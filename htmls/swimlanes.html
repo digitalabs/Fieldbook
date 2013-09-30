@@ -1,0 +1,213 @@
+<html>
+<head>
+    <!-- Le javascript
+        ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap-transition.js"></script>
+    <script src="js/jqueryui/jquery-ui.js"></script>
+    <script src="js/bootstrap-alert.js"></script>
+    <script src="js/jqueryui/jquery.ui.draggable.js"></script>
+    <script src="js/jqueryui/jquery.ui.droppable.js"></script>
+    <link rel="stylesheet" href="css/jquery.ui.theme.css">
+
+
+    <script src="js/bootstrap-modal.js"></script>
+    <script src="js/bootstrap-dropdown.js"></script>
+    <script src="js/bootstrap-scrollspy.js"></script>
+    <script src="js/bootstrap-tab.js"></script>
+    <script src="js/bootstrap-tooltip.js"></script>
+    <script src="js/bootstrap-popover.js"></script>
+    <script src="js/bootstrap-button.js"></script>
+    <script src="js/bootstrap-collapse.js"></script>
+    <script src="js/bootstrap-carousel.js"></script>
+    <script src="js/bootstrap-typeahead.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+
+            var selectedClass = 'ui-state-highlight',
+                    clickDelay = 600,
+            // click time (milliseconds)
+                    lastClick, diffClick; // timestamps
+
+            $("#draggable li")
+                // Script to deferentiate a click from a mousedown for drag event
+                    .bind('mousedown mouseup', function (e) {
+                        if (e.type == "mousedown") {
+                            lastClick = e.timeStamp; // get mousedown time
+                        } else {
+                            diffClick = e.timeStamp - lastClick;
+                            if (diffClick < clickDelay) {
+                                // add selected class to group draggable objects
+                                $(this).toggleClass(selectedClass);
+                            }
+                        }
+                    })
+                    .draggable({
+                        revertDuration: 10,
+                        // grouped items animate separately, so leave this number low
+                        containment: '.demo',
+                        start: function (e, ui) {
+                            ui.helper.addClass(selectedClass);
+                        },
+                        stop: function (e, ui) {
+                            // reset group positions
+                            $('.' + selectedClass).css({
+                                top: 0,
+                                left: 0
+                            });
+                        },
+                        drag: function (e, ui) {
+                            // set selected group position to main dragged object
+                            // this works because the position is relative to the starting position
+                            $('.' + selectedClass).css({
+                                top: ui.position.top,
+                                left: ui.position.left
+                            });
+                        }
+                    });
+
+            $(".droppable, #draggable").sortable().droppable({
+
+                drop: function (e, ui) {
+
+                    //var id = ui['draggable'].attr('id');
+                    // var div_id = this.id;
+
+                    //alert(id + " dropped to "+ div_id);
+
+                    $('.' + selectedClass).appendTo($(this)).add(ui.draggable)
+                        // ui.draggable is appended by the script, so add it after
+                            .removeClass(selectedClass).css({
+                                top: 0,
+                                left: 0
+                            });
+
+
+                }
+            });
+
+        });
+    </script>
+    <style>
+        .demo {
+            width: 220px
+        }
+
+        ul {
+            width: 200px;
+            height: 150px;
+            padding: 2em;
+            margin: 10px;
+            color: #ddd;
+            list-style: none;
+        }
+
+        ul li {
+            cursor: pointer;
+        }
+
+        #draggable {
+            background: #444;
+        }
+
+        .droppable {
+            background: #222;
+        }
+    </style>
+</head>
+<body>
+<div class="demo">
+    <p>Unclassified items</p>
+    <ul id="draggable">
+        <li id="1">Box #1</li>
+        <li id="2">Box #2</li>
+        <li id="3">Box #3</li>
+        <li id="4">Box #4</li>
+
+        <li id="5">Box #5</li>
+        <li id="6">Box #6</li>
+        <li id="7">Box #7</li>
+        <li id="8">Box #8</li>
+    </ul>
+    <table>
+        <tr>
+            <th>Condition</th>
+            <th>Factor</th>
+            <th>Constant</th>
+            <th>Variate</th>
+        </tr>
+        <tr>
+
+            <td>
+                <ul class="droppable" id="condition" name="condition">
+                </ul>
+            </td>
+            <td>
+
+                <ul class="droppable" id="factor" name="factor">
+                </ul>
+            </td>
+            <td>
+
+                <ul class="droppable" id="constant" name="constant">
+                </ul>
+            </td>
+            <td>
+
+                <ul class="droppable" id="variate" name="variate">
+                </ul>
+            </td>
+        </tr>
+    </table>
+    <form action="#" type="POST" name="swimlanes" id="swimlanes">
+
+        <input type="hidden" value="" name="condition_h" id="condition_h">
+        <input type="hidden" value="" name="factor_h" id="factor_h">
+        <input type="hidden" value="" name="constant_h" id="constant_h">
+        <input type="hidden" value="" name="variate_h" id="variate_h">
+
+    </form>
+    <input type="button" value="submit" onclick="submitMe()">
+</div>
+
+<script>
+    function submitMe() {
+
+        var constants = $('#constant li').map(function (i, n) {
+            return $(n).attr('id');
+        }).get().join(',');
+
+        var conditions = $('#condition li').map(function (i, n) {
+            return $(n).attr('id');
+        }).get().join(',');
+
+        var factors = $('#factor li').map(function (i, n) {
+            return $(n).attr('id');
+        }).get().join(',');
+
+        var variates = $('#variate li').map(function (i, n) {
+            return $(n).attr('id');
+        }).get().join(',');
+
+
+        $("#condition_h").val(conditions);
+        $("#constant_h").val(constants);
+        $("#factor_h").val(factors);
+        $("#variate_h").val(variates);
+
+
+        alert("conditions " + conditions);
+        alert("constants " + constants);
+        alert("factors " + factors);
+        alert("variates " + variates);
+
+        document.getElementById('swimlanes').submit();
+    }
+
+
+</script>
+</body>
+</html>

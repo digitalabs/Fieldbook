@@ -1,0 +1,107 @@
+body {
+}
+
+.ui-combobox {
+	display: inline-block;
+	margin: 0;
+	margin-right: 1.8em;
+	position: relative;
+	font-family: "Times New Roman", Times, serif;
+	font-size: 12pt;
+}
+
+.ui-combobox-input {
+	padding: 0.2em;
+	margin: 0;
+	width: 460px;
+
+}
+
+.ui-combobox-button {
+	position: absolute;
+	width: 1.8em !important;
+	margin: 0;
+	margin-left: -1px;
+	top: 0;
+	bottom: 0;
+}
+
+.ui-combobox-button .ui-button-text {
+	padding: 0em;
+}
+
+.ui-combobox .ui-autocomplete {
+	max-height: 10em;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.swimlane {
+}
+
+.swimlane .panel-heading {
+	height: 55px;
+}
+
+.swimlane .panel-body {
+	padding: 0px;
+	height: 500px;
+	overflow: auto;
+}
+
+.swimlane .panel-body .list-group {
+	min-height: 480px;
+}
+
+.swimlane .panel-body .list-group-item {
+	border-radius: 0;
+	cursor: pointer;
+	padding: 0; border: 0;
+}
+
+.swimlane .list-group-item:hover {
+	background-color: #f5f5f5;
+}
+
+.swimlane .list-group-item.selected {
+color: #ffffff;
+background-color: #428bca;
+}
+
+
+.swimlane .list-group-item:first-child .list-group-item-content {
+	border-top: 0;
+}
+
+.swimlane .list-group-item-content {
+	padding: 10px 15px;
+
+	border: 1px solid #dddddd;
+	border-left: 0;
+	border-right: 0;
+}
+
+.swimlane  .list-group-item.selected .list-group-item-content {
+	padding: 10px 15px;
+	border: 1px solid #dddddd;
+	border-color: #428bca;
+}
+
+.swimlane .counter {
+	float: right
+}
+
+#addOntologyModal .modal-body {
+max-height: 150px;
+height: 150px;
+}
+
+.affix {
+	position: fixed;
+	top: 50px;
+	width: 573px;
+}
+
+.affix-bottom {
+	position: absolute;
+}

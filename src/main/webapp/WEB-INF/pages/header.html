@@ -1,0 +1,17 @@
+	<div class="jumbotron">
+		<div class="container">
+	    <h1>
+			Fieldbook Main
+		</h1>
+		<p>
+			This is for new Fieldbook Application.
+		</p>
+	  </div>
+	</div>
+	
+	<ul class="nav nav-pills">
+	  <li th:class="${templateName == 'testPage'} ? 'active' : ''"><a href="testPage.html" th:href="@{/}" >Home</a></li>
+	  <li th:class="${templateName == 'test'} ? 'active' : ''"><a href="test.html" th:href="@{/test}">Navigation 1</a></li>
+	  <li><a href="#">Navigation 2</a></li>
+	</ul>
+	

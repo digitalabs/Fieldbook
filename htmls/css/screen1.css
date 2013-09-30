@@ -1,0 +1,16 @@
+.EvenRow{
+	background-color: #bbccdd;
+}
+
+.OddRow
+{
+	background-color: #aabbcc;
+}
+.HoveredRow
+{
+	background-color: #CCDDEE;
+}
+.table_select{
+	width: 100%;
+	margin: 0 auto;
+}

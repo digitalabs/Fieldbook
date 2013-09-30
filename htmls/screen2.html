@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Bootstrap, from Twitter</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/screen1.css" rel="stylesheet">
+    <style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+    </style>
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="ico/apple-touch-icon-114-precomposed.png">
+      <link rel="apple-touch-icon-precomposed" sizes="72x72" href="ico/apple-touch-icon-72-precomposed.png">
+                    <link rel="apple-touch-icon-precomposed" href="ico/apple-touch-icon-57-precomposed.png">
+                                   <link rel="shortcut icon" href="ico/favicon.png">
+     <script>
+    	function goto(mylocation)
+    	{
+    		window.location = mylocation;
+    	}
+    </script>                                 
+  </head>
+
+  <body>
+
+   
+
+    <div class="container">
+
+	Row Header: <input type="text" id="rowHeaderSelectRow" onClick="rowheader()"></input> <br/>
+	First Row Data: <input type="text" id="firstRowSelect" onClick="firstRow()"></input> <br/>
+    Index Column: 
+    <select>
+    <option>Scientific Name</option>	
+    <option>Something Name</option>	
+    <option>Something 2 Name</option>	
+    <option>Something 3 Name</option>	
+    </select> 
+     <br/>
+    <input type="button" name="ok" value="Ok" onclick="goto('swimlane.html')"></input>
+    <input type="button" name="cancel" value="Cancel"></input>
+    
+    
+    <div id="rowHeaderModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h3 id="myModalLabel">Select Header Row</h3>
+     		</div> 
+     		<!-- modal-header //-->
+            <div class="modal-body">
+            	<h2>Search:</h2><input type="text">
+				<table class="table_select">
+				<tr class="OddRow" onmouseover="changeClass(this,'HoveredRow')" onmouseout="changeClass(this,'OddRow')" onclick="onchangeSelectedRow('Row1 - Header 1,Header 2, Header 3')" >
+					<td>
+						Row1 - Header 1,Header 2, Header 3
+					</td>
+				</tr>
+				<tr class="EvenRow" onmouseover="changeClass(this,'HoveredRow')" onmouseout="changeClass(this,'EvenRow')" onclick="onchangeSelectedRow('Row2 - Header 1,Header 2, Header 3')">
+					<td>
+						Row2 - Header 1,Header 2, Header 3
+					</td>
+				</tr>
+				<tr class="OddRow" onmouseover="changeClass(this,'HoveredRow')" onmouseout="changeClass(this,'OddRow')" onclick="onchangeSelectedRow('Row3 - Header 1,Header 2, Header 3')">
+					<td>
+						Row3 - Header 1,Header 2, Header 3
+					</td>
+				</tr>
+				<tr class="EvenRow" onmouseover="changeClass(this,'HoveredRow')" onmouseout="changeClass(this,'EvenRow')" onclick="onchangeSelectedRow('Row4 - Header 1,Header 2, Header 3')">
+					<td>
+						Row4 - Header 1,Header 2, Header 3
+					</td>
+				</tr>
+				<tr class="OddRow" onmouseover="changeClass(this,'HoveredRow')" onmouseout="changeClass(this,'OddRow')" onclick="onchangeSelectedRow('Row5 - Header 1,Header 2, Header 3')">
+					<td>
+						Row5 - Header 1,Header 2, Header 3
+					</td>
+				</tr>
+				</table>
+				<center>
+	          	<div class="pagination">
+			  			<ul>
+			   			 <li><a href="javascript:changePage('prev')">Prev</a></li>
+			   			 <li><a href="javascript:changePage('1')">1</a></li>
+			  		 	 <li><a href="javascript:changePage('2')">2</a></li>
+			   			 <li><a href="javascript:changePage('3')">3</a></li>
+			   			 <li><a href="javascript:changePage('4')">4</a></li>
+			   			 <li><a href="javascript:changePage('5')">5</a></li>
+			   			 <li><a href="javascript:changePage('next')">Next</a></li>
+			  			</ul>
+				</div><!-- pagination //-->
+				</center>
+	  		</div>
+	  		<!-- modal-Body //-->
+            <div class="modal-footer">
+              <button class="btn" data-dismiss="modal">Close</button>
+              <button class="btn" >Search</button>
+            </div>
+            <!-- modal-footer //-->
+	</div>
+	<!-- myModal //-->
+	
+	
+	<div id="firstRowSelectModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h3 id="myModalLabel">Select First Row</h3>
+     		</div> 
+     		<!-- modal-header //-->
+            <div class="modal-body">
+            	<h2>Search:</h2><input type="text">
+				<table class="table_select">
+				<tr class="OddRow" onmouseover="changeClass(this,'HoveredRow')" onmouseout="changeClass(this,'OddRow')" onclick="onchangeFirstRow('Row1 - Header 1,Header 2, Header 3')" >
+					<td>
+						Row1 - Header 1,Header 2, Header 3
+					</td>
+				</tr>
+				<tr class="EvenRow" onmouseover="changeClass(this,'HoveredRow')" onmouseout="changeClass(this,'EvenRow')" onclick="onchangeFirstRow('Row2 - Header 1,Header 2, Header 3')">
+					<td>
+						Row2 - Header 1,Header 2, Header 3
+					</td>
+				</tr>
+				<tr class="OddRow" onmouseover="changeClass(this,'HoveredRow')" onmouseout="changeClass(this,'OddRow')" onclick="onchangeFirstRow('Row3 - Header 1,Header 2, Header 3')">
+					<td>
+						Row3 - Header 1,Header 2, Header 3
+					</td>
+				</tr>
+				<tr class="EvenRow" onmouseover="changeClass(this,'HoveredRow')" onmouseout="changeClass(this,'EvenRow')" onclick="onchangeFirstRow('Row4 - Header 1,Header 2, Header 3')">
+					<td>
+						Row4 - Header 1,Header 2, Header 3
+					</td>
+				</tr>
+				<tr class="OddRow" onmouseover="changeClass(this,'HoveredRow')" onmouseout="changeClass(this,'OddRow')" onclick="onchangeFirstRow('Row5 - Header 1,Header 2, Header 3')">
+					<td>
+						Row5 - Header 1,Header 2, Header 3
+					</td>
+				</tr>
+				</table>
+				<center>
+	          	<div class="pagination">
+			  			<ul>
+			   			 <li><a href="javascript:changePage('prev')">Prev</a></li>
+			   			 <li><a href="javascript:changePage('1')">1</a></li>
+			  		 	 <li><a href="javascript:changePage('2')">2</a></li>
+			   			 <li><a href="javascript:changePage('3')">3</a></li>
+			   			 <li><a href="javascript:changePage('4')">4</a></li>
+			   			 <li><a href="javascript:changePage('5')">5</a></li>
+			   			 <li><a href="javascript:changePage('next')">Next</a></li>
+			  			</ul>
+				</div><!-- pagination //-->
+				</center>
+	  		</div>
+	  		<!-- modal-Body //-->
+            <div class="modal-footer">
+              <button class="btn" data-dismiss="modal">Close</button>
+              <button class="btn" >Search</button>
+            </div>
+            <!-- modal-footer //-->
+	</div>
+	<!-- myModal //-->
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap-transition.js"></script>
+    <script src="js/bootstrap-alert.js"></script>
+    <script src="js/bootstrap-modal.js"></script>
+    <script src="js/bootstrap-dropdown.js"></script>
+    <script src="js/bootstrap-scrollspy.js"></script>
+    <script src="js/bootstrap-tab.js"></script>
+    <script src="js/bootstrap-tooltip.js"></script>
+    <script src="js/bootstrap-popover.js"></script>
+    <script src="js/bootstrap-button.js"></script>
+    <script src="js/bootstrap-collapse.js"></script>
+    <script src="js/bootstrap-carousel.js"></script>
+    <script src="js/bootstrap-typeahead.js"></script>
+	<script>
+function rowheader()
+{
+$("#rowHeaderModal").modal()                       // initialized with defaults
+$("#rowHeaderModal").modal({ keyboard: false })   // initialized with no keyboard
+$("#rowHeaderModal").modal('show')
+}
+function firstRow()
+{
+$("#firstRowSelectModal").modal()                       // initialized with defaults
+$("#firstRowSelectModal").modal({ keyboard: false })   // initialized with no keyboard
+$("#firstRowSelectModal").modal('show')
+}
+function firstRowModalclose()
+{
+	$("#firstRowSelectModal").modal('hide')
+}
+function rowHeaderModalclose()
+{
+	$("#rowHeaderModal").modal('hide')
+}
+function changeClass(object, classnameko)
+{
+	object.className = classnameko;
+}
+
+function onchangeFirstRow(myvalue)
+{
+	$("#firstRowSelect").val(myvalue);
+	firstRowModalclose();
+}
+
+function onchangeSelectedRow(myvalue)
+{
+	$("#rowHeaderSelectRow").val(myvalue);
+	rowHeaderModalclose();
+}
+function changePage(pageName)
+{
+	alert("should call an ajax page");
+}
+</script>
+  </body>
+</html>

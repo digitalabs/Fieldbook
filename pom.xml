@@ -248,7 +248,7 @@
 										and make a folder under pipeline/config that meets your needs -->
 										<copy todir="src/main/resources" overwrite="true">
 											<fileset dir="pipeline/config/${envConfig}" id="fromDir">
-												<!--<include name="datasetImporter.properties" />-->
+												<include name="fieldbook.properties" />
                                                 <include name="database.properties"/>
 											</fileset>
 										</copy>
@@ -283,7 +283,7 @@
 									<tasks>
 										<copy todir="src/main/resources" overwrite="true">
 											<fileset dir="pipeline/config/${envConfig}" id="fromDir">
-												<!--<include name="datasetImporter.properties"/>-->
+												<include name="fieldbook.properties"/>
                                                 <include name="database.properties"/>
 											</fileset>
 										</copy>

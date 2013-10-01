@@ -21,8 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class TestController extends AbstractBaseFieldbookController{
 
     @RequestMapping(method = RequestMethod.GET)
-    public String show(@ModelAttribute("testForm") TestJavaForm testForm, Model model) {
-
+    public String show(@ModelAttribute("testForm") TestJavaForm testForm,  BindingResult result, Model model) {
 
 
     	model.addAttribute("testList", getDummyList());

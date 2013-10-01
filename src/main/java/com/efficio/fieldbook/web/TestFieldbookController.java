@@ -38,6 +38,10 @@ public class TestFieldbookController extends AbstractBaseFieldbookController{
         //FileUploadFormValidator validator = new FileUploadFormValidator();
         //validator.validate(uploadForm, result);
 
+    	//for adding of error
+    	result.reject("testForm.username", "test error msg");
+    	
+    	
         if (result.hasErrors()) {
             /**
              * Return the user back to form to show errors

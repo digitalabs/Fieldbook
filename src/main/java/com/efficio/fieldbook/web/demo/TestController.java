@@ -1,9 +1,15 @@
-package com.efficio.fieldbook.web;
+package com.efficio.fieldbook.web.demo;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.form.TestJavaForm;
+
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,12 +25,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping({"/test"})
 public class TestController extends AbstractBaseFieldbookController{
-
+	
+	
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("testForm") TestJavaForm testForm,  BindingResult result, Model model) {
 
-
+    	
     	model.addAttribute("testList", getDummyList());
+    
     	return super.show(model);
     }
 

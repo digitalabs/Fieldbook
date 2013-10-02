@@ -12,6 +12,6 @@
 	<ul class="nav nav-pills">
 	  <li th:class="${templateName == 'testPage'} ? 'active' : ''"><a href="testPage.html" th:href="@{/}" >Home</a></li>
 	  <li th:class="${templateName == 'test'} ? 'active' : ''"><a href="test.html" th:href="@{/test}">Navigation 1</a></li>
-	  <li><a href="#">Navigation 2</a></li>
+	  <li th:class="${templateName == 'test2'} ? 'active' : ''"><a href="test2.html" th:href="@{/test2}">Navigation 2</a></li>
 	</ul>
 	

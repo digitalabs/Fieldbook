@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.form.TestJavaForm;
+import com.efficio.fieldbook.web.form.demo.TestJavaForm;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -59,7 +59,7 @@ public class TestFieldbookController extends AbstractBaseFieldbookController{
 
     @Override
     public String getContentName() {
-        return "testPage";
+        return "demo/testPage";
     }
    
 }

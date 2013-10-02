@@ -6,7 +6,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.form.TestJavaForm;
+import com.efficio.fieldbook.web.form.demo.TestJavaForm;
 
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
@@ -46,7 +46,7 @@ public class TestController extends AbstractBaseFieldbookController{
 
     @Override
     public String getContentName() {
-        return "test";
+        return "demo/test";
     }
    
 }

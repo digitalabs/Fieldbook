@@ -1,6 +1,6 @@
 package com.efficio.fieldbook.web.form.demo;
 
-import com.efficio.fieldbook.web.bean.TestJavaBean;
+import com.efficio.fieldbook.web.bean.demo.TestJavaBean;
 
 public class TestJavaForm {
 	private TestJavaBean bean;

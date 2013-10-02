@@ -8,7 +8,7 @@ import javax.annotation.Resource;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.form.demo.Test2JavaForm;
 import com.efficio.fieldbook.web.form.demo.TestJavaForm;
-import com.efficio.fieldbook.web.validation.TestValidator;
+import com.efficio.fieldbook.web.validation.demo.TestValidator;
 
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
@@ -75,7 +75,7 @@ public class Test2Controller extends AbstractBaseFieldbookController{
 
     @Override
     public String getContentName() {
-        return "test2";
+        return "demo/test2";
     }
    
 }

@@ -17,7 +17,14 @@ public abstract class AbstractRestfulService {
 
 	@Autowired
 	private RestTemplate restTemplate;
-	
+
+	/**
+	 * GET call to the RESTful Web Service.
+	 * 
+	 * @param url
+	 * @param responseType
+	 * @return
+	 */
 	public <T> T get(String url, Class<T> responseType) {
 		return (T) restTemplate.getForObject(url, responseType);
 	}
@@ -34,8 +41,28 @@ public abstract class AbstractRestfulService {
 		return (T) restTemplate.getForObject(url, responseType, param);
 	}
 	
+	/**
+	 * GET call to the RESTful Web Service that returns a List.
+	 * 
+	 * @param url
+	 * @param responseType
+	 * @return
+	 */
 	public <T> List<T> getList(String url, Class<T> responseType) {
 		T[] results = (T[]) restTemplate.getForObject(url, Array.newInstance(responseType, 0).getClass());
+		return Arrays.asList(results);
+	}
+	
+	/**
+	 * GET call to the RESTful Web Service that returns a List.
+	 * 
+	 * @param url
+	 * @param responseType
+	 * @param param
+	 * @return
+	 */
+	public <T> List<T> getList(String url, Class<T> responseType, Object... param) {
+		T[] results = (T[]) restTemplate.getForObject(url, Array.newInstance(responseType, 0).getClass(), param);
 		return Arrays.asList(results);
 	}
 }

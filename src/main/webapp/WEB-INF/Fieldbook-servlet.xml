@@ -67,14 +67,14 @@
 
 
 	<!-- Application Beans -->
-<!--
-	<bean id="etlService" class="com.efficio.etl.service.impl.ETLServiceImpl" />
 
-	<bean id="fileService" class="com.efficio.etl.service.impl.FileServiceImpl"
+	<bean id="fieldbookService" class="com.efficio.fieldbook.service.api.FieldbookServiceImpl" />
+
+	<bean id="fileService" class="com.efficio.fieldbook.service.api.FileServiceImpl"
 		init-method="init">
 		<constructor-arg value="${upload.directory}" />
 	</bean>
--->
+
 	<bean id="multipartResolver"
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 		<!-- one of the properties available; the maximum file size in bytes -->
@@ -128,6 +128,11 @@
     <bean id="germplasmDataManagerV2" class="org.generationcp.middleware.manager.GermplasmDataManagerImpl">
         <property name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
         <property name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
+    </bean>
+    
+    <bean id="dataImportService" class="org.generationcp.middleware.service.DataImportServiceImpl">
+        <constructor-arg name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
+        <constructor-arg name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
     </bean>
     
     <bean id="centralHibernateSessionProvider" class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider" scope="request" destroy-method="close">

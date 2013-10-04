@@ -23,7 +23,7 @@ import com.efficio.pojos.cropontology.Ontology;
 public class CropOntologyServiceTest extends AbstractJUnit4SpringContextTests {
 
 	@Autowired
-	private CropOntologyService cropOntologyService;// = new CropOntologyServiceImpl();
+	private CropOntologyService cropOntologyService;
 	
 	/* =========== search terms =========== */
 	

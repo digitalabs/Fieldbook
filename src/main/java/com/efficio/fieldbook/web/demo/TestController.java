@@ -6,6 +6,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.bean.demo.TestJavaBean;
 import com.efficio.fieldbook.web.form.demo.TestJavaForm;
 
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping({"/test"})
 public class TestController extends AbstractBaseFieldbookController{
+	
 	
 	
     @RequestMapping(method = RequestMethod.GET)

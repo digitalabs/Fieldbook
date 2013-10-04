@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.bean.demo.TestJavaBean;
 import com.efficio.fieldbook.web.form.demo.TestJavaForm;
 
 import javax.annotation.Resource;
@@ -29,6 +30,9 @@ public class TestFieldbookController extends AbstractBaseFieldbookController{
     @Resource
     private UserSelection userSelection;
 	*/
+	@Resource
+	private TestJavaBean bean;
+	
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("testForm") TestJavaForm testForm, Model model) {
     	return super.show(model);
@@ -41,7 +45,8 @@ public class TestFieldbookController extends AbstractBaseFieldbookController{
 
     	//for adding of error
     	result.reject("testForm.username", "test error msg");
-    	
+    	bean.setAge("10");
+    	bean.setName("Hello");
     	
         if (result.hasErrors()) {
             /**

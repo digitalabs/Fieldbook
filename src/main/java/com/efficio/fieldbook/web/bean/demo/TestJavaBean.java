@@ -1,6 +1,8 @@
 package com.efficio.fieldbook.web.bean.demo;
 
-public class TestJavaBean {
+import java.io.Serializable;
+
+public class TestJavaBean implements Serializable {
 	private String name;
 	private String age;
 	

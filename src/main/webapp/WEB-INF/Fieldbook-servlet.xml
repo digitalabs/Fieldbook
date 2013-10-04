@@ -86,7 +86,10 @@
 		<aop:scoped-proxy />
 	</bean>
 -->
-
+	<bean id="testJavaBean" class="com.efficio.fieldbook.web.bean.demo.TestJavaBean"
+		scope="session">
+		<aop:scoped-proxy />
+	</bean>
 	<!-- **************************************************************** -->
 	<!-- RESTful Web Service -->
 	<!-- **************************************************************** -->

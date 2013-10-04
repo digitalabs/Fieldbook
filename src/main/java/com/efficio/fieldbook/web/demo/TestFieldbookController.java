@@ -46,7 +46,7 @@ public class TestFieldbookController extends AbstractBaseFieldbookController{
     	//for adding of error
     	result.reject("testForm.username", "test error msg");
     	bean.setAge("10");
-    	bean.setName("Hello");
+    	bean.setName("Hello"+System.currentTimeMillis());
     	
         if (result.hasErrors()) {
             /**

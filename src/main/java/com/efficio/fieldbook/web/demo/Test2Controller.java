@@ -6,6 +6,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.bean.demo.TestJavaBean;
 import com.efficio.fieldbook.web.form.demo.Test2JavaForm;
 import com.efficio.fieldbook.web.form.demo.TestJavaForm;
 import com.efficio.fieldbook.web.validation.demo.TestValidator;
@@ -31,12 +32,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class Test2Controller extends AbstractBaseFieldbookController{
 	@Resource
 	private GermplasmDataManager germplasmDataManager;
+	@Resource
+	private TestJavaBean testJavaBean;
 	
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("test2Form") Test2JavaForm testForm,  Model model) {
 
     	
     	try {
+    		System.out.println(testJavaBean.getName());
 			testForm.setLocationList(germplasmDataManager.getAllBreedingLocations());
 			testForm.setMethodList(germplasmDataManager.getAllMethods());
 			

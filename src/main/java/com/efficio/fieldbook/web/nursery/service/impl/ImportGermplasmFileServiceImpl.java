@@ -98,9 +98,9 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 		errorMessages = new HashSet();
         
         try {
-        	inp = new FileInputStream(mainInfo.getServerFilename());
-        	
-        	wb = new HSSFWorkbook(inp);
+        	//inp = new FileInputStream(mainInfo.getServerFilename());
+        	wb = getFileService().retrieveWorkbook(mainInfo.getServerFilename());
+        	//wb = new HSSFWorkbook(inp);
             
             readSheet1();
             readSheet2();
@@ -130,7 +130,14 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
             showInvalidFileTypeError();
         } catch (OfficeXmlFileException e){
             showInvalidFileError(e.getMessage());
-        }
+        } catch (Exception e) {
+        	showInvalidFileError(e.getMessage());
+		} finally{
+			if(fileIsValid==false){
+				mainInfo.setFileIsValid(false);
+	            mainInfo.setErrorMessages(errorMessages);
+			}
+		}
 		return mainInfo;
 	}
 	

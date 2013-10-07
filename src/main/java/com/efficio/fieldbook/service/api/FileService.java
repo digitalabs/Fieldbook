@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.poi.ss.usermodel.Workbook;
+
 public interface FileService{
 
     /**
@@ -15,6 +17,8 @@ public interface FileService{
      */
     public String saveTemporaryFile(InputStream userFile) throws IOException;
 
+    public Workbook retrieveWorkbook(String currentFilename) throws IOException;
+
     /**
      * Retrieves a File object based on the given file name
      * 
@@ -23,5 +27,6 @@ public interface FileService{
      * @throws IOException
      */
     public File retrieveFileFromFileName(String currentFilename) throws IOException;
+
 
 }

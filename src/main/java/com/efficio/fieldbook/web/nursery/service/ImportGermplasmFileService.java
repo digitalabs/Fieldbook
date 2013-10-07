@@ -18,13 +18,19 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Interface ImportGermplasmFileService.
+ */
 public interface ImportGermplasmFileService {
+	
 	/**
-     * Takes in an input stream representing the Excel file to be read, and returns the temporary file name used to store it in the system
-     *
-     * @param in
-     * @return
-     */
+	 * Takes in an input stream representing the Excel file to be read, and returns the temporary file name used to store it in the system.
+	 *
+	 * @param multipartFile the multipart file
+	 * @return the imported germplasm main info
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
     public ImportedGermplasmMainInfo storeImportGermplasmWorkbook(MultipartFile multipartFile) throws IOException;
     
     /**

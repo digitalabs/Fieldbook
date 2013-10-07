@@ -1,7 +1,7 @@
 package com.efficio.fieldbook.web.demo.controller;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.form.demo.Test2JavaForm;
+import com.efficio.fieldbook.web.demo.form.Test2JavaForm;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

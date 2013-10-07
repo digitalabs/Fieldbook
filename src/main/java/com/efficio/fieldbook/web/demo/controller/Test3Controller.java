@@ -5,9 +5,9 @@ import java.io.IOException;
 import javax.annotation.Resource;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.validation.demo.FileUploadFormValidator;
+import com.efficio.fieldbook.web.demo.validation.FileUploadFormValidator;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.form.demo.Test3JavaForm;
+import com.efficio.fieldbook.web.demo.form.Test3JavaForm;
 
 import org.generationcp.middleware.service.api.DataImportService;
 import org.springframework.stereotype.Controller;

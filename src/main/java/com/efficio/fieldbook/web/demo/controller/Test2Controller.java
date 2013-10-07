@@ -1,20 +1,15 @@
 package com.efficio.fieldbook.web.demo.controller;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.annotation.Resource;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.bean.demo.TestJavaBean;
-import com.efficio.fieldbook.web.form.demo.Test2JavaForm;
-import com.efficio.fieldbook.web.form.demo.TestJavaForm;
-import com.efficio.fieldbook.web.validation.demo.TestValidator;
+import com.efficio.fieldbook.web.demo.bean.TestJavaBean;
+import com.efficio.fieldbook.web.demo.form.Test2JavaForm;
+import com.efficio.fieldbook.web.demo.validation.TestValidator;
 
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
-import org.generationcp.middleware.pojos.Location;
-import org.generationcp.middleware.pojos.Method;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;

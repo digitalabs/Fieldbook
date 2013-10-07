@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.bean.demo.TestJavaBean;
-import com.efficio.fieldbook.web.form.demo.TestJavaForm;
+import com.efficio.fieldbook.web.demo.bean.TestJavaBean;
+import com.efficio.fieldbook.web.demo.form.TestJavaForm;
 
 import javax.annotation.Resource;
 import java.io.IOException;

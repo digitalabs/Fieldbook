@@ -6,8 +6,8 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.bean.demo.TestJavaBean;
-import com.efficio.fieldbook.web.form.demo.TestJavaForm;
+import com.efficio.fieldbook.web.demo.bean.TestJavaBean;
+import com.efficio.fieldbook.web.demo.form.TestJavaForm;
 
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;

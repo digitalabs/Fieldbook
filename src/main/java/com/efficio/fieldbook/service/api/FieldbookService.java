@@ -1,4 +1,4 @@
-package com.efficio.fieldbook.service;
+package com.efficio.fieldbook.service.api;
 
 import java.io.IOException;
 import java.io.InputStream;

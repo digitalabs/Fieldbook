@@ -1,12 +1,13 @@
-package com.efficio.fieldbook.service.api;
+package com.efficio.fieldbook.service;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import javax.annotation.Resource;
 
-import com.efficio.fieldbook.service.FileService;
-import com.efficio.fieldbook.service.FieldbookService;
+import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.service.api.FileService;
+
 
 public class FieldbookServiceImpl implements FieldbookService{
 	

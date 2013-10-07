@@ -1,4 +1,4 @@
-package com.efficio.fieldbook.service.api;
+package com.efficio.fieldbook.service;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -9,7 +9,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.BeanInitializationException;
 
-import com.efficio.fieldbook.service.FileService;
+import com.efficio.fieldbook.service.api.FileService;
+
 
 public class FileServiceImpl implements FileService {
 	

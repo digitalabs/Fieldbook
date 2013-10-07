@@ -28,33 +28,61 @@ import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.nursery.validation.ImportGermplasmListValidator;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ImportGermplasmListController.
+ */
 @Controller
 @RequestMapping(ImportGermplasmListController.URL)
 public class ImportGermplasmListController extends AbstractBaseFieldbookController{
 
+    /** The Constant URL. */
     public static final String URL = "/NurseryManager/importGermplasmList";
     
+    /** The user selection. */
     @Resource
     private UserSelection userSelection;
 
+    /** The import germplasm file service. */
     @Resource
     private ImportGermplasmFileService importGermplasmFileService;
     
+    /* (non-Javadoc)
+     * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
+     */
     @Override
     public String getContentName() {
         return "NurseryManager/importGermplasmList";
     }
     
+    /* (non-Javadoc)
+     * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getUserSelection()
+     */
     @Override
 	public UserSelection getUserSelection() {
 		return this.userSelection;
 	}
     
+    /**
+     * Show.
+     *
+     * @param form the form
+     * @param model the model
+     * @return the string
+     */
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, Model model) {
     	return super.show(model);
     }
 
+    /**
+     * Show details.
+     *
+     * @param form the form
+     * @param result the result
+     * @param model the model
+     * @return the string
+     */
     @RequestMapping(method = RequestMethod.POST)
     public String showDetails(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, BindingResult result, Model model) {
     	
@@ -95,6 +123,14 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     	
     }
     
+    /**
+     * Next screen.
+     *
+     * @param form the form
+     * @param result the result
+     * @param model the model
+     * @return the string
+     */
     @RequestMapping(value="/next", method = RequestMethod.POST)
     public String nextScreen(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, BindingResult result, Model model) {
     	

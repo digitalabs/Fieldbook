@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2013, All Rights Reserved.
+ * 
+ * Generation Challenge Programme (GCP)
+ * 
+ * 
+ * This software is licensed for use under the terms of the GNU General Public
+ * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
+ * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ * 
+ *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.service.impl;
 
 import java.io.File;
@@ -35,73 +46,143 @@ import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.vaadin.data.Property.ConversionException;
 import com.vaadin.data.Property.ReadOnlyException;
 import com.vaadin.ui.Window.Notification;
+// TODO: Auto-generated Javadoc
+
 /**
  * Author: Daniel Jao
- * This should parse the import file from the user
- * 
+ * This should parse the import file from the user.
  */
 public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileService{
+	
+	/** The file service. */
 	@Resource
     private FileService fileService;
 
+	/** The current sheet. */
 	private Integer currentSheet;
+    
+    /** The current row. */
     private Integer currentRow;
+    
+    /** The current column. */
     private Integer currentColumn;
+    
+    /** The file is valid. */
     private boolean fileIsValid;
+    
+    /** The list name. */
     private String listName;
+    
+    /** The list title. */
     private String listTitle;
+    
+    /** The list type. */
     private String listType;
+    
+    /** The list date. */
     private Date listDate;
     
+    /** The inp. */
     private InputStream inp;
+    
+    /** The wb. */
     private Workbook wb;
     
+    /** The imported germplasm list. */
     private ImportedGermplasmList importedGermplasmList;
     
+	/** The file. */
 	public File file;
 
+    /** The temp file name. */
     private String tempFileName;
     
+    /** The original filename. */
     private String originalFilename;
+    
+    /** The server filename. */
     private String serverFilename;
     
+    /** The Constant FILE_INVALID. */
     public final static String FILE_INVALID = "error.invalid.file";
+    
+    /** The Constant FILE_TYPE_INVALID. */
     public final static String FILE_TYPE_INVALID = "error.invalid.file.type";
     
     						
 
     
+    /** The Constant CONDITION_CONDITION. */
     private final static String CONDITION_CONDITION = "CONDITION";
+    
+    /** The Constant CONDITION_DESCRIPTION. */
     private final static String CONDITION_DESCRIPTION = "DESCRIPTION";
+    
+    /** The Constant CONDITION_PROPERTY. */
     private final static String CONDITION_PROPERTY = "PROPERTY";
+    
+    /** The Constant CONDITION_SCALE. */
     private final static String CONDITION_SCALE = "SCALE";
+    
+    /** The Constant CONDITION_METHOD. */
     private final static String CONDITION_METHOD = "METHOD";
+    
+    /** The Constant CONDITION_DATA_TYPE. */
     private final static String CONDITION_DATA_TYPE = "DATA TYPE";
+    
+    /** The Constant CONDITION_VALUE. */
     private final static String CONDITION_VALUE = "VALUE";    
     
     					
 
     
+    /** The Constant FACTOR_HEADER_FACTOR. */
     private final static String FACTOR_HEADER_FACTOR = "FACTOR";
+    
+    /** The Constant FACTOR_HEADER_DESCRIPTION. */
     private final static String FACTOR_HEADER_DESCRIPTION = "DESCRIPTION";
+    
+    /** The Constant FACTOR_HEADER_PROPERTY. */
     private final static String FACTOR_HEADER_PROPERTY = "PROPERTY";
+    
+    /** The Constant FACTOR_HEADER_SCALE. */
     private final static String FACTOR_HEADER_SCALE = "SCALE";
+    
+    /** The Constant FACTOR_HEADER_METHOD. */
     private final static String FACTOR_HEADER_METHOD = "METHOD";
+    
+    /** The Constant FACTOR_HEADER_DATA_TYPE. */
     private final static String FACTOR_HEADER_DATA_TYPE = "DATA TYPE";
     
+    /** The Constant FACTOR_ENTRY. */
     private final static String FACTOR_ENTRY = "ENTRY";
+    
+    /** The Constant FACTOR_DESIGNATION. */
     private final static String FACTOR_DESIGNATION = "DESIGNATION";
+    
+    /** The Constant FACTOR_GID. */
     private final static String FACTOR_GID = "GID";
+    
+    /** The Constant FACTOR_CROSS. */
     private final static String FACTOR_CROSS = "CROSS";
+    
+    /** The Constant FACTOR_SOURCE. */
     private final static String FACTOR_SOURCE = "SOURCE";
+    
+    /** The Constant FACTOR_ENTRY_CODE. */
     private final static String FACTOR_ENTRY_CODE = "ENTRY CODE";
     
     
     
+    /** The error messages. */
     private Set<String> errorMessages;
         
+    /** The is advance import type. */
     private boolean isAdvanceImportType;
 	
+	/* (non-Javadoc)
+	 * @see com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService#storeImportGermplasmWorkbook(org.springframework.web.multipart.MultipartFile)
+	 */
 	@Override
     public ImportedGermplasmMainInfo storeImportGermplasmWorkbook(MultipartFile multipartFile) throws IOException {
 		ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
@@ -115,10 +196,18 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
         //return ;
     }
 	
+	/**
+	 * Gets the file service.
+	 *
+	 * @return the file service
+	 */
 	public FileService getFileService() {
         return fileService;
     }
 	
+	/* (non-Javadoc)
+	 * @see com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService#processWorkbook(com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo)
+	 */
 	@Override
 	public ImportedGermplasmMainInfo processWorkbook(ImportedGermplasmMainInfo mainInfo){
 		currentSheet = 0;
@@ -174,6 +263,9 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 		return mainInfo;
 	}
 	
+	/**
+	 * Read sheet1.
+	 */
 	private void readSheet1(){
         readGermplasmListFileInfo();
         readConditions();
@@ -182,6 +274,9 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
         //readVariates();
     }
     
+    /**
+     * Read sheet2.
+     */
     private void readSheet2(){
         currentSheet = 1;
         currentRow = 0;
@@ -273,6 +368,9 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
         }
     }
 
+    /**
+     * Read germplasm list file info.
+     */
     private void readGermplasmListFileInfo(){
         try {
             listName = getCellStringValue(0,0,1,true);
@@ -300,6 +398,9 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
         
     }
     
+    /**
+     * Read conditions.
+     */
     private void readConditions(){
         
         currentRow++; //Skip row from file info
@@ -345,6 +446,9 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
         currentRow++;
     }
 
+    /**
+     * Read factors.
+     */
     private void readFactors(){
         Boolean entryColumnIsPresent = false;
         Boolean desigColumnIsPresent = false;
@@ -411,6 +515,9 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
         }
     }
     
+    /**
+     * Read constants.
+     */
     private void readConstants(){
         //Check if headers are correct
         if(!getCellStringValue(currentSheet,currentRow,0,true).toUpperCase().equals("CONSTANT") 
@@ -442,6 +549,9 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
         currentRow++;
     }
     
+    /**
+     * Read variates.
+     */
     private void readVariates(){
         //Check if headers are correct
         if(!getCellStringValue(currentSheet,currentRow,0,true).toUpperCase().equals("VARIATE")
@@ -473,14 +583,32 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 
     
     
+    /**
+     * Row is empty.
+     *
+     * @return the boolean
+     */
     private Boolean rowIsEmpty(){
         return rowIsEmpty(currentRow);
     }
     
+    /**
+     * Row is empty.
+     *
+     * @param row the row
+     * @return the boolean
+     */
     private Boolean rowIsEmpty(Integer row){
         return rowIsEmpty(currentSheet, row);
     }
 
+    /**
+     * Row is empty.
+     *
+     * @param sheet the sheet
+     * @param row the row
+     * @return the boolean
+     */
     private Boolean rowIsEmpty(Integer sheet, Integer row){
         for(int col=0;col<8;col++){
             if(getCellStringValue(sheet, row, col)!="" && getCellStringValue(sheet, row, col)!=null)
@@ -489,10 +617,27 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
         return true;        
     }    
     
+    /**
+     * Gets the cell string value.
+     *
+     * @param sheetNumber the sheet number
+     * @param rowNumber the row number
+     * @param columnNumber the column number
+     * @return the cell string value
+     */
     private String getCellStringValue(Integer sheetNumber, Integer rowNumber, Integer columnNumber){
         return getCellStringValue(sheetNumber, rowNumber, columnNumber, false);
     }
         
+    /**
+     * Gets the cell string value.
+     *
+     * @param sheetNumber the sheet number
+     * @param rowNumber the row number
+     * @param columnNumber the column number
+     * @param followThisPosition the follow this position
+     * @return the cell string value
+     */
     private String getCellStringValue(Integer sheetNumber, Integer rowNumber, Integer columnNumber, Boolean followThisPosition){
         if(followThisPosition){
             currentSheet = sheetNumber;
@@ -515,6 +660,11 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
         }
     }
     
+    /**
+     * Show invalid file error.
+     *
+     * @param message the message
+     */
     private void showInvalidFileError(String message){
         if(fileIsValid){
             //source.getAccordion().getApplication().getMainWindow().showNotification("Invalid Import File: " + message, Notification.TYPE_ERROR_MESSAGE);
@@ -523,6 +673,9 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
         }
     }
     
+    /**
+     * Show invalid file type error.
+     */
     private void showInvalidFileTypeError(){
         if(fileIsValid){
             //source.getAccordion().getApplication().getMainWindow().showNotification("Invalid Import File Type, you need to upload an XLS file", Notification.TYPE_ERROR_MESSAGE);

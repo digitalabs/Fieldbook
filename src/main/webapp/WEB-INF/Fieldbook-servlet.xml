@@ -68,9 +68,9 @@
 
 	<!-- Application Beans -->
 
-	<bean id="fieldbookService" class="com.efficio.fieldbook.service.api.FieldbookServiceImpl" />
+	<bean id="fieldbookService" class="com.efficio.fieldbook.service.FieldbookServiceImpl" />
 
-	<bean id="fileService" class="com.efficio.fieldbook.service.api.FileServiceImpl"
+	<bean id="fileService" class="com.efficio.fieldbook.service.FileServiceImpl"
 		init-method="init">
 		<constructor-arg value="${upload.directory}" />
 	</bean>
@@ -86,7 +86,7 @@
 		<aop:scoped-proxy />
 	</bean>
 -->
-	<bean id="testJavaBean" class="com.efficio.fieldbook.web.bean.demo.TestJavaBean"
+	<bean id="testJavaBean" class="com.efficio.fieldbook.web.demo.bean.TestJavaBean"
 		scope="session">
 		<aop:scoped-proxy />
 	</bean>

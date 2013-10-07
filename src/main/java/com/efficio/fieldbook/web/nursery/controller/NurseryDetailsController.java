@@ -11,6 +11,7 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.efficio.fieldbook.web.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.NurseryDetailsForm;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
@@ -28,11 +30,19 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 public class NurseryDetailsController extends AbstractBaseFieldbookController{
 
     public static final String URL = "/NurseryManager/nurseryDetails";
+    
+    @Resource
+    private UserSelection userSelection;
 
     @Override
     public String getContentName() {
         return "NurseryManager/nurseryDetails";
     }
+    
+    @Override
+	public UserSelection getUserSelection() {
+		return this.userSelection;
+	}
 
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("nurseryDetailsForm") NurseryDetailsForm form, Model model, HttpSession session) {

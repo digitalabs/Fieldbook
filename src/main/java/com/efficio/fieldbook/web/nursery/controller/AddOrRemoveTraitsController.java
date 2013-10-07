@@ -11,6 +11,7 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.efficio.fieldbook.web.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
@@ -28,6 +30,9 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController{
 
     public static final String URL = "/NurseryManager/addOrRemoveTraits";
+    
+    @Resource
+    private UserSelection userSelection;
 
     @Override
     public String getContentName() {
@@ -45,5 +50,10 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     	//TODO
         return "redirect:" + SaveNurseryController.URL;
     }
+    
+    @Override
+	public UserSelection getUserSelection() {
+		return this.userSelection;
+	}
 
 }

@@ -1,6 +1,9 @@
 package com.efficio.fieldbook.web.demo.controller;
 
+import javax.annotation.Resource;
+
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.bean.UserSelection;
 import com.efficio.fieldbook.web.demo.form.Test2JavaForm;
 
 import org.springframework.stereotype.Controller;
@@ -14,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping({"/testWizard"})
 public class TestWizardController extends AbstractBaseFieldbookController{
+	
+	@Resource
+    private UserSelection userSelection;
 	
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("test2JavaForm") Test2JavaForm testForm,  Model model) {
@@ -30,5 +36,10 @@ public class TestWizardController extends AbstractBaseFieldbookController{
     public String getContentName() {
         return "demo/testWizard";
     }
+    
+    @Override
+	public UserSelection getUserSelection() {
+		return this.userSelection;
+	}
    
 }

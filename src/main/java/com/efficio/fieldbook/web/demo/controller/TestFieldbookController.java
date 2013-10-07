@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.efficio.fieldbook.web.bean.UserSelection;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.demo.bean.TestJavaBean;
 import com.efficio.fieldbook.web.demo.form.TestJavaForm;
@@ -26,10 +27,10 @@ public class TestFieldbookController extends AbstractBaseFieldbookController{
 	/*
     @Resource
     private ETLService etlService;
-
+	*/
     @Resource
     private UserSelection userSelection;
-	*/
+	
 	@Resource
 	private TestJavaBean bean;
 	
@@ -66,5 +67,10 @@ public class TestFieldbookController extends AbstractBaseFieldbookController{
     public String getContentName() {
         return "demo/testPage";
     }
+    
+    @Override
+	public UserSelection getUserSelection() {
+		return this.userSelection;
+	}
    
 }

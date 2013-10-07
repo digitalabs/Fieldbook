@@ -80,12 +80,12 @@
 		<!-- one of the properties available; the maximum file size in bytes -->
 		<property name="maxUploadSize" value="10000000" />
 	</bean>
-<!--
-	<bean id="userSelection" class="com.efficio.etl.web.bean.UserSelection"
+
+	<bean id="userSelection" class="com.efficio.fieldbook.web.bean.UserSelection"
 		scope="session">
 		<aop:scoped-proxy />
 	</bean>
--->
+
 	<bean id="testJavaBean" class="com.efficio.fieldbook.web.demo.bean.TestJavaBean"
 		scope="session">
 		<aop:scoped-proxy />

@@ -5,7 +5,8 @@ import java.io.IOException;
 import javax.annotation.Resource;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.demo.validation.FileUploadFormValidator;
+import com.efficio.fieldbook.web.bean.UserSelection;
+import com.efficio.fieldbook.web.demo.validation.TestFileUploadFormValidator;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.demo.form.Test3JavaForm;
 
@@ -26,6 +27,9 @@ public class Test3Controller extends AbstractBaseFieldbookController{
     private DataImportService dataImportService;
 	
 	@Resource
+    private UserSelection userSelection;
+	
+	@Resource
     private FieldbookService fieldbookService;
 	
     @RequestMapping(method = RequestMethod.GET)
@@ -35,7 +39,7 @@ public class Test3Controller extends AbstractBaseFieldbookController{
 
     @RequestMapping(method = RequestMethod.POST)
     public String uploadFile(@ModelAttribute("test3Form") Test3JavaForm uploadForm, BindingResult result, Model model) {
-        FileUploadFormValidator validator = new FileUploadFormValidator();
+        TestFileUploadFormValidator validator = new TestFileUploadFormValidator();
         validator.validate(uploadForm, result);
 
         if (result.hasErrors()) {
@@ -62,4 +66,9 @@ public class Test3Controller extends AbstractBaseFieldbookController{
     public String getContentName() {
         return "demo/test3";
     }
+    
+    @Override
+	public UserSelection getUserSelection() {
+		return this.userSelection;
+	}
 }

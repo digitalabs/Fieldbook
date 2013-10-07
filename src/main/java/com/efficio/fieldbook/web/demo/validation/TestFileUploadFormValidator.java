@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.web.demo.form.Test3JavaForm;
 
-public class FileUploadFormValidator implements Validator {
+public class TestFileUploadFormValidator implements Validator {
 
     public final static String FILE_NOT_FOUND_ERROR = "error.file.not.found";
     public final static String FILE_NOT_EXCEL_ERROR = "error.file.not.excel";

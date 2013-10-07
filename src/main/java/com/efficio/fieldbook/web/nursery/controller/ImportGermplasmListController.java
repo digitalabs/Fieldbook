@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
+import com.efficio.fieldbook.web.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.nursery.validation.ImportGermplasmListValidator;
@@ -32,6 +33,9 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 public class ImportGermplasmListController extends AbstractBaseFieldbookController{
 
     public static final String URL = "/NurseryManager/importGermplasmList";
+    
+    @Resource
+    private UserSelection userSelection;
 
     @Resource
     private ImportGermplasmFileService importGermplasmFileService;
@@ -40,6 +44,11 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     public String getContentName() {
         return "NurseryManager/importGermplasmList";
     }
+    
+    @Override
+	public UserSelection getUserSelection() {
+		return this.userSelection;
+	}
     
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, Model model) {

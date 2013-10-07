@@ -3,6 +3,7 @@ package com.efficio.fieldbook.web.demo.controller;
 import javax.annotation.Resource;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.bean.UserSelection;
 import com.efficio.fieldbook.web.demo.bean.TestJavaBean;
 import com.efficio.fieldbook.web.demo.form.Test2JavaForm;
 import com.efficio.fieldbook.web.demo.validation.TestValidator;
@@ -26,6 +27,9 @@ public class TestTableController extends AbstractBaseFieldbookController{
 	@Resource
 	private TestJavaBean testJavaBean;
 
+	@Resource
+    private UserSelection userSelection;
+	
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("test2JavaForm") Test2JavaForm testForm,  Model model) {
 
@@ -67,4 +71,8 @@ public class TestTableController extends AbstractBaseFieldbookController{
         return "demo/testTable";
     }
    
+    @Override
+	public UserSelection getUserSelection() {
+		return this.userSelection;
+	}
 }

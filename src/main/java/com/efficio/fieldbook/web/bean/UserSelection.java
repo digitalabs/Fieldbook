@@ -14,6 +14,8 @@ package com.efficio.fieldbook.web.bean;
 import java.io.Serializable;
 import org.generationcp.middleware.domain.etl.Workbook;
 
+import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
+
 /**
  * Created by IntelliJ IDEA.
  * This bean models the various input that the user builds up over time to perform the actual loading operation
@@ -27,8 +29,20 @@ private static final long serialVersionUID = 1L;
     private String serverFileName;
     
     private Workbook workbook;
+    private ImportedGermplasmMainInfo importedGermplasmMainInfo;
+    
+    
 
-    public String getActualFileName() {
+    public ImportedGermplasmMainInfo getImportedGermplasmMainInfo() {
+		return importedGermplasmMainInfo;
+	}
+
+	public void setImportedGermplasmMainInfo(
+			ImportedGermplasmMainInfo importedGermplasmMainInfo) {
+		this.importedGermplasmMainInfo = importedGermplasmMainInfo;
+	}
+
+	public String getActualFileName() {
         return actualFileName;
     }
 

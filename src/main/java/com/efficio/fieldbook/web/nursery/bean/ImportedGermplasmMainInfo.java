@@ -8,6 +8,10 @@ import java.util.Set;
 
 import org.apache.poi.ss.usermodel.Workbook;
 
+/*
+ * Daniel Jao
+ * This should hold information when doing import of germplasm list
+ */
 public class ImportedGermplasmMainInfo implements Serializable {
 	/**
 	 * 
@@ -34,7 +38,17 @@ public class ImportedGermplasmMainInfo implements Serializable {
     
     private Set<String> errorMessages;
     
+    private boolean isAdvanceImportType;
     
+    
+
+	public boolean isAdvanceImportType() {
+		return isAdvanceImportType;
+	}
+
+	public void setAdvanceImportType(boolean isAdvanceImportType) {
+		this.isAdvanceImportType = isAdvanceImportType;
+	}
 
 	public Set<String> getErrorMessages() {
 		return errorMessages;

@@ -75,6 +75,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         		
         		if(mainInfo.getFileIsValid()){
         			form.setHasError("0");
+        			userSelection.setImportedGermplasmMainInfo(mainInfo);
         			
         		}else{
         			//meaing there is error

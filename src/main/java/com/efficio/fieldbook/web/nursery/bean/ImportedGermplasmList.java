@@ -33,6 +33,7 @@ public class ImportedGermplasmList implements Serializable {
         this.importedConstants = new ArrayList<ImportedConstant>();
         this.importedVariates = new ArrayList<ImportedVariate>();
         this.importedGermplasms = new ArrayList<ImportedGermplasm>();
+        this.importedConditions = new ArrayList<ImportedCondition>();
     }
     
     public ImportedGermplasmList (String filename, String name, String title, String type, Date date

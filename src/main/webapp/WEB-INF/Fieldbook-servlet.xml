@@ -78,6 +78,9 @@
 	<bean id="importGermplasmfileService" class="com.efficio.fieldbook.web.nursery.service.impl.ImportGermplasmFileServiceImpl">
 	</bean>
 
+	<bean id="importWorkbookFileService" class="com.efficio.fieldbook.service.ImportWorkbookFileServiceImpl">
+	</bean>
+
 	<bean id="multipartResolver"
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 		<!-- one of the properties available; the maximum file size in bytes -->

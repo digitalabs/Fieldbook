@@ -13,6 +13,8 @@ package com.efficio.fieldbook.web.nursery.controller;
 
 import java.io.IOException;
 
+import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.efficio.fieldbook.web.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.validation.FileUploadFormValidator;
 import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.service.api.ImportWorkbookFileService;
 import com.efficio.fieldbook.web.nursery.form.FileUploadForm;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
@@ -43,8 +46,12 @@ public class FileUploadController extends AbstractBaseFieldbookController{
     @Resource
     private UserSelection userSelection;	
 	
-	@Resource
+    @Resource
     private DataImportService dataImportService;
+    
+    @Resource
+    private ImportWorkbookFileService importWorkbookFileService;
+
 	
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("fileUploadForm") FileUploadForm uploadForm, Model model, HttpSession session) {
@@ -69,6 +76,14 @@ public class FileUploadController extends AbstractBaseFieldbookController{
             	String tempFileName = fieldbookService.storeUserWorkbook(uploadForm.getFile().getInputStream());
             	userSelection.setServerFileName(tempFileName);
                 userSelection.setActualFileName(uploadForm.getFile().getOriginalFilename());
+                
+                Workbook datasetWorkbook;
+                    datasetWorkbook = dataImportService
+                            .parseWorkbook(importWorkbookFileService.retrieveCurrentWorkbookAsFile(userSelection));
+                userSelection.setWorkbook(datasetWorkbook);
+                
+            } catch (MiddlewareQueryException e) {
+                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
                 result.reject("uploadForm.file", "Error occurred while uploading file.");
@@ -96,9 +111,9 @@ public class FileUploadController extends AbstractBaseFieldbookController{
         this.userSelection = userSelection;
     }
 
-	@Override
-	public UserSelection getUserSelection() {
-		return this.userSelection;
-	}
+    @Override
+    public UserSelection getUserSelection() {
+        return this.userSelection;
+    }
     
 }

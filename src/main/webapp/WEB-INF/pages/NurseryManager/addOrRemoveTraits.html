@@ -1,41 +1,23 @@
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:th="http://www.thymeleaf.org"
-  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-  layout:decorator="base-template">
-  <head>
-    <title th:inline="text">[[#{page.title.file.upload}]]</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/static/css/bootstrap-fileupload.css}"/>
-  </head>
-  <body>
+<div class="page-header">
+	<h1>
+		Step 3: Add or Remove Traits
+	</h1>
+	
+	<div class="progress">
+	  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
+	    <span class="sr-only">60% Complete</span>
+	  </div>
+	</div>
+</div>
 
-<section layout:fragment="content">
-	<div class="page-header">
-		<h1>
-			Step 3: Add or Remove Traits
-		</h1>
-		
-		<div class="progress">
-		  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
-		    <span class="sr-only">60% Complete</span>
-		  </div>
+<form role="form-horizontal" onsubmit="return do_validation()" class="form-horizontal" action="#" 
+	th:action="@{/NurseryManager/addOrRemoveTraits}" method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data">
+
+	<div class="form-group">
+		<div class="col-lg-offset-2 col-lg-10">
+			<input type="button" onclick="history.go(-1);" th:value="#{button.back}" class="btn btn-primary btn-lg" />
+			<input type="submit" th:value="#{button.next}" class="btn btn-primary btn-lg" />
 		</div>
 	</div>
 
-	<form role="form-horizontal" onsubmit="return do_validation()" class="form-horizontal" action="#" 
-	th:action="@{/NurseryManager/addOrRemoveTraits}" method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data">
-
-		<div class="form-group">
-			<div class="col-lg-offset-2 col-lg-10">
-				<input type="button" onclick="history.go(-1);" th:value="#{button.back}" class="btn btn-primary btn-lg" />
-				<input type="submit" th:value="#{button.next}" class="btn btn-primary btn-lg" />
-			</div>
-		</div>
-
-	</form>
-	
-</section>
-
-</body>
-
-</html>
+</form>

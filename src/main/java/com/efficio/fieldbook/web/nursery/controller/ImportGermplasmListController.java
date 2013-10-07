@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.nursery.validation.ImportGermplasmListValidator;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
 @Controller
@@ -35,15 +36,31 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     }
     
     @RequestMapping(method = RequestMethod.GET)
-    public String show(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, Model model, HttpSession session) {
-    	session.invalidate();
+    public String show(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, Model model) {
     	return super.show(model);
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public String showDetails(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, BindingResult result, Model model) {
-    	//TODO
+    	
+    	ImportGermplasmListValidator validator = new ImportGermplasmListValidator();
+    	validator.validate(form, result);
+    	//result.reject("importGermplasmListForm.file", "test error msg");    	
+    	
+        if (result.hasErrors()) {
+            /**
+             * Return the user back to form to show errors
+             */
+        	form.setHasError("1");
+            return show(form,model);
+        }else{
+        	form.setHasError("0");
+        }
+        
+
+    	//meaning everything is good, we redirect
         return "redirect:" + AddOrRemoveTraitsController.URL;
+    	
     }
 
 }

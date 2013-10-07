@@ -11,6 +11,31 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.form;
 
-public class ImportGermplasmListForm {
+import org.springframework.web.multipart.MultipartFile;
 
+public class ImportGermplasmListForm {
+	private MultipartFile file;
+	private String hasError;
+	
+	public ImportGermplasmListForm(){
+		setHasError("0");
+	}
+	
+    public String getHasError() {
+		return hasError;
+	}
+
+	public void setHasError(String hasError) {
+		this.hasError = hasError;
+	}
+
+	public MultipartFile getFile() {
+
+        return file;
+
+    }
+
+    public void setFile(MultipartFile file) {
+        this.file = file;
+    }
 }

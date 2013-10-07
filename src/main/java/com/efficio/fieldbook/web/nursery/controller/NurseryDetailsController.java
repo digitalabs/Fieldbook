@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.efficio.fieldbook.form.NurseryDetailsForm;
+import com.efficio.fieldbook.web.nursery.form.NurseryDetailsForm;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
 @Controller

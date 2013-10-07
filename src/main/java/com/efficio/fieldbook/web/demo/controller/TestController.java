@@ -1,4 +1,4 @@
-package com.efficio.fieldbook.web.demo;
+package com.efficio.fieldbook.web.demo.controller;
 
 import java.util.ArrayList;
 import java.util.List;

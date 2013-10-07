@@ -1,4 +1,4 @@
-package com.efficio.fieldbook.web.demo;
+package com.efficio.fieldbook.web.demo.controller;
 
 import javax.annotation.Resource;
 

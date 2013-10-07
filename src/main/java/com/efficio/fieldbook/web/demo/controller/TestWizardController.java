@@ -1,4 +1,4 @@
-package com.efficio.fieldbook.web.demo;
+package com.efficio.fieldbook.web.demo.controller;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.form.demo.Test2JavaForm;

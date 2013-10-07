@@ -17,12 +17,10 @@ public class FileUploadForm {
 
 	private MultipartFile file;
     private String importType = "";
-    public String fileName = "";
+    private String fileName = "";
     
     public MultipartFile getFile() {
-
         return file;
-
     }
 
     public void setFile(MultipartFile file) {

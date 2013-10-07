@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.efficio.fieldbook.web.bean.UserSelection;
-import com.efficio.fieldbook.web.demo.validation.FileUploadFormValidator;
+import com.efficio.fieldbook.web.nursery.validation.FileUploadFormValidator;
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.nursery.form.FileUploadForm;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
@@ -46,12 +46,12 @@ public class FileUploadController extends AbstractBaseFieldbookController{
     private DataImportService dataImportService;
 	
     @RequestMapping(method = RequestMethod.GET)
-    public String show(@ModelAttribute("uploadForm") FileUploadForm uploadForm, Model model) {
+    public String show(@ModelAttribute("fileUploadForm") FileUploadForm uploadForm, Model model) {
     	return super.show(model);
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String uploadFile(@ModelAttribute("uploadForm") FileUploadForm uploadForm, BindingResult result, Model model) {
+    public String uploadFile(@ModelAttribute("fileUploadForm") FileUploadForm uploadForm, BindingResult result, Model model) {
     	FileUploadFormValidator validator = new FileUploadFormValidator();
         validator.validate(uploadForm, result);
 

@@ -6,7 +6,7 @@ import javax.annotation.Resource;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.bean.UserSelection;
-import com.efficio.fieldbook.web.demo.validation.FileUploadFormValidator;
+import com.efficio.fieldbook.web.demo.validation.TestFileUploadFormValidator;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.demo.form.Test3JavaForm;
 
@@ -39,7 +39,7 @@ public class Test3Controller extends AbstractBaseFieldbookController{
 
     @RequestMapping(method = RequestMethod.POST)
     public String uploadFile(@ModelAttribute("test3Form") Test3JavaForm uploadForm, BindingResult result, Model model) {
-        FileUploadFormValidator validator = new FileUploadFormValidator();
+        TestFileUploadFormValidator validator = new TestFileUploadFormValidator();
         validator.validate(uploadForm, result);
 
         if (result.hasErrors()) {

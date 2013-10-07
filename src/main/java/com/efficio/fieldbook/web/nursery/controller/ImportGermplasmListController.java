@@ -11,6 +11,7 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
@@ -20,7 +21,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.nursery.validation.ImportGermplasmListValidator;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
@@ -30,6 +33,9 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
 
     public static final String URL = "/NurseryManager/importGermplasmList";
 
+    @Resource
+    private ImportGermplasmFileService importGermplasmFileService;
+    
     @Override
     public String getContentName() {
         return "NurseryManager/importGermplasmList";
@@ -54,11 +60,35 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         	form.setHasError("1");
             return show(form,model);
         }else{
-        	form.setHasError("0");
+        	try{
+        		ImportedGermplasmMainInfo mainInfo =importGermplasmFileService.storeImportGermplasmWorkbook(form.getFile());
+        		mainInfo = importGermplasmFileService.processWorkbook(mainInfo);
+        		
+        		if(mainInfo.getFileIsValid()){
+        			form.setHasError("0");
+        			
+        		}else{
+        			//meaing there is error
+        			form.setHasError("1");
+        			for(String errorMsg : mainInfo.getErrorMessages()){
+        				result.rejectValue("file", errorMsg);  
+        			}
+        			
+        		}
+        	}catch(Exception e){
+        		e.printStackTrace();
+        	}
+        	
+        	
         }
-        
-
-    	//meaning everything is good, we redirect
+        return show(form,model);
+    	
+    }
+    
+    @RequestMapping(value="/next", method = RequestMethod.POST)
+    public String nextScreen(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, BindingResult result, Model model) {
+    	
+    	
         return "redirect:" + AddOrRemoveTraitsController.URL;
     	
     }

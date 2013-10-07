@@ -3,7 +3,10 @@ package com.efficio.fieldbook.web.demo.bean;
 import java.io.Serializable;
 
 public class TestJavaBean implements Serializable {
-	private String name;
+
+    private static final long serialVersionUID = 1L;
+    
+    private String name;
 	private String age;
 	
 	public String getName() {

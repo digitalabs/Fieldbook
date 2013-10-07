@@ -1,3 +1,4 @@
+
 package com.efficio.fieldbook.service;
 
 import java.io.File;
@@ -11,16 +12,15 @@ import org.springframework.beans.factory.BeanInitializationException;
 
 import com.efficio.fieldbook.service.api.FileService;
 
+public class FileServiceImpl implements FileService{
 
-public class FileServiceImpl implements FileService {
-	
-	private String uploadDirectory;
+    private String uploadDirectory;
 
     public FileServiceImpl(String uploadDirectory) {
         this.uploadDirectory = uploadDirectory;
     }
 
-	@Override
+    @Override
     public String saveTemporaryFile(InputStream userFile) throws IOException {
         String tempFileName = RandomStringUtils.randomAlphanumeric(15);
 
@@ -38,18 +38,25 @@ public class FileServiceImpl implements FileService {
 
         return tempFileName;
 
-
     }
-	
-	protected String getFilePath(String tempFilename) {
+
+    protected String getFilePath(String tempFilename) {
         return uploadDirectory + File.separator + tempFilename;
     }
-	
-	public void init() {
+
+    @Override
+    public File retrieveFileFromFileName(String currentFilename) throws IOException {
+        return new File(getFilePath(currentFilename));
+
+    }
+
+    public void init() {
         File file = new File(uploadDirectory);
 
         if (!file.exists()) {
-            throw new BeanInitializationException("Specified upload directory does not exist : " + uploadDirectory);
+            throw new BeanInitializationException(
+                    "Specified upload directory does not exist : "
+                            + uploadDirectory);
         }
     }
 

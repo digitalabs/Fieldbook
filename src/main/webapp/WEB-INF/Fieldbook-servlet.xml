@@ -86,7 +86,7 @@
 		<aop:scoped-proxy />
 	</bean>
 -->
-	<bean id="testJavaBean" class="com.efficio.fieldbook.web.bean.demo.TestJavaBean"
+	<bean id="testJavaBean" class="com.efficio.fieldbook.web.demo.bean.TestJavaBean"
 		scope="session">
 		<aop:scoped-proxy />
 	</bean>

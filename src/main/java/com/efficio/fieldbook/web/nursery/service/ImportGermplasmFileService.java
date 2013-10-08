@@ -14,6 +14,7 @@ package com.efficio.fieldbook.web.nursery.service;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
@@ -40,4 +41,13 @@ public interface ImportGermplasmFileService {
      * @return the imported germplasm main info
      */
     public ImportedGermplasmMainInfo processWorkbook(ImportedGermplasmMainInfo mainInfo);
+    
+    /**
+     * Do process now.
+     *
+     * @param workbook the workbook
+     * @param mainInfo the main info
+     * @throws Exception the exception
+     */
+    public void doProcessNow(Workbook workbook, ImportedGermplasmMainInfo mainInfo) throws Exception;
 }

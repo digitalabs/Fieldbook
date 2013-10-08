@@ -210,37 +210,14 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 	 */
 	@Override
 	public ImportedGermplasmMainInfo processWorkbook(ImportedGermplasmMainInfo mainInfo){
-		currentSheet = 0;
-		currentRow = 0;
-		currentColumn = 0;
 		
-		fileIsValid = true;
-		errorMessages = new HashSet();
         
         try {
         	//inp = new FileInputStream(mainInfo.getServerFilename());
         	wb = getFileService().retrieveWorkbook(mainInfo.getServerFilename());
         	//wb = new HSSFWorkbook(inp);
-            
-            readSheet1();
-            readSheet2();
-
-            if(fileIsValid==false){
-                importedGermplasmList = null;
-                mainInfo.setFileIsValid(false);
-                mainInfo.setErrorMessages(errorMessages);
-                
-            }else{
-            	mainInfo.setFileIsValid(true);
-            	mainInfo.setInp(inp);
-            	mainInfo.setWb(wb);
-            	mainInfo.setImportedGermplasmList(importedGermplasmList);
-            	mainInfo.setListDate(listDate);
-            	mainInfo.setListName(listName);
-            	mainInfo.setListTitle(listTitle);
-            	mainInfo.setListType(listType);
-            	mainInfo.setAdvanceImportType(isAdvanceImportType);
-            }
+        	doProcessNow(wb, mainInfo);
+           
         } catch (FileNotFoundException e) {
             System.out.println("File not found");
         } catch (IOException e) {
@@ -257,10 +234,47 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 		} finally{
 			if(fileIsValid==false){
 				mainInfo.setFileIsValid(false);
-	            mainInfo.setErrorMessages(errorMessages);
+				mainInfo.setErrorMessages(errorMessages);
 			}
 		}
 		return mainInfo;
+	}
+	
+	/**
+	 * Do process now. This would be used for the junit testing
+	 *
+	 * @param workbook the workbook
+	 * @param mainInfo the main info
+	 * @throws Exception the exception
+	 */
+	public void doProcessNow(Workbook workbook, ImportedGermplasmMainInfo mainInfo) throws Exception{
+	    wb = workbook;
+	    currentSheet = 0;
+            currentRow = 0;
+            currentColumn = 0;
+            
+            fileIsValid = true;
+            errorMessages = new HashSet();
+            
+	    readSheet1();
+            readSheet2();
+
+            if(fileIsValid==false){
+                importedGermplasmList = null;
+                mainInfo.setFileIsValid(false);
+                mainInfo.setErrorMessages(errorMessages);
+                
+            }else{
+                mainInfo.setFileIsValid(true);
+                mainInfo.setInp(inp);
+                mainInfo.setWb(wb);
+                mainInfo.setImportedGermplasmList(importedGermplasmList);
+                mainInfo.setListDate(listDate);
+                mainInfo.setListName(listName);
+                mainInfo.setListTitle(listTitle);
+                mainInfo.setListType(listType);
+                mainInfo.setAdvanceImportType(isAdvanceImportType);
+            }
 	}
 	
 	/**

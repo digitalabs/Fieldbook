@@ -34,31 +34,57 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class FileUploadController.
+ */
 @Controller
 @RequestMapping({"/NurseryManager", FileUploadController.URL})
 public class FileUploadController extends AbstractBaseFieldbookController{
 
+    /** The Constant URL. */
     public static final String URL = "/NurseryManager/fileUpload";
     
+    /** The fieldbook service. */
     @Resource
     private FieldbookService fieldbookService;
 	
+    /** The user selection. */
     @Resource
     private UserSelection userSelection;	
 	
+    /** The data import service. */
     @Resource
     private DataImportService dataImportService;
     
+    /** The import workbook file service. */
     @Resource
     private ImportWorkbookFileService importWorkbookFileService;
 
 	
+    /**
+     * Shows the file upload screen
+     *
+     * @param uploadForm the upload form
+     * @param model the model
+     * @param session the session
+     * @return the string
+     */
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("fileUploadForm") FileUploadForm uploadForm, Model model, HttpSession session) {
     	session.invalidate();
     	return super.show(model);
     }
 
+    /**
+     * Uploads file if it passes validation
+     *
+     * @param uploadForm the upload form
+     * @param result the result
+     * @param model the model
+     * @param session the session
+     * @return the string
+     */
     @RequestMapping(method = RequestMethod.POST)
     public String uploadFile(@ModelAttribute("fileUploadForm") FileUploadForm uploadForm, BindingResult result, Model model, HttpSession session) {
     	FileUploadFormValidator validator = new FileUploadFormValidator();
@@ -93,24 +119,47 @@ public class FileUploadController extends AbstractBaseFieldbookController{
         }
     }
     
+    /* (non-Javadoc)
+     * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
+     */
     @Override
     public String getContentName() {
         return "NurseryManager/fileUpload";
     }
     
+    /**
+     * Gets the form.
+     *
+     * @return the form
+     */
     @ModelAttribute("form")
     public FileUploadForm getForm() {
         return new FileUploadForm();
     }
     
+    /**
+     * Sets the etl service.
+     *
+     * @param fieldbookService the new etl service
+     */
     public void setEtlService(FieldbookService fieldbookService) {
         this.fieldbookService = fieldbookService;
     }
 
+    /**
+     * Sets the user selection.
+     *
+     * @param userSelection the new user selection
+     */
     public void setUserSelection(UserSelection userSelection) {
         this.userSelection = userSelection;
     }
 
+    /**
+     * Gets the user selection.
+     *
+     * @return the user selection
+     */
     public UserSelection getUserSelection() {
         return this.userSelection;
     }

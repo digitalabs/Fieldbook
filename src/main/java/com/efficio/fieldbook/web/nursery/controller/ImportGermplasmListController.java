@@ -70,6 +70,12 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
      */
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, Model model) {
+        //this set the necessary info from the session variable
+        form.setImportedGermplasmMainInfo(getUserSelection().getImportedGermplasmMainInfo());
+        if(getUserSelection().getImportedGermplasmMainInfo() != null && getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList() != null){
+            //this would be use to display the imported germplasm info
+            form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+        }
     	return super.show(model);
     }
 
@@ -103,6 +109,9 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         			form.setHasError("0");
         			getUserSelection().setImportedGermplasmMainInfo(mainInfo);
         			getUserSelection().setImportValid(true);
+        			form.setImportedGermplasmMainInfo(getUserSelection().getImportedGermplasmMainInfo());
+        			form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+        			//after this one, it goes back to the same screen, but the list should already be displayed
         		}else{
         			//meaing there is error
         			form.setHasError("1");
@@ -122,7 +131,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     }
     
     /**
-     * Next screen.
+     * Goes to the Next screen.  Added validation if a germplasm list was properly uploaded
      *
      * @param form the form
      * @param result the result

@@ -10,59 +10,89 @@
 		  </div>
 		</div>
 	</div>
-	
-	<a data-toggle="modal" href="#myModal" class="" th:text="#{import.germplasm.list}">Import File</a>
-	
 	<form role="form-horizontal" onsubmit="return do_validation()"  class="form-horizontal" action="#" 
-		th:action="@{/NurseryManager/importGermplasmList}" method="post" th:object="${importGermplasmListForm}" enctype="multipart/form-data">			
+				th:action="@{/NurseryManager/importGermplasmList}" method="post" th:object="${importGermplasmListForm}" enctype="multipart/form-data">
+	<div class="row">
+		<div class="col-md-4">
+		<a data-toggle="modal" href="#myModal" class="" th:text="#{import.germplasm.list}">Import File</a>
+		</div>
+		<div class="col-md-8">
+			<!-- We show the table here -->						
+			
+			<div th:if="*{importedGermplasm == null or #lists.isEmpty(importedGermplasm)}">
+				No Germplasm list
+			</div>
+			
+			<table th:if="*{not #lists.isEmpty(importedGermplasm)}" class="table table-striped table-bordered">
+			<!-- Edit the code to display the importedGermplasm variable -->
+				<tr>
+					<th>Entry</th>
+					<th>Designation</th>
+					<th>GID</th>
+					<th>Cross</th>
+					<th>Source</th>
+					<th>Entry Code</th>
+				</tr>
+				<tr>
+					<td>1</td>
+					<td>2</td>
+					<td>3</td>
+					<td>4</td>
+					<td>5</td>
+				</tr>
+			</table>
+			
+		</div>
+	</div>	
 						
-		 <!-- Modal -->
-		  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		    <div class="modal-dialog">
-		      <div class="modal-content">
-			        <div class="modal-header">
-			          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			          <h4 class="modal-title">Import Gemplasm List</h4>
-			        </div>
-			        <div class="modal-body">
-			          <div class="form-group" id="page-message"></div>
-			          <div th:class="${#fields.hasErrors('file')} ? 'form-group has-error' : 'form-group'">
-			          
-			          
-				        	<div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
-					
-					        <label for="fileupload" class="col-md-2 control-label" th:text="#{import.germplasm.select.file}">Select a file</label>
-							<div class="col-lg-6">
 								
-							    <div class="fileupload fileupload-new" data-provides="fileupload">							    
-							        <div class="input-group">
-							            <div class="form-control uneditable-input"><i class="icon-file fileupload-exists"></i> 
-							                <span class="fileupload-preview"></span>
-							            </div>
-							            <div class="input-group-btn">
-							                <a class="btn btn-primary btn-file">
-							                    <span class="fileupload-new">Select file</span>
-							                    <span class="fileupload-exists">Change</span>
-							                    <input id="fileupload" th:field="*{file}" type="file" class="file-input"/></a>
-							                <a href="#" class="btn btn-danger fileupload-exists" data-dismiss="fileupload">Remove</a>
-							            </div>
-							        </div>
-							    </div>
-							</div>
-						</div>																							
-			        </div>
-			        <div class="modal-footer">
-			        	<button type="submit" th:value="#{import.germplasm.form.submit}" class="btn btn-primary">Submit</button>			        	
-			        </div>
-		      </div><!-- /.modal-content -->
-		    </div><!-- /.modal-dialog -->
-		  </div><!-- /.modal -->
-	</form>
+				 <!-- Modal -->
+				  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				    <div class="modal-dialog">
+				      <div class="modal-content">
+					        <div class="modal-header">
+					          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					          <h4 class="modal-title">Import Gemplasm List</h4>
+					        </div>
+					        <div class="modal-body">
+					          <div class="form-group" id="page-message"></div>
+					          <div th:class="${#fields.hasErrors('file')} ? 'form-group has-error' : 'form-group'">
+					          
+					          
+						        	<div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
+							
+							        <label for="fileupload" class="col-md-2 control-label" th:text="#{import.germplasm.select.file}">Select a file</label>
+									<div class="col-lg-6">
+										
+									    <div class="fileupload fileupload-new" data-provides="fileupload">							    
+									        <div class="input-group">
+									            <div class="form-control uneditable-input"><i class="icon-file fileupload-exists"></i> 
+									                <span class="fileupload-preview"></span>
+									            </div>
+									            <div class="input-group-btn">
+									                <a class="btn btn-primary btn-file">
+									                    <span class="fileupload-new">Select file</span>
+									                    <span class="fileupload-exists">Change</span>
+									                    <input id="fileupload" th:field="*{file}" type="file" class="file-input"/></a>
+									                <a href="#" class="btn btn-danger fileupload-exists" data-dismiss="fileupload">Remove</a>
+									            </div>
+									        </div>
+									    </div>
+									</div>
+								</div>																							
+					        </div>
+					        <div class="modal-footer">
+					        	<button type="submit" th:value="#{import.germplasm.form.submit}" class="btn btn-primary">Submit</button>			        	
+					        </div>
+				      </div><!-- /.modal-content -->
+				    </div><!-- /.modal-dialog -->
+				  </div><!-- /.modal -->
+			</form>
 	<form role="form-horizontal" class="form-horizontal" action="#"
 	th:action="@{/NurseryManager/importGermplasmList/next}" method="post" th:object="${importGermplasmListForm}" enctype="multipart/form-data">	
 		<div class="row">
 			<div class="form-group">
-				<div class="col-lg-offset-2 col-lg-10">
+				<div class="col-lg-offset-10 col-lg-2">
 					<input type="button" onclick="history.go(-1);" th:value="#{button.back}" class="btn btn-primary btn-lg" />
 					<input type="submit" th:value="#{button.next}" class="btn btn-primary btn-lg" />
 					

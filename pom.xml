@@ -286,7 +286,7 @@
 						<version>1.7</version>
 						<executions>
 							<execution>
-								<phase>generate-resources</phase>
+								<phase>compile</phase>
 								<configuration>
 									<tasks>
 										<copy todir="src/main/resources" overwrite="true">

@@ -1,6 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2013, All Rights Reserved.
+ * 
+ * Generation Challenge Programme (GCP)
+ * 
+ * 
+ * This software is licensed for use under the terms of the GNU General Public
+ * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
+ * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ * 
+ *******************************************************************************/
 package com.efficio.fieldbook.web.demo.controller;
 
-import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -8,13 +18,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.efficio.fieldbook.web.bean.UserSelection;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.demo.bean.TestJavaBean;
+import com.efficio.fieldbook.web.demo.bean.UserSelection;
 import com.efficio.fieldbook.web.demo.form.TestJavaForm;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,15 +33,12 @@ import java.io.IOException;
 @Controller
 @RequestMapping({"/","/fieldbook"})
 public class TestFieldbookController extends AbstractBaseFieldbookController{
-	/*
-    @Resource
-    private ETLService etlService;
-	*/
+	
     @Resource
     private UserSelection userSelection;
 	
-	@Resource
-	private TestJavaBean bean;
+    @Resource
+    private TestJavaBean bean;
 	
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("testForm") TestJavaForm testForm, Model model) {
@@ -68,9 +74,8 @@ public class TestFieldbookController extends AbstractBaseFieldbookController{
         return "demo/testPage";
     }
     
-    @Override
-	public UserSelection getUserSelection() {
-		return this.userSelection;
-	}
+    public UserSelection getUserSelection() {
+        return this.userSelection;
+    }
    
 }

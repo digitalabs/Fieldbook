@@ -1,10 +1,21 @@
+/*******************************************************************************
+ * Copyright (c) 2013, All Rights Reserved.
+ * 
+ * Generation Challenge Programme (GCP)
+ * 
+ * 
+ * This software is licensed for use under the terms of the GNU General Public
+ * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
+ * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ * 
+ *******************************************************************************/
 package com.efficio.fieldbook.web.demo.controller;
 
 import javax.annotation.Resource;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.bean.UserSelection;
 import com.efficio.fieldbook.web.demo.form.Test2JavaForm;
+import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +29,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping({"/testWizard"})
 public class TestWizardController extends AbstractBaseFieldbookController{
 	
-	@Resource
+    @Resource
     private UserSelection userSelection;
 	
     @RequestMapping(method = RequestMethod.GET)
@@ -26,7 +37,6 @@ public class TestWizardController extends AbstractBaseFieldbookController{
     	return super.show(model);
     }
     
-
     @RequestMapping(value="doSubmit", method = RequestMethod.POST)
     public String submit(@ModelAttribute("test2JavaForm") Test2JavaForm testForm, BindingResult result, Model model) {
         return show(testForm,model);
@@ -36,10 +46,9 @@ public class TestWizardController extends AbstractBaseFieldbookController{
     public String getContentName() {
         return "demo/testWizard";
     }
-    
-    @Override
-	public UserSelection getUserSelection() {
-		return this.userSelection;
-	}
+
+    public UserSelection getUserSelection() {
+        return this.userSelection;
+    }
    
 }

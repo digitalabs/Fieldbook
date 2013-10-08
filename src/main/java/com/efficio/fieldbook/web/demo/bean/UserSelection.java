@@ -9,12 +9,9 @@
  * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
  * 
  *******************************************************************************/
-package com.efficio.fieldbook.web.bean;
+package com.efficio.fieldbook.web.demo.bean;
 
 import java.io.Serializable;
-import org.generationcp.middleware.domain.etl.Workbook;
-
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 
 /**
  * Created by IntelliJ IDEA.
@@ -28,21 +25,7 @@ private static final long serialVersionUID = 1L;
     
     private String serverFileName;
     
-    private Workbook workbook;
-    private ImportedGermplasmMainInfo importedGermplasmMainInfo;
-    
-    
-
-    public ImportedGermplasmMainInfo getImportedGermplasmMainInfo() {
-		return importedGermplasmMainInfo;
-	}
-
-	public void setImportedGermplasmMainInfo(
-			ImportedGermplasmMainInfo importedGermplasmMainInfo) {
-		this.importedGermplasmMainInfo = importedGermplasmMainInfo;
-	}
-
-	public String getActualFileName() {
+    public String getActualFileName() {
         return actualFileName;
     }
 
@@ -56,14 +39,6 @@ private static final long serialVersionUID = 1L;
 
     public void setServerFileName(String serverFileName) {
         this.serverFileName = serverFileName;
-    }
-
-    public Workbook getWorkbook() {
-        return workbook;
-    }
-
-    public void setWorkbook(Workbook workbook) {
-        this.workbook = workbook;
     }
 
 }

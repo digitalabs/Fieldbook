@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.efficio.fieldbook.web.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.SaveNurseryForm;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
@@ -38,10 +38,9 @@ public class SuccessfulController extends AbstractBaseFieldbookController{
         return "NurseryManager/successful";
     }
     
-    @Override
-	public UserSelection getUserSelection() {
-		return this.userSelection;
-	}
+    public UserSelection getUserSelection() {
+        return this.userSelection;
+    }
 
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("saveNurseryForm") SaveNurseryForm form, Model model, HttpSession session) {

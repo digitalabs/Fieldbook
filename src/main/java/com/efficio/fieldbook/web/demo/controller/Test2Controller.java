@@ -1,13 +1,23 @@
+/*******************************************************************************
+ * Copyright (c) 2013, All Rights Reserved.
+ * 
+ * Generation Challenge Programme (GCP)
+ * 
+ * 
+ * This software is licensed for use under the terms of the GNU General Public
+ * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
+ * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ * 
+ *******************************************************************************/
 package com.efficio.fieldbook.web.demo.controller;
-
 
 import javax.annotation.Resource;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.bean.UserSelection;
 import com.efficio.fieldbook.web.demo.bean.TestJavaBean;
 import com.efficio.fieldbook.web.demo.form.Test2JavaForm;
 import com.efficio.fieldbook.web.demo.validation.TestValidator;
+import com.efficio.fieldbook.web.demo.bean.UserSelection;
 
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
@@ -26,13 +36,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping({"/test2"})
 public class Test2Controller extends AbstractBaseFieldbookController{
-	@Resource
-	private GermplasmDataManager germplasmDataManager;
-	@Resource
-	private TestJavaBean testJavaBean;
-	@Resource
-    private UserSelection userSelection;
-	
+
+    @Resource
+    private GermplasmDataManager germplasmDataManager;
+    @Resource
+    private TestJavaBean         testJavaBean;
+    @Resource
+    private UserSelection        userSelection;
+
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("test2Form") Test2JavaForm testForm,  Model model) {
 
@@ -80,8 +91,7 @@ public class Test2Controller extends AbstractBaseFieldbookController{
         return "demo/test2";
     }
    
-    @Override
-	public UserSelection getUserSelection() {
-		return this.userSelection;
-	}
+    public UserSelection getUserSelection() {
+        return this.userSelection;
+    }
 }

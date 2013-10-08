@@ -23,10 +23,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.efficio.fieldbook.web.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.service.ImportWorkbookFileService;
 import com.efficio.fieldbook.web.nursery.validation.FileUploadFormValidator;
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.ImportWorkbookFileService;
+import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.FileUploadForm;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
@@ -111,7 +111,6 @@ public class FileUploadController extends AbstractBaseFieldbookController{
         this.userSelection = userSelection;
     }
 
-    @Override
     public UserSelection getUserSelection() {
         return this.userSelection;
     }

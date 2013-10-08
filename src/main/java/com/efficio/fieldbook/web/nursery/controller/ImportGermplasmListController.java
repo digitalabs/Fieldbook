@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
-import com.efficio.fieldbook.web.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.nursery.validation.ImportGermplasmListValidator;
@@ -58,10 +58,9 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getUserSelection()
      */
-    @Override
-	public UserSelection getUserSelection() {
-		return this.userSelection;
-	}
+    public UserSelection getUserSelection() {
+        return this.userSelection;
+    }
     
     /**
      * Show.

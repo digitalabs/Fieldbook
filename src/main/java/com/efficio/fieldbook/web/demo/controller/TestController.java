@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2013, All Rights Reserved.
+ * 
+ * Generation Challenge Programme (GCP)
+ * 
+ * 
+ * This software is licensed for use under the terms of the GNU General Public
+ * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
+ * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ * 
+ *******************************************************************************/
 package com.efficio.fieldbook.web.demo.controller;
 
 import java.util.ArrayList;
@@ -6,12 +17,9 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.bean.UserSelection;
-import com.efficio.fieldbook.web.demo.bean.TestJavaBean;
 import com.efficio.fieldbook.web.demo.form.TestJavaForm;
+import com.efficio.fieldbook.web.demo.bean.UserSelection;
 
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -28,7 +36,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping({"/test"})
 public class TestController extends AbstractBaseFieldbookController{
 	
-	@Resource
+    @Resource
     private UserSelection userSelection;
 	
     @RequestMapping(method = RequestMethod.GET)
@@ -53,9 +61,8 @@ public class TestController extends AbstractBaseFieldbookController{
         return "demo/test";
     }
     
-    @Override
-	public UserSelection getUserSelection() {
-		return this.userSelection;
-	}
+    public UserSelection getUserSelection() {
+        return this.userSelection;
+    }
    
 }

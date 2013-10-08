@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2013, All Rights Reserved.
+ * 
+ * Generation Challenge Programme (GCP)
+ * 
+ * 
+ * This software is licensed for use under the terms of the GNU General Public
+ * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
+ * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ * 
+ *******************************************************************************/
 package com.efficio.fieldbook.web.demo.controller;
 
 import java.io.IOException;
@@ -5,12 +16,11 @@ import java.io.IOException;
 import javax.annotation.Resource;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.bean.UserSelection;
 import com.efficio.fieldbook.web.demo.validation.TestFileUploadFormValidator;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.demo.form.Test3JavaForm;
+import com.efficio.fieldbook.web.demo.bean.UserSelection;
 
-import org.generationcp.middleware.service.api.DataImportService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,13 +33,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping({"/test3"})
 public class Test3Controller extends AbstractBaseFieldbookController{
 	
-	@Resource
-    private DataImportService dataImportService;
-	
-	@Resource
+    @Resource
     private UserSelection userSelection;
-	
-	@Resource
+
+    @Resource
     private FieldbookService fieldbookService;
 	
     @RequestMapping(method = RequestMethod.GET)
@@ -67,8 +74,7 @@ public class Test3Controller extends AbstractBaseFieldbookController{
         return "demo/test3";
     }
     
-    @Override
-	public UserSelection getUserSelection() {
-		return this.userSelection;
-	}
+    public UserSelection getUserSelection() {
+        return this.userSelection;
+    }
 }

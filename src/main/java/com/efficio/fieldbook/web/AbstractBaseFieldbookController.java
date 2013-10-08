@@ -16,8 +16,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.ui.Model;
 
-import com.efficio.fieldbook.web.bean.UserSelection;
-
 /**
  * Created by IntelliJ IDEA.
  * User: Daniel Villafuerte
@@ -32,8 +30,7 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
     private ApplicationContext applicationContext;
 
     public abstract String getContentName();
-    public abstract UserSelection getUserSelection();
-
+    
     /**
      * Base functionality for displaying the page.
      *

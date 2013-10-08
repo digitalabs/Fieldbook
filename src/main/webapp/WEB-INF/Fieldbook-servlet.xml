@@ -78,7 +78,7 @@
 	<bean id="importGermplasmfileService" class="com.efficio.fieldbook.web.nursery.service.impl.ImportGermplasmFileServiceImpl">
 	</bean>
 
-	<bean id="importWorkbookFileService" class="com.efficio.fieldbook.service.ImportWorkbookFileServiceImpl">
+	<bean id="importWorkbookFileService" class="com.efficio.fieldbook.web.nursery.service.impl.ImportWorkbookFileServiceImpl">
 	</bean>
 
 	<bean id="multipartResolver"
@@ -87,7 +87,12 @@
 		<property name="maxUploadSize" value="10000000" />
 	</bean>
 
-	<bean id="userSelection" class="com.efficio.fieldbook.web.bean.UserSelection"
+	<bean id="demoUserSelection" class="com.efficio.fieldbook.web.demo.bean.UserSelection"
+		scope="session">
+		<aop:scoped-proxy />
+	</bean>
+
+	<bean id="nurseryUserSelection" class="com.efficio.fieldbook.web.nursery.bean.UserSelection"
 		scope="session">
 		<aop:scoped-proxy />
 	</bean>

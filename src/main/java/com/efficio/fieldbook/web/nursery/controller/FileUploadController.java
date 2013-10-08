@@ -140,11 +140,11 @@ public class FileUploadController extends AbstractBaseFieldbookController{
     }
     
     /**
-     * Sets the etl service.
+     * Sets the fieldbook service.
      *
-     * @param fieldbookService the new etl service
+     * @param fieldbookService the new fieldbook service
      */
-    public void setEtlService(FieldbookService fieldbookService) {
+    public void setFieldbookService(FieldbookService fieldbookService) {
         this.fieldbookService = fieldbookService;
     }
 

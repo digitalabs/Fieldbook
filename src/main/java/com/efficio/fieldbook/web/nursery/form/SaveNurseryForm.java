@@ -11,6 +11,40 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.form;
 
+/**
+ * Form for the Nursery Wizard - Step 4.
+ * 
+ */
 public class SaveNurseryForm {
+	
+	private String title;
+	
+	private String objective;
+	
+	private String nurseryBookName;
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getObjective() {
+		return objective;
+	}
+
+	public void setObjective(String objective) {
+		this.objective = objective;
+	}
+
+	public String getNurseryBookName() {
+		return nurseryBookName;
+	}
+
+	public void setNurseryBookName(String nurseryBookName) {
+		this.nurseryBookName = nurseryBookName;
+	}
 
 }

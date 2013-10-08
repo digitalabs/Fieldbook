@@ -16,13 +16,11 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.efficio.fieldbook.web.nursery.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.SaveNurseryForm;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 
 @Controller
 @RequestMapping(SuccessfulController.URL)
@@ -43,7 +41,7 @@ public class SuccessfulController extends AbstractBaseFieldbookController{
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String show(@ModelAttribute("saveNurseryForm") SaveNurseryForm form, Model model, HttpSession session) {
+    public String show(Model model, HttpSession session) {
     	session.invalidate();
     	return super.show(model);
     }

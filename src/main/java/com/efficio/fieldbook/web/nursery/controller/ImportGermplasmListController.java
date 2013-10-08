@@ -12,7 +12,6 @@
 package com.efficio.fieldbook.web.nursery.controller;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

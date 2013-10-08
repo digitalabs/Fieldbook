@@ -97,6 +97,7 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
             assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().size(), 20);
             assertEquals(mainInfo.getImportedGermplasmList().getImportedFactors().get(0).getFactor(), "ENTRY");
             assertEquals(mainInfo.getImportedGermplasmList().getImportedFactors().get(1).getFactor(), "DESIGNATION");
+            assertEquals(mainInfo.isAdvanceImportType(), false);
         }
         
         @Test
@@ -132,6 +133,7 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
             assertEquals(mainInfo.getImportedGermplasmList().getImportedFactors().get(3).getFactor(), "CROSS");
             assertEquals(mainInfo.getImportedGermplasmList().getImportedFactors().get(4).getFactor(), "SOURCE");
             assertEquals(mainInfo.getImportedGermplasmList().getImportedFactors().get(5).getFactor(), "ENTRY CODE");
+            assertEquals(mainInfo.isAdvanceImportType(), true);
             //assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().size(), 20);
         }
       

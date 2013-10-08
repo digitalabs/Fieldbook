@@ -22,7 +22,7 @@ import org.springframework.ui.Model;
  */
 public abstract class AbstractBaseFieldbookController implements ApplicationContextAware {
 
-    public static final String BASE_TEMPLATE_NAME = "base-template";
+    public static final String BASE_TEMPLATE_NAME = "/template/base-template";
     public static final String TEMPLATE_NAME_ATTRIBUTE = "templateName";
     public static final String USER_SELECTION_ID_SUFFIX = "TestUserSelection";
 

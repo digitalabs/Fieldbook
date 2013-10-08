@@ -31,7 +31,7 @@ import javax.annotation.Resource;
  */
 
 @Controller
-@RequestMapping({"/","/fieldbook"})
+@RequestMapping({"/fieldbook"})
 public class TestFieldbookController extends AbstractBaseFieldbookController{
 	
     @Resource

@@ -14,6 +14,7 @@ package com.efficio.fieldbook.web.nursery.controller;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -33,7 +34,15 @@ public class NurseryDetailsController extends AbstractBaseFieldbookController{
     
     @Resource
     private UserSelection userSelection;
+    
+    public NurseryDetailsController(){
+    }
 
+    /** Constructor used for testing */
+    public NurseryDetailsController(UserSelection userSelection){
+        this.userSelection = userSelection;
+    }
+    
     @Override
     public String getContentName() {
         return "NurseryManager/nurseryDetails";
@@ -45,12 +54,12 @@ public class NurseryDetailsController extends AbstractBaseFieldbookController{
 
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("nurseryDetailsForm") NurseryDetailsForm form, Model model, HttpSession session) {
+        form.setWorkbook(userSelection.getWorkbook());
     	return super.show(model);
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public String showDetails(@ModelAttribute("nurseryDetailsForm") NurseryDetailsForm uploadForm, BindingResult result, Model model) {
-    	//TODO
         return "redirect:" + ImportGermplasmListController.URL;
     }
 

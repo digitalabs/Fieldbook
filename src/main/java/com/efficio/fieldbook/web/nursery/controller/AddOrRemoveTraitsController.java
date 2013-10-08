@@ -41,7 +41,6 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, Model model, HttpSession session) {
-    	session.invalidate();
     	return super.show(model);
     }
 

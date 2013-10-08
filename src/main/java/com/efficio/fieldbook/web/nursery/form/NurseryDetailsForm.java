@@ -11,6 +11,28 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.form;
 
-public class NurseryDetailsForm {
+import org.generationcp.middleware.domain.etl.Workbook;
 
+public class NurseryDetailsForm {
+    
+    private Workbook workbook;
+    
+    private boolean fieldLayoutRandom;
+       
+    public Workbook getWorkbook() {
+        return workbook;
+    }
+    
+    public void setWorkbook(Workbook workbook) {
+        this.workbook = workbook;
+    }
+
+    public boolean isFieldLayoutRandom() {
+        return fieldLayoutRandom;
+    }
+    
+    public void setFieldLayoutRandom(boolean fieldLayoutRandom) {
+        this.fieldLayoutRandom = fieldLayoutRandom;
+    }
+    
 }

@@ -11,44 +11,37 @@
 <form role="form-horizontal" onsubmit="return do_validation()" class="form-horizontal" action="#"
 	th:action="@{/NurseryManager/nurseryDetails}" method="post" th:object="${nurseryDetailsForm}" enctype="multipart/form-data">
 
-	<div class="form-group row">
+	<div th:class="${#fields.hasErrors('workbook')} ? 'form-group has-error' : 'form-group row'">
+       	<div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
+
 		<div class="col-md-12">
 			<h3>NURSERY-LEVEL DETAILS</h3>
 
-			<table border="5" cellpadding="10" cellspacing="10">
-				<tr>
-					<th>Condition</th>
-					<th>Description</th>
-					<th>Property</th>
-					<th>Scale</th>
-					<th>Method</th>
-					<th>Value</th>
-				</tr>
-				<tr>
-					<td>PI</td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td>Daniel Jao</td>
-				</tr>
-				<tr>
-					<td>Site</td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td>Daniel's Fields</td>
-				</tr>
-				<tr>
-					<td>B.Method</td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td>Storm method</td>
-				</tr>
-			</table>
+			<div th:if="*{workbook.conditions != null AND workbook.conditions.size() > 0}">
+
+				<table border="5" cellpadding="10" cellspacing="10">
+					<thead>
+					<tr>
+						<th>Condition</th>
+						<th>Description</th>
+						<th>Property</th>
+						<th>Scale</th>
+						<th>Method</th>
+						<th>Value</th>
+					</tr>
+					</thead>
+					<tbody>
+						<tr th:each="choice, rowStat : *{workbook.conditions}">
+							<td th:text="*{workbook.conditions[__${rowStat.index}__].name}">Name</td>
+							<td th:text="*{workbook.conditions[__${rowStat.index}__].description}">Description</td>
+							<td th:text="*{workbook.conditions[__${rowStat.index}__].property}">Property</td>
+							<td th:text="*{workbook.conditions[__${rowStat.index}__].scale}">Scale</td>
+							<td th:text="*{workbook.conditions[__${rowStat.index}__].method}">Method</td>
+							<td th:text="*{workbook.conditions[__${rowStat.index}__].value}">Value</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 		</div>
 	</div>
 
@@ -56,81 +49,88 @@
 		<div class="col-md-12">
 			<h3>PLOT-LEVEL DETAILS</h3>
 
-			<table border="5" cellpadding="10" cellspacing="10">
-				<tr>
-					<th>Factor</th>
-					<th>Description</th>
-					<th>Property</th>
-					<th>Scale</th>
-					<th>Method</th>
-					<th>Data Type</th>
-				</tr>
-				<tr>
-					<td>Plot</td>
-					<td>plot num</td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td>N</td>
-				</tr>
-				<tr>
-					<td>GID</td>
-					<td>Germplasm ID</td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td>N</td>
-				</tr>
-				<tr>
-					<td>DESIG</td>
-					<td>Germplasm Name</td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td>C</td>
-				</tr>
-			</table>
+				<div th:if="*{workbook.factors != null AND workbook.factors.size() > 0}">
+					<table border="5" cellpadding="10" cellspacing="10">
+						<thead>
+							<tr>
+								<th>Factor</th>
+								<th>Description</th>
+								<th>Property</th>
+								<th>Scale</th>
+								<th>Method</th>
+								<th>Data Type</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="choice, rowStat : *{workbook.factors}">
+								<td th:text="*{workbook.factors[__${rowStat.index}__].name}">Name</td>
+								<td th:text="*{workbook.factors[__${rowStat.index}__].description}">Description</td>
+								<td th:text="*{workbook.factors[__${rowStat.index}__].property}">Property</td>
+								<td th:text="*{workbook.factors[__${rowStat.index}__].scale}">Scale</td>
+								<td th:text="*{workbook.factors[__${rowStat.index}__].method}">Method</td>
+								<td th:text="*{workbook.factors[__${rowStat.index}__].dataType}">Data Type</td>
+							</tr>
+						</tbody>
+		
+					</table>
+				</div>
 		</div>
 	</div>
 
 	<div class="form-group row">
 		<div class="col-md-12">
 			<h3>BASELINE TRAITS</h3>
+			
+				<div th:if="*{workbook.constants != null AND workbook.constants.size() > 0}">
+					<table border="5" cellpadding="10" cellspacing="10" >
+					<thead>
+						<tr>
+							<th>Constant</th>
+							<th>Description</th>
+							<th>Property</th>
+							<th>Scale</th>
+							<th>Method</th>
+							<th>Data Type</th>
+						</tr>
+						</thead>
+						<tbody>
+							<tr th:each="choice, rowStat : *{workbook.constants}">
+								<td th:text="*{workbook.constants[__${rowStat.index}__].name}">Name</td>
+								<td th:text="*{workbook.constants[__${rowStat.index}__].description}">Description</td>
+								<td th:text="*{workbook.constants[__${rowStat.index}__].property}">Property</td>
+								<td th:text="*{workbook.constants[__${rowStat.index}__].scale}">Scale</td>
+								<td th:text="*{workbook.constants[__${rowStat.index}__].method}">Method</td>
+								<td th:text="*{workbook.constants[__${rowStat.index}__].dataType}">Data Type</td>
+							</tr>
+						</tbody>
+					</table>		
+					<br/><br/>
+				</div>
 
-			<table border="5" cellpadding="10" cellspacing="10">
-				<tr>
-					<th>Variate</th>
-					<th>Description</th>
-					<th>Property</th>
-					<th>Scale</th>
-					<th>Method</th>
-					<th>Data Type</th>
-				</tr>
-				<tr>
-					<td>G.Yield</td>
-					<td>yield</td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-				</tr>
-				<tr>
-					<td>P.Height</td>
-					<td>height</td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-				</tr>
-				<tr>
-					<td>D.Resist</td>
-					<td>disease</td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
-				</tr>
-			</table>
+				<div th:if="*{workbook.variates != null AND workbook.variates.size() > 0}">
+					<table border="5" cellpadding="10" cellspacing="10">
+						<thead>
+							<tr>
+								<th>Variate</th>
+								<th>Description</th>
+								<th>Property</th>
+								<th>Scale</th>
+								<th>Method</th>
+								<th>Data Type</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="choice, rowStat : *{workbook.variates}">
+								<td th:text="*{workbook.variates[__${rowStat.index}__].name}">Name</td>
+								<td th:text="*{workbook.variates[__${rowStat.index}__].description}">Description</td>
+								<td th:text="*{workbook.variates[__${rowStat.index}__].property}">Property</td>
+								<td th:text="*{workbook.variates[__${rowStat.index}__].scale}">Scale</td>
+								<td th:text="*{workbook.variates[__${rowStat.index}__].method}">Method</td>
+								<td th:text="*{workbook.variates[__${rowStat.index}__].dataType}">Data Type</td>
+							</tr>
+						</tbody>
+					</table>
+			</div>
 		</div>
 	</div>
 
@@ -150,3 +150,31 @@
 	</div>
 
 </form>
+
+<!-- Scripts location, note that the div tag will be remove after merging to decorator -->
+<div layout:fragment="page-script">
+<script type="text/javascript" th:src="@{/static/js/bootstrap-fileupload.js}"></script>
+<script type="text/javascript" th:inline="javascript">
+		//<![CDATA[          
+		           
+		function do_validation() {
+			if ($('#fileupload').val() == "") {
+				var message = /*[[#{error.file.no.file.selected}]]*/;
+				
+				
+				$("#page-message").html(
+		    			"<div class='alert alert-danger'>"+ message +"</div>"
+		    		);
+				
+				$('div.fileupload').parent().parent().addClass('has-error');
+				
+				return false;
+			}
+			
+			return true;
+		}
+			
+		//]]>
+</script>
+
+</div>

@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.IOException;
 
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.operation.parser.WorkbookParserException;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.springframework.stereotype.Controller;
@@ -35,8 +34,6 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
-
-// TODO: Auto-generated Javadoc
 /**
  * The Class FileUploadController.
  */
@@ -108,7 +105,6 @@ public class FileUploadController extends AbstractBaseFieldbookController{
                 Workbook datasetWorkbook = null;
                 File file = importWorkbookFileService.retrieveCurrentWorkbookAsFile(userSelection);
                 datasetWorkbook = dataImportService.parseWorkbook(file);
-                   
                 userSelection.setWorkbook(datasetWorkbook);
                 
             }catch (IOException e) {

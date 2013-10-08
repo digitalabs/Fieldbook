@@ -11,9 +11,13 @@
 		</form>
 	</div>
 
-	<form role="form-horizontal" onsubmit="return do_validation()" class="form-horizontal" action="#" th:action="@{/NurseryManager/fileUpload}" method="post" th:object="${fileUploadForm}" enctype="multipart/form-data">		
+	<form role="form-horizontal" onsubmit="return do_validation()" class="form-horizontal" action="#" th:action="@{/NurseryManager/fileUpload}" method="post" th:object="${fileUploadForm}" enctype="multipart/form-data">
+		<div class="form-group">
+			<div class="col-md-12">
+				<label for="fileupload" class="control-label">Select Nursery Template File:</label>
+			</div>
+		</div>		
 		<div th:class="${#fields.hasErrors('file')} ? 'form-group has-error' : 'form-group'">
-	        <label for="fileupload" class="col-md-2 control-label">Row Header:</label>
 			<div class="col-lg-6">
 			    <div class="fileupload fileupload-new" data-provides="fileupload">
 			        <div class="input-group">
@@ -33,7 +37,7 @@
 		</div>
 		
 		<div class="form-group">
-			<div class="col-md-12 col-lg-offset-2">
+			<div class="col-md-12">
 				<input type="submit" th:value="#{button.submit}" class="btn btn-primary btn-lg"/>
 			</div>
 		</div>

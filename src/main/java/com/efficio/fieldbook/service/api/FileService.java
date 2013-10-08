@@ -17,24 +17,36 @@ import java.io.InputStream;
 
 import org.apache.poi.ss.usermodel.Workbook;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Interface FileService.
+ */
 public interface FileService{
 
     /**
-     * 
-     * @param userFile
-     *            The input stream of the file to be saved
-     * @return
+     * Save temporary file.
+     *
+     * @param userFile The input stream of the file to be saved
+     * @return the string
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public String saveTemporaryFile(InputStream userFile) throws IOException;
 
+    /**
+     * Retrieve workbook.
+     *
+     * @param currentFilename the current filename
+     * @return the workbook
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     public Workbook retrieveWorkbook(String currentFilename) throws IOException;
 
     /**
-     * Retrieves a File object based on the given file name
-     * 
-     * @param currentFilename
-     * @return
-     * @throws IOException
+     * Retrieves a File object based on the given file name.
+     *
+     * @param currentFilename the current filename
+     * @return the file
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     public File retrieveFileFromFileName(String currentFilename) throws IOException;
 

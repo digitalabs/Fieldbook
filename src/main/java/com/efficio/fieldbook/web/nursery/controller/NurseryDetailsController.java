@@ -53,7 +53,11 @@ public class NurseryDetailsController extends AbstractBaseFieldbookController{
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String show(@ModelAttribute("nurseryDetailsForm") NurseryDetailsForm form, Model model, HttpSession session) {
+    public String show(@ModelAttribute("nurseryDetailsForm") NurseryDetailsForm form, BindingResult result, Model model, HttpSession session) {
+        if (userSelection.getWorkbook() == null){
+            result.reject("form.workbook", "Error occurred while parsing file.");
+            userSelection.setWorkbook(new Workbook());
+        }
         form.setWorkbook(userSelection.getWorkbook());
     	return super.show(model);
     }

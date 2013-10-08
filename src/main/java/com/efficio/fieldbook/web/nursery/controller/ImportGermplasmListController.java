@@ -62,7 +62,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     }
     
     /**
-     * Show.
+     * Show the main import page
      *
      * @param form the form
      * @param model the model
@@ -74,7 +74,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     }
 
     /**
-     * Show details.
+     * Process the imported file and just show the information again
      *
      * @param form the form
      * @param result the result
@@ -87,7 +87,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     	ImportGermplasmListValidator validator = new ImportGermplasmListValidator();
     	validator.validate(form, result);
     	//result.reject("importGermplasmListForm.file", "test error msg");    	
-    	
+    	getUserSelection().setImportValid(false);
         if (result.hasErrors()) {
             /**
              * Return the user back to form to show errors
@@ -101,8 +101,8 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         		
         		if(mainInfo.getFileIsValid()){
         			form.setHasError("0");
-        			userSelection.setImportedGermplasmMainInfo(mainInfo);
-        			
+        			getUserSelection().setImportedGermplasmMainInfo(mainInfo);
+        			getUserSelection().setImportValid(true);
         		}else{
         			//meaing there is error
         			form.setHasError("1");
@@ -132,8 +132,13 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     @RequestMapping(value="/next", method = RequestMethod.POST)
     public String nextScreen(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, BindingResult result, Model model) {
     	
-    	
-        return "redirect:" + AddOrRemoveTraitsController.URL;
+    	if(getUserSelection().isImportValid())
+    	    return "redirect:" + AddOrRemoveTraitsController.URL;
+    	else{
+    	    form.setHasError("1");
+    	    result.reject("error.no.import.germplasm.list", "Please import germplasm");
+    	    return show(form,model);
+    	}
     	
     }
 

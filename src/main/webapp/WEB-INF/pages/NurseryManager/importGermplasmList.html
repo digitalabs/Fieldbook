@@ -57,8 +57,9 @@
 		      </div><!-- /.modal-content -->
 		    </div><!-- /.modal-dialog -->
 		  </div><!-- /.modal -->
-
-		
+	</form>
+	<form role="form-horizontal" class="form-horizontal" action="#"
+	th:action="@{/NurseryManager/importGermplasmList/next}" method="post" th:object="${importGermplasmListForm}" enctype="multipart/form-data">	
 		<div class="row">
 			<div class="form-group">
 				<div class="col-lg-offset-2 col-lg-10">
@@ -75,7 +76,7 @@
 <script type="text/javascript" th:src="@{/static/js/bootstrap-fileupload.js}"></script>
 <script type="text/javascript" th:inline="javascript">
 		//<![CDATA[          
-		var hasPageError = /*[[${importGermplasmListForm.hasError}]]*/;		           
+		var hasPageError = /*[[${importGermplasmListForm.hasError}]]*/;
 		function do_validation() {
 			if ($('#fileupload').val() == "") {
 				var message = /*[[#{error.file.no.file.selected}]]*/;
@@ -92,6 +93,8 @@
 			
 			return true;
 		}
+		
+		
 		
 		$( document ).ready(function() {
 		// Handler for .ready() called.

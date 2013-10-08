@@ -29,7 +29,20 @@ private static final long serialVersionUID = 1L;
     private Workbook workbook;
     
     private ImportedGermplasmMainInfo importedGermplasmMainInfo;
+    private boolean isImportValid;
     
+    
+    
+    
+    public boolean isImportValid() {
+        return isImportValid;
+    }
+
+    
+    public void setImportValid(boolean isImportValid) {
+        this.isImportValid = isImportValid;
+    }
+
     public ImportedGermplasmMainInfo getImportedGermplasmMainInfo() {
         return importedGermplasmMainInfo;
     }

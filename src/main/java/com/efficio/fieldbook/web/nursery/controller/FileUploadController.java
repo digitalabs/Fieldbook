@@ -11,10 +11,12 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.operation.parser.WorkbookParserException;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -77,16 +79,17 @@ public class FileUploadController extends AbstractBaseFieldbookController{
             	userSelection.setServerFileName(tempFileName);
                 userSelection.setActualFileName(uploadForm.getFile().getOriginalFilename());
                 
-                Workbook datasetWorkbook;
-                    datasetWorkbook = dataImportService
-                            .parseWorkbook(importWorkbookFileService.retrieveCurrentWorkbookAsFile(userSelection));
+                Workbook datasetWorkbook = null;
+                File file = importWorkbookFileService.retrieveCurrentWorkbookAsFile(userSelection);
+                datasetWorkbook = dataImportService.parseWorkbook(file);
+                   
                 userSelection.setWorkbook(datasetWorkbook);
                 
-            } catch (MiddlewareQueryException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            }catch (IOException e) {
                 e.printStackTrace();
                 result.reject("uploadForm.file", "Error occurred while uploading file.");
+            } catch(WorkbookParserException ee){
+                ee.printStackTrace();
             }
             
             return "redirect:" + NurseryDetailsController.URL;

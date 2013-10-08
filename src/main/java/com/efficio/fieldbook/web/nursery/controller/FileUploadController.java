@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.operation.parser.WorkbookParserException;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.springframework.stereotype.Controller;
@@ -110,8 +111,10 @@ public class FileUploadController extends AbstractBaseFieldbookController{
             }catch (IOException e) {
                 e.printStackTrace();
                 result.reject("uploadForm.file", "Error occurred while uploading file.");
-            } catch(WorkbookParserException ee){
-                ee.printStackTrace();
+            } catch(WorkbookParserException e){
+                e.printStackTrace();
+            } catch (MiddlewareQueryException e){
+            	e.printStackTrace();
             }
             
             return "redirect:" + NurseryDetailsController.URL;

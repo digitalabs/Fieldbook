@@ -394,13 +394,13 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
             
             
             importedGermplasmList = new ImportedGermplasmList(originalFilename, listName, listTitle, listType, listDate); 
-            
+            /*
             System.out.println("DEBUG | Original Filename:" + originalFilename);
             System.out.println("DEBUG | List Name:" + listName);
             System.out.println("DEBUG | List Title:" + listTitle);
             System.out.println("DEBUG | List Type:" + listType);
             System.out.println("DEBUG | List Date:" + listDate);
-            
+            */
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -500,7 +500,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
                         ,getCellStringValue(currentSheet,currentRow,5,true)
                         ,"");
                    importedGermplasmList.addImportedFactor(importedFactor);
-                
+                /*
                 System.out.println("");
                 System.out.println("DEBUG | Factor:"+getCellStringValue(currentSheet,currentRow,0));
                 System.out.println("DEBUG | Description:"+getCellStringValue(currentSheet,currentRow,1));
@@ -508,6 +508,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
                 System.out.println("DEBUG | Scale:"+getCellStringValue(currentSheet,currentRow,3));
                 System.out.println("DEBUG | Method:"+getCellStringValue(currentSheet,currentRow,4));
                 System.out.println("DEBUG | Data Type:"+getCellStringValue(currentSheet,currentRow,5));
+                */
                 //System.out.println("DEBUG | Value:"+getCellStringValue(currentSheet,currentRow,6));
                 //System.out.println("DEBUG | Label:"+getCellStringValue(currentSheet,currentRow,7));
                 //
@@ -542,7 +543,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
             || !getCellStringValue(currentSheet,currentRow,5,true).toUpperCase().equals("DATA TYPE")
             || !getCellStringValue(currentSheet,currentRow,6,true).toUpperCase().equals("VALUE")) {
             showInvalidFileError("Incorrect headers for constants.");
-            System.out.println("DEBUG | Invalid file on readConstants header");
+            //System.out.println("DEBUG | Invalid file on readConstants header");
         }
         //If file is still valid (after checking headers), proceed
         if(fileIsValid){
@@ -575,7 +576,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
             || !getCellStringValue(currentSheet,currentRow,4,true).toUpperCase().equals("METHOD")
             || !getCellStringValue(currentSheet,currentRow,5,true).toUpperCase().equals("DATA TYPE")) {
             showInvalidFileError("Incorrect headers for variates.");
-            System.out.println("DEBUG | Invalid file on readVariates header");
+            //System.out.println("DEBUG | Invalid file on readVariates header");
         }
         //If file is still valid (after checking headers), proceed
         if(fileIsValid){

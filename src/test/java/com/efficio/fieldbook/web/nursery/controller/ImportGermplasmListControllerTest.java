@@ -45,6 +45,7 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
         
         private Workbook workbookBasic;
         private Workbook workbookAdvance;
+        private Workbook workbookInvalid;
         
         @Before
         public void setUp() {
@@ -61,32 +62,39 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
                         getClass().getClassLoader().getResourceAsStream("GermplasmImportTemplate-Advanced-rev4.xls");
                 workbookAdvance = WorkbookFactory.create(inp);
                 
+                inp =
+                        getClass().getClassLoader().getResourceAsStream("Population114_Pheno_FB_1.xls");
+                workbookInvalid = WorkbookFactory.create(inp);
+                
             }catch (Exception e) {
                 e.printStackTrace();
             }
         }
         
         @Test
-        public void testBasicParseImportGerplasm(){
+        public void testInvalidParseImportGerplasm(){
+
+            ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+            try{
+                
+                importGermplasmFileService.doProcessNow(workbookInvalid, mainInfo); 
+                assertEquals(mainInfo.getFileIsValid(), false);
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+            
+                      
+        }
+        
+        @Test
+        public void testValidBasicParseImportGerplasm(){
 
             ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
             try{
                 
                 importGermplasmFileService.doProcessNow(workbookBasic, mainInfo); 
                 
-                if(mainInfo.getFileIsValid()){
-                        //form.setHasError("0");
-                        //userSelection.setImportedGermplasmMainInfo(mainInfo);
-                        
-                }else{
-                        //meaing there is error
-                    /*
-                        form.setHasError("1");
-                        for(String errorMsg : mainInfo.getErrorMessages()){
-                                result.rejectValue("file", errorMsg);  
-                        }
-                      */  
-                }
+                
             }catch (Exception e) {
                 e.printStackTrace();
             }
@@ -98,28 +106,16 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
             assertEquals(mainInfo.getImportedGermplasmList().getImportedFactors().get(0).getFactor(), "ENTRY");
             assertEquals(mainInfo.getImportedGermplasmList().getImportedFactors().get(1).getFactor(), "DESIGNATION");
             assertEquals(mainInfo.isAdvanceImportType(), false);
+            assertEquals(mainInfo.getFileIsValid(), true);
         }
         
         @Test
-        public void testAdvanceParseImportGerplasm(){
+        public void testValidAdvanceParseImportGerplasm(){
             ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
             try{
                 
                 importGermplasmFileService.doProcessNow(workbookAdvance, mainInfo); 
                 
-                if(mainInfo.getFileIsValid()){
-                        //form.setHasError("0");
-                        //userSelection.setImportedGermplasmMainInfo(mainInfo);
-                        
-                }else{
-                        //meaing there is error
-                    /*
-                        form.setHasError("1");
-                        for(String errorMsg : mainInfo.getErrorMessages()){
-                                result.rejectValue("file", errorMsg);  
-                        }
-                      */  
-                }
             }catch (Exception e) {
                 e.printStackTrace();
             }
@@ -134,7 +130,7 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
             assertEquals(mainInfo.getImportedGermplasmList().getImportedFactors().get(4).getFactor(), "SOURCE");
             assertEquals(mainInfo.getImportedGermplasmList().getImportedFactors().get(5).getFactor(), "ENTRY CODE");
             assertEquals(mainInfo.isAdvanceImportType(), true);
-            //assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().size(), 20);
+            assertEquals(mainInfo.getFileIsValid(), true);
         }
       
         

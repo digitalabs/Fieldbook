@@ -16,7 +16,7 @@ import java.util.Properties;
 /**
  * The Class GitRepositoryState.
  *
- * @author Efficio.Daniel
+ * @author Daniel Jao
  */
 public class GitRepositoryState {
     

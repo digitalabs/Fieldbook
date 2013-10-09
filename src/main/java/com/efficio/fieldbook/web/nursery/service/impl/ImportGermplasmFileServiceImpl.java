@@ -43,8 +43,8 @@ import com.vaadin.data.Property.ConversionException;
 import com.vaadin.data.Property.ReadOnlyException;
 
 /**
- * Author: Daniel Jao
- * This should parse the import file from the user.
+ * @author Daniel Jao
+ * This should parse the import file from the user.  Can handle basic and advance file format
  */
 public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileService{
 	
@@ -622,7 +622,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
      */
     private Boolean rowIsEmpty(Integer sheet, Integer row){
         for(int col=0;col<8;col++){
-            if(getCellStringValue(sheet, row, col)!="" && getCellStringValue(sheet, row, col)!=null)
+            if(getCellStringValue(sheet, row, col)!=null && !getCellStringValue(sheet, row, col).equalsIgnoreCase("") )
                 return false;
         }
         return true;        

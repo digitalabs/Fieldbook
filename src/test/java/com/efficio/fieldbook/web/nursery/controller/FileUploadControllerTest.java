@@ -47,21 +47,24 @@ public class FileUploadControllerTest extends AbstractJUnit4SpringContextTests {
 	@Autowired
     DataImportService dataImportService;
 	
-	private FileUploadController dut;
+	private FileUploadController controller;
 	private FileUploadForm form;
 	private BindingResult result;
 	private Model model;
 	private MultipartFile file;
 	private HttpSession session;
+	private UserSelection userSelection;
+	
 	private static final String fileName = "Population114_Pheno_FB_1.xls";
 	
 	@Before
-    public void setUp() {        
-        	dut = new FileUploadController();
+    public void setUp() {
+			controller = new FileUploadController();
             file = createMock(MultipartFile.class);
             session = new MockHttpSession();
             form = new FileUploadForm();
             form.setFile(file);
+            userSelection = new UserSelection();
 
             result = createMock(BindingResult.class);
             model = createMock(Model.class);
@@ -73,7 +76,6 @@ public class FileUploadControllerTest extends AbstractJUnit4SpringContextTests {
 		// Get the file
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
         String tempFileName = fieldbookService.storeUserWorkbook(inputStream);
-        UserSelection userSelection = new UserSelection();
         userSelection.setActualFileName(fileName);
         userSelection.setServerFileName(tempFileName);
 
@@ -100,7 +102,7 @@ public class FileUploadControllerTest extends AbstractJUnit4SpringContextTests {
         expect(result.hasErrors()).andReturn(true);
         replay(result);
 
-        String navigationResult = dut.uploadFile(form, result, model, session);
+        String navigationResult = controller.uploadFile(form, result, model, session);
 
         // verify if the expected methods in the mock object were called
         verify(result);
@@ -118,7 +120,7 @@ public class FileUploadControllerTest extends AbstractJUnit4SpringContextTests {
         
         replay(result, file);
         
-        String navigationResult = dut.uploadFile(form, result, model, session);
+        String navigationResult = controller.uploadFile(form, result, model, session);
 
         // verify if the expected methods in the mock object were called
         verify(result, file);

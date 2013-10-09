@@ -12,6 +12,7 @@
 package com.efficio.fieldbook.web.nursery.controller;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -23,6 +24,7 @@ import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -171,24 +173,28 @@ public class SaveNurseryController extends AbstractBaseFieldbookController{
      * @return the string
      */
     private String validate(String title, String objective, String nurseryBookName) {
+        Locale locale = LocaleContextHolder.getLocale();
         StringBuilder errorMessages = null;
+        
+        //Required Field Checks
         StringBuilder requiredFields = null;
         if (StringUtils.isBlank(title)) {
             requiredFields = requiredFields == null ? new StringBuilder() : requiredFields.append(", ");
-            requiredFields.append(messageSource.getMessage("nursery.savenursery.title", null, null));
+            requiredFields.append(messageSource.getMessage("nursery.savenursery.title", null, locale));
         }
         if (StringUtils.isBlank(objective)) {
             requiredFields = requiredFields == null ? new StringBuilder() : requiredFields.append(", ");
-            requiredFields.append(messageSource.getMessage("nursery.savenursery.objective", null, null));
+            requiredFields.append(messageSource.getMessage("nursery.savenursery.objective", null, locale));
         }
         if (StringUtils.isBlank(nurseryBookName)) {
             requiredFields = requiredFields == null ? new StringBuilder() : requiredFields.append(", ");
-            requiredFields.append(messageSource.getMessage("nursery.savenursery.nurseryBookName", null, null));
+            requiredFields.append(messageSource.getMessage("nursery.savenursery.nurseryBookName", null, locale));
         }
         if (requiredFields != null) {
             errorMessages = errorMessages == null ? new StringBuilder() : errorMessages.append("<br />");
-            errorMessages.append(messageSource.getMessage("error.mandatory.field", new String[] {requiredFields.toString()}, null));
+            errorMessages.append(messageSource.getMessage("error.mandatory.field", new String[] {requiredFields.toString()}, locale));
         }
+        
         return errorMessages != null ? errorMessages.toString() : null;
     }
 

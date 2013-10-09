@@ -82,13 +82,13 @@ public class FileUploadControllerTest extends AbstractJUnit4SpringContextTests {
         Workbook datasetWorkbook = dataImportService.parseWorkbook(file);
         StudyDetails studyDetails = datasetWorkbook.getStudyDetails();
         
-        assertEquals(studyDetails.getStudyName(), "pheno_t7");
-        assertEquals(studyDetails.getTitle(), "Phenotyping trials of the Population 114");
-        assertEquals(studyDetails.getObjective(), "To evaluate the Population 114");
-        assertEquals(studyDetails.getPmKey(), "0");
-        assertEquals(studyDetails.getStartDate(), "20130805");
-        assertEquals(studyDetails.getEndDate(), "20130805");
-        assertEquals(studyDetails.getStudyType(), "T");
+        assertEquals(studyDetails.getStudyName().toString(), "pheno_t7");
+        assertEquals(studyDetails.getTitle().toString(), "Phenotyping trials of the Population 114");
+        assertEquals(studyDetails.getObjective().toString(), "To evaluate the Population 114");
+        assertEquals(studyDetails.getPmKey().toString(), "0");
+        assertEquals(studyDetails.getStartDate().toString(), "20130805");
+        assertEquals(studyDetails.getEndDate().toString(), "20130805");
+        assertEquals(studyDetails.getStudyType().toString(), "T");
     }
 
 	

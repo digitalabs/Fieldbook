@@ -71,7 +71,8 @@ public class NurseryDetailsTest extends AbstractJUnit4SpringContextTests {
         Workbook datasetWorkbook = dataImportService.parseWorkbook(file);
         userSelection.setWorkbook(datasetWorkbook);
 
-        controllerValid = new NurseryDetailsController(userSelection);
+        controllerValid = new NurseryDetailsController();
+        controllerValid.setUserSelection(userSelection);
 
         // Test if the workbook in the controller is valid
         Workbook workbook = controllerValid.getUserSelection().getWorkbook();
@@ -112,7 +113,8 @@ public class NurseryDetailsTest extends AbstractJUnit4SpringContextTests {
             datasetWorkbook = dataImportService.parseWorkbook(file);
             userSelection.setWorkbook(datasetWorkbook);
     
-            controllerInvalid = new NurseryDetailsController(userSelection);
+            controllerInvalid = new NurseryDetailsController();
+            controllerInvalid.setUserSelection(userSelection);
     
         } catch (WorkbookParserException e){
             assertTrue(datasetWorkbook == null); // Workbook was not parsed properly due to format errors

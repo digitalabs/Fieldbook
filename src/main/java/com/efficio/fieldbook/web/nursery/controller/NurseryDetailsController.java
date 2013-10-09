@@ -35,19 +35,15 @@ public class NurseryDetailsController extends AbstractBaseFieldbookController{
     @Resource
     private UserSelection userSelection;
     
-    public NurseryDetailsController(){
-    }
-
-    /** Constructor used for testing */
-    public NurseryDetailsController(UserSelection userSelection){
-        this.userSelection = userSelection;
-    }
-    
     @Override
     public String getContentName() {
         return "NurseryManager/nurseryDetails";
     }
     
+    public void setUserSelection(UserSelection userSelection) {
+        this.userSelection = userSelection;
+    }
+
     public UserSelection getUserSelection() {
         return this.userSelection;
     }
@@ -63,7 +59,8 @@ public class NurseryDetailsController extends AbstractBaseFieldbookController{
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String showDetails(@ModelAttribute("nurseryDetailsForm") NurseryDetailsForm uploadForm, BindingResult result, Model model) {
+    public String showDetails(@ModelAttribute("nurseryDetailsForm") NurseryDetailsForm form, BindingResult result, Model model) {
+        userSelection.setFieldLayoutRandom(form.getFieldLayoutRandom());
         return "redirect:" + ImportGermplasmListController.URL;
     }
 

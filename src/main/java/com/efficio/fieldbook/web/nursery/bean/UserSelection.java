@@ -28,16 +28,16 @@ private static final long serialVersionUID = 1L;
     
     private Workbook workbook;
     
+    private boolean fieldLayoutRandom;
+    
     private ImportedGermplasmMainInfo importedGermplasmMainInfo;
+
     private boolean isImportValid;
-    
-    
     
     
     public boolean isImportValid() {
         return isImportValid;
     }
-
     
     public void setImportValid(boolean isImportValid) {
         this.isImportValid = isImportValid;
@@ -74,6 +74,14 @@ private static final long serialVersionUID = 1L;
 
     public void setWorkbook(Workbook workbook) {
         this.workbook = workbook;
+    }
+
+    public Boolean getFieldLayoutRandom() {
+        return fieldLayoutRandom;
+    }
+
+    public void setFieldLayoutRandom(Boolean fieldLayoutRandom) {
+        this.fieldLayoutRandom = fieldLayoutRandom;
     }
 
 }

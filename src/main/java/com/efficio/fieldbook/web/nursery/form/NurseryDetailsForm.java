@@ -17,7 +17,7 @@ public class NurseryDetailsForm {
     
     private Workbook workbook;
     
-    private boolean fieldLayoutRandom;
+    private boolean fieldLayoutRandom = true;
        
     public Workbook getWorkbook() {
         return workbook;
@@ -27,7 +27,7 @@ public class NurseryDetailsForm {
         this.workbook = workbook;
     }
 
-    public boolean isFieldLayoutRandom() {
+    public boolean getFieldLayoutRandom() {
         return fieldLayoutRandom;
     }
     

@@ -12,14 +12,15 @@
             http://www.springframework.org/schema/aop 
 			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
-	<!-- Declare property file locations -->
-	<context:property-placeholder location="classpath:fieldbook.properties, classpath:database.properties" />
+	<!-- Declare property file locations  -->
+	<context:property-placeholder location="classpath:git.properties, classpath:fieldbook.properties, classpath:database.properties" />
 
 	<!-- **************************************************************** -->
 	<!--  RESOURCE FOLDERS CONFIGURATION                                  -->
 	<!--  Dispatcher configuration for serving static resources           -->
 	<!-- **************************************************************** -->
 	<mvc:resources mapping="/static/**" location="/WEB-INF/static/" />
+
 
 
 	<!-- **************************************************************** -->
@@ -179,5 +180,21 @@
         <property name="username" value="${workbench.username}"/>
         <property name="password" value="${workbench.password}"/>
     </bean>
+    
+   	<bean id="gitRepositoryState" class="com.efficio.fieldbook.web.util.GitRepositoryState">	
+   		<property name="branch" value="${git.branch}"/>
+   		<property name="describe" value="${git.commit.id.describe}"/>
+   		<property name="commitId" value="${git.commit.id}"/>
+   		<property name="buildUserName" value="${git.build.user.name}"/>
+   		<property name="buildUserEmail" value="${git.build.user.email}"/>
+   		<property name="buildTime" value="${git.build.time}"/>
+   		<property name="commitUserName" value="${git.commit.user.name}"/>
+   		<property name="commitUserEmail" value="${git.commit.user.email}"/>
+   		<property name="commitMessageShort" value="${git.commit.message.short}"/>
+   		<property name="commitMessageFull" value="${git.commit.message.full}"/>
+   		<property name="commitTime" value="${git.commit.time}"/>
+   		<property name="commitIdAbbrev" value="${git.commit.id.abbrev}"/>   		
+	</bean>
+	
 
 </beans>

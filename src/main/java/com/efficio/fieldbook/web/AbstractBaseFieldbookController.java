@@ -11,10 +11,14 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web;
 
+import javax.annotation.Resource;
+
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.ui.Model;
+
+import com.efficio.fieldbook.web.util.GitRepositoryState;
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,9 +28,11 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
 
     public static final String BASE_TEMPLATE_NAME = "/template/base-template";
     public static final String TEMPLATE_NAME_ATTRIBUTE = "templateName";
+    public static final String GIT_INFO_ATTRIBUTE = "gitInfo";
     public static final String USER_SELECTION_ID_SUFFIX = "TestUserSelection";
-
-
+    @Resource
+    public GitRepositoryState gitRepositoryState;
+    
     private ApplicationContext applicationContext;
 
     public abstract String getContentName();
@@ -39,7 +45,7 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
      */
     public String show(Model model) {
         model.addAttribute(TEMPLATE_NAME_ATTRIBUTE, getContentName());
-
+        model.addAttribute(GIT_INFO_ATTRIBUTE, gitRepositoryState);
         return BASE_TEMPLATE_NAME;
     }
     

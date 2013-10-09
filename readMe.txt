@@ -36,3 +36,5 @@ Thymeleaf Basic: http://www.thymeleaf.org/doc/html/Using-Thymeleaf.html
         If-then: (if) ? (then)
         If-then-else: (if) ? (then) : (else)
         Default: (value) ?: (defaultvalue)
+
+		mvn clean install -DskipTests -DenvConfig=ci

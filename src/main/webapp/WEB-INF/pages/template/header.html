@@ -6,6 +6,17 @@
 		<p>
 			This is for new Fieldbook Application.
 		</p>
+		<table  th:object="${gitInfo}" class="table table-striped">
+			<tr>
+				<td>Build ID</td>
+				<td>Build Date</td>
+			</tr>
+			<tr>
+				<td th:text="*{commitIdAbbrev}">Build ID</td>
+				<td th:text="*{buildTime}">Build Date</td>
+			</tr>
+		</table>	
+		
 	  </div>
 	</div>
 	

@@ -19,17 +19,28 @@ import javax.annotation.Resource;
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.FileService;
 
-
+/**
+ * The Class FieldbookServiceImpl.
+ */
 public class FieldbookServiceImpl implements FieldbookService{
 	
+	/** The file service. */
 	@Resource
     private FileService fileService;
 
+	/* (non-Javadoc)
+	 * @see com.efficio.fieldbook.service.api.FieldbookService#storeUserWorkbook(java.io.InputStream)
+	 */
 	@Override
     public String storeUserWorkbook(InputStream in) throws IOException {
         return getFileService().saveTemporaryFile(in);
     }
 	
+	/**
+	 * Gets the file service.
+	 *
+	 * @return the file service
+	 */
 	public FileService getFileService() {
         return fileService;
     }

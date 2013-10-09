@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2013, All Rights Reserved.
+ * 
+ * Generation Challenge Programme (GCP)
+ * 
+ * 
+ * This software is licensed for use under the terms of the GNU General Public
+ * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
+ * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ * 
+ *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.service.impl;
 
 import java.util.ArrayList;
@@ -13,13 +24,18 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 
-
+/**
+ * The Class MeasurementsGeneratorServiceImpl.
+ */
 @Service
 public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorService {
 
 	//TODO: currently used for generating test data.. 
 	//but in the future can be used to call a Middleware service that will 
 	//generate the measurements row
+	/* (non-Javadoc)
+	 * @see com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService#generateMeasurementRows(com.efficio.fieldbook.web.nursery.bean.UserSelection)
+	 */
 	public List<MeasurementRow> generateMeasurementRows(UserSelection userSelection) {
 		Workbook workbook = userSelection.getWorkbook();
 		List<MeasurementRow> rows = new ArrayList<MeasurementRow>();

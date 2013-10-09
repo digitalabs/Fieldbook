@@ -13,12 +13,13 @@ package com.efficio.fieldbook.web.nursery.bean;
 
 import java.io.Serializable;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ImportedVariate.
  */
 public class ImportedVariate implements Serializable{
     
+    private static final long serialVersionUID = 1L;
+
     /** The variate. */
     private String variate;
     

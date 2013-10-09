@@ -13,12 +13,13 @@ package com.efficio.fieldbook.web.nursery.bean;
 
 import java.io.Serializable;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ImportedConstant.
  */
 public class ImportedConstant  implements Serializable{
     
+    private static final long serialVersionUID = 1L;
+
     /** The constant. */
     private String constant;
     

@@ -36,18 +36,29 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping({"/test"})
 public class TestController extends AbstractBaseFieldbookController{
 	
+    /** The user selection. */
     @Resource
     private UserSelection userSelection;
 	
+    /**
+     * Shows the screen.
+     *
+     * @param testForm the test form
+     * @param result the result
+     * @param model the model
+     * @return the string
+     */
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("testForm") TestJavaForm testForm,  BindingResult result, Model model) {
-
-    	
     	model.addAttribute("testList", getDummyList());
-    
     	return super.show(model);
     }
 
+    /**
+     * Gets the dummy list.
+     *
+     * @return the dummy list
+     */
     private List getDummyList(){
     	List l = new ArrayList();
     	l.add("Hello 1");
@@ -56,11 +67,19 @@ public class TestController extends AbstractBaseFieldbookController{
     	return l;
     }
 
+    /* (non-Javadoc)
+     * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
+     */
     @Override
     public String getContentName() {
         return "demo/test";
     }
     
+    /**
+     * Gets the user selection.
+     *
+     * @return the user selection
+     */
     public UserSelection getUserSelection() {
         return this.userSelection;
     }

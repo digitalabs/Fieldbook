@@ -26,28 +26,55 @@ import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.NurseryDetailsForm;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
+/**
+ * The Class NurseryDetailsController.
+ */
 @Controller
 @RequestMapping(NurseryDetailsController.URL)
 public class NurseryDetailsController extends AbstractBaseFieldbookController{
 
+    /** The Constant URL. */
     public static final String URL = "/NurseryManager/nurseryDetails";
     
+    /** The user selection. */
     @Resource
     private UserSelection userSelection;
     
+    /* (non-Javadoc)
+     * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
+     */
     @Override
     public String getContentName() {
         return "NurseryManager/nurseryDetails";
     }
     
+    /**
+     * Sets the user selection.
+     *
+     * @param userSelection the new user selection
+     */
     public void setUserSelection(UserSelection userSelection) {
         this.userSelection = userSelection;
     }
 
+    /**
+     * Gets the user selection.
+     *
+     * @return the user selection
+     */
     public UserSelection getUserSelection() {
         return this.userSelection;
     }
 
+    /**
+     * Shows the screen.
+     *
+     * @param form the form
+     * @param result the result
+     * @param model the model
+     * @param session the session
+     * @return the string
+     */
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("nurseryDetailsForm") NurseryDetailsForm form, BindingResult result, Model model, HttpSession session) {
         if (userSelection.getWorkbook() == null){
@@ -58,8 +85,16 @@ public class NurseryDetailsController extends AbstractBaseFieldbookController{
     	return super.show(model);
     }
 
+    /**
+     * Submits the details.
+     *
+     * @param form the form
+     * @param result the result
+     * @param model the model
+     * @return the string
+     */
     @RequestMapping(method = RequestMethod.POST)
-    public String showDetails(@ModelAttribute("nurseryDetailsForm") NurseryDetailsForm form, BindingResult result, Model model) {
+    public String submitDetails(@ModelAttribute("nurseryDetailsForm") NurseryDetailsForm form, BindingResult result, Model model) {
         userSelection.setFieldLayoutRandom(form.getFieldLayoutRandom());
         return "redirect:" + ImportGermplasmListController.URL;
     }

@@ -13,13 +13,14 @@ package com.efficio.fieldbook.web.nursery.bean;
 
 import java.io.Serializable;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ImportedGermplasm.
  */
 public class ImportedGermplasm implements Serializable {
 	
-	/** The entry id. */
+    private static final long serialVersionUID = 1L;
+
+    /** The entry id. */
 	private Integer entryId;
     
     /** The desig. */

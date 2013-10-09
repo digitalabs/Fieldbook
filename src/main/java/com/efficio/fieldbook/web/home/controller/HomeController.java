@@ -13,34 +13,32 @@ package com.efficio.fieldbook.web.home.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.demo.bean.TestJavaBean;
-import com.efficio.fieldbook.web.demo.bean.UserSelection;
-import com.efficio.fieldbook.web.demo.form.TestJavaForm;
 
-import javax.annotation.Resource;
-
-
+/**
+ * The Class HomeController.
+ */
 @Controller
 @RequestMapping({"/"})
 public class HomeController extends AbstractBaseFieldbookController{
-	
-    
-	
+
+    /* (non-Javadoc)
+     * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#show(org.springframework.ui.Model)
+     */
     @RequestMapping(method = RequestMethod.GET)
     public String show(Model model) {
     	return super.show(model);
     }
     
+    /* (non-Javadoc)
+     * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
+     */
     @Override
     public String getContentName() {
         return "home/home";
     }
-    
    
 }

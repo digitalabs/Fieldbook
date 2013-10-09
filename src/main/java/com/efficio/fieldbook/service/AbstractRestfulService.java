@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2013, All Rights Reserved.
+ * 
+ * Generation Challenge Programme (GCP)
+ * 
+ * 
+ * This software is licensed for use under the terms of the GNU General Public
+ * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
+ * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ * 
+ *******************************************************************************/
 package com.efficio.fieldbook.service;
 
 import java.lang.reflect.Array;
@@ -7,12 +18,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
 
-import com.efficio.pojos.cropontology.CropTerm;
-
 /**
  * This is the abstract class that implements basic calls
  * to client RESTful web services.
  */
+@SuppressWarnings("unchecked")
 public abstract class AbstractRestfulService {
 
 	@Autowired
@@ -49,7 +59,7 @@ public abstract class AbstractRestfulService {
 	 * @return
 	 */
 	public <T> List<T> getList(String url, Class<T> responseType) {
-		T[] results = (T[]) restTemplate.getForObject(url, Array.newInstance(responseType, 0).getClass());
+        T[] results = (T[]) restTemplate.getForObject(url, Array.newInstance(responseType, 0).getClass());
 		return Arrays.asList(results);
 	}
 	

@@ -13,12 +13,13 @@ package com.efficio.fieldbook.web.nursery.bean;
 
 import java.io.Serializable;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ImportedCondition.
  */
 public class ImportedCondition implements Serializable{
     
+    private static final long serialVersionUID = 1L;
+
     /** The condition. */
     private String condition;
     

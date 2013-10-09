@@ -37,30 +37,45 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping({"/test2"})
 public class Test2Controller extends AbstractBaseFieldbookController{
 
+    /** The germplasm data manager. */
     @Resource
     private GermplasmDataManager germplasmDataManager;
+    
+    /** The test java bean. */
     @Resource
-    private TestJavaBean         testJavaBean;
+    private TestJavaBean testJavaBean;
+    
+    /** The user selection. */
     @Resource
-    private UserSelection        userSelection;
+    private UserSelection userSelection;
 
+    /**
+     * Show the form
+     *
+     * @param testForm the test form
+     * @param model the model
+     * @return the string
+     */
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("test2Form") Test2JavaForm testForm,  Model model) {
-
-    	
     	try {
     		System.out.println(testJavaBean.getName());
 			testForm.setLocationList(germplasmDataManager.getAllBreedingLocations());
 			testForm.setMethodList(germplasmDataManager.getAllMethods());
-			
-			
 		} catch (MiddlewareQueryException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     	return super.show(model);
     }
 
+    /**
+     * Upload file.
+     *
+     * @param testForm the test form
+     * @param result the result
+     * @param model the model
+     * @return the string
+     */
     @RequestMapping(value="doSubmit", method = RequestMethod.POST)
     public String uploadFile(@ModelAttribute("test2Form") Test2JavaForm testForm, BindingResult result, Model model) {
         //FileUploadFormValidator validator = new FileUploadFormValidator();
@@ -73,24 +88,27 @@ public class Test2Controller extends AbstractBaseFieldbookController{
     	validator.validate(testForm, result);
     	
         if (result.hasErrors()) {
-            /**
-             * Return the user back to form to show errors
-             */
+            // Return the user back to form to show errors
             return show(testForm,model);
         } else {
-
-            
             // at this point, we can assume that program has reached an error condition. we return user to the form
-
             return show(testForm,model);
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
+     */
     @Override
     public String getContentName() {
         return "demo/test2";
     }
    
+    /**
+     * Gets the user selection.
+     *
+     * @return the user selection
+     */
     public UserSelection getUserSelection() {
         return this.userSelection;
     }

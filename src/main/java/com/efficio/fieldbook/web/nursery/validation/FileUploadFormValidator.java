@@ -11,14 +11,12 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.validation;
 
-
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.web.nursery.form.FileUploadForm;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class FileUploadFormValidator.
  */

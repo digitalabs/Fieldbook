@@ -37,35 +37,59 @@ import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.SaveNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 
+/**
+ * The Class SaveNurseryController.
+ */
 @Controller
 @RequestMapping(SaveNurseryController.URL)
 public class SaveNurseryController extends AbstractBaseFieldbookController{
 	
+	/** The Constant LOG. */
 	private static final Logger LOG = LoggerFactory.getLogger(SaveNurseryController.class);
 
+    /** The Constant URL. */
     public static final String URL = "/NurseryManager/saveNursery";
 
+    /** The user selection. */
     @Resource
     private UserSelection userSelection;
     
+    /** The data import service. */
     @Resource
     private DataImportService dataImportService;
     
+    /** The measurements generator service. */
     @Resource
     private MeasurementsGeneratorService measurementsGeneratorService;
     
+    /** The message source. */
     @Resource
     private ResourceBundleMessageSource messageSource;
     
+    /* (non-Javadoc)
+     * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
+     */
     @Override
     public String getContentName() {
         return "NurseryManager/saveNursery";
     }
     
+    /**
+     * Gets the user selection.
+     *
+     * @return the user selection
+     */
     public UserSelection getUserSelection() {
         return this.userSelection;
     }
 
+    /**
+     * Shows the screen.
+     *
+     * @param form the form
+     * @param model the model
+     * @return the string
+     */
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("saveNurseryForm") SaveNurseryForm form, Model model) {
     	
@@ -73,6 +97,14 @@ public class SaveNurseryController extends AbstractBaseFieldbookController{
     }
 
     
+    /**
+     * Save nursery.
+     *
+     * @param title the title
+     * @param objective the objective
+     * @param nurseryBookName the nursery book name
+     * @return the map
+     */
     @RequestMapping(method = RequestMethod.POST)
     public @ResponseBody Map<String, String> saveNursery(@RequestParam String title, @RequestParam String objective,
             @RequestParam String nurseryBookName) {
@@ -104,6 +136,11 @@ public class SaveNurseryController extends AbstractBaseFieldbookController{
     	return resultMap;
     }
     
+    /**
+     * Gets the workbook.
+     *
+     * @return the workbook
+     */
     private Workbook getWorkbook() {
         UserSelection userSelection = getUserSelection();
         Workbook workbook = userSelection.getWorkbook();
@@ -125,6 +162,14 @@ public class SaveNurseryController extends AbstractBaseFieldbookController{
         return workbook;
     }
     
+    /**
+     * Validate.
+     *
+     * @param title the title
+     * @param objective the objective
+     * @param nurseryBookName the nursery book name
+     * @return the string
+     */
     private String validate(String title, String objective, String nurseryBookName) {
         StringBuilder errorMessages = null;
         StringBuilder requiredFields = null;
@@ -147,6 +192,14 @@ public class SaveNurseryController extends AbstractBaseFieldbookController{
         return errorMessages != null ? errorMessages.toString() : null;
     }
 
+    /**
+     * Sets the study details.
+     *
+     * @param title the title
+     * @param objective the objective
+     * @param nurseryBookName the nursery book name
+     * @param workbook the workbook
+     */
     public void setStudyDetails(String title, String objective, String nurseryBookName, Workbook workbook) {
         if (workbook.getStudyDetails() == null) {
             workbook.setStudyDetails(new StudyDetails());

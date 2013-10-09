@@ -22,13 +22,14 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedFactor;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.bean.ImportedVariate;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ImportedGermplasmList.
  */
 public class ImportedGermplasmList implements Serializable {
 	
-	/** The filename. */
+    private static final long serialVersionUID = 1L;
+
+    /** The filename. */
 	private String filename;
     
     /** The name. */

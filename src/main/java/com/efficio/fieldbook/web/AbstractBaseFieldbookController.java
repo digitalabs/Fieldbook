@@ -30,6 +30,7 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
     public static final String TEMPLATE_NAME_ATTRIBUTE = "templateName";
     public static final String GIT_INFO_ATTRIBUTE = "gitInfo";
     public static final String USER_SELECTION_ID_SUFFIX = "TestUserSelection";
+    
     @Resource
     public GitRepositoryState gitRepositoryState;
     

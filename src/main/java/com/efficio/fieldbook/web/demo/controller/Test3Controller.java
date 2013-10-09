@@ -28,22 +28,41 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-
+/**
+ * The Class Test3Controller.
+ */
 @Controller
 @RequestMapping({"/test3"})
 public class Test3Controller extends AbstractBaseFieldbookController{
 	
+    /** The user selection. */
     @Resource
     private UserSelection userSelection;
 
+    /** The fieldbook service. */
     @Resource
     private FieldbookService fieldbookService;
 	
+    /**
+     * Show.
+     *
+     * @param testForm the test form
+     * @param model the model
+     * @return the string
+     */
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("test3Form") Test3JavaForm testForm,  Model model) {
     		return super.show(model);
     }
 
+    /**
+     * Upload file.
+     *
+     * @param uploadForm the upload form
+     * @param result the result
+     * @param model the model
+     * @return the string
+     */
     @RequestMapping(method = RequestMethod.POST)
     public String uploadFile(@ModelAttribute("test3Form") Test3JavaForm uploadForm, BindingResult result, Model model) {
         TestFileUploadFormValidator validator = new TestFileUploadFormValidator();
@@ -53,27 +72,34 @@ public class Test3Controller extends AbstractBaseFieldbookController{
             /**
              * Return the user back to form to show errors
              */
-        	return show(uploadForm,model);
+            return show(uploadForm, model);
         } else {
 
-
             try {
-            	String tempFileName = fieldbookService.storeUserWorkbook(uploadForm.getFile().getInputStream());
-            	uploadForm.setFileName(tempFileName);
+                String tempFileName = fieldbookService.storeUserWorkbook(uploadForm.getFile().getInputStream());
+                uploadForm.setFileName(tempFileName);
             } catch (IOException e) {
                 e.printStackTrace();
                 result.reject("uploadForm.file", "Error occurred while uploading file.");
             }
-            
-            return show(uploadForm,model);
+
+            return show(uploadForm, model);
         }
     }
     
+    /* (non-Javadoc)
+     * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
+     */
     @Override
     public String getContentName() {
         return "demo/test3";
     }
     
+    /**
+     * Gets the user selection.
+     *
+     * @return the user selection
+     */
     public UserSelection getUserSelection() {
         return this.userSelection;
     }

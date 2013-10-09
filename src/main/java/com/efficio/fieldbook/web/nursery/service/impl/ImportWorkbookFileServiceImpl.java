@@ -21,19 +21,22 @@ import com.efficio.fieldbook.web.nursery.service.ImportWorkbookFileService;
 import com.efficio.fieldbook.service.api.FileService;
 
 /**
- * 
- * @author Joyce Avestro
+ * The Class ImportWorkbookFileServiceImpl.
  *
+ * @author Joyce Avestro
  */
 public class ImportWorkbookFileServiceImpl implements ImportWorkbookFileService {
 
+    /** The file service. */
     @Resource
     private FileService fileService;
 
     /**
-     * @param userSelection
-     * @return
-     * @throws IOException
+     * Retrieve current workbook as file.
+     *
+     * @param userSelection the user selection
+     * @return the file
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     @Override
     public File retrieveCurrentWorkbookAsFile(UserSelection userSelection) throws IOException {
@@ -41,10 +44,20 @@ public class ImportWorkbookFileServiceImpl implements ImportWorkbookFileService 
     }
 
 
+    /**
+     * Gets the file service.
+     *
+     * @return the file service
+     */
     public FileService getFileService() {
         return fileService;
     }
 
+    /**
+     * Sets the file service.
+     *
+     * @param fileService the new file service
+     */
     public void setFileService(FileService fileService) {
         this.fileService = fileService;
     }

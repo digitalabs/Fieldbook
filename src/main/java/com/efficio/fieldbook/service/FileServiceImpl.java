@@ -26,14 +26,26 @@ import org.springframework.beans.factory.BeanInitializationException;
 
 import com.efficio.fieldbook.service.api.FileService;
 
+/**
+ * The Class FileServiceImpl.
+ */
 public class FileServiceImpl implements FileService{
 
+    /** The upload directory. */
     private String uploadDirectory;
 
+    /**
+     * Instantiates a new file service impl.
+     *
+     * @param uploadDirectory the upload directory
+     */
     public FileServiceImpl(String uploadDirectory) {
         this.uploadDirectory = uploadDirectory;
     }
 
+    /* (non-Javadoc)
+     * @see com.efficio.fieldbook.service.api.FileService#saveTemporaryFile(java.io.InputStream)
+     */
     @Override
     public String saveTemporaryFile(InputStream userFile) throws IOException {
         String tempFileName = RandomStringUtils.randomAlphanumeric(15);
@@ -54,10 +66,19 @@ public class FileServiceImpl implements FileService{
 
     }
 
+    /**
+     * Gets the file path.
+     *
+     * @param tempFilename the temp filename
+     * @return the file path
+     */
     protected String getFilePath(String tempFilename) {
         return uploadDirectory + File.separator + tempFilename;
     }
 
+    /* (non-Javadoc)
+     * @see com.efficio.fieldbook.service.api.FileService#retrieveFileFromFileName(java.lang.String)
+     */
     @Override
     public File retrieveFileFromFileName(String currentFilename) throws IOException {
         return new File(getFilePath(currentFilename));
@@ -74,7 +95,10 @@ public class FileServiceImpl implements FileService{
         }
     }
 	
-	 @Override
+	 /* (non-Javadoc)
+ 	 * @see com.efficio.fieldbook.service.api.FileService#retrieveWorkbook(java.lang.String)
+ 	 */
+ 	@Override
     public Workbook retrieveWorkbook(String currentFilename) throws IOException {
         InputStream is = new FileInputStream(getFilePath(currentFilename));
 

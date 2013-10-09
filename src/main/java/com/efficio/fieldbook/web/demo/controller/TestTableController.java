@@ -29,19 +29,32 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 
+/**
+ * The Class TestTableController.
+ */
 @Controller
 @RequestMapping({"/testTable"})
 public class TestTableController extends AbstractBaseFieldbookController{
 	
+    /** The germplasm data manager. */
     @Resource
     private GermplasmDataManager germplasmDataManager;
     
+    /** The test java bean. */
     @Resource
     private TestJavaBean testJavaBean;
 
+    /** The user selection. */
     @Resource
     private UserSelection userSelection;
 	
+    /**
+     * Shows the screen.
+     *
+     * @param testForm the test form
+     * @param model the model
+     * @return the string
+     */
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("test2JavaForm") Test2JavaForm testForm,  Model model) {
 
@@ -57,30 +70,41 @@ public class TestTableController extends AbstractBaseFieldbookController{
     	return super.show(model);
     }
 
+    /**
+     * Submit.
+     *
+     * @param testForm the test form
+     * @param result the result
+     * @param model the model
+     * @return the string
+     */
     @RequestMapping(value = "doSubmit", method = RequestMethod.POST)
     public String submit(@ModelAttribute("test2JavaForm") Test2JavaForm testForm, BindingResult result, Model model) {
         TestValidator validator = new TestValidator();
         validator.validate(testForm, result);
 
         if (result.hasErrors()) {
-            /**
-             * Return the user back to form to show errors
-             */
+            //Return the user back to form to show errors
             return show(testForm, model);
         } else {
-
-            // at this point, we can assume that program has reached an error
-            // condition. we return user to the form
-
+            // at this point, we can assume that program has reached an error condition. we return user to the form
             return show(testForm, model);
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
+     */
     @Override
     public String getContentName() {
         return "demo/testTable";
     }
    
+    /**
+     * Gets the user selection.
+     *
+     * @return the user selection
+     */
     public UserSelection getUserSelection() {
         return this.userSelection;
     }

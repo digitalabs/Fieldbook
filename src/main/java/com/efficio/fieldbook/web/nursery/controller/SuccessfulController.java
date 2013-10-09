@@ -22,24 +22,44 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 
+/**
+ * The Class SuccessfulController.
+ */
 @Controller
 @RequestMapping(SuccessfulController.URL)
 public class SuccessfulController extends AbstractBaseFieldbookController{
 
+    /** The Constant URL. */
     public static final String URL = "/NurseryManager/successful";
     
+    /** The user selection. */
     @Resource
     private UserSelection userSelection;
 
+    /* (non-Javadoc)
+     * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
+     */
     @Override
     public String getContentName() {
         return "NurseryManager/successful";
     }
     
+    /**
+     * Gets the user selection.
+     *
+     * @return the user selection
+     */
     public UserSelection getUserSelection() {
         return this.userSelection;
     }
 
+    /**
+     * Shows the screen.
+     *
+     * @param model the model
+     * @param session the session
+     * @return the string
+     */
     @RequestMapping(method = RequestMethod.GET)
     public String show(Model model, HttpSession session) {
     	session.invalidate();

@@ -24,29 +24,55 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-
+/**
+ * The Class TestWizardController.
+ */
 @Controller
 @RequestMapping({"/testWizard"})
 public class TestWizardController extends AbstractBaseFieldbookController{
 	
+    /** The user selection. */
     @Resource
     private UserSelection userSelection;
 	
+    /**
+     * Shows the screen.
+     *
+     * @param testForm the test form
+     * @param model the model
+     * @return the string
+     */
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("test2JavaForm") Test2JavaForm testForm,  Model model) {
     	return super.show(model);
     }
     
+    /**
+     * Submit.
+     *
+     * @param testForm the test form
+     * @param result the result
+     * @param model the model
+     * @return the string
+     */
     @RequestMapping(value="doSubmit", method = RequestMethod.POST)
     public String submit(@ModelAttribute("test2JavaForm") Test2JavaForm testForm, BindingResult result, Model model) {
         return show(testForm,model);
     }
 
+    /* (non-Javadoc)
+     * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
+     */
     @Override
     public String getContentName() {
         return "demo/testWizard";
     }
 
+    /**
+     * Gets the user selection.
+     *
+     * @return the user selection
+     */
     public UserSelection getUserSelection() {
         return this.userSelection;
     }

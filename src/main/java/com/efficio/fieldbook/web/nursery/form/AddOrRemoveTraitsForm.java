@@ -11,7 +11,9 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.form;
 
-
+/**
+ * The Class AddOrRemoveTraitsForm.
+ */
 public class AddOrRemoveTraitsForm {
 
 }

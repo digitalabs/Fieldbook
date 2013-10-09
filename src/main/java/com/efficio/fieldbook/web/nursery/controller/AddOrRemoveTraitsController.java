@@ -25,31 +25,59 @@ import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
+/**
+ * The Class AddOrRemoveTraitsController.
+ */
 @Controller
 @RequestMapping(AddOrRemoveTraitsController.URL)
 public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController{
 
+    /** The Constant URL. */
     public static final String URL = "/NurseryManager/addOrRemoveTraits";
     
+    /** The user selection. */
     @Resource
     private UserSelection userSelection;
 
+    /* (non-Javadoc)
+     * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
+     */
     @Override
     public String getContentName() {
         return "NurseryManager/addOrRemoveTraits";
     }
     
+    /**
+     * Shows the screen
+     *
+     * @param form the form
+     * @param model the model
+     * @param session the session
+     * @return the string
+     */
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, Model model, HttpSession session) {
     	return super.show(model);
     }
 
+    /**
+     * Show details.
+     *
+     * @param form the form
+     * @param result the result
+     * @param model the model
+     * @return the string
+     */
     @RequestMapping(method = RequestMethod.POST)
     public String showDetails(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, BindingResult result, Model model) {
-    	//TODO
         return "redirect:" + SaveNurseryController.URL;
     }
     
+    /**
+     * Gets the user selection.
+     *
+     * @return the user selection
+     */
     public UserSelection getUserSelection() {
         return this.userSelection;
     }

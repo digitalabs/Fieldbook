@@ -17,32 +17,65 @@ package com.efficio.fieldbook.web.nursery.form;
  */
 public class SaveNurseryForm {
 	
+	/** The title. */
 	private String title;
 	
+	/** The objective. */
 	private String objective;
 	
+	/** The nursery book name. */
 	private String nurseryBookName;
 
+	/**
+	 * Gets the title.
+	 *
+	 * @return the title
+	 */
 	public String getTitle() {
 		return title;
 	}
 
+	/**
+	 * Sets the title.
+	 *
+	 * @param title the new title
+	 */
 	public void setTitle(String title) {
 		this.title = title;
 	}
 
+	/**
+	 * Gets the objective.
+	 *
+	 * @return the objective
+	 */
 	public String getObjective() {
 		return objective;
 	}
 
+	/**
+	 * Sets the objective.
+	 *
+	 * @param objective the new objective
+	 */
 	public void setObjective(String objective) {
 		this.objective = objective;
 	}
 
+	/**
+	 * Gets the nursery book name.
+	 *
+	 * @return the nursery book name
+	 */
 	public String getNurseryBookName() {
 		return nurseryBookName;
 	}
 
+	/**
+	 * Sets the nursery book name.
+	 *
+	 * @param nurseryBookName the new nursery book name
+	 */
 	public void setNurseryBookName(String nurseryBookName) {
 		this.nurseryBookName = nurseryBookName;
 	}

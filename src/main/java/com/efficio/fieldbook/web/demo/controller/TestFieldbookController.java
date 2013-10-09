@@ -34,17 +34,34 @@ import javax.annotation.Resource;
 @RequestMapping({"/fieldbook"})
 public class TestFieldbookController extends AbstractBaseFieldbookController{
 	
+    /** The user selection. */
     @Resource
     private UserSelection userSelection;
 	
+    /** The bean. */
     @Resource
     private TestJavaBean bean;
 	
+    /**
+     * Show.
+     *
+     * @param testForm the test form
+     * @param model the model
+     * @return the string
+     */
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("testForm") TestJavaForm testForm, Model model) {
     	return super.show(model);
     }
 
+    /**
+     * Upload file.
+     *
+     * @param testForm the test form
+     * @param result the result
+     * @param model the model
+     * @return the string
+     */
     @RequestMapping(method = RequestMethod.POST)
     public String uploadFile(@ModelAttribute("testForm") TestJavaForm testForm, BindingResult result, Model model) {
         //FileUploadFormValidator validator = new FileUploadFormValidator();
@@ -56,24 +73,27 @@ public class TestFieldbookController extends AbstractBaseFieldbookController{
     	bean.setName("Hello"+System.currentTimeMillis());
     	
         if (result.hasErrors()) {
-            /**
-             * Return the user back to form to show errors
-             */
+            // Return the user back to form to show errors
             return show(testForm,model);
         } else {
-
-            
             // at this point, we can assume that program has reached an error condition. we return user to the form
-
             return show(testForm,model);
         }
     }
 
+    /* (non-Javadoc)
+     * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
+     */
     @Override
     public String getContentName() {
         return "demo/testPage";
     }
     
+    /**
+     * Gets the user selection.
+     *
+     * @return the user selection
+     */
     public UserSelection getUserSelection() {
         return this.userSelection;
     }

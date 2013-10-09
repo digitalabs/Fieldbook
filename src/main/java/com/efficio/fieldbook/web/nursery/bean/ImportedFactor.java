@@ -13,12 +13,13 @@ package com.efficio.fieldbook.web.nursery.bean;
 
 import java.io.Serializable;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ImportedFactor.
  */
 public class ImportedFactor  implements Serializable{
     
+    private static final long serialVersionUID = 1L;
+
     /** The factor. */
     private String factor;
     

@@ -53,10 +53,10 @@ public class FileUploadControllerTest extends AbstractJUnit4SpringContextTests {
 	FieldbookService fieldbookService;
 	
 	@Autowired
-    ImportWorkbookFileService fileService;
+        ImportWorkbookFileService fileService;
 	
 	@Autowired
-    DataImportService dataImportService;
+        DataImportService dataImportService;
 	
 	private FileUploadController controller;
 	private FileUploadForm form;
@@ -69,10 +69,10 @@ public class FileUploadControllerTest extends AbstractJUnit4SpringContextTests {
 	private static final String fileName = "Population114_Pheno_FB_1.xls";
 	
 	@Before
-    public void setUp() {
-			controller = new FileUploadController();
-			form = new FileUploadForm();
-			result = createMock(BindingResult.class);
+        public void setUp() {
+	    controller = new FileUploadController();
+	    form = new FileUploadForm();
+	    result = createMock(BindingResult.class);
             model = createMock(Model.class);
             file = createMock(MultipartFile.class);
             session = new MockHttpSession();
@@ -80,63 +80,63 @@ public class FileUploadControllerTest extends AbstractJUnit4SpringContextTests {
             form.setFile(file);
             userSelection = new UserSelection();     
             controller.setUserSelection(userSelection);
-    }
+        }
 	
 	@Test
-    public void testValidFile() throws Exception{
+        public void testValidFile() throws Exception{
 		
-		// Get the file
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
-        String tempFileName = fieldbookService.storeUserWorkbook(inputStream);
-        userSelection.setActualFileName(fileName);
-        userSelection.setServerFileName(tempFileName);
-
-        // Parse the file to create Workbook
-        File file = fileService.retrieveCurrentWorkbookAsFile(userSelection);
-        Workbook datasetWorkbook = dataImportService.parseWorkbook(file);
-        StudyDetails studyDetails = datasetWorkbook.getStudyDetails();
-        
-        assertEquals(studyDetails.getStudyName().toString(), "pheno_t7");
-        assertEquals(studyDetails.getTitle().toString(), "Phenotyping trials of the Population 114");
-        assertEquals(studyDetails.getObjective().toString(), "To evaluate the Population 114");
-        assertEquals(studyDetails.getPmKey().toString(), "0");
-        assertEquals(studyDetails.getStartDate().toString(), "20130805");
-        assertEquals(studyDetails.getEndDate().toString(), "20130805");
-        assertEquals(studyDetails.getStudyType().toString(), "T");
-    }
+    	// Get the file
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
+            String tempFileName = fieldbookService.storeUserWorkbook(inputStream);
+            userSelection.setActualFileName(fileName);
+            userSelection.setServerFileName(tempFileName);
+    
+            // Parse the file to create Workbook
+            File file = fileService.retrieveCurrentWorkbookAsFile(userSelection);
+            Workbook datasetWorkbook = dataImportService.parseWorkbook(file);
+            StudyDetails studyDetails = datasetWorkbook.getStudyDetails();
+            
+            assertEquals(studyDetails.getStudyName().toString(), "pheno_t7");
+            assertEquals(studyDetails.getTitle().toString(), "Phenotyping trials of the Population 114");
+            assertEquals(studyDetails.getObjective().toString(), "To evaluate the Population 114");
+            assertEquals(studyDetails.getPmKey().toString(), "0");
+            assertEquals(studyDetails.getStartDate().toString(), "20130805");
+            assertEquals(studyDetails.getEndDate().toString(), "20130805");
+            assertEquals(studyDetails.getStudyType().toString(), "T");
+        }
 
 	
 	@Test
-    public void testEmptyFileHandling() {
-        form.setFile(null);
-        
-        result.rejectValue("file", FileUploadFormValidator.FILE_NOT_FOUND_ERROR);
-        expect(result.hasErrors()).andReturn(true);
-        replay(result);
-
-        String navigationResult = controller.uploadFile(form, result, model, session);
-
-        // verify if the expected methods in the mock object were called
-        verify(result);
-
-        assertNotSame("redirect:" + NurseryDetailsController.URL, navigationResult);
-    }
+        public void testEmptyFileHandling() {
+            form.setFile(null);
+            
+            result.rejectValue("file", FileUploadFormValidator.FILE_NOT_FOUND_ERROR);
+            expect(result.hasErrors()).andReturn(true);
+            replay(result);
+    
+            String navigationResult = controller.uploadFile(form, result, model, session);
+    
+            // verify if the expected methods in the mock object were called
+            verify(result);
+    
+            assertNotSame("redirect:" + NurseryDetailsController.URL, navigationResult);
+        }
 
 	@Test
-    public void testNonExcelFileUpload() {
-        form.setFile(file);
-        
-        expect(file.getOriginalFilename()).andReturn("something.txt").anyTimes();
-        result.rejectValue("file", FileUploadFormValidator.FILE_NOT_EXCEL_ERROR);
-        expect(result.hasErrors()).andReturn(true);
-        
-        replay(result, file);
-        
-        String navigationResult = controller.uploadFile(form, result, model, session);
-
-        // verify if the expected methods in the mock object were called
-        verify(result, file);
-
-        assertNotSame("redirect:" + NurseryDetailsController.URL, navigationResult);
-    }
+	public void testNonExcelFileUpload() {
+            form.setFile(file);
+            
+            expect(file.getOriginalFilename()).andReturn("something.txt").anyTimes();
+            result.rejectValue("file", FileUploadFormValidator.FILE_NOT_EXCEL_ERROR);
+            expect(result.hasErrors()).andReturn(true);
+            
+            replay(result, file);
+            
+            String navigationResult = controller.uploadFile(form, result, model, session);
+    
+            // verify if the expected methods in the mock object were called
+            verify(result, file);
+    
+            assertNotSame("redirect:" + NurseryDetailsController.URL, navigationResult);
+        }
 }

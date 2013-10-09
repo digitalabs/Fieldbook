@@ -14,11 +14,10 @@ package com.efficio.fieldbook.web.util;
 import java.util.Properties;
 
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class GitRepositoryState.
  *
- * @author Efficio.Daniel
+ * @author Daniel Jao
  */
 public class GitRepositoryState {
     

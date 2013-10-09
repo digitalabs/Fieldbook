@@ -46,11 +46,11 @@ import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.vaadin.data.Property.ConversionException;
 import com.vaadin.data.Property.ReadOnlyException;
 import com.vaadin.ui.Window.Notification;
-// TODO: Auto-generated Javadoc
+
 
 /**
- * Author: Daniel Jao
- * This should parse the import file from the user.
+ * @author Daniel Jao
+ * This should parse the import file from the user.  Can handle basic and advance file format
  */
 public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileService{
 	

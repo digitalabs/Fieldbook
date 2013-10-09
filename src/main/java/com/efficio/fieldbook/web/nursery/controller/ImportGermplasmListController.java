@@ -27,9 +27,12 @@ import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.nursery.validation.ImportGermplasmListValidator;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * The Class ImportGermplasmListController.
+ * This controller handles the 2nd step in the nursery manager process.
+ * 
+ * @author Daniel Jao
  */
 @Controller
 @RequestMapping(ImportGermplasmListController.URL)

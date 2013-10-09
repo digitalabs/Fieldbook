@@ -19,7 +19,7 @@ import java.util.List;
 
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.operation.parser.WorkbookParserException;
+import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.junit.Before;
 import org.junit.Test;

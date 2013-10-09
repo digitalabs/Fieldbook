@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2013, All Rights Reserved.
+ * 
+ * Generation Challenge Programme (GCP)
+ * 
+ * 
+ * This software is licensed for use under the terms of the GNU General Public
+ * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
+ * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ * 
+ *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
 import static org.easymock.EasyMock.createMock;
@@ -60,14 +71,15 @@ public class FileUploadControllerTest extends AbstractJUnit4SpringContextTests {
 	@Before
     public void setUp() {
 			controller = new FileUploadController();
+			form = new FileUploadForm();
+			result = createMock(BindingResult.class);
+            model = createMock(Model.class);
             file = createMock(MultipartFile.class);
             session = new MockHttpSession();
-            form = new FileUploadForm();
+            
             form.setFile(file);
-            userSelection = new UserSelection();
-
-            result = createMock(BindingResult.class);
-            model = createMock(Model.class);
+            userSelection = new UserSelection();     
+            controller.setUserSelection(userSelection);
     }
 	
 	@Test

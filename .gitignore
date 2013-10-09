@@ -4,3 +4,4 @@
 /logs
 .classpath
 src/main/resources/git.properties
+pipeline/config/dev-martin

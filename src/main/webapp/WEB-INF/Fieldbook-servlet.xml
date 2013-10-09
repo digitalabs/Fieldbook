@@ -147,6 +147,11 @@
         <constructor-arg name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
     </bean>
     
+     <bean id="studyDataManagerV2" class="org.generationcp.middleware.manager.StudyDataManagerImpl">
+        <property name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
+        <property name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
+    </bean>
+    
     <bean id="centralHibernateSessionProvider" class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider" scope="request" destroy-method="close">
         <property name="sessionFactory" ref="centralSessionFactory"/>
         <aop:scoped-proxy proxy-target-class="false"/>

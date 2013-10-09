@@ -1,0 +1,46 @@
+<div class="col-md-12" xmlns:th="http://www.thymeleaf.org">
+	<div class="page-header">
+		<h1>
+			Test Tree View
+		</h1>				
+	</div>
+	
+	<div id="studyTree" class="well"></div>
+
+</div>
+
+<script type="text/javascript" th:inline="javascript">
+	$(function() {
+		var jsonObj = JSON.parse(
+				/*[[${rootFolders}]]*/
+				);
+		
+		$("#studyTree").dynatree({
+			title: "study tree",
+			checkbox: false,
+			noLink: true,
+			children: jsonObj,
+			onLazyRead: function(node) {
+				node.appendAjax({
+					url: "expandtree" + "?parentId=" + node.data.key,
+					dataType: "json",
+					success: function(node) {
+						//do nothing
+					},
+					error: function(node, XMLHttpRequest, textStatus, errorThrown) {
+						console.log("The following error occured: " + textStatus, errorThrown); 
+					},
+					cache: false
+				});
+			},
+			classNames : {
+				container: "list-unstyled",
+				folder: "glyphicon glyphicon-folder-close dynatree-folder",
+				expanded: "glyphicon glyphicon-folder-open dynatree-expanded"
+			}
+		});
+	});
+</script>
+
+
+

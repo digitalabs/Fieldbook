@@ -11,27 +11,31 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.SaveNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
-import com.efficio.fieldbook.web.nursery.validation.SaveNurseryValidator;
 
 @Controller
 @RequestMapping(SaveNurseryController.URL)
@@ -48,10 +52,10 @@ public class SaveNurseryController extends AbstractBaseFieldbookController{
     private DataImportService dataImportService;
     
     @Resource
-    private SaveNurseryValidator saveNurseryValidator;
+    private MeasurementsGeneratorService measurementsGeneratorService;
     
     @Resource
-    private MeasurementsGeneratorService measurementsGeneratorService;
+    private ResourceBundleMessageSource messageSource;
     
     @Override
     public String getContentName() {
@@ -68,29 +72,36 @@ public class SaveNurseryController extends AbstractBaseFieldbookController{
     	return super.show(model);
     }
 
+    
     @RequestMapping(method = RequestMethod.POST)
-    public String saveNursery(@ModelAttribute("saveNurseryForm") SaveNurseryForm form, BindingResult result, Model model) {
+    public @ResponseBody Map<String, String> saveNursery(@RequestParam String title, @RequestParam String objective,
+            @RequestParam String nurseryBookName) {
     	
+        Map<String, String> resultMap = new HashMap<String, String>();
+        
         Workbook workbook = getWorkbook();
     	
-    	saveNurseryValidator.validate(form, result);
+        String errorMessages = validate(title, objective, nurseryBookName);
     	
-    	if (result.hasErrors()) {
-    		return super.show(model);
-    	}
-    	
-    	try {
-    	    setStudyDetails(form, workbook);
+        if (errorMessages != null) {
+            resultMap.put("status", "-1");
+            resultMap.put("errorMessage", errorMessages);
+            return resultMap;
+        }
+
+        try {
+    	    setStudyDetails(title, objective, nurseryBookName, workbook);
     	    
     		dataImportService.saveDataset(workbook);
+    		resultMap.put("status", "1");
     	
-    	} catch(MiddlewareQueryException e) {
+    	} catch(Exception e) {
     		LOG.error(e.getMessage());
-    		result.reject("error.savenursery.failed");
-    		return super.show(model);
+    		resultMap.put("status", "-1");
+    		resultMap.put("errorMessage", e.getMessage());
     	}
     	
-        return "redirect:" + SuccessfulController.URL;
+    	return resultMap;
     }
     
     private Workbook getWorkbook() {
@@ -114,14 +125,36 @@ public class SaveNurseryController extends AbstractBaseFieldbookController{
         return workbook;
     }
     
-    public void setStudyDetails(SaveNurseryForm form, Workbook workbook) {
+    private String validate(String title, String objective, String nurseryBookName) {
+        StringBuilder errorMessages = null;
+        StringBuilder requiredFields = null;
+        if (StringUtils.isBlank(title)) {
+            requiredFields = requiredFields == null ? new StringBuilder() : requiredFields.append(", ");
+            requiredFields.append(messageSource.getMessage("nursery.savenursery.title", null, null));
+        }
+        if (StringUtils.isBlank(objective)) {
+            requiredFields = requiredFields == null ? new StringBuilder() : requiredFields.append(", ");
+            requiredFields.append(messageSource.getMessage("nursery.savenursery.objective", null, null));
+        }
+        if (StringUtils.isBlank(nurseryBookName)) {
+            requiredFields = requiredFields == null ? new StringBuilder() : requiredFields.append(", ");
+            requiredFields.append(messageSource.getMessage("nursery.savenursery.nurseryBookName", null, null));
+        }
+        if (requiredFields != null) {
+            errorMessages = errorMessages == null ? new StringBuilder() : errorMessages.append("<br />");
+            errorMessages.append(messageSource.getMessage("error.mandatory.field", new String[] {requiredFields.toString()}, null));
+        }
+        return errorMessages != null ? errorMessages.toString() : null;
+    }
+
+    public void setStudyDetails(String title, String objective, String nurseryBookName, Workbook workbook) {
         if (workbook.getStudyDetails() == null) {
             workbook.setStudyDetails(new StudyDetails());
         }
         StudyDetails studyDetails = workbook.getStudyDetails();
-        studyDetails.setTitle(form.getTitle());
-        studyDetails.setObjective(form.getObjective());
-        studyDetails.setStudyName(form.getNurseryBookName());
+        studyDetails.setTitle(title);
+        studyDetails.setObjective(objective);
+        studyDetails.setStudyName(nurseryBookName);
         studyDetails.setStudyType(StudyType.N);
         
         //TODO: save parent id, currently not implemented yet in UI

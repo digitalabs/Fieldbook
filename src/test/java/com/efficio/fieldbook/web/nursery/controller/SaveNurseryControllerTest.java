@@ -86,7 +86,7 @@ public class SaveNurseryControllerTest extends AbstractJUnit4SpringContextTests 
 		
 		Workbook workbook = new Workbook();
 		
-		controller.setStudyDetails(form, workbook);
+		controller.setStudyDetails(title, objective, name, workbook);
 		
 		Assert.assertNotNull(workbook.getStudyDetails());
 		StudyDetails studyDetails = workbook.getStudyDetails();

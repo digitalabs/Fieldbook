@@ -99,6 +99,12 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
             assertEquals(mainInfo.getImportedGermplasmList().getImportedFactors().get(1).getFactor(), "DESIGNATION");
             assertEquals(mainInfo.isAdvanceImportType(), false);
             assertEquals(mainInfo.getFileIsValid(), true);
+            //we check the parse data here
+            assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryId(), new Integer(1));
+            assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getDesig(), "IR 68835-58-1-1-B");
+            
+            assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(19).getEntryId(), new Integer(20));
+            assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(19).getDesig(), "IR 67632-14-2-5-1-2-B");
         }
         
         @Test
@@ -123,6 +129,20 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
             assertEquals(mainInfo.getImportedGermplasmList().getImportedFactors().get(5).getFactor(), "ENTRY CODE");
             assertEquals(mainInfo.isAdvanceImportType(), true);
             assertEquals(mainInfo.getFileIsValid(), true);
+            //test the parsing
+            assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryId(), new Integer(1));
+            assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getDesig(), "IR 68201-21-2-B-4-B-B");
+            assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getGid(), "1");
+            assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getCross(), "1");
+            assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getSource(), "1");
+            assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryCode(), "1");
+            
+            assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getEntryId(), new Integer(2));
+            assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getDesig(), "IR 67632-14-2-5-1-2-B");
+            assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getGid(), "2");
+            assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getCross(), "2");
+            assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getSource(), "2");
+            assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getEntryCode(), "2");
         }
       
         

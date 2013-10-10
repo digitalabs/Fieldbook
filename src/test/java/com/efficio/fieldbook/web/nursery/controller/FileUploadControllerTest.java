@@ -61,6 +61,7 @@ public class FileUploadControllerTest extends AbstractJUnit4SpringContextTests {
 	FileUploadFormValidator validator;
 	
 	private static final String fileName = "Population114_Pheno_FB_1.xls";
+	private static final String fileNameXLSX = "Population114_Pheno_FB_1.xlsx";
 	
 	@Before
         public void setUp() {
@@ -76,12 +77,35 @@ public class FileUploadControllerTest extends AbstractJUnit4SpringContextTests {
         }
 	
 	@Test
-        public void testValidFile() throws Exception{
+        public void testValidFileXLS() throws Exception{
 		
     	// Get the file
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
             String tempFileName = fieldbookService.storeUserWorkbook(inputStream);
             userSelection.setActualFileName(fileName);
+            userSelection.setServerFileName(tempFileName);
+    
+            // Parse the file to create Workbook
+            File file = fileService.retrieveCurrentWorkbookAsFile(userSelection);
+            Workbook datasetWorkbook = dataImportService.parseWorkbook(file);
+            StudyDetails studyDetails = datasetWorkbook.getStudyDetails();
+            
+            assertEquals(studyDetails.getStudyName().toString(), "pheno_t7");
+            assertEquals(studyDetails.getTitle().toString(), "Phenotyping trials of the Population 114");
+            assertEquals(studyDetails.getObjective().toString(), "To evaluate the Population 114");
+            assertEquals(studyDetails.getPmKey().toString(), "0");
+            assertEquals(studyDetails.getStartDate().toString(), "20130805");
+            assertEquals(studyDetails.getEndDate().toString(), "20130805");
+            assertEquals(studyDetails.getStudyType().toString(), "T");
+        }
+	
+	@Test
+        public void testValidFileXLSX() throws Exception{
+                
+        // Get the file
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileNameXLSX);
+            String tempFileName = fieldbookService.storeUserWorkbook(inputStream);
+            userSelection.setActualFileName(fileNameXLSX);
             userSelection.setServerFileName(tempFileName);
     
             // Parse the file to create Workbook

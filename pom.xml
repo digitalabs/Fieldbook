@@ -241,14 +241,14 @@
 				</property>
 			</activation>
 			<build>
-				<pluginManagement>
+				
 				<plugins>
 					<plugin>
 						<artifactId>maven-antrun-plugin</artifactId>
 						<version>1.7</version>
 						<executions>
 							<execution>
-								<phase>generate-resources</phase>
+								<phase>generate-resources</phase> 
 								<configuration>
 									<tasks>
 										<!-- Please do not change this : run mvn as mvn clean install -DenvConfig=dev
@@ -268,7 +268,6 @@
 						</executions>
 					</plugin>
 				</plugins>
-				</pluginManagement>
 			</build>
 		</profile>
 

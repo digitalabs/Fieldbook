@@ -25,7 +25,8 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 public interface ImportGermplasmFileService {
 	
 	/**
-	 * Takes in an input stream representing the Excel file to be read, and returns the temporary file name used to store it in the system.
+	 * Takes in an MultipartFile that was uploaded by the user, 
+	 * and returns the ImportedGermplasmMainInfo for the information needed.
 	 *
 	 * @param multipartFile the multipart file
 	 * @return the imported germplasm main info

@@ -14,13 +14,10 @@ package com.efficio.fieldbook.web.nursery.controller;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.InputStream;
-
-import javax.servlet.http.HttpSession;
 
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -29,11 +26,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -61,10 +56,9 @@ public class FileUploadControllerTest extends AbstractJUnit4SpringContextTests {
 	private FileUploadController controller;
 	private FileUploadForm form;
 	private BindingResult result;
-	private Model model;
 	private MultipartFile file;
-	private HttpSession session;
 	private UserSelection userSelection;
+	FileUploadFormValidator validator;
 	
 	private static final String fileName = "Population114_Pheno_FB_1.xls";
 	
@@ -72,10 +66,9 @@ public class FileUploadControllerTest extends AbstractJUnit4SpringContextTests {
         public void setUp() {
 	    controller = new FileUploadController();
 	    form = new FileUploadForm();
+	    validator = new FileUploadFormValidator();
 	    result = createMock(BindingResult.class);
-            model = createMock(Model.class);
             file = createMock(MultipartFile.class);
-            session = new MockHttpSession();
             
             form.setFile(file);
             userSelection = new UserSelection();     
@@ -114,12 +107,9 @@ public class FileUploadControllerTest extends AbstractJUnit4SpringContextTests {
             expect(result.hasErrors()).andReturn(true);
             replay(result);
     
-            String navigationResult = controller.uploadFile(form, result, model, session);
-    
-            // verify if the expected methods in the mock object were called
-            verify(result);
-    
-            assertNotSame("redirect:" + NurseryDetailsController.URL, navigationResult);
+            validator.validate(form, result);
+
+            assertTrue(result.hasErrors());
         }
 
 	@Test
@@ -132,11 +122,7 @@ public class FileUploadControllerTest extends AbstractJUnit4SpringContextTests {
             
             replay(result, file);
             
-            String navigationResult = controller.uploadFile(form, result, model, session);
-    
-            // verify if the expected methods in the mock object were called
-            verify(result, file);
-    
-            assertNotSame("redirect:" + NurseryDetailsController.URL, navigationResult);
+            validator.validate(form, result);
+            assertTrue(result.hasErrors());
         }
 }

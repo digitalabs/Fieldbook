@@ -185,6 +185,9 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
             assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(19).getDesig(), "IR 67632-14-2-5-1-2-B");
         }
         
+        /**
+         * Test valid advance parse import gerplasm xlsx.
+         */
         @Test
         public void testValidAdvanceParseImportGerplasmXlsx(){
             ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();

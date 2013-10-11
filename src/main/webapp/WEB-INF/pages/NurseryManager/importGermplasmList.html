@@ -20,7 +20,7 @@
     th:action="@{/NurseryManager/importGermplasmList}" method="post" th:object="${importGermplasmListForm}" enctype="multipart/form-data">
     <div class="row">
       <div class="col-md-4">
-        <a data-toggle="modal" href="#myModal" class="" th:text="#{import.germplasm.list}">Import File</a>
+        <a data-toggle="modal" href="#myModal" class="" th:text="#{nursery.import.germplasm.list}">Import File</a>
       </div>
       <div class="col-md-8">
         <!-- Show the table here -->						
@@ -100,7 +100,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title">Import Gemplasm List</h4>
+            <h4 class="modal-title" th:text="#{nursery.import.germplasm.list}">Import Gemplasm List</h4>
           </div>
           <div class="modal-body">
             <div class="form-group" id="page-message"></div>
@@ -109,7 +109,7 @@
               
               <div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
               
-              <label for="fileupload" class="col-md-2 control-label" th:text="#{import.germplasm.select.file}">Select a file</label>
+              <label for="fileupload" class="col-md-2 control-label" th:text="#{nursery.import.germplasm.select.file}">Select a file</label>
               <div class="col-lg-6">
                 
                 <div class="fileupload fileupload-new" data-provides="fileupload">							    
@@ -119,10 +119,10 @@
                 </div>
                 <div class="input-group-btn">
                   <a class="btn btn-primary btn-file">
-                    <span class="fileupload-new">Select file</span>
-                    <span class="fileupload-exists">Change</span>
+                    <span class="fileupload-new" th:text="#{nursery.import.germplasm.select.file}">Select file</span>
+                    <span class="fileupload-exists" th:text="#{nursery.import.germplasm.change}">Change</span>
                     <input id="fileupload" th:field="*{file}" type="file" class="file-input"/></a>
-                    <a href="#" class="btn btn-danger fileupload-exists" data-dismiss="fileupload">Remove</a>
+                    <a href="#" class="btn btn-danger fileupload-exists" data-dismiss="fileupload" th:text="#{nursery.import.germplasm.remove}">Remove</a>
                   </div>
                 </div>
               </div>
@@ -130,7 +130,7 @@
           </div>																							
         </div>
         <div class="modal-footer">
-          <button type="submit" th:value="#{form.submit.text}" class="btn btn-primary">Submit</button>			        	
+          <button type="submit" th:value="#{form.submit.text}" class="btn btn-primary" th:text="#{nursery.import.germplasm.submit}">Submit</button>			        	
         </div>
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->

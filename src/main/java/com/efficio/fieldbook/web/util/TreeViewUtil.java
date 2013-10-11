@@ -18,7 +18,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.DatasetReference;
 import org.generationcp.middleware.domain.dms.FolderReference;
 import org.generationcp.middleware.domain.dms.Reference;
-import org.generationcp.middleware.domain.dms.StudyReference;
 
 import com.efficio.pojos.treeview.TreeNode;
 
@@ -34,6 +33,11 @@ public class TreeViewUtil {
 		return convertTreeViewToJson(treeNodes);
 	}
 	
+    public static String convertDatasetReferencesToJson(List<DatasetReference> references) throws Exception {
+        List<TreeNode> treeNodes = convertDatasetReferencesToTreeView(references);
+        return convertTreeViewToJson(treeNodes);
+    }
+    
 	private static List<TreeNode> convertReferencesToTreeView(List<Reference> references) {
 		List<TreeNode> treeNodes = null;
 		if (references != null && references.size() > 0) {
@@ -55,6 +59,17 @@ public class TreeViewUtil {
 		}
 		return treeNodes;
 	}
+
+    private static List<TreeNode> convertDatasetReferencesToTreeView(List<DatasetReference> references) {
+        List<TreeNode> treeNodes = null;
+        if (references != null && references.size() > 0) {
+            treeNodes = new ArrayList<TreeNode>();
+            for (DatasetReference reference : references) {
+                treeNodes.add(convertReferenceToTreeNode(reference));
+            }
+        }
+        return treeNodes;
+    }
 
 	private static TreeNode convertReferenceToTreeNode(Reference reference) {
 		TreeNode treeNode = new TreeNode();

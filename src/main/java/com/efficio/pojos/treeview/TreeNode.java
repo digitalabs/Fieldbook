@@ -11,8 +11,6 @@ public class TreeNode {
 	
 	private boolean isLazy;
 	
-	private String addClass;
-	
 	public boolean getIsLazy() {
 		return isLazy;
 	}
@@ -44,13 +42,5 @@ public class TreeNode {
 	public void setIsFolder(boolean isFolder) {
 		this.isFolder = isFolder;
 	}
-
-    public String getAddClass() {
-        return addClass;
-    }
-
-    public void setAddClass(String addClass) {
-        this.addClass = addClass;
-    }
 
 }

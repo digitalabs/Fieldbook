@@ -13,6 +13,8 @@ package com.efficio.fieldbook.web.nursery.controller;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -36,7 +38,9 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 @Controller
 @RequestMapping(ImportGermplasmListController.URL)
 public class ImportGermplasmListController extends AbstractBaseFieldbookController{
-
+    
+    private static final Logger LOG = LoggerFactory.getLogger(ImportGermplasmListController.class);
+    
     /** The Constant URL. */
     public static final String URL = "/NurseryManager/importGermplasmList";
     
@@ -123,7 +127,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         			
         		}
         	}catch(Exception e){
-        		e.printStackTrace();
+                LOG.error(e.getMessage(), e);
         	}
         	
         	

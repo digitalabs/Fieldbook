@@ -17,6 +17,9 @@ import java.io.IOException;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.service.api.DataImportService;
+import org.generationcp.middleware.util.ExceptionUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -41,6 +44,9 @@ import javax.servlet.http.HttpSession;
 @RequestMapping({"/NurseryManager", FileUploadController.URL})
 public class FileUploadController extends AbstractBaseFieldbookController{
 
+    
+    private static final Logger LOG = LoggerFactory.getLogger(FileUploadController.class);
+    
     /** The Constant URL. */
     public static final String URL = "/NurseryManager/fileUpload";
     
@@ -108,10 +114,11 @@ public class FileUploadController extends AbstractBaseFieldbookController{
                 userSelection.setWorkbook(datasetWorkbook);
                 
             }catch (IOException e) {
-                e.printStackTrace();
+                LOG.error(e.getMessage(), e);
                 result.reject("uploadForm.file", "Error occurred while uploading file.");
             } catch(WorkbookParserException e){
-                e.printStackTrace();
+                LOG.error(e.getMessage(), e);
+                result.reject("uploadForm.file", "Error occurred while parsing file.");
             }
             
             return "redirect:" + NurseryDetailsController.URL;

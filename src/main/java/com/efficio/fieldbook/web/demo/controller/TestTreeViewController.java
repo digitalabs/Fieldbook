@@ -17,6 +17,7 @@ import org.generationcp.middleware.domain.dms.FolderReference;
 import org.generationcp.middleware.domain.dms.Reference;
 import org.generationcp.middleware.manager.Database;
 import org.generationcp.middleware.manager.api.StudyDataManager;
+import org.generationcp.middleware.util.Debug;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,7 @@ public class TestTreeViewController extends AbstractBaseFieldbookController {
 		try {
 			List<FolderReference> rootFolders = studyDataManager.getRootFolders(Database.LOCAL);
 			String jsonResponse = TreeViewUtil.convertFolderReferencesToJson(rootFolders);
-			System.out.println(jsonResponse);
+			LOG.debug(jsonResponse);
 			model.addAttribute("rootFolders", jsonResponse);
 		
 		} catch (Exception e) {

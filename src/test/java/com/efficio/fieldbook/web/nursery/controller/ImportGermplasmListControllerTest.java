@@ -20,6 +20,8 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
@@ -31,6 +33,8 @@ import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/Fieldbook-servlet.xml"})
 public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringContextTests {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(ImportGermplasmListControllerTest.class);
 
         @Autowired
         private ImportGermplasmFileService importGermplasmFileService;
@@ -70,7 +74,7 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
                 workbookInvalid = WorkbookFactory.create(inp);
                 
             }catch (Exception e) {
-                e.printStackTrace();
+                LOG.error(e.getMessage(), e);
             }
         }
         
@@ -83,7 +87,7 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
                 importGermplasmFileService.doProcessNow(workbookInvalid, mainInfo); 
                 assertEquals(mainInfo.getFileIsValid(), false);
             }catch (Exception e) {
-                e.printStackTrace();
+                LOG.error(e.getMessage(), e);
             }
             
                       
@@ -99,7 +103,7 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
                 
                 
             }catch (Exception e) {
-                e.printStackTrace();
+                LOG.error(e.getMessage(), e);
             }
             
             assertEquals(mainInfo.getListName(),"<Enter name for germplasm list>");
@@ -126,7 +130,7 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
                 importGermplasmFileService.doProcessNow(workbookAdvance, mainInfo); 
                 
             }catch (Exception e) {
-                e.printStackTrace();
+                LOG.error(e.getMessage(), e);
             }
             
             assertEquals(mainInfo.getListName(),"<Enter name for germplasm list>");
@@ -166,7 +170,7 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
                 
                 
             }catch (Exception e) {
-                e.printStackTrace();
+                LOG.error(e.getMessage(), e);
             }
             
             assertEquals(mainInfo.getListName(),"<Enter name for germplasm list>");
@@ -196,7 +200,7 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
                 importGermplasmFileService.doProcessNow(workbookAdvanceXlsx, mainInfo); 
                 
             }catch (Exception e) {
-                e.printStackTrace();
+                LOG.error(e.getMessage(), e);
             }
             
             assertEquals(mainInfo.getListName(),"<Enter name for germplasm list>");

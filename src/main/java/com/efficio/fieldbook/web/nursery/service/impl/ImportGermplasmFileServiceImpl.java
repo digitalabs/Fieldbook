@@ -28,6 +28,8 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.service.api.FileService;
@@ -48,6 +50,8 @@ import com.vaadin.data.Property.ReadOnlyException;
  */
 public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileService{
 	
+    private static final Logger LOG = LoggerFactory.getLogger(ImportGermplasmFileServiceImpl.class);
+    
     /** The file service. */
     @Resource
     private FileService fileService;
@@ -203,7 +207,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
             doProcessNow(wb, mainInfo);
 
         } catch (FileNotFoundException e) {
-            System.out.println("File not found");
+            LOG.error("File not found");
         } catch (IOException e) {
             showInvalidFileError(e.getMessage());
         } catch (ReadOnlyException e) {
@@ -213,7 +217,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
         } catch (OfficeXmlFileException e) {
             showInvalidFileError(e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
             showInvalidFileError(e.getMessage());
         } finally {
             if (fileIsValid == false) {
@@ -309,7 +313,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
             }
         if (entryColumnIsPresent == false || desigColumnIsPresent == false) {
             showInvalidFileError("ENTRY or DESIG column missing from Observation sheet.");
-            System.out.println("DEBUG | Invalid file on missing ENTRY or DESIG on readSheet2");
+            LOG.debug("Invalid file on missing ENTRY or DESIG on readSheet2");
         }
 
         if (entryColumnIsPresent == true && desigColumnIsPresent == true) {
@@ -322,7 +326,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
                 ;
             } else {
                 showInvalidFileError("CROSS or SOURCE or GID or ENTRY CODE column missing from Observation sheet.");
-                System.out.println("DEBUG | Invalid file on missing ENTRY or DESIG on readSheet2");
+                LOG.debug("Invalid file on missing ENTRY or DESIG on readSheet2");
             }
         }
 
@@ -331,44 +335,38 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
             currentRow++;
 
             while (!rowIsEmpty()) {
-                System.out.println("");
+                LOG.debug("");
                 importedGermplasm = new ImportedGermplasm();
                 for (int col = 0; col < importedGermplasmList.getImportedFactors().size(); col++) {
                     if (importedGermplasmList.getImportedFactors().get(col).getFactor().toUpperCase()
                             .equals(FACTOR_ENTRY)) {
                         importedGermplasm.setEntryId(Integer.valueOf(getCellStringValue(currentSheet, currentRow, col,
                                 true)));
-                        // System.out.println("DEBUG | ENTRY:"+getCellStringValue(currentSheet,
-                        // currentRow, col));
+                        // LOG.debug("ENTRY:"+getCellStringValue(currentSheet, currentRow, col));
                     } else if (importedGermplasmList.getImportedFactors().get(col).getFactor().toUpperCase()
                             .equals(FACTOR_DESIGNATION)) {
                         importedGermplasm.setDesig(getCellStringValue(currentSheet, currentRow, col, true));
-                        // System.out.println("DEBUG | DESIG:"+getCellStringValue(currentSheet,
-                        // currentRow, col));
+                        // LOG.debug("DESIG:"+getCellStringValue(currentSheet, currentRow, col));
                     } else if (importedGermplasmList.getImportedFactors().get(col).getFactor().toUpperCase()
                             .equals(FACTOR_GID)) {
                         importedGermplasm.setGid(getCellStringValue(currentSheet, currentRow, col, true));
-                        // System.out.println("DEBUG | DESIG:"+getCellStringValue(currentSheet,
-                        // currentRow, col));
+                        // LOG.debug("DESIG:"+getCellStringValue(currentSheet, currentRow, col));
                     } else if (importedGermplasmList.getImportedFactors().get(col).getFactor().toUpperCase()
                             .equals(FACTOR_CROSS)) {
                         importedGermplasm.setCross(getCellStringValue(currentSheet, currentRow, col, true));
-                        // System.out.println("DEBUG | DESIG:"+getCellStringValue(currentSheet,
-                        // currentRow, col));
+                        // LOG.debug("DESIG:"+getCellStringValue(currentSheet, currentRow, col));
                     } else if (importedGermplasmList.getImportedFactors().get(col).getFactor().toUpperCase()
                             .equals(FACTOR_SOURCE)) {
                         importedGermplasm.setSource(getCellStringValue(currentSheet, currentRow, col, true));
-                        // System.out.println("DEBUG | DESIG:"+getCellStringValue(currentSheet,
-                        // currentRow, col));
+                        // LOG.debug("DESIG:"+getCellStringValue(currentSheet, currentRow, col));
                     } else if (importedGermplasmList.getImportedFactors().get(col).getFactor().toUpperCase()
                             .equals(FACTOR_ENTRY_CODE)) {
                         importedGermplasm.setEntryCode(getCellStringValue(currentSheet, currentRow, col, true));
-                        // System.out.println("DEBUG | DESIG:"+getCellStringValue(currentSheet,
-                        // currentRow, col));
+                        // LOG.debug("DESIG:"+getCellStringValue(currentSheet, currentRow, col));
                     }
 
                     else {
-                        System.out.println("DEBUG | Unhandled Column - "
+                        LOG.debug("Unhandled Column - "
                                 + importedGermplasmList.getImportedFactors().get(col).getFactor().toUpperCase() + ":"
                                 + getCellStringValue(currentSheet, currentRow, col));
                     }
@@ -391,14 +389,14 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 
             importedGermplasmList = new ImportedGermplasmList(originalFilename, listName, listTitle, listType, listDate);
             /*
-             * System.out.println("DEBUG | Original Filename:" +
-             * originalFilename); System.out.println("DEBUG | List Name:" +
-             * listName); System.out.println("DEBUG | List Title:" + listTitle);
-             * System.out.println("DEBUG | List Type:" + listType);
-             * System.out.println("DEBUG | List Date:" + listDate);
+             * LOG.debug("Original Filename:" + originalFilename); 
+             * LOG.debug("List Name:" + listName); 
+             * LOG.debug("List Title:" + listTitle);
+             * LOG.debug("List Type:" + listType);
+             * LOG.debug("List Date:" + listDate);
              */
         } catch (ParseException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
 
         // Prepare for next set of data
@@ -427,8 +425,8 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
             ){
         	/*
             showInvalidFileError("Incorrect headers for conditions.");
-            System.out.println("DEBUG | Invalid file on readConditions header");
-            System.out.println(getCellStringValue(currentSheet,currentRow,0,true).toUpperCase());
+            LOG.debug("Invalid file on readConditions header");
+            LOG.debug("getCellStringValue(currentSheet,currentRow,0,true).toUpperCase());
             */
         	//for now we dont flag as an error
         	currentRow++; //Skip row from file info
@@ -473,7 +471,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
             //|| !getCellStringValue(currentSheet,currentRow,7,true).toUpperCase().equals("NESTED IN")
             ) {
             showInvalidFileError("Incorrect headers for factors.");
-            System.out.println("DEBUG | Invalid file on readFactors header");
+            LOG.debug("Invalid file on readFactors header");
         }
         //If file is still valid (after checking headers), proceed
         if(fileIsValid){
@@ -497,16 +495,16 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
                         ,"");
                    importedGermplasmList.addImportedFactor(importedFactor);
                 /*
-                System.out.println("");
-                System.out.println("DEBUG | Factor:"+getCellStringValue(currentSheet,currentRow,0));
-                System.out.println("DEBUG | Description:"+getCellStringValue(currentSheet,currentRow,1));
-                System.out.println("DEBUG | Property:"+getCellStringValue(currentSheet,currentRow,2));
-                System.out.println("DEBUG | Scale:"+getCellStringValue(currentSheet,currentRow,3));
-                System.out.println("DEBUG | Method:"+getCellStringValue(currentSheet,currentRow,4));
-                System.out.println("DEBUG | Data Type:"+getCellStringValue(currentSheet,currentRow,5));
+                LOG.debug("");
+                LOG.debug("Factor:"+getCellStringValue(currentSheet,currentRow,0));
+                LOG.debug("Description:"+getCellStringValue(currentSheet,currentRow,1));
+                LOG.debug("Property:"+getCellStringValue(currentSheet,currentRow,2));
+                LOG.debug("Scale:"+getCellStringValue(currentSheet,currentRow,3));
+                LOG.debug("Method:"+getCellStringValue(currentSheet,currentRow,4));
+                LOG.debug("Data Type:"+getCellStringValue(currentSheet,currentRow,5));
                 */
-                //System.out.println("DEBUG | Value:"+getCellStringValue(currentSheet,currentRow,6));
-                //System.out.println("DEBUG | Label:"+getCellStringValue(currentSheet,currentRow,7));
+                //LOG.debug("Value:"+getCellStringValue(currentSheet,currentRow,6));
+                //LOG.debug("Label:"+getCellStringValue(currentSheet,currentRow,7));
                 //
                 //Check if the current factor is ENTRY or DESIG
                 if(importedFactor.getFactor().toUpperCase().equals(FACTOR_ENTRY)){
@@ -522,7 +520,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
         //If ENTRY or DESIG is not present on Factors, return error
         if(entryColumnIsPresent == false || desigColumnIsPresent == false){
             showInvalidFileError("There is no ENTRY or DESIG factor.");
-            System.out.println("DEBUG | Invalid file on missing ENTRY or DESIG on readFactors");
+            LOG.debug("Invalid file on missing ENTRY or DESIG on readFactors");
         }
     }
     
@@ -539,7 +537,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
             || !getCellStringValue(currentSheet,currentRow,5,true).toUpperCase().equals("DATA TYPE")
             || !getCellStringValue(currentSheet,currentRow,6,true).toUpperCase().equals("VALUE")) {
             showInvalidFileError("Incorrect headers for constants.");
-            //System.out.println("DEBUG | Invalid file on readConstants header");
+            //LOG.debug("Invalid file on readConstants header");
         }
         //If file is still valid (after checking headers), proceed
         if(fileIsValid){
@@ -572,7 +570,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
             || !getCellStringValue(currentSheet,currentRow,4,true).toUpperCase().equals("METHOD")
             || !getCellStringValue(currentSheet,currentRow,5,true).toUpperCase().equals("DATA TYPE")) {
             showInvalidFileError("Incorrect headers for variates.");
-            //System.out.println("DEBUG | Invalid file on readVariates header");
+            //LOG.debug("Invalid file on readVariates header");
         }
         //If file is still valid (after checking headers), proceed
         if(fileIsValid){

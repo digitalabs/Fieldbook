@@ -21,6 +21,9 @@ import com.efficio.fieldbook.web.demo.validation.TestValidator;
 
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.GermplasmDataManager;
+import org.generationcp.middleware.util.Debug;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -36,6 +39,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping({"/testTable"})
 public class TestTableController extends AbstractBaseFieldbookController{
 	
+    private static final Logger LOG = LoggerFactory.getLogger(TestTableController.class);
+    
     /** The germplasm data manager. */
     @Resource
     private GermplasmDataManager germplasmDataManager;
@@ -59,13 +64,12 @@ public class TestTableController extends AbstractBaseFieldbookController{
     public String show(@ModelAttribute("test2JavaForm") Test2JavaForm testForm,  Model model) {
 
         try {
-            System.out.println(testJavaBean.getName());
+            LOG.debug(testJavaBean.getName());
             testForm.setLocationList(germplasmDataManager
                     .getAllBreedingLocations());
             testForm.setMethodList(germplasmDataManager.getAllMethods());
-
         } catch (MiddlewareQueryException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
     	return super.show(model);
     }

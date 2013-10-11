@@ -22,6 +22,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanInitializationException;
 
 import com.efficio.fieldbook.service.api.FileService;
@@ -30,6 +32,8 @@ import com.efficio.fieldbook.service.api.FileService;
  * The Class FileServiceImpl.
  */
 public class FileServiceImpl implements FileService{
+    
+    private static final Logger LOG = LoggerFactory.getLogger(FileServiceImpl.class);
 
     /** The upload directory. */
     private String uploadDirectory;
@@ -104,10 +108,9 @@ public class FileServiceImpl implements FileService{
 
         try {
             Workbook workbook = WorkbookFactory.create(is);
-
             return workbook;
         } catch (InvalidFormatException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            LOG.error(e.getMessage(), e);
             return null;
         } finally {
             IOUtils.closeQuietly(is);

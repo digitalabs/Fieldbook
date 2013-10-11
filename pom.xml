@@ -118,7 +118,6 @@
 			<artifactId>poi-ooxml-schemas</artifactId>
 			<version>3.8</version>
 		</dependency>
-		<!-- Logging -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
@@ -127,8 +126,9 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.7</version>
 		</dependency>
+		<!-- Logging -->
 		<!-- JUnit Dependency for Testing -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -241,7 +241,7 @@
 				</property>
 			</activation>
 			<build>
-				
+				<pluginManagement>
 				<plugins>
 					<plugin>
 						<artifactId>maven-antrun-plugin</artifactId>
@@ -268,6 +268,7 @@
 						</executions>
 					</plugin>
 				</plugins>
+				</pluginManagement>
 			</build>
 		</profile>
 

@@ -21,6 +21,8 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.demo.form.Test3JavaForm;
 import com.efficio.fieldbook.web.demo.bean.UserSelection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -35,6 +37,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping({"/test3"})
 public class Test3Controller extends AbstractBaseFieldbookController{
 	
+    private static final Logger LOG = LoggerFactory.getLogger(Test3Controller.class);
+    
     /** The user selection. */
     @Resource
     private UserSelection userSelection;
@@ -79,7 +83,7 @@ public class Test3Controller extends AbstractBaseFieldbookController{
                 String tempFileName = fieldbookService.storeUserWorkbook(uploadForm.getFile().getInputStream());
                 uploadForm.setFileName(tempFileName);
             } catch (IOException e) {
-                e.printStackTrace();
+                LOG.error(e.getMessage(), e);
                 result.reject("uploadForm.file", "Error occurred while uploading file.");
             }
 

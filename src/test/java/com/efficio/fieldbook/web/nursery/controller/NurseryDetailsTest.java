@@ -24,6 +24,8 @@ import org.generationcp.middleware.service.api.DataImportService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
@@ -36,6 +38,8 @@ import com.efficio.fieldbook.web.nursery.service.ImportWorkbookFileService;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/Fieldbook-servlet.xml"})
 public class NurseryDetailsTest extends AbstractJUnit4SpringContextTests {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(NurseryDetailsTest.class);
     
     @Autowired
     ImportWorkbookFileService fileService;
@@ -83,13 +87,13 @@ public class NurseryDetailsTest extends AbstractJUnit4SpringContextTests {
         assertTrue(workbook.getVariates() != null && workbook.getVariates().size() > 0);
         
         // Output the nursery details
-        System.out.println("========== CONDITIONS ==========");
+        LOG.debug("========== CONDITIONS ==========");
         printMeasurementVariables(workbook.getConditions(), 4);
-        System.out.println("========== FACTORS ==========");
+        LOG.debug("========== FACTORS ==========");
         printMeasurementVariables(workbook.getFactors(), 4);
-        System.out.println("========== CONSTANTS ==========");
+        LOG.debug("========== CONSTANTS ==========");
         printMeasurementVariables(workbook.getConstants(), 4);
-        System.out.println("========== VARIATES ==========");
+        LOG.debug("========== VARIATES ==========");
         printMeasurementVariables(workbook.getVariates(), 4);
     }
     

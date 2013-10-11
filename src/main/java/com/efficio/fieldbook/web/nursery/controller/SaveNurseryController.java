@@ -107,8 +107,9 @@ public class SaveNurseryController extends AbstractBaseFieldbookController{
      * @param nurseryBookName the nursery book name
      * @return the map
      */
+    @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
-    public @ResponseBody Map<String, String> saveNursery(@RequestParam String title, @RequestParam String objective,
+    public Map<String, String> saveNursery(@RequestParam String title, @RequestParam String objective,
             @RequestParam String nurseryBookName) {
     	
         Map<String, String> resultMap = new HashMap<String, String>();

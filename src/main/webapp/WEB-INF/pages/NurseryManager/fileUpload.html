@@ -1,7 +1,7 @@
 <div class="col-md-12" xmlns:th="http://www.thymeleaf.org">
 	<div class="page-header">
-		<h1>
-			Upload a Nursery Template Excel File
+		<h1 th:text="#{nursery.fileupload.template.file}">
+			Upload a Template Excel File
 		</h1>
 	</div>
 	
@@ -14,7 +14,7 @@
 	<form role="form-horizontal" onsubmit="return do_validation()" class="form-horizontal" action="#" th:action="@{/NurseryManager/fileUpload}" method="post" th:object="${fileUploadForm}" enctype="multipart/form-data">
 		<div class="form-group">
 			<div class="col-md-12">
-				<label for="fileupload" class="control-label">Select Nursery Template File:</label>
+				<label for="fileupload" class="control-label" th:text="#{nursery.fileupload.select.template.file}">Select File:</label>
 			</div>
 		</div>		
 		<div th:class="${#fields.hasErrors('file')} ? 'form-group has-error' : 'form-group'">
@@ -26,10 +26,10 @@
 			            </div>
 			            <div class="input-group-btn">
 			                <a class="btn btn-primary btn-file">
-			                    <span class="fileupload-new">Select file</span>
-			                    <span class="fileupload-exists">Change</span>
+			                    <span class="fileupload-new" th:text="#{nursery.fileupload.select.file}">Select</span>
+			                    <span class="fileupload-exists" th:text="#{nursery.fileupload.change.file}">Change</span>
 			                    <input id="fileupload" th:field="*{file}" type="file" class="file-input"/></a>
-			                <a href="#" class="btn btn-danger fileupload-exists" data-dismiss="fileupload">Remove</a>
+			                <a href="#" class="btn btn-danger fileupload-exists" data-dismiss="fileupload" th:text="#{nursery.fileupload.remove.file}">Remove</a>
 			            </div>
 			        </div>
 			    </div>

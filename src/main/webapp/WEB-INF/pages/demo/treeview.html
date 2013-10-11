@@ -1,7 +1,7 @@
 <div class="col-md-12" xmlns:th="http://www.thymeleaf.org">
 	<div class="page-header">
 		<h1>
-			Test Tree View
+			Test Tree View new1
 		</h1>				
 	</div>
 	
@@ -18,8 +18,10 @@
 		$("#studyTree").dynatree({
 			title: "study tree",
 			checkbox: false,
-			noLink: true,
+			noLink: false,
 			children: jsonObj,
+			imagePath: "../img/",
+			clickFolderMode: 2,
 			onLazyRead: function(node) {
 				node.appendAjax({
 					url: "expandtree" + "?parentId=" + node.data.key,
@@ -33,10 +35,17 @@
 					cache: false
 				});
 			},
-			classNames : {
-				container: "list-unstyled",
-				folder: "glyphicon glyphicon-folder-close dynatree-folder",
-				expanded: "glyphicon glyphicon-folder-open dynatree-expanded"
+			onExpand: function(flag, node) {
+				//alert('onExpand ' + flag);
+			},
+			onActivate: function(node) {
+				//alert('onActivate ' + node.data.title);
+			},
+			onDeactivate: function(node) {
+				//alert('onDeactivate ' + node.data.title);
+			},
+			classNames: {
+				nodeIcon: "glyphicon glyphicon-folder-close"
 			}
 		});
 	});

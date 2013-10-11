@@ -18,6 +18,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.DatasetReference;
 import org.generationcp.middleware.domain.dms.FolderReference;
 import org.generationcp.middleware.domain.dms.Reference;
+import org.generationcp.middleware.domain.dms.StudyReference;
 
 import com.efficio.pojos.treeview.TreeNode;
 

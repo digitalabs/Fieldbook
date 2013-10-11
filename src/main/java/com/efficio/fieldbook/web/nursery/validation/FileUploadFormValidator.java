@@ -23,13 +23,13 @@ import com.efficio.fieldbook.web.nursery.form.FileUploadForm;
 public class FileUploadFormValidator implements Validator {
 
     /** The Constant FILE_NOT_FOUND_ERROR. */
-    public final static String FILE_NOT_FOUND_ERROR = "error.file.not.found";
+    public final static String FILE_NOT_FOUND_ERROR = "common.error.file.not.found";
     
     /** The Constant FILE_NOT_EXCEL_ERROR. */
-    public final static String FILE_NOT_EXCEL_ERROR = "error.file.not.excel";
+    public final static String FILE_NOT_EXCEL_ERROR = "common.error.file.not.excel";
     
     /** The Constant FILE_NOT_SELECTED. */
-    public final static String FILE_NOT_SELECTED = "error.file.no.file.selected";
+    public final static String FILE_NOT_SELECTED = "common.error.file.no.file.selected";
 
     /* (non-Javadoc)
      * @see org.springframework.validation.Validator#supports(java.lang.Class)

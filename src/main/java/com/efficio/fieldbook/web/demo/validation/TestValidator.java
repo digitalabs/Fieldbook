@@ -23,10 +23,10 @@ import com.efficio.fieldbook.web.demo.form.Test2JavaForm;
 public class TestValidator implements Validator {
 
     /** The Constant FILE_NOT_FOUND_ERROR. */
-    public final static String FILE_NOT_FOUND_ERROR = "error.file.not.found";
+    public final static String FILE_NOT_FOUND_ERROR = "common.error.file.not.found";
     
     /** The Constant FILE_NOT_EXCEL_ERROR. */
-    public final static String FILE_NOT_EXCEL_ERROR = "error.file.not.excel";
+    public final static String FILE_NOT_EXCEL_ERROR = "common.error.file.not.excel";
 
     /* (non-Javadoc)
      * @see org.springframework.validation.Validator#supports(java.lang.Class)

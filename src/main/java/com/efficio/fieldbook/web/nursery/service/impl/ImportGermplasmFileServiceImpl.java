@@ -102,10 +102,10 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
     private String serverFilename;
     
     /** The Constant FILE_INVALID. */
-    public final static String FILE_INVALID = "error.invalid.file";
+    public final static String FILE_INVALID = "common.error.invalid.file";
     
     /** The Constant FILE_TYPE_INVALID. */
-    public final static String FILE_TYPE_INVALID = "error.invalid.file.type";
+    public final static String FILE_TYPE_INVALID = "common.error.invalid.file.type";
         
     /** The Constant CONDITION_CONDITION. */
     private final static String CONDITION_CONDITION = "CONDITION";

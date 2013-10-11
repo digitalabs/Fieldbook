@@ -38,7 +38,7 @@
 		
 		<div class="form-group">
 			<div class="col-md-12">
-				<input type="submit" th:value="#{form.submit.text}" class="btn btn-primary btn-lg"/>
+				<input type="submit" th:value="#{common.form.submit.text}" class="btn btn-primary btn-lg"/>
 			</div>
 		</div>
 	
@@ -53,7 +53,7 @@
 		           
 		function do_validation() {
 			if ($('#fileupload').val() == "") {
-				var message = /*[[#{error.file.no.file.selected}]]*/;
+				var message = /*[[#{common.error.file.no.file.selected}]]*/;
 				
 				
 				$("#page-message").html(

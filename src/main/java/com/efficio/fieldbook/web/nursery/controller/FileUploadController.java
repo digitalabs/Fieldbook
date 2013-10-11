@@ -17,7 +17,6 @@ import java.io.IOException;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.service.api.DataImportService;
-import org.generationcp.middleware.util.ExceptionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;

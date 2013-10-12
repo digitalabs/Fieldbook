@@ -68,10 +68,12 @@ public class TestTreeViewController extends AbstractBaseFieldbookController {
 	@RequestMapping(value = "/expandTree", method = RequestMethod.GET)
 	public String expandFolder(@RequestParam int parentId) {
 		try {
+			//TODO: use a generic MW method that returns a List<Reference> instead of 
+			//several separate MW calls.
 			List<Reference> childNodes = studyDataManager.getChildrenOfFolder(parentId);
-			if (childNodes == null || childNodes.size() == 0) {
-			    childNodes = studyDataManager.getStudiesByFolder(parentId);
-			}
+//			if (childNodes == null || childNodes.size() == 0) {
+//			    childNodes = studyDataManager.getStudiesByFolder(parentId);
+//			}
             
 			if (childNodes == null || childNodes.size() == 0) {
                 List<DatasetReference> datasets = studyDataManager.getDatasetReferences(parentId);

@@ -144,8 +144,8 @@
 	</div>
 
 	<div class="form-group">
-		<div class="col-lg-offset-2 col-lg-10">
-			<input type="button" onclick="history.go(-1);" th:value="#{common.form.back.text}" class="btn btn-primary btn-lg" /> 
+		<div class="col-lg-offset-2 col-lg-10">			
+			<a href="/NurseryManager/fileUpload.html" th:href="@{/NurseryManager/}" class="btn btn-primary btn-lg" th:text="#{common.form.back.text}">.Back</a> 
 			<input type="submit" th:value="#{common.form.next.text}" class="btn btn-primary btn-lg" />
 		</div>
 	</div>

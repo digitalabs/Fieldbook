@@ -42,9 +42,11 @@ public class GermplasmTreeController{
 
         try {
             int count = (int) germplasmListManager.countAllGermplasmLists();
-            List<GermplasmList> germplasmLists = germplasmListManager.getAllGermplasmLists(0, count, Database.valueOf(dbInstance));
-            String jsonResponse = TreeViewUtil.convertGermplasmListToJson(germplasmLists);
-            return jsonResponse;
+            if (count > 0) {
+                List<GermplasmList> germplasmLists = germplasmListManager.getAllGermplasmLists(0, count, Database.valueOf(dbInstance));
+                String jsonResponse = TreeViewUtil.convertGermplasmListToJson(germplasmLists);
+                return jsonResponse;
+            }
             
         } catch(Exception e) {
             LOG.error(e.getMessage(), e);

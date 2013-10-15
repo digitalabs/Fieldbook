@@ -18,29 +18,17 @@
 			<h3 th:text="#{nursery.nurserydetails.nursery.level.header}">NURSERY-LEVEL DETAILS</h3>
 			<span th:text="#{nursery.nurserydetails.nursery.level.details}"></span>
 			<div th:if="*{workbook.conditions != null AND workbook.conditions.size() > 0}">
-
-				<table border="5" cellpadding="10" cellspacing="10">
-					<thead>
-					<tr>
-						<th>Condition</th>
-						<th>Description</th>
-						<th>Property</th>
-						<th>Scale</th>
-						<th>Method</th>
-						<th>Value</th>
-					</tr>
-					</thead>
-					<tbody>
-						<tr th:each="choice, rowStat : *{workbook.conditions}">
-							<td th:text="*{workbook.conditions[__${rowStat.index}__].name}">Name</td>
-							<td th:text="*{workbook.conditions[__${rowStat.index}__].description}">Description</td>
-							<td th:text="*{workbook.conditions[__${rowStat.index}__].property}">Property</td>
-							<td th:text="*{workbook.conditions[__${rowStat.index}__].scale}">Scale</td>
-							<td th:text="*{workbook.conditions[__${rowStat.index}__].method}">Method</td>
-							<td th:text="*{workbook.conditions[__${rowStat.index}__].value}">Value</td>
-						</tr>
-					</tbody>
-				</table>
+				<div th:each="choice, rowStat : *{workbook.conditions}">
+					<div class="form-group">
+						<div class="control-group">
+							<label class="col-lg-2 control-label" for="title"
+								th:text="*{workbook.conditions[__${rowStat.index}__].name}">Label</label>
+							<div class="col-lg-10">
+								<input type="text" class="form-control" th:field="*{values[__${rowStat.index}__]}" th:value="*{workbook.conditions[__${rowStat.index}__].value}" />
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

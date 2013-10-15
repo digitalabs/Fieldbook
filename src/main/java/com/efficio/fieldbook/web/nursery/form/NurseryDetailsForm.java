@@ -11,6 +11,8 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.form;
 
+import java.util.List;
+
 import org.generationcp.middleware.domain.etl.Workbook;
 
 /**
@@ -23,6 +25,8 @@ public class NurseryDetailsForm {
     
     /** The field layout random. */
     private boolean fieldLayoutRandom = true;
+    
+    private List<String> values;
        
     /**
      * Gets the workbook.
@@ -58,6 +62,20 @@ public class NurseryDetailsForm {
      */
     public void setFieldLayoutRandom(boolean fieldLayoutRandom) {
         this.fieldLayoutRandom = fieldLayoutRandom;
+    }
+
+    /**
+     * @return the values
+     */
+    public List<String> getValues() {
+        return values;
+    }
+
+    /**
+     * @param values the values to set
+     */
+    public void setValues(List<String> values) {
+        this.values = values;
     }
     
 }

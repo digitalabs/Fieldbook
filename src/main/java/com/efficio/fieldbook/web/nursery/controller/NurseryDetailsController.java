@@ -11,9 +11,13 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,7 +36,7 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 @Controller
 @RequestMapping(NurseryDetailsController.URL)
 public class NurseryDetailsController extends AbstractBaseFieldbookController{
-
+    
     /** The Constant URL. */
     public static final String URL = "/NurseryManager/nurseryDetails";
     
@@ -81,6 +85,15 @@ public class NurseryDetailsController extends AbstractBaseFieldbookController{
             result.reject("form.workbook", "Error occurred while parsing file.");
             userSelection.setWorkbook(new Workbook());
         }
+        
+        // Get the values of conditions from Workbook
+        List<MeasurementVariable> conditions = userSelection.getWorkbook().getConditions();
+        List<String> values = new ArrayList<String>();
+        for (MeasurementVariable condition : conditions){
+            values.add(condition.getValue());
+        }
+        form.setValues(values);
+        
         form.setWorkbook(userSelection.getWorkbook());
     	return super.show(model);
     }
@@ -96,6 +109,17 @@ public class NurseryDetailsController extends AbstractBaseFieldbookController{
     @RequestMapping(method = RequestMethod.POST)
     public String submitDetails(@ModelAttribute("nurseryDetailsForm") NurseryDetailsForm form, BindingResult result, Model model) {
         userSelection.setFieldLayoutRandom(form.getFieldLayoutRandom());
+        
+        // Set the values of conditions
+        List<String> values = form.getValues();
+        Workbook workbook = userSelection.getWorkbook();
+        List<MeasurementVariable> conditions = workbook.getConditions();
+        for (MeasurementVariable condition : conditions){
+            condition.setValue(values.get(conditions.indexOf(condition)));
+        }
+        workbook.setConditions(conditions);
+        userSelection.setWorkbook(workbook);
+
         return "redirect:" + ImportGermplasmListController.URL;
     }
 

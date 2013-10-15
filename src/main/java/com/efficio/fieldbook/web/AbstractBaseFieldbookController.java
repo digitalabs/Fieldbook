@@ -38,6 +38,11 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
 
     public abstract String getContentName();
     
+    private void setupModelInfo(Model model){
+        
+        model.addAttribute(GIT_INFO_ATTRIBUTE, gitRepositoryState);
+    }
+    
     /**
      * Base functionality for displaying the page.
      *
@@ -45,9 +50,21 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
      * @return
      */
     public String show(Model model) {
+        setupModelInfo(model);
         model.addAttribute(TEMPLATE_NAME_ATTRIBUTE, getContentName());
-        model.addAttribute(GIT_INFO_ATTRIBUTE, gitRepositoryState);
         return BASE_TEMPLATE_NAME;
+    }
+    
+    /**
+     * Base functionality for displaying the page.
+     *
+     * @param model
+     * @return
+     */
+    public String showAjaxPage(Model model, String ajaxPage) {
+        setupModelInfo(model);
+        //model.addAttribute(TEMPLATE_NAME_ATTRIBUTE, getContentName());        
+        return ajaxPage;
     }
     
 

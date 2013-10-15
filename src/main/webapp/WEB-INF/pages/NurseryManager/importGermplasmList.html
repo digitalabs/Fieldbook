@@ -132,37 +132,25 @@
 <!-- For pagination -->
 <script type="text/javascript" th:src="@{/static/js/bootstrap-paginator.min.js}"></script>
 <script type='text/javascript' th:inline="javascript">
-	//<![CDATA[    
+	//<![CDATA[
+        var paginationUrl = /*[[@{/NurseryManager/importGermplasmList/page/}]]*/;
         var options = {
             currentPage: /*[[${importGermplasmListForm.currentPage}]]*/,
             totalPages: /*[[${importGermplasmListForm.totalPages}]]*/,
             //size:'small',
             alignment:'center',
             useBootstrapTooltip:true,
-            onPageClicked: function(e,originalEvent,type,page){
-            	showGermplasmPage(page)
+            onPageClicked: function(e,originalEvent,type,page){            	
+            	showPage(paginationUrl, page, 'imported-germplasm-list');
                 //alert("Page item clicked, type: "+type+" page: "+page);
             }
         }
-        var paginationUrl = /*[[@{/NurseryManager/importGermplasmList/page/}]]*/;
+        
 		if($('#germplasm-list-pagination') != null){
 			$('#germplasm-list-pagination').bootstrapPaginator(options);	
 		}
         
-        function showGermplasmPage(pageNum){
-       		//$('#imported-germplasm-list').html(pageNum); 	
-       		Spinner.toggle();
-       	 	$.ajax(
-                 { url: paginationUrl+pageNum,
-                   type: "GET",
-                   data: "",
-                   success: function(html) {
-                     $("#imported-germplasm-list").empty().append(html);
-                     Spinner.toggle();  
-                   }
-                 }
-               );
-        }
+        
       //]]>
     </script>
 </div>

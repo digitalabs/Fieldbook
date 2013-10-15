@@ -19,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -43,6 +44,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     
     /** The Constant URL. */
     public static final String URL = "/NurseryManager/importGermplasmList";
+    public static final String PAGINATION_TEMPLATE = "/NurseryManager/showGermplasmPagination";
     
     /** The user selection. */
     @Resource
@@ -81,8 +83,28 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         if(getUserSelection().getImportedGermplasmMainInfo() != null && getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList() != null){
             //this would be use to display the imported germplasm info
             form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+            form.setCurrentPage(1);
         }
     	return super.show(model);
+    }
+    
+    /**
+     * Get for the pagination of the list
+     *
+     * @param form the form
+     * @param model the model
+     * @return the string
+     */
+    @RequestMapping(value="/page/{pageNum}", method = RequestMethod.GET)
+    public String getPaginatedList(@PathVariable int pageNum, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, Model model) {
+        //this set the necessary info from the session variable
+        form.setImportedGermplasmMainInfo(getUserSelection().getImportedGermplasmMainInfo());
+        if(getUserSelection().getImportedGermplasmMainInfo() != null && getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList() != null){
+            //this would be use to display the imported germplasm info
+            form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+            form.setCurrentPage(pageNum);
+        }
+        return super.showAjaxPage(model, PAGINATION_TEMPLATE);
     }
 
     /**
@@ -117,6 +139,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         			getUserSelection().setImportValid(true);
         			form.setImportedGermplasmMainInfo(getUserSelection().getImportedGermplasmMainInfo());
         			form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+        			form.setCurrentPage(1);
         			//after this one, it goes back to the same screen, but the list should already be displayed
         		}else{
         			//meaing there is error

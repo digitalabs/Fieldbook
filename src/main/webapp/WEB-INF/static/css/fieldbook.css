@@ -458,3 +458,18 @@ span.dynatree-drop-target.dynatree-drop-reject
 span.dynatree-drop-target.dynatree-drop-after a
 {
 }
+/*For the spinner*/
+#spinner-wrap {
+    position:fixed;
+    z-index:999;
+    width:250px;
+    height:250px;
+    background:#000;
+    opacity:0.8;
+ filter:alpha(opacity=80); /* For IE8 and earlier */
+    border-radius: 15px;
+    top:50%;
+    margin-left:-100px;
+    margin-top:-100px;
+    left:50%;
+}

@@ -34,7 +34,82 @@ public class ImportGermplasmListForm {
 	
 	/** The imported germplasm. */
 	private List<ImportedGermplasm> importedGermplasm;
+	//for pagination
+	private List<ImportedGermplasm> paginatedImportedGermplasm;	
+	private int currentPage;
+	private int totalPages;
+	private int resultPerPage = 10;			
+	
+    public int getResultPerPage() {
+        return resultPerPage;
+    }
+
+    
+    public void setResultPerPage(int resultPerPage) {
+        this.resultPerPage = resultPerPage;
+    }
+
+    public int getTotalPages(){
+	    if(importedGermplasm != null && importedGermplasm.size() > 0){           
+            totalPages = (int) Math.ceil((importedGermplasm.size() * 1f) / getResultPerPage()); 
+        }else{
+            totalPages = 0;
+        }
+	    return totalPages;
+	}
+	
+	
+	
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+
+    
+    /**
+     * Sets the current page.
+     *
+     * @param currentPage the new current page
+     */
+    public void setCurrentPage(int currentPage) {
+        
+        //assumption is there is an imported germplasm already
+        if(importedGermplasm != null && importedGermplasm.size() > 0){
+            int totalItemsPerPage = getResultPerPage();
+            int start = (currentPage - 1) * totalItemsPerPage;
+            int end = start + totalItemsPerPage;
+            if(importedGermplasm.size() < end){
+                end = importedGermplasm.size();
+            }
+            paginatedImportedGermplasm = importedGermplasm.subList(start, end);
+            this.currentPage = currentPage;
+        }else{
+            this.currentPage = 0;
+        }
+    }
+
+
+    public void setTotalPages(int totalPages) {
+        this.totalPages = totalPages;
+    }
+    
+
 	    
+    
+    public List<ImportedGermplasm> getPaginatedImportedGermplasm() {
+        return paginatedImportedGermplasm;
+    }
+
+
+
+    
+    public void setPaginatedImportedGermplasm(
+            List<ImportedGermplasm> paginatedImportedGermplasm) {
+        this.paginatedImportedGermplasm = paginatedImportedGermplasm;
+    }
+   //end of pagination code
+
+
     /**
      * Gets the imported germplasm.
      *

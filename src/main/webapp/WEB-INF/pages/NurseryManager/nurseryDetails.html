@@ -15,8 +15,8 @@
        	<div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
 
 		<div class="col-md-12">
-			<h3>NURSERY-LEVEL DETAILS</h3>
-
+			<h3 th:text="#{nursery.nurserydetails.nursery.level.header}">NURSERY-LEVEL DETAILS</h3>
+			<span th:text="#{nursery.nurserydetails.nursery.level.details}"></span>
 			<div th:if="*{workbook.conditions != null AND workbook.conditions.size() > 0}">
 
 				<table border="5" cellpadding="10" cellspacing="10">
@@ -47,8 +47,8 @@
 
 	<div class="form-group row">
 		<div class="col-md-12">
-			<h3>PLOT-LEVEL DETAILS</h3>
-
+			<h3 th:text="#{nursery.nurserydetails.plot.level.header}">PLOT-LEVEL DETAILS</h3>
+			<span th:text="#{nursery.nurserydetails.plot.level.details}"></span>
 				<div th:if="*{workbook.factors != null AND workbook.factors.size() > 0}">
 					<table border="5" cellpadding="10" cellspacing="10">
 						<thead>
@@ -79,28 +79,20 @@
 
 	<div class="form-group row">
 		<div class="col-md-12">
-			<h3>BASELINE TRAITS</h3>
-			
+			<h3 th:text="#{nursery.nurserydetails.baseline.traits.header}">BASELINE TRAITS</h3>
+				<span th:text="#{nursery.nurserydetails.baseline.traits}"></span>
 				<div th:if="*{workbook.constants != null AND workbook.constants.size() > 0}">
 					<table border="5" cellpadding="10" cellspacing="10" >
 					<thead>
 						<tr>
 							<th>Constant</th>
 							<th>Description</th>
-							<th>Property</th>
-							<th>Scale</th>
-							<th>Method</th>
-							<th>Data Type</th>
 						</tr>
 						</thead>
 						<tbody>
 							<tr th:each="choice, rowStat : *{workbook.constants}">
 								<td th:text="*{workbook.constants[__${rowStat.index}__].name}">Name</td>
 								<td th:text="*{workbook.constants[__${rowStat.index}__].description}">Description</td>
-								<td th:text="*{workbook.constants[__${rowStat.index}__].property}">Property</td>
-								<td th:text="*{workbook.constants[__${rowStat.index}__].scale}">Scale</td>
-								<td th:text="*{workbook.constants[__${rowStat.index}__].method}">Method</td>
-								<td th:text="*{workbook.constants[__${rowStat.index}__].dataType}">Data Type</td>
 							</tr>
 						</tbody>
 					</table>		
@@ -113,20 +105,12 @@
 							<tr>
 								<th>Variate</th>
 								<th>Description</th>
-								<th>Property</th>
-								<th>Scale</th>
-								<th>Method</th>
-								<th>Data Type</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr th:each="choice, rowStat : *{workbook.variates}">
 								<td th:text="*{workbook.variates[__${rowStat.index}__].name}">Name</td>
 								<td th:text="*{workbook.variates[__${rowStat.index}__].description}">Description</td>
-								<td th:text="*{workbook.variates[__${rowStat.index}__].property}">Property</td>
-								<td th:text="*{workbook.variates[__${rowStat.index}__].scale}">Scale</td>
-								<td th:text="*{workbook.variates[__${rowStat.index}__].method}">Method</td>
-								<td th:text="*{workbook.variates[__${rowStat.index}__].dataType}">Data Type</td>
 							</tr>
 						</tbody>
 					</table>
@@ -136,9 +120,12 @@
 
 	<div class="form-group row">
 		<div class="col-md-12">
-			<h3>FIELD LAYOUT OPTIONS</h3>
-			<input type="radio" th:field="*{fieldLayoutRandom}" value="true">  Uneplicated Design with Randomization</input><br/> 
-			<input type="radio"  th:field="*{fieldLayoutRandom}" value="false">  Uneplicated Design without Randomization</input>
+			<h3 th:text="#{nursery.nurserydetails.field.layout.header}">FIELD LAYOUT</h3>
+			<label for="fieldLayoutRandom" th:text="#{nursery.nurserydetails.select.field.layout.label} + ': *'"></label>
+			<select th:field="*{fieldLayoutRandom}">
+				<option value="true" th:text="#{nursery.nurserydetails.option.with.randomization}">Unreplicated Design with Randomization</option>
+				<option value="false" th:text="#{nursery.nurserydetails.option.without.randomization}">Unreplicated Design without Randomization</option>
+			</select>
 		</div>
 		
 	</div>

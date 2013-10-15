@@ -18,6 +18,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.DatasetReference;
 import org.generationcp.middleware.domain.dms.FolderReference;
 import org.generationcp.middleware.domain.dms.Reference;
+import org.generationcp.middleware.pojos.GermplasmList;
 
 import com.efficio.pojos.treeview.TreeNode;
 
@@ -38,10 +39,14 @@ public class TreeViewUtil {
         return convertTreeViewToJson(treeNodes);
     }
     
+    public static String convertGermplasmListToJson(List<GermplasmList> germplasmLists) throws Exception {
+        List<TreeNode> treeNodes = convertGermplasmListToTreeView(germplasmLists);
+        return convertTreeViewToJson(treeNodes);
+    }
+    
 	private static List<TreeNode> convertReferencesToTreeView(List<Reference> references) {
-		List<TreeNode> treeNodes = null;
+		List<TreeNode> treeNodes = new ArrayList<TreeNode>();
 		if (references != null && references.size() > 0) {
-			treeNodes = new ArrayList<TreeNode>();
 			for (Reference reference : references) {
 				treeNodes.add(convertReferenceToTreeNode(reference));
 			}
@@ -50,9 +55,8 @@ public class TreeViewUtil {
 	}
 	
 	private static List<TreeNode> convertFolderReferencesToTreeView(List<FolderReference> references) {
-		List<TreeNode> treeNodes = null;
+        List<TreeNode> treeNodes = new ArrayList<TreeNode>();
 		if (references != null && references.size() > 0) {
-			treeNodes = new ArrayList<TreeNode>();
 			for (FolderReference reference : references) {
 				treeNodes.add(convertReferenceToTreeNode(reference));
 			}
@@ -61,11 +65,20 @@ public class TreeViewUtil {
 	}
 
     private static List<TreeNode> convertDatasetReferencesToTreeView(List<DatasetReference> references) {
-        List<TreeNode> treeNodes = null;
+        List<TreeNode> treeNodes = new ArrayList<TreeNode>();
         if (references != null && references.size() > 0) {
-            treeNodes = new ArrayList<TreeNode>();
             for (DatasetReference reference : references) {
                 treeNodes.add(convertReferenceToTreeNode(reference));
+            }
+        }
+        return treeNodes;
+    }
+    
+    private static List<TreeNode> convertGermplasmListToTreeView(List<GermplasmList> germplasmLists) {
+        List<TreeNode> treeNodes = new ArrayList<TreeNode>();
+        if (germplasmLists != null && germplasmLists.size() > 0) {
+            for (GermplasmList germplasmList : germplasmLists) {
+                treeNodes.add(convertGermplasmListToTreeNode(germplasmList));
             }
         }
         return treeNodes;
@@ -80,6 +93,17 @@ public class TreeViewUtil {
 		treeNode.setIsLazy(true);
 
 		return treeNode;
+	}
+	
+	private static TreeNode convertGermplasmListToTreeNode(GermplasmList germplasmList) {
+	    TreeNode treeNode = new TreeNode();
+	    
+	    treeNode.setKey(germplasmList.getId().toString());
+	    treeNode.setTitle(germplasmList.getName());
+	    treeNode.setIsFolder(germplasmList.getType() != null && germplasmList.getType().equals("FOLDER") ? true : false);
+	    treeNode.setIsLazy(true);
+	    
+	    return treeNode;
 	}
 	
 	private static String convertTreeViewToJson(List<TreeNode> treeNodes) throws Exception {

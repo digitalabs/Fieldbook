@@ -1,3 +1,11 @@
+/** Germplasm Tree API **/
+
+function displayGermplasmListTree(treeName, dbInstance) {
+	displayTree(treeName, "loadInitGermplasmTree/" + dbInstance, "expandGermplasmTree/" + dbInstance);
+}
+
+/** Study Tree API **/
+
 function displayStudyTree(treeName) {
 	displayTree(treeName, "loadInitTree", "expandTree");
 }
@@ -18,6 +26,7 @@ function addFolderInStudyTree(treeName) {
 		});
 	}
 }
+
 function addLeafNodeInStudyTree(treeName) {
 	//TODO: implement ajax call
 	var node = $("#" + treeName).dynatree("getTree").getActiveNode();
@@ -30,6 +39,9 @@ function addLeafNodeInStudyTree(treeName) {
 	}
 }
 
+
+/** Utility functions **/
+
 function displayTree(treeName, initMethodName, expandMethodName) {
 	$("#" + treeName).dynatree({
 		title: treeName,
@@ -37,12 +49,13 @@ function displayTree(treeName, initMethodName, expandMethodName) {
 		noLink: false,
 		autoFocus: false,
 		imagePath: "../img/",
+		activeVisible: true,
 		initAjax: {url: initMethodName,
 			dataType: "json"
 		},
 		onLazyRead: function(node) {
 			node.appendAjax({
-				url: expandMethodName + "?parentId=" + node.data.key,
+				url: expandMethodName + "/" + node.data.key,
 				dataType: "json",
 				success: function(node) {
 					//do nothing

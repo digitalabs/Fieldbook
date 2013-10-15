@@ -28,6 +28,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -228,6 +229,75 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
             assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getCross(), "2");
             assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getSource(), "2");
             assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getEntryCode(), "2");
+        }
+        
+        @Test
+        public void testValidBasicParseImportGerplasmXlsPagination(){
+          //testing when doing pagination, we simulate the pagination
+            ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+            ImportGermplasmListForm form = new ImportGermplasmListForm();
+            try{
+                
+                importGermplasmFileService.doProcessNow(workbookBasic, mainInfo); 
+                form.setImportedGermplasmMainInfo(mainInfo);
+                form.setImportedGermplasm(mainInfo.getImportedGermplasmList().getImportedGermplasms());
+                
+                
+            }catch (Exception e) {
+                LOG.error(e.getMessage(), e);
+            }
+            form.setCurrentPage(1);            
+            assertEquals(form.getPaginatedImportedGermplasm().size(), form.getResultPerPage());            
+            assertEquals(form.getPaginatedImportedGermplasm().get(0).getEntryId(), new Integer(1));
+            assertEquals(form.getPaginatedImportedGermplasm().get(0).getDesig(), "IR 68835-58-1-1-B");//we check the parse data here
+            
+            assertEquals(form.getPaginatedImportedGermplasm().get(9).getEntryId(), new Integer(10));
+            assertEquals(form.getPaginatedImportedGermplasm().get(9).getDesig(), "IR 68815-25-PMI 3-UBN 6-B-B");//we check the parse data here
+            
+            form.setCurrentPage(2);
+            assertEquals(form.getPaginatedImportedGermplasm().get(0).getEntryId(), new Integer(11));
+            assertEquals(form.getPaginatedImportedGermplasm().get(0).getDesig(), "IR 68815-51-PMI 2-UBN 2-2-B");//we check the parse data here
+            
+            assertEquals(form.getPaginatedImportedGermplasm().get(9).getEntryId(), new Integer(20));
+            assertEquals(form.getPaginatedImportedGermplasm().get(9).getDesig(), "IR 67632-14-2-5-1-2-B");//we check the parse data here
+            
+        }
+        
+        @Test
+        public void testValidAdvanceParseImportGerplasmXlsPagination(){
+            //testing when doing pagination, we simulate the pagination
+            ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+            ImportGermplasmListForm form = new ImportGermplasmListForm();
+            try{
+                
+                importGermplasmFileService.doProcessNow(workbookAdvance, mainInfo); 
+                form.setImportedGermplasmMainInfo(mainInfo);
+                form.setImportedGermplasm(mainInfo.getImportedGermplasmList().getImportedGermplasms());
+                
+                
+            }catch (Exception e) {
+                LOG.error(e.getMessage(), e);
+            }
+            form.setCurrentPage(1);            
+            assertEquals(form.getPaginatedImportedGermplasm().size(), form.getResultPerPage());            
+            assertEquals(form.getPaginatedImportedGermplasm().get(0).getEntryId(), new Integer(1));
+            assertEquals(form.getPaginatedImportedGermplasm().get(0).getDesig(), "IR 68201-21-2-B-4-B-B");//we check the parse data here
+            
+            assertEquals(form.getPaginatedImportedGermplasm().get(9).getEntryId(), new Integer(10));
+            assertEquals(form.getPaginatedImportedGermplasm().get(9).getDesig(), "IR 67632-14-2-5-1-2-B");//we check the parse data here
+            
+            form.setCurrentPage(2);
+            assertEquals(form.getPaginatedImportedGermplasm().get(0).getEntryId(), new Integer(11));
+            assertEquals(form.getPaginatedImportedGermplasm().get(0).getDesig(), "IR 67632-14-2-5-1-2-B");//we check the parse data here
+            
+            assertEquals(form.getPaginatedImportedGermplasm().get(9).getEntryId(), new Integer(20));
+            assertEquals(form.getPaginatedImportedGermplasm().get(9).getDesig(), "IR 67632-14-2-5-1-2-B");//we check the parse data here
+            
+            form.setCurrentPage(3);
+            assertEquals(form.getPaginatedImportedGermplasm().get(0).getEntryId(), new Integer(21));
+            assertEquals(form.getPaginatedImportedGermplasm().get(0).getDesig(), "IR 67632-14-2-5-1-2-B1");//we check the parse data here
+            assertEquals(form.getPaginatedImportedGermplasm().get(0).getCross(), "21");//we check the parse data here
+            
         }
       
         

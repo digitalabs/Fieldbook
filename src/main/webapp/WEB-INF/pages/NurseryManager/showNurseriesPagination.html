@@ -1,0 +1,34 @@
+<div th:object="${manageNurseriesForm}">
+    <!-- case 1: no data means no table -->
+     <div th:if="*{paginatedNurseryDetailsList == null or #lists.isEmpty(paginatedNurseryDetailsList)}">
+       <span th:text="#{nursery.managenurseries.no.nursery.list}">No Nurseries</span>
+     </div>
+     
+     <!-- case 2: nursery list has data -->
+     <div th:if="*{paginatedNurseryDetailsList != null and not #lists.isEmpty(paginatedNurseryDetailsList)}">
+         <table th:if="*{not #lists.isEmpty(paginatedNurseryDetailsList)}" class="table table-striped table-bordered">
+           <thead>
+				<tr>
+					<th>Name</th>
+					<th>Title</th>
+					<th>Objective</th>
+					<th>Start Date</th>
+					<th>End Date</th>
+					<th>Principal Investigator</th>
+					<th>Site Name</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="nursery : *{paginatedNurseryDetailsList}">
+					<td th:text="${nursery.name}">Name</td>
+					<td th:text="${nursery.title}">Title</td>
+					<td th:text="${nursery.objective}">Objective</td>
+					<td th:text="${nursery.startDate}">Start Date</td>
+					<td th:text="${nursery.endDate}">End Date</td>
+					<td th:text="${nursery.principalInvestigator}">Principal Investigator</td>
+					<td th:text="${nursery.siteName}">Site Name</td>
+				</tr>
+			</tbody>
+         </table>
+	</div>
+</div>

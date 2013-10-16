@@ -1,7 +1,7 @@
 /** Germplasm Tree API **/
 
-function displayGermplasmListTree(treeName, dbInstance) {
-	displayTree(treeName, "loadInitGermplasmTree/" + dbInstance, "expandGermplasmTree/" + dbInstance);
+function displayGermplasmListTree(treeName) {
+	displayTree(treeName, "loadInitGermplasmTree", "expandGermplasmTree");
 }
 
 /** Study Tree API **/

@@ -106,8 +106,11 @@ public class TreeViewUtil {
 	    return treeNode;
 	}
 	
-	private static String convertTreeViewToJson(List<TreeNode> treeNodes) throws Exception {
-		ObjectMapper mapper = new ObjectMapper();
-		return mapper.writeValueAsString(treeNodes);
+	public static String convertTreeViewToJson(List<TreeNode> treeNodes) throws Exception {
+	    if (treeNodes != null && treeNodes.size() > 0) {
+    		ObjectMapper mapper = new ObjectMapper();
+    		return mapper.writeValueAsString(treeNodes);
+	    }
+	    return "[]"; 
 	}
 }

@@ -26,12 +26,17 @@ public class TreeNode {
 	
 	private String addClass;
 	
-	private String icon;
+	/** 
+	 * set icon to Boolean(false) to suppress icon.
+	 * set icon to null to use default icon.
+	 * set icon to an image file name relative the the image path to use a custom icon image.
+	 */
+	private Object icon;
 	
 	public TreeNode() {
 	}
 	
-	public TreeNode(String key, String title, boolean isFolder, String addClass, String icon) {
+	public TreeNode(String key, String title, boolean isFolder, String addClass, Object icon) {
 	    this.key = key;
 	    this.title = title;
 	    this.isFolder = isFolder;
@@ -80,11 +85,11 @@ public class TreeNode {
         this.addClass = addClass;
     }
 
-    public String getIcon() {
+    public Object getIcon() {
         return icon;
     }
 
-    public void setIcon(String icon) {
+    public void setIcon(Object icon) {
         this.icon = icon;
     }
 

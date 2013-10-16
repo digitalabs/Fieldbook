@@ -28,7 +28,7 @@
 	<!-- **************************************************************** -->
 	<mvc:annotation-driven />
 	<context:component-scan base-package="com.efficio.fieldbook" />
-
+	
 	<!-- **************************************************************** -->
 	<!-- MESSAGE EXTERNALIZATION/INTERNATIONALIZATION -->
 	<!-- Standard Spring MessageSource implementation -->
@@ -166,12 +166,11 @@
         <property name="sessionFactory" ref="centralSessionFactory"/>
         <aop:scoped-proxy proxy-target-class="false"/>
     </bean>
-    
-     <bean id="localIbdbHibernateSessionProvider" class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider" scope="request" destroy-method="close">
-        <property name="sessionFactory" ref="localIbdbSessionFactory"/>
+    <bean id="localIbdbHibernateSessionProvider" class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider" scope="singleton" destroy-method="close">
+    	<property name="sessionFactory" ref="localIbdbSessionFactory"/>
         <aop:scoped-proxy proxy-target-class="false"/>
     </bean>
-    
+        
     <bean id="centralSessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
         <property name="dataSource" ref="centralDataSource"/>
         <property name="configLocation" value="classpath:ibpmidware_hib.cfg.xml"/>
@@ -211,5 +210,4 @@
    		<property name="commitIdAbbrev" value="${git.commit.id.abbrev}"/>   		
 	</bean>
 	
-
 </beans>

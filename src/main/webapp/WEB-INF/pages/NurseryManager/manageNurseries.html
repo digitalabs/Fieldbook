@@ -1,0 +1,41 @@
+<div class="col-md-12" xmlns:th="http://www.thymeleaf.org">
+	<div class="page-header">
+		<h1 th:text="#{nursery.managenurseries.header}">
+			Manage Nurseries
+		</h1>
+	</div>		
+	
+	<a href="/NurseryManager/fileUpload.html" th:href="@{/NurseryManager/fileUpload}" th:text="#{nursery.managenurseries.make.new.nursery}">New Nursery</a>
+	
+	<div id="nursery-details-list" th:include="/NurseryManager/showNurseriesPagination">
+    </div>
+    <div th:object="${manageNurseriesForm}">
+		<div th:if="*{nurseryDetailsList != null and not #lists.isEmpty(nurseryDetailsList)}">
+			<div id="nurseryDetailsListPagination"></div>
+		</div>
+    </div>
+</div>
+<div layout:fragment="page-script">
+	<!-- For pagination -->
+	<script type="text/javascript" th:src="@{/static/js/bootstrap-paginator.min.js}"></script>
+	<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[    
+        var paginationUrl = /*[[@{/NurseryManager/manageNurseries/page/}]]*/;
+        var options = {
+            currentPage: /*[[${manageNurseriesForm.currentPage}]]*/,
+            totalPages: /*[[${manageNurseriesForm.totalPages}]]*/,
+            //size:'small',
+            alignment:'center',
+            useBootstrapTooltip:true,
+            onPageClicked: function(e,originalEvent,type,page){
+            	showPage(paginationUrl, page, 'nursery-details-list');
+                //alert("Page item clicked, type: "+type+" page: "+page);
+            }
+        }
+        
+		if($('#nurseryDetailsListPagination') != null){
+			$('#nurseryDetailsListPagination').bootstrapPaginator(options);	
+		}
+      //]]>
+    </script>
+</div>

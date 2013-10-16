@@ -40,7 +40,7 @@ import javax.servlet.http.HttpSession;
  * The Class FileUploadController.
  */
 @Controller
-@RequestMapping({"/NurseryManager", FileUploadController.URL})
+@RequestMapping(FileUploadController.URL)
 public class FileUploadController extends AbstractBaseFieldbookController{
 
     

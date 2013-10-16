@@ -12,6 +12,9 @@
 package com.efficio.fieldbook.web.nursery.bean;
 
 import java.io.Serializable;
+import java.util.List;
+
+import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 
 /**
@@ -39,6 +42,9 @@ public class UserSelection implements Serializable {
 
     /** The is import valid. */
     private boolean isImportValid;
+    
+    /** The study details list.*/
+    private List<StudyDetails> studyDetailsList;
     
     
     /**
@@ -149,5 +155,12 @@ public class UserSelection implements Serializable {
     public void setFieldLayoutRandom(Boolean fieldLayoutRandom) {
         this.fieldLayoutRandom = fieldLayoutRandom;
     }
+    
+    public List<StudyDetails> getStudyDetailsList(){
+        return studyDetailsList;
+    }
 
+    public void setStudyDetailsList(List<StudyDetails> studyDetailsList) {
+        this.studyDetailsList = studyDetailsList;
+    }
 }

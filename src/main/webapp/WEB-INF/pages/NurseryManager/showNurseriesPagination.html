@@ -20,12 +20,12 @@
 			</thead>
 			<tbody>
 				<tr th:each="nursery : *{paginatedNurseryDetailsList}">
-					<td th:text="${nursery.name}">Name</td>
+					<td th:text="${nursery.studyName}">Name</td>
 					<td th:text="${nursery.title}">Title</td>
 					<td th:text="${nursery.objective}">Objective</td>
 					<td th:text="${nursery.startDate}">Start Date</td>
 					<td th:text="${nursery.endDate}">End Date</td>
-					<td th:text="${nursery.principalInvestigator}">Principal Investigator</td>
+					<td th:text="${nursery.pmKey}">Principal Investigator</td>
 					<td th:text="${nursery.siteName}">Site Name</td>
 				</tr>
 			</tbody>

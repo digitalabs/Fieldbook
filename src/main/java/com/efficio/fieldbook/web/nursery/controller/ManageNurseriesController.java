@@ -11,8 +11,9 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,10 +25,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.efficio.fieldbook.web.nursery.bean.NurseryDetails;
+import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.ManageNurseriesForm;
 import com.efficio.fieldbook.web.nursery.form.NurseryDetailsForm;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+
+import org.generationcp.middleware.domain.etl.StudyDetails;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.service.api.FieldbookService;
 
 /**
  * The Class ManageNurseriesController.
@@ -43,7 +48,13 @@ public class ManageNurseriesController extends AbstractBaseFieldbookController{
     public static final String URL = "/NurseryManager/manageNurseries";
     public static final String PAGINATION_TEMPLATE = "/NurseryManager/showNurseriesPagination";
 
-	
+    @Resource
+    private FieldbookService fieldbookMiddlewareService;
+    
+    /** The user selection. */
+    @Resource
+    private UserSelection userSelection;
+    
     /**
      * Shows the manage nurseries screen
      *
@@ -54,9 +65,15 @@ public class ManageNurseriesController extends AbstractBaseFieldbookController{
      */
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("manageNurseriesForm") ManageNurseriesForm form, Model model) {
-        List<NurseryDetails> nurseryDetailsList = new ArrayList<NurseryDetails>();
-        form.setNurseryDetailsList(nurseryDetailsList);
-        form.setCurrentPage(1);
+        try {
+            List<StudyDetails> nurseryDetailsList = fieldbookMiddlewareService.getAllLocalNurseryDetails();
+            getUserSelection().setStudyDetailsList(nurseryDetailsList);
+            form.setNurseryDetailsList(getUserSelection().getStudyDetailsList());
+            form.setCurrentPage(1);
+        }
+        catch (MiddlewareQueryException e){
+            LOG.error(e.getMessage(), e);
+        }
     	return super.show(model);
     }
     
@@ -69,11 +86,8 @@ public class ManageNurseriesController extends AbstractBaseFieldbookController{
      */
     @RequestMapping(value="/page/{pageNum}", method = RequestMethod.GET)
     public String getPaginatedList(@PathVariable int pageNum, @ModelAttribute("manageNurseriesForm") ManageNurseriesForm form, Model model) {
-        //this set the necessary info from the session variable
-        List<NurseryDetails> nurseryDetailsList = new ArrayList<NurseryDetails>();
-        
+        List<StudyDetails> nurseryDetailsList = getUserSelection().getStudyDetailsList();
         if(nurseryDetailsList != null){
-            //this would be use to display the imported germplasm info
             form.setNurseryDetailsList(nurseryDetailsList);
             form.setCurrentPage(pageNum);
         }
@@ -111,4 +125,10 @@ public class ManageNurseriesController extends AbstractBaseFieldbookController{
         return new ManageNurseriesForm();
     }
     
+    /* (non-Javadoc)
+     * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getUserSelection()
+     */
+    public UserSelection getUserSelection() {
+        return this.userSelection;
+    }
 }

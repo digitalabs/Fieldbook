@@ -147,6 +147,11 @@
         <constructor-arg name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
     </bean>
     
+    <bean id="fieldbookMiddlewareService" class="org.generationcp.middleware.service.FieldbookServiceImpl">
+        <constructor-arg name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
+        <constructor-arg name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
+    </bean>
+    
     <bean id="studyDataManagerV2" class="org.generationcp.middleware.manager.StudyDataManagerImpl">
         <property name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
         <property name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>

@@ -14,16 +14,16 @@ package com.efficio.fieldbook.web.nursery.form;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.efficio.fieldbook.web.nursery.bean.NurseryDetails;
+import org.generationcp.middleware.domain.etl.StudyDetails;
 
 /**
  * The Class ManageNurseriesForm.
  */
 public class ManageNurseriesForm {
-    private List<NurseryDetails> nurseryDetailsList;
+    private List<StudyDetails> nurseryDetailsList;
     
     //for pagination
-    private List<NurseryDetails> paginatedNurseryDetailsList;     
+    private List<StudyDetails> paginatedNurseryDetailsList;     
     private int currentPage;
     private int totalPages;
     private int resultPerPage = 10;                 
@@ -76,25 +76,26 @@ public class ManageNurseriesForm {
         this.totalPages = totalPages;
     }
     
-    public List<NurseryDetails> getPaginatedNurseryDetailsList() {
+    public List<StudyDetails> getPaginatedNurseryDetailsList() {
         return paginatedNurseryDetailsList;
     }
     
-    public void setPaginatedNurseryDetailsList(List<NurseryDetails> paginatedNurseryDetailsList) {
+    public void setPaginatedNurseryDetailsList(List<StudyDetails> paginatedNurseryDetailsList) {
         this.paginatedNurseryDetailsList = paginatedNurseryDetailsList;
     }
     //end of pagination code
 
-    public List<NurseryDetails> getNurseryDetailsList() {        
+    public List<StudyDetails> getNurseryDetailsList() {        
         return nurseryDetailsList;
     }
          
-    public void setNurseryDetailsList(List<NurseryDetails> nurseryDetailsList){
-        this.nurseryDetailsList = createDummyData();
+    public void setNurseryDetailsList(List<StudyDetails> nurseryDetailsList){
+        this.nurseryDetailsList = nurseryDetailsList;
     }
-    
+    /*
     private List<NurseryDetails> createDummyData(){
         List<NurseryDetails> tempnurseryDetailsList = new ArrayList<NurseryDetails>();
+        
         tempnurseryDetailsList.add(new NurseryDetails("testName1", "testTitle1", "testObjective1", 
                 "testStartDate1", "testEndDate1", "testPrincipalInvestigator1", "testSiteName1"));
         tempnurseryDetailsList.add(new NurseryDetails("testName2", "testTitle2", "testObjective2", 
@@ -119,6 +120,8 @@ public class ManageNurseriesForm {
                 "testStartDate11", "testEndDate11", "testPrincipalInvestigator11", "testSiteName11"));
         tempnurseryDetailsList.add(new NurseryDetails("testName12", "testTitle12", "testObjective12", 
                 "testStartDate12", "testEndDate12", "testPrincipalInvestigator12", "testSiteName12"));
+        
         return tempnurseryDetailsList;
     }
+    */
 }

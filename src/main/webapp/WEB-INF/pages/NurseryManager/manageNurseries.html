@@ -4,9 +4,8 @@
 			Manage Nurseries
 		</h1>
 	</div>		
-	
 	<a href="/NurseryManager/fileUpload.html" th:href="@{/NurseryManager/fileUpload}" th:text="#{nursery.managenurseries.make.new.nursery}">New Nursery</a>
-	
+	<br/><br/>
 	<div id="nursery-details-list" th:include="/NurseryManager/showNurseriesPagination">
     </div>
     <div th:object="${manageNurseriesForm}">
@@ -25,7 +24,7 @@
             currentPage: /*[[${manageNurseriesForm.currentPage}]]*/,
             totalPages: /*[[${manageNurseriesForm.totalPages}]]*/,
             //size:'small',
-            alignment:'center',
+            alignment:'right',
             useBootstrapTooltip:true,
             onPageClicked: function(e,originalEvent,type,page){
             	showPage(paginationUrl, page, 'nursery-details-list');

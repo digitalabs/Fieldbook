@@ -68,7 +68,7 @@ public class ManageNurseriesController extends AbstractBaseFieldbookController{
      * @return the string
      */
     @RequestMapping(value="/page/{pageNum}", method = RequestMethod.GET)
-    public String getPaginatedList(@PathVariable int pageNum, @ModelAttribute("importGermplasmListForm") ManageNurseriesForm form, Model model) {
+    public String getPaginatedList(@PathVariable int pageNum, @ModelAttribute("manageNurseriesForm") ManageNurseriesForm form, Model model) {
         //this set the necessary info from the session variable
         List<NurseryDetails> nurseryDetailsList = new ArrayList<NurseryDetails>();
         

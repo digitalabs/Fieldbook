@@ -18,6 +18,7 @@
 			<h3 th:text="#{nursery.nurserydetails.nursery.level.header}">NURSERY-LEVEL DETAILS</h3>
 			<span th:text="#{nursery.nurserydetails.nursery.level.details}"></span>
 			<div th:if="*{workbook.conditions != null AND workbook.conditions.size() > 0}">
+				<br/>
 				<div th:each="choice, rowStat : *{workbook.conditions}">
 					<div class="form-group">
 						<div class="control-group">
@@ -38,6 +39,7 @@
 			<h3 th:text="#{nursery.nurserydetails.plot.level.header}">PLOT-LEVEL DETAILS</h3>
 			<span th:text="#{nursery.nurserydetails.plot.level.details}"></span>
 				<div th:if="*{workbook.factors != null AND workbook.factors.size() > 0}">
+					<br/>
 					<table border="5" cellpadding="10" cellspacing="10">
 						<thead>
 							<tr>
@@ -70,6 +72,7 @@
 			<h3 th:text="#{nursery.nurserydetails.baseline.traits.header}">BASELINE TRAITS</h3>
 				<span th:text="#{nursery.nurserydetails.baseline.traits}"></span>
 				<div th:if="*{workbook.constants != null AND workbook.constants.size() > 0}">
+					<br/>
 					<table border="5" cellpadding="10" cellspacing="10" >
 					<thead>
 						<tr>

@@ -7,13 +7,7 @@
     <div class="row">
       <div class="col-md-4">
       	<!-- Germplasm List Tree View -->
-      	<div class="well">
-	      	<p class="lead" th:text="#{nursery.import.germplasm.myList}"></p>
-	      	<div id="germplasmLocalTree"></div>
-	      	<br />
-	      	<p class="lead" th:text="#{nursery.import.germplasm.sharedList}"></p>
-	      	<div id="germplasmCentralTree"></div>
-      	</div>
+      	<div id="germplasmTree" style="height:350px; overflow:auto;"></div>
       	
         <a data-toggle="modal" href="#myModal" class="" th:text="#{nursery.import.germplasm.list}">Import File</a>
       </div>
@@ -123,8 +117,7 @@
 	  }	
   
 	  //display tree
-	  displayGermplasmListTree("germplasmLocalTree", "LOCAL");
-	  displayGermplasmListTree("germplasmCentralTree", "CENTRAL");
+	  displayGermplasmListTree("germplasmTree");
   });
   
   //]]>

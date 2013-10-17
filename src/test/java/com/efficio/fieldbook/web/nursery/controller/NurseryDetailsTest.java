@@ -21,6 +21,7 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.service.api.DataImportService;
+import org.generationcp.middleware.util.Debug;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,8 +51,8 @@ public class NurseryDetailsTest extends AbstractJUnit4SpringContextTests {
     @Autowired
     DataImportService dataImportService;
     
-    private static final String fileName = "Population114_Pheno_FB_1.xls";
-    private static final String fileNameInvalid = "GermplasmImportTemplate-Basic-rev4b-with_data.xls";
+    private static final String FILE_NAME_VALID = "Population114_Pheno_FB_1.xls";
+    private static final String FILE_NAME_INVALID = "GermplasmImportTemplate-Basic-rev4b-with_data.xls";
     
     NurseryDetailsController controllerValid;
     NurseryDetailsController controllerInvalid;
@@ -64,10 +65,10 @@ public class NurseryDetailsTest extends AbstractJUnit4SpringContextTests {
     public void testValidNurseryWorkbook() throws Exception {
 
         // Get the file
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(FILE_NAME_VALID);
         String tempFileName = fieldbookService.storeUserWorkbook(inputStream);
         UserSelection userSelection = new UserSelection();
-        userSelection.setActualFileName(fileName);
+        userSelection.setActualFileName(FILE_NAME_VALID);
         userSelection.setServerFileName(tempFileName);
 
         // Parse the file to create Workbook
@@ -106,11 +107,11 @@ public class NurseryDetailsTest extends AbstractJUnit4SpringContextTests {
         
         try{
             
-            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileNameInvalid);
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(FILE_NAME_INVALID);
             
             String tempFileName = fieldbookService.storeUserWorkbook(inputStream);
             UserSelection userSelection = new UserSelection();
-            userSelection.setActualFileName(fileName);
+            userSelection.setActualFileName(FILE_NAME_VALID);
             userSelection.setServerFileName(tempFileName);
     
             File file = fileService.retrieveCurrentWorkbookAsFile(userSelection);
@@ -131,7 +132,7 @@ public class NurseryDetailsTest extends AbstractJUnit4SpringContextTests {
         for (MeasurementVariable mVar : mVariables){
             mVar.print(indent);
         }
-        System.out.println();
+        Debug.println(1,"");
     }
       
         

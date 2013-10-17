@@ -29,7 +29,7 @@ public interface FileService{
      * @return the string
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public String saveTemporaryFile(InputStream userFile) throws IOException;
+    String saveTemporaryFile(InputStream userFile) throws IOException;
 
     /**
      * Retrieve workbook.
@@ -38,7 +38,7 @@ public interface FileService{
      * @return the workbook
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public Workbook retrieveWorkbook(String currentFilename) throws IOException;
+    Workbook retrieveWorkbook(String currentFilename) throws IOException;
 
     /**
      * Retrieves a File object based on the given file name.
@@ -47,7 +47,7 @@ public interface FileService{
      * @return the file
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public File retrieveFileFromFileName(String currentFilename) throws IOException;
+    File retrieveFileFromFileName(String currentFilename) throws IOException;
 
 
 }

@@ -50,7 +50,7 @@ public class ImportGermplasmListForm {
     }
 
     public int getTotalPages(){
-	    if(importedGermplasm != null && importedGermplasm.size() > 0){           
+	    if(importedGermplasm != null && !importedGermplasm.isEmpty()){           
             totalPages = (int) Math.ceil((importedGermplasm.size() * 1f) / getResultPerPage()); 
         }else{
             totalPages = 0;
@@ -74,7 +74,7 @@ public class ImportGermplasmListForm {
     public void setCurrentPage(int currentPage) {
         
         //assumption is there is an imported germplasm already
-        if(importedGermplasm != null && importedGermplasm.size() > 0){
+        if(importedGermplasm != null && !importedGermplasm.isEmpty()){
             int totalItemsPerPage = getResultPerPage();
             int start = (currentPage - 1) * totalItemsPerPage;
             int end = start + totalItemsPerPage;

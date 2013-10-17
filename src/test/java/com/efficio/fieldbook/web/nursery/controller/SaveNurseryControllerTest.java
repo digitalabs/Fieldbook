@@ -54,7 +54,7 @@ public class SaveNurseryControllerTest extends AbstractJUnit4SpringContextTests 
 	private MockHttpSession session;
 	
 	@Before
-	public void setup() {
+	public void setUp() {
 		request = new MockHttpServletRequest();
 		response = new MockHttpServletResponse();
 		request.setRequestURI(SaveNurseryController.URL);

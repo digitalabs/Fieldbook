@@ -32,7 +32,7 @@ public interface ImportGermplasmFileService {
 	 * @return the imported germplasm main info
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-    public ImportedGermplasmMainInfo storeImportGermplasmWorkbook(MultipartFile multipartFile) throws IOException;
+    ImportedGermplasmMainInfo storeImportGermplasmWorkbook(MultipartFile multipartFile) throws IOException;
     
     /**
      * Process workbook.
@@ -40,7 +40,7 @@ public interface ImportGermplasmFileService {
      * @param mainInfo the main info
      * @return the imported germplasm main info
      */
-    public ImportedGermplasmMainInfo processWorkbook(ImportedGermplasmMainInfo mainInfo);
+    ImportedGermplasmMainInfo processWorkbook(ImportedGermplasmMainInfo mainInfo);
     
     /**
      * Do process now.
@@ -49,5 +49,5 @@ public interface ImportGermplasmFileService {
      * @param mainInfo the main info
      * @throws Exception the exception
      */
-    public void doProcessNow(Workbook workbook, ImportedGermplasmMainInfo mainInfo) throws Exception;
+    void doProcessNow(Workbook workbook, ImportedGermplasmMainInfo mainInfo) throws Exception;
 }

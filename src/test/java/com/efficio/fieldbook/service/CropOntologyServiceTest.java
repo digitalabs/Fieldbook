@@ -20,6 +20,8 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
@@ -33,7 +35,9 @@ import com.efficio.pojos.cropontology.Ontology;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/Fieldbook-servlet.xml"})
 public class CropOntologyServiceTest extends AbstractJUnit4SpringContextTests {
-
+    
+    private static final Logger LOG = LoggerFactory.getLogger(CropOntologyServiceTest.class);
+    
 	@Autowired
 	private CropOntologyService cropOntologyService;
 	
@@ -44,9 +48,9 @@ public class CropOntologyServiceTest extends AbstractJUnit4SpringContextTests {
 		String query = "stem rust";
 		List<CropTerm> cropTerms = cropOntologyService.searchTerms(query);
 		assertNotNull(cropTerms);
-		assertTrue(cropTerms.size() > 0);
+		assertTrue(!cropTerms.isEmpty());
 		for (CropTerm cropTerm : cropTerms) {
-			System.out.println(cropTerm);
+			LOG.debug(cropTerm.toString());
 		}
 	}
 	
@@ -81,9 +85,9 @@ public class CropOntologyServiceTest extends AbstractJUnit4SpringContextTests {
 		String category = "010-089 General Germplasm Ontology";
 		List<Ontology> ontologies = cropOntologyService.getOntologiesByCategory(category);
 		assertNotNull(ontologies);
-		assertTrue(ontologies.size() > 0);
+		assertTrue(!ontologies.isEmpty());
 		for (Ontology ontology : ontologies) {
-			System.out.println(ontology);
+			LOG.debug(ontology.toString());
 		}
 	}
 	

@@ -60,8 +60,8 @@ public class FileUploadControllerTest extends AbstractJUnit4SpringContextTests {
 	private UserSelection userSelection;
 	FileUploadFormValidator validator;
 	
-	private static final String fileName = "Population114_Pheno_FB_1.xls";
-	private static final String fileNameXLSX = "Population114_Pheno_FB_1.xlsx";
+	private static final String FILE_NAME = "Population114_Pheno_FB_1.xls";
+	private static final String FILE_NAME_XLSX = "Population114_Pheno_FB_1.xlsx";
 	
 	@Before
         public void setUp() {
@@ -80,9 +80,9 @@ public class FileUploadControllerTest extends AbstractJUnit4SpringContextTests {
         public void testValidFileXLS() throws Exception{
 		
     	// Get the file
-            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(FILE_NAME);
             String tempFileName = fieldbookService.storeUserWorkbook(inputStream);
-            userSelection.setActualFileName(fileName);
+            userSelection.setActualFileName(FILE_NAME);
             userSelection.setServerFileName(tempFileName);
     
             // Parse the file to create Workbook
@@ -103,9 +103,9 @@ public class FileUploadControllerTest extends AbstractJUnit4SpringContextTests {
         public void testValidFileXLSX() throws Exception{
                 
         // Get the file
-            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileNameXLSX);
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(FILE_NAME_XLSX);
             String tempFileName = fieldbookService.storeUserWorkbook(inputStream);
-            userSelection.setActualFileName(fileNameXLSX);
+            userSelection.setActualFileName(FILE_NAME_XLSX);
             userSelection.setServerFileName(tempFileName);
     
             // Parse the file to create Workbook

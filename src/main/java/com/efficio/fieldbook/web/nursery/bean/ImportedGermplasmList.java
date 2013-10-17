@@ -16,12 +16,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.efficio.fieldbook.web.nursery.bean.ImportedCondition;
-import com.efficio.fieldbook.web.nursery.bean.ImportedConstant;
-import com.efficio.fieldbook.web.nursery.bean.ImportedFactor;
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
-import com.efficio.fieldbook.web.nursery.bean.ImportedVariate;
-
 /**
  * The Class ImportedGermplasmList.
  */

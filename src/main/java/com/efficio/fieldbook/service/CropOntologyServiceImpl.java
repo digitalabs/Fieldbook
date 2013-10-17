@@ -56,7 +56,7 @@ public class CropOntologyServiceImpl extends AbstractRestfulService implements
 		if (StringUtils.isNotBlank(name)) {
 			String url = GET_ONTOLOGY_ID_BY_NAME_URL + name;
 			List<CropTerm> cropTerms = getList(url, CropTerm.class);
-			return cropTerms != null && cropTerms.size() > 0 ? cropTerms.get(0).getId() : null;
+			return cropTerms != null && !cropTerms.isEmpty() ? cropTerms.get(0).getId() : null;
 		}
 		return null;
 	}

@@ -75,14 +75,12 @@ public class TestTreeViewController extends AbstractBaseFieldbookController {
 //			    childNodes = studyDataManager.getStudiesByFolder(parentId);
 //			}
             
-			if (childNodes == null || childNodes.size() == 0) {
+			if (childNodes == null || childNodes.isEmpty()) {
                 List<DatasetReference> datasets = studyDataManager.getDatasetReferences(parentId);
-                String jsonString = TreeViewUtil.convertDatasetReferencesToJson(datasets);
-                return jsonString;
+                return TreeViewUtil.convertDatasetReferencesToJson(datasets);
 
             } else {
-    			String jsonString = TreeViewUtil.convertReferencesToJson(childNodes);
-    			return jsonString;
+    			return TreeViewUtil.convertReferencesToJson(childNodes);
             }
 			
 		} catch (Exception e) {

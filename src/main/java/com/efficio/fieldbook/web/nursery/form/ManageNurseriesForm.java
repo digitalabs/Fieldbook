@@ -11,7 +11,6 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.form;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.generationcp.middleware.domain.etl.StudyDetails;
@@ -38,7 +37,7 @@ public class ManageNurseriesForm {
     }
     
     public int getTotalPages(){
-        if(nurseryDetailsList != null && nurseryDetailsList.size() > 0){           
+        if(nurseryDetailsList != null && !nurseryDetailsList.isEmpty()){           
             totalPages = (int) Math.ceil((nurseryDetailsList.size() * 1f) / getResultPerPage()); 
         }else{
             totalPages = 0;
@@ -58,7 +57,7 @@ public class ManageNurseriesForm {
     public void setCurrentPage(int currentPage) {
         
         //assumption is there are nursery list already
-        if(nurseryDetailsList != null && nurseryDetailsList.size() > 0){
+        if(nurseryDetailsList != null && !nurseryDetailsList.isEmpty()){
             int totalItemsPerPage = getResultPerPage();
             int start = (currentPage - 1) * totalItemsPerPage;
             int end = start + totalItemsPerPage;

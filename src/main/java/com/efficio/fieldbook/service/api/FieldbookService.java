@@ -26,5 +26,5 @@ public interface FieldbookService {
 	 * @return the string
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-    public String storeUserWorkbook(InputStream in) throws IOException;
+    String storeUserWorkbook(InputStream in) throws IOException;
 }

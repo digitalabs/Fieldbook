@@ -46,7 +46,7 @@ public class TreeViewUtil {
     
 	private static List<TreeNode> convertReferencesToTreeView(List<Reference> references) {
 		List<TreeNode> treeNodes = new ArrayList<TreeNode>();
-		if (references != null && references.size() > 0) {
+		if (references != null && !references.isEmpty()) {
 			for (Reference reference : references) {
 				treeNodes.add(convertReferenceToTreeNode(reference));
 			}
@@ -56,7 +56,7 @@ public class TreeViewUtil {
 	
 	private static List<TreeNode> convertFolderReferencesToTreeView(List<FolderReference> references) {
         List<TreeNode> treeNodes = new ArrayList<TreeNode>();
-		if (references != null && references.size() > 0) {
+		if (references != null && !references.isEmpty()) {
 			for (FolderReference reference : references) {
 				treeNodes.add(convertReferenceToTreeNode(reference));
 			}
@@ -66,7 +66,7 @@ public class TreeViewUtil {
 
     private static List<TreeNode> convertDatasetReferencesToTreeView(List<DatasetReference> references) {
         List<TreeNode> treeNodes = new ArrayList<TreeNode>();
-        if (references != null && references.size() > 0) {
+        if (references != null && !references.isEmpty()) {
             for (DatasetReference reference : references) {
                 treeNodes.add(convertReferenceToTreeNode(reference));
             }
@@ -76,7 +76,7 @@ public class TreeViewUtil {
     
     private static List<TreeNode> convertGermplasmListToTreeView(List<GermplasmList> germplasmLists) {
         List<TreeNode> treeNodes = new ArrayList<TreeNode>();
-        if (germplasmLists != null && germplasmLists.size() > 0) {
+        if (germplasmLists != null && !germplasmLists.isEmpty()) {
             for (GermplasmList germplasmList : germplasmLists) {
                 treeNodes.add(convertGermplasmListToTreeNode(germplasmList));
             }
@@ -107,7 +107,7 @@ public class TreeViewUtil {
 	}
 	
 	public static String convertTreeViewToJson(List<TreeNode> treeNodes) throws Exception {
-	    if (treeNodes != null && treeNodes.size() > 0) {
+	    if (treeNodes != null && !treeNodes.isEmpty()) {
     		ObjectMapper mapper = new ObjectMapper();
     		return mapper.writeValueAsString(treeNodes);
 	    }

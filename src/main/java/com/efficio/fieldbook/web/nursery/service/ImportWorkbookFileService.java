@@ -31,5 +31,5 @@ public interface ImportWorkbookFileService {
      * @return
      * @throws IOException 
      */
-    public File retrieveCurrentWorkbookAsFile(UserSelection userSelection) throws IOException;
+    File retrieveCurrentWorkbookAsFile(UserSelection userSelection) throws IOException;
 }

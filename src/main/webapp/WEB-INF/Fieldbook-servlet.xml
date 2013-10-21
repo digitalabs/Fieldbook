@@ -162,12 +162,12 @@
         <property name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
     </bean>
 
-    <bean id="centralHibernateSessionProvider" class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider" scope="singleton" destroy-method="close">
+    <bean id="centralHibernateSessionProvider" class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider" scope="prototype" destroy-method="close">
         <property name="sessionFactory" ref="centralSessionFactory"/>
         <aop:scoped-proxy proxy-target-class="false"/>
     </bean>
     
-     <bean id="localIbdbHibernateSessionProvider" class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider" scope="singleton" destroy-method="close">
+     <bean id="localIbdbHibernateSessionProvider" class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider" scope="prototype" destroy-method="close">
         <property name="sessionFactory" ref="localIbdbSessionFactory"/>
         <aop:scoped-proxy proxy-target-class="false"/>
     </bean>

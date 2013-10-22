@@ -1,0 +1,74 @@
+<div xmlns:th="http://www.thymeleaf.org">
+
+	<form class="form-horizontal">
+		<div class="form-group">
+			<label class="col-lg-4 control-label" th:text="#{ontology.browser.detailstab.traitClass} + ':'">Trait Class:</label>
+			<div class="col-lg-6">
+				<p id="traitClass" class="form-control-static"></p>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-lg-4 control-label" th:text="#{ontology.browser.detailstab.property} + ':'">Property:</label>
+			<div class="col-lg-6">
+				<p id="property" class="form-control-static"></p>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-lg-4 control-label" th:text="#{ontology.browser.detailstab.method} + ':'">Method:</label>
+			<div class="col-lg-6">
+				<p id="method" class="form-control-static"></p>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-lg-4 control-label" th:text="#{ontology.browser.detailstab.scale} + ':'">Scale:</label>
+			<div class="col-lg-6">
+				<p id="scale" class="form-control-static"></p>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-lg-4 control-label" th:text="#{ontology.browser.detailstab.dataType} + ':'">Data Type:</label>
+			<div class="col-lg-6">
+				<p id="dataType" class="form-control-static"></p>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-lg-4 control-label" th:text="#{ontology.browser.detailstab.role} + ':'">Role:</label>
+			<div class="col-lg-6">
+				<p id="role" class="form-control-static"></p>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-lg-4 control-label" th:text="#{ontology.browser.detailstab.cropOntologyId} + ':'">Crop Ontology ID:</label>
+			<div class="col-lg-6">
+				<p id="cropOntologyId" class="form-control-static"></p>
+			</div>
+		</div>
+	</form>
+
+</div>
+
+<div layout:fragment="page-script">		
+	<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[    
+    	function viewDetails(variableId) {
+    		$.ajax({
+    			url: "details/" + variableId,
+    			type: "get",
+    			dataType: "json",
+    			success: function(data) {
+    				$("#traitClass").text(data.isA.name);
+    				$("#property").text(data.property.name);
+    				$("#method").text(data.method.name);
+    				$("#scale").text(data.scale.name);
+    				$("#dataType").text(data.dataType.name);
+    				$("#role").text(data.phenotypicType);
+    				$("#cropOntologyId").text(data.name);
+    			},
+    			error: function(jqXHR, textStatus, errorThrown){ 
+  					console.log("The following error occured: " + textStatus, errorThrown); 
+    			}
+    		});
+    	}
+    //]]>
+    </script>
+</div>

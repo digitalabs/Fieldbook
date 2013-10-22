@@ -1,3 +1,61 @@
 <div class="col-md-7" xmlns:th="http://www.thymeleaf.org">
-Show the tabs here
+
+	<!-- Tab Navigation section -->
+	
+	<ul id="ontology-tab-headers" class="nav nav-pills nav-justified">
+		<li id="ontology-details-tab-li" class="active"><a href="javascript:showSelectedTab('ontology-details-tab');" th:text="#{ontology.browser.tab.details}">Details</a></li>
+		<li id="ontology-values-tab-li"><a href="javascript:showSelectedTab('ontology-values-tab');" th:text="#{ontology.browser.tab.validValues}">Valid Values</a></li>
+		<li id="ontology-usage-tab-li"><a href="javascript:showSelectedTab('ontology-usage-tab');" th:text="#{ontology.browser.tab.usage}">Usage</a></li>
+	</ul>
+	
+	<!-- FOR TESTING ONLY -->
+	<input type="text" id="dummyVariableId" />
+	<input type="button" onclick="javascript:dummyCall();" value="click me"/>
+
+	<!-- details section -->
+	
+	<div id="ontology-tabs">
+		<div id="ontology-details-tab" th:include="/OntologyBrowser/detailsTab" style="display:none;"></div>
+		<div id="ontology-values-tab" th:include="/OntologyBrowser/validValuesTab" style="display:none;"></div>
+		<div id="ontology-usage-tab" th:include="/OntologyBrowser/usageTab" style="display:none;"></div>
+	</div>
+	
+</div>
+
+<div layout:fragment="page-script">		
+	<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[    
+		function dummyCall() {
+			var id = $("#dummyVariableId").val();
+			processTab(id);
+		}
+		
+		//will be called from the leaf node
+		function processTab(variableId) {
+			var selectedTabName = $("#ontology-tab-headers > li.active").text();
+			if (selectedTabName == "Details") {
+				viewDetails(variableId);
+			}
+			else if (selectedTabName == "Valid Values") {
+				
+			}
+			else if (selectedTabName == "Usage") {
+				
+			}
+		}
+		
+	    function showSelectedTab(selectedTabName) {
+			var tabs = $("#ontology-tabs").children();
+			for (var i = 0; i < tabs.length; i++) {
+				if (tabs[i].id == selectedTabName) {
+					$("#" + tabs[i].id + "-li").addClass("active");
+					$("#" + tabs[i].id).show();
+				} else {
+					$("#" + tabs[i].id + "-li").removeClass("active");
+					$("#" + tabs[i].id).hide();
+				}
+			}
+		}
+    //]]>
+    </script>
 </div>

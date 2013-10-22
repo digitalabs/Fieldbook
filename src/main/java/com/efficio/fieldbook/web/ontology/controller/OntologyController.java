@@ -11,8 +11,14 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.ontology.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Resource;
 
+import org.generationcp.middleware.domain.oms.PropertyReference;
+import org.generationcp.middleware.domain.oms.StandardVariableReference;
+import org.generationcp.middleware.domain.oms.TraitReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -29,6 +35,7 @@ import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.nursery.validation.ImportGermplasmListValidator;
 import com.efficio.fieldbook.web.ontology.form.OntologyBrowserForm;
+import com.efficio.fieldbook.web.util.TreeViewUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
 
@@ -56,6 +63,53 @@ public class OntologyController extends AbstractBaseFieldbookController{
         return "OntologyBrowser/main";
     }
     
+    public List<StandardVariableReference> getDummyStandardVariableReference(int i){
+        List<StandardVariableReference> list = new ArrayList();
+        int count = 1;
+        StandardVariableReference ref1 = new StandardVariableReference((i*100)+count++, i + " Variable 1");
+        StandardVariableReference ref2 = new StandardVariableReference((i*100)+count++, i + " Variable 2");
+        StandardVariableReference ref3 = new StandardVariableReference((i*100)+count++, i + " Variable 3");
+        
+        
+       list.add(ref1);
+       list.add(ref2);
+       list.add(ref3);
+        return list;
+    }
+    
+    public List<PropertyReference> getDummyPropertyReference(int i){
+        List<PropertyReference> propList = new ArrayList();
+        int count = 1;
+        PropertyReference propRef1 = new PropertyReference((i*10)+count++, i + " Prop 1");
+        PropertyReference propRef2 = new PropertyReference((i*10)+count++, i + " Prop 2");
+        PropertyReference propRef3 = new PropertyReference((i*10)+count++, i + " Prop 3");
+        
+        propRef1.setStandardVariables(getDummyStandardVariableReference(1));
+        propRef2.setStandardVariables(getDummyStandardVariableReference(2));
+        propRef3.setStandardVariables(getDummyStandardVariableReference(3));
+        
+        propList.add(propRef1);
+        propList.add(propRef2);
+        propList.add(propRef3);
+        return propList;
+    }
+    
+    public List<TraitReference> getDummyData(){
+        List<TraitReference> refList = new ArrayList();
+        TraitReference ref1 = new TraitReference(1, "Test 1");
+        TraitReference ref2 = new TraitReference(2, "Test 2");
+        TraitReference ref3 = new TraitReference(3, "Test 3");
+        
+                
+        ref1.setProperties(getDummyPropertyReference(1));
+        ref2.setProperties(getDummyPropertyReference(2));
+        ref3.setProperties(getDummyPropertyReference(3));
+        
+        refList.add(ref1);
+        refList.add(ref2);
+        refList.add(ref3);
+        return refList;
+    }
    
     /**
      * Show the main import page
@@ -68,99 +122,16 @@ public class OntologyController extends AbstractBaseFieldbookController{
     public String show(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form, Model model) {
         //this set the necessary info from the session variable
         //OntologyDataManager.getTraitGroups()
+        try {
+            List<TraitReference> traitRefList = getDummyData();
+            form.setTraitReferenceList(traitRefList);
+            form.setTreeData(TreeViewUtil.convertOntologyTraitsToJson(traitRefList));
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     	return super.show(model);
     }
-    
-    /**
-     * Get for the pagination of the list
-     *
-     * @param form the form
-     * @param model the model
-     * @return the string
-     */
-    @RequestMapping(value="/page/{pageNum}", method = RequestMethod.GET)
-    public String getPaginatedList(@PathVariable int pageNum, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, Model model) {
-        //this set the necessary info from the session variable
-        form.setImportedGermplasmMainInfo(getUserSelection().getImportedGermplasmMainInfo());
-        if(getUserSelection().getImportedGermplasmMainInfo() != null && getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList() != null){
-            //this would be use to display the imported germplasm info
-            form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
-            form.setCurrentPage(pageNum);
-        }
-        return super.showAjaxPage(model, PAGINATION_TEMPLATE);
-    }
-
-    /**
-     * Process the imported file and just show the information again
-     *
-     * @param form the form
-     * @param result the result
-     * @param model the model
-     * @return the string
-     */
-    @RequestMapping(method = RequestMethod.POST)
-    public String showDetails(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, BindingResult result, Model model) {
-    	
-    	ImportGermplasmListValidator validator = new ImportGermplasmListValidator();
-    	validator.validate(form, result);
-    	//result.reject("importGermplasmListForm.file", "test error msg");    	
-    	getUserSelection().setImportValid(false);
-        if (result.hasErrors()) {
-            /**
-             * Return the user back to form to show errors
-             */
-        	form.setHasError("1");
-            return show(form,model);
-        }else{
-        	try{
-        		ImportedGermplasmMainInfo mainInfo =importGermplasmFileService.storeImportGermplasmWorkbook(form.getFile());
-        		mainInfo = importGermplasmFileService.processWorkbook(mainInfo);
-        		
-        		if(mainInfo.getFileIsValid()){
-        			form.setHasError("0");
-        			getUserSelection().setImportedGermplasmMainInfo(mainInfo);
-        			getUserSelection().setImportValid(true);
-        			form.setImportedGermplasmMainInfo(getUserSelection().getImportedGermplasmMainInfo());
-        			form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
-        			form.setCurrentPage(1);
-        			//after this one, it goes back to the same screen, but the list should already be displayed
-        		}else{
-        			//meaing there is error
-        			form.setHasError("1");
-        			for(String errorMsg : mainInfo.getErrorMessages()){
-        				result.rejectValue("file", errorMsg);  
-        			}
-        			
-        		}
-        	}catch(Exception e){
-                LOG.error(e.getMessage(), e);
-        	}
-        	
-        	
-        }
-        return show(form,model);
-    	
-    }
-    
-    /**
-     * Goes to the Next screen.  Added validation if a germplasm list was properly uploaded
-     *
-     * @param form the form
-     * @param result the result
-     * @param model the model
-     * @return the string
-     */
-    @RequestMapping(value="/next", method = RequestMethod.POST)
-    public String nextScreen(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, BindingResult result, Model model) {
-    	
-    	if(getUserSelection().isImportValid())
-    	    return "redirect:" + AddOrRemoveTraitsController.URL;
-    	else{
-    	    form.setHasError("1");
-    	    result.reject("error.no.import.germplasm.list", "Please import germplasm");
-    	    return show(form,model);
-    	}
-    	
-    }
+  
 
 }

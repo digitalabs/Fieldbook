@@ -18,6 +18,9 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.DatasetReference;
 import org.generationcp.middleware.domain.dms.FolderReference;
 import org.generationcp.middleware.domain.dms.Reference;
+import org.generationcp.middleware.domain.oms.PropertyReference;
+import org.generationcp.middleware.domain.oms.StandardVariableReference;
+import org.generationcp.middleware.domain.oms.TraitReference;
 import org.generationcp.middleware.pojos.GermplasmList;
 
 import com.efficio.pojos.treeview.TreeNode;
@@ -113,4 +116,93 @@ public class TreeViewUtil {
 	    }
 	    return "[]"; 
 	}
+	
+	
+	//for the ontology Browser
+	public static String convertOntologyTraitsToJson(List<TraitReference> traitReferences) throws Exception {
+	    TreeNode treeNode = new TreeNode();
+        
+        treeNode.setKey("0");
+        treeNode.setTitle("Trait Class");
+        treeNode.setIsFolder(true);
+        treeNode.setIsLazy(false);
+        treeNode.setExpand(true);
+        
+        List<TreeNode> treeNodes = convertTraitReferencesToTreeView(traitReferences);
+        treeNode.setChildren(treeNodes);
+        
+        List<TreeNode> tempList = new ArrayList();
+        tempList.add(treeNode);
+        return convertTreeViewToJson(tempList);
+    }
+	private static List<TreeNode> convertTraitReferencesToTreeView(List<TraitReference> traitReferences) {
+        List<TreeNode> treeNodes = new ArrayList<TreeNode>();
+        if (traitReferences != null && !traitReferences.isEmpty()) {
+            for (TraitReference reference : traitReferences) {
+                treeNodes.add(convertTraitReferenceToTreeNode(reference));
+            }
+        }
+        return treeNodes;
+    }
+	
+	private static TreeNode convertTraitReferenceToTreeNode(TraitReference reference) {
+        TreeNode treeNode = new TreeNode();
+        String parentId = reference.getId().toString();
+        treeNode.setKey(parentId);
+        treeNode.setAddClass(parentId);
+        treeNode.setTitle(reference.getName());
+        treeNode.setIsFolder(true);
+        treeNode.setIsLazy(false);
+        //treeNode.setExpand(true);
+        //we need to set the children for the property
+        List<TreeNode> treeNodes = new ArrayList<TreeNode>();
+        if(reference.getProperties() != null && !reference.getProperties().isEmpty()){
+            for (PropertyReference propRef : reference.getProperties()) {
+                treeNodes.add(convertPropertyReferenceToTreeNode(parentId, propRef));
+            }
+            
+        }
+        treeNode.setChildren(treeNodes);
+        
+        return treeNode;
+    }
+	
+	private static TreeNode convertPropertyReferenceToTreeNode(String parentId, PropertyReference reference) {
+        TreeNode treeNode = new TreeNode();
+        String id = parentId+"_"+reference.getId().toString();
+        treeNode.setKey(id);
+        treeNode.setAddClass(id);
+        treeNode.setTitle(reference.getName());
+        treeNode.setIsFolder(true);
+        treeNode.setIsLazy(false);
+        //treeNode.setExpand(true);
+        //we need to set the children for the property
+        List<TreeNode> treeNodes = new ArrayList<TreeNode>();
+        if(reference.getStandardVariables() != null && !reference.getStandardVariables().isEmpty()){
+            for (StandardVariableReference variableRef : reference.getStandardVariables()) {
+                treeNodes.add(convertStandardVariableReferenceToTreeNode(id, variableRef));
+            }
+            
+        }
+        treeNode.setChildren(treeNodes);
+        
+        return treeNode;
+    }
+
+	private static TreeNode convertStandardVariableReferenceToTreeNode(String parentId, StandardVariableReference reference) {
+        TreeNode treeNode = new TreeNode();
+        String id = parentId+"_"+reference.getId().toString();
+        treeNode.setKey(id);
+        treeNode.setAddClass(id);
+        treeNode.setTitle(reference.getName());
+        treeNode.setIsFolder(false);
+        treeNode.setIsLazy(false);
+        treeNode.setLastChildren(true);
+        //treeNode.setExpand(true);
+        //we need to set the children for the property
+        List<TreeNode> treeNodes = new ArrayList<TreeNode>();           
+        treeNode.setChildren(treeNodes);
+        
+        return treeNode;
+    }
 }

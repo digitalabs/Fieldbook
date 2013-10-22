@@ -5,18 +5,62 @@
 		</h1>
 	</div>		
 	
-	<div id="ontology-browser-tree" th:include="/OntologyBrowser/traitTree">
-	
+	<div class="row">
+		<div class="col-md-5">        
+	        <div class="form-group" id="page-message"></div>
+	        <h4 th:text="#{ontology.search.name}">
+	            Please enter a trial or variable name:
+	        </h4>
+        </div>
     </div>
-    <div id="ontology-detail-tabs" th:include="/OntologyBrowser/detailTab">
     
+	<div class="row">
+		<div class="col-md-5">        
+	        <div class="input-group">
+	            <input type="text" id="srch-term" name="srch-term" placeholder="Search" class="form-control"/>
+	            <div class="input-group-btn">
+	                <button type="button" class="btn btn-default" onclick="javascript: doSearchTree();"><i class="glyphicon glyphicon-search"></i></button>
+	            </div>
+	        </div>
+        </div>
+    </div>	
+    
+    <div class="row">
+        &nbsp;
+    </div>
+    
+	<div class="row">
+		<div id="ontology-browser-tree" th:include="/OntologyBrowser/traitTree">
+		
+	    </div>
+	    <div id="ontology-detail-tabs" th:include="/OntologyBrowser/detailTab">
+	    
+	    </div>
     </div>
     
 </div>
 <div layout:fragment="page-script">		
+	<script type="text/javascript" th:src="@{/static/js/fieldbook-tree.js}"></script>
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    
-    
+    var treeData = /*[[${ontologyBrowserForm.treeData}]]*/;
+    var treeDivId = 'ontologyBrowserTree';
+    var message = /*[[#{ontology.search.error.no.result}]]*/;
+   	function doSearchTree(){
+   		var result = seachOntologyTreeNodeWithName(treeDivId, $('#srch-term').val());
+   		//var res = $("#"+treeDivId+" a.dynatree-title:contains('"++"')");
+   		$("#page-message").html("");
+   		if(result == null){   		    	       	    
+   	    	$("#page-message").html("<div class='alert alert-danger'>"+ message +"</div>");
+   		}else{
+   			$("#"+treeDivId).dynatree("getTree").activateKey(result.data.key);
+   			doOntologyTreeHighlight(treeDivId, result.data.key);
+   		}
+   	} 
+   	$( document ).ready(function() {  	     
+  	  //display tree
+  	  displayOntologyTree(treeDivId, treeData);
+    });
       //]]>
     </script>
 </div>

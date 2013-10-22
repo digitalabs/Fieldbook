@@ -21,8 +21,20 @@ import org.generationcp.middleware.domain.oms.TraitReference;
  */
 public class OntologyBrowserForm{
     private List<TraitReference> traitReferenceList;
+    private String treeData;
+            
+    
+    public String getTreeData() {
+        return treeData;
+    }
+
 
     
+    public void setTreeData(String treeData) {
+        this.treeData = treeData;
+    }
+
+
     public List<TraitReference> getTraitReferenceList() {
         return traitReferenceList;
     }

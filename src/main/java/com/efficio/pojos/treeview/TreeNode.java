@@ -11,6 +11,9 @@
  *******************************************************************************/
 package com.efficio.pojos.treeview;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * This class holds the data needed for rendering a tree view using dynatree jquery.
  */
@@ -25,6 +28,12 @@ public class TreeNode {
 	private boolean isLazy;
 	
 	private String addClass;
+	
+	private List<TreeNode> children;
+	
+	private boolean expand;
+	
+	private boolean isLastChildren;
 	
 	/** 
 	 * set icon to Boolean(false) to suppress icon.
@@ -43,6 +52,7 @@ public class TreeNode {
 	    this.addClass = addClass;
 	    this.icon = icon;
 	    this.isLazy = true;
+	    children = new ArrayList();
 	}
 	
 	public boolean getIsLazy() {
@@ -93,4 +103,39 @@ public class TreeNode {
         this.icon = icon;
     }
 
+    
+    public List<TreeNode> getChildren() {
+        return children;
+    }
+
+    
+    public void setChildren(List<TreeNode> children) {
+        this.children = children;
+    }
+
+    
+    public boolean isExpand() {
+        return expand;
+    }
+
+    
+    public void setExpand(boolean expand) {
+        this.expand = expand;
+    }
+
+    
+    public boolean isLastChildren() {
+        return isLastChildren;
+    }
+
+    
+    public void setLastChildren(boolean isLastChildren) {
+        this.isLastChildren = isLastChildren;
+    }
+    
+    
+
+    
+    
+    
 }

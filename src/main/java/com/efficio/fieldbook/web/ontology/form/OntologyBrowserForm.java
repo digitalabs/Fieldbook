@@ -12,6 +12,8 @@
 package com.efficio.fieldbook.web.ontology.form;
 
 import java.util.List;
+
+import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TraitReference;
 
 
@@ -31,7 +33,13 @@ public class OntologyBrowserForm{
     //convert to json 1 level for the property and standard variable
     /** The search tree data. */
     private String searchTreeData;
-            
+    
+    private List<Term> dataTypes;  
+    private List<Term> roles;
+    private List<TraitReference> traitClasses;
+    private List<Term> properties;
+    private List<Term> methods;
+    private List<Term> scales;            
     
     /**
      * Gets the tree data.
@@ -98,5 +106,51 @@ public class OntologyBrowserForm{
     }
     
     
-
+    public List<Term> getDataTypes() {
+        return dataTypes;
+    }
+    
+    public void setDataTypes(List<Term> dataTypes){
+        this.dataTypes = dataTypes;
+    }
+    
+    public List<Term> getRoles() {
+        return roles;
+    }
+    
+    public void setRoles(List<Term> roles) {
+        this.roles = roles;
+    }
+    
+    public List<TraitReference> getTraitClasses() {
+        return traitClasses;
+    }
+    
+    public void setTraitClasses(List<TraitReference> traitClasses) {
+        this.traitClasses = traitClasses;
+    }
+    
+    public List<Term> getProperties() {
+        return properties;
+    }
+    
+    public void setProperties(List<Term> properties) {
+        this.properties = properties;
+    }
+    
+    public List<Term> getMethods() {
+        return methods;
+    }
+    
+    public void setMethods(List<Term> methods) {
+        this.methods = methods;
+    }
+    
+    public List<Term> getScales() {
+        return scales;
+    }
+    
+    public void setScales(List<Term> scales) {
+        this.scales = scales;
+    }
 }

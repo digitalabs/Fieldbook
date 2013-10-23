@@ -19,6 +19,7 @@ import javax.annotation.Resource;
 import org.generationcp.middleware.domain.oms.PropertyReference;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TraitReference;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.OntologyDataManager;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
@@ -89,6 +90,9 @@ public class OntologyController extends AbstractBaseFieldbookController{
             form.setTraitReferenceList(traitRefList);
             form.setTreeData(TreeViewUtil.convertOntologyTraitsToJson(traitRefList));
             form.setSearchTreeData(TreeViewUtil.convertOntologyTraitsToSearchSingleLevelJson(traitRefList));
+            form.setDataTypes(ontologyService.getAllDataTypes());
+            form.setRoles(ontologyService.getAllRoles());
+            form.setTraitClasses(ontologyService.getAllTraitClasses());
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -96,5 +100,15 @@ public class OntologyController extends AbstractBaseFieldbookController{
     	return super.show(model);
     }
   
+    @ModelAttribute("traitClassesSuggestionList")
+    public List<TraitReference> getTraitClassSuggestions() {
+        try {
+            List<TraitReference> traitClass = ontologyService.getAllTraitClasses();
+            return traitClass;
+        } catch (MiddlewareQueryException e) {
+            e.printStackTrace();
+        }
 
+        return null;
+    }
 }

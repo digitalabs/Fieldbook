@@ -3,7 +3,7 @@
 	<input type="button" th:value="#{ontology.browser.button.add.new.variable}" class="btn btn-default btn-log" data-toggle="modal" href="#addVariableModal" />
 	<!-- Modal -->
   	<form role="form-horizontal" onsubmit="return do_validation()"  class="form-horizontal" action="#" 
-	    				th:action="@{/OntologyBrowser/}" method="post" enctype="multipart/form-data">
+	    th:action="@{/OntologyBrowser/}" method="post" enctype="multipart/form-data" th:object="${ontologyBrowserForm}">
 	   	<div class="modal fade" id="addVariableModal" tabindex="-1" role="dialog" aria-labelledby="addVariableLabel" aria-hidden="true">
 			<div class="modal-dialog modal-large" style="width:900px">
 		    	<div class="modal-content">
@@ -35,6 +35,7 @@
 									<div class="col-md-7">
 										<select class="form-control" id="comboDataType">
 			                        		<option value="">Select</option>
+			                        		<option th:each="type : *{dataTypes}" th:value="${type.id}" th:text="${type.name}"/>
 			                        	</select>
 									</div>
 								</div>
@@ -44,6 +45,7 @@
 									<div class="col-md-7">
 										<select class="form-control" id="comboRole">
 			                        		<option value="">Select</option>
+			                        		<option th:each="role : *{roles}" th:value="${role.id}" th:text="${role.name}"/>
 			                        	</select>
 									</div>
 								</div>
@@ -59,14 +61,7 @@
 			         			<div class="form-group">                        
 			                        <label for="comboTraitClass" class="col-md-5 control-label" th:text="#{ontology.browser.modal.trait.class} + ':'">Class:</label>
 			                        <div class="col-md-7">
-			                        	<div class="input-group">
-				                        	<input id="comboTraitClass" type="hidden"  class="form-control select2" placeholder=""/>
-				                        	<span class="input-group-btn">
-				                        		<button class="btn btn-primary" type="button" id="btnAddTraitClass">
-				                        			<span class="glyphicon glyphicon-plus"></span>
-				                        		</button>
-			                        		</span>
-                                        </div>
+			                        	<input id="comboTraitClass" type="hidden"  class="form-control select2" placeholder=""/>
 			                        </div>
 		                        </div>
 		                        
@@ -166,13 +161,37 @@
 	//<![CDATA[   
 		$(function () {
 			
-			var suggestions = null;
+			var traitClassesSuggestions = /*[[${traitClassesSuggestionList}]]*/;
 			
-		  	var suggestions_obj = [];
+		  	var traitClassesSuggestions_obj = [];
 			
-			
+		  	$.each(traitClassesSuggestions, function( index, value ) {
+		  		traitClassesSuggestions_obj.push({ 'id' : value.id,
+  				  'text' : value.name
+				});  
+			});
+		  	
+		  	$("#comboTraitClass").select2({
+	            query: function (query) {
+	              var data = {results: traitClassesSuggestions_obj}, i, j, s;
+	              // return the array that matches
+	              data.results = $.grep(data.results,function(item,index) {
+	                return ($.fn.select2.defaults.matcher(query.term,item.text));
+	              
+	              });
+	              if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
+	              
+	                query.callback(data);
+	            }
+	  
+	        });
+		  	
+		  //$("#comboTraitClass").data("ui-combobox").value($("#hidTraitClass").val());
 		});
 
+		function onBeforeSubmit() {
+	        //$("#hidTraitClass").val($("#comboStudyName").data("ui-combobox").value());
+	    }
     //]]>
     </script>
 </div>

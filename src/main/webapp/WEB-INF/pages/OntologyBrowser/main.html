@@ -38,6 +38,172 @@
 	    </div>
     </div>
     
+    <div class="row">
+    	<br/>
+    	<input type="button" th:value="#{ontology.browser.button.add.new.variable}" class="btn btn-default btn-log" data-toggle="modal" href="#addVariableModal" />
+    </div>
+    
+  	<!-- Modal -->
+  	<form role="form-horizontal" onsubmit="return do_validation()"  class="form-horizontal" action="#" 
+	    				th:action="@{/OntologyBrowser/}" method="post" enctype="multipart/form-data">
+	   	<div class="modal fade" id="addVariableModal" tabindex="-1" role="dialog" aria-labelledby="addVariableLabel" aria-hidden="true">
+			<div class="modal-dialog modal-large" style="width:900px">
+		    	<div class="modal-content">
+		        	<div class="modal-header">
+		           		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		           		<h4 class="modal-title" th:text="#{ontology.browser.header.add.new.variable}">Add a New Variable</h4>
+		         	</div>
+		         	<div class="modal-body" id="addVariableBody">
+		         		<div class="row fluid">
+			         		<div class="col-md-5">
+								<div class="form-group">
+				           			<label for="txtNewVariableName" class="col-md-5 control-label" th:text="#{ontology.browser.modal.variable.name} + ':'">Name:</label>
+			                        <div class="col-md-7">
+			                            <input type="text" id="txtNewVariableName" class="form-control"/>
+			                        </div>
+		                        </div>
+		                        
+		                        <div class="form-group">
+				           			<label for="txtNewVariableNameDesc" class="col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
+				           			<div class="col-md-7">
+			                            <textarea id="txtNewVariableNameDesc" class="form-control" size="10"> </textarea>
+			                        </div>
+								</div>
+								
+								<br/>
+								
+								<div class="form-group">
+									<label for="comboDataType" class="col-md-5 control-label" th:text="#{ontology.browser.modal.data.type} + ':'">Data Type:</label>
+									<div class="col-md-7">
+										<select class="form-control" id="comboDataType">
+			                        		<option value="">Select</option>
+			                        	</select>
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label for="comboRole" class="col-md-5 control-label" th:text="#{ontology.browser.modal.role} + ':'">Role:</label>
+									<div class="col-md-7">
+										<select class="form-control" id="comboRole">
+			                        		<option value="">Select</option>
+			                        	</select>
+									</div>
+								</div>
+								
+								<div class="form-group">
+				           			<label for="txtNewCropOntologyId" class="col-md-5 control-label" th:text="#{ontology.browser.modal.crop.ontology.id} + ':'">Crop Ontology ID:</label>
+			                        <div class="col-md-7">
+			                            <input type="text" id="txtNewCropOntologyId" class="form-control"/>
+			                        </div>
+		                        </div>
+							</div>
+			         		<div class="col-md-6">
+			         			<div class="form-group">                        
+			                        <label for="comboTraitClass" class="col-md-5 control-label" th:text="#{ontology.browser.modal.trait.class} + ':'">Class:</label>
+			                        <div class="col-md-7">
+			                        	<div class="input-group">
+				                        	<select class="form-control" id="comboTraitClass">
+				                        		<option value="">Select</option>
+				                        	</select>
+				                        	<span class="input-group-btn">
+				                        		<button class="btn btn-primary" type="button" id="btnAddTraitClass">
+				                        			<span class="glyphicon glyphicon-plus"></span>
+				                        		</button>
+			                        		</span>
+                                        </div>
+			                        </div>
+		                        </div>
+		                        
+		                        <div class="form-group">
+				                	<label for="txtNewTraitClassDesc" class="col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
+				                    <div class="col-md-7">
+				                    	<textarea type="text" id="txtNewTraitClassDesc" class="form-control" size="10"> </textarea>
+				                    </div>
+			                    </div>
+			                    
+			                    <div class="form-group">                        
+			                        <label for="comboProperty" class="col-md-5 control-label" th:text="#{ontology.browser.modal.property} + ':'">Property:</label>
+			                        <div class="col-md-7">
+			                        	<div class="input-group">
+				                        	<select class="form-control" id="comboProperty">
+				                        		<option value="">Select</option>
+				                        	</select>
+				                        	<span class="input-group-btn">
+				                        		<button class="btn btn-primary" type="button" id="btnAddProperty">
+				                        			<span class="glyphicon glyphicon-plus"></span>
+				                        		</button>
+		                        			</span>
+	                        			</div>
+			                        </div>
+		                        </div>
+		                        
+		                        <div class="form-group">
+				                	<label for="txtNewPropertyDesc" class="col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
+				                    <div class="col-md-7">
+				                    	<textarea type="text" id="txtNewPropertyDesc" class="form-control" size="10"> </textarea>
+				                    </div>
+			                    </div>
+			                    
+			                    <div class="form-group">                        
+			                        <label for="comboMethod" class="col-md-5 control-label" th:text="#{ontology.browser.modal.method} + ':'">Method:</label>
+			                        <div class="col-md-7">
+			                        	<div class="input-group">
+				                        	<select class="form-control" id="comboMethod">
+				                        		<option value="">Select</option>
+				                        	</select>
+				                        	<span class="input-group-btn">
+				                        		<button class="btn btn-primary" type="button" id="btnAddMethod">
+				                        			<span class="glyphicon glyphicon-plus"></span>
+				                        		</button>
+		                        			</span>
+	                        			</div>
+			                        </div>
+		                        </div>
+		                        
+		                        <div class="form-group">
+				                	<label for="txtNewMethodDesc" class="col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
+				                    <div class="col-md-7">
+				                    	<textarea type="text" id="txtNewMethodDesc" class="form-control" size="10"> </textarea>
+				                    </div>
+			                    </div>
+			                    
+			                    <div class="form-group">                        
+			                        <label for="comboScale" class="col-md-5 control-label" th:text="#{ontology.browser.modal.scale} + ':'">Scale:</label>
+			                        <div class="col-md-7">
+			                        	<div class="input-group">
+				                        	<select class="form-control" id="comboScale">
+				                        		<option value="">Select</option>
+				                        	</select>
+			                        		<span class="input-group-btn">
+				                        		<button class="btn btn-primary" type="button" id="btnAddMethod">
+				                        			<span class="glyphicon glyphicon-plus"></span>
+				                        		</button>
+		                        			</span>
+	                        			</div>
+			                        </div>
+		                        </div>
+		                        
+		                        <div class="form-group">
+				                	<label for="txtNewMethodDesc" class="col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
+				                    <div class="col-md-7">
+				                    	<textarea type="text" id="txtNewScaleDesc" class="form-control" size="10"> </textarea>
+				                    </div>
+			                    </div>
+			         		</div>
+			         		<div class="col-md-1"></div>
+		           		</div>
+		         	</div>																							
+		       		<div class="modal-footer">
+		         		<button type="button" th:value="#{common.form.cancel.text}" class="btn btn-primary"
+		         		 th:text="#{common.form.cancel.text}" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		         		<button type="submit" th:value="#{common.form.add.text}" class="btn btn-primary" 
+		         		th:text="#{common.form.add.text}">Add</button>      	
+	       			</div>
+		     	</div><!-- /.modal-content -->
+	   		</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+	</form>
+    
 </div>
 <div layout:fragment="page-script">		
 	<script type="text/javascript" th:src="@{/static/js/ontologyBrowser.js}"></script>
@@ -45,12 +211,19 @@
 	//<![CDATA[    
     var treeData = /*[[${ontologyBrowserForm.treeData}]]*/;
     var treeDivId = 'ontologyBrowserTree';
-    var message = /*[[#{ontology.search.error.no.result}]]*/;
+    var seasrchErrorMessage = /*[[#{ontology.search.error.no.result}]]*/;
    	
    	$( document ).ready(function() {  	     
   	  //display tree
   	  displayOntologyTree(treeDivId, treeData);
     });
+   	
+   	$('#srch-term').on("keypress", function(e) {
+        if (e.keyCode == 13) {
+        	doSearchTree();
+            return false; // prevent the button click from happening
+        }
+	});
       //]]>
     </script>
 </div>

@@ -30,7 +30,7 @@ function doOntologyTreeHighlight(treeName, nodeKey){
 		//call ajax
 		standardVariableKey = elem[elem.length-1];
 		//alert("Do the ajax call now with standard variable id " + standardVariableKey);
-		viewDetails(standardVariableKey);
+		processTab(standardVariableKey);
 	}
 }
 

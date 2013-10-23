@@ -26,42 +26,11 @@
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[   
 	           
-          var details = /*[[#{ontology.browser.tab.details}]]*/;
-          var validValues = /*[[#{ontology.browser.tab.validValues}]]*/;
-          var usage = /*[[#{ontology.browser.tab.usage}]]*/;
-          
-          
-		function dummyCall() {
-			var id = $("#dummyVariableId").val();
-			processTab(id);
-		}
-		
-		//will be called from the leaf node
-		function processTab(variableId) {
-			var selectedTabName = $("#ontology-tab-headers > li.active").text();
-			if (selectedTabName == details) {
-				viewDetails(variableId);
-			}
-			else if (selectedTabName == validValues) {
-				
-			}
-			else if (selectedTabName == usage) {
-				
-			}
-		}
-		
-	    function showSelectedTab(selectedTabName) {
-			var tabs = $("#ontology-tabs").children();
-			for (var i = 0; i < tabs.length; i++) {
-				if (tabs[i].id == selectedTabName) {
-					$("#" + tabs[i].id + "-li").addClass("active");
-					$("#" + tabs[i].id).show();
-				} else {
-					$("#" + tabs[i].id + "-li").removeClass("active");
-					$("#" + tabs[i].id).hide();
-				}
-			}
-		}
+	function dummyCall() {
+		var id = $("#dummyVariableId").val();
+		processTab(id);
+	}
+
     //]]>
     </script>
 </div>

@@ -40,23 +40,13 @@
     
 </div>
 <div layout:fragment="page-script">		
-	<script type="text/javascript" th:src="@{/static/js/fieldbook-tree.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/ontologyBrowser.js}"></script>
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    
     var treeData = /*[[${ontologyBrowserForm.treeData}]]*/;
     var treeDivId = 'ontologyBrowserTree';
     var message = /*[[#{ontology.search.error.no.result}]]*/;
-   	function doSearchTree(){
-   		var result = seachOntologyTreeNodeWithName(treeDivId, $('#srch-term').val());
-   		//var res = $("#"+treeDivId+" a.dynatree-title:contains('"++"')");
-   		$("#page-message").html("");
-   		if(result == null){   		    	       	    
-   	    	$("#page-message").html("<div class='alert alert-danger'>"+ message +"</div>");
-   		}else{
-   			$("#"+treeDivId).dynatree("getTree").activateKey(result.data.key);
-   			doOntologyTreeHighlight(treeDivId, result.data.key);
-   		}
-   	} 
+   	
    	$( document ).ready(function() {  	     
   	  //display tree
   	  displayOntologyTree(treeDivId, treeData);

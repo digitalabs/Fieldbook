@@ -147,17 +147,38 @@ function viewDetails(variableId) {
 		type: "get",
 		dataType: "json",
 		success: function(data) {
-			$("#traitClass").text(data.isA.name);
-			$("#property").text(data.property.name);
-			$("#method").text(data.method.name);
-			$("#scale").text(data.scale.name);
-			$("#dataType").text(data.dataType.name);
-			$("#role").text(data.phenotypicType);
-			$("#cropOntologyId > p").text(data.cropOntologyId);
-			$("#cropOntologyId").attr("href", "http://www.cropontology.org/terms/" + data.cropOntologyId) + "/";
+			if (data && !$.isEmptyObject(data)) {
+				if (data.isA) {
+					$("#traitClass").text(data.isA.name);
+				} else {
+					$("#traitClass").text("");
+				}
+				$("#property").text(data.property.name);
+				$("#method").text(data.method.name);
+				$("#scale").text(data.scale.name);
+				$("#dataType").text(data.dataType.name);
+				$("#role").text(data.phenotypicType);
+				if (data.cropOntologyId) {
+					$("#cropOntologyId > p").text(data.cropOntologyId);
+					$("#cropOntologyId").attr("href", "http://www.cropontology.org/terms/" + data.cropOntologyId + "/");
+				} else {
+					$("#cropOntologyId > p").text("");
+					$("#cropOntologyId").attr("href", "");
+				}
+			} else {
+				clearTabs();
+			}
 		},
 		error: function(jqXHR, textStatus, errorThrown){ 
-				console.log("The following error occured: " + textStatus, errorThrown); 
+			console.log("The following error occured: " + textStatus, errorThrown); 
 		}
 	});
+}
+
+function clearTabs() {
+	var elements = $("#ontology-details-tab").find("p.form-control-static");
+	for (var i = 0; i < elements.length; i++) {
+		elements.text("");
+	}
+	
 }

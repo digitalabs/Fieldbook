@@ -122,6 +122,25 @@ function displayOntologyTree(treeName, treeData){
 
 }
 
+//Tab functions
+function processTab(variableId) {
+	showSelectedTab("ontology-details-tab");
+	viewDetails(variableId);
+}
+
+function showSelectedTab(selectedTabName) {
+	var tabs = $("#ontology-tabs").children();
+	for (var i = 0; i < tabs.length; i++) {
+		if (tabs[i].id == selectedTabName) {
+			$("#" + tabs[i].id + "-li").addClass("active");
+			$("#" + tabs[i].id).show();
+		} else {
+			$("#" + tabs[i].id + "-li").removeClass("active");
+			$("#" + tabs[i].id).hide();
+		}
+	}
+}
+
 function viewDetails(variableId) {
 	$.ajax({
 		url: "details/" + variableId,
@@ -134,7 +153,7 @@ function viewDetails(variableId) {
 			$("#scale").text(data.scale.name);
 			$("#dataType").text(data.dataType.name);
 			$("#role").text(data.phenotypicType);
-			$("#cropOntologyId").text(data.name);
+			$("#cropOntologyId").text(data.cropOntologyId);
 		},
 		error: function(jqXHR, textStatus, errorThrown){ 
 				console.log("The following error occured: " + textStatus, errorThrown); 

@@ -64,7 +64,27 @@ function searchOntologyTreeNodeWithName(treeName, name) {
     	
 };
 
-function displayOntologyTree(treeName, treeData){
+function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId){
+	//for triggering the start of search type ahead
+	
+	var searchTypeAhead = $('#'+searchDivId).typeahead({
+   	  name: 'OntologyBrowserSearchTree', 
+   	  local:  $.parseJSON(searchTreeData),
+   	  limit : 20,   	
+   	  template: '<p><strong>{{value}}</strong> ({{type}}) <br /> {{parentTitle}}</p>',
+   	  engine: Hogan,   	
+   	});
+   	
+   	searchTypeAhead.on('typeahead:selected',function(evt,data){   	    
+   	    doOntologyTreeHighlight(treeDivId, data.key);
+   	    return false;
+   	    });
+   	searchTypeAhead.on('typeahead:autocomplete',function(evt,data){   	    
+   	    doOntologyTreeHighlight(treeDivId, data.key);
+   	    return false;
+   	    });
+   	
+	
 	var json = $.parseJSON(treeData);
 	
 	$("#" + treeName).dynatree({
@@ -190,3 +210,6 @@ function clearTabs() {
 	}
 	
 }
+
+	
+	   	

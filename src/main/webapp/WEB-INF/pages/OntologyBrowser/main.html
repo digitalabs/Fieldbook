@@ -62,25 +62,10 @@
   	  $(".tt-hint").css('top','3px');
 	  $(".tt-hint").css('left','1px');
 	//display tree
-  	  displayOntologyTree(treeDivId, treeData);
+  	  displayOntologyTree(treeDivId, treeData, searchTreeData, 'srch-term');
     });
    	
-   	var searchTypeAhead = $('#srch-term').typeahead({
-   	  name: 'OntologyBrowserSearchTree', 
-   	  local:  $.parseJSON(searchTreeData),
-   	  limit : 20,   	
-   	  template: '<p><strong>{{value}}</strong> ({{type}}) <br /> {{parentTitle}}</p>',
-   	  engine: Hogan,   	
-   	});
-   	
-   	searchTypeAhead.on('typeahead:selected',function(evt,data){   	    
-   	    doOntologyTreeHighlight(treeDivId, data.key);
-   	    return false;
-   	    });
-   	searchTypeAhead.on('typeahead:autocomplete',function(evt,data){   	    
-   	    doOntologyTreeHighlight(treeDivId, data.key);
-   	    return false;
-   	    });
+
   	
    	$('#srch-term').on("keypress", function(e) {
         if (e.keyCode == 13) {

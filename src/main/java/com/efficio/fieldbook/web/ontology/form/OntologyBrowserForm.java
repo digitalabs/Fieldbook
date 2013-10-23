@@ -15,33 +15,60 @@ import java.util.List;
 import org.generationcp.middleware.domain.oms.TraitReference;
 
 
+// TODO: Auto-generated Javadoc
 /**
- * @author Efficio.Daniel
+ * The Class OntologyBrowserForm.
  *
+ * @author Efficio.Daniel
  */
 public class OntologyBrowserForm{
+    
+    /** The trait reference list. */
     private List<TraitReference> traitReferenceList;
+    
+    /** The tree data. */
     private String treeData;
     //convert to json 1 level for the property and standard variable
+    /** The search tree data. */
     private String searchTreeData;
             
     
+    /**
+     * Gets the tree data.
+     *
+     * @return the tree data
+     */
     public String getTreeData() {
         return treeData;
     }
 
 
     
+    /**
+     * Sets the tree data.
+     *
+     * @param treeData the new tree data
+     */
     public void setTreeData(String treeData) {
         this.treeData = treeData;
     }
 
 
+    /**
+     * Gets the trait reference list.
+     *
+     * @return the trait reference list
+     */
     public List<TraitReference> getTraitReferenceList() {
         return traitReferenceList;
     }
 
     
+    /**
+     * Sets the trait reference list.
+     *
+     * @param traitReferenceList the new trait reference list
+     */
     public void setTraitReferenceList(List<TraitReference> traitReferenceList) {
         this.traitReferenceList = traitReferenceList;
     }
@@ -49,6 +76,11 @@ public class OntologyBrowserForm{
 
 
     
+    /**
+     * Gets the search tree data.
+     *
+     * @return the search tree data
+     */
     public String getSearchTreeData() {
         return searchTreeData;
     }
@@ -56,6 +88,11 @@ public class OntologyBrowserForm{
 
 
     
+    /**
+     * Sets the search tree data.
+     *
+     * @param searchTreeData the new search tree data
+     */
     public void setSearchTreeData(String searchTreeData) {
         this.searchTreeData = searchTreeData;
     }

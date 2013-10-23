@@ -42,6 +42,7 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import org.generationcp.middleware.service.api.OntologyService;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * This controller handles the ontology screen.
  * 
@@ -51,10 +52,13 @@ import org.generationcp.middleware.service.api.OntologyService;
 @RequestMapping(OntologyController.URL)
 public class OntologyController extends AbstractBaseFieldbookController{
     
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(OntologyController.class);
     
     /** The Constant URL. */
     public static final String URL = "/OntologyBrowser/";
+    
+    /** The ontology service. */
     @Resource
     private OntologyService ontologyService;
     
@@ -70,7 +74,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
    
    
     /**
-     * Show the main import page
+     * Show the main import page.
      *
      * @param form the form
      * @param model the model

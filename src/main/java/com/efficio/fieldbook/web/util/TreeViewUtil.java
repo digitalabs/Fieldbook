@@ -142,7 +142,7 @@ public class TreeViewUtil {
                     String key = reference.getId().toString() + "_" + propRef.getId().toString(); 
                     List<String> token = new ArrayList();
                     token.add(propRef.getName());
-                    TypeAheadSearchTreeNode searchTreeNode = new TypeAheadSearchTreeNode(key, token , propRef.getName(), parentTitle);
+                    TypeAheadSearchTreeNode searchTreeNode = new TypeAheadSearchTreeNode(key, token , propRef.getName(), parentTitle, "Property");
                     treeNodes.add(searchTreeNode);
                     
                     for(StandardVariableReference variableRef : variableRefList){
@@ -150,7 +150,7 @@ public class TreeViewUtil {
                         String varKey = key + "_" + variableRef.getId().toString();
                         List<String> varToken = new ArrayList();
                         varToken.add(variableRef.getName());
-                        TypeAheadSearchTreeNode varSearchTreeNode = new TypeAheadSearchTreeNode(varKey, varToken, variableRef.getName(), varParentTitle);
+                        TypeAheadSearchTreeNode varSearchTreeNode = new TypeAheadSearchTreeNode(varKey, varToken, variableRef.getName(), varParentTitle, "Standard Variable");
                         treeNodes.add(varSearchTreeNode);
                     }
                 }

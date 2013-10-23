@@ -25,19 +25,31 @@ public class TypeAheadSearchTreeNode {
 	private String key;
 	
 	private String parentTitle;
+	private String type;
 	
 	public TypeAheadSearchTreeNode() {
 	}
 	
-	public TypeAheadSearchTreeNode(String key, List<String>  tokens, String value, String parentTitle) {
+	public TypeAheadSearchTreeNode(String key, List<String>  tokens, String value, String parentTitle, String type) {
 	    this.key = key;
 	    this.tokens = tokens;	
 	    this.value = value;
 	    this.parentTitle = parentTitle;
+	    this.type = type;
 	    
 	}
 
     
+    
+    public String getType() {
+        return type;
+    }
+
+    
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public String getValue() {
         return value;
     }

@@ -39,6 +39,7 @@ import com.efficio.fieldbook.web.nursery.validation.ImportGermplasmListValidator
 import com.efficio.fieldbook.web.ontology.form.OntologyBrowserForm;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import org.generationcp.middleware.service.api.OntologyService;
 
 
 /**
@@ -55,7 +56,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
     /** The Constant URL. */
     public static final String URL = "/OntologyBrowser/";
     @Resource
-    private OntologyDataManager ontologyDataManager;
+    private OntologyService ontologyService;
     
     
     /* (non-Javadoc)
@@ -80,7 +81,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
         //this set the necessary info from the session variable
         //OntologyDataManager.getTraitGroups()
         try {
-            List<TraitReference> traitRefList = (List<TraitReference>) ontologyDataManager.getTraitGroups();//getDummyData();
+            List<TraitReference> traitRefList = (List<TraitReference>) ontologyService.getTraitGroups();//getDummyData();
             form.setTraitReferenceList(traitRefList);
             form.setTreeData(TreeViewUtil.convertOntologyTraitsToJson(traitRefList));
             form.setSearchTreeData(TreeViewUtil.convertOntologyTraitsToSearchSingleLevelJson(traitRefList));

@@ -34,12 +34,12 @@ public class OntologyBrowserForm{
     /** The search tree data. */
     private String searchTreeData;
     
+    /** The data types. */
     private List<Term> dataTypes;  
+    
+    /** The roles. */
     private List<Term> roles;
-    private List<TraitReference> traitClasses;
-    private List<Term> properties;
-    private List<Term> methods;
-    private List<Term> scales;            
+            
     
     /**
      * Gets the tree data.
@@ -106,51 +106,40 @@ public class OntologyBrowserForm{
     }
     
     
+    /**
+     * Gets the data types.
+     *
+     * @return the data types
+     */
     public List<Term> getDataTypes() {
         return dataTypes;
     }
     
+    /**
+     * Sets the data types.
+     *
+     * @param dataTypes the new data types
+     */
     public void setDataTypes(List<Term> dataTypes){
         this.dataTypes = dataTypes;
     }
     
+    /**
+     * Gets the roles.
+     *
+     * @return the roles
+     */
     public List<Term> getRoles() {
         return roles;
     }
     
+    /**
+     * Sets the roles.
+     *
+     * @param roles the new roles
+     */
     public void setRoles(List<Term> roles) {
         this.roles = roles;
     }
     
-    public List<TraitReference> getTraitClasses() {
-        return traitClasses;
-    }
-    
-    public void setTraitClasses(List<TraitReference> traitClasses) {
-        this.traitClasses = traitClasses;
-    }
-    
-    public List<Term> getProperties() {
-        return properties;
-    }
-    
-    public void setProperties(List<Term> properties) {
-        this.properties = properties;
-    }
-    
-    public List<Term> getMethods() {
-        return methods;
-    }
-    
-    public void setMethods(List<Term> methods) {
-        this.methods = methods;
-    }
-    
-    public List<Term> getScales() {
-        return scales;
-    }
-    
-    public void setScales(List<Term> scales) {
-        this.scales = scales;
-    }
-}
+ }

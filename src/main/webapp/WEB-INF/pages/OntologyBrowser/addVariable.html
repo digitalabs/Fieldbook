@@ -15,7 +15,7 @@
 		         		<div class="row fluid">
 			         		<div class="col-md-5">
 								<div class="form-group">
-				           			<label for="txtNewVariableName" class="col-md-5 control-label" th:text="#{ontology.browser.modal.variable.name} + ':'">Name:</label>
+				           			<label for="txtNewVariableName" class="col-md-5 control-label" th:text="#{ontology.browser.modal.variable.name} + ': *'">Name:</label>
 			                        <div class="col-md-7">
 			                            <input type="text" id="txtNewVariableName" class="form-control"/>
 			                        </div>
@@ -31,7 +31,7 @@
 								<br/>
 								
 								<div class="form-group">
-									<label for="comboDataType" class="col-md-5 control-label" th:text="#{ontology.browser.modal.data.type} + ':'">Data Type:</label>
+									<label for="comboDataType" class="col-md-5 control-label" th:text="#{ontology.browser.modal.data.type} + ': *'">Data Type:</label>
 									<div class="col-md-7">
 										<select class="form-control" id="comboDataType">
 			                        		<option value="">Select</option>
@@ -41,7 +41,7 @@
 								</div>
 								
 								<div class="form-group">
-									<label for="comboRole" class="col-md-5 control-label" th:text="#{ontology.browser.modal.role} + ':'">Role:</label>
+									<label for="comboRole" class="col-md-5 control-label" th:text="#{ontology.browser.modal.role} + ': *'">Role:</label>
 									<div class="col-md-7">
 										<select class="form-control" id="comboRole">
 			                        		<option value="">Select</option>
@@ -59,7 +59,7 @@
 							</div>
 			         		<div class="col-md-6">
 			         			<div class="form-group">                        
-			                        <label for="comboTraitClass" class="col-md-5 control-label" th:text="#{ontology.browser.modal.trait.class} + ':'">Class:</label>
+			                        <label for="comboTraitClass" class="col-md-5 control-label" th:text="#{ontology.browser.modal.trait.class} + ': *'">Class:</label>
 			                        <div class="col-md-7">
 			                        	<div class="input-group">
 			                        		<input id="comboTraitClass" type="hidden"  class="form-control select2" placeholder=""/>
@@ -80,12 +80,10 @@
 			                    </div>
 			                    
 			                    <div class="form-group">                        
-			                        <label for="comboProperty" class="col-md-5 control-label" th:text="#{ontology.browser.modal.property} + ':'">Property:</label>
+			                        <label for="comboProperty" class="col-md-5 control-label" th:text="#{ontology.browser.modal.property} + ': *'">Property:</label>
 			                        <div class="col-md-7">
 			                        	<div class="input-group">
-				                        	<select class="form-control" id="comboProperty">
-				                        		<option value="">Select</option>
-				                        	</select>
+				                        	<input id="comboProperty" type="hidden"  class="form-control select2" placeholder=""/>
 				                        	<span class="input-group-btn">
 				                        		<button class="btn btn-primary" type="button" id="btnAddProperty">
 				                        			<span class="glyphicon glyphicon-plus"></span>
@@ -103,12 +101,10 @@
 			                    </div>
 			                    
 			                    <div class="form-group">                        
-			                        <label for="comboMethod" class="col-md-5 control-label" th:text="#{ontology.browser.modal.method} + ':'">Method:</label>
+			                        <label for="comboMethod" class="col-md-5 control-label" th:text="#{ontology.browser.modal.method} + ': *'">Method:</label>
 			                        <div class="col-md-7">
 			                        	<div class="input-group">
-				                        	<select class="form-control" id="comboMethod">
-				                        		<option value="">Select</option>
-				                        	</select>
+				                        	<input id="comboMethod" type="hidden"  class="form-control select2" placeholder=""/>
 				                        	<span class="input-group-btn">
 				                        		<button class="btn btn-primary" type="button" id="btnAddMethod">
 				                        			<span class="glyphicon glyphicon-plus"></span>
@@ -126,12 +122,10 @@
 			                    </div>
 			                    
 			                    <div class="form-group">                        
-			                        <label for="comboScale" class="col-md-5 control-label" th:text="#{ontology.browser.modal.scale} + ':'">Scale:</label>
+			                        <label for="comboScale" class="col-md-5 control-label" th:text="#{ontology.browser.modal.scale} + ': *'">Scale:</label>
 			                        <div class="col-md-7">
 			                        	<div class="input-group">
-				                        	<select class="form-control" id="comboScale">
-				                        		<option value="">Select</option>
-				                        	</select>
+				                        	<input id="comboScale" type="hidden"  class="form-control select2" placeholder=""/>
 			                        		<span class="input-group-btn">
 				                        		<button class="btn btn-primary" type="button" id="btnAddMethod">
 				                        			<span class="glyphicon glyphicon-plus"></span>
@@ -168,12 +162,36 @@
 	//<![CDATA[   
 		$(function () {
 			
-			var traitClassesSuggestions = /*[[${traitClassesSuggestionList}]]*/;
+			var traitClassesSuggestions = /*[[${traitClassesSuggestionList}]]*/ null;
+			var propertySuggestions = /*[[${propertiesSuggestionList}]]*/ null;
+			var methodSuggestions = /*[[${methodsSuggestionList}]]*/ null;
+			var scaleSuggestions = /*[[${scalesSuggestionList}]]*/ null;
 			
 		  	var traitClassesSuggestions_obj = [];
+		  	var propertySuggestions_obj = [];
+		  	var methodSuggestions_obj = [];
+		  	var scaleSuggestions_obj = [];
 			
 		  	$.each(traitClassesSuggestions, function( index, value ) {
 		  		traitClassesSuggestions_obj.push({ 'id' : value.id,
+  				  'text' : value.name
+				});  
+			});
+		  	
+		  	$.each(propertySuggestions, function( index, value ) {
+		  		propertySuggestions_obj.push({ 'id' : value.id,
+  				  'text' : value.name
+				});  
+			});
+		  	
+		  	$.each(methodSuggestions, function( index, value ) {
+		  		methodSuggestions_obj.push({ 'id' : value.id,
+  				  'text' : value.name
+				});  
+			});
+		  	
+		  	$.each(scaleSuggestions, function( index, value ) {
+		  		scaleSuggestions_obj.push({ 'id' : value.id,
   				  'text' : value.name
 				});  
 			});
@@ -193,11 +211,62 @@
 	  
 	        });
 		  	
+		  	$("#comboProperty").select2({
+	            query: function (query) {
+	              var data = {results: propertySuggestions_obj}, i, j, s;
+	              // return the array that matches
+	              data.results = $.grep(data.results,function(item,index) {
+	                return ($.fn.select2.defaults.matcher(query.term,item.text));
+	              
+	              });
+	              if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
+	              
+	                query.callback(data);
+	            }
+	  
+	        });
+		  	
+		  	$("#comboMethod").select2({
+	            query: function (query) {
+	              var data = {results: methodSuggestions_obj}, i, j, s;
+	              // return the array that matches
+	              data.results = $.grep(data.results,function(item,index) {
+	                return ($.fn.select2.defaults.matcher(query.term,item.text));
+	              
+	              });
+	              if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
+	              
+	                query.callback(data);
+	            }
+	  
+	        });
+		  	
+		  	$("#comboScale").select2({
+	            query: function (query) {
+	              var data = {results: scaleSuggestions_obj}, i, j, s;
+	              // return the array that matches
+	              data.results = $.grep(data.results,function(item,index) {
+	                return ($.fn.select2.defaults.matcher(query.term,item.text));
+	              
+	              });
+	              if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
+	              
+	                query.callback(data);
+	            }
+	  
+	        });
+		  	
 		  //$("#comboTraitClass").data("ui-combobox").value($("#hidTraitClass").val());
+		  //$("#comboProperty").data("ui-combobox").value($("#hidProperty").val());
+		  //$("#comboMethod").data("ui-combobox").value($("#hidMethod").val());
+		  //$("#comboScale").data("ui-combobox").value($("#hidScale").val());
 		});
 
 		function onBeforeSubmit() {
-	        //$("#hidTraitClass").val($("#comboStudyName").data("ui-combobox").value());
+	        //$("#hidTraitClass").val($("#comboTraitClass").data("ui-combobox").value());
+	        //$("#hidProperty").val($("#comboProperty").data("ui-combobox").value());
+	        //$("#hidMethod").val($("#comboMethod").data("ui-combobox").value());
+	        //$("#hidScale").val($("#comboScale").data("ui-combobox").value());
 	    }
     //]]>
     </script>

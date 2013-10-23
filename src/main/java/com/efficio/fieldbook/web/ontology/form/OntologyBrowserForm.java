@@ -22,6 +22,8 @@ import org.generationcp.middleware.domain.oms.TraitReference;
 public class OntologyBrowserForm{
     private List<TraitReference> traitReferenceList;
     private String treeData;
+    //convert to json 1 level for the property and standard variable
+    private String searchTreeData;
             
     
     public String getTreeData() {
@@ -42,6 +44,20 @@ public class OntologyBrowserForm{
     
     public void setTraitReferenceList(List<TraitReference> traitReferenceList) {
         this.traitReferenceList = traitReferenceList;
+    }
+
+
+
+    
+    public String getSearchTreeData() {
+        return searchTreeData;
+    }
+
+
+
+    
+    public void setSearchTreeData(String searchTreeData) {
+        this.searchTreeData = searchTreeData;
     }
     
     

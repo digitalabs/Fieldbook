@@ -24,6 +24,7 @@ import org.generationcp.middleware.domain.oms.TraitReference;
 import org.generationcp.middleware.pojos.GermplasmList;
 
 import com.efficio.pojos.treeview.TreeNode;
+import com.efficio.pojos.treeview.TypeAheadSearchTreeNode;
 
 public class TreeViewUtil {
 
@@ -117,8 +118,51 @@ public class TreeViewUtil {
 	    return "[]"; 
 	}
 	
+	public static String convertSearchTreeViewToJson(List<TypeAheadSearchTreeNode> treeNodes) throws Exception {
+        if (treeNodes != null && !treeNodes.isEmpty()) {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.writeValueAsString(treeNodes);
+        }
+        return "[]"; 
+    }
 	
 	//for the ontology Browser
+	public static String convertOntologyTraitsToSearchSingleLevelJson(List<TraitReference> traitReferences) throws Exception {
+        
+        
+        List<TypeAheadSearchTreeNode> treeNodes = new ArrayList();// convertTraitReferencesToTreeView(traitReferences);
+        
+        
+        if (traitReferences != null && !traitReferences.isEmpty()) {
+            for (TraitReference reference : traitReferences) {
+                List<PropertyReference> propRefList = reference.getProperties();
+                for(PropertyReference propRef : propRefList){                                       
+                    List<StandardVariableReference> variableRefList = propRef.getStandardVariables();
+                    String parentTitle = reference.getName();
+                    String key = reference.getId().toString() + "_" + propRef.getId().toString(); 
+                    List<String> token = new ArrayList();
+                    token.add(propRef.getName());
+                    TypeAheadSearchTreeNode searchTreeNode = new TypeAheadSearchTreeNode(key, token , propRef.getName(), parentTitle);
+                    treeNodes.add(searchTreeNode);
+                    
+                    for(StandardVariableReference variableRef : variableRefList){
+                        String varParentTitle = reference.getName() + " > " + propRef.getName();
+                        String varKey = key + "_" + variableRef.getId().toString();
+                        List<String> varToken = new ArrayList();
+                        varToken.add(variableRef.getName());
+                        TypeAheadSearchTreeNode varSearchTreeNode = new TypeAheadSearchTreeNode(varKey, varToken, variableRef.getName(), varParentTitle);
+                        treeNodes.add(varSearchTreeNode);
+                    }
+                }
+                
+            }
+        }
+        //return treeNodes;
+        
+        return convertSearchTreeViewToJson(treeNodes);
+    }
+     
+	
 	public static String convertOntologyTraitsToJson(List<TraitReference> traitReferences) throws Exception {
 	    TreeNode treeNode = new TreeNode();
         
@@ -155,12 +199,13 @@ public class TreeViewUtil {
         treeNode.setIsFolder(true);
         treeNode.setIsLazy(false);
         treeNode.setIcon(false);
+        treeNode.setIncludeInSearch(false);
         //treeNode.setExpand(true);
         //we need to set the children for the property
         List<TreeNode> treeNodes = new ArrayList<TreeNode>();
         if(reference.getProperties() != null && !reference.getProperties().isEmpty()){
             for (PropertyReference propRef : reference.getProperties()) {
-                treeNodes.add(convertPropertyReferenceToTreeNode(parentId, propRef));
+                treeNodes.add(convertPropertyReferenceToTreeNode(parentId, propRef, reference.getName()));
             }
             
         }
@@ -169,7 +214,7 @@ public class TreeViewUtil {
         return treeNode;
     }
 	
-	private static TreeNode convertPropertyReferenceToTreeNode(String parentId, PropertyReference reference) {
+	private static TreeNode convertPropertyReferenceToTreeNode(String parentId, PropertyReference reference, String parentTitle) {
         TreeNode treeNode = new TreeNode();
         String id = parentId+"_"+reference.getId().toString();
         treeNode.setKey(id);
@@ -178,12 +223,15 @@ public class TreeViewUtil {
         treeNode.setIsFolder(true);
         treeNode.setIsLazy(false);
         treeNode.setIcon(false);
+        treeNode.setIncludeInSearch(true);
+        String newParentTitle = parentTitle + " > " + reference.getName();
+        treeNode.setParentTitle(newParentTitle);
         //treeNode.setExpand(true);
         //we need to set the children for the property
         List<TreeNode> treeNodes = new ArrayList<TreeNode>();
         if(reference.getStandardVariables() != null && !reference.getStandardVariables().isEmpty()){
             for (StandardVariableReference variableRef : reference.getStandardVariables()) {
-                treeNodes.add(convertStandardVariableReferenceToTreeNode(id, variableRef));
+                treeNodes.add(convertStandardVariableReferenceToTreeNode(id, variableRef, newParentTitle));
             }
             
         }
@@ -192,7 +240,7 @@ public class TreeViewUtil {
         return treeNode;
     }
 
-	private static TreeNode convertStandardVariableReferenceToTreeNode(String parentId, StandardVariableReference reference) {
+	private static TreeNode convertStandardVariableReferenceToTreeNode(String parentId, StandardVariableReference reference, String parentTitle) {
         TreeNode treeNode = new TreeNode();
         String id = parentId+"_"+reference.getId().toString();
         treeNode.setKey(id);
@@ -202,6 +250,9 @@ public class TreeViewUtil {
         treeNode.setIsLazy(false);
         treeNode.setLastChildren(true);
         treeNode.setIcon(false);
+        treeNode.setIncludeInSearch(true);
+        String newParentTitle = parentTitle + " > " + reference.getName();
+        treeNode.setParentTitle(newParentTitle);
         //treeNode.setExpand(true);
         //we need to set the children for the property
         List<TreeNode> treeNodes = new ArrayList<TreeNode>();           

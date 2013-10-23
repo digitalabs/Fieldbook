@@ -5,13 +5,15 @@ function doSearchTree(){
 	if(result == null){   		    	       	    
     	$("#page-message").html("<div class='alert alert-danger'>"+ seasrchErrorMessage +"</div>");
 	}else{
-		$("#"+treeDivId).dynatree("getTree").activateKey(result.data.key);
-		doOntologyTreeHighlight(treeDivId, result.data.key);
+		console.log(result);
+		//$("#"+treeDivId).dynatree("getTree").activateKey(result.data.key);
+		//doOntologyTreeHighlight(treeDivId, result.data.key);
 	}
 } 
 
 
 function doOntologyTreeHighlight(treeName, nodeKey){
+	$("#"+treeName).dynatree("getTree").activateKey(nodeKey);
 	$('#'+treeName).find("*").removeClass('highlight');
 	//then we highlight the nodeKey and its parents
 	var elem = nodeKey.split("_");
@@ -23,6 +25,7 @@ function doOntologyTreeHighlight(treeName, nodeKey){
 			key = key + "_";
 		
 		key = key + elem[count];
+		console.log("Highlight: " + key);
 		$('.'+key).addClass('highlight');
 	}
 	
@@ -46,10 +49,15 @@ function searchOntologyTreeNodeWithName(treeName, name) {
     var match = null;
 
     searchFrom.visit(function (node) {
-        if (node.data.title.toUpperCase() == name.toUpperCase()) {
-            match = node;
-            return false; // Break if found
-        }
+    	if(node.data.includeInSearch == true){
+	        if (node.data.title.toUpperCase().indexOf(name.toUpperCase()) != -1) {
+	        	if(match == null){
+	        		match = new Array();
+	        	}
+	            match[match.length] = node;
+	            //return false; // Break if found
+	        }
+	    }
     });
     return match;
     

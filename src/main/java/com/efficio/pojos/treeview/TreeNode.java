@@ -35,6 +35,10 @@ public class TreeNode {
 	
 	private boolean isLastChildren;
 	
+	private String parentTitle;
+	
+	private boolean includeInSearch;
+	
 	/** 
 	 * set icon to Boolean(false) to suppress icon.
 	 * set icon to null to use default icon.
@@ -132,9 +136,29 @@ public class TreeNode {
     public void setLastChildren(boolean isLastChildren) {
         this.isLastChildren = isLastChildren;
     }
-    
-    
 
+    
+    public String getParentTitle() {
+        return parentTitle;
+    }
+
+    
+    public void setParentTitle(String parentTitle) {
+        this.parentTitle = parentTitle;
+    }
+
+    
+    public boolean isIncludeInSearch() {
+        return includeInSearch;
+    }
+
+    
+    public void setIncludeInSearch(boolean includeInSearch) {
+        this.includeInSearch = includeInSearch;
+    }
+    
+    
+    
     
     
     

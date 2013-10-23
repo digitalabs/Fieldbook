@@ -19,7 +19,7 @@
 	        <div class="input-group">
 	            <input type="text" id="srch-term" name="srch-term" placeholder="Search" class="form-control"/>
 	            <div class="input-group-btn">
-	                <button type="button" class="btn btn-default" onclick="javascript: doSearchTree();"><i class="glyphicon glyphicon-search"></i></button>
+	                <button type="button" class="btn btn-default" onclick="javascript: void(0)"><i class="glyphicon glyphicon-search"></i></button>
 	            </div>
 	        </div>
         </div>
@@ -40,24 +40,50 @@
     
 </div>
 <div layout:fragment="page-script">		
+	<link th:href="@{/static/css/typeahead.js-bootstrap.css}" rel="stylesheet"/>
 	<script type="text/javascript" th:src="@{/static/js/ontologyBrowser.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/typeahead.min.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/Hogan.js}"></script>
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    
     var treeData = /*[[${ontologyBrowserForm.treeData}]]*/;
+    var searchTreeData = /*[[${ontologyBrowserForm.searchTreeData}]]*/;
     var treeDivId = 'ontologyBrowserTree';
     var seasrchErrorMessage = /*[[#{ontology.search.error.no.result}]]*/;
    	
    	$( document ).ready(function() {  	     
-  	  //display tree
+  	  
+  	  //fix for the typeahead
+  	  $(".tt-hint").css('top','3px');
+	  $(".tt-hint").css('left','1px');
+	//display tree
   	  displayOntologyTree(treeDivId, treeData);
     });
    	
+   	var searchTypeAhead = $('#srch-term').typeahead({
+   	  name: 'OntologyBrowserSearchTree', 
+   	  local:  $.parseJSON(searchTreeData),
+   	  limit : 20,   	
+   	  template: '<p><strong>{{value}}</strong> <br /> {{parentTitle}}</p>',
+   	  engine: Hogan,   	
+   	});
+   	
+   	searchTypeAhead.on('typeahead:selected',function(evt,data){   	    
+   	    doOntologyTreeHighlight(treeDivId, data.key);
+   	    return false;
+   	    });
+   	searchTypeAhead.on('typeahead:autocomplete',function(evt,data){   	    
+   	    doOntologyTreeHighlight(treeDivId, data.key);
+   	    return false;
+   	    });
+  	
    	$('#srch-term').on("keypress", function(e) {
         if (e.keyCode == 13) {
-        	doSearchTree();
+        	//doSearchTree();
             return false; // prevent the button click from happening
         }
 	});
+  
       //]]>
     </script>
 </div>

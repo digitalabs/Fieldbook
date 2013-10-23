@@ -29,8 +29,8 @@ function doOntologyTreeHighlight(treeName, nodeKey){
 	if(elem.length == 3){
 		//call ajax
 		standardVariableKey = elem[elem.length-1];
-		alert("Do the ajax call now with standard variable id " + standardVariableKey);
-		
+		//alert("Do the ajax call now with standard variable id " + standardVariableKey);
+		viewDetails(standardVariableKey);
 	}
 }
 
@@ -120,4 +120,24 @@ function displayOntologyTree(treeName, treeData){
 	      },
 	    });
 
+}
+
+function viewDetails(variableId) {
+	$.ajax({
+		url: "details/" + variableId,
+		type: "get",
+		dataType: "json",
+		success: function(data) {
+			$("#traitClass").text(data.isA.name);
+			$("#property").text(data.property.name);
+			$("#method").text(data.method.name);
+			$("#scale").text(data.scale.name);
+			$("#dataType").text(data.dataType.name);
+			$("#role").text(data.phenotypicType);
+			$("#cropOntologyId").text(data.name);
+		},
+		error: function(jqXHR, textStatus, errorThrown){ 
+				console.log("The following error occured: " + textStatus, errorThrown); 
+		}
+	});
 }

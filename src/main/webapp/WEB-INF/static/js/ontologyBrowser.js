@@ -154,7 +154,7 @@ function viewDetails(variableId) {
 			$("#dataType").text(data.dataType.name);
 			$("#role").text(data.phenotypicType);
 			$("#cropOntologyId > p").text(data.cropOntologyId);
-			$("#cropOntologyId").attr("href", "http://www.cropontology.org/terms/" + data.cropOntologyId);
+			$("#cropOntologyId").attr("href", "http://www.cropontology.org/terms/" + data.cropOntologyId) + "/";
 		},
 		error: function(jqXHR, textStatus, errorThrown){ 
 				console.log("The following error occured: " + textStatus, errorThrown); 

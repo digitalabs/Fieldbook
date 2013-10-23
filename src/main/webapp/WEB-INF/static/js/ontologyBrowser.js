@@ -153,7 +153,8 @@ function viewDetails(variableId) {
 			$("#scale").text(data.scale.name);
 			$("#dataType").text(data.dataType.name);
 			$("#role").text(data.phenotypicType);
-			$("#cropOntologyId").text(data.cropOntologyId);
+			$("#cropOntologyId > p").text(data.cropOntologyId);
+			$("#cropOntologyId").attr("href", "http://www.cropontology.org/terms/" + data.cropOntologyId);
 		},
 		error: function(jqXHR, textStatus, errorThrown){ 
 				console.log("The following error occured: " + textStatus, errorThrown); 

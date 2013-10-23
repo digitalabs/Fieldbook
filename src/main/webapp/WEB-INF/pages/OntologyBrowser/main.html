@@ -59,11 +59,12 @@
    	$( document ).ready(function() {  	     
   	  
   	  //fix for the typeahead
-  	  $(".tt-hint").css('top','3px');
-	  $(".tt-hint").css('left','1px');
+  	 
 	//display tree
   	  displayOntologyTree(treeDivId, treeData, searchTreeData, 'srch-term');
      $.fn.modal.Constructor.prototype.enforceFocus = function () {};
+     $(".tt-hint").css('top','3px');
+	  $(".tt-hint").css('left','0px');
     });
    	
 

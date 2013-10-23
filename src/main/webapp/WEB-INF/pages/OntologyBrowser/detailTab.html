@@ -8,29 +8,11 @@
 		<li id="ontology-usage-tab-li"><a href="javascript:showSelectedTab('ontology-usage-tab');" th:text="#{ontology.browser.tab.usage}">Usage</a></li>
 	</ul>
 	
-	<!-- FOR TESTING ONLY -->
-	<input type="text" id="dummyVariableId" />
-	<input type="button" onclick="javascript:dummyCall();" value="click me"/>
-
 	<!-- details section -->
-	
-	<div id="ontology-tabs">
+	<div id="ontology-tabs" style="padding-top: 15px;">
 		<div id="ontology-details-tab" th:include="/OntologyBrowser/detailsTab" style="display:none;"></div>
 		<div id="ontology-values-tab" th:include="/OntologyBrowser/validValuesTab" style="display:none;"></div>
 		<div id="ontology-usage-tab" th:include="/OntologyBrowser/usageTab" style="display:none;"></div>
 	</div>
 	
-</div>
-
-<div layout:fragment="page-script">		
-	<script type='text/javascript' th:inline="javascript">
-	//<![CDATA[   
-	           
-	function dummyCall() {
-		var id = $("#dummyVariableId").val();
-		processTab(id);
-	}
-
-    //]]>
-    </script>
 </div>

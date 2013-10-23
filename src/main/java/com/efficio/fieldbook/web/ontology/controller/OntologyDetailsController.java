@@ -11,11 +11,14 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.ontology.controller;
 
+import java.text.NumberFormat;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Resource;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.StandardVariable;
-import org.generationcp.middleware.manager.api.OntologyDataManager;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -30,23 +33,33 @@ public class OntologyDetailsController {
     private static final Logger LOG = LoggerFactory.getLogger(OntologyDetailsController.class);
     
     @Resource
-    private OntologyDataManager ontologyDataManager;
+    private OntologyService ontologyService;
     
     @ResponseBody
     @RequestMapping(value = "/OntologyBrowser/details/{variableId}", method = RequestMethod.GET)
-    public String getOntologyDetails(@PathVariable int variableId) {
+    public Map<String, Object> getOntologyDetails(@PathVariable int variableId) {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
         try {
-            StandardVariable variable = ontologyDataManager.getStandardVariable(variableId);
+            StandardVariable variable = ontologyService.getStandardVariable(variableId);
             if (variable != null && variable.getName() != null && !"".equals(variable.getName())) {
-                ObjectMapper objectMapper = new ObjectMapper();
-                return objectMapper.writeValueAsString(variable);
+                resultMap.put("status", "success");
+                resultMap.put("variable", variable);
+                
+                NumberFormat numberFormat = NumberFormat.getIntegerInstance();
+                resultMap.put("projectCount", 
+                        numberFormat.format(ontologyService.countProjectsByVariable(variableId)));
+                resultMap.put("observationCount", 
+                        numberFormat.format(ontologyService.countExperimentsByVariable(variableId, variable.getStoredIn().getId())));
+                
+            } else {
+                resultMap.put("status", "notfound");
             }
-            
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
+            resultMap.put("status", "fail");
         }
         
-        return "[]";
+        return resultMap;
     }
     
 }

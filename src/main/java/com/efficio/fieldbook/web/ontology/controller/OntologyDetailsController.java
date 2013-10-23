@@ -37,7 +37,7 @@ public class OntologyDetailsController {
     public String getOntologyDetails(@PathVariable int variableId) {
         try {
             StandardVariable variable = ontologyDataManager.getStandardVariable(variableId);
-            if (variable != null) {
+            if (variable != null && variable.getName() != null && !"".equals(variable.getName())) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 return objectMapper.writeValueAsString(variable);
             }
@@ -45,6 +45,7 @@ public class OntologyDetailsController {
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
+        
         return "[]";
     }
     

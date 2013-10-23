@@ -19,6 +19,8 @@ import javax.annotation.Resource;
 import org.generationcp.middleware.domain.oms.PropertyReference;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TraitReference;
+import org.generationcp.middleware.manager.api.OntologyDataManager;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -52,7 +54,8 @@ public class OntologyController extends AbstractBaseFieldbookController{
     
     /** The Constant URL. */
     public static final String URL = "/OntologyBrowser/";
-    
+    @Resource
+    private OntologyDataManager ontologyDataManager;
     
     
     /* (non-Javadoc)
@@ -63,53 +66,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
         return "OntologyBrowser/main";
     }
     
-    public List<StandardVariableReference> getDummyStandardVariableReference(int i){
-        List<StandardVariableReference> list = new ArrayList();
-        int count = 1;
-        StandardVariableReference ref1 = new StandardVariableReference((i*100)+count++, i + " Variable 1");
-        StandardVariableReference ref2 = new StandardVariableReference((i*100)+count++, i + " Variable 2");
-        StandardVariableReference ref3 = new StandardVariableReference((i*100)+count++, i + " Variable 3");
-        
-        
-       list.add(ref1);
-       list.add(ref2);
-       list.add(ref3);
-        return list;
-    }
-    
-    public List<PropertyReference> getDummyPropertyReference(int i){
-        List<PropertyReference> propList = new ArrayList();
-        int count = 1;
-        PropertyReference propRef1 = new PropertyReference((i*10)+count++, i + " Prop 1");
-        PropertyReference propRef2 = new PropertyReference((i*10)+count++, i + " Prop 2");
-        PropertyReference propRef3 = new PropertyReference((i*10)+count++, i + " Prop 3");
-        
-        propRef1.setStandardVariables(getDummyStandardVariableReference(1));
-        propRef2.setStandardVariables(getDummyStandardVariableReference(2));
-        propRef3.setStandardVariables(getDummyStandardVariableReference(3));
-        
-        propList.add(propRef1);
-        propList.add(propRef2);
-        propList.add(propRef3);
-        return propList;
-    }
-    
-    public List<TraitReference> getDummyData(){
-        List<TraitReference> refList = new ArrayList();
-        TraitReference ref1 = new TraitReference(1, "Test 1");
-        TraitReference ref2 = new TraitReference(2, "Test 2");
-        TraitReference ref3 = new TraitReference(3, "Test 3");
-        
-                
-        ref1.setProperties(getDummyPropertyReference(1));
-        ref2.setProperties(getDummyPropertyReference(2));
-        ref3.setProperties(getDummyPropertyReference(3));
-        
-        refList.add(ref1);
-        refList.add(ref2);
-        refList.add(ref3);
-        return refList;
-    }
+   
    
     /**
      * Show the main import page
@@ -123,7 +80,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
         //this set the necessary info from the session variable
         //OntologyDataManager.getTraitGroups()
         try {
-            List<TraitReference> traitRefList = getDummyData();
+            List<TraitReference> traitRefList = (List<TraitReference>) ontologyDataManager.getTraitGroups();//getDummyData();
             form.setTraitReferenceList(traitRefList);
             form.setTreeData(TreeViewUtil.convertOntologyTraitsToJson(traitRefList));
         } catch (Exception e) {

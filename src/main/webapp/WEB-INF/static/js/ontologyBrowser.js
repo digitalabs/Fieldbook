@@ -3,7 +3,7 @@ function doSearchTree(){
 	//var res = $("#"+treeDivId+" a.dynatree-title:contains('"++"')");
 	$("#page-message").html("");
 	if(result == null){   		    	       	    
-    	$("#page-message").html("<div class='alert alert-danger'>"+ message +"</div>");
+    	$("#page-message").html("<div class='alert alert-danger'>"+ seasrchErrorMessage +"</div>");
 	}else{
 		$("#"+treeDivId).dynatree("getTree").activateKey(result.data.key);
 		doOntologyTreeHighlight(treeDivId, result.data.key);

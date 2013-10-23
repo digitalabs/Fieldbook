@@ -127,6 +127,7 @@ public class TreeViewUtil {
         treeNode.setIsFolder(true);
         treeNode.setIsLazy(false);
         treeNode.setExpand(true);
+        treeNode.setIcon(false);
         
         List<TreeNode> treeNodes = convertTraitReferencesToTreeView(traitReferences);
         treeNode.setChildren(treeNodes);
@@ -153,6 +154,7 @@ public class TreeViewUtil {
         treeNode.setTitle(reference.getName());
         treeNode.setIsFolder(true);
         treeNode.setIsLazy(false);
+        treeNode.setIcon(false);
         //treeNode.setExpand(true);
         //we need to set the children for the property
         List<TreeNode> treeNodes = new ArrayList<TreeNode>();
@@ -175,6 +177,7 @@ public class TreeViewUtil {
         treeNode.setTitle(reference.getName());
         treeNode.setIsFolder(true);
         treeNode.setIsLazy(false);
+        treeNode.setIcon(false);
         //treeNode.setExpand(true);
         //we need to set the children for the property
         List<TreeNode> treeNodes = new ArrayList<TreeNode>();
@@ -198,6 +201,7 @@ public class TreeViewUtil {
         treeNode.setIsFolder(false);
         treeNode.setIsLazy(false);
         treeNode.setLastChildren(true);
+        treeNode.setIcon(false);
         //treeNode.setExpand(true);
         //we need to set the children for the property
         List<TreeNode> treeNodes = new ArrayList<TreeNode>();           

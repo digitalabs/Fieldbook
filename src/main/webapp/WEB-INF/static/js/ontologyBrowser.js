@@ -25,7 +25,7 @@ function doOntologyTreeHighlight(treeName, nodeKey){
 			key = key + "_";
 		
 		key = key + elem[count];
-		console.log("Highlight: " + key);
+		//console.log("Highlight: " + key);
 		$('.'+key).addClass('highlight');
 	}
 	
@@ -34,6 +34,8 @@ function doOntologyTreeHighlight(treeName, nodeKey){
 		standardVariableKey = elem[elem.length-1];
 		//alert("Do the ajax call now with standard variable id " + standardVariableKey);
 		processTab(standardVariableKey);
+	}else{
+		clearAndAppendOntologyDetailsTab('');
 	}
 }
 
@@ -152,8 +154,8 @@ function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId){
 
 //Tab functions
 function processTab(variableId) {
-	clearAllTabs();
-	showSelectedTab("ontology-details-tab");
+	//clearAllTabs();
+	//showSelectedTab("ontology-details-tab");
 	viewTabs(variableId);
 }
 
@@ -171,20 +173,31 @@ function showSelectedTab(selectedTabName) {
 	}
 }
 
+function clearAndAppendOntologyDetailsTab(html){
+	if(html != '')
+		$("#ontology-detail-tabs").empty().append(html);
+	else
+		$("#ontology-detail-tabs").empty();
+}
+
 function viewTabs(variableId) {
 	Spinner.toggle();
 	$.ajax({
 		url: "details/" + variableId,
 		type: "get",
-		dataType: "json",
-		success: function(data) {
+		//dataType: "json",
+		success: function(html) {
+			clearAndAppendOntologyDetailsTab(html);
+			
+			//alert(data);
+			/*
 			if (data && !$.isEmptyObject(data) && data.status && data.status == "success") {
 				populateDetailsTab(data.variable);
 				populateValidValuesTab(data.variable);
 				populateUsageTab(data);
 			} else {
 				clearAllTabs();
-			}
+			}*/
 		},
 		error: function(jqXHR, textStatus, errorThrown){ 
 			console.log("The following error occured: " + textStatus, errorThrown); 
@@ -194,7 +207,7 @@ function viewTabs(variableId) {
 		}
 	});
 }
-
+/*
 function populateDetailsTab(variable) {
 	if (variable.isA) {
 		$("#traitClass").text(variable.isA.name);
@@ -224,6 +237,7 @@ function populateUsageTab(data) {
 	$("#observationCount").text(data.observationCount);
 }
 
+
 function clearAllTabs() {
 	var elements = $("#ontology-details-tab").find("p.form-control-static");
 	for (var i = 0; i < elements.length; i++) {
@@ -235,3 +249,4 @@ function clearAllTabs() {
 		elements.text("");
 	}
 }
+*/

@@ -1,16 +1,16 @@
 <div xmlns:th="http://www.thymeleaf.org">
 
-	<form id="usageTabForm" class="form-horizontal">
+	<form id="usageTabForm" class="form-horizontal"  th:object="${ontologyDetailsForm}">
 		<div class="form-group">
 			<label class="col-lg-8 control-label" th:text="#{ontology.browser.usagetab.projectCount} + ':'">Number of studies where this variable is involved:</label>
 			<div class="col-lg-2">
-				<p id="projectCount" class="form-control-static"></p>
+				<p id="projectCount" class="form-control-static" th:value="${projectCount}"></p>
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="col-lg-8 control-label" th:text="#{ontology.browser.usagetab.observationCount} + ':'">Number of observations for this variable:</label>
 			<div class="col-lg-2">
-				<p id="observationCount" class="form-control-static"></p>
+				<p id="observationCount" class="form-control-static" th:value="${observationCount}"></p>
 			</div>
 		</div>
 	</form>

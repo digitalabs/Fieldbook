@@ -2,7 +2,7 @@
 
 	<!-- Tab Navigation section -->
 	
-	<ul id="ontology-tab-headers" class="nav nav-tabs" style="display:none;">
+	<ul id="ontology-tab-headers" class="nav nav-tabs" >
 		<li id="ontology-details-tab-li" class="active"><a href="javascript:showSelectedTab('ontology-details-tab');" th:text="#{ontology.browser.tab.details}">Details</a></li>
 		<li id="ontology-values-tab-li"><a href="javascript:showSelectedTab('ontology-values-tab');" th:text="#{ontology.browser.tab.validValues}">Valid Values</a></li>
 		<li id="ontology-usage-tab-li"><a href="javascript:showSelectedTab('ontology-usage-tab');" th:text="#{ontology.browser.tab.usage}">Usage</a></li>
@@ -10,7 +10,7 @@
 	
 	<!-- details section -->
 	<div id="ontology-tabs" style="padding-top: 15px;">
-		<div id="ontology-details-tab" th:include="/OntologyBrowser/detailsTab" style="display:none;"></div>
+		<div id="ontology-details-tab" th:include="/OntologyBrowser/detailsTab" ></div>
 		<div id="ontology-values-tab" th:include="/OntologyBrowser/validValuesTab" style="display:none;"></div>
 		<div id="ontology-usage-tab" th:include="/OntologyBrowser/usageTab" style="display:none;"></div>
 	</div>

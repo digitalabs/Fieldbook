@@ -91,8 +91,6 @@ public class OntologyController extends AbstractBaseFieldbookController{
             form.setTraitReferenceList(traitRefList);
             form.setTreeData(TreeViewUtil.convertOntologyTraitsToJson(traitRefList));
             form.setSearchTreeData(TreeViewUtil.convertOntologyTraitsToSearchSingleLevelJson(traitRefList));
-            form.setDataTypes(ontologyService.getAllDataTypes());
-            form.setRoles(ontologyService.getAllRoles());
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -113,15 +111,16 @@ public class OntologyController extends AbstractBaseFieldbookController{
     public String saveNewVariable(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form, BindingResult result, Model model) {
        try {
            StandardVariable standardVariable = new StandardVariable();
-           standardVariable.setName("variableName");
-           standardVariable.setDescription("variableDesc");
-           standardVariable.setProperty(new Term(1, "name", "desc"));
-           standardVariable.setMethod(new Term(1, "name", "desc"));
-           standardVariable.setScale(new Term(1, "name", "desc"));
-           standardVariable.setDataType(new Term(1, "datatype", ""));
-           standardVariable.setPhenotypicType(PhenotypicType.STUDY);
-           standardVariable.setIsA(new Term(1, "traitClass", ""));
-           standardVariable.setCropOntologyId("cropOntologyID");
+           standardVariable.setName(form.getVariableName());
+           standardVariable.setDescription(form.getVariableDescription());
+           standardVariable.setProperty(ontologyService.getTermById(Integer.parseInt(form.getProperty())));
+           standardVariable.setMethod(ontologyService.getTermById(Integer.parseInt(form.getMethod())));
+           standardVariable.setScale(ontologyService.getTermById(Integer.parseInt(form.getScale())));
+           standardVariable.setDataType(ontologyService.getTermById(Integer.parseInt(form.getDataType())));
+           standardVariable.setPhenotypicType(ontologyService.getPhenotypicTypeById(Integer.parseInt(form.getRole())));
+           standardVariable.setIsA(ontologyService.getTermById(Integer.parseInt(form.getTraitClass())));
+           standardVariable.setStoredIn(ontologyService.getTermById(Integer.parseInt(form.getRole())));
+           standardVariable.setCropOntologyId(form.getCropOntologyId());
            ontologyService.addStandardVariable(standardVariable);
        } catch (MiddlewareQueryException e) {
            LOG.error(e.getMessage(), e);
@@ -139,18 +138,36 @@ public class OntologyController extends AbstractBaseFieldbookController{
         Map<String, String> resultMap = new HashMap<String, String>();
         
         try {
+            Term term = null;
+
+            //add new data
             if (combo.equals("Property")) {
-                ontologyService.addTerm(property, propertyDescription, CvId.PROPERTIES);
+                if (propertyDescription == null || propertyDescription == "") {
+                    propertyDescription = property;
+                }
+                term = ontologyService.addTerm(property, propertyDescription, CvId.PROPERTIES);
             } else if (combo.equals("Method")) {
-                ontologyService.addTerm(method, methodDescription, CvId.METHODS);
+                if (methodDescription == null || methodDescription == "") {
+                    methodDescription = method;
+                }
+                term = ontologyService.addTerm(method, methodDescription, CvId.METHODS);
             } else if (combo.equals("Scale")) {
-                ontologyService.addTerm(scale, scaleDescription, CvId.SCALES);
+                if (scaleDescription == null || scaleDescription == "") {
+                    scaleDescription = scale;
+                }
+                term = ontologyService.addTerm(scale, scaleDescription, CvId.SCALES);
             } else {
-                ontologyService.addTraitClass(traitClass, traitClassDescription, CvId.IBDB_TERMS);
+                if (traitClassDescription == null || traitClassDescription == "") {
+                    traitClassDescription = traitClass;
+                }
+                term = ontologyService.addTraitClass(traitClass, traitClassDescription, CvId.IBDB_TERMS);
             }          
               
             //List<Property> properties = ontologyService.getAllProperties();
-            resultMap.put("status", "1");            
+            resultMap.put("status", "1");
+            resultMap.put("id", String.valueOf(term.getId()));
+            resultMap.put("name", term.getName());
+            resultMap.put("definition", term.getDefinition());
         } catch(MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
             resultMap.put("status", "-1");
@@ -158,7 +175,31 @@ public class OntologyController extends AbstractBaseFieldbookController{
         }
         return resultMap;
     }
-  
+    
+    @ModelAttribute("dataTypes")
+    public List<Term> getDataTypes() {
+        try {
+            List<Term> dataTypes = ontologyService.getAllDataTypes();
+            return dataTypes;
+        } catch (MiddlewareQueryException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+    
+    @ModelAttribute("roles")
+    public List<Term> getRoles() {
+        try {
+            List<Term> roles = ontologyService.getAllRoles();
+            return roles;
+        } catch (MiddlewareQueryException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     /**
      * Gets the trait class suggestions.
      *

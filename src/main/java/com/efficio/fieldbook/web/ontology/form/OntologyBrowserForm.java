@@ -34,26 +34,43 @@ public class OntologyBrowserForm{
     /** The search tree data. */
     private String searchTreeData;
     
+    /** The variable name. */
+    private String variableName;
+    
+    /** The variable description. */
+    private String variableDescription;
+    
     /** The data types. */
-    private List<Term> dataTypes;  
+    private String dataType;  
     
     /** The roles. */
-    private List<Term> roles;
+    private String role;
     
+    /** The crop ontology id. */
+    private String cropOntologyId;
+    
+    /** The trait class. */
     private String traitClass;
     
+    /** The property. */
     private String property;
     
+    /** The method. */
     private String method;
     
+    /** The scale. */
     private String scale;
     
+    /** The trait class description. */
     private String traitClassDescription;
     
+    /** The property description. */
     private String propertyDescription;
     
+    /** The method description. */
     private String methodDescription;
     
+    /** The scale description. */
     private String scaleDescription;
             
     
@@ -121,23 +138,58 @@ public class OntologyBrowserForm{
         this.searchTreeData = searchTreeData;
     }
     
+    /**
+     * Gets the variable name.
+     *
+     * @return the variable name
+     */
+    public String getVariableName() {
+        return variableName;
+    }
+    
+    /**
+     * Sets the variable name.
+     *
+     * @param variableName the new variable name
+     */
+    public void setVariableName(String variableName) {
+        this.variableName = variableName;
+    }
+    
+    /**
+     * Gets the variable description.
+     *
+     * @return the variable description
+     */
+    public String getVariableDescription() {
+        return variableDescription;
+    }
+    
+    /**
+     * Sets the variable description.
+     *
+     * @param variableDescription the new variable description
+     */
+    public void setVariableDescription(String variableDescription) {
+        this.variableDescription = variableDescription;
+    }
     
     /**
      * Gets the data types.
      *
      * @return the data types
      */
-    public List<Term> getDataTypes() {
-        return dataTypes;
+    public String getDataType() {
+        return dataType;
     }
     
     /**
      * Sets the data types.
      *
-     * @param dataTypes the new data types
+     * @param dataType the new data type
      */
-    public void setDataTypes(List<Term> dataTypes){
-        this.dataTypes = dataTypes;
+    public void setDataType(String dataType){
+        this.dataType = dataType;
     }
     
     /**
@@ -145,79 +197,177 @@ public class OntologyBrowserForm{
      *
      * @return the roles
      */
-    public List<Term> getRoles() {
-        return roles;
+    public String getRole() {
+        return role;
     }
     
     /**
      * Sets the roles.
      *
-     * @param roles the new roles
+     * @param role the new role
      */
-    public void setRoles(List<Term> roles) {
-        this.roles = roles;
+    public void setRole(String role) {
+        this.role = role;
     }
     
+    /**
+     * Gets the crop ontology id.
+     *
+     * @return the crop ontology id
+     */
+    public String getCropOntologyId() {
+        return cropOntologyId;
+    }
+    
+    /**
+     * Sets the crop ontology id.
+     *
+     * @param cropOntologyId the new crop ontology id
+     */
+    public void setCropOntologyId(String cropOntologyId) {
+        this.cropOntologyId = cropOntologyId;
+    }
+    
+    /**
+     * Gets the trait class.
+     *
+     * @return the trait class
+     */
     public String getTraitClass() {
         return traitClass;
     }
     
+    /**
+     * Sets the trait class.
+     *
+     * @param traitClass the new trait class
+     */
     public void setTraitClass(String traitClass) {
         this.traitClass = traitClass;
     }
     
+    /**
+     * Gets the property.
+     *
+     * @return the property
+     */
     public String getProperty() {
         return property;
     }
     
+    /**
+     * Sets the property.
+     *
+     * @param property the new property
+     */
     public void setProperty(String property) {
         this.property = property;
     }
     
+    /**
+     * Gets the method.
+     *
+     * @return the method
+     */
     public String getMethod() {
         return method;
     }
     
+    /**
+     * Sets the method.
+     *
+     * @param method the new method
+     */
     public void setMethod(String method) {
         this.method = method;
     }
     
+    /**
+     * Gets the scale.
+     *
+     * @return the scale
+     */
     public String getScale() {
         return scale;
     }
     
+    /**
+     * Sets the scale.
+     *
+     * @param scale the new scale
+     */
     public void setScale(String scale) {
         this.scale = scale;
     }
     
+    /**
+     * Gets the trait class description.
+     *
+     * @return the trait class description
+     */
     public String getTraitClassDescription() {
         return traitClassDescription;
     }
     
+    /**
+     * Sets the trait class description.
+     *
+     * @param traitClassDescription the new trait class description
+     */
     public void setTraitClassDescription(String traitClassDescription) {
         this.traitClassDescription = traitClassDescription;
     }
     
+    /**
+     * Gets the property description.
+     *
+     * @return the property description
+     */
     public String getPropertyDescription() {
         return propertyDescription;
     }
     
+    /**
+     * Sets the property description.
+     *
+     * @param propertyDescription the new property description
+     */
     public void setPropertyDescription(String propertyDescription) {
         this.propertyDescription = propertyDescription;
     }
     
+    /**
+     * Gets the method description.
+     *
+     * @return the method description
+     */
     public String getMethodDescription() {
         return methodDescription;
     }
     
+    /**
+     * Sets the method description.
+     *
+     * @param methodDescription the new method description
+     */
     public void setMethodDescription(String methodDescription) {
         this.methodDescription = methodDescription;
     }
     
+    /**
+     * Gets the scale description.
+     *
+     * @return the scale description
+     */
     public String getScaleDescription() {
         return scaleDescription;
     }
     
+    /**
+     * Sets the scale description.
+     *
+     * @param scaleDescription the new scale description
+     */
     public void setScaleDescription(String scaleDescription) {
         this.scaleDescription = scaleDescription;
     }

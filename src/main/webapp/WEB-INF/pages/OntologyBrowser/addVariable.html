@@ -15,45 +15,45 @@
 		         		<div class="row fluid">
 			         		<div class="col-md-5">
 								<div class="form-group">
-				           			<label for="txtNewVariableName" class="col-md-5 control-label" th:text="#{ontology.browser.modal.variable.name} + ': *'">Name:</label>
+				           			<label for="variableName" class="col-md-5 control-label" th:text="#{ontology.browser.modal.variable.name} + ': *'">Name:</label>
 			                        <div class="col-md-7">
-			                            <input type="text" id="txtNewVariableName" class="form-control"/>
+			                            <input type="text" th:field="*{variableName}" class="form-control"/>
 			                        </div>
 		                        </div>
 		                        
 		                        <div class="form-group">
-				           			<label for="txtNewVariableNameDesc" class="col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
+				           			<label for="variableDescription" class="col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
 				           			<div class="col-md-7">
-			                            <textarea id="txtNewVariableNameDesc" class="form-control" size="10"> </textarea>
+			                            <textarea th:field="*{variableDescription}" class="form-control" size="10"> </textarea>
 			                        </div>
 								</div>
 								
 								<br/>
 								
 								<div class="form-group">
-									<label for="comboDataType" class="col-md-5 control-label" th:text="#{ontology.browser.modal.data.type} + ': *'">Data Type:</label>
+									<label for="dataType" class="col-md-5 control-label" th:text="#{ontology.browser.modal.data.type} + ': *'">Data Type:</label>
 									<div class="col-md-7">
-										<select class="form-control" id="comboDataType">
+										<select class="form-control" th:field="*{dataType}">
 			                        		<option value="">Select</option>
-			                        		<option th:each="type : *{dataTypes}" th:value="${type.id}" th:text="${type.name}"/>
+			                        		<option th:each="type : ${dataTypes}" th:value="${type.id}" th:text="${type.name}"/>
 			                        	</select>
 									</div>
 								</div>
 								
 								<div class="form-group">
-									<label for="comboRole" class="col-md-5 control-label" th:text="#{ontology.browser.modal.role} + ': *'">Role:</label>
+									<label for="role" class="col-md-5 control-label" th:text="#{ontology.browser.modal.role} + ': *'">Role:</label>
 									<div class="col-md-7">
-										<select class="form-control" id="comboRole">
+										<select class="form-control" th:field="*{role}">
 			                        		<option value="">Select</option>
-			                        		<option th:each="role : *{roles}" th:value="${role.id}" th:text="${role.name}"/>
+			                        		<option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.name}"/>
 			                        	</select>
 									</div>
 								</div>
 								
 								<div class="form-group">
-				           			<label for="txtNewCropOntologyId" class="col-md-5 control-label" th:text="#{ontology.browser.modal.crop.ontology.id} + ':'">Crop Ontology ID:</label>
+				           			<label for="cropOntologyId" class="col-md-5 control-label" th:text="#{ontology.browser.modal.crop.ontology.id} + ':'">Crop Ontology ID:</label>
 			                        <div class="col-md-7">
-			                            <input type="text" id="txtNewCropOntologyId" class="form-control"/>
+			                            <input type="text" th:field="*{cropOntologyId}" class="form-control"/>
 			                        </div>
 		                        </div>
 							</div>
@@ -73,9 +73,9 @@
 		                        </div>
 		                        
 		                        <div class="form-group">
-				                	<label for="txtNewTraitClassDesc" class="col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
+				                	<label for="traitClassDescription" class="col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
 				                    <div class="col-md-7">
-				                    	<textarea type="text" id="txtNewTraitClassDesc" th:field="*{traitClassDescription}" class="form-control" size="10"> </textarea>
+				                    	<textarea type="text" th:field="*{traitClassDescription}" class="form-control" size="10"> </textarea>
 				                    </div>
 			                    </div>
 			                    
@@ -94,9 +94,9 @@
 		                        </div>
 		                        
 		                        <div class="form-group">
-				                	<label for="txtNewPropertyDesc" class="col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
+				                	<label for="propertyDescription" class="col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
 				                    <div class="col-md-7">
-				                    	<textarea type="text" id="txtNewPropertyDesc" th:field="*{propertyDescription}" class="form-control" size="10"> </textarea>
+				                    	<textarea type="text" th:field="*{propertyDescription}" class="form-control" size="10"> </textarea>
 				                    </div>
 			                    </div>
 			                    
@@ -115,9 +115,9 @@
 		                        </div>
 		                        
 		                        <div class="form-group">
-				                	<label for="txtNewMethodDesc" class="col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
+				                	<label for="methodDescription" class="col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
 				                    <div class="col-md-7">
-				                    	<textarea type="text" id="txtNewMethodDesc" th:field="*{methodDescription}" class="form-control" size="10"> </textarea>
+				                    	<textarea type="text" th:field="*{methodDescription}" class="form-control" size="10"> </textarea>
 				                    </div>
 			                    </div>
 			                    
@@ -136,9 +136,9 @@
 		                        </div>
 		                        
 		                        <div class="form-group">
-				                	<label for="txtNewMethodDesc" class="col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
+				                	<label for="scaleDescription" class="col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
 				                    <div class="col-md-7">
-				                    	<textarea type="text" id="txtNewScaleDesc" th:field="*{scaleDescription}" class="form-control" size="10"> </textarea>
+				                    	<textarea type="text" th:field="*{scaleDescription}" class="form-control" size="10"> </textarea>
 				                    </div>
 			                    </div>
 			         		</div>
@@ -159,40 +159,51 @@
 
 <div layout:fragment="page-script">		
 	<script type='text/javascript' th:inline="javascript">
-	//<![CDATA[   
+	//<![CDATA[
+        var traitClassesSuggestions = /*[[${traitClassesSuggestionList}]]*/ null;
+		var propertySuggestions = /*[[${propertiesSuggestionList}]]*/ null;
+		var methodSuggestions = /*[[${methodsSuggestionList}]]*/ null;
+		var scaleSuggestions = /*[[${scalesSuggestionList}]]*/ null;
+		
+	  	var traitClassesSuggestions_obj = [];
+	  	var propertySuggestions_obj = [];
+	  	var methodSuggestions_obj = [];
+	  	var scaleSuggestions_obj = [];
+	  	
+	  	var traitClassesDescription = [];
+	  	var propertyDescription = [];
+	  	var methodDescription = [];
+	  	var scaleDescription = [];
+			  	
 		$(function () {
 			
-			var traitClassesSuggestions = /*[[${traitClassesSuggestionList}]]*/ null;
-			var propertySuggestions = /*[[${propertiesSuggestionList}]]*/ null;
-			var methodSuggestions = /*[[${methodsSuggestionList}]]*/ null;
-			var scaleSuggestions = /*[[${scalesSuggestionList}]]*/ null;
-			
-		  	var traitClassesSuggestions_obj = [];
-		  	var propertySuggestions_obj = [];
-		  	var methodSuggestions_obj = [];
-		  	var scaleSuggestions_obj = [];
 			
 		  	$.each(traitClassesSuggestions, function( index, value ) {
 		  		traitClassesSuggestions_obj.push({ 'id' : value.id,
-  				  'text' : value.name
+  				  'text' : value.name,
+  				  'description' : value.description
 				});  
+		  		
 			});
 		  	
 		  	$.each(propertySuggestions, function( index, value ) {
 		  		propertySuggestions_obj.push({ 'id' : value.id,
-  				  'text' : value.name
+  				  'text' : value.name,
+  				  'description' : value.definition
 				});  
 			});
 		  	
 		  	$.each(methodSuggestions, function( index, value ) {
 		  		methodSuggestions_obj.push({ 'id' : value.id,
-  				  'text' : value.name
+  				  'text' : value.name,
+  				  'description' : value.definition
 				});  
 			});
 		  	
 		  	$.each(scaleSuggestions, function( index, value ) {
 		  		scaleSuggestions_obj.push({ 'id' : value.id,
-  				  'text' : value.name
+  				  'text' : value.name,
+  				  'description' : value.definition
 				});  
 			});
 		  	
@@ -209,6 +220,8 @@
 	                query.callback(data);
 	            }
 	  
+	        }).on("change", function(){
+	        	$("#traitClassDescription").val($("#comboTraitClass").select2("data").description);
 	        });
 		  	
 		  	$("#comboProperty").select2({
@@ -224,6 +237,8 @@
 	                query.callback(data);
 	            }
 	  
+	        }).on("change", function(){
+	        	$("#propertyDescription").val($("#comboProperty").select2("data").description);
 	        });
 		  	
 		  	$("#comboMethod").select2({
@@ -239,6 +254,8 @@
 	                query.callback(data);
 	            }
 	  
+	        }).on("change", function(){
+	        	$("#methodDescription").val($("#comboMethod").select2("data").description);
 	        });
 		  	
 		  	$("#comboScale").select2({
@@ -254,6 +271,8 @@
 	                query.callback(data);
 	            }
 	  
+	        }).on("change", function(){
+	        	$("#scaleDescription").val($("#comboScale").select2("data").description);
 	        });
 		  	
 		  //$("#comboTraitClass").data("ui-combobox").value($("#hidTraitClass").val());
@@ -273,9 +292,7 @@
 			var $form = $("#addVariableForm");
 			var allComboElements = $("input.select2, textarea");
 			$inputs = $form.find(allComboElements);
-			
 			serializedData = $form.serialize();
-			$inputs.attr("disabled", "disabled");
 			Spinner.toggle();
 			
 			$.ajax({
@@ -285,12 +302,8 @@
 				data: serializedData,
 			    success: function(data){
 				    if (data.status == "1") {
-				    	
-				    	$("comboProperty").select2({data: [{id:0,text:'black'},{id:1,text:'blue'}, {id:1,text:'red'}, {id:1,text:'bssasa'}]});
-				    	
-				    	
+				    	recreateCombo(combo, data);					    	
 			       	} else {
-			       		alert("nay");
 			       		//to do
 			       		//$("#error-message").html(data.errorMessage);
 			       		//$("#page-message").show();
@@ -299,11 +312,64 @@
 			   error: function(jqXHR, textStatus, errorThrown){
 					console.log("The following error occured: " + textStatus, errorThrown);
 			   }, 
-			   complete: function(){
-			       $inputs.removeAttr("disabled"); 
+			   complete: function(){ 
 				   Spinner.toggle();
 			   } 
 			});
+		}
+		
+		function recreateCombo(combo, data) {
+			var suggestions_obj = [];
+			var description = null;
+			
+			//add the new data in the collection
+			if (combo == "TraitClass") {
+				traitClassesSuggestions_obj.push({ 'id' : data.id,
+					  'text' : data.name,
+					  'description' : data.definition
+				});
+				suggestions_obj = traitClassesSuggestions_obj;
+				description = $("#traitClassDescription");
+			} else if (combo == "Property") {
+				propertySuggestions_obj.push({ 'id' : data.id,
+					  'text' : data.name,
+					  'description' : data.definition
+				});
+				suggestions_obj = propertySuggestions_obj;
+			} else if (combo == "Method") {
+				methodSuggestions_obj.push({ 'id' : data.id,
+					  'text' : data.name,
+					  'description' : data.definition
+				});
+				suggestions_obj = methodSuggestions_obj;
+			} else {
+				scaleSuggestions_obj.push({ 'id' : data.id,
+					  'text' : data.name,
+					  'description' : data.definition
+				});
+				suggestions_obj = scaleSuggestions_obj;
+			}
+			
+			//set description field to empty
+			if (description == null) {
+				description = $("#"+combo.toLowerCase()+"Description"); 
+			}
+			description.val("");
+			
+			//recreate the dropdown
+	    	$("#combo" + combo).select2({
+	    			query: function (query) {
+	  	              var data = {results: suggestions_obj}, i, j, s;
+	  	              // return the array that matches
+	  	              data.results = $.grep(data.results,function(item,index) {
+	  	                return ($.fn.select2.defaults.matcher(query.term,item.text));
+	  	              
+	  	              });
+	  	              if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
+	  	              
+	  	                query.callback(data);
+	  	            }		
+	    	});
 		}
     //]]>
     </script>

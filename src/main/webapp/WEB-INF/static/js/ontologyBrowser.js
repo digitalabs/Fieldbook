@@ -158,6 +158,7 @@ function processTab(variableId) {
 }
 
 function showSelectedTab(selectedTabName) {
+	$("#ontology-tab-headers").show();
 	var tabs = $("#ontology-tabs").children();
 	for (var i = 0; i < tabs.length; i++) {
 		if (tabs[i].id == selectedTabName) {
@@ -171,7 +172,7 @@ function showSelectedTab(selectedTabName) {
 }
 
 function viewTabs(variableId) {
-	$("#ontology-tab-headers").find("a").attr("disabled", "disabled");
+	Spinner.toggle();
 	$.ajax({
 		url: "details/" + variableId,
 		type: "get",
@@ -189,7 +190,7 @@ function viewTabs(variableId) {
 			console.log("The following error occured: " + textStatus, errorThrown); 
 		},
 		complete: function() {
-			$("#ontology-tab-headers").find("a").removeAttr("disabled");
+			Spinner.toggle();
 		}
 	});
 }

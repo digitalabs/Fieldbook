@@ -37,7 +37,7 @@ import com.efficio.fieldbook.web.nursery.form.SaveNurseryForm;
 //http://stackoverflow.com/questions/12607140/how-to-test-post-spring-mvc
 	
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/Fieldbook-servlet.xml"})
+@ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
 public class SaveNurseryControllerTest extends AbstractJUnit4SpringContextTests {
 
 	@Autowired

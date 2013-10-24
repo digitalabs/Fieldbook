@@ -37,7 +37,7 @@ import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.service.ImportWorkbookFileService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/Fieldbook-servlet.xml"})
+@ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
 public class NurseryDetailsTest extends AbstractJUnit4SpringContextTests {
     
     private static final Logger LOG = LoggerFactory.getLogger(NurseryDetailsTest.class);

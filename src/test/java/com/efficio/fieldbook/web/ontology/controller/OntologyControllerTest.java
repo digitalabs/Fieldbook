@@ -14,14 +14,9 @@ package com.efficio.fieldbook.web.ontology.controller;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -39,15 +34,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
-import com.efficio.fieldbook.web.nursery.controller.GermplasmTreeController;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 import com.efficio.pojos.treeview.TreeNode;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/Fieldbook-servlet.xml"})
+@ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
 public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
     
     private static final Logger LOG = LoggerFactory.getLogger(OntologyControllerTest.class);
@@ -56,7 +47,7 @@ public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
     private OntologyController controller;
     
     private List<StandardVariableReference> getDummyStandardVariableReference(int i){
-        List<StandardVariableReference> list = new ArrayList();
+        List<StandardVariableReference> list = new ArrayList<StandardVariableReference>();
         int count = 1;
         StandardVariableReference ref1 = new StandardVariableReference((i*100)+count++, i + " Variable 1");
         StandardVariableReference ref2 = new StandardVariableReference((i*100)+count++, i + " Variable 2");
@@ -70,7 +61,7 @@ public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
     }
     
     private List<PropertyReference> getDummyPropertyReference(int i){
-        List<PropertyReference> propList = new ArrayList();
+        List<PropertyReference> propList = new ArrayList<PropertyReference>();
         int count = 1;
         PropertyReference propRef1 = new PropertyReference((i*10)+count++, i + " Prop 1");
         PropertyReference propRef2 = new PropertyReference((i*10)+count++, i + " Prop 2");
@@ -87,7 +78,7 @@ public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
     }
     
     private List<TraitReference> getDummyData(){
-        List<TraitReference> refList = new ArrayList();
+        List<TraitReference> refList = new ArrayList<TraitReference>();
         TraitReference ref1 = new TraitReference(1, "Test 1");
         TraitReference ref2 = new TraitReference(2, "Test 2");
         TraitReference ref3 = new TraitReference(3, "Test 3");
@@ -111,7 +102,6 @@ public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
         @Test
         public void testOntologyTreeJsonData(){
 
-            ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
             try{
                 
                 List<TraitReference> traitRefList = getDummyData();

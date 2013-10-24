@@ -32,7 +32,7 @@ import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/Fieldbook-servlet.xml"})
+@ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
 public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringContextTests {
     
     private static final Logger LOG = LoggerFactory.getLogger(ImportGermplasmListControllerTest.class);

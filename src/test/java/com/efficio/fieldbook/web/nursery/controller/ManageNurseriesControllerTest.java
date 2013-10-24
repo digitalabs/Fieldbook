@@ -32,7 +32,7 @@ import com.efficio.fieldbook.web.nursery.form.ManageNurseriesForm;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/Fieldbook-servlet.xml"})
+@ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
 public class ManageNurseriesControllerTest extends AbstractJUnit4SpringContextTests {
 	
     private static final Logger LOG = LoggerFactory.getLogger(ManageNurseriesControllerTest.class);

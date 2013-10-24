@@ -40,7 +40,7 @@ import com.efficio.fieldbook.web.nursery.form.FileUploadForm;
 import com.efficio.fieldbook.service.api.FieldbookService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/Fieldbook-servlet.xml"})
+@ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
 public class FileUploadControllerTest extends AbstractJUnit4SpringContextTests {
 
 	

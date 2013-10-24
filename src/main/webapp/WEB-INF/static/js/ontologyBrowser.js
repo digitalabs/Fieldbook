@@ -154,8 +154,6 @@ function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId){
 
 //Tab functions
 function processTab(variableId) {
-	//clearAllTabs();
-	//showSelectedTab("ontology-details-tab");
 	viewTabs(variableId);
 }
 
@@ -187,17 +185,7 @@ function viewTabs(variableId) {
 		type: "get",
 		//dataType: "json",
 		success: function(html) {
-			clearAndAppendOntologyDetailsTab(html);
-			
-			//alert(data);
-			/*
-			if (data && !$.isEmptyObject(data) && data.status && data.status == "success") {
-				populateDetailsTab(data.variable);
-				populateValidValuesTab(data.variable);
-				populateUsageTab(data);
-			} else {
-				clearAllTabs();
-			}*/
+			clearAndAppendOntologyDetailsTab(html);			
 		},
 		error: function(jqXHR, textStatus, errorThrown){ 
 			console.log("The following error occured: " + textStatus, errorThrown); 
@@ -207,46 +195,3 @@ function viewTabs(variableId) {
 		}
 	});
 }
-/*
-function populateDetailsTab(variable) {
-	if (variable.isA) {
-		$("#traitClass").text(variable.isA.name);
-	} else {
-		$("#traitClass").text("");
-	}
-	$("#property").text(variable.property.name);
-	$("#method").text(variable.method.name);
-	$("#scale").text(variable.scale.name);
-	$("#dataType").text(variable.dataType.name);
-	$("#role").text(variable.phenotypicType);
-	if (variable.cropOntologyId) {
-		$("#cropOntologyId > p").text(variable.cropOntologyId);
-		$("#cropOntologyId").attr("href", "http://www.cropontology.org/terms/" + variable.cropOntologyId + "/");
-	} else {
-		$("#cropOntologyId > p").text("");
-		$("#cropOntologyId").attr("href", "");
-	}
-}
-
-function populateValidValuesTab(variable) {
-	
-}
-
-function populateUsageTab(data) {
-	$("#projectCount").text(data.projectCount);
-	$("#observationCount").text(data.observationCount);
-}
-
-
-function clearAllTabs() {
-	var elements = $("#ontology-details-tab").find("p.form-control-static");
-	for (var i = 0; i < elements.length; i++) {
-		elements.text("");
-	}
-	
-	elements = $("#usageTabForm").find("p.form-control-static");
-	for (var i = 0; i < elements.length; i++) {
-		elements.text("");
-	}
-}
-*/

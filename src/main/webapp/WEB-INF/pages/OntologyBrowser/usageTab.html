@@ -4,13 +4,13 @@
 		<div class="form-group">
 			<label class="col-lg-8 control-label" th:text="#{ontology.browser.usagetab.projectCount} + ':'">Number of studies where this variable is involved:</label>
 			<div class="col-lg-2">
-				<p class="form-control-static" th:value="*{projectCount}"></p>
+				<p class="form-control-static" th:text="*{projectCount}">.0</p>
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="col-lg-8 control-label" th:text="#{ontology.browser.usagetab.observationCount} + ':'">Number of observations for this variable:</label>
 			<div class="col-lg-2">
-				<p  class="form-control-static" th:value="*{observationCount}"></p>
+				<p  class="form-control-static" th:text="*{observationCount}">.0</p>
 			</div>
 		</div>
 	</form>

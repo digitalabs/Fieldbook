@@ -5,43 +5,45 @@
 		<div class="form-group">
 			<label class="col-lg-4 control-label" th:text="#{ontology.browser.detailstab.traitClass} + ':'">Trait Class:</label>
 			<div class="col-lg-6">
-				<p id="traitClass" class="form-control-static" th:text="${traitClassName}">.trait Class</p>
+				<p class="form-control-static" th:text="*{traitClassName}">.trait Class</p>
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="col-lg-4 control-label" th:text="#{ontology.browser.detailstab.property} + ':'">Property:</label>
 			<div class="col-lg-6">
-				<p id="property" class="form-control-static" th:text="${propertyName}">.property</p>
+				<p class="form-control-static" th:text="*{propertyName}">.property</p>
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="col-lg-4 control-label" th:text="#{ontology.browser.detailstab.method} + ':'">Method:</label>
 			<div class="col-lg-6">
-				<p id="method" class="form-control-static" th:text="${methodName}">.Method</p>
+				<p class="form-control-static" th:text="*{methodName}">.Method</p>
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="col-lg-4 control-label" th:text="#{ontology.browser.detailstab.scale} + ':'">Scale:</label>
 			<div class="col-lg-6">
-				<p id="scale" class="form-control-static" th:text="${scaleName}">.Scale</p>
+				<p class="form-control-static" th:text="*{scaleName}">.Scale</p>
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="col-lg-4 control-label" th:text="#{ontology.browser.detailstab.dataType} + ':'">Data Type:</label>
 			<div class="col-lg-6">
-				<p id="dataType" class="form-control-static" th:text="${dataTypeName}">.Data Type</p>
+				<p class="form-control-static" th:text="*{dataTypeName}">.Data Type</p>
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="col-lg-4 control-label" th:text="#{ontology.browser.detailstab.role} + ':'">Role:</label>
 			<div class="col-lg-6">
-				<p id="role" class="form-control-static" th:text="${roleName}">.Role</p>
+				<p class="form-control-static" th:text="*{roleName}">.Role</p>
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="col-lg-4 control-label" th:text="#{ontology.browser.detailstab.cropOntologyId} + ':'">Crop Ontology ID:</label>
 			<div class="col-lg-6">
-				<a id="cropOntologyId" target="_blank"><p class="form-control-static"></p></a>
+				<p class="form-control-static" >
+					<a id="cropOntologyId" target="_blank" href="http://www.cropontology.org/terms" th:href="@{http://www.cropontology.org/terms/} + *{cropOntologyId} + '/'" th:text="*{cropOntologyId}"></a>
+				</p>
 			</div>
 		</div>
 	</form>

@@ -35,7 +35,7 @@ public class OntologyDetailsForm{
     private String methodName;
     private String scaleName;
     private String dataTypeName;
-        
+    private String cropOntologyId;    
     
     
     public String getTraitClassName() {
@@ -148,7 +148,15 @@ public class OntologyDetailsForm{
         return variable;
     }
 
-    
+    public String getCropOntologyId() {
+        return cropOntologyId;
+    }
+
+
+    public void setCropOntologyId(String cropOntologyId) {
+        this.cropOntologyId = cropOntologyId;
+    }
+
     public void setVariable(StandardVariable variable) {
         this.variable = variable;
         if(variable != null){
@@ -157,7 +165,8 @@ public class OntologyDetailsForm{
             setRoleName(variable.getPhenotypicType().toString());
             setMethodName(variable.getMethod().getName());
             setScaleName(variable.getScale().getName());
-            setDataTypeName(variable.getDataType().getName());                                      
+            setDataTypeName(variable.getDataType().getName());
+            setCropOntologyId(variable.getCropOntologyId());
         }
     }
     

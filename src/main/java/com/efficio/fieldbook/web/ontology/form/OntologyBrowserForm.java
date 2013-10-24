@@ -39,6 +39,22 @@ public class OntologyBrowserForm{
     
     /** The roles. */
     private List<Term> roles;
+    
+    private String traitClass;
+    
+    private String property;
+    
+    private String method;
+    
+    private String scale;
+    
+    private String traitClassDescription;
+    
+    private String propertyDescription;
+    
+    private String methodDescription;
+    
+    private String scaleDescription;
             
     
     /**
@@ -140,6 +156,70 @@ public class OntologyBrowserForm{
      */
     public void setRoles(List<Term> roles) {
         this.roles = roles;
+    }
+    
+    public String getTraitClass() {
+        return traitClass;
+    }
+    
+    public void setTraitClass(String traitClass) {
+        this.traitClass = traitClass;
+    }
+    
+    public String getProperty() {
+        return property;
+    }
+    
+    public void setProperty(String property) {
+        this.property = property;
+    }
+    
+    public String getMethod() {
+        return method;
+    }
+    
+    public void setMethod(String method) {
+        this.method = method;
+    }
+    
+    public String getScale() {
+        return scale;
+    }
+    
+    public void setScale(String scale) {
+        this.scale = scale;
+    }
+    
+    public String getTraitClassDescription() {
+        return traitClassDescription;
+    }
+    
+    public void setTraitClassDescription(String traitClassDescription) {
+        this.traitClassDescription = traitClassDescription;
+    }
+    
+    public String getPropertyDescription() {
+        return propertyDescription;
+    }
+    
+    public void setPropertyDescription(String propertyDescription) {
+        this.propertyDescription = propertyDescription;
+    }
+    
+    public String getMethodDescription() {
+        return methodDescription;
+    }
+    
+    public void setMethodDescription(String methodDescription) {
+        this.methodDescription = methodDescription;
+    }
+    
+    public String getScaleDescription() {
+        return scaleDescription;
+    }
+    
+    public void setScaleDescription(String scaleDescription) {
+        this.scaleDescription = scaleDescription;
     }
     
  }

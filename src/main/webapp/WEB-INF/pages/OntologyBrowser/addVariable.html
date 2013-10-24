@@ -2,7 +2,7 @@
 	<br/>
 	<input type="button" th:value="#{ontology.browser.button.add.new.variable}" class="btn btn-default btn-log" data-toggle="modal" href="#addVariableModal" />
 	<!-- Modal -->
-  	<form role="form-horizontal" onsubmit="return do_validation()"  class="form-horizontal" action="#" 
+  	<form id="addVariableForm" role="form-horizontal" onsubmit="return do_validation()"  class="form-horizontal" action="#" 
 	    th:action="@{/OntologyBrowser/}" method="post" enctype="multipart/form-data" th:object="${ontologyBrowserForm}">
 	   	<div class="modal fade" id="addVariableModal" role="dialog" aria-labelledby="addVariableLabel" aria-hidden="true">
 			<div class="modal-dialog modal-large" style="width:900px">
@@ -62,9 +62,9 @@
 			                        <label for="comboTraitClass" class="col-md-5 control-label" th:text="#{ontology.browser.modal.trait.class} + ': *'">Class:</label>
 			                        <div class="col-md-7">
 			                        	<div class="input-group">
-			                        		<input id="comboTraitClass" type="hidden"  class="form-control select2" placeholder=""/>
+			                        		<input id="comboTraitClass" type="hidden" th:field="*{traitClass}" class="form-control select2" placeholder=""/>
 			                        		<span class="input-group-btn">
-				                        		<button class="btn btn-primary" type="button" id="btnAddMethod">
+				                        		<button class="btn btn-primary" type="button" id="btnAddTraitClass" onClick="doSave('TraitClass')">
 				                        			<span class="glyphicon glyphicon-plus"></span>
 				                        		</button>
 		                        			</span>
@@ -75,7 +75,7 @@
 		                        <div class="form-group">
 				                	<label for="txtNewTraitClassDesc" class="col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
 				                    <div class="col-md-7">
-				                    	<textarea type="text" id="txtNewTraitClassDesc" class="form-control" size="10"> </textarea>
+				                    	<textarea type="text" id="txtNewTraitClassDesc" th:field="*{traitClassDescription}" class="form-control" size="10"> </textarea>
 				                    </div>
 			                    </div>
 			                    
@@ -83,9 +83,9 @@
 			                        <label for="comboProperty" class="col-md-5 control-label" th:text="#{ontology.browser.modal.property} + ': *'">Property:</label>
 			                        <div class="col-md-7">
 			                        	<div class="input-group">
-				                        	<input id="comboProperty" type="hidden"  class="form-control select2" placeholder=""/>
+				                        	<input id="comboProperty" type="hidden" th:field="*{property}" class="form-control select2" placeholder=""/>
 				                        	<span class="input-group-btn">
-				                        		<button class="btn btn-primary" type="button" id="btnAddProperty">
+				                        		<button class="btn btn-primary" type="button" id="btnAddProperty" onClick="doSave('Property')">
 				                        			<span class="glyphicon glyphicon-plus"></span>
 				                        		</button>
 		                        			</span>
@@ -96,7 +96,7 @@
 		                        <div class="form-group">
 				                	<label for="txtNewPropertyDesc" class="col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
 				                    <div class="col-md-7">
-				                    	<textarea type="text" id="txtNewPropertyDesc" class="form-control" size="10"> </textarea>
+				                    	<textarea type="text" id="txtNewPropertyDesc" th:field="*{propertyDescription}" class="form-control" size="10"> </textarea>
 				                    </div>
 			                    </div>
 			                    
@@ -104,9 +104,9 @@
 			                        <label for="comboMethod" class="col-md-5 control-label" th:text="#{ontology.browser.modal.method} + ': *'">Method:</label>
 			                        <div class="col-md-7">
 			                        	<div class="input-group">
-				                        	<input id="comboMethod" type="hidden"  class="form-control select2" placeholder=""/>
+				                        	<input id="comboMethod" type="hidden" th:field="*{method}" class="form-control select2" placeholder=""  />
 				                        	<span class="input-group-btn">
-				                        		<button class="btn btn-primary" type="button" id="btnAddMethod">
+				                        		<button class="btn btn-primary" type="button" id="btnAddMethod" onClick="doSave('Method')">
 				                        			<span class="glyphicon glyphicon-plus"></span>
 				                        		</button>
 		                        			</span>
@@ -117,7 +117,7 @@
 		                        <div class="form-group">
 				                	<label for="txtNewMethodDesc" class="col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
 				                    <div class="col-md-7">
-				                    	<textarea type="text" id="txtNewMethodDesc" class="form-control" size="10"> </textarea>
+				                    	<textarea type="text" id="txtNewMethodDesc" th:field="*{methodDescription}" class="form-control" size="10"> </textarea>
 				                    </div>
 			                    </div>
 			                    
@@ -125,9 +125,9 @@
 			                        <label for="comboScale" class="col-md-5 control-label" th:text="#{ontology.browser.modal.scale} + ': *'">Scale:</label>
 			                        <div class="col-md-7">
 			                        	<div class="input-group">
-				                        	<input id="comboScale" type="hidden"  class="form-control select2" placeholder=""/>
+				                        	<input id="comboScale" type="hidden" th:field="*{scale}" class="form-control select2" placeholder=""/>
 			                        		<span class="input-group-btn">
-				                        		<button class="btn btn-primary" type="button" id="btnAddMethod">
+				                        		<button class="btn btn-primary" type="button" id="btnAddScale" onClick="doSave('Scale')">
 				                        			<span class="glyphicon glyphicon-plus"></span>
 				                        		</button>
 		                        			</span>
@@ -138,7 +138,7 @@
 		                        <div class="form-group">
 				                	<label for="txtNewMethodDesc" class="col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
 				                    <div class="col-md-7">
-				                    	<textarea type="text" id="txtNewScaleDesc" class="form-control" size="10"> </textarea>
+				                    	<textarea type="text" id="txtNewScaleDesc" th:field="*{scaleDescription}" class="form-control" size="10"> </textarea>
 				                    </div>
 			                    </div>
 			         		</div>
@@ -268,6 +268,43 @@
 	        //$("#hidMethod").val($("#comboMethod").data("ui-combobox").value());
 	        //$("#hidScale").val($("#comboScale").data("ui-combobox").value());
 	    }
+		
+		function doSave(combo) {
+			var $form = $("#addVariableForm");
+			var allComboElements = $("input.select2, textarea");
+			$inputs = $form.find(allComboElements);
+			
+			serializedData = $form.serialize();
+			$inputs.attr("disabled", "disabled");
+			Spinner.toggle();
+			
+			$.ajax({
+				url: "addVariable/" + combo,
+				type: "post",
+				dataType: "json",
+				data: serializedData,
+			    success: function(data){
+				    if (data.status == "1") {
+				    	
+				    	$("comboProperty").select2({data: [{id:0,text:'black'},{id:1,text:'blue'}, {id:1,text:'red'}, {id:1,text:'bssasa'}]});
+				    	
+				    	
+			       	} else {
+			       		alert("nay");
+			       		//to do
+			       		//$("#error-message").html(data.errorMessage);
+			       		//$("#page-message").show();
+			       	}
+			   }, 
+			   error: function(jqXHR, textStatus, errorThrown){
+					console.log("The following error occured: " + textStatus, errorThrown);
+			   }, 
+			   complete: function(){
+			       $inputs.removeAttr("disabled"); 
+				   Spinner.toggle();
+			   } 
+			});
+		}
     //]]>
     </script>
 </div>

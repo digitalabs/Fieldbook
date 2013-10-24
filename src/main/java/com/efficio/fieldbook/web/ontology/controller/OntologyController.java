@@ -11,13 +11,19 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.ontology.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.oms.CvId;
 import org.generationcp.middleware.domain.oms.Method;
 import org.generationcp.middleware.domain.oms.Property;
 import org.generationcp.middleware.domain.oms.Scale;
+import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TraitReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.slf4j.Logger;
@@ -26,8 +32,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.ontology.form.OntologyBrowserForm;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
@@ -102,7 +111,52 @@ public class OntologyController extends AbstractBaseFieldbookController{
      */
     @RequestMapping(method = RequestMethod.POST)
     public String saveNewVariable(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form, BindingResult result, Model model) {
+       try {
+           StandardVariable standardVariable = new StandardVariable();
+           standardVariable.setName("variableName");
+           standardVariable.setDescription("variableDesc");
+           standardVariable.setProperty(new Term(1, "name", "desc"));
+           standardVariable.setMethod(new Term(1, "name", "desc"));
+           standardVariable.setScale(new Term(1, "name", "desc"));
+           standardVariable.setDataType(new Term(1, "datatype", ""));
+           standardVariable.setPhenotypicType(PhenotypicType.STUDY);
+           standardVariable.setIsA(new Term(1, "traitClass", ""));
+           standardVariable.setCropOntologyId("cropOntologyID");
+           ontologyService.addStandardVariable(standardVariable);
+       } catch (MiddlewareQueryException e) {
+           LOG.error(e.getMessage(), e);
+       }
         return show(form, model);
+    }
+    
+    @ResponseBody
+    @RequestMapping(value="addVariable/{combo}", method=RequestMethod.POST)
+    public Map<String, String> saveNewTerm(@PathVariable String combo,
+            @RequestParam String traitClass, @RequestParam String traitClassDescription,
+            @RequestParam String property, @RequestParam String propertyDescription, 
+            @RequestParam String method, @RequestParam String methodDescription, 
+            @RequestParam String scale, @RequestParam String scaleDescription) {
+        Map<String, String> resultMap = new HashMap<String, String>();
+        
+        try {
+            if (combo.equals("Property")) {
+                ontologyService.addTerm(property, propertyDescription, CvId.PROPERTIES);
+            } else if (combo.equals("Method")) {
+                ontologyService.addTerm(method, methodDescription, CvId.METHODS);
+            } else if (combo.equals("Scale")) {
+                ontologyService.addTerm(scale, scaleDescription, CvId.SCALES);
+            } else {
+                ontologyService.addTraitClass(traitClass, traitClassDescription, CvId.IBDB_TERMS);
+            }          
+              
+            //List<Property> properties = ontologyService.getAllProperties();
+            resultMap.put("status", "1");            
+        } catch(MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+            resultMap.put("status", "-1");
+            resultMap.put("errorMessage", e.getMessage());
+        }
+        return resultMap;
     }
   
     /**

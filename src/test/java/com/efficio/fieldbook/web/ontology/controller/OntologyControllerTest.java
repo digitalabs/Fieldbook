@@ -16,14 +16,23 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.oms.CvId;
 import org.generationcp.middleware.domain.oms.PropertyReference;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
+import org.generationcp.middleware.domain.oms.Term;
+import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.oms.TermProperty;
 import org.generationcp.middleware.domain.oms.TraitReference;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,6 +51,9 @@ import com.efficio.pojos.treeview.TreeNode;
 public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
     
     private static final Logger LOG = LoggerFactory.getLogger(OntologyControllerTest.class);
+    
+    @Autowired
+    OntologyService ontologyService;
 
     @Autowired
     private OntologyController controller;
@@ -99,55 +111,153 @@ public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
           
         }
         
-        @Test
-        public void testOntologyTreeJsonData(){
+    @Test
+    public void testOntologyTreeJsonData(){
 
-            try{
-                
-                List<TraitReference> traitRefList = getDummyData();
-                //form.setTraitReferenceList(traitRefList);
-                List<TreeNode> rootTree = convertJsonStringToMap(TreeViewUtil.convertOntologyTraitsToJson(traitRefList));
-                //assertEquals(mainInfo.getFileIsValid(), false);
-                //assertEquals(jsonMap.get('1'), false);
-                //System.out.println(jsonMap.get("key"));
-                assertEquals("Trait Class", rootTree.get(0).getTitle());
-                assertEquals(3, rootTree.get(0).getChildren().size());
-                
-                assertEquals("Test 1", rootTree.get(0).getChildren().get(0).getTitle());
-                assertEquals("Test 2", rootTree.get(0).getChildren().get(1).getTitle());
-                assertEquals("Test 3", rootTree.get(0).getChildren().get(2).getTitle());
-                
-                assertEquals("1 Prop 1", rootTree.get(0).getChildren().get(0).getChildren().get(0).getTitle());
-                assertEquals("1 Prop 2", rootTree.get(0).getChildren().get(0).getChildren().get(1).getTitle());
-                assertEquals("1 Prop 3", rootTree.get(0).getChildren().get(0).getChildren().get(2).getTitle());
-                
-                assertEquals("2 Prop 1", rootTree.get(0).getChildren().get(1).getChildren().get(0).getTitle());
-                assertEquals("2 Prop 2", rootTree.get(0).getChildren().get(1).getChildren().get(1).getTitle());
-                assertEquals("2 Prop 3", rootTree.get(0).getChildren().get(1).getChildren().get(2).getTitle());
-                
-                assertEquals("1 Variable 1", rootTree.get(0).getChildren().get(0).getChildren().get(0).getChildren().get(0).getTitle());
-                assertEquals("1 Variable 2", rootTree.get(0).getChildren().get(0).getChildren().get(0).getChildren().get(1).getTitle());
-                assertEquals("1 Variable 3", rootTree.get(0).getChildren().get(0).getChildren().get(0).getChildren().get(2).getTitle());
-                
-                assertEquals("2 Variable 1", rootTree.get(0).getChildren().get(0).getChildren().get(1).getChildren().get(0).getTitle());
-                assertEquals("2 Variable 2", rootTree.get(0).getChildren().get(0).getChildren().get(1).getChildren().get(1).getTitle());
-                assertEquals("2 Variable 3", rootTree.get(0).getChildren().get(0).getChildren().get(1).getChildren().get(2).getTitle());
-                
-                assertEquals("3 Variable 1", rootTree.get(0).getChildren().get(0).getChildren().get(2).getChildren().get(0).getTitle());
-                assertEquals("3 Variable 2", rootTree.get(0).getChildren().get(0).getChildren().get(2).getChildren().get(1).getTitle());
-                assertEquals("3 Variable 3", rootTree.get(0).getChildren().get(0).getChildren().get(2).getChildren().get(2).getTitle());
-            }catch (Exception e) {
-                LOG.error(e.getMessage(), e);
-            }
+        try{
             
-                      
+            List<TraitReference> traitRefList = getDummyData();
+            //form.setTraitReferenceList(traitRefList);
+            List<TreeNode> rootTree = convertJsonStringToMap(TreeViewUtil.convertOntologyTraitsToJson(traitRefList));
+            //assertEquals(mainInfo.getFileIsValid(), false);
+            //assertEquals(jsonMap.get('1'), false);
+            //System.out.println(jsonMap.get("key"));
+            assertEquals("Trait Class", rootTree.get(0).getTitle());
+            assertEquals(3, rootTree.get(0).getChildren().size());
+            
+            assertEquals("Test 1", rootTree.get(0).getChildren().get(0).getTitle());
+            assertEquals("Test 2", rootTree.get(0).getChildren().get(1).getTitle());
+            assertEquals("Test 3", rootTree.get(0).getChildren().get(2).getTitle());
+            
+            assertEquals("1 Prop 1", rootTree.get(0).getChildren().get(0).getChildren().get(0).getTitle());
+            assertEquals("1 Prop 2", rootTree.get(0).getChildren().get(0).getChildren().get(1).getTitle());
+            assertEquals("1 Prop 3", rootTree.get(0).getChildren().get(0).getChildren().get(2).getTitle());
+            
+            assertEquals("2 Prop 1", rootTree.get(0).getChildren().get(1).getChildren().get(0).getTitle());
+            assertEquals("2 Prop 2", rootTree.get(0).getChildren().get(1).getChildren().get(1).getTitle());
+            assertEquals("2 Prop 3", rootTree.get(0).getChildren().get(1).getChildren().get(2).getTitle());
+            
+            assertEquals("1 Variable 1", rootTree.get(0).getChildren().get(0).getChildren().get(0).getChildren().get(0).getTitle());
+            assertEquals("1 Variable 2", rootTree.get(0).getChildren().get(0).getChildren().get(0).getChildren().get(1).getTitle());
+            assertEquals("1 Variable 3", rootTree.get(0).getChildren().get(0).getChildren().get(0).getChildren().get(2).getTitle());
+            
+            assertEquals("2 Variable 1", rootTree.get(0).getChildren().get(0).getChildren().get(1).getChildren().get(0).getTitle());
+            assertEquals("2 Variable 2", rootTree.get(0).getChildren().get(0).getChildren().get(1).getChildren().get(1).getTitle());
+            assertEquals("2 Variable 3", rootTree.get(0).getChildren().get(0).getChildren().get(1).getChildren().get(2).getTitle());
+            
+            assertEquals("3 Variable 1", rootTree.get(0).getChildren().get(0).getChildren().get(2).getChildren().get(0).getTitle());
+            assertEquals("3 Variable 2", rootTree.get(0).getChildren().get(0).getChildren().get(2).getChildren().get(1).getTitle());
+            assertEquals("3 Variable 3", rootTree.get(0).getChildren().get(0).getChildren().get(2).getChildren().get(2).getTitle());
+        }catch (Exception e) {
+            LOG.error(e.getMessage(), e);
         }
         
-        protected List<TreeNode> convertJsonStringToMap(String json) throws JsonParseException, JsonMappingException, IOException {
-            ObjectMapper mapper = new ObjectMapper();
-            List<TreeNode> lcd = mapper.readValue(json, new TypeReference<List<TreeNode>>() {});
+                  
+    }
+    
+    protected List<TreeNode> convertJsonStringToMap(String json) throws JsonParseException, JsonMappingException, IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        List<TreeNode> lcd = mapper.readValue(json, new TypeReference<List<TreeNode>>() {});
 
-            return lcd;
-        }
+        return lcd;
+    }
+    
+    @Test
+    public void testSaveNewTerm() {
         
+        Term term = null;
+        
+        //create new trait class w/o desc
+        String name = "Test Trait Class " + new Random().nextInt(10000);
+        String definition = "";
+        term = testSaveNewTerm("TraitClass", name, definition, "", "", "", "", "", "");
+        assertEquals(term.getName(), name);
+        assertEquals(term.getDefinition(), name);
+        
+        //create new property
+        name = "Test Property " + new Random().nextInt(10000);
+        definition = "propertyDesc";
+        term = testSaveNewTerm("Property", "", "", name, definition, "", "", "", "");
+        assertEquals(term.getName(), name);
+        assertEquals(term.getDefinition(), definition);
+        
+        //create new method w/o desc
+        name = "Test Method " + new Random().nextInt(10000);
+        definition = "";
+        term = testSaveNewTerm("Method", "", "", "", "", name, definition, "", "");
+        assertEquals(term.getName(), name);
+        assertEquals(term.getDefinition(), name);
+        
+        //create new scale 
+        name = "Test Scale " + new Random().nextInt(10000);
+        definition = "test";
+        term = testSaveNewTerm("Scale", "", "", "", "", "", "", name, definition);
+        assertEquals(term.getName(), name);
+        assertEquals(term.getDefinition(), definition);
+    } 
+    
+    private Term testSaveNewTerm(String combo,
+            String traitClass, String traitClassDescription,
+            String property, String propertyDescription, 
+            String method, String methodDescription,
+            String scale, String scaleDescription) {
+        Term term = null;
+        try {
+            if (combo.equals("Property")) {
+                if (propertyDescription == null || propertyDescription == "") {
+                    propertyDescription = property;
+                }
+                term = ontologyService.addTerm(property, propertyDescription, CvId.PROPERTIES);
+            } else if (combo.equals("Method")) {
+                if (methodDescription == null || methodDescription == "") {
+                    methodDescription = method;
+                }
+                term = ontologyService.addTerm(method, methodDescription, CvId.METHODS);
+            } else if (combo.equals("Scale")) {
+                if (scaleDescription == null || scaleDescription == "") {
+                    scaleDescription = scale;
+                }
+                term = ontologyService.addTerm(scale, scaleDescription, CvId.SCALES);
+            } else {
+                if (traitClassDescription == null || traitClassDescription == "") {
+                    traitClassDescription = traitClass;
+                }
+                term = ontologyService.addTraitClass(traitClass, traitClassDescription, CvId.IBDB_TERMS);
+            }
+            return term;
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        return term;
+    }
+    
+    @Test
+    public void testSaveNewVariable() {
+        try {
+            List<TermProperty> termProperties = new ArrayList<TermProperty>();
+            termProperties.add(new TermProperty(1, TermId.CROP_ONTOLOGY_ID.getId(), "CO:12345", 0));
+            Term property = new Term(100, "PROPERTY", "PROPERTY DEF", null, termProperties);
+            Term scale = new Term(200, "SCALE", "SCALE DEF", null, null);
+            Term method = new Term(300, "METHOD", "METHOD DEF", null, null);
+            Term dataType = new Term(400, "DATA TYPE", "DATA TYPE DEF", null, null);
+            Term storedIn = new Term(1010, "STORED IN", "STORED IN DEF", null, null);
+            Term traitClass = new Term(600, "TRAIT CLASS", "TRAIT CLASS DEF", null, null);
+            
+            StandardVariable standardVariable = new StandardVariable();
+            standardVariable.setName("TestVariable" + new Random().nextInt(10000));
+            standardVariable.setDescription("Test Desc");
+            standardVariable.setProperty(property);
+            standardVariable.setMethod(method);
+            standardVariable.setScale(scale);
+            standardVariable.setDataType(dataType);
+            standardVariable.setPhenotypicType(PhenotypicType.TRIAL_DESIGN);
+            standardVariable.setIsA(traitClass);
+            standardVariable.setStoredIn(storedIn);
+            standardVariable.setCropOntologyId("CO:1200");
+            ontologyService.addStandardVariable(standardVariable);
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+    }
+    
 }

@@ -25,6 +25,12 @@ import org.generationcp.middleware.domain.oms.TraitReference;
  */
 public class OntologyBrowserForm{
     
+    /** The has error. */
+    private String hasError;
+    
+    /** The add successful. */
+    private String addSuccessful;
+    
     /** The trait reference list. */
     private List<TraitReference> traitReferenceList;
     
@@ -72,7 +78,44 @@ public class OntologyBrowserForm{
     
     /** The scale description. */
     private String scaleDescription;
-            
+       
+    /**
+     * Gets the checks for error.
+     *
+     * @return the checks for error
+     */
+    public String getHasError() {
+                return hasError;
+        }
+
+    /**
+     * Sets the checks for error.
+     *
+     * @param hasError the new checks for error
+     */
+    public void setHasError(String hasError) {
+            this.hasError = hasError;
+    }
+    
+    
+    /**
+     * Gets the adds the successful.
+     *
+     * @return the adds the successful
+     */
+    public String getAddSuccessful() {
+        return addSuccessful;
+    }
+    
+    /**
+     * Sets the adds the successful.
+     *
+     * @param addSuccessful the new adds the successful
+     */
+    public void setAddSuccessful(String addSuccessful) {
+        this.addSuccessful = addSuccessful;
+    }
+
     
     /**
      * Gets the tree data.
@@ -103,7 +146,6 @@ public class OntologyBrowserForm{
     public List<TraitReference> getTraitReferenceList() {
         return traitReferenceList;
     }
-
     
     /**
      * Sets the trait reference list.
@@ -113,9 +155,6 @@ public class OntologyBrowserForm{
     public void setTraitReferenceList(List<TraitReference> traitReferenceList) {
         this.traitReferenceList = traitReferenceList;
     }
-
-
-
     
     /**
      * Gets the search tree data.
@@ -126,9 +165,6 @@ public class OntologyBrowserForm{
         return searchTreeData;
     }
 
-
-
-    
     /**
      * Sets the search tree data.
      *

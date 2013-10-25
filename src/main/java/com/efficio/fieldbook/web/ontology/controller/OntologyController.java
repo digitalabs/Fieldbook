@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.ontology.form.OntologyBrowserForm;
+import com.efficio.fieldbook.web.ontology.validation.OntologyBrowserValidator;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -109,22 +110,35 @@ public class OntologyController extends AbstractBaseFieldbookController{
      */
     @RequestMapping(method = RequestMethod.POST)
     public String saveNewVariable(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form, BindingResult result, Model model) {
-       try {
-           StandardVariable standardVariable = new StandardVariable();
-           standardVariable.setName(form.getVariableName());
-           standardVariable.setDescription(form.getVariableDescription());
-           standardVariable.setProperty(ontologyService.getTermById(Integer.parseInt(form.getProperty())));
-           standardVariable.setMethod(ontologyService.getTermById(Integer.parseInt(form.getMethod())));
-           standardVariable.setScale(ontologyService.getTermById(Integer.parseInt(form.getScale())));
-           standardVariable.setDataType(ontologyService.getTermById(Integer.parseInt(form.getDataType())));
-           standardVariable.setPhenotypicType(ontologyService.getPhenotypicTypeById(Integer.parseInt(form.getRole())));
-           standardVariable.setIsA(ontologyService.getTermById(Integer.parseInt(form.getTraitClass())));
-           standardVariable.setStoredIn(ontologyService.getTermById(Integer.parseInt(form.getRole())));
-           standardVariable.setCropOntologyId(form.getCropOntologyId());
-           ontologyService.addStandardVariable(standardVariable);
-       } catch (MiddlewareQueryException e) {
-           LOG.error(e.getMessage(), e);
-       }
+        OntologyBrowserValidator validator = new OntologyBrowserValidator();
+        validator.validate(form, result);
+        form.setAddSuccessful("0");
+        
+        if (result.hasErrors()) {
+            /**
+             * Return the user back to form to show errors
+             */
+            form.setHasError("1");
+            return show(form,model);
+        } else {
+            try {
+                StandardVariable standardVariable = new StandardVariable();
+                standardVariable.setName(form.getVariableName());
+                standardVariable.setDescription(form.getVariableDescription());
+                standardVariable.setProperty(ontologyService.getTermById(Integer.parseInt(form.getProperty())));
+                standardVariable.setMethod(ontologyService.getTermById(Integer.parseInt(form.getMethod())));
+                standardVariable.setScale(ontologyService.getTermById(Integer.parseInt(form.getScale())));
+                standardVariable.setDataType(ontologyService.getTermById(Integer.parseInt(form.getDataType())));
+                standardVariable.setPhenotypicType(ontologyService.getPhenotypicTypeById(Integer.parseInt(form.getRole())));
+                standardVariable.setIsA(ontologyService.getTermById(Integer.parseInt(form.getTraitClass())));
+                standardVariable.setStoredIn(ontologyService.getTermById(Integer.parseInt(form.getRole())));
+                standardVariable.setCropOntologyId(form.getCropOntologyId());
+                ontologyService.addStandardVariable(standardVariable);
+                form.setAddSuccessful("1");
+           } catch (MiddlewareQueryException e) {
+               LOG.error(e.getMessage(), e);
+           }
+        }
         return show(form, model);
     }
     

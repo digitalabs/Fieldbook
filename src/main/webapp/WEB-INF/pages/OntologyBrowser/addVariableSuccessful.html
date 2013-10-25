@@ -1,0 +1,32 @@
+<div class="col-md-7" xmlns:th="http://www.thymeleaf.org">
+	<input type="button" id="showSuccessfulModal" data-toggle="modal" href="#addVariableSuccessfulModal" value="test" style="visibility:hidden" />
+	<!-- Modal -->
+   	<div class="modal fade" id="addVariableSuccessfulModal" role="dialog" aria-labelledby="addVariableSuccessfulLabel" aria-hidden="true">
+		<div class="modal-dialog modal-large" style="width:900px">
+	    	<div class="modal-content">
+	        	<div class="modal-header">
+	           		<button id="closeAddVariableSuccessfulModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	         	</div>
+	         	<div class="modal-body" id="addVariableSuccessfulBody">
+	         		<h4 class="modal-title" th:text="#{ontology.browser.header.add.new.variable.successful(${ontologyBrowserForm.variableName})}">Standard Variable successfully created.</h4>
+	         	</div>																							
+	       		<div class="modal-footer">    	
+       			</div>
+	     	</div><!-- /.modal-content -->
+   		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->		
+</div>
+
+<div layout:fragment="page-script">		
+	<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[
+	    var addSuccessful = /*[[${ontologyBrowserForm.addSuccessful}]]*/;
+	    if (addSuccessful == "1") {
+			setTimeout(function (){
+				$("#showSuccessfulModal").trigger("click");
+				setTimeout(function (){$("#closeAddVariableSuccessfulModal").trigger("click");}, 2000);
+				}, 500);
+	    }
+    //]]>
+    </script>
+</div>

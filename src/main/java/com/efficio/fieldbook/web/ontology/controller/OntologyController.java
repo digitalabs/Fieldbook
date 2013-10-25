@@ -17,7 +17,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.oms.CvId;
 import org.generationcp.middleware.domain.oms.Method;
@@ -122,6 +121,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
             return show(form,model);
         } else {
             try {
+                //create the standardVariable object
                 StandardVariable standardVariable = new StandardVariable();
                 standardVariable.setName(form.getVariableName());
                 standardVariable.setDescription(form.getVariableDescription());
@@ -142,6 +142,20 @@ public class OntologyController extends AbstractBaseFieldbookController{
         return show(form, model);
     }
     
+    /**
+     * Save new term.
+     *
+     * @param combo the combo
+     * @param traitClass the trait class
+     * @param traitClassDescription the trait class description
+     * @param property the property
+     * @param propertyDescription the property description
+     * @param method the method
+     * @param methodDescription the method description
+     * @param scale the scale
+     * @param scaleDescription the scale description
+     * @return the map
+     */
     @ResponseBody
     @RequestMapping(value="addVariable/{combo}", method=RequestMethod.POST)
     public Map<String, String> saveNewTerm(@PathVariable String combo,
@@ -154,7 +168,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
         try {
             Term term = null;
 
-            //add new data
+            //add new data, use name for description if description was left blank
             if (combo.equals("Property")) {
                 if (propertyDescription == null || propertyDescription == "") {
                     propertyDescription = property;
@@ -177,7 +191,6 @@ public class OntologyController extends AbstractBaseFieldbookController{
                 term = ontologyService.addTraitClass(traitClass, traitClassDescription, CvId.IBDB_TERMS);
             }          
               
-            //List<Property> properties = ontologyService.getAllProperties();
             resultMap.put("status", "1");
             resultMap.put("id", String.valueOf(term.getId()));
             resultMap.put("name", term.getName());
@@ -190,6 +203,11 @@ public class OntologyController extends AbstractBaseFieldbookController{
         return resultMap;
     }
     
+    /**
+     * Gets the data types.
+     *
+     * @return the data types
+     */
     @ModelAttribute("dataTypes")
     public List<Term> getDataTypes() {
         try {
@@ -202,6 +220,12 @@ public class OntologyController extends AbstractBaseFieldbookController{
         return null;
     }
     
+    
+    /**
+     * Gets the roles.
+     *
+     * @return the roles
+     */
     @ModelAttribute("roles")
     public List<Term> getRoles() {
         try {

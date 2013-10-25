@@ -2,15 +2,17 @@
 	<input type="button" id="showSuccessfulModal" data-toggle="modal" href="#addVariableSuccessfulModal" value="test" style="visibility:hidden" />
 	<!-- Modal -->
    	<div class="modal fade" id="addVariableSuccessfulModal" role="dialog" aria-labelledby="addVariableSuccessfulLabel" aria-hidden="true">
-		<div class="modal-dialog modal-large" style="width:900px">
+		<div class="modal-dialog modal-large">
 	    	<div class="modal-content">
-	        	<div class="modal-header">
-	           		<button id="closeAddVariableSuccessfulModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	         	</div>
 	         	<div class="modal-body" id="addVariableSuccessfulBody">
-	         		<h4 class="modal-title" th:text="#{ontology.browser.header.add.new.variable.successful(${ontologyBrowserForm.variableName})}">Standard Variable successfully created.</h4>
+	         		<div>
+	         			<button id="closeAddVariableSuccessfulModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	         		</div>
+	         		<br/><br/>
+	         		<div class="alert alert-success" th:text="#{ontology.browser.header.add.new.variable.successful(${ontologyBrowserForm.variableName})}">Standard Variable successfully created.</div>
 	         	</div>																							
-	       		<div class="modal-footer">    	
+	       		<div class="modal-footer">    
+	       			<button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">OK</button>	
        			</div>
 	     	</div><!-- /.modal-content -->
    		</div><!-- /.modal-dialog -->
@@ -24,9 +26,8 @@
 	    if (addSuccessful == "1") {
 			setTimeout(function (){
 				$("#showSuccessfulModal").trigger("click");
-				setTimeout(function (){$("#closeAddVariableSuccessfulModal").trigger("click");}, 2000);
-				}, 500);
-	    }
+			}, 500);
+	    }	    
     //]]>
     </script>
 </div>

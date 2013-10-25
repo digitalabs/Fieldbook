@@ -195,3 +195,226 @@ function viewTabs(variableId) {
 		}
 	});
 }
+
+function doSave(combo) {
+	if (validateCombo(combo)) {
+		var $form = $("#addVariableForm");
+		serializedData = $form.serialize();
+		Spinner.toggle();
+		
+		$.ajax({
+			url: "addVariable/" + combo,
+			type: "post",
+			dataType: "json",
+			data: serializedData,
+		    success: function(data){
+			    if (data.status == "1") {
+			    	recreateCombo(combo, data);					    	
+		       	} else {
+		       		showMessage(data.errorMessage);
+		       	}
+		   }, 
+		   error: function(jqXHR, textStatus, errorThrown){
+				console.log("The following error occured: " + textStatus, errorThrown);
+		   }, 
+		   complete: function(){ 
+			   Spinner.toggle();
+		   } 
+		});
+		
+		$("#page-message-modal").html("");
+	}
+}
+
+$(function () {
+	
+	
+  	$.each(traitClassesSuggestions, function( index, value ) {
+  		traitClassesSuggestions_obj.push({ 'id' : value.id,
+			  'text' : value.name,
+			  'description' : value.description
+		});  
+  		
+	});
+  	
+  	$.each(propertySuggestions, function( index, value ) {
+  		propertySuggestions_obj.push({ 'id' : value.id,
+			  'text' : value.name,
+			  'description' : value.definition
+		});  
+	});
+  	
+  	$.each(methodSuggestions, function( index, value ) {
+  		methodSuggestions_obj.push({ 'id' : value.id,
+			  'text' : value.name,
+			  'description' : value.definition
+		});  
+	});
+  	
+  	$.each(scaleSuggestions, function( index, value ) {
+  		scaleSuggestions_obj.push({ 'id' : value.id,
+			  'text' : value.name,
+			  'description' : value.definition
+		});  
+	});
+  	
+  	$("#comboTraitClass").select2({
+        query: function (query) {
+          var data = {results: traitClassesSuggestions_obj.sort()}, i, j, s;
+          // return the array that matches
+          data.results = $.grep(data.results,function(item,index) {
+            return ($.fn.select2.defaults.matcher(query.term,item.text));
+          
+          });
+          if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
+          
+            query.callback(data);
+        }
+
+    }).on("change", function(){
+    	$("#traitClassDescription").val($("#comboTraitClass").select2("data").description);
+    });
+  	
+  	$("#comboProperty").select2({
+        query: function (query) {
+          var data = {results: propertySuggestions_obj.sort()}, i, j, s;
+          // return the array that matches
+          data.results = $.grep(data.results,function(item,index) {
+            return ($.fn.select2.defaults.matcher(query.term,item.text));
+          
+          });
+          if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
+          
+            query.callback(data);
+        }
+
+    }).on("change", function(){
+    	$("#propertyDescription").val($("#comboProperty").select2("data").description);
+    });
+  	
+  	$("#comboMethod").select2({
+        query: function (query) {
+          var data = {results: methodSuggestions_obj}, i, j, s;
+          // return the array that matches
+          data.results = $.grep(data.results,function(item,index) {
+            return ($.fn.select2.defaults.matcher(query.term,item.text));
+          
+          });
+          if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
+          
+            query.callback(data);
+        }
+
+    }).on("change", function(){
+    	$("#methodDescription").val($("#comboMethod").select2("data").description);
+    });
+  	
+  	$("#comboScale").select2({
+        query: function (query) {
+          var data = {results: scaleSuggestions_obj}, i, j, s;
+          // return the array that matches
+          data.results = $.grep(data.results,function(item,index) {
+            return ($.fn.select2.defaults.matcher(query.term,item.text));
+          
+          });
+          if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
+          
+            query.callback(data);
+        }
+
+    }).on("change", function(){
+    	$("#scaleDescription").val($("#comboScale").select2("data").description);
+    });
+  	
+  //$("#comboTraitClass").data("ui-combobox").value($("#hidTraitClass").val());
+  //$("#comboProperty").data("ui-combobox").value($("#hidProperty").val());
+  //$("#comboMethod").data("ui-combobox").value($("#hidMethod").val());
+  //$("#comboScale").data("ui-combobox").value($("#hidScale").val());
+});		
+
+function clearFields() {
+	$("div.modal .form-control").val("");
+	$("div.modal .select2").select2("val", "");
+	$("#page-message-modal").html("");
+}
+
+function recreateCombo(combo, data) {
+	var suggestions_obj = [];
+	var description = null;
+	
+	//add the new data in the collection
+	if (combo == "TraitClass") {
+		traitClassesSuggestions_obj.push({ 'id' : data.id,
+			  'text' : data.name,
+			  'description' : data.definition
+		});
+		suggestions_obj = traitClassesSuggestions_obj;
+		description = $("#traitClassDescription");
+	} else if (combo == "Property") {
+		propertySuggestions_obj.push({ 'id' : data.id,
+			  'text' : data.name,
+			  'description' : data.definition
+		});
+		suggestions_obj = propertySuggestions_obj;
+	} else if (combo == "Method") {
+		methodSuggestions_obj.push({ 'id' : data.id,
+			  'text' : data.name,
+			  'description' : data.definition
+		});
+		suggestions_obj = methodSuggestions_obj;
+	} else {
+		scaleSuggestions_obj.push({ 'id' : data.id,
+			  'text' : data.name,
+			  'description' : data.definition
+		});
+		suggestions_obj = scaleSuggestions_obj;
+	}
+	
+	//set description field to empty
+	if (description == null) {
+		description = $("#"+combo.toLowerCase()+"Description"); 
+	}
+	description.val("");
+	
+	//recreate the dropdown
+	$("#combo" + combo).select2({
+			query: function (query) {
+	              var data = {results: suggestions_obj}, i, j, s;
+	              // return the array that matches
+	              data.results = $.grep(data.results,function(item,index) {
+	                return ($.fn.select2.defaults.matcher(query.term,item.text));
+	              
+	              });
+	              if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
+	              
+	                query.callback(data);
+	            }		
+	});
+}
+
+function itemExists(combo) {
+	return $("#combo"+combo).select2("data").id != $("#combo"+combo).select2("data").text && $("#combo"+combo).select2("data").description != undefined;
+}
+
+function showMessage(message) {
+	$("#page-message-modal").html(
+		    "<div class='alert alert-danger'>"+ message +"</div>"
+	);
+}
+
+function requiredFieldsEmpty() {
+	return $("#variableName").val() == "" || $("#dataType").val() == "" || $("#role").val() == "" || 
+	$("#comboTraitClass").val() == "" || $("#comboProperty").val() == "" || 
+	$("#comboMethod").val() == "" || $("#comboScale").val() == "";
+}
+
+function comboValuesInvalid() {	
+	return ($("#comboTraitClass").select2("data").id == $("#comboTraitClass").select2("data").text && 
+    		$("#comboTraitClass").select2("data").description == undefined) || 
+    	   ($("#comboProperty").select2("data").id == $("#comboProperty").select2("data").text && 
+			$("#comboProperty").select2("data").description == undefined) || 
+		   ($("#comboMethod").select2("data").id == $("#comboMethod").select2("data").text && 
+			$("#comboMethod").select2("data").description == undefined) || 
+		   ($("#comboScale").select2("data").id == $("#comboScale").select2("data").text && 
+			$("#comboScale").select2("data").description == undefined);
+}

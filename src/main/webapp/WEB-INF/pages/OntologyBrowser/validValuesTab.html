@@ -28,13 +28,10 @@
 				<div th:text="#{ontology.browser.validValuesTab.noCategoricalValue}">This categorical variable has no pre-defined set of valid values</div>
 			</div>
 			<div th:unless="*{categoricalValues == null}">
-               <select class="form-control-static" size="15">
-					<option  th:value="*{categoricalValues[__${rowStat.index}__].description}" 
-				    		th:text="*{categoricalValues[__${rowStat.index}__].description}" 
-				    		th:each="choice, rowStat : *{categoricalValues}">
-        					Value
-		    		</option>	    
-			   </select>
+				<ul class="list-group">
+					<li class="list-group-item"   th:text="*{categoricalValues[__${rowStat.index}__].description}" 
+			    		th:each="choice, rowStat : *{categoricalValues}">Value</li>
+				</ul>
 			</div>
 		</div>
 		

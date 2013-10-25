@@ -172,22 +172,22 @@ public class OntologyController extends AbstractBaseFieldbookController{
 
             //add new data, use name for description if description was left blank
             if (combo.equals("Property")) {
-                if (propertyDescription == null || propertyDescription == "") {
+                if (propertyDescription == null || propertyDescription.equals("")) {
                     propertyDescription = property;
                 }
                 term = ontologyService.addTerm(property, propertyDescription, CvId.PROPERTIES);
             } else if (combo.equals("Method")) {
-                if (methodDescription == null || methodDescription == "") {
+                if (methodDescription == null || methodDescription.equals("")) {
                     methodDescription = method;
                 }
                 term = ontologyService.addTerm(method, methodDescription, CvId.METHODS);
             } else if (combo.equals("Scale")) {
-                if (scaleDescription == null || scaleDescription == "") {
+                if (scaleDescription == null || scaleDescription.equals("")) {
                     scaleDescription = scale;
                 }
                 term = ontologyService.addTerm(scale, scaleDescription, CvId.SCALES);
             } else {
-                if (traitClassDescription == null || traitClassDescription == "") {
+                if (traitClassDescription == null || traitClassDescription.equals("")) {
                     traitClassDescription = traitClass;
                 }
                 term = ontologyService.addTraitClass(traitClass, traitClassDescription, CvId.IBDB_TERMS);

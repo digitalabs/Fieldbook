@@ -63,9 +63,9 @@ public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
     private List<PropertyReference> getDummyPropertyReference(int i){
         List<PropertyReference> propList = new ArrayList<PropertyReference>();
         int count = 1;
-        PropertyReference propRef1 = new PropertyReference((i*10)+count++, i + " Prop 1");
-        PropertyReference propRef2 = new PropertyReference((i*10)+count++, i + " Prop 2");
-        PropertyReference propRef3 = new PropertyReference((i*10)+count++, i + " Prop 3");
+        PropertyReference propRef1 = new PropertyReference((i * 10) + count++, i + " Prop 1");
+        PropertyReference propRef2 = new PropertyReference((i * 10) + count++, i + " Prop 2");
+        PropertyReference propRef3 = new PropertyReference((i * 10) + count++, i + " Prop 3");
         
         propRef1.setStandardVariables(getDummyStandardVariableReference(1));
         propRef2.setStandardVariables(getDummyStandardVariableReference(2));

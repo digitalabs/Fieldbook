@@ -47,8 +47,8 @@ public class GermplasmTreeController{
 
         try {
             List<TreeNode> rootNodes = new ArrayList<TreeNode>();
-            rootNodes.add(new TreeNode("LOCAL", "My List", true, "lead", new Boolean(false)));
-            rootNodes.add(new TreeNode("CENTRAL", "Shared List", true, "lead", new Boolean(false)));
+            rootNodes.add(new TreeNode("LOCAL", "My List", true, "lead", Boolean.valueOf(false)));
+            rootNodes.add(new TreeNode("CENTRAL", "Shared List", true, "lead", Boolean.valueOf(false)));
             return TreeViewUtil.convertTreeViewToJson(rootNodes);
             
         } catch(Exception e) {

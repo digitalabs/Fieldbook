@@ -107,8 +107,7 @@ public class FileServiceImpl implements FileService{
         InputStream is = new FileInputStream(getFilePath(currentFilename));
 
         try {
-            Workbook workbook = WorkbookFactory.create(is);
-            return workbook;
+            return WorkbookFactory.create(is);
         } catch (InvalidFormatException e) {
             LOG.error(e.getMessage(), e);
             return null;

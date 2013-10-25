@@ -47,12 +47,12 @@ public class FileUploadControllerTest extends AbstractJUnit4SpringContextTests {
 	@Autowired
 	FieldbookService fieldbookService;
 	
-	@Autowired
-        ImportWorkbookFileService fileService;
-	
-	@Autowired
-        DataImportService dataImportService;
-	
+    @Autowired
+    ImportWorkbookFileService fileService;
+
+    @Autowired
+    DataImportService dataImportService;
+
 	private FileUploadController controller;
 	private FileUploadForm form;
 	private BindingResult result;

@@ -123,12 +123,12 @@
 			<artifactId>jcl-over-slf4j</artifactId>
 			<version>1.6.4</version>
 		</dependency>
+		<!-- Logging -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>1.0.7</version>
 		</dependency>
-		<!-- Logging -->
 		<!-- JUnit Dependency for Testing -->
 		<dependency>
 			<groupId>junit</groupId>

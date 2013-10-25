@@ -37,37 +37,37 @@ public class ManageNurseriesControllerTest extends AbstractJUnit4SpringContextTe
 	
     private static final Logger LOG = LoggerFactory.getLogger(ManageNurseriesControllerTest.class);
     
-        @Autowired
-        FieldbookService fieldbookMiddlewareService;
-    
-	@Before
-        public void setUp() {
-	    
-        }
+    @Autowired
+    FieldbookService fieldbookMiddlewareService;
+
+    @Before
+    public void setUp() {
+
+    }
 	
 	@Test
 	public void testManageNurseriesPagination(){
 	    ManageNurseriesForm form = new ManageNurseriesForm();
 	    
 	    try {    
-                List<StudyDetails> nurseryDetailsList = fieldbookMiddlewareService.getAllLocalNurseryDetails();
-                form.setNurseryDetailsList(nurseryDetailsList);
+            List<StudyDetails> nurseryDetailsList = fieldbookMiddlewareService.getAllLocalNurseryDetails();
+            form.setNurseryDetailsList(nurseryDetailsList);
 	    } catch (MiddlewareQueryException e) {
 	        LOG.error(e.getMessage(), e);
 	    }
             
 	    if (form.getPaginatedNurseryDetailsList() != null) {
-    	        if (form.getPaginatedNurseryDetailsList().size() > 0) {
-                    form.setCurrentPage(1);            
-                    if (form.getPaginatedNurseryDetailsList().size() > 10) {
-                        assertEquals(form.getPaginatedNurseryDetailsList().size(), form.getResultPerPage());
-                    } 
-    	        }
-                
-    	        if (form.getPaginatedNurseryDetailsList().size() > 10 && form.getPaginatedNurseryDetailsList().size() <= 20) {
-                    form.setCurrentPage(2);
-                    assertEquals(form.getPaginatedNurseryDetailsList().size(), form.getNurseryDetailsList().size()-10);
-    	        }
+            if (form.getPaginatedNurseryDetailsList().size() > 0) {
+                form.setCurrentPage(1);
+                if (form.getPaginatedNurseryDetailsList().size() > 10) {
+                    assertEquals(form.getPaginatedNurseryDetailsList().size(), form.getResultPerPage());
+                }
+            }
+
+            if (form.getPaginatedNurseryDetailsList().size() > 10 && form.getPaginatedNurseryDetailsList().size() <= 20) {
+                form.setCurrentPage(2);
+                assertEquals(form.getPaginatedNurseryDetailsList().size(), form.getNurseryDetailsList().size() - 10);
+            }
 	    }
 	}
 }

@@ -11,10 +11,8 @@
  *******************************************************************************/
 package com.efficio.pojos.treeview;
 
-import java.util.ArrayList;
 import java.util.List;
 
-// TODO: Auto-generated Javadoc
 /**
  * This class holds the data needed for rendering a tree view using dynatree jquery.
  */

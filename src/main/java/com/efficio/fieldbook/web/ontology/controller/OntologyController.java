@@ -11,6 +11,8 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.ontology.controller;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -212,6 +214,14 @@ public class OntologyController extends AbstractBaseFieldbookController{
     public List<Term> getDataTypes() {
         try {
             List<Term> dataTypes = ontologyService.getAllDataTypes();
+            
+            Collections.sort(dataTypes, new  Comparator<Term>() {
+                @Override
+                public int compare(Term o1, Term o2) {
+                        return o1.getName().compareTo(o2.getName());
+                }
+            }
+            );
             return dataTypes;
         } catch (MiddlewareQueryException e) {
             e.printStackTrace();
@@ -230,6 +240,15 @@ public class OntologyController extends AbstractBaseFieldbookController{
     public List<Term> getRoles() {
         try {
             List<Term> roles = ontologyService.getAllRoles();
+            
+            Collections.sort(roles, new  Comparator<Term>() {
+                @Override
+                public int compare(Term o1, Term o2) {
+                        return o1.getName().compareTo(o2.getName());
+                }
+            }
+            );
+            
             return roles;
         } catch (MiddlewareQueryException e) {
             e.printStackTrace();

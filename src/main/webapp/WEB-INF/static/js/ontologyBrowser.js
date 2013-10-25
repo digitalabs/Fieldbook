@@ -260,7 +260,7 @@ $(function () {
   	
   	$("#comboTraitClass").select2({
         query: function (query) {
-          var data = {results: traitClassesSuggestions_obj.sort()}, i, j, s;
+          var data = {results: sortByKey(traitClassesSuggestions_obj, "text")}, i, j, s;
           // return the array that matches
           data.results = $.grep(data.results,function(item,index) {
             return ($.fn.select2.defaults.matcher(query.term,item.text));
@@ -277,7 +277,7 @@ $(function () {
   	
   	$("#comboProperty").select2({
         query: function (query) {
-          var data = {results: propertySuggestions_obj.sort()}, i, j, s;
+          var data = {results: sortByKey(propertySuggestions_obj, "text")}, i, j, s;
           // return the array that matches
           data.results = $.grep(data.results,function(item,index) {
             return ($.fn.select2.defaults.matcher(query.term,item.text));
@@ -294,7 +294,7 @@ $(function () {
   	
   	$("#comboMethod").select2({
         query: function (query) {
-          var data = {results: methodSuggestions_obj}, i, j, s;
+          var data = {results: sortByKey(methodSuggestions_obj, "text")}, i, j, s;
           // return the array that matches
           data.results = $.grep(data.results,function(item,index) {
             return ($.fn.select2.defaults.matcher(query.term,item.text));
@@ -311,7 +311,7 @@ $(function () {
   	
   	$("#comboScale").select2({
         query: function (query) {
-          var data = {results: scaleSuggestions_obj}, i, j, s;
+          var data = {results: sortByKey(scaleSuggestions_obj, "text")}, i, j, s;
           // return the array that matches
           data.results = $.grep(data.results,function(item,index) {
             return ($.fn.select2.defaults.matcher(query.term,item.text));
@@ -348,26 +348,26 @@ function recreateCombo(combo, data) {
 			  'text' : data.name,
 			  'description' : data.definition
 		});
-		suggestions_obj = traitClassesSuggestions_obj;
+		suggestions_obj = sortByKey(traitClassesSuggestions_obj, "text");
 		description = $("#traitClassDescription");
 	} else if (combo == "Property") {
 		propertySuggestions_obj.push({ 'id' : data.id,
 			  'text' : data.name,
 			  'description' : data.definition
 		});
-		suggestions_obj = propertySuggestions_obj;
+		suggestions_obj = sortByKey(propertySuggestions_obj, "text");
 	} else if (combo == "Method") {
 		methodSuggestions_obj.push({ 'id' : data.id,
 			  'text' : data.name,
 			  'description' : data.definition
 		});
-		suggestions_obj = methodSuggestions_obj;
+		suggestions_obj = sortByKey(methodSuggestions_obj, "text");
 	} else {
 		scaleSuggestions_obj.push({ 'id' : data.id,
 			  'text' : data.name,
 			  'description' : data.definition
 		});
-		suggestions_obj = scaleSuggestions_obj;
+		suggestions_obj = sortByKey(scaleSuggestions_obj, "text");
 	}
 	
 	//set description field to empty
@@ -417,4 +417,11 @@ function comboValuesInvalid() {
 			$("#comboMethod").select2("data").description == undefined) || 
 		   ($("#comboScale").select2("data").id == $("#comboScale").select2("data").text && 
 			$("#comboScale").select2("data").description == undefined);
+}
+
+function sortByKey(array, key) {
+    return array.sort(function(a, b) {
+        var x = a[key].toLowerCase(); var y = b[key].toLowerCase();
+        return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+    });
 }

@@ -26,28 +26,66 @@ import org.generationcp.middleware.pojos.GermplasmList;
 import com.efficio.pojos.treeview.TreeNode;
 import com.efficio.pojos.treeview.TypeAheadSearchTreeNode;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class TreeViewUtil.
+ */
 public class TreeViewUtil {
 
+	/**
+	 * Convert references to json.
+	 *
+	 * @param references the references
+	 * @return the string
+	 * @throws Exception the exception
+	 */
 	public static String convertReferencesToJson(List<Reference> references) throws Exception {
 		List<TreeNode> treeNodes = convertReferencesToTreeView(references);
 		return convertTreeViewToJson(treeNodes);
 	}
 	
+	/**
+	 * Convert folder references to json.
+	 *
+	 * @param references the references
+	 * @return the string
+	 * @throws Exception the exception
+	 */
 	public static String convertFolderReferencesToJson(List<FolderReference> references) throws Exception {
 		List<TreeNode> treeNodes = convertFolderReferencesToTreeView(references);
 		return convertTreeViewToJson(treeNodes);
 	}
 	
+    /**
+     * Convert dataset references to json.
+     *
+     * @param references the references
+     * @return the string
+     * @throws Exception the exception
+     */
     public static String convertDatasetReferencesToJson(List<DatasetReference> references) throws Exception {
         List<TreeNode> treeNodes = convertDatasetReferencesToTreeView(references);
         return convertTreeViewToJson(treeNodes);
     }
     
+    /**
+     * Convert germplasm list to json.
+     *
+     * @param germplasmLists the germplasm lists
+     * @return the string
+     * @throws Exception the exception
+     */
     public static String convertGermplasmListToJson(List<GermplasmList> germplasmLists) throws Exception {
         List<TreeNode> treeNodes = convertGermplasmListToTreeView(germplasmLists);
         return convertTreeViewToJson(treeNodes);
     }
     
+	/**
+	 * Convert references to tree view.
+	 *
+	 * @param references the references
+	 * @return the list
+	 */
 	private static List<TreeNode> convertReferencesToTreeView(List<Reference> references) {
 		List<TreeNode> treeNodes = new ArrayList<TreeNode>();
 		if (references != null && !references.isEmpty()) {
@@ -58,6 +96,12 @@ public class TreeViewUtil {
 		return treeNodes;
 	}
 	
+	/**
+	 * Convert folder references to tree view.
+	 *
+	 * @param references the references
+	 * @return the list
+	 */
 	private static List<TreeNode> convertFolderReferencesToTreeView(List<FolderReference> references) {
         List<TreeNode> treeNodes = new ArrayList<TreeNode>();
 		if (references != null && !references.isEmpty()) {
@@ -68,6 +112,12 @@ public class TreeViewUtil {
 		return treeNodes;
 	}
 
+    /**
+     * Convert dataset references to tree view.
+     *
+     * @param references the references
+     * @return the list
+     */
     private static List<TreeNode> convertDatasetReferencesToTreeView(List<DatasetReference> references) {
         List<TreeNode> treeNodes = new ArrayList<TreeNode>();
         if (references != null && !references.isEmpty()) {
@@ -78,6 +128,12 @@ public class TreeViewUtil {
         return treeNodes;
     }
     
+    /**
+     * Convert germplasm list to tree view.
+     *
+     * @param germplasmLists the germplasm lists
+     * @return the list
+     */
     private static List<TreeNode> convertGermplasmListToTreeView(List<GermplasmList> germplasmLists) {
         List<TreeNode> treeNodes = new ArrayList<TreeNode>();
         if (germplasmLists != null && !germplasmLists.isEmpty()) {
@@ -88,6 +144,12 @@ public class TreeViewUtil {
         return treeNodes;
     }
 
+	/**
+	 * Convert reference to tree node.
+	 *
+	 * @param reference the reference
+	 * @return the tree node
+	 */
 	private static TreeNode convertReferenceToTreeNode(Reference reference) {
 		TreeNode treeNode = new TreeNode();
 		
@@ -99,6 +161,12 @@ public class TreeViewUtil {
 		return treeNode;
 	}
 	
+	/**
+	 * Convert germplasm list to tree node.
+	 *
+	 * @param germplasmList the germplasm list
+	 * @return the tree node
+	 */
 	private static TreeNode convertGermplasmListToTreeNode(GermplasmList germplasmList) {
 	    TreeNode treeNode = new TreeNode();
 	    
@@ -110,6 +178,13 @@ public class TreeViewUtil {
 	    return treeNode;
 	}
 	
+	/**
+	 * Convert tree view to json.
+	 *
+	 * @param treeNodes the tree nodes
+	 * @return the string
+	 * @throws Exception the exception
+	 */
 	public static String convertTreeViewToJson(List<TreeNode> treeNodes) throws Exception {
 	    if (treeNodes != null && !treeNodes.isEmpty()) {
     		ObjectMapper mapper = new ObjectMapper();
@@ -118,6 +193,13 @@ public class TreeViewUtil {
 	    return "[]"; 
 	}
 	
+	/**
+	 * Convert search tree view to json.
+	 *
+	 * @param treeNodes the tree nodes
+	 * @return the string
+	 * @throws Exception the exception
+	 */
 	public static String convertSearchTreeViewToJson(List<TypeAheadSearchTreeNode> treeNodes) throws Exception {
         if (treeNodes != null && !treeNodes.isEmpty()) {
             ObjectMapper mapper = new ObjectMapper();
@@ -127,6 +209,13 @@ public class TreeViewUtil {
     }
 	
 	//for the ontology Browser
+	/**
+	 * Convert ontology traits to search single level json.
+	 *
+	 * @param traitReferences the trait references
+	 * @return the string
+	 * @throws Exception the exception
+	 */
 	public static String convertOntologyTraitsToSearchSingleLevelJson(List<TraitReference> traitReferences) throws Exception {
         
         
@@ -163,6 +252,13 @@ public class TreeViewUtil {
     }
      
 	
+	/**
+	 * Convert ontology traits to json.
+	 *
+	 * @param traitReferences the trait references
+	 * @return the string
+	 * @throws Exception the exception
+	 */
 	public static String convertOntologyTraitsToJson(List<TraitReference> traitReferences) throws Exception {
 	    TreeNode treeNode = new TreeNode();
         
@@ -180,6 +276,13 @@ public class TreeViewUtil {
         tempList.add(treeNode);
         return convertTreeViewToJson(tempList);
     }
+	
+	/**
+	 * Convert trait references to tree view.
+	 *
+	 * @param traitReferences the trait references
+	 * @return the list
+	 */
 	private static List<TreeNode> convertTraitReferencesToTreeView(List<TraitReference> traitReferences) {
         List<TreeNode> treeNodes = new ArrayList<TreeNode>();
         if (traitReferences != null && !traitReferences.isEmpty()) {
@@ -190,6 +293,12 @@ public class TreeViewUtil {
         return treeNodes;
     }
 	
+	/**
+	 * Convert trait reference to tree node.
+	 *
+	 * @param reference the reference
+	 * @return the tree node
+	 */
 	private static TreeNode convertTraitReferenceToTreeNode(TraitReference reference) {
         TreeNode treeNode = new TreeNode();
         String parentId = reference.getId().toString();
@@ -214,6 +323,14 @@ public class TreeViewUtil {
         return treeNode;
     }
 	
+	/**
+	 * Convert property reference to tree node.
+	 *
+	 * @param parentId the parent id
+	 * @param reference the reference
+	 * @param parentTitle the parent title
+	 * @return the tree node
+	 */
 	private static TreeNode convertPropertyReferenceToTreeNode(String parentId, PropertyReference reference, String parentTitle) {
         TreeNode treeNode = new TreeNode();
         String id = parentId+"_"+reference.getId().toString();
@@ -240,6 +357,14 @@ public class TreeViewUtil {
         return treeNode;
     }
 
+	/**
+	 * Convert standard variable reference to tree node.
+	 *
+	 * @param parentId the parent id
+	 * @param reference the reference
+	 * @param parentTitle the parent title
+	 * @return the tree node
+	 */
 	private static TreeNode convertStandardVariableReferenceToTreeNode(String parentId, StandardVariableReference reference, String parentTitle) {
         TreeNode treeNode = new TreeNode();
         String id = parentId+"_"+reference.getId().toString();

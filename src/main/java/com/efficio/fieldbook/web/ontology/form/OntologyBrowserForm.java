@@ -31,6 +31,9 @@ public class OntologyBrowserForm{
     /** The add successful. */
     private String addSuccessful;
     
+    /** The error message. */
+    private String errorMessage;
+    
     /** The trait reference list. */
     private List<TraitReference> traitReferenceList;
     
@@ -115,7 +118,24 @@ public class OntologyBrowserForm{
     public void setAddSuccessful(String addSuccessful) {
         this.addSuccessful = addSuccessful;
     }
-
+    
+    /**
+     * Gets the error message.
+     *
+     * @return the error message
+     */
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+    
+    /**
+     * Sets the error message.
+     *
+     * @param errorMessage the new error message
+     */
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
     
     /**
      * Gets the tree data.

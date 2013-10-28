@@ -123,22 +123,31 @@ public class OntologyController extends AbstractBaseFieldbookController{
             return show(form,model);
         } else {
             try {
-                //create the standardVariable object
-                StandardVariable standardVariable = new StandardVariable();
-                standardVariable.setName(form.getVariableName());
-                standardVariable.setDescription(form.getVariableDescription());
-                standardVariable.setProperty(ontologyService.getTermById(Integer.parseInt(form.getProperty())));
-                standardVariable.setMethod(ontologyService.getTermById(Integer.parseInt(form.getMethod())));
-                standardVariable.setScale(ontologyService.getTermById(Integer.parseInt(form.getScale())));
-                standardVariable.setDataType(ontologyService.getTermById(Integer.parseInt(form.getDataType())));
-                standardVariable.setPhenotypicType(ontologyService.getPhenotypicTypeById(Integer.parseInt(form.getRole())));
-                standardVariable.setIsA(ontologyService.getTermById(Integer.parseInt(form.getTraitClass())));
-                standardVariable.setStoredIn(ontologyService.getTermById(Integer.parseInt(form.getRole())));
-                standardVariable.setCropOntologyId(form.getCropOntologyId());
-                ontologyService.addStandardVariable(standardVariable);
-                form.setAddSuccessful("1");
+                Term stdVariableTerm = ontologyService.findTermByName(form.getVariableName(), CvId.VARIABLES);
+                
+                if (stdVariableTerm == null) {
+                    //create the standardVariable object
+                    StandardVariable standardVariable = new StandardVariable();
+                    standardVariable.setName(form.getVariableName());
+                    standardVariable.setDescription(form.getVariableDescription());
+                    standardVariable.setProperty(ontologyService.getTermById(Integer.parseInt(form.getProperty())));
+                    standardVariable.setMethod(ontologyService.getTermById(Integer.parseInt(form.getMethod())));
+                    standardVariable.setScale(ontologyService.getTermById(Integer.parseInt(form.getScale())));
+                    standardVariable.setDataType(ontologyService.getTermById(Integer.parseInt(form.getDataType())));
+                    standardVariable.setPhenotypicType(ontologyService.getPhenotypicTypeById(Integer.parseInt(form.getRole())));
+                    standardVariable.setIsA(ontologyService.getTermById(Integer.parseInt(form.getTraitClass())));
+                    standardVariable.setStoredIn(ontologyService.getTermById(Integer.parseInt(form.getRole())));
+                    standardVariable.setCropOntologyId(form.getCropOntologyId());
+                    ontologyService.addStandardVariable(standardVariable);
+                    form.setAddSuccessful("1");
+                } else {
+                    form.setAddSuccessful("2");
+                    form.setErrorMessage("Variable Name already exists");
+                } 
            } catch (MiddlewareQueryException e) {
                LOG.error(e.getMessage(), e);
+               form.setAddSuccessful("2");
+               form.setErrorMessage(e.getMessage());
            }
         }
         return show(form, model);

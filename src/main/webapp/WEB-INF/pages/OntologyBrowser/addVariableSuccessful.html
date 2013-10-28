@@ -16,6 +16,24 @@
        			</div>
 	     	</div><!-- /.modal-content -->
    		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+	<input type="button" id="showFailedSaveModal" data-toggle="modal" href="#addFailedSaveModal" value="test" style="visibility:hidden" />
+	<!-- Modal -->
+   	<div class="modal fade" id="addFailedSaveModal" role="dialog" aria-labelledby="addVariableFailedLabel" aria-hidden="true">
+		<div class="modal-dialog modal-large">
+	    	<div class="modal-content">
+	         	<div class="modal-body" id="addVariableFailedBody">
+	         		<div>
+	         			<button id="closeAddVariableFailedModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	         		</div>
+	         		<br/><br/>
+	         		<div class="alert alert-danger" th:text="${ontologyBrowserForm.errorMessage}"></div>
+	         	</div>																							
+	       		<div class="modal-footer">    
+	       			<button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">OK</button>	
+       			</div>
+	     	</div><!-- /.modal-content -->
+   		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->		
 </div>
 
@@ -27,7 +45,11 @@
 			setTimeout(function (){
 				$("#showSuccessfulModal").trigger("click");
 			}, 500);
-	    }	    
+	    } else if (addSuccessful == "2") {
+	    	setTimeout(function (){
+				$("#showFailedSaveModal").trigger("click");
+			}, 500);
+	    }    
     //]]>
     </script>
 </div>

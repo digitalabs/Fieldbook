@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -29,6 +30,8 @@ import org.generationcp.middleware.domain.oms.TraitReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -65,6 +68,9 @@ public class OntologyController extends AbstractBaseFieldbookController{
     /** The ontology service. */
     @Resource
     private OntologyService ontologyService;
+    
+    @Autowired
+    public MessageSource messageSource;
     
     
     /* (non-Javadoc)
@@ -173,7 +179,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
             @RequestParam String traitClass, @RequestParam String traitClassDescription,
             @RequestParam String property, @RequestParam String propertyDescription, 
             @RequestParam String method, @RequestParam String methodDescription, 
-            @RequestParam String scale, @RequestParam String scaleDescription) {
+            @RequestParam String scale, @RequestParam String scaleDescription, Locale local) {
         Map<String, String> resultMap = new HashMap<String, String>();
         
         try {
@@ -206,6 +212,10 @@ public class OntologyController extends AbstractBaseFieldbookController{
             resultMap.put("id", String.valueOf(term.getId()));
             resultMap.put("name", term.getName());
             resultMap.put("definition", term.getDefinition());
+            Object[] args = new Object[2];
+            args[0] = combo;
+            args[1] = term.getName();
+            resultMap.put("successMessage", messageSource.getMessage("ontology.browser.modal.variable.name.save.success", args, local));
         } catch(MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
             resultMap.put("status", "-1");

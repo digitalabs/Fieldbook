@@ -209,7 +209,8 @@ function doSave(combo) {
 			data: serializedData,
 		    success: function(data){
 			    if (data.status == "1") {
-			    	recreateCombo(combo, data);					    	
+			    	recreateCombo(combo, data);	
+			    	showSuccessMessage(data.successMessage);
 		       	} else {
 		       		showMessage(data.errorMessage);
 		       	}
@@ -226,12 +227,15 @@ function doSave(combo) {
 	}
 }
 
+function getOntologySuffix(id){
+	return (id > -1 ? "(Shared)" : "") + " "; 
+}
 $(function () {
 	
 	
   	$.each(traitClassesSuggestions, function( index, value ) {
   		traitClassesSuggestions_obj.push({ 'id' : value.id,
-			  'text' : value.name,
+			  'text' :  getOntologySuffix(value.id) + value.name,
 			  'description' : value.description
 		});  
   		
@@ -239,21 +243,21 @@ $(function () {
   	
   	$.each(propertySuggestions, function( index, value ) {
   		propertySuggestions_obj.push({ 'id' : value.id,
-			  'text' : value.name,
+			  'text' :  getOntologySuffix(value.id) + value.name,
 			  'description' : value.definition
 		});  
 	});
   	
   	$.each(methodSuggestions, function( index, value ) {
   		methodSuggestions_obj.push({ 'id' : value.id,
-			  'text' : value.name,
+			  'text' :  getOntologySuffix(value.id) + value.name,
 			  'description' : value.definition
 		});  
 	});
   	
   	$.each(scaleSuggestions, function( index, value ) {
   		scaleSuggestions_obj.push({ 'id' : value.id,
-			  'text' : value.name,
+			  'text' : getOntologySuffix(value.id) + value.name,
 			  'description' : value.definition
 		});  
 	});
@@ -394,6 +398,11 @@ function recreateCombo(combo, data) {
 
 function itemExists(combo) {
 	return $("#combo"+combo).select2("data").id != $("#combo"+combo).select2("data").text && $("#combo"+combo).select2("data").description != undefined;
+}
+function showSuccessMessage(message) {
+	$("#page-message-modal").html(
+		    "<div class='alert alert-success'>"+ message +"</div>"
+	);
 }
 
 function showMessage(message) {

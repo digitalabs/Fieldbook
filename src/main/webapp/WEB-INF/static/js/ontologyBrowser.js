@@ -403,6 +403,10 @@ function showSuccessMessage(message) {
 	$("#page-message-modal").html(
 		    "<div class='alert alert-success'>"+ message +"</div>"
 	);
+	setTimeout("hideSuccessMessage()", 3000);
+}
+function hideSuccessMessage(){
+	$('#page-message-modal .alert-success').fadeOut(1000);
 }
 
 function showMessage(message) {

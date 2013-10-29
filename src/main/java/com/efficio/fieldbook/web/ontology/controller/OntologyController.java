@@ -184,8 +184,9 @@ public class OntologyController extends AbstractBaseFieldbookController{
         
         try {
             Term term = null;
-
+            String ontologyName = "";
             //add new data, use name for description if description was left blank
+            ontologyName = combo;
             if (combo.equals("Property")) {
                 if (propertyDescription == null || propertyDescription.equals("")) {
                     propertyDescription = property;
@@ -205,6 +206,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
                 if (traitClassDescription == null || traitClassDescription.equals("")) {
                     traitClassDescription = traitClass;
                 }
+                ontologyName = "Trait Class";
                 term = ontologyService.addTraitClass(traitClass, traitClassDescription, CvId.IBDB_TERMS);
             }          
               
@@ -213,7 +215,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
             resultMap.put("name", term.getName());
             resultMap.put("definition", term.getDefinition());
             Object[] args = new Object[2];
-            args[0] = combo;
+            args[0] = ontologyName;
             args[1] = term.getName();
             resultMap.put("successMessage", messageSource.getMessage("ontology.browser.modal.variable.name.save.success", args, local));
         } catch(MiddlewareQueryException e) {

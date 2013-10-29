@@ -204,6 +204,8 @@ public class OntologyController extends AbstractBaseFieldbookController{
         
         try {
             Term term = null;
+            Term traitClassTerm = null;
+            Integer traitClassId = null;
             String ontologyName = "";
             //add new data, use name for description if description was left blank
             ontologyName = combo;
@@ -214,15 +216,19 @@ public class OntologyController extends AbstractBaseFieldbookController{
                 }
                 if(isInteger(traitClass) == false){
                     //meaning we need to save the trait class
-                    term = ontologyService.addTraitClass(traitClass, traitClassDescription, CvId.IBDB_TERMS);
+                    traitClassTerm = ontologyService.addTraitClass(traitClass, traitClassDescription, CvId.IBDB_TERMS);
                     
-                    resultMap.put("traitId", String.valueOf(term.getId()));
-                    resultMap.put("traitName", term.getName());
-                    resultMap.put("traitDefinition", term.getDefinition());
+                    resultMap.put("traitId", String.valueOf(traitClassTerm.getId()));
+                    resultMap.put("traitName", traitClassTerm.getName());
+                    resultMap.put("traitDefinition", traitClassTerm.getDefinition());
                     resultMap.put("addedNewTrait", "1");
+                    traitClassId = Integer.valueOf(traitClassTerm.getId());
+                }else{
+                    traitClassId = Integer.parseInt(traitClass);
                 }
                 term = ontologyService.addTerm(property, propertyDescription, CvId.PROPERTIES);
                 //we also include the trait class already here
+                
                 
                 
             } else if (combo.equals("Method")) {

@@ -227,6 +227,37 @@ function doSave(combo) {
 	}
 }
 
+function setCorrespondingTraitClass(propertyId){
+	//console.log(propertyId);
+	Spinner.toggle();
+	$.ajax({
+		url: "retrieve/trait/property/" + propertyId,
+		type: "GET",
+		dataType: "json",
+		data: "",
+	    success: function(data){
+		    if (data.status == "1") {
+		    	var dataVal = {id:'',text:'',description:''}; //default value
+		    	if(data.traitId != ''){
+		    		var count = 0;
+			    	for(count = 0 ; count < traitClassesSuggestions_obj.length ; count++){
+			    		if(traitClassesSuggestions_obj[count].id == data.traitId){
+			    			//console.log(traitClassesSuggestions_obj[count]);
+			    			//$("#comboTraitClass").val(traitClassesSuggestions_obj[count]);
+			    			dataVal = traitClassesSuggestions_obj[count];			    			
+			    			break;
+			    		}			    			
+			    	}
+		    	}
+		    	$("#comboTraitClass").select2('data', dataVal).trigger('change');
+		    	
+	       	}
+		    Spinner.toggle();
+	   }
+	   
+	});
+}
+
 function getOntologySuffix(id){
 	return (id > -1 ? "(Shared)" : "") + " "; 
 }
@@ -235,7 +266,7 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	if (description == "description") {
 		$.each(variableSuggestions, function( index, value ) {
 			variableSuggestions_obj.push({ 'id' : value.id,
-				  'text' : value.name,
+				  'text' : getOntologySuffix(value.id) + value.name,
 				  'description' : value.description
 			});  
 	  		
@@ -243,7 +274,7 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	} else {
 		$.each(variableSuggestions, function( index, value ) {
 			variableSuggestions_obj.push({ 'id' : value.id,
-				  'text' : value.name,
+				  'text' : getOntologySuffix(value.id) + value.name,
 				  'description' : value.definition
 			});  
 	  		
@@ -280,7 +311,11 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	        }
 	
 	    }).on("change", function(){
-	    	$("#" + lowerCaseFirstLetter(name) + "Description").val($("#comboTraitClass").select2("data").description);
+	    	$("#" + lowerCaseFirstLetter(name) + "Description").val($("#combo"+name).select2("data").description);
+	    	if(name == 'Property'){
+	    		setCorrespondingTraitClass($("#comboProperty").select2("data").id);
+	    	}
+	    	
 	    });
 	}
 }

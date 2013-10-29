@@ -227,35 +227,46 @@ function doSave(combo) {
 	}
 }
 
+function isInt(value) { 
+    return !isNaN(parseInt(value,10)) && (parseFloat(value,10) == parseInt(value,10)); 
+}
+
 function setCorrespondingTraitClass(propertyId){
 	//console.log(propertyId);
-	Spinner.toggle();
-	$.ajax({
-		url: "retrieve/trait/property/" + propertyId,
-		type: "GET",
-		dataType: "json",
-		data: "",
-	    success: function(data){
-		    if (data.status == "1") {
-		    	var dataVal = {id:'',text:'',description:''}; //default value
-		    	if(data.traitId != ''){
-		    		var count = 0;
-			    	for(count = 0 ; count < traitClassesSuggestions_obj.length ; count++){
-			    		if(traitClassesSuggestions_obj[count].id == data.traitId){
-			    			//console.log(traitClassesSuggestions_obj[count]);
-			    			//$("#comboTraitClass").val(traitClassesSuggestions_obj[count]);
-			    			dataVal = traitClassesSuggestions_obj[count];			    			
-			    			break;
-			    		}			    			
+	var dataVal = {id:'',text:'',description:''}; //default value
+	if(isInt(propertyId)){
+		Spinner.toggle();
+		$.ajax({
+			url: "retrieve/trait/property/" + propertyId,
+			type: "GET",
+			dataType: "json",
+			data: "",
+		    success: function(data){
+			    if (data.status == "1") {
+			    	
+			    	if(data.traitId != ''){
+			    		var count = 0;
+				    	for(count = 0 ; count < traitClassesSuggestions_obj.length ; count++){
+				    		if(traitClassesSuggestions_obj[count].id == data.traitId){
+				    			//console.log(traitClassesSuggestions_obj[count]);
+				    			//$("#comboTraitClass").val(traitClassesSuggestions_obj[count]);
+				    			dataVal = traitClassesSuggestions_obj[count];			    			
+				    			break;
+				    		}			    			
+				    	}
 			    	}
-		    	}
-		    	$("#comboTraitClass").select2('data', dataVal).trigger('change');
-		    	
-	       	}
-		    Spinner.toggle();
-	   }
-	   
-	});
+			    	$("#comboTraitClass").select2('data', dataVal).trigger('change');
+			    	
+		       	}
+			    Spinner.toggle();
+		   }
+		   
+		});
+	}else{
+		$("#comboTraitClass").select2('data', dataVal).trigger('change');
+	}
+	
+	
 }
 
 function getOntologySuffix(id){

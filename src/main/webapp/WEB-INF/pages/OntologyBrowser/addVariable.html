@@ -207,6 +207,18 @@
 				showMessage(message); 
 				return false;
 			}
+			
+			if(combo == 'Property'){
+				//we need to check if the trait class has a value
+				var dataVal = $("#comboTraitClass").select2("data");
+				if(dataVal == null || dataVal.id == ''){
+					message = /*[[#{ontology.browser.modal.trait.class.required}]]*/;
+					showMessage(message);
+					return false;
+				}
+				
+			}
+			
 			return true;
 		}
 		

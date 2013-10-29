@@ -230,156 +230,74 @@ function doSave(combo) {
 function getOntologySuffix(id){
 	return (id > -1 ? "(Shared)" : "") + " "; 
 }
+
+function initializeVariable(variableSuggestions, variableSuggestions_obj, description, name) {
+	if (description == "description") {
+		$.each(variableSuggestions, function( index, value ) {
+			variableSuggestions_obj.push({ 'id' : value.id,
+				  'text' : value.name,
+				  'description' : value.description
+			});  
+	  		
+		});
+	} else {
+		$.each(variableSuggestions, function( index, value ) {
+			variableSuggestions_obj.push({ 'id' : value.id,
+				  'text' : value.name,
+				  'description' : value.definition
+			});  
+	  		
+		});
+	}
+	
+	if (name == "Variable Name") {
+		$("#combo" + name).select2({
+	        query: function (query) {
+	          var data = {results: sortByKey(variableSuggestions_obj, "text")}, i, j, s;
+	          // return the array that matches
+	          data.results = $.grep(data.results,function(item,index) {
+	            return ($.fn.select2.defaults.matcher(query.term,item.text));
+	          
+	          });
+	          if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
+	          
+	            query.callback(data);
+	        }
+	
+	    });
+	} else {
+		$("#combo" + name).select2({
+	        query: function (query) {
+	          var data = {results: sortByKey(variableSuggestions_obj, "text")}, i, j, s;
+	          // return the array that matches
+	          data.results = $.grep(data.results,function(item,index) {
+	            return ($.fn.select2.defaults.matcher(query.term,item.text));
+	          
+	          });
+	          if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
+	          
+	            query.callback(data);
+	        }
+	
+	    }).on("change", function(){
+	    	$("#" + lowerCaseFirstLetter(name) + "Description").val($("#comboTraitClass").select2("data").description);
+	    });
+	}
+}
+
+function lowerCaseFirstLetter(string)
+{
+    return string.charAt(0).toLowerCase() + string.slice(1);
+}
+
 $(function () {
-	
-	
-  	$.each(traitClassesSuggestions, function( index, value ) {
-  		traitClassesSuggestions_obj.push({ 'id' : value.id,
-			  'text' :  getOntologySuffix(value.id) + value.name,
-			  'description' : value.description
-		});  
-  		
-	});
-  	
-  	$.each(propertySuggestions, function( index, value ) {
-  		propertySuggestions_obj.push({ 'id' : value.id,
-			  'text' :  getOntologySuffix(value.id) + value.name,
-			  'description' : value.definition
-		});  
-	});
-  	
-  	$.each(methodSuggestions, function( index, value ) {
-  		methodSuggestions_obj.push({ 'id' : value.id,
-			  'text' :  getOntologySuffix(value.id) + value.name,
-			  'description' : value.definition
-		});  
-	});
-  	
-  	$.each(scaleSuggestions, function( index, value ) {
-  		scaleSuggestions_obj.push({ 'id' : value.id,
-			  'text' : getOntologySuffix(value.id) + value.name,
-			  'description' : value.definition
-		});  
-	});
-  	
-  	$("#comboTraitClass").select2({
-        query: function (query) {
-          var data = {results: sortByKey(traitClassesSuggestions_obj, "text")}, i, j, s;
-          // return the array that matches
-          data.results = $.grep(data.results,function(item,index) {
-            return ($.fn.select2.defaults.matcher(query.term,item.text));
-          
-          });
-          if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
-          
-            query.callback(data);
-        },
-  		initSelection: function(item, callback) {
-        	  // despite select2 having already read the whole sources list when you 
-        	  // do .val(n) you have to explicitly tell it how to find that item again.
-        	  var to_be_selected = null;
-        	  $.each(traitClassesSuggestions_obj, function(index, thing) {
-        	    if (thing.id == item.val()) {
-        	      to_be_selected = thing;
-        	      return;
-        	    }
-        	  })
-        	  callback(to_be_selected);
-  		}
-    }).on("change", function(){
-    	$("#traitClassDescription").val($("#comboTraitClass").select2("data").description);
-    });
-  	
-  	$("#comboProperty").select2({
-        query: function (query) {
-          var data = {results: sortByKey(propertySuggestions_obj, "text")}, i, j, s;
-          // return the array that matches
-          data.results = $.grep(data.results,function(item,index) {
-            return ($.fn.select2.defaults.matcher(query.term,item.text));
-          
-          });
-          if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
-          
-            query.callback(data);
-        }
-
-    }).on("change", function(){
-    	$("#propertyDescription").val($("#comboProperty").select2("data").description);
-    	//we need to set the TraitClass drop down
-    	setCorrespondingTraitClass($("#comboProperty").select2("data").id);
-    });
-  	
-  	$("#comboMethod").select2({
-        query: function (query) {
-          var data = {results: sortByKey(methodSuggestions_obj, "text")}, i, j, s;
-          // return the array that matches
-          data.results = $.grep(data.results,function(item,index) {
-            return ($.fn.select2.defaults.matcher(query.term,item.text));
-          
-          });
-          if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
-          
-            query.callback(data);
-        }
-
-    }).on("change", function(){
-    	$("#methodDescription").val($("#comboMethod").select2("data").description);
-    });
-  	
-  	$("#comboScale").select2({
-        query: function (query) {
-          var data = {results: sortByKey(scaleSuggestions_obj, "text")}, i, j, s;
-          // return the array that matches
-          data.results = $.grep(data.results,function(item,index) {
-            return ($.fn.select2.defaults.matcher(query.term,item.text));
-          
-          });
-          if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
-          
-            query.callback(data);
-        }
-
-    }).on("change", function(){
-    	$("#scaleDescription").val($("#comboScale").select2("data").description);
-    });
-  	
-  //$("#comboTraitClass").data("ui-combobox").value($("#hidTraitClass").val());
-  //$("#comboProperty").data("ui-combobox").value($("#hidProperty").val());
-  //$("#comboMethod").data("ui-combobox").value($("#hidMethod").val());
-  //$("#comboScale").data("ui-combobox").value($("#hidScale").val());
+	initializeVariable(variableNameSuggestions, variableNameSuggestions_obj, "description", "VariableName");
+	initializeVariable(traitClassesSuggestions, traitClassesSuggestions_obj, "description", "TraitClass");
+	initializeVariable(propertySuggestions, propertySuggestions_obj, "definition", "Property");
+	initializeVariable(methodSuggestions, methodSuggestions_obj, "definition", "Method");
+	initializeVariable(scaleSuggestions, scaleSuggestions_obj, "definition", "Scale");
 });		
 
-
-function setCorrespondingTraitClass(propertyId){
-	//console.log(propertyId);
-	Spinner.toggle();
-	$.ajax({
-		url: "retrieve/trait/property/" + propertyId,
-		type: "GET",
-		dataType: "json",
-		data: "",
-	    success: function(data){
-		    if (data.status == "1") {
-		    	var dataVal = {id:'',text:'',description:''}; //default value
-		    	if(data.traitId != ''){
-		    		var count = 0;
-			    	for(count = 0 ; count < traitClassesSuggestions_obj.length ; count++){
-			    		if(traitClassesSuggestions_obj[count].id == data.traitId){
-			    			//console.log(traitClassesSuggestions_obj[count]);
-			    			//$("#comboTraitClass").val(traitClassesSuggestions_obj[count]);
-			    			dataVal = traitClassesSuggestions_obj[count];			    			
-			    			break;
-			    		}			    			
-			    	}
-		    	}
-		    	$("#comboTraitClass").select2('data', dataVal).trigger('change');
-		    	
-	       	}
-		    Spinner.toggle();
-	   }
-	   
-	});
-}
 function clearFields() {
 	$("div.modal .form-control").val("");
 	$("div.modal .select2").select2("val", "");

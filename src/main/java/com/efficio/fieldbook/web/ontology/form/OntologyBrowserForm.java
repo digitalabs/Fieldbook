@@ -13,7 +13,6 @@ package com.efficio.fieldbook.web.ontology.form;
 
 import java.util.List;
 
-import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TraitReference;
 
 
@@ -43,6 +42,9 @@ public class OntologyBrowserForm{
     /** The search tree data. */
     private String searchTreeData;
     
+    /** The standard variable id */
+    private Integer variableId;
+       
     /** The variable name. */
     private String variableName;
     
@@ -81,7 +83,7 @@ public class OntologyBrowserForm{
     
     /** The scale description. */
     private String scaleDescription;
-       
+    
     /**
      * Gets the checks for error.
      *
@@ -427,5 +429,19 @@ public class OntologyBrowserForm{
     public void setScaleDescription(String scaleDescription) {
         this.scaleDescription = scaleDescription;
     }
-    
- }
+
+    /**
+     * @return the variableId
+     */
+    public Integer getVariableId() {
+        return variableId;
+    }
+
+    /**
+     * @param variableId the variableId to set
+     */
+    public void setVariableId(Integer variableId) {
+        this.variableId = variableId;
+    }
+
+}

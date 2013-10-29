@@ -20,7 +20,7 @@
 									<div class="form-group">
 					           			<label for="variableName" class="col-md-5 control-label" th:text="#{ontology.browser.modal.variable.name} + ': *'">Name:</label>
 				                        <div class="col-md-7">
-				                            <input type="text" th:field="*{variableName}" class="form-control"/>
+				                        	<input id="comboVariableName" type="hidden" th:field="*{variableName}" class="form-control select2" placeholder=""/>
 											<input type="hidden" th:field="*{variableId}" />
 				                        </div>
 			                        </div>
@@ -165,21 +165,18 @@
 <div layout:fragment="page-script">		
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
+        var variableNameSuggestions = /*[[${variableNameSuggestionList}]]*/ null;
         var traitClassesSuggestions = /*[[${traitClassesSuggestionList}]]*/ null;
 		var propertySuggestions = /*[[${propertiesSuggestionList}]]*/ null;
 		var methodSuggestions = /*[[${methodsSuggestionList}]]*/ null;
 		var scaleSuggestions = /*[[${scalesSuggestionList}]]*/ null;
 		
+		var variableNameSuggestions_obj = [];
 	  	var traitClassesSuggestions_obj = [];
 	  	var propertySuggestions_obj = [];
 	  	var methodSuggestions_obj = [];
 	  	var scaleSuggestions_obj = [];
-	  	
-	  	var traitClassesDescription = [];
-	  	var propertyDescription = [];
-	  	var methodDescription = [];
-	  	var scaleDescription = [];
-	  	
+	  		  	
 		function validateCombo(combo) {
 			var message = null;
 			//check if field is blank	

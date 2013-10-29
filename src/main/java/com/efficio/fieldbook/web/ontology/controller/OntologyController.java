@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -224,6 +225,23 @@ public class OntologyController extends AbstractBaseFieldbookController{
             resultMap.put("errorMessage", e.getMessage());
         }
         return resultMap;
+    }
+    
+    /**
+     * Gets the variable name.
+     *
+     * @return the variable name
+     */
+    @ModelAttribute("variableNameSuggestionList")
+    public Set<StandardVariable> getVariableName() {
+        try {
+            Set<StandardVariable> variables = ontologyService.getAllStandardVariables();
+            return variables;
+        } catch (MiddlewareQueryException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
     
     /**

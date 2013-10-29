@@ -211,6 +211,12 @@ function doSave(combo) {
 			    if (data.status == "1") {
 			    	recreateCombo(combo, data);	
 			    	showSuccessMessage(data.successMessage);
+			    	
+			    	if(data.addedNewTrait == "1"){
+			    		//we need to recreate the combo for the traitClass			    		
+			    		var newData = {id:data.traitId, name:data.traitName, definition:data.traitDefinition};
+			    		recreateCombo('TraitClass', newData);
+			    	}
 		       	} else {
 		       		showMessage(data.errorMessage);
 		       	}

@@ -70,6 +70,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
     @Resource
     private OntologyService ontologyService;
     
+    /** The message source. */
     @Autowired
     public MessageSource messageSource;
     
@@ -160,6 +161,23 @@ public class OntologyController extends AbstractBaseFieldbookController{
         return show(form, model);
     }
     
+    
+    /**
+     * Checks if is integer.
+     *
+     * @param s the s
+     * @return true, if is integer
+     */
+    public static boolean isInteger(String s) {
+        try { 
+            Integer.parseInt(s); 
+        } catch(NumberFormatException e) { 
+            return false; 
+        }
+        // only got here if we didn't return false
+        return true;
+    }
+    
     /**
      * Save new term.
      *
@@ -172,6 +190,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
      * @param methodDescription the method description
      * @param scale the scale
      * @param scaleDescription the scale description
+     * @param local the local
      * @return the map
      */
     @ResponseBody
@@ -188,11 +207,24 @@ public class OntologyController extends AbstractBaseFieldbookController{
             String ontologyName = "";
             //add new data, use name for description if description was left blank
             ontologyName = combo;
+            resultMap.put("addedNewTrait", "0");
             if (combo.equals("Property")) {
                 if (propertyDescription == null || propertyDescription.equals("")) {
                     propertyDescription = property;
                 }
+                if(isInteger(traitClass) == false){
+                    //meaning we need to save the trait class
+                    term = ontologyService.addTraitClass(traitClass, traitClassDescription, CvId.IBDB_TERMS);
+                    
+                    resultMap.put("traitId", String.valueOf(term.getId()));
+                    resultMap.put("traitName", term.getName());
+                    resultMap.put("traitDefinition", term.getDefinition());
+                    resultMap.put("addedNewTrait", "1");
+                }
                 term = ontologyService.addTerm(property, propertyDescription, CvId.PROPERTIES);
+                //we also include the trait class already here
+                
+                
             } else if (combo.equals("Method")) {
                 if (methodDescription == null || methodDescription.equals("")) {
                     methodDescription = method;
@@ -368,6 +400,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
      * Save new term.
      *
      * @param propertyId the property id
+     * @param local the local
      * @return the map
      */
     @ResponseBody

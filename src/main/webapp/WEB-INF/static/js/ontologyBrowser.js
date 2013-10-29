@@ -273,8 +273,19 @@ $(function () {
           if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
           
             query.callback(data);
-        }
-
+        },
+  		initSelection: function(item, callback) {
+        	  // despite select2 having already read the whole sources list when you 
+        	  // do .val(n) you have to explicitly tell it how to find that item again.
+        	  var to_be_selected = null;
+        	  $.each(traitClassesSuggestions_obj, function(index, thing) {
+        	    if (thing.id == item.val()) {
+        	      to_be_selected = thing;
+        	      return;
+        	    }
+        	  })
+        	  callback(to_be_selected);
+  		}
     }).on("change", function(){
     	$("#traitClassDescription").val($("#comboTraitClass").select2("data").description);
     });
@@ -294,6 +305,8 @@ $(function () {
 
     }).on("change", function(){
     	$("#propertyDescription").val($("#comboProperty").select2("data").description);
+    	//we need to set the TraitClass drop down
+    	setCorrespondingTraitClass($("#comboProperty").select2("data").id);
     });
   	
   	$("#comboMethod").select2({
@@ -336,6 +349,37 @@ $(function () {
   //$("#comboScale").data("ui-combobox").value($("#hidScale").val());
 });		
 
+
+function setCorrespondingTraitClass(propertyId){
+	//console.log(propertyId);
+	Spinner.toggle();
+	$.ajax({
+		url: "retrieve/trait/property/" + propertyId,
+		type: "GET",
+		dataType: "json",
+		data: "",
+	    success: function(data){
+		    if (data.status == "1") {
+		    	var dataVal = {id:'',text:'',description:''}; //default value
+		    	if(data.traitId != ''){
+		    		var count = 0;
+			    	for(count = 0 ; count < traitClassesSuggestions_obj.length ; count++){
+			    		if(traitClassesSuggestions_obj[count].id == data.traitId){
+			    			//console.log(traitClassesSuggestions_obj[count]);
+			    			//$("#comboTraitClass").val(traitClassesSuggestions_obj[count]);
+			    			dataVal = traitClassesSuggestions_obj[count];			    			
+			    			break;
+			    		}			    			
+			    	}
+		    	}
+		    	$("#comboTraitClass").select2('data', dataVal).trigger('change');
+		    	
+	       	}
+		    Spinner.toggle();
+	   }
+	   
+	});
+}
 function clearFields() {
 	$("div.modal .form-control").val("");
 	$("div.modal .select2").select2("val", "");

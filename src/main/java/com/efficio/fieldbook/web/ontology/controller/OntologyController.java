@@ -345,4 +345,31 @@ public class OntologyController extends AbstractBaseFieldbookController{
 
         return null;
     }
+    
+    /**
+     * Save new term.
+     *
+     * @param propertyId the property id
+     * @return the map
+     */
+    @ResponseBody
+    @RequestMapping(value="retrieve/trait/property/{propertyId}", method=RequestMethod.GET)
+    public Map<String, String> retrieveTraitProperty(@PathVariable String propertyId, Locale local) {
+        Map<String, String> resultMap = new HashMap<String, String>();
+        
+        try {
+            Property property = ontologyService.getProperty(Integer.parseInt(propertyId));
+            Term term = property.getIsA();
+            String traitId = term  == null ? "": Integer.toString(term.getId());
+            //term.getId();
+            resultMap.put("status", "1");
+            resultMap.put("traitId", traitId);
+            
+        } catch(MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+            resultMap.put("status", "-1");
+            resultMap.put("errorMessage", e.getMessage());
+        }
+        return resultMap;
+    }
 }

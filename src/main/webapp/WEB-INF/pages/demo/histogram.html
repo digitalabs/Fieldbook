@@ -1,0 +1,81 @@
+
+<!--   <link th:href="@{/static/css/visualize/basic.css}" rel="stylesheet"/>
+-->
+<link th:href="@{/static/css/visualize/visualize.css}" rel="stylesheet"/>
+<link th:href="@{/static/css/visualize/visualize-light.css}" rel="stylesheet"/>
+<script type="text/javascript" th:src="@{/static/js/visualize/visualize.jQuery.js}"></script>
+	
+	<div class="col-md-12" xmlns:th="http://www.thymeleaf.org">
+	<div class="page-header">
+		<h1>
+			Histogram Test
+		</h1>				
+
+	</div>
+	<!-- 
+	<table id="histogram-table">
+				<thead>
+					<tr>
+						<td>Label</td>
+						<td>Value</td>						
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="node : ${histogramList}">
+		               <td th:text="${node.label}">.1</td>
+		               <td th:text="${node.val}">.2</td>		               
+		             </tr>
+				</tbody>				
+			</table>
+	 -->
+	 
+	<table  id="histogram-table-1" height="400px" width="100%">
+	<caption>Sample Histogram</caption>
+	<thead>
+		<tr>
+			<td></td>
+			<th scope="col" th:each="node : ${histogramList}" th:text="${node.label}">Label</th>			
+		</tr>
+	</thead>
+	<tbody>
+			<tr>
+              <th scope="row" >Count</th>
+              <td th:each="node : ${histogramList}" th:text="${node.val}">1</td>              		              
+            </tr>
+           
+		
+	</tbody>
+</table>	
+
+<table  id="histogram-table-2" height="400px" width="100%">
+	<caption>Sample Histogram</caption>
+	<thead>
+		<tr>
+			<td></td>
+			<th>Count</th>			
+		</tr>
+	</thead>
+	<tbody>
+			
+            <tr th:each="node : ${histogramList}">
+               <th th:text="${node.label}">.1</th>
+               <td th:text="${node.val}">.2</td>		               
+             </tr>
+           
+		
+	</tbody>
+</table>	
+
+</div>
+<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[    
+   	
+   	$( document ).ready(function() {
+   		$('#histogram-table-1').visualize({type: 'bar', width: '820px', height:'400px'});
+   		$('#histogram-table-2').visualize({type: 'bar', width: '820px', height:'400px'});  
+  	 
+    });
+   	
+  
+      //]]>
+    </script>

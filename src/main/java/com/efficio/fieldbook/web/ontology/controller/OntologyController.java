@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -50,7 +49,6 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import org.generationcp.middleware.service.api.OntologyService;
 
 
-// TODO: Auto-generated Javadoc
 /**
  * This controller handles the ontology screen.
  * 
@@ -216,7 +214,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
                 }
                 if(isInteger(traitClass) == false){
                     //meaning we need to save the trait class
-                    traitClassTerm = ontologyService.addTraitClass(traitClass, traitClassDescription, CvId.IBDB_TERMS);
+                    traitClassTerm = ontologyService.addTraitClass(traitClass, traitClassDescription);
                     
                     resultMap.put("traitId", String.valueOf(traitClassTerm.getId()));
                     resultMap.put("traitName", traitClassTerm.getName());
@@ -226,27 +224,24 @@ public class OntologyController extends AbstractBaseFieldbookController{
                 }else{
                     traitClassId = Integer.parseInt(traitClass);
                 }
-                term = ontologyService.addTerm(property, propertyDescription, CvId.PROPERTIES);
-                //we also include the trait class already here
-                
-                ontologyService.saveProperty(term.getId(), traitClassId);
+                term = ontologyService.addProperty(property, propertyDescription, traitClassId).getTerm();
                 
             } else if (combo.equals("Method")) {
                 if (methodDescription == null || methodDescription.equals("")) {
                     methodDescription = method;
                 }
-                term = ontologyService.addTerm(method, methodDescription, CvId.METHODS);
+                term = ontologyService.addMethod(method, methodDescription).getTerm();
             } else if (combo.equals("Scale")) {
                 if (scaleDescription == null || scaleDescription.equals("")) {
                     scaleDescription = scale;
                 }
-                term = ontologyService.addTerm(scale, scaleDescription, CvId.SCALES);
+                term = ontologyService.addScale(scale, scaleDescription).getTerm();
             } else {
                 if (traitClassDescription == null || traitClassDescription.equals("")) {
                     traitClassDescription = traitClass;
                 }
                 ontologyName = "Trait Class";
-                term = ontologyService.addTraitClass(traitClass, traitClassDescription, CvId.IBDB_TERMS);
+                term = ontologyService.addTraitClass(traitClass, traitClassDescription);
             }          
               
             resultMap.put("status", "1");

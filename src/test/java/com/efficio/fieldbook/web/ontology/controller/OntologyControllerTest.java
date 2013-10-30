@@ -222,7 +222,7 @@ public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
                 if (traitClassDescription == null || traitClassDescription == "") {
                     traitClassDescription = traitClass;
                 }
-                term = ontologyService.addTraitClass(traitClass, traitClassDescription, CvId.IBDB_TERMS);
+                term = ontologyService.addTraitClass(traitClass, traitClassDescription);
             }
             return term;
         } catch (MiddlewareQueryException e) {

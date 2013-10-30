@@ -48,6 +48,8 @@ public class OntologyBrowserForm{
     /** The variable name. */
     private String variableName;
     
+    private String newVariableName;
+    
     /** The variable description. */
     private String variableDescription;
     
@@ -212,6 +214,24 @@ public class OntologyBrowserForm{
      */
     public void setVariableName(String variableName) {
         this.variableName = variableName;
+    }
+    
+    /**
+     * Gets new the variable name.
+     *
+     * @return the new variable name
+     */
+    public String getNewVariableName() {
+        return newVariableName;
+    }
+    
+    /**
+     * Sets the new variable name.
+     *
+     * @param newVariableName the new variable name
+     */
+    public void setNewVariableName(String newVariableName) {
+        this.newVariableName = newVariableName;
     }
     
     /**

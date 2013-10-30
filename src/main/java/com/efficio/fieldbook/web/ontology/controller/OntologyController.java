@@ -136,7 +136,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
                 if (stdVariableTerm == null) {
                     //create the standardVariable object
                     StandardVariable standardVariable = new StandardVariable();
-                    standardVariable.setName(form.getVariableName());
+                    standardVariable.setName(form.getNewVariableName());
                     standardVariable.setDescription(form.getVariableDescription());
                     standardVariable.setProperty(ontologyService.getTermById(Integer.parseInt(form.getProperty())));
                     standardVariable.setMethod(ontologyService.getTermById(Integer.parseInt(form.getMethod())));

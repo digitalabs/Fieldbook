@@ -366,7 +366,7 @@ function getStandardVariableDetails(variableId) {
 		   
 		});
 	} else {
-		clearFieldsExceptVariableName();
+		$("#newVariableName").val($("#comboVariableName").select2("data").text);
 	}
 }
 

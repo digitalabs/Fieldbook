@@ -40,7 +40,7 @@ public class OntologyBrowserValidator implements Validator  {
     	OntologyBrowserForm form = (OntologyBrowserForm) o;
 
         
-        if (form.getVariableName() == null || form.getVariableName().equals("")) {
+        if (form.getNewVariableName() == null || form.getNewVariableName().equals("")) {
             errors.rejectValue("variableName", MANDATORY_FIELD_NOT_POPULATED);
         } else if (form.getDataType() == null || form.getDataType().equals("")) {
             errors.rejectValue("dataType", MANDATORY_FIELD_NOT_POPULATED);

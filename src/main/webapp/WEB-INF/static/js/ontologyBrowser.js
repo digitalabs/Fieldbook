@@ -298,7 +298,7 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 		});
 	}
 	
-	if (name == "Variable Name") {
+	if (name == "VariableName") {
 		$("#combo" + name).select2({
 	        query: function (query) {
 	          var data = {results: sortByKey(variableSuggestions_obj, "text")}, i, j, s;
@@ -312,6 +312,8 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	            query.callback(data);
 	        }
 	
+	    }).on("change", function(){
+	    	getStandardVariableDetails($("#combo" + name).select2("data").id);
 	    });
 	} else {
 		$("#combo" + name).select2({
@@ -335,6 +337,46 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	    	
 	    });
 	}
+}
+
+function getStandardVariableDetails(variableId) {
+	if(isInt(variableId)){
+		Spinner.toggle();
+		$.ajax({
+			url: "retrieve/variable/" + variableId,
+			type: "GET",
+			dataType: "json",
+			data: "",
+		    success: function(data){
+			    if (data.status == "1") {
+			    	$("#variableDescription").val(data.description);
+			    	$("#dataType").val(data.dataType);
+			    	$("#role").val(data.role);
+			    	$("#cropOntologyId").val(data.cropOntologyId);
+			    	setComboValues(traitClassesSuggestions_obj, data.traitClass, "TraitClass");
+			    	setComboValues(propertySuggestions_obj, data.property, "Property");
+			    	setComboValues(methodSuggestions_obj, data.method, "Method");
+			    	setComboValues(scaleSuggestions_obj, data.scale, "Scale");
+		       	}
+			    Spinner.toggle();
+		   }
+		   
+		});
+	}
+}
+
+function setComboValues(suggestions_obj, id, name) {
+	var dataVal = {id:'',text:'',description:''}; //default value
+	if(id != ''){
+		var count = 0;
+    	for(count = 0 ; count < suggestions_obj.length ; count++){
+    		if(suggestions_obj[count].id == id){
+    			dataVal = suggestions_obj[count];			    			
+    			break;
+    		}			    			
+    	}
+	}
+	$("#combo" + name).select2('data', dataVal).trigger('change');
 }
 
 function lowerCaseFirstLetter(string)

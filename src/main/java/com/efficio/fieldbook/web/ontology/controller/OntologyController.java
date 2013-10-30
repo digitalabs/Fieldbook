@@ -271,9 +271,9 @@ public class OntologyController extends AbstractBaseFieldbookController{
      * @return the variable name
      */
     @ModelAttribute("variableNameSuggestionList")
-    public Set<StandardVariable> getVariableName() {
+    public List<Term> getVariableName() {
         try {
-            Set<StandardVariable> variables = ontologyService.getAllStandardVariables();
+            List<Term> variables = ontologyService.getAllTermsByCvId(CvId.VARIABLES);
             return variables;
         } catch (MiddlewareQueryException e) {
             e.printStackTrace();
@@ -428,5 +428,46 @@ public class OntologyController extends AbstractBaseFieldbookController{
             resultMap.put("errorMessage", e.getMessage());
         }
         return resultMap;
+    }
+    
+    /**
+     * Gets the standard variable details.
+     *
+     * @param variableId the variable id
+     * @return the standard variable details
+     */
+    @ResponseBody
+    @RequestMapping(value="retrieve/variable/{variableId}", method=RequestMethod.GET)
+    public Map<String, String> getStandardVariableDetails(@PathVariable String variableId) {
+        Map<String, String> resultMap = new HashMap<String, String>();
+        
+        try {
+            StandardVariable stdVariable = ontologyService.getStandardVariable(Integer.parseInt(variableId));
+            resultMap.put("status", "1");
+            resultMap.put("description", stdVariable.getDescription()==null ? "" : stdVariable.getDescription());
+            resultMap.put("dataType", checkIfNull(stdVariable.getDataType()));
+            resultMap.put("role", checkIfNull(stdVariable.getStoredIn()));
+            resultMap.put("cropOntologyId", stdVariable.getCropOntologyId()==null ? "" : stdVariable.getCropOntologyId());
+            resultMap.put("traitClass", checkIfNull(stdVariable.getIsA()));
+            resultMap.put("property", checkIfNull(stdVariable.getProperty()));
+            resultMap.put("method", checkIfNull(stdVariable.getMethod()));
+            resultMap.put("scale", checkIfNull(stdVariable.getScale()));
+        } catch(MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+            resultMap.put("status", "-1");
+            resultMap.put("errorMessage", e.getMessage());
+        }
+        
+        return resultMap;
+    }
+    
+    /**
+     * Check if null.
+     *
+     * @param term the term
+     * @return the string
+     */
+    private String checkIfNull(Term term) {
+        return term==null ? "" : String.valueOf(term.getId());
     }
 }

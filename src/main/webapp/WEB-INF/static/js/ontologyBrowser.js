@@ -349,6 +349,7 @@ function getStandardVariableDetails(variableId) {
 			data: "",
 		    success: function(data){
 			    if (data.status == "1") {
+			    	$("#variableId").val(variableId);
 			    	$("#variableDescription").val(data.description);
 			    	$("#dataType").val(data.dataType);
 			    	$("#role").val(data.role);

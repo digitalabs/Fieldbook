@@ -229,7 +229,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
                 term = ontologyService.addTerm(property, propertyDescription, CvId.PROPERTIES);
                 //we also include the trait class already here
                 
-                
+                //ontologyService.saveProperty(term.getId(), traitClassId);
                 
             } else if (combo.equals("Method")) {
                 if (methodDescription == null || methodDescription.equals("")) {

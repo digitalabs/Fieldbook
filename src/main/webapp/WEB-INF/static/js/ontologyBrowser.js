@@ -196,10 +196,13 @@ function viewTabs(variableId) {
 	});
 }
 
+//save function for adding ontology
 function doSave(combo) {
 	if (validateCombo(combo)) {
+		//get form data
 		var $form = $("#addVariableForm");
 		serializedData = $form.serialize();
+		
 		Spinner.toggle();
 		
 		$.ajax({
@@ -209,6 +212,7 @@ function doSave(combo) {
 			data: serializedData,
 		    success: function(data){
 			    if (data.status == "1") {
+			    	//add the newly inserted ontology in its corresponding dropdown
 			    	recreateCombo(combo, data);	
 			    	showSuccessMessage(data.successMessage);
 			    	
@@ -232,6 +236,38 @@ function doSave(combo) {
 		});
 		
 		$("#page-message-modal").html("");
+	}
+}
+
+//function for deleting ontology
+function deleteOntology(combo) {
+	if (validateComboForDelete(combo)) {
+		//get the form data
+		var $form = $("#addVariableForm");
+		serializedData = $form.serialize();
+		
+		Spinner.toggle();
+		
+		$.ajax({
+			url: "deleteOntology/" + combo,
+			type: "post",
+			dataType: "json",
+			data: serializedData,
+		    success: function(data){
+			    if (data.status == "1") {
+		       	} else {
+		       		//show validation or error messages
+		       		showMessage(data.errorMessage);
+		       	}
+		   }, 
+		   error: function(jqXHR, textStatus, errorThrown){
+				console.log("The following error occured: " + textStatus, errorThrown);
+		   }, 
+		   complete: function(){ 
+			   Spinner.toggle();
+		   } 
+		});
+
 	}
 }
 
@@ -281,7 +317,10 @@ function getOntologySuffix(id){
 	return (id > -1 ? "(Shared)" : "") + " "; 
 }
 
+//function to create the select2 combos
 function initializeVariable(variableSuggestions, variableSuggestions_obj, description, name) {
+	
+	//initialize the arrays that would contain json data for the combos
 	if (description == "description") {
 		$.each(variableSuggestions, function( index, value ) {
 			variableSuggestions_obj.push({ 'id' : value.id,
@@ -300,9 +339,11 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 		});
 	}
 	
+	//create the select2 combo
+	//if combo to create is the variable name, add an onchange event to fill up all the fields of the selected variable
 	if (name == "VariableName") {
 		$("#combo" + name).select2({
-	        query: function (query) {
+	        query: function (query) {	
 	          var data = {results: sortByKey(variableSuggestions_obj, "text")}, i, j, s;
 	          // return the array that matches
 	          data.results = $.grep(data.results,function(item,index) {
@@ -318,6 +359,7 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	    	getStandardVariableDetails($("#combo" + name).select2("data").id);
 	    });
 	} else {
+		//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
 		$("#combo" + name).select2({
 	        query: function (query) {
 	          var data = {results: sortByKey(variableSuggestions_obj, "text")}, i, j, s;
@@ -341,6 +383,7 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	}
 }
 
+//function to retrieve the standard variable details of the selected variable
 function getStandardVariableDetails(variableId) {
 	if(isInt(variableId)){
 		Spinner.toggle();
@@ -366,6 +409,7 @@ function getStandardVariableDetails(variableId) {
 		   
 		});
 	} else {
+		//save the variable name in a hidden field for saving new standard variables
 		$("#newVariableName").val($("#comboVariableName").select2("data").text);
 	}
 }
@@ -374,6 +418,7 @@ function setComboValues(suggestions_obj, id, name) {
 	var dataVal = {id:'',text:'',description:''}; //default value
 	if(id != ''){
 		var count = 0;
+		//find the matching ontology value in the array given
     	for(count = 0 ; count < suggestions_obj.length ; count++){
     		if(suggestions_obj[count].id == id){
     			dataVal = suggestions_obj[count];			    			
@@ -381,6 +426,7 @@ function setComboValues(suggestions_obj, id, name) {
     		}			    			
     	}
 	}
+	//set the selected value of the ontology combo
 	$("#combo" + name).select2('data', dataVal).trigger('change');
 }
 
@@ -390,6 +436,7 @@ function lowerCaseFirstLetter(string)
 }
 
 $(function () {
+	//create combos
 	initializeVariable(variableNameSuggestions, variableNameSuggestions_obj, "description", "VariableName");
 	initializeVariable(traitClassesSuggestions, traitClassesSuggestions_obj, "description", "TraitClass");
 	initializeVariable(propertySuggestions, propertySuggestions_obj, "definition", "Property");
@@ -470,15 +517,18 @@ function recreateCombo(combo, data) {
 	$("#combo"+combo).select2('data', newData);//no need to trigger change.trigger('change');
 }
 
+//check if the selected item is an existing record 
 function itemExists(combo) {
 	return $("#combo"+combo).select2("data").id != $("#combo"+combo).select2("data").text && $("#combo"+combo).select2("data").description != undefined;
 }
+
 function showSuccessMessage(message) {
 	$("#page-message-modal").html(
 		    "<div class='alert alert-success'>"+ message +"</div>"
 	);
 	setTimeout("hideSuccessMessage()", 3000);
 }
+
 function hideSuccessMessage(){
 	$('#page-message-modal .alert-success').fadeOut(1000);
 }
@@ -489,12 +539,14 @@ function showMessage(message) {
 	);
 }
 
+//check if any of the required fields is empty
 function requiredFieldsEmpty() {
 	return $("#variableName").val() == "" || $("#dataType").val() == "" || $("#role").val() == "" || 
 	$("#comboTraitClass").val() == "" || $("#comboProperty").val() == "" || 
 	$("#comboMethod").val() == "" || $("#comboScale").val() == "";
 }
 
+//check if the values selected in the combo is a new entry
 function comboValuesInvalid() {	
 	return ($("#comboTraitClass").select2("data").id == $("#comboTraitClass").select2("data").text && 
     		$("#comboTraitClass").select2("data").description == undefined) || 
@@ -511,4 +563,8 @@ function sortByKey(array, key) {
         var x = a[key].toLowerCase(); var y = b[key].toLowerCase();
         return ((x < y) ? -1 : ((x > y) ? 1 : 0));
     });
+}
+
+function checkIfCentral(id) {
+	return (id > -1 ? true : false);
 }

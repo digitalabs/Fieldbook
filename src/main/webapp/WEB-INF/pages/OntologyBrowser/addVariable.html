@@ -252,6 +252,27 @@
 		    }
 	    }
 	    
+	    function validateComboForDelete(combo) {
+	    	var message = null;
+			//check if field is blank
+	    	if ($("#combo"+combo).val() == "" || 
+	    			($("#combo"+combo).select2("data").id == $("#combo"+combo).select2("data").id && 
+    				 $("#combo"+combo).select2("data").description == undefined)) {
+				if (combo == "TraitClass") {
+					message = /*[[#{ontology.browser.modal.combo.no.value.delete(#{ontology.browser.modal.trait.class})}]]*/;
+				} else if (combo == "Property") {
+					message = /*[[#{ontology.browser.modal.combo.no.value.delete(#{ontology.browser.modal.property})}]]*/;
+				} else if (combo == "Method") {
+					message = /*[[#{ontology.browser.modal.combo.no.value.delete(#{ontology.browser.modal.method})}]]*/;
+				} else {
+					message = /*[[#{ontology.browser.modal.combo.no.value.delete(#{ontology.browser.modal.scale})}]]*/;	
+				}
+				showMessage(message);
+				return false;
+			}
+			return true;
+	    }
+	    
     //]]>
     </script>
 </div>

@@ -26,6 +26,7 @@ import org.generationcp.middleware.domain.oms.Method;
 import org.generationcp.middleware.domain.oms.Property;
 import org.generationcp.middleware.domain.oms.Scale;
 import org.generationcp.middleware.domain.oms.Term;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.slf4j.Logger;
@@ -49,6 +50,7 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import org.generationcp.middleware.service.api.OntologyService;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * This controller handles the ontology screen.
  * 
@@ -271,7 +273,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
             List<Term> variables = ontologyService.getAllTermsByCvId(CvId.VARIABLES);
             return variables;
         } catch (MiddlewareQueryException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
 
         return null;
@@ -296,7 +298,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
             );
             return dataTypes;
         } catch (MiddlewareQueryException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
 
         return null;
@@ -323,7 +325,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
             
             return roles;
         } catch (MiddlewareQueryException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
 
         return null;
@@ -340,7 +342,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
             List<TraitReference> traitClass = ontologyService.getAllTraitClasses();
             return traitClass;
         } catch (MiddlewareQueryException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
 
         return null;
@@ -357,7 +359,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
             List<Property> properties = ontologyService.getAllProperties();
             return properties;
         } catch (MiddlewareQueryException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
 
         return null;
@@ -374,7 +376,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
             List<Method> methods = ontologyService.getAllMethods();
             return methods;
         } catch (MiddlewareQueryException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
 
         return null;
@@ -391,7 +393,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
             List<Scale> scales = ontologyService.getAllScales();
             return scales;
         } catch (MiddlewareQueryException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
 
         return null;
@@ -464,5 +466,85 @@ public class OntologyController extends AbstractBaseFieldbookController{
      */
     private String checkIfNull(Term term) {
         return term==null ? "" : String.valueOf(term.getId());
+    }
+    
+    /**
+     * Delete ontology.
+     *
+     * @param combo the combo
+     * @param traitClass the trait class
+     * @param property the property
+     * @param method the method
+     * @param scale the scale
+     * @param local the local
+     * @return the map
+     */
+    @ResponseBody
+    @RequestMapping(value="deleteOntology/{combo}", method=RequestMethod.POST)
+    public Map<String, String> deleteOntology(@PathVariable String combo,
+            @RequestParam String traitClass, @RequestParam String property,  
+            @RequestParam String method, @RequestParam String scale, Locale local) {
+        Map<String, String> resultMap = new HashMap<String, String>();
+        
+        String errorMessage = validateSelectedData(combo, traitClass, property, method, scale, local);
+        
+        if (errorMessage == null) {
+            
+        } else {
+            resultMap.put("status", "-1");
+            resultMap.put("errorMessage", errorMessage);
+        }
+        
+        return resultMap;
+    }
+    
+    /**
+     * Validate selected data.
+     *
+     * @param combo the combo
+     * @param traitClass the trait class
+     * @param property the property
+     * @param method the method
+     * @param scale the scale
+     * @param local the local
+     * @return the string
+     */
+    private String validateSelectedData(String combo, String traitClass, String property,  
+            String method, String scale, Locale local) {
+        String errorMessage = null;
+        
+        if (combo.equals("TraitClass")) {
+            errorMessage = validateOntology("Trait Class", traitClass, local, TermId.IS_A);
+        } else if (combo.equals("Property")) {
+            errorMessage = validateOntology(combo, property, local, TermId.HAS_PROPERTY);
+        } else if (combo.equals("Method")) {
+            errorMessage = validateOntology(combo, method, local, TermId.HAS_METHOD);
+        } else {
+            errorMessage = validateOntology(combo, scale, local, TermId.HAS_SCALE);
+        }
+        return errorMessage;
+    }
+    
+    /**
+     * Validate ontology.
+     *
+     * @param combo the combo
+     * @param id the id
+     * @param local the local
+     * @param termId the term id
+     * @return the string
+     */
+    private String validateOntology(String combo, String id, Locale local, TermId termId) {
+        String message = null;
+        try {
+            if (Integer.parseInt(id) > -1) {
+                message = messageSource.getMessage("ontology.browser.modal.ontology.from.central.database", new String[] {combo, ontologyService.getTermById(Integer.parseInt(id)).getName()}, local);
+            } else if (ontologyService.getStandardVariableIdByTermId(Integer.parseInt(id), termId) != null){
+                message = messageSource.getMessage("ontology.browser.modal.ontology.has.linked.standard.variable", new String[] {combo, ontologyService.getTermById(Integer.parseInt(id)).getName()}, local);
+            }
+        } catch(MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        return message;
     }
 }

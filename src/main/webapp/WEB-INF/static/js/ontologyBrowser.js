@@ -216,7 +216,9 @@ function doSave(combo) {
 			    		//we need to recreate the combo for the traitClass			    		
 			    		var newData = {id:data.traitId, name:data.traitName, definition:data.traitDefinition};
 			    		recreateCombo('TraitClass', newData);
+			    		
 			    	}
+			    	//$("#comboTraitClass").select2('data', dataVal).trigger('change');
 		       	} else {
 		       		showMessage(data.errorMessage);
 		       	}
@@ -260,7 +262,7 @@ function setCorrespondingTraitClass(propertyId){
 				    			break;
 				    		}			    			
 				    	}
-			    	}
+			    	}			    	
 			    	$("#comboTraitClass").select2('data', dataVal).trigger('change');
 			    	
 		       	}
@@ -450,6 +452,12 @@ function recreateCombo(combo, data) {
 	                query.callback(data);
 	            }		
 	});
+	var newData = { 'id' : data.id,
+			  'text' : data.name,
+			  'description' : data.definition
+		}
+	description.val(data.definition);
+	$("#combo"+combo).select2('data', newData);//no need to trigger change.trigger('change');
 }
 
 function itemExists(combo) {

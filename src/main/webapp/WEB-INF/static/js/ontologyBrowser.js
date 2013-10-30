@@ -351,9 +351,10 @@ function getStandardVariableDetails(variableId) {
 			data: "",
 		    success: function(data){
 			    if (data.status == "1") {
+			    	$("#variableId").val(variableId);
 			    	$("#variableDescription").val(data.description);
 			    	$("#dataType").val(data.dataType);
-			    	$("#role").val(data.role);
+			    	$("#role").val(data.role).attr("disabled","disabled");
 			    	$("#cropOntologyId").val(data.cropOntologyId);
 			    	setComboValues(traitClassesSuggestions_obj, data.traitClass, "TraitClass");
 			    	setComboValues(propertySuggestions_obj, data.property, "Property");
@@ -364,6 +365,8 @@ function getStandardVariableDetails(variableId) {
 		   }
 		   
 		});
+	} else {
+		clearFieldsExceptVariableName();
 	}
 }
 
@@ -397,6 +400,13 @@ $(function () {
 function clearFields() {
 	$("div.modal .form-control").val("");
 	$("div.modal .select2").select2("val", "");
+	$("#page-message-modal").html("");
+}
+
+function clearFieldsExceptVariableName() {
+	$("div.modal .form-control").val("");
+	$("#role").removeAttr("disabled");
+	$("#comboTraitClass, #comboProperty, #comboMethod, #comboScale").select2("val", "");
 	$("#page-message-modal").html("");
 }
 

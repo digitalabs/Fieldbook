@@ -30,7 +30,7 @@ import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TermProperty;
-import org.generationcp.middleware.domain.oms.TraitReference;
+import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Before;
@@ -89,11 +89,11 @@ public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
         return propList;
     }
     
-    private List<TraitReference> getDummyData(){
-        List<TraitReference> refList = new ArrayList<TraitReference>();
-        TraitReference ref1 = new TraitReference(1, "Test 1");
-        TraitReference ref2 = new TraitReference(2, "Test 2");
-        TraitReference ref3 = new TraitReference(3, "Test 3");
+    private List<TraitClassReference> getDummyData(){
+        List<TraitClassReference> refList = new ArrayList<TraitClassReference>();
+        TraitClassReference ref1 = new TraitClassReference(1, "Test 1");
+        TraitClassReference ref2 = new TraitClassReference(2, "Test 2");
+        TraitClassReference ref3 = new TraitClassReference(3, "Test 3");
         
                 
         ref1.setProperties(getDummyPropertyReference(1));
@@ -116,8 +116,8 @@ public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
 
         try{
             
-            List<TraitReference> traitRefList = getDummyData();
-            //form.setTraitReferenceList(traitRefList);
+            List<TraitClassReference> traitRefList = getDummyData();
+            //form.setTraitClassReferenceList(traitRefList);
             List<TreeNode> rootTree = convertJsonStringToMap(TreeViewUtil.convertOntologyTraitsToJson(traitRefList));
             //assertEquals(mainInfo.getFileIsValid(), false);
             //assertEquals(jsonMap.get('1'), false);
@@ -222,7 +222,7 @@ public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
                 if (traitClassDescription == null || traitClassDescription == "") {
                     traitClassDescription = traitClass;
                 }
-                term = ontologyService.addTraitClass(traitClass, traitClassDescription);
+                term = ontologyService.addTraitClass(traitClass, traitClassDescription, TermId.ONTOLOGY_TRAIT_CLASS.getId()).getTerm();
             }
             return term;
         } catch (MiddlewareQueryException e) {

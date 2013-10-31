@@ -26,8 +26,9 @@ import org.generationcp.middleware.domain.oms.Method;
 import org.generationcp.middleware.domain.oms.Property;
 import org.generationcp.middleware.domain.oms.Scale;
 import org.generationcp.middleware.domain.oms.Term;
+import org.generationcp.middleware.domain.oms.TermId;
 //import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.domain.oms.TraitReference;
+import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -104,8 +105,8 @@ public class OntologyController extends AbstractBaseFieldbookController{
         //this set the necessary info from the session variable
         //OntologyDataManager.getTraitGroups()
         try {
-            List<TraitReference> traitRefList = (List<TraitReference>) ontologyService.getTraitGroups();//getDummyData();
-            form.setTraitReferenceList(traitRefList);
+            List<TraitClassReference> traitRefList = (List<TraitClassReference>) ontologyService.getTraitGroupsHierarchy(TermId.ONTOLOGY_TRAIT_CLASS);//getDummyData();
+            form.setTraitClassReferenceList(traitRefList);
             form.setTreeData(TreeViewUtil.convertOntologyTraitsToJson(traitRefList));
             form.setSearchTreeData(TreeViewUtil.convertOntologyTraitsToSearchSingleLevelJson(traitRefList));
         } catch (Exception e) {
@@ -231,7 +232,8 @@ public class OntologyController extends AbstractBaseFieldbookController{
                 }
                 if(isInteger(traitClass) == false){
                     //meaning we need to save the trait class
-                    traitClassTerm = ontologyService.addTraitClass(traitClass, traitClassDescription);
+                    traitClassTerm = ontologyService
+                            .addTraitClass(traitClass, traitClassDescription, TermId.ONTOLOGY_TRAIT_CLASS.getId()).getTerm();
                     
                     resultMap.put("traitId", String.valueOf(traitClassTerm.getId()));
                     resultMap.put("traitName", traitClassTerm.getName());
@@ -258,7 +260,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
                     traitClassDescription = traitClass;
                 }
                 ontologyName = "Trait Class";
-                term = ontologyService.addTraitClass(traitClass, traitClassDescription);
+                term = ontologyService.addTraitClass(traitClass, traitClassDescription, TermId.ONTOLOGY_TRAIT_CLASS.getId()).getTerm();
             }          
               
             resultMap.put("status", "1");
@@ -353,9 +355,9 @@ public class OntologyController extends AbstractBaseFieldbookController{
      * @return the trait class suggestions
      */
     @ModelAttribute("traitClassesSuggestionList")
-    public List<TraitReference> getTraitClassSuggestions() {
+    public List<TraitClassReference> getTraitClassSuggestions() {
         try {
-            List<TraitReference> traitClass = ontologyService.getAllTraitClasses();
+            List<TraitClassReference> traitClass = ontologyService.getAllTraitClasses();
             return traitClass;
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);

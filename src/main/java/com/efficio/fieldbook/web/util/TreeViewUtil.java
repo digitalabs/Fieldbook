@@ -20,7 +20,7 @@ import org.generationcp.middleware.domain.dms.FolderReference;
 import org.generationcp.middleware.domain.dms.Reference;
 import org.generationcp.middleware.domain.oms.PropertyReference;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
-import org.generationcp.middleware.domain.oms.TraitReference;
+import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.pojos.GermplasmList;
 
 import com.efficio.pojos.treeview.TreeNode;
@@ -212,18 +212,18 @@ public class TreeViewUtil {
 	/**
 	 * Convert ontology traits to search single level json.
 	 *
-	 * @param traitReferences the trait references
+	 * @param TraitClassReferences the trait references
 	 * @return the string
 	 * @throws Exception the exception
 	 */
-	public static String convertOntologyTraitsToSearchSingleLevelJson(List<TraitReference> traitReferences) throws Exception {
+	public static String convertOntologyTraitsToSearchSingleLevelJson(List<TraitClassReference> TraitClassReferences) throws Exception {
         
         
-        List<TypeAheadSearchTreeNode> treeNodes = new ArrayList();// convertTraitReferencesToTreeView(traitReferences);
+        List<TypeAheadSearchTreeNode> treeNodes = new ArrayList();// convertTraitClassReferencesToTreeView(TraitClassReferences);
         
         
-        if (traitReferences != null && !traitReferences.isEmpty()) {
-            for (TraitReference reference : traitReferences) {
+        if (TraitClassReferences != null && !TraitClassReferences.isEmpty()) {
+            for (TraitClassReference reference : TraitClassReferences) {
                 List<PropertyReference> propRefList = reference.getProperties();
                 for(PropertyReference propRef : propRefList){                                       
                     List<StandardVariableReference> variableRefList = propRef.getStandardVariables();
@@ -255,11 +255,11 @@ public class TreeViewUtil {
 	/**
 	 * Convert ontology traits to json.
 	 *
-	 * @param traitReferences the trait references
+	 * @param TraitClassReferences the trait references
 	 * @return the string
 	 * @throws Exception the exception
 	 */
-	public static String convertOntologyTraitsToJson(List<TraitReference> traitReferences) throws Exception {
+	public static String convertOntologyTraitsToJson(List<TraitClassReference> TraitClassReferences) throws Exception {
 	    TreeNode treeNode = new TreeNode();
         
         treeNode.setKey("0");
@@ -269,7 +269,7 @@ public class TreeViewUtil {
         treeNode.setExpand(true);
         treeNode.setIcon(false);
         
-        List<TreeNode> treeNodes = convertTraitReferencesToTreeView(traitReferences);
+        List<TreeNode> treeNodes = convertTraitClassReferencesToTreeView(TraitClassReferences);
         treeNode.setChildren(treeNodes);
         
         List<TreeNode> tempList = new ArrayList();
@@ -280,14 +280,14 @@ public class TreeViewUtil {
 	/**
 	 * Convert trait references to tree view.
 	 *
-	 * @param traitReferences the trait references
+	 * @param TraitClassReferences the trait references
 	 * @return the list
 	 */
-	private static List<TreeNode> convertTraitReferencesToTreeView(List<TraitReference> traitReferences) {
+	private static List<TreeNode> convertTraitClassReferencesToTreeView(List<TraitClassReference> TraitClassReferences) {
         List<TreeNode> treeNodes = new ArrayList<TreeNode>();
-        if (traitReferences != null && !traitReferences.isEmpty()) {
-            for (TraitReference reference : traitReferences) {
-                treeNodes.add(convertTraitReferenceToTreeNode(reference));
+        if (TraitClassReferences != null && !TraitClassReferences.isEmpty()) {
+            for (TraitClassReference reference : TraitClassReferences) {
+                treeNodes.add(convertTraitClassReferenceToTreeNode(reference));
             }
         }
         return treeNodes;
@@ -299,7 +299,7 @@ public class TreeViewUtil {
 	 * @param reference the reference
 	 * @return the tree node
 	 */
-	private static TreeNode convertTraitReferenceToTreeNode(TraitReference reference) {
+	private static TreeNode convertTraitClassReferenceToTreeNode(TraitClassReference reference) {
         TreeNode treeNode = new TreeNode();
         String parentId = reference.getId().toString();
         treeNode.setKey(parentId);

@@ -13,7 +13,7 @@ package com.efficio.fieldbook.web.ontology.form;
 
 import java.util.List;
 
-import org.generationcp.middleware.domain.oms.TraitReference;
+import org.generationcp.middleware.domain.oms.TraitClassReference;
 
 
 // TODO: Auto-generated Javadoc
@@ -34,7 +34,7 @@ public class OntologyBrowserForm{
     private String errorMessage;
     
     /** The trait reference list. */
-    private List<TraitReference> traitReferenceList;
+    private List<TraitClassReference> TraitClassReferenceList;
     
     /** The tree data. */
     private String treeData;
@@ -167,17 +167,17 @@ public class OntologyBrowserForm{
      *
      * @return the trait reference list
      */
-    public List<TraitReference> getTraitReferenceList() {
-        return traitReferenceList;
+    public List<TraitClassReference> getTraitClassReferenceList() {
+        return TraitClassReferenceList;
     }
     
     /**
      * Sets the trait reference list.
      *
-     * @param traitReferenceList the new trait reference list
+     * @param TraitClassReferenceList the new trait reference list
      */
-    public void setTraitReferenceList(List<TraitReference> traitReferenceList) {
-        this.traitReferenceList = traitReferenceList;
+    public void setTraitClassReferenceList(List<TraitClassReference> TraitClassReferenceList) {
+        this.TraitClassReferenceList = TraitClassReferenceList;
     }
     
     /**

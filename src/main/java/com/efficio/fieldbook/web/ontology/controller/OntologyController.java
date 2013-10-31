@@ -26,7 +26,7 @@ import org.generationcp.middleware.domain.oms.Method;
 import org.generationcp.middleware.domain.oms.Property;
 import org.generationcp.middleware.domain.oms.Scale;
 import org.generationcp.middleware.domain.oms.Term;
-import org.generationcp.middleware.domain.oms.TermId;
+//import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
@@ -159,7 +159,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
         if (form.getVariableId() != null) {
             standardVariable.setId(form.getVariableId());
         }
-        standardVariable.setName(form.getNewVariableName());
+        standardVariable.setName(form.getVariableName());
         standardVariable.setDescription(form.getVariableDescription());
         standardVariable.setProperty(ontologyService.getTermById(Integer.parseInt(form.getProperty())));
         standardVariable.setMethod(ontologyService.getTermById(Integer.parseInt(form.getMethod())));
@@ -277,11 +277,11 @@ public class OntologyController extends AbstractBaseFieldbookController{
         return resultMap;
     }
     
-    /**
+    /*
      * Gets the variable name.
      *
      * @return the variable name
-     */
+     
     @ModelAttribute("variableNameSuggestionList")
     public List<Term> getVariableName() {
         try {
@@ -293,6 +293,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
 
         return null;
     }
+    */
     
     /**
      * Gets the data types.
@@ -442,12 +443,12 @@ public class OntologyController extends AbstractBaseFieldbookController{
         return resultMap;
     }
     
-    /**
+    /*
      * Gets the standard variable details.
      *
      * @param variableId the variable id
      * @return the standard variable details
-     */
+     *
     @ResponseBody
     @RequestMapping(value="retrieve/variable/{variableId}", method=RequestMethod.GET)
     public Map<String, String> getStandardVariableDetails(@PathVariable String variableId) {
@@ -473,18 +474,19 @@ public class OntologyController extends AbstractBaseFieldbookController{
         
         return resultMap;
     }
+    */
     
-    /**
+    /*
      * Check if null.
      *
      * @param term the term
      * @return the string
-     */
+     * 
     private String checkIfNull(Term term) {
         return term==null ? "" : String.valueOf(term.getId());
     }
-    
-    /**
+    */
+    /*
      * Delete ontology.
      *
      * @param combo the combo
@@ -494,7 +496,6 @@ public class OntologyController extends AbstractBaseFieldbookController{
      * @param scale the scale
      * @param local the local
      * @return the map
-     */
     @ResponseBody
     @RequestMapping(value="deleteOntology/{combo}", method=RequestMethod.POST)
     public Map<String, String> deleteOntology(@PathVariable String combo,
@@ -513,8 +514,8 @@ public class OntologyController extends AbstractBaseFieldbookController{
         
         return resultMap;
     }
-    
-    /**
+    */
+    /*
      * Validate selected data.
      *
      * @param combo the combo
@@ -524,7 +525,6 @@ public class OntologyController extends AbstractBaseFieldbookController{
      * @param scale the scale
      * @param local the local
      * @return the string
-     */
     private String validateSelectedData(String combo, String traitClass, String property,  
             String method, String scale, Locale local) {
         String errorMessage = null;
@@ -540,16 +540,15 @@ public class OntologyController extends AbstractBaseFieldbookController{
         }
         return errorMessage;
     }
-    
-    /**
+    */
+    /*
      * Validate ontology.
      *
      * @param combo the combo
      * @param id the id
      * @param local the local
      * @param termId the term id
-     * @return the string
-     */
+     * @return the string    
     private String validateOntology(String combo, String id, Locale local, TermId termId) {
         String message = null;
         try {
@@ -562,5 +561,5 @@ public class OntologyController extends AbstractBaseFieldbookController{
             LOG.error(e.getMessage(), e);
         }
         return message;
-    }
+    }*/
 }

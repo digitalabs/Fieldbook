@@ -42,7 +42,7 @@ public class OntologyBrowserValidator implements Validator  {
         //on edit mode, role is disabled and not passed to the form
     	boolean isAddMode = form.getVariableId() == null;
     	
-        if (form.getNewVariableName() == null || form.getNewVariableName().equals("")) {
+        if (form.getVariableName() == null || form.getVariableName().equals("")) {
             errors.rejectValue("variableName", MANDATORY_FIELD_NOT_POPULATED);
         } else if (form.getDataType() == null || form.getDataType().equals("")) {
             errors.rejectValue("dataType", MANDATORY_FIELD_NOT_POPULATED);

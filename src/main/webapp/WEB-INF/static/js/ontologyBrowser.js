@@ -239,38 +239,6 @@ function doSave(combo) {
 	}
 }
 
-//function for deleting ontology
-function deleteOntology(combo) {
-	if (validateComboForDelete(combo)) {
-		//get the form data
-		var $form = $("#addVariableForm");
-		serializedData = $form.serialize();
-		
-		Spinner.toggle();
-		
-		$.ajax({
-			url: "deleteOntology/" + combo,
-			type: "post",
-			dataType: "json",
-			data: serializedData,
-		    success: function(data){
-			    if (data.status == "1") {
-		       	} else {
-		       		//show validation or error messages
-		       		showMessage(data.errorMessage);
-		       	}
-		   }, 
-		   error: function(jqXHR, textStatus, errorThrown){
-				console.log("The following error occured: " + textStatus, errorThrown);
-		   }, 
-		   complete: function(){ 
-			   Spinner.toggle();
-		   } 
-		});
-
-	}
-}
-
 function isInt(value) { 
     return !isNaN(parseInt(value,10)) && (parseFloat(value,10) == parseInt(value,10)); 
 }
@@ -341,7 +309,7 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	
 	//create the select2 combo
 	//if combo to create is the variable name, add an onchange event to fill up all the fields of the selected variable
-	if (name == "VariableName") {
+	/*if (name == "VariableName") {
 		$("#combo" + name).select2({
 	        query: function (query) {	
 	          var data = {results: sortByKey(variableSuggestions_obj, "text")}, i, j, s;
@@ -358,7 +326,7 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	    }).on("change", function(){
 	    	getStandardVariableDetails($("#combo" + name).select2("data").id);
 	    });
-	} else {
+	} else {*/
 		//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
 		$("#combo" + name).select2({
 	        query: function (query) {
@@ -380,56 +348,10 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	    	}
 	    	
 	    });
-	}
+	//}
 }
 
-//function to retrieve the standard variable details of the selected variable
-function getStandardVariableDetails(variableId) {
-	if(isInt(variableId)){
-		Spinner.toggle();
-		$.ajax({
-			url: "retrieve/variable/" + variableId,
-			type: "GET",
-			dataType: "json",
-			data: "",
-		    success: function(data){
-			    if (data.status == "1") {
-			    	$("#variableId").val(variableId);
-			    	$("#newVariableName").val(data.name);
-			    	$("#variableDescription").val(data.description);
-			    	$("#dataType").val(data.dataType);
-			    	$("#role").val(data.role).attr("disabled","disabled");
-			    	$("#cropOntologyId").val(data.cropOntologyId);
-			    	setComboValues(traitClassesSuggestions_obj, data.traitClass, "TraitClass");
-			    	setComboValues(propertySuggestions_obj, data.property, "Property");
-			    	setComboValues(methodSuggestions_obj, data.method, "Method");
-			    	setComboValues(scaleSuggestions_obj, data.scale, "Scale");
-		       	}
-			    Spinner.toggle();
-		   }
-		   
-		});
-	} else {
-		//save the variable name in a hidden field for saving new standard variables
-		$("#newVariableName").val($("#comboVariableName").select2("data").text);
-	}
-}
 
-function setComboValues(suggestions_obj, id, name) {
-	var dataVal = {id:'',text:'',description:''}; //default value
-	if(id != ''){
-		var count = 0;
-		//find the matching ontology value in the array given
-    	for(count = 0 ; count < suggestions_obj.length ; count++){
-    		if(suggestions_obj[count].id == id){
-    			dataVal = suggestions_obj[count];			    			
-    			break;
-    		}			    			
-    	}
-	}
-	//set the selected value of the ontology combo
-	$("#combo" + name).select2('data', dataVal).trigger('change');
-}
 
 function lowerCaseFirstLetter(string)
 {
@@ -438,7 +360,7 @@ function lowerCaseFirstLetter(string)
 
 $(function () {
 	//create combos
-	initializeVariable(variableNameSuggestions, variableNameSuggestions_obj, "description", "VariableName");
+	//initializeVariable(variableNameSuggestions, variableNameSuggestions_obj, "description", "VariableName");
 	initializeVariable(traitClassesSuggestions, traitClassesSuggestions_obj, "description", "TraitClass");
 	initializeVariable(propertySuggestions, propertySuggestions_obj, "definition", "Property");
 	initializeVariable(methodSuggestions, methodSuggestions_obj, "definition", "Method");
@@ -448,13 +370,6 @@ $(function () {
 function clearFields() {
 	$("div.modal .form-control").val("");
 	$("div.modal .select2").select2("val", "");
-	$("#page-message-modal").html("");
-}
-
-function clearFieldsExceptVariableName() {
-	$("div.modal .form-control").val("");
-	$("#role").removeAttr("disabled");
-	$("#comboTraitClass, #comboProperty, #comboMethod, #comboScale").select2("val", "");
 	$("#page-message-modal").html("");
 }
 
@@ -566,6 +481,85 @@ function sortByKey(array, key) {
     });
 }
 
-function checkIfCentral(id) {
-	return (id > -1 ? true : false);
+/*
+//function for deleting ontology
+function deleteOntology(combo) {
+	if (validateComboForDelete(combo)) {
+		//get the form data
+		var $form = $("#addVariableForm");
+		serializedData = $form.serialize();
+		
+		Spinner.toggle();
+		
+		$.ajax({
+			url: "deleteOntology/" + combo,
+			type: "post",
+			dataType: "json",
+			data: serializedData,
+		    success: function(data){
+			    if (data.status == "1") {
+		       	} else {
+		       		//show validation or error messages
+		       		showMessage(data.errorMessage);
+		       	}
+		   }, 
+		   error: function(jqXHR, textStatus, errorThrown){
+				console.log("The following error occured: " + textStatus, errorThrown);
+		   }, 
+		   complete: function(){ 
+			   Spinner.toggle();
+		   } 
+		});
+
+	}
 }
+
+//function to retrieve the standard variable details of the selected variable
+function getStandardVariableDetails(variableId) {
+	if(isInt(variableId)){
+		Spinner.toggle();
+		$.ajax({
+			url: "retrieve/variable/" + variableId,
+			type: "GET",
+			dataType: "json",
+			data: "",
+		    success: function(data){
+			    if (data.status == "1") {
+			    	$("#variableId").val(variableId);
+			    	$("#newVariableName").val(data.name);
+			    	$("#variableDescription").val(data.description);
+			    	$("#dataType").val(data.dataType);
+			    	$("#role").val(data.role).attr("disabled","disabled");
+			    	$("#cropOntologyId").val(data.cropOntologyId);
+			    	setComboValues(traitClassesSuggestions_obj, data.traitClass, "TraitClass");
+			    	setComboValues(propertySuggestions_obj, data.property, "Property");
+			    	setComboValues(methodSuggestions_obj, data.method, "Method");
+			    	setComboValues(scaleSuggestions_obj, data.scale, "Scale");
+		       	}
+			    Spinner.toggle();
+		   }
+		   
+		});
+	} else {
+		//save the variable name in a hidden field for saving new standard variables
+		$("#newVariableName").val($("#comboVariableName").select2("data").text);
+	}
+}
+
+function setComboValues(suggestions_obj, id, name) {
+	var dataVal = {id:'',text:'',description:''}; //default value
+	if(id != ''){
+		var count = 0;
+		//find the matching ontology value in the array given
+    	for(count = 0 ; count < suggestions_obj.length ; count++){
+    		if(suggestions_obj[count].id == id){
+    			dataVal = suggestions_obj[count];			    			
+    			break;
+    		}			    			
+    	}
+	}
+	//set the selected value of the ontology combo
+	$("#combo" + name).select2('data', dataVal).trigger('change');
+}
+
+*/

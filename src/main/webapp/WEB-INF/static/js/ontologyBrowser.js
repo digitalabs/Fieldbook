@@ -275,7 +275,7 @@ function setCorrespondingTraitClass(propertyId){
 		   
 		});
 	}else{
-		$("#comboTraitClass").select2('data', dataVal).trigger('change');
+		//$("#comboTraitClass").select2('data', dataVal).trigger('change');
 	}
 	
 	

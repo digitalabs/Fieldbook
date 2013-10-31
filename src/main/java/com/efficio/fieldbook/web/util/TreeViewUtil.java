@@ -217,13 +217,22 @@ public class TreeViewUtil {
 	 * @throws Exception the exception
 	 */
 	public static String convertOntologyTraitsToSearchSingleLevelJson(List<TraitClassReference> TraitClassReferences) throws Exception {
+                
+        //return treeNodes;
         
-        
-        List<TypeAheadSearchTreeNode> treeNodes = new ArrayList();// convertTraitClassReferencesToTreeView(TraitClassReferences);
-        
-        
-        if (TraitClassReferences != null && !TraitClassReferences.isEmpty()) {
+        return convertSearchTreeViewToJson(getTypeAheadTreeNodes(TraitClassReferences));
+    }
+	
+	private static List<TypeAheadSearchTreeNode> getTypeAheadTreeNodes(List<TraitClassReference> TraitClassReferences){
+	    List<TypeAheadSearchTreeNode> treeNodes = new ArrayList();
+
+	    if (TraitClassReferences != null && !TraitClassReferences.isEmpty()) {
             for (TraitClassReference reference : TraitClassReferences) {
+              //this is for the inner trait classes
+                if(reference.getTraitClassChildren() != null && !reference.getTraitClassChildren().isEmpty()){
+                    treeNodes.addAll(getTypeAheadTreeNodes(reference.getTraitClassChildren()));
+                }
+                
                 List<PropertyReference> propRefList = reference.getProperties();
                 for(PropertyReference propRef : propRefList){                                       
                     List<StandardVariableReference> variableRefList = propRef.getStandardVariables();
@@ -246,10 +255,9 @@ public class TreeViewUtil {
                 
             }
         }
-        //return treeNodes;
-        
-        return convertSearchTreeViewToJson(treeNodes);
-    }
+	    
+	    return treeNodes;
+	}
      
 	
 	/**
@@ -310,8 +318,17 @@ public class TreeViewUtil {
         treeNode.setIcon(false);
         treeNode.setIncludeInSearch(false);
         //treeNode.setExpand(true);
-        //we need to set the children for the property
+        
         List<TreeNode> treeNodes = new ArrayList<TreeNode>();
+        
+        //this is for the inner trait classes
+        if(reference.getTraitClassChildren() != null && !reference.getTraitClassChildren().isEmpty()){
+            for (TraitClassReference childTrait : reference.getTraitClassChildren()) {
+                treeNodes.add(convertTraitClassReferenceToTreeNode(childTrait));
+            }
+        }
+        //we need to set the children for the property
+        
         if(reference.getProperties() != null && !reference.getProperties().isEmpty()){
             for (PropertyReference propRef : reference.getProperties()) {
                 treeNodes.add(convertPropertyReferenceToTreeNode(parentId, propRef, reference.getName()));

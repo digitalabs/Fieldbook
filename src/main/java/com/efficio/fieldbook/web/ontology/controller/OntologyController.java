@@ -11,6 +11,7 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.ontology.controller;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -24,7 +25,9 @@ import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.oms.CvId;
 import org.generationcp.middleware.domain.oms.Method;
 import org.generationcp.middleware.domain.oms.Property;
+import org.generationcp.middleware.domain.oms.PropertyReference;
 import org.generationcp.middleware.domain.oms.Scale;
+import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 //import org.generationcp.middleware.domain.oms.TermId;
@@ -91,7 +94,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
         return "OntologyBrowser/main";
     }
     
-   
+    
    
     /**
      * Show the main import page.
@@ -105,7 +108,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
         //this set the necessary info from the session variable
         //OntologyDataManager.getTraitGroups()
         try {
-            List<TraitClassReference> traitRefList = (List<TraitClassReference>) ontologyService.getTraitGroupsHierarchy(TermId.ONTOLOGY_TRAIT_CLASS);//getDummyData();
+            List<TraitClassReference> traitRefList = (List<TraitClassReference>) ontologyService.getTraitGroupsHierarchy(TermId.ONTOLOGY_TRAIT_CLASS);//getDummyData();    
             form.setTraitClassReferenceList(traitRefList);
             form.setTreeData(TreeViewUtil.convertOntologyTraitsToJson(traitRefList));
             form.setSearchTreeData(TreeViewUtil.convertOntologyTraitsToSearchSingleLevelJson(traitRefList));

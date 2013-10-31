@@ -29,7 +29,11 @@ function doOntologyTreeHighlight(treeName, nodeKey){
 		$('.'+key).addClass('highlight');
 	}
 	
-	if(elem.length == 3){
+	var node = tree.getNodeByKey(nodeKey);
+
+	if(node.data.lastChildren == true){
+	
+	//if(elem.length == 3){
 		//call ajax
 		standardVariableKey = elem[elem.length-1];
 		//alert("Do the ajax call now with standard variable id " + standardVariableKey);

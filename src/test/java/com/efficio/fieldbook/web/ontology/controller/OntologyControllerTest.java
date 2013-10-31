@@ -95,6 +95,20 @@ public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
         TraitClassReference ref2 = new TraitClassReference(2, "Test 2");
         TraitClassReference ref3 = new TraitClassReference(3, "Test 3");
         
+        List<TraitClassReference> refList1 = new ArrayList<TraitClassReference>();
+        TraitClassReference ref11 = new TraitClassReference(1, "Test 1 Child");
+        TraitClassReference ref21 = new TraitClassReference(2, "Test 2 Child");
+        TraitClassReference ref31 = new TraitClassReference(3, "Test 3 Child");
+        
+        ref11.setProperties(getDummyPropertyReference(10));
+        ref21.setProperties(getDummyPropertyReference(20));
+        ref31.setProperties(getDummyPropertyReference(30));
+        
+        refList1.add(ref11);
+        refList1.add(ref21);
+        refList1.add(ref31);
+        
+        ref1.setTraitClassChildren(refList1);
                 
         ref1.setProperties(getDummyPropertyReference(1));
         ref2.setProperties(getDummyPropertyReference(2));

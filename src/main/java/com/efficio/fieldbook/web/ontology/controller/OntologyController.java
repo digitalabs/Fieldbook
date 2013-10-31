@@ -29,6 +29,8 @@ import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +45,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.efficio.fieldbook.service.api.ErrorHandlerService;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.ontology.form.OntologyBrowserForm;
 import com.efficio.fieldbook.web.ontology.validation.OntologyBrowserValidator;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
@@ -73,6 +77,9 @@ public class OntologyController extends AbstractBaseFieldbookController{
     /** The message source. */
     @Autowired
     public MessageSource messageSource;
+    
+    @Resource
+    private ErrorHandlerService errorHandlerService;
     
     
     /* (non-Javadoc)
@@ -131,34 +138,42 @@ public class OntologyController extends AbstractBaseFieldbookController{
             return show(form,model);
         } else {
             try {
-                Term stdVariableTerm = ontologyService.findTermByName(form.getVariableName(), CvId.VARIABLES);
+                Operation operation = form.getVariableId() != null ? Operation.UPDATE : Operation.ADD;
                 
-                if (stdVariableTerm == null) {
-                    //create the standardVariable object
-                    StandardVariable standardVariable = new StandardVariable();
-                    standardVariable.setName(form.getNewVariableName());
-                    standardVariable.setDescription(form.getVariableDescription());
-                    standardVariable.setProperty(ontologyService.getTermById(Integer.parseInt(form.getProperty())));
-                    standardVariable.setMethod(ontologyService.getTermById(Integer.parseInt(form.getMethod())));
-                    standardVariable.setScale(ontologyService.getTermById(Integer.parseInt(form.getScale())));
-                    standardVariable.setDataType(ontologyService.getTermById(Integer.parseInt(form.getDataType())));
-                    standardVariable.setPhenotypicType(ontologyService.getPhenotypicTypeById(Integer.parseInt(form.getRole())));
-                    standardVariable.setIsA(ontologyService.getTermById(Integer.parseInt(form.getTraitClass())));
-                    standardVariable.setStoredIn(ontologyService.getTermById(Integer.parseInt(form.getRole())));
-                    standardVariable.setCropOntologyId(form.getCropOntologyId());
-                    ontologyService.addStandardVariable(standardVariable);
-                    form.setAddSuccessful("1");
-                } else {
-                    form.setAddSuccessful("2");
-                    form.setErrorMessage("Variable Name already exists");
-                } 
-           } catch (MiddlewareQueryException e) {
+                StandardVariable standardVariable = createStandardVariableObject(form);
+                ontologyService.saveOrUpdateStandardVariable(standardVariable, operation);
+                form.setAddSuccessful("1");
+                
+           } catch (Exception e) {
                LOG.error(e.getMessage(), e);
                form.setAddSuccessful("2");
-               form.setErrorMessage(e.getMessage());
+               form.setErrorMessage(errorHandlerService.getErrorMessagesAsString(e.getMessage(), "<br/>"));
            }
         }
         return show(form, model);
+    }
+    
+    private StandardVariable createStandardVariableObject(OntologyBrowserForm form) throws MiddlewareQueryException {
+        StandardVariable standardVariable = new StandardVariable();
+
+        if (form.getVariableId() != null) {
+            standardVariable.setId(form.getVariableId());
+        }
+        standardVariable.setName(form.getNewVariableName());
+        standardVariable.setDescription(form.getVariableDescription());
+        standardVariable.setProperty(ontologyService.getTermById(Integer.parseInt(form.getProperty())));
+        standardVariable.setMethod(ontologyService.getTermById(Integer.parseInt(form.getMethod())));
+        standardVariable.setScale(ontologyService.getTermById(Integer.parseInt(form.getScale())));
+        standardVariable.setDataType(ontologyService.getTermById(Integer.parseInt(form.getDataType())));
+        
+        if (form.getVariableId() == null) {
+            standardVariable.setPhenotypicType(ontologyService.getPhenotypicTypeById(Integer.parseInt(form.getRole())));
+            standardVariable.setStoredIn(ontologyService.getTermById(Integer.parseInt(form.getRole())));
+        }
+        standardVariable.setIsA(ontologyService.getTermById(Integer.parseInt(form.getTraitClass())));
+        standardVariable.setCropOntologyId(form.getCropOntologyId());
+        
+        return standardVariable;
     }
     
     
@@ -441,6 +456,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
         try {
             StandardVariable stdVariable = ontologyService.getStandardVariable(Integer.parseInt(variableId));
             resultMap.put("status", "1");
+            resultMap.put("name", stdVariable.getName()==null ? "" : stdVariable.getName());
             resultMap.put("description", stdVariable.getDescription()==null ? "" : stdVariable.getDescription());
             resultMap.put("dataType", checkIfNull(stdVariable.getDataType()));
             resultMap.put("role", checkIfNull(stdVariable.getStoredIn()));

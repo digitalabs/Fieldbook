@@ -395,6 +395,7 @@ function getStandardVariableDetails(variableId) {
 		    success: function(data){
 			    if (data.status == "1") {
 			    	$("#variableId").val(variableId);
+			    	$("#newVariableName").val(data.name);
 			    	$("#variableDescription").val(data.description);
 			    	$("#dataType").val(data.dataType);
 			    	$("#role").val(data.role).attr("disabled","disabled");

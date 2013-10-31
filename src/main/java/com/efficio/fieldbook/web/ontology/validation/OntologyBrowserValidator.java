@@ -39,12 +39,14 @@ public class OntologyBrowserValidator implements Validator  {
     public void validate(Object o, Errors errors) {
     	OntologyBrowserForm form = (OntologyBrowserForm) o;
 
-        
+        //on edit mode, role is disabled and not passed to the form
+    	boolean isAddMode = form.getVariableId() == null;
+    	
         if (form.getNewVariableName() == null || form.getNewVariableName().equals("")) {
             errors.rejectValue("variableName", MANDATORY_FIELD_NOT_POPULATED);
         } else if (form.getDataType() == null || form.getDataType().equals("")) {
             errors.rejectValue("dataType", MANDATORY_FIELD_NOT_POPULATED);
-        } else if (form.getRole() == null || form.getRole().equals("")) {
+        } else if (isAddMode && (form.getRole() == null || form.getRole().equals(""))) {
             errors.rejectValue("role", MANDATORY_FIELD_NOT_POPULATED);
         } else if (form.getTraitClass() == null || form.getTraitClass().equals("")) {
             errors.rejectValue("traitClass", MANDATORY_FIELD_NOT_POPULATED);

@@ -1,6 +1,6 @@
 <div class="col-md-7" xmlns:th="http://www.thymeleaf.org">
 	<br/>
-	<input type="button" th:value="#{ontology.browser.button.manage.variable}" class="btn btn-default btn-log" data-toggle="modal" href="#addVariableModal" onClick="clearFields()" />
+	<input type="button" th:value="#{ontology.browser.button.add.new.variable}" class="btn btn-default btn-log" data-toggle="modal" href="#addVariableModal" onClick="clearFields()" />
 	<!-- Modal -->
   	<form id="addVariableForm" role="form-horizontal" onsubmit="return do_validation()"  class="form-horizontal" action="#" 
 	    th:action="@{/OntologyBrowser/}" method="post" enctype="multipart/form-data" th:object="${ontologyBrowserForm}">
@@ -9,7 +9,7 @@
 		    	<div class="modal-content">
 		        	<div class="modal-header">
 		           		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		           		<h4 class="modal-title" th:text="#{ontology.browser.header.manage.variable}">Manage Standard Variable</h4>
+		           		<h4 class="modal-title" th:text="#{ontology.browser.header.add.new.variable}">Add a New Standard Variable</h4>
 		         	</div>
 		         	<div class="modal-body" id="addVariableBody">
 		         		<div class="form-group" id="page-message-modal"></div>

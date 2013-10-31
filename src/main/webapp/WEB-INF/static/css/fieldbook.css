@@ -17,3 +17,7 @@
 .modal-large {
     width: 800px;
 }
+#addVariableModal .select2-choice{
+	max-width: 200px;
+	min-width: 200px;
+}

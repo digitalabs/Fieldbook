@@ -67,12 +67,12 @@
 				                        <label for="comboTraitClass" class="col-md-5 control-label" th:text="#{ontology.browser.modal.trait.class} + ': *'">Class:</label>
 				                        <div class="col-md-7">
 				                        	<div class="input-group">
-				                        		<input id="comboTraitClass" type="hidden" th:field="*{traitClass}" class="form-control select2" placeholder=""/>
+				                        		<input id="comboTraitClass" type="hidden" th:field="*{traitClass}"  class="form-control  input-medium  select2" placeholder=""/>
 				                        		<span class="input-group-btn">
 					                        		<button class="btn btn-primary" type="button" id="btnAddTraitClass" onClick="doSave('TraitClass')">
 					                        			<span class="">Save</span>
 					                        		</button>
-					                        		<button class="btn btn-primary" type="button" id="btnDeleteTraitClass" onClick="deleteOntology('TraitClass')">
+					                        		<button class="btn btn-danger" type="button" id="btnDeleteTraitClass" onClick="deleteOntology('TraitClass')">
 					                        			<span class="glyphicon glyphicon-minus"></span>
 					                        		</button>
 			                        			</span>
@@ -96,7 +96,7 @@
 					                        		<button class="btn btn-primary" type="button" id="btnAddProperty" onClick="doSave('Property')">
 					                        			<span class="">Save</span>
 					                        		</button>
-					                        		<button class="btn btn-primary" type="button" id="btnDeleteProperty" onClick="deleteOntology('Property')">
+					                        		<button class="btn btn-danger" type="button" id="btnDeleteProperty" onClick="deleteOntology('Property')">
 					                        			<span class="glyphicon glyphicon-minus"></span>
 					                        		</button>
 			                        			</span>
@@ -120,7 +120,7 @@
 					                        		<button class="btn btn-primary" type="button" id="btnAddMethod" onClick="doSave('Method')">
 					                        			<span class="">Save</span>
 					                        		</button>
-					                        		<button class="btn btn-primary" type="button" id="btnDeleteMethod" onClick="deleteOntology('Method')">
+					                        		<button class="btn btn-danger" type="button" id="btnDeleteMethod" onClick="deleteOntology('Method')">
 					                        			<span class="glyphicon glyphicon-minus"></span>
 					                        		</button>
 			                        			</span>
@@ -144,7 +144,7 @@
 					                        		<button class="btn btn-primary" type="button" id="btnAddScale" onClick="doSave('Scale')">
 					                        			<span class="">Save</span>
 					                        		</button>
-					                        		<button class="btn btn-primary" type="button" id="btnDeleteScale" onClick="deleteOntology('Scale')">
+					                        		<button class="btn btn-danger" type="button" id="btnDeleteScale" onClick="deleteOntology('Scale')">
 					                        			<span class="glyphicon glyphicon-minus"></span>
 					                        		</button>
 			                        			</span>

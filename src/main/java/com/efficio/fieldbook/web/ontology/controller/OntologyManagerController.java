@@ -471,7 +471,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
     @ModelAttribute("propertiesSuggestionList")
     public List<Property> getPropertySuggestions() {
         try {
-            List<Property> properties = ontologyService.getAllProperties();            
+            List<Property> properties = ontologyService.getAllPropertiesWithTraitClass();            
             return properties;
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);

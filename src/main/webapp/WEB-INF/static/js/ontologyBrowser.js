@@ -312,11 +312,12 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 			});  
 	  		
 		});
-	} else if (name == "Property"){
+	} else if (name == "Property"){		
 		$.each(variableSuggestions, function( index, value ) {
 			variableSuggestions_obj.push({ 'id' : value.id,
 				  'text' : value.name + getOntologySuffix(value.id),
-				  'description' : value.definition
+				  'description' : value.definition,
+				  'traitId' : value.isAId
 			});  
 	  		
 		});
@@ -407,6 +408,12 @@ function lowerCaseFirstLetter(string)
 function loadOntologyCombos(){
 	//create combos
 	initializeVariable(variableNameSuggestions, variableNameSuggestions_obj, "description", "VariableName", true);
+	
+	traitClassesSuggestions_obj.push({ 'id' : 0,
+		  'text' : "-- All --",
+		  'description' : "All",
+	});  
+	
 	initializeVariable(traitClassesSuggestions, traitClassesSuggestions_obj, "description", "TraitClass", false);
 	initializeVariable(propertySuggestions, propertySuggestions_obj, "definition", "Property", false);
 	initializeVariable(methodSuggestions, methodSuggestions_obj, "definition", "Method", false);
@@ -599,27 +606,30 @@ function getTreeChildren(child, traitClassId){
 function filterPropertyCombo(treeName, traitClassId, isFromDropDown){
 	console.log("Load property of trait class id: "+traitClassId);
 	if(isFromDropDown){
-		var nodeKey = getNodeKeyFromTraitClass(traitClassId, treeName);
-		console.log("Activate: "+ nodeKey);
-		//console.log(json);
-		//we need to highlight the tree
-		$("#"+treeName).dynatree("getTree").activateKey(nodeKey);
 		$('#'+treeName).find("*").removeClass('highlight');
-		//then we highlight the nodeKey and its parents		
-		
-		if(nodeKey != ''){
-			var elem = nodeKey.split("_");
-			var count = 0;
-			var key = "";
-			var traitClassId = ""
-			for(count = 0 ; count < elem.length ; count++){
-				if(key != '')
-					key = key + "_";
-				
-				key = key + elem[count];
-				$('.'+key).addClass('highlight');
+		if(traitClassId != 0){
+			var nodeKey = getNodeKeyFromTraitClass(traitClassId, treeName);
+			console.log("Activate: "+ nodeKey);
+			//console.log(json);
+			//we need to highlight the tree
+			$("#"+treeName).dynatree("getTree").activateKey(nodeKey);
+			
+			//then we highlight the nodeKey and its parents		
+			
+			if(nodeKey != ''){
+				var elem = nodeKey.split("_");
+				var count = 0;
+				var key = "";
+				for(count = 0 ; count < elem.length ; count++){
+					if(key != '')
+						key = key + "_";
+					
+					key = key + elem[count];
+					$('.'+key).addClass('highlight');
+				}
 			}
 		}
+		
 		
 		
 	}else {
@@ -636,7 +646,37 @@ function filterPropertyCombo(treeName, traitClassId, isFromDropDown){
 	}
 	
 	//we filter the property combo
+	var suggestions_obj = [];
+	if(traitClassId == 0){
+		suggestions_obj = sortByKey(propertySuggestions_obj, "text");
+	}		
+	else{
+		//we filter by specific
+		var count = 0;
+		for(count = 0 ; count < propertySuggestions_obj.length ; count++){
+			if(traitClassId == propertySuggestions_obj[count].traitId){
+				suggestions_obj[suggestions_obj.length] = propertySuggestions_obj[count];
+			}
+		}
+	}
 	
+	$("#comboProperty").select2({
+		query: function (query) {
+              var data = {results: suggestions_obj}, i, j, s;
+              // return the array that matches
+              data.results = $.grep(data.results,function(item,index) {
+                return ($.fn.select2.defaults.matcher(query.term,item.text));
+              
+              });
+              
+              //if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
+              
+                query.callback(data);
+                
+            }
+	
+});
+	$("#propertyDescription").val("");
 }
 function loadTraitClassTree(treeName, treeData, dropDownId){
 	//for triggering the start of search type ahead

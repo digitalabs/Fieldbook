@@ -29,13 +29,14 @@ function doOntologyTreeHighlight(treeName, nodeKey){
 		$('.'+key).addClass('highlight');
 	}
 	
-	var node = tree.getNodeByKey(nodeKey);
+	var node = $("#"+treeName).dynatree("getTree").getNodeByKey(nodeKey);
 
 	if(node.data.lastChildren == true){
-	
+		
 	//if(elem.length == 3){
 		//call ajax
 		standardVariableKey = elem[elem.length-1];
+		//console.log('im here' + standardVariableKey);
 		//alert("Do the ajax call now with standard variable id " + standardVariableKey);
 		processTab(standardVariableKey);
 	}else{
@@ -286,7 +287,7 @@ function setCorrespondingTraitClass(propertyId){
 }
 
 function getOntologySuffix(id){
-	return (id > -1 ? "(Shared)" : "") + " "; 
+	return (id > -1 ? " (Shared)" : ""); 
 }
 
 //function to create the select2 combos
@@ -296,7 +297,7 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	if (description == "description") {
 		$.each(variableSuggestions, function( index, value ) {
 			variableSuggestions_obj.push({ 'id' : value.id,
-				  'text' : getOntologySuffix(value.id) + value.name,
+				  'text' : value.name + getOntologySuffix(value.id),
 				  'description' : value.description
 			});  
 	  		
@@ -304,7 +305,7 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	} else {
 		$.each(variableSuggestions, function( index, value ) {
 			variableSuggestions_obj.push({ 'id' : value.id,
-				  'text' : getOntologySuffix(value.id) + value.name,
+				  'text' : value.name + getOntologySuffix(value.id),
 				  'description' : value.definition
 			});  
 	  		
@@ -384,26 +385,26 @@ function recreateCombo(combo, data) {
 	//add the new data in the collection
 	if (combo == "TraitClass") {
 		traitClassesSuggestions_obj.push({ 'id' : data.id,
-			  'text' : data.name,
+			  'text' : data.name + getOntologySuffix(data.id),
 			  'description' : data.definition
 		});
 		suggestions_obj = sortByKey(traitClassesSuggestions_obj, "text");
 		description = $("#traitClassDescription");
 	} else if (combo == "Property") {
 		propertySuggestions_obj.push({ 'id' : data.id,
-			  'text' : data.name,
+			  'text' : data.name + getOntologySuffix(data.id),
 			  'description' : data.definition
 		});
 		suggestions_obj = sortByKey(propertySuggestions_obj, "text");
 	} else if (combo == "Method") {
 		methodSuggestions_obj.push({ 'id' : data.id,
-			  'text' : data.name,
+			  'text' : data.name + getOntologySuffix(data.id),
 			  'description' : data.definition
 		});
 		suggestions_obj = sortByKey(methodSuggestions_obj, "text");
 	} else {
 		scaleSuggestions_obj.push({ 'id' : data.id,
-			  'text' : data.name,
+			  'text' : data.name + getOntologySuffix(data.id),
 			  'description' : data.definition
 		});
 		suggestions_obj = sortByKey(scaleSuggestions_obj, "text");
@@ -430,7 +431,7 @@ function recreateCombo(combo, data) {
 	            }		
 	});
 	var newData = { 'id' : data.id,
-			  'text' : data.name,
+			  'text' : data.name + getOntologySuffix(data.id),
 			  'description' : data.definition
 		}
 	description.val(data.definition);

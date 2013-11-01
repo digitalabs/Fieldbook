@@ -268,6 +268,7 @@ public class TreeViewUtil {
 	 * @throws Exception the exception
 	 */
 	public static String convertOntologyTraitsToJson(List<TraitClassReference> TraitClassReferences) throws Exception {
+	    /*
 	    TreeNode treeNode = new TreeNode();
         
         treeNode.setKey("0");
@@ -276,13 +277,16 @@ public class TreeViewUtil {
         treeNode.setIsLazy(false);
         treeNode.setExpand(true);
         treeNode.setIcon(false);
-        
+        */
         List<TreeNode> treeNodes = convertTraitClassReferencesToTreeView(TraitClassReferences);
-        treeNode.setChildren(treeNodes);
         
-        List<TreeNode> tempList = new ArrayList();
-        tempList.add(treeNode);
-        return convertTreeViewToJson(tempList);
+        
+//        treeNode.setChildren(treeNodes);
+        
+//        List<TreeNode> tempList = new ArrayList();
+//        tempList.add(treeNode);
+//        return convertTreeViewToJson(tempList);
+        return convertTreeViewToJson(treeNodes);
     }
 	
 	/**

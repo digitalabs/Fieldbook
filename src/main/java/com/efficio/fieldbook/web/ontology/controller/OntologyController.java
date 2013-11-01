@@ -108,7 +108,8 @@ public class OntologyController extends AbstractBaseFieldbookController{
         //this set the necessary info from the session variable
         //OntologyDataManager.getTraitGroups()
         try {
-            List<TraitClassReference> traitRefList = (List<TraitClassReference>) ontologyService.getTraitGroupsHierarchy(TermId.ONTOLOGY_TRAIT_CLASS);//getDummyData();    
+            //List<TraitClassReference> traitRefList = (List<TraitClassReference>) ontologyService.getTraitGroupsHierarchy(TermId.ONTOLOGY_TRAIT_CLASS);//getDummyData();    
+            List<TraitClassReference> traitRefList = (List<TraitClassReference>) ontologyService.getAllTraitGroupsHierarchy();
             form.setTraitClassReferenceList(traitRefList);
             form.setTreeData(TreeViewUtil.convertOntologyTraitsToJson(traitRefList));
             form.setSearchTreeData(TreeViewUtil.convertOntologyTraitsToSearchSingleLevelJson(traitRefList));
@@ -360,13 +361,26 @@ public class OntologyController extends AbstractBaseFieldbookController{
     @ModelAttribute("traitClassesSuggestionList")
     public List<TraitClassReference> getTraitClassSuggestions() {
         try {
-            List<TraitClassReference> traitClass = ontologyService.getAllTraitClasses();
+            //List<TraitClassReference> traitClass = ontologyService.getAllTraitClasses();
+            //List<TraitClassReference> traitRefList = (List<TraitClassReference>) ontologyService.getAllTraitGroupsHierarchy();             
+            List<TraitClassReference> traitRefList = (List<TraitClassReference>) ontologyService.getAllTraitGroupsHierarchy();
+            List<TraitClassReference> traitClass = getAllTraitClassesFromHierarchy(traitRefList); 
             return traitClass;
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }
 
         return null;
+    }
+    
+    private List<TraitClassReference> getAllTraitClassesFromHierarchy(List<TraitClassReference> refList) throws MiddlewareQueryException{
+        
+        List<TraitClassReference> traitClass = new ArrayList();
+        for(TraitClassReference ref : refList){
+            traitClass.add(ref);
+            traitClass.addAll(getAllTraitClassesFromHierarchy(ref.getTraitClassChildren()));
+        }
+        return traitClass;
     }
     
     /**

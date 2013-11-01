@@ -53,8 +53,10 @@
  		           success: function(html) {
  		        	   
  		             $("#manageOntologyModal"+" .modal-content").empty().append(html);
- 		             Spinner.toggle();  
+ 		               
  		             $('#manageOntologyModal').modal('show');
+ 		             $.fn.modal.Constructor.prototype.enforceFocus = function () {};
+ 		             Spinner.toggle();
  		           }
  		         }
  		       );

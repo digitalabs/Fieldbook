@@ -65,14 +65,19 @@ import org.generationcp.middleware.service.api.OntologyService;
  * @author Daniel Jao
  */
 @Controller
-@RequestMapping(OntologyManageVariableController.URL)
-public class OntologyManageVariableController extends AbstractBaseFieldbookController{
+@RequestMapping(OntologyManagerController.URL)
+public class OntologyManagerController extends AbstractBaseFieldbookController{
     
     /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(OntologyManageVariableController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OntologyManagerController.class);
     
     /** The Constant URL. */
-    public static final String URL = "/OntologyManageVariable/";
+    public static final String URL = "/OntologyManager/manage/";
+    /** AJAX PAGES **/
+    public static final String TRAIT_CLASS_MODAL = "/OntologyBrowser/manage/traitClass";
+    public static final String PROPERTY_MODAL = "/OntologyBrowser/manage/property";
+    public static final String SCALE_MODAL = "/OntologyBrowser/manage/scale";
+    public static final String METHOD_MODAL = "/OntologyBrowser/manage/method";
     
     /** The ontology service. */
     @Resource
@@ -91,11 +96,10 @@ public class OntologyManageVariableController extends AbstractBaseFieldbookContr
      */
     @Override
     public String getContentName() {
-        return "OntologyBrowser/manageVariable";
+        return "OntologyBrowser/manage/variable";
     }
     
     
-   
     /**
      * Show the main import page.
      *
@@ -103,7 +107,82 @@ public class OntologyManageVariableController extends AbstractBaseFieldbookContr
      * @param model the model
      * @return the string
      */
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value="traitClass", method = RequestMethod.GET)
+    public String showTraitClass(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form, Model model) {
+        
+        try {
+            
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return super.showAjaxPage(model, TRAIT_CLASS_MODAL);
+    }
+    
+    /**
+     * Show the main import page.
+     *
+     * @param form the form
+     * @param model the model
+     * @return the string
+     */
+    @RequestMapping(value="property", method = RequestMethod.GET)
+    public String showProperty(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form, Model model) {
+        
+        try {
+            
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return super.showAjaxPage(model, PROPERTY_MODAL);
+    }
+    
+    /**
+     * Show the main import page.
+     *
+     * @param form the form
+     * @param model the model
+     * @return the string
+     */
+    @RequestMapping(value="scale", method = RequestMethod.GET)
+    public String showScale(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form, Model model) {
+        
+        try {
+            
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return super.showAjaxPage(model, SCALE_MODAL);
+    }
+    
+    /**
+     * Show the main import page.
+     *
+     * @param form the form
+     * @param model the model
+     * @return the string
+     */
+    @RequestMapping(value="method", method = RequestMethod.GET)
+    public String showMethod(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form, Model model) {
+        
+        try {
+            
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return super.showAjaxPage(model, METHOD_MODAL);
+    }
+    /**
+     * Show the main import page.
+     *
+     * @param form the form
+     * @param model the model
+     * @return the string
+     */
+    @RequestMapping(value="variable", method = RequestMethod.GET)
     public String show(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form, Model model) {
         
         try {
@@ -124,7 +203,7 @@ public class OntologyManageVariableController extends AbstractBaseFieldbookContr
      * @param model the model
      * @return the string
      */
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value="variable", method = RequestMethod.POST)
     public String saveNewVariable(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form, BindingResult result, Model model) {
         OntologyBrowserValidator validator = new OntologyBrowserValidator();
         validator.validate(form, result);

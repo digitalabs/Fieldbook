@@ -3,11 +3,24 @@
 		<h1 th:text="#{ontology.browser.button.manage.variable}">
 			Manage Variable 
 		</h1>
-	</div>		
+	</div>	
+	
+	<input type="button" class="btn btn-default btn-log" onClick="loadOntologyModal('traitClass')" value="Trait Class"/>
+	<input type="button" class="btn btn-default btn-log" onClick="loadOntologyModal('property')" value="Property"/>
+	<input type="button" class="btn btn-default btn-log" onClick="loadOntologyModal('method')" value="Method"/>
+	<input type="button" class="btn btn-default btn-log" onClick="loadOntologyModal('scale')" value="Scale"/>
+			
+		
 	
 	<div class="row">
 		<div class="col-md-12">	
-				
+			<div class="modal fade" id="manageOntologyModal"  role="dialog" aria-labelledby="manageOntologyModal" aria-hidden="true">
+				<div class="modal-dialog modal-large" style="width:900px">
+					<div class="modal-content" >
+						
+					</div><!-- /.modal-content -->
+				</div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->		
 			 
 		</div>
 	</div>	
@@ -30,7 +43,23 @@
   	var propertySuggestions_obj = [];
   	var methodSuggestions_obj = [];
   	var scaleSuggestions_obj = [];
-  		  	
+  		 
+  	function loadOntologyModal(ontologyName){
+  		Spinner.toggle();
+  		$.ajax(
+ 		         { url: ontologyName,
+ 		           type: "GET",
+ 		           data: "",
+ 		           success: function(html) {
+ 		        	   
+ 		             $("#manageOntologyModal"+" .modal-content").empty().append(html);
+ 		             Spinner.toggle();  
+ 		             $('#manageOntologyModal').modal('show');
+ 		           }
+ 		         }
+ 		       );
+  	}
+  	
 	function validateCombo(combo) {
 		var message = null;
 		//check if field is blank	

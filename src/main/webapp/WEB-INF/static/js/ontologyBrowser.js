@@ -312,6 +312,14 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 			});  
 	  		
 		});
+	} else if (name == "Property"){
+		$.each(variableSuggestions, function( index, value ) {
+			variableSuggestions_obj.push({ 'id' : value.id,
+				  'text' : value.name + getOntologySuffix(value.id),
+				  'description' : value.definition
+			});  
+	  		
+		});
 	} else {
 		$.each(variableSuggestions, function( index, value ) {
 			variableSuggestions_obj.push({ 'id' : value.id,
@@ -549,52 +557,56 @@ function getNodeKeyFromTraitClass(traitClassId, treeName){
 
 	var rootNode = $("#"+treeName).dynatree("getRoot");
 
-	console.log(rootNode.data.key);
+	//console.log(rootNode.data.key);
 
 	var children=rootNode.getChildren() ;
 	var i = 0;
+	var nodeKey = '';
 	for(i=0;i<children.length;i++){
 		//console.log("child key:"+children[i].data.key);
-		getTreeChildren(children[i], traitClassId);
+		nodeKey = getTreeChildren(children[i], traitClassId);
+		if(nodeKey != ''){
+			break;
+		}
 	}
+	return nodeKey;
 }
 function getTreeChildren(child, traitClassId){
-	console.log("parent child key:"+child.data.key);
+	//console.log("parent child key:"+child.data.key);
+	var nodeKey = "";
+	if( child.data.key.indexOf(traitClassId) != -1){
+		console.log("FOUND");
+		return child.data.key;
+	}
 	
 	var children=child.getChildren();
 	if(children != null){
-		console.log("Children Length:"+children.length);
+		//console.log("Children Length:"+children.length);
 		var i = 0;
 		for(i=0;i<children.length;i++){
-			console.log("child key:"+children[i].data.key);			
-			//getChildren(children[i], traitClassId);
+			//console.log("child key:"+children[i].data.key);	
+			if(children[i].data.key.indexOf(traitClassId) != -1){
+				//console.log("FOUND");
+				return children[i].data.key;
+			}
+			if(children[i].getChildren() != null)
+				nodeKey = getTreeChildren(children[i], traitClassId);
 		}
 	}
-	return;
+	return nodeKey;
 }
 
 function filterPropertyCombo(treeName, traitClassId, isFromDropDown){
 	console.log("Load property of trait class id: "+traitClassId);
 	if(isFromDropDown){
-		getNodeKeyFromTraitClass(traitClassId, treeName);
-		
+		var nodeKey = getNodeKeyFromTraitClass(traitClassId, treeName);
+		console.log("Activate: "+ nodeKey);
 		//console.log(json);
 		//we need to highlight the tree
-		//$("#"+treeName).dynatree("getTree").activateKey(nodeKey);
+		$("#"+treeName).dynatree("getTree").activateKey(nodeKey);
 		$('#'+treeName).find("*").removeClass('highlight');
 		//then we highlight the nodeKey and its parents		
-		var traitClassIdentifier = "_"+traitClassId;
-		console.log(traitClassIdentifier);
-		var classes = $( "span[class*='"+traitClassIdentifier+"']" ).attr("class");
-		var classArr = classes.split("_");
-		var counter = 0 ;
-		var nodeKey = "";
-		for(counter = 0 ; counter < classArr.length ; counter++){
-			if(classArr[counter].indexOf(traitClassIdentifier) != -1){
-				nodeKey = classArr[counter];
-				break;
-			}
-		}
+		
 		if(nodeKey != ''){
 			var elem = nodeKey.split("_");
 			var count = 0;
@@ -623,7 +635,7 @@ function filterPropertyCombo(treeName, traitClassId, isFromDropDown){
 		}	
 	}
 	
-	//we filter the combo
+	//we filter the property combo
 	
 }
 function loadTraitClassTree(treeName, treeData, dropDownId){

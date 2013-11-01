@@ -271,7 +271,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
             standardVariable.setName(form.getNewVariableName());
         }
 
-        standardVariable.setName(form.getVariableName());
+        standardVariable.setName(form.getNewVariableName());
         standardVariable.setDescription(form.getVariableDescription());
         standardVariable.setProperty(ontologyService.getTermById(Integer.parseInt(form.getProperty())));
         standardVariable.setMethod(ontologyService.getTermById(Integer.parseInt(form.getMethod())));

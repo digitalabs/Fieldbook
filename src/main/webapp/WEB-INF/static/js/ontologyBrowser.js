@@ -421,8 +421,8 @@ function loadOntologyCombos(){
 }		
 
 function clearFields() {
-	$("div.modal .form-control").val("");
-	$("div.modal .select2").select2("val", "");
+	$(".form-control").val("");
+	$(".select2").select2("val", "");
 	$("#page-message-modal").html("");
 }
 

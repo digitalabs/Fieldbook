@@ -28,11 +28,17 @@
 				<div th:text="#{ontology.browser.validValuesTab.noCategoricalValue}">This categorical variable has no pre-defined set of valid values</div>
 			</div>
 			<div th:unless="*{categoricalValues == null}">
-				<ul class="list-group">
-					<li class="list-group-item"   th:text="*{categoricalValues[__${rowStat.index}__].description}" 
-			    		th:each="choice, rowStat : *{categoricalValues}">Value</li>
-				</ul>
-			</div>
+				<table border="1" cellpadding="10" cellspacing="10">
+					<tr>
+						<th>Label</th>
+						<th>Description</th>
+					</tr>
+					<tr  th:each="choice, rowStat : *{categoricalValues}">
+						<td th:text="*{categoricalValues[__${rowStat.index}__].name}">&nbsp;</td>
+						<td th:text="*{categoricalValues[__${rowStat.index}__].description}" >&nbsp;</td>
+					</tr>
+				</table>
+ 			</div>
 		</div>
 		
 		<div  th:if="*{dataTypeName != null AND #strings.startsWith(dataTypeName,'Character')}">

@@ -245,7 +245,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
             try {
                 Operation operation = form.getVariableId() != null ? Operation.UPDATE : Operation.ADD;
                 
-                StandardVariable standardVariable = createStandardVariableObject(form);
+                StandardVariable standardVariable = createStandardVariableObject(form, operation);
                 ontologyService.saveOrUpdateStandardVariable(standardVariable, operation);
                 form.setAddSuccessful("1");
                 
@@ -258,12 +258,19 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         return show(form, model);
     }
     
-    private StandardVariable createStandardVariableObject(OntologyBrowserForm form) throws MiddlewareQueryException {
+    private StandardVariable createStandardVariableObject(OntologyBrowserForm form, Operation operation) throws MiddlewareQueryException {
         StandardVariable standardVariable = new StandardVariable();
 
         if (form.getVariableId() != null) {
             standardVariable.setId(form.getVariableId());
         }
+        
+        if (operation.equals(Operation.ADD)) {
+            standardVariable.setName(form.getVariableName());
+        } else {
+            standardVariable.setName(form.getNewVariableName());
+        }
+
         standardVariable.setName(form.getVariableName());
         standardVariable.setDescription(form.getVariableDescription());
         standardVariable.setProperty(ontologyService.getTermById(Integer.parseInt(form.getProperty())));
@@ -566,7 +573,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      *
      * @param variableId the variable id
      * @return the standard variable details
-     *
+     */
     @ResponseBody
     @RequestMapping(value="retrieve/variable/{variableId}", method=RequestMethod.GET)
     public Map<String, String> getStandardVariableDetails(@PathVariable String variableId) {
@@ -592,18 +599,17 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         
         return resultMap;
     }
-    */
     
     /*
      * Check if null.
      *
      * @param term the term
      * @return the string
-     * 
+     */ 
     private String checkIfNull(Term term) {
         return term==null ? "" : String.valueOf(term.getId());
     }
-    */
+
     /*
      * Delete ontology.
      *

@@ -4,6 +4,8 @@
 			Manage Variable 
 		</h1>
 	</div>	
+	<div id="page-message">
+	</div>
 	<form id="manageVariable" role="form-horizontal" onsubmit="return do_validation()"  class="form-horizontal" action="#" 
 	    th:action="@{/OntologyManager/manage/variable}" method="post" enctype="multipart/form-data" th:object="${ontologyBrowserForm}">
 	<div class="row">
@@ -22,7 +24,7 @@
                      	
                      	<input id="comboVariableName" type="hidden" th:field="*{variableName}" class="form-control select2" placeholder=""/>
    				        <input type="hidden" th:field="*{variableId}" />
-				        <!-- <input type="hidden" th:field="*{newVariableName}" />  --> 
+				        <input type="hidden" th:field="*{newVariableName}" /> 
                      </div>
             </div>
 			<div class="form-group">
@@ -200,11 +202,11 @@
 	
 	<div class="row">
 		<div class="col-md-pull-12 pull-right">
-		<button type="submit" th:value="#{common.form.add.text}" class="btn btn-primary" 
+		<button type="submit" id="addVariable" th:value="#{common.form.add.text}" class="btn btn-primary" 
       		th:text="#{common.form.add.text}">.Add</button>    
-      		<button type="submit" th:value="#{common.form.update.text}" class="btn btn-primary" 
+      		<button type="submit" id="updateVariable" th:value="#{common.form.update.text}" class="btn btn-primary" 
       		th:text="#{common.form.update.text}">.Update</button>    
-      		<button type="submit" th:value="#{common.form.delete.text}" class="btn btn-danger" 
+      		<button type="submit" id="deleteVariable" th:value="#{common.form.delete.text}" class="btn btn-danger" 
       		th:text="#{common.form.delete.text}">.Delete</button>    
 		  <button type="button" th:value="#{common.form.back.text}" class="btn btn-primary"
       		 th:text="#{common.form.back.text}">.back</button>
@@ -229,7 +231,9 @@
 		</div>
 	</div>	
 	
-    
+    <div class="row">
+    	<div id="ontology-add-variable" th:include="/OntologyBrowser/addVariableSuccessful"></div>
+    </div>
 </div>
 <div layout:fragment="page-script">			
 	<script type="text/javascript" th:src="@{/static/js/ontologyBrowser.js}"></script>
@@ -334,6 +338,7 @@
 	$( document ).ready(function() {  	     
 		loadOntologyCombos();
 		loadTraitClassTree(treeDivId, treeClassData, 'comboTraitClass');
+		setVisibleButtons(true, false, false);
 	});
 	
 	

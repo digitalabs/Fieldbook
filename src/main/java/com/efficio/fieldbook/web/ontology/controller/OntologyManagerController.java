@@ -51,7 +51,9 @@ import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.ontology.form.OntologyBrowserForm;
 import com.efficio.fieldbook.web.ontology.form.OntologyMethodForm;
+import com.efficio.fieldbook.web.ontology.form.OntologyPropertyForm;
 import com.efficio.fieldbook.web.ontology.form.OntologyScaleForm;
+import com.efficio.fieldbook.web.ontology.form.OntologyTraitClassForm;
 import com.efficio.fieldbook.web.ontology.validation.OntologyBrowserValidator;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 
@@ -106,9 +108,12 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      * @return the string
      */
     @RequestMapping(value="traitClass", method = RequestMethod.GET)
-    public String showTraitClass(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form, Model model) {
+    public String showTraitClass(@ModelAttribute("ontologyTraitClassForm") OntologyTraitClassForm form, Model model) {
         
         try {
+            List<TraitClassReference> traitRefList = (List<TraitClassReference>) ontologyService.getAllTraitGroupsHierarchy(false);
+            List<TraitClassReference> traitClass = getAllTraitClassesFromHierarchy(traitRefList); 
+            model.addAttribute("traitClassesSuggestionList", traitClass);
             
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -125,9 +130,11 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      * @return the string
      */
     @RequestMapping(value="property", method = RequestMethod.GET)
-    public String showProperty(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form, Model model) {
+    public String showProperty(@ModelAttribute("ontologyPropertyForm") OntologyPropertyForm form, Model model) {
         
         try {
+            
+            model.addAttribute("propertiesSuggestionList", ontologyService.getAllProperties());
             
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -147,6 +154,8 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
     public String showScale(@ModelAttribute("ontologyScaleForm") OntologyScaleForm form, Model model) {
         
         try {
+            
+            model.addAttribute("scalesSuggestionList", ontologyService.getAllScales());
             
             List<String> variableListForScales = new ArrayList<String>();
             variableListForScales.add("Sample Variable 1");
@@ -173,6 +182,8 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         
         try {
             
+            model.addAttribute("methodsSuggestionList", ontologyService.getAllMethods());
+            
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -194,6 +205,9 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
             List<TraitClassReference> traitClass = getAllTraitClassesFromHierarchy(traitRefList);
             model.addAttribute("traitClassTreeData", TreeViewUtil.convertOntologyTraitsToJson(traitRefList));
             model.addAttribute("traitClassesSuggestionList", traitClass);
+            model.addAttribute("propertiesSuggestionList", ontologyService.getAllPropertiesWithTraitClass());
+            model.addAttribute("methodsSuggestionList", ontologyService.getAllMethods());
+            model.addAttribute("scalesSuggestionList", ontologyService.getAllScales());
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -468,7 +482,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      *
      * @return the property suggestions
      */
-    @ModelAttribute("propertiesSuggestionList")
+    /*@ModelAttribute("propertiesSuggestionList")
     public List<Property> getPropertySuggestions() {
         try {
             List<Property> properties = ontologyService.getAllPropertiesWithTraitClass();            
@@ -478,14 +492,14 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         }
 
         return null;
-    }
+    }*/
     
     /**
      * Gets the method suggestions.
      *
      * @return the method suggestions
      */
-    @ModelAttribute("methodsSuggestionList")
+    /*@ModelAttribute("methodsSuggestionList")
     public List<Method> getMethodSuggestions() {
         try {
             List<Method> methods = ontologyService.getAllMethods();
@@ -495,14 +509,14 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         }
 
         return null;
-    }
+    }*/
     
     /**
      * Gets the scale suggestions.
      *
      * @return the scale suggestions
      */
-    @ModelAttribute("scalesSuggestionList")
+    /*@ModelAttribute("scalesSuggestionList")
     public List<Scale> getScaleSuggestions() {
         try {
             List<Scale> scales = ontologyService.getAllScales();
@@ -512,7 +526,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         }
 
         return null;
-    }
+    }*/
     
     /**
      * Save new term.

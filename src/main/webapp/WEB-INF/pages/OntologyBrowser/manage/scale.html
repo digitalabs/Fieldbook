@@ -31,13 +31,10 @@
 				<div class="col-md-5">
 					<div class="form-group">
 						<div>
-							<span th:text="#{ontology.browser.modal.scale.variable.list}">Variables Linked to Scale:</span>
+							<span th:text="#{ontology.browser.modal.variable.list('Scale')}">Variables Linked to Scale:</span>
 							<span id="manageScaleNameText"></span>
 						</div>
 						<div class="input-group" id="manageScaleVariableList">
-							<div th:if="*{variablesLinkedToScale == null or #lists.isEmpty(variablesLinkedToScale)}">
-								<div th:text="#{ontology.browser.modal.scale.empty.variable.list}">No variables defined for this Scale</div>
-							</div>
 							<div th:unless="*{variablesLinkedToScale == null}">
 								<table class="table table-striped table-bordered">
 									<tr  th:each="choice, rowStat : *{variablesLinkedToScale}">
@@ -67,12 +64,12 @@
 <div layout:fragment="page-script">		
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
-		var scaleSuggestions = /*[[${scalesSuggestionList}]]*/ null;
+		var scalesSuggestions = /*[[${scalesSuggestionList}]]*/ null;
 		
-	  	var scaleSuggestions_obj = [];
+	  	var scalesSuggestions_obj = [];
 	  	
 	  	$(document).ready(function() {
-	  		initializeVariable(scaleSuggestions, scaleSuggestions_obj, "definition", "ManageScale", true);
+	  		initializeVariable(scalesSuggestions, scalesSuggestions_obj, "definition", "ManageScale", true);
 	  		
 	  	});
     //]]>

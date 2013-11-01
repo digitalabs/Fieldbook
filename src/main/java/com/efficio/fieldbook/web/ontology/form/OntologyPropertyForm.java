@@ -18,9 +18,19 @@ public class OntologyPropertyForm{
     
     private String comboManageProperty;
     private Integer managePropertyId;
+    private String managePropertyName;
     private String managePropertyDescription;
     private List<String> variablesLinkedToProperty;
     
+    
+    public String getManagePropertyName() {
+        return managePropertyName;
+    }
+    
+    public void setManagePropertyName(String managePropertyName) {
+        this.managePropertyName = managePropertyName;
+    }
+
     public String getComboManageProperty() {
         return comboManageProperty;
     }

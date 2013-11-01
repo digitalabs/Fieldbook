@@ -18,6 +18,7 @@ public class OntologyScaleForm{
 
     private String comboManageScale;
     private Integer manageScaleId;
+    private String manageScaleName;
     private String manageScaleDescription;
     private List<String> variablesLinkedToScale;
     
@@ -51,6 +52,14 @@ public class OntologyScaleForm{
     
     public void setVariablesLinkedToScale(List<String> variablesLinkedToScale) {
         this.variablesLinkedToScale = variablesLinkedToScale;
+    }
+
+    public String getManageScaleName() {
+        return manageScaleName;
+    }
+
+    public void setManageScaleName(String manageScaleName) {
+        this.manageScaleName = manageScaleName;
     }
     
 }

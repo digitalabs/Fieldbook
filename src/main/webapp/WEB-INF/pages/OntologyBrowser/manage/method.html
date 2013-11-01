@@ -15,10 +15,9 @@
 					<div class="form-group">                        
 						<label for="comboManageMethod" class="col-md-5 control-label" th:text="#{ontology.browser.modal.method} + ': *'">Method: *</label>
 						<div class="col-md-7">
-							<div class="input-group">
-								<input type="hidden" th:field="*{comboManageMethod}" class="form-control select2" placeholder=""/>
-								<input type="hidden" th:field="*{manageMethodId}" />
-							</div>
+							<input type="hidden" th:field="*{comboManageMethod}" class="form-control select2" placeholder=""/>
+							<input type="hidden" th:field="*{manageMethodId}" />
+							<input type="hidden" th:field="*{manageMethodName}" />
 						</div>
 					</div>
 					<div class="form-group">

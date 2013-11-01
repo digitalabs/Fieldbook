@@ -18,9 +18,19 @@ public class OntologyMethodForm{
 
     private String comboManageMethod;
     private Integer manageMethodId;
+    private String manageMethodName;
     private String manageMethodDescription;
     private List<String> variablesLinkedToMethod;
     
+    
+    public String getManageMethodName() {
+        return manageMethodName;
+    }
+    
+    public void setManageMethodName(String manageMethodName) {
+        this.manageMethodName = manageMethodName;
+    }
+
     public String getComboManageMethod() {
         return comboManageMethod;
     }

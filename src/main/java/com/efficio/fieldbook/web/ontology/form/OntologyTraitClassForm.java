@@ -18,7 +18,9 @@ public class OntologyTraitClassForm{
 
     private String comboManageTraitClass;
     private Integer manageTraitClassId;
+    private String manageTraitClassName;
     private String manageTraitClassDescription;
+    private Integer manageParentTraitClassId;
     private List<String> variablesLinkedToTraitClass;
     
     public String getComboManageTraitClass() {
@@ -37,12 +39,28 @@ public class OntologyTraitClassForm{
         this.manageTraitClassId = manageTraitClassId;
     }
     
+    public String getManageTraitClassName() {
+        return manageTraitClassName;
+    }
+    
+    public void setManageTraitClassName(String manageTraitClassName) {
+        this.manageTraitClassName = manageTraitClassName;
+    }
+    
     public String getManageTraitClassDescription() {
         return manageTraitClassDescription;
     }
     
     public void setManageTraitClassDescription(String manageTraitClassDescription) {
         this.manageTraitClassDescription = manageTraitClassDescription;
+    }
+    
+    public Integer getManageParentTraitClassId() {
+        return manageParentTraitClassId;
+    }
+    
+    public void setManageParentTraitClassId(Integer manageParentTraitClassId) {
+        this.manageParentTraitClassId = manageParentTraitClassId;
     }
     
     public List<String> getVariablesLinkedToTraitClass() {
@@ -53,5 +71,6 @@ public class OntologyTraitClassForm{
             List<String> variablesLinkedToTraitClass) {
         this.variablesLinkedToTraitClass = variablesLinkedToTraitClass;
     }
-
+    
+    
 }

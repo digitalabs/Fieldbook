@@ -476,16 +476,24 @@ span.dynatree-drop-target.dynatree-drop-after a
 }
 
 /*Added for highlight*/
-#ontologyBrowserTree span.dynatree-node.highlight
+#ontologyBrowserTree span.dynatree-node.highlight,
+#traitClassBrowserTree span.dynatree-node.highlight
 {
 	background-color: #518CC6;
 }
-#ontologyBrowserTree ul.fbtree-container.highlight a:hover
+#ontologyBrowserTree ul.fbtree-container.highlight a:hover,
+#traitClassBrowserTree ul.fbtree-container.highlight a:hover
 {
 	background-color: #518CC6;
 }
 #ontologyBrowserTree ul.fbtree-container a:focus,
 #ontologyBrowserTree span.fbtree-focused a:link  /* @IE */
+{
+	background-color: #518CC6;
+}
+
+#traitClassBrowserTree ul.fbtree-container a:focus,
+#traitClassBrowserTree span.fbtree-focused a:link  /* @IE */
 {
 	background-color: #518CC6;
 }

@@ -363,8 +363,8 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	
 	    }).on("change", function(){
 	    	$("#" + lowerCaseFirstLetter(name) + "Description").val($("#combo"+name).select2("data").description);
-	    	if(name == 'Property'){
-	    		setCorrespondingTraitClass($("#comboProperty").select2("data").id);
+	    	if(name == 'TraitClass'){
+	    		filterPropertyCombo(treeDivId, $("#comboTraitClass").select2("data").id, true);
 	    	}
 	    	
 	    });
@@ -501,6 +501,115 @@ function sortByKey(array, key) {
         var x = a[key].toLowerCase(); var y = b[key].toLowerCase();
         return ((x < y) ? -1 : ((x > y) ? 1 : 0));
     });
+}
+
+function doTraitClassTreeHighlight(treeName, nodeKey){
+	$("#"+treeName).dynatree("getTree").activateKey(nodeKey);
+	$('#'+treeName).find("*").removeClass('highlight');
+	//then we highlight the nodeKey and its parents
+	var elem = nodeKey.split("_");
+	var count = 0;
+	var key = "";
+	var traitClassId = ""
+	for(count = 0 ; count < elem.length ; count++){
+		if(key != '')
+			key = key + "_";
+		
+		key = key + elem[count];
+		$('.'+key).addClass('highlight');
+	}
+	
+	var node = $("#"+treeName).dynatree("getTree").getNodeByKey(nodeKey);
+	
+	traitClassId = elem[elem.length-1];
+	
+	filterPropertyCombo(treeName, traitClassId, false)
+	
+}
+function filterPropertyCombo(treeName, traitClassId, isFromDropDown){
+	console.log("Load property of trait class id: "+traitClassId);
+	if(isFromDropDown){
+		//we need to highlight the tree
+		//$("#"+treeName).dynatree("getTree").activateKey(nodeKey);
+		$('#'+treeName).find("*").removeClass('highlight');
+		//then we highlight the nodeKey and its parents
+		
+		/*
+		var elem = nodeKey.split("_");
+		var count = 0;
+		var key = "";
+		var traitClassId = ""
+		for(count = 0 ; count < elem.length ; count++){
+			if(key != '')
+				key = key + "_";
+			
+			key = key + elem[count];
+			$('.'+key).addClass('highlight');
+		}
+		
+		var node = $("#"+treeName).dynatree("getTree").getNodeByKey(nodeKey);
+		*/
+		
+	}else {
+		var counter = 0;
+		for(counter = 0 ; counter < traitClassesSuggestions_obj.length ; counter++){
+			if(traitClassId == traitClassesSuggestions_obj[counter].id){
+				var dataVal = traitClassesSuggestions_obj[counter];
+				//console.log(dataVal);
+				$("#comboTraitClass").select2('data', dataVal);
+				$("#traitClassDescription").val(dataVal.description);
+				break;
+			}
+		}	
+	}
+	
+	//we filter the combo
+	
+}
+function loadTraitClassTree(treeName, treeData, dropDownId){
+	//for triggering the start of search type ahead
+			
+	var json = $.parseJSON(treeData);
+	
+	$("#" + treeName).dynatree({
+	      checkbox: false,
+	      // Override class name for checkbox icon:
+	      classNames: {
+				container: "fbtree-container",
+				expander: "fbtree-expander",
+				nodeIcon: "fbtree-icon",
+				combinedIconPrefix: "fbtree-ico-",
+				focused: "fbtree-focused",
+				active: "fbtree-active"
+			},
+	      selectMode: 1,
+	      children: json,
+	      onActivate: function(node) {
+	        //alert("onActivate" + node.data.title);
+	     // Display list of selected nodes
+	        var selNodes = node.tree.getSelectedNodes();
+	        // convert to title/key array
+	        var selKeys = $.map(selNodes, function(node){
+	             return "[" + node.data.key + "]: '" + node.data.title + "'";
+	        });
+	       
+	        doTraitClassTreeHighlight(treeName, node.data.key);
+	      },
+	      onSelect: function(select, node) {
+	        // Display list of selected nodes		    	
+	        doTraitClassTreeHighlight(treeName, node.data.key);
+	      },
+	      onDblClick: function(node, event) {
+	        node.toggleSelect();
+	      },
+	      onKeydown: function(node, event) {
+	        if( event.which == 32 ) {
+	          node.toggleSelect();
+	          return false;
+	        }
+	      },
+	    });
+
 }
 
 /*

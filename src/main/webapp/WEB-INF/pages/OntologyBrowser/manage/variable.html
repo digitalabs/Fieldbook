@@ -104,9 +104,18 @@
                	<label for="traitClassDescription" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
                	</div>
                   <div class="col-md-6">
-                  	<textarea type="text" th:field="*{traitClassDescription}" class="form-control" size="10"> </textarea>
+                  	<textarea disabled="true"  type="text" th:field="*{traitClassDescription}" class="form-control" size="10"> </textarea>
                   </div>
-            </div>		 
+            </div>
+            <div class="form-group">
+			
+				<div class="col-md-4">
+               		<label for="traitClass">Trait Class Tree View:</label>
+               	</div>
+				<div class="col-md-6" id="traitClassBrowserTree" style="height:200px; overflow:auto;">
+				
+				</div>
+			</div>		 
 		</div>
 		<div class="col-md-6">	
 			<div class="form-group">
@@ -126,10 +135,14 @@
                	<label for="propertyDescription" class="col-md-12 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
                	</div>
                   <div class="col-md-6">
-                  	<textarea type="text" th:field="*{propertyDescription}" class="form-control" size="10"> </textarea>
+                  	<textarea disabled="true"  type="text" th:field="*{propertyDescription}" class="form-control" size="10"> </textarea>
                   </div>
             </div>			 
 		</div>
+		
+		
+			
+			
 	</div>	
 	
 	<div class="row">
@@ -155,10 +168,10 @@
 			</div>	
 			<div class="form-group">
 				<div class="col-md-4">
-               	<label for="traitClassDescription" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
+               	<label for="methodDescription" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
                	</div>
                   <div class="col-md-6">
-                  	<textarea type="text" th:field="*{methodDescription}" class="form-control" size="10"> </textarea>
+                  	<textarea disabled="true"  type="text" th:field="*{methodDescription}" class="form-control" size="10"> </textarea>
                   </div>
             </div>		 
 		</div>
@@ -179,7 +192,7 @@
                	<label for="propertyDescription" class="col-md-12 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
                	</div>
                   <div class="col-md-6">
-                  	<textarea type="text" th:field="*{scaleDescription}" class="form-control" size="10"> </textarea>
+                  	<textarea disabled="true"  type="text" th:field="*{scaleDescription}" class="form-control" size="10"> </textarea>
                   </div>
             </div>			 
 		</div>
@@ -234,6 +247,9 @@
   	var propertySuggestions_obj = [];
   	var methodSuggestions_obj = [];
   	var scaleSuggestions_obj = [];
+  	
+  	var treeDivId = 'traitClassBrowserTree';
+  	var treeClassData = /*[[${traitClassTreeData}]]*/;
   		 
   	function loadOntologyModal(ontologyName){
   		Spinner.toggle();
@@ -317,7 +333,9 @@
     
 	$( document ).ready(function() {  	     
 		loadOntologyCombos();
+		loadTraitClassTree(treeDivId, treeClassData, 'comboTraitClass');
 	});
+	
 	
   
       //]]>

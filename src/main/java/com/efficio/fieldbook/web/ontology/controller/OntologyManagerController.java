@@ -186,7 +186,10 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
     public String show(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form, Model model) {
         
         try {
-            
+            List<TraitClassReference> traitRefList = (List<TraitClassReference>) ontologyService.getAllTraitGroupsHierarchy(false);
+            List<TraitClassReference> traitClass = getAllTraitClassesFromHierarchy(traitRefList);
+            model.addAttribute("traitClassTreeData", TreeViewUtil.convertOntologyTraitsToJson(traitRefList));
+            model.addAttribute("traitClassesSuggestionList", traitClass);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -432,12 +435,11 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      *
      * @return the trait class suggestions
      */
+    /*
     @ModelAttribute("traitClassesSuggestionList")
     public List<TraitClassReference> getTraitClassSuggestions() {
         try {
-            //List<TraitClassReference> traitClass = ontologyService.getAllTraitClasses();
-            //List<TraitClassReference> traitRefList = (List<TraitClassReference>) ontologyService.getAllTraitGroupsHierarchy();             
-            List<TraitClassReference> traitRefList = (List<TraitClassReference>) ontologyService.getAllTraitGroupsHierarchy();
+            List<TraitClassReference> traitRefList = (List<TraitClassReference>) ontologyService.getAllTraitGroupsHierarchy(false);
             List<TraitClassReference> traitClass = getAllTraitClassesFromHierarchy(traitRefList); 
             return traitClass;
         } catch (MiddlewareQueryException e) {
@@ -446,7 +448,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
 
         return null;
     }
-    
+    */
     private List<TraitClassReference> getAllTraitClassesFromHierarchy(List<TraitClassReference> refList) throws MiddlewareQueryException{
         
         List<TraitClassReference> traitClass = new ArrayList();
@@ -465,7 +467,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
     @ModelAttribute("propertiesSuggestionList")
     public List<Property> getPropertySuggestions() {
         try {
-            List<Property> properties = ontologyService.getAllProperties();
+            List<Property> properties = ontologyService.getAllProperties();            
             return properties;
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);

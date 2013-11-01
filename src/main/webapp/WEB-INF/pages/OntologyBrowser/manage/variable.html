@@ -4,11 +4,120 @@
 			Manage Variable 
 		</h1>
 	</div>	
-	<!-- real button already jsut place in the neccessary position -->
-	<input type="button" class="btn btn-default btn-log" onClick="loadOntologyModal('traitClass')" value="Trait Class"/>
-	<input type="button" class="btn btn-default btn-log" onClick="loadOntologyModal('property')" value="Property"/>
-	<input type="button" class="btn btn-default btn-log" onClick="loadOntologyModal('method')" value="Method"/>
-	<input type="button" class="btn btn-default btn-log" onClick="loadOntologyModal('scale')" value="Scale"/>
+	<form id="manageVariable" role="form-horizontal" onsubmit="return do_validation()"  class="form-horizontal" action="#" 
+	    th:action="@{/OntologyManager/manage/variable}" method="post" enctype="multipart/form-data" th:object="${ontologyBrowserForm}">
+	<div class="row">
+		<div class="col-md-12">	
+			<h3 th:text="#{ontology.browser.button.manage.variable}">Variable Details:</h3>			 
+		</div>
+	</div>	
+
+	<div class="row">
+		<div class="col-md-12">	
+			<h3 th:text="#{ontology.browser.button.manage.variable}">Properties and Trait Classes:</h3>			 
+		</div>
+	</div>	
+	
+	<div class="row">
+		<div class="col-md-6">	
+			<div class="form-group">
+				<div class="col-md-4">
+				<label for="traitClass">Filter for Trait Class:</label>
+				</div>
+				<div class="col-md-6">
+					<input id="comboTraitClass" type="hidden" th:field="*{traitClass}"  class="form-control  input-medium  select2" placeholder=""/>                   	
+				</div>
+				<div class="col-md-2">
+					<input type="button" class="btn btn-default btn-log" onClick="loadOntologyModal('traitClass')" value="Manage"/>
+				</div>
+			</div>	
+			<div class="form-group">
+				<div class="col-md-4">
+               	<label for="traitClassDescription" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
+               	</div>
+                  <div class="col-md-6">
+                  	<textarea type="text" th:field="*{traitClassDescription}" class="form-control" size="10"> </textarea>
+                  </div>
+            </div>		 
+		</div>
+		<div class="col-md-6">	
+			<div class="form-group">
+				<div class="col-md-4">
+				<label for="traitClass" class="col-md-12 control-label" th:text="#{ontology.browser.modal.property} + ': *'">Property:*</label>
+				</div>
+				<div class="col-md-6">
+					<input id="comboProperty" type="hidden" th:field="*{property}" class="form-control select2" placeholder=""/>
+                   	
+				</div>
+				<div class="col-md-2">
+					<input type="button" class="btn btn-default btn-log" onClick="loadOntologyModal('property')" value="Manage"/>
+				</div>
+			</div>	
+			<div class="form-group">
+				<div class="col-md-4">
+               	<label for="propertyDescription" class="col-md-12 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
+               	</div>
+                  <div class="col-md-6">
+                  	<textarea type="text" th:field="*{propertyDescription}" class="form-control" size="10"> </textarea>
+                  </div>
+            </div>			 
+		</div>
+	</div>	
+	
+	<div class="row">
+		<div class="col-md-12">	
+			<h3 th:text="#{ontology.browser.button.manage.variable}">Methods and Scales:</h3>			 
+		</div>
+	</div>	
+	
+	
+	<div class="row">
+		<div class="col-md-6">	
+			<div class="form-group">
+				<div class="col-md-4">
+				<label for="method" th:text="#{ontology.browser.modal.method} + ': *'">Method:</label>
+				</div>
+				<div class="col-md-6">
+					<input id="comboMethod" type="hidden" th:field="*{method}" class="form-control select2" placeholder=""  />
+                   	
+				</div>
+				<div class="col-md-2">
+					<input type="button" class="btn btn-default btn-log" onClick="loadOntologyModal('method')" value="Manage"/>
+				</div>
+			</div>	
+			<div class="form-group">
+				<div class="col-md-4">
+               	<label for="traitClassDescription" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
+               	</div>
+                  <div class="col-md-6">
+                  	<textarea type="text" th:field="*{methodDescription}" class="form-control" size="10"> </textarea>
+                  </div>
+            </div>		 
+		</div>
+		<div class="col-md-6">	
+			<div class="form-group">
+				<div class="col-md-4">
+				<label for="traitClass" class="col-md-12 control-label" th:text="#{ontology.browser.modal.scale} + ': *'">Scale:*</label>
+				</div>
+				<div class="col-md-6">					
+                   	<input id="comboScale" type="hidden" th:field="*{scale}" class="form-control select2" placeholder=""/>
+				</div>
+				<div class="col-md-2">
+					<input type="button" class="btn btn-default btn-log" onClick="loadOntologyModal('scale')" value="Manage"/>
+				</div>
+			</div>	
+			<div class="form-group">
+				<div class="col-md-4">
+               	<label for="propertyDescription" class="col-md-12 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
+               	</div>
+                  <div class="col-md-6">
+                  	<textarea type="text" th:field="*{scaleDescription}" class="form-control" size="10"> </textarea>
+                  </div>
+            </div>			 
+		</div>
+	</div>	
+	
+	</form>
 			
 		
 	<!-- Placeholder for modal, do not remove -->

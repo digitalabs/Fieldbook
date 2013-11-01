@@ -301,7 +301,7 @@ function getOntologySuffix(id){
 }
 
 //function to create the select2 combos
-function initializeVariable(variableSuggestions, variableSuggestions_obj, description, name) {
+function initializeVariable(variableSuggestions, variableSuggestions_obj, description, name, allowTypedValues) {
 	
 	//initialize the arrays that would contain json data for the combos
 	if (description == "description") {
@@ -351,9 +351,14 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	            return ($.fn.select2.defaults.matcher(query.term,item.text));
 	          
 	          });
-	          if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
+	          if(allowTypedValues == true){
+	        	  if (data.results.length === 0) 
+	        		  data.results.unshift({id:query.term,text:query.term});  
+	          }
+	            
 	          
 	            query.callback(data);
+	            
 	        }
 	
 	    }).on("change", function(){
@@ -376,10 +381,10 @@ function lowerCaseFirstLetter(string)
 function loadOntologyCombos(){
 	//create combos
 	//initializeVariable(variableNameSuggestions, variableNameSuggestions_obj, "description", "VariableName");
-	initializeVariable(traitClassesSuggestions, traitClassesSuggestions_obj, "description", "TraitClass");
-	initializeVariable(propertySuggestions, propertySuggestions_obj, "definition", "Property");
-	initializeVariable(methodSuggestions, methodSuggestions_obj, "definition", "Method");
-	initializeVariable(scaleSuggestions, scaleSuggestions_obj, "definition", "Scale");
+	initializeVariable(traitClassesSuggestions, traitClassesSuggestions_obj, "description", "TraitClass", false);
+	initializeVariable(propertySuggestions, propertySuggestions_obj, "definition", "Property", false);
+	initializeVariable(methodSuggestions, methodSuggestions_obj, "definition", "Method", false);
+	initializeVariable(scaleSuggestions, scaleSuggestions_obj, "definition", "Scale", false);
 }		
 
 function clearFields() {
@@ -435,9 +440,11 @@ function recreateCombo(combo, data) {
 	                return ($.fn.select2.defaults.matcher(query.term,item.text));
 	              
 	              });
+	              
 	              if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
 	              
 	                query.callback(data);
+	                
 	            }		
 	});
 	var newData = { 'id' : data.id,

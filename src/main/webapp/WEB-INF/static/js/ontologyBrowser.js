@@ -13,6 +13,7 @@ function doSearchTree(){
 
 
 function doOntologyTreeHighlight(treeName, nodeKey){
+	//console.log(nodeKey);
 	$("#"+treeName).dynatree("getTree").activateKey(nodeKey);
 	$('#'+treeName).find("*").removeClass('highlight');
 	//then we highlight the nodeKey and its parents
@@ -30,7 +31,9 @@ function doOntologyTreeHighlight(treeName, nodeKey){
 	}
 	
 	var node = $("#"+treeName).dynatree("getTree").getNodeByKey(nodeKey);
-
+	
+	console.log(nodeKey)
+	
 	if(node.data.lastChildren == true){
 		
 	//if(elem.length == 3){

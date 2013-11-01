@@ -220,17 +220,22 @@ public class TreeViewUtil {
                 
         //return treeNodes;
         
-        return convertSearchTreeViewToJson(getTypeAheadTreeNodes(TraitClassReferences));
+        return convertSearchTreeViewToJson(getTypeAheadTreeNodes("", TraitClassReferences));
     }
 	
-	private static List<TypeAheadSearchTreeNode> getTypeAheadTreeNodes(List<TraitClassReference> TraitClassReferences){
+	private static List<TypeAheadSearchTreeNode> getTypeAheadTreeNodes(String parentId, List<TraitClassReference> TraitClassReferences){
 	    List<TypeAheadSearchTreeNode> treeNodes = new ArrayList();
 
 	    if (TraitClassReferences != null && !TraitClassReferences.isEmpty()) {
             for (TraitClassReference reference : TraitClassReferences) {
               //this is for the inner trait classes
                 if(reference.getTraitClassChildren() != null && !reference.getTraitClassChildren().isEmpty()){
-                    treeNodes.addAll(getTypeAheadTreeNodes(reference.getTraitClassChildren()));
+                    String newParentId = "";
+                    if(parentId != null && !parentId.equalsIgnoreCase("")){
+                        newParentId = parentId + "_";
+                    }
+                    newParentId = newParentId + reference.getId().toString();
+                    treeNodes.addAll(getTypeAheadTreeNodes(newParentId, reference.getTraitClassChildren()));
                 }
                 
                 List<PropertyReference> propRefList = reference.getProperties();
@@ -238,6 +243,11 @@ public class TreeViewUtil {
                     List<StandardVariableReference> variableRefList = propRef.getStandardVariables();
                     String parentTitle = reference.getName();
                     String key = reference.getId().toString() + "_" + propRef.getId().toString(); 
+                    
+                    if(parentId != null && !parentId.equalsIgnoreCase("")){
+                        key = parentId + "_" + key;
+                    }
+                    
                     List<String> token = new ArrayList();
                     token.add(propRef.getName());
                     TypeAheadSearchTreeNode searchTreeNode = new TypeAheadSearchTreeNode(key, token , propRef.getName(), parentTitle, "Property");
@@ -299,7 +309,7 @@ public class TreeViewUtil {
         List<TreeNode> treeNodes = new ArrayList<TreeNode>();
         if (TraitClassReferences != null && !TraitClassReferences.isEmpty()) {
             for (TraitClassReference reference : TraitClassReferences) {
-                treeNodes.add(convertTraitClassReferenceToTreeNode(reference));
+                treeNodes.add(convertTraitClassReferenceToTreeNode("", reference));
             }
         }
         return treeNodes;
@@ -311,9 +321,12 @@ public class TreeViewUtil {
 	 * @param reference the reference
 	 * @return the tree node
 	 */
-	private static TreeNode convertTraitClassReferenceToTreeNode(TraitClassReference reference) {
+	private static TreeNode convertTraitClassReferenceToTreeNode(String parentParentId, TraitClassReference reference) {
         TreeNode treeNode = new TreeNode();
         String parentId = reference.getId().toString();
+        if(parentParentId != null && !parentParentId.equalsIgnoreCase("")){
+            parentId = parentParentId + "_" + parentId;
+        }
         treeNode.setKey(parentId);
         treeNode.setAddClass(parentId);
         treeNode.setTitle(reference.getName());
@@ -328,7 +341,7 @@ public class TreeViewUtil {
         //this is for the inner trait classes
         if(reference.getTraitClassChildren() != null && !reference.getTraitClassChildren().isEmpty()){
             for (TraitClassReference childTrait : reference.getTraitClassChildren()) {
-                treeNodes.add(convertTraitClassReferenceToTreeNode(childTrait));
+                treeNodes.add(convertTraitClassReferenceToTreeNode(parentId, childTrait));
             }
         }
         //we need to set the children for the property

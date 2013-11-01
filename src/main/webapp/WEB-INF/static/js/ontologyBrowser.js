@@ -366,7 +366,25 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	    	if(name == 'TraitClass'){
 	    		filterPropertyCombo(treeDivId, $("#comboTraitClass").select2("data").id, true);
 	    	}
-	    	
+	    	if (name.match("^Manage")) {
+	    		if ($("#combo"+name).select2("data").description) { //edit mode
+			    	$("#" + lowerCaseFirstLetter(name) + "Id").val($("#combo"+name).select2("data").id);
+			    	$("#" + lowerCaseFirstLetter(name) + "Name").val($("#combo"+name).select2("data").description);
+		    		$("#btnAdd" + name).hide();
+		    		$("#btnUpdate" + name).show();
+		    		$("#btnDelete" + name).show();
+		    		$("#" + lowerCaseFirstLetter(name) + "NameText").html($("#combo"+name).select2("data").description);
+		    		
+	    		} else { //add mode
+			    	$("#" + lowerCaseFirstLetter(name) + "Id").val('');
+			    	$("#" + lowerCaseFirstLetter(name) + "Name").val($("#combo"+name).select2("data").id);
+		    		$("#btnAdd" + name).show();
+		    		$("#btnUpdate" + name).hide();
+		    		$("#btnDelete" + name).hide();
+		    		$("#" + lowerCaseFirstLetter(name) + "NameText").html($("#combo"+name).select2("data").id);
+		    		$("#" + lowerCaseFirstLetter(name) + "VariableList").html("");
+	    		}
+	    	}	    	
 	    });
 	//}
 }

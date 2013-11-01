@@ -52,6 +52,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.ontology.form.OntologyBrowserForm;
+import com.efficio.fieldbook.web.ontology.form.OntologyScaleForm;
 import com.efficio.fieldbook.web.ontology.validation.OntologyBrowserValidator;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
@@ -146,9 +147,15 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      * @return the string
      */
     @RequestMapping(value="scale", method = RequestMethod.GET)
-    public String showScale(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form, Model model) {
+    public String showScale(@ModelAttribute("ontologyScaleForm") OntologyScaleForm form, Model model) {
         
         try {
+            
+            List<String> variableListForScales = new ArrayList<String>();
+            variableListForScales.add("Sample Variable 1");
+            variableListForScales.add("Sample Variable 2");
+            variableListForScales.add("Sample Variable 3");
+            form.setVariablesLinkedToScale(variableListForScales);
             
         } catch (Exception e) {
             // TODO Auto-generated catch block

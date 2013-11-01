@@ -607,7 +607,7 @@ function filterPropertyCombo(treeName, traitClassId, isFromDropDown){
 	console.log("Load property of trait class id: "+traitClassId);
 	if(isFromDropDown){
 		$('#'+treeName).find("*").removeClass('highlight');
-		if(traitClassId != 0){
+		//if(traitClassId != 0){
 			var nodeKey = getNodeKeyFromTraitClass(traitClassId, treeName);
 			console.log("Activate: "+ nodeKey);
 			//console.log(json);
@@ -628,7 +628,7 @@ function filterPropertyCombo(treeName, traitClassId, isFromDropDown){
 					$('.'+key).addClass('highlight');
 				}
 			}
-		}
+		//}
 		
 		
 		
@@ -682,6 +682,7 @@ function loadTraitClassTree(treeName, treeData, dropDownId){
 	//for triggering the start of search type ahead
 			
 	var json = $.parseJSON(treeData);
+	
 	
 	$("#" + treeName).dynatree({
 	      checkbox: false,

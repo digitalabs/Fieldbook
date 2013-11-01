@@ -192,7 +192,11 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         try {
             List<TraitClassReference> traitRefList = (List<TraitClassReference>) ontologyService.getAllTraitGroupsHierarchy(false);
             List<TraitClassReference> traitClass = getAllTraitClassesFromHierarchy(traitRefList);
-            model.addAttribute("traitClassTreeData", TreeViewUtil.convertOntologyTraitsToJson(traitRefList));
+            List<TraitClassReference> parentList = new ArrayList();
+            TraitClassReference refAll = new TraitClassReference(0, "ALL");
+            refAll.setTraitClassChildren(traitRefList);
+            parentList.add(refAll);
+            model.addAttribute("traitClassTreeData", TreeViewUtil.convertOntologyTraitsToJson(parentList));
             model.addAttribute("traitClassesSuggestionList", traitClass);
         } catch (Exception e) {
             // TODO Auto-generated catch block

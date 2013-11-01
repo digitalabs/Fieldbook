@@ -380,7 +380,7 @@ function lowerCaseFirstLetter(string)
 
 function loadOntologyCombos(){
 	//create combos
-	//initializeVariable(variableNameSuggestions, variableNameSuggestions_obj, "description", "VariableName");
+	initializeVariable(variableNameSuggestions, variableNameSuggestions_obj, "description", "VariableName", true);
 	initializeVariable(traitClassesSuggestions, traitClassesSuggestions_obj, "description", "TraitClass", false);
 	initializeVariable(propertySuggestions, propertySuggestions_obj, "definition", "Property", false);
 	initializeVariable(methodSuggestions, methodSuggestions_obj, "definition", "Method", false);

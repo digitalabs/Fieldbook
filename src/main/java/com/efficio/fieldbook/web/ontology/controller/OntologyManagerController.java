@@ -361,7 +361,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      * Gets the variable name.
      *
      * @return the variable name
-     
+    */ 
     @ModelAttribute("variableNameSuggestionList")
     public List<Term> getVariableName() {
         try {
@@ -373,7 +373,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
 
         return null;
     }
-    */
+    
     
     /**
      * Gets the data types.

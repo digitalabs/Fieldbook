@@ -13,8 +13,76 @@
 	</div>	
 
 	<div class="row">
+		<div class="col-md-6">	
+			<div class="form-group">
+					<div class="col-md-4">
+         			<label for="variableName" th:text="#{ontology.browser.modal.variable.name} + ': *'">Name:</label>
+         			</div>
+                     <div class="col-md-6">
+                     	
+                     	<input id="comboVariableName" type="hidden" th:field="*{variableName}" class="form-control select2" placeholder=""/>
+   				        <input type="hidden" th:field="*{variableId}" />
+				        <!-- <input type="hidden" th:field="*{newVariableName}" />  --> 
+                     </div>
+            </div>
+			<div class="form-group">
+					<div class="col-md-4">
+           			<label for="variableDescription" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
+           			</div>
+           			<div class="col-md-6">
+                           <textarea th:field="*{variableDescription}" class="form-control" size="10"> </textarea>
+                       </div>
+				</div>	
+								
+					
+					<div class="form-group">
+						<div class="col-md-4">
+	           			<label for="cropOntologyId" th:text="#{ontology.browser.modal.crop.ontology.id} + ':'">Crop Ontology ID:</label>
+	           			</div>
+                        <div class="col-md-6">
+                            <input type="text" th:field="*{cropOntologyId}" class="form-control"/>
+                        </div>
+                       </div> 
+		</div>
+		<div class="col-md-6">	
+			<div class="form-group">
+				<div class="col-md-4">
+				<label for="dataType" class="control-label" th:text="#{ontology.browser.modal.data.type} + ': *'">Data Type:</label>
+				</div>
+				<div class="col-md-6">
+					<select class="form-control" th:field="*{dataType}">
+                      		<option value="">Select</option>
+                      		<option th:each="type : ${dataTypes}" th:value="${type.id}" th:text="${type.name}"/>
+                      	</select>
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<div class="col-md-4">
+				<label for="role" class="control-label" th:text="#{ontology.browser.modal.role} + ': *'">Role:</label>
+				</div>
+				<div class="col-md-6">
+					<select class="form-control" th:field="*{role}">
+                      		<option value="">Select</option>
+                      		<option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.name}"/>
+                      	</select>
+				</div>
+			</div>	
+			<div class="form-group">
+				<div class="col-md-4">
+				<label for="role" class="control-label" th:text="#{ontology.browser.modal.valid.value} + ':'">.Valid Values:</label>
+				</div>
+				<div class="col-md-6">
+					
+				</div>
+			</div>			 
+		</div>
+	</div>	
+	
+	
+	<div class="row">
 		<div class="col-md-12">	
-			<h3 th:text="#{ontology.browser.button.manage.variable}">Properties and Trait Classes:</h3>			 
+			<h3 th:text="#{ontology.browser.manager.header.properties.trait}">Properties and Trait Classes:</h3>			 
 		</div>
 	</div>	
 	
@@ -66,7 +134,7 @@
 	
 	<div class="row">
 		<div class="col-md-12">	
-			<h3 th:text="#{ontology.browser.button.manage.variable}">Methods and Scales:</h3>			 
+			<h3 th:text="#{ontology.browser.manager.header.method.scales}">Methods and Scales:</h3>			 
 		</div>
 	</div>	
 	
@@ -116,6 +184,20 @@
             </div>			 
 		</div>
 	</div>	
+	
+	<div class="row">
+		<div class="col-md-pull-12 pull-right">
+		<button type="submit" th:value="#{common.form.add.text}" class="btn btn-primary" 
+      		th:text="#{common.form.add.text}">.Add</button>    
+      		<button type="submit" th:value="#{common.form.update.text}" class="btn btn-primary" 
+      		th:text="#{common.form.update.text}">.Update</button>    
+      		<button type="submit" th:value="#{common.form.delete.text}" class="btn btn-danger" 
+      		th:text="#{common.form.delete.text}">.Delete</button>    
+		  <button type="button" th:value="#{common.form.back.text}" class="btn btn-primary"
+      		 th:text="#{common.form.back.text}">.back</button>
+      		
+		</div>
+	</div>
 	
 	</form>
 			

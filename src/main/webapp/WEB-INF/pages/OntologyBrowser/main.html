@@ -7,8 +7,11 @@
 	
 	<div class="row">
 		<div class="col-md-12">	
-			<input type="button" th:value="#{ontology.browser.button.manage.variable}" class="btn btn-default btn-log" 
+		
+			<!-- <input type="button" th:value="#{ontology.browser.button.manage.variable}" class="btn btn-default btn-log" 
 			data-toggle="modal" href="#addVariableModal" onClick="clearFields()" />
+			 -->
+			 <a href="/OntologyManageVariable/" class="btn btn-default btn-log" th:href="@{/OntologyManageVariable/}" th:text="#{ontology.browser.button.manage.variable}">.Manage Variable</a>
 		</div>
 	</div>	
 	<div class="row">
@@ -53,7 +56,7 @@
 	    
 	    </div>
     </div>
-    
+    <!-- 
     <div class="row">
     	<div id="ontology-add-variable" th:include="/OntologyBrowser/addVariable"></div>
     </div>
@@ -61,7 +64,7 @@
     <div class="row">
     	<div id="ontology-add-variable" th:include="/OntologyBrowser/addVariableSuccessful"></div>
     </div>
-    
+     -->
 </div>
 <div layout:fragment="page-script">		
 	<link th:href="@{/static/css/typeahead.js-bootstrap.css}" rel="stylesheet"/>

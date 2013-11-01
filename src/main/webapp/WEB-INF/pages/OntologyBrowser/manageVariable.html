@@ -1,0 +1,103 @@
+<div class="col-md-12" xmlns:th="http://www.thymeleaf.org">
+	<div class="page-header">
+		<h1 th:text="#{ontology.browser.button.manage.variable}">
+			Manage Variable 
+		</h1>
+	</div>		
+	
+	<div class="row">
+		<div class="col-md-12">	
+				
+			 
+		</div>
+	</div>	
+	
+    
+</div>
+<div layout:fragment="page-script">			
+	<script type="text/javascript" th:src="@{/static/js/ontologyBrowser.js}"></script>
+	
+	<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[    
+	var variableNameSuggestions = /*[[${variableNameSuggestionList}]]*/ null;
+    var traitClassesSuggestions = /*[[${traitClassesSuggestionList}]]*/ null;
+	var propertySuggestions = /*[[${propertiesSuggestionList}]]*/ null;
+	var methodSuggestions = /*[[${methodsSuggestionList}]]*/ null;
+	var scaleSuggestions = /*[[${scalesSuggestionList}]]*/ null;
+	
+	var variableNameSuggestions_obj = [];
+  	var traitClassesSuggestions_obj = [];
+  	var propertySuggestions_obj = [];
+  	var methodSuggestions_obj = [];
+  	var scaleSuggestions_obj = [];
+  		  	
+	function validateCombo(combo) {
+		var message = null;
+		//check if field is blank	
+		if ($("#combo"+combo).val() == "") {
+			if (combo == "TraitClass") {
+				message = /*[[#{ontology.browser.modal.combo.no.value(#{ontology.browser.modal.trait.class})}]]*/;
+			} else if (combo == "Property") {
+				message = /*[[#{ontology.browser.modal.combo.no.value(#{ontology.browser.modal.property})}]]*/;
+			} else if (combo == "Method") {
+				message = /*[[#{ontology.browser.modal.combo.no.value(#{ontology.browser.modal.method})}]]*/;
+			} else {
+				message = /*[[#{ontology.browser.modal.combo.no.value(#{ontology.browser.modal.scale})}]]*/;	
+			}
+			showMessage(message);		  
+			return false;
+		}
+		//check if items to be added exists
+		if (itemExists(combo)) {
+			if (combo == "TraitClass") {
+				message = /*[[#{ontology.browser.modal.item.exists(#{ontology.browser.modal.trait.class})}]]*/;
+			} else if (combo == "Property") {
+				message = /*[[#{ontology.browser.modal.item.exists(#{ontology.browser.modal.property})}]]*/;
+			} else if (combo == "Method") {
+				message = /*[[#{ontology.browser.modal.item.exists(#{ontology.browser.modal.method})}]]*/;
+			} else {
+				message = /*[[#{ontology.browser.modal.item.exists(#{ontology.browser.modal.scale})}]]*/;	
+			}
+			showMessage(message); 
+			return false;
+		}
+		
+		if(combo == 'Property'){
+			//we need to check if the trait class has a value
+			var dataVal = $("#comboTraitClass").select2("data");
+			if(dataVal == null || dataVal.id == ''){
+				message = /*[[#{ontology.browser.modal.trait.class.required}]]*/;
+				showMessage(message);
+				return false;
+			}
+			
+		}
+		
+		return true;
+	}
+	
+	 
+    function do_validation() {
+    	var message = null;
+    	//check required fields
+	    if (requiredFieldsEmpty()) {	
+	    	message = /*[[#{ontology.browser.modal.error}]]*/;
+	    	showMessage(message);
+			return false;
+	    }
+	    //check combo values
+	    if (comboValuesInvalid()) {
+	    	message = /*[[#{ontology.browser.modal.invalid.value}]]*/;
+	    	showMessage(message);
+	    	return false;
+	    }
+    }
+    
+	$( document ).ready(function() {  	     
+		loadOntologyCombos();
+	});
+	
+  
+      //]]>
+    </script>
+</div>

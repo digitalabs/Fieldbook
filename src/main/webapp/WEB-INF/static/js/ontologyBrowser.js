@@ -373,14 +373,14 @@ function lowerCaseFirstLetter(string)
     return string.charAt(0).toLowerCase() + string.slice(1);
 }
 
-$(function () {
+function loadOntologyCombos(){
 	//create combos
 	//initializeVariable(variableNameSuggestions, variableNameSuggestions_obj, "description", "VariableName");
 	initializeVariable(traitClassesSuggestions, traitClassesSuggestions_obj, "description", "TraitClass");
 	initializeVariable(propertySuggestions, propertySuggestions_obj, "definition", "Property");
 	initializeVariable(methodSuggestions, methodSuggestions_obj, "definition", "Method");
 	initializeVariable(scaleSuggestions, scaleSuggestions_obj, "definition", "Scale");
-});		
+}		
 
 function clearFields() {
 	$("div.modal .form-control").val("");

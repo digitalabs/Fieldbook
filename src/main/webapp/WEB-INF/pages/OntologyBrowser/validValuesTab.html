@@ -28,7 +28,7 @@
 				<div th:text="#{ontology.browser.validValuesTab.noCategoricalValue}">This categorical variable has no pre-defined set of valid values</div>
 			</div>
 			<div th:unless="*{categoricalValues == null}">
-				<table border="1" cellpadding="10" cellspacing="10">
+				<table class="table table-striped table-bordered">
 					<tr>
 						<th>Label</th>
 						<th>Description</th>

@@ -1,17 +1,30 @@
 <div class="col-md-12" xmlns:th="http://www.thymeleaf.org">
 	<div class="page-header">
 		<h1 th:text="#{ontology.browser.header}">
-			Ontology Browser
+			Standard Variables and Ontology Browser
 		</h1>
 	</div>		
 	
 	<div class="row">
+		<div class="col-md-12">	
+			<input type="button" th:value="#{ontology.browser.button.manage.variable}" class="btn btn-default btn-log" 
+			data-toggle="modal" href="#addVariableModal" onClick="clearFields()" />
+		</div>
+	</div>	
+	<div class="row">
 		<div class="col-md-5">        
 	        <div class="form-group" id="page-message"></div>
 	        <h4 th:text="#{ontology.search.name}">
-	            Please enter a trial or variable name:
+	            Enter a property or variable name:*
 	        </h4>
         </div>
+        
+		<div class="col-md-7">
+			<div class="form-group"></div>  
+			<h4 id="variable-details">	            
+	        </h4>      	        	        
+        </div>
+    
     </div>
     
 	<div class="row">
@@ -61,6 +74,7 @@
     var searchTreeData = /*[[${ontologyBrowserForm.searchTreeData}]]*/;
     var treeDivId = 'ontologyBrowserTree';
     var seasrchErrorMessage = /*[[#{ontology.search.error.no.result}]]*/;
+   	var variableDetailHeader = /*[[#{ontology.variable.details}]]*/;
    	
    	$( document ).ready(function() {  	     
   	  

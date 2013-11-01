@@ -32,7 +32,7 @@ function doOntologyTreeHighlight(treeName, nodeKey){
 	
 	var node = $("#"+treeName).dynatree("getTree").getNodeByKey(nodeKey);
 	
-	console.log(nodeKey)
+	//console.log(nodeKey)
 	
 	if(node.data.lastChildren == true){
 		
@@ -41,9 +41,9 @@ function doOntologyTreeHighlight(treeName, nodeKey){
 		standardVariableKey = elem[elem.length-1];
 		//console.log('im here' + standardVariableKey);
 		//alert("Do the ajax call now with standard variable id " + standardVariableKey);
-		processTab(standardVariableKey);
+		processTab(node.data.title, standardVariableKey);
 	}else{
-		clearAndAppendOntologyDetailsTab('');
+		clearAndAppendOntologyDetailsTab('', '');
 	}
 }
 
@@ -161,8 +161,8 @@ function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId){
 }
 
 //Tab functions
-function processTab(variableId) {
-	viewTabs(variableId);
+function processTab(variableName, variableId) {
+	viewTabs(variableName, variableId);
 }
 
 function showSelectedTab(selectedTabName) {
@@ -179,21 +179,28 @@ function showSelectedTab(selectedTabName) {
 	}
 }
 
-function clearAndAppendOntologyDetailsTab(html){
-	if(html != '')
-		$("#ontology-detail-tabs").empty().append(html);
-	else
+function clearAndAppendOntologyDetailsTab(variableName, html){
+	if(html != ''){
+		$("#ontology-detail-tabs").empty().append(html);		
+		var varDetails = variableDetailHeader + " " + variableName;
+		$("#variable-details").html(varDetails);
+	}		
+	else{
 		$("#ontology-detail-tabs").empty();
+		$("#variable-details").html('');
+		
+	}
+		
 }
 
-function viewTabs(variableId) {
+function viewTabs(variableName, variableId) {
 	Spinner.toggle();
 	$.ajax({
 		url: "details/" + variableId,
 		type: "get",
 		//dataType: "json",
 		success: function(html) {
-			clearAndAppendOntologyDetailsTab(html);			
+			clearAndAppendOntologyDetailsTab(variableName, html);			
 		},
 		error: function(jqXHR, textStatus, errorThrown){ 
 			console.log("The following error occured: " + textStatus, errorThrown); 

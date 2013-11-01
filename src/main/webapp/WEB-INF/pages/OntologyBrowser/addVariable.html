@@ -1,6 +1,4 @@
 <div class="col-md-7" xmlns:th="http://www.thymeleaf.org">
-	<br/>
-	<input type="button" th:value="#{ontology.browser.button.add.new.variable}" class="btn btn-default btn-log" data-toggle="modal" href="#addVariableModal" onClick="clearFields()" />
 	<!-- Modal -->
   	<form id="addVariableForm" role="form-horizontal" onsubmit="return do_validation()"  class="form-horizontal" action="#" 
 	    th:action="@{/OntologyBrowser/}" method="post" enctype="multipart/form-data" th:object="${ontologyBrowserForm}">

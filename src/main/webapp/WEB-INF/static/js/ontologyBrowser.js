@@ -523,32 +523,74 @@ function doTraitClassTreeHighlight(treeName, nodeKey){
 	
 	traitClassId = elem[elem.length-1];
 	
-	filterPropertyCombo(treeName, traitClassId, false)
+	filterPropertyCombo(treeName, traitClassId, false);
 	
 }
+
+function getNodeKeyFromTraitClass(traitClassId, treeName){
+
+	var rootNode = $("#"+treeName).dynatree("getRoot");
+
+	console.log(rootNode.data.key);
+
+	var children=rootNode.getChildren() ;
+	var i = 0;
+	for(i=0;i<children.length;i++){
+		//console.log("child key:"+children[i].data.key);
+		getTreeChildren(children[i], traitClassId);
+	}
+}
+function getTreeChildren(child, traitClassId){
+	console.log("parent child key:"+child.data.key);
+	
+	var children=child.getChildren();
+	if(children != null){
+		console.log("Children Length:"+children.length);
+		var i = 0;
+		for(i=0;i<children.length;i++){
+			console.log("child key:"+children[i].data.key);			
+			//getChildren(children[i], traitClassId);
+		}
+	}
+	return;
+}
+
 function filterPropertyCombo(treeName, traitClassId, isFromDropDown){
 	console.log("Load property of trait class id: "+traitClassId);
 	if(isFromDropDown){
+		getNodeKeyFromTraitClass(traitClassId, treeName);
+		
+		//console.log(json);
 		//we need to highlight the tree
 		//$("#"+treeName).dynatree("getTree").activateKey(nodeKey);
 		$('#'+treeName).find("*").removeClass('highlight');
-		//then we highlight the nodeKey and its parents
-		
-		/*
-		var elem = nodeKey.split("_");
-		var count = 0;
-		var key = "";
-		var traitClassId = ""
-		for(count = 0 ; count < elem.length ; count++){
-			if(key != '')
-				key = key + "_";
-			
-			key = key + elem[count];
-			$('.'+key).addClass('highlight');
+		//then we highlight the nodeKey and its parents		
+		var traitClassIdentifier = "_"+traitClassId;
+		console.log(traitClassIdentifier);
+		var classes = $( "span[class*='"+traitClassIdentifier+"']" ).attr("class");
+		var classArr = classes.split("_");
+		var counter = 0 ;
+		var nodeKey = "";
+		for(counter = 0 ; counter < classArr.length ; counter++){
+			if(classArr[counter].indexOf(traitClassIdentifier) != -1){
+				nodeKey = classArr[counter];
+				break;
+			}
+		}
+		if(nodeKey != ''){
+			var elem = nodeKey.split("_");
+			var count = 0;
+			var key = "";
+			var traitClassId = ""
+			for(count = 0 ; count < elem.length ; count++){
+				if(key != '')
+					key = key + "_";
+				
+				key = key + elem[count];
+				$('.'+key).addClass('highlight');
+			}
 		}
 		
-		var node = $("#"+treeName).dynatree("getTree").getNodeByKey(nodeKey);
-		*/
 		
 	}else {
 		var counter = 0;

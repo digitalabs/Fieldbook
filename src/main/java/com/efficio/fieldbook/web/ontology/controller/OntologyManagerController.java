@@ -25,9 +25,7 @@ import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.oms.CvId;
 import org.generationcp.middleware.domain.oms.Method;
 import org.generationcp.middleware.domain.oms.Property;
-import org.generationcp.middleware.domain.oms.PropertyReference;
 import org.generationcp.middleware.domain.oms.Scale;
-import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 //import org.generationcp.middleware.domain.oms.TermId;
@@ -52,11 +50,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.ontology.form.OntologyBrowserForm;
+import com.efficio.fieldbook.web.ontology.form.OntologyMethodForm;
 import com.efficio.fieldbook.web.ontology.form.OntologyScaleForm;
 import com.efficio.fieldbook.web.ontology.validation.OntologyBrowserValidator;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import org.generationcp.middleware.service.api.OntologyService;
 
 
 // TODO: Auto-generated Javadoc
@@ -172,7 +169,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      * @return the string
      */
     @RequestMapping(value="method", method = RequestMethod.GET)
-    public String showMethod(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form, Model model) {
+    public String showMethod(@ModelAttribute("ontologyMethodForm") OntologyMethodForm form, Model model) {
         
         try {
             

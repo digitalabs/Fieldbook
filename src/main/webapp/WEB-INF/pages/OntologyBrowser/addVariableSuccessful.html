@@ -10,7 +10,7 @@
 	         		</div>
 	         		<br/><br/>
 	         		<div class="alert alert-success" th:if="${#strings.isEmpty(ontologyBrowserForm.variableId)}" th:text="#{ontology.browser.header.add.new.variable.successful(${ontologyBrowserForm.variableName})}">Standard Variable successfully created.</div>
-	         		<div class="alert alert-success" th:unless="${#strings.isEmpty(ontologyBrowserForm.variableId)}" th:text="#{ontology.browser.header.edit.variable.successful(${ontologyBrowserForm.variableName})}">Standard Variable successfully updated.</div>
+	         		<div class="alert alert-success" th:unless="${#strings.isEmpty(ontologyBrowserForm.variableId)}" th:text="#{ontology.browser.header.edit.variable.successful(${ontologyBrowserForm.newVariableName})}">Standard Variable successfully updated.</div>
 	         	</div>																							
 	       		<div class="modal-footer">    
 	       			<button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">OK</button>	

@@ -760,6 +760,7 @@ function getStandardVariableDetails(variableId) {
 		setVisibleButtons(true, false, false);
 		$("#role").removeAttr("disabled");
 	}
+	$("#page-message").html("");
 }
 
 function setComboValues(suggestions_obj, id, name) {

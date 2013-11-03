@@ -23,6 +23,8 @@ public class OntologyBrowserValidator implements Validator  {
     
 
     public final static String MANDATORY_FIELD_NOT_POPULATED = "ontology.browser.modal.error";
+    
+    public final static String CANNOT_UPDATE_CENTRAL_VARIABLE = "ontology.browser.cannot.update.central.variable"; 
 
     /* (non-Javadoc)
      * @see org.springframework.validation.Validator#supports(java.lang.Class)
@@ -41,7 +43,6 @@ public class OntologyBrowserValidator implements Validator  {
 
         //on edit mode, role is disabled and not passed to the form
     	boolean isAddMode = form.getVariableId() == null;
-    	
         if (form.getVariableName() == null || form.getVariableName().equals("")) {
             errors.rejectValue("variableName", MANDATORY_FIELD_NOT_POPULATED);
         } else if (form.getDataType() == null || form.getDataType().equals("")) {
@@ -56,6 +57,8 @@ public class OntologyBrowserValidator implements Validator  {
             errors.rejectValue("method", MANDATORY_FIELD_NOT_POPULATED);
         } else if (form.getScale() == null || form.getScale().equals("")) {
             errors.rejectValue("scale", MANDATORY_FIELD_NOT_POPULATED);
+        } else if (!isAddMode && form.getVariableId() > -1) {
+            errors.rejectValue("variableName", CANNOT_UPDATE_CENTRAL_VARIABLE);
         }
         
     }

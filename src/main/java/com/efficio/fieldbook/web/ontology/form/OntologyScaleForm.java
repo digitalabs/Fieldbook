@@ -14,7 +14,7 @@ package com.efficio.fieldbook.web.ontology.form;
 import java.util.List;
 
 
-public class OntologyScaleForm{
+public class OntologyScaleForm implements OntologyModalForm {
 
     private String comboManageScale;
     private Integer manageScaleId;
@@ -60,6 +60,21 @@ public class OntologyScaleForm{
 
     public void setManageScaleName(String manageScaleName) {
         this.manageScaleName = manageScaleName;
+    }
+
+    @Override
+    public boolean isAddMode() {
+        return manageScaleId == null;
+    }
+
+    @Override
+    public String getName() {
+        return getManageScaleName();
+    }
+
+    @Override
+    public Integer getId() {
+        return getManageScaleId();
     }
     
 }

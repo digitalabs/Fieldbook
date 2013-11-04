@@ -7,7 +7,7 @@
 	enctype="multipart/form-data" th:object="${ontologyMethodForm}">
 	
 	<div class="modal-body">
-		<div class="form-group" id="page-message-modal"></div>
+		<div class="form-group" id="page-message-manageMethod-modal"></div>
 		<div th:class="${#fields.hasErrors('*')} ? 'form-group has-error' : 'form-group'">
 			<div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
 			<div class="row fluid">
@@ -43,12 +43,12 @@
 	</div>																							
 	<div class="modal-footer">
 		<button id="btnAddManageMethod" type="submit" th:value="#{common.form.add.text}" class="btn btn-primary" 
-		th:text="#{common.form.add.text}">Add</button>      	
+		th:text="#{common.form.add.text}" onclick="saveMethod();">Add</button>      	
 		<button id="btnUpdateManageMethod" type="submit" th:value="#{common.form.update.text}" class="btn btn-primary" 
-		th:text="#{common.form.update.text}" style="display:none;">Update</button>      	
+		th:text="#{common.form.update.text}" style="display:none;" onclick="saveMethod();">Update</button>      	
 		<button id="btnDeleteManageMethod" type="submit" th:value="#{common.form.delete.text}" class="btn btn-primary" 
-		th:text="#{common.form.delete.text}" style="display:none;">Delete</button>      	
-		<button type="button" th:value="#{common.form.cancel.text}" class="btn btn-primary"
+		th:text="#{common.form.delete.text}" style="display:none;" onclick="deleteOntology('ManageMethod')">Delete</button>      	
+		<button id="btnCloseManageMethod" type="button" th:value="#{common.form.cancel.text}" class="btn btn-primary"
 		 th:text="#{common.form.cancel.text}" data-dismiss="modal" aria-hidden="true">Cancel</button>
 	</div>
 
@@ -61,6 +61,34 @@
 	  		initializeVariable(methodSuggestions, methodSuggestions_obj, "definition", "ManageMethod", true);
 	  		
 	  	});
+
+	  	function saveMethod() {
+	  		if (!validateMethod()) {
+	  			message = /*[[#{ontology.browser.modal.error}]]*/;
+	  			showErrorMessageInModal("page-message-manageMethod-modal", message);
+	  			return;
+	  		}
+	  		Spinner.toggle();
+			serializedData = $("#manageMethodForm").serialize();
+	  		
+	  		$.ajax({
+	  			url : ontologyUrl + "method",
+				type: "POST",
+				dataType: "json",
+				data: serializedData,
+			    success: function(data) {
+			    	if (data.status == '1') {
+			    		$("#btnCloseManageMethod").trigger("click");
+			    		recreateComboAfterUpdate("ManageMethod", data.savedObject);
+			    		showSuccessMessage(data.successMessage);
+			    	} else {
+			    		alert(data.errorMessage);
+			    		showErrorMessageInModal("page-message-manageMethod-modal", data.errorMessage);
+			    	}
+					Spinner.toggle();
+				} 
+	  		});
+	  	}
     //]]>
 	</script>
 </div>

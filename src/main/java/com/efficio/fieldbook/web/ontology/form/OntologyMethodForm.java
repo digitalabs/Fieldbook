@@ -14,7 +14,7 @@ package com.efficio.fieldbook.web.ontology.form;
 import java.util.List;
 
 
-public class OntologyMethodForm{
+public class OntologyMethodForm implements OntologyModalForm {
 
     private String comboManageMethod;
     private Integer manageMethodId;
@@ -61,5 +61,20 @@ public class OntologyMethodForm{
     
     public void setVariablesLinkedToMethod(List<String> variablesLinkedToMethod) {
         this.variablesLinkedToMethod = variablesLinkedToMethod;
+    }
+
+    @Override
+    public boolean isAddMode() {
+        return manageMethodId == null;
+    }
+
+    @Override
+    public String getName() {
+        return getManageMethodName();
+    }
+
+    @Override
+    public Integer getId() {
+        return getManageMethodId();
     }
 }

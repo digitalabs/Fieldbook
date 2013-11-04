@@ -14,23 +14,17 @@ package com.efficio.fieldbook.web.ontology.form;
 import java.util.List;
 
 
-public class OntologyPropertyForm{
+public class OntologyPropertyForm implements OntologyModalForm {
     
     private String comboManageProperty;
     private Integer managePropertyId;
     private String managePropertyName;
     private String managePropertyDescription;
+    private String comboManagePropTraitClass;
+    private Integer managePropTraitClassId;
+    private String managePropTraitClassName;
     private List<String> variablesLinkedToProperty;
     
-    
-    public String getManagePropertyName() {
-        return managePropertyName;
-    }
-    
-    public void setManagePropertyName(String managePropertyName) {
-        this.managePropertyName = managePropertyName;
-    }
-
     public String getComboManageProperty() {
         return comboManageProperty;
     }
@@ -47,12 +41,44 @@ public class OntologyPropertyForm{
         this.managePropertyId = managePropertyId;
     }
     
+    public String getManagePropertyName() {
+        return managePropertyName;
+    }
+    
+    public void setManagePropertyName(String managePropertyName) {
+        this.managePropertyName = managePropertyName;
+    }
+    
     public String getManagePropertyDescription() {
         return managePropertyDescription;
     }
     
     public void setManagePropertyDescription(String managePropertyDescription) {
         this.managePropertyDescription = managePropertyDescription;
+    }
+    
+    public String getComboManagePropTraitClass() {
+        return comboManagePropTraitClass;
+    }
+    
+    public void setComboManagePropTraitClass(String comboManagePropTraitClass) {
+        this.comboManagePropTraitClass = comboManagePropTraitClass;
+    }
+    
+    public Integer getManagePropTraitClassId() {
+        return managePropTraitClassId;
+    }
+    
+    public void setManagePropTraitClassId(Integer managePropTraitClassId) {
+        this.managePropTraitClassId = managePropTraitClassId;
+    }
+    
+    public String getManagePropTraitClassName() {
+        return managePropTraitClassName;
+    }
+    
+    public void setManagePropTraitClassName(String managePropTraitClassName) {
+        this.managePropTraitClassName = managePropTraitClassName;
     }
     
     public List<String> getVariablesLinkedToProperty() {
@@ -62,4 +88,20 @@ public class OntologyPropertyForm{
     public void setVariablesLinkedToProperty(List<String> variablesLinkedToProperty) {
         this.variablesLinkedToProperty = variablesLinkedToProperty;
     }
+
+    @Override
+    public boolean isAddMode() {
+        return managePropertyId == null;
+    }
+
+    @Override
+    public String getName() {
+        return getManagePropertyName();
+    }
+
+    @Override
+    public Integer getId() {
+        return getManagePropertyId();
+    }
+    
 }

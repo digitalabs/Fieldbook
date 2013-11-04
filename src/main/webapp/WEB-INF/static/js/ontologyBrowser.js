@@ -383,10 +383,12 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 		    		$("#btnAdd" + name).hide();
 		    		$("#btnUpdate" + name).show();
 		    		$("#btnDelete" + name).show();
-		    		$("#" + lowerCaseFirstLetter(name) + "NameText").html($("#combo"+name).select2("data").description);
+		    		$("#" + lowerCaseFirstLetter(name) + "NameText").html($("#combo"+name).select2("data").text.replace(" (Shared)", ""));
 		    		
 		    		//add the loading of the linked variables here
-		    		retrieveLinkedVariables(name, $("#combo"+name).select2("data").id);
+		    		if (allowTypedValues) {
+		    			retrieveLinkedVariables(name, $("#combo"+name).select2("data").id);
+		    		}
 	    		} else { //add mode
 			    	$("#" + lowerCaseFirstLetter(name) + "Id").val('');
 			    	$("#" + lowerCaseFirstLetter(name) + "Name").val($("#combo"+name).select2("data").id);
@@ -843,6 +845,18 @@ function validateTraitClass() {
 	return ($("#comboManageTraitClass").val() && $("#manageParentTraitClassId").val());
 }
 
+function validateProperty() {
+	return ($("#comboManageProperty").val() && $("#managePropTraitClassId").val());
+}
+
+function validateScale() {
+	return ($("#comboManageScale").val());
+}
+
+function validateMethod() {
+	return ($("#comboManageMethod").val());
+}
+
 function findIndexOfOntology(suggestions_obj, data) {
 	for (var i = 0; i < suggestions_obj.length; i++) {
 	    if (suggestions_obj[i].id == data.id) {
@@ -959,29 +973,6 @@ function recreateComboAfterUpdate(combo, data) {
 	$("#combo"+combo).select2('data', newData);//no need to trigger change.trigger('change');
 }
 
-function deleteTraitClass() {
-	Spinner.toggle();
-	
-	var traitClassData = {id: $("#manageTraitClassId").val(), name: $("#manageTraitClassName").val()};
-	
-	$.ajax({
-		url : ontologyUrl + "deleteTraitClass",
-		type: "POST",
-		dataType: "json",
-		data: traitClassData,
-	    success: function(data) {
-	    	if (data.status == '1') {
-	    		$("#btnCloseTraitClass").trigger("click");
-	    		recreateComboAfterDelete("ManageTraitClass", traitClassData);
-	    		showSuccessMessage(data.successMessage);
-	    	} else {
-	    		showErrorMessageInModal("page-message-traitClass-modal", data.errorMessage);
-	    	}
-			Spinner.toggle();
-		} 
-	});
-}
-  	
 function findIndexOfDeletedVariable(suggestions_obj, id) {
 	for (var i = 0; i < suggestions_obj.length; i++) {
 	    if (suggestions_obj[i].id == id) {
@@ -1032,26 +1023,26 @@ function preSelectAfterUpdate(combo, id, name) {
 	$("#combo" + combo).select2('data', newData).trigger('change');	
 }
 
-/*
 //function for deleting ontology
 function deleteOntology(combo) {
-	if (validateComboForDelete(combo)) {
+	//if (validateComboForDelete(combo)) {
 		//get the form data
-		var $form = $("#addVariableForm");
-		serializedData = $form.serialize();
+		var formData = {id: $("#" + lowerCaseFirstLetter(combo) + "Id").val(), name: $("#" + lowerCaseFirstLetter(combo) + "Name").val()};
 		
 		Spinner.toggle();
 		
 		$.ajax({
-			url: "deleteOntology/" + combo,
+			url: ontologyUrl + "deleteOntology/" + lowerCaseFirstLetter(combo.replace("Manage", "")),
 			type: "post",
 			dataType: "json",
-			data: serializedData,
+			data: formData,
 		    success: function(data){
 			    if (data.status == "1") {
-		       	} else {
-		       		//show validation or error messages
-		       		showMessage(data.errorMessage);
+		    		$("#btnClose" + combo).trigger("click");
+		    		recreateComboAfterDelete(combo, formData);
+		    		showSuccessMessage(data.successMessage);
+		    	} else {
+		    		showErrorMessageInModal("page-message-" + lowerCaseFirstLetter(combo) + "-modal", data.errorMessage);
 		       	}
 		   }, 
 		   error: function(jqXHR, textStatus, errorThrown){
@@ -1062,7 +1053,7 @@ function deleteOntology(combo) {
 		   } 
 		});
 
-	}
+	//}
 }
 
-*/
+

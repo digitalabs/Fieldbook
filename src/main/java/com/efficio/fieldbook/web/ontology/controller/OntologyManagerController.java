@@ -52,6 +52,7 @@ import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.ontology.form.OntologyBrowserForm;
 import com.efficio.fieldbook.web.ontology.form.OntologyMethodForm;
+import com.efficio.fieldbook.web.ontology.form.OntologyModalForm;
 import com.efficio.fieldbook.web.ontology.form.OntologyPropertyForm;
 import com.efficio.fieldbook.web.ontology.form.OntologyScaleForm;
 import com.efficio.fieldbook.web.ontology.form.OntologyTraitClassForm;
@@ -112,74 +113,15 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
     @RequestMapping(value="traitClass", method = RequestMethod.GET)
     public String showTraitClass(@ModelAttribute("ontologyTraitClassForm") OntologyTraitClassForm form, Model model) {
         
-        try {
-            
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
         return super.showAjaxPage(model, TRAIT_CLASS_MODAL);
     }
 
     @ResponseBody
     @RequestMapping(value="traitClass", method = RequestMethod.POST)
-    public Map<String, Object> addTraitClass(@ModelAttribute("ontologyTraitClassForm") OntologyTraitClassForm form) {
-        
-        Map<String, Object> result = new HashMap<String, Object>();
-        Locale locale = LocaleContextHolder.getLocale();
-        String ontologyType = messageSource.getMessage("ontology.browser.modal.trait.class", null, locale);
-        
-        try {
-            if (form.getManageTraitClassId() == null) { //add mode
-                result.put("successMessage", 
-                        messageSource.getMessage("ontology.browser.modal.add.ontology.successful", 
-                                new Object[] {ontologyType, form.getManageTraitClassName()}, 
-                                locale));
-            } 
-            else { //edit mode
-                result.put("successMessage", 
-                        messageSource.getMessage("ontology.browser.modal.update.ontology.successful", 
-                                new Object[] {ontologyType, form.getManageTraitClassName()}, 
-                                locale));
-            }
-            TraitClass traitClass = ontologyService.addOrUpdateTraitClass(form.getManageTraitClassName(), form.getManageTraitClassDescription(), form.getManageParentTraitClassId());
-            result.put("traitClass", traitClass);
-            result.put("status", "1");
-            
-        } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
-            result.put("status",  "0");
-            result.put("errorMessage", errorHandlerService.getErrorMessagesAsString(e.getMessage(), "<br/>"));
-        }
-        return result;
+    public Map<String, Object> saveTraitClass(@ModelAttribute("ontologyTraitClassForm") OntologyTraitClassForm form) {
+         return saveOntology(form);
     }
     
-    @ResponseBody
-    @RequestMapping(value="deleteTraitClass", method = RequestMethod.POST)
-    public Map<String, String> deleteTraitClass(@RequestParam("id") Integer traitClassId, 
-            @RequestParam("name") String traitClassName) {
-        
-        System.out.println("INPUT!!! " + traitClassId + ", " + traitClassName);
-        Map<String, String> result = new HashMap<String, String>();
-        Locale locale = LocaleContextHolder.getLocale();
-        String ontologyType = messageSource.getMessage("ontology.browser.modal.trait.class", null, locale);
-        
-        try {
-            ontologyService.deleteTraitClass(traitClassId);
-            result.put("status", "1");
-            result.put("successMessage", messageSource.getMessage("ontology.browser.modal.delete.ontology.successful", 
-                    new Object[] {ontologyType, traitClassName}, 
-                    locale));
-            
-        } catch(Exception e) {
-            LOG.error(e.getMessage(), e);
-            result.put("status", "0");
-            result.put("errorMessage", errorHandlerService.getErrorMessagesAsString(e.getMessage(), "<br/>"));
-        }
-        
-        return result;
-    }
-
     /**
      * Show the main import page.
      *
@@ -190,15 +132,14 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
     @RequestMapping(value="property", method = RequestMethod.GET)
     public String showProperty(@ModelAttribute("ontologyPropertyForm") OntologyPropertyForm form, Model model) {
         
-        try {
-            
-//            model.addAttribute("propertiesSuggestionList", ontologyService.getAllProperties());
-            
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
         return super.showAjaxPage(model, PROPERTY_MODAL);
+    }
+
+    @ResponseBody
+    @RequestMapping(value="property", method = RequestMethod.POST)
+    public Map<String, Object> saveProperty(@ModelAttribute("ontologyPropertyForm") OntologyPropertyForm form) {
+
+        return saveOntology(form);
     }
     
     /**
@@ -211,21 +152,14 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
     @RequestMapping(value="scale", method = RequestMethod.GET)
     public String showScale(@ModelAttribute("ontologyScaleForm") OntologyScaleForm form, Model model) {
         
-        try {
-            
-  //          model.addAttribute("scalesSuggestionList", ontologyService.getAllScales());
-            
-            List<String> variableListForScales = new ArrayList<String>();
-            variableListForScales.add("Sample Variable 1");
-            variableListForScales.add("Sample Variable 2");
-            variableListForScales.add("Sample Variable 3");
-            form.setVariablesLinkedToScale(variableListForScales);
-            
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
         return super.showAjaxPage(model, SCALE_MODAL);
+    }
+    
+    @ResponseBody
+    @RequestMapping(value="scale", method = RequestMethod.POST)
+    public Map<String, Object> saveScale(@ModelAttribute("ontologyScaleForm") OntologyScaleForm form) {
+
+        return saveOntology(form);
     }
     
     /**
@@ -238,16 +172,16 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
     @RequestMapping(value="method", method = RequestMethod.GET)
     public String showMethod(@ModelAttribute("ontologyMethodForm") OntologyMethodForm form, Model model) {
         
-        try {
-            
-//            model.addAttribute("methodsSuggestionList", ontologyService.getAllMethods());
-            
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
         return super.showAjaxPage(model, METHOD_MODAL);
     }
+    
+    @ResponseBody
+    @RequestMapping(value="method", method = RequestMethod.POST)
+    public Map<String, Object> saveMethod(@ModelAttribute("ontologyMethodForm") OntologyMethodForm form) {
+
+        return saveOntology(form);
+    }
+    
     /**
      * Show the main import page.
      *
@@ -799,4 +733,87 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         }
         return message;
     }*/
+    
+    private Map<String, Object> saveOntology(OntologyModalForm form) {
+        Map<String, Object> result = new HashMap<String, Object>();
+        Locale locale = LocaleContextHolder.getLocale();
+        String ontologyName = null;
+
+        try {
+            if (form instanceof OntologyTraitClassForm) {
+                ontologyName = messageSource.getMessage("ontology.browser.modal.trait.class", null, locale);
+                result.put("savedObject", ontologyService.addOrUpdateTraitClass(
+                        ((OntologyTraitClassForm) form).getManageTraitClassName(), 
+                        ((OntologyTraitClassForm) form).getManageTraitClassDescription(), 
+                        ((OntologyTraitClassForm) form).getManageParentTraitClassId()));
+            }
+            else if (form instanceof OntologyPropertyForm) {
+                ontologyName = messageSource.getMessage("ontology.browser.modal.property", null, locale);
+                result.put("savedObject", ontologyService.addOrUpdateProperty(
+                        ((OntologyPropertyForm)form).getManagePropertyName(), 
+                        ((OntologyPropertyForm)form).getManagePropertyDescription(), 
+                        ((OntologyPropertyForm)form).getManagePropTraitClassId()));
+            }
+            else if (form instanceof OntologyScaleForm) {
+                ontologyName = messageSource.getMessage("ontology.browser.modal.scale", null, locale);
+                result.put("savedObject", ontologyService.addOrUpdateScale(
+                        ((OntologyScaleForm) form).getManageScaleName(), 
+                        ((OntologyScaleForm) form).getManageScaleDescription()));
+            }
+            else if (form instanceof OntologyMethodForm) {
+                ontologyName = messageSource.getMessage("ontology.browser.modal.method", null, locale);
+                result.put("savedObject", ontologyService.addOrUpdateMethod(
+                        ((OntologyMethodForm) form).getManageMethodName(), 
+                        ((OntologyMethodForm) form).getManageMethodDescription()));
+            }
+            
+            if (form.isAddMode()) { //add mode
+                result.put("successMessage", 
+                        messageSource.getMessage("ontology.browser.modal.add.ontology.successful", 
+                                new Object[] {ontologyName, form.getName()}, 
+                                locale));
+            } 
+            else { //edit mode
+                result.put("successMessage", 
+                        messageSource.getMessage("ontology.browser.modal.update.ontology.successful", 
+                                new Object[] {ontologyName, form.getName()}, 
+                                locale));
+            }
+
+            result.put("status", "1");
+            
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            result.put("status",  "0");
+            result.put("errorMessage", errorHandlerService.getErrorMessagesAsString(e.getMessage(), "<br/>"));
+        }
+        return result;
+    }
+    
+    @ResponseBody
+    @RequestMapping(value = "deleteOntology/{ontology}", method = RequestMethod.POST)
+    public Map<String, String> deleteOntology(@RequestParam(required=false) Integer id, @RequestParam(required=false) String name, @PathVariable String ontology) {
+        Map<String, String> result = new HashMap<String, String>();
+        System.out.println("ID IS " + id);
+        System.out.println("NAME IS " + name);
+        Locale locale = LocaleContextHolder.getLocale();
+        
+        String ontologyTypeName = messageSource.getMessage("ontology.browser.modal." + ontology, null, locale);
+        
+        try {
+            ontologyService.deleteTraitClass(id);
+            result.put("status", "1");
+            result.put("successMessage", messageSource.getMessage("ontology.browser.modal.delete.ontology.successful", 
+                    new Object[] {ontologyTypeName, name}, 
+                    locale));
+            
+        } catch(Exception e) {
+            LOG.error(e.getMessage(), e);
+            result.put("status", "0");
+            result.put("errorMessage", errorHandlerService.getErrorMessagesAsString(e.getMessage(), "<br/>"));
+        }
+        
+        return result;
+    }
+    
 }

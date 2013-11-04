@@ -21,14 +21,9 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.generationcp.middleware.domain.dms.Enumeration;
-import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
-import org.generationcp.middleware.domain.dms.VariableConstraints;
 import org.generationcp.middleware.domain.oms.CvId;
-import org.generationcp.middleware.domain.oms.Method;
 import org.generationcp.middleware.domain.oms.Property;
-import org.generationcp.middleware.domain.oms.Scale;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitClass;
@@ -128,7 +123,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
 
     @ResponseBody
     @RequestMapping(value="traitClass", method = RequestMethod.POST)
-    public Map<String, Object> addTraitClass(@ModelAttribute("ontologyTraitClassForm") OntologyTraitClassForm form, Model model) {
+    public Map<String, Object> addTraitClass(@ModelAttribute("ontologyTraitClassForm") OntologyTraitClassForm form) {
         
         Map<String, Object> result = new HashMap<String, Object>();
         Locale locale = LocaleContextHolder.getLocale();
@@ -156,6 +151,32 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
             result.put("status",  "0");
             result.put("errorMessage", errorHandlerService.getErrorMessagesAsString(e.getMessage(), "<br/>"));
         }
+        return result;
+    }
+    
+    @ResponseBody
+    @RequestMapping(value="deleteTraitClass", method = RequestMethod.POST)
+    public Map<String, String> deleteTraitClass(@RequestParam("id") Integer traitClassId, 
+            @RequestParam("name") String traitClassName) {
+        
+        System.out.println("INPUT!!! " + traitClassId + ", " + traitClassName);
+        Map<String, String> result = new HashMap<String, String>();
+        Locale locale = LocaleContextHolder.getLocale();
+        String ontologyType = messageSource.getMessage("ontology.browser.modal.trait.class", null, locale);
+        
+        try {
+            ontologyService.deleteTraitClass(traitClassId);
+            result.put("status", "1");
+            result.put("successMessage", messageSource.getMessage("ontology.browser.modal.delete.ontology.successful", 
+                    new Object[] {ontologyType, traitClassName}, 
+                    locale));
+            
+        } catch(Exception e) {
+            LOG.error(e.getMessage(), e);
+            result.put("status", "0");
+            result.put("errorMessage", errorHandlerService.getErrorMessagesAsString(e.getMessage(), "<br/>"));
+        }
+        
         return result;
     }
 

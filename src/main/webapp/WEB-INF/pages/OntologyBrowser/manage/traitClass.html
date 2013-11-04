@@ -60,7 +60,7 @@
 		<button id="btnUpdateManageTraitClass" type="button" th:value="#{common.form.update.text}" class="btn btn-primary" 
 		th:text="#{common.form.update.text}" style="display:none;" onclick="saveTraitClass();">Update</button>      	
 		<button id="btnDeleteManageTraitClass" type="submit" th:value="#{common.form.delete.text}" class="btn btn-primary" 
-		th:text="#{common.form.delete.text}" style="display:none;">Delete</button>      	
+		th:text="#{common.form.delete.text}" style="display:none;" onclick="deleteTraitClass();">Delete</button>      	
 		<button id="btnCloseTraitClass" type="button" th:value="#{common.form.cancel.text}" class="btn btn-primary"
 		 th:text="#{common.form.cancel.text}" data-dismiss="modal" aria-hidden="true">Cancel</button>
 	</div>
@@ -102,11 +102,6 @@
 			    	} else {
 			    		showErrorMessageInModal("page-message-traitClass-modal", data.errorMessage);
 			    	}
-			    }, 
-				error: function(jqXHR, textStatus, errorThrown){ 
-					console.log("The following error occured: " + textStatus, errorThrown); 
-				}, 
-				complete: function(){ 
 					Spinner.toggle();
 				} 
 	  		});

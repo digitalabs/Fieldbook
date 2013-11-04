@@ -876,16 +876,15 @@ function recreateComboAfterDelete(combo, data) {
 		index = findIndexOfDeletedVariable(variableNameSuggestions_obj, data);
 		variableNameSuggestions_obj.splice(index, 1);
 		recreate(combo, variableNameSuggestions_obj);
-	} else if (combo == "TraitClass") {		
+	} else if (combo == "ManageTraitClass") {		
 		index = findIndexOfOntology(traitClassesSuggestions_obj, data);
 		traitClassesSuggestions_obj.splice(index, 1);
 		recreate(combo, traitClassesSuggestions_obj);
-		description = $("#traitClassDescription");
-	} else if (combo == "Property") {
+	} else if (combo == "ManageProperty") {
 		index = findIndexOfOntology(propertySuggestions_obj, data);
 		propertySuggestions_obj.splice(index, 1);
 		recreate(combo, propertySuggestions_obj);
-	} else if (combo == "Method") {
+	} else if (combo == "ManageMethod") {
 		index = findIndexOfOntology(methodSuggestions_obj, data);
 		methodSuggestions_obj.splice(index, 1);
 		recreate(combo, methodSuggestions_obj);
@@ -958,6 +957,31 @@ function recreateComboAfterUpdate(combo, data) {
 	description.val(data.definition);
 	$("#combo"+combo).select2('data', newData);//no need to trigger change.trigger('change');
 }
+
+function deleteTraitClass() {
+	Spinner.toggle();
+	
+	var traitClassData = {id: $("#manageTraitClassId").val(), name: $("#manageTraitClassName").val()};
+	
+	$.ajax({
+		url : ontologyUrl + "deleteTraitClass",
+		type: "POST",
+		dataType: "json",
+		data: traitClassData,
+	    success: function(data) {
+	    	if (data.status == '1') {
+	    		$("#btnCloseTraitClass").trigger("click");
+	    		recreateComboAfterDelete("ManageTraitClass", traitClassData);
+	    		showSuccessMessage(data.successMessage);
+	    	} else {
+	    		showErrorMessageInModal("page-message-traitClass-modal", data.errorMessage);
+	    	}
+			Spinner.toggle();
+		} 
+	});
+}
+  	
+
 /*
 //function for deleting ontology
 function deleteOntology(combo) {

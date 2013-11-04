@@ -373,7 +373,7 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	    }).on("change", function(){
 	    	$("#" + lowerCaseFirstLetter(name) + "Description").val($("#combo"+name).select2("data").description);
 	    	if(name == 'TraitClass'){
-	    		filterPropertyCombo(treeDivId, $("#comboTraitClass").select2("data").id, true);
+	    		filterPropertyCombo(treeDivId, "comboTraitClass", "traitClassDescription", $("#comboTraitClass").select2("data").id, true);
 	    	}
 	    	if (name.match("^Manage")) {
 	    		if ($("#combo"+name).select2("data").description) { //edit mode
@@ -536,7 +536,7 @@ function sortByKey(array, key) {
     });
 }
 
-function doTraitClassTreeHighlight(treeName, nodeKey){
+function doTraitClassTreeHighlight(treeName, comboName, descriptionName, nodeKey){
 	$("#"+treeName).dynatree("getTree").activateKey(nodeKey);
 	$('#'+treeName).find("*").removeClass('highlight');
 	//then we highlight the nodeKey and its parents
@@ -556,7 +556,7 @@ function doTraitClassTreeHighlight(treeName, nodeKey){
 	
 	traitClassId = elem[elem.length-1];
 	
-	filterPropertyCombo(treeName, traitClassId, false);
+	filterPropertyCombo(treeName, comboName, descriptionName, traitClassId, false);
 	
 }
 
@@ -603,7 +603,7 @@ function getTreeChildren(child, traitClassId){
 	return nodeKey;
 }
 
-function filterPropertyCombo(treeName, traitClassId, isFromDropDown){
+function filterPropertyCombo(treeName, comboName, descriptionName, traitClassId, isFromDropDown){
 	console.log("Load property of trait class id: "+traitClassId);
 	if(isFromDropDown){
 		$('#'+treeName).find("*").removeClass('highlight');
@@ -638,8 +638,8 @@ function filterPropertyCombo(treeName, traitClassId, isFromDropDown){
 			if(traitClassId == traitClassesSuggestions_obj[counter].id){
 				var dataVal = traitClassesSuggestions_obj[counter];
 				//console.log(dataVal);
-				$("#comboTraitClass").select2('data', dataVal);
-				$("#traitClassDescription").val(dataVal.description);
+				$("#" + comboName).select2('data', dataVal);
+				$("#" + descriptionName).val(dataVal.description);
 				break;
 			}
 		}	
@@ -678,7 +678,7 @@ function filterPropertyCombo(treeName, traitClassId, isFromDropDown){
 });
 	$("#propertyDescription").val("");
 }
-function loadTraitClassTree(treeName, treeData, dropDownId){
+function loadTraitClassTree(treeName, comboName, descriptionName, treeData, dropDownId){
 	//for triggering the start of search type ahead
 			
 	var json = $.parseJSON(treeData);
@@ -706,11 +706,11 @@ function loadTraitClassTree(treeName, treeData, dropDownId){
 	             return "[" + node.data.key + "]: '" + node.data.title + "'";
 	        });
 	       
-	        doTraitClassTreeHighlight(treeName, node.data.key);
+	        doTraitClassTreeHighlight(treeName, comboName, descriptionName, node.data.key);
 	      },
 	      onSelect: function(select, node) {
 	        // Display list of selected nodes		    	
-	        doTraitClassTreeHighlight(treeName, node.data.key);
+	        doTraitClassTreeHighlight(treeName, comboName, descriptionName, node.data.key);
 	      },
 	      onDblClick: function(node, event) {
 	        node.toggleSelect();

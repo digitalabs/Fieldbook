@@ -111,10 +111,6 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
     public String showTraitClass(@ModelAttribute("ontologyTraitClassForm") OntologyTraitClassForm form, Model model) {
         
         try {
-            List<TraitClassReference> traitRefList = (List<TraitClassReference>) ontologyService.getAllTraitGroupsHierarchy(false);
-            List<TraitClassReference> traitClass = getAllTraitClassesFromHierarchy(traitRefList); 
-            model.addAttribute("traitClassTreeData", TreeViewUtil.convertOntologyTraitsToJson(traitRefList));
-            model.addAttribute("traitClassesSuggestionList", traitClass);
             
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -135,7 +131,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         
         try {
             
-            model.addAttribute("propertiesSuggestionList", ontologyService.getAllProperties());
+//            model.addAttribute("propertiesSuggestionList", ontologyService.getAllProperties());
             
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -156,7 +152,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         
         try {
             
-            model.addAttribute("scalesSuggestionList", ontologyService.getAllScales());
+  //          model.addAttribute("scalesSuggestionList", ontologyService.getAllScales());
             
             List<String> variableListForScales = new ArrayList<String>();
             variableListForScales.add("Sample Variable 1");
@@ -183,7 +179,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         
         try {
             
-            model.addAttribute("methodsSuggestionList", ontologyService.getAllMethods());
+//            model.addAttribute("methodsSuggestionList", ontologyService.getAllMethods());
             
         } catch (Exception e) {
             // TODO Auto-generated catch block

@@ -57,7 +57,7 @@ public class OntologyBrowserValidator implements Validator  {
             errors.rejectValue("method", MANDATORY_FIELD_NOT_POPULATED);
         } else if (form.getScale() == null || form.getScale().equals("")) {
             errors.rejectValue("scale", MANDATORY_FIELD_NOT_POPULATED);
-        } else if (!isAddMode && form.getVariableId() > -1) {
+        } else if (!isAddMode && form.getVariableId() > -1 && form.getIsDelete() == null) {
             errors.rejectValue("variableName", CANNOT_UPDATE_CENTRAL_VARIABLE);
         }
         

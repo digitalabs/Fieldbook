@@ -793,6 +793,10 @@ function setVisibility(isVisible, buttonId) {
 	}
 }
 
+function setDeleteOperation() {
+	$("#isDelete").val(1);
+}
+
 /*
 //function for deleting ontology
 function deleteOntology(combo) {

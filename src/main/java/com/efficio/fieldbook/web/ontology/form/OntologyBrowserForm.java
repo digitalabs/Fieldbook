@@ -42,13 +42,17 @@ public class OntologyBrowserForm{
     /** The search tree data. */
     private String searchTreeData;
     
-    /** The standard variable id */
+    /** The standard variable id. */
     private Integer variableId;
        
     /** The variable name. */
     private String variableName;
     
+    /** The new variable name. */
     private String newVariableName;
+    
+    /** The is delete. */
+    private Integer isDelete;
     
     /** The variable description. */
     private String variableDescription;
@@ -221,6 +225,11 @@ public class OntologyBrowserForm{
      *
      * @return the new variable name
      */
+    /**
+     * Gets the new variable name.
+     *
+     * @return the new variable name
+     */
     public String getNewVariableName() {
         return newVariableName;
     }
@@ -231,8 +240,31 @@ public class OntologyBrowserForm{
      *
      * @param newVariableName the new variable name
      */
+    /**
+     * Sets the new variable name.
+     *
+     * @param newVariableName the new new variable name
+     */
     public void setNewVariableName(String newVariableName) {
         this.newVariableName = newVariableName;
+    }
+    
+    /**
+     * Gets the checks if is delete.
+     *
+     * @return the checks if is delete
+     */
+    public Integer getIsDelete() {
+        return isDelete;
+    }
+    
+    /**
+     * Sets the checks if is delete.
+     *
+     * @param isDelete the new checks if is delete
+     */
+    public void setIsDelete(Integer isDelete) {
+        this.isDelete = isDelete;
     }
     
     /**
@@ -452,6 +484,8 @@ public class OntologyBrowserForm{
     }
 
     /**
+     * Gets the variable id.
+     *
      * @return the variableId
      */
     public Integer getVariableId() {
@@ -459,6 +493,8 @@ public class OntologyBrowserForm{
     }
 
     /**
+     * Sets the variable id.
+     *
      * @param variableId the variableId to set
      */
     public void setVariableId(Integer variableId) {

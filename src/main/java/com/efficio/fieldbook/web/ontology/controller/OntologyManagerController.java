@@ -40,6 +40,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -229,6 +230,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
     public String saveNewVariable(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form, BindingResult result, Model model) {
         OntologyBrowserValidator validator = new OntologyBrowserValidator();
         validator.validate(form, result);
+        validateDelete(form, result);
         form.setAddSuccessful("0");
         
         if (result.hasErrors()) {
@@ -605,6 +607,17 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
     private String checkIfNull(Term term) {
         return term==null ? "" : String.valueOf(term.getId());
     }
+    
+    private void validateDelete(Object o, Errors errors) {
+        OntologyBrowserForm form = (OntologyBrowserForm) o;
+        try {
+            if (form.getIsDelete().equals(1) && form.getVariableId() > -1) {
+                errors.rejectValue("variableName", "ontology.browser.cannot.delete.central.variable", new String[] {ontologyService.getStandardVariable(form.getVariableId()).getName()}, "ontology.browser.cannot.delete.central.variable");
+            }
+        } catch(MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+    } 
 
     /*
      * Delete ontology.

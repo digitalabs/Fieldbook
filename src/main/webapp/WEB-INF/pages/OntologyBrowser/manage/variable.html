@@ -27,6 +27,7 @@
                      	
                      	<input id="comboVariableName" type="hidden" th:field="*{variableName}" class="form-control select2" placeholder=""/>
    				        <input type="hidden" th:field="*{variableId}" />
+   				        <input type="hidden" th:field="*{isDelete}" />
 				        <input type="hidden" th:field="*{newVariableName}" /> 
                      </div>
             </div>
@@ -210,9 +211,9 @@
       		<button type="submit" id="updateVariable" th:value="#{common.form.update.text}" class="btn btn-primary" 
       		th:text="#{common.form.update.text}">.Update</button>    
       		<button type="submit" id="deleteVariable" th:value="#{common.form.delete.text}" class="btn btn-danger" 
-      		th:text="#{common.form.delete.text}">.Delete</button>    
-		  <button type="button" th:value="#{common.form.back.text}" class="btn btn-primary"
-      		 th:text="#{common.form.back.text}">.back</button>
+      		th:text="#{common.form.delete.text}" onClick="setDeleteOperation();">.Delete</button>    
+		    <button href="/OntologyBrowser/main.html" th:href="@{/OntologyBrowser/}" type="button" th:value="#{common.form.back.text}" class="btn btn-primary"
+      		th:text="#{common.form.back.text}">.back</button>
       		
 		</div>
 	</div>

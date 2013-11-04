@@ -290,7 +290,11 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
     public String saveNewVariable(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form, BindingResult result, Model model) {
         OntologyBrowserValidator validator = new OntologyBrowserValidator();
         validator.validate(form, result);
-        validateDelete(form, result);
+        
+        //validations for delete
+        if (form.getIsDelete().equals(1)) {
+            validateDelete(form, result);
+        }
         form.setAddSuccessful("0");
         
         if (result.hasErrors()) {
@@ -301,10 +305,15 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
             return show(form,model);
         } else {
             try {
-                Operation operation = form.getVariableId() != null ? Operation.UPDATE : Operation.ADD;
-                
-                StandardVariable standardVariable = createStandardVariableObject(form, operation);
-                ontologyService.saveOrUpdateStandardVariable(standardVariable, operation);
+                if (form.getIsDelete().equals(1)) {
+                    ontologyService.deleteStandardVariable(form.getVariableId());
+                } else {
+                    Operation operation = form.getVariableId() != null ? Operation.UPDATE : Operation.ADD;
+                    
+                    StandardVariable standardVariable = createStandardVariableObject(form, operation);
+                    ontologyService.saveOrUpdateStandardVariable(standardVariable, operation);
+                    form.setVariableId(standardVariable.getId());
+                }
                 form.setAddSuccessful("1");
                 
            } catch (Exception e) {
@@ -704,8 +713,10 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
     private void validateDelete(Object o, Errors errors) {
         OntologyBrowserForm form = (OntologyBrowserForm) o;
         try {
-            if (form.getIsDelete().equals(1) && form.getVariableId() > -1) {
+            if (form.getVariableId() > -1) {
                 errors.rejectValue("variableName", "ontology.browser.cannot.delete.central.variable", new String[] {ontologyService.getStandardVariable(form.getVariableId()).getName()}, "ontology.browser.cannot.delete.central.variable");
+            } else if (ontologyService.countProjectsByVariable(form.getVariableId()) > 0) {
+                errors.rejectValue("variableName", "ontology.browser.cannot.delete.linked.variable", new String[] {ontologyService.getStandardVariable(form.getVariableId()).getName()}, "ontology.browser.cannot.delete.linked.variable");
             }
         } catch(MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);

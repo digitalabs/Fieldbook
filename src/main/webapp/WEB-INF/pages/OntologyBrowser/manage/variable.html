@@ -211,7 +211,7 @@
       		<button type="submit" id="updateVariable" th:value="#{common.form.update.text}" class="btn btn-primary" 
       		th:text="#{common.form.update.text}">.Update</button>    
       		<button type="submit" id="deleteVariable" th:value="#{common.form.delete.text}" class="btn btn-danger" 
-      		th:text="#{common.form.delete.text}" onClick="setDeleteOperation();">.Delete</button>
+      		th:text="#{common.form.delete.text}" onClick="setDeleteOperation(1);">.Delete</button>
       		<a href="/OntologyBrowser/main.html" th:href="@{/OntologyBrowser/}" class="btn btn-primary btn-md" th:text="#{common.form.back.text}">.Back</a>          		
 		</div>
 	</div>
@@ -257,6 +257,11 @@
   	
   	var treeDivId = 'traitClassBrowserTree';
   	var treeClassData = /*[[${traitClassTreeData}]]*/;
+  	
+  	var varId = /*[[${ontologyBrowserForm.variableId}]]*/;
+  	var saveSuccessful = /*[[${ontologyBrowserForm.addSuccessful}]]*/;
+  	var isDelete = /*[[${ontologyBrowserForm.isDelete}]]*/;
+  	var name = /*[[${ontologyBrowserForm.newVariableName}]]*/;
   		 
   	var ontologyUrl = $('#ontologyBaseUrl').attr('href');
   	
@@ -327,6 +332,16 @@
 		loadTraitClassTree(treeDivId, "comboTraitClass", "traitClassDescription", treeClassData, 'comboTraitClass');
 		setVisibleButtons(true, false, false);
 		clearFields();
+		
+		if (saveSuccessful == "1" ) {
+			if (isDelete == 0) {
+				recreateVariableNameCombo("VariableName", varId, name);
+			} else if (isDelete == 1) {
+				recreateComboAfterDelete("VariableName", varId);	
+			} else {
+				preSelectAfterUpdate("VariableName", varId, name);
+			}
+		}
 	});
 	
 	

@@ -9,8 +9,9 @@
 	         			<button id="closeAddVariableSuccessfulModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 	         		</div>
 	         		<br/><br/>
-	         		<div class="alert alert-success" th:if="${#strings.isEmpty(ontologyBrowserForm.variableId)}" th:text="#{ontology.browser.header.add.new.variable.successful(${ontologyBrowserForm.variableName})}">Standard Variable successfully created.</div>
-	         		<div class="alert alert-success" th:unless="${#strings.isEmpty(ontologyBrowserForm.variableId)}" th:text="#{ontology.browser.header.edit.variable.successful(${ontologyBrowserForm.newVariableName})}">Standard Variable successfully updated.</div>
+	         		<div class="alert alert-success" th:if="${ontologyBrowserForm.isDelete} == 0" th:text="#{ontology.browser.header.add.new.variable.successful(${ontologyBrowserForm.variableName})}">Standard Variable successfully created.</div>
+	         		<div class="alert alert-success" th:if="${ontologyBrowserForm.isDelete} == 2" th:text="#{ontology.browser.header.edit.variable.successful(${ontologyBrowserForm.newVariableName})}">Standard Variable successfully updated.</div>
+	         		<div class="alert alert-success" th:if="${ontologyBrowserForm.isDelete} == 1" th:text="#{ontology.browser.header.delete.variable.successful(${ontologyBrowserForm.newVariableName})}">Standard Variable successfully deleted.</div>
 	         	</div>																							
 	       		<div class="modal-footer">    
 	       			<button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">OK</button>	
@@ -42,15 +43,17 @@
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
 	    var addSuccessful = /*[[${ontologyBrowserForm.addSuccessful}]]*/;
+	    
 	    if (addSuccessful == "1") {
 			setTimeout(function (){
 				$("#showSuccessfulModal").trigger("click");
-			}, 500);
+			}, 500);			
 	    } else if (addSuccessful == "2") {
 	    	setTimeout(function (){
 				$("#showFailedSaveModal").trigger("click");
 			}, 500);
 	    }    
+
     //]]>
     </script>
 </div>

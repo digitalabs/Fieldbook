@@ -768,14 +768,15 @@ function getStandardVariableDetails(variableId) {
 		   }
 		   
 		});
-		
 		setVisibleButtons(false, true, true);
+		setDeleteOperation(2);
 	} else {
 		//save the variable name in a hidden field for saving new standard variables
 		$("#variableId").val("");
 		$("#newVariableName").val($("#comboVariableName").select2("data").text);
 		setVisibleButtons(true, false, false);
 		$("#role").removeAttr("disabled");
+		setDeleteOperation(0);
 	}
 	$("#page-message").html("");
 }
@@ -810,8 +811,8 @@ function setVisibility(isVisible, buttonId) {
 	}
 }
 
-function setDeleteOperation() {
-	$("#isDelete").val(1);
+function setDeleteOperation(val) {
+	$("#isDelete").val(val);
 }
 
 function loadOntologyModal(ontologyName){
@@ -981,6 +982,55 @@ function deleteTraitClass() {
 	});
 }
   	
+function findIndexOfDeletedVariable(suggestions_obj, id) {
+	for (var i = 0; i < suggestions_obj.length; i++) {
+	    if (suggestions_obj[i].id == id) {
+	        return i;
+	    }
+	}
+}
+
+function recreateVariableNameCombo(combo, id, name) {
+	var suggestions_obj = [];
+	
+	//add the new data in the collection
+	variableNameSuggestions_obj.push({ 'id' : id,
+		  'text' : name + getOntologySuffix(id),
+		  'description' : name
+	});
+	suggestions_obj = sortByKey(variableNameSuggestions_obj, "text");
+	
+	//recreate the dropdown
+	$("#combo" + combo).select2({
+			query: function (query) {
+	              var data = {results: suggestions_obj}, i, j, s;
+	              // return the array that matches
+	              data.results = $.grep(data.results,function(item,index) {
+	                return ($.fn.select2.defaults.matcher(query.term,item.text));
+	              
+	              });
+	              
+	              if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
+	              
+	                query.callback(data);
+	                
+	            }		
+	});
+	
+	var newData = { 'id' : id,
+			  'text' : name + getOntologySuffix(id),
+			  'description' : name
+		};
+	$("#combo"+combo).select2('data', newData).trigger('change');
+}
+
+function preSelectAfterUpdate(combo, id, name) {
+	var newData = { 'id' : id,
+			  'text' : name,
+			  'description' : name
+		};
+	$("#combo" + combo).select2('data', newData).trigger('change');	
+}
 
 /*
 //function for deleting ontology

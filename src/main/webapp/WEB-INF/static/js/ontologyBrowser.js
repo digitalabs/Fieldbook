@@ -850,30 +850,8 @@ function findIndexOfOntology(suggestions_obj, data) {
 	}
 	return -1;
 }
-function recreateComboAfterDelete(combo, data) {
-	var suggestions_obj = [];
-	var description = null;
-	var index = -1;
-	//add the new data in the collection
-	if (combo == "ManageTraitClass") {		
-		index = findIndexOfOntology(traitClassesSuggestions_obj, data);
-		suggestions_obj = traitClassesSuggestions_obj.splice(index, 1);
-	} else if (combo == "ManageProperty") {
-		index = findIndexOfOntology(propertySuggestions_obj, data);
-		suggestions_obj = propertySuggestions_obj.splice(index, 1);
-	} else if (combo == "ManageMethod") {
-		index = findIndexOfOntology(methodSuggestions_obj, data);
-		suggestions_obj = methodSuggestions_obj.splice(index, 1);
-	} else {
-		index = findIndexOfOntology(scaleSuggestions_obj, data);
-		suggestions_obj = scaleSuggestions_obj.splice(index, 1);
-	}
-	
-	//set description field to empty
-	description = $("#"+lowerCaseFirstLetter(combo)+"Description"); 
-	description.val("");
-	
-	//recreate the dropdown
+
+function recreate(combo, suggestions_obj) {
 	$("#combo" + combo).select2({
 		query: function (query) {
               var data = {results: suggestions_obj}, i, j, s;
@@ -888,6 +866,42 @@ function recreateComboAfterDelete(combo, data) {
             }		
 	});
 }
+
+function recreateComboAfterDelete(combo, data) {
+	var description = null;
+	var index = 0;
+
+	//add the new data in the collection
+	if (combo == "VariableName") {
+		index = findIndexOfDeletedVariable(variableNameSuggestions_obj, data);
+		variableNameSuggestions_obj.splice(index, 1);
+		recreate(combo, variableNameSuggestions_obj);
+	} else if (combo == "TraitClass") {		
+		index = findIndexOfOntology(traitClassesSuggestions_obj, data);
+		traitClassesSuggestions_obj.splice(index, 1);
+		recreate(combo, traitClassesSuggestions_obj);
+		description = $("#traitClassDescription");
+	} else if (combo == "Property") {
+		index = findIndexOfOntology(propertySuggestions_obj, data);
+		propertySuggestions_obj.splice(index, 1);
+		recreate(combo, propertySuggestions_obj);
+	} else if (combo == "Method") {
+		index = findIndexOfOntology(methodSuggestions_obj, data);
+		methodSuggestions_obj.splice(index, 1);
+		recreate(combo, methodSuggestions_obj);
+	} else {
+		index = findIndexOfOntology(scaleSuggestions_obj, data);
+		scaleSuggestions_obj.splice(index, 1);
+		recreate(combo, scaleSuggestions_obj);
+	}
+	
+	//set description field to empty
+	if (description == null) {
+		description = $("#"+lowerCaseFirstLetter(combo)+"Description"); 
+	}
+	description.val("");
+}
+
 function recreateComboAfterUpdate(combo, data) {
 	var suggestions_obj = [];
 	var description = null;

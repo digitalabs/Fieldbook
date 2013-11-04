@@ -7,7 +7,7 @@
 	enctype="multipart/form-data" th:object="${ontologyTraitClassForm}">
 
 	<div class="modal-body">
-		<div class="form-group" id="page-message-modal"></div>
+		<div class="form-group" id="page-message-traitClass-modal"></div>
 		<div th:class="${#fields.hasErrors('*')} ? 'form-group has-error' : 'form-group'">
 			<div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
 			<div class="row fluid">
@@ -55,13 +55,13 @@
 	    </div>
 	</div>																							
 	<div class="modal-footer">
-		<button id="btnAddManageTraitClass" type="submit" th:value="#{common.form.add.text}" class="btn btn-primary" 
-		th:text="#{common.form.add.text}">Add</button>      	
-		<button id="btnUpdateManageTraitClass" type="submit" th:value="#{common.form.update.text}" class="btn btn-primary" 
-		th:text="#{common.form.update.text}" style="display:none;">Update</button>      	
+		<button id="btnAddManageTraitClass" type="button" th:value="#{common.form.add.text}" class="btn btn-primary" 
+		th:text="#{common.form.add.text}" onclick="saveTraitClass();">Add</button>      	
+		<button id="btnUpdateManageTraitClass" type="button" th:value="#{common.form.update.text}" class="btn btn-primary" 
+		th:text="#{common.form.update.text}" style="display:none;" onclick="saveTraitClass();">Update</button>      	
 		<button id="btnDeleteManageTraitClass" type="submit" th:value="#{common.form.delete.text}" class="btn btn-primary" 
 		th:text="#{common.form.delete.text}" style="display:none;">Delete</button>      	
-		<button type="button" th:value="#{common.form.cancel.text}" class="btn btn-primary"
+		<button id="btnCloseTraitClass" type="button" th:value="#{common.form.cancel.text}" class="btn btn-primary"
 		 th:text="#{common.form.cancel.text}" data-dismiss="modal" aria-hidden="true">Cancel</button>
 	</div>
 
@@ -79,6 +79,39 @@
 	  					$("#comboManageParentTraitClass").val(), true);
 	  		});
 	  	});
+	  	
+	  	function saveTraitClass() {
+	  		if (!validateTraitClass()) {
+	  			message = /*[[#{ontology.browser.modal.error}]]*/;
+	  			showErrorMessageInModal("page-message-traitClass-modal", message);
+	  			return;
+	  		}
+	  		Spinner.toggle();
+			serializedData = $("#manageTraitClassForm").serialize();
+	  		
+	  		$.ajax({
+	  			url : ontologyUrl + "traitClass",
+				type: "POST",
+				dataType: "json",
+				data: serializedData,
+			    success: function(data) {
+			    	if (data.status == '1') {
+			    		$("#btnCloseTraitClass").trigger("click");
+			    		recreateComboAfterUpdate("ManageTraitClass", data.traitClass);
+			    		showSuccessMessage(data.successMessage);
+			    	} else {
+			    		showErrorMessageInModal("page-message-traitClass-modal", data.errorMessage);
+			    	}
+			    }, 
+				error: function(jqXHR, textStatus, errorThrown){ 
+					console.log("The following error occured: " + textStatus, errorThrown); 
+				}, 
+				complete: function(){ 
+					Spinner.toggle();
+				} 
+	  		});
+	  	}
+	  	
     //]]>
 	</script>
 </div>

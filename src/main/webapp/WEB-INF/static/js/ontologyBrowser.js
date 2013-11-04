@@ -379,11 +379,11 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	    	if (name.match("^Manage")) {
 	    		if ($("#combo"+name).select2("data").description) { //edit mode
 			    	$("#" + lowerCaseFirstLetter(name) + "Id").val($("#combo"+name).select2("data").id);
-			    	$("#" + lowerCaseFirstLetter(name) + "Name").val($("#combo"+name).select2("data").description);
+			    	$("#" + lowerCaseFirstLetter(name) + "Name").val($("#combo"+name).select2("data").text.replace(" (Shared)", ""));
 		    		$("#btnAdd" + name).hide();
 		    		$("#btnUpdate" + name).show();
 		    		$("#btnDelete" + name).show();
-		    		$("#" + lowerCaseFirstLetter(name) + "NameText").html($("#combo"+name).select2("data").text);
+		    		$("#" + lowerCaseFirstLetter(name) + "NameText").html($("#combo"+name).select2("data").description);
 		    		
 		    		//add the loading of the linked variables here
 		    		retrieveLinkedVariables(name, $("#combo"+name).select2("data").id);
@@ -453,7 +453,6 @@ function recreateCombo(combo, data) {
 			  'description' : data.definition
 		});
 		suggestions_obj = sortByKey(traitClassesSuggestions_obj, "text");
-		description = $("#traitClassDescription");
 	} else if (combo == "Property") {
 		propertySuggestions_obj.push({ 'id' : data.id,
 			  'text' : data.name + getOntologySuffix(data.id),
@@ -475,9 +474,7 @@ function recreateCombo(combo, data) {
 	}
 	
 	//set description field to empty
-	if (description == null) {
-		description = $("#"+combo.toLowerCase()+"Description"); 
-	}
+	description = $("#"+lowerCaseFirstLetter(combo)+"Description"); 
 	description.val("");
 	
 	//recreate the dropdown
@@ -835,6 +832,118 @@ function loadOntologyModal(ontologyName){
 		       );
 	}
 
+function showErrorMessageInModal(messageDivId, message) {
+	$("#" + messageDivId).html(
+			"<div class='alert alert-danger'>"+ message +"</div>"
+	);
+}
+
+function validateTraitClass() {
+	return ($("#comboManageTraitClass").val() && $("#manageParentTraitClassId").val());
+}
+
+function findIndexOfOntology(suggestions_obj, data) {
+	for (var i = 0; i < suggestions_obj.length; i++) {
+	    if (suggestions_obj[i].id == data.id) {
+	        return i;
+	    }
+	}
+	return -1;
+}
+function recreateComboAfterDelete(combo, data) {
+	var suggestions_obj = [];
+	var description = null;
+	var index = -1;
+	//add the new data in the collection
+	if (combo == "ManageTraitClass") {		
+		index = findIndexOfOntology(traitClassesSuggestions_obj, data);
+		suggestions_obj = traitClassesSuggestions_obj.splice(index, 1);
+	} else if (combo == "ManageProperty") {
+		index = findIndexOfOntology(propertySuggestions_obj, data);
+		suggestions_obj = propertySuggestions_obj.splice(index, 1);
+	} else if (combo == "ManageMethod") {
+		index = findIndexOfOntology(methodSuggestions_obj, data);
+		suggestions_obj = methodSuggestions_obj.splice(index, 1);
+	} else {
+		index = findIndexOfOntology(scaleSuggestions_obj, data);
+		suggestions_obj = scaleSuggestions_obj.splice(index, 1);
+	}
+	
+	//set description field to empty
+	description = $("#"+lowerCaseFirstLetter(combo)+"Description"); 
+	description.val("");
+	
+	//recreate the dropdown
+	$("#combo" + combo).select2({
+		query: function (query) {
+              var data = {results: suggestions_obj}, i, j, s;
+              // return the array that matches
+              data.results = $.grep(data.results,function(item,index) {
+                return ($.fn.select2.defaults.matcher(query.term,item.text));
+              
+              });
+              if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
+              
+                query.callback(data);
+            }		
+	});
+}
+function recreateComboAfterUpdate(combo, data) {
+	var suggestions_obj = [];
+	var description = null;
+	
+	if (combo.indexOf("TraitClass") > -1) {
+		suggestions_obj = traitClassesSuggestions_obj;
+	}
+	else if (combo.indexOf("Property") > -1) {
+		suggestions_obj = propertySuggestions_obj;
+	}
+	else if (combo.indexOf("Method") > -1) {
+		suggestions_obj = methodSuggestions_obj;
+	}
+	else {
+		suggestions_obj = scaleSuggestions_obj;
+	}
+	
+	var index = findIndexOfOntology(suggestions_obj, data);
+	if (index > -1) { //update
+		suggestions_obj[index].description = data.definition;
+	}
+	else { //add
+		suggestions_obj.push({ 'id' : data.id,
+			  'text' : data.name + getOntologySuffix(data.id),
+			  'description' : data.definition
+		});
+		suggestions_obj = sortByKey(suggestions_obj, "text");
+	}
+	
+	//set description field to empty
+	description = $("#"+lowerCaseFirstLetter(combo)+"Description"); 
+	description.val("");
+	
+	//recreate the dropdown
+	$("#combo" + combo).select2({
+			query: function (query) {
+	              var data = {results: suggestions_obj}, i, j, s;
+	              // return the array that matches
+	              data.results = $.grep(data.results,function(item,index) {
+	                return ($.fn.select2.defaults.matcher(query.term,item.text));
+	              
+	              });
+	              
+	              if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
+	              
+	                query.callback(data);
+	                
+	            }		
+	});
+	var newData = { 'id' : data.id,
+			  'text' : data.name + getOntologySuffix(data.id),
+			  'description' : data.definition
+		}
+	description.val(data.definition);
+	$("#combo"+combo).select2('data', newData);//no need to trigger change.trigger('change');
+}
 /*
 //function for deleting ontology
 function deleteOntology(combo) {

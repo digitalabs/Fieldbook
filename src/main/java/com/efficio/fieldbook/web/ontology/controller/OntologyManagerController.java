@@ -31,6 +31,7 @@ import org.generationcp.middleware.domain.oms.Property;
 import org.generationcp.middleware.domain.oms.Scale;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.oms.TraitClass;
 //import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -40,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -123,7 +125,40 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         }
         return super.showAjaxPage(model, TRAIT_CLASS_MODAL);
     }
-    
+
+    @ResponseBody
+    @RequestMapping(value="traitClass", method = RequestMethod.POST)
+    public Map<String, Object> addTraitClass(@ModelAttribute("ontologyTraitClassForm") OntologyTraitClassForm form, Model model) {
+        
+        Map<String, Object> result = new HashMap<String, Object>();
+        Locale locale = LocaleContextHolder.getLocale();
+        String ontologyType = messageSource.getMessage("ontology.browser.modal.trait.class", null, locale);
+        
+        try {
+            if (form.getManageTraitClassId() == null) { //add mode
+                result.put("successMessage", 
+                        messageSource.getMessage("ontology.browser.modal.add.ontology.successful", 
+                                new Object[] {ontologyType, form.getManageTraitClassName()}, 
+                                locale));
+            } 
+            else { //edit mode
+                result.put("successMessage", 
+                        messageSource.getMessage("ontology.browser.modal.update.ontology.successful", 
+                                new Object[] {ontologyType, form.getManageTraitClassName()}, 
+                                locale));
+            }
+            TraitClass traitClass = ontologyService.addOrUpdateTraitClass(form.getManageTraitClassName(), form.getManageTraitClassDescription(), form.getManageParentTraitClassId());
+            result.put("traitClass", traitClass);
+            result.put("status", "1");
+            
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            result.put("status",  "0");
+            result.put("errorMessage", errorHandlerService.getErrorMessagesAsString(e.getMessage(), "<br/>"));
+        }
+        return result;
+    }
+
     /**
      * Show the main import page.
      *

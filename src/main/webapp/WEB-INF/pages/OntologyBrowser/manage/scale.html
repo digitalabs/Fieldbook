@@ -63,12 +63,8 @@
 <div layout:fragment="page-script">		
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
-		var scalesSuggestions = /*[[${scalesSuggestionList}]]*/ null;
-		
-	  	var scalesSuggestions_obj = [];
-	  	
 	  	$(document).ready(function() {
-	  		initializeVariable(scalesSuggestions, scalesSuggestions_obj, "definition", "ManageScale", true);
+	  		initializeVariable(scaleSuggestions, scaleSuggestions_obj, "definition", "ManageScale", true);
 	  		
 	  	});
     //]]>

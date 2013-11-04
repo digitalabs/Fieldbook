@@ -63,12 +63,8 @@
 <div layout:fragment="page-script">		
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
-		var propertiesSuggestions = /*[[${propertiesSuggestionList}]]*/ null;
-		
-	  	var propertiesSuggestions_obj = [];
-	  	
 	  	$(document).ready(function() {
-	  		initializeVariable(propertiesSuggestions, propertiesSuggestions_obj, "definition", "ManageProperty", true);
+	  		initializeVariable(propertySuggestions, propertySuggestions_obj, "definition", "ManageProperty", true);
 	  		
 	  	});
     //]]>

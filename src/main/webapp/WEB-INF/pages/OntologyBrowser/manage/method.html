@@ -63,10 +63,6 @@
 <div layout:fragment="page-script">		
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
-		var methodSuggestions = /*[[${methodsSuggestionList}]]*/ null;
-		
-	  	var methodSuggestions_obj = [];
-	  	
 	  	$(document).ready(function() {
 	  		initializeVariable(methodSuggestions, methodSuggestions_obj, "definition", "ManageMethod", true);
 	  		

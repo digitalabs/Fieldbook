@@ -21,7 +21,10 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.generationcp.middleware.domain.dms.Enumeration;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.VariableConstraints;
 import org.generationcp.middleware.domain.oms.CvId;
 import org.generationcp.middleware.domain.oms.Method;
 import org.generationcp.middleware.domain.oms.Property;
@@ -79,6 +82,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
     public static final String PROPERTY_MODAL = "/OntologyBrowser/manage/property";
     public static final String SCALE_MODAL = "/OntologyBrowser/manage/scale";
     public static final String METHOD_MODAL = "/OntologyBrowser/manage/method";
+    public static final String LINKED_VARIABLES_MODAL = "/OntologyBrowser/manage/linkedVariable";
     
     /** The ontology service. */
     @Resource
@@ -596,6 +600,44 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         }
         
         return resultMap;
+    }
+    
+    /**
+     * Show the main import page.
+     *
+     * @param form the form
+     * @param model the model
+     * @return the string
+     */
+    @RequestMapping(value="retrieve/linked/variable/{ontologyType}/{id}", method = RequestMethod.GET)
+    public String getLinkedVariable(@PathVariable String ontologyType, @PathVariable String id, Model model) {
+        
+        try {
+            List<StandardVariable> standardVariableList = new ArrayList<StandardVariable>();
+            StandardVariable var = new StandardVariable();
+            var.setName("Test 1");
+            StandardVariable var1 = new StandardVariable();
+            var1.setName("Test 12");
+            //standardVariableList.add(var);
+            //standardVariableList.add(var1);
+            if("ManageProperty".equalsIgnoreCase(ontologyType)){
+                
+            }else if("ManageTraitClass".equalsIgnoreCase(ontologyType)){
+                
+            }else if("ManageMethod".equalsIgnoreCase(ontologyType)){
+                
+            }else if("ManageScale".equalsIgnoreCase(ontologyType)){
+                
+            }
+            
+            
+            model.addAttribute("linkedStandardVariableList", standardVariableList);
+            
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return super.showAjaxPage(model, LINKED_VARIABLES_MODAL);
     }
     
     /*

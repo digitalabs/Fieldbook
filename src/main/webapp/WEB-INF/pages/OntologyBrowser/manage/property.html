@@ -33,14 +33,8 @@
 							<span th:text="#{ontology.browser.modal.variable.list('Property')}">Variables Linked to Property:</span>
 							<span id="managePropertyNameText"></span>
 						</div>
-						<div class="input-group" id="managePropertyVariableList">
-							<div th:unless="*{variablesLinkedToProperty == null}">
-								<table class="table table-striped table-bordered">
-									<tr  th:each="choice, rowStat : *{variablesLinkedToProperty}">
-										<td th:text="*{variablesLinkedToProperty[__${rowStat.index}__]}" >&nbsp;</td>
-									</tr>
-								</table>
-				 			</div>
+						<div class="input-group col-md-12" id="manageLinkedVariableList">
+							
 						</div>
 					</div>
 				</div>

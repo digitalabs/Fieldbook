@@ -46,14 +46,8 @@
 							<span th:text="#{ontology.browser.modal.variable.list('Trait Class')}">Variables Linked to Trait Class:</span>
 							<span id="manageTraitClassNameText"></span>
 						</div>
-						<div class="input-group" id="manageTraitClassVariableList">
-							<div th:unless="*{variablesLinkedToTraitClass == null}">
-								<table class="table table-striped table-bordered">
-									<tr  th:each="choice, rowStat : *{variablesLinkedToTraitClass}">
-										<td th:text="*{variablesLinkedToTraitClass[__${rowStat.index}__]}" >&nbsp;</td>
-									</tr>
-								</table>
-				 			</div>
+						<div class="input-group col-md-12" id="manageLinkedVariableList">
+							
 						</div>
 					</div>
 				</div>

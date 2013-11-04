@@ -383,8 +383,10 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 		    		$("#btnAdd" + name).hide();
 		    		$("#btnUpdate" + name).show();
 		    		$("#btnDelete" + name).show();
-		    		$("#" + lowerCaseFirstLetter(name) + "NameText").html($("#combo"+name).select2("data").description);
+		    		$("#" + lowerCaseFirstLetter(name) + "NameText").html($("#combo"+name).select2("data").text);
 		    		
+		    		//add the loading of the linked variables here
+		    		retrieveLinkedVariables(name, $("#combo"+name).select2("data").id);
 	    		} else { //add mode
 			    	$("#" + lowerCaseFirstLetter(name) + "Id").val('');
 			    	$("#" + lowerCaseFirstLetter(name) + "Name").val($("#combo"+name).select2("data").id);
@@ -399,6 +401,19 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	}
 }
 
+function retrieveLinkedVariables(ontologyType, ontologyId){
+	console.log(ontologyType + " = " + ontologyId);
+	Spinner.toggle();
+	$.ajax({
+		url: "retrieve/linked/variable/" + ontologyType + "/"+ontologyId,
+		type: "get",
+		success: function(html) {
+			$("#manageLinkedVariableList").empty().append(html);			
+			Spinner.toggle();
+		}
+	});
+	
+}
 
 
 function lowerCaseFirstLetter(string)

@@ -33,14 +33,8 @@
 							<span th:text="#{ontology.browser.modal.variable.list('Scale')}">Variables Linked to Scale:</span>
 							<span id="manageScaleNameText"></span>
 						</div>
-						<div class="input-group" id="manageScaleVariableList">
-							<div th:unless="*{variablesLinkedToScale == null}">
-								<table class="table table-striped table-bordered">
-									<tr  th:each="choice, rowStat : *{variablesLinkedToScale}">
-										<td th:text="*{variablesLinkedToScale[__${rowStat.index}__]}" >&nbsp;</td>
-									</tr>
-								</table>
-				 			</div>
+						<div class="input-group col-md-12" id="manageLinkedVariableList">
+							
 						</div>
 					</div>
 				</div>

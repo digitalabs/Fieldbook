@@ -236,6 +236,7 @@
     <div class="row">
     	<div id="ontology-add-variable" th:include="/OntologyBrowser/addVariableSuccessful"></div>
     </div>
+    <a style="display: none" id="ontologyBaseUrl" href="/OntologyManager/manage" th:href="@{/OntologyManager/manage/}">test</a>
 </div>
 <div layout:fragment="page-script">			
 	<script type="text/javascript" th:src="@{/static/js/ontologyBrowser.js}"></script>
@@ -257,23 +258,7 @@
   	var treeDivId = 'traitClassBrowserTree';
   	var treeClassData = /*[[${traitClassTreeData}]]*/;
   		 
-  	function loadOntologyModal(ontologyName){
-  		Spinner.toggle();
-  		$.ajax(
- 		         { url: ontologyName,
- 		           type: "GET",
- 		           data: "",
- 		           success: function(html) {
- 		        	   
- 		             $("#manageOntologyModal"+" .modal-content").empty().append(html);
- 		               
- 		             $('#manageOntologyModal').modal('show');
- 		             $.fn.modal.Constructor.prototype.enforceFocus = function () {};
- 		             Spinner.toggle();
- 		           }
- 		         }
- 		       );
-  	}
+  	var ontologyUrl = $('#ontologyBaseUrl').attr('href');
   	
 	function validateCombo(combo) {
 		var message = null;

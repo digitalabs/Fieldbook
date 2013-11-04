@@ -196,7 +196,7 @@ function clearAndAppendOntologyDetailsTab(variableName, html){
 function viewTabs(variableName, variableId) {
 	Spinner.toggle();
 	$.ajax({
-		url: "details/" + variableId,
+		url: ontologyUrl + "details/" + variableId,
 		type: "get",
 		//dataType: "json",
 		success: function(html) {
@@ -221,7 +221,7 @@ function doSave(combo) {
 		Spinner.toggle();
 		
 		$.ajax({
-			url: "addVariable/" + combo,
+			url: ontologyUrl + "addVariable/" + combo,
 			type: "post",
 			dataType: "json",
 			data: serializedData,
@@ -264,7 +264,7 @@ function setCorrespondingTraitClass(propertyId){
 	if(isInt(propertyId)){
 		Spinner.toggle();
 		$.ajax({
-			url: "retrieve/trait/property/" + propertyId,
+			url: ontologyUrl+"retrieve/trait/property/" + propertyId,
 			type: "GET",
 			dataType: "json",
 			data: "",
@@ -405,7 +405,7 @@ function retrieveLinkedVariables(ontologyType, ontologyId){
 	console.log(ontologyType + " = " + ontologyId);
 	Spinner.toggle();
 	$.ajax({
-		url: "retrieve/linked/variable/" + ontologyType + "/"+ontologyId,
+		url: ontologyUrl + "retrieve/linked/variable/" + ontologyType + "/"+ontologyId,
 		type: "get",
 		success: function(html) {
 			$("#manageLinkedVariableList").empty().append(html);			
@@ -614,18 +614,22 @@ function getTreeChildren(child, traitClassId){
 			}
 			if(children[i].getChildren() != null)
 				nodeKey = getTreeChildren(children[i], traitClassId);
+			
+			if(nodeKey != ""){
+				break;
+			}
 		}
 	}
 	return nodeKey;
 }
 
 function filterPropertyCombo(treeName, comboName, descriptionName, traitClassId, isFromDropDown){
-	console.log("Load property of trait class id: "+traitClassId);
+	//console.log("Load property of trait class id: "+traitClassId);
 	if(isFromDropDown){
 		$('#'+treeName).find("*").removeClass('highlight');
 		//if(traitClassId != 0){
 			var nodeKey = getNodeKeyFromTraitClass(traitClassId, treeName);
-			console.log("Activate: "+ nodeKey);
+			//console.log("Activate: "+ nodeKey);
 			//console.log(json);
 			//we need to highlight the tree
 			$("#"+treeName).dynatree("getTree").activateKey(nodeKey);
@@ -746,7 +750,7 @@ function getStandardVariableDetails(variableId) {
 	if(isInt(variableId)){
 		Spinner.toggle();
 		$.ajax({
-			url: "retrieve/variable/" + variableId,
+			url: ontologyUrl + "retrieve/variable/" + variableId,
 			type: "GET",
 			dataType: "json",
 			data: "",
@@ -812,6 +816,24 @@ function setVisibility(isVisible, buttonId) {
 function setDeleteOperation() {
 	$("#isDelete").val(1);
 }
+
+function loadOntologyModal(ontologyName){
+		Spinner.toggle();
+		$.ajax(
+		         { url: ontologyUrl + ontologyName,
+		           type: "GET",
+		           data: "",
+		           success: function(html) {
+		        	   
+		             $("#manageOntologyModal"+" .modal-content").empty().append(html);
+		               
+		             $('#manageOntologyModal').modal('show');
+		             $.fn.modal.Constructor.prototype.enforceFocus = function () {};
+		             Spinner.toggle();
+		           }
+		         }
+		       );
+	}
 
 /*
 //function for deleting ontology

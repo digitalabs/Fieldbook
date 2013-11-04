@@ -65,6 +65,7 @@
     	<div id="ontology-add-variable" th:include="/OntologyBrowser/addVariableSuccessful"></div>
     </div>
      -->
+     <a style="display: none" id="ontologyBaseUrl" href="/OntologyBrowser" th:href="@{/OntologyBrowser/}">test</a>
 </div>
 <div layout:fragment="page-script">		
 	<link th:href="@{/static/css/typeahead.js-bootstrap.css}" rel="stylesheet"/>
@@ -78,6 +79,8 @@
     var treeDivId = 'ontologyBrowserTree';
     var seasrchErrorMessage = /*[[#{ontology.search.error.no.result}]]*/;
    	var variableDetailHeader = /*[[#{ontology.variable.details}]]*/;
+   	
+   	var ontologyUrl = $('#ontologyBaseUrl').attr('href');
    	
    	$( document ).ready(function() {  	     
   	  

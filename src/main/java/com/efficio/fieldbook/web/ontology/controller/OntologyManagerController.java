@@ -614,20 +614,15 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         
         try {
             List<StandardVariable> standardVariableList = new ArrayList<StandardVariable>();
-            StandardVariable var = new StandardVariable();
-            var.setName("Test 1");
-            StandardVariable var1 = new StandardVariable();
-            var1.setName("Test 12");
-            //standardVariableList.add(var);
-            //standardVariableList.add(var1);
+            
             if("ManageProperty".equalsIgnoreCase(ontologyType)){
-                
+                standardVariableList = ontologyService.getStandardVariablesByProperty(Integer.valueOf(id));
             }else if("ManageTraitClass".equalsIgnoreCase(ontologyType)){
-                
+                standardVariableList = ontologyService.getStandardVariablesByTraitClass(Integer.valueOf(id));
             }else if("ManageMethod".equalsIgnoreCase(ontologyType)){
-                
+                standardVariableList = ontologyService.getStandardVariablesByMethod(Integer.valueOf(id));
             }else if("ManageScale".equalsIgnoreCase(ontologyType)){
-                
+                standardVariableList = ontologyService.getStandardVariablesByScale(Integer.valueOf(id));
             }
             
             

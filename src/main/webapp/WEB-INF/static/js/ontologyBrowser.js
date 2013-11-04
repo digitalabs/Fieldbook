@@ -303,34 +303,35 @@ function getOntologySuffix(id){
 //function to create the select2 combos
 function initializeVariable(variableSuggestions, variableSuggestions_obj, description, name, allowTypedValues) {
 	
-	//initialize the arrays that would contain json data for the combos
-	if (description == "description") {
-		$.each(variableSuggestions, function( index, value ) {
-			variableSuggestions_obj.push({ 'id' : value.id,
-				  'text' : value.name + getOntologySuffix(value.id),
-				  'description' : value.description
-			});  
-	  		
-		});
-	} else if (name == "Property"){		
-		$.each(variableSuggestions, function( index, value ) {
-			variableSuggestions_obj.push({ 'id' : value.id,
-				  'text' : value.name + getOntologySuffix(value.id),
-				  'description' : value.definition,
-				  'traitId' : value.isAId
-			});  
-	  		
-		});
-	} else {
-		$.each(variableSuggestions, function( index, value ) {
-			variableSuggestions_obj.push({ 'id' : value.id,
-				  'text' : value.name + getOntologySuffix(value.id),
-				  'description' : value.definition
-			});  
-	  		
-		});
+	if (name.indexOf('TraitClass') > -1 && variableSuggestions_obj.length == 1 || variableSuggestions_obj.length == 0) {
+		//initialize the arrays that would contain json data for the combos
+		if (description == "description") {
+			$.each(variableSuggestions, function( index, value ) {
+				variableSuggestions_obj.push({ 'id' : value.id,
+					  'text' : value.name + getOntologySuffix(value.id),
+					  'description' : value.description
+				});  
+		  		
+			});
+		} else if (name == "Property"){		
+			$.each(variableSuggestions, function( index, value ) {
+				variableSuggestions_obj.push({ 'id' : value.id,
+					  'text' : value.name + getOntologySuffix(value.id),
+					  'description' : value.definition,
+					  'traitId' : value.isAId
+				});  
+		  		
+			});
+		} else {
+			$.each(variableSuggestions, function( index, value ) {
+				variableSuggestions_obj.push({ 'id' : value.id,
+					  'text' : value.name + getOntologySuffix(value.id),
+					  'description' : value.definition
+				});  
+		  		
+			});
+		}
 	}
-	
 	//create the select2 combo
 	//if combo to create is the variable name, add an onchange event to fill up all the fields of the selected variable
 	if (name == "VariableName") {
@@ -376,6 +377,7 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	    		filterPropertyCombo(treeDivId, "comboTraitClass", "traitClassDescription", $("#comboTraitClass").select2("data").id, true);
 	    	}
 	    	if (name.match("^Manage")) {
+	    		alert($("#combo"+name).select2("data").description);
 	    		if ($("#combo"+name).select2("data").description) { //edit mode
 			    	$("#" + lowerCaseFirstLetter(name) + "Id").val($("#combo"+name).select2("data").id);
 			    	$("#" + lowerCaseFirstLetter(name) + "Name").val($("#combo"+name).select2("data").description);

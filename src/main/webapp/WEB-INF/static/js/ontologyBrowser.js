@@ -377,7 +377,6 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	    		filterPropertyCombo(treeDivId, "comboTraitClass", "traitClassDescription", $("#comboTraitClass").select2("data").id, true);
 	    	}
 	    	if (name.match("^Manage")) {
-	    		alert($("#combo"+name).select2("data").description);
 	    		if ($("#combo"+name).select2("data").description) { //edit mode
 			    	$("#" + lowerCaseFirstLetter(name) + "Id").val($("#combo"+name).select2("data").id);
 			    	$("#" + lowerCaseFirstLetter(name) + "Name").val($("#combo"+name).select2("data").description);

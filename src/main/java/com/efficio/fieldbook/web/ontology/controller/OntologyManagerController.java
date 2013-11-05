@@ -794,8 +794,6 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
     @RequestMapping(value = "deleteOntology/{ontology}", method = RequestMethod.POST)
     public Map<String, String> deleteOntology(@RequestParam(required=false) Integer id, @RequestParam(required=false) String name, @PathVariable String ontology) {
         Map<String, String> result = new HashMap<String, String>();
-        System.out.println("ID IS " + id);
-        System.out.println("NAME IS " + name);
         Locale locale = LocaleContextHolder.getLocale();
         
         String ontologyTypeName = messageSource.getMessage("ontology.browser.modal." + ontology, null, locale);

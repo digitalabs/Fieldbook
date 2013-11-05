@@ -81,8 +81,14 @@
 	  	});
 	  	
 	  	function saveTraitClass() {
+	  		var message = null;
 	  		if (!validateTraitClass()) {
 	  			message = /*[[#{ontology.browser.modal.error}]]*/;
+	  		}
+	  		if ($("#manageTraitClassId").val() && $("#manageTraitClassId").val() > 0) {
+	  			message += "Trait Class if From Central and can not be Updated."
+	  		}
+	  		if (message) {
 	  			showErrorMessageInModal("page-message-manageTraitClass-modal", message);
 	  			return;
 	  		}

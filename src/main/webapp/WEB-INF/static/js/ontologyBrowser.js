@@ -390,13 +390,14 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 		    			retrieveLinkedVariables(name, $("#combo"+name).select2("data").id);
 		    		}
 	    		} else { //add mode
+		    		clearForm(lowerCaseFirstLetter(name) + "Form");
 			    	$("#" + lowerCaseFirstLetter(name) + "Id").val('');
 			    	$("#" + lowerCaseFirstLetter(name) + "Name").val($("#combo"+name).select2("data").id);
 		    		$("#btnAdd" + name).show();
 		    		$("#btnUpdate" + name).hide();
 		    		$("#btnDelete" + name).hide();
 		    		$("#" + lowerCaseFirstLetter(name) + "NameText").html($("#combo"+name).select2("data").id);
-		    		$("#" + lowerCaseFirstLetter(name) + "VariableList").html("");
+		    		$("#manageLinkedVariableList").html("");
 	    		}
 	    	}	    	
 	    });
@@ -1054,6 +1055,13 @@ function deleteOntology(combo) {
 		});
 
 	//}
+}
+
+function clearForm(formName) {
+	//$("#" + formName).reset();
+	$("#" + formName).find("input").each(function() {
+		this.value = "";
+	});
 }
 
 

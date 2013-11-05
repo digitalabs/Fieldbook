@@ -843,7 +843,7 @@ function showErrorMessageInModal(messageDivId, message) {
 }
 
 function validateTraitClass() {
-	return ($("#comboManageTraitClass").val() && $("#manageParentTraitClassId").val());
+	return ($("#comboManageTraitClass").val() && $("#manageParentTraitClassId").val() && $("#manageParentTraitClassId").val() != "0");
 }
 
 function validateProperty() {

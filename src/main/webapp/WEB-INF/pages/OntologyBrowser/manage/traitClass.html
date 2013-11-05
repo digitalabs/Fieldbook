@@ -96,7 +96,7 @@
 				data: serializedData,
 			    success: function(data) {
 			    	if (data.status == '1') {
-			    		$("#btnCloseTraitClass").trigger("click");
+			    		$("#btnCloseManageTraitClass").trigger("click");
 			    		recreateComboAfterUpdate("ManageTraitClass", data.savedObject);
 			    		showSuccessMessage(data.successMessage);
 			    	} else {

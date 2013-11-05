@@ -366,7 +366,6 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	        		  data.results.unshift({id:query.term,text:query.term});  
 	          }
 	            
-	          
 	            query.callback(data);
 	            
 	        }
@@ -842,6 +841,16 @@ function showErrorMessageInModal(messageDivId, message) {
 			"<div class='alert alert-danger'>"+ message +"</div>"
 	);
 }
+function showSuccessMessageInModal(message) {
+	$("#page-message-modal").html(
+		    "<div class='alert alert-success'>"+ message +"</div>"
+	);
+	setTimeout("hideSuccessMessageInModal()", 3000);
+}
+
+function hideSuccessMessageInModal(){
+	$('#page-message-modal .alert-success').fadeOut(1000);
+}
 
 function validateTraitClass() {
 	return ($("#manageTraitClassName").val() && $("#manageParentTraitClassId").val() && $("#manageParentTraitClassId").val() != "0");
@@ -1040,11 +1049,10 @@ function deleteOntology(combo) {
 			data: formData,
 		    success: function(data){
 			    if (data.status == "1") {
-		    		$("#btnClose" + combo).trigger("click");
 		    		recreateComboAfterDelete(combo, formData);
-		    		showSuccessMessage(data.successMessage);
+		    		showSuccessMessageInModal(data.successMessage);
 		    	} else {
-		    		showErrorMessageInModal("page-message-" + lowerCaseFirstLetter(combo) + "-modal", data.errorMessage);
+		    		showErrorMessageInModal(data.errorMessage);
 		       	}
 		   }, 
 		   error: function(jqXHR, textStatus, errorThrown){

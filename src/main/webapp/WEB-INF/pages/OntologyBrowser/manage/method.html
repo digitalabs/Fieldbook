@@ -7,7 +7,7 @@
 	enctype="multipart/form-data" th:object="${ontologyMethodForm}">
 	
 	<div class="modal-body">
-		<div class="form-group" id="page-message-manageMethod-modal"></div>
+		<div class="form-group" id="page-message-modal"></div>
 		<div th:class="${#fields.hasErrors('*')} ? 'form-group has-error' : 'form-group'">
 			<div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
 			<div class="row fluid">
@@ -65,7 +65,7 @@
 	  	function saveMethod() {
 	  		if (!validateMethod()) {
 	  			message = /*[[#{ontology.browser.modal.error}]]*/;
-	  			showErrorMessageInModal("page-message-manageMethod-modal", message);
+	  			showErrorMessageInModal(message);
 	  			return;
 	  		}
 	  		Spinner.toggle();
@@ -78,11 +78,13 @@
 				data: serializedData,
 			    success: function(data) {
 			    	if (data.status == '1') {
-			    		$("#btnCloseManageMethod").trigger("click");
 			    		recreateComboAfterUpdate("ManageMethod", data.savedObject);
-			    		showSuccessMessage(data.successMessage);
+			    		showSuccessMessageInModal(data.successMessage);
+			    		$("#btnAddManageMethod").hide();
+			    		$("#btnUpdateManageMethod").show();
+			    		$("#btnDeleteManageMethod").show();
 			    	} else {
-			    		showErrorMessageInModal("page-message-manageMethod-modal", data.errorMessage);
+			    		showErrorMessageInModal(data.errorMessage);
 			    	}
 					Spinner.toggle();
 				} 

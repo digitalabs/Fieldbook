@@ -86,7 +86,12 @@
 	  			message = /*[[#{ontology.browser.modal.error}]]*/;
 	  		}
 	  		if ($("#manageTraitClassId").val() && $("#manageTraitClassId").val() > 0) {
-	  			message += "Trait Class if From Central and can not be Updated."
+	  			if (message) {
+	  				message += "<br/>";
+	  			} else {
+	  				message = "";
+	  			}
+	  			message += /*[[#{ontology.browser.modal.from.central('Trait Class')}]]*/;
 	  		}
 	  		if (message) {
 	  			showErrorMessageInModal("page-message-manageTraitClass-modal", message);

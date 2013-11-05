@@ -97,7 +97,7 @@
 	  			message += /*[[#{ontology.browser.modal.from.central('Trait Class')}]]*/;
 	  		}
 	  		if (message) {
-	  			showErrorMessageInModal(message);
+	  			showErrorMessageInModal('page-message-modal', message);
 	  			return;
 	  		}
 	  		Spinner.toggle();
@@ -116,7 +116,7 @@
 			    		$("#btnUpdateManageTraitClass").show();
 			    		$("#btnDeleteManageTraitClass").show();
 			    	} else {
-			    		showErrorMessageInModal(data.errorMessage);
+			    		showErrorMessageInModal('page-message-modal', data.errorMessage);
 			    	}
 					Spinner.toggle();
 				} 

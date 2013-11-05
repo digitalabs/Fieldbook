@@ -65,7 +65,7 @@
 	  	function saveMethod() {
 	  		if (!validateMethod()) {
 	  			message = /*[[#{ontology.browser.modal.error}]]*/;
-	  			showErrorMessageInModal(message);
+	  			showErrorMessageInModal('page-message-modal', message);
 	  			return;
 	  		}
 	  		Spinner.toggle();
@@ -84,7 +84,7 @@
 			    		$("#btnUpdateManageMethod").show();
 			    		$("#btnDeleteManageMethod").show();
 			    	} else {
-			    		showErrorMessageInModal(data.errorMessage);
+			    		showErrorMessageInModal('page-message-modal', data.errorMessage);
 			    	}
 					Spinner.toggle();
 				} 

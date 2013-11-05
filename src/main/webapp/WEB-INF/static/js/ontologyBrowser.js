@@ -837,6 +837,7 @@ function loadOntologyModal(ontologyName){
 	}
 
 function showErrorMessageInModal(messageDivId, message) {
+	console.log(message);
 	$("#" + messageDivId).html(
 			"<div class='alert alert-danger'>"+ message +"</div>"
 	);
@@ -1038,7 +1039,8 @@ function preSelectAfterUpdate(combo, id, name) {
 function deleteOntology(combo) {
 	//if (validateComboForDelete(combo)) {
 		//get the form data
-		var formData = {id: $("#" + lowerCaseFirstLetter(combo) + "Id").val(), name: $("#" + lowerCaseFirstLetter(combo) + "Name").val()};
+		//var formData = {id: $("#" + lowerCaseFirstLetter(combo) + "Id").val(), name: $("#" + lowerCaseFirstLetter(combo) + "Name").val()};
+		var formData = {id: $("#" + "combo" + (combo) ).select2('data').id, name: $("#" + lowerCaseFirstLetter(combo) + "Name").val()};
 		
 		Spinner.toggle();
 		
@@ -1048,11 +1050,15 @@ function deleteOntology(combo) {
 			dataType: "json",
 			data: formData,
 		    success: function(data){
+		    	//alert(data.errorMessage);
 			    if (data.status == "1") {
 		    		recreateComboAfterDelete(combo, formData);
 		    		showSuccessMessageInModal(data.successMessage);
+		    		//remove the list
+		    		$("#" + lowerCaseFirstLetter(combo) + "NameText").html("");
+		    		$("#manageLinkedVariableList").html("");
 		    	} else {
-		    		showErrorMessageInModal(data.errorMessage);
+		    		showErrorMessageInModal('page-message-modal', data.errorMessage);
 		       	}
 		   }, 
 		   error: function(jqXHR, textStatus, errorThrown){

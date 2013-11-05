@@ -65,7 +65,7 @@
 	  	function saveScale() {
 	  		if (!validateScale()) {
 	  			message = /*[[#{ontology.browser.modal.error}]]*/;
-	  			showErrorMessageInModal(message);
+	  			showErrorMessageInModal('page-message-modal', message);
 	  			return;
 	  		}
 	  		Spinner.toggle();
@@ -79,12 +79,12 @@
 			    success: function(data) {
 			    	if (data.status == '1') {
 			    		recreateComboAfterUpdate("ManageScale", data.savedObject);
-			    		showSuccessMessage(data.successMessage);
+			    		showSuccessMessageInModal(data.successMessage);
 			    		$("#btnAddManageScale").hide();
 			    		$("#btnUpdateManageScale").show();
 			    		$("#btnDeleteManageScale").show();
 			    	} else {
-			    		showErrorMessageInModal(data.errorMessage);
+			    		showErrorMessageInModal('page-message-modal', data.errorMessage);
 			    	}
 					Spinner.toggle();
 				} 

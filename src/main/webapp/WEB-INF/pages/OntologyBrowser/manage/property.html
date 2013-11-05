@@ -83,7 +83,7 @@
 	  	function saveProperty() {
 	  		if (!validateProperty()) {
 	  			message = /*[[#{ontology.browser.modal.error}]]*/;
-	  			showErrorMessageInModal(message);
+	  			showErrorMessageInModal('page-message-modal', message);
 	  			return;
 	  		}
 	  		Spinner.toggle();
@@ -102,7 +102,7 @@
 			    		$("#btnUpdateManageProperty").show();
 			    		$("#btnDeleteManageProperty").show();
 			    	} else {
-			    		showErrorMessageInModal(data.errorMessage);
+			    		showErrorMessageInModal('page-message-modal', data.errorMessage);
 			    	}
 					Spinner.toggle();
 				} 

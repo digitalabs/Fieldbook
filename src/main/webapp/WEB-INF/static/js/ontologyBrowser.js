@@ -377,6 +377,7 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	    		filterPropertyCombo(treeDivId, "comboTraitClass", "traitClassDescription", $("#comboTraitClass").select2("data").id, true);
 	    	}
 	    	if (name.match("^Manage")) {
+	    		$("#" + "page-message-" + lowerCaseFirstLetter(name) + "-modal").html("");
 	    		if ($("#combo"+name).select2("data").description) { //edit mode
 			    	$("#" + lowerCaseFirstLetter(name) + "Id").val($("#combo"+name).select2("data").id);
 			    	$("#" + lowerCaseFirstLetter(name) + "Name").val($("#combo"+name).select2("data").text.replace(" (Shared)", ""));
@@ -843,19 +844,19 @@ function showErrorMessageInModal(messageDivId, message) {
 }
 
 function validateTraitClass() {
-	return ($("#comboManageTraitClass").val() && $("#manageParentTraitClassId").val() && $("#manageParentTraitClassId").val() != "0");
+	return ($("#manageTraitClassName").val() && $("#manageParentTraitClassId").val() && $("#manageParentTraitClassId").val() != "0");
 }
 
 function validateProperty() {
-	return ($("#comboManageProperty").val() && $("#managePropTraitClassId").val());
+	return ($("#managePropertyName").val() && $("#managePropTraitClassId").val() && $("#managePropTraitClassId").val() != "0");
 }
 
 function validateScale() {
-	return ($("#comboManageScale").val());
+	return ($("#manageScaleName").val());
 }
 
 function validateMethod() {
-	return ($("#comboManageMethod").val());
+	return ($("#manageMethodName").val());
 }
 
 function findIndexOfOntology(suggestions_obj, data) {

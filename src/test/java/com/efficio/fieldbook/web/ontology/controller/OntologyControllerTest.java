@@ -25,6 +25,7 @@ import org.codehaus.jackson.type.TypeReference;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.oms.CvId;
+import org.generationcp.middleware.domain.oms.Property;
 import org.generationcp.middleware.domain.oms.PropertyReference;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.Term;
@@ -250,9 +251,17 @@ public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
         try {
             List<TermProperty> termProperties = new ArrayList<TermProperty>();
             termProperties.add(new TermProperty(1, TermId.CROP_ONTOLOGY_ID.getId(), "CO:12345", 0));
-            Term property = new Term(100, "PROPERTY", "PROPERTY DEF", null, termProperties);
-            Term scale = new Term(200, "SCALE", "SCALE DEF", null, null);
-            Term method = new Term(300, "METHOD", "METHOD DEF", null, null);
+            
+            String propertyName = "property name " + new Random().nextInt(10000);
+            ontologyService.addProperty(propertyName, "test property", 1087);
+            Property property = ontologyService.getProperty(propertyName);
+            
+            String scaleName = "scale name " + new Random().nextInt(10000);
+            Term scale = ontologyService.addTerm(scaleName, "test scale", CvId.SCALES);
+            
+            String methodName = "method name " + new Random().nextInt(10000);
+            Term method = ontologyService.addTerm(methodName, methodName, CvId.METHODS);
+            
             Term dataType = new Term(400, "DATA TYPE", "DATA TYPE DEF", null, null);
             Term storedIn = new Term(1010, "STORED IN", "STORED IN DEF", null, null);
             Term traitClass = new Term(600, "TRAIT CLASS", "TRAIT CLASS DEF", null, null);
@@ -260,7 +269,7 @@ public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
             StandardVariable standardVariable = new StandardVariable();
             standardVariable.setName("TestVariable" + new Random().nextInt(10000));
             standardVariable.setDescription("Test Desc");
-            standardVariable.setProperty(property);
+            standardVariable.setProperty(property.getTerm());
             standardVariable.setMethod(method);
             standardVariable.setScale(scale);
             standardVariable.setDataType(dataType);

@@ -261,7 +261,8 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
     
     private StandardVariable createStandardVariableObject(OntologyBrowserForm form, Operation operation) throws MiddlewareQueryException {
         StandardVariable standardVariable = new StandardVariable();
-
+        String description = null;
+        
         if (form.getVariableId() != null) {
             standardVariable.setId(form.getVariableId());
         }
@@ -272,8 +273,14 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
             standardVariable.setName(form.getNewVariableName());
         }
 
+        if (form.getVariableDescription() == null) {
+            description = form.getNewVariableName();
+        } else {
+            description = form.getVariableDescription();
+        }
+        
         standardVariable.setName(form.getNewVariableName());
-        standardVariable.setDescription(form.getVariableDescription());
+        standardVariable.setDescription(description);
         standardVariable.setProperty(ontologyService.getTermById(Integer.parseInt(form.getProperty())));
         standardVariable.setMethod(ontologyService.getTermById(Integer.parseInt(form.getMethod())));
         standardVariable.setScale(ontologyService.getTermById(Integer.parseInt(form.getScale())));

@@ -82,7 +82,9 @@
 	  	
 	  	function saveTraitClass() {
 	  		var message = null;
-	  		$("#manageParentTraitClassId").val($("#comboManageParentTraitClass").select2("data").id);
+	  		if ($("#comboManageParentTraitClass").select2("data")) {
+	  			$("#manageParentTraitClassId").val($("#comboManageParentTraitClass").select2("data").id);
+	  		}
 	  		if (!validateTraitClass()) {
 	  			message = /*[[#{ontology.browser.modal.error}]]*/;
 	  		}

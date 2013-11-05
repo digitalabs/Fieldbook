@@ -749,29 +749,45 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         try {
             if (form instanceof OntologyTraitClassForm) {
                 ontologyName = messageSource.getMessage("ontology.browser.modal.trait.class", null, locale);
+                String desc = ((OntologyTraitClassForm) form).getManageTraitClassDescription();
+                if(desc != null && desc.equalsIgnoreCase("")){
+                    desc = ((OntologyTraitClassForm) form).getManageTraitClassName();
+                }
                 result.put("savedObject", ontologyService.addOrUpdateTraitClass(
                         ((OntologyTraitClassForm) form).getManageTraitClassName(), 
-                        ((OntologyTraitClassForm) form).getManageTraitClassDescription(), 
+                        desc, 
                         ((OntologyTraitClassForm) form).getManageParentTraitClassId()));
             }
             else if (form instanceof OntologyPropertyForm) {
                 ontologyName = messageSource.getMessage("ontology.browser.modal.property", null, locale);
+                String desc = ((OntologyPropertyForm) form).getManagePropertyDescription();
+                if(desc != null && desc.equalsIgnoreCase("")){
+                    desc = ((OntologyPropertyForm) form).getManagePropertyName();
+                }
                 result.put("savedObject", ontologyService.addOrUpdateProperty(
                         ((OntologyPropertyForm)form).getManagePropertyName(), 
-                        ((OntologyPropertyForm)form).getManagePropertyDescription(), 
+                        desc, 
                         ((OntologyPropertyForm)form).getManagePropTraitClassId()));
             }
             else if (form instanceof OntologyScaleForm) {
                 ontologyName = messageSource.getMessage("ontology.browser.modal.scale", null, locale);
+                String desc = ((OntologyScaleForm) form).getManageScaleDescription();
+                if(desc != null && desc.equalsIgnoreCase("")){
+                    desc = ((OntologyScaleForm) form).getManageScaleName();
+                }
                 result.put("savedObject", ontologyService.addOrUpdateScale(
                         ((OntologyScaleForm) form).getManageScaleName(), 
-                        ((OntologyScaleForm) form).getManageScaleDescription()));
+                        desc));
             }
             else if (form instanceof OntologyMethodForm) {
                 ontologyName = messageSource.getMessage("ontology.browser.modal.method", null, locale);
+                String desc = ((OntologyMethodForm) form).getManageMethodDescription();
+                if(desc != null && desc.equalsIgnoreCase("")){
+                    desc = ((OntologyMethodForm) form).getManageMethodName();
+                }
                 result.put("savedObject", ontologyService.addOrUpdateMethod(
                         ((OntologyMethodForm) form).getManageMethodName(), 
-                        ((OntologyMethodForm) form).getManageMethodDescription()));
+                        desc));
             }
             
             if (form.isAddMode()) { //add mode

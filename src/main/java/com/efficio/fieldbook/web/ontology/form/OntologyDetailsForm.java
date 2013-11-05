@@ -305,7 +305,7 @@ public class OntologyDetailsForm{
         if(variable != null){
             setTraitClassName(variable.getIsA().getName());
             setPropertyName(variable.getProperty().getName());
-            setRoleName(variable.getPhenotypicType().toString());
+            setRoleName(variable.getStoredIn().getName());
             setMethodName(variable.getMethod().getName());
             setScaleName(variable.getScale().getName());
             setDataTypeName(variable.getDataType().getName());

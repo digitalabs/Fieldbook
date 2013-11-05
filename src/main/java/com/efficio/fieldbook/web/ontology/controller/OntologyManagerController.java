@@ -228,6 +228,8 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         //validations for delete
         if (form.getIsDelete().equals(1)) {
             validateDelete(form, result);
+        } else if (form.getIsDelete().equals(2)) {
+            validateUpdate(form, result);
         }
         form.setAddSuccessful("0");
         
@@ -662,7 +664,18 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         } catch(MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }
-    } 
+    }
+    
+    private void validateUpdate(Object o, Errors errors) {
+        OntologyBrowserForm form = (OntologyBrowserForm) o;
+        try {
+            if (form.getVariableId() > -1) {
+                errors.rejectValue("variableName", "ontology.browser.cannot.update.central.variable", new String[] {ontologyService.getStandardVariable(form.getVariableId()).getName()}, "ontology.browser.cannot.update.central.variable");
+            }
+        } catch(MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+    }
 
     /*
      * Delete ontology.

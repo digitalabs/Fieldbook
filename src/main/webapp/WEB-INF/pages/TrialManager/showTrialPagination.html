@@ -1,0 +1,48 @@
+<div th:object="${manageTrialForm}">
+    <!-- case 1: no data means no table -->
+     <div th:if="*{paginatedTrialDetailsList == null or #lists.isEmpty(paginatedTrialDetailsList)}">
+       <span th:text="#{nursery.managenurseries.no.nursery.list}">No Trial</span>
+     </div>
+     
+         
+     <!-- case 2: nursery list has data -->
+     <div th:if="*{paginatedTrialDetailsList != null and not #lists.isEmpty(paginatedTrialDetailsList)}">
+         <table id="trial-table" th:if="*{not #lists.isEmpty(paginatedTrialDetailsList)}" class="table table-bordered">
+           <thead>
+				<tr>
+					<th th:text="#{nursery.managenurseries.shownurseries.name}">Name</th>
+					<th th:text="#{nursery.managenurseries.shownurseries.title}">Title</th>
+					<th th:text="#{nursery.managenurseries.shownurseries.objective}">Objective</th>
+					<th th:text="#{nursery.managenurseries.shownurseries.start.date}">Start Date</th>
+					<th th:text="#{nursery.managenurseries.shownurseries.end.date}">End Date</th>
+					<th th:text="#{nursery.managenurseries.shownurseries.principal.investigator}">Principal Investigator</th>
+					<th th:text="#{nursery.managenurseries.shownurseries.site.name}">Site Name</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:class="${row.even}? 'data-row even' : 'data-row odd'" th:each="trial, row : *{paginatedTrialDetailsList}"  th:id="${trial.id}">
+					<td th:text="${trial.studyName}">Name</td>
+					<td th:text="${trial.title}">Title</td>
+					<td th:text="${trial.objective}">Objective</td>
+					<td th:text="${trial.startDate}">Start Date</td>
+					<td th:text="${trial.endDate}">End Date</td>
+					<td th:text="${trial.piName}">Principal Investigator</td>
+					<td th:text="${trial.siteName}">Site Name</td>
+				</tr>
+			</tbody>
+         </table>
+	</div>
+</div>
+
+<div layout:fragment="page-script">
+	<!-- For pagination -->
+	<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[    
+        
+		$( document ).ready(function() {  	     
+        	triggerFieldMapTableSelection('trial-table');
+		});
+        
+      //]]>
+    </script>
+</div>

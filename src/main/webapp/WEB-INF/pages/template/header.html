@@ -22,6 +22,7 @@
 	
 	<ul class="nav nav-pills">
 		<li th:class="${templateName == 'NurseryManager/fileUpload' or templateName == 'NurseryManager/importGermplasmList' } ? 'active' : ''"><a href="/NurseryManager/manageNurseries.html" th:href="@{/NurseryManager}" >Nursery Manager</a></li>
+		<li th:class="${templateName == 'TrialManager/fileUpload' or templateName == 'TrialManager/manageTrial' } ? 'active' : ''"><a href="/TrialManager/manageTrial.html" th:href="@{/TrialManager}" >Trial Manager</a></li>
 		<li th:class="${templateName == 'OntologyBrowser/main' } ? 'active' : ''"><a href="/OntologyBrowser/main.html" th:href="@{/OntologyBrowser/}" >Ontology Browser</a></li>
 	  <!-- 
 	  <li th:class="${templateName == 'test'} ? 'active' : ''"><a href="test.html" th:href="@{/test}">Navigation 1</a></li>

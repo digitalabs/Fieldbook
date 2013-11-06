@@ -1,0 +1,166 @@
+<div class="col-md-12" xmlns:th="http://www.thymeleaf.org">
+	<div class="page-header">
+		<h1 th:text="#{fieldmap.header.field.plan}">
+			FIELD PLAN
+		</h1>
+	</div>			  
+</div>
+<div class="row">
+	<div class="col-md-3">
+		<h4 th:text="#{fieldmap.header.make.a.field.plan}">Make a Field Plan</h4>
+	</div>
+	<div class="col-md-3">
+		<h4 th:text="#{fieldmap.header.enter.details}">1. ENTER FIELD DETAILS</h4>
+	</div>
+	<div class="col-md-3">
+		<h4 th:text="#{fieldmap.header.enter.planting.details}">2. ENTER PLANTING DETAILS</h4>
+	</div>
+	<div class="col-md-3">
+		<h4 th:text="#{fieldmap.header.generate.field.map}">3. GENERATE FIELD MAP</h4>
+	</div>
+</div>
+<form role="form-horizontal" class="form-horizontal" action="#"
+th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapForm}" enctype="multipart/form-data">
+
+	
+
+
+<div class="row" style="border: 1px solid #333333">
+
+	<div class="form-group">
+		&nbsp;
+	</div>
+	
+	<div class="form-group col-md-12" >
+		<strong th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.to.be.mapped}">TRIAL TO BE MAPPED:</strong>
+		<strong th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery.to.be.mapped}">NURSERY TO BE MAPPED:</strong>
+	</div>
+	
+	<div class="form-group col-md-3">
+		<strong>
+			<span th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.selected.trial}">Selected Trial:</span>
+			<span th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery.selected.nursery}">Selected Nursery:</span>
+		</strong> <span th:text="*{userFieldmap.selectedName}">[FieldbookName]</span>
+	</div>
+	<div class="form-group col-md-3">
+		<strong><span th:text="#{fieldmap.trial.number.of.entries}">Number of Entries:</span></strong> <span th:text="*{userFieldmap.numberOfEntries}">3</span>
+	</div>
+	
+	<div class="form-group col-md-3">
+		<strong><span th:if="*{userFieldmap.trial == true}"  th:text="#{fieldmap.trial.number.of.reps}">Number of Reps:</span></strong> <span th:if="*{userFieldmap.trial == true}"  th:text="*{userFieldmap.numberOfReps}">2</span>
+	</div>
+	
+	<div class="form-group">
+		<strong><span th:text="#{fieldmap.trial.total.number.of.plots}">Total Number of Plots:</span></strong> <span th:text="*{userFieldmap.totalNumberOfPlots}">55</span>
+	</div>
+	
+	<div class="form-group col-md-12" >
+		<strong th:text="#{fieldmap.trial.field.and.block.details}">FIELD AND BLOCK DETAILS:</strong>
+	</div>
+	<div class="form-group col-md-12" >
+		<strong th:text="#{fieldmap.trial.add.new.details}">Add new field and block details:</strong>
+	</div>
+	 
+    
+	<div class="form-group  col-md-12">			
+		  <div class="form-group col-md-12">
+		    
+		    <div class="col-md-2">
+		  		<label class="control-label" th:text="#{fieldmap.trial.field.location}">Field Location:</label>
+		  	</div>
+		    <div class="col-md-4">
+		       <select class="form-control" th:field="*{userFieldmap.fieldLocationId}">
+		       		<option value="1">Test Loc 1</option>
+		       		<option value="2">Test Loc 2</option>
+			   </select>
+		    </div>
+		  </div>
+		  <div class="form-group col-md-12">
+		    
+		    <div class="col-md-2">
+		  		<label class="control-label" th:text="#{fieldmap.trial.enter.field.name}">Enter Field Name:</label>
+		  	</div>
+		    <div class="col-md-4">
+		      <input type="email" class="form-control"  th:field="*{userFieldmap.fieldName}" placeholder="Field Name"/>
+		    </div>
+		  </div>
+		  <div class="form-group col-md-12">
+		    <div class="col-md-2">
+		  		<label class="control-label" th:text="#{fieldmap.trial.enter.block.name}">Enter Block Name:</label>
+		  	</div>
+		    <div class="col-md-4">
+		      <input type="email" class="form-control" th:field="*{userFieldmap.blockName}" placeholder="Block Name"/>
+		    </div>
+		  </div>						
+	</div>
+	<div class="form-group  col-md-12">
+		<strong th:text="#{fieldmap.trial.row.and.range.details}">ROW AND RANGE DETAILS:</strong>
+	</div>
+	<div class="form-group  col-md-12">			
+		  <div class="form-group col-md-6">
+		  	<div class="col-md-6">
+		  	<label class="control-label" th:text="#{fieldmap.trial.num.of.rows.in.blocks}">Number of Rows in the Block:</label>
+		  	</div>		    
+		    <div class="col-md-6">
+		       <input type="text" class="form-control" th:field="*{userFieldmap.numberOfRowsInBlock}"/>
+		    </div>
+		  </div>
+		  <div class="form-group col-md-6">
+		   	<div class="col-md-6">
+		  		<label class="control-label" th:text="#{fieldmap.trial.num.of.ranges.in.blocks}">Number of Ranges in the Block:</label>
+		  	</div>	
+		    <div class="col-md-6">
+		      <input type="text" class="form-control" th:field="*{userFieldmap.numberOfRangesInBlock}"/>
+		    </div>
+		  </div>
+		  						
+	</div>
+	
+	<div class="form-group  col-md-12">
+		<strong>PLOT DETAILS:</strong>
+	</div>
+	<div class="form-group  col-md-12">			
+		  <div class="form-group col-md-6">		    
+		    <div class="col-md-6">
+		  		<label class="control-label" th:text="#{fieldmap.trial.num.of.rows.per.plot}">Number of Rows per Plot:</label>
+		  	</div>
+		    <div class="col-md-6">
+		        <select class="form-control" th:field="*{userFieldmap.numberOfRowsPerPlot}">
+			   </select>
+		    </div>
+		  </div>
+		  <div class="form-group col-md-6">		   
+		    <div class="col-md-6">
+		  		<label class="control-label" th:text="#{fieldmap.trial.planting.order}">Planting Order:</label>
+		  	</div>
+		    <div class="col-md-6">
+		     <div class="form-group ">
+			  <label class="radio-inline">
+			    <input type="radio" th:field="*{userFieldmap.plantingOrder}" id="plantingOrder" value="1" th:text="#{fieldmap.planting.order.row.column}">
+			    Row/Column
+			    </input>
+			  </label>
+			  <label class="radio-inline">
+			    <input type="radio" th:field="*{userFieldmap.plantingOrder}" id="plantingOrder" value="2" th:text="#{fieldmap.planting.order.serpentine}">
+			    Serpentine
+			    </input>
+			  </label>
+			</div>
+		    </div>
+		  </div>
+		  						
+	</div>
+	
+	  <div class="form-group">
+	    <div class="col-md-offset-5 col-md-7">
+	      <input type="button" value="Cancel" class="btn btn-default btn-lg"/>
+	      <input type="submit" value="Next" class="btn btn-primary btn-lg"/>
+	      
+	    </div>
+	  </div>
+	
+</div>
+</form>
+<div layout:fragment="page-script">
+	
+</div>

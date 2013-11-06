@@ -29,5 +29,8 @@ public class AppConstants {
     
     /** The Constant DATA_TYPE. */
     public static final String DATA_TYPE = "dataType";
+    
+    public static final int PLANTING_ORDER_ROW_COLUMN = 1;
+    public static final int PLANTING_ORDER_SERPENTINE = 2;
 
 }

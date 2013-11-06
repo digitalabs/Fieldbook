@@ -21,3 +21,10 @@
 	max-width: 200px;
 	min-width: 200px;
 }
+
+table .even{
+	background-color: #F9F9F9;
+}
+table .field-map-highlight {
+     background-color: #5BC0DE;
+}

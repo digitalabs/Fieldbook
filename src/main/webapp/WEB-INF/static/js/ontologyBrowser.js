@@ -1079,4 +1079,55 @@ function clearForm(formName) {
 	});
 }
 
+function showValidValues() {
+	var dataType = $("#dataType option:selected").text();
+	if (dataType.indexOf("Categorical") > -1) {
+		showSelectedValidValues(["AddCatVar","DelCatVar"]);
+		hideValidValues(["Min", "Max", "None"]);
+	} else if (dataType.indexOf("Numeric variable") > -1) {
+		showSelectedValidValues(["Min", "Max"]);
+		hideValidValues(["AddCatVar","DelCatVar", "None"]);
+	} else {
+		showSelectedValidValues(["None"]);
+		hideValidValues(["AddCatVar","DelCatVar", "Min", "Max"]);
+	}
+}
 
+function showSelectedValidValues(validValues) {
+	for (var i = 0; i < validValues.length; i++) {
+		$("#validValue" + validValues[i]).show();
+	}
+}
+
+function hideValidValues(validValues) {
+	for (var i = 0; i < validValues.length; i++) {
+		$("#validValue" + validValues[i]).hide();
+	}
+}
+
+function addCatVar() {
+	
+	var deleteButton = "<button class='btn btn-default' type='button' onClick='delCatVar($(this))'>" + 
+						"<span class='glyphicon glyphicon-remove'></span>" +
+					    "</button>";
+	var newValidValue = "<tr><td class='col-md-4'>" + $("#newValidValueLabel").val() +  
+						"</td><td class='col-md-6'>" + $("#newValidValueDesc").val() + 
+						"</td><td class='col-md-2'>" + deleteButton + "</td></tr>";
+	$("#catVarList").append(newValidValue);
+	
+	//clear fields
+	$("#newValidValueLabel").val("");
+	$("#newValidValueDesc").val("");
+	
+	//add scrollbar 
+	if ($("#catVarList").height() > 200 && !$("#catVarList").parent().hasClass("scrollWrapper")) {
+		$("#catVarList").parent().toggleClass("scrollWrapper");
+	}
+}
+
+function delCatVar(button) {
+	button.closest('tr').remove();
+	if ($("#catVarList").height() <= 200 && $("#catVarList").parent().hasClass("scrollWrapper")) {
+		$("#catVarList").parent().toggleClass("scrollWrapper");
+	}
+}

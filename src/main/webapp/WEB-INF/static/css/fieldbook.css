@@ -28,3 +28,8 @@ table .even{
 table .field-map-highlight {
      background-color: #5BC0DE;
 }
+
+div.scrollWrapper{
+  height:200px;
+  overflow-y:scroll;
+}

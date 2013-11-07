@@ -1,7 +1,7 @@
 <div th:object="${manageTrialForm}">
     <!-- case 1: no data means no table -->
      <div th:if="*{paginatedTrialDetailsList == null or #lists.isEmpty(paginatedTrialDetailsList)}">
-       <span th:text="#{nursery.managenurseries.no.nursery.list}">No Trial</span>
+       <span th:text="#{trial.managetrial.no.trial.list}">No Trials</span>
      </div>
      
          
@@ -10,13 +10,13 @@
          <table id="trial-table" th:if="*{not #lists.isEmpty(paginatedTrialDetailsList)}" class="table table-bordered">
            <thead>
 				<tr>
-					<th th:text="#{nursery.managenurseries.shownurseries.name}">Name</th>
-					<th th:text="#{nursery.managenurseries.shownurseries.title}">Title</th>
-					<th th:text="#{nursery.managenurseries.shownurseries.objective}">Objective</th>
-					<th th:text="#{nursery.managenurseries.shownurseries.start.date}">Start Date</th>
-					<th th:text="#{nursery.managenurseries.shownurseries.end.date}">End Date</th>
-					<th th:text="#{nursery.managenurseries.shownurseries.principal.investigator}">Principal Investigator</th>
-					<th th:text="#{nursery.managenurseries.shownurseries.site.name}">Site Name</th>
+					<th th:text="#{trial.managetrial.showtrial.name}">Name</th>
+					<th th:text="#{trial.managetrial.showtrial.title}">Title</th>
+					<th th:text="#{trial.managetrial.showtrial.objective}">Objective</th>
+					<th th:text="#{trial.managetrial.showtrial.start.date}">Start Date</th>
+					<th th:text="#{trial.managetrial.showtrial.end.date}">End Date</th>
+					<th th:text="#{trial.managetrial.showtrial.principal.investigator}">Principal Investigator</th>
+					<th th:text="#{trial.managetrial.showtrial.site.name}">Site Name</th>
 				</tr>
 			</thead>
 			<tbody>

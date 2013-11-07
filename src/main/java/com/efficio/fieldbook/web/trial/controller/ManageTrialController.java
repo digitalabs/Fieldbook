@@ -66,14 +66,14 @@ public class ManageTrialController extends AbstractBaseFieldbookController{
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("manageTrialForm") ManageTrialForm form, Model model) {
         try {
-            List<StudyDetails> nurseryDetailsList = fieldbookMiddlewareService.getAllLocalNurseryDetails();
-            
+            List<StudyDetails> nurseryDetailsList = fieldbookMiddlewareService.getAllLocalTrialStudyDetails();
+            /*
             StudyDetails det1 = new StudyDetails("studyName", "title", "pmKey", "objective", "", "", null, 1, "", "");                        
             for(int i = 0 ; i < 50  ; i++){
                 det1.setId(4);
                 nurseryDetailsList.add(det1);
             }
-            
+            */
             getTrialSelection().setStudyDetailsList(nurseryDetailsList);
             form.setTrialDetailsList(getTrialSelection().getStudyDetailsList());
             form.setCurrentPage(1);

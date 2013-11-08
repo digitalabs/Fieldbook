@@ -478,13 +478,15 @@ span.dynatree-drop-target.dynatree-drop-after a
 /*Added for highlight*/
 #ontologyBrowserTree span.dynatree-node.highlight,
 #traitClassBrowserTree span.dynatree-node.highlight,
-#manageParentTraitClassBrowserTree span.dynatree-node.highlight
+#manageParentTraitClassBrowserTree span.dynatree-node.highlight,
+#managePropTraitClassBrowserTree span.dynatree-node.highlight
 {
 	background-color: #518CC6;
 }
 #ontologyBrowserTree ul.fbtree-container.highlight a:hover,
 #traitClassBrowserTree ul.fbtree-container.highlight a:hover,
-#manageParentTraitClassBrowserTree ul.fbtree-container.highlight a:hover
+#manageParentTraitClassBrowserTree ul.fbtree-container.highlight a:hover,
+#managePropTraitClassBrowserTree ul.fbtree-container.highlight a:hover
 {
 	background-color: #518CC6;
 }
@@ -504,4 +506,8 @@ span.dynatree-drop-target.dynatree-drop-after a
 {
 	background-color: #518CC6;
 }
-
+#managePropTraitClassBrowserTree ul.fbtree-container a:focus,
+#managePropTraitClassBrowserTree span.fbtree-focused a:link  /* @IE */
+{
+	background-color: #518CC6;
+}

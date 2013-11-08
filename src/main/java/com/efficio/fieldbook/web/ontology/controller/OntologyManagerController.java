@@ -21,16 +21,19 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.Enumeration;
+import org.generationcp.middleware.domain.dms.VariableConstraints;
 import org.generationcp.middleware.domain.oms.CvId;
 import org.generationcp.middleware.domain.oms.Property;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 //import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -52,6 +55,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.ontology.bean.EnumerationOperation;
 import com.efficio.fieldbook.web.ontology.form.OntologyBrowserForm;
 import com.efficio.fieldbook.web.ontology.form.OntologyMethodForm;
 import com.efficio.fieldbook.web.ontology.form.OntologyModalForm;
@@ -70,6 +74,7 @@ import com.efficio.fieldbook.web.util.TreeViewUtil;
  */
 @Controller
 @RequestMapping(OntologyManagerController.URL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class OntologyManagerController extends AbstractBaseFieldbookController{
     
     /** The Constant LOG. */
@@ -77,11 +82,20 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
     
     /** The Constant URL. */
     public static final String URL = "/OntologyManager/manage/";
-    /** AJAX PAGES **/
+    
+    /** AJAX PAGES *. */
     public static final String TRAIT_CLASS_MODAL = "/OntologyBrowser/manage/traitClass";
+    
+    /** The Constant PROPERTY_MODAL. */
     public static final String PROPERTY_MODAL = "/OntologyBrowser/manage/property";
+    
+    /** The Constant SCALE_MODAL. */
     public static final String SCALE_MODAL = "/OntologyBrowser/manage/scale";
+    
+    /** The Constant METHOD_MODAL. */
     public static final String METHOD_MODAL = "/OntologyBrowser/manage/method";
+    
+    /** The Constant LINKED_VARIABLES_MODAL. */
     public static final String LINKED_VARIABLES_MODAL = "/OntologyBrowser/manage/linkedVariable";
     
     /** The ontology service. */
@@ -92,6 +106,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
     @Autowired
     public MessageSource messageSource;
     
+    /** The error handler service. */
     @Resource
     private ErrorHandlerService errorHandlerService;
     
@@ -118,6 +133,12 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         return super.showAjaxPage(model, TRAIT_CLASS_MODAL);
     }
 
+    /**
+     * Save trait class.
+     *
+     * @param form the form
+     * @return the map
+     */
     @ResponseBody
     @RequestMapping(value="traitClass", method = RequestMethod.POST)
     public Map<String, Object> saveTraitClass(@ModelAttribute("ontologyTraitClassForm") OntologyTraitClassForm form) {
@@ -137,6 +158,12 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         return super.showAjaxPage(model, PROPERTY_MODAL);
     }
 
+    /**
+     * Save property.
+     *
+     * @param form the form
+     * @return the map
+     */
     @ResponseBody
     @RequestMapping(value="property", method = RequestMethod.POST)
     public Map<String, Object> saveProperty(@ModelAttribute("ontologyPropertyForm") OntologyPropertyForm form) {
@@ -157,6 +184,12 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         return super.showAjaxPage(model, SCALE_MODAL);
     }
     
+    /**
+     * Save scale.
+     *
+     * @param form the form
+     * @return the map
+     */
     @ResponseBody
     @RequestMapping(value="scale", method = RequestMethod.POST)
     public Map<String, Object> saveScale(@ModelAttribute("ontologyScaleForm") OntologyScaleForm form) {
@@ -177,6 +210,12 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         return super.showAjaxPage(model, METHOD_MODAL);
     }
     
+    /**
+     * Save method.
+     *
+     * @param form the form
+     * @return the map
+     */
     @ResponseBody
     @RequestMapping(value="method", method = RequestMethod.POST)
     public Map<String, Object> saveMethod(@ModelAttribute("ontologyMethodForm") OntologyMethodForm form) {
@@ -227,7 +266,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         OntologyBrowserValidator validator = new OntologyBrowserValidator();
         validator.validate(form, result);
         
-        //validations for delete
+        //validations for delete and update
         if (form.getIsDelete().equals(1)) {
             validateDelete(form, result);
         } else if (form.getIsDelete().equals(2)) {
@@ -250,7 +289,8 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                     
                     StandardVariable standardVariable = createStandardVariableObject(form, operation);
                     ontologyService.saveOrUpdateStandardVariable(standardVariable, operation);
-                    //ontologyService.addStandardVariableValidValue(standardVariable, convertToEnumerations(form.getEnumerations()));
+                    standardVariable = ontologyService.getStandardVariable(standardVariable.getId());
+                    saveConstraintsAndValidValues(form, standardVariable);
                     form.setVariableId(standardVariable.getId());
                 }
                 form.setAddSuccessful("1");
@@ -263,7 +303,78 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         }
         return show(form, model);
     }
+    
+    /**
+     * Save constraints and valid values.
+     *
+     * @param form the form
+     * @param stdVariable the std variable
+     * @throws MiddlewareQueryException the middleware query exception
+     * @throws MiddlewareException the middleware exception
+     */
+    private void saveConstraintsAndValidValues(OntologyBrowserForm form, StandardVariable stdVariable) throws MiddlewareQueryException, MiddlewareException {
+        String dataType = ontologyService.getTermById(Integer.parseInt(form.getDataType())).getName(); 
+        if (dataType.contains("Categorical")) {
+            saveValidValues(form, stdVariable);
+        } else if (dataType.contains("Numeric variable")) {
+            saveConstraints(form, stdVariable); 
+        }
+    }
+    
+    /**
+     * Save constraints.
+     *
+     * @param form the form
+     * @param stdVariable the std variable
+     * @throws MiddlewareQueryException the middleware query exception
+     * @throws MiddlewareException the middleware exception
+     */
+    private void saveConstraints(OntologyBrowserForm form, StandardVariable stdVariable) throws MiddlewareQueryException, MiddlewareException {
+        Integer minValue = form.getMinValue();
+        Integer maxValue = form.getMaxValue();
         
+        if (minValue == null && maxValue == null && stdVariable.getConstraints() != null) {
+            //delete constraints
+            ontologyService.deleteStandardVariableMinMaxConstraints(stdVariable.getId());
+        } else if (stdVariable.getConstraints() != null){
+            //update constraints
+            ontologyService.addOrUpdateStandardVariableMinMaxConstraints(stdVariable.getId(), 
+                    new VariableConstraints(stdVariable.getConstraints().getMinValueId(), 
+                            stdVariable.getConstraints().getMaxValueId(), minValue, maxValue));
+        } else {
+            //add constraints
+            ontologyService.addOrUpdateStandardVariableMinMaxConstraints(stdVariable.getId(), 
+                    new VariableConstraints(minValue, maxValue));
+        }
+    }
+    
+    /**
+     * Save valid values.
+     *
+     * @param form the form
+     * @param stdVariable the std variable
+     * @throws MiddlewareQueryException the middleware query exception
+     */
+    private void saveValidValues(OntologyBrowserForm form, StandardVariable stdVariable) throws MiddlewareQueryException {
+        int index = 0;
+        List<Enumeration> enumerations = convertToEnumerations(form.getEnumerations());
+        List<EnumerationOperation> operations = convertToEnumerationOperation(form.getEnumerations());
+        for (Enumeration enumeration : enumerations) {
+            if (operations.get(index).getOperation() > 0) {
+                ontologyService.addStandardVariableValidValue(stdVariable, enumeration);
+            } else if (operations.get(index).getOperation() < 0) {
+                ontologyService.deleteStandardVariableValidValue(stdVariable.getId(), enumeration.getId());
+            }
+            index++;
+        }
+    }
+        
+    /**
+     * Convert to enumerations.
+     *
+     * @param enumerations the enumerations
+     * @return the list
+     */
     private static List<Enumeration> convertToEnumerations(String enumerations) {
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -274,6 +385,30 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         return new ArrayList<Enumeration>();
     }
     
+    /**
+     * Convert to enumeration operation.
+     *
+     * @param enumerations the enumerations
+     * @return the list
+     */
+    private static List<EnumerationOperation> convertToEnumerationOperation(String enumerations) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.readValue(enumerations, new TypeReference<List<EnumerationOperation>>() { });
+        } catch(Exception e) {
+            LoggerFactory.getLogger(OntologyManagerController.class).error(e.getMessage(), e);
+        }
+        return new ArrayList<EnumerationOperation>();
+    }
+    
+    /**
+     * Creates the standard variable object.
+     *
+     * @param form the form
+     * @param operation the operation
+     * @return the standard variable
+     * @throws MiddlewareQueryException the middleware query exception
+     */
     private StandardVariable createStandardVariableObject(OntologyBrowserForm form, Operation operation) throws MiddlewareQueryException {
         StandardVariable standardVariable = new StandardVariable();
         String description = null;
@@ -418,6 +553,11 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      *
      * @return the variable name
     */ 
+    /**
+     * Gets the variable name.
+     *
+     * @return the variable name
+     */
     @ModelAttribute("variableNameSuggestionList")
     public List<Term> getVariableName() {
         try {
@@ -486,7 +626,9 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
     /**
      * Gets the trait class suggestions.
      *
+     * @param refList the ref list
      * @return the trait class suggestions
+     * @throws MiddlewareQueryException the middleware query exception
      */
     /*
     @ModelAttribute("traitClassesSuggestionList")
@@ -515,6 +657,8 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
     /**
      * Gets the property suggestions.
      *
+     * @param propertyId the property id
+     * @param local the local
      * @return the property suggestions
      */
     /*@ModelAttribute("propertiesSuggestionList")
@@ -597,6 +741,12 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      * @param variableId the variable id
      * @return the standard variable details
      */
+    /**
+     * Gets the standard variable details.
+     *
+     * @param variableId the variable id
+     * @return the standard variable details
+     */
     @ResponseBody
     @RequestMapping(value="retrieve/variable/{variableId}", method=RequestMethod.GET)
     public Map<String, String> getStandardVariableDetails(@PathVariable String variableId) {
@@ -633,6 +783,12 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         return resultMap;
     }
     
+    /**
+     * Convert enumerations to json.
+     *
+     * @param enumerations the enumerations
+     * @return the string
+     */
     private String convertEnumerationsToJSON(List<Enumeration> enumerations) {
         if (enumerations!= null) {
             try {
@@ -648,7 +804,8 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
     /**
      * Show the main import page.
      *
-     * @param form the form
+     * @param ontologyType the ontology type
+     * @param id the id
      * @param model the model
      * @return the string
      */
@@ -684,10 +841,22 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      * @param term the term
      * @return the string
      */ 
+    /**
+     * Check if null.
+     *
+     * @param term the term
+     * @return the string
+     */
     private String checkIfNull(Term term) {
         return term==null ? "" : String.valueOf(term.getId());
     }
     
+    /**
+     * Validate delete.
+     *
+     * @param o the o
+     * @param errors the errors
+     */
     private void validateDelete(Object o, Errors errors) {
         OntologyBrowserForm form = (OntologyBrowserForm) o;
         try {
@@ -701,6 +870,12 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         }
     }
     
+    /**
+     * Validate update.
+     *
+     * @param o the o
+     * @param errors the errors
+     */
     private void validateUpdate(Object o, Errors errors) {
         OntologyBrowserForm form = (OntologyBrowserForm) o;
         try {
@@ -789,6 +964,12 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         return message;
     }*/
     
+    /**
+     * Save ontology.
+     *
+     * @param form the form
+     * @return the map
+     */
     private Map<String, Object> saveOntology(OntologyModalForm form) {
         Map<String, Object> result = new HashMap<String, Object>();
         Locale locale = LocaleContextHolder.getLocale();
@@ -861,6 +1042,14 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         return result;
     }
     
+    /**
+     * Delete ontology.
+     *
+     * @param id the id
+     * @param name the name
+     * @param ontology the ontology
+     * @return the map
+     */
     @ResponseBody
     @RequestMapping(value = "deleteOntology/{ontology}", method = RequestMethod.POST)
     public Map<String, String> deleteOntology(@RequestParam(required=false) Integer id, @RequestParam(required=false) String name, @PathVariable String ontology) {

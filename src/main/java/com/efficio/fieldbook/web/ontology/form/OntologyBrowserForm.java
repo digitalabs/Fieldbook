@@ -11,16 +11,9 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.ontology.form;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
-import org.slf4j.LoggerFactory;
-
-import com.efficio.fieldbook.web.ontology.controller.OntologyManagerController;
 
 
 // TODO: Auto-generated Javadoc

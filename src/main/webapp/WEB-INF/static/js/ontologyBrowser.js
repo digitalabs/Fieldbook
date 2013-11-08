@@ -756,23 +756,12 @@ function getStandardVariableDetails(variableId) {
 			data: "",
 		    success: function(data){
 			    if (data.status == "1") {
-			    	$("#variableId").val(variableId);
-			    	$("#newVariableName").val(data.name);
-			    	$("#variableDescription").val(data.description);
-			    	$("#dataType").val(data.dataType);
-			    	$("#role").val(data.role).attr("disabled","disabled");
-			    	$("#cropOntologyId").val(data.cropOntologyId);
-			    	setComboValues(traitClassesSuggestions_obj, data.traitClass, "TraitClass");
-			    	setComboValues(propertySuggestions_obj, data.property, "Property");
-			    	setComboValues(methodSuggestions_obj, data.method, "Method");
-			    	setComboValues(scaleSuggestions_obj, data.scale, "Scale");
+			    	populateFields(data, variableId);
 		       	}
 			    Spinner.toggle();
 		   }
 		   
 		});
-		setVisibleButtons(false, true, true);
-		setDeleteOperation(2);
 	} else {
 		//save the variable name in a hidden field for saving new standard variables
 		$("#variableId").val("");
@@ -782,6 +771,35 @@ function getStandardVariableDetails(variableId) {
 		setDeleteOperation(0);
 	}
 	$("#page-message").html("");
+}
+
+function populateFields(data, variableId) {
+	//set values of fields
+	$("#variableId").val(variableId);
+	$("#newVariableName").val(data.name);
+	$("#variableDescription").val(data.description);
+	$("#role").val(data.role).attr("disabled","disabled");
+	$("#cropOntologyId").val(data.cropOntologyId);
+	setComboValues(traitClassesSuggestions_obj, data.traitClass, "TraitClass");
+	setComboValues(propertySuggestions_obj, data.property, "Property");
+	setComboValues(methodSuggestions_obj, data.method, "Method");
+	setComboValues(scaleSuggestions_obj, data.scale, "Scale");
+	$("#dataType").val(data.dataType).trigger("change");
+	$("#minValue").val(data.minValue);
+	$("#maxValue").val(data.maxValue);
+	populateCategoricalValues(data.validValues);
+	
+	setVisibleButtons(false, true, true);
+	setDeleteOperation(2);
+}
+
+function populateCategoricalValues(data) {
+	if (data != "") {
+		var validValues = $.parseJSON(data);
+		for (var i = 0; i < validValues.length; i++) {
+			addCatVar(validValues[i].name, validValues[i].description, validValues[i].id);
+		}
+	} 
 }
 
 function setComboValues(suggestions_obj, id, name) {
@@ -1105,13 +1123,33 @@ function hideValidValues(validValues) {
 	}
 }
 
-function addCatVar() {
+function addCategoricalValidValue(id, label, description) {
+	var deleteButton = "";
+	var operation = "0";
 	
-	var deleteButton = "<button class='btn btn-default' type='button' onClick='delCatVar($(this))'>" + 
+	if (id == null) {
+		operation = "1";
+	}
+	
+	if (id < 0 || id == null) {
+		deleteButton= "<button class='btn btn-default' type='button' onClick='delCatVar($(this))'>" + 
 						"<span class='glyphicon glyphicon-remove'></span>" +
 					    "</button>";
-	var newValidValue = "<tr><td class='col-md-4'>" + $("#newValidValueLabel").val() +  
-						"</td><td class='col-md-6'>" + $("#newValidValueDesc").val() + 
+		enumerations.push({ 'id' : id,
+			  'name' : label, 
+			  'description' : description,
+			  'operation' : operation
+		});
+	} else {
+		enumerations_central.push({ 'id' : id,
+			  'name' : label, 
+			  'description' : description,
+			  'operation' : operation
+		});
+	}
+	
+	var newValidValue = "<tr><td class='col-md-4'>" + label +  
+						"</td><td class='col-md-6'>" + description + 
 						"</td><td class='col-md-2'>" + deleteButton + "</td></tr>";
 	$("#catVarList").append(newValidValue);
 	
@@ -1125,9 +1163,69 @@ function addCatVar() {
 	}
 }
 
+function validateNewValidValue(label, description) {
+	if (findIndexOfEnumeration(enumerations, label, "name") > -1 || 
+			findIndexOfEnumeration(enumerations_central, label, "name") > -1) {
+		return "name";
+	} else if (findIndexOfEnumeration(enumerations, description, "description") > -1 || 
+			findIndexOfEnumeration(enumerations_central, description, "description") > -1) {
+		return "description";
+	} else if (label == "" || description == ""){
+		return "required";
+	}
+	else {
+		return "";
+	}
+}
+
 function delCatVar(button) {
-	button.closest('tr').remove();
+	//get the label of the valid value to be deleted
+	var name = button.closest("td").prev().prev().text();
+	
+	//get the index of the deleted label and remove it from the enumerations object
+	var index = findIndexOfEnumeration(enumerations, name, "name");
+	enumerations[index].operation = "-1";  
+	
+	//remove the row
+	button.closest("tr").remove();
 	if ($("#catVarList").height() <= 200 && $("#catVarList").parent().hasClass("scrollWrapper")) {
 		$("#catVarList").parent().toggleClass("scrollWrapper");
 	}
+}
+
+function findIndexOfEnumeration(enumerations_obj, name, col) {
+	for (var i = 0; i < enumerations_obj.length; i++) {
+		if (col == "name") {
+		    if (enumerations_obj[i].name == name) {
+		        return i;
+		    }
+		} else {
+			if (enumerations_obj[i].description == name) {
+		        return i;
+		    }
+		}
+	}
+	return -1;
+}
+
+function minMaxErrorMessage(bothMinMaxRequired, notANumber, invalidValue) {
+	var minValue = $("#minValue").val();
+	var maxValue = $("#maxValue").val();
+	
+	if (minValue != "" || maxValue != "") {
+		if (minValue == "" || maxValue == "") {
+			return bothMinMaxRequired;
+		}
+		if (!isNaN(minValue) || !isNaN(maxValue)) {
+			return notANumber;
+		}
+		if (parseFloat(minValue) > parseFloat(maxValue)) {
+			return invalidValue;
+		}
+	}
+	return "";
+}
+
+function isFloat(value) { 
+    return !isNaN(parseInt(value,10)) && (parseFloat(value,10) == parseInt(value,10)); 
 }

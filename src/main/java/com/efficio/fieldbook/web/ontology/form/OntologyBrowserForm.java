@@ -11,9 +11,16 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.ontology.form;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
+import org.slf4j.LoggerFactory;
+
+import com.efficio.fieldbook.web.ontology.controller.OntologyManagerController;
 
 
 // TODO: Auto-generated Javadoc
@@ -89,6 +96,15 @@ public class OntologyBrowserForm{
     
     /** The scale description. */
     private String scaleDescription;
+    
+    /** The min value. */
+    private Integer minValue;
+    
+    /** The max value. */
+    private Integer maxValue;
+    
+    /** The enumerations. */
+    private String enumerations;
     
     /**
      * Gets the checks for error.
@@ -500,5 +516,59 @@ public class OntologyBrowserForm{
     public void setVariableId(Integer variableId) {
         this.variableId = variableId;
     }
+    
+    /**
+     * Gets the min value.
+     *
+     * @return the min value
+     */
+    public Integer getMinValue() {
+        return minValue;
+    }
 
-}
+    /**
+     * Sets the min value.
+     *
+     * @param minValue the new min value
+     */
+    public void setMinValue(Integer minValue) {
+        this.minValue = minValue;
+    }
+    
+    /**
+     * Gets the max value.
+     *
+     * @return the max value
+     */
+    public Integer getMaxValue() {
+        return maxValue;
+    }
+
+    /**
+     * Sets the max value.
+     *
+     * @param maxValue the new max value
+     */
+    public void setMaxValue(Integer maxValue) {
+        this.maxValue = maxValue;
+    }
+    
+    /**
+     * Gets the enumerations.
+     *
+     * @return the enumerations
+     */
+    public String getEnumerations() {
+        return enumerations;
+    }
+
+    /**
+     * Sets the enumerations.
+     *
+     * @param enumerations the new enumerations
+     */
+    public void setEnumerations(String enumerations) {
+        this.enumerations = enumerations;
+    } 
+    
+    }

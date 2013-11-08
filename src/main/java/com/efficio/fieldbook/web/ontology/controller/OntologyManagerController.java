@@ -21,12 +21,14 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.oms.CvId;
 import org.generationcp.middleware.domain.oms.Property;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
-import org.generationcp.middleware.domain.oms.TraitClass;
 //import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -248,6 +250,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                     
                     StandardVariable standardVariable = createStandardVariableObject(form, operation);
                     ontologyService.saveOrUpdateStandardVariable(standardVariable, operation);
+                    //ontologyService.addStandardVariableValidValue(standardVariable, convertToEnumerations(form.getEnumerations()));
                     form.setVariableId(standardVariable.getId());
                 }
                 form.setAddSuccessful("1");
@@ -259,6 +262,16 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
            }
         }
         return show(form, model);
+    }
+        
+    private static List<Enumeration> convertToEnumerations(String enumerations) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.readValue(enumerations, new TypeReference<List<Enumeration>>() { });
+        } catch(Exception e) {
+            LoggerFactory.getLogger(OntologyManagerController.class).error(e.getMessage(), e);
+        }
+        return new ArrayList<Enumeration>();
     }
     
     private StandardVariable createStandardVariableObject(OntologyBrowserForm form, Operation operation) throws MiddlewareQueryException {
@@ -601,6 +614,16 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
             resultMap.put("property", checkIfNull(stdVariable.getProperty()));
             resultMap.put("method", checkIfNull(stdVariable.getMethod()));
             resultMap.put("scale", checkIfNull(stdVariable.getScale()));
+            if (stdVariable.getConstraints() != null) {
+                resultMap.put("minValue", String.valueOf(stdVariable.getConstraints().getMinValue()));
+                resultMap.put("maxValue", String.valueOf(stdVariable.getConstraints().getMaxValue()));
+            } else {
+                resultMap.put("minValue", "");
+                resultMap.put("maxValue", "");
+            }
+            
+            resultMap.put("validValues", convertEnumerationsToJSON(stdVariable.getEnumerations()));
+            
         } catch(MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
             resultMap.put("status", "-1");
@@ -608,6 +631,18 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         }
         
         return resultMap;
+    }
+    
+    private String convertEnumerationsToJSON(List<Enumeration> enumerations) {
+        if (enumerations!= null) {
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                return mapper.writeValueAsString(enumerations);
+            } catch(Exception e) {
+                LOG.error(e.getMessage(), e);
+            }
+        }
+        return "";
     }
     
     /**

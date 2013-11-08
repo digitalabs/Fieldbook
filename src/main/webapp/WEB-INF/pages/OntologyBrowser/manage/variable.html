@@ -84,7 +84,7 @@
 					<label for="role" class="col-md-12 control-label" th:text="#{ontology.browser.modal.valid.value} + ':'">.Valid Values:</label>
 				</div>
 				<div class="col-md-6">
-					<input type="text" class="form-control" />
+					<input type="text" class="form-control" th:field="*{minValue}" />
 				</div>
 				<div class="col-md-2">
 					<label class="control-label">Minimum</label>
@@ -94,7 +94,7 @@
 				<div class="col-md-4">
 				</div>
 				<div class="col-md-6">
-					<input type="text" class="form-control" />
+					<input type="text" class="form-control" th:field="*{maxValue}" />
 				</div>
 				<div class="col-md-2">
 					<label class="control-label">Maximum</label>
@@ -111,13 +111,14 @@
 					<input type="text" class="col-md-12 form-control" id="newValidValueDesc" />
 				</div>
 				<div class="col-md-2">
-					<input type="button" class="btn btn-default" value="Add Value" onClick="addCatVar()" />
+					<input type="button" class="btn btn-default" value="Add Value" onClick="addCatVar($('#newValidValueLabel').val(), $('#newValidValueDesc').val(), null)" />
 				</div>
 			</div>
 			<div class="form-group" id="validValueDelCatVar">
 				<div class="col-md-4">
 				</div>
 				<div class="col-md-8">
+					<input type="hidden" th:field="*{enumerations}" />
 					<table class="table table-striped table-bordered" id="catVarList">
 						<tbody>
 						</tbody>
@@ -307,6 +308,9 @@
   		 
   	var ontologyUrl = $('#ontologyBaseUrl').attr('href');
   	
+  	var enumerations = [];
+  	var enumerations_central = [];
+  	
 	function validateCombo(combo) {
 		var message = null;
 		//check if field is blank	
@@ -355,18 +359,31 @@
 	 
     function do_validation() {
     	var message = null;
-    	//check required fields
-	    if (requiredFieldsEmpty()) {	
-	    	message = /*[[#{ontology.browser.modal.error}]]*/;
-	    	showMessage(message);
-			return false;
-	    }
-	    //check combo values
-	    if (comboValuesInvalid()) {
-	    	message = /*[[#{ontology.browser.modal.invalid.value}]]*/;
-	    	showMessage(message);
-	    	return false;
-	    }
+    	if ($("#isDelete").val() != 1) {
+	    	//check required fields
+		    if (requiredFieldsEmpty()) {	
+		    	message = /*[[#{ontology.browser.modal.error}]]*/;
+		    	showMessage(message);
+				return false;
+		    }
+		    //check combo values
+		    if (comboValuesInvalid()) {
+		    	message = /*[[#{ontology.browser.modal.invalid.value}]]*/;
+		    	showMessage(message);
+		    	return false;
+		    }
+		    //check min max values
+		    var bothMinMaxRequired = /*[[#{ontology.manager.min.max.both.required}]]*/;
+		    var notANumber = /*[[#{ontology.manager.min.max.not.a.number}]]*/;
+		    var invalidValue = /*[[#{ontology.manager.min.max.invalid.value}]]*/;
+		    message = minMaxErrorMessage(bothMinMaxRequired, notANumber, invalidValue); 
+		    if (message != "") { 
+		    	showMessage(message);
+		    	return false;
+		    }
+		    $("#enumerations").val(JSON.stringify(enumerations));
+    	}
+	    return true;
     }
     
 	$( document ).ready(function() {  	     
@@ -389,7 +406,23 @@
 		hideValidValues(["AddCatVar","DelCatVar", "Min", "Max"]);
 	});
 	
-	
+	function addCatVar(label, description, id) {
+		
+		var errorColumn = validateNewValidValue(label, description);
+		var message = "";
+		if (errorColumn == "") {
+			addCategoricalValidValue(id, label, description)
+		} else {
+			if (errorColumn == "name") {
+				message = /*[[#{ontology.manager.valid.value.not.unique(#{ontology.manager.valid.value.name})}]]*/;				
+			} else if (errorColumn == "description"){
+				message = /*[[#{ontology.manager.valid.value.not.unique(#{ontology.browser.modal.description})}]]*/;
+			} else {
+				message = /*[[#{ontology.manager.valid.value.required}]]*/;
+			}
+			showMessage(message);
+		}
+	}
   
       //]]>
     </script>

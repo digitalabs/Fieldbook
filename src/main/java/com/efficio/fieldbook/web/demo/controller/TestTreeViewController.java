@@ -37,7 +37,7 @@ public class TestTreeViewController extends AbstractBaseFieldbookController {
     private static final Logger LOG = LoggerFactory.getLogger(TestTreeViewController.class);
     
 	@Autowired
-	private StudyDataManager studyDataManager;
+	private transient StudyDataManager studyDataManager;
 	
 	@Override
 	public String getContentName() {

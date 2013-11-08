@@ -32,7 +32,7 @@ public class UserSelection implements Serializable {
     private String serverFileName;
     
     /** The workbook. */
-    private Workbook workbook;
+    private transient Workbook workbook;
     
     /** The field layout random. */
     private boolean fieldLayoutRandom;
@@ -44,7 +44,7 @@ public class UserSelection implements Serializable {
     private boolean isImportValid;
     
     /** The study details list.*/
-    private List<StudyDetails> studyDetailsList;
+    private transient List<StudyDetails> studyDetailsList;
     
     
     /**

@@ -21,7 +21,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -74,7 +73,6 @@ import com.efficio.fieldbook.web.util.TreeViewUtil;
  */
 @Controller
 @RequestMapping(OntologyManagerController.URL)
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class OntologyManagerController extends AbstractBaseFieldbookController{
     
     /** The Constant LOG. */
@@ -316,8 +314,24 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         String dataType = ontologyService.getTermById(Integer.parseInt(form.getDataType())).getName(); 
         if (dataType.contains("Categorical")) {
             saveValidValues(form, stdVariable);
+            //if datatype is changed to categorical, delete constraints
+            if (stdVariable.getConstraints() != null) {
+                ontologyService.deleteStandardVariableMinMaxConstraints(stdVariable.getId());
+            }
         } else if (dataType.contains("Numeric variable")) {
             saveConstraints(form, stdVariable); 
+            //if datatype is changed to numeric, delete valid values
+            if (stdVariable.getEnumerations() != null) {
+                deleteValidValues(stdVariable);
+            }
+        } else {
+            //if datatype is neither numeric nor categorical, delete constraints/valid values
+            if (stdVariable.getEnumerations() != null) {
+                deleteValidValues(stdVariable);
+            }
+            if (stdVariable.getConstraints() != null) {
+                ontologyService.deleteStandardVariableMinMaxConstraints(stdVariable.getId());
+            }
         }
     }
     
@@ -356,33 +370,21 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      * @throws MiddlewareQueryException the middleware query exception
      */
     private void saveValidValues(OntologyBrowserForm form, StandardVariable stdVariable) throws MiddlewareQueryException, MiddlewareException {
-        int index = 0;
-        List<Enumeration> enumerations = convertToEnumerations(form.getEnumerations());
-        List<EnumerationOperation> operations = convertToEnumerationOperation(form.getEnumerations());
-        for (Enumeration enumeration : enumerations) {
-            if (operations.get(index).getOperation() > 0) {
-                ontologyService.addStandardVariableValidValue(stdVariable, enumeration);
-            } else if (operations.get(index).getOperation() < 0) {
+        List<EnumerationOperation> enumerations = convertToEnumerationOperation(form.getEnumerations());
+        for (EnumerationOperation enumeration : enumerations) {
+            if (enumeration.getOperation() > 0) {
+                ontologyService.addStandardVariableValidValue(stdVariable, 
+                        new Enumeration(enumeration.getId(), enumeration.getName(), enumeration.getDescription(), 0));
+            } else if (enumeration.getOperation() < 0) {
                 ontologyService.deleteStandardVariableValidValue(stdVariable.getId(), enumeration.getId());
             }
-            index++;
         }
-    }
-        
-    /**
-     * Convert to enumerations.
-     *
-     * @param enumerations the enumerations
-     * @return the list
-     */
-    private static List<Enumeration> convertToEnumerations(String enumerations) {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.readValue(enumerations, new TypeReference<List<Enumeration>>() { });
-        } catch(Exception e) {
-            LoggerFactory.getLogger(OntologyManagerController.class).error(e.getMessage(), e);
+    } 
+    
+    private void deleteValidValues(StandardVariable stdVariable) throws MiddlewareQueryException {
+        for (Enumeration enumeration : stdVariable.getEnumerations()) {
+            ontologyService.deleteStandardVariableValidValue(stdVariable.getId(), enumeration.getId());
         }
-        return new ArrayList<Enumeration>();
     }
     
     /**

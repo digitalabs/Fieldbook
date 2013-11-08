@@ -111,6 +111,16 @@ public class OntologyManagerControllerTest extends AbstractJUnit4SpringContextTe
         assertEquals(standardVariable.getConstraints().getMinValue(), minValue);
         assertEquals(standardVariable.getConstraints().getMaxValue(), maxValue);
         
+        //edit
+        minValue = 1;
+        maxValue = 10;
+        Integer minValueId = standardVariable.getConstraints().getMinValueId();
+        Integer maxValueId = standardVariable.getConstraints().getMaxValueId();
+        ontologyService.addOrUpdateStandardVariableMinMaxConstraints(standardVariable.getId(), 
+                new VariableConstraints(minValueId, maxValueId, minValue, maxValue));
+        standardVariable = ontologyService.getStandardVariable(standardVariable.getId());
+        assertEquals(standardVariable.getConstraints().getMinValue(), minValue);
+        assertEquals(standardVariable.getConstraints().getMaxValue(), maxValue);
     } 
     
     @Test

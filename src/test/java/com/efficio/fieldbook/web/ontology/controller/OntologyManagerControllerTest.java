@@ -114,7 +114,7 @@ public class OntologyManagerControllerTest extends AbstractJUnit4SpringContextTe
     } 
     
     @Test
-    public void testSaveValidValues() throws MiddlewareQueryException {
+    public void testSaveValidValues() throws MiddlewareQueryException, MiddlewareException {
         //add
         List<Enumeration> enumerations = new ArrayList<Enumeration>();
         String randNum = String.valueOf(new Random().nextInt(10000));

@@ -389,8 +389,11 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 		    		if (allowTypedValues) {
 		    			retrieveLinkedVariables(name, $("#combo"+name).select2("data").id);
 		    		}
+		    		
 	    		} else { //add mode
-		    		clearForm(lowerCaseFirstLetter(name) + "Form");
+	    			if(name != 'ManageProperty')
+	    				clearForm(lowerCaseFirstLetter(name) + "Form");
+	    			
 			    	$("#" + lowerCaseFirstLetter(name) + "Id").val('');
 			    	$("#" + lowerCaseFirstLetter(name) + "Name").val($("#combo"+name).select2("data").id);
 		    		$("#btnAdd" + name).show();
@@ -398,6 +401,7 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 		    		$("#btnDelete" + name).hide();
 		    		$("#" + lowerCaseFirstLetter(name) + "NameText").html($("#combo"+name).select2("data").id);
 		    		$("#manageLinkedVariableList").html("");
+		    		
 	    		}
 	    	}	    	
 	    });
@@ -405,7 +409,7 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 }
 
 function retrieveLinkedVariables(ontologyType, ontologyId){
-	console.log(ontologyType + " = " + ontologyId);
+	//console.log(ontologyType + " = " + ontologyId);
 	Spinner.toggle();
 	$.ajax({
 		url: ontologyUrl + "retrieve/linked/variable/" + ontologyType + "/"+ontologyId,
@@ -559,7 +563,7 @@ function doTraitClassTreeHighlight(treeName, comboName, descriptionName, nodeKey
 	var elem = nodeKey.split("_");
 	var count = 0;
 	var key = "";
-	var traitClassId = ""
+	var traitClassId = "";
 	for(count = 0 ; count < elem.length ; count++){
 		if(key != '')
 			key = key + "_";
@@ -574,6 +578,12 @@ function doTraitClassTreeHighlight(treeName, comboName, descriptionName, nodeKey
 	
 	filterPropertyCombo(treeName, comboName, descriptionName, traitClassId, false);
 	
+	if(treeName == 'managePropTraitClassBrowserTree'){
+		//console.log("should be settings now")
+    	$('#managePropTraitClassId').val($('#comboManagePropTraitClass').select2('data').id);
+    	$('#managePropTraitClassName').val($('#comboManagePropTraitClass').select2('data').text);
+    	//console.log($('#comboManagePropTraitClass').select2('data').id);
+    }
 }
 
 function getNodeKeyFromTraitClass(traitClassId, treeName){
@@ -598,7 +608,7 @@ function getTreeChildren(child, traitClassId){
 	//console.log("parent child key:"+child.data.key);
 	var nodeKey = "";
 	if( child.data.key.indexOf(traitClassId) != -1){
-		console.log("FOUND");
+		//console.log("FOUND");
 		return child.data.key;
 	}
 	
@@ -727,6 +737,9 @@ function loadTraitClassTree(treeName, comboName, descriptionName, treeData, drop
 	        });
 	       
 	        doTraitClassTreeHighlight(treeName, comboName, descriptionName, node.data.key);
+	      
+	        
+	    	
 	      },
 	      onSelect: function(select, node) {
 	        // Display list of selected nodes		    	
@@ -855,7 +868,7 @@ function loadOntologyModal(ontologyName){
 	}
 
 function showErrorMessageInModal(messageDivId, message) {
-	console.log(message);
+	//console.log(message);
 	$("#" + messageDivId).html(
 			"<div class='alert alert-danger'>"+ message +"</div>"
 	);
@@ -1092,9 +1105,12 @@ function deleteOntology(combo) {
 
 function clearForm(formName) {
 	//$("#" + formName).reset();
+	
 	$("#" + formName).find("input").each(function() {
+		
 		this.value = "";
 	});
+	
 }
 
 function showValidValues() {

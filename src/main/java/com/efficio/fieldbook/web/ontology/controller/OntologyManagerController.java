@@ -355,7 +355,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      * @param stdVariable the std variable
      * @throws MiddlewareQueryException the middleware query exception
      */
-    private void saveValidValues(OntologyBrowserForm form, StandardVariable stdVariable) throws MiddlewareQueryException {
+    private void saveValidValues(OntologyBrowserForm form, StandardVariable stdVariable) throws MiddlewareQueryException, MiddlewareException {
         int index = 0;
         List<Enumeration> enumerations = convertToEnumerations(form.getEnumerations());
         List<EnumerationOperation> operations = convertToEnumerationOperation(form.getEnumerations());

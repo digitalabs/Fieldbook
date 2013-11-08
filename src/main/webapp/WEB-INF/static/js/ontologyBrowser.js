@@ -262,7 +262,7 @@ function setCorrespondingTraitClass(propertyId){
 	//console.log(propertyId);
 	var dataVal = {id:'',text:'',description:''}; //default value
 	if(isInt(propertyId)){
-		Spinner.toggle();
+		//Spinner.toggle();
 		$.ajax({
 			url: ontologyUrl+"retrieve/trait/property/" + propertyId,
 			type: "GET",
@@ -282,10 +282,10 @@ function setCorrespondingTraitClass(propertyId){
 				    		}			    			
 				    	}
 			    	}			    	
-			    	$("#comboTraitClass").select2('data', dataVal).trigger('change');
+			    	$("#comboManagePropTraitClass").select2('data', dataVal).trigger('change');
 			    	
 		       	}
-			    Spinner.toggle();
+			    //Spinner.toggle();
 		   }
 		   
 		});
@@ -388,6 +388,11 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 		    		//add the loading of the linked variables here
 		    		if (allowTypedValues) {
 		    			retrieveLinkedVariables(name, $("#combo"+name).select2("data").id);
+		    		}
+		    		
+		    		if(name == 'ManageProperty'){
+		    			//console.log("set the proper trait class")
+		    			setCorrespondingTraitClass($("#combo"+name).select2("data").id);
 		    		}
 		    		
 	    		} else { //add mode

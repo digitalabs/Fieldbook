@@ -765,6 +765,7 @@ function loadTraitClassTree(treeName, comboName, descriptionName, treeData, drop
 
 //function to retrieve the standard variable details of the selected variable
 function getStandardVariableDetails(variableId) {
+	resetCategoricalValues();
 	if(isInt(variableId)){
 		Spinner.toggle();
 		$.ajax({
@@ -1249,4 +1250,10 @@ function minMaxErrorMessage(bothMinMaxRequired, notANumber, invalidValue) {
 
 function isFloat(value) { 
     return !isNaN(parseInt(value,10)) && (parseFloat(value,10) == parseInt(value,10)); 
+}
+
+function resetCategoricalValues() {
+	enumerations = [];
+	enumerations_central = [];
+	$("#catVarList").empty();
 }

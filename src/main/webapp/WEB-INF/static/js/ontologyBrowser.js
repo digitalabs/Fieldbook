@@ -679,39 +679,41 @@ function filterPropertyCombo(treeName, comboName, descriptionName, traitClassId,
 			}
 		}	
 	}
-	
-	//we filter the property combo
-	var suggestions_obj = [];
-	if(traitClassId == 0){
-		suggestions_obj = sortByKey(propertySuggestions_obj, "text");
-	}		
-	else{
-		//we filter by specific
-		var count = 0;
-		for(count = 0 ; count < propertySuggestions_obj.length ; count++){
-			if(traitClassId == propertySuggestions_obj[count].traitId){
-				suggestions_obj[suggestions_obj.length] = propertySuggestions_obj[count];
+	if(treeName != 'managePropTraitClassBrowserTree'){
+		//we filter the property combo
+		var suggestions_obj = [];
+		if(traitClassId == 0){
+			suggestions_obj = sortByKey(propertySuggestions_obj, "text");
+		}		
+		else{
+			//we filter by specific
+			var count = 0;
+			for(count = 0 ; count < propertySuggestions_obj.length ; count++){
+				if(traitClassId == propertySuggestions_obj[count].traitId){
+					suggestions_obj[suggestions_obj.length] = propertySuggestions_obj[count];
+				}
 			}
 		}
+		
+		$("#comboProperty").select2({
+			query: function (query) {
+	              var data = {results: suggestions_obj}, i, j, s;
+	              // return the array that matches
+	              data.results = $.grep(data.results,function(item,index) {
+	                return ($.fn.select2.defaults.matcher(query.term,item.text));
+	              
+	              });
+	              
+	              //if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
+	              
+	                query.callback(data);
+	                
+	            }
+		
+	});
+		$("#propertyDescription").val("");
 	}
 	
-	$("#comboProperty").select2({
-		query: function (query) {
-              var data = {results: suggestions_obj}, i, j, s;
-              // return the array that matches
-              data.results = $.grep(data.results,function(item,index) {
-                return ($.fn.select2.defaults.matcher(query.term,item.text));
-              
-              });
-              
-              //if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
-              
-                query.callback(data);
-                
-            }
-	
-});
-	$("#propertyDescription").val("");
 }
 function loadTraitClassTree(treeName, comboName, descriptionName, treeData, dropDownId){
 	//for triggering the start of search type ahead

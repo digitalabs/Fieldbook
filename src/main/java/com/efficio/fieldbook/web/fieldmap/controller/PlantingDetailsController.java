@@ -39,9 +39,15 @@ import com.efficio.fieldbook.web.nursery.form.ManageNurseriesForm;
 import com.efficio.fieldbook.web.nursery.form.NurseryDetailsForm;
 
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class PlantingDetailsController.
+ */
 @Controller
 @RequestMapping({PlantingDetailsController.URL})
 public class PlantingDetailsController extends AbstractBaseFieldbookController{
+ 
+ /** The Constant LOG. */
  private static final Logger LOG = LoggerFactory.getLogger(ManageNurseriesController.class);
     
     /** The Constant URL. */
@@ -53,6 +59,14 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
     private UserFieldmap userFieldmap;
     
    
+    /**
+     * Show.
+     *
+     * @param form the form
+     * @param model the model
+     * @param session the session
+     * @return the string
+     */
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("FieldmapForm") FieldmapForm form, Model model, HttpSession session) {
         session.invalidate();
@@ -96,6 +110,11 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
     }
     
     
+    /**
+     * Gets the user fieldmap.
+     *
+     * @return the user fieldmap
+     */
     public UserFieldmap getUserFieldmap() {
         return this.userFieldmap;
     }

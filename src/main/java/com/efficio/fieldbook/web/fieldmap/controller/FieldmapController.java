@@ -31,9 +31,15 @@ import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class FieldmapController.
+ */
 @Controller
 @RequestMapping({FieldmapController.URL})
 public class FieldmapController extends AbstractBaseFieldbookController{
+ 
+ /** The Constant LOG. */
  private static final Logger LOG = LoggerFactory.getLogger(FieldmapController.class);
     
     /** The Constant URL. */
@@ -45,6 +51,15 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     private UserFieldmap userFieldmap;
     
    
+    /**
+     * Show trial.
+     *
+     * @param form the form
+     * @param id the id
+     * @param model the model
+     * @param session the session
+     * @return the string
+     */
     @RequestMapping(value="/trial/{id}", method = RequestMethod.GET)
     public String showTrial(@ModelAttribute("fieldmapForm") FieldmapForm form, 
             @PathVariable String id, 
@@ -60,6 +75,15 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         return super.show(model);
     }
     
+    /**
+     * Show nursery.
+     *
+     * @param form the form
+     * @param id the id
+     * @param model the model
+     * @param session the session
+     * @return the string
+     */
     @RequestMapping(value="/nursery/{id}", method = RequestMethod.GET)
     public String showNursery(@ModelAttribute("fieldmapForm") FieldmapForm form, 
             @PathVariable String id, 
@@ -97,6 +121,11 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     }
     
     
+    /**
+     * Gets the user fieldmap.
+     *
+     * @return the user fieldmap
+     */
     public UserFieldmap getUserFieldmap() {
         return this.userFieldmap;
     }

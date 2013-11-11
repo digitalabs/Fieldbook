@@ -14,19 +14,33 @@ package com.efficio.fieldbook.web.fieldmap.form;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 
 
+// TODO: Auto-generated Javadoc
 /**
- * @author Efficio.Daniel
+ * The Class FieldmapForm.
  *
+ * @author Efficio.Daniel
  */
 public class FieldmapForm{
+    
+    /** The user fieldmap. */
     private UserFieldmap userFieldmap;
     
     
+    /**
+     * Gets the user fieldmap.
+     *
+     * @return the user fieldmap
+     */
     public UserFieldmap getUserFieldmap() {
         return userFieldmap;
     }
 
     
+    /**
+     * Sets the user fieldmap.
+     *
+     * @param userFieldmap the new user fieldmap
+     */
     public void setUserFieldmap(UserFieldmap userFieldmap) {
         this.userFieldmap = userFieldmap;
     }

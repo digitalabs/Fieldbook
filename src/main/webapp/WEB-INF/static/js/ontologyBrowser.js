@@ -1256,4 +1256,7 @@ function resetCategoricalValues() {
 	enumerations = [];
 	enumerations_central = [];
 	$("#catVarList").empty();
+	if ($("#catVarList").height() <= 200 && $("#catVarList").parent().hasClass("scrollWrapper")) {
+		$("#catVarList").parent().toggleClass("scrollWrapper");
+	}
 }

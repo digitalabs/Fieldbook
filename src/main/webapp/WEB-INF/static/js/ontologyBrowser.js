@@ -1245,7 +1245,7 @@ function minMaxErrorMessage(bothMinMaxRequired, notANumber, invalidValue) {
 		if (minValue == "" || maxValue == "") {
 			return bothMinMaxRequired;
 		}
-		if (isNaN(parseFloat(minValue)) || isNaN(parseFloat(maxValue))) {
+		if (isNaN(minValue) || isNaN(maxValue)) {
 			return notANumber;
 		}
 		if (parseFloat(minValue) > parseFloat(maxValue)) {

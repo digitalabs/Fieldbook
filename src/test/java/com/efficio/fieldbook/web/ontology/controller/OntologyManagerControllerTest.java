@@ -86,7 +86,7 @@ public class OntologyManagerControllerTest extends AbstractJUnit4SpringContextTe
         standardVariable.setIsA(traitClass);
         standardVariable.setStoredIn(storedIn);
         standardVariable.setCropOntologyId("CO:1200");
-        standardVariable.setConstraints(new VariableConstraints(1, 10));
+        standardVariable.setConstraints(new VariableConstraints(1.0, 10.0));
         ontologyService.addStandardVariable(standardVariable);
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
@@ -95,15 +95,15 @@ public class OntologyManagerControllerTest extends AbstractJUnit4SpringContextTe
 
     @Test
     public void testSaveConstraints() throws MiddlewareQueryException, MiddlewareException {
-        Integer minValue = null, maxValue = null;
+        Double minValue = null, maxValue = null;
         
         //delete constraint
         ontologyService.deleteStandardVariableMinMaxConstraints(standardVariable.getId());
         standardVariable = ontologyService.getStandardVariable(standardVariable.getId());
         assertNull(standardVariable.getConstraints());
         
-        minValue = 0;
-        maxValue = 10;
+        minValue = 0.0;
+        maxValue = 10.0;
         
         //add constraint
         ontologyService.addOrUpdateStandardVariableMinMaxConstraints(standardVariable.getId(), new VariableConstraints(minValue, maxValue));
@@ -112,8 +112,8 @@ public class OntologyManagerControllerTest extends AbstractJUnit4SpringContextTe
         assertEquals(standardVariable.getConstraints().getMaxValue(), maxValue);
         
         //edit
-        minValue = 1;
-        maxValue = 10;
+        minValue = 1.0;
+        maxValue = 10.0;
         Integer minValueId = standardVariable.getConstraints().getMinValueId();
         Integer maxValueId = standardVariable.getConstraints().getMaxValueId();
         ontologyService.addOrUpdateStandardVariableMinMaxConstraints(standardVariable.getId(), 

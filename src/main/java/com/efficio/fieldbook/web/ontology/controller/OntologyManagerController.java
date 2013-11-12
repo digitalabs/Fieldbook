@@ -344,8 +344,8 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      * @throws MiddlewareException the middleware exception
      */
     private void saveConstraints(OntologyBrowserForm form, StandardVariable stdVariable) throws MiddlewareQueryException, MiddlewareException {
-        Integer minValue = form.getMinValue();
-        Integer maxValue = form.getMaxValue();
+        Double minValue = form.getMinValue();
+        Double maxValue = form.getMaxValue();
         
         if (minValue == null && maxValue == null && stdVariable.getConstraints() != null) {
             //delete constraints

@@ -807,8 +807,16 @@ function populateFields(data, variableId) {
 	setComboValues(methodSuggestions_obj, data.method, "Method");
 	setComboValues(scaleSuggestions_obj, data.scale, "Scale");
 	$("#dataType").val(data.dataType).trigger("change");
-	$("#minValue").val(data.minValue);
-	$("#maxValue").val(data.maxValue);
+	if (isInt(data.minValue)) {
+		$("#minValue").val(parseInt(data.minValue));
+	} else {
+		$("#minValue").val(data.minValue);
+	}
+	if (isInt(data.maxValue)) {
+		$("#maxValue").val(parseInt(data.maxValue));
+	} else {
+		$("#maxValue").val(data.maxValue);
+	}
 	populateCategoricalValues(data.validValues);
 	
 	setVisibleButtons(false, true, true);

@@ -276,7 +276,7 @@ public class OntologyDetailsForm{
      *
      * @return the min value
      */
-    public Integer getMinValue() {
+    public Double getMinValue() {
         if (constraints != null){
             return constraints.getMinValue();
         }
@@ -288,7 +288,7 @@ public class OntologyDetailsForm{
      *
      * @return the max value
      */
-    public Integer getMaxValue() {
+    public Double getMaxValue() {
         if (constraints != null){
             return constraints.getMaxValue();
         }

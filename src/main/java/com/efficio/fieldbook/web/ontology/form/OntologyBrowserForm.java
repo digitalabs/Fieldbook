@@ -91,10 +91,10 @@ public class OntologyBrowserForm{
     private String scaleDescription;
     
     /** The min value. */
-    private Integer minValue;
+    private Double minValue;
     
     /** The max value. */
-    private Integer maxValue;
+    private Double maxValue;
     
     /** The enumerations. */
     private String enumerations;
@@ -515,7 +515,7 @@ public class OntologyBrowserForm{
      *
      * @return the min value
      */
-    public Integer getMinValue() {
+    public Double getMinValue() {
         return minValue;
     }
 
@@ -524,7 +524,7 @@ public class OntologyBrowserForm{
      *
      * @param minValue the new min value
      */
-    public void setMinValue(Integer minValue) {
+    public void setMinValue(Double minValue) {
         this.minValue = minValue;
     }
     
@@ -533,7 +533,7 @@ public class OntologyBrowserForm{
      *
      * @return the max value
      */
-    public Integer getMaxValue() {
+    public Double getMaxValue() {
         return maxValue;
     }
 
@@ -542,7 +542,7 @@ public class OntologyBrowserForm{
      *
      * @param maxValue the new max value
      */
-    public void setMaxValue(Integer maxValue) {
+    public void setMaxValue(Double maxValue) {
         this.maxValue = maxValue;
     }
     

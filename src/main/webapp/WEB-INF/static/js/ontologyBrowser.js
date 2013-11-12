@@ -1173,9 +1173,9 @@ function addCategoricalValidValue(id, label, description) {
 		});
 	}
 	
-	var newValidValue = "<tr><td class='col-md-4'>" + label +  
-						"</td><td class='col-md-6'>" + description + 
-						"</td><td class='col-md-2'>" + deleteButton + "</td></tr>";
+	var newValidValue = "<tr><td class='validValueLabel'>" + label +  
+						"</td><td class='validValueDesc'>" + description + 
+						"</td><td class='validValueDel'>" + deleteButton + "</td></tr>";
 	$("#catVarList").append(newValidValue);
 	
 	//clear fields

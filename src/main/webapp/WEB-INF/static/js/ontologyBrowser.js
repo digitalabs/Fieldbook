@@ -773,6 +773,7 @@ function getStandardVariableDetails(variableId) {
 		$.ajax({
 			url: ontologyUrl + "retrieve/variable/" + variableId,
 			type: "GET",
+			cache: false,
 			dataType: "json",
 			data: "",
 		    success: function(data){

@@ -11,7 +11,10 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.fieldmap.form;
 
+import java.util.List;
+
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
+import com.efficio.pojos.svg.Element;
 
 
 // TODO: Auto-generated Javadoc
@@ -25,7 +28,22 @@ public class FieldmapForm{
     /** The user fieldmap. */
     private UserFieldmap userFieldmap;
     
+    private List<String> fieldmapLabels;
     
+    private List<Element> fieldmapShapes;
+    
+    
+    public List<String> getFieldmapLabels() {
+        return fieldmapLabels;
+    }
+
+
+    
+    public void setFieldmapLabels(List<String> fieldmapLabels) {
+        this.fieldmapLabels = fieldmapLabels;
+    }
+
+
     /**
      * Gets the user fieldmap.
      *
@@ -43,6 +61,20 @@ public class FieldmapForm{
      */
     public void setUserFieldmap(UserFieldmap userFieldmap) {
         this.userFieldmap = userFieldmap;
+    }
+
+
+
+    
+    public List<Element> getFieldmapShapes() {
+        return fieldmapShapes;
+    }
+
+
+
+    
+    public void setFieldmapShapes(List<Element> fieldmapShapes) {
+        this.fieldmapShapes = fieldmapShapes;
     }
     
     

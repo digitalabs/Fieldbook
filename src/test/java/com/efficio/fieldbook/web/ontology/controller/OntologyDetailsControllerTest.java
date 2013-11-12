@@ -74,7 +74,7 @@ public class OntologyDetailsControllerTest  extends AbstractJUnit4SpringContextT
         Term dataType = new Term(400, "DATA TYPE", "DATA TYPE DEF", null, null);
         Term storedIn = new Term(1010, "STORED IN", "STORED IN DEF", null, null);
         Term traitClass = new Term(600, "TRAIT CLASS", "TRAIT CLASS DEF", null, null);
-        VariableConstraints constraints = new VariableConstraints(10, 50);
+        VariableConstraints constraints = new VariableConstraints(10.0, 50.0);
         List<Enumeration> enumerations = new ArrayList<Enumeration>();
         enumerations.add(new Enumeration(1, "ENUM1", "ENUM1 DESC", 0));
         enumerations.add(new Enumeration(2, "ENUM1", "ENUM2 DESC", 0));

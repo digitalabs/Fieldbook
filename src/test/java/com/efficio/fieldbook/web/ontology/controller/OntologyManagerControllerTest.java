@@ -86,7 +86,7 @@ public class OntologyManagerControllerTest extends AbstractJUnit4SpringContextTe
         standardVariable.setIsA(traitClass);
         standardVariable.setStoredIn(storedIn);
         standardVariable.setCropOntologyId("CO:1200");
-        standardVariable.setConstraints(new VariableConstraints(1, 10));
+        standardVariable.setConstraints(new VariableConstraints(1.0, 10.0));
         ontologyService.addStandardVariable(standardVariable);
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
@@ -106,7 +106,7 @@ public class OntologyManagerControllerTest extends AbstractJUnit4SpringContextTe
         maxValue = 10;
         
         //add constraint
-        ontologyService.addOrUpdateStandardVariableMinMaxConstraints(standardVariable.getId(), new VariableConstraints(minValue, maxValue));
+        ontologyService.addOrUpdateStandardVariableMinMaxConstraints(standardVariable.getId(), new VariableConstraints(Double.valueOf(minValue.toString()), Double.valueOf(maxValue.toString())));
         standardVariable = ontologyService.getStandardVariable(standardVariable.getId());
         assertEquals(standardVariable.getConstraints().getMinValue(), minValue);
         assertEquals(standardVariable.getConstraints().getMaxValue(), maxValue);
@@ -117,7 +117,7 @@ public class OntologyManagerControllerTest extends AbstractJUnit4SpringContextTe
         Integer minValueId = standardVariable.getConstraints().getMinValueId();
         Integer maxValueId = standardVariable.getConstraints().getMaxValueId();
         ontologyService.addOrUpdateStandardVariableMinMaxConstraints(standardVariable.getId(), 
-                new VariableConstraints(minValueId, maxValueId, minValue, maxValue));
+                new VariableConstraints(minValueId, maxValueId, Double.valueOf(minValue.toString()), Double.valueOf(maxValue.toString())));
         standardVariable = ontologyService.getStandardVariable(standardVariable.getId());
         assertEquals(standardVariable.getConstraints().getMinValue(), minValue);
         assertEquals(standardVariable.getConstraints().getMaxValue(), maxValue);

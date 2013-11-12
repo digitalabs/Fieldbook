@@ -408,7 +408,7 @@
 	
 	function addCatVar(label, description, id) {
 		
-		var errorColumn = validateNewValidValue(label, description);
+		var errorColumn = validateNewValidValue(label, description, id);
 		var message = "";
 		if (errorColumn == "") {
 			addCategoricalValidValue(id, label, description)

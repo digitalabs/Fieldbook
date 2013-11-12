@@ -1188,17 +1188,21 @@ function addCategoricalValidValue(id, label, description) {
 	}
 }
 
-function validateNewValidValue(label, description) {
-	if (findIndexOfEnumeration(enumerations, label, "name") > -1 || 
-			findIndexOfEnumeration(enumerations_central, label, "name") > -1) {
-		return "name";
-	} else if (findIndexOfEnumeration(enumerations, description, "description") > -1 || 
-			findIndexOfEnumeration(enumerations_central, description, "description") > -1) {
-		return "description";
-	} else if (label == "" || description == ""){
-		return "required";
-	}
-	else {
+function validateNewValidValue(label, description, id) {
+	if (id == null) {
+		if (findIndexOfEnumeration(enumerations, label, "name") > -1 || 
+				findIndexOfEnumeration(enumerations_central, label, "name") > -1) {
+			return "name";
+		} else if (findIndexOfEnumeration(enumerations, description, "description") > -1 || 
+				findIndexOfEnumeration(enumerations_central, description, "description") > -1) {
+			return "description";
+		} else if (label == "" || description == ""){
+			return "required";
+		}
+		else {
+			return "";
+		}
+	} else {
 		return "";
 	}
 }

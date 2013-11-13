@@ -12,6 +12,9 @@
 package com.efficio.fieldbook.web.fieldmap.bean;
 
 import java.io.Serializable;
+import java.util.List;
+
+import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 
 
 // TODO: Auto-generated Javadoc
@@ -26,13 +29,13 @@ public class UserFieldmap  implements Serializable {
     private String selectedName;
     
     /** The number of entries. */
-    private String numberOfEntries;
+    private Long numberOfEntries;
     
     /** The number of reps. */
-    private String numberOfReps;
+    private Long numberOfReps;
     
     /** The total number of plots. */
-    private String totalNumberOfPlots;
+    private Long totalNumberOfPlots;
     
     /** The field location id. */
     private int fieldLocationId;
@@ -57,8 +60,106 @@ public class UserFieldmap  implements Serializable {
     
     /** The is trial. */
     private boolean isTrial;
-           
     
+    /** The entry numbers. */
+    private List<String> entryNumbers;
+    
+    /** The germplasm names. */
+    private List<String> germplasmNames;
+    
+    /** The reps. */
+    private List<Integer> reps;
+    
+    public UserFieldmap(){
+        
+    }
+    
+    /**
+     * Instantiates a new user fieldmap.
+     *
+     * @param fieldMapInfo the field map info
+     * @param isTrial the is trial
+     */
+    public UserFieldmap(FieldMapInfo fieldMapInfo, boolean isTrial){
+        setSelectedName(fieldMapInfo.getFieldbookName());
+        setNumberOfEntries(fieldMapInfo.getEntryCount());
+        setNumberOfReps(fieldMapInfo.getRepCount());
+        setTotalNumberOfPlots(fieldMapInfo.getPlotCount());
+        setEntryNumbers(fieldMapInfo.getEntryNumbers());
+        setGermplasmNames(fieldMapInfo.getGermplasmNames());
+        setReps(fieldMapInfo.getReps());
+        setTrial(isTrial);
+        if(isTrial){
+            setNumberOfRowsPerPlot(2);
+        }else{
+            setNumberOfRowsPerPlot(1);
+        }
+        
+    }
+    
+    
+    
+    /**
+     * Gets the entry numbers.
+     *
+     * @return the entry numbers
+     */
+    public List<String> getEntryNumbers() {
+        return entryNumbers;
+    }
+
+
+    /**
+     * Sets the entry numbers.
+     *
+     * @param entryNumbers the new entry numbers
+     */
+    public void setEntryNumbers(List<String> entryNumbers) {
+        this.entryNumbers = entryNumbers;
+    }
+
+    /**
+     * Gets the germplasm names.
+     *
+     * @return the germplasm names
+     */
+    public List<String> getGermplasmNames() {
+        return germplasmNames;
+    }
+
+
+    /**
+     * Sets the germplasm names.
+     *
+     * @param germplasmNames the new germplasm names
+     */
+    public void setGermplasmNames(List<String> germplasmNames) {
+        this.germplasmNames = germplasmNames;
+    }
+
+
+    /**
+     * Gets the reps.
+     *
+     * @return the reps
+     */
+    public List<Integer> getReps() {
+        return reps;
+    }
+
+    /**
+     * Sets the reps.
+     *
+     * @param reps the new reps
+     */
+    public void setReps(List<Integer> reps) {
+        this.reps = reps;
+    }
+
+
+
+
+
     /**
      * Checks if is trial.
      *
@@ -101,7 +202,7 @@ public class UserFieldmap  implements Serializable {
      *
      * @return the number of entries
      */
-    public String getNumberOfEntries() {
+    public Long getNumberOfEntries() {
         return numberOfEntries;
     }
     
@@ -110,7 +211,7 @@ public class UserFieldmap  implements Serializable {
      *
      * @param numberOfEntries the new number of entries
      */
-    public void setNumberOfEntries(String numberOfEntries) {
+    public void setNumberOfEntries(Long numberOfEntries) {
         this.numberOfEntries = numberOfEntries;
     }
     
@@ -119,7 +220,7 @@ public class UserFieldmap  implements Serializable {
      *
      * @return the number of reps
      */
-    public String getNumberOfReps() {
+    public Long getNumberOfReps() {
         return numberOfReps;
     }
     
@@ -128,7 +229,7 @@ public class UserFieldmap  implements Serializable {
      *
      * @param numberOfReps the new number of reps
      */
-    public void setNumberOfReps(String numberOfReps) {
+    public void setNumberOfReps(Long numberOfReps) {
         this.numberOfReps = numberOfReps;
     }
     
@@ -137,7 +238,7 @@ public class UserFieldmap  implements Serializable {
      *
      * @return the total number of plots
      */
-    public String getTotalNumberOfPlots() {
+    public Long getTotalNumberOfPlots() {
         return totalNumberOfPlots;
     }
     
@@ -146,7 +247,7 @@ public class UserFieldmap  implements Serializable {
      *
      * @param totalNumberOfPlots the new total number of plots
      */
-    public void setTotalNumberOfPlots(String totalNumberOfPlots) {
+    public void setTotalNumberOfPlots(Long totalNumberOfPlots) {
         this.totalNumberOfPlots = totalNumberOfPlots;
     }
     
@@ -275,7 +376,5 @@ public class UserFieldmap  implements Serializable {
     public void setPlantingOrder(int plantingOrder) {
         this.plantingOrder = plantingOrder;
     }
-    
-    
-    
+           
 }

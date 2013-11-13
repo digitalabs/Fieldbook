@@ -97,8 +97,8 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         UserFieldmap info = new UserFieldmap();
         info.setNumberOfRowsInBlock(10);
         info.setNumberOfRangesInBlock(10);
-        info.setNumberOfEntries("10");
-        info.setNumberOfReps("7");
+        info.setNumberOfEntries(10L);
+        info.setNumberOfReps(7L);
         info.setNumberOfRowsPerPlot(2);
         info.setSelectedName("Fieldbook 1");
         info.setPlantingOrder(1);

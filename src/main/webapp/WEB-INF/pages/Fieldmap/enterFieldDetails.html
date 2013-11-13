@@ -20,7 +20,7 @@
 	</div>
 </div>
 <form role="form-horizontal" class="form-horizontal" action="#"
-th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapForm}" enctype="multipart/form-data">
+th:action="@{/Fieldmap/enterFieldDetails}" onsubmit="return validateEnterFieldPage();" method="post" th:object="${fieldmapForm}" enctype="multipart/form-data">
 
 	
 
@@ -28,37 +28,50 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 <div class="row" style="border: 1px solid #333333">
 
 	<div class="form-group">
-		&nbsp;
+		&nbsp;	
+	</div>
+	
+	<div id="enter-field-details-message" class="col-md-12">
+	
 	</div>
 	
 	<div class="form-group col-md-12" >
-		<strong th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.to.be.mapped}">TRIAL TO BE MAPPED:</strong>
-		<strong th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery.to.be.mapped}">NURSERY TO BE MAPPED:</strong>
+		&nbsp;<strong th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.to.be.mapped}">TRIAL TO BE MAPPED:</strong>
+		&nbsp;<strong th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery.to.be.mapped}">NURSERY TO BE MAPPED:</strong>
 	</div>
 	
 	<div class="form-group col-md-3">
 		<strong class="col-md-12">
-			<span th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.selected.trial}">Selected Trial:</span>
-			<span th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery.selected.nursery}">Selected Nursery:</span>
+			&nbsp;<span th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.selected.trial}">Selected Trial:</span>
+			&nbsp;<span th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery.selected.nursery}">Selected Nursery:</span>
 		</strong> <span th:text="*{userFieldmap.selectedName}">[FieldbookName]</span>
 	</div>
 	<div class="form-group col-md-3">
-		<strong><span th:text="#{fieldmap.trial.number.of.entries}">Number of Entries:</span></strong> <span th:text="*{userFieldmap.numberOfEntries}">3</span>
+		&nbsp;<strong>
+				<span th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.number.of.entries}">Number of Entries:</span>
+				<span th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.trial.number.of.entries.and.plots}">Number of Entries and Plots:</span>
+			  </strong>
+		 	  <span th:text="*{userFieldmap.numberOfEntries}">3</span>
 	</div>
 	
 	<div class="form-group col-md-3">
-		<strong><span th:if="*{userFieldmap.trial == true}"  th:text="#{fieldmap.trial.number.of.reps}">Number of Reps:</span></strong> <span th:if="*{userFieldmap.trial == true}"  th:text="*{userFieldmap.numberOfReps}">2</span>
+		<strong>
+		<span th:if="*{userFieldmap.trial == true}"  th:text="#{fieldmap.trial.number.of.reps}">Number of Reps:</span></strong> 
+		<span th:if="*{userFieldmap.trial == true}"  th:text="*{userFieldmap.numberOfReps}">2</span>
 	</div>
 	
 	<div class="form-group">
-		<strong><span th:text="#{fieldmap.trial.total.number.of.plots}">Total Number of Plots:</span></strong> <span th:text="*{userFieldmap.totalNumberOfPlots}">55</span>
+		<strong>
+			<span th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.total.number.of.plots}">Total Number of Plots:</span>
+		</strong> 
+		<span th:if="*{userFieldmap.trial == true}" th:text="*{userFieldmap.totalNumberOfPlots}">55</span>
 	</div>
 	
 	<div class="form-group col-md-12" >
-		<strong th:text="#{fieldmap.trial.field.and.block.details}">FIELD AND BLOCK DETAILS:</strong>
+		&nbsp;<strong th:text="#{fieldmap.trial.field.and.block.details}">FIELD AND BLOCK DETAILS:</strong>
 	</div>
 	<div class="form-group col-md-12" >
-		<strong th:text="#{fieldmap.trial.add.new.details}">Add new field and block details:</strong>
+		&nbsp;<strong th:text="#{fieldmap.trial.add.new.details}">Add new field and block details:</strong>
 	</div>
 	 
     
@@ -81,7 +94,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		  		<label class="control-label" th:text="#{fieldmap.trial.enter.field.name}">Enter Field Name:</label>
 		  	</div>
 		    <div class="col-md-4">
-		      <input type="email" class="form-control"  th:field="*{userFieldmap.fieldName}" placeholder="Field Name"/>
+		      <input type="text" class="form-control"  th:field="*{userFieldmap.fieldName}" placeholder="Field Name"/>
 		    </div>
 		  </div>
 		  <div class="form-group col-md-12">
@@ -89,20 +102,36 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		  		<label class="control-label" th:text="#{fieldmap.trial.enter.block.name}">Enter Block Name:</label>
 		  	</div>
 		    <div class="col-md-4">
-		      <input type="email" class="form-control" th:field="*{userFieldmap.blockName}" placeholder="Block Name"/>
+		      <input type="text" class="form-control" th:field="*{userFieldmap.blockName}" placeholder="Block Name"/>
 		    </div>
 		  </div>						
 	</div>
+	
 	<div class="form-group  col-md-12">
-		<strong th:text="#{fieldmap.trial.row.and.range.details}">ROW AND RANGE DETAILS:</strong>
+		&nbsp;<strong th:text="#{fieldmap.trial.row.and.range.and.plot.details}">ROW, RANGE AND PLOT DETAILS:</strong>
 	</div>
 	<div class="form-group  col-md-12">			
+		  
 		  <div class="form-group col-md-6">
+		  
 		  	<div class="col-md-6">
 		  	<label class="control-label" th:text="#{fieldmap.trial.num.of.rows.in.blocks}">Number of Rows in the Block:</label>
 		  	</div>		    
 		    <div class="col-md-6">
 		       <input type="text" class="form-control" th:field="*{userFieldmap.numberOfRowsInBlock}"/>
+		    </div>
+		    
+		  </div>
+		  <div class="form-group col-md-6">		    
+		    <div class="col-md-5">
+		  		<label class="control-label" th:text="#{fieldmap.trial.num.of.rows.per.plot}">Number of Rows per Plot:</label>
+		  	</div>
+		    <div class="col-md-7">
+		        <select class="form-control" th:field="*{userFieldmap.numberOfRowsPerPlot}">
+		        	<option value="1">1</option>
+		        	<option value="2">2</option>
+		        	<option value="4">4</option>
+			    </select>
 		    </div>
 		  </div>
 		  <div class="form-group col-md-6">
@@ -113,41 +142,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		      <input type="text" class="form-control" th:field="*{userFieldmap.numberOfRangesInBlock}"/>
 		    </div>
 		  </div>
-		  						
-	</div>
-	
-	<div class="form-group  col-md-12">
-		<strong>PLOT DETAILS:</strong>
-	</div>
-	<div class="form-group  col-md-12">			
-		  <div class="form-group col-md-6">		    
-		    <div class="col-md-6">
-		  		<label class="control-label" th:text="#{fieldmap.trial.num.of.rows.per.plot}">Number of Rows per Plot:</label>
-		  	</div>
-		    <div class="col-md-6">
-		        <select class="form-control" th:field="*{userFieldmap.numberOfRowsPerPlot}">
-			   </select>
-		    </div>
-		  </div>
-		  <div class="form-group col-md-6">		   
-		    <div class="col-md-6">
-		  		<label class="control-label" th:text="#{fieldmap.trial.planting.order}">Planting Order:</label>
-		  	</div>
-		    <div class="col-md-6">
-		     <div class="form-group ">
-			  <label class="radio-inline">
-			    <input type="radio" th:field="*{userFieldmap.plantingOrder}" id="plantingOrder" value="1" th:text="#{fieldmap.planting.order.row.column}">
-			    Row/Column
-			    </input>
-			  </label>
-			  <label class="radio-inline">
-			    <input type="radio" th:field="*{userFieldmap.plantingOrder}" id="plantingOrder" value="2" th:text="#{fieldmap.planting.order.serpentine}">
-			    Serpentine
-			    </input>
-			  </label>
-			</div>
-		    </div>
-		  </div>
+		  
 		  						
 	</div>
 	
@@ -162,5 +157,23 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 </div>
 </form>
 <div layout:fragment="page-script">
+<script type="text/javascript" th:src="@{/static/js/fieldMap.js}"></script>
+<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[    
+    var msgLocation = /*[[#{fieldmap.location.error}]]*/;
+    var msgFieldName = /*[[#{fieldmap.field.name.error}]]*/;
+    var msgBlockName = /*[[#{fieldmap.block.name.error}]]*/;
+    var msgRowsInBlock = /*[[#{fieldmap.row.in.block.error}]]*/;
+    var msgRangesInBlock = /*[[#{fieldmap.ranges.in.block.error}]]*/;
+    var defaultRowsPerPlot = /*[[${fieldmapForm.userFieldmap.numberOfRowsPerPlot}]]*/;
+   	
+	$( document ).ready(function() {  	     
+	  	  
+		$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val(defaultRowsPerPlot);
+	});
+  	
+  
+      //]]>
+    </script>
 	
 </div>

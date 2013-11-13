@@ -26,6 +26,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.service.api.FieldbookService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
@@ -50,6 +53,9 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     @Resource
     private UserFieldmap userFieldmap;
     
+    @Resource
+    private FieldbookService fieldbookMiddlewareService;
+    
    
     /**
      * Show trial.
@@ -65,13 +71,25 @@ public class FieldmapController extends AbstractBaseFieldbookController{
             @PathVariable String id, 
             Model model, HttpSession session) {
         session.invalidate();
-        this.userFieldmap = new UserFieldmap();
-        this.userFieldmap.setSelectedName("Testing");
-        this.userFieldmap.setNumberOfEntries("6");
-        this.userFieldmap.setNumberOfReps("66");
-        this.userFieldmap.setTotalNumberOfPlots("666");
-        this.userFieldmap.setTrial(true);
-        form.setUserFieldmap(userFieldmap);       
+        
+        try {
+            //FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getLocalFieldMapInfoOfTrial(Integer.parseInt(id));
+            
+            //this.userFieldmap = new UserFieldmap(fieldMapInfo, true);
+            
+            this.userFieldmap = new UserFieldmap();
+            this.userFieldmap.setNumberOfRowsPerPlot(2);
+            
+            form.setUserFieldmap(userFieldmap);    
+        } catch (NumberFormatException e) {
+            // TODO Auto-generated catch block
+            LOG.error(e.toString());
+        }/* catch (MiddlewareQueryException e) {
+            // TODO Auto-generated catch block
+            LOG.error(e.toString());
+        }*/
+        
+       
         return super.show(model);
     }
     
@@ -89,13 +107,19 @@ public class FieldmapController extends AbstractBaseFieldbookController{
             @PathVariable String id, 
             Model model, HttpSession session) {
         session.invalidate();
-        this.userFieldmap = new UserFieldmap();
-        this.userFieldmap.setSelectedName("Testing");
-        this.userFieldmap.setNumberOfEntries("6");
-        this.userFieldmap.setNumberOfReps("66");
-        this.userFieldmap.setTotalNumberOfPlots("666");
-        this.userFieldmap.setTrial(false);
-        form.setUserFieldmap(userFieldmap);       
+        
+        try {
+            //FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getLocalFieldMapInfoOfNursery(Integer.parseInt(id));
+            //this.userFieldmap = new UserFieldmap(fieldMapInfo, false);
+            this.userFieldmap = new UserFieldmap();
+            this.userFieldmap.setNumberOfRowsPerPlot(1);
+            form.setUserFieldmap(userFieldmap);
+        } catch (NumberFormatException e) {
+            LOG.error(e.toString());
+        }/* catch (MiddlewareQueryException e) {
+            LOG.error(e.toString());
+        }*/
+               
         return super.show(model);
     }
     

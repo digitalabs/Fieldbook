@@ -11,6 +11,9 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.fieldmap.controller;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -27,7 +30,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
+import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.service.api.FieldbookService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
@@ -56,6 +61,23 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     @Resource
     private FieldbookService fieldbookMiddlewareService;
     
+    /**
+     * Gets the data types.
+     *
+     * @return the data types
+     */
+    @ModelAttribute("locationList")
+    public List<Location> getLocationList() {
+        try {
+            List<Location> dataTypes = fieldbookMiddlewareService.getAllLocations();
+            
+            return dataTypes;
+        }catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+
+        return null;
+    }
    
     /**
      * Show trial.
@@ -73,21 +95,18 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         session.invalidate();
         
         try {
-            //FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getLocalFieldMapInfoOfTrial(Integer.parseInt(id));
+            FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getLocalFieldMapInfoOfTrial(Integer.parseInt(id));            
+            this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, true);
             
-            //this.userFieldmap = new UserFieldmap(fieldMapInfo, true);
-            
-            this.userFieldmap = new UserFieldmap();
-            this.userFieldmap.setNumberOfRowsPerPlot(2);
+            //this.userFieldmap = new UserFieldmap();
+            //this.userFieldmap.setNumberOfRowsPerPlot(2);
             
             form.setUserFieldmap(userFieldmap);    
         } catch (NumberFormatException e) {
-            // TODO Auto-generated catch block
             LOG.error(e.toString());
-        }/* catch (MiddlewareQueryException e) {
-            // TODO Auto-generated catch block
+        } catch (MiddlewareQueryException e) {
             LOG.error(e.toString());
-        }*/
+        }
         
        
         return super.show(model);
@@ -109,16 +128,14 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         session.invalidate();
         
         try {
-            //FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getLocalFieldMapInfoOfNursery(Integer.parseInt(id));
-            //this.userFieldmap = new UserFieldmap(fieldMapInfo, false);
-            this.userFieldmap = new UserFieldmap();
-            this.userFieldmap.setNumberOfRowsPerPlot(1);
+            FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getLocalFieldMapInfoOfNursery(Integer.parseInt(id));
+            this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, false);
             form.setUserFieldmap(userFieldmap);
         } catch (NumberFormatException e) {
             LOG.error(e.toString());
-        }/* catch (MiddlewareQueryException e) {
+        } catch (MiddlewareQueryException e) {
             LOG.error(e.toString());
-        }*/
+        }
                
         return super.show(model);
     }

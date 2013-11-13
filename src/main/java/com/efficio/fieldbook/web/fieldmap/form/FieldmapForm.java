@@ -13,6 +13,8 @@ package com.efficio.fieldbook.web.fieldmap.form;
 
 import java.util.List;
 
+import org.generationcp.middleware.pojos.Location;
+
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.pojos.svg.Element;
 
@@ -28,19 +30,32 @@ public class FieldmapForm{
     /** The user fieldmap. */
     private UserFieldmap userFieldmap;
     
+    /** The fieldmap labels. */
     private List<String> fieldmapLabels;
     
+    /** The fieldmap shapes. */
     private List<Element> fieldmapShapes;
     
+    /** The marked cells. */
     private String markedCells;
     
 
+    /**
+     * Gets the fieldmap labels.
+     *
+     * @return the fieldmap labels
+     */
     public List<String> getFieldmapLabels() {
         return fieldmapLabels;
     }
 
 
     
+    /**
+     * Sets the fieldmap labels.
+     *
+     * @param fieldmapLabels the new fieldmap labels
+     */
     public void setFieldmapLabels(List<String> fieldmapLabels) {
         this.fieldmapLabels = fieldmapLabels;
     }
@@ -68,6 +83,11 @@ public class FieldmapForm{
 
 
     
+    /**
+     * Gets the fieldmap shapes.
+     *
+     * @return the fieldmap shapes
+     */
     public List<Element> getFieldmapShapes() {
         return fieldmapShapes;
     }
@@ -75,18 +95,35 @@ public class FieldmapForm{
 
 
     
+    /**
+     * Sets the fieldmap shapes.
+     *
+     * @param fieldmapShapes the new fieldmap shapes
+     */
     public void setFieldmapShapes(List<Element> fieldmapShapes) {
         this.fieldmapShapes = fieldmapShapes;
     }
     
     
     
+    /**
+     * Gets the marked cells.
+     *
+     * @return the marked cells
+     */
     public String getMarkedCells() {
         return markedCells;
     }
     
+    /**
+     * Sets the marked cells.
+     *
+     * @param markedCells the new marked cells
+     */
     public void setMarkedCells(String markedCells) {
         this.markedCells = markedCells;
     }
+
+    
     
 }

@@ -1,5 +1,5 @@
 function validateEnterFieldPage(){
-	if($('#'+getJquerySafeId('userFieldmap.fieldLocationId')).val() == ""){
+	if($('#'+getJquerySafeId('userFieldmap.fieldLocationId')).val() == "0"){
 		showEnterFieldDetailsMessage(msgLocation);
 		return false;
 	}

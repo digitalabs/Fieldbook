@@ -97,6 +97,22 @@ public class UserFieldmap  implements Serializable {
         
     }
     
+    public void setUserFieldmapInfo(FieldMapInfo fieldMapInfo, boolean isTrial){
+        setSelectedName(fieldMapInfo.getFieldbookName());
+        setNumberOfEntries(fieldMapInfo.getEntryCount());
+        setNumberOfReps(fieldMapInfo.getRepCount());
+        setTotalNumberOfPlots(fieldMapInfo.getPlotCount());
+        setEntryNumbers(fieldMapInfo.getEntryNumbers());
+        setGermplasmNames(fieldMapInfo.getGermplasmNames());
+        setReps(fieldMapInfo.getReps());
+        setTrial(isTrial);
+        if(isTrial){
+            setNumberOfRowsPerPlot(2);
+        }else{
+            setNumberOfRowsPerPlot(1);
+        }
+    }
+    
     
     
     /**

@@ -81,11 +81,13 @@ th:action="@{/Fieldmap/enterFieldDetails}" onsubmit="return validateEnterFieldPa
 		    <div class="col-md-2">
 		  		<label class="control-label" th:text="#{fieldmap.trial.field.location}">Field Location:</label>
 		  	</div>
+		  	
 		    <div class="col-md-4">
 		       <select class="form-control" th:field="*{userFieldmap.fieldLocationId}">
-		       		<option value="1">Test Loc 1</option>
-		       		<option value="2">Test Loc 2</option>
+		       		<option value="0">Select</option>
+		       		<option th:each="loc : ${locationList}" th:text="${loc.lname}" th:value="${loc.locid}"></option>		       		
 			   </select>
+			 
 		    </div>
 		  </div>
 		  <div class="form-group col-md-12">

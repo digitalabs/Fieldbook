@@ -16,27 +16,20 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
-import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.efficio.fieldbook.service.api.FieldMapService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
-import com.efficio.fieldbook.web.nursery.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.controller.FileUploadController;
 import com.efficio.fieldbook.web.nursery.controller.ManageNurseriesController;
-import com.efficio.fieldbook.web.nursery.form.ManageNurseriesForm;
-import com.efficio.fieldbook.web.nursery.form.NurseryDetailsForm;
+import com.efficio.pojos.svg.Element;
 
 
 // TODO: Auto-generated Javadoc
@@ -58,6 +51,9 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
     @Resource
     private UserFieldmap userFieldmap;
     
+    @Resource
+    private FieldMapService fieldmapService;
+    
    
     /**
      * Show.
@@ -68,21 +64,13 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
      * @return the string
      */
     @RequestMapping(method = RequestMethod.GET)
-    public String show(@ModelAttribute("FieldmapForm") FieldmapForm form, Model model, HttpSession session) {
-        session.invalidate();
-        /*
-        try {
-            
-            List<StudyDetails> nurseryDetailsList = fieldbookMiddlewareService.getAllLocalNurseryDetails();
-            getUserSelection().setStudyDetailsList(nurseryDetailsList);
-            form.setNurseryDetailsList(getUserSelection().getStudyDetailsList());
-            form.setCurrentPage(1);
-            
+    public String show(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model, HttpSession session) {
+        System.out.println(userFieldmap.getNumberOfRowsPerPlot());
+        System.out.println(userFieldmap.getNumberOfRangesInBlock());
+        if (form.getUserFieldmap() != null) { 
+            List<Element> fieldmapShapes = fieldmapService.createBlankFieldmap(form.getUserFieldmap(), 5, 5);
+            form.setFieldmapShapes(fieldmapShapes);
         }
-        catch (MiddlewareQueryException e){
-            LOG.error(e.getMessage(), e);
-        }
-        */
         return super.show(model);
     }
     
@@ -97,8 +85,11 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
      * @return the string
      */
     @RequestMapping(method = RequestMethod.POST)
-    public String submitDetails(@ModelAttribute("FieldmapForm") FieldmapForm form, BindingResult result, Model model) {
-        return "redirect:" + FileUploadController.URL;
+    public String submitDetails(@ModelAttribute("FieldmapForm") FieldmapForm form, Model model) {
+        this.userFieldmap.setStartingRow(form.getUserFieldmap().getStartingRow());
+        this.userFieldmap.setStartingRange(form.getUserFieldmap().getStartingRange());
+        this.userFieldmap.setPlantingOrder(form.getUserFieldmap().getPlantingOrder());
+        return "redirect:" + GenerateFieldmapController.URL;
     }
     
     /* (non-Javadoc)

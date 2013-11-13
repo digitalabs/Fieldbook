@@ -70,6 +70,12 @@ public class UserFieldmap  implements Serializable {
     /** The reps. */
     private List<Integer> reps;
     
+    /** The starting row. */
+    private int startingRow;
+    
+    /** The starting range. */
+    private int startingRange;
+    
     public UserFieldmap(){
         
     }
@@ -392,5 +398,40 @@ public class UserFieldmap  implements Serializable {
     public void setPlantingOrder(int plantingOrder) {
         this.plantingOrder = plantingOrder;
     }
-           
+    
+    /**
+     * Gets the starting row.
+     *
+     * @return the starting row
+     */
+    public int getStartingRow() {
+        return startingRow;
+    }
+    
+    /**
+     * Sets the starting row.
+     *
+     * @param startingRow the new starting row
+     */
+    public void setStartingRow(int startingRow) {
+        this.startingRow = startingRow;
+    }
+    
+    /**
+     * Gets the starting range.
+     *
+     * @return the starting range
+     */
+    public int getStartingRange() {
+        return startingRange;
+    }
+    
+    /**
+     * Sets the starting range.
+     *
+     * @param startingRange the new starting range
+     */
+    public void setStartingRange(int startingRange) {
+        this.startingRange = startingRange;
+    }
 }

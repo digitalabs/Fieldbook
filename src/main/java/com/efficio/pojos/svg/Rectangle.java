@@ -74,5 +74,5 @@ public class Rectangle extends Element {
     public void setStroke(String stroke) {
         this.stroke = stroke;
     }
-    
+
 }

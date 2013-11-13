@@ -1,0 +1,61 @@
+
+<div id="fieldmapContainer" style="border: black;"></div>
+	
+
+<div layout:fragment="page-script">		
+	<script type="text/javascript" th:src="@{/static/js/raphael-min.js}"></script>
+	<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[
+	    var rectangleJsonMapping = new Array();
+	    	    	    
+	    function NodeJsonMapping(node, jsonData){
+	    	this.node = node;
+	    	this.jsonData = jsonData;
+	    }
+	    
+	    function addNodeJsonMapping(node, jsonData){
+	    	rectangleJsonMapping[rectangleJsonMapping.length] = new NodeJsonMapping(node, jsonData);
+	    	
+	    }
+	    
+	  	$(document).ready(function() {
+			drawFieldmap();	  		
+	  	});
+
+	  	function drawFieldmap() {
+	  		var paper = new Raphael("fieldmapContainer", 5500, 1500);
+	  		var data = /*[[${fieldmapForm.fieldmapShapes}]]*/;
+	  		var jsonData = JSON.stringify(data);
+	  		var json = JSON.parse(jsonData);
+
+	  		for (var i = 0; i < json.length; i++) {
+	  			var c = paper.rect(json[i].x, json[i].y, json[i].width, json[i].height);
+	  			if (json[i].title) {
+		  			paper.text(json[i].x+30, json[i].y+20, json[i].title);
+	  			}
+	  			c.attr({stroke: json[i].stroke});
+	  				  			
+	  			if(json[i].id){
+	  				addNodeJsonMapping(c.node, json[i]);
+	  				c.attr({fill: "#FFFFFF"});
+	  				//console.log("Add on click");
+	  				$(c.node).click(function(evt){
+	  					
+	  					//console.log("click");
+	  					if($(this).attr("fill") == "#000000")
+	  						$(this).attr("fill", "#FFFFFF");
+	  					else{
+	  						$(this).attr("fill", "#000000");
+	  						//console.log(evt.currentTarget.raphaelid);
+	  						
+	  					}
+	  		           return false;
+					});
+	  				
+	  			}
+	  		}
+	  	}
+	  	
+    //]]>
+	</script>
+</div>

@@ -17,7 +17,7 @@ public abstract class Element {
     private String id;
     private String type;
     private String title;
-
+    private String usageType;
 
     public Element() {
         this.type = getElementTypeName();
@@ -50,4 +50,12 @@ public abstract class Element {
         this.title = title;
     }
 
+    public String getUsageType() {
+        return usageType;
+    }
+    
+    public void setUsageType(String usageType) {
+        this.usageType = usageType;
+    }
+    
 }

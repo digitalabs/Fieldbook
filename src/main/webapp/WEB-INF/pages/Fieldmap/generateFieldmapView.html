@@ -23,7 +23,6 @@
 th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldmapForm}" enctype="multipart/form-data">
 
 <input type="hidden" id="markedCells" name="markedCells" />
-
 <div class="table-responsive">
 	<table class="table" border="1">
 	
@@ -49,6 +48,9 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	</table>
 	 <button type="button" onclick="javascript: setAllDeletedBox()" class="btn btn-default">Submit Now test</button>
 
+	<div id="fieldmap-area" th:include="/Fieldmap/fieldmapView">
+	</div>
+
 </div>
 
 </form>
@@ -56,58 +58,6 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	<script type="text/javascript" th:src="@{/static/js/raphael-min.js}"></script>
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
-	    var markedFields = new Array();
-	    var rectangleJsonMapping = new Array();
-	    	    	    
-	    function NodeJsonMapping(node, jsonData){
-	    	this.node = node;
-	    	this.jsonData = jsonData;
-	    }
-	    
-	    function addNodeJsonMapping(node, jsonData){
-	    	rectangleJsonMapping[rectangleJsonMapping.length] = new NodeJsonMapping(node, jsonData);
-	    	
-	    }
-	    
-	  	$(document).ready(function() {
-	  		var paper = new Raphael(10, 1700, 5500, 1500);
-	  		var data = /*[[${fieldmapForm.fieldmapShapes}]]*/;
-	  		var jsonData = JSON.stringify(data);
-	  		var json = JSON.parse(jsonData);
-
-	  		console.log(json);
-	  		for (var i = 0; i < json.length; i++) {
-	  			var c = paper.rect(json[i].x, json[i].y, json[i].width, json[i].height);
-	  			if (json[i].title) {
-		  			paper.text(json[i].x+30, json[i].y+20, json[i].title);
-	  			}
-	  			//c.node.attr({fill: "#FFFFFF"});
-	  			
-	  			c.attr({stroke: json[i].stroke});
-	  				  			
-	  			
-	  			if(json[i].id){
-	  				addNodeJsonMapping(c.node, json[i]);
-	  				c.attr({fill: "#FFFFFF"});
-	  				//console.log("Add on click");
-	  				$(c.node).click(function(evt){
-	  					
-	  					//console.log("click");
-	  					if($(this).attr("fill") == "#000000")
-	  						$(this).attr("fill", "#FFFFFF");
-	  					else{
-	  						$(this).attr("fill", "#000000");
-	  						//console.log(evt.currentTarget.raphaelid);
-	  						
-	  					}
-	  		           return false;
-	  		         });
-	  				
-	  			}
-	  		}
-	  		
-	  	});
-	  	
 	  	function setAllDeletedBox(){
 	  		var deletedRect = "";
 	  		for(var i = 0 ; i < rectangleJsonMapping.length ; i++){
@@ -129,6 +79,8 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	  		console.log(deletedRect);
 	  		$("#fieldmapForm").submit();
 	  	}
+	  	$(document).ready(function() {
+	  	});
     //]]>
 	</script>
 </div>

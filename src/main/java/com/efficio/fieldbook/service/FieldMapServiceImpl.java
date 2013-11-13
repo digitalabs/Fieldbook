@@ -52,8 +52,8 @@ public class FieldMapServiceImpl implements FieldMapService{
     public List<String> createFieldmap(UserFieldmap info) {
         List<String> names = new ArrayList<String>();
         names.add(info.getSelectedName());
-        int reps = Integer.valueOf(info.getNumberOfReps());
-        int entries = Integer.valueOf(info.getNumberOfEntries());
+        int reps = info.getNumberOfReps().intValue();
+        int entries = info.getNumberOfEntries().intValue();
         int rows = info.getNumberOfRowsInBlock();
         int ranges = info.getNumberOfRangesInBlock();
         int rowsPerPlot = info.getNumberOfRowsPerPlot();

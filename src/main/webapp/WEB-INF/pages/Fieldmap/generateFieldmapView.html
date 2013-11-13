@@ -19,8 +19,10 @@
 		<h4 th:text="#{fieldmap.header.generate.field.map}">3. GENERATE FIELD MAP</h4>
 	</div>
 </div>
-<form role="form-horizontal" class="form-horizontal" action="#"
+<form id="fieldmapForm" name="fieldmapForm" role="form-horizontal" class="form-horizontal" action="#"
 th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldmapForm}" enctype="multipart/form-data">
+
+<input type="hidden" id="markedCells" name="markedCells" />
 
 <div class="table-responsive">
 	<table class="table" border="1">
@@ -71,26 +73,14 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	  		var paper = new Raphael(10, 1700, 5500, 1500);
 	  		var data = /*[[${fieldmapForm.fieldmapShapes}]]*/;
 	  		var jsonData = JSON.stringify(data);
-	  		//console.log(jsonData);
 	  		var json = JSON.parse(jsonData);
-	  		//paper.add(json);
-	  		/*
-	  		paper.forEach(function(el) {
-	  			if (el.title) {
-	  				el.click(function(e) {
-	  					alert(this.id);
-	  					markedFields.push(this.id);
-	  					this.attr({fill: "#ccc"});
-	  				});
-	  			}
-	  		});
-	  		*/
+
 	  		console.log(json);
 	  		for (var i = 0; i < json.length; i++) {
-	  			//if (json[i].title) {
-		  		//	paper.text(json[i].x+30, json[i].y+20, json[i].title);
-	  			//}
 	  			var c = paper.rect(json[i].x, json[i].y, json[i].width, json[i].height);
+	  			if (json[i].title) {
+		  			paper.text(json[i].x+30, json[i].y+20, json[i].title);
+	  			}
 	  			//c.node.attr({fill: "#FFFFFF"});
 	  			
 	  			c.attr({stroke: json[i].stroke});
@@ -135,8 +125,9 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	  		if(deletedRect != ''){
 	  			deletedRect = deletedRect.substr(0,deletedRect.length-1);
 	  		}
-	  		//$('#deletedRect').val(deletedRect)
+	  		$('#markedCells').val(deletedRect);
 	  		console.log(deletedRect);
+	  		$("#fieldmapForm").submit();
 	  	}
     //]]>
 	</script>

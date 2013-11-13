@@ -32,7 +32,9 @@ public class FieldmapForm{
     
     private List<Element> fieldmapShapes;
     
+    private String markedCells;
     
+
     public List<String> getFieldmapLabels() {
         return fieldmapLabels;
     }
@@ -77,5 +79,14 @@ public class FieldmapForm{
         this.fieldmapShapes = fieldmapShapes;
     }
     
+    
+    
+    public String getMarkedCells() {
+        return markedCells;
+    }
+    
+    public void setMarkedCells(String markedCells) {
+        this.markedCells = markedCells;
+    }
     
 }

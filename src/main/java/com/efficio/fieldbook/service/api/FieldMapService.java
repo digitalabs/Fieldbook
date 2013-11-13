@@ -19,6 +19,7 @@ import com.efficio.pojos.svg.Element;
 
 public interface FieldMapService {
     
+    List<Element> createBlankFieldmap(UserFieldmap info, int startX, int startY);
     List<String> createFieldmap(UserFieldmap info);
-    List<Element> createFieldmap(UserFieldmap info, int startX, int startY);
+    List<Element> createFieldmap(UserFieldmap info, List<String> markedCells, int startX, int startY);
 }

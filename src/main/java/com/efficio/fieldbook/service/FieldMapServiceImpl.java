@@ -21,12 +21,11 @@ import com.efficio.fieldbook.service.api.FieldMapService;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.pojos.svg.Element;
 import com.efficio.pojos.svg.Rectangle;
-import com.efficio.pojos.svg.Text;
 
 @Service
 public class FieldMapServiceImpl implements FieldMapService{
     
-    private static final String EMPTY_CELL = ""; 
+    private static final String EMPTY_CELL = "--"; 
     private static final int RANGE_MARGIN_X = 10;
     private static final int RANGE_MARGIN_Y = 10;
     private static final int BLOCK_MARGIN_X = 15;
@@ -38,6 +37,7 @@ public class FieldMapServiceImpl implements FieldMapService{
     private static final String CELL_ID_PREFIX = "cell";
 
     
+    @Override
     public List<Element> createBlankFieldmap(UserFieldmap info, int startX, int startY) {
         int rows = info.getNumberOfRowsInBlock();
         int ranges = info.getNumberOfRangesInBlock();
@@ -45,7 +45,7 @@ public class FieldMapServiceImpl implements FieldMapService{
         boolean isSerpentine = info.getPlantingOrder() == 1;
         
         //List<String> data = createFieldmap(info);
-        return createFieldmapElements(null, rows, ranges, rowsPerPlot, isSerpentine, startX, startY);
+        return createFieldmapElements(null, null, rows, ranges, rowsPerPlot, isSerpentine, startX, startY);
     }
     
     @Override
@@ -62,22 +62,24 @@ public class FieldMapServiceImpl implements FieldMapService{
     }
     
     @Override
-    public List<Element> createFieldmap(UserFieldmap info, int startX, int startY) {
+    public List<Element> createFieldmap(UserFieldmap info, List<String> markedCells, int startX, int startY) {
         int rows = info.getNumberOfRowsInBlock();
         int ranges = info.getNumberOfRangesInBlock();
         int rowsPerPlot = info.getNumberOfRowsPerPlot();
         boolean isSerpentine = info.getPlantingOrder() == 1;
         
         List<String> data = createFieldmap(info);
-        return createFieldmapElements(data, rows, ranges, rowsPerPlot, isSerpentine, startX, startY);
+        return createFieldmapElements(data, markedCells, rows, ranges, rowsPerPlot, isSerpentine, startX, startY);
     }
     
-    private List<Element> createFieldmapElements(List<String> data, int rows, int cols, int rowsPerPlot, boolean isSerpentine, int startX, int startY) {
+    private List<Element> createFieldmapElements(List<String> data, List<String> markedCells, int rows, int cols, 
+            int rowsPerPlot, boolean isSerpentine, int startX, int startY) {
+        
         List<Element> fieldMapElements = new ArrayList<Element>();
         
         fieldMapElements.add(createBlock(rows, cols, rowsPerPlot, startX, startY));
         fieldMapElements.addAll(createRanges(rows, cols, rowsPerPlot, startX, startY));
-        fieldMapElements.addAll(createCells(data, rows, cols, rowsPerPlot, startX, startY));
+        fieldMapElements.addAll(createCells(data, markedCells, rows, cols, rowsPerPlot, isSerpentine, startX, startY));
         
         return fieldMapElements;
     }
@@ -93,13 +95,13 @@ public class FieldMapServiceImpl implements FieldMapService{
             }
         }        
         addPadding(fieldTexts, rows * cols);
-        if (isSerpentine) {
-            makeSerpentine(fieldTexts, rows, cols);
-        }
+//        if (isSerpentine) {
+//            makeSerpentine(fieldTexts, rows, cols);
+//        }
         return fieldTexts;
     }
 
-    private void makeSerpentine(List<String> data, int rows, int cols) {
+    private void makeSerpentine(List<Element> data, int rows, int cols) {
         for (int y = 0; y < rows && y < Math.ceil((double) data.size() / cols); y++) {
             int start = y * cols;
             int end = y * cols + cols - 1;
@@ -109,17 +111,42 @@ public class FieldMapServiceImpl implements FieldMapService{
         }
     }
     
-    private static void reverse(List<String> data, int start, int end) {
-        int iterations = (end - start + 1) / 2;
-        int pad = end - data.size() + 1;
-        if (pad > 0) {
-            for (int i = 0; i < pad; i++) {
-                data.add(EMPTY_CELL);
+    private void reverse(List<Element> data, int start, int end) {
+//        int iterations = (end - start + 1) / 2;
+//        int pad = end - data.size() + 1;
+//        if (pad > 0) {
+//            for (int i = 0; i < pad; i++) {
+//                data.add(EMPTY_CELL);
+//            }
+//        }
+//        for (int i = 0; i < iterations; i++) {
+//            Collections.swap(data, start + i, end - i);
+//        }
+        while (start < end) {
+            while (data.get(start).getTitle().isEmpty() && start < end) {
+                start++;
             }
+            while (data.get(end).getTitle().isEmpty() && start < end) {
+                end--;
+            }
+            if (start < end) {
+                Collections.swap(data, start, end);
+                swapCoordinates(data, start, end);
+            }
+            start++;
+            end--;
         }
-        for (int i = 0; i < iterations; i++) {
-            Collections.swap(data, start + i, end - i);
-        }
+    }
+    
+    private void swapCoordinates(List<Element> data, int start, int end) {
+        Rectangle startElement = ((Rectangle) data.get(start));
+        Rectangle endElement = ((Rectangle) data.get(end));
+        int tempX = startElement.getX();
+        int tempY = endElement.getY();
+        startElement.setX(endElement.getX());
+        startElement.setY(endElement.getY());
+        endElement.setX(tempX);
+        endElement.setY(tempY);
     }
     
     private Element createBlock(int rows, int cols, int rowsPerPlot, int startX, int startY) {
@@ -156,22 +183,29 @@ public class FieldMapServiceImpl implements FieldMapService{
         return ranges;
     }
     
-    private List<Element> createCells(List<String> data, int rows, int cols, int rowsPerPlot, int startX, int startY) {
+    private List<Element> createCells(List<String> data, List<String> markedCells, int rows, int cols, int rowsPerPlot, boolean isSerpentine, int startX, int startY) {
         List<Element> cells = new ArrayList<Element>();
         startX += BLOCK_MARGIN_X + RANGE_MARGIN_X;
         startY += BLOCK_MARGIN_Y + RANGE_MARGIN_Y;
         int cellDistanceX = RANGE_MARGIN_X * 2 + BLOCK_MARGIN_X;
         int cellDistanceY = RANGE_MARGIN_Y;
         int plotDistanceY = RANGE_MARGIN_Y + PLOT_MARGIN_Y;
+        int index = 0;
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                if (data == null || i * cols + j < data.size()) {
+                if (data == null || index < data.size()) {
                     int x = startX + (cellDistanceX + CELL_WIDTH) * j;
                     int y = startY + (cellDistanceY + CELL_HEIGHT) * i + plotDistanceY * (i / rowsPerPlot);
                     
                     Rectangle rect = new Rectangle();
                     if (data != null) {
-                        rect.setTitle(data.get(i * cols + j));
+                        if (markedCells.contains(getCoordinatesKey(i, j))) {
+                            rect.setTitle("");
+                            rect.setFill("#000000");
+                        }
+                        else {
+                            rect.setTitle(data.get(index++));
+                        }
                     }
                     rect.setId(CELL_ID_PREFIX + i + "_" + j);
                     rect.setStroke("black");
@@ -189,11 +223,14 @@ public class FieldMapServiceImpl implements FieldMapService{
                 }
             }
         }
+        if (isSerpentine && data != null) {
+            makeSerpentine(cells, rowsPerPlot, cols);
+        }
         return cells;
     }
     
-    private void createPlots(List<Element> dataElements) {
-        
+    private String getCoordinatesKey(int x, int y) {
+        return x + "_" + y;
     }
     
     private void addPadding(List<String> data, int expectedSize) {

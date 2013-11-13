@@ -11,7 +11,9 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.fieldmap.controller;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
@@ -20,6 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.efficio.fieldbook.service.api.FieldMapService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
@@ -49,9 +52,27 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         List<String> fieldmapLabels = fieldmapService.createFieldmap(form.getUserFieldmap());
         form.setFieldmapLabels(fieldmapLabels);
         
-        List<Element> fieldmapShapes = fieldmapService.createFieldmap(form.getUserFieldmap(), 5, 5);
+        List<Element> fieldmapShapes = fieldmapService.createBlankFieldmap(form.getUserFieldmap(), 5, 5);
         form.setFieldmapShapes(fieldmapShapes);
         
+        return super.show(model);
+    }
+    
+    @RequestMapping(method = RequestMethod.POST)
+    public String generateFieldmap(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model) {
+        System.out.println("GENERATING FIELD MAP...." + form.getMarkedCells());
+        //TODO: FOR testing only, remove this 
+        populateFormWithDummyData(form);
+        
+        List<String> fieldmapLabels = fieldmapService.createFieldmap(form.getUserFieldmap());
+        form.setFieldmapLabels(fieldmapLabels);
+        
+        if (form.getMarkedCells() != null && !form.getMarkedCells().isEmpty()) {
+            List<String> markedCells = Arrays.asList(form.getMarkedCells().replace("cell", "").split(","));
+            
+            List<Element> fieldmapShapes = fieldmapService.createFieldmap(form.getUserFieldmap(), markedCells, 5, 5);
+            form.setFieldmapShapes(fieldmapShapes);
+        }
         return super.show(model);
     }
 

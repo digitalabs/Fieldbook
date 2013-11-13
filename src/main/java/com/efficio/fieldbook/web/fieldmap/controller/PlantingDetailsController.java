@@ -11,7 +11,10 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.fieldmap.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
@@ -26,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.efficio.fieldbook.service.api.FieldMapService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 import com.efficio.fieldbook.web.nursery.controller.ManageNurseriesController;
@@ -67,6 +71,8 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
     public String show(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model, HttpSession session) {
 
         List<Element> fieldmapShapes = fieldmapService.createBlankFieldmap(userFieldmap, 5, 5);
+        
+        
         form.setFieldmapShapes(fieldmapShapes);
         
         return super.show(model);
@@ -87,6 +93,22 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
         this.userFieldmap.setStartingRow(form.getUserFieldmap().getStartingRow());
         this.userFieldmap.setStartingRange(form.getUserFieldmap().getStartingRange());
         this.userFieldmap.setPlantingOrder(form.getUserFieldmap().getPlantingOrder());
+        
+        int startRange = form.getUserFieldmap().getStartingRange();
+        int startCol = form.getUserFieldmap().getStartingRow();
+        int rows = userFieldmap.getNumberOfRowsInBlock();
+        int ranges = userFieldmap.getNumberOfRangesInBlock();
+        int rowsPerPlot = userFieldmap.getNumberOfRowsPerPlot();
+        boolean isSerpentine = userFieldmap.getPlantingOrder() == 1;
+        
+        int col = rows / rowsPerPlot;
+        Map deletedPlot = new HashMap();
+        //should list here the deleted plot in col-range format
+        List entryList = new ArrayList();
+        //add here the entry list
+        Plot[][] plot = fieldmapService.createFieldMap(col, ranges, startRange, startCol,
+                isSerpentine, deletedPlot, entryList);
+        
         return "redirect:" + GenerateFieldmapController.URL;
     }
     

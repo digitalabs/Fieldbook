@@ -83,11 +83,13 @@ th:action="@{/Fieldmap/enterFieldDetails}" onsubmit="return validateEnterFieldPa
 		  	</div>
 		  	
 		    <div class="col-md-4">
+		   <!-- 
 		       <select class="form-control" th:field="*{userFieldmap.fieldLocationId}">
 		       		<option value="0">Select</option>
 		       		<option th:each="loc : ${locationList}" th:text="${loc.lname}" th:value="${loc.locid}"></option>		       		
 			   </select>
-			 
+			   -->
+			   <input type="hidden" th:field="*{userFieldmap.fieldLocationId}" class="form-control select2" placeholder=""/>
 		    </div>
 		  </div>
 		  <div class="form-group col-md-12">
@@ -169,8 +171,12 @@ th:action="@{/Fieldmap/enterFieldDetails}" onsubmit="return validateEnterFieldPa
     var msgRangesInBlock = /*[[#{fieldmap.ranges.in.block.error}]]*/;
     var defaultRowsPerPlot = /*[[${fieldmapForm.userFieldmap.numberOfRowsPerPlot}]]*/;
    	
+    var locationSuggestions = /*[[${locationList}]]*/ null;
+    var locationSuggestions_obj = [];
+
 	$( document ).ready(function() {  	     
-	  	  
+													   
+		initializeLocationSelect2(locationSuggestions, locationSuggestions_obj); 
 		$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val(defaultRowsPerPlot);
 	});
   	

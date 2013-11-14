@@ -188,24 +188,40 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	</div>
 <input type="hidden" id="markedCells" name="markedCells" />
 <div class="table-responsive">
-	<table class="table" border="1">
+	<table id="field-map" class="table" border="1">
 	
 	<thead>
 		<tr>
-			<td></td>
-			<td th:each="j : ${#numbers.sequence(#object.userFieldmap.numberOfRangesInBlock, 1)}">
+			<td>Rows</td>
+			<td th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock)}">
 				<p th:text="${j}"></p>				
 			</td>
-			<td>Rows</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td th:colspan="*{userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
+				<p th:text="'Column ' + ${j}"></p>
+			</td>
 		</tr>
 	</thead>
 	<tbody>
-		<tr th:each="i : ${#numbers.sequence(#object.userFieldmap.numberOfRowsInBlock, 1)}">
+		<tr th:each="i : ${#numbers.sequence(#object.userFieldmap.numberOfRangesInBlock, 1)}">
 			<td><p th:text="'Range ' + ${i}"></p></td>
-			<td th:each="j : ${#numbers.sequence(#object.userFieldmap.numberOfRangesInBlock, 1)}">
+			<td class="plot" th:id="${i} + '_' + ${j}" th:colspan="*{userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
 				<p th:text="${#object.fieldmapLabels[__${(i-1) * #object.userFieldmap.numberOfRangesInBlock + (j-1)}__]}"></p>
 			</td>
+		</tr>
+		<tr>
+			<td>Rows</td>
+			<td th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock)}">
+				<p th:text="${j}"></p>				
+			</td>
+		</tr>
+		<tr>
 			<td></td>
+			<td th:colspan="*{userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
+				<p th:text="'Column ' + ${j}"></p>
+			</td>
 		</tr>
 	</tbody>
 	
@@ -224,18 +240,13 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	//<![CDATA[
 	  	function setAllDeletedBox(){
 	  		var deletedRect = "";
-	  		for(var i = 0 ; i < rectangleJsonMapping.length ; i++){
-	  			var nodeJsonMapping = rectangleJsonMapping[i];
-	  			if($(nodeJsonMapping.node).attr('fill') == "#000000"){
-	  				//console.log("To be pass "+nodeJsonMapping.jsonData.id);
-	  				deletedRect += nodeJsonMapping.jsonData.id;
-	  				if(deletedRect != ''){
-	  					deletedRect += ",";
-	  				}
-	  			}
-	  				
-	  		}
-	  		
+	  		$('#field-map td.plot.deleted').each(function(){
+	  			deletedRect += $(this).attr('id');
+  				if(deletedRect != ''){
+  					deletedRect += ",";
+  				}
+	  		})
+	  			  			  		
 	  		if(deletedRect != ''){
 	  			deletedRect = deletedRect.substr(0,deletedRect.length-1);
 	  		}
@@ -244,6 +255,17 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	  		$("#fieldmapForm").submit();
 	  	}
 	  	$(document).ready(function() {
+	  		$('#field-map td.plot').on('click', function() {
+	  			if($(this).hasClass('deleted')){
+	  				$(this).removeClass('deleted');
+	  				$(this).html('');
+	  			}else{
+	  				$(this).addClass('deleted');
+	  				$(this).html("<label class='alert alert-danger'>X</label>");
+	  			}
+	  			//console.log($(this).attr('id'));
+	  		});
+	  		
 	  	});
     //]]>
 	</script>

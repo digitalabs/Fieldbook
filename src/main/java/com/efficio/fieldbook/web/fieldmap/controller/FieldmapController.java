@@ -69,7 +69,16 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     @ModelAttribute("locationList")
     public List<Location> getLocationList() {
         try {
-            List<Location> dataTypes = fieldbookMiddlewareService.getAllLocations();
+            List<Location> dataTypesOrig = fieldbookMiddlewareService.getAllLocations();
+            List<Location> dataTypes = dataTypesOrig;
+            /*
+            for(int i = 0 ; i < 5000 ; i++){
+                Location loc = new Location();
+                loc.setLname(dataTypesOrig.size() + " LNAME " + i);
+                loc.setLocid(i);
+                dataTypes.add(loc);
+            }
+            */
             
             return dataTypes;
         }catch (MiddlewareQueryException e) {
@@ -97,10 +106,10 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         try {
             FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getLocalFieldMapInfoOfTrial(Integer.parseInt(id));            
             this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, true);
-            
-            //this.userFieldmap = new UserFieldmap();
-            //this.userFieldmap.setNumberOfRowsPerPlot(2);
-            
+            /*
+            this.userFieldmap = new UserFieldmap();
+            this.userFieldmap.setNumberOfRowsPerPlot(2);
+            */
             form.setUserFieldmap(userFieldmap);    
         } catch (NumberFormatException e) {
             LOG.error(e.toString());

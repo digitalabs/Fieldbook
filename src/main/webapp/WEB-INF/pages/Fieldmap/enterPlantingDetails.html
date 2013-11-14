@@ -40,8 +40,8 @@ th:action="@{/Fieldmap/plantingDetails}" method="post" th:object="${fieldmapForm
 					<label class="control-label" th:text="#{fieldmap.label.starting.coordinates} + ':'">Starting Coordinates:</label>
 				</div>
 				<div class="col-md-4">
-					<input th:field="*{userFieldmap.startingRow}" type="text" style="width: 20%;" />&nbsp;
-					<strong><em th:text="#{fieldmap.label.row}">row</em></strong>
+					<input th:field="*{userFieldmap.startingColumn}" type="text" style="width: 20%;" />&nbsp;
+					<strong><em th:text="#{fieldmap.label.column}">column</em></strong>
 					&nbsp;&nbsp;&nbsp;
 					<input th:field="*{userFieldmap.startingRange}" type="text" style="width: 20%;" />&nbsp;
 					<strong><em th:text="#{fieldmap.label.range}">range</em></strong>

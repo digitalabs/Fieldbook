@@ -69,7 +69,7 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
      */
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model, HttpSession session) {
-
+        
         List<Element> fieldmapShapes = fieldmapService.createBlankFieldmap(userFieldmap, 5, 5);
         
         
@@ -90,12 +90,12 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
      */
     @RequestMapping(method = RequestMethod.POST)
     public String submitDetails(@ModelAttribute("FieldmapForm") FieldmapForm form, Model model) {
-        this.userFieldmap.setStartingRow(form.getUserFieldmap().getStartingRow());
+        this.userFieldmap.setStartingColumn(form.getUserFieldmap().getStartingColumn());
         this.userFieldmap.setStartingRange(form.getUserFieldmap().getStartingRange());
         this.userFieldmap.setPlantingOrder(form.getUserFieldmap().getPlantingOrder());
         
         int startRange = form.getUserFieldmap().getStartingRange();
-        int startCol = form.getUserFieldmap().getStartingRow();
+        int startCol = form.getUserFieldmap().getStartingColumn();
         int rows = userFieldmap.getNumberOfRowsInBlock();
         int ranges = userFieldmap.getNumberOfRangesInBlock();
         int rowsPerPlot = userFieldmap.getNumberOfRowsPerPlot();

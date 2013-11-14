@@ -69,13 +69,18 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
      */
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model, HttpSession session) {
-        
+        setPrevValues(form);
         //List<Element> fieldmapShapes = fieldmapService.createBlankFieldmap(userFieldmap, 5, 5);
-        
-        
         //form.setFieldmapShapes(fieldmapShapes);
         
         return super.show(model);
+    }
+    
+    private void setPrevValues(FieldmapForm form) {
+        UserFieldmap info = new UserFieldmap();
+        info.setNumberOfRangesInBlock(userFieldmap.getNumberOfRangesInBlock());
+        info.setNumberOfRowsInBlock(userFieldmap.getNumberOfRowsInBlock());
+        form.setUserFieldmap(info);
     }
     
     

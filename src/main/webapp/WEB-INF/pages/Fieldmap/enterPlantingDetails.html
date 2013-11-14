@@ -20,10 +20,17 @@
 	</div>
 </div>
 
-<form role="form-horizontal" action="#"
+<form role="form-horizontal" action="#" onsubmit="return validatePlantingDetails();"
 th:action="@{/Fieldmap/plantingDetails}" method="post" th:object="${fieldmapForm}" enctype="multipart/form-data">
 	<div style="border: 1px solid #333333">
 		<div class="row">&nbsp;</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<div class="col-md-12" id="page-message"></div>
+				</div>
+			</div>
+		</div>
 		<div class="row">
 			<div class="col-md-12" >
 				<div class="form-group">
@@ -106,5 +113,65 @@ th:action="@{/Fieldmap/plantingDetails}" method="post" th:object="${fieldmapForm
 </form>
 
 <div layout:fragment="page-script">
-	
+	<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[
+        var startColError = /*[[#{fieldmap.starting.coordinates.required(#{fieldmap.label.column})}]]*/;
+        var startRangeError = /*[[#{fieldmap.starting.coordinates.required(#{fieldmap.label.range})}]]*/;
+		var plantingOrderError = /*[[#{fieldmap.planting.order.required}]]*/;
+		var startColInvalid = /*[[#{fieldmap.starting.coordinates.invalid(#{fieldmap.label.column},#{fieldmap.label.column})}]]*/;
+		var startRangeInvalid = /*[[#{fieldmap.starting.coordinates.invalid(#{fieldmap.label.range},#{fieldmap.label.range})}]]*/;
+		var startColNotInt = /*[[#{fieldmap.starting.coordinates.not.an.integer(#{fieldmap.label.column})}]]*/;
+		var startRangeNotInt = /*[[#{fieldmap.starting.coordinates.not.an.integer(#{fieldmap.label.range})}]]*/;
+		var rowNum = /*[[${fieldmapForm.userFieldmap.numberOfRowsInBlock}]]*/;
+		var rangeNum = /*[[${fieldmapForm.userFieldmap.numberOfRangesInBlock}]]*/;
+		
+		function validatePlantingDetails() {
+			var startingCol = $('#'+getJquerySafeId("userFieldmap.startingColumn")).val();
+			var startingRange = $('#'+getJquerySafeId("userFieldmap.startingRange")).val();
+			var plantingOrder = $("input[type='radio']:checked").length;
+						
+			if (startingCol == "") {
+				showMessage(startColError);
+				return false;
+			}
+			
+			if (startingRange == "") {
+				showMessage(startRangeError);
+				return false;
+			}
+			
+			if (!isInt(startingCol)) {
+				showMessage(startColNotInt);
+				return false;
+			} 
+			
+			if (!isInt(startingRange)) {
+				showMessage(startRangeNotInt);
+				return false;
+			}
+			
+			if (parseInt(startingCol) > parseInt(rowNum) || parseInt(startingCol) == 0) {
+				showMessage(startColInvalid);
+				return false;
+			}
+			
+			if (parseInt(startingRange) > parseInt(rangeNum) || parseInt(startingRange) == 0) {
+				showMessage(startRangeInvalid);
+				return false;
+			}
+			
+			if (plantingOrder == 0) {
+				showMessage(plantingOrderError);
+				return false;
+			}
+			return true;
+		}
+		
+		function showMessage(message) {
+			$("#page-message").html(
+				    "<div class='alert alert-danger'>"+ message +"</div>"
+			);
+		}
+    //]]>
+    </script>
 </div>

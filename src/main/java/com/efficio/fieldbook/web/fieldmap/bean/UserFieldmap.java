@@ -70,8 +70,8 @@ public class UserFieldmap  implements Serializable {
     /** The reps. */
     private List<Integer> reps;
     
-    /** The starting row. */
-    private int startingRow;
+    /** The starting column. */
+    private int startingColumn;
     
     /** The starting range. */
     private int startingRange;
@@ -400,21 +400,21 @@ public class UserFieldmap  implements Serializable {
     }
     
     /**
-     * Gets the starting row.
+     * Gets the starting column.
      *
-     * @return the starting row
+     * @return the starting column
      */
-    public int getStartingRow() {
-        return startingRow;
+    public int getStartingColumn() {
+        return startingColumn;
     }
     
     /**
-     * Sets the starting row.
+     * Sets the starting column.
      *
-     * @param startingRow the new starting row
+     * @param startingColumn the new starting column
      */
-    public void setStartingRow(int startingRow) {
-        this.startingRow = startingRow;
+    public void setStartingColumn(int startingColumn) {
+        this.startingColumn= startingColumn;
     }
     
     /**

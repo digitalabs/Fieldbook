@@ -78,12 +78,18 @@ public class UserFieldmap  implements Serializable {
     /** The starting range. */
     private int startingRange;
     
+    /** The fieldmap. */
     private Plot[][] fieldmap;
     
+    /** The field map labels. */
     private List<FieldMapLabel> fieldMapLabels;
     
-	private String locationName;
+    /** The location name. */
+    private String locationName;
 
+    /**
+     * Instantiates a new user fieldmap.
+     */
     public UserFieldmap(){
         
     }
@@ -98,6 +104,12 @@ public class UserFieldmap  implements Serializable {
         setUserFieldmapInfo(fieldMapInfo, isTrial);
     }
     
+    /**
+     * Sets the user fieldmap info.
+     *
+     * @param fieldMapInfo the field map info
+     * @param isTrial the is trial
+     */
     public void setUserFieldmapInfo(FieldMapInfo fieldMapInfo, boolean isTrial){
         setSelectedName(fieldMapInfo.getFieldbookName());
         setNumberOfEntries(fieldMapInfo.getEntryCount());
@@ -430,37 +442,59 @@ public class UserFieldmap  implements Serializable {
 
     
     
+    /**
+     * Gets the fieldmap.
+     *
+     * @return the fieldmap
+     */
     public Plot[][] getFieldmap() {
         return fieldmap;
     }
 
     
+    /**
+     * Sets the fieldmap.
+     *
+     * @param fieldmap the new fieldmap
+     */
     public void setFieldmap(Plot[][] fieldmap) {
         this.fieldmap = fieldmap;
     }
 
     
+    /**
+     * Gets the field map labels.
+     *
+     * @return the field map labels
+     */
     public List<FieldMapLabel> getFieldMapLabels() {
         return fieldMapLabels;
     }
 
     
+    /**
+     * Sets the field map labels.
+     *
+     * @param fieldMapLabels the new field map labels
+     */
     public void setFieldMapLabels(List<FieldMapLabel> fieldMapLabels) {
         this.fieldMapLabels = fieldMapLabels;
     }
 
+    /**
+     * Gets the location name.
+     *
+     * @return the location name
+     */
     public String getLocationName() {
         return locationName;
     }
     
-    public void setLocationName(String locationName) {
-        this.locationName = locationName;
-    }
-	
-	public String getLocationName() {
-        return locationName;
-    }
-    
+    /**
+     * Sets the location name.
+     *
+     * @param locationName the new location name
+     */
     public void setLocationName(String locationName) {
         this.locationName = locationName;
     }

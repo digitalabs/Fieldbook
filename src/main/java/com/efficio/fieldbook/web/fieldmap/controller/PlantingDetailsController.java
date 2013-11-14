@@ -95,7 +95,7 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
         this.userFieldmap.setPlantingOrder(form.getUserFieldmap().getPlantingOrder());
         
         int startRange = form.getUserFieldmap().getStartingRange();
-        int startCol = form.getUserFieldmap().getStartingRow();
+        int startCol = form.getUserFieldmap().getStartingColumn();
         int rows = userFieldmap.getNumberOfRowsInBlock();
         int ranges = userFieldmap.getNumberOfRangesInBlock();
         int rowsPerPlot = userFieldmap.getNumberOfRowsPerPlot();

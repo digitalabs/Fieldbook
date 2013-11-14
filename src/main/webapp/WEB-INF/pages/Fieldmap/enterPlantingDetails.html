@@ -20,8 +20,10 @@
 	</div>
 </div>
 
-<form role="form-horizontal" action="#" onsubmit="return validatePlantingDetails();"
+<form id="fieldmapForm" name="fieldmapForm" role="form-horizontal" action="#" onsubmit="return validatePlantingDetails();"
 th:action="@{/Fieldmap/plantingDetails}" method="post" th:object="${fieldmapForm}" enctype="multipart/form-data">
+
+<input type="hidden" id="markedCells" name="markedCells" />
 	<div style="border: 1px solid #333333">
 		<div class="row">&nbsp;</div>
 		<div class="row">
@@ -98,14 +100,15 @@ th:action="@{/Fieldmap/plantingDetails}" method="post" th:object="${fieldmapForm
 		</div>
 		<div class="row">
 			<div class="col-md-12" >
-				
+				<div id="fieldmap-area" th:include="/Fieldmap/fieldmapView">
+				</div>
 			</div>	
 		</div>
 		<div class="row">
 			<div class="col-md-offset-5 col-md-7">
 				<div class="form-group">
 			      <input type="button" href="/Fieldmap/enterFieldDetails.html" th:href="@{/Fieldmap/enterFieldDetails/trial/-10}" th:value="#{common.form.back.text}" value="Back" class="btn btn-default btn-lg"/>
-			      <input type="submit" th:value="#{common.form.next.text}" value="Next" class="btn btn-primary btn-lg"/>
+			      <input type="button" onclick="javascript: setAllDeletedBox();" th:value="#{common.form.next.text}" value="Next" class="btn btn-primary btn-lg"/>
 		      	</div>
 		    </div>
 	    </div>
@@ -126,6 +129,36 @@ th:action="@{/Fieldmap/plantingDetails}" method="post" th:object="${fieldmapForm
 		var rowNum = /*[[${fieldmapForm.userFieldmap.numberOfRowsInBlock}]]*/;
 		var rangeNum = /*[[${fieldmapForm.userFieldmap.numberOfRangesInBlock}]]*/;
 		
+	  	function setAllDeletedBox(){
+			validatePlantingDetails();
+	  		var deletedRect = "";
+	  		$('#field-map td.plot.deleted').each(function(){
+	  			deletedRect += $(this).attr('id');
+  				if(deletedRect != ''){
+  					deletedRect += ",";
+  				}
+	  		})
+	  			  			  		
+	  		if(deletedRect != ''){
+	  			deletedRect = deletedRect.substr(0,deletedRect.length-1);
+	  		}
+	  		$('#markedCells').val(deletedRect);
+	  		console.log(deletedRect);
+	  		$("#fieldmapForm").submit();
+	  	}
+	  	$(document).ready(function() {
+	  		$('#field-map td.plot').on('click', function() {
+	  			if($(this).hasClass('deleted')){
+	  				$(this).removeClass('deleted');
+	  				$(this).html('');
+	  			}else{
+	  				$(this).addClass('deleted');
+	  				$(this).html("<label class='alert alert-danger'>X</label>");
+	  			}
+	  			//console.log($(this).attr('id'));
+	  		});
+	  		
+	  	});
     //]]>
     </script>
 </div>

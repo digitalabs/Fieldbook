@@ -14,7 +14,6 @@ package com.efficio.fieldbook.web.fieldmap.bean;
 import java.io.Serializable;
 import java.util.List;
 
-import org.apache.poi.hssf.record.chart.PlotAreaRecord;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 

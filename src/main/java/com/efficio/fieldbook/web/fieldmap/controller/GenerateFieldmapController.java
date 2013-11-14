@@ -11,28 +11,26 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.fieldmap.controller;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
+import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.efficio.fieldbook.service.api.FieldMapService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
-import com.efficio.pojos.svg.Element;
 
 @Controller
 @RequestMapping({GenerateFieldmapController.URL})
@@ -46,6 +44,8 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
     @Resource
     private FieldMapService fieldmapService;
     
+    @Resource
+    private FieldbookService fieldbookMiddlewareService;
 
     @RequestMapping(method = RequestMethod.GET)
     public String showGeneratedFieldmap(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model) {
@@ -57,7 +57,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
     }
     
     @RequestMapping(method = RequestMethod.POST)
-    public String generateFieldmap(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model) {
+    public String generateFieldmap(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model) throws Exception {
         /*System.out.println("GENERATING FIELD MAP...." + form.getMarkedCells());
         //TODO: FOR testing only, remove this 
         populateFormWithSessionData(form);
@@ -93,7 +93,11 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
             }
         }
 
-        List<String> entryList = fieldmapService.generateFieldMapLabels(info);
+        FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfNursery(-209);
+        UserFieldmap map = new UserFieldmap();
+        map.setUserFieldmapInfo(fieldMapInfo, false);
+        form.setUserFieldmap(userFieldmap);
+        List<String> entryList = fieldmapService.generateFieldMapLabels(map);
         Plot[][] plots = fieldmapService.createFieldMap(col, ranges, startRange, startCol,
                 isSerpentine, deletedPlot, entryList);
         info.setFieldmap(plots);

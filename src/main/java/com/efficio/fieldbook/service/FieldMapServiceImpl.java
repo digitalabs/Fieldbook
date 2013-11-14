@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +36,7 @@ public class FieldMapServiceImpl implements FieldMapService{
     private static final int CELL_WIDTH = 70;
     private static final int CELL_HEIGHT = 40;
     private static final int PLOT_MARGIN_Y = 20;
-    private static final String NEXT_LINE = "\n";
+    private static final String NEXT_LINE = "<br/>";
     private static final String CELL_ID_PREFIX = "cell";
 
     
@@ -112,9 +111,9 @@ public class FieldMapServiceImpl implements FieldMapService{
             textLabel = new StringBuilder();
             textLabel.append("Entry " + label.getEntryNumber());
             if (info.isTrial()) {
-                textLabel.append("Rep " + label.getRep());
+                textLabel.append(NEXT_LINE + "Rep " + label.getRep());
             }
-            textLabel.append(label.getGermplasmName());
+            textLabel.append(NEXT_LINE + label.getGermplasmName());
             fieldTexts.add(textLabel.toString());
         }
         return fieldTexts;

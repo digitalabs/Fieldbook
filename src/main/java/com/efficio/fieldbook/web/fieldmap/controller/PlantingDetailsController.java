@@ -11,7 +11,7 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.fieldmap.controller;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +33,6 @@ import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 import com.efficio.fieldbook.web.nursery.controller.ManageNurseriesController;
-import com.efficio.pojos.svg.Element;
 
 
 // TODO: Auto-generated Javadoc
@@ -70,6 +69,7 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model, HttpSession session) {
         setPrevValues(form);
+        form.setUserFieldmap(this.userFieldmap);
         //List<Element> fieldmapShapes = fieldmapService.createBlankFieldmap(userFieldmap, 5, 5);
         //form.setFieldmapShapes(fieldmapShapes);
         
@@ -95,26 +95,36 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
      */
     @RequestMapping(method = RequestMethod.POST)
     public String submitDetails(@ModelAttribute("FieldmapForm") FieldmapForm form, Model model) {
-        this.userFieldmap.setStartingColumn(form.getUserFieldmap().getStartingColumn());
-        this.userFieldmap.setStartingRange(form.getUserFieldmap().getStartingRange());
-        this.userFieldmap.setPlantingOrder(form.getUserFieldmap().getPlantingOrder());
+//        this.userFieldmap.setStartingColumn(form.getUserFieldmap().getStartingColumn());
+//        this.userFieldmap.setStartingRange(form.getUserFieldmap().getStartingRange());
+//        this.userFieldmap.setPlantingOrder(form.getUserFieldmap().getPlantingOrder());
         
-        int startRange = form.getUserFieldmap().getStartingRange();
-        int startCol = form.getUserFieldmap().getStartingColumn();
+        int startRange = form.getUserFieldmap().getStartingRange() - 1;
+        int startCol = form.getUserFieldmap().getStartingColumn() - 1;
         int rows = userFieldmap.getNumberOfRowsInBlock();
         int ranges = userFieldmap.getNumberOfRangesInBlock();
         int rowsPerPlot = userFieldmap.getNumberOfRowsPerPlot();
         boolean isSerpentine = userFieldmap.getPlantingOrder() == 1;
         
         int col = rows / rowsPerPlot;
-        Map deletedPlot = new HashMap();
         //should list here the deleted plot in col-range format
-        List entryList = new ArrayList();
-        //add here the entry list
-        Plot[][] plot = fieldmapService.createFieldMap(col, ranges, startRange, startCol,
+        Map deletedPlot = new HashMap();
+        if (form.getMarkedCells() != null && !form.getMarkedCells().isEmpty()) {
+            List<String> markedCells = Arrays.asList(form.getMarkedCells().split(","));
+            
+            for (String markedCell : markedCells) {
+                deletedPlot.put(markedCell, markedCell);
+            }
+        }
+
+        List<String> entryList = fieldmapService.generateFieldMapLabels(userFieldmap);
+
+        Plot[][] plots = fieldmapService.createFieldMap(col, ranges, startRange, startCol,
                 isSerpentine, deletedPlot, entryList);
+        userFieldmap.setFieldmap(plots);
         
-        return "redirect:" + GenerateFieldmapController.URL;
+        return "forward:" + GenerateFieldmapController.URL;
+        //return "redirect:" + GenerateFieldmapController.URL;
     }
     
     /* (non-Javadoc)

@@ -50,8 +50,8 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
     @RequestMapping(method = RequestMethod.GET)
     public String showGeneratedFieldmap(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model) {
         
-        //TODO: FOR testing only, remove this 
-        populateFormWithDummyData(form);
+        //TODO: FOR testing only, remove this
+        populateFormWithSessionData(form);
         
         return super.show(model);
     }
@@ -60,7 +60,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
     public String generateFieldmap(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model) {
         /*System.out.println("GENERATING FIELD MAP...." + form.getMarkedCells());
         //TODO: FOR testing only, remove this 
-        populateFormWithDummyData(form);
+        populateFormWithSessionData(form);
         
         List<String> fieldmapLabels = fieldmapService.createFieldmap(form.getUserFieldmap());
         form.setFieldmapLabels(fieldmapLabels);
@@ -117,18 +117,27 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         return "Fieldmap/generateFieldmapView";
     }
 
-    private void populateFormWithDummyData(FieldmapForm form) {
+    private void populateFormWithSessionData(FieldmapForm form) {
         UserFieldmap info = userFieldmap;
-        info.setNumberOfRowsInBlock(10);
-        info.setNumberOfRangesInBlock(10);
-        info.setNumberOfEntries(10L);
-        info.setNumberOfReps(10L);
-        info.setNumberOfRowsPerPlot(2);
-        info.setSelectedName("Fieldbook 1");
-        info.setPlantingOrder(1);
-        info.setStartingRange(1);
-        info.setStartingColumn(1);
-        info.setGermplasmNames(Arrays.asList("Germplasm 1", "Germplasm 2", "Germplasm 3", "Germplasm 4"));
+        info.setNumberOfRowsInBlock(userFieldmap.getNumberOfRowsInBlock());
+        info.setNumberOfRangesInBlock(userFieldmap.getNumberOfRangesInBlock());
+        info.setNumberOfEntries(userFieldmap.getNumberOfEntries());
+        info.setNumberOfReps(userFieldmap.getNumberOfReps());
+        info.setNumberOfRowsPerPlot(userFieldmap.getNumberOfRowsPerPlot());
+        info.setSelectedName(userFieldmap.getSelectedName());
+        info.setPlantingOrder(userFieldmap.getPlantingOrder());
+        info.setBlockName(userFieldmap.getBlockName());
+        info.setEntryNumbers(userFieldmap.getEntryNumbers());
+        info.setFieldLocationId(userFieldmap.getFieldLocationId());
+        info.setFieldName(userFieldmap.getFieldName());
+        info.setGermplasmNames(userFieldmap.getGermplasmNames());
+        info.setReps(userFieldmap.getReps());
+        info.setStartingColumn(userFieldmap.getStartingColumn());
+        info.setStartingRange(userFieldmap.getStartingRange());
+        info.setTotalNumberOfPlots(userFieldmap.getTotalNumberOfPlots());
+        info.setTrial(userFieldmap.isTrial());
+        info.setLocationName(userFieldmap.getLocationName());
+        
         form.setUserFieldmap(info);
     }
     

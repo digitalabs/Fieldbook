@@ -24,24 +24,40 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 
 <input type="hidden" id="markedCells" name="markedCells" />
 <div class="table-responsive">
-	<table class="table" border="1">
+	<table id="field-map" class="table" border="1">
 	
 	<thead>
 		<tr>
-			<td></td>
-			<td th:each="j : ${#numbers.sequence(#object.userFieldmap.numberOfRangesInBlock, 1)}">
+			<td>Rows</td>
+			<td th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock)}">
 				<p th:text="${j}"></p>				
 			</td>
-			<td>Rows</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td th:colspan="*{userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
+				<p th:text="'Column ' + ${j}"></p>
+			</td>
 		</tr>
 	</thead>
 	<tbody>
-		<tr th:each="i : ${#numbers.sequence(#object.userFieldmap.numberOfRowsInBlock, 1)}">
+		<tr th:each="i : ${#numbers.sequence(#object.userFieldmap.numberOfRangesInBlock, 1)}">
 			<td><p th:text="'Range ' + ${i}"></p></td>
-			<td th:each="j : ${#numbers.sequence(#object.userFieldmap.numberOfRangesInBlock, 1)}">
+			<td class="plot" th:id="${i} + '_' + ${j}" th:colspan="*{userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
 				<p th:text="${#object.fieldmapLabels[__${(i-1) * #object.userFieldmap.numberOfRangesInBlock + (j-1)}__]}"></p>
 			</td>
+		</tr>
+		<tr>
+			<td>Rows</td>
+			<td th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock)}">
+				<p th:text="${j}"></p>				
+			</td>
+		</tr>
+		<tr>
 			<td></td>
+			<td th:colspan="*{userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
+				<p th:text="'Column ' + ${j}"></p>
+			</td>
 		</tr>
 	</tbody>
 	
@@ -80,6 +96,14 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	  		$("#fieldmapForm").submit();
 	  	}
 	  	$(document).ready(function() {
+	  		$('#field-map td.plot').click(function(){
+	  			if($(this).hasClass('deleted'){
+	  				$(this).removeClass('deleted');
+	  			}else
+	  				$(this).addClass('deleted');
+	  			alert($(this).attr('id')));
+	  		}
+	  		})
 	  	});
     //]]>
 	</script>

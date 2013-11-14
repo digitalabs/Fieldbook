@@ -14,12 +14,23 @@ function validateEnterFieldPage(){
 		return false;
 	}
 	
-	if($('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val() == "" || !isInt($('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val())){
+	if($('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val() == "" 
+		|| !isInt($('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val())
+		|| parseInt($('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val()) < 1){
 		showEnterFieldDetailsMessage(msgRowsInBlock);
 		return false;
 	}
-	if($('#'+getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val() == "" || !isInt($('#'+getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val())){
+	if($('#'+getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val() == "" || 
+	!isInt($('#'+getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val())
+	|| parseInt($('#'+getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val()) < 1){
 		showEnterFieldDetailsMessage(msgRangesInBlock);
+		return false;
+	}
+	if(parseInt($('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val()) % 
+			parseInt($('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val()) != 0){
+		//we need to check 
+		
+		showEnterFieldDetailsMessage(msgColError);
 		return false;
 	}
 	return true;

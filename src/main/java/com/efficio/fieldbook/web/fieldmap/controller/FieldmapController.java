@@ -181,7 +181,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         return this.userFieldmap;
     }
     
-    private void setUserFieldMapDetails(FieldmapForm form) {
+    private void setUserFieldMapDetails(FieldmapForm form) {        
         this.userFieldmap.setBlockName(form.getUserFieldmap().getBlockName());
         this.userFieldmap.setEntryNumbers(form.getUserFieldmap().getEntryNumbers());
         this.userFieldmap.setFieldLocationId(form.getUserFieldmap().getFieldLocationId());

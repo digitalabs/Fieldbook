@@ -72,3 +72,51 @@ function initializeLocationSelect2(locationSuggestions, locationSuggestions_obj)
 	    });
 	
 }
+
+function validatePlantingDetails() {
+	var startingCol = $('#'+getJquerySafeId("userFieldmap.startingColumn")).val();
+	var startingRange = $('#'+getJquerySafeId("userFieldmap.startingRange")).val();
+	var plantingOrder = $("input[type='radio']:checked").length;
+				
+	if (startingCol == "") {
+		showMessage(startColError);
+		return false;
+	}
+	
+	if (startingRange == "") {
+		showMessage(startRangeError);
+		return false;
+	}
+	
+	if (!isInt(startingCol)) {
+		showMessage(startColNotInt);
+		return false;
+	} 
+	
+	if (!isInt(startingRange)) {
+		showMessage(startRangeNotInt);
+		return false;
+	}
+	
+	if (parseInt(startingCol) > parseInt(rowNum) || parseInt(startingCol) == 0) {
+		showMessage(startColInvalid);
+		return false;
+	}
+	
+	if (parseInt(startingRange) > parseInt(rangeNum) || parseInt(startingRange) == 0) {
+		showMessage(startRangeInvalid);
+		return false;
+	}
+	
+	if (plantingOrder == 0) {
+		showMessage(plantingOrderError);
+		return false;
+	}
+	return true;
+}
+
+function showMessage(message) {
+	$("#page-message").html(
+		    "<div class='alert alert-danger'>"+ message +"</div>"
+	);
+}

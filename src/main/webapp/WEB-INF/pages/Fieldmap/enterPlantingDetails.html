@@ -113,6 +113,7 @@ th:action="@{/Fieldmap/plantingDetails}" method="post" th:object="${fieldmapForm
 </form>
 
 <div layout:fragment="page-script">
+	<script type="text/javascript" th:src="@{/static/js/fieldMap.js}"></script>
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
         var startColError = /*[[#{fieldmap.starting.coordinates.required(#{fieldmap.label.column})}]]*/;
@@ -125,53 +126,6 @@ th:action="@{/Fieldmap/plantingDetails}" method="post" th:object="${fieldmapForm
 		var rowNum = /*[[${fieldmapForm.userFieldmap.numberOfRowsInBlock}]]*/;
 		var rangeNum = /*[[${fieldmapForm.userFieldmap.numberOfRangesInBlock}]]*/;
 		
-		function validatePlantingDetails() {
-			var startingCol = $('#'+getJquerySafeId("userFieldmap.startingColumn")).val();
-			var startingRange = $('#'+getJquerySafeId("userFieldmap.startingRange")).val();
-			var plantingOrder = $("input[type='radio']:checked").length;
-						
-			if (startingCol == "") {
-				showMessage(startColError);
-				return false;
-			}
-			
-			if (startingRange == "") {
-				showMessage(startRangeError);
-				return false;
-			}
-			
-			if (!isInt(startingCol)) {
-				showMessage(startColNotInt);
-				return false;
-			} 
-			
-			if (!isInt(startingRange)) {
-				showMessage(startRangeNotInt);
-				return false;
-			}
-			
-			if (parseInt(startingCol) > parseInt(rowNum) || parseInt(startingCol) == 0) {
-				showMessage(startColInvalid);
-				return false;
-			}
-			
-			if (parseInt(startingRange) > parseInt(rangeNum) || parseInt(startingRange) == 0) {
-				showMessage(startRangeInvalid);
-				return false;
-			}
-			
-			if (plantingOrder == 0) {
-				showMessage(plantingOrderError);
-				return false;
-			}
-			return true;
-		}
-		
-		function showMessage(message) {
-			$("#page-message").html(
-				    "<div class='alert alert-danger'>"+ message +"</div>"
-			);
-		}
     //]]>
     </script>
 </div>

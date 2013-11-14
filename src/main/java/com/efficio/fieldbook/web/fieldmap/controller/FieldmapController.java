@@ -183,18 +183,11 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     
     private void setUserFieldMapDetails(FieldmapForm form) {
         this.userFieldmap.setBlockName(form.getUserFieldmap().getBlockName());
-        this.userFieldmap.setEntryNumbers(form.getUserFieldmap().getEntryNumbers());
         this.userFieldmap.setFieldLocationId(form.getUserFieldmap().getFieldLocationId());
         this.userFieldmap.setFieldName(form.getUserFieldmap().getFieldName());
-        this.userFieldmap.setGermplasmNames(form.getUserFieldmap().getGermplasmNames());
-        this.userFieldmap.setNumberOfEntries(form.getUserFieldmap().getNumberOfEntries());
         this.userFieldmap.setNumberOfRangesInBlock(form.getUserFieldmap().getNumberOfRangesInBlock());
-        this.userFieldmap.setNumberOfReps(form.getUserFieldmap().getNumberOfReps());
         this.userFieldmap.setNumberOfRowsInBlock(form.getUserFieldmap().getNumberOfRowsInBlock());
         this.userFieldmap.setNumberOfRowsPerPlot(form.getUserFieldmap().getNumberOfRowsPerPlot());
-        this.userFieldmap.setReps(form.getUserFieldmap().getReps());
-        this.userFieldmap.setSelectedName(form.getUserFieldmap().getSelectedName());
-        this.userFieldmap.setTotalNumberOfPlots(form.getUserFieldmap().getTotalNumberOfPlots());
-        this.userFieldmap.setTrial(form.getUserFieldmap().isTrial());
+        this.userFieldmap.setLocationName(form.getUserFieldmap().getLocationName());
     }
 }

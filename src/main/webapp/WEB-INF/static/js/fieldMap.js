@@ -56,6 +56,8 @@ function initializeLocationSelect2(locationSuggestions, locationSuggestions_obj)
 	            
 	        }
 	
+	    }).on("change", function (){
+	    	$('#'+getJquerySafeId("userFieldmap.locationName")).val($('#'+getJquerySafeId("userFieldmap.fieldLocationId")).select2("data").text);
 	    });
 	
 }

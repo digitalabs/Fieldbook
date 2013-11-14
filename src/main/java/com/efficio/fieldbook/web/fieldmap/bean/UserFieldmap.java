@@ -76,6 +76,8 @@ public class UserFieldmap  implements Serializable {
     /** The starting range. */
     private int startingRange;
     
+    private String locationName;
+    
     public UserFieldmap(){
         
     }
@@ -433,5 +435,13 @@ public class UserFieldmap  implements Serializable {
      */
     public void setStartingRange(int startingRange) {
         this.startingRange = startingRange;
+    }
+    
+    public String getLocationName() {
+        return locationName;
+    }
+    
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
     }
 }

@@ -19,9 +19,173 @@
 		<h4 th:text="#{fieldmap.header.generate.field.map}">3. GENERATE FIELD MAP</h4>
 	</div>
 </div>
-<form id="fieldmapForm" name="fieldmapForm" role="form-horizontal" class="form-horizontal" action="#"
+<form id="fieldmapForm" name="fieldmapForm" role="form-horizontal" action="#"
 th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldmapForm}" enctype="multipart/form-data">
-
+	<div style="border: 1px solid #333333">
+		<div class="row">&nbsp;</div>
+		<div class="row">
+			<div class="col-md-12" >
+				<div class="form-group">
+					<div class="col-md-12">
+						<label th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.header.summary.for.trial}">SUMMARY OF TRIAL, FIELD AND PLANTING DETAILS</label>
+						<label th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.header.summary.for.nursery}">SUMMARY OF NURSERY, FIELD AND PLANTING DETAILS</label>
+					</div>
+				</div>
+			</div>	
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<div class="col-md-3">
+						<label class="control-label" th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.selected.trial}">Selected Trial:</label>
+						<label class="control-label" th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery.selected.nursery}">Selected Nursery:</label>
+						<span th:text="*{userFieldmap.selectedName}">[FieldbookName]</span>
+					</div>
+					
+				</div>
+				<div class="form-group">
+					<div class="col-md-3">
+						<label class="control-label" th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.number.of.entries}">Number of Entries:</label>
+						<label class="control-label" th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.trial.number.of.entries.and.plots}">Number of Entries and Plots:</label>
+						<span th:text="*{userFieldmap.numberOfEntries}"></span>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-md-3">
+						<label class="control-label" th:if="*{userFieldmap.trial == true}"  th:text="#{fieldmap.trial.number.of.reps}">Number of Reps:</label>
+						<span th:if="*{userFieldmap.trial == true}"  th:text="*{userFieldmap.numberOfReps}"></span>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-md-3">
+						<label class="control-label" th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.total.number.of.plots}">Total Number of Plots:</label>
+						<span th:if="*{userFieldmap.trial == true}" th:text="*{userFieldmap.totalNumberOfPlots}"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+		&nbsp;
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<div class="col-md-4">
+						<label class="control-label" th:text="#{fieldmap.trial.field.and.block.details}">FIELD AND BLOCK DETAILS:</label>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-md-4">
+						<label class="control-label" th:text="#{fieldmap.trial.row.and.range.and.plot.details}">ROW, RANGE AND PLOT DETAILS:</label>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-md-4">
+						<label class="control-label" th:text="#{fieldmap.header.planting.details}">PLANTING DETAILS</label>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<div class="col-md-4">
+						<label class="control-label" th:text="#{fieldmap.trial.field.location}">Field Location:</label>
+						<span th:text="*{userFieldmap.fieldLocationId}"></span>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-md-4">
+						<label class="control-label" th:text="#{fieldmap.label.block.capacity} + ':'">Block Capacity:</label>
+						<span th:text="#{fieldmap.label.rows}"></span>
+						<span th:text="*{userFieldmap.numberOfRowsInBlock} + ', '"></span>
+						<span th:text="#{fieldmap.label.ranges}"></span>
+						<span th:text="*{userFieldmap.numberOfRangesInBlock}"></span>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-md-4">
+						<label class="control-label" th:text="#{fieldmap.label.starting.coordinates} + ':'">Starting Coordinates:</label>
+						<span th:text="#{fieldmap.label.capitalized.column}"></span>
+						<span th:text="*{userFieldmap.startingColumn} + ', '"></span>
+						<span th:text="#{fieldmap.label.capitalized.range}"></span>
+						<span th:text="*{userFieldmap.startingRange}"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<div class="col-md-4">
+						<label class="control-label" th:text="#{fieldmap.label.field.name} + ':'">Field Name:</label>
+						<span th:text="*{userFieldmap.fieldName}"></span>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-md-4">
+						<label class="control-label" th:text="#{fieldmap.label.rows.per.plot} + ':'">Rows per Plot:</label>
+						<span th:text="*{userFieldmap.numberOfRowsPerPlot}"></span>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-md-4">
+						<label class="control-label" th:text="#{fieldmap.trial.planting.order}">Planting Order:</label>
+						<span th:if="*{userFieldmap.plantingOrder == 1}" th:text="#{fieldmap.planting.order.row.column}">Row/Column</span>
+						<span th:if="*{userFieldmap.plantingOrder == 2}" th:text="#{fieldmap.planting.order.serpentine}">Serpentine</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<div class="col-md-4">
+						<label class="control-label" th:text="#{fieldmap.label.block.name} + ':'">Block Name:</label>
+						<span th:text="*{userFieldmap.blockName}"></span>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-md-4">
+						<label class="control-label" th:text="#{fieldmap.label.columns} + ':'">Columns:</label>
+						<span th:text="*{userFieldmap.numberOfRangesInBlock}"></span>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-md-4">
+						&nbsp;
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+		&nbsp;
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<div class="col-md-11">
+						<label class="control-label" th:text="#{fieldmap.header.fieldmap}">FIELD MAP</label>
+					</div>
+					<div class="col-md-1" style="padding-left:0">
+						<div class="btn-group">
+							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+						    	<span class="glyphicon glyphicon-cog"></span>&nbsp;Tools
+						  	</button>
+						  	<ul class="dropdown-menu" role="menu">
+							    <li>
+							    	<a href="" th:text="#{fieldmap.tools.export.to.excel}">Export to Excel</a>
+							    </li>    
+						  	</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+		&nbsp;
+		</div>
+	</div>
 <input type="hidden" id="markedCells" name="markedCells" />
 <div class="table-responsive">
 	<table class="table" border="1">

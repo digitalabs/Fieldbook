@@ -76,18 +76,13 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	//<![CDATA[
 	  	function setAllDeletedBox(){
 	  		var deletedRect = "";
-	  		for(var i = 0 ; i < rectangleJsonMapping.length ; i++){
-	  			var nodeJsonMapping = rectangleJsonMapping[i];
-	  			if($(nodeJsonMapping.node).attr('fill') == "#000000"){
-	  				//console.log("To be pass "+nodeJsonMapping.jsonData.id);
-	  				deletedRect += nodeJsonMapping.jsonData.id;
-	  				if(deletedRect != ''){
-	  					deletedRect += ",";
-	  				}
-	  			}
-	  				
-	  		}
-	  		
+	  		$('#field-map td.plot.deleted').each(function(){
+	  			deletedRect += $(this).attr('id');
+  				if(deletedRect != ''){
+  					deletedRect += ",";
+  				}
+	  		})
+	  			  			  		
 	  		if(deletedRect != ''){
 	  			deletedRect = deletedRect.substr(0,deletedRect.length-1);
 	  		}
@@ -96,14 +91,17 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	  		$("#fieldmapForm").submit();
 	  	}
 	  	$(document).ready(function() {
-	  		$('#field-map td.plot').click(function(){
-	  			if($(this).hasClass('deleted'){
+	  		$('#field-map td.plot').on('click', function() {
+	  			if($(this).hasClass('deleted')){
 	  				$(this).removeClass('deleted');
-	  			}else
+	  				$(this).html('');
+	  			}else{
 	  				$(this).addClass('deleted');
-	  			alert($(this).attr('id')));
-	  		}
-	  		})
+	  				$(this).html("<label class='alert alert-danger'>X</label>");
+	  			}
+	  			//console.log($(this).attr('id'));
+	  		});
+	  		
 	  	});
     //]]>
 	</script>

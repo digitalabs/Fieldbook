@@ -104,18 +104,18 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         session.invalidate();
         
         try {
-            //FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getLocalFieldMapInfoOfTrial(Integer.parseInt(id));            
-            //this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, true);
-            
+            FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getLocalFieldMapInfoOfTrial(Integer.parseInt(id));            
+            this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, true);
+            /*
             this.userFieldmap = new UserFieldmap();
             this.userFieldmap.setNumberOfRowsPerPlot(2);
-            
+            */
             form.setUserFieldmap(userFieldmap);    
         } catch (NumberFormatException e) {
             LOG.error(e.toString());
-        }/* catch (MiddlewareQueryException e) {
+        } catch (MiddlewareQueryException e) {
             LOG.error(e.toString());
-        }*/
+        }
         
        
         return super.show(model);

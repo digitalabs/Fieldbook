@@ -185,54 +185,61 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 		<div class="row">
 		&nbsp;
 		</div>
+		<input type="hidden" id="markedCells" name="markedCells" />
+		<div class="table-responsive">
+			<table id="field-map" class="table" style="border: 1px solid;">
+			
+			<thead>
+				<tr>
+					<td>Rows</td>
+					<td th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock)}">
+						<p th:text="${j}"></p>				
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td th:colspan="*{userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
+						<p th:text="'Column ' + ${j}"></p>
+					</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="i : ${#numbers.sequence(#object.userFieldmap.numberOfRangesInBlock, 1)}">
+					<td><p th:text="'Range ' + ${i}"></p></td>
+					<td class="plot" th:id="${i} + '_' + ${j}" th:colspan="*{userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
+						<p th:text="${#object.fieldmapLabels[__${(i-1) * #object.userFieldmap.numberOfRangesInBlock + (j-1)}__]}"></p>
+					</td>
+				</tr>
+				<tr>
+					<td>Rows</td>
+					<td th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock)}">
+						<p th:text="${j}"></p>				
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td th:colspan="*{userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
+						<p th:text="'Column ' + ${j}"></p>
+					</td>
+				</tr>
+			</tbody>
+			
+			</table>
+			 <button type="button" onclick="javascript: setAllDeletedBox()" class="btn btn-default">Submit Now test</button>
+		
+			<div id="fieldmap-area" th:include="/Fieldmap/fieldmapView">
+			</div>
+		
+		</div>
+		<div class="row">
+			<div class="col-md-offset-5 col-md-7">
+				<div class="form-group">
+			      <input type="button" href="/Fieldmap/enterPlantingDetails.html" th:href="@{/Fieldmap/plantingDetails/}" th:value="#{common.form.back.text}" value="Back" class="btn btn-default btn-lg"/>
+			      <input type="submit" th:value="#{common.form.finish.text}" value="Next" class="btn btn-primary btn-lg"/>
+		      	</div>
+		    </div>
+	    </div>
 	</div>
-<input type="hidden" id="markedCells" name="markedCells" />
-<div class="table-responsive">
-	<table id="field-map" class="table" border="1">
-	
-	<thead>
-		<tr>
-			<td>Rows</td>
-			<td th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock)}">
-				<p th:text="${j}"></p>				
-			</td>
-		</tr>
-		<tr>
-			<td></td>
-			<td th:colspan="*{userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
-				<p th:text="'Column ' + ${j}"></p>
-			</td>
-		</tr>
-	</thead>
-	<tbody>
-		<tr th:each="i : ${#numbers.sequence(#object.userFieldmap.numberOfRangesInBlock, 1)}">
-			<td><p th:text="'Range ' + ${i}"></p></td>
-			<td class="plot" th:id="${i} + '_' + ${j}" th:colspan="*{userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
-				<p th:text="${#object.fieldmapLabels[__${(i-1) * #object.userFieldmap.numberOfRangesInBlock + (j-1)}__]}"></p>
-			</td>
-		</tr>
-		<tr>
-			<td>Rows</td>
-			<td th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock)}">
-				<p th:text="${j}"></p>				
-			</td>
-		</tr>
-		<tr>
-			<td></td>
-			<td th:colspan="*{userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
-				<p th:text="'Column ' + ${j}"></p>
-			</td>
-		</tr>
-	</tbody>
-	
-	</table>
-	 <button type="button" onclick="javascript: setAllDeletedBox()" class="btn btn-default">Submit Now test</button>
-
-	<div id="fieldmap-area" th:include="/Fieldmap/fieldmapView">
-	</div>
-
-</div>
-
 </form>
 <div layout:fragment="page-script">		
 	<script type="text/javascript" th:src="@{/static/js/raphael-min.js}"></script>

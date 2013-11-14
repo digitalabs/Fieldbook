@@ -104,7 +104,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         session.invalidate();
         
         try {
-            FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getLocalFieldMapInfoOfTrial(Integer.parseInt(id));            
+            FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfTrial(Integer.parseInt(id));            
             this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, true);
             /*
             this.userFieldmap = new UserFieldmap();
@@ -137,7 +137,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         session.invalidate();
         
         try {
-            FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getLocalFieldMapInfoOfNursery(Integer.parseInt(id));
+            FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfNursery(Integer.parseInt(id));
             this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, false);
             form.setUserFieldmap(userFieldmap);
         } catch (NumberFormatException e) {

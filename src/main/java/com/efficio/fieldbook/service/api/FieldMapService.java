@@ -24,6 +24,8 @@ public interface FieldMapService {
     List<Element> createBlankFieldmap(UserFieldmap info, int startX, int startY);
     List<String> createFieldmap(UserFieldmap info);
     List<Element> createFieldmap(UserFieldmap info, List<String> markedCells, int startX, int startY);
+    List<String> generateFieldmapLabels(List<String> names, int reps);
+    List<String> generateFieldMapLabels(UserFieldmap info);
     
     //added by Daniel
     Plot[][] createFieldMap(int col, int range, int startRange, int startCol, boolean isSerpentine, Map deletedPlot, List<String> entryNumbersInString);

@@ -11,8 +11,11 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.fieldmap.controller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
@@ -26,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.efficio.fieldbook.service.api.FieldMapService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 import com.efficio.pojos.svg.Element;
@@ -49,18 +53,12 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         //TODO: FOR testing only, remove this
         populateFormWithSessionData(form);
         
-        List<String> fieldmapLabels = fieldmapService.createFieldmap(form.getUserFieldmap());
-        form.setFieldmapLabels(fieldmapLabels);
-        
-        List<Element> fieldmapShapes = fieldmapService.createBlankFieldmap(form.getUserFieldmap(), 5, 5);
-        form.setFieldmapShapes(fieldmapShapes);
-        
         return super.show(model);
     }
     
     @RequestMapping(method = RequestMethod.POST)
     public String generateFieldmap(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model) {
-        System.out.println("GENERATING FIELD MAP...." + form.getMarkedCells());
+        /*System.out.println("GENERATING FIELD MAP...." + form.getMarkedCells());
         //TODO: FOR testing only, remove this 
         populateFormWithSessionData(form);
         
@@ -72,7 +70,33 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
             
             List<Element> fieldmapShapes = fieldmapService.createFieldmap(form.getUserFieldmap(), markedCells, 5, 5);
             form.setFieldmapShapes(fieldmapShapes);
+        }*/
+//        populateFormWithDummyData(form);
+        
+        UserFieldmap info = userFieldmap;
+        form.setUserFieldmap(info);
+        int reps = info.getNumberOfReps().intValue();
+        int startRange = info.getStartingRange();
+        int startCol = info.getStartingColumn();
+        int rows = info.getNumberOfRowsInBlock();
+        int ranges = info.getNumberOfRangesInBlock();
+        int rowsPerPlot = info.getNumberOfRowsPerPlot();
+        boolean isSerpentine = info.getPlantingOrder() == 1;
+        int col = rows / rowsPerPlot;
+        
+        Map deletedPlot = new HashMap();
+        if (form.getMarkedCells() != null && !form.getMarkedCells().isEmpty()) {
+            List<String> markedCells = Arrays.asList(form.getMarkedCells().split(","));
+            
+            for (String markedCell : markedCells) {
+                deletedPlot.put(markedCell, markedCell);
+            }
         }
+
+        List<String> entryList = fieldmapService.generateFieldMapLabels(info);
+        Plot[][] plots = fieldmapService.createFieldMap(col, ranges, startRange, startCol,
+                isSerpentine, deletedPlot, entryList);
+        info.setFieldmap(plots);
         return super.show(model);
     }
 
@@ -94,7 +118,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
     }
 
     private void populateFormWithSessionData(FieldmapForm form) {
-        UserFieldmap info = new UserFieldmap();
+        UserFieldmap info = userFieldmap;
         info.setNumberOfRowsInBlock(userFieldmap.getNumberOfRowsInBlock());
         info.setNumberOfRangesInBlock(userFieldmap.getNumberOfRangesInBlock());
         info.setNumberOfEntries(userFieldmap.getNumberOfEntries());

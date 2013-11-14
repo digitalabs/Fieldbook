@@ -19,7 +19,7 @@
 		<h4 th:text="#{fieldmap.header.generate.field.map}">3. GENERATE FIELD MAP</h4>
 	</div>
 </div>
-<form id="fieldmapForm" name="fieldmapForm" role="form-horizontal" action="#"
+<form id="fieldmapForm" name="fieldmapForm" role="form-horizontal" class="form-horizontal" action="#"
 th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldmapForm}" enctype="multipart/form-data">
 	<div style="border: 1px solid #333333">
 		<div class="row">&nbsp;</div>
@@ -240,6 +240,15 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 		    </div>
 	    </div>
 	</div>
+
+<input type="hidden" id="markedCells" name="markedCells" />
+<div class="table-responsive">
+
+	<div id="fieldmap-area" th:include="/Fieldmap/fieldmapView"></div>
+	<button type="button" onclick="javascript: setAllDeletedBox()" class="btn btn-default">Submit Now test</button>
+
+</div>
+
 </form>
 <div layout:fragment="page-script">		
 	<script type="text/javascript" th:src="@{/static/js/raphael-min.js}"></script>

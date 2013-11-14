@@ -1,60 +1,62 @@
+<div class="table-responsive">
+	<table id="field-map" class="table" border="1">
+	
+	<thead>
+		<tr>
+			<td style="width:150px;">Rows</td>
+			<td style="width:50px;" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock)}">
+				<p th:text="${j}"></p>				
+			</td>
+		</tr>
+		<tr th:unless="${#arrays.isEmpty(#object.userFieldmap.fieldmap)}">
+			<td></td>
+			<td th:colspan="*{userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
+				<p th:unless="${#arrays.isEmpty(#object.userFieldmap.fieldmap)}"
+					th:if="${#object.userFieldmap.fieldmap[__${j-1}__][__0__].upward}">Up</p>
+				<p th:unless="${#object.userFieldmap.fieldmap[__${j-1}__][__0__].upward}">Down</p>
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td th:colspan="*{userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
+				<p th:text="'Column ' + ${j}"></p>
+			</td>
+		</tr>
+	</thead>
+	<tbody>
+		<tr th:each="i : ${#numbers.sequence(#object.userFieldmap.numberOfRangesInBlock, 1)}">
+			<td><p th:text="'Range ' + ${i}"></p></td>
+			<td class="plot" th:id="${j} + '_' + ${i}" th:colspan="*{userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
+				<p th:unless="${#arrays.isEmpty(#object.userFieldmap.fieldmap)}" 
+					th:text="${#object.userFieldmap.fieldmap[__${j-1}__][__${i-1}__].displayString}"></p>
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td th:colspan="*{userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
+				<p th:text="'Column ' + ${j}"></p>
+			</td>
+		</tr>
+		<tr>
+			<td>Rows</td>
+			<td th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock)}">
+				<p th:text="${j}"></p>				
+			</td>
+		</tr>
+	</tbody>
+	
+	</table>
 
-<div id="fieldmapContainer" style="border: black;"></div>
+</div>
 	
 
 <div layout:fragment="page-script">		
-	<script type="text/javascript" th:src="@{/static/js/raphael-min.js}"></script>
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
-	    var rectangleJsonMapping = new Array();
-	    	    	    
-	    function NodeJsonMapping(node, jsonData){
-	    	this.node = node;
-	    	this.jsonData = jsonData;
-	    }
-	    
-	    function addNodeJsonMapping(node, jsonData){
-	    	rectangleJsonMapping[rectangleJsonMapping.length] = new NodeJsonMapping(node, jsonData);
-	    	
-	    }
 	    
 	  	$(document).ready(function() {
-			drawFieldmap();	  		
 	  	});
 
-	  	function drawFieldmap() {
-	  		var paper = new Raphael("fieldmapContainer", 5500, 1500);
-	  		var data = /*[[${fieldmapForm.fieldmapShapes}]]*/;
-	  		var jsonData = JSON.stringify(data);
-	  		var json = JSON.parse(jsonData);
-
-	  		for (var i = 0; i < json.length; i++) {
-	  			var c = paper.rect(json[i].x, json[i].y, json[i].width, json[i].height);
-	  			if (json[i].title) {
-		  			paper.text(json[i].x+30, json[i].y+20, json[i].title);
-	  			}
-	  			c.attr({stroke: json[i].stroke});
-	  				  			
-	  			if(json[i].id){
-	  				addNodeJsonMapping(c.node, json[i]);
-	  				c.attr({fill: "#FFFFFF"});
-	  				//console.log("Add on click");
-	  				$(c.node).click(function(evt){
-	  					
-	  					//console.log("click");
-	  					if($(this).attr("fill") == "#000000")
-	  						$(this).attr("fill", "#FFFFFF");
-	  					else{
-	  						$(this).attr("fill", "#000000");
-	  						//console.log(evt.currentTarget.raphaelid);
-	  						
-	  					}
-	  		           return false;
-					});
-	  				
-	  			}
-	  		}
-	  	}
 	  	
     //]]>
 	</script>

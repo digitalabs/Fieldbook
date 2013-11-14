@@ -21,6 +21,8 @@ public class Rectangle extends Element {
     private String fill;
     private String stroke;
     
+    private Position position;
+    
 
     @Override
     protected String getElementTypeName() {
@@ -73,6 +75,14 @@ public class Rectangle extends Element {
     
     public void setStroke(String stroke) {
         this.stroke = stroke;
+    }
+    
+    public Position getPosition() {
+        return position;
+    }
+    
+    public void setPosition(Position position) {
+        this.position = position;
     }
 
 }

@@ -16,6 +16,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
+import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.service.api.FieldMapService;
@@ -55,13 +57,8 @@ public class FieldMapServiceImpl implements FieldMapService{
         List<String> names = new ArrayList<String>();
         names.add(info.getSelectedName());
         int reps = info.getNumberOfReps().intValue();
-        int entries = info.getNumberOfEntries().intValue();
-        int rows = info.getNumberOfRowsInBlock();
-        int ranges = info.getNumberOfRangesInBlock();
-        int rowsPerPlot = info.getNumberOfRowsPerPlot();
-        boolean isSerpentine = info.getPlantingOrder() == 1;
 
-        return generateFieldmapLabels(names, reps, entries, rowsPerPlot, rows, ranges, isSerpentine);
+        return generateFieldmapLabels(names, reps);
     }
     
     @Override
@@ -87,20 +84,39 @@ public class FieldMapServiceImpl implements FieldMapService{
         return fieldMapElements;
     }
     
-    private List<String> generateFieldmapLabels(List<String> names, int reps, int entries, int rowsPerPlot, int rows, int ranges, boolean isSerpentine) {
+    @Override
+    public List<String> generateFieldmapLabels(List<String> names, int reps) {
         List<String> fieldTexts = new ArrayList<String>();
-        int noOfTrials = names.size();
-        for (int i = 0; i < noOfTrials; i++) {
+        //int noOfTrials = names.size();
+        int entries = names.size();
+        //for (int i = 0; i < noOfTrials; i++) {
             for (int j = 0; j < reps; j++) {
                 for (int k = 0; k < entries; k++) {
-                    fieldTexts.add("Entry " + (k+1) + NEXT_LINE + "Rep " + (j+1) + NEXT_LINE + names.get(i));
+                    fieldTexts.add("Entry " + (k+1) + NEXT_LINE + "Rep " + (j+1) + NEXT_LINE + names.get(k));
                 }
             }
-        }        
-        addPadding(fieldTexts, rows * ranges);
+        //}        
+        //addPadding(fieldTexts, rows * ranges);
 //        if (isSerpentine) {
 //            makeSerpentine(fieldTexts, rows, ranges);
 //        }
+        return fieldTexts;
+    }
+
+    @Override
+    public List<String> generateFieldMapLabels(UserFieldmap info) {
+        List<FieldMapLabel> labels = info.getFieldMapLabels();
+        List<String> fieldTexts = new ArrayList<String>();
+        StringBuilder textLabel = null;
+        for (FieldMapLabel label : labels) {
+            textLabel = new StringBuilder();
+            textLabel.append("Entry " + label.getEntryNumber());
+            if (info.isTrial()) {
+                textLabel.append("Rep " + label.getRep());
+            }
+            textLabel.append(label.getGermplasmName());
+            fieldTexts.add(textLabel.toString());
+        }
         return fieldTexts;
     }
 
@@ -299,7 +315,8 @@ public class FieldMapServiceImpl implements FieldMapService{
         //this creates the initial data
         for(int j = range -1 ; j >= 0 ; j--){
             for(int i = 0 ; i < col ; i++){
-                plots[i][j] = new Plot(i,j, "Col-"+i+ " Range-"+j);
+                //plots[i][j] = new Plot(i,j, "Col-"+i+ " Range-"+j);
+                plots[i][j] = new Plot(i, j, "");
                 System.out.print("[ " + plots[i][j].getDisplayString() + " ]");
             }
             System.out.println("");
@@ -390,28 +407,29 @@ public class FieldMapServiceImpl implements FieldMapService{
         plots[i][j].setUpward(isUpward);
     
         if(isStartOk){
-            plots[i][j].setNotStarted(true);
+            plots[i][j].setNotStarted(false);
             if(isDeleted(i,j, deletedPlot) == false){
                 plots[i][j].setPlotDeleted(false);
                 if(hasAvailableEntries){
                     //meaning we can plant already and move to the next plant
-                    plots[i][j].setDisplayString(plots[i][j].getDisplayString() + ": " + stringToDisplay);
+                    //plots[i][j].setDisplayString(plots[i][j].getDisplayString() + ": " + stringToDisplay);
+                    plots[i][j].setDisplayString(stringToDisplay);
                     plots[i][j].setNoMoreEntries(false);
                     counter++;
                 }else{
                     //there are space but no more entries to plant
-                    plots[i][j].setDisplayString(plots[i][j].getDisplayString() + ": No More Entries");
+                    //plots[i][j].setDisplayString(plots[i][j].getDisplayString() + ": No More Entries");
                     plots[i][j].setNoMoreEntries(true);
                 }
             }
             else{
                 //meaing this plot is deleted
-                plots[i][j].setDisplayString(plots[i][j].getDisplayString() + ": " + "DELETED");
+                //plots[i][j].setDisplayString(plots[i][j].getDisplayString() + ": " + "DELETED");
                 plots[i][j].setPlotDeleted(true);
             }
         }else{
             //meaning we haven't started
-            plots[i][j].setDisplayString(plots[i][j].getDisplayString() + ": " + "NOT STARTED");
+            //plots[i][j].setDisplayString(plots[i][j].getDisplayString() + ": " + "NOT STARTED");
             plots[i][j].setNotStarted(true);
         }
         return counter;

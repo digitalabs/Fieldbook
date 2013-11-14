@@ -14,7 +14,9 @@ package com.efficio.fieldbook.web.fieldmap.bean;
 import java.io.Serializable;
 import java.util.List;
 
+import org.apache.poi.hssf.record.chart.PlotAreaRecord;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
+import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 
 
 // TODO: Auto-generated Javadoc
@@ -76,6 +78,10 @@ public class UserFieldmap  implements Serializable {
     /** The starting range. */
     private int startingRange;
     
+    private Plot[][] fieldmap;
+    
+    private List<FieldMapLabel> fieldMapLabels;
+    
     public UserFieldmap(){
         
     }
@@ -87,20 +93,7 @@ public class UserFieldmap  implements Serializable {
      * @param isTrial the is trial
      */
     public UserFieldmap(FieldMapInfo fieldMapInfo, boolean isTrial){
-        setSelectedName(fieldMapInfo.getFieldbookName());
-        setNumberOfEntries(fieldMapInfo.getEntryCount());
-        setNumberOfReps(fieldMapInfo.getRepCount());
-        setTotalNumberOfPlots(fieldMapInfo.getPlotCount());
-        setEntryNumbers(fieldMapInfo.getEntryNumbers());
-        setGermplasmNames(fieldMapInfo.getGermplasmNames());
-        setReps(fieldMapInfo.getReps());
-        setTrial(isTrial);
-        if(isTrial){
-            setNumberOfRowsPerPlot(2);
-        }else{
-            setNumberOfRowsPerPlot(1);
-        }
-        
+        setUserFieldmapInfo(fieldMapInfo, isTrial);
     }
     
     public void setUserFieldmapInfo(FieldMapInfo fieldMapInfo, boolean isTrial){
@@ -108,9 +101,7 @@ public class UserFieldmap  implements Serializable {
         setNumberOfEntries(fieldMapInfo.getEntryCount());
         setNumberOfReps(fieldMapInfo.getRepCount());
         setTotalNumberOfPlots(fieldMapInfo.getPlotCount());
-        setEntryNumbers(fieldMapInfo.getEntryNumbers());
-        setGermplasmNames(fieldMapInfo.getGermplasmNames());
-        setReps(fieldMapInfo.getReps());
+        setFieldMapLabels(fieldMapInfo.getFieldMapLabels());
         setTrial(isTrial);
         if(isTrial){
             setNumberOfRowsPerPlot(2);
@@ -434,4 +425,25 @@ public class UserFieldmap  implements Serializable {
     public void setStartingRange(int startingRange) {
         this.startingRange = startingRange;
     }
+
+    
+    public Plot[][] getFieldmap() {
+        return fieldmap;
+    }
+
+    
+    public void setFieldmap(Plot[][] fieldmap) {
+        this.fieldmap = fieldmap;
+    }
+
+    
+    public List<FieldMapLabel> getFieldMapLabels() {
+        return fieldMapLabels;
+    }
+
+    
+    public void setFieldMapLabels(List<FieldMapLabel> fieldMapLabels) {
+        this.fieldMapLabels = fieldMapLabels;
+    }
+
 }

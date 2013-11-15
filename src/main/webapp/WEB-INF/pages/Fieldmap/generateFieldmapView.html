@@ -5,20 +5,23 @@
 		</h1>
 	</div>			  
 </div>
+
 <div class="row">
 	<div class="col-md-3">
-		<h4 th:text="#{fieldmap.header.make.a.field.plan}">Make a Field Plan</h4>
+		<span style="font-weight: bold; font-size: 18px" th:text="#{fieldmap.header.make.a.field.plan}">Make a Field Plan</span>
 	</div>
 	<div class="col-md-3">
-		<h4 th:text="#{fieldmap.header.enter.details}">1. ENTER FIELD DETAILS</h4>
+		<span  th:text="#{fieldmap.header.enter.details}">1. ENTER FIELD DETAILS</span>
 	</div>
 	<div class="col-md-3">
-		<h4 th:text="#{fieldmap.header.enter.planting.details}">2. ENTER PLANTING DETAILS</h4>
+		
+		<span th:text="#{fieldmap.header.enter.planting.details}">2. ENTER PLANTING DETAILS</span>
 	</div>
 	<div class="col-md-3">
-		<h4 th:text="#{fieldmap.header.generate.field.map}">3. GENERATE FIELD MAP</h4>
+		<span style="font-weight: bold; font-size: 16px" th:text="#{fieldmap.header.generate.field.map}">3. GENERATE FIELD MAP</span>
 	</div>
 </div>
+
 <form id="fieldmapForm" name="fieldmapForm" role="form-horizontal" action="#"
 th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldmapForm}" enctype="multipart/form-data">
 	<div style="border: 1px solid #333333">

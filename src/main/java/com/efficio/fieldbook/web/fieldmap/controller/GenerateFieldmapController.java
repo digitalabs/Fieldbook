@@ -104,12 +104,12 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
      */
     @RequestMapping(method = RequestMethod.POST)
     public String submitDetails(@ModelAttribute("FieldmapForm") FieldmapForm form, Model model) {
-//        this.userFieldmap.setStartingColumn(form.getUserFieldmap().getStartingColumn());
-//        this.userFieldmap.setStartingRange(form.getUserFieldmap().getStartingRange());
-//        this.userFieldmap.setPlantingOrder(form.getUserFieldmap().getPlantingOrder());
+        this.userFieldmap.setStartingColumn(form.getUserFieldmap().getStartingColumn());
+        this.userFieldmap.setStartingRange(form.getUserFieldmap().getStartingRange());
+        this.userFieldmap.setPlantingOrder(form.getUserFieldmap().getPlantingOrder());
         
-        int startRange = form.getUserFieldmap().getStartingRange() - 1;
-        int startCol = form.getUserFieldmap().getStartingColumn() - 1;
+        int startRange = userFieldmap.getStartingRange() - 1;
+        int startCol = userFieldmap.getStartingColumn() - 1;
         int rows = userFieldmap.getNumberOfRowsInBlock();
         int ranges = userFieldmap.getNumberOfRangesInBlock();
         int rowsPerPlot = userFieldmap.getNumberOfRowsPerPlot();

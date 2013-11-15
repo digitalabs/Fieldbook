@@ -189,7 +189,7 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 			<div class="col-md-12">
 				<input type="hidden" id="markedCells" name="markedCells" />
 				<div class="table-responsive">
-					<div id="fieldmap-area" style="1000px; overflow:auto;" th:include="/Fieldmap/fieldmapView"></div>
+					<div id="fieldmap-area" th:include="/Fieldmap/fieldmapView"></div>
 					<button type="button" onclick="javascript: setAllDeletedBox()" class="btn btn-default">Submit Now test</button>
 				</div>
 			</div>

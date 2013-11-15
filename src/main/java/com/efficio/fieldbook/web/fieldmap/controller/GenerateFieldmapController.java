@@ -113,7 +113,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         int rows = userFieldmap.getNumberOfRowsInBlock();
         int ranges = userFieldmap.getNumberOfRangesInBlock();
         int rowsPerPlot = userFieldmap.getNumberOfRowsPerPlot();
-        boolean isSerpentine = userFieldmap.getPlantingOrder() == 1;
+        boolean isSerpentine = userFieldmap.getPlantingOrder() == 2;
         
         int col = rows / rowsPerPlot;
         //should list here the deleted plot in col-range format

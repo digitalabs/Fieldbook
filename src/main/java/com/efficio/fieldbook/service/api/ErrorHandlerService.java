@@ -18,7 +18,7 @@ import java.util.List;
  */
 public interface ErrorHandlerService {
 
-    List<String> getErrorMessagesAsList(String errorCodes);
+    List<String> getErrorMessagesAsList(String errorCodes, Object[] parameters);
     
-    String getErrorMessagesAsString(String errorCodes, String nextLine);
+    String getErrorMessagesAsString(String errorCodes, Object[] parameters, String nextLine);
 }

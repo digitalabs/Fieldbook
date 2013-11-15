@@ -293,10 +293,14 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                 }
                 form.setAddSuccessful("1");
                 
-           } catch (Exception e) {
+           } catch (MiddlewareQueryException e) {
                LOG.error(e.getMessage(), e);
                form.setAddSuccessful("2");
-               form.setErrorMessage(errorHandlerService.getErrorMessagesAsString(e.getMessage(), "<br/>"));
+               form.setErrorMessage(errorHandlerService.getErrorMessagesAsString(e.getCode(), null, "<br/>"));
+           } catch (MiddlewareException e) {
+               LOG.error(e.getMessage(), e);
+               form.setAddSuccessful("2");
+               form.setErrorMessage(errorHandlerService.getErrorMessagesAsString(e.getMessage(), null, "<br/>"));
            }
         }
         return show(form, model);
@@ -1036,10 +1040,14 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
 
             result.put("status", "1");
             
-        } catch (Exception e) {
+        } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
             result.put("status",  "0");
-            result.put("errorMessage", errorHandlerService.getErrorMessagesAsString(e.getMessage(), "<br/>"));
+            result.put("errorMessage", errorHandlerService.getErrorMessagesAsString(e.getCode(), new Object[] {ontologyName, form.getName()}, "<br/>"));
+        } catch (MiddlewareException e) {
+            LOG.error(e.getMessage(), e);
+            result.put("status",  "0");
+            result.put("errorMessage", errorHandlerService.getErrorMessagesAsString(e.getMessage(), null, "<br/>"));
         }
         return result;
     }
@@ -1067,10 +1075,10 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                     new Object[] {ontologyTypeName, name}, 
                     locale));
             
-        } catch(Exception e) {
+        } catch(MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
             result.put("status", "0");
-            result.put("errorMessage", errorHandlerService.getErrorMessagesAsString(e.getMessage(), "<br/>"));
+            result.put("errorMessage", errorHandlerService.getErrorMessagesAsString(e.getMessage(), new Object[] {ontologyTypeName, name}, "<br/>"));
         }
         
         return result;

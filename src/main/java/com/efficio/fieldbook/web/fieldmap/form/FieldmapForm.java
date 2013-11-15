@@ -13,10 +13,7 @@ package com.efficio.fieldbook.web.fieldmap.form;
 
 import java.util.List;
 
-import org.generationcp.middleware.pojos.Location;
-
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
-import com.efficio.pojos.svg.Element;
 
 
 // TODO: Auto-generated Javadoc
@@ -33,9 +30,6 @@ public class FieldmapForm{
     /** The fieldmap labels. */
     private List<String> fieldmapLabels;
     
-    /** The fieldmap shapes. */
-    private List<Element> fieldmapShapes;
-    
     /** The marked cells. */
     private String markedCells;
     
@@ -48,8 +42,6 @@ public class FieldmapForm{
     public List<String> getFieldmapLabels() {
         return fieldmapLabels;
     }
-
-
     
     /**
      * Sets the fieldmap labels.
@@ -69,7 +61,6 @@ public class FieldmapForm{
     public UserFieldmap getUserFieldmap() {
         return userFieldmap;
     }
-
     
     /**
      * Sets the user fieldmap.
@@ -80,32 +71,6 @@ public class FieldmapForm{
         this.userFieldmap = userFieldmap;
     }
 
-
-
-    
-    /**
-     * Gets the fieldmap shapes.
-     *
-     * @return the fieldmap shapes
-     */
-    public List<Element> getFieldmapShapes() {
-        return fieldmapShapes;
-    }
-
-
-
-    
-    /**
-     * Sets the fieldmap shapes.
-     *
-     * @param fieldmapShapes the new fieldmap shapes
-     */
-    public void setFieldmapShapes(List<Element> fieldmapShapes) {
-        this.fieldmapShapes = fieldmapShapes;
-    }
-    
-    
-    
     /**
      * Gets the marked cells.
      *
@@ -123,7 +88,4 @@ public class FieldmapForm{
     public void setMarkedCells(String markedCells) {
         this.markedCells = markedCells;
     }
-
-    
-    
 }

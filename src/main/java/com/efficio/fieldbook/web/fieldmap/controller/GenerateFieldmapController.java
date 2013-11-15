@@ -16,7 +16,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,8 +26,9 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
-import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -33,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.efficio.fieldbook.service.api.ExportExcelService;
 import com.efficio.fieldbook.service.api.FieldMapService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
@@ -45,6 +49,8 @@ import com.efficio.fieldbook.web.trial.controller.ManageTrialController;
 @RequestMapping({GenerateFieldmapController.URL})
 public class GenerateFieldmapController extends AbstractBaseFieldbookController{
 
+    private static final Logger LOG = LoggerFactory.getLogger(GenerateFieldmapController.class);
+
     public static final String URL = "/Fieldmap/generateFieldmapView";
 
     @Resource
@@ -55,6 +61,9 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
     
     @Resource
     private FieldbookService fieldbookMiddlewareService;
+
+    @Resource
+    private ExportExcelService exportExcelService;
     
     private static final int BUFFER_SIZE = 4096;
 
@@ -69,10 +78,13 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
     @ResponseBody
     @RequestMapping(value="/exportExcel", method = RequestMethod.GET)
     public String exportExcel(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model, HttpServletResponse response) {
+        String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
+        String fileName = userFieldmap.getSelectedName().replace(" ", "") + "_" + currentDate + ".xls";
+
+        File xls = new File(fileName); // the selected name + current date
         
-        response.setHeader("Content-disposition","attachment; filename=random.xls");
-        File xls = new File("exported.xls"); // or whatever your file is
         FileInputStream in;
+        
         try {
             in = new FileInputStream(xls);
         
@@ -87,12 +99,13 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
             in.close();
             out.close();
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        	LOG.error(e.getMessage(), e);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        	LOG.error(e.getMessage(), e);
         }
+        
+        response.setHeader("Content-disposition","attachment; filename=" + fileName);
+
         return "";
     }
     

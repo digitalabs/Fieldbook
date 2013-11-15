@@ -13,10 +13,15 @@ package com.efficio.fieldbook.web.fieldmap.bean;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Locale;
+
+import javax.annotation.Resource;
 
 
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.ResourceBundleMessageSource;
 
 import com.efficio.fieldbook.util.FieldbookException;
 
@@ -34,6 +39,9 @@ public class UserFieldmap  implements Serializable {
     public final int ROW_COLUMN = 1;
     public final int SERPENTINE = 2;
 	
+    @Resource
+    private ResourceBundleMessageSource messageSource;
+
     /** The selected name. */
     private String selectedName;
     
@@ -353,21 +361,27 @@ public class UserFieldmap  implements Serializable {
     }
     
     public String getBlockCapacityString() {
-    	//TODO Internationalize
-    	return getNumberOfColumnsInBlock() + " Columns, " + getNumberOfRangesInBlock()+ " Ranges";
+    	// 10 Columns, 10 Ranges
+    	Locale locale = LocaleContextHolder.getLocale();
+    	String columns = messageSource.getMessage("fieldmap.label.columns", null, locale);
+    	String ranges = messageSource.getMessage("fieldmap.label.ranges", null, locale);
+    	return getNumberOfColumnsInBlock() + " " + columns + ", " + getNumberOfRangesInBlock()+ " " + ranges;
     }
     
     public String getStartingCoordinateString() {
-    	//TODO Internationalize
-    	return "Column " + getStartingColumn() + ", Range " + getStartingRange();
+    	// Column 1, Range 1
+    	Locale locale = LocaleContextHolder.getLocale();
+    	String column = messageSource.getMessage("fieldmap.label.capitalized.column", null, locale);
+    	String range = messageSource.getMessage("fieldmap.label.capitalized.range", null, locale);
+    	return column + " " + getStartingColumn() + ", " + range + " " + getStartingRange();
     }
     
     public String getPlantingOrderString() throws FieldbookException{
-    	//TODO Internationalize
+    	Locale locale = LocaleContextHolder.getLocale();
     	if (plantingOrder == ROW_COLUMN){
-    		return "Row/Column";
+    		return messageSource.getMessage("fieldmap.planting.order.row.column", null, locale);
     	} else if (plantingOrder == SERPENTINE){
-    		return "Serpentine";
+    		return messageSource.getMessage("fieldmap.planting.order.serpentine", null, locale);
     	}
     	throw new FieldbookException("Invalid planting order.");
 	}    

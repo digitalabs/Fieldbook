@@ -387,7 +387,7 @@ public class FieldMapServiceImpl implements FieldMapService{
     }
     
     public boolean isDeleted(int col, int range, Map deletedPlot){
-        if(deletedPlot.get(col+"-"+range) != null)
+        if(deletedPlot.get(col+"_"+range) != null)
             return true;
         return false;
     }    

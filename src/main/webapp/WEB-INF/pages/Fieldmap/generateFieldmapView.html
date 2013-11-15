@@ -200,7 +200,7 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 			<div class="col-md-offset-5 col-md-7">
 				<div class="form-group">
 			      <input type="button" onclick="javascript: window.history.back();" href="/Fieldmap/enterPlantingDetails.html" th:href="@{/Fieldmap/plantingDetails/}" th:value="#{common.form.back.text}" value="Back" class="btn btn-default btn-lg"/>
-			      <input type="submit" th:value="#{common.form.finish.text}" value="Next" class="btn btn-primary btn-lg"/>
+			      <a class="btn btn-primary btn-lg" th:href="@{/Fieldmap/generateFieldmapView/showMainPage/}" th:text="#{common.form.finish.text}" value="Next" />
 		      	</div>
 		    </div>
 	    </div>

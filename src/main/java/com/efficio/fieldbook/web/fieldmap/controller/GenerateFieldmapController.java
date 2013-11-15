@@ -11,12 +11,18 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.fieldmap.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -25,6 +31,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.FieldMapService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
@@ -46,6 +53,8 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
     
     @Resource
     private FieldbookService fieldbookMiddlewareService;
+    
+    private static final int BUFFER_SIZE = 4096;
 
     @RequestMapping(method = RequestMethod.GET)
     public String showGeneratedFieldmap(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model) {
@@ -54,6 +63,35 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         populateFormWithSessionData(form);
         
         return super.show(model);
+    }
+    @ResponseBody
+    @RequestMapping(value="/exportExcel", method = RequestMethod.GET)
+    public String exportExcel(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model, HttpServletResponse response) {
+        
+        response.setHeader("Content-disposition","attachment; filename=random.xls");
+        File xls = new File("exported.xls"); // or whatever your file is
+        FileInputStream in;
+        try {
+            in = new FileInputStream(xls);
+        
+            OutputStream out = response.getOutputStream();
+    
+            byte[] buffer= new byte[BUFFER_SIZE]; // use bigger if you want
+            int length = 0;
+    
+            while ((length = in.read(buffer)) > 0){
+                 out.write(buffer, 0, length);
+            }
+            in.close();
+            out.close();
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return "";
     }
     
     @RequestMapping(method = RequestMethod.POST)

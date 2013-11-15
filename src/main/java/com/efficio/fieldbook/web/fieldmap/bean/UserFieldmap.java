@@ -72,10 +72,10 @@ public class UserFieldmap  implements Serializable {
     private List<Integer> reps;
     
     /** The starting column. */
-    private int startingColumn;
+    private int startingColumn = 1; // we default to 1
     
     /** The starting range. */
-    private int startingRange;
+    private int startingRange = 1; //we default to 1
     
     /** The fieldmap. */
     private Plot[][] fieldmap;

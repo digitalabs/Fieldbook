@@ -41,3 +41,30 @@ td.validValueLabel, td.validValueDel {
 td.validValueDesc {
 	width: 60%;
 }
+
+#field-map td{
+	border: 1px solid;
+	text-align: center;
+}
+
+#field-map td.plot{
+	text-align:center
+}
+#field-map td.plot label {
+	padding: 3px;
+	margin-bottom: 0px;
+	padding-left: 15px;
+	padding-right: 15px;
+}
+
+#field-map td.header-row-main{
+	background-color: #BEBEBA;
+	width: 50px;
+}
+#field-map td.header-row-data{
+	background-color: #BEBEBA;
+	width: 30px;
+}
+#field-map td.sub-header-row{
+	background-color: #EEEEE9;
+}

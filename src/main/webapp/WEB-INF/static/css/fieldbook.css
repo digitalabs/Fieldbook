@@ -73,3 +73,11 @@ td.validValueDesc {
 #field-map td.sub-header-row{
 	background-color: #EEEEE9;
 }
+
+.fieldmap-container {
+	padding:10px; 
+	margin:20px; 
+	border:1px dashed; 
+	overflow:auto; 
+	border-bottom:none;
+}

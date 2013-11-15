@@ -176,8 +176,8 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 						    	<span class="glyphicon glyphicon-cog"></span>&nbsp;Tools
 						  	</button>
 						  	<ul class="dropdown-menu" role="menu">
-							    <li>
-							    	<a href="" th:text="#{fieldmap.tools.export.to.excel}">Export to Excel</a>
+							    <li>							    
+							    	<a th:href="@{/Fieldmap/generateFieldmapView/exportExcel}" href="" th:text="#{fieldmap.tools.export.to.excel}">Export to Excel</a>
 							    </li>    
 						  	</ul>
 						</div>

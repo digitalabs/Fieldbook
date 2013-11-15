@@ -133,9 +133,9 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         userFieldmap.setFieldmap(plots);
         form.setUserFieldmap(userFieldmap);
 
-        return super.show(model);
+        //return super.show(model);
         //return "forward:" + GenerateFieldmapController.URL;
-        //return "redirect:" + GenerateFieldmapController.URL;
+        return "redirect:" + GenerateFieldmapController.URL;
     }
     
     public UserFieldmap getUserFieldmap() {

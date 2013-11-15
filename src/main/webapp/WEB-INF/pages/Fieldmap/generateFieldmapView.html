@@ -207,38 +207,5 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	</div>
 </form>
 <div layout:fragment="page-script">		
-	<script type="text/javascript" th:src="@{/static/js/raphael-min.js}"></script>
-	<script type='text/javascript' th:inline="javascript">
-	//<![CDATA[
-	  	function setAllDeletedBox(){
-	  		var deletedRect = "";
-	  		$('#field-map td.plot.deleted').each(function(){
-	  			deletedRect += $(this).attr('id');
-  				if(deletedRect != ''){
-  					deletedRect += ",";
-  				}
-	  		})
-	  			  			  		
-	  		if(deletedRect != ''){
-	  			deletedRect = deletedRect.substr(0,deletedRect.length-1);
-	  		}
-	  		$('#markedCells').val(deletedRect);
-	  		console.log(deletedRect);
-	  		$("#fieldmapForm").submit();
-	  	}
-	  	$(document).ready(function() {
-	  		$('#field-map td.plot').on('click', function() {
-	  			if($(this).hasClass('deleted')){
-	  				$(this).removeClass('deleted');
-	  				$(this).html('');
-	  			}else{
-	  				$(this).addClass('deleted');
-	  				$(this).html("<label class='alert alert-danger'>X</label>");
-	  			}
-	  			//console.log($(this).attr('id'));
-	  		});
-	  		
-	  	});
-    //]]>
-	</script>
+	
 </div>

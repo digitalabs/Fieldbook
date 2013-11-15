@@ -56,34 +56,29 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         return super.show(model);
     }
     
+    /**
+     * Submits the details.
+     *
+     * @param form the form
+     * @param result the result
+     * @param model the model
+     * @return the string
+     */
     @RequestMapping(method = RequestMethod.POST)
-    public String generateFieldmap(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model) throws Exception {
-        /*System.out.println("GENERATING FIELD MAP...." + form.getMarkedCells());
-        //TODO: FOR testing only, remove this 
-        populateFormWithSessionData(form);
+    public String submitDetails(@ModelAttribute("FieldmapForm") FieldmapForm form, Model model) {
+//        this.userFieldmap.setStartingColumn(form.getUserFieldmap().getStartingColumn());
+//        this.userFieldmap.setStartingRange(form.getUserFieldmap().getStartingRange());
+//        this.userFieldmap.setPlantingOrder(form.getUserFieldmap().getPlantingOrder());
         
-        List<String> fieldmapLabels = fieldmapService.createFieldmap(form.getUserFieldmap());
-        form.setFieldmapLabels(fieldmapLabels);
+        int startRange = form.getUserFieldmap().getStartingRange() - 1;
+        int startCol = form.getUserFieldmap().getStartingColumn() - 1;
+        int rows = userFieldmap.getNumberOfRowsInBlock();
+        int ranges = userFieldmap.getNumberOfRangesInBlock();
+        int rowsPerPlot = userFieldmap.getNumberOfRowsPerPlot();
+        boolean isSerpentine = userFieldmap.getPlantingOrder() == 1;
         
-        if (form.getMarkedCells() != null && !form.getMarkedCells().isEmpty()) {
-            List<String> markedCells = Arrays.asList(form.getMarkedCells().replace("cell", "").split(","));
-            
-            List<Element> fieldmapShapes = fieldmapService.createFieldmap(form.getUserFieldmap(), markedCells, 5, 5);
-            form.setFieldmapShapes(fieldmapShapes);
-        }*/
-//        populateFormWithDummyData(form);
-        
-        UserFieldmap info = userFieldmap;
-        form.setUserFieldmap(info);
-        int reps = info.getNumberOfReps().intValue();
-        int startRange = info.getStartingRange();
-        int startCol = info.getStartingColumn();
-        int rows = info.getNumberOfRowsInBlock();
-        int ranges = info.getNumberOfRangesInBlock();
-        int rowsPerPlot = info.getNumberOfRowsPerPlot();
-        boolean isSerpentine = info.getPlantingOrder() == 1;
         int col = rows / rowsPerPlot;
-        
+        //should list here the deleted plot in col-range format
         Map deletedPlot = new HashMap();
         if (form.getMarkedCells() != null && !form.getMarkedCells().isEmpty()) {
             List<String> markedCells = Arrays.asList(form.getMarkedCells().split(","));
@@ -93,17 +88,17 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
             }
         }
 
-        FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfNursery(-209);
-        UserFieldmap map = new UserFieldmap();
-        map.setUserFieldmapInfo(fieldMapInfo, false);
-        form.setUserFieldmap(userFieldmap);
-        List<String> entryList = fieldmapService.generateFieldMapLabels(map);
+        List<String> entryList = fieldmapService.generateFieldMapLabels(userFieldmap);
+
         Plot[][] plots = fieldmapService.createFieldMap(col, ranges, startRange, startCol,
                 isSerpentine, deletedPlot, entryList);
-        info.setFieldmap(plots);
-        return super.show(model);
-    }
+        userFieldmap.setFieldmap(plots);
+        form.setUserFieldmap(userFieldmap);
 
+        return super.show(model);
+        //return "forward:" + GenerateFieldmapController.URL;
+        //return "redirect:" + GenerateFieldmapController.URL;
+    }
     
     public UserFieldmap getUserFieldmap() {
         return userFieldmap;

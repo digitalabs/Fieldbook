@@ -21,7 +21,7 @@
 </div>
 
 <form id="fieldmapForm" name="fieldmapForm" role="form-horizontal" action="#" onsubmit="return validatePlantingDetails();"
-th:action="@{/Fieldmap/plantingDetails}" method="post" th:object="${fieldmapForm}" enctype="multipart/form-data">
+th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldmapForm}" enctype="multipart/form-data">
 
 <input type="hidden" id="markedCells" name="markedCells" />
 	<div style="border: 1px solid #333333">

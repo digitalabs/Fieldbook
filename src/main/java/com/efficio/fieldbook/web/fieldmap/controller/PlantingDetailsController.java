@@ -85,48 +85,6 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
     
     
     
-    /**
-     * Submits the details.
-     *
-     * @param form the form
-     * @param result the result
-     * @param model the model
-     * @return the string
-     */
-    @RequestMapping(method = RequestMethod.POST)
-    public String submitDetails(@ModelAttribute("FieldmapForm") FieldmapForm form, Model model) {
-//        this.userFieldmap.setStartingColumn(form.getUserFieldmap().getStartingColumn());
-//        this.userFieldmap.setStartingRange(form.getUserFieldmap().getStartingRange());
-//        this.userFieldmap.setPlantingOrder(form.getUserFieldmap().getPlantingOrder());
-        
-        int startRange = form.getUserFieldmap().getStartingRange() - 1;
-        int startCol = form.getUserFieldmap().getStartingColumn() - 1;
-        int rows = userFieldmap.getNumberOfRowsInBlock();
-        int ranges = userFieldmap.getNumberOfRangesInBlock();
-        int rowsPerPlot = userFieldmap.getNumberOfRowsPerPlot();
-        boolean isSerpentine = userFieldmap.getPlantingOrder() == 1;
-        
-        int col = rows / rowsPerPlot;
-        //should list here the deleted plot in col-range format
-        Map deletedPlot = new HashMap();
-        if (form.getMarkedCells() != null && !form.getMarkedCells().isEmpty()) {
-            List<String> markedCells = Arrays.asList(form.getMarkedCells().split(","));
-            
-            for (String markedCell : markedCells) {
-                deletedPlot.put(markedCell, markedCell);
-            }
-        }
-
-        List<String> entryList = fieldmapService.generateFieldMapLabels(userFieldmap);
-
-        Plot[][] plots = fieldmapService.createFieldMap(col, ranges, startRange, startCol,
-                isSerpentine, deletedPlot, entryList);
-        userFieldmap.setFieldmap(plots);
-        
-        return "forward:" + GenerateFieldmapController.URL;
-        //return "redirect:" + GenerateFieldmapController.URL;
-    }
-    
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
      */

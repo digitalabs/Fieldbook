@@ -30,7 +30,7 @@ public class ErrorHandlerServiceImpl implements ErrorHandlerService{
     private ResourceBundleMessageSource messageSource;
     
     @Override
-    public List<String> getErrorMessagesAsList(String errorCodes) {
+    public List<String> getErrorMessagesAsList(String errorCodes, Object[] parameters) {
         List<String> errorMessages = new ArrayList<String>();
         if (errorCodes != null) {
             Locale locale = LocaleContextHolder.getLocale();
@@ -39,7 +39,7 @@ public class ErrorHandlerServiceImpl implements ErrorHandlerService{
             for (String errorCode : errorCodesArray) {
                 String message = null;
                 try {
-                    message = messageSource.getMessage(errorCode, null, locale);
+                    message = messageSource.getMessage(errorCode, parameters, locale);
                 } catch(Exception e) {
                     //do nothing
                 }
@@ -55,9 +55,9 @@ public class ErrorHandlerServiceImpl implements ErrorHandlerService{
     }
     
     @Override
-    public String getErrorMessagesAsString(String errorCodes, String nextLine) {
+    public String getErrorMessagesAsString(String errorCodes, Object[] parameters, String nextLine) {
         StringBuilder message = new StringBuilder();
-        List<String> errorCodeList = getErrorMessagesAsList(errorCodes);
+        List<String> errorCodeList = getErrorMessagesAsList(errorCodes, parameters);
         for (String errorCode : errorCodeList) {
             if (message.length() > 0) {
                 message.append(nextLine);

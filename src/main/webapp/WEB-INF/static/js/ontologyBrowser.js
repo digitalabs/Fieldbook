@@ -1028,7 +1028,7 @@ function recreateComboAfterUpdate(combo, data) {
 			  'description' : data.definition
 		}
 	description.val(data.definition);
-	$("#combo"+combo).select2('data', newData);//no need to trigger change.trigger('change');
+	$("#combo"+combo).select2('data', newData).trigger('change');
 }
 
 function findIndexOfDeletedVariable(suggestions_obj, id) {

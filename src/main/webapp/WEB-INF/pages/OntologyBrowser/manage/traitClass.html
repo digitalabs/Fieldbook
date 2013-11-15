@@ -59,7 +59,7 @@
 		th:text="#{common.form.add.text}" onclick="saveTraitClass();">Add</button>      	
 		<button id="btnUpdateManageTraitClass" type="button" th:value="#{common.form.update.text}" class="btn btn-primary" 
 		th:text="#{common.form.update.text}" style="display:none;" onclick="saveTraitClass();">Update</button>      	
-		<button id="btnDeleteManageTraitClass" type="submit" th:value="#{common.form.delete.text}" class="btn btn-primary" 
+		<button id="btnDeleteManageTraitClass" type="submit" th:value="#{common.form.delete.text}" class="btn btn-danger" 
 		th:text="#{common.form.delete.text}" style="display:none;" onclick="deleteOntology('ManageTraitClass');">Delete</button>      	
 		<button id="btnCloseManageTraitClass" type="button" th:value="#{common.form.cancel.text}" class="btn btn-primary"
 		 th:text="#{common.form.cancel.text}" data-dismiss="modal" aria-hidden="true">Cancel</button>
@@ -87,14 +87,6 @@
 	  		}
 	  		if (!validateTraitClass()) {
 	  			message = /*[[#{ontology.browser.modal.error}]]*/;
-	  		}
-	  		if ($("#manageTraitClassId").val() && $("#manageTraitClassId").val() > 0) {
-	  			if (message) {
-	  				message += "<br/>";
-	  			} else {
-	  				message = "";
-	  			}
-	  			message += /*[[#{ontology.browser.modal.from.central('Trait Class')}]]*/;
 	  		}
 	  		if (message) {
 	  			showErrorMessageInModal('page-message-modal', message);

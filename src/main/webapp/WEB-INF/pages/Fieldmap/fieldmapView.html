@@ -9,7 +9,7 @@
 			</td>
 		</tr>
 		<tr th:unless="${#arrays.isEmpty(#object.userFieldmap.fieldmap)}">
-			<td class="header-row"></td>
+			<td class="header-row-main"></td>
 			<td class="sub-header-row" th:colspan="${#object.userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
 				<p th:unless="${#arrays.isEmpty(#object.userFieldmap.fieldmap)}"
 					th:if="${#object.userFieldmap.fieldmap[__${j-1}__][__0__].upward}">
@@ -33,7 +33,7 @@
 			<td class="plot" th:id="${j-1} + '_' + ${i-1}" th:colspan="${#object.userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
 				<span th:unless="${#arrays.isEmpty(#object.userFieldmap.fieldmap)}">
 					<p th:if="${#object.userFieldmap.fieldmap[__${j-1}__][__${i-1}__].plotDeleted == false}" th:utext="${#object.userFieldmap.fieldmap[__${j-1}__][__${i-1}__].displayString}"></p>
-					<p th:if="${#object.userFieldmap.fieldmap[__${j-1}__][__${i-1}__].plotDeleted == true}"><label class='alert alert-danger'>X</label></p></p>
+					<p th:if="${#object.userFieldmap.fieldmap[__${j-1}__][__${i-1}__].plotDeleted == true}"><label class='alert alert-danger'>X</label></p>
 				</span> 
 					
 			</td>
@@ -42,6 +42,18 @@
 			<td class="header-row-main"></td>
 			<td class="sub-header-row" th:colspan="*{userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
 				<p th:text="'Column ' + ${j}"></p>
+			</td>
+		</tr>
+		<tr th:unless="${#arrays.isEmpty(#object.userFieldmap.fieldmap)}">
+			<td class="header-row-main"></td>
+			<td class="sub-header-row" th:colspan="${#object.userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
+				<p th:unless="${#arrays.isEmpty(#object.userFieldmap.fieldmap)}"
+					th:if="${#object.userFieldmap.fieldmap[__${j-1}__][__0__].upward}">
+					<span class="glyphicon glyphicon-arrow-up"></span>
+					</p>
+				<p th:unless="${#object.userFieldmap.fieldmap[__${j-1}__][__0__].upward}">
+					<span class="glyphicon glyphicon-arrow-down"></span>
+				</p>
 			</td>
 		</tr>
 		<tr>

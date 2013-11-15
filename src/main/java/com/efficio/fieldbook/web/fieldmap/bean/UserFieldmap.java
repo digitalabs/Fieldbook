@@ -14,8 +14,11 @@ package com.efficio.fieldbook.web.fieldmap.bean;
 import java.io.Serializable;
 import java.util.List;
 
+
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
+
+import com.efficio.fieldbook.util.FieldbookException;
 
 
 // TODO: Auto-generated Javadoc
@@ -26,6 +29,11 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
  */
 public class UserFieldmap  implements Serializable {
     
+    private static final long serialVersionUID = 1L;
+
+    public final int ROW_COLUMN = 1;
+    public final int SERPENTINE = 2;
+	
     /** The selected name. */
     private String selectedName;
     
@@ -338,6 +346,37 @@ public class UserFieldmap  implements Serializable {
      */
     public int getNumberOfRowsInBlock() {
         return numberOfRowsInBlock;
+    }
+    
+    public int getNumberOfColumnsInBlock() {
+    	return  getNumberOfRowsInBlock() / getNumberOfRowsPerPlot();
+    }
+    
+    public String getBlockCapacityString() {
+    	//TODO Internationalize
+    	return getNumberOfColumnsInBlock() + " Columns, " + getNumberOfRangesInBlock()+ " Ranges";
+    }
+    
+    public String getStartingCoordinateString() {
+    	//TODO Internationalize
+    	return "Column " + getStartingColumn() + ", Range " + getStartingRange();
+    }
+    
+    public String getPlantingOrderString() throws FieldbookException{
+    	//TODO Internationalize
+    	if (plantingOrder == ROW_COLUMN){
+    		return "Row/Column";
+    	} else if (plantingOrder == SERPENTINE){
+    		return "Serpentine";
+    	}
+    	throw new FieldbookException("Invalid planting order.");
+	}    
+    
+    public boolean isSerpentine(){
+    	if (plantingOrder == SERPENTINE){
+    		return true;
+    	}
+    	return false;
     }
     
     /**

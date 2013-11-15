@@ -42,6 +42,10 @@ td.validValueDesc {
 	width: 60%;
 }
 
+#field-map {
+	table-layout: fixed;
+}
+
 #field-map td{
 	border: 1px solid;
 	text-align: center;
@@ -60,11 +64,11 @@ td.validValueDesc {
 
 #field-map td.header-row-main{
 	background-color: #BEBEBA;
-	width: 50px;
+	width: 60px;
 }
 #field-map td.header-row-data{
 	background-color: #BEBEBA;
-	width: 30px;
+	width: 80px;
 }
 #field-map td.sub-header-row{
 	background-color: #EEEEE9;

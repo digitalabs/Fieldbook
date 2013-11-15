@@ -38,6 +38,8 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
+import com.efficio.fieldbook.web.nursery.controller.ManageNurseriesController;
+import com.efficio.fieldbook.web.trial.controller.ManageTrialController;
 
 @Controller
 @RequestMapping({GenerateFieldmapController.URL})
@@ -133,11 +135,20 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         userFieldmap.setFieldmap(plots);
         form.setUserFieldmap(userFieldmap);
 
-        //return super.show(model);
-        //return "forward:" + GenerateFieldmapController.URL;
         return "redirect:" + GenerateFieldmapController.URL;
     }
     
+    @RequestMapping(value="/showMainPage", method = RequestMethod.GET)
+    public String redirectToMainScreen(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model) {
+
+        if (userFieldmap.isTrial()) {
+            return "redirect:" + ManageTrialController.URL;
+        }
+        else {
+            return "redirect:" + ManageNurseriesController.URL;
+        }
+    }
+        
     public UserFieldmap getUserFieldmap() {
         return userFieldmap;
     }

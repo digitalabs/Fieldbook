@@ -24,4 +24,6 @@ public interface FieldMapService {
     
     //added by Daniel
     Plot[][] createFieldMap(int col, int range, int startRange, int startCol, boolean isSerpentine, Map deletedPlot, List<String> entryNumbersInString);
+    
+    Plot[][] createDummyData(int col, int range, int startRange, int startCol, boolean isSerpentine, Map deletedPlot);
 }

@@ -128,6 +128,17 @@ public class FieldMapServiceImpl implements FieldMapService{
         return plots;
     }
     
+    @Override
+    public Plot[][] createDummyData(int col, int range, int startRange, int startCol, boolean isSerpentine, Map deletedPlot) {
+        
+        List<String> entryNumbersInString = new ArrayList<>();
+        for (int i = 0; i < range*col; i++) {
+            entryNumbersInString.add("DummyData-" + i);
+        }
+        Plot[][] plots = createFieldMap(col, range, startRange, startCol, isSerpentine, deletedPlot, entryNumbersInString);
+        return plots;
+    }
+    
     public boolean isDeleted(int col, int range, Map deletedPlot){
         if(deletedPlot.get(col+"_"+range) != null)
             return true;

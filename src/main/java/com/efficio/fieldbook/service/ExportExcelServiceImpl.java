@@ -22,6 +22,7 @@ import javax.annotation.Resource;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.CellRangeAddress;
 import org.apache.poi.hssf.util.HSSFColor;
@@ -115,6 +116,10 @@ public class ExportExcelServiceImpl implements ExportExcelService{
 	        HSSFFont font = workbook.createFont();
             font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
 	        labelStyle.setFont(font);
+	        
+	        
+	        CellStyle wrapStyle = workbook.createCellStyle();
+	        wrapStyle.setWrapText(true);
 	        
 	        CellStyle mainHeaderStyle = workbook.createCellStyle();
 	        
@@ -303,6 +308,7 @@ public class ExportExcelServiceImpl implements ExportExcelService{
                 
                 // Rows 15 onwards: Ranges and Row Data
                 row = fieldMapSheet.createRow(rowIndex);
+                row.setHeightInPoints(45);
                 columnIndex = 0;
                 int rangeValue = j + 1;
                 Cell cellRange = row.createCell(columnIndex++);
@@ -314,8 +320,11 @@ public class ExportExcelServiceImpl implements ExportExcelService{
                         displayString = "  X  ";
                     }
                     Cell dataCell = row.createCell(columnIndex++);
-                    dataCell.setCellValue(displayString);
-                    
+                    //dataCell.setCellValue(displayString);
+                    dataCell.setCellValue(
+                            new HSSFRichTextString(displayString)
+                         ); 
+                    dataCell.setCellStyle(wrapStyle);
                     //row.createCell(columnIndex).setCellValue("");
                     
                     for(int k = 0 ; k < rowsPerPlot -1 ; k++){

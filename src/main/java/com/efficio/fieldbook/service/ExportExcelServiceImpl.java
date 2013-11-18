@@ -11,6 +11,7 @@
  *******************************************************************************/
 package com.efficio.fieldbook.service;
 
+import java.awt.Font;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -18,8 +19,14 @@ import java.util.Locale;
 
 import javax.annotation.Resource;
 
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.CellRangeAddress;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -97,10 +104,39 @@ public class ExportExcelServiceImpl implements ExportExcelService{
         String columnLabel = messageSource.getMessage("fieldmap.label.capitalized.column", null, locale); //Column
         String rangeLabel = messageSource.getMessage("fieldmap.label.capitalized.range", null, locale); //Range
          
+        
+        
         try {
 	        //Create workbook
-	        Workbook workbook = new HSSFWorkbook();
+            HSSFWorkbook workbook = new HSSFWorkbook();
 	        Sheet fieldMapSheet = workbook.createSheet(fieldMapLabel);
+	    
+	        CellStyle labelStyle = workbook.createCellStyle();
+	        HSSFFont font = workbook.createFont();
+            font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+	        labelStyle.setFont(font);
+	        
+	        CellStyle mainHeaderStyle = workbook.createCellStyle();
+	        
+	        HSSFPalette palette = workbook.getCustomPalette();
+	        // get the color which most closely matches the color you want to use
+	        HSSFColor myColor = palette.findSimilarColor(179,165, 165);
+	        // get the palette index of that color 
+	        short palIndex = myColor.getIndex();
+	        // code to get the style for the cell goes here
+	        mainHeaderStyle.setFillForegroundColor(palIndex);	        
+	        mainHeaderStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+	        
+	        CellStyle mainSubHeaderStyle = workbook.createCellStyle();
+            
+            HSSFPalette paletteSubHeader = workbook.getCustomPalette();
+            // get the color which most closely matches the color you want to use
+            HSSFColor myColorSubHeader = paletteSubHeader.findSimilarColor(190,190, 186);
+            // get the palette index of that color 
+            short palIndexSubHeader = myColorSubHeader.getIndex();
+            // code to get the style for the cell goes here
+            mainSubHeaderStyle.setFillForegroundColor(palIndexSubHeader);           
+            mainSubHeaderStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 	        
 	        int rowIndex = 0;
 	        int columnIndex = 0;
@@ -109,7 +145,9 @@ public class ExportExcelServiceImpl implements ExportExcelService{
 	        
 	        // Row 1: SUMMARY OF TRIAL, FIELD AND PLANTING DETAILS 
 	        Row row = fieldMapSheet.createRow(rowIndex++);
-	        row.createCell(columnIndex).setCellValue(summaryOfFieldbookFieldPlantingDetailsLabel);
+	        Cell summaryCell = row.createCell(columnIndex);
+	        summaryCell.setCellValue(summaryOfFieldbookFieldPlantingDetailsLabel);
+	        summaryCell.setCellStyle(labelStyle);
 	        
 	        // Row 2: Space
 	        row = fieldMapSheet.createRow(rowIndex++);
@@ -118,24 +156,38 @@ public class ExportExcelServiceImpl implements ExportExcelService{
 	        row = fieldMapSheet.createRow(rowIndex++); 
 	        
 	        // Selected Trial : [Fieldbook Name]
-            row.createCell(columnIndex++).setCellValue(selectedFieldbookLabel);
+            Cell labelCell = row.createCell(columnIndex++);
+            labelCell.setCellValue(selectedFieldbookLabel);
+            labelCell.setCellStyle(labelStyle);
             row.createCell(columnIndex++).setCellValue(selectedFieldbookValue);
 	        
             if (isTrial){ 
                 // Number of Entries : 25
-                row.createCell(columnIndex++).setCellValue(numberOfEntriesLabel);
+                labelCell = row.createCell(columnIndex++);
+                labelCell.setCellValue(numberOfEntriesLabel);
+                labelCell.setCellStyle(labelStyle);
+                
                 row.createCell(columnIndex++).setCellValue(numberOfEntriesValue);
 
                 // Number of Reps : 3
-                row.createCell(columnIndex++).setCellValue(numberOfRepsLabel);
+                labelCell = row.createCell(columnIndex++);
+                labelCell.setCellValue(numberOfRepsLabel);
+                labelCell.setCellStyle(labelStyle);
+                
                 row.createCell(columnIndex++).setCellValue(numberOfRepsValue);
                 
                 // Total Number of Plots : 75
-                row.createCell(columnIndex++).setCellValue(numberOfPlotsLabel);
+                labelCell = row.createCell(columnIndex++);
+                labelCell.setCellValue(numberOfPlotsLabel);
+                labelCell.setCellStyle(labelStyle);
+                
                 row.createCell(columnIndex++).setCellValue(numberOfPlotsValue);
             } else { // Nursery
                 // Number of Entries and Plots: 25
-                row.createCell(columnIndex++).setCellValue(numberOfEntriesAndPlotLabel);
+                labelCell = row.createCell(columnIndex++);
+                labelCell.setCellValue(numberOfEntriesAndPlotLabel);
+                labelCell.setCellStyle(labelStyle);
+                
                 row.createCell(columnIndex++).setCellValue(numberOfEntriesValue);
                 
             }
@@ -146,39 +198,74 @@ public class ExportExcelServiceImpl implements ExportExcelService{
             // Row 5: Header - Details Heading
             row = fieldMapSheet.createRow(rowIndex++);
             columnIndex = 0;
-            row.createCell(columnIndex++).setCellValue(fieldAndBlockDetailsLabel);
+            labelCell = row.createCell(columnIndex++);
+            labelCell.setCellValue(fieldAndBlockDetailsLabel);
+            labelCell.setCellStyle(labelStyle);
+            
             row.createCell(columnIndex++);
-            row.createCell(columnIndex++).setCellValue(rowRangePlotDetailsLabel);
+            labelCell = row.createCell(columnIndex++);
+            labelCell.setCellValue(rowRangePlotDetailsLabel);
+            labelCell.setCellStyle(labelStyle);
+            
             row.createCell(columnIndex++);
-            row.createCell(columnIndex++).setCellValue(plantingDetailsLabel);
+            labelCell = row.createCell(columnIndex++);
+            labelCell.setCellValue(plantingDetailsLabel);
+            labelCell.setCellStyle(labelStyle);
+            
             row.createCell(columnIndex++);
             
             //Row 6: Field Location, Block Capacity, Starting Coordinates
             row = fieldMapSheet.createRow(rowIndex++);
             columnIndex = 0;
-            row.createCell(columnIndex++).setCellValue(fieldLocationLabel);
+            labelCell = row.createCell(columnIndex++);
+            labelCell.setCellValue(fieldLocationLabel);
+            labelCell.setCellStyle(labelStyle);
+            
             row.createCell(columnIndex++).setCellValue(fieldLocationValue);
-            row.createCell(columnIndex++).setCellValue(blockCapacityLabel);
+            labelCell = row.createCell(columnIndex++);
+            labelCell.setCellValue(blockCapacityLabel);
+            labelCell.setCellStyle(labelStyle);
+            
             row.createCell(columnIndex++).setCellValue(blockCapacityValue);
-            row.createCell(columnIndex++).setCellValue(startingCoordinatesLabel);
+            
+            
+            labelCell = row.createCell(columnIndex++);
+            labelCell.setCellValue(startingCoordinatesLabel);
+            labelCell.setCellStyle(labelStyle);
+            
             row.createCell(columnIndex++).setCellValue(startingCoordinatesValue);
             
             // Row 7: Field Name, Rows Per Plot, Planting Order
             row = fieldMapSheet.createRow(rowIndex++);
             columnIndex = 0;
-            row.createCell(columnIndex++).setCellValue(fieldNameLabel);
+            labelCell = row.createCell(columnIndex++);
+            labelCell.setCellValue(fieldNameLabel);
+            labelCell.setCellStyle(labelStyle);
+            
             row.createCell(columnIndex++).setCellValue(fieldNameValue);
-            row.createCell(columnIndex++).setCellValue(rowsPerPlotLabel);
+            labelCell = row.createCell(columnIndex++);
+            labelCell.setCellValue(rowsPerPlotLabel);
+            labelCell.setCellStyle(labelStyle);
+            
             row.createCell(columnIndex++).setCellValue(rowsPerPlotValue);
-            row.createCell(columnIndex++).setCellValue(plantingOrderLabel);
+            labelCell = row.createCell(columnIndex++);
+            labelCell.setCellValue(plantingOrderLabel);
+            labelCell.setCellStyle(labelStyle);
+            
             row.createCell(columnIndex++).setCellValue(plantingOrderValue);
             
             // Row 8: Block Name, Columns
             row = fieldMapSheet.createRow(rowIndex++);
             columnIndex = 0;
-            row.createCell(columnIndex++).setCellValue(blockNameLabel);
+            labelCell= row.createCell(columnIndex++);
+            labelCell.setCellValue(blockNameLabel);
+            labelCell.setCellStyle(labelStyle);
+            
             row.createCell(columnIndex++).setCellValue(blockNameValue);
-            row.createCell(columnIndex++).setCellValue(columnsLabel);
+            labelCell = row.createCell(columnIndex++);
+            labelCell.setCellValue(columnsLabel);
+            labelCell.setCellStyle(labelStyle);
+            
             row.createCell(columnIndex++).setCellValue(columnsValue);
             
             // Row 9: Space
@@ -187,7 +274,9 @@ public class ExportExcelServiceImpl implements ExportExcelService{
             // Row 10: FIELD MAP
             row = fieldMapSheet.createRow(rowIndex++);
             columnIndex = 0;
-            row.createCell(columnIndex++).setCellValue(fieldMapLabel);
+            labelCell = row.createCell(columnIndex++);
+            labelCell.setCellValue(fieldMapLabel);
+            labelCell.setCellStyle(labelStyle);
 
             // Row 11: Space
             row = fieldMapSheet.createRow(rowIndex++);
@@ -196,48 +285,58 @@ public class ExportExcelServiceImpl implements ExportExcelService{
             Plot[][] plots = userFieldMap.getFieldmap();
             int range = userFieldMap.getNumberOfRangesInBlock();
             int col = userFieldMap.getNumberOfColumnsInBlock();
+            int rowsPerPlot = userFieldMap.getNumberOfRowsPerPlot();
 
             for(int j = range - 1 ; j >= 0 ; j--){
 
                 if(j == range - 1){ // TOP TABLE LABELS
                     
                     // Row 12: Rows Header
-                    rowIndex = printRowHeader(fieldMapSheet, userFieldMap.getNumberOfRowsInBlock(), rowIndex, rowsLabel);
+                    rowIndex = printRowHeader(fieldMapSheet, userFieldMap.getNumberOfRowsInBlock(), rowIndex, rowsLabel, mainHeaderStyle, mainSubHeaderStyle);
 
                     // Row 13: UP, DOWN Direction
-                    rowIndex = printDirectionHeader(fieldMapSheet, plots, j, col, rowIndex);
+                    rowIndex = printDirectionHeader(fieldMapSheet, plots, j, col, rowIndex, rowsPerPlot, mainHeaderStyle, mainSubHeaderStyle);
 
                     // Row 14: Column labels
-                    rowIndex = printColumnHeader(fieldMapSheet, col, rowIndex, columnLabel);
+                    rowIndex = printColumnHeader(fieldMapSheet, col, rowIndex, columnLabel, rowsPerPlot, mainHeaderStyle, mainSubHeaderStyle);
                 }
                 
                 // Rows 15 onwards: Ranges and Row Data
                 row = fieldMapSheet.createRow(rowIndex);
                 columnIndex = 0;
                 int rangeValue = j + 1;
-                row.createCell(columnIndex++).setCellValue(rangeLabel + " " + rangeValue);
+                Cell cellRange = row.createCell(columnIndex++);
+                cellRange.setCellValue(rangeLabel + " " + rangeValue);
+                cellRange.setCellStyle(mainSubHeaderStyle);
                 for(int i = 0 ; i < col ; i++){
                     String displayString = plots[i][j].getDisplayString().replace("<br/>", "\n");
                     if (plots[i][j].isPlotDeleted()){
                         displayString = "  X  ";
                     }
-                    row.createCell(columnIndex++).setCellValue(displayString);
-                    row.createCell(columnIndex).setCellValue("");
+                    Cell dataCell = row.createCell(columnIndex++);
+                    dataCell.setCellValue(displayString);
+                    
+                    //row.createCell(columnIndex).setCellValue("");
+                    
+                    for(int k = 0 ; k < rowsPerPlot -1 ; k++){
+                        row.createCell(columnIndex++).setCellValue("");
+                    }
+                                        
                     fieldMapSheet.addMergedRegion(new CellRangeAddress(
                             rowIndex, //first row (0-based)
                             rowIndex, //last row  (0-based)
-                            columnIndex - 1, //first column (0-based)
-                            columnIndex //last column  (0-based)
+                            columnIndex - rowsPerPlot, //first column (0-based)
+                            columnIndex -1 //last column  (0-based)
                             ));
-                    columnIndex++;
+                    //columnIndex++;
                 }
                 rowIndex++;
                 
                 if(j == 0){
                     // BOTTOM TABLE LABELS
-                    rowIndex = printColumnHeader(fieldMapSheet, col, rowIndex, columnLabel);
-                    rowIndex = printDirectionHeader(fieldMapSheet, plots, j, col, rowIndex);
-                    rowIndex = printRowHeader(fieldMapSheet, userFieldMap.getNumberOfRowsInBlock(), rowIndex, rowsLabel);
+                    rowIndex = printColumnHeader(fieldMapSheet, col, rowIndex, columnLabel, rowsPerPlot, mainHeaderStyle, mainSubHeaderStyle);
+                    rowIndex = printDirectionHeader(fieldMapSheet, plots, j, col, rowIndex, rowsPerPlot, mainHeaderStyle, mainSubHeaderStyle);
+                    rowIndex = printRowHeader(fieldMapSheet, userFieldMap.getNumberOfRowsInBlock(), rowIndex, rowsLabel, mainHeaderStyle, mainSubHeaderStyle);
                 }
                 
             }
@@ -260,48 +359,70 @@ public class ExportExcelServiceImpl implements ExportExcelService{
 		
 	}
 	
-	private int printRowHeader(Sheet fieldMapSheet,  int numOfRows, int rowIndex, String rowsLabel){
+	private int printRowHeader(Sheet fieldMapSheet,  int numOfRows, int rowIndex, String rowsLabel,CellStyle mainHeader, CellStyle subHeaderStyle){
         Row row = fieldMapSheet.createRow(rowIndex++);
         int columnIndex = 0;
-        row.createCell(columnIndex++).setCellValue(rowsLabel);
+        Cell cell = row.createCell(columnIndex++);
+        cell.setCellValue(rowsLabel);
+        cell.setCellStyle(mainHeader);
         for (int i = 0; i < numOfRows; i++){
-            row.createCell(columnIndex++).setCellValue(i+1);
+            Cell tableCell = row.createCell(columnIndex++);
+            tableCell.setCellValue(i+1);
+            tableCell.setCellStyle(subHeaderStyle);
         }
         return rowIndex;
 
 	}
 	
 
-	private int printColumnHeader(Sheet fieldMapSheet,  int numberOfColumns, int rowIndex, String columnLabel){
+	private int printColumnHeader(Sheet fieldMapSheet,  int numberOfColumns, int rowIndex, String columnLabel, int rowsPerPlot,CellStyle mainHeader, CellStyle subHeaderStyle){
         Row row = fieldMapSheet.createRow(rowIndex);
         int columnIndex = 0;
-        row.createCell(columnIndex++).setCellValue("");
+        Cell mainCell = row.createCell(columnIndex++);
+        mainCell.setCellValue("");
+        mainCell.setCellStyle(mainHeader);
         for(int i = 0 ; i < numberOfColumns ; i++){
             int columnValue = i + 1;
-            row.createCell(columnIndex++).setCellValue(columnLabel + " " + columnValue);
-            row.createCell(columnIndex).setCellValue("");
-            fieldMapSheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, columnIndex - 1, columnIndex));
-            columnIndex++;
+            Cell cell = row.createCell(columnIndex++);
+            cell.setCellValue(columnLabel + " " + columnValue);
+            cell.setCellStyle(subHeaderStyle);
+            for(int j = 0 ; j < rowsPerPlot -1 ; j++){
+                Cell cell1 = row.createCell(columnIndex++);
+                cell1.setCellValue("");
+                cell.setCellStyle(subHeaderStyle);
+            }
+            
+            fieldMapSheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, columnIndex - rowsPerPlot, columnIndex-1));
+            //columnIndex++;
         }
         rowIndex++;
         return rowIndex;
 
 	}
 
-    private int printDirectionHeader(Sheet fieldMapSheet, Plot[][] plots, int range, int numberOfColumns, int rowIndex){
+    private int printDirectionHeader(Sheet fieldMapSheet, Plot[][] plots, int range, int numberOfColumns, int rowIndex, int rowsPerPlot,CellStyle mainHeader, CellStyle subHeaderStyle){
 
         Row row = fieldMapSheet.createRow(rowIndex);
         int columnIndex = 0;
-        row.createCell(columnIndex++).setCellValue("");
+        Cell cell1 = row.createCell(columnIndex++);
+        cell1.setCellValue("");
+        cell1.setCellStyle(mainHeader);
         for(int i = 0 ; i < numberOfColumns ; i++){
             if(plots[i][range].isUpward()){
-                row.createCell(columnIndex++).setCellValue(" UP ");
+                Cell cell = row.createCell(columnIndex++);
+                cell.setCellValue(" UP ");
+                cell.setCellStyle(subHeaderStyle);
             } else {
-                row.createCell(columnIndex++).setCellValue(" DOWN ");
+                Cell cell = row.createCell(columnIndex++);
+                cell.setCellValue(" DOWN ");
+                cell.setCellStyle(subHeaderStyle);
             }
-            row.createCell(columnIndex).setCellValue("");
-            fieldMapSheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, columnIndex - 1, columnIndex ));
-            columnIndex++;
+            for(int j = 0 ; j < rowsPerPlot -1 ; j++){
+                row.createCell(columnIndex++).setCellValue("");
+            }
+            //row.createCell(columnIndex).setCellValue("");
+            fieldMapSheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, columnIndex - rowsPerPlot, columnIndex-1));
+            //columnIndex++;
         }
         rowIndex++;
         return rowIndex;

@@ -18,8 +18,6 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
@@ -34,7 +32,6 @@ import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 @ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
 public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
     
-    private static final Logger LOG = LoggerFactory.getLogger(TestExportExcelService.class);
     
 	@Autowired
 	private ExportExcelService exportExcelService;
@@ -53,6 +50,7 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
 		userFieldMap.setLocationName("IFPRI"); 
 		userFieldMap.setFieldName("Field 1");
 		userFieldMap.setBlockName("Block 1");
+		userFieldMap.setNumberOfRowsInBlock(20);
 		userFieldMap.setNumberOfRowsPerPlot(2);
 		userFieldMap.setStartingColumn(2);
 		userFieldMap.setStartingRange(2);
@@ -74,7 +72,7 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
 		userFieldMap.setFieldmap(plots);
 
 	    String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        String fileName = "FieldMap" +  "_" + currentDate;
+        String fileName = "FieldMap" +  "_" + currentDate + ".xls";
 		exportExcelService.exportFieldMapToExcel(fileName, userFieldMap);
 	}
 	

@@ -84,7 +84,6 @@
 
 	<bean id="exportExcelService" class="com.efficio.fieldbook.service.ExportExcelServiceImpl" />
 
-	<bean id="fieldMapService" class="com.efficio.fieldbook.service.FieldMapServiceImpl" />
 
 
 	<bean id="multipartResolver"

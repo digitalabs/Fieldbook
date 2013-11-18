@@ -21,6 +21,8 @@ import java.io.Serializable;
  */
 public class Plot implements Serializable{
     
+    private static final long serialVersionUID = 1L;
+
     /** The range. */
     private int range;
     

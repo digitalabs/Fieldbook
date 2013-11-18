@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.ExportExcelService;
 import com.efficio.fieldbook.service.api.FieldMapService;
+import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
@@ -54,7 +55,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
     public static final String URL = "/Fieldmap/generateFieldmapView";
 
     @Resource
-    private UserFieldmap userFieldmap;
+    private UserFieldmap userFieldMap;
     
     @Resource
     private FieldMapService fieldmapService;
@@ -65,7 +66,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
     @Resource
     private ExportExcelService exportExcelService;
     
-    private static final int BUFFER_SIZE = 4096;
+    private static final int BUFFER_SIZE = 4096 * 4;
 
     @RequestMapping(method = RequestMethod.GET)
     public String showGeneratedFieldmap(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model) {
@@ -78,34 +79,37 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
     @ResponseBody
     @RequestMapping(value="/exportExcel", method = RequestMethod.GET)
     public String exportExcel(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model, HttpServletResponse response) {
+
         String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        String fileName = userFieldmap.getSelectedName().replace(" ", "") + "_" + currentDate + ".xls";
+        String fileName = userFieldMap.getSelectedName().replace(" ", "") + "_" + currentDate + ".xls";
+
+        response.setHeader("Content-disposition","attachment; filename=" + fileName);
 
         File xls = new File(fileName); // the selected name + current date
-        
         FileInputStream in;
         
         try {
+            exportExcelService.exportFieldMapToExcel(fileName, userFieldMap);
+
             in = new FileInputStream(xls);
-        
             OutputStream out = response.getOutputStream();
-    
+
             byte[] buffer= new byte[BUFFER_SIZE]; // use bigger if you want
             int length = 0;
-    
+
             while ((length = in.read(buffer)) > 0){
                  out.write(buffer, 0, length);
             }
             in.close();
             out.close();
+        } catch (FieldbookException e) {
+            LOG.error(e.getMessage(), e);
         } catch (FileNotFoundException e) {
         	LOG.error(e.getMessage(), e);
         } catch (IOException e) {
         	LOG.error(e.getMessage(), e);
         }
         
-        response.setHeader("Content-disposition","attachment; filename=" + fileName);
-
         return "";
     }
     
@@ -119,16 +123,16 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
      */
     @RequestMapping(method = RequestMethod.POST)
     public String submitDetails(@ModelAttribute("FieldmapForm") FieldmapForm form, Model model) {
-        this.userFieldmap.setStartingColumn(form.getUserFieldmap().getStartingColumn());
-        this.userFieldmap.setStartingRange(form.getUserFieldmap().getStartingRange());
-        this.userFieldmap.setPlantingOrder(form.getUserFieldmap().getPlantingOrder());
+        this.userFieldMap.setStartingColumn(form.getUserFieldmap().getStartingColumn());
+        this.userFieldMap.setStartingRange(form.getUserFieldmap().getStartingRange());
+        this.userFieldMap.setPlantingOrder(form.getUserFieldmap().getPlantingOrder());
         
-        int startRange = userFieldmap.getStartingRange() - 1;
-        int startCol = userFieldmap.getStartingColumn() - 1;
-        int rows = userFieldmap.getNumberOfRowsInBlock();
-        int ranges = userFieldmap.getNumberOfRangesInBlock();
-        int rowsPerPlot = userFieldmap.getNumberOfRowsPerPlot();
-        boolean isSerpentine = userFieldmap.getPlantingOrder() == 2;
+        int startRange = userFieldMap.getStartingRange() - 1;
+        int startCol = userFieldMap.getStartingColumn() - 1;
+        int rows = userFieldMap.getNumberOfRowsInBlock();
+        int ranges = userFieldMap.getNumberOfRangesInBlock();
+        int rowsPerPlot = userFieldMap.getNumberOfRowsPerPlot();
+        boolean isSerpentine = userFieldMap.getPlantingOrder() == 2;
         
         int col = rows / rowsPerPlot;
         //should list here the deleted plot in col-range format
@@ -141,12 +145,12 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
             }
         }
 
-        List<String> entryList = fieldmapService.generateFieldMapLabels(userFieldmap);
+        List<String> entryList = fieldmapService.generateFieldMapLabels(userFieldMap);
 
         Plot[][] plots = fieldmapService.createFieldMap(col, ranges, startRange, startCol,
                 isSerpentine, deletedPlot, entryList);
-        userFieldmap.setFieldmap(plots);
-        form.setUserFieldmap(userFieldmap);
+        userFieldMap.setFieldmap(plots);
+        form.setUserFieldmap(userFieldMap);
 
         return "redirect:" + GenerateFieldmapController.URL;
     }
@@ -154,7 +158,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
     @RequestMapping(value="/showMainPage", method = RequestMethod.GET)
     public String redirectToMainScreen(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model) {
 
-        if (userFieldmap.isTrial()) {
+        if (userFieldMap.isTrial()) {
             return "redirect:" + ManageTrialController.URL;
         }
         else {
@@ -163,11 +167,11 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
     }
         
     public UserFieldmap getUserFieldmap() {
-        return userFieldmap;
+        return userFieldMap;
     }
     
     public void setUserFieldmap(UserFieldmap userFieldmap) {
-        this.userFieldmap = userFieldmap;
+        this.userFieldMap = userFieldmap;
     }
 
     /* (non-Javadoc)
@@ -179,25 +183,25 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
     }
 
     private void populateFormWithSessionData(FieldmapForm form) {
-        UserFieldmap info = userFieldmap;
-        info.setNumberOfRowsInBlock(userFieldmap.getNumberOfRowsInBlock());
-        info.setNumberOfRangesInBlock(userFieldmap.getNumberOfRangesInBlock());
-        info.setNumberOfEntries(userFieldmap.getNumberOfEntries());
-        info.setNumberOfReps(userFieldmap.getNumberOfReps());
-        info.setNumberOfRowsPerPlot(userFieldmap.getNumberOfRowsPerPlot());
-        info.setSelectedName(userFieldmap.getSelectedName());
-        info.setPlantingOrder(userFieldmap.getPlantingOrder());
-        info.setBlockName(userFieldmap.getBlockName());
-        info.setEntryNumbers(userFieldmap.getEntryNumbers());
-        info.setFieldLocationId(userFieldmap.getFieldLocationId());
-        info.setFieldName(userFieldmap.getFieldName());
-        info.setGermplasmNames(userFieldmap.getGermplasmNames());
-        info.setReps(userFieldmap.getReps());
-        info.setStartingColumn(userFieldmap.getStartingColumn());
-        info.setStartingRange(userFieldmap.getStartingRange());
-        info.setTotalNumberOfPlots(userFieldmap.getTotalNumberOfPlots());
-        info.setTrial(userFieldmap.isTrial());
-        info.setLocationName(userFieldmap.getLocationName());
+        UserFieldmap info = userFieldMap;
+        info.setNumberOfRowsInBlock(userFieldMap.getNumberOfRowsInBlock());
+        info.setNumberOfRangesInBlock(userFieldMap.getNumberOfRangesInBlock());
+        info.setNumberOfEntries(userFieldMap.getNumberOfEntries());
+        info.setNumberOfReps(userFieldMap.getNumberOfReps());
+        info.setNumberOfRowsPerPlot(userFieldMap.getNumberOfRowsPerPlot());
+        info.setSelectedName(userFieldMap.getSelectedName());
+        info.setPlantingOrder(userFieldMap.getPlantingOrder());
+        info.setBlockName(userFieldMap.getBlockName());
+        info.setEntryNumbers(userFieldMap.getEntryNumbers());
+        info.setFieldLocationId(userFieldMap.getFieldLocationId());
+        info.setFieldName(userFieldMap.getFieldName());
+        info.setGermplasmNames(userFieldMap.getGermplasmNames());
+        info.setReps(userFieldMap.getReps());
+        info.setStartingColumn(userFieldMap.getStartingColumn());
+        info.setStartingRange(userFieldMap.getStartingRange());
+        info.setTotalNumberOfPlots(userFieldMap.getTotalNumberOfPlots());
+        info.setTrial(userFieldMap.isTrial());
+        info.setLocationName(userFieldMap.getLocationName());
         
         form.setUserFieldmap(info);
     }

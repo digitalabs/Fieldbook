@@ -130,6 +130,8 @@ public class FieldMapServiceImpl implements FieldMapService{
     
     @Override
     public Plot[][] createDummyData(int col, int range, int startRange, int startCol, boolean isSerpentine, Map deletedPlot) {
+        startRange--;
+        startCol--;
         
         List<String> entryNumbersInString = new ArrayList<String>();
         for (int i = 0; i < range*col; i++) {

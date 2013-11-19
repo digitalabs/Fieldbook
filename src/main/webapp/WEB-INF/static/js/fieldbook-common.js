@@ -66,7 +66,8 @@ function replaceall(str,replace,with_this)
     return str_hasil;
 }
 function isInt(value) {
-    if ((undefined === value) || (null === value)) {
+    if ((undefined === value) || (null === value) || (value === "")) {
+    	
         return false;
     }
     return value % 1 == 0;

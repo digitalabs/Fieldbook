@@ -98,7 +98,7 @@ function validatePlantingDetails() {
 		return false;
 	}
 	
-	if (parseInt(startingCol) > parseInt(rowNum) || parseInt(startingCol) == 0) {
+	if (parseInt(startingCol) > parseInt(rowNum)/parseInt(rowsPerPlot) || parseInt(startingCol) == 0) {
 		showMessage(startColInvalid);
 		return false;
 	}

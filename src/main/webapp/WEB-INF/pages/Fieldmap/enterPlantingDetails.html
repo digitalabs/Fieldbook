@@ -128,6 +128,7 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 		var startRangeNotInt = /*[[#{fieldmap.starting.coordinates.not.an.integer(#{fieldmap.label.range})}]]*/;
 		var rowNum = /*[[${fieldmapForm.userFieldmap.numberOfRowsInBlock}]]*/;
 		var rangeNum = /*[[${fieldmapForm.userFieldmap.numberOfRangesInBlock}]]*/;
+		var rowsPerPlot = /*[[${fieldmapForm.userFieldmap.numberOfRowsPerPlot}]]*/;
 		
 	  	function setAllDeletedBox(){
 			validatePlantingDetails();

@@ -120,6 +120,7 @@ public class ExportExcelServiceImpl implements ExportExcelService{
 	        
 	        CellStyle wrapStyle = workbook.createCellStyle();
 	        wrapStyle.setWrapText(true);
+	        wrapStyle.setAlignment(CellStyle.ALIGN_CENTER);
 	        
 	        CellStyle mainHeaderStyle = workbook.createCellStyle();
 	        
@@ -142,6 +143,7 @@ public class ExportExcelServiceImpl implements ExportExcelService{
             // code to get the style for the cell goes here
             mainSubHeaderStyle.setFillForegroundColor(palIndexSubHeader);           
             mainSubHeaderStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+            mainSubHeaderStyle.setAlignment(CellStyle.ALIGN_CENTER);
 	        
 	        int rowIndex = 0;
 	        int columnIndex = 0;

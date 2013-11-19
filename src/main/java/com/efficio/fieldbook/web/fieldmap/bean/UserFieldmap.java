@@ -356,9 +356,9 @@ public class UserFieldmap  implements Serializable {
     public String getBlockCapacityString(ResourceBundleMessageSource messageSource){
     	// 10 Columns, 10 Ranges
     	Locale locale = LocaleContextHolder.getLocale();
-    	String columns = messageSource.getMessage("fieldmap.label.columns", null, locale);
+    	String columns = messageSource.getMessage("fieldmap.label.rows", null, locale);
         String ranges = messageSource.getMessage("fieldmap.label.ranges", null, locale);
-    	return getNumberOfColumnsInBlock() + " " + columns + ", " + getNumberOfRangesInBlock()+ " " + ranges;
+    	return this.getNumberOfRowsInBlock() + " " + columns + ", " + getNumberOfRangesInBlock()+ " " + ranges;
     }
     
     public String getStartingCoordinateString(ResourceBundleMessageSource messageSource) {

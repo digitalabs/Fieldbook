@@ -25,8 +25,8 @@ function createFieldMap(tableName){
 	var fieldMapHref = $('#fieldmap-url').attr("href");	
 	if($('#'+tableName+' .field-map-highlight').attr('id') != null){
 		var id = $('#'+tableName+' .field-map-highlight').attr('id');
-		//console.log(fieldMapHref+id);
-		location.href=fieldMapHref+id;
+//		console.log(fieldMapHref+id);
+		location.href=fieldMapHref+"/"+id;
 //		$('#fieldmap-url').attr("href", fieldMapHref+id);
 //		$('#fieldmap-url').trigger('click');
 	}else{

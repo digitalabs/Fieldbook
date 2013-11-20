@@ -147,6 +147,7 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 		var rowsPerPlot = /*[[${fieldmapForm.userFieldmap.numberOfRowsPerPlot}]]*/;
 		var deletedPlots = 0;
 		var totalNoOfPlots = /*[[${fieldmapForm.userFieldmap.totalNumberOfPlots}]]*/;
+		var deletedPlotError = /*[[#{fieldmap.starting.coordinates.deleted}]]*/;
 		
 	  	function setAllDeletedBox(){
 			validatePlantingDetails();
@@ -165,6 +166,7 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	  		}
 	  		$('#markedCells').val(deletedRect);
 	  		console.log(deletedRect);
+	  		
 	  		if (checkRemainingPlots()) {
 	  			$("#enterPlantingDetailsModal").modal("toggle");
 				return false;

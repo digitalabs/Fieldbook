@@ -124,7 +124,27 @@ function validatePlantingDetails() {
 		return false;
 	}
 	
+	if (checkStartingCoordinates()) {
+		showMessage(deletedPlotError);
+		return false;
+	}
+	
 	return true;
+}
+
+function checkStartingCoordinates() {
+	var isDeleted = 0;
+	$('#field-map td.plot.deleted').each(function(){
+		if (isDeletedPlotAtStartCoord($(this).attr('id'))) {
+			isDeleted = 1;
+			return false;
+		}
+	});
+	
+	if (isDeleted == 1) {
+		return true;
+	}
+	return false;
 }
 
 function showMessage(message) {
@@ -187,4 +207,16 @@ function checkDeletedPlots(id) {
 			deletedPlots++;
 		}
 	}
+}
+
+function isDeletedPlotAtStartCoord(id) {
+	var startingCol = $('#'+getJquerySafeId("userFieldmap.startingColumn")).val();
+	var startingRange = $('#'+getJquerySafeId("userFieldmap.startingRange")).val();
+	var col = parseInt(id.split("_")[0]) + 1;
+	var range = parseInt(id.split("_")[1]) + 1;
+	
+	if (col == startingCol && range == startingRange) {
+		return true;
+	} 
+	return false;
 }

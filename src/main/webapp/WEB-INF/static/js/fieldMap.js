@@ -140,8 +140,10 @@ function checkRemainingPlots() {
 	var remainingPlots = 0;
 
 	if (plantingOrder == "1") {
+		//row/column
 		remainingPlots = (((parseInt(rowNum)/parseInt(rowsPerPlot))*rangeNum)-deletedPlots) - (((startingCol-1)*rangeNum)+(startingRange-1));
 	} else {
+		//serpentine
 		remainingPlots = (((parseInt(rowNum)/parseInt(rowsPerPlot))*rangeNum)-deletedPlots) - getUnavailablePlots(startingCol, startingRange); 
 	}
 	
@@ -153,6 +155,7 @@ function checkRemainingPlots() {
 }
 
 function getUnavailablePlots(startingCol, startingRange) {
+	//get number of unavailable plots based on starting coordinates
 	if (startingCol%2==0) {
 		//even column
 		return (startingCol*rangeNum)-startingRange;

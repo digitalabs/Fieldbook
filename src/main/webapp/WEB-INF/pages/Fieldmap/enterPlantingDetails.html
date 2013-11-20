@@ -122,7 +122,7 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
          			<button id="closeEnterPlantingDetailsModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
          		</div>
          		<br/><br/>
-         		<span th:text="#{fieldmap.plots.exceed.blocks.with.deleted}">The current specifications for the planting details cannot be fully accommodated by the current block size, do you wish to proceed?</span>
+         		<div class="alert alert-danger" th:text="#{fieldmap.plots.exceed.blocks.with.deleted}">The current specifications for the planting details cannot be fully accommodated by the current block size, do you wish to proceed?</div>
          	</div>																							
        		<div class="modal-footer">    
        			<button type="button" class="btn btn-primary" onclick="javascript: $('#fieldmapForm').submit();" aria-hidden="true" th:value="#{common.form.yes.text}">Yes</button>

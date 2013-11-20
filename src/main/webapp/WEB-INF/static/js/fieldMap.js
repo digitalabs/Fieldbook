@@ -37,8 +37,12 @@ function validateEnterFieldPage(){
 	var totalNoOfBlocks = (parseInt($("#"+getJquerySafeId("userFieldmap.numberOfRowsInBlock")).val())
 						/parseInt($("#"+getJquerySafeId("userFieldmap.numberOfRowsPerPlot")).val())) 
 						* parseInt($("#"+getJquerySafeId("userFieldmap.numberOfRangesInBlock")).val());
-	if(parseInt($("#"+getJquerySafeId("userFieldmap.totalNumberOfPlots")).val()) > totalNoOfBlocks) {
+	
+	if(totalNoOfPlots > totalNoOfBlocks) {
+		$("#enterFieldDetailsModal").modal("toggle");
 		return false;
+	} else {
+		$("#enterFieldDetailsForm").submit();
 	}
 	return true;
 	
@@ -120,9 +124,6 @@ function validatePlantingDetails() {
 		return false;
 	}
 	
-	if (parseInt(totalNoOfPlots) > ((parseInt(rowNum)/parseInt(rowsPerPlot))*rangeNum)-deletedPlots) {
-		return false;
-	}
 	return true;
 }
 
@@ -130,4 +131,57 @@ function showMessage(message) {
 	$("#page-message").html(
 		    "<div class='alert alert-danger'>"+ message +"</div>"
 	);
+}
+
+function checkRemainingPlots() {
+	var startingCol = $('#'+getJquerySafeId("userFieldmap.startingColumn")).val();
+	var startingRange = $('#'+getJquerySafeId("userFieldmap.startingRange")).val();
+	var plantingOrder = $("input[type='radio']:checked").val();
+	var remainingPlots = 0;
+
+	if (plantingOrder == "1") {
+		remainingPlots = (((parseInt(rowNum)/parseInt(rowsPerPlot))*rangeNum)-deletedPlots) - (((startingCol-1)*rangeNum)+(startingRange-1));
+	} else {
+		remainingPlots = (((parseInt(rowNum)/parseInt(rowsPerPlot))*rangeNum)-deletedPlots) - getUnavailablePlots(startingCol, startingRange); 
+	}
+	
+	if (totalNoOfPlots > remainingPlots) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function getUnavailablePlots(startingCol, startingRange) {
+	if (startingCol%2==0) {
+		//even column
+		return (startingCol*rangeNum)-startingRange;
+	} else {
+		//odd column
+		return (((startingCol-1)*rangeNum)+(startingRange-1));
+	}
+}
+
+function checkDeletedPlots(id) {
+	var startingCol = $('#'+getJquerySafeId("userFieldmap.startingColumn")).val();
+	var startingRange = $('#'+getJquerySafeId("userFieldmap.startingRange")).val();
+	var plantingOrder = $("input[type='radio']:checked").val();
+	
+	var col = parseInt(id.split("_")[0]) + 1;
+	var range = parseInt(id.split("_")[1]) + 1;
+	
+	if (plantingOrder == "1") {
+		//row/column
+		if (col > startingCol || (col >= startingCol && range >= startingRange)) {
+			deletedPlots++;
+		}
+	} else {
+		//serpentine
+		if (col > startingCol || 
+				(col == startingCol && 
+						((col%2 == 0 && range <= startingRange) || //down  
+								(col%2==1 && range >= startingRange)))) { //up
+			deletedPlots++;
+		}
+	}
 }

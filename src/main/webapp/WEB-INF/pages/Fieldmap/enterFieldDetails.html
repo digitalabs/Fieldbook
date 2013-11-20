@@ -159,6 +159,22 @@ th:action="@{/Fieldmap/enterFieldDetails}" onsubmit="return validateEnterFieldPa
 	
 </div>
 </form>
+<div class="modal fade" id="enterFieldDetailsModal" role="dialog" aria-labelledby="enterFieldDetailsLabel" aria-hidden="true">
+	<div class="modal-dialog modal-large">
+    	<div class="modal-content">
+         	<div class="modal-body" id="enterFieldDetailsBody">
+         		<div>
+         			<button id="closeEnterFieldDetailsModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+         		</div>
+         		<br/><br/>
+         		<span th:text="#{fieldmap.plots.exceed.blocks}">The total number of plots in this trial exceeds the specified size of the block, do you wish to proceed?</span>
+         	</div>																							
+       		<div class="modal-footer">    
+       			<button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">OK</button>	
+     		</div>
+     	</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div>
 <div layout:fragment="page-script">
 <script type="text/javascript" th:src="@{/static/js/fieldMap.js}"></script>
 <script type='text/javascript' th:inline="javascript">

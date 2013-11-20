@@ -33,8 +33,15 @@ function validateEnterFieldPage(){
 		showEnterFieldDetailsMessage(msgColError);
 		return false;
 	}
+	
+	var totalNoOfBlocks = (parseInt($("#"+getJquerySafeId("userFieldmap.numberOfRowsInBlock")).val())
+						/parseInt($("#"+getJquerySafeId("userFieldmap.numberOfRowsPerPlot")).val())) 
+						* parseInt($("#"+getJquerySafeId("userFieldmap.numberOfRangesInBlock")).val());
+	if(parseInt($("#"+getJquerySafeId("userFieldmap.totalNumberOfPlots")).val()) > totalNoOfBlocks) {
+		return false;
+	}
 	return true;
-		
+	
 }
 
 function showEnterFieldDetailsMessage(msg){
@@ -110,6 +117,10 @@ function validatePlantingDetails() {
 	
 	if (plantingOrder == 0) {
 		showMessage(plantingOrderError);
+		return false;
+	}
+	
+	if (parseInt(totalNoOfPlots) > ((parseInt(rowNum)/parseInt(rowsPerPlot))*rangeNum)-deletedPlots) {
 		return false;
 	}
 	return true;

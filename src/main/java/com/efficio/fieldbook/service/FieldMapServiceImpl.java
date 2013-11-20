@@ -42,8 +42,7 @@ public class FieldMapServiceImpl implements FieldMapService{
             if (info.isTrial()) {
                 textLabel.append(NEXT_LINE + "Rep " + label.getRep());
             }
-            textLabel.append(NEXT_LINE + label.getGermplasmName());
-            System.out.println(label.getExperimentId() + " == " + label.getEntryNumber() + " == " + label.getGermplasmName());
+            textLabel.append(NEXT_LINE + info.getSelectedName());
             fieldTexts.add(textLabel.toString());
         }
         return fieldTexts;

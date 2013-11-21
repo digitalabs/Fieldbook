@@ -35,6 +35,13 @@ public class UserFieldmap  implements Serializable {
     public final int ROW_COLUMN = 1;
     public final int SERPENTINE = 2;
 	
+    /** The trial id or nursery id */
+    private Integer studyId;
+    
+    private Integer selectedDatasetId;
+    
+    private Integer selectedGeolocationId;
+    
     /** The selected name. */
     private String selectedName;
     
@@ -130,6 +137,7 @@ public class UserFieldmap  implements Serializable {
         }else{
             setNumberOfRowsPerPlot(1);
         }
+        setStudyId(fieldMapInfo.getFieldbookId());
     }
     
     
@@ -543,4 +551,53 @@ public class UserFieldmap  implements Serializable {
     public void setLocationName(String locationName) {
         this.locationName = locationName;
     }
+
+    
+    /**
+     * @return the studyId
+     */
+    public Integer getStudyId() {
+        return studyId;
+    }
+
+    
+    /**
+     * @param studyId the studyId to set
+     */
+    public void setStudyId(Integer studyId) {
+        this.studyId = studyId;
+    }
+
+    
+    /**
+     * @return the selectedDatasetId
+     */
+    public Integer getSelectedDatasetId() {
+        return selectedDatasetId;
+    }
+
+    
+    /**
+     * @param selectedDatasetId the selectedDatasetId to set
+     */
+    public void setSelectedDatasetId(Integer selectedDatasetId) {
+        this.selectedDatasetId = selectedDatasetId;
+    }
+
+    
+    /**
+     * @return the selectedGeolocationId
+     */
+    public Integer getSelectedGeolocationId() {
+        return selectedGeolocationId;
+    }
+
+    
+    /**
+     * @param selectedGeolocationId the selectedGeolocationId to set
+     */
+    public void setSelectedGeolocationId(Integer selectedGeolocationId) {
+        this.selectedGeolocationId = selectedGeolocationId;
+    }
+
 }

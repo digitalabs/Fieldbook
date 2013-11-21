@@ -114,23 +114,6 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	    </div>
 	</div>
 </form>
-<div class="modal fade" id="enterPlantingDetailsModal" role="dialog" aria-labelledby="enterPlantingDetailsLabel" aria-hidden="true">
-	<div class="modal-dialog modal-large">
-    	<div class="modal-content">
-         	<div class="modal-body" id="enterPlantingDetailsBody">
-         		<div>
-         			<button id="closeEnterPlantingDetailsModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-         		</div>
-         		<br/><br/>
-         		<div class="alert alert-danger" th:text="#{fieldmap.plots.exceed.blocks.with.deleted}">The current specifications for the planting details cannot be fully accommodated by the current block size, do you wish to proceed?</div>
-         	</div>																							
-       		<div class="modal-footer">    
-       			<button type="button" class="btn btn-primary" onclick="javascript: $('#fieldmapForm').submit();" aria-hidden="true" th:value="#{common.form.yes.text}">Yes</button>
-       			<button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true" th:value="#{common.form.no.text}">No</button>	
-     		</div>
-     	</div><!-- /.modal-content -->
-	</div><!-- /.modal-dialog -->
-</div>
 <div layout:fragment="page-script">
 	<script type="text/javascript" th:src="@{/static/js/fieldMap.js}"></script>
 	<script type='text/javascript' th:inline="javascript">
@@ -148,9 +131,10 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 		var deletedPlots = 0;
 		var totalNoOfPlots = /*[[${fieldmapForm.userFieldmap.totalNumberOfPlots}]]*/;
 		var deletedPlotError = /*[[#{fieldmap.starting.coordinates.deleted}]]*/;
+		var totalBlocksError = /*[[#{fieldmap.plots.exceed.blocks.with.deleted}]]*/;
 		
 	  	function setAllDeletedBox(){
-			var isValid = validatePlantingDetails();
+			validatePlantingDetails();
 	  		var deletedRect = "";
 	  		deletedPlots = 0;
 	  		$('#field-map td.plot.deleted').each(function(){
@@ -167,11 +151,12 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	  		$('#markedCells').val(deletedRect);
 	  		console.log(deletedRect);
 	  		
-	  		if (checkRemainingPlots() && isValid) {
-	  			$("#enterPlantingDetailsModal").modal("toggle");
-				return false;
-			}
-	  		
+	  		//validation that total no. of plots does not exceed total no. of blocks
+	  		if (checkRemainingPlots()) {
+	  			showMessage(totalBlocksError);
+	  			return false;
+			} 
+			
 	  		$("#fieldmapForm").submit();
 	  	}
 	  	$(document).ready(function() {

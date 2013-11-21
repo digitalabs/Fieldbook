@@ -39,7 +39,7 @@ function validateEnterFieldPage(){
 						* parseInt($("#"+getJquerySafeId("userFieldmap.numberOfRangesInBlock")).val());
 	
 	if(totalNoOfPlots > totalNoOfBlocks) {
-		$("#enterFieldDetailsModal").modal("toggle");
+		showEnterFieldDetailsMessage(msgBlockSizeError);
 		return false;
 	} else {
 		$("#enterFieldDetailsForm").submit();

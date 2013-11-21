@@ -45,7 +45,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		<strong class="col-md-12">
 			&nbsp;<span th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.selected.trial}">Selected Trial:</span>
 			&nbsp;<span th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery.selected.nursery}">Selected Nursery:</span>
-		</strong> <span th:text="*{userFieldmap.selectedName}">[FieldbookName]</span>
+		</strong> <span th:text="*{userFieldmap.selectedName}">[FieldbookName]</span>		
 	</div>
 	<div class="form-group col-md-8">
 		&nbsp;<strong>
@@ -160,6 +160,8 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 </div>
 </form>
 <div layout:fragment="page-script">
+<script type="text/javascript" th:src="@{/static/js/jquery.treegrid.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/jquery.treegrid.bootstrap3.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/fieldMap.js}"></script>
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    
@@ -172,13 +174,24 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
    	var msgColError = /*[[#{fieldmap.column.plot.error}]]*/;
     var locationSuggestions = /*[[${locationList}]]*/ null;
     var locationSuggestions_obj = [];
-    var totalNoOfPlots = /*[[${fieldmapForm.userFieldmap.totalNumberOfPlots}]]*/;
-    var msgBlockSizeError = /*[[#{fieldmap.plots.exceed.blocks}]]*/;
+    
+    var trial = /*[[${fieldmapForm.userFieldmap.trial}]]*/;
+    var totalNoOfPlots;
+    var msgBlockSizeError;
+    
+    if (trial) {
+    	totalNoOfPlots = /*[[${fieldmapForm.userFieldmap.totalNumberOfPlots}]]*/;
+    	msgBlockSizeError = /*[[#{fieldmap.plots.exceed.blocks.trial}]]*/;
+    } else {
+    	totalNoOfPlots = /*[[${fieldmapForm.userFieldmap.numberOfEntries}]]*/;
+    	msgBlockSizeError = /*[[#{fieldmap.plots.exceed.blocks.nursery}]]*/;
+    }
 
 	$( document ).ready(function() {  	     
 													   
 		initializeLocationSelect2(locationSuggestions, locationSuggestions_obj); 
 		$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val(defaultRowsPerPlot);
+		
 	});
   	
   

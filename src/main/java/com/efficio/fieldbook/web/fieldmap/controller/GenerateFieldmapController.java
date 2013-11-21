@@ -26,6 +26,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,7 +72,6 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
     @RequestMapping(method = RequestMethod.GET)
     public String showGeneratedFieldmap(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model) {
         
-        //TODO: FOR testing only, remove this
         populateFormWithSessionData(form);
         
         return super.show(model);
@@ -145,10 +145,11 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
             }
         }
 
-        List<String> entryList = fieldmapService.generateFieldMapLabels(userFieldMap);
+        //List<String> entryList = fieldmapService.generateFieldMapLabels(userFieldMap);
+        List<FieldMapLabel> labels = userFieldMap.getFieldMapLabels();
 
         Plot[][] plots = fieldmapService.createFieldMap(col, ranges, startRange, startCol,
-                isSerpentine, deletedPlot, entryList);
+                isSerpentine, deletedPlot, labels, userFieldMap.isTrial(), userFieldMap.getSelectedName());
         userFieldMap.setFieldmap(plots);
         form.setUserFieldmap(userFieldMap);
 

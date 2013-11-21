@@ -11,14 +11,15 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.fieldmap.controller;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.Location;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -29,11 +30,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
-import org.generationcp.middleware.domain.oms.Term;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.pojos.Location;
-import org.generationcp.middleware.service.api.FieldbookService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
@@ -104,7 +100,12 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         session.invalidate();
         
         try {
-            FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfTrial(Integer.parseInt(id));            
+            //TODO: GET FROM FORM
+            userFieldmap.setSelectedGeolocationId(fieldbookMiddlewareService.getGeolocationId(Integer.parseInt(id)));
+            
+            FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfTrial(Integer.parseInt(id), 
+                    userFieldmap.getSelectedGeolocationId());
+            
             this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, true);
             /*
             this.userFieldmap = new UserFieldmap();
@@ -137,7 +138,11 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         session.invalidate();
         
         try {
-            FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfNursery(Integer.parseInt(id));
+            //TODO: GET FROM FORM
+            userFieldmap.setSelectedGeolocationId(fieldbookMiddlewareService.getGeolocationId(Integer.parseInt(id)));
+            
+            FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfNursery(Integer.parseInt(id), 
+                    this.userFieldmap.getSelectedGeolocationId());
             this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, false);
             form.setUserFieldmap(userFieldmap);
         } catch (NumberFormatException e) {
@@ -159,6 +164,10 @@ public class FieldmapController extends AbstractBaseFieldbookController{
      */
     @RequestMapping(method = RequestMethod.POST)
     public String submitDetails(@ModelAttribute("fieldmapForm") FieldmapForm form, BindingResult result, Model model) {
+        
+        //if fieldmap already exists, forward to GenerateFieldmapController with the fieldmap data. (populate userFieldMap)
+        //otherwise, redirect to PlantingDetailsController
+        
         setUserFieldMapDetails(form);
         return "redirect:" + PlantingDetailsController.URL;
     } 

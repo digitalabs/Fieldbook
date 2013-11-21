@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.service.api.FieldMapService;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
-import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 
 @Service
 public class FieldMapServiceImpl implements FieldMapService{
@@ -31,7 +30,7 @@ public class FieldMapServiceImpl implements FieldMapService{
     
     private static final String NEXT_LINE = "<br/>";
 
-    @Override
+    /*@Override
     public List<String> generateFieldMapLabels(UserFieldmap info) {
         List<FieldMapLabel> labels = info.getFieldMapLabels();
         List<String> fieldTexts = new ArrayList<String>();
@@ -46,12 +45,22 @@ public class FieldMapServiceImpl implements FieldMapService{
             fieldTexts.add(textLabel.toString());
         }
         return fieldTexts;
+    }*/
+    
+    private String getDisplayString(FieldMapLabel label, boolean isTrial, String selectedName) {
+        StringBuilder textLabel = new StringBuilder();
+        textLabel.append("Entry " + label.getEntryNumber());
+        if (isTrial) {
+            textLabel.append(NEXT_LINE + "Rep " + label.getRep());
+        }
+        textLabel.append(NEXT_LINE + selectedName);
+        return textLabel.toString();
     }
 
     @Override
     public Plot[][] createFieldMap(int col, int range, int startRange,
             int startCol, boolean isSerpentine, Map deletedPlot,
-            List<String> entryNumbersInString) {
+            List<FieldMapLabel> labels, boolean isTrial, String selectedName) {
         
         Plot[][] plots = new Plot[col][range];
         //this creates the initial data
@@ -88,7 +97,8 @@ public class FieldMapServiceImpl implements FieldMapService{
                             //this will signify that we have started
                             isStartOk = true;
                         }
-                        counter = populatePlotData(counter, entryNumbersInString, i, j, plots, isUpward, startCol, startRange, isStartOk, deletedPlot);
+                        counter = populatePlotData(counter, labels, i, j, plots, isUpward, startCol, startRange, isStartOk, deletedPlot, 
+                                isTrial, selectedName);
                     }
                 }else{
                     for(int j = range - 1 ; j >= 0 ; j--){
@@ -97,7 +107,8 @@ public class FieldMapServiceImpl implements FieldMapService{
                             //this will signify that we have started
                             isStartOk = true;
                         }
-                        counter = populatePlotData(counter, entryNumbersInString, i, j, plots, isUpward, startCol, startRange, isStartOk, deletedPlot);
+                        counter = populatePlotData(counter, labels, i, j, plots, isUpward, startCol, startRange, isStartOk, deletedPlot,
+                                isTrial, selectedName);
 
                     }
                 }
@@ -133,11 +144,11 @@ public class FieldMapServiceImpl implements FieldMapService{
         startRange--;
         startCol--;
         
-        List<String> entryNumbersInString = new ArrayList<String>();
+        List<FieldMapLabel> labels = new ArrayList<FieldMapLabel>();
         for (int i = 0; i < range*col; i++) {
-            entryNumbersInString.add("DummyData-" + i);
+            labels.add(new FieldMapLabel(null, null, "DummyData-" + i, null, null));
         }
-        Plot[][] plots = createFieldMap(col, range, startRange, startCol, isSerpentine, deletedPlot, entryNumbersInString);
+        Plot[][] plots = createFieldMap(col, range, startRange, startCol, isSerpentine, deletedPlot, labels, true, "Dummy Trial");
         return plots;
     }
     
@@ -147,14 +158,14 @@ public class FieldMapServiceImpl implements FieldMapService{
         return false;
     }    
     
-    public int populatePlotData(int counter, List<String> entryNumbersInString, int col, int range, Plot[][] plots,
-            boolean isUpward, int startCol, int startRange, boolean isStartOk, Map deletedPlot){
+    public int populatePlotData(int counter, List<FieldMapLabel> labels, int col, int range, Plot[][] plots,
+            boolean isUpward, int startCol, int startRange, boolean isStartOk, Map deletedPlot, boolean isTrial, String selectedName){
         String stringToDisplay = "";
         int i = col;
         int j = range;
         boolean hasAvailableEntries = true;
-        if(counter < entryNumbersInString.size()){
-            stringToDisplay = entryNumbersInString.get(counter);
+        if(counter < labels.size()){
+            stringToDisplay = getDisplayString(labels.get(counter), isTrial, selectedName);
         }else{
             hasAvailableEntries = false;
         }
@@ -167,6 +178,9 @@ public class FieldMapServiceImpl implements FieldMapService{
                 if(hasAvailableEntries){
                     //meaning we can plant already and move to the next plant
                     plots[i][j].setDisplayString(stringToDisplay);
+                    //plots[i][j].setExperimentId(labels.get(counter).getExperimentId());
+                    labels.get(counter).setColumn(i+1);
+                    labels.get(counter).setRange(j+1);
                     plots[i][j].setNoMoreEntries(false);
                     counter++;
                 }else{

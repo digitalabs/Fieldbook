@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
@@ -28,4 +29,6 @@ public interface FieldMapService {
     Plot[][] createFieldMap(int col, int range, int startRange, int startCol, boolean isSerpentine, Map deletedPlot, List<FieldMapLabel> labels, boolean isTrial, String selectedName);
     
     Plot[][] createDummyData(int col, int range, int startRange, int startCol, boolean isSerpentine, Map deletedPlot);
+    
+    public Plot[][] generateFieldmap(UserFieldmap info) throws MiddlewareQueryException;
 }

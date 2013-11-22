@@ -16,6 +16,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.generationcp.middleware.domain.dms.DatasetReference;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Location;
@@ -101,6 +102,12 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         
         try {
             //TODO: GET FROM FORM
+            List<DatasetReference> datasets = fieldbookMiddlewareService.getDatasetReferences(Integer.parseInt(id));
+            if (Integer.parseInt(id) < 0) {
+                userFieldmap.setSelectedDatasetId(datasets.get(0).getId());
+            } else {
+                userFieldmap.setSelectedDatasetId(datasets.get(datasets.size()-1).getId());
+            }
             userFieldmap.setSelectedGeolocationId(fieldbookMiddlewareService.getGeolocationId(Integer.parseInt(id)));
             
             FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfTrial(Integer.parseInt(id));
@@ -138,6 +145,8 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         
         try {
             //TODO: GET FROM FORM
+            List<DatasetReference> datasets = fieldbookMiddlewareService.getDatasetReferences(Integer.parseInt(id));
+            userFieldmap.setSelectedDatasetId(datasets.get(datasets.size()-1).getId());
             userFieldmap.setSelectedGeolocationId(fieldbookMiddlewareService.getGeolocationId(Integer.parseInt(id)));
             
             FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfNursery(Integer.parseInt(id));

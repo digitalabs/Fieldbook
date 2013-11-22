@@ -16,12 +16,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.service.api.FieldMapService;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
+import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 
 @Service
 public class FieldMapServiceImpl implements FieldMapService{
@@ -199,4 +201,65 @@ public class FieldMapServiceImpl implements FieldMapService{
         return counter;
     }
     
+    @Override
+    public Plot[][] generateFieldmap(UserFieldmap info) throws MiddlewareQueryException {
+        
+        int totalColumns = info.getNumberOfColumnsInBlock();
+        int totalRanges = info.getNumberOfRangesInBlock();
+        boolean isSerpentine = (info.getPlantingOrder() == 2);
+        Plot[][] plots = new Plot[totalColumns][totalRanges];
+        List<FieldMapLabel> labels = info.getFieldMapLabels();
+        initializeFieldMapArray(plots, totalColumns, totalRanges);
+        for (FieldMapLabel label : labels) {
+            int column = label.getColumn();
+            int range = label.getRange();
+            if (column <= totalColumns && range <= totalRanges) {
+                Plot plot = plots[column-1][range-1];
+                plot.setColumn(column);
+                plot.setRange(range);
+                if (isSerpentine && column % 2 == 0) {
+                    plot.setUpward(false);
+                }
+                plot.setDisplayString(getDisplayString(label, info.isTrial(), info.getSelectedName()));
+                plot.setNotStarted(false);
+            }
+            else {
+                throw new MiddlewareQueryException("The Column/Range of the Field Map exceeded the Total Columns/Ranges");
+            }
+        }
+        
+        setOtherFieldMapInformation(info, plots, totalColumns, totalRanges);
+        return plots;
+    }
+        
+    private void initializeFieldMapArray(Plot[][] plots, int totalColumns, int totalRanges) {
+        for (int i = 0; i < totalColumns; i++) {
+            for (int j = 0; j < totalRanges; j++) {
+                Plot plot = plots[i][j];
+                plot.setNotStarted(true);
+                plot.setUpward(true);
+            }
+        }
+    }
+    
+    private void setOtherFieldMapInformation(UserFieldmap info, Plot[][] plots, int totalColumns, int totalRanges) {
+        int startColumn = 0;
+        int startRange = 0;
+        boolean isStarted = false;
+        for (int i = 0; i < totalColumns; i++) {
+            for (int j = 0; j < totalRanges; j++) {
+                Plot plot = plots[i][j];
+                if (!plot.isNotStarted() && startColumn == 0 && startRange == 0) {
+                    startColumn = i;
+                    startRange = j;
+                    isStarted = true;
+                }
+                else if (isStarted) {
+                    plot.setPlotDeleted(true);
+                }
+            }
+        }
+        info.setStartingColumn(startColumn);
+        info.setStartingRange(startRange);
+    }
 }

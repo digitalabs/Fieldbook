@@ -27,6 +27,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
+import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +75,15 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
     public String showGeneratedFieldmap(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model) {
         
         populateFormWithSessionData(form);
+        /*try {
         
+            Plot[][] plots = fieldmapService.generateFieldmap(userFieldMap);
+            userFieldMap.setFieldmap(plots);
+            form.setUserFieldmap(userFieldMap);
+        
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }*/
         return super.show(model);
     }
     @ResponseBody
@@ -154,6 +164,8 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         form.setUserFieldmap(userFieldMap);
 
         return "redirect:" + GenerateFieldmapController.URL;
+        //populateFormWithSessionData(form);
+        //return super.show(model);
     }
     
     @RequestMapping(value="/showMainPage", method = RequestMethod.GET)

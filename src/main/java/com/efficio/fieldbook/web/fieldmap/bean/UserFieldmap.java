@@ -17,6 +17,7 @@ import java.util.Locale;
 
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
+import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
@@ -133,6 +134,16 @@ public class UserFieldmap  implements Serializable {
         setTotalNumberOfPlots(fieldMapInfo.getPlotCount());
         setFieldMapLabels(fieldMapInfo.getFieldMapLabels());
         */
+        
+        int datasetId = getSelectedDatasetId();
+        int trialInstanceId = getSelectedGeolocationId();
+        
+        FieldMapTrialInstanceInfo info = fieldMapInfo.getDataSet(datasetId).getTrialInstance(trialInstanceId);
+        setFieldMapLabels(info.getFieldMapLabels());
+        setNumberOfEntries(info.getEntryCount());
+        setNumberOfReps(info.getRepCount());
+        setTotalNumberOfPlots(info.getPlotCount());
+        
         setTrial(isTrial);
         if(isTrial){
             setNumberOfRowsPerPlot(2);

@@ -220,3 +220,51 @@ function isDeletedPlotAtStartCoord(id) {
 	} 
 	return false;
 }
+
+function createStudyTree(fieldMapInfo) {
+	createRow(getPrefixName("study", fieldMapInfo.fieldbookId), "", fieldMapInfo.fieldbookName);
+	alert(fieldMapInfo.datasets[0].datasetName);
+	alert(fieldMapInfo.datasets[0].trialInstances[0].siteName);
+	$.each(fieldMapInfo.datasets, function (index, value) {
+		createRow(getPrefixName("dataset", value.datasetId), getPrefixName("study", fieldMapInfo.fieldbookId), value.datasetName);
+		$.each(value.trialInstances, function (index, childValue) {
+			createRow(getPrefixName("trialInstance", childValue.geolocationId), getPrefixName("dataset", value.datasetId), childValue);
+		});
+	});
+}
+
+function getPrefixName(cat, id) {
+	if (parseInt(id) > 0) {
+		return cat + id;
+	} else {
+		return cat + "n" + (parseInt(id)*-1);
+	}
+}
+
+function createRow(id, parentClass, value) {
+	var genClassName = "treegrid-";
+	var genParentClassName = "";
+	var newCell = "";	
+	if (parentClass != "") {
+		genParentClassName = "treegrid-parent-" + parentClass;
+	}
+	var newRow = "<tr id='" + id + "' class='"+ genClassName + id + " " + genParentClassName + "'>";
+	if (id.indexOf("study") > -1 || id.indexOf("dataset") > -1) {
+		if (trial) {
+			newCell = "<td>" + value + "</td><td></td><td></td><td></td>";
+		} else {
+			newCell = "<td>" + value + "</td><td></td>";
+		}
+	} else {
+		if (trial) {
+			newCell = "<td>" + value.siteName + "</td><td>" 
+					+ value.entryCount + "</td><td>" 
+					+ value.repCount + "</td><td>" 
+					+ value.plotCount + "</td>";
+		} else {
+			newCell = "<td>" + value.siteName + "</td><td>" 
+			+ value.entryCount + "</td><td><td></td><td></td>"; 
+		}
+	}
+	$("#studyTree").append(newRow+newCell+"</tr>");
+}

@@ -102,6 +102,8 @@ public class UserFieldmap  implements Serializable {
     
     /** The location name. */
     private String locationName;
+    
+    private FieldMapInfo fieldMapInfo;
 
     /**
      * Instantiates a new user fieldmap.
@@ -151,9 +153,16 @@ public class UserFieldmap  implements Serializable {
             setNumberOfRowsPerPlot(1);
         }
         setStudyId(fieldMapInfo.getFieldbookId());
+        setFieldMapInfo(fieldMapInfo);
     }
     
+    public FieldMapInfo getFieldMapInfo() {
+        return fieldMapInfo;
+    }
     
+    public void setFieldMapInfo(FieldMapInfo fieldMapInfo) {
+        this.fieldMapInfo = fieldMapInfo;
+    }
     
     /**
      * Gets the entry numbers.

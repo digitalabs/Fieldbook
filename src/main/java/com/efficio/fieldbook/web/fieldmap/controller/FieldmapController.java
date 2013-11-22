@@ -113,10 +113,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
             FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfTrial(Integer.parseInt(id));
             
             this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, true);
-            /*
-            this.userFieldmap = new UserFieldmap();
-            this.userFieldmap.setNumberOfRowsPerPlot(2);
-            */
+            
             form.setUserFieldmap(userFieldmap);    
         } catch (NumberFormatException e) {
             LOG.error(e.toString());

@@ -146,7 +146,11 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         try {
             //TODO: GET FROM FORM
             List<DatasetReference> datasets = fieldbookMiddlewareService.getDatasetReferences(Integer.parseInt(id));
-            userFieldmap.setSelectedDatasetId(datasets.get(datasets.size()-1).getId());
+            if (Integer.parseInt(id) < 0) {
+                userFieldmap.setSelectedDatasetId(datasets.get(0).getId());
+            } else {
+                userFieldmap.setSelectedDatasetId(datasets.get(datasets.size()-1).getId());
+            }
             userFieldmap.setSelectedGeolocationId(fieldbookMiddlewareService.getGeolocationId(Integer.parseInt(id)));
             
             FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfNursery(Integer.parseInt(id));

@@ -45,27 +45,30 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		<strong class="col-md-12">
 			&nbsp;<span th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.selected.trial}">Selected Trial:</span>
 			&nbsp;<span th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery.selected.nursery}">Selected Nursery:</span>
-		</strong> <span th:text="*{userFieldmap.selectedName}">[FieldbookName]</span>		
+		</strong>		
 	</div>
 	<div class="form-group col-md-8">
-		&nbsp;<strong>
-				<span th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.number.of.entries}">Number of Entries:</span>
-				<span th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.trial.number.of.entries.and.plots}">Number of Entries and Plots:</span>
-			  </strong>
-		 	  <span th:text="*{userFieldmap.numberOfEntries}">3</span>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<strong>
-			<span th:if="*{userFieldmap.trial == true}"  th:text="#{fieldmap.trial.number.of.reps}">Number of Reps:</span>
-		</strong> 
-		<span th:if="*{userFieldmap.trial == true}"  th:text="*{userFieldmap.numberOfReps}">2</span>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<strong>
-			<span th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.total.number.of.plots}">Total Number of Plots:</span>
-		</strong> 
-		<span th:if="*{userFieldmap.trial == true}" th:text="*{userFieldmap.totalNumberOfPlots}">55</span>
+		&nbsp;
 	</div>
 	<div class="form-group col-md-12">
-		<table class="table tree table-bordered table-striped table-condensed" id="studyTree" style="margin-left:5px;">        
+		<input type="hidden" th:field="*{userFieldmap.selectedDatasetId}" />
+		<input type="hidden" th:field="*{userFieldmap.selectedGeolocationId}" />
+		<input type="hidden" th:field="*{userFieldmap.numberOfEntries}" />
+		<input type="hidden" th:field="*{userFieldmap.numberOfReps}" />
+		<input type="hidden" th:field="*{userFieldmap.totalNumberOfPlots}" />
+		<table class="table tree table-bordered" id="studyTree" style="margin-left:5px;">
+			<thead>
+				<tr th:if="*{userFieldmap.trial == true}">
+					<th></th>
+					<th th:text="#{fieldmap.trial.number.of.entries}"></th>
+					<th th:text="#{fieldmap.trial.number.of.reps}"></th>
+					<th th:text="#{fieldmap.trial.total.number.of.plots}"></th>
+				</tr>
+				<tr th:if="*{userFieldmap.trial == false}">
+					<th></th>
+					<th th:text="#{fieldmap.trial.number.of.entries.and.plots}"></th>
+				</tr>
+			</thead>    
         </table>	
 	</div>
 	<div class="form-group col-md-12" >
@@ -175,18 +178,16 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
     var msgRangesInBlock = /*[[#{fieldmap.ranges.in.block.error}]]*/;
     var defaultRowsPerPlot = /*[[${fieldmapForm.userFieldmap.numberOfRowsPerPlot}]]*/;
    	var msgColError = /*[[#{fieldmap.column.plot.error}]]*/;
+   	var msgNoSelectedTrial = /*[[#{fieldmap.no.selected.trial.instance}]]*/;
     var locationSuggestions = /*[[${locationList}]]*/ null;
     var locationSuggestions_obj = [];
     
     var trial = /*[[${fieldmapForm.userFieldmap.trial}]]*/;
-    var totalNoOfPlots;
     var msgBlockSizeError;
     
     if (trial) {
-    	totalNoOfPlots = /*[[${fieldmapForm.userFieldmap.totalNumberOfPlots}]]*/;
     	msgBlockSizeError = /*[[#{fieldmap.plots.exceed.blocks.trial}]]*/;
     } else {
-    	totalNoOfPlots = /*[[${fieldmapForm.userFieldmap.numberOfEntries}]]*/;
     	msgBlockSizeError = /*[[#{fieldmap.plots.exceed.blocks.nursery}]]*/;
     }
     
@@ -204,7 +205,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
             expanderExpandedClass: 'glyphicon glyphicon-minus',
             expanderCollapsedClass: 'glyphicon glyphicon-plus'
         });
-		
+		triggerFieldMapTableSelection('studyTree');
 	});
   	
   

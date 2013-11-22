@@ -1,4 +1,12 @@
 function validateEnterFieldPage(){
+	setValuesForCounts();
+	var totalNoOfPlots;
+	
+	if (!$('#studyTree .field-map-highlight').attr('id')) {
+		showEnterFieldDetailsMessage(msgNoSelectedTrial);
+		return false;
+	}
+	
 	if($('#'+getJquerySafeId('userFieldmap.fieldLocationId')).select2("data") == null){
 		showEnterFieldDetailsMessage(msgLocation);
 		return false;
@@ -38,14 +46,35 @@ function validateEnterFieldPage(){
 						/parseInt($("#"+getJquerySafeId("userFieldmap.numberOfRowsPerPlot")).val())) 
 						* parseInt($("#"+getJquerySafeId("userFieldmap.numberOfRangesInBlock")).val());
 	
+	if (trial) {
+    	totalNoOfPlots = $("#"+getJquerySafeId("userFieldmap.totalNumberOfPlots")).val();
+	}
+    else {
+    	totalNoOfPlots = $("#"+getJquerySafeId("userFieldmap.numberOfEntries")).val();
+    }
+	
 	if(totalNoOfPlots > totalNoOfBlocks) {
 		showEnterFieldDetailsMessage(msgBlockSizeError);
 		return false;
 	} else {
+		var id = $('#studyTree .field-map-highlight').attr('id').split("|");
+		
+		//set selected trial instance and its dataset
+		$("#"+getJquerySafeId("userFieldmap.selectedDatasetId")).val(id[1]);
+		$("#"+getJquerySafeId("userFieldmap.selectedGeolocationId")).val(id[0]);
 		$("#enterFieldDetailsForm").submit();
 	}
-	return true;
 	
+	return true;
+}
+
+function setValuesForCounts() {
+	//set values for counts
+	$("#"+getJquerySafeId("userFieldmap.numberOfEntries")).val($('#studyTree .field-map-highlight td:nth-child(2)').html());
+	if (trial) {
+		$("#"+getJquerySafeId("userFieldmap.numberOfReps")).val($('#studyTree .field-map-highlight td:nth-child(3)').html());
+		$("#"+getJquerySafeId("userFieldmap.totalNumberOfPlots")).val($('#studyTree .field-map-highlight td:nth-child(4)').html());
+	}
 }
 
 function showEnterFieldDetailsMessage(msg){
@@ -222,13 +251,11 @@ function isDeletedPlotAtStartCoord(id) {
 }
 
 function createStudyTree(fieldMapInfo) {
-	createRow(getPrefixName("study", fieldMapInfo.fieldbookId), "", fieldMapInfo.fieldbookName);
-	alert(fieldMapInfo.datasets[0].datasetName);
-	alert(fieldMapInfo.datasets[0].trialInstances[0].siteName);
+	createRow(getPrefixName("study", fieldMapInfo.fieldbookId), "", fieldMapInfo.fieldbookName, fieldMapInfo.fieldbookId, "");
 	$.each(fieldMapInfo.datasets, function (index, value) {
-		createRow(getPrefixName("dataset", value.datasetId), getPrefixName("study", fieldMapInfo.fieldbookId), value.datasetName);
+		createRow(getPrefixName("dataset", value.datasetId), getPrefixName("study", fieldMapInfo.fieldbookId), value.datasetName, value.datasetId, "");
 		$.each(value.trialInstances, function (index, childValue) {
-			createRow(getPrefixName("trialInstance", childValue.geolocationId), getPrefixName("dataset", value.datasetId), childValue);
+			createRow(getPrefixName("trialInstance", childValue.geolocationId), getPrefixName("dataset", value.datasetId), childValue, childValue.geolocationId, value.datasetId);
 		});
 	});
 }
@@ -241,21 +268,24 @@ function getPrefixName(cat, id) {
 	}
 }
 
-function createRow(id, parentClass, value) {
+function createRow(id, parentClass, value, realId, parentId) {
 	var genClassName = "treegrid-";
 	var genParentClassName = "";
+	var newRow = "";
 	var newCell = "";	
 	if (parentClass != "") {
 		genParentClassName = "treegrid-parent-" + parentClass;
 	}
-	var newRow = "<tr id='" + id + "' class='"+ genClassName + id + " " + genParentClassName + "'>";
+	
 	if (id.indexOf("study") > -1 || id.indexOf("dataset") > -1) {
+		newRow = "<tr id='" + realId + "' class='"+ genClassName + id + " " + genParentClassName + "'>";
 		if (trial) {
 			newCell = "<td>" + value + "</td><td></td><td></td><td></td>";
 		} else {
 			newCell = "<td>" + value + "</td><td></td>";
 		}
 	} else {
+		newRow = "<tr id='" + realId + "|" + parentId + "' class='data-row "+ genClassName + id + " " + genParentClassName + "'>";
 		if (trial) {
 			newCell = "<td>" + value.siteName + "</td><td>" 
 					+ value.entryCount + "</td><td>" 
@@ -263,7 +293,7 @@ function createRow(id, parentClass, value) {
 					+ value.plotCount + "</td>";
 		} else {
 			newCell = "<td>" + value.siteName + "</td><td>" 
-			+ value.entryCount + "</td><td><td></td><td></td>"; 
+			+ value.entryCount + "</td>"; 
 		}
 	}
 	$("#studyTree").append(newRow+newCell+"</tr>");

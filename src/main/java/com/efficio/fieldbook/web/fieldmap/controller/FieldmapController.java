@@ -198,7 +198,12 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         return this.userFieldmap;
     }
     
-    private void setUserFieldMapDetails(FieldmapForm form) {        
+    private void setUserFieldMapDetails(FieldmapForm form) {
+        this.userFieldmap.setSelectedDatasetId(form.getUserFieldmap().getSelectedDatasetId());
+        this.userFieldmap.setSelectedGeolocationId(form.getUserFieldmap().getSelectedGeolocationId());
+        this.userFieldmap.setNumberOfEntries(form.getUserFieldmap().getNumberOfEntries());
+        this.userFieldmap.setNumberOfReps(form.getUserFieldmap().getNumberOfReps());
+        this.userFieldmap.setTotalNumberOfPlots(form.getUserFieldmap().getTotalNumberOfPlots());
         this.userFieldmap.setBlockName(form.getUserFieldmap().getBlockName());
         this.userFieldmap.setFieldLocationId(form.getUserFieldmap().getFieldLocationId());
         this.userFieldmap.setFieldName(form.getUserFieldmap().getFieldName());

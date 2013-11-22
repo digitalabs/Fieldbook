@@ -103,8 +103,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
             //TODO: GET FROM FORM
             userFieldmap.setSelectedGeolocationId(fieldbookMiddlewareService.getGeolocationId(Integer.parseInt(id)));
             
-            FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfTrial(Integer.parseInt(id), 
-                    userFieldmap.getSelectedGeolocationId());
+            FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfTrial(Integer.parseInt(id));
             
             this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, true);
             /*
@@ -141,8 +140,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
             //TODO: GET FROM FORM
             userFieldmap.setSelectedGeolocationId(fieldbookMiddlewareService.getGeolocationId(Integer.parseInt(id)));
             
-            FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfNursery(Integer.parseInt(id), 
-                    this.userFieldmap.getSelectedGeolocationId());
+            FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfNursery(Integer.parseInt(id));
             this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, false);
             form.setUserFieldmap(userFieldmap);
         } catch (NumberFormatException e) {

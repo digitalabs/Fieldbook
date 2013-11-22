@@ -72,12 +72,13 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController{
     private FieldMapInfo createFieldMapInfo() {
         FieldMapInfo info = new FieldMapInfo(); 
         info.setFieldbookId(userFieldMap.getStudyId());
+        /*
         info.setBlockName(userFieldMap.getBlockName());
         info.setColumnsInBlock(userFieldMap.getNumberOfColumnsInBlock());
         info.setRangesInBlock(userFieldMap.getNumberOfRangesInBlock());
         info.setPlantingOrder(userFieldMap.getPlantingOrder());
         info.setFieldMapLabels(userFieldMap.getFieldMapLabels());
-        
+        */
         return info;
     }
 }

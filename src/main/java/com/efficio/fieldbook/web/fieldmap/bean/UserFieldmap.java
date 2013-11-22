@@ -127,10 +127,12 @@ public class UserFieldmap  implements Serializable {
      */
     public void setUserFieldmapInfo(FieldMapInfo fieldMapInfo, boolean isTrial){
         setSelectedName(fieldMapInfo.getFieldbookName());
+        /*
         setNumberOfEntries(fieldMapInfo.getEntryCount());
         setNumberOfReps(fieldMapInfo.getRepCount());
         setTotalNumberOfPlots(fieldMapInfo.getPlotCount());
         setFieldMapLabels(fieldMapInfo.getFieldMapLabels());
+        */
         setTrial(isTrial);
         if(isTrial){
             setNumberOfRowsPerPlot(2);

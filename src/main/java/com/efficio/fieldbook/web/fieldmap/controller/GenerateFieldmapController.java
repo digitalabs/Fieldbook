@@ -26,7 +26,9 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
+import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
@@ -34,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -83,10 +86,22 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         return super.show(model);
     }
     
-    @RequestMapping(value="/viewFieldmap", method = RequestMethod.GET)
-    public String viewFieldmap(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model) {
-        
+    @RequestMapping(value="/viewFieldmap/{datasetId}/{geolocationId}", method = RequestMethod.GET)
+    public String viewFieldmap(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model,
+            @PathVariable Integer datasetId, @PathVariable Integer geolocationId) {
         try {
+
+            this.userFieldMap.setSelectedDatasetId(datasetId);
+            this.userFieldMap.setSelectedGeolocationId(geolocationId);
+            FieldMapInfo fieldMapInfo = userFieldMap.getFieldMapInfo();
+            FieldMapTrialInstanceInfo trialInfo = fieldMapInfo.getDataSet(datasetId).getTrialInstance(geolocationId); 
+            this.userFieldMap.setNumberOfRangesInBlock(trialInfo.getRangesInBlock());
+            this.userFieldMap.setNumberOfRowsInBlock(trialInfo.getColumnsInBlock(), trialInfo.getRowsPerPlot());
+            this.userFieldMap.setUserFieldmapInfo(fieldMapInfo, true);
+            this.userFieldMap.setNumberOfRowsPerPlot(trialInfo.getRowsPerPlot());
+            this.userFieldMap.setPlantingOrder(trialInfo.getPlantingOrder());
+            this.userFieldMap.setBlockName(trialInfo.getBlockName());
+            
             populateFormWithSessionData(form);
             this.userFieldMap.setFieldmap(fieldmapService.generateFieldmap(this.userFieldMap));
             form.setUserFieldmap(this.userFieldMap);

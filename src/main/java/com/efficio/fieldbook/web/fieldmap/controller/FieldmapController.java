@@ -110,32 +110,9 @@ public class FieldmapController extends AbstractBaseFieldbookController{
             
             List<FieldMapDatasetInfo> datasetList = fieldMapInfo.getDatasetsWithFieldMap();
             if (datasetList != null && !datasetList.isEmpty()) {
-                int datasetId = datasetList.get(0).getDatasetId();
                 List<FieldMapTrialInstanceInfo> trials = datasetList.get(0).getTrialInstancesWithFieldMap();
                 if (trials != null && !trials.isEmpty()) {
-                    //if (trials.size() > 0) {
-                        //open 1st popup
-                        nav = "0";
-                    //}
-                    /*
-                    if (trials.size() > 1) {
-                        nav = "0";
-                    }
-                    else {
-                        int trialId = trials.get(0).getGeolocationId();
-                        this.userFieldmap.setSelectedDatasetId(datasetId);
-                        this.userFieldmap.setSelectedGeolocationId(trialId);
-                        System.out.println("dataset " + datasetId + ", trial instance " + trialId);
-                        FieldMapTrialInstanceInfo trialInfo = fieldMapInfo.getDataSet(datasetId).getTrialInstance(trialId); 
-                        this.userFieldmap.setNumberOfRangesInBlock(trialInfo.getRangesInBlock());
-                        this.userFieldmap.setNumberOfRowsInBlock(trialInfo.getColumnsInBlock(), trialInfo.getRowsPerPlot());
-                        this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, true);
-                        this.userFieldmap.setNumberOfRowsPerPlot(trialInfo.getRowsPerPlot());
-                        this.userFieldmap.setPlantingOrder(trialInfo.getPlantingOrder());
-                        this.userFieldmap.setBlockName(trialInfo.getBlockName());
-                        nav = "3"; 
-                        //go to step 3 and display the field map 
-                    }*/
+                    nav = "0";
                 }
             }
         } catch(MiddlewareQueryException e) {
@@ -143,20 +120,27 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         }
         System.out.println("NAVIGAGE TO --- " + nav);
         result.put("nav", nav);
-        System.out.println(userFieldmap.getFieldMapInfo().getFieldbookName());
         return result;
         //go to step 1
     }
     
     @ResponseBody
-    @RequestMapping(value="/selectTrialInstance/{id}", method = RequestMethod.GET)
-    public Map<String, String> getFieldMapInfoData(@PathVariable String id) {
+    @RequestMapping(value="/selectTrialInstance", method = RequestMethod.GET)
+    public Map<String, String> getFieldMapInfoData() {
         Map<String, String> result = new HashMap<String, String>();
-        System.out.println(userFieldmap.getFieldMapInfo().getFieldbookName());
         FieldMapInfo fieldMapInfo = userFieldmap.getFieldMapInfo();
-        System.out.println(userFieldmap.getFieldMapInfo().getFieldbookName());
+        String size = "0";
+        
+        List<FieldMapDatasetInfo> datasetList = fieldMapInfo.getDatasetsWithFieldMap();
+        if (datasetList != null && !datasetList.isEmpty()) {
+            List<FieldMapTrialInstanceInfo> trials = datasetList.get(0).getTrialInstancesWithFieldMap();
+            if (trials != null && !trials.isEmpty()) {
+                size = String.valueOf(trials.size());
+            }
+        }
         String fieldMapInfoJson = convertFieldMapInfoToJson(fieldMapInfo);
         result.put("fieldMapInfo", fieldMapInfoJson);
+        result.put("size", size);
         return result;
     } 
     
@@ -185,47 +169,12 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     public String showTrial(@ModelAttribute("fieldmapForm") FieldmapForm form, 
             @PathVariable String id, 
             Model model, HttpSession session) {
-        //session.invalidate();
-  System.out.println("inside show trial1!!!!!!");      
-/*        
         try {
-            
-            Plot[][] plots = fieldmapService.generateFieldmap(userFieldMap);
-            userFieldMap.setFieldmap(plots);
-            form.setUserFieldmap(userFieldMap);
-        
-        } catch (MiddlewareQueryException e) {
-            LOG.error(e.getMessage(), e);
-        }
-*/
-        
-        try {
-            //TODO: GET FROM FORM
-/*            List<DatasetReference> datasets = fieldbookMiddlewareService.getDatasetReferences(Integer.parseInt(id));
-            if (Integer.parseInt(id) < 0) {
-                userFieldmap.setSelectedDatasetId(datasets.get(0).getId());
-            } else {
-                userFieldmap.setSelectedDatasetId(datasets.get(datasets.size()-1).getId());
-            }
-            userFieldmap.setSelectedGeolocationId(fieldbookMiddlewareService.getGeolocationId(Integer.parseInt(id)));
-            
-            FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfTrial(Integer.parseInt(id));
-            
-            this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, true);
-*/
-            /*
-            this.userFieldmap = new UserFieldmap();
-            this.userFieldmap.setNumberOfRowsPerPlot(2);
-            */
-            form.setUserFieldmap(userFieldmap);
-            
+            form.setUserFieldmap(userFieldmap);    
         } catch (NumberFormatException e) {
             LOG.error(e.toString());
-        //} catch (MiddlewareQueryException e) {
-        //    LOG.error(e.toString());
         }
-        
-       
+               
         return super.show(model);
     }
     

@@ -73,13 +73,13 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
     @RequestMapping(method = RequestMethod.GET)
     public String showGeneratedFieldmap(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model) {
         
-        try {
+        //try {
             populateFormWithSessionData(form);
-            this.userFieldMap.setFieldmap(fieldmapService.generateFieldmap(this.userFieldMap));
+            //this.userFieldMap.setFieldmap(fieldmapService.generateFieldmap(this.userFieldMap));
             form.setUserFieldmap(this.userFieldMap);
-        } catch(MiddlewareQueryException e) {
-            LOG.error(e.getMessage(), e);
-        }
+        //} catch(MiddlewareQueryException e) {
+        //    LOG.error(e.getMessage(), e);
+        //}
         return super.show(model);
     }
     @ResponseBody

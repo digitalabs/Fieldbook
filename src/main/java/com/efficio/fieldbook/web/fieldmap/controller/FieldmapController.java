@@ -19,7 +19,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.generationcp.middleware.domain.dms.DatasetReference;
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
@@ -37,7 +36,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.service.api.FieldMapService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
@@ -64,9 +62,6 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     
     @Resource
     private FieldbookService fieldbookMiddlewareService;
-    
-    @Resource
-    private FieldMapService fieldmapService;
     
     /**
      * Gets the data types.
@@ -116,7 +111,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
                 }
             }
         } catch(MiddlewareQueryException e) {
-            
+            LOG.error(e.getMessage(), e);
         }
         result.put("nav", nav);
         return result;
@@ -194,14 +189,6 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         boolean goToStep3 = false;
         StringBuilder step3Url = new StringBuilder(GenerateFieldmapController.URL).append("/");
         try {
-            //TODO: GET FROM FORM
-//            List<DatasetReference> datasets = fieldbookMiddlewareService.getDatasetReferences(Integer.parseInt(id));
-//            if (Integer.parseInt(id) < 0) {
-//                userFieldmap.setSelectedDatasetId(datasets.get(0).getId());
-//            } else {
-//                userFieldmap.setSelectedDatasetId(datasets.get(datasets.size()-1).getId());
-//            }
-//            userFieldmap.setSelectedGeolocationId(fieldbookMiddlewareService.getGeolocationId(Integer.parseInt(id)));
             
             FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfNursery(Integer.parseInt(id));
             if (!fieldMapInfo.getDatasetsWithFieldMap().isEmpty()) {
@@ -265,7 +252,6 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         this.userFieldmap.setSelectedDatasetId(form.getUserFieldmap().getSelectedDatasetId());
         this.userFieldmap.setSelectedGeolocationId(form.getUserFieldmap().getSelectedGeolocationId());
         this.userFieldmap.setUserFieldmapInfo(userFieldmap.getFieldMapInfo(), this.userFieldmap.isTrial() ? true : false);
-        //this.userFieldmap.setUserFieldmapInfo(userFieldmap.getFieldMapInfo(), form.getUserFieldmap().isTrial() ? true : false);
         this.userFieldmap.setNumberOfEntries(form.getUserFieldmap().getNumberOfEntries());
         this.userFieldmap.setNumberOfReps(form.getUserFieldmap().getNumberOfReps());
         this.userFieldmap.setTotalNumberOfPlots(form.getUserFieldmap().getTotalNumberOfPlots());

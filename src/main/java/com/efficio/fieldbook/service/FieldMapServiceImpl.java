@@ -32,23 +32,6 @@ public class FieldMapServiceImpl implements FieldMapService{
     
     private static final String NEXT_LINE = "<br/>";
 
-    /*@Override
-    public List<String> generateFieldMapLabels(UserFieldmap info) {
-        List<FieldMapLabel> labels = info.getFieldMapLabels();
-        List<String> fieldTexts = new ArrayList<String>();
-        StringBuilder textLabel = null;
-        for (FieldMapLabel label : labels) {
-            textLabel = new StringBuilder();
-            textLabel.append("Entry " + label.getEntryNumber());
-            if (info.isTrial()) {
-                textLabel.append(NEXT_LINE + "Rep " + label.getRep());
-            }
-            textLabel.append(NEXT_LINE + info.getSelectedName());
-            fieldTexts.add(textLabel.toString());
-        }
-        return fieldTexts;
-    }*/
-    
     private String getDisplayString(FieldMapLabel label, boolean isTrial, String selectedName) {
         StringBuilder textLabel = new StringBuilder();
         textLabel.append("Entry " + label.getEntryNumber());
@@ -288,7 +271,6 @@ public class FieldMapServiceImpl implements FieldMapService{
         else {
             if (isStarted) {
                 possiblyDeletedCoordinates.add(i + "_" + j);
-                //plot.setPlotDeleted(true);
             }
             else {
                 plot.setNotStarted(true);

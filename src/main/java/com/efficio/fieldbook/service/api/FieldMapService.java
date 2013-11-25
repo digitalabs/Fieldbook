@@ -23,8 +23,6 @@ import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 
 public interface FieldMapService {
     
-//    List<String> generateFieldMapLabels(UserFieldmap info);
-    
     //added by Daniel
     Plot[][] createFieldMap(int col, int range, int startRange, int startCol, boolean isSerpentine, Map deletedPlot, List<FieldMapLabel> labels, boolean isTrial, String selectedName);
     

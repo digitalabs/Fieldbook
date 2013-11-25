@@ -177,7 +177,6 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
             }
         }
 
-        //List<String> entryList = fieldmapService.generateFieldMapLabels(userFieldMap);
         List<FieldMapLabel> labels = userFieldmap.getFieldMapLabels();
 
         Plot[][] plots = fieldmapService.createFieldMap(col, ranges, startRange, startCol,
@@ -186,8 +185,6 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         form.setUserFieldmap(userFieldmap);
 
         return "redirect:" + GenerateFieldmapController.URL;
-        //populateFormWithSessionData(form);
-        //return super.show(model);
     }
     
     @RequestMapping(value="/showMainPage", method = RequestMethod.GET)
@@ -219,25 +216,6 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
 
     private void populateFormWithSessionData(FieldmapForm form) {
         UserFieldmap info = userFieldmap;
-        info.setNumberOfRowsInBlock(userFieldmap.getNumberOfRowsInBlock());
-        info.setNumberOfRangesInBlock(userFieldmap.getNumberOfRangesInBlock());
-        info.setNumberOfEntries(userFieldmap.getNumberOfEntries());
-        info.setNumberOfReps(userFieldmap.getNumberOfReps());
-        info.setNumberOfRowsPerPlot(userFieldmap.getNumberOfRowsPerPlot());
-        info.setSelectedName(userFieldmap.getSelectedName());
-        info.setPlantingOrder(userFieldmap.getPlantingOrder());
-        info.setBlockName(userFieldmap.getBlockName());
-        info.setEntryNumbers(userFieldmap.getEntryNumbers());
-        info.setFieldLocationId(userFieldmap.getFieldLocationId());
-        info.setFieldName(userFieldmap.getFieldName());
-        info.setGermplasmNames(userFieldmap.getGermplasmNames());
-        info.setReps(userFieldmap.getReps());
-        info.setStartingColumn(userFieldmap.getStartingColumn());
-        info.setStartingRange(userFieldmap.getStartingRange());
-        info.setTotalNumberOfPlots(userFieldmap.getTotalNumberOfPlots());
-        info.setTrial(userFieldmap.isTrial());
-        info.setLocationName(userFieldmap.getLocationName());
-        
         form.setUserFieldmap(info);
     }
     

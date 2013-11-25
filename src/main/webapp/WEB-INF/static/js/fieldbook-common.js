@@ -113,22 +113,31 @@ function isInt(value) {
     return value % 1 == 0;
 }
 
-function selectTrialInstance(id) {
+function selectTrialInstance() {
 	$('#manageTrialConfirmation').modal('hide');
 	Spinner.toggle();
 	//var fieldMapHref = $('#fieldmap-url').attr("href");	
 	$.ajax({ 
-		url: "/Fieldbook/Fieldmap/enterFieldDetails/selectTrialInstance/" + id,
+		url: "/Fieldbook/Fieldmap/enterFieldDetails/selectTrialInstance",
 	    type: "GET",
 	    data: "",
 	    success: function(data) {
 	    	if (data.fieldMapInfo != null && data.fieldMapInfo != "") {
-	    		createStudyTree($.parseJSON(data.fieldMapInfo), true);
-	    		$('.tree').treegrid({
-	                expanderExpandedClass: 'glyphicon glyphicon-minus',
-	                expanderCollapsedClass: 'glyphicon glyphicon-plus'
-	            });
-	    		triggerFieldMapTableSelection('studyTree');
+	    		if (parseInt(data.size) > 1) {
+		    		clearStudyTree();
+		    		createStudyTree($.parseJSON(data.fieldMapInfo), true);
+		    		$('.tree').treegrid({
+		                expanderExpandedClass: 'glyphicon glyphicon-minus',
+		                expanderCollapsedClass: 'glyphicon glyphicon-plus'
+		            });
+		    		triggerFieldMapTableSelection('studyTree');
+	    		} else {
+	    			//redirect to step 3
+	    			var fieldMapInfo = $.parseJSON(data.fieldMapInfo);
+	    			var datasetId = fieldMapInfo.datasets[0].datasetId;
+	    			var geolocationId = fieldMapInfo.datasets[0].trialInstances[0].geolocationId;	    			
+	    			location.href = "/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/" + datasetId + "/" + geolocationId;
+	    		}
 	    	}
             Spinner.toggle();
         }
@@ -194,4 +203,14 @@ function createRow(id, parentClass, value, realId, parentId) {
 		}
 	}
 	$("#studyTree").append(newRow+newCell+"</tr>");
+}
+
+function clearStudyTree() {
+	$("#studyTree tbody").empty();
+}
+
+function showMessage(message) {
+	$("#page-message").html(
+		    "<div class='alert alert-danger'>"+ message +"</div>"
+	);
 }

@@ -176,12 +176,6 @@ function checkStartingCoordinates() {
 	return false;
 }
 
-function showMessage(message) {
-	$("#page-message").html(
-		    "<div class='alert alert-danger'>"+ message +"</div>"
-	);
-}
-
 function checkRemainingPlots() {
 	var startingCol = $('#'+getJquerySafeId("userFieldmap.startingColumn")).val();
 	var startingRange = $('#'+getJquerySafeId("userFieldmap.startingRange")).val();

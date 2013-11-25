@@ -8,7 +8,12 @@
 	         			<button id="closeSelectTrialInstanceModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 	         		</div>
 	         		<br/><br/>
-	         		
+	         		<div id="page-message">
+	         		</div>
+	         		<div>
+	         			<label class="control-label" th:text="#{fieldmap.select.trial.instance}+':'">Select a Trial Instance:</label>
+	         			<br/>
+	         		</div>
 	         		<table class="table tree table-bordered" id="studyTree" style="margin-left:5px;">
 						<thead>
 							<tr>
@@ -35,7 +40,19 @@
 	<script type="text/javascript" th:src="@{/static/js/jquery.treegrid.bootstrap3.js}"></script>		
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    
+        var noSelectedTrialInstance = /*[[#{fieldmap.no.selected.trial.instance}]]*/;
+        
 		var trial = true;
+		
+		function viewFieldMap() {
+			if ($('#studyTree .field-map-highlight').attr('id')) {
+				$("#selectTrialInstanceModal").modal("toggle");
+				var id = $('#studyTree .field-map-highlight').attr('id').split("|");
+				location.href = "/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/" + id[1] + "/" + id[0];
+			} else {
+				showMessage(noSelectedTrialInstance);
+			}
+		}
     //]]>
     </script>
 </div>

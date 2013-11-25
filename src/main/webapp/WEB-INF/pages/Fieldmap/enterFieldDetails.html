@@ -200,12 +200,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		
 		var fieldMapInfo = /*[[${fieldmapForm.userFieldmap.fieldMapInfo}]]*/;
 		
-		createStudyTree(fieldMapInfo);
-		$('.tree').treegrid({
-            expanderExpandedClass: 'glyphicon glyphicon-minus',
-            expanderCollapsedClass: 'glyphicon glyphicon-plus'
-        });
-		triggerFieldMapTableSelection('studyTree');
+		createStudyTree(fieldMapInfo, false);
 	});
   	
   

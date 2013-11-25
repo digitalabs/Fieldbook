@@ -18,6 +18,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.DatasetReference;
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
@@ -142,8 +143,33 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         }
         System.out.println("NAVIGAGE TO --- " + nav);
         result.put("nav", nav);
+        System.out.println(userFieldmap.getFieldMapInfo().getFieldbookName());
         return result;
         //go to step 1
+    }
+    
+    @ResponseBody
+    @RequestMapping(value="/selectTrialInstance/{id}", method = RequestMethod.GET)
+    public Map<String, String> getFieldMapInfoData(@PathVariable String id) {
+        Map<String, String> result = new HashMap<String, String>();
+        System.out.println(userFieldmap.getFieldMapInfo().getFieldbookName());
+        FieldMapInfo fieldMapInfo = userFieldmap.getFieldMapInfo();
+        System.out.println(userFieldmap.getFieldMapInfo().getFieldbookName());
+        String fieldMapInfoJson = convertFieldMapInfoToJson(fieldMapInfo);
+        result.put("fieldMapInfo", fieldMapInfoJson);
+        return result;
+    } 
+    
+    private String convertFieldMapInfoToJson(FieldMapInfo fieldMapInfo) {
+        if (fieldMapInfo!= null) {
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                return mapper.writeValueAsString(fieldMapInfo);
+            } catch(Exception e) {
+                LOG.error(e.getMessage(), e);
+            }
+        }
+        return "";
     }
    
     /**

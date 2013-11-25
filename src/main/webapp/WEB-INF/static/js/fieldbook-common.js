@@ -72,7 +72,7 @@ function checkTrialOptions(id){
 	});
 }
 
-function proceedToCreateFieldMap(id) {
+function proceedToCreateFieldMap() {
 	$('#manageTrialConfirmation').modal('hide');
 	var fieldMapHref = $('#fieldmap-url').attr("href");	
 	location.href = fieldMapHref + "/" + $("#fieldmapStudyId").val();

@@ -11,9 +11,13 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.fieldmap.controller;
 
+import java.util.Arrays;
+
 import javax.annotation.Resource;
 
+import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
+import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
@@ -70,8 +74,21 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController{
     }
 
     private FieldMapInfo createFieldMapInfo() {
+        FieldMapTrialInstanceInfo trialInfo = new FieldMapTrialInstanceInfo();
+        trialInfo.setGeolocationId(userFieldMap.getSelectedGeolocationId());
+        trialInfo.setBlockName(userFieldMap.getBlockName());
+        trialInfo.setColumnsInBlock(userFieldMap.getNumberOfColumnsInBlock());
+        trialInfo.setRangesInBlock(userFieldMap.getNumberOfRangesInBlock());
+        trialInfo.setPlantingOrder(userFieldMap.getPlantingOrder());
+        trialInfo.setFieldMapLabels(userFieldMap.getFieldMapLabels());
+
+        FieldMapDatasetInfo datasetInfo = new FieldMapDatasetInfo();
+        datasetInfo.setDatasetId(userFieldMap.getSelectedDatasetId());
+        datasetInfo.setTrialInstances(Arrays.asList(trialInfo));
+
         FieldMapInfo info = new FieldMapInfo(); 
         info.setFieldbookId(userFieldMap.getStudyId());
+        info.setDatasets(Arrays.asList(datasetInfo));
         /*
         info.setBlockName(userFieldMap.getBlockName());
         info.setColumnsInBlock(userFieldMap.getNumberOfColumnsInBlock());
@@ -79,6 +96,7 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController{
         info.setPlantingOrder(userFieldMap.getPlantingOrder());
         info.setFieldMapLabels(userFieldMap.getFieldMapLabels());
         */
+        
         return info;
     }
 }

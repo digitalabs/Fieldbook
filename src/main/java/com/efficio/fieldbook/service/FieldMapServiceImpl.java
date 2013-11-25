@@ -221,7 +221,7 @@ public class FieldMapServiceImpl implements FieldMapService{
                     plot.setUpward(false);
                 }
                 plot.setDisplayString(getDisplayString(label, info.isTrial(), info.getSelectedName()));
-                plot.setNotStarted(false);
+                plot.setNotStarted(true);
             }
             else {
                 throw new MiddlewareQueryException("The Column/Range of the Field Map exceeded the Total Columns/Ranges");
@@ -261,7 +261,7 @@ public class FieldMapServiceImpl implements FieldMapService{
                 }
             }
         }
-        info.setStartingColumn(startColumn);
-        info.setStartingRange(startRange);
+        info.setStartingColumn(startColumn+1);
+        info.setStartingRange(startRange+1);
     }
 }

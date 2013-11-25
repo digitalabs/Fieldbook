@@ -82,6 +82,20 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         //}
         return super.show(model);
     }
+    
+    @RequestMapping(value="/viewFieldmap", method = RequestMethod.GET)
+    public String viewFieldmap(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model) {
+        
+        try {
+            populateFormWithSessionData(form);
+            this.userFieldMap.setFieldmap(fieldmapService.generateFieldmap(this.userFieldMap));
+            form.setUserFieldmap(this.userFieldMap);
+        } catch(MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        return super.show(model);
+    }
+    
     @ResponseBody
     @RequestMapping(value="/exportExcel", method = RequestMethod.GET)
     public String exportExcel(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model, HttpServletResponse response) {

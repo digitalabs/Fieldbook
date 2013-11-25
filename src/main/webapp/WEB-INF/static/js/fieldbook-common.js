@@ -62,7 +62,7 @@ function checkTrialOptions(id){
 	    		location.href = fieldMapHref + "/" + id;
 	    	}
 	    	else if (data.nav == '3') {
-	    		location.href = "/Fieldbook/Fieldmap/generateFieldmapView";
+	    		location.href = "/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap";
 	    	}
 	    	
             Spinner.toggle();

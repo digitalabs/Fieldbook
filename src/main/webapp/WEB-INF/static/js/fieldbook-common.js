@@ -132,7 +132,6 @@ function selectTrialInstance() {
 		            });
 		    		triggerFieldMapTableSelection('studyTree');
 	    		} else {
-	    			
 	    			//redirect to step 3
 	    			var fieldMapInfo = $.parseJSON(data.fieldMapInfo);
 	    			var datasetId = fieldMapInfo.datasets[0].datasetId;
@@ -210,9 +209,8 @@ function clearStudyTree() {
 	$("#studyTree tbody").empty();
 }
 
-function viewFieldMap() {
-	$("#selectTrialInstanceModal").modal("toggle");
-	var id = $('#studyTree .field-map-highlight').attr('id').split("|");
-	
-	location.href = "/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/" + id[1] + "/" + id[0];
+function showMessage(message) {
+	$("#page-message").html(
+		    "<div class='alert alert-danger'>"+ message +"</div>"
+	);
 }

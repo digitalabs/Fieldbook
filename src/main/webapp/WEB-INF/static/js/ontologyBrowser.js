@@ -527,12 +527,6 @@ function hideSuccessMessage(){
 	$('#page-message .alert-success').fadeOut(1000);
 }
 
-function showMessage(message) {
-	$("#page-message").html(
-		    "<div class='alert alert-danger'>"+ message +"</div>"
-	);
-}
-
 //check if any of the required fields is empty
 function requiredFieldsEmpty() {
 	return $("#variableName").val() == "" || $("#dataType").val() == "" || $("#role").val() == "" || 

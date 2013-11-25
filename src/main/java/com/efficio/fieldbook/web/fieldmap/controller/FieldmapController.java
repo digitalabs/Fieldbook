@@ -11,13 +11,17 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.fieldmap.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import org.generationcp.middleware.domain.dms.DatasetReference;
+import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
+import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -30,7 +34,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.efficio.fieldbook.service.api.FieldMapService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
@@ -58,6 +64,9 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     @Resource
     private FieldbookService fieldbookMiddlewareService;
     
+    @Resource
+    private FieldMapService fieldmapService;
+    
     /**
      * Gets the data types.
      *
@@ -84,6 +93,49 @@ public class FieldmapController extends AbstractBaseFieldbookController{
 
         return null;
     }
+    
+    @ResponseBody
+    @RequestMapping(value="/createFieldmap/{id}", method = RequestMethod.GET)
+    public Map<String, String> determineFieldMapNavigation(@PathVariable String id, Model model, HttpSession session) {
+        
+        session.invalidate();
+        Map<String, String> result = new HashMap<String, String>();
+        
+        String nav = "1";
+        try {
+            FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfTrial(Integer.parseInt(id));
+            
+            this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, true);
+            
+            List<FieldMapDatasetInfo> datasetList = fieldMapInfo.getDatasetsWithFieldMap();
+            if (datasetList != null && !datasetList.isEmpty()) {
+                int datasetId = datasetList.get(0).getDatasetId();
+                List<FieldMapTrialInstanceInfo> trials = datasetList.get(0).getTrialInstancesWithFieldMap();
+                if (trials != null && !trials.isEmpty()) {
+                    if (trials.size() > 1) {
+                        nav = "0";
+                    }
+                    else {
+                        int trialId = trials.get(0).getGeolocationId();
+                        this.userFieldmap.setSelectedDatasetId(datasetId);
+                        this.userFieldmap.setSelectedGeolocationId(trialId);
+                        System.out.println("dataset " + datasetId + ", trial instance " + trialId);
+                        this.userFieldmap.setNumberOfRangesInBlock(fieldMapInfo.getDataSet(datasetId).getTrialInstance(trialId).getRangesInBlock());
+                        this.userFieldmap.setNumberOfColumnsInBlock(fieldMapInfo.getDataSet(datasetId).getTrialInstance(trialId).getColumnsInBlock());
+                        this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, true);
+                        nav = "3"; 
+                        //go to step 3 and display the field map 
+                    }
+                }
+            }
+        } catch(MiddlewareQueryException e) {
+            
+        }
+        System.out.println("NAVIGAGE TO --- " + nav);
+        result.put("nav", nav);
+        return result;
+        //go to step 1
+    }
    
     /**
      * Show trial.
@@ -98,11 +150,23 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     public String showTrial(@ModelAttribute("fieldmapForm") FieldmapForm form, 
             @PathVariable String id, 
             Model model, HttpSession session) {
-        session.invalidate();
+        //session.invalidate();
+  System.out.println("inside show trial1!!!!!!");      
+/*        
+        try {
+            
+            Plot[][] plots = fieldmapService.generateFieldmap(userFieldMap);
+            userFieldMap.setFieldmap(plots);
+            form.setUserFieldmap(userFieldMap);
+        
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+*/
         
         try {
             //TODO: GET FROM FORM
-            List<DatasetReference> datasets = fieldbookMiddlewareService.getDatasetReferences(Integer.parseInt(id));
+/*            List<DatasetReference> datasets = fieldbookMiddlewareService.getDatasetReferences(Integer.parseInt(id));
             if (Integer.parseInt(id) < 0) {
                 userFieldmap.setSelectedDatasetId(datasets.get(0).getId());
             } else {
@@ -113,12 +177,17 @@ public class FieldmapController extends AbstractBaseFieldbookController{
             FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfTrial(Integer.parseInt(id));
             
             this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, true);
+*/
+            /*
+            this.userFieldmap = new UserFieldmap();
+            this.userFieldmap.setNumberOfRowsPerPlot(2);
+            */
+            form.setUserFieldmap(userFieldmap);
             
-            form.setUserFieldmap(userFieldmap);    
         } catch (NumberFormatException e) {
             LOG.error(e.toString());
-        } catch (MiddlewareQueryException e) {
-            LOG.error(e.toString());
+        //} catch (MiddlewareQueryException e) {
+        //    LOG.error(e.toString());
         }
         
        
@@ -172,9 +241,6 @@ public class FieldmapController extends AbstractBaseFieldbookController{
      */
     @RequestMapping(method = RequestMethod.POST)
     public String submitDetails(@ModelAttribute("fieldmapForm") FieldmapForm form, BindingResult result, Model model) {
-        
-        //if fieldmap already exists, forward to GenerateFieldmapController with the fieldmap data. (populate userFieldMap)
-        //otherwise, redirect to PlantingDetailsController
         
         setUserFieldMapDetails(form);
         return "redirect:" + PlantingDetailsController.URL;

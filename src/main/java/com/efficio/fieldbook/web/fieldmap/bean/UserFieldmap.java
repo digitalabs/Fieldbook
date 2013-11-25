@@ -136,15 +136,16 @@ public class UserFieldmap  implements Serializable {
         setTotalNumberOfPlots(fieldMapInfo.getPlotCount());
         setFieldMapLabels(fieldMapInfo.getFieldMapLabels());
         */
-        
-        int datasetId = getSelectedDatasetId();
-        int trialInstanceId = getSelectedGeolocationId();
-        
-        FieldMapTrialInstanceInfo info = fieldMapInfo.getDataSet(datasetId).getTrialInstance(trialInstanceId);
-        setFieldMapLabels(info.getFieldMapLabels());
-        setNumberOfEntries(info.getEntryCount());
-        setNumberOfReps(info.getRepCount());
-        setTotalNumberOfPlots(info.getPlotCount());
+        if (getSelectedDatasetId() != null && getSelectedGeolocationId() != null) {
+            int datasetId = getSelectedDatasetId();
+            int trialInstanceId = getSelectedGeolocationId();
+            
+            FieldMapTrialInstanceInfo info = fieldMapInfo.getDataSet(datasetId).getTrialInstance(trialInstanceId);
+            setFieldMapLabels(info.getFieldMapLabels());
+            setNumberOfEntries(info.getEntryCount());
+            setNumberOfReps(info.getRepCount());
+            setTotalNumberOfPlots(info.getPlotCount());
+        }
         
         setTrial(isTrial);
         if(isTrial){
@@ -154,6 +155,7 @@ public class UserFieldmap  implements Serializable {
         }
         setStudyId(fieldMapInfo.getFieldbookId());
         setFieldMapInfo(fieldMapInfo);
+        
     }
     
     public FieldMapInfo getFieldMapInfo() {
@@ -425,6 +427,10 @@ public class UserFieldmap  implements Serializable {
         this.numberOfRowsInBlock = numberOfRowsInBlock;
     }
     
+    public void setNumberOfColumnsInBlock(int numberOfColumnsInBlock) {
+        this.numberOfRowsInBlock = numberOfColumnsInBlock * 2;
+    }
+
     /**
      * Gets the number of ranges in block.
      *

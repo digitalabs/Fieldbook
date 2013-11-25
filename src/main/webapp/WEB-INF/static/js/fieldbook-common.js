@@ -26,7 +26,12 @@ function createFieldMap(tableName){
 	if($('#'+tableName+' .field-map-highlight').attr('id') != null){
 		var id = $('#'+tableName+' .field-map-highlight').attr('id');
 //		console.log(fieldMapHref+id);
-		location.href=fieldMapHref+"/"+id;
+		if (tableName == 'trial-table') {
+			checkTrialOptions(id);
+		}
+		else {
+			location.href=fieldMapHref+"/"+id;
+		}
 //		$('#fieldmap-url').attr("href", fieldMapHref+id);
 //		$('#fieldmap-url').trigger('click');
 	}else{
@@ -35,9 +40,36 @@ function createFieldMap(tableName){
 			type='Nursery';
 		$('#page-create-field-map-message').html("<div class='alert alert-danger'>Please choose a "+type+"</div>");
 	}
-	
-	
 }
+
+function checkTrialOptions(id){
+	Spinner.toggle();
+	//var fieldMapHref = $('#fieldmap-url').attr("href");	
+	$.ajax({ 
+		url: "/Fieldbook/Fieldmap/enterFieldDetails/createFieldmap/" + id,
+	    type: "GET",
+	    data: "",
+	    success: function(data) {
+//        	$("#manageOntologyModal"+" .modal-content").empty().append(html);
+//            $('#manageOntologyModal').modal('show');
+//            $.fn.modal.Constructor.prototype.enforceFocus = function () {};
+	    	
+	    	if (data.nav == '0') {
+	    		//show popup
+	    	}
+	    	else if (data.nav == '1') {
+	    		var fieldMapHref = $('#fieldmap-url').attr("href");	
+	    		location.href = fieldMapHref + "/" + id;
+	    	}
+	    	else if (data.nav == '3') {
+	    		location.href = "/Fieldbook/Fieldmap/generateFieldmapView";
+	    	}
+	    	
+            Spinner.toggle();
+        }
+	});
+}
+
 function getJquerySafeId(fieldId){
 
     //return fieldId.replace(".", "\\.")

@@ -235,7 +235,9 @@ public class FieldMapServiceImpl implements FieldMapService{
     private void initializeFieldMapArray(Plot[][] plots, int totalColumns, int totalRanges) {
         for (int i = 0; i < totalColumns; i++) {
             for (int j = 0; j < totalRanges; j++) {
-                Plot plot = plots[i][j];
+                
+                Plot plot = new Plot(i, j, "");
+                plots[i][j] = plot;
                 plot.setNotStarted(true);
                 plot.setUpward(true);
             }

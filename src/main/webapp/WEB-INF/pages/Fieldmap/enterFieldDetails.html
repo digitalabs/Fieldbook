@@ -59,14 +59,14 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		<table class="table tree table-bordered" id="studyTree" style="margin-left:5px;">
 			<thead>
 				<tr th:if="*{userFieldmap.trial == true}">
-					<th></th>
-					<th th:text="#{fieldmap.trial.number.of.entries}"></th>
-					<th th:text="#{fieldmap.trial.number.of.reps}"></th>
-					<th th:text="#{fieldmap.trial.total.number.of.plots}"></th>
+					<th style="width:40%"></th>
+					<th style="width:20%" th:text="#{fieldmap.trial.number.of.entries}"></th>
+					<th style="width:20%" th:text="#{fieldmap.trial.number.of.reps}"></th>
+					<th style="width:20%" th:text="#{fieldmap.trial.total.number.of.plots}"></th>
 				</tr>
 				<tr th:if="*{userFieldmap.trial == false}">
-					<th></th>
-					<th th:text="#{fieldmap.trial.number.of.entries.and.plots}"></th>
+					<th style="width:60%"></th>
+					<th style="width:40%" th:text="#{fieldmap.trial.number.of.entries.and.plots}"></th>
 				</tr>
 			</thead>    
         </table>	

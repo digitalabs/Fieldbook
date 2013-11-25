@@ -1,0 +1,41 @@
+<div class="col-md-7" xmlns:th="http://www.thymeleaf.org">
+	<!-- Modal -->
+   	<div class="modal fade" id="selectTrialInstanceModal" role="dialog" aria-labelledby="selectTrialInstanceLabel" aria-hidden="true">
+		<div class="modal-dialog modal-large">
+	    	<div class="modal-content">
+	         	<div class="modal-body" id="selectTrialInstanceBody">
+	         		<div>
+	         			<button id="closeSelectTrialInstanceModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	         		</div>
+	         		<br/><br/>
+	         		
+	         		<table class="table tree table-bordered" id="studyTree" style="margin-left:5px;">
+						<thead>
+							<tr>
+								<th style="width:40%"></th>
+								<th style="width:20%" th:text="#{fieldmap.trial.number.of.entries}"></th>
+								<th style="width:20%" th:text="#{fieldmap.trial.number.of.reps}"></th>
+								<th style="width:20%" th:text="#{fieldmap.trial.total.number.of.plots}"></th>
+							</tr>
+						</thead>    
+						<tbody>
+						</tbody>
+			        </table>
+	         	</div>																							
+	       		<div class="modal-footer">    
+	       			<button type="button" class="btn btn-primary" onclick="javascript: viewFieldMap();" aria-hidden="true">OK</button>	
+       			</div>
+	     	</div><!-- /.modal-content -->
+   		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+</div>
+
+<div layout:fragment="page-script">
+	<script type="text/javascript" th:src="@{/static/js/jquery.treegrid.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/jquery.treegrid.bootstrap3.js}"></script>		
+	<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[    
+		var trial = true;
+    //]]>
+    </script>
+</div>

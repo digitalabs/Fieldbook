@@ -221,14 +221,14 @@ public class FieldMapServiceImpl implements FieldMapService{
                     plot.setUpward(false);
                 }
                 plot.setDisplayString(getDisplayString(label, info.isTrial(), info.getSelectedName()));
-                plot.setNotStarted(true);
+                plot.setNotStarted(false);
             }
             else {
                 throw new MiddlewareQueryException("The Column/Range of the Field Map exceeded the Total Columns/Ranges");
             }
         }
         
-        setOtherFieldMapInformation(info, plots, totalColumns, totalRanges);
+        setOtherFieldMapInformation(info, plots, totalColumns, totalRanges, isSerpentine);
         return plots;
     }
         
@@ -238,30 +238,63 @@ public class FieldMapServiceImpl implements FieldMapService{
                 
                 Plot plot = new Plot(i, j, "");
                 plots[i][j] = plot;
-                plot.setNotStarted(true);
+                plot.setNotStarted(false);
                 plot.setUpward(true);
             }
         }
     }
     
-    private void setOtherFieldMapInformation(UserFieldmap info, Plot[][] plots, int totalColumns, int totalRanges) {
+    private void setOtherFieldMapInformation(UserFieldmap info, Plot[][] plots, int totalColumns, int totalRanges, boolean isSerpentine) {
         int startColumn = 0;
         int startRange = 0;
         boolean isStarted = false;
+        List<String> possiblyDeletedCoordinates = new ArrayList<String>();
         for (int i = 0; i < totalColumns; i++) {
-            for (int j = 0; j < totalRanges; j++) {
-                Plot plot = plots[i][j];
-                if (!plot.isNotStarted() && startColumn == 0 && startRange == 0) {
-                    startColumn = i;
-                    startRange = j;
-                    isStarted = true;
+            if (isSerpentine && i % 2 == 1) {
+                for (int j = totalRanges - 1; j >= 0; j--) {
+                    isStarted = renderPlotCell(info, plots, i, j, isStarted, possiblyDeletedCoordinates);
                 }
-                else if (isStarted) {
-                    plot.setPlotDeleted(true);
+            }
+            else {
+                for (int j = 0; j < totalRanges; j++) {
+                    isStarted = renderPlotCell(info, plots, i, j, isStarted, possiblyDeletedCoordinates);
                 }
             }
         }
-        info.setStartingColumn(startColumn+1);
-        info.setStartingRange(startRange+1);
+    }
+    
+    private void markDeletedCoordinates(Plot[][] plots, List<String> deletedCoordinates) {
+        for (String deletedIndex : deletedCoordinates) {
+            String[] columnRange = deletedIndex.split("_");
+            int column = Integer.parseInt(columnRange[0]);
+            int range = Integer.parseInt(columnRange[1]);
+            plots[column][range].setPlotDeleted(true);
+            System.out.println("marking "+ column + ", " + range);
+        }
+    }
+    
+    private boolean renderPlotCell(UserFieldmap info, Plot[][] plots, int i, int j, boolean isStarted, List<String> possiblyDeletedCoordinates) {
+        Plot plot = plots[i][j];
+        if (plot.getDisplayString() != null && !plot.getDisplayString().isEmpty()) {
+            if (!isStarted) {
+                info.setStartingColumn(i - 1);
+                info.setStartingRange(j - 1);
+                isStarted = true;
+            }
+            if (!possiblyDeletedCoordinates.isEmpty()) {
+                markDeletedCoordinates(plots, possiblyDeletedCoordinates);
+                possiblyDeletedCoordinates.clear();
+            }
+        }
+        else {
+            if (isStarted) {
+                possiblyDeletedCoordinates.add(i + "_" + j);
+                //plot.setPlotDeleted(true);
+            }
+            else {
+                plot.setNotStarted(true);
+            }
+        }
+        return isStarted;
     }
 }

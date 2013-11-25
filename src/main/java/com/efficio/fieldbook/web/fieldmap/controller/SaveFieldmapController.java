@@ -42,7 +42,7 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController{
     public static final String URL = "/Fieldmap/saveFieldmap";
 
     @Resource
-    private UserFieldmap userFieldMap;
+    private UserFieldmap userFieldmap;
     
     @Resource
     private FieldbookService fieldbookMiddlewareService;
@@ -57,7 +57,7 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController{
     public String saveFieldMap(Model model) {
         
         try {
-            if (userFieldMap != null && userFieldMap.getFieldMapLabels() != null && !userFieldMap.getFieldMapLabels().isEmpty()) {
+            if (userFieldmap != null && userFieldmap.getFieldMapLabels() != null && !userFieldmap.getFieldMapLabels().isEmpty()) {
                 FieldMapInfo info = createFieldMapInfo();
                 fieldbookMiddlewareService.saveOrUpdateFieldmapProperties(info);
             }
@@ -65,7 +65,7 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController{
         } catch(MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }
-        if (userFieldMap.isTrial()) {
+        if (userFieldmap.isTrial()) {
             return "redirect:" + ManageTrialController.URL;
         }
         else {
@@ -75,20 +75,20 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController{
 
     private FieldMapInfo createFieldMapInfo() {
         FieldMapTrialInstanceInfo trialInfo = new FieldMapTrialInstanceInfo();
-        trialInfo.setGeolocationId(userFieldMap.getSelectedGeolocationId());
-        trialInfo.setBlockName(userFieldMap.getBlockName());
-        trialInfo.setColumnsInBlock(userFieldMap.getNumberOfColumnsInBlock());
-        trialInfo.setRangesInBlock(userFieldMap.getNumberOfRangesInBlock());
-        trialInfo.setPlantingOrder(userFieldMap.getPlantingOrder());
-        trialInfo.setFieldMapLabels(userFieldMap.getFieldMapLabels());
-        trialInfo.setRowsPerPlot(userFieldMap.getNumberOfRowsPerPlot());
+        trialInfo.setGeolocationId(userFieldmap.getSelectedGeolocationId());
+        trialInfo.setBlockName(userFieldmap.getBlockName());
+        trialInfo.setColumnsInBlock(userFieldmap.getNumberOfColumnsInBlock());
+        trialInfo.setRangesInBlock(userFieldmap.getNumberOfRangesInBlock());
+        trialInfo.setPlantingOrder(userFieldmap.getPlantingOrder());
+        trialInfo.setFieldMapLabels(userFieldmap.getFieldMapLabels());
+        trialInfo.setRowsPerPlot(userFieldmap.getNumberOfRowsPerPlot());
 
         FieldMapDatasetInfo datasetInfo = new FieldMapDatasetInfo();
-        datasetInfo.setDatasetId(userFieldMap.getSelectedDatasetId());
+        datasetInfo.setDatasetId(userFieldmap.getSelectedDatasetId());
         datasetInfo.setTrialInstances(Arrays.asList(trialInfo));
 
         FieldMapInfo info = new FieldMapInfo(); 
-        info.setFieldbookId(userFieldMap.getStudyId());
+        info.setFieldbookId(userFieldmap.getStudyId());
         info.setDatasets(Arrays.asList(datasetInfo));
         /*
         info.setBlockName(userFieldMap.getBlockName());

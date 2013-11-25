@@ -118,10 +118,8 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         } catch(MiddlewareQueryException e) {
             
         }
-        System.out.println("NAVIGAGE TO --- " + nav);
         result.put("nav", nav);
         return result;
-        //go to step 1
     }
     
     @ResponseBody
@@ -170,7 +168,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
             @PathVariable String id, 
             Model model, HttpSession session) {
         try {
-            form.setUserFieldmap(userFieldmap);    
+            form.setUserFieldmap(userFieldmap);
         } catch (NumberFormatException e) {
             LOG.error(e.toString());
         }
@@ -251,7 +249,8 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     private void setUserFieldMapDetails(FieldmapForm form) {
         this.userFieldmap.setSelectedDatasetId(form.getUserFieldmap().getSelectedDatasetId());
         this.userFieldmap.setSelectedGeolocationId(form.getUserFieldmap().getSelectedGeolocationId());
-        this.userFieldmap.setUserFieldmapInfo(userFieldmap.getFieldMapInfo(), form.getUserFieldmap().isTrial() ? true : false);
+        this.userFieldmap.setUserFieldmapInfo(userFieldmap.getFieldMapInfo(), this.userFieldmap.isTrial() ? true : false);
+        //this.userFieldmap.setUserFieldmapInfo(userFieldmap.getFieldMapInfo(), form.getUserFieldmap().isTrial() ? true : false);
         this.userFieldmap.setNumberOfEntries(form.getUserFieldmap().getNumberOfEntries());
         this.userFieldmap.setNumberOfReps(form.getUserFieldmap().getNumberOfReps());
         this.userFieldmap.setTotalNumberOfPlots(form.getUserFieldmap().getTotalNumberOfPlots());

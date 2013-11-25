@@ -37,11 +37,21 @@
 	            <h4 class="modal-title">Confirmation</h4>
 	          </div>
 	          <div class="modal-body">
-				<div><p th:text="#{fieldmap.confirmation.for.viewing.generated.fieldmap}">Do you wish to view the generated fieldmap(s)?</p></div>
+				<div class="row">
+					<div class="col-md-offset-1 col-md-11">
+						<p th:text="#{fieldmap.confirmation.for.viewing.generated.fieldmap}">Do you wish to view the generated fieldmap(s)?</p>
+					</div>
+				</div>
 				<br/>
-				<input type="hidden" id="fieldmapStudyId" name="fieldmapStudyId" />
-				<button type="button" class="btn btn-primary" th:value="#{common.form.yes.text}" onclick="javascript: proceedToCreateFieldMap();">No</button>			        	
-				<button type="button" class="btn btn-primary" th:value="#{common.form.no.text}" onclick="javascript: selectTrialInstance();">Yes</button>			        	
+				<div class="row">
+					<div class="col-md-offset-5 col-md-7">
+						<div class="form-group">
+							<input type="hidden" id="fieldmapStudyId" name="fieldmapStudyId" />
+							<button type="button" class="btn btn-danger btn-lg" th:value="#{common.form.yes.text}" onclick="javascript: proceedToCreateFieldMap();">No</button>			        	
+							<button type="button" class="btn btn-primary btn-lg" th:value="#{common.form.no.text}" onclick="javascript: selectTrialInstance();">Yes</button>
+						</div>
+					</div>
+				</div>			        	
 	          </div>
 	        </div>
 	      </div>

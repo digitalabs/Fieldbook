@@ -73,11 +73,13 @@ function checkTrialOptions(id){
 }
 
 function proceedToCreateFieldMap(id) {
+	$('#manageTrialConfirmation').modal('hide');
 	var fieldMapHref = $('#fieldmap-url').attr("href");	
 	location.href = fieldMapHref + "/" + $("#fieldmapStudyId").val();
 }
 
 function selectTrialInstance() {
+	$('#manageTrialConfirmation').modal('hide');
 	alert("select trial instance");
 }
 

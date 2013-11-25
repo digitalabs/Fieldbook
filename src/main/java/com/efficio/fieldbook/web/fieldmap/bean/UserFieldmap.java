@@ -427,8 +427,8 @@ public class UserFieldmap  implements Serializable {
         this.numberOfRowsInBlock = numberOfRowsInBlock;
     }
     
-    public void setNumberOfColumnsInBlock(int numberOfColumnsInBlock) {
-        this.numberOfRowsInBlock = numberOfColumnsInBlock * 2;
+    public void setNumberOfRowsInBlock(int numberOfColumnsInBlock, int rowsPerPlot) {
+        this.numberOfRowsInBlock = numberOfColumnsInBlock * rowsPerPlot;
     }
 
     /**

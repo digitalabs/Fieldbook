@@ -120,9 +120,13 @@ public class FieldmapController extends AbstractBaseFieldbookController{
                         this.userFieldmap.setSelectedDatasetId(datasetId);
                         this.userFieldmap.setSelectedGeolocationId(trialId);
                         System.out.println("dataset " + datasetId + ", trial instance " + trialId);
-                        this.userFieldmap.setNumberOfRangesInBlock(fieldMapInfo.getDataSet(datasetId).getTrialInstance(trialId).getRangesInBlock());
-                        this.userFieldmap.setNumberOfColumnsInBlock(fieldMapInfo.getDataSet(datasetId).getTrialInstance(trialId).getColumnsInBlock());
+                        FieldMapTrialInstanceInfo trialInfo = fieldMapInfo.getDataSet(datasetId).getTrialInstance(trialId); 
+                        this.userFieldmap.setNumberOfRangesInBlock(trialInfo.getRangesInBlock());
+                        this.userFieldmap.setNumberOfRowsInBlock(trialInfo.getColumnsInBlock(), trialInfo.getRowsPerPlot());
                         this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, true);
+                        this.userFieldmap.setNumberOfRowsPerPlot(trialInfo.getRowsPerPlot());
+                        this.userFieldmap.setPlantingOrder(trialInfo.getPlantingOrder());
+                        this.userFieldmap.setBlockName(trialInfo.getBlockName());
                         nav = "3"; 
                         //go to step 3 and display the field map 
                     }

@@ -28,6 +28,24 @@
 			  </ul>
 			</div>
 		</div>
+
+	    <div class="modal fade" id="manageTrialConfirmation" tabindex="-1" role="dialog" aria-labelledby="manageTrialConfirmationLabel" aria-hidden="true">
+	      <div class="modal-dialog modal-large" style="width:900px;">
+	        <div class="modal-content">
+	          <div class="modal-header">
+	            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	            <h4 class="modal-title">Confirmation</h4>
+	          </div>
+	          <div class="modal-body">
+				<div>Do you wish to view the generated fieldmap(s)?</div>
+				<input type="hidden" id="fieldmapStudyId" name="fieldmapStudyId" />
+				<button type="button" class="btn btn-primary" onclick="javascript: proceedToCreateFieldMap();">No</button>			        	
+				<button type="button" class="btn btn-primary" onclick="javascript: selectTrialInstance();">Yes</button>			        	
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+
 	</div>
 	<br/><br/>
 	<div id="trial-details-list" th:include="/TrialManager/showTrialPagination">

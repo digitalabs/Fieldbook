@@ -25,6 +25,8 @@ function createFieldMap(tableName){
 	var fieldMapHref = $('#fieldmap-url').attr("href");	
 	if($('#'+tableName+' .field-map-highlight').attr('id') != null){
 		var id = $('#'+tableName+' .field-map-highlight').attr('id');
+		$("#fieldmapStudyId").val(id);
+		
 //		console.log(fieldMapHref+id);
 		if (tableName == 'trial-table') {
 			checkTrialOptions(id);
@@ -44,7 +46,6 @@ function createFieldMap(tableName){
 
 function checkTrialOptions(id){
 	Spinner.toggle();
-	//var fieldMapHref = $('#fieldmap-url').attr("href");	
 	$.ajax({ 
 		url: "/Fieldbook/Fieldmap/enterFieldDetails/createFieldmap/" + id,
 	    type: "GET",
@@ -55,19 +56,29 @@ function checkTrialOptions(id){
 //            $.fn.modal.Constructor.prototype.enforceFocus = function () {};
 	    	
 	    	if (data.nav == '0') {
-	    		//show popup
+	    		//show confirmation popup
+	    		$('#manageTrialConfirmation').modal('show');
 	    	}
 	    	else if (data.nav == '1') {
 	    		var fieldMapHref = $('#fieldmap-url').attr("href");	
 	    		location.href = fieldMapHref + "/" + id;
 	    	}
-	    	else if (data.nav == '3') {
-	    		location.href = "/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap";
-	    	}
+//	    	else if (data.nav == '3') {
+//	    		location.href = "/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap";
+//	    	}
 	    	
             Spinner.toggle();
         }
 	});
+}
+
+function proceedToCreateFieldMap(id) {
+	var fieldMapHref = $('#fieldmap-url').attr("href");	
+	location.href = fieldMapHref + "/" + $("#fieldmapStudyId").val();
+}
+
+function selectTrialInstance() {
+	alert("select trial instance");
 }
 
 function getJquerySafeId(fieldId){

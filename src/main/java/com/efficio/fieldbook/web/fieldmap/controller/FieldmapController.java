@@ -112,6 +112,11 @@ public class FieldmapController extends AbstractBaseFieldbookController{
                 int datasetId = datasetList.get(0).getDatasetId();
                 List<FieldMapTrialInstanceInfo> trials = datasetList.get(0).getTrialInstancesWithFieldMap();
                 if (trials != null && !trials.isEmpty()) {
+                    //if (trials.size() > 0) {
+                        //open 1st popup
+                        nav = "0";
+                    //}
+                    /*
                     if (trials.size() > 1) {
                         nav = "0";
                     }
@@ -129,7 +134,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
                         this.userFieldmap.setBlockName(trialInfo.getBlockName());
                         nav = "3"; 
                         //go to step 3 and display the field map 
-                    }
+                    }*/
                 }
             }
         } catch(MiddlewareQueryException e) {

@@ -191,26 +191,41 @@ public class FieldmapController extends AbstractBaseFieldbookController{
             Model model, HttpSession session) {
         session.invalidate();
         
+        boolean goToStep3 = false;
+        StringBuilder step3Url = new StringBuilder(GenerateFieldmapController.URL).append("/");
         try {
             //TODO: GET FROM FORM
-            List<DatasetReference> datasets = fieldbookMiddlewareService.getDatasetReferences(Integer.parseInt(id));
-            if (Integer.parseInt(id) < 0) {
-                userFieldmap.setSelectedDatasetId(datasets.get(0).getId());
-            } else {
-                userFieldmap.setSelectedDatasetId(datasets.get(datasets.size()-1).getId());
-            }
-            userFieldmap.setSelectedGeolocationId(fieldbookMiddlewareService.getGeolocationId(Integer.parseInt(id)));
+//            List<DatasetReference> datasets = fieldbookMiddlewareService.getDatasetReferences(Integer.parseInt(id));
+//            if (Integer.parseInt(id) < 0) {
+//                userFieldmap.setSelectedDatasetId(datasets.get(0).getId());
+//            } else {
+//                userFieldmap.setSelectedDatasetId(datasets.get(datasets.size()-1).getId());
+//            }
+//            userFieldmap.setSelectedGeolocationId(fieldbookMiddlewareService.getGeolocationId(Integer.parseInt(id)));
             
             FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfNursery(Integer.parseInt(id));
+            if (!fieldMapInfo.getDatasetsWithFieldMap().isEmpty()) {
+                //go to step 3
+                FieldMapDatasetInfo dataset = fieldMapInfo.getDatasetsWithFieldMap().get(0);
+                this.userFieldmap.setSelectedDatasetId(dataset.getDatasetId());
+                this.userFieldmap.setSelectedGeolocationId(dataset.getTrialInstancesWithFieldMap().get(0).getGeolocationId());
+                step3Url.append("/viewFieldmap/")
+                    .append(this.userFieldmap.getSelectedDatasetId())
+                    .append("/").append(this.userFieldmap.getSelectedGeolocationId());
+                
+                goToStep3 = true;
+            }
+            
             this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, false);
             form.setUserFieldmap(userFieldmap);
+
         } catch (NumberFormatException e) {
             LOG.error(e.toString());
         } catch (MiddlewareQueryException e) {
             LOG.error(e.toString());
         }
                
-        return super.show(model);
+        return goToStep3 ? "redirect:" + step3Url.toString() : super.show(model);
     }
     
     /**

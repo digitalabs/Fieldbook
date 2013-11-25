@@ -269,7 +269,6 @@ public class FieldMapServiceImpl implements FieldMapService{
             int column = Integer.parseInt(columnRange[0]);
             int range = Integer.parseInt(columnRange[1]);
             plots[column][range].setPlotDeleted(true);
-            System.out.println("marking "+ column + ", " + range);
         }
     }
     
@@ -277,8 +276,8 @@ public class FieldMapServiceImpl implements FieldMapService{
         Plot plot = plots[i][j];
         if (plot.getDisplayString() != null && !plot.getDisplayString().isEmpty()) {
             if (!isStarted) {
-                info.setStartingColumn(i - 1);
-                info.setStartingRange(j - 1);
+                info.setStartingColumn(i + 1);
+                info.setStartingRange(j + 1);
                 isStarted = true;
             }
             if (!possiblyDeletedCoordinates.isEmpty()) {

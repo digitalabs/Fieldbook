@@ -130,12 +130,6 @@ public class UserFieldmap  implements Serializable {
      */
     public void setUserFieldmapInfo(FieldMapInfo fieldMapInfo, boolean isTrial){
         setSelectedName(fieldMapInfo.getFieldbookName());
-        /*
-        setNumberOfEntries(fieldMapInfo.getEntryCount());
-        setNumberOfReps(fieldMapInfo.getRepCount());
-        setTotalNumberOfPlots(fieldMapInfo.getPlotCount());
-        setFieldMapLabels(fieldMapInfo.getFieldMapLabels());
-        */
         if (getSelectedDatasetId() != null && getSelectedGeolocationId() != null) {
             int datasetId = getSelectedDatasetId();
             int trialInstanceId = getSelectedGeolocationId();

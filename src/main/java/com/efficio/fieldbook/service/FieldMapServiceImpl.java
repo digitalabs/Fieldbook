@@ -194,20 +194,22 @@ public class FieldMapServiceImpl implements FieldMapService{
         List<FieldMapLabel> labels = info.getFieldMapLabels();
         initializeFieldMapArray(plots, totalColumns, totalRanges);
         for (FieldMapLabel label : labels) {
-            int column = label.getColumn();
-            int range = label.getRange();
-            if (column <= totalColumns && range <= totalRanges) {
-                Plot plot = plots[column-1][range-1];
-                plot.setColumn(column);
-                plot.setRange(range);
-                if (isSerpentine && column % 2 == 0) {
-                    plot.setUpward(false);
+            if (label.getColumn() != null && label.getRange() != null) {
+                int column = label.getColumn();
+                int range = label.getRange();
+                if (column <= totalColumns && range <= totalRanges) {
+                    Plot plot = plots[column-1][range-1];
+                    plot.setColumn(column);
+                    plot.setRange(range);
+                    if (isSerpentine && column % 2 == 0) {
+                        plot.setUpward(false);
+                    }
+                    plot.setDisplayString(getDisplayString(label, info.isTrial(), info.getSelectedName()));
+                    plot.setNotStarted(false);
                 }
-                plot.setDisplayString(getDisplayString(label, info.isTrial(), info.getSelectedName()));
-                plot.setNotStarted(false);
-            }
-            else {
-                throw new MiddlewareQueryException("The Column/Range of the Field Map exceeded the Total Columns/Ranges");
+                else {
+                    throw new MiddlewareQueryException("The Column/Range of the Field Map exceeded the Total Columns/Ranges");
+                }
             }
         }
         

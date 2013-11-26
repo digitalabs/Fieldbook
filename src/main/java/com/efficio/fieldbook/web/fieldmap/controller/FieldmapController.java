@@ -195,6 +195,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
             }
         } catch(MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
+            e.printStackTrace();
         }
         result.put("nav", nav);
         return result;

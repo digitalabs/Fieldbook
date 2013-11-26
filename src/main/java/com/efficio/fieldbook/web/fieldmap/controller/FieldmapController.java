@@ -171,6 +171,35 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         return super.show(model);
     }
     
+    @ResponseBody
+    @RequestMapping(value="/createNurseryFieldmap/{id}", method = RequestMethod.GET)
+    public Map<String, String> determineNurseryFieldMapNavigation(@PathVariable String id, HttpSession session) {
+        
+        session.invalidate();
+        Map<String, String> result = new HashMap<String, String>();
+        
+        String nav = "1";
+        try {
+            FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfNursery(Integer.parseInt(id));
+            
+            this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, false);
+            
+            List<FieldMapDatasetInfo> datasetList = fieldMapInfo.getDatasetsWithFieldMap();
+            if (datasetList != null && !datasetList.isEmpty()) {
+                FieldMapDatasetInfo dataset = datasetList.get(0);
+                nav = "0";
+                this.userFieldmap.setSelectedDatasetId(dataset.getDatasetId());
+                this.userFieldmap.setSelectedGeolocationId(dataset.getTrialInstancesWithFieldMap().get(0).getGeolocationId());
+                result.put("datasetId", this.userFieldmap.getSelectedDatasetId().toString());
+                result.put("geolocationId", this.userFieldmap.getSelectedGeolocationId().toString());
+            }
+        } catch(MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        result.put("nav", nav);
+        return result;
+    }
+
     /**
      * Show nursery.
      *
@@ -184,35 +213,14 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     public String showNursery(@ModelAttribute("fieldmapForm") FieldmapForm form, 
             @PathVariable String id, 
             Model model, HttpSession session) {
-        session.invalidate();
-        
-        boolean goToStep3 = false;
-        StringBuilder step3Url = new StringBuilder(GenerateFieldmapController.URL).append("/");
         try {
-            
-            FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfNursery(Integer.parseInt(id));
-            if (!fieldMapInfo.getDatasetsWithFieldMap().isEmpty()) {
-                //go to step 3
-                FieldMapDatasetInfo dataset = fieldMapInfo.getDatasetsWithFieldMap().get(0);
-                this.userFieldmap.setSelectedDatasetId(dataset.getDatasetId());
-                this.userFieldmap.setSelectedGeolocationId(dataset.getTrialInstancesWithFieldMap().get(0).getGeolocationId());
-                step3Url.append("/viewFieldmap/")
-                    .append(this.userFieldmap.getSelectedDatasetId())
-                    .append("/").append(this.userFieldmap.getSelectedGeolocationId());
-                
-                goToStep3 = true;
-            }
-            
-            this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, false);
             form.setUserFieldmap(userFieldmap);
 
         } catch (NumberFormatException e) {
             LOG.error(e.toString());
-        } catch (MiddlewareQueryException e) {
-            LOG.error(e.toString());
         }
-               
-        return goToStep3 ? "redirect:" + step3Url.toString() : super.show(model);
+        
+        return super.show(model);
     }
     
     /**

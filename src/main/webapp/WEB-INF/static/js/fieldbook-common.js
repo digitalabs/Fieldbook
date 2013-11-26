@@ -32,7 +32,8 @@ function createFieldMap(tableName){
 			checkTrialOptions(id);
 		}
 		else {
-			location.href=fieldMapHref+"/"+id;
+			//location.href=fieldMapHref+"/"+id;
+			createNurseryFieldmap(id);
 		}
 //		$('#fieldmap-url').attr("href", fieldMapHref+id);
 //		$('#fieldmap-url').trigger('click');
@@ -51,12 +52,7 @@ function checkTrialOptions(id){
 	    type: "GET",
 	    data: "",
 	    success: function(data) {
-//        	$("#manageOntologyModal"+" .modal-content").empty().append(html);
-//            $('#manageOntologyModal').modal('show');
-//            $.fn.modal.Constructor.prototype.enforceFocus = function () {};
-	    	
 	    	if (data.nav == '0') {
-	    		//show confirmation popup
 	    		$('#manageTrialConfirmation').modal('show');
 	    	}
 	    	else if (data.nav == '1') {
@@ -72,10 +68,37 @@ function checkTrialOptions(id){
 	});
 }
 
+function createNurseryFieldmap(id) {
+	Spinner.toggle();
+	$.ajax({ 
+		url: "/Fieldbook/Fieldmap/enterFieldDetails/createNurseryFieldmap/" + id,
+	    type: "GET",
+	    data: "",
+	    success: function(data) {
+	    	if (data.nav == '0') {
+	    		$('#manageTrialConfirmation').modal('show');
+	    		$("#fieldmapDatasetId").val(data.datasetId);
+	    		$("#fieldmapGeolocationId").val(data.geolocationId);
+	    	}
+	    	else if (data.nav == '1') {
+	    		var fieldMapHref = $('#fieldmap-url').attr("href");	
+	    		location.href = fieldMapHref + "/" + id;
+	    	}
+            Spinner.toggle();
+        }
+	});
+}
+
 function proceedToCreateFieldMap() {
 	$('#manageTrialConfirmation').modal('hide');
 	var fieldMapHref = $('#fieldmap-url').attr("href");	
 	location.href = fieldMapHref + "/" + $("#fieldmapStudyId").val();
+}
+
+function proceedToGenerateFieldMap() {
+	$('#manageTrialConfirmation').modal('hide');
+	location.href = "/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/" 
+		+ $("#fieldmapDatasetId").val() + "/" + $("#fieldmapGeolocationId").val();
 }
 
 function getJquerySafeId(fieldId){

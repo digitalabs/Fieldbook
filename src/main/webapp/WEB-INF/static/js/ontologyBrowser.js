@@ -1213,7 +1213,11 @@ function delCatVar(button) {
 	
 	//get the index of the deleted label and remove it from the enumerations object
 	var index = findIndexOfEnumeration(enumerations, name, "name");
-	enumerations[index].operation = "-1";  
+	if (enumerations[index].id == null || enumerations[index].id == "") {
+		enumerations.splice(index, 1);
+	} else {
+		enumerations[index].operation = "-1";
+	}
 	
 	//remove the row
 	button.closest("tr").remove();

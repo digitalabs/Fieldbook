@@ -54,6 +54,7 @@ td.validValueDesc {
 #field-map td.plot{
 	text-align:center;
 	vertical-align: middle;
+	word-wrap: break-word;
 }
 #field-map td.plot label {
 	padding: 3px;

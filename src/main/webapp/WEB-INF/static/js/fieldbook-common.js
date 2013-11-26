@@ -154,6 +154,7 @@ function selectTrialInstance() {
 		                expanderCollapsedClass: 'glyphicon glyphicon-plus'
 		            });
 		    		triggerFieldMapTableSelection('studyTree');
+		    		$("#selectTrialInstanceModal").modal("toggle");
 	    		} else {
 	    			//redirect to step 3
 	    			var fieldMapInfo = $.parseJSON(data.fieldMapInfo);
@@ -165,7 +166,6 @@ function selectTrialInstance() {
             Spinner.toggle();
         }
 	});
-	$("#selectTrialInstanceModal").modal("toggle");
 }
 
 function createStudyTree(fieldMapInfo, hasFieldMap) {

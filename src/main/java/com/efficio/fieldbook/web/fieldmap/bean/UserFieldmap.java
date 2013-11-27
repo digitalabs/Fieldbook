@@ -15,6 +15,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
 
+import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
@@ -104,6 +105,8 @@ public class UserFieldmap  implements Serializable {
     private String locationName;
     
     private FieldMapInfo fieldMapInfo;
+    
+    private List<FieldMapInfo> selectedFieldMaps;
 
     /**
      * Instantiates a new user fieldmap.
@@ -622,4 +625,33 @@ public class UserFieldmap  implements Serializable {
         this.selectedGeolocationId = selectedGeolocationId;
     }
 
+    
+    /**
+     * @return the selectedFieldMaps
+     */
+    public List<FieldMapInfo> getSelectedFieldMaps() {
+        return selectedFieldMaps;
+    }
+
+    
+    /**
+     * @param selectedFieldMaps the selectedFieldMaps to set
+     */
+    public void setSelectedFieldMaps(List<FieldMapInfo> selectedFieldMaps) {
+        this.selectedFieldMaps = selectedFieldMaps;
+    }
+
+    public long getTotalNumberOfSelectedPlots() {
+        long total = 0;
+        
+        for (FieldMapInfo info : getSelectedFieldMaps()) {
+            for (FieldMapDatasetInfo dataset : info.getDatasets()) {
+                for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
+                    total += trial.getPlotCount();
+                }
+            }
+        }
+        
+        return total;
+    }
 }

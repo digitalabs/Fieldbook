@@ -233,4 +233,11 @@
 	</bean>
 	
 
+	<bean id="externalToolInfo" class="com.efficio.fieldbook.web.util.ExternalToolInfo">	
+   		<property name="currentUserId" value="${workbench.currentUserId}"/>
+   		<property name="oldFieldbookPath" value="${old.fb.tool.path}"/>   			
+	</bean>	
+    
+    
+    
 </beans>

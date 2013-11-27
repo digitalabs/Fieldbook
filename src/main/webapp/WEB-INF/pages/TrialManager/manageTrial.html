@@ -12,7 +12,8 @@
 	
 		<div class="col-md-11">			
 			 
-			<a href="/TrialManager/fileUpload.html" th:href="@{/TrialManager/fileUpload}" th:text="#{trial.managetrial.make.new.trial}">New Trial</a>
+<!-- 			<a href="/TrialManager/fileUpload.html" th:href="@{/TrialManager/fileUpload}" th:text="#{trial.managetrial.make.new.trial}">New Trial</a> -->
+			<button type="button" class="btn btn-link" id="make-trial" th:value="@{/TrialManager/fileUpload}"  th:text="#{trial.managetrial.make.new.trial}">New Trial</button>
 			
 		</div>
 		<div class="col-md-1">
@@ -96,7 +97,19 @@
 			$('#trialDetailsListPagination').bootstrapPaginator(options);	
 		}
         
-
+        $('#make-trial').on('click', function(){
+     		Spinner.toggle();
+     		$.ajax(
+   		         { url: $(this).val(),
+   		           type: "GET",
+   		           data: "",
+   		           success: function(html) {
+   		        	Spinner.toggle();
+   		               
+   		           }
+   		         }
+   		       );
+     	});
         
       //]]>
     </script>

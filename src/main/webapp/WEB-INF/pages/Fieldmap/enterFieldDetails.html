@@ -193,14 +193,11 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
     
     
 
-	$( document ).ready(function() {  	     
-										   
+	$( document ).ready(function() {
+		var fieldMapInfo = /*[[${fieldmapForm.userFieldmap.fieldMapInfo}]]*/;
+		createStudyTree(fieldMapInfo, false);								   
 		initializeLocationSelect2(locationSuggestions, locationSuggestions_obj); 
 		$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val(defaultRowsPerPlot);
-		
-		var fieldMapInfo = /*[[${fieldmapForm.userFieldmap.fieldMapInfo}]]*/;
-		
-		createStudyTree(fieldMapInfo, false);
 	});
   	
   

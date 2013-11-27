@@ -32,5 +32,21 @@ public class AppConstants {
     
     public static final int PLANTING_ORDER_ROW_COLUMN = 1;
     public static final int PLANTING_ORDER_SERPENTINE = 2;
+    
+    public static final int SIZE_OF_PAPER_A4 = 1;
+    public static final int SIZE_OF_PAPER_LETTER = 2;
 
+    
+    public static final int AVAILABLE_LABEL_FIELDS_ENTRY_NUM = 1;
+    public static final int AVAILABLE_LABEL_FIELDS_GID = 2;
+    public static final int AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME = 3;
+    public static final int AVAILABLE_LABEL_FIELDS_YEAR = 4;
+    public static final int AVAILABLE_LABEL_FIELDS_SEASON = 5;
+    public static final int AVAILABLE_LABEL_FIELDS_TRIAL_NAME = 6;
+    public static final int AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM = 7;
+    public static final int AVAILABLE_LABEL_FIELDS_REP= 8;
+    public static final int AVAILABLE_LABEL_FIELDS_LOCATION = 9;
+    public static final int AVAILABLE_LABEL_FIELDS_BLOCK_NAME = 10;
+    public static final int AVAILABLE_LABEL_FIELDS_PLOT = 11;
+    public static final int AVAILABLE_LABEL_FIELDS_NURSERY_NAME = 12;
 }

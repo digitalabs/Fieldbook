@@ -11,6 +11,12 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.label.printing.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -21,7 +27,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
+import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.label.printing.form.LabelPrintingForm;
+import com.efficio.fieldbook.web.nursery.bean.UserSelection;
+import com.efficio.fieldbook.web.util.AppConstants;
 
 
 @Controller
@@ -34,19 +44,68 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     /** The Constant URL. */
     public static final String URL = "/LabelPrinting/specifyLabelDetails";
     
+    @Resource
+    private UserLabelPrinting userLabelPrinting;    
+    
     @RequestMapping(value="/trial/{id}", method = RequestMethod.GET)
-    public String showTrialLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, Model model) {
+    public String showTrialLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, Model model, HttpSession session) {
+        session.invalidate();
+        getUserLabelPrinting().setName("test");
+        getUserLabelPrinting().setTitle("title");
+        getUserLabelPrinting().setObjective("Objective");
+        getUserLabelPrinting().setTotalNumberOfLabelToPrint("50");
+        getUserLabelPrinting().setSizeOfLabelSheet("A4");
+        getUserLabelPrinting().setNumberOfRowsPerPageOfLabel("10");
+        getUserLabelPrinting().setNumberOfLabelPerRow("3");
+        getUserLabelPrinting().setNumberOfInstances("2");
+        form.setUserLabelPrinting(getUserLabelPrinting());
+        
+        model.addAttribute("availableFields",getAvailableLabelFields(true, false));
+        
         form.setIsTrial(true);
         return super.show(model);
     }
     
     @RequestMapping(value="/nursery/{id}", method = RequestMethod.GET)
-    public String showNurseryLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, Model model) {
+    public String showNurseryLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, Model model, HttpSession session) {
+        session.invalidate();
+        getUserLabelPrinting().setName("test");
+        getUserLabelPrinting().setTitle("title");
+        getUserLabelPrinting().setObjective("Objective");
+        getUserLabelPrinting().setTotalNumberOfLabelToPrint("50");
+        getUserLabelPrinting().setSizeOfLabelSheet("A4");
+        getUserLabelPrinting().setNumberOfRowsPerPageOfLabel("10");
+        getUserLabelPrinting().setNumberOfLabelPerRow("3");
+        getUserLabelPrinting().setNumberOfInstances("2");
+        form.setUserLabelPrinting(getUserLabelPrinting());
+        model.addAttribute("availableFields", getAvailableLabelFields(false, false));
         form.setIsTrial(false);
         return super.show(model);
     }
     
-    
+    private List<LabelFields> getAvailableLabelFields(boolean isTrial, boolean isFromFieldMap){
+        List<LabelFields> labelFieldsList = new ArrayList();
+        
+        
+        labelFieldsList.add(new LabelFields("Entry #", AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM));
+        labelFieldsList.add(new LabelFields("GID", AppConstants.AVAILABLE_LABEL_FIELDS_GID));
+        labelFieldsList.add(new LabelFields("Germplasm Name", AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME));
+        labelFieldsList.add(new LabelFields("Year", AppConstants.AVAILABLE_LABEL_FIELDS_YEAR));
+        labelFieldsList.add(new LabelFields("Season", AppConstants.AVAILABLE_LABEL_FIELDS_SEASON));
+        if(isTrial){
+            labelFieldsList.add(new LabelFields("Trial Name", AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME));
+            labelFieldsList.add(new LabelFields("Trial Instance #", AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM));
+        }else{
+            labelFieldsList.add(new LabelFields("Nursery Name", AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME));
+        }
+        if(isFromFieldMap){
+            labelFieldsList.add(new LabelFields("Rep", AppConstants.AVAILABLE_LABEL_FIELDS_REP));
+            labelFieldsList.add(new LabelFields("Location", AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION));
+            labelFieldsList.add(new LabelFields("Block Name", AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME));
+            labelFieldsList.add(new LabelFields("Plot (Range / Column)", AppConstants.AVAILABLE_LABEL_FIELDS_PLOT));
+        }
+        return labelFieldsList;
+    }
     /**
      * Submits the details.
      *
@@ -67,5 +126,17 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     public String getContentName() {
         return "LabelPrinting/specifyLabelDetails";
     }
+
+    
+    public UserLabelPrinting getUserLabelPrinting() {
+        return userLabelPrinting;
+    }
+
+    
+    public void setUserLabelPrinting(UserLabelPrinting userLabelPrinting) {
+        this.userLabelPrinting = userLabelPrinting;
+    }
+    
+    
     
 }

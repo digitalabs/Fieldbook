@@ -80,6 +80,7 @@
 	<script type="text/javascript" th:src="@{/static/js/bootstrap-paginator.min.js}"></script>
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    
+        var createLabelErrorMsg = /*[[#{common.error.create.label.trial}]]*/;
         var paginationUrl = /*[[@{/TrialManager/manageTrial/page/}]]*/;
         var options = {
             currentPage: /*[[${manageTrialForm.currentPage}]]*/,

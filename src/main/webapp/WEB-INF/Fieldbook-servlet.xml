@@ -113,6 +113,11 @@
 		scope="session">
 		<aop:scoped-proxy />
 	</bean>
+	
+	<bean id="userLabelPrinting" class="com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting"
+		scope="session">
+		<aop:scoped-proxy />
+	</bean>
 
 	<bean id="testJavaBean" class="com.efficio.fieldbook.web.demo.bean.TestJavaBean"
 		scope="session">

@@ -11,9 +11,23 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.label.printing.form;
 
+import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
+
 public class LabelPrintingForm{
     private boolean isTrial;
+    private UserLabelPrinting userLabelPrinting;
+        
     
+    
+    public UserLabelPrinting getUserLabelPrinting() {
+        return userLabelPrinting;
+    }
+
+    
+    public void setUserLabelPrinting(UserLabelPrinting userLabelPrinting) {
+        this.userLabelPrinting = userLabelPrinting;
+    }
+
     public boolean getIsTrial() {
         return isTrial;
     }

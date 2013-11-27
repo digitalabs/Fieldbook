@@ -116,7 +116,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
      */
     @RequestMapping(method = RequestMethod.POST)
     public String submitDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, BindingResult result, Model model) {
-        return "redirect:" + LabelPrintingController.URL;
+        return "redirect:" + GenerateLabelController.URL;
     } 
     
     /* (non-Javadoc)

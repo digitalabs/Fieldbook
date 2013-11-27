@@ -36,11 +36,13 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     
     @RequestMapping(value="/trial/{id}", method = RequestMethod.GET)
     public String showTrialLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, Model model) {
+        form.setIsTrial(true);
         return super.show(model);
     }
     
     @RequestMapping(value="/nursery/{id}", method = RequestMethod.GET)
     public String showNurseryLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, Model model) {
+        form.setIsTrial(false);
         return super.show(model);
     }
     

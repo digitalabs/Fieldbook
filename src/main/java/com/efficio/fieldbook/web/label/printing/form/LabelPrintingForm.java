@@ -12,5 +12,13 @@
 package com.efficio.fieldbook.web.label.printing.form;
 
 public class LabelPrintingForm{
+    private boolean isTrial;
     
+    public boolean getIsTrial() {
+        return isTrial;
+    }
+    
+    public void setIsTrial(boolean isTrial) {
+        this.isTrial = isTrial;
+    }
 }

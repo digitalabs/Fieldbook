@@ -19,17 +19,115 @@
 		&nbsp;
 	</div>
 </div>
-
+<form id="specifyLabelDetailsForm" role="form-horizontal" action="#"
+th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${labelPrintingForm}" enctype="multipart/form-data">
 <div class="row" style="border: 1px solid #333333">
-
 	<div class="form-group">
 		&nbsp;	
 	</div>
-	
-	<div class="form-group">
-		
+	<div class="row">
+		<div class="col-md-12" >
+			<div class="form-group">
+				<div class="col-md-12">
+					<label class="control-label" th:if="*{isTrial == true}" th:text="#{label.printing.selected.trial}">SELECTED TRIAL</label>
+					<label class="control-label" th:if="*{isTrial == false}" th:text="#{label.printing.selected.nursery}">SELECTED NURSERY</label>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12" >
+			<div class="form-group">
+				<div class="col-md-12">
+					<label class="control-label" th:if="*{isTrial == true}" th:text="#{label.printing.trial.name}+':'"></label>
+					<label class="control-label" th:if="*{isTrial == false}" th:text="#{label.printing.nursery.name}+':'"></label>
+					<span>Trial Name</span>
+				</div>		
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12" >
+			<div class="form-group">
+				<div class="col-md-12">
+					<label class="control-label" th:text="#{label.printing.title}+':'"></label>
+					<span>Title</span>
+				</div>		
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12" >
+			<div class="form-group">
+				<div class="col-md-12">
+					<label class="control-label" th:text="#{label.printing.objective}+':'"></label>
+					<span>Objective</span>
+				</div>		
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12" >
+			<div class="form-group">
+				<div class="col-md-12">
+					<label class="control-label" th:text="#{label.printing.number.of.instances}+':'"></label>
+					<span>1</span>
+				</div>		
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12" >
+			<div class="form-group">
+				<div class="col-md-12">
+					<label class="control-label" th:if="*{isTrial == true}" th:text="#{label.printing.total.number.of.labels}+':'"></label>
+					<span>10</span>
+				</div>		
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12" >
+			<div class="form-group">
+				<div class="col-md-12">
+					<label class="control-label" th:text="#{label.printing.specify.label.stock}"></label>
+				</div>		
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6" >
+			<div class="form-group">
+				<div class="col-md-12">
+					<label class="control-label" th:text="#{label.printing.enter.specs.for.label}"></label>
+				</div>		
+			</div>
+			<div class="form-group">
+				<div class="col-md-12">
+					<label class="control-label" th:text="#{label.printing.size.of.label.sheet}+':'"></label>
+				</div>		
+			</div>
+			<div class="form-group">
+				<div class="col-md-12">
+					<label class="control-label" th:text="#{label.printing.number.of.labels.per.row}+':'"></label>
+				</div>		
+			</div>
+			<div class="form-group">
+				<div class="col-md-12">
+					<label class="control-label" th:text="#{label.printing.number.of.rows.per.page}+':'"></label>
+				</div>		
+			</div>
+		</div>
+		<div class="col-md-6" >
+			<div class="form-group">
+				<div class="col-md-12">
+					<em th:text="#{label.printing.specify.label.details.message}"></em>
+				</div>		
+			</div>
+		</div>
 	</div>
 </div>
+</form>
 <div layout:fragment="page-script">
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    	

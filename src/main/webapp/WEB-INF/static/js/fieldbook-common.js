@@ -237,3 +237,18 @@ function showMessage(message) {
 		    "<div class='alert alert-danger'>"+ message +"</div>"
 	);
 }
+
+function createLabelPrinting(tableName){	
+	if($('#'+tableName+' .field-map-highlight').attr('id') != null){
+		var labelPrintingHref = $('#label-printing-url').attr("href");
+		var id = $('#'+tableName+' .field-map-highlight').attr('id');
+		Spinner.toggle();
+		location.href = labelPrintingHref + "/" + id;
+	    Spinner.toggle();
+	}else{
+		var type = 'Trial';
+		if(tableName == 'nursery-table')
+			type='Nursery';
+		$('#page-create-field-map-message').html("<div class='alert alert-danger'>Please choose a "+type+"</div>");
+	}
+}

@@ -29,6 +29,7 @@ import com.efficio.fieldbook.web.nursery.validation.FileUploadFormValidator;
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 import com.efficio.fieldbook.web.trial.form.FileUploadForm;
+import com.efficio.fieldbook.web.util.ToolUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
 import javax.annotation.Resource;
@@ -75,6 +76,15 @@ public class TrialFileUploadController extends AbstractBaseFieldbookController{
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("fileUploadForm") FileUploadForm uploadForm, Model model, HttpSession session) {
     	session.invalidate();
+    	
+    	try {
+    	    ToolUtil toolUtil = new ToolUtil();
+    	    toolUtil.launchNativeTool(this.getOldFieldbookPath(), "--ibpApplication=IBFieldbookTools");
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    	
     	return super.show(model);
     }
 

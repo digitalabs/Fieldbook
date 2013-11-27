@@ -15,6 +15,10 @@
 				<td th:text="*{commitIdAbbrev}">Build ID</td>
 				<td th:text="*{buildTime}">Build Date</td>
 			</tr>
+			<tr>
+				<td >User ID</td>
+				<td th:object="${externalInfo}"  th:text="*{currentUserId}"></td>
+			</tr>
 		</table>	
 		
 	  </div>

@@ -11,7 +11,9 @@
 	
 	
 		<div class="col-md-11">			
-	<a href="/NurseryManager/fileUpload.html" th:href="@{/NurseryManager/fileUpload}" th:text="#{nursery.managenurseries.make.new.nursery}">New Nursery</a>
+	<!-- <a href="/NurseryManager/fileUpload.html" th:href="@{/NurseryManager/fileUpload}" th:text="#{nursery.managenurseries.make.new.nursery}">New Nursery</a>
+	 -->
+		<button type="button" class="btn btn-link" id="make-nursery" th:value="@{/NurseryManager/fileUpload}"  th:text="#{nursery.managenurseries.make.new.nursery}">New Nursery</button>
 		</div>
 		<div class="col-md-1">
 			<div class="btn-group">
@@ -88,7 +90,19 @@
 			$('#nurseryDetailsListPagination').bootstrapPaginator(options);	
 		}
         
-     
+     	$('#make-nursery').on('click', function(){
+     		Spinner.toggle();
+     		$.ajax(
+   		         { url: $(this).val(),
+   		           type: "GET",
+   		           data: "",
+   		           success: function(html) {
+   		        	Spinner.toggle();
+   		               
+   		           }
+   		         }
+   		       );
+     	});
         
       //]]>
     </script>

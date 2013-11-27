@@ -18,7 +18,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.ui.Model;
 
+import com.efficio.fieldbook.web.util.ExternalToolInfo;
 import com.efficio.fieldbook.web.util.GitRepositoryState;
+import com.efficio.fieldbook.web.util.ToolUtil;
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,10 +31,15 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
     public static final String BASE_TEMPLATE_NAME = "/template/base-template";
     public static final String TEMPLATE_NAME_ATTRIBUTE = "templateName";
     public static final String GIT_INFO_ATTRIBUTE = "gitInfo";
+    public static final String EXTERNAL_INFO_ATTRIBUTE = "externalInfo";
     public static final String USER_SELECTION_ID_SUFFIX = "TestUserSelection";
     
     @Resource
     public GitRepositoryState gitRepositoryState;
+    
+    @Resource
+    public ExternalToolInfo externalToolInfo;
+
     
     private ApplicationContext applicationContext;
 
@@ -41,6 +48,22 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
     private void setupModelInfo(Model model){
         
         model.addAttribute(GIT_INFO_ATTRIBUTE, gitRepositoryState);
+        model.addAttribute(EXTERNAL_INFO_ATTRIBUTE, externalToolInfo);
+    }
+        
+    
+   
+
+    public String getCurrentUserId(){
+        if(externalToolInfo != null)
+            return externalToolInfo.getCurrentUserId();
+        return "";
+    }
+    
+    public String getOldFieldbookPath(){
+        if(externalToolInfo != null)
+            return externalToolInfo.getOldFieldbookPath();
+        return "";
     }
     
     /**

@@ -86,6 +86,8 @@ public class OntologyController extends AbstractBaseFieldbookController{
     private ErrorHandlerService errorHandlerService;
     
     
+    
+    
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
      */
@@ -112,7 +114,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
             List<TraitClassReference> traitRefList = (List<TraitClassReference>) ontologyService.getAllTraitGroupsHierarchy(true);
             form.setTraitClassReferenceList(traitRefList);
             form.setTreeData(TreeViewUtil.convertOntologyTraitsToJson(traitRefList));
-            form.setSearchTreeData(TreeViewUtil.convertOntologyTraitsToSearchSingleLevelJson(traitRefList));
+            form.setSearchTreeData(TreeViewUtil.convertOntologyTraitsToSearchSingleLevelJson(traitRefList));                       
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

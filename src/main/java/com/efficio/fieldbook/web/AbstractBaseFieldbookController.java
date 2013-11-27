@@ -54,9 +54,9 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
     
    
 
-    public String getCurrentUserId(){
+    public String getCurrentProjectId(){
         if(externalToolInfo != null)
-            return externalToolInfo.getCurrentUserId();
+            return externalToolInfo.getCurrentProjectId();
         return "";
     }
     

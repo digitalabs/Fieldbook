@@ -93,8 +93,19 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		       		<option th:each="loc : ${locationList}" th:text="${loc.lname}" th:value="${loc.locid}"></option>		       		
 			   </select>
 			   -->
-			   <input type="hidden" th:field="*{userFieldmap.fieldLocationId}" class="form-control select2" placeholder=""/>
+			   <input type="hidden" th:field="*{fieldLocationIdAll}" class="form-control select2" placeholder=""/>
+			   
+			   <input type="hidden" th:field="*{fieldLocationIdFavorite}" class="form-control select2" placeholder=""/>
+			   
+			   <input type="hidden" th:field="*{userFieldmap.fieldLocationId}"/>
 			   <input type="hidden" th:field="*{userFieldmap.locationName}" />
+		    </div>
+		    <div class="col-md-3">
+		    	<div class="checkbox">
+			    <label>
+			      <input id="showFavoriteLocation" checked="checked" value="1" type="checkbox"/> <span th:text="#{show.favorite.location}">Show Favorite Location</span>
+			    </label>
+			  </div>
 		    </div>
 		  </div>
 		  <div class="form-group col-md-12">
@@ -182,6 +193,9 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
     var locationSuggestions = /*[[${locationList}]]*/ null;
     var locationSuggestions_obj = [];
     
+    var locationSuggestionsFav = /*[[${favoriteLocationList}]]*/ null;
+    var locationSuggestionsFav_obj = [];
+    
     var trial = /*[[${fieldmapForm.userFieldmap.trial}]]*/;
     var msgBlockSizeError;
     
@@ -196,7 +210,36 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 	$( document ).ready(function() {
 		var fieldMapInfo = /*[[${fieldmapForm.userFieldmap.fieldMapInfo}]]*/;
 		createStudyTree(fieldMapInfo, false);								   
-		initializeLocationSelect2(locationSuggestions, locationSuggestions_obj); 
+		initializeLocationSelect2(locationSuggestions, locationSuggestions_obj);
+		initializeLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj);
+		$('#s2id_fieldLocationIdFavorite').show();
+		$('#s2id_fieldLocationIdAll').hide();
+		$('#showFavoriteLocation').on('change', function(){
+			var isChecked = $('#showFavoriteLocation').is(':checked');
+			if(isChecked){
+				$('#s2id_fieldLocationIdFavorite').show();
+				$('#s2id_fieldLocationIdAll').hide();
+				if($('#'+getJquerySafeId("fieldLocationIdFavorite")).select2("data") != null){
+					$('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val($('#'+getJquerySafeId("fieldLocationIdFavorite")).select2("data").id);
+					$('#'+getJquerySafeId("userFieldmap.locationName")).val($('#'+getJquerySafeId("fieldLocationIdFavorite")).select2("data").text);
+				}else{
+					$('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val(0);
+					$('#'+getJquerySafeId("userFieldmap.locationName")).val("");
+				}
+			}else{
+				$('#s2id_fieldLocationIdFavorite').hide();
+				$('#s2id_fieldLocationIdAll').show();
+				if($('#'+getJquerySafeId("fieldLocationIdAll")).select2("data") != null){
+					$('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val($('#'+getJquerySafeId("fieldLocationIdAll")).select2("data").id);
+					$('#'+getJquerySafeId("userFieldmap.locationName")).val($('#'+getJquerySafeId("fieldLocationIdAll")).select2("data").text);	
+				}else{
+					$('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val(0);
+					$('#'+getJquerySafeId("userFieldmap.locationName")).val("");
+				}
+				
+			}
+		})
+		
 		$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val(defaultRowsPerPlot);
 	});
   	

@@ -11,6 +11,7 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.fieldmap.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
@@ -62,6 +64,9 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     
     @Resource
     private FieldbookService fieldbookMiddlewareService;
+    @Resource
+    private WorkbenchDataManager workbenchDataManager;
+    
     
     /**
      * Gets the data types.
@@ -90,6 +95,29 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         return null;
     }
     
+    @ModelAttribute("favoriteLocationList")
+    public List<Location> getFavoriteLocationList() {
+        try {
+            
+            List<Long> locationsIds = workbenchDataManager.getFavoriteProjectLocationIds(Long.valueOf(this.getCurrentProjectId()), 0,  Integer.MAX_VALUE);
+            List<Location> dataTypes = fieldbookMiddlewareService.getFavoriteLocationByProjectId(locationsIds);
+            /*dataTypes = new ArrayList();
+            for(int i = 0 ; i < 50 ; i++){
+                Location loc = new Location();
+                loc.setLname(" LNAME " + i);
+                loc.setLocid(i);
+                dataTypes.add(loc);
+            }
+            */
+            
+            return dataTypes;
+        }catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+
+        return null;
+    }
+    
     @ResponseBody
     @RequestMapping(value="/createFieldmap/{id}", method = RequestMethod.GET)
     public Map<String, String> determineFieldMapNavigation(@PathVariable String id, Model model, HttpSession session) {
@@ -100,7 +128,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         String nav = "1";
         try {
             FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfTrial(Integer.parseInt(id));
-            
+            //workbenchDataManager.get
             this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, true);
             
             List<FieldMapDatasetInfo> datasetList = fieldMapInfo.getDatasetsWithFieldMap();

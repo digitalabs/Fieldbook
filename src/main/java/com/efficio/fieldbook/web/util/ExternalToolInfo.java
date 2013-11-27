@@ -22,54 +22,64 @@ import java.util.Properties;
 public class ExternalToolInfo {
     
    /** The current user id. */
-   private String currentUserId;
+   private String currentProjectId;
    
    /** The old fieldbook path. */
    private String oldFieldbookPath;
 
+   /**
+    * Instantiates a new external tool info.
+    */
    public ExternalToolInfo(){
        
    }
+   
+   /**
+    * Instantiates a new external tool info.
+    *
+    * @param properties the properties
+    */
    public ExternalToolInfo(Properties properties)
    {
-      this.currentUserId = properties.get("workbench.currentUserId").toString();
+      this.currentProjectId = properties.get("workbench.currentProjectIdId").toString();
       this.oldFieldbookPath = properties.get("old.fb.tool.path").toString();
    }
-    /**
-     * Gets the current user id.
-     *
-     * @return the current user id
-     */
-    public String getCurrentUserId() {
-        return currentUserId;
-    }
-    
-    /**
-     * Sets the current user id.
-     *
-     * @param currentUserId the new current user id
-     */
-    public void setCurrentUserId(String currentUserId) {
-        this.currentUserId = currentUserId;
-    }
-    
-    /**
-     * Gets the old fieldbook path.
-     *
-     * @return the old fieldbook path
-     */
-    public String getOldFieldbookPath() {
-        return oldFieldbookPath;
-    }
-    
-    /**
-     * Sets the old fieldbook path.
-     *
-     * @param oldFieldbookPath the new old fieldbook path
-     */
-    public void setOldFieldbookPath(String oldFieldbookPath) {
-        this.oldFieldbookPath = oldFieldbookPath;
-    }
-       
+
+/**
+ * Gets the current project id.
+ *
+ * @return the current project id
+ */
+public String getCurrentProjectId() {
+    return currentProjectId;
+}
+
+/**
+ * Sets the current project id.
+ *
+ * @param currentProjectId the new current project id
+ */
+public void setCurrentProjectId(String currentProjectId) {
+    this.currentProjectId = currentProjectId;
+}
+
+/**
+ * Gets the old fieldbook path.
+ *
+ * @return the old fieldbook path
+ */
+public String getOldFieldbookPath() {
+    return oldFieldbookPath;
+}
+
+/**
+ * Sets the old fieldbook path.
+ *
+ * @param oldFieldbookPath the new old fieldbook path
+ */
+public void setOldFieldbookPath(String oldFieldbookPath) {
+    this.oldFieldbookPath = oldFieldbookPath;
+}
+   
        
 }

@@ -7,7 +7,7 @@ function validateEnterFieldPage(){
 		return false;
 	}
 	
-	if($('#'+getJquerySafeId('userFieldmap.fieldLocationId')).select2("data") == null){
+	if($('#'+getJquerySafeId('userFieldmap.fieldLocationId')).val() == 0){
 		showEnterFieldDetailsMessage(msgLocation);
 		return false;
 	}
@@ -94,7 +94,7 @@ function initializeLocationSelect2(locationSuggestions, locationSuggestions_obj)
 		
 	
 		//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
-		$('#'+getJquerySafeId('userFieldmap.fieldLocationId')).select2({
+		$('#'+getJquerySafeId('fieldLocationIdAll')).select2({
 			minimumInputLength: 2,
 	        query: function (query) {
 	          var data = {results: locationSuggestions_obj}, i, j, s;
@@ -108,9 +108,40 @@ function initializeLocationSelect2(locationSuggestions, locationSuggestions_obj)
 	        }
 	
 	    }).on("change", function (){
-	    	$('#'+getJquerySafeId("userFieldmap.locationName")).val($('#'+getJquerySafeId("userFieldmap.fieldLocationId")).select2("data").text);
+	    	$('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val($('#'+getJquerySafeId("fieldLocationIdAll")).select2("data").id);
+	    	$('#'+getJquerySafeId("userFieldmap.locationName")).val($('#'+getJquerySafeId("fieldLocationIdAll")).select2("data").text);
 	    });
 	
+}
+
+function initializeLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj) {
+
+	$.each(locationSuggestionsFav, function( index, value ) {
+		locationSuggestionsFav_obj.push({ 'id' : value.locid,
+			  'text' : value.lname
+		});  
+  		
+	});
+
+
+//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
+$('#'+getJquerySafeId('fieldLocationIdFavorite')).select2({
+    query: function (query) {
+      var data = {results: locationSuggestionsFav_obj}, i, j, s;
+      // return the array that matches
+      data.results = $.grep(data.results,function(item,index) {
+        return ($.fn.select2.defaults.matcher(query.term,item.text));
+      
+      });
+        query.callback(data);
+        
+    }
+
+}).on("change", function (){
+	$('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val($('#'+getJquerySafeId("fieldLocationIdFavorite")).select2("data").id);
+	$('#'+getJquerySafeId("userFieldmap.locationName")).val($('#'+getJquerySafeId("fieldLocationIdFavorite")).select2("data").text);
+});
+
 }
 
 function validatePlantingDetails() {

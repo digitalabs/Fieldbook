@@ -128,10 +128,12 @@ public class BarCodeController extends AbstractBaseFieldbookController{
              try {
                  
                  Image image1 = Image.getInstance(imageLocation);
+                 //image1.scalePercent(50);
                  //image1.setAbsolutePosition(10f, 10f);
                  //document.add(image1);
                  
-                 Document document = new Document(PageSize.A4.rotate());
+                 //PageSize.A4
+                 Document document = new Document(PageSize.LETTER);
                  // step 2
                  PdfWriter.getInstance(document, new FileOutputStream(fileName));
                  // step 3
@@ -145,46 +147,28 @@ public class BarCodeController extends AbstractBaseFieldbookController{
                          Image.getInstance(String.format(RESOURCE, "0376994")),
                          Image.getInstance(String.format(RESOURCE, "0348150"))
                  };*/
-                 // Creates a table with 6 columns
-                 PdfPTable table = new PdfPTable(6);
-                 table.setWidthPercentage(100);
-                 // first movie
-                 table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
-                 table.getDefaultCell().setVerticalAlignment(Element.ALIGN_TOP);
-                 table.addCell("X-Men");
-                 // we wrap he image in a PdfPCell
-                 PdfPCell cell = new PdfPCell(image1, true);
-                 table.addCell(cell);
-                 // second movie
-                 table.getDefaultCell().setVerticalAlignment(Element.ALIGN_MIDDLE);
-                 table.addCell("X2");
-                 // we wrap the image in a PdfPCell and let iText scale it
-                 cell = new PdfPCell(image1, true);
-                 table.addCell(cell);
-                 // third movie
-                 table.getDefaultCell().setVerticalAlignment(Element.ALIGN_BOTTOM);
-                 table.addCell("X-Men: The Last Stand");
-                 // we add the image with addCell()
-                 table.addCell(image1);
-                 // fourth movie
-                 table.addCell("Superman Returns");
-                 cell = new PdfPCell();
-                 // we add it with addElement(); it can only take 50% of the width.
-                 image1.setWidthPercentage(50);
-                 cell.addElement(image1);
-                 table.addCell(cell);
-                 // we complete the table (otherwise the last row won't be rendered)
-                 table.completeRow();
-                 document.add(table);
+               
                  
                  
-                 
-                 
-                 table = new PdfPTable(6);
+                 PdfPTable table = new PdfPTable(4);
                  table.setWidthPercentage(100);
                  // first movie
                  table.getDefaultCell().setVerticalAlignment(Element.ALIGN_BOTTOM);
-                 table.addCell("X-Men: The Last Stand");
+                 Phrase phrase = new Phrase();
+                 phrase.add("Entry # " + barCodeForm.getEntryNo());
+                 phrase.add("\n");
+                 phrase.add("Designation " + barCodeForm.getDesignation());
+                 phrase.add("\n");
+                 phrase.add("Rep " + barCodeForm.getRep());
+                 phrase.add("\n");
+                 phrase.add("GID " + barCodeForm.getGid());
+                 phrase.add("\n");
+                 phrase.add("Trial/Nursery Name " + barCodeForm.getName());
+                 phrase.add("\n");
+                 phrase.add("Col " + barCodeForm.getColumn());
+                 phrase.add("\n");
+                 phrase.add("Range " + barCodeForm.getRange());                
+                 table.addCell(phrase);
                  // we add the image with addCell()
                  table.addCell(image1);
                  
@@ -198,20 +182,7 @@ public class BarCodeController extends AbstractBaseFieldbookController{
                  // we add the image with addCell()
                  table.addCell(image1);
                  
-                 table.getDefaultCell().setVerticalAlignment(Element.ALIGN_BOTTOM);
-                 table.addCell("X-Men: The Last Stand");
-                 // we add the image with addCell()
-                 table.addCell(image1);
                  
-                 table.getDefaultCell().setVerticalAlignment(Element.ALIGN_BOTTOM);
-                 table.addCell("X-Men: The Last Stand");
-                 // we add the image with addCell()
-                 table.addCell(image1);
-                 
-                 table.getDefaultCell().setVerticalAlignment(Element.ALIGN_BOTTOM);
-                 table.addCell("X-Men: The Last Stand");
-                 // we add the image with addCell()
-                 table.addCell(image1);
                  // we complete the table (otherwise the last row won't be rendered)
                  table.completeRow();
                  document.add(table);

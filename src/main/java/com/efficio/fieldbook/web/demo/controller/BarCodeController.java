@@ -12,11 +12,14 @@
 package com.efficio.fieldbook.web.demo.controller;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.demo.form.BarCodeForm;
 import com.efficio.fieldbook.web.demo.bean.UserSelection;
+import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,14 +29,30 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.oned.Code128Writer;
+import com.lowagie.text.Document;
+import com.lowagie.text.Element;
+import com.lowagie.text.Image;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
 
 /**
  * The Class Test3Controller.
@@ -51,6 +70,7 @@ public class BarCodeController extends AbstractBaseFieldbookController{
     /** The fieldbook service. */
     @Resource
     private FieldbookService fieldbookService;
+    private static final int BUFFER_SIZE = 4096 * 4;
 	
     /**
      * Show.
@@ -72,9 +92,11 @@ public class BarCodeController extends AbstractBaseFieldbookController{
      * @param model the model
      * @return the string
      */
+    @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
-    public String uploadFile(@ModelAttribute("barCodeForm") BarCodeForm barCodeForm, BindingResult result, Model model) {
-        int width = 440; 
+    public String uploadFile(@ModelAttribute("barCodeForm") BarCodeForm barCodeForm, 
+            BindingResult result, Model model, HttpServletResponse response) {
+        int width = 60; 
         int height = 48;
         String delimeter = "|";
         StringBuilder barCodeString = new StringBuilder();
@@ -90,7 +112,131 @@ public class BarCodeController extends AbstractBaseFieldbookController{
         BitMatrix bitMatrix;
          try {
              bitMatrix = new Code128Writer().encode(barCodeString.toString(),BarcodeFormat.CODE_128,width,height,null);
-             MatrixToImageWriter.writeToStream(bitMatrix, "png", new FileOutputStream(new File("src/test/resources/barcode/zxing_barcode.png")));
+             String imageLocation = "src/test/resources/barcode/zxing_barcode.png";
+             MatrixToImageWriter.writeToStream(bitMatrix, "png", new FileOutputStream(new File(imageLocation)));
+             
+             
+          
+             String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
+             String fileName = currentDate + ".doc";
+
+             response.setHeader("Content-disposition","attachment; filename=" + fileName);
+
+             File xls = new File(fileName); // the selected name + current date
+             FileInputStream in;
+             
+             try {
+                 
+                 Image image1 = Image.getInstance(imageLocation);
+                 //image1.setAbsolutePosition(10f, 10f);
+                 //document.add(image1);
+                 
+                 Document document = new Document(PageSize.A4.rotate());
+                 // step 2
+                 PdfWriter.getInstance(document, new FileOutputStream(fileName));
+                 // step 3
+                 document.open();
+                 // step 4
+                 // we'll use 4 images in this example
+                 /*
+                 Image[] img = {
+                         Image.getInstance(String.format(RESOURCE, "0120903")),
+                         Image.getInstance(String.format(RESOURCE, "0290334")),
+                         Image.getInstance(String.format(RESOURCE, "0376994")),
+                         Image.getInstance(String.format(RESOURCE, "0348150"))
+                 };*/
+                 // Creates a table with 6 columns
+                 PdfPTable table = new PdfPTable(6);
+                 table.setWidthPercentage(100);
+                 // first movie
+                 table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+                 table.getDefaultCell().setVerticalAlignment(Element.ALIGN_TOP);
+                 table.addCell("X-Men");
+                 // we wrap he image in a PdfPCell
+                 PdfPCell cell = new PdfPCell(image1, true);
+                 table.addCell(cell);
+                 // second movie
+                 table.getDefaultCell().setVerticalAlignment(Element.ALIGN_MIDDLE);
+                 table.addCell("X2");
+                 // we wrap the image in a PdfPCell and let iText scale it
+                 cell = new PdfPCell(image1, true);
+                 table.addCell(cell);
+                 // third movie
+                 table.getDefaultCell().setVerticalAlignment(Element.ALIGN_BOTTOM);
+                 table.addCell("X-Men: The Last Stand");
+                 // we add the image with addCell()
+                 table.addCell(image1);
+                 // fourth movie
+                 table.addCell("Superman Returns");
+                 cell = new PdfPCell();
+                 // we add it with addElement(); it can only take 50% of the width.
+                 image1.setWidthPercentage(50);
+                 cell.addElement(image1);
+                 table.addCell(cell);
+                 // we complete the table (otherwise the last row won't be rendered)
+                 table.completeRow();
+                 document.add(table);
+                 
+                 
+                 
+                 
+                 table = new PdfPTable(6);
+                 table.setWidthPercentage(100);
+                 // first movie
+                 table.getDefaultCell().setVerticalAlignment(Element.ALIGN_BOTTOM);
+                 table.addCell("X-Men: The Last Stand");
+                 // we add the image with addCell()
+                 table.addCell(image1);
+                 
+                 table.getDefaultCell().setVerticalAlignment(Element.ALIGN_BOTTOM);
+                 table.addCell("X-Men: The Last Stand");
+                 // we add the image with addCell()
+                 table.addCell(image1);
+                 
+                 table.getDefaultCell().setVerticalAlignment(Element.ALIGN_BOTTOM);
+                 table.addCell("X-Men: The Last Stand");
+                 // we add the image with addCell()
+                 table.addCell(image1);
+                 
+                 table.getDefaultCell().setVerticalAlignment(Element.ALIGN_BOTTOM);
+                 table.addCell("X-Men: The Last Stand");
+                 // we add the image with addCell()
+                 table.addCell(image1);
+                 
+                 table.getDefaultCell().setVerticalAlignment(Element.ALIGN_BOTTOM);
+                 table.addCell("X-Men: The Last Stand");
+                 // we add the image with addCell()
+                 table.addCell(image1);
+                 
+                 table.getDefaultCell().setVerticalAlignment(Element.ALIGN_BOTTOM);
+                 table.addCell("X-Men: The Last Stand");
+                 // we add the image with addCell()
+                 table.addCell(image1);
+                 // we complete the table (otherwise the last row won't be rendered)
+                 table.completeRow();
+                 document.add(table);
+                 
+                 document.close();
+
+                 in = new FileInputStream(xls);
+                 OutputStream out = response.getOutputStream();
+
+                 byte[] buffer= new byte[BUFFER_SIZE]; // use bigger if you want
+                 int length = 0;
+
+                 while ((length = in.read(buffer)) > 0){
+                      out.write(buffer, 0, length);
+                 }
+                 in.close();
+                 out.close();
+             }catch (FileNotFoundException e) {
+                 LOG.error(e.getMessage(), e);
+             } catch (IOException e) {
+                 LOG.error(e.getMessage(), e);
+             }
+             
+             return "";
+             
          } catch (WriterException e) {
              // TODO Auto-generated catch block
              e.printStackTrace();
@@ -101,6 +247,8 @@ public class BarCodeController extends AbstractBaseFieldbookController{
 
          return show(barCodeForm, model);
     }
+    
+  
     
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()

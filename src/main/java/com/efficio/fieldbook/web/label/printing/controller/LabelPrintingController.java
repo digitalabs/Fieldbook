@@ -17,12 +17,17 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.generationcp.middleware.domain.dms.Study;
+import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -45,19 +50,39 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     public static final String URL = "/LabelPrinting/specifyLabelDetails";
     
     @Resource
-    private UserLabelPrinting userLabelPrinting;    
+    private UserLabelPrinting userLabelPrinting;  
+    @Resource
+    private FieldbookService fieldbookMiddlewareService;
     
     @RequestMapping(value="/trial/{id}", method = RequestMethod.GET)
-    public String showTrialLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, Model model, HttpSession session) {
+    public String showTrialLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, 
+            Model model, HttpSession session, @PathVariable int id ) {
         session.invalidate();
-        getUserLabelPrinting().setName("test");
-        getUserLabelPrinting().setTitle("title");
-        getUserLabelPrinting().setObjective("Objective");
+        Study study = null;
+        FieldMapInfo fieldMapInfo = null;
+        try {
+            study = fieldbookMiddlewareService.getStudy(id);
+            fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfTrial(id);
+        } catch (MiddlewareQueryException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        getUserLabelPrinting().setStudy(study);
+        getUserLabelPrinting().setFieldMapInfo(fieldMapInfo);
+        getUserLabelPrinting().setBarcodeNeeded("1");
+        
+        /*
+        getUserLabelPrinting().setName(study.getName());
+        getUserLabelPrinting().setTitle(study.getTitle());
+        getUserLabelPrinting().setObjective(study.getObjective());
+       
+        getUserLabelPrinting().setNumberOfInstances("2");
         getUserLabelPrinting().setTotalNumberOfLabelToPrint("50");
+         
         getUserLabelPrinting().setSizeOfLabelSheet("A4");
         getUserLabelPrinting().setNumberOfRowsPerPageOfLabel("10");
         getUserLabelPrinting().setNumberOfLabelPerRow("3");
-        getUserLabelPrinting().setNumberOfInstances("2");
+        */
         form.setUserLabelPrinting(getUserLabelPrinting());
         
         model.addAttribute("availableFields",getAvailableLabelFields(true, false));
@@ -67,16 +92,34 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     }
     
     @RequestMapping(value="/nursery/{id}", method = RequestMethod.GET)
-    public String showNurseryLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, Model model, HttpSession session) {
+    public String showNurseryLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, Model model, 
+            HttpSession session, @PathVariable int id) {
         session.invalidate();
-        getUserLabelPrinting().setName("test");
-        getUserLabelPrinting().setTitle("title");
-        getUserLabelPrinting().setObjective("Objective");
+        Study study = null;
+        FieldMapInfo fieldMapInfo = null;
+        try {
+            study = fieldbookMiddlewareService.getStudy(id);
+            fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfNursery(id);
+        } catch (MiddlewareQueryException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        getUserLabelPrinting().setStudy(study);
+        getUserLabelPrinting().setFieldMapInfo(fieldMapInfo);
+        getUserLabelPrinting().setBarcodeNeeded("1");
+        
+        /*
+        getUserLabelPrinting().setName(study.getName());
+        getUserLabelPrinting().setTitle(study.getTitle());
+        getUserLabelPrinting().setObjective(study.getObjective());
+       
+        getUserLabelPrinting().setNumberOfInstances("2");
         getUserLabelPrinting().setTotalNumberOfLabelToPrint("50");
+         
         getUserLabelPrinting().setSizeOfLabelSheet("A4");
         getUserLabelPrinting().setNumberOfRowsPerPageOfLabel("10");
         getUserLabelPrinting().setNumberOfLabelPerRow("3");
-        getUserLabelPrinting().setNumberOfInstances("2");
+        */
         form.setUserLabelPrinting(getUserLabelPrinting());
         model.addAttribute("availableFields", getAvailableLabelFields(false, false));
         form.setIsTrial(false);

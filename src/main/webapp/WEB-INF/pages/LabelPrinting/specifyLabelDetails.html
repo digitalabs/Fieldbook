@@ -25,9 +25,15 @@
 th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${labelPrintingForm}" enctype="multipart/form-data">
 <input type="hidden" th:field="*{userLabelPrinting.selectedLabelFields}"/>
 <div class="row" style="border: 1px solid #333333">
-	<div class="form-group">
-		&nbsp;	
+	<div class="row">&nbsp;</div>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="form-group">
+				<div class="col-md-12" id="page-message"></div>
+			</div>
+		</div>
 	</div>
+	
 	<div class="row">
 		<div class="col-md-12" >
 			<div class="form-group">
@@ -173,11 +179,11 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 					<label class="control-label" th:text="#{label.printing.do.you.need.bar.codes}">Do you need barcodes on your labels?</label>
 					&nbsp;&nbsp;&nbsp;
 					<label class="radio-inline">
-					  <input type="radio" id="inlineCheckbox1" value="1" th:field="*{userLabelPrinting.barcodeNeeded}"/> 
+					  <input checked="checked" type="radio" value="1" th:field="*{userLabelPrinting.barcodeNeeded}"/> 
 					  <span th:text="#{label.printing.do.you.need.bar.codes.yes}">Yes</span>
 					</label>
 					<label class="radio-inline">
-					  <input type="radio" id="inlineCheckbox2" value="0" th:field="*{userLabelPrinting.barcodeNeeded}"/> 
+					  <input type="radio" value="0" th:field="*{userLabelPrinting.barcodeNeeded}"/> 
 					  <span th:text="#{label.printing.do.you.need.bar.codes.no}">No</span>
 					</label>
 				</div>	
@@ -285,6 +291,9 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 <script type="text/javascript" th:src="@{/static/js/jquery-multisortable.js}"></script>
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    	
+        var barcodeNeededError = /*[[#{label.printing.bar.code.needed.error}]]*/;
+        var barcodeFieldNeededError = /*[[#{label.printing.bar.code.field.error}]]*/;
+        
   		function validateEnterLabelFieldsPage(){
   			//we do the validation
   			//we do the selected fields
@@ -300,12 +309,40 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
   			}
   			//console.log(selectedFields);
   			$('#'+getJquerySafeId('userLabelPrinting.selectedLabelFields')).val(selectedFields);
+  			
+  			
+  			var barcodeNeeded = $("input[type='radio']:checked").length;
+  			if (barcodeNeeded == 0) {
+  				showMessage(barcodeNeededError);
+  				return false;
+  			}
+  			
+  			//we checked if something was checked
+  			if($("#"+getJquerySafeId('userLabelPrinting.barcodeNeeded1')).is(":checked")){
+  				//we need to check if either one is chosen in the drop downs
+  				if($('#'+getJquerySafeId('userLabelPrinting.firstBarcodeField')).val() == ""
+ 						&& $('#'+getJquerySafeId('userLabelPrinting.secondBarcodeField')).val() == ""
+ 						&& $('#'+getJquerySafeId('userLabelPrinting.thirdBarcodeField')).val() == ""){
+  					showMessage(barcodeFieldNeededError);
+  					return false;
+  				}
+  			}
+  			
   			$('#specifyLabelDetailsForm').submit();	
   		}
   		
  		 $(function() {
  			$( "ul.droptrue" ).sortable({
- 				connectWith: "ul"
+ 				connectWith: "ul",
+				receive: function(event, ui) {
+		            // so if > 10
+		            if ($(this).attr('id') == 'selectedFields' && 
+	            		$(this).children().length > 6) {
+		                //ui.sender: will cancel the change.
+		                //Useful in the 'receive' callback.
+		                $(ui.sender).sortable('cancel');
+		            }
+		        }
  			});
  			
  			

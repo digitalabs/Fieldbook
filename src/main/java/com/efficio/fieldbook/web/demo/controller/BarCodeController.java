@@ -112,7 +112,7 @@ public class BarCodeController extends AbstractBaseFieldbookController{
         BitMatrix bitMatrix;
          try {
              bitMatrix = new Code128Writer().encode(barCodeString.toString(),BarcodeFormat.CODE_128,width,height,null);
-             String imageLocation = "src/test/resources/barcode/zxing_barcode.png";
+             String imageLocation = Math.random() +".png"; //"src/test/resources/barcode/zxing_barcode.png";
              MatrixToImageWriter.writeToStream(bitMatrix, "png", new FileOutputStream(new File(imageLocation)));
              
              

@@ -27,8 +27,8 @@ public class UserLabelPrinting implements Serializable{
     
     private static final long serialVersionUID = 1L;
     
-    private transient Study study;
-    private transient FieldMapInfo fieldMapInfo;
+    private Study study;
+    private FieldMapInfo fieldMapInfo;
     
     private String name;
     private String title;
@@ -45,10 +45,6 @@ public class UserLabelPrinting implements Serializable{
     private String firstBarcodeField;
     private String secondBarcodeField;
     private String thirdBarcodeField;
-    
-    
-     
-    
     
     
     public FieldMapInfo getFieldMapInfo() {

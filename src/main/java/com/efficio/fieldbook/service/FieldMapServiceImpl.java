@@ -34,11 +34,11 @@ public class FieldMapServiceImpl implements FieldMapService{
 
     private String getDisplayString(FieldMapLabel label, boolean isTrial, String selectedName) {
         StringBuilder textLabel = new StringBuilder();
-        textLabel.append("Entry " + label.getEntryNumber());
+        textLabel.append(selectedName);
+        textLabel.append(NEXT_LINE + "Entry " + label.getEntryNumber());
         if (isTrial) {
             textLabel.append(NEXT_LINE + "Rep " + label.getRep());
         }
-        textLabel.append(NEXT_LINE + selectedName);
         return textLabel.toString();
     }
 

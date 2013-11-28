@@ -26,6 +26,10 @@
 			    	<a href="javascript: createFieldMap('nursery-table');" id="fieldmap-url-link" th:text="#{tools.create.field.map}">Create Field Map</a>
 			    </li>
 			    <li>
+			    	<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
+			    	<a href="javascript: showFieldMap('nursery-table');" id="fieldmap-url-link" th:text="#{tools.display.existing.field.map}">Display Existing Field Map</a>
+			    </li>
+			    <li>
 			    	<a href="" style="display: none" id="label-printing-url" th:href="@{LabelPrinting/specifyLabelDetails/nursery}"></a>
 			    	<a href="javascript: createLabelPrinting('nursery-table');" id="label-printing-url-link" th:text="#{tools.create.label.printing}">Create Labels</a> 
 			    </li>    
@@ -79,6 +83,9 @@
 	//<![CDATA[    
         var createLabelErrorMsg = /*[[#{common.error.create.label.nursery}]]*/;
         var paginationUrl = /*[[@{/NurseryManager/manageNurseries/page/}]]*/;
+        var fieldMapStudyRequired = /*[[#{common.error.select.study(#{fieldmap.nursery})}]]*/;
+        var fieldMapOneStudyErrorMsg = /*[[#{common.error.select.one.study.show.fieldmap(#{fieldmap.nursery})}]]*/;
+        var noFieldMapExists = /*[[#{common.error.no.existing.fieldmap(#{fieldmap.nursery})}]]*/;
         var options = {
             currentPage: /*[[${manageNurseriesForm.currentPage}]]*/,
             totalPages: /*[[${manageNurseriesForm.totalPages}]]*/,

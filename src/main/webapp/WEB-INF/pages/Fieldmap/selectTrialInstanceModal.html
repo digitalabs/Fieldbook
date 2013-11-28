@@ -41,14 +41,19 @@
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    
         var noSelectedTrialInstance = /*[[#{fieldmap.no.selected.trial.instance}]]*/;
+        var multipleSelectError = /*[[#{common.error.select.one.trial.instance}]]*/;
         
 		var trial = true;
 		
 		function viewFieldMap() {
 			if ($('#studyTree .field-map-highlight').attr('id')) {
-				$("#selectTrialInstanceModal").modal("toggle");
-				var id = $('#studyTree .field-map-highlight').attr('id').split("|");
-				location.href = "/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/" + id[1] + "/" + id[0];
+				if ($('#studyTree .field-map-highlight').size() == 1) {
+					$("#selectTrialInstanceModal").modal("toggle");
+					var id = $('#studyTree .field-map-highlight').attr('id').split("|");
+					location.href = "/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/" + id[1] + "/" + id[0];
+				} else {
+					showMessage(multipleSelectError);
+				}
 			} else {
 				showMessage(noSelectedTrialInstance);
 			}

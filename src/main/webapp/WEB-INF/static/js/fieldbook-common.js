@@ -16,8 +16,13 @@ function showPage(paginationUrl, pageNum, sectionDiv){
 
 function triggerFieldMapTableSelection(tableName){
 	$('#'+tableName+' tr.data-row').on('click', function() {	
-		$('#'+tableName).find("*").removeClass('field-map-highlight');
-		$(this).addClass('field-map-highlight');
+		//$('#'+tableName).find("*").removeClass('field-map-highlight');
+		if (tableName == "studyTree") {
+			$(this).toggleClass("trialInstance");
+			$(this).toggleClass('field-map-highlight');
+		} else {
+			$(this).toggleClass('field-map-highlight');
+		}
 	});
 }
 
@@ -32,16 +37,10 @@ function createFieldMap(tableName){
 			checkTrialOptions(id);
 		}
 		else {
-			//location.href=fieldMapHref+"/"+id;
 			createNurseryFieldmap(id);
 		}
-//		$('#fieldmap-url').attr("href", fieldMapHref+id);
-//		$('#fieldmap-url').trigger('click');
 	}else{
-		var type = 'Trial';
-		if(tableName == 'nursery-table')
-			type='Nursery';
-		$('#page-create-field-map-message').html("<div class='alert alert-danger'>Please choose a "+type+"</div>");
+		$('#page-create-field-map-message').html("<div class='alert alert-danger'>"+fieldMapStudyRequired+"</div>");
 	}
 }
 
@@ -136,36 +135,37 @@ function isInt(value) {
     return value % 1 == 0;
 }
 
-function selectTrialInstance() {
-	$('#manageTrialConfirmation').modal('hide');
-	Spinner.toggle();
-	//var fieldMapHref = $('#fieldmap-url').attr("href");	
-	$.ajax({ 
-		url: "/Fieldbook/Fieldmap/enterFieldDetails/selectTrialInstance",
-	    type: "GET",
-	    data: "",
-	    success: function(data) {
-	    	if (data.fieldMapInfo != null && data.fieldMapInfo != "") {
-	    		if (parseInt(data.size) > 1) {
-		    		clearStudyTree();
-		    		createStudyTree($.parseJSON(data.fieldMapInfo), true);
-		    		$('.tree').treegrid({
-		                expanderExpandedClass: 'glyphicon glyphicon-minus',
-		                expanderCollapsedClass: 'glyphicon glyphicon-plus'
-		            });
-		    		triggerFieldMapTableSelection('studyTree');
-		    		$("#selectTrialInstanceModal").modal("toggle");
-	    		} else {
-	    			//redirect to step 3
-	    			var fieldMapInfo = $.parseJSON(data.fieldMapInfo);
-	    			var datasetId = fieldMapInfo.datasets[0].datasetId;
-	    			var geolocationId = fieldMapInfo.datasets[0].trialInstances[0].geolocationId;	    			
-	    			location.href = "/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/" + datasetId + "/" + geolocationId;
-	    		}
-	    	}
-            Spinner.toggle();
-        }
-	});
+function selectTrialInstance(tableName) {
+	if (tableName == "trial-table") { 
+		Spinner.toggle();
+		//var fieldMapHref = $('#fieldmap-url').attr("href");	
+		$.ajax({ 
+			url: "/Fieldbook/Fieldmap/enterFieldDetails/selectTrialInstance",
+		    type: "GET",
+		    data: "",
+		    success: function(data) {
+		    	if (data.fieldMapInfo != null && data.fieldMapInfo != "") {
+		    		if (parseInt(data.size) > 1) {
+			    		clearStudyTree();
+			    		createStudyTree($.parseJSON(data.fieldMapInfo), true);
+			    		$("#selectTrialInstanceModal").modal("toggle");
+		    		} else {
+		    			//redirect to step 3
+		    			var fieldMapInfo = $.parseJSON(data.fieldMapInfo);
+		    			var datasetId = fieldMapInfo.datasets[0].datasetId;
+		    			var geolocationId = fieldMapInfo.datasets[0].trialInstances[0].geolocationId;	    			
+		    			location.href = "/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/" + datasetId + "/" + geolocationId;
+		    		}
+		    	}
+	            Spinner.toggle();
+	        }
+		});
+	} else {
+		//redirect to step 3 for nursery
+		var datasetId = $("#fieldmapDatasetId").val();
+		var geolocationId = $("#fieldmapGeolocationId").val();
+		location.href = "/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/" + datasetId + "/" + geolocationId;
+	}
 }
 
 function createStudyTree(fieldMapInfo, hasFieldMap) {
@@ -181,7 +181,7 @@ function createStudyTree(fieldMapInfo, hasFieldMap) {
 	
 	//set bootstrap ui
 	$('.tree').treegrid({
-        expanderExpandedClass: 'glyphicon glyphicon-minus',
+        expanderExpandedClass: 'glyphicon glyphicon-minus ',
         expanderCollapsedClass: 'glyphicon glyphicon-plus'
     });
 	
@@ -197,6 +197,14 @@ function getPrefixName(cat, id) {
 	}
 }
 
+function triggerExpanderClick(row) {
+	if (row.treegrid('isExpanded')) {
+		row.treegrid('collapse');
+	} else {
+		row.treegrid('expand');
+	}
+}
+
 function createRow(id, parentClass, value, realId, parentId) {
 	var genClassName = "treegrid-";
 	var genParentClassName = "";
@@ -207,14 +215,14 @@ function createRow(id, parentClass, value, realId, parentId) {
 	}
 	
 	if (id.indexOf("study") > -1 || id.indexOf("dataset") > -1) {
-		newRow = "<tr id='" + realId + "' class='"+ genClassName + id + " " + genParentClassName + "'>";
+		newRow = "<tr id='" + realId + "' class='"+ genClassName + id + " " + genParentClassName + "' onClick='triggerExpanderClick($(this))'>";
 		if (trial) {
 			newCell = "<td>" + value + "</td><td></td><td></td><td></td>";
 		} else {
 			newCell = "<td>" + value + "</td><td></td>";
 		}
 	} else {
-		newRow = "<tr id='" + realId + "|" + parentId + "' class='data-row "+ genClassName + id + " " + genParentClassName + "'>";
+		newRow = "<tr id='" + realId + "|" + parentId + "' class='data-row trialInstance "+ genClassName + id + " " + genParentClassName + "'>";
 		if (trial) {
 			newCell = "<td>" + value.siteName + "</td><td>" 
 					+ value.entryCount + "</td><td>" 
@@ -257,4 +265,37 @@ function createLabelPrinting(tableName){
 			type='Nursery';
 		$('#page-create-field-map-message').html("<div class='alert alert-danger'>"+createLabelErrorMsg+"</div>");
 	}
+}
+
+function showFieldMap(tableName) {
+	if($('#'+tableName+' .field-map-highlight').attr('id') != null){
+		if ($('#'+tableName+' .field-map-highlight').size() > 1) {
+			$('#page-create-field-map-message').html("<div class='alert alert-danger'>"+fieldMapOneStudyErrorMsg+"</div>");
+		} else {
+			$("#page-message").html("");
+			showFieldMapPopUp(tableName, $('#'+tableName+' .field-map-highlight').attr('id'));
+		}
+	} else {
+		$('#page-create-field-map-message').html("<div class='alert alert-danger'>"+fieldMapStudyRequired+"</div>");
+	}
+}
+
+function showFieldMapPopUp(tableName, id) {
+	Spinner.toggle();
+	$.ajax({ 
+		url: "/Fieldbook/Fieldmap/enterFieldDetails/createNurseryFieldmap/" + id,
+	    type: "GET",
+	    data: "",
+	    success: function(data) {
+	    	if (data.nav == '0') {
+	    		$("#fieldmapDatasetId").val(data.datasetId);
+	    		$("#fieldmapGeolocationId").val(data.geolocationId);
+	    		selectTrialInstance(tableName);
+	    	}
+	    	else if (data.nav == '1') {
+	    		$('#page-create-field-map-message').html("<div class='alert alert-danger'>"+noFieldMapExists+"</div>");
+	    	}
+            Spinner.toggle();
+        }
+	});
 }

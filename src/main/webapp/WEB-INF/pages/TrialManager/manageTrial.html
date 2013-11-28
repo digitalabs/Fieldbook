@@ -26,6 +26,10 @@
 			    	<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/trial}"></a>
 			    	<a href="javascript: createFieldMap('trial-table');" id="fieldmap-url-link" th:text="#{tools.create.field.map}">Create Field Map</a>
 			    </li>
+			    <li> 
+			    	<a href="" style="display: none" id="show-fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/trial}"></a>
+			    	<a href="javascript: showFieldMap('trial-table');" id="show-fieldmap-url-link" th:text="#{tools.display.existing.field.map}">Display Existing Field Map</a>
+			    </li>
 			    <li>
 			    	<a href="" style="display: none" id="label-printing-url" th:href="@{LabelPrinting/specifyLabelDetails/trial}"></a>
 			    	<a href="javascript: createLabelPrinting('trial-table');" id="label-printing-url-link" th:text="#{tools.create.label.printing}">Create Labels</a> 
@@ -82,6 +86,9 @@
 	//<![CDATA[    
         var createLabelErrorMsg = /*[[#{common.error.create.label.trial}]]*/;
         var paginationUrl = /*[[@{/TrialManager/manageTrial/page/}]]*/;
+        var fieldMapStudyRequired = /*[[#{common.error.select.study(#{fieldmap.trial})}]]*/;
+        var fieldMapOneStudyErrorMsg = /*[[#{common.error.select.one.study.show.fieldmap(#{fieldmap.trial})}]]*/;
+        var noFieldMapExists = /*[[#{common.error.no.existing.fieldmap(#{fieldmap.nursery})}]]*/;
         var options = {
             currentPage: /*[[${manageTrialForm.currentPage}]]*/,
             totalPages: /*[[${manageTrialForm.totalPages}]]*/,

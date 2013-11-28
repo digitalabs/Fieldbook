@@ -88,3 +88,7 @@ td.validValueDesc {
 margin-right: 10px; background: #eee; padding: 5px; width: 100%;}
 #availableFields li, #selectedFields li
 { margin: 5px; padding: 5px; font-size: 1.2em; }
+
+tr.trialInstance {
+	background-color: #dff0d8;
+}

@@ -127,7 +127,10 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         
         String nav = "1";
         try {
-            FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfTrial(Integer.parseInt(id));
+            List<Integer> ids = new ArrayList<Integer>();
+            ids.add(Integer.parseInt(id));
+            List<FieldMapInfo> fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfTrial(ids);
+            FieldMapInfo fieldMapInfo = fieldMapInfoList.get(0);
             //workbenchDataManager.get
             this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, true);
             
@@ -208,7 +211,10 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         
         String nav = "1";
         try {
-            FieldMapInfo fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfNursery(Integer.parseInt(id));
+            List<Integer> ids = new ArrayList<Integer>();
+            ids.add(Integer.parseInt(id));
+            List<FieldMapInfo> fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids);
+            FieldMapInfo fieldMapInfo = fieldMapInfoList.get(0);
             
             this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, false);
             

@@ -26,7 +26,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.poi.hpsf.Constants;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
@@ -49,7 +48,6 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.label.printing.form.LabelPrintingForm;
-import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
@@ -63,7 +61,6 @@ import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
@@ -91,14 +88,21 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
             Model model, HttpSession session, @PathVariable int id ) {
         session.invalidate();
         Study study = null;
+        List<FieldMapInfo> fieldMapInfoList = null;
         FieldMapInfo fieldMapInfo = null;
         try {
             study = fieldbookMiddlewareService.getStudy(id);
-            fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfTrial(id);
+            List<Integer> ids = new ArrayList<Integer>();
+            ids.add(id);
+            fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfTrial(ids);
+            for (FieldMapInfo fieldMapInfoDetail : fieldMapInfoList) {
+                fieldMapInfo = fieldMapInfoDetail;
+            }
         } catch (MiddlewareQueryException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        
         getUserLabelPrinting().setStudy(study);
         getUserLabelPrinting().setFieldMapInfo(fieldMapInfo);
         getUserLabelPrinting().setBarcodeNeeded("1");
@@ -128,10 +132,16 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
             HttpSession session, @PathVariable int id) {
         session.invalidate();
         Study study = null;
+        List<FieldMapInfo> fieldMapInfoList = null;
         FieldMapInfo fieldMapInfo = null;
         try {
             study = fieldbookMiddlewareService.getStudy(id);
-            fieldMapInfo = fieldbookMiddlewareService.getFieldMapInfoOfNursery(id);
+            List<Integer> ids = new ArrayList<Integer>();
+            ids.add(id);
+            fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids);
+            for (FieldMapInfo fieldMapInfoDetail : fieldMapInfoList) {
+                fieldMapInfo = fieldMapInfoDetail;
+            }
         } catch (MiddlewareQueryException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

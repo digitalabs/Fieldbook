@@ -26,6 +26,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.poi.hpsf.Constants;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
@@ -56,10 +57,13 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.oned.Code128Writer;
 import com.lowagie.text.Document;
+import com.lowagie.text.Font;
+import com.lowagie.text.FontFactory;
 import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
@@ -190,7 +194,16 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     public String submitDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, 
             BindingResult result, Model model, HttpServletResponse response) {
         
-        setUserLabelPrinting(form.getUserLabelPrinting());
+        getUserLabelPrinting().setBarcodeNeeded(form.getUserLabelPrinting().getBarcodeNeeded());
+        getUserLabelPrinting().setSizeOfLabelSheet(form.getUserLabelPrinting().getSizeOfLabelSheet());
+        getUserLabelPrinting().setNumberOfLabelPerRow(form.getUserLabelPrinting().getNumberOfLabelPerRow());
+        getUserLabelPrinting().setNumberOfRowsPerPageOfLabel(form.getUserLabelPrinting().getNumberOfRowsPerPageOfLabel());
+        getUserLabelPrinting().setSelectedLabelFields(form.getUserLabelPrinting().getSelectedLabelFields());
+        getUserLabelPrinting().setFirstBarcodeField(form.getUserLabelPrinting().getFirstBarcodeField());        
+        getUserLabelPrinting().setSecondBarcodeField(form.getUserLabelPrinting().getSecondBarcodeField());
+        getUserLabelPrinting().setThirdBarcodeField(form.getUserLabelPrinting().getThirdBarcodeField());
+        
+        //setUserLabelPrinting(form.getUserLabelPrinting());
         int pageSizeId = Integer.parseInt(getUserLabelPrinting().getSizeOfLabelSheet());
         int numberOfLabelPerRow = Integer.parseInt(getUserLabelPrinting().getNumberOfLabelPerRow());
         int numberofRowsPerPageOfLabel = Integer.parseInt(getUserLabelPrinting().getNumberOfRowsPerPageOfLabel());
@@ -203,8 +216,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         String thirdBarcodeField = getUserLabelPrinting().getThirdBarcodeField();
         
         
-        int width = 60; 
-        int height = 48;
+        
         String delimeter = "|";
         //StringBuilder barCodeString = new StringBuilder();
         /*
@@ -231,7 +243,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
              
           
              String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
-             String fileName = currentDate + ".doc";
+             String fileName = currentDate + ".pdf";
 
              response.setHeader("Content-disposition","attachment; filename=" + fileName);
 
@@ -269,7 +281,10 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
                  
                  int i = 0;
                  
-                 PdfPTable table = new PdfPTable(numberOfLabelPerRow);  
+                 PdfPTable table = new PdfPTable(numberOfLabelPerRow); 
+                 table.setWidthPercentage(100);
+                 int width = 60; 
+                 int height = 48;
                  for(FieldMapLabel fieldMapLabel : fieldMapLabelsList){
                      i++;
                      String barcodeLabel = generateBarcodeField(fieldMapLabel, firstBarcodeField, secondBarcodeField, thirdBarcodeField, barcodeNeeded);
@@ -281,23 +296,35 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
                      MatrixToImageWriter.writeToStream(bitMatrix, "png", new FileOutputStream(new File(imageLocation)));
                      Image mainImage = Image.getInstance(imageLocation);
                      
+                     
+                     if(i % numberOfLabelPerRow == 0){
+                         //we go the next line
+                         table.completeRow();
+                         document.add(table);
+                         table = new PdfPTable(numberOfLabelPerRow);  
+                         table.setWidthPercentage(100);
+                     }
+                     
                      if(i % totalPerPage == 0){
                          //we go the next page
                          document.newPage();
-                     }
-                     if(i % numberOfLabelPerRow == 0){
-                         //we go the next line
-                         table = new PdfPTable(numberOfLabelPerRow);  
                      }
                      
                      PdfPCell cell = new PdfPCell();
                      Paragraph paragraph1 = new Paragraph();
                      
-                     String selectedLabel = "";
-                     paragraph1.add(selectedLabel);
-                     cell.addElement(paragraph1);                     
+                     //String selectedLabel = "";
+                     //paragraph1.add("test" + i);
+                     //cell.addElement(paragraph1);  
+                     
+                     
+                     Font fontNormal = FontFactory.getFont("Arial", 8, Font.NORMAL);
+                     mainImage.scaleAbsoluteHeight(50);
                      cell.addElement(mainImage);
+                     cell.addElement(new Paragraph());
+                     cell.addElement(new Paragraph("test " + i, fontNormal));
                      table.addCell(cell);
+                     
                  }
                  
                  document.close();
@@ -334,6 +361,64 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     } 
     
     private String generateBarcodeField(FieldMapLabel fieldMapLabel, String firstField, String secondField, String thirdField, String barcodeNeeded){
+        StringBuffer buffer = new StringBuffer();
+        List<String> fieldList = new ArrayList<String>();
+        fieldList.add(firstField);
+        fieldList.add(secondField);
+        fieldList.add(thirdField);
+        String delimiter = "|";
+        for(String barcodeLabel : fieldList){
+            if(barcodeLabel.equalsIgnoreCase(""))
+                continue;
+            
+            if(!buffer.toString().equalsIgnoreCase("")){
+                buffer.append(delimiter);
+            }
+            switch(Integer.parseInt(barcodeLabel)){
+                
+                
+                case AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM:
+                    buffer.append(fieldMapLabel.getEntryNumber());
+                    break;
+                case AppConstants.AVAILABLE_LABEL_FIELDS_GID: 
+                    //buffer.append(fieldMapLabel.get());
+                    break;
+                case AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME: 
+                    buffer.append(fieldMapLabel.getGermplasmName());
+                    break;
+                case AppConstants.AVAILABLE_LABEL_FIELDS_YEAR: 
+                    
+                    break;
+                case AppConstants.AVAILABLE_LABEL_FIELDS_SEASON: 
+                    
+                    break;
+                case AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME: 
+                    
+                    break;
+                case AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM: 
+                    
+                    break;
+                case AppConstants.AVAILABLE_LABEL_FIELDS_REP: 
+                    buffer.append(fieldMapLabel.getRep());
+                    break;
+                case AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION: 
+                    
+                    break;
+                case AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME: 
+                    
+                    break;
+                case AppConstants.AVAILABLE_LABEL_FIELDS_PLOT: 
+                    buffer.append(fieldMapLabel.getPlotNo());
+                    break;
+                case AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME: 
+                    //buffer.append(fieldMapLabel.getEntryNumber());
+                    break;
+                default: break;    
+            }
+        }
+        return buffer.toString();
+    }
+    private String generateBarcodeLabel(FieldMapLabel fieldMapLabel, String selectedFields){
         StringBuffer buffer = new StringBuffer();
         return buffer.toString();
     }

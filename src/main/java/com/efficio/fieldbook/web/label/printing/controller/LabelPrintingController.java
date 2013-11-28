@@ -319,7 +319,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
                      
                      
                      Font fontNormal = FontFactory.getFont("Arial", 8, Font.NORMAL);
-                     mainImage.scaleAbsoluteHeight(50);
+                     //mainImage.scaleAbsoluteHeight(50);
                      cell.addElement(mainImage);
                      cell.addElement(new Paragraph());
                      cell.addElement(new Paragraph("test " + i, fontNormal));

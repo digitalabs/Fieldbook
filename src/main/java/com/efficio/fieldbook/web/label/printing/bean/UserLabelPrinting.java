@@ -13,12 +13,23 @@ package com.efficio.fieldbook.web.label.printing.bean;
 
 import java.io.Serializable;
 
+import org.generationcp.middleware.domain.dms.Study;
+import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
+import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
+import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
+
 
 /**
  * @author Efficio.Daniel
  *
  */
 public class UserLabelPrinting implements Serializable{
+    
+    private static final long serialVersionUID = 1L;
+    
+    private transient Study study;
+    private transient FieldMapInfo fieldMapInfo;
+    
     private String name;
     private String title;
     private String objective;
@@ -36,6 +47,53 @@ public class UserLabelPrinting implements Serializable{
     private String thirdBarcodeField;
     
     
+     
+    
+    
+    
+    public FieldMapInfo getFieldMapInfo() {
+        return fieldMapInfo;
+    }
+
+
+    
+    public void setFieldMapInfo(FieldMapInfo fieldMapInfo) {
+        this.fieldMapInfo = fieldMapInfo;
+        int totalLabels = 0;
+        if(fieldMapInfo != null){
+            if(fieldMapInfo.getDatasets() != null && fieldMapInfo.getDatasets().size() > 0){
+                FieldMapDatasetInfo info = fieldMapInfo.getDatasets().get(0);
+                if(info.getTrialInstances() != null){
+                    this.numberOfInstances = Integer.toString(info.getTrialInstances().size());
+                    for(int i = 0 ; i < info.getTrialInstances().size(); i++){
+                        FieldMapTrialInstanceInfo trialInstanceInfo = info.getTrialInstances().get(i);
+                        if(trialInstanceInfo.getFieldMapLabels() != null)
+                            totalLabels+=trialInstanceInfo.getFieldMapLabels().size();
+                    }
+                    
+                }
+            }
+            this.totalNumberOfLabelToPrint = Integer.toString(totalLabels);
+            
+        }
+    }
+
+
+    public Study getStudy() {
+        return study;
+    }
+
+
+    public void setStudy(Study study) {
+        this.study = study;
+        this.name = study.getName();
+        this.title = study.getTitle();
+        this.objective = study.getObjective();
+    }
+
+
+
+
     public String getFirstBarcodeField() {
         return firstBarcodeField;
     }

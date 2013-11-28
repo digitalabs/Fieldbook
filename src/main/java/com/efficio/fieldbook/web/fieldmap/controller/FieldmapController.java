@@ -127,20 +127,21 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         
         String nav = "1";
         try {
-            List<Integer> ids = new ArrayList<Integer>();
-            ids.add(Integer.parseInt(id));
-            List<FieldMapInfo> fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfTrial(ids);
-            FieldMapInfo fieldMapInfo = fieldMapInfoList.get(0);
-            //workbenchDataManager.get
-            this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, true);
+            List<Integer> trialIds = new ArrayList<Integer>();
+            trialIds.add(Integer.parseInt(id));
+            List<FieldMapInfo> fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfTrial(trialIds);
+
+            this.userFieldmap.setUserFieldmapInfo(fieldMapInfoList, true);
             
-            List<FieldMapDatasetInfo> datasetList = fieldMapInfo.getDatasetsWithFieldMap();
-            if (datasetList != null && !datasetList.isEmpty()) {
-                List<FieldMapTrialInstanceInfo> trials = datasetList.get(0).getTrialInstancesWithFieldMap();
-                if (trials != null && !trials.isEmpty()) {
-                    nav = "0";
+            for (FieldMapInfo fieldMapInfo : fieldMapInfoList) {
+                List<FieldMapDatasetInfo> datasetList = fieldMapInfo.getDatasetsWithFieldMap();
+                if (datasetList != null && !datasetList.isEmpty()) {
+                    List<FieldMapTrialInstanceInfo> trials = datasetList.get(0).getTrialInstancesWithFieldMap();
+                    if (trials != null && !trials.isEmpty()) {
+                        nav = "0";
+                    }
                 }
-            }
+            } 
         } catch(MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }
@@ -152,17 +153,20 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     @RequestMapping(value="/selectTrialInstance", method = RequestMethod.GET)
     public Map<String, String> getFieldMapInfoData() {
         Map<String, String> result = new HashMap<String, String>();
-        FieldMapInfo fieldMapInfo = userFieldmap.getFieldMapInfo();
+        List<FieldMapInfo> fieldMapInfoList = userFieldmap.getFieldMapInfo();
         String size = "0";
-        
-        List<FieldMapDatasetInfo> datasetList = fieldMapInfo.getDatasetsWithFieldMap();
-        if (datasetList != null && !datasetList.isEmpty()) {
-            List<FieldMapTrialInstanceInfo> trials = datasetList.get(0).getTrialInstancesWithFieldMap();
-            if (trials != null && !trials.isEmpty()) {
-                size = String.valueOf(trials.size());
+        String fieldMapInfoJson = null;
+        for (FieldMapInfo fieldMapInfo : fieldMapInfoList) {
+            List<FieldMapDatasetInfo> datasetList = fieldMapInfo.getDatasetsWithFieldMap();
+            if (datasetList != null && !datasetList.isEmpty()) {
+                List<FieldMapTrialInstanceInfo> trials = datasetList.get(0).getTrialInstancesWithFieldMap();
+                if (trials != null && !trials.isEmpty()) {
+                    size = String.valueOf(trials.size());
+                }
             }
+            fieldMapInfoJson = convertFieldMapInfoToJson(fieldMapInfo);
         }
-        String fieldMapInfoJson = convertFieldMapInfoToJson(fieldMapInfo);
+        
         result.put("fieldMapInfo", fieldMapInfoJson);
         result.put("size", size);
         return result;
@@ -211,22 +215,27 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         
         String nav = "1";
         try {
-            List<Integer> ids = new ArrayList<Integer>();
-            ids.add(Integer.parseInt(id));
-            List<FieldMapInfo> fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfNursery(ids);
-            FieldMapInfo fieldMapInfo = fieldMapInfoList.get(0);
+            List<Integer> nurseryIds = new ArrayList<Integer>();
+            nurseryIds.add(Integer.parseInt(id));
             
-            this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, false);
+            List<FieldMapInfo> fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfNursery(nurseryIds);
+
+            this.userFieldmap.setUserFieldmapInfo(fieldMapInfoList, false);
             
-            List<FieldMapDatasetInfo> datasetList = fieldMapInfo.getDatasetsWithFieldMap();
-            if (datasetList != null && !datasetList.isEmpty()) {
-                FieldMapDatasetInfo dataset = datasetList.get(0);
-                nav = "0";
-                this.userFieldmap.setSelectedDatasetId(dataset.getDatasetId());
-                this.userFieldmap.setSelectedGeolocationId(dataset.getTrialInstancesWithFieldMap().get(0).getGeolocationId());
-                result.put("datasetId", this.userFieldmap.getSelectedDatasetId().toString());
-                result.put("geolocationId", this.userFieldmap.getSelectedGeolocationId().toString());
-            }
+            for (FieldMapInfo fieldMapInfo : fieldMapInfoList) {
+                List<FieldMapDatasetInfo> datasetList = fieldMapInfo.getDatasetsWithFieldMap();
+                if (datasetList != null && !datasetList.isEmpty()) {
+                    List<FieldMapTrialInstanceInfo> trials = datasetList.get(0).getTrialInstancesWithFieldMap();
+                    if (trials != null && !trials.isEmpty()) {
+                        FieldMapDatasetInfo dataset = datasetList.get(0);
+                        nav = "0";
+                        this.userFieldmap.setSelectedDatasetId(dataset.getDatasetId());
+                        this.userFieldmap.setSelectedGeolocationId(dataset.getTrialInstancesWithFieldMap().get(0).getGeolocationId());
+                        result.put("datasetId", this.userFieldmap.getSelectedDatasetId().toString());
+                        result.put("geolocationId", this.userFieldmap.getSelectedGeolocationId().toString());
+                    }
+                }
+            } 
         } catch(MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
             e.printStackTrace();

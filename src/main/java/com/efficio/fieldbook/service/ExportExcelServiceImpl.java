@@ -64,7 +64,7 @@ public class ExportExcelServiceImpl implements ExportExcelService{
             summaryOfFieldbookFieldPlantingDetailsLabel = messageSource.getMessage("fieldmap.header.summary.for.nursery", null, locale); //SUMMARY OF NURSERY, FIELD AND PLANTING DETAILS
             selectedFieldbookLabel =  messageSource.getMessage("fieldmap.nursery.selected.nursery", null, locale); //Selected Nursery:
         }
-        String selectedFieldbookValue = userFieldMap.getSelectedName();
+        String selectedFieldbookValue = userFieldMap.getBlockName();
         String numberOfEntriesLabel = messageSource.getMessage("fieldmap.trial.number.of.entries", null, locale); // Number of Entries:  -- used if Trial
         String numberOfEntriesAndPlotLabel = messageSource.getMessage("fieldmap.trial.number.of.entries.and.plots", null, locale); //Number of Entries and Plot: -- used if Nursery
         long numberOfEntriesValue = userFieldMap.getNumberOfEntries();

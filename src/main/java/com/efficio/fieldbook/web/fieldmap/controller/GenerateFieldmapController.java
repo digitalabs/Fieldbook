@@ -80,7 +80,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         form.setUserFieldmap(this.userFieldmap);
 
         //TEST DATA FOR GCP-6321
-        this.userFieldmap.setSelectedFieldMaps(Arrays.asList(this.userFieldmap.getFieldMapInfo()));
+        this.userFieldmap.setSelectedFieldMaps(this.userFieldmap.getFieldMapInfo());
         
         return super.show(model);
     }
@@ -92,8 +92,8 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
 
             this.userFieldmap.setSelectedDatasetId(datasetId);
             this.userFieldmap.setSelectedGeolocationId(geolocationId);
-            FieldMapInfo fieldMapInfo = userFieldmap.getFieldMapInfo();
-            FieldMapTrialInstanceInfo trialInfo = fieldMapInfo.getDataSet(datasetId).getTrialInstance(geolocationId); 
+            List<FieldMapInfo> fieldMapInfo = userFieldmap.getFieldMapInfo();
+            FieldMapTrialInstanceInfo trialInfo = fieldMapInfo.get(0).getDataSet(datasetId).getTrialInstance(geolocationId); 
             this.userFieldmap.setNumberOfRangesInBlock(trialInfo.getRangesInBlock());
             this.userFieldmap.setNumberOfRowsInBlock(trialInfo.getColumnsInBlock(), trialInfo.getRowsPerPlot());
             this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, true);
@@ -106,7 +106,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
             form.setUserFieldmap(this.userFieldmap);
             
             //TEST DATA FOR GCP-6321
-            this.userFieldmap.setSelectedFieldMaps(Arrays.asList(this.userFieldmap.getFieldMapInfo()));
+            this.userFieldmap.setSelectedFieldMaps(this.userFieldmap.getFieldMapInfo());
             
         } catch(MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
@@ -119,7 +119,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
     public String exportExcel(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model, HttpServletResponse response) {
 
         String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        String fileName = userFieldmap.getSelectedName().replace(" ", "") + "_" + currentDate + ".xls";
+        String fileName = userFieldmap.getBlockName().replace(" ", "") + "_" + currentDate + ".xls"; //changed selected name to block name for now
 
         response.setHeader("Content-disposition","attachment; filename=" + fileName);
 
@@ -186,8 +186,10 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
 
         List<FieldMapLabel> labels = userFieldmap.getFieldMapLabels();
 
+      //changed selected name to block name for now
         Plot[][] plots = fieldmapService.createFieldMap(col, ranges, startRange, startCol,
-                isSerpentine, deletedPlot, labels, userFieldmap.isTrial(), userFieldmap.getSelectedName());
+                isSerpentine, deletedPlot, labels, userFieldmap.isTrial(), userFieldmap.getBlockName());
+        
         userFieldmap.setFieldmap(plots);
         form.setUserFieldmap(userFieldmap);
 

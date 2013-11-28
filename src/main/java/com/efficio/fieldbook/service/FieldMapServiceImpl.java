@@ -204,7 +204,7 @@ public class FieldMapServiceImpl implements FieldMapService{
                     if (isSerpentine && column % 2 == 0) {
                         plot.setUpward(false);
                     }
-                    plot.setDisplayString(getDisplayString(label, info.isTrial(), info.getSelectedName()));
+                    plot.setDisplayString(getDisplayString(label, info.isTrial(), info.getBlockName()));
                     plot.setNotStarted(false);
                 }
                 else {

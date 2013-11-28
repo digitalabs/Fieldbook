@@ -43,10 +43,7 @@ public class UserFieldmap  implements Serializable {
     private Integer selectedDatasetId;
     
     private Integer selectedGeolocationId;
-    
-    /** The selected name. */
-    private String selectedName;
-    
+        
     /** The number of entries. */
     private Long numberOfEntries;
     
@@ -104,7 +101,7 @@ public class UserFieldmap  implements Serializable {
     /** The location name. */
     private String locationName;
     
-    private FieldMapInfo fieldMapInfo;
+    private List<FieldMapInfo> fieldMapInfo;
     
     private List<FieldMapInfo> selectedFieldMaps;
 
@@ -121,7 +118,7 @@ public class UserFieldmap  implements Serializable {
      * @param fieldMapInfo the field map info
      * @param isTrial the is trial
      */
-    public UserFieldmap(FieldMapInfo fieldMapInfo, boolean isTrial){
+    public UserFieldmap(List<FieldMapInfo> fieldMapInfo, boolean isTrial){
         setUserFieldmapInfo(fieldMapInfo, isTrial);
     }
     
@@ -131,17 +128,23 @@ public class UserFieldmap  implements Serializable {
      * @param fieldMapInfo the field map info
      * @param isTrial the is trial
      */
-    public void setUserFieldmapInfo(FieldMapInfo fieldMapInfo, boolean isTrial){
-        setSelectedName(fieldMapInfo.getFieldbookName());
+    public void setUserFieldmapInfo(List<FieldMapInfo> fieldMapInfoList, boolean isTrial){
+        
         if (getSelectedDatasetId() != null && getSelectedGeolocationId() != null) {
+            
             int datasetId = getSelectedDatasetId();
             int trialInstanceId = getSelectedGeolocationId();
             
-            FieldMapTrialInstanceInfo info = fieldMapInfo.getDataSet(datasetId).getTrialInstance(trialInstanceId);
-            setFieldMapLabels(info.getFieldMapLabels());
-            setNumberOfEntries(info.getEntryCount());
-            setNumberOfReps(info.getRepCount());
-            setTotalNumberOfPlots(info.getPlotCount());
+            for (FieldMapInfo fieldMapInfo : fieldMapInfoList) {
+                if (fieldMapInfo.getDataSet(datasetId) != null) {
+                    FieldMapTrialInstanceInfo info = fieldMapInfo.getDataSet(datasetId).getTrialInstance(trialInstanceId);
+                    setFieldMapLabels(info.getFieldMapLabels());
+                    setNumberOfEntries(info.getEntryCount());
+                    setNumberOfReps(info.getRepCount());
+                    setTotalNumberOfPlots(info.getPlotCount());
+                    setStudyId(fieldMapInfo.getFieldbookId());
+                }
+            }            
         }
         
         setTrial(isTrial);
@@ -150,16 +153,15 @@ public class UserFieldmap  implements Serializable {
         }else{
             setNumberOfRowsPerPlot(1);
         }
-        setStudyId(fieldMapInfo.getFieldbookId());
-        setFieldMapInfo(fieldMapInfo);
+        setFieldMapInfo(fieldMapInfoList);
         
     }
     
-    public FieldMapInfo getFieldMapInfo() {
+    public List<FieldMapInfo> getFieldMapInfo() {
         return fieldMapInfo;
     }
     
-    public void setFieldMapInfo(FieldMapInfo fieldMapInfo) {
+    public void setFieldMapInfo(List<FieldMapInfo> fieldMapInfo) {
         this.fieldMapInfo = fieldMapInfo;
     }
     
@@ -241,24 +243,6 @@ public class UserFieldmap  implements Serializable {
      */
     public void setTrial(boolean isTrial) {
         this.isTrial = isTrial;
-    }
-
-    /**
-     * Gets the selected name.
-     *
-     * @return the selected name
-     */
-    public String getSelectedName() {
-        return selectedName;
-    }
-    
-    /**
-     * Sets the selected name.
-     *
-     * @param selectedName the new selected name
-     */
-    public void setSelectedName(String selectedName) {
-        this.selectedName = selectedName;
     }
     
     /**

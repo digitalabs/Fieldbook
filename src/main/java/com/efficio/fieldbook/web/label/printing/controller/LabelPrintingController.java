@@ -295,47 +295,53 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
                  table.setWidthPercentage(100);
                  int width = 60; 
                  int height = 48;
-                 for(FieldMapLabel fieldMapLabel : fieldMapLabelsList){
-                     i++;
-                     String barcodeLabel = generateBarcodeField(fieldMapLabel, firstBarcodeField, secondBarcodeField, thirdBarcodeField, barcodeNeeded);
+                 
+                 for(FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo : datasetInfo.getTrialInstances()){
+                     for(FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()){
+                         
+           
+                         i++;
+                         String barcodeLabel = generateBarcodeField(fieldMapLabel, firstBarcodeField, secondBarcodeField, thirdBarcodeField, barcodeNeeded);
+                         
+                         
+                         
+                         BitMatrix bitMatrix = new Code128Writer().encode(barcodeLabel,BarcodeFormat.CODE_128,width,height,null);
+                         String imageLocation = Math.random() + ".png";
+                         MatrixToImageWriter.writeToStream(bitMatrix, "png", new FileOutputStream(new File(imageLocation)));
+                         Image mainImage = Image.getInstance(imageLocation);
+                         
+                         
+                         if(i % numberOfLabelPerRow == 0){
+                             //we go the next line
+                             table.completeRow();
+                             document.add(table);
+                             table = new PdfPTable(numberOfLabelPerRow);  
+                             table.setWidthPercentage(100);
+                         }
+                         
+                         if(i % totalPerPage == 0){
+                             //we go the next page
+                             document.newPage();
+                         }
+                         
+                         PdfPCell cell = new PdfPCell();
+                         Paragraph paragraph1 = new Paragraph();
+                         
+                         //String selectedLabel = "";
+                         //paragraph1.add("test" + i);
+                         //cell.addElement(paragraph1);  
+                         
+                         
+                         Font fontNormal = FontFactory.getFont("Arial", 8, Font.NORMAL);
+                         //mainImage.scaleAbsoluteHeight(50);
+                         cell.addElement(mainImage);
+                         cell.addElement(new Paragraph());
+                         cell.addElement(new Paragraph("test " + i, fontNormal));
+                         table.addCell(cell);
                      
-                     
-                     
-                     BitMatrix bitMatrix = new Code128Writer().encode(barcodeLabel,BarcodeFormat.CODE_128,width,height,null);
-                     String imageLocation = Math.random() + ".png";
-                     MatrixToImageWriter.writeToStream(bitMatrix, "png", new FileOutputStream(new File(imageLocation)));
-                     Image mainImage = Image.getInstance(imageLocation);
-                     
-                     
-                     if(i % numberOfLabelPerRow == 0){
-                         //we go the next line
-                         table.completeRow();
-                         document.add(table);
-                         table = new PdfPTable(numberOfLabelPerRow);  
-                         table.setWidthPercentage(100);
                      }
-                     
-                     if(i % totalPerPage == 0){
-                         //we go the next page
-                         document.newPage();
-                     }
-                     
-                     PdfPCell cell = new PdfPCell();
-                     Paragraph paragraph1 = new Paragraph();
-                     
-                     //String selectedLabel = "";
-                     //paragraph1.add("test" + i);
-                     //cell.addElement(paragraph1);  
-                     
-                     
-                     Font fontNormal = FontFactory.getFont("Arial", 8, Font.NORMAL);
-                     //mainImage.scaleAbsoluteHeight(50);
-                     cell.addElement(mainImage);
-                     cell.addElement(new Paragraph());
-                     cell.addElement(new Paragraph("test " + i, fontNormal));
-                     table.addCell(cell);
-                     
                  }
+           
                  
                  document.close();
 

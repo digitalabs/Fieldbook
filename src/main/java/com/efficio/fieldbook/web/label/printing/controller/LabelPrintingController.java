@@ -239,6 +239,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
             .append(barCodeForm.getRange());
         */
         FieldMapDatasetInfo datasetInfo =  getUserLabelPrinting().getFieldMapInfo().getDatasets().get(0);
+        /*
         List<FieldMapLabel> fieldMapLabelsList = new ArrayList();
         
         
@@ -246,7 +247,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
             FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = datasetInfo.getTrialInstances().get(i);
             fieldMapLabelsList.addAll(fieldMapTrialInstanceInfo.getFieldMapLabels());
         }
-           
+          */ 
         
          try {
              

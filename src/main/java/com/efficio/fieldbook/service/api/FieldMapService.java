@@ -24,7 +24,7 @@ import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 public interface FieldMapService {
     
     //added by Daniel
-    Plot[][] createFieldMap(int col, int range, int startRange, int startCol, boolean isSerpentine, Map deletedPlot, List<FieldMapLabel> labels, boolean isTrial, String selectedName);
+    Plot[][] createFieldMap(int col, int range, int startRange, int startCol, boolean isSerpentine, Map deletedPlot, List<FieldMapLabel> labels, boolean isTrial);
     
     Plot[][] createDummyData(int col, int range, int startRange, int startCol, boolean isSerpentine, Map deletedPlot);
     

@@ -100,6 +100,9 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
             this.userFieldmap.setNumberOfRowsPerPlot(trialInfo.getRowsPerPlot());
             this.userFieldmap.setPlantingOrder(trialInfo.getPlantingOrder());
             this.userFieldmap.setBlockName(trialInfo.getBlockName());
+            this.userFieldmap.setFieldName(trialInfo.getFieldName());
+            this.userFieldmap.setLocationName(trialInfo.getLocationName());
+            this.userFieldmap.setFieldMapLabels(fieldbookMiddlewareService.getAllFieldMapsInBlockByTrialInstanceId(geolocationId));
             
             populateFormWithSessionData(form);
             this.userFieldmap.setFieldmap(fieldmapService.generateFieldmap(this.userFieldmap));
@@ -110,6 +113,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
             
         } catch(MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
+            e.printStackTrace();
         }
         return super.show(model);
     }
@@ -188,7 +192,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
 
       //changed selected name to block name for now
         Plot[][] plots = fieldmapService.createFieldMap(col, ranges, startRange, startCol,
-                isSerpentine, deletedPlot, labels, userFieldmap.isTrial(), userFieldmap.getBlockName());
+                isSerpentine, deletedPlot, labels, userFieldmap.isTrial());
         
         userFieldmap.setFieldmap(plots);
         form.setUserFieldmap(userFieldmap);

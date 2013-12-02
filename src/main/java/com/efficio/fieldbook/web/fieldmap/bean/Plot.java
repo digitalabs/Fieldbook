@@ -29,8 +29,11 @@ public class Plot implements Serializable{
     /** The column. */
     private int column;
     
-    /** The is upward. */
+    /** The is upward. The direction of seed distribution */
     private boolean isUpward;
+    
+    /** The direction of the machine */
+    private boolean isMachineUpward;
     
     /** The display string. */
     private String displayString;
@@ -195,6 +198,20 @@ public class Plot implements Serializable{
      */
     public void setColumn(int column) {
         this.column = column;
+    }
+
+    /**
+     * @return the isMachineUpward
+     */
+    public boolean isMachineUpward() {
+        return isMachineUpward;
+    }
+    
+    /**
+     * @param isMachineUpward the isMachineUpward to set
+     */
+    public void setMachineUpward(boolean isMachineUpward) {
+        this.isMachineUpward = isMachineUpward;
     }
     
     

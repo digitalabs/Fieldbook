@@ -12,6 +12,7 @@
 package com.efficio.fieldbook.web.fieldmap.controller;
 
 import java.util.Arrays;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 
@@ -58,7 +59,8 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController{
         
         try {
             if (userFieldmap != null && userFieldmap.getFieldMapLabels() != null && !userFieldmap.getFieldMapLabels().isEmpty()) {
-                FieldMapInfo info = createFieldMapInfo();
+                String fieldmapUUID = UUID.randomUUID().toString();
+                FieldMapInfo info = createFieldMapInfo(fieldmapUUID);
                 fieldbookMiddlewareService.saveOrUpdateFieldmapProperties(info);
             }
             
@@ -73,7 +75,7 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController{
         }
     }
 
-    private FieldMapInfo createFieldMapInfo() {
+    private FieldMapInfo createFieldMapInfo(String fieldmapUUID) {
         FieldMapTrialInstanceInfo trialInfo = new FieldMapTrialInstanceInfo();
         trialInfo.setGeolocationId(userFieldmap.getSelectedGeolocationId());
         trialInfo.setBlockName(userFieldmap.getBlockName());
@@ -82,6 +84,9 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController{
         trialInfo.setPlantingOrder(userFieldmap.getPlantingOrder());
         trialInfo.setFieldMapLabels(userFieldmap.getFieldMapLabels());
         trialInfo.setRowsPerPlot(userFieldmap.getNumberOfRowsPerPlot());
+        trialInfo.setFieldName(userFieldmap.getFieldName());
+        trialInfo.setLocationName(userFieldmap.getLocationName());
+        trialInfo.setFieldmapUUID(fieldmapUUID);
 
         FieldMapDatasetInfo datasetInfo = new FieldMapDatasetInfo();
         datasetInfo.setDatasetId(userFieldmap.getSelectedDatasetId());
@@ -90,13 +95,6 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController{
         FieldMapInfo info = new FieldMapInfo(); 
         info.setFieldbookId(userFieldmap.getStudyId());
         info.setDatasets(Arrays.asList(datasetInfo));
-        /*
-        info.setBlockName(userFieldMap.getBlockName());
-        info.setColumnsInBlock(userFieldMap.getNumberOfColumnsInBlock());
-        info.setRangesInBlock(userFieldMap.getNumberOfRangesInBlock());
-        info.setPlantingOrder(userFieldMap.getPlantingOrder());
-        info.setFieldMapLabels(userFieldMap.getFieldMapLabels());
-        */
         
         return info;
     }

@@ -32,9 +32,9 @@ public class FieldMapServiceImpl implements FieldMapService{
     
     private static final String NEXT_LINE = "<br/>";
 
-    private String getDisplayString(FieldMapLabel label, boolean isTrial, String selectedName) {
+    private String getDisplayString(FieldMapLabel label, boolean isTrial) {
         StringBuilder textLabel = new StringBuilder();
-        textLabel.append(selectedName);
+        textLabel.append(label.getStudyName());
         textLabel.append(NEXT_LINE + "Entry " + label.getEntryNumber());
         if (isTrial) {
             textLabel.append(NEXT_LINE + "Rep " + label.getRep());
@@ -45,7 +45,7 @@ public class FieldMapServiceImpl implements FieldMapService{
     @Override
     public Plot[][] createFieldMap(int col, int range, int startRange,
             int startCol, boolean isSerpentine, Map deletedPlot,
-            List<FieldMapLabel> labels, boolean isTrial, String selectedName) {
+            List<FieldMapLabel> labels, boolean isTrial) {
         
         Plot[][] plots = new Plot[col][range];
         //this creates the initial data
@@ -83,7 +83,7 @@ public class FieldMapServiceImpl implements FieldMapService{
                             isStartOk = true;
                         }
                         counter = populatePlotData(counter, labels, i, j, plots, isUpward, startCol, startRange, isStartOk, deletedPlot, 
-                                isTrial, selectedName);
+                                isTrial);
                     }
                 }else{
                     for(int j = range - 1 ; j >= 0 ; j--){
@@ -93,7 +93,7 @@ public class FieldMapServiceImpl implements FieldMapService{
                             isStartOk = true;
                         }
                         counter = populatePlotData(counter, labels, i, j, plots, isUpward, startCol, startRange, isStartOk, deletedPlot,
-                                isTrial, selectedName);
+                                isTrial);
 
                     }
                 }
@@ -131,9 +131,11 @@ public class FieldMapServiceImpl implements FieldMapService{
         
         List<FieldMapLabel> labels = new ArrayList<FieldMapLabel>();
         for (int i = 0; i < range*col; i++) {
-            labels.add(new FieldMapLabel(null, null, "DummyData-" + i, null, null));
+            FieldMapLabel label = new FieldMapLabel(null, null, "DummyData-" + i, null, null);
+            label.setStudyName("Dummy Trial");
+            labels.add(label);
         }
-        Plot[][] plots = createFieldMap(col, range, startRange, startCol, isSerpentine, deletedPlot, labels, true, "Dummy Trial");
+        Plot[][] plots = createFieldMap(col, range, startRange, startCol, isSerpentine, deletedPlot, labels, true);
         return plots;
     }
     
@@ -144,13 +146,13 @@ public class FieldMapServiceImpl implements FieldMapService{
     }    
     
     public int populatePlotData(int counter, List<FieldMapLabel> labels, int col, int range, Plot[][] plots,
-            boolean isUpward, int startCol, int startRange, boolean isStartOk, Map deletedPlot, boolean isTrial, String selectedName){
+            boolean isUpward, int startCol, int startRange, boolean isStartOk, Map deletedPlot, boolean isTrial){
         String stringToDisplay = "";
         int i = col;
         int j = range;
         boolean hasAvailableEntries = true;
         if(counter < labels.size()){
-            stringToDisplay = getDisplayString(labels.get(counter), isTrial, selectedName);
+            stringToDisplay = getDisplayString(labels.get(counter), isTrial);
         }else{
             hasAvailableEntries = false;
         }
@@ -204,7 +206,7 @@ public class FieldMapServiceImpl implements FieldMapService{
                     if (isSerpentine && column % 2 == 0) {
                         plot.setUpward(false);
                     }
-                    plot.setDisplayString(getDisplayString(label, info.isTrial(), info.getBlockName()));
+                    plot.setDisplayString(getDisplayString(label, info.isTrial()));
                     plot.setNotStarted(false);
                 }
                 else {

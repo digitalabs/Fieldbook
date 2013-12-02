@@ -85,7 +85,9 @@ td.validValueDesc {
 
 #availableFields, #selectedFields 
 { list-style-type: none; margin: 0; padding: 0; float: left; 
-margin-right: 10px; background: #eee; padding: 5px; width: 100%;}
+margin-right: 10px; background: #eee; padding: 5px; width: 100%;
+min-height: 50px;
+}
 #availableFields li, #selectedFields li
 { margin: 5px; padding: 5px; font-size: 1.2em; }
 

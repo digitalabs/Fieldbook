@@ -402,4 +402,24 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         this.userFieldmap.setNumberOfRowsPerPlot(form.getUserFieldmap().getNumberOfRowsPerPlot());
         this.userFieldmap.setLocationName(form.getUserFieldmap().getLocationName());
     }
+    
+    private void setDummyData() {
+        List<FieldMapInfo> infos = new ArrayList<FieldMapInfo>();
+        FieldMapInfo info = new FieldMapInfo();
+        FieldMapDatasetInfo dataset = new FieldMapDatasetInfo();
+        info.setDatasets(new ArrayList<FieldMapDatasetInfo>());
+        info.getDatasets().add(dataset);
+        info.setFieldbookId(-212);
+        info.setFieldbookName("Dummy Fieldbook");
+        info.setTrial(true);
+        dataset.setDatasetName("Dummy Daaset");
+        dataset.setDatasetId(-214);
+        FieldMapTrialInstanceInfo trial = new FieldMapTrialInstanceInfo();
+        trial.setGeolocationId(-140);
+        dataset.setTrialInstances(new ArrayList<FieldMapTrialInstanceInfo>());
+        dataset.getTrialInstances().add(trial);
+        this.userFieldmap.setSelectedDatasetId(-214);
+        this.userFieldmap.setSelectedGeolocationId(-140);
+        this.userFieldmap.setFieldMapInfo(infos);
+    }
 }

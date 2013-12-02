@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -82,6 +83,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     private FieldbookService fieldbookMiddlewareService;
     
     private static final int BUFFER_SIZE = 4096 * 4;
+    
+    private String delimiter = "|";
     
     @RequestMapping(value="/trial/{id}", method = RequestMethod.GET)
     public String showTrialLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, 
@@ -226,8 +229,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         String thirdBarcodeField = getUserLabelPrinting().getThirdBarcodeField();
         
         
-        
-        String delimeter = "|";
         //StringBuilder barCodeString = new StringBuilder();
         /*
         barCodeString.append(barCodeForm.getEntryNo()).append(delimeter)
@@ -383,7 +384,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         fieldList.add(firstField);
         fieldList.add(secondField);
         fieldList.add(thirdField);
-        String delimiter = "|";
+        
         for(String barcodeLabel : fieldList){
             if(barcodeLabel.equalsIgnoreCase(""))
                 continue;
@@ -391,52 +392,68 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
             if(!buffer.toString().equalsIgnoreCase("")){
                 buffer.append(delimiter);
             }
-            switch(Integer.parseInt(barcodeLabel)){
-                
-                
-                case AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM:
-                    buffer.append(fieldMapLabel.getEntryNumber());
-                    break;
-                case AppConstants.AVAILABLE_LABEL_FIELDS_GID: 
-                    //buffer.append(fieldMapLabel.get());
-                    break;
-                case AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME: 
-                    buffer.append(fieldMapLabel.getGermplasmName());
-                    break;
-                case AppConstants.AVAILABLE_LABEL_FIELDS_YEAR: 
-                    
-                    break;
-                case AppConstants.AVAILABLE_LABEL_FIELDS_SEASON: 
-                    
-                    break;
-                case AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME: 
-                    
-                    break;
-                case AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM: 
-                    
-                    break;
-                case AppConstants.AVAILABLE_LABEL_FIELDS_REP: 
-                    buffer.append(fieldMapLabel.getRep());
-                    break;
-                case AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION: 
-                    
-                    break;
-                case AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME: 
-                    
-                    break;
-                case AppConstants.AVAILABLE_LABEL_FIELDS_PLOT: 
-                    buffer.append(fieldMapLabel.getPlotNo());
-                    break;
-                case AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME: 
-                    //buffer.append(fieldMapLabel.getEntryNumber());
-                    break;
-                default: break;    
-            }
+            buffer.append(getSpecificInfo(fieldMapLabel, barcodeLabel));
         }
         return buffer.toString();
     }
     private String generateBarcodeLabel(FieldMapLabel fieldMapLabel, String selectedFields){
         StringBuffer buffer = new StringBuffer();
+        StringTokenizer token = new StringTokenizer(selectedFields, ",");
+        while(token.hasMoreTokens()){
+            String barcodeLabel = token.nextToken();
+            if(barcodeLabel != null && !barcodeLabel.equalsIgnoreCase("")){
+                if(!buffer.toString().equalsIgnoreCase("")){
+                    buffer.append(delimiter);
+                }
+                buffer.append(getSpecificInfo(fieldMapLabel, barcodeLabel));
+            }
+        }
+        return buffer.toString();
+    }
+    
+    private String getSpecificInfo(FieldMapLabel fieldMapLabel, String barcodeLabel){
+        StringBuffer buffer = new StringBuffer();
+        switch(Integer.parseInt(barcodeLabel)){
+            
+            
+            case AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM:
+                buffer.append(fieldMapLabel.getEntryNumber());
+                break;
+            case AppConstants.AVAILABLE_LABEL_FIELDS_GID: 
+                //buffer.append(fieldMapLabel.get());
+                break;
+            case AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME: 
+                buffer.append(fieldMapLabel.getGermplasmName());
+                break;
+            case AppConstants.AVAILABLE_LABEL_FIELDS_YEAR: 
+                
+                break;
+            case AppConstants.AVAILABLE_LABEL_FIELDS_SEASON: 
+                
+                break;
+            case AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME: 
+                
+                break;
+            case AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM: 
+                
+                break;
+            case AppConstants.AVAILABLE_LABEL_FIELDS_REP: 
+                buffer.append(fieldMapLabel.getRep());
+                break;
+            case AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION: 
+                
+                break;
+            case AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME: 
+                
+                break;
+            case AppConstants.AVAILABLE_LABEL_FIELDS_PLOT: 
+                buffer.append(fieldMapLabel.getPlotNo());
+                break;
+            case AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME: 
+                //buffer.append(fieldMapLabel.getEntryNumber());
+                break;
+            default: break;    
+        }
         return buffer.toString();
     }
     

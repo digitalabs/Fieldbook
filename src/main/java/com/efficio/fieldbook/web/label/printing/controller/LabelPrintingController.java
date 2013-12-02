@@ -11,19 +11,28 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.label.printing.controller;
 
+import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
+import java.nio.file.DirectoryNotEmptyException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -34,6 +43,7 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -56,6 +66,7 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.oned.Code128Writer;
 import com.lowagie.text.Document;
+import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
 import com.lowagie.text.Image;
@@ -295,38 +306,51 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
                  
                  PdfPTable table = new PdfPTable(numberOfLabelPerRow); 
                  table.setWidthPercentage(100);
-                 int width = 60; 
-                 int height = 48;
+                 int width = 300; 
+                 int height = 100;
                  
                  for(FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo : datasetInfo.getTrialInstances()){
+                     /*
+                     ;
+                      ; //trial or nursery
+                     
+                     fieldMapTrialInstanceInfo.get //trial instance number ??? tiff
+                     */
+                     
+                     Map<String,String> moreFieldInfo = new HashMap<String, String>();
+                     moreFieldInfo.put("locationName", fieldMapTrialInstanceInfo.getLocationName());
+                     moreFieldInfo.put("blockName", fieldMapTrialInstanceInfo.getBlockName());
+                     moreFieldInfo.put("selectedName", getUserLabelPrinting().getFieldMapInfo().getFieldbookName());
+                     
                      for(FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()){
                          
            
                          i++;
-                         String barcodeLabel = generateBarcodeField(fieldMapLabel, firstBarcodeField, secondBarcodeField, thirdBarcodeField, barcodeNeeded);
+                         String barcodeLabel = generateBarcodeField(moreFieldInfo, fieldMapLabel, firstBarcodeField, secondBarcodeField, thirdBarcodeField, barcodeNeeded);
                          
                          
-                         
+                        
                          BitMatrix bitMatrix = new Code128Writer().encode(barcodeLabel,BarcodeFormat.CODE_128,width,height,null);
                          String imageLocation = Math.random() + ".png";
-                         MatrixToImageWriter.writeToStream(bitMatrix, "png", new FileOutputStream(new File(imageLocation)));
+                         File imageFile = new File(imageLocation);
+                         MatrixToImageWriter.writeToStream(bitMatrix, "png", new FileOutputStream(imageFile));
+                        
+                         
+                         /*
+                         BufferedImage src = ImageIO.read(imageFile);
+                         BufferedImage thumbnail =
+                                 Scalr.resize(src, Scalr.Method.QUALITY, Scalr.Mode.FIT_EXACT,
+                                              200, 50, Scalr.OP_ANTIALIAS);
+                         ImageIO.write(thumbnail, "png", imageFile);
+                         */
+                         
                          Image mainImage = Image.getInstance(imageLocation);
                          
                          
-                         if(i % numberOfLabelPerRow == 0){
-                             //we go the next line
-                             table.completeRow();
-                             document.add(table);
-                             table = new PdfPTable(numberOfLabelPerRow);  
-                             table.setWidthPercentage(100);
-                         }
-                         
-                         if(i % totalPerPage == 0){
-                             //we go the next page
-                             document.newPage();
-                         }
                          
                          PdfPCell cell = new PdfPCell();
+                         //cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                         
                          Paragraph paragraph1 = new Paragraph();
                          
                          //String selectedLabel = "";
@@ -335,12 +359,38 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
                          
                          
                          Font fontNormal = FontFactory.getFont("Arial", 8, Font.NORMAL);
-                         //mainImage.scaleAbsoluteHeight(50);
                          cell.addElement(mainImage);
                          cell.addElement(new Paragraph());
                          cell.addElement(new Paragraph("test " + i, fontNormal));
+                         
+                         cell.setBorder(Rectangle.NO_BORDER);                         
+                         cell.setBackgroundColor(Color.white);
+                         
+                         cell.addElement(new Paragraph("\n"));
+                         
                          table.addCell(cell);
-                     
+                         /*
+                         System.out.println(i + ". " + barcodeLabel + " " + imageLocation);
+                         
+                         cell.setBorder(Rectangle.NO_BORDER);
+                         cell.setBackgroundColor(new Color(255,255,45));
+                          */
+                                                 
+                         if(i % numberOfLabelPerRow == 0){
+                             //we go the next line
+                             table.completeRow();
+                             document.add(table);
+                             table = new PdfPTable(numberOfLabelPerRow);  
+                             table.setWidthPercentage(100);
+                             
+                         }
+                         if(i % totalPerPage == 0){
+                             //we go the next page
+                             document.newPage();
+                         } 
+                         
+                         
+                         
                      }
                  }
            
@@ -378,7 +428,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         return "redirect:" + GenerateLabelController.URL;
     } 
     
-    private String generateBarcodeField(FieldMapLabel fieldMapLabel, String firstField, String secondField, String thirdField, String barcodeNeeded){
+    
+    private String generateBarcodeField(Map<String,String> moreFieldInfo, FieldMapLabel fieldMapLabel, String firstField, String secondField, String thirdField, String barcodeNeeded){
         StringBuffer buffer = new StringBuffer();
         List<String> fieldList = new ArrayList<String>();
         fieldList.add(firstField);
@@ -392,11 +443,11 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
             if(!buffer.toString().equalsIgnoreCase("")){
                 buffer.append(delimiter);
             }
-            buffer.append(getSpecificInfo(fieldMapLabel, barcodeLabel));
+            buffer.append(getSpecificInfo(moreFieldInfo, fieldMapLabel, barcodeLabel));
         }
         return buffer.toString();
     }
-    private String generateBarcodeLabel(FieldMapLabel fieldMapLabel, String selectedFields){
+    private String generateBarcodeLabel(Map<String,String> moreFieldInfo, FieldMapLabel fieldMapLabel, String selectedFields){
         StringBuffer buffer = new StringBuffer();
         StringTokenizer token = new StringTokenizer(selectedFields, ",");
         while(token.hasMoreTokens()){
@@ -405,13 +456,13 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
                 if(!buffer.toString().equalsIgnoreCase("")){
                     buffer.append(delimiter);
                 }
-                buffer.append(getSpecificInfo(fieldMapLabel, barcodeLabel));
+                buffer.append(getSpecificInfo(moreFieldInfo, fieldMapLabel, barcodeLabel));
             }
         }
         return buffer.toString();
     }
     
-    private String getSpecificInfo(FieldMapLabel fieldMapLabel, String barcodeLabel){
+    private String getSpecificInfo(Map<String,String> moreFieldInfo, FieldMapLabel fieldMapLabel, String barcodeLabel){
         StringBuffer buffer = new StringBuffer();
         switch(Integer.parseInt(barcodeLabel)){
             
@@ -421,18 +472,22 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_GID: 
                 //buffer.append(fieldMapLabel.get());
+                //from joyce
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME: 
                 buffer.append(fieldMapLabel.getGermplasmName());
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_YEAR: 
-                
+                //from joyce
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_SEASON: 
-                
+                //from joyce
+                break;
+            case AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME: 
+                buffer.append(moreFieldInfo.get("selectedName"));
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME: 
-                
+                buffer.append(moreFieldInfo.get("selectedName"));
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM: 
                 
@@ -441,17 +496,15 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
                 buffer.append(fieldMapLabel.getRep());
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION: 
-                
+                buffer.append(moreFieldInfo.get("locationName")); 
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME: 
-                
+                buffer.append(moreFieldInfo.get("blockName"));
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_PLOT: 
                 buffer.append(fieldMapLabel.getPlotNo());
                 break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME: 
-                //buffer.append(fieldMapLabel.getEntryNumber());
-                break;
+           
             default: break;    
         }
         return buffer.toString();

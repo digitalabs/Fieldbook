@@ -15,16 +15,6 @@
 	         			<br/>
 	         		</div>
 	         		<table class="table tree table-bordered" id="studyTree" style="margin-left:5px;">
-						<thead>
-							<tr>
-								<th style="width:40%"></th>
-								<th style="width:20%" th:text="#{fieldmap.trial.number.of.entries}"></th>
-								<th style="width:20%" th:text="#{fieldmap.trial.number.of.reps}"></th>
-								<th style="width:20%" th:text="#{fieldmap.trial.total.number.of.plots}"></th>
-							</tr>
-						</thead>    
-						<tbody>
-						</tbody>
 			        </table>
 	         	</div>																							
 	       		<div class="modal-footer">    
@@ -42,19 +32,62 @@
 	//<![CDATA[    
         var noSelectedTrialInstance = /*[[#{fieldmap.no.selected.trial.instance}]]*/;
         var multipleSelectError = /*[[#{common.error.select.one.trial.instance}]]*/;
+        var entryLabel = /*[[#{fieldmap.trial.number.of.entries}]]*/;
+        var repLabel = /*[[#{fieldmap.trial.number.of.reps}]]*/;
+        var plotLabel = /*[[#{fieldmap.trial.total.number.of.plots}]]*/;
+        var fieldmapLabel = /*[[#{fieldmap.has.fieldmap}]]*/;
+        var entryPlotLabel = /*[[#{fieldmap.trial.number.of.entries.and.plots}]]*/;
         
 		var trial = true;
+		var isViewFieldmap = true;
 		
 		function viewFieldMap() {
+			if (isViewFieldmap) {
+				showGeneratedFieldMap();
+			} else {
+				showCreateFieldMap();
+			}
+		}
+		
+		function showGeneratedFieldMap() {
 			if ($('#studyTree .field-map-highlight').attr('id')) {
 				if ($('#studyTree .field-map-highlight').size() == 1) {
 					$("#selectTrialInstanceModal").modal("toggle");
-					var id = $('#studyTree .field-map-highlight').attr('id').split("|");
-					location.href = "/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/" + id[1] + "/" + id[0];
+					var id = $('#studyTree .field-map-highlight').attr('id');
+					var datasetId = $('#studyTree .field-map-highlight').treegrid('getParentNode').attr("id");
+					location.href = "/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/" + datasetId + "/" + id;
 				} else {
 					showMessage(multipleSelectError);
 				}
 			} else {
+				showMessage(noSelectedTrialInstance);
+			}
+		}
+		
+		function showCreateFieldMap() {
+			if ($('#studyTree .checkInstance:checked').attr('id')) {
+				var selectedWithFieldMap = false;
+				var ids = [];
+				$('#studyTree .checkInstance:checked').each(function(){
+					var id = this.id;
+					var datasetId = $(this).parent().parent().treegrid('getParentNode').attr("id");
+					var studyId = $(this).parent().parent().treegrid('getParentNode').treegrid('getParentNode').attr("id");
+					var hasFieldMap = $(this).parent().next().next().next().next().html();
+					
+					//build id list of selected trials instances
+					ids.push(studyId+"|"+datasetId+"|"+id);
+					if (hasFieldMap == "Yes") {
+						selectedWithFieldMap = true;
+					}
+				});
+				if (selectedWithFieldMap) {
+					showMessage("Are you sure you want to overwrite existing fieldmaps?");
+				} else {
+					//redirect to step 1
+					location.href = $('#fieldmap-url').attr("href") + "/" + encodeURIComponent(ids.join(","));
+				}
+			} else {
+				//no trial instance is selected
 				showMessage(noSelectedTrialInstance);
 			}
 		}

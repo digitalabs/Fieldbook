@@ -119,16 +119,17 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     }
     
     @ResponseBody
-    @RequestMapping(value="/createFieldmap/{id}", method = RequestMethod.GET)
-    public Map<String, String> determineFieldMapNavigation(@PathVariable String id, Model model, HttpSession session) {
-        
+    @RequestMapping(value="/createFieldmap/{ids}", method = RequestMethod.GET)
+    public Map<String, String> determineFieldMapNavigation(@PathVariable String ids, Model model, HttpSession session) {
         session.invalidate();
         Map<String, String> result = new HashMap<String, String>();
-        
         String nav = "1";
         try {
             List<Integer> trialIds = new ArrayList<Integer>();
-            trialIds.add(Integer.parseInt(id));
+            String[] idList = ids.split(",");
+            for (String id : idList) {
+                trialIds.add(Integer.parseInt(id));
+            }
             List<FieldMapInfo> fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfTrial(trialIds);
 
             this.userFieldmap.setUserFieldmapInfo(fieldMapInfoList, true);
@@ -157,6 +158,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         String size = "0";
         String fieldMapInfoJson = null;
         for (FieldMapInfo fieldMapInfo : fieldMapInfoList) {
+            //for viewing of fieldmaps
             List<FieldMapDatasetInfo> datasetList = fieldMapInfo.getDatasetsWithFieldMap();
             if (datasetList != null && !datasetList.isEmpty()) {
                 List<FieldMapTrialInstanceInfo> trials = datasetList.get(0).getTrialInstancesWithFieldMap();
@@ -164,15 +166,16 @@ public class FieldmapController extends AbstractBaseFieldbookController{
                     size = String.valueOf(trials.size());
                 }
             }
-            fieldMapInfoJson = convertFieldMapInfoToJson(fieldMapInfo);
         }
+        
+        fieldMapInfoJson = convertFieldMapInfoToJson(fieldMapInfoList);
         
         result.put("fieldMapInfo", fieldMapInfoJson);
         result.put("size", size);
         return result;
     } 
     
-    private String convertFieldMapInfoToJson(FieldMapInfo fieldMapInfo) {
+    private String convertFieldMapInfoToJson(List<FieldMapInfo> fieldMapInfo) {
         if (fieldMapInfo!= null) {
             try {
                 ObjectMapper mapper = new ObjectMapper();
@@ -198,6 +201,36 @@ public class FieldmapController extends AbstractBaseFieldbookController{
             @PathVariable String id, 
             Model model, HttpSession session) {
         try {
+            /*
+            String[] groupId = id.split(",");
+            List<FieldMapInfo> fieldMapInfoList = userFieldmap.getFieldMapInfo();
+            List<FieldMapInfo> selectedFieldMap = new ArrayList<FieldMapInfo>();
+            FieldMapInfo newFieldMapInfo = new FieldMapInfo();
+            for (String group : groupId) {
+                String[] ids = group.split("|");
+                int studyId = Integer.parseInt(ids[0]);
+                int datasetId = Integer.parseInt(ids[1]);
+                int geolocationId = Integer.parseInt(ids[2]);
+                for (FieldMapInfo fieldMapInfo : fieldMapInfoList) {
+                    if (fieldMapInfo.getFieldbookId() == studyId) {
+                        newFieldMapInfo.setFieldbookId(fieldMapInfo.getFieldbookId());
+                        newFieldMapInfo.setFieldbookName(fieldMapInfo.getFieldbookName());
+                        FieldMapTrialInstanceInfo trialInstance = fieldMapInfo.getDataSet(datasetId).getTrialInstance(geolocationId); 
+                        
+                        FieldMapDatasetInfo dataset = newFieldMapInfo.getDataSet(datasetId);
+                        if (dataset != null) {
+                            newFieldMapInfo.getDataSet(datasetId);
+                        } else {
+                            
+                        }
+                        
+                        selectedFieldMap.add(newFieldMapInfo);
+                        
+                        
+                    }
+                }
+            }
+            */
             form.setUserFieldmap(userFieldmap);
         } catch (NumberFormatException e) {
             LOG.error(e.toString());
@@ -207,8 +240,8 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     }
     
     @ResponseBody
-    @RequestMapping(value="/createNurseryFieldmap/{id}", method = RequestMethod.GET)
-    public Map<String, String> determineNurseryFieldMapNavigation(@PathVariable String id, HttpSession session) {
+    @RequestMapping(value="/createNurseryFieldmap/{ids}", method = RequestMethod.GET)
+    public Map<String, String> determineNurseryFieldMapNavigation(@PathVariable String ids, HttpSession session) {
         
         session.invalidate();
         Map<String, String> result = new HashMap<String, String>();
@@ -216,7 +249,10 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         String nav = "1";
         try {
             List<Integer> nurseryIds = new ArrayList<Integer>();
-            nurseryIds.add(Integer.parseInt(id));
+            String[] idList = ids.split(",");
+            for (String id : idList) {
+                nurseryIds.add(Integer.parseInt(id));
+            }
             
             List<FieldMapInfo> fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfNursery(nurseryIds);
 

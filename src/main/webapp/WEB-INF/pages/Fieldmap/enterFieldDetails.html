@@ -56,19 +56,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		<input type="hidden" th:field="*{userFieldmap.numberOfEntries}" />
 		<input type="hidden" th:field="*{userFieldmap.numberOfReps}" />
 		<input type="hidden" th:field="*{userFieldmap.totalNumberOfPlots}" />
-		<table class="table tree table-bordered" id="studyTree" style="margin-left:5px;">
-			<thead>
-				<tr th:if="*{userFieldmap.trial == true}">
-					<th style="width:40%"></th>
-					<th style="width:20%" th:text="#{fieldmap.trial.number.of.entries}"></th>
-					<th style="width:20%" th:text="#{fieldmap.trial.number.of.reps}"></th>
-					<th style="width:20%" th:text="#{fieldmap.trial.total.number.of.plots}"></th>
-				</tr>
-				<tr th:if="*{userFieldmap.trial == false}">
-					<th style="width:60%"></th>
-					<th style="width:40%" th:text="#{fieldmap.trial.number.of.entries.and.plots}"></th>
-				</tr>
-			</thead>    
+		<table class="table tree table-bordered" id="studyTree" style="margin-left:5px;">    
         </table>	
 	</div>
 	<div class="form-group col-md-12" >
@@ -198,6 +186,12 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
     
     var trial = /*[[${fieldmapForm.userFieldmap.trial}]]*/;
     var msgBlockSizeError;
+    var isViewFieldmap = false;
+    var entryLabel = /*[[#{fieldmap.trial.number.of.entries}]]*/;
+    var repLabel = /*[[#{fieldmap.trial.number.of.reps}]]*/;
+    var plotLabel = /*[[#{fieldmap.trial.total.number.of.plots}]]*/;
+    var fieldmapLabel = /*[[#{fieldmap.has.fieldmap}]]*/;
+    var entryPlotLabel = /*[[#{fieldmap.trial.number.of.entries.and.plots}]]*/;
     
     if (trial) {
     	msgBlockSizeError = /*[[#{fieldmap.plots.exceed.blocks.trial}]]*/;

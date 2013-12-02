@@ -55,7 +55,7 @@
 					$("#selectTrialInstanceModal").modal("toggle");
 					var id = $('#studyTree .field-map-highlight').attr('id');
 					var datasetId = $('#studyTree .field-map-highlight').treegrid('getParentNode').attr("id");
-					location.href = "/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/" + datasetId + "/" + id;
+					location.href = "/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/trial/" + datasetId + "/" + id;
 				} else {
 					showMessage(multipleSelectError);
 				}

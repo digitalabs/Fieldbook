@@ -85,9 +85,9 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         return super.show(model);
     }
     
-    @RequestMapping(value="/viewFieldmap/{datasetId}/{geolocationId}", method = RequestMethod.GET)
+    @RequestMapping(value="/viewFieldmap/{studyType}/{datasetId}/{geolocationId}", method = RequestMethod.GET)
     public String viewFieldmap(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model,
-            @PathVariable Integer datasetId, @PathVariable Integer geolocationId) {
+            @PathVariable Integer datasetId, @PathVariable Integer geolocationId, @PathVariable String studyType) {
         try {
 
             this.userFieldmap.setSelectedDatasetId(datasetId);
@@ -96,20 +96,27 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
             FieldMapTrialInstanceInfo trialInfo = fieldMapInfo.get(0).getDataSet(datasetId).getTrialInstance(geolocationId); 
             this.userFieldmap.setNumberOfRangesInBlock(trialInfo.getRangesInBlock());
             this.userFieldmap.setNumberOfRowsInBlock(trialInfo.getColumnsInBlock(), trialInfo.getRowsPerPlot());
-            this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, true);
+            this.userFieldmap.setNumberOfEntries((long) this.userFieldmap.getAllSelectedFieldMapLabels().size()); 
+//            this.userFieldmap.setNumberOfEntries(fieldMapInfo.getEntryCount());
+//            this.userFieldmap.setNumberOfReps(fieldMapInfo.getRepCount());
+//            this.userFieldmap.setTotalNumberOfPlots(fieldMapInfo.getPlotCount());
+//            this.userFieldmap.setStudyId(fieldMapInfo.getFieldbookId());
+//           this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, true);
             this.userFieldmap.setNumberOfRowsPerPlot(trialInfo.getRowsPerPlot());
             this.userFieldmap.setPlantingOrder(trialInfo.getPlantingOrder());
             this.userFieldmap.setBlockName(trialInfo.getBlockName());
             this.userFieldmap.setFieldName(trialInfo.getFieldName());
             this.userFieldmap.setLocationName(trialInfo.getLocationName());
-            this.userFieldmap.setFieldMapLabels(fieldbookMiddlewareService.getAllFieldMapsInBlockByTrialInstanceId(geolocationId));
+            this.userFieldmap.setSelectedFieldMaps(fieldbookMiddlewareService.getAllFieldMapsInBlockByTrialInstanceId(geolocationId));
+            this.userFieldmap.setFieldMapLabels(this.userFieldmap.getAllSelectedFieldMapLabels());
+            this.userFieldmap.setTrial("trial".equals(studyType));
             
             populateFormWithSessionData(form);
             this.userFieldmap.setFieldmap(fieldmapService.generateFieldmap(this.userFieldmap));
             form.setUserFieldmap(this.userFieldmap);
             
             //TEST DATA FOR GCP-6321
-            this.userFieldmap.setSelectedFieldMaps(this.userFieldmap.getFieldMapInfo());
+            //this.userFieldmap.setSelectedFieldMaps(this.userFieldmap.getFieldMapInfo());
             
         } catch(MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
@@ -188,9 +195,9 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
             }
         }
 
-        List<FieldMapLabel> labels = userFieldmap.getFieldMapLabels();
+//        List<FieldMapLabel> labels = userFieldmap.getFieldMapLabels();
+        List<FieldMapLabel> labels = userFieldmap.getAllSelectedFieldMapLabels();
 
-      //changed selected name to block name for now
         Plot[][] plots = fieldmapService.createFieldMap(col, ranges, startRange, startCol,
                 isSerpentine, deletedPlot, labels, userFieldmap.isTrial());
         

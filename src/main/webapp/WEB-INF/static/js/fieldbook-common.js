@@ -90,7 +90,7 @@ function proceedToCreateFieldMap() {
 
 function proceedToGenerateFieldMap() {
 	$('#manageTrialConfirmation').modal('hide');
-	location.href = "/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/" 
+	location.href = "/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/nursery/" 
 		+ $("#fieldmapDatasetId").val() + "/" + $("#fieldmapGeolocationId").val();
 }
 
@@ -148,7 +148,7 @@ function selectTrialInstance(tableName) {
 		    			var fieldMapInfo = $.parseJSON(data.fieldMapInfo);
 		    			var datasetId = fieldMapInfo.datasets[0].datasetId;
 		    			var geolocationId = fieldMapInfo.datasets[0].trialInstances[0].geolocationId;	    			
-		    			location.href = "/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/" + datasetId + "/" + geolocationId;
+		    			location.href = "/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/trial/" + datasetId + "/" + geolocationId;
 		    		}
 		    	}
 	            Spinner.toggle();
@@ -158,7 +158,7 @@ function selectTrialInstance(tableName) {
 		//redirect to step 3 for nursery
 		var datasetId = $("#fieldmapDatasetId").val();
 		var geolocationId = $("#fieldmapGeolocationId").val();
-		location.href = "/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/" + datasetId + "/" + geolocationId;
+		location.href = "/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/nursery/" + datasetId + "/" + geolocationId;
 	}
 }
 

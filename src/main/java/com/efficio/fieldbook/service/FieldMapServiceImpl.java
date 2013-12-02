@@ -12,8 +12,10 @@
 package com.efficio.fieldbook.service;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -195,11 +197,14 @@ public class FieldMapServiceImpl implements FieldMapService{
         Plot[][] plots = new Plot[totalColumns][totalRanges];
         List<FieldMapLabel> labels = info.getFieldMapLabels();
         initializeFieldMapArray(plots, totalColumns, totalRanges);
+        Set<String> orderedSet = new LinkedHashSet<String>();
+        info.setOrderedMapInfo(orderedSet);
         for (FieldMapLabel label : labels) {
             if (label.getColumn() != null && label.getRange() != null) {
                 int column = label.getColumn();
                 int range = label.getRange();
                 if (column <= totalColumns && range <= totalRanges) {
+                    orderedSet.add(label.getDatasetId() + "," + label.getGeolocationId());
                     Plot plot = plots[column-1][range-1];
                     plot.setColumn(column);
                     plot.setRange(range);
@@ -232,8 +237,6 @@ public class FieldMapServiceImpl implements FieldMapService{
     }
     
     private void setOtherFieldMapInformation(UserFieldmap info, Plot[][] plots, int totalColumns, int totalRanges, boolean isSerpentine) {
-        int startColumn = 0;
-        int startRange = 0;
         boolean isStarted = false;
         List<String> possiblyDeletedCoordinates = new ArrayList<String>();
         for (int i = 0; i < totalColumns; i++) {

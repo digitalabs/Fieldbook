@@ -141,6 +141,7 @@ function selectTrialInstance(tableName) {
 		    	if (data.fieldMapInfo != null && data.fieldMapInfo != "") {
 		    		if (parseInt(data.size) > 1) {
 			    		clearStudyTree();
+			    		isViewFieldmap = true;
 			    		createStudyTree($.parseJSON(data.fieldMapInfo), isViewFieldmap);
 			    		$("#selectTrialInstanceModal").modal("toggle");
 		    		} else {
@@ -262,7 +263,7 @@ function createRow(id, parentClass, value, realId, withFieldMap) {
 		if (withFieldMap) {
 			//for view fieldmap
 			newRow = "<tr id='" + realId + "' class='data-row trialInstance "+ genClassName + id + " " + genParentClassName + "'>";
-			newCell = "<td>" + value.siteName + "</td><td>" + value.entryCount + "</td>"; 
+			newCell = "<td>" + value.trialInstanceNo + "</td><td>" + value.entryCount + "</td>"; 
 			if (trial) {
 				newCell = newCell + "<td>" + value.repCount + "</td><td>" + value.plotCount + "</td>";
 			}
@@ -270,7 +271,7 @@ function createRow(id, parentClass, value, realId, withFieldMap) {
 			//for create new fieldmap
 			newRow = "<tr class='data-row trialInstance "+ genClassName + id + " " + genParentClassName + "'>";
 			var checkBox = "<input class='checkInstance' type='checkbox' id='" + realId + "' /> &nbsp;&nbsp;";
-			newCell = "<td>" + checkBox + value.siteName + "</td><td>" + value.entryCount + "</td>";
+			newCell = "<td>" + checkBox + value.trialInstanceNo + "</td><td>" + value.entryCount + "</td>";
 			if (trial) {
 				newCell = newCell + "<td>" + value.repCount + "</td><td>" + value.plotCount + "</td>";
 			}

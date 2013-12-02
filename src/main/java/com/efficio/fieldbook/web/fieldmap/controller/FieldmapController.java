@@ -201,42 +201,93 @@ public class FieldmapController extends AbstractBaseFieldbookController{
             @PathVariable String id, 
             Model model, HttpSession session) {
         try {
-            /*
-            String[] groupId = id.split(",");
-            List<FieldMapInfo> fieldMapInfoList = userFieldmap.getFieldMapInfo();
-            List<FieldMapInfo> selectedFieldMap = new ArrayList<FieldMapInfo>();
-            FieldMapInfo newFieldMapInfo = new FieldMapInfo();
-            for (String group : groupId) {
-                String[] ids = group.split("|");
-                int studyId = Integer.parseInt(ids[0]);
-                int datasetId = Integer.parseInt(ids[1]);
-                int geolocationId = Integer.parseInt(ids[2]);
-                for (FieldMapInfo fieldMapInfo : fieldMapInfoList) {
-                    if (fieldMapInfo.getFieldbookId() == studyId) {
-                        newFieldMapInfo.setFieldbookId(fieldMapInfo.getFieldbookId());
-                        newFieldMapInfo.setFieldbookName(fieldMapInfo.getFieldbookName());
-                        FieldMapTrialInstanceInfo trialInstance = fieldMapInfo.getDataSet(datasetId).getTrialInstance(geolocationId); 
-                        
-                        FieldMapDatasetInfo dataset = newFieldMapInfo.getDataSet(datasetId);
-                        if (dataset != null) {
-                            newFieldMapInfo.getDataSet(datasetId);
-                        } else {
-                            
-                        }
-                        
-                        selectedFieldMap.add(newFieldMapInfo);
-                        
-                        
-                    }
-                }
-            }
-            */
+            setSelectedFieldMapInfo(id, true);
             form.setUserFieldmap(userFieldmap);
         } catch (NumberFormatException e) {
             LOG.error(e.toString());
         }
                
         return super.show(model);
+    }
+    
+    private void setSelectedFieldMapInfo(String id, boolean isTrial) {
+        String[] groupId = id.split(",");
+        List<FieldMapInfo> fieldMapInfoList = userFieldmap.getFieldMapInfo();
+        
+        List<FieldMapInfo> selectedFieldMapInfoList = new ArrayList<FieldMapInfo>();
+        FieldMapInfo newFieldMapInfo = null;
+        List<FieldMapDatasetInfo> datasets = null;
+        FieldMapDatasetInfo dataset = null;
+        List<FieldMapTrialInstanceInfo> trialInstances = null;
+        FieldMapTrialInstanceInfo trialInstance = null;
+        
+        Integer studyId = null;
+        Integer datasetId = null;
+        String fieldbookName = null;
+        String datasetName = null;
+        //build the selectedFieldMaps
+        for (String group : groupId) {
+            String[] ids = group.split("\\|");
+            int selectedStudyId = Integer.parseInt(ids[0]);
+            int selectedDatasetId = Integer.parseInt(ids[1]);
+            int selectedGeolocationId = Integer.parseInt(ids[2]);
+            
+            for (FieldMapInfo fieldMapInfo : fieldMapInfoList) {
+                //if current study id is equal to the selected study id
+                if (fieldMapInfo.getFieldbookId().equals(selectedStudyId)) {
+                    if (datasetId == null) {
+                        dataset = new FieldMapDatasetInfo();
+                        trialInstances = new ArrayList<FieldMapTrialInstanceInfo>();
+                    } else { 
+                        //if dataset has changed, add previously saved dataset to the list
+                        if (!datasetId.equals(selectedDatasetId)) {
+                            dataset.setDatasetId(datasetId);
+                            dataset.setDatasetName(datasetName);
+                            dataset.setTrialInstances(trialInstances);
+                            datasets.add(dataset);
+                            dataset = new FieldMapDatasetInfo();
+                            trialInstances = new ArrayList<FieldMapTrialInstanceInfo>();
+                        } 
+                    }
+                    
+                    if (studyId == null) {
+                        newFieldMapInfo = new FieldMapInfo();
+                        datasets = new ArrayList<FieldMapDatasetInfo>();
+                    } else {
+                        if (!studyId.equals(selectedStudyId)) {
+                            newFieldMapInfo.setFieldbookId(studyId);
+                            newFieldMapInfo.setFieldbookName(fieldbookName);
+                            newFieldMapInfo.setDatasets(datasets);
+                            newFieldMapInfo.setTrial(isTrial);
+                            selectedFieldMapInfoList.add(newFieldMapInfo);
+                            newFieldMapInfo = new FieldMapInfo();
+                            datasets = new ArrayList<FieldMapDatasetInfo>();
+                        }
+                    }
+                    
+                    trialInstance = fieldMapInfo.getDataSet(selectedDatasetId).getTrialInstance(selectedGeolocationId);
+                    trialInstances.add(trialInstance);
+                                        
+                    datasetId = selectedDatasetId;
+                    studyId = selectedStudyId;
+                    datasetName = fieldMapInfo.getDataSet(datasetId).getDatasetName();
+                    fieldbookName = fieldMapInfo.getFieldbookName();
+                }
+            }
+        }
+        
+        dataset.setDatasetId(datasetId);
+        dataset.setDatasetName(datasetName);
+        dataset.setTrialInstances(trialInstances);
+        datasets.add(dataset);
+        
+        newFieldMapInfo.setFieldbookId(studyId);
+        newFieldMapInfo.setFieldbookName(fieldbookName);
+        newFieldMapInfo.setDatasets(datasets);
+        newFieldMapInfo.setTrial(isTrial);
+        selectedFieldMapInfoList.add(newFieldMapInfo);
+        
+        userFieldmap.setSelectedFieldMaps(selectedFieldMapInfoList);
     }
     
     @ResponseBody
@@ -294,8 +345,8 @@ public class FieldmapController extends AbstractBaseFieldbookController{
             @PathVariable String id, 
             Model model, HttpSession session) {
         try {
+            setSelectedFieldMapInfo(id, false);
             form.setUserFieldmap(userFieldmap);
-
         } catch (NumberFormatException e) {
             LOG.error(e.toString());
         }

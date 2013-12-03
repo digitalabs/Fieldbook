@@ -147,8 +147,8 @@ function selectTrialInstance(tableName) {
 		    		} else {
 		    			//redirect to step 3
 		    			var fieldMapInfo = $.parseJSON(data.fieldMapInfo);
-		    			var datasetId = fieldMapInfo.datasets[0].datasetId;
-		    			var geolocationId = fieldMapInfo.datasets[0].trialInstances[0].geolocationId;	    			
+		    			var datasetId = fieldMapInfo[0].datasets[0].datasetId;
+		    			var geolocationId = fieldMapInfo[0].datasets[0].trialInstances[0].geolocationId;	    			
 		    			location.href = "/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/trial/" + datasetId + "/" + geolocationId;
 		    		}
 		    	}

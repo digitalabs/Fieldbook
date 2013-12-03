@@ -76,7 +76,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
     @RequestMapping(method = RequestMethod.GET)
     public String showGeneratedFieldmap(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model) {
         
-        populateFormWithSessionData(form);
+        //populateFormWithSessionData(form);
         form.setUserFieldmap(this.userFieldmap);
 
         return super.show(model);
@@ -89,22 +89,27 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
 
             this.userFieldmap.setSelectedDatasetId(datasetId);
             this.userFieldmap.setSelectedGeolocationId(geolocationId);
-            List<FieldMapInfo> fieldMapInfo = userFieldmap.getFieldMapInfo();
-            FieldMapTrialInstanceInfo trialInfo = fieldMapInfo.get(0).getDataSet(datasetId).getTrialInstance(geolocationId); 
-            this.userFieldmap.setNumberOfRangesInBlock(trialInfo.getRangesInBlock());
-            this.userFieldmap.setNumberOfRowsInBlock(trialInfo.getColumnsInBlock(), trialInfo.getRowsPerPlot());
-            this.userFieldmap.setNumberOfEntries((long) this.userFieldmap.getAllSelectedFieldMapLabels().size()); 
-            this.userFieldmap.setNumberOfRowsPerPlot(trialInfo.getRowsPerPlot());
-            this.userFieldmap.setPlantingOrder(trialInfo.getPlantingOrder());
-            this.userFieldmap.setBlockName(trialInfo.getBlockName());
-            this.userFieldmap.setFieldName(trialInfo.getFieldName());
-            this.userFieldmap.setLocationName(trialInfo.getLocationName());
-            this.userFieldmap.setSelectedFieldMaps(fieldbookMiddlewareService.getAllFieldMapsInBlockByTrialInstanceId(geolocationId));
-            this.userFieldmap.setFieldMapLabels(this.userFieldmap.getAllSelectedFieldMapLabels());
-            this.userFieldmap.setTrial("trial".equals(studyType));
-            
-            populateFormWithSessionData(form);
-            this.userFieldmap.setFieldmap(fieldmapService.generateFieldmap(this.userFieldmap));
+            List<FieldMapInfo> fieldMapInfo = fieldbookMiddlewareService.getAllFieldMapsInBlockByTrialInstanceId(geolocationId);
+            this.userFieldmap.setSelectedFieldMaps(fieldMapInfo);
+            if (fieldMapInfo != null && !fieldMapInfo.isEmpty() && fieldMapInfo.get(0).getDataSet(datasetId) != null
+                    && fieldMapInfo.get(0).getDataSet(datasetId).getTrialInstance(geolocationId) != null) {
+                
+                FieldMapTrialInstanceInfo trialInfo = fieldMapInfo.get(0).getDataSet(datasetId).getTrialInstance(geolocationId); 
+                this.userFieldmap.setNumberOfRangesInBlock(trialInfo.getRangesInBlock());
+                this.userFieldmap.setNumberOfRowsInBlock(trialInfo.getColumnsInBlock(), trialInfo.getRowsPerPlot());
+                this.userFieldmap.setNumberOfEntries((long) this.userFieldmap.getAllSelectedFieldMapLabels().size()); 
+                this.userFieldmap.setNumberOfRowsPerPlot(trialInfo.getRowsPerPlot());
+                this.userFieldmap.setPlantingOrder(trialInfo.getPlantingOrder());
+                this.userFieldmap.setBlockName(trialInfo.getBlockName());
+                this.userFieldmap.setFieldName(trialInfo.getFieldName());
+                this.userFieldmap.setLocationName(trialInfo.getLocationName());
+                this.userFieldmap.setFieldMapLabels(this.userFieldmap.getAllSelectedFieldMapLabels());
+                this.userFieldmap.setTrial("trial".equals(studyType));
+                this.userFieldmap.setMachineRowCapacity(trialInfo.getMachineRowCapacity());
+                
+                //populateFormWithSessionData(form);
+                this.userFieldmap.setFieldmap(fieldmapService.generateFieldmap(this.userFieldmap));
+            }
             form.setUserFieldmap(this.userFieldmap);
             
         } catch(MiddlewareQueryException e) {
@@ -165,6 +170,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         this.userFieldmap.setStartingColumn(form.getUserFieldmap().getStartingColumn());
         this.userFieldmap.setStartingRange(form.getUserFieldmap().getStartingRange());
         this.userFieldmap.setPlantingOrder(form.getUserFieldmap().getPlantingOrder());
+        this.userFieldmap.setMachineRowCapacity(form.getUserFieldmap().getMachineRowCapacity());
         
         int startRange = userFieldmap.getStartingRange() - 1;
         int startCol = userFieldmap.getStartingColumn() - 1;

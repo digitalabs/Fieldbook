@@ -121,6 +121,8 @@ public class UserFieldmap  implements Serializable {
     /** The order. */
     private String order;
 
+    private Integer machineRowCapacity;
+
     /**
      * Instantiates a new user fieldmap.
      */
@@ -764,6 +766,21 @@ public class UserFieldmap  implements Serializable {
      */
     public void setSelectedFieldMaps(List<FieldMapInfo> selectedFieldMaps) {
         this.selectedFieldMaps = selectedFieldMaps;
+    }
+
+    /**
+     * @return the machineRowCapacity
+     */
+    public Integer getMachineRowCapacity() {
+        return machineRowCapacity;
+    }
+
+    
+    /**
+     * @param machineRowCapacity the machineRowCapacity to set
+     */
+    public void setMachineRowCapacity(Integer machineRowCapacity) {
+        this.machineRowCapacity = machineRowCapacity;
     }
 
     /**

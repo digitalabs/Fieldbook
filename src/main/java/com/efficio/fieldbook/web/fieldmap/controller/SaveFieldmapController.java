@@ -87,6 +87,7 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController{
                     trialInfo.setFieldName(userFieldmap.getFieldName());
                     trialInfo.setLocationName(userFieldmap.getLocationName());
                     trialInfo.setFieldmapUUID(fieldmapUUID);
+                    trialInfo.setMachineRowCapacity(userFieldmap.getMachineRowCapacity());
                 }
             }
         }

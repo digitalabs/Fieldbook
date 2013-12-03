@@ -79,6 +79,23 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 				</div>
 			</div>
 		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<div class="col-md-2">
+						<label class="control-label" th:text="#{fieldmap.label.row.capacity.machine} + ':'">Row Capacity of Planting Machine:</label>
+					</div>
+					<div class="col-md-4">
+				        <select class="form-control" th:field="*{userFieldmap.machineRowCapacity}">
+				        	<option value="1">1</option>
+				        	<option value="2">2</option>
+				        	<option value="4">4</option>
+				        	<option value="8">8</option>
+					    </select>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div class="row">&nbsp;</div>
 		<div class="row">
 			<div class="col-md-12" >

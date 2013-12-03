@@ -65,14 +65,14 @@ public class ExportExcelServiceImpl implements ExportExcelService{
             selectedFieldbookLabel =  messageSource.getMessage("fieldmap.nursery.selected.nursery", null, locale); //Selected Nursery:
         }
         String selectedFieldbookValue = userFieldMap.getBlockName();
-        String numberOfEntriesLabel = messageSource.getMessage("fieldmap.trial.number.of.entries", null, locale); // Number of Entries:  -- used if Trial
+        /*String numberOfEntriesLabel = messageSource.getMessage("fieldmap.trial.number.of.entries", null, locale); // Number of Entries:  -- used if Trial
         String numberOfEntriesAndPlotLabel = messageSource.getMessage("fieldmap.trial.number.of.entries.and.plots", null, locale); //Number of Entries and Plot: -- used if Nursery
         long numberOfEntriesValue = userFieldMap.getNumberOfEntries();
         String numberOfRepsLabel = messageSource.getMessage("fieldmap.trial.number.of.reps", null, locale); // Number of Reps:
         long numberOfRepsValue = userFieldMap.getNumberOfReps();
         String numberOfPlotsLabel = messageSource.getMessage("fieldmap.trial.total.number.of.plots", null, locale); // Total Number of Plots:
         long numberOfPlotsValue = userFieldMap.getTotalNumberOfPlots();
-
+*/
         
         //  Field And Block Details
         String fieldAndBlockDetailsLabel = messageSource.getMessage("fieldmap.trial.field.and.block.details", null, locale); //FIELD AND BLOCK DETAILS
@@ -167,7 +167,7 @@ public class ExportExcelServiceImpl implements ExportExcelService{
             labelCell.setCellValue(selectedFieldbookLabel);
             labelCell.setCellStyle(labelStyle);
             row.createCell(columnIndex++).setCellValue(selectedFieldbookValue);
-	        
+/*	        
             if (isTrial){ 
                 // Number of Entries : 25
                 labelCell = row.createCell(columnIndex++);
@@ -198,7 +198,7 @@ public class ExportExcelServiceImpl implements ExportExcelService{
                 row.createCell(columnIndex++).setCellValue(numberOfEntriesValue);
                 
             }
-
+*/
             // Row 4: Space
             row = fieldMapSheet.createRow(rowIndex++);
             

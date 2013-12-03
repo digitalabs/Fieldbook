@@ -79,9 +79,6 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         populateFormWithSessionData(form);
         form.setUserFieldmap(this.userFieldmap);
 
-        //TEST DATA FOR GCP-6321
-        //this.userFieldmap.setSelectedFieldMaps(this.userFieldmap.getFieldMapInfo());
-        
         return super.show(model);
     }
     
@@ -195,7 +192,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         
         userFieldmap.setFieldmap(plots);
         form.setUserFieldmap(userFieldmap);
-
+        
         return "redirect:" + GenerateFieldmapController.URL;
     }
     

@@ -232,13 +232,13 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 				<div class="col-md-2">
 					<label class="control-label" th:text="#{label.printing.first.bar.code.field}+':'"></label>
 				</div>	
-				<div class="col-md-2">
+				<div class="col-md-3">
 					<select th:field="*{userLabelPrinting.firstBarcodeField}" class="form-control">
 					  <option value="" th:text="#{label.printing.bar.code.please.choose.field}">Please choose</option>
 					  <option th:each="fields: ${availableFields}" th:text="${fields.name}" th:value="${fields.id}">8</option>
 					</select>
 				</div>
-				<div class="col-md-2">
+				<div class="col-md-1">
 					&nbsp;
 				</div>
 				<div class="col-md-6">
@@ -247,13 +247,13 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 				<div class="col-md-2">
 					<label class="control-label" th:text="#{label.printing.second.bar.code.field}+':'"></label>
 				</div>	
-				<div class="col-md-2">
+				<div class="col-md-3">
 					<select th:field="*{userLabelPrinting.secondBarcodeField}" class="form-control">
 					  <option value="" th:text="#{label.printing.bar.code.please.choose.field}">Please choose</option>
 					  <option th:each="fields: ${availableFields}" th:text="${fields.name}" th:value="${fields.id}">8</option>					  					 
 					</select>
 				</div>
-				<div class="col-md-2">
+				<div class="col-md-1">
 					&nbsp;
 				</div>
 				<div class="col-md-6">
@@ -262,13 +262,25 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 				<div class="col-md-2">
 					<label class="control-label" th:text="#{label.printing.third.bar.code.field}+':'"></label>
 				</div>	
-				<div class="col-md-2">
+				<div class="col-md-3">
 					<select th:field="*{userLabelPrinting.thirdBarcodeField}" class="form-control">
 					  <option value="" th:text="#{label.printing.bar.code.please.choose.field}">Please choose</option>
 					  <option th:each="fields: ${availableFields}" th:text="${fields.name}" th:value="${fields.id}">8</option>					  					 
 					</select>
 				</div>
-				<div class="col-md-2">
+				<div class="col-md-1">
+					&nbsp;
+				</div>
+				
+				<div class="col-md-6">
+					&nbsp;
+				</div>
+				
+				<div class="col-md-3">
+					<input type="button" onclick="javascript: validateEnterLabelFieldsPage();" value="Preview" class="btn btn-primary btn-lg"/>
+				</div>	
+				
+				<div class="col-md-6">
 					&nbsp;
 				</div>
 			</div>

@@ -32,9 +32,6 @@ public class Plot implements Serializable{
     /** The is upward. The direction of seed distribution */
     private boolean isUpward;
     
-    /** The direction of the machine */
-    private boolean isMachineUpward;
-    
     /** The display string. */
     private String displayString;
     
@@ -46,7 +43,10 @@ public class Plot implements Serializable{
     
     /** The is no more entries. */
     private boolean isNoMoreEntries;
+
+    private Integer datasetId;
     
+    private Integer geolocationId;
 
     /**
      * Instantiates a new plot.
@@ -200,19 +200,44 @@ public class Plot implements Serializable{
         this.column = column;
     }
 
-    /**
-     * @return the isMachineUpward
-     */
-    public boolean isMachineUpward() {
-        return isMachineUpward;
-    }
+
+
     
     /**
-     * @param isMachineUpward the isMachineUpward to set
+     * @return the datasetId
      */
-    public void setMachineUpward(boolean isMachineUpward) {
-        this.isMachineUpward = isMachineUpward;
+    public Integer getDatasetId() {
+        return datasetId;
     }
+
+
+
     
+    /**
+     * @param datasetId the datasetId to set
+     */
+    public void setDatasetId(Integer datasetId) {
+        this.datasetId = datasetId;
+    }
+
+
+
     
+    /**
+     * @return the geolocationId
+     */
+    public Integer getGeolocationId() {
+        return geolocationId;
+    }
+
+
+
+    
+    /**
+     * @param geolocationId the geolocationId to set
+     */
+    public void setGeolocationId(Integer geolocationId) {
+        this.geolocationId = geolocationId;
+    }
+
 }

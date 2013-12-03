@@ -164,10 +164,12 @@ public class ExportExcelServiceImpl implements ExportExcelService{
 	        
 	        // Selected Trial : [Fieldbook Name]
             Cell labelCell = row.createCell(columnIndex++);
-            labelCell.setCellValue(selectedFieldbookLabel);
+            
+            
+/*            labelCell.setCellValue(selectedFieldbookLabel);
             labelCell.setCellStyle(labelStyle);
             row.createCell(columnIndex++).setCellValue(selectedFieldbookValue);
-/*	        
+            
             if (isTrial){ 
                 // Number of Entries : 25
                 labelCell = row.createCell(columnIndex++);

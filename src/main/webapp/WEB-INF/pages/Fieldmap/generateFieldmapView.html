@@ -60,23 +60,19 @@ th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" 
 							<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.reps.count}"># of Reps</th>
 							<th th:text="#{fieldmap.trial.plots.needed}">Plots Needed</th>
 						</tr>
-						<div th:each="map : *{userFieldmap.selectedFieldMaps}">
-							<div th:each="dataset : ${map.datasets}">
-								<tr th:each="trial : ${dataset.trialInstances}">
-									<td th:text="${trialStat.index + 1}"></td>
-									<td th:text="${map.fieldbookName}"></td>
-									<td th:if="*{userFieldmap.trial == true}" th:text="${trial.trialInstanceNo}"></td>
-									<td th:if="*{userFieldmap.trial == true}" th:text="${trial.entryCount}"></td>
-									<td th:if="*{userFieldmap.trial == true}" th:text="${trial.repCount}"></td>
-									<td th:text="${trial.plotCount}"></td>
-								</tr>
-							</div>
-						</div>
+						<tr th:each="row : *{userFieldmap.selectedFieldmapList.rows}">
+							<td th:text="${row.order}"></td>
+							<td th:text="${row.studyName}"></td>
+							<td th:if="*{userFieldmap.trial == true}" th:text="${row.trialInstanceNo}"></td>
+							<td th:if="*{userFieldmap.trial == true}" th:text="${row.entryCount}"></td>
+							<td th:if="*{userFieldmap.trial == true}" th:text="${row.repCount}"></td>
+							<td th:text="${row.plotCount}"></td>
+						</tr>
 					</table>
 				</div>
 				<div class="col-md-12">
 					<label class="control-label" th:text="#{fieldmap.trial.total.number.of.plots}"> Total # of Plots Needed: </label> &nbsp; 
-					<span th:text="*{userFieldmap.totalNumberOfSelectedPlots}"></span>
+					<span th:text="*{userFieldmap.selectedFieldmapList.totalNumberOfPlots}"></span>
 				</div>
 			</div>
 		</div>

@@ -15,7 +15,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
@@ -115,13 +114,12 @@ public class UserFieldmap  implements Serializable {
     /** The selected field maps. */
     private List<FieldMapInfo> selectedFieldMaps;
     
-    /** The ordered map info. */
-    private Set<String> orderedMapInfo;
-    
     /** The order. */
     private String order;
 
     private Integer machineRowCapacity;
+    
+    private SelectedFieldmapList selectedFieldmapList;
 
     /**
      * Instantiates a new user fieldmap.
@@ -157,7 +155,7 @@ public class UserFieldmap  implements Serializable {
                 if (fieldMapInfo.getDataSet(datasetId) != null) {
                     FieldMapTrialInstanceInfo info = fieldMapInfo.getDataSet(datasetId).getTrialInstance(trialInstanceId);
                     //setFieldMapLabels(info.getFieldMapLabels());
-                    setFieldMapLabels(getAllSelectedFieldMapLabels());
+                    setFieldMapLabels(getAllSelectedFieldMapLabels(false));
                     setNumberOfEntries(info.getEntryCount());
                     setNumberOfReps(info.getRepCount());
                     setTotalNumberOfPlots(info.getPlotCount());
@@ -181,16 +179,28 @@ public class UserFieldmap  implements Serializable {
      *
      * @return the all selected field map labels
      */
-    public List<FieldMapLabel> getAllSelectedFieldMapLabels() {
+    public List<FieldMapLabel> getAllSelectedFieldMapLabels(boolean isSorted) {
         List<FieldMapLabel> allLabels = new ArrayList<FieldMapLabel>();
-        if (getSelectedFieldMaps() != null && !getSelectedFieldMaps().isEmpty()) {
-            for (FieldMapInfo info : getSelectedFieldMaps()) {
-                if (info.getDatasets() != null && !info.getDatasets().isEmpty()) {
-                    for (FieldMapDatasetInfo dataset : info.getDatasets()) {
-                        if (dataset.getTrialInstances() != null) {
-                            for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
-                                if (trial.getFieldMapLabels() != null && !trial.getFieldMapLabels().isEmpty()) {
-                                    allLabels.addAll(trial.getFieldMapLabels());
+        
+        if (isSorted) {
+            if (getSelectedFieldmapList() != null && !getSelectedFieldmapList().isEmpty()) {
+                for (SelectedFieldmapRow row : getSelectedFieldmapList().getRows()) {
+                    FieldMapTrialInstanceInfo trial = 
+                            getSelectedTrialInstanceByDatasetIdAndGeolocationId(row.getDatasetId(), row.getGeolocationId());
+                    allLabels.addAll(trial.getFieldMapLabels());
+                }
+            }
+        }
+        else {
+            if (getSelectedFieldMaps() != null && !getSelectedFieldMaps().isEmpty()) {
+                for (FieldMapInfo info : getSelectedFieldMaps()) {
+                    if (info.getDatasets() != null && !info.getDatasets().isEmpty()) {
+                        for (FieldMapDatasetInfo dataset : info.getDatasets()) {
+                            if (dataset.getTrialInstances() != null) {
+                                for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
+                                    if (trial.getFieldMapLabels() != null && !trial.getFieldMapLabels().isEmpty()) {
+                                        allLabels.addAll(trial.getFieldMapLabels());
+                                    }
                                 }
                             }
                         }
@@ -482,6 +492,27 @@ public class UserFieldmap  implements Serializable {
     	return false;
     }
     
+    public FieldMapTrialInstanceInfo getSelectedTrialInstanceByDatasetIdAndGeolocationId(int datasetId, int geolocationId) {
+        if (getSelectedFieldMaps() != null) {
+            for (FieldMapInfo info : getSelectedFieldMaps()) {
+                if (info.getDatasets() != null) {
+                    for (FieldMapDatasetInfo dataset : info.getDatasets()) {
+                        if (dataset.getDatasetId().equals(datasetId)) {
+                            if (dataset.getTrialInstances() != null) {
+                                for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
+                                    if (trial.getGeolocationId().equals(geolocationId)) {
+                                        return trial;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    
     /**
      * Sets the number of rows in block.
      *
@@ -720,27 +751,6 @@ public class UserFieldmap  implements Serializable {
         return selectedFieldMaps;
     }
 
-    
-    
-    /**
-     * Gets the ordered map info.
-     *
-     * @return the orderedMapInfo
-     */
-    public Set<String> getOrderedMapInfo() {
-        return orderedMapInfo;
-    }
-
-    
-    /**
-     * Sets the ordered map info.
-     *
-     * @param orderedMapInfo the orderedMapInfo to set
-     */
-    public void setOrderedMapInfo(Set<String> orderedMapInfo) {
-        this.orderedMapInfo = orderedMapInfo;
-    }
-    
     /**
      * Gets the order.
      *
@@ -801,4 +811,23 @@ public class UserFieldmap  implements Serializable {
         
         return total;
     }
+
+    
+    /**
+     * @return the selectedFieldmapList
+     */
+    public SelectedFieldmapList getSelectedFieldmapList() {
+        
+        return this.selectedFieldmapList;
+    }
+
+    
+    /**
+     * @param selectedFieldmapList the selectedFieldmapList to set
+     */
+    public void setSelectedFieldmapList(SelectedFieldmapList selectedFieldmapList) {
+        this.selectedFieldmapList = selectedFieldmapList;
+    }
+
+
 }

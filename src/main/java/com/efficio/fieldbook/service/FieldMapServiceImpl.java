@@ -12,12 +12,11 @@
 package com.efficio.fieldbook.service;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
+import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.service.api.FieldMapService;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
+import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 
 @Service
@@ -197,17 +197,16 @@ public class FieldMapServiceImpl implements FieldMapService{
         Plot[][] plots = new Plot[totalColumns][totalRanges];
         List<FieldMapLabel> labels = info.getFieldMapLabels();
         initializeFieldMapArray(plots, totalColumns, totalRanges);
-        Set<String> orderedSet = new LinkedHashSet<String>();
-        info.setOrderedMapInfo(orderedSet);
         for (FieldMapLabel label : labels) {
             if (label.getColumn() != null && label.getRange() != null) {
                 int column = label.getColumn();
                 int range = label.getRange();
                 if (column <= totalColumns && range <= totalRanges) {
-                    orderedSet.add(label.getDatasetId() + "," + label.getGeolocationId());
                     Plot plot = plots[column-1][range-1];
                     plot.setColumn(column);
                     plot.setRange(range);
+                    plot.setDatasetId(label.getDatasetId());
+                    plot.setGeolocationId(label.getGeolocationId());
                     if (isSerpentine && column % 2 == 0) {
                         plot.setUpward(false);
                     }
@@ -239,18 +238,20 @@ public class FieldMapServiceImpl implements FieldMapService{
     private void setOtherFieldMapInformation(UserFieldmap info, Plot[][] plots, int totalColumns, int totalRanges, boolean isSerpentine) {
         boolean isStarted = false;
         List<String> possiblyDeletedCoordinates = new ArrayList<String>();
+        int[] order = {1};
         for (int i = 0; i < totalColumns; i++) {
             if (isSerpentine && i % 2 == 1) {
                 for (int j = totalRanges - 1; j >= 0; j--) {
-                    isStarted = renderPlotCell(info, plots, i, j, isStarted, possiblyDeletedCoordinates);
+                    isStarted = renderPlotCell(info, plots, i, j, isStarted, possiblyDeletedCoordinates, order);
                 }
             }
             else {
                 for (int j = 0; j < totalRanges; j++) {
-                    isStarted = renderPlotCell(info, plots, i, j, isStarted, possiblyDeletedCoordinates);
+                    isStarted = renderPlotCell(info, plots, i, j, isStarted, possiblyDeletedCoordinates, order);
                 }
             }
         }
+        info.setSelectedFieldmapList(new SelectedFieldmapList(info.getSelectedFieldMaps()));
     }
     
     private void markDeletedCoordinates(Plot[][] plots, List<String> deletedCoordinates) {
@@ -262,7 +263,9 @@ public class FieldMapServiceImpl implements FieldMapService{
         }
     }
     
-    private boolean renderPlotCell(UserFieldmap info, Plot[][] plots, int i, int j, boolean isStarted, List<String> possiblyDeletedCoordinates) {
+    private boolean renderPlotCell(UserFieldmap info, Plot[][] plots, int i, int j, boolean isStarted, 
+            List<String> possiblyDeletedCoordinates, int[] order) {
+        
         Plot plot = plots[i][j];
         if (plot.getDisplayString() != null && !plot.getDisplayString().isEmpty()) {
             if (!isStarted) {
@@ -274,6 +277,12 @@ public class FieldMapServiceImpl implements FieldMapService{
                 markDeletedCoordinates(plots, possiblyDeletedCoordinates);
                 possiblyDeletedCoordinates.clear();
             }
+            FieldMapTrialInstanceInfo trial = info.getSelectedTrialInstanceByDatasetIdAndGeolocationId(
+                                                    plot.getDatasetId(), plot.getGeolocationId());
+            if (trial != null && trial.getOrder() == null) {
+                trial.setOrder(order[0]);
+                order[0] += 1;
+            }
         }
         else {
             if (isStarted) {
@@ -283,6 +292,7 @@ public class FieldMapServiceImpl implements FieldMapService{
                 plot.setNotStarted(true);
             }
         }
+
         return isStarted;
     }
 }

@@ -26,7 +26,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
-import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -46,6 +45,7 @@ import com.efficio.fieldbook.service.api.FieldMapService;
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
+import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 import com.efficio.fieldbook.web.nursery.controller.ManageNurseriesController;
@@ -76,7 +76,6 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
     @RequestMapping(method = RequestMethod.GET)
     public String showGeneratedFieldmap(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model) {
         
-        //populateFormWithSessionData(form);
         form.setUserFieldmap(this.userFieldmap);
 
         return super.show(model);
@@ -89,25 +88,25 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
 
             this.userFieldmap.setSelectedDatasetId(datasetId);
             this.userFieldmap.setSelectedGeolocationId(geolocationId);
-            List<FieldMapInfo> fieldMapInfo = fieldbookMiddlewareService.getAllFieldMapsInBlockByTrialInstanceId(geolocationId);
-            this.userFieldmap.setSelectedFieldMaps(fieldMapInfo);
-            if (fieldMapInfo != null && !fieldMapInfo.isEmpty() && fieldMapInfo.get(0).getDataSet(datasetId) != null
-                    && fieldMapInfo.get(0).getDataSet(datasetId).getTrialInstance(geolocationId) != null) {
-                
-                FieldMapTrialInstanceInfo trialInfo = fieldMapInfo.get(0).getDataSet(datasetId).getTrialInstance(geolocationId); 
+            
+            this.userFieldmap.setSelectedFieldMaps(
+                    fieldbookMiddlewareService.getAllFieldMapsInBlockByTrialInstanceId(geolocationId));
+
+            FieldMapTrialInstanceInfo trialInfo = 
+                    this.userFieldmap.getSelectedTrialInstanceByDatasetIdAndGeolocationId(datasetId, geolocationId);
+            if (trialInfo != null) {
                 this.userFieldmap.setNumberOfRangesInBlock(trialInfo.getRangesInBlock());
                 this.userFieldmap.setNumberOfRowsInBlock(trialInfo.getColumnsInBlock(), trialInfo.getRowsPerPlot());
-                this.userFieldmap.setNumberOfEntries((long) this.userFieldmap.getAllSelectedFieldMapLabels().size()); 
+                this.userFieldmap.setNumberOfEntries((long) this.userFieldmap.getAllSelectedFieldMapLabels(false).size()); 
                 this.userFieldmap.setNumberOfRowsPerPlot(trialInfo.getRowsPerPlot());
                 this.userFieldmap.setPlantingOrder(trialInfo.getPlantingOrder());
                 this.userFieldmap.setBlockName(trialInfo.getBlockName());
                 this.userFieldmap.setFieldName(trialInfo.getFieldName());
                 this.userFieldmap.setLocationName(trialInfo.getLocationName());
-                this.userFieldmap.setFieldMapLabels(this.userFieldmap.getAllSelectedFieldMapLabels());
+                this.userFieldmap.setFieldMapLabels(this.userFieldmap.getAllSelectedFieldMapLabels(false));
                 this.userFieldmap.setTrial("trial".equals(studyType));
                 this.userFieldmap.setMachineRowCapacity(trialInfo.getMachineRowCapacity());
                 
-                //populateFormWithSessionData(form);
                 this.userFieldmap.setFieldmap(fieldmapService.generateFieldmap(this.userFieldmap));
             }
             form.setUserFieldmap(this.userFieldmap);
@@ -191,7 +190,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         }
 
 //        List<FieldMapLabel> labels = userFieldmap.getFieldMapLabels();
-        List<FieldMapLabel> labels = userFieldmap.getAllSelectedFieldMapLabels();
+        List<FieldMapLabel> labels = userFieldmap.getAllSelectedFieldMapLabels(true);
 
         Plot[][] plots = fieldmapService.createFieldMap(col, ranges, startRange, startCol,
                 isSerpentine, deletedPlot, labels, userFieldmap.isTrial());

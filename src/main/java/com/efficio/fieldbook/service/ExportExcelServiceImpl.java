@@ -293,6 +293,9 @@ public class ExportExcelServiceImpl implements ExportExcelService{
             int range = userFieldMap.getNumberOfRangesInBlock();
             int col = userFieldMap.getNumberOfColumnsInBlock();
             int rowsPerPlot = userFieldMap.getNumberOfRowsPerPlot();
+            int machineRowCapacity = userFieldMap.getMachineRowCapacity();
+            int rows = userFieldMap.getNumberOfRowsInBlock();
+            boolean isSerpentine = userFieldMap.getPlantingOrder() == 2; 
 
             for(int j = range - 1 ; j >= 0 ; j--){
 
@@ -302,7 +305,7 @@ public class ExportExcelServiceImpl implements ExportExcelService{
                     rowIndex = printRowHeader(fieldMapSheet, userFieldMap.getNumberOfRowsInBlock(), rowIndex, rowsLabel, mainHeaderStyle, mainSubHeaderStyle);
 
                     // Row 13: UP, DOWN Direction
-                    rowIndex = printDirectionHeader(fieldMapSheet, plots, j, col, rowIndex, rowsPerPlot, mainHeaderStyle, mainSubHeaderStyle);
+                    rowIndex = printDirectionHeader(fieldMapSheet, plots, j, rows, rowIndex, machineRowCapacity, mainHeaderStyle, mainSubHeaderStyle, isSerpentine);
 
                     // Row 14: Column labels
                     rowIndex = printColumnHeader(fieldMapSheet, col, rowIndex, columnLabel, rowsPerPlot, mainHeaderStyle, mainSubHeaderStyle);
@@ -346,7 +349,7 @@ public class ExportExcelServiceImpl implements ExportExcelService{
                 if(j == 0){
                     // BOTTOM TABLE LABELS
                     rowIndex = printColumnHeader(fieldMapSheet, col, rowIndex, columnLabel, rowsPerPlot, mainHeaderStyle, mainSubHeaderStyle);
-                    rowIndex = printDirectionHeader(fieldMapSheet, plots, j, col, rowIndex, rowsPerPlot, mainHeaderStyle, mainSubHeaderStyle);
+                    rowIndex = printDirectionHeader(fieldMapSheet, plots, j, rows, rowIndex, machineRowCapacity, mainHeaderStyle, mainSubHeaderStyle, isSerpentine);
                     rowIndex = printRowHeader(fieldMapSheet, userFieldMap.getNumberOfRowsInBlock(), rowIndex, rowsLabel, mainHeaderStyle, mainSubHeaderStyle);
                 }
                 
@@ -411,29 +414,48 @@ public class ExportExcelServiceImpl implements ExportExcelService{
 
 	}
 
-    private int printDirectionHeader(Sheet fieldMapSheet, Plot[][] plots, int range, int numberOfColumns, int rowIndex, int rowsPerPlot,CellStyle mainHeader, CellStyle subHeaderStyle){
+    private int printDirectionHeader(Sheet fieldMapSheet, Plot[][] plots, int range, int numberOfRows, int rowIndex, 
+            int machineRowCapacity, CellStyle mainHeader, CellStyle subHeaderStyle, boolean isSerpentine){
 
         Row row = fieldMapSheet.createRow(rowIndex);
         int columnIndex = 0;
         Cell cell1 = row.createCell(columnIndex++);
         cell1.setCellValue("");
         cell1.setCellStyle(mainHeader);
-        for(int i = 0 ; i < numberOfColumns ; i++){
-            if(plots[i][range].isUpward()){
-                Cell cell = row.createCell(columnIndex++);
+        
+        int numberOfDirections = numberOfRows / machineRowCapacity;
+        int remainingRows = numberOfRows % machineRowCapacity;
+        if (remainingRows > 0) {
+            numberOfDirections++;
+        }
+        
+        for(int i = 0 ; i < numberOfDirections; i++){
+            int startCol = machineRowCapacity * i + 1;
+            if (isSerpentine) {
+                if (i % 2 == 1) {
+                    Cell cell = row.createCell(startCol);
+                    cell.setCellValue(" DOWN ");
+                    cell.setCellStyle(subHeaderStyle);
+                }
+                else {
+                    Cell cell = row.createCell(startCol);
+                    cell.setCellValue(" UP ");
+                    cell.setCellStyle(subHeaderStyle);
+                }
+            }
+            else {
+                Cell cell = row.createCell(startCol);
                 cell.setCellValue(" UP ");
                 cell.setCellStyle(subHeaderStyle);
-            } else {
-                Cell cell = row.createCell(columnIndex++);
-                cell.setCellValue(" DOWN ");
-                cell.setCellStyle(subHeaderStyle);
             }
-            for(int j = 0 ; j < rowsPerPlot -1 ; j++){
-                row.createCell(columnIndex++).setCellValue("");
+            if (i == numberOfDirections - 1 && remainingRows > 0) { //last item
+                fieldMapSheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 
+                        startCol, machineRowCapacity * i + remainingRows));
             }
-            //row.createCell(columnIndex).setCellValue("");
-            fieldMapSheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, columnIndex - rowsPerPlot, columnIndex-1));
-            //columnIndex++;
+            else {
+                fieldMapSheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 
+                        startCol, machineRowCapacity * (i+1)));
+            }
         }
         rowIndex++;
         return rowIndex;

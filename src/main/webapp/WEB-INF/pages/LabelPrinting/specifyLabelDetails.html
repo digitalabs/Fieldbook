@@ -23,7 +23,8 @@
 </div>
 <form id="specifyLabelDetailsForm" role="form-horizontal" action="#"
 th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${labelPrintingForm}" enctype="multipart/form-data">
-<input type="hidden" th:field="*{userLabelPrinting.selectedLabelFields}"/>
+<input type="hidden" th:field="*{userLabelPrinting.leftSelectedLabelFields}"/>
+<input type="hidden" th:field="*{userLabelPrinting.rightSelectedLabelFields}"/>
 <div class="row" style="border: 1px solid #333333">
 	<div class="row">&nbsp;</div>
 	<div class="row">
@@ -75,7 +76,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 			</div>
 		</div>
 	</div>
-	<div class="row">
+	<div class="row"  th:if="*{isTrial == true}" >
 		<div class="col-md-12" >
 			<div class="form-group">
 				<div class="col-md-12">
@@ -89,7 +90,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 		<div class="col-md-12" >
 			<div class="form-group">
 				<div class="col-md-12">
-					<label class="control-label" th:if="*{isTrial == true}" th:text="#{label.printing.total.number.of.labels}+':'"></label>
+					<label class="control-label" th:text="#{label.printing.total.number.of.labels}+':'"></label>
 					<span th:text="*{userLabelPrinting.totalNumberOfLabelToPrint}">10</span>
 				</div>		
 			</div>
@@ -192,7 +193,8 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 		<div class="col-md-12" >
 			<div class="form-group">
 				<div class="col-md-6">
-					<div class="col-md-5">
+					<div class="col-md-3">&nbsp;</div>
+					<div class="col-md-6">
 					
 						<ul class="list-group" >
 					      <li class="list-group-item"><label class="control-label" th:text="#{label.printing.available.fields}">Available Fields</label></li>
@@ -203,22 +205,34 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 								
 								 			
 					</div>
-					<div class="col-md-1">
-					&nbsp;
-					</div>
-					<div class="col-md-5">
+					<div class="col-md-3">&nbsp;</div>
+					
+					<div class="col-md-6">
+					<br />
 						<ul class="list-group" >
-					      <li class="list-group-item"><label class="control-label" th:text="#{label.printing.selected.fields}">Selected Fields</label></li>
+					      <li class="list-group-item"><label class="control-label" th:text="#{label.printing.left.selected.fields}">Selected Fields</label></li>
 						</ul>									
-						<ul id="selectedFields" class="list-group droptrue" >
+						<ul id="leftSelectedFields" class="list-group droptrue" >
 					      
 						  					  
 						</ul>	
 																				
 					</div>
-					<div class="col-md-1">
-					&nbsp;
-					</div>			
+					
+					<div class="col-md-6">
+					<br />
+						<ul class="list-group" >
+					      <li class="list-group-item"><label class="control-label" th:text="#{label.printing.right.selected.fields}">Selected Fields</label></li>
+						</ul>	
+														
+						<ul id="rightSelectedFields" class="list-group droptrue" >
+					      
+						  					  
+						</ul>	
+							 													
+					</div>
+					
+							
 				</div>
 			</div>
 			<div class="form-group">
@@ -232,13 +246,13 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 				<div class="col-md-2">
 					<label class="control-label" th:text="#{label.printing.first.bar.code.field}+':'"></label>
 				</div>	
-				<div class="col-md-2">
+				<div class="col-md-3">
 					<select th:field="*{userLabelPrinting.firstBarcodeField}" class="form-control">
 					  <option value="" th:text="#{label.printing.bar.code.please.choose.field}">Please choose</option>
 					  <option th:each="fields: ${availableFields}" th:text="${fields.name}" th:value="${fields.id}">8</option>
 					</select>
 				</div>
-				<div class="col-md-2">
+				<div class="col-md-1">
 					&nbsp;
 				</div>
 				<div class="col-md-6">
@@ -247,13 +261,13 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 				<div class="col-md-2">
 					<label class="control-label" th:text="#{label.printing.second.bar.code.field}+':'"></label>
 				</div>	
-				<div class="col-md-2">
+				<div class="col-md-3">
 					<select th:field="*{userLabelPrinting.secondBarcodeField}" class="form-control">
 					  <option value="" th:text="#{label.printing.bar.code.please.choose.field}">Please choose</option>
 					  <option th:each="fields: ${availableFields}" th:text="${fields.name}" th:value="${fields.id}">8</option>					  					 
 					</select>
 				</div>
-				<div class="col-md-2">
+				<div class="col-md-1">
 					&nbsp;
 				</div>
 				<div class="col-md-6">
@@ -262,13 +276,25 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 				<div class="col-md-2">
 					<label class="control-label" th:text="#{label.printing.third.bar.code.field}+':'"></label>
 				</div>	
-				<div class="col-md-2">
+				<div class="col-md-3">
 					<select th:field="*{userLabelPrinting.thirdBarcodeField}" class="form-control">
 					  <option value="" th:text="#{label.printing.bar.code.please.choose.field}">Please choose</option>
 					  <option th:each="fields: ${availableFields}" th:text="${fields.name}" th:value="${fields.id}">8</option>					  					 
 					</select>
 				</div>
-				<div class="col-md-2">
+				<div class="col-md-1">
+					&nbsp;
+				</div>
+				
+				<div class="col-md-6">
+					&nbsp;
+				</div>
+				
+				<div class="col-md-3">
+					<input type="button" onclick="javascript: validateEnterLabelFieldsPage();" value="Preview" class="btn btn-primary btn-lg"/>
+				</div>	
+				
+				<div class="col-md-6">
 					&nbsp;
 				</div>
 			</div>
@@ -295,18 +321,30 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
   		function validateEnterLabelFieldsPage(){
   			//we do the validation
   			//we do the selected fields
-  			var selectedFields = "";
-  			$('#selectedFields li').each(function(){
+  			var leftSelectedFields = "";
+  			$('#leftSelectedFields li').each(function(){
   				
-  				selectedFields += $(this).attr('id');
-  				selectedFields += ",";
+  				leftSelectedFields += $(this).attr('id');
+  				leftSelectedFields += ",";
   			})
   			
-  			if(selectedFields != ''){
-  				selectedFields = selectedFields.substring(0,selectedFields.length-1); 
+  			if(leftSelectedFields != ''){
+  				leftSelectedFields = leftSelectedFields.substring(0,leftSelectedFields.length-1); 
+  			}
+  			
+  			var rightSelectedFields = "";
+  			$('#rightSelectedFields li').each(function(){
+  				
+  				rightSelectedFields += $(this).attr('id');
+  				rightSelectedFields += ",";
+  			})
+  			
+  			if(rightSelectedFields != ''){
+  				rightSelectedFields = rightSelectedFields.substring(0,rightSelectedFields.length-1); 
   			}
   			//console.log(selectedFields);
-  			$('#'+getJquerySafeId('userLabelPrinting.selectedLabelFields')).val(selectedFields);
+  			$('#'+getJquerySafeId('userLabelPrinting.leftSelectedLabelFields')).val(leftSelectedFields);
+  			$('#'+getJquerySafeId('userLabelPrinting.rightSelectedLabelFields')).val(rightSelectedFields);
   			
   			
   			var barcodeNeeded = $("input[type='radio']:checked").length;
@@ -334,8 +372,8 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
  				connectWith: "ul",
 				receive: function(event, ui) {
 		            // so if > 10
-		            if ($(this).attr('id') == 'selectedFields' && 
-	            		$(this).children().length > 6) {
+		            if (($(this).attr('id') == 'leftSelectedFields' || $(this).attr('id') == 'rightSelectedFields' ) && 
+	            		$(this).children().length > 5) {
 		                //ui.sender: will cancel the change.
 		                //Useful in the 'receive' callback.
 		                $(ui.sender).sortable('cancel');

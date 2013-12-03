@@ -40,7 +40,8 @@ public class UserLabelPrinting implements Serializable{
     private String numberOfRowsPerPageOfLabel;
     private String barcodeNeeded;
     
-    private String selectedLabelFields;
+    private String leftSelectedLabelFields;
+    private String rightSelectedLabelFields;
     
     private String firstBarcodeField;
     private String secondBarcodeField;
@@ -130,16 +131,32 @@ public class UserLabelPrinting implements Serializable{
     }
 
 
-
-    public String getSelectedLabelFields() {
-        return selectedLabelFields;
+    
+    public String getLeftSelectedLabelFields() {
+        return leftSelectedLabelFields;
     }
+
 
 
     
-    public void setSelectedLabelFields(String selectedLabelFields) {
-        this.selectedLabelFields = selectedLabelFields;
+    public void setLeftSelectedLabelFields(String leftSelectedLabelFields) {
+        this.leftSelectedLabelFields = leftSelectedLabelFields;
     }
+
+
+
+    
+    public String getRightSelectedLabelFields() {
+        return rightSelectedLabelFields;
+    }
+
+
+
+    
+    public void setRightSelectedLabelFields(String rightSelectedLabelFields) {
+        this.rightSelectedLabelFields = rightSelectedLabelFields;
+    }
+
 
 
     public String getBarcodeNeeded() {

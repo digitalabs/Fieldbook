@@ -288,6 +288,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         selectedFieldMapInfoList.add(newFieldMapInfo);
         
         userFieldmap.setSelectedFieldMaps(selectedFieldMapInfoList);
+        
     }
     
     @ResponseBody

@@ -39,6 +39,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import com.efficio.fieldbook.service.api.ExportExcelService;
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
+import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapRow;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 
 /**
@@ -164,9 +165,42 @@ public class ExportExcelServiceImpl implements ExportExcelService{
 	        
 	        // Selected Trial : [Fieldbook Name]
             Cell labelCell = row.createCell(columnIndex++);
+            labelCell.setCellValue(selectedFieldbookLabel);
+            
+            row = fieldMapSheet.createRow(rowIndex++);
+            columnIndex = 0;
+            row.createCell(columnIndex++).setCellValue("Order");
+            if (isTrial) {
+                row.createCell(columnIndex++).setCellValue("Trial");
+                row.createCell(columnIndex++).setCellValue("Instance");
+                row.createCell(columnIndex++).setCellValue("# of Entries");
+                row.createCell(columnIndex++).setCellValue("# of Reps");
+            }
+            else {
+                row.createCell(columnIndex++).setCellValue("Nursery");
+            }
+            row.createCell(columnIndex++).setCellValue("Plots Needed");
+            
+            for (SelectedFieldmapRow rec : userFieldMap.getSelectedFieldmapList().getRows()) {
+                row = fieldMapSheet.createRow(rowIndex++);
+                columnIndex = 0;
+                row.createCell(columnIndex++).setCellValue(rec.getOrder());
+                row.createCell(columnIndex++).setCellValue(rec.getStudyName());
+                if (isTrial) {
+                    row.createCell(columnIndex++).setCellValue(rec.getTrialInstanceNo());
+                    row.createCell(columnIndex++).setCellValue(rec.getEntryCount());
+                    row.createCell(columnIndex++).setCellValue(rec.getRepCount());
+                }
+                row.createCell(columnIndex++).setCellValue(rec.getPlotCount());
+            }
+            
+            row = fieldMapSheet.createRow(rowIndex++);
+            columnIndex = 0;
+            row.createCell(columnIndex++).setCellValue("Total Number Of Plots Needed");
+            row.createCell(columnIndex++).setCellValue(userFieldMap.getSelectedFieldmapList().getTotalNumberOfPlots());
             
             
-/*            labelCell.setCellValue(selectedFieldbookLabel);
+/*            
             labelCell.setCellStyle(labelStyle);
             row.createCell(columnIndex++).setCellValue(selectedFieldbookValue);
             

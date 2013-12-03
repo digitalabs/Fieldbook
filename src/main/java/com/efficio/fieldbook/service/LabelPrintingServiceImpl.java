@@ -118,10 +118,18 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 
                 int i = 0;
                 
-                PdfPTable table = new PdfPTable(numberOfLabelPerRow); 
-                table.setWidthPercentage(100);
+                PdfPTable table = new PdfPTable(numberOfLabelPerRow);
+                float columnWidthSize = 100f;
+                float[] widthColumns = new float[numberOfLabelPerRow];
+                
+                for(int counter = 0 ; counter < widthColumns.length ; counter++){
+                    widthColumns[counter] = columnWidthSize;
+                }
+                
+                table.setWidths(widthColumns);
+                //table.setWidthPercentage(100);
                 int width = 300; 
-                int height = 100;
+                int height = 80;
                 List<File> filesToBeDeleted = new ArrayList<File>(); 
                 
                 for(FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo : datasetInfo.getTrialInstances()){
@@ -166,6 +174,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         
                         
                         PdfPCell cell = new PdfPCell();
+                        cell.setFixedHeight(75f);
+                        cell.setNoWrap(false);
+                        cell.setPadding(4f);
                         //cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                         
                         Paragraph paragraph1 = new Paragraph();
@@ -175,15 +186,19 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         //cell.addElement(paragraph1);  
                         
                         
-                        Font fontNormal = FontFactory.getFont("Arial", 8, Font.NORMAL);
+                        Font fontNormal = FontFactory.getFont("Arial", 6, Font.NORMAL);
                         cell.addElement(mainImage);
                         cell.addElement(new Paragraph());
                         cell.addElement(new Paragraph("test " + i, fontNormal));
-                        
+                        cell.addElement(new Paragraph("test " + i, fontNormal));
+                        cell.addElement(new Paragraph("test " + i, fontNormal));
+                        cell.addElement(new Paragraph("test " + i, fontNormal));
+                        cell.addElement(new Paragraph("test " + i, fontNormal));
+                        /*
                         cell.setBorder(Rectangle.NO_BORDER);                         
                         cell.setBackgroundColor(Color.white);
-                        
-                        cell.addElement(new Paragraph("\n"));
+                        */
+                        //cell.addElement(new Paragraph("\n"));
                         
                         table.addCell(cell);
                         /*
@@ -198,7 +213,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                             table.completeRow();
                             document.add(table);
                             table = new PdfPTable(numberOfLabelPerRow);  
-                            table.setWidthPercentage(100);
+                            //table.setWidthPercentage(100);
+                            table.setWidths(widthColumns);
                             
                         }
                         if(i % totalPerPage == 0){

@@ -11,20 +11,12 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.label.printing.controller;
 
-import java.awt.Color;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -33,8 +25,6 @@ import javax.servlet.http.HttpSession;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
-import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
-import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
@@ -48,26 +38,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.efficio.fieldbook.service.api.LabelPrintingService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.label.printing.form.LabelPrintingForm;
 import com.efficio.fieldbook.web.util.AppConstants;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.WriterException;
-import com.google.zxing.client.j2se.MatrixToImageWriter;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.oned.Code128Writer;
-import com.lowagie.text.Document;
-import com.lowagie.text.Font;
-import com.lowagie.text.FontFactory;
-import com.lowagie.text.Image;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
 
 
 @Controller
@@ -84,11 +60,12 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     private UserLabelPrinting userLabelPrinting;  
     @Resource
     private FieldbookService fieldbookMiddlewareService;
+    @Resource
+    private LabelPrintingService labelPrintingService;
     
     private static final int BUFFER_SIZE = 4096 * 4;
     
-    private String delimiter = "|";
-    
+   
     @RequestMapping(value="/trial/{id}", method = RequestMethod.GET)
     public String showTrialLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, 
             Model model, HttpSession session, @PathVariable int id ) {
@@ -219,288 +196,50 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         getUserLabelPrinting().setSecondBarcodeField(form.getUserLabelPrinting().getSecondBarcodeField());
         getUserLabelPrinting().setThirdBarcodeField(form.getUserLabelPrinting().getThirdBarcodeField());
         
-        //setUserLabelPrinting(form.getUserLabelPrinting());
-        int pageSizeId = Integer.parseInt(getUserLabelPrinting().getSizeOfLabelSheet());
-        int numberOfLabelPerRow = Integer.parseInt(getUserLabelPrinting().getNumberOfLabelPerRow());
-        int numberofRowsPerPageOfLabel = Integer.parseInt(getUserLabelPrinting().getNumberOfRowsPerPageOfLabel());
-        int totalPerPage = numberOfLabelPerRow * numberofRowsPerPageOfLabel;
-        String selectedFields = getUserLabelPrinting().getSelectedLabelFields();
-        String barcodeNeeded = getUserLabelPrinting().getBarcodeNeeded();
-        
-        String firstBarcodeField = getUserLabelPrinting().getFirstBarcodeField();
-        String secondBarcodeField = getUserLabelPrinting().getSecondBarcodeField();
-        String thirdBarcodeField = getUserLabelPrinting().getThirdBarcodeField();
-        
-        
-        //StringBuilder barCodeString = new StringBuilder();
-        /*
-        barCodeString.append(barCodeForm.getEntryNo()).append(delimeter)
-            .append(barCodeForm.getGid()).append(delimeter)
-            .append(barCodeForm.getDesignation()).append(delimeter)
-            .append(barCodeForm.getName()).append(delimeter)
-            .append(barCodeForm.getRep()).append(delimeter)
-            .append(barCodeForm.getColumn()).append(delimeter)
-            .append(barCodeForm.getRange());
-        */
+         
         FieldMapDatasetInfo datasetInfo =  getUserLabelPrinting().getFieldMapInfo().getDatasets().get(0);
-        /*
-        List<FieldMapLabel> fieldMapLabelsList = new ArrayList();
-        
-        
-        for(int i = 0  ; i < datasetInfo.getTrialInstances().size() ; i++){
-            FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = datasetInfo.getTrialInstances().get(i);
-            fieldMapLabelsList.addAll(fieldMapTrialInstanceInfo.getFieldMapLabels());
+       
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            String fileName = labelPrintingService.generateLabels(datasetInfo, getUserLabelPrinting(), baos);
+            response.setHeader("Content-disposition","attachment; filename=" + fileName);
+            //File xls = new File(fileName); // the selected name + current date
+            //FileInputStream in;
+            //in = new FileInputStream(xls);
+            OutputStream out = response.getOutputStream();
+
+            
+            /*
+            byte[] buffer= new byte[BUFFER_SIZE]; // use bigger if you want
+            int length = 0;
+
+            while ((length = in.read(buffer)) > 0){
+                 out.write(buffer, 0, length);
+            }
+            */
+            out.write(baos.toByteArray());
+            
+            //in.close();
+            out.close();
+            return "";
+        } catch (MiddlewareQueryException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
-          */ 
-        
-         try {
-             
-             
-          
-             String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
-             String fileName = currentDate + ".pdf";
-
-             response.setHeader("Content-disposition","attachment; filename=" + fileName);
-
-             File xls = new File(fileName); // the selected name + current date
-             FileInputStream in;
-             
-             try {
-                 
-                 //Image image1 = Image.getInstance(imageLocation);
-                
-                 //PageSize.A4
-                 Rectangle pageSize = PageSize.LETTER;
-                 
-                 if(pageSizeId == AppConstants.SIZE_OF_PAPER_A4)
-                     pageSize = PageSize.A4;
-                 
-                 Document document = new Document(pageSize);
-                 // step 2
-                 PdfWriter.getInstance(document, new FileOutputStream(fileName));
-                 // step 3
-                 document.open();
-                 // step 4
-                 /*
-                 PdfPTable table = new PdfPTable(2);  
-                 PdfPCell cell = new PdfPCell();
-                 Paragraph paragraph1 = new Paragraph();
-                 paragraph1.add(textAnswer);
-                 cell.addElement(paragraph1);
-                 cell.addElement(new Paragraph("Test 1"));
-                 cell.addElement(imageAnswer);
-                 cell.addElement(new Paragraph("Test 3"));
-                 table.addCell(cell);
-                 */
-                 
-                 
-                 int i = 0;
-                 
-                 PdfPTable table = new PdfPTable(numberOfLabelPerRow); 
-                 table.setWidthPercentage(100);
-                 int width = 300; 
-                 int height = 100;
-                 
-                 for(FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo : datasetInfo.getTrialInstances()){
-                     /*
-                     ;
-                      ; //trial or nursery
-                     
-                     fieldMapTrialInstanceInfo.get //trial instance number ??? tiff
-                     */
-                     
-                     Map<String,String> moreFieldInfo = new HashMap<String, String>();
-                     moreFieldInfo.put("locationName", fieldMapTrialInstanceInfo.getLocationName());
-                     moreFieldInfo.put("blockName", fieldMapTrialInstanceInfo.getBlockName());
-                     moreFieldInfo.put("selectedName", getUserLabelPrinting().getFieldMapInfo().getFieldbookName());
-                     
-                     for(FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()){
-                         
-           
-                         i++;
-                         String barcodeLabel = generateBarcodeField(moreFieldInfo, fieldMapLabel, firstBarcodeField, secondBarcodeField, thirdBarcodeField, barcodeNeeded);
-                         
-                         
-                        
-                         BitMatrix bitMatrix = new Code128Writer().encode(barcodeLabel,BarcodeFormat.CODE_128,width,height,null);
-                         String imageLocation = Math.random() + ".png";
-                         File imageFile = new File(imageLocation);
-                         MatrixToImageWriter.writeToStream(bitMatrix, "png", new FileOutputStream(imageFile));
-                        
-                         
-                         /*
-                         BufferedImage src = ImageIO.read(imageFile);
-                         BufferedImage thumbnail =
-                                 Scalr.resize(src, Scalr.Method.QUALITY, Scalr.Mode.FIT_EXACT,
-                                              200, 50, Scalr.OP_ANTIALIAS);
-                         ImageIO.write(thumbnail, "png", imageFile);
-                         */
-                         
-                         Image mainImage = Image.getInstance(imageLocation);
-                         
-                         
-                         
-                         PdfPCell cell = new PdfPCell();
-                         //cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                         
-                         Paragraph paragraph1 = new Paragraph();
-                         
-                         //String selectedLabel = "";
-                         //paragraph1.add("test" + i);
-                         //cell.addElement(paragraph1);  
-                         
-                         
-                         Font fontNormal = FontFactory.getFont("Arial", 8, Font.NORMAL);
-                         cell.addElement(mainImage);
-                         cell.addElement(new Paragraph());
-                         cell.addElement(new Paragraph("test " + i, fontNormal));
-                         
-                         cell.setBorder(Rectangle.NO_BORDER);                         
-                         cell.setBackgroundColor(Color.white);
-                         
-                         cell.addElement(new Paragraph("\n"));
-                         
-                         table.addCell(cell);
-                         /*
-                         System.out.println(i + ". " + barcodeLabel + " " + imageLocation);
-                         
-                         cell.setBorder(Rectangle.NO_BORDER);
-                         cell.setBackgroundColor(new Color(255,255,45));
-                          */
-                                                 
-                         if(i % numberOfLabelPerRow == 0){
-                             //we go the next line
-                             table.completeRow();
-                             document.add(table);
-                             table = new PdfPTable(numberOfLabelPerRow);  
-                             table.setWidthPercentage(100);
-                             
-                         }
-                         if(i % totalPerPage == 0){
-                             //we go the next page
-                             document.newPage();
-                         } 
-                         
-                         
-                         
-                     }
-                 }
-           
-                 
-                 document.close();
-
-                 in = new FileInputStream(xls);
-                 OutputStream out = response.getOutputStream();
-
-                 byte[] buffer= new byte[BUFFER_SIZE]; // use bigger if you want
-                 int length = 0;
-
-                 while ((length = in.read(buffer)) > 0){
-                      out.write(buffer, 0, length);
-                 }
-                 in.close();
-                 out.close();
-             }catch (FileNotFoundException e) {
-                 LOG.error(e.getMessage(), e);
-             } catch (IOException e) {
-                 LOG.error(e.getMessage(), e);
-             }
-             
-             return "";
-             
-         } catch (WriterException e) {
-             // TODO Auto-generated catch block
-             e.printStackTrace();
-         } catch (Exception e) {
-             // TODO Auto-generated catch block
-             e.printStackTrace();
-         } 
+         
          
          
         return "redirect:" + GenerateLabelController.URL;
     } 
     
     
-    private String generateBarcodeField(Map<String,String> moreFieldInfo, FieldMapLabel fieldMapLabel, String firstField, String secondField, String thirdField, String barcodeNeeded){
-        StringBuffer buffer = new StringBuffer();
-        List<String> fieldList = new ArrayList<String>();
-        fieldList.add(firstField);
-        fieldList.add(secondField);
-        fieldList.add(thirdField);
-        
-        for(String barcodeLabel : fieldList){
-            if(barcodeLabel.equalsIgnoreCase(""))
-                continue;
-            
-            if(!buffer.toString().equalsIgnoreCase("")){
-                buffer.append(delimiter);
-            }
-            buffer.append(getSpecificInfo(moreFieldInfo, fieldMapLabel, barcodeLabel));
-        }
-        return buffer.toString();
-    }
-    private String generateBarcodeLabel(Map<String,String> moreFieldInfo, FieldMapLabel fieldMapLabel, String selectedFields){
-        StringBuffer buffer = new StringBuffer();
-        StringTokenizer token = new StringTokenizer(selectedFields, ",");
-        while(token.hasMoreTokens()){
-            String barcodeLabel = token.nextToken();
-            if(barcodeLabel != null && !barcodeLabel.equalsIgnoreCase("")){
-                if(!buffer.toString().equalsIgnoreCase("")){
-                    buffer.append(delimiter);
-                }
-                buffer.append(getSpecificInfo(moreFieldInfo, fieldMapLabel, barcodeLabel));
-            }
-        }
-        return buffer.toString();
-    }
     
-    private String getSpecificInfo(Map<String,String> moreFieldInfo, FieldMapLabel fieldMapLabel, String barcodeLabel){
-        StringBuffer buffer = new StringBuffer();
-        switch(Integer.parseInt(barcodeLabel)){
-            
-            
-            case AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM:
-                buffer.append(fieldMapLabel.getEntryNumber());
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_GID: 
-                //buffer.append(fieldMapLabel.get());
-                //from joyce
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME: 
-                buffer.append(fieldMapLabel.getGermplasmName());
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_YEAR: 
-                //from joyce
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_SEASON: 
-                //from joyce
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME: 
-                buffer.append(moreFieldInfo.get("selectedName"));
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME: 
-                buffer.append(moreFieldInfo.get("selectedName"));
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM: 
-                
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_REP: 
-                buffer.append(fieldMapLabel.getRep());
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION: 
-                buffer.append(moreFieldInfo.get("locationName")); 
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME: 
-                buffer.append(moreFieldInfo.get("blockName"));
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_PLOT: 
-                buffer.append(fieldMapLabel.getPlotNo());
-                break;
-           
-            default: break;    
-        }
-        return buffer.toString();
-    }
     
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()

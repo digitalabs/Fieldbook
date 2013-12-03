@@ -222,17 +222,29 @@ function triggerExpanderClick(row) {
 
 function createHeader(hasFieldMap) {
 	var newRow = "<thead><tr>";
-	if (trial) {
-		newRow = newRow + "<th style='width:30%'></th>" +
-			"<th style='width:20%'>" + entryLabel + "</th>" +
-			"<th style='width:20%'>" + repLabel + "</th>" +
-			"<th style='width:20%'>" + plotLabel + "</th>";
-	} else {
-		newRow = newRow + "<th style='width:50%'></th>" +
-		"<th style='width:40%'>" + entryPlotLabel + "</th>";
-	}
+	
 	if (!hasFieldMap) {
+		if (trial) {
+			newRow = newRow + "<th style='width:30%'></th>" +
+				"<th style='width:18%'>" + entryLabel + "</th>" +
+				"<th style='width:17%'>" + repLabel + "</th>" +
+				"<th style='width:20%'>" + plotLabel + "</th>";
+		} else {
+			newRow = newRow + "<th style='width:50%'></th>" +
+			"<th style='width:35%'>" + entryPlotLabel + "</th>";
+		}
 		newRow = newRow + "<th style='width:10%'>" + fieldmapLabel + "</th>";
+		newRow = newRow + "<th style='width:5%'>" + "</th>";
+	} else {
+		if (trial) {
+			newRow = newRow + "<th style='width:40%'></th>" +
+				"<th style='width:20%'>" + entryLabel + "</th>" +
+				"<th style='width:20%'>" + repLabel + "</th>" +
+				"<th style='width:20%'>" + plotLabel + "</th>";
+		} else {
+			newRow = newRow + "<th style='width:60%'></th>" +
+			"<th style='width:40%'>" + entryPlotLabel + "</th>";
+		}
 	}
 	newRow = newRow + "</tr></thead>";
 	$("#studyTree").append(newRow+"<tbody></tbody>");
@@ -256,7 +268,7 @@ function createRow(id, parentClass, value, realId, withFieldMap) {
 			newCell = "<td>" + value + "</td><td></td>";
 		}
 		if (!withFieldMap) {
-			newCell = newCell + "<td></td>";
+			newCell = newCell + "<td></td><td></td>";
 		}
 	} else {
 		//trial instance level
@@ -271,12 +283,13 @@ function createRow(id, parentClass, value, realId, withFieldMap) {
 			//for create new fieldmap
 			newRow = "<tr class='data-row trialInstance "+ genClassName + id + " " + genParentClassName + "'>";
 			var checkBox = "<input class='checkInstance' type='checkbox' id='" + realId + "' /> &nbsp;&nbsp;";
-			newCell = "<td>" + checkBox + value.trialInstanceNo + "</td><td>" + value.entryCount + "</td>";
+			newCell = "<td>" + value.trialInstanceNo + "</td><td>" + value.entryCount + "</td>";
 			if (trial) {
 				newCell = newCell + "<td>" + value.repCount + "</td><td>" + value.plotCount + "</td>";
 			}
 			var hasFieldMap = value.hasFieldMap ? "Yes" : "No";
 			newCell = newCell + "<td class='hasFieldMap'>" + hasFieldMap + "</td>";
+			newCell = newCell + "<td>" + checkBox + "</td>";
 		}
 	}
 	$("#studyTree").append(newRow+newCell+"</tr>");
@@ -378,4 +391,61 @@ function showFieldMapPopUp(tableName, id) {
             Spinner.toggle();
         }
 	});
+}
+
+function viewFieldMap() {
+	if (isViewFieldmap) {
+		showGeneratedFieldMap();
+	} else {
+		showCreateFieldMap();
+	}
+}
+
+function showGeneratedFieldMap() {
+	if ($('#studyTree .field-map-highlight').attr('id')) {
+		if ($('#studyTree .field-map-highlight').size() == 1) {
+			$("#selectTrialInstanceModal").modal("toggle");
+			var id = $('#studyTree .field-map-highlight').attr('id');
+			var datasetId = $('#studyTree .field-map-highlight').treegrid('getParentNode').attr("id");
+			location.href = "/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/trial/" + datasetId + "/" + id;
+		} else {
+			showMessage(multipleSelectError);
+		}
+	} else {
+		showMessage(noSelectedTrialInstance);
+	}
+}
+
+function showCreateFieldMap() {
+	if ($('#studyTree .checkInstance:checked').attr('id')) {
+		var selectedWithFieldMap = false;
+		fieldmapIds = [];
+		$('#studyTree .checkInstance:checked').each(function(){
+			var id = this.id;
+			var datasetId = $(this).parent().parent().treegrid('getParentNode').attr("id");
+			var studyId = $(this).parent().parent().treegrid('getParentNode').treegrid('getParentNode').attr("id");
+			var hasFieldMap = $(this).parent().prev().html();
+			
+			//build id list of selected trials instances
+			fieldmapIds.push(studyId+"|"+datasetId+"|"+id);
+			if (hasFieldMap == "Yes") {
+				selectedWithFieldMap = true;
+			}
+		});
+		if (selectedWithFieldMap) {
+			$("#selectTrialInstanceModal button,input").attr("disabled", true);
+			$("#confirmSubModal").modal("toggle");
+			//showMessage("Are you sure you want to overwrite existing fieldmaps?");
+		} else {
+			//redirect to step 1
+			redirectToFirstPage();
+		}
+	} else {
+		//no trial instance is selected
+		showMessage(noSelectedTrialInstance);
+	}
+}
+
+function redirectToFirstPage() {
+	location.href = $('#fieldmap-url').attr("href") + "/" + encodeURIComponent(fieldmapIds.join(","));
 }

@@ -23,6 +23,28 @@
 	     	</div><!-- /.modal-content -->
    		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
+	
+	<div class="modal fade" id="confirmSubModal" role="dialog" aria-labelledby="confirmSubModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-large" style="width:500px">
+	    	<div class="modal-content">
+	         	<div class="modal-body" id="selectTrialInstanceBody">
+	         		<div>
+	         			<button id="closeConfirmSubModalModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	         		</div>
+	         		<br/><br/>
+	         		<div id="page-message">
+	         			<div class="alert alert-danger">
+	         				Are you sure you want to overwrite existing fieldmaps?
+	         			</div>
+	         		</div>
+	         	</div>																							
+	       		<div class="modal-footer">    
+	       			<button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">No</button>
+	       			<button type="button" class="btn btn-danger" onclick="javascript: redirectToFirstPage();" aria-hidden="true">Yes</button>	
+       			</div>
+	     	</div><!-- /.modal-content -->
+   		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
 </div>
 
 <div layout:fragment="page-script">
@@ -39,57 +61,14 @@
         var entryPlotLabel = /*[[#{fieldmap.trial.number.of.entries.and.plots}]]*/;
 		var trial = true;
 		var isViewFieldmap = true;
+		var fieldmapIds = [];
 		
-		function viewFieldMap() {
-			if (isViewFieldmap) {
-				showGeneratedFieldMap();
-			} else {
-				showCreateFieldMap();
-			}
-		}
-		
-		function showGeneratedFieldMap() {
-			if ($('#studyTree .field-map-highlight').attr('id')) {
-				if ($('#studyTree .field-map-highlight').size() == 1) {
-					$("#selectTrialInstanceModal").modal("toggle");
-					var id = $('#studyTree .field-map-highlight').attr('id');
-					var datasetId = $('#studyTree .field-map-highlight').treegrid('getParentNode').attr("id");
-					location.href = "/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/trial/" + datasetId + "/" + id;
-				} else {
-					showMessage(multipleSelectError);
-				}
-			} else {
-				showMessage(noSelectedTrialInstance);
-			}
-		}
-		
-		function showCreateFieldMap() {
-			if ($('#studyTree .checkInstance:checked').attr('id')) {
-				var selectedWithFieldMap = false;
-				var ids = [];
-				$('#studyTree .checkInstance:checked').each(function(){
-					var id = this.id;
-					var datasetId = $(this).parent().parent().treegrid('getParentNode').attr("id");
-					var studyId = $(this).parent().parent().treegrid('getParentNode').treegrid('getParentNode').attr("id");
-					var hasFieldMap = $(this).parent().next().next().next().next().html();
-					
-					//build id list of selected trials instances
-					ids.push(studyId+"|"+datasetId+"|"+id);
-					if (hasFieldMap == "Yes") {
-						selectedWithFieldMap = true;
-					}
-				});
-				if (selectedWithFieldMap) {
-					showMessage("Are you sure you want to overwrite existing fieldmaps?");
-				} else {
-					//redirect to step 1
-					location.href = $('#fieldmap-url').attr("href") + "/" + encodeURIComponent(ids.join(","));
-				}
-			} else {
-				//no trial instance is selected
-				showMessage(noSelectedTrialInstance);
-			}
-		}
+		$(function(){
+            $('#confirmSubModal').on('hidden.bs.modal', function () {
+            	$("#selectTrialInstanceModal button,input").removeAttr("disabled");
+            });
+            
+        });
     //]]>
     </script>
 </div>

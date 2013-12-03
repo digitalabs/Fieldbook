@@ -50,13 +50,20 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 	<div class="form-group col-md-8">
 		&nbsp;
 	</div>
+	<div class="form-group col-md-8">
+		&nbsp;<em class="col-md-12" th:text="#{fieldmap.note.arrange.order}">Note: Arrange the order of the selected nurseries to be planted in the field map.</em>
+	</div>
+	<div class="form-group col-md-4">
+		&nbsp;
+	</div>
 	<div class="form-group col-md-12">
 		<input type="hidden" th:field="*{userFieldmap.order}" />
-		<table class="table table-bordered" style="margin-left: 5px;" id="selectedTrials">
+		<table class="table table-bordered" style="margin-left: 10px;" id="selectedTrials">
 			<tr>
 				<th th:text="#{fieldmap.trial.order}">Order</th>
 				<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial}">Trial</th>
 				<th th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery}">Nursery</th>
+				<th th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.dataset.name}">Dataset Name</th>
 				<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.instance}">Instance</th>
 				<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.entry.count}"># of Entries</th>
 				<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.reps.count}"># of Reps</th>
@@ -70,6 +77,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 							<span class="orderNo"></span>
 						</td>
 						<td th:text="${map.fieldbookName}"></td>
+						<td th:if="*{userFieldmap.trial == false}" th:text="${dataset.datasetName}"></td>
 						<td th:if="*{userFieldmap.trial == true}" th:text="${trial.trialInstanceNo}"></td>
 						<td th:if="*{userFieldmap.trial == true}" th:text="${trial.entryCount}"></td>
 						<td th:if="*{userFieldmap.trial == true}" th:text="${trial.repCount}"></td>
@@ -77,11 +85,9 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 					</tr>
 				</div>
 			</div>
-		</table>	
-	</div>
-	<div class="form-group col-md-12">
-		<label class="control-label" th:text="#{fieldmap.trial.total.number.of.plots}"> Total # of Plots Needed: </label> &nbsp; 
-		<span th:text="*{userFieldmap.totalNumberOfSelectedPlots}"></span>
+		</table>
+		&nbsp;&nbsp;&nbsp;<label th:text="#{fieldmap.trial.total.number.of.plots}"> Total # of Plots Needed: </label> &nbsp; 
+		<span th:text="*{userFieldmap.totalNumberOfSelectedPlots}"></span>	
 	</div>
 	<div class="form-group col-md-12" >
 		&nbsp;<strong th:text="#{fieldmap.trial.field.and.block.details} + ':'">FIELD AND BLOCK DETAILS:</strong>

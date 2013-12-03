@@ -435,7 +435,6 @@ function showCreateFieldMap() {
 		if (selectedWithFieldMap) {
 			$("#selectTrialInstanceModal button,input").attr("disabled", true);
 			$("#confirmSubModal").modal("toggle");
-			//showMessage("Are you sure you want to overwrite existing fieldmaps?");
 		} else {
 			//redirect to step 1
 			redirectToFirstPage();

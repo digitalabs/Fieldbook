@@ -51,12 +51,8 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		&nbsp;
 	</div>
 	<div class="form-group col-md-12">
-		<input type="hidden" th:field="*{userFieldmap.selectedDatasetId}" />
-		<input type="hidden" th:field="*{userFieldmap.selectedGeolocationId}" />
-		<input type="hidden" th:field="*{userFieldmap.numberOfEntries}" />
-		<input type="hidden" th:field="*{userFieldmap.numberOfReps}" />
-		<input type="hidden" th:field="*{userFieldmap.totalNumberOfPlots}" />
-		<table class="table table-bordered" style="margin-left: 5px;">
+		<input type="hidden" th:field="*{userFieldmap.order}" />
+		<table class="table table-bordered" style="margin-left: 5px;" id="selectedTrials">
 			<tr>
 				<th th:text="#{fieldmap.trial.order}">Order</th>
 				<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial}">Trial</th>
@@ -69,7 +65,10 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 			<div th:each="map : *{userFieldmap.selectedFieldMaps}">
 				<div th:each="dataset : ${map.datasets}">
 					<tr th:each="trial : ${dataset.trialInstances}">
-						<td th:text="${trialStat.index + 1}"></td>
+						<td>
+							<input class="trialOrder" type="hidden" th:value="${map.fieldbookId}+'|'+${dataset.datasetId}+'|'+${trial.geolocationId}" />
+							<span class="orderNo"></span>
+						</td>
 						<td th:text="${map.fieldbookName}"></td>
 						<td th:if="*{userFieldmap.trial == true}" th:text="${trial.trialInstanceNo}"></td>
 						<td th:if="*{userFieldmap.trial == true}" th:text="${trial.entryCount}"></td>
@@ -79,6 +78,10 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 				</div>
 			</div>
 		</table>	
+	</div>
+	<div class="form-group col-md-12">
+		<label class="control-label" th:text="#{fieldmap.trial.total.number.of.plots}"> Total # of Plots Needed: </label> &nbsp; 
+		<span th:text="*{userFieldmap.totalNumberOfSelectedPlots}"></span>
 	</div>
 	<div class="form-group col-md-12" >
 		&nbsp;<strong th:text="#{fieldmap.trial.field.and.block.details} + ':'">FIELD AND BLOCK DETAILS:</strong>
@@ -189,6 +192,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 <script type="text/javascript" th:src="@{/static/js/jquery.treegrid.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/jquery.treegrid.bootstrap3.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/fieldMap.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/jquery.tablednd.0.7.min.js}"></script>
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    
     var msgLocation = /*[[#{fieldmap.location.error}]]*/;
@@ -213,6 +217,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
     var plotLabel = /*[[#{fieldmap.trial.total.number.of.plots}]]*/;
     var fieldmapLabel = /*[[#{fieldmap.has.fieldmap}]]*/;
     var entryPlotLabel = /*[[#{fieldmap.trial.number.of.entries.and.plots}]]*/;
+    var totalNumberOfSelectedPlots = /*[[${fieldmapForm.userFieldmap.totalNumberOfSelectedPlots}]]*/;
     
     if (trial) {
     	msgBlockSizeError = /*[[#{fieldmap.plots.exceed.blocks.trial}]]*/;
@@ -220,11 +225,9 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
     	msgBlockSizeError = /*[[#{fieldmap.plots.exceed.blocks.nursery}]]*/;
     }
     
-    
-
 	$( document ).ready(function() {
-		//var fieldMapInfo = /*[[${fieldmapForm.userFieldmap.fieldMapInfo}]]*/;
-		//createStudyTree(fieldMapInfo, false);								   
+		setSelectedTrialsAsDraggable();		
+										   
 		initializeLocationSelect2(locationSuggestions, locationSuggestions_obj);
 		initializeLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj);
 		$('#s2id_fieldLocationIdFavorite').show();

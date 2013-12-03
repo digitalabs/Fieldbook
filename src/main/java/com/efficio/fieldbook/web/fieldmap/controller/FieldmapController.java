@@ -365,10 +365,30 @@ public class FieldmapController extends AbstractBaseFieldbookController{
      */
     @RequestMapping(method = RequestMethod.POST)
     public String submitDetails(@ModelAttribute("fieldmapForm") FieldmapForm form, BindingResult result, Model model) {
-        
+        setTrialInstanceOrder(form);
         setUserFieldMapDetails(form);
         return "redirect:" + PlantingDetailsController.URL;
     } 
+    
+    private void setTrialInstanceOrder(FieldmapForm form) {
+        String[] orderList = form.getUserFieldmap().getOrder().split(",");
+        List<FieldMapInfo> fieldMapInfoList = userFieldmap.getSelectedFieldMaps();
+        for (String order : orderList) {
+            String ids [] = order.split("\\|");
+            int orderId, fieldbookId, datasetId, geolocationId, ctr = 0;
+            orderId = Integer.parseInt(ids[0]);
+            fieldbookId = Integer.parseInt(ids[1]);
+            datasetId = Integer.parseInt(ids[2]);
+            geolocationId = Integer.parseInt(ids[3]);
+            for (FieldMapInfo fieldMapInfo : fieldMapInfoList) {
+                if (fieldMapInfo.getFieldbookId().equals(fieldbookId)) {
+                    userFieldmap.getSelectedFieldMaps().get(ctr).getDataSet(datasetId).getTrialInstance(geolocationId).setOrder(orderId);
+                    break;
+                }
+                ctr++;
+            }
+        } 
+    }
     
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()

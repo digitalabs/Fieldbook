@@ -34,16 +34,22 @@ import com.efficio.fieldbook.util.FieldbookException;
  */
 public class UserFieldmap  implements Serializable {
     
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
+    /** The row column. */
     public final int ROW_COLUMN = 1;
+    
+    /** The serpentine. */
     public final int SERPENTINE = 2;
 	
-    /** The trial id or nursery id */
+    /** The trial id or nursery id. */
     private Integer studyId;
     
+    /** The selected dataset id. */
     private Integer selectedDatasetId;
     
+    /** The selected geolocation id. */
     private Integer selectedGeolocationId;
         
     /** The number of entries. */
@@ -103,11 +109,17 @@ public class UserFieldmap  implements Serializable {
     /** The location name. */
     private String locationName;
     
+    /** The field map info. */
     private List<FieldMapInfo> fieldMapInfo;
     
+    /** The selected field maps. */
     private List<FieldMapInfo> selectedFieldMaps;
     
+    /** The ordered map info. */
     private Set<String> orderedMapInfo;
+    
+    /** The order. */
+    private String order;
 
     /**
      * Instantiates a new user fieldmap.
@@ -129,7 +141,7 @@ public class UserFieldmap  implements Serializable {
     /**
      * Sets the user fieldmap info.
      *
-     * @param fieldMapInfo the field map info
+     * @param fieldMapInfoList the field map info list
      * @param isTrial the is trial
      */
     public void setUserFieldmapInfo(List<FieldMapInfo> fieldMapInfoList, boolean isTrial){
@@ -162,6 +174,11 @@ public class UserFieldmap  implements Serializable {
         
     }
     
+    /**
+     * Gets the all selected field map labels.
+     *
+     * @return the all selected field map labels
+     */
     public List<FieldMapLabel> getAllSelectedFieldMapLabels() {
         List<FieldMapLabel> allLabels = new ArrayList<FieldMapLabel>();
         if (getSelectedFieldMaps() != null && !getSelectedFieldMaps().isEmpty()) {
@@ -182,10 +199,20 @@ public class UserFieldmap  implements Serializable {
         return allLabels;
     }
 
+    /**
+     * Gets the field map info.
+     *
+     * @return the field map info
+     */
     public List<FieldMapInfo> getFieldMapInfo() {
         return fieldMapInfo;
     }
     
+    /**
+     * Sets the field map info.
+     *
+     * @param fieldMapInfo the new field map info
+     */
     public void setFieldMapInfo(List<FieldMapInfo> fieldMapInfo) {
         this.fieldMapInfo = fieldMapInfo;
     }
@@ -387,10 +414,21 @@ public class UserFieldmap  implements Serializable {
         return numberOfRowsInBlock;
     }
     
+    /**
+     * Gets the number of columns in block.
+     *
+     * @return the number of columns in block
+     */
     public int getNumberOfColumnsInBlock() {
     	return  getNumberOfRowsInBlock() / getNumberOfRowsPerPlot();
     }
     
+    /**
+     * Gets the block capacity string.
+     *
+     * @param messageSource the message source
+     * @return the block capacity string
+     */
     public String getBlockCapacityString(ResourceBundleMessageSource messageSource){
     	// 10 Columns, 10 Ranges
     	Locale locale = LocaleContextHolder.getLocale();
@@ -399,6 +437,12 @@ public class UserFieldmap  implements Serializable {
     	return this.getNumberOfRowsInBlock() + " " + columns + ", " + getNumberOfRangesInBlock()+ " " + ranges;
     }
     
+    /**
+     * Gets the starting coordinate string.
+     *
+     * @param messageSource the message source
+     * @return the starting coordinate string
+     */
     public String getStartingCoordinateString(ResourceBundleMessageSource messageSource) {
     	// Column 1, Range 1
     	Locale locale = LocaleContextHolder.getLocale();
@@ -407,6 +451,13 @@ public class UserFieldmap  implements Serializable {
     	return column + " " + getStartingColumn() + ", " + range + " " + getStartingRange();
     }
     
+    /**
+     * Gets the planting order string.
+     *
+     * @param messageSource the message source
+     * @return the planting order string
+     * @throws FieldbookException the fieldbook exception
+     */
     public String getPlantingOrderString(ResourceBundleMessageSource messageSource) throws FieldbookException{
     	Locale locale = LocaleContextHolder.getLocale();
     	if (plantingOrder == ROW_COLUMN){
@@ -417,6 +468,11 @@ public class UserFieldmap  implements Serializable {
     	throw new FieldbookException("Invalid planting order.");
 	}    
     
+    /**
+     * Checks if is serpentine.
+     *
+     * @return true, if is serpentine
+     */
     public boolean isSerpentine(){
     	if (plantingOrder == SERPENTINE){
     		return true;
@@ -433,6 +489,12 @@ public class UserFieldmap  implements Serializable {
         this.numberOfRowsInBlock = numberOfRowsInBlock;
     }
     
+    /**
+     * Sets the number of rows in block.
+     *
+     * @param numberOfColumnsInBlock the number of columns in block
+     * @param rowsPerPlot the rows per plot
+     */
     public void setNumberOfRowsInBlock(int numberOfColumnsInBlock, int rowsPerPlot) {
         this.numberOfRowsInBlock = numberOfColumnsInBlock * rowsPerPlot;
     }
@@ -588,6 +650,8 @@ public class UserFieldmap  implements Serializable {
 
     
     /**
+     * Gets the study id.
+     *
      * @return the studyId
      */
     public Integer getStudyId() {
@@ -596,6 +660,8 @@ public class UserFieldmap  implements Serializable {
 
     
     /**
+     * Sets the study id.
+     *
      * @param studyId the studyId to set
      */
     public void setStudyId(Integer studyId) {
@@ -604,6 +670,8 @@ public class UserFieldmap  implements Serializable {
 
     
     /**
+     * Gets the selected dataset id.
+     *
      * @return the selectedDatasetId
      */
     public Integer getSelectedDatasetId() {
@@ -612,6 +680,8 @@ public class UserFieldmap  implements Serializable {
 
     
     /**
+     * Sets the selected dataset id.
+     *
      * @param selectedDatasetId the selectedDatasetId to set
      */
     public void setSelectedDatasetId(Integer selectedDatasetId) {
@@ -620,6 +690,8 @@ public class UserFieldmap  implements Serializable {
 
     
     /**
+     * Gets the selected geolocation id.
+     *
      * @return the selectedGeolocationId
      */
     public Integer getSelectedGeolocationId() {
@@ -628,6 +700,8 @@ public class UserFieldmap  implements Serializable {
 
     
     /**
+     * Sets the selected geolocation id.
+     *
      * @param selectedGeolocationId the selectedGeolocationId to set
      */
     public void setSelectedGeolocationId(Integer selectedGeolocationId) {
@@ -636,6 +710,8 @@ public class UserFieldmap  implements Serializable {
 
     
     /**
+     * Gets the selected field maps.
+     *
      * @return the selectedFieldMaps
      */
     public List<FieldMapInfo> getSelectedFieldMaps() {
@@ -645,6 +721,8 @@ public class UserFieldmap  implements Serializable {
     
     
     /**
+     * Gets the ordered map info.
+     *
      * @return the orderedMapInfo
      */
     public Set<String> getOrderedMapInfo() {
@@ -653,19 +731,46 @@ public class UserFieldmap  implements Serializable {
 
     
     /**
+     * Sets the ordered map info.
+     *
      * @param orderedMapInfo the orderedMapInfo to set
      */
     public void setOrderedMapInfo(Set<String> orderedMapInfo) {
         this.orderedMapInfo = orderedMapInfo;
     }
+    
+    /**
+     * Gets the order.
+     *
+     * @return the order
+     */
+    public String getOrder() {
+        return order;
+    }
+    
+    /**
+     * Sets the order.
+     *
+     * @param order the new order
+     */
+    public void setOrder(String order) {
+        this.order = order;
+    }
 
     /**
+     * Sets the selected field maps.
+     *
      * @param selectedFieldMaps the selectedFieldMaps to set
      */
     public void setSelectedFieldMaps(List<FieldMapInfo> selectedFieldMaps) {
         this.selectedFieldMaps = selectedFieldMaps;
     }
 
+    /**
+     * Gets the total number of selected plots.
+     *
+     * @return the total number of selected plots
+     */
     public long getTotalNumberOfSelectedPlots() {
         long total = 0;
         

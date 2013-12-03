@@ -80,7 +80,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         form.setUserFieldmap(this.userFieldmap);
 
         //TEST DATA FOR GCP-6321
-        this.userFieldmap.setSelectedFieldMaps(this.userFieldmap.getFieldMapInfo());
+        //this.userFieldmap.setSelectedFieldMaps(this.userFieldmap.getFieldMapInfo());
         
         return super.show(model);
     }
@@ -97,11 +97,6 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
             this.userFieldmap.setNumberOfRangesInBlock(trialInfo.getRangesInBlock());
             this.userFieldmap.setNumberOfRowsInBlock(trialInfo.getColumnsInBlock(), trialInfo.getRowsPerPlot());
             this.userFieldmap.setNumberOfEntries((long) this.userFieldmap.getAllSelectedFieldMapLabels().size()); 
-//            this.userFieldmap.setNumberOfEntries(fieldMapInfo.getEntryCount());
-//            this.userFieldmap.setNumberOfReps(fieldMapInfo.getRepCount());
-//            this.userFieldmap.setTotalNumberOfPlots(fieldMapInfo.getPlotCount());
-//            this.userFieldmap.setStudyId(fieldMapInfo.getFieldbookId());
-//           this.userFieldmap.setUserFieldmapInfo(fieldMapInfo, true);
             this.userFieldmap.setNumberOfRowsPerPlot(trialInfo.getRowsPerPlot());
             this.userFieldmap.setPlantingOrder(trialInfo.getPlantingOrder());
             this.userFieldmap.setBlockName(trialInfo.getBlockName());
@@ -114,9 +109,6 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
             populateFormWithSessionData(form);
             this.userFieldmap.setFieldmap(fieldmapService.generateFieldmap(this.userFieldmap));
             form.setUserFieldmap(this.userFieldmap);
-            
-            //TEST DATA FOR GCP-6321
-            //this.userFieldmap.setSelectedFieldMaps(this.userFieldmap.getFieldMapInfo());
             
         } catch(MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);

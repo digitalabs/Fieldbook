@@ -65,7 +65,7 @@ th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" 
 								<tr th:each="trial : ${dataset.trialInstances}">
 									<td th:text="${trialStat.index + 1}"></td>
 									<td th:text="${map.fieldbookName}"></td>
-									<td th:if="*{userFieldmap.trial == true}" th:text="${trial.siteName}"></td>
+									<td th:if="*{userFieldmap.trial == true}" th:text="${trial.trialInstanceNo}"></td>
 									<td th:if="*{userFieldmap.trial == true}" th:text="${trial.entryCount}"></td>
 									<td th:if="*{userFieldmap.trial == true}" th:text="${trial.repCount}"></td>
 									<td th:text="${trial.plotCount}"></td>

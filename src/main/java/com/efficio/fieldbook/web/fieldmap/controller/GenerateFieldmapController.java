@@ -109,6 +109,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
                 
                 this.userFieldmap.setFieldmap(fieldmapService.generateFieldmap(this.userFieldmap));
             }
+            this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(this.userFieldmap.getSelectedFieldMaps()));
             form.setUserFieldmap(this.userFieldmap);
             
         } catch(MiddlewareQueryException e) {

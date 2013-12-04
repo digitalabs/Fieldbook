@@ -427,7 +427,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 break;
                 
             case AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE: 
-                //buffer.append(fieldMapLabel.getPlotNo());
+                buffer.append(fieldMapLabel.getPedigree() == null ? "" : fieldMapLabel.getPedigree());
                 break;
            
             default: break;    
@@ -458,13 +458,6 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         String fileName = currentDate + ".xls";
         try {
             
-
-            
-            
-          
-                
-                
-                
                     HSSFWorkbook workbook = new HSSFWorkbook();
                     Sheet labelPrintingSheet = workbook.createSheet(userLabelPrinting.getName());
                 

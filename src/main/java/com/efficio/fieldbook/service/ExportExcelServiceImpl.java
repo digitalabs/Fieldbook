@@ -11,7 +11,6 @@
  *******************************************************************************/
 package com.efficio.fieldbook.service;
 
-import java.awt.Font;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,7 +29,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -74,6 +72,13 @@ public class ExportExcelServiceImpl implements ExportExcelService{
         String numberOfPlotsLabel = messageSource.getMessage("fieldmap.trial.total.number.of.plots", null, locale); // Total Number of Plots:
         long numberOfPlotsValue = userFieldMap.getTotalNumberOfPlots();
 */
+        String orderHeader = messageSource.getMessage("fieldmap.trial.order", null, locale);
+        String studyHeader = messageSource.getMessage((isTrial ? "fieldmap.trial" : "fieldmap.nursery"), null, locale);
+        String instanceHeader = messageSource.getMessage("fieldmap.trial.instance", null, locale);
+        String entriesCountHeader = messageSource.getMessage("fieldmap.trial.entry.count", null, locale);
+        String repsCountHeader = messageSource.getMessage("fieldmap.trial.reps.count", null, locale);
+        String plotsNeededHeader = messageSource.getMessage("fieldmap.trial.plots.needed", null, locale);
+        String totalPlotsHeader = messageSource.getMessage("fieldmap.trial.total.number.of.plots", null, locale);
         
         //  Field And Block Details
         String fieldAndBlockDetailsLabel = messageSource.getMessage("fieldmap.trial.field.and.block.details", null, locale); //FIELD AND BLOCK DETAILS
@@ -105,7 +110,6 @@ public class ExportExcelServiceImpl implements ExportExcelService{
         String rowsLabel = messageSource.getMessage("fieldmap.label.rows", null, locale); //Rows
         String columnLabel = messageSource.getMessage("fieldmap.label.capitalized.column", null, locale); //Column
         String rangeLabel = messageSource.getMessage("fieldmap.label.capitalized.range", null, locale); //Range
-         
         
         
         try {
@@ -163,23 +167,32 @@ public class ExportExcelServiceImpl implements ExportExcelService{
 	        // Row 3: Fieldbook Name, Entries, Reps, Plots
 	        row = fieldMapSheet.createRow(rowIndex++); 
 	        
-	        // Selected Trial : [Fieldbook Name]
+	        // Selected Trial : [Fieldbook Name]  TABLE SECTION
             Cell labelCell = row.createCell(columnIndex++);
             labelCell.setCellValue(selectedFieldbookLabel);
             
             row = fieldMapSheet.createRow(rowIndex++);
             columnIndex = 0;
-            row.createCell(columnIndex++).setCellValue("Order");
+            Cell headerCell = row.createCell(columnIndex++);
+            headerCell.setCellValue(orderHeader);
+            headerCell.setCellStyle(labelStyle);
+            headerCell = row.createCell(columnIndex++);
+            headerCell.setCellValue(studyHeader);
+            headerCell.setCellStyle(labelStyle);
             if (isTrial) {
-                row.createCell(columnIndex++).setCellValue("Trial");
-                row.createCell(columnIndex++).setCellValue("Instance");
-                row.createCell(columnIndex++).setCellValue("# of Entries");
-                row.createCell(columnIndex++).setCellValue("# of Reps");
+                headerCell = row.createCell(columnIndex++);
+                headerCell.setCellValue(instanceHeader);
+                headerCell.setCellStyle(labelStyle);
+                headerCell = row.createCell(columnIndex++);
+                headerCell.setCellValue(entriesCountHeader);
+                headerCell.setCellStyle(labelStyle);
+                headerCell = row.createCell(columnIndex++);
+                headerCell.setCellValue(repsCountHeader);
+                headerCell.setCellStyle(labelStyle);
             }
-            else {
-                row.createCell(columnIndex++).setCellValue("Nursery");
-            }
-            row.createCell(columnIndex++).setCellValue("Plots Needed");
+            headerCell = row.createCell(columnIndex++);
+            headerCell.setCellValue(plotsNeededHeader);
+            headerCell.setCellStyle(labelStyle);
             
             for (SelectedFieldmapRow rec : userFieldMap.getSelectedFieldmapList().getRows()) {
                 row = fieldMapSheet.createRow(rowIndex++);
@@ -196,7 +209,9 @@ public class ExportExcelServiceImpl implements ExportExcelService{
             
             row = fieldMapSheet.createRow(rowIndex++);
             columnIndex = 0;
-            row.createCell(columnIndex++).setCellValue("Total Number Of Plots Needed");
+            headerCell = row.createCell(columnIndex++);
+            headerCell.setCellValue(totalPlotsHeader);
+            headerCell.setCellStyle(labelStyle);
             row.createCell(columnIndex++).setCellValue(userFieldMap.getSelectedFieldmapList().getTotalNumberOfPlots());
             
             

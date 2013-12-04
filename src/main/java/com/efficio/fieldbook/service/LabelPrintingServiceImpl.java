@@ -61,6 +61,7 @@ import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapRow;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
+import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.google.zxing.BarcodeFormat;
@@ -95,7 +96,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
      * @see com.efficio.fieldbook.service.api.LabelPrintingService#generateLabels(com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap)
      */
     @Override
-    public String generatePDFLabels(List<FieldMapDatasetInfo> datasetInfoList, UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos)
+    public String generatePDFLabels(List<StudyTrialInstanceInfo> trialInstances, UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos)
             throws MiddlewareQueryException {
         
       //setUserLabelPrinting(form.getUserLabelPrinting());
@@ -153,121 +154,120 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 int width = 600; 
                 int height = 95;
                 List<File> filesToBeDeleted = new ArrayList<File>(); 
-                for(FieldMapDatasetInfo datasetInfo :datasetInfoList){
-                    for(FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo : datasetInfo.getTrialInstances()){
-                        /*
-                        ;
-                         ; //trial or nursery
+                for(StudyTrialInstanceInfo trialInstance : trialInstances){
+                    FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = trialInstance.getTrialInstance(); 
+                    /*
+                    ;
+                     ; //trial or nursery
+                    
+                    fieldMapTrialInstanceInfo.get //trial instance number ??? tiff
+                    */
+                    
+                    Map<String,String> moreFieldInfo = new HashMap<String, String>();
+                    moreFieldInfo.put("locationName", fieldMapTrialInstanceInfo.getLocationName());
+                    moreFieldInfo.put("blockName", fieldMapTrialInstanceInfo.getBlockName());
+                    moreFieldInfo.put("selectedName", trialInstance.getFieldbookName());
+                    moreFieldInfo.put("trialInstanceNumber", fieldMapTrialInstanceInfo.getTrialInstanceNo());
+                    
+                    for(FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()){
+                           
+          
+                        i++;
+                        String barcodeLabel = generateBarcodeField(moreFieldInfo, fieldMapLabel, firstBarcodeField, secondBarcodeField, thirdBarcodeField, barcodeNeeded);
                         
-                        fieldMapTrialInstanceInfo.get //trial instance number ??? tiff
+                        
+                       
+                        BitMatrix bitMatrix = new Code128Writer().encode(barcodeLabel,BarcodeFormat.CODE_128,width,height,null);
+                        String imageLocation = Math.random() + ".png";
+                        File imageFile = new File(imageLocation);
+                        FileOutputStream fout = new FileOutputStream(imageFile);
+                        MatrixToImageWriter.writeToStream(bitMatrix, "png", fout);
+                        filesToBeDeleted.add(imageFile);
+                        
+                        /*
+                        BufferedImage src = ImageIO.read(imageFile);
+                        BufferedImage thumbnail =
+                                Scalr.resize(src, Scalr.Method.QUALITY, Scalr.Mode.FIT_EXACT,
+                                             200, 50, Scalr.OP_ANTIALIAS);
+                        ImageIO.write(thumbnail, "png", imageFile);
                         */
                         
-                        Map<String,String> moreFieldInfo = new HashMap<String, String>();
-                        moreFieldInfo.put("locationName", fieldMapTrialInstanceInfo.getLocationName());
-                        moreFieldInfo.put("blockName", fieldMapTrialInstanceInfo.getBlockName());
-                        moreFieldInfo.put("selectedName", userLabelPrinting.getFieldMapInfo().getFieldbookName());
-                        moreFieldInfo.put("trialInstanceNumber", fieldMapTrialInstanceInfo.getTrialInstanceNo());
+                        Image mainImage = Image.getInstance(imageLocation);
+                        //File.createTempFile();
                         
-                        for(FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()){
-                               
-              
-                            i++;
-                            String barcodeLabel = generateBarcodeField(moreFieldInfo, fieldMapLabel, firstBarcodeField, secondBarcodeField, thirdBarcodeField, barcodeNeeded);
+                        
+                        PdfPCell cell = new PdfPCell();
+                        cell.setFixedHeight(70f);
+                        cell.setNoWrap(false);
+                        cell.setPadding(5f);
+                        //cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        
+                        //Paragraph paragraph1 = new Paragraph();
+                        
+                        //String selectedLabel = "";
+                        //paragraph1.add("test" + i);
+                        //cell.addElement(paragraph1);  
+                        
+                        
+                        Font fontNormal = FontFactory.getFont("Arial", 8, Font.NORMAL);
+                        cell.addElement(mainImage);
+                        
+                        
+                        
+                        
+                        cell.addElement(new Paragraph());
+                        for(int row = 0 ; row < 5 ; row++){
+                            PdfPTable innerTableInfo = new PdfPTable(2);
+                            String leftText = generateBarcodeLabel(moreFieldInfo, fieldMapLabel, leftSelectedFields, row);
+                            PdfPCell cellInnerLeft = new PdfPCell(new Paragraph(leftText, fontNormal));
+                            cellInnerLeft.setBorder(Rectangle.NO_BORDER);                         
+                            cellInnerLeft.setBackgroundColor(Color.white);
+                            innerTableInfo.addCell(cellInnerLeft);
                             
+                            String rightText = generateBarcodeLabel(moreFieldInfo, fieldMapLabel, rightSelectedFields, row);
+                            PdfPCell cellInnerRight = new PdfPCell(new Paragraph(rightText, fontNormal));
+                            cellInnerRight.setBorder(Rectangle.NO_BORDER);                         
+                            cellInnerRight.setBackgroundColor(Color.white);
+                            innerTableInfo.addCell(cellInnerRight);
                             
-                           
-                            BitMatrix bitMatrix = new Code128Writer().encode(barcodeLabel,BarcodeFormat.CODE_128,width,height,null);
-                            String imageLocation = Math.random() + ".png";
-                            File imageFile = new File(imageLocation);
-                            FileOutputStream fout = new FileOutputStream(imageFile);
-                            MatrixToImageWriter.writeToStream(bitMatrix, "png", fout);
-                            filesToBeDeleted.add(imageFile);
+                            cell.addElement(innerTableInfo);
+                        }
+                        
+                        
+                        cell.setBorder(Rectangle.NO_BORDER);                         
+                        cell.setBackgroundColor(Color.white);
+                        
+                        //cell.addElement(new Paragraph("\n"));
+                        
+                        table.addCell(cell);
+                                     
+                        if(i % numberOfLabelPerRow == 0){
+                            //we go the next line
                             
-                            /*
-                            BufferedImage src = ImageIO.read(imageFile);
-                            BufferedImage thumbnail =
-                                    Scalr.resize(src, Scalr.Method.QUALITY, Scalr.Mode.FIT_EXACT,
-                                                 200, 50, Scalr.OP_ANTIALIAS);
-                            ImageIO.write(thumbnail, "png", imageFile);
-                            */
+                            int needed = fixTableRowSize - numberOfLabelPerRow;
                             
-                            Image mainImage = Image.getInstance(imageLocation);
-                            //File.createTempFile();
-                            
-                            
-                            PdfPCell cell = new PdfPCell();
-                            cell.setFixedHeight(70f);
-                            cell.setNoWrap(false);
-                            cell.setPadding(5f);
-                            //cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                            
-                            //Paragraph paragraph1 = new Paragraph();
-                            
-                            //String selectedLabel = "";
-                            //paragraph1.add("test" + i);
-                            //cell.addElement(paragraph1);  
-                            
-                            
-                            Font fontNormal = FontFactory.getFont("Arial", 8, Font.NORMAL);
-                            cell.addElement(mainImage);
-                            
-                            
-                            
-                            
-                            cell.addElement(new Paragraph());
-                            for(int row = 0 ; row < 5 ; row++){
-                                PdfPTable innerTableInfo = new PdfPTable(2);
-                                String leftText = generateBarcodeLabel(moreFieldInfo, fieldMapLabel, leftSelectedFields, row);
-                                PdfPCell cellInnerLeft = new PdfPCell(new Paragraph(leftText, fontNormal));
-                                cellInnerLeft.setBorder(Rectangle.NO_BORDER);                         
-                                cellInnerLeft.setBackgroundColor(Color.white);
-                                innerTableInfo.addCell(cellInnerLeft);
-                                
-                                String rightText = generateBarcodeLabel(moreFieldInfo, fieldMapLabel, rightSelectedFields, row);
-                                PdfPCell cellInnerRight = new PdfPCell(new Paragraph(rightText, fontNormal));
-                                cellInnerRight.setBorder(Rectangle.NO_BORDER);                         
-                                cellInnerRight.setBackgroundColor(Color.white);
-                                innerTableInfo.addCell(cellInnerRight);
-                                
-                                cell.addElement(innerTableInfo);
+                            for(int neededCount = 0 ; neededCount < needed ; neededCount++){
+                                PdfPCell cellNeeded = new PdfPCell(); 
+                                cellNeeded.setBorder(Rectangle.NO_BORDER);                         
+                                cellNeeded.setBackgroundColor(Color.white);
+                                table.addCell(cellNeeded);
                             }
                             
-                            
-                            cell.setBorder(Rectangle.NO_BORDER);                         
-                            cell.setBackgroundColor(Color.white);
-                            
-                            //cell.addElement(new Paragraph("\n"));
-                            
-                            table.addCell(cell);
-                                         
-                            if(i % numberOfLabelPerRow == 0){
-                                //we go the next line
-                                
-                                int needed = fixTableRowSize - numberOfLabelPerRow;
-                                
-                                for(int neededCount = 0 ; neededCount < needed ; neededCount++){
-                                    PdfPCell cellNeeded = new PdfPCell(); 
-                                    cellNeeded.setBorder(Rectangle.NO_BORDER);                         
-                                    cellNeeded.setBackgroundColor(Color.white);
-                                    table.addCell(cellNeeded);
-                                }
-                                
-                                table.completeRow();
-                                document.add(table);
-                                table = new PdfPTable(fixTableRowSize);  
-                                //table.setWidthPercentage(100);
-                                table.setWidths(widthColumns);
-                                
-                            }
-                            if(i % totalPerPage == 0){
-                                //we go the next page
-                                document.newPage();
-                            } 
-                            fout.flush();
-                            fout.close();
-                            
+                            table.completeRow();
+                            document.add(table);
+                            table = new PdfPTable(fixTableRowSize);  
+                            //table.setWidthPercentage(100);
+                            table.setWidths(widthColumns);
                             
                         }
+                        if(i % totalPerPage == 0){
+                            //we go the next page
+                            document.newPage();
+                        } 
+                        fout.flush();
+                        fout.close();
+                        
+                        
                     }
                 }
           
@@ -439,7 +439,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
      * @see com.efficio.fieldbook.service.api.LabelPrintingService#generateXlSLabels(org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo, com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting, java.io.ByteArrayOutputStream)
      */
     @Override
-    public String generateXlSLabels(List<FieldMapDatasetInfo> datasetInfoList,
+    public String generateXlSLabels(List<StudyTrialInstanceInfo> trialInstances,
             UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos)
             throws MiddlewareQueryException {
         int pageSizeId = Integer.parseInt(userLabelPrinting.getSizeOfLabelSheet());
@@ -522,39 +522,38 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                     
                     //we populate the info now
                     int i = 0;
-                    for(FieldMapDatasetInfo datasetInfo :datasetInfoList){
-                        for(FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo : datasetInfo.getTrialInstances()){
-                           
-                            Map<String,String> moreFieldInfo = new HashMap<String, String>();
-                            moreFieldInfo.put("locationName", fieldMapTrialInstanceInfo.getLocationName());
-                            moreFieldInfo.put("blockName", fieldMapTrialInstanceInfo.getBlockName());
-                            moreFieldInfo.put("selectedName", userLabelPrinting.getFieldMapInfo().getFieldbookName());
-                            moreFieldInfo.put("trialInstanceNumber", fieldMapTrialInstanceInfo.getTrialInstanceNo());
+                    for(StudyTrialInstanceInfo trialInstance : trialInstances){
+                        FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = trialInstance.getTrialInstance();
+                        
+                        Map<String,String> moreFieldInfo = new HashMap<String, String>();
+                        moreFieldInfo.put("locationName", fieldMapTrialInstanceInfo.getLocationName());
+                        moreFieldInfo.put("blockName", fieldMapTrialInstanceInfo.getBlockName());
+                        moreFieldInfo.put("selectedName", trialInstance.getFieldbookName());
+                        moreFieldInfo.put("trialInstanceNumber", fieldMapTrialInstanceInfo.getTrialInstanceNo());
+                        
+                        for(FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()){
+                            row = labelPrintingSheet.createRow(rowIndex++);    
+                            columnIndex = 0;
+                            i++;
                             
-                            for(FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()){
-                                row = labelPrintingSheet.createRow(rowIndex++);    
-                                columnIndex = 0;
-                                i++;
-                                
-                                
-                                token = new StringTokenizer(leftSelectedFields, ",");
-                                while(token.hasMoreTokens()){
-                                    String headerId = token.nextToken();
-                                    String leftText = getSpecificInfo(moreFieldInfo, fieldMapLabel, headerId);
-                                    Cell summaryCell = row.createCell(columnIndex++);
-                                    summaryCell.setCellValue(leftText);
-                                    //summaryCell.setCellStyle(labelStyle);
-                                }
-                                token = new StringTokenizer(rightSelectedFields, ",");
-                                while(token.hasMoreTokens()){
-                                    String headerId = token.nextToken();
-                                    String rightText = getSpecificInfo(moreFieldInfo, fieldMapLabel, headerId);
-                                    Cell summaryCell = row.createCell(columnIndex++);
-                                    summaryCell.setCellValue(rightText);
-                                    //summaryCell.setCellStyle(labelStyle);
-                                }
-                               
+                            
+                            token = new StringTokenizer(leftSelectedFields, ",");
+                            while(token.hasMoreTokens()){
+                                String headerId = token.nextToken();
+                                String leftText = getSpecificInfo(moreFieldInfo, fieldMapLabel, headerId);
+                                Cell summaryCell = row.createCell(columnIndex++);
+                                summaryCell.setCellValue(leftText);
+                                //summaryCell.setCellStyle(labelStyle);
                             }
+                            token = new StringTokenizer(rightSelectedFields, ",");
+                            while(token.hasMoreTokens()){
+                                String headerId = token.nextToken();
+                                String rightText = getSpecificInfo(moreFieldInfo, fieldMapLabel, headerId);
+                                Cell summaryCell = row.createCell(columnIndex++);
+                                summaryCell.setCellValue(rightText);
+                                //summaryCell.setCellStyle(labelStyle);
+                            }
+                           
                         }
                     }
                     

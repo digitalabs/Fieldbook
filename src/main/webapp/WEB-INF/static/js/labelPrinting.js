@@ -49,6 +49,11 @@ function validateEnterLabelFieldsPage(type){
 			return false;
 		}
 	}
+
+	if ($("#selectedTrials .includeTrial:checked").length == 0 && $("#selectedTrials .includeTrial").length > 0) {
+		showMessage(trialInstanceRequired);
+		return false;
+	}
 	
 	if($("#"+getJquerySafeId('userLabelPrinting.filename')).val() == ''){
 		//we need to check if either one is chosen in the drop downs
@@ -57,6 +62,8 @@ function validateEnterLabelFieldsPage(type){
 			return false;
 		
 	}
+	
+	
 	
 	$("#"+getJquerySafeId('userLabelPrinting.generateType')).val(type);
 	
@@ -67,7 +74,6 @@ function validateEnterLabelFieldsPage(type){
 function setSelectedTrialInstanceOrder() {
 	var order = [];
 	var notIncluded = 0;
-	var fieldMapInfoList = [];
 	$("#selectedTrials .includeTrial").each(function(){
 		if (!this.checked) {
 			notIncluded++;
@@ -82,9 +88,7 @@ function setSelectedTrialInstanceOrder() {
 			var orderId = $(this).parent().parent().attr("id");
 			orderId = parseInt(orderId) - notIncluded;
 			order.push(orderId+"|"+$(this).val());
-			fieldMapInfoList.push($(this).val());
 		}
 	});
 	$("#"+getJquerySafeId("userLabelPrinting.order")).val(order.join(","));
-	$("#"+getJquerySafeId("userLabelPrinting.order")).val(fieldMapInfoList.join(","));
 }

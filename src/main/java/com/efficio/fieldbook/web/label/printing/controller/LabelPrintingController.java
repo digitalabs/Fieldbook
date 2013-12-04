@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -26,8 +28,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.generationcp.middleware.domain.dms.Study;
-import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
+import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
@@ -46,6 +48,7 @@ import com.efficio.fieldbook.service.api.LabelPrintingService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
+import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.label.printing.form.LabelPrintingForm;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -146,7 +149,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     @RequestMapping(value="/fieldmap", method = RequestMethod.GET)
     public String showFieldmapLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, 
             Model model, HttpSession session, Locale locale) {
-        System.out.println(userFieldmap.getSelectedFieldMaps());
         List<FieldMapInfo> fieldMapInfoList = userFieldmap.getSelectedFieldMaps();
         FieldMapInfo fieldMapInfo = null;
         
@@ -170,10 +172,19 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
         String fileName = "Labels_for_" + userLabelPrinting.getName();
         
-        if(isTrial)
-            fileName += "_" + userLabelPrinting.getNumberOfInstances() + "_" + currentDate; //changed selected name to block name for now        
-        else
-            fileName += "_" + currentDate; //changed selected name to block name for now
+        if(isTrial) {
+            if (getUserLabelPrinting().getFieldMapInfoList() != null) {
+                fileName = "Trial_Field_Map_Labels_" + currentDate;
+            } else {
+                fileName += "_" + userLabelPrinting.getNumberOfInstances() + "_" + currentDate; //changed selected name to block name for now
+            }
+        } else {
+            if (getUserLabelPrinting().getFieldMapInfoList() != null) {
+                fileName = "Nursery_Field_Map_Labels_" + currentDate;
+            } else {
+                fileName += "_" + currentDate; //changed selected name to block name for now
+            }
+        }
         
         return fileName;
     }
@@ -227,19 +238,23 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         getUserLabelPrinting().setFilename(form.getUserLabelPrinting().getFilename());
         getUserLabelPrinting().setGenerateType(form.getUserLabelPrinting().getGenerateType());
         
-         
-        FieldMapDatasetInfo datasetInfo =  getUserLabelPrinting().getFieldMapInfo().getDatasets().get(0);
-        List<FieldMapDatasetInfo> datasetInfoList = new ArrayList();
-        datasetInfoList.add(datasetInfo);
+        List<FieldMapInfo> fieldMapInfoList = getUserLabelPrinting().getFieldMapInfoList();
+        List<StudyTrialInstanceInfo> trialInstances = null;
+        if (fieldMapInfoList != null) {
+            trialInstances = generateTrialInstancesFromSelectedFieldMaps(fieldMapInfoList, form);
+        } else {
+            trialInstances = generateTrialInstancesFromFieldMap();
+        }
+        
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             
             if(getUserLabelPrinting().getGenerateType().equalsIgnoreCase("1")){
                 
-                String fileName = labelPrintingService.generatePDFLabels(datasetInfoList, getUserLabelPrinting(), baos);
+                String fileName = labelPrintingService.generatePDFLabels(trialInstances, getUserLabelPrinting(), baos);
                 response.setHeader("Content-disposition","attachment; filename=" + getUserLabelPrinting().getFilename() + ".pdf");
             }else{
-                String fileName = labelPrintingService.generateXlSLabels(datasetInfoList, getUserLabelPrinting(), baos);
+                String fileName = labelPrintingService.generateXlSLabels(trialInstances, getUserLabelPrinting(), baos);
                 response.setHeader("Content-disposition","attachment; filename=" + getUserLabelPrinting().getFilename() + ".xls");
             }
             //File xls = new File(fileName); // the selected name + current date
@@ -277,7 +292,48 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         return "redirect:" + GenerateLabelController.URL;
     } 
     
+    private List<StudyTrialInstanceInfo> generateTrialInstancesFromFieldMap() {
+        List<FieldMapTrialInstanceInfo> trialInstances = getUserLabelPrinting().getFieldMapInfo().getDatasets().get(0).getTrialInstances();
+        List<StudyTrialInstanceInfo> studyTrial = new ArrayList<StudyTrialInstanceInfo>();
+        for (FieldMapTrialInstanceInfo trialInstance : trialInstances) {
+            StudyTrialInstanceInfo studyTrialInstance = new StudyTrialInstanceInfo(trialInstance, getUserLabelPrinting().getFieldMapInfo().getFieldbookName());
+            studyTrial.add(studyTrialInstance);
+        }
+        return studyTrial;
+    }
     
+    private List<StudyTrialInstanceInfo> generateTrialInstancesFromSelectedFieldMaps(List<FieldMapInfo> fieldMapInfoList, LabelPrintingForm form) {
+        List<StudyTrialInstanceInfo> trialInstances = new ArrayList<StudyTrialInstanceInfo>();
+        String[] fieldMapOrder = form.getUserLabelPrinting().getOrder().split(",");
+        for (String fieldmap : fieldMapOrder) {
+            String[] fieldMapGroup = fieldmap.split("\\|");
+            int order = Integer.parseInt(fieldMapGroup[0]);
+            int studyId = Integer.parseInt(fieldMapGroup[1]);
+            int datasetId = Integer.parseInt(fieldMapGroup[2]);
+            int geolocationId = Integer.parseInt(fieldMapGroup[3]);
+            
+            for (FieldMapInfo fieldMapInfo : fieldMapInfoList) {
+                if (fieldMapInfo.getFieldbookId().equals(studyId)) {
+                    fieldMapInfo.getDataSet(datasetId).getTrialInstance(geolocationId).setOrder(order);
+                    StudyTrialInstanceInfo trialInstance = 
+                                new StudyTrialInstanceInfo(fieldMapInfo.getDataSet(datasetId).getTrialInstance(geolocationId), 
+                                        fieldMapInfo.getFieldbookName());
+                    trialInstances.add(trialInstance);
+                    break;
+                }
+            }
+        }
+        
+        Collections.sort(trialInstances, new  Comparator<StudyTrialInstanceInfo>() {
+            @Override
+            public int compare(StudyTrialInstanceInfo o1, StudyTrialInstanceInfo o2) {
+                    return o1.getTrialInstance().getOrder().compareTo(o2.getTrialInstance().getOrder());
+            }
+        }
+        );
+        
+        return trialInstances;
+    }
     
     
     /* (non-Javadoc)

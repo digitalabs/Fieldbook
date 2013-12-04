@@ -47,6 +47,10 @@ public class UserLabelPrinting implements Serializable{
     private String secondBarcodeField;
     private String thirdBarcodeField;
     
+    private String filename;
+    
+    private String generateType; //1 - pdf, 2 - xls
+    
     
     public FieldMapInfo getFieldMapInfo() {
         return fieldMapInfo;
@@ -74,6 +78,35 @@ public class UserLabelPrinting implements Serializable{
             
         }
     }
+
+    
+
+    
+    
+    public String getGenerateType() {
+        return generateType;
+    }
+
+
+
+    
+    public void setGenerateType(String generateType) {
+        this.generateType = generateType;
+    }
+
+
+
+    public String getFilename() {
+        return filename;
+    }
+
+
+
+    
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
 
 
     public Study getStudy() {

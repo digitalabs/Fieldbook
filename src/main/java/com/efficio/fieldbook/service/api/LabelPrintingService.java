@@ -22,5 +22,6 @@ import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 
 public interface LabelPrintingService {
         
-    public String generateLabels(FieldMapDatasetInfo datasetInfo, UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos) throws MiddlewareQueryException;
+    public String generatePDFLabels(FieldMapDatasetInfo datasetInfo, UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos) throws MiddlewareQueryException;
+    public String generateXlSLabels(FieldMapDatasetInfo datasetInfo, UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos) throws MiddlewareQueryException;
 }

@@ -14,10 +14,12 @@
 	<div class="col-md-3">
 		<span style="font-weight: bold; font-size: 16px">1. SPECIFY LABEL DETAILS</span>
 	</div>
+	<!-- 
 	<div class="col-md-3">		
 		<span>2. GENERATE LABELS</span>
 	</div>
-	<div class="col-md-3">
+	 -->
+	<div class="col-md-6">
 		&nbsp;
 	</div>
 </div>
@@ -25,6 +27,9 @@
 th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${labelPrintingForm}" enctype="multipart/form-data">
 <input type="hidden" th:field="*{userLabelPrinting.leftSelectedLabelFields}"/>
 <input type="hidden" th:field="*{userLabelPrinting.rightSelectedLabelFields}"/>
+<input type="hidden" th:field="*{userLabelPrinting.numberOfLabelPerRow}" value="3"/>
+<input type="hidden" th:field="*{userLabelPrinting.generateType}"/>
+
 <div class="row" style="border: 1px solid #333333">
 	<div class="row">&nbsp;</div>
 	<div class="row">
@@ -123,6 +128,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 					</select>
 				</div>		
 			</div>
+			<!-- 
 			<div class="row form-group">
 				<div class="col-md-7">
 					&nbsp;&nbsp;&nbsp;<label class="control-label" th:text="#{label.printing.number.of.labels.per.row}+':'"></label>
@@ -135,6 +141,8 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 					</select>
 				</div>
 			</div>
+			 -->
+			 
 			<div class="row form-group">
 				<div class="col-md-7">
 					&nbsp;&nbsp;&nbsp;<label class="control-label" th:text="#{label.printing.number.of.rows.per.page}+':'"></label>					
@@ -300,11 +308,44 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 			</div>
 		</div>
 	</div>
+	
+	<div class="row">
+		<div class="col-md-12">
+			&nbsp;
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="form-group">
+				<div class="col-md-12">
+					<label class="control-label" th:text="#{label.printing.set.the.filename}"></label>
+				</div>		
+			</div>
+		</div>
+		<div class="col-md-12" >
+			<div class="form-group">
+				<div class="col-md-1">
+					<label class="control-label" th:text="#{label.printing.filename}+':'"></label>					
+				</div>		
+				<div class="col-md-5">
+					<input type="text" class="form-control"  th:field="*{userLabelPrinting.filename}" placeholder="Filename"/>					
+				</div>
+			</div>
+		</div>
+	</div>
+	
+
+
+	<div class="row">
+		
+	</div>
+	
 	<div class="form-group">&nbsp;</div>
 	<div class="form-group">
-	    <div class="col-md-offset-5 col-md-7">
+	    <div class="col-md-offset-4 col-md-8">
 	      <input type="button" onclick="javascript: window.history.back();"  value="Cancel" class="btn btn-default btn-lg"/>
-	      <input type="button" onclick="javascript: validateEnterLabelFieldsPage();" value="Next" class="btn btn-primary btn-lg"/>
+	      <input type="button" onclick="javascript: validateEnterLabelFieldsPage(1);" value="Generate Labels" th:value="#{common.form.generate.label.text}" class="btn btn-primary btn-lg"/>
+	      <input type="button" onclick="javascript: validateEnterLabelFieldsPage(2);" value="Export Label Data" th:value="#{common.form.export.label.text}" class="btn btn-primary btn-lg"/>
 	      
 	    </div>
 	  </div>
@@ -313,59 +354,14 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 </form>
 <div layout:fragment="page-script">
 <script type="text/javascript" th:src="@{/static/js/jquery-multisortable.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/labelPrinting.js}"></script>
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    	
         var barcodeNeededError = /*[[#{label.printing.bar.code.needed.error}]]*/;
         var barcodeFieldNeededError = /*[[#{label.printing.bar.code.field.error}]]*/;
+        var filenameError = /*[[#{label.printing.filename.field.error}]]*/;
         
-  		function validateEnterLabelFieldsPage(){
-  			//we do the validation
-  			//we do the selected fields
-  			var leftSelectedFields = "";
-  			$('#leftSelectedFields li').each(function(){
-  				
-  				leftSelectedFields += $(this).attr('id');
-  				leftSelectedFields += ",";
-  			})
-  			
-  			if(leftSelectedFields != ''){
-  				leftSelectedFields = leftSelectedFields.substring(0,leftSelectedFields.length-1); 
-  			}
-  			
-  			var rightSelectedFields = "";
-  			$('#rightSelectedFields li').each(function(){
-  				
-  				rightSelectedFields += $(this).attr('id');
-  				rightSelectedFields += ",";
-  			})
-  			
-  			if(rightSelectedFields != ''){
-  				rightSelectedFields = rightSelectedFields.substring(0,rightSelectedFields.length-1); 
-  			}
-  			//console.log(selectedFields);
-  			$('#'+getJquerySafeId('userLabelPrinting.leftSelectedLabelFields')).val(leftSelectedFields);
-  			$('#'+getJquerySafeId('userLabelPrinting.rightSelectedLabelFields')).val(rightSelectedFields);
-  			
-  			
-  			var barcodeNeeded = $("input[type='radio']:checked").length;
-  			if (barcodeNeeded == 0) {
-  				showMessage(barcodeNeededError);
-  				return false;
-  			}
-  			
-  			//we checked if something was checked
-  			if($("#"+getJquerySafeId('userLabelPrinting.barcodeNeeded1')).is(":checked")){
-  				//we need to check if either one is chosen in the drop downs
-  				if($('#'+getJquerySafeId('userLabelPrinting.firstBarcodeField')).val() == ""
- 						&& $('#'+getJquerySafeId('userLabelPrinting.secondBarcodeField')).val() == ""
- 						&& $('#'+getJquerySafeId('userLabelPrinting.thirdBarcodeField')).val() == ""){
-  					showMessage(barcodeFieldNeededError);
-  					return false;
-  				}
-  			}
-  			
-  			$('#specifyLabelDetailsForm').submit();	
-  		}
+  		
   		
  		 $(function() {
  			$( "ul.droptrue" ).sortable({

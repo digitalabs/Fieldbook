@@ -75,6 +75,27 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 			</div>
 		</div>
 		<div class="col-md-6">
+			<div class="col-md-12">
+				<table class="table table-bordered">
+					<tr>
+						<th th:text="#{fieldmap.trial.instance}">Instance</th>
+						<th th:if="*{isTrial == true}" th:text="#{fieldmap.trial.entry.count}"># of Entries</th>
+						<th th:if="*{isTrial == true}" th:text="#{fieldmap.trial.reps.count}"># of Reps</th>
+						<th th:if="*{isTrial == true}" th:text="#{label.printing.labels.needed}">Labels Needed</th>
+						<th th:if="*{isTrial == false}" th:text="#{label.printing.nursery.entries.labels.count}"># of Entries / Labels Needed</th>
+					</tr>
+					<tr th:each="trialRow : *{userLabelPrinting.fieldMapInfo.datasets[__0__].trialInstances}">
+						<td th:text="${trialRow.trialInstanceNo}"></td>
+						<td th:if="*{isTrial == true}" th:text="${trialRow.entryCount}"></td>
+						<td th:if="*{isTrial == true}" th:text="${trialRow.repCount}"></td>
+						<td th:text="${trialRow.plotCount}"></td>
+					</tr>
+				</table>
+			</div>
+			<div class="col-md-12" align="right" th:if="*{isTrial == true}">
+				<label class="control-label" th:text="#{label.printing.total.number.of.labels} + ':'"> Total # of Labels to Print: </label> &nbsp; 
+				<span th:text="*{userLabelPrinting.totalNumberOfLabelToPrint}"></span>
+			</div>
 		</div>
 	</div>
 	<div class="row" th:if="*{userLabelPrinting.fieldMapInfoList}">

@@ -49,4 +49,5 @@ public class AppConstants {
     public static final int AVAILABLE_LABEL_FIELDS_BLOCK_NAME = 10;
     public static final int AVAILABLE_LABEL_FIELDS_PLOT = 11;
     public static final int AVAILABLE_LABEL_FIELDS_NURSERY_NAME = 12;
+    public static final int AVAILABLE_LABEL_FIELDS_PEDIGREE = 13;
 }

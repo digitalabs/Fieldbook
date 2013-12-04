@@ -15,7 +15,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -89,19 +91,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         getUserLabelPrinting().setStudy(study);
         getUserLabelPrinting().setFieldMapInfo(fieldMapInfo);
         getUserLabelPrinting().setBarcodeNeeded("1");
-        
-        /*
-        getUserLabelPrinting().setName(study.getName());
-        getUserLabelPrinting().setTitle(study.getTitle());
-        getUserLabelPrinting().setObjective(study.getObjective());
-       
-        getUserLabelPrinting().setNumberOfInstances("2");
-        getUserLabelPrinting().setTotalNumberOfLabelToPrint("50");
-         
-        getUserLabelPrinting().setSizeOfLabelSheet("A4");
-        getUserLabelPrinting().setNumberOfRowsPerPageOfLabel("10");
         getUserLabelPrinting().setNumberOfLabelPerRow("3");
-        */
+        
+        getUserLabelPrinting().setFilename(generateDefaultFilename(getUserLabelPrinting(), true));
         form.setUserLabelPrinting(getUserLabelPrinting());
         
         model.addAttribute("availableFields",getAvailableLabelFields(true, false));
@@ -132,23 +124,27 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         getUserLabelPrinting().setStudy(study);
         getUserLabelPrinting().setFieldMapInfo(fieldMapInfo);
         getUserLabelPrinting().setBarcodeNeeded("1");
-        
-        /*
-        getUserLabelPrinting().setName(study.getName());
-        getUserLabelPrinting().setTitle(study.getTitle());
-        getUserLabelPrinting().setObjective(study.getObjective());
-       
-        getUserLabelPrinting().setNumberOfInstances("2");
-        getUserLabelPrinting().setTotalNumberOfLabelToPrint("50");
-         
-        getUserLabelPrinting().setSizeOfLabelSheet("A4");
-        getUserLabelPrinting().setNumberOfRowsPerPageOfLabel("10");
         getUserLabelPrinting().setNumberOfLabelPerRow("3");
-        */
+        
+        
+        
+        getUserLabelPrinting().setFilename(generateDefaultFilename(getUserLabelPrinting(), false));
         form.setUserLabelPrinting(getUserLabelPrinting());
         model.addAttribute("availableFields", getAvailableLabelFields(false, false));
         form.setIsTrial(false);
         return super.show(model);
+    }
+    
+    private String generateDefaultFilename(UserLabelPrinting userLabelPrinting, boolean isTrial){
+        String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
+        String fileName = "Labels_for_" + userLabelPrinting.getName();
+        
+        if(isTrial)
+            fileName += "_" + userLabelPrinting.getNumberOfInstances() + "_" + currentDate; //changed selected name to block name for now        
+        else
+            fileName += "_" + currentDate; //changed selected name to block name for now
+        
+        return fileName;
     }
     
     private List<LabelFields> getAvailableLabelFields(boolean isTrial, boolean isFromFieldMap){
@@ -158,6 +154,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         labelFieldsList.add(new LabelFields("Entry #", AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM));
         labelFieldsList.add(new LabelFields("GID", AppConstants.AVAILABLE_LABEL_FIELDS_GID));
         labelFieldsList.add(new LabelFields("Germplasm Name", AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME));
+        labelFieldsList.add(new LabelFields("Pedigree", AppConstants.AVAILABLE_LABEL_FIELDS_PEDIGREE));
         labelFieldsList.add(new LabelFields("Year", AppConstants.AVAILABLE_LABEL_FIELDS_YEAR));
         labelFieldsList.add(new LabelFields("Season", AppConstants.AVAILABLE_LABEL_FIELDS_SEASON));
         if(isTrial){
@@ -196,14 +193,22 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         getUserLabelPrinting().setFirstBarcodeField(form.getUserLabelPrinting().getFirstBarcodeField());        
         getUserLabelPrinting().setSecondBarcodeField(form.getUserLabelPrinting().getSecondBarcodeField());
         getUserLabelPrinting().setThirdBarcodeField(form.getUserLabelPrinting().getThirdBarcodeField());
+        getUserLabelPrinting().setFilename(form.getUserLabelPrinting().getFilename());
+        getUserLabelPrinting().setGenerateType(form.getUserLabelPrinting().getGenerateType());
         
          
         FieldMapDatasetInfo datasetInfo =  getUserLabelPrinting().getFieldMapInfo().getDatasets().get(0);
        
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            String fileName = labelPrintingService.generateLabels(datasetInfo, getUserLabelPrinting(), baos);
-            response.setHeader("Content-disposition","attachment; filename=" + fileName);
+            
+            if(getUserLabelPrinting().getGenerateType().equalsIgnoreCase("1")){
+                String fileName = labelPrintingService.generatePDFLabels(datasetInfo, getUserLabelPrinting(), baos);
+                response.setHeader("Content-disposition","attachment; filename=" + getUserLabelPrinting().getFilename() + ".pdf");
+            }else{
+                String fileName = labelPrintingService.generateXlSLabels(datasetInfo, getUserLabelPrinting(), baos);
+                response.setHeader("Content-disposition","attachment; filename=" + getUserLabelPrinting().getFilename() + ".xls");
+            }
             //File xls = new File(fileName); // the selected name + current date
             //FileInputStream in;
             //in = new FileInputStream(xls);

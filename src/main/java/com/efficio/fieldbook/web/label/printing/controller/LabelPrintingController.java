@@ -44,6 +44,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.LabelPrintingService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.label.printing.form.LabelPrintingForm;
@@ -66,6 +67,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     private FieldbookService fieldbookMiddlewareService;
     @Resource
     private LabelPrintingService labelPrintingService;
+    @Resource
+    private UserFieldmap userFieldmap;
     
     private static final int BUFFER_SIZE = 4096 * 4;
     
@@ -137,6 +140,29 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         form.setUserLabelPrinting(getUserLabelPrinting());
         model.addAttribute("availableFields", getAvailableLabelFields(false, false, locale));
         form.setIsTrial(false);
+        return super.show(model);
+    }
+    
+    @RequestMapping(value="/fieldmap", method = RequestMethod.GET)
+    public String showFieldmapLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, 
+            Model model, HttpSession session, Locale locale) {
+        System.out.println(userFieldmap.getSelectedFieldMaps());
+        List<FieldMapInfo> fieldMapInfoList = userFieldmap.getSelectedFieldMaps();
+        FieldMapInfo fieldMapInfo = null;
+        
+        //getUserLabelPrinting().setStudy();
+        getUserLabelPrinting().setFieldMapInfo(fieldMapInfo);
+        getUserLabelPrinting().setFieldMapInfoList(fieldMapInfoList);
+        getUserLabelPrinting().setBarcodeNeeded("1");
+        getUserLabelPrinting().setNumberOfLabelPerRow("3");
+        
+        getUserLabelPrinting().setFilename(generateDefaultFilename(getUserLabelPrinting(), true));
+        form.setUserLabelPrinting(getUserLabelPrinting());
+        
+        model.addAttribute("availableFields",getAvailableLabelFields(true, false, locale));
+        
+        form.setIsTrial(userFieldmap.isTrial());
+        
         return super.show(model);
     }
     

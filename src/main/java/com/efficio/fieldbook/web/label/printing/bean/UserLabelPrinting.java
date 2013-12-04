@@ -12,6 +12,7 @@
 package com.efficio.fieldbook.web.label.printing.bean;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
@@ -29,6 +30,8 @@ public class UserLabelPrinting implements Serializable{
     
     private Study study;
     private FieldMapInfo fieldMapInfo;
+    private List<FieldMapInfo> fieldMapInfoList;
+    private List<FieldMapInfo> selectedFieldMaps;
     
     private String name;
     private String title;
@@ -50,6 +53,8 @@ public class UserLabelPrinting implements Serializable{
     private String filename;
     
     private String generateType; //1 - pdf, 2 - xls
+    
+    private String order;
     
     
     public FieldMapInfo getFieldMapInfo() {
@@ -79,9 +84,44 @@ public class UserLabelPrinting implements Serializable{
         }
     }
 
-    
+    public List<FieldMapInfo> getFieldMapInfoList() {
+        return fieldMapInfoList;
+    }
+
 
     
+    public void setFieldMapInfoList(List<FieldMapInfo> fieldMapInfoList) {
+        this.fieldMapInfoList = fieldMapInfoList;
+        int totalLabels = 0;
+        if(fieldMapInfoList != null){
+            for (FieldMapInfo fieldMapInfo : fieldMapInfoList) {
+                for (FieldMapDatasetInfo dataset : fieldMapInfo.getDatasets()) {
+                    for (FieldMapTrialInstanceInfo trialInstance : dataset.getTrialInstances()) {
+                        totalLabels+=trialInstance.getFieldMapLabels().size();
+                    } 
+                }
+            }
+            this.totalNumberOfLabelToPrint = Integer.toString(totalLabels);
+        }
+    }      
+    
+    /**
+     * Gets the selected field maps.
+     *
+     * @return the selectedFieldMaps
+     */
+    public List<FieldMapInfo> getSelectedFieldMaps() {
+        return selectedFieldMaps;
+    }
+    
+    /**
+     * Sets the selected field maps.
+     *
+     * @param selectedFieldMaps the selectedFieldMaps to set
+     */
+    public void setSelectedFieldMaps(List<FieldMapInfo> selectedFieldMaps) {
+        this.selectedFieldMaps = selectedFieldMaps;
+    }
     
     public String getGenerateType() {
         return generateType;
@@ -265,5 +305,11 @@ public class UserLabelPrinting implements Serializable{
         this.numberOfRowsPerPageOfLabel = numberOfRowsPerPageOfLabel;
     }
     
+    public String getOrder() {
+        return order;
+    }
     
+    public void setOrder(String order) {
+        this.order = order;
+    }
 }

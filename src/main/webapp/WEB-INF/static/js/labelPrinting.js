@@ -54,5 +54,31 @@ function validateEnterLabelFieldsPage(type){
 	
 	$("#"+getJquerySafeId('userLabelPrinting.generateType')).val(type);
 	
+	setSelectedTrialInstanceOrder();
 	$('#specifyLabelDetailsForm').submit();	
+}
+
+function setSelectedTrialInstanceOrder() {
+	var order = [];
+	var notIncluded = 0;
+	var fieldMapInfoList = [];
+	$("#selectedTrials .includeTrial").each(function(){
+		if (!this.checked) {
+			notIncluded++;
+		}
+	});
+	$("#selectedTrials .trialOrder").each(function(){
+		var checked = false;
+		$(this).parent().prev().find(":checked").each(function() {
+				checked = true;
+		});
+		if (checked) {
+			var orderId = $(this).parent().parent().attr("id");
+			orderId = parseInt(orderId) - notIncluded;
+			order.push(orderId+"|"+$(this).val());
+			fieldMapInfoList.push($(this).val());
+		}
+	});
+	$("#"+getJquerySafeId("userLabelPrinting.order")).val(order.join(","));
+	$("#"+getJquerySafeId("userLabelPrinting.order")).val(fieldMapInfoList.join(","));
 }

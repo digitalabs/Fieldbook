@@ -47,11 +47,6 @@ function validateEnterFieldPage(){
 		showEnterFieldDetailsMessage(msgBlockSizeError);
 		return false;
 	} else {
-		//var id = $('#studyTree .field-map-highlight').attr('id').split("|");
-		
-		//set selected trial instance and its dataset
-		//$("#"+getJquerySafeId("userFieldmap.selectedDatasetId")).val(id[1]);
-		//$("#"+getJquerySafeId("userFieldmap.selectedGeolocationId")).val(id[0]);
 		setTrialInstanceOrder();
 		$("#enterFieldDetailsForm").submit();
 	}
@@ -273,26 +268,4 @@ function isDeletedPlotAtStartCoord(id) {
 		return true;
 	} 
 	return false;
-}
-
-function setSelectedTrialsAsDraggable(){
-	$("#selectedTrials").tableDnD();
-	
-	$("#selectedTrials").tableDnD({
-        onDragClass: "myDragClass",
-        onDrop: function(table, row) {
-        	setSelectTrialOrderValues();
-        }
-    });
-	
-	setSelectTrialOrderValues();
-}
-
-function setSelectTrialOrderValues() {
-	var i = 0;
-	$("#selectedTrials .orderNo").each(function (){
-		$(this).text(i+1);
-		$(this).parent().parent().attr("id", i+1);
-		i++;
-	});
 }

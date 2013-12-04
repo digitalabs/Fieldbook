@@ -136,6 +136,7 @@ function selectTrialInstance(tableName) {
 		$.ajax({ 
 			url: "/Fieldbook/Fieldmap/enterFieldDetails/selectTrialInstance",
 		    type: "GET",
+		    cache: false,
 		    data: "",
 		    success: function(data) {
 		    	if (data.fieldMapInfo != null && data.fieldMapInfo != "") {
@@ -167,6 +168,7 @@ function selectTrialInstanceCreate() {
 	$.ajax({ 
 		url: "/Fieldbook/Fieldmap/enterFieldDetails/selectTrialInstance",
 	    type: "GET",
+	    cache: false,
 	    data: "",
 	    success: function(data) {
 	    	if (data.fieldMapInfo != null && data.fieldMapInfo != "") {
@@ -447,4 +449,26 @@ function showCreateFieldMap() {
 
 function redirectToFirstPage() {
 	location.href = $('#fieldmap-url').attr("href") + "/" + encodeURIComponent(fieldmapIds.join(","));
+}
+
+function setSelectedTrialsAsDraggable(){
+	$("#selectedTrials").tableDnD();
+	
+	$("#selectedTrials").tableDnD({
+        onDragClass: "myDragClass",
+        onDrop: function(table, row) {
+        	setSelectTrialOrderValues();
+        }
+    });
+	
+	setSelectTrialOrderValues();
+}
+
+function setSelectTrialOrderValues() {
+	var i = 0;
+	$("#selectedTrials .orderNo").each(function (){
+		$(this).text(i+1);
+		$(this).parent().parent().attr("id", i+1);
+		i++;
+	});
 }

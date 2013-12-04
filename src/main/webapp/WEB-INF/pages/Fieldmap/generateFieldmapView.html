@@ -187,7 +187,10 @@ th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" 
 						  	<ul class="dropdown-menu" role="menu">
 							    <li>							    
 							    	<a th:href="@{/Fieldmap/generateFieldmapView/exportExcel}" href="" th:text="#{fieldmap.tools.export.to.excel}">Export to Excel</a>
-							    </li>    
+							    </li> 
+							    <li>
+							    	<a th:href="@{/LabelPrinting/specifyLabelDetails/fieldmap}" href="" th:text="#{tools.create.label.printing}">Create Labels</a>
+							    </li>   
 						  	</ul>
 						</div>
 					</div>

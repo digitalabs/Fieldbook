@@ -40,18 +40,14 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 		</div>
 	</div>
 	
-	<div class="row">
-		<div class="col-md-12" >
+	<div class="row" th:if="*{userLabelPrinting.fieldMapInfoList == null}">
+		<div class="col-md-6" >
 			<div class="form-group">
 				<div class="col-md-12">
 					<label class="control-label" th:if="*{isTrial == true}" th:text="#{label.printing.selected.trial}">SELECTED TRIAL</label>
 					<label class="control-label" th:if="*{isTrial == false}" th:text="#{label.printing.selected.nursery}">SELECTED NURSERY</label>
 				</div>
 			</div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-12" >
 			<div class="form-group">
 				<div class="col-md-12">
 					<label class="control-label" th:if="*{isTrial == true}" th:text="#{label.printing.trial.name}+':'"></label>
@@ -59,30 +55,18 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 					<span th:text="*{userLabelPrinting.name}">Trial Name</span>
 				</div>		
 			</div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-12" >
 			<div class="form-group">
 				<div class="col-md-12">
 					<label class="control-label" th:text="#{label.printing.title}+':'"></label>
 					<span th:text="*{userLabelPrinting.title}">Title</span>
 				</div>		
 			</div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-12" >
 			<div class="form-group">
 				<div class="col-md-12">
 					<label class="control-label" th:text="#{label.printing.objective}+':'"></label>
 					<span th:text="*{userLabelPrinting.objective}">Objective</span>
 				</div>		
 			</div>
-		</div>
-	</div>
-	<div class="row"  th:if="*{isTrial == true}" >
-		<div class="col-md-12" >
 			<div class="form-group">
 				<div class="col-md-12">
 					<label class="control-label" th:text="#{label.printing.number.of.instances}+':'"></label>
@@ -90,13 +74,56 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 				</div>		
 			</div>
 		</div>
+		<div class="col-md-6">
+		</div>
 	</div>
-	<div class="row">
+	<div class="row" th:if="*{userLabelPrinting.fieldMapInfoList}">
 		<div class="col-md-12" >
 			<div class="form-group">
 				<div class="col-md-12">
+					<label class="control-label" th:text="#{label.printing.summary.of.labels.needed}">SUMMARY OF LABELS NEEDED</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-md-12">
+					<input type="hidden" th:field="*{userLabelPrinting.order}" />
+					<table class="table table-bordered" id="selectedTrials">
+						<tr>
+							<th></th>
+							<th th:text="#{fieldmap.trial.order}">Order</th>
+							<th th:if="*{isTrial == true}" th:text="#{fieldmap.trial}">Trial</th>
+							<th th:if="*{isTrial == false}" th:text="#{fieldmap.nursery}">Nursery</th>
+							<th th:if="*{isTrial == false}" th:text="#{fieldmap.dataset.name}">Dataset Name</th>
+							<th th:if="*{isTrial == true}" th:text="#{fieldmap.trial.instance}">Instance</th>
+							<th th:if="*{isTrial == true}" th:text="#{fieldmap.trial.entry.count}"># of Entries</th>
+							<th th:if="*{isTrial == true}" th:text="#{fieldmap.trial.reps.count}"># of Reps</th>
+							<th th:text="#{label.printing.labels.needed}">Labels Needed</th>
+						</tr>
+						<div th:each="map : *{userLabelPrinting.fieldMapInfoList}">
+							<div th:each="dataset : ${map.datasets}">
+								<tr th:each="trial : ${dataset.trialInstances}">
+									<td><input class="includeTrial" type="checkbox" onclick="setTotalLabels(this);" /></td>
+									<td>
+										<input class="trialOrder" type="hidden" th:value="${map.fieldbookId}+'|'+${dataset.datasetId}+'|'+${trial.geolocationId}" />
+										<span class="orderNo"></span>
+									</td>
+									<td th:text="${map.fieldbookName}"></td>
+									<td th:if="*{isTrial == false}" th:text="${dataset.datasetName}"></td>
+									<td th:if="*{isTrial == true}" th:text="${trial.trialInstanceNo}"></td>
+									<td th:if="*{isTrial == true}" th:text="${trial.entryCount}"></td>
+									<td th:if="*{isTrial == true}" th:text="${trial.repCount}"></td>
+									<td th:text="${trial.plotCount}"></td>
+								</tr>
+							</div>
+						</div>
+					</table>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-md-12">
 					<label class="control-label" th:text="#{label.printing.total.number.of.labels}+':'"></label>
-					<span th:text="*{userLabelPrinting.totalNumberOfLabelToPrint}">10</span>
+					<span id="totalLabelCount">0</span>
+					<input type="hidden" th:value="*{userLabelPrinting.totalNumberOfLabelToPrint}" /> 
 				</div>		
 			</div>
 		</div>
@@ -355,6 +382,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 <div layout:fragment="page-script">
 <script type="text/javascript" th:src="@{/static/js/jquery-multisortable.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/labelPrinting.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/jquery.tablednd.0.7.min.js}"></script>
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    	
         var barcodeNeededError = /*[[#{label.printing.bar.code.needed.error}]]*/;
@@ -364,6 +392,8 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
   		
   		
  		 $(function() {
+ 			setSelectedTrialsAsDraggable();
+ 			
  			$( "ul.droptrue" ).sortable({
  				connectWith: "ul",
 				receive: function(event, ui) {
@@ -380,6 +410,17 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
  			
  			
  		});
+ 		 
+ 		 function setTotalLabels(checkbox) {
+ 			 var labelCount = $(checkbox).parent().next().next().next().next().next().next().html();
+ 			 var totalCount = $("#totalLabelCount").text();
+ 			  			 
+ 			 if (checkbox.checked) {
+ 				 $("#totalLabelCount").text(parseInt(totalCount) + parseInt(labelCount));
+ 			 } else {
+ 				$("#totalLabelCount").text(parseInt(totalCount) - parseInt(labelCount));
+ 			 }
+ 		 }
       //]]>
     </script>
 	

@@ -31,7 +31,6 @@ public class UserLabelPrinting implements Serializable{
     private Study study;
     private FieldMapInfo fieldMapInfo;
     private List<FieldMapInfo> fieldMapInfoList;
-    private List<FieldMapInfo> selectedFieldMaps;
     
     private String name;
     private String title;
@@ -104,24 +103,6 @@ public class UserLabelPrinting implements Serializable{
             this.totalNumberOfLabelToPrint = Integer.toString(totalLabels);
         }
     }      
-    
-    /**
-     * Gets the selected field maps.
-     *
-     * @return the selectedFieldMaps
-     */
-    public List<FieldMapInfo> getSelectedFieldMaps() {
-        return selectedFieldMaps;
-    }
-    
-    /**
-     * Sets the selected field maps.
-     *
-     * @param selectedFieldMaps the selectedFieldMaps to set
-     */
-    public void setSelectedFieldMaps(List<FieldMapInfo> selectedFieldMaps) {
-        this.selectedFieldMaps = selectedFieldMaps;
-    }
     
     public String getGenerateType() {
         return generateType;

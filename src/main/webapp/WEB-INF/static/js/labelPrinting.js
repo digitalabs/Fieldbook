@@ -22,6 +22,12 @@ function validateEnterLabelFieldsPage(type){
 	if(rightSelectedFields != ''){
 		rightSelectedFields = rightSelectedFields.substring(0,rightSelectedFields.length-1); 
 	}
+	
+	if(leftSelectedFields == "" && rightSelectedFields == ""){
+		showMessage(selectedFieldsError);
+		return false;
+	}
+	
 	//console.log(selectedFields);
 	$('#'+getJquerySafeId('userLabelPrinting.leftSelectedLabelFields')).val(leftSelectedFields);
 	$('#'+getJquerySafeId('userLabelPrinting.rightSelectedLabelFields')).val(rightSelectedFields);

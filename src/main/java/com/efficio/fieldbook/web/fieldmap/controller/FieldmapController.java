@@ -157,6 +157,8 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         Map<String, String> result = new HashMap<String, String>();
         List<FieldMapInfo> fieldMapInfoList = userFieldmap.getFieldMapInfo();
         String size = "0";
+        String datasetId = null;
+        String geolocationId = null;
         String fieldMapInfoJson = null;
         for (FieldMapInfo fieldMapInfo : fieldMapInfoList) {
             //for viewing of fieldmaps
@@ -165,6 +167,10 @@ public class FieldmapController extends AbstractBaseFieldbookController{
                 List<FieldMapTrialInstanceInfo> trials = datasetList.get(0).getTrialInstancesWithFieldMap();
                 if (trials != null && !trials.isEmpty()) {
                     size = String.valueOf(trials.size());
+                    if (trials.size() == 1) {
+                        datasetId = datasetList.get(0).getDatasetId().toString();
+                        geolocationId = trials.get(0).getGeolocationId().toString();
+                    }
                 }
             }
         }
@@ -173,6 +179,12 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         
         result.put("fieldMapInfo", fieldMapInfoJson);
         result.put("size", size);
+        if (datasetId != null) {
+            result.put("datasetId", datasetId);
+        }
+        if (geolocationId != null) {
+            result.put("geolocationId", geolocationId);
+        }
         return result;
     } 
     

@@ -1,5 +1,7 @@
 function validateEnterFieldPage(){
-	if($('#'+getJquerySafeId('userFieldmap.fieldLocationId')).select2("data") == null){
+	var totalNoOfPlots;
+	
+	if($('#'+getJquerySafeId('userFieldmap.fieldLocationId')).val() == 0){
 		showEnterFieldDetailsMessage(msgLocation);
 		return false;
 	}
@@ -38,14 +40,41 @@ function validateEnterFieldPage(){
 						/parseInt($("#"+getJquerySafeId("userFieldmap.numberOfRowsPerPlot")).val())) 
 						* parseInt($("#"+getJquerySafeId("userFieldmap.numberOfRangesInBlock")).val());
 	
+	
+    totalNoOfPlots = totalNumberOfSelectedPlots;    
+	
 	if(totalNoOfPlots > totalNoOfBlocks) {
-		$("#enterFieldDetailsModal").modal("toggle");
+		showEnterFieldDetailsMessage(msgBlockSizeError);
 		return false;
 	} else {
+		//var id = $('#studyTree .field-map-highlight').attr('id').split("|");
+		
+		//set selected trial instance and its dataset
+		//$("#"+getJquerySafeId("userFieldmap.selectedDatasetId")).val(id[1]);
+		//$("#"+getJquerySafeId("userFieldmap.selectedGeolocationId")).val(id[0]);
+		setTrialInstanceOrder();
 		$("#enterFieldDetailsForm").submit();
 	}
-	return true;
 	
+	return true;
+}
+
+function setTrialInstanceOrder() {
+	var order = [];
+	$("#selectedTrials .trialOrder").each(function(){
+		var orderId = $(this).parent().parent().attr("id");
+		order.push(orderId+"|"+$(this).val());
+	});
+	$("#"+getJquerySafeId("userFieldmap.order")).val(order.join(","));
+}
+
+function setValuesForCounts() {
+	//set values for counts
+	$("#"+getJquerySafeId("userFieldmap.numberOfEntries")).val($('#studyTree .field-map-highlight td:nth-child(2)').html());
+	if (trial) {
+		$("#"+getJquerySafeId("userFieldmap.numberOfReps")).val($('#studyTree .field-map-highlight td:nth-child(3)').html());
+		$("#"+getJquerySafeId("userFieldmap.totalNumberOfPlots")).val($('#studyTree .field-map-highlight td:nth-child(4)').html());
+	}
 }
 
 function showEnterFieldDetailsMessage(msg){
@@ -65,7 +94,7 @@ function initializeLocationSelect2(locationSuggestions, locationSuggestions_obj)
 		
 	
 		//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
-		$('#'+getJquerySafeId('userFieldmap.fieldLocationId')).select2({
+		$('#'+getJquerySafeId('fieldLocationIdAll')).select2({
 			minimumInputLength: 2,
 	        query: function (query) {
 	          var data = {results: locationSuggestions_obj}, i, j, s;
@@ -79,9 +108,40 @@ function initializeLocationSelect2(locationSuggestions, locationSuggestions_obj)
 	        }
 	
 	    }).on("change", function (){
-	    	$('#'+getJquerySafeId("userFieldmap.locationName")).val($('#'+getJquerySafeId("userFieldmap.fieldLocationId")).select2("data").text);
+	    	$('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val($('#'+getJquerySafeId("fieldLocationIdAll")).select2("data").id);
+	    	$('#'+getJquerySafeId("userFieldmap.locationName")).val($('#'+getJquerySafeId("fieldLocationIdAll")).select2("data").text);
 	    });
 	
+}
+
+function initializeLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj) {
+
+	$.each(locationSuggestionsFav, function( index, value ) {
+		locationSuggestionsFav_obj.push({ 'id' : value.locid,
+			  'text' : value.lname
+		});  
+  		
+	});
+
+
+//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
+$('#'+getJquerySafeId('fieldLocationIdFavorite')).select2({
+    query: function (query) {
+      var data = {results: locationSuggestionsFav_obj}, i, j, s;
+      // return the array that matches
+      data.results = $.grep(data.results,function(item,index) {
+        return ($.fn.select2.defaults.matcher(query.term,item.text));
+      
+      });
+        query.callback(data);
+        
+    }
+
+}).on("change", function (){
+	$('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val($('#'+getJquerySafeId("fieldLocationIdFavorite")).select2("data").id);
+	$('#'+getJquerySafeId("userFieldmap.locationName")).val($('#'+getJquerySafeId("fieldLocationIdFavorite")).select2("data").text);
+});
+
 }
 
 function validatePlantingDetails() {
@@ -145,12 +205,6 @@ function checkStartingCoordinates() {
 		return true;
 	}
 	return false;
-}
-
-function showMessage(message) {
-	$("#page-message").html(
-		    "<div class='alert alert-danger'>"+ message +"</div>"
-	);
 }
 
 function checkRemainingPlots() {
@@ -219,4 +273,26 @@ function isDeletedPlotAtStartCoord(id) {
 		return true;
 	} 
 	return false;
+}
+
+function setSelectedTrialsAsDraggable(){
+	$("#selectedTrials").tableDnD();
+	
+	$("#selectedTrials").tableDnD({
+        onDragClass: "myDragClass",
+        onDrop: function(table, row) {
+        	setSelectTrialOrderValues();
+        }
+    });
+	
+	setSelectTrialOrderValues();
+}
+
+function setSelectTrialOrderValues() {
+	var i = 0;
+	$("#selectedTrials .orderNo").each(function (){
+		$(this).text(i+1);
+		$(this).parent().parent().attr("id", i+1);
+		i++;
+	});
 }

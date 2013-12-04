@@ -12,11 +12,14 @@
 package com.efficio.fieldbook.web.fieldmap.bean;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
+import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
@@ -30,14 +33,24 @@ import com.efficio.fieldbook.util.FieldbookException;
  */
 public class UserFieldmap  implements Serializable {
     
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
+    /** The row column. */
     public final int ROW_COLUMN = 1;
+    
+    /** The serpentine. */
     public final int SERPENTINE = 2;
 	
-    /** The selected name. */
-    private String selectedName;
+    /** The trial id or nursery id. */
+    private Integer studyId;
     
+    /** The selected dataset id. */
+    private Integer selectedDatasetId;
+    
+    /** The selected geolocation id. */
+    private Integer selectedGeolocationId;
+        
     /** The number of entries. */
     private Long numberOfEntries;
     
@@ -94,6 +107,19 @@ public class UserFieldmap  implements Serializable {
     
     /** The location name. */
     private String locationName;
+    
+    /** The field map info. */
+    private List<FieldMapInfo> fieldMapInfo;
+    
+    /** The selected field maps. */
+    private List<FieldMapInfo> selectedFieldMaps;
+    
+    /** The order. */
+    private String order;
+
+    private Integer machineRowCapacity;
+    
+    private SelectedFieldmapList selectedFieldmapList;
 
     /**
      * Instantiates a new user fieldmap.
@@ -108,31 +134,100 @@ public class UserFieldmap  implements Serializable {
      * @param fieldMapInfo the field map info
      * @param isTrial the is trial
      */
-    public UserFieldmap(FieldMapInfo fieldMapInfo, boolean isTrial){
+    public UserFieldmap(List<FieldMapInfo> fieldMapInfo, boolean isTrial){
         setUserFieldmapInfo(fieldMapInfo, isTrial);
     }
     
     /**
      * Sets the user fieldmap info.
      *
-     * @param fieldMapInfo the field map info
+     * @param fieldMapInfoList the field map info list
      * @param isTrial the is trial
      */
-    public void setUserFieldmapInfo(FieldMapInfo fieldMapInfo, boolean isTrial){
-        setSelectedName(fieldMapInfo.getFieldbookName());
-        setNumberOfEntries(fieldMapInfo.getEntryCount());
-        setNumberOfReps(fieldMapInfo.getRepCount());
-        setTotalNumberOfPlots(fieldMapInfo.getPlotCount());
-        setFieldMapLabels(fieldMapInfo.getFieldMapLabels());
+    public void setUserFieldmapInfo(List<FieldMapInfo> fieldMapInfoList, boolean isTrial){
+        
+        if (getSelectedDatasetId() != null && getSelectedGeolocationId() != null) {
+            
+            int datasetId = getSelectedDatasetId();
+            int trialInstanceId = getSelectedGeolocationId();
+            
+            for (FieldMapInfo fieldMapInfo : fieldMapInfoList) {
+                if (fieldMapInfo.getDataSet(datasetId) != null) {
+                    FieldMapTrialInstanceInfo info = fieldMapInfo.getDataSet(datasetId).getTrialInstance(trialInstanceId);
+                    //setFieldMapLabels(info.getFieldMapLabels());
+                    setFieldMapLabels(getAllSelectedFieldMapLabels(false));
+                    setNumberOfEntries(info.getEntryCount());
+                    setNumberOfReps(info.getRepCount());
+                    setTotalNumberOfPlots(info.getPlotCount());
+                    setStudyId(fieldMapInfo.getFieldbookId());
+                }
+            }            
+        }
+        
         setTrial(isTrial);
         if(isTrial){
             setNumberOfRowsPerPlot(2);
         }else{
             setNumberOfRowsPerPlot(1);
         }
+        setFieldMapInfo(fieldMapInfoList);
+        
     }
     
+    /**
+     * Gets the all selected field map labels.
+     *
+     * @return the all selected field map labels
+     */
+    public List<FieldMapLabel> getAllSelectedFieldMapLabels(boolean isSorted) {
+        List<FieldMapLabel> allLabels = new ArrayList<FieldMapLabel>();
+        
+        if (isSorted) {
+            if (getSelectedFieldmapList() != null && !getSelectedFieldmapList().isEmpty()) {
+                for (SelectedFieldmapRow row : getSelectedFieldmapList().getRows()) {
+                    FieldMapTrialInstanceInfo trial = 
+                            getSelectedTrialInstanceByDatasetIdAndGeolocationId(row.getDatasetId(), row.getGeolocationId());
+                    allLabels.addAll(trial.getFieldMapLabels());
+                }
+            }
+        }
+        else {
+            if (getSelectedFieldMaps() != null && !getSelectedFieldMaps().isEmpty()) {
+                for (FieldMapInfo info : getSelectedFieldMaps()) {
+                    if (info.getDatasets() != null && !info.getDatasets().isEmpty()) {
+                        for (FieldMapDatasetInfo dataset : info.getDatasets()) {
+                            if (dataset.getTrialInstances() != null) {
+                                for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
+                                    if (trial.getFieldMapLabels() != null && !trial.getFieldMapLabels().isEmpty()) {
+                                        allLabels.addAll(trial.getFieldMapLabels());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return allLabels;
+    }
+
+    /**
+     * Gets the field map info.
+     *
+     * @return the field map info
+     */
+    public List<FieldMapInfo> getFieldMapInfo() {
+        return fieldMapInfo;
+    }
     
+    /**
+     * Sets the field map info.
+     *
+     * @param fieldMapInfo the new field map info
+     */
+    public void setFieldMapInfo(List<FieldMapInfo> fieldMapInfo) {
+        this.fieldMapInfo = fieldMapInfo;
+    }
     
     /**
      * Gets the entry numbers.
@@ -212,24 +307,6 @@ public class UserFieldmap  implements Serializable {
      */
     public void setTrial(boolean isTrial) {
         this.isTrial = isTrial;
-    }
-
-    /**
-     * Gets the selected name.
-     *
-     * @return the selected name
-     */
-    public String getSelectedName() {
-        return selectedName;
-    }
-    
-    /**
-     * Sets the selected name.
-     *
-     * @param selectedName the new selected name
-     */
-    public void setSelectedName(String selectedName) {
-        this.selectedName = selectedName;
     }
     
     /**
@@ -349,10 +426,21 @@ public class UserFieldmap  implements Serializable {
         return numberOfRowsInBlock;
     }
     
+    /**
+     * Gets the number of columns in block.
+     *
+     * @return the number of columns in block
+     */
     public int getNumberOfColumnsInBlock() {
     	return  getNumberOfRowsInBlock() / getNumberOfRowsPerPlot();
     }
     
+    /**
+     * Gets the block capacity string.
+     *
+     * @param messageSource the message source
+     * @return the block capacity string
+     */
     public String getBlockCapacityString(ResourceBundleMessageSource messageSource){
     	// 10 Columns, 10 Ranges
     	Locale locale = LocaleContextHolder.getLocale();
@@ -361,6 +449,12 @@ public class UserFieldmap  implements Serializable {
     	return this.getNumberOfRowsInBlock() + " " + columns + ", " + getNumberOfRangesInBlock()+ " " + ranges;
     }
     
+    /**
+     * Gets the starting coordinate string.
+     *
+     * @param messageSource the message source
+     * @return the starting coordinate string
+     */
     public String getStartingCoordinateString(ResourceBundleMessageSource messageSource) {
     	// Column 1, Range 1
     	Locale locale = LocaleContextHolder.getLocale();
@@ -369,6 +463,13 @@ public class UserFieldmap  implements Serializable {
     	return column + " " + getStartingColumn() + ", " + range + " " + getStartingRange();
     }
     
+    /**
+     * Gets the planting order string.
+     *
+     * @param messageSource the message source
+     * @return the planting order string
+     * @throws FieldbookException the fieldbook exception
+     */
     public String getPlantingOrderString(ResourceBundleMessageSource messageSource) throws FieldbookException{
     	Locale locale = LocaleContextHolder.getLocale();
     	if (plantingOrder == ROW_COLUMN){
@@ -379,11 +480,37 @@ public class UserFieldmap  implements Serializable {
     	throw new FieldbookException("Invalid planting order.");
 	}    
     
+    /**
+     * Checks if is serpentine.
+     *
+     * @return true, if is serpentine
+     */
     public boolean isSerpentine(){
     	if (plantingOrder == SERPENTINE){
     		return true;
     	}
     	return false;
+    }
+    
+    public FieldMapTrialInstanceInfo getSelectedTrialInstanceByDatasetIdAndGeolocationId(int datasetId, int geolocationId) {
+        if (getSelectedFieldMaps() != null) {
+            for (FieldMapInfo info : getSelectedFieldMaps()) {
+                if (info.getDatasets() != null) {
+                    for (FieldMapDatasetInfo dataset : info.getDatasets()) {
+                        if (dataset.getDatasetId().equals(datasetId)) {
+                            if (dataset.getTrialInstances() != null) {
+                                for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
+                                    if (trial.getGeolocationId().equals(geolocationId)) {
+                                        return trial;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
     
     /**
@@ -395,6 +522,16 @@ public class UserFieldmap  implements Serializable {
         this.numberOfRowsInBlock = numberOfRowsInBlock;
     }
     
+    /**
+     * Sets the number of rows in block.
+     *
+     * @param numberOfColumnsInBlock the number of columns in block
+     * @param rowsPerPlot the rows per plot
+     */
+    public void setNumberOfRowsInBlock(int numberOfColumnsInBlock, int rowsPerPlot) {
+        this.numberOfRowsInBlock = numberOfColumnsInBlock * rowsPerPlot;
+    }
+
     /**
      * Gets the number of ranges in block.
      *
@@ -543,4 +680,154 @@ public class UserFieldmap  implements Serializable {
     public void setLocationName(String locationName) {
         this.locationName = locationName;
     }
+
+    
+    /**
+     * Gets the study id.
+     *
+     * @return the studyId
+     */
+    public Integer getStudyId() {
+        return studyId;
+    }
+
+    
+    /**
+     * Sets the study id.
+     *
+     * @param studyId the studyId to set
+     */
+    public void setStudyId(Integer studyId) {
+        this.studyId = studyId;
+    }
+
+    
+    /**
+     * Gets the selected dataset id.
+     *
+     * @return the selectedDatasetId
+     */
+    public Integer getSelectedDatasetId() {
+        return selectedDatasetId;
+    }
+
+    
+    /**
+     * Sets the selected dataset id.
+     *
+     * @param selectedDatasetId the selectedDatasetId to set
+     */
+    public void setSelectedDatasetId(Integer selectedDatasetId) {
+        this.selectedDatasetId = selectedDatasetId;
+    }
+
+    
+    /**
+     * Gets the selected geolocation id.
+     *
+     * @return the selectedGeolocationId
+     */
+    public Integer getSelectedGeolocationId() {
+        return selectedGeolocationId;
+    }
+
+    
+    /**
+     * Sets the selected geolocation id.
+     *
+     * @param selectedGeolocationId the selectedGeolocationId to set
+     */
+    public void setSelectedGeolocationId(Integer selectedGeolocationId) {
+        this.selectedGeolocationId = selectedGeolocationId;
+    }
+
+    
+    /**
+     * Gets the selected field maps.
+     *
+     * @return the selectedFieldMaps
+     */
+    public List<FieldMapInfo> getSelectedFieldMaps() {
+        return selectedFieldMaps;
+    }
+
+    /**
+     * Gets the order.
+     *
+     * @return the order
+     */
+    public String getOrder() {
+        return order;
+    }
+    
+    /**
+     * Sets the order.
+     *
+     * @param order the new order
+     */
+    public void setOrder(String order) {
+        this.order = order;
+    }
+
+    /**
+     * Sets the selected field maps.
+     *
+     * @param selectedFieldMaps the selectedFieldMaps to set
+     */
+    public void setSelectedFieldMaps(List<FieldMapInfo> selectedFieldMaps) {
+        this.selectedFieldMaps = selectedFieldMaps;
+    }
+
+    /**
+     * @return the machineRowCapacity
+     */
+    public Integer getMachineRowCapacity() {
+        return machineRowCapacity;
+    }
+
+    
+    /**
+     * @param machineRowCapacity the machineRowCapacity to set
+     */
+    public void setMachineRowCapacity(Integer machineRowCapacity) {
+        this.machineRowCapacity = machineRowCapacity;
+    }
+
+    /**
+     * Gets the total number of selected plots.
+     *
+     * @return the total number of selected plots
+     */
+    public long getTotalNumberOfSelectedPlots() {
+        long total = 0;
+        
+        for (FieldMapInfo info : getSelectedFieldMaps()) {
+            for (FieldMapDatasetInfo dataset : info.getDatasets()) {
+                for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
+                    total += trial.getPlotCount();
+                }
+            }
+        }
+        
+        return total;
+    }
+
+    
+    /**
+     * @return the selectedFieldmapList
+     */
+    public SelectedFieldmapList getSelectedFieldmapList() {
+        
+        return this.selectedFieldmapList;
+    }
+
+    
+    /**
+     * @param selectedFieldmapList the selectedFieldmapList to set
+     */
+    public void setSelectedFieldmapList(SelectedFieldmapList selectedFieldmapList) {
+        this.selectedFieldmapList = selectedFieldmapList;
+    }
+
+
 }

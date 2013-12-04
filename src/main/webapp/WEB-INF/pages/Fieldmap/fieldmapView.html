@@ -8,14 +8,30 @@
 				<p th:text="${j}"></p>				
 			</td>
 		</tr>
-		<tr th:unless="${#arrays.isEmpty(#object.userFieldmap.fieldmap)}">
+		<tr class="machineDirectionRow" th:unless="${#arrays.isEmpty(#object.userFieldmap.fieldmap)}">
 			<td class="header-row-main"></td>
-			<td class="sub-header-row" th:colspan="${#object.userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
-				<p th:unless="${#arrays.isEmpty(#object.userFieldmap.fieldmap)}"
-					th:if="${#object.userFieldmap.fieldmap[__${j-1}__][__0__].upward}">
+			<td class="sub-header-row" th:colspan="${#object.userFieldmap.machineRowCapacity}" 
+			th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.machineRowCapacity)}">
+				<p th:if="${#object.userFieldmap.plantingOrder == 1}">
 					<span class="glyphicon glyphicon-arrow-up"></span>
-					</p>
-				<p th:unless="${#object.userFieldmap.fieldmap[__${j-1}__][__0__].upward}">
+				</p>
+				<p th:if="${#object.userFieldmap.plantingOrder == 2 and j % 2 == 1}">
+					<span class="glyphicon glyphicon-arrow-up"></span>
+				</p>
+				<p th:if="${#object.userFieldmap.plantingOrder == 2 and j % 2 == 0}">
+					<span class="glyphicon glyphicon-arrow-down"></span>
+				</p>
+			</td>
+			<td class="sub-header-row" th:if="${#object.userFieldmap.numberOfRowsInBlock % #object.userFieldmap.machineRowCapacity != 0}"
+			th:colspan="${#object.userFieldmap.numberOfRowsInBlock % #object.userFieldmap.machineRowCapacity}"
+			th:with="j=${#object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.machineRowCapacity + 1}">
+				<p th:if="${#object.userFieldmap.plantingOrder == 1}">
+					<span class="glyphicon glyphicon-arrow-up"></span>
+				</p>
+				<p th:if="${#object.userFieldmap.plantingOrder == 2 and j % 2 == 1}">
+					<span class="glyphicon glyphicon-arrow-up"></span>
+				</p>
+				<p th:if="${#object.userFieldmap.plantingOrder == 2 and j % 2 == 0}">
 					<span class="glyphicon glyphicon-arrow-down"></span>
 				</p>
 			</td>
@@ -31,7 +47,7 @@
 		<tr th:each="i : ${#numbers.sequence(#object.userFieldmap.numberOfRangesInBlock, 1)}">
 			<td class="sub-header-row"><p th:text="'Range ' + ${i}"></p></td>
 			<td class="plot" th:id="${j-1} + '_' + ${i-1}" th:colspan="${#object.userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
-				<span th:unless="${#arrays.isEmpty(#object.userFieldmap.fieldmap)}">
+				<span class="plotLabel" th:unless="${#arrays.isEmpty(#object.userFieldmap.fieldmap)}">
 					<p th:if="${#object.userFieldmap.fieldmap[__${j-1}__][__${i-1}__].plotDeleted == false}" th:utext="${#object.userFieldmap.fieldmap[__${j-1}__][__${i-1}__].displayString}"></p>
 					<p th:if="${#object.userFieldmap.fieldmap[__${j-1}__][__${i-1}__].plotDeleted == true}"><label class='alert alert-danger'>X</label></p>
 				</span> 
@@ -44,14 +60,30 @@
 				<p th:text="'Column ' + ${j}"></p>
 			</td>
 		</tr>
-		<tr th:unless="${#arrays.isEmpty(#object.userFieldmap.fieldmap)}">
+		<tr class="machineDirectionRow" th:unless="${#arrays.isEmpty(#object.userFieldmap.fieldmap)}">
 			<td class="header-row-main"></td>
-			<td class="sub-header-row" th:colspan="${#object.userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
-				<p th:unless="${#arrays.isEmpty(#object.userFieldmap.fieldmap)}"
-					th:if="${#object.userFieldmap.fieldmap[__${j-1}__][__0__].upward}">
+			<td class="sub-header-row" th:colspan="${#object.userFieldmap.machineRowCapacity}" 
+			th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.machineRowCapacity)}">
+				<p th:if="${#object.userFieldmap.plantingOrder == 1}">
 					<span class="glyphicon glyphicon-arrow-up"></span>
-					</p>
-				<p th:unless="${#object.userFieldmap.fieldmap[__${j-1}__][__0__].upward}">
+				</p>
+				<p th:if="${#object.userFieldmap.plantingOrder == 2 and j % 2 == 1}">
+					<span class="glyphicon glyphicon-arrow-up"></span>
+				</p>
+				<p th:if="${#object.userFieldmap.plantingOrder == 2 and j % 2 == 0}">
+					<span class="glyphicon glyphicon-arrow-down"></span>
+				</p>
+			</td>
+			<td class="sub-header-row" th:if="${#object.userFieldmap.numberOfRowsInBlock % #object.userFieldmap.machineRowCapacity != 0}"
+			th:colspan="${#object.userFieldmap.numberOfRowsInBlock % #object.userFieldmap.machineRowCapacity}"
+			th:with="j=${#object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.machineRowCapacity + 1}">
+				<p th:if="${#object.userFieldmap.plantingOrder == 1}">
+					<span class="glyphicon glyphicon-arrow-up"></span>
+				</p>
+				<p th:if="${#object.userFieldmap.plantingOrder == 2 and j % 2 == 1}">
+					<span class="glyphicon glyphicon-arrow-up"></span>
+				</p>
+				<p th:if="${#object.userFieldmap.plantingOrder == 2 and j % 2 == 0}">
 					<span class="glyphicon glyphicon-arrow-down"></span>
 				</p>
 			</td>
@@ -74,6 +106,14 @@
 	//<![CDATA[
 	    
 	  	$(document).ready(function() {
+	  		if ($("#stepValue").val() == '2') {
+	  			$(".machineDirectionRow").hide();
+	  			$(".plotLabel").hide();
+	  		}
+	  		else {
+	  			$(".machineDirectionRow").show();
+	  			$(".plotLabel").show();
+	  		}
 	  	});
 
 	  	

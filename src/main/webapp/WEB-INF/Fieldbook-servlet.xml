@@ -84,6 +84,9 @@
 
 	<bean id="fieldmapService" class="com.efficio.fieldbook.service.FieldMapServiceImpl">
 	</bean>
+	
+	<bean id="labelPrintingService" class="com.efficio.fieldbook.service.LabelPrintingServiceImpl">
+	</bean>
 
 	<bean id="exportExcelService" class="com.efficio.fieldbook.service.ExportExcelServiceImpl">
 	</bean>
@@ -110,6 +113,11 @@
 	</bean>
 	
 	<bean id="userFieldmap" class="com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap"
+		scope="session">
+		<aop:scoped-proxy />
+	</bean>
+	
+	<bean id="userLabelPrinting" class="com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting"
 		scope="session">
 		<aop:scoped-proxy />
 	</bean>
@@ -202,6 +210,10 @@
         <property name="dataSource" ref="localIbdbDataSource"/>
         <property name="configLocation" value="classpath:ibpmidware_hib.cfg.xml"/>
     </bean>
+    <bean id="workbenchSessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+        <property name="dataSource" ref="workbenchDataSource"/>
+        <property name="configLocation" value="classpath:ibpworkbench_hib.cfg.xml"/>
+    </bean>
     
      <bean id="centralDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="${workbench.driver}"/>
@@ -233,4 +245,30 @@
 	</bean>
 	
 
+	<bean id="externalToolInfo" class="com.efficio.fieldbook.web.util.ExternalToolInfo">	
+   		<property name="currentProjectId" value="${workbench.currentProjectId}"/>
+   		<property name="oldFieldbookPath" value="${old.fb.tool.path}"/>   			
+	</bean>	
+    
+    
+    <bean id="workbenchDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${workbench.driver}"/>
+        <property name="url" value="${workbench.url}"/>
+        <property name="username" value="${workbench.username}"/>
+        <property name="password" value="${workbench.password}"/>
+    </bean>
+	
+	 <bean id="workbenchHibernateSessionProvider" class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider" scope="request" destroy-method="close">
+        <property name="sessionFactory" ref="workbenchSessionFactory"/>
+        
+        <!-- JDK Standard Proxy around this request scoped bean, so we can use it on longer scoped beans -->
+        <aop:scoped-proxy proxy-target-class="false"/>
+    </bean>
+	
+	<bean id="workbenchDataManager"
+        class="org.generationcp.middleware.manager.WorkbenchDataManagerImpl">
+        <constructor-arg ref="workbenchHibernateSessionProvider" />
+    </bean>
+    
+    
 </beans>

@@ -54,6 +54,7 @@ td.validValueDesc {
 #field-map td.plot{
 	text-align:center;
 	vertical-align: middle;
+	word-wrap: break-word;
 }
 #field-map td.plot label {
 	padding: 3px;
@@ -80,4 +81,20 @@ td.validValueDesc {
 	border:1px dashed; 
 	overflow:auto; 
 	border-bottom:none;
+}
+
+#availableFields, #leftSelectedFields, #rightSelectedFields 
+{ list-style-type: none; margin: 0; padding: 0; float: left; 
+margin-right: 10px; background: #eee; padding: 5px; width: 100%;
+min-height: 50px;
+}
+#availableFields li, #leftSelectedFields li, #rightSelectedFields li
+{ margin: 5px; padding: 5px; font-size: 1.2em; }
+
+tr.trialInstance {
+	background-color: #dff0d8;
+}
+
+.myDragClass {
+	background-color: #dff0d8;
 }

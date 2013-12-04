@@ -39,6 +39,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import com.efficio.fieldbook.service.api.ExportExcelService;
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
+import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapRow;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 
 /**
@@ -64,15 +65,15 @@ public class ExportExcelServiceImpl implements ExportExcelService{
             summaryOfFieldbookFieldPlantingDetailsLabel = messageSource.getMessage("fieldmap.header.summary.for.nursery", null, locale); //SUMMARY OF NURSERY, FIELD AND PLANTING DETAILS
             selectedFieldbookLabel =  messageSource.getMessage("fieldmap.nursery.selected.nursery", null, locale); //Selected Nursery:
         }
-        String selectedFieldbookValue = userFieldMap.getSelectedName();
-        String numberOfEntriesLabel = messageSource.getMessage("fieldmap.trial.number.of.entries", null, locale); // Number of Entries:  -- used if Trial
+        String selectedFieldbookValue = userFieldMap.getBlockName();
+        /*String numberOfEntriesLabel = messageSource.getMessage("fieldmap.trial.number.of.entries", null, locale); // Number of Entries:  -- used if Trial
         String numberOfEntriesAndPlotLabel = messageSource.getMessage("fieldmap.trial.number.of.entries.and.plots", null, locale); //Number of Entries and Plot: -- used if Nursery
         long numberOfEntriesValue = userFieldMap.getNumberOfEntries();
         String numberOfRepsLabel = messageSource.getMessage("fieldmap.trial.number.of.reps", null, locale); // Number of Reps:
         long numberOfRepsValue = userFieldMap.getNumberOfReps();
         String numberOfPlotsLabel = messageSource.getMessage("fieldmap.trial.total.number.of.plots", null, locale); // Total Number of Plots:
         long numberOfPlotsValue = userFieldMap.getTotalNumberOfPlots();
-
+*/
         
         //  Field And Block Details
         String fieldAndBlockDetailsLabel = messageSource.getMessage("fieldmap.trial.field.and.block.details", null, locale); //FIELD AND BLOCK DETAILS
@@ -165,9 +166,44 @@ public class ExportExcelServiceImpl implements ExportExcelService{
 	        // Selected Trial : [Fieldbook Name]
             Cell labelCell = row.createCell(columnIndex++);
             labelCell.setCellValue(selectedFieldbookLabel);
+            
+            row = fieldMapSheet.createRow(rowIndex++);
+            columnIndex = 0;
+            row.createCell(columnIndex++).setCellValue("Order");
+            if (isTrial) {
+                row.createCell(columnIndex++).setCellValue("Trial");
+                row.createCell(columnIndex++).setCellValue("Instance");
+                row.createCell(columnIndex++).setCellValue("# of Entries");
+                row.createCell(columnIndex++).setCellValue("# of Reps");
+            }
+            else {
+                row.createCell(columnIndex++).setCellValue("Nursery");
+            }
+            row.createCell(columnIndex++).setCellValue("Plots Needed");
+            
+            for (SelectedFieldmapRow rec : userFieldMap.getSelectedFieldmapList().getRows()) {
+                row = fieldMapSheet.createRow(rowIndex++);
+                columnIndex = 0;
+                row.createCell(columnIndex++).setCellValue(rec.getOrder());
+                row.createCell(columnIndex++).setCellValue(rec.getStudyName());
+                if (isTrial) {
+                    row.createCell(columnIndex++).setCellValue(rec.getTrialInstanceNo());
+                    row.createCell(columnIndex++).setCellValue(rec.getEntryCount());
+                    row.createCell(columnIndex++).setCellValue(rec.getRepCount());
+                }
+                row.createCell(columnIndex++).setCellValue(rec.getPlotCount());
+            }
+            
+            row = fieldMapSheet.createRow(rowIndex++);
+            columnIndex = 0;
+            row.createCell(columnIndex++).setCellValue("Total Number Of Plots Needed");
+            row.createCell(columnIndex++).setCellValue(userFieldMap.getSelectedFieldmapList().getTotalNumberOfPlots());
+            
+            
+/*            
             labelCell.setCellStyle(labelStyle);
             row.createCell(columnIndex++).setCellValue(selectedFieldbookValue);
-	        
+            
             if (isTrial){ 
                 // Number of Entries : 25
                 labelCell = row.createCell(columnIndex++);
@@ -198,7 +234,7 @@ public class ExportExcelServiceImpl implements ExportExcelService{
                 row.createCell(columnIndex++).setCellValue(numberOfEntriesValue);
                 
             }
-
+*/
             // Row 4: Space
             row = fieldMapSheet.createRow(rowIndex++);
             
@@ -293,6 +329,9 @@ public class ExportExcelServiceImpl implements ExportExcelService{
             int range = userFieldMap.getNumberOfRangesInBlock();
             int col = userFieldMap.getNumberOfColumnsInBlock();
             int rowsPerPlot = userFieldMap.getNumberOfRowsPerPlot();
+            int machineRowCapacity = userFieldMap.getMachineRowCapacity();
+            int rows = userFieldMap.getNumberOfRowsInBlock();
+            boolean isSerpentine = userFieldMap.getPlantingOrder() == 2; 
 
             for(int j = range - 1 ; j >= 0 ; j--){
 
@@ -302,7 +341,7 @@ public class ExportExcelServiceImpl implements ExportExcelService{
                     rowIndex = printRowHeader(fieldMapSheet, userFieldMap.getNumberOfRowsInBlock(), rowIndex, rowsLabel, mainHeaderStyle, mainSubHeaderStyle);
 
                     // Row 13: UP, DOWN Direction
-                    rowIndex = printDirectionHeader(fieldMapSheet, plots, j, col, rowIndex, rowsPerPlot, mainHeaderStyle, mainSubHeaderStyle);
+                    rowIndex = printDirectionHeader(fieldMapSheet, plots, j, rows, rowIndex, machineRowCapacity, mainHeaderStyle, mainSubHeaderStyle, isSerpentine);
 
                     // Row 14: Column labels
                     rowIndex = printColumnHeader(fieldMapSheet, col, rowIndex, columnLabel, rowsPerPlot, mainHeaderStyle, mainSubHeaderStyle);
@@ -346,7 +385,7 @@ public class ExportExcelServiceImpl implements ExportExcelService{
                 if(j == 0){
                     // BOTTOM TABLE LABELS
                     rowIndex = printColumnHeader(fieldMapSheet, col, rowIndex, columnLabel, rowsPerPlot, mainHeaderStyle, mainSubHeaderStyle);
-                    rowIndex = printDirectionHeader(fieldMapSheet, plots, j, col, rowIndex, rowsPerPlot, mainHeaderStyle, mainSubHeaderStyle);
+                    rowIndex = printDirectionHeader(fieldMapSheet, plots, j, rows, rowIndex, machineRowCapacity, mainHeaderStyle, mainSubHeaderStyle, isSerpentine);
                     rowIndex = printRowHeader(fieldMapSheet, userFieldMap.getNumberOfRowsInBlock(), rowIndex, rowsLabel, mainHeaderStyle, mainSubHeaderStyle);
                 }
                 
@@ -411,29 +450,48 @@ public class ExportExcelServiceImpl implements ExportExcelService{
 
 	}
 
-    private int printDirectionHeader(Sheet fieldMapSheet, Plot[][] plots, int range, int numberOfColumns, int rowIndex, int rowsPerPlot,CellStyle mainHeader, CellStyle subHeaderStyle){
+    private int printDirectionHeader(Sheet fieldMapSheet, Plot[][] plots, int range, int numberOfRows, int rowIndex, 
+            int machineRowCapacity, CellStyle mainHeader, CellStyle subHeaderStyle, boolean isSerpentine){
 
         Row row = fieldMapSheet.createRow(rowIndex);
         int columnIndex = 0;
         Cell cell1 = row.createCell(columnIndex++);
         cell1.setCellValue("");
         cell1.setCellStyle(mainHeader);
-        for(int i = 0 ; i < numberOfColumns ; i++){
-            if(plots[i][range].isUpward()){
-                Cell cell = row.createCell(columnIndex++);
+        
+        int numberOfDirections = numberOfRows / machineRowCapacity;
+        int remainingRows = numberOfRows % machineRowCapacity;
+        if (remainingRows > 0) {
+            numberOfDirections++;
+        }
+        
+        for(int i = 0 ; i < numberOfDirections; i++){
+            int startCol = machineRowCapacity * i + 1;
+            if (isSerpentine) {
+                if (i % 2 == 1) {
+                    Cell cell = row.createCell(startCol);
+                    cell.setCellValue(" DOWN ");
+                    cell.setCellStyle(subHeaderStyle);
+                }
+                else {
+                    Cell cell = row.createCell(startCol);
+                    cell.setCellValue(" UP ");
+                    cell.setCellStyle(subHeaderStyle);
+                }
+            }
+            else {
+                Cell cell = row.createCell(startCol);
                 cell.setCellValue(" UP ");
                 cell.setCellStyle(subHeaderStyle);
-            } else {
-                Cell cell = row.createCell(columnIndex++);
-                cell.setCellValue(" DOWN ");
-                cell.setCellStyle(subHeaderStyle);
             }
-            for(int j = 0 ; j < rowsPerPlot -1 ; j++){
-                row.createCell(columnIndex++).setCellValue("");
+            if (i == numberOfDirections - 1 && remainingRows > 0) { //last item
+                fieldMapSheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 
+                        startCol, machineRowCapacity * i + remainingRows));
             }
-            //row.createCell(columnIndex).setCellValue("");
-            fieldMapSheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, columnIndex - rowsPerPlot, columnIndex-1));
-            //columnIndex++;
+            else {
+                fieldMapSheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 
+                        startCol, machineRowCapacity * (i+1)));
+            }
         }
         rowIndex++;
         return rowIndex;

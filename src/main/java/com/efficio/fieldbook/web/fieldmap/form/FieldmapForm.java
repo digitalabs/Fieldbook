@@ -33,6 +33,30 @@ public class FieldmapForm{
     /** The marked cells. */
     private String markedCells;
     
+    private String fieldLocationIdAll;
+    private String fieldLocationIdFavorite;
+    
+    
+
+    
+    public String getFieldLocationIdAll() {
+        return fieldLocationIdAll;
+    }
+
+    
+    public void setFieldLocationIdAll(String fieldLocationIdAll) {
+        this.fieldLocationIdAll = fieldLocationIdAll;
+    }
+
+    
+    public String getFieldLocationIdFavorite() {
+        return fieldLocationIdFavorite;
+    }
+
+    
+    public void setFieldLocationIdFavorite(String fieldLocationIdFavorite) {
+        this.fieldLocationIdFavorite = fieldLocationIdFavorite;
+    }
 
     /**
      * Gets the fieldmap labels.

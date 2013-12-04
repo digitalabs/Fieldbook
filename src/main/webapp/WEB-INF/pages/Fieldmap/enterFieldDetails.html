@@ -45,26 +45,50 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		<strong class="col-md-12">
 			&nbsp;<span th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.selected.trial}">Selected Trial:</span>
 			&nbsp;<span th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery.selected.nursery}">Selected Nursery:</span>
-		</strong> <span th:text="*{userFieldmap.selectedName}">[FieldbookName]</span>
+		</strong>		
 	</div>
 	<div class="form-group col-md-8">
-		&nbsp;<strong>
-				<span th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.number.of.entries}">Number of Entries:</span>
-				<span th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.trial.number.of.entries.and.plots}">Number of Entries and Plots:</span>
-			  </strong>
-		 	  <span th:text="*{userFieldmap.numberOfEntries}">3</span>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<strong>
-			<span th:if="*{userFieldmap.trial == true}"  th:text="#{fieldmap.trial.number.of.reps}">Number of Reps:</span>
-		</strong> 
-		<span th:if="*{userFieldmap.trial == true}"  th:text="*{userFieldmap.numberOfReps}">2</span>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<strong>
-			<span th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.total.number.of.plots}">Total Number of Plots:</span>
-		</strong> 
-		<span th:if="*{userFieldmap.trial == true}" th:text="*{userFieldmap.totalNumberOfPlots}">55</span>
+		&nbsp;
 	</div>
-	
+	<div class="form-group col-md-8">
+		&nbsp;<em class="col-md-12" th:text="#{fieldmap.note.arrange.order}">Note: Arrange the order of the selected nurseries to be planted in the field map.</em>
+	</div>
+	<div class="form-group col-md-4">
+		&nbsp;
+	</div>
+	<div class="form-group col-md-12">
+		<input type="hidden" th:field="*{userFieldmap.order}" />
+		<table class="table table-bordered" style="margin-left: 10px;" id="selectedTrials">
+			<tr>
+				<th th:text="#{fieldmap.trial.order}">Order</th>
+				<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial}">Trial</th>
+				<th th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery}">Nursery</th>
+				<th th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.dataset.name}">Dataset Name</th>
+				<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.instance}">Instance</th>
+				<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.entry.count}"># of Entries</th>
+				<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.reps.count}"># of Reps</th>
+				<th th:text="#{fieldmap.trial.plots.needed}">Plots Needed</th>
+			</tr>
+			<div th:each="map : *{userFieldmap.selectedFieldMaps}">
+				<div th:each="dataset : ${map.datasets}">
+					<tr th:each="trial : ${dataset.trialInstances}">
+						<td>
+							<input class="trialOrder" type="hidden" th:value="${map.fieldbookId}+'|'+${dataset.datasetId}+'|'+${trial.geolocationId}" />
+							<span class="orderNo"></span>
+						</td>
+						<td th:text="${map.fieldbookName}"></td>
+						<td th:if="*{userFieldmap.trial == false}" th:text="${dataset.datasetName}"></td>
+						<td th:if="*{userFieldmap.trial == true}" th:text="${trial.trialInstanceNo}"></td>
+						<td th:if="*{userFieldmap.trial == true}" th:text="${trial.entryCount}"></td>
+						<td th:if="*{userFieldmap.trial == true}" th:text="${trial.repCount}"></td>
+						<td th:text="${trial.plotCount}"></td>
+					</tr>
+				</div>
+			</div>
+		</table>
+		&nbsp;&nbsp;&nbsp;<label th:text="#{fieldmap.trial.total.number.of.plots}"> Total # of Plots Needed: </label> &nbsp; 
+		<span th:text="*{userFieldmap.totalNumberOfSelectedPlots}"></span>	
+	</div>
 	<div class="form-group col-md-12" >
 		&nbsp;<strong th:text="#{fieldmap.trial.field.and.block.details} + ':'">FIELD AND BLOCK DETAILS:</strong>
 	</div>
@@ -87,8 +111,19 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		       		<option th:each="loc : ${locationList}" th:text="${loc.lname}" th:value="${loc.locid}"></option>		       		
 			   </select>
 			   -->
-			   <input type="hidden" th:field="*{userFieldmap.fieldLocationId}" class="form-control select2" placeholder=""/>
+			   <input type="hidden" th:field="*{fieldLocationIdAll}" class="form-control select2" placeholder=""/>
+			   
+			   <input type="hidden" th:field="*{fieldLocationIdFavorite}" class="form-control select2" placeholder=""/>
+			   
+			   <input type="hidden" th:field="*{userFieldmap.fieldLocationId}"/>
 			   <input type="hidden" th:field="*{userFieldmap.locationName}" />
+		    </div>
+		    <div class="col-md-3">
+		    	<div class="checkbox">
+			    <label>
+			      <input id="showFavoriteLocation" checked="checked" value="1" type="checkbox"/> <span th:text="#{show.favorite.location}">Show Favorite Location</span>
+			    </label>
+			  </div>
 		    </div>
 		  </div>
 		  <div class="form-group col-md-12">
@@ -159,25 +194,11 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 	
 </div>
 </form>
-<div class="modal fade" id="enterFieldDetailsModal" role="dialog" aria-labelledby="enterFieldDetailsLabel" aria-hidden="true">
-	<div class="modal-dialog modal-large">
-    	<div class="modal-content">
-         	<div class="modal-body" id="enterFieldDetailsBody">
-         		<div>
-         			<button id="closeEnterFieldDetailsModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-         		</div>
-         		<br/><br/>
-         		<div class="alert alert-danger" th:text="#{fieldmap.plots.exceed.blocks}">The total number of plots in this trial exceeds the specified size of the block, do you wish to proceed?</div>
-         	</div>																							
-       		<div class="modal-footer">    
-       			<button type="button" class="btn btn-primary" onclick="javascript: $('#enterFieldDetailsForm').submit();" aria-hidden="true" th:value="#{common.form.yes.text}">Yes</button>
-       			<button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true" th:value="#{common.form.no.text}">No</button>	
-     		</div>
-     	</div><!-- /.modal-content -->
-	</div><!-- /.modal-dialog -->
-</div>
 <div layout:fragment="page-script">
+<script type="text/javascript" th:src="@{/static/js/jquery.treegrid.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/jquery.treegrid.bootstrap3.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/fieldMap.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/jquery.tablednd.0.7.min.js}"></script>
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    
     var msgLocation = /*[[#{fieldmap.location.error}]]*/;
@@ -187,13 +208,62 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
     var msgRangesInBlock = /*[[#{fieldmap.ranges.in.block.error}]]*/;
     var defaultRowsPerPlot = /*[[${fieldmapForm.userFieldmap.numberOfRowsPerPlot}]]*/;
    	var msgColError = /*[[#{fieldmap.column.plot.error}]]*/;
+   	var msgNoSelectedTrial = /*[[#{fieldmap.no.selected.trial.instance}]]*/;
     var locationSuggestions = /*[[${locationList}]]*/ null;
     var locationSuggestions_obj = [];
-    var totalNoOfPlots = /*[[${fieldmapForm.userFieldmap.totalNumberOfPlots}]]*/;
-
-	$( document ).ready(function() {  	     
-													   
-		initializeLocationSelect2(locationSuggestions, locationSuggestions_obj); 
+    
+    var locationSuggestionsFav = /*[[${favoriteLocationList}]]*/ null;
+    var locationSuggestionsFav_obj = [];
+    
+    var trial = /*[[${fieldmapForm.userFieldmap.trial}]]*/;
+    var msgBlockSizeError;
+    var isViewFieldmap = false;
+    var entryLabel = /*[[#{fieldmap.trial.number.of.entries}]]*/;
+    var repLabel = /*[[#{fieldmap.trial.number.of.reps}]]*/;
+    var plotLabel = /*[[#{fieldmap.trial.total.number.of.plots}]]*/;
+    var fieldmapLabel = /*[[#{fieldmap.has.fieldmap}]]*/;
+    var entryPlotLabel = /*[[#{fieldmap.trial.number.of.entries.and.plots}]]*/;
+    var totalNumberOfSelectedPlots = /*[[${fieldmapForm.userFieldmap.totalNumberOfSelectedPlots}]]*/;
+    
+    if (trial) {
+    	msgBlockSizeError = /*[[#{fieldmap.plots.exceed.blocks.trial}]]*/;
+    } else {
+    	msgBlockSizeError = /*[[#{fieldmap.plots.exceed.blocks.nursery}]]*/;
+    }
+    
+	$( document ).ready(function() {
+		setSelectedTrialsAsDraggable();		
+										   
+		initializeLocationSelect2(locationSuggestions, locationSuggestions_obj);
+		initializeLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj);
+		$('#s2id_fieldLocationIdFavorite').show();
+		$('#s2id_fieldLocationIdAll').hide();
+		$('#showFavoriteLocation').on('change', function(){
+			var isChecked = $('#showFavoriteLocation').is(':checked');
+			if(isChecked){
+				$('#s2id_fieldLocationIdFavorite').show();
+				$('#s2id_fieldLocationIdAll').hide();
+				if($('#'+getJquerySafeId("fieldLocationIdFavorite")).select2("data") != null){
+					$('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val($('#'+getJquerySafeId("fieldLocationIdFavorite")).select2("data").id);
+					$('#'+getJquerySafeId("userFieldmap.locationName")).val($('#'+getJquerySafeId("fieldLocationIdFavorite")).select2("data").text);
+				}else{
+					$('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val(0);
+					$('#'+getJquerySafeId("userFieldmap.locationName")).val("");
+				}
+			}else{
+				$('#s2id_fieldLocationIdFavorite').hide();
+				$('#s2id_fieldLocationIdAll').show();
+				if($('#'+getJquerySafeId("fieldLocationIdAll")).select2("data") != null){
+					$('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val($('#'+getJquerySafeId("fieldLocationIdAll")).select2("data").id);
+					$('#'+getJquerySafeId("userFieldmap.locationName")).val($('#'+getJquerySafeId("fieldLocationIdAll")).select2("data").text);	
+				}else{
+					$('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val(0);
+					$('#'+getJquerySafeId("userFieldmap.locationName")).val("");
+				}
+				
+			}
+		})
+		
 		$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val(defaultRowsPerPlot);
 	});
   	

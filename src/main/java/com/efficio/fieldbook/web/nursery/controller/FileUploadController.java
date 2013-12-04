@@ -13,6 +13,7 @@ package com.efficio.fieldbook.web.nursery.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream.GetField;
 
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
@@ -31,6 +32,7 @@ import com.efficio.fieldbook.web.nursery.validation.FileUploadFormValidator;
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.FileUploadForm;
+import com.efficio.fieldbook.web.util.ToolUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
 import javax.annotation.Resource;
@@ -65,6 +67,7 @@ public class FileUploadController extends AbstractBaseFieldbookController{
     @Resource
     private ImportWorkbookFileService importWorkbookFileService;
 
+    
 	
     /**
      * Shows the file upload screen
@@ -77,6 +80,15 @@ public class FileUploadController extends AbstractBaseFieldbookController{
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("fileUploadForm") FileUploadForm uploadForm, Model model, HttpSession session) {
     	session.invalidate();
+    	
+    	try {
+    	    ToolUtil toolUtil = new ToolUtil();
+    	    toolUtil.launchNativeTool(this.getOldFieldbookPath(), "--ibpApplication=BreedingManager");
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    	
     	return super.show(model);
     }
 

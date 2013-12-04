@@ -24,6 +24,8 @@
 th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldmapForm}" enctype="multipart/form-data">
 
 <input type="hidden" id="markedCells" name="markedCells" />
+<input type="hidden" id="stepValue" name="stepValue" value="2" />
+
 	<div style="border: 1px solid #333333">
 		<div class="row">&nbsp;</div>
 		<div class="row">
@@ -77,6 +79,23 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 				</div>
 			</div>
 		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+					<div class="col-md-2">
+						<label class="control-label" th:text="#{fieldmap.label.row.capacity.machine} + ':'">Row Capacity of Planting Machine:</label>
+					</div>
+					<div class="col-md-4">
+				        <select class="form-control" th:field="*{userFieldmap.machineRowCapacity}">
+				        	<option value="1">1</option>
+				        	<option value="2">2</option>
+				        	<option value="4">4</option>
+				        	<option value="8">8</option>
+					    </select>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div class="row">&nbsp;</div>
 		<div class="row">
 			<div class="col-md-12" >
@@ -114,23 +133,6 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	    </div>
 	</div>
 </form>
-<div class="modal fade" id="enterPlantingDetailsModal" role="dialog" aria-labelledby="enterPlantingDetailsLabel" aria-hidden="true">
-	<div class="modal-dialog modal-large">
-    	<div class="modal-content">
-         	<div class="modal-body" id="enterPlantingDetailsBody">
-         		<div>
-         			<button id="closeEnterPlantingDetailsModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-         		</div>
-         		<br/><br/>
-         		<div class="alert alert-danger" th:text="#{fieldmap.plots.exceed.blocks.with.deleted}">The current specifications for the planting details cannot be fully accommodated by the current block size, do you wish to proceed?</div>
-         	</div>																							
-       		<div class="modal-footer">    
-       			<button type="button" class="btn btn-primary" onclick="javascript: $('#fieldmapForm').submit();" aria-hidden="true" th:value="#{common.form.yes.text}">Yes</button>
-       			<button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true" th:value="#{common.form.no.text}">No</button>	
-     		</div>
-     	</div><!-- /.modal-content -->
-	</div><!-- /.modal-dialog -->
-</div>
 <div layout:fragment="page-script">
 	<script type="text/javascript" th:src="@{/static/js/fieldMap.js}"></script>
 	<script type='text/javascript' th:inline="javascript">
@@ -146,8 +148,16 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 		var rangeNum = /*[[${fieldmapForm.userFieldmap.numberOfRangesInBlock}]]*/;
 		var rowsPerPlot = /*[[${fieldmapForm.userFieldmap.numberOfRowsPerPlot}]]*/;
 		var deletedPlots = 0;
-		var totalNoOfPlots = /*[[${fieldmapForm.userFieldmap.totalNumberOfPlots}]]*/;
+		var totalNoOfPlots;
 		var deletedPlotError = /*[[#{fieldmap.starting.coordinates.deleted}]]*/;
+		var totalBlocksError = /*[[#{fieldmap.plots.exceed.blocks.with.deleted}]]*/;
+		var trial = /*[[${fieldmapForm.userFieldmap.trial}]]*/;
+		
+		if (trial) {
+			totalNoOfPlots = /*[[${fieldmapForm.userFieldmap.totalNumberOfPlots}]]*/;
+		} else {
+			totalNoOfPlots = /*[[${fieldmapForm.userFieldmap.numberOfEntries}]]*/;
+		}
 		
 	  	function setAllDeletedBox(){
 			validatePlantingDetails();
@@ -167,11 +177,12 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	  		$('#markedCells').val(deletedRect);
 	  		console.log(deletedRect);
 	  		
+	  		//validation that total no. of plots does not exceed total no. of blocks
 	  		if (checkRemainingPlots()) {
-	  			$("#enterPlantingDetailsModal").modal("toggle");
-				return false;
-			}
-	  		
+	  			showMessage(totalBlocksError);
+	  			return false;
+			} 
+			
 	  		$("#fieldmapForm").submit();
 	  	}
 	  	$(document).ready(function() {

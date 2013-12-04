@@ -12,7 +12,8 @@
 	
 		<div class="col-md-11">			
 			 
-			<a href="/TrialManager/fileUpload.html" th:href="@{/TrialManager/fileUpload}" th:text="#{trial.managetrial.make.new.trial}">New Trial</a>
+<!-- 			<a href="/TrialManager/fileUpload.html" th:href="@{/TrialManager/fileUpload}" th:text="#{trial.managetrial.make.new.trial}">New Trial</a> -->
+			<button type="button" class="btn btn-link" id="make-trial" th:value="@{/TrialManager/fileUpload}"  th:text="#{trial.managetrial.make.new.trial}">New Trial</button>
 			
 		</div>
 		<div class="col-md-1">
@@ -21,13 +22,50 @@
 			    <span class="glyphicon glyphicon-cog"></span>&nbsp;Tools
 			  </button>
 			  <ul class="dropdown-menu" role="menu">
-			    <li>
+			    <li> 
 			    	<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/trial}"></a>
 			    	<a href="javascript: createFieldMap('trial-table');" id="fieldmap-url-link" th:text="#{tools.create.field.map}">Create Field Map</a>
+			    </li>
+			    <li> 
+			    	<a href="" style="display: none" id="show-fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/trial}"></a>
+			    	<a href="javascript: showFieldMap('trial-table');" id="show-fieldmap-url-link" th:text="#{tools.display.existing.field.map}">Display Existing Field Map</a>
+			    </li>
+			    <li>
+			    	<a href="" style="display: none" id="label-printing-url" th:href="@{LabelPrinting/specifyLabelDetails/trial}"></a>
+			    	<a href="javascript: createLabelPrinting('trial-table');" id="label-printing-url-link" th:text="#{tools.create.label.printing}">Create Labels</a> 
 			    </li>    
 			  </ul>
 			</div>
 		</div>
+
+	    <div class="modal fade" id="manageTrialConfirmation" tabindex="-1" role="dialog" aria-labelledby="manageTrialConfirmationLabel" aria-hidden="true">
+	      <div class="modal-dialog">
+	        <div class="modal-content">
+	          <div class="modal-header">
+	            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	            <h4 class="modal-title">Confirmation</h4>
+	          </div>
+	          <div class="modal-body">
+				<div class="row">
+					<div class="col-md-offset-1 col-md-11">
+						<p th:text="#{fieldmap.confirmation.for.viewing.generated.fieldmap}">Do you wish to view the generated fieldmap(s)?</p>
+					</div>
+				</div>
+				<br/>
+				<div class="row">
+					<div class="col-md-offset-5 col-md-7">
+						<div class="form-group">
+							<input type="hidden" id="fieldmapStudyId" name="fieldmapStudyId" />
+							<button type="button" class="btn btn-danger btn-lg" th:value="#{common.form.yes.text}" onclick="javascript: proceedToCreateFieldMap();">No</button>			        	
+							<button type="button" class="btn btn-primary btn-lg" th:value="#{common.form.no.text}" onclick="javascript: selectTrialInstance();">Yes</button>
+						</div>
+					</div>
+				</div>			        	
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+
 	</div>
 	<br/><br/>
 	<div id="trial-details-list" th:include="/TrialManager/showTrialPagination">
@@ -37,13 +75,20 @@
 			<div id="trialDetailsListPagination"></div>
 		</div>
     </div>
+    <div class="row">
+    	<div id="ontology-add-variable" th:include="/Fieldmap/selectTrialInstanceModal"></div>
+    </div>
 </div>
 <div layout:fragment="page-script">
 	<!-- For pagination -->
 	<script type="text/javascript" th:src="@{/static/js/bootstrap-paginator.min.js}"></script>
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    
+        var createLabelErrorMsg = /*[[#{common.error.create.label.trial}]]*/;
         var paginationUrl = /*[[@{/TrialManager/manageTrial/page/}]]*/;
+        var fieldMapStudyRequired = /*[[#{common.error.select.study(#{fieldmap.trial})}]]*/;
+        var fieldMapOneStudyErrorMsg = /*[[#{common.error.select.one.study.show.fieldmap(#{fieldmap.trial})}]]*/;
+        var noFieldMapExists = /*[[#{common.error.no.existing.fieldmap(#{fieldmap.trial})}]]*/;
         var options = {
             currentPage: /*[[${manageTrialForm.currentPage}]]*/,
             totalPages: /*[[${manageTrialForm.totalPages}]]*/,
@@ -60,7 +105,19 @@
 			$('#trialDetailsListPagination').bootstrapPaginator(options);	
 		}
         
-     
+        $('#make-trial').on('click', function(){
+     		Spinner.toggle();
+     		$.ajax(
+   		         { url: $(this).val(),
+   		           type: "GET",
+   		           data: "",
+   		           success: function(html) {
+   		        	Spinner.toggle();
+   		               
+   		           }
+   		         }
+   		       );
+     	});
         
       //]]>
     </script>

@@ -11,7 +11,9 @@
 	
 	
 		<div class="col-md-11">			
-	<a href="/NurseryManager/fileUpload.html" th:href="@{/NurseryManager/fileUpload}" th:text="#{nursery.managenurseries.make.new.nursery}">New Nursery</a>
+	<!-- <a href="/NurseryManager/fileUpload.html" th:href="@{/NurseryManager/fileUpload}" th:text="#{nursery.managenurseries.make.new.nursery}">New Nursery</a>
+	 -->
+		<button type="button" class="btn btn-link" id="make-nursery" th:value="@{/NurseryManager/fileUpload}"  th:text="#{nursery.managenurseries.make.new.nursery}">New Nursery</button>
 		</div>
 		<div class="col-md-1">
 			<div class="btn-group">
@@ -22,6 +24,14 @@
 			    <li>
 			    	<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
 			    	<a href="javascript: createFieldMap('nursery-table');" id="fieldmap-url-link" th:text="#{tools.create.field.map}">Create Field Map</a>
+			    </li>
+			    <li>
+			    	<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
+			    	<a href="javascript: showFieldMap('nursery-table');" id="fieldmap-url-link" th:text="#{tools.display.existing.field.map}">Display Existing Field Map</a>
+			    </li>
+			    <li>
+			    	<a href="" style="display: none" id="label-printing-url" th:href="@{LabelPrinting/specifyLabelDetails/nursery}"></a>
+			    	<a href="javascript: createLabelPrinting('nursery-table');" id="label-printing-url-link" th:text="#{tools.create.label.printing}">Create Labels</a> 
 			    </li>    
 			  </ul>
 			</div>
@@ -35,13 +45,49 @@
 			<div id="nurseryDetailsListPagination"></div>
 		</div>
     </div>
+	<div class="row">
+    	<div id="ontology-add-variable" th:include="/Fieldmap/selectTrialInstanceModal"></div>
+    </div>
+    <div class="modal fade" id="manageTrialConfirmation" tabindex="-1" role="dialog" aria-labelledby="manageTrialConfirmationLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Confirmation</h4>
+          </div>
+          <div class="modal-body">
+			<div class="row">
+				<div class="col-md-offset-1 col-md-11">
+					<p th:text="#{fieldmap.confirmation.for.viewing.generated.fieldmap}">Do you wish to view the generated fieldmap(s)?</p>
+				</div>
+			</div>
+			<br/>
+			<div class="row">
+				<div class="col-md-offset-5 col-md-7">
+					<div class="form-group">
+						<input type="hidden" id="fieldmapStudyId" name="fieldmapStudyId" />
+						<input type="hidden" id="fieldmapDatasetId" name="fieldmapDatasetId" />
+						<input type="hidden" id="fieldmapGeolocationId" name="fieldmapGeolocationId" />
+						<button type="button" class="btn btn-danger btn-lg" th:value="#{common.form.yes.text}" onclick="javascript: proceedToCreateFieldMap();">No</button>			        	
+						<button type="button" class="btn btn-primary btn-lg" th:value="#{common.form.no.text}" onclick="javascript: proceedToGenerateFieldMap();">Yes</button>
+					</div>
+				</div>
+			</div>			        	
+          </div>
+        </div>
+      </div>
+    </div>
 </div>
 <div layout:fragment="page-script">
 	<!-- For pagination -->
 	<script type="text/javascript" th:src="@{/static/js/bootstrap-paginator.min.js}"></script>
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    
+        var createLabelErrorMsg = /*[[#{common.error.create.label.nursery}]]*/;
         var paginationUrl = /*[[@{/NurseryManager/manageNurseries/page/}]]*/;
+        var fieldMapStudyRequired = /*[[#{common.error.select.study(#{fieldmap.nursery})}]]*/;
+        var fieldMapOneStudyErrorMsg = /*[[#{common.error.select.one.study.show.fieldmap(#{fieldmap.nursery})}]]*/;
+        var noFieldMapExists = /*[[#{common.error.no.existing.fieldmap(#{fieldmap.nursery})}]]*/;
         var options = {
             currentPage: /*[[${manageNurseriesForm.currentPage}]]*/,
             totalPages: /*[[${manageNurseriesForm.totalPages}]]*/,
@@ -58,7 +104,19 @@
 			$('#nurseryDetailsListPagination').bootstrapPaginator(options);	
 		}
         
-     
+     	$('#make-nursery').on('click', function(){
+     		Spinner.toggle();
+     		$.ajax(
+   		         { url: $(this).val(),
+   		           type: "GET",
+   		           data: "",
+   		           success: function(html) {
+   		        	Spinner.toggle();
+   		               
+   		           }
+   		         }
+   		       );
+     	});
         
       //]]>
     </script>

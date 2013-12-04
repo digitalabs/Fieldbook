@@ -15,6 +15,10 @@
 				<td th:text="*{commitIdAbbrev}">Build ID</td>
 				<td th:text="*{buildTime}">Build Date</td>
 			</tr>
+			<tr>
+				<td >Project ID</td>
+				<td th:object="${externalInfo}"  th:text="*{currentProjectId}"></td>
+			</tr>
 		</table>	
 		
 	  </div>
@@ -24,6 +28,7 @@
 		<li th:class="${templateName == 'NurseryManager/fileUpload' or templateName == 'NurseryManager/importGermplasmList' } ? 'active' : ''"><a href="/NurseryManager/manageNurseries.html" th:href="@{/NurseryManager}" >Nursery Manager</a></li>
 		<li th:class="${templateName == 'TrialManager/fileUpload' or templateName == 'TrialManager/manageTrial' } ? 'active' : ''"><a href="/TrialManager/manageTrial.html" th:href="@{/TrialManager}" >Trial Manager</a></li>
 		<li th:class="${templateName == 'OntologyBrowser/main' } ? 'active' : ''"><a href="/OntologyBrowser/main.html" th:href="@{/OntologyBrowser/}" >Ontology Browser</a></li>
+		<li th:class="${templateName == 'LabelPrinting/specifyLabelDetails'} ? 'active' : ''"><a href="LabelPrinting/specifyLabelDetails.html" th:href="@{/LabelPrinting/specifyLabelDetails}">Label Printing</a></li>
 	  <!-- 
 	  <li th:class="${templateName == 'test'} ? 'active' : ''"><a href="test.html" th:href="@{/test}">Navigation 1</a></li>
 	  <li th:class="${templateName == 'test2'} ? 'active' : ''"><a href="test2.html" th:href="@{/test2}">Navigation 2</a></li>

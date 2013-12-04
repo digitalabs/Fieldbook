@@ -23,7 +23,8 @@
 </div>
 
 <form id="fieldmapForm" name="fieldmapForm" role="form-horizontal" action="#"
-th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldmapForm}" enctype="multipart/form-data">
+th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" enctype="multipart/form-data">
+<input type="hidden" id="stepValue" name="stepValue" value="3" />
 	<div style="border: 1px solid #333333">
 		<div class="row">&nbsp;</div>
 		<div class="row">
@@ -36,34 +37,42 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 				</div>
 			</div>	
 		</div>
+		
 		<div class="row">
 			<div class="col-md-12">
-				<div class="form-group">
-					<div class="col-md-3">
-						<label class="control-label" th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.selected.trial}">Selected Trial:</label>
-						<label class="control-label" th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery.selected.nursery}">Selected Nursery:</label>
-						<span th:text="*{userFieldmap.selectedName}">[FieldbookName]</span>
-					</div>
-					
+				<div class="col-md-12">
+					<label class="control-label" th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.selected.trial}">Selected Trials:</label>
+					<label class="control-label" th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery.selected.nursery}">Selected Nurseries:</label>
 				</div>
-				<div class="form-group">
-					<div class="col-md-3">
-						<label class="control-label" th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.number.of.entries}">Number of Entries:</label>
-						<label class="control-label" th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.trial.number.of.entries.and.plots}">Number of Entries and Plots:</label>
-						<span th:text="*{userFieldmap.numberOfEntries}"></span>
-					</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-12">
+				<div class="col-md-12">
+					<table class="table table-bordered">
+						<tr>
+							<th th:text="#{fieldmap.trial.order}">Order</th>
+							<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial}">Trial</th>
+							<th th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery}">Nursery</th>
+							<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.instance}">Instance</th>
+							<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.entry.count}"># of Entries</th>
+							<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.reps.count}"># of Reps</th>
+							<th th:text="#{fieldmap.trial.plots.needed}">Plots Needed</th>
+						</tr>
+						<tr th:each="row : *{userFieldmap.selectedFieldmapList.rows}">
+							<td th:text="${row.order}"></td>
+							<td th:text="${row.studyName}"></td>
+							<td th:if="*{userFieldmap.trial == true}" th:text="${row.trialInstanceNo}"></td>
+							<td th:if="*{userFieldmap.trial == true}" th:text="${row.entryCount}"></td>
+							<td th:if="*{userFieldmap.trial == true}" th:text="${row.repCount}"></td>
+							<td th:text="${row.plotCount}"></td>
+						</tr>
+					</table>
 				</div>
-				<div class="form-group">
-					<div class="col-md-3">
-						<label class="control-label" th:if="*{userFieldmap.trial == true}"  th:text="#{fieldmap.trial.number.of.reps}">Number of Reps:</label>
-						<span th:if="*{userFieldmap.trial == true}"  th:text="*{userFieldmap.numberOfReps}"></span>
-					</div>
-				</div>
-				<div class="form-group">
-					<div class="col-md-3">
-						<label class="control-label" th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.total.number.of.plots}">Total Number of Plots:</label>
-						<span th:if="*{userFieldmap.trial == true}" th:text="*{userFieldmap.totalNumberOfPlots}"></span>
-					</div>
+				<div class="col-md-12">
+					<label class="control-label" th:text="#{fieldmap.trial.total.number.of.plots}"> Total # of Plots Needed: </label> &nbsp; 
+					<span th:text="*{userFieldmap.selectedFieldmapList.totalNumberOfPlots}"></span>
 				</div>
 			</div>
 		</div>
@@ -200,7 +209,7 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 			<div class="col-md-offset-5 col-md-7">
 				<div class="form-group">
 			      <input type="button" onclick="javascript: window.history.back();" href="/Fieldmap/enterPlantingDetails.html" th:href="@{/Fieldmap/plantingDetails/}" th:value="#{common.form.back.text}" value="Back" class="btn btn-default btn-lg"/>
-			      <a class="btn btn-primary btn-lg" th:href="@{/Fieldmap/generateFieldmapView/showMainPage/}" th:text="#{common.form.finish.text}" value="Next" />
+			      <input th:if="*{userFieldmap.selectedDatasetId == null}" type="submit" class="btn btn-primary btn-lg" th:value="#{common.form.finish.text}" value="Finish" />
 		      	</div>
 		    </div>
 	    </div>

@@ -43,7 +43,7 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
 	public void testExportFieldMapToExcel() throws Exception{
 		
 		UserFieldmap userFieldMap = new UserFieldmap();
-		userFieldMap.setSelectedName("Field Map Name");
+		//userFieldMap.setSelectedName("Field Map Name");
 		userFieldMap.setNumberOfEntries(25L);
 		userFieldMap.setNumberOfReps(3L);
 		userFieldMap.setTotalNumberOfPlots(75L);

@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -31,6 +32,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -67,10 +69,13 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     
     private static final int BUFFER_SIZE = 4096 * 4;
     
+    @Resource
+    private ResourceBundleMessageSource messageSource;
+    
    
     @RequestMapping(value="/trial/{id}", method = RequestMethod.GET)
     public String showTrialLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, 
-            Model model, HttpSession session, @PathVariable int id ) {
+            Model model, HttpSession session, @PathVariable int id , Locale locale) {
         session.invalidate();
         Study study = null;
         List<FieldMapInfo> fieldMapInfoList = null;
@@ -96,7 +101,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         getUserLabelPrinting().setFilename(generateDefaultFilename(getUserLabelPrinting(), true));
         form.setUserLabelPrinting(getUserLabelPrinting());
         
-        model.addAttribute("availableFields",getAvailableLabelFields(true, false));
+        model.addAttribute("availableFields",getAvailableLabelFields(true, false, locale));
         
         form.setIsTrial(true);
         return super.show(model);
@@ -104,7 +109,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     
     @RequestMapping(value="/nursery/{id}", method = RequestMethod.GET)
     public String showNurseryLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, Model model, 
-            HttpSession session, @PathVariable int id) {
+            HttpSession session, @PathVariable int id, Locale locale) {
         session.invalidate();
         Study study = null;
         List<FieldMapInfo> fieldMapInfoList = null;
@@ -130,7 +135,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         
         getUserLabelPrinting().setFilename(generateDefaultFilename(getUserLabelPrinting(), false));
         form.setUserLabelPrinting(getUserLabelPrinting());
-        model.addAttribute("availableFields", getAvailableLabelFields(false, false));
+        model.addAttribute("availableFields", getAvailableLabelFields(false, false, locale));
         form.setIsTrial(false);
         return super.show(model);
     }
@@ -147,27 +152,27 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         return fileName;
     }
     
-    private List<LabelFields> getAvailableLabelFields(boolean isTrial, boolean isFromFieldMap){
+    private List<LabelFields> getAvailableLabelFields(boolean isTrial, boolean isFromFieldMap, Locale locale){
         List<LabelFields> labelFieldsList = new ArrayList();
         
         
-        labelFieldsList.add(new LabelFields("Entry #", AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM));
-        labelFieldsList.add(new LabelFields("GID", AppConstants.AVAILABLE_LABEL_FIELDS_GID));
-        labelFieldsList.add(new LabelFields("Germplasm Name", AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME));
-        labelFieldsList.add(new LabelFields("Pedigree", AppConstants.AVAILABLE_LABEL_FIELDS_PEDIGREE));
-        labelFieldsList.add(new LabelFields("Year", AppConstants.AVAILABLE_LABEL_FIELDS_YEAR));
-        labelFieldsList.add(new LabelFields("Season", AppConstants.AVAILABLE_LABEL_FIELDS_SEASON));
+        labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.entry.num", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM));
+        labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.gid", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_GID));
+        labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.germplasm.name", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME));
+        labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.parentage", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE));
+        labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.year", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_YEAR));
+        labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.season", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_SEASON));
         if(isTrial){
-            labelFieldsList.add(new LabelFields("Trial Name", AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME));
-            labelFieldsList.add(new LabelFields("Trial Instance #", AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM));
+            labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.trial.name", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME));
+            labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.trial.instance.num", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM));
         }else{
-            labelFieldsList.add(new LabelFields("Nursery Name", AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME));
+            labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.nursery.name", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME));
         }
         if(isFromFieldMap){
-            labelFieldsList.add(new LabelFields("Rep", AppConstants.AVAILABLE_LABEL_FIELDS_REP));
-            labelFieldsList.add(new LabelFields("Location", AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION));
-            labelFieldsList.add(new LabelFields("Block Name", AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME));
-            labelFieldsList.add(new LabelFields("Plot (Range / Column)", AppConstants.AVAILABLE_LABEL_FIELDS_PLOT));
+            labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.rep", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_REP));
+            labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.location", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION));
+            labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.block.name", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME));
+            labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.plot", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_PLOT));
         }
         return labelFieldsList;
     }

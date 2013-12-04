@@ -27,9 +27,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+
+import javax.annotation.Resource;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -48,6 +51,8 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.service.api.FieldMapService;
@@ -83,7 +88,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
     
     private String delimiter = "|";
     
-    
+    @Resource
+    private ResourceBundleMessageSource messageSource;
     
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.service.api.LabelPrintingService#generateLabels(com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap)
@@ -327,49 +333,50 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         return buffer.toString();
     }
     private String getHeader(String headerId){
+        Locale locale = LocaleContextHolder.getLocale();
+
         StringBuffer buffer = new StringBuffer();
-        switch(Integer.parseInt(headerId)){
-            
+        switch(Integer.parseInt(headerId)){           
             
             case AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM:
-                buffer.append("Entry #");
+                buffer.append(messageSource.getMessage("label.printing.available.fields.entry.num", null, locale));                 
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_GID: 
-                buffer.append("GID");
+                buffer.append(messageSource.getMessage("label.printing.available.fields.gid", null, locale));
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME: 
-                buffer.append("Germplasm Name");
+                buffer.append(messageSource.getMessage("label.printing.available.fields.germplasm.name", null, locale));
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_YEAR: 
-                buffer.append("Year");
+                buffer.append(messageSource.getMessage("label.printing.available.fields.year", null, locale));
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_SEASON: 
-                buffer.append("Season");
+                buffer.append(messageSource.getMessage("label.printing.available.fields.season", null, locale));
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME: 
-                buffer.append("Nursery Name");
+                buffer.append(messageSource.getMessage("label.printing.available.fields.nursery.name", null, locale));
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME: 
-                buffer.append("Trial Name");
+                buffer.append(messageSource.getMessage("label.printing.available.fields.trial.name", null, locale));
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM: 
-                buffer.append("Trial Instance #");
+                buffer.append(messageSource.getMessage("label.printing.available.fields.trial.instance.num", null, locale));
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_REP: 
-                buffer.append("Rep");
+                buffer.append(messageSource.getMessage("label.printing.available.fields.rep", null, locale));
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION: 
-                buffer.append("Location"); 
+                buffer.append(messageSource.getMessage("label.printing.available.fields.location", null, locale));
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME: 
-                buffer.append("Block Name");
+                buffer.append(messageSource.getMessage("label.printing.available.fields.block.name", null, locale));
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_PLOT: 
-                buffer.append("Plot");
+                buffer.append(messageSource.getMessage("label.printing.available.fields.plot", null, locale));
                 break;
                 
-            case AppConstants.AVAILABLE_LABEL_FIELDS_PEDIGREE: 
-                buffer.append("Pedigree");
+            case AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE: 
+                buffer.append(messageSource.getMessage("label.printing.available.fields.parentage", null, locale));
                 break;
            
             default: break;    
@@ -418,7 +425,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 buffer.append(fieldMapLabel.getPlotNo());
                 break;
                 
-            case AppConstants.AVAILABLE_LABEL_FIELDS_PEDIGREE: 
+            case AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE: 
                 //buffer.append(fieldMapLabel.getPlotNo());
                 break;
            

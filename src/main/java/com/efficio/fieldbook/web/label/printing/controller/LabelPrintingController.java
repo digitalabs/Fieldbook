@@ -203,15 +203,17 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         
          
         FieldMapDatasetInfo datasetInfo =  getUserLabelPrinting().getFieldMapInfo().getDatasets().get(0);
-       
+        List<FieldMapDatasetInfo> datasetInfoList = new ArrayList();
+        datasetInfoList.add(datasetInfo);
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             
             if(getUserLabelPrinting().getGenerateType().equalsIgnoreCase("1")){
-                String fileName = labelPrintingService.generatePDFLabels(datasetInfo, getUserLabelPrinting(), baos);
+                
+                String fileName = labelPrintingService.generatePDFLabels(datasetInfoList, getUserLabelPrinting(), baos);
                 response.setHeader("Content-disposition","attachment; filename=" + getUserLabelPrinting().getFilename() + ".pdf");
             }else{
-                String fileName = labelPrintingService.generateXlSLabels(datasetInfo, getUserLabelPrinting(), baos);
+                String fileName = labelPrintingService.generateXlSLabels(datasetInfoList, getUserLabelPrinting(), baos);
                 response.setHeader("Content-disposition","attachment; filename=" + getUserLabelPrinting().getFilename() + ".xls");
             }
             //File xls = new File(fileName); // the selected name + current date

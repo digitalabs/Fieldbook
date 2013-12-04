@@ -12,6 +12,7 @@
 package com.efficio.fieldbook.service.api;
 
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -22,6 +23,6 @@ import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 
 public interface LabelPrintingService {
         
-    public String generatePDFLabels(FieldMapDatasetInfo datasetInfo, UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos) throws MiddlewareQueryException;
-    public String generateXlSLabels(FieldMapDatasetInfo datasetInfo, UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos) throws MiddlewareQueryException;
+    public String generatePDFLabels(List<FieldMapDatasetInfo> datasetInfo, UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos) throws MiddlewareQueryException;
+    public String generateXlSLabels(List<FieldMapDatasetInfo> datasetInfo, UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos) throws MiddlewareQueryException;
 }

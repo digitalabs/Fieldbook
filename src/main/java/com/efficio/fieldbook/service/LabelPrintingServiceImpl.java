@@ -78,6 +78,17 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
     @Resource
     private ResourceBundleMessageSource messageSource;
     
+    
+    private float getCellHeight(int numberOfRowsPerPage){
+        if(numberOfRowsPerPage == 7)
+            return 144f;
+        else if(numberOfRowsPerPage == 8)
+            return 132.48f;
+        else if(numberOfRowsPerPage == 10)
+            return 96f;
+        return 0f;
+    }
+    
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.service.api.LabelPrintingService#generateLabels(com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap)
      */
@@ -116,6 +127,12 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                     pageSize = PageSize.A4;
                 
                 Document document = new Document(pageSize);
+                if(numberofRowsPerPageOfLabel == 7)
+                    document.setMargins(0, 0, 5, 5);
+                else if(numberofRowsPerPageOfLabel == 8)
+                    document.setMargins(0, 0, 5, 5);
+                else if(numberofRowsPerPageOfLabel == 10)
+                    document.setMargins(5, 5, 20, 20);
                 // step 2
                 
                 //PdfWriter.getInstance(document, new FileOutputStream(fileName));
@@ -128,7 +145,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 int i = 0;
                 int fixTableRowSize = numberOfLabelPerRow;
                 PdfPTable table = new PdfPTable(fixTableRowSize);
-                float columnWidthSize = 180f;
+                float columnWidthSize = 265f;//180f;
                 float[] widthColumns = new float[fixTableRowSize];
                 
                 for(int counter = 0 ; counter < widthColumns.length ; counter++){
@@ -136,10 +153,14 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 }
                 
                 table.setWidths(widthColumns);
-                //table.setWidthPercentage(100);
+                table.setWidthPercentage(100);
                 int width = 600; 
                 int height = 95;
+                
+                
                 List<File> filesToBeDeleted = new ArrayList<File>(); 
+                float cellHeight = getCellHeight(numberofRowsPerPageOfLabel);                                
+                
                 for(StudyTrialInstanceInfo trialInstance : trialInstances){
                     FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = trialInstance.getTrialInstance(); 
                     /*
@@ -183,7 +204,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         
                         
                         PdfPCell cell = new PdfPCell();
-                        cell.setFixedHeight(70f);
+                        cell.setFixedHeight(cellHeight);
                         cell.setNoWrap(false);
                         cell.setPadding(5f);
                         //cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -195,7 +216,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         //cell.addElement(paragraph1);  
                         
                         
-                        Font fontNormal = FontFactory.getFont("Arial", 8, Font.NORMAL);
+                        Font fontNormal = FontFactory.getFont("Arial", 6, Font.NORMAL);
                         cell.addElement(mainImage);
                         
                         
@@ -219,10 +240,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                             cell.addElement(innerTableInfo);
                         }
                         
-                        
+                        /*
                         cell.setBorder(Rectangle.NO_BORDER);                         
                         cell.setBackgroundColor(Color.white);
-                        
+                        */
                         //cell.addElement(new Paragraph("\n"));
                         
                         table.addCell(cell);
@@ -244,6 +265,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                             table = new PdfPTable(fixTableRowSize);  
                             //table.setWidthPercentage(100);
                             table.setWidths(widthColumns);
+                            table.setWidthPercentage(100);
                             
                         }
                         if(i % totalPerPage == 0){

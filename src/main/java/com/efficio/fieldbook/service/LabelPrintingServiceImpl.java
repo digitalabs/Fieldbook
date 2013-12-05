@@ -83,7 +83,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         if(numberOfRowsPerPage == 7)
             return 104f;
         else if(numberOfRowsPerPage == 8)
-            return 93f;
+            return 95f;
         else if(numberOfRowsPerPage == 10)
             return 96f;
         return 0f;

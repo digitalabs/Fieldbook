@@ -74,16 +74,14 @@ function validateEnterLabelFieldsPage(type){
 function setSelectedTrialInstanceOrder() {
 	var order = [];
 	var notIncluded = 0;
-	$("#selectedTrials .includeTrial").each(function(){
-		if (!this.checked) {
-			notIncluded++;
-		}
-	});
 	$("#selectedTrials .trialOrder").each(function(){
 		var checked = false;
 		$(this).parent().prev().find(":checked").each(function() {
 				checked = true;
 		});
+		if (!checked) {
+			notIncluded++;
+		}
 		if (checked) {
 			var orderId = $(this).parent().parent().attr("id");
 			orderId = parseInt(orderId) - notIncluded;

@@ -81,9 +81,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
     
     private float getCellHeight(int numberOfRowsPerPage){
         if(numberOfRowsPerPage == 7)
-            return 144f;
+            return 104f;
         else if(numberOfRowsPerPage == 8)
-            return 132.48f;
+            return 93f;
         else if(numberOfRowsPerPage == 10)
             return 96f;
         return 0f;
@@ -128,9 +128,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 
                 Document document = new Document(pageSize);
                 if(numberofRowsPerPageOfLabel == 7)
-                    document.setMargins(0, 0, 5, 5);
+                    document.setMargins(5, 0, 10, 5);
                 else if(numberofRowsPerPageOfLabel == 8)
-                    document.setMargins(0, 0, 5, 5);
+                    document.setMargins(5, 0, 0, 5);
                 else if(numberofRowsPerPageOfLabel == 10)
                     document.setMargins(5, 5, 20, 20);
                 // step 2

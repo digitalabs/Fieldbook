@@ -165,7 +165,8 @@ th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" 
 				</div>
 				<div class="form-group">
 					<div class="col-md-4">
-						&nbsp;
+						<label class="control-label" th:text="#{fieldmap.label.row.capacity.machine} + ':'">Row Capacity of Planting Machine:</label>
+						<span th:text="*{userFieldmap.machineRowCapacity}"></span>
 					</div>
 				</div>
 			</div>

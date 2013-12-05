@@ -148,10 +148,10 @@
 	<!-- **************************************************************** -->
 
     <bean id="managerFactoryProvider" class="org.generationcp.commons.hibernate.DefaultManagerFactoryProvider" destroy-method="close">
-    	<property name="localUsername" value="${local.user}"/>
+    	<property name="localUsername" value="${local.username}"/>
     	<property name="localPassword" value="${local.password}"/>
     	<property name="localPort"     value="${workbench.port}"/>
-    	<property name="centralUsername" value="${central.user}"/>
+    	<property name="centralUsername" value="${central.username}"/>
     	<property name="centralPassword" value="${central.password}"/>
     	<property name="centralPort"     value="${workbench.port}"/>
     </bean>
@@ -215,11 +215,12 @@
         <property name="configLocation" value="classpath:ibpworkbench_hib.cfg.xml"/>
     </bean>
     
-     <bean id="centralDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+
+    <bean id="centralDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="${workbench.driver}"/>
         <property name="url" value="${central.url}"/>
-        <property name="username" value="${workbench.username}"/>
-        <property name="password" value="${workbench.password}"/>
+        <property name="username" value="${central.username}"/>
+        <property name="password" value="${central.password}"/>
     </bean>
 
     <bean id="localIbdbDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">

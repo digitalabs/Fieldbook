@@ -56,12 +56,16 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.oned.Code128Writer;
 import com.lowagie.text.Document;
+import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
 import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.ColumnText;
+import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
@@ -133,18 +137,22 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                     document.setMargins(5, 0, 0, 5);
                 else if(numberofRowsPerPageOfLabel == 10)
                     document.setMargins(2, 2, 30, 30);
-                // step 2
-                
-                //PdfWriter.getInstance(document, new FileOutputStream(fileName));
-                PdfWriter.getInstance(document, baos);
+               
+                PdfWriter writer = PdfWriter.getInstance(document, baos);
                 // step 3
                 document.open();
                 // step 4
-               
+                
+                PdfContentByte canvas = writer.getDirectContent();
+                
+                
                 
                 int i = 0;
                 int fixTableRowSize = numberOfLabelPerRow;
                 PdfPTable table = new PdfPTable(fixTableRowSize);
+                
+                
+                //table.writeSelectedRows(0, -1, 10, 12, canvas);
                 float columnWidthSize = 265f;//180f;
                 float[] widthColumns = new float[fixTableRowSize];
                 
@@ -158,17 +166,12 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 int height = 75;
                 
                 
-                List<File> filesToBeDeleted = new ArrayList<File>(); 
+                //List<File> filesToBeDeleted = new ArrayList<File>(); 
                 float cellHeight = getCellHeight(numberofRowsPerPageOfLabel);                                
                 
                 for(StudyTrialInstanceInfo trialInstance : trialInstances){
                     FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = trialInstance.getTrialInstance(); 
-                    /*
-                    ;
-                     ; //trial or nursery
-                    
-                    fieldMapTrialInstanceInfo.get //trial instance number ??? tiff
-                    */
+                   
                     
                     Map<String,String> moreFieldInfo = new HashMap<String, String>();
                     moreFieldInfo.put("locationName", fieldMapTrialInstanceInfo.getLocationName());
@@ -189,18 +192,11 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         File imageFile = new File(imageLocation);
                         FileOutputStream fout = new FileOutputStream(imageFile);
                         MatrixToImageWriter.writeToStream(bitMatrix, "png", fout);
-                        filesToBeDeleted.add(imageFile);
+                        //filesToBeDeleted.add(imageFile);
                         
-                        /*
-                        BufferedImage src = ImageIO.read(imageFile);
-                        BufferedImage thumbnail =
-                                Scalr.resize(src, Scalr.Method.QUALITY, Scalr.Mode.FIT_EXACT,
-                                             200, 50, Scalr.OP_ANTIALIAS);
-                        ImageIO.write(thumbnail, "png", imageFile);
-                        */
+                       
                         
                         Image mainImage = Image.getInstance(imageLocation);
-                        //File.createTempFile();
                         
                         
                         PdfPCell cell = new PdfPCell();
@@ -208,21 +204,25 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         cell.setNoWrap(false);
                         cell.setPadding(5f);
                         cell.setPaddingBottom(1f);
-                        //cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                         
-                        //Paragraph paragraph1 = new Paragraph();
-                        
-                        //String selectedLabel = "";
-                        //paragraph1.add("test" + i);
-                        //cell.addElement(paragraph1);  
+                        PdfPTable innerImageTableInfo = new PdfPTable(1);
+                        innerImageTableInfo.setWidths(new float[]{1});
+                        innerImageTableInfo.setWidthPercentage(85);
+                        PdfPCell cellImage = new PdfPCell();
+                        cellImage.addElement(mainImage);
+                        cellImage.setBorder(Rectangle.NO_BORDER);                         
+                        cellImage.setBackgroundColor(Color.white);
+                        cellImage.setPadding(0f);
+                        innerImageTableInfo.addCell(cellImage);
                         
                         float fontSize = 6f;
                         if(numberofRowsPerPageOfLabel == 10)
                             fontSize = 4.8f;
                                
                         Font fontNormal = FontFactory.getFont("Arial", fontSize, Font.NORMAL);
-                        cell.addElement(mainImage);
                         
+                        //cell.addElement(mainImage);
+                        cell.addElement(innerImageTableInfo);
                         
                         
                         
@@ -230,7 +230,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         for(int row = 0 ; row < 5 ; row++){
                             PdfPTable innerTableInfo = new PdfPTable(2);
                             innerTableInfo.setWidths(new float[]{1,1});
-                            innerTableInfo.setWidthPercentage(90);
+                            innerTableInfo.setWidthPercentage(85);
                             
                             String leftText = generateBarcodeLabel(moreFieldInfo, fieldMapLabel, leftSelectedFields, row);
                             PdfPCell cellInnerLeft = new PdfPCell(new Paragraph(leftText, fontNormal));
@@ -255,10 +255,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                             cell.addElement(innerTableInfo);
                         }
                         
-                       
+                       /*
                         cell.setBorder(Rectangle.NO_BORDER);                         
                         cell.setBackgroundColor(Color.white);
-                       
+                       */
                         
                         
                         table.addCell(cell);
@@ -279,6 +279,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                             
                             table.completeRow();
                             document.add(table);
+                            //table.setTotalWidth(265f*3);
+                            //table.writeSelectedRows(0, -1, 10, cellHeight * ( numberOfLabelPerRow * (i % numberOfLabelPerRow)) , canvas);
+                            
                             table = new PdfPTable(fixTableRowSize);                              
                             table.setWidths(widthColumns);
                             table.setWidthPercentage(100);
@@ -297,10 +300,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
           
                 
                 document.close();
-                for(File file : filesToBeDeleted){
-                    
-                    file.delete();
-                }
+                
                 
             }catch (FileNotFoundException e) {
                 LOG.error(e.getMessage(), e);

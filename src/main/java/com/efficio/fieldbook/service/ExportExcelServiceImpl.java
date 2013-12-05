@@ -97,6 +97,8 @@ public class ExportExcelServiceImpl implements ExportExcelService{
         int rowsPerPlotValue = userFieldMap.getNumberOfRowsPerPlot(); 
         String columnsLabel =  messageSource.getMessage("fieldmap.label.columns", null, locale); //Columns     
         Integer columnsValue = userFieldMap.getNumberOfColumnsInBlock();     // 10
+        String machineCapacityLabel = messageSource.getMessage("fieldmap.label.row.capacity.machine", null, locale); //machine row capacity
+        Integer machineCapacityValue = userFieldMap.getMachineRowCapacity();
         
         //Planting Details
         String plantingDetailsLabel = messageSource.getMessage("fieldmap.header.planting.details", null, locale); //PLANTING DETAILS
@@ -325,6 +327,13 @@ public class ExportExcelServiceImpl implements ExportExcelService{
             labelCell.setCellStyle(labelStyle);
             
             row.createCell(columnIndex++).setCellValue(columnsValue);
+            
+            row.createCell(columnIndex++).setCellValue(blockNameValue);
+            labelCell = row.createCell(columnIndex++);
+            labelCell.setCellValue(machineCapacityLabel);
+            labelCell.setCellStyle(labelStyle);
+            
+            row.createCell(columnIndex++).setCellValue(machineCapacityValue);
             
             // Row 9: Space
             row = fieldMapSheet.createRow(rowIndex++);

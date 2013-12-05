@@ -237,6 +237,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                             
                             cellInnerLeft.setBorder(Rectangle.NO_BORDER);                         
                             cellInnerLeft.setBackgroundColor(Color.white);
+                            cellInnerLeft.setPaddingBottom(0.5f);
+                            cellInnerLeft.setPaddingTop(0.5f);
                             
                             innerTableInfo.addCell(cellInnerLeft);
                             
@@ -245,6 +247,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                            
                             cellInnerRight.setBorder(Rectangle.NO_BORDER);                         
                             cellInnerRight.setBackgroundColor(Color.white);
+                            cellInnerRight.setPaddingBottom(0.5f);
+                            cellInnerRight.setPaddingTop(0.5f);
                             
                             innerTableInfo.addCell(cellInnerRight);
                             

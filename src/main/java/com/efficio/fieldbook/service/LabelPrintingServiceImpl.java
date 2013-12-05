@@ -85,7 +85,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         else if(numberOfRowsPerPage == 8)
             return 95f;
         else if(numberOfRowsPerPage == 10)
-            return 96f;
+            return 75.5f;
         return 0f;
     }
     
@@ -132,7 +132,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 else if(numberofRowsPerPageOfLabel == 8)
                     document.setMargins(5, 0, 0, 5);
                 else if(numberofRowsPerPageOfLabel == 10)
-                    document.setMargins(5, 5, 20, 20);
+                    document.setMargins(2, 2, 30, 30);
                 // step 2
                 
                 //PdfWriter.getInstance(document, new FileOutputStream(fileName));
@@ -155,7 +155,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 table.setWidths(widthColumns);
                 table.setWidthPercentage(100);
                 int width = 600; 
-                int height = 95;
+                int height = 75;
                 
                 
                 List<File> filesToBeDeleted = new ArrayList<File>(); 
@@ -207,6 +207,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         cell.setFixedHeight(cellHeight);
                         cell.setNoWrap(false);
                         cell.setPadding(5f);
+                        cell.setPaddingBottom(1f);
                         //cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                         
                         //Paragraph paragraph1 = new Paragraph();
@@ -215,8 +216,11 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         //paragraph1.add("test" + i);
                         //cell.addElement(paragraph1);  
                         
-                        
-                        Font fontNormal = FontFactory.getFont("Arial", 6, Font.NORMAL);
+                        float fontSize = 6f;
+                        if(numberofRowsPerPageOfLabel == 10)
+                            fontSize = 4.8f;
+                               
+                        Font fontNormal = FontFactory.getFont("Arial", fontSize, Font.NORMAL);
                         cell.addElement(mainImage);
                         
                         
@@ -225,26 +229,33 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         cell.addElement(new Paragraph());
                         for(int row = 0 ; row < 5 ; row++){
                             PdfPTable innerTableInfo = new PdfPTable(2);
+                            innerTableInfo.setWidths(new float[]{1,1});
+                            innerTableInfo.setWidthPercentage(90);
+                            
                             String leftText = generateBarcodeLabel(moreFieldInfo, fieldMapLabel, leftSelectedFields, row);
                             PdfPCell cellInnerLeft = new PdfPCell(new Paragraph(leftText, fontNormal));
+                            
                             cellInnerLeft.setBorder(Rectangle.NO_BORDER);                         
                             cellInnerLeft.setBackgroundColor(Color.white);
+                            
                             innerTableInfo.addCell(cellInnerLeft);
                             
                             String rightText = generateBarcodeLabel(moreFieldInfo, fieldMapLabel, rightSelectedFields, row);
                             PdfPCell cellInnerRight = new PdfPCell(new Paragraph(rightText, fontNormal));
+                           
                             cellInnerRight.setBorder(Rectangle.NO_BORDER);                         
                             cellInnerRight.setBackgroundColor(Color.white);
+                            
                             innerTableInfo.addCell(cellInnerRight);
                             
                             cell.addElement(innerTableInfo);
                         }
                         
-                        /*
+                       
                         cell.setBorder(Rectangle.NO_BORDER);                         
                         cell.setBackgroundColor(Color.white);
-                        */
-                        //cell.addElement(new Paragraph("\n"));
+                       
+                        
                         
                         table.addCell(cell);
                                      
@@ -255,15 +266,16 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                             
                             for(int neededCount = 0 ; neededCount < needed ; neededCount++){
                                 PdfPCell cellNeeded = new PdfPCell(); 
+                                
                                 cellNeeded.setBorder(Rectangle.NO_BORDER);                         
                                 cellNeeded.setBackgroundColor(Color.white);
+                                
                                 table.addCell(cellNeeded);
                             }
                             
                             table.completeRow();
                             document.add(table);
-                            table = new PdfPTable(fixTableRowSize);  
-                            //table.setWidthPercentage(100);
+                            table = new PdfPTable(fixTableRowSize);                              
                             table.setWidths(widthColumns);
                             table.setWidthPercentage(100);
                             

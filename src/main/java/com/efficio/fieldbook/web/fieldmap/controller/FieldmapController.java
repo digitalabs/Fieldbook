@@ -122,7 +122,6 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     @ResponseBody
     @RequestMapping(value="/createFieldmap/{ids}", method = RequestMethod.GET)
     public Map<String, String> determineFieldMapNavigation(@PathVariable String ids, Model model, HttpSession session) {
-        session.invalidate();
         Map<String, String> result = new HashMap<String, String>();
         String nav = "1";
         try {
@@ -308,7 +307,6 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     @RequestMapping(value="/createNurseryFieldmap/{ids}", method = RequestMethod.GET)
     public Map<String, String> determineNurseryFieldMapNavigation(@PathVariable String ids, HttpSession session) {
         
-        session.invalidate();
         Map<String, String> result = new HashMap<String, String>();
         
         String nav = "1";

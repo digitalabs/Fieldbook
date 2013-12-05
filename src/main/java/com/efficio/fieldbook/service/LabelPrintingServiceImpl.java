@@ -166,7 +166,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 int height = 75;
                 
                 
-                //List<File> filesToBeDeleted = new ArrayList<File>(); 
+                List<File> filesToBeDeleted = new ArrayList<File>(); 
                 float cellHeight = getCellHeight(numberofRowsPerPageOfLabel);                                
                 
                 for(StudyTrialInstanceInfo trialInstance : trialInstances){
@@ -192,7 +192,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         File imageFile = new File(imageLocation);
                         FileOutputStream fout = new FileOutputStream(imageFile);
                         MatrixToImageWriter.writeToStream(bitMatrix, "png", fout);
-                        //filesToBeDeleted.add(imageFile);
+                        filesToBeDeleted.add(imageFile);
                         
                        
                         
@@ -300,7 +300,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
           
                 
                 document.close();
-                
+                for(File file : filesToBeDeleted)
+                    file.delete();
                 
             }catch (FileNotFoundException e) {
                 LOG.error(e.getMessage(), e);

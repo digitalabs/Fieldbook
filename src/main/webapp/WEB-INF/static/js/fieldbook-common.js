@@ -339,7 +339,16 @@ function showMessage(message) {
 
 function createLabelPrinting(tableName){	
 	
-	if($('.field-map-highlight').length != 1){
+	var count = 0;
+	for(var index in selectedTableIds) {
+		//console.log( index + " : " + selectedTableIds[index]);
+		var idVal = selectedTableIds[index];
+		if(idVal != null){
+			count++;
+		}			
+	}
+	
+	if(count != 1){
 		$('#page-create-field-map-message').html("<div class='alert alert-danger'>"+createLabelErrorMsg+"</div>");
 		return;
 	}
@@ -350,6 +359,8 @@ function createLabelPrinting(tableName){
 		Spinner.toggle();
 		location.href = labelPrintingHref + "/" + id;
 	    Spinner.toggle();
+	    
+	    
 	}else{
 		var type = 'Trial';
 		if(tableName == 'nursery-table')
@@ -359,8 +370,17 @@ function createLabelPrinting(tableName){
 }
 
 function showFieldMap(tableName) {
+	var count = 0;
+	for(var index in selectedTableIds) {
+		//console.log( index + " : " + selectedTableIds[index]);
+		var idVal = selectedTableIds[index];
+		if(idVal != null){
+			count++;
+		}			
+	}
+	
 	if($('#'+tableName+' .field-map-highlight').attr('id') != null){
-		if ($('#'+tableName+' .field-map-highlight').size() > 1) {
+		if (count > 1) {
 			$('#page-create-field-map-message').html("<div class='alert alert-danger'>"+fieldMapOneStudyErrorMsg+"</div>");
 		} else {
 			$("#page-message").html("");

@@ -36,6 +36,11 @@ function validateEnterFieldPage(){
 		return false;
 	}
 	
+	if (parseInt($('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val()) > 256) {
+		showEnterFieldDetailsMessage(noOfRowsLimitError);
+		return false;
+	}
+	
 	var totalNoOfBlocks = (parseInt($("#"+getJquerySafeId("userFieldmap.numberOfRowsInBlock")).val())
 						/parseInt($("#"+getJquerySafeId("userFieldmap.numberOfRowsPerPlot")).val())) 
 						* parseInt($("#"+getJquerySafeId("userFieldmap.numberOfRangesInBlock")).val());

@@ -90,7 +90,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
             this.userFieldmap.setSelectedGeolocationId(geolocationId);
             
             this.userFieldmap.setSelectedFieldMaps(
-                    fieldbookMiddlewareService.getAllFieldMapsInBlockByTrialInstanceId(geolocationId));
+                    fieldbookMiddlewareService.getAllFieldMapsInBlockByTrialInstanceId(datasetId, geolocationId));
 
             FieldMapTrialInstanceInfo trialInfo = 
                     this.userFieldmap.getSelectedTrialInstanceByDatasetIdAndGeolocationId(datasetId, geolocationId);

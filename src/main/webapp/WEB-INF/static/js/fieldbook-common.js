@@ -340,9 +340,10 @@ function showMessage(message) {
 function createLabelPrinting(tableName){	
 	
 	var count = 0;
+	var idVal = null;
 	for(var index in selectedTableIds) {
 		//console.log( index + " : " + selectedTableIds[index]);
-		var idVal = selectedTableIds[index];
+		idVal = selectedTableIds[index];
 		if(idVal != null){
 			count++;
 		}			
@@ -353,9 +354,9 @@ function createLabelPrinting(tableName){
 		return;
 	}
 	
-	if($('#'+tableName+' .field-map-highlight').attr('id') != null){
+	if(idVal != null){
 		var labelPrintingHref = $('#label-printing-url').attr("href");
-		var id = $('#'+tableName+' .field-map-highlight').attr('id');
+		var id = idVal;
 		Spinner.toggle();
 		location.href = labelPrintingHref + "/" + id;
 	    Spinner.toggle();
@@ -371,20 +372,22 @@ function createLabelPrinting(tableName){
 
 function showFieldMap(tableName) {
 	var count = 0;
+	var idVal = null;
 	for(var index in selectedTableIds) {
 		//console.log( index + " : " + selectedTableIds[index]);
-		var idVal = selectedTableIds[index];
+		idVal = selectedTableIds[index];
 		if(idVal != null){
 			count++;
 		}			
 	}
 	
-	if($('#'+tableName+' .field-map-highlight').attr('id') != null){
+	if(idVal != null){
 		if (count > 1) {
 			$('#page-create-field-map-message').html("<div class='alert alert-danger'>"+fieldMapOneStudyErrorMsg+"</div>");
 		} else {
 			$("#page-message").html("");
-			showFieldMapPopUp(tableName, $('#'+tableName+' .field-map-highlight').attr('id'));
+			//showFieldMapPopUp(tableName, $('#'+tableName+' .field-map-highlight').attr('id'));
+			showFieldMapPopUp(tableName, idVal);
 		}
 	} else {
 		$('#page-create-field-map-message').html("<div class='alert alert-danger'>"+fieldMapStudyRequired+"</div>");

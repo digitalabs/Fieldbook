@@ -8,6 +8,19 @@ function showPage(paginationUrl, pageNum, sectionDiv){
            success: function(html) {
         	   
              $("#"+sectionDiv).empty().append(html);
+             
+             if(sectionDiv == 'trial-details-list' || sectionDiv == 'nursery-details-list'){
+            	 //we highlight the previously clicked
+            	 for(var index in selectedTableIds) {
+         			//console.log( index + " : " + selectedTableIds[index]);
+         			var idVal = selectedTableIds[index];
+         			if(idVal != null){
+         				//we need to highlight
+         				$('tr.data-row#-'+idVal).toggleClass('field-map-highlight');
+         			}			
+         		 }
+             }
+             
              Spinner.toggle();  
            }
          }
@@ -20,8 +33,17 @@ function triggerFieldMapTableSelection(tableName){
 		if (tableName == "studyTree") {
 			$(this).toggleClass("trialInstance");
 			$(this).toggleClass('field-map-highlight');
+			
 		} else {
 			$(this).toggleClass('field-map-highlight');
+			var id = $(this).attr('id') + "";
+			if($(this).hasClass('field-map-highlight')){				
+				selectedTableIds[id] = id;
+			}else{
+				selectedTableIds[id] = null;
+			}
+			
+			//console.log(selectedTableIds);
 		}
 	});
 }
@@ -29,7 +51,15 @@ function triggerFieldMapTableSelection(tableName){
 function createFieldMap(tableName){
 	if($('#'+tableName+' .field-map-highlight').attr('id') != null){
 		var ids = [];
-		$('#'+tableName+' .field-map-highlight').each(function(){ ids.push(this.id); });
+		//$('#'+tableName+' .field-map-highlight').each(function(){ ids.push(this.id); });
+		
+		for(var index in selectedTableIds) {
+			//console.log( index + " : " + selectedTableIds[index]);
+			var idVal = selectedTableIds[index];
+			if(idVal != null){
+				ids.push(idVal);
+			}			
+		}
 		var idList = ids.join(",");
 		$('#page-message').html("");
 		showFieldMapPopUpCreate(tableName, idList);

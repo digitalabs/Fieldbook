@@ -36,7 +36,7 @@ function validateEnterFieldPage(){
 		return false;
 	}
 	
-	if (parseInt($('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val()) > 256) {
+	if (parseInt($('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val()) > 255) {
 		showEnterFieldDetailsMessage(noOfRowsLimitError);
 		return false;
 	}

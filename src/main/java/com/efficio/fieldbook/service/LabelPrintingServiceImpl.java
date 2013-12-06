@@ -83,13 +83,23 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
     private ResourceBundleMessageSource messageSource;
     
     
-    private float getCellHeight(int numberOfRowsPerPage){
-        if(numberOfRowsPerPage == 7)
-            return 104f;
-        else if(numberOfRowsPerPage == 8)
-            return 95f;
-        else if(numberOfRowsPerPage == 10)
-            return 75.5f;
+    private float getCellHeight(int numberOfRowsPerPage, int pageSizeId){
+        if(pageSizeId == AppConstants.SIZE_OF_PAPER_A4){
+            if(numberOfRowsPerPage == 7)
+                return 108f; //ok
+            else if(numberOfRowsPerPage == 8)
+                return 97f;//ok
+            else if(numberOfRowsPerPage == 10)
+                return 72.5f;
+        }else{
+            if(numberOfRowsPerPage == 7)
+                return 108f; //ok
+            else if(numberOfRowsPerPage == 8)
+                return 98.1f;//ok
+            else if(numberOfRowsPerPage == 10)
+                return 72.5f;//ok
+        }
+           
         return 0f;
     }
     
@@ -131,12 +141,21 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                     pageSize = PageSize.A4;
                 
                 Document document = new Document(pageSize);
-                if(numberofRowsPerPageOfLabel == 7)
-                    document.setMargins(5, 0, 10, 5);
-                else if(numberofRowsPerPageOfLabel == 8)
-                    document.setMargins(5, 0, 0, 5);
-                else if(numberofRowsPerPageOfLabel == 10)
-                    document.setMargins(2, 2, 30, 30);
+                if(pageSizeId == AppConstants.SIZE_OF_PAPER_LETTER){
+                    if(numberofRowsPerPageOfLabel == 7)
+                        document.setMargins(10, 0, 17, 5);
+                    else if(numberofRowsPerPageOfLabel == 8)
+                        document.setMargins(5, 0, 0, 5);
+                    else if(numberofRowsPerPageOfLabel == 10)
+                        document.setMargins(2, 2, 33.3f, 5);
+                }else if(pageSizeId == AppConstants.SIZE_OF_PAPER_A4){
+                    if(numberofRowsPerPageOfLabel == 7)
+                        document.setMargins(15, 0, 42, 5);
+                    else if(numberofRowsPerPageOfLabel == 8)
+                        document.setMargins(15, 0, 37, 5);
+                    else if(numberofRowsPerPageOfLabel == 10)
+                        document.setMargins(6, 2, 17.5f, 5);
+                }
                
                 PdfWriter writer = PdfWriter.getInstance(document, baos);
                 // step 3
@@ -167,7 +186,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 
                 
                 List<File> filesToBeDeleted = new ArrayList<File>(); 
-                float cellHeight = getCellHeight(numberofRowsPerPageOfLabel);                                
+                float cellHeight = getCellHeight(numberofRowsPerPageOfLabel, pageSizeId);                                
                 
                 for(StudyTrialInstanceInfo trialInstance : trialInstances){
                     FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = trialInstance.getTrialInstance(); 
@@ -207,15 +226,15 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         
                         PdfPTable innerImageTableInfo = new PdfPTable(1);
                         innerImageTableInfo.setWidths(new float[]{1});
-                        innerImageTableInfo.setWidthPercentage(85);
+                        innerImageTableInfo.setWidthPercentage(82);
                         PdfPCell cellImage = new PdfPCell();
                         cellImage.addElement(mainImage);
                         cellImage.setBorder(Rectangle.NO_BORDER);                         
                         cellImage.setBackgroundColor(Color.white);
-                        cellImage.setPadding(0f);
+                        cellImage.setPadding(1.5f);
                         innerImageTableInfo.addCell(cellImage);
                         
-                        float fontSize = 6f;
+                        float fontSize = 6.8f;
                         if(numberofRowsPerPageOfLabel == 10)
                             fontSize = 4.8f;
                                
@@ -255,11 +274,12 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                             cell.addElement(innerTableInfo);
                         }
                         
-                       /*
+                       
                         cell.setBorder(Rectangle.NO_BORDER);                         
                         cell.setBackgroundColor(Color.white);
-                       */
-                        
+                        /*
+                        cell.setBorderColor(Color.RED);
+                        */
                         
                         table.addCell(cell);
                                      
@@ -278,9 +298,14 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                             }
                             
                             table.completeRow();
+                            if(numberofRowsPerPageOfLabel == 10){
+                                
+                               table.setSpacingAfter(9f);
+                            }
+                            
                             document.add(table);
-                            //table.setTotalWidth(265f*3);
-                            //table.writeSelectedRows(0, -1, 10, cellHeight * ( numberOfLabelPerRow * (i % numberOfLabelPerRow)) , canvas);
+                            
+                            
                             
                             table = new PdfPTable(fixTableRowSize);                              
                             table.setWidths(widthColumns);
@@ -300,8 +325,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
           
                 
                 document.close();
-                for(File file : filesToBeDeleted)
+                for(File file : filesToBeDeleted){
                     file.delete();
+                }
                 
             }catch (FileNotFoundException e) {
                 LOG.error(e.getMessage(), e);

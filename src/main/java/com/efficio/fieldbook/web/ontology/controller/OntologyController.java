@@ -65,7 +65,7 @@ import org.generationcp.middleware.service.api.OntologyService;
  * @author Daniel Jao
  */
 @Controller
-@RequestMapping(OntologyController.URL)
+@RequestMapping({OntologyController.URL, "/OntologyBrowser"})
 public class OntologyController extends AbstractBaseFieldbookController{
     
     /** The Constant LOG. */

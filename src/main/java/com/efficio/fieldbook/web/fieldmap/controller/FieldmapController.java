@@ -377,6 +377,9 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     @RequestMapping(method = RequestMethod.POST)
     public String submitDetails(@ModelAttribute("fieldmapForm") FieldmapForm form, BindingResult result, Model model) {
         setTrialInstanceOrder(form);
+        if (form.getUserFieldmap().getFieldmap() != null) {
+            form.getUserFieldmap().setFieldmap(null);
+        }
         setUserFieldMapDetails(form);
         return "redirect:" + PlantingDetailsController.URL;
     } 

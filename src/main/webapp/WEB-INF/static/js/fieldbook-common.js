@@ -16,7 +16,7 @@ function showPage(paginationUrl, pageNum, sectionDiv){
          			var idVal = selectedTableIds[index];
          			if(idVal != null){
          				//we need to highlight
-         				$('tr.data-row#-'+idVal).toggleClass('field-map-highlight');
+         				$('tr.data-row#'+idVal).addClass('field-map-highlight');
          			}			
          		 }
              }

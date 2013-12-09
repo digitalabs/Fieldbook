@@ -211,11 +211,11 @@ public class ExportExcelServiceImpl implements ExportExcelService{
                     row.createCell(columnIndex++).setCellValue(rec.getTrialInstanceNo());
                     row.createCell(columnIndex++).setCellValue(rec.getEntryCount());
                     row.createCell(columnIndex++).setCellValue(rec.getRepCount());
-                }
-                else {
+                    row.createCell(columnIndex++).setCellValue(rec.getPlotCount());
+                } else {
                     row.createCell(columnIndex++).setCellValue(rec.getDatasetName());
+                    row.createCell(columnIndex++).setCellValue(rec.getEntryCount());
                 }
-                row.createCell(columnIndex++).setCellValue(rec.getPlotCount());
             }
             
             row = fieldMapSheet.createRow(rowIndex++);

@@ -251,7 +251,7 @@ public class FieldMapServiceImpl implements FieldMapService{
                 }
             }
         }
-        info.setSelectedFieldmapList(new SelectedFieldmapList(info.getSelectedFieldMaps()));
+        info.setSelectedFieldmapList(new SelectedFieldmapList(info.getSelectedFieldMaps(), info.isTrial()));
     }
     
     private void markDeletedCoordinates(Plot[][] plots, List<String> deletedCoordinates) {

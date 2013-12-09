@@ -74,7 +74,10 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 				</div>		
 			</div>
 		</div>
-		<div class="col-md-6">
+		<div class="col-md-6" th:unless="*{#lists.isEmpty(userLabelPrinting.fieldMapInfo)}">
+			<div class="col-md-12">
+				<label class="control-label" th:text="#{label.printing.summary.of.labels.needed}">SUMMARY OF LABELS NEEDED</label>
+			</div>
 			<div class="col-md-12">
 				<table class="table table-bordered">
 					<tr>

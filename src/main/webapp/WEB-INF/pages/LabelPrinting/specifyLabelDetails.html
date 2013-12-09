@@ -414,7 +414,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
         var filenameError = /*[[#{label.printing.filename.field.error}]]*/;
         var selectedFieldsError = /*[[#{label.printing.selected.fields.error}]]*/;
         var trialInstanceRequired = /*[[#{fieldmap.no.selected.trial.instance}]]*/;
-  		
+  		var isTrial = /*[[${labelPrintingForm.isTrial}]]*/;
   		
  		 $(function() {
  			setSelectedTrialsAsDraggable();
@@ -437,7 +437,13 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
  		});
  		 
  		 function setTotalLabels(checkbox) {
- 			 var labelCount = $(checkbox).parent().next().next().next().next().next().next().html();
+ 			 
+ 			 var labelCount = "";
+ 			 if (isTrial) {
+ 				labelCount = $(checkbox).parent().next().next().next().next().next().next().html();
+ 			 } else {
+ 				labelCount = $(checkbox).parent().next().next().next().next().html();
+ 			 }
  			 var totalCount = $("#totalLabelCount").text();
  			  			 
  			 if (checkbox.checked) {

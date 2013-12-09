@@ -30,7 +30,6 @@ public class SelectedFieldmapList{
                                 row.setStudyId(study.getFieldbookId());
                                 row.setDatasetId(dataset.getDatasetId());
                                 row.setGeolocationId(trial.getGeolocationId());
-                                System.out.println(dataset.getDatasetName());
                                 row.setDatasetName(dataset.getDatasetName());
                                 rows.add(row);
                             }

@@ -10,6 +10,7 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow> {
     private Long repCount;
     private Long entryCount;
     private Long plotCount;
+    private String datasetName;
     
     private Integer studyId;
     private Integer datasetId;
@@ -164,6 +165,22 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow> {
      */
     public void setGeolocationId(Integer geolocationId) {
         this.geolocationId = geolocationId;
+    }
+
+    
+    /**
+     * @return the datasetName
+     */
+    public String getDatasetName() {
+        return datasetName;
+    }
+
+    
+    /**
+     * @param datasetName the datasetName to set
+     */
+    public void setDatasetName(String datasetName) {
+        this.datasetName = datasetName;
     }
 
     @Override

@@ -402,7 +402,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
                 ctr++;
             }
         }
-        this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(this.userFieldmap.getSelectedFieldMaps()));
+        this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(this.userFieldmap.getSelectedFieldMaps(), form.getUserFieldmap().isTrial()));
     }
     
     /* (non-Javadoc)

@@ -12,8 +12,10 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 public class SelectedFieldmapList{
 
     private List<SelectedFieldmapRow> rows = new ArrayList<SelectedFieldmapRow>();
+    
+    private boolean isTrial;
 
-    public SelectedFieldmapList(List<FieldMapInfo> studies) {
+    public SelectedFieldmapList(List<FieldMapInfo> studies, boolean isTrial) {
         if (studies != null && !studies.isEmpty()) {
             for (FieldMapInfo study : studies) {
                 if (study.getDatasets() != null) {
@@ -38,8 +40,17 @@ public class SelectedFieldmapList{
             }
             Collections.sort(rows);
         }
+        
+        setTrial(isTrial);
     }
     
+    public boolean isTrial() {
+        return isTrial;
+    }
+    
+    public void setTrial(boolean isTrial) {
+        this.isTrial = isTrial;
+    }
     
     /**
      * @return the rows
@@ -60,7 +71,11 @@ public class SelectedFieldmapList{
         long total = 0;
         if (this.rows != null && !this.rows.isEmpty()) {
             for (SelectedFieldmapRow row : this.rows) {
-                total += (row.getPlotCount() != null ? row.getPlotCount() : 0);
+                if (isTrial()) {
+                    total += (row.getPlotCount() != null ? row.getPlotCount() : 0);
+                } else {
+                    total += (row.getEntryCount() != null ? row.getEntryCount() : 0);
+                }
             }
         }
         return total;

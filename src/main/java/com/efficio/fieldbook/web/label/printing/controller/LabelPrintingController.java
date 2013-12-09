@@ -158,10 +158,10 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         getUserLabelPrinting().setBarcodeNeeded("1");
         getUserLabelPrinting().setNumberOfLabelPerRow("3");
         
-        getUserLabelPrinting().setFilename(generateDefaultFilename(getUserLabelPrinting(), true));
+        getUserLabelPrinting().setFilename(generateDefaultFilename(getUserLabelPrinting(), userFieldmap.isTrial()));
         form.setUserLabelPrinting(getUserLabelPrinting());
         
-        model.addAttribute("availableFields",getAvailableLabelFields(true, false, locale));
+        model.addAttribute("availableFields",getAvailableLabelFields(userFieldmap.isTrial(), true, locale));
         
         form.setIsTrial(userFieldmap.isTrial());
         

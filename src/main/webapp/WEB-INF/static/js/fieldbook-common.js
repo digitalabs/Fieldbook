@@ -194,7 +194,8 @@ function selectTrialInstance(tableName) {
 	}
 }
 
-function selectTrialInstanceCreate() { 	
+function selectTrialInstanceCreate() {
+	Spinner.toggle();
 	$.ajax({ 
 		url: "/Fieldbook/Fieldmap/enterFieldDetails/selectTrialInstance",
 	    type: "GET",
@@ -205,7 +206,8 @@ function selectTrialInstanceCreate() {
 	    		clearStudyTree();
 	    		isViewFieldmap = false;
 	    		createStudyTree($.parseJSON(data.fieldMapInfo), isViewFieldmap);
-	    		$("#selectTrialInstanceModal").modal("toggle");	    		
+	    		$("#selectTrialInstanceModal").modal("toggle");
+	    		Spinner.toggle();
 	    	}
         }
 	});

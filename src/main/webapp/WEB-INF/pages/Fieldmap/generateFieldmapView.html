@@ -55,6 +55,7 @@ th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" 
 							<th th:text="#{fieldmap.trial.order}">Order</th>
 							<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial}">Trial</th>
 							<th th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery}">Nursery</th>
+							<th th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery.dataset}">Dataset</th>
 							<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.instance}">Instance</th>
 							<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.entry.count}"># of Entries</th>
 							<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.reps.count}"># of Reps</th>
@@ -63,6 +64,7 @@ th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" 
 						<tr th:each="row : *{userFieldmap.selectedFieldmapList.rows}">
 							<td th:text="${row.order}"></td>
 							<td th:text="${row.studyName}"></td>
+							<td th:if="*{userFieldmap.trial == false}" th:text="${row.datasetName}"></td>
 							<td th:if="*{userFieldmap.trial == true}" th:text="${row.trialInstanceNo}"></td>
 							<td th:text="${row.entryCount}"></td>
 							<td th:if="*{userFieldmap.trial == true}" th:text="${row.repCount}"></td>

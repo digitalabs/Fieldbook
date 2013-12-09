@@ -79,6 +79,7 @@ public class ExportExcelServiceImpl implements ExportExcelService{
         String repsCountHeader = messageSource.getMessage("fieldmap.trial.reps.count", null, locale);
         String plotsNeededHeader = messageSource.getMessage("fieldmap.trial.plots.needed", null, locale);
         String totalPlotsHeader = messageSource.getMessage("fieldmap.trial.total.number.of.plots", null, locale);
+        String datasetNameHeader = messageSource.getMessage("fieldmap.nursery.dataset", null, locale);
         
         //  Field And Block Details
         String fieldAndBlockDetailsLabel = messageSource.getMessage("fieldmap.trial.field.and.block.details", null, locale); //FIELD AND BLOCK DETAILS
@@ -192,6 +193,11 @@ public class ExportExcelServiceImpl implements ExportExcelService{
                 headerCell.setCellValue(repsCountHeader);
                 headerCell.setCellStyle(labelStyle);
             }
+            else {
+                headerCell = row.createCell(columnIndex++);
+                headerCell.setCellValue(datasetNameHeader);
+                headerCell.setCellStyle(labelStyle);
+            }
             headerCell = row.createCell(columnIndex++);
             headerCell.setCellValue(plotsNeededHeader);
             headerCell.setCellStyle(labelStyle);
@@ -207,6 +213,7 @@ public class ExportExcelServiceImpl implements ExportExcelService{
                     row.createCell(columnIndex++).setCellValue(rec.getRepCount());
                     row.createCell(columnIndex++).setCellValue(rec.getPlotCount());
                 } else {
+                    row.createCell(columnIndex++).setCellValue(rec.getDatasetName());
                     row.createCell(columnIndex++).setCellValue(rec.getEntryCount());
                 }
             }

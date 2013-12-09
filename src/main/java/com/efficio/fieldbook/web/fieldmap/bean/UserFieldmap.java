@@ -804,7 +804,11 @@ public class UserFieldmap  implements Serializable {
         for (FieldMapInfo info : getSelectedFieldMaps()) {
             for (FieldMapDatasetInfo dataset : info.getDatasets()) {
                 for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
-                    total += trial.getPlotCount();
+                    if (isTrial()) {
+                        total += trial.getPlotCount();
+                    } else {
+                        total += trial.getEntryCount();
+                    }
                 }
             }
         }

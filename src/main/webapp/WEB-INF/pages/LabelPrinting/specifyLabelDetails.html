@@ -86,9 +86,9 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 					</tr>
 					<tr th:each="trialRow : *{userLabelPrinting.fieldMapInfo.datasets[__0__].trialInstances}">
 						<td th:text="${trialRow.trialInstanceNo}"></td>
-						<td th:if="*{isTrial == true}" th:text="${trialRow.entryCount}"></td>
+						<td th:text="${trialRow.entryCount}"></td>
 						<td th:if="*{isTrial == true}" th:text="${trialRow.repCount}"></td>
-						<td th:text="${trialRow.plotCount}"></td>
+						<td th:if="*{isTrial == true}" th:text="${trialRow.plotCount}"></td>
 					</tr>
 				</table>
 			</div>

@@ -988,12 +988,25 @@ function recreateComboAfterUpdate(combo, data) {
 	var index = findIndexOfOntology(suggestions_obj, data);
 	if (index > -1) { //update
 		suggestions_obj[index].description = data.definition;
+		if (combo.indexOf("Property") > -1) {
+			suggestions_obj[index].traitId = data.isAId;
+		}
+		
 	}
 	else { //add
-		suggestions_obj.push({ 'id' : data.id,
-			  'text' : data.name + getOntologySuffix(data.id),
-			  'description' : data.definition
-		});
+		if (combo.indexOf("Property") > -1) {
+			suggestions_obj.push({ 'id' : data.id,
+				  'text' : data.name + getOntologySuffix(data.id),
+				  'description' : data.definition,
+				  'traitId' : data.isAId
+			});
+		}else{
+			suggestions_obj.push({ 'id' : data.id,
+				  'text' : data.name + getOntologySuffix(data.id),
+				  'description' : data.definition
+			});	
+		}
+		
 		suggestions_obj = sortByKey(suggestions_obj, "text");
 	}
 	

@@ -446,6 +446,33 @@ function loadOntologyCombos(){
 	initializeVariable(scaleSuggestions, scaleSuggestions_obj, "definition", "Scale", false);
 }		
 
+function loadTraitOntologyCombos(){
+	//re create combos	
+	traitClassesSuggestions_obj.push({ 'id' : 0,
+		  'text' : "-- All --",
+		  'description' : "All",
+	});  
+	//initialize main tree
+	initializeVariable(traitClassesSuggestions, traitClassesSuggestions_obj, "description", "TraitClass", false);
+	//initialize main tree
+	loadTraitClassTree("traitClassBrowserTree", "comboTraitClass", "traitClassDescription", treeClassData, 'comboTraitClass');
+	
+	
+	//initializeVariable(traitClassesSuggestions, traitClassesSuggestions_obj, "definition", "ManageTraitClass", true);
+	//initializeVariable(traitClassesSuggestions, traitClassesSuggestions_obj, "definition", "ManageParentTraitClass", false);
+	//loadTraitClassTree("manageParentTraitClassBrowserTree", "comboManageParentTraitClass", "manageParentTraitClassDescription", treeClassData, "comboManageParentTraitClass");
+	//loadTraitClassTree("managePropTraitClassBrowserTree", "comboManagePropTraitClass", "managePropTraitClassDescription", treeClassData, "comboManagePropTraitClass");
+	/*
+	$("#comboManageParentTraitClass").on("change", function() {
+		filterPropertyCombo("manageParentTraitClassBrowserTree", "comboManageParentTraitClass", "manageParentTraitClassDescription", 
+				$("#comboManageParentTraitClass").val(), true);
+	});
+	*/
+	$("#traitClassBrowserTree").dynatree("getTree").reload();
+	//$("#manageParentTraitClassBrowserTree").dynatree("getTree").reload();
+
+}
+
 function clearFields() {
 	$(".form-control").val("");
 	$(".select2").select2("val", "");
@@ -1105,7 +1132,27 @@ function deleteOntology(combo) {
 		    success: function(data){
 		    	//alert(data.errorMessage);
 			    if (data.status == "1") {
-		    		recreateComboAfterDelete(combo, formData);
+			    	
+			    	if(combo == 'ManageTraitClass'){
+			    		var chosendRecord = $("#comboTraitClass").select2("data");
+			    		traitClassesSuggestions = data.traitClassesSuggestionList;
+						traitClassesSuggestions_obj = [];
+						treeClassData = data.traitClassTreeData;
+			    		
+						loadTraitOntologyCombos();
+						if($("#" + "combo" + (combo) ).select2('data').id == chosendRecord.id){
+							filterPropertyCombo(treeDivId, "comboTraitClass", "traitClassDescription", 0, true);
+						}else{
+						//we set it again
+							$("#comboTraitClass").select2('data', chosendRecord);
+							filterPropertyCombo(treeDivId, "comboTraitClass", "traitClassDescription", $("#comboTraitClass").select2("data").id, true);
+			    		}
+			    	}else{
+			    		recreateComboAfterDelete(combo, formData);	
+			    	}
+			    	
+			    	
+		    		
 		    		showSuccessMessageInModal(data.successMessage);
 		    		//remove the list
 		    		$("#" + lowerCaseFirstLetter(combo) + "NameText").html("");

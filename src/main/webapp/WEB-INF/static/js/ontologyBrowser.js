@@ -556,9 +556,9 @@ function hideSuccessMessage(){
 
 //check if any of the required fields is empty
 function requiredFieldsEmpty() {
-	return $("#variableName").val() == "" || $("#dataType").val() == "" || $("#role").val() == "" || 
-	$("#comboTraitClass").val() == "" || $("#comboProperty").val() == "" || 
-	$("#comboMethod").val() == "" || $("#comboScale").val() == "";
+	return $("#comboVariableName").select2("data") == null || $("#dataType").val() == "" || $("#role").val() == "" || 
+	$("#comboTraitClass").select2("data") == null || $("#comboProperty").select2("data") == null || 
+	$("#comboMethod").select2("data") == null || $("#comboScale").select2("data") == null;
 }
 
 //check if the values selected in the combo is a new entry

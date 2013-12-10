@@ -250,9 +250,9 @@
 	<div class="row">
 		<div class="col-xs-pull-12 col-md-pull-12 pull-right">
 		<button type="submit" id="addVariable" th:value="#{common.form.add.text}" class="btn btn-primary" 
-      		th:text="#{common.form.add.text}">.Add</button>    
+      		th:text="#{common.form.add.text}" onClick="setDeleteOperation(0);">.Add</button>    
       		<button type="submit" id="updateVariable" th:value="#{common.form.update.text}" class="btn btn-primary" 
-      		th:text="#{common.form.update.text}">.Update</button>    
+      		th:text="#{common.form.update.text}" onClick="setDeleteOperation(2);">.Update</button>    
       		<button type="submit" id="deleteVariable" th:value="#{common.form.delete.text}" class="btn btn-danger" 
       		th:text="#{common.form.delete.text}" onClick="setDeleteOperation(1);">.Delete</button>
       		<a href="/OntologyBrowser/main.html" th:href="@{/OntologyBrowser/}" class="btn btn-primary btn-md" th:text="#{common.form.back.text}">.Back</a>          		

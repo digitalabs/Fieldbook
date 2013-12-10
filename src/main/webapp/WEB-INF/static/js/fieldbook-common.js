@@ -207,9 +207,11 @@ function selectTrialInstanceCreate() {
 	    		isViewFieldmap = false;
 	    		createStudyTree($.parseJSON(data.fieldMapInfo), isViewFieldmap);
 	    		$("#selectTrialInstanceModal").modal("toggle");
-	    		Spinner.toggle();
 	    	}
-        }
+        },
+        complete: function(){ 
+ 		   Spinner.toggle();
+ 	    } 
 	});
 }
 

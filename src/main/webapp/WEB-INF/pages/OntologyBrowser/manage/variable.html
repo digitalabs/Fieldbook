@@ -380,7 +380,21 @@
 		    	showMessage(message);
 		    	return false;
 		    }
+		    
+		    if (parseInt($("#comboVariableName").select2('data').id) > 0) {
+    			message = /*[[#{ontology.browser.cannot.update.central.variable}]]*/;
+    			showMessage(message);
+    			return false;
+    		}
+		    
 		    $("#enumerations").val(JSON.stringify(enumerations));
+    	} else if ($("#isDelete").val() == 1) {
+    		if (parseInt($("#comboVariableName").select2('data').id) > 0) {
+    			var variableName = $("#comboVariableName").select2('data').text.replace(" (Shared)", "");
+    			message = /*[[#{ontology.browser.cannot.delete.central.variable}]]*/;
+    			showMessage(message.replace("{0}", variableName));
+    			return false;
+    		}
     	}
 	    return true;
     }

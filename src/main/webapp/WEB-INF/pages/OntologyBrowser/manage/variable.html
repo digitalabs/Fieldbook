@@ -1,4 +1,4 @@
-<div class="col-md-12" xmlns:th="http://www.thymeleaf.org">
+<div class="col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org">
 	<div class="page-header">
 		<h1 th:text="#{ontology.browser.button.manage.variable}">
 			Manage Variable 
@@ -13,18 +13,18 @@
 	<form id="manageVariable" role="form-horizontal" onsubmit="return do_validation()"  class="form-horizontal" action="#" 
 	    th:action="@{/OntologyManager/manage/variable}" method="post" enctype="multipart/form-data" th:object="${ontologyBrowserForm}">
 	<div class="row">
-		<div class="col-md-12">	
+		<div class="col-xs-12 col-md-12">	
 			<h3 th:text="#{ontology.browser.manager.header.variable.details}">Variable Details:</h3>			 
 		</div>
 	</div>	
 
 	<div class="row">
-		<div class="col-md-6">	
+		<div class="col-xs-6 col-md-6">	
 			<div class="form-group">
-					<div class="col-md-4">
+					<div class="col-xs-4 col-md-4">
          			<label for="variableName" th:text="#{ontology.browser.modal.variable.name} + ': *'">Name:</label>
          			</div>
-                     <div class="col-md-6">
+                     <div class="col-xs-6 col-md-6">
                      	
                      	<input id="comboVariableName" type="hidden" th:field="*{variableName}" class="form-control select2" placeholder=""/>
    				        <input type="hidden" th:field="*{variableId}" />
@@ -33,30 +33,30 @@
                      </div>
             </div>
 			<div class="form-group">
-				<div class="col-md-4">
+				<div class="col-xs-4 col-md-4">
           			<label for="variableDescription" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
           			</div>
-          			<div class="col-md-6">
+          			<div class="col-xs-6 col-md-6">
                        <textarea th:field="*{variableDescription}" class="form-control" size="10"> </textarea>
                    </div>
 			</div>	
 								
 					
 			<div class="form-group">
-				<div class="col-md-4">
+				<div class="col-xs-4 col-md-4">
           			<label for="cropOntologyId" th:text="#{ontology.browser.modal.crop.ontology.id} + ':'">Crop Ontology ID:</label>
        			</div>
-                <div class="col-md-6">
+                <div class="col-xs-6 col-md-6">
                     <input type="text" th:field="*{cropOntologyId}" class="form-control"/>
                 </div>
             </div> 
 		</div>
-		<div class="col-md-6">	
+		<div class="col-xs-6 col-md-6">	
 			<div class="form-group">
-				<div class="col-md-4">
-				<label for="role" class="col-md-12 control-label" th:text="#{ontology.browser.modal.role} + ': *'">Role:</label>
+				<div class="col-xs-4 col-md-4">
+				<label for="role" class="col-xs-12 col-md-12 control-label" th:text="#{ontology.browser.modal.role} + ': *'">Role:</label>
 				</div>
-				<div class="col-md-6">
+				<div class="col-xs-6 col-md-6">
 					<select class="form-control" th:field="*{role}">
                       		<option value="">Select</option>
                       		<option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.name}"/>
@@ -64,10 +64,10 @@
 				</div>
 			</div>
 			<div class="form-group">
-				<div class="col-md-4">
-				<label for="dataType" class="col-md-12 control-label" th:text="#{ontology.browser.modal.data.type} + ': *'">Data Type:</label>
+				<div class="col-xs-4 col-md-4">
+				<label for="dataType" class="col-xs-12 col-md-12 control-label" th:text="#{ontology.browser.modal.data.type} + ': *'">Data Type:</label>
 				</div>
-				<div class="col-md-6">
+				<div class="col-xs-6 col-md-6">
 					<select class="form-control" th:field="*{dataType}" onchange="showValidValues()">
                     	<option value="">Select</option>
                      	<option th:each="type : ${dataTypes}" th:value="${type.id}" th:text="${type.name}"/>
@@ -75,49 +75,49 @@
 				</div>
 			</div>
 			<div class="form-group" id="validValueNone">
-				<div class="col-md-4">
+				<div class="col-xs-4 col-md-4">
 					<label for="role" class="col-md-12 control-label" th:text="#{ontology.browser.modal.valid.value} + ':'">.Valid Values:</label>
 				</div>
 			</div>	
 			<div class="form-group" id="validValueMin">
-				<div class="col-md-4">
-					<label for="role" class="col-md-12 control-label" th:text="#{ontology.browser.modal.valid.value} + ':'">.Valid Values:</label>
+				<div class="col-xs-4 col-md-4">
+					<label for="role" class="col-xs-12 col-md-12 control-label" th:text="#{ontology.browser.modal.valid.value} + ':'">.Valid Values:</label>
 				</div>
-				<div class="col-md-6">
+				<div class="col-xs-6 col-md-6">
 					<input type="text" class="form-control" th:field="*{minValue}" />
 				</div>
-				<div class="col-md-2">
+				<div class="col-xs-2 col-md-2">
 					<label class="control-label">Minimum</label>
 				</div>
 			</div>
 			<div class="form-group" id="validValueMax">
-				<div class="col-md-4">
+				<div class="col-xs-4 col-md-4">
 				</div>
-				<div class="col-md-6">
+				<div class="col-xs-6 col-md-6">
 					<input type="text" class="form-control" th:field="*{maxValue}" />
 				</div>
-				<div class="col-md-2">
+				<div class="col-xs-2 col-md-2">
 					<label class="control-label">Maximum</label>
 				</div>
 			</div>		
 			<div class="form-group" id="validValueAddCatVar">
-				<div class="col-md-4">
-					<label for="role" class="col-md-12 control-label" th:text="#{ontology.browser.modal.valid.value} + ':'">.Valid Values:</label>
+				<div class="col-xs-4 col-md-4">
+					<label for="role" class="col-xs-12 col-md-12 control-label" th:text="#{ontology.browser.modal.valid.value} + ':'">.Valid Values:</label>
 				</div>
-				<div class="col-md-2">
-					<input type="text" class="col-md-12 form-control" id="newValidValueLabel" />
+				<div class="col-xs-4 col-md-2">
+					<input type="text" class="col-xs-12 col-md-12 form-control" id="newValidValueLabel" />
 				</div>
-				<div class="col-md-4">
-					<input type="text" class="col-md-12 form-control" id="newValidValueDesc" />
+				<div class="col-xs-4 col-md-4">
+					<input type="text" class="col-xs-12 col-md-12 form-control" id="newValidValueDesc" />
 				</div>
-				<div class="col-md-2">
+				<div class="col-xs-2 col-md-2">
 					<input type="button" class="btn btn-default" value="Add Value" onClick="addCatVar($('#newValidValueLabel').val(), $('#newValidValueDesc').val(), null)" />
 				</div>
 			</div>
 			<div class="form-group" id="validValueDelCatVar">
-				<div class="col-md-4">
+				<div class="col-xs-4 col-md-4">
 				</div>
-				<div class="col-md-8">
+				<div class="col-xs-8 col-md-8">
 					<input type="hidden" th:field="*{enumerations}" />
 					<table class="table table-striped table-bordered" id="catVarList">
 						<tbody>
@@ -130,60 +130,60 @@
 	
 	
 	<div class="row">
-		<div class="col-md-12">	
+		<div class="col-xs-12 col-md-12">	
 			<h3 th:text="#{ontology.browser.manager.header.properties.trait}">Properties and Trait Classes:</h3>			 
 		</div>
 	</div>	
 	
 	<div class="row">
-		<div class="col-md-6">	
+		<div class="col-xs-6 col-md-6">	
 			<div class="form-group">
-				<div class="col-md-4">
+				<div class="col-xs-4 col-md-4">
 				<label for="traitClass">Filter for Trait Class:</label>
 				</div>
-				<div class="col-md-6">
+				<div class="col-xs-6 col-md-6">
 					<input id="comboTraitClass" type="hidden" th:field="*{traitClass}"  class="form-control  input-medium  select2" placeholder=""/>                   	
 				</div>
-				<div class="col-md-2">
+				<div class="col-xs-2 col-md-2">
 					<input type="button" class="btn btn-default btn-log" onClick="loadOntologyModal('traitClass')" value="Manage"/>
 				</div>
 			</div>	
 			<div class="form-group">
-				<div class="col-md-4">
+				<div class="col-xs-4 col-md-4">
                	<label for="traitClassDescription" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
                	</div>
-                  <div class="col-md-6">
+                  <div class="col-xs-6 col-md-6">
                   	<textarea disabled="true"  type="text" th:field="*{traitClassDescription}" class="form-control" size="10"> </textarea>
                   </div>
             </div>
             <div class="form-group">
 			
-				<div class="col-md-4">
+				<div class="col-xs-4 col-md-4">
                		<label for="traitClass">Trait Class Tree View:</label>
                	</div>
-				<div class="col-md-6" id="traitClassBrowserTree" style="height:200px; overflow:auto;">
+				<div class="col-xs-6 col-md-6" id="traitClassBrowserTree" style="height:200px; overflow:auto;">
 				
 				</div>
 			</div>		 
 		</div>
-		<div class="col-md-6">	
+		<div class="col-xs-6 col-md-6">	
 			<div class="form-group">
-				<div class="col-md-4">
-				<label for="traitClass" class="col-md-12 control-label" th:text="#{ontology.browser.modal.property} + ': *'">Property:*</label>
+				<div class="col-xs-4 col-md-4">
+				<label for="traitClass" class="col-xs-12 col-md-12 control-label" th:text="#{ontology.browser.modal.property} + ': *'">Property:*</label>
 				</div>
-				<div class="col-md-6">
+				<div class="col-xs-6 col-md-6">
 					<input id="comboProperty" type="hidden" th:field="*{property}" class="form-control select2" placeholder=""/>
                    	
 				</div>
-				<div class="col-md-2">
+				<div class="col-xs-2 col-md-2">
 					<input type="button" class="btn btn-default btn-log" onClick="loadOntologyModal('property')" value="Manage"/>
 				</div>
 			</div>	
 			<div class="form-group">
-				<div class="col-md-4">
-               	<label for="propertyDescription" class="col-md-12 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
+				<div class="col-xs-4 col-md-4">
+               	<label for="propertyDescription" class="col-xs-12 col-md-12 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
                	</div>
-                  <div class="col-md-6">
+                  <div class="col-xs-6 col-md-6">
                   	<textarea disabled="true"  type="text" th:field="*{propertyDescription}" class="form-control" size="10"> </textarea>
                   </div>
             </div>			 
@@ -195,52 +195,52 @@
 	</div>	
 	
 	<div class="row">
-		<div class="col-md-12">	
+		<div class="col-xs-12 col-md-12">	
 			<h3 th:text="#{ontology.browser.manager.header.method.scales}">Methods and Scales:</h3>			 
 		</div>
 	</div>	
 	
 	
 	<div class="row">
-		<div class="col-md-6">	
+		<div class="col-xs-6 col-md-6">	
 			<div class="form-group">
-				<div class="col-md-4">
+				<div class="col-xs-4 col-md-4">
 				<label for="method" th:text="#{ontology.browser.modal.method} + ': *'">Method:</label>
 				</div>
-				<div class="col-md-6">
+				<div class="col-xs-6 col-md-6">
 					<input id="comboMethod" type="hidden" th:field="*{method}" class="form-control select2" placeholder=""  />
                    	
 				</div>
-				<div class="col-md-2">
+				<div class="col-xs-2 col-md-2">
 					<input type="button" class="btn btn-default btn-log" onClick="loadOntologyModal('method')" value="Manage"/>
 				</div>
 			</div>	
 			<div class="form-group">
-				<div class="col-md-4">
+				<div class="col-xs-4 col-md-4">
                	<label for="methodDescription" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
                	</div>
-                  <div class="col-md-6">
+                  <div class="col-xs-6 col-md-6">
                   	<textarea disabled="true"  type="text" th:field="*{methodDescription}" class="form-control" size="10"> </textarea>
                   </div>
             </div>		 
 		</div>
-		<div class="col-md-6">	
+		<div class="col-xs-6 col-md-6">	
 			<div class="form-group">
-				<div class="col-md-4">
-				<label for="traitClass" class="col-md-12 control-label" th:text="#{ontology.browser.modal.scale} + ': *'">Scale:*</label>
+				<div class="col-xs-4 col-md-4">
+				<label for="traitClass" class="col-xs-12 col-md-12 control-label" th:text="#{ontology.browser.modal.scale} + ': *'">Scale:*</label>
 				</div>
-				<div class="col-md-6">					
+				<div class="col-xs-6 col-md-6">					
                    	<input id="comboScale" type="hidden" th:field="*{scale}" class="form-control select2" placeholder=""/>
 				</div>
-				<div class="col-md-2">
+				<div class="col-xs-2 col-md-2">
 					<input type="button" class="btn btn-default btn-log" onClick="loadOntologyModal('scale')" value="Manage"/>
 				</div>
 			</div>	
 			<div class="form-group">
-				<div class="col-md-4">
-               	<label for="propertyDescription" class="col-md-12 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
+				<div class="col-xs-4 col-md-4">
+               	<label for="propertyDescription" class="col-xs-12 col-md-12 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
                	</div>
-                  <div class="col-md-6">
+                  <div class="col-xs-6 col-md-6">
                   	<textarea disabled="true"  type="text" th:field="*{scaleDescription}" class="form-control" size="10"> </textarea>
                   </div>
             </div>			 
@@ -248,7 +248,7 @@
 	</div>	
 	
 	<div class="row">
-		<div class="col-md-pull-12 pull-right">
+		<div class="col-xs-pull-12 col-md-pull-12 pull-right">
 		<button type="submit" id="addVariable" th:value="#{common.form.add.text}" class="btn btn-primary" 
       		th:text="#{common.form.add.text}">.Add</button>    
       		<button type="submit" id="updateVariable" th:value="#{common.form.update.text}" class="btn btn-primary" 

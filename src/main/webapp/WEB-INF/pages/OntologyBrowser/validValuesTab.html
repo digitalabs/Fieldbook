@@ -9,14 +9,14 @@
 			</div>
 			<div th:unless="*{constraints == null}">
  				<div class="form-group">
-					<label class="col-lg-8 control-label" th:text="#{ontology.browser.validValuesTab.minValue} + ':'">Minimum Value:</label>
-					<div class="col-lg-2">
+					<label class="col-xs-8 col-lg-8 control-label" th:text="#{ontology.browser.validValuesTab.minValue} + ':'">Minimum Value:</label>
+					<div class="col-xs-2 col-lg-2">
 						<p class="form-control-static" th:text="*{constraints.minValue}">.0</p>
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-lg-8 control-label" th:text="#{ontology.browser.validValuesTab.maxValue} + ':'">Maximum Value:</label>
-					<div class="col-lg-2">
+					<label class="col-xs-8 col-lg-8 control-label" th:text="#{ontology.browser.validValuesTab.maxValue} + ':'">Maximum Value:</label>
+					<div class="col-xs-2 col-lg-2">
 						<p  class="form-control-static" th:text="*{constraints.maxValue}">.0</p>
 					</div>
 				</div>

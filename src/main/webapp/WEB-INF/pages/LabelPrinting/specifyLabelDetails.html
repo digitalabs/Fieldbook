@@ -1,4 +1,4 @@
-<div class="col-md-12" xmlns:th="http://www.thymeleaf.org">
+<div class="col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org">
 
 
 	<div class="page-header">
@@ -8,18 +8,18 @@
 	</div>			  
 </div>
 <div class="row">
-	<div class="col-md-3">
+	<div class="col-xs-3 col-md-3">
 		<span style="font-weight: bold; font-size: 18px">Create Labels</span>
 	</div>
-	<div class="col-md-3">
+	<div class="col-xs-3 col-md-3">
 		<span style="font-weight: bold; font-size: 16px">1. SPECIFY LABEL DETAILS</span>
 	</div>
 	<!-- 
-	<div class="col-md-3">		
+	<div class="col-xs-3 col-md-3">		
 		<span>2. GENERATE LABELS</span>
 	</div>
 	 -->
-	<div class="col-md-6">
+	<div class="col-xs-6 col-md-6">
 		&nbsp;
 	</div>
 </div>
@@ -33,52 +33,52 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 <div class="row" style="border: 1px solid #333333">
 	<div class="row">&nbsp;</div>
 	<div class="row">
-		<div class="col-md-12">
+		<div class="col-xs-12 col-md-12">
 			<div class="form-group">
-				<div class="col-md-12" id="page-message"></div>
+				<div class="col-xs-12 col-md-12" id="page-message"></div>
 			</div>
 		</div>
 	</div>
 	
 	<div class="row" th:if="*{userLabelPrinting.fieldMapInfoList == null}">
-		<div class="col-md-6" >
+		<div class="col-xs-6 col-md-6" >
 			<div class="form-group">
-				<div class="col-md-12">
+				<div class="col-xs-12 col-md-12">
 					<label class="control-label" th:if="*{isTrial == true}" th:text="#{label.printing.selected.trial}">SELECTED TRIAL</label>
 					<label class="control-label" th:if="*{isTrial == false}" th:text="#{label.printing.selected.nursery}">SELECTED NURSERY</label>
 				</div>
 			</div>
 			<div class="form-group">
-				<div class="col-md-12">
+				<div class="col-xs-12 col-md-12">
 					<label class="control-label" th:if="*{isTrial == true}" th:text="#{label.printing.trial.name}+':'"></label>
 					<label class="control-label" th:if="*{isTrial == false}" th:text="#{label.printing.nursery.name}+':'"></label>
 					<span th:text="*{userLabelPrinting.name}">Trial Name</span>
 				</div>		
 			</div>
 			<div class="form-group">
-				<div class="col-md-12">
+				<div class="col-xs-12 col-md-12">
 					<label class="control-label" th:text="#{label.printing.title}+':'"></label>
 					<span th:text="*{userLabelPrinting.title}">Title</span>
 				</div>		
 			</div>
 			<div class="form-group">
-				<div class="col-md-12">
+				<div class="col-xs-12 col-md-12">
 					<label class="control-label" th:text="#{label.printing.objective}+':'"></label>
 					<span th:text="*{userLabelPrinting.objective}">Objective</span>
 				</div>		
 			</div>
 			<div class="form-group" th:if="*{isTrial == true}">
-				<div class="col-md-12">
+				<div class="col-xs-12 col-md-12">
 					<label class="control-label" th:text="#{label.printing.number.of.instances}+':'"></label>
 					<span th:text="*{userLabelPrinting.numberOfInstances}">1</span>
 				</div>		
 			</div>
 		</div>
-		<div class="col-md-6" th:unless="*{#lists.isEmpty(userLabelPrinting.fieldMapInfo)}">
-			<div class="col-md-12">
+		<div class="col-xs-6 col-md-6" th:unless="*{#lists.isEmpty(userLabelPrinting.fieldMapInfo)}">
+			<div class="col-xs-12 col-md-12">
 				<label class="control-label" th:text="#{label.printing.summary.of.labels.needed}">SUMMARY OF LABELS NEEDED</label>
 			</div>
-			<div class="col-md-12">
+			<div class="col-xs-12 col-md-12">
 				<table class="table table-bordered">
 					<tr>
 						<th th:text="#{fieldmap.trial.instance}">Instance</th>
@@ -95,21 +95,21 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 					</tr>
 				</table>
 			</div>
-			<div class="col-md-12" align="right" th:if="*{isTrial == true}">
+			<div class="col-xs-12 col-md-12" align="right" th:if="*{isTrial == true}">
 				<label class="control-label" th:text="#{label.printing.total.number.of.labels} + ':'"> Total # of Labels to Print: </label> &nbsp; 
 				<span th:text="*{userLabelPrinting.totalNumberOfLabelToPrint}"></span>
 			</div>
 		</div>
 	</div>
 	<div class="row" th:if="*{userLabelPrinting.fieldMapInfoList}">
-		<div class="col-md-12" >
+		<div class="col-xs-12 col-md-12" >
 			<div class="form-group">
-				<div class="col-md-12">
+				<div class="col-xs-12 col-md-12">
 					<label class="control-label" th:text="#{label.printing.summary.of.labels.needed}">SUMMARY OF LABELS NEEDED</label>
 				</div>
 			</div>
 			<div class="form-group">
-				<div class="col-md-12">
+				<div class="col-xs-12 col-md-12">
 					<input type="hidden" th:field="*{userLabelPrinting.order}" />
 					<table class="table table-bordered" id="selectedTrials">
 						<tr>
@@ -144,7 +144,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 				</div>
 			</div>
 			<div class="form-group">
-				<div class="col-md-12">
+				<div class="col-xs-12 col-md-12">
 					<label class="control-label" th:text="#{label.printing.total.number.of.labels}+':'"></label>
 					<span id="totalLabelCount">0</span>
 					<input type="hidden" th:value="*{userLabelPrinting.totalNumberOfLabelToPrint}" /> 
@@ -153,26 +153,26 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-md-12" >
+		<div class="col-xs-12 col-md-12" >
 			<div class="form-group">
-				<div class="col-md-12">
+				<div class="col-xs-12 col-md-12">
 					<label class="control-label" th:text="#{label.printing.specify.label.stock}"></label>
 				</div>		
 			</div>
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-md-6" >
+		<div class="col-xs-6 col-md-6" >
 			<div class="form-group">
-				<div class="col-md-12">
+				<div class="col-xs-12 col-md-12">
 					<label class="control-label" th:text="#{label.printing.enter.specs.for.label}"></label>
 				</div>		
 			</div>
 			<div class="row form-group">
-				<div class="col-md-7">
+				<div class="col-xs-7 col-md-7">
 					&nbsp;&nbsp;&nbsp;<label class="control-label" th:text="#{label.printing.size.of.label.sheet}+':'"></label>
 				</div>
-				<div class="col-md-5">
+				<div class="col-xs-5 col-md-5">
 					<select th:field="*{userLabelPrinting.sizeOfLabelSheet}" class="form-control">
 					  <option value="1" th:text="#{label.printing.label.size.a4}">A4</option>
 					  <option value="2" th:text="#{label.printing.label.size.letter}">Letter</option>					  
@@ -195,10 +195,10 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 			 -->
 			 
 			<div class="row form-group">
-				<div class="col-md-7">
+				<div class="col-xs-7 col-md-7">
 					&nbsp;&nbsp;&nbsp;<label class="control-label" th:text="#{label.printing.number.of.rows.per.page}+':'"></label>					
 				</div>		
-				<div class="col-md-5">
+				<div class="col-xs-5 col-md-5">
 					<select th:field="*{userLabelPrinting.numberOfRowsPerPageOfLabel}" class="form-control">
 					  <option value="7">7</option>
 					  <option value="8">8</option>
@@ -208,32 +208,32 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 				</div>
 			</div>
 		</div>
-		<div class="col-md-6" >
+		<div class="col-xs-6 col-md-6" >
 			<div class="form-group">
-			<div class="col-md-12">&nbsp;</div>
-				<div class="col-md-12">
+			<div class="col-xs-12 col-md-12">&nbsp;</div>
+				<div class="col-xs-12 col-md-12">
 					<em th:text="#{label.printing.specify.label.details.message}"></em>
 				</div>		
 			</div>
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-md-12" >
+		<div class="col-xs-12 col-md-12" >
 			<div class="form-group">
-				<div class="col-md-6">
+				<div class="col-xs-6 col-md-6">
 					<label class="control-label" th:text="#{label.printing.choose.label.fields}">CHOOSE LABEL FIELDS</label>
 				</div>	
-				<div class="col-md-6">
+				<div class="col-xs-6 col-md-6">
 					<label class="control-label" th:text="#{label.printing.barcode.options}">BARCODE OPTIONS</label>
 				</div>		
 			</div>
 		</div>
-		<div class="col-md-12" >
+		<div class="col-xs-12 col-md-12" >
 			<div class="form-group">
-				<div class="col-md-6">
+				<div class="col-xs-6 col-md-6">
 					<label class="control-label" th:text="#{label.printing.choose.option.fields}">Choose up to six fields you would like printed on your labels.</label>
 				</div>	
-				<div class="col-md-6">
+				<div class="col-xs-6 col-md-6">
 					<label class="control-label" th:text="#{label.printing.do.you.need.bar.codes}">Do you need barcodes on your labels?</label>
 					&nbsp;&nbsp;&nbsp;
 					<label class="radio-inline">
@@ -249,11 +249,11 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 		</div>
 	</div>
 	<div class="row">	
-		<div class="col-md-12" >
+		<div class="col-xs-12 col-md-12" >
 			<div class="form-group">
-				<div class="col-md-6">
-					<div class="col-md-3">&nbsp;</div>
-					<div class="col-md-6">
+				<div class="col-xs-6 col-md-6">
+					<div class="col-xs-3 col-md-3">&nbsp;</div>
+					<div class="col-xs-6 col-md-6">
 					
 						<ul class="list-group" >
 					      <li class="list-group-item"><label class="control-label" th:text="#{label.printing.available.fields}">Available Fields</label></li>
@@ -264,9 +264,9 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 								
 								 			
 					</div>
-					<div class="col-md-3">&nbsp;</div>
+					<div class="col-xs-3 col-md-3">&nbsp;</div>
 					
-					<div class="col-md-6">
+					<div class="col-xs-6 col-md-6">
 					<br />
 						<ul class="list-group" >
 					      <li class="list-group-item"><label class="control-label" th:text="#{label.printing.left.selected.fields}">Selected Fields</label></li>
@@ -278,7 +278,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 																				
 					</div>
 					
-					<div class="col-md-6">
+					<div class="col-xs-6 col-md-6">
 					<br />
 						<ul class="list-group" >
 					      <li class="list-group-item"><label class="control-label" th:text="#{label.printing.right.selected.fields}">Selected Fields</label></li>
@@ -295,65 +295,65 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 				</div>
 			</div>
 			<div class="form-group">
-				<div class="col-md-6">
+				<div class="col-xs-6 col-md-6">
 					<label class="control-label" th:utext="#{label.printing.bar.code.note}">.</label>
 				</div>
 				
-				<div class="col-md-6">
+				<div class="col-xs-6 col-md-6">
 					&nbsp;
 				</div>	
-				<div class="col-md-2">
+				<div class="col-xs-2 col-md-2">
 					<label class="control-label" th:text="#{label.printing.first.bar.code.field}+':'"></label>
 				</div>	
-				<div class="col-md-3">
+				<div class="col-xs-3 col-md-3">
 					<select th:field="*{userLabelPrinting.firstBarcodeField}" class="form-control">
 					  <option value="" th:text="#{label.printing.bar.code.please.choose.field}">Please choose</option>
 					  <option th:each="fields: ${availableFields}" th:text="${fields.name}" th:value="${fields.id}">8</option>
 					</select>
 				</div>
-				<div class="col-md-1">
+				<div class="col-xs-1 col-md-1">
 					&nbsp;
 				</div>
-				<div class="col-md-6">
+				<div class="col-xs-6 col-md-6">
 					&nbsp;
 				</div>
-				<div class="col-md-2">
+				<div class="col-xs-2 col-md-2">
 					<label class="control-label" th:text="#{label.printing.second.bar.code.field}+':'"></label>
 				</div>	
-				<div class="col-md-3">
+				<div class="col-xs-3 col-md-3">
 					<select th:field="*{userLabelPrinting.secondBarcodeField}" class="form-control">
 					  <option value="" th:text="#{label.printing.bar.code.please.choose.field}">Please choose</option>
 					  <option th:each="fields: ${availableFields}" th:text="${fields.name}" th:value="${fields.id}">8</option>					  					 
 					</select>
 				</div>
-				<div class="col-md-1">
+				<div class="col-xs-1 col-md-1">
 					&nbsp;
 				</div>
-				<div class="col-md-6">
+				<div class="col-xs-6 col-md-6">
 					&nbsp;
 				</div>
-				<div class="col-md-2">
+				<div class="col-xs-2 col-md-2">
 					<label class="control-label" th:text="#{label.printing.third.bar.code.field}+':'"></label>
 				</div>	
-				<div class="col-md-3">
+				<div class="col-xs-3 col-md-3">
 					<select th:field="*{userLabelPrinting.thirdBarcodeField}" class="form-control">
 					  <option value="" th:text="#{label.printing.bar.code.please.choose.field}">Please choose</option>
 					  <option th:each="fields: ${availableFields}" th:text="${fields.name}" th:value="${fields.id}">8</option>					  					 
 					</select>
 				</div>
-				<div class="col-md-1">
+				<div class="col-xs-1 col-md-1">
 					&nbsp;
 				</div>
 				
-				<div class="col-md-6">
+				<div class="col-xs-6 col-md-6">
 					&nbsp;
 				</div>
 				
-				<div class="col-md-3">
+				<div class="col-xs-3 col-md-3">
 					<!-- <input type="button" onclick="javascript: validateEnterLabelFieldsPage();" value="Preview" class="btn btn-primary btn-lg"/> -->
 				</div>	
 				
-				<div class="col-md-6">
+				<div class="col-xs-6 col-md-6">
 					&nbsp;
 				</div>
 			</div>
@@ -361,24 +361,24 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 	</div>
 	
 	<div class="row">
-		<div class="col-md-12">
+		<div class="col-xs-12 col-md-12">
 			&nbsp;
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-md-12">
+		<div class="col-xs-12 col-md-12">
 			<div class="form-group">
-				<div class="col-md-12">
+				<div class="col-xs-12 col-md-12">
 					<label class="control-label" th:text="#{label.printing.set.the.filename}"></label>
 				</div>		
 			</div>
 		</div>
-		<div class="col-md-12" >
+		<div class="col-xs-12 col-md-12" >
 			<div class="form-group">
-				<div class="col-md-1">
+				<div class="col-xs-1 col-md-1">
 					<label class="control-label" th:text="#{label.printing.filename}+':'"></label>					
 				</div>		
-				<div class="col-md-5">
+				<div class="col-xs-5 col-md-5">
 					<input type="text" class="form-control"  th:field="*{userLabelPrinting.filename}" placeholder="Filename"/>					
 				</div>
 			</div>
@@ -393,12 +393,14 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 	
 	<div class="form-group">&nbsp;</div>
 	<div class="form-group">
-	    <div class="col-md-offset-4 col-md-8">
+	    <div class="col-xs-3 col-md-4 ">&nbsp;</div>
+	    <div class="col-xs-7 col-md-8">
 	      <input type="button" onclick="javascript: window.history.back();"  value="Cancel" class="btn btn-default btn-lg"/>
 	      <input type="button" onclick="javascript: validateEnterLabelFieldsPage(1);" value="Generate Labels" th:value="#{common.form.generate.label.text}" class="btn btn-primary btn-lg"/>
 	      <input type="button" onclick="javascript: validateEnterLabelFieldsPage(2);" value="Export Label Data" th:value="#{common.form.export.label.text}" class="btn btn-primary btn-lg"/>
 	      
 	    </div>
+	    <div class="col-xs-12">&nbsp;</div>
 	  </div>
 	<div class="form-group">&nbsp;</div>
 </div>

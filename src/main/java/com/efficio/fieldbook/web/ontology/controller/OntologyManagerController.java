@@ -993,6 +993,21 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                         ((OntologyTraitClassForm) form).getManageTraitClassName(), 
                         desc, 
                         ((OntologyTraitClassForm) form).getManageParentTraitClassId()));
+
+                List<TraitClassReference> traitRefList = (List<TraitClassReference>) ontologyService.getAllTraitGroupsHierarchy(false);
+                List<TraitClassReference> traitClass = getAllTraitClassesFromHierarchy(traitRefList);
+                List<TraitClassReference> parentList = new ArrayList();
+                TraitClassReference refAll = new TraitClassReference(0, "ALL");
+                refAll.setTraitClassChildren(traitRefList);
+                parentList.add(refAll);
+                try {
+                    result.put("traitClassTreeData", TreeViewUtil.convertOntologyTraitsToJson(parentList));
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                result.put("traitClassesSuggestionList", traitClass);
+
             }
             else if (form instanceof OntologyPropertyForm) {
                 ontologyName = messageSource.getMessage("ontology.browser.modal.property", null, locale);
@@ -1063,8 +1078,8 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      */
     @ResponseBody
     @RequestMapping(value = "deleteOntology/{ontology}", method = RequestMethod.POST)
-    public Map<String, String> deleteOntology(@RequestParam(required=false) Integer id, @RequestParam(required=false) String name, @PathVariable String ontology) {
-        Map<String, String> result = new HashMap<String, String>();
+    public Map<String, Object> deleteOntology(@RequestParam(required=false) Integer id, @RequestParam(required=false) String name, @PathVariable String ontology) {
+        Map<String, Object> result = new HashMap<String, Object>();
         Locale locale = LocaleContextHolder.getLocale();
         
         String ontologyTypeName = messageSource.getMessage("ontology.browser.modal." + ontology, null, locale);
@@ -1075,7 +1090,21 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
             result.put("successMessage", messageSource.getMessage("ontology.browser.modal.delete.ontology.successful", 
                     new Object[] {ontologyTypeName, name}, 
                     locale));
-            
+            if("traitClass".equalsIgnoreCase(ontology)){
+                List<TraitClassReference> traitRefList = (List<TraitClassReference>) ontologyService.getAllTraitGroupsHierarchy(false);
+                List<TraitClassReference> traitClass = getAllTraitClassesFromHierarchy(traitRefList);
+                List<TraitClassReference> parentList = new ArrayList();
+                TraitClassReference refAll = new TraitClassReference(0, "ALL");
+                refAll.setTraitClassChildren(traitRefList);
+                parentList.add(refAll);
+                try {
+                    result.put("traitClassTreeData", TreeViewUtil.convertOntologyTraitsToJson(parentList));
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                result.put("traitClassesSuggestionList", traitClass);
+            }
         } catch(MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
             result.put("status", "0");

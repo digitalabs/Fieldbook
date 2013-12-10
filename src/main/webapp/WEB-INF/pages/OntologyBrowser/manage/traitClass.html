@@ -102,7 +102,19 @@
 				data: serializedData,
 			    success: function(data) {
 			    	if (data.status == '1') {
-			    		recreateComboAfterUpdate("ManageTraitClass", data.savedObject);
+			    		//we would be resetting
+			    		var chosendRecord = $("#comboTraitClass").select2("data");
+			    		traitClassesSuggestions = data.traitClassesSuggestionList;
+						traitClassesSuggestions_obj = [];
+						treeClassData = data.traitClassTreeData;
+			    		
+						loadTraitOntologyCombos();
+						
+						//we set it again
+						$("#comboTraitClass").select2('data', chosendRecord);
+						filterPropertyCombo(treeDivId, "comboTraitClass", "traitClassDescription", $("#comboTraitClass").select2("data").id, true);
+				  		
+			    		//recreateComboAfterUpdate("ManageTraitClass", data.savedObject);
 			    		showSuccessMessageInModal(data.successMessage);
 			    		$("#btnAddManageTraitClass").hide();
 			    		$("#btnUpdateManageTraitClass").show();

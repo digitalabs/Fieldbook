@@ -195,10 +195,10 @@ function selectTrialInstance(tableName) {
 }
 
 function selectTrialInstanceCreate() {
-	Spinner.toggle();
 	$.ajax({ 
 		url: "/Fieldbook/Fieldmap/enterFieldDetails/selectTrialInstance",
 	    type: "GET",
+	    async: false,
 	    cache: false,
 	    data: "",
 	    success: function(data) {
@@ -208,10 +208,7 @@ function selectTrialInstanceCreate() {
 	    		createStudyTree($.parseJSON(data.fieldMapInfo), isViewFieldmap);
 	    		$("#selectTrialInstanceModal").modal("toggle");
 	    	}
-        },
-        complete: function(){ 
- 		   Spinner.toggle();
- 	    } 
+        } 
 	});
 }
 

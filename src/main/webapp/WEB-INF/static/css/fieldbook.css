@@ -6,6 +6,21 @@ body {
 }
 
 h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+  font-family: 'Open Sans', 'Segoe UI','Helvetica Neue', Arial, sans-serif;  
+}
+
+h1,
 .h1 {
   font-size: 24px;
    font-weight: 300;
@@ -75,11 +90,23 @@ label{
 .btn {
     font-size: 11px;    
 }
+/*
 table th, table td{
 	background-color: #CECECE;
 	font-size: 12px;
 	color: #333333;
 }
+*/
+table > thead > tr > th{
+	background-color: #CECECE;
+}
+table .odd{
+	background-color: #CECECE;
+}
+table .even{
+	background-color: #F9F9F9;
+}
+
 .table-bordered > thead > tr > th, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > tbody > tr > td, .table-bordered > tfoot > tr > td {
     border: 1px solid #828282;
 }
@@ -125,6 +152,14 @@ table .field-map-highlight {
 table .field-map-highlight td{
      background-color: #BED6B2;
 }
+.pagination {
+font-size: 10px;
+}
+.pagination > li > a, .pagination > li > span {
+    padding: 6px 8px;
+}
+
+
 /*end*/
 
 /*For the spinner*/
@@ -151,9 +186,6 @@ table .field-map-highlight td{
 	min-width: 200px;
 }
 
-table .even{
-	background-color: #F9F9F9;
-}
 
 
 div.scrollWrapper{

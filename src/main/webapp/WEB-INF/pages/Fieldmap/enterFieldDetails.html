@@ -71,7 +71,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 			</thead>
 			<div th:each="map : *{userFieldmap.selectedFieldMaps}">
 				<div th:each="dataset : ${map.datasets}">
-					<tr th:each="trial : ${dataset.trialInstances}">
+					<tr th:class="${row.even}? 'even' : 'odd'"  th:each="trial, row : ${dataset.trialInstances}">
 						<td>
 							<input class="trialOrder" type="hidden" th:value="${map.fieldbookId}+'|'+${dataset.datasetId}+'|'+${trial.geolocationId}" />
 							<span class="orderNo"></span>

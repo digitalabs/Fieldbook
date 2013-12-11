@@ -20,7 +20,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:class="${row.even}? 'data-row' : 'data-row'" th:each="trial, row : *{paginatedTrialDetailsList}"  th:id="${trial.id}">
+				<tr th:class="${row.even}? 'data-row even' : 'data-row odd'" th:each="trial, row : *{paginatedTrialDetailsList}"  th:id="${trial.id}">
 					<td th:text="${trial.studyName}">Name</td>
 					<td th:text="${trial.title}">Title</td>
 					<td th:text="${trial.objective}">Objective</td>

@@ -24,6 +24,7 @@ public class OntologyPropertyForm implements OntologyModalForm {
     private Integer managePropTraitClassId;
     private String managePropTraitClassName;
     private List<String> variablesLinkedToProperty;
+    private String cropOntologyId;
     
     public String getComboManageProperty() {
         return comboManageProperty;
@@ -87,6 +88,20 @@ public class OntologyPropertyForm implements OntologyModalForm {
     
     public void setVariablesLinkedToProperty(List<String> variablesLinkedToProperty) {
         this.variablesLinkedToProperty = variablesLinkedToProperty;
+    }
+
+    /**
+     * @return the cropOntologyId
+     */
+    public String getCropOntologyId() {
+        return cropOntologyId;
+    }
+
+    /**
+     * @param cropOntologyId the cropOntologyId to set
+     */
+    public void setCropOntologyId(String cropOntologyId) {
+        this.cropOntologyId = cropOntologyId;
     }
 
     @Override

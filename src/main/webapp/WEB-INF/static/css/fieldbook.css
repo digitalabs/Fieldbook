@@ -253,8 +253,14 @@ margin-right: 10px; background: #eee; padding: 5px; width: 100%;
 min-height: 50px;
 }
 #availableFields li, #leftSelectedFields li, #rightSelectedFields li
-{ margin: 5px; padding: 5px; font-size: 1.2em; }
+{ margin: 5px; padding: 5px; font-size: 13px; }
 
+.field-group{
+	margin-bottom: 0px
+}
+.field-group .list-group-item{
+	padding: 5px 10px;
+}
 tr.trialInstance {
 	background-color: #dff0d8;
 }

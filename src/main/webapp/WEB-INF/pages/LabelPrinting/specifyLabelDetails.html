@@ -253,7 +253,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 					<div class="col-xs-3 col-md-3">&nbsp;</div>
 					<div class="col-xs-6 col-md-6">
 					
-						<ul class="list-group" >
+						<ul class="list-group field-group"  >
 					      <li class="list-group-item"><label class="control-label" th:text="#{label.printing.available.fields}">Available Fields</label></li>
 						</ul>
 						<ul id="availableFields" class="list-group droptrue" >					      
@@ -266,7 +266,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 					
 					<div class="col-xs-6 col-md-6">
 					<br />
-						<ul class="list-group" >
+						<ul class="list-group field-group">
 					      <li class="list-group-item"><label class="control-label" th:text="#{label.printing.left.selected.fields}">Selected Fields</label></li>
 						</ul>									
 						<ul id="leftSelectedFields" class="list-group droptrue" >
@@ -278,7 +278,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 					
 					<div class="col-xs-6 col-md-6">
 					<br />
-						<ul class="list-group" >
+						<ul class="list-group field-group"  >
 					      <li class="list-group-item"><label class="control-label" th:text="#{label.printing.right.selected.fields}">Selected Fields</label></li>
 						</ul>	
 														

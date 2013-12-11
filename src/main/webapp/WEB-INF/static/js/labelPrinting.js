@@ -25,6 +25,7 @@ function validateEnterLabelFieldsPage(type){
 	
 	if(leftSelectedFields == "" && rightSelectedFields == ""){
 		showMessage(selectedFieldsError);
+		moveToTopScreen();
 		return false;
 	}
 	
@@ -36,6 +37,7 @@ function validateEnterLabelFieldsPage(type){
 	var barcodeNeeded = $("input[type='radio']:checked").length;
 	if (barcodeNeeded == 0) {
 		showMessage(barcodeNeededError);
+		moveToTopScreen();
 		return false;
 	}
 	
@@ -46,6 +48,7 @@ function validateEnterLabelFieldsPage(type){
 				&& $('#'+getJquerySafeId('userLabelPrinting.secondBarcodeField')).val() == ""
 				&& $('#'+getJquerySafeId('userLabelPrinting.thirdBarcodeField')).val() == ""){
 			showMessage(barcodeFieldNeededError);
+			moveToTopScreen();
 			return false;
 		}
 	}
@@ -59,6 +62,7 @@ function validateEnterLabelFieldsPage(type){
 		//we need to check if either one is chosen in the drop downs
 		
 			showMessage(barcodeFieldNeededError);
+			moveToTopScreen();
 			return false;
 		
 	}
@@ -70,7 +74,9 @@ function validateEnterLabelFieldsPage(type){
 	setSelectedTrialInstanceOrder();
 	$('#specifyLabelDetailsForm').submit();	
 }
-
+function moveToTopScreen(){
+	 $('html').scrollTop(0);
+}
 function setSelectedTrialInstanceOrder() {
 	var order = [];
 	var notIncluded = 0;

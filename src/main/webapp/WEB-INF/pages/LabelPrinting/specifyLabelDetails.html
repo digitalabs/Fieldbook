@@ -7,10 +7,10 @@
 </div>
 <div class="row">
 	<div class="col-xs-3 col-md-3">
-		<span style="font-weight: bold; font-size: 18px">Create Labels</span>
+		<span style="font-weight: 400; font-size: 18px">Create Labels</span>
 	</div>
 	<div class="col-xs-3 col-md-3">
-		<span style="font-weight: bold; font-size: 16px">1. SPECIFY LABEL DETAILS</span>
+		<span style="font-weight: 400; font-size: 16px">1. SPECIFY LABEL DETAILS</span>
 	</div>
 	<!-- 
 	<div class="col-xs-3 col-md-3">		
@@ -123,7 +123,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 						</thead>
 						<div th:each="map : *{userLabelPrinting.fieldMapInfoList}">
 							<div th:each="dataset : ${map.datasets}">
-								<tr th:class="${rowInd.even}? 'even' : 'odd'" th:each="trial, row : ${dataset.trialInstances}">
+								<tr th:class="${row.even}? 'even' : 'odd'" th:each="trial, row : ${dataset.trialInstances}">
 									<td><input class="includeTrial" type="checkbox" onclick="setTotalLabels(this);" /></td>
 									<td>
 										<input class="trialOrder" type="hidden" th:value="${map.fieldbookId}+'|'+${dataset.datasetId}+'|'+${trial.geolocationId}" />

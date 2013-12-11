@@ -393,16 +393,15 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 	
 	<div class="form-group">&nbsp;</div>
 	<div class="form-group">
-	    <div class="col-xs-3 col-md-4 ">&nbsp;</div>
-	    <div class="col-xs-7 col-md-8">
+	    <div class="col-xs-4 col-md-4">&nbsp;</div> 
+	    <div class="col-xs-8 col-md-8">
 	      <input type="button" onclick="javascript: window.history.back();"  value="Cancel" class="btn btn-default"/>
 	      <input type="button" onclick="javascript: validateEnterLabelFieldsPage(1);" value="Generate Labels" th:value="#{common.form.generate.label.text}" class="btn btn-primary"/>
 	      <input type="button" onclick="javascript: validateEnterLabelFieldsPage(2);" value="Export Label Data" th:value="#{common.form.export.label.text}" class="btn btn-primary"/>
 	      
 	    </div>
-	    <div class="col-xs-12">&nbsp;</div>
 	  </div>
-	<div class="form-group">&nbsp;</div>
+	  <div class="form-group">&nbsp;</div>
 </div>
 </form>
 <div layout:fragment="page-script">

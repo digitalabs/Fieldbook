@@ -96,14 +96,14 @@
 				<div class="col-xs-4 col-md-4">
 					<label for="role" class="col-xs-12 col-md-12 control-label" th:text="#{ontology.browser.modal.valid.value} + ':'">.Valid Values:</label>
 				</div>
-				<div class="col-xs-4 col-md-2">
+				<div class="col-xs-2 col-md-2">
 					<input type="text" class="col-xs-12 col-md-12 form-control" id="newValidValueLabel" />
 				</div>
 				<div class="col-xs-4 col-md-4">
 					<input type="text" class="col-xs-12 col-md-12 form-control" id="newValidValueDesc" />
 				</div>
 				<div class="col-xs-2 col-md-2">
-					<input type="button" class="btn btn-default" value="Add Value" onClick="addCatVar($('#newValidValueLabel').val(), $('#newValidValueDesc').val(), null)" />
+					<input type="button" class="btn btn-primary" value="Add Value" onClick="addCatVar($('#newValidValueLabel').val(), $('#newValidValueDesc').val(), null)" />
 				</div>
 			</div>
 			<div class="form-group" id="validValueDelCatVar">

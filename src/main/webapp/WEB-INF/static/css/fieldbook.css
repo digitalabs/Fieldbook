@@ -1,4 +1,4 @@
-@import url('/fonts/font.css');
+@import url('/Fieldbook/static/fonts/font.css');
 /*Added to style properly*/
 body {
   font-family: 'Open Sans', 'Segoe UI','Helvetica Neue', Arial, sans-serif;
@@ -161,7 +161,9 @@ font-size: 10px;
 .pagination > li > a, .pagination > li > span {
     padding: 6px 8px;
 }
-
+table{
+	font-size: 11px;
+}
 
 /*end*/
 

@@ -231,6 +231,15 @@ function createStudyTree(fieldMapInfoList, hasFieldMap) {
         expanderCollapsedClass: 'glyphicon glyphicon-plus'
     });
 	
+	$('.tr-expander').on('click', function(){
+		triggerExpanderClick($(this));
+	})
+	$('.treegrid-expander').on('click', function(){
+		triggerExpanderClick($(this).parent().parent());
+		
+	})
+	 
+	
 	//set as highlightable
 	if (hasFieldMap) {
 		triggerFieldMapTableSelection('studyTree');
@@ -294,7 +303,8 @@ function createRow(id, parentClass, value, realId, withFieldMap) {
 	
 	if (id.indexOf("study") > -1 || id.indexOf("dataset") > -1) {
 		//study and dataset level 
-		newRow = "<tr id='" + realId + "' class='"+ genClassName + id + " " + genParentClassName + "' onClick='triggerExpanderClick($(this))'>";
+		//newRow = "<tr id='" + realId + "' class='"+ genClassName + id + " " + genParentClassName + "' onClick='triggerExpanderClick($(this))'>";
+		newRow = "<tr id='" + realId + "' class='tr-expander "+ genClassName + id + " " + genParentClassName + "'>";
 		if (trial) {
 			newCell = "<td>" + value + "</td><td></td><td></td><td></td>";
 		} else {

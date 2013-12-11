@@ -23,13 +23,14 @@ import javax.annotation.Resource;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
-import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.Enumeration;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.VariableConstraints;
 import org.generationcp.middleware.domain.oms.CvId;
 import org.generationcp.middleware.domain.oms.Property;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.oms.TermProperty;
 //import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareException;
@@ -448,7 +449,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         }
         //remove setting of isA
         //standardVariable.setIsA(ontologyService.getTermById(Integer.parseInt(form.getTraitClass())));
-        standardVariable.setCropOntologyId(form.getCropOntologyId());
+        standardVariable.setCropOntologyId(form.getCropOntologyDisplay());
         
         return standardVariable;
     }
@@ -730,9 +731,20 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
             Property property = ontologyService.getProperty(Integer.parseInt(propertyId));
             Term term = property.getIsA();
             String traitId = term  == null ? "": Integer.toString(term.getId());
-            //term.getId();
+            
+            String cropOntologyId = "";
+            if (property.getTerm() != null && property.getTerm().getProperties() != null && !property.getTerm().getProperties().isEmpty()) {
+                for (TermProperty tp : property.getTerm().getProperties()) {
+                    if (tp.getTypeId().equals(TermId.CROP_ONTOLOGY_ID.getId()) && tp.getValue() != null && !"".equals(tp.getValue().trim())) {
+                        cropOntologyId = tp.getValue();
+                        break;
+                    }
+                }
+            }
+            
             resultMap.put("status", "1");
             resultMap.put("traitId", traitId);
+            resultMap.put("cropOntologyId", cropOntologyId);
             
         } catch(MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
@@ -766,7 +778,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
             resultMap.put("description", stdVariable.getDescription()==null ? "" : stdVariable.getDescription());
             resultMap.put("dataType", checkIfNull(stdVariable.getDataType()));
             resultMap.put("role", checkIfNull(stdVariable.getStoredIn()));
-            resultMap.put("cropOntologyId", stdVariable.getCropOntologyId()==null ? "" : stdVariable.getCropOntologyId());
+            resultMap.put("cropOntologyDisplay", stdVariable.getCropOntologyId()==null ? "" : stdVariable.getCropOntologyId());
             resultMap.put("traitClass", checkIfNull(stdVariable.getIsA()));
             resultMap.put("property", checkIfNull(stdVariable.getProperty()));
             resultMap.put("method", checkIfNull(stdVariable.getMethod()));
@@ -1018,7 +1030,8 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                 result.put("savedObject", ontologyService.addOrUpdateProperty(
                         ((OntologyPropertyForm)form).getManagePropertyName(), 
                         desc, 
-                        ((OntologyPropertyForm)form).getManagePropTraitClassId()));
+                        ((OntologyPropertyForm)form).getManagePropTraitClassId(),
+                        ((OntologyPropertyForm)form).getCropOntologyId()));
             }
             else if (form instanceof OntologyScaleForm) {
                 ontologyName = messageSource.getMessage("ontology.browser.modal.scale", null, locale);

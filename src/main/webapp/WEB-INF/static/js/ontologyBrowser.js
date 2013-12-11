@@ -279,7 +279,8 @@ function setCorrespondingTraitClass(propertyId){
 				    			break;
 				    		}			    			
 				    	}
-			    	}			    	
+			    	}
+			    	$("#cropOntologyId").val(data.cropOntologyId);
 			    	$("#comboManagePropTraitClass").select2('data', dataVal).trigger('change');
 			    	
 		       	}
@@ -316,7 +317,8 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 				variableSuggestions_obj.push({ 'id' : value.id,
 					  'text' : value.name + getOntologySuffix(value.id),
 					  'description' : value.definition,
-					  'traitId' : value.isAId
+					  'traitId' : value.isAId,
+					  'cropOntologyId' : value.cropOntologyId
 				});  
 		  		
 			});
@@ -372,6 +374,9 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	    	$("#" + lowerCaseFirstLetter(name) + "Description").val($("#combo"+name).select2("data").description);
 	    	if(name == 'TraitClass'){
 	    		filterPropertyCombo(treeDivId, "comboTraitClass", "traitClassDescription", $("#comboTraitClass").select2("data").id, true);
+	    	}
+	    	else if (name == 'Property') {
+	    		$("#cropOntologyDisplay").html($("#combo"+name).select2("data").cropOntologyId);
 	    	}
 	    	if (name.match("^Manage")) {
 	    		$("#" + "page-message-" + lowerCaseFirstLetter(name) + "-modal").html("");
@@ -731,6 +736,7 @@ function filterPropertyCombo(treeName, comboName, descriptionName, traitClassId,
 		
 	});
 		$("#propertyDescription").val("");
+		$("#cropOntologyDisplay").html("");
 	}
 	
 }
@@ -820,7 +826,7 @@ function populateFields(data, variableId) {
 	$("#newVariableName").val(data.name);
 	$("#variableDescription").val(data.description);
 	$("#role").val(data.role).attr("disabled","disabled");
-	$("#cropOntologyId").val(data.cropOntologyId);
+	$("#cropOntologyDisplay").html(data.cropOntologyDisplay);
 	setComboValues(traitClassesSuggestions_obj, data.traitClass, "TraitClass");
 	setComboValues(propertySuggestions_obj, data.property, "Property");
 	setComboValues(methodSuggestions_obj, data.method, "Method");

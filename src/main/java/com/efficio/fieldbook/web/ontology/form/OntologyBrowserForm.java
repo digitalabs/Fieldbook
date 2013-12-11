@@ -64,7 +64,7 @@ public class OntologyBrowserForm{
     private String role;
     
     /** The crop ontology id. */
-    private String cropOntologyId;
+    private String cropOntologyDisplay;
     
     /** The trait class. */
     private String traitClass;
@@ -335,8 +335,8 @@ public class OntologyBrowserForm{
      *
      * @return the crop ontology id
      */
-    public String getCropOntologyId() {
-        return cropOntologyId;
+    public String getCropOntologyDisplay() {
+        return cropOntologyDisplay;
     }
     
     /**
@@ -344,8 +344,8 @@ public class OntologyBrowserForm{
      *
      * @param cropOntologyId the new crop ontology id
      */
-    public void setCropOntologyId(String cropOntologyId) {
-        this.cropOntologyId = cropOntologyId;
+    public void setCropOntologyDisplay(String cropOntologyId) {
+        this.cropOntologyDisplay = cropOntologyId;
     }
     
     /**

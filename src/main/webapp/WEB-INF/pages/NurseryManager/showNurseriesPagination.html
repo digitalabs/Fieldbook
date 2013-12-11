@@ -7,7 +7,7 @@
          
      <!-- case 2: nursery list has data -->
      <div th:if="*{paginatedNurseryDetailsList != null and not #lists.isEmpty(paginatedNurseryDetailsList)}">
-         <table id="nursery-table" th:if="*{not #lists.isEmpty(paginatedNurseryDetailsList)}" class="table table-bordered">
+         <table id="nursery-table" th:if="*{not #lists.isEmpty(paginatedNurseryDetailsList)}" class="table table-bordered table-condensed">
            <thead>
 				<tr>
 					<th th:text="#{nursery.managenurseries.shownurseries.name}">Name</th>
@@ -20,7 +20,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:class="${row.even}? 'data-row even' : 'data-row odd'" th:each="nursery, row : *{paginatedNurseryDetailsList}"  th:id="${nursery.id}">
+				<tr th:class="${row.even}? 'data-row' : 'data-row'" th:each="nursery, row : *{paginatedNurseryDetailsList}"  th:id="${nursery.id}">
 					<td th:text="${nursery.studyName}">Name</td>
 					<td th:text="${nursery.title}">Title</td>
 					<td th:text="${nursery.objective}">Objective</td>

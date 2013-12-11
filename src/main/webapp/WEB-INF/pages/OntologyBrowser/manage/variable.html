@@ -1,8 +1,8 @@
 <div class="col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org">
 	<div class="page-header">
-		<h1 th:text="#{ontology.browser.button.manage.variable}">
+		<h2 th:text="#{ontology.browser.button.manage.variable}">
 			Manage Variable 
-		</h1>
+		</h2>
 	</div>	
 	<div id="page-message">
 		<form  th:object="${ontologyBrowserForm}" th:remove="tag">	
@@ -145,7 +145,7 @@
 					<input id="comboTraitClass" type="hidden" th:field="*{traitClass}"  class="form-control  input-medium  select2" placeholder=""/>                   	
 				</div>
 				<div class="col-xs-2 col-md-2">
-					<input type="button" class="btn btn-default btn-log" onClick="loadOntologyModal('traitClass')" value="Manage"/>
+					<input type="button" class="btn btn-info" onClick="loadOntologyModal('traitClass')" value="Manage"/>
 				</div>
 			</div>	
 			<div class="form-group">
@@ -176,7 +176,7 @@
                    	
 				</div>
 				<div class="col-xs-2 col-md-2">
-					<input type="button" class="btn btn-default btn-log" onClick="loadOntologyModal('property')" value="Manage"/>
+					<input type="button" class="btn btn-info" onClick="loadOntologyModal('property')" value="Manage"/>
 				</div>
 			</div>	
 			<div class="form-group">
@@ -212,7 +212,7 @@
                    	
 				</div>
 				<div class="col-xs-2 col-md-2">
-					<input type="button" class="btn btn-default btn-log" onClick="loadOntologyModal('method')" value="Manage"/>
+					<input type="button" class="btn btn-info" onClick="loadOntologyModal('method')" value="Manage"/>
 				</div>
 			</div>	
 			<div class="form-group">
@@ -233,7 +233,7 @@
                    	<input id="comboScale" type="hidden" th:field="*{scale}" class="form-control select2" placeholder=""/>
 				</div>
 				<div class="col-xs-2 col-md-2">
-					<input type="button" class="btn btn-default btn-log" onClick="loadOntologyModal('scale')" value="Manage"/>
+					<input type="button" class="btn btn-info" onClick="loadOntologyModal('scale')" value="Manage"/>
 				</div>
 			</div>	
 			<div class="form-group">
@@ -249,13 +249,14 @@
 	
 	<div class="row">
 		<div class="col-xs-pull-12 col-md-pull-12 pull-right">
+		<a href="/OntologyBrowser/main.html" th:href="@{/OntologyBrowser/}" class="btn btn-default btn-md" th:text="#{common.form.back.text}">.Back</a>
 		<button type="submit" id="addVariable" th:value="#{common.form.add.text}" class="btn btn-primary" 
       		th:text="#{common.form.add.text}" onClick="setDeleteOperation(0);">.Add</button>    
       		<button type="submit" id="updateVariable" th:value="#{common.form.update.text}" class="btn btn-primary" 
       		th:text="#{common.form.update.text}" onClick="setDeleteOperation(2);">.Update</button>    
       		<button type="submit" id="deleteVariable" th:value="#{common.form.delete.text}" class="btn btn-danger" 
       		th:text="#{common.form.delete.text}" onClick="setDeleteOperation(1);">.Delete</button>
-      		<a href="/OntologyBrowser/main.html" th:href="@{/OntologyBrowser/}" class="btn btn-primary btn-md" th:text="#{common.form.back.text}">.Back</a>          		
+      		          		
 		</div>
 	</div>
 	

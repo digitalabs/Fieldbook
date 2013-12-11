@@ -1,6 +1,7 @@
 <div xmlns:th="http://www.thymeleaf.org">
 	<div  th:if="*{not #lists.isEmpty(linkedStandardVariableList)}"  style="overflow-y: auto; max-height: 300px">
-		<table class="table table-striped table-bordered">
+		<table class="table table-striped table-bordered table-condensed">
+			
 			<tr  th:each="choice : ${linkedStandardVariableList}">
 				<td th:text="*{choice.name}" >&nbsp;</td>
 			</tr>

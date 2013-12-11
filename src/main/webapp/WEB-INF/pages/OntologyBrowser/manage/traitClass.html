@@ -55,14 +55,15 @@
 	    </div>
 	</div>																							
 	<div class="modal-footer">
+	<button id="btnCloseManageTraitClass" type="button" th:value="#{common.form.cancel.text}" class="btn btn-default"
+		 th:text="#{common.form.cancel.text}" data-dismiss="modal" aria-hidden="true">Cancel</button>
 		<button id="btnAddManageTraitClass" type="button" th:value="#{common.form.add.text}" class="btn btn-primary" 
 		th:text="#{common.form.add.text}" onclick="saveTraitClass();">Add</button>      	
 		<button id="btnUpdateManageTraitClass" type="button" th:value="#{common.form.update.text}" class="btn btn-primary" 
 		th:text="#{common.form.update.text}" style="display:none;" onclick="saveTraitClass();">Update</button>      	
-		<button id="btnDeleteManageTraitClass" type="button" th:value="#{common.form.delete.text}" class="btn btn-danger" 
+		<button id="btnDeleteManageTraitClass" type="button" th:value="#{common.form.delete.text}" class="btn btn-primary" 
 		th:text="#{common.form.delete.text}" style="display:none;" onclick="deleteOntology('ManageTraitClass');">Delete</button>      	
-		<button id="btnCloseManageTraitClass" type="button" th:value="#{common.form.cancel.text}" class="btn btn-primary"
-		 th:text="#{common.form.cancel.text}" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		
 	</div>
 
 </form>

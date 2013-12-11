@@ -1,8 +1,8 @@
 <div class="col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org">
 	<div class="page-header">
-		<h1 th:text="#{ontology.browser.header}">
+		<h2 th:text="#{ontology.browser.header}">
 			Standard Variables and Ontology Browser
-		</h1>
+		</h2>
 	</div>		
 	
 	<div class="row">
@@ -11,7 +11,7 @@
 			<!-- <input type="button" th:value="#{ontology.browser.button.manage.variable}" class="btn btn-default btn-log" 
 			data-toggle="modal" href="#addVariableModal" onClick="clearFields()" />
 			 -->
-			 <a href="/OntologyManageVariable/" class="btn btn-default btn-log" th:href="@{/OntologyManager/manage/variable}" th:text="#{ontology.browser.button.manage.variable}">.Manage Variable</a>
+			 <a href="/OntologyManageVariable/" class="btn btn-info" th:href="@{/OntologyManager/manage/variable}" th:text="#{ontology.browser.button.manage.variable}">.Manage Variable</a>
 		</div>
 	</div>	
 	<div class="row">

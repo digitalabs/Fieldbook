@@ -1,4 +1,132 @@
-.container{ max-width: none !important; width: 970px; }
+@import url('/fonts/font.css');
+/*Added to style properly*/
+body {
+  font-family: 'Open Sans', 'Segoe UI','Helvetica Neue', Arial, sans-serif;
+  font-size: 13px;  
+}
+
+h1,
+.h1 {
+  font-size: 24px;
+   font-weight: 300;
+}
+h2,
+.h2 {
+  font-size: 22px;
+  font-weight: 300;
+}
+h3,
+.h3 {
+  font-size: 20px;
+  font-weight: 300;
+}
+h4,
+.h4 {
+  font-size: 18px;
+  font-weight: 300;
+}
+label{
+	font-weight: normal;
+}
+.btn-primary {
+  color: #ffffff;
+  background-color: #ff8109;
+  border-color:  #ff8109;
+}
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active,
+.open .dropdown-toggle.btn-primary {
+  color: #ffffff;
+  background-color: #728B66;
+  border-color: #728B66;
+}
+
+.btn-default {
+  color: #ffffff;
+  background-color: #828282;
+  border-color: #828282;
+}
+.btn-default:hover,
+.btn-default:focus,
+.btn-default:active,
+.btn-default.active,
+.open .dropdown-toggle.btn-default {
+  color: #333333;
+  background-color: #728B66;
+  border-color: #728B66;
+}
+
+.btn-info {
+  color: #ffffff;
+  background-color: #1b95b2;
+  border-color: #1b95b2;
+}
+.btn-info:hover,
+.btn-info:focus,
+.btn-info:active,
+.btn-info.active,
+.open .dropdown-toggle.btn-info {
+  color: #ffffff;
+  background-color: #728B66;
+  border-color: #728B66;
+}
+.btn {
+    font-size: 11px;    
+}
+table th, table td{
+	background-color: #CECECE;
+	font-size: 12px;
+	color: #333333;
+}
+.table-bordered > thead > tr > th, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > tbody > tr > td, .table-bordered > tfoot > tr > td {
+    border: 1px solid #828282;
+}
+.table caption + thead tr:first-child th,
+.table colgroup + thead tr:first-child th,
+.table thead:first-child tr:first-child th,
+.table caption + thead tr:first-child td,
+.table colgroup + thead tr:first-child td,
+.table thead:first-child tr:first-child td {
+  border-top: none;
+}
+
+
+  .table-bordered > thead > tr > th:first-child,
+  .table-bordered > tbody > tr > th:first-child,
+  .table-bordered > tfoot > tr > th:first-child,
+  .table-bordered > thead > tr > td:first-child,
+  .table-bordered > tbody > tr > td:first-child,
+  .table-bordered > tfoot > tr > td:first-child {
+    border-left: none;
+  }
+  .table-bordered > thead > tr > th:last-child,
+  .table-bordered > tbody > tr > th:last-child,
+  .table-bordered > tfoot > tr > th:last-child,
+  .table-bordered > thead > tr > td:last-child,
+  .table-bordered > tbody > tr > td:last-child,
+  .table-bordered > tfoot > tr > td:last-child {
+    border-right: none;
+  }
+  .table-bordered > thead > tr:last-child > th,
+  .table-bordered > tbody > tr:last-child > th,
+  .table-bordered > tfoot > tr:last-child > th,
+  .table-bordered > thead > tr:last-child > td,
+  .table-bordered > tbody > tr:last-child > td,
+  .table-bordered > tfoot > tr:last-child > td {
+    border-bottom: none;
+  }
+  
+
+table .field-map-highlight {
+     background-color: #BED6B2;
+}
+table .field-map-highlight td{
+     background-color: #BED6B2;
+}
+/*end*/
+
 /*For the spinner*/
 #spinner-wrap {
     position:fixed;
@@ -26,9 +154,7 @@
 table .even{
 	background-color: #F9F9F9;
 }
-table .field-map-highlight {
-     background-color: #5BC0DE;
-}
+
 
 div.scrollWrapper{
   height:200px;
@@ -98,4 +224,7 @@ tr.trialInstance {
 
 .myDragClass {
 	background-color: #dff0d8;
+}
+.plot{
+	background-color: #ffffff;
 }

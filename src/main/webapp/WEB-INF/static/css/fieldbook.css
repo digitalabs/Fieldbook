@@ -98,17 +98,17 @@ table th, table td{
 }
 */
 table > thead > tr > th{
-	background-color: #CECECE;
+	background-color: #DADADA;
 }
 table .odd{
-	background-color: #CECECE;
+	background-color: #DADADA;
 }
 table .even{
-	background-color: #F9F9F9;
+	background-color: #E9e9e9;
 }
 
-#studyTree tr:nth-child(even), #selectedTrials tr:nth-child(even), #catVarList tr:nth-child(even) {background-color: #CECECE;}
-#studyTree tr:nth-child(odd), #selectedTrials tr:nth-child(odd), #catVarList tr:nth-child(odd) {background-color: #F9F9F9;}
+#studyTree tr:nth-child(even), #selectedTrials tr:nth-child(even), #catVarList tr:nth-child(even) {background-color: #DADADA}
+#studyTree tr:nth-child(odd), #selectedTrials tr:nth-child(odd), #catVarList tr:nth-child(odd) {background-color: #E9e9e9}
 
 .table-bordered > thead > tr > th, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > tbody > tr > td, .table-bordered > tfoot > tr > td {
     border: 1px solid #828282;
@@ -166,6 +166,9 @@ table{
 }
 .dropdown-menu {
     font-size: 12px;
+}
+.required{
+	color: #990000;
 }
 
 /*end*/

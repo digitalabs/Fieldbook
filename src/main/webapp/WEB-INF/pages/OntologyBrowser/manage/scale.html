@@ -13,7 +13,7 @@
 			<div class="row fluid">
 	      		<div class="col-xs-7 col-md-7">
 					<div class="form-group">                        
-						<label for="comboManageScale" class="col-xs-5 col-md-5 control-label" th:text="#{ontology.browser.modal.scale} + ': *'">Scale: *</label>
+						<label for="comboManageScale" class="col-xs-5 col-md-5 control-label" ><span th:text="#{ontology.browser.modal.scale} + ': '"></span><span class="required">*</span></label>
 						<div class="col-xs-7  col-md-7">
 							<input type="hidden" th:field="*{comboManageScale}" class="form-control select2" placeholder=""/>
 							<input type="hidden" th:field="*{manageScaleId}" />

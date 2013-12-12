@@ -13,7 +13,7 @@
 			<div class="row fluid">
 	      		<div class="col-xs-6 col-md-6">
 	      			<div class="form-group">
-	      				<label for="comboManageParentTraitClass" class="col-xs-5 col-md-5 control-label" th:text="#{ontology.browser.modal.traitclass.parent} + ': *'">Parent Trait Class: *</label>
+	      				<label for="comboManageParentTraitClass" class="col-xs-5 col-md-5 control-label" ><span th:text="#{ontology.browser.modal.traitclass.parent} + ': '"></span><span class="required">*</span></label>
 						<div class="col-xs-7 col-md-7">
 							<input type="hidden" th:field="*{comboManageParentTraitClass}" class="form-control select2" placeholder=""/>
 							<input type="hidden" th:field="*{manageParentTraitClassId}" />
@@ -28,7 +28,7 @@
 				</div>
 				<div class="col-xs-6 col-md-6">
 					<div class="form-group">                        
-						<label for="comboManageTraitClass" class="col-xs-5 col-md-5 control-label" th:text="#{ontology.browser.modal.trait.class} + ': *'">Trait Class: *</label>
+						<label for="comboManageTraitClass" class="col-xs-5 col-md-5 control-label" ><span th:text="#{ontology.browser.modal.trait.class} + ': '"></span><span class="required">*</span></label>
 						<div class="col-xs-7 col-md-7">
 							<input type="hidden" th:field="*{comboManageTraitClass}" class="form-control select2" placeholder=""/>
 							<input type="hidden" th:field="*{manageTraitClassId}" />

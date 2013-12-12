@@ -20,14 +20,14 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:class="${row.even}? 'data-row even' : 'data-row odd'" th:each="nursery, row : *{paginatedNurseryDetailsList}"  th:id="${nursery.id}">
-					<td th:text="${nursery.studyName}">Name</td>
-					<td th:text="${nursery.title}">Title</td>
-					<td th:text="${nursery.objective}">Objective</td>
-					<td th:text="${nursery.startDate}">Start Date</td>
-					<td th:text="${nursery.endDate}">End Date</td>
-					<td th:text="${nursery.piName}">Principal Investigator</td>
-					<td th:text="${nursery.siteName}">Site Name</td>
+				<tr th:class="${row.even}? 'data-row' : 'data-row'" th:each="nursery, row : *{paginatedNurseryDetailsList}"  th:id="${nursery.id}">
+					<td th:class="${row.even}? 'even' : 'odd'" th:text="${nursery.studyName}">Name</td>
+					<td th:class="${row.even}? 'even' : 'odd'" th:text="${nursery.title}">Title</td>
+					<td th:class="${row.even}? 'even' : 'odd'" th:text="${nursery.objective}">Objective</td>
+					<td th:class="${row.even}? 'even' : 'odd'" th:text="${nursery.startDate}">Start Date</td>
+					<td th:class="${row.even}? 'even' : 'odd'" th:text="${nursery.endDate}">End Date</td>
+					<td th:class="${row.even}? 'even' : 'odd'" th:text="${nursery.piName}">Principal Investigator</td>
+					<td th:class="${row.even}? 'even' : 'odd'" th:text="${nursery.siteName}">Site Name</td>
 				</tr>
 			</tbody>
          </table>

@@ -6,7 +6,7 @@ function validateEnterLabelFieldsPage(type){
 		
 		leftSelectedFields += $(this).attr('id');
 		leftSelectedFields += ",";
-	})
+	});
 	
 	if(leftSelectedFields != ''){
 		leftSelectedFields = leftSelectedFields.substring(0,leftSelectedFields.length-1); 
@@ -55,6 +55,7 @@ function validateEnterLabelFieldsPage(type){
 
 	if ($("#selectedTrials .includeTrial:checked").length == 0 && $("#selectedTrials .includeTrial").length > 0) {
 		showMessage(trialInstanceRequired);
+		moveToTopScreen();
 		return false;
 	}
 	

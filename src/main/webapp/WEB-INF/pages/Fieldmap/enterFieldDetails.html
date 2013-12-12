@@ -58,7 +58,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 	</div>
 	<div class="form-group col-xs-12 col-md-12">
 		<input type="hidden" th:field="*{userFieldmap.order}" />
-		<table class="table table-bordered table-condensed" style="margin-left: 10px;" id="selectedTrials">
+		<table class="table table-curved table-condensed" style="margin-left: 10px;" id="selectedTrials">
 			<thead>
 				<th th:text="#{fieldmap.trial.order}">Order</th>
 				<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial}">Trial</th>

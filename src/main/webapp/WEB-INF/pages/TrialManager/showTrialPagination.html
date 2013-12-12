@@ -7,7 +7,7 @@
          
      <!-- case 2: nursery list has data -->
      <div th:if="*{paginatedTrialDetailsList != null and not #lists.isEmpty(paginatedTrialDetailsList)}">
-         <table id="trial-table" th:if="*{not #lists.isEmpty(paginatedTrialDetailsList)}" class="my-class table table-bordered table-condensed">
+         <table id="trial-table" th:if="*{not #lists.isEmpty(paginatedTrialDetailsList)}" class="my-class table table-curved table-condensed">
            <thead>
 				<tr>
 					<th th:text="#{trial.managetrial.showtrial.name}">Name</th>

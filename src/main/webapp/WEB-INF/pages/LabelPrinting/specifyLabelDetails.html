@@ -77,7 +77,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 				<label class="control-label"><strong  th:text="#{label.printing.summary.of.labels.needed}">SUMMARY OF LABELS NEEDED</strong></label>
 			</div>
 			<div class="col-xs-12 col-md-12">
-				<table class="table table-bordered table-condensed">
+				<table class="table table-curved table-condensed">
 					<thead>
 						<th th:text="#{fieldmap.trial.instance}">Instance</th>
 						<th th:if="*{isTrial == true}" th:text="#{fieldmap.trial.entry.count}"># of Entries</th>
@@ -109,7 +109,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 			<div class="form-group">
 				<div class="col-xs-12 col-md-12">
 					<input type="hidden" th:field="*{userLabelPrinting.order}" />
-					<table class="table table-bordered table-condensed" id="selectedTrials">
+					<table class="table table-curved table-condensed" id="selectedTrials">
 						<thead>
 							<th></th>
 							<th th:text="#{fieldmap.trial.order}">Order</th>

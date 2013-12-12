@@ -540,6 +540,7 @@ function setSelectTrialOrderValues() {
 		$(this).parent().parent().attr("id", i+1);
 		i++;
 	});
+	styleDynamicTree('selectedTrials');
 }
 function styleDynamicTree(treeName){
 	var count = 0;

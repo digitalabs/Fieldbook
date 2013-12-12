@@ -171,6 +171,72 @@ table{
 	color: #990000;
 }
 
+.nav-tabs > li > a,
+.nav-tabs > li > a:hover,
+.nav-tabs > li > a:focus{
+    color: #333333;
+    background-color: #eeeeee;  
+} 
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus{
+    color: #333333;
+    background-color: #f6f6f6;  
+    border-color: #e4e4e4;  
+}
+
+.nav-tabs > li > a {
+    border: #e4e4e4;
+}
+.nav > li > a {
+    display: block;
+    padding: 5px 10px;
+    position: relative;
+}
+#ontology-tabs{
+	background-color: #f6f6f6;
+	border:1px solid #e4e4e4;  
+	min-height: 320px; 	
+}
+
+.table-curved {
+   border-collapse: separate;
+   border: solid #e4e4e4 1px;
+   border-radius: 10px;
+   border-left: 0px;
+   border-top: 0px;
+}
+.table-curved > thead:first-child > tr:first-child > th {
+	
+     border-bottom: none;
+}
+.table-curved > tbody > tr > td:first-child,
+.table-curved > thead > tr > th:first-child,
+.table-curved > th:first:child  {
+	
+     border-left: none;
+}
+.table-curved  > tbody > tr:last-child > td {	
+     border-bottom: none;
+}
+
+.table-curved td, .table-curved th {
+	
+    border-left: 1px solid #c2c3c4;
+    border-bottom: none;
+}
+.table-curved > :first-child > :first-child > :first-child {
+    border-top-left-radius: 10px;
+}
+.table-curved > :first-child > :first-child > :last-child {
+    border-top-right-radius: 10px;
+}
+.table-curved > :last-child > :last-child > :first-child {
+    border-bottom-left-radius: 10px;
+}
+.table-curved > :last-child > :last-child > :last-child {
+    border-bottom-right-radius: 10px;
+}
 /*end*/
 
 /*For the spinner*/

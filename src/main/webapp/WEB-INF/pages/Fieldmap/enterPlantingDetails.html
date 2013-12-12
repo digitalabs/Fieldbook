@@ -149,17 +149,11 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 		var rangeNum = /*[[${fieldmapForm.userFieldmap.numberOfRangesInBlock}]]*/;
 		var rowsPerPlot = /*[[${fieldmapForm.userFieldmap.numberOfRowsPerPlot}]]*/;
 		var deletedPlots = 0;
-		var totalNoOfPlots;
+		var totalNoOfPlots = /*[[${fieldmapForm.userFieldmap.totalNumberOfSelectedPlots}]]*/;
 		var deletedPlotError = /*[[#{fieldmap.starting.coordinates.deleted}]]*/;
 		var totalBlocksError = /*[[#{fieldmap.plots.exceed.blocks.with.deleted}]]*/;
 		var trial = /*[[${fieldmapForm.userFieldmap.trial}]]*/;
-		
-		if (trial) {
-			totalNoOfPlots = /*[[${fieldmapForm.userFieldmap.totalNumberOfPlots}]]*/;
-		} else {
-			totalNoOfPlots = /*[[${fieldmapForm.userFieldmap.numberOfEntries}]]*/;
-		}
-		
+				
 	  	function setAllDeletedBox(){
 			validatePlantingDetails();
 	  		var deletedRect = "";

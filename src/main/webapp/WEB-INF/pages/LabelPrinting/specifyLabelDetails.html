@@ -67,7 +67,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 			</div>
 			<div class="form-group" th:if="*{isTrial == true}">
 				<div class="col-xs-12 col-md-12">
-					<label class="control-label" th:text="#{label.printing.number.of.instances}+':'"></label>
+					<label class="control-label"><strong th:text="#{label.printing.number.of.instances}+':'"></strong></label>
 					<span th:text="*{userLabelPrinting.numberOfInstances}">1</span>
 				</div>		
 			</div>

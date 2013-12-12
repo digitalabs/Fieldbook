@@ -354,8 +354,9 @@ function createLabelPrinting(tableName){
 	var idVal = null;
 	for(var index in selectedTableIds) {
 		//console.log( index + " : " + selectedTableIds[index]);
-		idVal = selectedTableIds[index];
-		if(idVal != null){
+		var tempVal = selectedTableIds[index];
+		if(tempVal != null){
+			idVal = tempVal;
 			count++;
 		}			
 	}
@@ -386,8 +387,9 @@ function showFieldMap(tableName) {
 	var idVal = null;
 	for(var index in selectedTableIds) {
 		//console.log( index + " : " + selectedTableIds[index]);
-		idVal = selectedTableIds[index];
-		if(idVal != null){
+		var tempVal = selectedTableIds[index];
+		if(tempVal != null){
+			idVal = tempVal;
 			count++;
 		}			
 	}

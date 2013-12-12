@@ -106,10 +106,10 @@ table .odd{
 table .even{
 	background-color: #E9e9e9;
 }
-
+/*
 #studyTree tr:nth-child(even), #selectedTrials tr:nth-child(even), #catVarList tr:nth-child(even) {background-color: #DADADA}
 #studyTree tr:nth-child(odd), #selectedTrials tr:nth-child(odd), #catVarList tr:nth-child(odd) {background-color: #E9e9e9}
-
+*/
 
 .table-bordered > thead > tr > th, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > tbody > tr > td, .table-bordered > tfoot > tr > td {
     border: 1px solid #828282;

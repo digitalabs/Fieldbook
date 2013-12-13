@@ -20,14 +20,14 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:class="${row.even}? 'data-row even' : 'data-row odd'" th:each="trial, row : *{paginatedTrialDetailsList}"  th:id="${trial.id}">
-					<td th:text="${trial.studyName}">Name</td>
-					<td th:text="${trial.title}">Title</td>
-					<td th:text="${trial.objective}">Objective</td>
-					<td th:text="${trial.startDate}">Start Date</td>
-					<td th:text="${trial.endDate}">End Date</td>
-					<td th:text="${trial.piName}">Principal Investigator</td>
-					<td th:text="${trial.siteName}">Site Name</td>
+				<tr th:class="${row.even}? 'data-row' : 'data-row'" th:each="trial, row : *{paginatedTrialDetailsList}"  th:id="${trial.id}">
+					<td th:class="${row.even}? 'even' : 'odd'" th:text="${trial.studyName}">Name</td>
+					<td th:class="${row.even}? 'even' : 'odd'" th:text="${trial.title}">Title</td>
+					<td th:class="${row.even}? 'even' : 'odd'" th:text="${trial.objective}">Objective</td>
+					<td th:class="${row.even}? 'even' : 'odd'" th:text="${trial.startDate}">Start Date</td>
+					<td th:class="${row.even}? 'even' : 'odd'" th:text="${trial.endDate}">End Date</td>
+					<td th:class="${row.even}? 'even' : 'odd'" th:text="${trial.piName}">Principal Investigator</td>
+					<td th:class="${row.even}? 'even' : 'odd'" th:text="${trial.siteName}">Site Name</td>
 				</tr>
 			</tbody>
          </table>

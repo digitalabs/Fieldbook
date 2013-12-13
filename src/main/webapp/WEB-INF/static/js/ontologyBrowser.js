@@ -1252,6 +1252,7 @@ function addCategoricalValidValue(id, label, description) {
 	if ($("#catVarList").height() > 200 && !$("#catVarList").parent().hasClass("scrollWrapper")) {
 		$("#catVarList").parent().toggleClass("scrollWrapper");
 	}
+	styleDynamicTree('catVarList');
 }
 
 function validateNewValidValue(label, description, id) {
@@ -1290,6 +1291,7 @@ function delCatVar(button) {
 	if ($("#catVarList").height() <= 200 && $("#catVarList").parent().hasClass("scrollWrapper")) {
 		$("#catVarList").parent().toggleClass("scrollWrapper");
 	}
+	styleDynamicTree('catVarList');
 }
 
 function findIndexOfEnumeration(enumerations_obj, name, col) {
@@ -1336,4 +1338,5 @@ function resetCategoricalValues() {
 	if ($("#catVarList").height() <= 200 && $("#catVarList").parent().hasClass("scrollWrapper")) {
 		$("#catVarList").parent().toggleClass("scrollWrapper");
 	}
+	styleDynamicTree('catVarList');
 }

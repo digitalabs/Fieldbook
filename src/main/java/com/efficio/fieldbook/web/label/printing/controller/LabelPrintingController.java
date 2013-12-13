@@ -252,10 +252,10 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
             if(getUserLabelPrinting().getGenerateType().equalsIgnoreCase("1")){
                 
                 String fileName = labelPrintingService.generatePDFLabels(trialInstances, getUserLabelPrinting(), baos);
-                response.setHeader("Content-disposition","attachment; filename=" + getUserLabelPrinting().getFilename() + ".pdf");
+                response.setHeader("Content-disposition","attachment; filename=" + getUserLabelPrinting().getFilename().replaceAll(" ",  "_") + ".pdf");
             }else{
                 String fileName = labelPrintingService.generateXlSLabels(trialInstances, getUserLabelPrinting(), baos);
-                response.setHeader("Content-disposition","attachment; filename=" + getUserLabelPrinting().getFilename() + ".xls");
+                response.setHeader("Content-disposition","attachment; filename=" + getUserLabelPrinting().getFilename().replaceAll(" ",  "_") + ".xls");
             }
             //File xls = new File(fileName); // the selected name + current date
             //FileInputStream in;

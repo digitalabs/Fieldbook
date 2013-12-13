@@ -241,7 +241,9 @@ function createStudyTree(fieldMapInfoList, hasFieldMap) {
 	//set as highlightable
 	if (hasFieldMap) {
 		triggerFieldMapTableSelection('studyTree');
+		
 	}
+	styleDynamicTree('studyTree');
 }
 
 function getPrefixName(cat, id) {
@@ -531,6 +533,7 @@ function setSelectedTrialsAsDraggable(){
     });
 	
 	setSelectTrialOrderValues();
+	styleDynamicTree('selectedTrials');
 }
 
 function setSelectTrialOrderValues() {
@@ -540,4 +543,30 @@ function setSelectTrialOrderValues() {
 		$(this).parent().parent().attr("id", i+1);
 		i++;
 	});
+	styleDynamicTree('selectedTrials');
+}
+function styleDynamicTree(treeName){
+	var count = 0;
+	if($('#'+treeName) != null){
+		$('#'+treeName+' tr').each(function(){
+			count++;
+			var className = "";
+			if(count % 2 == 1){
+				className = 'odd';
+			}else{
+				className = 'even';
+			}
+			$(this).find('td').removeClass('odd');
+			$(this).find('td').removeClass('even');
+			$(this).find('td').addClass(className);
+			
+			$(this).find('th').removeClass('odd');
+			$(this).find('th').removeClass('even');
+			$(this).find('th').addClass('table-header');
+			
+			
+		});
+		
+	}
+	
 }

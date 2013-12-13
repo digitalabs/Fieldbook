@@ -85,11 +85,11 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 						<th th:if="*{isTrial == true}" th:text="#{label.printing.labels.needed}">Labels Needed</th>
 						<th th:if="*{isTrial == false}" th:text="#{label.printing.nursery.entries.labels.count}"># of Entries / Labels Needed</th>
 					</thead>
-					<tr th:class="${row.even}? 'even' : 'odd'" th:each="trialRow, row : *{userLabelPrinting.fieldMapInfo.datasets[__0__].trialInstances}">
-						<td th:text="${trialRow.trialInstanceNo}"></td>
-						<td th:text="${trialRow.entryCount}"></td>
-						<td th:if="*{isTrial == true}" th:text="${trialRow.repCount}"></td>
-						<td th:if="*{isTrial == true}" th:text="${trialRow.plotCount}"></td>
+					<tr  th:each="trialRow, row : *{userLabelPrinting.fieldMapInfo.datasets[__0__].trialInstances}">
+						<td th:class="${row.even}? 'even' : 'odd'" th:text="${trialRow.trialInstanceNo}"></td>
+						<td th:class="${row.even}? 'even' : 'odd'" th:text="${trialRow.entryCount}"></td>
+						<td th:class="${row.even}? 'even' : 'odd'" th:if="*{isTrial == true}" th:text="${trialRow.repCount}"></td>
+						<td th:class="${row.even}? 'even' : 'odd'" th:if="*{isTrial == true}" th:text="${trialRow.plotCount}"></td>
 					</tr>
 				</table>
 			</div>
@@ -123,7 +123,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 						</thead>
 						<div th:each="map : *{userLabelPrinting.fieldMapInfoList}">
 							<div th:each="dataset : ${map.datasets}">
-								<tr th:class="${row.even}? 'even' : 'odd'" th:each="trial, row : ${dataset.trialInstances}">
+								<tr th:each="trial, row : ${dataset.trialInstances}">
 									<td><input class="includeTrial" type="checkbox" onclick="setTotalLabels(this);" /></td>
 									<td>
 										<input class="trialOrder" type="hidden" th:value="${map.fieldbookId}+'|'+${dataset.datasetId}+'|'+${trial.geolocationId}" />

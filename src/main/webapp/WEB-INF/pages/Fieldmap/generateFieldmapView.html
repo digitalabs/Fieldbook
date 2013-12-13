@@ -61,14 +61,14 @@ th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" 
 							<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.reps.count}"># of Reps</th>
 							<th th:text="#{fieldmap.trial.plots.needed}">Plots Needed</th>
 						</thead>
-						<tr th:class="${rowInd.even}? 'even' : 'odd'" th:each="row, rowInd : *{userFieldmap.selectedFieldmapList.rows}">
-							<td th:text="${row.order}"></td>
-							<td th:text="${row.studyName}"></td>
-							<td th:if="*{userFieldmap.trial == false}" th:text="${row.datasetName}"></td>
-							<td th:if="*{userFieldmap.trial == true}" th:text="${row.trialInstanceNo}"></td>
-							<td th:text="${row.entryCount}"></td>
-							<td th:if="*{userFieldmap.trial == true}" th:text="${row.repCount}"></td>
-							<td th:if="*{userFieldmap.trial == true}" th:text="${row.plotCount}"></td>
+						<tr  th:each="row, rowInd : *{userFieldmap.selectedFieldmapList.rows}">
+							<td th:class="${rowInd.even}? 'even' : 'odd'" th:text="${row.order}"></td>
+							<td th:class="${rowInd.even}? 'even' : 'odd'" th:text="${row.studyName}"></td>
+							<td th:class="${rowInd.even}? 'even' : 'odd'" th:if="*{userFieldmap.trial == false}" th:text="${row.datasetName}"></td>
+							<td th:class="${rowInd.even}? 'even' : 'odd'" th:if="*{userFieldmap.trial == true}" th:text="${row.trialInstanceNo}"></td>
+							<td th:class="${rowInd.even}? 'even' : 'odd'" th:text="${row.entryCount}"></td>
+							<td th:class="${rowInd.even}? 'even' : 'odd'" th:if="*{userFieldmap.trial == true}" th:text="${row.repCount}"></td>
+							<td th:class="${rowInd.even}? 'even' : 'odd'" th:if="*{userFieldmap.trial == true}" th:text="${row.plotCount}"></td>
 						</tr>
 					</table>
 				</div>

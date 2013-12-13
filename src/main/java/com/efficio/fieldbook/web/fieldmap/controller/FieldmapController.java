@@ -132,6 +132,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
             }
             List<FieldMapInfo> fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfTrial(trialIds);
 
+            clearFields();
             this.userFieldmap.setUserFieldmapInfo(fieldMapInfoList, true);
             
             for (FieldMapInfo fieldMapInfo : fieldMapInfoList) {
@@ -317,6 +318,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
                 nurseryIds.add(Integer.parseInt(id));
             }
             
+            clearFields();
             List<FieldMapInfo> fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfNursery(nurseryIds);
 
             this.userFieldmap.setUserFieldmapInfo(fieldMapInfoList, false);
@@ -438,24 +440,13 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         this.userFieldmap.setNumberOfRowsPerPlot(form.getUserFieldmap().getNumberOfRowsPerPlot());
         this.userFieldmap.setLocationName(form.getUserFieldmap().getLocationName());
     }
-    
-    private void setDummyData() {
-        List<FieldMapInfo> infos = new ArrayList<FieldMapInfo>();
-        FieldMapInfo info = new FieldMapInfo();
-        FieldMapDatasetInfo dataset = new FieldMapDatasetInfo();
-        info.setDatasets(new ArrayList<FieldMapDatasetInfo>());
-        info.getDatasets().add(dataset);
-        info.setFieldbookId(-212);
-        info.setFieldbookName("Dummy Fieldbook");
-        info.setTrial(true);
-        dataset.setDatasetName("Dummy Daaset");
-        dataset.setDatasetId(-214);
-        FieldMapTrialInstanceInfo trial = new FieldMapTrialInstanceInfo();
-        trial.setGeolocationId(-140);
-        dataset.setTrialInstances(new ArrayList<FieldMapTrialInstanceInfo>());
-        dataset.getTrialInstances().add(trial);
-        this.userFieldmap.setSelectedDatasetId(-214);
-        this.userFieldmap.setSelectedGeolocationId(-140);
-        this.userFieldmap.setFieldMapInfo(infos);
+ 
+    private void clearFields() {
+        if (this.userFieldmap != null) {
+            this.userFieldmap.setBlockName("");
+            this.userFieldmap.setFieldName("");
+            this.userFieldmap.setNumberOfRowsInBlock(0);
+            this.userFieldmap.setNumberOfRangesInBlock(0);
+        }
     }
 }

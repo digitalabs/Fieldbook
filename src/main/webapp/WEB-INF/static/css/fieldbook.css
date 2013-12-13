@@ -151,7 +151,7 @@ table .even{
   
 
 table .field-map-highlight {
-     background-color: #BED6B2;
+    /* background-color: #BED6B2;*/
 }
 table .field-map-highlight td{
      background-color: #BED6B2;

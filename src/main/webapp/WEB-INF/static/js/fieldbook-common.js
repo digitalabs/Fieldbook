@@ -555,10 +555,13 @@ function styleDynamicTree(treeName){
 			}
 			$(this).find('td').removeClass('odd');
 			$(this).find('td').removeClass('even');
+			$(this).find('td').addClass(className);
+			
 			$(this).find('th').removeClass('odd');
 			$(this).find('th').removeClass('even');
-			$(this).find('td').addClass(className);
-			$(this).find('th').addClass(className);
+			$(this).find('th').addClass('table-header');
+			
+			
 		});
 		
 	}

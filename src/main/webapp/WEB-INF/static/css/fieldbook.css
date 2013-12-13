@@ -97,14 +97,14 @@ table th, table td{
 	color: #333333;
 }
 */
-table > thead > tr > th{
-	background-color: #DADADA;
+table > thead > tr > th, table .table-header{
+	background-color: #c8c6c6;
 }
 table .odd{
-	background-color: #DADADA;
+	background-color: #e3e3e3;
 }
 table .even{
-	background-color: #E9e9e9;
+	background-color: #f0eeee;
 }
 /*
 #studyTree tr:nth-child(even), #selectedTrials tr:nth-child(even), #catVarList tr:nth-child(even) {background-color: #DADADA}

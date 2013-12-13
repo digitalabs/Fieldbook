@@ -37,9 +37,9 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 		</div>
 		<div class="row">
 			<div class="col-xs-12 col-md-12" >
-				<div class="form-group">
+				<div class="">
 					<div class="col-xs-12 col-md-12">
-						<label th:text="#{fieldmap.header.planting.details}">PLANTING DETAILS</label>
+						<label ><strong th:text="#{fieldmap.header.planting.details}">PLANTING DETAILS</strong></label>
 					</div>
 				</div>
 			</div>	
@@ -99,11 +99,11 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 		<div class="row">&nbsp;</div>
 		<div class="row">
 			<div class="col-xs-12 col-md-12" >
-				<div class="form-group">
+				
 					<div class="col-xs-12 col-md-12">
-						<label th:text="#{fieldmap.header.unavailable.plots}">UNAVAILABLE PLOTS</label>
+						<label><strong  th:text="#{fieldmap.header.unavailable.plots}">UNAVAILABLE PLOTS</strong></label>
 					</div>
-				</div>
+				
 			</div>	
 		</div>
 		<div class="row">

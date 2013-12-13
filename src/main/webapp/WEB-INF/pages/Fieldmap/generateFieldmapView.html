@@ -31,8 +31,8 @@ th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" 
 			<div class="col-xs-12 col-md-12" >
 				<div class="form-group">
 					<div class="col-xs-12  col-md-12">
-						<label th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.header.summary.for.trial}">SUMMARY OF TRIAL, FIELD AND PLANTING DETAILS</label>
-						<label th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.header.summary.for.nursery}">SUMMARY OF NURSERY, FIELD AND PLANTING DETAILS</label>
+						<label th:if="*{userFieldmap.trial == true}" ><strong th:text="#{fieldmap.header.summary.for.trial}">SUMMARY OF TRIAL, FIELD AND PLANTING DETAILS</strong></label>
+						<label th:if="*{userFieldmap.trial == false}" ><strong th:text="#{fieldmap.header.summary.for.nursery}">SUMMARY OF NURSERY, FIELD AND PLANTING DETAILS</strong></label>
 					</div>
 				</div>
 			</div>	
@@ -85,17 +85,17 @@ th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" 
 			<div class="col-xs-12 col-md-12">
 				<div class="form-group">
 					<div class="col-xs-4 col-md-4">
-						<label class="control-label" th:text="#{fieldmap.trial.field.and.block.details}">FIELD AND BLOCK DETAILS:</label>
+						<label class="control-label" ><strong th:text="#{fieldmap.trial.field.and.block.details}">FIELD AND BLOCK DETAILS:</strong></label>
 					</div>
 				</div>
 				<div class="form-group">
 					<div class="col-xs-4 col-md-4">
-						<label class="control-label" th:text="#{fieldmap.trial.row.and.range.and.plot.details}">ROW, RANGE AND PLOT DETAILS:</label>
+						<label class="control-label" ><strong th:text="#{fieldmap.trial.row.and.range.and.plot.details}">ROW, RANGE AND PLOT DETAILS:</strong></label>
 					</div>
 				</div>
 				<div class="form-group">
 					<div class="col-xs-4 col-md-4">
-						<label class="control-label" th:text="#{fieldmap.header.planting.details}">PLANTING DETAILS</label>
+						<label class="control-label" ><strong th:text="#{fieldmap.header.planting.details}">PLANTING DETAILS</strong></label>
 					</div>
 				</div>
 			</div>
@@ -179,12 +179,12 @@ th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" 
 		<div class="row">
 			<div class="col-xs-12 col-md-12">
 				<div class="form-group">
-					<div class="col-xs-11 col-md-11">
-						<label class="control-label" th:text="#{fieldmap.header.fieldmap}">FIELD MAP</label>
+					<div class="col-xs-10 col-md-10">
+						<label class="control-label" ><strong th:text="#{fieldmap.header.fieldmap}">FIELD MAP</strong></label>
 					</div>
-					<div class="col-xs-1 col-md-1" style="padding-left:0">
-						<div class="btn-group">
-							<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+					<div class="col-xs-2 col-md-2">
+						<div class="btn-group" style="padding-left: 55px">
+							<button style="marging-left: -20px" type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
 						    	<span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;Tools
 						  	</button>
 						  	<ul class="dropdown-menu" role="menu">
@@ -200,9 +200,7 @@ th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" 
 				</div>
 			</div>
 		</div>
-		<div class="row">
-		&nbsp;
-		</div>
+		
 		<div class="row">
 			<div class="col-xs-12 col-md-12">
 				<input type="hidden" id="markedCells" name="markedCells" />

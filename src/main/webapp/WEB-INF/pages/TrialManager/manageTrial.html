@@ -121,6 +121,15 @@
    		       );
      	});
         
+        $( document ).ready(function() {  	     
+        	if($('#trialDetailsListPagination') == null || 
+       			$('#trialDetailsListPagination').length == 0){
+       			        		//we disable the buttons
+       			        		$('.dropdown-menu li').addClass('disabled');
+       			        	}
+       			        	
+		});
+        
       //]]>
     </script>
 </div>

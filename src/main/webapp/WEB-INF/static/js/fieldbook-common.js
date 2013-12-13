@@ -226,10 +226,8 @@ function createStudyTree(fieldMapInfoList, hasFieldMap) {
 		});
 	});
 	//set bootstrap ui
-	$('.tree').treegrid({
-        expanderExpandedClass: 'glyphicon glyphicon-minus ',
-        expanderCollapsedClass: 'glyphicon glyphicon-plus'
-    });
+	
+	$('.tree').treegrid();
 	
 	$('.tr-expander').on('click', function(){
 		triggerExpanderClick($(this));
@@ -267,16 +265,15 @@ function createHeader(hasFieldMap) {
 	
 	if (!hasFieldMap) {
 		if (trial) {
-			newRow = newRow + "<th style='width:30%'></th>" +
+			newRow = newRow + "<th style='width:30%'>" + trialName+ "</th>" +
 				"<th style='width:18%'>" + entryLabel + "</th>" +
 				"<th style='width:17%'>" + repLabel + "</th>" +
 				"<th style='width:20%'>" + plotLabel + "</th>";
 		} else {
-			newRow = newRow + "<th style='width:50%'></th>" +
+			newRow = newRow + "<th style='width:50%'>" + nurseryName + "</th>" +
 			"<th style='width:35%'>" + entryPlotLabel + "</th>";
 		}
 		newRow = newRow + "<th style='width:10%'>" + fieldmapLabel + "</th>";
-		newRow = newRow + "<th style='width:5%'>" + "</th>";
 	} else {
 		if (trial) {
 			newRow = newRow + "<th style='width:40%'></th>" +
@@ -305,13 +302,14 @@ function createRow(id, parentClass, value, realId, withFieldMap) {
 		//study and dataset level 
 		//newRow = "<tr id='" + realId + "' class='"+ genClassName + id + " " + genParentClassName + "' onClick='triggerExpanderClick($(this))'>";
 		newRow = "<tr id='" + realId + "' class='tr-expander "+ genClassName + id + " " + genParentClassName + "'>";
+		
 		if (trial) {
-			newCell = "<td>" + value + "</td><td></td><td></td><td></td>";
+			newCell = newCell + "<td>" + value + "</td><td></td><td></td><td></td>";
 		} else {
-			newCell = "<td>" + value + "</td><td></td>";
+			newCell = newCell + "<td>" + value + "</td><td></td>";
 		}
 		if (!withFieldMap) {
-			newCell = newCell + "<td></td><td></td>";
+			newCell = newCell + "<td></td>";
 		}
 	} else {
 		//trial instance level
@@ -326,13 +324,12 @@ function createRow(id, parentClass, value, realId, withFieldMap) {
 			//for create new fieldmap
 			newRow = "<tr class='data-row trialInstance "+ genClassName + id + " " + genParentClassName + "'>";
 			var checkBox = "<input class='checkInstance' type='checkbox' id='" + realId + "' /> &nbsp;&nbsp;";
-			newCell = "<td>" + value.trialInstanceNo + "</td><td>" + value.entryCount + "</td>";
+			newCell = "<td>" + checkBox + "&nbsp;" + value.trialInstanceNo + "</td><td>" + value.entryCount + "</td>";
 			if (trial) {
 				newCell = newCell + "<td>" + value.repCount + "</td><td>" + value.plotCount + "</td>";
 			}
 			var hasFieldMap = value.hasFieldMap ? "Yes" : "No";
 			newCell = newCell + "<td class='hasFieldMap'>" + hasFieldMap + "</td>";
-			newCell = newCell + "<td>" + checkBox + "</td>";
 		}
 	}
 	$("#studyTree").append(newRow+newCell+"</tr>");
@@ -492,7 +489,13 @@ function showCreateFieldMap() {
 			var id = this.id;
 			var datasetId = $(this).parent().parent().treegrid('getParentNode').attr("id");
 			var studyId = $(this).parent().parent().treegrid('getParentNode').treegrid('getParentNode').attr("id");
-			var hasFieldMap = $(this).parent().prev().html();
+			var hasFieldMap;
+			if (trial) {
+				hasFieldMap = $(this).parent().next().next().next().next().html();
+			} else {
+				hasFieldMap = $(this).parent().next().next().html();
+			}
+			
 			
 			//build id list of selected trials instances
 			fieldmapIds.push(studyId+"|"+datasetId+"|"+id);

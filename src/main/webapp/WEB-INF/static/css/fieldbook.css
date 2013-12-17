@@ -377,3 +377,6 @@ tr.trialInstance {
 .treegrid-indent{
 	height: 0px;
 }
+.page-header{
+	margin-left: -25px;
+}

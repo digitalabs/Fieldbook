@@ -38,13 +38,13 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 	
 	<div class="form-group col-xs-12 col-md-12" >
 			&nbsp;<strong class="sub-heading col-xs-12 col-md-12" th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.to.be.mapped}">TRIAL TO BE MAPPED:</strong>
-			&nbsp;<strong class="sub-heading col-xs-12 col-md-12" th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery.to.be.mapped}">NURSERY TO BE MAPPED:</strong>		
+			<strong class="sub-heading col-xs-12 col-md-12" th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery.to.be.mapped}">NURSERY TO BE MAPPED:</strong>		
 	</div>
 	
 	<div class="form-group col-xs-4 col-md-4">
 		<strong class="col-xs-12 col-md-12">
 			&nbsp;<span th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.selected.trial}">Selected Trial:</span>
-			&nbsp;<span th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery.selected.nursery}">Selected Nursery:</span>
+			<span th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery.selected.nursery}">Selected Nursery:</span>
 		</strong>		
 	</div>
 	<div class="form-group col-xs-8 col-md-8">
@@ -86,7 +86,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 				</div>
 			</div>
 		</table>
-		&nbsp;&nbsp;&nbsp;&nbsp;<label th:text="#{fieldmap.trial.total.number.of.plots}"> Total # of Plots Needed: </label> &nbsp; 
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label th:text="#{fieldmap.trial.total.number.of.plots}"> Total # of Plots Needed: </label> &nbsp; 
 		<span th:text="*{userFieldmap.totalNumberOfSelectedPlots}"></span>	
 	</div>
 	<div class="form-group col-xs-12 col-md-12" >

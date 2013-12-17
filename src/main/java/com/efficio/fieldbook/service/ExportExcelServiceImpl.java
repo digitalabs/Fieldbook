@@ -337,7 +337,6 @@ public class ExportExcelServiceImpl implements ExportExcelService{
             
             row.createCell(columnIndex++).setCellValue(columnsValue);
             
-            row.createCell(columnIndex++).setCellValue(blockNameValue);
             labelCell = row.createCell(columnIndex++);
             labelCell.setCellValue(machineCapacityLabel);
             labelCell.setCellStyle(labelStyle);

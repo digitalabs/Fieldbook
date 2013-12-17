@@ -92,6 +92,19 @@ public class FileUploadController extends AbstractBaseFieldbookController{
     	return super.show(model);
     }
 
+    @RequestMapping(value="/newNursery", method = RequestMethod.GET)
+    public String openNursery(@ModelAttribute("fileUploadForm") FileUploadForm uploadForm, Model model, HttpSession session) {
+        //use this one to not invalidat the session
+        try {
+            ToolUtil toolUtil = new ToolUtil();
+            toolUtil.launchNativeTool(this.getOldFieldbookPath(), "--ibpApplication=BreedingManager");
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        return super.show(model);
+    }
     /**
      * Uploads file if it passes validation
      *

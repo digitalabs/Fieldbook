@@ -87,6 +87,21 @@ public class TrialFileUploadController extends AbstractBaseFieldbookController{
     	
     	return super.show(model);
     }
+    
+    @RequestMapping(value="/newTrial", method = RequestMethod.GET)
+    public String openTrial(@ModelAttribute("fileUploadForm") FileUploadForm uploadForm, Model model, HttpSession session) {
+        session.invalidate();
+        
+        try {
+            ToolUtil toolUtil = new ToolUtil();
+            toolUtil.launchNativeTool(this.getOldFieldbookPath(), "--ibpApplication=IBFieldbookTools");
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        return super.show(model);
+    }
 
     /**
      * Uploads file if it passes validation

@@ -364,3 +364,6 @@ tr.trialInstance {
     text-align: center;
     padding: 10px;
 }
+.treegrid-indent{
+	height: 0px;
+}

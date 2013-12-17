@@ -275,7 +275,7 @@ function createHeader(hasFieldMap) {
 			newRow = newRow + "<th style='width:50%'>" + nurseryName + "</th>" +
 			"<th style='width:35%'>" + entryPlotLabel + "</th>";
 		}
-		newRow = newRow + "<th style='width:10%'>" + fieldmapLabel + "</th>";
+		newRow = newRow + "<th style='width:15%'>" + fieldmapLabel + "</th>";
 	} else {
 		if (trial) {
 			newRow = newRow + "<th style='width:40%'></th>" +

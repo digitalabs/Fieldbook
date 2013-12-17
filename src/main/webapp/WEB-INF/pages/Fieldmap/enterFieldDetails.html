@@ -268,8 +268,46 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 				
 			}
 		})
-		
+		var numRowPerPlot = $('#'+getJquerySafeId("userFieldmap.numberOfRowsPerPlot")).val();
 		$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val(defaultRowsPerPlot);
+		if($('#'+getJquerySafeId("userFieldmap.fieldName")).val() != ''){
+			//we preset the fieldlocation id
+			var isChecked = $('#showFavoriteLocation').is(':checked');
+			var locId = $('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val();
+			
+			$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val(numRowPerPlot);
+			
+			if(isChecked){
+				$('#s2id_fieldLocationIdFavorite').show();
+				$('#s2id_fieldLocationIdAll').hide();
+				for(var index in locationSuggestionsFav_obj) {
+				  if(locationSuggestionsFav_obj[index].id == locId){
+					  console.log(locationSuggestionsFav_obj[index]);
+					  
+					  
+					  $("#fieldLocationIdFavorite").select2('data', locationSuggestionsFav_obj[index]);
+					  $('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val($('#'+getJquerySafeId("fieldLocationIdFavorite")).select2("data").id);
+				      $('#'+getJquerySafeId("userFieldmap.locationName")).val($('#'+getJquerySafeId("fieldLocationIdFavorite")).select2("data").text);
+					  break;
+				  }
+				}
+				
+			}else{
+				$('#s2id_fieldLocationIdFavorite').hide();
+				$('#s2id_fieldLocationIdAll').show();
+				for(var index in locationSuggestions_obj) {
+					  if(locationSuggestions_obj[index].id == locId){
+						  console.log(locationSuggestions_obj[index]);
+						  $("#fieldLocationIdAll").select2('data', locationSuggestions_obj[index]);
+						  $('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val($('#'+getJquerySafeId("fieldLocationIdAll")).select2("data").id);
+						  $('#'+getJquerySafeId("userFieldmap.locationName")).val($('#'+getJquerySafeId("fieldLocationIdAll")).select2("data").text);	
+						  break;
+					  }
+					}
+				
+			}
+		}
+				 
 	});
   	
   

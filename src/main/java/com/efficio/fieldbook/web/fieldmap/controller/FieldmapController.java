@@ -447,6 +447,12 @@ public class FieldmapController extends AbstractBaseFieldbookController{
             this.userFieldmap.setFieldName("");
             this.userFieldmap.setNumberOfRowsInBlock(0);
             this.userFieldmap.setNumberOfRangesInBlock(0);
+            this.userFieldmap.setStartingColumn(1);
+            this.userFieldmap.setStartingRange(1);
+            this.userFieldmap.setPlantingOrder(0);
+            this.userFieldmap.setMachineRowCapacity(1);
+            this.userFieldmap.setFieldMapLabels(null);
+            this.userFieldmap.setFieldmap(null);
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.efficio.fieldbook.web.fieldmap.bean;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,7 +10,9 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 
 
-public class SelectedFieldmapList{
+public class SelectedFieldmapList implements Serializable {
+
+    private static final long serialVersionUID = 3166386440351404690L;
 
     private List<SelectedFieldmapRow> rows = new ArrayList<SelectedFieldmapRow>();
     

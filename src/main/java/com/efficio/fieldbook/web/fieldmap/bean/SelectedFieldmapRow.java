@@ -1,8 +1,12 @@
 package com.efficio.fieldbook.web.fieldmap.bean;
 
+import java.io.Serializable;
 
 
-public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow> {
+
+public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Serializable {
+
+    private static final long serialVersionUID = 1435511995297357029L;
 
     private Integer order;
     private String studyName;

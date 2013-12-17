@@ -169,12 +169,12 @@ function validatePlantingDetails() {
 		return false;
 	}
 	
-	if (parseInt(startingCol) > parseInt(rowNum)/parseInt(rowsPerPlot) || parseInt(startingCol) == 0) {
+	if (parseInt(startingCol) > parseInt(rowNum)/parseInt(rowsPerPlot) || parseInt(startingCol) <= 0) {
 		showMessage(startColInvalid);
 		return false;
 	}
 	
-	if (parseInt(startingRange) > parseInt(rangeNum) || parseInt(startingRange) == 0) {
+	if (parseInt(startingRange) > parseInt(rangeNum) || parseInt(startingRange) <= 0) {
 		showMessage(startRangeInvalid);
 		return false;
 	}

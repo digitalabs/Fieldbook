@@ -10,24 +10,24 @@
          <table id="nursery-table" th:if="*{not #lists.isEmpty(paginatedNurseryDetailsList)}" class="table table-curved table-condensed">
            <thead>
 				<tr>
-					<th width="10%" th:text="#{nursery.managenurseries.shownurseries.name}">Name</th>
-					<th width="25%" th:text="#{nursery.managenurseries.shownurseries.title}">Title</th>
-					<th width="20%" th:text="#{nursery.managenurseries.shownurseries.objective}">Objective</th>
-					<th width="10%" th:text="#{nursery.managenurseries.shownurseries.start.date}">Start Date</th>
-					<th width="10%" th:text="#{nursery.managenurseries.shownurseries.end.date}">End Date</th>
-					<th width="15%" th:text="#{nursery.managenurseries.shownurseries.principal.investigator}">Principal Investigator</th>
-					<th width="10%" th:text="#{nursery.managenurseries.shownurseries.site.name}">Site Name</th>
+					<th style="max-width:10%;word-wrap:break-word;" th:text="#{nursery.managenurseries.shownurseries.name}">Name</th>
+					<th style="max-width:25%;word-wrap:break-word;" th:text="#{nursery.managenurseries.shownurseries.title}">Title</th>
+					<th style="max-width:20%;word-wrap:break-word;" th:text="#{nursery.managenurseries.shownurseries.objective}">Objective</th>
+					<th style="max-width:10%;word-wrap:break-word;" th:text="#{nursery.managenurseries.shownurseries.start.date}">Start Date</th>
+					<th style="max-width:10%;word-wrap:break-word;" th:text="#{nursery.managenurseries.shownurseries.end.date}">End Date</th>
+					<th style="max-width:15%;word-wrap:break-word;" th:text="#{nursery.managenurseries.shownurseries.principal.investigator}">Principal Investigator</th>
+					<th style="max-width:10%;word-wrap:break-word;" th:text="#{nursery.managenurseries.shownurseries.site.name}">Site Name</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr th:class="${row.even}? 'data-row' : 'data-row'" th:each="nursery, row : *{paginatedNurseryDetailsList}"  th:id="${nursery.id}">
-					<td th:class="${row.even}? 'even' : 'odd'" th:text="${nursery.studyName}">Name</td>
-					<td th:class="${row.even}? 'even' : 'odd'" th:text="${nursery.title}">Title</td>
-					<td th:class="${row.even}? 'even' : 'odd'" th:text="${nursery.objective}">Objective</td>
-					<td th:class="${row.even}? 'even' : 'odd'" th:text="${nursery.startDate}">Start Date</td>
-					<td th:class="${row.even}? 'even' : 'odd'" th:text="${nursery.endDate}">End Date</td>
-					<td th:class="${row.even}? 'even' : 'odd'" th:text="${nursery.piName}">Principal Investigator</td>
-					<td th:class="${row.even}? 'even' : 'odd'" th:text="${nursery.siteName}">Site Name</td>
+					<td style="max-width:10%;word-wrap:break-word;" th:class="${row.even}? 'even' : 'odd'" th:text="${nursery.studyName}">Name</td>
+					<td style="max-width:25%;word-wrap:break-word;" th:class="${row.even}? 'even' : 'odd'" th:text="${nursery.title}">Title</td>
+					<td style="max-width:20%;word-wrap:break-word;" th:class="${row.even}? 'even' : 'odd'" th:text="${nursery.objective}">Objective</td>
+					<td style="max-width:10%;word-wrap:break-word;" th:class="${row.even}? 'even' : 'odd'" th:text="${nursery.startDate}">Start Date</td>
+					<td style="max-width:10%;word-wrap:break-word;" th:class="${row.even}? 'even' : 'odd'" th:text="${nursery.endDate}">End Date</td>
+					<td style="max-width:15%;word-wrap:break-word;" th:class="${row.even}? 'even' : 'odd'" th:text="${nursery.piName}">Principal Investigator</td>
+					<td style="max-width:10%;word-wrap:break-word;" th:class="${row.even}? 'even' : 'odd'" th:text="${nursery.siteName}">Site Name</td>
 				</tr>
 			</tbody>
          </table>

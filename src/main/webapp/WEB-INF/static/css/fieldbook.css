@@ -380,3 +380,6 @@ tr.trialInstance {
 .page-header{
 	margin-left: -25px;
 }
+#nursery-table, #trial-table{
+	table-layout: fixed;
+}

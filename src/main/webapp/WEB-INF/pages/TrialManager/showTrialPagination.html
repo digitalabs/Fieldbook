@@ -10,24 +10,24 @@
          <table id="trial-table" th:if="*{not #lists.isEmpty(paginatedTrialDetailsList)}" class="my-class table table-curved table-condensed">
            <thead>
 				<tr>
-					<th width="10%" th:text="#{trial.managetrial.showtrial.name}">Name</th>
-					<th width="25%" th:text="#{trial.managetrial.showtrial.title}">Title</th>
-					<th width="20%" th:text="#{trial.managetrial.showtrial.objective}">Objective</th>
-					<th width="10%" th:text="#{trial.managetrial.showtrial.start.date}">Start Date</th>
-					<th width="10%" th:text="#{trial.managetrial.showtrial.end.date}">End Date</th>
-					<th width="15%" th:text="#{trial.managetrial.showtrial.principal.investigator}">Principal Investigator</th>
-					<th width="10%" th:text="#{trial.managetrial.showtrial.site.name}">Site Name</th>
+					<th style="max-width:10%;word-wrap:break-word;" th:text="#{trial.managetrial.showtrial.name}">Name</th>
+					<th style="max-width:25%;word-wrap:break-word;" th:text="#{trial.managetrial.showtrial.title}">Title</th>
+					<th style="max-width:20%;word-wrap:break-word;" th:text="#{trial.managetrial.showtrial.objective}">Objective</th>
+					<th style="max-width:10%;word-wrap:break-word;" th:text="#{trial.managetrial.showtrial.start.date}">Start Date</th>
+					<th style="max-width:10%;word-wrap:break-word;" th:text="#{trial.managetrial.showtrial.end.date}">End Date</th>
+					<th style="max-width:15%;word-wrap:break-word;" th:text="#{trial.managetrial.showtrial.principal.investigator}">Principal Investigator</th>
+					<th style="max-width:10%;word-wrap:break-word;" th:text="#{trial.managetrial.showtrial.site.name}">Site Name</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr th:class="${row.even}? 'data-row' : 'data-row'" th:each="trial, row : *{paginatedTrialDetailsList}"  th:id="${trial.id}">
-					<td th:class="${row.even}? 'even' : 'odd'" th:text="${trial.studyName}">Name</td>
-					<td th:class="${row.even}? 'even' : 'odd'" th:text="${trial.title}">Title</td>
-					<td th:class="${row.even}? 'even' : 'odd'" th:text="${trial.objective}">Objective</td>
-					<td th:class="${row.even}? 'even' : 'odd'" th:text="${trial.startDate}">Start Date</td>
-					<td th:class="${row.even}? 'even' : 'odd'" th:text="${trial.endDate}">End Date</td>
-					<td th:class="${row.even}? 'even' : 'odd'" th:text="${trial.piName}">Principal Investigator</td>
-					<td th:class="${row.even}? 'even' : 'odd'" th:text="${trial.siteName}">Site Name</td>
+					<td style="max-width:10%;word-wrap:break-word;" th:class="${row.even}? 'even' : 'odd'" th:text="${trial.studyName}">Name</td>
+					<td style="max-width:25%;word-wrap:break-word;" th:class="${row.even}? 'even' : 'odd'" th:text="${trial.title}">Title</td>
+					<td style="max-width:20%;word-wrap:break-word;" th:class="${row.even}? 'even' : 'odd'" th:text="${trial.objective}">Objective</td>
+					<td style="max-width:10%;word-wrap:break-word;" th:class="${row.even}? 'even' : 'odd'" th:text="${trial.startDate}">Start Date</td>
+					<td style="max-width:10%;word-wrap:break-word;" th:class="${row.even}? 'even' : 'odd'" th:text="${trial.endDate}">End Date</td>
+					<td style="max-width:15%;word-wrap:break-word;" th:class="${row.even}? 'even' : 'odd'" th:text="${trial.piName}">Principal Investigator</td>
+					<td style="max-width:10%;word-wrap:break-word;" th:class="${row.even}? 'even' : 'odd'" th:text="${trial.siteName}">Site Name</td>
 				</tr>
 			</tbody>
          </table>

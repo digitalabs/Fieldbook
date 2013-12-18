@@ -74,7 +74,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 		</div>
 		<div class="col-xs-6 col-md-6" th:unless="*{#lists.isEmpty(userLabelPrinting.fieldMapInfo)}">
 			<div class="col-xs-12 col-md-12">
-				<label class="control-label"><strong  th:text="#{label.printing.summary.of.labels.needed}">SUMMARY OF LABELS NEEDED</strong></label>
+				<label class="control-label"><strong class="sub-content-heading"  th:text="#{label.printing.summary.of.labels.needed}">SUMMARY OF LABELS NEEDED</strong></label>
 			</div>
 			<div class="col-xs-12 col-md-12">
 				<table class="table table-curved table-condensed">
@@ -103,7 +103,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 		<div class="col-xs-12 col-md-12" >
 			<div class="form-group">
 				<div class="col-xs-12 col-md-12">
-					<label class="control-label" ><strong th:text="#{label.printing.summary.of.labels.needed}">SUMMARY OF LABELS NEEDED</strong></label>
+					<label class="control-label" ><strong class="sub-content-heading"  th:text="#{label.printing.summary.of.labels.needed}">SUMMARY OF LABELS NEEDED</strong></label>
 				</div>
 			</div>
 			<div class="form-group">
@@ -155,7 +155,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 			<div class="">
 				<div class="col-xs-12 col-md-12">
 				<br />
-					<label class="control-label" ><strong th:text="#{label.printing.specify.label.stock}"></strong></label>
+					<label class="control-label" ><strong class="sub-content-heading"  th:text="#{label.printing.specify.label.stock}"></strong></label>
 				</div>		
 			</div>
 		</div>
@@ -222,10 +222,10 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 		<div class="col-xs-12 col-md-12" >
 			<div class="form-group">
 				<div class="col-xs-6 col-md-6">
-					<label class="control-label" ><strong th:text="#{label.printing.choose.label.fields}">CHOOSE LABEL FIELDS</strong> </label>
+					<label class="control-label" ><strong class="sub-content-heading"  th:text="#{label.printing.choose.label.fields}">CHOOSE LABEL FIELDS</strong> </label>
 				</div>	
 				<div class="col-xs-6 col-md-6">
-					<label class="control-label" ><strong th:text="#{label.printing.barcode.options}"></strong></label>
+					<label class="control-label" ><strong class="sub-content-heading" th:text="#{label.printing.barcode.options}"></strong></label>
 				</div>		
 			</div>
 		</div>
@@ -371,7 +371,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 		<div class="col-xs-12 col-md-12">
 			<div class="form-group">
 				<div class="col-xs-12 col-md-12">
-					<label class="control-label" ><strong th:text="#{label.printing.set.the.filename}"></strong></label>
+					<label class="control-label" ><strong class="sub-content-heading"  th:text="#{label.printing.set.the.filename}"></strong></label>
 				</div>		
 			</div>
 		</div>

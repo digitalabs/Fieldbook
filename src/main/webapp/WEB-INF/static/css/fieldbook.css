@@ -22,13 +22,13 @@ h6,
 
 h1,
 .h1 {
-  font-size: 24px;
-   font-weight: 400;
+  font-size: 26px;
+   font-weight: bold;
 }
 h2,
 .h2 {
-  font-size: 24px;
-  font-weight: 400;
+  font-size: 26px;
+  font-weight: bold;
 }
 h3,
 .h3 {
@@ -363,9 +363,16 @@ tr.trialInstance {
 .plot{
 	background-color: #ffffff;
 }
+
 .sub-heading{
-	font-size: 13.5px;
-	font-weight: 600;
+	font-size: 24px;
+	font-weight: 300;
+	text-transform:uppercase;
+}
+.sub-content-heading{
+	font-size: 16px;
+	font-weight: bold;
+	text-transform:uppercase;
 }
 .modal-header{
 	background-color: #e9e9e9;

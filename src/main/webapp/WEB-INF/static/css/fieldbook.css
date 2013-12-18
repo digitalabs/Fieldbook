@@ -393,5 +393,19 @@ tr.trialInstance {
 	table-layout: fixed;
 }
 #ontology-tab-headers{
-	border-bottom:none;
+	/*border-bottom:none;*/
+}
+#ontology-tab-headers  > li > a, 
+#ontology-tab-headers  > li > a:hover, 
+#ontology-tab-headers  > li > a:focus {
+    
+    border-bottom: 1px solid #E4E4E4;
+    
+}
+#ontology-tab-headers  > li.active > a, 
+#ontology-tab-headers  > li.active > a:hover, 
+#ontology-tab-headers  > li.active > a:focus {
+    
+    border-bottom: 0px;
+    
 }

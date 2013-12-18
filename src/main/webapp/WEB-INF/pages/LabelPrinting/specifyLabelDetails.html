@@ -42,8 +42,8 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 		<div class="col-xs-6 col-md-6" >
 			<div class="form-group">
 				<div class="col-xs-12 col-md-12">
-					<label class="control-label" th:if="*{isTrial == true}" ><strong th:text="#{label.printing.selected.trial}">SELECTED TRIAL</strong></label>
-					<label class="control-label" th:if="*{isTrial == false}"><strong th:text="#{label.printing.selected.nursery}">SELECTED NURSERY</strong></label>
+					<label class="control-label" th:if="*{isTrial == true}" ><strong  class="sub-content-heading" th:text="#{label.printing.selected.trial}">SELECTED TRIAL</strong></label>
+					<label class="control-label" th:if="*{isTrial == false}"><strong  class="sub-content-heading" th:text="#{label.printing.selected.nursery}">SELECTED NURSERY</strong></label>
 				</div>
 			</div>
 			<div class="form-group">

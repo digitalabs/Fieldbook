@@ -37,7 +37,11 @@
 			    <li>
 			    	<a href="" style="display: none" id="label-printing-url" th:href="@{/LabelPrinting/specifyLabelDetails/trial}"></a>
 			    	<a href="javascript: createLabelPrinting('trial-table');" id="label-printing-url-link" th:text="#{tools.create.label.printing}">Create Labels</a> 
-			    </li>    
+			    </li> 
+			    <li>
+			    	<a href="" style="display: none" id="open-study-url" th:href="@{/TrialManager/fileUpload/newTrial}"></a>
+			    	<a href="javascript: openStudy('trial-table');" id="open-study-url-link" th:text="#{tools.open.trial}">Open Trial</a> 
+			    </li>   
 			  </ul>
 			</div>
 		</div>
@@ -93,6 +97,7 @@
         var fieldMapStudyRequired = /*[[#{common.error.select.study(#{fieldmap.trial})}]]*/;
         var fieldMapOneStudyErrorMsg = /*[[#{common.error.select.one.study.show.fieldmap(#{fieldmap.trial})}]]*/;
         var noFieldMapExists = /*[[#{common.error.no.existing.fieldmap(#{fieldmap.trial})}]]*/;
+        var openStudyError = /*[[#{common.error.open.study(#{fieldmap.trial})}]]*/;
         
         var selectedTableIds = new Array();
         var options = {

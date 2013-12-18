@@ -570,3 +570,33 @@ function styleDynamicTree(treeName){
 	}
 	
 }
+
+function openStudy(tableName){	
+	
+	var count = 0;
+	for(var index in selectedTableIds) {
+		//console.log( index + " : " + selectedTableIds[index]);
+		var tempVal = selectedTableIds[index];
+		if(tempVal != null){
+			idVal = tempVal;
+			count++;
+		}			
+	}
+	
+	if(count != 1){
+		$('#page-create-field-map-message').html("<div class='alert alert-danger'>"+openStudyError+"</div>");
+		return;
+	}
+	
+	Spinner.toggle();
+	var openStudyHref = $('#open-study-url').attr("href");
+	
+	$.ajax(
+    { url: openStudyHref,
+       type: "GET",
+       data: "",
+       success: function() {    	            
+         Spinner.toggle();  
+       }
+     });
+}

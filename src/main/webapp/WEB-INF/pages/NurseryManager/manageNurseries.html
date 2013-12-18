@@ -35,7 +35,11 @@
 			    <li>
 			    	<a href="" style="display: none" id="label-printing-url" th:href="@{/LabelPrinting/specifyLabelDetails/nursery}"></a>
 			    	<a href="javascript: createLabelPrinting('nursery-table');" id="label-printing-url-link" th:text="#{tools.create.label.printing}">Create Labels</a> 
-			    </li>    
+			    </li>
+				<li>
+			    	<a href="" style="display: none" id="open-study-url" th:href="@{/NurseryManager/fileUpload/newNursery}"></a>
+			    	<a href="javascript: openStudy('nursery-table');" id="open-study-url-link" th:text="#{tools.open.nursery}">Open Nursery</a> 
+			    </li>	        
 			  </ul>
 			</div>
 		</div>
@@ -91,6 +95,7 @@
         var fieldMapStudyRequired = /*[[#{common.error.select.study(#{fieldmap.nursery})}]]*/;
         var fieldMapOneStudyErrorMsg = /*[[#{common.error.select.one.study.show.fieldmap(#{fieldmap.nursery})}]]*/;
         var noFieldMapExists = /*[[#{common.error.no.existing.fieldmap(#{fieldmap.nursery})}]]*/;
+        var openStudyError = /*[[#{common.error.open.study(#{fieldmap.nursery})}]]*/;
         var options = {
             currentPage: /*[[${manageNurseriesForm.currentPage}]]*/,
             totalPages: /*[[${manageNurseriesForm.totalPages}]]*/,

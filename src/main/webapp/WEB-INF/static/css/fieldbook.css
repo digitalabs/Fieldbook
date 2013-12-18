@@ -380,8 +380,11 @@ tr.trialInstance {
 }
 .page-header{
 	margin-left: -25px;
-	margin-bottom: 0px;
+	/*margin-bottom: 0px;*/
 }
 #nursery-table, #trial-table{
 	table-layout: fixed;
+}
+#ontology-tab-headers{
+	border-bottom:none;
 }

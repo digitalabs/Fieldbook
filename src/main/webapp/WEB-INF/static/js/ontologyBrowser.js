@@ -376,6 +376,7 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	    		filterPropertyCombo(treeDivId, "comboTraitClass", "traitClassDescription", $("#comboTraitClass").select2("data").id, true);
 	    	}
 	    	else if (name == 'Property') {
+	    		//console.log($("#combo"+name).select2("data"));
 	    		$("#cropOntologyDisplay").html($("#combo"+name).select2("data").cropOntologyId);
 	    	}
 	    	if (name.match("^Manage")) {

@@ -126,6 +126,11 @@
 							filterPropertyCombo(treeDivId, "comboTraitClass", "traitClassDescription", $("#comboTraitClass").select2("data").id, true);	
 						}
 						
+			    		if(chosendRecord != null && chosendRecord.id == $('#manageTraitClassId').val()){
+			    			$('#traitClassDescription').val($('#manageTraitClassDescription').val());
+
+			    		}
+						
 				  		
 			    		//recreateComboAfterUpdate("ManageTraitClass", data.savedObject);
 			    		showSuccessMessageInModal(data.successMessage);

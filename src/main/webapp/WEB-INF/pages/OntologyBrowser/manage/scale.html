@@ -81,6 +81,11 @@
 			    	if (data.status == '1') {
 			    		recreateComboAfterUpdate("ManageScale", data.savedObject);
 			    		showSuccessMessageInModal(data.successMessage);
+			    		var chosendRecord = $("#comboScale").select2("data");
+			    		if(chosendRecord != null && chosendRecord.id == $('#manageScaleId').val()){
+			    			$('#scaleDescription').val($('#manageScaleDescription').val());
+
+			    		}
 			    		$("#btnAddManageScale").hide();
 			    		$("#btnUpdateManageScale").show();
 			    		$("#btnDeleteManageScale").show();

@@ -84,6 +84,11 @@
 			    	if (data.status == '1') {
 			    		recreateComboAfterUpdate("ManageMethod", data.savedObject);
 			    		showSuccessMessageInModal(data.successMessage);
+			    		var chosendRecord = $("#comboMethod").select2("data");
+			    		if(chosendRecord != null && chosendRecord.id == $('#manageMethodId').val()){
+			    			$('#methodDescription').val($('#manageMethodDescription').val());
+
+			    		}
 			    		$("#btnAddManageMethod").hide();
 			    		$("#btnUpdateManageMethod").show();
 			    		$("#btnDeleteManageMethod").show();

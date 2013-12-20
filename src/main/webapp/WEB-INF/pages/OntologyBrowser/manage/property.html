@@ -118,6 +118,7 @@
 			    		var chosendRecord = $("#comboProperty").select2("data");
 			    		if(chosendRecord != null && chosendRecord.id == $('#managePropertyId').val()){
 			    			//console.log("we should update frontend")
+			    			$('#propertyDescription').val($('#managePropertyDescription').val());
 			    			$("#cropOntologyDisplay").html(cropOntologyId);
 			    		}
 			    		$("#btnAddManageProperty").hide();

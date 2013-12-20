@@ -112,16 +112,20 @@
 			    success: function(data) {
 			    	if (data.status == '1') {
 			    		//we would be resetting
+			    		//console.log($("#comboTraitClass"));
 			    		var chosendRecord = $("#comboTraitClass").select2("data");
 			    		traitClassesSuggestions = data.traitClassesSuggestionList;
 						traitClassesSuggestions_obj = [];
 						treeClassData = data.traitClassTreeData;
 			    		
 						loadTraitOntologyCombos();
-						
+						//console.log($("#comboTraitClass"));
 						//we set it again
-						$("#comboTraitClass").select2('data', chosendRecord);
-						filterPropertyCombo(treeDivId, "comboTraitClass", "traitClassDescription", $("#comboTraitClass").select2("data").id, true);
+						if(chosendRecord != null){
+							$("#comboTraitClass").select2('data', chosendRecord);
+							filterPropertyCombo(treeDivId, "comboTraitClass", "traitClassDescription", $("#comboTraitClass").select2("data").id, true);	
+						}
+						
 				  		
 			    		//recreateComboAfterUpdate("ManageTraitClass", data.savedObject);
 			    		showSuccessMessageInModal(data.successMessage);

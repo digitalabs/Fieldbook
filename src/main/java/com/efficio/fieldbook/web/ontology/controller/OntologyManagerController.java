@@ -828,6 +828,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      * @param model the model
      * @return the string
      */
+    @SuppressWarnings("rawtypes")
     @RequestMapping(value="retrieve/linked/variable/{ontologyType}/{id}", method = RequestMethod.GET)
     public String getLinkedVariable(@PathVariable String ontologyType, @PathVariable String id, Model model) {
         
@@ -844,7 +845,16 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                 standardVariableList = ontologyService.getStandardVariablesByScale(Integer.valueOf(id));
             }
             
-            
+            if(standardVariableList != null && !standardVariableList.isEmpty()){
+                Collections.sort(standardVariableList, new Comparator(){
+
+                    @Override
+                    public int compare(Object o1, Object o2) {
+                        return ((StandardVariable)o1).getName().compareTo(((StandardVariable)o2).getName());
+                    }
+                    
+                }); 
+            }
             model.addAttribute("linkedStandardVariableList", standardVariableList);
             
         } catch (Exception e) {
@@ -853,6 +863,8 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         }
         return super.showAjaxPage(model, LINKED_VARIABLES_MODAL);
     }
+    
+   
     
     /*
      * Check if null.

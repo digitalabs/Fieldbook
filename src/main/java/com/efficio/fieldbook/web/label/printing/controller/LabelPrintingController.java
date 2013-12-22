@@ -318,6 +318,10 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
                     StudyTrialInstanceInfo trialInstance = 
                                 new StudyTrialInstanceInfo(fieldMapInfo.getDataSet(datasetId).getTrialInstance(geolocationId), 
                                         fieldMapInfo.getFieldbookName());
+                    if (userFieldmap.getBlockName() != null && userFieldmap.getLocationName() != null) {
+                        trialInstance.getTrialInstance().setBlockName(userFieldmap.getBlockName());
+                        trialInstance.getTrialInstance().setLocationName(userFieldmap.getLocationName());
+                    }
                     trialInstances.add(trialInstance);
                     break;
                 }

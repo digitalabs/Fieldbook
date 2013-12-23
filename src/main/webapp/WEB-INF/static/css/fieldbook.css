@@ -311,6 +311,11 @@ td.validValueDesc {
 #field-map td{
 	border: 1px solid;
 	text-align: center;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+#field-map td p{
+	margin-bottom: 0px;
 }
 
 #field-map td.plot{
@@ -318,6 +323,7 @@ td.validValueDesc {
 	vertical-align: middle;
 	word-wrap: break-word;
 }
+
 #field-map td.plot label {
 	padding: 3px;
 	margin-bottom: 0px;
@@ -327,7 +333,7 @@ td.validValueDesc {
 
 #field-map td.header-row-main{
 	background-color: #BEBEBA;
-	width: 60px;
+	width: 64px;
 }
 #field-map td.header-row-data{
 	background-color: #BEBEBA;
@@ -337,6 +343,7 @@ td.validValueDesc {
 	background-color: #EEEEE9;
 }
 
+
 .fieldmap-container {
 	padding:10px; 
 	margin:20px; 
@@ -344,6 +351,7 @@ td.validValueDesc {
 	overflow:auto; 
 	border-bottom:none;
 }
+
 
 #availableFields, #leftSelectedFields, #rightSelectedFields 
 { list-style-type: none; margin: 0; padding: 0; float: left; 

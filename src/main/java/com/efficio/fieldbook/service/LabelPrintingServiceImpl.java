@@ -247,6 +247,24 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         
                         cell.addElement(new Paragraph());
                         for(int row = 0 ; row < 5 ; row++){
+                            if(row == 0){
+                                PdfPTable innerDataTableInfo = new PdfPTable(1);
+                                innerDataTableInfo.setWidths(new float[]{1});
+                                innerDataTableInfo.setWidthPercentage(85);
+                                
+                                Font fontNormalData = FontFactory.getFont("Arial", 5.0f, Font.NORMAL);
+                                PdfPCell cellInnerData = new PdfPCell(new Phrase(barcodeLabel, fontNormalData));
+                                
+                                cellInnerData.setBorder(Rectangle.NO_BORDER);                         
+                                cellInnerData.setBackgroundColor(Color.white);
+                                cellInnerData.setPaddingBottom(0.2f);
+                                cellInnerData.setPaddingTop(0.2f);
+                                cellInnerData.setHorizontalAlignment(Element.ALIGN_MIDDLE);
+                                
+                                innerDataTableInfo.addCell(cellInnerData);
+                                innerDataTableInfo.setHorizontalAlignment(Element.ALIGN_MIDDLE);
+                                cell.addElement(innerDataTableInfo);
+                            }
                             PdfPTable innerTableInfo = new PdfPTable(2);
                             innerTableInfo.setWidths(new float[]{1,1});
                             innerTableInfo.setWidthPercentage(85);

@@ -47,7 +47,7 @@ h4,h5,h6,
 .h4,.h5,.h6{margin-top:5px}
 h1,.h1{font-size:26px;font-weight:500;height:26px;line-height:26px;text-transform:uppercase}
 h2,.h1{font-size:18px;height:18px;line-height:18px;font-weight:600;text-transform:uppercase}
-h2.light,.h2.light{font-weight: 300}
+h2.light,.h2.light{font-weight: 300; color:#999;}
 h3,.h3{font-size:16px;height:16px;line-height:16px;font-weight:600;text-transform:uppercase}
 h4,.h4{font-size:15px;height:15px;line-height:15px;font-weight:500}
 h5,.h5{font-size:15px;font-weight:500;height:15px;line-height:15px;text-transform:uppercase}

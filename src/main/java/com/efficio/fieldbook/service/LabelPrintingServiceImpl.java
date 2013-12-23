@@ -528,7 +528,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         try {
             
                     HSSFWorkbook workbook = new HSSFWorkbook();
-                    Sheet labelPrintingSheet = workbook.createSheet(userLabelPrinting.getName());
+                    String sheetName = userLabelPrinting.getName();
+                    if(sheetName == null)
+                        sheetName = "Labels";
+                    Sheet labelPrintingSheet = workbook.createSheet(sheetName);
                 
                     CellStyle labelStyle = workbook.createCellStyle();
                     HSSFFont font = workbook.createFont();

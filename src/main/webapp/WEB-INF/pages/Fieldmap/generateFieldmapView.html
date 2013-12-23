@@ -1,30 +1,34 @@
 <div class="col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org">
 	<div class="page-header">
-		<h2 th:text="#{fieldmap.header.field.plan}">
+		<h1 th:text="#{fieldmap.header.field.plan}">
 			FIELD PLAN
-		</h2>
+		</h1>
 	</div>			  
 </div>
 
 <div class="row">
-	<div class="col-xs-3 col-md-3">
-		<span style="font-weight: 400; font-size: 18px" th:text="#{fieldmap.header.make.a.field.plan}">Make a Field Plan</span>
-	</div>
-	<div class="col-xs-3 col-md-3">
-		<span style="font-size: 16px"   th:text="#{fieldmap.header.enter.details}">1. ENTER FIELD DETAILS</span>
-	</div>
-	<div class="col-xs-3 col-md-3">
-		
-		<span style="font-size: 16px"   th:text="#{fieldmap.header.enter.planting.details}">2. ENTER PLANTING DETAILS</span>
-	</div>
-	<div class="col-xs-3 col-md-3">
-		<span  style="font-weight: 600; font-size: 16px"  th:text="#{fieldmap.header.generate.field.map}">3. GENERATE FIELD MAP</span>
-	</div>
+	<form class="form-inline" role="form">
+		  <div  class="form-group fieldmap-header">
+		    <h2 th:text="#{fieldmap.header.make.a.field.plan}">Make a Field Plan</h2>
+		  </div>
+		  <div  class="form-group fieldmap-header">
+		    <h2 class="light" th:text="#{fieldmap.header.enter.details}">1. ENTER FIELD DETAILS</h2>
+		  </div>
+		  <div  class="form-group fieldmap-header">
+		    <h2 class="light" th:text="#{fieldmap.header.enter.planting.details}">2. ENTER PLANTING DETAILS</h2>
+		  </div>
+		  <div class="form-group fieldmap-header">
+		    <h2  th:text="#{fieldmap.header.generate.field.map}">3. GENERATE FIELD MAP</h2>
+		  </div>
+	</form>
 </div>
 
 <form id="fieldmapForm" name="fieldmapForm" role="form-horizontal" action="#"
 th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" enctype="multipart/form-data">
 <input type="hidden" id="stepValue" name="stepValue" value="3" />
+<input type="hidden" th:field="*{userFieldmap.generated}"/>
+<input type="hidden" th:field="*{saveAndRedirectToCreateLabel}"/>
+
 	<div style="border: 1px solid #333333">
 		<div class="row">&nbsp;</div>
 		<div class="row">
@@ -192,7 +196,8 @@ th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" 
 							    	<a th:href="@{/Fieldmap/generateFieldmapView/exportExcel}" href="" th:text="#{fieldmap.tools.export.to.excel}">Export to Excel</a>
 							    </li> 
 							    <li>
-							    	<a th:href="@{/LabelPrinting/specifyLabelDetails/fieldmap}" href="" th:text="#{tools.create.label.printing}">Create Labels</a>
+							    	<a th:href="@{/LabelPrinting/specifyLabelDetails/fieldmap}" href="" style="display: none" id="step3-create-labels-url"></a>
+							    	<a href="javascript: void(0);" id="step3-create-labels" th:text="#{tools.create.label.printing}">Create Labels</a>
 							    </li>   
 						  	</ul>
 						</div>
@@ -219,7 +224,59 @@ th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" 
 		    </div>
 	    </div>
 	</div>
-</form>
-<div layout:fragment="page-script">		
 	
+<div class="modal fade" id="create-label-confirmation">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Confirmation</h4>
+      </div>
+      <div class="modal-body">
+        <p th:text="#{fieldmap.create.label.save.fieldmap}">Do you want to save the fieldmap?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="javascript: redirectToCreateLabel();">No</button>
+        <button type="button" class="btn btn-primary" onclick="javascript: saveAndRedirectToCreateLabels();">Yes</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+	
+</form>
+
+
+<div layout:fragment="page-script">		
+<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[    
+  var isGenerated = false;
+  $( document ).ready(function() {
+	 if($('#'+getJquerySafeId("userFieldmap.generated")).val() == 'true'){
+		 isGenerated = true;	 
+	 } 
+	 $('#saveAndRedirectToCreateLabel').val("0");
+	 $('#step3-create-labels').on('click', function(){
+		 if(isGenerated){
+			 //we show the prompt
+			 $('#create-label-confirmation').modal('show');
+		 }else{
+			 redirectToCreateLabel(); 
+		 }
+	 })
+	 //console.log(isGenerated);
+  });
+  
+  function redirectToCreateLabel(){
+	var url =  $('#step3-create-labels-url').attr('href');	  
+	location.href = url;
+  }
+  function saveAndRedirectToCreateLabels(){
+	  $('#saveAndRedirectToCreateLabel').val("1");
+	  $('#fieldmapForm').submit(); 
+  }  
+	
+  	
+  
+      //]]>
+    </script>	
 </div>

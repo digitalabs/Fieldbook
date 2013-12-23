@@ -1,24 +1,28 @@
 <div class="col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org">
 	<div class="page-header">
-		<h2 th:text="#{fieldmap.header.field.plan}">
+		<h1 th:text="#{fieldmap.header.field.plan}">
 			FIELD PLAN
-		</h2>
+		</h1>
 	</div>			  
 </div>
 <div class="row">
-	<div class="col-xs-3 col-md-3">
-		<span style="font-weight: 400; font-size: 18px" th:text="#{fieldmap.header.make.a.field.plan}">Make a Field Plan</span>
-	</div>
-	<div class="col-xs-3 col-md-3">
-		<span style="font-weight: 600; font-size: 16px" th:text="#{fieldmap.header.enter.details}">1. ENTER FIELD DETAILS</span>
-	</div>
-	<div class="col-xs-3 col-md-3">
-		
-		<span style="font-size: 16px"  th:text="#{fieldmap.header.enter.planting.details}">2. ENTER PLANTING DETAILS</span>
-	</div>
-	<div class="col-xs-3 col-md-3">
-		<span style="font-size: 16px" th:text="#{fieldmap.header.generate.field.map}">3. GENERATE FIELD MAP</span>
-	</div>
+	
+	<form class="form-inline" role="form">
+		  <div   class="form-group fieldmap-header">
+		    <h2 th:text="#{fieldmap.header.make.a.field.plan}">Make a Field Plan</h2>
+		  </div>
+		  <div   class="form-group fieldmap-header">
+		    <h2 th:text="#{fieldmap.header.enter.details}">1. ENTER FIELD DETAILS</h2>
+		  </div>
+		  <div  class="form-group fieldmap-header">
+		    <h2 class="light" th:text="#{fieldmap.header.enter.planting.details}">2. ENTER PLANTING DETAILS</h2>
+		  </div>
+		  <div  class="form-group fieldmap-header">
+		    <h2 class="light" th:text="#{fieldmap.header.generate.field.map}">3. GENERATE FIELD MAP</h2>
+		  </div>
+	</form>
+	
+	
 </div>
 <form id="enterFieldDetailsForm" role="form-horizontal" class="form-horizontal" action="#"
 th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapForm}" enctype="multipart/form-data">

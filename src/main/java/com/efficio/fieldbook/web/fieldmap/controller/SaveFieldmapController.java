@@ -25,11 +25,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
+import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
+import com.efficio.fieldbook.web.label.printing.controller.LabelPrintingController;
 import com.efficio.fieldbook.web.nursery.controller.ManageNurseriesController;
 import com.efficio.fieldbook.web.trial.controller.ManageTrialController;
 
@@ -55,7 +58,7 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController{
     }
     
     @RequestMapping(method = RequestMethod.POST)
-    public String saveFieldMap(Model model) {
+    public String saveFieldMap(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model) {
         
         try {
             if (userFieldmap != null && userFieldmap.getSelectedFieldMaps() != null && !userFieldmap.getSelectedFieldMaps().isEmpty()) {
@@ -67,6 +70,11 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController{
         } catch(MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }
+        
+        if("1".equalsIgnoreCase(form.getSaveAndRedirectToCreateLabel())){            
+            return "redirect:" + LabelPrintingController.URL+"/fieldmap";            
+        }
+        
         if (userFieldmap.isTrial()) {
             return "redirect:" + ManageTrialController.URL;
         }

@@ -122,7 +122,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		    <div class="col-xs-3 col-md-3">
 		    	<div class="checkbox">
 			    <label>
-			      <input id="showFavoriteLocation" checked="checked" value="1" type="checkbox"/> <span th:text="#{show.favorite.location}">Show Favorite Location</span>
+			      <input id="showFavoriteLocation" value="1" type="checkbox"/> <span th:text="#{show.favorite.location}">Show Favorite Location</span>
 			    </label>
 			  </div>
 		    </div>
@@ -241,8 +241,8 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 										   
 		initializeLocationSelect2(locationSuggestions, locationSuggestions_obj);
 		initializeLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj);
-		$('#s2id_fieldLocationIdFavorite').show();
-		$('#s2id_fieldLocationIdAll').hide();
+		$('#s2id_fieldLocationIdFavorite').hide();
+		$('#s2id_fieldLocationIdAll').show();
 		$('#showFavoriteLocation').on('change', function(){
 			var isChecked = $('#showFavoriteLocation').is(':checked');
 			if(isChecked){

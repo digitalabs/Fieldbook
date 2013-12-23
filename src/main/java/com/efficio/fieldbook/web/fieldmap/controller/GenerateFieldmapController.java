@@ -110,6 +110,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
                 this.userFieldmap.setFieldmap(fieldmapService.generateFieldmap(this.userFieldmap));
             }
             this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(this.userFieldmap.getSelectedFieldMaps(), this.userFieldmap.isTrial()));
+            this.userFieldmap.setGenerated(false);
             form.setUserFieldmap(this.userFieldmap);
             
         } catch(MiddlewareQueryException e) {
@@ -198,6 +199,8 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         
         userFieldmap.setFieldmap(plots);
         form.setUserFieldmap(userFieldmap);
+        
+        this.userFieldmap.setGenerated(true);
         
         return "redirect:" + GenerateFieldmapController.URL;
     }

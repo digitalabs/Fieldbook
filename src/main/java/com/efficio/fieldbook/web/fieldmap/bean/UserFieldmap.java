@@ -120,6 +120,8 @@ public class UserFieldmap  implements Serializable {
     private Integer machineRowCapacity;
     
     private SelectedFieldmapList selectedFieldmapList;
+    
+    private boolean isGenerated;
 
     /**
      * Instantiates a new user fieldmap.
@@ -138,6 +140,21 @@ public class UserFieldmap  implements Serializable {
         setUserFieldmapInfo(fieldMapInfo, isTrial);
     }
     
+    
+    public boolean isGenerated() {
+        return isGenerated;
+    }
+
+    
+    /**
+     * Sets the generated.
+     *
+     * @param isGenerated the new generated
+     */
+    public void setGenerated(boolean isGenerated) {
+        this.isGenerated = isGenerated;
+    }
+
     /**
      * Sets the user fieldmap info.
      *

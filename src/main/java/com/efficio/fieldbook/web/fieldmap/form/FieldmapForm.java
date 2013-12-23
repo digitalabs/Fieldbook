@@ -36,9 +36,22 @@ public class FieldmapForm{
     private String fieldLocationIdAll;
     private String fieldLocationIdFavorite;
     
+    private String saveAndRedirectToCreateLabel;
     
+    
+    
+    
+    public String getSaveAndRedirectToCreateLabel() {
+        return saveAndRedirectToCreateLabel;
+    }
+
 
     
+    public void setSaveAndRedirectToCreateLabel(String saveAndRedirectToCreateLabel) {
+        this.saveAndRedirectToCreateLabel = saveAndRedirectToCreateLabel;
+    }
+
+
     public String getFieldLocationIdAll() {
         return fieldLocationIdAll;
     }

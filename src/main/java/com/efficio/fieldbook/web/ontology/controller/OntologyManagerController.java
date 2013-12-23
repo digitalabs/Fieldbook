@@ -263,14 +263,18 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
     @RequestMapping(value="variable", method = RequestMethod.POST)
     public String saveNewVariable(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form, BindingResult result, Model model) {
         OntologyBrowserValidator validator = new OntologyBrowserValidator();
-        validator.validate(form, result);
         
         //validations for delete and update
         if (form.getIsDelete().equals(1)) {
             validateDelete(form, result);
-        } else if (form.getIsDelete().equals(2)) {
-            validateUpdate(form, result);
-        }
+        } else if (form.getIsDelete().equals(0) || (form.getIsDelete().equals(0) && form.getVariableId() > -1)) {
+            System.out.println("hallow");
+            validator.validate(form, result);
+        } 
+        
+        //else if (form.getIsDelete().equals(2)) {
+            //validateUpdate(form, result);
+        //}
         form.setAddSuccessful("0");
         
         if (result.hasErrors()) {
@@ -285,12 +289,18 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                     ontologyService.deleteStandardVariable(form.getVariableId());
                 } else {
                     Operation operation = form.getVariableId() != null ? Operation.UPDATE : Operation.ADD;
-                    
-                    StandardVariable standardVariable = createStandardVariableObject(form, operation);
-                    ontologyService.saveOrUpdateStandardVariable(standardVariable, operation);
-                    standardVariable = ontologyService.getStandardVariable(standardVariable.getId());
+                    StandardVariable standardVariable = new StandardVariable();
+                    if (form.getVariableId() < 0) {
+                        standardVariable = createStandardVariableObject(form, operation);
+                        ontologyService.saveOrUpdateStandardVariable(standardVariable, operation);
+                        standardVariable = ontologyService.getStandardVariable(standardVariable.getId());
+                    } else {
+                        standardVariable = ontologyService.getStandardVariable(form.getVariableId());
+                        form.setNewVariableName(standardVariable.getName());
+                    }
                     saveConstraintsAndValidValues(form, standardVariable);
                     form.setVariableId(standardVariable.getId());
+                    form.setVariableName(standardVariable.getName());
                 }
                 form.setAddSuccessful("1");
                 
@@ -316,7 +326,8 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      * @throws MiddlewareException the middleware exception
      */
     private void saveConstraintsAndValidValues(OntologyBrowserForm form, StandardVariable stdVariable) throws MiddlewareQueryException, MiddlewareException {
-        String dataType = ontologyService.getTermById(Integer.parseInt(form.getDataType())).getName(); 
+        String dataTypeId = form.getDataType() == null ? form.getDataTypeId() : form.getDataType(); 
+        String dataType = ontologyService.getTermById(Integer.parseInt(dataTypeId)).getName();
         if (dataType.contains("Categorical")) {
             saveValidValues(form, stdVariable);
             //if datatype is changed to categorical, delete constraints

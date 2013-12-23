@@ -64,6 +64,7 @@
                     	<option value="">Select</option>
                      	<option th:each="type : ${dataTypes}" th:value="${type.id}" th:text="${type.name}"/>
                     </select>
+                    <input type="hidden" th:field="*{dataTypeId}" />
 				</div>
 			</div>
 			<div class="form-group" id="validValueNone">
@@ -383,13 +384,11 @@
 		    	return false;
 		    }
 		    
-		    if (parseInt($("#comboVariableName").select2('data').id) > 0) {
-    			message = /*[[#{ontology.browser.cannot.update.central.variable}]]*/;
-    			showMessage(message);
-    			return false;
-    		}
-		    
 		    $("#enumerations").val(JSON.stringify(enumerations));
+		    
+		    if ($("#isDelete").val() == 0) {
+		    	$("#dataTypeId").val($("#dataType").val());
+		    }
     	} else if ($("#isDelete").val() == 1) {
     		if (parseInt($("#comboVariableName").select2('data').id) > 0) {
     			var variableName = $("#comboVariableName").select2('data').text.replace(" (Shared)", "");
@@ -398,6 +397,7 @@
     			return false;
     		}
     	}
+    	
 	    return true;
     }
     

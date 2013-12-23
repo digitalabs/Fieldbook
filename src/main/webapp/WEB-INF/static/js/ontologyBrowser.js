@@ -833,6 +833,7 @@ function populateFields(data, variableId) {
 	setComboValues(methodSuggestions_obj, data.method, "Method");
 	setComboValues(scaleSuggestions_obj, data.scale, "Scale");
 	$("#dataType").val(data.dataType).trigger("change");
+	$("#dataTypeId").val(data.dataType);
 	if (isInt(data.minValue)) {
 		$("#minValue").val(parseInt(data.minValue));
 	} else {
@@ -847,6 +848,10 @@ function populateFields(data, variableId) {
 	
 	setVisibleButtons(false, true, true);
 	setDeleteOperation(2);
+	
+	if (parseInt(variableId) > 0) {
+		disableFieldsForCentralUpdate();
+	}
 }
 
 function populateCategoricalValues(data) {
@@ -1340,4 +1345,15 @@ function resetCategoricalValues() {
 		$("#catVarList").parent().toggleClass("scrollWrapper");
 	}
 	styleDynamicTree('catVarList');
+}
+
+function disableFieldsForCentralUpdate() {
+	$("#newVariableName").attr("disabled","disabled");
+	$("#variableDescription").attr("disabled","disabled");
+	$("#role").attr("disabled","disabled");
+	$("#comboTraitClass").select2('disable',true);
+	$("#comboProperty").select2('disable',true);
+	$("#comboMethod").select2('disable',true);
+	$("#comboScale").select2('disable',true);
+	$("#dataType").attr("disabled","disabled");
 }

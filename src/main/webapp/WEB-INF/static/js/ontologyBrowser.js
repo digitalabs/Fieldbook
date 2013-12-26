@@ -797,27 +797,36 @@ function loadTraitClassTree(treeName, comboName, descriptionName, treeData, drop
 	      onActivate: function(node) {
 	        //alert("onActivate" + node.data.title);
 	     // Display list of selected nodes
-	        var selNodes = node.tree.getSelectedNodes();
-	        // convert to title/key array
-	        var selKeys = $.map(selNodes, function(node){
-	             return "[" + node.data.key + "]: '" + node.data.title + "'";
-	        });
-	       
-	        doTraitClassTreeHighlight(treeName, comboName, descriptionName, node.data.key);
+	    	  if(!$(this).hasClass('ui-dynatree-disabled')){
+	    		  var selNodes = node.tree.getSelectedNodes();
+	  	        // convert to title/key array
+		  	        var selKeys = $.map(selNodes, function(node){
+		  	             return "[" + node.data.key + "]: '" + node.data.title + "'";
+		  	        });
+		  	       
+		  	        doTraitClassTreeHighlight(treeName, comboName, descriptionName, node.data.key);
+	    	  }
+	        
 	      
 	        
 	    	
 	      },
 	      onSelect: function(select, node) {
-	        // Display list of selected nodes		    	
+	        // Display list of selected nodes		
+	    	  if(!$(this).hasClass('ui-dynatree-disabled')){
 	        doTraitClassTreeHighlight(treeName, comboName, descriptionName, node.data.key);
+	    	  }
 	      },
 	      onDblClick: function(node, event) {
-	        node.toggleSelect();
+	    	  if(!$(this).hasClass('ui-dynatree-disabled')){
+	    		  node.toggleSelect();
+	    	  }
 	      },
 	      onKeydown: function(node, event) {
 	        if( event.which == 32 ) {
-	          node.toggleSelect();
+	        	if(!$(this).hasClass('ui-dynatree-disabled')){
+	        		node.toggleSelect();
+	        	}
 	          return false;
 	        }
 	      },
@@ -885,7 +894,11 @@ function populateFields(data, variableId) {
 	
 	if (parseInt(variableId) > 0) {
 		disableFieldsForCentralUpdate();
+		$("#traitClassBrowserTree").dynatree("disable");
+	}else{
+		$("#traitClassBrowserTree").dynatree("enable");
 	}
+	
 }
 
 function populateCategoricalValues(data) {

@@ -394,6 +394,40 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 		    			retrieveLinkedVariables(name, $("#combo"+name).select2("data").id);
 		    		}
 		    		
+		    		if(name == 'ManageTraitClass'){
+		    			//console.log("set the proper trait class")
+		    			//setCorrespondingTraitClass($("#combo"+name).select2("data").id);
+		    			var count = 0;
+		    			var traitId = $("#combo"+name).select2("data").id;
+		    			if(traitId != null && traitId != ''){
+		    				var nodeKeyFull = getNodeKeyFromTraitClass(traitId,'manageParentTraitClassBrowserTree')
+		    				
+		    				var elem = nodeKeyFull.split("_");
+		    				var count = 0;
+		    				var prevTraitId;
+		    				for(count = 0 ; count < elem.length ; count++){		    					
+		    					
+		    					if(traitId == elem[count])
+		    						break;
+		    					else
+		    						prevTraitId = elem[count];
+		    				}
+		    				
+		    				for(count = 0 ; count < traitClassesSuggestions_obj.length ; count++){
+					    		if(traitClassesSuggestions_obj[count].id == prevTraitId){
+					    			dataVal = traitClassesSuggestions_obj[count];			    			
+					    			break;
+					    		}			    			
+					    	}
+					    	
+					    	$("#comboManageParentTraitClass").select2('data', dataVal).trigger('change');
+
+		    			}
+		    			
+				    	
+		    		}
+		    		
+		    		
 		    		if(name == 'ManageProperty'){
 		    			//console.log("set the proper trait class")
 		    			setCorrespondingTraitClass($("#combo"+name).select2("data").id);

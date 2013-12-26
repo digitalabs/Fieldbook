@@ -228,12 +228,12 @@ public class ExportExcelServiceImpl implements ExportExcelService{
                 row.createCell(columnIndex++).setCellValue(rec.getStudyName());
                 if (isTrial) {
                     row.createCell(columnIndex++).setCellValue(rec.getTrialInstanceNo());
-                    row.createCell(columnIndex++).setCellValue(rec.getEntryCount());
-                    row.createCell(columnIndex++).setCellValue(rec.getRepCount());
-                    row.createCell(columnIndex++).setCellValue(rec.getPlotCount());
+                    row.createCell(columnIndex++).setCellValue(rec.getEntryCount()+"");
+                    row.createCell(columnIndex++).setCellValue(rec.getRepCount()+"");
+                    row.createCell(columnIndex++).setCellValue(rec.getPlotCount()+"");
                 } else {
                     row.createCell(columnIndex++).setCellValue(rec.getDatasetName());
-                    row.createCell(columnIndex++).setCellValue(rec.getEntryCount());
+                    row.createCell(columnIndex++).setCellValue(rec.getEntryCount()+"");
                 }
             }
             
@@ -242,7 +242,7 @@ public class ExportExcelServiceImpl implements ExportExcelService{
             headerCell = row.createCell(columnIndex++);
             headerCell.setCellValue(totalPlotsHeader);
             headerCell.setCellStyle(labelStyle);
-            row.createCell(columnIndex++).setCellValue(userFieldMap.getSelectedFieldmapList().getTotalNumberOfPlots());
+            row.createCell(columnIndex++).setCellValue(userFieldMap.getSelectedFieldmapList().getTotalNumberOfPlots()+"");
             
             
             // Row 4: Space
@@ -324,7 +324,7 @@ public class ExportExcelServiceImpl implements ExportExcelService{
             labelCell.setCellValue(rowsPerPlotLabel);
             labelCell.setCellStyle(labelStyle);
             
-            row.createCell(columnIndex++).setCellValue(rowsPerPlotValue);
+            row.createCell(columnIndex++).setCellValue(rowsPerPlotValue+"");
             labelCell = row.createCell(columnIndex++);
             labelCell.setCellValue(plantingOrderLabel);
             labelCell.setCellStyle(labelStyle);
@@ -343,13 +343,13 @@ public class ExportExcelServiceImpl implements ExportExcelService{
             labelCell.setCellValue(columnsLabel);
             labelCell.setCellStyle(labelStyle);
             
-            row.createCell(columnIndex++).setCellValue(columnsValue);
+            row.createCell(columnIndex++).setCellValue(columnsValue+"");
             
             labelCell = row.createCell(columnIndex++);
             labelCell.setCellValue(machineCapacityLabel);
             labelCell.setCellStyle(labelStyle);
             
-            row.createCell(columnIndex++).setCellValue(machineCapacityValue);
+            row.createCell(columnIndex++).setCellValue(machineCapacityValue+"");
             
             // Row 9: Space
             row = summarySheet.createRow(rowIndex++);

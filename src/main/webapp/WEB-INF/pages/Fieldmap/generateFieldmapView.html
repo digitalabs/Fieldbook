@@ -251,6 +251,7 @@ th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" 
 	//<![CDATA[    
   var isGenerated = false;
   $( document ).ready(function() {
+	  $('#create-label-confirmation').modal('hide');
 	 if($('#'+getJquerySafeId("userFieldmap.generated")).val() == 'true'){
 		 isGenerated = true;	 
 	 } 

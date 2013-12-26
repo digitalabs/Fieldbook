@@ -603,7 +603,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
             Collections.sort(dataTypes, new  Comparator<Term>() {
                 @Override
                 public int compare(Term o1, Term o2) {
-                        return o1.getName().toUpperCase().compareTo(o2.getName().toUpperCase());
+                        return o1.getName().compareTo(o2.getName());
                 }
             }
             );
@@ -861,7 +861,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
 
                     @Override
                     public int compare(Object o1, Object o2) {
-                        return ((StandardVariable)o1).getName().compareTo(((StandardVariable)o2).getName());
+                        return ((StandardVariable)o1).getName().toUpperCase().compareTo(((StandardVariable)o2).getName().toUpperCase());
                     }
                     
                 }); 

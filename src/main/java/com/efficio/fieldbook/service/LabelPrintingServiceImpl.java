@@ -462,7 +462,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 buffer.append(fieldMapLabel.getEntryNumber());
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_GID: 
-                buffer.append(fieldMapLabel.getGid().toString());
+                String gidTemp = fieldMapLabel.getGid() == null ? "" : fieldMapLabel.getGid().toString();
+                buffer.append(gidTemp);
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME: 
                 buffer.append(fieldMapLabel.getGermplasmName());

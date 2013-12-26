@@ -290,7 +290,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                 } else {
                     Operation operation = form.getVariableId() != null ? Operation.UPDATE : Operation.ADD;
                     StandardVariable standardVariable = new StandardVariable();
-                    if (form.getVariableId() < 0) {
+                    if (form.getVariableId() == null || form.getVariableId() < 0) {
                         standardVariable = createStandardVariableObject(form, operation);
                         ontologyService.saveOrUpdateStandardVariable(standardVariable, operation);
                         standardVariable = ontologyService.getStandardVariable(standardVariable.getId());

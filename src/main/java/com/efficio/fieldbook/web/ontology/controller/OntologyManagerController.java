@@ -297,11 +297,11 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
            } catch (MiddlewareQueryException e) {
                LOG.error(e.getMessage(), e);
                form.setAddSuccessful("2");
-               form.setErrorMessage(errorHandlerService.getErrorMessagesAsString(e.getCode(), null, "<br/>"));
+               form.setErrorMessage(errorHandlerService.getErrorMessagesAsString(e.getCode(), null, "\n"));
            } catch (MiddlewareException e) {
                LOG.error(e.getMessage(), e);
                form.setAddSuccessful("2");
-               form.setErrorMessage(errorHandlerService.getErrorMessagesAsString(e.getMessage(), null, "<br/>"));
+               form.setErrorMessage(errorHandlerService.getErrorMessagesAsString(e.getMessage(), null, "\n"));
            }
         }
         return show(form, model);

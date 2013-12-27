@@ -60,6 +60,9 @@ public class OntologyBrowserForm{
     /** The data types. */
     private String dataType;  
     
+    /** The data type id. */
+    private String dataTypeId;
+    
     /** The roles. */
     private String role;
     
@@ -310,6 +313,24 @@ public class OntologyBrowserForm{
      */
     public void setDataType(String dataType){
         this.dataType = dataType;
+    }
+    
+    /**
+     * Gets the data type id.
+     *
+     * @return the data type id
+     */
+    public String getDataTypeId() {
+        return dataTypeId;
+    }
+    
+    /**
+     * Sets the data type id.
+     *
+     * @param dataTypeId the new data type id
+     */
+    public void setDataTypeId(String dataTypeId){
+        this.dataTypeId = dataTypeId;
     }
     
     /**

@@ -108,6 +108,19 @@
 			    	if (data.status == '1') {
 			    		recreateComboAfterUpdate("ManageProperty", data.savedObject);
 			    		showSuccessMessageInModal(data.successMessage);
+			    		var cropOntologyId = $('#cropOntologyId').val();
+			    		//we need to set the data in the front
+			    		for(count = 0 ; count < propertySuggestions_obj.length ; count++){
+							if($('#managePropertyId').val() == propertySuggestions_obj[count].id){
+								propertySuggestions_obj[count].cropOntologyId = cropOntologyId;
+							}
+						}
+			    		var chosendRecord = $("#comboProperty").select2("data");
+			    		if(chosendRecord != null && chosendRecord.id == $('#managePropertyId').val()){
+			    			//console.log("we should update frontend")
+			    			$('#propertyDescription').val($('#managePropertyDescription').val());
+			    			$("#cropOntologyDisplay").html(cropOntologyId);
+			    		}
 			    		$("#btnAddManageProperty").hide();
 			    		$("#btnUpdateManageProperty").show();
 			    		$("#btnDeleteManageProperty").show();

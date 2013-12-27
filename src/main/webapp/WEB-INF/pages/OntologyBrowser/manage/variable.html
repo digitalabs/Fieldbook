@@ -1,8 +1,8 @@
 <div class="col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org">
 	<div class="page-header">
-		<h2 th:text="#{ontology.browser.button.manage.variable}">
+		<h1 th:text="#{ontology.browser.button.manage.variable}">
 			Manage Variable 
-		</h2>
+		</h1>
 	</div>	
 	<div id="page-message">
 		<form  th:object="${ontologyBrowserForm}" th:remove="tag">	
@@ -64,6 +64,7 @@
                     	<option value="">Select</option>
                      	<option th:each="type : ${dataTypes}" th:value="${type.id}" th:text="${type.name}"/>
                     </select>
+                    <input type="hidden" th:field="*{dataTypeId}" />
 				</div>
 			</div>
 			<div class="form-group" id="validValueNone">
@@ -131,7 +132,7 @@
 		<div class="col-xs-6 col-md-6">	
 			<div class="form-group">
 				<div class="col-xs-4 col-md-4">
-				<label for="traitClass">Filter for Trait Class:</label>
+				<label for="traitClass">Filter for Trait Class:</label><span class="required">*</span>
 				</div>
 				<div class="col-xs-6 col-md-6">
 					<input id="comboTraitClass" type="hidden" th:field="*{traitClass}"  class="form-control  input-medium  select2" placeholder=""/>                   	
@@ -383,13 +384,11 @@
 		    	return false;
 		    }
 		    
-		    if (parseInt($("#comboVariableName").select2('data').id) > 0) {
-    			message = /*[[#{ontology.browser.cannot.update.central.variable}]]*/;
-    			showMessage(message);
-    			return false;
-    		}
-		    
 		    $("#enumerations").val(JSON.stringify(enumerations));
+		    
+		    if ($("#isDelete").val() == 0) {
+		    	$("#dataTypeId").val($("#dataType").val());
+		    }
     	} else if ($("#isDelete").val() == 1) {
     		if (parseInt($("#comboVariableName").select2('data').id) > 0) {
     			var variableName = $("#comboVariableName").select2('data').text.replace(" (Shared)", "");
@@ -398,6 +397,7 @@
     			return false;
     		}
     	}
+    	
 	    return true;
     }
     

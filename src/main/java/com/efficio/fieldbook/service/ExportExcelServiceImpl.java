@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.Locale;
 
 import javax.annotation.Resource;
+import javax.swing.GroupLayout.Alignment;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -118,6 +119,8 @@ public class ExportExcelServiceImpl implements ExportExcelService{
         try {
 	        //Create workbook
             HSSFWorkbook workbook = new HSSFWorkbook();
+            String summaryLabelSheet = "SUMMARY";
+            Sheet summarySheet = workbook.createSheet(summaryLabelSheet);
 	        Sheet fieldMapSheet = workbook.createSheet(fieldMapLabel);
 	    
 	        CellStyle labelStyle = workbook.createCellStyle();
@@ -159,22 +162,38 @@ public class ExportExcelServiceImpl implements ExportExcelService{
 	        // Create Header Information
 	        
 	        // Row 1: SUMMARY OF TRIAL, FIELD AND PLANTING DETAILS 
-	        Row row = fieldMapSheet.createRow(rowIndex++);
+	        CellStyle headerLabelStyle = workbook.createCellStyle();
+            font = workbook.createFont();
+            font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+            headerLabelStyle.setFont(font);
+            headerLabelStyle.setAlignment(CellStyle.ALIGN_CENTER);
+            
+	        Row row = summarySheet.createRow(rowIndex++);
 	        Cell summaryCell = row.createCell(columnIndex);
 	        summaryCell.setCellValue(summaryOfFieldbookFieldPlantingDetailsLabel);
-	        summaryCell.setCellStyle(labelStyle);
+	        
+	        
+	        summaryCell.setCellStyle(headerLabelStyle);
+	        
+	        summarySheet.addMergedRegion(new CellRangeAddress(
+                    rowIndex-1, //first row (0-based)
+                    rowIndex-1, //last row  (0-based)
+                    columnIndex, //first column (0-based)
+                    columnIndex + 5 //last column  (0-based)
+                    ));
+	        
 	        
 	        // Row 2: Space
-	        row = fieldMapSheet.createRow(rowIndex++);
+	        row = summarySheet.createRow(rowIndex++);
             
 	        // Row 3: Fieldbook Name, Entries, Reps, Plots
-	        row = fieldMapSheet.createRow(rowIndex++); 
+	        row = summarySheet.createRow(rowIndex++); 
 	        
 	        // Selected Trial : [Fieldbook Name]  TABLE SECTION
             Cell labelCell = row.createCell(columnIndex++);
             labelCell.setCellValue(selectedFieldbookLabel);
             
-            row = fieldMapSheet.createRow(rowIndex++);
+            row = summarySheet.createRow(rowIndex++);
             columnIndex = 0;
             Cell headerCell = row.createCell(columnIndex++);
             headerCell.setCellValue(orderHeader);
@@ -203,88 +222,77 @@ public class ExportExcelServiceImpl implements ExportExcelService{
             headerCell.setCellStyle(labelStyle);
             
             for (SelectedFieldmapRow rec : userFieldMap.getSelectedFieldmapList().getRows()) {
-                row = fieldMapSheet.createRow(rowIndex++);
+                row = summarySheet.createRow(rowIndex++);
                 columnIndex = 0;
                 row.createCell(columnIndex++).setCellValue(rec.getOrder());
                 row.createCell(columnIndex++).setCellValue(rec.getStudyName());
                 if (isTrial) {
                     row.createCell(columnIndex++).setCellValue(rec.getTrialInstanceNo());
-                    row.createCell(columnIndex++).setCellValue(rec.getEntryCount());
-                    row.createCell(columnIndex++).setCellValue(rec.getRepCount());
-                    row.createCell(columnIndex++).setCellValue(rec.getPlotCount());
+                    row.createCell(columnIndex++).setCellValue(rec.getEntryCount()+"");
+                    row.createCell(columnIndex++).setCellValue(rec.getRepCount()+"");
+                    row.createCell(columnIndex++).setCellValue(rec.getPlotCount()+"");
                 } else {
                     row.createCell(columnIndex++).setCellValue(rec.getDatasetName());
-                    row.createCell(columnIndex++).setCellValue(rec.getEntryCount());
+                    row.createCell(columnIndex++).setCellValue(rec.getEntryCount()+"");
                 }
             }
             
-            row = fieldMapSheet.createRow(rowIndex++);
+            row = summarySheet.createRow(rowIndex++);
             columnIndex = 0;
             headerCell = row.createCell(columnIndex++);
             headerCell.setCellValue(totalPlotsHeader);
             headerCell.setCellStyle(labelStyle);
-            row.createCell(columnIndex++).setCellValue(userFieldMap.getSelectedFieldmapList().getTotalNumberOfPlots());
+            row.createCell(columnIndex++).setCellValue(userFieldMap.getSelectedFieldmapList().getTotalNumberOfPlots()+"");
             
             
-/*            
-            labelCell.setCellStyle(labelStyle);
-            row.createCell(columnIndex++).setCellValue(selectedFieldbookValue);
-            
-            if (isTrial){ 
-                // Number of Entries : 25
-                labelCell = row.createCell(columnIndex++);
-                labelCell.setCellValue(numberOfEntriesLabel);
-                labelCell.setCellStyle(labelStyle);
-                
-                row.createCell(columnIndex++).setCellValue(numberOfEntriesValue);
-
-                // Number of Reps : 3
-                labelCell = row.createCell(columnIndex++);
-                labelCell.setCellValue(numberOfRepsLabel);
-                labelCell.setCellStyle(labelStyle);
-                
-                row.createCell(columnIndex++).setCellValue(numberOfRepsValue);
-                
-                // Total Number of Plots : 75
-                labelCell = row.createCell(columnIndex++);
-                labelCell.setCellValue(numberOfPlotsLabel);
-                labelCell.setCellStyle(labelStyle);
-                
-                row.createCell(columnIndex++).setCellValue(numberOfPlotsValue);
-            } else { // Nursery
-                // Number of Entries and Plots: 25
-                labelCell = row.createCell(columnIndex++);
-                labelCell.setCellValue(numberOfEntriesAndPlotLabel);
-                labelCell.setCellStyle(labelStyle);
-                
-                row.createCell(columnIndex++).setCellValue(numberOfEntriesValue);
-                
-            }
-*/
             // Row 4: Space
-            row = fieldMapSheet.createRow(rowIndex++);
+            row = summarySheet.createRow(rowIndex++);
             
             // Row 5: Header - Details Heading
-            row = fieldMapSheet.createRow(rowIndex++);
+            row = summarySheet.createRow(rowIndex++);
             columnIndex = 0;
             labelCell = row.createCell(columnIndex++);
             labelCell.setCellValue(fieldAndBlockDetailsLabel);
-            labelCell.setCellStyle(labelStyle);
+            labelCell.setCellStyle(headerLabelStyle);
+            
+            summarySheet.addMergedRegion(new CellRangeAddress(
+                    rowIndex-1, //first row (0-based)
+                    rowIndex-1, //last row  (0-based)
+                    columnIndex-1, //first column (0-based)
+                    columnIndex //last column  (0-based)
+                    ));
             
             row.createCell(columnIndex++);
             labelCell = row.createCell(columnIndex++);
             labelCell.setCellValue(rowRangePlotDetailsLabel);
-            labelCell.setCellStyle(labelStyle);
+            labelCell.setCellStyle(headerLabelStyle);
+            
+            summarySheet.addMergedRegion(new CellRangeAddress(
+                    rowIndex-1, //first row (0-based)
+                    rowIndex-1, //last row  (0-based)
+                    columnIndex-1, //first column (0-based)
+                    columnIndex //last column  (0-based)
+                    ));
+            
             
             row.createCell(columnIndex++);
             labelCell = row.createCell(columnIndex++);
             labelCell.setCellValue(plantingDetailsLabel);
-            labelCell.setCellStyle(labelStyle);
+            labelCell.setCellStyle(headerLabelStyle);
+            
+            summarySheet.addMergedRegion(new CellRangeAddress(
+                    rowIndex-1, //first row (0-based)
+                    rowIndex-1, //last row  (0-based)
+                    columnIndex-1, //first column (0-based)
+                    columnIndex //last column  (0-based)
+                    ));
             
             row.createCell(columnIndex++);
             
+            
+            
             //Row 6: Field Location, Block Capacity, Starting Coordinates
-            row = fieldMapSheet.createRow(rowIndex++);
+            row = summarySheet.createRow(rowIndex++);
             columnIndex = 0;
             labelCell = row.createCell(columnIndex++);
             labelCell.setCellValue(fieldLocationLabel);
@@ -305,7 +313,7 @@ public class ExportExcelServiceImpl implements ExportExcelService{
             row.createCell(columnIndex++).setCellValue(startingCoordinatesValue);
             
             // Row 7: Field Name, Rows Per Plot, Planting Order
-            row = fieldMapSheet.createRow(rowIndex++);
+            row = summarySheet.createRow(rowIndex++);
             columnIndex = 0;
             labelCell = row.createCell(columnIndex++);
             labelCell.setCellValue(fieldNameLabel);
@@ -316,7 +324,7 @@ public class ExportExcelServiceImpl implements ExportExcelService{
             labelCell.setCellValue(rowsPerPlotLabel);
             labelCell.setCellStyle(labelStyle);
             
-            row.createCell(columnIndex++).setCellValue(rowsPerPlotValue);
+            row.createCell(columnIndex++).setCellValue(rowsPerPlotValue+"");
             labelCell = row.createCell(columnIndex++);
             labelCell.setCellValue(plantingOrderLabel);
             labelCell.setCellStyle(labelStyle);
@@ -324,7 +332,7 @@ public class ExportExcelServiceImpl implements ExportExcelService{
             row.createCell(columnIndex++).setCellValue(plantingOrderValue);
             
             // Row 8: Block Name, Columns
-            row = fieldMapSheet.createRow(rowIndex++);
+            row = summarySheet.createRow(rowIndex++);
             columnIndex = 0;
             labelCell= row.createCell(columnIndex++);
             labelCell.setCellValue(blockNameLabel);
@@ -335,18 +343,27 @@ public class ExportExcelServiceImpl implements ExportExcelService{
             labelCell.setCellValue(columnsLabel);
             labelCell.setCellStyle(labelStyle);
             
-            row.createCell(columnIndex++).setCellValue(columnsValue);
+            row.createCell(columnIndex++).setCellValue(columnsValue+"");
             
             labelCell = row.createCell(columnIndex++);
             labelCell.setCellValue(machineCapacityLabel);
             labelCell.setCellStyle(labelStyle);
             
-            row.createCell(columnIndex++).setCellValue(machineCapacityValue);
+            row.createCell(columnIndex++).setCellValue(machineCapacityValue+"");
             
             // Row 9: Space
-            row = fieldMapSheet.createRow(rowIndex++);
+            row = summarySheet.createRow(rowIndex++);
             
-            // Row 10: FIELD MAP
+            for(int columnsResize = 0 ; columnsResize < columnIndex ; columnsResize++){
+                summarySheet.autoSizeColumn(columnsResize);
+            }
+            
+            
+            // Get FieldMap data
+            //we reset the row index
+            rowIndex = 0;
+            
+         // Row 10: FIELD MAP
             row = fieldMapSheet.createRow(rowIndex++);
             columnIndex = 0;
             labelCell = row.createCell(columnIndex++);
@@ -356,7 +373,6 @@ public class ExportExcelServiceImpl implements ExportExcelService{
             // Row 11: Space
             row = fieldMapSheet.createRow(rowIndex++);
             
-            // Get FieldMap data
             Plot[][] plots = userFieldMap.getFieldmap();
             int range = userFieldMap.getNumberOfRangesInBlock();
             int col = userFieldMap.getNumberOfColumnsInBlock();

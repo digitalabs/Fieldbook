@@ -247,6 +247,24 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         
                         cell.addElement(new Paragraph());
                         for(int row = 0 ; row < 5 ; row++){
+                            if(row == 0){
+                                PdfPTable innerDataTableInfo = new PdfPTable(1);
+                                innerDataTableInfo.setWidths(new float[]{1});
+                                innerDataTableInfo.setWidthPercentage(85);
+                                
+                                Font fontNormalData = FontFactory.getFont("Arial", 5.0f, Font.NORMAL);
+                                PdfPCell cellInnerData = new PdfPCell(new Phrase(barcodeLabel, fontNormalData));
+                                
+                                cellInnerData.setBorder(Rectangle.NO_BORDER);                         
+                                cellInnerData.setBackgroundColor(Color.white);
+                                cellInnerData.setPaddingBottom(0.2f);
+                                cellInnerData.setPaddingTop(0.2f);
+                                cellInnerData.setHorizontalAlignment(Element.ALIGN_MIDDLE);
+                                
+                                innerDataTableInfo.addCell(cellInnerData);
+                                innerDataTableInfo.setHorizontalAlignment(Element.ALIGN_MIDDLE);
+                                cell.addElement(innerDataTableInfo);
+                            }
                             PdfPTable innerTableInfo = new PdfPTable(2);
                             innerTableInfo.setWidths(new float[]{1,1});
                             innerTableInfo.setWidthPercentage(85);
@@ -444,7 +462,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 buffer.append(fieldMapLabel.getEntryNumber());
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_GID: 
-                buffer.append(fieldMapLabel.getGid().toString());
+                String gidTemp = fieldMapLabel.getGid() == null ? "" : fieldMapLabel.getGid().toString();
+                buffer.append(gidTemp);
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME: 
                 buffer.append(fieldMapLabel.getGermplasmName());
@@ -510,7 +529,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         try {
             
                     HSSFWorkbook workbook = new HSSFWorkbook();
-                    Sheet labelPrintingSheet = workbook.createSheet(userLabelPrinting.getName());
+                    String sheetName = userLabelPrinting.getName();
+                    if(sheetName == null)
+                        sheetName = "Labels";
+                    Sheet labelPrintingSheet = workbook.createSheet(sheetName);
                 
                     CellStyle labelStyle = workbook.createCellStyle();
                     HSSFFont font = workbook.createFont();

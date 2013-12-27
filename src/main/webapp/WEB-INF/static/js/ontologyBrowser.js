@@ -376,6 +376,7 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	    		filterPropertyCombo(treeDivId, "comboTraitClass", "traitClassDescription", $("#comboTraitClass").select2("data").id, true);
 	    	}
 	    	else if (name == 'Property') {
+	    		//console.log($("#combo"+name).select2("data"));
 	    		$("#cropOntologyDisplay").html($("#combo"+name).select2("data").cropOntologyId);
 	    	}
 	    	if (name.match("^Manage")) {
@@ -392,6 +393,40 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 		    		if (allowTypedValues) {
 		    			retrieveLinkedVariables(name, $("#combo"+name).select2("data").id);
 		    		}
+		    		
+		    		if(name == 'ManageTraitClass'){
+		    			//console.log("set the proper trait class")
+		    			//setCorrespondingTraitClass($("#combo"+name).select2("data").id);
+		    			var count = 0;
+		    			var traitId = $("#combo"+name).select2("data").id;
+		    			if(traitId != null && traitId != ''){
+		    				var nodeKeyFull = getNodeKeyFromTraitClass(traitId,'manageParentTraitClassBrowserTree')
+		    				
+		    				var elem = nodeKeyFull.split("_");
+		    				var count = 0;
+		    				var prevTraitId;
+		    				for(count = 0 ; count < elem.length ; count++){		    					
+		    					
+		    					if(traitId == elem[count])
+		    						break;
+		    					else
+		    						prevTraitId = elem[count];
+		    				}
+		    				
+		    				for(count = 0 ; count < traitClassesSuggestions_obj.length ; count++){
+					    		if(traitClassesSuggestions_obj[count].id == prevTraitId){
+					    			dataVal = traitClassesSuggestions_obj[count];			    			
+					    			break;
+					    		}			    			
+					    	}
+					    	
+					    	$("#comboManageParentTraitClass").select2('data', dataVal).trigger('change');
+
+		    			}
+		    			
+				    	
+		    		}
+		    		
 		    		
 		    		if(name == 'ManageProperty'){
 		    			//console.log("set the proper trait class")
@@ -762,27 +797,36 @@ function loadTraitClassTree(treeName, comboName, descriptionName, treeData, drop
 	      onActivate: function(node) {
 	        //alert("onActivate" + node.data.title);
 	     // Display list of selected nodes
-	        var selNodes = node.tree.getSelectedNodes();
-	        // convert to title/key array
-	        var selKeys = $.map(selNodes, function(node){
-	             return "[" + node.data.key + "]: '" + node.data.title + "'";
-	        });
-	       
-	        doTraitClassTreeHighlight(treeName, comboName, descriptionName, node.data.key);
+	    	  if(!$(this).hasClass('ui-dynatree-disabled')){
+	    		  var selNodes = node.tree.getSelectedNodes();
+	  	        // convert to title/key array
+		  	        var selKeys = $.map(selNodes, function(node){
+		  	             return "[" + node.data.key + "]: '" + node.data.title + "'";
+		  	        });
+		  	       
+		  	        doTraitClassTreeHighlight(treeName, comboName, descriptionName, node.data.key);
+	    	  }
+	        
 	      
 	        
 	    	
 	      },
 	      onSelect: function(select, node) {
-	        // Display list of selected nodes		    	
+	        // Display list of selected nodes		
+	    	  if(!$(this).hasClass('ui-dynatree-disabled')){
 	        doTraitClassTreeHighlight(treeName, comboName, descriptionName, node.data.key);
+	    	  }
 	      },
 	      onDblClick: function(node, event) {
-	        node.toggleSelect();
+	    	  if(!$(this).hasClass('ui-dynatree-disabled')){
+	    		  node.toggleSelect();
+	    	  }
 	      },
 	      onKeydown: function(node, event) {
 	        if( event.which == 32 ) {
-	          node.toggleSelect();
+	        	if(!$(this).hasClass('ui-dynatree-disabled')){
+	        		node.toggleSelect();
+	        	}
 	          return false;
 	        }
 	      },
@@ -832,6 +876,7 @@ function populateFields(data, variableId) {
 	setComboValues(methodSuggestions_obj, data.method, "Method");
 	setComboValues(scaleSuggestions_obj, data.scale, "Scale");
 	$("#dataType").val(data.dataType).trigger("change");
+	$("#dataTypeId").val(data.dataType);
 	if (isInt(data.minValue)) {
 		$("#minValue").val(parseInt(data.minValue));
 	} else {
@@ -846,6 +891,14 @@ function populateFields(data, variableId) {
 	
 	setVisibleButtons(false, true, true);
 	setDeleteOperation(2);
+	
+	if (parseInt(variableId) > 0) {
+		disableFieldsForCentralUpdate();
+		$("#traitClassBrowserTree").dynatree("disable");
+	}else{
+		$("#traitClassBrowserTree").dynatree("enable");
+	}
+	
 }
 
 function populateCategoricalValues(data) {
@@ -1339,4 +1392,15 @@ function resetCategoricalValues() {
 		$("#catVarList").parent().toggleClass("scrollWrapper");
 	}
 	styleDynamicTree('catVarList');
+}
+
+function disableFieldsForCentralUpdate() {
+	$("#newVariableName").attr("disabled","disabled");
+	$("#variableDescription").attr("disabled","disabled");
+	$("#role").attr("disabled","disabled");
+	$("#comboTraitClass").select2('disable',true);
+	$("#comboProperty").select2('disable',true);
+	$("#comboMethod").select2('disable',true);
+	$("#comboScale").select2('disable',true);
+	$("#dataType").attr("disabled","disabled");
 }

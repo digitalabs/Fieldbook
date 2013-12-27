@@ -4,7 +4,7 @@ body {
   font-family: 'Open Sans', 'Segoe UI','Helvetica Neue', Arial, sans-serif;
   font-size: 13px;  
 }
-
+/*
 h1,
 h2,
 h3,
@@ -40,6 +40,38 @@ h4,
   font-size: 18px;
   font-weight: 300;
 }
+*/
+h1,h2,h3,h4,h5,h6,
+.h1,.h2,.h3,.h4,.h5,.h6{display:block;color:#333;font-family:'Open Sans','Segoe UI','Helvetica Neue',Arial,sans-serif;letter-spacing:normal;font-weight:500;margin-bottom:5px;margin-left:0;margin-right:0;margin-top:10px;box-sizing:border-box}
+h4,h5,h6,
+.h4,.h5,.h6{margin-top:5px}
+h1,.h1{font-size:26px;font-weight:500;height:26px;line-height:26px;text-transform:uppercase}
+h2,.h1{font-size:18px;height:18px;line-height:18px;font-weight:600;text-transform:uppercase}
+h2.light,.h2.light{font-weight: 300; color:#999;}
+h3,.h3{font-size:16px;height:16px;line-height:16px;font-weight:600;text-transform:uppercase}
+h4,.h4{font-size:15px;height:15px;line-height:15px;font-weight:500}
+h5,.h5{font-size:15px;font-weight:500;height:15px;line-height:15px;text-transform:uppercase}
+h6,.h6{font-size:13px;font-weight:500;line-height:13px}
+
+.sub-heading{
+	/*
+	font-size: 24px;
+	font-weight: 300;
+	text-transform:uppercase;
+	*/
+	font-size:16px;height:16px;line-height:16px;font-weight:600;text-transform:uppercase
+	margin-bottom:5px;margin-left:0;margin-right:0;margin-top:10px;box-sizing:border-box;
+}
+.sub-content-heading{
+	/*
+	font-size: 16px;
+	font-weight: bold;
+	text-transform:uppercase;
+	*/
+	font-size:15px;height:15px;line-height:15px;font-weight:500
+	margin-bottom:5px;margin-left:0;margin-right:0;margin-top:10px;box-sizing:border-box;
+}
+
 label{
 	font-weight: normal;
 }
@@ -54,9 +86,11 @@ label{
 .btn-primary.active,
 .open .dropdown-toggle.btn-primary {
   color: #ffffff;
-  background-color: #728B66;
-  border-color: #728B66;
+  background-color: #ff8109;
+  border-color:  #ff8109;
+  opacity: 0.7	
 }
+
 
 .btn-default {
   color: #ffffff;
@@ -68,9 +102,10 @@ label{
 .btn-default:active,
 .btn-default.active,
 .open .dropdown-toggle.btn-default {
-  color: #333333;
-  background-color: #728B66;
-  border-color: #728B66;
+  color: #ffffff;
+  background-color: #828282;
+  border-color: #828282;
+  opacity: 0.7	
 }
 
 .btn-info {
@@ -84,8 +119,9 @@ label{
 .btn-info.active,
 .open .dropdown-toggle.btn-info {
   color: #ffffff;
-  background-color: #728B66;
-  border-color: #728B66;
+  background-color: #1b95b2;
+  border-color: #1b95b2;
+  opacity: 0.7	
 }
 .btn {
     font-size: 11px;    
@@ -256,7 +292,9 @@ table{
 	padding-left: 13px;
 }
 /*end*/
-
+.container{
+	max-width: none !important; width: 950px; padding-left: 35px; margin-top: -20px;
+}
 /*For the spinner*/
 #spinner-wrap {
     position:fixed;
@@ -298,6 +336,10 @@ td.validValueDesc {
 	width: 60%;
 }
 
+.fieldmap-header{
+	padding-right: 25px;
+	margin-left:5px;
+}
 #field-map {
 	table-layout: fixed;
 }
@@ -305,6 +347,11 @@ td.validValueDesc {
 #field-map td{
 	border: 1px solid;
 	text-align: center;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+#field-map td p{
+	margin-bottom: 0px;
 }
 
 #field-map td.plot{
@@ -312,6 +359,7 @@ td.validValueDesc {
 	vertical-align: middle;
 	word-wrap: break-word;
 }
+
 #field-map td.plot label {
 	padding: 3px;
 	margin-bottom: 0px;
@@ -321,7 +369,7 @@ td.validValueDesc {
 
 #field-map td.header-row-main{
 	background-color: #BEBEBA;
-	width: 60px;
+	width: 64px;
 }
 #field-map td.header-row-data{
 	background-color: #BEBEBA;
@@ -331,6 +379,7 @@ td.validValueDesc {
 	background-color: #EEEEE9;
 }
 
+
 .fieldmap-container {
 	padding:10px; 
 	margin:20px; 
@@ -338,6 +387,7 @@ td.validValueDesc {
 	overflow:auto; 
 	border-bottom:none;
 }
+
 
 #availableFields, #leftSelectedFields, #rightSelectedFields 
 { list-style-type: none; margin: 0; padding: 0; float: left; 
@@ -364,16 +414,7 @@ tr.trialInstance {
 	background-color: #ffffff;
 }
 
-.sub-heading{
-	font-size: 24px;
-	font-weight: 300;
-	text-transform:uppercase;
-}
-.sub-content-heading{
-	font-size: 16px;
-	font-weight: bold;
-	text-transform:uppercase;
-}
+
 .modal-header{
 	background-color: #e9e9e9;
 	padding: 10px;

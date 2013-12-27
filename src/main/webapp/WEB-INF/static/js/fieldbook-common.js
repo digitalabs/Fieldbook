@@ -173,7 +173,7 @@ function selectTrialInstance(tableName) {
 		    		if (parseInt(data.size) > 1) {
 			    		clearStudyTree();
 			    		isViewFieldmap = true;
-			    		createStudyTree($.parseJSON(data.fieldMapInfo), isViewFieldmap);
+			    		createStudyTree($.parseJSON(data.fieldMapInfo), isViewFieldmap, tableName);
 			    		$("#selectTrialInstanceModal").modal("toggle");
 		    		} else {
 		    			//redirect to step 3
@@ -194,7 +194,7 @@ function selectTrialInstance(tableName) {
 	}
 }
 
-function selectTrialInstanceCreate() {
+function selectTrialInstanceCreate(tableName) {
 	$.ajax({ 
 		url: "/Fieldbook/Fieldmap/enterFieldDetails/selectTrialInstance",
 	    type: "GET",
@@ -205,24 +205,34 @@ function selectTrialInstanceCreate() {
 	    	if (data.fieldMapInfo != null && data.fieldMapInfo != "") {
 	    		clearStudyTree();
 	    		isViewFieldmap = false;
-	    		createStudyTree($.parseJSON(data.fieldMapInfo), isViewFieldmap);
+	    		createStudyTree($.parseJSON(data.fieldMapInfo), isViewFieldmap, tableName);
 	    		$("#selectTrialInstanceModal").modal("toggle");
 	    	}
         } 
 	});
 }
 
-function createStudyTree(fieldMapInfoList, hasFieldMap) {
+function createStudyTree(fieldMapInfoList, hasFieldMap, tableName) {
 	createHeader(hasFieldMap);
 	$.each(fieldMapInfoList, function (index, fieldMapInfo) {
 		createRow(getPrefixName("study", fieldMapInfo.fieldbookId), "", fieldMapInfo.fieldbookName, fieldMapInfo.fieldbookId, hasFieldMap);
 		$.each(fieldMapInfo.datasets, function (index, value) {
-			createRow(getPrefixName("dataset", value.datasetId), getPrefixName("study", fieldMapInfo.fieldbookId), value.datasetName, value.datasetId, hasFieldMap);
-			$.each(value.trialInstances, function (index, childValue) {
-				if ((hasFieldMap && childValue.hasFieldMap) || !hasFieldMap) {
-					createRow(getPrefixName("trialInstance", childValue.geolocationId), getPrefixName("dataset", value.datasetId), childValue, childValue.geolocationId, hasFieldMap);
+			if (tableName == "trial-table") {
+				createRow(getPrefixName("dataset", value.datasetId), getPrefixName("study", fieldMapInfo.fieldbookId), value.datasetName, value.datasetId, hasFieldMap);
+				$.each(value.trialInstances, function (index, childValue) {
+					if ((hasFieldMap && childValue.hasFieldMap) || !hasFieldMap) {
+						createRow(getPrefixName("trialInstance", childValue.geolocationId), getPrefixName("dataset", value.datasetId), childValue, childValue.geolocationId, hasFieldMap);
+					}
+				});
+			} else {
+				if (value.trialInstances.length > 0) {
+					$.each(value.trialInstances, function (index, childValue) {
+						createRowForNursery(getPrefixName("trialInstance", childValue.geolocationId), 
+								getPrefixName("study", fieldMapInfo.fieldbookId), childValue, childValue.geolocationId, 
+								hasFieldMap, value.datasetName, value.datasetId);
+					});
 				}
-			});
+			}
 		});
 	});
 	//set bootstrap ui
@@ -231,11 +241,11 @@ function createStudyTree(fieldMapInfoList, hasFieldMap) {
 	
 	$('.tr-expander').on('click', function(){
 		triggerExpanderClick($(this));
-	})
+	});
 	$('.treegrid-expander').on('click', function(){
 		triggerExpanderClick($(this).parent().parent());
 		
-	})
+	});
 	 
 	
 	//set as highlightable
@@ -289,6 +299,24 @@ function createHeader(hasFieldMap) {
 	}
 	newRow = newRow + "</tr></thead>";
 	$("#studyTree").append(newRow+"<tbody></tbody>");
+}
+
+function createRowForNursery(id, parentClass, value, realId, withFieldMap, datasetName, datasetId) {
+	var genClassName = "treegrid-";
+	var genParentClassName = "";
+	var newRow = "";
+	var newCell = "";	
+	if (parentClass != "") {
+		genParentClassName = "treegrid-parent-" + parentClass;
+	}
+	
+	//for create new fieldmap
+	newRow = "<tr class='data-row trialInstance "+ genClassName + id + " " + genParentClassName + "'>";
+	var checkBox = "<input class='checkInstance' type='checkbox' id='" + datasetId + "|" + realId + "' /> &nbsp;&nbsp;";
+	newCell = "<td>" + checkBox + "&nbsp;" + datasetName + "</td><td>" + value.entryCount + "</td>";
+	var hasFieldMap = value.hasFieldMap ? "Yes" : "No";
+	newCell = newCell + "<td class='hasFieldMap'>" + hasFieldMap + "</td>";
+	$("#studyTree").append(newRow+newCell+"</tr>");
 }
 
 function createRow(id, parentClass, value, realId, withFieldMap) {
@@ -421,7 +449,7 @@ function showFieldMapPopUpCreate(tableName, ids) {
 	    type: "GET",
 	    data: "",
 	    success: function(data) {
-    		selectTrialInstanceCreate();
+    		selectTrialInstanceCreate(tableName);
         },
 		error: function(jqXHR, textStatus, errorThrown){
 			console.log("The following error occured: " + textStatus , errorThrown);
@@ -489,15 +517,22 @@ function showCreateFieldMap() {
 		fieldmapIds = [];
 		$('#studyTree .checkInstance:checked').each(function(){
 			var id = this.id;
-			var datasetId = $(this).parent().parent().treegrid('getParentNode').attr("id");
-			var studyId = $(this).parent().parent().treegrid('getParentNode').treegrid('getParentNode').attr("id");
+			var datasetId;
+			var studyId;
+			if (id.indexOf("|") > -1) {
+				datasetId = id.split("|")[0];
+				id = id.split("|")[1];
+				studyId = $(this).parent().parent().treegrid('getParentNode').attr("id");
+			} else {
+				datasetId = $(this).parent().parent().treegrid('getParentNode').attr("id");
+				studyId = $(this).parent().parent().treegrid('getParentNode').treegrid('getParentNode').attr("id");
+			}
 			var hasFieldMap;
 			if (trial) {
 				hasFieldMap = $(this).parent().next().next().next().next().html();
 			} else {
 				hasFieldMap = $(this).parent().next().next().html();
 			}
-			
 			
 			//build id list of selected trials instances
 			fieldmapIds.push(studyId+"|"+datasetId+"|"+id);

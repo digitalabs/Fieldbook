@@ -277,13 +277,13 @@ function createHeader(hasFieldMap) {
 	
 	if (!hasFieldMap) {
 		if (trial) {
-			newRow = newRow + "<th style='width:30%'>" + trialName+ "</th>" +
-				"<th style='width:18%'>" + entryLabel + "</th>" +
-				"<th style='width:17%'>" + repLabel + "</th>" +
+			newRow = newRow + "<th style='width:45%'>" + trialName+ "</th>" +
+				"<th style='width:10%'>" + entryLabel + "</th>" +
+				"<th style='width:10%'>" + repLabel + "</th>" +
 				"<th style='width:20%'>" + plotLabel + "</th>";
 		} else {
-			newRow = newRow + "<th style='width:50%'>" + nurseryName + "</th>" +
-			"<th style='width:35%'>" + entryPlotLabel + "</th>";
+			newRow = newRow + "<th style='width:65%'>" + nurseryName + "</th>" +
+			"<th style='width:20%'>" + entryPlotLabel + "</th>";
 		}
 		newRow = newRow + "<th style='width:15%'>" + fieldmapLabel + "</th>";
 	} else {

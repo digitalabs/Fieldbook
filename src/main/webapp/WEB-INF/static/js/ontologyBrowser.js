@@ -431,6 +431,11 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 		    		if(name == 'ManageProperty'){
 		    			//console.log("set the proper trait class")
 		    			setCorrespondingTraitClass($("#combo"+name).select2("data").id);
+		    			if (parseInt($("#combo"+name).select2("data").id) > 0) {
+		    				disablePropertyFields();
+		    			} else {
+		    				enablePropertyFields();
+		    			}
 		    		}
 		    		
 	    		} else { //add mode
@@ -449,6 +454,18 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	    	}	    	
 	    });
 	}
+}
+
+function disablePropertyFields() {
+	$("#comboManagePropTraitClass").select2("disable", true);
+	$("#managePropertyDescription").attr("disabled", "disabled");
+	$("#managePropTraitClassBrowserTree").dynatree("disable");
+}
+
+function enablePropertyFields() {
+	$("#comboManagePropTraitClass").select2("enable", true);
+	$("#managePropertyDescription").removeAttr("disabled");
+	$("#managePropTraitClassBrowserTree").dynatree("enable");
 }
 
 function retrieveLinkedVariables(ontologyType, ontologyId){
@@ -896,6 +913,7 @@ function populateFields(data, variableId) {
 		disableFieldsForCentralUpdate();
 		$("#traitClassBrowserTree").dynatree("disable");
 	}else{
+		enableFieldsForUpdate();
 		$("#traitClassBrowserTree").dynatree("enable");
 	}
 	
@@ -1403,4 +1421,15 @@ function disableFieldsForCentralUpdate() {
 	$("#comboMethod").select2('disable',true);
 	$("#comboScale").select2('disable',true);
 	$("#dataType").attr("disabled","disabled");
+}
+
+function enableFieldsForUpdate() {
+	$("#newVariableName").removeAttr("disabled");
+	$("#variableDescription").removeAttr("disabled");
+	$("#role").removeAttr("disabled");
+	$("#comboTraitClass").select2('enable',true);
+	$("#comboProperty").select2('enable',true);
+	$("#comboMethod").select2('enable',true);
+	$("#comboScale").select2('enable',true);
+	$("#dataType").removeAttr("disabled");
 }

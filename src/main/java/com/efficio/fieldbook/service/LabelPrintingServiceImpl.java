@@ -77,7 +77,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
     
    
     
-    private String delimiter = "|";
+    private String delimiter = " | ";
     
     @Resource
     private ResourceBundleMessageSource messageSource;

@@ -343,13 +343,20 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	            return ($.fn.select2.defaults.matcher(query.term,item.text));
 	          
 	          });
-	          if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
+	          if (data.results.length === 0){
+	        	  data.results.unshift({id:query.term,text:query.term});	        	 
+	          }
 	          
 	            query.callback(data);
 	        }
 	
 	    }).on("change", function(){
-	    	getStandardVariableDetails($("#combo" + name).select2("data").id);
+	    	getStandardVariableDetails($("#combo" + name).select2("data").id, $("#combo" + name).select2("data").text);
+	    	var tempId = $("#combo" + name).select2("data").id
+	    	if(tempId == $("#combo" + name).select2("data").text){
+	    		enableFieldsForUpdate();
+	    		$("#traitClassBrowserTree").dynatree("enable");
+	    	}
 	    });
 	} else {
 		//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
@@ -852,9 +859,9 @@ function loadTraitClassTree(treeName, comboName, descriptionName, treeData, drop
 }
 
 //function to retrieve the standard variable details of the selected variable
-function getStandardVariableDetails(variableId) {
+function getStandardVariableDetails(variableId, text) {
 	resetCategoricalValues();
-	if(isInt(variableId)){
+	if(isInt(variableId) && variableId != text){
 		Spinner.toggle();
 		$.ajax({
 			url: ontologyUrl + "retrieve/variable/" + variableId,
@@ -1170,7 +1177,12 @@ function recreateVariableNameCombo(combo, id, name) {
 	              
 	              });
 	              
-	              if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
+	              if (data.results.length === 0)
+	            	  {
+	            	  	//console.log('new');
+	            	  	data.results.unshift({id:query.term,text:query.term});
+	            	  
+	            	  }
 	              
 	                query.callback(data);
 	                

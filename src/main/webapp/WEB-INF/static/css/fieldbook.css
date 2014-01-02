@@ -450,3 +450,7 @@ tr.trialInstance {
     border-bottom: 0px;
     
 }
+
+.page-header {
+	border-bottom: 0;
+}

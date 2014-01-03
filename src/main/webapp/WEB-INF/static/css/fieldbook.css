@@ -293,7 +293,8 @@ table{
 }
 /*end*/
 .container{
-	max-width: none !important; width: 950px; padding-left: 35px; margin-top: -20px;
+	max-width: none !important; width: 950px; padding-left: 35px; margin-top: -20px; margin-left: 10px;
+	float: left;
 }
 /*For the spinner*/
 #spinner-wrap {

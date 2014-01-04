@@ -205,7 +205,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                     moreFieldInfo.put("trialInstanceNumber", fieldMapTrialInstanceInfo.getTrialInstanceNo());
                     
                     for(FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()){
-                        
+                      
                         i++;
                         String barcodeLabel = generateBarcodeField(moreFieldInfo, fieldMapLabel, firstBarcodeField, secondBarcodeField, thirdBarcodeField, barcodeNeeded);
                         System.out.println(barcodeLabel);

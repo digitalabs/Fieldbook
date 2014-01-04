@@ -12,6 +12,8 @@
 package com.efficio.fieldbook.web.label.printing.controller;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -45,8 +47,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.LabelPrintingService;
+import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
+import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
@@ -213,6 +217,41 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         }
         return labelFieldsList;
     }
+    
+    @ResponseBody
+    @RequestMapping(value="/download", method = RequestMethod.GET)
+    public String exportFile(HttpServletResponse response) {
+
+        
+        String fileName = getUserLabelPrinting().getFilenameDL();
+
+        response.setHeader("Content-disposition","attachment; filename=" + fileName);
+
+        File xls = new File(getUserLabelPrinting().getFilenameDLLocation()); // the selected name + current date
+        FileInputStream in;
+        
+        try {
+            
+
+            in = new FileInputStream(xls);
+            OutputStream out = response.getOutputStream();
+
+            byte[] buffer= new byte[BUFFER_SIZE]; // use bigger if you want
+            int length = 0;
+
+            while ((length = in.read(buffer)) > 0){
+                 out.write(buffer, 0, length);
+            }
+            in.close();
+            out.close();
+        } catch (FileNotFoundException e) {
+        	LOG.error(e.getMessage(), e);
+        } catch (IOException e) {
+        	LOG.error(e.getMessage(), e);
+        }
+        
+        return "";
+    }
     /**
      * Submits the details.
      *
@@ -248,45 +287,56 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            
+            String fileName  = "";
             if(getUserLabelPrinting().getGenerateType().equalsIgnoreCase("1")){
-                
-                String fileName = labelPrintingService.generatePDFLabels(trialInstances, getUserLabelPrinting(), baos);
-                response.setHeader("Content-disposition","attachment; filename=" + getUserLabelPrinting().getFilename().replaceAll(" ",  "_") + ".pdf");
+            	fileName  =getUserLabelPrinting().getFilename().replaceAll(" ",  "_") + ".pdf";
+            	String fileNameLocation  = System.getProperty( "user.home" ) + "/"+fileName;
+            	
+            	getUserLabelPrinting().setFilenameDL(fileName);
+            	getUserLabelPrinting().setFilenameDLLocation(fileNameLocation);
+                fileName = labelPrintingService.generatePDFLabels(trialInstances, getUserLabelPrinting(), baos);
+                //response.setHeader("Content-disposition","attachment; filename= + fileName);
             }else{
-                String fileName = labelPrintingService.generateXlSLabels(trialInstances, getUserLabelPrinting(), baos);
-                response.setHeader("Content-disposition","attachment; filename=" + getUserLabelPrinting().getFilename().replaceAll(" ",  "_") + ".xls");
+            	fileName  = getUserLabelPrinting().getFilename().replaceAll(" ",  "_") + ".xls";
+            	String fileNameLocation  = System.getProperty( "user.home" ) + "/"+fileName;
+            	getUserLabelPrinting().setFilenameDL(fileName);
+            	getUserLabelPrinting().setFilenameDLLocation(fileNameLocation);
+                fileName = labelPrintingService.generateXlSLabels(trialInstances, getUserLabelPrinting(), baos);
+                //response.setHeader("Content-disposition","attachment; filename=" + fileName);
             }
-            //File xls = new File(fileName); // the selected name + current date
-            //FileInputStream in;
-            //in = new FileInputStream(xls);
+            /*
+            File xls = new File(fileName); // the selected name + current date
+            FileInputStream in;
+            in = new FileInputStream(xls);
             OutputStream out = response.getOutputStream();
 
             
-            /*
+            
             byte[] buffer= new byte[BUFFER_SIZE]; // use bigger if you want
             int length = 0;
 
             while ((length = in.read(buffer)) > 0){
                  out.write(buffer, 0, length);
             }
-            */
-            out.write(baos.toByteArray());
             
-            //in.close();
+            //out.write(baos.toByteArray());
+            
+            in.close();
             out.close();
-            return "";
+            */
+            
+            return fileName;
         } catch (MiddlewareQueryException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
-        } catch (FileNotFoundException e) {
+        }/* catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-         
+         */
          
          
         return "redirect:" + GenerateLabelController.URL;

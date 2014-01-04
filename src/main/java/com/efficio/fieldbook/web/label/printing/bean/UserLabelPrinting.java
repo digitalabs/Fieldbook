@@ -55,6 +55,11 @@ public class UserLabelPrinting implements Serializable{
     
     private String order;
     
+    private String filenameDL;
+    private String filenameDLLocation;
+    
+    
+    
     
     public FieldMapInfo getFieldMapInfo() {
         return fieldMapInfo;
@@ -62,7 +67,31 @@ public class UserLabelPrinting implements Serializable{
 
 
     
-    public void setFieldMapInfo(FieldMapInfo fieldMapInfo) {
+    public String getFilenameDL() {
+		return filenameDL;
+	}
+
+
+
+	public void setFilenameDL(String filenameDL) {
+		this.filenameDL = filenameDL;
+	}
+
+
+
+	public String getFilenameDLLocation() {
+		return filenameDLLocation;
+	}
+
+
+
+	public void setFilenameDLLocation(String filenameDLLocation) {
+		this.filenameDLLocation = filenameDLLocation;
+	}
+
+
+
+	public void setFieldMapInfo(FieldMapInfo fieldMapInfo) {
         this.fieldMapInfo = fieldMapInfo;
         int totalLabels = 0;
         if(fieldMapInfo != null){

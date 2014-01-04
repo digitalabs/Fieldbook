@@ -124,9 +124,14 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         String thirdBarcodeField = userLabelPrinting.getThirdBarcodeField();
         
         String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        String fileName = currentDate + ".pdf";
+        //String fileName = currentDate + ".pdf";
+        
+       
+        
+        String fileName = userLabelPrinting.getFilenameDLLocation();
+        
         try {
-            
+        	FileOutputStream fileOutputStream = new FileOutputStream(fileName);
 
             
             
@@ -157,7 +162,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         document.setMargins(6, 2, 17.5f, 5);
                 }
                
-                PdfWriter writer = PdfWriter.getInstance(document, baos);
+               // PdfWriter writer = PdfWriter.getInstance(document, baos);
+                PdfWriter writer = PdfWriter.getInstance(document, fileOutputStream);
                 // step 3
                 document.open();
                 // step 4
@@ -346,7 +352,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 for(File file : filesToBeDeleted){
                     file.delete();
                 }
-                
+                fileOutputStream.close();
+
             }catch (FileNotFoundException e) {
                 LOG.error(e.getMessage(), e);
             } catch (IOException e) {
@@ -525,7 +532,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         String thirdBarcodeField = userLabelPrinting.getThirdBarcodeField();
         
         String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        String fileName = currentDate + ".xls";
+        //String fileName = currentDate + ".xls";
+        String fileName = userLabelPrinting.getFilenameDLLocation();
         try {
             
                     HSSFWorkbook workbook = new HSSFWorkbook();
@@ -636,9 +644,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 
                     //Write the excel file
                     
-                    //FileOutputStream fileOutputStream = new FileOutputStream(fileName);
-                    workbook.write(baos);
-                    //fileOutputStream.close();
+                    FileOutputStream fileOutputStream = new FileOutputStream(fileName);
+                    //workbook.write(baos);
+                    workbook.write(fileOutputStream);
+                    fileOutputStream.close();
                     //return fileOutputStream;
       
             

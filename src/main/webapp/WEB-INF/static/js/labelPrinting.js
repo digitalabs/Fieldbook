@@ -73,7 +73,22 @@ function validateEnterLabelFieldsPage(type){
 	$("#"+getJquerySafeId('userLabelPrinting.generateType')).val(type);
 	
 	setSelectedTrialInstanceOrder();
-	$('#specifyLabelDetailsForm').submit();	
+	
+Spinner.toggle();
+var $form = $("#specifyLabelDetailsForm");
+serializedData = $form.serialize();
+		$.ajax({
+			url: $('#specifyLabelDetailsForm').attr('action'),
+			type: "post",
+			data: serializedData,
+		    success: function(data){
+			    $('#specifyLabelDetailsDownloadForm').submit();
+		   },
+		   complete: function(){ 
+			   Spinner.toggle();
+		   } 
+		});
+	
 }
 function moveToTopScreen(){
 	 $('html').scrollTop(0);

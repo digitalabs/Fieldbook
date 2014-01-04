@@ -21,6 +21,12 @@
 		&nbsp;
 	</div>
 </div>
+
+<form id="specifyLabelDetailsDownloadForm" role="form-horizontal" action="#"
+th:action="@{/LabelPrinting/specifyLabelDetails/download}" method="GET" th:object="${labelPrintingForm}">
+
+</form>
+
 <form id="specifyLabelDetailsForm" role="form-horizontal" action="#"
 th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${labelPrintingForm}" enctype="multipart/form-data">
 <input type="hidden" th:field="*{userLabelPrinting.leftSelectedLabelFields}"/>

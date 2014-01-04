@@ -205,11 +205,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                     moreFieldInfo.put("trialInstanceNumber", fieldMapTrialInstanceInfo.getTrialInstanceNo());
                     
                     for(FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()){
-                           
-          
+                        
                         i++;
                         String barcodeLabel = generateBarcodeField(moreFieldInfo, fieldMapLabel, firstBarcodeField, secondBarcodeField, thirdBarcodeField, barcodeNeeded);
-                        
+                        System.out.println(barcodeLabel);
                         
                        
                         BitMatrix bitMatrix = new Code128Writer().encode(barcodeLabel,BarcodeFormat.CODE_128,width,height,null);
@@ -301,9 +300,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                        
                         cell.setBorder(Rectangle.NO_BORDER);                         
                         cell.setBackgroundColor(Color.white);
-                        /*
-                        cell.setBorderColor(Color.RED);
-                        */
+                        
                         
                         table.addCell(cell);
                                      
@@ -346,7 +343,36 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         
                     }
                 }
-          
+                //we need to add the last row
+                if(i % numberOfLabelPerRow != 0){
+                    //we go the next line
+                    
+                    int needed = fixTableRowSize - numberOfLabelPerRow;
+                    int remaining = numberOfLabelPerRow - ( i % numberOfLabelPerRow);
+                    for(int neededCount = 0 ; neededCount < remaining ; neededCount++){
+                        PdfPCell cellNeeded = new PdfPCell(); 
+                        
+                        cellNeeded.setBorder(Rectangle.NO_BORDER);                         
+                        cellNeeded.setBackgroundColor(Color.white);
+                        
+                        table.addCell(cellNeeded);
+                    }
+                    
+                    table.completeRow();
+                    if(numberofRowsPerPageOfLabel == 10){
+                        
+                       table.setSpacingAfter(9f);
+                    }
+                    
+                    document.add(table);
+                    
+                    
+                    
+                    table = new PdfPTable(fixTableRowSize);                              
+                    table.setWidths(widthColumns);
+                    table.setWidthPercentage(100);
+                    
+                }
                 
                 document.close();
                 for(File file : filesToBeDeleted){

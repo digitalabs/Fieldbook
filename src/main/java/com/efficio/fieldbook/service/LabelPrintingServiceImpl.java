@@ -212,7 +212,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         
                        
                         BitMatrix bitMatrix = new Code128Writer().encode(barcodeLabel,BarcodeFormat.CODE_128,width,height,null);
-                        String imageLocation = Math.random() + ".png";
+                        String imageLocation = System.getProperty( "user.home" )  + "/" + Math.random() + ".png";
                         File imageFile = new File(imageLocation);
                         FileOutputStream fout = new FileOutputStream(imageFile);
                         MatrixToImageWriter.writeToStream(bitMatrix, "png", fout);

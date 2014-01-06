@@ -162,6 +162,10 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         getUserLabelPrinting().setBarcodeNeeded("1");
         getUserLabelPrinting().setNumberOfLabelPerRow("3");
         
+        getUserLabelPrinting().setFirstBarcodeField("");
+        getUserLabelPrinting().setSecondBarcodeField("");
+        getUserLabelPrinting().setThirdBarcodeField("");
+        
         getUserLabelPrinting().setFilename(generateDefaultFilename(getUserLabelPrinting(), userFieldmap.isTrial()));
         form.setUserLabelPrinting(getUserLabelPrinting());
         

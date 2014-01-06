@@ -125,7 +125,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
     public String exportExcel(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model, HttpServletResponse response) {
 
         String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        String fileName = userFieldmap.getBlockName().replace(" ", "") + "_" + currentDate + ".xls"; //changed selected name to block name for now
+        String fileName = userFieldmap.getBlockName().replace(" ", "") + "-" + currentDate + ".xls"; //changed selected name to block name for now
 
         response.setHeader("Content-disposition","attachment; filename=" + fileName);
 

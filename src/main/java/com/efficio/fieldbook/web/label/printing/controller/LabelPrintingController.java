@@ -178,19 +178,19 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     
     private String generateDefaultFilename(UserLabelPrinting userLabelPrinting, boolean isTrial){
         String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        String fileName = "Labels_for_" + userLabelPrinting.getName();
+        String fileName = "Labels-for-" + userLabelPrinting.getName();
         
         if(isTrial) {
             if (getUserLabelPrinting().getFieldMapInfoList() != null) {
-                fileName = "Trial_Field_Map_Labels_" + currentDate;
+                fileName = "Trial-Field-Map-Labels-" + currentDate;
             } else {
-                fileName += "_" + userLabelPrinting.getNumberOfInstances() + "_" + currentDate; //changed selected name to block name for now
+                fileName += "-" + userLabelPrinting.getNumberOfInstances() + "-" + currentDate; //changed selected name to block name for now
             }
         } else {
             if (getUserLabelPrinting().getFieldMapInfoList() != null) {
-                fileName = "Nursery_Field_Map_Labels_" + currentDate;
+                fileName = "Nursery-Field-Map-Labels-" + currentDate;
             } else {
-                fileName += "_" + currentDate; //changed selected name to block name for now
+                fileName += "-" + currentDate; //changed selected name to block name for now
             }
         }
         
@@ -297,7 +297,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             String fileName  = "";
             if(getUserLabelPrinting().getGenerateType().equalsIgnoreCase("1")){
-            	fileName  =getUserLabelPrinting().getFilename().replaceAll(" ",  "_") + ".pdf";
+            	fileName  =getUserLabelPrinting().getFilename().replaceAll(" ",  "-") + ".pdf";
             	String fileNameLocation  = System.getProperty( "user.home" ) + "/"+fileName;
             	
             	getUserLabelPrinting().setFilenameDL(fileName);
@@ -305,7 +305,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
                 fileName = labelPrintingService.generatePDFLabels(trialInstances, getUserLabelPrinting(), baos);
                 //response.setHeader("Content-disposition","attachment; filename= + fileName);
             }else{
-            	fileName  = getUserLabelPrinting().getFilename().replaceAll(" ",  "_") + ".xls";
+            	fileName  = getUserLabelPrinting().getFilename().replaceAll(" ",  "-") + ".xls";
             	String fileNameLocation  = System.getProperty( "user.home" ) + "/"+fileName;
             	getUserLabelPrinting().setFilenameDL(fileName);
             	getUserLabelPrinting().setFilenameDLLocation(fileNameLocation);

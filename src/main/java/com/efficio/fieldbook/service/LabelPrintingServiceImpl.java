@@ -208,7 +208,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                       
                         i++;
                         String barcodeLabel = generateBarcodeField(moreFieldInfo, fieldMapLabel, firstBarcodeField, secondBarcodeField, thirdBarcodeField, barcodeNeeded);
-                        System.out.println(barcodeLabel);
+                        //System.out.println(barcodeLabel);
                         
                        
                         BitMatrix bitMatrix = new Code128Writer().encode(barcodeLabel,BarcodeFormat.CODE_128,width,height,null);

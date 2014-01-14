@@ -238,7 +238,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 		<div class="col-xs-12 col-md-12" >
 			<div class="form-group">
 				<div class="col-xs-6 col-md-6">
-					<label class="control-label" th:text="#{label.printing.choose.option.fields}">Choose up to six fields you would like printed on your labels.</label>
+					<label class="control-label" th:utext="#{label.printing.choose.option.fields}">Choose up to six fields you would like printed on your labels.</label>
 				</div>	
 				<div class="col-xs-6 col-md-6">
 					<label class="control-label" th:text="#{label.printing.do.you.need.bar.codes}">Do you need barcodes on your labels?</label>

@@ -125,7 +125,6 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         
         String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
         //String fileName = currentDate + ".pdf";
-        
        
         
         String fileName = userLabelPrinting.getFilenameDLLocation();
@@ -208,7 +207,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                       
                         i++;
                         String barcodeLabel = generateBarcodeField(moreFieldInfo, fieldMapLabel, firstBarcodeField, secondBarcodeField, thirdBarcodeField, barcodeNeeded);
-                        //System.out.println(barcodeLabel);
+                        if("0".equalsIgnoreCase(barcodeNeeded)){
+                        	barcodeLabel = " ";
+                        }
                         
                        
                         BitMatrix bitMatrix = new Code128Writer().encode(barcodeLabel,BarcodeFormat.CODE_128,width,height,null);
@@ -233,11 +234,20 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         innerImageTableInfo.setWidths(new float[]{1});
                         innerImageTableInfo.setWidthPercentage(82);
                         PdfPCell cellImage = new PdfPCell();
-                        cellImage.addElement(mainImage);
+                        if("1".equalsIgnoreCase(barcodeNeeded)){
+                        	cellImage.addElement(mainImage);
+                        }else{
+                        	cellImage.addElement(new Paragraph(" "));
+                        }
                         cellImage.setBorder(Rectangle.NO_BORDER);                         
                         cellImage.setBackgroundColor(Color.white);
-                        cellImage.setPadding(1.5f);
-                        innerImageTableInfo.addCell(cellImage);
+                        cellImage.setPadding(1.5f); 
+                        
+                        
+                       
+                        	innerImageTableInfo.addCell(cellImage);                        	
+                       
+                        
                         
                         float fontSize = 6.8f;
                         if(numberofRowsPerPageOfLabel == 10)
@@ -535,7 +545,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
            
             default: break;    
         }
-        return buffer.toString();
+        String stemp = buffer.toString();
+        if(stemp != null && "null".equalsIgnoreCase(stemp))
+        	stemp = " ";
+    	return stemp;
     }
 
     /* (non-Javadoc)

@@ -210,7 +210,6 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                         if("0".equalsIgnoreCase(barcodeNeeded)){
                         	barcodeLabel = " ";
                         }
-                        
                        
                         BitMatrix bitMatrix = new Code128Writer().encode(barcodeLabel,BarcodeFormat.CODE_128,width,height,null);
                         String imageLocation = System.getProperty( "user.home" )  + "/" + Math.random() + ".png";

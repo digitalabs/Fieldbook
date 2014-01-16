@@ -334,30 +334,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
                 fieldMapTrialInstanceInfo.setLocationName(fieldMapTrialInstanceInfo.getSiteName());
                 
             }
-            /*
-            List<StudyDetails> studyDetailsList = null;
-            try {
-	            if(userFieldmap.isTrial())				
-					studyDetailsList = fieldbookMiddlewareService.getAllLocalTrialStudyDetails();				
-				else
-	            	studyDetailsList = fieldbookMiddlewareService.getAllLocalNurseryDetails();
-	            String location = "";
-	            if(studyDetailsList != null && userFieldmap.getStudyId() != null){
-	            	for(StudyDetails det : studyDetailsList){
-	            		if(det.getId().intValue() == userFieldmap.getStudyId().intValue()){
-	            			location = det.getSiteName();
-	            			break;
-	            		}
-	            	}
-	            }
-	            
-
-	            System.out.println("=========== "+location);
-            } catch (MiddlewareQueryException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			*/
+           
         }
         
         try {
@@ -379,26 +356,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
                 fileName = labelPrintingService.generateXlSLabels(trialInstances, getUserLabelPrinting(), baos);
                 //response.setHeader("Content-disposition","attachment; filename=" + fileName);
             }
-            /*
-            File xls = new File(fileName); // the selected name + current date
-            FileInputStream in;
-            in = new FileInputStream(xls);
-            OutputStream out = response.getOutputStream();
-
-            
-            
-            byte[] buffer= new byte[BUFFER_SIZE]; // use bigger if you want
-            int length = 0;
-
-            while ((length = in.read(buffer)) > 0){
-                 out.write(buffer, 0, length);
-            }
-            
-            //out.write(baos.toByteArray());
-            
-            in.close();
-            out.close();
-            */
+           
             
             return fileName;
         } catch (MiddlewareQueryException e1) {

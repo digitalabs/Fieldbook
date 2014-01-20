@@ -58,7 +58,6 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import org.generationcp.middleware.service.api.OntologyService;
 
 
-// TODO: Auto-generated Javadoc
 /**
  * This controller handles the ontology screen.
  * 

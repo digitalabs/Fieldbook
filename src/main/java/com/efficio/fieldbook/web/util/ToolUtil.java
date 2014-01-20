@@ -31,18 +31,21 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 import com.efficio.fieldbook.web.trial.controller.ManageTrialController;
 
+/**
+ * The Class ToolUtil.
+ */
 public class ToolUtil {
+    
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(ToolUtil.class);
    
     /**
      * Launch the specified native tool.
-     * 
-     * @param tool
+     *
+     * @param abolutePath the abolute path
+     * @param parameter the parameter
      * @return the {@link Process} object created when the tool was launched
-     * @throws IOException
-     *             if an I/O error occurs while trying to launch the tool
-     * @throws IllegalArgumentException
-     *             if the specified Tool's type is not {@link ToolType#NATIVE}
+     * @throws IOException if an I/O error occurs while trying to launch the tool
      */
     public Process launchNativeTool(String abolutePath, String parameter) throws IOException {
         /*
@@ -65,6 +68,12 @@ public class ToolUtil {
         return pb.start();
     }   
     
+    /**
+     * Close native tool.
+     *
+     * @param abolutePath the abolute path
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     public void closeNativeTool(String abolutePath) throws IOException {
         /*
         if (tool.getToolType() != ToolType.NATIVE) {

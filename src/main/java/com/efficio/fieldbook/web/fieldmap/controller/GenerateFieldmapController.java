@@ -51,28 +51,48 @@ import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 import com.efficio.fieldbook.web.nursery.controller.ManageNurseriesController;
 import com.efficio.fieldbook.web.trial.controller.ManageTrialController;
 
+
+/**
+ * The Class GenerateFieldmapController.
+ * 
+ * Generates the final fieldmap for the step 3.
+ */
 @Controller
 @RequestMapping({GenerateFieldmapController.URL})
 public class GenerateFieldmapController extends AbstractBaseFieldbookController{
 
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(GenerateFieldmapController.class);
 
+    /** The Constant URL. */
     public static final String URL = "/Fieldmap/generateFieldmapView";
 
+    /** The user fieldmap. */
     @Resource
     private UserFieldmap userFieldmap;
     
+    /** The fieldmap service. */
     @Resource
     private FieldMapService fieldmapService;
     
+    /** The fieldbook middleware service. */
     @Resource
     private FieldbookService fieldbookMiddlewareService;
 
+    /** The export excel service. */
     @Resource
     private ExportExcelService exportExcelService;
     
+    /** The Constant BUFFER_SIZE. */
     private static final int BUFFER_SIZE = 4096 * 4;
 
+    /**
+     * Show generated fieldmap.
+     *
+     * @param form the form
+     * @param model the model
+     * @return the string
+     */
     @RequestMapping(method = RequestMethod.GET)
     public String showGeneratedFieldmap(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model) {
         
@@ -81,6 +101,16 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         return super.show(model);
     }
     
+    /**
+     * View fieldmap.
+     *
+     * @param form the form
+     * @param model the model
+     * @param datasetId the dataset id
+     * @param geolocationId the geolocation id
+     * @param studyType the study type
+     * @return the string
+     */
     @RequestMapping(value="/viewFieldmap/{studyType}/{datasetId}/{geolocationId}", method = RequestMethod.GET)
     public String viewFieldmap(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model,
             @PathVariable Integer datasetId, @PathVariable Integer geolocationId, @PathVariable String studyType) {
@@ -120,6 +150,14 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         return super.show(model);
     }
     
+    /**
+     * Export excel.
+     *
+     * @param form the form
+     * @param model the model
+     * @param response the response
+     * @return the string
+     */
     @ResponseBody
     @RequestMapping(value="/exportExcel", method = RequestMethod.GET)
     public String exportExcel(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model, HttpServletResponse response) {
@@ -161,7 +199,6 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
      * Submits the details.
      *
      * @param form the form
-     * @param result the result
      * @param model the model
      * @return the string
      */
@@ -205,6 +242,13 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         return "redirect:" + GenerateFieldmapController.URL;
     }
     
+    /**
+     * Redirect to main screen.
+     *
+     * @param form the form
+     * @param model the model
+     * @return the string
+     */
     @RequestMapping(value="/showMainPage", method = RequestMethod.GET)
     public String redirectToMainScreen(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model) {
 
@@ -216,10 +260,20 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         }
     }
         
+    /**
+     * Gets the user fieldmap.
+     *
+     * @return the user fieldmap
+     */
     public UserFieldmap getUserFieldmap() {
         return userFieldmap;
     }
     
+    /**
+     * Sets the user fieldmap.
+     *
+     * @param userFieldmap the new user fieldmap
+     */
     public void setUserFieldmap(UserFieldmap userFieldmap) {
         this.userFieldmap = userFieldmap;
     }
@@ -232,6 +286,11 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         return "Fieldmap/generateFieldmapView";
     }
 
+    /**
+     * Populate form with session data.
+     *
+     * @param form the form
+     */
     private void populateFormWithSessionData(FieldmapForm form) {
         UserFieldmap info = userFieldmap;
         form.setUserFieldmap(info);

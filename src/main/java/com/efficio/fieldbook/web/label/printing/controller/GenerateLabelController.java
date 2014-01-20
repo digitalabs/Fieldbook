@@ -73,23 +73,41 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class GenerateLabelController.
+ */
 @Controller
 @RequestMapping({GenerateLabelController.URL})
 public class GenerateLabelController extends AbstractBaseFieldbookController{
 
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(GenerateLabelController.class);
 
+    /** The Constant URL. */
     public static final String URL = "/LabelPrinting/generateLabel";
 
+    /** The user label printing. */
     @Resource
     private UserLabelPrinting userLabelPrinting;  
     
     
+    /** The fieldbook middleware service. */
     @Resource
     private FieldbookService fieldbookMiddlewareService;
     
+    /** The Constant BUFFER_SIZE. */
     private static final int BUFFER_SIZE = 4096 * 4;
 
+    /**
+     * Show trial label details.
+     *
+     * @param form the form
+     * @param model the model
+     * @param session the session
+     * @param response the response
+     * @return the string
+     */
     @RequestMapping(method = RequestMethod.GET)
     public String showTrialLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, 
             Model model, HttpSession session, HttpServletResponse response) {
@@ -101,17 +119,30 @@ public class GenerateLabelController extends AbstractBaseFieldbookController{
     
     
     
+    /* (non-Javadoc)
+     * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
+     */
     @Override
     public String getContentName() {
         return "LabelPrinting/generateLabel";
     }
 
     
+    /**
+     * Gets the user label printing.
+     *
+     * @return the user label printing
+     */
     public UserLabelPrinting getUserLabelPrinting() {
         return userLabelPrinting;
     }
 
     
+    /**
+     * Sets the user label printing.
+     *
+     * @param userLabelPrinting the new user label printing
+     */
     public void setUserLabelPrinting(UserLabelPrinting userLabelPrinting) {
         this.userLabelPrinting = userLabelPrinting;
     }

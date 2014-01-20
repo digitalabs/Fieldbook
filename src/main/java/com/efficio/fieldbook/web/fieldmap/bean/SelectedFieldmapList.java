@@ -10,14 +10,27 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SelectedFieldmapList.
+ */
 public class SelectedFieldmapList implements Serializable {
 
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 3166386440351404690L;
 
+    /** The rows. */
     private List<SelectedFieldmapRow> rows = new ArrayList<SelectedFieldmapRow>();
     
+    /** The is trial. */
     private boolean isTrial;
 
+    /**
+     * Instantiates a new selected fieldmap list.
+     *
+     * @param studies the studies
+     * @param isTrial the is trial
+     */
     public SelectedFieldmapList(List<FieldMapInfo> studies, boolean isTrial) {
         if (studies != null && !studies.isEmpty()) {
             for (FieldMapInfo study : studies) {
@@ -48,15 +61,27 @@ public class SelectedFieldmapList implements Serializable {
         setTrial(isTrial);
     }
     
+    /**
+     * Checks if is trial.
+     *
+     * @return true, if is trial
+     */
     public boolean isTrial() {
         return isTrial;
     }
     
+    /**
+     * Sets the trial.
+     *
+     * @param isTrial the new trial
+     */
     public void setTrial(boolean isTrial) {
         this.isTrial = isTrial;
     }
     
     /**
+     * Gets the rows.
+     *
      * @return the rows
      */
     public List<SelectedFieldmapRow> getRows() {
@@ -65,12 +90,19 @@ public class SelectedFieldmapList implements Serializable {
 
     
     /**
+     * Sets the rows.
+     *
      * @param rows the rows to set
      */
     public void setRows(List<SelectedFieldmapRow> rows) {
         this.rows = rows;
     }
 
+    /**
+     * Gets the total number of plots.
+     *
+     * @return the total number of plots
+     */
     public long getTotalNumberOfPlots() {
         long total = 0;
         if (this.rows != null && !this.rows.isEmpty()) {
@@ -85,6 +117,11 @@ public class SelectedFieldmapList implements Serializable {
         return total;
     }
     
+    /**
+     * Checks if is empty.
+     *
+     * @return true, if is empty
+     */
     public boolean isEmpty() {
         return rows != null ? rows.isEmpty() : true;
     }

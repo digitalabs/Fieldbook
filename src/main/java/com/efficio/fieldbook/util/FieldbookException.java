@@ -11,14 +11,29 @@
  *******************************************************************************/
 package com.efficio.fieldbook.util;
 
+/**
+ * The Class FieldbookException.
+ */
 public class FieldbookException extends Exception {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -1639961960516233500L;
 
+	/**
+	 * Instantiates a new fieldbook exception.
+	 *
+	 * @param message the message
+	 */
 	public FieldbookException(String message) {
 		super(message);
 	}
 
+	/**
+	 * Instantiates a new fieldbook exception.
+	 *
+	 * @param message the message
+	 * @param cause the cause
+	 */
 	public FieldbookException(String message, Throwable cause) {
 		super(message, cause);
 	}

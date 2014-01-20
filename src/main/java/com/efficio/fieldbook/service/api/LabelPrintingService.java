@@ -20,8 +20,30 @@ import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 
 
+/**
+ * The Interface LabelPrintingService.
+ */
 public interface LabelPrintingService {
         
+    /**
+     * Generate pdf labels.
+     *
+     * @param trialInstances the trial instances
+     * @param userLabelPrinting the user label printing
+     * @param baos the baos
+     * @return the string
+     * @throws MiddlewareQueryException the middleware query exception
+     */
     public String generatePDFLabels(List<StudyTrialInstanceInfo> trialInstances, UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos) throws MiddlewareQueryException;
+    
+    /**
+     * Generate xl s labels.
+     *
+     * @param trialInstances the trial instances
+     * @param userLabelPrinting the user label printing
+     * @param baos the baos
+     * @return the string
+     * @throws MiddlewareQueryException the middleware query exception
+     */
     public String generateXlSLabels(List<StudyTrialInstanceInfo> trialInstances, UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos) throws MiddlewareQueryException;
 }

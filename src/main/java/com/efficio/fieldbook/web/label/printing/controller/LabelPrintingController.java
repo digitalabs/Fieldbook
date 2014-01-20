@@ -61,7 +61,9 @@ import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.ManageNurseriesForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 
-
+/**
+ * The Class LabelPrintingController.
+ */
 @Controller
 @RequestMapping({LabelPrintingController.URL})
 public class LabelPrintingController extends AbstractBaseFieldbookController{
@@ -72,17 +74,26 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     /** The Constant URL. */
     public static final String URL = "/LabelPrinting/specifyLabelDetails";
     
+    /** The user label printing. */
     @Resource
     private UserLabelPrinting userLabelPrinting;  
+    
+    /** The fieldbook middleware service. */
     @Resource
     private FieldbookService fieldbookMiddlewareService;
+    
+    /** The label printing service. */
     @Resource
     private LabelPrintingService labelPrintingService;
+    
+    /** The user fieldmap. */
     @Resource
     private UserFieldmap userFieldmap;
     
+    /** The Constant BUFFER_SIZE. */
     private static final int BUFFER_SIZE = 4096 * 4;
     
+    /** The message source. */
     @Resource
     private ResourceBundleMessageSource messageSource;
     
@@ -91,6 +102,16 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     private UserSelection userSelection;
     
    
+    /**
+     * Show trial label details.
+     *
+     * @param form the form
+     * @param model the model
+     * @param session the session
+     * @param id the id
+     * @param locale the locale
+     * @return the string
+     */
     @RequestMapping(value="/trial/{id}", method = RequestMethod.GET)
     public String showTrialLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, 
             Model model, HttpSession session, @PathVariable int id , Locale locale) {
@@ -137,6 +158,16 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         return super.show(model);
     }
     
+    /**
+     * Show nursery label details.
+     *
+     * @param form the form
+     * @param model the model
+     * @param session the session
+     * @param id the id
+     * @param locale the locale
+     * @return the string
+     */
     @RequestMapping(value="/nursery/{id}", method = RequestMethod.GET)
     public String showNurseryLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, Model model, 
             HttpSession session, @PathVariable int id, Locale locale) {
@@ -181,6 +212,15 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         return super.show(model);
     }
     
+    /**
+     * Show fieldmap label details.
+     *
+     * @param form the form
+     * @param model the model
+     * @param session the session
+     * @param locale the locale
+     * @return the string
+     */
     @RequestMapping(value="/fieldmap", method = RequestMethod.GET)
     public String showFieldmapLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, 
             Model model, HttpSession session, Locale locale) {
@@ -207,6 +247,13 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         return super.show(model);
     }
     
+    /**
+     * Generate default filename.
+     *
+     * @param userLabelPrinting the user label printing
+     * @param isTrial the is trial
+     * @return the string
+     */
     private String generateDefaultFilename(UserLabelPrinting userLabelPrinting, boolean isTrial){
         String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
         String fileName = "Labels-for-" + userLabelPrinting.getName();
@@ -228,6 +275,14 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         return fileName;
     }
     
+    /**
+     * Gets the available label fields.
+     *
+     * @param isTrial the is trial
+     * @param isFromFieldMap the is from field map
+     * @param locale the locale
+     * @return the available label fields
+     */
     private List<LabelFields> getAvailableLabelFields(boolean isTrial, boolean isFromFieldMap, Locale locale){
         List<LabelFields> labelFieldsList = new ArrayList();
         
@@ -260,6 +315,12 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         return labelFieldsList;
     }
     
+    /**
+     * Export file.
+     *
+     * @param response the response
+     * @return the string
+     */
     @ResponseBody
     @RequestMapping(value="/download", method = RequestMethod.GET)
     public String exportFile(HttpServletResponse response) {
@@ -298,12 +359,14 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         
         return "";
     }
+    
     /**
      * Submits the details.
      *
      * @param form the form
      * @param result the result
      * @param model the model
+     * @param response the response
      * @return the string
      */
     @ResponseBody
@@ -375,6 +438,11 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         return "redirect:" + GenerateLabelController.URL;
     } 
     
+    /**
+     * Generate trial instances from field map.
+     *
+     * @return the list
+     */
     private List<StudyTrialInstanceInfo> generateTrialInstancesFromFieldMap() {
         List<FieldMapTrialInstanceInfo> trialInstances = getUserLabelPrinting().getFieldMapInfo().getDatasets().get(0).getTrialInstances();
         List<StudyTrialInstanceInfo> studyTrial = new ArrayList<StudyTrialInstanceInfo>();
@@ -385,6 +453,13 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         return studyTrial;
     }
     
+    /**
+     * Generate trial instances from selected field maps.
+     *
+     * @param fieldMapInfoList the field map info list
+     * @param form the form
+     * @return the list
+     */
     private List<StudyTrialInstanceInfo> generateTrialInstancesFromSelectedFieldMaps(List<FieldMapInfo> fieldMapInfoList, LabelPrintingForm form) {
         List<StudyTrialInstanceInfo> trialInstances = new ArrayList<StudyTrialInstanceInfo>();
         String[] fieldMapOrder = form.getUserLabelPrinting().getOrder().split(",");
@@ -432,11 +507,21 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     }
 
     
+    /**
+     * Gets the user label printing.
+     *
+     * @return the user label printing
+     */
     public UserLabelPrinting getUserLabelPrinting() {
         return userLabelPrinting;
     }
 
     
+    /**
+     * Sets the user label printing.
+     *
+     * @param userLabelPrinting the new user label printing
+     */
     public void setUserLabelPrinting(UserLabelPrinting userLabelPrinting) {
         this.userLabelPrinting = userLabelPrinting;
     }
@@ -444,6 +529,11 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
   
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getUserSelection()
+     */
+    /**
+     * Gets the user selection.
+     *
+     * @return the user selection
      */
     public UserSelection getUserSelection() {
         return this.userSelection;

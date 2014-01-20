@@ -4,23 +4,48 @@ import java.io.Serializable;
 
 
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SelectedFieldmapRow.
+ */
 public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Serializable {
 
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1435511995297357029L;
 
+    /** The order. */
     private Integer order;
+    
+    /** The study name. */
     private String studyName;
+    
+    /** The trial instance no. */
     private String trialInstanceNo;
+    
+    /** The rep count. */
     private Long repCount;
+    
+    /** The entry count. */
     private Long entryCount;
+    
+    /** The plot count. */
     private Long plotCount;
+    
+    /** The dataset name. */
     private String datasetName;
     
+    /** The study id. */
     private Integer studyId;
+    
+    /** The dataset id. */
     private Integer datasetId;
+    
+    /** The geolocation id. */
     private Integer geolocationId;
     
     /**
+     * Gets the order.
+     *
      * @return the order
      */
     public Integer getOrder() {
@@ -28,6 +53,8 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
     }
     
     /**
+     * Sets the order.
+     *
      * @param order the order to set
      */
     public void setOrder(Integer order) {
@@ -35,6 +62,8 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
     }
     
     /**
+     * Gets the study name.
+     *
      * @return the studyName
      */
     public String getStudyName() {
@@ -44,6 +73,8 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 
     
     /**
+     * Sets the study name.
+     *
      * @param studyName the studyName to set
      */
     public void setStudyName(String studyName) {
@@ -53,6 +84,8 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 
     
     /**
+     * Gets the trial instance no.
+     *
      * @return the trialInstanceNo
      */
     public String getTrialInstanceNo() {
@@ -62,6 +95,8 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 
     
     /**
+     * Sets the trial instance no.
+     *
      * @param trialInstanceNo the trialInstanceNo to set
      */
     public void setTrialInstanceNo(String trialInstanceNo) {
@@ -71,6 +106,8 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 
     
     /**
+     * Gets the rep count.
+     *
      * @return the repCount
      */
     public Long getRepCount() {
@@ -80,6 +117,8 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 
     
     /**
+     * Sets the rep count.
+     *
      * @param repCount the repCount to set
      */
     public void setRepCount(Long repCount) {
@@ -89,6 +128,8 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 
     
     /**
+     * Gets the entry count.
+     *
      * @return the entryCount
      */
     public Long getEntryCount() {
@@ -98,6 +139,8 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 
     
     /**
+     * Sets the entry count.
+     *
      * @param entryCount the entryCount to set
      */
     public void setEntryCount(Long entryCount) {
@@ -107,6 +150,8 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 
     
     /**
+     * Gets the plot count.
+     *
      * @return the plotCount
      */
     public Long getPlotCount() {
@@ -116,6 +161,8 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 
     
     /**
+     * Sets the plot count.
+     *
      * @param plotCount the plotCount to set
      */
     public void setPlotCount(Long plotCount) {
@@ -125,6 +172,8 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 
     
     /**
+     * Gets the study id.
+     *
      * @return the studyId
      */
     public Integer getStudyId() {
@@ -133,6 +182,8 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 
     
     /**
+     * Sets the study id.
+     *
      * @param studyId the studyId to set
      */
     public void setStudyId(Integer studyId) {
@@ -141,6 +192,8 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 
     
     /**
+     * Gets the dataset id.
+     *
      * @return the datasetId
      */
     public Integer getDatasetId() {
@@ -149,6 +202,8 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 
     
     /**
+     * Sets the dataset id.
+     *
      * @param datasetId the datasetId to set
      */
     public void setDatasetId(Integer datasetId) {
@@ -157,6 +212,8 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 
     
     /**
+     * Gets the geolocation id.
+     *
      * @return the geolocationId
      */
     public Integer getGeolocationId() {
@@ -165,6 +222,8 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 
     
     /**
+     * Sets the geolocation id.
+     *
      * @param geolocationId the geolocationId to set
      */
     public void setGeolocationId(Integer geolocationId) {
@@ -173,6 +232,8 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 
     
     /**
+     * Gets the dataset name.
+     *
      * @return the datasetName
      */
     public String getDatasetName() {
@@ -181,12 +242,17 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
 
     
     /**
+     * Sets the dataset name.
+     *
      * @param datasetName the datasetName to set
      */
     public void setDatasetName(String datasetName) {
         this.datasetName = datasetName;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Comparable#compareTo(java.lang.Object)
+     */
     @Override
     public int compareTo(SelectedFieldmapRow o) {
         if (this.order != null && o != null) {

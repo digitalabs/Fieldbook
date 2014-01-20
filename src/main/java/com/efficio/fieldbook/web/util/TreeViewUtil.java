@@ -26,7 +26,6 @@ import org.generationcp.middleware.pojos.GermplasmList;
 import com.efficio.pojos.treeview.TreeNode;
 import com.efficio.pojos.treeview.TypeAheadSearchTreeNode;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class TreeViewUtil.
  */

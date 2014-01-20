@@ -25,7 +25,6 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 
 import com.efficio.fieldbook.util.FieldbookException;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class UserFieldmap.
  *

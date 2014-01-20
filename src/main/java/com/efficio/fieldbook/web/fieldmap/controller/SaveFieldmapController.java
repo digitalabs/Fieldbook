@@ -37,26 +37,45 @@ import com.efficio.fieldbook.web.nursery.controller.ManageNurseriesController;
 import com.efficio.fieldbook.web.trial.controller.ManageTrialController;
 
 
+/**
+ * The Class SaveFieldmapController.
+ * 
+ * Controller is being use to save the fieldmap details in the database.
+ */
 @Controller
 @RequestMapping({SaveFieldmapController.URL})
 public class SaveFieldmapController extends AbstractBaseFieldbookController{
 
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(SaveFieldmapController.class);
 
+    /** The Constant URL. */
     public static final String URL = "/Fieldmap/saveFieldmap";
 
+    /** The user fieldmap. */
     @Resource
     private UserFieldmap userFieldmap;
     
+    /** The fieldbook middleware service. */
     @Resource
     private FieldbookService fieldbookMiddlewareService;
     
 
+    /* (non-Javadoc)
+     * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
+     */
     @Override
     public String getContentName() {
         return null;
     }
     
+    /**
+     * Save field map.
+     *
+     * @param form the form
+     * @param model the model
+     * @return the string
+     */
     @RequestMapping(method = RequestMethod.POST)
     public String saveFieldMap(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model) {
         
@@ -83,6 +102,11 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController{
         }
     }
 
+    /**
+     * Update selected field map info.
+     *
+     * @param fieldmapUUID the fieldmap uuid
+     */
     private void updateSelectedFieldMapInfo(String fieldmapUUID) {
         for (FieldMapInfo info : this.userFieldmap.getSelectedFieldMaps()) {
             for (FieldMapDatasetInfo datasetInfo : info.getDatasets()) {

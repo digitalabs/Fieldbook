@@ -16,11 +16,10 @@ import java.util.List;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class FieldmapForm.
  *
- * @author Efficio.Daniel
+ * Form that would hold the data input for the fieldmap creation.
  */
 public class FieldmapForm{
     

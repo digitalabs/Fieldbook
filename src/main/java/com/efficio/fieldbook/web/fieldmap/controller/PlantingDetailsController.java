@@ -35,7 +35,6 @@ import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 import com.efficio.fieldbook.web.nursery.controller.ManageNurseriesController;
 
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class PlantingDetailsController.
  */

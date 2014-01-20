@@ -27,13 +27,25 @@ import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 
+/**
+ * The Class FieldMapServiceImpl.
+ */
 @Service
 public class FieldMapServiceImpl implements FieldMapService{
     
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(FieldMapServiceImpl.class);
     
+    /** The Constant NEXT_LINE. */
     private static final String NEXT_LINE = "<br/>";
 
+    /**
+     * Gets the display string.
+     *
+     * @param label the label
+     * @param isTrial the is trial
+     * @return the display string
+     */
     private String getDisplayString(FieldMapLabel label, boolean isTrial) {
         StringBuilder textLabel = new StringBuilder();
         textLabel.append(label.getStudyName());
@@ -44,6 +56,9 @@ public class FieldMapServiceImpl implements FieldMapService{
         return textLabel.toString();
     }
 
+    /* (non-Javadoc)
+     * @see com.efficio.fieldbook.service.api.FieldMapService#createFieldMap(int, int, int, int, boolean, java.util.Map, java.util.List, boolean)
+     */
     @Override
     public Plot[][] createFieldMap(int col, int range, int startRange,
             int startCol, boolean isSerpentine, Map deletedPlot,
@@ -126,6 +141,9 @@ public class FieldMapServiceImpl implements FieldMapService{
         return plots;
     }
     
+    /* (non-Javadoc)
+     * @see com.efficio.fieldbook.service.api.FieldMapService#createDummyData(int, int, int, int, boolean, java.util.Map)
+     */
     @Override
     public Plot[][] createDummyData(int col, int range, int startRange, int startCol, boolean isSerpentine, Map deletedPlot) {
         startRange--;
@@ -141,12 +159,36 @@ public class FieldMapServiceImpl implements FieldMapService{
         return plots;
     }
     
+    /**
+     * Checks if is deleted.
+     *
+     * @param col the col
+     * @param range the range
+     * @param deletedPlot the deleted plot
+     * @return true, if is deleted
+     */
     public boolean isDeleted(int col, int range, Map deletedPlot){
         if(deletedPlot.get(col+"_"+range) != null)
             return true;
         return false;
     }    
     
+    /**
+     * Populate plot data.
+     *
+     * @param counter the counter
+     * @param labels the labels
+     * @param col the col
+     * @param range the range
+     * @param plots the plots
+     * @param isUpward the is upward
+     * @param startCol the start col
+     * @param startRange the start range
+     * @param isStartOk the is start ok
+     * @param deletedPlot the deleted plot
+     * @param isTrial the is trial
+     * @return the int
+     */
     public int populatePlotData(int counter, List<FieldMapLabel> labels, int col, int range, Plot[][] plots,
             boolean isUpward, int startCol, int startRange, boolean isStartOk, Map deletedPlot, boolean isTrial){
         String stringToDisplay = "";
@@ -188,6 +230,9 @@ public class FieldMapServiceImpl implements FieldMapService{
         return counter;
     }
     
+    /* (non-Javadoc)
+     * @see com.efficio.fieldbook.service.api.FieldMapService#generateFieldmap(com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap)
+     */
     @Override
     public Plot[][] generateFieldmap(UserFieldmap info) throws MiddlewareQueryException {
         
@@ -223,6 +268,13 @@ public class FieldMapServiceImpl implements FieldMapService{
         return plots;
     }
         
+    /**
+     * Initialize field map array.
+     *
+     * @param plots the plots
+     * @param totalColumns the total columns
+     * @param totalRanges the total ranges
+     */
     private void initializeFieldMapArray(Plot[][] plots, int totalColumns, int totalRanges) {
         for (int i = 0; i < totalColumns; i++) {
             for (int j = 0; j < totalRanges; j++) {
@@ -235,6 +287,15 @@ public class FieldMapServiceImpl implements FieldMapService{
         }
     }
     
+    /**
+     * Sets the other field map information.
+     *
+     * @param info the info
+     * @param plots the plots
+     * @param totalColumns the total columns
+     * @param totalRanges the total ranges
+     * @param isSerpentine the is serpentine
+     */
     private void setOtherFieldMapInformation(UserFieldmap info, Plot[][] plots, int totalColumns, int totalRanges, boolean isSerpentine) {
         boolean isStarted = false;
         List<String> possiblyDeletedCoordinates = new ArrayList<String>();
@@ -254,6 +315,12 @@ public class FieldMapServiceImpl implements FieldMapService{
         info.setSelectedFieldmapList(new SelectedFieldmapList(info.getSelectedFieldMaps(), info.isTrial()));
     }
     
+    /**
+     * Mark deleted coordinates.
+     *
+     * @param plots the plots
+     * @param deletedCoordinates the deleted coordinates
+     */
     private void markDeletedCoordinates(Plot[][] plots, List<String> deletedCoordinates) {
         for (String deletedIndex : deletedCoordinates) {
             String[] columnRange = deletedIndex.split("_");
@@ -263,6 +330,18 @@ public class FieldMapServiceImpl implements FieldMapService{
         }
     }
     
+    /**
+     * Render plot cell.
+     *
+     * @param info the info
+     * @param plots the plots
+     * @param i the i
+     * @param j the j
+     * @param isStarted the is started
+     * @param possiblyDeletedCoordinates the possibly deleted coordinates
+     * @param order the order
+     * @return true, if successful
+     */
     private boolean renderPlotCell(UserFieldmap info, Plot[][] plots, int i, int j, boolean isStarted, 
             List<String> possiblyDeletedCoordinates, int[] order) {
         

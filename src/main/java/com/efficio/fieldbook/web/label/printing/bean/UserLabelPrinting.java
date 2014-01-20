@@ -23,7 +23,7 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 /**
  * The Class UserLabelPrinting.
  *
- * @author Efficio.Daniel
+ * This is the session variable being use to hold information for the labels.
  */
 public class UserLabelPrinting implements Serializable{
     

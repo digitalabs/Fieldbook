@@ -490,6 +490,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
             case AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE: 
                 buffer.append(messageSource.getMessage("label.printing.available.fields.parentage", null, locale));
                 break;
+                
+            case AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES: 
+                buffer.append(messageSource.getMessage("label.printing.available.fields.plot.coordinates", null, locale));
+                break;
            
             default: break;    
         }
@@ -540,6 +544,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 
             case AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE: 
                 buffer.append(fieldMapLabel.getPedigree() == null ? "" : fieldMapLabel.getPedigree());
+                break;
+                
+            case AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES: 
+                buffer.append("Needs to check value for now");
                 break;
            
             default: break;    

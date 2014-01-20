@@ -50,4 +50,5 @@ public class AppConstants {
     public static final int AVAILABLE_LABEL_FIELDS_PLOT = 11;
     public static final int AVAILABLE_LABEL_FIELDS_NURSERY_NAME = 12;
     public static final int AVAILABLE_LABEL_FIELDS_PARENTAGE = 13;
+    public static final int AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES = 14;
 }

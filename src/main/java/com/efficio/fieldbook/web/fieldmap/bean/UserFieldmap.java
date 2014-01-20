@@ -28,7 +28,7 @@ import com.efficio.fieldbook.util.FieldbookException;
 /**
  * The Class UserFieldmap.
  *
- * @author Efficio.Daniel
+ * Session variable being use to hold information for the creating of the fieldmaps.
  */
 public class UserFieldmap  implements Serializable {
     

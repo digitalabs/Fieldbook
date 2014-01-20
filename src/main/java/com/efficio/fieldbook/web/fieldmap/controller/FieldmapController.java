@@ -44,9 +44,11 @@ import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class FieldmapController.
+ * 
+ * This is the initial controller for the fieldmap generation.  
+ * It handles the step 1 of 3 of the fieldmap process. 
  */
 @Controller
 @RequestMapping({FieldmapController.URL})

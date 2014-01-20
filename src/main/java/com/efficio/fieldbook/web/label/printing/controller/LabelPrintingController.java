@@ -63,6 +63,8 @@ import com.efficio.fieldbook.web.util.AppConstants;
 
 /**
  * The Class LabelPrintingController.
+ * 
+ * This class would handle the label printing for the pdf and excel generation.
  */
 @Controller
 @RequestMapping({LabelPrintingController.URL})

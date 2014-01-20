@@ -18,6 +18,8 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 
 /**
  * The Class StudyTrialInstanceInfo.
+ * 
+ * Contains the information for the trial instance that is being is for the label printing.
  */
 public class StudyTrialInstanceInfo implements Serializable{
     

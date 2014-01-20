@@ -73,9 +73,10 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class GenerateLabelController.
+ * 
+ * Code is not currently being use.
  */
 @Controller
 @RequestMapping({GenerateLabelController.URL})

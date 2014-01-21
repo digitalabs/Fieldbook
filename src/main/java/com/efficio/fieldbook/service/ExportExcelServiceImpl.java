@@ -511,6 +511,17 @@ public class ExportExcelServiceImpl implements ExportExcelService{
         
         for(int i = 0 ; i < numberOfDirections; i++){
             int startCol = machineRowCapacity * i + 1;
+            if (i % 2 == 1) {
+                Cell cell = row.createCell(startCol);
+                cell.setCellValue(DOWN);
+                cell.setCellStyle(subHeaderStyle);
+            }
+            else {
+                Cell cell = row.createCell(startCol);
+                cell.setCellValue(UP);
+                cell.setCellStyle(subHeaderStyle);
+            }
+            /*
             if (isSerpentine) {
                 if (i % 2 == 1) {
                     Cell cell = row.createCell(startCol);
@@ -528,6 +539,7 @@ public class ExportExcelServiceImpl implements ExportExcelService{
                 cell.setCellValue(UP);
                 cell.setCellStyle(subHeaderStyle);
             }
+            */
             if (i == numberOfDirections - 1 && remainingRows > 0) { //last item
                 fieldMapSheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 
                         startCol, machineRowCapacity * i + remainingRows));

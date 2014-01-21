@@ -253,10 +253,10 @@ function getUnavailablePlotsHorizontal(startingCol, startingRange) {
 	//get number of unavailable plots based on starting coordinates
 	if (startingRange%2==0) {
 		//even range
-		return (startingRange*colNum)-startingCol;
+		return (startingRange*(rowNum/rowsPerPlot))-startingCol;
 	} else {
 		//odd range
-		return (((startingRange-1)*colNum)+(startingCol-1));
+		return (((startingRange-1)*(rowNum/rowsPerPlot))+(startingCol-1));
 	}
 }
 

@@ -12,6 +12,7 @@
 			<td class="header-row-main"></td>
 			<td class="sub-header-row" th:colspan="${#object.userFieldmap.machineRowCapacity}" 
 			th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.machineRowCapacity)}">
+			<!-- 
 				<p th:if="${#object.userFieldmap.plantingOrder == 1}">
 					<span class="glyphicon glyphicon-arrow-up"></span>
 				</p>
@@ -21,10 +22,18 @@
 				<p th:if="${#object.userFieldmap.plantingOrder == 2 and j % 2 == 0}">
 					<span class="glyphicon glyphicon-arrow-down"></span>
 				</p>
+				 -->
+				 <p th:if="${j % 2 == 1}">
+					<span class="glyphicon glyphicon-arrow-up"></span>
+				</p>
+				<p th:if="${j % 2 == 0}">
+					<span class="glyphicon glyphicon-arrow-down"></span>
+				</p>
 			</td>
 			<td class="sub-header-row" th:if="${#object.userFieldmap.numberOfRowsInBlock % #object.userFieldmap.machineRowCapacity != 0}"
 			th:colspan="${#object.userFieldmap.numberOfRowsInBlock % #object.userFieldmap.machineRowCapacity}"
 			th:with="j=${#object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.machineRowCapacity + 1}">
+			<!-- 
 				<p th:if="${#object.userFieldmap.plantingOrder == 1}">
 					<span class="glyphicon glyphicon-arrow-up"></span>
 				</p>
@@ -32,6 +41,13 @@
 					<span class="glyphicon glyphicon-arrow-up"></span>
 				</p>
 				<p th:if="${#object.userFieldmap.plantingOrder == 2 and j % 2 == 0}">
+					<span class="glyphicon glyphicon-arrow-down"></span>
+				</p>
+				 -->
+				 <p th:if="${j % 2 == 1}">
+					<span class="glyphicon glyphicon-arrow-up"></span>
+				</p>
+				<p th:if="${j % 2 == 0}">
 					<span class="glyphicon glyphicon-arrow-down"></span>
 				</p>
 			</td>
@@ -63,6 +79,7 @@
 			<td class="header-row-main"></td>
 			<td class="sub-header-row" th:colspan="${#object.userFieldmap.machineRowCapacity}" 
 			th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.machineRowCapacity)}">
+			<!-- 
 				<p th:if="${#object.userFieldmap.plantingOrder == 1}">
 					<span class="glyphicon glyphicon-arrow-up"></span>
 				</p>
@@ -72,10 +89,18 @@
 				<p th:if="${#object.userFieldmap.plantingOrder == 2 and j % 2 == 0}">
 					<span class="glyphicon glyphicon-arrow-down"></span>
 				</p>
+				 -->
+				<p th:if="${j % 2 == 1}">
+					<span class="glyphicon glyphicon-arrow-up"></span>
+				</p>
+				<p th:if="${j % 2 == 0}">
+					<span class="glyphicon glyphicon-arrow-down"></span>
+				</p>
 			</td>
 			<td class="sub-header-row" th:if="${#object.userFieldmap.numberOfRowsInBlock % #object.userFieldmap.machineRowCapacity != 0}"
 			th:colspan="${#object.userFieldmap.numberOfRowsInBlock % #object.userFieldmap.machineRowCapacity}"
 			th:with="j=${#object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.machineRowCapacity + 1}">
+			<!-- 
 				<p th:if="${#object.userFieldmap.plantingOrder == 1}">
 					<span class="glyphicon glyphicon-arrow-up"></span>
 				</p>
@@ -83,6 +108,13 @@
 					<span class="glyphicon glyphicon-arrow-up"></span>
 				</p>
 				<p th:if="${#object.userFieldmap.plantingOrder == 2 and j % 2 == 0}">
+					<span class="glyphicon glyphicon-arrow-down"></span>
+				</p>
+				-->
+				<p th:if="${j % 2 == 1}">
+					<span class="glyphicon glyphicon-arrow-up"></span>
+				</p>
+				<p th:if="${j % 2 == 0}">
 					<span class="glyphicon glyphicon-arrow-down"></span>
 				</p>
 			</td>

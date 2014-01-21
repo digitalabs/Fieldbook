@@ -268,7 +268,7 @@ function isDeletedPlotAtStartCoord(id) {
 	var startingRange = $('#'+getJquerySafeId("userFieldmap.startingRange")).val();
 	var col = parseInt(id.split("_")[0]) + 1;
 	var range = parseInt(id.split("_")[1]) + 1;
-	
+	//check if starting coordinates is marked as deleted
 	if (col == startingCol && range == startingRange) {
 		return true;
 	} 

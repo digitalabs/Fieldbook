@@ -257,10 +257,8 @@ function doSave(combo) {
 
 
 function setCorrespondingTraitClass(propertyId){
-	//console.log(propertyId);
 	var dataVal = {id:'',text:'',description:''}; //default value
 	if(isInt(propertyId)){
-		//Spinner.toggle();
 		$.ajax({
 			url: ontologyUrl+"retrieve/trait/property/" + propertyId,
 			type: "GET",
@@ -273,8 +271,6 @@ function setCorrespondingTraitClass(propertyId){
 			    		var count = 0;
 				    	for(count = 0 ; count < traitClassesSuggestions_obj.length ; count++){
 				    		if(traitClassesSuggestions_obj[count].id == data.traitId){
-				    			//console.log(traitClassesSuggestions_obj[count]);
-				    			//$("#comboTraitClass").val(traitClassesSuggestions_obj[count]);
 				    			dataVal = traitClassesSuggestions_obj[count];			    			
 				    			break;
 				    		}			    			
@@ -284,15 +280,10 @@ function setCorrespondingTraitClass(propertyId){
 			    	$("#comboManagePropTraitClass").select2('data', dataVal).trigger('change');
 			    	
 		       	}
-			    //Spinner.toggle();
 		   }
 		   
 		});
-	}else{
-		//$("#comboTraitClass").select2('data', dataVal).trigger('change');
 	}
-	
-	
 }
 
 function getOntologySuffix(id){
@@ -916,6 +907,7 @@ function populateFields(data, variableId) {
 	setVisibleButtons(false, true, true);
 	setDeleteOperation(2);
 	
+	//disable other fields except valid values if selected variable is from central db
 	if (parseInt(variableId) > 0) {
 		disableFieldsForCentralUpdate();
 		$("#traitClassBrowserTree").dynatree("disable");
@@ -1339,6 +1331,7 @@ function addCategoricalValidValue(id, label, description) {
 
 function validateNewValidValue(label, description, id) {
 	if (id == null) {
+		//validate if new valid value entered is unique and has a value
 		if (findIndexOfEnumeration(enumerations, label, "name") > -1 || 
 				findIndexOfEnumeration(enumerations_central, label, "name") > -1) {
 			return "name";
@@ -1377,6 +1370,7 @@ function delCatVar(button) {
 }
 
 function findIndexOfEnumeration(enumerations_obj, name, col) {
+	//check if given value is already existing
 	for (var i = 0; i < enumerations_obj.length; i++) {
 		if (col == "name") {
 		    if (enumerations_obj[i].name == name) {

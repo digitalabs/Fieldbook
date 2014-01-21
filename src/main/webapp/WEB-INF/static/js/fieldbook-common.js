@@ -528,6 +528,7 @@ function showCreateFieldMap() {
 				studyId = $(this).parent().parent().treegrid('getParentNode').treegrid('getParentNode').attr("id");
 			}
 			var hasFieldMap;
+			//get value hasfieldmap column
 			if (trial) {
 				hasFieldMap = $(this).parent().next().next().next().next().html();
 			} else {

@@ -631,6 +631,7 @@ function openStudy(tableName){
     { url: openStudyHref,
        type: "GET",
        data: "",
+       cache: false,
        success: function() {    	            
          Spinner.toggle();  
        }

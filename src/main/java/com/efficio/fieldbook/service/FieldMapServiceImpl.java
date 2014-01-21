@@ -46,19 +46,21 @@ public class FieldMapServiceImpl implements FieldMapService{
      * @see com.efficio.fieldbook.service.api.FieldMapService#createDummyData(int, int, int, int, boolean, java.util.Map)
      */
     @Override
-    public Plot[][] createDummyData(int col, int range, int startRange, int startCol, boolean isSerpentine, Map deletedPlot, FieldPlotLayoutIterator plotLayouIterator) {
+    public Plot[][] createDummyData(int col, int range, int startRange, int startCol, 
+    		boolean isSerpentine, Map deletedPlot, List<FieldMapLabel> fieldMapLabels, FieldPlotLayoutIterator plotLayouIterator) {
         startRange--;
         startCol--;
-        
+        /*
         List<FieldMapLabel> labels = new ArrayList<FieldMapLabel>();
         for (int i = 0; i < range*col; i++) {
             FieldMapLabel label = new FieldMapLabel(null, null, "DummyData-" + i, null, null);
             label.setStudyName("Dummy Trial");
             labels.add(label);
         }
+        */
         //Plot[][] plots = createFieldMap(col, range, startRange, startCol, isSerpentine, deletedPlot, labels, true);
         //for testing only
-        Plot[][] plots = plotLayouIterator.createFieldMap(col, range, startRange, startCol, isSerpentine, deletedPlot, labels, true);
+        Plot[][] plots = plotLayouIterator.createFieldMap(col, range, startRange, startCol, isSerpentine, deletedPlot, fieldMapLabels, true);
         //setOtherFieldMapInformation(info, plots, totalColumns, totalRanges, isSerpentine);
         return plots;
     }

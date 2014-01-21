@@ -38,7 +38,7 @@ public interface FieldMapService {
      * @param deletedPlot the deleted plot
      * @return the plot[][]
      */
-    Plot[][] createDummyData(int col, int range, int startRange, int startCol, boolean isSerpentine, Map deletedPlot, FieldPlotLayoutIterator plotLayouIterator);
+    Plot[][] createDummyData(int col, int range, int startRange, int startCol, boolean isSerpentine, Map deletedPlot, List<FieldMapLabel> fieldMapLabels, FieldPlotLayoutIterator plotLayouIterator);
     
     /**
      * Generate fieldmap.

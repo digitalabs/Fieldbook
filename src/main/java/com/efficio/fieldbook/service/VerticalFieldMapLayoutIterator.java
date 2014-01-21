@@ -34,8 +34,9 @@ public class VerticalFieldMapLayoutIterator implements
         int counter = 0;
         //we need to take note of the start range
         boolean isStartOk = false;
-        for(int i = 0; i < col ; i++){
-
+        boolean downToUp = true;
+        for(int x = 0; x < col ; x++){
+        		/*
                 boolean isUpward = true;
                 if(isSerpentine){
                     if(i % 2 == 0){
@@ -47,30 +48,32 @@ public class VerticalFieldMapLayoutIterator implements
                     //row/column
                     isUpward = true;
                 }
-
-                if(isUpward){
-                    for(int j = 0 ; j < range ; j++){
+				*/
+                if(downToUp){
+                    for(int y = 0 ; y < range ; y++){
                         //for upload planting
-                        if(i == startCol && j == startRange){
+                        if(x == startCol && y == startRange){
                             //this will signify that we have started
                             isStartOk = true;
                         }
-                        counter = FieldMapUtilityHelper.populatePlotData(counter, labels, i, j, plots, isUpward, startCol, startRange, isStartOk, deletedPlot, 
+                        counter = FieldMapUtilityHelper.populatePlotData(counter, labels, x, y, plots, false, startCol, startRange, isStartOk, deletedPlot, 
                                 isTrial);
                     }
                 }else{
-                    for(int j = range - 1 ; j >= 0 ; j--){
+                    for(int y = range - 1 ; y >= 0 ; y--){
                         //for downward planting
-                        if(i == startCol && j == startRange){
+                        if(x == startCol && y == startRange){
                             //this will signify that we have started
                             isStartOk = true;
                         }
-                        counter = FieldMapUtilityHelper.populatePlotData(counter, labels, i, j, plots, isUpward, startCol, startRange, isStartOk, deletedPlot,
+                        counter = FieldMapUtilityHelper.populatePlotData(counter, labels, x, y, plots, false, startCol, startRange, isStartOk, deletedPlot,
                                 isTrial);
 
                     }
                 }
-
+                if(isSerpentine){
+    	        	downToUp = !downToUp;
+    	        }
 
         }
         //for displaying the data

@@ -145,25 +145,27 @@ public class Plot implements Serializable{
     public void setDisplayString(String displayString) {
         this.displayString = displayString;
     }
-
+    
     /**
      * Checks if is upward.
      *
      * @return true, if is upward
      */
+    /*
     public boolean isUpward() {
         return isUpward;
     }
-
+	*/
     /**
      * Sets the upward.
      *
      * @param upward the new upward
      */
+    /*
     public void setUpward(boolean upward) {
         isUpward = upward;
     }
-
+	*/
     /**
      * Gets the range.
      *

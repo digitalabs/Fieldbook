@@ -243,8 +243,10 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         Plot[][] plots = fieldmapService.createFieldMap(col, ranges, startRange, startCol,
                 isSerpentine, deletedPlot, labels, userFieldmap.isTrial());
         */
+        //we can add logic here to decide if its vertical or horizontal
+        FieldPlotLayoutIterator plotIterator = horizontalFieldMapLayoutIterator;
         
-        Plot[][] plots = verticalFieldMapLayoutIterator.createFieldMap(col, ranges, startRange, startCol,
+        Plot[][] plots = plotIterator.createFieldMap(col, ranges, startRange, startCol,
                 isSerpentine, deletedPlot, labels, userFieldmap.isTrial());
         
         userFieldmap.setFieldmap(plots);

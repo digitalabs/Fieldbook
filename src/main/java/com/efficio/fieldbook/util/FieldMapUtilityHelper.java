@@ -30,6 +30,7 @@ public class FieldMapUtilityHelper {
      */
     public static int populatePlotData(int counter, List<FieldMapLabel> labels, int col, int range, Plot[][] plots,
             boolean isUpward, int startCol, int startRange, boolean isStartOk, Map deletedPlot, boolean isTrial){
+
         String stringToDisplay = "";
         int i = col;
         int j = range;
@@ -39,7 +40,7 @@ public class FieldMapUtilityHelper {
         }else{
             hasAvailableEntries = false;
         }
-        plots[i][j].setUpward(isUpward);
+        //plots[i][j].setUpward(isUpward);
     
         if(isStartOk){
             plots[i][j].setNotStarted(false);

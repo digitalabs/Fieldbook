@@ -88,7 +88,7 @@ public class FieldMapServiceImpl implements FieldMapService{
                     plot.setDatasetId(label.getDatasetId());
                     plot.setGeolocationId(label.getGeolocationId());
                     if (isSerpentine && column % 2 == 0) {
-                        plot.setUpward(false);
+                        ;//plot.setUpward(false);
                     }
                     plot.setDisplayString(FieldMapUtilityHelper.getDisplayString(label, info.isTrial()));
                     plot.setNotStarted(false);
@@ -117,7 +117,7 @@ public class FieldMapServiceImpl implements FieldMapService{
                 Plot plot = new Plot(i, j, "");
                 plots[i][j] = plot;
                 plot.setNotStarted(false);
-                plot.setUpward(true);
+                //plot.setUpward(true);
             }
         }
     }

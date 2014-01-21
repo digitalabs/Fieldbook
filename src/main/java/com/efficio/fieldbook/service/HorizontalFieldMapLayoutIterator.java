@@ -33,6 +33,35 @@ public class HorizontalFieldMapLayoutIterator implements
         int counter = 0;
         //we need to take note of the start range
         boolean isStartOk = false;
+        boolean leftToRight = true;
+        for(int y = 0 ; y < range ; y++){
+        	if(leftToRight){
+		        for(int x = 0 ; x < col; x++){
+		        	//for left to right planting
+		        	 if(x == startCol && y == startRange){
+                         //this will signify that we have started
+                         isStartOk = true;
+                     }
+                     counter = FieldMapUtilityHelper.populatePlotData(counter, labels, x, y, plots, false, startCol, startRange, isStartOk, deletedPlot, 
+                             isTrial);
+		        }
+        	}else{
+    			for(int x = col -1 ; x >= 0; x--){
+		        	//for right to left planting
+    				 if(x == startCol && y == startRange){
+                         //this will signify that we have started
+                         isStartOk = true;
+                     }
+                     counter = FieldMapUtilityHelper.populatePlotData(counter, labels, x, y, plots, false, startCol, startRange, isStartOk, deletedPlot,
+                             isTrial);
+		        }
+        	}
+	        if(isSerpentine){
+	        	leftToRight = !leftToRight;
+	        }
+        }
+        
+        /*
         for(int i = 0; i < col ; i++){
 
                 boolean isUpward = true;
@@ -72,26 +101,7 @@ public class HorizontalFieldMapLayoutIterator implements
 
 
         }
-        //for displaying the data
-//        LOG.debug("Here Data:");
-//        for(int j = range -1 ; j >= 0 ; j--){
-//            //we only show this once
-//            if(j == range - 1){
-//                for(int i = 0 ; i < col ; i++){
-//                    if(plots[i][j].isUpward())
-//                        System.out.print("[  UP  ]");
-//                    else
-//                        System.out.print("[   DOWN   ]");
-//                }
-//                System.out.println("");
-//            }
-//
-//            for(int i = 0 ; i < col ; i++){
-//                //s[i][j] = "Col-"+i+ " Range-"+j;
-//                System.out.print("[ "+plots[i][j].getDisplayString() + "]");
-//            }
-//            System.out.println("");
-//        }
+       	*/
         
         return plots;
     }

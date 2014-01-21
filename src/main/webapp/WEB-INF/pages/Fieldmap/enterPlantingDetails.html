@@ -165,7 +165,7 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
   				if(deletedRect != ''){
   					deletedRect += ",";
   				}
-  				checkDeletedPlots($(this).attr('id'));
+  				checkDeletedPlotsHorizontal($(this).attr('id'));
 	  		})
 	  			  			  		
 	  		if(deletedRect != ''){
@@ -175,7 +175,7 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	  		console.log(deletedRect);
 	  		
 	  		//validation that total no. of plots does not exceed total no. of blocks
-	  		if (checkRemainingPlots()) {
+	  		if (checkRemainingPlotsHorizontal()) {
 	  			showMessage(totalBlocksError);
 	  			return false;
 			} 

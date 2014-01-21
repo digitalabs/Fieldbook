@@ -207,7 +207,28 @@ function checkStartingCoordinates() {
 	return false;
 }
 
-function checkRemainingPlots() {
+function checkRemainingPlotsHorizontal() {
+	var startingCol = $('#'+getJquerySafeId("userFieldmap.startingColumn")).val();
+	var startingRange = $('#'+getJquerySafeId("userFieldmap.startingRange")).val();
+	var plantingOrder = $("input[type='radio']:checked").val();
+	var remainingPlots = 0;
+
+	if (plantingOrder == "1") {
+		//row/column
+		remainingPlots = (((parseInt(rowNum)/parseInt(rowsPerPlot))*rangeNum)-deletedPlots) - (((startingRange-1)*(rowNum/rowsPerPlot))+(startingCol-1));
+	} else {
+		//serpentine
+		remainingPlots = (((parseInt(rowNum)/parseInt(rowsPerPlot))*rangeNum)-deletedPlots) - getUnavailablePlotsHorizontal(startingCol, startingRange); 
+	}
+	
+	if (totalNoOfPlots > remainingPlots) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function checkRemainingPlotsVertical() {
 	var startingCol = $('#'+getJquerySafeId("userFieldmap.startingColumn")).val();
 	var startingRange = $('#'+getJquerySafeId("userFieldmap.startingRange")).val();
 	var plantingOrder = $("input[type='radio']:checked").val();
@@ -218,7 +239,7 @@ function checkRemainingPlots() {
 		remainingPlots = (((parseInt(rowNum)/parseInt(rowsPerPlot))*rangeNum)-deletedPlots) - (((startingCol-1)*rangeNum)+(startingRange-1));
 	} else {
 		//serpentine
-		remainingPlots = (((parseInt(rowNum)/parseInt(rowsPerPlot))*rangeNum)-deletedPlots) - getUnavailablePlots(startingCol, startingRange); 
+		remainingPlots = (((parseInt(rowNum)/parseInt(rowsPerPlot))*rangeNum)-deletedPlots) - getUnavailablePlotsVertical(startingCol, startingRange); 
 	}
 	
 	if (totalNoOfPlots > remainingPlots) {
@@ -228,7 +249,18 @@ function checkRemainingPlots() {
 	}
 }
 
-function getUnavailablePlots(startingCol, startingRange) {
+function getUnavailablePlotsHorizontal(startingCol, startingRange) {
+	//get number of unavailable plots based on starting coordinates
+	if (startingRange%2==0) {
+		//even range
+		return (startingRange*colNum)-startingCol;
+	} else {
+		//odd range
+		return (((startingRange-1)*colNum)+(startingCol-1));
+	}
+}
+
+function getUnavailablePlotsVertical(startingCol, startingRange) {
 	//get number of unavailable plots based on starting coordinates
 	if (startingCol%2==0) {
 		//even column
@@ -239,7 +271,31 @@ function getUnavailablePlots(startingCol, startingRange) {
 	}
 }
 
-function checkDeletedPlots(id) {
+function checkDeletedPlotsHorizontal(id) {
+	var startingCol = $('#'+getJquerySafeId("userFieldmap.startingColumn")).val();
+	var startingRange = $('#'+getJquerySafeId("userFieldmap.startingRange")).val();
+	var plantingOrder = $("input[type='radio']:checked").val();
+	
+	var col = parseInt(id.split("_")[0]) + 1;
+	var range = parseInt(id.split("_")[1]) + 1;
+	
+	if (plantingOrder == "1") {
+		//row/column
+		if (range > startingRange || (range == startingRange && col >= startingCol)) {
+			deletedPlots++;
+		}
+	} else {
+		//serpentine
+		if (range > startingRange || 
+				(range == startingRange && 
+					((col <=startingCol && range%2 == 0) || //left
+						(col >=startingCol && range%2 == 1 )))) { // right
+			deletedPlots++;
+		}
+	}
+}
+
+function checkDeletedPlotsVertical(id) {
 	var startingCol = $('#'+getJquerySafeId("userFieldmap.startingColumn")).val();
 	var startingRange = $('#'+getJquerySafeId("userFieldmap.startingRange")).val();
 	var plantingOrder = $("input[type='radio']:checked").val();

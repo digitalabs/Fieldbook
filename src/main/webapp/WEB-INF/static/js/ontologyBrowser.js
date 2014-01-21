@@ -1206,59 +1206,58 @@ function preSelectAfterUpdate(combo, id, name) {
 
 //function for deleting ontology
 function deleteOntology(combo) {
-	//if (validateComboForDelete(combo)) {
-		//get the form data
-		//var formData = {id: $("#" + lowerCaseFirstLetter(combo) + "Id").val(), name: $("#" + lowerCaseFirstLetter(combo) + "Name").val()};
-		var formData = {id: $("#" + "combo" + (combo) ).select2('data').id, name: $("#" + lowerCaseFirstLetter(combo) + "Name").val()};
-		
-		Spinner.toggle();
-		
-		$.ajax({
-			url: ontologyUrl + "deleteOntology/" + lowerCaseFirstLetter(combo.replace("Manage", "")),
-			type: "post",
-			dataType: "json",
-			data: formData,
-		    success: function(data){
-		    	//alert(data.errorMessage);
-			    if (data.status == "1") {
-			    	
-			    	if(combo == 'ManageTraitClass'){
-			    		var chosendRecord = $("#comboTraitClass").select2("data");
-			    		traitClassesSuggestions = data.traitClassesSuggestionList;
-						traitClassesSuggestions_obj = [];
-						treeClassData = data.traitClassTreeData;
-			    		
-						loadTraitOntologyCombos();
+	var formData = {id: $("#" + "combo" + (combo) ).select2('data').id, name: $("#" + lowerCaseFirstLetter(combo) + "Name").val()};
+
+	Spinner.toggle();
+	$.ajax({
+		url: ontologyUrl + "deleteOntology/" + lowerCaseFirstLetter(combo.replace("Manage", "")),
+		type: "post",
+		dataType: "json",
+		data: formData,
+	    success: function(data){
+		    if (data.status == "1") {
+		    	if(combo == 'ManageTraitClass'){
+		    		var chosendRecord = $("#comboTraitClass").select2("data");
+		    		traitClassesSuggestions = data.traitClassesSuggestionList;
+					traitClassesSuggestions_obj = [];
+					treeClassData = data.traitClassTreeData;
+					
+					loadTraitOntologyCombos();
+						
+					//if there is a selected trait class in the Manage Variable screen
+					if (chosendRecord != null) {
 						if($("#" + "combo" + (combo) ).select2('data').id == chosendRecord.id){
 							filterPropertyCombo(treeDivId, "comboTraitClass", "traitClassDescription", 0, true);
 						}else{
-						//we set it again
+							//we set it again
 							$("#comboTraitClass").select2('data', chosendRecord);
 							filterPropertyCombo(treeDivId, "comboTraitClass", "traitClassDescription", $("#comboTraitClass").select2("data").id, true);
-			    		}
-			    	}else{
-			    		recreateComboAfterDelete(combo, formData);	
-			    	}
-			    	
-			    	
-		    		
-		    		showSuccessMessageInModal(data.successMessage);
-		    		//remove the list
-		    		$("#" + lowerCaseFirstLetter(combo) + "NameText").html("");
-		    		$("#manageLinkedVariableList").html("");
-		    	} else {
-		    		showErrorMessageInModal('page-message-modal', data.errorMessage);
-		       	}
-		   }, 
-		   error: function(jqXHR, textStatus, errorThrown){
-				console.log("The following error occured: " + textStatus, errorThrown);
-		   }, 
-		   complete: function(){ 
-			   Spinner.toggle();
-		   } 
-		});
-
-	//}
+						}
+					}
+					recreateComboAfterDelete(combo, formData);
+		    	}else{
+		    		recreateComboAfterDelete(combo, formData);	
+		    	}	    	
+	    		
+	    		showSuccessMessageInModal(data.successMessage);
+	    		//remove the list
+	    		$("#" + lowerCaseFirstLetter(combo) + "NameText").html("");
+	    		$("#" + lowerCaseFirstLetter(combo) + "Name").val("");
+	    		$("#manageLinkedVariableList").html("");
+	    		$("#btnAdd" + combo).show();
+	    		$("#btnUpdate" + combo).hide();
+	    		$("#btnDelete" + combo).hide();
+	    	} else {
+	    		showErrorMessageInModal('page-message-modal', data.errorMessage);
+	       	}
+	   }, 
+	   error: function(jqXHR, textStatus, errorThrown){
+			console.log("The following error occured: " + textStatus, errorThrown);
+	   }, 
+	   complete: function(){ 
+		   Spinner.toggle();
+	   } 
+	});
 }
 
 function clearForm(formName) {

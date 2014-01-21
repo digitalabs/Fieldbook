@@ -113,6 +113,7 @@
 			    	if (data.status == '1') {
 			    		//we would be resetting
 			    		//console.log($("#comboTraitClass"));
+			    		recreateComboAfterUpdate("ManageTraitClass", data.savedObject);
 			    		var chosendRecord = $("#comboTraitClass").select2("data");
 			    		traitClassesSuggestions = data.traitClassesSuggestionList;
 						traitClassesSuggestions_obj = [];

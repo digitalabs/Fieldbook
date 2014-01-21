@@ -547,7 +547,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 break;
                 
             case AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES: 
-                buffer.append("Needs to check value for now");
+                buffer.append(fieldMapLabel.getPlotCoordinate());
                 break;
            
             default: break;    

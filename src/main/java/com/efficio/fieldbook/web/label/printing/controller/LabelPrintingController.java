@@ -308,11 +308,13 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         }else{
             labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.nursery.name", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME));
         }
+        labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.plot", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_PLOT));
         if(isFromFieldMap){
 //            labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.rep", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_REP));
 //            labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.location", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION));
             labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.block.name", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME));
-            labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.plot", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_PLOT));
+            //labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.plot", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_PLOT));
+            labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.plot.coordinates", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES));
         }
         return labelFieldsList;
     }

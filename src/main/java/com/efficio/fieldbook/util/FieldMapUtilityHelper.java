@@ -52,6 +52,7 @@ public class FieldMapUtilityHelper {
                     //plots[i][j].setExperimentId(labels.get(counter).getExperimentId());
                     labels.get(counter).setColumn(i+1);
                     labels.get(counter).setRange(j+1);
+                    
                     plots[i][j].setNoMoreEntries(false);
                     counter++;
                 }else{

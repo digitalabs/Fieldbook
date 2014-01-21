@@ -59,6 +59,7 @@ public class FieldMapServiceImpl implements FieldMapService{
         //Plot[][] plots = createFieldMap(col, range, startRange, startCol, isSerpentine, deletedPlot, labels, true);
         //for testing only
         Plot[][] plots = plotLayouIterator.createFieldMap(col, range, startRange, startCol, isSerpentine, deletedPlot, labels, true);
+        //setOtherFieldMapInformation(info, plots, totalColumns, totalRanges, isSerpentine);
         return plots;
     }
     
@@ -69,7 +70,7 @@ public class FieldMapServiceImpl implements FieldMapService{
      * @see com.efficio.fieldbook.service.api.FieldMapService#generateFieldmap(com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap)
      */
     @Override
-    public Plot[][] generateFieldmap(UserFieldmap info) throws MiddlewareQueryException {
+    public Plot[][] generateFieldmap(UserFieldmap info, FieldPlotLayoutIterator plotIterator) throws MiddlewareQueryException {
         
         int totalColumns = info.getNumberOfColumnsInBlock();
         int totalRanges = info.getNumberOfRangesInBlock();
@@ -99,7 +100,7 @@ public class FieldMapServiceImpl implements FieldMapService{
             }
         }
         
-        setOtherFieldMapInformation(info, plots, totalColumns, totalRanges, isSerpentine);
+        plotIterator.setOtherFieldMapInformation(info, plots, totalColumns, totalRanges, isSerpentine);
         return plots;
     }
         
@@ -122,33 +123,7 @@ public class FieldMapServiceImpl implements FieldMapService{
         }
     }
     
-    /**
-     * Sets the other field map information.
-     *
-     * @param info the info
-     * @param plots the plots
-     * @param totalColumns the total columns
-     * @param totalRanges the total ranges
-     * @param isSerpentine the is serpentine
-     */
-    private void setOtherFieldMapInformation(UserFieldmap info, Plot[][] plots, int totalColumns, int totalRanges, boolean isSerpentine) {
-        boolean isStarted = false;
-        List<String> possiblyDeletedCoordinates = new ArrayList<String>();
-        int[] order = {1};
-        for (int i = 0; i < totalColumns; i++) {
-            if (isSerpentine && i % 2 == 1) {
-                for (int j = totalRanges - 1; j >= 0; j--) {
-                    isStarted = renderPlotCell(info, plots, i, j, isStarted, possiblyDeletedCoordinates, order);
-                }
-            }
-            else {
-                for (int j = 0; j < totalRanges; j++) {
-                    isStarted = renderPlotCell(info, plots, i, j, isStarted, possiblyDeletedCoordinates, order);
-                }
-            }
-        }
-        info.setSelectedFieldmapList(new SelectedFieldmapList(info.getSelectedFieldMaps(), info.isTrial()));
-    }
+    
     
     /**
      * Mark deleted coordinates.
@@ -165,48 +140,5 @@ public class FieldMapServiceImpl implements FieldMapService{
         }
     }
     
-    /**
-     * Render plot cell.
-     *
-     * @param info the info
-     * @param plots the plots
-     * @param i the i
-     * @param j the j
-     * @param isStarted the is started
-     * @param possiblyDeletedCoordinates the possibly deleted coordinates
-     * @param order the order
-     * @return true, if successful
-     */
-    private boolean renderPlotCell(UserFieldmap info, Plot[][] plots, int i, int j, boolean isStarted, 
-            List<String> possiblyDeletedCoordinates, int[] order) {
-        
-        Plot plot = plots[i][j];
-        if (plot.getDisplayString() != null && !plot.getDisplayString().isEmpty()) {
-            if (!isStarted) {
-                info.setStartingColumn(i + 1);
-                info.setStartingRange(j + 1);
-                isStarted = true;
-            }
-            if (!possiblyDeletedCoordinates.isEmpty()) {
-                markDeletedCoordinates(plots, possiblyDeletedCoordinates);
-                possiblyDeletedCoordinates.clear();
-            }
-            FieldMapTrialInstanceInfo trial = info.getSelectedTrialInstanceByDatasetIdAndGeolocationId(
-                                                    plot.getDatasetId(), plot.getGeolocationId());
-            if (trial != null && trial.getOrder() == null) {
-                trial.setOrder(order[0]);
-                order[0] += 1;
-            }
-        }
-        else {
-            if (isStarted) {
-                possiblyDeletedCoordinates.add(i + "_" + j);
-            }
-            else {
-                plot.setNotStarted(true);
-            }
-        }
-
-        return isStarted;
-    }
+    
 }

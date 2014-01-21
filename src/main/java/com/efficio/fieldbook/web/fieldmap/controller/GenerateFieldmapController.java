@@ -144,7 +144,8 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
                 this.userFieldmap.setTrial("trial".equals(studyType));
                 this.userFieldmap.setMachineRowCapacity(trialInfo.getMachineRowCapacity());
                 
-                this.userFieldmap.setFieldmap(fieldmapService.generateFieldmap(this.userFieldmap));
+                FieldPlotLayoutIterator plotIterator = horizontalFieldMapLayoutIterator;
+                this.userFieldmap.setFieldmap(fieldmapService.generateFieldmap(this.userFieldmap, plotIterator));
             }
             this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(this.userFieldmap.getSelectedFieldMaps(), this.userFieldmap.isTrial()));
             this.userFieldmap.setGenerated(false);

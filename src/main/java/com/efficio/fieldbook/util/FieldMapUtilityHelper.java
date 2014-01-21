@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
+import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
+import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 
 public class FieldMapUtilityHelper {
 	
@@ -100,5 +102,65 @@ public class FieldMapUtilityHelper {
             textLabel.append(NEXT_LINE + "Rep " + label.getRep());
         }
         return textLabel.toString();
+    }
+    
+    /**
+     * Render plot cell.
+     *
+     * @param info the info
+     * @param plots the plots
+     * @param i the i
+     * @param j the j
+     * @param isStarted the is started
+     * @param possiblyDeletedCoordinates the possibly deleted coordinates
+     * @param order the order
+     * @return true, if successful
+     */
+    public static boolean renderPlotCell(UserFieldmap info, Plot[][] plots, int i, int j, boolean isStarted, 
+            List<String> possiblyDeletedCoordinates, int[] order) {
+        
+        Plot plot = plots[i][j];
+        if (plot.getDisplayString() != null && !plot.getDisplayString().isEmpty()) {
+            if (!isStarted) {
+                info.setStartingColumn(i + 1);
+                info.setStartingRange(j + 1);
+                isStarted = true;
+            }
+            if (!possiblyDeletedCoordinates.isEmpty()) {
+                markDeletedCoordinates(plots, possiblyDeletedCoordinates);
+                possiblyDeletedCoordinates.clear();
+            }
+            FieldMapTrialInstanceInfo trial = info.getSelectedTrialInstanceByDatasetIdAndGeolocationId(
+                                                    plot.getDatasetId(), plot.getGeolocationId());
+            if (trial != null && trial.getOrder() == null) {
+                trial.setOrder(order[0]);
+                order[0] += 1;
+            }
+        }
+        else {
+            if (isStarted) {
+                possiblyDeletedCoordinates.add(i + "_" + j);
+            }
+            else {
+                plot.setNotStarted(true);
+            }
+        }
+
+        return isStarted;
+    }
+
+    /**
+     * Mark deleted coordinates.
+     *
+     * @param plots the plots
+     * @param deletedCoordinates the deleted coordinates
+     */
+    public static void markDeletedCoordinates(Plot[][] plots, List<String> deletedCoordinates) {
+        for (String deletedIndex : deletedCoordinates) {
+            String[] columnRange = deletedIndex.split("_");
+            int column = Integer.parseInt(columnRange[0]);
+            int range = Integer.parseInt(columnRange[1]);
+            plots[column][range].setPlotDeleted(true);
+        }
     }
 }

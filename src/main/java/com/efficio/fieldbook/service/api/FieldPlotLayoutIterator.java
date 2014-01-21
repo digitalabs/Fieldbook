@@ -6,7 +6,12 @@ import java.util.Map;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
+import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Interface FieldPlotLayoutIterator.
+ */
 public interface FieldPlotLayoutIterator {
 	
 	
@@ -26,6 +31,17 @@ public interface FieldPlotLayoutIterator {
      */
     Plot[][] createFieldMap(int col, int range, int startRange, int startCol, boolean isSerpentine, Map deletedPlot, List<FieldMapLabel> labels, boolean isTrial);
     
-    
+    /**
+     * Sets the other field map information.
+     * 
+     * This would be use when generating a field map from a saved information in the DB
+     *
+     * @param info the info
+     * @param plots the plots
+     * @param totalColumns the total columns
+     * @param totalRanges the total ranges
+     * @param isSerpentine the is serpentine
+     */
+    void setOtherFieldMapInformation(UserFieldmap info, Plot[][] plots, int totalColumns, int totalRanges, boolean isSerpentine);
     
 }

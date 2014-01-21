@@ -81,6 +81,18 @@
 
 	<bean id="importWorkbookFileService" class="com.efficio.fieldbook.web.nursery.service.impl.ImportWorkbookFileServiceImpl">
 	</bean>
+	
+	<bean id="fieldmapService" class="com.efficio.fieldbook.service.FieldMapServiceImpl">
+	</bean>
+	
+	<bean id="verticalFieldMapLayoutIterator" class="com.efficio.fieldbook.service.VerticalFieldMapLayoutIterator">
+	</bean>
+	
+	<bean id="horizontalFieldMapLayoutIterator" class="com.efficio.fieldbook.service.HorizontalFieldMapLayoutIterator">
+	</bean>
+	
+	<bean id="labelPrintingService" class="com.efficio.fieldbook.service.LabelPrintingServiceImpl">
+	</bean>
 
 	<bean id="exportExcelService" class="com.efficio.fieldbook.service.ExportExcelServiceImpl" />
 
@@ -108,6 +120,11 @@
 	</bean>
 	
 	<bean id="userFieldmap" class="com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap"
+		scope="session">
+		<aop:scoped-proxy />
+	</bean>
+	
+	<bean id="userLabelPrinting" class="com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting"
 		scope="session">
 		<aop:scoped-proxy />
 	</bean>
@@ -139,11 +156,11 @@
 	<!-- MIDDLEWARE Database Managers -->
 	<!-- **************************************************************** -->
 
-    <bean id="managerFactoryProvider" class="org.generationcp.commons.hibernate.DefaultManagerFactoryProvider" destroy-method="close">
-    	<property name="localUsername" value="${local.user}"/>
+    <bean id="managerFactoryProvider" class="org.generationcp.commons.hibernate.DefaultManagerFactoryProvider" destroy-method="close">   	
+    	<property name="localUsername" value="${local.username}"/>
     	<property name="localPassword" value="${local.password}"/>
     	<property name="localPort"     value="${workbench.port}"/>
-    	<property name="centralUsername" value="${central.user}"/>
+    	<property name="centralUsername" value="${central.username}"/>
     	<property name="centralPassword" value="${central.password}"/>
     	<property name="centralPort"     value="${workbench.port}"/>
     </bean>
@@ -231,6 +248,31 @@
    		<property name="commitTime" value="${git.commit.time}"/>
    		<property name="commitIdAbbrev" value="${git.commit.id.abbrev}"/>   		
 	</bean>
+	
+	<bean id="externalToolInfo" class="com.efficio.fieldbook.web.util.ExternalToolInfo">	
+   		<property name="currentProjectId" value="${workbench.currentProjectId}"/>
+   		<property name="oldFieldbookPath" value="${old.fb.tool.path}"/>   			
+	</bean>	
+    
+    
+    <bean id="workbenchDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${workbench.driver}"/>
+        <property name="url" value="${workbench.url}"/>
+        <property name="username" value="${workbench.username}"/>
+        <property name="password" value="${workbench.password}"/>
+    </bean>
+	
+	 <bean id="workbenchHibernateSessionProvider" class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider" scope="request" destroy-method="close">
+        <property name="sessionFactory" ref="workbenchSessionFactory"/>
+        
+        <!-- JDK Standard Proxy around this request scoped bean, so we can use it on longer scoped beans -->
+        <aop:scoped-proxy proxy-target-class="false"/>
+    </bean>
+	
+	<bean id="workbenchDataManager"
+        class="org.generationcp.middleware.manager.WorkbenchDataManagerImpl">
+        <constructor-arg ref="workbenchHibernateSessionProvider" />
+    </bean>
 	
 
 </beans>

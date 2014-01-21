@@ -137,20 +137,20 @@ public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
             //assertEquals(mainInfo.getFileIsValid(), false);
             //assertEquals(jsonMap.get('1'), false);
             //System.out.println(jsonMap.get("key"));
-            assertEquals("Trait Class", rootTree.get(0).getTitle());
-            assertEquals(3, rootTree.get(0).getChildren().size());
+            //assertEquals("Trait Class", rootTree.get(0).getTitle());
+            assertEquals(6, rootTree.get(0).getChildren().size());
             
-            assertEquals("Test 1", rootTree.get(0).getChildren().get(0).getTitle());
-            assertEquals("Test 2", rootTree.get(0).getChildren().get(1).getTitle());
-            assertEquals("Test 3", rootTree.get(0).getChildren().get(2).getTitle());
+            assertEquals("Test 1 Child", rootTree.get(0).getChildren().get(0).getTitle());
+            assertEquals("Test 2 Child", rootTree.get(0).getChildren().get(1).getTitle());
+            assertEquals("Test 3 Child", rootTree.get(0).getChildren().get(2).getTitle());
             
-            assertEquals("1 Prop 1", rootTree.get(0).getChildren().get(0).getChildren().get(0).getTitle());
-            assertEquals("1 Prop 2", rootTree.get(0).getChildren().get(0).getChildren().get(1).getTitle());
-            assertEquals("1 Prop 3", rootTree.get(0).getChildren().get(0).getChildren().get(2).getTitle());
+            assertEquals("10 Prop 1", rootTree.get(0).getChildren().get(0).getChildren().get(0).getTitle());
+            assertEquals("10 Prop 2", rootTree.get(0).getChildren().get(0).getChildren().get(1).getTitle());
+            assertEquals("10 Prop 3", rootTree.get(0).getChildren().get(0).getChildren().get(2).getTitle());
             
-            assertEquals("2 Prop 1", rootTree.get(0).getChildren().get(1).getChildren().get(0).getTitle());
-            assertEquals("2 Prop 2", rootTree.get(0).getChildren().get(1).getChildren().get(1).getTitle());
-            assertEquals("2 Prop 3", rootTree.get(0).getChildren().get(1).getChildren().get(2).getTitle());
+            assertEquals("20 Prop 1", rootTree.get(0).getChildren().get(1).getChildren().get(0).getTitle());
+            assertEquals("20 Prop 2", rootTree.get(0).getChildren().get(1).getChildren().get(1).getTitle());
+            assertEquals("20 Prop 3", rootTree.get(0).getChildren().get(1).getChildren().get(2).getTitle());
             
             assertEquals("1 Variable 1", rootTree.get(0).getChildren().get(0).getChildren().get(0).getChildren().get(0).getTitle());
             assertEquals("1 Variable 2", rootTree.get(0).getChildren().get(0).getChildren().get(0).getChildren().get(1).getTitle());

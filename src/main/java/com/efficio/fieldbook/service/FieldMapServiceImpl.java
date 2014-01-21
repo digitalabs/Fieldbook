@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -23,6 +25,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.service.api.FieldMapService;
+import com.efficio.fieldbook.service.api.FieldPlotLayoutIterator;
+import com.efficio.fieldbook.util.FieldMapUtilityHelper;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
@@ -36,116 +40,13 @@ public class FieldMapServiceImpl implements FieldMapService{
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(FieldMapServiceImpl.class);
     
-    /** The Constant NEXT_LINE. */
-    private static final String NEXT_LINE = "<br/>";
-
-    /**
-     * Gets the display string.
-     *
-     * @param label the label
-     * @param isTrial the is trial
-     * @return the display string
-     */
-    private String getDisplayString(FieldMapLabel label, boolean isTrial) {
-        StringBuilder textLabel = new StringBuilder();
-        textLabel.append(label.getStudyName());
-        textLabel.append(NEXT_LINE + "Entry " + label.getEntryNumber());
-        if (isTrial) {
-            textLabel.append(NEXT_LINE + "Rep " + label.getRep());
-        }
-        return textLabel.toString();
-    }
-
-    /* (non-Javadoc)
-     * @see com.efficio.fieldbook.service.api.FieldMapService#createFieldMap(int, int, int, int, boolean, java.util.Map, java.util.List, boolean)
-     */
-    @Override
-    public Plot[][] createFieldMap(int col, int range, int startRange,
-            int startCol, boolean isSerpentine, Map deletedPlot,
-            List<FieldMapLabel> labels, boolean isTrial) {
-        
-        Plot[][] plots = new Plot[col][range];
-        //this creates the initial data
-        for(int j = range -1 ; j >= 0 ; j--){
-            for(int i = 0 ; i < col ; i++){
-                plots[i][j] = new Plot(i, j, "");
-                //System.out.print("[ " + plots[i][j].getDisplayString() + " ]");
-            }
-            //System.out.println("");
-        }
-
-        //this is how we populate data
-        int counter = 0;
-        //we need to take note of the start range
-        boolean isStartOk = false;
-        for(int i = 0; i < col ; i++){
-
-                boolean isUpward = true;
-                if(isSerpentine){
-                    if(i % 2 == 0){
-                        isUpward = true;
-                    }else{
-                        isUpward = false;
-                    }
-                }else{
-                    //row/column
-                    isUpward = true;
-                }
-
-                if(isUpward){
-                    for(int j = 0 ; j < range ; j++){
-                        //for upload planting
-                        if(i == startCol && j == startRange){
-                            //this will signify that we have started
-                            isStartOk = true;
-                        }
-                        counter = populatePlotData(counter, labels, i, j, plots, isUpward, startCol, startRange, isStartOk, deletedPlot, 
-                                isTrial);
-                    }
-                }else{
-                    for(int j = range - 1 ; j >= 0 ; j--){
-                        //for downward planting
-                        if(i == startCol && j == startRange){
-                            //this will signify that we have started
-                            isStartOk = true;
-                        }
-                        counter = populatePlotData(counter, labels, i, j, plots, isUpward, startCol, startRange, isStartOk, deletedPlot,
-                                isTrial);
-
-                    }
-                }
-
-
-        }
-        //for displaying the data
-//        LOG.debug("Here Data:");
-//        for(int j = range -1 ; j >= 0 ; j--){
-//            //we only show this once
-//            if(j == range - 1){
-//                for(int i = 0 ; i < col ; i++){
-//                    if(plots[i][j].isUpward())
-//                        System.out.print("[  UP  ]");
-//                    else
-//                        System.out.print("[   DOWN   ]");
-//                }
-//                System.out.println("");
-//            }
-//
-//            for(int i = 0 ; i < col ; i++){
-//                //s[i][j] = "Col-"+i+ " Range-"+j;
-//                System.out.print("[ "+plots[i][j].getDisplayString() + "]");
-//            }
-//            System.out.println("");
-//        }
-        
-        return plots;
-    }
-    
+  
+     
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.service.api.FieldMapService#createDummyData(int, int, int, int, boolean, java.util.Map)
      */
     @Override
-    public Plot[][] createDummyData(int col, int range, int startRange, int startCol, boolean isSerpentine, Map deletedPlot) {
+    public Plot[][] createDummyData(int col, int range, int startRange, int startCol, boolean isSerpentine, Map deletedPlot, FieldPlotLayoutIterator plotLayouIterator) {
         startRange--;
         startCol--;
         
@@ -155,80 +56,14 @@ public class FieldMapServiceImpl implements FieldMapService{
             label.setStudyName("Dummy Trial");
             labels.add(label);
         }
-        Plot[][] plots = createFieldMap(col, range, startRange, startCol, isSerpentine, deletedPlot, labels, true);
+        //Plot[][] plots = createFieldMap(col, range, startRange, startCol, isSerpentine, deletedPlot, labels, true);
+        //for testing only
+        Plot[][] plots = plotLayouIterator.createFieldMap(col, range, startRange, startCol, isSerpentine, deletedPlot, labels, true);
         return plots;
     }
     
-    /**
-     * Checks if is deleted.
-     *
-     * @param col the col
-     * @param range the range
-     * @param deletedPlot the deleted plot
-     * @return true, if is deleted
-     */
-    public boolean isDeleted(int col, int range, Map deletedPlot){
-        if(deletedPlot.get(col+"_"+range) != null)
-            return true;
-        return false;
-    }    
     
-    /**
-     * Populate plot data.
-     *
-     * @param counter the counter
-     * @param labels the labels
-     * @param col the col
-     * @param range the range
-     * @param plots the plots
-     * @param isUpward the is upward
-     * @param startCol the start col
-     * @param startRange the start range
-     * @param isStartOk the is start ok
-     * @param deletedPlot the deleted plot
-     * @param isTrial the is trial
-     * @return the int
-     */
-    public int populatePlotData(int counter, List<FieldMapLabel> labels, int col, int range, Plot[][] plots,
-            boolean isUpward, int startCol, int startRange, boolean isStartOk, Map deletedPlot, boolean isTrial){
-        String stringToDisplay = "";
-        int i = col;
-        int j = range;
-        boolean hasAvailableEntries = true;
-        if(counter < labels.size()){
-            stringToDisplay = getDisplayString(labels.get(counter), isTrial);
-        }else{
-            hasAvailableEntries = false;
-        }
-        plots[i][j].setUpward(isUpward);
     
-        if(isStartOk){
-            plots[i][j].setNotStarted(false);
-            if(isDeleted(i,j, deletedPlot) == false){
-                plots[i][j].setPlotDeleted(false);
-                if(hasAvailableEntries){
-                    //meaning we can plant already and move to the next plant
-                    plots[i][j].setDisplayString(stringToDisplay);
-                    //plots[i][j].setExperimentId(labels.get(counter).getExperimentId());
-                    labels.get(counter).setColumn(i+1);
-                    labels.get(counter).setRange(j+1);
-                    plots[i][j].setNoMoreEntries(false);
-                    counter++;
-                }else{
-                    //there are space but no more entries to plant
-                    plots[i][j].setNoMoreEntries(true);
-                }
-            }
-            else{
-                //meaing this plot is deleted
-                plots[i][j].setPlotDeleted(true);
-            }
-        }else{
-            //meaning we haven't started
-            plots[i][j].setNotStarted(true);
-        }
-        return counter;
-    }
     
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.service.api.FieldMapService#generateFieldmap(com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap)
@@ -255,7 +90,7 @@ public class FieldMapServiceImpl implements FieldMapService{
                     if (isSerpentine && column % 2 == 0) {
                         plot.setUpward(false);
                     }
-                    plot.setDisplayString(getDisplayString(label, info.isTrial()));
+                    plot.setDisplayString(FieldMapUtilityHelper.getDisplayString(label, info.isTrial()));
                     plot.setNotStarted(false);
                 }
                 else {

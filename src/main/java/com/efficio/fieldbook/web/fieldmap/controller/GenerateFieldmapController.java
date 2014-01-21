@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.ExportExcelService;
 import com.efficio.fieldbook.service.api.FieldMapService;
+import com.efficio.fieldbook.service.api.FieldPlotLayoutIterator;
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
@@ -74,6 +75,12 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
     /** The fieldmap service. */
     @Resource
     private FieldMapService fieldmapService;
+    
+    @Resource
+    private FieldPlotLayoutIterator verticalFieldMapLayoutIterator;
+    
+    @Resource
+    private FieldPlotLayoutIterator horizontalFieldMapLayoutIterator;
     
     /** The fieldbook middleware service. */
     @Resource
@@ -231,7 +238,13 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
 //        List<FieldMapLabel> labels = userFieldmap.getFieldMapLabels();
         List<FieldMapLabel> labels = userFieldmap.getAllSelectedFieldMapLabels(true);
 
+        //we'll use vertical layouter for now
+        /*
         Plot[][] plots = fieldmapService.createFieldMap(col, ranges, startRange, startCol,
+                isSerpentine, deletedPlot, labels, userFieldmap.isTrial());
+        */
+        
+        Plot[][] plots = verticalFieldMapLayoutIterator.createFieldMap(col, ranges, startRange, startCol,
                 isSerpentine, deletedPlot, labels, userFieldmap.isTrial());
         
         userFieldmap.setFieldmap(plots);

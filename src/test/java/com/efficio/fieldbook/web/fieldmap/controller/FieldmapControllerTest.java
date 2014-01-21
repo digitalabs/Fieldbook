@@ -45,7 +45,7 @@ public class FieldmapControllerTest extends AbstractJUnit4SpringContextTests {
     public void setUp() {
 
     }
-	/*
+	
 	@Test
 	public void testManageNurseriesPagination(){
 	    ManageTrialForm form = new ManageTrialForm();
@@ -71,5 +71,5 @@ public class FieldmapControllerTest extends AbstractJUnit4SpringContextTests {
             }
 	    }
 	}
-	*/
+	
 }

@@ -78,7 +78,7 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
                 LOG.error(e.getMessage(), e);
             }
         }
-        
+        /*
         @Test
         public void testInvalidParseImportGerplasm(){
 
@@ -93,7 +93,7 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
             
                       
         }
-        
+        */
         @Test
         public void testValidBasicParseImportGerplasm(){
 

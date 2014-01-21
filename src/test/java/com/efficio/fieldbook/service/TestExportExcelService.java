@@ -36,8 +36,8 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
 	@Autowired
 	private ExportExcelService exportExcelService;
 	
-	@Autowired
-	private FieldMapService fieldMapService;
+	//@Autowired
+	private FieldMapService fieldMapService = new FieldMapServiceImpl();
 	
 	@Test
 	public void testExportFieldMapToExcel() throws Exception{
@@ -68,7 +68,7 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
 				, userFieldMap.getStartingRange()
 				, userFieldMap.getStartingColumn()
 				, userFieldMap.isSerpentine()
-				, deletedPlot);
+				, deletedPlot, new VerticalFieldMapLayoutIterator());
 		userFieldMap.setFieldmap(plots);
 
 	    String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());

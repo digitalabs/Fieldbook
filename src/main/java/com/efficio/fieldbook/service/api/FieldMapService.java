@@ -26,21 +26,7 @@ import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
  */
 public interface FieldMapService {
     
-    /**
-     * Creates the field map.
-     *
-     * @param col the col
-     * @param range the range
-     * @param startRange the start range
-     * @param startCol the start col
-     * @param isSerpentine the is serpentine
-     * @param deletedPlot the deleted plot
-     * @param labels the labels
-     * @param isTrial the is trial
-     * @return the plot[][]
-     */
-    Plot[][] createFieldMap(int col, int range, int startRange, int startCol, boolean isSerpentine, Map deletedPlot, List<FieldMapLabel> labels, boolean isTrial);
-    
+
     /**
      * Creates the dummy data.
      *
@@ -52,7 +38,7 @@ public interface FieldMapService {
      * @param deletedPlot the deleted plot
      * @return the plot[][]
      */
-    Plot[][] createDummyData(int col, int range, int startRange, int startCol, boolean isSerpentine, Map deletedPlot);
+    Plot[][] createDummyData(int col, int range, int startRange, int startCol, boolean isSerpentine, Map deletedPlot, FieldPlotLayoutIterator plotLayouIterator);
     
     /**
      * Generate fieldmap.

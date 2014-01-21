@@ -123,6 +123,8 @@ public class NurseryDetailsTest extends AbstractJUnit4SpringContextTests {
     
         } catch (WorkbookParserException e){
             assertTrue(datasetWorkbook == null); // Workbook was not parsed properly due to format errors
+        }catch (NullPointerException e){
+            assertTrue(datasetWorkbook == null); // Workbook was not parsed properly due to format errors
         }
 
     }

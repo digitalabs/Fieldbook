@@ -155,17 +155,23 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 		var deletedPlotError = /*[[#{fieldmap.starting.coordinates.deleted}]]*/;
 		var totalBlocksError = /*[[#{fieldmap.plots.exceed.blocks.with.deleted}]]*/;
 		var trial = /*[[${fieldmapForm.userFieldmap.trial}]]*/;
+		var isHorizontal = true;
 				
 	  	function setAllDeletedBox(){
 			validatePlantingDetails();
 	  		var deletedRect = "";
+	  		var insufficientPlots;
 	  		deletedPlots = 0;
 	  		$('#field-map td.plot.deleted').each(function(){
 	  			deletedRect += $(this).attr('id');
   				if(deletedRect != ''){
   					deletedRect += ",";
   				}
-  				checkDeletedPlotsHorizontal($(this).attr('id'));
+  				if (isHorizontal) {
+  					checkDeletedPlotsHorizontal($(this).attr('id'));
+  				} else {
+  					checkDeletedPlotsVertical($(this).attr('id'));
+  				}
 	  		})
 	  			  			  		
 	  		if(deletedRect != ''){
@@ -175,6 +181,12 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	  		console.log(deletedRect);
 	  		
 	  		//validation that total no. of plots does not exceed total no. of blocks
+	  		if (isHorizontal) {
+	  			insufficientPlots = checkRemainingPlotsHorizontal(); 
+	  		} else {
+	  			insufficientPlots = checkRemainingPlotsVertical();
+	  		}
+	  		
 	  		if (checkRemainingPlotsHorizontal()) {
 	  			showMessage(totalBlocksError);
 	  			return false;

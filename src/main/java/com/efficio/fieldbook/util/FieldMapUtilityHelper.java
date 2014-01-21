@@ -110,6 +110,7 @@ public class FieldMapUtilityHelper {
     public static String getDisplayString(FieldMapLabel label, boolean isTrial) {
         StringBuilder textLabel = new StringBuilder();
         textLabel.append(label.getStudyName());
+        textLabel.append("-"+label.getPlotNo());
         textLabel.append(NEXT_LINE + "Entry " + label.getEntryNumber());
         if (isTrial) {
             textLabel.append(NEXT_LINE + "Rep " + label.getRep());

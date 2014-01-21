@@ -14,6 +14,19 @@ public class FieldMapUtilityHelper {
 	/** The Constant NEXT_LINE. */
     private static final String NEXT_LINE = "<br/>";
     
+    
+    public static Plot[][] initializePlots(int col, int range){
+    	 Plot[][] plots = new Plot[col][range];
+         //this creates the initial data
+         for(int j = range -1 ; j >= 0 ; j--){
+             for(int i = 0 ; i < col ; i++){
+                 plots[i][j] = new Plot(i, j, "");
+                 //System.out.print("[ " + plots[i][j].getDisplayString() + " ]");
+             }
+             //System.out.println("");
+         }
+         return plots;
+    }
 	/**
      * Populate plot data.
      *

@@ -22,16 +22,8 @@ public class HorizontalFieldMapLayoutIterator implements
             int startCol, boolean isSerpentine, Map deletedPlot,
             List<FieldMapLabel> labels, boolean isTrial) {
         
-        Plot[][] plots = new Plot[col][range];
-        //this creates the initial data
-        for(int j = range -1 ; j >= 0 ; j--){
-            for(int i = 0 ; i < col ; i++){
-                plots[i][j] = new Plot(i, j, "");
-                //System.out.print("[ " + plots[i][j].getDisplayString() + " ]");
-            }
-            //System.out.println("");
-        }
-
+       
+    	Plot[][] plots = FieldMapUtilityHelper.initializePlots(col, range);
         //this is how we populate data
         int counter = 0;
         //we need to take note of the start range

@@ -49,6 +49,9 @@ public class ExportExcelServiceImpl implements ExportExcelService{
     
     private static final Logger LOG = LoggerFactory.getLogger(ExportExcelServiceImpl.class);
     
+    private final String UP = "  UP  ";
+    private final String DOWN = "  DOWN  ";
+    
     @Resource
     private ResourceBundleMessageSource messageSource;
     
@@ -112,7 +115,7 @@ public class ExportExcelServiceImpl implements ExportExcelService{
         try {
 	        //Create workbook
             HSSFWorkbook workbook = new HSSFWorkbook();
-            String summaryLabelSheet = "SUMMARY";
+            String summaryLabelSheet = messageSource.getMessage("fieldmap.header.excel.summary", null, locale);;
             Sheet summarySheet = workbook.createSheet(summaryLabelSheet);
 	        Sheet fieldMapSheet = workbook.createSheet(fieldMapLabel);
 	    
@@ -511,18 +514,18 @@ public class ExportExcelServiceImpl implements ExportExcelService{
             if (isSerpentine) {
                 if (i % 2 == 1) {
                     Cell cell = row.createCell(startCol);
-                    cell.setCellValue(" DOWN ");
+                    cell.setCellValue(DOWN);
                     cell.setCellStyle(subHeaderStyle);
                 }
                 else {
                     Cell cell = row.createCell(startCol);
-                    cell.setCellValue(" UP ");
+                    cell.setCellValue(UP);
                     cell.setCellStyle(subHeaderStyle);
                 }
             }
             else {
                 Cell cell = row.createCell(startCol);
-                cell.setCellValue(" UP ");
+                cell.setCellValue(UP);
                 cell.setCellStyle(subHeaderStyle);
             }
             if (i == numberOfDirections - 1 && remainingRows > 0) { //last item

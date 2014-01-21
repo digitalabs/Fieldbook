@@ -32,17 +32,25 @@ import com.efficio.fieldbook.service.api.CropOntologyService;
 import com.efficio.pojos.cropontology.CropTerm;
 import com.efficio.pojos.cropontology.Ontology;
 
+/**
+ * The Class CropOntologyServiceTest.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
 public class CropOntologyServiceTest extends AbstractJUnit4SpringContextTests {
     
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(CropOntologyServiceTest.class);
     
+	/** The crop ontology service. */
 	@Autowired
 	private CropOntologyService cropOntologyService;
 	
 	/* =========== search terms =========== */
 	
+	/**
+	 * Test search terms.
+	 */
 	@Test
 	public void testSearchTerms() {
 		String query = "stem rust";
@@ -57,6 +65,9 @@ public class CropOntologyServiceTest extends AbstractJUnit4SpringContextTests {
 	
 	/* =========== get ontology id by name =========== */
 	
+	/**
+	 * Test get ontology id by name.
+	 */
 	@Test
 	public void testGetOntologyIdByName() {
 		String name = "cassava";
@@ -64,6 +75,9 @@ public class CropOntologyServiceTest extends AbstractJUnit4SpringContextTests {
 		assertEquals("CO_334", cropId);
 	}
 	
+	/**
+	 * Test get ontology id by name with null param.
+	 */
 	@Test
 	public void testGetOntologyIdByNameWithNullParam() {
 		String name = null;
@@ -71,6 +85,9 @@ public class CropOntologyServiceTest extends AbstractJUnit4SpringContextTests {
 		assertNull(cropId);
 	}
 	
+	/**
+	 * Test get ontology id by name that does not exist.
+	 */
 	@Test(expected = HttpClientErrorException.class)
 	public void testGetOntologyIdByNameThatDoesNotExist() {
 		String name = "testing-doesnotexist-condition";
@@ -80,6 +97,9 @@ public class CropOntologyServiceTest extends AbstractJUnit4SpringContextTests {
 
 	/* =========== get ontologies by category =========== */
 	
+	/**
+	 * Test get ontologies by category.
+	 */
 	@Test
 	public void testGetOntologiesByCategory() {
 		String category = "010-089 General Germplasm Ontology";

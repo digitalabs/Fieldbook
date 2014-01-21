@@ -31,21 +31,38 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 
+/**
+ * The Class ImportGermplasmListControllerTest.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
 public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringContextTests {
     
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(ImportGermplasmListControllerTest.class);
 
+        /** The import germplasm file service. */
         @Autowired
         private ImportGermplasmFileService importGermplasmFileService;
         
+        /** The workbook basic. */
         private Workbook workbookBasic;
+        
+        /** The workbook advance. */
         private Workbook workbookAdvance;
+        
+        /** The workbook basic xlsx. */
         private Workbook workbookBasicXlsx;
+        
+        /** The workbook advance xlsx. */
         private Workbook workbookAdvanceXlsx;
+        
+        /** The workbook invalid. */
         private Workbook workbookInvalid;
         
+        /**
+         * Sets the up.
+         */
         @Before
         public void setUp() {
           
@@ -94,6 +111,9 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
                       
         }
         */
+        /**
+         * Test valid basic parse import gerplasm.
+         */
         @Test
         public void testValidBasicParseImportGerplasm(){
 
@@ -123,6 +143,9 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
             assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(19).getDesig(), "IR 67632-14-2-5-1-2-B");
         }
         
+        /**
+         * Test valid advance parse import gerplasm.
+         */
         @Test
         public void testValidAdvanceParseImportGerplasm(){
             ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
@@ -161,6 +184,9 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
             assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getEntryCode(), "2");
         }
         
+        /**
+         * Test valid basic parse import gerplasm xlsx.
+         */
         @Test
         public void testValidBasicParseImportGerplasmXlsx(){
 
@@ -231,6 +257,9 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
             assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(1).getEntryCode(), "2");
         }
         
+        /**
+         * Test valid basic parse import gerplasm xls pagination.
+         */
         @Test
         public void testValidBasicParseImportGerplasmXlsPagination(){
           //testing when doing pagination, we simulate the pagination
@@ -263,6 +292,9 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
             
         }
         
+        /**
+         * Test valid advance parse import gerplasm xls pagination.
+         */
         @Test
         public void testValidAdvanceParseImportGerplasmXlsPagination(){
             //testing when doing pagination, we simulate the pagination

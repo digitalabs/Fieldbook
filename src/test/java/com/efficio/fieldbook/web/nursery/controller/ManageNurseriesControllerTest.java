@@ -31,20 +31,31 @@ import org.generationcp.middleware.service.api.FieldbookService;
 import com.efficio.fieldbook.web.nursery.form.ManageNurseriesForm;
 
 
+/**
+ * The Class ManageNurseriesControllerTest.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
 public class ManageNurseriesControllerTest extends AbstractJUnit4SpringContextTests {
 	
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(ManageNurseriesControllerTest.class);
     
+    /** The fieldbook middleware service. */
     @Autowired
     FieldbookService fieldbookMiddlewareService;
 
+    /**
+     * Sets the up.
+     */
     @Before
     public void setUp() {
 
     }
 	
+	/**
+	 * Test manage nurseries pagination.
+	 */
 	@Test
 	public void testManageNurseriesPagination(){
 	    ManageNurseriesForm form = new ManageNurseriesForm();

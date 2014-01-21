@@ -47,18 +47,30 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 import com.efficio.pojos.treeview.TreeNode;
 
+/**
+ * The Class OntologyControllerTest.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
 public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
     
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(OntologyControllerTest.class);
     
+    /** The ontology service. */
     @Autowired
     OntologyService ontologyService;
 
+    /** The controller. */
     @Autowired
     private OntologyController controller;
     
+    /**
+     * Gets the dummy standard variable reference.
+     *
+     * @param i the i
+     * @return the dummy standard variable reference
+     */
     private List<StandardVariableReference> getDummyStandardVariableReference(int i){
         List<StandardVariableReference> list = new ArrayList<StandardVariableReference>();
         int count = 1;
@@ -73,6 +85,12 @@ public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
         return list;
     }
     
+    /**
+     * Gets the dummy property reference.
+     *
+     * @param i the i
+     * @return the dummy property reference
+     */
     private List<PropertyReference> getDummyPropertyReference(int i){
         List<PropertyReference> propList = new ArrayList<PropertyReference>();
         int count = 1;
@@ -90,6 +108,11 @@ public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
         return propList;
     }
     
+    /**
+     * Gets the dummy data.
+     *
+     * @return the dummy data
+     */
     private List<TraitClassReference> getDummyData(){
         List<TraitClassReference> refList = new ArrayList<TraitClassReference>();
         TraitClassReference ref1 = new TraitClassReference(1, "Test 1");
@@ -121,11 +144,17 @@ public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
         return refList;
     }
     
+        /**
+         * Sets the up.
+         */
         @Before
         public void setUp() {
           
         }
         
+    /**
+     * Test ontology tree json data.
+     */
     @Test
     public void testOntologyTreeJsonData(){
 
@@ -170,6 +199,15 @@ public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
                   
     }
     
+    /**
+     * Convert json string to map.
+     *
+     * @param json the json
+     * @return the list
+     * @throws JsonParseException the json parse exception
+     * @throws JsonMappingException the json mapping exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     protected List<TreeNode> convertJsonStringToMap(String json) throws JsonParseException, JsonMappingException, IOException {
         ObjectMapper mapper = new ObjectMapper();
         List<TreeNode> lcd = mapper.readValue(json, new TypeReference<List<TreeNode>>() {});
@@ -177,6 +215,9 @@ public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
         return lcd;
     }
     
+    /**
+     * Test save new term.
+     */
     @Test
     public void testSaveNewTerm() {
         
@@ -211,6 +252,20 @@ public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
         assertEquals(term.getDefinition(), definition);
     } 
     
+    /**
+     * Test save new term.
+     *
+     * @param combo the combo
+     * @param traitClass the trait class
+     * @param traitClassDescription the trait class description
+     * @param property the property
+     * @param propertyDescription the property description
+     * @param method the method
+     * @param methodDescription the method description
+     * @param scale the scale
+     * @param scaleDescription the scale description
+     * @return the term
+     */
     private Term testSaveNewTerm(String combo,
             String traitClass, String traitClassDescription,
             String property, String propertyDescription, 
@@ -246,6 +301,9 @@ public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
         return term;
     }
     
+    /**
+     * Test save new variable.
+     */
     @Test
     public void testSaveNewVariable() {
         try {

@@ -39,30 +39,53 @@ import com.efficio.fieldbook.web.nursery.validation.FileUploadFormValidator;
 import com.efficio.fieldbook.web.nursery.form.FileUploadForm;
 import com.efficio.fieldbook.service.api.FieldbookService;
 
+/**
+ * The Class FileUploadControllerTest.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
 public class FileUploadControllerTest extends AbstractJUnit4SpringContextTests {
 
 	
+	/** The fieldbook service. */
 	@Autowired
 	FieldbookService fieldbookService;
 	
+    /** The file service. */
     @Autowired
     ImportWorkbookFileService fileService;
 
+    /** The data import service. */
     @Autowired
     DataImportService dataImportService;
 
+	/** The controller. */
 	private FileUploadController controller;
+	
+	/** The form. */
 	private FileUploadForm form;
+	
+	/** The result. */
 	private BindingResult result;
+	
+	/** The file. */
 	private MultipartFile file;
+	
+	/** The user selection. */
 	private UserSelection userSelection;
+	
+	/** The validator. */
 	FileUploadFormValidator validator;
 	
+	/** The Constant FILE_NAME. */
 	private static final String FILE_NAME = "Population114_Pheno_FB_1.xls";
+	
+	/** The Constant FILE_NAME_XLSX. */
 	private static final String FILE_NAME_XLSX = "Population114_Pheno_FB_1.xlsx";
 	
+	/**
+	 * Sets the up.
+	 */
 	@Before
         public void setUp() {
 	    controller = new FileUploadController();
@@ -76,6 +99,11 @@ public class FileUploadControllerTest extends AbstractJUnit4SpringContextTests {
             controller.setUserSelection(userSelection);
         }
 	
+	/**
+	 * Test valid file xls.
+	 *
+	 * @throws Exception the exception
+	 */
 	@Test
         public void testValidFileXLS() throws Exception{
 		
@@ -99,6 +127,11 @@ public class FileUploadControllerTest extends AbstractJUnit4SpringContextTests {
             assertEquals(studyDetails.getStudyType().toString(), "T");
         }
 	
+	/**
+	 * Test valid file xlsx.
+	 *
+	 * @throws Exception the exception
+	 */
 	@Test
         public void testValidFileXLSX() throws Exception{
                 
@@ -123,6 +156,9 @@ public class FileUploadControllerTest extends AbstractJUnit4SpringContextTests {
         }
 
 	
+	/**
+	 * Test empty file handling.
+	 */
 	@Test
         public void testEmptyFileHandling() {
             form.setFile(null);
@@ -136,6 +172,9 @@ public class FileUploadControllerTest extends AbstractJUnit4SpringContextTests {
             assertTrue(result.hasErrors());
         }
 
+	/**
+	 * Test non excel file upload.
+	 */
 	@Test
 	public void testNonExcelFileUpload() {
             form.setFile(file);

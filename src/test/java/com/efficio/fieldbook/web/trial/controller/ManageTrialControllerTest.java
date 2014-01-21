@@ -32,20 +32,31 @@ import com.efficio.fieldbook.web.nursery.form.ManageNurseriesForm;
 import com.efficio.fieldbook.web.trial.form.ManageTrialForm;
 
 
+/**
+ * The Class ManageTrialControllerTest.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
 public class ManageTrialControllerTest extends AbstractJUnit4SpringContextTests {
 	
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(ManageTrialControllerTest.class);
     
+    /** The fieldbook middleware service. */
     @Autowired
     FieldbookService fieldbookMiddlewareService;
 
+    /**
+     * Sets the up.
+     */
     @Before
     public void setUp() {
 
     }
 	
+	/**
+	 * Test manage nurseries pagination.
+	 */
 	@Test
 	public void testManageNurseriesPagination(){
 	    ManageTrialForm form = new ManageTrialForm();

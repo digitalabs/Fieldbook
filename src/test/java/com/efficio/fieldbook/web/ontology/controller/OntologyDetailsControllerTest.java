@@ -36,13 +36,22 @@ import org.springframework.ui.Model;
 
 import com.efficio.fieldbook.web.ontology.form.OntologyDetailsForm;
 
+/**
+ * The Class OntologyDetailsControllerTest.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
 public class OntologyDetailsControllerTest  extends AbstractJUnit4SpringContextTests {
 
+    /** The controller. */
     @Autowired
     private OntologyDetailsController controller;
     
+    /**
+     * Test get ontology details.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void testGetOntologyDetails() throws Exception {
         OntologyDetailsForm form = new OntologyDetailsForm();
@@ -65,6 +74,11 @@ public class OntologyDetailsControllerTest  extends AbstractJUnit4SpringContextT
         Assert.assertEquals("789,000", form.getObservationCount());
     }
     
+    /**
+     * Creates the standard variable test data.
+     *
+     * @return the standard variable
+     */
     private StandardVariable createStandardVariableTestData() {
         List<TermProperty> termProperties = new ArrayList<TermProperty>();
         termProperties.add(new TermProperty(1, TermId.CROP_ONTOLOGY_ID.getId(), "CO:12345", 0));

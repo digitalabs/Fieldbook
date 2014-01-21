@@ -35,18 +35,30 @@ import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 
+/**
+ * The Class TestExportExcelService.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
 public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
     
     
+	/** The export excel service. */
 	@Autowired
 	private ExportExcelService exportExcelService;
 	
 	//@Autowired
+	/** The field map service. */
 	private FieldMapService fieldMapService = new FieldMapServiceImpl();
 	
 	
+	/**
+	 * Generate test field map labels.
+	 *
+	 * @param range the range
+	 * @param col the col
+	 * @return the list
+	 */
 	private List<FieldMapLabel> generateTestFieldMapLabels(int range, int col){
 		List<FieldMapLabel> labels = new ArrayList<FieldMapLabel>();
         for (int i = 0; i < range*col; i++) {
@@ -56,6 +68,12 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
         }
         return labels;
 	}
+	
+	/**
+	 * Test export field map to excel horizontal serpentine.
+	 *
+	 * @throws Exception the exception
+	 */
 	@Test
 	public void testExportFieldMapToExcelHorizontalSerpentine() throws Exception{
 		
@@ -102,6 +120,11 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
 		assertEquals(true, plots[8][5].isPlotDeleted());
 	}
 	
+	/**
+	 * Test export field map to excel vertical serpentine.
+	 *
+	 * @throws Exception the exception
+	 */
 	@Test
 	public void testExportFieldMapToExcelVerticalSerpentine() throws Exception{
 		
@@ -148,6 +171,11 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
 		assertEquals(true, plots[8][5].isPlotDeleted());
 	}
 	
+	/**
+	 * Test export field map to excel horizontal row column.
+	 *
+	 * @throws Exception the exception
+	 */
 	@Test
 	public void testExportFieldMapToExcelHorizontalRowColumn() throws Exception{
 		
@@ -193,6 +221,11 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
 		assertEquals(true, plots[8][5].isPlotDeleted());
 	}
 	
+	/**
+	 * Test export field map to excel vertical row column.
+	 *
+	 * @throws Exception the exception
+	 */
 	@Test
 	public void testExportFieldMapToExcelVerticalRowColumn() throws Exception{
 		

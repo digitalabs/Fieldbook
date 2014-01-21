@@ -36,23 +36,37 @@ import com.efficio.fieldbook.web.nursery.form.SaveNurseryForm;
 //http://www.finalconcept.com.au/article/view/spring-unit-testing-controllers
 //http://stackoverflow.com/questions/12607140/how-to-test-post-spring-mvc
 	
+/**
+ * The Class SaveNurseryControllerTest.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
 public class SaveNurseryControllerTest extends AbstractJUnit4SpringContextTests {
 
+	/** The controller. */
 	@Autowired
 	private SaveNurseryController controller;
 	
+	/** The handler adapter. */
 	@Autowired
 	private RequestMappingHandlerAdapter handlerAdapter;
 	
+	/** The handler mapping. */
 	@Autowired
 	private RequestMappingHandlerMapping handlerMapping;
 	
+	/** The request. */
 	private MockHttpServletRequest request;
+	
+	/** The response. */
 	private MockHttpServletResponse response;
+	
+	/** The session. */
 	private MockHttpSession session;
 	
+	/**
+	 * Sets the up.
+	 */
 	@Before
 	public void setUp() {
 		request = new MockHttpServletRequest();
@@ -62,6 +76,11 @@ public class SaveNurseryControllerTest extends AbstractJUnit4SpringContextTests 
 		request.setSession(session);
 	}
 	
+	/**
+	 * Test load initial page.
+	 *
+	 * @throws Exception the exception
+	 */
 	@Test
 	public void testLoadInitialPage() throws Exception {
 		request.setMethod("GET");
@@ -72,6 +91,11 @@ public class SaveNurseryControllerTest extends AbstractJUnit4SpringContextTests 
 		ModelAndViewAssert.assertModelAttributeValue(mav, SaveNurseryController.TEMPLATE_NAME_ATTRIBUTE, "NurseryManager/saveNursery");
 	}
 	
+	/**
+	 * Test set study details.
+	 *
+	 * @throws Exception the exception
+	 */
 	@Test
 	public void testSetStudyDetails() throws Exception {
 		SaveNurseryForm form = new SaveNurseryForm();

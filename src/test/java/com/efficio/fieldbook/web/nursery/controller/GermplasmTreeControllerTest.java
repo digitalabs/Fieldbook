@@ -34,30 +34,58 @@ import org.springframework.test.util.ReflectionTestUtils;
 import com.efficio.pojos.treeview.TreeNode;
 
 
+/**
+ * The Class GermplasmTreeControllerTest.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
 public class GermplasmTreeControllerTest extends AbstractJUnit4SpringContextTests {
 
+    /** The controller. */
     @Autowired
     private GermplasmTreeController controller;
     
+    /** The Constant LOCAL_LIST_1. */
     private static final GermplasmList LOCAL_LIST_1 = new GermplasmList(1, "Local List 1", null, "LIST", null, "Local List 1", null, 1);
+    
+    /** The Constant LOCAL_LIST_2. */
     private static final GermplasmList LOCAL_LIST_2 = new GermplasmList(2, "Local List 2", null, "LIST", null, "Local List 2", null, 1);
+    
+    /** The Constant LOCAL_LIST_3. */
     private static final GermplasmList LOCAL_LIST_3 = new GermplasmList(3, "Local List 3", null, "LIST", null, "Local List 3", null, 1);
     
+    /** The Constant CENTRAL_LIST_1. */
     private static final GermplasmList CENTRAL_LIST_1 = new GermplasmList(4, "Central List 1", null, "LIST", null, "Central List 1", null, 1);
+    
+    /** The Constant CENTRAL_LIST_2. */
     private static final GermplasmList CENTRAL_LIST_2 = new GermplasmList(5, "Central List 2", null, "LIST", null, "Central List 2", null, 1);
+    
+    /** The Constant CENTRAL_LIST_3. */
     private static final GermplasmList CENTRAL_LIST_3 = new GermplasmList(6, "Central List 3", null, "LIST", null, "Central List 3", null, 1);
     
+    /** The Constant LOCAL_GERMPLASM_LIST_TEST_DATA. */
     private static final List<GermplasmList> LOCAL_GERMPLASM_LIST_TEST_DATA = Arrays.asList(LOCAL_LIST_1, LOCAL_LIST_2, LOCAL_LIST_3);
+    
+    /** The Constant CENTRAL_GERMPLASM_LIST_TEST_DATA. */
     private static final List<GermplasmList> CENTRAL_GERMPLASM_LIST_TEST_DATA = Arrays.asList(CENTRAL_LIST_1, CENTRAL_LIST_2, CENTRAL_LIST_3);
     
+    /** The object mapper. */
     private ObjectMapper objectMapper = new ObjectMapper();
     
+    /**
+     * Sets the up.
+     *
+     * @throws Exception the exception
+     */
     @Before
     public void setUp() throws Exception {
     }
     
+    /**
+     * Test load initial tree.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void testLoadInitialTree() throws Exception {
         String jsonResponse = controller.loadInitialGermplasmTree();
@@ -69,6 +97,11 @@ public class GermplasmTreeControllerTest extends AbstractJUnit4SpringContextTest
         Assert.assertEquals("CENTRAL", treeNodes.get(1).getKey());
     }
     
+    /**
+     * Test expand germplasm tree local.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void testExpandGermplasmTreeLocal() throws Exception {
         GermplasmListManager germplasmListManager = EasyMock.createMock(GermplasmListManager.class);
@@ -88,6 +121,11 @@ public class GermplasmTreeControllerTest extends AbstractJUnit4SpringContextTest
         }
     }
     
+    /**
+     * Test expand germplasm tree central.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void testExpandGermplasmTreeCentral() throws Exception {
         GermplasmListManager germplasmListManager = EasyMock.createMock(GermplasmListManager.class);
@@ -107,6 +145,11 @@ public class GermplasmTreeControllerTest extends AbstractJUnit4SpringContextTest
         }
     }
     
+    /**
+     * Test expand germplasm node.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void testExpandGermplasmNode() throws Exception {
         GermplasmListManager germplasmListManager = EasyMock.createMock(GermplasmListManager.class);

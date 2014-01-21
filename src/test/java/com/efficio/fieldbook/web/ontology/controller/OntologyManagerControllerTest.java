@@ -41,20 +41,27 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 
 /**
- * @author Chezka Camille Arevalo
+ * The Class OntologyManagerControllerTest.
  *
+ * @author Chezka Camille Arevalo
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
 public class OntologyManagerControllerTest extends AbstractJUnit4SpringContextTests{
     
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(OntologyControllerTest.class);
     
+    /** The ontology service. */
     @Autowired
     OntologyService ontologyService;
     
+    /** The standard variable. */
     private StandardVariable standardVariable;
     
+    /**
+     * Sets the up.
+     */
     @Before
     public void setUp() {
         List<TermProperty> termProperties = new ArrayList<TermProperty>();
@@ -93,6 +100,12 @@ public class OntologyManagerControllerTest extends AbstractJUnit4SpringContextTe
         }
     }
 
+    /**
+     * Test save constraints.
+     *
+     * @throws MiddlewareQueryException the middleware query exception
+     * @throws MiddlewareException the middleware exception
+     */
     @Test
     public void testSaveConstraints() throws MiddlewareQueryException, MiddlewareException {
         Double minValue = null, maxValue = null;

@@ -162,7 +162,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		  	&nbsp;<label class="control-label" th:text="#{fieldmap.trial.num.of.rows.in.blocks}">Number of Rows in the Block:</label>
 		  	</div>		    
 		    <div class="col-xs-5 col-md-5">
-		       <input type="text" class="form-control" th:field="*{userFieldmap.numberOfRowsInBlock}"/>
+		       <input type="text" class="form-control calculate-plot" th:field="*{userFieldmap.numberOfRowsInBlock}"/>
 		    </div>
 		    
 		  </div>
@@ -171,7 +171,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		  		<label class="control-label" th:text="#{fieldmap.trial.num.of.rows.per.plot}">Number of Rows per Plot:</label>
 		  	</div>
 		    <div class="col-xs-7 col-md-7">
-		        <select class="form-control" th:field="*{userFieldmap.numberOfRowsPerPlot}">
+		        <select class="form-control calculate-plot" th:field="*{userFieldmap.numberOfRowsPerPlot}">
 		        	<option value="1">1</option>
 		        	<option value="2">2</option>
 		        	<option value="4">4</option>
@@ -183,10 +183,18 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		  		&nbsp;<label class="control-label" th:text="#{fieldmap.trial.num.of.ranges.in.blocks}">Number of Ranges in the Block:</label>
 		  	</div>	
 		    <div class="col-xs-5 col-md-5">
-		      <input type="text" class="form-control" th:field="*{userFieldmap.numberOfRangesInBlock}"/>
+		      <input type="text" class="form-control calculate-plot" th:field="*{userFieldmap.numberOfRangesInBlock}"/>
 		    </div>
 		  </div>
 		  
+		  <div class="form-group col-xs-6  col-md-6">		    
+		    <div class="col-xs-5 col-md-5">
+		  		<label class="control-label" th:text="#{fieldmap.total.num.of.plots}">Total Number of plots:</label>
+		  	</div>
+		    <div class="col-xs-7 col-md-7">
+		        <label class="control-label" id="calculatedPlots">-</label>
+		    </div>
+		  </div>
 		  						
 	</div>
 	
@@ -239,9 +247,18 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
     } else {
     	msgBlockSizeError = /*[[#{fieldmap.plots.exceed.blocks.nursery}]]*/;
     }
+    $('.calculate-plot').on('change', function(){
+    	calculateTotalPlots();
+    })
+    $('.calculate-plot').on('keyup', function(){
+    	calculateTotalPlots();
+    })
+    
+    
     
 	$( document ).ready(function() {
-		setSelectedTrialsAsDraggable();		
+		setSelectedTrialsAsDraggable();
+		calculateTotalPlots();
 										   
 		initializeLocationSelect2(locationSuggestions, locationSuggestions_obj);
 		initializeLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj);
@@ -286,7 +303,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 				$('#s2id_fieldLocationIdAll').hide();
 				for(var index in locationSuggestionsFav_obj) {
 				  if(locationSuggestionsFav_obj[index].id == locId){
-					  console.log(locationSuggestionsFav_obj[index]);
+					  //console.log(locationSuggestionsFav_obj[index]);
 					  
 					  
 					  $("#fieldLocationIdFavorite").select2('data', locationSuggestionsFav_obj[index]);
@@ -301,7 +318,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 				$('#s2id_fieldLocationIdAll').show();
 				for(var index in locationSuggestions_obj) {
 					  if(locationSuggestions_obj[index].id == locId){
-						  console.log(locationSuggestions_obj[index]);
+						  //console.log(locationSuggestions_obj[index]);
 						  $("#fieldLocationIdAll").select2('data', locationSuggestions_obj[index]);
 						  $('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val($('#'+getJquerySafeId("fieldLocationIdAll")).select2("data").id);
 						  $('#'+getJquerySafeId("userFieldmap.locationName")).val($('#'+getJquerySafeId("fieldLocationIdAll")).select2("data").text);	

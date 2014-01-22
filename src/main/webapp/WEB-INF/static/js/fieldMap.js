@@ -59,6 +59,40 @@ function validateEnterFieldPage(){
 	return true;
 }
 
+function calculateTotalPlots(){
+	var numberOrRowsPerBlock = parseInt($("#"+getJquerySafeId("userFieldmap.numberOfRowsInBlock")).val());
+	var numberOfRowsPerPlot = parseInt($("#"+getJquerySafeId("userFieldmap.numberOfRowsPerPlot")).val());
+	var numberOfRangesInBlock = parseInt($("#"+getJquerySafeId("userFieldmap.numberOfRangesInBlock")).val());
+	
+	if($('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val() == "" 
+		|| !isInt($('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val())
+		|| parseInt($('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val()) < 1){
+		$('#calculatedPlots').html("-");
+		return false;
+	}
+	if($('#'+getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val() == "" || 
+	!isInt($('#'+getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val())
+	|| parseInt($('#'+getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val()) < 1){
+		$('#calculatedPlots').html("-");
+		return false;
+	}
+	
+	if(parseInt($('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val()) % 
+			parseInt($('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val()) != 0){
+		//we need to check 
+		
+		$('#calculatedPlots').html("-");
+		return false;
+	}
+	
+	if(isNaN(numberOrRowsPerBlock) || isNaN(numberOrRowsPerBlock) || isNaN(numberOrRowsPerBlock)){
+		$('#calculatedPlots').html("-");
+	}else{
+		var totalNoOfBlocks = (numberOrRowsPerBlock / numberOfRowsPerPlot) * numberOfRangesInBlock;
+		$('#calculatedPlots').html(totalNoOfBlocks);
+	}    	    	
+}
+
 function setTrialInstanceOrder() {
 	var order = [];
 	$("#selectedTrials .trialOrder").each(function(){

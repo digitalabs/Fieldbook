@@ -46,7 +46,7 @@ h1,h2,h3,h4,h5,h6,
 h4,h5,h6,
 .h4,.h5,.h6{margin-top:5px}
 h1,.h1{font-size:26px;font-weight:500;height:26px;line-height:26px;text-transform:uppercase}
-h2,.h1{font-size:18px;height:18px;line-height:18px;font-weight:600;text-transform:uppercase}
+h2,.h2{font-size:18px;height:18px;line-height:18px;font-weight:600;text-transform:uppercase}
 h2.light,.h2.light{font-weight: 300; color:#999;}
 h3,.h3{font-size:16px;height:16px;line-height:16px;font-weight:600;text-transform:uppercase}
 h4,.h4{font-size:15px;height:15px;line-height:15px;font-weight:500}
@@ -454,4 +454,35 @@ tr.trialInstance {
 
 .page-header {
 	border-bottom: 0;
+}
+.tooltip-inner {
+    background-color: #5A5A5A;    
+    max-width: 350px;
+    margin-top: 40px;
+    padding: 15px;
+    text-align: left;
+    text-transform: none;
+}
+.tooltip.right .tooltip-arrow {
+    border-right-color: #5A5A5A;
+    /*margin-top: -5px;*/    
+}
+/*
+.help-tooltip{
+padding-left: 20px; margin-top: 7px
+}
+*/
+.help-tooltip {
+    background-color: #5A5A5A;
+    border-radius: 50%;
+    box-shadow: 0 0 3px #000000;
+    color: #FFFFFF;
+    font-size: 12px;
+    margin-right: 20px;
+    padding: 0 5px;
+    text-decoration: none;
+    float: left; 
+    margin-left: 15px;
+    margin-top: 13px;
+    line-height: 18px;
 }

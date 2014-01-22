@@ -64,7 +64,7 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
 	private List<FieldMapLabel> generateTestFieldMapLabels(int range, int col){
 		List<FieldMapLabel> labels = new ArrayList<FieldMapLabel>();
         for (int i = 0; i < range*col; i++) {
-            FieldMapLabel label = new FieldMapLabel(null, null, "DummyData-" + i, i, null);
+            FieldMapLabel label = new FieldMapLabel(null, null, "DummyData-" + i, i, i);
             label.setStudyName("Dummy Trial");
             labels.add(label);
         }
@@ -100,8 +100,8 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
         String fileName = "FieldMapHorizontal" +  "_" + getCurrentDate() + ".xls";
 		exportExcelService.exportFieldMapToExcel(fileName, userFieldMap);
 		
-		assertEquals("Dummy Trial<br/>Entry null<br/>Rep 76", plots[2][9].getDisplayString());
-		assertEquals("Dummy Trial<br/>Entry null<br/>Rep 70", plots[8][9].getDisplayString());
+		assertEquals("Dummy Trial-76<br/>Entry null<br/>Rep 76", plots[2][9].getDisplayString());
+		assertEquals("Dummy Trial-70<br/>Entry null<br/>Rep 70", plots[8][9].getDisplayString());
 		assertEquals(true, plots[8][5].isPlotDeleted());
 	}
 	
@@ -134,8 +134,8 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
         String fileName = "FieldMapVertical" +  "_" + getCurrentDate() + ".xls";
 		exportExcelService.exportFieldMapToExcel(fileName, userFieldMap);
 		
-		assertEquals("Dummy Trial<br/>Entry null<br/>Rep 10", plots[2][9].getDisplayString());
-		assertEquals("Dummy Trial<br/>Entry null<br/>Rep 67", plots[8][9].getDisplayString());
+		assertEquals("Dummy Trial-10<br/>Entry null<br/>Rep 10", plots[2][9].getDisplayString());
+		assertEquals("Dummy Trial-67<br/>Entry null<br/>Rep 67", plots[8][9].getDisplayString());
 		assertEquals(true, plots[8][5].isPlotDeleted());
 	}
 	
@@ -169,8 +169,8 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
 
         String fileName = "FieldMapHorizontalRowColumn" +  "_" + getCurrentDate() + ".xls";
 		exportExcelService.exportFieldMapToExcel(fileName, userFieldMap);
-		assertEquals("Dummy Trial<br/>Entry null<br/>Rep 77", plots[2][9].getDisplayString());
-		assertEquals("Dummy Trial<br/>Entry null<br/>Rep 83", plots[8][9].getDisplayString());
+		assertEquals("Dummy Trial-77<br/>Entry null<br/>Rep 77", plots[2][9].getDisplayString());
+		assertEquals("Dummy Trial-83<br/>Entry null<br/>Rep 83", plots[8][9].getDisplayString());
 		assertEquals(true, plots[8][5].isPlotDeleted());
 	}
 	
@@ -204,8 +204,8 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
 
         String fileName = "FieldMapVerticalRowColumn" +  "_" + getCurrentDate() + ".xls";
 		exportExcelService.exportFieldMapToExcel(fileName, userFieldMap);
-		assertEquals("Dummy Trial<br/>Entry null<br/>Rep 17", plots[2][9].getDisplayString());
-		assertEquals("Dummy Trial<br/>Entry null<br/>Rep 74", plots[8][9].getDisplayString());
+		assertEquals("Dummy Trial-17<br/>Entry null<br/>Rep 17", plots[2][9].getDisplayString());
+		assertEquals("Dummy Trial-74<br/>Entry null<br/>Rep 74", plots[8][9].getDisplayString());
 		assertEquals(true, plots[8][5].isPlotDeleted());
 	}
 	

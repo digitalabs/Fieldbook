@@ -63,6 +63,4 @@ public class TestJavaBean implements Serializable {
 		this.age = age;
 	}
 	
-	
-
 }

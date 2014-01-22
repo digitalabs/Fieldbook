@@ -30,17 +30,28 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 import com.efficio.pojos.treeview.TreeNode;
 
+/**
+ * The Class GermplasmTreeController.
+ */
 @Controller
 @RequestMapping(value = "/NurseryManager")
 public class GermplasmTreeController{
 
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(GermplasmTreeController.class);
     
+    /** The Constant BATCH_SIZE. */
     private static final int BATCH_SIZE = 50;
     
+    /** The germplasm list manager. */
     @Resource
     private GermplasmListManager germplasmListManager;
     
+    /**
+     * Load initial germplasm tree.
+     *
+     * @return the string
+     */
     @ResponseBody
     @RequestMapping(value = "/loadInitGermplasmTree", method = RequestMethod.GET)
     public String loadInitialGermplasmTree() {
@@ -58,18 +69,27 @@ public class GermplasmTreeController{
         return "[]";
     }
     
+    /**
+     * Expand germplasm tree.
+     *
+     * @param parentKey the parent key
+     * @return the string
+     */
     @ResponseBody
     @RequestMapping(value = "/expandGermplasmTree/{parentKey}", method = RequestMethod.GET)
     public String expandGermplasmTree(@PathVariable String parentKey) {
         
         try {
-            if (Database.LOCAL.toString().equals(parentKey) || Database.CENTRAL.toString().equals(parentKey)) {
-                List<GermplasmList> rootLists = germplasmListManager.getAllTopLevelListsBatched(BATCH_SIZE, Database.valueOf(parentKey));
+            if (Database.LOCAL.toString().equals(parentKey) 
+                    || Database.CENTRAL.toString().equals(parentKey)) {
+                List<GermplasmList> rootLists = germplasmListManager
+                            .getAllTopLevelListsBatched(BATCH_SIZE, Database.valueOf(parentKey));
                 return TreeViewUtil.convertGermplasmListToJson(rootLists);
             } 
             else if (NumberUtils.isNumber(parentKey)) {
                 int parentId = Integer.valueOf(parentKey);
-                List<GermplasmList> childLists = germplasmListManager.getGermplasmListByParentFolderIdBatched(parentId, BATCH_SIZE);
+                List<GermplasmList> childLists = germplasmListManager
+                            .getGermplasmListByParentFolderIdBatched(parentId, BATCH_SIZE);
                 return TreeViewUtil.convertGermplasmListToJson(childLists);
             }
             else {

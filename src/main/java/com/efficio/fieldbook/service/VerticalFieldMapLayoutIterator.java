@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2013, All Rights Reserved.
+ * 
+ * Generation Challenge Programme (GCP)
+ * 
+ * 
+ * This software is licensed for use under the terms of the GNU General Public
+ * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
+ * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ * 
+ *******************************************************************************/
 package com.efficio.fieldbook.service;
 
 import java.util.ArrayList;
@@ -12,9 +23,11 @@ import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 
+/**
+ * The Class VerticalFieldMapLayoutIterator.
+ */
 public class VerticalFieldMapLayoutIterator implements
 		FieldPlotLayoutIterator {
-
 	
 	/* (non-Javadoc)
      * @see com.efficio.fieldbook.service.api.FieldMapService#createFieldMap(int, int, int, int, boolean, java.util.Map, java.util.List, boolean)
@@ -37,8 +50,9 @@ public class VerticalFieldMapLayoutIterator implements
                             //this will signify that we have started
                             isStartOk = true;
                         }
-                        counter = FieldMapUtilityHelper.populatePlotData(counter, labels, x, y, plots, false, startCol, startRange, isStartOk, deletedPlot, 
-                                isTrial);
+                        counter = FieldMapUtilityHelper.populatePlotData(
+                                counter, labels, x, y, plots, false, startCol
+                                , startRange, isStartOk, deletedPlot, isTrial);
                     }
                 }else{
                     for(int y = range - 1 ; y >= 0 ; y--){
@@ -47,8 +61,9 @@ public class VerticalFieldMapLayoutIterator implements
                             //this will signify that we have started
                             isStartOk = true;
                         }
-                        counter = FieldMapUtilityHelper.populatePlotData(counter, labels, x, y, plots, false, startCol, startRange, isStartOk, deletedPlot,
-                                isTrial);
+                        counter = FieldMapUtilityHelper.populatePlotData(
+                                counter, labels, x, y, plots, false, startCol, 
+                                startRange, isStartOk, deletedPlot, isTrial);
 
                     }
                 }
@@ -69,7 +84,9 @@ public class VerticalFieldMapLayoutIterator implements
      * @param totalRanges the total ranges
      * @param isSerpentine the is serpentine
      */
-    public void setOtherFieldMapInformation(UserFieldmap info, Plot[][] plots, int totalColumns, int totalRanges, boolean isSerpentine) {
+    public void setOtherFieldMapInformation(
+            UserFieldmap info, Plot[][] plots, int totalColumns
+            , int totalRanges, boolean isSerpentine) {
         boolean isStarted = false;
         List<String> possiblyDeletedCoordinates = new ArrayList<String>();
         int[] order = {1};
@@ -77,18 +94,21 @@ public class VerticalFieldMapLayoutIterator implements
         for (int x = 0; x < totalColumns; x++) {
             if (downToUp) {
             	for (int y = 0; y < totalRanges; y++) {
-                    isStarted = FieldMapUtilityHelper.renderPlotCell(info, plots, x, y, isStarted, possiblyDeletedCoordinates, order);
+                    isStarted = FieldMapUtilityHelper.renderPlotCell(
+                            info, plots, x, y, isStarted, possiblyDeletedCoordinates, order);
                 }
             }
             else {                
                 for (int y = totalRanges - 1; y >= 0; y--) {
-                    isStarted = FieldMapUtilityHelper.renderPlotCell(info, plots, x, y, isStarted, possiblyDeletedCoordinates, order);
+                    isStarted = FieldMapUtilityHelper.renderPlotCell(
+                            info, plots, x, y, isStarted, possiblyDeletedCoordinates, order);
                 }
             }
             if(isSerpentine){
 	        	downToUp = !downToUp;
 	        }
         }
-        info.setSelectedFieldmapList(new SelectedFieldmapList(info.getSelectedFieldMaps(), info.isTrial()));
+        info.setSelectedFieldmapList(new SelectedFieldmapList(
+                info.getSelectedFieldMaps(), info.isTrial()));
     }
 }

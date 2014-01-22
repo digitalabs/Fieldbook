@@ -63,8 +63,8 @@ public class ImportedCondition implements Serializable{
      * @param value the value
      * @param label the label
      */
-    public ImportedCondition(String condition, String description, String property, String scale, String method
-            , String dataType, String value, String label) {
+    public ImportedCondition(String condition, String description, String property, String scale
+            , String method, String dataType, String value, String label) {
         this.condition = condition;
         this.description = description;
         this.property = property;

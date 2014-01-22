@@ -31,17 +31,30 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.ontology.form.OntologyDetailsForm;
 
+/**
+ * The Class OntologyDetailsController.
+ */
 @Controller
 public class OntologyDetailsController extends AbstractBaseFieldbookController {
     
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(OntologyDetailsController.class);
     
+    /** The Constant DETAILS_TEMPLATE. */
     public static final String DETAILS_TEMPLATE = "/OntologyBrowser/detailTab";
 
+    /** The ontology service. */
     @Resource
     private OntologyService ontologyService;
     
-    
+    /**
+     * Gets the ontology details.
+     *
+     * @param variableId the variable id
+     * @param form the form
+     * @param model the model
+     * @return the ontology details
+     */
     @RequestMapping(value = "/OntologyBrowser/details/{variableId}", method = RequestMethod.GET)
     public String getOntologyDetails(@PathVariable int variableId,  
             @ModelAttribute("ontologyDetailsForm") OntologyDetailsForm form, Model model) {
@@ -53,8 +66,11 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
                 resultMap.put("variable", variable);
                 
                 NumberFormat numberFormat = NumberFormat.getIntegerInstance();
-                form.setProjectCount(numberFormat.format(ontologyService.countProjectsByVariable(variableId)));
-                form.setObservationCount(numberFormat.format(ontologyService.countExperimentsByVariable(variableId, variable.getStoredIn().getId())));
+                form.setProjectCount(numberFormat.format(
+                                ontologyService.countProjectsByVariable(variableId)));
+                form.setObservationCount(numberFormat.format(
+                                ontologyService.countExperimentsByVariable(
+                                        variableId, variable.getStoredIn().getId())));
                 form.setVariable(variable);
             } else {
                 resultMap.put("status", "notfound");

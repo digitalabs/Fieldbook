@@ -43,7 +43,6 @@ public class ImportWorkbookFileServiceImpl implements ImportWorkbookFileService 
         return getFileService().retrieveFileFromFileName(userSelection.getServerFileName());
     }
 
-
     /**
      * Gets the file service.
      *

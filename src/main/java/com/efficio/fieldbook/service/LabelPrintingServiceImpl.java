@@ -64,40 +64,52 @@ import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.ColumnText;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
+/**
+ * The Class LabelPrintingServiceImpl.
+ */
 @Service
 public class LabelPrintingServiceImpl implements LabelPrintingService{
 
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(LabelPrintingServiceImpl.class);
     
-   
-    
+    /** The delimiter. */
     private String delimiter = " | ";
     
+    /** The message source. */
     @Resource
     private ResourceBundleMessageSource messageSource;
     
     
+    /**
+     * Gets the cell height.
+     *
+     * @param numberOfRowsPerPage the number of rows per page
+     * @param pageSizeId the page size id
+     * @return the cell height
+     */
     private float getCellHeight(int numberOfRowsPerPage, int pageSizeId){
         if(pageSizeId == AppConstants.SIZE_OF_PAPER_A4){
-            if(numberOfRowsPerPage == 7)
+            if(numberOfRowsPerPage == 7){
                 return 108f; //ok
-            else if(numberOfRowsPerPage == 8)
+            }else if(numberOfRowsPerPage == 8){
                 return 97f;//ok
-            else if(numberOfRowsPerPage == 10)
+            }else if(numberOfRowsPerPage == 10){
                 return 72.5f;
+            }
         }else{
-            if(numberOfRowsPerPage == 7)
+            if(numberOfRowsPerPage == 7){
                 return 108f; //ok
-            else if(numberOfRowsPerPage == 8)
+            }else if(numberOfRowsPerPage == 8){
                 return 98.1f;//ok
-            else if(numberOfRowsPerPage == 10)
+            }else if(numberOfRowsPerPage == 10){
                 return 72.5f;//ok
+            }
         }
            
         return 0f;
@@ -107,10 +119,11 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
      * @see com.efficio.fieldbook.service.api.LabelPrintingService#generateLabels(com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap)
      */
     @Override
-    public String generatePDFLabels(List<StudyTrialInstanceInfo> trialInstances, UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos)
-            throws MiddlewareQueryException {
-        
-      //setUserLabelPrinting(form.getUserLabelPrinting());
+    public String generatePDFLabels(List<StudyTrialInstanceInfo> trialInstances
+            , UserLabelPrinting userLabelPrinting,
+            ByteArrayOutputStream baos) throws MiddlewareQueryException {
+
+        // setUserLabelPrinting(form.getUserLabelPrinting());
         int pageSizeId = Integer.parseInt(userLabelPrinting.getSizeOfLabelSheet());
         int numberOfLabelPerRow = Integer.parseInt(userLabelPrinting.getNumberOfLabelPerRow());
         int numberofRowsPerPageOfLabel = Integer.parseInt(userLabelPrinting.getNumberOfRowsPerPageOfLabel());
@@ -118,295 +131,290 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         String leftSelectedFields = userLabelPrinting.getLeftSelectedLabelFields();
         String rightSelectedFields = userLabelPrinting.getRightSelectedLabelFields();
         String barcodeNeeded = userLabelPrinting.getBarcodeNeeded();
-        
+
         String firstBarcodeField = userLabelPrinting.getFirstBarcodeField();
         String secondBarcodeField = userLabelPrinting.getSecondBarcodeField();
         String thirdBarcodeField = userLabelPrinting.getThirdBarcodeField();
-        
-        String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        //String fileName = currentDate + ".pdf";
-       
-        
-        String fileName = userLabelPrinting.getFilenameDLLocation();
-        
-        try {
-        	FileOutputStream fileOutputStream = new FileOutputStream(fileName);
 
-            
-            
+        String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
+        // String fileName = currentDate + ".pdf";
+
+        String fileName = userLabelPrinting.getFilenameDLLocation();
+
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(fileName);
+
             try {
-                
-                //Image image1 = Image.getInstance(imageLocation);
-               
-                //PageSize.A4
+
+                // Image image1 = Image.getInstance(imageLocation);
+
+                // PageSize.A4
                 Rectangle pageSize = PageSize.LETTER;
-                
-                if(pageSizeId == AppConstants.SIZE_OF_PAPER_A4)
+
+                if (pageSizeId == AppConstants.SIZE_OF_PAPER_A4)
                     pageSize = PageSize.A4;
-                
+
                 Document document = new Document(pageSize);
-                if(pageSizeId == AppConstants.SIZE_OF_PAPER_LETTER){
-                    if(numberofRowsPerPageOfLabel == 7)
+                if (pageSizeId == AppConstants.SIZE_OF_PAPER_LETTER) {
+                    if (numberofRowsPerPageOfLabel == 7)
                         document.setMargins(10, 0, 17, 5);
-                    else if(numberofRowsPerPageOfLabel == 8)
+                    else if (numberofRowsPerPageOfLabel == 8)
                         document.setMargins(5, 0, 0, 5);
-                    else if(numberofRowsPerPageOfLabel == 10)
+                    else if (numberofRowsPerPageOfLabel == 10)
                         document.setMargins(2, 2, 33.3f, 5);
-                }else if(pageSizeId == AppConstants.SIZE_OF_PAPER_A4){
-                    if(numberofRowsPerPageOfLabel == 7)
+                } else if (pageSizeId == AppConstants.SIZE_OF_PAPER_A4) {
+                    if (numberofRowsPerPageOfLabel == 7)
                         document.setMargins(15, 0, 42, 5);
-                    else if(numberofRowsPerPageOfLabel == 8)
+                    else if (numberofRowsPerPageOfLabel == 8)
                         document.setMargins(15, 0, 37, 5);
-                    else if(numberofRowsPerPageOfLabel == 10)
+                    else if (numberofRowsPerPageOfLabel == 10)
                         document.setMargins(6, 2, 17.5f, 5);
                 }
-               
-               // PdfWriter writer = PdfWriter.getInstance(document, baos);
+
+                // PdfWriter writer = PdfWriter.getInstance(document, baos);
                 PdfWriter writer = PdfWriter.getInstance(document, fileOutputStream);
                 // step 3
                 document.open();
                 // step 4
-                
+
                 PdfContentByte canvas = writer.getDirectContent();
-                
-                
-                
+
                 int i = 0;
                 int fixTableRowSize = numberOfLabelPerRow;
                 PdfPTable table = new PdfPTable(fixTableRowSize);
-                
-                
-                //table.writeSelectedRows(0, -1, 10, 12, canvas);
-                float columnWidthSize = 265f;//180f;
+
+                // table.writeSelectedRows(0, -1, 10, 12, canvas);
+                float columnWidthSize = 265f;// 180f;
                 float[] widthColumns = new float[fixTableRowSize];
-                
-                for(int counter = 0 ; counter < widthColumns.length ; counter++){
+
+                for (int counter = 0; counter < widthColumns.length; counter++) {
                     widthColumns[counter] = columnWidthSize;
                 }
-                
+
                 table.setWidths(widthColumns);
                 table.setWidthPercentage(100);
-                int width = 600; 
+                int width = 600;
                 int height = 75;
-                
-                
-                List<File> filesToBeDeleted = new ArrayList<File>(); 
-                float cellHeight = getCellHeight(numberofRowsPerPageOfLabel, pageSizeId);                                
-                
-                for(StudyTrialInstanceInfo trialInstance : trialInstances){
-                    FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = trialInstance.getTrialInstance(); 
-                   
-                    
-                    Map<String,String> moreFieldInfo = new HashMap<String, String>();
+
+                List<File> filesToBeDeleted = new ArrayList<File>();
+                float cellHeight = getCellHeight(numberofRowsPerPageOfLabel, pageSizeId);
+
+                for (StudyTrialInstanceInfo trialInstance : trialInstances) {
+                    FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = trialInstance.getTrialInstance();
+
+                    Map<String, String> moreFieldInfo = new HashMap<String, String>();
                     moreFieldInfo.put("locationName", fieldMapTrialInstanceInfo.getLocationName());
                     moreFieldInfo.put("blockName", fieldMapTrialInstanceInfo.getBlockName());
                     moreFieldInfo.put("selectedName", trialInstance.getFieldbookName());
                     moreFieldInfo.put("trialInstanceNumber", fieldMapTrialInstanceInfo.getTrialInstanceNo());
-                    
-                    for(FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()){
-                      
+
+                    for (FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()) {
+
                         i++;
-                        String barcodeLabel = generateBarcodeField(moreFieldInfo, fieldMapLabel, firstBarcodeField, secondBarcodeField, thirdBarcodeField, barcodeNeeded);
-                        if("0".equalsIgnoreCase(barcodeNeeded)){
-                        	barcodeLabel = " ";
+                        String barcodeLabel = generateBarcodeField(
+                                moreFieldInfo, fieldMapLabel, firstBarcodeField,
+                                secondBarcodeField, thirdBarcodeField, barcodeNeeded);
+                        if ("0".equalsIgnoreCase(barcodeNeeded)) {
+                            barcodeLabel = " ";
                         }
-                       
-                        BitMatrix bitMatrix = new Code128Writer().encode(barcodeLabel,BarcodeFormat.CODE_128,width,height,null);
-                        String imageLocation = System.getProperty( "user.home" )  + "/" + Math.random() + ".png";
+
+                        BitMatrix bitMatrix = new Code128Writer().encode(barcodeLabel, 
+                                BarcodeFormat.CODE_128, width, height, null);
+                        String imageLocation = System.getProperty("user.home") 
+                                + "/" + Math.random() + ".png";
                         File imageFile = new File(imageLocation);
                         FileOutputStream fout = new FileOutputStream(imageFile);
                         MatrixToImageWriter.writeToStream(bitMatrix, "png", fout);
                         filesToBeDeleted.add(imageFile);
-                        
-                       
-                        
+
                         Image mainImage = Image.getInstance(imageLocation);
-                        
-                        
+
                         PdfPCell cell = new PdfPCell();
                         cell.setFixedHeight(cellHeight);
                         cell.setNoWrap(false);
                         cell.setPadding(5f);
                         cell.setPaddingBottom(1f);
-                        
+
                         PdfPTable innerImageTableInfo = new PdfPTable(1);
-                        innerImageTableInfo.setWidths(new float[]{1});
+                        innerImageTableInfo.setWidths(new float[] { 1 });
                         innerImageTableInfo.setWidthPercentage(82);
                         PdfPCell cellImage = new PdfPCell();
-                        if("1".equalsIgnoreCase(barcodeNeeded)){
-                        	cellImage.addElement(mainImage);
-                        }else{
-                        	cellImage.addElement(new Paragraph(" "));
+                        if ("1".equalsIgnoreCase(barcodeNeeded)) {
+                            cellImage.addElement(mainImage);
+                        } else {
+                            cellImage.addElement(new Paragraph(" "));
                         }
-                        cellImage.setBorder(Rectangle.NO_BORDER);                         
+                        cellImage.setBorder(Rectangle.NO_BORDER);
                         cellImage.setBackgroundColor(Color.white);
-                        cellImage.setPadding(1.5f); 
-                        
-                        
-                       
-                        	innerImageTableInfo.addCell(cellImage);                        	
-                       
-                        
-                        
+                        cellImage.setPadding(1.5f);
+
+                        innerImageTableInfo.addCell(cellImage);
+
                         float fontSize = 6.8f;
-                        if(numberofRowsPerPageOfLabel == 10)
+                        if (numberofRowsPerPageOfLabel == 10)
                             fontSize = 4.8f;
-                               
+
                         Font fontNormal = FontFactory.getFont("Arial", fontSize, Font.NORMAL);
-                        
-                        //cell.addElement(mainImage);
+
+                        // cell.addElement(mainImage);
                         cell.addElement(innerImageTableInfo);
-                        
-                        
-                        
+
                         cell.addElement(new Paragraph());
-                        for(int row = 0 ; row < 5 ; row++){
-                            if(row == 0){
+                        for (int row = 0; row < 5; row++) {
+                            if (row == 0) {
                                 PdfPTable innerDataTableInfo = new PdfPTable(1);
-                                innerDataTableInfo.setWidths(new float[]{1});
+                                innerDataTableInfo.setWidths(new float[] { 1 });
                                 innerDataTableInfo.setWidthPercentage(85);
-                                
+
                                 Font fontNormalData = FontFactory.getFont("Arial", 5.0f, Font.NORMAL);
-                                PdfPCell cellInnerData = new PdfPCell(new Phrase(barcodeLabel, fontNormalData));
-                                
-                                cellInnerData.setBorder(Rectangle.NO_BORDER);                         
+                                PdfPCell cellInnerData = 
+                                        new PdfPCell(new Phrase(barcodeLabel, fontNormalData));
+
+                                cellInnerData.setBorder(Rectangle.NO_BORDER);
                                 cellInnerData.setBackgroundColor(Color.white);
                                 cellInnerData.setPaddingBottom(0.2f);
                                 cellInnerData.setPaddingTop(0.2f);
                                 cellInnerData.setHorizontalAlignment(Element.ALIGN_MIDDLE);
-                                
+
                                 innerDataTableInfo.addCell(cellInnerData);
                                 innerDataTableInfo.setHorizontalAlignment(Element.ALIGN_MIDDLE);
                                 cell.addElement(innerDataTableInfo);
                             }
                             PdfPTable innerTableInfo = new PdfPTable(2);
-                            innerTableInfo.setWidths(new float[]{1,1});
+                            innerTableInfo.setWidths(new float[] { 1, 1 });
                             innerTableInfo.setWidthPercentage(85);
-                            
-                            String leftText = generateBarcodeLabel(moreFieldInfo, fieldMapLabel, leftSelectedFields, row);
+
+                            String leftText = generateBarcodeLabel(
+                                    moreFieldInfo, fieldMapLabel, leftSelectedFields, row);
                             PdfPCell cellInnerLeft = new PdfPCell(new Paragraph(leftText, fontNormal));
-                            
-                            cellInnerLeft.setBorder(Rectangle.NO_BORDER);                         
+
+                            cellInnerLeft.setBorder(Rectangle.NO_BORDER);
                             cellInnerLeft.setBackgroundColor(Color.white);
                             cellInnerLeft.setPaddingBottom(0.5f);
                             cellInnerLeft.setPaddingTop(0.5f);
-                            
+
                             innerTableInfo.addCell(cellInnerLeft);
-                            
-                            String rightText = generateBarcodeLabel(moreFieldInfo, fieldMapLabel, rightSelectedFields, row);
-                            PdfPCell cellInnerRight = new PdfPCell(new Paragraph(rightText, fontNormal));
-                           
-                            cellInnerRight.setBorder(Rectangle.NO_BORDER);                         
+
+                            String rightText = generateBarcodeLabel(
+                                    moreFieldInfo, fieldMapLabel, rightSelectedFields,
+                                    row);
+                            PdfPCell cellInnerRight = new PdfPCell(
+                                    new Paragraph(rightText, fontNormal));
+
+                            cellInnerRight.setBorder(Rectangle.NO_BORDER);
                             cellInnerRight.setBackgroundColor(Color.white);
                             cellInnerRight.setPaddingBottom(0.5f);
                             cellInnerRight.setPaddingTop(0.5f);
-                            
+
                             innerTableInfo.addCell(cellInnerRight);
-                            
+
                             cell.addElement(innerTableInfo);
                         }
-                        
-                       
-                        cell.setBorder(Rectangle.NO_BORDER);                         
+
+                        cell.setBorder(Rectangle.NO_BORDER);
                         cell.setBackgroundColor(Color.white);
-                        
-                        
+
                         table.addCell(cell);
-                                     
-                        if(i % numberOfLabelPerRow == 0){
-                            //we go the next line
-                            
+
+                        if (i % numberOfLabelPerRow == 0) {
+                            // we go the next line
+
                             int needed = fixTableRowSize - numberOfLabelPerRow;
-                            
-                            for(int neededCount = 0 ; neededCount < needed ; neededCount++){
-                                PdfPCell cellNeeded = new PdfPCell(); 
-                                
-                                cellNeeded.setBorder(Rectangle.NO_BORDER);                         
+
+                            for (int neededCount = 0; neededCount < needed; neededCount++) {
+                                PdfPCell cellNeeded = new PdfPCell();
+
+                                cellNeeded.setBorder(Rectangle.NO_BORDER);
                                 cellNeeded.setBackgroundColor(Color.white);
-                                
+
                                 table.addCell(cellNeeded);
                             }
-                            
+
                             table.completeRow();
-                            if(numberofRowsPerPageOfLabel == 10){
-                                
-                               table.setSpacingAfter(9f);
+                            if (numberofRowsPerPageOfLabel == 10) {
+
+                                table.setSpacingAfter(9f);
                             }
-                            
+
                             document.add(table);
-                            
-                            
-                            
-                            table = new PdfPTable(fixTableRowSize);                              
+
+                            table = new PdfPTable(fixTableRowSize);
                             table.setWidths(widthColumns);
                             table.setWidthPercentage(100);
-                            
+
                         }
-                        if(i % totalPerPage == 0){
-                            //we go the next page
+                        if (i % totalPerPage == 0) {
+                            // we go the next page
                             document.newPage();
-                        } 
+                        }
                         fout.flush();
                         fout.close();
-                        
-                        
+
                     }
                 }
-                //we need to add the last row
-                if(i % numberOfLabelPerRow != 0){
-                    //we go the next line
-                    
+                // we need to add the last row
+                if (i % numberOfLabelPerRow != 0) {
+                    // we go the next line
+
                     int needed = fixTableRowSize - numberOfLabelPerRow;
-                    int remaining = numberOfLabelPerRow - ( i % numberOfLabelPerRow);
-                    for(int neededCount = 0 ; neededCount < remaining ; neededCount++){
-                        PdfPCell cellNeeded = new PdfPCell(); 
-                        
-                        cellNeeded.setBorder(Rectangle.NO_BORDER);                         
+                    int remaining = numberOfLabelPerRow - (i % numberOfLabelPerRow);
+                    for (int neededCount = 0; neededCount < remaining; neededCount++) {
+                        PdfPCell cellNeeded = new PdfPCell();
+
+                        cellNeeded.setBorder(Rectangle.NO_BORDER);
                         cellNeeded.setBackgroundColor(Color.white);
-                        
+
                         table.addCell(cellNeeded);
                     }
-                    
+
                     table.completeRow();
-                    if(numberofRowsPerPageOfLabel == 10){
-                        
-                       table.setSpacingAfter(9f);
+                    if (numberofRowsPerPageOfLabel == 10) {
+
+                        table.setSpacingAfter(9f);
                     }
-                    
+
                     document.add(table);
-                    
-                    
-                    
-                    table = new PdfPTable(fixTableRowSize);                              
+
+                    table = new PdfPTable(fixTableRowSize);
                     table.setWidths(widthColumns);
                     table.setWidthPercentage(100);
-                    
+
                 }
-                
+
                 document.close();
-                for(File file : filesToBeDeleted){
+                for (File file : filesToBeDeleted) {
                     file.delete();
                 }
                 fileOutputStream.close();
 
-            }catch (FileNotFoundException e) {
+            } catch (FileNotFoundException e) {
                 LOG.error(e.getMessage(), e);
             } catch (IOException e) {
                 LOG.error(e.getMessage(), e);
             }
-                       
-            
+
         } catch (WriterException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } 
+            LOG.error(e.getMessage(), e);
+        }
         return fileName;
     }
     
-    private String generateBarcodeField(Map<String,String> moreFieldInfo, FieldMapLabel fieldMapLabel, String firstField, String secondField, String thirdField, String barcodeNeeded){
+    /**
+     * Generate barcode field.
+     *
+     * @param moreFieldInfo the more field info
+     * @param fieldMapLabel the field map label
+     * @param firstField the first field
+     * @param secondField the second field
+     * @param thirdField the third field
+     * @param barcodeNeeded the barcode needed
+     * @return the string
+     */
+    private String generateBarcodeField(Map<String,String> moreFieldInfo
+            , FieldMapLabel fieldMapLabel, String firstField, String secondField
+            , String thirdField, String barcodeNeeded){
         StringBuffer buffer = new StringBuffer();
         List<String> fieldList = new ArrayList<String>();
         fieldList.add(firstField);
@@ -414,9 +422,9 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         fieldList.add(thirdField);
         
         for(String barcodeLabel : fieldList){
-            if(barcodeLabel.equalsIgnoreCase(""))
+            if(barcodeLabel.equalsIgnoreCase("")){
                 continue;
-            
+            }
             if(!buffer.toString().equalsIgnoreCase("")){
                 buffer.append(delimiter);
             }
@@ -424,6 +432,16 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         }
         return buffer.toString();
     }
+    
+    /**
+     * Generate barcode label.
+     *
+     * @param moreFieldInfo the more field info
+     * @param fieldMapLabel the field map label
+     * @param selectedFields the selected fields
+     * @param rowNumber the row number
+     * @return the string
+     */
     private String generateBarcodeLabel(Map<String,String> moreFieldInfo, 
             FieldMapLabel fieldMapLabel, String selectedFields, int rowNumber){
         StringBuffer buffer = new StringBuffer();
@@ -444,6 +462,13 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         }
         return buffer.toString();
     }
+    
+    /**
+     * Gets the header.
+     *
+     * @param headerId the header id
+     * @return the header
+     */
     private String getHeader(String headerId){
         Locale locale = LocaleContextHolder.getLocale();
 
@@ -451,55 +476,79 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         switch(Integer.parseInt(headerId)){           
             
             case AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM:
-                buffer.append(messageSource.getMessage("label.printing.available.fields.entry.num", null, locale));                 
+                buffer.append(messageSource.getMessage(
+                        "label.printing.available.fields.entry.num", null, locale));                 
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_GID: 
-                buffer.append(messageSource.getMessage("label.printing.available.fields.gid", null, locale));
+                buffer.append(messageSource.getMessage(
+                        "label.printing.available.fields.gid", null, locale));
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME: 
-                buffer.append(messageSource.getMessage("label.printing.available.fields.germplasm.name", null, locale));
+                buffer.append(messageSource.getMessage(
+                        "label.printing.available.fields.germplasm.name", null, locale));
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_YEAR: 
-                buffer.append(messageSource.getMessage("label.printing.available.fields.year", null, locale));
+                buffer.append(messageSource.getMessage(
+                        "label.printing.available.fields.year", null, locale));
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_SEASON: 
-                buffer.append(messageSource.getMessage("label.printing.available.fields.season", null, locale));
+                buffer.append(messageSource.getMessage(
+                        "label.printing.available.fields.season", null, locale));
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME: 
-                buffer.append(messageSource.getMessage("label.printing.available.fields.nursery.name", null, locale));
+                buffer.append(messageSource.getMessage(
+                        "label.printing.available.fields.nursery.name", null, locale));
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME: 
-                buffer.append(messageSource.getMessage("label.printing.available.fields.trial.name", null, locale));
+                buffer.append(messageSource.getMessage(
+                        "label.printing.available.fields.trial.name", null, locale));
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM: 
-                buffer.append(messageSource.getMessage("label.printing.available.fields.trial.instance.num", null, locale));
+                buffer.append(messageSource.getMessage(
+                        "label.printing.available.fields.trial.instance.num", null, locale));
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_REP: 
-                buffer.append(messageSource.getMessage("label.printing.available.fields.rep", null, locale));
+                buffer.append(messageSource.getMessage(
+                        "label.printing.available.fields.rep", null, locale));
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION: 
-                buffer.append(messageSource.getMessage("label.printing.available.fields.location", null, locale));
+                buffer.append(messageSource.getMessage(
+                        "label.printing.available.fields.location", null, locale));
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME: 
-                buffer.append(messageSource.getMessage("label.printing.available.fields.block.name", null, locale));
+                buffer.append(messageSource.getMessage(
+                        "label.printing.available.fields.block.name", null, locale));
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_PLOT: 
-                buffer.append(messageSource.getMessage("label.printing.available.fields.plot", null, locale));
+                buffer.append(messageSource.getMessage(
+                        "label.printing.available.fields.plot", null, locale));
                 break;
                 
             case AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE: 
-                buffer.append(messageSource.getMessage("label.printing.available.fields.parentage", null, locale));
+                buffer.append(messageSource.getMessage(
+                        "label.printing.available.fields.parentage", null, locale));
                 break;
                 
             case AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES: 
-                buffer.append(messageSource.getMessage("label.printing.available.fields.plot.coordinates", null, locale));
+                buffer.append(messageSource.getMessage(
+                        "label.printing.available.fields.plot.coordinates", null, locale));
                 break;
            
             default: break;    
         }
         return buffer.toString();
     }
-    private String getSpecificInfo(Map<String,String> moreFieldInfo, FieldMapLabel fieldMapLabel, String barcodeLabel){
+    
+    /**
+     * Gets the specific info.
+     *
+     * @param moreFieldInfo the more field info
+     * @param fieldMapLabel the field map label
+     * @param barcodeLabel the barcode label
+     * @return the specific info
+     */
+    private String getSpecificInfo(
+            Map<String,String> moreFieldInfo, FieldMapLabel fieldMapLabel, String barcodeLabel){
         StringBuffer buffer = new StringBuffer();
         switch(Integer.parseInt(barcodeLabel)){
             
@@ -508,7 +557,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 buffer.append(fieldMapLabel.getEntryNumber());
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_GID: 
-                String gidTemp = fieldMapLabel.getGid() == null ? "" : fieldMapLabel.getGid().toString();
+                String gidTemp = fieldMapLabel.getGid() == null 
+                                ? "" : fieldMapLabel.getGid().toString();
                 buffer.append(gidTemp);
                 break;
             case AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME: 
@@ -567,7 +617,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
             throws MiddlewareQueryException {
         int pageSizeId = Integer.parseInt(userLabelPrinting.getSizeOfLabelSheet());
         int numberOfLabelPerRow = Integer.parseInt(userLabelPrinting.getNumberOfLabelPerRow());
-        int numberofRowsPerPageOfLabel = Integer.parseInt(userLabelPrinting.getNumberOfRowsPerPageOfLabel());
+        int numberofRowsPerPageOfLabel = 
+                Integer.parseInt(userLabelPrinting.getNumberOfRowsPerPageOfLabel());
         int totalPerPage = numberOfLabelPerRow * numberofRowsPerPageOfLabel;
         String leftSelectedFields = userLabelPrinting.getLeftSelectedLabelFields();
         String rightSelectedFields = userLabelPrinting.getRightSelectedLabelFields();
@@ -650,19 +701,20 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                     //we populate the info now
                     int i = 0;
                     for(StudyTrialInstanceInfo trialInstance : trialInstances){
-                        FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = trialInstance.getTrialInstance();
+                        FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = 
+                                trialInstance.getTrialInstance();
                         
                         Map<String,String> moreFieldInfo = new HashMap<String, String>();
                         moreFieldInfo.put("locationName", fieldMapTrialInstanceInfo.getLocationName());
                         moreFieldInfo.put("blockName", fieldMapTrialInstanceInfo.getBlockName());
                         moreFieldInfo.put("selectedName", trialInstance.getFieldbookName());
-                        moreFieldInfo.put("trialInstanceNumber", fieldMapTrialInstanceInfo.getTrialInstanceNo());
+                        moreFieldInfo.put("trialInstanceNumber", 
+                                fieldMapTrialInstanceInfo.getTrialInstanceNo());
                         
                         for(FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()){
                             row = labelPrintingSheet.createRow(rowIndex++);    
                             columnIndex = 0;
                             i++;
-                            
                             
                             token = new StringTokenizer(leftSelectedFields, ",");
                             while(token.hasMoreTokens()){
@@ -698,8 +750,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
       
             
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         } 
         return fileName;
     }

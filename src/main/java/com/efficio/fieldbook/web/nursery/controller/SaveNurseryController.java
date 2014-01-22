@@ -189,11 +189,13 @@ public class SaveNurseryController extends AbstractBaseFieldbookController{
         }
         if (StringUtils.isBlank(nurseryBookName)) {
             requiredFields = requiredFields == null ? new StringBuilder() : requiredFields.append(", ");
-            requiredFields.append(messageSource.getMessage("nursery.savenursery.nurseryBookName", null, locale));
+            requiredFields.append(messageSource.getMessage("nursery.savenursery.nurseryBookName"
+                    , null, locale));
         }
         if (requiredFields != null) {
             errorMessages = errorMessages == null ? new StringBuilder() : errorMessages.append("<br />");
-            errorMessages.append(messageSource.getMessage("error.mandatory.field", new String[] {requiredFields.toString()}, locale));
+            errorMessages.append(messageSource.getMessage("error.mandatory.field"
+                    , new String[] {requiredFields.toString()}, locale));
         }
         
         return errorMessages != null ? errorMessages.toString() : null;
@@ -207,7 +209,8 @@ public class SaveNurseryController extends AbstractBaseFieldbookController{
      * @param nurseryBookName the nursery book name
      * @param workbook the workbook
      */
-    public void setStudyDetails(String title, String objective, String nurseryBookName, Workbook workbook) {
+    public void setStudyDetails(String title, String objective
+            , String nurseryBookName, Workbook workbook) {
         if (workbook.getStudyDetails() == null) {
             workbook.setStudyDetails(new StudyDetails());
         }

@@ -8,14 +8,11 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface FieldPlotLayoutIterator.
  */
 public interface FieldPlotLayoutIterator {
 	
-	
-    
     /**
      * Creates the field map.
      *
@@ -29,7 +26,8 @@ public interface FieldPlotLayoutIterator {
      * @param isTrial the is trial
      * @return the plot[][]
      */
-    Plot[][] createFieldMap(int col, int range, int startRange, int startCol, boolean isSerpentine, Map deletedPlot, List<FieldMapLabel> labels, boolean isTrial);
+    Plot[][] createFieldMap(int col, int range, int startRange, int startCol, 
+            boolean isSerpentine, Map deletedPlot, List<FieldMapLabel> labels, boolean isTrial);
     
     /**
      * Sets the other field map information.
@@ -42,6 +40,7 @@ public interface FieldPlotLayoutIterator {
      * @param totalRanges the total ranges
      * @param isSerpentine the is serpentine
      */
-    void setOtherFieldMapInformation(UserFieldmap info, Plot[][] plots, int totalColumns, int totalRanges, boolean isSerpentine);
+    void setOtherFieldMapInformation(UserFieldmap info, Plot[][] plots, int totalColumns, 
+            int totalRanges, boolean isSerpentine);
     
 }

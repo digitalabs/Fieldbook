@@ -15,11 +15,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.demo.form.BarCodeForm;
 import com.efficio.fieldbook.web.demo.bean.UserSelection;
-import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +48,6 @@ import com.lowagie.text.Element;
 import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Phrase;
-import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
@@ -117,8 +114,6 @@ public class BarCodeController extends AbstractBaseFieldbookController{
              String imageLocation = Math.random() +".png"; //"src/test/resources/barcode/zxing_barcode.png";
              MatrixToImageWriter.writeToStream(bitMatrix, "png", new FileOutputStream(new File(imageLocation)));
              
-             
-          
              String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
              String fileName = currentDate + ".doc";
 
@@ -149,8 +144,6 @@ public class BarCodeController extends AbstractBaseFieldbookController{
                          Image.getInstance(String.format(RESOURCE, "0376994")),
                          Image.getInstance(String.format(RESOURCE, "0348150"))
                  };*/
-               
-                 
                  
                  PdfPTable table = new PdfPTable(4);
                  table.setWidthPercentage(100);
@@ -211,18 +204,14 @@ public class BarCodeController extends AbstractBaseFieldbookController{
              return "";
              
          } catch (WriterException e) {
-             // TODO Auto-generated catch block
-             e.printStackTrace();
+             LOG.error(e.getMessage(), e);
          } catch (Exception e) {
-             // TODO Auto-generated catch block
-             e.printStackTrace();
+             LOG.error(e.getMessage(), e);
          } 
 
          return show(barCodeForm, model);
     }
-    
-  
-    
+      
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
      */

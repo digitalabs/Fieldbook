@@ -19,7 +19,6 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 
-
 /**
  * The Class UserLabelPrinting.
  *
@@ -96,9 +95,6 @@ public class UserLabelPrinting implements Serializable{
     /** The filename dl location. */
     private String filenameDLLocation;
     
-    
-    
-    
     /**
      * Gets the field map info.
      *
@@ -107,8 +103,6 @@ public class UserLabelPrinting implements Serializable{
     public FieldMapInfo getFieldMapInfo() {
         return fieldMapInfo;
     }
-
-
     
     /**
      * Gets the filename dl.
@@ -119,8 +113,6 @@ public class UserLabelPrinting implements Serializable{
 		return filenameDL;
 	}
 
-
-
 	/**
 	 * Sets the filename dl.
 	 *
@@ -129,8 +121,6 @@ public class UserLabelPrinting implements Serializable{
 	public void setFilenameDL(String filenameDL) {
 		this.filenameDL = filenameDL;
 	}
-
-
 
 	/**
 	 * Gets the filename dl location.
@@ -141,8 +131,6 @@ public class UserLabelPrinting implements Serializable{
 		return filenameDLLocation;
 	}
 
-
-
 	/**
 	 * Sets the filename dl location.
 	 *
@@ -151,8 +139,6 @@ public class UserLabelPrinting implements Serializable{
 	public void setFilenameDLLocation(String filenameDLLocation) {
 		this.filenameDLLocation = filenameDLLocation;
 	}
-
-
 
 	/**
 	 * Sets the field map info.
@@ -175,8 +161,7 @@ public class UserLabelPrinting implements Serializable{
                     
                 }
             }
-            this.totalNumberOfLabelToPrint = Integer.toString(totalLabels);
-            
+            this.totalNumberOfLabelToPrint = Integer.toString(totalLabels);            
         }
     }
 
@@ -188,8 +173,6 @@ public class UserLabelPrinting implements Serializable{
     public List<FieldMapInfo> getFieldMapInfoList() {
         return fieldMapInfoList;
     }
-
-
     
     /**
      * Sets the field map info list.
@@ -219,9 +202,6 @@ public class UserLabelPrinting implements Serializable{
     public String getGenerateType() {
         return generateType;
     }
-
-
-
     
     /**
      * Sets the generate type.
@@ -232,8 +212,6 @@ public class UserLabelPrinting implements Serializable{
         this.generateType = generateType;
     }
 
-
-
     /**
      * Gets the filename.
      *
@@ -242,9 +220,6 @@ public class UserLabelPrinting implements Serializable{
     public String getFilename() {
         return filename;
     }
-
-
-
     
     /**
      * Sets the filename.
@@ -255,8 +230,6 @@ public class UserLabelPrinting implements Serializable{
         this.filename = filename;
     }
 
-
-
     /**
      * Gets the study.
      *
@@ -265,7 +238,6 @@ public class UserLabelPrinting implements Serializable{
     public Study getStudy() {
         return study;
     }
-
 
     /**
      * Sets the study.
@@ -279,9 +251,6 @@ public class UserLabelPrinting implements Serializable{
         this.objective = study.getObjective();
     }
 
-
-
-
     /**
      * Gets the first barcode field.
      *
@@ -290,9 +259,6 @@ public class UserLabelPrinting implements Serializable{
     public String getFirstBarcodeField() {
         return firstBarcodeField;
     }
-
-
-
     
     /**
      * Sets the first barcode field.
@@ -302,9 +268,6 @@ public class UserLabelPrinting implements Serializable{
     public void setFirstBarcodeField(String firstBarcodeField) {
         this.firstBarcodeField = firstBarcodeField;
     }
-
-
-
     
     /**
      * Gets the second barcode field.
@@ -314,9 +277,6 @@ public class UserLabelPrinting implements Serializable{
     public String getSecondBarcodeField() {
         return secondBarcodeField;
     }
-
-
-
     
     /**
      * Sets the second barcode field.
@@ -326,9 +286,6 @@ public class UserLabelPrinting implements Serializable{
     public void setSecondBarcodeField(String secondBarcodeField) {
         this.secondBarcodeField = secondBarcodeField;
     }
-
-
-
     
     /**
      * Gets the third barcode field.
@@ -338,9 +295,6 @@ public class UserLabelPrinting implements Serializable{
     public String getThirdBarcodeField() {
         return thirdBarcodeField;
     }
-
-
-
     
     /**
      * Sets the third barcode field.
@@ -350,8 +304,6 @@ public class UserLabelPrinting implements Serializable{
     public void setThirdBarcodeField(String thirdBarcodeField) {
         this.thirdBarcodeField = thirdBarcodeField;
     }
-
-
     
     /**
      * Gets the left selected label fields.
@@ -361,9 +313,6 @@ public class UserLabelPrinting implements Serializable{
     public String getLeftSelectedLabelFields() {
         return leftSelectedLabelFields;
     }
-
-
-
     
     /**
      * Sets the left selected label fields.
@@ -373,9 +322,6 @@ public class UserLabelPrinting implements Serializable{
     public void setLeftSelectedLabelFields(String leftSelectedLabelFields) {
         this.leftSelectedLabelFields = leftSelectedLabelFields;
     }
-
-
-
     
     /**
      * Gets the right selected label fields.
@@ -385,9 +331,6 @@ public class UserLabelPrinting implements Serializable{
     public String getRightSelectedLabelFields() {
         return rightSelectedLabelFields;
     }
-
-
-
     
     /**
      * Sets the right selected label fields.
@@ -398,8 +341,6 @@ public class UserLabelPrinting implements Serializable{
         this.rightSelectedLabelFields = rightSelectedLabelFields;
     }
 
-
-
     /**
      * Gets the barcode needed.
      *
@@ -408,7 +349,6 @@ public class UserLabelPrinting implements Serializable{
     public String getBarcodeNeeded() {
         return barcodeNeeded;
     }
-
     
     /**
      * Sets the barcode needed.

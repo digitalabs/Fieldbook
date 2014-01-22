@@ -14,23 +14,12 @@ package com.efficio.fieldbook.web.demo.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.demo.bean.TestJavaBean;
-import com.efficio.fieldbook.web.demo.form.Test2JavaForm;
-import com.efficio.fieldbook.web.demo.validation.TestValidator;
-import com.efficio.fieldbook.web.demo.bean.UserSelection;
 import com.efficio.pojos.histogram.HistogramNode;
 
-import org.generationcp.middleware.domain.oms.Scale;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.manager.api.GermplasmDataManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -43,10 +32,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping({"/histogram"})
 public class HistogramController extends AbstractBaseFieldbookController{
-
-    private static final Logger LOG = LoggerFactory.getLogger(HistogramController.class);
-    
-    
 
     /**
      * Show the form
@@ -82,8 +67,6 @@ public class HistogramController extends AbstractBaseFieldbookController{
         return histogramNodes;
     }
 
-    
-
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
      */
@@ -91,6 +74,5 @@ public class HistogramController extends AbstractBaseFieldbookController{
     public String getContentName() {
         return "demo/histogram";
     }
-   
     
 }

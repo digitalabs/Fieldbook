@@ -44,7 +44,8 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 				&& userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList() != null
 				&& userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms() != null 
 				&& userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().size() > 0) {
-			germplasms = userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
+			germplasms = userSelection.getImportedGermplasmMainInfo()
+			        .getImportedGermplasmList().getImportedGermplasms();
 		}
 				
 		int count = germplasms != null ? germplasms.size() : 20;

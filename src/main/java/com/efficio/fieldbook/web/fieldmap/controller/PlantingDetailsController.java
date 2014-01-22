@@ -11,16 +11,9 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.fieldmap.controller;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -29,11 +22,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.efficio.fieldbook.service.api.FieldMapService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
-import com.efficio.fieldbook.web.nursery.controller.ManageNurseriesController;
-
 
 /**
  * The Class PlantingDetailsController.
@@ -42,20 +32,15 @@ import com.efficio.fieldbook.web.nursery.controller.ManageNurseriesController;
 @RequestMapping({PlantingDetailsController.URL})
 public class PlantingDetailsController extends AbstractBaseFieldbookController{
  
- /** The Constant LOG. */
- private static final Logger LOG = LoggerFactory.getLogger(ManageNurseriesController.class);
-    
     /** The Constant URL. */
     public static final String URL = "/Fieldmap/plantingDetails";
 
-    
     /** The user selection. */
     @Resource
     private UserFieldmap userFieldmap;
     
     @Resource
     private FieldMapService fieldmapService;
-    
    
     /**
      * Show.
@@ -82,8 +67,6 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
         form.setUserFieldmap(info);
     }
     
-    
-    
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
      */
@@ -91,7 +74,6 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
     public String getContentName() {
         return "Fieldmap/enterPlantingDetails";
     }
-    
     
     /**
      * Gets the user fieldmap.

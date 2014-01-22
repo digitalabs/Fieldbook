@@ -71,8 +71,6 @@ public class ImportedGermplasmMainInfo implements Serializable {
     /** The is advance import type. */
     private boolean isAdvanceImportType;
     
-    
-
 	/**
 	 * Checks if is advance import type.
 	 *
@@ -324,7 +322,5 @@ public class ImportedGermplasmMainInfo implements Serializable {
 	public void setServerFilename(String serverFilename) {
 		this.serverFilename = serverFilename;
 	}
-    
-    
     
 }

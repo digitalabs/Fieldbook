@@ -28,9 +28,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
-import com.efficio.fieldbook.web.nursery.form.ManageNurseriesForm;
 import com.efficio.fieldbook.web.trial.form.ManageTrialForm;
-
 
 /**
  * The Class FieldmapControllerTest.
@@ -62,7 +60,8 @@ public class FieldmapControllerTest extends AbstractJUnit4SpringContextTests {
 	    ManageTrialForm form = new ManageTrialForm();
 	    
 	    try {    
-            List<StudyDetails> nurseryDetailsList = fieldbookMiddlewareService.getAllLocalTrialStudyDetails();
+            List<StudyDetails> nurseryDetailsList = fieldbookMiddlewareService
+                                            .getAllLocalTrialStudyDetails();
             form.setTrialDetailsList(nurseryDetailsList);
 	    } catch (MiddlewareQueryException e) {
 	        LOG.error(e.getMessage(), e);
@@ -76,9 +75,11 @@ public class FieldmapControllerTest extends AbstractJUnit4SpringContextTests {
                 }
             }
 
-            if (form.getPaginatedTrialDetailsList().size() > 10 && form.getPaginatedTrialDetailsList().size() <= 20) {
+            if (form.getPaginatedTrialDetailsList().size() > 10 
+                    && form.getPaginatedTrialDetailsList().size() <= 20) {
                 form.setCurrentPage(2);
-                assertEquals(form.getPaginatedTrialDetailsList().size(), form.getTrialDetailsList().size() - 10);
+                assertEquals(form.getPaginatedTrialDetailsList().size(), 
+                        form.getTrialDetailsList().size() - 10);
             }
 	    }
 	}

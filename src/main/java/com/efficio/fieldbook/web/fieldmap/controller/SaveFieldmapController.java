@@ -12,12 +12,10 @@
 package com.efficio.fieldbook.web.fieldmap.controller;
 
 import java.util.UUID;
-
 import javax.annotation.Resource;
 
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
-import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -35,7 +33,6 @@ import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 import com.efficio.fieldbook.web.label.printing.controller.LabelPrintingController;
 import com.efficio.fieldbook.web.nursery.controller.ManageNurseriesController;
 import com.efficio.fieldbook.web.trial.controller.ManageTrialController;
-
 
 /**
  * The Class SaveFieldmapController.
@@ -80,10 +77,12 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController{
     public String saveFieldMap(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model) {
         
         try {
-            if (userFieldmap != null && userFieldmap.getSelectedFieldMaps() != null && !userFieldmap.getSelectedFieldMaps().isEmpty()) {
+            if (userFieldmap != null && userFieldmap.getSelectedFieldMaps() != null 
+                    && !userFieldmap.getSelectedFieldMaps().isEmpty()) {
                 String fieldmapUUID = UUID.randomUUID().toString();
                 updateSelectedFieldMapInfo(fieldmapUUID);
-                fieldbookMiddlewareService.saveOrUpdateFieldmapProperties(this.userFieldmap.getSelectedFieldMaps(), fieldmapUUID);
+                fieldbookMiddlewareService.saveOrUpdateFieldmapProperties(
+                        this.userFieldmap.getSelectedFieldMaps(), fieldmapUUID);
             }
             
         } catch(MiddlewareQueryException e) {

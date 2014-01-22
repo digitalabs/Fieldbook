@@ -13,7 +13,6 @@ package com.efficio.fieldbook.web.label.printing.form;
 
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class LabelPrintingForm.
  */
@@ -24,8 +23,6 @@ public class LabelPrintingForm{
     
     /** The user label printing. */
     private UserLabelPrinting userLabelPrinting;
-        
-    
     
     /**
      * Gets the user label printing.
@@ -35,7 +32,6 @@ public class LabelPrintingForm{
     public UserLabelPrinting getUserLabelPrinting() {
         return userLabelPrinting;
     }
-
     
     /**
      * Sets the user label printing.

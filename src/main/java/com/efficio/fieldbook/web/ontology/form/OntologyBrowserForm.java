@@ -15,8 +15,6 @@ import java.util.List;
 
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 
-
-// TODO: Auto-generated Javadoc
 /**
  * The Class OntologyBrowserForm.
  *

@@ -20,7 +20,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 
 /**
- * This bean models the various input that the user builds up over time to perform the actual loading operation
+ * This bean models the various input that the user builds up over time to perform the actual loading operation.
  */
 public class TrialSelection implements Serializable {
     
@@ -47,8 +47,7 @@ public class TrialSelection implements Serializable {
     
     /** The study details list.*/
     private List<StudyDetails> studyDetailsList;
-    
-    
+   
     /**
      * Checks if is import valid.
      *
@@ -158,10 +157,20 @@ public class TrialSelection implements Serializable {
         this.fieldLayoutRandom = fieldLayoutRandom;
     }
     
+    /**
+     * Gets the study details list.
+     *
+     * @return the study details list
+     */
     public List<StudyDetails> getStudyDetailsList(){
         return studyDetailsList;
     }
 
+    /**
+     * Sets the study details list.
+     *
+     * @param studyDetailsList the new study details list
+     */
     public void setStudyDetailsList(List<StudyDetails> studyDetailsList) {
         this.studyDetailsList = studyDetailsList;
     }

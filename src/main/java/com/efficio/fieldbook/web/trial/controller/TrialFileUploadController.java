@@ -41,7 +41,6 @@ import javax.servlet.http.HttpSession;
 @Controller
 @RequestMapping(TrialFileUploadController.URL)
 public class TrialFileUploadController extends AbstractBaseFieldbookController{
-
     
     private static final Logger LOG = LoggerFactory.getLogger(TrialFileUploadController.class);
     
@@ -74,29 +73,29 @@ public class TrialFileUploadController extends AbstractBaseFieldbookController{
      * @return the string
      */
     @RequestMapping(method = RequestMethod.GET)
-    public String show(@ModelAttribute("fileUploadForm") FileUploadForm uploadForm, Model model, HttpSession session) {
+    public String show(@ModelAttribute("fileUploadForm") FileUploadForm uploadForm
+            , Model model, HttpSession session) {
     	session.invalidate();
     	
     	try {
     	    ToolUtil toolUtil = new ToolUtil();
     	    toolUtil.launchNativeTool(this.getOldFieldbookPath(), "--ibpApplication=IBFieldbookTools");
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
     	
     	return super.show(model);
     }
     
     @RequestMapping(value="/newTrial", method = RequestMethod.GET)
-    public String openTrial(@ModelAttribute("fileUploadForm") FileUploadForm uploadForm, Model model, HttpSession session) {
+    public String openTrial(@ModelAttribute("fileUploadForm") FileUploadForm uploadForm
+            , Model model, HttpSession session) {
        
         try {
             ToolUtil toolUtil = new ToolUtil();
             toolUtil.launchNativeTool(this.getOldFieldbookPath(), "--ibpApplication=IBFieldbookTools");
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
         
         return super.show(model);
@@ -112,7 +111,8 @@ public class TrialFileUploadController extends AbstractBaseFieldbookController{
      * @return the string
      */
     @RequestMapping(method = RequestMethod.POST)
-    public String uploadFile(@ModelAttribute("fileUploadForm") FileUploadForm uploadForm, BindingResult result, Model model, HttpSession session) {
+    public String uploadFile(@ModelAttribute("fileUploadForm") FileUploadForm uploadForm
+            , BindingResult result, Model model, HttpSession session) {
     	FileUploadFormValidator validator = new FileUploadFormValidator();
         validator.validate(uploadForm, result);
 
@@ -125,7 +125,8 @@ public class TrialFileUploadController extends AbstractBaseFieldbookController{
 
 
             try {
-            	String tempFileName = fieldbookService.storeUserWorkbook(uploadForm.getFile().getInputStream());
+            	String tempFileName = fieldbookService.storeUserWorkbook(
+            	        uploadForm.getFile().getInputStream());
             	trialSelection.setServerFileName(tempFileName);
             	trialSelection.setActualFileName(uploadForm.getFile().getOriginalFilename());
                 /*
@@ -173,17 +174,13 @@ public class TrialFileUploadController extends AbstractBaseFieldbookController{
     public void setFieldbookService(FieldbookService fieldbookService) {
         this.fieldbookService = fieldbookService;
     }
-
     
     public TrialSelection getTrialSelection() {
         return trialSelection;
     }
-
     
     public void setTrialSelection(TrialSelection trialSelection) {
         this.trialSelection = trialSelection;
     }
 
-    
-    
 }

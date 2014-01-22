@@ -68,7 +68,8 @@ public class Test3Controller extends AbstractBaseFieldbookController{
      * @return the string
      */
     @RequestMapping(method = RequestMethod.POST)
-    public String uploadFile(@ModelAttribute("test3Form") Test3JavaForm uploadForm, BindingResult result, Model model) {
+    public String uploadFile(@ModelAttribute("test3Form") Test3JavaForm uploadForm, 
+            BindingResult result, Model model) {
         TestFileUploadFormValidator validator = new TestFileUploadFormValidator();
         validator.validate(uploadForm, result);
 
@@ -80,7 +81,8 @@ public class Test3Controller extends AbstractBaseFieldbookController{
         } else {
 
             try {
-                String tempFileName = fieldbookService.storeUserWorkbook(uploadForm.getFile().getInputStream());
+                String tempFileName = fieldbookService.storeUserWorkbook(
+                        uploadForm.getFile().getInputStream());
                 uploadForm.setFileName(tempFileName);
             } catch (IOException e) {
                 LOG.error(e.getMessage(), e);

@@ -11,24 +11,18 @@
  *******************************************************************************/
 package com.efficio.fieldbook.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
 
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
-import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.service.api.FieldMapService;
 import com.efficio.fieldbook.service.api.FieldPlotLayoutIterator;
 import com.efficio.fieldbook.util.FieldMapUtilityHelper;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
-import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 
 /**
@@ -36,18 +30,14 @@ import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
  */
 @Service
 public class FieldMapServiceImpl implements FieldMapService{
-    
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(FieldMapServiceImpl.class);
-    
-  
-     
+         
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.service.api.FieldMapService#createDummyData(int, int, int, int, boolean, java.util.Map)
      */
     @Override
     public Plot[][] createDummyData(int col, int range, int startRange, int startCol, 
-    		boolean isSerpentine, Map deletedPlot, List<FieldMapLabel> fieldMapLabels, FieldPlotLayoutIterator plotLayouIterator) {
+    		boolean isSerpentine, Map deletedPlot, List<FieldMapLabel> fieldMapLabels, 
+    		FieldPlotLayoutIterator plotLayouIterator) {
         startRange--;
         startCol--;
         /*
@@ -58,9 +48,11 @@ public class FieldMapServiceImpl implements FieldMapService{
             labels.add(label);
         }
         */
-        //Plot[][] plots = createFieldMap(col, range, startRange, startCol, isSerpentine, deletedPlot, labels, true);
+        //Plot[][] plots = createFieldMap(col, range, startRange, startCol
+        //                  , isSerpentine, deletedPlot, labels, true);
         //for testing only
-        Plot[][] plots = plotLayouIterator.createFieldMap(col, range, startRange, startCol, isSerpentine, deletedPlot, fieldMapLabels, true);
+        Plot[][] plots = plotLayouIterator.createFieldMap(col, range
+                , startRange, startCol, isSerpentine, deletedPlot, fieldMapLabels, true);
         //setOtherFieldMapInformation(info, plots, totalColumns, totalRanges, isSerpentine);
         return plots;
     }
@@ -72,7 +64,8 @@ public class FieldMapServiceImpl implements FieldMapService{
      * @see com.efficio.fieldbook.service.api.FieldMapService#generateFieldmap(com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap)
      */
     @Override
-    public Plot[][] generateFieldmap(UserFieldmap info, FieldPlotLayoutIterator plotIterator) throws MiddlewareQueryException {
+    public Plot[][] generateFieldmap(UserFieldmap info, FieldPlotLayoutIterator plotIterator) 
+            throws MiddlewareQueryException {
         
         int totalColumns = info.getNumberOfColumnsInBlock();
         int totalRanges = info.getNumberOfRangesInBlock();
@@ -97,7 +90,8 @@ public class FieldMapServiceImpl implements FieldMapService{
                     plot.setNotStarted(false);
                 }
                 else {
-                    throw new MiddlewareQueryException("The Column/Range of the Field Map exceeded the Total Columns/Ranges");
+                    throw new MiddlewareQueryException(
+                            "The Column/Range of the Field Map exceeded the Total Columns/Ranges");
                 }
             }
         }

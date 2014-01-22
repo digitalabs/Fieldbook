@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2013, All Rights Reserved.
+ * 
+ * Generation Challenge Programme (GCP)
+ * 
+ * 
+ * This software is licensed for use under the terms of the GNU General Public
+ * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
+ * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ * 
+ *******************************************************************************/
 package com.efficio.fieldbook.util;
 
 import java.util.List;
@@ -43,8 +54,9 @@ public class FieldMapUtilityHelper {
      * @param isTrial the is trial
      * @return the int
      */
-    public static int populatePlotData(int counter, List<FieldMapLabel> labels, int col, int range, Plot[][] plots,
-            boolean isUpward, int startCol, int startRange, boolean isStartOk, Map deletedPlot, boolean isTrial){
+    public static int populatePlotData(int counter, List<FieldMapLabel> labels, 
+            int col, int range, Plot[][] plots, boolean isUpward, int startCol, 
+            int startRange, boolean isStartOk, Map deletedPlot, boolean isTrial){
 
         String stringToDisplay = "";
         int i = col;
@@ -65,8 +77,8 @@ public class FieldMapUtilityHelper {
                     //meaning we can plant already and move to the next plant
                     plots[i][j].setDisplayString(stringToDisplay);
                     //plots[i][j].setExperimentId(labels.get(counter).getExperimentId());
-                    labels.get(counter).setColumn(i+1);
-                    labels.get(counter).setRange(j+1);
+                    labels.get(counter).setColumn(i + 1);
+                    labels.get(counter).setRange(j + 1);
                     
                     plots[i][j].setNoMoreEntries(false);
                     counter++;
@@ -110,7 +122,7 @@ public class FieldMapUtilityHelper {
     public static String getDisplayString(FieldMapLabel label, boolean isTrial) {
         StringBuilder textLabel = new StringBuilder();
         textLabel.append(label.getStudyName());
-        textLabel.append("-"+label.getPlotNo());
+        textLabel.append("-" + label.getPlotNo());
         textLabel.append(NEXT_LINE + "Entry " + label.getEntryNumber());
         if (isTrial) {
             textLabel.append(NEXT_LINE + "Rep " + label.getRep());
@@ -130,8 +142,8 @@ public class FieldMapUtilityHelper {
      * @param order the order
      * @return true, if successful
      */
-    public static boolean renderPlotCell(UserFieldmap info, Plot[][] plots, int i, int j, boolean isStarted, 
-            List<String> possiblyDeletedCoordinates, int[] order) {
+    public static boolean renderPlotCell(UserFieldmap info, Plot[][] plots, int i, int j, 
+            boolean isStarted, List<String> possiblyDeletedCoordinates, int[] order) {
         
         Plot plot = plots[i][j];
         if (plot.getDisplayString() != null && !plot.getDisplayString().isEmpty()) {

@@ -66,7 +66,8 @@ public class ImportedGermplasm implements Serializable {
      * @param source the source
      * @param entryCode the entry code
      */
-    public ImportedGermplasm(Integer entryId, String desig, String gid, String cross, String source, String entryCode){
+    public ImportedGermplasm(Integer entryId, String desig, String gid, String cross
+            , String source, String entryCode){
         this.entryId = entryId;
         this.desig = desig;
         this.gid = gid;
@@ -74,8 +75,6 @@ public class ImportedGermplasm implements Serializable {
         this.source = source;
         this.entryCode = entryCode;
     }
-    
-    
     
     /**
      * Gets the gid.

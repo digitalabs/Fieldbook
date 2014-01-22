@@ -14,11 +14,26 @@ package com.efficio.fieldbook.service.api;
 import java.util.List;
 
 /**
- * Handles errors thrown at the Middleware
+ * Handles errors thrown at the Middleware.
  */
 public interface ErrorHandlerService {
 
+    /**
+     * Gets the error messages as list.
+     *
+     * @param errorCodes the error codes
+     * @param parameters the parameters
+     * @return the error messages as list
+     */
     List<String> getErrorMessagesAsList(String errorCodes, Object[] parameters);
     
+    /**
+     * Gets the error messages as string.
+     *
+     * @param errorCodes the error codes
+     * @param parameters the parameters
+     * @param nextLine the next line
+     * @return the error messages as string
+     */
     String getErrorMessagesAsString(String errorCodes, Object[] parameters, String nextLine);
 }

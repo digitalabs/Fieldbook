@@ -15,7 +15,6 @@ import java.io.Serializable;
 
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 
-
 /**
  * The Class StudyTrialInstanceInfo.
  * 
@@ -23,6 +22,8 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
  */
 public class StudyTrialInstanceInfo implements Serializable{
     
+    private static final long serialVersionUID = 1L;
+
     /** The trial instance. */
     private FieldMapTrialInstanceInfo trialInstance;
     

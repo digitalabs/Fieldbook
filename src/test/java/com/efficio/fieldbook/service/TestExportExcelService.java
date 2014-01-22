@@ -77,28 +77,12 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
 	@Test
 	public void testExportFieldMapToExcelHorizontalSerpentine() throws Exception{
 		
-		UserFieldmap userFieldMap = new UserFieldmap();
-		//userFieldMap.setSelectedName("Field Map Name");
-		userFieldMap.setNumberOfEntries(25L);
-		userFieldMap.setNumberOfReps(3L);
-		userFieldMap.setTotalNumberOfPlots(75L);
-		userFieldMap.setLocationName("IFPRI"); 
-		userFieldMap.setFieldName("Field 1");
-		userFieldMap.setBlockName("Block 1");
-		userFieldMap.setNumberOfRowsInBlock(20);
-		userFieldMap.setNumberOfRowsPerPlot(2);
-		userFieldMap.setStartingColumn(2);
-		userFieldMap.setStartingRange(2);
-		userFieldMap.setPlantingOrder(userFieldMap.SERPENTINE);
-		userFieldMap.setNumberOfRangesInBlock(10);
-
-		Map<String, String> deletedPlot = new HashMap<String, String>(); // key = "<col>_<range>"
-		deletedPlot.put("2_2", "X");
-		deletedPlot.put("4_7", "X");
-		deletedPlot.put("6_1", "X");
-		deletedPlot.put("8_5", "X");
-		List<FieldMapLabel> fieldMapLabels = generateTestFieldMapLabels( userFieldMap.getNumberOfRangesInBlock(), userFieldMap.getNumberOfColumnsInBlock());
-		List fieldmapInfoList = new ArrayList<FieldMapInfo>();		
+	    UserFieldmap userFieldMap = createUserFieldMap();
+		Map<String, String> deletedPlot = createDeletedPlot();
+		
+		List<FieldMapLabel> fieldMapLabels = generateTestFieldMapLabels( 
+		        userFieldMap.getNumberOfRangesInBlock(), userFieldMap.getNumberOfColumnsInBlock());
+		List<FieldMapInfo> fieldmapInfoList = new ArrayList<FieldMapInfo>();		
 		fieldmapInfoList.add(new FieldMapInfo(Integer.parseInt("1"), "1", fieldMapLabels));			
 	    userFieldMap.setMachineRowCapacity(2);
 		  	    
@@ -111,8 +95,7 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
 				, deletedPlot, fieldMapLabels, new HorizontalFieldMapLayoutIterator());
 		userFieldMap.setFieldmap(plots);
 
-	    String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        String fileName = "FieldMapHorizontal" +  "_" + currentDate + ".xls";
+        String fileName = "FieldMapHorizontal" +  "_" + getCurrentDate() + ".xls";
 		exportExcelService.exportFieldMapToExcel(fileName, userFieldMap);
 		
 		assertEquals("Dummy Trial<br/>Entry null<br/>Rep 76", plots[2][9].getDisplayString());
@@ -128,28 +111,12 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
 	@Test
 	public void testExportFieldMapToExcelVerticalSerpentine() throws Exception{
 		
-		UserFieldmap userFieldMap = new UserFieldmap();
-		//userFieldMap.setSelectedName("Field Map Name");
-		userFieldMap.setNumberOfEntries(25L);
-		userFieldMap.setNumberOfReps(3L);
-		userFieldMap.setTotalNumberOfPlots(75L);
-		userFieldMap.setLocationName("IFPRI"); 
-		userFieldMap.setFieldName("Field 1");
-		userFieldMap.setBlockName("Block 1");
-		userFieldMap.setNumberOfRowsInBlock(20);
-		userFieldMap.setNumberOfRowsPerPlot(2);
-		userFieldMap.setStartingColumn(2);
-		userFieldMap.setStartingRange(2);
-		userFieldMap.setPlantingOrder(userFieldMap.SERPENTINE);
-		userFieldMap.setNumberOfRangesInBlock(10);
+        UserFieldmap userFieldMap = createUserFieldMap();
+        Map<String, String> deletedPlot = createDeletedPlot();
 
-		Map<String, String> deletedPlot = new HashMap<String, String>(); // key = "<col>_<range>"
-		deletedPlot.put("2_2", "X");
-		deletedPlot.put("4_7", "X");
-		deletedPlot.put("6_1", "X");
-		deletedPlot.put("8_5", "X");
-		List<FieldMapLabel> fieldMapLabels = generateTestFieldMapLabels( userFieldMap.getNumberOfRangesInBlock(), userFieldMap.getNumberOfColumnsInBlock());
-		List fieldmapInfoList = new ArrayList<FieldMapInfo>();		
+		List<FieldMapLabel> fieldMapLabels = generateTestFieldMapLabels( 
+		        userFieldMap.getNumberOfRangesInBlock(), userFieldMap.getNumberOfColumnsInBlock());
+		List<FieldMapInfo> fieldmapInfoList = new ArrayList<FieldMapInfo>();		
 		fieldmapInfoList.add(new FieldMapInfo(Integer.parseInt("1"), "1", fieldMapLabels));			
 	    userFieldMap.setMachineRowCapacity(2);
 		  	    
@@ -162,8 +129,7 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
 				, deletedPlot, fieldMapLabels, new VerticalFieldMapLayoutIterator());
 		userFieldMap.setFieldmap(plots);
 
-	    String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        String fileName = "FieldMapVertical" +  "_" + currentDate + ".xls";
+        String fileName = "FieldMapVertical" +  "_" + getCurrentDate() + ".xls";
 		exportExcelService.exportFieldMapToExcel(fileName, userFieldMap);
 		
 		assertEquals("Dummy Trial<br/>Entry null<br/>Rep 10", plots[2][9].getDisplayString());
@@ -179,28 +145,14 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
 	@Test
 	public void testExportFieldMapToExcelHorizontalRowColumn() throws Exception{
 		
-		UserFieldmap userFieldMap = new UserFieldmap();
-		//userFieldMap.setSelectedName("Field Map Name");
-		userFieldMap.setNumberOfEntries(25L);
-		userFieldMap.setNumberOfReps(3L);
-		userFieldMap.setTotalNumberOfPlots(75L);
-		userFieldMap.setLocationName("IFPRI"); 
-		userFieldMap.setFieldName("Field 1");
-		userFieldMap.setBlockName("Block 1");
-		userFieldMap.setNumberOfRowsInBlock(20);
-		userFieldMap.setNumberOfRowsPerPlot(2);
-		userFieldMap.setStartingColumn(2);
-		userFieldMap.setStartingRange(2);
-		userFieldMap.setPlantingOrder(userFieldMap.ROW_COLUMN);
-		userFieldMap.setNumberOfRangesInBlock(10);
+	    UserFieldmap userFieldMap = createUserFieldMap();
+        userFieldMap.setPlantingOrder(userFieldMap.ROW_COLUMN);
 
-		Map<String, String> deletedPlot = new HashMap<String, String>(); // key = "<col>_<range>"
-		deletedPlot.put("2_2", "X");
-		deletedPlot.put("4_7", "X");
-		deletedPlot.put("6_1", "X");
-		deletedPlot.put("8_5", "X");
-		List<FieldMapLabel> fieldMapLabels = generateTestFieldMapLabels( userFieldMap.getNumberOfRangesInBlock(), userFieldMap.getNumberOfColumnsInBlock());
-		List fieldmapInfoList = new ArrayList<FieldMapInfo>();		
+        Map<String, String> deletedPlot = createDeletedPlot();
+
+		List<FieldMapLabel> fieldMapLabels = generateTestFieldMapLabels( 
+		        userFieldMap.getNumberOfRangesInBlock(), userFieldMap.getNumberOfColumnsInBlock());
+		List<FieldMapInfo> fieldmapInfoList = new ArrayList<FieldMapInfo>();		
 		fieldmapInfoList.add(new FieldMapInfo(Integer.parseInt("1"), "1", fieldMapLabels));			
 	    userFieldMap.setMachineRowCapacity(2);
 		  	    
@@ -213,8 +165,7 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
 				, deletedPlot, fieldMapLabels, new HorizontalFieldMapLayoutIterator());
 		userFieldMap.setFieldmap(plots);
 
-	    String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        String fileName = "FieldMapHorizontalRowColumn" +  "_" + currentDate + ".xls";
+        String fileName = "FieldMapHorizontalRowColumn" +  "_" + getCurrentDate() + ".xls";
 		exportExcelService.exportFieldMapToExcel(fileName, userFieldMap);
 		assertEquals("Dummy Trial<br/>Entry null<br/>Rep 77", plots[2][9].getDisplayString());
 		assertEquals("Dummy Trial<br/>Entry null<br/>Rep 83", plots[8][9].getDisplayString());
@@ -228,29 +179,15 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
 	 */
 	@Test
 	public void testExportFieldMapToExcelVerticalRowColumn() throws Exception{
-		
-		UserFieldmap userFieldMap = new UserFieldmap();
-		//userFieldMap.setSelectedName("Field Map Name");
-		userFieldMap.setNumberOfEntries(25L);
-		userFieldMap.setNumberOfReps(3L);
-		userFieldMap.setTotalNumberOfPlots(75L);
-		userFieldMap.setLocationName("IFPRI"); 
-		userFieldMap.setFieldName("Field 1");
-		userFieldMap.setBlockName("Block 1");
-		userFieldMap.setNumberOfRowsInBlock(20);
-		userFieldMap.setNumberOfRowsPerPlot(2);
-		userFieldMap.setStartingColumn(2);
-		userFieldMap.setStartingRange(2);
-		userFieldMap.setPlantingOrder(userFieldMap.ROW_COLUMN);
-		userFieldMap.setNumberOfRangesInBlock(10);
 
-		Map<String, String> deletedPlot = new HashMap<String, String>(); // key = "<col>_<range>"
-		deletedPlot.put("2_2", "X");
-		deletedPlot.put("4_7", "X");
-		deletedPlot.put("6_1", "X");
-		deletedPlot.put("8_5", "X");
-		List<FieldMapLabel> fieldMapLabels = generateTestFieldMapLabels( userFieldMap.getNumberOfRangesInBlock(), userFieldMap.getNumberOfColumnsInBlock());
-		List fieldmapInfoList = new ArrayList<FieldMapInfo>();		
+		UserFieldmap userFieldMap = createUserFieldMap();
+        userFieldMap.setPlantingOrder(userFieldMap.ROW_COLUMN);
+
+        Map<String, String> deletedPlot = createDeletedPlot();
+
+		List<FieldMapLabel> fieldMapLabels = generateTestFieldMapLabels( 
+		        userFieldMap.getNumberOfRangesInBlock(), userFieldMap.getNumberOfColumnsInBlock());
+		List<FieldMapInfo> fieldmapInfoList = new ArrayList<FieldMapInfo>();		
 		fieldmapInfoList.add(new FieldMapInfo(Integer.parseInt("1"), "1", fieldMapLabels));			
 	    userFieldMap.setMachineRowCapacity(2);
 		  	    
@@ -263,12 +200,43 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
 				, deletedPlot, fieldMapLabels, new VerticalFieldMapLayoutIterator());
 		userFieldMap.setFieldmap(plots);
 
-	    String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        String fileName = "FieldMapVerticalRowColumn" +  "_" + currentDate + ".xls";
+        String fileName = "FieldMapVerticalRowColumn" +  "_" + getCurrentDate() + ".xls";
 		exportExcelService.exportFieldMapToExcel(fileName, userFieldMap);
 		assertEquals("Dummy Trial<br/>Entry null<br/>Rep 17", plots[2][9].getDisplayString());
 		assertEquals("Dummy Trial<br/>Entry null<br/>Rep 74", plots[8][9].getDisplayString());
 		assertEquals(true, plots[8][5].isPlotDeleted());
+	}
+	
+	private UserFieldmap createUserFieldMap(){
+	       UserFieldmap userFieldMap = new UserFieldmap();
+	        //userFieldMap.setSelectedName("Field Map Name");
+	        userFieldMap.setNumberOfEntries(25L);
+	        userFieldMap.setNumberOfReps(3L);
+	        userFieldMap.setTotalNumberOfPlots(75L);
+	        userFieldMap.setLocationName("IFPRI"); 
+	        userFieldMap.setFieldName("Field 1");
+	        userFieldMap.setBlockName("Block 1");
+	        userFieldMap.setNumberOfRowsInBlock(20);
+	        userFieldMap.setNumberOfRowsPerPlot(2);
+	        userFieldMap.setStartingColumn(2);
+	        userFieldMap.setStartingRange(2);
+	        userFieldMap.setPlantingOrder(userFieldMap.SERPENTINE);
+	        userFieldMap.setNumberOfRangesInBlock(10);
+	        
+	        return userFieldMap;
+	}
+	
+	private Map<String, String> createDeletedPlot(){
+	    Map<String, String> deletedPlot = new HashMap<String, String>(); // key = "<col>_<range>"
+        deletedPlot.put("2_2", "X");
+        deletedPlot.put("4_7", "X");
+        deletedPlot.put("6_1", "X");
+        deletedPlot.put("8_5", "X");
+        return deletedPlot;
+	}
+	
+	private String getCurrentDate(){
+	    return new SimpleDateFormat("yyyyMMdd").format(new Date());
 	}
 	
 }

@@ -43,7 +43,6 @@ import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 
-
 /**
  * The Class FieldmapController.
  * 
@@ -54,22 +53,21 @@ import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 @RequestMapping({FieldmapController.URL})
 public class FieldmapController extends AbstractBaseFieldbookController{
  
- /** The Constant LOG. */
- private static final Logger LOG = LoggerFactory.getLogger(FieldmapController.class);
+     /** The Constant LOG. */
+     private static final Logger LOG = LoggerFactory.getLogger(FieldmapController.class);
     
     /** The Constant URL. */
     public static final String URL = "/Fieldmap/enterFieldDetails";
-
     
-    /** The user selection. */
+    /** The user field map. */
     @Resource
     private UserFieldmap userFieldmap;
     
     @Resource
     private FieldbookService fieldbookMiddlewareService;
+    
     @Resource
     private WorkbenchDataManager workbenchDataManager;
-    
     
     /**
      * Gets the data types.
@@ -102,8 +100,10 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     public List<Location> getFavoriteLocationList() {
         try {
             
-            List<Long> locationsIds = workbenchDataManager.getFavoriteProjectLocationIds(Long.valueOf(this.getCurrentProjectId()), 0,  Integer.MAX_VALUE);
-            List<Location> dataTypes = fieldbookMiddlewareService.getFavoriteLocationByProjectId(locationsIds);
+            List<Long> locationsIds = workbenchDataManager.getFavoriteProjectLocationIds(
+                    Long.valueOf(this.getCurrentProjectId()), 0,  Integer.MAX_VALUE);
+            List<Location> dataTypes = fieldbookMiddlewareService
+                                .getFavoriteLocationByProjectId(locationsIds);
             /*dataTypes = new ArrayList();
             for(int i = 0 ; i < 50 ; i++){
                 Location loc = new Location();
@@ -123,7 +123,8 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     
     @ResponseBody
     @RequestMapping(value="/createFieldmap/{ids}", method = RequestMethod.GET)
-    public Map<String, String> determineFieldMapNavigation(@PathVariable String ids, Model model, HttpSession session) {
+    public Map<String, String> determineFieldMapNavigation(@PathVariable String ids, 
+            Model model, HttpSession session) {
         Map<String, String> result = new HashMap<String, String>();
         String nav = "1";
         try {
@@ -132,7 +133,8 @@ public class FieldmapController extends AbstractBaseFieldbookController{
             for (String id : idList) {
                 trialIds.add(Integer.parseInt(id));
             }
-            List<FieldMapInfo> fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfTrial(trialIds);
+            List<FieldMapInfo> fieldMapInfoList = fieldbookMiddlewareService
+                    .getFieldMapInfoOfTrial(trialIds);
 
             clearFields();
             this.userFieldmap.setUserFieldmapInfo(fieldMapInfoList, true);
@@ -140,7 +142,8 @@ public class FieldmapController extends AbstractBaseFieldbookController{
             for (FieldMapInfo fieldMapInfo : fieldMapInfoList) {
                 List<FieldMapDatasetInfo> datasetList = fieldMapInfo.getDatasetsWithFieldMap();
                 if (datasetList != null && !datasetList.isEmpty()) {
-                    List<FieldMapTrialInstanceInfo> trials = datasetList.get(0).getTrialInstancesWithFieldMap();
+                    List<FieldMapTrialInstanceInfo> trials = datasetList.get(0)
+                            .getTrialInstancesWithFieldMap();
                     if (trials != null && !trials.isEmpty()) {
                         nav = "0";
                     }
@@ -166,7 +169,8 @@ public class FieldmapController extends AbstractBaseFieldbookController{
             //for viewing of fieldmaps
             List<FieldMapDatasetInfo> datasetList = fieldMapInfo.getDatasetsWithFieldMap();
             if (datasetList != null && !datasetList.isEmpty()) {
-                List<FieldMapTrialInstanceInfo> trials = datasetList.get(0).getTrialInstancesWithFieldMap();
+                List<FieldMapTrialInstanceInfo> trials = 
+                        datasetList.get(0).getTrialInstancesWithFieldMap();
                 if (trials != null && !trials.isEmpty()) {
                     size = String.valueOf(trials.size());
                     if (trials.size() == 1) {
@@ -280,7 +284,8 @@ public class FieldmapController extends AbstractBaseFieldbookController{
                         }
                     }
                     
-                    trialInstance = fieldMapInfo.getDataSet(selectedDatasetId).getTrialInstance(selectedGeolocationId);
+                    trialInstance = fieldMapInfo.getDataSet(selectedDatasetId)
+                            .getTrialInstance(selectedGeolocationId);
                     trialInstances.add(trialInstance);
                                         
                     datasetId = selectedDatasetId;
@@ -308,7 +313,8 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     
     @ResponseBody
     @RequestMapping(value="/createNurseryFieldmap/{ids}", method = RequestMethod.GET)
-    public Map<String, String> determineNurseryFieldMapNavigation(@PathVariable String ids, HttpSession session) {
+    public Map<String, String> determineNurseryFieldMapNavigation(
+            @PathVariable String ids, HttpSession session) {
         
         Map<String, String> result = new HashMap<String, String>();
         
@@ -321,19 +327,22 @@ public class FieldmapController extends AbstractBaseFieldbookController{
             }
             
             clearFields();
-            List<FieldMapInfo> fieldMapInfoList = fieldbookMiddlewareService.getFieldMapInfoOfNursery(nurseryIds);
+            List<FieldMapInfo> fieldMapInfoList = fieldbookMiddlewareService
+                    .getFieldMapInfoOfNursery(nurseryIds);
 
             this.userFieldmap.setUserFieldmapInfo(fieldMapInfoList, false);
             
             for (FieldMapInfo fieldMapInfo : fieldMapInfoList) {
                 List<FieldMapDatasetInfo> datasetList = fieldMapInfo.getDatasetsWithFieldMap();
                 if (datasetList != null && !datasetList.isEmpty()) {
-                    List<FieldMapTrialInstanceInfo> trials = datasetList.get(0).getTrialInstancesWithFieldMap();
+                    List<FieldMapTrialInstanceInfo> trials = datasetList.get(0)
+                                .getTrialInstancesWithFieldMap();
                     if (trials != null && !trials.isEmpty()) {
                         FieldMapDatasetInfo dataset = datasetList.get(0);
                         nav = "0";
                         this.userFieldmap.setSelectedDatasetId(dataset.getDatasetId());
-                        this.userFieldmap.setSelectedGeolocationId(dataset.getTrialInstancesWithFieldMap().get(0).getGeolocationId());
+                        this.userFieldmap.setSelectedGeolocationId(
+                                dataset.getTrialInstancesWithFieldMap().get(0).getGeolocationId());
                         result.put("datasetId", this.userFieldmap.getSelectedDatasetId().toString());
                         result.put("geolocationId", this.userFieldmap.getSelectedGeolocationId().toString());
                     }
@@ -341,7 +350,6 @@ public class FieldmapController extends AbstractBaseFieldbookController{
             } 
         } catch(MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
-            e.printStackTrace();
         }
         result.put("nav", nav);
         return result;
@@ -379,7 +387,8 @@ public class FieldmapController extends AbstractBaseFieldbookController{
      * @return the string
      */
     @RequestMapping(method = RequestMethod.POST)
-    public String submitDetails(@ModelAttribute("fieldmapForm") FieldmapForm form, BindingResult result, Model model) {
+    public String submitDetails(@ModelAttribute("fieldmapForm") FieldmapForm form, 
+            BindingResult result, Model model) {
         setTrialInstanceOrder(form);
         if (form.getUserFieldmap().getFieldmap() != null) {
             form.getUserFieldmap().setFieldmap(null);
@@ -400,13 +409,15 @@ public class FieldmapController extends AbstractBaseFieldbookController{
             geolocationId = Integer.parseInt(ids[3]);
             for (FieldMapInfo fieldMapInfo : fieldMapInfoList) {
                 if (fieldMapInfo.getFieldbookId().equals(fieldbookId)) {
-                    userFieldmap.getSelectedFieldMaps().get(ctr).getDataSet(datasetId).getTrialInstance(geolocationId).setOrder(orderId);
+                    userFieldmap.getSelectedFieldMaps().get(ctr).getDataSet(datasetId)
+                                    .getTrialInstance(geolocationId).setOrder(orderId);
                     break;
                 }
                 ctr++;
             }
         }
-        this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(this.userFieldmap.getSelectedFieldMaps(), this.userFieldmap.isTrial()));
+        this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(
+                this.userFieldmap.getSelectedFieldMaps(), this.userFieldmap.isTrial()));
     }
     
     /* (non-Javadoc)
@@ -430,7 +441,8 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     private void setUserFieldMapDetails(FieldmapForm form) {
         this.userFieldmap.setSelectedDatasetId(form.getUserFieldmap().getSelectedDatasetId());
         this.userFieldmap.setSelectedGeolocationId(form.getUserFieldmap().getSelectedGeolocationId());
-        this.userFieldmap.setUserFieldmapInfo(userFieldmap.getFieldMapInfo(), this.userFieldmap.isTrial() ? true : false);
+        this.userFieldmap.setUserFieldmapInfo(userFieldmap.getFieldMapInfo(), 
+                this.userFieldmap.isTrial() ? true : false);
         this.userFieldmap.setNumberOfEntries(form.getUserFieldmap().getNumberOfEntries());
         this.userFieldmap.setNumberOfReps(form.getUserFieldmap().getNumberOfReps());
         this.userFieldmap.setTotalNumberOfPlots(form.getUserFieldmap().getTotalNumberOfPlots());

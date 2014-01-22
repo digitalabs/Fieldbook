@@ -11,20 +11,33 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.ontology.bean;
 
-
 /**
- * @author Chezka Camille Arevalo
+ * The Class EnumerationOperation.
  *
+ * @author Chezka Camille Arevalo
  */
 public class EnumerationOperation{
+    
+    /** The id. */
     private Integer id;
     
+    /** The name. */
     private String name;
     
+    /** The description. */
     private String description;
     
+    /** The operation. */
     private int operation;
     
+    /**
+     * Instantiates a new enumeration operation.
+     *
+     * @param id the id
+     * @param name the name
+     * @param description the description
+     * @param operation the operation
+     */
     public EnumerationOperation(Integer id, String name, String description, int operation) {
         this.id = id;
         this.name = name;
@@ -32,26 +45,54 @@ public class EnumerationOperation{
         this.operation = operation;
     }
     
+    /**
+     * Instantiates a new enumeration operation.
+     */
     public EnumerationOperation() {
         
     }
     
+    /**
+     * Sets the id.
+     *
+     * @param id the new id
+     */
     public void setId(Integer id) {
         this.id = id;
     }
 
+    /**
+     * Gets the id.
+     *
+     * @return the id
+     */
     public Integer getId() {
         return id;
     }
 
+    /**
+     * Gets the name.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Gets the description.
+     *
+     * @return the description
+     */
     public String getDescription() {
         return description;
     }
     
+    /**
+     * Gets the operation.
+     *
+     * @return the operation
+     */
     public int getOperation() {
         return operation;
     }

@@ -81,7 +81,8 @@ public class Test2Controller extends AbstractBaseFieldbookController{
      * @return the string
      */
     @RequestMapping(value="doSubmit", method = RequestMethod.POST)
-    public String uploadFile(@ModelAttribute("test2Form") Test2JavaForm testForm, BindingResult result, Model model) {
+    public String uploadFile(@ModelAttribute("test2Form") Test2JavaForm testForm, 
+            BindingResult result, Model model) {
         //FileUploadFormValidator validator = new FileUploadFormValidator();
         //validator.validate(uploadForm, result);
 
@@ -95,7 +96,8 @@ public class Test2Controller extends AbstractBaseFieldbookController{
             // Return the user back to form to show errors
             return show(testForm,model);
         } else {
-            // at this point, we can assume that program has reached an error condition. we return user to the form
+            // at this point, we can assume that program has reached an error condition. 
+            // we return user to the form
             return show(testForm,model);
         }
     }

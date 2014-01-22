@@ -31,7 +31,6 @@ public class ManageNurseriesForm {
         return resultPerPage;
     }
     
-    
     public void setResultPerPage(int resultPerPage) {
         this.resultPerPage = resultPerPage;
     }

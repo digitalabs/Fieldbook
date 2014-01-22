@@ -139,11 +139,9 @@ public class UserFieldmap  implements Serializable {
         setUserFieldmapInfo(fieldMapInfo, isTrial);
     }
     
-    
     public boolean isGenerated() {
         return isGenerated;
     }
-
     
     /**
      * Sets the generated.
@@ -169,7 +167,8 @@ public class UserFieldmap  implements Serializable {
             
             for (FieldMapInfo fieldMapInfo : fieldMapInfoList) {
                 if (fieldMapInfo.getDataSet(datasetId) != null) {
-                    FieldMapTrialInstanceInfo info = fieldMapInfo.getDataSet(datasetId).getTrialInstance(trialInstanceId);
+                    FieldMapTrialInstanceInfo info = 
+                            fieldMapInfo.getDataSet(datasetId).getTrialInstance(trialInstanceId);
                     //setFieldMapLabels(info.getFieldMapLabels());
                     setFieldMapLabels(getAllSelectedFieldMapLabels(false));
                     setNumberOfEntries(info.getEntryCount());
@@ -202,7 +201,8 @@ public class UserFieldmap  implements Serializable {
             if (getSelectedFieldmapList() != null && !getSelectedFieldmapList().isEmpty()) {
                 for (SelectedFieldmapRow row : getSelectedFieldmapList().getRows()) {
                     FieldMapTrialInstanceInfo trial = 
-                            getSelectedTrialInstanceByDatasetIdAndGeolocationId(row.getDatasetId(), row.getGeolocationId());
+                            getSelectedTrialInstanceByDatasetIdAndGeolocationId(row.getDatasetId(), 
+                                    row.getGeolocationId());
                     allLabels.addAll(trial.getFieldMapLabels());
                 }
             }
@@ -214,7 +214,8 @@ public class UserFieldmap  implements Serializable {
                         for (FieldMapDatasetInfo dataset : info.getDatasets()) {
                             if (dataset.getTrialInstances() != null) {
                                 for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
-                                    if (trial.getFieldMapLabels() != null && !trial.getFieldMapLabels().isEmpty()) {
+                                    if (trial.getFieldMapLabels() != null 
+                                            && !trial.getFieldMapLabels().isEmpty()) {
                                         allLabels.addAll(trial.getFieldMapLabels());
                                     }
                                 }
@@ -254,7 +255,6 @@ public class UserFieldmap  implements Serializable {
         return entryNumbers;
     }
 
-
     /**
      * Sets the entry numbers.
      *
@@ -273,7 +273,6 @@ public class UserFieldmap  implements Serializable {
         return germplasmNames;
     }
 
-
     /**
      * Sets the germplasm names.
      *
@@ -282,7 +281,6 @@ public class UserFieldmap  implements Serializable {
     public void setGermplasmNames(List<String> germplasmNames) {
         this.germplasmNames = germplasmNames;
     }
-
 
     /**
      * Gets the reps.
@@ -302,10 +300,6 @@ public class UserFieldmap  implements Serializable {
         this.reps = reps;
     }
 
-
-
-
-
     /**
      * Checks if is trial.
      *
@@ -314,7 +308,6 @@ public class UserFieldmap  implements Serializable {
     public boolean isTrial() {
         return isTrial;
     }
-
     
     /**
      * Sets the trial.
@@ -462,7 +455,8 @@ public class UserFieldmap  implements Serializable {
     	Locale locale = LocaleContextHolder.getLocale();
     	String columns = messageSource.getMessage("fieldmap.label.rows", null, locale);
         String ranges = messageSource.getMessage("fieldmap.label.ranges", null, locale);
-    	return this.getNumberOfRowsInBlock() + " " + columns + ", " + getNumberOfRangesInBlock()+ " " + ranges;
+    	return this.getNumberOfRowsInBlock() + " " + columns + ", " 
+                + getNumberOfRangesInBlock()+ " " + ranges;
     }
     
     /**
@@ -486,7 +480,8 @@ public class UserFieldmap  implements Serializable {
      * @return the planting order string
      * @throws FieldbookException the fieldbook exception
      */
-    public String getPlantingOrderString(ResourceBundleMessageSource messageSource) throws FieldbookException{
+    public String getPlantingOrderString(ResourceBundleMessageSource messageSource) 
+            throws FieldbookException{
     	Locale locale = LocaleContextHolder.getLocale();
     	if (plantingOrder == ROW_COLUMN){
     		return messageSource.getMessage("fieldmap.planting.order.row.column", null, locale);
@@ -508,7 +503,8 @@ public class UserFieldmap  implements Serializable {
     	return false;
     }
     
-    public FieldMapTrialInstanceInfo getSelectedTrialInstanceByDatasetIdAndGeolocationId(int datasetId, int geolocationId) {
+    public FieldMapTrialInstanceInfo getSelectedTrialInstanceByDatasetIdAndGeolocationId(
+            int datasetId, int geolocationId) {
         if (getSelectedFieldMaps() != null) {
             for (FieldMapInfo info : getSelectedFieldMaps()) {
                 if (info.getDatasets() != null) {
@@ -637,8 +633,6 @@ public class UserFieldmap  implements Serializable {
     public void setStartingRange(int startingRange) {
         this.startingRange = startingRange;
     }
-
-    
     
     /**
      * Gets the fieldmap.
@@ -648,7 +642,6 @@ public class UserFieldmap  implements Serializable {
     public Plot[][] getFieldmap() {
         return fieldmap;
     }
-
     
     /**
      * Sets the fieldmap.
@@ -658,7 +651,6 @@ public class UserFieldmap  implements Serializable {
     public void setFieldmap(Plot[][] fieldmap) {
         this.fieldmap = fieldmap;
     }
-
     
     /**
      * Gets the field map labels.
@@ -668,7 +660,6 @@ public class UserFieldmap  implements Serializable {
     public List<FieldMapLabel> getFieldMapLabels() {
         return fieldMapLabels;
     }
-
     
     /**
      * Sets the field map labels.
@@ -696,7 +687,6 @@ public class UserFieldmap  implements Serializable {
     public void setLocationName(String locationName) {
         this.locationName = locationName;
     }
-
     
     /**
      * Gets the study id.
@@ -706,7 +696,6 @@ public class UserFieldmap  implements Serializable {
     public Integer getStudyId() {
         return studyId;
     }
-
     
     /**
      * Sets the study id.
@@ -716,7 +705,6 @@ public class UserFieldmap  implements Serializable {
     public void setStudyId(Integer studyId) {
         this.studyId = studyId;
     }
-
     
     /**
      * Gets the selected dataset id.
@@ -726,7 +714,6 @@ public class UserFieldmap  implements Serializable {
     public Integer getSelectedDatasetId() {
         return selectedDatasetId;
     }
-
     
     /**
      * Sets the selected dataset id.
@@ -736,7 +723,6 @@ public class UserFieldmap  implements Serializable {
     public void setSelectedDatasetId(Integer selectedDatasetId) {
         this.selectedDatasetId = selectedDatasetId;
     }
-
     
     /**
      * Gets the selected geolocation id.
@@ -746,7 +732,6 @@ public class UserFieldmap  implements Serializable {
     public Integer getSelectedGeolocationId() {
         return selectedGeolocationId;
     }
-
     
     /**
      * Sets the selected geolocation id.
@@ -756,7 +741,6 @@ public class UserFieldmap  implements Serializable {
     public void setSelectedGeolocationId(Integer selectedGeolocationId) {
         this.selectedGeolocationId = selectedGeolocationId;
     }
-
     
     /**
      * Gets the selected field maps.
@@ -800,7 +784,6 @@ public class UserFieldmap  implements Serializable {
     public Integer getMachineRowCapacity() {
         return machineRowCapacity;
     }
-
     
     /**
      * @param machineRowCapacity the machineRowCapacity to set
@@ -832,15 +815,12 @@ public class UserFieldmap  implements Serializable {
         return total;
     }
 
-    
     /**
      * @return the selectedFieldmapList
      */
     public SelectedFieldmapList getSelectedFieldmapList() {
-        
         return this.selectedFieldmapList;
     }
-
     
     /**
      * @param selectedFieldmapList the selectedFieldmapList to set
@@ -848,6 +828,5 @@ public class UserFieldmap  implements Serializable {
     public void setSelectedFieldmapList(SelectedFieldmapList selectedFieldmapList) {
         this.selectedFieldmapList = selectedFieldmapList;
     }
-
 
 }

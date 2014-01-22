@@ -11,10 +11,6 @@
  *******************************************************************************/
 package com.efficio.pojos.histogram;
 
-import java.util.ArrayList;
-import java.util.List;
-
-// TODO: Auto-generated Javadoc
 /**
  * This class holds the data needed for rendering a tree view using dynatree jquery.
  */
@@ -25,7 +21,6 @@ public class HistogramNode {
     
     /** The val. */
     private int val;
-    
     
     /**
      * Instantiates a new histogram node.
@@ -73,6 +68,5 @@ public class HistogramNode {
     public void setVal(int val) {
         this.val = val;
     }
-    
     
 }

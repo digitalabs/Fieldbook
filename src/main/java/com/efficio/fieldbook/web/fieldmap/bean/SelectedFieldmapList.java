@@ -9,8 +9,6 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 
-
-// TODO: Auto-generated Javadoc
 /**
  * The Class SelectedFieldmapList.
  */

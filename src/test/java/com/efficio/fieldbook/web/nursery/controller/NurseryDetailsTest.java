@@ -65,10 +65,10 @@ public class NurseryDetailsTest extends AbstractJUnit4SpringContextTests {
     private static final String FILE_NAME_INVALID = "GermplasmImportTemplate-Basic-rev4b-with_data.xls";
     
     /** The controller valid. */
-    NurseryDetailsController controllerValid;
+    private NurseryDetailsController controllerValid;
     
     /** The controller invalid. */
-    NurseryDetailsController controllerInvalid;
+    private NurseryDetailsController controllerInvalid;
 
     /**
      * Sets the up.
@@ -119,8 +119,6 @@ public class NurseryDetailsTest extends AbstractJUnit4SpringContextTests {
         printMeasurementVariables(workbook.getVariates(), 4);
     }
     
-
-    
     /**
      * Test invalid nursery workbook.
      *
@@ -153,8 +151,7 @@ public class NurseryDetailsTest extends AbstractJUnit4SpringContextTests {
             assertTrue(datasetWorkbook == null); // Workbook was not parsed properly due to format errors
         }
 
-    }
-    
+    }    
 
     /**
      * Prints the measurement variables.
@@ -166,8 +163,7 @@ public class NurseryDetailsTest extends AbstractJUnit4SpringContextTests {
         for (MeasurementVariable mVar : mVariables){
             mVar.print(indent);
         }
-        Debug.println(1,"");
-    }
-      
+        Debug.println(1, "");
+    }      
         
 }

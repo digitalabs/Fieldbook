@@ -30,7 +30,6 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import com.efficio.fieldbook.web.nursery.form.ManageNurseriesForm;
 
-
 /**
  * The Class ManageNurseriesControllerTest.
  */
@@ -75,9 +74,11 @@ public class ManageNurseriesControllerTest extends AbstractJUnit4SpringContextTe
                 }
             }
 
-            if (form.getPaginatedNurseryDetailsList().size() > 10 && form.getPaginatedNurseryDetailsList().size() <= 20) {
+            if (form.getPaginatedNurseryDetailsList().size() > 10 
+                    && form.getPaginatedNurseryDetailsList().size() <= 20) {
                 form.setCurrentPage(2);
-                assertEquals(form.getPaginatedNurseryDetailsList().size(), form.getNurseryDetailsList().size() - 10);
+                assertEquals(form.getPaginatedNurseryDetailsList().size()
+                        , form.getNurseryDetailsList().size() - 10);
             }
 	    }
 	}

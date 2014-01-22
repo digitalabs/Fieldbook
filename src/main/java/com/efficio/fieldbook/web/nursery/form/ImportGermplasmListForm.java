@@ -43,7 +43,6 @@ public class ImportGermplasmListForm {
     public int getResultPerPage() {
         return resultPerPage;
     }
-
     
     public void setResultPerPage(int resultPerPage) {
         this.resultPerPage = resultPerPage;
@@ -57,15 +56,11 @@ public class ImportGermplasmListForm {
         }
 	    return totalPages;
 	}
-	
-	
-	
+
     public int getCurrentPage() {
         return currentPage;
     }
 
-
-    
     /**
      * Sets the current page.
      *
@@ -88,27 +83,19 @@ public class ImportGermplasmListForm {
         }
     }
 
-
     public void setTotalPages(int totalPages) {
         this.totalPages = totalPages;
     }
-    
-
-	    
-    
+        
     public List<ImportedGermplasm> getPaginatedImportedGermplasm() {
         return paginatedImportedGermplasm;
     }
-
-
-
     
     public void setPaginatedImportedGermplasm(
             List<ImportedGermplasm> paginatedImportedGermplasm) {
         this.paginatedImportedGermplasm = paginatedImportedGermplasm;
     }
    //end of pagination code
-
 
     /**
      * Gets the imported germplasm.
@@ -118,8 +105,6 @@ public class ImportGermplasmListForm {
     public List<ImportedGermplasm> getImportedGermplasm() {
         return importedGermplasm;
     }
-
-
     
     /**
      * Sets the imported germplasm.
@@ -130,7 +115,6 @@ public class ImportGermplasmListForm {
         this.importedGermplasm = importedGermplasm;
     }
 
-
     /**
      * Gets the imported germplasm main info.
      *
@@ -139,7 +123,6 @@ public class ImportGermplasmListForm {
     public ImportedGermplasmMainInfo getImportedGermplasmMainInfo() {
         return importedGermplasmMainInfo;
     }
-    
         
     /**
      * Sets the imported germplasm main info.

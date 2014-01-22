@@ -18,7 +18,8 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 
 /**
- * This bean models the various input that the user builds up over time to perform the actual loading operation
+ * This bean models the various input that the user builds up over time
+ * to perform the actual loading operation.
  */
 public class UserSelection implements Serializable {
     
@@ -156,10 +157,20 @@ public class UserSelection implements Serializable {
         this.fieldLayoutRandom = fieldLayoutRandom;
     }
     
+    /**
+     * Gets the study details list.
+     *
+     * @return the study details list
+     */
     public List<StudyDetails> getStudyDetailsList(){
         return studyDetailsList;
     }
 
+    /**
+     * Sets the study details list.
+     *
+     * @param studyDetailsList the new study details list
+     */
     public void setStudyDetailsList(List<StudyDetails> studyDetailsList) {
         this.studyDetailsList = studyDetailsList;
     }

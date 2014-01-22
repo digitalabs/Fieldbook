@@ -41,7 +41,8 @@ public class CropTerm implements Serializable {
 	 * @param ontologyName the ontology name
 	 */
 	@JsonCreator
-	public CropTerm(@JsonProperty("id") String id, @JsonProperty("name") Name name, @JsonProperty("ontology_name") Name ontologyName) {
+	public CropTerm(@JsonProperty("id") String id, @JsonProperty("name") Name name
+	        , @JsonProperty("ontology_name") Name ontologyName) {
 		this.id = id;
 		this.name = name;
 		this.ontologyName = ontologyName;

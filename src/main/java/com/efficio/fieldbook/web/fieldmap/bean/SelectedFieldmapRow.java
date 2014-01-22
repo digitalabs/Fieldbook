@@ -1,10 +1,18 @@
+/*******************************************************************************
+ * Copyright (c) 2013, All Rights Reserved.
+ * 
+ * Generation Challenge Programme (GCP)
+ * 
+ * 
+ * This software is licensed for use under the terms of the GNU General Public
+ * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
+ * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ * 
+ *******************************************************************************/
 package com.efficio.fieldbook.web.fieldmap.bean;
 
 import java.io.Serializable;
 
-
-
-// TODO: Auto-generated Javadoc
 /**
  * The Class SelectedFieldmapRow.
  */
@@ -70,8 +78,6 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
         return studyName;
     }
 
-
-    
     /**
      * Sets the study name.
      *
@@ -81,8 +87,6 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
         this.studyName = studyName;
     }
 
-
-    
     /**
      * Gets the trial instance no.
      *
@@ -92,8 +96,6 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
         return trialInstanceNo;
     }
 
-
-    
     /**
      * Sets the trial instance no.
      *
@@ -102,8 +104,6 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
     public void setTrialInstanceNo(String trialInstanceNo) {
         this.trialInstanceNo = trialInstanceNo;
     }
-
-
     
     /**
      * Gets the rep count.
@@ -113,8 +113,6 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
     public Long getRepCount() {
         return repCount;
     }
-
-
     
     /**
      * Sets the rep count.
@@ -125,8 +123,6 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
         this.repCount = repCount;
     }
 
-
-    
     /**
      * Gets the entry count.
      *
@@ -135,8 +131,6 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
     public Long getEntryCount() {
         return entryCount;
     }
-
-
     
     /**
      * Sets the entry count.
@@ -146,8 +140,6 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
     public void setEntryCount(Long entryCount) {
         this.entryCount = entryCount;
     }
-
-
     
     /**
      * Gets the plot count.
@@ -158,8 +150,6 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
         return plotCount;
     }
 
-
-    
     /**
      * Sets the plot count.
      *
@@ -168,8 +158,6 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
     public void setPlotCount(Long plotCount) {
         this.plotCount = plotCount;
     }
-
-
     
     /**
      * Gets the study id.
@@ -180,7 +168,6 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
         return studyId;
     }
 
-    
     /**
      * Sets the study id.
      *
@@ -189,7 +176,6 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
     public void setStudyId(Integer studyId) {
         this.studyId = studyId;
     }
-
     
     /**
      * Gets the dataset id.
@@ -199,7 +185,6 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
     public Integer getDatasetId() {
         return datasetId;
     }
-
     
     /**
      * Sets the dataset id.
@@ -209,7 +194,6 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
     public void setDatasetId(Integer datasetId) {
         this.datasetId = datasetId;
     }
-
     
     /**
      * Gets the geolocation id.
@@ -219,7 +203,6 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
     public Integer getGeolocationId() {
         return geolocationId;
     }
-
     
     /**
      * Sets the geolocation id.
@@ -229,7 +212,6 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
     public void setGeolocationId(Integer geolocationId) {
         this.geolocationId = geolocationId;
     }
-
     
     /**
      * Gets the dataset name.
@@ -239,7 +221,6 @@ public class SelectedFieldmapRow implements Comparable<SelectedFieldmapRow>, Ser
     public String getDatasetName() {
         return datasetName;
     }
-
     
     /**
      * Sets the dataset name.

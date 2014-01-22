@@ -23,12 +23,19 @@ import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.service.api.ErrorHandlerService;
 
+/**
+ * The Class ErrorHandlerServiceImpl.
+ */
 @Service
 public class ErrorHandlerServiceImpl implements ErrorHandlerService{
 
+    /** The message source. */
     @Resource
     private ResourceBundleMessageSource messageSource;
     
+    /* (non-Javadoc)
+     * @see com.efficio.fieldbook.service.api.ErrorHandlerService#getErrorMessagesAsList(java.lang.String, java.lang.Object[])
+     */
     @Override
     public List<String> getErrorMessagesAsList(String errorCodes, Object[] parameters) {
         List<String> errorMessages = new ArrayList<String>();
@@ -54,6 +61,9 @@ public class ErrorHandlerServiceImpl implements ErrorHandlerService{
         return errorMessages;
     }
     
+    /* (non-Javadoc)
+     * @see com.efficio.fieldbook.service.api.ErrorHandlerService#getErrorMessagesAsString(java.lang.String, java.lang.Object[], java.lang.String)
+     */
     @Override
     public String getErrorMessagesAsString(String errorCodes, Object[] parameters, String nextLine) {
         StringBuilder message = new StringBuilder();

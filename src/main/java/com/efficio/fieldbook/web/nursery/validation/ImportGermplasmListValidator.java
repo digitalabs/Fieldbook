@@ -50,7 +50,8 @@ public class ImportGermplasmListValidator implements Validator  {
         if (file == null) {
             errors.rejectValue("file", FILE_NOT_FOUND_ERROR);
         } else {
-            boolean isExcelFile = file.getOriginalFilename().contains(".xls") || file.getOriginalFilename().contains(".xlsx");
+            boolean isExcelFile = file.getOriginalFilename().contains(".xls") 
+                    || file.getOriginalFilename().contains(".xlsx");
             if (!isExcelFile) {
                 errors.rejectValue("file", FILE_NOT_EXCEL_ERROR);
             }

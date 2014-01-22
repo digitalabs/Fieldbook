@@ -19,7 +19,7 @@ import java.util.List;
 public class ETLPojo {
 
 	/** The Sheets. */
-	public List<String> Sheets;
+	public List<String> sheets;
 
 	/**
 	 * Gets the sheets.
@@ -27,7 +27,7 @@ public class ETLPojo {
 	 * @return the sheets
 	 */
 	public List<String> getSheets() {
-		return Sheets;
+		return sheets;
 	}
 
 	/**
@@ -36,7 +36,7 @@ public class ETLPojo {
 	 * @param sheets the new sheets
 	 */
 	public void setSheets(List<String> sheets) {
-		Sheets = sheets;
+		this.sheets = sheets;
 	}
 	
 }

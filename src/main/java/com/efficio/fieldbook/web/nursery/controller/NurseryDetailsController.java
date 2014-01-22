@@ -80,7 +80,8 @@ public class NurseryDetailsController extends AbstractBaseFieldbookController{
      * @return the string
      */
     @RequestMapping(method = RequestMethod.GET)
-    public String show(@ModelAttribute("nurseryDetailsForm") NurseryDetailsForm form, BindingResult result, Model model, HttpSession session) {
+    public String show(@ModelAttribute("nurseryDetailsForm") NurseryDetailsForm form
+            , BindingResult result, Model model, HttpSession session) {
         if (userSelection.getWorkbook() == null){
             result.reject("form.workbook", "Error occurred while parsing file.");
             userSelection.setWorkbook(new Workbook());
@@ -107,7 +108,8 @@ public class NurseryDetailsController extends AbstractBaseFieldbookController{
      * @return the string
      */
     @RequestMapping(method = RequestMethod.POST)
-    public String submitDetails(@ModelAttribute("nurseryDetailsForm") NurseryDetailsForm form, BindingResult result, Model model) {
+    public String submitDetails(@ModelAttribute("nurseryDetailsForm") NurseryDetailsForm form
+            , BindingResult result, Model model) {
         userSelection.setFieldLayoutRandom(form.getFieldLayoutRandom());
         
         // Set the values of conditions

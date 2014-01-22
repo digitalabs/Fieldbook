@@ -13,7 +13,7 @@ package com.efficio.fieldbook.web.fieldmap.bean;
 
 import java.io.Serializable;
 
-
+// TODO: Auto-generated Javadoc
 /**
  * The Class Plot.  This would be use track the plots 
  *
@@ -21,6 +21,7 @@ import java.io.Serializable;
  */
 public class Plot implements Serializable{
     
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
     /** The range. */
@@ -44,8 +45,10 @@ public class Plot implements Serializable{
     /** The is no more entries. */
     private boolean isNoMoreEntries;
 
+    /** The dataset id. */
     private Integer datasetId;
     
+    /** The geolocation id. */
     private Integer geolocationId;
 
     /**
@@ -61,8 +64,6 @@ public class Plot implements Serializable{
         setDisplayString(displayString);
     }
 
-    
-    
     /**
      * Checks if is plot deleted.
      *
@@ -71,8 +72,6 @@ public class Plot implements Serializable{
     public boolean isPlotDeleted() {
         return isPlotDeleted;
     }
-
-
     
     /**
      * Sets the plot deleted.
@@ -82,8 +81,6 @@ public class Plot implements Serializable{
     public void setPlotDeleted(boolean isPlotDeleted) {
         this.isPlotDeleted = isPlotDeleted;
     }
-
-
     
     /**
      * Checks if is not started.
@@ -93,8 +90,6 @@ public class Plot implements Serializable{
     public boolean isNotStarted() {
         return isNotStarted;
     }
-
-
     
     /**
      * Sets the not started.
@@ -104,8 +99,6 @@ public class Plot implements Serializable{
     public void setNotStarted(boolean isNotStarted) {
         this.isNotStarted = isNotStarted;
     }
-
-
     
     /**
      * Checks if is no more entries.
@@ -116,8 +109,6 @@ public class Plot implements Serializable{
         return isNoMoreEntries;
     }
 
-
-    
     /**
      * Sets the no more entries.
      *
@@ -126,7 +117,6 @@ public class Plot implements Serializable{
     public void setNoMoreEntries(boolean isNoMoreEntries) {
         this.isNoMoreEntries = isNoMoreEntries;
     }
-
 
     /**
      * Gets the display string.
@@ -202,40 +192,36 @@ public class Plot implements Serializable{
         this.column = column;
     }
 
-
-
-    
     /**
+     * Gets the dataset id.
+     *
      * @return the datasetId
      */
     public Integer getDatasetId() {
         return datasetId;
     }
-
-
-
     
     /**
+     * Sets the dataset id.
+     *
      * @param datasetId the datasetId to set
      */
     public void setDatasetId(Integer datasetId) {
         this.datasetId = datasetId;
     }
 
-
-
-    
     /**
+     * Gets the geolocation id.
+     *
      * @return the geolocationId
      */
     public Integer getGeolocationId() {
         return geolocationId;
     }
-
-
-
     
     /**
+     * Sets the geolocation id.
+     *
      * @param geolocationId the geolocationId to set
      */
     public void setGeolocationId(Integer geolocationId) {

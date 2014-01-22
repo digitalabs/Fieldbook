@@ -56,7 +56,8 @@ public class TestWizardController extends AbstractBaseFieldbookController{
      * @return the string
      */
     @RequestMapping(value="doSubmit", method = RequestMethod.POST)
-    public String submit(@ModelAttribute("test2JavaForm") Test2JavaForm testForm, BindingResult result, Model model) {
+    public String submit(@ModelAttribute("test2JavaForm") Test2JavaForm testForm, 
+            BindingResult result, Model model) {
         return show(testForm,model);
     }
 

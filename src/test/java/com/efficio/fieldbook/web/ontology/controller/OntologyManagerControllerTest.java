@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.VariableConstraints;
@@ -38,7 +37,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 
 /**
  * The Class OntologyManagerControllerTest.
@@ -119,7 +117,9 @@ public class OntologyManagerControllerTest extends AbstractJUnit4SpringContextTe
         maxValue = 10.0;
         
         //add constraint
-        ontologyService.addOrUpdateStandardVariableMinMaxConstraints(standardVariable.getId(), new VariableConstraints(Double.valueOf(minValue.toString()), Double.valueOf(maxValue.toString())));
+        ontologyService.addOrUpdateStandardVariableMinMaxConstraints(standardVariable.getId()
+                , new VariableConstraints(Double.valueOf(minValue.toString())
+                        , Double.valueOf(maxValue.toString())));
         standardVariable = ontologyService.getStandardVariable(standardVariable.getId());
         assertEquals(standardVariable.getConstraints().getMinValue(), minValue);
         assertEquals(standardVariable.getConstraints().getMaxValue(), maxValue);
@@ -130,7 +130,8 @@ public class OntologyManagerControllerTest extends AbstractJUnit4SpringContextTe
         Integer minValueId = standardVariable.getConstraints().getMinValueId();
         Integer maxValueId = standardVariable.getConstraints().getMaxValueId();
         ontologyService.addOrUpdateStandardVariableMinMaxConstraints(standardVariable.getId(), 
-                new VariableConstraints(minValueId, maxValueId, Double.valueOf(minValue.toString()), Double.valueOf(maxValue.toString())));
+                new VariableConstraints(minValueId, maxValueId, Double.valueOf(minValue.toString())
+                        , Double.valueOf(maxValue.toString())));
         standardVariable = ontologyService.getStandardVariable(standardVariable.getId());
         assertEquals(standardVariable.getConstraints().getMinValue(), minValue);
         assertEquals(standardVariable.getConstraints().getMaxValue(), maxValue);

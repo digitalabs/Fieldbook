@@ -70,8 +70,7 @@ public class GitRepositoryState {
      *
      * @param properties the properties
      */
-    public GitRepositoryState(Properties properties)
-    {
+    public GitRepositoryState(Properties properties){
        this.branch = properties.get("git.branch").toString();
        this.describe = properties.get("git.commit.id.describe").toString();
        this.commitId = properties.get("git.commit.id").toString();

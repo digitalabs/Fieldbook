@@ -21,10 +21,12 @@ import com.efficio.fieldbook.web.ontology.form.OntologyBrowserForm;
  */
 public class OntologyBrowserValidator implements Validator  {
     
-
+    /** The Constant MANDATORY_FIELD_NOT_POPULATED. */
     public final static String MANDATORY_FIELD_NOT_POPULATED = "ontology.browser.modal.error";
     
-    public final static String CANNOT_UPDATE_CENTRAL_VARIABLE = "ontology.browser.cannot.update.central.variable"; 
+    /** The Constant CANNOT_UPDATE_CENTRAL_VARIABLE. */
+    public final static String CANNOT_UPDATE_CENTRAL_VARIABLE = 
+                "ontology.browser.cannot.update.central.variable"; 
 
     /* (non-Javadoc)
      * @see org.springframework.validation.Validator#supports(java.lang.Class)
@@ -34,9 +36,6 @@ public class OntologyBrowserValidator implements Validator  {
         return OntologyBrowserForm.class.isAssignableFrom(aClass);
     }
 
-    /* (non-Javadoc)
-     * @see org.springframework.validation.Validator#validate(java.lang.Object, org.springframework.validation.Errors)
-     */
     @Override
     public void validate(Object o, Errors errors) {
     	OntologyBrowserForm form = (OntologyBrowserForm) o;

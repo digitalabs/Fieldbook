@@ -30,7 +30,6 @@ import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.nursery.validation.ImportGermplasmListValidator;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
-
 /**
  * This controller handles the 2nd step in the nursery manager process.
  * 
@@ -77,12 +76,15 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
      * @return the string
      */
     @RequestMapping(method = RequestMethod.GET)
-    public String show(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, Model model) {
+    public String show(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form
+            , Model model) {
         //this set the necessary info from the session variable
         form.setImportedGermplasmMainInfo(getUserSelection().getImportedGermplasmMainInfo());
-        if(getUserSelection().getImportedGermplasmMainInfo() != null && getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList() != null){
+        if(getUserSelection().getImportedGermplasmMainInfo() != null 
+                && getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList() != null){
             //this would be use to display the imported germplasm info
-            form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+            form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo()
+                    .getImportedGermplasmList().getImportedGermplasms());
             form.setCurrentPage(1);
         }
     	return super.show(model);
@@ -96,12 +98,15 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
      * @return the string
      */
     @RequestMapping(value="/page/{pageNum}", method = RequestMethod.GET)
-    public String getPaginatedList(@PathVariable int pageNum, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, Model model) {
+    public String getPaginatedList(@PathVariable int pageNum
+            , @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, Model model) {
         //this set the necessary info from the session variable
         form.setImportedGermplasmMainInfo(getUserSelection().getImportedGermplasmMainInfo());
-        if(getUserSelection().getImportedGermplasmMainInfo() != null && getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList() != null){
+        if(getUserSelection().getImportedGermplasmMainInfo() != null 
+                && getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList() != null){
             //this would be use to display the imported germplasm info
-            form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+            form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo()
+                    .getImportedGermplasmList().getImportedGermplasms());
             form.setCurrentPage(pageNum);
         }
         return super.showAjaxPage(model, PAGINATION_TEMPLATE);
@@ -116,7 +121,8 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
      * @return the string
      */
     @RequestMapping(method = RequestMethod.POST)
-    public String showDetails(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, BindingResult result, Model model) {
+    public String showDetails(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form
+            , BindingResult result, Model model) {
     	
     	ImportGermplasmListValidator validator = new ImportGermplasmListValidator();
     	validator.validate(form, result);
@@ -130,7 +136,8 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             return show(form,model);
         }else{
         	try{
-        		ImportedGermplasmMainInfo mainInfo =importGermplasmFileService.storeImportGermplasmWorkbook(form.getFile());
+        		ImportedGermplasmMainInfo mainInfo =importGermplasmFileService
+        		        .storeImportGermplasmWorkbook(form.getFile());
         		mainInfo = importGermplasmFileService.processWorkbook(mainInfo);
         		
         		if(mainInfo.getFileIsValid()){
@@ -138,9 +145,11 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         			getUserSelection().setImportedGermplasmMainInfo(mainInfo);
         			getUserSelection().setImportValid(true);
         			form.setImportedGermplasmMainInfo(getUserSelection().getImportedGermplasmMainInfo());
-        			form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+        			form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo()
+        			        .getImportedGermplasmList().getImportedGermplasms());
         			form.setCurrentPage(1);
-        			//after this one, it goes back to the same screen, but the list should already be displayed
+        			//after this one, it goes back to the same screen, 
+        			// but the list should already be displayed
         		}else{
         			//meaing there is error
         			form.setHasError("1");
@@ -168,7 +177,8 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
      * @return the string
      */
     @RequestMapping(value="/next", method = RequestMethod.POST)
-    public String nextScreen(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, BindingResult result, Model model) {
+    public String nextScreen(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form
+            , BindingResult result, Model model) {
     	
     	if(getUserSelection().isImportValid())
     	    return "redirect:" + AddOrRemoveTraitsController.URL;

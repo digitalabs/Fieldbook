@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2013, All Rights Reserved.
+ * 
+ * Generation Challenge Programme (GCP)
+ * 
+ * 
+ * This software is licensed for use under the terms of the GNU General Public
+ * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
+ * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ * 
+ *******************************************************************************/
 package com.efficio.fieldbook.service;
 
 import java.util.ArrayList;
@@ -37,8 +48,9 @@ public class HorizontalFieldMapLayoutIterator implements
                          //this will signify that we have started
                          isStartOk = true;
                      }
-                     counter = FieldMapUtilityHelper.populatePlotData(counter, labels, x, y, plots, false, startCol, startRange, isStartOk, deletedPlot, 
-                             isTrial);
+                     counter = FieldMapUtilityHelper.populatePlotData(
+                             counter, labels, x, y, plots, false, startCol
+                             , startRange, isStartOk, deletedPlot, isTrial);
 		        }
         	}else{
     			for(int x = col -1 ; x >= 0; x--){
@@ -47,8 +59,9 @@ public class HorizontalFieldMapLayoutIterator implements
                          //this will signify that we have started
                          isStartOk = true;
                      }
-                     counter = FieldMapUtilityHelper.populatePlotData(counter, labels, x, y, plots, false, startCol, startRange, isStartOk, deletedPlot,
-                             isTrial);
+                     counter = FieldMapUtilityHelper.populatePlotData(
+                             counter, labels, x, y, plots, false, startCol, 
+                             startRange, isStartOk, deletedPlot, isTrial);
 		        }
         	}
 	        if(isSerpentine){
@@ -69,7 +82,9 @@ public class HorizontalFieldMapLayoutIterator implements
      * @param totalRanges the total ranges
      * @param isSerpentine the is serpentine
      */
-    public void setOtherFieldMapInformation(UserFieldmap info, Plot[][] plots, int totalColumns, int totalRanges, boolean isSerpentine) {
+    public void setOtherFieldMapInformation(
+            UserFieldmap info, Plot[][] plots, int totalColumns
+            , int totalRanges, boolean isSerpentine) {
         boolean isStarted = false;
         List<String> possiblyDeletedCoordinates = new ArrayList<String>();
         int[] order = {1};
@@ -77,19 +92,22 @@ public class HorizontalFieldMapLayoutIterator implements
         for (int y = 0; y < totalRanges; y++) {        	
             if (leftToRight) {
             	for (int x = 0; x < totalColumns; x++) {
-                    isStarted = FieldMapUtilityHelper.renderPlotCell(info, plots, x, y, isStarted, possiblyDeletedCoordinates, order);
+                    isStarted = FieldMapUtilityHelper.renderPlotCell(
+                            info, plots, x, y, isStarted, possiblyDeletedCoordinates, order);
                 }
             }
             else {                
             	for(int x = totalColumns - 1 ; x >= 0; x--){
-                    isStarted = FieldMapUtilityHelper.renderPlotCell(info, plots, x, y, isStarted, possiblyDeletedCoordinates, order);
+                    isStarted = FieldMapUtilityHelper.renderPlotCell(
+                            info, plots, x, y, isStarted, possiblyDeletedCoordinates, order);
                 }
             }
             if(isSerpentine){
             	leftToRight = !leftToRight;
 	        }
         }
-        info.setSelectedFieldmapList(new SelectedFieldmapList(info.getSelectedFieldMaps(), info.isTrial()));
+        info.setSelectedFieldmapList(new SelectedFieldmapList(
+                info.getSelectedFieldMaps(), info.isTrial()));
     }
 
 }

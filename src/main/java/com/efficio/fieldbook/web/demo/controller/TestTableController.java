@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-
 /**
  * The Class TestTableController.
  */
@@ -82,7 +81,8 @@ public class TestTableController extends AbstractBaseFieldbookController{
      * @return the string
      */
     @RequestMapping(value = "doSubmit", method = RequestMethod.POST)
-    public String submit(@ModelAttribute("test2JavaForm") Test2JavaForm testForm, BindingResult result, Model model) {
+    public String submit(@ModelAttribute("test2JavaForm") Test2JavaForm testForm, 
+            BindingResult result, Model model) {
         TestValidator validator = new TestValidator();
         validator.validate(testForm, result);
 
@@ -90,7 +90,8 @@ public class TestTableController extends AbstractBaseFieldbookController{
             //Return the user back to form to show errors
             return show(testForm, model);
         } else {
-            // at this point, we can assume that program has reached an error condition. we return user to the form
+            // at this point, we can assume that program has reached an error condition. 
+            // we return user to the form
             return show(testForm, model);
         }
     }

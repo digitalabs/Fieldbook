@@ -14,7 +14,6 @@ package com.efficio.fieldbook.web.util;
 /**
  * Created by IntelliJ IDEA.
  * User: Daniel Villafuerte
-
  */
 public class AppConstants {
 
@@ -35,7 +34,6 @@ public class AppConstants {
     
     public static final int SIZE_OF_PAPER_A4 = 1;
     public static final int SIZE_OF_PAPER_LETTER = 2;
-
     
     public static final int AVAILABLE_LABEL_FIELDS_ENTRY_NUM = 1;
     public static final int AVAILABLE_LABEL_FIELDS_GID = 2;
@@ -51,4 +49,5 @@ public class AppConstants {
     public static final int AVAILABLE_LABEL_FIELDS_NURSERY_NAME = 12;
     public static final int AVAILABLE_LABEL_FIELDS_PARENTAGE = 13;
     public static final int AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES = 14;
+    
 }

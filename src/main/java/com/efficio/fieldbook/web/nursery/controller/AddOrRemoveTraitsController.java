@@ -56,7 +56,8 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
      * @return the string
      */
     @RequestMapping(method = RequestMethod.GET)
-    public String show(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, Model model, HttpSession session) {
+    public String show(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form
+            , Model model, HttpSession session) {
     	return super.show(model);
     }
 
@@ -69,7 +70,8 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
      * @return the string
      */
     @RequestMapping(method = RequestMethod.POST)
-    public String showDetails(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, BindingResult result, Model model) {
+    public String showDetails(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form
+            , BindingResult result, Model model) {
         return "redirect:" + SaveNurseryController.URL;
     }
     

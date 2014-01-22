@@ -58,8 +58,8 @@ public class ImportedVariate implements Serializable{
      * @param method the method
      * @param dataType the data type
      */
-    public ImportedVariate(String variate, String description, String property, String scale, String method
-            , String dataType) {
+    public ImportedVariate(String variate, String description, String property, String scale
+            , String method, String dataType) {
         this.variate = variate;
         this.description = description;
         this.property = property;
@@ -79,8 +79,8 @@ public class ImportedVariate implements Serializable{
      * @param dataType the data type
      * @param sampleLevel the sample level
      */
-    public ImportedVariate(String variate, String description, String property, String scale, String method
-            , String dataType, String sampleLevel) {
+    public ImportedVariate(String variate, String description, String property, String scale
+            , String method, String dataType, String sampleLevel) {
         this.variate = variate;
         this.description = description;
         this.property = property;

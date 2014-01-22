@@ -13,7 +13,6 @@ package com.efficio.fieldbook.web.nursery.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream.GetField;
 
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
@@ -66,8 +65,6 @@ public class FileUploadController extends AbstractBaseFieldbookController{
     /** The import workbook file service. */
     @Resource
     private ImportWorkbookFileService importWorkbookFileService;
-
-    
 	
     /**
      * Shows the file upload screen
@@ -78,29 +75,29 @@ public class FileUploadController extends AbstractBaseFieldbookController{
      * @return the string
      */
     @RequestMapping(method = RequestMethod.GET)
-    public String show(@ModelAttribute("fileUploadForm") FileUploadForm uploadForm, Model model, HttpSession session) {
+    public String show(@ModelAttribute("fileUploadForm") FileUploadForm uploadForm
+            , Model model, HttpSession session) {
     	session.invalidate();
     	
     	try {
     	    ToolUtil toolUtil = new ToolUtil();
     	    toolUtil.launchNativeTool(this.getOldFieldbookPath(), "--ibpApplication=BreedingManager");
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
     	
     	return super.show(model);
     }
 
     @RequestMapping(value="/newNursery", method = RequestMethod.GET)
-    public String openNursery(@ModelAttribute("fileUploadForm") FileUploadForm uploadForm, Model model, HttpSession session) {
+    public String openNursery(@ModelAttribute("fileUploadForm") FileUploadForm uploadForm
+            , Model model, HttpSession session) {
         //use this one to not invalidat the session
         try {
             ToolUtil toolUtil = new ToolUtil();
             toolUtil.launchNativeTool(this.getOldFieldbookPath(), "--ibpApplication=BreedingManager");
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
         
         return super.show(model);
@@ -115,7 +112,8 @@ public class FileUploadController extends AbstractBaseFieldbookController{
      * @return the string
      */
     @RequestMapping(method = RequestMethod.POST)
-    public String uploadFile(@ModelAttribute("fileUploadForm") FileUploadForm uploadForm, BindingResult result, Model model, HttpSession session) {
+    public String uploadFile(@ModelAttribute("fileUploadForm") FileUploadForm uploadForm
+            , BindingResult result, Model model, HttpSession session) {
     	FileUploadFormValidator validator = new FileUploadFormValidator();
         validator.validate(uploadForm, result);
 
@@ -128,7 +126,8 @@ public class FileUploadController extends AbstractBaseFieldbookController{
 
 
             try {
-            	String tempFileName = fieldbookService.storeUserWorkbook(uploadForm.getFile().getInputStream());
+            	String tempFileName = fieldbookService.storeUserWorkbook(
+            	                            uploadForm.getFile().getInputStream());
             	userSelection.setServerFileName(tempFileName);
                 userSelection.setActualFileName(uploadForm.getFile().getOriginalFilename());
                 

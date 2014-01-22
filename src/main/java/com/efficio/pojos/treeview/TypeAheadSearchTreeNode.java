@@ -54,10 +54,7 @@ public class TypeAheadSearchTreeNode {
 	    this.value = value;
 	    this.parentTitle = parentTitle;
 	    this.type = type;
-	    
 	}
-
-    
     
     /**
      * Gets the type.
@@ -67,7 +64,6 @@ public class TypeAheadSearchTreeNode {
     public String getType() {
         return type;
     }
-
     
     /**
      * Sets the type.
@@ -86,7 +82,6 @@ public class TypeAheadSearchTreeNode {
     public String getValue() {
         return value;
     }
-
     
     /**
      * Sets the value.
@@ -96,7 +91,6 @@ public class TypeAheadSearchTreeNode {
     public void setValue(String value) {
         this.value = value;
     }
-
     
     /**
      * Gets the tokens.
@@ -106,7 +100,6 @@ public class TypeAheadSearchTreeNode {
     public List<String>  getTokens() {
         return tokens;
     }
-
     
     /**
      * Sets the tokens.
@@ -116,7 +109,6 @@ public class TypeAheadSearchTreeNode {
     public void setTokens(List<String>  tokens) {
         this.tokens = tokens;
     }
-
     
     /**
      * Gets the key.
@@ -126,7 +118,6 @@ public class TypeAheadSearchTreeNode {
     public String getKey() {
         return key;
     }
-
     
     /**
      * Sets the key.
@@ -136,7 +127,6 @@ public class TypeAheadSearchTreeNode {
     public void setKey(String key) {
         this.key = key;
     }
-
     
     /**
      * Gets the parent title.
@@ -146,7 +136,6 @@ public class TypeAheadSearchTreeNode {
     public String getParentTitle() {
         return parentTitle;
     }
-
     
     /**
      * Sets the parent title.
@@ -156,7 +145,5 @@ public class TypeAheadSearchTreeNode {
     public void setParentTitle(String parentTitle) {
         this.parentTitle = parentTitle;
     }
-
-    
     
 }

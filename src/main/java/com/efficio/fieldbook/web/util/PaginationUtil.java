@@ -14,7 +14,6 @@ package com.efficio.fieldbook.web.util;
 /**
  * Created by IntelliJ IDEA.
  * User: Daniel Villafuerte
-
  */
 public class PaginationUtil {
     
@@ -50,7 +49,8 @@ public class PaginationUtil {
      * @param endRow the end row
      * @return the string
      */
-    public static String calculatePageFunction(String pageFunction, String updateTarget, String clickFunction, int startRow, int endRow) {
+    public static String calculatePageFunction(String pageFunction, String updateTarget
+            , String clickFunction, int startRow, int endRow) {
         String function = "javascript:" + pageFunction;
         function += "('" + updateTarget + "', '" + clickFunction + "', " + startRow + "," + endRow + ")";
 

@@ -88,7 +88,8 @@ public class SaveNurseryControllerTest extends AbstractJUnit4SpringContextTests 
 		ModelAndView mav = handlerAdapter.handle(request, response, handler);
 		
 		ModelAndViewAssert.assertViewName(mav, SaveNurseryController.BASE_TEMPLATE_NAME);
-		ModelAndViewAssert.assertModelAttributeValue(mav, SaveNurseryController.TEMPLATE_NAME_ATTRIBUTE, "NurseryManager/saveNursery");
+		ModelAndViewAssert.assertModelAttributeValue(mav, 
+		        SaveNurseryController.TEMPLATE_NAME_ATTRIBUTE, "NurseryManager/saveNursery");
 	}
 	
 	/**

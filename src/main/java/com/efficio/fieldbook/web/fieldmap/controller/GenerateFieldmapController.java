@@ -120,21 +120,26 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
      */
     @RequestMapping(value="/viewFieldmap/{studyType}/{datasetId}/{geolocationId}", method = RequestMethod.GET)
     public String viewFieldmap(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model,
-            @PathVariable Integer datasetId, @PathVariable Integer geolocationId, @PathVariable String studyType) {
+            @PathVariable Integer datasetId, @PathVariable Integer geolocationId, 
+            @PathVariable String studyType) {
         try {
 
             this.userFieldmap.setSelectedDatasetId(datasetId);
             this.userFieldmap.setSelectedGeolocationId(geolocationId);
             
             this.userFieldmap.setSelectedFieldMaps(
-                    fieldbookMiddlewareService.getAllFieldMapsInBlockByTrialInstanceId(datasetId, geolocationId));
+                    fieldbookMiddlewareService.getAllFieldMapsInBlockByTrialInstanceId(
+                            datasetId, geolocationId));
 
             FieldMapTrialInstanceInfo trialInfo = 
-                    this.userFieldmap.getSelectedTrialInstanceByDatasetIdAndGeolocationId(datasetId, geolocationId);
+                    this.userFieldmap.getSelectedTrialInstanceByDatasetIdAndGeolocationId(
+                                            datasetId, geolocationId);
             if (trialInfo != null) {
                 this.userFieldmap.setNumberOfRangesInBlock(trialInfo.getRangesInBlock());
-                this.userFieldmap.setNumberOfRowsInBlock(trialInfo.getColumnsInBlock(), trialInfo.getRowsPerPlot());
-                this.userFieldmap.setNumberOfEntries((long) this.userFieldmap.getAllSelectedFieldMapLabels(false).size()); 
+                this.userFieldmap.setNumberOfRowsInBlock(trialInfo.getColumnsInBlock(), 
+                        trialInfo.getRowsPerPlot());
+                this.userFieldmap.setNumberOfEntries(
+                        (long) this.userFieldmap.getAllSelectedFieldMapLabels(false).size()); 
                 this.userFieldmap.setNumberOfRowsPerPlot(trialInfo.getRowsPerPlot());
                 this.userFieldmap.setPlantingOrder(trialInfo.getPlantingOrder());
                 this.userFieldmap.setBlockName(trialInfo.getBlockName());
@@ -145,15 +150,16 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
                 this.userFieldmap.setMachineRowCapacity(trialInfo.getMachineRowCapacity());
                 
                 FieldPlotLayoutIterator plotIterator = horizontalFieldMapLayoutIterator;
-                this.userFieldmap.setFieldmap(fieldmapService.generateFieldmap(this.userFieldmap, plotIterator));
+                this.userFieldmap.setFieldmap(fieldmapService.generateFieldmap(this.userFieldmap, 
+                        plotIterator));
             }
-            this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(this.userFieldmap.getSelectedFieldMaps(), this.userFieldmap.isTrial()));
+            this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(
+                    this.userFieldmap.getSelectedFieldMaps(), this.userFieldmap.isTrial()));
             this.userFieldmap.setGenerated(false);
             form.setUserFieldmap(this.userFieldmap);
             
         } catch(MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
-            e.printStackTrace();
         }
         return super.show(model);
     }
@@ -168,10 +174,12 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
      */
     @ResponseBody
     @RequestMapping(value="/exportExcel", method = RequestMethod.GET)
-    public String exportExcel(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model, HttpServletResponse response) {
+    public String exportExcel(@ModelAttribute("fieldmapForm") FieldmapForm form, 
+            Model model, HttpServletResponse response) {
 
         String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        String fileName = userFieldmap.getBlockName().replace(" ", "") + "-" + currentDate + ".xls"; //changed selected name to block name for now
+        String fileName = userFieldmap.getBlockName().replace(" ", "") + "-" 
+                + currentDate + ".xls"; //changed selected name to block name for now
 
         response.setHeader("Content-disposition","attachment; filename=" + fileName);
 

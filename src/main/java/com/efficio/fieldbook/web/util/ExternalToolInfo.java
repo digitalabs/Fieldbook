@@ -38,47 +38,47 @@ public class ExternalToolInfo {
     *
     * @param properties the properties
     */
-   public ExternalToolInfo(Properties properties)
-   {
+   public ExternalToolInfo(Properties properties){
       this.currentProjectId = properties.get("workbench.currentProjectIdId").toString();
       this.oldFieldbookPath = properties.get("old.fb.tool.path").toString();
    }
 
-/**
- * Gets the current project id.
- *
- * @return the current project id
- */
-public String getCurrentProjectId() {
-    return currentProjectId;
-}
+    /**
+     * Gets the current project id.
+     * 
+     * @return the current project id
+     */
+    public String getCurrentProjectId() {
+        return currentProjectId;
+    }
 
-/**
- * Sets the current project id.
- *
- * @param currentProjectId the new current project id
- */
-public void setCurrentProjectId(String currentProjectId) {
-    this.currentProjectId = currentProjectId;
-}
+    /**
+     * Sets the current project id.
+     * 
+     * @param currentProjectId
+     *            the new current project id
+     */
+    public void setCurrentProjectId(String currentProjectId) {
+        this.currentProjectId = currentProjectId;
+    }
 
-/**
- * Gets the old fieldbook path.
- *
- * @return the old fieldbook path
- */
-public String getOldFieldbookPath() {
-    return oldFieldbookPath;
-}
+    /**
+     * Gets the old fieldbook path.
+     * 
+     * @return the old fieldbook path
+     */
+    public String getOldFieldbookPath() {
+        return oldFieldbookPath;
+    }
 
-/**
- * Sets the old fieldbook path.
- *
- * @param oldFieldbookPath the new old fieldbook path
- */
-public void setOldFieldbookPath(String oldFieldbookPath) {
-    this.oldFieldbookPath = oldFieldbookPath;
-}
+    /**
+     * Sets the old fieldbook path.
+     * 
+     * @param oldFieldbookPath
+     *            the new old fieldbook path
+     */
+    public void setOldFieldbookPath(String oldFieldbookPath) {
+        this.oldFieldbookPath = oldFieldbookPath;
+    }
    
-       
 }

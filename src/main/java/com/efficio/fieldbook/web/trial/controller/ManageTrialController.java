@@ -25,9 +25,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.ManageNurseriesForm;
-import com.efficio.fieldbook.web.nursery.form.NurseryDetailsForm;
 import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 import com.efficio.fieldbook.web.trial.form.ManageTrialForm;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
@@ -66,9 +64,11 @@ public class ManageTrialController extends AbstractBaseFieldbookController{
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("manageTrialForm") ManageTrialForm form, Model model) {
         try {
-            List<StudyDetails> nurseryDetailsList = fieldbookMiddlewareService.getAllLocalTrialStudyDetails();
+            List<StudyDetails> nurseryDetailsList = 
+                    fieldbookMiddlewareService.getAllLocalTrialStudyDetails();
             /*
-            StudyDetails det1 = new StudyDetails("studyName", "title", "pmKey", "objective", "", "", null, 1, "", "");                        
+            StudyDetails det1 = new StudyDetails(
+                "studyName", "title", "pmKey", "objective", "", "", null, 1, "", "");                        
             for(int i = 0 ; i < 50  ; i++){
                 det1.setId(4);
                 nurseryDetailsList.add(det1);
@@ -92,7 +92,8 @@ public class ManageTrialController extends AbstractBaseFieldbookController{
      * @return the string
      */
     @RequestMapping(value="/page/{pageNum}", method = RequestMethod.GET)
-    public String getPaginatedList(@PathVariable int pageNum, @ModelAttribute("manageTrialForm") ManageTrialForm form, Model model) {
+    public String getPaginatedList(@PathVariable int pageNum
+            , @ModelAttribute("manageTrialForm") ManageTrialForm form, Model model) {
         List<StudyDetails> nurseryDetailsList = getTrialSelection().getStudyDetailsList();
         if(nurseryDetailsList != null){
             form.setTrialDetailsList(nurseryDetailsList);
@@ -110,7 +111,8 @@ public class ManageTrialController extends AbstractBaseFieldbookController{
      * @return the string
      */
     @RequestMapping(method = RequestMethod.POST)
-    public String submitDetails(@ModelAttribute("manageTrialForm") ManageTrialForm form, BindingResult result, Model model) {
+    public String submitDetails(@ModelAttribute("manageTrialForm") ManageTrialForm form
+            , BindingResult result, Model model) {
         //return "redirect:" + FileUploadController.URL;
         return super.show(model);
     }

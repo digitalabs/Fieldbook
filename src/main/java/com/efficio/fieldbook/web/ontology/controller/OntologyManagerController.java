@@ -66,7 +66,6 @@ import com.efficio.fieldbook.web.ontology.validation.OntologyBrowserValidator;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 
 
-// TODO: Auto-generated Javadoc
 /**
  * This controller handles the ontology screen.
  * 
@@ -127,7 +126,8 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      * @return the string
      */
     @RequestMapping(value="traitClass", method = RequestMethod.GET)
-    public String showTraitClass(@ModelAttribute("ontologyTraitClassForm") OntologyTraitClassForm form, Model model) {
+    public String showTraitClass(@ModelAttribute("ontologyTraitClassForm") OntologyTraitClassForm form
+            , Model model) {
         
         return super.showAjaxPage(model, TRAIT_CLASS_MODAL);
     }
@@ -140,7 +140,8 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      */
     @ResponseBody
     @RequestMapping(value="traitClass", method = RequestMethod.POST)
-    public Map<String, Object> saveTraitClass(@ModelAttribute("ontologyTraitClassForm") OntologyTraitClassForm form) {
+    public Map<String, Object> saveTraitClass(
+            @ModelAttribute("ontologyTraitClassForm") OntologyTraitClassForm form) {
          return saveOntology(form);
     }
     
@@ -233,9 +234,10 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
     public String show(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form, Model model) {
         
         try {
-            List<TraitClassReference> traitRefList = (List<TraitClassReference>) ontologyService.getAllTraitGroupsHierarchy(false);
+            List<TraitClassReference> traitRefList = 
+                    (List<TraitClassReference>) ontologyService.getAllTraitGroupsHierarchy(false);
             List<TraitClassReference> traitClass = getAllTraitClassesFromHierarchy(traitRefList);
-            List<TraitClassReference> parentList = new ArrayList();
+            List<TraitClassReference> parentList = new ArrayList<TraitClassReference>();
             TraitClassReference refAll = new TraitClassReference(0, "ALL");
             refAll.setTraitClassChildren(traitRefList);
             parentList.add(refAll);
@@ -245,8 +247,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
             model.addAttribute("methodsSuggestionList", ontologyService.getAllMethods());
             model.addAttribute("scalesSuggestionList", ontologyService.getAllScales());
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
     	return super.show(model);
     }
@@ -261,14 +262,16 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      * @return the string
      */
     @RequestMapping(value="variable", method = RequestMethod.POST)
-    public String saveNewVariable(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form, BindingResult result, Model model) {
+    public String saveNewVariable(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form
+            , BindingResult result, Model model) {
         OntologyBrowserValidator validator = new OntologyBrowserValidator();
         
         //validations for delete and update
         if (form.getIsDelete().equals(1)) {
             validateDelete(form, result);
-        } else if (form.getIsDelete().equals(0) || (form.getIsDelete().equals(0) && form.getVariableId() > -1)) {
-            System.out.println("hallow");
+        } else if (form.getIsDelete().equals(0) 
+                || (form.getIsDelete().equals(0) && form.getVariableId() > -1)) {
+            LOG.debug("hallow");
             validator.validate(form, result);
         } 
         
@@ -325,7 +328,8 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      * @throws MiddlewareQueryException the middleware query exception
      * @throws MiddlewareException the middleware exception
      */
-    private void saveConstraintsAndValidValues(OntologyBrowserForm form, StandardVariable stdVariable) throws MiddlewareQueryException, MiddlewareException {
+    private void saveConstraintsAndValidValues(OntologyBrowserForm form, StandardVariable stdVariable) 
+            throws MiddlewareQueryException, MiddlewareException {
         String dataTypeId = form.getDataType() == null ? form.getDataTypeId() : form.getDataType(); 
         String dataType = ontologyService.getTermById(Integer.parseInt(dataTypeId)).getName();
         if (dataType.contains("Categorical")) {
@@ -359,7 +363,8 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      * @throws MiddlewareQueryException the middleware query exception
      * @throws MiddlewareException the middleware exception
      */
-    private void saveConstraints(OntologyBrowserForm form, StandardVariable stdVariable) throws MiddlewareQueryException, MiddlewareException {
+    private void saveConstraints(OntologyBrowserForm form, StandardVariable stdVariable) 
+            throws MiddlewareQueryException, MiddlewareException {
         Double minValue = form.getMinValue();
         Double maxValue = form.getMaxValue();
         
@@ -385,12 +390,14 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      * @param stdVariable the std variable
      * @throws MiddlewareQueryException the middleware query exception
      */
-    private void saveValidValues(OntologyBrowserForm form, StandardVariable stdVariable) throws MiddlewareQueryException, MiddlewareException {
+    private void saveValidValues(OntologyBrowserForm form, StandardVariable stdVariable) 
+            throws MiddlewareQueryException, MiddlewareException {
         List<EnumerationOperation> enumerations = convertToEnumerationOperation(form.getEnumerations());
         for (EnumerationOperation enumeration : enumerations) {
             if (enumeration.getOperation() > 0) {
                 ontologyService.addStandardVariableValidValue(stdVariable, 
-                        new Enumeration(enumeration.getId(), enumeration.getName(), enumeration.getDescription(), 0));
+                        new Enumeration(enumeration.getId(), enumeration.getName()
+                                , enumeration.getDescription(), 0));
             } else if (enumeration.getOperation() < 0) {
                 ontologyService.deleteStandardVariableValidValue(stdVariable.getId(), enumeration.getId());
             }
@@ -427,7 +434,8 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      * @return the standard variable
      * @throws MiddlewareQueryException the middleware query exception
      */
-    private StandardVariable createStandardVariableObject(OntologyBrowserForm form, Operation operation) throws MiddlewareQueryException {
+    private StandardVariable createStandardVariableObject(OntologyBrowserForm form, Operation operation) 
+            throws MiddlewareQueryException {
         StandardVariable standardVariable = new StandardVariable();
         String description = null;
         
@@ -455,7 +463,8 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         standardVariable.setDataType(ontologyService.getTermById(Integer.parseInt(form.getDataType())));
         
         if (form.getVariableId() == null) {
-            standardVariable.setPhenotypicType(ontologyService.getPhenotypicTypeById(Integer.parseInt(form.getRole())));
+            standardVariable.setPhenotypicType(ontologyService.getPhenotypicTypeById(
+                    Integer.parseInt(form.getRole())));
             standardVariable.setStoredIn(ontologyService.getTermById(Integer.parseInt(form.getRole())));
         }
         //remove setting of isA
@@ -521,7 +530,8 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                 if(isInteger(traitClass) == false){
                     //meaning we need to save the trait class
                     traitClassTerm = ontologyService
-                            .addTraitClass(traitClass, traitClassDescription, TermId.ONTOLOGY_TRAIT_CLASS.getId()).getTerm();
+                            .addTraitClass(traitClass, traitClassDescription
+                                    , TermId.ONTOLOGY_TRAIT_CLASS.getId()).getTerm();
                     
                     resultMap.put("traitId", String.valueOf(traitClassTerm.getId()));
                     resultMap.put("traitName", traitClassTerm.getName());
@@ -548,7 +558,8 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                     traitClassDescription = traitClass;
                 }
                 ontologyName = "Trait Class";
-                term = ontologyService.addTraitClass(traitClass, traitClassDescription, TermId.ONTOLOGY_TRAIT_CLASS.getId()).getTerm();
+                term = ontologyService.addTraitClass(traitClass, traitClassDescription
+                        , TermId.ONTOLOGY_TRAIT_CLASS.getId()).getTerm();
             }          
               
             resultMap.put("status", "1");
@@ -558,7 +569,8 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
             Object[] args = new Object[2];
             args[0] = ontologyName;
             args[1] = term.getName();
-            resultMap.put("successMessage", messageSource.getMessage("ontology.browser.modal.variable.name.save.success", args, local));
+            resultMap.put("successMessage", messageSource
+                    .getMessage("ontology.browser.modal.variable.name.save.success", args, local));
         } catch(MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
             resultMap.put("status", "-1");
@@ -663,9 +675,10 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         return null;
     }
     */
-    private List<TraitClassReference> getAllTraitClassesFromHierarchy(List<TraitClassReference> refList) throws MiddlewareQueryException{
+    private List<TraitClassReference> getAllTraitClassesFromHierarchy(List<TraitClassReference> refList) 
+            throws MiddlewareQueryException{
         
-        List<TraitClassReference> traitClass = new ArrayList();
+        List<TraitClassReference> traitClass = new ArrayList<TraitClassReference>();
         for(TraitClassReference ref : refList){
             traitClass.add(ref);
             traitClass.addAll(getAllTraitClassesFromHierarchy(ref.getTraitClassChildren()));
@@ -744,9 +757,11 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
             String traitId = term  == null ? "": Integer.toString(term.getId());
             
             String cropOntologyId = "";
-            if (property.getTerm() != null && property.getTerm().getProperties() != null && !property.getTerm().getProperties().isEmpty()) {
+            if (property.getTerm() != null && property.getTerm().getProperties() != null 
+                    && !property.getTerm().getProperties().isEmpty()) {
                 for (TermProperty tp : property.getTerm().getProperties()) {
-                    if (tp.getTypeId().equals(TermId.CROP_ONTOLOGY_ID.getId()) && tp.getValue() != null && !"".equals(tp.getValue().trim())) {
+                    if (tp.getTypeId().equals(TermId.CROP_ONTOLOGY_ID.getId()) 
+                            && tp.getValue() != null && !"".equals(tp.getValue().trim())) {
                         cropOntologyId = tp.getValue();
                         break;
                     }
@@ -783,13 +798,16 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         Map<String, String> resultMap = new HashMap<String, String>();
         
         try {
-            StandardVariable stdVariable = ontologyService.getStandardVariable(Integer.parseInt(variableId));
+            StandardVariable stdVariable = 
+                    ontologyService.getStandardVariable(Integer.parseInt(variableId));
             resultMap.put("status", "1");
             resultMap.put("name", stdVariable.getName()==null ? "" : stdVariable.getName());
-            resultMap.put("description", stdVariable.getDescription()==null ? "" : stdVariable.getDescription());
+            resultMap.put("description", stdVariable.getDescription() == null 
+                                ? "" : stdVariable.getDescription());
             resultMap.put("dataType", checkIfNull(stdVariable.getDataType()));
             resultMap.put("role", checkIfNull(stdVariable.getStoredIn()));
-            resultMap.put("cropOntologyDisplay", stdVariable.getCropOntologyId()==null ? "" : stdVariable.getCropOntologyId());
+            resultMap.put("cropOntologyDisplay", stdVariable.getCropOntologyId() == null 
+                                ? "" : stdVariable.getCropOntologyId());
             resultMap.put("traitClass", checkIfNull(stdVariable.getIsA()));
             resultMap.put("property", checkIfNull(stdVariable.getProperty()));
             resultMap.put("method", checkIfNull(stdVariable.getMethod()));
@@ -841,7 +859,8 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      */
     @SuppressWarnings("rawtypes")
     @RequestMapping(value="retrieve/linked/variable/{ontologyType}/{id}", method = RequestMethod.GET)
-    public String getLinkedVariable(@PathVariable String ontologyType, @PathVariable String id, Model model) {
+    public String getLinkedVariable(@PathVariable String ontologyType
+            , @PathVariable String id, Model model) {
         
         try {
             List<StandardVariable> standardVariableList = new ArrayList<StandardVariable>();
@@ -861,7 +880,8 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
 
                     @Override
                     public int compare(Object o1, Object o2) {
-                        return ((StandardVariable)o1).getName().toUpperCase().compareTo(((StandardVariable)o2).getName().toUpperCase());
+                        return ((StandardVariable)o1).getName().toUpperCase()
+                                .compareTo(((StandardVariable)o2).getName().toUpperCase());
                     }
                     
                 }); 
@@ -869,14 +889,11 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
             model.addAttribute("linkedStandardVariableList", standardVariableList);
             
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
         return super.showAjaxPage(model, LINKED_VARIABLES_MODAL);
     }
-    
-   
-    
+     
     /*
      * Check if null.
      *
@@ -890,7 +907,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      * @return the string
      */
     private String checkIfNull(Term term) {
-        return term==null ? "" : String.valueOf(term.getId());
+        return term == null ? "" : String.valueOf(term.getId());
     }
     
     /**
@@ -903,9 +920,15 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         OntologyBrowserForm form = (OntologyBrowserForm) o;
         try {
             if (form.getVariableId() > -1) {
-                errors.rejectValue("variableName", "ontology.browser.cannot.delete.central.variable", new String[] {ontologyService.getStandardVariable(form.getVariableId()).getName()}, "ontology.browser.cannot.delete.central.variable");
+                errors.rejectValue("variableName", "ontology.browser.cannot.delete.central.variable"
+                        , new String[] {
+                                ontologyService.getStandardVariable(form.getVariableId()).getName()}
+                                    , "ontology.browser.cannot.delete.central.variable");
             } else if (ontologyService.countProjectsByVariable(form.getVariableId()) > 0) {
-                errors.rejectValue("variableName", "ontology.browser.cannot.delete.linked.variable", new String[] {ontologyService.getStandardVariable(form.getVariableId()).getName()}, "ontology.browser.cannot.delete.linked.variable");
+                errors.rejectValue("variableName", "ontology.browser.cannot.delete.linked.variable"
+                        , new String[] {
+                            ontologyService.getStandardVariable(form.getVariableId()).getName()}
+                                    , "ontology.browser.cannot.delete.linked.variable");
             }
         } catch(MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
@@ -922,7 +945,9 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         OntologyBrowserForm form = (OntologyBrowserForm) o;
         try {
             if (form.getVariableId() > -1) {
-                errors.rejectValue("variableName", "ontology.browser.cannot.update.central.variable", new String[] {ontologyService.getStandardVariable(form.getVariableId()).getName()}, "ontology.browser.cannot.update.central.variable");
+                errors.rejectValue("variableName", "ontology.browser.cannot.update.central.variable"
+                        , new String[] {ontologyService.getStandardVariable(form.getVariableId()).getName()}
+                        , "ontology.browser.cannot.update.central.variable");
             }
         } catch(MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
@@ -1029,17 +1054,17 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                         desc, 
                         ((OntologyTraitClassForm) form).getManageParentTraitClassId()));
 
-                List<TraitClassReference> traitRefList = (List<TraitClassReference>) ontologyService.getAllTraitGroupsHierarchy(false);
+                List<TraitClassReference> traitRefList = 
+                        (List<TraitClassReference>) ontologyService.getAllTraitGroupsHierarchy(false);
                 List<TraitClassReference> traitClass = getAllTraitClassesFromHierarchy(traitRefList);
-                List<TraitClassReference> parentList = new ArrayList();
+                List<TraitClassReference> parentList = new ArrayList<TraitClassReference>();
                 TraitClassReference refAll = new TraitClassReference(0, "ALL");
                 refAll.setTraitClassChildren(traitRefList);
                 parentList.add(refAll);
                 try {
                     result.put("traitClassTreeData", TreeViewUtil.convertOntologyTraitsToJson(parentList));
                 } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    LOG.error(e.getMessage(), e);
                 }
                 result.put("traitClassesSuggestionList", traitClass);
 
@@ -1095,11 +1120,13 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
             result.put("status",  "0");
-            result.put("errorMessage", errorHandlerService.getErrorMessagesAsString(e.getCode(), new Object[] {ontologyName, form.getName()}, "<br/>"));
+            result.put("errorMessage", errorHandlerService.getErrorMessagesAsString(e.getCode()
+                    , new Object[] {ontologyName, form.getName()}, "<br/>"));
         } catch (MiddlewareException e) {
             LOG.error(e.getMessage(), e);
             result.put("status",  "0");
-            result.put("errorMessage", errorHandlerService.getErrorMessagesAsString(e.getMessage(), null, "<br/>"));
+            result.put("errorMessage", errorHandlerService.getErrorMessagesAsString(e.getMessage()
+                    , null, "<br/>"));
         }
         return result;
     }
@@ -1114,37 +1141,40 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      */
     @ResponseBody
     @RequestMapping(value = "deleteOntology/{ontology}", method = RequestMethod.POST)
-    public Map<String, Object> deleteOntology(@RequestParam(required=false) Integer id, @RequestParam(required=false) String name, @PathVariable String ontology) {
+    public Map<String, Object> deleteOntology(@RequestParam(required=false) Integer id
+            , @RequestParam(required=false) String name, @PathVariable String ontology) {
         Map<String, Object> result = new HashMap<String, Object>();
         Locale locale = LocaleContextHolder.getLocale();
         
-        String ontologyTypeName = messageSource.getMessage("ontology.browser.modal." + ontology, null, locale);
+        String ontologyTypeName = 
+                messageSource.getMessage("ontology.browser.modal." + ontology, null, locale);
         
         try {
             ontologyService.deleteTraitClass(id);
             result.put("status", "1");
-            result.put("successMessage", messageSource.getMessage("ontology.browser.modal.delete.ontology.successful", 
-                    new Object[] {ontologyTypeName, name}, 
-                    locale));
+            result.put("successMessage", messageSource
+                        .getMessage("ontology.browser.modal.delete.ontology.successful", 
+                    new Object[] {ontologyTypeName, name}, locale));
             if("traitClass".equalsIgnoreCase(ontology)){
-                List<TraitClassReference> traitRefList = (List<TraitClassReference>) ontologyService.getAllTraitGroupsHierarchy(false);
+                List<TraitClassReference> traitRefList = 
+                        (List<TraitClassReference>) ontologyService.getAllTraitGroupsHierarchy(false);
                 List<TraitClassReference> traitClass = getAllTraitClassesFromHierarchy(traitRefList);
-                List<TraitClassReference> parentList = new ArrayList();
+                List<TraitClassReference> parentList = new ArrayList<TraitClassReference>();
                 TraitClassReference refAll = new TraitClassReference(0, "ALL");
                 refAll.setTraitClassChildren(traitRefList);
                 parentList.add(refAll);
                 try {
                     result.put("traitClassTreeData", TreeViewUtil.convertOntologyTraitsToJson(parentList));
                 } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    LOG.error(e.getMessage(), e);
                 }
                 result.put("traitClassesSuggestionList", traitClass);
             }
         } catch(MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
             result.put("status", "0");
-            result.put("errorMessage", errorHandlerService.getErrorMessagesAsString(e.getMessage(), new Object[] {ontologyTypeName, name}, "<br/>"));
+            result.put("errorMessage", errorHandlerService.getErrorMessagesAsString(
+                            e.getMessage(), new Object[] {ontologyTypeName, name}, "<br/>"));
         }
         
         return result;

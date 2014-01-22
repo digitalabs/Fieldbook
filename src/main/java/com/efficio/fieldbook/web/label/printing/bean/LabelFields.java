@@ -13,7 +13,6 @@ package com.efficio.fieldbook.web.label.printing.bean;
 
 import java.io.Serializable;
 
-
 /**
  * The Class LabelFields.
  *
@@ -21,6 +20,8 @@ import java.io.Serializable;
  */
 public class LabelFields implements Serializable{
     
+    private static final long serialVersionUID = 1L;
+
     /** The name. */
     private String name;
     
@@ -73,6 +74,5 @@ public class LabelFields implements Serializable{
     public void setId(int id) {
         this.id = id;
     }
-    
     
 }

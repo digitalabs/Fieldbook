@@ -40,7 +40,6 @@ import org.generationcp.middleware.service.api.FieldbookService;
 @Controller
 @RequestMapping({"/NurseryManager", ManageNurseriesController.URL})
 public class ManageNurseriesController extends AbstractBaseFieldbookController{
-
     
     private static final Logger LOG = LoggerFactory.getLogger(ManageNurseriesController.class);
     
@@ -66,9 +65,11 @@ public class ManageNurseriesController extends AbstractBaseFieldbookController{
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("manageNurseriesForm") ManageNurseriesForm form, Model model) {
         try {
-            List<StudyDetails> nurseryDetailsList = fieldbookMiddlewareService.getAllLocalNurseryDetails();
+            List<StudyDetails> nurseryDetailsList = fieldbookMiddlewareService
+                    .getAllLocalNurseryDetails();
             /*
-            StudyDetails det1 = new StudyDetails("studyName", "title", "pmKey", "objective", "", "", null, 1, "", "");
+            StudyDetails det1 = new StudyDetails(
+                    "studyName", "title", "pmKey", "objective", "", "", null, 1, "", "");
             det1.setId(1);
             nurseryDetailsList.add(det1);
             det1.setId(2);
@@ -96,7 +97,8 @@ public class ManageNurseriesController extends AbstractBaseFieldbookController{
      * @return the string
      */
     @RequestMapping(value="/page/{pageNum}", method = RequestMethod.GET)
-    public String getPaginatedList(@PathVariable int pageNum, @ModelAttribute("manageNurseriesForm") ManageNurseriesForm form, Model model) {
+    public String getPaginatedList(@PathVariable int pageNum
+            , @ModelAttribute("manageNurseriesForm") ManageNurseriesForm form, Model model) {
         List<StudyDetails> nurseryDetailsList = getUserSelection().getStudyDetailsList();
         if(nurseryDetailsList != null){
             form.setNurseryDetailsList(nurseryDetailsList);
@@ -114,7 +116,8 @@ public class ManageNurseriesController extends AbstractBaseFieldbookController{
      * @return the string
      */
     @RequestMapping(method = RequestMethod.POST)
-    public String submitDetails(@ModelAttribute("manageNurseriesForm") NurseryDetailsForm form, BindingResult result, Model model) {
+    public String submitDetails(@ModelAttribute("manageNurseriesForm") NurseryDetailsForm form
+            , BindingResult result, Model model) {
         return "redirect:" + FileUploadController.URL;
     }
     

@@ -62,8 +62,8 @@ public class ImportedConstant  implements Serializable{
      * @param dataType the data type
      * @param value the value
      */
-    public ImportedConstant(String constant, String description, String property, String scale, String method
-            , String dataType, String value) {
+    public ImportedConstant(String constant, String description, String property
+            , String scale, String method, String dataType, String value) {
         this.constant = constant;
         this.description = description;
         this.property = property;
@@ -85,7 +85,8 @@ public class ImportedConstant  implements Serializable{
      * @param value the value
      * @param sampleLevel the sample level
      */
-    public ImportedConstant(String constant, String description, String property, String scale, String method
+    public ImportedConstant(String constant, String description, String property
+            , String scale, String method
             , String dataType, String value, String sampleLevel) {
         this.constant = constant;
         this.description = description;
@@ -240,4 +241,5 @@ public class ImportedConstant  implements Serializable{
     public void setSampleLevel(String sampleLevel){
         this.sampleLevel = sampleLevel;
     }
-};
+    
+}

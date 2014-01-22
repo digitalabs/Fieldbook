@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.generationcp.middleware.domain.dms.Study;
-import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -48,17 +47,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.LabelPrintingService;
-import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
-import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.label.printing.form.LabelPrintingForm;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.ManageNurseriesForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 
 /**
@@ -142,8 +138,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
                 fieldMapInfo = fieldMapInfoDetail;
             }
         } catch (MiddlewareQueryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
         
         getUserLabelPrinting().setStudy(study);
@@ -171,7 +166,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
      * @return the string
      */
     @RequestMapping(value="/nursery/{id}", method = RequestMethod.GET)
-    public String showNurseryLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, Model model, 
+    public String showNurseryLabelDetails(
+            @ModelAttribute("labelPrintingForm") LabelPrintingForm form, Model model, 
             HttpSession session, @PathVariable int id, Locale locale) {
     	//we get the nursery nite name first
     	/*
@@ -197,15 +193,12 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
                 fieldMapInfo = fieldMapInfoDetail;
             }
         } catch (MiddlewareQueryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
         getUserLabelPrinting().setStudy(study);
         getUserLabelPrinting().setFieldMapInfo(fieldMapInfo);
         getUserLabelPrinting().setBarcodeNeeded("1");
         getUserLabelPrinting().setNumberOfLabelPerRow("3");
-        
-        
         
         getUserLabelPrinting().setFilename(generateDefaultFilename(getUserLabelPrinting(), false));
         form.setUserLabelPrinting(getUserLabelPrinting());
@@ -239,10 +232,12 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         getUserLabelPrinting().setSecondBarcodeField("");
         getUserLabelPrinting().setThirdBarcodeField("");
         
-        getUserLabelPrinting().setFilename(generateDefaultFilename(getUserLabelPrinting(), userFieldmap.isTrial()));
+        getUserLabelPrinting().setFilename(
+                generateDefaultFilename(getUserLabelPrinting(), userFieldmap.isTrial()));
         form.setUserLabelPrinting(getUserLabelPrinting());
         
-        model.addAttribute("availableFields",getAvailableLabelFields(userFieldmap.isTrial(), true, locale));
+        model.addAttribute("availableFields"
+                , getAvailableLabelFields(userFieldmap.isTrial(), true, locale));
         
         form.setIsTrial(userFieldmap.isTrial());
         
@@ -264,7 +259,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
             if (getUserLabelPrinting().getFieldMapInfoList() != null) {
                 fileName = "Trial-Field-Map-Labels-" + currentDate;
             } else {
-                fileName += "-" + userLabelPrinting.getNumberOfInstances() + "-" + currentDate; //changed selected name to block name for now
+                fileName += "-" + userLabelPrinting.getNumberOfInstances() 
+                        + "-" + currentDate; //changed selected name to block name for now
             }
         } else {
             if (getUserLabelPrinting().getFieldMapInfoList() != null) {
@@ -286,35 +282,58 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
      * @return the available label fields
      */
     private List<LabelFields> getAvailableLabelFields(boolean isTrial, boolean isFromFieldMap, Locale locale){
-        List<LabelFields> labelFieldsList = new ArrayList();
+        List<LabelFields> labelFieldsList = new ArrayList<LabelFields>();
         
-        
-        labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.entry.num", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM));
-        labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.gid", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_GID));
-        labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.germplasm.name", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME));
-        labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.parentage", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE));
-        labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.year", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_YEAR));
-        labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.season", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_SEASON));
-        
-        
-        labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.location", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION));
+        labelFieldsList.add(new LabelFields(
+                messageSource.getMessage("label.printing.available.fields.entry.num", null, locale)
+                , AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM));
+        labelFieldsList.add(new LabelFields(
+                messageSource.getMessage("label.printing.available.fields.gid", null, locale)
+                , AppConstants.AVAILABLE_LABEL_FIELDS_GID));
+        labelFieldsList.add(new LabelFields(
+                messageSource.getMessage("label.printing.available.fields.germplasm.name", null, locale)
+                , AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME));
+        labelFieldsList.add(new LabelFields(
+                messageSource.getMessage("label.printing.available.fields.parentage", null, locale)
+                , AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE));
+        labelFieldsList.add(new LabelFields(
+                messageSource.getMessage("label.printing.available.fields.year", null, locale)
+                , AppConstants.AVAILABLE_LABEL_FIELDS_YEAR));
+        labelFieldsList.add(new LabelFields(
+                messageSource.getMessage("label.printing.available.fields.season", null, locale)
+                , AppConstants.AVAILABLE_LABEL_FIELDS_SEASON));
+        labelFieldsList.add(new LabelFields(
+                messageSource.getMessage("label.printing.available.fields.location", null, locale)
+                , AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION));
         
         if(isTrial){
-            labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.trial.name", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME));
-            labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.trial.instance.num", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM));
-            
-            labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.rep", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_REP));
-            
+            labelFieldsList.add(new LabelFields(
+                    messageSource.getMessage("label.printing.available.fields.trial.name", null, locale)
+                    , AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME));
+            labelFieldsList.add(new LabelFields(
+                    messageSource.getMessage("label.printing.available.fields.trial.instance.num", null, locale)
+                    , AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM));
+            labelFieldsList.add(new LabelFields(
+                    messageSource.getMessage("label.printing.available.fields.rep", null, locale)
+                    , AppConstants.AVAILABLE_LABEL_FIELDS_REP));
         }else{
-            labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.nursery.name", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME));
+            labelFieldsList.add(new LabelFields(
+                    messageSource.getMessage("label.printing.available.fields.nursery.name", null, locale)
+                    , AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME));
         }
-        labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.plot", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_PLOT));
+        labelFieldsList.add(new LabelFields(
+                messageSource.getMessage("label.printing.available.fields.plot", null, locale)
+                , AppConstants.AVAILABLE_LABEL_FIELDS_PLOT));
         if(isFromFieldMap){
 //            labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.rep", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_REP));
 //            labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.location", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION));
-            labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.block.name", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME));
+            labelFieldsList.add(new LabelFields(
+                    messageSource.getMessage("label.printing.available.fields.block.name", null, locale)
+                    , AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME));
             //labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.plot", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_PLOT));
-            labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.plot.coordinates", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES));
+            labelFieldsList.add(new LabelFields(
+                    messageSource.getMessage("label.printing.available.fields.plot.coordinates", null, locale)
+                    , AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES));
         }
         return labelFieldsList;
     }
@@ -328,7 +347,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     @ResponseBody
     @RequestMapping(value="/download", method = RequestMethod.GET)
     public String exportFile(HttpServletResponse response) {
-
         
         String fileName = getUserLabelPrinting().getFilenameDL();
 
@@ -342,8 +360,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         FileInputStream in;
         
         try {
-            
-
             in = new FileInputStream(xls);
             OutputStream out = response.getOutputStream();
 
@@ -399,9 +415,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
             for(StudyTrialInstanceInfo trialInstance : trialInstances){
                 FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = trialInstance.getTrialInstance();
                 fieldMapTrialInstanceInfo.setLocationName(fieldMapTrialInstanceInfo.getSiteName());
-                
             }
-           
         }
         
         try {
@@ -413,31 +427,28 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
             	
             	getUserLabelPrinting().setFilenameDL(fileName);
             	getUserLabelPrinting().setFilenameDLLocation(fileNameLocation);
-                fileName = labelPrintingService.generatePDFLabels(trialInstances, getUserLabelPrinting(), baos);
+                fileName = labelPrintingService.generatePDFLabels(trialInstances, 
+                                getUserLabelPrinting(), baos);
                 //response.setHeader("Content-disposition","attachment; filename= + fileName);
             }else{
             	fileName  = getUserLabelPrinting().getFilename().replaceAll(" ",  "-") + ".xls";
             	String fileNameLocation  = System.getProperty( "user.home" ) + "/"+fileName;
             	getUserLabelPrinting().setFilenameDL(fileName);
             	getUserLabelPrinting().setFilenameDLLocation(fileNameLocation);
-                fileName = labelPrintingService.generateXlSLabels(trialInstances, getUserLabelPrinting(), baos);
+                fileName = labelPrintingService.generateXlSLabels(trialInstances, 
+                                getUserLabelPrinting(), baos);
                 //response.setHeader("Content-disposition","attachment; filename=" + fileName);
             }
-           
             
             return fileName;
-        } catch (MiddlewareQueryException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
         }/* catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
          */
-         
          
         return "redirect:" + GenerateLabelController.URL;
     } 
@@ -448,10 +459,12 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
      * @return the list
      */
     private List<StudyTrialInstanceInfo> generateTrialInstancesFromFieldMap() {
-        List<FieldMapTrialInstanceInfo> trialInstances = getUserLabelPrinting().getFieldMapInfo().getDatasets().get(0).getTrialInstances();
+        List<FieldMapTrialInstanceInfo> trialInstances = 
+                getUserLabelPrinting().getFieldMapInfo().getDatasets().get(0).getTrialInstances();
         List<StudyTrialInstanceInfo> studyTrial = new ArrayList<StudyTrialInstanceInfo>();
         for (FieldMapTrialInstanceInfo trialInstance : trialInstances) {
-            StudyTrialInstanceInfo studyTrialInstance = new StudyTrialInstanceInfo(trialInstance, getUserLabelPrinting().getFieldMapInfo().getFieldbookName());
+            StudyTrialInstanceInfo studyTrialInstance = new StudyTrialInstanceInfo(
+                        trialInstance, getUserLabelPrinting().getFieldMapInfo().getFieldbookName());
             studyTrial.add(studyTrialInstance);
         }
         return studyTrial;
@@ -464,7 +477,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
      * @param form the form
      * @return the list
      */
-    private List<StudyTrialInstanceInfo> generateTrialInstancesFromSelectedFieldMaps(List<FieldMapInfo> fieldMapInfoList, LabelPrintingForm form) {
+    private List<StudyTrialInstanceInfo> generateTrialInstancesFromSelectedFieldMaps(
+                List<FieldMapInfo> fieldMapInfoList, LabelPrintingForm form) {
         List<StudyTrialInstanceInfo> trialInstances = new ArrayList<StudyTrialInstanceInfo>();
         String[] fieldMapOrder = form.getUserLabelPrinting().getOrder().split(",");
         for (String fieldmap : fieldMapOrder) {
@@ -478,8 +492,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
                 if (fieldMapInfo.getFieldbookId().equals(studyId)) {
                     fieldMapInfo.getDataSet(datasetId).getTrialInstance(geolocationId).setOrder(order);
                     StudyTrialInstanceInfo trialInstance = 
-                                new StudyTrialInstanceInfo(fieldMapInfo.getDataSet(datasetId).getTrialInstance(geolocationId), 
-                                        fieldMapInfo.getFieldbookName());
+                                new StudyTrialInstanceInfo(fieldMapInfo.getDataSet(datasetId)
+                                        .getTrialInstance(geolocationId), 
+                                            fieldMapInfo.getFieldbookName());
                     if (userFieldmap.getBlockName() != null && userFieldmap.getLocationName() != null) {
                         trialInstance.getTrialInstance().setBlockName(userFieldmap.getBlockName());
                         trialInstance.getTrialInstance().setLocationName(userFieldmap.getLocationName());
@@ -509,7 +524,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     public String getContentName() {
         return "LabelPrinting/specifyLabelDetails";
     }
-
     
     /**
      * Gets the user label printing.
@@ -519,7 +533,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     public UserLabelPrinting getUserLabelPrinting() {
         return userLabelPrinting;
     }
-
     
     /**
      * Sets the user label printing.
@@ -529,7 +542,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     public void setUserLabelPrinting(UserLabelPrinting userLabelPrinting) {
         this.userLabelPrinting = userLabelPrinting;
     }
-    
   
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getUserSelection()

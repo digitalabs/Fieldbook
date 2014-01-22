@@ -95,8 +95,9 @@ public class OntologyDetailsControllerTest  extends AbstractJUnit4SpringContextT
         enumerations.add(new Enumeration(3, "ENUM1", "ENUM3 DESC", 0));
         enumerations.add(new Enumeration(4, "ENUM1", "ENUM4 DESC", 0));
         
-        StandardVariable stdvar = new StandardVariable(property, scale, method, dataType, storedIn, traitClass, 
-                PhenotypicType.TRIAL_DESIGN, constraints, enumerations);
+        StandardVariable stdvar = 
+                new StandardVariable(property, scale, method, dataType, storedIn, traitClass, 
+                        PhenotypicType.TRIAL_DESIGN, constraints, enumerations);
         stdvar.setName("VARIABLE1");
         stdvar.setDescription("VARIABLE DESCRIPTION");
         

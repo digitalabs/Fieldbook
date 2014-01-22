@@ -15,7 +15,8 @@ import java.io.Serializable;
 
 /**
  * 
- * This bean models the various input that the user builds up over time to perform the actual loading operation
+ * This bean models the various input that the user builds up over time to perform 
+ * the actual loading operation
  */
 public class UserSelection implements Serializable {
     

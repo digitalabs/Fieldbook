@@ -74,14 +74,13 @@ public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
     private List<StandardVariableReference> getDummyStandardVariableReference(int i){
         List<StandardVariableReference> list = new ArrayList<StandardVariableReference>();
         int count = 1;
-        StandardVariableReference ref1 = new StandardVariableReference((i*100)+count++, i + " Variable 1");
-        StandardVariableReference ref2 = new StandardVariableReference((i*100)+count++, i + " Variable 2");
-        StandardVariableReference ref3 = new StandardVariableReference((i*100)+count++, i + " Variable 3");
-        
-        
-       list.add(ref1);
-       list.add(ref2);
-       list.add(ref3);
+        StandardVariableReference ref1 = new StandardVariableReference((i * 100) + count++, i + " Variable 1");
+        StandardVariableReference ref2 = new StandardVariableReference((i * 100) + count++, i + " Variable 2");
+        StandardVariableReference ref3 = new StandardVariableReference((i * 100) + count++, i + " Variable 3");
+
+        list.add(ref1);
+        list.add(ref2);
+        list.add(ref3);
         return list;
     }
     
@@ -143,14 +142,14 @@ public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
         refList.add(ref3);
         return refList;
     }
-    
-        /**
-         * Sets the up.
-         */
-        @Before
-        public void setUp() {
-          
-        }
+
+    /**
+     * Sets up.
+     */
+    @Before
+    public void setUp() {
+
+    }
         
     /**
      * Test ontology tree json data.
@@ -162,7 +161,8 @@ public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
             
             List<TraitClassReference> traitRefList = getDummyData();
             //form.setTraitClassReferenceList(traitRefList);
-            List<TreeNode> rootTree = convertJsonStringToMap(TreeViewUtil.convertOntologyTraitsToJson(traitRefList));
+            List<TreeNode> rootTree = convertJsonStringToMap(
+                    TreeViewUtil.convertOntologyTraitsToJson(traitRefList));
             //assertEquals(mainInfo.getFileIsValid(), false);
             //assertEquals(jsonMap.get('1'), false);
             //System.out.println(jsonMap.get("key"));
@@ -181,17 +181,26 @@ public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
             assertEquals("20 Prop 2", rootTree.get(0).getChildren().get(1).getChildren().get(1).getTitle());
             assertEquals("20 Prop 3", rootTree.get(0).getChildren().get(1).getChildren().get(2).getTitle());
             
-            assertEquals("1 Variable 1", rootTree.get(0).getChildren().get(0).getChildren().get(0).getChildren().get(0).getTitle());
-            assertEquals("1 Variable 2", rootTree.get(0).getChildren().get(0).getChildren().get(0).getChildren().get(1).getTitle());
-            assertEquals("1 Variable 3", rootTree.get(0).getChildren().get(0).getChildren().get(0).getChildren().get(2).getTitle());
+            assertEquals("1 Variable 1", rootTree.get(0).getChildren().get(0)
+                    .getChildren().get(0).getChildren().get(0).getTitle());
+            assertEquals("1 Variable 2", rootTree.get(0).getChildren().get(0)
+                    .getChildren().get(0).getChildren().get(1).getTitle());
+            assertEquals("1 Variable 3", rootTree.get(0).getChildren().get(0)
+                    .getChildren().get(0).getChildren().get(2).getTitle());
             
-            assertEquals("2 Variable 1", rootTree.get(0).getChildren().get(0).getChildren().get(1).getChildren().get(0).getTitle());
-            assertEquals("2 Variable 2", rootTree.get(0).getChildren().get(0).getChildren().get(1).getChildren().get(1).getTitle());
-            assertEquals("2 Variable 3", rootTree.get(0).getChildren().get(0).getChildren().get(1).getChildren().get(2).getTitle());
+            assertEquals("2 Variable 1", rootTree.get(0).getChildren().get(0)
+                    .getChildren().get(1).getChildren().get(0).getTitle());
+            assertEquals("2 Variable 2", rootTree.get(0).getChildren().get(0)
+                    .getChildren().get(1).getChildren().get(1).getTitle());
+            assertEquals("2 Variable 3", rootTree.get(0).getChildren().get(0)
+                    .getChildren().get(1).getChildren().get(2).getTitle());
             
-            assertEquals("3 Variable 1", rootTree.get(0).getChildren().get(0).getChildren().get(2).getChildren().get(0).getTitle());
-            assertEquals("3 Variable 2", rootTree.get(0).getChildren().get(0).getChildren().get(2).getChildren().get(1).getTitle());
-            assertEquals("3 Variable 3", rootTree.get(0).getChildren().get(0).getChildren().get(2).getChildren().get(2).getTitle());
+            assertEquals("3 Variable 1", rootTree.get(0).getChildren().get(0)
+                    .getChildren().get(2).getChildren().get(0).getTitle());
+            assertEquals("3 Variable 2", rootTree.get(0).getChildren().get(0)
+                    .getChildren().get(2).getChildren().get(1).getTitle());
+            assertEquals("3 Variable 3", rootTree.get(0).getChildren().get(0)
+                    .getChildren().get(2).getChildren().get(2).getTitle());
         }catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
@@ -208,7 +217,8 @@ public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
      * @throws JsonMappingException the json mapping exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    protected List<TreeNode> convertJsonStringToMap(String json) throws JsonParseException, JsonMappingException, IOException {
+    protected List<TreeNode> convertJsonStringToMap(String json) 
+            throws JsonParseException, JsonMappingException, IOException {
         ObjectMapper mapper = new ObjectMapper();
         List<TreeNode> lcd = mapper.readValue(json, new TypeReference<List<TreeNode>>() {});
 
@@ -273,26 +283,27 @@ public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
             String scale, String scaleDescription) {
         Term term = null;
         try {
-            if (combo.equals("Property")) {
-                if (propertyDescription == null || propertyDescription == "") {
+            if ("Property".equals(combo)) {
+                if (propertyDescription == null || propertyDescription.equals("")) {
                     propertyDescription = property;
                 }
                 term = ontologyService.addTerm(property, propertyDescription, CvId.PROPERTIES);
-            } else if (combo.equals("Method")) {
-                if (methodDescription == null || methodDescription == "") {
+            } else if ("Method".equals(combo)) {
+                if (methodDescription == null || methodDescription.equals("")) {
                     methodDescription = method;
                 }
                 term = ontologyService.addTerm(method, methodDescription, CvId.METHODS);
-            } else if (combo.equals("Scale")) {
-                if (scaleDescription == null || scaleDescription == "") {
+            } else if ("Scale".equals(combo)) {
+                if (scaleDescription == null || scaleDescription.equals("")) {
                     scaleDescription = scale;
                 }
                 term = ontologyService.addTerm(scale, scaleDescription, CvId.SCALES);
             } else {
-                if (traitClassDescription == null || traitClassDescription == "") {
+                if (traitClassDescription == null || traitClassDescription.equals("")) {
                     traitClassDescription = traitClass;
                 }
-                term = ontologyService.addTraitClass(traitClass, traitClassDescription, TermId.ONTOLOGY_TRAIT_CLASS.getId()).getTerm();
+                term = ontologyService.addTraitClass(traitClass, traitClassDescription
+                        , TermId.ONTOLOGY_TRAIT_CLASS.getId()).getTerm();
             }
             return term;
         } catch (MiddlewareQueryException e) {

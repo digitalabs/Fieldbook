@@ -20,8 +20,6 @@ import org.springframework.ui.Model;
 
 import com.efficio.fieldbook.web.util.ExternalToolInfo;
 import com.efficio.fieldbook.web.util.GitRepositoryState;
-import com.efficio.fieldbook.web.util.ToolUtil;
-
 
 /**
  * The Class AbstractBaseFieldbookController.
@@ -82,8 +80,9 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
      * @return the current project id
      */
     public String getCurrentProjectId(){
-        if(externalToolInfo != null)
+        if(externalToolInfo != null){
             return externalToolInfo.getCurrentProjectId();
+        }
         return "";
     }
     
@@ -93,8 +92,9 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
      * @return the old fieldbook path
      */
     public String getOldFieldbookPath(){
-        if(externalToolInfo != null)
+        if(externalToolInfo != null){
             return externalToolInfo.getOldFieldbookPath();
+        }
         return "";
     }
     
@@ -123,7 +123,6 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
         return ajaxPage;
     }
     
-
     /* (non-Javadoc)
      * @see org.springframework.context.ApplicationContextAware#setApplicationContext(org.springframework.context.ApplicationContext)
      */

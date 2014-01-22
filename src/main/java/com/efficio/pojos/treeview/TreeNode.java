@@ -14,7 +14,6 @@ package com.efficio.pojos.treeview;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: Auto-generated Javadoc
 /**
  * This class holds the data needed for rendering a tree view using dynatree jquery.
  */
@@ -79,7 +78,7 @@ public class TreeNode {
 	    this.addClass = addClass;
 	    this.icon = icon;
 	    this.isLazy = true;
-	    children = new ArrayList();
+	    this.children = new ArrayList<TreeNode>();
 	}
 	
 	/**
@@ -189,7 +188,6 @@ public class TreeNode {
     public void setIcon(Object icon) {
         this.icon = icon;
     }
-
     
     /**
      * Gets the children.
@@ -200,7 +198,6 @@ public class TreeNode {
         return children;
     }
 
-    
     /**
      * Sets the children.
      *
@@ -209,7 +206,6 @@ public class TreeNode {
     public void setChildren(List<TreeNode> children) {
         this.children = children;
     }
-
     
     /**
      * Checks if is expand.
@@ -219,7 +215,6 @@ public class TreeNode {
     public boolean isExpand() {
         return expand;
     }
-
     
     /**
      * Sets the expand.
@@ -229,7 +224,6 @@ public class TreeNode {
     public void setExpand(boolean expand) {
         this.expand = expand;
     }
-
     
     /**
      * Checks if is last children.
@@ -239,7 +233,6 @@ public class TreeNode {
     public boolean isLastChildren() {
         return isLastChildren;
     }
-
     
     /**
      * Sets the last children.
@@ -249,7 +242,6 @@ public class TreeNode {
     public void setLastChildren(boolean isLastChildren) {
         this.isLastChildren = isLastChildren;
     }
-
     
     /**
      * Gets the parent title.
@@ -259,7 +251,6 @@ public class TreeNode {
     public String getParentTitle() {
         return parentTitle;
     }
-
     
     /**
      * Sets the parent title.
@@ -269,7 +260,6 @@ public class TreeNode {
     public void setParentTitle(String parentTitle) {
         this.parentTitle = parentTitle;
     }
-
     
     /**
      * Checks if is include in search.
@@ -279,7 +269,6 @@ public class TreeNode {
     public boolean isIncludeInSearch() {
         return includeInSearch;
     }
-
     
     /**
      * Sets the include in search.
@@ -289,10 +278,5 @@ public class TreeNode {
     public void setIncludeInSearch(boolean includeInSearch) {
         this.includeInSearch = includeInSearch;
     }
-    
-    
-    
-    
-    
     
 }

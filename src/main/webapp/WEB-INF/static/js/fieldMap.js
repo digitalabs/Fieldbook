@@ -52,6 +52,7 @@ function validateEnterFieldPage(){
 		showEnterFieldDetailsMessage(msgBlockSizeError);
 		return false;
 	} else {
+		//no error in validation, proceed to the next step
 		setTrialInstanceOrder();
 		$("#enterFieldDetailsForm").submit();
 	}
@@ -115,36 +116,33 @@ function showEnterFieldDetailsMessage(msg){
 		$('#enter-field-details-message').html("<div class='alert alert-danger'>"+ msg +"</div>");
 }
 
-
-
 function initializeLocationSelect2(locationSuggestions, locationSuggestions_obj) {
 
-			$.each(locationSuggestions, function( index, value ) {
-				locationSuggestions_obj.push({ 'id' : value.locid,
-					  'text' : value.lname
-				});  
-		  		
-			});
+	$.each(locationSuggestions, function( index, value ) {
+		locationSuggestions_obj.push({ 'id' : value.locid,
+			  'text' : value.lname
+		});  
 		
+	});		
 	
-		//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
-		$('#'+getJquerySafeId('fieldLocationIdAll')).select2({
-			minimumInputLength: 2,
-	        query: function (query) {
-	          var data = {results: locationSuggestions_obj}, i, j, s;
-	          // return the array that matches
-	          data.results = $.grep(data.results,function(item,index) {
-	            return ($.fn.select2.defaults.matcher(query.term,item.text));
-	          
-	          });
-	            query.callback(data);
-	            
-	        }
-	
-	    }).on("change", function (){
-	    	$('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val($('#'+getJquerySafeId("fieldLocationIdAll")).select2("data").id);
-	    	$('#'+getJquerySafeId("userFieldmap.locationName")).val($('#'+getJquerySafeId("fieldLocationIdAll")).select2("data").text);
-	    });
+	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
+	$('#'+getJquerySafeId('fieldLocationIdAll')).select2({
+		minimumInputLength: 2,
+        query: function (query) {
+          var data = {results: locationSuggestions_obj}, i, j, s;
+          // return the array that matches
+          data.results = $.grep(data.results,function(item,index) {
+            return ($.fn.select2.defaults.matcher(query.term,item.text));
+          
+          });
+            query.callback(data);
+            
+        }
+
+    }).on("change", function (){
+    	$('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val($('#'+getJquerySafeId("fieldLocationIdAll")).select2("data").id);
+    	$('#'+getJquerySafeId("userFieldmap.locationName")).val($('#'+getJquerySafeId("fieldLocationIdAll")).select2("data").text);
+    });
 	
 }
 
@@ -228,6 +226,7 @@ function validatePlantingDetails() {
 
 function checkStartingCoordinates() {
 	var isDeleted = 0;
+	//check if starting coordinate is marked as deleted
 	$('#field-map td.plot.deleted').each(function(){
 		if (isDeletedPlotAtStartCoord($(this).attr('id'))) {
 			isDeleted = 1;
@@ -241,6 +240,9 @@ function checkStartingCoordinates() {
 	return false;
 }
 
+//check if the remaining plots is enough to accommodate the 
+//total no. of plots given the deleted plots and starting coordinates
+//using horizontal layout
 function checkRemainingPlotsHorizontal() {
 	var startingCol = $('#'+getJquerySafeId("userFieldmap.startingColumn")).val();
 	var startingRange = $('#'+getJquerySafeId("userFieldmap.startingRange")).val();
@@ -262,6 +264,9 @@ function checkRemainingPlotsHorizontal() {
 	}
 }
 
+//check if the remaining plots is enough to accommodate the 
+//total no. of plots given the deleted plots and starting coordinates
+//using vertical layout
 function checkRemainingPlotsVertical() {
 	var startingCol = $('#'+getJquerySafeId("userFieldmap.startingColumn")).val();
 	var startingRange = $('#'+getJquerySafeId("userFieldmap.startingRange")).val();
@@ -305,6 +310,7 @@ function getUnavailablePlotsVertical(startingCol, startingRange) {
 	}
 }
 
+//count the no. of plots marked as deleted, starting coordinates are considered
 function checkDeletedPlotsHorizontal(id) {
 	var startingCol = $('#'+getJquerySafeId("userFieldmap.startingColumn")).val();
 	var startingRange = $('#'+getJquerySafeId("userFieldmap.startingRange")).val();
@@ -329,6 +335,7 @@ function checkDeletedPlotsHorizontal(id) {
 	}
 }
 
+//count the no. of plots marked as deleted, starting coordinates are considered
 function checkDeletedPlotsVertical(id) {
 	var startingCol = $('#'+getJquerySafeId("userFieldmap.startingColumn")).val();
 	var startingRange = $('#'+getJquerySafeId("userFieldmap.startingRange")).val();

@@ -52,7 +52,7 @@ function createFieldMap(tableName){
 	if($('#'+tableName+' .field-map-highlight').attr('id') != null){
 		var ids = [];
 		//$('#'+tableName+' .field-map-highlight').each(function(){ ids.push(this.id); });
-		
+		//get selected studies
 		for(var index in selectedTableIds) {
 			//console.log( index + " : " + selectedTableIds[index]);
 			var idVal = selectedTableIds[index];
@@ -62,12 +62,15 @@ function createFieldMap(tableName){
 		}
 		var idList = ids.join(",");
 		$('#page-message').html("");
+		
+		//show pop up to select instances/dataset for field map creation
 		showFieldMapPopUpCreate(tableName, idList);
 	} else {
 		$('#page-create-field-map-message').html("<div class='alert alert-danger'>"+fieldMapStudyRequired+"</div>");
 	}
 }
 
+//obsolete
 function checkTrialOptions(id){
 	Spinner.toggle();
 	$.ajax({ 
@@ -91,6 +94,7 @@ function checkTrialOptions(id){
 	});
 }
 
+//obsolete
 function createNurseryFieldmap(id) {
 	Spinner.toggle();
 	$.ajax({ 
@@ -111,6 +115,7 @@ function createNurseryFieldmap(id) {
         }
 	});
 }
+
 
 function proceedToCreateFieldMap() {
 	$('#manageTrialConfirmation').modal('hide');
@@ -151,6 +156,7 @@ function replaceall(str,replace,with_this)
 
     return str_hasil;
 }
+
 function isInt(value) {
     if ((undefined === value) || (null === value) || (value === "")) {
     	
@@ -171,6 +177,7 @@ function selectTrialInstance(tableName) {
 		    success: function(data) {
 		    	if (data.fieldMapInfo != null && data.fieldMapInfo != "") {
 		    		if (parseInt(data.size) > 1) {
+		    			//show popup to select fieldmap to display
 			    		clearStudyTree();
 			    		isViewFieldmap = true;
 			    		createStudyTree($.parseJSON(data.fieldMapInfo), isViewFieldmap, tableName);
@@ -203,6 +210,7 @@ function selectTrialInstanceCreate(tableName) {
 	    data: "",
 	    success: function(data) {
 	    	if (data.fieldMapInfo != null && data.fieldMapInfo != "") {
+	    		//show popup to select instances to create field map
 	    		clearStudyTree();
 	    		isViewFieldmap = false;
 	    		createStudyTree($.parseJSON(data.fieldMapInfo), isViewFieldmap, tableName);
@@ -212,12 +220,13 @@ function selectTrialInstanceCreate(tableName) {
 	});
 }
 
-function createStudyTree(fieldMapInfoList, hasFieldMap, tableName) {
+function createStudyTree(fieldMapInfoList, hasFieldMap, tableName) { 
 	createHeader(hasFieldMap);
 	$.each(fieldMapInfoList, function (index, fieldMapInfo) {
 		createRow(getPrefixName("study", fieldMapInfo.fieldbookId), "", fieldMapInfo.fieldbookName, fieldMapInfo.fieldbookId, hasFieldMap);
 		$.each(fieldMapInfo.datasets, function (index, value) {
 			if (tableName == "trial-table") {
+				//create trial study tree up to instance level
 				createRow(getPrefixName("dataset", value.datasetId), getPrefixName("study", fieldMapInfo.fieldbookId), value.datasetName, value.datasetId, hasFieldMap);
 				$.each(value.trialInstances, function (index, childValue) {
 					if ((hasFieldMap && childValue.hasFieldMap) || !hasFieldMap) {
@@ -225,6 +234,7 @@ function createStudyTree(fieldMapInfoList, hasFieldMap, tableName) {
 					}
 				});
 			} else {
+				//if dataset has an instance, show up to the dataset level
 				if (value.trialInstances.length > 0) {
 					$.each(value.trialInstances, function (index, childValue) {
 						createRowForNursery(getPrefixName("trialInstance", childValue.geolocationId), 
@@ -235,8 +245,8 @@ function createStudyTree(fieldMapInfoList, hasFieldMap, tableName) {
 			}
 		});
 	});
-	//set bootstrap ui
 	
+	//set bootstrap ui
 	$('.tree').treegrid();
 	
 	$('.tr-expander').on('click', function(){
@@ -434,6 +444,7 @@ function showFieldMap(tableName) {
 	}
 }
 
+//show popup to select instances for field map creation
 function showFieldMapPopUpCreate(tableName, ids) {
 	var link = "";
 	if (tableName == "trial-table") {
@@ -460,6 +471,7 @@ function showFieldMapPopUpCreate(tableName, ids) {
 	});
 }
 
+//show popup to select field map to display
 function showFieldMapPopUp(tableName, id) {
 	var link = "";
 	if (tableName == "trial-table") {
@@ -496,6 +508,7 @@ function viewFieldMap() {
 	}
 }
 
+//redirect to step 3
 function showGeneratedFieldMap() {
 	if ($('#studyTree .field-map-highlight').attr('id')) {
 		if ($('#studyTree .field-map-highlight').size() == 1) {
@@ -581,6 +594,7 @@ function setSelectTrialOrderValues() {
 	});
 	styleDynamicTree('selectedTrials');
 }
+
 function styleDynamicTree(treeName){
 	var count = 0;
 	if($('#'+treeName) != null){

@@ -266,7 +266,7 @@ function setCorrespondingTraitClass(propertyId){
 			data: "",
 		    success: function(data){
 			    if (data.status == "1") {
-			    	
+			    	//set trait class and crop ontology id of selected property
 			    	if(data.traitId != ''){
 			    		var count = 0;
 				    	for(count = 0 ; count < traitClassesSuggestions_obj.length ; count++){
@@ -379,7 +379,8 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	    	}
 	    	if (name.match("^Manage")) {
 	    		$("#" + "page-message-" + lowerCaseFirstLetter(name) + "-modal").html("");
-	    		if ($("#combo"+name).select2("data").description) { //edit mode
+	    		if ($("#combo"+name).select2("data").description) { 
+	    			//edit mode
 			    	$("#" + lowerCaseFirstLetter(name) + "Id").val($("#combo"+name).select2("data").id);
 			    	$("#" + lowerCaseFirstLetter(name) + "Name").val($("#combo"+name).select2("data").text.replace(" (Shared)", ""));
 		    		$("#btnAdd" + name).hide();
@@ -1232,7 +1233,7 @@ function deleteOntology(combo) {
 		    	}	    	
 	    		
 	    		showSuccessMessageInModal(data.successMessage);
-	    		//remove the list
+	    		//remove the list, other values and reset buttons
 	    		$("#" + lowerCaseFirstLetter(combo) + "NameText").html("");
 	    		$("#" + lowerCaseFirstLetter(combo) + "Name").val("");
 	    		$("#manageLinkedVariableList").html("");
@@ -1292,10 +1293,12 @@ function addCategoricalValidValue(id, label, description) {
 	var deleteButton = "";
 	var operation = "0";
 	
+	//add mode
 	if (id == null) {
 		operation = "1";
 	}
 	
+	//if new valid value, add a delete button
 	if (id < 0 || id == null) {
 		deleteButton= "<button class='btn btn-primary' type='button' onClick='delCatVar($(this))'>" + 
 						"<span class='glyphicon glyphicon-remove'></span>" +
@@ -1306,6 +1309,7 @@ function addCategoricalValidValue(id, label, description) {
 			  'operation' : operation
 		});
 	} else {
+		//read-only
 		enumerations_central.push({ 'id' : id,
 			  'name' : label, 
 			  'description' : description,
@@ -1411,6 +1415,7 @@ function resetCategoricalValues() {
 	enumerations = [];
 	enumerations_central = [];
 	$("#catVarList").empty();
+	//show scrollbar if values exceed height allotted
 	if ($("#catVarList").height() <= 200 && $("#catVarList").parent().hasClass("scrollWrapper")) {
 		$("#catVarList").parent().toggleClass("scrollWrapper");
 	}

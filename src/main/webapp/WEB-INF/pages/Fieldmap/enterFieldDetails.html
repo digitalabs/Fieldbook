@@ -275,6 +275,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		$('#s2id_fieldLocationIdAll').show();
 		$('#showFavoriteLocation').on('change', function(){
 			var isChecked = $('#showFavoriteLocation').is(':checked');
+			//if show favorite location is checked, hide all field locations, else, show only favorite locations
 			if(isChecked){
 				$('#s2id_fieldLocationIdFavorite').show();
 				$('#s2id_fieldLocationIdAll').hide();

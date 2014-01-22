@@ -446,7 +446,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
  		});
  		 
  		 function setTotalLabels(checkbox) {
- 			 
+ 			 //count total number of labels to be generated based on selected trial/nursery instance
  			 var labelCount = "";
  			 if (isTrial) {
  				labelCount = $(checkbox).parent().next().next().next().next().next().next().html();

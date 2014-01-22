@@ -17,7 +17,7 @@ function validateEnterLabelFieldsPage(type){
 		
 		rightSelectedFields += $(this).attr('id');
 		rightSelectedFields += ",";
-	})
+	});
 	
 	if(rightSelectedFields != ''){
 		rightSelectedFields = rightSelectedFields.substring(0,rightSelectedFields.length-1); 
@@ -96,6 +96,7 @@ function moveToTopScreen(){
 function setSelectedTrialInstanceOrder() {
 	var order = [];
 	var notIncluded = 0;
+	//check if instance is selected and include in the list
 	$("#selectedTrials .trialOrder").each(function(){
 		var checked = false;
 		$(this).parent().prev().find(":checked").each(function() {

@@ -165,13 +165,14 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	  	function setAllDeletedBox(){
 			validatePlantingDetails();
 	  		var deletedRect = "";
-	  		var insufficientPlots;
+	  		var insufficientPlots = false;
 	  		deletedPlots = 0;
 	  		$('#field-map td.plot.deleted').each(function(){
 	  			deletedRect += $(this).attr('id');
   				if(deletedRect != ''){
   					deletedRect += ",";
   				}
+  				//count number of plots marked as deleted
   				if (isHorizontal) {
   					checkDeletedPlotsHorizontal($(this).attr('id'));
   				} else {
@@ -185,14 +186,14 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	  		$('#markedCells').val(deletedRect);
 	  		console.log(deletedRect);
 	  		
-	  		//validation that total no. of plots does not exceed total no. of blocks
+	  		//validate that total no. of plots does not exceed total no. of blocks
 	  		if (isHorizontal) {
 	  			insufficientPlots = checkRemainingPlotsHorizontal(); 
 	  		} else {
 	  			insufficientPlots = checkRemainingPlotsVertical();
 	  		}
 	  		
-	  		if (checkRemainingPlotsHorizontal()) {
+	  		if (insufficientPlots) {
 	  			showMessage(totalBlocksError);
 	  			return false;
 			} 

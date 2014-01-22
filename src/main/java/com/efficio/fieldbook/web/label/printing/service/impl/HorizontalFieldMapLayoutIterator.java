@@ -9,7 +9,7 @@
  * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
  * 
  *******************************************************************************/
-package com.efficio.fieldbook.service;
+package com.efficio.fieldbook.web.label.printing.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,18 +17,15 @@ import java.util.Map;
 
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 
-import com.efficio.fieldbook.service.api.FieldPlotLayoutIterator;
 import com.efficio.fieldbook.util.FieldMapUtilityHelper;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
+import com.efficio.fieldbook.web.label.printing.service.FieldPlotLayoutIterator;
 
-/**
- * The Class VerticalFieldMapLayoutIterator.
- */
-public class VerticalFieldMapLayoutIterator implements
+public class HorizontalFieldMapLayoutIterator implements
 		FieldPlotLayoutIterator {
-	
+
 	/* (non-Javadoc)
      * @see com.efficio.fieldbook.service.api.FieldMapService#createFieldMap(int, int, int, int, boolean, java.util.Map, java.util.List, boolean)
      */
@@ -36,45 +33,46 @@ public class VerticalFieldMapLayoutIterator implements
             int startCol, boolean isSerpentine, Map deletedPlot,
             List<FieldMapLabel> labels, boolean isTrial) {
         
+       
     	Plot[][] plots = FieldMapUtilityHelper.initializePlots(col, range);
         //this is how we populate data
         int counter = 0;
         //we need to take note of the start range
         boolean isStartOk = false;
-        boolean downToUp = true;
-        for(int x = 0; x < col ; x++){        		
-                if(downToUp){
-                    for(int y = 0 ; y < range ; y++){
-                        //for upload planting
-                        if(x == startCol && y == startRange){
-                            //this will signify that we have started
-                            isStartOk = true;
-                        }
-                        counter = FieldMapUtilityHelper.populatePlotData(
-                                counter, labels, x, y, plots, false, startCol
-                                , startRange, isStartOk, deletedPlot, isTrial);
-                    }
-                }else{
-                    for(int y = range - 1 ; y >= 0 ; y--){
-                        //for downward planting
-                        if(x == startCol && y == startRange){
-                            //this will signify that we have started
-                            isStartOk = true;
-                        }
-                        counter = FieldMapUtilityHelper.populatePlotData(
-                                counter, labels, x, y, plots, false, startCol, 
-                                startRange, isStartOk, deletedPlot, isTrial);
-
-                    }
-                }
-                if(isSerpentine){
-    	        	downToUp = !downToUp;
-    	        }
-
+        boolean leftToRight = true;
+        for(int y = 0 ; y < range ; y++){
+        	if(leftToRight){
+		        for(int x = 0 ; x < col; x++){
+		        	//for left to right planting
+		        	 if(x == startCol && y == startRange){
+                         //this will signify that we have started
+                         isStartOk = true;
+                     }
+                     counter = FieldMapUtilityHelper.populatePlotData(
+                             counter, labels, x, y, plots, false, startCol
+                             , startRange, isStartOk, deletedPlot, isTrial);
+		        }
+        	}else{
+    			for(int x = col -1 ; x >= 0; x--){
+		        	//for right to left planting
+    				 if(x == startCol && y == startRange){
+                         //this will signify that we have started
+                         isStartOk = true;
+                     }
+                     counter = FieldMapUtilityHelper.populatePlotData(
+                             counter, labels, x, y, plots, false, startCol, 
+                             startRange, isStartOk, deletedPlot, isTrial);
+		        }
+        	}
+	        if(isSerpentine){
+	        	leftToRight = !leftToRight;
+	        }
         }
+        
+       
         return plots;
     }
-
+    
     /**
      * Sets the other field map information.
      *
@@ -90,25 +88,26 @@ public class VerticalFieldMapLayoutIterator implements
         boolean isStarted = false;
         List<String> possiblyDeletedCoordinates = new ArrayList<String>();
         int[] order = {1};
-        boolean downToUp = true;
-        for (int x = 0; x < totalColumns; x++) {
-            if (downToUp) {
-            	for (int y = 0; y < totalRanges; y++) {
+        boolean leftToRight = true;
+        for (int y = 0; y < totalRanges; y++) {        	
+            if (leftToRight) {
+            	for (int x = 0; x < totalColumns; x++) {
                     isStarted = FieldMapUtilityHelper.renderPlotCell(
                             info, plots, x, y, isStarted, possiblyDeletedCoordinates, order);
                 }
             }
             else {                
-                for (int y = totalRanges - 1; y >= 0; y--) {
+            	for(int x = totalColumns - 1 ; x >= 0; x--){
                     isStarted = FieldMapUtilityHelper.renderPlotCell(
                             info, plots, x, y, isStarted, possiblyDeletedCoordinates, order);
                 }
             }
             if(isSerpentine){
-	        	downToUp = !downToUp;
+            	leftToRight = !leftToRight;
 	        }
         }
         info.setSelectedFieldmapList(new SelectedFieldmapList(
                 info.getSelectedFieldMaps(), info.isTrial()));
     }
+
 }

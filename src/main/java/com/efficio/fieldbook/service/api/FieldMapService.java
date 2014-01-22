@@ -19,6 +19,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
+import com.efficio.fieldbook.web.label.printing.service.FieldPlotLayoutIterator;
 
 
 /**

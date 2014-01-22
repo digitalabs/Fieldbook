@@ -42,13 +42,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.ExportExcelService;
 import com.efficio.fieldbook.service.api.FieldMapService;
-import com.efficio.fieldbook.service.api.FieldPlotLayoutIterator;
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
+import com.efficio.fieldbook.web.label.printing.service.FieldPlotLayoutIterator;
 import com.efficio.fieldbook.web.nursery.controller.ManageNurseriesController;
 import com.efficio.fieldbook.web.trial.controller.ManageTrialController;
 

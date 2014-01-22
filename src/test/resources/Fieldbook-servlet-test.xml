@@ -85,10 +85,10 @@
 	<bean id="fieldmapService" class="com.efficio.fieldbook.service.FieldMapServiceImpl">
 	</bean>
 	
-	<bean id="verticalFieldMapLayoutIterator" class="com.efficio.fieldbook.service.VerticalFieldMapLayoutIterator">
+	<bean id="verticalFieldMapLayoutIterator" class="com.efficio.fieldbook.web.label.printing.service.impl.VerticalFieldMapLayoutIterator">
 	</bean>
 	
-	<bean id="horizontalFieldMapLayoutIterator" class="com.efficio.fieldbook.service.HorizontalFieldMapLayoutIterator">
+	<bean id="horizontalFieldMapLayoutIterator" class="com.efficio.fieldbook.web.label.printing.service.impl.HorizontalFieldMapLayoutIterator">
 	</bean>
 	
 	<bean id="labelPrintingService" class="com.efficio.fieldbook.service.LabelPrintingServiceImpl">

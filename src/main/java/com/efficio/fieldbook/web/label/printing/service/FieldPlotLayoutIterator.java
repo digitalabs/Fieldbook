@@ -1,4 +1,4 @@
-package com.efficio.fieldbook.service.api;
+package com.efficio.fieldbook.web.label.printing.service;
 
 import java.util.List;
 import java.util.Map;

@@ -34,6 +34,8 @@ import com.efficio.fieldbook.service.api.FieldMapService;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
+import com.efficio.fieldbook.web.label.printing.service.impl.HorizontalFieldMapLayoutIterator;
+import com.efficio.fieldbook.web.label.printing.service.impl.VerticalFieldMapLayoutIterator;
 
 /**
  * The Class TestExportExcelService.

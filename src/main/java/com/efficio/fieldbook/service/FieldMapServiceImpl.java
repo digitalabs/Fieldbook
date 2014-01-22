@@ -20,10 +20,10 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.service.api.FieldMapService;
-import com.efficio.fieldbook.service.api.FieldPlotLayoutIterator;
 import com.efficio.fieldbook.util.FieldMapUtilityHelper;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
+import com.efficio.fieldbook.web.label.printing.service.FieldPlotLayoutIterator;
 
 /**
  * The Class FieldMapServiceImpl.

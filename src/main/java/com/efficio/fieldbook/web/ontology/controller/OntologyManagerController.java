@@ -395,10 +395,12 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         List<EnumerationOperation> enumerations = convertToEnumerationOperation(form.getEnumerations());
         for (EnumerationOperation enumeration : enumerations) {
             if (enumeration.getOperation() > 0) {
+                //add valid value
                 ontologyService.addStandardVariableValidValue(stdVariable, 
                         new Enumeration(enumeration.getId(), enumeration.getName()
                                 , enumeration.getDescription(), 0));
             } else if (enumeration.getOperation() < 0) {
+                //delete valid value
                 ontologyService.deleteStandardVariableValidValue(stdVariable.getId(), enumeration.getId());
             }
         }

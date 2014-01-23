@@ -43,6 +43,7 @@ import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class FieldmapController.
  * 
@@ -63,9 +64,11 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     @Resource
     private UserFieldmap userFieldmap;
     
+    /** The fieldbook middleware service. */
     @Resource
     private FieldbookService fieldbookMiddlewareService;
     
+    /** The workbench data manager. */
     @Resource
     private WorkbenchDataManager workbenchDataManager;
     
@@ -96,6 +99,11 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         return null;
     }
     
+    /**
+     * Gets the favorite location list.
+     *
+     * @return the favorite location list
+     */
     @ModelAttribute("favoriteLocationList")
     public List<Location> getFavoriteLocationList() {
         try {
@@ -121,6 +129,14 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         return null;
     }
     
+    /**
+     * Determine field map navigation.
+     *
+     * @param ids the ids
+     * @param model the model
+     * @param session the session
+     * @return the map
+     */
     @ResponseBody
     @RequestMapping(value="/createFieldmap/{ids}", method = RequestMethod.GET)
     public Map<String, String> determineFieldMapNavigation(@PathVariable String ids, 
@@ -138,7 +154,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
 
             clearFields();
             this.userFieldmap.setUserFieldmapInfo(fieldMapInfoList, true);
-            
+            //get trial instances with field map
             for (FieldMapInfo fieldMapInfo : fieldMapInfoList) {
                 List<FieldMapDatasetInfo> datasetList = fieldMapInfo.getDatasetsWithFieldMap();
                 if (datasetList != null && !datasetList.isEmpty()) {
@@ -156,6 +172,11 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         return result;
     }
     
+    /**
+     * Gets the field map info data.
+     *
+     * @return the field map info data
+     */
     @ResponseBody
     @RequestMapping(value="/selectTrialInstance", method = RequestMethod.GET)
     public Map<String, String> getFieldMapInfoData() {
@@ -194,6 +215,12 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         return result;
     } 
     
+    /**
+     * Convert field map info to json.
+     *
+     * @param fieldMapInfo the field map info
+     * @return the string
+     */
     private String convertFieldMapInfoToJson(List<FieldMapInfo> fieldMapInfo) {
         if (fieldMapInfo!= null) {
             try {
@@ -229,6 +256,12 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         return super.show(model);
     }
     
+    /**
+     * Sets the selected field map info.
+     *
+     * @param id the id
+     * @param isTrial the is trial
+     */
     private void setSelectedFieldMapInfo(String id, boolean isTrial) {
         String[] groupId = id.split(",");
         List<FieldMapInfo> fieldMapInfoList = userFieldmap.getFieldMapInfo();
@@ -273,6 +306,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
                         newFieldMapInfo = new FieldMapInfo();
                         datasets = new ArrayList<FieldMapDatasetInfo>();
                     } else {
+                        //if study id has changed, add previously saved study to the list
                         if (!studyId.equals(selectedStudyId)) {
                             newFieldMapInfo.setFieldbookId(studyId);
                             newFieldMapInfo.setFieldbookName(fieldbookName);
@@ -295,7 +329,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
                 }
             }
         }
-        
+        //add last dataset and study to the list
         dataset.setDatasetId(datasetId);
         dataset.setDatasetName(datasetName);
         dataset.setTrialInstances(trialInstances);
@@ -311,6 +345,13 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         
     }
     
+    /**
+     * Determine nursery field map navigation.
+     *
+     * @param ids the ids
+     * @param session the session
+     * @return the map
+     */
     @ResponseBody
     @RequestMapping(value="/createNurseryFieldmap/{ids}", method = RequestMethod.GET)
     public Map<String, String> determineNurseryFieldMapNavigation(
@@ -397,6 +438,11 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         return "redirect:" + PlantingDetailsController.URL;
     } 
     
+    /**
+     * Sets the trial instance order.
+     *
+     * @param form the new trial instance order
+     */
     private void setTrialInstanceOrder(FieldmapForm form) {
         String[] orderList = form.getUserFieldmap().getOrder().split(",");
         List<FieldMapInfo> fieldMapInfoList = userFieldmap.getSelectedFieldMaps();
@@ -438,6 +484,11 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         return this.userFieldmap;
     }
     
+    /**
+     * Sets the user field map details.
+     *
+     * @param form the new user field map details
+     */
     private void setUserFieldMapDetails(FieldmapForm form) {
         this.userFieldmap.setSelectedDatasetId(form.getUserFieldmap().getSelectedDatasetId());
         this.userFieldmap.setSelectedGeolocationId(form.getUserFieldmap().getSelectedGeolocationId());
@@ -455,6 +506,9 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         this.userFieldmap.setLocationName(form.getUserFieldmap().getLocationName());
     }
  
+    /**
+     * Clear fields.
+     */
     private void clearFields() {
         if (this.userFieldmap != null) {
             this.userFieldmap.setBlockName("");

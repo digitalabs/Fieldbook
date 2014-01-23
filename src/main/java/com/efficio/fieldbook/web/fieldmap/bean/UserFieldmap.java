@@ -25,6 +25,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 
 import com.efficio.fieldbook.util.FieldbookException;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class UserFieldmap.
  *
@@ -116,10 +117,13 @@ public class UserFieldmap  implements Serializable {
     /** The order. */
     private String order;
 
+    /** The machine row capacity. */
     private Integer machineRowCapacity;
     
+    /** The selected fieldmap list. */
     private SelectedFieldmapList selectedFieldmapList;
     
+    /** The is generated. */
     private boolean isGenerated;
 
     /**
@@ -139,6 +143,11 @@ public class UserFieldmap  implements Serializable {
         setUserFieldmapInfo(fieldMapInfo, isTrial);
     }
     
+    /**
+     * Checks if is generated.
+     *
+     * @return true, if is generated
+     */
     public boolean isGenerated() {
         return isGenerated;
     }
@@ -192,6 +201,7 @@ public class UserFieldmap  implements Serializable {
     /**
      * Gets the all selected field map labels.
      *
+     * @param isSorted the is sorted
      * @return the all selected field map labels
      */
     public List<FieldMapLabel> getAllSelectedFieldMapLabels(boolean isSorted) {
@@ -503,6 +513,13 @@ public class UserFieldmap  implements Serializable {
     	return false;
     }
     
+    /**
+     * Gets the selected trial instance by dataset id and geolocation id.
+     *
+     * @param datasetId the dataset id
+     * @param geolocationId the geolocation id
+     * @return the selected trial instance by dataset id and geolocation id
+     */
     public FieldMapTrialInstanceInfo getSelectedTrialInstanceByDatasetIdAndGeolocationId(
             int datasetId, int geolocationId) {
         if (getSelectedFieldMaps() != null) {
@@ -779,6 +796,8 @@ public class UserFieldmap  implements Serializable {
     }
 
     /**
+     * Gets the machine row capacity.
+     *
      * @return the machineRowCapacity
      */
     public Integer getMachineRowCapacity() {
@@ -786,6 +805,8 @@ public class UserFieldmap  implements Serializable {
     }
     
     /**
+     * Sets the machine row capacity.
+     *
      * @param machineRowCapacity the machineRowCapacity to set
      */
     public void setMachineRowCapacity(Integer machineRowCapacity) {
@@ -816,6 +837,8 @@ public class UserFieldmap  implements Serializable {
     }
 
     /**
+     * Gets the selected fieldmap list.
+     *
      * @return the selectedFieldmapList
      */
     public SelectedFieldmapList getSelectedFieldmapList() {
@@ -823,6 +846,8 @@ public class UserFieldmap  implements Serializable {
     }
     
     /**
+     * Sets the selected fieldmap list.
+     *
      * @param selectedFieldmapList the selectedFieldmapList to set
      */
     public void setSelectedFieldmapList(SelectedFieldmapList selectedFieldmapList) {

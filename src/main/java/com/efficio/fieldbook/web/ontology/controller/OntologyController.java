@@ -132,7 +132,7 @@ public class OntologyController extends AbstractBaseFieldbookController{
             Property property = ontologyService.getProperty(Integer.parseInt(propertyId));
             Term term = property.getIsA();
             String traitId = term  == null ? "" : Integer.toString(term.getId());
-            //term.getId();
+
             resultMap.put("status", "1");
             resultMap.put("traitId", traitId);
             

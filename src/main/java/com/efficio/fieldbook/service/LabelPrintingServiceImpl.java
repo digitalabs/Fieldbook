@@ -47,8 +47,10 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.service.api.LabelPrintingService;
+import com.efficio.fieldbook.util.LabelPaperFactory;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
+import com.efficio.fieldbook.web.label.printing.template.LabelPaper;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
@@ -93,6 +95,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
      * @param pageSizeId the page size id
      * @return the cell height
      */
+    /*
     private float getCellHeight(int numberOfRowsPerPage, int pageSizeId){
         if(pageSizeId == AppConstants.SIZE_OF_PAPER_A4){
             if(numberOfRowsPerPage == 7){
@@ -114,7 +117,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
            
         return 0f;
     }
-    
+    */
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.service.api.LabelPrintingService#generateLabels(com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap)
      */
@@ -149,12 +152,22 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 // Image image1 = Image.getInstance(imageLocation);
 
                 // PageSize.A4
+            	LabelPaper paper = LabelPaperFactory.generateLabelPaper(numberOfLabelPerRow, numberofRowsPerPageOfLabel, pageSizeId);
+            	
                 Rectangle pageSize = PageSize.LETTER;
 
                 if (pageSizeId == AppConstants.SIZE_OF_PAPER_A4)
                     pageSize = PageSize.A4;
 
                 Document document = new Document(pageSize);
+                /*
+                 * 2, 2, 33.3f, 5
+                 * 15, 0, 42, 5
+                 * 10, 0, 17, 5
+                 * 10, 0, 17, 5
+                 * 5, 0, 0, 5
+                 * 15, 0, 37, 5
+                 * 10, 0, 17, 5
                 if (pageSizeId == AppConstants.SIZE_OF_PAPER_LETTER) {
                     if (numberofRowsPerPageOfLabel == 7)
                         document.setMargins(10, 0, 17, 5);
@@ -170,7 +183,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                     else if (numberofRowsPerPageOfLabel == 10)
                         document.setMargins(6, 2, 17.5f, 5);
                 }
-
+				*/
+                //float marginLeft, float marginRight, float marginTop, float marginBottom
+                document.setMargins(paper.getMarginLeft(), paper.getMarginRight(), paper.getMarginTop(), paper.getMarginBottom());
+                
                 // PdfWriter writer = PdfWriter.getInstance(document, baos);
                 PdfWriter writer = PdfWriter.getInstance(document, fileOutputStream);
                 // step 3
@@ -197,7 +213,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 int height = 75;
 
                 List<File> filesToBeDeleted = new ArrayList<File>();
-                float cellHeight = getCellHeight(numberofRowsPerPageOfLabel, pageSizeId);
+                //float cellHeight = getCellHeight(numberofRowsPerPageOfLabel, pageSizeId);
+                float cellHeight = paper.getCellHeight();
 
                 for (StudyTrialInstanceInfo trialInstance : trialInstances) {
                     FieldMapTrialInstanceInfo fieldMapTrialInstanceInfo = trialInstance.getTrialInstance();
@@ -250,9 +267,10 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 
                         innerImageTableInfo.addCell(cellImage);
 
-                        float fontSize = 6.8f;
-                        if (numberofRowsPerPageOfLabel == 10)
-                            fontSize = 4.8f;
+                        //float fontSize = 6.8f;
+                        float fontSize = paper.getFontSize();
+                        //if (numberofRowsPerPageOfLabel == 10)
+                        //    fontSize = 4.8f;
 
                         Font fontNormal = FontFactory.getFont("Arial", fontSize, Font.NORMAL);
 
@@ -310,10 +328,12 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
 
                             cell.addElement(innerTableInfo);
                         }
-
+                        
                         cell.setBorder(Rectangle.NO_BORDER);
                         cell.setBackgroundColor(Color.white);
-
+						
+                        //cell.setBorderColor(Color.BLUE);
+                        
                         table.addCell(cell);
 
                         if (i % numberOfLabelPerRow == 0) {
@@ -333,7 +353,8 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                             table.completeRow();
                             if (numberofRowsPerPageOfLabel == 10) {
 
-                                table.setSpacingAfter(9f);
+                                //table.setSpacingAfter(9f);
+                            	table.setSpacingAfter(paper.getSpacingAfter());
                             }
 
                             document.add(table);
@@ -370,7 +391,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                     table.completeRow();
                     if (numberofRowsPerPageOfLabel == 10) {
 
-                        table.setSpacingAfter(9f);
+                        table.setSpacingAfter(paper.getSpacingAfter());
                     }
 
                     document.add(table);

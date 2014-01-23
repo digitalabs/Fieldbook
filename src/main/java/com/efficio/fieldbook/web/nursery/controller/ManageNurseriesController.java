@@ -67,18 +67,6 @@ public class ManageNurseriesController extends AbstractBaseFieldbookController{
         try {
             List<StudyDetails> nurseryDetailsList = fieldbookMiddlewareService
                     .getAllLocalNurseryDetails();
-            /*
-            StudyDetails det1 = new StudyDetails(
-                    "studyName", "title", "pmKey", "objective", "", "", null, 1, "", "");
-            det1.setId(1);
-            nurseryDetailsList.add(det1);
-            det1.setId(2);
-            nurseryDetailsList.add(det1);
-            det1.setId(3);
-            nurseryDetailsList.add(det1);
-            det1.setId(4);
-            nurseryDetailsList.add(det1);
-            */
             getUserSelection().setStudyDetailsList(nurseryDetailsList);
             form.setNurseryDetailsList(getUserSelection().getStudyDetailsList());
             form.setCurrentPage(1);

@@ -43,7 +43,6 @@ import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class FieldmapController.
  * 
@@ -82,14 +81,6 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         try {
             List<Location> dataTypesOrig = fieldbookMiddlewareService.getAllLocations();
             List<Location> dataTypes = dataTypesOrig;
-            /*
-            for(int i = 0 ; i < 5000 ; i++){
-                Location loc = new Location();
-                loc.setLname(dataTypesOrig.size() + " LNAME " + i);
-                loc.setLocid(i);
-                dataTypes.add(loc);
-            }
-            */
             
             return dataTypes;
         }catch (MiddlewareQueryException e) {
@@ -112,14 +103,6 @@ public class FieldmapController extends AbstractBaseFieldbookController{
                     Long.valueOf(this.getCurrentProjectId()), 0,  Integer.MAX_VALUE);
             List<Location> dataTypes = fieldbookMiddlewareService
                                 .getFavoriteLocationByProjectId(locationsIds);
-            /*dataTypes = new ArrayList();
-            for(int i = 0 ; i < 50 ; i++){
-                Location loc = new Location();
-                loc.setLname(" LNAME " + i);
-                loc.setLocid(i);
-                dataTypes.add(loc);
-            }
-            */
             
             return dataTypes;
         }catch (MiddlewareQueryException e) {

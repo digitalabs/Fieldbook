@@ -275,9 +275,6 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
             validator.validate(form, result);
         } 
         
-        //else if (form.getIsDelete().equals(2)) {
-            //validateUpdate(form, result);
-        //}
         form.setAddSuccessful("0");
         
         if (result.hasErrors()) {
@@ -289,10 +286,14 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         } else {
             try {
                 if (form.getIsDelete().equals(1)) {
+                    //delete
                     ontologyService.deleteStandardVariable(form.getVariableId());
                 } else {
+                    //add or update
                     Operation operation = form.getVariableId() != null ? Operation.UPDATE : Operation.ADD;
                     StandardVariable standardVariable = new StandardVariable();
+                    //if variable is from local, add/update the variable
+                    //if it's from central, get the standard variable object only for update of valid value
                     if (form.getVariableId() == null || form.getVariableId() < 0) {
                         standardVariable = createStandardVariableObject(form, operation);
                         ontologyService.saveOrUpdateStandardVariable(standardVariable, operation);
@@ -395,10 +396,12 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         List<EnumerationOperation> enumerations = convertToEnumerationOperation(form.getEnumerations());
         for (EnumerationOperation enumeration : enumerations) {
             if (enumeration.getOperation() > 0) {
+                //add valid value
                 ontologyService.addStandardVariableValidValue(stdVariable, 
                         new Enumeration(enumeration.getId(), enumeration.getName()
                                 , enumeration.getDescription(), 0));
             } else if (enumeration.getOperation() < 0) {
+                //delete valid value
                 ontologyService.deleteStandardVariableValidValue(stdVariable.getId(), enumeration.getId());
             }
         }
@@ -579,11 +582,6 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         return resultMap;
     }
     
-    /*
-     * Gets the variable name.
-     *
-     * @return the variable name
-    */ 
     /**
      * Gets the variable name.
      *
@@ -654,27 +652,6 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         return null;
     }
 
-    /**
-     * Gets the trait class suggestions.
-     *
-     * @param refList the ref list
-     * @return the trait class suggestions
-     * @throws MiddlewareQueryException the middleware query exception
-     */
-    /*
-    @ModelAttribute("traitClassesSuggestionList")
-    public List<TraitClassReference> getTraitClassSuggestions() {
-        try {
-            List<TraitClassReference> traitRefList = (List<TraitClassReference>) ontologyService.getAllTraitGroupsHierarchy(false);
-            List<TraitClassReference> traitClass = getAllTraitClassesFromHierarchy(traitRefList); 
-            return traitClass;
-        } catch (MiddlewareQueryException e) {
-            LOG.error(e.getMessage(), e);
-        }
-
-        return null;
-    }
-    */
     private List<TraitClassReference> getAllTraitClassesFromHierarchy(List<TraitClassReference> refList) 
             throws MiddlewareQueryException{
         
@@ -685,59 +662,6 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         }
         return traitClass;
     }
-    
-    /**
-     * Gets the property suggestions.
-     *
-     * @param propertyId the property id
-     * @param local the local
-     * @return the property suggestions
-     */
-    /*@ModelAttribute("propertiesSuggestionList")
-    public List<Property> getPropertySuggestions() {
-        try {
-            List<Property> properties = ontologyService.getAllPropertiesWithTraitClass();            
-            return properties;
-        } catch (MiddlewareQueryException e) {
-            LOG.error(e.getMessage(), e);
-        }
-
-        return null;
-    }*/
-    
-    /**
-     * Gets the method suggestions.
-     *
-     * @return the method suggestions
-     */
-    /*@ModelAttribute("methodsSuggestionList")
-    public List<Method> getMethodSuggestions() {
-        try {
-            List<Method> methods = ontologyService.getAllMethods();
-            return methods;
-        } catch (MiddlewareQueryException e) {
-            LOG.error(e.getMessage(), e);
-        }
-
-        return null;
-    }*/
-    
-    /**
-     * Gets the scale suggestions.
-     *
-     * @return the scale suggestions
-     */
-    /*@ModelAttribute("scalesSuggestionList")
-    public List<Scale> getScaleSuggestions() {
-        try {
-            List<Scale> scales = ontologyService.getAllScales();
-            return scales;
-        } catch (MiddlewareQueryException e) {
-            LOG.error(e.getMessage(), e);
-        }
-
-        return null;
-    }*/
     
     /**
      * Save new term.
@@ -780,12 +704,6 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         return resultMap;
     }
     
-    /*
-     * Gets the standard variable details.
-     *
-     * @param variableId the variable id
-     * @return the standard variable details
-     */
     /**
      * Gets the standard variable details.
      *
@@ -877,7 +795,6 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
             
             if(standardVariableList != null && !standardVariableList.isEmpty()){
                 Collections.sort(standardVariableList, new Comparator(){
-
                     @Override
                     public int compare(Object o1, Object o2) {
                         return ((StandardVariable)o1).getName().toUpperCase()
@@ -894,12 +811,6 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         return super.showAjaxPage(model, LINKED_VARIABLES_MODAL);
     }
      
-    /*
-     * Check if null.
-     *
-     * @param term the term
-     * @return the string
-     */ 
     /**
      * Check if null.
      *
@@ -929,25 +840,6 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                         , new String[] {
                             ontologyService.getStandardVariable(form.getVariableId()).getName()}
                                     , "ontology.browser.cannot.delete.linked.variable");
-            }
-        } catch(MiddlewareQueryException e) {
-            LOG.error(e.getMessage(), e);
-        }
-    }
-    
-    /**
-     * Validate update.
-     *
-     * @param o the o
-     * @param errors the errors
-     */
-    private void validateUpdate(Object o, Errors errors) {
-        OntologyBrowserForm form = (OntologyBrowserForm) o;
-        try {
-            if (form.getVariableId() > -1) {
-                errors.rejectValue("variableName", "ontology.browser.cannot.update.central.variable"
-                        , new String[] {ontologyService.getStandardVariable(form.getVariableId()).getName()}
-                        , "ontology.browser.cannot.update.central.variable");
             }
         } catch(MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);

@@ -151,7 +151,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         			//after this one, it goes back to the same screen, 
         			// but the list should already be displayed
         		}else{
-        			//meaing there is error
+        			//meaning there is error
         			form.setHasError("1");
         			for(String errorMsg : mainInfo.getErrorMessages()){
         				result.rejectValue("file", errorMsg);  

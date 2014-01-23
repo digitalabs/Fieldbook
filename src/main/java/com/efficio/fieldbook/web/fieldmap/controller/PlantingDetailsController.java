@@ -54,8 +54,6 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
     public String show(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model, HttpSession session) {
         setPrevValues(form);
         form.setUserFieldmap(this.userFieldmap);
-        //List<Element> fieldmapShapes = fieldmapService.createBlankFieldmap(userFieldmap, 5, 5);
-        //form.setFieldmapShapes(fieldmapShapes);
         
         return super.show(model);
     }

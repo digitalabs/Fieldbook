@@ -169,7 +169,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     public String showNurseryLabelDetails(
             @ModelAttribute("labelPrintingForm") LabelPrintingForm form, Model model, 
             HttpSession session, @PathVariable int id, Locale locale) {
-    	//we get the nursery nite name first
+    	//we get the nursery site name first
     	/*
     	String location = "";
     	for(StudyDetails details : getUserSelection().getStudyDetailsList()){
@@ -443,12 +443,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
             return fileName;
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
-        }/* catch (FileNotFoundException e) {
-            LOG.error(e.getMessage(), e);
-        } catch (IOException e) {
-            LOG.error(e.getMessage(), e);
         }
-         */
          
         return "redirect:" + GenerateLabelController.URL;
     } 

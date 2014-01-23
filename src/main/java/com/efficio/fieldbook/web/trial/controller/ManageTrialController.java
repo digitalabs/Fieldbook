@@ -66,14 +66,6 @@ public class ManageTrialController extends AbstractBaseFieldbookController{
         try {
             List<StudyDetails> nurseryDetailsList = 
                     fieldbookMiddlewareService.getAllLocalTrialStudyDetails();
-            /*
-            StudyDetails det1 = new StudyDetails(
-                "studyName", "title", "pmKey", "objective", "", "", null, 1, "", "");                        
-            for(int i = 0 ; i < 50  ; i++){
-                det1.setId(4);
-                nurseryDetailsList.add(det1);
-            }
-            */
             getTrialSelection().setStudyDetailsList(nurseryDetailsList);
             form.setTrialDetailsList(getTrialSelection().getStudyDetailsList());
             form.setCurrentPage(1);
@@ -137,8 +129,7 @@ public class ManageTrialController extends AbstractBaseFieldbookController{
     
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getUserSelection()
-     */
-    
+     */    
     public TrialSelection getTrialSelection() {
         return this.trialSelection;
     }

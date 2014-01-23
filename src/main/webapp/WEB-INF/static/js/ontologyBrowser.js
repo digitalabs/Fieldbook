@@ -1,19 +1,15 @@
 function doSearchTree(){
 	var result = searchOntologyTreeNodeWithName(treeDivId, $('#srch-term').val());
-	//var res = $("#"+treeDivId+" a.dynatree-title:contains('"++"')");
 	$("#page-message").html("");
 	if(result == null){   		    	       	    
     	$("#page-message").html("<div class='alert alert-danger'>"+ seasrchErrorMessage +"</div>");
 	}else{
 		console.log(result);
-		//$("#"+treeDivId).dynatree("getTree").activateKey(result.data.key);
-		//doOntologyTreeHighlight(treeDivId, result.data.key);
 	}
 } 
 
 
 function doOntologyTreeHighlight(treeName, nodeKey){
-	//console.log(nodeKey);
 	$("#"+treeName).dynatree("getTree").activateKey(nodeKey);
 	$('#'+treeName).find("*").removeClass('highlight');
 	//then we highlight the nodeKey and its parents
@@ -26,21 +22,14 @@ function doOntologyTreeHighlight(treeName, nodeKey){
 			key = key + "_";
 		
 		key = key + elem[count];
-		//console.log("Highlight: " + key);
 		$('.'+key).addClass('highlight');
 	}
 	
 	var node = $("#"+treeName).dynatree("getTree").getNodeByKey(nodeKey);
 	
-	//console.log(nodeKey)
-	
 	if(node.data.lastChildren == true){
-		
-	//if(elem.length == 3){
 		//call ajax
 		standardVariableKey = elem[elem.length-1];
-		//console.log('im here' + standardVariableKey);
-		//alert("Do the ajax call now with standard variable id " + standardVariableKey);
 		processTab(node.data.title, standardVariableKey);
 	}else{
 		clearAndAppendOntologyDetailsTab('', '');
@@ -111,23 +100,12 @@ function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId){
 	      selectMode: 1,
 	      children: json,
 	      onActivate: function(node) {
-	        //alert("onActivate" + node.data.title);
 	     // Display list of selected nodes
 	        var selNodes = node.tree.getSelectedNodes();
 	        // convert to title/key array
 	        var selKeys = $.map(selNodes, function(node){
 	             return "[" + node.data.key + "]: '" + node.data.title + "'";
 	        });
-	        //alert(selKeys.join(", "));
-	        //alert(selNodes);
-	        /*
-	        if(node.data.isLastChildren == true){
-	        	alert("Trigger Ajax 1");
-	        	//$('.'+node.data.key).addClass("highlight");
-	        	
-	        }
-	        console.log(node.data.key);
-	        */
 	        //$('.fbtree-focused').addClass("highlight");
 	        doOntologyTreeHighlight(treeName, node.data.key);
 	      },
@@ -374,7 +352,6 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	    		filterPropertyCombo(treeDivId, "comboTraitClass", "traitClassDescription", $("#comboTraitClass").select2("data").id, true);
 	    	}
 	    	else if (name == 'Property') {
-	    		//console.log($("#combo"+name).select2("data"));
 	    		$("#cropOntologyDisplay").html($("#combo"+name).select2("data").cropOntologyId);
 	    	}
 	    	if (name.match("^Manage")) {
@@ -394,7 +371,6 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 		    		}
 		    		
 		    		if(name == 'ManageTraitClass'){
-		    			//console.log("set the proper trait class")
 		    			//setCorrespondingTraitClass($("#combo"+name).select2("data").id);
 		    			var count = 0;
 		    			var traitId = $("#combo"+name).select2("data").id;
@@ -428,7 +404,6 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 		    		
 		    		
 		    		if(name == 'ManageProperty'){
-		    			//console.log("set the proper trait class")
 		    			setCorrespondingTraitClass($("#combo"+name).select2("data").id);
 		    			if (parseInt($("#combo"+name).select2("data").id) > 0) {
 		    				disablePropertyFields();
@@ -659,10 +634,8 @@ function doTraitClassTreeHighlight(treeName, comboName, descriptionName, nodeKey
 	filterPropertyCombo(treeName, comboName, descriptionName, traitClassId, false);
 	
 	if(treeName == 'managePropTraitClassBrowserTree'){
-		//console.log("should be settings now")
     	$('#managePropTraitClassId').val($('#comboManagePropTraitClass').select2('data').id);
     	$('#managePropTraitClassName').val($('#comboManagePropTraitClass').select2('data').text);
-    	//console.log($('#comboManagePropTraitClass').select2('data').id);
     }
 }
 
@@ -811,7 +784,6 @@ function loadTraitClassTree(treeName, comboName, descriptionName, treeData, drop
 	      selectMode: 1,
 	      children: json,
 	      onActivate: function(node) {
-	        //alert("onActivate" + node.data.title);
 	     // Display list of selected nodes
 	    	  if(!$(this).hasClass('ui-dynatree-disabled')){
 	    		  var selNodes = node.tree.getSelectedNodes();

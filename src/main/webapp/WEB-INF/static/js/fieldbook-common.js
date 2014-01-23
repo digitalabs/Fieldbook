@@ -85,9 +85,6 @@ function checkTrialOptions(id){
 	    		var fieldMapHref = $('#fieldmap-url').attr("href");	
 	    		location.href = fieldMapHref + "/" + id;
 	    	}
-//	    	else if (data.nav == '3') {
-//	    		location.href = "/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap";
-//	    	}
 	    	
             Spinner.toggle();
         }

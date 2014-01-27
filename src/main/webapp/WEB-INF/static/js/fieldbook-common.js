@@ -292,7 +292,8 @@ function createHeader(hasFieldMap) {
 			newRow = newRow + "<th style='width:65%'>" + nurseryName + "</th>" +
 			"<th style='width:20%'>" + entryPlotLabel + "</th>";
 		}
-		newRow = newRow + "<th style='width:15%'>" + fieldmapLabel + "</th>";
+		//remove has field map column for now GCp-7295
+		//newRow = newRow + "<th style='width:15%'>" + fieldmapLabel + "</th>";
 	} else {
 		if (trial) {
 			newRow = newRow + "<th style='width:40%'></th>" +
@@ -322,7 +323,8 @@ function createRowForNursery(id, parentClass, value, realId, withFieldMap, datas
 	var checkBox = "<input class='checkInstance' type='checkbox' id='" + datasetId + "|" + realId + "' /> &nbsp;&nbsp;";
 	newCell = "<td>" + checkBox + "&nbsp;" + datasetName + "</td><td>" + value.entryCount + "</td>";
 	var hasFieldMap = value.hasFieldMap ? "Yes" : "No";
-	newCell = newCell + "<td class='hasFieldMap'>" + hasFieldMap + "</td>";
+	//remve the has field map column for now GCP-7295
+	//newCell = newCell + "<td class='hasFieldMap'>" + hasFieldMap + "</td>";
 	$("#studyTree").append(newRow+newCell+"</tr>");
 }
 
@@ -346,7 +348,9 @@ function createRow(id, parentClass, value, realId, withFieldMap) {
 			newCell = newCell + "<td>" + value + "</td><td></td>";
 		}
 		if (!withFieldMap) {
-			newCell = newCell + "<td></td>";
+			//remve the has field map column for now GCP-7295
+			//newCell = newCell + "<td></td>";
+			;
 		}
 	} else {
 		//trial instance level
@@ -366,7 +370,8 @@ function createRow(id, parentClass, value, realId, withFieldMap) {
 				newCell = newCell + "<td>" + value.repCount + "</td><td>" + value.plotCount + "</td>";
 			}
 			var hasFieldMap = value.hasFieldMap ? "Yes" : "No";
-			newCell = newCell + "<td class='hasFieldMap'>" + hasFieldMap + "</td>";
+			//remve the has field map column for now GCP-7295
+			//newCell = newCell + "<td class='hasFieldMap'>" + hasFieldMap + "</td>";
 		}
 	}
 	$("#studyTree").append(newRow+newCell+"</tr>");

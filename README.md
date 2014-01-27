@@ -31,7 +31,7 @@ To Deploy
 -----------
   1.  Deploy the code after the build.
   2.  Or run via command line:
-    a.  Configure and modify the settings.xml for the spring and set the profiles
+  * Configure and modify the settings.xml for the spring and set the profiles
     b.  In the pipeline/config, you should have a specific profile for the user, with the correct DB settings and properties.
     c.  Go to the Fieldbook folder
     d.  Make sure to edit the conf/settings.xml under the installation of maven (mvn -version to see the installation directory of maven)

@@ -551,7 +551,8 @@ function showCreateFieldMap() {
 				selectedWithFieldMap = true;
 			}
 		});
-		if (selectedWithFieldMap) {
+		//this is to disable the 2nd popup
+		if (false && selectedWithFieldMap) {
 			$("#selectTrialInstanceModal button,input").attr("disabled", true);
 			$("#confirmSubModal").modal("toggle");
 		} else {

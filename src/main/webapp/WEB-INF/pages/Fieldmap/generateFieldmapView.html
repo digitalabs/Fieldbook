@@ -33,6 +33,9 @@ th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" 
 <input type="hidden" id="stepValue" name="stepValue" value="3" />
 <input type="hidden" th:field="*{userFieldmap.generated}"/>
 <input type="hidden" th:field="*{saveAndRedirectToCreateLabel}"/>
+<input type="hidden" th:field="*{userFieldmap.trial}"/>
+<a th:if="*{userFieldmap.trial == true}" th:href="@{/TrialManager}" href="" style="display: none" id="landing-page-url"></a>
+<a th:if="*{userFieldmap.trial == false}" th:href="@{/NurseryManager}" href="" style="display: none" id="landing-page-url"></a>
 
 	<div>
 		<div class="row">&nbsp;</div>
@@ -198,7 +201,7 @@ th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" 
 						  	</button>
 						  	<ul class="dropdown-menu" role="menu" style="z-index: 99999">
 							    <li>							    
-							    	<a th:href="@{/Fieldmap/generateFieldmapView/exportExcel}" href="" th:text="#{fieldmap.tools.export.to.excel}">Export to Excel</a>
+							    	<a id="exportToExcel" th:href="@{/Fieldmap/generateFieldmapView/exportExcel}" href="" th:text="#{fieldmap.tools.export.to.excel}">Export to Excel</a>
 							    </li> 
 							    <li>
 							    	<a th:href="@{/LabelPrinting/specifyLabelDetails/fieldmap}" href="" style="display: none" id="step3-create-labels-url"></a>
@@ -236,7 +239,7 @@ th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" 
 			      <input type="button" onclick="javascript: window.history.back();" href="/Fieldmap/enterPlantingDetails.html" th:href="@{/Fieldmap/plantingDetails/}" th:value="#{common.form.back.text}" value="Back" class="btn btn-default"/>
 			      <!-- <input th:if="*{userFieldmap.selectedDatasetId == null}" type="submit" class="btn btn-primary" th:value="#{common.form.finish.text}" value="Finish" /> -->
 			      <!-- this is for temporary fix, we wont be saving but woud trigger the export functionality only for now GCP-7295 -->			      
-			      <a class="btn btn-primary" th:if="*{userFieldmap.selectedDatasetId == null}" th:href="@{/Fieldmap/generateFieldmapView/exportExcel}" href="" th:text="#{common.form.finish.text}">Finish</a>
+			      <a id="finishExport" class="btn btn-primary" th:if="*{userFieldmap.selectedDatasetId == null}"  href="javascript: void(0);" th:text="#{common.form.finish.text}">Finish</a>
 			      
 		      	</div>
 		    </div>
@@ -261,12 +264,20 @@ th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" 
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 	
+	
+	
 </form>
 
 
 <div layout:fragment="page-script">		
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    
+	           
+  function finishLoading(){
+	  var url =  $('#landing-page-url').attr('href');			 	
+      location.href = url;
+  }  
+    
   var isGenerated = false;
   $( document ).ready(function() {
 	  $('#create-label-confirmation').modal('hide');
@@ -283,6 +294,12 @@ th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" 
 		 }
 	 })
 	 //console.log(isGenerated);
+	 //for the workaround
+	 $('#finishExport').on("click", function(){
+		 var url = $('#exportToExcel').attr('href');
+		 $('<iframe src="'+url+'" onload="finishLoading();" frameborder="0">').appendTo('body');
+		 
+	 })
   });
   
   function redirectToCreateLabel(){

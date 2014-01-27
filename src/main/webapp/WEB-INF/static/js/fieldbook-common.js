@@ -544,17 +544,19 @@ function showCreateFieldMap() {
 			}
 			var hasFieldMap;
 			//get value hasfieldmap column
+			/* commented for now the checking for has fieldmap GCp-7295
 			if (trial) {
 				hasFieldMap = $(this).parent().next().next().next().next().html();
 			} else {
 				hasFieldMap = $(this).parent().next().next().html();
 			}
-			
+			*/
 			//build id list of selected trials instances
 			fieldmapIds.push(studyId+"|"+datasetId+"|"+id);
+			/* commented for now the checking for has fieldmap GCp-7295
 			if (hasFieldMap == "Yes") {
 				selectedWithFieldMap = true;
-			}
+			}*/
 		});
 		//this is to disable the 2nd popup
 		if (false && selectedWithFieldMap) {

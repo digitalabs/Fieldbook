@@ -31,19 +31,20 @@ To Deploy
 -----------
   1.  Deploy the code after the build.
   2.  Or run via command line:
-  a.  Configure and modify the settings.xml for the spring and set the profiles
-  b.  In the pipeline/config, you should have a specific profile for the user, with the correct DB settings and properties.
-  c.  Go to the Fieldbook folder
-  d.  Make sure to edit the conf/settings.xml under the installation of maven (mvn -version to see the installation directory of maven)
-  e.  mvn tomcat7:run
+  
+    a.  Configure and modify the settings.xml for the spring and set the profiles
+    b.  In the pipeline/config, you should have a specific profile for the user, with the correct DB settings and properties.
+    c.  Go to the Fieldbook folder
+    d.  Make sure to edit the conf/settings.xml under the installation of maven (mvn -version to see the installation directory of maven)
+    e.  mvn tomcat7:run
 
 To Access Product
 -------------------
 Below are the urls to access the Fieldbook pages:
   1.  Home - http://&lt;tomcatHost&gt;:&lt;tomcatPort&gt;/Fieldbook/
-  2.  Manage Trials - http://<tomcatHost>:<tomcatPort>/Fieldbook/TrialManager/
-  3.  Manage Nurseries - http://<tomcatHost>:<tomcatPort>/Fieldbook/NurseryManager/
-  4.  Ontology Browser - http://<tomcatHost>:<tomcatPort>/Fieldbook/OntologyBrowser/
+  2.  Manage Trials - http://&lt;tomcatHost&gt;:&lt;tomcatPort&gt;/Fieldbook/TrialManager/
+  3.  Manage Nurseries - http://&lt;tomcatHost&gt;:&lt;tomcatPort&gt;/Fieldbook/NurseryManager/
+  4.  Ontology Browser - http://&lt;tomcatHost&gt;:&lt;tomcatPort&gt;/Fieldbook/OntologyBrowser/
 
 Other Helpful Resources
 -------------------------
@@ -57,7 +58,6 @@ Thymeleaf Basic: http://www.thymeleaf.org/doc/html/Using-Thymeleaf.html
   2.  th:utext -> unescaped text, it will be use to substitute the body
   3.  #{message.home}" -> would be use for internationalization
   4.  ${today} -> similar to spring expression language
-  
 
     Text literals: '...'
     Number literals: 0, 34, 12, 3.0, 12.3, etc.
@@ -79,3 +79,5 @@ Thymeleaf Basic: http://www.thymeleaf.org/doc/html/Using-Thymeleaf.html
         If-then: (if) ? (then)
         If-then-else: (if) ? (then) : (else)
         Default: (value) ?: (defaultvalue)
+
+		mvn clean install -DskipTests -DenvConfig=ci

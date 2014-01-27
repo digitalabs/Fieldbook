@@ -31,6 +31,7 @@ To Deploy
 -----------
   1.  Deploy the code after the build.
   2.  Or run via command line:
+  
     Configuration
   	* Go to your maven installation, you can find your installation directory by typing in DOS "mvn -version", this should show you the MVN installation information
   	* Go to the Maven installation directory conf/settings.xml and modify for the spring and set the profiles.

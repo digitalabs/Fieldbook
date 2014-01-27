@@ -31,11 +31,14 @@ To Deploy
 -----------
   1.  Deploy the code after the build.
   2.  Or run via command line:
-  	* Configure and modify the settings.xml for the spring and set the profiles
-    b.  In the pipeline/config, you should have a specific profile for the user, with the correct DB settings and properties.
-    c.  Go to the Fieldbook folder
-    d.  Make sure to edit the conf/settings.xml under the installation of maven (mvn -version to see the installation directory of maven)
-    e.  mvn tomcat7:run
+    Configuration
+  	* Go to your maven installation, you can find your installation directory by typing in DOS "mvn -version", this should show you the MVN installation information
+  	* Go to the Maven installation directory conf/settings.xml and modify for the spring and set the profiles.
+  	* In the Fieldbook directory, go to pipeline/config, you should have a specific profile for the user, with the correct DB settings and properties.
+  	
+  	Running via command line
+  	* From the command line, go to the Fieldbook folder
+  	* mvn tomcat7:run
 
 To Access Product
 -------------------
@@ -51,32 +54,3 @@ To setup remote debugging:
   1.  In Windows: set MAVEN_OPTS=-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n
   2.  Go to IDE, setup remote debugging application, choose socket attach and input the correct port number.
   3.  Happy debugging
-
-Thymeleaf Basic: http://www.thymeleaf.org/doc/html/Using-Thymeleaf.html
-  1.  th:text -> escaped text, it will be use to substitute the body
-  2.  th:utext -> unescaped text, it will be use to substitute the body
-  3.  #{message.home}" -> would be use for internationalization
-  4.  ${today} -> similar to spring expression language
-
-	    Text literals: '...'
-	    Number literals: 0, 34, 12, 3.0, 12.3, etc.
-	    Simple expressions:
-	        Variable Expressions: ${...}
-	        Selection Variable Expressions: *{...}
-	        Message Expressions: #{...}
-	        Link URL Expressions: @{...}
-	    Binary operations:
-	        String concatenation: +
-	        Arithmetic operators: +, -, *, /, %
-	        Comparators: >, <, >=, <=
-	        Boolean operators: and, or
-	        Equality operators: ==, !=
-	    Unary operations:
-	        Minus sign (numeric): -
-	        Boolean negation: !, not
-	    Conditional operators:
-	        If-then: (if) ? (then)
-	        If-then-else: (if) ? (then) : (else)
-	        Default: (value) ?: (defaultvalue)
-
-		mvn clean install -DskipTests -DenvConfig=ci

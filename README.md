@@ -10,7 +10,7 @@ our system.
 
 Prerequisites
 ---------------
-Build and install Middleware and Commons using one of the ff. methods:
+Build and install Middleware and Commons using one of the following methods:
   1.  Using the command line, go the IBPMiddleware/IBPCommons home directory, run the command: "mvn clean install -DskipTests=true".
   2.  From within Eclipse, right-click on the project, IBPCommons for instance, select Run As --> Maven build..., then input the target "clean install -DskipTests=true"
 
@@ -18,14 +18,14 @@ To Build
 ----------
 To build the Fieldbook App using the command line, issue the following commands in the Fieldbook directory:
   1.  To create a clean build and run the test code: mvn clean package
-  2.  To create a clean build without running the test code: Imvn -DskipTests=true clean package
+  2.  To create a clean build without running the test code: mvn -DskipTests=true clean package
 
 To Run Tests
 --------------
 To run junit tests using the command line, issue the following commands in the Fieldbook directory:
   1.  To run all tests: mvn clean test
   2.  To run a specific test class: mvn clean test -Dtest=TestClassName
-  3.  To run a specific function: mvn clean test -Dtest=TestClassName#functionName
+  3.  To run a specific test function: mvn clean test -Dtest=TestClassName#testFunctionName
  
 To Deploy
 -----------
@@ -34,12 +34,12 @@ To Deploy
   
     Configuration
   	* Go to your maven installation, you can find your installation directory by typing in DOS "mvn -version", this should show you the MVN installation information
-  	* Go to the Maven installation directory conf/settings.xml and modify for the spring and set the profiles.
+  	* Go to the Maven installation directory conf/settings.xml, modify as necessary and set the profiles.
   	* In the Fieldbook directory, go to pipeline/config, you should have a specific profile for the user, with the correct DB settings and properties.
   	
   	Running via command line
   	* From the command line, go to the Fieldbook folder
-  	* mvn tomcat7:run
+  	* Execute the ff: mvn tomcat7:run
 
 To Access Product
 -------------------

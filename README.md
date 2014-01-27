@@ -11,14 +11,13 @@ our system.
 Prerequisites
 ---------------
 Build and install Middleware and Commons using one of the following methods:
-  1.  Using the command line, go the IBPMiddleware/IBPCommons home directory, run the command: "mvn clean install -DskipTests=true".
-  2.  From within Eclipse, right-click on the project, IBPCommons for instance, select Run As --> Maven build..., then input the target "clean install -DskipTests=true"
+  1.  Using the command line, go the IBPMiddleware/IBPCommons home directory, run the command: "mvn clean install".
+  2.  From within Eclipse, right-click on the project, IBPCommons for instance, select Run As --> Maven build..., then input the target "clean install"
 
 To Build
 ----------
 To build the Fieldbook App using the command line, issue the following commands in the Fieldbook directory:
   1.  To create a clean build and run the test code: mvn clean package
-  2.  To create a clean build without running the test code: mvn -DskipTests=true clean package
 
 To Run Tests
 --------------

@@ -11,51 +11,47 @@ our system.
 Prerequisites
 ---------------
 Build and install Middleware and Commons 
-* On the command line, go the IBPMiddleware/IBPCommons home directory, run the command: 
-  "mvn clean install -DskipTests=true".
-* From within Eclipse. To do this, right-click on the project, IBPCommons for instance, 
-  select Run As --> Maven build..., then input the target "clean install -DskipTests=true"
+* On the command line, go the IBPMiddleware/IBPCommons home directory, run the command: "mvn clean install -DskipTests=true".
+* From within Eclipse, right-click on the project, IBPCommons for instance, select Run As --> Maven build..., then input the target "clean install -DskipTests=true"
 
 To Build
 ----------
-* To build the Fieldbook App, issue the following commands in the Fieldbook directory:
-  a.  mvn clean package - this would create a clean build and run the test code as well
-  b.  mvn -DskipTests=true clean package - this would create a clean build without running test code
+To build the Fieldbook App using the command line, issue the following commands in the Fieldbook directory:
+1.	mvn clean package - this would create a clean build and run the test code as well
+2.	mvn -DskipTests=true clean package - this would create a clean build without running test code
 
 To Run Tests
 --------------
-* To run all tests, go to the Fieldbook directory and run the ff. command: mvn clean test 
-* To run a specific test class: mvn clean test -Dtest=TestClassName
+To run junit tests using the command line, issue the ff. commands in the Fieldbook directory:
+1.  To run all tests: mvn clean test 
+2.  To run a specific test class: mvn clean test -Dtest=TestClassName
  
 To Deploy
 -----------
-* Deploy the code after the build.
-* Or run via command line:
-  1.  Configuration
-    a.  To configure, just modify the settings.xml for the spring and set the profiles
+1.  Deploy the code after the build.
+2.  Or run via command line:
+	a.  Configure and modify the settings.xml for the spring and set the profiles
     b.  In the pipeline/config, you should have a specific profile for the user, with the correct DB settings and properties.
-  
-  2.  Running
-    a.  Go to the Fieldbook folder
-    b.  Make sure to edit the conf/settings.xml under the installation of maven (mvn -version to see the installation directory of maven)
-    c.  mvn tomcat7:run
+    c.  Go to the Fieldbook folder
+    d.  Make sure to edit the conf/settings.xml under the installation of maven (mvn -version to see the installation directory of maven)
+    e.  mvn tomcat7:run
 
 To Access Product
 -------------------
-* Below are the urls to access the Fieldbook pages: 
-  1.  Home - localhost:8080/Fieldbook
-  2.  Manage Trials - localhost:8080/Fieldbook/TrialManager
-  3.  Manage Nurseries - localhost:8080/Fieldbook/NurseryManager
-  4.  Ontology Browser - localhost:8080/Fieldbook/OntologyBrowser/
+Below are the urls to access the Fieldbook pages: 
+1.  Home - http://<tomcatHost>:<tomcatPort>/Fieldbook/
+2.  Manage Trials - http://<tomcatHost>:<tomcatPort>/Fieldbook/TrialManager/
+3.  Manage Nurseries - http://<tomcatHost>:<tomcatPort>/Fieldbook/NurseryManager/
+4.  Ontology Browser - http://<tomcatHost>:<tomcatPort>/Fieldbook/OntologyBrowser/
 
 Other Helpful Resources
 -------------------------
-* To setup remote debugging:
+To setup remote debugging:
   1.  In Windows: set MAVEN_OPTS=-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n
   2.  Go to IDE, setup remote debugging application, choose socket attach and input the correct port number.
   3.  Happy debugging
 
-*Thymeleaf Basic: http://www.thymeleaf.org/doc/html/Using-Thymeleaf.html
+Thymeleaf Basic: http://www.thymeleaf.org/doc/html/Using-Thymeleaf.html
 1.  th:text -> escaped text, it will be use to substitute the body
 2.  th:utext -> unescaped text, it will be use to substitute the body
 3.  #{message.home}" -> would be use for internationalization
@@ -81,5 +77,3 @@ Other Helpful Resources
         If-then: (if) ? (then)
         If-then-else: (if) ? (then) : (else)
         Default: (value) ?: (defaultvalue)
-
-		mvn clean install -DskipTests -DenvConfig=ci

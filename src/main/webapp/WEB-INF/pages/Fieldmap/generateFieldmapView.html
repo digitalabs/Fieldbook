@@ -234,7 +234,10 @@ th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" 
 			<div class=" col-xs-7  col-md-7">
 				<div class="form-group">
 			      <input type="button" onclick="javascript: window.history.back();" href="/Fieldmap/enterPlantingDetails.html" th:href="@{/Fieldmap/plantingDetails/}" th:value="#{common.form.back.text}" value="Back" class="btn btn-default"/>
-			      <input th:if="*{userFieldmap.selectedDatasetId == null}" type="submit" class="btn btn-primary" th:value="#{common.form.finish.text}" value="Finish" />
+			      <!-- <input th:if="*{userFieldmap.selectedDatasetId == null}" type="submit" class="btn btn-primary" th:value="#{common.form.finish.text}" value="Finish" /> -->
+			      <!-- this is for temporary fix, we wont be saving but woud trigger the export functionality only for now GCP-7295 -->			      
+			      <a class="btn btn-primary" th:if="*{userFieldmap.selectedDatasetId == null}" th:href="@{/Fieldmap/generateFieldmapView/exportExcel}" href="" th:text="#{common.form.finish.text}">Finish</a>
+			      
 		      	</div>
 		    </div>
 	    </div>
@@ -272,7 +275,7 @@ th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" 
 	 } 
 	 $('#saveAndRedirectToCreateLabel').val("0");
 	 $('#step3-create-labels').on('click', function(){
-		 if(isGenerated){
+		 if(false && isGenerated){
 			 //we show the prompt
 			 $('#create-label-confirmation').modal('show');
 		 }else{

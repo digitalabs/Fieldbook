@@ -11,8 +11,10 @@ our system.
 Prerequisites
 ---------------
 Build and install Middleware and Commons 
-* On the command line, go the IBPMiddleware/IBPCommons home directory, run the command: "mvn clean install -DskipTests=true".
-* From within Eclipse. To do this, right-click on the project, IBPCommons for instance, select Run As --> Maven build..., then input the target "clean install -DskipTests=true"
+* On the command line, go the IBPMiddleware/IBPCommons home directory, run the command: 
+  "mvn clean install -DskipTests=true".
+* From within Eclipse. To do this, right-click on the project, IBPCommons for instance, 
+  select Run As --> Maven build..., then input the target "clean install -DskipTests=true"
 
 To Build
 ----------
@@ -29,11 +31,11 @@ To Deploy
 -----------
 * Deploy the code after the build.
 * Or run via command line:
-  1. Configuration
+  1.  Configuration
     a.  To configure, just modify the settings.xml for the spring and set the profiles
     b.  In the pipeline/config, you should have a specific profile for the user, with the correct DB settings and properties.
   
-  2. Running
+  2.  Running
     a.  Go to the Fieldbook folder
     b.  Make sure to edit the conf/settings.xml under the installation of maven (mvn -version to see the installation directory of maven)
     c.  mvn tomcat7:run
@@ -41,17 +43,17 @@ To Deploy
 To Access Product
 -------------------
 * Below are the urls to access the Fieldbook pages: 
-1. Home - localhost:8080/Fieldbook
-2. Manage Trials - localhost:8080/Fieldbook/TrialManager
-3. Manage Nurseries - localhost:8080/Fieldbook/NurseryManager
-4. Ontology Browser - localhost:8080/Fieldbook/OntologyBrowser/
+  1.  Home - localhost:8080/Fieldbook
+  2.  Manage Trials - localhost:8080/Fieldbook/TrialManager
+  3.  Manage Nurseries - localhost:8080/Fieldbook/NurseryManager
+  4.  Ontology Browser - localhost:8080/Fieldbook/OntologyBrowser/
 
 Other Helpful Resources
 -------------------------
 * To setup remote debugging:
-1.  In Windows: set MAVEN_OPTS=-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n
-2.  Go to IDE, setup remote debugging application, choose socket attach and input the correct port number.
-3.  Happy debugging
+  1.  In Windows: set MAVEN_OPTS=-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n
+  2.  Go to IDE, setup remote debugging application, choose socket attach and input the correct port number.
+  3.  Happy debugging
 
 *Thymeleaf Basic: http://www.thymeleaf.org/doc/html/Using-Thymeleaf.html
 1.  th:text -> escaped text, it will be use to substitute the body

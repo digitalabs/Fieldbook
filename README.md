@@ -31,7 +31,6 @@ To Deploy
 -----------
   1.  Deploy the code after the build.
   2.  Or run via command line:
-  
     a.  Configure and modify the settings.xml for the spring and set the profiles
     b.  In the pipeline/config, you should have a specific profile for the user, with the correct DB settings and properties.
     c.  Go to the Fieldbook folder
@@ -59,25 +58,25 @@ Thymeleaf Basic: http://www.thymeleaf.org/doc/html/Using-Thymeleaf.html
   3.  #{message.home}" -> would be use for internationalization
   4.  ${today} -> similar to spring expression language
 
-    Text literals: '...'
-    Number literals: 0, 34, 12, 3.0, 12.3, etc.
-    Simple expressions:
-        Variable Expressions: ${...}
-        Selection Variable Expressions: *{...}
-        Message Expressions: #{...}
-        Link URL Expressions: @{...}
-    Binary operations:
-        String concatenation: +
-        Arithmetic operators: +, -, *, /, %
-        Comparators: >, <, >=, <=
-        Boolean operators: and, or
-        Equality operators: ==, !=
-    Unary operations:
-        Minus sign (numeric): -
-        Boolean negation: !, not
-    Conditional operators:
-        If-then: (if) ? (then)
-        If-then-else: (if) ? (then) : (else)
-        Default: (value) ?: (defaultvalue)
+	    Text literals: '...'
+	    Number literals: 0, 34, 12, 3.0, 12.3, etc.
+	    Simple expressions:
+	        Variable Expressions: ${...}
+	        Selection Variable Expressions: *{...}
+	        Message Expressions: #{...}
+	        Link URL Expressions: @{...}
+	    Binary operations:
+	        String concatenation: +
+	        Arithmetic operators: +, -, *, /, %
+	        Comparators: >, <, >=, <=
+	        Boolean operators: and, or
+	        Equality operators: ==, !=
+	    Unary operations:
+	        Minus sign (numeric): -
+	        Boolean negation: !, not
+	    Conditional operators:
+	        If-then: (if) ? (then)
+	        If-then-else: (if) ? (then) : (else)
+	        Default: (value) ?: (defaultvalue)
 
 		mvn clean install -DskipTests -DenvConfig=ci

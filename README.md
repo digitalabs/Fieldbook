@@ -22,7 +22,7 @@ To build the Fieldbook App using the command line, issue the following commands 
 
 To Run Tests
 --------------
-To run junit tests using the command line, issue the ff. commands in the Fieldbook directory:
+To run junit tests using the command line, issue the following commands in the Fieldbook directory:
   1.  To run all tests: mvn clean test
   2.  To run a specific test class: mvn clean test -Dtest=TestClassName
   3.  To run a specific function: mvn clean test -Dtest=TestClassName#functionName
@@ -31,7 +31,7 @@ To Deploy
 -----------
   1.  Deploy the code after the build.
   2.  Or run via command line:
-  * Configure and modify the settings.xml for the spring and set the profiles
+  	* Configure and modify the settings.xml for the spring and set the profiles
     b.  In the pipeline/config, you should have a specific profile for the user, with the correct DB settings and properties.
     c.  Go to the Fieldbook folder
     d.  Make sure to edit the conf/settings.xml under the installation of maven (mvn -version to see the installation directory of maven)

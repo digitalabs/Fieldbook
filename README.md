@@ -17,8 +17,8 @@ Build and install Middleware and Commons using one of the ff. methods:
 To Build
 ----------
 To build the Fieldbook App using the command line, issue the following commands in the Fieldbook directory:
-  1.  mvn clean package - this would create a clean build and run the test code as well
-  2.  Imvn -DskipTests=true clean package - this would create a clean build without running test code
+  1.  To create a clean build and run the test code: mvn clean package
+  2.  To create a clean build without running the test code: Imvn -DskipTests=true clean package
 
 To Run Tests
 --------------
@@ -31,16 +31,16 @@ To Deploy
 -----------
   1.  Deploy the code after the build.
   2.  Or run via command line:
-  	a.  Configure and modify the settings.xml for the spring and set the profiles
-	b.  In the pipeline/config, you should have a specific profile for the user, with the correct DB settings and properties.
-	c.  Go to the Fieldbook folder
-	d.  Make sure to edit the conf/settings.xml under the installation of maven (mvn -version to see the installation directory of maven)
-	e.  mvn tomcat7:run
+  a.  Configure and modify the settings.xml for the spring and set the profiles
+  b.  In the pipeline/config, you should have a specific profile for the user, with the correct DB settings and properties.
+  c.  Go to the Fieldbook folder
+  d.  Make sure to edit the conf/settings.xml under the installation of maven (mvn -version to see the installation directory of maven)
+  e.  mvn tomcat7:run
 
 To Access Product
 -------------------
 Below are the urls to access the Fieldbook pages:
-  1.  Home - http://<tomcatHost>:<tomcatPort>/Fieldbook/
+  1.  Home - http://&lt;tomcatHost&gt;:&lt;tomcatPort&gt;/Fieldbook/
   2.  Manage Trials - http://<tomcatHost>:<tomcatPort>/Fieldbook/TrialManager/
   3.  Manage Nurseries - http://<tomcatHost>:<tomcatPort>/Fieldbook/NurseryManager/
   4.  Ontology Browser - http://<tomcatHost>:<tomcatPort>/Fieldbook/OntologyBrowser/
@@ -57,6 +57,7 @@ Thymeleaf Basic: http://www.thymeleaf.org/doc/html/Using-Thymeleaf.html
   2.  th:utext -> unescaped text, it will be use to substitute the body
   3.  #{message.home}" -> would be use for internationalization
   4.  ${today} -> similar to spring expression language
+  
 
     Text literals: '...'
     Number literals: 0, 34, 12, 3.0, 12.3, etc.

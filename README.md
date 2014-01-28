@@ -11,8 +11,8 @@ our system.
 Prerequisites
 ---------------
 Build and install Middleware and Commons using one of the following methods:
-  1.  Using the command line, go the IBPMiddleware/IBPCommons home directory, run the command: "mvn clean install".
-  2.  From within Eclipse, right-click on the project, IBPCommons for instance, select Run As --> Maven build..., then input the target "clean install"
+  1.  Using the command line, go the IBPMiddleware/IBPCommons home directory, run the command: <pre>mvn clean install</pre>
+  2.  From within Eclipse, right-click on the project, IBPCommons for instance, select Run As --> Maven build..., then input the target <pre>clean install</pre>
 
 To Build
 ----------
@@ -22,9 +22,9 @@ To build the Fieldbook App using the command line, issue the following commands 
 To Run Tests
 --------------
 To run junit tests using the command line, issue the following commands in the Fieldbook directory:
-  1.  To run all tests: mvn clean test
-  2.  To run a specific test class: mvn clean test -Dtest=TestClassName
-  3.  To run a specific test function: mvn clean test -Dtest=TestClassName#testFunctionName
+  1.  To run all tests: <pre>mvn clean test</pre>
+  2.  To run a specific test class: <pre>mvn clean test -Dtest=TestClassName</pre>
+  3.  To run a specific test function: <pre>mvn clean test -Dtest=TestClassName#testFunctionName</pre>
  
 To Deploy
 -----------
@@ -38,7 +38,7 @@ To Deploy
   	
   	Running via command line
   	* From the command line, go to the Fieldbook folder
-  	* Execute the ff: mvn tomcat7:run
+  	* Execute the ff: <pre>mvn tomcat7:run</pre>
 
 To Access Product
 -------------------
@@ -51,6 +51,6 @@ Below are the urls to access the Fieldbook pages:
 Other Helpful Resources
 -------------------------
 To setup remote debugging:
-  1.  In Windows: set MAVEN_OPTS=-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n
+  1.  In Windows: set <pre>MAVEN_OPTS=-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n</pre>
   2.  Go to IDE, setup remote debugging application, choose socket attach and input the correct port number.
   3.  Happy debugging

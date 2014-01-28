@@ -78,12 +78,18 @@
 						<tr>
 							<th>Constant</th>
 							<th>Description</th>
+							<th></th>
 						</tr>
 						</thead>
 						<tbody>
 							<tr th:each="choice, rowStat : *{workbook.constants}">
 								<td th:text="*{workbook.constants[__${rowStat.index}__].name}">Name</td>
 								<td th:text="*{workbook.constants[__${rowStat.index}__].description}">Description</td>
+								<td>
+									<span th:onclick="'javascript:showBaselineTraitDetails(\'' + 
+									*{workbook.constants[__${rowStat.index}__].name} + '\', 1);'" 
+									class="glyphicon glyphicon-eye-open"></span>
+								</td>
 							</tr>
 						</tbody>
 					</table>		
@@ -96,12 +102,18 @@
 							<tr>
 								<th>Variate</th>
 								<th>Description</th>
+								<th></th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr th:each="choice, rowStat : *{workbook.variates}">
 								<td th:text="*{workbook.variates[__${rowStat.index}__].name}">Name</td>
 								<td th:text="*{workbook.variates[__${rowStat.index}__].description}">Description</td>
+								<td>
+									<span th:onclick="'javascript:showBaselineTraitDetails(\'' + 
+									*{workbook.variates[__${rowStat.index}__].name} + '\', 1);'" 
+									class="glyphicon glyphicon-eye-open"></span>
+								</td>
 							</tr>
 						</tbody>
 					</table>
@@ -127,7 +139,9 @@
 			<input type="submit" th:value="#{common.form.next.text}" class="btn btn-primary" />
 		</div>
 	</div>
-
+	<div class="row">
+    	<div id="showBaselineTraitDetails" th:include="/NurseryManager/baselineTraitDetails"></div>
+    </div>
 </form>
 
 <!-- Scripts location, note that the div tag will be remove after merging to decorator -->
@@ -151,6 +165,54 @@
 			}
 			
 			return true;
+		}
+		
+		function showBaselineTraitDetails(name, id) {
+			Spinner.toggle();
+			//pass name for now, later on, this will be changed to id
+		 	$.ajax(
+				 { url: "/Fieldbook/NurseryManager/nurseryDetails/showPlantHeightInfo/" + name,
+		           type: "GET",
+		           data: "",
+		           cache: false,
+		           success: function(data) {
+		        	 if (data.error == "0") {
+		        		 populateVariableInfo($.parseJSON(data.stdVar));
+		        	 }
+		             Spinner.toggle();
+		             $("#baselineTraitDetails").modal("toggle");
+		           }
+		         }
+		       );
+						
+		}
+		
+		function populateVariableInfo(standardVariable) {
+			if (standardVariable != null) {
+				$("#traitClass").text(checkIfNull(standardVariable.isA.name));
+				$("#property").text(checkIfNull(standardVariable.property.name));
+				$("#method").text(checkIfNull(standardVariable.method.name));
+				$("#scale").text(checkIfNull(standardVariable.scale.name));
+				$("#dataType").text(checkIfNull(standardVariable.dataType.name));
+				$("#role").text(checkIfNull(standardVariable.storedIn.name));
+				$("#cropOntologyId").text(checkIfNull(standardVariable.cropOntologyId));				
+			} else {
+				$("#traitClass").text("");
+				$("#property").text("");
+				$("#method").text("");
+				$("#scale").text("");
+				$("#dataType").text("");
+				$("#role").text("");
+				$("#cropOntologyId").text("");
+			}
+		}
+		
+		function checkIfNull(object) {
+			if (object != null) {
+				return object;
+			} else {
+				return "";
+			}
 		}
 			
 		//]]>

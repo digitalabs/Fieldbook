@@ -76,11 +76,12 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     	
     	int index = 0;
     	List<MeasurementRow> measurementRows = new ArrayList();
+    	int newGid = fieldbookMiddlewareService.getNextGermplasmId();
     	for(ImportedGermplasm germplasm : getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms()){
     		MeasurementRow measurementRow = new MeasurementRow();
     		List<MeasurementData> dataList = new ArrayList();
     		index++;
-    		int newGid = fieldbookMiddlewareService.getNextGermplasmId();
+    		
     		for(MeasurementVariable var : getUserSelection().getWorkbook().getMeasurementDatasetVariables()){
     			MeasurementData measurementData =null;
     			var.setFactor(true);    			
@@ -90,7 +91,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
                 		|| var.getName().equalsIgnoreCase(ImportGermplasmFileServiceImpl.FACTOR_DESIG)) {
                 	measurementData = new MeasurementData(var.getName(), germplasm.getDesig());                	
                 } else if (var.getName().equalsIgnoreCase(ImportGermplasmFileServiceImpl.FACTOR_GID)) {
-                	measurementData = new MeasurementData(var.getName(), Integer.toString(newGid));                	
+                	measurementData = new MeasurementData(var.getName(), Integer.toString(newGid--));                	
                 } else if (var.getName().equalsIgnoreCase(ImportGermplasmFileServiceImpl.FACTOR_CROSS)) {
                 	measurementData = new MeasurementData(var.getName(), "");                	
                 } else if (var.getName().equalsIgnoreCase(ImportGermplasmFileServiceImpl.FACTOR_SOURCE)) {

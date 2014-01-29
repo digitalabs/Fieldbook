@@ -43,6 +43,8 @@ public class ImportedGermplasm implements Serializable {
     /** The check. */
     private String check;
     
+   
+    
     /**
      * Instantiates a new imported germplasm.
      */
@@ -210,6 +212,5 @@ public class ImportedGermplasm implements Serializable {
 	public void setCheck(String check) {
 		this.check = check;
 	}
-    
     
 }

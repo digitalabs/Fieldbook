@@ -11,6 +11,7 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
+import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
@@ -184,6 +185,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             , BindingResult result, Model model) {
     	
     	if(getUserSelection().isImportValid()){
+    		/*
     		//we set the check value here
     		StringTokenizer tokenizer = new StringTokenizer(form.getCheckValues(), ",");
     		int index = 0;
@@ -191,6 +193,16 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     			String checkVal = "1".equalsIgnoreCase(tokenizer.nextToken()) ? "is check" : "";
     			ImportedGermplasm germplasm = getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(index++);
     			germplasm.setCheck(checkVal);
+    		}
+    		*/
+    		List<ImportedGermplasm> sessionImportedGermplasmList = getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
+    		for(int i = 0 ; i < form.getImportedGermplasm().size() ; i++){
+    			ImportedGermplasm germplasm = form.getImportedGermplasm().get(i);
+    			String checkVal = "";
+    			if(germplasm.getCheck() != null){
+    				checkVal = germplasm.getCheck();
+    			}
+    			sessionImportedGermplasmList.get(i).setCheck(checkVal);
     		}
     		//getUserSelection().setImportedGermplasmMainInfo(form)
     		

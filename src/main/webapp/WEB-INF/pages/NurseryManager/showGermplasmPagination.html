@@ -1,7 +1,6 @@
 <div>    
 <form onsubmit="return do_germplasm_check();" id="germplasm-list-form" role="form-horizontal" class="form-horizontal" action="#"
   th:action="@{/NurseryManager/importGermplasmList/next}" method="post" th:object="${importGermplasmListForm}" enctype="multipart/form-data">
-     <input type="hidden" th:field="*{checkValues}"/>
       
     <!-- case 1: no data means no table -->
      <div th:if="*{paginatedImportedGermplasm == null or #lists.isEmpty(paginatedImportedGermplasm)}">
@@ -25,7 +24,11 @@
            </thead>
            <tbody th:remove="all-but-first">
              <tr th:each="gid, row : *{paginatedImportedGermplasm}">
-               <td align="center" th:class="${row.even}? 'even' : 'odd'"><input class="germplasm-check" type="checkbox"  th:field="*{check}" value="1"/></td>
+               <td align="center" th:class="${row.even}? 'even' : 'odd'">
+               
+               <input type="checkbox"  th:field="*{importedGermplasm[__${row.index}__].check}" value="is check" />
+               
+               </td>
                <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryId}">.1</td>
                <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.desig}">.2</td>
                <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.gid}">.3</td>
@@ -60,7 +63,9 @@
            </thead>
            <tbody th:remove="all-but-first">
              <tr th:each="gid, row : *{paginatedImportedGermplasm}">
-               <td align="center" th:class="${row.even}? 'even' : 'odd'"><input class="germplasm-check" type="checkbox"  th:field="*{check}" value="1"/></td>
+               <td align="center" th:class="${row.even}? 'even' : 'odd'">
+               <input type="checkbox"  th:field="*{importedGermplasm[__${row.index}__].check}" value="is check"/>
+               </td>
                <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryId}">.1</td>
                <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.desig}">.2</td>
              </tr>

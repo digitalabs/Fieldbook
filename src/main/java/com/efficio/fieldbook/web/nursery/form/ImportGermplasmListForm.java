@@ -54,8 +54,7 @@ public class ImportGermplasmListForm {
 	/** The choose specify check. */
 	private String chooseSpecifyCheck;
 	
-	/** The check values. */
-	private String checkValues;
+	
 	
     /**
      * Gets the result per page.
@@ -266,25 +265,7 @@ public class ImportGermplasmListForm {
 		this.chooseSpecifyCheck = chooseSpecifyCheck;
 	}
 
-	/**
-	 * Gets the check values.
-	 *
-	 * @return the check values
-	 */
-	public String getCheckValues() {
-		return checkValues;
-	}
-
-	/**
-	 * Sets the check values.
-	 *
-	 * @param checkValues the new check values
-	 */
-	public void setCheckValues(String checkValues) {
-		this.checkValues = checkValues;
-	}
-	
-	
+		
     
     
 }

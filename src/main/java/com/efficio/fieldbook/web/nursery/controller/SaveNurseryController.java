@@ -16,7 +16,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.swing.plaf.metal.MetalIconFactory.FolderIcon16;
 
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.middleware.domain.etl.StudyDetails;
@@ -149,23 +148,7 @@ public class SaveNurseryController extends AbstractBaseFieldbookController{
      */
     private Workbook getWorkbook() {
         UserSelection userSelection = getUserSelection();
-        Workbook workbook = userSelection.getWorkbook();
-
-        //TODO: CLEAN THIS SECTION UP, THIS IS FOR TESTING ONLY.
-        //test, for testing step 4 stand-alone
-        if (workbook == null) {
-            workbook = new Workbook();
-            //workbook = TestNurseryWorkbookUtil.getTestWorkbook();
-            userSelection.setWorkbook(workbook);
-            //TODO: workbook can't be null, throw an exception
-        }
-
-        //Simulate Step 3 - generating / saving measurements data (TO BE REMOVED)
-        if (workbook.getObservations() == null || workbook.getObservations().size() == 0) {
-            workbook.setObservations(measurementsGeneratorService.generateMeasurementRows(userSelection));
-        }
-        
-        return workbook;
+        return userSelection.getWorkbook();
     }
     
     /**

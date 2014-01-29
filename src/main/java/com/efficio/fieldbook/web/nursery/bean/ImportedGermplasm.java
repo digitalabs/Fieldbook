@@ -13,11 +13,13 @@ package com.efficio.fieldbook.web.nursery.bean;
 
 import java.io.Serializable;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class ImportedGermplasm.
  */
 public class ImportedGermplasm implements Serializable {
 	
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
     /** The entry id. */
@@ -38,6 +40,9 @@ public class ImportedGermplasm implements Serializable {
     /** The entry code. */
     private String entryCode;
     
+    /** The check. */
+    private String check;
+    
     /**
      * Instantiates a new imported germplasm.
      */
@@ -50,10 +55,12 @@ public class ImportedGermplasm implements Serializable {
      *
      * @param entryId the entry id
      * @param desig the desig
+     * @param check the check
      */
-    public ImportedGermplasm(Integer entryId, String desig){
+    public ImportedGermplasm(Integer entryId, String desig, String check){
         this.entryId = entryId;
         this.desig = desig;
+        this.check = check;
     }
     
     /**
@@ -65,15 +72,17 @@ public class ImportedGermplasm implements Serializable {
      * @param cross the cross
      * @param source the source
      * @param entryCode the entry code
+     * @param check the check
      */
     public ImportedGermplasm(Integer entryId, String desig, String gid, String cross
-            , String source, String entryCode){
+            , String source, String entryCode, String check){
         this.entryId = entryId;
         this.desig = desig;
         this.gid = gid;
         this.cross = cross;
         this.source = source;
         this.entryCode = entryCode;
+        this.check = check;
     }
     
     /**
@@ -183,4 +192,24 @@ public class ImportedGermplasm implements Serializable {
     public void setDesig(String desig){
         this.desig = desig;
     }
+
+	/**
+	 * Gets the check.
+	 *
+	 * @return the check
+	 */
+	public String getCheck() {
+		return check;
+	}
+
+	/**
+	 * Sets the check.
+	 *
+	 * @param check the new check
+	 */
+	public void setCheck(String check) {
+		this.check = check;
+	}
+    
+    
 }

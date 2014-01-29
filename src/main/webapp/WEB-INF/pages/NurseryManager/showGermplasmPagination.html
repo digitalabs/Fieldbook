@@ -1,4 +1,8 @@
-<div th:object="${importGermplasmListForm}">
+<div>    
+<form onsubmit="return do_germplasm_check();" id="germplasm-list-form" role="form-horizontal" class="form-horizontal" action="#"
+  th:action="@{/NurseryManager/importGermplasmList/next}" method="post" th:object="${importGermplasmListForm}" enctype="multipart/form-data">
+     <input type="hidden" th:field="*{checkValues}"/>
+      
     <!-- case 1: no data means no table -->
      <div th:if="*{paginatedImportedGermplasm == null or #lists.isEmpty(paginatedImportedGermplasm)}">
        <span th:text="#{nursery.import.no.germplasm.list}">No Germplasm list</span>
@@ -6,10 +10,11 @@
      
      <!-- case 2: advanced view of the importedGermplasm -->
      <div th:if="*{paginatedImportedGermplasm != null and not #lists.isEmpty(paginatedImportedGermplasm)}">
-       <div th:if="*{importedGermplasmMainInfo.isAdvanceImportType()}">
-         <table th:if="*{not #lists.isEmpty(paginatedImportedGermplasm)}" class="table table-striped table-bordered">
+       <div class="germplasm-list-table" th:if="*{importedGermplasmMainInfo.isAdvanceImportType()}">
+         <table th:if="*{not #lists.isEmpty(paginatedImportedGermplasm)}" class="my-class table table-curved table-condensed">
            <thead>
              <tr>
+               <th th:utext="#{nursery.import.header.check}">.Check</th>
                <th th:utext="#{nursery.import.header.entry}">.Entry</th>
                <th th:utext="#{nursery.import.header.designation}">.Designation</th>
                <th th:utext="#{nursery.import.header.gid}">.GID</th>
@@ -19,15 +24,17 @@
              </tr>
            </thead>
            <tbody th:remove="all-but-first">
-             <tr th:each="gid : *{paginatedImportedGermplasm}">
-               <td th:text="${gid.entryId}">.1</td>
-               <td th:text="${gid.desig}">.2</td>
-               <td th:text="${gid.gid}">.3</td>
-               <td th:text="${gid.cross}">.4</td>
-               <td th:text="${gid.source}">.5</td>
-               <td th:text="${gid.entryCode}">.6</td>
+             <tr th:each="gid, row : *{paginatedImportedGermplasm}">
+               <td align="center" th:class="${row.even}? 'even' : 'odd'"><input class="germplasm-check" type="checkbox"  th:field="*{check}" value="1"/></td>
+               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryId}">.1</td>
+               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.desig}">.2</td>
+               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.gid}">.3</td>
+               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.cross}">.4</td>
+               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.source}">.5</td>
+               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryCode}">.6</td>
              </tr>
              <tr>
+               <td>.1.1</td>
                <td>.1</td>
                <td>.2</td>
                <td>.3</td>
@@ -42,20 +49,23 @@
 
      <!-- case 3: basic view of the importedGermplasm -->
      <div th:if="*{paginatedImportedGermplasm != null and not #lists.isEmpty(paginatedImportedGermplasm)}">
-       <div th:if="*{not importedGermplasmMainInfo.isAdvanceImportType()}">
-         <table th:if="*{not #lists.isEmpty(paginatedImportedGermplasm)}" class="table table-striped table-bordered">
+       <div class="germplasm-list-table" th:if="*{not importedGermplasmMainInfo.isAdvanceImportType()}">
+         <table th:if="*{not #lists.isEmpty(paginatedImportedGermplasm)}" class="my-class table table-curved table-condensed">
            <thead>
              <tr>
+               <th th:utext="#{nursery.import.header.check}">.Check</th>
                <th th:utext="#{nursery.import.header.entry}">.Entry</th>
                <th th:utext="#{nursery.import.header.designation}">.Designation</th>
              </tr>
            </thead>
            <tbody th:remove="all-but-first">
-             <tr th:each="gid : *{paginatedImportedGermplasm}">
-               <td th:text="${gid.entryId}">.1</td>
-               <td th:text="${gid.desig}">.2</td>
+             <tr th:each="gid, row : *{paginatedImportedGermplasm}">
+               <td align="center" th:class="${row.even}? 'even' : 'odd'"><input class="germplasm-check" type="checkbox"  th:field="*{check}" value="1"/></td>
+               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryId}">.1</td>
+               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.desig}">.2</td>
              </tr>
              <tr>
+               <td>.1.1</td>
                <td>.1</td>
                <td>.2</td>
              </tr>
@@ -63,4 +73,32 @@
          </table>
        </div>
      </div>
+     
+     <div th:if="*{paginatedImportedGermplasm != null or not #lists.isEmpty(paginatedImportedGermplasm)}">
+       <span class="h3" th:text="#{germplasm.list.specify.checks}">Specify Checks</span>
+       
+       <div class="row">
+		<div class="col-xs-12 col-md-12" >			
+			<div class="row form-group">
+				<div class="col-xs-5 col-md-5">
+					<label class="control-label" th:text="#{germplasm.list.choose.specify.checks}+':'"></label>
+				</div>
+				<div class="col-xs-7 col-md-7">
+					<select class="form-control" th:field="*{chooseSpecifyCheck}">
+						<option value="1" th:text="#{germplasm.list.choose.specify.checks.one.or.more}">Select one or more checks from the list</option>
+					</select>
+				</div>		
+			</div>
+			
+			 
+			
+		</div>
+		
+	</div>
+     </div>
+     
+     <br />
+     
+     </form>
+     
  </div>

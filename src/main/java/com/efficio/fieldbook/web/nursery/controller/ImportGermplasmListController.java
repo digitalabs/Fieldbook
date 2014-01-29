@@ -11,6 +11,8 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
+import java.util.StringTokenizer;
+
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
@@ -180,8 +183,19 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     public String nextScreen(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form
             , BindingResult result, Model model) {
     	
-    	if(getUserSelection().isImportValid())
+    	if(getUserSelection().isImportValid()){
+    		//we set the check value here
+    		StringTokenizer tokenizer = new StringTokenizer(form.getCheckValues(), ",");
+    		int index = 0;
+    		while(tokenizer.hasMoreTokens()){
+    			String checkVal = "1".equalsIgnoreCase(tokenizer.nextToken()) ? "is check" : "";
+    			ImportedGermplasm germplasm = getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(index++);
+    			germplasm.setCheck(checkVal);
+    		}
+    		//getUserSelection().setImportedGermplasmMainInfo(form)
+    		
     	    return "redirect:" + AddOrRemoveTraitsController.URL;
+    	}
     	else{
     	    form.setHasError("1");
     	    result.reject("error.no.import.germplasm.list", "Please import germplasm");

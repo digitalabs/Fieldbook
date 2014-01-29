@@ -11,6 +11,8 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
@@ -21,8 +23,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.AddOrRemoveTraitsForm;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
 /**
@@ -58,6 +62,10 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form
             , Model model, HttpSession session) {
+    	/*
+    	for(ImportedGermplasm germplasm : getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms()){
+    		System.out.println(germplasm.getEntryCode() + " " + germplasm.getCheck());
+    	}*/
     	return super.show(model);
     }
 
@@ -70,8 +78,8 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
      * @return the string
      */
     @RequestMapping(method = RequestMethod.POST)
-    public String showDetails(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form
-            , BindingResult result, Model model) {
+    public String showDetails(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form,     		
+            BindingResult result, Model model) {
         return "redirect:" + SaveNurseryController.URL;
     }
     

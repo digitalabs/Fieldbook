@@ -50,4 +50,6 @@ public class AppConstants {
     public static final int AVAILABLE_LABEL_FIELDS_PARENTAGE = 13;
     public static final int AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES = 14;
     
+    public static final int GERMPLASM_LIST_CHOOSE_SPECIFY_CHECK_SELECT_ONE_OR_MORE_IN_THE_LIST = 1;
+    
 }

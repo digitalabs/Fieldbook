@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class ImportGermplasmListForm.
  */
@@ -35,19 +36,50 @@ public class ImportGermplasmListForm {
 	/** The imported germplasm. */
 	private List<ImportedGermplasm> importedGermplasm;
 	//for pagination
+	/** The paginated imported germplasm. */
 	private List<ImportedGermplasm> paginatedImportedGermplasm;	
-	private int currentPage;
-	private int totalPages;
-	private int resultPerPage = 10;			
 	
+	/** The current page. */
+	private int currentPage;
+	
+	/** The total pages. */
+	private int totalPages;
+	
+	/** The result per page. */
+	private int resultPerPage = 10;	
+	
+	/** The method ids. */
+	private Integer[] check;
+	
+	/** The choose specify check. */
+	private String chooseSpecifyCheck;
+	
+	/** The check values. */
+	private String checkValues;
+	
+    /**
+     * Gets the result per page.
+     *
+     * @return the result per page
+     */
     public int getResultPerPage() {
         return resultPerPage;
     }
     
+    /**
+     * Sets the result per page.
+     *
+     * @param resultPerPage the new result per page
+     */
     public void setResultPerPage(int resultPerPage) {
         this.resultPerPage = resultPerPage;
     }
 
+    /**
+     * Gets the total pages.
+     *
+     * @return the total pages
+     */
     public int getTotalPages(){
 	    if(importedGermplasm != null && !importedGermplasm.isEmpty()){           
             totalPages = (int) Math.ceil((importedGermplasm.size() * 1f) / getResultPerPage()); 
@@ -57,6 +89,11 @@ public class ImportGermplasmListForm {
 	    return totalPages;
 	}
 
+    /**
+     * Gets the current page.
+     *
+     * @return the current page
+     */
     public int getCurrentPage() {
         return currentPage;
     }
@@ -83,14 +120,30 @@ public class ImportGermplasmListForm {
         }
     }
 
+    /**
+     * Sets the total pages.
+     *
+     * @param totalPages the new total pages
+     */
     public void setTotalPages(int totalPages) {
         this.totalPages = totalPages;
     }
         
+    /**
+     * Gets the paginated imported germplasm.
+     *
+     * @return the paginated imported germplasm
+     */
     public List<ImportedGermplasm> getPaginatedImportedGermplasm() {
-        return paginatedImportedGermplasm;
+        //return paginatedImportedGermplasm;
+    	return getImportedGermplasm();
     }
     
+    /**
+     * Sets the paginated imported germplasm.
+     *
+     * @param paginatedImportedGermplasm the new paginated imported germplasm
+     */
     public void setPaginatedImportedGermplasm(
             List<ImportedGermplasm> paginatedImportedGermplasm) {
         this.paginatedImportedGermplasm = paginatedImportedGermplasm;
@@ -176,4 +229,62 @@ public class ImportGermplasmListForm {
     public void setFile(MultipartFile file) {
         this.file = file;
     }
+
+	/**
+	 * Gets the check.
+	 *
+	 * @return the check
+	 */
+	public Integer[] getCheck() {
+		return check;
+	}
+
+	/**
+	 * Sets the check.
+	 *
+	 * @param check the new check
+	 */
+	public void setCheck(Integer[] check) {
+		this.check = check;
+	}
+
+	/**
+	 * Gets the choose specify check.
+	 *
+	 * @return the choose specify check
+	 */
+	public String getChooseSpecifyCheck() {
+		return chooseSpecifyCheck;
+	}
+
+	/**
+	 * Sets the choose specify check.
+	 *
+	 * @param chooseSpecifyCheck the new choose specify check
+	 */
+	public void setChooseSpecifyCheck(String chooseSpecifyCheck) {
+		this.chooseSpecifyCheck = chooseSpecifyCheck;
+	}
+
+	/**
+	 * Gets the check values.
+	 *
+	 * @return the check values
+	 */
+	public String getCheckValues() {
+		return checkValues;
+	}
+
+	/**
+	 * Sets the check values.
+	 *
+	 * @param checkValues the new check values
+	 */
+	public void setCheckValues(String checkValues) {
+		this.checkValues = checkValues;
+	}
+	
+	
+    
+    
 }

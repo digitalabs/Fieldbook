@@ -1,5 +1,6 @@
 package com.efficio.fieldbook.web.nursery.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -41,7 +42,10 @@ public class SelectFolderLocationController extends
         try {
             
             List<FolderReference> folderTree = studyDataManager.getFolderTree();
-            model.addAttribute("folderBrowserTree", TreeViewUtil.convertFolderReferencesToJson(folderTree, false));
+            List<FolderReference> rootFolder = new ArrayList<FolderReference>();
+            rootFolder.add(new FolderReference(1, "Root Folder", "Root Folder"));
+            rootFolder.get(0).setSubFolders(folderTree);
+            model.addAttribute("folderBrowserTree", TreeViewUtil.convertFolderReferencesToJson(rootFolder, false));
 
         } catch(Exception e) {
             LOG.error(e.getMessage(), e);

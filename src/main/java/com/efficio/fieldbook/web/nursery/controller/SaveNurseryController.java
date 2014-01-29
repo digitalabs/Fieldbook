@@ -16,6 +16,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.swing.plaf.metal.MetalIconFactory.FolderIcon16;
 
 import org.apache.commons.lang3.StringUtils;
 import org.generationcp.middleware.domain.etl.StudyDetails;
@@ -94,7 +95,8 @@ public class SaveNurseryController extends AbstractBaseFieldbookController{
      */
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("saveNurseryForm") SaveNurseryForm form, Model model) {
-    	
+        Locale locale = LocaleContextHolder.getLocale();
+        form.setFolderName(messageSource.getMessage("nursery.savenursery.pleaseSpecifyLocationText", null, locale));
     	return super.show(model);
     }
 
@@ -109,14 +111,14 @@ public class SaveNurseryController extends AbstractBaseFieldbookController{
      */
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
-    public Map<String, String> saveNursery(@RequestParam String title, @RequestParam String objective,
+    public Map<String, String> saveNursery(@RequestParam Integer folderId, @RequestParam String title, @RequestParam String objective,
             @RequestParam String nurseryBookName) {
     	
         Map<String, String> resultMap = new HashMap<String, String>();
         
         Workbook workbook = getWorkbook();
     	
-        String errorMessages = validate(title, objective, nurseryBookName);
+        String errorMessages = validate(folderId, title, objective, nurseryBookName);
     	
         if (errorMessages != null) {
             resultMap.put("status", "-1");
@@ -125,9 +127,10 @@ public class SaveNurseryController extends AbstractBaseFieldbookController{
         }
 
         try {
-    	    setStudyDetails(title, objective, nurseryBookName, workbook);
+    	    setStudyDetails(folderId, title, objective, nurseryBookName, workbook);
     	    
-    		dataImportService.saveDataset(workbook);
+    		dataImportService.saveDataset(workbook, true);
+    		
     		resultMap.put("status", "1");
     	
     	} catch(Exception e) {
@@ -173,7 +176,7 @@ public class SaveNurseryController extends AbstractBaseFieldbookController{
      * @param nurseryBookName the nursery book name
      * @return the string
      */
-    private String validate(String title, String objective, String nurseryBookName) {
+    private String validate(Integer folderId, String title, String objective, String nurseryBookName) {
         Locale locale = LocaleContextHolder.getLocale();
         StringBuilder errorMessages = null;
         
@@ -190,6 +193,11 @@ public class SaveNurseryController extends AbstractBaseFieldbookController{
         if (StringUtils.isBlank(nurseryBookName)) {
             requiredFields = requiredFields == null ? new StringBuilder() : requiredFields.append(", ");
             requiredFields.append(messageSource.getMessage("nursery.savenursery.nurseryBookName"
+                    , null, locale));
+        }
+        if (folderId == null) {
+            requiredFields = requiredFields == null ? new StringBuilder() : requiredFields.append(", ");
+            requiredFields.append(messageSource.getMessage("nursery.savenursery.savein"
                     , null, locale));
         }
         if (requiredFields != null) {
@@ -209,7 +217,7 @@ public class SaveNurseryController extends AbstractBaseFieldbookController{
      * @param nurseryBookName the nursery book name
      * @param workbook the workbook
      */
-    public void setStudyDetails(String title, String objective
+    public void setStudyDetails(Integer folderId, String title, String objective
             , String nurseryBookName, Workbook workbook) {
         if (workbook.getStudyDetails() == null) {
             workbook.setStudyDetails(new StudyDetails());
@@ -220,10 +228,8 @@ public class SaveNurseryController extends AbstractBaseFieldbookController{
         studyDetails.setStudyName(nurseryBookName);
         studyDetails.setStudyType(StudyType.N);
         
-        //TODO: save parent id, currently not implemented yet in UI
-        //studyDetails.setParentFolderId(form.getParentFolder());
-        //for testing set to the default folder
-        studyDetails.setParentFolderId(1);
+        studyDetails.setParentFolderId(folderId);
     }
+    
 
 }

@@ -17,6 +17,12 @@ package com.efficio.fieldbook.web.nursery.form;
  */
 public class SaveNurseryForm {
 	
+    /** The folderId */
+    private Integer folderId;
+    
+    /** The folder name */
+    private String folderName;
+    
 	/** The title. */
 	private String title;
 	
@@ -79,5 +85,37 @@ public class SaveNurseryForm {
 	public void setNurseryBookName(String nurseryBookName) {
 		this.nurseryBookName = nurseryBookName;
 	}
+
+    
+    /**
+     * @return the folderId
+     */
+    public Integer getFolderId() {
+        return folderId;
+    }
+
+    
+    /**
+     * @param folderId the folderId to set
+     */
+    public void setFolderId(Integer folderId) {
+        this.folderId = folderId;
+    }
+
+    
+    /**
+     * @return the folderName
+     */
+    public String getFolderName() {
+        return folderName;
+    }
+
+    
+    /**
+     * @param folderName the folderName to set
+     */
+    public void setFolderName(String folderName) {
+        this.folderName = folderName;
+    }
 
 }

@@ -54,7 +54,7 @@ public class TestTreeViewController extends AbstractBaseFieldbookController {
     public String loadInitialTree() {
         try {
             List<FolderReference> rootFolders = studyDataManager.getRootFolders(Database.LOCAL);
-            String jsonResponse = TreeViewUtil.convertFolderReferencesToJson(rootFolders);
+            String jsonResponse = TreeViewUtil.convertFolderReferencesToJson(rootFolders, true);
             LOG.debug(jsonResponse);
             return jsonResponse;
         

@@ -147,22 +147,26 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
     private final static String FACTOR_HEADER_DATA_TYPE = "DATA TYPE";
     
     /** The Constant FACTOR_ENTRY. */
-    private final static String FACTOR_ENTRY = "ENTRY";
+    public final static String FACTOR_ENTRY = "ENTRY";
     
     /** The Constant FACTOR_DESIGNATION. */
-    private final static String FACTOR_DESIGNATION = "DESIGNATION";
+    public final static String FACTOR_DESIGNATION = "DESIGNATION";
+    public final static String FACTOR_DESIG = "DESIG";
     
     /** The Constant FACTOR_GID. */
-    private final static String FACTOR_GID = "GID";
+    public final static String FACTOR_GID = "GID";
     
     /** The Constant FACTOR_CROSS. */
-    private final static String FACTOR_CROSS = "CROSS";
+    public final static String FACTOR_CROSS = "CROSS";
     
     /** The Constant FACTOR_SOURCE. */
-    private final static String FACTOR_SOURCE = "SOURCE";
+    public final static String FACTOR_SOURCE = "SOURCE";
     
     /** The Constant FACTOR_ENTRY_CODE. */
-    private final static String FACTOR_ENTRY_CODE = "ENTRY CODE";
+    public final static String FACTOR_ENTRY_CODE = "ENTRY CODE";
+    
+    public final static String FACTOR_PLOT = "PLOT";
+    public final static String FACTOR_CHECK = "CHECK";
     
     /** The error messages. */
     private Set<String> errorMessages;

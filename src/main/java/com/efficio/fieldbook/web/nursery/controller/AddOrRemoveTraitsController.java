@@ -20,6 +20,7 @@ import javax.servlet.http.HttpSession;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.springframework.stereotype.Controller;
@@ -135,12 +136,16 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     @RequestMapping(method = RequestMethod.POST)
     public String showDetails(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form,     		
             BindingResult result, Model model) {
-    	//need to save the 
-    	/*
-    	 * for
-    	 */
-    	form.getMeasurementRowList(); //this contains all the data
-    	form.getMeasurementVariables(); //no value, just get it in the userSelection.getWorkbook 
+    	
+        Workbook workbook = userSelection.getWorkbook();
+        
+        if (workbook == null) {
+            workbook = new Workbook();
+        }
+        
+        workbook.setObservations(form.getMeasurementRowList());
+        userSelection.setWorkbook(workbook);
+    	
         return "redirect:" + SaveNurseryController.URL;
     }
     

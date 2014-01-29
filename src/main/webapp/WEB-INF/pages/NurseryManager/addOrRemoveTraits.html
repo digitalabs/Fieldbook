@@ -23,7 +23,7 @@
            </thead>
            <tbody th:remove="all-but-first">
            	<tr th:class="${row.even}? 'even' : 'odd'" th:each="measurementRow, row: *{measurementRowList}">
-             	<td  th:each="measurementData, rowIndex : ${measurementRow.dataList}"  >
+             	<td style="vertical-align:bottom; padding: 2px;" align="center" th:each="measurementData, rowIndex : ${measurementRow.dataList}"  >
              		<label th:if="${measurementData.editable == false}" th:text="${measurementData.value}" ></label>
              		<input th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" type="text" th:if="${measurementData.editable == true}" th:field="*{measurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}"/>
              		<input type="hidden" th:if="${measurementData.editable == false}" th:field="*{measurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}"/>

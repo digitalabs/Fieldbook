@@ -135,6 +135,12 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     @RequestMapping(method = RequestMethod.POST)
     public String showDetails(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form,     		
             BindingResult result, Model model) {
+    	//need to save the 
+    	/*
+    	 * for
+    	 */
+    	form.getMeasurementRowList(); //this contains all the data
+    	form.getMeasurementVariables(); //no value, just get it in the userSelection.getWorkbook 
         return "redirect:" + SaveNurseryController.URL;
     }
     

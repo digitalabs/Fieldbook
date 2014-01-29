@@ -50,8 +50,8 @@ public class TreeViewUtil {
 	 * @return the string
 	 * @throws Exception the exception
 	 */
-	public static String convertFolderReferencesToJson(List<FolderReference> references) throws Exception {
-		List<TreeNode> treeNodes = convertFolderReferencesToTreeView(references);
+	public static String convertFolderReferencesToJson(List<FolderReference> references, boolean isLazy) throws Exception {
+		List<TreeNode> treeNodes = convertFolderReferencesToTreeView(references, isLazy);
 		return convertTreeViewToJson(treeNodes);
 	}
 	
@@ -95,21 +95,30 @@ public class TreeViewUtil {
 		return treeNodes;
 	}
 	
-	/**
-	 * Convert folder references to tree view.
-	 *
-	 * @param references the references
-	 * @return the list
-	 */
-	private static List<TreeNode> convertFolderReferencesToTreeView(List<FolderReference> references) {
+    /**
+     * Convert folder references to tree view.
+     *
+     * @param references the references
+     * @return the list
+     */
+    private static List<TreeNode> convertFolderReferencesToTreeView(List<FolderReference> references, boolean isLazy) {
         List<TreeNode> treeNodes = new ArrayList<TreeNode>();
-		if (references != null && !references.isEmpty()) {
-			for (FolderReference reference : references) {
-				treeNodes.add(convertReferenceToTreeNode(reference));
-			}
-		}
-		return treeNodes;
-	}
+        TreeNode treeNode;
+        if (references != null && !references.isEmpty()) {
+            for (FolderReference reference : references) {
+                treeNode = convertReferenceToTreeNode(reference);
+                treeNode.setIsLazy(isLazy);
+                treeNodes.add(treeNode);
+                if (reference.getSubFolders() != null && !reference.getSubFolders().isEmpty()) {
+                    treeNode.setChildren(convertFolderReferencesToTreeView(reference.getSubFolders(), isLazy));
+                }
+                else {
+                    treeNode.setIsFolder(false);
+                }
+            }
+        }
+        return treeNodes;
+    }
 
     /**
      * Convert dataset references to tree view.

@@ -21,6 +21,18 @@
 
 		<div class="form-group">
 			<div class="control-group">
+				<label class="col-xs-2 col-lg-2 control-label" for="title" th:text="#{nursery.savenursery.savein} + ':*'">Save in:*</label>
+				<div class="col-xs-5 col-lg-5">
+					<span id="folderName" name="folderName" th:text="*{folderName}" ></span>
+					<input type="hidden" th:field="*{folderId}" />
+				</div>
+				<div class="col-xs-5 col-lg-5">
+					<a onclick="loadFolderAjax();" th:text="#{nursery.savenursery.chooseLocation}"></a>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="control-group">
 				<label class="col-xs-2 col-lg-2 control-label" for="title" th:text="#{nursery.savenursery.title} + ':*'">Title:*</label>
 				<div class="col-xs-10 col-lg-10">
 					<input type="text" class="form-control" th:field="*{title}" />
@@ -46,16 +58,33 @@
 		
 		<div class="form-group">
 			<div class="col-xs-offset-2 col-xs-10 col-lg-offset-2 col-lg-10">
-				<input type="button" onclick="history.go(-1);" th:value="#{common.form.back.text}" class="btn btn-primary" />
+				<input type="button" onclick="history.go(-1);" th:value="#{common.form.back.text}" class="btn btn-default" />
 				<input type="button" th:value="#{common.form.finish.text}" class="btn btn-primary" onclick="doSave();" />
 			</div>
 		</div>
 	</form>
+
+
+	<!-- Modal Dialog for Choosing Folder Location -->
+	<div class="row">
+		<div class="col-md-12">	
+			<div class="modal fade" id="folderBrowserModal"  role="dialog" aria-labelledby="folderBrowserModal" aria-hidden="true">
+				<div class="modal-dialog modal-large" style="width:500px;">
+					<div class="modal-content">
+					
+					</div><!-- /.modal-content -->
+				</div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->		
+			 
+		</div>
+	</div>	
 	
 </div>
 
 
-<script>
+<div layout:fragment="page-script">			
+<script type='text/javascript' th:inline="javascript">
+//<![CDATA[    
 
 	function doSave() {
 		var $form = $("#nurseryForm");
@@ -86,4 +115,23 @@
 		   } 
 		});
 	}
+
+	function loadFolderAjax() {
+		Spinner.toggle();
+		$.ajax({ 
+			url: "/Fieldbook/Common/selectFolderLocation",
+		    type: "GET",
+		    data: "",
+		    success: function(html) {
+				$("#folderBrowserModal"+" .modal-content").empty().append(html);
+				$('#folderBrowserModal').modal('show');
+				$.fn.modal.Constructor.prototype.enforceFocus = function () {};
+				Spinner.toggle();
+			}
+		});
+	}
+	
+	
+//]]>
 </script>
+</div>

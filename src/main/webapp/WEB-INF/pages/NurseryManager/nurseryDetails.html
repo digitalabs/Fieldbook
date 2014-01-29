@@ -40,7 +40,7 @@
 			<span th:text="#{nursery.nurserydetails.plot.level.details}"></span>
 				<div th:if="*{workbook.factors != null AND workbook.factors.size() > 0}">
 					<br/>
-					<table border="5" cellpadding="10" cellspacing="10">
+					<table class="my-class table table-curved table-condensed">
 						<thead>
 							<tr>
 								<th>Factor</th>
@@ -53,12 +53,12 @@
 						</thead>
 						<tbody>
 							<tr th:each="choice, rowStat : *{workbook.factors}">
-								<td th:text="*{workbook.factors[__${rowStat.index}__].name}">Name</td>
-								<td th:text="*{workbook.factors[__${rowStat.index}__].description}">Description</td>
-								<td th:text="*{workbook.factors[__${rowStat.index}__].property}">Property</td>
-								<td th:text="*{workbook.factors[__${rowStat.index}__].scale}">Scale</td>
-								<td th:text="*{workbook.factors[__${rowStat.index}__].method}">Method</td>
-								<td th:text="*{workbook.factors[__${rowStat.index}__].dataType}">Data Type</td>
+								<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{workbook.factors[__${rowStat.index}__].name}">Name</td>
+								<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{workbook.factors[__${rowStat.index}__].description}">Description</td>
+								<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{workbook.factors[__${rowStat.index}__].property}">Property</td>
+								<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{workbook.factors[__${rowStat.index}__].scale}">Scale</td>
+								<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{workbook.factors[__${rowStat.index}__].method}">Method</td>
+								<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{workbook.factors[__${rowStat.index}__].dataType}">Data Type</td>
 							</tr>
 						</tbody>
 		
@@ -73,7 +73,7 @@
 				<span th:text="#{nursery.nurserydetails.baseline.traits}"></span>
 				<br/><br/>
 				<div th:if="*{workbook.constants != null AND workbook.constants.size() > 0}">
-					<table border="5" cellpadding="10" cellspacing="10" >
+					<table style="width: 60%"  class="my-class table table-curved table-condensed" >
 					<thead>
 						<tr>
 							<th>Constant</th>
@@ -83,12 +83,13 @@
 						</thead>
 						<tbody>
 							<tr th:each="choice, rowStat : *{workbook.constants}">
-								<td th:text="*{workbook.constants[__${rowStat.index}__].name}">Name</td>
-								<td th:text="*{workbook.constants[__${rowStat.index}__].description}">Description</td>
-								<td>
-									<span th:onclick="'javascript:showBaselineTraitDetails(\'' + 
-									*{workbook.constants[__${rowStat.index}__].name} + '\', 1);'" 
-									class="glyphicon glyphicon-eye-open"></span>
+								<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{workbook.constants[__${rowStat.index}__].name}">Name</td>
+								<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{workbook.constants[__${rowStat.index}__].description}">Description</td>
+								<td th:class="${rowStat.even}? 'even' : 'odd'">
+								<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetails(\'' + 
+									*{workbook.constants[__${rowStat.index}__].name} + '\', 1);'" >
+									<span 
+									class="glyphicon glyphicon-eye-open"></span></a>
 								</td>
 							</tr>
 						</tbody>
@@ -97,7 +98,7 @@
 				</div>
 
 				<div th:if="*{workbook.variates != null AND workbook.variates.size() > 0}">
-					<table border="5" cellpadding="10" cellspacing="10">
+					<table style="width: 60%"  class="my-class table table-curved table-condensed">
 						<thead>
 							<tr>
 								<th>Variate</th>
@@ -107,12 +108,13 @@
 						</thead>
 						<tbody>
 							<tr th:each="choice, rowStat : *{workbook.variates}">
-								<td th:text="*{workbook.variates[__${rowStat.index}__].name}">Name</td>
-								<td th:text="*{workbook.variates[__${rowStat.index}__].description}">Description</td>
-								<td>
-									<span th:onclick="'javascript:showBaselineTraitDetails(\'' + 
-									*{workbook.variates[__${rowStat.index}__].name} + '\', 1);'" 
-									class="glyphicon glyphicon-eye-open"></span>
+								<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{workbook.variates[__${rowStat.index}__].name}">Name</td>
+								<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{workbook.variates[__${rowStat.index}__].description}">Description</td>
+								<td th:class="${rowStat.even}? 'even' : 'odd'">
+								<a href="javascript: void(0);"  th:onclick="'javascript:showBaselineTraitDetails(\'' + 
+									*{workbook.variates[__${rowStat.index}__].name} + '\', 1);'" >
+									<span class="glyphicon glyphicon-eye-open"></span>
+									</a>
 								</td>
 							</tr>
 						</tbody>
@@ -133,12 +135,16 @@
 		
 	</div>
 
+	
+	<div class="form-group">&nbsp;</div>
 	<div class="form-group">
-		<div class="col-xs-offset-2 col-xs-10 col-lg-offset-2 col-lg-10">			
-			<a href="/NurseryManager/fileUpload.html" th:href="@{/NurseryManager/}" class="btn btn-default" th:text="#{common.form.back.text}">.Back</a> 
-			<input type="submit" th:value="#{common.form.next.text}" class="btn btn-primary" />
-		</div>
-	</div>
+	    <div class="col-xs-4 col-md-4">&nbsp;</div> 
+	    <div class="col-xs-8 col-md-8">
+	    	<a href="/NurseryManager/fileUpload.html" th:href="@{/NurseryManager/}" class="btn btn-default" th:text="#{common.form.back.text}">.Back</a> 
+			<input type="submit" th:value="#{common.form.next.text}" class="btn btn-primary" />  
+	    </div>
+	  </div>
+	  
 	<div class="row">
     	<div id="showBaselineTraitDetails" th:include="/NurseryManager/baselineTraitDetails"></div>
     </div>

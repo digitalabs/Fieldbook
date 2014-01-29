@@ -490,6 +490,9 @@ padding-left: 20px; margin-top: 7px
 	max-height: 400px; 
 	overflow: auto;
 }
+.germplasm-measurement-list-table td input {
+   font-size: 10px;
+}
 .variates{
 	background-color: blue;	
 	color: #FFFFFF;

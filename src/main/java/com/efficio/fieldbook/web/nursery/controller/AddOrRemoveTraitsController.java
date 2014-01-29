@@ -87,27 +87,27 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     			MeasurementData measurementData =null;
     			var.setFactor(true);    			
     			if (var.getName().equalsIgnoreCase(ImportGermplasmFileServiceImpl.FACTOR_ENTRY)) {
-    				measurementData = new MeasurementData(var.getName(), Integer.toString(index));
+    				measurementData = new MeasurementData(var.getName(), Integer.toString(index), false, var.getDataType());
                 } else if (var.getName().equalsIgnoreCase(ImportGermplasmFileServiceImpl.FACTOR_DESIGNATION)
                 		|| var.getName().equalsIgnoreCase(ImportGermplasmFileServiceImpl.FACTOR_DESIG)) {
-                	measurementData = new MeasurementData(var.getName(), germplasm.getDesig());                	
+                	measurementData = new MeasurementData(var.getName(), germplasm.getDesig(), false, var.getDataType());                	
                 } else if (var.getName().equalsIgnoreCase(ImportGermplasmFileServiceImpl.FACTOR_GID)) {
-                	measurementData = new MeasurementData(var.getName(), Integer.toString(newGid--));                	
+                	measurementData = new MeasurementData(var.getName(), Integer.toString(newGid--), false, var.getDataType());                	
                 } else if (var.getName().equalsIgnoreCase(ImportGermplasmFileServiceImpl.FACTOR_CROSS)) {
-                	measurementData = new MeasurementData(var.getName(), "");                	
+                	measurementData = new MeasurementData(var.getName(), "", false, var.getDataType());                	
                 } else if (var.getName().equalsIgnoreCase(ImportGermplasmFileServiceImpl.FACTOR_SOURCE)) {
-                	measurementData = new MeasurementData(var.getName(), "");
+                	measurementData = new MeasurementData(var.getName(), "", false, var.getDataType());
                 } else if (var.getName().equalsIgnoreCase(ImportGermplasmFileServiceImpl.FACTOR_ENTRY_CODE)) {
-                	measurementData = new MeasurementData(var.getName(), Integer.toString(index));
+                	measurementData = new MeasurementData(var.getName(), Integer.toString(index), false, var.getDataType());
                 } else if (var.getName().equalsIgnoreCase(ImportGermplasmFileServiceImpl.FACTOR_PLOT)) {
-                	measurementData = new MeasurementData(var.getName(), Integer.toString(index));
+                	measurementData = new MeasurementData(var.getName(), Integer.toString(index), false, var.getDataType());
                 } else if (var.getName().equalsIgnoreCase(ImportGermplasmFileServiceImpl.FACTOR_CHECK)) {
-                	measurementData = new MeasurementData(var.getName(), germplasm.getCheck());
+                	measurementData = new MeasurementData(var.getName(), germplasm.getCheck(), false, var.getDataType());
                 }
                 else{
                 	//meaning non factor
-                	measurementData = new MeasurementData(var.getName(), "");
-                	measurementData.setEditable(true);
+                	measurementData = new MeasurementData(var.getName(), "", true, var.getDataType());
+                	//measurementData.setEditable(true);
                 	var.setFactor(false);
                 	//measurementData.set
                 }

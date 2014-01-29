@@ -656,3 +656,14 @@ function openStudy(tableName){
        }
      });
 }
+
+function showErrorMessage(messageDivId, message) {
+	//console.log(message);
+	$("#" + messageDivId).html(
+			"<div class='alert alert-danger'>"+ message +"</div>"
+	);
+}
+
+function hideErrorMessage(){
+	$('#page-message .alert-danger').fadeOut(1000);
+}

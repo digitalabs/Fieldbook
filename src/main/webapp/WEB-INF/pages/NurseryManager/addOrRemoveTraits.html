@@ -12,12 +12,12 @@
 
 <form role="form-horizontal" onsubmit="return do_validation()" class="form-horizontal" action="#" 
 	th:action="@{/NurseryManager/addOrRemoveTraits}" method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data">
-
-	<div class="germplasm-measurement-list-table">
+	<div class="form-group" id="page-message"></div>
+	<div class="germplasm-measurement-list-table">		
          <table th:if="*{not #lists.isEmpty(measurementRowList)}" class="my-class table table-curved table-condensed">
            <thead>
              <tr >
-               <th th:class="${measurementVariable.factor == true}? '' : 'variates'" th:each="measurementVariable: *{measurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>
+               <th  th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'" th:each="measurementVariable, rowIndex : *{measurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>
 
              </tr>
            </thead>
@@ -25,7 +25,7 @@
            	<tr th:class="${row.even}? 'even' : 'odd'" th:each="measurementRow, row: *{measurementRowList}">
              	<td  th:each="measurementData, rowIndex : ${measurementRow.dataList}"  >
              		<label th:if="${measurementData.editable == false}" th:text="${measurementData.value}" ></label>
-             		<input style="width: 100%" size="1" type="text" th:if="${measurementData.editable == true}" th:field="*{measurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}"/>
+             		<input th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" type="text" th:if="${measurementData.editable == true}" th:field="*{measurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}"/>
              		<input type="hidden" th:if="${measurementData.editable == false}" th:field="*{measurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}"/>
              		<input type="hidden" th:field="*{measurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].label}"/> 
 				</td>
@@ -46,12 +46,28 @@
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
 
-     
+       
        $( document ).ready(function() {  	     
-    	   $('.germplasm-measurement-list-table td').on("click", function() {
-    		   if($(this).find('input') == null)
-  	         	  $(this).html('<input type="text" value="' + $(this).html() + '" />');
-  	    	});
+    	   $('.germplasm-measurement-list-table td input').on("change", validateCells);
+    	   $('.germplasm-measurement-list-table td input').on("focus", validateCells);
+    	   $('.germplasm-measurement-list-table td input').on("blur", validateCells);
 		});
+       function validateCells(){
+    	   var noError = true;
+    	   $('.germplasm-measurement-list-table td input').each(function(){
+			   if($(this).data('type') == 'N'){
+	    			  if(isNaN(Number($(this).val()))){    				   
+	    				  showErrorMessage('page-message', "Please enter a numeric value for this variate");
+	    				  var id = $(this).attr('id');
+	    				  setTimeout(function() { $('#'+getJquerySafeId(id)).focus(); }, 10);
+	    				  noError = false;
+	    				  return;
+	    			  }
+			   }
+		   }); 
+    	   if(noError){
+    		   hideErrorMessage('page-message');
+    	   }
+       }
       //]]>
     </script>

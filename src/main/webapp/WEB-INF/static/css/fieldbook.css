@@ -491,5 +491,10 @@ padding-left: 20px; margin-top: 7px
 	overflow: auto;
 }
 .variates{
-	background-color: green;	
+	background-color: blue;	
+	color: #FFFFFF;
+}
+.factors{
+	background-color: green;
+	color: #FFFFFF;	
 }

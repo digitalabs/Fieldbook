@@ -510,3 +510,10 @@ padding-left: 20px; margin-top: 7px
 .lead {
     font-size: 10pt;
 }
+.btn-file, a.fileupload-exists{
+	padding: 8.5px 12px;
+}
+.fileupload-exists{
+	padding: 0px;	
+}
+ 

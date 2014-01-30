@@ -92,7 +92,18 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
                 		|| var.getName().equalsIgnoreCase(ImportGermplasmFileServiceImpl.FACTOR_DESIG)) {
                 	measurementData = new MeasurementData(var.getName(), germplasm.getDesig(), false, var.getDataType());                	
                 } else if (var.getName().equalsIgnoreCase(ImportGermplasmFileServiceImpl.FACTOR_GID)) {
-                	measurementData = new MeasurementData(var.getName(), Integer.toString(newGid--), false, var.getDataType());                	
+                	//we need to check first if the germplasm is existing or not
+                	Integer dbGid = fieldbookMiddlewareService.getGermplasmIdByName(germplasm.getDesig());
+                	Integer gidToBeUse = null;
+                	if(dbGid == null){
+                		newGid--;
+                		gidToBeUse = Integer.valueOf(newGid);
+                	}else{
+                		gidToBeUse = dbGid;
+                	}
+                	
+                	
+                	measurementData = new MeasurementData(var.getName(), gidToBeUse.toString(), false, var.getDataType());                	
                 } else if (var.getName().equalsIgnoreCase(ImportGermplasmFileServiceImpl.FACTOR_CROSS)) {
                 	measurementData = new MeasurementData(var.getName(), "", false, var.getDataType());                	
                 } else if (var.getName().equalsIgnoreCase(ImportGermplasmFileServiceImpl.FACTOR_SOURCE)) {

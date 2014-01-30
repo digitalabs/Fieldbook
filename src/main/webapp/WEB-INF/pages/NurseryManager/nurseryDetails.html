@@ -126,7 +126,7 @@
 	<div class="form-group row">
 		<div class="col-xs-12 col-md-12">
 			<h3 th:text="#{nursery.nurserydetails.field.layout.header}">FIELD LAYOUT</h3>
-			<label for="fieldLayoutRandom" th:text="#{nursery.nurserydetails.select.field.layout.label} + ': *'"></label>
+			<label for="fieldLayoutRandom" th:text="#{nursery.nurserydetails.select.field.layout.label} + ': '"></label><span class="required">*</span>
 			<select th:field="*{fieldLayoutRandom}">
 				<option value="true" th:text="#{nursery.nurserydetails.option.with.randomization}">Unreplicated Design with Randomization</option>
 				<option value="false" th:text="#{nursery.nurserydetails.option.without.randomization}">Unreplicated Design without Randomization</option>

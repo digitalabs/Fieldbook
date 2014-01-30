@@ -29,12 +29,12 @@
                <input type="checkbox"  th:field="*{importedGermplasm[__${row.index}__].check}" value="is check" />
                
                </td>
-               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryId}">.1</td>
-               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.desig}">.2</td>
-               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.gid}">.3</td>
-               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.cross}">.4</td>
-               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.source}">.5</td>
-               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryCode}">.6</td>
+               <td align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryId}">.1</td>
+               <td align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.desig}">.2</td>
+               <td align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.gid}">.3</td>
+               <td align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.cross}">.4</td>
+               <td align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.source}">.5</td>
+               <td align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryCode}">.6</td>
              </tr>
              <tr>
                <td>.1.1</td>
@@ -86,7 +86,7 @@
 		<div class="col-xs-12 col-md-12" >			
 			<div class="row form-group">
 				<div class="col-xs-5 col-md-5">
-					<label class="control-label" th:text="#{germplasm.list.choose.specify.checks}+':'"></label>
+					<label class="control-label" th:text="#{germplasm.list.choose.specify.checks}+':'"></label><span class="required">*</span>
 				</div>
 				<div class="col-xs-7 col-md-7">
 					<select class="form-control" th:field="*{chooseSpecifyCheck}">

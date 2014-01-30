@@ -27,7 +27,7 @@
 	</form>
 </div>
 
-<form id="fieldmapForm" name="fieldmapForm" role="form-horizontal" action="#" onsubmit="return validatePlantingDetails();"
+<form id="fieldmapForm" name="fieldmapForm" role="form-horizontal" action="#" onsubmit="return setAllDeletedBox();"
 th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldmapForm}" enctype="multipart/form-data">
 
 <input type="hidden" id="markedCells" name="markedCells" />
@@ -135,7 +135,8 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 			<div class=" col-xs-7  col-md-7">
 				<div class="form-group">
 			      <input type="button" onclick="javascript: window.history.back();" href="/Fieldmap/enterFieldDetails.html" th:href="@{/Fieldmap/enterFieldDetails/trial/-10}" th:value="#{common.form.back.text}" value="Back" class="btn btn-default"/>
-			      <input type="button" onclick="javascript: setAllDeletedBox();" th:value="#{common.form.next.text}" value="Next" class="btn btn-primary"/>
+			      <input type="submit"  th:value="#{common.form.next.text}" value="Next" class="btn btn-primary"/>
+			      
 		      	</div>
 		    </div>
 	    </div>
@@ -163,7 +164,10 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 		var isHorizontal = true;
 				
 	  	function setAllDeletedBox(){
-			validatePlantingDetails();
+			var ret = validatePlantingDetails();
+			if(ret == false)
+				return false;
+			
 	  		var deletedRect = "";
 	  		var insufficientPlots = false;
 	  		deletedPlots = 0;
@@ -184,7 +188,7 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	  			deletedRect = deletedRect.substr(0,deletedRect.length-1);
 	  		}
 	  		$('#markedCells').val(deletedRect);
-	  		console.log(deletedRect);
+	  		//console.log(deletedRect);
 	  		
 	  		//validate that total no. of plots does not exceed total no. of blocks
 	  		if (isHorizontal) {
@@ -197,8 +201,9 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	  			showMessage(totalBlocksError);
 	  			return false;
 			} 
-			
-	  		$("#fieldmapForm").submit();
+			return true;
+	  		//$("#fieldmapForm").submit();
+	  		//setTimeout(function(){$('#submitButton').trigger('submit')}, 50);
 	  	}
 	  	$(document).ready(function() {
 	  		$('#field-map td.plot').on('click', function() {

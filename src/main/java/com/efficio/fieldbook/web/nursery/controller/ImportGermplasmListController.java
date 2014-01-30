@@ -16,6 +16,10 @@ import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
+import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -56,7 +60,8 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     /** The import germplasm file service. */
     @Resource
     private ImportGermplasmFileService importGermplasmFileService;
-    
+    @Resource
+    private FieldbookService fieldbookMiddlewareService;
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
      */
@@ -179,10 +184,11 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
      * @param result the result
      * @param model the model
      * @return the string
+     * @throws MiddlewareQueryException 
      */
     @RequestMapping(value="/next", method = RequestMethod.POST)
     public String nextScreen(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form
-            , BindingResult result, Model model) {
+            , BindingResult result, Model model) throws MiddlewareQueryException {
     	
     	if(getUserSelection().isImportValid()){
     		/*
@@ -195,14 +201,45 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     			germplasm.setCheck(checkVal);
     		}
     		*/
+    		boolean hasCheck = false;
     		List<ImportedGermplasm> sessionImportedGermplasmList = getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
     		for(int i = 0 ; i < form.getImportedGermplasm().size() ; i++){
     			ImportedGermplasm germplasm = form.getImportedGermplasm().get(i);
     			String checkVal = "";
     			if(germplasm.getCheck() != null){
     				checkVal = germplasm.getCheck();
+    				hasCheck = true;
     			}
     			sessionImportedGermplasmList.get(i).setCheck(checkVal);
+    		}
+    		
+    		if(hasCheck){
+    			//we need to add the CHECK factor if its not existing
+    			List<MeasurementVariable> measurementVariables = userSelection.getWorkbook().getFactors();
+    			MeasurementVariable checkVariable = new MeasurementVariable("CHECK", "TYPE OF ENTRY", "CODE", "ASSIGNED", "CHECK", "C", "", "ENTRY");
+    			Integer checkVariableTermId = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(checkVariable.getProperty(), checkVariable.getScale(), checkVariable.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(checkVariable.getLabel()));
+    			boolean checkFactorExisting = false;
+    			for(MeasurementVariable var : measurementVariables){
+    				Integer termId = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(var.getProperty(), var.getScale(), var.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(var.getLabel()));
+    				if(termId != null && checkVariableTermId != null && termId.intValue() == checkVariableTermId.intValue()){
+    					checkFactorExisting = true;
+    					break;
+    				}
+    			}
+    			if(checkFactorExisting == false){
+					userSelection.getWorkbook().reset();
+					userSelection.getWorkbook().setCheckFactorAddedOnly(true);
+    				userSelection.getWorkbook().getFactors().add(checkVariable);
+    			}
+    		}else{
+    			//we remove since it was dynamically added only
+    			if(userSelection.getWorkbook().isCheckFactorAddedOnly() == true){
+    				//we need to remove it
+    				userSelection.getWorkbook().reset();
+    				List<MeasurementVariable> factors = userSelection.getWorkbook().getFactors();
+    				factors.remove(factors.size() - 1);
+    				userSelection.getWorkbook().setFactors(factors);
+    			}
     		}
     		//getUserSelection().setImportedGermplasmMainInfo(form)
     		

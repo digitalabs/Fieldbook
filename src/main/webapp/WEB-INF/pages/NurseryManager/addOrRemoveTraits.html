@@ -45,7 +45,7 @@
 	<div class="form-group">
 	    <div class="col-xs-4 col-md-4">&nbsp;</div> 
 	    <div class="col-xs-8 col-md-8">
-			<input type="button" onclick="history.go(-1);" th:value="#{common.form.back.text}" class="btn btn-default" />
+	      	<a id="btnBack" href="" th:href="@{/NurseryManager/importGermplasmList}"   th:text="#{common.form.back.text}" class="btn btn-default" />
 			<input type="submit" id="btnNext" th:value="#{common.form.next.text}" class="btn btn-primary" />
 	      	<input type="submit" id="btnUpdate" th:value="#{common.form.update.text}" class="btn btn-primary" onclick="doSave();"/>
 	      
@@ -92,6 +92,7 @@
     	   $('.germplasm-measurement-list-table td input').on("focus", validateCells);
     	   $('.germplasm-measurement-list-table td input').on("blur", validateCells);
     	   if (document.URL.indexOf("viewNursery") > -1) {
+    		   $("#btnBack").attr("href", "/Fieldbook/NurseryManager");
     		   $("#btnUpdate").show();
     		   $("#btnNext").hide();
     	   } else {

@@ -671,6 +671,12 @@ function showErrorMessage(messageDivId, message) {
 	);
 }
 
+function showSuccessfulMessage(messageDivId, message) {
+	$("#" + messageDivId).html(
+			"<div class='alert alert-success'>"+ message +"</div>"
+	);
+}
+
 function hideErrorMessage(){
 	$('#page-message .alert-danger').fadeOut(1000);
 }

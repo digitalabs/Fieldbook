@@ -120,7 +120,6 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     @RequestMapping(method = RequestMethod.POST)
     public String showDetails(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form,          
             BindingResult result, Model model) {
-        
         // If operation = add new nursery
         Workbook workbook = userSelection.getWorkbook();
         if (workbook == null) {
@@ -128,18 +127,6 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
         }
         workbook.setObservations(form.getMeasurementRowList());
         userSelection.setWorkbook(workbook);
-        
-        // If operation = update
-        if (form.getIsUpdated()){
-            try { 
-                fieldbookMiddlewareService.saveMeasurementRows(workbook);
-                return "redirect:" + SuccessfulController.URL;
-            } catch (MiddlewareQueryException e) {
-                LOG.error(e.getMessage(), e);
-                //TODO Handle error messages here
-                return super.show(model);
-            }
-        }
         
         return "redirect:" + SaveNurseryController.URL;
     }
@@ -149,9 +136,9 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     @RequestMapping(value="/updateTraits", method = RequestMethod.POST)
     public  Map<String, String> updateTraits(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form,          
             BindingResult result, Model model){
-
         Map<String, String> resultMap = new HashMap<String, String>();
 
+        
         Workbook workbook = userSelection.getWorkbook();        
         workbook.setObservations(form.getMeasurementRowList());
         workbook.setVariates(form.getMeasurementVariables());
@@ -164,7 +151,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
             resultMap.put("status", "-1");
             resultMap.put("errorMessage", e.getMessage());
         }
-
+        
         return resultMap;
     }
     

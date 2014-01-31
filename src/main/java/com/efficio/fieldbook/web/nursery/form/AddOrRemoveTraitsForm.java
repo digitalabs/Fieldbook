@@ -27,6 +27,8 @@ public class AddOrRemoveTraitsForm {
 	
 	/** The measurement variables. */
 	private List<MeasurementVariable> measurementVariables;
+	
+	private boolean isUpdated;
 
 	/**
 	 * Gets the measurement row list.
@@ -64,6 +66,16 @@ public class AddOrRemoveTraitsForm {
 			List<MeasurementVariable> measurementVariables) {
 		this.measurementVariables = measurementVariables;
 	}
+
+    
+    public boolean getIsUpdated() {
+        return isUpdated;
+    }
+
+    
+    public void setIsUpdated(boolean isUpdated) {
+        this.isUpdated = isUpdated;
+    }
 	
 	
 	

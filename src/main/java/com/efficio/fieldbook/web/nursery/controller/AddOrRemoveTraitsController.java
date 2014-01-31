@@ -11,18 +11,13 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
-import org.generationcp.middleware.domain.dms.PhenotypicType;
-import org.generationcp.middleware.domain.etl.MeasurementData;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
@@ -34,15 +29,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.AddOrRemoveTraitsForm;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
-import com.efficio.fieldbook.web.nursery.service.impl.ImportGermplasmFileServiceImpl;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.vaadin.terminal.Terminal;
 
 /**
  * The Class AddOrRemoveTraitsController.
@@ -87,7 +79,6 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     	
     	//getUserSelection().getWorkbook().getMeasurementDatasetVariables();
     	
-    	
     	form.setMeasurementRowList(measurementsGeneratorService.generateRealMeasurementRows(getUserSelection()));
     	form.setMeasurementVariables(getUserSelection().getWorkbook().getMeasurementDatasetVariables());
     	/*
@@ -112,6 +103,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
         if (workbook != null) {
             form.setMeasurementRowList(workbook.getObservations());
             form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());
+            userSelection.setWorkbook(workbook);
         }
         
         return super.show(model);
@@ -126,19 +118,54 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
      * @return the string
      */
     @RequestMapping(method = RequestMethod.POST)
-    public String showDetails(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form,     		
+    public String showDetails(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form,          
             BindingResult result, Model model) {
-    	
-        Workbook workbook = userSelection.getWorkbook();
         
+        // If operation = add new nursery
+        Workbook workbook = userSelection.getWorkbook();
         if (workbook == null) {
             workbook = new Workbook();
         }
-        
         workbook.setObservations(form.getMeasurementRowList());
         userSelection.setWorkbook(workbook);
-    	
+        
+        // If operation = update
+        if (form.getIsUpdated()){
+            try { 
+                fieldbookMiddlewareService.saveMeasurementRows(workbook);
+                return "redirect:" + SuccessfulController.URL;
+            } catch (MiddlewareQueryException e) {
+                LOG.error(e.getMessage(), e);
+                //TODO Handle error messages here
+                return super.show(model);
+            }
+        }
+        
         return "redirect:" + SaveNurseryController.URL;
+    }
+    
+
+    @ResponseBody
+    @RequestMapping(value="/updateTraits", method = RequestMethod.POST)
+    public  Map<String, String> updateTraits(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form,          
+            BindingResult result, Model model){
+
+        Map<String, String> resultMap = new HashMap<String, String>();
+
+        Workbook workbook = userSelection.getWorkbook();        
+        workbook.setObservations(form.getMeasurementRowList());
+        workbook.setVariates(form.getMeasurementVariables());
+        
+        try { 
+            fieldbookMiddlewareService.saveMeasurementRows(workbook);
+            resultMap.put("status", "1");
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+            resultMap.put("status", "-1");
+            resultMap.put("errorMessage", e.getMessage());
+        }
+
+        return resultMap;
     }
     
     /**

@@ -14,9 +14,13 @@ package com.efficio.fieldbook.web.nursery.controller;
 import static org.junit.Assert.assertEquals;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,6 +32,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
+import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 
@@ -271,10 +276,10 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
             LOG.error(e.getMessage(), e);
         }
         form.setCurrentPage(1);
-        assertEquals(form.getPaginatedImportedGermplasm().size(), form.getResultPerPage());
+        //assertEquals(form.getPaginatedImportedGermplasm().size(), form.getResultPerPage());
         assertEquals(form.getPaginatedImportedGermplasm().get(0).getEntryId(), Integer.valueOf(1));
         assertEquals(form.getPaginatedImportedGermplasm().get(0).getDesig(), "IR 68835-58-1-1-B"); // we check the parse data here
-
+        /* no more pagination
         assertEquals(form.getPaginatedImportedGermplasm().get(9).getEntryId(), Integer.valueOf(10));
         assertEquals(form.getPaginatedImportedGermplasm().get(9).getDesig(), "IR 68815-25-PMI 3-UBN 6-B-B"); // we check the parse data here
 
@@ -285,7 +290,7 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
 
         assertEquals(form.getPaginatedImportedGermplasm().get(9).getEntryId(), Integer.valueOf(20));
         assertEquals(form.getPaginatedImportedGermplasm().get(9).getDesig(), "IR 67632-14-2-5-1-2-B"); // we check the parse data here
-
+         */
     }
 
     /**
@@ -304,10 +309,10 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
             LOG.error(e.getMessage(), e);
         }
         form.setCurrentPage(1);
-        assertEquals(form.getPaginatedImportedGermplasm().size(), form.getResultPerPage());
+        //assertEquals(form.getPaginatedImportedGermplasm().size(), form.getResultPerPage());
         assertEquals(form.getPaginatedImportedGermplasm().get(0).getEntryId(), Integer.valueOf(1));
         assertEquals(form.getPaginatedImportedGermplasm().get(0).getDesig(), "IR 68201-21-2-B-4-B-B"); // we check the parse data here
-
+        /* no more pagination
         assertEquals(form.getPaginatedImportedGermplasm().get(9).getEntryId(), Integer.valueOf(10));
         assertEquals(form.getPaginatedImportedGermplasm().get(9).getDesig(), "IR 67632-14-2-5-1-2-B"); // we check the parse data here
 
@@ -322,7 +327,39 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
         assertEquals(form.getPaginatedImportedGermplasm().get(0).getEntryId(), Integer.valueOf(21));
         assertEquals(form.getPaginatedImportedGermplasm().get(0).getDesig(), "IR 67632-14-2-5-1-2-B1"); // we check the parse data here
         assertEquals(form.getPaginatedImportedGermplasm().get(0).getCross(), "21"); // we check the parse data here
-
+		*/
+    }
+    
+    @Test
+    public void testValidAndAddCheckFactor() throws MiddlewareQueryException {
+        // testing when doing pagination, we simulate the pagination
+        ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+        ImportGermplasmListForm form = new ImportGermplasmListForm();
+        try {
+            importGermplasmFileService.doProcessNow(workbookAdvance, mainInfo);
+            form.setImportedGermplasmMainInfo(mainInfo);
+            form.setImportedGermplasm(mainInfo.getImportedGermplasmList().getImportedGermplasms());
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+        }
+        UserSelection userSelection = new UserSelection();
+        userSelection.setWorkbook(new org.generationcp.middleware.domain.etl.Workbook());
+        List<MeasurementVariable> factors = new ArrayList();
+        
+        //factors.add(new MeasurementVariable());
+        userSelection.getWorkbook().setFactors(factors);
+        userSelection.getWorkbook().setVariates(new ArrayList());
+        userSelection.setImportedGermplasmMainInfo(mainInfo);
+        importGermplasmFileService.validataAndAddCheckFactor(form.getImportedGermplasm(), userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(), userSelection);
+        //no check factor yet
+        assertEquals(0, userSelection.getWorkbook().getMeasurementDatasetVariables().size());
+        //we now need to add check
+        MeasurementVariable checkVariable = new MeasurementVariable("CHECK", "TYPE OF ENTRY", "CODE", "ASSIGNED", "CHECK", "C", "", "ENTRY");
+        factors.add(checkVariable);
+        userSelection.getWorkbook().reset();
+        userSelection.getWorkbook().setFactors(factors);
+        // need to check if the CHECK was added
+        assertEquals(1, userSelection.getWorkbook().getMeasurementDatasetVariables().size());
     }
         
 }

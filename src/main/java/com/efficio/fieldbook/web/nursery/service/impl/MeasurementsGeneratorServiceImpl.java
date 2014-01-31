@@ -160,6 +160,11 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 	    					
 	    				/*
 	    				 * NESTED_PLOT FOR TRIAL ONLY
+	    				 * BLOCK
+							REP
+							COL
+							ROW
+							NESTED_PLOT
 	    				 */
 	    				
 	    					measurementData = new MeasurementData(var.getName(), germplasm.getCheck(), false, var.getDataType());

@@ -19,6 +19,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -28,6 +29,10 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,16 +45,21 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmList;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 import com.efficio.fieldbook.web.nursery.bean.ImportedVariate;
+import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.vaadin.data.Property.ConversionException;
 import com.vaadin.data.Property.ReadOnlyException;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class ImportGermplasmFileServiceImpl.
+ *
  * @author Daniel Jao
  * This should parse the import file from the user.  Can handle basic and advance file format
  */
 public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileService{
 	
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(ImportGermplasmFileServiceImpl.class);
     
     /** The file service. */
@@ -151,6 +161,8 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
     
     /** The Constant FACTOR_DESIGNATION. */
     public final static String FACTOR_DESIGNATION = "DESIGNATION";
+    
+    /** The Constant FACTOR_DESIG. */
     public final static String FACTOR_DESIG = "DESIG";
     
     /** The Constant FACTOR_GID. */
@@ -165,7 +177,10 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
     /** The Constant FACTOR_ENTRY_CODE. */
     public final static String FACTOR_ENTRY_CODE = "ENTRY CODE";
     
+    /** The Constant FACTOR_PLOT. */
     public final static String FACTOR_PLOT = "PLOT";
+    
+    /** The Constant FACTOR_CHECK. */
     public final static String FACTOR_CHECK = "CHECK";
     
     /** The error messages. */
@@ -173,6 +188,8 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
         
     /** The is advance import type. */
     private boolean isAdvanceImportType;
+    @Resource
+    private FieldbookService fieldbookMiddlewareService;
 	
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService#storeImportGermplasmWorkbook(org.springframework.web.multipart.MultipartFile)
@@ -707,5 +724,57 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
         	errorMessages.add(FILE_TYPE_INVALID);
             fileIsValid = false;
         }
-    }    
+    }
+
+	/* (non-Javadoc)
+	 * @see com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService#validataAndAddCheckFactor(java.util.List, com.efficio.fieldbook.web.nursery.bean.UserSelection)
+	 */
+	@Override
+	public void validataAndAddCheckFactor(
+			List<ImportedGermplasm> formImportedGermplasmsm, List<ImportedGermplasm> importedGermplasms,
+			UserSelection userSelection) throws MiddlewareQueryException {
+
+		boolean hasCheck = false;
+		List<ImportedGermplasm> sessionImportedGermplasmList = importedGermplasms;
+		for(int i = 0 ; i < formImportedGermplasmsm.size() ; i++){
+			ImportedGermplasm germplasm = formImportedGermplasmsm.get(i);
+			String checkVal = "";
+			if(germplasm.getCheck() != null){
+				checkVal = germplasm.getCheck();
+				hasCheck = true;
+			}
+			sessionImportedGermplasmList.get(i).setCheck(checkVal);
+		}
+		
+		if(hasCheck){
+			//we need to add the CHECK factor if its not existing
+			List<MeasurementVariable> measurementVariables = userSelection.getWorkbook().getFactors();
+			MeasurementVariable checkVariable = new MeasurementVariable("CHECK", "TYPE OF ENTRY", "CODE", "ASSIGNED", "CHECK", "C", "", "ENTRY");
+			Integer checkVariableTermId = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(checkVariable.getProperty(), checkVariable.getScale(), checkVariable.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(checkVariable.getLabel()));
+			boolean checkFactorExisting = false;
+			for(MeasurementVariable var : measurementVariables){
+				Integer termId = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(var.getProperty(), var.getScale(), var.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(var.getLabel()));
+				if(termId != null && checkVariableTermId != null && termId.intValue() == checkVariableTermId.intValue()){
+					checkFactorExisting = true;
+					break;
+				}
+			}
+			if(checkFactorExisting == false){
+				userSelection.getWorkbook().reset();
+				userSelection.getWorkbook().setCheckFactorAddedOnly(true);
+				userSelection.getWorkbook().getFactors().add(checkVariable);
+			}
+		}else{
+			//we remove since it was dynamically added only
+			if(userSelection.getWorkbook().isCheckFactorAddedOnly() == true){
+				//we need to remove it
+				userSelection.getWorkbook().reset();
+				List<MeasurementVariable> factors = userSelection.getWorkbook().getFactors();
+				factors.remove(factors.size() - 1);
+				userSelection.getWorkbook().setFactors(factors);
+			}
+		}
+	}  
+    
+    
 }

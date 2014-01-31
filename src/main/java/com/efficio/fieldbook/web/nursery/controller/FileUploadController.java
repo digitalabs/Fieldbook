@@ -78,14 +78,14 @@ public class FileUploadController extends AbstractBaseFieldbookController{
     public String show(@ModelAttribute("fileUploadForm") FileUploadForm uploadForm
             , Model model, HttpSession session) {
     	session.invalidate();
-    	
+    	/*
     	try {
     	    ToolUtil toolUtil = new ToolUtil();
     	    toolUtil.launchNativeTool(this.getOldFieldbookPath(), "--ibpApplication=BreedingManager");
         } catch (IOException e) {
             LOG.error(e.getMessage(), e);
         }
-    	
+    	*/
     	return super.show(model);
     }
 
@@ -93,13 +93,14 @@ public class FileUploadController extends AbstractBaseFieldbookController{
     public String openNursery(@ModelAttribute("fileUploadForm") FileUploadForm uploadForm
             , Model model, HttpSession session) {
         //use this one to not invalidat the session
+    	/*
         try {
             ToolUtil toolUtil = new ToolUtil();
             toolUtil.launchNativeTool(this.getOldFieldbookPath(), "--ibpApplication=BreedingManager");
         } catch (IOException e) {
             LOG.error(e.getMessage(), e);
         }
-        
+        */
         return super.show(model);
     }
     /**

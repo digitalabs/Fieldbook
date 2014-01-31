@@ -31,7 +31,7 @@
              	<td style="vertical-align:bottom; padding: 2px;" align="center" th:each="measurementData, rowIndex : ${measurementRow.dataList}"  >
              		<label th:if="${measurementData.editable == false}" th:text="${measurementData.value}" ></label>
              		<input th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" type="text" th:if="${measurementData.editable == true}" th:field="*{measurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}"/>
-             		<input type="text" th:field="*{measurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].phenotypeId}"/>
+             		<input type="hidden" th:field="*{measurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].phenotypeId}"/>
              		<input type="hidden" th:if="${measurementData.editable == false}" th:field="*{measurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}"/>
              		<input type="hidden" th:field="*{measurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].label}"/>             		
 				</td>
@@ -61,6 +61,7 @@
   	        document.getElementById("isUpdated").value = true;
   	      	var $form = $("#addVariableForm");
   			serializedData = $form.serialize();
+  			$("btnUpdate").attr("disabled", "disabled");
 			Spinner.toggle();
 
 			$.ajax({
@@ -82,6 +83,7 @@
 					console.log("The following error occured: " + textStatus, errorThrown); 
 			   }, 
 			   complete: function(){  
+				   $("btnUpdate").removeAttr("disabled");
 				   Spinner.toggle();
 			   } 
 			});

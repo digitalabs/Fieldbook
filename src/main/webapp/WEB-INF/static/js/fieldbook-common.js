@@ -646,15 +646,22 @@ function openStudy(tableName){
 	Spinner.toggle();
 	var openStudyHref = $('#open-study-url').attr("href");
 	
-	$.ajax(
-    { url: openStudyHref,
-       type: "GET",
-       data: "",
-       cache: false,
-       success: function() {    	            
-         Spinner.toggle();  
-       }
-     });
+	if (tableName == "nursery-table") {
+		if(idVal != null){
+			location.href = openStudyHref + "/" + idVal;
+			Spinner.toggle();
+		}
+	} else {
+		$.ajax(
+	    { url: openStudyHref,
+	       type: "GET",
+	       data: "",
+	       cache: false,
+	       success: function() {    	            
+	         Spinner.toggle();  
+	       }
+	     });
+	}
 }
 
 function showErrorMessage(messageDivId, message) {

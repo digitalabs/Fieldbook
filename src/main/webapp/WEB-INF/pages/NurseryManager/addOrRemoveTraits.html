@@ -40,7 +40,8 @@
 	    <div class="col-xs-4 col-md-4">&nbsp;</div> 
 	    <div class="col-xs-8 col-md-8">
 	      <a href="" th:href="@{/NurseryManager/importGermplasmList}"   th:text="#{common.form.back.text}" class="btn btn-default" />
-			<input type="submit" th:value="#{common.form.next.text}" class="btn btn-primary" />
+			<input type="submit" id="btnNext" th:value="#{common.form.next.text}" class="btn btn-primary" />
+	      	<input type="submit" id="btnUpdate" th:value="#{common.form.update.text}" class="btn btn-primary"  />
 	      
 	    </div>
 	  </div>
@@ -54,6 +55,13 @@
     	   $('.germplasm-measurement-list-table td input').on("change", validateCells);
     	   $('.germplasm-measurement-list-table td input').on("focus", validateCells);
     	   $('.germplasm-measurement-list-table td input').on("blur", validateCells);
+    	   if (document.URL.indexOf("viewNursery") > -1) {
+    		   $("#btnUpdate").show();
+    		   $("#btnNext").hide();
+    	   } else {
+    		   $("#btnUpdate").hide();
+    		   $("#btnNext").show();
+    	   }
 		});
        function validateCells(){
     	   var noError = true;

@@ -157,7 +157,7 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 	    					measurementData = new MeasurementData(var.getName(), germplasm.getEntryCode(), false, var.getDataType());
 	    				else if(termId.intValue() == TermId.PLOT_NO.getId())
 	    					measurementData = new MeasurementData(var.getName(), Integer.toString(index), false, var.getDataType());
-	    				else if(false && termId.intValue() == TermId.CHECK.getId()){
+	    				else if(termId.intValue() == TermId.CHECK.getId()){
 	    					
 	    				/*
 	    				 * NESTED_PLOT FOR TRIAL ONLY

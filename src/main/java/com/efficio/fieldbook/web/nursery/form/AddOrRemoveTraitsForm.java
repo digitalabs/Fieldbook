@@ -16,7 +16,6 @@ import java.util.List;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class AddOrRemoveTraitsForm.
  */
@@ -28,8 +27,6 @@ public class AddOrRemoveTraitsForm {
 	/** The measurement variables. */
 	private List<MeasurementVariable> measurementVariables;
 	
-	private boolean isUpdated;
-
 	/**
 	 * Gets the measurement row list.
 	 *
@@ -68,15 +65,6 @@ public class AddOrRemoveTraitsForm {
 	}
 
     
-    public boolean getIsUpdated() {
-        return isUpdated;
-    }
-
-    
-    public void setIsUpdated(boolean isUpdated) {
-        this.isUpdated = isUpdated;
-    }
-	
 	
 	
 }

@@ -152,7 +152,6 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
         workbook.setObservations(form.getMeasurementRowList());
         workbook.setVariates(form.getMeasurementVariables());
         
-        System.out.println(form.getMeasurementRowList().get(0).getExperimentId());
         try { 
             fieldbookMiddlewareService.saveMeasurementRows(workbook);
             resultMap.put("status", "1");

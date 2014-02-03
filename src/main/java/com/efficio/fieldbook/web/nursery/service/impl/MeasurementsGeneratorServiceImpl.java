@@ -138,6 +138,7 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 	    					measurementData = new MeasurementData(var.getName(), germplasm.getCross(), false, var.getDataType());
 	    				else if(termId.intValue() == TermId.DESIG.getId())	
 	    					measurementData = new MeasurementData(var.getName(), germplasm.getDesig(), false, var.getDataType());
+	    					//measurementData = new MeasurementData(var.getName(), " sdasd a", false, var.getDataType());
 	    				else if(termId.intValue() == TermId.GID.getId()){	    					
 	    					//we need to check first if the germplasm is existing or not
 	                    	Integer dbGid = fieldbookMiddlewareService.getGermplasmIdByName(germplasm.getDesig());
@@ -156,7 +157,7 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 	    					measurementData = new MeasurementData(var.getName(), germplasm.getEntryCode(), false, var.getDataType());
 	    				else if(termId.intValue() == TermId.PLOT_NO.getId())
 	    					measurementData = new MeasurementData(var.getName(), Integer.toString(index), false, var.getDataType());
-	    				else if(termId.intValue() == TermId.CHECK.getId()){
+	    				else if(false && termId.intValue() == TermId.CHECK.getId()){
 	    					
 	    				/*
 	    				 * NESTED_PLOT FOR TRIAL ONLY
@@ -180,7 +181,7 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
     			
     						
     			
-    			dataList.add(measurementData);
+    			dataList.add(measurementData);    			
     		}
     		measurementRow.setDataList(dataList);
     		measurementRows.add(measurementRow);

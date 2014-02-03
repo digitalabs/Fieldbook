@@ -52,6 +52,9 @@ public class ImportedGermplasmList implements Serializable {
     
     /** The imported germplasms. */
     private List<ImportedGermplasm> importedGermplasms;
+    
+    public ImportedGermplasmList() {
+    }
 
     /**
      * Instantiates a new imported germplasm list.

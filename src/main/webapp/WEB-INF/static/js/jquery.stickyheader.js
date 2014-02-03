@@ -49,15 +49,15 @@ $(function(){
 			
 			
 			//$stickyInsct.html('<thead><tr><th>'+$t.find('thead th:first-child').html()+'</th></tr></thead>');
-			/*
+			
 			var intersectHtml = '<thead><tr>';
 			$(this).find('.factors').each(function(i){
-				var widthPx = Number($(this).width());
+				var widthPx = Number($(this).width()) * 1.09;
 				intersectHtml += '<th style="width: '+widthPx+'px">'+$(this).html()+'</th>';				
 			});
 			intersectHtml += "</tr></thead>";
-			$stickyInsct.html(intersectHtml);
-			*/
+			//$stickyInsct.html(intersectHtml);
+			
 			
 			// Set widths
 			var setWidths = function () {
@@ -92,6 +92,18 @@ $(function(){
 								opacity: 1,
 								top: $stickyWrap.scrollTop()
 							});
+							
+							if($stickyWrap.scrollLeft() > 0){
+								
+								$stickyHead.add($stickyInsct).css({
+									left: 80
+								});
+							}else{
+								$stickyHead.add($stickyInsct).css({
+									left: 0
+								});
+							}
+							
 						} else {
 							// When top of wrapping parent is in view
 							$stickyHead.add($stickyInsct).css({
@@ -107,6 +119,7 @@ $(function(){
 							$stickyHead.add($stickyInsct).css({
 								opacity: 1,
 								top: $w.scrollTop() - $t.offset().top
+								
 							});
 						} else {
 							// When top of viewport is above or below table
@@ -165,5 +178,6 @@ $(function(){
 			}));
 			//.scroll($.throttle(15, repositionStickyHead));
 		}
+		
 	});
 });

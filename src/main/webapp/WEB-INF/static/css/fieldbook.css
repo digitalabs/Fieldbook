@@ -597,6 +597,9 @@ table.make-sticky{
 	z-index: 50;
 	width: auto; /* Prevent table from stretching to full size */
 }
+.sticky-col{
+	z-index:9999;
+}
 	.sticky-wrap .sticky-thead {
 		box-shadow: 0 0.25em 0.1em -0.1em rgba(0,0,0,.125);
 		z-index: 100;
@@ -630,8 +633,6 @@ td.user-name {
 }
 .sticky-wrap.overflow-y {
 	overflow-y: auto;
-	max-height: 70vh;
+	/*max-height: 70vh;*/
+	max-height: 500px;
 }
-
-
-

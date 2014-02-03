@@ -762,7 +762,12 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 			if(checkFactorExisting == false){
 				userSelection.getWorkbook().reset();
 				userSelection.getWorkbook().setCheckFactorAddedOnly(true);
-				userSelection.getWorkbook().getFactors().add(checkVariable);
+				//for(int i = 0 ; i < 10 ; i++)
+					userSelection.getWorkbook().getFactors().add(checkVariable);
+				
+				//MeasurementVariable checkVariable1 = new MeasurementVariable("CHECK 123", "TYPE OF ENTRY", "CODE", "ASSIGNED", "CHECK", "C", "", "ENTRY");
+				//for(int i = 0 ; i < 10 ; i++)
+				//	userSelection.getWorkbook().getFactors().add(checkVariable1);
 				
 			}
 		}else{

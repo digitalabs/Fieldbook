@@ -22,6 +22,7 @@ import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
+import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmList;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
@@ -227,7 +229,14 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             List<GermplasmListData> data = germplasmListManager.getGermplasmListDataByListId(listId, 0, count);
             List<ImportedGermplasm> list = transformGermplasmListDataToImportedGermplasm(data);
             form.setImportedGermplasm(list);
+            
+            ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
+            importedGermplasmList.setImportedGermplasms(list);
+            mainInfo.setImportedGermplasmList(importedGermplasmList);
+            
             form.setCurrentPage(1);
+            getUserSelection().setImportedGermplasmMainInfo(mainInfo);
+            getUserSelection().setImportValid(true);
             
         } catch (Exception e) {
             e.printStackTrace();

@@ -763,6 +763,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 				userSelection.getWorkbook().reset();
 				userSelection.getWorkbook().setCheckFactorAddedOnly(true);
 				userSelection.getWorkbook().getFactors().add(checkVariable);
+				
 			}
 		}else{
 			//we remove since it was dynamically added only

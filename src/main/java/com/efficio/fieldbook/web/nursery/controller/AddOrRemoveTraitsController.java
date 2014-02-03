@@ -12,11 +12,13 @@
 package com.efficio.fieldbook.web.nursery.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -139,10 +141,18 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
         Map<String, String> resultMap = new HashMap<String, String>();
 
         
-        Workbook workbook = userSelection.getWorkbook();        
+        Workbook workbook = userSelection.getWorkbook();
+        
+        int ctr = 0;
+        for (MeasurementRow observation : workbook.getObservations()) {
+            form.getMeasurementRowList().get(ctr).setExperimentId(observation.getExperimentId());
+            ctr++;
+        }
+
         workbook.setObservations(form.getMeasurementRowList());
         workbook.setVariates(form.getMeasurementVariables());
         
+        System.out.println(form.getMeasurementRowList().get(0).getExperimentId());
         try { 
             fieldbookMiddlewareService.saveMeasurementRows(workbook);
             resultMap.put("status", "1");

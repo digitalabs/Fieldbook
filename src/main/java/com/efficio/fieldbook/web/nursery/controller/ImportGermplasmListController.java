@@ -11,11 +11,15 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
+import org.generationcp.middleware.manager.api.GermplasmListManager;
+import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -56,6 +60,9 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     /** The user selection. */
     @Resource
     private UserSelection userSelection;
+    
+    @Resource
+    private GermplasmListManager germplasmListManager;
 
     /** The import germplasm file service. */
     @Resource
@@ -208,4 +215,43 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     	
     }
 
+    @RequestMapping(value="/displayGermplasmDetails/{listId}", method = RequestMethod.GET)
+    public String displayGermplasmDetails(@PathVariable Integer listId, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, 
+            Model model) {
+        
+        try {
+            ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+            mainInfo.setAdvanceImportType(true);
+            form.setImportedGermplasmMainInfo(mainInfo);
+            int count = (int) germplasmListManager.countGermplasmListDataByListId(listId);
+            List<GermplasmListData> data = germplasmListManager.getGermplasmListDataByListId(listId, 0, count);
+            List<ImportedGermplasm> list = transformGermplasmListDataToImportedGermplasm(data);
+            form.setImportedGermplasm(list);
+            form.setCurrentPage(1);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return super.showAjaxPage(model, PAGINATION_TEMPLATE);
+    }
+    
+    
+    private List<ImportedGermplasm> transformGermplasmListDataToImportedGermplasm(List<GermplasmListData> data) {
+        List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
+        if (data != null && data.size() > 0) {
+            for (GermplasmListData aData : data) {
+                ImportedGermplasm germplasm = new ImportedGermplasm();
+                germplasm.setCheck(null);
+                germplasm.setCross(null);
+                germplasm.setDesig(aData.getDesignation());
+                germplasm.setEntryCode(aData.getEntryCode());
+                germplasm.setEntryId(aData.getEntryId());
+                germplasm.setGid(aData.getGid().toString());
+                germplasm.setSource(aData.getSeedSource());
+                
+                list.add(germplasm);
+            }
+        }
+        return list;
+    }
 }

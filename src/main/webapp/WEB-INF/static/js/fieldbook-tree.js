@@ -1,8 +1,3 @@
-/** Germplasm Tree API **/
-
-function displayGermplasmListTree(treeName) {
-	displayTree(treeName, "loadInitGermplasmTree", "expandGermplasmTree");
-}
 
 /** Study Tree API **/
 

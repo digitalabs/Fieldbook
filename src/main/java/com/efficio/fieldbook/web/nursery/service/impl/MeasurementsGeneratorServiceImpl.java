@@ -144,8 +144,9 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 	                    	Integer dbGid = fieldbookMiddlewareService.getGermplasmIdByName(germplasm.getDesig());
 	                    	Integer gidToBeUse = null;
 	                    	if(dbGid == null){
-	                    		newGid--;
+	                    		
 	                    		gidToBeUse = Integer.valueOf(newGid);
+	                    		newGid--;
 	                    	}else{
 	                    		gidToBeUse = dbGid;
 	                    	}

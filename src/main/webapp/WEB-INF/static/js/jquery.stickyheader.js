@@ -179,5 +179,8 @@ $(function(){
 			//.scroll($.throttle(15, repositionStickyHead));
 		}
 		
+		$('.sticky-col input').each(function(){
+			$(this).attr('name', 'test');
+			})
 	});
 });

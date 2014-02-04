@@ -13,7 +13,7 @@
 	<div id="page-message"> 
 	</div>
 
-<form id="addVariableForm" role="form-horizontal" onsubmit="return do_validation()" class="form-horizontal" action="#" 
+<form id="addVariableForm" role="form-horizontal" onsubmit="return validateCells();" class="form-horizontal" action="#" 
 	th:action="@{/NurseryManager/addOrRemoveTraits}" method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data">
 	<div class="form-group" id="page-message"></div>
 	
@@ -75,6 +75,8 @@
 	//<![CDATA[
 	           
 		function doSave(){
+			if(validateCells() == false)
+				return false;
   	      	var $form = $("#addVariableForm");
   			serializedData = $form.serialize();
   			$("btnUpdate").attr("disabled", "disabled");
@@ -132,13 +134,17 @@
 	    				  var id = $(this).attr('id');
 	    				  setTimeout(function() { $('#'+getJquerySafeId(id)).focus(); }, 10);
 	    				  noError = false;
-	    				  return;
+	    				  //console.log('false');
+	    				  return false;
 	    			  }
 			   }
 		   }); 
     	   if(noError){
     		   hideErrorMessage('page-message');
     	   }
+    	   //console.log('true');
+    	   return true;
        }
+       
       //]]>
     </script>

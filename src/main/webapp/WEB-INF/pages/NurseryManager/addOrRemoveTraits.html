@@ -65,6 +65,26 @@
 	      
 	    </div>
 	  </div>
+	  
+	<div class="form-group">
+		<div class="col-md-12">	
+			<div class="modal fade" id="successMessageModal"  role="dialog" aria-labelledby="successMessageModal" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content" >
+						<div class="modal-body" id="successMessageBody">
+							<div style="text-align: center">
+								<label th:text="#{nursery.addOrRemoveTraits.success.update.message}">Traits has been successfully updated.</label>
+							</div>
+						</div>
+						<div class="modal-footer">    
+			       			<a id="btnOK" href="" th:href="@{/NurseryManager}"   th:text="#{common.form.ok.text}" class="btn btn-primary" />	
+		       			</div>
+					</div><!-- /.modal-content -->
+				</div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->		
+			 
+		</div>
+	</div>  
 
 </form>
 
@@ -89,10 +109,8 @@
 				data: serializedData,
 			    success: function(data){
 				    if (data.status == "1") {
-				    	showSuccessfulMessage('page-message', "Successfully updated traits");
-				    	window.setTimeout(function() {
-		       				location.href = "/Fieldbook/NurseryManager";
-		       			}, 1000);
+				    	$('#successMessageModal').modal({ backdrop: 'static', keyboard: true }) 
+				    	$("#successMessageModal").modal("show");
 			       	} else if (data.status == "-1") {
 			       		showErrorMessage('page-message', data.errorMessage);
 			       	}

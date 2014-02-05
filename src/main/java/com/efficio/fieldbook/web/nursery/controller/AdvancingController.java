@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
@@ -60,7 +61,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     
     /** The user selection. */
     @Resource
-    private UserSelection userSelection;
+    private AdvancingNursery advancingNursery;
     @Resource
     private FieldbookService fieldbookMiddlewareService;
     @Resource
@@ -128,7 +129,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     @RequestMapping(value="/{nurseryId}", method = RequestMethod.GET)
     public String show(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form
             , Model model, HttpSession session, @PathVariable int nurseryId) throws MiddlewareQueryException{
-    	
+    	session.invalidate();
     	form.setMethodChoice("1");
     	form.setLineChoice("1");
     	form.setLineSelected("1");
@@ -141,6 +142,15 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     			form.setDefaultMethodId(var.getValue());
     		}
     	}
+    	advancingNursery.setStudy(study);
+    	return super.show(model);
+    }
+    
+    @RequestMapping(method = RequestMethod.POST)
+    public String postAdvanceNursery(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form
+            , Model model, HttpSession session, @PathVariable int nurseryId) throws MiddlewareQueryException{
+    	
+    	
     	return super.show(model);
     }
     

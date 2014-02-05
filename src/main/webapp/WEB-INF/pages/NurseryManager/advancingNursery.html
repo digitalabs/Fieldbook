@@ -23,7 +23,7 @@
 </div>
 
 <form onsubmit="javascript: return validateAdvanceNursery();" id="specifyLabelDetailsForm" role="form-horizontal" action="#"
-th:action="@{/NurseryManager/advancingNursery}" method="post" th:object="${advancingNurseryform}" enctype="multipart/form-data">
+th:action="@{/NurseryManager/advancing}" method="post" th:object="${advancingNurseryform}" enctype="multipart/form-data">
 
 <input type="hidden" th:field="*{defaultMethodId}"/>
 
@@ -223,6 +223,8 @@ th:action="@{/NurseryManager/advancingNursery}" method="post" th:object="${advan
 					   
 					   <input type="hidden" th:field="*{harvestLocationId}"/>
 					   <input type="hidden" th:field="*{harvestLocationName}" />
+					   <input type="hidden" th:field="*{harvestLocationAbbreviation}" />
+					   
 				    </div>
 				    <div class="col-xs-3 col-md-3">
 				    	<div class="checkbox">
@@ -272,6 +274,7 @@ th:action="@{/NurseryManager/advancingNursery}" method="post" th:object="${advan
 <div layout:fragment="page-script">
 
 <link th:href="@{/static/css/bootstrap-datepicker.css}" rel="stylesheet"/>
+<script type="text/javascript" th:src="@{/static/js/nurseryManager.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/bootstrap-datepicker.js}"></script>
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    	
@@ -307,19 +310,24 @@ th:action="@{/NurseryManager/advancingNursery}" method="post" th:object="${advan
  					if($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data") != null){
  						$('#'+getJquerySafeId("harvestLocationId")).val($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data").id);
  						$('#'+getJquerySafeId("harvestLocationName")).val($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data").text);
+ 						$('#'+getJquerySafeId("harvestLocationAbbreviation")).val($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data").abbr);
+ 						
  					}else{
  						$('#'+getJquerySafeId("harvestLocationId")).val(0);
  						$('#'+getJquerySafeId("harvestLocationName")).val("");
+ 						$('#'+getJquerySafeId("harvestLocationAbbreviation")).val("");
  					}
  				}else{
  					$('#s2id_harvestLocationIdFavorite').hide();
  					$('#s2id_harvestLocationIdAll').show();
  					if($('#'+getJquerySafeId("harvestLocationIdAll")).select2("data") != null){
  						$('#'+getJquerySafeId("harvestLocationId")).val($('#'+getJquerySafeId("harvestLocationIdAll")).select2("data").id);
- 						$('#'+getJquerySafeId("harvestLocationName")).val($('#'+getJquerySafeId("harvestLocationIdAll")).select2("data").text);	
+ 						$('#'+getJquerySafeId("harvestLocationName")).val($('#'+getJquerySafeId("harvestLocationIdAll")).select2("data").text);
+ 						$('#'+getJquerySafeId("harvestLocationAbbreviation")).val($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data").abbr);
  					}else{
  						$('#'+getJquerySafeId("harvestLocationId")).val(0);
  						$('#'+getJquerySafeId("harvestLocationName")).val("");
+ 						$('#'+getJquerySafeId("harvestLocationAbbreviation")).val("");
  					}
  					
  				}
@@ -329,45 +337,11 @@ th:action="@{/NurseryManager/advancingNursery}" method="post" th:object="${advan
  			 
  			$('input[type=radio][name=lineChoice]').on('change', lineMethod);
  			oldMethodSelected = $('#defaultMethodId').val();
+ 			oldLineSelected = $('#lineSelected').val();
  			checkMethod();
  			lineMethod();
  		});
- 		function checkMethod(){
- 			if($('input[type=radio][name=methodChoice]:checked').val() == 1){
-					$('#methodSelected').prop('disabled', false);
-					$('#methodSelected').val(oldMethodSelected);
-				}else{
-					$('#methodSelected').prop('disabled', 'disabled');
-					oldMethodSelected = $('#methodSelected').val();
-					 $('#methodSelected').val($('#defaultMethodId').val());
-				} 	
- 		}
- 		function lineMethod(){
- 			if($('input[type=radio][name=lineChoice]:checked').val() == 1){
-					$('#lineSelected').prop('disabled', false);
-					$('#lineSelected').val(oldLineSelected);
-				}else{
-					$('#lineSelected').prop('disabled', 'disabled');
-					oldLineSelected = $('#lineSelected').val();
-					$('#lineSelected').val(1);
-				} 
- 		}
  		
- 		function validateAdvanceNursery(){
- 			//validate number of sample per plot
- 			var numberOfSamplePerPlot = $('#lineSelected').val();
- 			if(numberOfSamplePerPlot == '' || !isInt(numberOfSamplePerPlot) || (Number(numberOfSamplePerPlot) < 1 && Number(numberOfSamplePerPlot) > 1000)){
- 				showErrorMessage('page-message',msgSamplePlotError);
- 				return false;
- 			}
- 			if( $('#harvestDate').val()){
- 				showErrorMessage('page-message',msgHarvestDateError);
- 				return false;
- 			}	
- 			
- 			//validate date
- 			return true;
- 		}
  		
  		
  		

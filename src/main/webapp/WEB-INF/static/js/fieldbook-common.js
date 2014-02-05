@@ -664,6 +664,32 @@ function openStudy(tableName){
 	}
 }
 
+function advanceNursery(tableName){
+	var count = 0;
+	for(var index in selectedTableIds) {
+		//console.log( index + " : " + selectedTableIds[index]);
+		var tempVal = selectedTableIds[index];
+		if(tempVal != null){
+			idVal = tempVal;
+			count++;
+		}			
+	}
+	
+	if(count != 1){
+		$('#page-create-field-map-message').html("<div class='alert alert-danger'>"+openStudyError+"</div>");
+		return;
+	}
+	
+	Spinner.toggle();
+	var advanceStudyHref = $('#advance-study-url').attr("href");
+	
+	if (tableName == "nursery-table") {
+		if(idVal != null){
+			location.href = advanceStudyHref + "/" + idVal;
+			Spinner.toggle();
+		}
+	}
+}
 function showErrorMessage(messageDivId, message) {
 	//console.log(message);
 	$("#" + messageDivId).html(
@@ -686,7 +712,8 @@ function initializeHarvestLocationSelect2(locationSuggestions, locationSuggestio
 
 	$.each(locationSuggestions, function( index, value ) {
 		locationSuggestions_obj.push({ 'id' : value.locid,
-			  'text' : value.lname
+			  'text' : value.lname,
+			  'abbr' : value.labbr
 		});  
 		
 	});		
@@ -708,6 +735,7 @@ function initializeHarvestLocationSelect2(locationSuggestions, locationSuggestio
     }).on("change", function (){
     	$('#'+getJquerySafeId("harvestLocationId")).val($('#'+getJquerySafeId("harvestLocationIdAll")).select2("data").id);
     	$('#'+getJquerySafeId("harvestLocationName")).val($('#'+getJquerySafeId("harvestLocationIdAll")).select2("data").text);
+    	$('#'+getJquerySafeId("harvestLocationAbbreviation")).val($('#'+getJquerySafeId("harvestLocationIdAll")).select2("data").abbr);
     });
 	
 }
@@ -716,7 +744,8 @@ function initializeHarvestLocationFavSelect2(locationSuggestionsFav, locationSug
 
 	$.each(locationSuggestionsFav, function( index, value ) {
 		locationSuggestionsFav_obj.push({ 'id' : value.locid,
-			  'text' : value.lname
+			  'text' : value.lname,
+			  'abbr' : value.labbr
 		});  
   		
 	});
@@ -738,6 +767,7 @@ $('#'+getJquerySafeId('harvestLocationIdFavorite')).select2({
 }).on("change", function (){
 	$('#'+getJquerySafeId("harvestLocationId")).val($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data").id);
 	$('#'+getJquerySafeId("harvestLocationName")).val($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data").text);
+	$('#'+getJquerySafeId("harvestLocationAbbreviation")).val($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data").abbr);
 });
 
 }

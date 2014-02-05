@@ -1,0 +1,378 @@
+<div class="col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org">
+	<div class="page-header">
+		<h1>
+			ADVANCE NURSERY WIZARD
+		</h1>
+	</div>			  
+</div>
+<div class="row">
+	<div class="col-xs-3 col-md-3">
+		<h2>Choose Location</h2>
+	</div>
+	<!-- 
+	<div class="col-xs-3 col-md-3">
+		<span style="font-weight: 400; font-size: 16px">1. SPECIFY LABEL DETAILS</span>
+	</div> 
+	<div class="col-xs-3 col-md-3">		
+		<span>2. GENERATE LABELS</span>
+	</div>
+	 -->
+	<div class="col-xs-9 col-md-9">
+		&nbsp;
+	</div>
+</div>
+
+<form onsubmit="javascript: return validateAdvanceNursery();" id="specifyLabelDetailsForm" role="form-horizontal" action="#"
+th:action="@{/NurseryManager/advancingNursery}" method="post" th:object="${advancingNurseryform}" enctype="multipart/form-data">
+
+<input type="hidden" th:field="*{defaultMethodId}"/>
+
+<div class="row">
+	<div class="row">&nbsp;</div>
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<div class="form-group">
+				<div class="col-xs-12 col-md-12" id="page-message"></div>
+			</div>
+		</div>
+	</div>
+	
+	
+	<div class="row">
+		<div class="col-xs-12 col-md-12" >
+			<div class="">
+				<div class="col-xs-12 col-md-12">
+				<br />
+					<label class="control-label" ><strong class="sub-content-heading"  th:text="#{advancing.nursery.convention}"></strong></label>
+				</div>		
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-6 col-md-6" >
+			
+			<div class="row form-group">
+				<div class="col-xs-7 col-md-7">
+					&nbsp;&nbsp;&nbsp;&nbsp;<label class="control-label" th:text="#{advancing.nursery.naming.convention}+':'"></label>
+				</div>
+				<div class="col-xs-5 col-md-5">
+					<select th:field="*{namingConvention}" class="form-control">
+					  <option value="1" th:text="#{advancing.nursery.naming.convention.cimmyt.wheat}">CIMMYT-WHEAT</option>
+					  <option value="2" th:text="#{advancing.nursery.naming.convention.cimmyt.maize}">CIMMYT-MAIZE</option>
+					  <option value="3" th:text="#{advancing.nursery.naming.convention.other.crops}">OTHER CROPS</option>					  
+					</select>
+				</div>		
+			</div>
+			
+			 
+			<div class="row form-group">
+				<div class="col-xs-7 col-md-7">
+					&nbsp;&nbsp;&nbsp;&nbsp;<label class="control-label" th:text="#{advancing.nursery.suffix.convention}+':'"></label>					
+				</div>		
+				<div class="col-xs-5 col-md-5">
+					<input type="text" th:field="*{suffixConvention}" class="form-control"/>					  
+				</div>
+			</div>
+		</div>
+		
+	</div>
+	<div class="row">
+	<br />
+		<div class="col-xs-12 col-md-12" >
+			<div class="form-group">
+				<div class="col-xs-6 col-md-6">
+					<label class="control-label" ><strong class="sub-content-heading"  th:text="#{advancing.nursery.method}">METHOD</strong> </label>
+				</div>	
+				<div class="col-xs-6 col-md-6">
+					<label class="control-label" ><strong class="sub-content-heading" th:text="#{advancing.nursery.method.selected}">METHOD SELECTED</strong></label>
+				</div>		
+			</div>
+			
+			<div class="row">
+				<div class="col-xs-6 col-md-6">					
+					<div class="row form-group">
+						<div class="col-xs-12 col-md-12">
+							&nbsp;&nbsp;&nbsp;&nbsp;<label class="control-label" th:text="#{advancing.nursery.breeding.method.the.same}">Naming Convention:</label>
+							&nbsp;&nbsp;&nbsp;&nbsp;
+							<label class="radio-inline">
+							  <input checked="checked" type="radio" value="1" th:field="*{methodChoice}"/> 
+							  <span th:text="#{label.printing.do.you.need.bar.codes.yes}">Yes</span>
+							</label>
+							<label class="radio-inline">
+							  <input type="radio" value="0" th:field="*{methodChoice}"/> 
+							  <span th:text="#{label.printing.do.you.need.bar.codes.no}">No</span>
+							</label>
+						</div>		
+					</div>										 				
+				</div>		
+				<div class="col-xs-6 col-md-6">					
+					<div class="row form-group">
+						<div class="col-xs-5 col-md-5">
+							<label class="control-label" th:text="#{advancing.nursery.breeding.method.all.plots}">Breeding Method for all plots</label>														
+						</div>		
+						<div class="col-xs-7 col-md-7">
+							<select th:field="*{methodSelected}" class="form-control">
+								<option  th:each="method, rowIndex : *{breedingMethods}" th:text="${method.mname}" th:value="${method.mid}"></option>							  					 
+							</select>
+						</div>
+					</div>										 				
+				</div>		
+			</div>
+			
+			<div class="row">
+				<div class="col-xs-6 col-md-6">					
+					<div class="row form-group">
+						<div class="col-xs-12 col-md-12">
+							&nbsp;
+						</div>		
+					</div>										 				
+				</div>		
+				<div class="col-xs-6 col-md-6">					
+					<div class="row form-group">
+						<div class="col-xs-5 col-md-5">
+							&nbsp;														
+						</div>		
+						<div class="col-xs-7 col-md-7">
+							<a href="javascript: void(0)" th:text="#{advancing.nursery.manage.method}">Manage Methods</a>	
+						</div>
+					</div>										 				
+				</div>		
+			</div>
+		</div>
+		
+	</div>
+	<div class="row">
+	<br />
+		<div class="col-xs-12 col-md-12" >
+			<div class="form-group">
+				<div class="col-xs-6 col-md-6">
+					<label class="control-label" ><strong class="sub-content-heading"  th:text="#{advancing.nursery.lines}">LINES</strong> </label>
+				</div>	
+				<div class="col-xs-6 col-md-6">
+					<label class="control-label" ><strong class="sub-content-heading" th:text="#{advancing.nursery.lines.selected}">LINES SELECTED</strong></label>
+				</div>		
+			</div>
+			<div class="row">
+				<div class="col-xs-6 col-md-6">					
+					<div class="row form-group">
+						<div class="col-xs-12 col-md-12">
+							&nbsp;&nbsp;&nbsp;&nbsp;<label class="control-label" th:text="#{advancing.nursery.line.the.same}">Line the same:</label>
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<label class="radio-inline">
+							  <input checked="checked" type="radio" value="1" th:field="*{lineChoice}"/> 
+							  <span th:text="#{label.printing.do.you.need.bar.codes.yes}">Yes</span>
+							</label>
+							<label class="radio-inline">
+							  <input type="radio" value="0" th:field="*{lineChoice}"/> 
+							  <span th:text="#{label.printing.do.you.need.bar.codes.no}">No</span>
+							</label>
+						</div>		
+					</div>										 				
+				</div>
+				<div class="col-xs-6 col-md-6">					
+					<div class="row form-group">
+						<div class="col-xs-5 col-md-5">
+							<label class="control-label" th:text="#{advancing.nursery.number.of.samples.plot}">advancing.nursery.lines.selected</label>														
+						</div>		
+						<div class="col-xs-7 col-md-7">
+							<input class="form-control" type="text" th:field="*{lineSelected}"/>
+						</div>
+					</div>										 				
+				</div>				
+			</div>
+		</div>
+		
+	</div>
+	
+	<div class="row">
+	<br />
+		<div class="col-xs-12 col-md-12" >
+			<div class="form-group">
+				<div class="col-xs-12 col-md-12">
+					<label class="control-label" ><strong class="sub-content-heading"  th:text="#{advancing.nursery.harvest.information}">Harvest Information</strong> </label>
+				</div>	
+						
+			</div>
+			<div class="row form-group">
+				<div class="col-xs-12 col-md-12 form-group">	
+					<div class="col-xs-2 col-md-2">
+						<label for="harvestDate" class="control-label"  th:text="#{advancing.nursery.harvest.date}">Harvest Date</label>
+					</div>	
+			    	  			    
+					   <div class="col-xs-4 col-md-4 input-group date" id="dp3" data-date="" data-date-format="yyyymmdd">
+						     <input th:field="*{harvestDate}" class="form-control" type="text"  readonly="readonly"  />
+							 <label for="harvestDate" class="input-group-addon btn datepicker"><i class="glyphicon glyphicon-calendar"></i></label>
+						
+						</div>
+		       		<div class="col-xs-6 col-md-6">
+						&nbsp;
+					</div>			  																					 				
+				</div>
+					
+			</div>
+			<div class="row form-group">
+				<div class="col-xs-12 col-md-12 form-group">
+					 <div class="col-xs-2 col-md-2">
+				  		<label class="control-label" th:text="#{advancing.nursery.harvest.location}">Harvest Location:</label>
+				  	</div>
+					<div class="col-xs-4 col-md-4">
+				  
+					   <input type="hidden" th:field="*{harvestLocationIdAll}" class="form-control select2" placeholder=""/>
+					   
+					   <input type="hidden" th:field="*{harvestLocationIdFavorite}" class="form-control select2" placeholder=""/>
+					   
+					   <input type="hidden" th:field="*{harvestLocationId}"/>
+					   <input type="hidden" th:field="*{harvestLocationName}" />
+				    </div>
+				    <div class="col-xs-3 col-md-3">
+				    	<div class="checkbox">
+					    <label>
+					      <input id="showFavoriteLocation" value="1" type="checkbox"/> <span th:text="#{show.favorite.location}">Show Favorite Location</span>
+					    </label>
+					  </div>
+				    </div>	
+				    
+			    </div>
+			</div>	
+			<div class="row form-group">
+				<div class="col-xs-12 col-md-12 form-group">
+					 <div class="col-xs-2 col-md-2">
+				  		&nbsp;
+				  	</div>
+					<div class="col-xs-4 col-md-4">
+				  		<a href="javascript: void(0)" th:text="#{advancing.nursery.manage.location}">Manage Locations</a>	
+				    </div>
+				    <div class="col-xs-3 col-md-3">
+				    	&nbsp;
+				    </div>	
+				    
+			    </div>
+			</div>	
+		</div>
+			
+	</div>
+
+
+	<div class="row">
+		
+	</div>
+	
+	<div class="form-group">&nbsp;</div>
+	<div class="form-group">
+	    <div class="col-xs-4 col-md-4">&nbsp;</div> 
+	    <div class="col-xs-8 col-md-8">
+	      <input type="button" onclick="javascript: window.history.back();"  value="Cancel" class="btn btn-default"/>
+	      <input type="submit" value="Ok" th:value="#{common.form.ok.text}" class="btn btn-primary"/>
+	      
+	    </div>
+	  </div>
+	  <div class="form-group">&nbsp;</div>
+</div>
+</form>
+<div layout:fragment="page-script">
+
+<link th:href="@{/static/css/bootstrap-datepicker.css}" rel="stylesheet"/>
+<script type="text/javascript" th:src="@{/static/js/bootstrap-datepicker.js}"></script>
+<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[    	
+        var locationSuggestions = /*[[${locationList}]]*/ null;
+	    var locationSuggestions_obj = [];
+	    
+	    var locationSuggestionsFav = /*[[${favoriteLocationList}]]*/ null;
+	    var locationSuggestionsFav_obj = [];
+	    
+	    
+	    var msgSamplePlotError = /*[[#{advancing.nursery.number.of.plot.error}]]*/;
+	   	var msgHarvestDateError = /*[[#{advancing.nursery.harvest.date.error}]]*/;
+    
+	    var oldLineSelected = "";
+	    var oldMethodSelected = "";
+	    
+ 		 $(function() {
+ 			var harvestDate =  $('#harvestDate').datepicker({'format': 'yyyymmdd'}).on('changeDate', function(ev) {
+ 				$(this).datepicker('hide');
+ 			})
+ 			
+ 			initializeHarvestLocationSelect2(locationSuggestions, locationSuggestions_obj);
+ 			initializeHarvestLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj);
+ 			
+ 			$('#s2id_harvestLocationIdFavorite').hide();
+ 			$('#s2id_harvestLocationIdAll').show();
+ 			$('#showFavoriteLocation').on('change', function(){
+ 				var isChecked = $('#showFavoriteLocation').is(':checked');
+ 				//if show favorite location is checked, hide all field locations, else, show only favorite locations
+ 				if(isChecked){
+ 					$('#s2id_harvestLocationIdFavorite').show();
+ 					$('#s2id_harvestLocationIdAll').hide();
+ 					if($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data") != null){
+ 						$('#'+getJquerySafeId("harvestLocationId")).val($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data").id);
+ 						$('#'+getJquerySafeId("harvestLocationName")).val($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data").text);
+ 					}else{
+ 						$('#'+getJquerySafeId("harvestLocationId")).val(0);
+ 						$('#'+getJquerySafeId("harvestLocationName")).val("");
+ 					}
+ 				}else{
+ 					$('#s2id_harvestLocationIdFavorite').hide();
+ 					$('#s2id_harvestLocationIdAll').show();
+ 					if($('#'+getJquerySafeId("harvestLocationIdAll")).select2("data") != null){
+ 						$('#'+getJquerySafeId("harvestLocationId")).val($('#'+getJquerySafeId("harvestLocationIdAll")).select2("data").id);
+ 						$('#'+getJquerySafeId("harvestLocationName")).val($('#'+getJquerySafeId("harvestLocationIdAll")).select2("data").text);	
+ 					}else{
+ 						$('#'+getJquerySafeId("harvestLocationId")).val(0);
+ 						$('#'+getJquerySafeId("harvestLocationName")).val("");
+ 					}
+ 					
+ 				}
+ 			});
+ 			
+ 			 $('input[type=radio][name=methodChoice]').on('change', checkMethod);
+ 			 
+ 			$('input[type=radio][name=lineChoice]').on('change', lineMethod);
+ 			oldMethodSelected = $('#defaultMethodId').val();
+ 			checkMethod();
+ 			lineMethod();
+ 		});
+ 		function checkMethod(){
+ 			if($('input[type=radio][name=methodChoice]:checked').val() == 1){
+					$('#methodSelected').prop('disabled', false);
+					$('#methodSelected').val(oldMethodSelected);
+				}else{
+					$('#methodSelected').prop('disabled', 'disabled');
+					oldMethodSelected = $('#methodSelected').val();
+					 $('#methodSelected').val($('#defaultMethodId').val());
+				} 	
+ 		}
+ 		function lineMethod(){
+ 			if($('input[type=radio][name=lineChoice]:checked').val() == 1){
+					$('#lineSelected').prop('disabled', false);
+					$('#lineSelected').val(oldLineSelected);
+				}else{
+					$('#lineSelected').prop('disabled', 'disabled');
+					oldLineSelected = $('#lineSelected').val();
+					$('#lineSelected').val(1);
+				} 
+ 		}
+ 		
+ 		function validateAdvanceNursery(){
+ 			//validate number of sample per plot
+ 			var numberOfSamplePerPlot = $('#lineSelected').val();
+ 			if(numberOfSamplePerPlot == '' || !isInt(numberOfSamplePerPlot) || (Number(numberOfSamplePerPlot) < 1 && Number(numberOfSamplePerPlot) > 1000)){
+ 				showErrorMessage('page-message',msgSamplePlotError);
+ 				return false;
+ 			}
+ 			if( $('#harvestDate').val()){
+ 				showErrorMessage('page-message',msgHarvestDateError);
+ 				return false;
+ 			}	
+ 			
+ 			//validate date
+ 			return true;
+ 		}
+ 		
+ 		
+ 		
+ 		//
+      //]]>
+    </script>
+	
+</div>

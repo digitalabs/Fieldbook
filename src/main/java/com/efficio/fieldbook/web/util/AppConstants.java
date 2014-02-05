@@ -52,4 +52,9 @@ public class AppConstants {
     
     public static final int GERMPLASM_LIST_CHOOSE_SPECIFY_CHECK_SELECT_ONE_OR_MORE_IN_THE_LIST = 1;
     
+    public static final int NAMING_CONVENTION_CIMMYT_WHEAT = 1;
+    public static final int NAMING_CONVENTION_CIMMYT_MAIZE = 2;
+    public static final int NAMING_CONVENTION_OTHER_CROPS = 3;
+    
+    public static final int SINGLE_PLANT_SELECTION_SF = 205;
 }

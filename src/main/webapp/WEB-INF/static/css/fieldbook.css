@@ -636,3 +636,6 @@ td.user-name {
 	/*max-height: 70vh;*/
 	max-height: 500px;
 }
+.datepicker th{
+	background-color: #FFFFFF;
+}

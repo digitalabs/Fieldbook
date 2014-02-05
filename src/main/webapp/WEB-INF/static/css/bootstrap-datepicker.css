@@ -1,14 +1,14 @@
 /*!
- * Datepicker for Bootstrap
- *
- * Copyright 2012 Stefan Petre
- * Improvements by Andrew Rowls
- * Updated for Bootstrap 3.x by Ian Serlin
- *
- * Licensed under the Apache License v2.0
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- */
+* Datepicker for Bootstrap
+*
+* Copyright 2012 Stefan Petre
+* Improvements by Andrew Rowls
+* Updated for Bootstrap 3.x by Ian Serlin
+*
+* Licensed under the Apache License v2.0
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+*/
 .datepicker {
   padding: 4px;
   -webkit-border-radius: 4px;
@@ -16,8 +16,8 @@
   border-radius: 4px;
   direction: ltr;
   /*.dow {
-    border-top: 1px solid #ddd !important;
-  }*/
+border-top: 1px solid #ddd !important;
+}*/
 
 }
 .datepicker-inline {

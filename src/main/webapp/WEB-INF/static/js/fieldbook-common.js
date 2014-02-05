@@ -680,3 +680,64 @@ function showSuccessfulMessage(messageDivId, message) {
 function hideErrorMessage(){
 	$('#page-message .alert-danger').fadeOut(1000);
 }
+
+
+function initializeHarvestLocationSelect2(locationSuggestions, locationSuggestions_obj) {
+
+	$.each(locationSuggestions, function( index, value ) {
+		locationSuggestions_obj.push({ 'id' : value.locid,
+			  'text' : value.lname
+		});  
+		
+	});		
+	
+	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
+	$('#'+getJquerySafeId('harvestLocationIdAll')).select2({
+		minimumInputLength: 2,
+        query: function (query) {
+          var data = {results: locationSuggestions_obj}, i, j, s;
+          // return the array that matches
+          data.results = $.grep(data.results,function(item,index) {
+            return ($.fn.select2.defaults.matcher(query.term,item.text));
+          
+          });
+            query.callback(data);
+            
+        }
+
+    }).on("change", function (){
+    	$('#'+getJquerySafeId("harvestLocationId")).val($('#'+getJquerySafeId("harvestLocationIdAll")).select2("data").id);
+    	$('#'+getJquerySafeId("harvestLocationName")).val($('#'+getJquerySafeId("harvestLocationIdAll")).select2("data").text);
+    });
+	
+}
+
+function initializeHarvestLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj) {
+
+	$.each(locationSuggestionsFav, function( index, value ) {
+		locationSuggestionsFav_obj.push({ 'id' : value.locid,
+			  'text' : value.lname
+		});  
+  		
+	});
+
+
+//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
+$('#'+getJquerySafeId('harvestLocationIdFavorite')).select2({
+    query: function (query) {
+      var data = {results: locationSuggestionsFav_obj}, i, j, s;
+      // return the array that matches
+      data.results = $.grep(data.results,function(item,index) {
+        return ($.fn.select2.defaults.matcher(query.term,item.text));
+      
+      });
+        query.callback(data);
+        
+    }
+
+}).on("change", function (){
+	$('#'+getJquerySafeId("harvestLocationId")).val($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data").id);
+	$('#'+getJquerySafeId("harvestLocationName")).val($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data").text);
+});
+
+}

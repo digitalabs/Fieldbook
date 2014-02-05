@@ -30,7 +30,6 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MeasurementsGeneratorServiceImpl.
  */
@@ -106,11 +105,11 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 	 */
 	public List<MeasurementRow> generateRealMeasurementRows(UserSelection userSelection) throws MiddlewareQueryException {
 		int index = 0;
-    	List<MeasurementRow> measurementRows = new ArrayList();
+    	List<MeasurementRow> measurementRows = new ArrayList<MeasurementRow>();
     	int newGid = fieldbookMiddlewareService.getNextGermplasmId();
     	for(ImportedGermplasm germplasm : userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms()){
     		MeasurementRow measurementRow = new MeasurementRow();
-    		List<MeasurementData> dataList = new ArrayList();
+    		List<MeasurementData> dataList = new ArrayList<MeasurementData>();
     		index++;
     		
     		for(MeasurementVariable var : userSelection.getWorkbook().getMeasurementDatasetVariables()){

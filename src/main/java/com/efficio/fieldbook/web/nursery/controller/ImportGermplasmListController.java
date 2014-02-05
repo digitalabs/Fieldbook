@@ -245,7 +245,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             for (GermplasmListData aData : data) {
                 ImportedGermplasm germplasm = new ImportedGermplasm();
                 germplasm.setCheck(null);
-                germplasm.setCross(null);
+                germplasm.setCross(aData.getGroupName());
                 germplasm.setDesig(aData.getDesignation());
                 germplasm.setEntryCode(aData.getEntryCode());
                 germplasm.setEntryId(aData.getEntryId());

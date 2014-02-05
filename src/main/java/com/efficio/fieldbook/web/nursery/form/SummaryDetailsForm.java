@@ -11,7 +11,6 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.form;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -50,37 +49,6 @@ public class SummaryDetailsForm {
     private List<MeasurementVariable> traits;
     
     public SummaryDetailsForm(){
-        createDummyData();
-    }
-
-    /**
-     * Instantiates a new summary details form.
-     */
-    public SummaryDetailsForm(boolean withDummy){
-        createDummyData();
-    }
-    
-    //TODO Remove later. Only for initial testing
-    /**
-     * Creates the dummy data.
-     */
-    private void createDummyData(){
-        nurseryName = "UCR 2012 Nurseries";
-        title = "UCR 2012 Nurseries";
-        objective = "UCR 2012 Study for Population Development Nurseries";
-        bookName = "UCR2012F1";
-        sequenceNumber = "F2";
-        principalInvestigator = "Jean Philips";
-        location = "University of California - Riverside";
-        breedingMethod = "Random Bulk CF";
-        
-        traits = new ArrayList<MeasurementVariable>();
-        traits.add(new MeasurementVariable("BB", "Resistance to bacterial blight", null, null, null, null, null, null));
-        traits.add(new MeasurementVariable("FLOW50", "Days to 50% flowering", null, null, null, null, null, null));
-        traits.add(new MeasurementVariable("MAT95", "Days to 95% maturity", null, null, null, null, null, null));
-        traits.add(new MeasurementVariable("NOTES", "BREEDERS NOTES", null, null, null, null, null, null));
-        traits.add(new MeasurementVariable("NPSEL", "NUMBER OF PLANTS SELECTED", null, null, null, null, null, null));
-        traits.add(new MeasurementVariable("SDSTORE", "AMOUNT OF SEED HARVESTED FOR STORAGE", null, null, null, null, null, null));             
     }
     
     /**

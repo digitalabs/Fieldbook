@@ -127,7 +127,7 @@ public class NurseryDetailsController extends AbstractBaseFieldbookController{
                 //this part should be commented out when id is already used
                 List<StandardVariable> stdVariables = ontologyService.getStandardVariables(id);
                 
-                if (stdVariables != null & stdVariables.size() > 0) {
+                if (stdVariables != null && stdVariables.size() > 0) {
                     result.put("stdVar", convertStandardVariableToJson(stdVariables.get(0)));
                 } else {
                     result.put("stdVar", null);

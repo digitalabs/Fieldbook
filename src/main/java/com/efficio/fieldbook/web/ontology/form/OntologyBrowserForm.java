@@ -32,7 +32,7 @@ public class OntologyBrowserForm{
     private String errorMessage;
     
     /** The trait reference list. */
-    private List<TraitClassReference> TraitClassReferenceList;
+    private List<TraitClassReference> traitClassReferenceList;
     
     /** The tree data. */
     private String treeData;
@@ -182,16 +182,16 @@ public class OntologyBrowserForm{
      * @return the trait reference list
      */
     public List<TraitClassReference> getTraitClassReferenceList() {
-        return TraitClassReferenceList;
+        return traitClassReferenceList;
     }
     
     /**
      * Sets the trait reference list.
      *
-     * @param TraitClassReferenceList the new trait reference list
+     * @param traitClassReferenceList the new trait reference list
      */
-    public void setTraitClassReferenceList(List<TraitClassReference> TraitClassReferenceList) {
-        this.TraitClassReferenceList = TraitClassReferenceList;
+    public void setTraitClassReferenceList(List<TraitClassReference> traitClassReferenceList) {
+        this.traitClassReferenceList = traitClassReferenceList;
     }
     
     /**

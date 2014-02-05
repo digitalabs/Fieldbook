@@ -74,7 +74,7 @@ public class SummaryDetailsController extends AbstractBaseFieldbookController{
     
     @ModelAttribute("form")
     public SummaryDetailsForm getForm() {
-        return new SummaryDetailsForm(true);
+        return new SummaryDetailsForm();
     }
 
 

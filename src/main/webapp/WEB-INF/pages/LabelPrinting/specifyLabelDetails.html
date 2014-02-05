@@ -424,7 +424,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
         var selectedFieldsError = /*[[#{label.printing.selected.fields.error}]]*/;
         var trialInstanceRequired = /*[[#{fieldmap.no.selected.trial.instance}]]*/;
   		var isTrial = /*[[${labelPrintingForm.isTrial}]]*/;
-  		
+  		var filenameError =  /*[[#{label.printing.filename.fields.error.character}]]*/;
  		 $(function() {
  			setSelectedTrialsAsDraggable();
  			
@@ -440,8 +440,6 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 		            }
 		        }
  			});
- 			
- 			
  			
  		});
  		 

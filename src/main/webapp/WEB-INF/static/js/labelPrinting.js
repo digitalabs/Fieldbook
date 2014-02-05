@@ -67,8 +67,16 @@ function validateEnterLabelFieldsPage(type){
 			return false;
 		
 	}
+	var data = $("#"+getJquerySafeId('userLabelPrinting.filename')).val();
+    //data = data.replace(/^\s|\s$/g, ""); //trims string
+     var isValid = /^[ A-Za-z0-9_@.\.&''@{},$!\-#()%.+~_=^\s]*$/i.test(data);
+	    
 	
-	
+	if (!isValid){
+		showMessage(filenameError);
+		moveToTopScreen();
+		return false;
+	}
 	
 	$("#"+getJquerySafeId('userLabelPrinting.generateType')).val(type);
 	

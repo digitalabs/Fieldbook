@@ -628,7 +628,11 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         	stemp = " ";
     	return stemp;
     }
-
+    private String cleanSheetName(String name){
+    	name = name.replaceAll("[^a-zA-Z0-9-_.=^&'@{},$!-#()%.+~_\\[\\]]", "_");
+    	name = name.replaceAll("\"", "_");
+    	return name;
+    }
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.service.api.LabelPrintingService#generateXlSLabels(org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo, com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting, java.io.ByteArrayOutputStream)
      */
@@ -655,7 +659,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         try {
             
                     HSSFWorkbook workbook = new HSSFWorkbook();
-                    String sheetName = userLabelPrinting.getName();
+                    String sheetName = cleanSheetName(userLabelPrinting.getName());
                     if(sheetName == null)
                         sheetName = "Labels";
                     Sheet labelPrintingSheet = workbook.createSheet(sheetName);

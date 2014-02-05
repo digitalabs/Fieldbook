@@ -269,6 +269,8 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
                 fileName += "-" + currentDate; //changed selected name to block name for now
             }
         }
+        fileName = fileName.replaceAll("[^a-zA-Z0-9\\-_\\.=^&'@{},$!-#()%.+~_\\[\\]]", "_");
+        fileName = fileName.replaceAll("\"", "_");
         
         return fileName;
     }

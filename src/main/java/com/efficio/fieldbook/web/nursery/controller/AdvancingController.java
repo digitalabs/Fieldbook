@@ -54,7 +54,7 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 public class AdvancingController extends AbstractBaseFieldbookController{
 
     /** The Constant URL. */
-    public static final String URL = "/NurseryManager/advancing";
+    public static final String URL = "/NurseryManager/advance/nursery";
     
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(AdvancingController.class);

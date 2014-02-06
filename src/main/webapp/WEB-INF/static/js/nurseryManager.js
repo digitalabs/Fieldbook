@@ -96,3 +96,194 @@ function validateAdvanceNursery(){
 	//validate date
 	return true;
 }
+
+function showCorrectLocationCombo() {
+	var isChecked = $('#showFavoriteLocation').is(':checked');
+	//if show favorite location is checked, hide all field locations, else, show only favorite locations
+	if(isChecked){
+		$('#s2id_harvestLocationIdFavorite').show();
+		$('#s2id_harvestLocationIdAll').hide();
+		if($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data") != null){
+			$('#'+getJquerySafeId("harvestLocationId")).val($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data").id);
+			$('#'+getJquerySafeId("harvestLocationName")).val($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data").text);
+			$('#'+getJquerySafeId("harvestLocationAbbreviation")).val($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data").abbr);
+			
+		}else{
+			$('#'+getJquerySafeId("harvestLocationId")).val(0);
+			$('#'+getJquerySafeId("harvestLocationName")).val("");
+			$('#'+getJquerySafeId("harvestLocationAbbreviation")).val("");
+		}
+	}else{
+		$('#s2id_harvestLocationIdFavorite').hide();
+		$('#s2id_harvestLocationIdAll').show();
+		if($('#'+getJquerySafeId("harvestLocationIdAll")).select2("data") != null){
+			$('#'+getJquerySafeId("harvestLocationId")).val($('#'+getJquerySafeId("harvestLocationIdAll")).select2("data").id);
+			$('#'+getJquerySafeId("harvestLocationName")).val($('#'+getJquerySafeId("harvestLocationIdAll")).select2("data").text);
+			$('#'+getJquerySafeId("harvestLocationAbbreviation")).val($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data").abbr);
+		}else{
+			$('#'+getJquerySafeId("harvestLocationId")).val(0);
+			$('#'+getJquerySafeId("harvestLocationName")).val("");
+			$('#'+getJquerySafeId("harvestLocationAbbreviation")).val("");
+		}
+		
+	}
+}
+
+function showCorrectMethodCombo() {
+	var isChecked = $('#showFavoriteMethod').is(':checked');
+	//if show favorite Method is checked, hide all field locations, else, show only favorite locations
+	var methodSelect = false;
+	if($('input[type=radio][name=methodChoice]:checked').val() == 1)
+		methodSelect = true;
+	
+	if(isChecked){
+		$('#s2id_methodIdFavorite').show();
+		$('#s2id_methodIdAll').hide();
+		setCorrectMethodValues(methodSelect);
+		if($('#'+getJquerySafeId("methodIdFavorite")).select2("data") != null){
+			$('#'+getJquerySafeId("breedingMethodId")).val($('#'+getJquerySafeId("methodIdFavorite")).select2("data").id); 						 						
+		}else{
+			$('#'+getJquerySafeId("breedingMethodId")).val(0); 						
+		}
+	}else{
+		$('#s2id_methodIdFavorite').hide();
+		$('#s2id_methodIdAll').show();
+		setCorrectMethodValues(methodSelect);
+		if($('#'+getJquerySafeId("methodIdAll")).select2("data") != null){
+			$('#'+getJquerySafeId("breedingMethodId")).val($('#'+getJquerySafeId("methodIdAll")).select2("data").id);
+		}else{
+			$('#'+getJquerySafeId("breedingMethodId")).val(0);
+		} 					
+	}
+}
+
+function openManageLocations() {
+	$('#manageLocationModal').modal({ backdrop: 'static', keyboard: true });
+	$("#manageLocationModal").modal("show");
+}
+
+function openManageMethods() {
+	$('#manageMethodModal').modal({ backdrop: 'static', keyboard: true });
+	$("#manageMethodModal").modal("show");
+}
+
+function recreateMethodCombo() {
+var selectedMethodAll = $("#methodIdAll").val();
+var selectedMethodFavorite = $("#methodIdFavorite").val();
+
+Spinner.toggle();
+$.ajax(
+     { url: "/Fieldbook/NurseryManager/advance/nursery/getBreedingMethods",
+       type: "GET",
+       cache: false,
+       data: "",
+       success: function(data) {
+    	   if (data.success == "1") {
+    		   //recreate the select2 combos to get updated list of locations
+    		   recreateMethodComboAfterClose("methodIdAll", $.parseJSON(data.allMethods));
+    		   recreateMethodComboAfterClose("methodIdFavorite", $.parseJSON(data.favoriteMethods));
+    		   showCorrectMethodCombo();
+    		   //set previously selected value of location
+    		   if ($("#showFavoriteMethod").prop("checked")) {
+    			   setComboValues(methodSuggestionsFav_obj, selectedMethodFavorite, "methodIdFavorite");
+    		   } else {
+    			   setComboValues(methodSuggestions_obj, selectedMethodAll, "methodIdAll");
+    		   }
+    	   } else {
+    		   showErrorMessage("page-message", data.errorMessage);
+    	   }
+       },
+       error: function(jqXHR, textStatus, errorThrown){
+			console.log("The following error occured: " + textStatus, errorThrown); 
+	   }, 
+	   complete: function(){  
+		   Spinner.toggle();
+	   } 
+     }
+ );
+}
+
+function recreateLocationCombo() {
+	var selectedLocationAll = $("#harvestLocationIdAll").val();
+	var selectedLocationFavorite = $("#harvestLocationIdFavorite").val();
+	
+	Spinner.toggle();
+	$.ajax(
+	{ url: "/Fieldbook/NurseryManager/advance/nursery/getLocations",
+       type: "GET",
+       cache: false,
+       data: "",
+       success: function(data) {
+    	   if (data.success == "1") {
+    		   //recreate the select2 combos to get updated list of locations
+    		   recreateLocationComboAfterClose("harvestLocationIdAll", $.parseJSON(data.allLocations));
+    		   recreateLocationComboAfterClose("harvestLocationIdFavorite", $.parseJSON(data.favoriteLocations));
+    		   showCorrectLocationCombo();
+    		   //set previously selected value of location
+    		   if ($("#showFavoriteLocation").prop("checked")) {
+    			   setComboValues(locationSuggestionsFav_obj, selectedLocationFavorite, "harvestLocationIdFavorite");
+    		   } else {
+    			   setComboValues(locationSuggestions_obj, selectedLocationAll, "harvestLocationIdAll");
+    		   }
+    	   } else {
+    		   showErrorMessage("page-message", data.errorMessage);
+    	   }
+       },
+       error: function(jqXHR, textStatus, errorThrown){
+			console.log("The following error occured: " + textStatus, errorThrown); 
+	   }, 
+	   complete: function(){  
+		   Spinner.toggle();
+	   } 
+     }
+ );
+}
+
+function setComboValues(suggestions_obj, id, name) {
+	var dataVal = {id:'',text:'',description:''}; //default value
+	if(id != ''){
+		var count = 0;
+		//find the matching value in the array given
+    	for(count = 0 ; count < suggestions_obj.length ; count++){
+    		if(suggestions_obj[count].id == id){
+    			dataVal = suggestions_obj[count];			    			
+    			break;
+    		}			    			
+    	}
+	}
+	//set the selected value of the ontology combo
+	$("#" + name).select2('data', dataVal);
+}
+
+function recreateLocationComboAfterClose(comboName, data) {	
+	if (comboName == "harvestLocationIdAll") {
+		locationSuggestions = [];
+		locationSuggestions_obj = [];
+		initializeHarvestLocationSelect2(locationSuggestions, locationSuggestions_obj);
+		locationSuggestions = data;
+		initializeHarvestLocationSelect2(locationSuggestions, locationSuggestions_obj);
+	} else {
+		locationSuggestionsFav = [];
+		locationSuggestionsFav_obj = [];
+		initializeHarvestLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj);
+		locationSuggestionsFav = data;
+		initializeHarvestLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj);
+	}
+
+}
+
+function recreateMethodComboAfterClose(comboName, data) {
+	if (comboName == "methodIdAll") {
+		methodSuggestions = [];
+		methodSuggestions_obj = [];
+		initializeMethodSelect2(methodSuggestions, methodSuggestions_obj);
+		methodSuggestions = data;
+		initializeMethodSelect2(methodSuggestions, methodSuggestions_obj);
+	} else {
+		methodSuggestionsFav = [];
+		methodSuggestionsFav_obj = [];
+		initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFav_obj);
+		methodSuggestionsFav = data;
+		initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFav_obj);
+	}
+}

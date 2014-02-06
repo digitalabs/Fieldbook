@@ -18,6 +18,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.dms.Variable;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -184,6 +185,77 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	}
     	advancingNursery.setStudy(study);
     	return super.show(model);
+    }
+    
+    @ResponseBody
+    @RequestMapping(value="/getBreedingMethods", method = RequestMethod.GET)
+    public Map<String, String> getBreedingMethods() {
+        Map<String, String> result = new HashMap<String, String>();;
+        
+        try {
+            List<Method> breedingMethods = fieldbookMiddlewareService.getAllBreedingMethods();
+            Project project = new Project();
+            project.setProjectId(Long.valueOf(this.getCurrentProjectId()));
+            
+              List<Integer> methodIds = workbenchDataManager.getFavoriteProjectMethods(
+                          project, 0,  Integer.MAX_VALUE);
+              List<Method> favoriteMethods = fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIds);
+            result.put("success", "1");
+            result.put("allMethods", convertMethodsToJson(breedingMethods));
+            result.put("favoriteMethods", convertMethodsToJson(favoriteMethods));
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+            result.put("success", "-1");
+            result.put("errorMessage", e.getMessage());
+        }
+        
+        return result;
+    }
+    
+    @ResponseBody
+    @RequestMapping(value="/getLocations", method = RequestMethod.GET)
+    public Map<String, String> getLocations() {
+        Map<String, String> result = new HashMap<String, String>();;
+        
+        try {
+            List<Long> locationsIds = workbenchDataManager.getFavoriteProjectLocationIds(
+                    Long.valueOf(this.getCurrentProjectId()), 0,  Integer.MAX_VALUE);
+            List<Location> faveLocations = fieldbookMiddlewareService
+                                .getFavoriteLocationByProjectId(locationsIds);
+            List<Location> allLocations = fieldbookMiddlewareService.getAllLocations();
+            result.put("success", "1");
+            result.put("favoriteLocations", convertFaveLocationToJson(faveLocations));
+            result.put("allLocations", convertFaveLocationToJson(allLocations));
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+            result.put("success", "-1");
+        }
+        
+        return result;
+    }
+    
+    private String convertFaveLocationToJson(List<Location> locations) {
+        if (locations!= null) {
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                return mapper.writeValueAsString(locations);
+            } catch(Exception e) {
+                LOG.error(e.getMessage(), e);
+            }
+        }
+        return "";
+    }
+    
+    private String convertMethodsToJson(List<Method> breedingMethods) {
+        if (breedingMethods!= null) {
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                return mapper.writeValueAsString(breedingMethods);
+            } catch(Exception e) {
+                LOG.error(e.getMessage(), e);
+            }
+        }
+        return "";
     }
     
     @RequestMapping(method = RequestMethod.POST)

@@ -166,7 +166,7 @@ th:action="@{/NurseryManager/advancing}" method="post" th:object="${advancingNur
 							&nbsp;														
 						</div>		
 						<div class="col-xs-7 col-md-7">
-							<a href="javascript: void(0)" th:text="#{advancing.nursery.manage.method}">Manage Methods</a>	
+							<a href="javascript: openManageMethods()" th:text="#{advancing.nursery.manage.method}">Manage Methods</a>	
 						</div>
 					</div>										 				
 				</div>		
@@ -289,7 +289,7 @@ th:action="@{/NurseryManager/advancing}" method="post" th:object="${advancingNur
 				  		&nbsp;
 				  	</div>
 					<div class="col-xs-4 col-md-4">
-				  		<a href="javascript: void(0)" th:text="#{advancing.nursery.manage.location}">Manage Locations</a>	
+				  		<a href="javascript: openManageLocations()" th:text="#{advancing.nursery.manage.location}">Manage Locations</a>	
 				    </div>
 				    <div class="col-xs-3 col-md-3">
 				    	&nbsp;
@@ -316,6 +316,12 @@ th:action="@{/NurseryManager/advancing}" method="post" th:object="${advancingNur
 	    </div>
 	  </div>
 	  <div class="form-group">&nbsp;</div>
+</div>
+<div class="row">
+	<div id="manage-method" th:include="/NurseryManager/manageMethodsModal"></div>
+</div>
+<div class="row">
+	<div id="manage-location" th:include="/NurseryManager/manageLocationsModal"></div>
 </div>
 </form>
 <div layout:fragment="page-script">
@@ -358,66 +364,14 @@ th:action="@{/NurseryManager/advancing}" method="post" th:object="${advancingNur
  			$('#s2id_harvestLocationIdFavorite').hide();
  			$('#s2id_harvestLocationIdAll').show();
  			$('#showFavoriteLocation').on('change', function(){
- 				var isChecked = $('#showFavoriteLocation').is(':checked');
- 				//if show favorite location is checked, hide all field locations, else, show only favorite locations
- 				if(isChecked){
- 					$('#s2id_harvestLocationIdFavorite').show();
- 					$('#s2id_harvestLocationIdAll').hide();
- 					if($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data") != null){
- 						$('#'+getJquerySafeId("harvestLocationId")).val($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data").id);
- 						$('#'+getJquerySafeId("harvestLocationName")).val($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data").text);
- 						$('#'+getJquerySafeId("harvestLocationAbbreviation")).val($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data").abbr);
- 						
- 					}else{
- 						$('#'+getJquerySafeId("harvestLocationId")).val(0);
- 						$('#'+getJquerySafeId("harvestLocationName")).val("");
- 						$('#'+getJquerySafeId("harvestLocationAbbreviation")).val("");
- 					}
- 				}else{
- 					$('#s2id_harvestLocationIdFavorite').hide();
- 					$('#s2id_harvestLocationIdAll').show();
- 					if($('#'+getJquerySafeId("harvestLocationIdAll")).select2("data") != null){
- 						$('#'+getJquerySafeId("harvestLocationId")).val($('#'+getJquerySafeId("harvestLocationIdAll")).select2("data").id);
- 						$('#'+getJquerySafeId("harvestLocationName")).val($('#'+getJquerySafeId("harvestLocationIdAll")).select2("data").text);
- 						$('#'+getJquerySafeId("harvestLocationAbbreviation")).val($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data").abbr);
- 					}else{
- 						$('#'+getJquerySafeId("harvestLocationId")).val(0);
- 						$('#'+getJquerySafeId("harvestLocationName")).val("");
- 						$('#'+getJquerySafeId("harvestLocationAbbreviation")).val("");
- 					}
- 					
- 				}
+ 				showCorrectLocationCombo();
  			});
  			
  			
  			$('#s2id_methodIdFavorite').hide();
  			$('#s2id_methodIdAll').show();
  			$('#showFavoriteMethod').on('change', function(){
- 				var isChecked = $('#showFavoriteMethod').is(':checked');
- 				//if show favorite Method is checked, hide all field locations, else, show only favorite locations
- 				var methodSelect = false;
- 				if($('input[type=radio][name=methodChoice]:checked').val() == 1)
- 					methodSelect = true;
- 				
- 				if(isChecked){
- 					$('#s2id_methodIdFavorite').show();
- 					$('#s2id_methodIdAll').hide();
- 					setCorrectMethodValues(methodSelect);
- 					if($('#'+getJquerySafeId("methodIdFavorite")).select2("data") != null){
- 						$('#'+getJquerySafeId("breedingMethodId")).val($('#'+getJquerySafeId("methodIdFavorite")).select2("data").id); 						 						
- 					}else{
- 						$('#'+getJquerySafeId("breedingMethodId")).val(0); 						
- 					}
- 				}else{
- 					$('#s2id_methodIdFavorite').hide();
- 					$('#s2id_methodIdAll').show();
- 					setCorrectMethodValues(methodSelect);
- 					if($('#'+getJquerySafeId("methodIdAll")).select2("data") != null){
- 						$('#'+getJquerySafeId("breedingMethodId")).val($('#'+getJquerySafeId("methodIdAll")).select2("data").id);
- 					}else{
- 						$('#'+getJquerySafeId("breedingMethodId")).val(0);
- 					} 					
- 				}
+ 				showCorrectMethodCombo();
  			});
  			 $('input[type=radio][name=methodChoice]').on('change', checkMethod);
  			 

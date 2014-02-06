@@ -47,8 +47,7 @@ th:action="@{/NurseryManager/advancing}" method="post" th:object="${advancingNur
 				</div>		
 			</div>
 		</div>
-	</div>
-	<div class="row">
+
 		<div class="col-xs-6 col-md-6" >
 			
 			<div class="row form-group">
@@ -65,7 +64,7 @@ th:action="@{/NurseryManager/advancing}" method="post" th:object="${advancingNur
 			</div>
 			
 			 
-			<div class="row form-group">
+			<div class="row form-group" id="suffix-div">
 				<div class="col-xs-7 col-md-7">
 					&nbsp;&nbsp;&nbsp;&nbsp;<label class="control-label" th:text="#{advancing.nursery.suffix.convention}+':'"></label>					
 				</div>		
@@ -376,13 +375,24 @@ th:action="@{/NurseryManager/advancing}" method="post" th:object="${advancingNur
  			 $('input[type=radio][name=methodChoice]').on('change', checkMethod);
  			 
  			$('input[type=radio][name=lineChoice]').on('change', lineMethod);
+ 			
+ 			$('#namingConvention').on('change', changeSuffix);
  			oldMethodSelected = $('#defaultMethodId').val();
  			oldLineSelected = $('#lineSelected').val();
  			checkMethod();
  			lineMethod();
+ 			changeSuffix();
  		});
  		
- 		
+ 		function changeSuffix(){
+ 			if($('#namingConvention').val() == 3){
+ 				//show
+ 				$('#suffix-div').show();
+ 			}else{
+ 				//hide
+ 				$('#suffix-div').hide();
+ 			}		
+ 		}
  		
  		
  		//

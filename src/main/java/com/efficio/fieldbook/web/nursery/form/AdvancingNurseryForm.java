@@ -64,6 +64,7 @@ public class AdvancingNurseryForm {
     /** The default method id. */
     private String defaultMethodId;
        
+    /** The breeding method id. */
     private String breedingMethodId;
     
     /** The field location id all. */
@@ -72,20 +73,43 @@ public class AdvancingNurseryForm {
     /** The field location id favorite. */
     private String methodIdFavorite;
     
+    /** The project id. */
+    private String projectId;
+    
     
 	
+	/**
+	 * Gets the method id all.
+	 *
+	 * @return the method id all
+	 */
 	public String getMethodIdAll() {
 		return methodIdAll;
 	}
 
+	/**
+	 * Sets the method id all.
+	 *
+	 * @param methodIdAll the new method id all
+	 */
 	public void setMethodIdAll(String methodIdAll) {
 		this.methodIdAll = methodIdAll;
 	}
 
+	/**
+	 * Gets the method id favorite.
+	 *
+	 * @return the method id favorite
+	 */
 	public String getMethodIdFavorite() {
 		return methodIdFavorite;
 	}
 
+	/**
+	 * Sets the method id favorite.
+	 *
+	 * @param methodIdFavorite the new method id favorite
+	 */
 	public void setMethodIdFavorite(String methodIdFavorite) {
 		this.methodIdFavorite = methodIdFavorite;
 	}
@@ -235,6 +259,11 @@ public class AdvancingNurseryForm {
 	}
 	
 	
+	/**
+	 * Gets the breeding method id.
+	 *
+	 * @return the breeding method id
+	 */
 	public String getBreedingMethodId() {
 		return breedingMethodId;
 	}
@@ -340,5 +369,21 @@ public class AdvancingNurseryForm {
 		this.lineSelected = lineSelected;
 	}
 	
+	/**
+	 * Gets the project id.
+	 *
+	 * @return the project id
+	 */
+	public String getProjectId() {
+            return projectId;
+        }
 	
+	/**
+	 * Sets the project id.
+	 *
+	 * @param projectId the new project id
+	 */
+	public void setProjectId(String projectId) {
+            this.projectId = projectId;
+        }
 }

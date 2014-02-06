@@ -131,7 +131,7 @@ function showCorrectLocationCombo() {
 
 function showCorrectMethodCombo() {
 	var isChecked = $('#showFavoriteMethod').is(':checked');
-	//if show favorite Method is checked, hide all field locations, else, show only favorite locations
+	//if show favorite Method is checked, hide all field locations, else, show only favorite methods
 	var methodSelect = false;
 	if($('input[type=radio][name=methodChoice]:checked').val() == 1)
 		methodSelect = true;
@@ -179,11 +179,11 @@ $.ajax(
        data: "",
        success: function(data) {
     	   if (data.success == "1") {
-    		   //recreate the select2 combos to get updated list of locations
+    		   //recreate the select2 combos to get updated list of methods
     		   recreateMethodComboAfterClose("methodIdAll", $.parseJSON(data.allMethods));
     		   recreateMethodComboAfterClose("methodIdFavorite", $.parseJSON(data.favoriteMethods));
     		   showCorrectMethodCombo();
-    		   //set previously selected value of location
+    		   //set previously selected value of method
     		   if ($("#showFavoriteMethod").prop("checked")) {
     			   setComboValues(methodSuggestionsFav_obj, selectedMethodFavorite, "methodIdFavorite");
     		   } else {
@@ -251,21 +251,25 @@ function setComboValues(suggestions_obj, id, name) {
     		}			    			
     	}
 	}
-	//set the selected value of the ontology combo
+	//set the selected value of the combo
 	$("#" + name).select2('data', dataVal);
 }
 
 function recreateLocationComboAfterClose(comboName, data) {	
 	if (comboName == "harvestLocationIdAll") {
+		//clear all locations dropdown
 		locationSuggestions = [];
 		locationSuggestions_obj = [];
 		initializeHarvestLocationSelect2(locationSuggestions, locationSuggestions_obj);
+		//reload the data retrieved
 		locationSuggestions = data;
 		initializeHarvestLocationSelect2(locationSuggestions, locationSuggestions_obj);
 	} else {
+		//clear the favorite locations dropdown
 		locationSuggestionsFav = [];
 		locationSuggestionsFav_obj = [];
 		initializeHarvestLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj);
+		//reload the data
 		locationSuggestionsFav = data;
 		initializeHarvestLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj);
 	}
@@ -274,15 +278,19 @@ function recreateLocationComboAfterClose(comboName, data) {
 
 function recreateMethodComboAfterClose(comboName, data) {
 	if (comboName == "methodIdAll") {
+		//clear the all methods dropdown
 		methodSuggestions = [];
 		methodSuggestions_obj = [];
 		initializeMethodSelect2(methodSuggestions, methodSuggestions_obj);
+		//reload the data
 		methodSuggestions = data;
 		initializeMethodSelect2(methodSuggestions, methodSuggestions_obj);
 	} else {
+		//clear the favorite methods dropdown
 		methodSuggestionsFav = [];
 		methodSuggestionsFav_obj = [];
 		initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFav_obj);
+		//reload the data
 		methodSuggestionsFav = data;
 		initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFav_obj);
 	}

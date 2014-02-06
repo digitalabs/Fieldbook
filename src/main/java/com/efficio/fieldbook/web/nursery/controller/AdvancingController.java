@@ -26,6 +26,8 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.Location;
+import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,6 +120,44 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         return null;
     }
     
+    @ModelAttribute("methodList")
+    public List<Method> getBreedingMethodList() {
+        try {
+            List<Method> dataTypesOrig = fieldbookMiddlewareService.getAllBreedingMethods();
+            List<Method> dataTypes = dataTypesOrig;
+            
+            return dataTypes;
+        }catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+
+        return null;
+    }
+    
+    /**
+     * Gets the favorite location list.
+     *
+     * @return the favorite location list
+     */
+    @ModelAttribute("favoriteMethodList")
+    public List<Method> getFavoriteMethodList() {
+    	
+        try {
+          Project project = new Project();
+          project.setProjectId(Long.valueOf(this.getCurrentProjectId()));
+          
+            List<Integer> methodIds = workbenchDataManager.getFavoriteProjectMethods(
+            		project, 0,  Integer.MAX_VALUE);
+            List<Method> dataTypes = fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIds);
+            
+            return dataTypes;
+        }catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+    	   
+        return null;
+    }
+    
     /**
      * Shows the screen
      *
@@ -133,7 +173,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	form.setMethodChoice("1");
     	form.setLineChoice("1");
     	form.setLineSelected("1");
-    	form.setBreedingMethods(fieldbookMiddlewareService.getAllBreedingMethods());
+    	//form.setBreedingMethods();
     	Study study = fieldbookMiddlewareService.getStudy(nurseryId);
     	List<Variable> varList = study.getConditions().getVariables();
     	form.setDefaultMethodId(Integer.toString(AppConstants.SINGLE_PLANT_SELECTION_SF));

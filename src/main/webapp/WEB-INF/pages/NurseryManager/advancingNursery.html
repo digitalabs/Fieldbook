@@ -111,10 +111,43 @@ th:action="@{/NurseryManager/advancing}" method="post" th:object="${advancingNur
 							<label class="control-label" th:text="#{advancing.nursery.breeding.method.all.plots}">Breeding Method for all plots</label>														
 						</div>		
 						<div class="col-xs-7 col-md-7">
+						<!-- 
 							<select th:field="*{methodSelected}" class="form-control">
 								<option  th:each="method, rowIndex : *{breedingMethods}" th:text="${method.mname}" th:value="${method.mid}"></option>							  					 
 							</select>
+							 -->
+							 
+							    <label>
+							      <input id="showFavoriteMethod" value="1" type="checkbox"/> <span th:text="#{show.favorite.method}">Show Favorite Method</span>
+							    </label>
+							
 						</div>
+					
+					</div>										 				
+				</div>		
+			</div>
+			<div class="row">
+				<div class="col-xs-6 col-md-6">					
+					<div class="row form-group">
+						<div class="col-xs-12 col-md-12">
+							&nbsp;
+						</div>		
+					</div>										 				
+				</div>		
+				<div class="col-xs-6 col-md-6">					
+					<div class="row form-group">
+						<div class="col-xs-5 col-md-5">
+							&nbsp;
+						</div>
+						<div class="col-xs-7 col-md-7">
+				  
+						   <input type="hidden" th:field="*{methodIdAll}" class="form-control select2" placeholder=""/>
+						   
+						   <input type="hidden" th:field="*{methodIdFavorite}" class="form-control select2" placeholder=""/>
+						   
+						   <input type="hidden" th:field="*{breedingMethodId}"/>						   
+						   
+					    </div>
 					</div>										 				
 				</div>		
 			</div>
@@ -217,6 +250,24 @@ th:action="@{/NurseryManager/advancing}" method="post" th:object="${advancingNur
 				  	</div>
 					<div class="col-xs-4 col-md-4">
 				  
+					   <label>
+					      <input id="showFavoriteLocation" value="1" type="checkbox"/> <span th:text="#{show.favorite.location}">Show Favorite Location</span>
+					    </label>
+					   
+				    </div>
+				    <div class="col-xs-3 col-md-3">
+				    	&nbsp;
+				    </div>	
+				    
+			    </div>
+			</div>	
+			<div class="row form-group">
+				<div class="col-xs-12 col-md-12 form-group">
+					 <div class="col-xs-2 col-md-2">
+						&nbsp;				  	
+					</div>
+					<div class="col-xs-4 col-md-4">
+				  
 					   <input type="hidden" th:field="*{harvestLocationIdAll}" class="form-control select2" placeholder=""/>
 					   
 					   <input type="hidden" th:field="*{harvestLocationIdFavorite}" class="form-control select2" placeholder=""/>
@@ -227,11 +278,7 @@ th:action="@{/NurseryManager/advancing}" method="post" th:object="${advancingNur
 					   
 				    </div>
 				    <div class="col-xs-3 col-md-3">
-				    	<div class="checkbox">
-					    <label>
-					      <input id="showFavoriteLocation" value="1" type="checkbox"/> <span th:text="#{show.favorite.location}">Show Favorite Location</span>
-					    </label>
-					  </div>
+				    	&nbsp;
 				    </div>	
 				    
 			    </div>
@@ -284,6 +331,12 @@ th:action="@{/NurseryManager/advancing}" method="post" th:object="${advancingNur
 	    var locationSuggestionsFav = /*[[${favoriteLocationList}]]*/ null;
 	    var locationSuggestionsFav_obj = [];
 	    
+	    var methodSuggestions = /*[[${methodList}]]*/ null;
+	    var methodSuggestions_obj = [];
+	    
+	    var methodSuggestionsFav = /*[[${favoriteMethodList}]]*/ null;
+	    var methodSuggestionsFav_obj = [];
+	    
 	    
 	    var msgSamplePlotError = /*[[#{advancing.nursery.number.of.plot.error}]]*/;
 	   	var msgHarvestDateError = /*[[#{advancing.nursery.harvest.date.error}]]*/;
@@ -298,6 +351,9 @@ th:action="@{/NurseryManager/advancing}" method="post" th:object="${advancingNur
  			
  			initializeHarvestLocationSelect2(locationSuggestions, locationSuggestions_obj);
  			initializeHarvestLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj);
+ 			
+ 			initializeMethodSelect2(methodSuggestions, methodSuggestions_obj);
+ 			initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFav_obj);
  			
  			$('#s2id_harvestLocationIdFavorite').hide();
  			$('#s2id_harvestLocationIdAll').show();
@@ -333,6 +389,36 @@ th:action="@{/NurseryManager/advancing}" method="post" th:object="${advancingNur
  				}
  			});
  			
+ 			
+ 			$('#s2id_methodIdFavorite').hide();
+ 			$('#s2id_methodIdAll').show();
+ 			$('#showFavoriteMethod').on('change', function(){
+ 				var isChecked = $('#showFavoriteMethod').is(':checked');
+ 				//if show favorite Method is checked, hide all field locations, else, show only favorite locations
+ 				var methodSelect = false;
+ 				if($('input[type=radio][name=methodChoice]:checked').val() == 1)
+ 					methodSelect = true;
+ 				
+ 				if(isChecked){
+ 					$('#s2id_methodIdFavorite').show();
+ 					$('#s2id_methodIdAll').hide();
+ 					setCorrectMethodValues(methodSelect);
+ 					if($('#'+getJquerySafeId("methodIdFavorite")).select2("data") != null){
+ 						$('#'+getJquerySafeId("breedingMethodId")).val($('#'+getJquerySafeId("methodIdFavorite")).select2("data").id); 						 						
+ 					}else{
+ 						$('#'+getJquerySafeId("breedingMethodId")).val(0); 						
+ 					}
+ 				}else{
+ 					$('#s2id_methodIdFavorite').hide();
+ 					$('#s2id_methodIdAll').show();
+ 					setCorrectMethodValues(methodSelect);
+ 					if($('#'+getJquerySafeId("methodIdAll")).select2("data") != null){
+ 						$('#'+getJquerySafeId("breedingMethodId")).val($('#'+getJquerySafeId("methodIdAll")).select2("data").id);
+ 					}else{
+ 						$('#'+getJquerySafeId("breedingMethodId")).val(0);
+ 					} 					
+ 				}
+ 			});
  			 $('input[type=radio][name=methodChoice]').on('change', checkMethod);
  			 
  			$('input[type=radio][name=lineChoice]').on('change', lineMethod);

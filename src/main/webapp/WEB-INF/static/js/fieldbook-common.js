@@ -771,3 +771,61 @@ $('#'+getJquerySafeId('harvestLocationIdFavorite')).select2({
 });
 
 }
+
+function initializeMethodSelect2(methodSuggestions, methodSuggestions_obj) {
+
+	$.each(methodSuggestions, function( index, value ) {
+		methodSuggestions_obj.push({ 'id' : value.mid,
+			  'text' : value.mname
+		});  
+		
+	});		
+	
+	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
+	$('#'+getJquerySafeId('methodIdAll')).select2({
+		//minimumInputLength: 2,
+        query: function (query) {
+          var data = {results: methodSuggestions_obj}, i, j, s;
+          // return the array that matches
+          data.results = $.grep(data.results,function(item,index) {
+            return ($.fn.select2.defaults.matcher(query.term,item.text));
+          
+          });
+            query.callback(data);
+            
+        }
+
+    }).on("change", function (){
+    	$('#'+getJquerySafeId("breedingMethodId")).val($('#'+getJquerySafeId("methodIdAll")).select2("data").id);
+    });
+	
+}
+
+function initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFav_obj) {
+
+	$.each(methodSuggestionsFav, function( index, value ) {
+		methodSuggestionsFav_obj.push({ 'id' : value.mid,
+			  'text' : value.mname,
+		});  
+  		
+	});
+
+
+//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
+$('#'+getJquerySafeId('methodIdFavorite')).select2({
+    query: function (query) {
+      var data = {results: methodSuggestionsFav_obj}, i, j, s;
+      // return the array that matches
+      data.results = $.grep(data.results,function(item,index) {
+        return ($.fn.select2.defaults.matcher(query.term,item.text));
+      
+      });
+        query.callback(data);
+        
+    }
+
+}).on("change", function (){
+	$('#'+getJquerySafeId("breedingMethodId")).val($('#'+getJquerySafeId("methodIdFavorite")).select2("data").id);
+});
+
+}

@@ -32,8 +32,6 @@ public class AdvancingNurseryForm {
 	/** The method choice. */
 	private String methodChoice;
 	
-	/** The method selected. */
-	private String methodSelected;
 	
 	/** The line choice. */
 	private String lineChoice;
@@ -41,8 +39,6 @@ public class AdvancingNurseryForm {
 	/** The line selected. */
 	private String lineSelected;
 	
-	/** The breeding methods. */
-	private List<Method> breedingMethods;
 	
 	/** The harvest date. */
 	private String harvestDate;
@@ -68,7 +64,32 @@ public class AdvancingNurseryForm {
     /** The default method id. */
     private String defaultMethodId;
        
+    private String breedingMethodId;
+    
+    /** The field location id all. */
+    private String methodIdAll;
+    
+    /** The field location id favorite. */
+    private String methodIdFavorite;
+    
+    
 	
+	public String getMethodIdAll() {
+		return methodIdAll;
+	}
+
+	public void setMethodIdAll(String methodIdAll) {
+		this.methodIdAll = methodIdAll;
+	}
+
+	public String getMethodIdFavorite() {
+		return methodIdFavorite;
+	}
+
+	public void setMethodIdFavorite(String methodIdFavorite) {
+		this.methodIdFavorite = methodIdFavorite;
+	}
+
 	/**
 	 * Gets the harvest location abbreviation.
 	 *
@@ -213,24 +234,20 @@ public class AdvancingNurseryForm {
 		this.harvestLocation = harvestLocation;
 	}
 	
-	/**
-	 * Gets the breeding methods.
-	 *
-	 * @return the breeding methods
-	 */
-	public List<Method> getBreedingMethods() {
-		return breedingMethods;
-	}
 	
-	/**
-	 * Sets the breeding methods.
-	 *
-	 * @param breedingMethods the new breeding methods
-	 */
-	public void setBreedingMethods(List<Method> breedingMethods) {
-		this.breedingMethods = breedingMethods;
+	public String getBreedingMethodId() {
+		return breedingMethodId;
 	}
-	
+
+	/**
+	 * Sets the breeding method id.
+	 *
+	 * @param breedingMethodId the new breeding method id
+	 */
+	public void setBreedingMethodId(String breedingMethodId) {
+		this.breedingMethodId = breedingMethodId;
+	}
+
 	/**
 	 * Gets the naming convention.
 	 *
@@ -285,23 +302,7 @@ public class AdvancingNurseryForm {
 		this.methodChoice = methodChoice;
 	}
 	
-	/**
-	 * Gets the method selected.
-	 *
-	 * @return the method selected
-	 */
-	public String getMethodSelected() {
-		return methodSelected;
-	}
 	
-	/**
-	 * Sets the method selected.
-	 *
-	 * @param methodSelected the new method selected
-	 */
-	public void setMethodSelected(String methodSelected) {
-		this.methodSelected = methodSelected;
-	}
 	
 	/**
 	 * Gets the line choice.

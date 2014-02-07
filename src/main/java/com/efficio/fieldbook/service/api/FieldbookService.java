@@ -13,11 +13,12 @@ package com.efficio.fieldbook.service.api;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmList;
+import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 
 /**
  * The Interface FieldbookService.
@@ -35,5 +36,5 @@ public interface FieldbookService {
     String storeUserWorkbook(InputStream in) throws IOException;
     
     
-    ImportedGermplasmList advanceNursery(AdvancingNursery advanceInfo) throws MiddlewareQueryException;
+    List<ImportedGermplasm> advanceNursery(AdvancingNursery advanceInfo) throws MiddlewareQueryException;
 }

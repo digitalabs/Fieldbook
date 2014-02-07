@@ -160,11 +160,20 @@ function showCorrectMethodCombo() {
 function openManageLocations() {
 	$('#manageLocationModal').modal({ backdrop: 'static', keyboard: true });
 	$("#manageLocationModal").modal("show");
+	if(locationIframeOpened == false){
+		locationIframeOpened = true;
+		$('#locationFrame').attr('src', programLocationUrl + $('#projectId').val());
+	}
+	
 }
 
 function openManageMethods() {
 	$('#manageMethodModal').modal({ backdrop: 'static', keyboard: true });
 	$("#manageMethodModal").modal("show");
+	if(methodIframeOpened == false){
+		methodIframeOpened = true;
+		$('#methodFrame').attr('src', programMethodUrl + $('#projectId').val());
+	}
 }
 
 function recreateMethodCombo() {

@@ -676,7 +676,7 @@ function advanceNursery(tableName){
 	}
 	
 	if(count != 1){
-		$('#page-create-field-map-message').html("<div class='alert alert-danger'>"+openStudyError+"</div>");
+		$('#page-create-field-map-message').html("<div class='alert alert-danger'>"+advanceStudyError+"</div>");
 		return;
 	}
 	

@@ -375,6 +375,10 @@ function isDeletedPlotAtStartCoord(id) {
 function openManageLocations() {
 	$('#manageLocationModal').modal({ backdrop: 'static', keyboard: true });
 	$("#manageLocationModal").modal("show");
+	if(locationIframeOpened == false){
+		locationIframeOpened = true;
+		$('#locationFrame').attr('src', programLocationUrl + $('#projectId').val());
+	}
 }
 
 function recreateLocationCombo() {
@@ -395,7 +399,7 @@ function recreateLocationCombo() {
     		   showCorrectLocationCombo();
     		   //set previously selected value of location
     		   if ($("#showFavoriteLocation").prop("checked")) {
-    			   setComboValues(locationSuggestionsFav_obj, selectedLocationFavorite, "fieldtLocationIdFavorite");
+    			   setComboValues(locationSuggestionsFav_obj, selectedLocationFavorite, "fieldLocationIdFavorite");
     		   } else {
     			   setComboValues(locationSuggestions_obj, selectedLocationAll, "fieldLocationIdAll");
     		   }
@@ -413,6 +417,38 @@ function recreateLocationCombo() {
  );
 }
 
+
+function showCorrectLocationCombo() {
+	var isChecked = $('#showFavoriteLocation').is(':checked');
+	//if show favorite location is checked, hide all field locations, else, show only favorite locations
+	if(isChecked){
+		$('#s2id_fieldLocationIdFavorite').show();
+		$('#s2id_fieldLocationIdAll').hide();
+		if($('#'+getJquerySafeId("fieldLocationIdFavorite")).select2("data") != null){
+			$('#'+getJquerySafeId("fieldLocationId")).val($('#'+getJquerySafeId("fieldLocationIdFavorite")).select2("data").id);
+			$('#'+getJquerySafeId("fieldLocationName")).val($('#'+getJquerySafeId("fieldLocationIdFavorite")).select2("data").text);
+			$('#'+getJquerySafeId("fieldLocationAbbreviation")).val($('#'+getJquerySafeId("fieldLocationIdFavorite")).select2("data").abbr);
+			
+		}else{
+			$('#'+getJquerySafeId("fieldLocationId")).val(0);
+			$('#'+getJquerySafeId("fieldLocationName")).val("");
+			$('#'+getJquerySafeId("fieldLocationAbbreviation")).val("");
+		}
+	}else{
+		$('#s2id_fieldLocationIdFavorite').hide();
+		$('#s2id_fieldLocationIdAll').show();
+		if($('#'+getJquerySafeId("fieldLocationIdAll")).select2("data") != null){
+			$('#'+getJquerySafeId("fieldLocationId")).val($('#'+getJquerySafeId("fieldLocationIdAll")).select2("data").id);
+			$('#'+getJquerySafeId("fieldLocationName")).val($('#'+getJquerySafeId("fieldLocationIdAll")).select2("data").text);
+			$('#'+getJquerySafeId("fieldLocationAbbreviation")).val($('#'+getJquerySafeId("fieldLocationIdFavorite")).select2("data").abbr);
+		}else{
+			$('#'+getJquerySafeId("fieldLocationId")).val(0);
+			$('#'+getJquerySafeId("fieldLocationName")).val("");
+			$('#'+getJquerySafeId("fieldLocationAbbreviation")).val("");
+		}
+		
+	}
+}
 function setComboValues(suggestions_obj, id, name) {
 	var dataVal = {id:'',text:'',description:''}; //default value
 	if(id != ''){
@@ -427,6 +463,8 @@ function setComboValues(suggestions_obj, id, name) {
 	}
 	//set the selected value of the combo
 	$("#" + name).select2('data', dataVal);
+	console.log("set data : " + name);
+	console.log(dataVal);
 }
 
 function recreateLocationComboAfterClose(comboName, data) {	

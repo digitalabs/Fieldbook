@@ -28,12 +28,33 @@ public class AdvancingNursery implements Serializable {
     private static final long serialVersionUID = 1L;
     private Study study;
     
-	public Study getStudy() {
-		return study;
-	}
-	public void setStudy(Study study) {
-		this.study = study;
-	}
+    /** The naming convention. */
+    private String namingConvention;
     
+    /** The suffix convention. */
+    private String suffixConvention;
+    
+    /** The method choice. */
+    private String methodChoice;
+    
+    /** The line choice. */
+    private String lineChoice;
+    
+    /** The line selected. */
+    private String lineSelected;
+    
+    /** The harvest date. */
+    private String harvestDate;
+    
+    /** The harvest location. */
+    private String harvestLocation;
+    
+    public Study getStudy() {
+        return study;
+    }
+    
+    public void setStudy(Study study) {
+        this.study = study;
+    }	   
     
 }

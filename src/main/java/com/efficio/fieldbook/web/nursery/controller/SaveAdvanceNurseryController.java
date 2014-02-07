@@ -15,7 +15,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -24,6 +23,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
@@ -42,7 +42,7 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
     @Resource
     private AdvancingNursery advancingNursery;
     @Resource
-    private FieldbookService fieldbookMiddlewareService;
+    private FieldbookService fieldbookService;
  
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
@@ -63,7 +63,7 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form
             , Model model, HttpSession session) throws MiddlewareQueryException{
-    	
+    	form.setGermplasmList(fieldbookService.advanceNursery(advancingNursery));
     	return super.show(model);
     }
        

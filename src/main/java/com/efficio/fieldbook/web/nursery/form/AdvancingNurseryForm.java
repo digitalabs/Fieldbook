@@ -11,6 +11,10 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.form;
 
+import java.util.List;
+
+import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class AdvancingNurseryForm.
@@ -76,6 +80,9 @@ public class AdvancingNurseryForm {
     
     /** The entries. */
     private int entries;
+    
+    /** The germplasm list. */
+    private List<ImportedGermplasm> germplasmList;
     
 	
 	/**
@@ -439,5 +446,23 @@ public class AdvancingNurseryForm {
          */
         public void setEntries(int entries) {
             this.entries = entries;
+        }
+        
+        /**
+         * Gets the germplasm list.
+         *
+         * @return the germplasm list
+         */
+        public List<ImportedGermplasm> getGermplasmList() {
+            return germplasmList;
+        }
+        
+        /**
+         * Sets the germplasm list.
+         *
+         * @param germplasmList the new germplasm list
+         */
+        public void setGermplasmList(List<ImportedGermplasm> germplasmList) {
+            this.germplasmList = germplasmList;
         }
 }

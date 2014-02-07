@@ -43,7 +43,14 @@ public class ImportedGermplasm implements Serializable {
     /** The check. */
     private String check;
     
-   
+    /** The breeding method id. */
+    private Integer breedingMethodId;
+    
+    private Integer gpid1;
+    
+    private Integer gpid2;
+    
+    private Integer gnpgs;
     
     /**
      * Instantiates a new imported germplasm.
@@ -87,6 +94,13 @@ public class ImportedGermplasm implements Serializable {
         this.check = check;
     }
     
+    public ImportedGermplasm(Integer entryId, String desig, String gid, String cross
+            , String source, String entryCode, String check, Integer breedingMethodId){
+        
+        this(entryId, desig, gid, cross, source, entryCode, check);
+        this.breedingMethodId = breedingMethodId;
+    }
+
     /**
      * Gets the gid.
      *
@@ -212,5 +226,61 @@ public class ImportedGermplasm implements Serializable {
 	public void setCheck(String check) {
 		this.check = check;
 	}
+    
+    /**
+     * @return the breedingMethodId
+     */
+    public Integer getBreedingMethodId() {
+        return breedingMethodId;
+    }
+    
+    /**
+     * @param breedingMethodId the breedingMethodId to set
+     */
+    public void setBreedingMethodId(Integer breedingMethodId) {
+        this.breedingMethodId = breedingMethodId;
+    }
+    
+    /**
+     * @return the gpid1
+     */
+    public Integer getGpid1() {
+        return gpid1;
+    }
+    
+    /**
+     * @param gpid1 the gpid1 to set
+     */
+    public void setGpid1(Integer gpid1) {
+        this.gpid1 = gpid1;
+    }
+    
+    /**
+     * @return the gpid2
+     */
+    public Integer getGpid2() {
+        return gpid2;
+    }
+
+    /**
+     * @param gpid2 the gpid2 to set
+     */
+    public void setGpid2(Integer gpid2) {
+        this.gpid2 = gpid2;
+    }
+
+    /**
+     * @return the gnpgs
+     */
+    public Integer getGnpgs() {
+        return gnpgs;
+    }
+    
+    /**
+     * @param gnpgs the gnpgs to set
+     */
+    public void setGnpgs(Integer gnpgs) {
+        this.gnpgs = gnpgs;
+    }
     
 }

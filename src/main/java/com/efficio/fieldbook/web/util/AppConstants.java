@@ -57,4 +57,11 @@ public class AppConstants {
     public static final int NAMING_CONVENTION_OTHER_CROPS = 3;
     
     public static final int SINGLE_PLANT_SELECTION_SF = 205;
+    public static final int SELECTED_BULK_SF = 206;
+    public static final int RANDOM_BULK_SF = 207;
+    public static final int RANDOM_BULK_CF = 507;
+    
+    public static final String METHOD_TYPE_GEN = "GEN";
+    
+    public static final String ENTRY_CODE_PREFIX = "E";
 }

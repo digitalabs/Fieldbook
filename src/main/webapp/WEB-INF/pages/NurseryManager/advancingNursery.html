@@ -92,7 +92,7 @@ th:action="@{/NurseryManager/advancing}" method="post" th:object="${advancingNur
 					<div class="row form-group">
 						<div class="col-xs-12 col-md-12">
 							&nbsp;&nbsp;&nbsp;&nbsp;<label class="control-label" th:text="#{advancing.nursery.breeding.method.the.same}">Naming Convention:</label>
-							&nbsp;&nbsp;&nbsp;&nbsp;
+							
 							<label class="radio-inline">
 							  <input checked="checked" type="radio" value="1" th:field="*{methodChoice}"/> 
 							  <span th:text="#{label.printing.do.you.need.bar.codes.yes}">Yes</span>
@@ -189,7 +189,7 @@ th:action="@{/NurseryManager/advancing}" method="post" th:object="${advancingNur
 					<div class="row form-group">
 						<div class="col-xs-12 col-md-12">
 							&nbsp;&nbsp;&nbsp;&nbsp;<label class="control-label" th:text="#{advancing.nursery.line.the.same}">Line the same:</label>
-							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							&nbsp;&nbsp;&nbsp;
 							<label class="radio-inline">
 							  <input checked="checked" type="radio" value="1" th:field="*{lineChoice}"/> 
 							  <span th:text="#{label.printing.do.you.need.bar.codes.yes}">Yes</span>

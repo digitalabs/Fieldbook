@@ -262,7 +262,18 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     @RequestMapping(method = RequestMethod.POST)
     public String postAdvanceNursery(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form
             , BindingResult result, Model model) throws MiddlewareQueryException{
-    	return "redirect:" + SaveAdvanceNurseryController.URL;
+        
+        advancingNursery.setNamingConvention(form.getNamingConvention());
+        advancingNursery.setSuffixConvention(form.getSuffixConvention());
+        advancingNursery.setMethodChoice(form.getMethodChoice());
+        advancingNursery.setBreedingMethodId(form.getBreedingMethodId());
+        advancingNursery.setLineChoice(form.getLineChoice());
+        advancingNursery.setLineSelected(form.getLineSelected());
+        advancingNursery.setHarvestDate(form.getHarvestDate());
+        advancingNursery.setHarvestLocationId(form.getHarvestLocationId());
+        advancingNursery.setHarvestLocationAbbreviation(form.getHarvestLocationAbbreviation());
+        
+        return "redirect:" + SaveAdvanceNurseryController.URL;
     }
     
 }

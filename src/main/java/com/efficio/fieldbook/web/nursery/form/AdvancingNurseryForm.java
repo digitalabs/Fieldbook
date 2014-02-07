@@ -11,42 +11,34 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.form;
 
-import java.util.List;
-
-import org.generationcp.middleware.domain.etl.MeasurementRow;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.pojos.Method;
-
 // TODO: Auto-generated Javadoc
 /**
  * The Class AdvancingNurseryForm.
  */
 public class AdvancingNurseryForm {
 	
-	/** The naming convention. */
-	private String namingConvention;
+    /** The naming convention. */
+    private String namingConvention;
 	
-	/** The suffix convention. */
-	private String suffixConvention;
+    /** The suffix convention. */
+    private String suffixConvention;
 	
-	/** The method choice. */
-	private String methodChoice;
+    /** The method choice. */
+    private String methodChoice;
 	
+    /** The line choice. */
+    private String lineChoice;
 	
-	/** The line choice. */
-	private String lineChoice;
+    /** The line selected. */
+    private String lineSelected;
 	
-	/** The line selected. */
-	private String lineSelected;
+    /** The harvest date. */
+    private String harvestDate;
 	
+    /** The harvest location. */
+    private String harvestLocation;
 	
-	/** The harvest date. */
-	private String harvestDate;
-	
-	/** The harvest location. */
-	private String harvestLocation;
-	
-	 /** The field location id all. */
+    /** The field location id all. */
     private String harvestLocationIdAll;
     
     /** The field location id favorite. */
@@ -76,6 +68,14 @@ public class AdvancingNurseryForm {
     /** The project id. */
     private String projectId;
     
+    /** The nursery advance name. */
+    private String nurseryAdvanceName;
+    
+    /** The nursery advance description. */
+    private String nurseryAdvanceDescription;
+    
+    /** The entries. */
+    private int entries;
     
 	
 	/**
@@ -385,5 +385,59 @@ public class AdvancingNurseryForm {
 	 */
 	public void setProjectId(String projectId) {
             this.projectId = projectId;
+        }
+	
+	/**
+	 * Gets the nursery advance name.
+	 *
+	 * @return the nursery advance name
+	 */
+	public String getNurseryAdvanceName() {
+	    return nurseryAdvanceName;
+	}
+	
+	/**
+	 * Sets the nursery advance name.
+	 *
+	 * @param nurseryAdvanceName the new nursery advance name
+	 */
+	public void setNurseryAdvanceName(String nurseryAdvanceName) {
+	    this.nurseryAdvanceName = nurseryAdvanceName;
+	}
+	
+	/**
+	 * Gets the nursery advance description.
+	 *
+	 * @return the nursery advance description
+	 */
+	public String getNurseryAdvanceDescription() {
+            return nurseryAdvanceDescription;
+        }
+        
+        /**
+         * Sets the nursery advance description.
+         *
+         * @param nurseryAdvanceDescription the new nursery advance description
+         */
+        public void setNurseryAdvanceDescription(String nurseryAdvanceDescription) {
+            this.nurseryAdvanceDescription = nurseryAdvanceDescription;
+        }
+        
+        /**
+         * Gets the entries.
+         *
+         * @return the entries
+         */
+        public int getEntries() {
+            return entries;
+        }
+        
+        /**
+         * Sets the entries.
+         *
+         * @param entries the new entries
+         */
+        public void setEntries(int entries) {
+            this.entries = entries;
         }
 }

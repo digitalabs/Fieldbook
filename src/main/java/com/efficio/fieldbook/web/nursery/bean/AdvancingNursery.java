@@ -46,8 +46,14 @@ public class AdvancingNursery implements Serializable {
     /** The harvest date. */
     private String harvestDate;
     
-    /** The harvest location. */
-    private String harvestLocation;
+    /** The harvest location id. */
+    private String harvestLocationId;
+    
+    /** The harvest location abbreviation. */
+    private String harvestLocationAbbreviation;
+    
+    /** The breeding method id. */
+    private String breedingMethodId;
     
     public Study getStudy() {
         return study;
@@ -56,5 +62,168 @@ public class AdvancingNursery implements Serializable {
     public void setStudy(Study study) {
         this.study = study;
     }	   
+ 
+    /**
+     * Gets the harvest location abbreviation.
+     *
+     * @return the harvest location abbreviation
+     */
+    public String getHarvestLocationAbbreviation() {
+            return harvestLocationAbbreviation;
+    }
     
+    /**
+     * Sets the harvest location abbreviation.
+     *
+     * @param harvestLocationAbbreviation the new harvest location abbreviation
+     */
+    public void setHarvestLocationAbbreviation(String harvestLocationAbbreviation) {
+            this.harvestLocationAbbreviation = harvestLocationAbbreviation;
+    }
+    
+    /**
+     * Gets the harvest location id.
+     *
+     * @return the harvest location id
+     */
+    public String getHarvestLocationId() {
+            return harvestLocationId;
+    }
+    
+    /**
+     * Sets the harvest location id.
+     *
+     * @param harvestLocationId the new harvest location id
+     */
+    public void setHarvestLocationId(String harvestLocationId) {
+            this.harvestLocationId = harvestLocationId;
+    }
+    
+    /**
+     * Gets the harvest date.
+     *
+     * @return the harvest date
+     */
+    public String getHarvestDate() {
+            return harvestDate;
+    }
+    
+    /**
+     * Sets the harvest date.
+     *
+     * @param harvestDate the new harvest date
+     */
+    public void setHarvestDate(String harvestDate) {
+            this.harvestDate = harvestDate;
+    }
+    
+    /**
+     * Gets the breeding method id.
+     *
+     * @return the breeding method id
+     */
+    public String getBreedingMethodId() {
+            return breedingMethodId;
+    }
+
+    /**
+     * Sets the breeding method id.
+     *
+     * @param breedingMethodId the new breeding method id
+     */
+    public void setBreedingMethodId(String breedingMethodId) {
+            this.breedingMethodId = breedingMethodId;
+    }
+
+    /**
+     * Gets the naming convention.
+     *
+     * @return the naming convention
+     */
+    public String getNamingConvention() {
+            return namingConvention;
+    }
+    
+    /**
+     * Sets the naming convention.
+     *
+     * @param namingConvention the new naming convention
+     */
+    public void setNamingConvention(String namingConvention) {
+            this.namingConvention = namingConvention;
+    }
+    
+    /**
+     * Gets the suffix convention.
+     *
+     * @return the suffix convention
+     */
+    public String getSuffixConvention() {
+            return suffixConvention;
+    }
+    
+    /**
+     * Sets the suffix convention.
+     *
+     * @param suffixConvention the new suffix convention
+     */
+    public void setSuffixConvention(String suffixConvention) {
+            this.suffixConvention = suffixConvention;
+    }
+    
+    /**
+     * Gets the method choice.
+     *
+     * @return the method choice
+     */
+    public String getMethodChoice() {
+            return methodChoice;
+    }
+    
+    /**
+     * Sets the method choice.
+     *
+     * @param methodChoice the new method choice
+     */
+    public void setMethodChoice(String methodChoice) {
+            this.methodChoice = methodChoice;
+    }
+    
+    
+    
+    /**
+     * Gets the line choice.
+     *
+     * @return the line choice
+     */
+    public String getLineChoice() {
+            return lineChoice;
+    }
+    
+    /**
+     * Sets the line choice.
+     *
+     * @param lineChoice the new line choice
+     */
+    public void setLineChoice(String lineChoice) {
+            this.lineChoice = lineChoice;
+    }
+    
+    /**
+     * Gets the line selected.
+     *
+     * @return the line selected
+     */
+    public String getLineSelected() {
+            return lineSelected;
+    }
+    
+    /**
+     * Sets the line selected.
+     *
+     * @param lineSelected the new line selected
+     */
+    public void setLineSelected(String lineSelected) {
+            this.lineSelected = lineSelected;
+    }
 }

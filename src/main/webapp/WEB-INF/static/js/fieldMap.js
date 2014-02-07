@@ -399,7 +399,7 @@ function recreateLocationCombo() {
     		   showCorrectLocationCombo();
     		   //set previously selected value of location
     		   if ($("#showFavoriteLocation").prop("checked")) {
-    			   setComboValues(locationSuggestionsFav_obj, selectedLocationFavorite, "fieldtLocationIdFavorite");
+    			   setComboValues(locationSuggestionsFav_obj, selectedLocationFavorite, "fieldLocationIdFavorite");
     		   } else {
     			   setComboValues(locationSuggestions_obj, selectedLocationAll, "fieldLocationIdAll");
     		   }
@@ -463,6 +463,8 @@ function setComboValues(suggestions_obj, id, name) {
 	}
 	//set the selected value of the combo
 	$("#" + name).select2('data', dataVal);
+	console.log("set data : " + name);
+	console.log(dataVal);
 }
 
 function recreateLocationComboAfterClose(comboName, data) {	

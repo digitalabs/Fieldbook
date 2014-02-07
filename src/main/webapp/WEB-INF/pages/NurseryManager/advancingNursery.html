@@ -23,7 +23,7 @@
 </div>
 
 <form onsubmit="javascript: return validateAdvanceNursery();" id="specifyLabelDetailsForm" role="form-horizontal" action="#"
-th:action="@{/NurseryManager/advancing}" method="post" th:object="${advancingNurseryform}" enctype="multipart/form-data">
+th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advancingNurseryform}" enctype="multipart/form-data">
 
 <input type="hidden" th:field="*{defaultMethodId}"/>
 

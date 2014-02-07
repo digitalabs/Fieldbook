@@ -261,10 +261,8 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     
     @RequestMapping(method = RequestMethod.POST)
     public String postAdvanceNursery(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form
-            , Model model, HttpSession session, @PathVariable int nurseryId) throws MiddlewareQueryException{
-    	
-    	
-    	return super.show(model);
+            , BindingResult result, Model model) throws MiddlewareQueryException{
+    	return "redirect:" + SaveAdvanceNurseryController.URL;
     }
     
 }

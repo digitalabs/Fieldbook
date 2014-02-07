@@ -138,6 +138,12 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 			    </label>
 			  </div>
 		    </div>
+		    
+		    <div class="col-xs-3 col-md-3">
+		  		<label class="control-label">
+		  			<a href="javascript: openManageLocations()" th:text="#{advancing.nursery.manage.location}">Manage Locations</a>
+		  		</label>	
+		    </div>
 		  </div>
 		  <div class="form-group col-xs-12 col-md-12">
 		    
@@ -215,6 +221,9 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 	    </div>
 	  </div>
 	
+</div>
+<div class="row">
+	<div id="manage-location" th:include="/Common/manageLocationsModal"></div>
 </div>
 </form>
 <div layout:fragment="page-script">

@@ -15,6 +15,7 @@ import java.util.List;
 
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class FieldmapForm.
  *
@@ -40,7 +41,30 @@ public class FieldmapForm{
     /** The save and redirect to create label. */
     private String saveAndRedirectToCreateLabel;
     
+    /** The project id. */
+    private String projectId;
+    
+    
+    
     /**
+     * Gets the project id.
+     *
+     * @return the project id
+     */
+    public String getProjectId() {
+		return projectId;
+	}
+
+	/**
+	 * Sets the project id.
+	 *
+	 * @param projectId the new project id
+	 */
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
+	}
+
+	/**
      * Gets the save and redirect to create label.
      *
      * @return the save and redirect to create label

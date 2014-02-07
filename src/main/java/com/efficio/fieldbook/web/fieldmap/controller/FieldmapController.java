@@ -232,6 +232,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         try {
             setSelectedFieldMapInfo(id, true);
             form.setUserFieldmap(userFieldmap);
+            form.setProjectId(this.getCurrentProjectId());
         } catch (NumberFormatException e) {
             LOG.error(e.toString());
         }
@@ -395,6 +396,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         try {
             setSelectedFieldMapInfo(id, false);
             form.setUserFieldmap(userFieldmap);
+            form.setProjectId(this.getCurrentProjectId());
         } catch (NumberFormatException e) {
             LOG.error(e.toString());
         }

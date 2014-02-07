@@ -829,3 +829,4 @@ $('#'+getJquerySafeId('methodIdFavorite')).select2({
 });
 
 }
+

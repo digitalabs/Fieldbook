@@ -371,3 +371,82 @@ function isDeletedPlotAtStartCoord(id) {
 	} 
 	return false;
 }
+
+function openManageLocations() {
+	$('#manageLocationModal').modal({ backdrop: 'static', keyboard: true });
+	$("#manageLocationModal").modal("show");
+}
+
+function recreateLocationCombo() {
+	var selectedLocationAll = $("#fieldLocationIdAll").val();
+	var selectedLocationFavorite = $("#fieldLocationIdFavorite").val();
+	
+	Spinner.toggle();
+	$.ajax(
+	{ url: "/Fieldbook/NurseryManager/advance/nursery/getLocations",
+       type: "GET",
+       cache: false,
+       data: "",
+       success: function(data) {
+    	   if (data.success == "1") {
+    		   //recreate the select2 combos to get updated list of locations
+    		   recreateLocationComboAfterClose("fieldLocationIdAll", $.parseJSON(data.allLocations));
+    		   recreateLocationComboAfterClose("fieldLocationIdFavorite", $.parseJSON(data.favoriteLocations));
+    		   showCorrectLocationCombo();
+    		   //set previously selected value of location
+    		   if ($("#showFavoriteLocation").prop("checked")) {
+    			   setComboValues(locationSuggestionsFav_obj, selectedLocationFavorite, "fieldtLocationIdFavorite");
+    		   } else {
+    			   setComboValues(locationSuggestions_obj, selectedLocationAll, "fieldLocationIdAll");
+    		   }
+    	   } else {
+    		   showErrorMessage("page-message", data.errorMessage);
+    	   }
+       },
+       error: function(jqXHR, textStatus, errorThrown){
+			console.log("The following error occured: " + textStatus, errorThrown); 
+	   }, 
+	   complete: function(){  
+		   Spinner.toggle();
+	   } 
+     }
+ );
+}
+
+function setComboValues(suggestions_obj, id, name) {
+	var dataVal = {id:'',text:'',description:''}; //default value
+	if(id != ''){
+		var count = 0;
+		//find the matching value in the array given
+    	for(count = 0 ; count < suggestions_obj.length ; count++){
+    		if(suggestions_obj[count].id == id){
+    			dataVal = suggestions_obj[count];			    			
+    			break;
+    		}			    			
+    	}
+	}
+	//set the selected value of the combo
+	$("#" + name).select2('data', dataVal);
+}
+
+function recreateLocationComboAfterClose(comboName, data) {	
+	if (comboName == "fieldLocationIdAll") {
+		//clear all locations dropdown
+		locationSuggestions = [];
+		locationSuggestions_obj = [];
+		
+		initializeLocationSelect2(locationSuggestions, locationSuggestions_obj);
+		//reload the data retrieved
+		locationSuggestions = data;
+		initializeLocationSelect2(locationSuggestions, locationSuggestions_obj);
+	} else {
+		//clear the favorite locations dropdown
+		locationSuggestionsFav = [];
+		locationSuggestionsFav_obj = [];
+		initializeLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj);
+		//reload the data
+		locationSuggestionsFav = data;
+		initializeLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj);
+	}
+
+}

@@ -16,10 +16,20 @@
 			<id>gcp-efficio-repo</id>
 			<url>http://gcp.efficio.us.com:8081/nexus/content/repositories/thirdparty/</url>
 		</repository>
+		
 	</repositories>
 
 	<dependencies>
 		<!-- Spring Dependency -->
+		
+		<dependency>
+		    <groupId>pojoxml</groupId>
+		    <artifactId>pojoxml-sdk</artifactId>
+		    <version>1.0</version>
+		    <scope>system</scope>
+		    <systemPath>${project.basedir}/libs/pojoxml/pojoxml-sdk/1.0/pojoxml-sdk-1.0.jar</systemPath>
+		</dependency> 
+         
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>

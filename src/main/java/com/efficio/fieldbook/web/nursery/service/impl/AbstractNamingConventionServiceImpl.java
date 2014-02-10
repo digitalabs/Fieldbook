@@ -31,16 +31,12 @@ implements NamingConventionService {
     public List<ImportedGermplasm> advanceNursery(AdvancingNursery info) throws MiddlewareQueryException {
         AdvancingSourceList list = createAdvancingSourceList(info);
         updatePlantsSelectedIfNecessary(list, info);
-        System.out.println("list is " + list);
-        if (list != null) {
-            System.out.println("list size is " + list.getRows().size());
-        }
         return generateGermplasmList(list);
     }
 
     protected abstract List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList list) throws MiddlewareQueryException;
     
-    protected abstract void assignNames(AdvancingSource source);
+    protected abstract void assignNames(ImportedGermplasm germplasm, AdvancingSource source);
 
     private AdvancingSourceList createAdvancingSourceList(AdvancingNursery advanceInfo) throws MiddlewareQueryException {
         int nurseryId = advanceInfo.getStudy().getId();
@@ -111,7 +107,7 @@ implements NamingConventionService {
                  source.getGermplasm().getGpid1(), source.getGermplasm().getGpid2(), 
                  source.getMethodType(), breedingMethod);
          
-         assignNames(source);
+         assignNames(germplasm, source);
          
          list.add(germplasm);
     }

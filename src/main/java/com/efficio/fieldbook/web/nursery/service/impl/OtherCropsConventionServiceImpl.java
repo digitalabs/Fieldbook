@@ -44,11 +44,11 @@ implements OtherCropsConventionService {
             }
         }
             
-        return null;
+        return list;
     }
 
     @Override
-    protected void assignNames(AdvancingSource source) {
+    protected void assignNames(ImportedGermplasm germplasm, AdvancingSource source) {
         List<Name> names = new ArrayList<Name>();
         
         Name name = new Name();
@@ -69,6 +69,6 @@ implements OtherCropsConventionService {
         name.setNstat(1);
         names.add(name);
         
-        source.getGermplasm().setNames(names);
+        germplasm.setNames(names);
     }
 }

@@ -273,13 +273,6 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         advancingNursery.setHarvestLocationId(form.getHarvestLocationId());
         advancingNursery.setHarvestLocationAbbreviation(form.getHarvestLocationAbbreviation());
 
-        List<ImportedGermplasm> list = fieldbookService.advanceNursery(advancingNursery);
-        if (list != null && !list.isEmpty()) {
-            for (ImportedGermplasm germplasm : list) {
-                System.out.println(germplasm);
-            }
-        }
-        
         return "redirect:" + SaveAdvanceNurseryController.URL;
     }
     

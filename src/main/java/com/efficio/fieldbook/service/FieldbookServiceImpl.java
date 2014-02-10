@@ -17,13 +17,15 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
+import com.efficio.fieldbook.web.nursery.service.NamingConventionService;
+import com.efficio.fieldbook.web.nursery.service.impl.NamingConventionServiceFactory;
 
 /**
  * The Class FieldbookServiceImpl.
@@ -34,9 +36,10 @@ public class FieldbookServiceImpl implements FieldbookService{
 	@Resource
     private FileService fileService;
 	
-	@Resource
-	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
+	@Autowired
+	private NamingConventionServiceFactory namingConventionServiceFactory;
 	
+
 	/* (non-Javadoc)
 	 * @see com.efficio.fieldbook.service.api.FieldbookService#storeUserWorkbook(java.io.InputStream)
 	 */
@@ -56,43 +59,13 @@ public class FieldbookServiceImpl implements FieldbookService{
 	
 	
 	public List<ImportedGermplasm> advanceNursery(AdvancingNursery advanceInfo)
-	        //int nurseryId, int namingConvention, String suffix, 
-	        //Integer selectedMethod, String locationAbbreviation) 
 	        throws MiddlewareQueryException {
 
-	    return null;
-	    /*
-	    int nurseryId = advanceInfo.getStudy().getId();
-	    String namingConvention = advanceInfo.getNamingConvention();
-	    String suffix = advanceInfo.getSuffixConvention();
-	    Integer selectedMethod = getIntegerValue(advanceInfo.getBreedingMethodId());
-	    String locationAbbreviation = advanceInfo.getHarvestLocationAbbreviation();
-	    
-	    Workbook workbook = fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
-	    AdvancingSourceList rows = new AdvancingSourceList(workbook);
-	    Study nursery = fieldbookMiddlewareService.getStudy(nurseryId);
-	    if (nursery.getConditions() != null && nursery.getConditions().size() > 0) {
-	        Variable breedingMethod = nursery.getConditions().findById(TermId.BREEDING_METHOD_ID.getId());
-	        if (breedingMethod != null && breedingMethod.getValue() != null && NumberUtils.isNumber(breedingMethod.getValue())) {
-	            rows.setNurseryBreedingMethodId(Integer.valueOf(breedingMethod.getValue()));
-	        }
-	    }
-	    rows.setSuffix(suffix);
-	    rows.setSelectedMethodId(selectedMethod);
-	    rows.setLocationAbbreviation(locationAbbreviation);
-	    
-	    NamingConventionService service = null;
-	    //if (namingConvention.equals("CIMMYT-WHEAT")) {
-	        service = new CimmytWheatConventionServiceImpl();
-	    //}
-	    return service.generateGermplasmList(rows);
-	    */
+        String namingConvention = advanceInfo.getNamingConvention();
+
+        NamingConventionService service = namingConventionServiceFactory.getNamingConventionService(namingConvention);
+
+	    return service.advanceNursery(advanceInfo);
 	}
 	
-	private Integer getIntegerValue(String value) {
-	    if (value != null && NumberUtils.isNumber(value)) {
-	        return Integer.valueOf(value);
-	    }
-	    return null;
-	}
 }

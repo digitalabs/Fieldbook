@@ -21,8 +21,6 @@ import javax.servlet.http.HttpSession;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.dms.Variable;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
-import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
@@ -41,13 +39,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.AddOrRemoveTraitsForm;
+import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
 /**
  * The Class AddOrRemoveTraitsController.
@@ -71,6 +68,9 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     private MeasurementsGeneratorService measurementsGeneratorService;
     @Resource
     private WorkbenchDataManager workbenchDataManager;
+    
+    @Resource
+    private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
 
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
@@ -272,6 +272,13 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         advancingNursery.setHarvestDate(form.getHarvestDate());
         advancingNursery.setHarvestLocationId(form.getHarvestLocationId());
         advancingNursery.setHarvestLocationAbbreviation(form.getHarvestLocationAbbreviation());
+
+        List<ImportedGermplasm> list = fieldbookService.advanceNursery(advancingNursery);
+        if (list != null && !list.isEmpty()) {
+            for (ImportedGermplasm germplasm : list) {
+                System.out.println(germplasm);
+            }
+        }
         
         return "redirect:" + SaveAdvanceNurseryController.URL;
     }

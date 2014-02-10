@@ -12,6 +12,9 @@
 package com.efficio.fieldbook.web.nursery.bean;
 
 import java.io.Serializable;
+import java.util.List;
+
+import org.generationcp.middleware.pojos.Name;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -51,6 +54,8 @@ public class ImportedGermplasm implements Serializable {
     private Integer gpid2;
     
     private Integer gnpgs;
+    
+    private List<Name> names;
     
     /**
      * Instantiates a new imported germplasm.
@@ -281,6 +286,35 @@ public class ImportedGermplasm implements Serializable {
      */
     public void setGnpgs(Integer gnpgs) {
         this.gnpgs = gnpgs;
+    }
+
+    
+    /**
+     * @return the names
+     */
+    public List<Name> getNames() {
+        return names;
+    }
+
+    
+    /**
+     * @param names the names to set
+     */
+    public void setNames(List<Name> names) {
+        this.names = names;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "ImportedGermplasm [entryId=" + entryId + ", desig=" + desig
+                + ", gid=" + gid + ", cross=" + cross + ", source=" + source
+                + ", entryCode=" + entryCode + ", check=" + check
+                + ", breedingMethodId=" + breedingMethodId + ", gpid1=" + gpid1
+                + ", gpid2=" + gpid2 + ", gnpgs=" + gnpgs + ", names=" + names
+                + "]";
     }
     
 }

@@ -112,6 +112,11 @@
 		<aop:scoped-proxy />
 	</bean>
 
+	<bean id="advancingNursery" class="com.efficio.fieldbook.web.nursery.bean.AdvancingNursery"
+		scope="session">
+		<aop:scoped-proxy />
+	</bean>
+	
 	<bean id="nurseryUserSelection" class="com.efficio.fieldbook.web.nursery.bean.UserSelection"
 		scope="session">
 		<aop:scoped-proxy />

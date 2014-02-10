@@ -68,5 +68,10 @@ public class AppConstants {
     
     public static final String METHOD_TYPE_GEN = "GEN";
     
+    public static final int METHOD_UNKNOWN_DERIVATIVE_METHOD_SF = 31; 
+    public static final int METHOD_UNKNOWN_GENERATIVE_METHOD_SF = 1; 
+    
     public static final String ENTRY_CODE_PREFIX = "E";
+    
+    public static final String NAME_SEPARATOR = "/";
 }

@@ -44,7 +44,7 @@ implements OtherCropsConventionService {
             }
         }
             
-        return null;
+        return list;
     }
 
     @Override

@@ -31,10 +31,6 @@ implements NamingConventionService {
     public List<ImportedGermplasm> advanceNursery(AdvancingNursery info) throws MiddlewareQueryException {
         AdvancingSourceList list = createAdvancingSourceList(info);
         updatePlantsSelectedIfNecessary(list, info);
-        System.out.println("list is " + list);
-        if (list != null) {
-            System.out.println("list size is " + list.getRows().size());
-        }
         return generateGermplasmList(list);
     }
 

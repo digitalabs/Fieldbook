@@ -84,7 +84,7 @@ public class AdvancingSourceList{
         Integer integerValue = null;
         
         if (NumberUtils.isNumber(value)) {
-            integerValue = Integer.valueOf(value);
+            integerValue = Double.valueOf(value).intValue();
         }
         
         return integerValue;

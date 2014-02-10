@@ -56,6 +56,11 @@ public class AppConstants {
     public static final int NAMING_CONVENTION_CIMMYT_MAIZE = 2;
     public static final int NAMING_CONVENTION_OTHER_CROPS = 3;
     
+    public static final int METHOD_CHOICE_YES = 1;
+    public static final int METHOD_CHOICE_NO = 0;
+    public static final int LINE_CHOICE_YES = 1;
+    public static final int LINE_CHOICE_NO = 0;
+    
     public static final int SINGLE_PLANT_SELECTION_SF = 205;
     public static final int SELECTED_BULK_SF = 206;
     public static final int RANDOM_BULK_SF = 207;

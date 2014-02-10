@@ -36,7 +36,7 @@ implements NamingConventionService {
 
     protected abstract List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList list) throws MiddlewareQueryException;
     
-    protected abstract void assignNames(AdvancingSource source);
+    protected abstract void assignNames(ImportedGermplasm germplasm, AdvancingSource source);
 
     private AdvancingSourceList createAdvancingSourceList(AdvancingNursery advanceInfo) throws MiddlewareQueryException {
         int nurseryId = advanceInfo.getStudy().getId();
@@ -107,7 +107,7 @@ implements NamingConventionService {
                  source.getGermplasm().getGpid1(), source.getGermplasm().getGpid2(), 
                  source.getMethodType(), breedingMethod);
          
-         assignNames(source);
+         assignNames(germplasm, source);
          
          list.add(germplasm);
     }

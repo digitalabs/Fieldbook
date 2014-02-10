@@ -83,7 +83,7 @@ implements CimmytWheatConventionService {
     }
     
     @Override
-    protected void assignNames(AdvancingSource row) {
+    protected void assignNames(ImportedGermplasm germplasm, AdvancingSource row) {
         List<Name> names = new ArrayList<Name>();
         
         Name name = new Name();
@@ -107,7 +107,7 @@ implements CimmytWheatConventionService {
         name.setNstat(0);
         names.add(name);
         
-        row.getGermplasm().setNames(names);
+        germplasm.setNames(names);
     }
     
 }

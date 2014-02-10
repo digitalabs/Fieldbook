@@ -33,7 +33,7 @@ implements OtherCropsConventionService {
                     addImportedGermplasmToList(list, row, newGermplasmName, breedingMethodId, index++, rows.getNurseryName());
                 }
                 else {
-                    for (int i = 0; i < rows.getRows().size(); i++) {
+                    for (int i = 0; i < row.getPlantsSelected(); i++) {
                         newGermplasmName = row.getGermplasm().getDesig() + "-" + (i+1) + rows.getSuffix();
                         if (breedingMethodId == null) {
                             breedingMethodId = row.getBreedingMethodId();

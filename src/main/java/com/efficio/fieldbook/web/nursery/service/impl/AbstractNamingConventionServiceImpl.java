@@ -55,7 +55,7 @@ implements NamingConventionService {
         boolean lineChoiceSame = info.getLineChoice() != null && "1".equals(info.getLineChoice());
         int plantsSelected = 0;
         if (info.getLineSelected() != null && NumberUtils.isNumber(info.getLineSelected())) {
-            plantsSelected = Integer.valueOf(info.getLineSelected()); 
+            plantsSelected = Double.valueOf(info.getLineSelected()).intValue(); 
         }
         else {
             lineChoiceSame = false;

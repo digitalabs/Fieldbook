@@ -69,7 +69,7 @@ function validateEnterLabelFieldsPage(type){
 	}
 	var data = $("#"+getJquerySafeId('userLabelPrinting.filename')).val();
     //data = data.replace(/^\s|\s$/g, ""); //trims string
-     var isValid = /^[ A-Za-z0-9_@.\.&''@{},$!\-#()%.+~_=^\s]*$/i.test(data);
+     var isValid = /^[ A-Za-z0-9_@.\.&''@{}$!\-#()%.+~_=^\s]*$/i.test(data);
 	    
 	
 	if (!isValid){

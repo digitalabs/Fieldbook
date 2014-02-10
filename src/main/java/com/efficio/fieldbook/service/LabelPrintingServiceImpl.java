@@ -629,7 +629,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
     	return stemp;
     }
     private String cleanSheetName(String name){
-    	name = name.replaceAll("[^a-zA-Z0-9-_.=^&'@{},$!-#()%.+~_\\[\\]]", "_");
+    	name = name.replaceAll("[^a-zA-Z0-9-_.=^&'@{}$!-#()%.+~_\\[\\]]", "_");
     	name = name.replaceAll("\"", "_");
     	return name;
     }

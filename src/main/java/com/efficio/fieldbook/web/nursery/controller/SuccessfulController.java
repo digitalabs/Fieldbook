@@ -65,5 +65,11 @@ public class SuccessfulController extends AbstractBaseFieldbookController{
     	session.invalidate();
     	return super.show(model);
     }
+    
+    @RequestMapping(method = RequestMethod.POST)
+    public String landingScreen() {
+        return "redirect:" + ManageNurseriesController.URL;
+    }
+
 
 }

@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.generationcp.middleware.pojos.Name;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ImportedGermplasm.
  */

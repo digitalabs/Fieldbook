@@ -41,7 +41,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -62,13 +61,20 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     /** The user selection. */
     @Resource
     private AdvancingNursery advancingNursery;
+    
+    /** The fieldbook middleware service. */
     @Resource
     private FieldbookService fieldbookMiddlewareService;
+    
+    /** The measurements generator service. */
     @Resource
     private MeasurementsGeneratorService measurementsGeneratorService;
+    
+    /** The workbench data manager. */
     @Resource
     private WorkbenchDataManager workbenchDataManager;
     
+    /** The fieldbook service. */
     @Resource
     private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
 
@@ -121,6 +127,11 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         return null;
     }
     
+    /**
+     * Gets the breeding method list.
+     *
+     * @return the breeding method list
+     */
     @ModelAttribute("methodList")
     public List<Method> getBreedingMethodList() {
         try {
@@ -160,12 +171,14 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     }
     
     /**
-     * Shows the screen
+     * Shows the screen.
      *
      * @param form the form
      * @param model the model
      * @param session the session
+     * @param nurseryId the nursery id
      * @return the string
+     * @throws MiddlewareQueryException the middleware query exception
      */
     @RequestMapping(value="/{nurseryId}", method = RequestMethod.GET)
     public String show(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form
@@ -188,6 +201,11 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	return super.show(model);
     }
     
+    /**
+     * Gets the breeding methods.
+     *
+     * @return the breeding methods
+     */
     @ResponseBody
     @RequestMapping(value="/getBreedingMethods", method = RequestMethod.GET)
     public Map<String, String> getBreedingMethods() {
@@ -213,6 +231,11 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         return result;
     }
     
+    /**
+     * Gets the locations.
+     *
+     * @return the locations
+     */
     @ResponseBody
     @RequestMapping(value="/getLocations", method = RequestMethod.GET)
     public Map<String, String> getLocations() {
@@ -235,6 +258,12 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         return result;
     }
     
+    /**
+     * Convert favorite location to json.
+     *
+     * @param locations the locations
+     * @return the string
+     */
     private String convertFaveLocationToJson(List<Location> locations) {
         if (locations!= null) {
             try {
@@ -247,6 +276,12 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         return "";
     }
     
+    /**
+     * Convert methods to json.
+     *
+     * @param breedingMethods the breeding methods
+     * @return the string
+     */
     private String convertMethodsToJson(List<Method> breedingMethods) {
         if (breedingMethods!= null) {
             try {
@@ -259,6 +294,15 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         return "";
     }
     
+    /**
+     * Post advance nursery.
+     *
+     * @param form the form
+     * @param result the result
+     * @param model the model
+     * @return the string
+     * @throws MiddlewareQueryException the middleware query exception
+     */
     @RequestMapping(method = RequestMethod.POST)
     public String postAdvanceNursery(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form
             , BindingResult result, Model model) throws MiddlewareQueryException{

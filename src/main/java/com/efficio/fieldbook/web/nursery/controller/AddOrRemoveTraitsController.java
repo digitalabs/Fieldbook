@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.AddOrRemoveTraitsForm;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 

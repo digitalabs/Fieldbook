@@ -74,4 +74,9 @@ public class AppConstants {
     public static final String ENTRY_CODE_PREFIX = "E";
     
     public static final String NAME_SEPARATOR = "/";
+    
+    public static final String GERMPLASM_LIST_TYPE_HARVEST = "Harvest";
+    
+    
+    
 }

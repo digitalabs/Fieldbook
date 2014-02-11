@@ -15,7 +15,6 @@ import java.util.List;
 
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class AdvancingNurseryForm.
  */
@@ -464,5 +463,54 @@ public class AdvancingNurseryForm {
          */
         public void setGermplasmList(List<ImportedGermplasm> germplasmList) {
             this.germplasmList = germplasmList;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append("AdvancingNurseryForm [namingConvention=");
+            builder.append(namingConvention);
+            builder.append(", suffixConvention=");
+            builder.append(suffixConvention);
+            builder.append(", methodChoice=");
+            builder.append(methodChoice);
+            builder.append(", lineChoice=");
+            builder.append(lineChoice);
+            builder.append(", lineSelected=");
+            builder.append(lineSelected);
+            builder.append(", harvestDate=");
+            builder.append(harvestDate);
+            builder.append(", harvestLocation=");
+            builder.append(harvestLocation);
+            builder.append(", harvestLocationIdAll=");
+            builder.append(harvestLocationIdAll);
+            builder.append(", harvestLocationIdFavorite=");
+            builder.append(harvestLocationIdFavorite);
+            builder.append(", harvestLocationId=");
+            builder.append(harvestLocationId);
+            builder.append(", harvestLocationName=");
+            builder.append(harvestLocationName);
+            builder.append(", harvestLocationAbbreviation=");
+            builder.append(harvestLocationAbbreviation);
+            builder.append(", defaultMethodId=");
+            builder.append(defaultMethodId);
+            builder.append(", breedingMethodId=");
+            builder.append(breedingMethodId);
+            builder.append(", methodIdAll=");
+            builder.append(methodIdAll);
+            builder.append(", methodIdFavorite=");
+            builder.append(methodIdFavorite);
+            builder.append(", projectId=");
+            builder.append(projectId);
+            builder.append(", nurseryAdvanceName=");
+            builder.append(nurseryAdvanceName);
+            builder.append(", nurseryAdvanceDescription=");
+            builder.append(nurseryAdvanceDescription);
+            builder.append(", entries=");
+            builder.append(entries);
+            builder.append(", germplasmList=");
+            builder.append(germplasmList);
+            builder.append("]");
+            return builder.toString();
         }
 }

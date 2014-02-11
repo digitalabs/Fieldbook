@@ -5,7 +5,13 @@
 		</h1>
 	</div>			  
 </div>
-<form onsubmit="javascript: return validateAdvanceNursery();" role="form-horizontal" action="#"
+
+	<div id="page-message" style="display:none;">
+	        <div id="error-message" class="alert alert-danger"></div> 
+	</div>
+
+
+<form id="saveAdvanceNurseryForm" role="form-horizontal" action="#"
 th:action="@{/NurseryManager/saveAdvanceNursery}" method="post" th:object="${advancingNurseryform}" enctype="multipart/form-data">
 	<div class="row">
 		<div class="row">&nbsp;</div>
@@ -80,19 +86,47 @@ th:action="@{/NurseryManager/saveAdvanceNursery}" method="post" th:object="${adv
 					<div class="col-xs-4 col-md-4">&nbsp;</div>
 					<div class="col-xs-4 col-md-4">
 						<input type="button" onclick="javascript: window.history.back();"  value="Cancel" class="btn btn-default"/>
-	      				<input type="submit" value="Save" th:value="#{common.form.save.text}" class="btn btn-primary"/>
+	      				<input type="submit" value="Save" th:value="#{common.form.save.text}" class="btn btn-primary" onclick="doSave();" />
 					</div>
 					<div class="col-xs-4 col-md-4">&nbsp;</div>
 				</div>
 			</div>
 		</div>
 	</div>
+	
 </form>
+
 <div layout:fragment="page-script">
-<script type="text/javascript" th:src="@{/static/js/nurseryManager.js}"></script>
 <script type='text/javascript' th:inline="javascript">
-	//<![CDATA[    	 		
- 		//
+	//<![CDATA[   
+ 		       
+		function doSave(){
+  	      	var $form = $("#saveAdvanceNurseryForm");
+  			serializedData = $form.serialize();
+			Spinner.toggle();
+
+			$.ajax({
+				url: "saveAdvanceNursery",
+				type: "post",
+				dataType: "json",
+				data: serializedData,
+			    success: function(data){
+				    if (data.status == "1") {
+			    		window.location = "successful";
+			       	} else if (data.status == "-1") {
+			       		$("#error-message").html(data.errorMessage);
+			       		$("#page-message").show();
+			       	}
+			   }, 
+			   error: function(jqXHR, textStatus, errorThrown){
+					console.log("The following error occured: " + textStatus, errorThrown); 
+			   }, 
+			   complete: function(){  
+				   Spinner.toggle();
+			   } 
+			});
+		}      
+	
       //]]>
     </script>
 	

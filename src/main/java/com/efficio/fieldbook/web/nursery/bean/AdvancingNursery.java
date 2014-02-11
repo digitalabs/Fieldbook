@@ -20,7 +20,7 @@ import org.generationcp.middleware.domain.dms.Study;
  * to perform the actual loading operation.
  */
 public class AdvancingNursery implements Serializable {
-    
+
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
     private Study study;
@@ -222,5 +222,32 @@ public class AdvancingNursery implements Serializable {
      */
     public void setLineSelected(String lineSelected) {
             this.lineSelected = lineSelected;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("AdvancingNursery [study=");
+        builder.append(study);
+        builder.append(", namingConvention=");
+        builder.append(namingConvention);
+        builder.append(", suffixConvention=");
+        builder.append(suffixConvention);
+        builder.append(", methodChoice=");
+        builder.append(methodChoice);
+        builder.append(", lineChoice=");
+        builder.append(lineChoice);
+        builder.append(", lineSelected=");
+        builder.append(lineSelected);
+        builder.append(", harvestDate=");
+        builder.append(harvestDate);
+        builder.append(", harvestLocationId=");
+        builder.append(harvestLocationId);
+        builder.append(", harvestLocationAbbreviation=");
+        builder.append(harvestLocationAbbreviation);
+        builder.append(", breedingMethodId=");
+        builder.append(breedingMethodId);
+        builder.append("]");
+        return builder.toString();
     }
 }

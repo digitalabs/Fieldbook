@@ -36,10 +36,11 @@ function showPostPage(paginationUrl,previewPageNum, pageNum, sectionDiv, formNam
 
 	Spinner.toggle();
  	$.ajax(
-         { url: paginationUrl+pageNum+"/"+previewPageNum,
+         { url: paginationUrl+pageNum+"/"+previewPageNum+'?r=' + (Math.random() * 999),
            type: "POST",
            data: serializedData,
            cache: false,
+           timeout: 70000,
            success: function(html) {
         	   
              $("#"+sectionDiv).empty().append(html);

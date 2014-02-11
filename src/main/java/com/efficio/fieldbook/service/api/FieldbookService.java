@@ -35,6 +35,12 @@ public interface FieldbookService {
 	 */
     String storeUserWorkbook(InputStream in) throws IOException;
     
-    
+    /**
+     * Logic for advancing a nursery following a particular naming convention.
+     * 
+     * @param advanceInfo
+     * @return
+     * @throws MiddlewareQueryException
+     */
     List<ImportedGermplasm> advanceNursery(AdvancingNursery advanceInfo) throws MiddlewareQueryException;
 }

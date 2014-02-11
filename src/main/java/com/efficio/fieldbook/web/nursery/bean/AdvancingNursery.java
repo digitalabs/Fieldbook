@@ -12,11 +12,8 @@
 package com.efficio.fieldbook.web.nursery.bean;
 
 import java.io.Serializable;
-import java.util.List;
 
 import org.generationcp.middleware.domain.dms.Study;
-import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.domain.etl.Workbook;
 
 /**
  * This bean models the various input that the user builds up over time

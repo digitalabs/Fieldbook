@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2013, All Rights Reserved.
+ * 
+ * Generation Challenge Programme (GCP)
+ * 
+ * 
+ * This software is licensed for use under the terms of the GNU General Public
+ * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
+ * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ * 
+ *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.service.impl;
 
 import java.util.List;
@@ -20,6 +31,12 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.service.NamingConventionService;
 import com.efficio.fieldbook.web.util.AppConstants;
 
+/**
+ * 
+ * Abstract class for the Naming Convention Services.
+ * Contains implementation shared by the Naming Convention Services.
+ *
+ */
 @Service
 public abstract class AbstractNamingConventionServiceImpl 
 implements NamingConventionService {
@@ -55,7 +72,7 @@ implements NamingConventionService {
         boolean lineChoiceSame = info.getLineChoice() != null && "1".equals(info.getLineChoice());
         int plantsSelected = 0;
         if (info.getLineSelected() != null && NumberUtils.isNumber(info.getLineSelected())) {
-            plantsSelected = Integer.valueOf(info.getLineSelected()); 
+            plantsSelected = Double.valueOf(info.getLineSelected()).intValue(); 
         }
         else {
             lineChoiceSame = false;

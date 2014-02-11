@@ -49,12 +49,16 @@ public class ImportedGermplasm implements Serializable {
     /** The breeding method id. */
     private Integer breedingMethodId;
     
+    /** Germplasm's GPID1 */
     private Integer gpid1;
     
+    /** Germplasm's GPID2 */
     private Integer gpid2;
     
+    /** Germplasm's Number of Parents */
     private Integer gnpgs;
     
+    /** List of Names associated with the Germplasm */
     private List<Name> names;
     
     /**

@@ -17,15 +17,31 @@
     <div class="row">
       <div class="col-xs-4 col-md-4">
       	<!-- Germplasm List Tree View -->
-      	<div id="germplasmTree" style="height:350px; overflow:auto;"></div>
       	
-        <a data-toggle="modal" href="#myModal" class="" th:text="#{nursery.import.germplasm.list}">Import File</a>
+		      	<div id="germplasmTree" style="height:350px; overflow:auto;"></div>
+		<br />  
+      	
+      	<div class="panel panel-default">
+    
+		      <div class="panel-body">
+		      	<a data-toggle="modal" href="#myModal" class="" th:text="#{nursery.import.germplasm.list}">Import File</a>
+		      </div>
+		     
+		  </div>  
+        
       </div>
       <div class="col-xs-8 col-md-8">
         <!-- Show the table here -->						
 			
-        <div id="imported-germplasm-list" th:include="/NurseryManager/showGermplasmPagination">
-        </div>
+			<div class="panel panel-default">
+    
+		      <div class="panel-body">
+		      		<div id="imported-germplasm-list" th:include="/NurseryManager/showGermplasmPagination">
+        	  		</div>
+		      </div>
+		     
+		  </div>  
+        
         <div th:object="${importGermplasmListForm}">
     
 	        <div th:if="*{importedGermplasm != null and not #lists.isEmpty(importedGermplasm)}">

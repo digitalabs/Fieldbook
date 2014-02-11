@@ -95,7 +95,7 @@
             useBootstrapTooltip:true,
             onPageClicked: function(e,originalEvent,type,page){     
             	if(validateCells()){
-            		showPostPage(paginationUrl, options.currentPage, page, 'germplasm-measurement-list-table-div');
+            		showPostPage(paginationUrl, options.currentPage, page, 'germplasm-measurement-list-table-div', 'addVariableForm');
             	}else{
             		event.stopImmediatePropagation();
             	}

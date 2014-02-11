@@ -51,12 +51,14 @@ public class UserSelection implements Serializable {
     
 	private List<MeasurementRow> measurementRowList;
 	
+	
     private int currentPage;
     private int currentPageGermplasmList;
     
     
 
-    public int getCurrentPage() {
+
+	public int getCurrentPage() {
 		return currentPage;
 	}
 

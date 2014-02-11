@@ -45,7 +45,7 @@ public class ImportGermplasmListForm {
 	private int totalPages;
 	
 	/** The result per page. */
-	private int resultPerPage = 1000;	
+	private int resultPerPage = 100;	
 	
 	/** The method ids. */
 	private Integer[] check;
@@ -136,8 +136,8 @@ public class ImportGermplasmListForm {
      * @return the paginated imported germplasm
      */
     public List<ImportedGermplasm> getPaginatedImportedGermplasm() {
-        //return paginatedImportedGermplasm;
-    	return getImportedGermplasm();
+        return paginatedImportedGermplasm;
+    	//return getImportedGermplasm();
     }
     
     /**

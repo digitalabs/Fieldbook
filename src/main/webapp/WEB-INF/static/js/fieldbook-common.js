@@ -27,9 +27,9 @@ function showPage(paginationUrl, pageNum, sectionDiv){
        );
 }
 
-function showPostPage(paginationUrl,previewPageNum, pageNum, sectionDiv){
+function showPostPage(paginationUrl,previewPageNum, pageNum, sectionDiv, formName){
 	//$('#imported-germplasm-list').html(pageNum); 	
-	var $form = $("#addVariableForm");
+	var $form = $("#"+formName);
 	serializedData = $form.serialize();
 	Spinner.toggle();
  	$.ajax(

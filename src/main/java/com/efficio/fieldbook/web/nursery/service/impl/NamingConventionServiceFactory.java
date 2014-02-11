@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2013, All Rights Reserved.
+ * 
+ * Generation Challenge Programme (GCP)
+ * 
+ * 
+ * This software is licensed for use under the terms of the GNU General Public
+ * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
+ * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ * 
+ *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.service.impl;
 
 import javax.annotation.Resource;
@@ -10,6 +21,11 @@ import com.efficio.fieldbook.web.nursery.service.NamingConventionService;
 import com.efficio.fieldbook.web.nursery.service.OtherCropsConventionService;
 import com.efficio.fieldbook.web.util.AppConstants;
 
+/**
+ * 
+ * Factory for creating Naming Convention Services.
+ *
+ */
 @Service
 public class NamingConventionServiceFactory {
 
@@ -18,6 +34,7 @@ public class NamingConventionServiceFactory {
     
     @Resource
     private OtherCropsConventionService otherCropsService;
+    
     
     public NamingConventionService getNamingConventionService(String namingConvention) {
         if (namingConvention != null && NumberUtils.isNumber(namingConvention)) {

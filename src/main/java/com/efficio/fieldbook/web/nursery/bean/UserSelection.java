@@ -14,6 +14,8 @@ package com.efficio.fieldbook.web.nursery.bean;
 import java.io.Serializable;
 import java.util.List;
 
+import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 
@@ -46,6 +48,9 @@ public class UserSelection implements Serializable {
     
     /** The study details list.*/
     private transient List<StudyDetails> studyDetailsList;
+    
+	private List<MeasurementRow> measurementRowList;
+	
     
     
     /**
@@ -174,4 +179,14 @@ public class UserSelection implements Serializable {
     public void setStudyDetailsList(List<StudyDetails> studyDetailsList) {
         this.studyDetailsList = studyDetailsList;
     }
+
+	public List<MeasurementRow> getMeasurementRowList() {
+		return measurementRowList;
+	}
+
+	public void setMeasurementRowList(List<MeasurementRow> measurementRowList) {
+		this.measurementRowList = measurementRowList;
+	}
+
+    
 }

@@ -220,9 +220,14 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             mainInfo.setAdvanceImportType(true);
             form.setImportedGermplasmMainInfo(mainInfo);
             int count = (int) germplasmListManager.countGermplasmListDataByListId(listId);
-            List<GermplasmListData> data = germplasmListManager.getGermplasmListDataByListId(listId, 0, count);
+            
+            List<GermplasmListData> data = new ArrayList();
+            //for(int i = 0 ; i < 20 ; i++)
+            	data.addAll(germplasmListManager.getGermplasmListDataByListId(listId, 0, count));
             List<ImportedGermplasm> list = transformGermplasmListDataToImportedGermplasm(data);
             form.setImportedGermplasm(list);
+            
+            System.out.println(list.size());
             
             ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
             importedGermplasmList.setImportedGermplasms(list);

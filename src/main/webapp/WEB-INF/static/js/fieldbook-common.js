@@ -27,6 +27,37 @@ function showPage(paginationUrl, pageNum, sectionDiv){
        );
 }
 
+function showPostPage(paginationUrl,previewPageNum, pageNum, sectionDiv){
+	//$('#imported-germplasm-list').html(pageNum); 	
+	var $form = $("#addVariableForm");
+	serializedData = $form.serialize();
+	Spinner.toggle();
+ 	$.ajax(
+         { url: paginationUrl+pageNum+"/"+previewPageNum,
+           type: "POST",
+           data: serializedData,
+           success: function(html) {
+        	   
+             $("#"+sectionDiv).empty().append(html);
+             
+             if(sectionDiv == 'trial-details-list' || sectionDiv == 'nursery-details-list'){
+            	 //we highlight the previously clicked
+            	 for(var index in selectedTableIds) {
+         			//console.log( index + " : " + selectedTableIds[index]);
+         			var idVal = selectedTableIds[index];
+         			if(idVal != null){
+         				//we need to highlight
+         				$('tr.data-row#'+idVal).addClass('field-map-highlight');
+         			}			
+         		 }
+             }
+             
+             Spinner.toggle();  
+           }
+         }
+       );
+}
+
 function triggerFieldMapTableSelection(tableName){
 	$('#'+tableName+' tr.data-row').on('click', function() {	
 		//$('#'+tableName).find("*").removeClass('field-map-highlight');

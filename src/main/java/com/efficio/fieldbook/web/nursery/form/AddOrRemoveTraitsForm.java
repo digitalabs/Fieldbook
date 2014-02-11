@@ -16,6 +16,8 @@ import java.util.List;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 
+import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
+
 /**
  * The Class AddOrRemoveTraitsForm.
  */
@@ -26,6 +28,18 @@ public class AddOrRemoveTraitsForm {
 	
 	/** The measurement variables. */
 	private List<MeasurementVariable> measurementVariables;
+	
+	/** The paginated imported germplasm. */
+	private List<MeasurementRow> paginatedMeasurementRowList;	
+	
+	/** The current page. */
+	private int currentPage;
+	
+	/** The total pages. */
+	private int totalPages;
+	
+	/** The result per page. */
+	private int resultPerPage = 100;	
 	
 	/**
 	 * Gets the measurement row list.
@@ -62,6 +76,56 @@ public class AddOrRemoveTraitsForm {
 	public void setMeasurementVariables(
 			List<MeasurementVariable> measurementVariables) {
 		this.measurementVariables = measurementVariables;
+	}
+
+	public List<MeasurementRow> getPaginatedMeasurementRowList() {
+		return paginatedMeasurementRowList;
+	}
+
+	public void setPaginatedMeasurementRowList(
+			List<MeasurementRow> paginatedMeasurementRowList) {
+		this.paginatedMeasurementRowList = paginatedMeasurementRowList;
+	}
+
+	public int getCurrentPage() {
+		return currentPage;
+	}
+
+	public void setCurrentPage(int currentPage) {
+		 //assumption is there is an imported germplasm already
+        if(measurementRowList != null && !measurementRowList.isEmpty()){
+            int totalItemsPerPage = getResultPerPage();
+            int start = (currentPage - 1) * totalItemsPerPage;
+            int end = start + totalItemsPerPage;
+            if(measurementRowList.size() < end){
+                end = measurementRowList.size();
+            }
+            paginatedMeasurementRowList = measurementRowList.subList(start, end);
+            this.currentPage = currentPage;
+        }else{
+            this.currentPage = 0;
+        }
+	}
+
+	public int getTotalPages() {
+		 if(measurementRowList != null && !measurementRowList.isEmpty()){           
+	            totalPages = (int) Math.ceil((measurementRowList.size() * 1f) / getResultPerPage()); 
+	        }else{
+	            totalPages = 0;
+	        }
+		    return totalPages;
+	}
+
+	public void setTotalPages(int totalPages) {
+		this.totalPages = totalPages;
+	}
+
+	public int getResultPerPage() {
+		return resultPerPage;
+	}
+
+	public void setResultPerPage(int resultPerPage) {
+		this.resultPerPage = resultPerPage;
 	}
 
     

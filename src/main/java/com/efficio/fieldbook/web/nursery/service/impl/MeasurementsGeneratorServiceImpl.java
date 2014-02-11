@@ -106,6 +106,7 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 	 * @see com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService#generateRealMeasurementRows(com.efficio.fieldbook.web.nursery.bean.UserSelection)
 	 */
 	public List<MeasurementRow> generateRealMeasurementRows(UserSelection userSelection) throws MiddlewareQueryException {
+		long start = System.currentTimeMillis();
 		int index = 0;
     	List<MeasurementRow> measurementRows = new ArrayList<MeasurementRow>();
     	int newGid = fieldbookMiddlewareService.getNextGermplasmId();
@@ -198,6 +199,7 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
     		measurementRow.setDataList(dataList);
     		measurementRows.add(measurementRow);
     	}
+    	System.out.println("generateRealMeasurementRows Time duration: "+ (System.currentTimeMillis() - start));
     	return measurementRows;
 	}
 	

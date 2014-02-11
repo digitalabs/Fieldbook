@@ -733,7 +733,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 	public void validataAndAddCheckFactor(
 			List<ImportedGermplasm> formImportedGermplasmsm, List<ImportedGermplasm> importedGermplasms,
 			UserSelection userSelection) throws MiddlewareQueryException {
-
+		long start = System.currentTimeMillis();
 		boolean hasCheck = false;
 		List<ImportedGermplasm> sessionImportedGermplasmList = importedGermplasms;
 		for(int i = 0 ; i < formImportedGermplasmsm.size() ; i++){
@@ -780,6 +780,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 				userSelection.getWorkbook().setFactors(factors);
 			}
 		}
+		System.out.println("validataAndAddCheckFactor Time duration: "+ (System.currentTimeMillis() - start));
 	}  
     
     

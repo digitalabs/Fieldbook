@@ -13,86 +13,22 @@
 	<div id="page-message"> 
 	</div>
 
-<form id="addVariableForm" role="form-horizontal" onsubmit="return validateCells();" class="form-horizontal" action="#" 
-	th:action="@{/NurseryManager/addOrRemoveTraits}" method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data">
-	<div class="form-group" id="page-message"></div>
-	
-       <div class="germplasm-measurement-list-table  component">
-       <!-- my-class table table-curved table-condensed   -->
-		
+<div id="germplasm-measurement-list-table-div" th:include="/NurseryManager/showAddOrRemoveTraitsPagination">
+    </div>
+     
 				
 				
-				<table id="freezeheader" class="overflow-y  make-sticky"> 
-					<thead>
-						 <tr >
-			               <th th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'" th:each="measurementVariable, rowIndex : *{measurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>
-			
-			             </tr>	
-					</thead>
-					<tbody>
-						<tr th:class="${row.even}? 'even' : 'odd'" th:each="measurementRow, row: *{measurementRowList}">
-           	
-           		<th th:if="${measurementData.editable == false}" style="vertical-align:bottom; padding: 2px;" align="center" th:each="measurementData, rowIndex : ${measurementRow.dataList}"  >
-             		<input type="hidden" th:if="${rowIndex.index} == 0" th:field="*{measurementRowList[__${row.index}__].experimentId}"/>
-             		<label th:if="${measurementData.editable == false}" th:text="${measurementData.value}" ></label>
-             		<input th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" type="text" th:if="${measurementData.editable == true}" th:field="*{measurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}"/>
-             		<input type="hidden" th:field="*{measurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].phenotypeId}"/>
-             		<input type="hidden" th:if="${measurementData.editable == false}" th:field="*{measurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}"/>
-             		<input type="hidden" th:field="*{measurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].label}"/>             		
-				</th>
-				
-             	<td  th:if="${measurementData.editable == true}" style="vertical-align:bottom; padding: 2px;" align="center" th:each="measurementData, rowIndex : ${measurementRow.dataList}"  >
-             		<input type="hidden" th:if="${rowIndex.index} == 0" th:field="*{measurementRowList[__${row.index}__].experimentId}"/>
-             		<label th:if="${measurementData.editable == false}" th:text="${measurementData.value}" ></label>
-             		<input th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" type="text" th:if="${measurementData.editable == true}" th:field="*{measurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}"/>
-             		<input type="hidden" th:field="*{measurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].phenotypeId}"/>
-             		<input type="hidden" th:if="${measurementData.editable == false}" th:field="*{measurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}"/>
-             		<input type="hidden" th:field="*{measurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].label}"/>             		
-				</td>
-             </tr>
-					</tbody>
-				</table>
-				</div>
-				
-	<div class="form-group">&nbsp;
-	</div>
-	<div class="form-group">
-	    <div class="col-xs-4 col-md-4">&nbsp;</div> 
-	    <div class="col-xs-8 col-md-8">
-	      	<a id="btnBack" href="" th:href="@{/NurseryManager/importGermplasmList}"   th:text="#{common.form.back.text}" class="btn btn-default" />
-			<input type="submit" id="btnNext" th:value="#{common.form.next.text}" class="btn btn-primary" />
-	      	<input type="submit" id="btnUpdate" th:value="#{common.form.update.text}" class="btn btn-primary" onclick="doSave();return false;"/>
-	      
-	    </div>
-	  </div>
-	  
-	<div class="form-group">
-		<div class="col-md-12">	
-			<div class="modal fade" id="successMessageModal"  role="dialog" aria-labelledby="successMessageModal" aria-hidden="true">
-				<div class="modal-dialog">
-					<div class="modal-content" >
-						<div class="modal-body" id="successMessageBody">
-							<div style="text-align: center">
-								<label th:text="#{nursery.addOrRemoveTraits.success.update.message}">Traits has been successfully updated.</label>
-							</div>
-						</div>
-						<div class="modal-footer">    
-			       			<a id="btnOK" href="" th:href="@{/NurseryManager}"   th:text="#{common.form.ok.text}" class="btn btn-primary" />	
-		       			</div>
-					</div><!-- /.modal-content -->
-				</div><!-- /.modal-dialog -->
-			</div><!-- /.modal -->		
-			 
-		</div>
-	</div>  
+    		
 
-</form>
+
 
 <script type="text/javascript" th:src="@{/static/js/jquery.ba-throttle-debounce.min.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/jquery.stickyheader.js}"></script>
-
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
+	           
+	            
+        
 	           
 		function doSave(){
 			if(validateCells() == false)
@@ -160,7 +96,7 @@
     		   hideErrorMessage('page-message');
     	   }
     	   //console.log('true');
-    	   return true;
+    	   return noError;
        }
        
       //]]>

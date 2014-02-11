@@ -45,7 +45,7 @@ public class ImportGermplasmListForm {
 	private int totalPages;
 	
 	/** The result per page. */
-	private int resultPerPage = 10;	
+	private int resultPerPage = 1000;	
 	
 	/** The method ids. */
 	private Integer[] check;

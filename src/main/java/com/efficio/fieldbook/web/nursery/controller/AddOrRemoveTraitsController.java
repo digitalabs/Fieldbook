@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.AddOrRemoveTraitsForm;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
@@ -46,6 +47,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
 
     /** The Constant URL. */
     public static final String URL = "/NurseryManager/addOrRemoveTraits";
+    public static final String PAGINATION_TEMPLATE = "/NurseryManager/showAddOrRemoveTraitsPagination";
     
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(AddOrRemoveTraitsController.class);
@@ -79,14 +81,11 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
             , Model model, HttpSession session) throws MiddlewareQueryException{
     	
     	//getUserSelection().getWorkbook().getMeasurementDatasetVariables();
-    	
-    	form.setMeasurementRowList(measurementsGeneratorService.generateRealMeasurementRows(getUserSelection()));
+    	getUserSelection().setMeasurementRowList(measurementsGeneratorService.generateRealMeasurementRows(getUserSelection()));
+    	form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
     	form.setMeasurementVariables(getUserSelection().getWorkbook().getMeasurementDatasetVariables());
-    	/*
-    	getUserSelection().getWorkbook().getFactors();
-    	getUserSelection().getWorkbook().getConstants();
-    	getUserSelection().getWorkbook().getVariates();
-    	*/
+    	form.setCurrentPage(1);
+    	
     	return super.show(model);
     }
     
@@ -104,6 +103,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
         if (workbook != null) {
             form.setMeasurementRowList(workbook.getObservations());
             form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());
+            form.setCurrentPage(1);
             userSelection.setWorkbook(workbook);
         }
         
@@ -159,6 +159,30 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
         }
         
         return resultMap;
+    }
+    /**
+     * Get for the pagination of the list
+     *
+     * @param form the form
+     * @param model the model
+     * @return the string
+     */
+    @RequestMapping(value="/page/{pageNum}/{previewPageNum}", method = RequestMethod.POST)
+    public String getPaginatedList(@PathVariable int pageNum, @PathVariable int previewPageNum
+            , @ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, Model model) {
+        //this set the necessary info from the session variable
+    	
+    	//we need to set the data in the measurementList
+    	for(int i = 0 ; i < form.getPaginatedMeasurementRowList().size() ; i++){
+    		MeasurementRow measurementRow = form.getPaginatedMeasurementRowList().get(i);
+    		int realIndex = ((previewPageNum - 1) * form.getResultPerPage()) + i;
+    		getUserSelection().getMeasurementRowList().set(realIndex, measurementRow);
+    	}
+    	
+    	form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
+    	form.setMeasurementVariables(getUserSelection().getWorkbook().getMeasurementDatasetVariables());
+        form.setCurrentPage(pageNum);
+        return super.showAjaxPage(model, PAGINATION_TEMPLATE);
     }
     
     /**

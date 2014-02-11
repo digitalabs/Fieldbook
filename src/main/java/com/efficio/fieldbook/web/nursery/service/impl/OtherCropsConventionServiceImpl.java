@@ -81,7 +81,7 @@ implements OtherCropsConventionService {
                 name.setTypeId(GermplasmNameType.UNNAMED_CROSS.getUserDefinedFieldID());
             }
         }
-        name.setNval(source.getGermplasm().getDesig());
+        name.setNval(germplasm.getDesig());
         name.setNstat(1);
         names.add(name);
         

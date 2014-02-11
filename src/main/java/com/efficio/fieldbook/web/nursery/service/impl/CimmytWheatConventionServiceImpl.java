@@ -105,21 +105,24 @@ implements CimmytWheatConventionService {
         Name name = new Name();
         name.setGermplasmId(Integer.valueOf(row.getGermplasm().getGid()));
         name.setTypeId(GermplasmNameType.CIMMYT_SELECTION_HISTORY.getUserDefinedFieldID());
-        name.setNval(row.getGermplasm().getDesig());
+        name.setNval(germplasm.getDesig());
         name.setNstat(0);
         names.add(name);
         
         name = new Name();
         name.setGermplasmId(Integer.valueOf(row.getGermplasm().getGid()));
         name.setTypeId(GermplasmNameType.UNRESOLVED_NAME.getUserDefinedFieldID());
-        name.setNval(row.getGermplasm().getDesig());
+        name.setNval(germplasm.getDesig());
         name.setNstat(1);
         names.add(name);
         
         name = new Name();
         name.setGermplasmId(Integer.valueOf(row.getGermplasm().getGid()));
         name.setTypeId(GermplasmNameType.CIMMYT_WHEAT_PEDIGREE.getUserDefinedFieldID());
-        name.setNval(row.getGermplasm().getCross());
+        name.setNval(germplasm.getCross());
+        if (germplasm.getCross() == null) {
+            name.setNval("-");
+        }
         name.setNstat(0);
         names.add(name);
         

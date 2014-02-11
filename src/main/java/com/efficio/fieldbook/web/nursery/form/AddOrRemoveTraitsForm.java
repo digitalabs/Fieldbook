@@ -34,7 +34,7 @@ public class AddOrRemoveTraitsForm {
 	
 	/** The current page. */
 	private int currentPage;
-	
+		
 	/** The total pages. */
 	private int totalPages;
 	
@@ -93,7 +93,11 @@ public class AddOrRemoveTraitsForm {
 
 	public void setCurrentPage(int currentPage) {
 		 //assumption is there is an imported germplasm already
-        if(measurementRowList != null && !measurementRowList.isEmpty()){
+		 this.currentPage = 0;
+	}
+	
+	public void changePage(int currentPage){
+		if(measurementRowList != null && !measurementRowList.isEmpty()){
             int totalItemsPerPage = getResultPerPage();
             int start = (currentPage - 1) * totalItemsPerPage;
             int end = start + totalItemsPerPage;

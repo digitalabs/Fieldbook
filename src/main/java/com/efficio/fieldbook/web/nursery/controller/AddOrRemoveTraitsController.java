@@ -59,8 +59,10 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     private FieldbookService fieldbookMiddlewareService;
     @Resource
     private MeasurementsGeneratorService measurementsGeneratorService;
+    
+  
 
-    /* (non-Javadoc)
+	/* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
      */
     @Override
@@ -84,7 +86,8 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     	getUserSelection().setMeasurementRowList(measurementsGeneratorService.generateRealMeasurementRows(getUserSelection()));
     	form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
     	form.setMeasurementVariables(getUserSelection().getWorkbook().getMeasurementDatasetVariables());
-    	form.setCurrentPage(1);
+    	form.changePage(1);
+    	userSelection.setCurrentPage(form.getCurrentPage());
     	
     	return super.show(model);
     }
@@ -101,9 +104,11 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
         }
         
         if (workbook != null) {
-            form.setMeasurementRowList(workbook.getObservations());
+        	getUserSelection().setMeasurementRowList(workbook.getObservations());
+            form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
             form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());
-            form.setCurrentPage(1);
+            form.changePage(1);
+            userSelection.setCurrentPage(form.getCurrentPage());
             userSelection.setWorkbook(workbook);
         }
         
@@ -126,6 +131,16 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
         if (workbook == null) {
             workbook = new Workbook();
         }
+        int previewPageNum = userSelection.getCurrentPage();
+        for(int i = 0 ; i < form.getPaginatedMeasurementRowList().size() ; i++){
+    		MeasurementRow measurementRow = form.getPaginatedMeasurementRowList().get(i);
+    		int realIndex = ((previewPageNum - 1) * form.getResultPerPage()) + i;
+    		getUserSelection().getMeasurementRowList().set(realIndex, measurementRow);
+    	}
+        form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
+    	form.setMeasurementVariables(getUserSelection().getWorkbook().getMeasurementDatasetVariables());
+      
+        
         workbook.setObservations(form.getMeasurementRowList());
         userSelection.setWorkbook(workbook);
         
@@ -140,13 +155,23 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
         Map<String, String> resultMap = new HashMap<String, String>();
         
         Workbook workbook = userSelection.getWorkbook();
-        
+        /*
         int ctr = 0;
         for (MeasurementRow observation : workbook.getObservations()) {
             form.getMeasurementRowList().get(ctr).setExperimentId(observation.getExperimentId());
             ctr++;
         }
-
+		*/
+        int previewPageNum = userSelection.getCurrentPage();
+        for(int i = 0 ; i < form.getPaginatedMeasurementRowList().size() ; i++){
+    		MeasurementRow measurementRow = form.getPaginatedMeasurementRowList().get(i);
+    		int realIndex = ((previewPageNum - 1) * form.getResultPerPage()) + i;
+    		getUserSelection().getMeasurementRowList().set(realIndex, measurementRow);
+    	}
+        form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
+    	form.setMeasurementVariables(getUserSelection().getWorkbook().getMeasurementDatasetVariables());
+      
+    	
         workbook.setObservations(form.getMeasurementRowList());
 
         try { 
@@ -181,7 +206,8 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     	
     	form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
     	form.setMeasurementVariables(getUserSelection().getWorkbook().getMeasurementDatasetVariables());
-        form.setCurrentPage(pageNum);
+        form.changePage(pageNum);
+        userSelection.setCurrentPage(form.getCurrentPage());
         return super.showAjaxPage(model, PAGINATION_TEMPLATE);
     }
     

@@ -51,9 +51,31 @@ public class UserSelection implements Serializable {
     
 	private List<MeasurementRow> measurementRowList;
 	
+    private int currentPage;
+    private int currentPageGermplasmList;
     
     
-    /**
+
+    public int getCurrentPage() {
+		return currentPage;
+	}
+
+	public void setCurrentPage(int currentPage) {
+		this.currentPage = currentPage;
+	}
+	
+	
+    
+    
+    public int getCurrentPageGermplasmList() {
+		return currentPageGermplasmList;
+	}
+
+	public void setCurrentPageGermplasmList(int currentPageGermplasmList) {
+		this.currentPageGermplasmList = currentPageGermplasmList;
+	}
+
+	/**
      * Checks if is import valid.
      *
      * @return true, if is import valid

@@ -102,8 +102,11 @@ public class ImportGermplasmListForm {
      * @param currentPage the new current page
      */
     public void setCurrentPage(int currentPage) {
-        
-        //assumption is there is an imported germplasm already
+    	 this.currentPage = currentPage;        
+    }
+    
+    public void changePage(int currentPage){
+    	 //assumption is there is an imported germplasm already
         if(importedGermplasm != null && !importedGermplasm.isEmpty()){
             int totalItemsPerPage = getResultPerPage();
             int start = (currentPage - 1) * totalItemsPerPage;
@@ -116,7 +119,7 @@ public class ImportGermplasmListForm {
         }else{
             this.currentPage = 0;
         }
-    }
+	}
 
     /**
      * Sets the total pages.

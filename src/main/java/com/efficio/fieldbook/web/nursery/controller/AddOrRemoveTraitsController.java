@@ -197,6 +197,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
         //this set the necessary info from the session variable
     	
     	//we need to set the data in the measurementList
+    	
     	for(int i = 0 ; i < form.getPaginatedMeasurementRowList().size() ; i++){
     		MeasurementRow measurementRow = form.getPaginatedMeasurementRowList().get(i);
     		int realIndex = ((previewPageNum - 1) * form.getResultPerPage()) + i;

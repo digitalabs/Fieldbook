@@ -5,6 +5,7 @@ function showPage(paginationUrl, pageNum, sectionDiv){
          { url: paginationUrl+pageNum,
            type: "GET",
            data: "",
+           cache: false,
            success: function(html) {
         	   
              $("#"+sectionDiv).empty().append(html);
@@ -30,12 +31,16 @@ function showPage(paginationUrl, pageNum, sectionDiv){
 function showPostPage(paginationUrl,previewPageNum, pageNum, sectionDiv, formName){
 	//$('#imported-germplasm-list').html(pageNum); 	
 	var $form = $("#"+formName);
-	serializedData = $form.serialize();
+	
+	var serializedData = $form.serialize();
+
 	Spinner.toggle();
  	$.ajax(
-         { url: paginationUrl+pageNum+"/"+previewPageNum,
+         { url: paginationUrl+pageNum+"/"+previewPageNum+'?r=' + (Math.random() * 999),
            type: "POST",
            data: serializedData,
+           cache: false,
+           timeout: 70000,
            success: function(html) {
         	   
              $("#"+sectionDiv).empty().append(html);
@@ -108,6 +113,7 @@ function checkTrialOptions(id){
 		url: "/Fieldbook/Fieldmap/enterFieldDetails/createFieldmap/" + id,
 	    type: "GET",
 	    data: "",
+	    cache: false,
 	    success: function(data) {
 	    	if (data.nav == '0') {
 	    		$('#manageTrialConfirmation').modal('show');
@@ -129,6 +135,7 @@ function createNurseryFieldmap(id) {
 		url: "/Fieldbook/Fieldmap/enterFieldDetails/createNurseryFieldmap/" + id,
 	    type: "GET",
 	    data: "",
+	    cache: false,
 	    success: function(data) {
 	    	if (data.nav == '0') {
 	    		$('#manageTrialConfirmation').modal('show');

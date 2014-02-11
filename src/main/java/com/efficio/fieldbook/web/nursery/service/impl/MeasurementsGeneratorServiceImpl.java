@@ -12,7 +12,9 @@
 package com.efficio.fieldbook.web.nursery.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -107,6 +109,7 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 		int index = 0;
     	List<MeasurementRow> measurementRows = new ArrayList<MeasurementRow>();
     	int newGid = fieldbookMiddlewareService.getNextGermplasmId();
+    	Map standardVariableMap = new HashMap();
     	for(ImportedGermplasm germplasm : userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms()){
     		MeasurementRow measurementRow = new MeasurementRow();
     		List<MeasurementData> dataList = new ArrayList<MeasurementData>();
@@ -116,7 +119,16 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
     			MeasurementData measurementData =null;
     			
     			
-    			Integer termId = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(var.getProperty(), var.getScale(), var.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(var.getLabel()));
+    			Integer termId = null;//fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(var.getProperty(), var.getScale(), var.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(var.getLabel()));
+    			String key = var.getProperty() + ":" + var.getScale() + ":" + var.getMethod() + ":" + PhenotypicType.getPhenotypicTypeForLabel(var.getLabel());
+    			if(standardVariableMap.get(key) == null){
+    				termId = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(var.getProperty(), var.getScale(), var.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(var.getLabel()));
+    				standardVariableMap.put(key, termId);
+    			}else{
+    				termId = (Integer)standardVariableMap.get(key);
+    						
+    			}
+    			
     			
     			
     			var.setFactor(true);    

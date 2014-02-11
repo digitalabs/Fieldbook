@@ -153,10 +153,10 @@
 	//<![CDATA[
         var paginationUrl = /*[[@{/NurseryManager/importGermplasmList/page/}]]*/;
         
-        //var options = {
-          //  currentPage: /*[[${importGermplasmListForm.currentPage}]]*/,
-          //  totalPages: /*[[${importGermplasmListForm.totalPages}]]*/,
-/*
+        var options = {
+            currentPage: /*[[${importGermplasmListForm.currentPage}]]*/,
+            totalPages: /*[[${importGermplasmListForm.totalPages}]]*/,
+
             alignment:'center',
             useBootstrapTooltip:true,
             onPageClicked: function(e,originalEvent,type,page){            	
@@ -165,10 +165,10 @@
         }
         
 		if($('#germplasm-list-pagination') != null){
-			$('#germplasm-list-pagination').bootstrapPaginator(options);	
+			$('#germplasm-list-pagination').bootstrapPaginator(options);
 		}
         
-        */
+        
         
         function do_germplasm_check(){        	
         	return true;

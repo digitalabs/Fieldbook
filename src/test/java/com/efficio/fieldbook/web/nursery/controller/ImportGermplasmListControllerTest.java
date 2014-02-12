@@ -275,7 +275,7 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
-        form.setCurrentPage(1);
+        form.changePage(1);
         //assertEquals(form.getPaginatedImportedGermplasm().size(), form.getResultPerPage());
         assertEquals(form.getPaginatedImportedGermplasm().get(0).getEntryId(), Integer.valueOf(1));
         assertEquals(form.getPaginatedImportedGermplasm().get(0).getDesig(), "IR 68835-58-1-1-B"); // we check the parse data here
@@ -308,7 +308,7 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
-        form.setCurrentPage(1);
+        form.changePage(1);
         //assertEquals(form.getPaginatedImportedGermplasm().size(), form.getResultPerPage());
         assertEquals(form.getPaginatedImportedGermplasm().get(0).getEntryId(), Integer.valueOf(1));
         assertEquals(form.getPaginatedImportedGermplasm().get(0).getDesig(), "IR 68201-21-2-B-4-B-B"); // we check the parse data here

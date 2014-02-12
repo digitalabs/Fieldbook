@@ -4,7 +4,7 @@
 	
        <!-- my-class table table-curved table-condensed   -->
 				<div class="factor-div" style="float: left; max-height: 400px; max-width: 45%; overflow-x: scroll; overflow-y: hidden">
-				<table >
+				<table class="overflow-y  make-sticky">
 					<thead>
 						 <tr >
 			               <th th:if="${measurementVariable.factor == true}" th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'" th:each="measurementVariable, rowIndex : *{measurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>
@@ -13,7 +13,7 @@
 					</thead>
 				
 				<tbody>
-						<tr style="height: 26px;" th:class="${row.even}? 'even' : 'odd'" th:each="measurementRow, row: *{paginatedMeasurementRowList}">
+						<tr  th:class="${row.even}? 'even' : 'odd'" th:each="measurementRow, row: *{paginatedMeasurementRowList}">
            	
            		<td th:if="${measurementData.editable == false}" style="vertical-align:bottom; padding: 0px;" align="center" th:each="measurementData, rowIndex : ${measurementRow.dataList}"  >
              		<input type="hidden" th:if="${rowIndex.index} == 0" th:field="*{paginatedMeasurementRowList[__${row.index}__].experimentId}"/>
@@ -30,7 +30,7 @@
 				</table>
 				</div>
 				<div class="variates-div" style="float: left; max-height: 400px; max-width: 55%; overflow: auto">
-				<table style="float: left" class="overflow-y  make-sticky"> 
+				<table class="overflow-y  make-sticky"> 
 					<thead>
 						 <tr >
 			               <th th:if="${measurementVariable.factor == false}" th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'" th:each="measurementVariable, rowIndex : *{measurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>
@@ -38,7 +38,7 @@
 			             </tr>	
 					</thead>
 					<tbody>
-						<tr style="height: 25px;" th:class="${row.even}? 'even' : 'odd'" th:each="measurementRow, row: *{paginatedMeasurementRowList}">
+						<tr  th:class="${row.even}? 'even' : 'odd'" th:each="measurementRow, row: *{paginatedMeasurementRowList}">
            	
              	<td  th:if="${measurementData.editable == true}" style="vertical-align:bottom; " align="center" th:each="measurementData, rowIndex : ${measurementRow.dataList}"  >
              		<input type="hidden" th:if="${rowIndex.index} == 0" th:field="*{paginatedMeasurementRowList[__${row.index}__].experimentId}"/>
@@ -121,7 +121,8 @@
 		if($('#measurement-data-list-pagination') != null){
 			$('#measurement-data-list-pagination').bootstrapPaginator(options);	
 		}
-        $( document ).ready(function() {  	
+        $( document ).ready(function() {
+        	fixedTrHeight();
         	//doStickyHeader();		     
        	 //  $('.germplasm-measurement-list-table td input').on("change", validateCells);
        	 //  $('.germplasm-measurement-list-table td input').on("focus", validateCells);
@@ -137,19 +138,21 @@
        	   
        	$('.variates-div').scroll(function(){ 
        	
-       	$('.factor-div').scrollTop($(this).scrollTop());
-       	/*
-       		$('.factor-div').animate(
-       			{
-       			scrollTop: "-=300px"
-       			}, "fast"
-       			)
-       			*/
+       		$('.factor-div').scrollTop($(this).scrollTop());
+       	
        	}); 
        	   //$("#freezeheader").freezeHeader({ 'height': '500px' });
        	   //setTimeout(function(){$('#hdfreezeheader').css('top', '0px')}, 450);
    		});
-        
+        function fixedTrHeight(){
+        	var max = 0;    
+        	$('table tr').each(function() {
+        	    max = Math.max($(this).height(), max);
+        	}).height(max);
+        	
+        	$('table tr').css('height', max+'px');
+        		
+        }
        
       //]]>
     </script>

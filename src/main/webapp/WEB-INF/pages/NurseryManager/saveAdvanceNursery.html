@@ -6,12 +6,7 @@
 	</div>			  
 </div>
 
-	<div id="page-message" style="display:none;">
-	        <div id="error-message" class="alert alert-danger"></div> 
-	</div>
-
-
-<form id="saveAdvanceNurseryForm" role="form-horizontal" action="#"
+<form id="saveAdvanceNurseryForm" role="form-horizontal" class="form-horizontal" action="#"
 th:action="@{/NurseryManager/saveAdvanceNursery}" method="post" th:object="${advancingNurseryform}" enctype="multipart/form-data">
 	<div class="row">
 		<div class="row">&nbsp;</div>
@@ -86,14 +81,38 @@ th:action="@{/NurseryManager/saveAdvanceNursery}" method="post" th:object="${adv
 					<div class="col-xs-4 col-md-4">&nbsp;</div>
 					<div class="col-xs-4 col-md-4">
 						<input type="button" onclick="javascript: window.history.back();"  value="Cancel" class="btn btn-default"/>
-	      				<input type="submit" value="Save" th:value="#{common.form.save.text}" class="btn btn-primary" onclick="doSave();" />
+	      				<input type="button" value="Save" th:value="#{common.form.save.text}" class="btn btn-primary" onclick="doSave();" />
 					</div>
 					<div class="col-xs-4 col-md-4">&nbsp;</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	
+
+	<div class="form-group">
+		<div class="col-md-12">
+			<div class="modal fade" id="successMessageModal" role="dialog" aria-labelledby="successMessageModal" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-body" id="successMessageBody">
+							<div style="text-align: center">
+								<label th:text="#{common.form.save.successful.text}">Save successful!</label>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<a id="btnOK" href="" th:href="@{/NurseryManager}" th:text="#{common.form.ok.text}" class="btn btn-primary" />
+						</div>
+					</div>
+					<!-- /.modal-content -->
+				</div>
+				<!-- /.modal-dialog -->
+			</div>
+			<!-- /.modal -->
+
+		</div>
+	</div>
+
+
 </form>
 
 <div layout:fragment="page-script">
@@ -106,16 +125,16 @@ th:action="@{/NurseryManager/saveAdvanceNursery}" method="post" th:object="${adv
 			Spinner.toggle();
 
 			$.ajax({
-				url: "saveAdvanceNursery",
+				url: "/Fieldbook/NurseryManager/saveAdvanceNursery",
 				type: "post",
 				dataType: "json",
 				data: serializedData,
 			    success: function(data){
 				    if (data.status == "1") {
-			    		window.location = "successful";
+				    	$('#successMessageModal').modal({ backdrop: 'static', keyboard: true }) 
+				    	$("#successMessageModal").modal("show");
 			       	} else if (data.status == "-1") {
-			       		$("#error-message").html(data.errorMessage);
-			       		$("#page-message").show();
+			       		showErrorMessage('page-message', data.errorMessage);
 			       	}
 			   }, 
 			   error: function(jqXHR, textStatus, errorThrown){

@@ -38,6 +38,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
@@ -45,6 +46,9 @@ import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
+/**
+ * The Class SaveAdvanceNurseryController.
+ */
 @Controller
 @RequestMapping(SaveAdvanceNurseryController.URL)
 public class SaveAdvanceNurseryController extends AbstractBaseFieldbookController{
@@ -59,9 +63,11 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
     @Resource
     private AdvancingNursery advancingNursery;
 
+    /** The fieldbook service. */
     @Resource
     private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
 
+    /** The fieldbook middleware service. */
     @Resource
     private FieldbookService fieldbookMiddlewareService;
     
@@ -69,9 +75,11 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
     @Resource
     private WorkbenchDataManager workbenchDataManager;
     
+    /** The message source. */
     @Resource
     private ResourceBundleMessageSource messageSource;
 
+    /** The imported germplasm list. */
     private List<ImportedGermplasm> importedGermplasmList;
      
     /* (non-Javadoc)
@@ -83,12 +91,13 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
     }    
     
     /**
-     * Shows the screen
+     * Shows the screen.
      *
      * @param form the form
      * @param model the model
      * @param session the session
      * @return the string
+     * @throws MiddlewareQueryException the middleware query exception
      */
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form
@@ -99,19 +108,28 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
     	return super.show(model);
     }
        
+    /**
+     * Post advance nursery.
+     *
+     * @param form the form
+     * @param model the model
+     * @param session the session
+     * @return the map
+     * @throws MiddlewareQueryException the middleware query exception
+     */
+    @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
-    public String postAdvanceNursery(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form
+    public Map<String, String> postAdvanceNursery(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form
             , Model model, HttpSession session) throws MiddlewareQueryException{
     	
         Map<String, String> resultMap = new HashMap<String, String>();
 
         try {
-            //TODO Validate
             String errorMessages = validate(form);
             if (errorMessages != null) {                
                 resultMap.put("status", "-1");
                 resultMap.put("errorMessage", errorMessages);
-                //return resultMap;
+                return resultMap;
             }
             
             Map<Germplasm, List<Name>> germplasms = new HashMap<Germplasm, List<Name>>();
@@ -126,10 +144,15 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
             resultMap.put("errorMessage", e.getMessage());
         }
         
-        //return resultMap;
-        return "redirect:" + SuccessfulController.URL;
+        return resultMap;
     }
     
+    /**
+     * Validate.
+     *
+     * @param form the form
+     * @return the string
+     */
     private String validate(AdvancingNurseryForm form) {
         Locale locale = LocaleContextHolder.getLocale();
         StringBuilder errorMessages = null;
@@ -182,12 +205,18 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
 
         return errorMessages != null ? errorMessages.toString() : null;
     }
-
     
+    /**
+     * Creates the nursery advance germplasm list.
+     *
+     * @param form the form
+     * @param germplasms the germplasms
+     * @param listDataItems the list data items
+     * @return the germplasm list
+     */
     private GermplasmList createNurseryAdvanceGermplasmList(AdvancingNurseryForm form
                                     , Map<Germplasm, List<Name>> germplasms
                                     , Map<Germplasm, GermplasmListData> listDataItems){
-
         
         // Create germplasm list
         String listName =  form.getNurseryAdvanceName();
@@ -249,7 +278,6 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
                 }
             }
             
-            
             if (names.size() > 1){
                 for (Name name : names) {
                     if (name.getTypeId() == GermplasmNameType.UNRESOLVED_NAME.getUserDefinedFieldID()
@@ -274,7 +302,6 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
             if (groupName == null){
                 groupName = "-"; // Default value if null
             }
-            
             
             GermplasmListData listData = new GermplasmListData(listDataId, germplasmList, gid, entryId, entryCode, seedSource,
                      designation, groupName, listDataStatus, localRecordId);

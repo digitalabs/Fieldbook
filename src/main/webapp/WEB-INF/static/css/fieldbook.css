@@ -539,8 +539,7 @@ padding-left: 20px; margin-top: 7px
 }
 */
 table.make-sticky{
-    border-collapse: collapse;
-    margin-bottom: 3em;
+    border-collapse: collapse;    
     width: 100%;
     background: #fff;
 }

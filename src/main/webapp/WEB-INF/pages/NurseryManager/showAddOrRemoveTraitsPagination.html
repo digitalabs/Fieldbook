@@ -1,21 +1,21 @@
 <form id="addVariableForm" role="form-horizontal" onsubmit="return validateCells();" class="form-horizontal" action="#" 
 	th:action="@{/NurseryManager/addOrRemoveTraits}" method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data">
-	<div class="germplasm-measurement-list-table  component">
+	 <div class="germplasm-measurement-list-table  component" style="width: 100%">
+	
        <!-- my-class table table-curved table-condensed   -->
-		
-				
-				
-				<table id="freezeheader" class="overflow-y  make-sticky"> 
+				<div class="factor-div" style="float: left; max-height: 400px; max-width: 45%; overflow-x: scroll; overflow-y: hidden">
+				<table >
 					<thead>
 						 <tr >
-			               <th th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'" th:each="measurementVariable, rowIndex : *{measurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>
+			               <th th:if="${measurementVariable.factor == true}" th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'" th:each="measurementVariable, rowIndex : *{measurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>
 			
 			             </tr>	
 					</thead>
-					<tbody>
-						<tr th:class="${row.even}? 'even' : 'odd'" th:each="measurementRow, row: *{paginatedMeasurementRowList}">
+				
+				<tbody>
+						<tr style="height: 26px;" th:class="${row.even}? 'even' : 'odd'" th:each="measurementRow, row: *{paginatedMeasurementRowList}">
            	
-           		<th th:if="${measurementData.editable == false}" style="vertical-align:bottom; padding: 2px;" align="center" th:each="measurementData, rowIndex : ${measurementRow.dataList}"  >
+           		<td th:if="${measurementData.editable == false}" style="vertical-align:bottom; padding: 0px;" align="center" th:each="measurementData, rowIndex : ${measurementRow.dataList}"  >
              		<input type="hidden" th:if="${rowIndex.index} == 0" th:field="*{paginatedMeasurementRowList[__${row.index}__].experimentId}"/>
              		<label th:if="${measurementData.editable == false}" th:text="${measurementData.value}" ></label>
              		<input th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" type="text" th:if="${measurementData.editable == true}" th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}"/>
@@ -24,9 +24,23 @@
              		<input type="hidden" th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].label}"/>
              		<input type="hidden" th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].editable}"/>
              		<input type="hidden" th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].dataType}"/>             		
-				</th>
-				
-             	<td  th:if="${measurementData.editable == true}" style="vertical-align:bottom; padding: 2px;" align="center" th:each="measurementData, rowIndex : ${measurementRow.dataList}"  >
+				</td>
+				</tr>
+             	</tbody>
+				</table>
+				</div>
+				<div class="variates-div" style="float: left; max-height: 400px; max-width: 55%; overflow: auto">
+				<table style="float: left" class="overflow-y  make-sticky"> 
+					<thead>
+						 <tr >
+			               <th th:if="${measurementVariable.factor == false}" th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'" th:each="measurementVariable, rowIndex : *{measurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>
+			
+			             </tr>	
+					</thead>
+					<tbody>
+						<tr style="height: 25px;" th:class="${row.even}? 'even' : 'odd'" th:each="measurementRow, row: *{paginatedMeasurementRowList}">
+           	
+             	<td  th:if="${measurementData.editable == true}" style="vertical-align:bottom; " align="center" th:each="measurementData, rowIndex : ${measurementRow.dataList}"  >
              		<input type="hidden" th:if="${rowIndex.index} == 0" th:field="*{paginatedMeasurementRowList[__${row.index}__].experimentId}"/>
              		<label th:if="${measurementData.editable == false}" th:text="${measurementData.value}" ></label>
              		<input th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" type="text" th:if="${measurementData.editable == true}" th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}"/>
@@ -40,6 +54,7 @@
 					</tbody>
 				</table>
 				</div>
+				</div> 
 	
         <div >
 	        <div th:if="*{measurementRowList != null and not #lists.isEmpty(measurementRowList)}">
@@ -118,7 +133,19 @@
        	   } else {
        		   $("#btnUpdate").hide();
        		   $("#btnNext").show();
-       	   }    	   
+       	   }    
+       	   
+       	$('.variates-div').scroll(function(){ 
+       	
+       	$('.factor-div').scrollTop($(this).scrollTop());
+       	/*
+       		$('.factor-div').animate(
+       			{
+       			scrollTop: "-=300px"
+       			}, "fast"
+       			)
+       			*/
+       	}); 
        	   //$("#freezeheader").freezeHeader({ 'height': '500px' });
        	   //setTimeout(function(){$('#hdfreezeheader').css('top', '0px')}, 450);
    		});

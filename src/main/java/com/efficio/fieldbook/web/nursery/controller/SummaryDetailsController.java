@@ -92,35 +92,36 @@ public class SummaryDetailsController extends AbstractBaseFieldbookController{
             , BindingResult result, Model model, HttpSession session) {
         
         // Set form values based on user selection
-        Workbook workbook = userSelection.getWorkbook();
-        
-        //nursery book name, title, objective
-        StudyDetails studyDetails = workbook.getStudyDetails();
-        form.setBookName(studyDetails.getStudyName());
-        form.setTitle(studyDetails.getTitle());
-        form.setObjective(studyDetails.getObjective());
-
-        //nursery sequence, principal investigator, location, breeding method
-        List<MeasurementVariable> conditions = workbook.getConditions();
-        Debug.println(0, conditions.toString());
-        for (MeasurementVariable condition : conditions){
-            if ("NID".equalsIgnoreCase(condition.getName())){
-                form.setSequenceNumber(condition.getValue());                
-            } else if ("PI Name".equalsIgnoreCase(condition.getName())){
-                    form.setPrincipalInvestigator(condition.getValue());                
-            } else if ("Site".equalsIgnoreCase(condition.getName())){
-                form.setLocation(condition.getValue());
-            } else if ("Breeding Method".equalsIgnoreCase(condition.getName())){
-                form.setBreedingMethod(condition.getValue());
-            }
-        }
-
-        // traits
-        List<MeasurementVariable> traits = new ArrayList<MeasurementVariable>();
-        traits.addAll(workbook.getConstants());
-        traits.addAll(workbook.getVariates());
-        form.setTraits(traits);
-
+    	if(userSelection != null){
+	        Workbook workbook = userSelection.getWorkbook();
+	        
+	        //nursery book name, title, objective
+	        StudyDetails studyDetails = workbook.getStudyDetails();
+	        form.setBookName(studyDetails.getStudyName());
+	        form.setTitle(studyDetails.getTitle());
+	        form.setObjective(studyDetails.getObjective());
+	
+	        //nursery sequence, principal investigator, location, breeding method
+	        List<MeasurementVariable> conditions = workbook.getConditions();
+	        Debug.println(0, conditions.toString());
+	        for (MeasurementVariable condition : conditions){
+	            if ("NID".equalsIgnoreCase(condition.getName())){
+	                form.setSequenceNumber(condition.getValue());                
+	            } else if ("PI Name".equalsIgnoreCase(condition.getName())){
+	                    form.setPrincipalInvestigator(condition.getValue());                
+	            } else if ("Site".equalsIgnoreCase(condition.getName())){
+	                form.setLocation(condition.getValue());
+	            } else if ("Breeding Method".equalsIgnoreCase(condition.getName())){
+	                form.setBreedingMethod(condition.getValue());
+	            }
+	        }
+	
+	        // traits
+	        List<MeasurementVariable> traits = new ArrayList<MeasurementVariable>();
+	        traits.addAll(workbook.getConstants());
+	        traits.addAll(workbook.getVariates());
+	        form.setTraits(traits);
+    	}
         session.invalidate();
     	return super.show(model);
     }

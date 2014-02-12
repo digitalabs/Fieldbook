@@ -12,9 +12,7 @@
 package com.efficio.fieldbook.web.nursery.controller;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +22,6 @@ import javax.annotation.Resource;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.exceptions.WorkbookParserException;
-import org.generationcp.middleware.service.api.DataImportService;
-import org.generationcp.middleware.util.Debug;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,7 +37,6 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
-import com.efficio.fieldbook.web.nursery.service.ImportWorkbookFileService;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 
 /**
@@ -108,11 +102,11 @@ public class AddOrRemoveTraitsControllerTest extends AbstractJUnit4SpringContext
          }
          UserSelection userSelection = new UserSelection();
          userSelection.setWorkbook(new org.generationcp.middleware.domain.etl.Workbook());
-         List<MeasurementVariable> factors = new ArrayList();
+         List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
          MeasurementVariable checkVariable = new MeasurementVariable("CHECK", "TYPE OF ENTRY", "CODE", "ASSIGNED", "CHECK", "C", "", "ENTRY");
          factors.add(checkVariable);
     	userSelection.getWorkbook().setFactors(factors);
-        userSelection.getWorkbook().setVariates(new ArrayList());
+        userSelection.getWorkbook().setVariates(new ArrayList<MeasurementVariable>());
         userSelection.setImportedGermplasmMainInfo(mainInfo);        
         List<MeasurementRow> measurementRows = measurementsGeneratorService.generateRealMeasurementRows(userSelection);
     	assertEquals(29, measurementRows.size());

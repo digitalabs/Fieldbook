@@ -14,7 +14,6 @@ package com.efficio.fieldbook.web.trial.controller;
 
 import java.io.IOException;
 
-import org.generationcp.middleware.service.api.DataImportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.efficio.fieldbook.web.nursery.service.ImportWorkbookFileService;
 import com.efficio.fieldbook.web.nursery.validation.FileUploadFormValidator;
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.trial.bean.TrialSelection;
@@ -54,15 +52,6 @@ public class TrialFileUploadController extends AbstractBaseFieldbookController{
     /** The user selection. */
     @Resource
     private TrialSelection trialSelection;	
-	
-    /** The data import service. */
-    @Resource
-    private DataImportService dataImportService;
-    
-    /** The import workbook file service. */
-    @Resource
-    private ImportWorkbookFileService importWorkbookFileService;
-
 	
     /**
      * Shows the file upload screen

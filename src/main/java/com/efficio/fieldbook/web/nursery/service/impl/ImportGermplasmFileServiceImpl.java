@@ -16,7 +16,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -47,6 +46,7 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 import com.efficio.fieldbook.web.nursery.bean.ImportedVariate;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
+import com.efficio.fieldbook.web.util.DateUtil;
 import com.vaadin.data.Property.ConversionException;
 import com.vaadin.data.Property.ReadOnlyException;
 
@@ -241,7 +241,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
             LOG.error(e.getMessage(), e);
             showInvalidFileError(e.getMessage());
         } finally {
-            if (fileIsValid == false) {
+            if (!fileIsValid) {
                 mainInfo.setFileIsValid(false);
                 mainInfo.setErrorMessages(errorMessages);
             }
@@ -268,7 +268,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
         readSheet1();
         readSheet2();
 
-        if (fileIsValid == false) {
+        if (!fileIsValid) {
             importedGermplasmList = null;
             mainInfo.setFileIsValid(false);
             mainInfo.setErrorMessages(errorMessages);
@@ -337,19 +337,19 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
                     desigEntryCodePresent = true;
                 }
             }
-        if (entryColumnIsPresent == false || desigColumnIsPresent == false) {
+        if (!entryColumnIsPresent || !desigColumnIsPresent) {
             showInvalidFileError("ENTRY or DESIG column missing from Observation sheet.");
             LOG.debug("Invalid file on missing ENTRY or DESIG on readSheet2");
         }
 
-        if (entryColumnIsPresent == true && desigColumnIsPresent == true) {
+        if (entryColumnIsPresent && desigColumnIsPresent) {
             isAdvanceImportType = false;
-            if (desigGidIsPresent == true && desigCrossIsPresent == true 
-                    && desigSourcePresent == true && desigEntryCodePresent == true) {
+            if (desigGidIsPresent && desigCrossIsPresent 
+                    && desigSourcePresent && desigEntryCodePresent) {
                 isAdvanceImportType = true;
-            } else if (desigGidIsPresent == false && desigCrossIsPresent == false 
-                    && desigSourcePresent == false && desigEntryCodePresent == false) {
-                ;
+            } else if (!desigGidIsPresent && !desigCrossIsPresent 
+                    && !desigSourcePresent && !desigEntryCodePresent) {
+
             } else {
                 showInvalidFileError("CROSS or SOURCE or GID or ENTRY CODE column missing " 
                             + "from Observation sheet.");
@@ -412,7 +412,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
         try {
             listName = getCellStringValue(0, 0, 1, true);
             listTitle = getCellStringValue(0, 1, 1, true);
-            listDate = new SimpleDateFormat("yyyyMMdd").parse(getCellStringValue(0, 2, 1, true));
+            listDate = DateUtil.parseDate(getCellStringValue(0, 2, 1, true));
             listType = getCellStringValue(0, 3, 1, true);
 
             importedGermplasmList = new ImportedGermplasmList(
@@ -547,7 +547,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
         currentRow++;
 
         //If ENTRY or DESIG is not present on Factors, return error
-        if(entryColumnIsPresent == false || desigColumnIsPresent == false){
+        if(!entryColumnIsPresent || !desigColumnIsPresent){
             showInvalidFileError("There is no ENTRY or DESIG factor.");
             LOG.debug("Invalid file on missing ENTRY or DESIG on readFactors");
         }
@@ -758,7 +758,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 					break;
 				}
 			}
-			if(checkFactorExisting == false){
+			if(!checkFactorExisting){
 				userSelection.getWorkbook().reset();
 				userSelection.getWorkbook().setCheckFactorAddedOnly(true);
 				//for(int i = 0 ; i < 10 ; i++)
@@ -779,7 +779,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 				userSelection.getWorkbook().setFactors(factors);
 			}
 		}
-		System.out.println("validataAndAddCheckFactor Time duration: "+ (System.currentTimeMillis() - start));
+		LOG.info("validataAndAddCheckFactor Time duration: "+ (System.currentTimeMillis() - start));
 	}  
     
     

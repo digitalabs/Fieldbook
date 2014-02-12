@@ -12,6 +12,8 @@
 package com.efficio.fieldbook.web.nursery.controller;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -124,8 +126,8 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
         assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().size(), 20);
         assertEquals(mainInfo.getImportedGermplasmList().getImportedFactors().get(0).getFactor(), "ENTRY");
         assertEquals(mainInfo.getImportedGermplasmList().getImportedFactors().get(1).getFactor(), "DESIGNATION");
-        assertEquals(mainInfo.isAdvanceImportType(), false);
-        assertEquals(mainInfo.getFileIsValid(), true);
+        assertFalse(mainInfo.isAdvanceImportType());
+        assertTrue(mainInfo.getFileIsValid());
         // we check the parse data here
         assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryId(),
                 Integer.valueOf(1));
@@ -161,8 +163,8 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
         assertEquals(mainInfo.getImportedGermplasmList().getImportedFactors().get(3).getFactor(), "CROSS");
         assertEquals(mainInfo.getImportedGermplasmList().getImportedFactors().get(4).getFactor(), "SOURCE");
         assertEquals(mainInfo.getImportedGermplasmList().getImportedFactors().get(5).getFactor(), "ENTRY CODE");
-        assertEquals(mainInfo.isAdvanceImportType(), true);
-        assertEquals(mainInfo.getFileIsValid(), true);
+        assertTrue(mainInfo.isAdvanceImportType());
+        assertTrue(mainInfo.getFileIsValid());
         // test the parsing
         assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryId(),
                 Integer.valueOf(1));
@@ -203,8 +205,8 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
         assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().size(), 20);
         assertEquals(mainInfo.getImportedGermplasmList().getImportedFactors().get(0).getFactor(), "ENTRY");
         assertEquals(mainInfo.getImportedGermplasmList().getImportedFactors().get(1).getFactor(), "DESIGNATION");
-        assertEquals(mainInfo.isAdvanceImportType(), false);
-        assertEquals(mainInfo.getFileIsValid(), true);
+        assertFalse(mainInfo.isAdvanceImportType());
+        assertTrue(mainInfo.getFileIsValid());
         // we check the parse data here
         assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryId(),
                 Integer.valueOf(1));
@@ -238,8 +240,8 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
         assertEquals(mainInfo.getImportedGermplasmList().getImportedFactors().get(3).getFactor(), "CROSS");
         assertEquals(mainInfo.getImportedGermplasmList().getImportedFactors().get(4).getFactor(), "SOURCE");
         assertEquals(mainInfo.getImportedGermplasmList().getImportedFactors().get(5).getFactor(), "ENTRY CODE");
-        assertEquals(mainInfo.isAdvanceImportType(), true);
-        assertEquals(mainInfo.getFileIsValid(), true);
+        assertTrue(mainInfo.isAdvanceImportType());
+        assertTrue(mainInfo.getFileIsValid());
         // test the parsing
         assertEquals(mainInfo.getImportedGermplasmList().getImportedGermplasms().get(0).getEntryId(),
                 Integer.valueOf(1));
@@ -344,11 +346,11 @@ public class ImportGermplasmListControllerTest extends AbstractJUnit4SpringConte
         }
         UserSelection userSelection = new UserSelection();
         userSelection.setWorkbook(new org.generationcp.middleware.domain.etl.Workbook());
-        List<MeasurementVariable> factors = new ArrayList();
+        List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
         
         //factors.add(new MeasurementVariable());
         userSelection.getWorkbook().setFactors(factors);
-        userSelection.getWorkbook().setVariates(new ArrayList());
+        userSelection.getWorkbook().setVariates(new ArrayList<MeasurementVariable> ());
         userSelection.setImportedGermplasmMainInfo(mainInfo);
         importGermplasmFileService.validataAndAddCheckFactor(form.getImportedGermplasm(), userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(), userSelection);
         //no check factor yet

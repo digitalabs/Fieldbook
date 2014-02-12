@@ -18,7 +18,6 @@ import javax.annotation.Resource;
 
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.pojos.GermplasmListData;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +33,6 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmList;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.nursery.validation.ImportGermplasmListValidator;
@@ -218,7 +216,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             form.setImportedGermplasmMainInfo(mainInfo);
             int count = (int) germplasmListManager.countGermplasmListDataByListId(listId);
             
-            List<GermplasmListData> data = new ArrayList();
+            List<GermplasmListData> data = new ArrayList<GermplasmListData>();
             //for(int i = 0 ; i < 20 ; i++)
             	data.addAll(germplasmListManager.getGermplasmListDataByListId(listId, 0, count));
             List<ImportedGermplasm> list = transformGermplasmListDataToImportedGermplasm(data);
@@ -239,7 +237,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             getUserSelection().setImportValid(true);
             
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
         return super.showAjaxPage(model, PAGINATION_TEMPLATE);
     }

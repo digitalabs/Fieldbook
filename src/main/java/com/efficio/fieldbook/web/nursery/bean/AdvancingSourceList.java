@@ -99,7 +99,7 @@ public class AdvancingSourceList{
         Integer integerValue = null;
         
         if (NumberUtils.isNumber(value)) {
-            integerValue = Double.valueOf(value).intValue();
+            integerValue = Integer.valueOf(value);
         }
         
         return integerValue;
@@ -111,7 +111,7 @@ public class AdvancingSourceList{
         if (variables != null && !variables.isEmpty()) {
             for (MeasurementVariable variable : variables) {
                 if (variable.getTermId() == id) {
-                    return variable.getName();
+                    label = variable.getName();
                 }
             }
         }

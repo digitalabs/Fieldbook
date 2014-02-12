@@ -14,10 +14,10 @@ package com.efficio.fieldbook.web.demo.controller;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
-import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.demo.form.BarCodeForm;
 import com.efficio.fieldbook.web.demo.bean.UserSelection;
+import com.efficio.fieldbook.web.util.DateUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +35,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
@@ -63,10 +61,7 @@ public class BarCodeController extends AbstractBaseFieldbookController{
     /** The user selection. */
     @Resource
     private UserSelection userSelection;
-
-    /** The fieldbook service. */
-    @Resource
-    private FieldbookService fieldbookService;
+    
     private static final int BUFFER_SIZE = 4096 * 4;
 	
     /**
@@ -114,7 +109,7 @@ public class BarCodeController extends AbstractBaseFieldbookController{
              String imageLocation = Math.random() +".png"; //"src/test/resources/barcode/zxing_barcode.png";
              MatrixToImageWriter.writeToStream(bitMatrix, "png", new FileOutputStream(new File(imageLocation)));
              
-             String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
+             String currentDate = DateUtil.getCurrentDate();
              String fileName = currentDate + ".doc";
 
              response.setHeader("Content-disposition","attachment; filename=" + fileName);

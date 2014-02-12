@@ -25,7 +25,6 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 
 import com.efficio.fieldbook.util.FieldbookException;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class UserFieldmap.
  *
@@ -37,10 +36,10 @@ public class UserFieldmap  implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /** The row column. */
-    public final int ROW_COLUMN = 1;
+    public static final int ROW_COLUMN = 1;
     
     /** The serpentine. */
-    public final int SERPENTINE = 2;
+    public static final int SERPENTINE = 2;
 	
     /** The trial id or nursery id. */
     private Integer studyId;

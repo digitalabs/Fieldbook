@@ -17,11 +17,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -56,6 +54,7 @@ import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.label.printing.form.LabelPrintingForm;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.DateUtil;
 
 /**
  * The Class LabelPrintingController.
@@ -252,7 +251,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
      * @return the string
      */
     private String generateDefaultFilename(UserLabelPrinting userLabelPrinting, boolean isTrial){
-        String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
+        String currentDate = DateUtil.getCurrentDate();
         String fileName = "Labels-for-" + userLabelPrinting.getName();
         
         if(isTrial) {

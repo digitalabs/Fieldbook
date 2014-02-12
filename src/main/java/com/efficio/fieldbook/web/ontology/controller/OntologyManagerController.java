@@ -31,7 +31,6 @@ import org.generationcp.middleware.domain.oms.Property;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TermProperty;
-//import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -530,7 +529,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                 if (propertyDescription == null || propertyDescription.equals("")) {
                     propertyDescription = property;
                 }
-                if(isInteger(traitClass) == false){
+                if(!isInteger(traitClass)){
                     //meaning we need to save the trait class
                     traitClassTerm = ontologyService
                             .addTraitClass(traitClass, traitClassDescription
@@ -590,8 +589,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
     @ModelAttribute("variableNameSuggestionList")
     public List<Term> getVariableName() {
         try {
-            List<Term> variables = ontologyService.getAllTermsByCvId(CvId.VARIABLES);
-            return variables;
+            return ontologyService.getAllTermsByCvId(CvId.VARIABLES);
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }

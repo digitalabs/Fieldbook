@@ -13,7 +13,6 @@ package com.efficio.fieldbook.web.fieldmap.bean;
 
 import java.io.Serializable;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Plot.  This would be use track the plots 
  *

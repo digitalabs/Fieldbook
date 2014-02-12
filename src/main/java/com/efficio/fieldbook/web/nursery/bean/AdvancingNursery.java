@@ -23,6 +23,7 @@ public class AdvancingNursery implements Serializable {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
+    
     private Study study;
     
     /** The naming convention. */

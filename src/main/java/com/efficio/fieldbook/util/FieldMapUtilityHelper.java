@@ -71,7 +71,7 @@ public class FieldMapUtilityHelper {
     
         if(isStartOk){
             plots[i][j].setNotStarted(false);
-            if(isDeleted(i,j, deletedPlot) == false){
+            if(!isDeleted(i,j, deletedPlot)){
                 plots[i][j].setPlotDeleted(false);
                 if(hasAvailableEntries){
                     //meaning we can plant already and move to the next plant

@@ -12,10 +12,9 @@
 package com.efficio.fieldbook.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +35,7 @@ import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.label.printing.service.impl.HorizontalFieldMapLayoutIterator;
 import com.efficio.fieldbook.web.label.printing.service.impl.VerticalFieldMapLayoutIterator;
+import com.efficio.fieldbook.web.util.DateUtil;
 
 /**
  * The Class TestExportExcelService.
@@ -97,12 +97,12 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
 				, deletedPlot, fieldMapLabels, new HorizontalFieldMapLayoutIterator());
 		userFieldMap.setFieldmap(plots);
 
-        String fileName = "FieldMapHorizontal" +  "_" + getCurrentDate() + ".xls";
+        String fileName = "FieldMapHorizontal" +  "_" + DateUtil.getCurrentDate() + ".xls";
 		exportExcelService.exportFieldMapToExcel(fileName, userFieldMap);
 		
 		assertEquals("Dummy Trial-76<br/>Entry null<br/>Rep 76", plots[2][9].getDisplayString());
 		assertEquals("Dummy Trial-70<br/>Entry null<br/>Rep 70", plots[8][9].getDisplayString());
-		assertEquals(true, plots[8][5].isPlotDeleted());
+		assertTrue(plots[8][5].isPlotDeleted());
 	}
 	
 	/**
@@ -131,12 +131,12 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
 				, deletedPlot, fieldMapLabels, new VerticalFieldMapLayoutIterator());
 		userFieldMap.setFieldmap(plots);
 
-        String fileName = "FieldMapVertical" +  "_" + getCurrentDate() + ".xls";
+        String fileName = "FieldMapVertical" +  "_" + DateUtil.getCurrentDate() + ".xls";
 		exportExcelService.exportFieldMapToExcel(fileName, userFieldMap);
 		
 		assertEquals("Dummy Trial-10<br/>Entry null<br/>Rep 10", plots[2][9].getDisplayString());
 		assertEquals("Dummy Trial-67<br/>Entry null<br/>Rep 67", plots[8][9].getDisplayString());
-		assertEquals(true, plots[8][5].isPlotDeleted());
+		assertTrue(plots[8][5].isPlotDeleted());
 	}
 	
 	/**
@@ -148,7 +148,7 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
 	public void testExportFieldMapToExcelHorizontalRowColumn() throws Exception{
 		
 	    UserFieldmap userFieldMap = createUserFieldMap();
-        userFieldMap.setPlantingOrder(userFieldMap.ROW_COLUMN);
+        userFieldMap.setPlantingOrder(UserFieldmap.ROW_COLUMN);
 
         Map<String, String> deletedPlot = createDeletedPlot();
 
@@ -167,11 +167,11 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
 				, deletedPlot, fieldMapLabels, new HorizontalFieldMapLayoutIterator());
 		userFieldMap.setFieldmap(plots);
 
-        String fileName = "FieldMapHorizontalRowColumn" +  "_" + getCurrentDate() + ".xls";
+        String fileName = "FieldMapHorizontalRowColumn" +  "_" + DateUtil.getCurrentDate() + ".xls";
 		exportExcelService.exportFieldMapToExcel(fileName, userFieldMap);
 		assertEquals("Dummy Trial-77<br/>Entry null<br/>Rep 77", plots[2][9].getDisplayString());
 		assertEquals("Dummy Trial-83<br/>Entry null<br/>Rep 83", plots[8][9].getDisplayString());
-		assertEquals(true, plots[8][5].isPlotDeleted());
+		assertTrue(plots[8][5].isPlotDeleted());
 	}
 	
 	/**
@@ -183,7 +183,7 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
 	public void testExportFieldMapToExcelVerticalRowColumn() throws Exception{
 
 		UserFieldmap userFieldMap = createUserFieldMap();
-        userFieldMap.setPlantingOrder(userFieldMap.ROW_COLUMN);
+        userFieldMap.setPlantingOrder(UserFieldmap.ROW_COLUMN);
 
         Map<String, String> deletedPlot = createDeletedPlot();
 
@@ -202,11 +202,11 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
 				, deletedPlot, fieldMapLabels, new VerticalFieldMapLayoutIterator());
 		userFieldMap.setFieldmap(plots);
 
-        String fileName = "FieldMapVerticalRowColumn" +  "_" + getCurrentDate() + ".xls";
+        String fileName = "FieldMapVerticalRowColumn" +  "_" + DateUtil.getCurrentDate() + ".xls";
 		exportExcelService.exportFieldMapToExcel(fileName, userFieldMap);
 		assertEquals("Dummy Trial-17<br/>Entry null<br/>Rep 17", plots[2][9].getDisplayString());
 		assertEquals("Dummy Trial-74<br/>Entry null<br/>Rep 74", plots[8][9].getDisplayString());
-		assertEquals(true, plots[8][5].isPlotDeleted());
+		assertTrue(plots[8][5].isPlotDeleted());
 	}
 	
 	private UserFieldmap createUserFieldMap(){
@@ -222,7 +222,7 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
 	        userFieldMap.setNumberOfRowsPerPlot(2);
 	        userFieldMap.setStartingColumn(2);
 	        userFieldMap.setStartingRange(2);
-	        userFieldMap.setPlantingOrder(userFieldMap.SERPENTINE);
+	        userFieldMap.setPlantingOrder(UserFieldmap.SERPENTINE);
 	        userFieldMap.setNumberOfRangesInBlock(10);
 	        
 	        return userFieldMap;
@@ -236,9 +236,5 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
         deletedPlot.put("8_5", "X");
         return deletedPlot;
 	}
-	
-	private String getCurrentDate(){
-	    return new SimpleDateFormat("yyyyMMdd").format(new Date());
-	}
-	
+		
 }

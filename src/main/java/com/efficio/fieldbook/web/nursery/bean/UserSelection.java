@@ -15,7 +15,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.generationcp.middleware.domain.etl.MeasurementRow;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 
@@ -49,30 +48,47 @@ public class UserSelection implements Serializable {
     /** The study details list.*/
     private transient List<StudyDetails> studyDetailsList;
     
+	/** The measurement row list. */
 	private List<MeasurementRow> measurementRowList;
 	
-	
+    /** The current page. */
     private int currentPage;
+    
+    /** The current page germplasm list. */
     private int currentPageGermplasmList;
     
-    
-
-
+	/**
+	 * Gets the current page.
+	 *
+	 * @return the current page
+	 */
 	public int getCurrentPage() {
 		return currentPage;
 	}
 
+	/**
+	 * Sets the current page.
+	 *
+	 * @param currentPage the new current page
+	 */
 	public void setCurrentPage(int currentPage) {
 		this.currentPage = currentPage;
 	}
 	
-	
-    
-    
+	/**
+     * Gets the current page germplasm list.
+     *
+     * @return the current page germplasm list
+     */
     public int getCurrentPageGermplasmList() {
 		return currentPageGermplasmList;
 	}
 
+	/**
+	 * Sets the current page germplasm list.
+	 *
+	 * @param currentPageGermplasmList the new current page germplasm list
+	 */
 	public void setCurrentPageGermplasmList(int currentPageGermplasmList) {
 		this.currentPageGermplasmList = currentPageGermplasmList;
 	}
@@ -204,10 +220,20 @@ public class UserSelection implements Serializable {
         this.studyDetailsList = studyDetailsList;
     }
 
+	/**
+	 * Gets the measurement row list.
+	 *
+	 * @return the measurement row list
+	 */
 	public List<MeasurementRow> getMeasurementRowList() {
 		return measurementRowList;
 	}
 
+	/**
+	 * Sets the measurement row list.
+	 *
+	 * @param measurementRowList the new measurement row list
+	 */
 	public void setMeasurementRowList(List<MeasurementRow> measurementRowList) {
 		this.measurementRowList = measurementRowList;
 	}

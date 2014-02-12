@@ -16,8 +16,6 @@ import java.util.List;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
-
 /**
  * The Class AddOrRemoveTraitsForm.
  */

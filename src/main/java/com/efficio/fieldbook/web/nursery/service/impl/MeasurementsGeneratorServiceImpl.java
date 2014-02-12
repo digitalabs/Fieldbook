@@ -26,6 +26,8 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
@@ -37,7 +39,9 @@ import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
  */
 @Service
 public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorService {
-
+    
+    private static final Logger LOG = LoggerFactory.getLogger(MeasurementsGeneratorServiceImpl.class);
+    
 	/** The fieldbook middleware service. */
 	@Resource
     private FieldbookService fieldbookMiddlewareService;
@@ -110,7 +114,7 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 		int index = 0;
     	List<MeasurementRow> measurementRows = new ArrayList<MeasurementRow>();
     	int newGid = fieldbookMiddlewareService.getNextGermplasmId();
-    	Map standardVariableMap = new HashMap();
+    	Map<String, Integer> standardVariableMap = new HashMap<String, Integer>();
     	for(ImportedGermplasm germplasm : userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms()){
     		MeasurementRow measurementRow = new MeasurementRow();
     		List<MeasurementData> dataList = new ArrayList<MeasurementData>();
@@ -199,7 +203,7 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
     		measurementRow.setDataList(dataList);
     		measurementRows.add(measurementRow);
     	}
-    	System.out.println("generateRealMeasurementRows Time duration: "+ (System.currentTimeMillis() - start));
+    	LOG.info("generateRealMeasurementRows Time duration: "+ (System.currentTimeMillis() - start));
     	return measurementRows;
 	}
 	

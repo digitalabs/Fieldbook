@@ -60,10 +60,6 @@ public class OntologyControllerTest extends AbstractJUnit4SpringContextTests {
     /** The ontology service. */
     @Autowired
     OntologyService ontologyService;
-
-    /** The controller. */
-    @Autowired
-    private OntologyController controller;
     
     /**
      * Gets the dummy standard variable reference.

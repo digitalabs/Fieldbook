@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.service.api.ErrorHandlerService;
+//import com.efficio.fieldbook.service.api.ErrorHandlerService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.ontology.form.OntologyBrowserForm;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
@@ -63,9 +63,9 @@ public class OntologyController extends AbstractBaseFieldbookController{
     @Autowired
     public MessageSource messageSource;
     
-    /** The error handler service. */
-    @Resource
-    private ErrorHandlerService errorHandlerService;
+//    /** The error handler service. */
+//    @Resource
+//    private ErrorHandlerService errorHandlerService;
     
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()

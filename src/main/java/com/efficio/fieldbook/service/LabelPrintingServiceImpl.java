@@ -17,9 +17,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -52,6 +50,7 @@ import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.label.printing.template.LabelPaper;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.DateUtil;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
@@ -139,7 +138,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         String secondBarcodeField = userLabelPrinting.getSecondBarcodeField();
         String thirdBarcodeField = userLabelPrinting.getThirdBarcodeField();
 
-        String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
+        String currentDate = DateUtil.getCurrentDate();
         // String fileName = currentDate + ".pdf";
 
         String fileName = userLabelPrinting.getFilenameDLLocation();
@@ -653,7 +652,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         String secondBarcodeField = userLabelPrinting.getSecondBarcodeField();
         String thirdBarcodeField = userLabelPrinting.getThirdBarcodeField();
         
-        String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
+        String currentDate = DateUtil.getCurrentDate();
         //String fileName = currentDate + ".xls";
         String fileName = userLabelPrinting.getFilenameDLLocation();
         try {

@@ -583,4 +583,4 @@ public class OntologyBrowserForm{
         this.enumerations = enumerations;
     } 
     
-    }
+}

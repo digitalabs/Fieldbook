@@ -33,7 +33,7 @@ public interface LabelPrintingService {
      * @return the string
      * @throws MiddlewareQueryException the middleware query exception
      */
-    public String generatePDFLabels(List<StudyTrialInstanceInfo> trialInstances, 
+    String generatePDFLabels(List<StudyTrialInstanceInfo> trialInstances, 
             UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos) 
                     throws MiddlewareQueryException;
     
@@ -46,7 +46,7 @@ public interface LabelPrintingService {
      * @return the string
      * @throws MiddlewareQueryException the middleware query exception
      */
-    public String generateXlSLabels(List<StudyTrialInstanceInfo> trialInstances, 
+    String generateXlSLabels(List<StudyTrialInstanceInfo> trialInstances, 
             UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos) 
                     throws MiddlewareQueryException;
 }

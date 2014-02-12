@@ -12,9 +12,9 @@
 package com.efficio.fieldbook.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -56,7 +56,7 @@ public class CropOntologyServiceTest extends AbstractJUnit4SpringContextTests {
 		String query = "stem rust";
 		List<CropTerm> cropTerms = cropOntologyService.searchTerms(query);
 		assertNotNull(cropTerms);
-		assertTrue(!cropTerms.isEmpty());
+		assertFalse(cropTerms.isEmpty());
 		for (CropTerm cropTerm : cropTerms) {
 			LOG.debug(cropTerm.toString());
 		}
@@ -105,7 +105,7 @@ public class CropOntologyServiceTest extends AbstractJUnit4SpringContextTests {
 		String category = "010-089 General Germplasm Ontology";
 		List<Ontology> ontologies = cropOntologyService.getOntologiesByCategory(category);
 		assertNotNull(ontologies);
-		assertTrue(!ontologies.isEmpty());
+		assertFalse(ontologies.isEmpty());
 		for (Ontology ontology : ontologies) {
 			LOG.debug(ontology.toString());
 		}

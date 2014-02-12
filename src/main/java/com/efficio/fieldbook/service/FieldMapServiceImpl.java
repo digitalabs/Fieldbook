@@ -84,7 +84,7 @@ public class FieldMapServiceImpl implements FieldMapService{
                     plot.setDatasetId(label.getDatasetId());
                     plot.setGeolocationId(label.getGeolocationId());
                     if (isSerpentine && column % 2 == 0) {
-                        ;//plot.setUpward(false);
+                        //plot.setUpward(false);
                     }
                     plot.setDisplayString(FieldMapUtilityHelper.getDisplayString(label, info.isTrial()));
                     plot.setNotStarted(false);
@@ -127,6 +127,7 @@ public class FieldMapServiceImpl implements FieldMapService{
      * @param plots the plots
      * @param deletedCoordinates the deleted coordinates
      */
+    @SuppressWarnings("unused")
     private void markDeletedCoordinates(Plot[][] plots, List<String> deletedCoordinates) {
         for (String deletedIndex : deletedCoordinates) {
             String[] columnRange = deletedIndex.split("_");

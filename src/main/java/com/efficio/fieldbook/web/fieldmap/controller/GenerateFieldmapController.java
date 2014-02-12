@@ -16,9 +16,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +49,7 @@ import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 import com.efficio.fieldbook.web.label.printing.service.FieldPlotLayoutIterator;
 import com.efficio.fieldbook.web.nursery.controller.ManageNurseriesController;
 import com.efficio.fieldbook.web.trial.controller.ManageTrialController;
+import com.efficio.fieldbook.web.util.DateUtil;
 
 
 /**
@@ -177,7 +176,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
     public String exportExcel(@ModelAttribute("fieldmapForm") FieldmapForm form, 
             Model model, HttpServletResponse response) {
 
-        String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
+        String currentDate = DateUtil.getCurrentDate();
         String fileName = userFieldmap.getBlockName().replace(" ", "") + "-" 
                 + currentDate + ".xls"; //changed selected name to block name for now
 

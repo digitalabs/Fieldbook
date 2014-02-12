@@ -59,8 +59,8 @@ public class TestController extends AbstractBaseFieldbookController{
      *
      * @return the dummy list
      */
-    private List getDummyList(){
-    	List l = new ArrayList();
+    private List<String> getDummyList(){
+    	List<String> l = new ArrayList<String>();
     	l.add("Hello 1");
     	l.add("Hello 2");
     	l.add("Hello 3");

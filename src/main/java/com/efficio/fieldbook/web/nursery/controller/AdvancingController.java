@@ -42,7 +42,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
-import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.util.AppConstants;
 
 /**
@@ -66,18 +65,10 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     @Resource
     private FieldbookService fieldbookMiddlewareService;
     
-    /** The measurements generator service. */
-    @Resource
-    private MeasurementsGeneratorService measurementsGeneratorService;
-    
     /** The workbench data manager. */
     @Resource
     private WorkbenchDataManager workbenchDataManager;
     
-    /** The fieldbook service. */
-    @Resource
-    private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
-
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
      */
@@ -210,7 +201,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     @ResponseBody
     @RequestMapping(value="/getBreedingMethods", method = RequestMethod.GET)
     public Map<String, String> getBreedingMethods() {
-        Map<String, String> result = new HashMap<String, String>();;
+        Map<String, String> result = new HashMap<String, String>();
         
         try {
             List<Method> breedingMethods = fieldbookMiddlewareService.getAllBreedingMethods();
@@ -240,7 +231,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     @ResponseBody
     @RequestMapping(value="/getLocations", method = RequestMethod.GET)
     public Map<String, String> getLocations() {
-        Map<String, String> result = new HashMap<String, String>();;
+        Map<String, String> result = new HashMap<String, String>();
         
         try {
             List<Long> locationsIds = workbenchDataManager.getFavoriteProjectLocationIds(

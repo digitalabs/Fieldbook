@@ -11,6 +11,7 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -146,9 +147,9 @@ public class NurseryDetailsTest extends AbstractJUnit4SpringContextTests {
             controllerInvalid.setUserSelection(userSelection);
     
         } catch (WorkbookParserException e){
-            assertTrue(datasetWorkbook == null); // Workbook was not parsed properly due to format errors
+            assertNull(datasetWorkbook); // Workbook was not parsed properly due to format errors
         }catch (NullPointerException e){
-            assertTrue(datasetWorkbook == null); // Workbook was not parsed properly due to format errors
+            assertNull(datasetWorkbook); // Workbook was not parsed properly due to format errors
         }
 
     }    

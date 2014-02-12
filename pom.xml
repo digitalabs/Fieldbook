@@ -419,6 +419,7 @@
 					<url>http://${tomcatHost}:${tomcatPort}/manager/text</url>
 					<server>TomcatServer</server>
 					<path>/${project.build.finalName}</path>
+					<maxPostSize>-1</maxPostSize>
 				</configuration>
 			</plugin>
 			

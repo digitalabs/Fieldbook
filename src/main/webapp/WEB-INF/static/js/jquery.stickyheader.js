@@ -68,7 +68,7 @@ function doStickyHeader(){
 					})
 					.end()
 					.find('tr').each(function (i) {
-						$stickyCol.find('tr').eq(i).height($(this).height());
+						//$stickyCol.find('tr').eq(i).height($(this).height());
 						
 					});
 

@@ -17,6 +17,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -131,11 +132,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
             workbook = new Workbook();
         }
         int previewPageNum = userSelection.getCurrentPage();
-        for(int i = 0 ; i < form.getPaginatedMeasurementRowList().size() ; i++){
-    		MeasurementRow measurementRow = form.getPaginatedMeasurementRowList().get(i);
-    		int realIndex = ((previewPageNum - 1) * form.getResultPerPage()) + i;
-    		getUserSelection().getMeasurementRowList().set(realIndex, measurementRow);
-    	}
+        copyDataFromFormToUserSelection(form, previewPageNum);
         form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
     	form.setMeasurementVariables(getUserSelection().getWorkbook().getMeasurementDatasetVariables());
       
@@ -162,11 +159,9 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
         }
 		*/
         int previewPageNum = userSelection.getCurrentPage();
-        for(int i = 0 ; i < form.getPaginatedMeasurementRowList().size() ; i++){
-    		MeasurementRow measurementRow = form.getPaginatedMeasurementRowList().get(i);
-    		int realIndex = ((previewPageNum - 1) * form.getResultPerPage()) + i;
-    		getUserSelection().getMeasurementRowList().set(realIndex, measurementRow);
-    	}
+        
+        copyDataFromFormToUserSelection(form, previewPageNum);
+        
         form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
     	form.setMeasurementVariables(getUserSelection().getWorkbook().getMeasurementDatasetVariables());
       
@@ -195,20 +190,30 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     public String getPaginatedList(@PathVariable int pageNum, @PathVariable int previewPageNum
             , @ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, Model model) {
         //this set the necessary info from the session variable
-    	
+    	copyDataFromFormToUserSelection(form, previewPageNum);
     	//we need to set the data in the measurementList
     	
-    	for(int i = 0 ; i < form.getPaginatedMeasurementRowList().size() ; i++){
-    		MeasurementRow measurementRow = form.getPaginatedMeasurementRowList().get(i);
-    		int realIndex = ((previewPageNum - 1) * form.getResultPerPage()) + i;
-    		getUserSelection().getMeasurementRowList().set(realIndex, measurementRow);
-    	}
+    	
     	
     	form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
     	form.setMeasurementVariables(getUserSelection().getWorkbook().getMeasurementDatasetVariables());
         form.changePage(pageNum);
         userSelection.setCurrentPage(form.getCurrentPage());
         return super.showAjaxPage(model, PAGINATION_TEMPLATE);
+    }
+    
+    private void copyDataFromFormToUserSelection(AddOrRemoveTraitsForm form, int previewPageNum){
+    	for(int i = 0 ; i < form.getPaginatedMeasurementRowList().size() ; i++){
+    		MeasurementRow measurementRow = form.getPaginatedMeasurementRowList().get(i);
+    		int realIndex = ((previewPageNum - 1) * form.getResultPerPage()) + i;
+    		for(int index = 0 ; index < measurementRow.getDataList().size() ; index++){
+    			MeasurementData measurementData =  measurementRow.getDataList().get(index);
+    			MeasurementData sessionMeasurementData = getUserSelection().getMeasurementRowList().get(realIndex).getDataList().get(index);
+    			if(sessionMeasurementData.isEditable())
+    				sessionMeasurementData.setValue(measurementData.getValue());    			
+    		}
+    		//getUserSelection().getMeasurementRowList().set(realIndex, measurementRow);
+    	}
     }
     
     /**

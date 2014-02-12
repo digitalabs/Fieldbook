@@ -16,14 +16,17 @@
 						<tr  th:class="${row.even}? 'even' : 'odd'" th:each="measurementRow, row: *{paginatedMeasurementRowList}">
            	
            		<td th:if="${measurementData.editable == false}" style="vertical-align:bottom; padding: 0px;" align="center" th:each="measurementData, rowIndex : ${measurementRow.dataList}"  >
-             		<input type="hidden" th:if="${rowIndex.index} == 0" th:field="*{paginatedMeasurementRowList[__${row.index}__].experimentId}"/>
+             		
              		<label th:if="${measurementData.editable == false}" th:text="${measurementData.value}" ></label>
              		<input th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" type="text" th:if="${measurementData.editable == true}" th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}"/>
+             		<!--
+             		<input type="hidden" th:if="${rowIndex.index} == 0" th:field="*{paginatedMeasurementRowList[__${row.index}__].experimentId}"/> 
              		<input type="hidden" th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].phenotypeId}"/>
              		<input type="hidden" th:if="${measurementData.editable == false}" th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}"/>
              		<input type="hidden" th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].label}"/>
              		<input type="hidden" th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].editable}"/>
-             		<input type="hidden" th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].dataType}"/>             		
+             		<input type="hidden" th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].dataType}"/>
+             		 -->             		
 				</td>
 				</tr>
              	</tbody>
@@ -41,14 +44,17 @@
 						<tr  th:class="${row.even}? 'even' : 'odd'" th:each="measurementRow, row: *{paginatedMeasurementRowList}">
            	
              	<td  th:if="${measurementData.editable == true}" style="vertical-align:bottom; " align="center" th:each="measurementData, rowIndex : ${measurementRow.dataList}"  >
-             		<input type="hidden" th:if="${rowIndex.index} == 0" th:field="*{paginatedMeasurementRowList[__${row.index}__].experimentId}"/>
+             		
              		<label th:if="${measurementData.editable == false}" th:text="${measurementData.value}" ></label>
              		<input th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" type="text" th:if="${measurementData.editable == true}" th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}"/>
+             		<!--
+             		<input type="hidden" th:if="${rowIndex.index} == 0" th:field="*{paginatedMeasurementRowList[__${row.index}__].experimentId}"/> 
              		<input type="hidden" th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].phenotypeId}"/>
              		<input type="hidden" th:if="${measurementData.editable == false}" th:field="*{measurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}"/>
              		<input type="hidden" th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].label}"/>             		
              		<input type="hidden" th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].editable}"/>
-             		<input type="hidden" th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].dataType}"/>             		
+             		<input type="hidden" th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].dataType}"/>
+             		 -->             		
 				</td>
              </tr>
 					</tbody>

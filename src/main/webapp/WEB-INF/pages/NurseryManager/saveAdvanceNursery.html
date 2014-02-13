@@ -80,7 +80,7 @@ th:action="@{/NurseryManager/saveAdvanceNursery}" method="post" th:object="${adv
 				<div class="row form-group">
 					<div class="col-xs-4 col-md-4">&nbsp;</div>
 					<div class="col-xs-4 col-md-4">
-						<input type="button" onclick="javascript: window.history.back();"  value="Cancel" class="btn btn-default"/>
+						<input type="button" onclick="javascript: window.history.back();"  value="Cancel" th:value="#{common.form.cancel.text}" class="btn btn-default"/>
 	      				<input type="button" value="Save" th:value="#{common.form.save.text}" class="btn btn-primary" onclick="doSave();" />
 					</div>
 					<div class="col-xs-4 col-md-4">&nbsp;</div>
@@ -100,7 +100,7 @@ th:action="@{/NurseryManager/saveAdvanceNursery}" method="post" th:object="${adv
 							</div>
 						</div>
 						<div class="modal-footer">
-							<a id="btnOK" href="" th:href="@{/NurseryManager}" th:text="#{common.form.ok.text}" class="btn btn-primary" />
+							<a id="btnOK" href="" th:href="@{/NurseryManager}" th:text="#{common.form.ok.text}" class="btn btn-primary">OK</a>
 						</div>
 					</div>
 					<!-- /.modal-content -->

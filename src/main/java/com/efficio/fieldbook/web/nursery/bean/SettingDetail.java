@@ -13,11 +13,13 @@ package com.efficio.fieldbook.web.nursery.bean;
 
 import java.util.List;
 
+import org.generationcp.middleware.domain.dms.ValueReference;
+
 
 public class SettingDetail {
 
 	private SettingVariable variable;
-	private List<DroplistElement> possibleValues;
+	private List<ValueReference> possibleValues;
 	private String value;
 	private boolean isDelete;
 
@@ -27,10 +29,10 @@ public class SettingDetail {
 	public void setVariable(SettingVariable variable) {
 		this.variable = variable;
 	}
-	public List<DroplistElement> getPossibleValues() {
+	public List<ValueReference> getPossibleValues() {
 		return possibleValues;
 	}
-	public void setPossibleValues(List<DroplistElement> possibleValues) {
+	public void setPossibleValues(List<ValueReference> possibleValues) {
 		this.possibleValues = possibleValues;
 	}
 	public String getValue() {

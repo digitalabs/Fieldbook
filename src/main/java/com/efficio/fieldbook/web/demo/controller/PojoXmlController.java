@@ -19,8 +19,10 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.demo.form.BarCodeForm;
 import com.efficio.fieldbook.web.demo.bean.TestJavaBean;
 import com.efficio.fieldbook.web.demo.bean.UserSelection;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.pojos.histogram.HistogramNode;
 
+import org.generationcp.middleware.domain.fieldbook.settings.Dataset;
 import org.pojoxml.core.PojoXml;
 import org.pojoxml.core.PojoXmlFactory;
 import org.slf4j.Logger;
@@ -80,18 +82,28 @@ public class PojoXmlController extends AbstractBaseFieldbookController{
      */
     @RequestMapping(method = RequestMethod.GET)
     public String show(Model model) {
-
+    	/*	
 		PojoXml pojoxml = PojoXmlFactory.createPojoXml();
 
         TestJavaBean testJavaBean = new TestJavaBean();
         testJavaBean.setAge("50");
         testJavaBean.setName("Daniel Test");
         
-        
         String xml = pojoxml.getXml(testJavaBean);
-        pojoxml.saveXml(testJavaBean,"testPojoXml.xml");
-        //Employee employee = (Employee) pojoXml.getPojoFrormFile(fullPathNamen,Employee.class);
+		TestJavaBean testJavaBean1  = (TestJavaBean) pojoxml.getPojo("<TestJavaBean><name>Daniel Test</name><age>50</age></TestJavaBean>",TestJavaBean.class);
 
+        //pojoxml.saveXml(testJavaBean,"testPojoXml.xml");
+        //Employee employee = (Employee) pojoXml.getPojoFrormFile(fullPathNamen,Employee.class);
+	*/
+    	
+    	Dataset dataset = new Dataset();
+    	dataset.setName("test dataset");
+    	dataset.setConditions(SettingsUtil.generateDummyCondition(10));
+    	dataset.setFactors(SettingsUtil.generateDummyFactor(10));
+    	dataset.setVariates(SettingsUtil.generateDummyVariate(10));
+    	
+    	String xml = SettingsUtil.generateSettingsXml(dataset);    	
+    	
         System.out.println(xml);
         model.addAttribute("xml", xml);
         return super.show(model);
@@ -99,12 +111,23 @@ public class PojoXmlController extends AbstractBaseFieldbookController{
     @RequestMapping(value="parse" , method = RequestMethod.GET)
     public String parse(Model model) {
 
+    	Dataset dataset = new Dataset();
+    	dataset.setName("test dataset");
+    	dataset.setConditions(SettingsUtil.generateDummyCondition(10));
+    	dataset.setFactors(SettingsUtil.generateDummyFactor(10));
+    	dataset.setVariates(SettingsUtil.generateDummyVariate(10));
+    	
+    	String xml = SettingsUtil.generateSettingsXml(dataset);    	
+    	//System.out.println(xml);
+    	Dataset datasetNew = SettingsUtil.parseXmlToDatasetPojo(xml);
+    	/*
 		PojoXml pojoXml = PojoXmlFactory.createPojoXml();
 
 		TestJavaBean testJavaBean  = (TestJavaBean) pojoXml.getPojoFromFile("testPojoXml.xml",TestJavaBean.class);
 		System.out.println(testJavaBean.getAge());
 		System.out.println(testJavaBean.getName());
-		model.addAttribute("xml", testJavaBean.getAge() + " <br />" +testJavaBean.getName());
+		*/
+		model.addAttribute("xml", datasetNew.getName() + " <br />" +datasetNew.getConditions().size());
         return super.show(model);
     }
 

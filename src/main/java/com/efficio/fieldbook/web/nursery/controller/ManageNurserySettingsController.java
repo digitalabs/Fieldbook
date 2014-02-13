@@ -43,6 +43,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
+import com.efficio.fieldbook.web.nursery.form.ManageSettingsForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
@@ -77,7 +78,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
      * @throws MiddlewareQueryException the middleware query exception
      */
     @RequestMapping(method = RequestMethod.GET)
-    public String show(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form
+    public String show(@ModelAttribute("manageSettingsForm") ManageSettingsForm form
             , Model model, HttpSession session) throws MiddlewareQueryException{
     	return super.show(model);
     }
@@ -93,7 +94,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
      */
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
-    public String postAdvanceNursery(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form
+    public String postAdvanceNursery(@ModelAttribute("manageSettingsForm") ManageSettingsForm form
             , Model model, HttpSession session) throws MiddlewareQueryException{
 
         return super.show(model);

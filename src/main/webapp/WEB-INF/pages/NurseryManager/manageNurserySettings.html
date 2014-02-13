@@ -6,8 +6,8 @@
 	</div>			  
 </div>
 
-<form id="saveAdvanceNurseryForm" role="form-horizontal" action="#"
-th:action="@{/NurseryManager/manageNurserySettings}" method="post" enctype="multipart/form-data">
+<form id="saveAdvanceNurseryForm" role="form-horizontal" action="#" th:action="@{/NurseryManager/manageNurserySettings}" 
+method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 <div class="col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org">
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
@@ -17,9 +17,9 @@ th:action="@{/NurseryManager/manageNurserySettings}" method="post" enctype="mult
 			    		<div class="col-xs-3 col-md-3">
 			    			<label class="control-label"> <strong th:text="#{nursery.managesettings.choose.saved.settings}+':'"> Choose Saved Settings: </strong></label>
 			    		</div>
-			    		<div class="col-xs-2 col-md-2">
-			    			<select>
-			    				<option>Nursery Type 1</option>
+			    		<div class="col-xs-3 col-md-3">
+			    			<select th:field="*{selectedSettingId}" class="form-control">
+			    				<option value="1">Nursery Type 1</option>
 			    			</select>
 			    		</div>
 			    		<div class="col-xs-2 col-md-2">
@@ -29,7 +29,7 @@ th:action="@{/NurseryManager/manageNurserySettings}" method="post" enctype="mult
 			    			<span class="glyphicon glyphicon-plus"></span>&nbsp;
 			    			<a href="" th:text="#{nursery.managesettings.add.new.settings}">Add New Settings</a>
 			    		</div>
-			    		<div class="col-xs-3 col-md-3">
+			    		<div class="col-xs-2 col-md-2">
 			    		</div>
 		    		</div>
 		    	</div>
@@ -56,52 +56,21 @@ th:action="@{/NurseryManager/manageNurserySettings}" method="post" enctype="mult
 			    			You can add settings at this level, or remove those that you wish to manage at the plot level.</label>
 		    			</div>
 	    			</div>
-	    			<div class="row form-group">
+	    			<div class="row form-group" th:each="nurseryLevelVariable : *{nurseryLevelVariables}">
 	    				<div class="col-xs-3 col-md-3">
-	    					<span class="glyphicon glyphicon-remove-sign"></span> &nbsp;&nbsp;
-	    					<label class="control-label">Specify Nursery Type:*</label>
+	    					<span th:if="${nurseryLevelVariable.isDelete}" class="glyphicon glyphicon-remove-sign"></span> &nbsp;&nbsp;
+	    					<label class="control-label" th:text="${nurseryLevelVariable.variable.name}"></label> 
 	    				</div>
 	    				<div class="col-xs-9 col-md-9">
-	    					<select>
-	    						<option>F1</option>
-	    					</select>
-	    					&nbsp;&nbsp;
-	    					<span class="glyphicon glyphicon-eye-open"></span>
 	    				</div>
-    				</div>
-    				<div class="row form-group">
-	    				<div class="col-xs-3 col-md-3">
-	    					<span class="glyphicon glyphicon-remove-sign"></span> &nbsp;&nbsp;
-	    					<label class="control-label">Principal Investigator:*</label>
-	    				</div>
+	    				<!--  
 	    				<div class="col-xs-9 col-md-9">
-	    					<select>
-	    						<option>Jean Phillips</option>
-	    					</select>
-	    				</div>
-    				</div>
-    				<div class="row form-group">
-	    				<div class="col-xs-3 col-md-3">
-	    					<span class="glyphicon glyphicon-remove-sign"></span> &nbsp;&nbsp;
-	    					<label class="control-label">Location:*</label>
-	    				</div>
-	    				<div class="col-xs-9 col-md-9">
-	    					<select>
-	    						<option>University of California - Riverside</option>
-	    					</select>
-	    					&nbsp;&nbsp;
-	    					<a href="">Manage Locations</a>
-	    				</div>
-    				</div>
-    				<div class="row form-group">
-	    				<div class="col-xs-3 col-md-3">
-	    					<span class="glyphicon glyphicon-remove-sign"></span> &nbsp;&nbsp;
-	    					<label class="control-label">Number of Rows:*</label>
-	    				</div>
-	    				<div class="col-xs-9 col-md-9">
-	    					<input type="text" />
-	    				</div>
-    				</div>
+	    					<select th:field="${nurseryLevelVariable.value}" class="form-control">
+	    						<option th:each="possibleValue : ${nurseryLevelVariable.possibleValue}"> </option>
+    						</select>
+    					</div>
+    					-->
+	    			</div>
     				<div class="row form-group">
 	    				<div class="col-xs-12 col-md-12">
 	    					&nbsp;
@@ -130,37 +99,26 @@ th:action="@{/NurseryManager/manageNurserySettings}" method="post" enctype="mult
 		    			</div>
 	    			</div>
 	    			<div class="row form-group">
-	    				<div class="col-xs-2 col-md-2">
-	    					<span class="glyphicon glyphicon-remove-sign"></span>&nbsp;&nbsp;
-	    					Entry #
-	    				</div>
-	    				<div class="col-xs-2 col-md-2">
-	    					<span class="glyphicon glyphicon-remove-sign"></span>&nbsp;&nbsp;
-	    					GID
-	    				</div>
-	    				<div class="col-xs-2 col-md-2">
-	    					<span class="glyphicon glyphicon-remove-sign"></span>&nbsp;&nbsp;
-	    					Generation
-	    				</div>
 	    				<div class="col-xs-6 col-md-6">
+	    					<table class="my-class table table-curved table-condensed">
+	    						<thead>
+								<tr>
+									<th></th>
+					                <th th:utext="#{nursery.managesettings.plot.name}">.Name</th>
+					                <th th:utext="#{nursery.managesettings.plot.description}">.Description</th>
+								</tr>
+								</thead>
+								<tbody>
+			    					<tr th:each="plotLevelVariable : *{plotLevelVariables}">
+			    					<td> <span th:if="${plotLevelVariable.isDelete}" class="glyphicon glyphicon-remove-sign"></span> </td>
+			    					<td th:text="${plotLevelVariable.variable.name}"></td>
+			    					<td th:text="${plotLevelVariable.variable.description}"></td>
+			    					</tr> 
+		    					</tbody>
+	    					</table>
 	    				</div>
-    				</div>
-    				<div class="row form-group">
-	    				<div class="col-xs-2 col-md-2">
-	    					<span class="glyphicon glyphicon-remove-sign"></span>&nbsp;&nbsp;
-	    					Plot #
-	    				</div>
-	    				<div class="col-xs-2 col-md-2">
-	    					<span class="glyphicon glyphicon-remove-sign"></span>&nbsp;&nbsp;
-	    					Name
-	    				</div>
-	    				<div class="col-xs-3 col-md-3">
-	    					<span class="glyphicon glyphicon-remove-sign"></span>&nbsp;&nbsp;
-	    					Breeding Method
-	    				</div>
-	    				<div class="col-xs-5 col-md-5">
-	    				</div>
-    				</div>
+	    				<div class="col-xs-6 col-md-6"></div>
+	    			</div>
     				<div class="row form-group">
 	    				<div class="col-xs-12 col-md-12">
 	    					&nbsp;
@@ -190,20 +148,26 @@ th:action="@{/NurseryManager/manageNurserySettings}" method="post" enctype="mult
 		    			</div>
 	    			</div>
 	    			<div class="row form-group">
-	    				<div class="col-xs-12 col-md-12">
+	    				<div class="col-xs-6 col-md-6">
 	    					<table class="my-class table table-curved table-condensed">
-								<thead>
-									<tr>
-										<th th:text="#{nursery.managesettings.trait}">Trait</th>
-						                <th th:text="#{nursery.managesettings.trait.description}">Description</th>
-						                <th></th>
-									</tr>
+	    						<thead>
+								<tr>
+									<th></th>
+					                <th th:utext="#{nursery.managesettings.trait}">.Trait</th>
+					                <th th:utext="#{nursery.managesettings.trait.description}">.Description</th>
+								</tr>
 								</thead>
 								<tbody>
-								</tbody>
-							</table>
+			    					<tr th:each="baselineTraitVariable : *{baselineTraitVariables}">
+			    					<td> <span th:if="${baselineTraitVariable.isDelete}" class="glyphicon glyphicon-remove-sign"></span> </td>
+			    					<td th:text="${baselineTraitVariable.variable.name}"></td>
+			    					<td th:text="${baselineTraitVariable.variable.description}"></td>
+			    					</tr> 
+		    					</tbody>
+	    					</table>
 	    				</div>
-    				</div>
+	    				<div class="col-xs-6 col-md-6"></div>
+	    			</div>
     				<div class="row form-group">
 	    				<div class="col-xs-12 col-md-12">
 	    					&nbsp;
@@ -279,10 +243,10 @@ th:action="@{/NurseryManager/manageNurserySettings}" method="post" enctype="mult
 	    				<div class="col-xs-5 col-md-5">
 	    					<label class="contol-label" th:text="#{nursery.managesettings.save.settings.as}+':'">Save these settings as:</label>
 	    					&nbsp;&nbsp;
-	    					<input type="text" />
+	    					<input type="text" th:field="*{settingName}" />
 	    				</div>
 	    				<div class="col-xs-7 col-md-7">
-	    					<input type="checkbox" /> 
+	    					<input type="checkbox" th:field="*{isDefault}" /> 
 	    					<label class="control-label" th:text="#{nursery.managesettings.set.default}"> Set as default for this program (overrides previous defaults)</label>
 	    				</div>
 	    			</div>

@@ -77,6 +77,8 @@ public class AppConstants {
     
     public static final String GERMPLASM_LIST_TYPE_HARVEST = "Harvest";
     
-    
+    public static final int SEGMENT_STUDY = 1;
+    public static final int SEGMENT_PLOT = 2;
+    public static final int SEGMENT_TRAITS = 3;
     
 }

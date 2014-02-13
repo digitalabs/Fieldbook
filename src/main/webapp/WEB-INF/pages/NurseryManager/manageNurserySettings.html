@@ -17,9 +17,10 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			    		<div class="col-xs-3 col-md-3">
 			    			<label class="control-label"> <strong th:text="#{nursery.managesettings.choose.saved.settings}+':'"> Choose Saved Settings: </strong></label>
 			    		</div>
+			    		
 			    		<div class="col-xs-3 col-md-3">
 			    			<select th:field="*{selectedSettingId}" class="form-control">
-			    				<option value="1">Nursery Type 1</option>
+			    				<option th:each="setting : ${settingsList}" th:value="${setting[id]}" th:text="${setting[name]}">Nursery Type 1</option>
 			    			</select>
 			    		</div>
 			    		<div class="col-xs-2 col-md-2">
@@ -274,7 +275,12 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 <div layout:fragment="page-script">
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[   
- 		       
+ 			$( document ).ready(function() {
+ 				$('#selectedSettingId').on('change', function(){
+ 					alert('load settings' + $(this).val());
+ 					
+ 				})
+ 			});       
 	
       //]]>
     </script>

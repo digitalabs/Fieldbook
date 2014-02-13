@@ -11,6 +11,7 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -26,6 +27,7 @@ import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
+import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
@@ -67,6 +69,32 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     public String getContentName() {
         return "NurseryManager/manageNurserySettings";
     }    
+    private Map generateDummySettings(int i){
+    	Map map = new HashMap();
+    	map.put("id", Integer.valueOf(i));
+    	map.put("name", i + " Test Name");
+    	return map;
+    }
+    @ModelAttribute("settingsList")
+    public List<Map> getSettingsList() {
+        //try {
+        	//need to call the MW call passing the tool id and project id
+        	//getCurrentProjectId()
+            //List<Location> dataTypesOrig = fieldbookMiddlewareService.getAllLocations();
+            //List<Location> dataTypes = dataTypesOrig;
+            List<Map> mapList = new ArrayList();
+            for(int i = 0 ; i < 10 ; i++){
+            	mapList.add(generateDummySettings(i));
+            }
+            
+            return mapList;
+        /*    
+        }catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+		*/
+        //return null;
+    }
     
     /**
      * Shows the screen.

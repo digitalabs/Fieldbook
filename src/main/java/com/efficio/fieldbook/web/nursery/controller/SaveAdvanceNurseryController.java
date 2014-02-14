@@ -236,7 +236,11 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
 
         //Common germplasm fields
         Integer lgid = 0;
-        Integer locationId = Integer.valueOf(advancingNursery.getHarvestLocationId()); 
+        Integer locationId = 0;
+        String harvestLocationId = advancingNursery.getHarvestLocationId();
+        if (harvestLocationId != null && !harvestLocationId.equals("")){
+            locationId = Integer.valueOf(harvestLocationId); 
+        }
         Integer gDate = Integer.valueOf(harvestDate); 
         
         //Common germplasm list data fields

@@ -22,7 +22,19 @@ public class SettingDetail {
 	private List<ValueReference> possibleValues;
 	private String value;
 	private boolean isDelete;
+	
+	public SettingDetail(){
+		super();
+	}
 
+	public SettingDetail(SettingVariable variable,
+			List<ValueReference> possibleValues, String value, boolean isDelete) {
+		super();
+		this.variable = variable;
+		this.possibleValues = possibleValues;
+		this.value = value;
+		this.isDelete = isDelete;
+	}
 	public SettingVariable getVariable() {
 		return variable;
 	}

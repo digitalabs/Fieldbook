@@ -25,6 +25,26 @@ public class SettingVariable {
 	private String traitClass;
 	private String cropOntologyId;
 	
+	public SettingVariable(){
+		super();
+	}
+	
+	
+	
+	public SettingVariable(String name, String description, String property,
+			String scale, String method, String role, String dataType) {
+		super();
+		this.name = name;
+		this.description = description;
+		this.property = property;
+		this.scale = scale;
+		this.method = method;
+		this.role = role;
+		this.dataType = dataType;
+	}
+
+
+
 	public String getTraitClass() {
 		return traitClass;
 	}

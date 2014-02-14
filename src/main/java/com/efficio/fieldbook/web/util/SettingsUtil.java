@@ -7,18 +7,26 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.fieldbook.settings.Condition;
 import org.generationcp.middleware.domain.fieldbook.settings.Dataset;
 import org.generationcp.middleware.domain.fieldbook.settings.Factor;
 import org.generationcp.middleware.domain.fieldbook.settings.Variate;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.pojoxml.core.PojoXml;
 import org.pojoxml.core.PojoXmlFactory;
 
 import com.efficio.fieldbook.web.demo.bean.TestJavaBean;
 import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.bean.SettingVariable;
+import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 
 public class SettingsUtil {
+	
+	 @Resource
+    private FieldbookService fieldbookMiddlewareService;
 	public static String generateSettingsXml(Dataset dataset){
 		PojoXml pojoXml = PojoXmlFactory.createPojoXml();
 
@@ -72,7 +80,7 @@ public class SettingsUtil {
 		pojoXml.addCollectionClass("variate",Variate.class);
 	}
 	
-	public static Dataset convertPojoToXmlDataset(List<SettingDetail> nurseryLevelConditions, List<SettingDetail> plotsLevelList, List<SettingDetail> baselineTraitsList){
+	public static Dataset convertPojoToXmlDataset(String name, List<SettingDetail> nurseryLevelConditions, List<SettingDetail> plotsLevelList, List<SettingDetail> baselineTraitsList){
 		Dataset dataset = new Dataset();
 		List<Condition> conditions = new ArrayList<Condition>();
 		List<Factor> factors = new ArrayList<Factor>();
@@ -90,23 +98,75 @@ public class SettingsUtil {
 			SettingVariable variable = settingDetail.getVariable();
 			Factor factor = new Factor(variable.getName(), variable.getDescription(), variable.getProperty(),
 					variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType());
-			conditions.add(condition);
+			factors.add(factor);
 		}
 		//iterate for the baseline traits level
 		for(SettingDetail settingDetail : baselineTraitsList){
 			SettingVariable variable = settingDetail.getVariable();
 			Variate variate = new Variate(variable.getName(), variable.getDescription(), variable.getProperty(),
 					variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType());
-			conditions.add(condition);
+			variates.add(variate);
 		}
 		dataset.setConditions(conditions);
 		dataset.setFactors(factors);
 		dataset.setVariates(variates);
+		dataset.setName(name);
 		return dataset;
 	}
 	
-	public static void convertXmlDatasetToPojo(Dataset dataset){
-		
+	public static List<ValueReference> getFieldPossibleVales(SettingVariable variable){
+		List<ValueReference> possibleValueList = new ArrayList<ValueReference>();
+		//return the object using the PSM-R
+		return possibleValueList;
+	}
+	
+	public static boolean isSettingVariableDeletable(SettingVariable variable){
+		//need to add the checking here if the specific PSM-R is deletable, for the nursery level details
+		return true;
+	}
+	public static void convertXmlDatasetToPojo(Dataset dataset, UserSelection userSelection){
+		if(dataset != null && userSelection != null){
+			//we copy it to User session object
+			//nursery level
+   		    List<SettingDetail> nurseryLevelConditions = new ArrayList<SettingDetail>();
+		    List<SettingDetail> plotsLevelList  = new ArrayList<SettingDetail>();
+		    List<SettingDetail> baselineTraitsList  = new ArrayList<SettingDetail>();
+			for(Condition condition : dataset.getConditions()){
+				
+				SettingVariable variable = new SettingVariable(condition.getName(), condition.getDescription(), condition.getProperty(),
+						condition.getScale(), condition.getMethod(), condition.getRole(), condition.getDatatype());
+				
+				SettingDetail settingDetail = new SettingDetail(variable,
+						getFieldPossibleVales(variable), condition.getValue(), isSettingVariableDeletable(variable));
+				nurseryLevelConditions.add(settingDetail);
+			}
+			//plot level
+			//always allowed to be deleted
+			for(Factor factor : dataset.getFactors()){
+				
+				SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(),
+						factor.getScale(), factor.getMethod(), factor.getRole(), factor.getDatatype());
+				
+				SettingDetail settingDetail = new SettingDetail(variable,
+						null, null, true);
+				plotsLevelList.add(settingDetail);
+			}
+			//baseline traits
+			//always allowed to be deleted
+			for(Variate variate : dataset.getVariates()){
+				
+				SettingVariable variable = new SettingVariable(variate.getName(), variate.getDescription(), variate.getProperty(),
+						variate.getScale(), variate.getMethod(), variate.getRole(), variate.getDatatype());
+				
+				SettingDetail settingDetail = new SettingDetail(variable,
+						null, null, true);
+				baselineTraitsList.add(settingDetail);
+			}
+			
+			userSelection.setNurseryLevelConditions(nurseryLevelConditions);
+			userSelection.setPlotsLevelList(plotsLevelList);			
+			userSelection.setBaselineTraitsList(baselineTraitsList);
+		}
 	}
 	
 	public static List<Condition> generateDummyCondition(int limit){

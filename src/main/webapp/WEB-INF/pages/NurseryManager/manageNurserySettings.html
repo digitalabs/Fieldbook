@@ -76,7 +76,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
     				<div class="row form-group">
 	    				<div class="col-xs-12 col-md-12">
 	    					<span class="glyphicon glyphicon-plus"></span>&nbsp;
-			    			<a href="javascript: openAddVariablesSetting('nursery');" th:text="#{nursery.managesettings.add.nursery.level.settings}">Add Nursery-Level Settings</a>
+			    			<a href="javascript: openAddVariablesSetting(1);" th:text="#{nursery.managesettings.add.nursery.level.settings}">Add Nursery-Level Settings</a>
 		    			</div>
 	    			</div>
 	    			<div class="row form-group">
@@ -124,7 +124,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
     				<div class="row form-group">
 	    				<div class="col-xs-12 col-md-12">
 	    					<span class="glyphicon glyphicon-plus"></span>&nbsp;
-			    			<a href="javascript: openAddVariablesSetting('plot');" th:text="#{nursery.managesettings.add.plot.level.settings}">Add Plot-Level Settings</a>
+			    			<a href="javascript: openAddVariablesSetting(2);" th:text="#{nursery.managesettings.add.plot.level.settings}">Add Plot-Level Settings</a>
 		    			</div>
 	    			</div>
 	    			<div class="row form-group">
@@ -173,7 +173,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
     				<div class="row form-group">
 	    				<div class="col-xs-12 col-md-12">
 	    					<span class="glyphicon glyphicon-plus"></span>&nbsp;
-			    			<a href="javascript: openAddVariablesSetting('baseline');" th:text="#{nursery.managesettings.add.baseline.traits}">Add Baseline Traits</a>
+			    			<a href="javascript: openAddVariablesSetting(3);" th:text="#{nursery.managesettings.add.baseline.traits}">Add Baseline Traits</a>
 		    			</div>
 	    			</div>
 	    			<div class="row form-group">
@@ -284,7 +284,75 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
  			});       
  			
  			function openAddVariablesSetting(variableType) {
- 				$("#addVariablesSettingModal").modal("show");
+ 				getStandardVariables(variableType);
+ 				$("#addVariablesSettingModal").modal("show"); 				
+ 			}
+ 			
+ 			function getStandardVariables(variableType) {
+ 				Spinner.toggle();
+ 				$.ajax({
+ 					url: "/Fieldbook/NurseryManager/manageNurserySettings/displayAddSetting/" + variableType,
+ 					type: "GET",
+ 					cache: false,
+ 					success: function (data) {
+ 						initializeStandardVariableSearch(data);
+ 					},
+ 					error: function(jqXHR, textStatus, errorThrown){
+ 						console.log("The following error occured: " + textStatus, errorThrown); 
+ 					},
+ 					complete: function() {
+ 						Spinner.toggle();
+ 					}
+ 				});
+ 			}
+ 			
+ 			function initializeStandardVariableSearch(data) {
+ 				var searchTypeAhead = $("#srch-var").typeahead({
+ 	        		   	  name: "StandardVariableSearch", 
+ 	        		   	  local: $.parseJSON(data),
+ 	        		   	  limit : 20,   	
+ 	        		   	  template: "<p>{{id}} - {{name}}</p>",
+ 	        		   	  engine: Hogan 	        		   	
+        		   	});
+ 				
+       		   	searchTypeAhead.on("typeahead:selected",function(evt,data){
+       		   	    getStandardVariableDetails(data.id);
+       		   	    return false;
+       		   	    });
+       		   	searchTypeAhead.on("typeahead:autocomplete",function(evt,data){
+       		   		getStandardVariableDetails(data.id);
+       		   	    return false;
+       		   	    });
+ 			}
+ 			
+ 			function getStandardVariableDetails(id) {
+ 				Spinner.toggle();
+ 				$.ajax({
+ 					url: "/Fieldbook/NurseryManager/manageNurserySettings/showVariableDetails/" + id,
+ 					type: "GET",
+ 					cache: false,
+ 					success: function (data) {
+ 						populateAttributeFields($.parseJSON(data));
+ 					},
+ 					error: function(jqXHR, textStatus, errorThrown){
+ 						console.log("The following error occured: " + textStatus, errorThrown); 
+ 					},
+ 					complete: function() {
+ 						Spinner.toggle();
+ 					}
+ 				});
+ 			}
+ 					
+ 			function populateAttributeFields(data) {
+ 				$("#selectedTraitClass").text(data.traitClass);
+ 				$("#selectedProperty").text(data.property);
+ 				$("#selectedMethod").text(data.method);
+ 				$("#selectedScale").text(data.scale);
+ 				$("#selectedDataType").text(data.dataType);
+ 				$("#selectedRole").text(data.role);
+ 				$("#selectedCropOntologyId").text(data.cropOntologyId);
+ 				$("#selectedStdVarId").val(data.cvTermId);
+ 				$("#selectedName").val(data.name);
  			}
 	
       //]]>

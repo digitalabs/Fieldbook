@@ -200,7 +200,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
         	List<StandardVariableReference> standardVariableList = fieldbookService.filterStandardVariablesForSetting(stdVars, mode, getSettingDetailList(mode));
         	if (standardVariableList != null && !standardVariableList.isEmpty()) {
         		ObjectMapper om = new ObjectMapper();
-        		om.writeValueAsString(standardVariableList);
+        		return om.writeValueAsString(standardVariableList);
         	}
 
     	} catch(Exception e) {

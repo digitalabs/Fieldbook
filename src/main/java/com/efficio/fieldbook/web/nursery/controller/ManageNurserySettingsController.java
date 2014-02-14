@@ -20,6 +20,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -143,13 +144,16 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
         	Set<StandardVariable> stdVars = fieldbookMiddlewareService.getAllStandardVariables();
         	List<StandardVariableReference> standardVariableList = fieldbookService.filterStandardVariablesForSetting(stdVars, mode, getSettingDetailList(mode));
         	model.addAttribute("standardVariableList", standardVariableList);
+        	if (standardVariableList != null && !standardVariableList.isEmpty()) {
+        		ObjectMapper om = new ObjectMapper();
+        		om.writeValueAsString(standardVariableList);
+        	}
 
     	} catch(Exception e) {
     		LOG.error(e.getMessage(), e);
     	}
     	
-    	//TODO: set it to the html of the popup
-    	return "";
+    	return "[]";
     }
     
     private List<SettingDetail> getSettingDetailList(int mode) {

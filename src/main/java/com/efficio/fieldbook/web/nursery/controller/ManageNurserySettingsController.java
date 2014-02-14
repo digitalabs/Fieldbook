@@ -33,8 +33,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.ManageSettingsForm;
+import com.efficio.fieldbook.web.util.AppConstants;
 
 /**
  * The Class SaveAdvanceNurseryController.
@@ -137,7 +139,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	try {
     		
         	Set<StandardVariable> stdVars = fieldbookMiddlewareService.getAllStandardVariables();
-        	//stdVars = fieldbookService.filterStandardVariablesForSettings(stdVars, mode, userSelection);
+        	//stdVars = fieldbookService.filterStandardVariablesForSettings(stdVars, mode, getSettingDetailList(mode));
 
     	} catch(Exception e) {
     		LOG.error(e.getMessage(), e);
@@ -147,4 +149,12 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	return "";
     }
     
+    private List<SettingDetail> getSettingDetailList(int mode) {
+    	switch (mode) {
+	    	case AppConstants.SEGMENT_STUDY : return userSelection.getNurseryLevelConditions(); 
+	    	case AppConstants.SEGMENT_PLOT : return userSelection.getPlotsLevelList();
+	    	case AppConstants.SEGMENT_TRAITS : return userSelection.getBaselineTraitsList(); 
+    	}
+    	return null;
+    }
 }

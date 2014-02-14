@@ -25,6 +25,10 @@ import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.WorkbenchDataManager;
+import org.generationcp.middleware.pojos.workbench.TemplateSetting;
+import org.generationcp.middleware.pojos.workbench.Tool;
+import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +46,7 @@ import com.efficio.fieldbook.web.nursery.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.ManageSettingsForm;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 
 /**
  * The Class SaveAdvanceNurseryController.
@@ -58,6 +63,8 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     
     @Resource
     private FieldbookService fieldbookMiddlewareService;
+    @Resource
+    private WorkbenchDataManager workbenchDataManager;
     
     @Resource
     private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
@@ -79,24 +86,22 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	return map;
     }
     @ModelAttribute("settingsList")
-    public List<Map> getSettingsList() {
-        //try {
+    public List<TemplateSetting> getSettingsList() {
+        try {
         	//need to call the MW call passing the tool id and project id
         	//getCurrentProjectId()
-            //List<Location> dataTypesOrig = fieldbookMiddlewareService.getAllLocations();
-            //List<Location> dataTypes = dataTypesOrig;
-            List<Map> mapList = new ArrayList();
-            for(int i = 0 ; i < 10 ; i++){
-            	mapList.add(generateDummySettings(i));
-            }
-            
-            return mapList;
-        /*    
+        	Tool tool = workbenchDataManager.getToolWithName(AppConstants.TOOL_NAME_NURSERY_MANAGER_WEB);
+        	
+        	TemplateSetting templateSettingFilter = new TemplateSetting(null, Integer.valueOf(getCurrentProjectId()), null, tool, null, null);
+        	templateSettingFilter.setIsDefaultToNull();
+            List<TemplateSetting> templateSettingsList = workbenchDataManager.getTemplateSettings(templateSettingFilter);
+           
+            return templateSettingsList;
         }catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }
-		*/
-        //return null;
+		
+        return null;
     }
     
     /**
@@ -125,9 +130,54 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
      */
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
-    public String postAdvanceNursery(@ModelAttribute("manageSettingsForm") ManageSettingsForm form
+    public String saveSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form
             , Model model, HttpSession session) throws MiddlewareQueryException{
-
+		//will do the saving here
+    	Dataset dataset = SettingsUtil.convertPojoToXmlDataset(form.getSettingName(), form.getNurseryLevelVariables(), form.getPlotLevelVariables(), form.getBaselineTraitVariables());
+    	String xml = SettingsUtil.generateSettingsXml(dataset);
+    	Tool tool = workbenchDataManager.getToolWithName(AppConstants.TOOL_NAME_NURSERY_MANAGER_WEB);
+    	Integer tempateSettingId = form.getSelectedSettingId() > 0 ? Integer.valueOf(form.getSelectedSettingId()) : null;
+    	TemplateSetting templateSetting = new TemplateSetting(tempateSettingId, Integer.valueOf(getCurrentProjectId()), dataset.getName(), tool, xml, Boolean.valueOf(form.getIsDefault())) ;
+    	if(templateSetting.getTemplateSettingId() != null)
+    		workbenchDataManager.addTemplateSetting(templateSetting);
+    	else
+    		workbenchDataManager.updateTemplateSetting(templateSetting);
+        return super.show(model);
+    }
+    /**
+     * For deletion of nursery setting
+     * @param templateSettingId
+     * @param model
+     * @param session
+     * @return
+     * @throws MiddlewareQueryException
+     */
+    @ResponseBody
+    @RequestMapping(value="/delete/{templateSettingId}", method = RequestMethod.POST)
+    public String deleteSettings(@PathVariable int templateSettingId
+            , Model model, HttpSession session) throws MiddlewareQueryException{
+		//will do the saving here
+    	workbenchDataManager.deleteTemplateSetting(Integer.valueOf(templateSettingId));
+    	//need to add here the cleanup in the session and in the form
+        return super.show(model);
+    }
+    
+    @ResponseBody
+    @RequestMapping(value="/view/{templateSettingId}", method = RequestMethod.POST)
+    public String viewSettings(@PathVariable int templateSettingId
+            , Model model, HttpSession session) throws MiddlewareQueryException{
+		//will do the saving here
+    	Tool tool = workbenchDataManager.getToolWithName(AppConstants.TOOL_NAME_NURSERY_MANAGER_WEB);
+    	
+    	TemplateSetting templateSettingFilter = new TemplateSetting(Integer.valueOf(templateSettingId), Integer.valueOf(getCurrentProjectId()), null, tool, null, null);
+    	templateSettingFilter.setIsDefaultToNull();
+    	List<TemplateSetting> templateSettings = workbenchDataManager.getTemplateSettings(templateSettingFilter);
+    	TemplateSetting templateSetting = templateSettings.get(0); //always 1
+    	Dataset dataset = SettingsUtil.parseXmlToDatasetPojo(templateSetting.getConfiguration());
+    	SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, dataset, userSelection);
+    	
+    	// we now need to return json for the display
+    	//need to add here the cleanup in the session and in the form
         return super.show(model);
     }
     

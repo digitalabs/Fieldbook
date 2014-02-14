@@ -11,24 +11,23 @@ import javax.annotation.Resource;
 
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.fieldbook.settings.Condition;
-import org.generationcp.middleware.domain.fieldbook.settings.Dataset;
-import org.generationcp.middleware.domain.fieldbook.settings.Factor;
-import org.generationcp.middleware.domain.fieldbook.settings.Variate;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.workbench.settings.Condition;
+import org.generationcp.middleware.pojos.workbench.settings.Dataset;
+import org.generationcp.middleware.pojos.workbench.settings.Factor;
+import org.generationcp.middleware.pojos.workbench.settings.Variate;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.pojoxml.core.PojoXml;
 import org.pojoxml.core.PojoXmlFactory;
+import org.springframework.stereotype.Component;
 
 import com.efficio.fieldbook.web.demo.bean.TestJavaBean;
 import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 
+
 public class SettingsUtil {
-	
-	@Resource
-    private static FieldbookService fieldbookMiddlewareService;
 	
 	public static String generateSettingsXml(Dataset dataset){
 		PojoXml pojoXml = PojoXmlFactory.createPojoXml();
@@ -117,7 +116,7 @@ public class SettingsUtil {
 		return dataset;
 	}
 	
-	public static List<ValueReference> getFieldPossibleVales(SettingVariable variable){
+	public static List<ValueReference> getFieldPossibleVales(FieldbookService fieldbookMiddlewareService, SettingVariable variable){
 		List<ValueReference> possibleValueList = new ArrayList<ValueReference>();
 		//return the object using the PSM-R
 		//fieldbookMiddlewareService.
@@ -141,7 +140,7 @@ public class SettingsUtil {
 		//need to add the checking here if the specific PSM-R is deletable, for the nursery level details
 		return true;
 	}
-	public static void convertXmlDatasetToPojo(Dataset dataset, UserSelection userSelection){
+	public static void convertXmlDatasetToPojo(FieldbookService fieldbookMiddlewareService, Dataset dataset, UserSelection userSelection){
 		if(dataset != null && userSelection != null){
 			//we copy it to User session object
 			//nursery level
@@ -154,7 +153,7 @@ public class SettingsUtil {
 						condition.getScale(), condition.getMethod(), condition.getRole(), condition.getDatatype());
 				
 				SettingDetail settingDetail = new SettingDetail(variable,
-						getFieldPossibleVales(variable), condition.getValue(), isSettingVariableDeletable(variable));
+						getFieldPossibleVales(fieldbookMiddlewareService, variable), condition.getValue(), isSettingVariableDeletable(variable));
 				nurseryLevelConditions.add(settingDetail);
 			}
 			//plot level

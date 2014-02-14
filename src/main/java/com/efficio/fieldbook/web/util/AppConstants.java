@@ -81,4 +81,8 @@ public class AppConstants {
     public static final int SEGMENT_PLOT = 2;
     public static final int SEGMENT_TRAITS = 3;
     
+    public static final String TOOL_NAME_NURSERY_MANAGER_WEB = "nursery_manager_fieldbook_web";
+    public static final String TOOL_NAME_TRIAL_MANAGER_WEB = "trial_manager_fieldbook_web";
+    
+    
 }

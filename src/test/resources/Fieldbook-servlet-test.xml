@@ -223,6 +223,12 @@
         <property name="configLocation" value="classpath:ibpmidware_hib.cfg.xml"/>
     </bean>
 
+
+	<bean id="workbenchSessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+        <property name="dataSource" ref="workbenchDataSource"/>
+        <property name="configLocation" value="classpath:ibpworkbench_hib.cfg.xml"/>
+    </bean>
+    
     <bean id="localIbdbSessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
         <property name="dataSource" ref="localIbdbDataSource"/>
         <property name="configLocation" value="classpath:ibpmidware_hib.cfg.xml"/>
@@ -270,7 +276,7 @@
         <property name="password" value="${workbench.password}"/>
     </bean>
 	
-	 <bean id="workbenchHibernateSessionProvider" class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider" scope="request" destroy-method="close">
+	 <bean id="workbenchHibernateSessionProvider" class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider" scope="singleton" destroy-method="close">
         <property name="sessionFactory" ref="workbenchSessionFactory"/>
         
         <!-- JDK Standard Proxy around this request scoped bean, so we can use it on longer scoped beans -->

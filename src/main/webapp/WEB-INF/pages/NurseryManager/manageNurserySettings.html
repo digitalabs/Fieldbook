@@ -20,7 +20,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			    		
 			    		<div class="col-xs-3 col-md-3">
 			    			<select th:field="*{selectedSettingId}" class="form-control">
-			    				<option th:each="setting : ${settingsList}" th:value="${setting[id]}" th:text="${setting[name]}">Nursery Type 1</option>
+			    				<option th:each="setting : ${settingsList}" th:value="${setting.templateSettingId}" th:text="${setting.name}">Nursery Type 1</option>
 			    			</select>
 			    		</div>
 			    		<div class="col-xs-2 col-md-2">

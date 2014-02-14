@@ -19,10 +19,11 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.demo.form.BarCodeForm;
 import com.efficio.fieldbook.web.demo.bean.TestJavaBean;
 import com.efficio.fieldbook.web.demo.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.bean.SettingVariable;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.pojos.histogram.HistogramNode;
 
-import org.generationcp.middleware.domain.fieldbook.settings.Dataset;
+import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.pojoxml.core.PojoXml;
 import org.pojoxml.core.PojoXmlFactory;
 import org.slf4j.Logger;
@@ -111,6 +112,7 @@ public class PojoXmlController extends AbstractBaseFieldbookController{
     @RequestMapping(value="parse" , method = RequestMethod.GET)
     public String parse(Model model) {
 
+    	
     	Dataset dataset = new Dataset();
     	dataset.setName("test dataset");
     	dataset.setConditions(SettingsUtil.generateDummyCondition(10));

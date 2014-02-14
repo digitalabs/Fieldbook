@@ -63,14 +63,10 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 	    					<label class="control-label" th:text="${nurseryLevelVariable.variable.name}"></label> 
 	    				</div>
 	    				<div class="col-xs-9 col-md-9">
-	    				</div>
-	    				<!--  
-	    				<div class="col-xs-9 col-md-9">
 	    					<select th:field="${nurseryLevelVariable.value}" class="form-control">
-	    						<option th:each="possibleValue : ${nurseryLevelVariable.possibleValue}"> </option>
+	    						<option th:each="possibleValue : ${nurseryLevelVariable.possibleValue}" th:value="${possibleValue.id}" th:text="${possibleValue.name}"> </option>
     						</select>
-    					</div>
-    					-->
+	    				</div>
 	    			</div>
     				<div class="row form-group">
 	    				<div class="col-xs-12 col-md-12">
@@ -80,7 +76,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
     				<div class="row form-group">
 	    				<div class="col-xs-12 col-md-12">
 	    					<span class="glyphicon glyphicon-plus"></span>&nbsp;
-			    			<a href="" th:text="#{nursery.managesettings.add.nursery.level.settings}">Add Nursery-Level Settings</a>
+			    			<a href="javascript: openAddVariablesSetting('nursery');" th:text="#{nursery.managesettings.add.nursery.level.settings}">Add Nursery-Level Settings</a>
 		    			</div>
 	    			</div>
 	    			<div class="row form-group">
@@ -128,7 +124,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
     				<div class="row form-group">
 	    				<div class="col-xs-12 col-md-12">
 	    					<span class="glyphicon glyphicon-plus"></span>&nbsp;
-			    			<a href="" th:text="#{nursery.managesettings.add.plot.level.settings}">Add Plot-Level Settings</a>
+			    			<a href="javascript: openAddVariablesSetting('plot');" th:text="#{nursery.managesettings.add.plot.level.settings}">Add Plot-Level Settings</a>
 		    			</div>
 	    			</div>
 	    			<div class="row form-group">
@@ -177,7 +173,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
     				<div class="row form-group">
 	    				<div class="col-xs-12 col-md-12">
 	    					<span class="glyphicon glyphicon-plus"></span>&nbsp;
-			    			<a href="" th:text="#{nursery.managesettings.add.baseline.traits}">Add Baseline Traits</a>
+			    			<a href="javascript: openAddVariablesSetting('baseline');" th:text="#{nursery.managesettings.add.baseline.traits}">Add Baseline Traits</a>
 		    			</div>
 	    			</div>
 	    			<div class="row form-group">
@@ -270,6 +266,11 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 	    	</div>	
 		</div>
 	</div>
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<div th:include="/NurseryManager/addVariablesSettingModal"></div>
+		</div>
+	</div>
 </div>
 </form>
 <div layout:fragment="page-script">
@@ -281,6 +282,10 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
  					
  				})
  			});       
+ 			
+ 			function openAddVariablesSetting(variableType) {
+ 				$("#addVariablesSettingModal").modal("show");
+ 			}
 	
       //]]>
     </script>

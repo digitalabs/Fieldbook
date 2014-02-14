@@ -1,0 +1,124 @@
+<div class="col-xs-7 col-md-7" xmlns:th="http://www.thymeleaf.org">
+	<!-- Modal -->
+   	<div class="modal fade" id="addVariablesSettingModal" role="dialog" aria-labelledby="addVariablesSettingModal" aria-hidden="true">
+		<div class="modal-dialog">
+	    	<div class="modal-content">
+	         	<div class="modal-body" id="addVariablesSettingBody">
+	         		<div>
+	         			<button id="closeAddVariablesSettingModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	         		</div>
+	         		<br/><br/>
+	         		<h4 class="modal-title" >Add Nursery-Level Settings</h4>
+	         		<br/>
+	         		<div id="page-message" class="row">
+	         		</div>
+	         		<div class="row">
+						<div class="col-xs-8 col-md-8">
+		         			<div class="input-group">
+		         				<input type="text" id="srch-term" name="srch-term" placeholder="Search" class="form-control"/>
+					            <span class="input-group-addon "><i class="glyphicon glyphicon-search"></i></span>
+					        </div>
+				        </div>
+				        <div class="col-xs-4 col-md-4">
+				        	<input type="button" value="Add" th:value="#{common.form.add.text}" class="btn btn-default" />
+				        </div>
+	         		</div>
+	         		<div class="row">
+						<div class="col-xs-12 col-md-12">&nbsp;</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12 col-md-12">
+							<div class="panel panel-default">
+								<div class="panel-body">
+									<div class="form-group">
+										<div class="col-xs-4 col-md-4">
+											<label class="control-label" th:text="#{ontology.browser.detailstab.traitClass} + ':'">Trait Class:</label>
+										</div>
+										<div class="col-xs-8 col-md-8">
+											<p>.trait Class</p>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-xs-4 col-md-4">
+											<label class="control-label" th:text="#{ontology.browser.detailstab.property} + ':'">Property:</label>
+										</div>
+										<div class="col-xs-8 col-md-8">
+											<p>.property</p>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-xs-4 col-md-4">
+											<label class="control-label" th:text="#{ontology.browser.detailstab.method} + ':'">Method:</label>
+										</div>
+										<div class="col-xs-8 col-md-8">
+											<p>.Method</p>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-xs-4 col-md-4">
+											<label class="control-label" th:text="#{ontology.browser.detailstab.scale} + ':'">Scale:</label>
+										</div>
+										<div class="col-xs-8 col-md-8">
+											<p>.Scale</p>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-xs-4 col-md-4">
+											<label class="control-label" th:text="#{ontology.browser.detailstab.dataType} + ':'">Data Type:</label>
+										</div>
+										<div class="col-xs-8 col-md-8">
+											<p>.Data Type</p>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-xs-4 col-md-4">
+											<label class="control-label" th:text="#{ontology.browser.detailstab.role} + ':'">Role:</label>
+										</div>
+										<div class="col-xs-8 col-md-8">
+											<p>.Role</p>
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-xs-4 col-md-4">
+											<label class="control-label" th:text="#{ontology.browser.detailstab.cropOntologyId} + ':'">Crop Ontology ID:</label>
+										</div>
+										<div class="col-xs-8 col-md-8">
+											<p>.CropOntologyId</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+	         		<div class="row">
+						<div class="col-xs-12 col-md-12">
+			         		<table class="table tree table-curved table-condensed" style="margin-left:5px;">
+			         			<thead>
+			         				<th>Variable Name</th>
+			         				<th>Property</th>
+			         				<th>Scale</th>
+			         				<th>Method</th>
+			         				<th>Role</th>
+			         			</thead>
+			         			<tbody>
+			         				
+			         			</tbody>
+					        </table>
+			        	</div>
+			        </div>
+	         	</div>																							
+	       		<div class="modal-footer">    
+	       			<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="javascript: " aria-hidden="true">Add Variables</button>
+	       			<button type="button" class="btn btn-default" data-dismiss="modal" onclick="javascript: " aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>	
+       			</div>
+	     	</div><!-- /.modal-content -->
+   		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->	
+</div>
+
+<div layout:fragment="page-script">
+	<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[    
+    //]]>
+    </script>
+</div>

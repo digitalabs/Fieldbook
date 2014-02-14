@@ -14,6 +14,7 @@ package com.efficio.fieldbook.web.nursery.bean;
 
 public class SettingVariable {
 
+	private Integer cvTermId;
 	private String name;
 	private String description;
 	private String property;
@@ -77,6 +78,18 @@ public class SettingVariable {
 	}
 	public void setDataType(String dataType) {
 		this.dataType = dataType;
+	}
+	/**
+	 * @return the cvTermId
+	 */
+	public Integer getCvTermId() {
+		return cvTermId;
+	}
+	/**
+	 * @param cvTermId the cvTermId to set
+	 */
+	public void setCvTermId(Integer cvTermId) {
+		this.cvTermId = cvTermId;
 	}
 
 }

@@ -57,6 +57,15 @@ public class UserSelection implements Serializable {
     /** The current page germplasm list. */
     private int currentPageGermplasmList;
     
+    /** Nursery level conditions in Manage Settings */
+    private List<SettingDetail> nurseryLevelConditions;
+    
+    /** Plot level factors in Manage Settings */
+    private List<SettingDetail> plotsLevelList;
+    
+    /** Baseline Traits in Manage Settings */
+    private List<SettingDetail> baselineTraitsList;
+    
 	/**
 	 * Gets the current page.
 	 *
@@ -236,6 +245,48 @@ public class UserSelection implements Serializable {
 	 */
 	public void setMeasurementRowList(List<MeasurementRow> measurementRowList) {
 		this.measurementRowList = measurementRowList;
+	}
+
+	/**
+	 * @return the nurseryLevelConditions
+	 */
+	public List<SettingDetail> getNurseryLevelConditions() {
+		return nurseryLevelConditions;
+	}
+
+	/**
+	 * @param nurseryLevelConditions the nurseryLevelConditions to set
+	 */
+	public void setNurseryLevelConditions(List<SettingDetail> nurseryLevelConditions) {
+		this.nurseryLevelConditions = nurseryLevelConditions;
+	}
+
+	/**
+	 * @return the plotsLevelList
+	 */
+	public List<SettingDetail> getPlotsLevelList() {
+		return plotsLevelList;
+	}
+
+	/**
+	 * @param plotsLevelList the plotsLevelList to set
+	 */
+	public void setPlotsLevelList(List<SettingDetail> plotsLevelList) {
+		this.plotsLevelList = plotsLevelList;
+	}
+
+	/**
+	 * @return the baselineTraitsList
+	 */
+	public List<SettingDetail> getBaselineTraitsList() {
+		return baselineTraitsList;
+	}
+
+	/**
+	 * @param baselineTraitsList the baselineTraitsList to set
+	 */
+	public void setBaselineTraitsList(List<SettingDetail> baselineTraitsList) {
+		this.baselineTraitsList = baselineTraitsList;
 	}
 
     

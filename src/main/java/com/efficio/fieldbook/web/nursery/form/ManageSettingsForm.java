@@ -13,9 +13,6 @@ package com.efficio.fieldbook.web.nursery.form;
 
 import java.util.List;
 
-import org.generationcp.middleware.domain.etl.MeasurementRow;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
-
 import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
 
 /**
@@ -34,6 +31,8 @@ public class ManageSettingsForm {
 	private List<SettingDetail> baselineTraitVariables;
 	
 	private boolean isDefault;
+	
+	private List<Integer> selectedIds;
 	
 	public int getSelectedSettingId() {
 	    return selectedSettingId;
@@ -82,4 +81,14 @@ public class ManageSettingsForm {
         public void setIsDefault(boolean isDefault) {
             this.isDefault = isDefault;
         }
+
+		public List<Integer> getSelectedIds() {
+			return selectedIds;
+		}
+
+		public void setSelectedIds(List<Integer> selectedIds) {
+			this.selectedIds = selectedIds;
+		}
+        
+        
 }

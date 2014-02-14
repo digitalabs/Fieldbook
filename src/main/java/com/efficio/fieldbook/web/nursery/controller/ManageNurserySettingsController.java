@@ -79,12 +79,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     public String getContentName() {
         return "NurseryManager/manageNurserySettings";
     }    
-    private Map generateDummySettings(int i){
-    	Map map = new HashMap();
-    	map.put("id", Integer.valueOf(i));
-    	map.put("name", i + " Test Name");
-    	return map;
-    }
+    
     @ModelAttribute("settingsList")
     public List<TemplateSetting> getSettingsList() {
         try {
@@ -159,12 +154,13 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
 		//will do the saving here
     	workbenchDataManager.deleteTemplateSetting(Integer.valueOf(templateSettingId));
     	//need to add here the cleanup in the session and in the form
+    	// need to reset here
         return super.show(model);
     }
     
     @ResponseBody
-    @RequestMapping(value="/view/{templateSettingId}", method = RequestMethod.POST)
-    public String viewSettings(@PathVariable int templateSettingId
+    @RequestMapping(value="/view/{templateSettingId}", method = RequestMethod.GET)
+    public String viewSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, @PathVariable int templateSettingId
             , Model model, HttpSession session) throws MiddlewareQueryException{
 		//will do the saving here
     	Tool tool = workbenchDataManager.getToolWithName(AppConstants.TOOL_NAME_NURSERY_MANAGER_WEB);
@@ -175,7 +171,11 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	TemplateSetting templateSetting = templateSettings.get(0); //always 1
     	Dataset dataset = SettingsUtil.parseXmlToDatasetPojo(templateSetting.getConfiguration());
     	SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, dataset, userSelection);
-    	
+    	form.setNurseryLevelVariables(userSelection.getNurseryLevelConditions());
+    	form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
+    	form.setPlotLevelVariables(userSelection.getPlotsLevelList());
+    	form.setIsDefault(templateSetting.getIsDefault().intValue() == 1 ? true : false);
+    	form.setSettingName(templateSetting.getName());
     	// we now need to return json for the display
     	//need to add here the cleanup in the session and in the form
         return super.show(model);

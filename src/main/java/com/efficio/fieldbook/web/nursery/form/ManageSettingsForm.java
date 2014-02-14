@@ -14,6 +14,7 @@ package com.efficio.fieldbook.web.nursery.form;
 import java.util.List;
 
 import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
+import com.efficio.fieldbook.web.nursery.bean.SettingVariable;
 
 /**
  * The Class AddOrRemoveTraitsForm.
@@ -32,7 +33,7 @@ public class ManageSettingsForm {
 	
 	private boolean isDefault;
 	
-	private List<Integer> selectedIds;
+	private List<SettingVariable> selectedVariables;
 	
 	public int getSelectedSettingId() {
 	    return selectedSettingId;
@@ -82,13 +83,13 @@ public class ManageSettingsForm {
             this.isDefault = isDefault;
         }
 
-		public List<Integer> getSelectedIds() {
-			return selectedIds;
+		public List<SettingVariable> getSelectedVariables() {
+			return selectedVariables;
 		}
 
-		public void setSelectedIds(List<Integer> selectedIds) {
-			this.selectedIds = selectedIds;
+		public void setSelectedVariables(List<SettingVariable> selectedVariables) {
+			this.selectedVariables = selectedVariables;
 		}
-        
-        
+
+
 }

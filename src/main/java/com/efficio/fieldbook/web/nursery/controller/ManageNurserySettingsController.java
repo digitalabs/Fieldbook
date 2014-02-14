@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
+import com.efficio.fieldbook.web.nursery.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.ManageSettingsForm;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -137,13 +138,13 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
      * @return
      * @throws MiddlewareQueryException
      */
+    @ResponseBody
     @RequestMapping(value = "displayAddSetting/{mode}", method = RequestMethod.GET)
-    public String showAddSettingPopup(Model model, @PathVariable int mode) throws MiddlewareQueryException {
+    public String showAddSettingPopup(@PathVariable int mode) {
     	try {
     		
         	Set<StandardVariable> stdVars = fieldbookMiddlewareService.getAllStandardVariables();
         	List<StandardVariableReference> standardVariableList = fieldbookService.filterStandardVariablesForSetting(stdVars, mode, getSettingDetailList(mode));
-        	model.addAttribute("standardVariableList", standardVariableList);
         	if (standardVariableList != null && !standardVariableList.isEmpty()) {
         		ObjectMapper om = new ObjectMapper();
         		om.writeValueAsString(standardVariableList);
@@ -155,6 +156,27 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	
     	return "[]";
     }
+    
+    @ResponseBody
+    @RequestMapping(value="showVariableDetails/{id}", method = RequestMethod.GET)
+    public String showVariableDetails(@PathVariable int id) {
+    	try {
+    		
+    		StandardVariable stdVar = fieldbookMiddlewareService.getStandardVariable(id);
+    		if (stdVar != null) {
+    			SettingVariable svar = new SettingVariable(stdVar.getName(), stdVar.getDescription(), stdVar.getProperty().getName(),
+    					stdVar.getScale().getName(), stdVar.getMethod().getName(), stdVar.getStoredIn().getName(), 
+    					stdVar.getDataType().getName());
+    			ObjectMapper om = new ObjectMapper();
+    			return om.writeValueAsString(svar);
+    		}
+    		
+    	} catch(Exception e) {
+    		LOG.error(e.getMessage(), e);
+    	}
+    	return "[]";
+    }
+    
     
     private List<SettingDetail> getSettingDetailList(int mode) {
     	switch (mode) {

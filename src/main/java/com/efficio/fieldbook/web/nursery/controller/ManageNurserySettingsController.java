@@ -136,7 +136,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
      * @return
      * @throws MiddlewareQueryException
      */
-    @RequestMapping(value = "displayAddSetting/{mode}")
+    @RequestMapping(value = "displayAddSetting/{mode}", method = RequestMethod.GET)
     public String showAddSettingPopup(Model model, @PathVariable int mode) throws MiddlewareQueryException {
     	try {
     		

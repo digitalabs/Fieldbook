@@ -15,6 +15,8 @@ import org.pojoxml.core.PojoXml;
 import org.pojoxml.core.PojoXmlFactory;
 
 import com.efficio.fieldbook.web.demo.bean.TestJavaBean;
+import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
+import com.efficio.fieldbook.web.nursery.bean.SettingVariable;
 
 public class SettingsUtil {
 	public static String generateSettingsXml(Dataset dataset){
@@ -70,11 +72,36 @@ public class SettingsUtil {
 		pojoXml.addCollectionClass("variate",Variate.class);
 	}
 	
-	public static Dataset convertPojoToXmlDataset(){
+	public static Dataset convertPojoToXmlDataset(List<SettingDetail> nurseryLevelConditions, List<SettingDetail> plotsLevelList, List<SettingDetail> baselineTraitsList){
 		Dataset dataset = new Dataset();
-		dataset.setConditions(new ArrayList<Condition>());
-		dataset.setFactors(new ArrayList<Factor>());
-		dataset.setVariates(new ArrayList<Variate>());
+		List<Condition> conditions = new ArrayList<Condition>();
+		List<Factor> factors = new ArrayList<Factor>();
+		List<Variate> variates = new ArrayList<Variate>();
+		//iterate for the nursery level
+		for(SettingDetail settingDetail : nurseryLevelConditions){
+			SettingVariable variable = settingDetail.getVariable();
+			Condition condition = new Condition(variable.getName(), variable.getDescription(), variable.getProperty(),
+					variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
+					settingDetail.getValue());
+			conditions.add(condition);
+		}
+		//iterate for the plot level
+		for(SettingDetail settingDetail : plotsLevelList){
+			SettingVariable variable = settingDetail.getVariable();
+			Factor factor = new Factor(variable.getName(), variable.getDescription(), variable.getProperty(),
+					variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType());
+			conditions.add(condition);
+		}
+		//iterate for the baseline traits level
+		for(SettingDetail settingDetail : baselineTraitsList){
+			SettingVariable variable = settingDetail.getVariable();
+			Variate variate = new Variate(variable.getName(), variable.getDescription(), variable.getProperty(),
+					variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType());
+			conditions.add(condition);
+		}
+		dataset.setConditions(conditions);
+		dataset.setFactors(factors);
+		dataset.setVariates(variates);
 		return dataset;
 	}
 	

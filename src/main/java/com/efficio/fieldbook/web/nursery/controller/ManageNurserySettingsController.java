@@ -14,27 +14,17 @@ package com.efficio.fieldbook.web.nursery.controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang3.StringUtils;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.manager.GermplasmNameType;
-import org.generationcp.middleware.manager.api.WorkbenchDataManager;
-import org.generationcp.middleware.pojos.Germplasm;
-import org.generationcp.middleware.pojos.GermplasmList;
-import org.generationcp.middleware.pojos.GermplasmListData;
-import org.generationcp.middleware.pojos.Location;
-import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.NoSuchMessageException;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -42,12 +32,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
-import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
-import com.efficio.fieldbook.web.nursery.form.ManageSettingsForm;
-import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.nursery.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.form.ManageSettingsForm;
 
 /**
  * The Class SaveAdvanceNurseryController.
@@ -61,6 +48,15 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(ManageNurserySettingsController.class);
+    
+    @Resource
+    private FieldbookService fieldbookMiddlewareService;
+    
+    @Resource
+    private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
+    
+    @Resource
+    private UserSelection userSelection;
          
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
@@ -126,6 +122,29 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
             , Model model, HttpSession session) throws MiddlewareQueryException{
 
         return super.show(model);
+    }
+    
+    /**
+     * Displays the Add Setting popup.
+     * 
+     * @param model
+     * @param mode
+     * @return
+     * @throws MiddlewareQueryException
+     */
+    @RequestMapping(value = "displayAddSetting/{mode}")
+    public String showAddSettingPopup(Model model, int mode) throws MiddlewareQueryException {
+    	try {
+    		
+        	Set<StandardVariable> stdVars = fieldbookMiddlewareService.getAllStandardVariables();
+        	//stdVars = fieldbookService.filterStandardVariablesForSettings(stdVars, mode, userSelection);
+
+    	} catch(Exception e) {
+    		LOG.error(e.getMessage(), e);
+    	}
+    	
+    	//TODO: set it to the html of the popup
+    	return "";
     }
     
 }

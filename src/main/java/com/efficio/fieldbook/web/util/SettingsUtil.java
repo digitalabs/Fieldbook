@@ -9,11 +9,13 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.fieldbook.settings.Condition;
 import org.generationcp.middleware.domain.fieldbook.settings.Dataset;
 import org.generationcp.middleware.domain.fieldbook.settings.Factor;
 import org.generationcp.middleware.domain.fieldbook.settings.Variate;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.pojoxml.core.PojoXml;
 import org.pojoxml.core.PojoXmlFactory;
@@ -25,11 +27,12 @@ import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 
 public class SettingsUtil {
 	
-	 @Resource
-    private FieldbookService fieldbookMiddlewareService;
+	@Resource
+    private static FieldbookService fieldbookMiddlewareService;
+	
 	public static String generateSettingsXml(Dataset dataset){
 		PojoXml pojoXml = PojoXmlFactory.createPojoXml();
-
+		
         setupPojoXml(pojoXml);
 		
         String xml = pojoXml.getXml(dataset);
@@ -117,6 +120,20 @@ public class SettingsUtil {
 	public static List<ValueReference> getFieldPossibleVales(SettingVariable variable){
 		List<ValueReference> possibleValueList = new ArrayList<ValueReference>();
 		//return the object using the PSM-R
+		//fieldbookMiddlewareService.
+		try {
+			//add condition here for the hardcode
+			/*
+			 * location
+			 * principal investigator
+			 * etc
+			 */
+			
+			possibleValueList = fieldbookMiddlewareService.getDistinctStandardVariableValues(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(variable.getRole()));
+		} catch (MiddlewareQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return possibleValueList;
 	}
 	

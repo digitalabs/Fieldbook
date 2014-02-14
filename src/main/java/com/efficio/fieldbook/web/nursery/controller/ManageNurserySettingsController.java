@@ -58,7 +58,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     
     @Resource
     private FieldbookService fieldbookMiddlewareService;
-    
+        
     @Resource
     private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
     
@@ -140,7 +140,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
      * @throws MiddlewareQueryException
      */
     @ResponseBody
-    @RequestMapping(value = "displayAddSetting/{mode}", method = RequestMethod.GET)
+    @RequestMapping(value = "/displayAddSetting/{mode}", method = RequestMethod.GET)
     public String showAddSettingPopup(@PathVariable int mode) {
     	try {
     		Set<StandardVariable> stdVars = userSelection.getAllStandardVariables();
@@ -150,9 +150,8 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
         	List<StandardVariableReference> standardVariableList = fieldbookService.filterStandardVariablesForSetting(stdVars, mode, getSettingDetailList(mode));
         	if (standardVariableList != null && !standardVariableList.isEmpty()) {
         		ObjectMapper om = new ObjectMapper();
-        		om.writeValueAsString(standardVariableList);
+        		return om.writeValueAsString(standardVariableList);
         	}
-
     	} catch(Exception e) {
     		LOG.error(e.getMessage(), e);
     	}
@@ -161,7 +160,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     }
     
     @ResponseBody
-    @RequestMapping(value="showVariableDetails/{id}", method = RequestMethod.GET)
+    @RequestMapping(value="/showVariableDetails/{id}", method = RequestMethod.GET)
     public String showVariableDetails(@PathVariable int id) {
     	try {
     		

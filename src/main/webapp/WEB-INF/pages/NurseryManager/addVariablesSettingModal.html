@@ -15,12 +15,12 @@
 	         		<div class="row">
 						<div class="col-xs-8 col-md-8">
 		         			<div class="input-group">
-		         				<input type="text" id="srch-term" name="srch-term" placeholder="Search" class="form-control"/>
+		         				<input type="text" id="srch-var" name="srch-var" placeholder="Search" class="form-control"/>
 					            <span class="input-group-addon "><i class="glyphicon glyphicon-search"></i></span>
 					        </div>
 				        </div>
 				        <div class="col-xs-4 col-md-4">
-				        	<input type="button" value="Add" th:value="#{common.form.add.text}" class="btn btn-default" />
+				        	<input type="button" id="addVariable" value="Add" th:value="#{common.form.add.text}" class="btn btn-default" />
 				        </div>
 	         		</div>
 	         		<div class="row">
@@ -35,7 +35,9 @@
 											<label class="control-label" th:text="#{ontology.browser.detailstab.traitClass} + ':'">Trait Class:</label>
 										</div>
 										<div class="col-xs-8 col-md-8">
-											<p>.trait Class</p>
+											<input type="hidden" id="selectedStdVarId" value="" />
+											<input type="hidden" id="selectedName" value="" />
+											<p id="selectedTraitClass">&nbsp;</p>
 										</div>
 									</div>
 									<div class="form-group">
@@ -43,7 +45,7 @@
 											<label class="control-label" th:text="#{ontology.browser.detailstab.property} + ':'">Property:</label>
 										</div>
 										<div class="col-xs-8 col-md-8">
-											<p>.property</p>
+											<p id="selectedProperty">&nbsp;</p>
 										</div>
 									</div>
 									<div class="form-group">
@@ -51,7 +53,7 @@
 											<label class="control-label" th:text="#{ontology.browser.detailstab.method} + ':'">Method:</label>
 										</div>
 										<div class="col-xs-8 col-md-8">
-											<p>.Method</p>
+											<p id="selectedMethod">&nbsp;</p>
 										</div>
 									</div>
 									<div class="form-group">
@@ -59,7 +61,7 @@
 											<label class="control-label" th:text="#{ontology.browser.detailstab.scale} + ':'">Scale:</label>
 										</div>
 										<div class="col-xs-8 col-md-8">
-											<p>.Scale</p>
+											<p id="selectedScale">&nbsp;</p>
 										</div>
 									</div>
 									<div class="form-group">
@@ -67,7 +69,7 @@
 											<label class="control-label" th:text="#{ontology.browser.detailstab.dataType} + ':'">Data Type:</label>
 										</div>
 										<div class="col-xs-8 col-md-8">
-											<p>.Data Type</p>
+											<p id="selectedDataType">&nbsp;</p>
 										</div>
 									</div>
 									<div class="form-group">
@@ -75,7 +77,7 @@
 											<label class="control-label" th:text="#{ontology.browser.detailstab.role} + ':'">Role:</label>
 										</div>
 										<div class="col-xs-8 col-md-8">
-											<p>.Role</p>
+											<p id="selectedRole">&nbsp;</p>
 										</div>
 									</div>
 									<div class="form-group">
@@ -83,7 +85,7 @@
 											<label class="control-label" th:text="#{ontology.browser.detailstab.cropOntologyId} + ':'">Crop Ontology ID:</label>
 										</div>
 										<div class="col-xs-8 col-md-8">
-											<p>.CropOntologyId</p>
+											<p id="selectedCropOntologyId">&nbsp;</p>
 										</div>
 									</div>
 								</div>
@@ -117,8 +119,11 @@
 </div>
 
 <div layout:fragment="page-script">
+	<script type="text/javascript" th:src="@{/static/js/typeahead.min.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/Hogan.js}"></script>
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    
+	           
     //]]>
     </script>
 </div>

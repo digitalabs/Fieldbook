@@ -21,6 +21,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
@@ -140,7 +141,8 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	try {
     		
         	Set<StandardVariable> stdVars = fieldbookMiddlewareService.getAllStandardVariables();
-        	//stdVars = fieldbookService.filterStandardVariablesForSettings(stdVars, mode, getSettingDetailList(mode));
+        	List<StandardVariableReference> standardVariableList = fieldbookService.filterStandardVariablesForSetting(stdVars, mode, getSettingDetailList(mode));
+        	model.addAttribute("standardVariableList", standardVariableList);
 
     	} catch(Exception e) {
     		LOG.error(e.getMessage(), e);

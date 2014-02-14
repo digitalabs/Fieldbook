@@ -13,12 +13,16 @@ package com.efficio.fieldbook.service.api;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.List;
 
+import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
+import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
 
 /**
  * The Interface FieldbookService.
@@ -43,4 +47,14 @@ public interface FieldbookService {
      * @throws MiddlewareQueryException
      */
     List<ImportedGermplasm> advanceNursery(AdvancingNursery advanceInfo) throws MiddlewareQueryException;
+    
+    /**
+     * Filters the variables based on the current setting mode and excludes the selected ones.
+     * 
+     * @param sourceList
+     * @param mode
+     * @param selectedList
+     * @return
+     */
+    List<StandardVariableReference> filterStandardVariablesForSetting(Collection<StandardVariable> sourceList, int mode, Collection<SettingDetail> selectedList);
 }

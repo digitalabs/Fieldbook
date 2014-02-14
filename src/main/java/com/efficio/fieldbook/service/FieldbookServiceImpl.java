@@ -13,10 +13,17 @@ package com.efficio.fieldbook.service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,8 +31,10 @@ import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
+import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.service.NamingConventionService;
 import com.efficio.fieldbook.web.nursery.service.impl.NamingConventionServiceFactory;
+import com.efficio.fieldbook.web.util.AppConstants;
 
 /**
  * The Class FieldbookServiceImpl.
@@ -57,7 +66,9 @@ public class FieldbookServiceImpl implements FieldbookService{
         return fileService;
     }
 	
-	
+	/**
+	 * Advance Nursery
+	 */
 	public List<ImportedGermplasm> advanceNursery(AdvancingNursery advanceInfo)
 	        throws MiddlewareQueryException {
 
@@ -66,6 +77,39 @@ public class FieldbookServiceImpl implements FieldbookService{
         NamingConventionService service = namingConventionServiceFactory.getNamingConventionService(namingConvention);
 
 	    return service.advanceNursery(advanceInfo);
+	}
+	
+	@Override
+	public List<StandardVariableReference> filterStandardVariablesForSetting(Collection<StandardVariable> sourceList, int mode, Collection<SettingDetail> selectedList) {
+		List<StandardVariableReference> result = new ArrayList<StandardVariableReference>();
+		if (sourceList != null && !sourceList.isEmpty()) {
+			Set<Integer> selectedIds = new HashSet<Integer>();
+			if (selectedList != null && !selectedList.isEmpty()) {
+				for (SettingDetail settingDetail : selectedList) {
+					selectedIds.add(settingDetail.getVariable().getCvTermId());
+				}
+			}
+			
+			for (StandardVariable var : sourceList) {
+				if (isApplicableInCurrentMode(var, mode) && !selectedIds.contains(var.getId())) {
+					result.add(new StandardVariableReference(var.getId(), var.getName(), var.getDescription()));
+				}
+			}
+		}
+		return result;
+	}
+	
+	private boolean isApplicableInCurrentMode(StandardVariable var, int mode) {
+		switch (mode) {
+			case AppConstants.SEGMENT_STUDY : return var.getPhenotypicType() == PhenotypicType.STUDY 
+													|| var.getPhenotypicType() == PhenotypicType.DATASET 
+													|| var.getPhenotypicType() == PhenotypicType.TRIAL_ENVIRONMENT;
+			case AppConstants.SEGMENT_PLOT : return var.getPhenotypicType() == PhenotypicType.TRIAL_ENVIRONMENT
+													|| var.getPhenotypicType() == PhenotypicType.TRIAL_DESIGN
+													|| var.getPhenotypicType() == PhenotypicType.GERMPLASM;
+			case AppConstants.SEGMENT_TRAITS : return var.getPhenotypicType() == PhenotypicType.VARIATE;
+		}
+		return false;
 	}
 	
 }

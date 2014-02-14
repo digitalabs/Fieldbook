@@ -13,7 +13,9 @@ package com.efficio.fieldbook.web.nursery.bean;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -65,6 +67,8 @@ public class UserSelection implements Serializable {
     
     /** Baseline Traits in Manage Settings */
     private List<SettingDetail> baselineTraitsList;
+    
+    private Set<StandardVariable> allStandardVariables;
     
 	/**
 	 * Gets the current page.
@@ -287,6 +291,20 @@ public class UserSelection implements Serializable {
 	 */
 	public void setBaselineTraitsList(List<SettingDetail> baselineTraitsList) {
 		this.baselineTraitsList = baselineTraitsList;
+	}
+
+	/**
+	 * @return the allStandardVariables
+	 */
+	public Set<StandardVariable> getAllStandardVariables() {
+		return allStandardVariables;
+	}
+
+	/**
+	 * @param allStandardVariables the allStandardVariables to set
+	 */
+	public void setAllStandardVariables(Set<StandardVariable> allStandardVariables) {
+		this.allStandardVariables = allStandardVariables;
 	}
 
     

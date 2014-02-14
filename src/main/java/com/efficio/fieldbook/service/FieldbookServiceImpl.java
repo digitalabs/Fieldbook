@@ -23,8 +23,11 @@ import javax.annotation.Resource;
 
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.Method;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
@@ -47,6 +50,9 @@ public class FieldbookServiceImpl implements FieldbookService{
 	
 	@Autowired
 	private NamingConventionServiceFactory namingConventionServiceFactory;
+	
+	@Resource
+	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 	
 
 	/* (non-Javadoc)
@@ -110,6 +116,28 @@ public class FieldbookServiceImpl implements FieldbookService{
 			case AppConstants.SEGMENT_TRAITS : return var.getPhenotypicType() == PhenotypicType.VARIATE;
 		}
 		return false;
+	}
+	
+	@Override
+	public List<ValueReference> getAllPossibleValues(int id) throws MiddlewareQueryException {
+		//TODO: include other variables like site, nursery type, and person
+		if (TermId.BREEDING_METHOD.getId() == id) {
+			return getAllBreedingMethods();
+		}
+		else {
+			return fieldbookMiddlewareService.getDistinctStandardVariableValues(id);
+		}
+	}
+	
+	private List<ValueReference> getAllBreedingMethods() throws MiddlewareQueryException {
+		List<ValueReference> list = new ArrayList<ValueReference>();
+		List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods();
+		if (methods != null && !methods.isEmpty()) {
+			for (Method method : methods) {
+				list.add(new ValueReference(method.getMid(), method.getMname()));
+			}
+		}
+		return list;
 	}
 	
 }

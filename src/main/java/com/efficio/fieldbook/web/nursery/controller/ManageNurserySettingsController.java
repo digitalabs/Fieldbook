@@ -22,6 +22,7 @@ import javax.servlet.http.HttpSession;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -142,8 +143,10 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     @RequestMapping(value = "displayAddSetting/{mode}", method = RequestMethod.GET)
     public String showAddSettingPopup(@PathVariable int mode) {
     	try {
-    		
-        	Set<StandardVariable> stdVars = fieldbookMiddlewareService.getAllStandardVariables();
+    		Set<StandardVariable> stdVars = userSelection.getAllStandardVariables();
+    		if (stdVars == null || stdVars.isEmpty()) {
+    			stdVars = fieldbookMiddlewareService.getAllStandardVariables();
+    		}
         	List<StandardVariableReference> standardVariableList = fieldbookService.filterStandardVariablesForSetting(stdVars, mode, getSettingDetailList(mode));
         	if (standardVariableList != null && !standardVariableList.isEmpty()) {
         		ObjectMapper om = new ObjectMapper();
@@ -174,6 +177,31 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	} catch(Exception e) {
     		LOG.error(e.getMessage(), e);
     	}
+    	return "[]";
+    }
+    
+    @RequestMapping(value = "addSettings", method = RequestMethod.POST)
+    public String addSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form) {
+    	try {
+	    	List<SettingVariable> selectedVariables = form.getSelectedVariables();
+	    	List<SettingDetail> newSettings = new ArrayList<SettingDetail>();
+	    	
+	    	if (selectedVariables != null && !selectedVariables.isEmpty()) {
+	    		for (SettingVariable var : selectedVariables) {
+					List<ValueReference> possibleValues = fieldbookService.getAllPossibleValues(var.getCvTermId());
+					newSettings.add(new SettingDetail(var, possibleValues, null, false));
+	    		}
+	    	}
+	    	
+	    	if (!newSettings.isEmpty()) {
+	    		ObjectMapper om = new ObjectMapper();
+	    		return om.writeValueAsString(newSettings);
+	    	}
+	    	
+    	} catch(Exception e) {
+    		LOG.error(e.getMessage(), e);
+    	}
+    	
     	return "[]";
     }
     

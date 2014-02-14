@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
@@ -57,4 +58,13 @@ public interface FieldbookService {
      * @return
      */
     List<StandardVariableReference> filterStandardVariablesForSetting(Collection<StandardVariable> sourceList, int mode, Collection<SettingDetail> selectedList);
+    
+    /**
+     * Get all possible values.
+     * 
+     * @param id
+     * @return
+     * @throws MiddlewareQueryException
+     */
+    List<ValueReference> getAllPossibleValues(int id) throws MiddlewareQueryException;
 }

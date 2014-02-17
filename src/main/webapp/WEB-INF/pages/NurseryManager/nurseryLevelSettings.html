@@ -1,0 +1,19 @@
+<table border="0" id="nurseryLevelSettings">
+	<tr th:each="nurseryLevelVariable : *{nurseryLevelVariables}">
+		<td><span th:if="${nurseryLevelVariable.isDelete}" class="glyphicon glyphicon-remove-sign"></span></td>
+		<td><label class="control-label" th:text="${nurseryLevelVariable.variable.name}"></label></td>
+		<td>
+			<select th:field="${nurseryLevelVariable.value}" class="form-control">
+				<option th:each="possibleValue : ${nurseryLevelVariable.possibleValue}" th:value="${possibleValue.id}" th:text="${possibleValue.name}"> </option>
+			</select>
+		</td>
+	</tr>
+</table>
+<div layout:fragment="page-script">
+	<!-- For pagination -->
+	<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[    
+        
+      //]]>
+    </script>
+</div>

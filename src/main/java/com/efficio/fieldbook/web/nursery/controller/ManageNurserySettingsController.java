@@ -145,8 +145,9 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
         	form.setSelectedSettingId(templateSetting.getTemplateSettingId());
         }
         
-        /* 
-        //sample data  
+         
+        //sample data
+        /*
         List<SettingVariable> selectedVariables = new ArrayList<SettingVariable>();
         selectedVariables.add(new SettingVariable("name", "prop", "scale", "method", "role", "datatype", "cropontologyid"));
         form.setSelectedVariables(selectedVariables);
@@ -277,7 +278,6 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	List<SettingDetail> newSettings = new ArrayList<SettingDetail>();
     	try {
 	    	List<SettingVariable> selectedVariables = form.getSelectedVariables();
-	    	
 	    	if (selectedVariables != null && !selectedVariables.isEmpty()) {
 	    		for (SettingVariable var : selectedVariables) {
 					List<ValueReference> possibleValues = fieldbookService.getAllPossibleValues(var.getCvTermId());

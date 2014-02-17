@@ -1,10 +1,12 @@
 <table border="0" id="nurseryLevelSettings">
-	<tr th:each="nurseryLevelVariable : *{nurseryLevelVariables}">
-		<td><span th:if="${nurseryLevelVariable.isDelete}" class="glyphicon glyphicon-remove-sign"></span></td>
-		<td><label class="control-label" th:text="${nurseryLevelVariable.variable.name}"></label></td>
+	<tr th:each="nurseryLevelVariable, rowStat : *{nurseryLevelVariables}">
+		<td><span th:if="*{nurseryLevelVariables[__${rowStat.index}__].delete}" class="glyphicon glyphicon-remove-sign"></span></td>
+		<td><label class="control-label" th:text="*{nurseryLevelVariables[__${rowStat.index}__].variable.name}"></label></td>
 		<td>
-			<select th:field="${nurseryLevelVariable.value}" class="form-control">
-				<option th:each="possibleValue : ${nurseryLevelVariable.possibleValue}" th:value="${possibleValue.id}" th:text="${possibleValue.name}"> </option>
+			<select th:field="*{nurseryLevelVariables[__${rowStat.index}__].value}" class="form-control">
+				<option th:each="possibleValue, row : *{nurseryLevelVariables[__${rowStat.index}__].possibleValues}" 
+				th:value="*{nurseryLevelVariables[__${rowStat.index}__].possibleValues[__${row.index}__].id}" 
+				th:text="${nurseryLevelVariables[__${rowStat.index}__].possibleValues[__${row.index}__].name}"> </option>
 			</select>
 		</td>
 	</tr>

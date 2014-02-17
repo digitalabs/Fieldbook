@@ -220,6 +220,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     			SettingVariable svar = new SettingVariable(stdVar.getName(), stdVar.getDescription(), stdVar.getProperty().getName(),
     					stdVar.getScale().getName(), stdVar.getMethod().getName(), stdVar.getStoredIn().getName(), 
     					stdVar.getDataType().getName());
+    			svar.setCvTermId(stdVar.getId());
     			ObjectMapper om = new ObjectMapper();
     			return om.writeValueAsString(svar);
     		}

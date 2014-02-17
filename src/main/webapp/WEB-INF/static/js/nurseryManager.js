@@ -304,3 +304,163 @@ function recreateMethodComboAfterClose(comboName, data) {
 		initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFav_obj);
 	}
 }
+
+function openAddVariablesSetting(variableType) {
+	//change heading of popup based on clicked link
+	switch (parseInt(variableType)) {
+		case 1:
+			$("#heading-modal").text(addNurseryLevelSettings);
+			break;
+		case 2:
+			$("#heading-modal").text(addPlotLevelSettings);
+			break;
+		case 3:
+			$("#heading-modal").text(addBaselineTraits);
+			break;
+	default: 
+		$("#heading-modal").text(addNurseryLevelSettings);
+	}
+	getStandardVariables(variableType); 				
+}
+
+function getStandardVariables(variableType) {
+	Spinner.toggle();
+	$.ajax({
+		url: "/Fieldbook/NurseryManager/manageNurserySettings/displayAddSetting/" + variableType,
+		type: "GET",
+		cache: false,
+		success: function (data) {
+			//clear and initialize standard variable combo
+			initializeStandardVariableSearch([]);
+			initializeStandardVariableSearch($.parseJSON(data));
+			
+			//clear selected variables table and attribute fields
+			$("#newVariablesList > tbody").empty();
+			clearAttributeFields();
+			
+			$("#addVariablesSettingModal").modal("show");
+		},
+		error: function(jqXHR, textStatus, errorThrown){
+			console.log("The following error occured: " + textStatus, errorThrown); 
+		},
+		complete: function() {
+			Spinner.toggle();
+		}
+	});
+}
+
+function initializeStandardVariableSearch(variables) {
+	//set values
+	stdVariableSuggestions = variables;
+	$.each(stdVariableSuggestions, function(index, value) {
+		stdVariableSuggestions_obj.push({ 'id' : value.id,
+			  'text' : value.name
+		});  
+	});
+
+	$("#stdVarSearch").select2({
+		query: function (query) {	
+      var data = {results: stdVariableSuggestions_obj}, i, j, s;
+      // return the array that matches
+      data.results = $.grep(data.results,function(item,index) {
+        return ($.fn.select2.defaults.matcher(query.term,item.text));
+      
+      });
+      if (data.results.length === 0){
+    	  data.results.unshift({id:query.term,text:query.term});	        	 
+      }
+      
+        query.callback(data);
+    }
+    }).on("change", function (){
+    	//set attribute values
+    	getStandardVariableDetails($("#stdVarSearch").select2("data").id);
+    });
+}
+
+function getStandardVariableDetails(id) {
+	Spinner.toggle();
+	$.ajax({
+		url: "/Fieldbook/NurseryManager/manageNurserySettings/showVariableDetails/" + id,
+		type: "GET",
+		cache: false,
+		success: function (data) {
+			populateAttributeFields($.parseJSON(data));
+		},
+		error: function(jqXHR, textStatus, errorThrown){
+			console.log("The following error occured: " + textStatus, errorThrown); 
+		},
+		complete: function() {
+			Spinner.toggle();
+		}
+	});
+}
+		
+function populateAttributeFields(data) {
+	$("#selectedTraitClass").text(data.traitClass);
+	$("#selectedProperty").text(data.property);
+	$("#selectedMethod").text(data.method);
+	$("#selectedScale").text(data.scale);
+	$("#selectedDataType").text(data.dataType);
+	$("#selectedRole").text(data.role);
+	$("#selectedCropOntologyId").text(data.cropOntologyId);
+	$("#selectedStdVarId").val(data.cvTermId);
+	$("#selectedName").val(data.name);
+}
+
+function clearAttributeFields() {
+	$("#selectedTraitClass").html("&nbsp;");
+	$("#selectedProperty").html("&nbsp;");
+	$("#selectedMethod").html("&nbsp;");
+	$("#selectedScale").html("&nbsp;");
+	$("#selectedDataType").html("&nbsp;");
+	$("#selectedRole").html("&nbsp;");
+	$("#selectedCropOntologyId").html("&nbsp;");
+	$("#selectedStdVarId").val("");
+	$("#selectedName").val("");
+}
+
+function addVariableToList() { 
+	var newRow;
+	var rowCount = $("#newVariablesList tbody tr").length;
+	var ctr;
+	
+	//get the last counter for the selected variables and add 1
+	if (rowCount == 0) {
+		ctr = 1; 
+	} else {
+		var lastVarId = $("#newVariablesList tbody tr:last-child td input[type='hidden']").attr("id");
+		ctr = parseInt(lastVarId.substring(lastVarId.indexOf("[") + 1, lastVarId.indexOf("]"))) + 1;
+	}
+
+	//if selected variable is not yet in the list and is not blank or new, add it
+	if (notInList($("#selectedStdVarId").val()) && $("#selectedStdVarId").val() != "") {
+		newRow = "<tr>";
+		newRow = newRow + "<td><input type='hidden' id='selectedVariables["+ ctr + "].cvTermId' " + 
+			"name='selectedVariables["+ ctr + "].cvTermId' value='" + $("#selectedStdVarId").val() + "' />";
+		newRow = newRow + "<input type='text' id='selectedVariables["+ ctr + "].name' " + 
+			"name='selectedVariables["+ ctr + "].name' value='" + $("#selectedName").val() + "' /></td>";
+		newRow = newRow + "<td>" + $("#selectedProperty").text() + "</td>";
+		newRow = newRow + "<td>" + $("#selectedScale").text() + "</td>";
+		newRow = newRow + "<td>" + $("#selectedMethod").text() + "</td>";
+		newRow = newRow + "<td>" + $("#selectedRole").text() + "</td>";
+		newRow = newRow + "</tr>";
+		
+		$("#newVariablesList").append(newRow);
+		$("#page-message-modal").html("");
+	} else {
+		$("#page-message-modal").html(
+			    "<div class='alert alert-danger'>"+ varInListMessage +"</div>"
+		);
+	}
+}
+	
+function notInList(id) {
+	var isNotInList = true;
+	$.each($("#newVariablesList tbody tr"), function() {
+		if ($(this).find("input[type='hidden']").val() == id) {
+			isNotInList = false;
+		}
+	});
+	return isNotInList;
+}

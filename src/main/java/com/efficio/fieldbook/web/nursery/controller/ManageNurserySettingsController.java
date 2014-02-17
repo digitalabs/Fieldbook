@@ -276,6 +276,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	return "[]";
     }
     
+    @ResponseBody
     @RequestMapping(value = "/addSettings/{mode}", method = RequestMethod.POST)
     public String addSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, Model model, @PathVariable int mode) {
     	List<SettingDetail> newSettings = new ArrayList<SettingDetail>();
@@ -288,12 +289,15 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
 	    		}
 	    	}
 	    	
+	    	if (newSettings != null && !newSettings.isEmpty()) {
+	    		return addNewSettingDetails(form, mode, newSettings);
+	    	}
 	    	
     	} catch(Exception e) {
     		LOG.error(e.getMessage(), e);
     	}
     	
-    	return addNewSettingDetails(form, mode, newSettings);
+    	return "[]";
     }
     
     @RequestMapping(value = "clearSettings", method = RequestMethod.GET)
@@ -347,7 +351,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	return null;
     }
     
-    private String addNewSettingDetails(ManageSettingsForm form, int mode, List<SettingDetail> newDetails) {
+    private String addNewSettingDetails(ManageSettingsForm form, int mode, List<SettingDetail> newDetails) throws Exception {
     	switch (mode) {
 	    	case AppConstants.SEGMENT_STUDY : 
 	    		if (form.getNurseryLevelVariables() == null) {
@@ -362,7 +366,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
 	    		else {
 		    		userSelection.getNurseryLevelConditions().addAll(newDetails);
 	    		}
-	    		return URL_STUDY_SETTINGS_TABLE;
+	    		//return URL_STUDY_SETTINGS_TABLE;
 	    	case AppConstants.SEGMENT_PLOT :
 	    		if (form.getPlotLevelVariables() == null) {
 	    			form.setPlotLevelVariables(newDetails);
@@ -376,7 +380,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
 	    		else {
 	    			userSelection.getPlotsLevelList().addAll(newDetails);
 	    		}
-	    		return URL_PLOTS_SETTINGS_TABLE;
+	    		//return URL_PLOTS_SETTINGS_TABLE;
 	    	//case AppConstants.SEGMENT_TRAITS :
 	    	default :
 	    		if (form.getBaselineTraitVariables() == null) {
@@ -391,7 +395,9 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
 	    		else {
 	    			userSelection.getBaselineTraitsList().addAll(newDetails);
 	    		}
-	    		return URL_TRAITS_SETTINGS_TABLE;
+	    		//return URL_TRAITS_SETTINGS_TABLE;
     	}
+    	ObjectMapper om = new ObjectMapper();
+    	return om.writeValueAsString(newDetails);
     }
 }

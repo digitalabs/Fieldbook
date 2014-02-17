@@ -21,7 +21,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.generationcp.middleware.domain.dms.NurseryType;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -31,7 +30,6 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Person;
-import org.generationcp.middleware.pojos.dms.Phenotype;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
@@ -135,7 +133,7 @@ public class FieldbookServiceImpl implements FieldbookService{
 			return convertPersonsToValueReferences(fieldbookMiddlewareService.getAllPersons());
 		}
 		else if (TermId.NURSERY_TYPE.getId() == id) {
-			return convertNurseryTypesToValueReferences(fieldbookMiddlewareService.getAllNurseryTypes());
+			return fieldbookMiddlewareService.getAllNurseryTypes();
 		}
 		else {
 			return fieldbookMiddlewareService.getDistinctStandardVariableValues(id);
@@ -183,15 +181,4 @@ public class FieldbookServiceImpl implements FieldbookService{
 		}
 		return list;
 	}
-	
-	private List<ValueReference> convertNurseryTypesToValueReferences(List<NurseryType> nurseryTypes) {
-		List<ValueReference> list = new ArrayList<ValueReference>();
-		if (nurseryTypes != null && !nurseryTypes.isEmpty()) {
-			for (NurseryType nurseryType : nurseryTypes) {
-				list.add(new ValueReference(nurseryType.getId(), nurseryType.getName()));
-			}
-		}
-		return list;
-	}
-	
 }

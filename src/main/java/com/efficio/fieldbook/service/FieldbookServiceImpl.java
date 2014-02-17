@@ -27,7 +27,9 @@ import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.pojos.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
@@ -124,6 +126,12 @@ public class FieldbookServiceImpl implements FieldbookService{
 		if (TermId.BREEDING_METHOD.getId() == id) {
 			return getAllBreedingMethods();
 		}
+		else if (TermId.SITE_NAME.getId() == id) {
+			return convertLocationsToValueReferences(fieldbookMiddlewareService.getAllLocations());
+		}
+		else if (TermId.PI_NAME.getId() == id) {
+			return convertPersonsToValueReferences(fieldbookMiddlewareService.getAllPersons());
+		}
 		else {
 			return fieldbookMiddlewareService.getDistinctStandardVariableValues(id);
 		}
@@ -135,6 +143,26 @@ public class FieldbookServiceImpl implements FieldbookService{
 		if (methods != null && !methods.isEmpty()) {
 			for (Method method : methods) {
 				list.add(new ValueReference(method.getMid(), method.getMname()));
+			}
+		}
+		return list;
+	}
+	
+	private List<ValueReference> convertLocationsToValueReferences(List<Location> locations) {
+		List<ValueReference> list = new ArrayList<ValueReference>();
+		if (locations != null && !locations.isEmpty()) {
+			for (Location loc : locations) {
+				list.add(new ValueReference(loc.getLocid(), loc.getLname()));
+			}
+		}
+		return list;
+	}
+	
+	private List<ValueReference> convertPersonsToValueReferences(List<Person> persons) {
+		List<ValueReference> list = new ArrayList<ValueReference>();
+		if (persons != null && !persons.isEmpty()) {
+			for (Person person : persons) {
+				list.add(new ValueReference(person.getId(), person.getDisplayName()));
 			}
 		}
 		return list;

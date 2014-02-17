@@ -91,5 +91,13 @@ public class ManageSettingsForm {
 			this.selectedVariables = selectedVariables;
 		}
 
-
+		public void clear() {
+			this.selectedSettingId = 0;
+			this.settingName = null;
+			this.nurseryLevelVariables = null;
+			this.plotLevelVariables = null;
+			this.baselineTraitVariables = null;
+			this.isDefault = false;
+			this.selectedVariables = null;
+		}
 }

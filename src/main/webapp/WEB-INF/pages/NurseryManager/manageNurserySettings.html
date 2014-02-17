@@ -31,6 +31,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			    			<a href="" th:text="#{nursery.managesettings.add.new.settings}">Add New Settings</a>
 			    		</div>
 			    		<div class="col-xs-2 col-md-2">
+			    			<a th:href="@{/NurseryManager/manageNurserySettings/clearSettings}" th:text="#{nursery.managesettings.clear.settings}">Clear</a>
 			    		</div>
 		    		</div>
 		    	</div>

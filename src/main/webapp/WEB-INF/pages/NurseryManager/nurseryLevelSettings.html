@@ -6,7 +6,7 @@
 			<select th:field="*{nurseryLevelVariables[__${rowStat.index}__].value}" class="form-control">
 				<option th:each="possibleValue, row : *{nurseryLevelVariables[__${rowStat.index}__].possibleValues}" 
 				th:value="*{nurseryLevelVariables[__${rowStat.index}__].possibleValues[__${row.index}__].id}" 
-				th:text="${nurseryLevelVariables[__${rowStat.index}__].possibleValues[__${row.index}__].name}"> </option>
+				th:text="*{nurseryLevelVariables[__${rowStat.index}__].possibleValues[__${row.index}__].name}"> </option>
 			</select>
 		</td>
 	</tr>

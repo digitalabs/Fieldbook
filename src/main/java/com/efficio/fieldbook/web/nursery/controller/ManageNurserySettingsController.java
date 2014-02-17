@@ -22,6 +22,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
@@ -144,7 +145,9 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
         	form.setSettingName(templateSetting.getName());
         	form.setSelectedSettingId(templateSetting.getTemplateSettingId());
         }
-        
+        else {
+        	assignDefaultValues(form);
+        }
          
         //sample data
         /*
@@ -293,6 +296,47 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	return addNewSettingDetails(form, mode, newSettings);
     }
     
+    @RequestMapping(value = "clearSettings", method = RequestMethod.GET)
+    public String clearSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, Model model, HttpSession session) {
+    	
+    	try {
+	    	session.invalidate();
+	    	form.clear();
+	    	assignDefaultValues(form);
+    	
+    	} catch(Exception e) {
+    		LOG.error(e.getMessage(), e);
+    	}
+    	
+    	return super.show(model);
+    	//return "redirect: " + ManageNurseriesController.URL;
+    }
+    
+    
+    private void assignDefaultValues(ManageSettingsForm form) throws MiddlewareQueryException {
+    	List<SettingDetail> nurseryDefaults = new ArrayList<SettingDetail>();
+    	form.setNurseryLevelVariables(nurseryDefaults);
+    	this.userSelection.setNurseryLevelConditions(nurseryDefaults);
+    	
+    	//nurseryDefaults.add(createSettingDetail(TermId.SITE_NAME.getId()));
+    	nurseryDefaults.add(createSettingDetail(TermId.PI_NAME.getId()));
+    }
+    
+    private SettingDetail createSettingDetail(int id) throws MiddlewareQueryException {
+		StandardVariable stdVar = fieldbookMiddlewareService.getStandardVariable(id);
+		if (stdVar != null) {
+			SettingVariable svar = new SettingVariable(stdVar.getName(), stdVar.getDescription(), stdVar.getProperty().getName(),
+					stdVar.getScale().getName(), stdVar.getMethod().getName(), stdVar.getStoredIn().getName(), 
+					stdVar.getDataType().getName());
+			svar.setCvTermId(stdVar.getId());
+			svar.setCropOntologyId(stdVar.getCropOntologyId());
+			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : null);
+
+			List<ValueReference> possibleValues = fieldbookService.getAllPossibleValues(id);
+	    	return new SettingDetail(svar, possibleValues, null, true);
+		}
+		return new SettingDetail();
+    }
     
     private List<SettingDetail> getSettingDetailList(int mode) {
     	switch (mode) {

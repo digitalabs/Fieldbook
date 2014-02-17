@@ -335,7 +335,7 @@ function getStandardVariables(variableType) {
 			initializeStandardVariableSearch($.parseJSON(data));
 			
 			//clear selected variables table and attribute fields
-			$("#newVariablesList > tbody").empty();
+			//$("#newVariablesList > tbody").empty();
 			clearAttributeFields();
 			
 			$("#addVariablesSettingModal").modal("show");
@@ -466,12 +466,15 @@ function notInList(id) {
 }
 
 function submitSelectedVariables() {
+	alert($("#newVariablesList").html());
+	var serializedData = $("#saveAdvanceNurseryForm").serialize();
 	Spinner.toggle();
 	$.ajax({
 		url: "/Fieldbook/NurseryManager/manageNurserySettings/addSettings/" + 1,
 		type: "POST",
+		data: serializedData,
 		success: function (html) {
-			
+			alert(html);
 			$("#nurseryLevelSettings").append(html);
 		},
 		error: function(jqXHR, textStatus, errorThrown){

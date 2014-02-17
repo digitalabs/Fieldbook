@@ -12,9 +12,7 @@
 package com.efficio.fieldbook.web.nursery.controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -57,6 +55,13 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
 
     /** The Constant URL. */
     public static final String URL = "/NurseryManager/manageNurserySettings";
+    
+    public static final String URL_STUDY_SETTINGS_TABLE = "/";
+    
+    public static final String URL_PLOTS_SETTINGS_TABLE = "/";
+
+    public static final String URL_TRAITS_SETTINGS_TABLE = "/";
+
     
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(ManageNurserySettingsController.class);
@@ -231,11 +236,11 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	return "[]";
     }
     
-    @RequestMapping(value = "addSettings", method = RequestMethod.POST)
-    public String addSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form) {
+    @RequestMapping(value = "addSettings/{mode}", method = RequestMethod.POST)
+    public String addSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, Model model, @PathVariable int mode) {
+    	List<SettingDetail> newSettings = new ArrayList<SettingDetail>();
     	try {
 	    	List<SettingVariable> selectedVariables = form.getSelectedVariables();
-	    	List<SettingDetail> newSettings = new ArrayList<SettingDetail>();
 	    	
 	    	if (selectedVariables != null && !selectedVariables.isEmpty()) {
 	    		for (SettingVariable var : selectedVariables) {
@@ -244,16 +249,12 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
 	    		}
 	    	}
 	    	
-	    	if (!newSettings.isEmpty()) {
-	    		ObjectMapper om = new ObjectMapper();
-	    		return om.writeValueAsString(newSettings);
-	    	}
 	    	
     	} catch(Exception e) {
     		LOG.error(e.getMessage(), e);
     	}
     	
-    	return "[]";
+    	return addNewSettingDetails(form, mode, newSettings);
     }
     
     
@@ -264,5 +265,53 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
 	    	case AppConstants.SEGMENT_TRAITS : return userSelection.getBaselineTraitsList(); 
     	}
     	return null;
+    }
+    
+    private String addNewSettingDetails(ManageSettingsForm form, int mode, List<SettingDetail> newDetails) {
+    	switch (mode) {
+	    	case AppConstants.SEGMENT_STUDY : 
+	    		if (form.getNurseryLevelVariables() == null) {
+	    			form.setNurseryLevelVariables(newDetails);
+	    		}
+	    		else {
+		    		form.getNurseryLevelVariables().addAll(newDetails);
+	    		}
+	    		if (userSelection.getNurseryLevelConditions() == null) {
+	    			userSelection.setNurseryLevelConditions(newDetails);
+	    		}
+	    		else {
+		    		userSelection.getNurseryLevelConditions().addAll(newDetails);
+	    		}
+	    		return URL_STUDY_SETTINGS_TABLE;
+	    	case AppConstants.SEGMENT_PLOT :
+	    		if (form.getPlotLevelVariables() == null) {
+	    			form.setPlotLevelVariables(newDetails);
+	    		}
+	    		else {
+	    			form.getPlotLevelVariables().addAll(newDetails);
+	    		}
+	    		if (userSelection.getPlotsLevelList() == null) {
+	    			userSelection.setPlotsLevelList(newDetails);
+	    		}
+	    		else {
+	    			userSelection.getPlotsLevelList().addAll(newDetails);
+	    		}
+	    		return URL_PLOTS_SETTINGS_TABLE;
+	    	//case AppConstants.SEGMENT_TRAITS :
+	    	default :
+	    		if (form.getBaselineTraitVariables() == null) {
+	    			form.setBaselineTraitVariables(newDetails);
+	    		}
+	    		else {
+	    			form.getBaselineTraitVariables().addAll(newDetails);
+	    		}
+	    		if (userSelection.getBaselineTraitsList() == null) {
+	    			userSelection.setBaselineTraitsList(newDetails);
+	    		}
+	    		else {
+	    			userSelection.getBaselineTraitsList().addAll(newDetails);
+	    		}
+	    		return URL_TRAITS_SETTINGS_TABLE;
+    	}
     }
 }

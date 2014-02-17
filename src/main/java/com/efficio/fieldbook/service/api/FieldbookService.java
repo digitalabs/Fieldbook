@@ -16,10 +16,12 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.dms.Phenotype;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
@@ -67,4 +69,8 @@ public interface FieldbookService {
      * @throws MiddlewareQueryException
      */
     List<ValueReference> getAllPossibleValues(int id) throws MiddlewareQueryException;
+    
+    
+    List<ValueReference> getAllPossibleValuesByPSMR(String property, String scale, String method, PhenotypicType phenotypeType) throws MiddlewareQueryException;
+
 }

@@ -30,6 +30,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Person;
+import org.generationcp.middleware.pojos.dms.Phenotype;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
@@ -158,6 +159,17 @@ public class FieldbookServiceImpl implements FieldbookService{
 		return list;
 	}
 	
+	@Override
+	public List<ValueReference> getAllPossibleValuesByPSMR(String property,
+			String scale, String method, PhenotypicType phenotypeType)
+			throws MiddlewareQueryException {
+		List<ValueReference> list = new ArrayList<ValueReference>();
+		Integer standardVariableId = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(property, scale, method, phenotypeType);
+		if(standardVariableId != null)
+			list = getAllPossibleValues(standardVariableId.intValue());
+		return list;
+	}
+
 	private List<ValueReference> convertPersonsToValueReferences(List<Person> persons) {
 		List<ValueReference> list = new ArrayList<ValueReference>();
 		if (persons != null && !persons.isEmpty()) {

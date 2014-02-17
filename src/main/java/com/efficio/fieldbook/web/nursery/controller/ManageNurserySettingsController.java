@@ -62,7 +62,8 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     private static final Logger LOG = LoggerFactory.getLogger(ManageNurserySettingsController.class);
     
     @Resource
-    private FieldbookService fieldbookMiddlewareService;
+    private FieldbookService fieldbookMiddlewareService;        
+    
     @Resource
     private WorkbenchDataManager workbenchDataManager;
     
@@ -170,7 +171,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	List<TemplateSetting> templateSettings = workbenchDataManager.getTemplateSettings(templateSettingFilter);
     	TemplateSetting templateSetting = templateSettings.get(0); //always 1
     	Dataset dataset = SettingsUtil.parseXmlToDatasetPojo(templateSetting.getConfiguration());
-    	SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, dataset, userSelection);
+    	SettingsUtil.convertXmlDatasetToPojo(fieldbookService, dataset, userSelection);
     	form.setNurseryLevelVariables(userSelection.getNurseryLevelConditions());
     	form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
     	form.setPlotLevelVariables(userSelection.getPlotsLevelList());

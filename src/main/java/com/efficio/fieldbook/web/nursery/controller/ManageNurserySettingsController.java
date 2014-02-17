@@ -86,14 +86,24 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
         return "NurseryManager/manageNurserySettings";
     }    
     
+    private Tool getNurseryTool(){
+    	Tool tool = null;
+		try {
+			tool = workbenchDataManager.getToolWithName(AppConstants.TOOL_NAME_NURSERY_MANAGER_WEB);
+		} catch (MiddlewareQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return tool;
+    }
+    
     @ModelAttribute("settingsList")
     public List<TemplateSetting> getSettingsList() {
         try {
         	//need to call the MW call passing the tool id and project id
         	//getCurrentProjectId()
-        	Tool tool = workbenchDataManager.getToolWithName(AppConstants.TOOL_NAME_NURSERY_MANAGER_WEB);
         	
-        	TemplateSetting templateSettingFilter = new TemplateSetting(null, Integer.valueOf(getCurrentProjectId()), null, tool, null, null);
+        	TemplateSetting templateSettingFilter = new TemplateSetting(null, Integer.valueOf(getCurrentProjectId()), null, getNurseryTool(), null, null);
         	templateSettingFilter.setIsDefaultToNull();
             List<TemplateSetting> templateSettingsList = workbenchDataManager.getTemplateSettings(templateSettingFilter);
            
@@ -117,6 +127,24 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("manageSettingsForm") ManageSettingsForm form
             , Model model, HttpSession session) throws MiddlewareQueryException{
+    	
+    	//we need to get the default settings if there is
+    	TemplateSetting templateSettingFilter = new TemplateSetting(null, Integer.valueOf(getCurrentProjectId()), null, getNurseryTool(), null, true);
+        List<TemplateSetting> templateSettingsList = workbenchDataManager.getTemplateSettings(templateSettingFilter);
+        
+        if(templateSettingsList != null && !templateSettingsList.isEmpty()){
+        	//we only get the 1st, cause its always gonna be 1 only per project and per tool
+        	TemplateSetting templateSetting = templateSettingsList.get(0); //always 1
+        	Dataset dataset = SettingsUtil.parseXmlToDatasetPojo(templateSetting.getConfiguration());
+        	SettingsUtil.convertXmlDatasetToPojo(fieldbookService, dataset, userSelection);
+        	form.setNurseryLevelVariables(userSelection.getNurseryLevelConditions());
+        	form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
+        	form.setPlotLevelVariables(userSelection.getPlotsLevelList());
+        	form.setIsDefault(templateSetting.getIsDefault().intValue() == 1 ? true : false);
+        	form.setSettingName(templateSetting.getName());
+        	form.setSelectedSettingId(templateSetting.getTemplateSettingId());
+        }
+       
     	return super.show(model);
     }
           
@@ -136,9 +164,8 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
 		//will do the saving here
     	Dataset dataset = SettingsUtil.convertPojoToXmlDataset(form.getSettingName(), form.getNurseryLevelVariables(), form.getPlotLevelVariables(), form.getBaselineTraitVariables());
     	String xml = SettingsUtil.generateSettingsXml(dataset);
-    	Tool tool = workbenchDataManager.getToolWithName(AppConstants.TOOL_NAME_NURSERY_MANAGER_WEB);
     	Integer tempateSettingId = form.getSelectedSettingId() > 0 ? Integer.valueOf(form.getSelectedSettingId()) : null;
-    	TemplateSetting templateSetting = new TemplateSetting(tempateSettingId, Integer.valueOf(getCurrentProjectId()), dataset.getName(), tool, xml, Boolean.valueOf(form.getIsDefault())) ;
+    	TemplateSetting templateSetting = new TemplateSetting(tempateSettingId, Integer.valueOf(getCurrentProjectId()), dataset.getName(), getNurseryTool(), xml, Boolean.valueOf(form.getIsDefault())) ;
     	if(templateSetting.getTemplateSettingId() != null)
     		workbenchDataManager.addTemplateSetting(templateSetting);
     	else
@@ -169,9 +196,8 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     public String viewSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, @PathVariable int templateSettingId
             , Model model, HttpSession session) throws MiddlewareQueryException{
 		//will do the saving here
-    	Tool tool = workbenchDataManager.getToolWithName(AppConstants.TOOL_NAME_NURSERY_MANAGER_WEB);
     	
-    	TemplateSetting templateSettingFilter = new TemplateSetting(Integer.valueOf(templateSettingId), Integer.valueOf(getCurrentProjectId()), null, tool, null, null);
+    	TemplateSetting templateSettingFilter = new TemplateSetting(Integer.valueOf(templateSettingId), Integer.valueOf(getCurrentProjectId()), null, getNurseryTool(), null, null);
     	templateSettingFilter.setIsDefaultToNull();
     	List<TemplateSetting> templateSettings = workbenchDataManager.getTemplateSettings(templateSettingFilter);
     	TemplateSetting templateSetting = templateSettings.get(0); //always 1
@@ -182,6 +208,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	form.setPlotLevelVariables(userSelection.getPlotsLevelList());
     	form.setIsDefault(templateSetting.getIsDefault().intValue() == 1 ? true : false);
     	form.setSettingName(templateSetting.getName());
+    	form.setSelectedSettingId(templateSetting.getTemplateSettingId());
     	// we now need to return json for the display
     	//need to add here the cleanup in the session and in the form
         return super.show(model);

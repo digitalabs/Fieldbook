@@ -100,15 +100,15 @@
 			         				<th>Role</th>
 			         			</thead>
 			         			<tbody>
-			         				<tr th:each="variable : *{selectedVariables}">
+			         				<tr th:each="choice, rowStat : *{selectedVariables}">
 			         					<td>
-			         						<input type="hidden" th:field="${variable.cvTermId}" />
-			         						<input type="text" th:field="${variable.name}" />
+			         						<input type="hidden" th:field="*{selectedVariables[__${rowStat.index}__].cvTermId}" />
+			         						<input type="text" th:field="*{selectedVariables[__${rowStat.index}__].name}" />
 		         						</td>
-			         					<td th:text="${variable.property}"></td>
-			         					<td th:text="${variable.scale}"></td>
-			         					<td th:text="${variable.method}"></td>
-			         					<td th:text="${variable.role}"></td>
+			         					<td th:text="*{selectedVariables[__${rowStat.index}__].property}"></td>
+			         					<td th:text="*{selectedVariables[__${rowStat.index}__].scale}"></td>
+			         					<td th:text="*{selectedVariables[__${rowStat.index}__].method}"></td>
+			         					<td th:text="*{selectedVariables[__${rowStat.index}__].role}"></td>
 			         				</tr>
 			         			</tbody>
 					        </table>
@@ -116,7 +116,7 @@
 			        </div>
 	         	</div>																							
 	       		<div class="modal-footer">    
-	       			<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="javascript: " aria-hidden="true">Add Variables</button>
+	       			<button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true" onclick="javascript: submitSelectedVariables();">Add Variables</button>
 	       			<button type="button" class="btn btn-default" data-dismiss="modal" onclick="javascript: " aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>	
        			</div>
 	     	</div><!-- /.modal-content -->

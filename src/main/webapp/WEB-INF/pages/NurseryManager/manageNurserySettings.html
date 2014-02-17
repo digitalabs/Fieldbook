@@ -57,15 +57,9 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			    			You can add settings at this level, or remove those that you wish to manage at the plot level.</label>
 		    			</div>
 	    			</div>
-	    			<div class="row form-group" th:each="nurseryLevelVariable : *{nurseryLevelVariables}">
-	    				<div class="col-xs-3 col-md-3">
-	    					<span th:if="${nurseryLevelVariable.isDelete}" class="glyphicon glyphicon-remove-sign"></span> &nbsp;&nbsp;
-	    					<label class="control-label" th:text="${nurseryLevelVariable.variable.name}"></label> 
-	    				</div>
-	    				<div class="col-xs-9 col-md-9">
-	    					<select th:field="${nurseryLevelVariable.value}" class="form-control">
-	    						<option th:each="possibleValue : ${nurseryLevelVariable.possibleValue}" th:value="${possibleValue.id}" th:text="${possibleValue.name}"> </option>
-    						</select>
+	    			<div class="row form-group">
+	    				<div class="col-xs-12 col-md-12">
+	    					<div th:include="/NurseryManager/nurseryLevelSettings"></div>
 	    				</div>
 	    			</div>
     				<div class="row form-group">

@@ -56,7 +56,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     /** The Constant URL. */
     public static final String URL = "/NurseryManager/manageNurserySettings";
     
-    public static final String URL_STUDY_SETTINGS_TABLE = "/";
+    public static final String URL_STUDY_SETTINGS_TABLE = "/NurseryManager/nurseryLevelSettings";
     
     public static final String URL_PLOTS_SETTINGS_TABLE = "/";
 
@@ -144,7 +144,13 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
         	form.setSettingName(templateSetting.getName());
         	form.setSelectedSettingId(templateSetting.getTemplateSettingId());
         }
-       
+        
+        /* 
+        //sample data  
+        List<SettingVariable> selectedVariables = new ArrayList<SettingVariable>();
+        selectedVariables.add(new SettingVariable("name", "prop", "scale", "method", "role", "datatype", "cropontologyid"));
+        form.setSelectedVariables(selectedVariables);
+        */
     	return super.show(model);
     }
           
@@ -266,7 +272,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	return "[]";
     }
     
-    @RequestMapping(value = "addSettings/{mode}", method = RequestMethod.POST)
+    @RequestMapping(value = "/addSettings/{mode}", method = RequestMethod.POST)
     public String addSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, Model model, @PathVariable int mode) {
     	List<SettingDetail> newSettings = new ArrayList<SettingDetail>();
     	try {

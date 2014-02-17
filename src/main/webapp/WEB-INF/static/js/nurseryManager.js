@@ -427,18 +427,18 @@ function addVariableToList() {
 	
 	//get the last counter for the selected variables and add 1
 	if (rowCount == 0) {
-		ctr = 1; 
+		ctr = 0; 
 	} else {
-		var lastVarId = $("#newVariablesList tbody tr:last-child td input[type='hidden']").attr("id");
+		var lastVarId = $("#newVariablesList tbody tr:last-child td input[type='hidden']").attr("name");
 		ctr = parseInt(lastVarId.substring(lastVarId.indexOf("[") + 1, lastVarId.indexOf("]"))) + 1;
 	}
 
 	//if selected variable is not yet in the list and is not blank or new, add it
 	if (notInList($("#selectedStdVarId").val()) && $("#selectedStdVarId").val() != "") {
 		newRow = "<tr>";
-		newRow = newRow + "<td><input type='hidden' id='selectedVariables["+ ctr + "].cvTermId' " + 
+		newRow = newRow + "<td><input type='hidden' id='selectedVariables"+ ctr + ".cvTermId' " + 
 			"name='selectedVariables["+ ctr + "].cvTermId' value='" + $("#selectedStdVarId").val() + "' />";
-		newRow = newRow + "<input type='text' id='selectedVariables["+ ctr + "].name' " + 
+		newRow = newRow + "<input type='text' id='selectedVariables"+ ctr + ".name' " + 
 			"name='selectedVariables["+ ctr + "].name' value='" + $("#selectedName").val() + "' /></td>";
 		newRow = newRow + "<td>" + $("#selectedProperty").text() + "</td>";
 		newRow = newRow + "<td>" + $("#selectedScale").text() + "</td>";
@@ -463,4 +463,22 @@ function notInList(id) {
 		}
 	});
 	return isNotInList;
+}
+
+function submitSelectedVariables() {
+	Spinner.toggle();
+	$.ajax({
+		url: "/Fieldbook/NurseryManager/manageNurserySettings/addSettings/" + 1,
+		type: "POST",
+		success: function (html) {
+			
+			$("#nurseryLevelSettings").append(html);
+		},
+		error: function(jqXHR, textStatus, errorThrown){
+			console.log("The following error occured: " + textStatus, errorThrown); 
+		},
+		complete: function() {
+			Spinner.toggle();
+		}
+	});
 }

@@ -21,6 +21,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.generationcp.middleware.domain.dms.NurseryType;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -133,6 +134,9 @@ public class FieldbookServiceImpl implements FieldbookService{
 		else if (TermId.PI_NAME.getId() == id) {
 			return convertPersonsToValueReferences(fieldbookMiddlewareService.getAllPersons());
 		}
+		else if (TermId.NURSERY_TYPE.getId() == id) {
+			return convertNurseryTypesToValueReferences(fieldbookMiddlewareService.getAllNurseryTypes());
+		}
 		else {
 			return fieldbookMiddlewareService.getDistinctStandardVariableValues(id);
 		}
@@ -175,6 +179,16 @@ public class FieldbookServiceImpl implements FieldbookService{
 		if (persons != null && !persons.isEmpty()) {
 			for (Person person : persons) {
 				list.add(new ValueReference(person.getId(), person.getDisplayName()));
+			}
+		}
+		return list;
+	}
+	
+	private List<ValueReference> convertNurseryTypesToValueReferences(List<NurseryType> nurseryTypes) {
+		List<ValueReference> list = new ArrayList<ValueReference>();
+		if (nurseryTypes != null && !nurseryTypes.isEmpty()) {
+			for (NurseryType nurseryType : nurseryTypes) {
+				list.add(new ValueReference(nurseryType.getId(), nurseryType.getName()));
 			}
 		}
 		return list;

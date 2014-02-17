@@ -21,6 +21,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.generationcp.middleware.domain.dms.NurseryType;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -30,6 +31,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Person;
+import org.generationcp.middleware.pojos.dms.Phenotype;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
@@ -132,6 +134,9 @@ public class FieldbookServiceImpl implements FieldbookService{
 		else if (TermId.PI_NAME.getId() == id) {
 			return convertPersonsToValueReferences(fieldbookMiddlewareService.getAllPersons());
 		}
+		else if (TermId.NURSERY_TYPE.getId() == id) {
+			return convertNurseryTypesToValueReferences(fieldbookMiddlewareService.getAllNurseryTypes());
+		}
 		else {
 			return fieldbookMiddlewareService.getDistinctStandardVariableValues(id);
 		}
@@ -158,11 +163,32 @@ public class FieldbookServiceImpl implements FieldbookService{
 		return list;
 	}
 	
+	@Override
+	public List<ValueReference> getAllPossibleValuesByPSMR(String property,
+			String scale, String method, PhenotypicType phenotypeType)
+			throws MiddlewareQueryException {
+		List<ValueReference> list = new ArrayList<ValueReference>();
+		Integer standardVariableId = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(property, scale, method, phenotypeType);
+		if(standardVariableId != null)
+			list = getAllPossibleValues(standardVariableId.intValue());
+		return list;
+	}
+
 	private List<ValueReference> convertPersonsToValueReferences(List<Person> persons) {
 		List<ValueReference> list = new ArrayList<ValueReference>();
 		if (persons != null && !persons.isEmpty()) {
 			for (Person person : persons) {
 				list.add(new ValueReference(person.getId(), person.getDisplayName()));
+			}
+		}
+		return list;
+	}
+	
+	private List<ValueReference> convertNurseryTypesToValueReferences(List<NurseryType> nurseryTypes) {
+		List<ValueReference> list = new ArrayList<ValueReference>();
+		if (nurseryTypes != null && !nurseryTypes.isEmpty()) {
+			for (NurseryType nurseryType : nurseryTypes) {
+				list.add(new ValueReference(nurseryType.getId(), nurseryType.getName()));
 			}
 		}
 		return list;

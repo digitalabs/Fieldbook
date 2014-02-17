@@ -22,7 +22,6 @@ import java.util.List;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.pojos.workbench.settings.Condition;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
-import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,6 +34,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.HttpClientErrorException;
 
 import com.efficio.fieldbook.service.api.CropOntologyService;
+import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
@@ -53,7 +53,7 @@ public class PojoXmlTester extends AbstractJUnit4SpringContextTests {
     private static final Logger LOG = LoggerFactory.getLogger(PojoXmlTester.class);
     
     @Autowired
-    FieldbookService fieldbookMiddlewareService;
+    FieldbookService fieldbookService;
     
     Dataset dataset;
     String datasetName;
@@ -129,7 +129,7 @@ public class PojoXmlTester extends AbstractJUnit4SpringContextTests {
 	public void testConvertDatasetToPojo() {
 		//tests the conversion of the POJO to dataset equivalent
 		UserSelection userSelection = new UserSelection();
-		SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, dataset, userSelection);
+		SettingsUtil.convertXmlDatasetToPojo(fieldbookService, dataset, userSelection);
 		
 		assertEquals(userSelection.getNurseryLevelConditions().size(), dataset.getConditions().size());
 		assertEquals(userSelection.getPlotsLevelList().size(), dataset.getFactors().size());

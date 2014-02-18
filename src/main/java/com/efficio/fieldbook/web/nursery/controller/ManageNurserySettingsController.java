@@ -11,13 +11,17 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -107,7 +111,8 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
         	TemplateSetting templateSettingFilter = new TemplateSetting(null, Integer.valueOf(getCurrentProjectId()), null, getNurseryTool(), null, null);
         	templateSettingFilter.setIsDefaultToNull();
             List<TemplateSetting> templateSettingsList = workbenchDataManager.getTemplateSettings(templateSettingFilter);
-           
+            // this is for the default
+            templateSettingsList.add(0, new TemplateSetting(Integer.valueOf(0), Integer.valueOf(getCurrentProjectId()), "", null, "", false));
             return templateSettingsList;
         }catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
@@ -129,6 +134,19 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     public String show(@ModelAttribute("manageSettingsForm") ManageSettingsForm form
             , Model model, HttpSession session) throws MiddlewareQueryException{
     	
+    	//we just called a function cause its gonna be used by the delete as well
+    	setupDefaultScreenValues(form);
+         
+        //sample data
+        /*
+        List<SettingVariable> selectedVariables = new ArrayList<SettingVariable>();
+        selectedVariables.add(new SettingVariable("name", "prop", "scale", "method", "role", "datatype", "cropontologyid"));
+        form.setSelectedVariables(selectedVariables);
+        */
+    	return super.show(model);
+    }
+      
+    private void setupDefaultScreenValues(ManageSettingsForm form) throws MiddlewareQueryException{
     	//we need to get the default settings if there is
     	TemplateSetting templateSettingFilter = new TemplateSetting(null, Integer.valueOf(getCurrentProjectId()), null, getNurseryTool(), null, true);
         List<TemplateSetting> templateSettingsList = workbenchDataManager.getTemplateSettings(templateSettingFilter);
@@ -148,16 +166,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
         else {
         	assignDefaultValues(form);
         }
-         
-        //sample data
-        /*
-        List<SettingVariable> selectedVariables = new ArrayList<SettingVariable>();
-        selectedVariables.add(new SettingVariable("name", "prop", "scale", "method", "role", "datatype", "cropontologyid"));
-        form.setSelectedVariables(selectedVariables);
-        */
-    	return super.show(model);
     }
-          
     /**
      * Post advance nursery.
      *
@@ -190,38 +199,41 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
      * @return
      * @throws MiddlewareQueryException
      */
-    @ResponseBody
     @RequestMapping(value="/delete/{templateSettingId}", method = RequestMethod.POST)
-    public String deleteSettings(@PathVariable int templateSettingId
+    public String deleteSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, 
+    		@PathVariable int templateSettingId
             , Model model, HttpSession session) throws MiddlewareQueryException{
 		//will do the saving here
     	workbenchDataManager.deleteTemplateSetting(Integer.valueOf(templateSettingId));
     	//need to add here the cleanup in the session and in the form
     	// need to reset here
-        return super.show(model);
+    	setupDefaultScreenValues(form);
+    	model.addAttribute("settingsList", getSettingsList());
+    	return super.showAjaxPage(model, getContentName() );
     }
     
-    @ResponseBody
+    
     @RequestMapping(value="/view/{templateSettingId}", method = RequestMethod.GET)
     public String viewSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, @PathVariable int templateSettingId
             , Model model, HttpSession session) throws MiddlewareQueryException{
 		//will do the saving here
-    	
-    	TemplateSetting templateSettingFilter = new TemplateSetting(Integer.valueOf(templateSettingId), Integer.valueOf(getCurrentProjectId()), null, getNurseryTool(), null, null);
-    	templateSettingFilter.setIsDefaultToNull();
-    	List<TemplateSetting> templateSettings = workbenchDataManager.getTemplateSettings(templateSettingFilter);
-    	TemplateSetting templateSetting = templateSettings.get(0); //always 1
-    	Dataset dataset = SettingsUtil.parseXmlToDatasetPojo(templateSetting.getConfiguration());
-    	SettingsUtil.convertXmlDatasetToPojo(fieldbookService, dataset, userSelection);
-    	form.setNurseryLevelVariables(userSelection.getNurseryLevelConditions());
-    	form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
-    	form.setPlotLevelVariables(userSelection.getPlotsLevelList());
-    	form.setIsDefault(templateSetting.getIsDefault().intValue() == 1 ? true : false);
-    	form.setSettingName(templateSetting.getName());
-    	form.setSelectedSettingId(templateSetting.getTemplateSettingId());
-    	// we now need to return json for the display
-    	//need to add here the cleanup in the session and in the form
-        return super.show(model);
+    	if(templateSettingId != 0){    	
+	    	TemplateSetting templateSettingFilter = new TemplateSetting(Integer.valueOf(templateSettingId), Integer.valueOf(getCurrentProjectId()), null, getNurseryTool(), null, null);
+	    	templateSettingFilter.setIsDefaultToNull();
+	    	List<TemplateSetting> templateSettings = workbenchDataManager.getTemplateSettings(templateSettingFilter);
+	    	TemplateSetting templateSetting = templateSettings.get(0); //always 1
+	    	Dataset dataset = SettingsUtil.parseXmlToDatasetPojo(templateSetting.getConfiguration());
+	    	SettingsUtil.convertXmlDatasetToPojo(fieldbookService, dataset, userSelection);
+	    	form.setNurseryLevelVariables(userSelection.getNurseryLevelConditions());
+	    	form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
+	    	form.setPlotLevelVariables(userSelection.getPlotsLevelList());
+	    	form.setIsDefault(templateSetting.getIsDefault().intValue() == 1 ? true : false);
+	    	form.setSettingName(templateSetting.getName());
+	    	form.setSelectedSettingId(templateSetting.getTemplateSettingId());
+    	}else{
+    		assignDefaultValues(form);
+    	}
+        return super.showAjaxPage(model, getContentName() );
     }
     
     /**
@@ -319,6 +331,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     
     private void assignDefaultValues(ManageSettingsForm form) throws MiddlewareQueryException {
     	List<SettingDetail> nurseryDefaults = new ArrayList<SettingDetail>();
+    	form.setSelectedSettingId(0);
     	form.setNurseryLevelVariables(nurseryDefaults);
     	this.userSelection.setNurseryLevelConditions(nurseryDefaults);
     	

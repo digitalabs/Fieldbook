@@ -485,3 +485,49 @@ function submitSelectedVariables() {
 		}
 	});
 }
+
+function hideDeleteConfirmation(){
+		$('#delete-settings-confirmation').modal('hide');
+	}
+function deleteNurserySettings(){
+	var templateSettingsId = $('#selectedSettingId').val();
+	if(templateSettingsId > 0){
+		$('#delete-settings-confirmation').modal('hide');
+		Spinner.toggle();
+		
+		$.ajax({
+			url: "/Fieldbook/NurseryManager/manageNurserySettings/delete/" + templateSettingsId,
+			type: "POST", 					
+			success: function (html) {
+				//we just paste the whole html
+				$('.container .row').first().html(html);
+				
+			    showSuccessfulMessage('page-message', deleteTemplateSettingSuccess);				
+				Spinner.toggle();
+			}
+		});
+			
+	}else{
+		alert('show error mesage')
+	}
+}
+	
+function loadNurserySettings(templateSettingsId) {
+	//alert($("#newVariablesList").html());
+	//var serializedData = $("#saveAdvanceNurseryForm").serialize();
+	Spinner.toggle();
+	$.ajax({
+		url: "/Fieldbook/NurseryManager/manageNurserySettings/view/" + templateSettingsId,
+		type: "GET", 					
+		success: function (html) {
+			//we just paste the whole html
+			$('.container .row').first().html(html);
+		},
+		error: function(jqXHR, textStatus, errorThrown){
+			console.log("The following error occured: " + textStatus, errorThrown); 
+		},
+		complete: function() {
+			Spinner.toggle();
+		}
+	});
+}

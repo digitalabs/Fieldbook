@@ -10,6 +10,11 @@
 method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 <div class="col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org">
 	<div class="row">
+		<div id="page-message" class="col-xs-12 col-md-12 form-group">
+	
+		</div>
+	</div>
+	<div class="row">
 		<div class="col-xs-12 col-md-12">
 			<div class="panel panel-default">
 		    	<div class="panel-body">
@@ -32,6 +37,8 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			    		</div>
 			    		<div class="col-xs-2 col-md-2">
 			    			<a th:href="@{/NurseryManager/manageNurserySettings/clearSettings}" th:text="#{nursery.managesettings.clear.settings}">Clear</a>
+			    			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			    			<a href="javascript: void(0)" id="deleteSettings" th:text="#{common.form.delete.text}">Delete</a>
 			    		</div>
 		    		</div>
 		    	</div>
@@ -102,7 +109,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 								</thead>
 								<tbody>
 			    					<tr th:each="plotLevelVariable : *{plotLevelVariables}">
-			    					<td> <span th:if="${plotLevelVariable.isDelete}" class="glyphicon glyphicon-remove-sign"></span> </td>
+			    					<td> <span th:if="${plotLevelVariable.delete}" class="glyphicon glyphicon-remove-sign"></span> </td>
 			    					<td th:text="${plotLevelVariable.variable.name}"></td>
 			    					<td th:text="${plotLevelVariable.variable.description}"></td>
 			    					</tr> 
@@ -151,7 +158,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 								</thead>
 								<tbody>
 			    					<tr th:each="baselineTraitVariable : *{baselineTraitVariables}">
-			    					<td> <span th:if="${baselineTraitVariable.isDelete}" class="glyphicon glyphicon-remove-sign"></span> </td>
+			    					<td> <span th:if="${baselineTraitVariable.delete}" class="glyphicon glyphicon-remove-sign"></span> </td>
 			    					<td th:text="${baselineTraitVariable.variable.name}"></td>
 			    					<td th:text="${baselineTraitVariable.variable.description}"></td>
 			    					</tr> 
@@ -267,6 +274,24 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 		</div>
 	</div>
 </div>
+
+<div class="modal fade" id="delete-settings-confirmation">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Confirmation</h4>
+      </div>
+      <div class="modal-body">
+        <p th:text="#{manage.settings.delete.confirmation}">Do you realy want to delete this configuration?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="javascript: hideDeleteConfirmation();">No</button>
+        <button type="button" class="btn btn-primary" onclick="javascript: deleteNurserySettings();">Yes</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 </form>
 <div layout:fragment="page-script">
 <script type="text/javascript" th:src="@{/static/js/nurseryManager.js}"></script>
@@ -278,13 +303,25 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
             var addNurseryLevelSettings = /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/;
             var addPlotLevelSettings = /*[[#{nursery.managesettings.add.plot.level.settings}]]*/;
             var addBaselineTraits = /*[[#{nursery.managesettings.add.baseline.traits}]]*/;
+            var deleteTemplateSettingError = /*[[#{manage.settings.delete.error}]]*/;
+            var deleteTemplateSettingSuccess = /*[[#{manage.settings.delete.success}]]*/;
+       
             
  			$( document ).ready(function() {
  				$('#selectedSettingId').on('change', function(){
- 					alert('load settings' + $(this).val());
+ 					//alert('load settings' + $(this).val());
+ 					loadNurserySettings($(this).val());
  					
  				})
- 			});       
+ 				$('#deleteSettings').on('click', function(){
+ 					if($('#selectedSettingId').val() == '0'){
+ 						showErrorMessage('page-message', deleteTemplateSettingError);	
+ 					}else{ 						
+ 	 					$('#delete-settings-confirmation').modal('show');	
+ 					} 					 					
+ 				});
+ 			});   
+ 			
 	
       //]]>
     </script>

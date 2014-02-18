@@ -120,7 +120,7 @@ public class SaveTemplateSettingsControllerTest extends AbstractJUnit4SpringCont
     	 assertEquals(templateSetting.getTemplateSettingId(), dbTemplateSetting.getTemplateSettingId());
     	 assertEquals(templateSetting.getConfiguration(), dbTemplateSetting.getConfiguration());
     	  
-    	 
+    	
     	 workbenchDataManager.deleteTemplateSetting(id);
     	 dbTemplateSettingList = workbenchDataManager.getTemplateSettings(templateSettingFilter);
     	 

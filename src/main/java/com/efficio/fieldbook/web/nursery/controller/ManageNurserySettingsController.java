@@ -160,12 +160,8 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
      */
     private void setupDefaultScreenValues(ManageSettingsForm form, TemplateSetting templateSettingFilter) throws MiddlewareQueryException{
 
-        Set<StandardVariable> stdVars = userSelection.getAllStandardVariables();
-        if (stdVars == null || stdVars.isEmpty()) {
-                stdVars = fieldbookMiddlewareService.getAllStandardVariables();
-                userSelection.setAllStandardVariables(stdVars);
-        }
-            	
+        getAllStandardVariables();
+    	
         List<TemplateSetting> templateSettingsList = new ArrayList<TemplateSetting>();
         //NULL when its an add new setting
         if(templateSettingFilter != null) 
@@ -287,10 +283,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     @RequestMapping(value = "displayAddSetting/{mode}", method = RequestMethod.GET)
     public String showAddSettingPopup(@PathVariable int mode) {
     	try {
-    		Set<StandardVariable> stdVars = userSelection.getAllStandardVariables();
-    		if (stdVars == null || stdVars.isEmpty()) {
-    			stdVars = fieldbookMiddlewareService.getAllStandardVariables();
-    		}
+    		Set<StandardVariable> stdVars = getAllStandardVariables();
         	List<StandardVariableReference> standardVariableList = fieldbookService.filterStandardVariablesForSetting(stdVars, mode, getSettingDetailList(mode));
         	if (standardVariableList != null && !standardVariableList.isEmpty()) {
         		ObjectMapper om = new ObjectMapper();
@@ -314,15 +307,9 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     @RequestMapping(value="showVariableDetails/{id}", method = RequestMethod.GET)
     public String showVariableDetails(@PathVariable int id) {
     	try {
-    		
-    		StandardVariable stdVar = fieldbookMiddlewareService.getStandardVariable(id);
-    		if (stdVar != null) {
-    			SettingVariable svar = new SettingVariable(stdVar.getName(), stdVar.getDescription(), stdVar.getProperty().getName(),
-    					stdVar.getScale().getName(), stdVar.getMethod().getName(), stdVar.getStoredIn().getName(), 
-    					stdVar.getDataType().getName());
-    			svar.setCvTermId(stdVar.getId());
-    			svar.setCropOntologyId(stdVar.getCropOntologyId());
-    			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : null);
+
+    		SettingVariable svar = getSettingVariable(id);
+    		if (svar != null) {
     			ObjectMapper om = new ObjectMapper();
     			return om.writeValueAsString(svar);
     		}
@@ -349,6 +336,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
 	    	List<SettingVariable> selectedVariables = form.getSelectedVariables();
 	    	if (selectedVariables != null && !selectedVariables.isEmpty()) {
 	    		for (SettingVariable var : selectedVariables) {
+	    			populateSettingVariable(var);
 					List<ValueReference> possibleValues = fieldbookService.getAllPossibleValues(var.getCvTermId());
 					newSettings.add(new SettingDetail(var, possibleValues, null, true));
 	    		}
@@ -533,5 +521,71 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	}
     	ObjectMapper om = new ObjectMapper();
     	return om.writeValueAsString(newDetails);
+    }
+    
+    /**
+     * Populates Setting Variable
+     * @param var
+     */
+    private void populateSettingVariable(SettingVariable var) throws MiddlewareQueryException {
+    	StandardVariable  stdvar = getStandardVariable(var.getCvTermId());
+		var.setDescription(stdvar.getDescription());
+		var.setProperty(stdvar.getProperty().getName());
+		var.setScale(stdvar.getScale().getName());
+		var.setMethod(stdvar.getMethod().getName());
+		var.setDataType(stdvar.getDataType().getName());
+		var.setRole(stdvar.getStoredIn().getName());
+		var.setCropOntologyId(stdvar.getCropOntologyId());
+		var.setTraitClass(stdvar.getIsA().getName());
+    }
+
+    /**
+     * get All standard variables from cache.
+     * @return
+     * @throws MiddlewareQueryException
+     */
+    private Set<StandardVariable> getAllStandardVariables() throws MiddlewareQueryException {
+		Set<StandardVariable> stdVars = userSelection.getAllStandardVariables();
+		if (stdVars == null || stdVars.isEmpty()) {
+			stdVars = fieldbookMiddlewareService.getAllStandardVariables();
+			this.userSelection.setAllStandardVariables(stdVars);
+		}
+		return stdVars;
+    }
+    
+    /**
+     * Get setting variable.
+     * @param id
+     * @return
+     * @throws MiddlewareQueryException
+     */
+    private SettingVariable getSettingVariable(int id) throws MiddlewareQueryException {
+		StandardVariable stdVar = getStandardVariable(id);
+		if (stdVar != null) {
+			SettingVariable svar = new SettingVariable(stdVar.getName(), stdVar.getDescription(), stdVar.getProperty().getName(),
+					stdVar.getScale().getName(), stdVar.getMethod().getName(), stdVar.getStoredIn().getName(), 
+					stdVar.getDataType().getName());
+			svar.setCvTermId(stdVar.getId());
+			svar.setCropOntologyId(stdVar.getCropOntologyId());
+			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : null);
+		}
+		return null;
+    }
+    /**
+     * Get standard variable.
+     * @param id
+     * @return
+     * @throws MiddlewareQueryException
+     */
+    private StandardVariable getStandardVariable(int id) throws MiddlewareQueryException {
+    	Set<StandardVariable> allStdVars = getAllStandardVariables();
+    	if (allStdVars != null && !allStdVars.isEmpty()) {
+    		for (StandardVariable stdvar : allStdVars) {
+    			if (stdvar.getId() == id) {
+    				return stdvar;
+    			}
+    		}
+    	}
+    	return null;
     }
 }

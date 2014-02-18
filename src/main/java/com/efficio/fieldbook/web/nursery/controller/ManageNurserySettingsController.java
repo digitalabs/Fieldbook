@@ -285,7 +285,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
 	    	if (selectedVariables != null && !selectedVariables.isEmpty()) {
 	    		for (SettingVariable var : selectedVariables) {
 					List<ValueReference> possibleValues = fieldbookService.getAllPossibleValues(var.getCvTermId());
-					newSettings.add(new SettingDetail(var, possibleValues, null, false));
+					newSettings.add(new SettingDetail(var, possibleValues, null, true));
 	    		}
 	    	}
 	    	
@@ -337,7 +337,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
 			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : null);
 
 			List<ValueReference> possibleValues = fieldbookService.getAllPossibleValues(id);
-	    	return new SettingDetail(svar, possibleValues, null, true);
+	    	return new SettingDetail(svar, possibleValues, null, false);
 		}
 		return new SettingDetail();
     }

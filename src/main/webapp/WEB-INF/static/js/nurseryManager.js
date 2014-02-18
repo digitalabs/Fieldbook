@@ -335,9 +335,9 @@ function getStandardVariables(variableType) {
 			initializeStandardVariableSearch($.parseJSON(data));
 			
 			//clear selected variables table and attribute fields
-			//$("#newVariablesList > tbody").empty();
+			$("#newVariablesList > tbody").empty();
 			clearAttributeFields();
-			
+			$("#addVariables").attr("onclick", "javascript: submitSelectedVariables(" + variableType + ");");
 			$("#addVariablesSettingModal").modal("show");
 		},
 		error: function(jqXHR, textStatus, errorThrown){
@@ -465,17 +465,28 @@ function notInList(id) {
 	return isNotInList;
 }
 
-function submitSelectedVariables() {
-	alert($("#newVariablesList").html());
+function submitSelectedVariables(variableType) {
 	var serializedData = $("#saveAdvanceNurseryForm").serialize();
 	Spinner.toggle();
 	$.ajax({
-		url: "/Fieldbook/NurseryManager/manageNurserySettings/addSettings/" + 1,
+		url: "/Fieldbook/NurseryManager/manageNurserySettings/addSettings/" + variableType,
 		type: "POST",
 		data: serializedData,
-		success: function (html) {
-			alert(html);
-			$("#nurseryLevelSettings").append(html);
+		success: function (data) {
+			switch (variableType) {
+				case 1:
+					createNurseryLevelSettingVariables($.parseJSON(data));
+					break;
+				case 2:
+					createPlotLevelSettingVariables($.parseJSON(data));
+					break;
+				case 3:
+					createBaselineTraitVariables($.parseJSON(data));
+					break;
+				default:
+					createNurseryLevelSettingVariables($.parseJSON(data));
+			}
+			
 		},
 		error: function(jqXHR, textStatus, errorThrown){
 			console.log("The following error occured: " + textStatus, errorThrown); 
@@ -484,4 +495,93 @@ function submitSelectedVariables() {
 			Spinner.toggle();
 		}
 	});
+}
+
+function getLastRowIndex(name, hasTBody) {
+	if (hasTBody) {
+		return $("#" + name + " tbody tr").length - 1;
+	} else {
+		return $("#" + name + " tr").length - 1;
+	}
+}
+
+function createNurseryLevelSettingVariables(data) {
+	var ctr = getLastRowIndex("nurseryLevelSettings", false) + 1;
+	$.each(data, function (index, settingDetail) {
+		var newRow = "<tr>";
+		var isDelete = "";
+		if (settingDetail.delete) {
+			isDelete = "<span class='glyphicon glyphicon-remove-sign'></span>";
+		}
+		newRow = newRow + "<td>" + isDelete + 
+		"<input type='hidden' id='nurseryLevelVariables" + ctr + ".variable.cvTermId' name='nurseryLevelVariables[" + 
+		ctr + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
+		"</td>";
+		newRow = newRow + "<td>" + settingDetail.variable.name + "</td>";
+		newRow = newRow + "<td><input type='hidden' id='nurseryLevelVariables" + ctr + 
+		".value' name='nurseryLevelVariables[" + ctr + "].value' class='form-control select2' /></td></tr>";
+
+		$("#nurseryLevelSettings").append(newRow);
+		
+		//initialize select 2 combo
+		initializePossibleValuesCombo(settingDetail.possibleValues, "#" + 
+				getJquerySafeId("nurseryLevelVariables" + ctr + ".value"));
+		
+		ctr++;
+	});
+}
+
+function createPlotLevelSettingVariables(data) {
+	$.each(data, function (index, settingDetail) {
+		var newRow = "<tr>";
+		var isDelete = "";
+		
+		if (settingDetail.delete) {
+			isDelete = "<span class='glyphicon glyphicon-remove-sign'></span>";
+		}
+		newRow = newRow + "<td>" + isDelete + 
+		"<input type='hidden' id='plotLevelVariables" + index + ".variable.cvTermId' name='plotLevelVariables[" + 
+		index + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
+		"</td>";
+		newRow = newRow + "<td>" + settingDetail.variable.name + "</td>"; 
+		newRow = newRow + "<td>" + settingDetail.variable.description + "</td></tr>";
+		$("#plotLevelSettings").append(newRow);
+	});
+}
+
+function createBaselineTraitVariables(data) {
+	$.each(data, function (index, settingDetail) {
+		var newRow = "<tr>";
+		newRow = newRow + "<td>" + "<input type='hidden' id='baselineTraitVariables" + index + 
+		".variable.cvTermId' name='baselineTraitVariables[" + index + "].variable.cvTermId' value='" + 
+		settingDetail.variable.cvTermId + "' />" + settingDetail.variable.name + "</td>";
+		newRow = newRow + "<td>" + settingDetail.variable.description + "</td></tr>";
+		$("#baselineTraitSettings").append(newRow);
+	});
+}
+
+function initializePossibleValuesCombo(possibleValues, name) {
+	var possibleValues_obj = [];
+
+	$.each(possibleValues, function(index, value) {
+		possibleValues_obj.push({ 'id' : value.id,
+			  'text' : value.name
+		});  
+	});
+
+	$(name).select2({
+		query: function (query) {	
+	      var data = {results: possibleValues_obj}, i, j, s;
+	      // return the array that matches
+	      data.results = $.grep(data.results,function(item,index) {
+	        return ($.fn.select2.defaults.matcher(query.term,item.text));
+	      
+	      });
+	      if (data.results.length === 0){
+	    	  data.results.unshift({id:query.term,text:query.term});	        	 
+	      }
+	      
+	        query.callback(data);
+	    }
+    });
 }

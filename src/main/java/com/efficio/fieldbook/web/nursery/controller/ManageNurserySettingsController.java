@@ -129,6 +129,12 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     public String show(@ModelAttribute("manageSettingsForm") ManageSettingsForm form
             , Model model, HttpSession session) throws MiddlewareQueryException{
     	
+        Set<StandardVariable> stdVars = userSelection.getAllStandardVariables();
+        if (stdVars == null || stdVars.isEmpty()) {
+                stdVars = fieldbookMiddlewareService.getAllStandardVariables();
+                userSelection.setAllStandardVariables(stdVars);
+        }
+        
     	//we need to get the default settings if there is
     	TemplateSetting templateSettingFilter = new TemplateSetting(null, Integer.valueOf(getCurrentProjectId()), null, getNurseryTool(), null, true);
         List<TemplateSetting> templateSettingsList = workbenchDataManager.getTemplateSettings(templateSettingFilter);
@@ -149,12 +155,6 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
         	assignDefaultValues(form);
         }
          
-        //sample data
-        /*
-        List<SettingVariable> selectedVariables = new ArrayList<SettingVariable>();
-        selectedVariables.add(new SettingVariable("name", "prop", "scale", "method", "role", "datatype", "cropontologyid"));
-        form.setSelectedVariables(selectedVariables);
-        */
     	return super.show(model);
     }
           

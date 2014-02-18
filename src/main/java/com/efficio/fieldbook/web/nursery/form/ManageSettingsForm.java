@@ -91,6 +91,7 @@ public class ManageSettingsForm {
 			this.selectedVariables = selectedVariables;
 		}
 
+		
 		public void clear() {
 			this.selectedSettingId = 0;
 			this.settingName = null;

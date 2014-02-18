@@ -166,7 +166,13 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
         }
         
     	//we need to get the default settings if there is
-    	TemplateSetting templateSettingFilter = new TemplateSetting(null, Integer.valueOf(getCurrentProjectId()), null, getNurseryTool(), null, true);
+        //only has value for clear setting, the rest null
+        Integer templateSettingId = form.getSelectedSettingId() > 0 ? Integer.valueOf(form.getSelectedSettingId()) : null;
+    	TemplateSetting templateSettingFilter = new TemplateSetting(templateSettingId, Integer.valueOf(getCurrentProjectId()), null, getNurseryTool(), null, true);
+    	//if there is an id query, we need to set the isDefault filter to  null
+    	if(templateSettingId != null){
+    		templateSettingFilter.setIsDefaultToNull();
+    	}
         List<TemplateSetting> templateSettingsList = workbenchDataManager.getTemplateSettings(templateSettingFilter);
         
         if(templateSettingsList != null && !templateSettingsList.isEmpty()){
@@ -364,13 +370,35 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
      * @param session the session
      * @return the string
      */
-    @RequestMapping(value = "clearSettings", method = RequestMethod.GET)
-    public String clearSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, Model model, HttpSession session) {
+    @RequestMapping(value = "clearSettings/{templateSettingId}", method = RequestMethod.GET)
+    public String clearSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form,
+    		@PathVariable int templateSettingId,
+    		Model model, HttpSession session) {
     	
     	try {
-	    	session.invalidate();
+	    	//session.invalidate();
 	    	form.clear();
-	    	assignDefaultValues(form);
+	    	form.setSelectedSettingId(templateSettingId);
+	    	setupDefaultScreenValues(form);
+	    	//assignDefaultValues(form);
+    	
+    	} catch(Exception e) {
+    		LOG.error(e.getMessage(), e);
+    	}
+    	
+    	//return super.show(model);
+    	return super.showAjaxPage(model, getContentName() );
+    	//return "redirect: " + ManageNurseriesController.URL;
+    }
+    
+    @RequestMapping(value = "addNewSettings", method = RequestMethod.GET)
+    public String addNewSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, Model model, HttpSession session) {
+    	
+    	try {
+	    	//session.invalidate();
+	    	form.clear();
+	    	setupDefaultScreenValues(form);
+	    	//assignDefaultValues(form);
     	
     	} catch(Exception e) {
     		LOG.error(e.getMessage(), e);

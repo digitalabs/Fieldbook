@@ -33,7 +33,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			    			<a href="" ><img width="15" src="/Fieldbook/static/img/copy.png"/>&nbsp;  <span th:text="#{nursery.managesettings.make.copy}"></span></a>
 			    			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			    			
-			    			<a href="" ><span class="glyphicon glyphicon-plus"></span>&nbsp; <span th:text="#{nursery.managesettings.add.new.settings}">Add New Settings</span></a>
+			    			<a href="javascript: void(0)" id="addNewSettings"><span class="glyphicon glyphicon-plus"></span>&nbsp; <span th:text="#{nursery.managesettings.add.new.settings}">Add New Settings</span></a>
 			    			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			    			<a href="javascript: void(0)" id="clearSettings"><span class="glyphicon glyphicon-remove"></span>&nbsp;<span th:text="#{nursery.managesettings.clear.settings}">Clear</span></a>
 			    			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -259,7 +259,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 	    					&nbsp;&nbsp;
 	    					<input type="text" th:field="*{settingName}" />
 	    				</div>
-	    				<div class="col-xs-7 col-md-7">
+	    				<div class="col-xs-7 col-md-7 add_top_padding">
 	    					<input type="checkbox" th:field="*{isDefault}" /> 
 	    					<label class="control-label" th:text="#{nursery.managesettings.set.default}"> Set as default for this program (overrides previous defaults)</label>
 	    				</div>
@@ -322,46 +322,9 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
  				});
  				$('#clearSettings').on('click', clearSettings);
  				$('#saveSettings').on('click', doSaveSettings);
+ 				$('#addNewSettings').on('click', addNewSettings);
  			});    			 			     
-	
- 			function hasDuplicateSettingName(){
- 				var selectedSettingsId = $('#selectedSettingId').val();
- 				var settingsName = $('#settingName').val() ;
- 				var hasDuplicate = false;
- 				$('#selectedSettingId option').each(function(){
- 				    if(selectedSettingsId != $(this).val() &&  $(this).html().trim() == settingsName)
- 				    	hasDuplicate = true;
- 				})
- 				return hasDuplicate;
- 			}
- 			function doSaveSettings(){
- 				$('#settingName').val($('#settingName').val().trim());
- 				if($('#settingName').val() == ''){
- 					showErrorMessage('page-message', templateSettingNameError);
-					return false;
- 				}else if(hasDuplicateSettingName()){
- 					showErrorMessage('page-message', templateSettingNameErrorUnique);
-					return false;
- 				} else{ 					
-					Spinner.toggle();
-					var $form = $("#saveNurserySettingsForm");
-					serializedData = $form.serialize();
-					
-					$.ajax({
-						url: "/Fieldbook/NurseryManager/manageNurserySettings/save/",
-						type: "POST", 	
-						data: serializedData,
-						success: function (html) {
-							//we just paste the whole html
-							$('.container .row').first().html(html);
-							
-						    showSuccessfulMessage('page-message', saveTemplateSettingSuccess);				
-							Spinner.toggle();
-						}
-					}); 					
- 				}
- 					
- 			}
+			
       //]]>
     </script>
 	

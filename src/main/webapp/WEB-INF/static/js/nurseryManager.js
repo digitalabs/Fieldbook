@@ -612,9 +612,9 @@ function deleteNurserySettings(){
 }
 function clearSettings(){
 	Spinner.toggle();
-		
+	var templateSettingsId = $('#selectedSettingId').val();
 		$.ajax({
-			url: "/Fieldbook/NurseryManager/manageNurserySettings/clearSettings",
+			url: "/Fieldbook/NurseryManager/manageNurserySettings/clearSettings/"+templateSettingsId,
 			type: "GET", 					
 			success: function (html) {
 				//we just paste the whole html
@@ -641,4 +641,54 @@ function loadNurserySettings(templateSettingsId) {
 			Spinner.toggle();
 		}
 	});
+}
+function addNewSettings(){
+	Spinner.toggle();
+	
+	$.ajax({
+		url: "/Fieldbook/NurseryManager/manageNurserySettings/addNewSettings",
+		type: "GET", 					
+		success: function (html) {
+			//we just paste the whole html
+			$('.container .row').first().html(html);				
+			Spinner.toggle();
+		}
+	});
+}
+function hasDuplicateSettingName(){
+	var selectedSettingsId = $('#selectedSettingId').val();
+	var settingsName = $('#settingName').val() ;
+	var hasDuplicate = false;
+	$('#selectedSettingId option').each(function(){
+	    if(selectedSettingsId != $(this).val() &&  $(this).html().trim() == settingsName)
+	    	hasDuplicate = true;
+	})
+	return hasDuplicate;
+}
+function doSaveSettings(){
+	$('#settingName').val($('#settingName').val().trim());
+	if($('#settingName').val() == ''){
+		showErrorMessage('page-message', templateSettingNameError);
+	return false;
+	}else if(hasDuplicateSettingName()){
+		showErrorMessage('page-message', templateSettingNameErrorUnique);
+	return false;
+	} else{ 					
+	Spinner.toggle();
+	var $form = $("#saveNurserySettingsForm");
+	serializedData = $form.serialize();
+	
+	$.ajax({
+		url: "/Fieldbook/NurseryManager/manageNurserySettings/save/",
+		type: "POST", 	
+		data: serializedData,
+		success: function (html) {
+			//we just paste the whole html
+			$('.container .row').first().html(html);
+			
+		    showSuccessfulMessage('page-message', saveTemplateSettingSuccess);				
+			Spinner.toggle();
+		}
+	}); 					
+	} 				
 }

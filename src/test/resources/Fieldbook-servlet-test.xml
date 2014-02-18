@@ -71,6 +71,8 @@
 
 	<bean id="fieldbookService" class="com.efficio.fieldbook.service.FieldbookServiceImpl" />
 
+	<bean id="workbenchService" class="com.efficio.fieldbook.service.WorkbenchServiceImpl" />
+
 	<bean id="fileService" class="com.efficio.fieldbook.service.FileServiceImpl"
 		init-method="init">
 		<constructor-arg value="${upload.directory}" />

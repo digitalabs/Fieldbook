@@ -24,7 +24,6 @@ import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
 import org.generationcp.middleware.pojos.workbench.Tool;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
@@ -39,6 +38,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.bean.SettingVariable;
@@ -76,7 +76,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     
     /** The workbench data manager. */
     @Resource
-    private WorkbenchDataManager workbenchDataManager;
+    private WorkbenchService workbenchService;
     
     /** The fieldbook service. */
     @Resource
@@ -102,10 +102,9 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     private Tool getNurseryTool(){
     	Tool tool = null;
 		try {
-			tool = workbenchDataManager.getToolWithName(AppConstants.TOOL_NAME_NURSERY_MANAGER_WEB);
+			tool = workbenchService.getToolWithName(AppConstants.TOOL_NAME_NURSERY_MANAGER_WEB);
 		} catch (MiddlewareQueryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		    LOG.error(e.getMessage(), e);
 		}
     	return tool;
     }
@@ -123,7 +122,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
         	
         	TemplateSetting templateSettingFilter = new TemplateSetting(null, Integer.valueOf(getCurrentProjectId()), null, getNurseryTool(), null, null);
         	templateSettingFilter.setIsDefaultToNull();
-            List<TemplateSetting> templateSettingsList = workbenchDataManager.getTemplateSettings(templateSettingFilter);
+            List<TemplateSetting> templateSettingsList = workbenchService.getTemplateSettings(templateSettingFilter);
          // this is for the default
             templateSettingsList.add(0, new TemplateSetting(Integer.valueOf(0), Integer.valueOf(getCurrentProjectId()), "", null, "", false));
             return templateSettingsList;
@@ -166,12 +165,11 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
                 stdVars = fieldbookMiddlewareService.getAllStandardVariables();
                 userSelection.setAllStandardVariables(stdVars);
         }
-        
-    	
+            	
         List<TemplateSetting> templateSettingsList = new ArrayList<TemplateSetting>();
         //NULL when its an add new setting
         if(templateSettingFilter != null) 
-        	templateSettingsList = workbenchDataManager.getTemplateSettings(templateSettingFilter);
+        	templateSettingsList = workbenchService.getTemplateSettings(templateSettingFilter);
         
         if(templateSettingsList != null && !templateSettingsList.isEmpty()){
         	//we only get the 1st, cause its always gonna be 1 only per project and per tool
@@ -209,9 +207,9 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	Integer tempateSettingId = form.getSelectedSettingId() > 0 ? Integer.valueOf(form.getSelectedSettingId()) : null;
     	TemplateSetting templateSetting = new TemplateSetting(tempateSettingId, Integer.valueOf(getCurrentProjectId()), dataset.getName(), getNurseryTool(), xml, Boolean.valueOf(form.getIsDefault())) ;
     	if(templateSetting.getTemplateSettingId() != null)
-    		workbenchDataManager.addTemplateSetting(templateSetting);
+    		workbenchService.addTemplateSetting(templateSetting);
     	else
-    		workbenchDataManager.updateTemplateSetting(templateSetting);
+    		workbenchService.updateTemplateSetting(templateSetting);
     	
     	int tempateSettingsId = templateSetting.getTemplateSettingId();
     	return viewSettings(form, tempateSettingsId, model, session);
@@ -231,7 +229,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     public String deleteSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, @PathVariable int templateSettingId
             , Model model, HttpSession session) throws MiddlewareQueryException{
 		//will do the saving here
-    	workbenchDataManager.deleteTemplateSetting(Integer.valueOf(templateSettingId));
+    	workbenchService.deleteTemplateSetting(Integer.valueOf(templateSettingId));
     	//need to add here the cleanup in the session and in the form
     	//we need to get the default settings if there is
         //only has value for clear setting, the rest null
@@ -263,7 +261,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	if(templateSettingId != 0){    	
 	    	TemplateSetting templateSettingFilter = new TemplateSetting(Integer.valueOf(templateSettingId), Integer.valueOf(getCurrentProjectId()), null, getNurseryTool(), null, null);
 	    	templateSettingFilter.setIsDefaultToNull();
-	    	List<TemplateSetting> templateSettings = workbenchDataManager.getTemplateSettings(templateSettingFilter);
+	    	List<TemplateSetting> templateSettings = workbenchService.getTemplateSettings(templateSettingFilter);
 	    	TemplateSetting templateSetting = templateSettings.get(0); //always 1
 	    	Dataset dataset = SettingsUtil.parseXmlToDatasetPojo(templateSetting.getConfiguration());
 	    	SettingsUtil.convertXmlDatasetToPojo(fieldbookService, dataset, userSelection);

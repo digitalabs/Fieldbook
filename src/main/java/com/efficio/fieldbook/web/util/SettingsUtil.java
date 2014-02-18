@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2013, All Rights Reserved.
+ * 
+ * Generation Challenge Programme (GCP)
+ * 
+ * 
+ * This software is licensed for use under the terms of the GNU General Public
+ * License (http://bit.ly/8Ztv8M) and the provisions of Part F of the Generation
+ * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
+ * 
+ *******************************************************************************/
 package com.efficio.fieldbook.web.util;
 
 import java.io.BufferedWriter;
@@ -27,8 +38,17 @@ import com.efficio.fieldbook.web.nursery.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 
 
+/**
+ * The Class SettingsUtil.
+ */
 public class SettingsUtil {
 	
+	/**
+	 * Generate settings xml.
+	 *
+	 * @param dataset the dataset
+	 * @return the string
+	 */
 	public static String generateSettingsXml(Dataset dataset){
 		PojoXml pojoXml = PojoXmlFactory.createPojoXml();
 		
@@ -39,6 +59,13 @@ public class SettingsUtil {
         //Employee employee = (Employee) pojoXml.getPojoFrormFile(fullPathNamen,Employee.class);
         return xml;
 	}
+	
+	/**
+	 * Parses the xml to dataset pojo.
+	 *
+	 * @param xml the xml
+	 * @return the dataset
+	 */
 	public static Dataset parseXmlToDatasetPojo(String xml){
 		PojoXml pojoXml = PojoXmlFactory.createPojoXml();
 		setupPojoXml(pojoXml);
@@ -70,6 +97,11 @@ public class SettingsUtil {
 		return dataset;
 	}
 	
+	/**
+	 * Sets the up pojo xml.
+	 *
+	 * @param pojoXml the new up pojo xml
+	 */
 	private static void setupPojoXml(PojoXml pojoXml){
 		pojoXml.addClassAlias(Dataset.class, "dataset");
 		pojoXml.addClassAlias(Condition.class, "condition");
@@ -82,6 +114,15 @@ public class SettingsUtil {
 		pojoXml.addCollectionClass("variate",Variate.class);
 	}
 	
+	/**
+	 * Convert pojo to xml dataset.
+	 *
+	 * @param name the name
+	 * @param nurseryLevelConditions the nursery level conditions
+	 * @param plotsLevelList the plots level list
+	 * @param baselineTraitsList the baseline traits list
+	 * @return the dataset
+	 */
 	public static Dataset convertPojoToXmlDataset(String name, List<SettingDetail> nurseryLevelConditions, List<SettingDetail> plotsLevelList, List<SettingDetail> baselineTraitsList){
 		Dataset dataset = new Dataset();
 		List<Condition> conditions = new ArrayList<Condition>();
@@ -116,6 +157,13 @@ public class SettingsUtil {
 		return dataset;
 	}
 	
+	/**
+	 * Gets the field possible vales.
+	 *
+	 * @param fieldbookService the fieldbook service
+	 * @param variable the variable
+	 * @return the field possible vales
+	 */
 	public static List<ValueReference> getFieldPossibleVales(FieldbookService fieldbookService, SettingVariable variable){
 		List<ValueReference> possibleValueList = new ArrayList<ValueReference>();
 		
@@ -129,10 +177,24 @@ public class SettingsUtil {
 		return possibleValueList;
 	}
 	
+	/**
+	 * Checks if is setting variable deletable.
+	 *
+	 * @param variable the variable
+	 * @return true, if is setting variable deletable
+	 */
 	public static boolean isSettingVariableDeletable(SettingVariable variable){
 		//need to add the checking here if the specific PSM-R is deletable, for the nursery level details
 		return true;
 	}
+	
+	/**
+	 * Convert xml dataset to pojo.
+	 *
+	 * @param fieldbookService the fieldbook service
+	 * @param dataset the dataset
+	 * @param userSelection the user selection
+	 */
 	public static void convertXmlDatasetToPojo(com.efficio.fieldbook.service.api.FieldbookService fieldbookService, Dataset dataset, UserSelection userSelection){
 		if(dataset != null && userSelection != null){
 			//we copy it to User session object
@@ -178,6 +240,12 @@ public class SettingsUtil {
 		}
 	}
 	
+	/**
+	 * Generate dummy condition.
+	 *
+	 * @param limit the limit
+	 * @return the list
+	 */
 	public static List<Condition> generateDummyCondition(int limit){
 		List<Condition> conditions = new ArrayList();
 		for(int i = 0 ; i < limit ; i++){
@@ -196,6 +264,12 @@ public class SettingsUtil {
 		return conditions;
 	}
 	
+	/**
+	 * Generate dummy factor.
+	 *
+	 * @param limit the limit
+	 * @return the list
+	 */
 	public static List<Factor> generateDummyFactor(int limit){
 		List<Factor> factors = new ArrayList();
 		for(int i = 0 ; i < limit ; i++){
@@ -213,6 +287,12 @@ public class SettingsUtil {
 		return factors;
 	}
 	
+	/**
+	 * Generate dummy variate.
+	 *
+	 * @param limit the limit
+	 * @return the list
+	 */
 	public static List<Variate> generateDummyVariate(int limit){
 		List<Variate> variates = new ArrayList();
 		for(int i = 0 ; i < limit ; i++){
@@ -229,6 +309,13 @@ public class SettingsUtil {
 		}
 		return variates;
 	}
+	
+	/**
+	 * Generate dummy settings xml.
+	 *
+	 * @param dataset the dataset
+	 * @return the string
+	 */
 	public static String generateDummySettingsXml(Dataset dataset){
 		PojoXml pojoXml = PojoXmlFactory.createPojoXml();
 
@@ -239,6 +326,12 @@ public class SettingsUtil {
         //Employee employee = (Employee) pojoXml.getPojoFrormFile(fullPathNamen,Employee.class);
         return xml;
 	}
+	
+	/**
+	 * Parses the dummy xml to dataset pojo.
+	 *
+	 * @return the dataset
+	 */
 	public static Dataset parseDummyXmlToDatasetPojo(){
 		PojoXml pojoXml = PojoXmlFactory.createPojoXml();
 		setupPojoXml(pojoXml);

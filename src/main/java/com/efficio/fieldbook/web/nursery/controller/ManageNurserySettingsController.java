@@ -57,25 +57,32 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     /** The Constant URL. */
     public static final String URL = "/NurseryManager/manageNurserySettings";
     
+    /** The Constant URL_STUDY_SETTINGS_TABLE. */
     public static final String URL_STUDY_SETTINGS_TABLE = "/NurseryManager/nurseryLevelSettings";
     
+    /** The Constant URL_PLOTS_SETTINGS_TABLE. */
     public static final String URL_PLOTS_SETTINGS_TABLE = "/";
 
+    /** The Constant URL_TRAITS_SETTINGS_TABLE. */
     public static final String URL_TRAITS_SETTINGS_TABLE = "/";
 
     
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(ManageNurserySettingsController.class);
     
+    /** The fieldbook middleware service. */
     @Resource
     private FieldbookService fieldbookMiddlewareService;        
     
+    /** The workbench data manager. */
     @Resource
     private WorkbenchDataManager workbenchDataManager;
     
+    /** The fieldbook service. */
     @Resource
     private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
     
+    /** The user selection. */
     @Resource
     private UserSelection userSelection;
          
@@ -87,6 +94,11 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
         return "NurseryManager/manageNurserySettings";
     }    
     
+    /**
+     * Gets the nursery tool.
+     *
+     * @return the nursery tool
+     */
     private Tool getNurseryTool(){
     	Tool tool = null;
 		try {
@@ -98,6 +110,11 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	return tool;
     }
     
+    /**
+     * Gets the settings list.
+     *
+     * @return the settings list
+     */
     @ModelAttribute("settingsList")
     public List<TemplateSetting> getSettingsList() {
         try {
@@ -134,6 +151,12 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	return super.show(model);
     }
     
+    /**
+     * Sets the up default screen values.
+     *
+     * @param form the new up default screen values
+     * @throws MiddlewareQueryException the middleware query exception
+     */
     private void setupDefaultScreenValues(ManageSettingsForm form) throws MiddlewareQueryException{
 
         Set<StandardVariable> stdVars = userSelection.getAllStandardVariables();
@@ -172,11 +195,11 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
      * @return the map
      * @throws MiddlewareQueryException the middleware query exception
      */
-    @ResponseBody
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value="save", method = RequestMethod.POST)
     public String saveSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form
             , Model model, HttpSession session) throws MiddlewareQueryException{
 		//will do the saving here
+    	
     	Dataset dataset = SettingsUtil.convertPojoToXmlDataset(form.getSettingName(), form.getNurseryLevelVariables(), form.getPlotLevelVariables(), form.getBaselineTraitVariables());
     	String xml = SettingsUtil.generateSettingsXml(dataset);
     	Integer tempateSettingId = form.getSelectedSettingId() > 0 ? Integer.valueOf(form.getSelectedSettingId()) : null;
@@ -185,15 +208,20 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     		workbenchDataManager.addTemplateSetting(templateSetting);
     	else
     		workbenchDataManager.updateTemplateSetting(templateSetting);
-        return super.show(model);
+    	
+    	int tempateSettingsId = templateSetting.getTemplateSettingId();
+    	return viewSettings(form, tempateSettingsId, model, session);
     }
+    
     /**
-     * For deletion of nursery setting
-     * @param templateSettingId
-     * @param model
-     * @param session
-     * @return
-     * @throws MiddlewareQueryException
+     * For deletion of nursery setting.
+     *
+     * @param form the form
+     * @param templateSettingId the template setting id
+     * @param model the model
+     * @param session the session
+     * @return the string
+     * @throws MiddlewareQueryException the middleware query exception
      */
     @RequestMapping(value="/delete/{templateSettingId}", method = RequestMethod.POST)
     public String deleteSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, @PathVariable int templateSettingId
@@ -206,6 +234,16 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	return super.showAjaxPage(model, getContentName() );
     }
     
+    /**
+     * View settings.
+     *
+     * @param form the form
+     * @param templateSettingId the template setting id
+     * @param model the model
+     * @param session the session
+     * @return the string
+     * @throws MiddlewareQueryException the middleware query exception
+     */
     @RequestMapping(value="/view/{templateSettingId}", method = RequestMethod.GET)
     public String viewSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, @PathVariable int templateSettingId
             , Model model, HttpSession session) throws MiddlewareQueryException{
@@ -232,11 +270,9 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     
     /**
      * Displays the Add Setting popup.
-     * 
-     * @param model
-     * @param mode
-     * @return
-     * @throws MiddlewareQueryException
+     *
+     * @param mode the mode
+     * @return the string
      */
     @ResponseBody
     @RequestMapping(value = "displayAddSetting/{mode}", method = RequestMethod.GET)
@@ -259,6 +295,12 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	return "[]";
     }
     
+    /**
+     * Show variable details.
+     *
+     * @param id the id
+     * @return the string
+     */
     @ResponseBody
     @RequestMapping(value="showVariableDetails/{id}", method = RequestMethod.GET)
     public String showVariableDetails(@PathVariable int id) {
@@ -282,6 +324,14 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	return "[]";
     }
     
+    /**
+     * Adds the settings.
+     *
+     * @param form the form
+     * @param model the model
+     * @param mode the mode
+     * @return the string
+     */
     @ResponseBody
     @RequestMapping(value = "/addSettings/{mode}", method = RequestMethod.POST)
     public String addSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, Model model, @PathVariable int mode) {
@@ -306,6 +356,14 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	return "[]";
     }
     
+    /**
+     * Clear settings.
+     *
+     * @param form the form
+     * @param model the model
+     * @param session the session
+     * @return the string
+     */
     @RequestMapping(value = "clearSettings", method = RequestMethod.GET)
     public String clearSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, Model model, HttpSession session) {
     	
@@ -324,6 +382,12 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     }
     
     
+    /**
+     * Assign default values.
+     *
+     * @param form the form
+     * @throws MiddlewareQueryException the middleware query exception
+     */
     private void assignDefaultValues(ManageSettingsForm form) throws MiddlewareQueryException {
     	List<SettingDetail> nurseryDefaults = new ArrayList<SettingDetail>();
     	form.setNurseryLevelVariables(nurseryDefaults);
@@ -333,6 +397,13 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	nurseryDefaults.add(createSettingDetail(TermId.PI_NAME.getId()));
     }
     
+    /**
+     * Creates the setting detail.
+     *
+     * @param id the id
+     * @return the setting detail
+     * @throws MiddlewareQueryException the middleware query exception
+     */
     private SettingDetail createSettingDetail(int id) throws MiddlewareQueryException {
 		StandardVariable stdVar = fieldbookMiddlewareService.getStandardVariable(id);
 		if (stdVar != null) {
@@ -349,6 +420,12 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
 		return new SettingDetail();
     }
     
+    /**
+     * Gets the setting detail list.
+     *
+     * @param mode the mode
+     * @return the setting detail list
+     */
     private List<SettingDetail> getSettingDetailList(int mode) {
     	switch (mode) {
 	    	case AppConstants.SEGMENT_STUDY : return userSelection.getNurseryLevelConditions(); 
@@ -358,6 +435,15 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	return null;
     }
     
+    /**
+     * Adds the new setting details.
+     *
+     * @param form the form
+     * @param mode the mode
+     * @param newDetails the new details
+     * @return the string
+     * @throws Exception the exception
+     */
     private String addNewSettingDetails(ManageSettingsForm form, int mode, List<SettingDetail> newDetails) throws Exception {
     	switch (mode) {
 	    	case AppConstants.SEGMENT_STUDY : 

@@ -47,6 +47,7 @@ import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class NurseryDetailsTest.
  */
@@ -58,9 +59,14 @@ public class SaveTemplateSettingsControllerTest extends AbstractJUnit4SpringCont
     private static final Logger LOG = LoggerFactory.getLogger(SaveTemplateSettingsControllerTest.class);
     
     
+    /** The workbench data manager. */
     @Autowired
     WorkbenchDataManager workbenchDataManager;
+    
+    /** The dataset. */
     Dataset dataset;
+    
+    /** The dataset name. */
     String datasetName;
     /**
      * Sets the up.
@@ -91,6 +97,12 @@ public class SaveTemplateSettingsControllerTest extends AbstractJUnit4SpringCont
 		
     }
     
+    /**
+     * Gets the test setting variable.
+     *
+     * @param prefix the prefix
+     * @return the test setting variable
+     */
     private SettingVariable getTestSettingVariable(String prefix){
 		return new SettingVariable(prefix + " name", prefix + " description", prefix + "  property",
 				prefix + "  scale", prefix + "  method", prefix + "  role", prefix + "  dataType");

@@ -28,16 +28,16 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			    				<option th:each="setting : ${settingsList}" th:value="${setting.templateSettingId}" th:text="${setting.name}">Nursery Type 1</option>
 			    			</select>
 			    		</div>
-			    		<div class="col-xs-2 col-md-2 add_top_padding">
-			    			<a href="" th:text="#{nursery.managesettings.make.copy}" >Make a Copy</a>
-			    		</div>
-			    		<div class="col-xs-2 col-md-2 add_top_padding">
+			    		<div class="col-xs-6 col-md-6 add_top_padding">
+			    			<img width="15" src="/Fieldbook/static/img/copy.png"/>
+			    			<a href="" th:text="#{nursery.managesettings.make.copy}" >  Make a Copy</a>
+			    			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			    			<span class="glyphicon glyphicon-plus"></span>&nbsp;
 			    			<a href="" th:text="#{nursery.managesettings.add.new.settings}">Add New Settings</a>
-			    		</div>
-			    		<div class="col-xs-2 col-md-2 add_top_padding">
+			    			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			    			<a th:href="@{/NurseryManager/manageNurserySettings/clearSettings}" th:text="#{nursery.managesettings.clear.settings}">Clear</a>
 			    			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			    			<span class="glyphicon glyphicon-trash"></span>&nbsp;
 			    			<a href="javascript: void(0)" id="deleteSettings" th:text="#{common.form.delete.text}">Delete</a>
 			    		</div>
 		    		</div>

@@ -122,7 +122,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 								<tbody>
 			    					<tr th:each="plotLevelVariable, rowStat : *{plotLevelVariables}">
 			    					<td>
-			    						<span th:if="${plotLevelVariable[__${rowStat.index}__].delete}" class="glyphicon glyphicon-remove-sign"></span>
+			    						 <span th:if="${plotLevelVariable[__${rowStat.index}__].delete}" class="glyphicon glyphicon-remove-sign"></span>			    						 
 			    						<input type="hidden" th:field="*{plotLevelVariable[__${rowStat.index}__].variable.cvTermId}" />
 		    						</td>
 			    					<td th:text="${plotLevelVariables[__${rowStat.index}__].variable.name}"></td>

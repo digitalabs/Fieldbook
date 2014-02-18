@@ -147,7 +147,9 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     public String show(@ModelAttribute("manageSettingsForm") ManageSettingsForm form
             , Model model, HttpSession session) throws MiddlewareQueryException{
     	
-    	setupDefaultScreenValues(form);
+    	//we need to get the default settings if there is
+        //only has value for clear setting, the rest null            	
+    	setupDefaultScreenValues(form, getDefaultTemplateSettingFilter());
     	return super.show(model);
     }
     
@@ -157,7 +159,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
      * @param form the new up default screen values
      * @throws MiddlewareQueryException the middleware query exception
      */
-    private void setupDefaultScreenValues(ManageSettingsForm form) throws MiddlewareQueryException{
+    private void setupDefaultScreenValues(ManageSettingsForm form, TemplateSetting templateSettingFilter) throws MiddlewareQueryException{
 
         Set<StandardVariable> stdVars = userSelection.getAllStandardVariables();
         if (stdVars == null || stdVars.isEmpty()) {
@@ -165,15 +167,11 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
                 userSelection.setAllStandardVariables(stdVars);
         }
         
-    	//we need to get the default settings if there is
-        //only has value for clear setting, the rest null
-        Integer templateSettingId = form.getSelectedSettingId() > 0 ? Integer.valueOf(form.getSelectedSettingId()) : null;
-    	TemplateSetting templateSettingFilter = new TemplateSetting(templateSettingId, Integer.valueOf(getCurrentProjectId()), null, getNurseryTool(), null, true);
-    	//if there is an id query, we need to set the isDefault filter to  null
-    	if(templateSettingId != null){
-    		templateSettingFilter.setIsDefaultToNull();
-    	}
-        List<TemplateSetting> templateSettingsList = workbenchDataManager.getTemplateSettings(templateSettingFilter);
+    	
+        List<TemplateSetting> templateSettingsList = new ArrayList<TemplateSetting>();
+        //NULL when its an add new setting
+        if(templateSettingFilter != null) 
+        	templateSettingsList = workbenchDataManager.getTemplateSettings(templateSettingFilter);
         
         if(templateSettingsList != null && !templateSettingsList.isEmpty()){
         	//we only get the 1st, cause its always gonna be 1 only per project and per tool
@@ -235,11 +233,18 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
 		//will do the saving here
     	workbenchDataManager.deleteTemplateSetting(Integer.valueOf(templateSettingId));
     	//need to add here the cleanup in the session and in the form
-    	setupDefaultScreenValues(form);
+    	//we need to get the default settings if there is
+        //only has value for clear setting, the rest null
+        
+    	    	
+    	setupDefaultScreenValues(form, getDefaultTemplateSettingFilter());
     	model.addAttribute("settingsList", getSettingsList());
     	return super.showAjaxPage(model, getContentName() );
     }
     
+    private TemplateSetting getDefaultTemplateSettingFilter(){
+    	return new TemplateSetting(null, Integer.valueOf(getCurrentProjectId()), null, getNurseryTool(), null, true);
+    }
     /**
      * View settings.
      *
@@ -379,7 +384,17 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
 	    	//session.invalidate();
 	    	form.clear();
 	    	form.setSelectedSettingId(templateSettingId);
-	    	setupDefaultScreenValues(form);
+	    	//we need to get the default settings if there is
+	        //only has value for clear setting, the rest null
+	        Integer templateSettingIdFilter = form.getSelectedSettingId() > 0 ? Integer.valueOf(form.getSelectedSettingId()) : null;
+	    	TemplateSetting templateSettingFilter = getDefaultTemplateSettingFilter();
+	    	//if there is an id query, we need to set the isDefault filter to  null
+	    	if(templateSettingIdFilter != null){
+	    		templateSettingFilter.setIsDefaultToNull();
+	    		templateSettingFilter.setTemplateSettingId(templateSettingIdFilter);
+	    	}
+	    	
+	    	setupDefaultScreenValues(form, templateSettingFilter);
 	    	//assignDefaultValues(form);
     	
     	} catch(Exception e) {
@@ -396,8 +411,8 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	
     	try {
 	    	//session.invalidate();
-	    	form.clear();
-	    	setupDefaultScreenValues(form);
+	    	form.clear();	    		    	
+	    	setupDefaultScreenValues(form, null);
 	    	//assignDefaultValues(form);
     	
     	} catch(Exception e) {

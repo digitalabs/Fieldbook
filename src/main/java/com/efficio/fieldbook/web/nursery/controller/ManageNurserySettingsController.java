@@ -309,6 +309,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	try {
 
     		SettingVariable svar = getSettingVariable(id);
+    		System.out.println("got this : " + svar);
     		if (svar != null) {
     			ObjectMapper om = new ObjectMapper();
     			return om.writeValueAsString(svar);
@@ -568,6 +569,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
 			svar.setCvTermId(stdVar.getId());
 			svar.setCropOntologyId(stdVar.getCropOntologyId());
 			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : null);
+			return svar;
 		}
 		return null;
     }

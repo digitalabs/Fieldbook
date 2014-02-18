@@ -610,7 +610,19 @@ function deleteNurserySettings(){
 		alert('show error mesage')
 	}
 }
-
+function clearSettings(){
+	Spinner.toggle();
+		
+		$.ajax({
+			url: "/Fieldbook/NurseryManager/manageNurserySettings/clearSettings",
+			type: "GET", 					
+			success: function (html) {
+				//we just paste the whole html
+				$('.container .row').first().html(html);				
+				Spinner.toggle();
+			}
+		});
+}
 function loadNurserySettings(templateSettingsId) {
 //alert($("#newVariablesList").html());
 //var serializedData = $("#saveAdvanceNurseryForm").serialize();

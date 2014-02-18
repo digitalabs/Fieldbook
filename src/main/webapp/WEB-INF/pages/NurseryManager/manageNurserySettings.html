@@ -29,16 +29,16 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			    			</select>
 			    		</div>
 			    		<div class="col-xs-6 col-md-6 add_top_padding">
-			    			<img width="15" src="/Fieldbook/static/img/copy.png"/>
-			    			<a href="" th:text="#{nursery.managesettings.make.copy}" >  Make a Copy</a>
+			    			
+			    			<a href="" ><img width="15" src="/Fieldbook/static/img/copy.png"/> <span th:text="#{nursery.managesettings.make.copy}"></span></a>
 			    			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			    			<span class="glyphicon glyphicon-plus"></span>&nbsp;
-			    			<a href="" th:text="#{nursery.managesettings.add.new.settings}">Add New Settings</a>
+			    			
+			    			<a href="" ><span class="glyphicon glyphicon-plus"></span>&nbsp; <span th:text="#{nursery.managesettings.add.new.settings}">Add New Settings</span></a>
 			    			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			    			<a th:href="@{/NurseryManager/manageNurserySettings/clearSettings}" th:text="#{nursery.managesettings.clear.settings}">Clear</a>
+			    			<a href="javascript: void(0)" id="clearSettings"><span th:text="#{nursery.managesettings.clear.settings}">Clear</span></a>
 			    			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			    			<span class="glyphicon glyphicon-trash"></span>&nbsp;
-			    			<a href="javascript: void(0)" id="deleteSettings" th:text="#{common.form.delete.text}">Delete</a>
+			    			
+			    			<a href="javascript: void(0)" id="deleteSettings" ><span class="glyphicon glyphicon-trash"></span>&nbsp;<span th:text="#{common.form.delete.text}">Delete</span></a>
 			    		</div>
 		    		</div>
 		    	</div>
@@ -317,6 +317,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
  	 					$('#delete-settings-confirmation').modal('show');	
  					} 					 					
  				});
+ 				$('#clearSettings').on('click', clearSettings);
  			});    			 			     
 	
       //]]>

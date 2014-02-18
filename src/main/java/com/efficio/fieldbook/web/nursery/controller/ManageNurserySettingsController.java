@@ -318,7 +318,8 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     		LOG.error(e.getMessage(), e);
     	}
     	
-    	return super.show(model);
+    	//return super.show(model);
+    	return super.showAjaxPage(model, getContentName() );
     	//return "redirect: " + ManageNurseriesController.URL;
     }
     

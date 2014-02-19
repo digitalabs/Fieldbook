@@ -569,14 +569,16 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
      */
     private void populateSettingVariable(SettingVariable var) throws MiddlewareQueryException {
     	StandardVariable  stdvar = getStandardVariable(var.getCvTermId());
-		var.setDescription(stdvar.getDescription());
-		var.setProperty(stdvar.getProperty().getName());
-		var.setScale(stdvar.getScale().getName());
-		var.setMethod(stdvar.getMethod().getName());
-		var.setDataType(stdvar.getDataType().getName());
-		var.setRole(stdvar.getStoredIn().getName());
-		var.setCropOntologyId(stdvar.getCropOntologyId() != null ? stdvar.getCropOntologyId() : "");
-		var.setTraitClass(stdvar.getIsA().getName());
+    	if (stdvar != null) {
+			var.setDescription(stdvar.getDescription());
+			var.setProperty(stdvar.getProperty().getName());
+			var.setScale(stdvar.getScale().getName());
+			var.setMethod(stdvar.getMethod().getName());
+			var.setDataType(stdvar.getDataType().getName());
+			var.setRole(stdvar.getStoredIn().getName());
+			var.setCropOntologyId(stdvar.getCropOntologyId() != null ? stdvar.getCropOntologyId() : "");
+			var.setTraitClass(stdvar.getIsA() != null ? stdvar.getIsA().getName() : "");
+    	}
     }
 
     /**

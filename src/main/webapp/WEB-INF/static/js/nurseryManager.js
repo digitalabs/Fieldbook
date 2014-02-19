@@ -236,7 +236,7 @@ function recreateLocationCombo() {
 	    			   setComboValues(locationSuggestions_obj, selectedLocationAll, "harvestLocationIdAll");
 	    		   }
     		   } else {
-    			   var selectedVal = "";
+    			   var selectedVal = null;
     			   if ($("#" + getJquerySafeId("nurseryLevelVariables0.value")).select2("data")) {
     				   selectedVal = $("#" + getJquerySafeId("nurseryLevelVariables0.value")).select2("data").id;
     			   } 

@@ -569,8 +569,8 @@ function createPlotLevelSettingVariables(data) {
 			settingDetail.variable.cvTermId + ",$(this))'></span>";
 		}
 		newRow = newRow + "<td style='text-align: center' class='"+className+"'>" + isDelete + 
-		"<input type='hidden' id='plotLevelVariables" + index + ".variable.cvTermId' name='plotLevelVariables[" + 
-		index + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
+		"<input type='hidden' id='plotLevelVariables" + (length-1) + ".variable.cvTermId' name='plotLevelVariables[" + 
+		(length-1) + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
 		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.name + "</td>"; 
 		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.description + "</td></tr>";
@@ -591,8 +591,8 @@ function createBaselineTraitVariables(data) {
 		}
 		
 		newRow = newRow + "<td style='text-align: center' class='"+className+"'>" + isDelete + 
-		"<input type='hidden' id='baselineTraitVariables" + index + ".variable.cvTermId' name='baselineTraitVariables[" + 
-		index + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
+		"<input type='hidden' id='baselineTraitVariables" + (length-1) + ".variable.cvTermId' name='baselineTraitVariables[" + 
+		(length-1) + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
 		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.name + "</td>";		
 		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.description + "</td></tr>";

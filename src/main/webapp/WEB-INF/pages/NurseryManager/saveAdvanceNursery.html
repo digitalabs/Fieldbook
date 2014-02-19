@@ -6,8 +6,6 @@
 	</div>			  
 </div>
 
-<form id="saveAdvanceNurseryForm" role="form-horizontal" class="form-horizontal" action="#"
-th:action="@{/NurseryManager/saveAdvanceNursery}" method="post" th:object="${advancingNurseryform}" enctype="multipart/form-data">
 	<div class="row">
 		<div class="row">&nbsp;</div>
 		<div class="row">
@@ -17,6 +15,9 @@ th:action="@{/NurseryManager/saveAdvanceNursery}" method="post" th:object="${adv
 				</div>
 			</div>
 		</div>
+		<form id="saveAdvanceNurseryForm" role="form-horizontal" class="form-horizontal" action="#"
+th:action="@{/NurseryManager/saveAdvanceNursery}" method="post" th:object="${advancingNurseryform}" enctype="multipart/form-data">
+		
 		<div class="row">
 			<div class="col-xs-12 col-md-12" >
 				<div class="row form-group">
@@ -47,32 +48,16 @@ th:action="@{/NurseryManager/saveAdvanceNursery}" method="post" th:object="${adv
 				</div>
 			</div>
 		</div>
+		</form>
 		<div class="row">
 			<div class="col-xs-12 col-md-12" >
 				<div class="row form-group">
-					<div class="col-xs-12 col-md-12">
-						<table class="my-class table table-curved table-condensed">
-							<thead>
-								<tr>
-									<th th:utext="#{nursery.import.header.entry}">.Entry</th>
-					                <th th:utext="#{nursery.import.header.designation}">.Designation</th>
-					                <th th:utext="#{nursery.import.header.gid}">.GID</th>
-					                <th th:utext="#{nursery.import.header.cross}">.Cross</th>
-					                <th th:utext="#{nursery.import.header.source}">.Source</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr th:each="choice, rowStat : *{germplasmList}">
-									<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{germplasmList[__${rowStat.index}__].entryId}">Entry</td>
-									<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{germplasmList[__${rowStat.index}__].desig}">Designation</td>
-									<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{germplasmList[__${rowStat.index}__].gid}">GID</td>
-									<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{germplasmList[__${rowStat.index}__].cross}">Cross</td>
-									<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{germplasmList[__${rowStat.index}__].source}">Source</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
+					
+					<div  id="advance-nursery-germplasm-list" th:include="/NurseryManager/showSaveAdvanceNurseryPagination">
+        	  		</div>
+					
 				</div>
+				
 			</div>
 		</div>
 		<div class="row">
@@ -113,12 +98,13 @@ th:action="@{/NurseryManager/saveAdvanceNursery}" method="post" th:object="${adv
 	</div>
 
 
-</form>
+
 
 <div layout:fragment="page-script">
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[   
- 		       
+ 		
+        
 		function doSave(){
   	      	var $form = $("#saveAdvanceNurseryForm");
   			serializedData = $form.serialize();

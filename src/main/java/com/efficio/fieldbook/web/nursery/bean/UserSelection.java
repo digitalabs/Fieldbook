@@ -70,6 +70,8 @@ public class UserSelection implements Serializable {
     
     private Set<StandardVariable> allStandardVariables;
     
+    private List<ImportedGermplasm> importedAdvancedGermplasmList;
+    
 	/**
 	 * Gets the current page.
 	 *
@@ -305,6 +307,15 @@ public class UserSelection implements Serializable {
 	 */
 	public void setAllStandardVariables(Set<StandardVariable> allStandardVariables) {
 		this.allStandardVariables = allStandardVariables;
+	}
+
+	public List<ImportedGermplasm> getImportedAdvancedGermplasmList() {
+		return importedAdvancedGermplasmList;
+	}
+
+	public void setImportedAdvancedGermplasmList(
+			List<ImportedGermplasm> importedAdvancedGermplasmList) {
+		this.importedAdvancedGermplasmList = importedAdvancedGermplasmList;
 	}
 
     

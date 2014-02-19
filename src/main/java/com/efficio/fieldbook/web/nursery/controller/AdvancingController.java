@@ -41,6 +41,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 
@@ -68,6 +69,9 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     /** The workbench data manager. */
     @Resource
     private WorkbenchDataManager workbenchDataManager;
+    
+    @Resource
+    private UserSelection userSelection;
     
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()

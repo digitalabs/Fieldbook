@@ -20,6 +20,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
+import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
@@ -36,13 +37,16 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
+import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
@@ -55,6 +59,7 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
 
     /** The Constant URL. */
     public static final String URL = "/NurseryManager/saveAdvanceNursery";
+    public static final String PAGINATION_TEMPLATE = "/NurseryManager/showSaveAdvanceNurseryPagination";
     
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(SaveAdvanceNurseryController.class);
@@ -81,6 +86,9 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
 
     /** The imported germplasm list. */
     private List<ImportedGermplasm> importedGermplasmList;
+    
+    @Resource
+    private UserSelection userSelection;
      
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
@@ -103,8 +111,10 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
     public String show(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form
             , Model model, HttpSession session) throws MiddlewareQueryException{
         importedGermplasmList = fieldbookService.advanceNursery(advancingNursery);
+        userSelection.setImportedAdvancedGermplasmList(importedGermplasmList);
         form.setGermplasmList(importedGermplasmList);
         form.setEntries(importedGermplasmList.size());
+        form.changePage(1);
     	return super.show(model);
     }
        
@@ -145,6 +155,27 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
         }
         
         return resultMap;
+    }
+    
+    /**
+     * Gets the paginated list.
+     *
+     * @param pageNum the page num
+     * @param previewPageNum the preview page num
+     * @param form the form
+     * @param model the model
+     * @return the paginated list
+     */
+    @RequestMapping(value="/page/{pageNum}", method = RequestMethod.GET)
+    public String getPaginatedList(@PathVariable int pageNum
+            , @ModelAttribute("advancingNurseryform") AdvancingNurseryForm form, Model model) {
+    	 List<ImportedGermplasm> importedAdvanceGermplasmList = userSelection.getImportedAdvancedGermplasmList();
+         if(importedAdvanceGermplasmList != null){
+        	 form.setGermplasmList(importedGermplasmList);
+             form.setEntries(importedGermplasmList.size());
+             form.changePage(pageNum);
+         }
+         return super.showAjaxPage(model, PAGINATION_TEMPLATE);
     }
     
     /**

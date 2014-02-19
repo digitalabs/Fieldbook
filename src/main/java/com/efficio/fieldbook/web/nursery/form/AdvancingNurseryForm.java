@@ -83,6 +83,17 @@ public class AdvancingNurseryForm {
     /** The germplasm list. */
     private List<ImportedGermplasm> germplasmList;
     
+    private List<ImportedGermplasm> paginatedGermplasmList;	
+	
+	/** The current page. */
+	private int currentPage;
+	
+	/** The total pages. */
+	private int totalPages;
+	
+	/** The result per page. */
+	private int resultPerPage = 100;	
+    
 	
 	/**
 	 * Gets the method id all.
@@ -464,8 +475,69 @@ public class AdvancingNurseryForm {
         public void setGermplasmList(List<ImportedGermplasm> germplasmList) {
             this.germplasmList = germplasmList;
         }
+        
+        
 
-        @Override
+        public List<ImportedGermplasm> getPaginatedGermplasmList() {
+			return paginatedGermplasmList;
+		}
+
+		public void setPaginatedGermplasmList(
+				List<ImportedGermplasm> paginatedGermplasmList) {
+			this.paginatedGermplasmList = paginatedGermplasmList;
+		}
+
+		public int getCurrentPage() {
+			return currentPage;
+		}
+
+		public void setCurrentPage(int currentPage) {
+			this.currentPage = currentPage;
+		}
+
+		public int getTotalPages() {
+			 if(germplasmList != null && !germplasmList.isEmpty()){           
+	            totalPages = (int) Math.ceil((germplasmList.size() * 1f) / getResultPerPage()); 
+	        }else{
+	            totalPages = 0;
+	        }
+		    return totalPages;
+		}
+
+		public void setTotalPages(int totalPages) {
+			this.totalPages = totalPages;
+		}
+
+		public int getResultPerPage() {
+			return resultPerPage;
+		}
+
+		public void setResultPerPage(int resultPerPage) {
+			this.resultPerPage = resultPerPage;
+		}
+		
+		/**
+		 * Change page.
+		 *
+		 * @param currentPage the current page
+		 */
+		public void changePage(int currentPage){
+	    	 //assumption is there is an imported germplasm already
+	        if(germplasmList != null && !germplasmList.isEmpty()){
+	            int totalItemsPerPage = getResultPerPage();
+	            int start = (currentPage - 1) * totalItemsPerPage;
+	            int end = start + totalItemsPerPage;
+	            if(germplasmList.size() < end){
+	                end = germplasmList.size();
+	            }
+	            paginatedGermplasmList = germplasmList.subList(start, end);
+	            this.currentPage = currentPage;
+	        }else{
+	            this.currentPage = 0;
+	        }
+		}
+
+		@Override
         public String toString() {
             StringBuilder builder = new StringBuilder();
             builder.append("AdvancingNurseryForm [namingConvention=");

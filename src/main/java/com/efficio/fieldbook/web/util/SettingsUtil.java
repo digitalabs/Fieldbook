@@ -23,6 +23,7 @@ import javax.annotation.Resource;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.settings.Condition;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
@@ -212,8 +213,16 @@ public class SettingsUtil {
 	 * @param variable the variable
 	 * @return true, if is setting variable deletable
 	 */
-	public static boolean isSettingVariableDeletable(SettingVariable variable){
+	public static boolean isSettingVariableDeletable(Integer standardVariableId){
 		//need to add the checking here if the specific PSM-R is deletable, for the nursery level details
+		
+		if (TermId.TRIAL_LOCATION.getId() == standardVariableId) {
+			return false;
+		}
+		else if (TermId.PI_NAME.getId() == standardVariableId) {
+			return false;
+		}
+		
 		return true;
 	}
 	
@@ -240,7 +249,7 @@ public class SettingsUtil {
 				variable.setCvTermId(stdVar);
 				List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
 				SettingDetail settingDetail = new SettingDetail(variable,
-						possibleValues, condition.getValue(), isSettingVariableDeletable(variable));
+						possibleValues, condition.getValue(), isSettingVariableDeletable(stdVar));
 				
 				settingDetail.setPossibleValuesToJson(possibleValues);
 				nurseryLevelConditions.add(settingDetail);

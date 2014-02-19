@@ -534,7 +534,7 @@ function createNurseryLevelSettingVariables(data) {
 		
 		//include delete button if variable is deletable
 		if (settingDetail.delete) {
-			isDelete = "<span class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(1," + 
+			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(1," + 
 				settingDetail.variable.cvTermId + ",$(this))'></span>";
 		}
 		
@@ -565,7 +565,7 @@ function createPlotLevelSettingVariables(data) {
 		var isDelete = "";
 		
 		if (settingDetail.delete) {
-			isDelete = "<span class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(2," + 
+			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(2," + 
 			settingDetail.variable.cvTermId + ",$(this))'></span>";
 		}
 		newRow = newRow + "<td style='text-align: center' class='"+className+"'>" + isDelete + 
@@ -586,7 +586,7 @@ function createBaselineTraitVariables(data) {
 		var isDelete = "";
 		
 		if (settingDetail.delete) {
-			isDelete = "<span class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(3," + 
+			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(3," + 
 			settingDetail.variable.cvTermId + ",$(this))'></span>";
 		}
 		

@@ -63,8 +63,8 @@ public class WorkbenchServiceImpl implements WorkbenchService{
     }
     
     @Override
-    public void addTemplateSetting(TemplateSetting templateSetting) throws MiddlewareQueryException{
-        workbenchDataManager.addTemplateSetting(templateSetting);
+    public Integer addTemplateSetting(TemplateSetting templateSetting) throws MiddlewareQueryException{
+        return workbenchDataManager.addTemplateSetting(templateSetting);
     }
     
     @Override

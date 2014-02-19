@@ -132,7 +132,7 @@ public class FieldbookServiceImpl implements FieldbookService{
 			if (TermId.BREEDING_METHOD.getId() == id) {
 				possibleValues = getAllBreedingMethods();
 			}
-			else if (TermId.SITE_NAME.getId() == id) {
+			else if (TermId.TRIAL_LOCATION.getId() == id) {
 				possibleValues = convertLocationsToValueReferences(fieldbookMiddlewareService.getAllLocations());
 			}
 			else if (TermId.PI_NAME.getId() == id) {

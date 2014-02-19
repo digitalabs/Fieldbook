@@ -659,8 +659,8 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation, default
 	}
 	
 	if(defaultJsonVal != null){
-		console.log(defaultValue);
-		console.log(defaultJsonVal);
+		//console.log(defaultValue);
+		//console.log(defaultJsonVal);
 		$(name).select2('data', defaultJsonVal).trigger('change');
 	}
 }

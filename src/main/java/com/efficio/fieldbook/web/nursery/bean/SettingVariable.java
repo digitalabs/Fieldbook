@@ -119,7 +119,7 @@ public class SettingVariable {
 			this.property = standardVariable.getProperty().getName();
 			this.scale = standardVariable.getScale().getName();
 			this.method = standardVariable.getMethod().getName();
-			this.role = standardVariable.getPhenotypicType().getLabelList().get(0);
+			this.role = standardVariable.getPhenotypicType().name();
 			this.description = standardVariable.getDescription();
 			this.dataType = standardVariable.getDataType().getName();			
 		}

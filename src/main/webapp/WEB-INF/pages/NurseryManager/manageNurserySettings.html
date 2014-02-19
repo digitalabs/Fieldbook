@@ -69,14 +69,15 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 	    				<div class="col-xs-8 col-md-8">
 	    					<table border="0" id="nurseryLevelSettings" width="100%">
 								<tr th:each="nurseryLevelVariable, rowStat : *{nurseryLevelVariables}">
-									<td width="10%">
+									<td  width="10%">
 										<span th:if="${nurseryLevelVariable.delete}" class="glyphicon glyphicon-remove-sign" 
 										th:onclick="'javascript: deleteVariable(1,\'' + ${nurseryLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
 										<input type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 									</td>
-									<td width="40%"><label class="control-label" th:text="${nurseryLevelVariable.variable.name}+':*'"></label></td>
-									<td width="50%">
+									<td  width="40%"><label class="control-label" th:text="${nurseryLevelVariable.variable.name}+':*'"></label></td>
+									<td  width="50%">
 										<input type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].value}" class="form-control select2" />
+										<div th:text="${nurseryLevelVariable.value}" class="div-select-val" style="display: none"/>
 										<div class="possibleValuesJson" style="display:none" th:text="${nurseryLevelVariable.possibleValuesJson}">
 										</div>
 									</td>
@@ -113,7 +114,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 		    			</div>
 	    			</div>
 	    			<div class="row form-group">
-	    				<div class="col-xs-6 col-md-6">
+	    				<div class="col-xs-9 col-md-9">
 	    					<table class="my-class table table-curved table-condensed" id="plotLevelSettings">
 	    						<thead>
 								<tr>
@@ -124,20 +125,20 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 								</thead>
 								<tbody>
 			    					<tr th:each="plotLevelVariable, rowStat : *{plotLevelVariables}">
-			    					<td>
+			    					<td style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'">
 			    					
 										<span th:if="${plotLevelVariable.delete}" class="glyphicon glyphicon-remove-sign"
 			    						th:onclick="'javascript: deleteVariable(2,\'' + ${plotLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
 			    						  			    						 
 			    						<input type="hidden" th:field="*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 		    						</td>
-			    					<td th:text="${plotLevelVariable.variable.name}"></td>
-			    					<td th:text="${plotLevelVariable.variable.description}"></td>
+			    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.name}"></td>
+			    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.description}"></td>
 			    					</tr> 
 		    					</tbody>
 	    					</table>
 	    				</div>
-	    				<div class="col-xs-6 col-md-6"></div>
+	    				<div class="col-xs-3 col-md-3"></div>
 	    			</div>
     				<div class="row form-group">
 	    				<div class="col-xs-12 col-md-12">
@@ -168,7 +169,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 		    			</div>
 	    			</div>
 	    			<div class="row form-group">
-	    				<div class="col-xs-6 col-md-6">
+	    				<div class="col-xs-9 col-md-9">
 	    					<table class="my-class table table-curved table-condensed" id="baselineTraitSettings">
 	    						<thead>
 								<tr>
@@ -179,20 +180,20 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 								</thead>
 								<tbody>
 			    					<tr th:each="baselineTraitVariable, rowStat : *{baselineTraitVariables}">
-			    						<td>
+			    						<td style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'" >
 			    						
 				    						<span th:if="${baselineTraitVariable.delete}" class="glyphicon glyphicon-remove-sign"
 				    						th:onclick="'javascript: deleteVariable(3,\'' + ${baselineTraitVariable.variable.cvTermId} + '\',$(this))'"></span>
-				    					
+				    									    					
 				    						<input type="hidden" th:field="*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId}" />
 			    						</td>
-				    					<td th:text="${baselineTraitVariable.variable.name}"></td>
-				    					<td th:text="${baselineTraitVariable.variable.description}"></td>
+				    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.name}"></td>
+				    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.description}"></td>
 			    					</tr> 
 		    					</tbody>
 	    					</table>
 	    				</div>
-	    				<div class="col-xs-6 col-md-6"></div>
+	    				<div class="col-xs-3 col-md-3"></div>
 	    			</div>
     				<div class="row form-group">
 	    				<div class="col-xs-12 col-md-12">
@@ -301,6 +302,24 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 		</div>
 	</div>
 </div>
+
+<div class="modal fade" id="delete-settings-confirmation">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Confirmation</h4>
+      </div>
+      <div class="modal-body">
+        <p th:text="#{manage.settings.delete.confirmation}">Do you realy want to delete this configuration?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="javascript: hideDeleteConfirmation();">No</button>
+        <button type="button" class="btn btn-primary" onclick="javascript: deleteNurserySettings();">Yes</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 </form>
 <div layout:fragment="page-script">
 <script type="text/javascript" th:src="@{/static/js/nurseryManager.js}"></script>
@@ -337,10 +356,12 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
  				$.each($(".possibleValuesJson"), function (index, divElem){
  					if (index == 0) {
  						initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 
- 		 			 			"#" + getJquerySafeId("nurseryLevelVariables0.value"), true);	
+ 		 			 			"#" + getJquerySafeId("nurseryLevelVariables0.value"), true, $(divElem).siblings(".div-select-val").html());
+ 						//console.log($(divElem).siblings(".div-select-val").html());
  					} else {
  						initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 
- 		 			 			"#" + getJquerySafeId("nurseryLevelVariables1.value"), false);
+ 		 			 			"#" + getJquerySafeId("nurseryLevelVariables1.value"), false, $(divElem).siblings(".div-select-val").html());
+ 						//console.log($(divElem).siblings(".div-select-val").html());
  					}
  					
  				});

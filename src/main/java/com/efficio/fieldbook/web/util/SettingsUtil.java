@@ -147,32 +147,36 @@ public class SettingsUtil {
 		}
 		//iterate for the plot level
 		index = 0;
-		for(SettingDetail settingDetail : plotsLevelList){
-			SettingVariable variable = settingDetail.getVariable();
-			if(userSelection != null){
-				StandardVariable standardVariable = userSelection.getCacheStandardVariable(variable.getCvTermId());
-				variable.setPSMRFromStandardVariable(standardVariable);
-				//need to get the name from the session
-				variable.setName(userSelection.getPlotsLevelList().get(index++).getVariable().getName());
+		if(plotsLevelList != null && !plotsLevelList.isEmpty()){
+			for(SettingDetail settingDetail : plotsLevelList){
+				SettingVariable variable = settingDetail.getVariable();
+				if(userSelection != null){
+					StandardVariable standardVariable = userSelection.getCacheStandardVariable(variable.getCvTermId());
+					variable.setPSMRFromStandardVariable(standardVariable);
+					//need to get the name from the session
+					variable.setName(userSelection.getPlotsLevelList().get(index++).getVariable().getName());
+				}
+				Factor factor = new Factor(variable.getName(), variable.getDescription(), variable.getProperty(),
+						variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType());
+				factors.add(factor);
 			}
-			Factor factor = new Factor(variable.getName(), variable.getDescription(), variable.getProperty(),
-					variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType());
-			factors.add(factor);
 		}
 		//iterate for the baseline traits level
 		index = 0;
-		for(SettingDetail settingDetail : baselineTraitsList){
-			SettingVariable variable = settingDetail.getVariable();
-			if(userSelection != null){
-				StandardVariable standardVariable = userSelection.getCacheStandardVariable(variable.getCvTermId());
-				variable.setPSMRFromStandardVariable(standardVariable);
-				//need to get the name from the session
-				variable.setName(userSelection.getBaselineTraitsList().get(index++).getVariable().getName());
-				
+		if(baselineTraitsList != null && !baselineTraitsList.isEmpty()){
+			for(SettingDetail settingDetail : baselineTraitsList){
+				SettingVariable variable = settingDetail.getVariable();
+				if(userSelection != null){
+					StandardVariable standardVariable = userSelection.getCacheStandardVariable(variable.getCvTermId());
+					variable.setPSMRFromStandardVariable(standardVariable);
+					//need to get the name from the session
+					variable.setName(userSelection.getBaselineTraitsList().get(index++).getVariable().getName());
+					
+				}
+				Variate variate = new Variate(variable.getName(), variable.getDescription(), variable.getProperty(),
+						variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType());
+				variates.add(variate);
 			}
-			Variate variate = new Variate(variable.getName(), variable.getDescription(), variable.getProperty(),
-					variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType());
-			variates.add(variate);
 		}
 		dataset.setConditions(conditions);
 		dataset.setFactors(factors);
@@ -188,12 +192,13 @@ public class SettingsUtil {
 	 * @param variable the variable
 	 * @return the field possible vales
 	 */
-	public static List<ValueReference> getFieldPossibleVales(FieldbookService fieldbookService, SettingVariable variable){
+	public static List<ValueReference> getFieldPossibleVales(FieldbookService fieldbookService, Integer standardVariableId){
 		List<ValueReference> possibleValueList = new ArrayList<ValueReference>();
 		
 		try {
 		
-			possibleValueList = fieldbookService.getAllPossibleValuesByPSMR(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(variable.getRole()));
+			//possibleValueList = fieldbookService.getAllPossibleValuesByPSMR(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(variable.getRole()));
+			possibleValueList = fieldbookService.getAllPossibleValues(standardVariableId);
 		} catch (MiddlewareQueryException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -231,9 +236,9 @@ public class SettingsUtil {
 				
 				SettingVariable variable = new SettingVariable(condition.getName(), condition.getDescription(), condition.getProperty(),
 						condition.getScale(), condition.getMethod(), condition.getRole(), condition.getDatatype());
-				Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(variable.getRole()));
+				Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
 				variable.setCvTermId(stdVar);
-				List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, variable);
+				List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
 				SettingDetail settingDetail = new SettingDetail(variable,
 						possibleValues, condition.getValue(), isSettingVariableDeletable(variable));
 				
@@ -246,7 +251,7 @@ public class SettingsUtil {
 				
 				SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(),
 						factor.getScale(), factor.getMethod(), factor.getRole(), factor.getDatatype());
-				Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(variable.getRole()));
+				Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
 				variable.setCvTermId(stdVar);
 				SettingDetail settingDetail = new SettingDetail(variable,
 						null, null, true);
@@ -258,7 +263,7 @@ public class SettingsUtil {
 				
 				SettingVariable variable = new SettingVariable(variate.getName(), variate.getDescription(), variate.getProperty(),
 						variate.getScale(), variate.getMethod(), variate.getRole(), variate.getDatatype());
-				Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(variable.getRole()));
+				Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
 				variable.setCvTermId(stdVar);
 				SettingDetail settingDetail = new SettingDetail(variable,
 						null, null, true);

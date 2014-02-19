@@ -384,22 +384,24 @@ function initializeStandardVariableSearch(variables) {
 }
 
 function getStandardVariableDetailsModal(id) {
-
-	Spinner.toggle();
-	$.ajax({
-		url: "/Fieldbook/NurseryManager/manageNurserySettings/showVariableDetails/" + id,
-		type: "GET",
-		cache: false,
-		success: function (data) {
-			populateAttributeFields($.parseJSON(data));
-		},
-		error: function(jqXHR, textStatus, errorThrown){
-			console.log("The following error occured: " + textStatus, errorThrown); 
-		},
-		complete: function() {
-			Spinner.toggle();
-		}
-	});
+	if(id != ''){
+		Spinner.toggle();
+		$.ajax({
+			url: "/Fieldbook/NurseryManager/manageNurserySettings/showVariableDetails/" + id,
+			type: "GET",
+			cache: false,
+			success: function (data) {
+				populateAttributeFields($.parseJSON(data));
+			},
+			error: function(jqXHR, textStatus, errorThrown){
+				console.log("The following error occured: " + textStatus, errorThrown); 
+			},
+			complete: function() {
+				Spinner.toggle();
+			}
+		});
+	}
+	
 }
 		
 function populateAttributeFields(data) {
@@ -549,7 +551,7 @@ function createNurseryLevelSettingVariables(data) {
 		
 		//initialize select 2 combo
 		initializePossibleValuesCombo(settingDetail.possibleValues, "#" + 
-				getJquerySafeId("nurseryLevelVariables" + ctr + ".value"), false);
+				getJquerySafeId("nurseryLevelVariables" + ctr + ".value"), false, null);
 		
 		ctr++;
 	});
@@ -605,12 +607,18 @@ function sortByKey(array, key) {
     });
 }
 
-function initializePossibleValuesCombo(possibleValues, name, isLocation) {
+function initializePossibleValuesCombo(possibleValues, name, isLocation, defaultValue) {
 	var possibleValues_obj = [];
+	var defaultJsonVal = null;
 	$.each(possibleValues, function(index, value) {
-		possibleValues_obj.push({ 'id' : value.id,
+		var jsonVal = { 'id' : value.id,
 			  'text' : value.name
-		});  
+		};
+		possibleValues_obj.push(jsonVal);  
+		if(defaultValue != null && defaultValue != '' && defaultValue == value.id){
+			defaultJsonVal = jsonVal;
+		}
+		
 	});
 	
 	possibleValues_obj = sortByKey(possibleValues_obj, "text");
@@ -648,6 +656,12 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation) {
 		        query.callback(data);
 		    }
 	    });
+	}
+	
+	if(defaultJsonVal != null){
+		console.log(defaultValue);
+		console.log(defaultJsonVal);
+		$(name).select2('data', defaultJsonVal).trigger('change');
 	}
 }
 

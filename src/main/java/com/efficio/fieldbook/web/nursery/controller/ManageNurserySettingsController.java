@@ -195,7 +195,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
      * @return the map
      * @throws MiddlewareQueryException the middleware query exception
      */
-    @RequestMapping(value="save", method = RequestMethod.POST)
+    @RequestMapping(value="/save", method = RequestMethod.POST)
     public String saveSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form
             , Model model, HttpSession session) throws MiddlewareQueryException{
 		//will do the saving here

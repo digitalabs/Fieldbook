@@ -172,7 +172,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
         	//we only get the 1st, cause its always gonna be 1 only per project and per tool
         	TemplateSetting templateSetting = templateSettingsList.get(0); //always 1
         	Dataset dataset = SettingsUtil.parseXmlToDatasetPojo(templateSetting.getConfiguration());
-        	SettingsUtil.convertXmlDatasetToPojo(fieldbookService, dataset, userSelection);
+        	SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection);
         	form.setNurseryLevelVariables(userSelection.getNurseryLevelConditions());
         	form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
         	form.setPlotLevelVariables(userSelection.getPlotsLevelList());
@@ -267,7 +267,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
 	    	List<TemplateSetting> templateSettings = workbenchService.getTemplateSettings(templateSettingFilter);
 	    	TemplateSetting templateSetting = templateSettings.get(0); //always 1
 	    	Dataset dataset = SettingsUtil.parseXmlToDatasetPojo(templateSetting.getConfiguration());
-	    	SettingsUtil.convertXmlDatasetToPojo(fieldbookService, dataset, userSelection);
+	    	SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection);
 	    	form.setNurseryLevelVariables(userSelection.getNurseryLevelConditions());
 	    	form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
 	    	form.setPlotLevelVariables(userSelection.getPlotsLevelList());
@@ -277,6 +277,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	}else{
     		assignDefaultValues(form);
     	}
+    	model.addAttribute("manageSettingsForm", form);
         return super.showAjaxPage(model, getContentName() );
     }
     

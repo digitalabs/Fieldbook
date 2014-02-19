@@ -80,7 +80,7 @@ public class SaveTemplateSettingsControllerTest extends AbstractJUnit4SpringCont
 				new ArrayList<ValueReference>(), "Test 6", false));
 		
 		datasetName = "test name";
-		dataset = SettingsUtil.convertPojoToXmlDataset(datasetName, nurseryLevelConditions, plotsLevelList, baselineTraitsList);
+		dataset = SettingsUtil.convertPojoToXmlDataset(datasetName, nurseryLevelConditions, plotsLevelList, baselineTraitsList, null);
 		
     }
     

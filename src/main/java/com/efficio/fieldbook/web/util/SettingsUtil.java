@@ -218,8 +218,9 @@ public class SettingsUtil {
 	 * @param fieldbookService the fieldbook service
 	 * @param dataset the dataset
 	 * @param userSelection the user selection
+	 * @throws MiddlewareQueryException 
 	 */
-	public static void convertXmlDatasetToPojo(com.efficio.fieldbook.service.api.FieldbookService fieldbookService, Dataset dataset, UserSelection userSelection){
+	public static void convertXmlDatasetToPojo(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, com.efficio.fieldbook.service.api.FieldbookService fieldbookService, Dataset dataset, UserSelection userSelection) throws MiddlewareQueryException{
 		if(dataset != null && userSelection != null){
 			//we copy it to User session object
 			//nursery level
@@ -230,7 +231,8 @@ public class SettingsUtil {
 				
 				SettingVariable variable = new SettingVariable(condition.getName(), condition.getDescription(), condition.getProperty(),
 						condition.getScale(), condition.getMethod(), condition.getRole(), condition.getDatatype());
-				
+				Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(variable.getRole()));
+				variable.setCvTermId(stdVar);
 				SettingDetail settingDetail = new SettingDetail(variable,
 						getFieldPossibleVales(fieldbookService, variable), condition.getValue(), isSettingVariableDeletable(variable));
 				nurseryLevelConditions.add(settingDetail);
@@ -241,7 +243,8 @@ public class SettingsUtil {
 				
 				SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(),
 						factor.getScale(), factor.getMethod(), factor.getRole(), factor.getDatatype());
-				
+				Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(variable.getRole()));
+				variable.setCvTermId(stdVar);
 				SettingDetail settingDetail = new SettingDetail(variable,
 						null, null, true);
 				plotsLevelList.add(settingDetail);
@@ -252,7 +255,8 @@ public class SettingsUtil {
 				
 				SettingVariable variable = new SettingVariable(variate.getName(), variate.getDescription(), variate.getProperty(),
 						variate.getScale(), variate.getMethod(), variate.getRole(), variate.getDatatype());
-				
+				Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(variable.getRole()));
+				variable.setCvTermId(stdVar);
 				SettingDetail settingDetail = new SettingDetail(variable,
 						null, null, true);
 				baselineTraitsList.add(settingDetail);

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.settings.Condition;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.junit.Before;
@@ -55,6 +56,9 @@ public class PojoXmlTester extends AbstractJUnit4SpringContextTests {
     @Autowired
     FieldbookService fieldbookService;
     
+    @Autowired
+    org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
+    
     Dataset dataset;
     String datasetName;
     /**
@@ -82,7 +86,7 @@ public class PojoXmlTester extends AbstractJUnit4SpringContextTests {
 				new ArrayList(), "Test 6", false));
 		
 		datasetName = "test name";
-		dataset = SettingsUtil.convertPojoToXmlDataset(datasetName, nurseryLevelConditions, plotsLevelList, baselineTraitsList);
+		dataset = SettingsUtil.convertPojoToXmlDataset(datasetName, nurseryLevelConditions, plotsLevelList, baselineTraitsList, null);
 		
     }
 	
@@ -126,10 +130,10 @@ public class PojoXmlTester extends AbstractJUnit4SpringContextTests {
 	}
 	
 	@Test
-	public void testConvertDatasetToPojo() {
+	public void testConvertDatasetToPojo() throws MiddlewareQueryException {
 		//tests the conversion of the POJO to dataset equivalent
 		UserSelection userSelection = new UserSelection();
-		SettingsUtil.convertXmlDatasetToPojo(fieldbookService, dataset, userSelection);
+		SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection);
 		
 		assertEquals(userSelection.getNurseryLevelConditions().size(), dataset.getConditions().size());
 		assertEquals(userSelection.getPlotsLevelList().size(), dataset.getFactors().size());

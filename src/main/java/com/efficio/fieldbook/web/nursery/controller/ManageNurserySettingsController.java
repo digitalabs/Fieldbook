@@ -473,7 +473,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
 					stdVar.getDataType().getName());
 			svar.setCvTermId(stdVar.getId());
 			svar.setCropOntologyId(stdVar.getCropOntologyId());
-			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : null);
+			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
 
 			List<ValueReference> possibleValues = fieldbookService.getAllPossibleValues(id);
 			SettingDetail settingDetail = new SettingDetail(svar, possibleValues, null, false);
@@ -569,7 +569,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
 		var.setMethod(stdvar.getMethod().getName());
 		var.setDataType(stdvar.getDataType().getName());
 		var.setRole(stdvar.getStoredIn().getName());
-		var.setCropOntologyId(stdvar.getCropOntologyId());
+		var.setCropOntologyId(stdvar.getCropOntologyId() != null ? stdvar.getCropOntologyId() : "");
 		var.setTraitClass(stdvar.getIsA().getName());
     }
 
@@ -600,8 +600,8 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
 					stdVar.getScale().getName(), stdVar.getMethod().getName(), stdVar.getStoredIn().getName(), 
 					stdVar.getDataType().getName());
 			svar.setCvTermId(stdVar.getId());
-			svar.setCropOntologyId(stdVar.getCropOntologyId());
-			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : null);
+			svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
+			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
 			return svar;
 		}
 		return null;

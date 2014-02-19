@@ -457,7 +457,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	form.setNurseryLevelVariables(nurseryDefaults);
     	this.userSelection.setNurseryLevelConditions(nurseryDefaults);
     	
-    	nurseryDefaults.add(createSettingDetail(TermId.SITE_NAME.getId(), AppConstants.LOCATION));
+    	nurseryDefaults.add(createSettingDetail(TermId.TRIAL_LOCATION.getId(), AppConstants.LOCATION));
         nurseryDefaults.add(createSettingDetail(TermId.PI_NAME.getId(), AppConstants.PRINCIPAL_INVESTIGATOR));
     }
     

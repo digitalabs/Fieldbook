@@ -146,7 +146,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("manageSettingsForm") ManageSettingsForm form
             , Model model, HttpSession session) throws MiddlewareQueryException{
-    	
+    	session.invalidate();
     	//we need to get the default settings if there is
         //only has value for clear setting, the rest null            	
     	setupDefaultScreenValues(form, getDefaultTemplateSettingFilter());
@@ -364,8 +364,10 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
             case AppConstants.SEGMENT_STUDY : 
                 //form.getNurseryLevelVariables()
                 deleteVariableInSession(userSelection.getNurseryLevelConditions(), variableId);
-            default:
+            case AppConstants.SEGMENT_PLOT :
                 deleteVariableInSession(userSelection.getPlotsLevelList(), variableId);
+            default:
+                deleteVariableInSession(userSelection.getBaselineTraitsList(), variableId);
         }
         return "";
     }

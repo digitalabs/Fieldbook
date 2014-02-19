@@ -336,6 +336,7 @@ function getStandardVariables(variableType) {
 			
 			//clear selected variables table and attribute fields
 			$("#newVariablesList > tbody").empty();
+			$("#page-message-modal").html("");
 			clearAttributeFields();
 			$("#addVariables").attr("onclick", "javascript: submitSelectedVariables(" + variableType + ");");
 			$("#addVariablesSettingModal").modal("show");
@@ -374,13 +375,16 @@ function initializeStandardVariableSearch(variables) {
       
         query.callback(data);
     }
-    }).on("change", function (){
+    }).unbind("change").on("change", function (){
     	//set attribute values
-    	getStandardVariableDetails($("#stdVarSearch").select2("data").id);
+    	getStandardVariableDetailsModal($("#stdVarSearch").select2("data").id);
     });
+	var dataVal = {'id': '', 'text': ''};
+	$("#stdVarSearch").select2('data', dataVal).trigger('change');
 }
 
-function getStandardVariableDetails(id) {
+function getStandardVariableDetailsModal(id) {
+
 	Spinner.toggle();
 	$.ajax({
 		url: "/Fieldbook/NurseryManager/manageNurserySettings/showVariableDetails/" + id,
@@ -469,9 +473,11 @@ function notInList(id) {
 
 function submitSelectedVariables(variableType) {
 	if ($("#newVariablesList tbody tr").length > 0) {
+		
 		var serializedData = $("input.addVariables").serialize();
 		$("#page-message-modal").html("");
 		Spinner.toggle();
+		
 		$.ajax({
 			url: "/Fieldbook/NurseryManager/manageNurserySettings/addSettings/" + variableType,
 			type: "POST",
@@ -568,9 +574,18 @@ function createPlotLevelSettingVariables(data) {
 function createBaselineTraitVariables(data) {
 	$.each(data, function (index, settingDetail) {
 		var newRow = "<tr>";
-		newRow = newRow + "<td>" + "<input type='hidden' id='baselineTraitVariables" + index + 
-		".variable.cvTermId' name='baselineTraitVariables[" + index + "].variable.cvTermId' value='" + 
-		settingDetail.variable.cvTermId + "' />" + settingDetail.variable.name + "</td>";
+		var isDelete = "";
+		
+		if (settingDetail.delete) {
+			isDelete = "<span class='glyphicon glyphicon-remove-sign' onclick='deleteVariable(3," + 
+			settingDetail.variable.cvTermId + ",$(this))'></span>";
+		}
+		
+		newRow = newRow + "<td>" + isDelete + 
+		"<input type='hidden' id='baselineTraitVariables" + index + ".variable.cvTermId' name='baselineTraitVariables[" + 
+		index + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
+		"</td>";
+		newRow = newRow + "<td>" + settingDetail.variable.name + "</td>";
 		newRow = newRow + "<td>" + settingDetail.variable.description + "</td></tr>";
 		$("#baselineTraitSettings").append(newRow);
 	});
@@ -649,19 +664,29 @@ function deleteVariable(variableType, variableId, deleteButton) {
 }
 
 function sortVariableIdsAndNames(variableType) {
-	if (variableType == 1) {
+	switch (variableType) {
+	case 1:
 		var reg = new RegExp("nurseryLevelVariables[0-9]+", "g")
 		var reg2 = new RegExp("nurseryLevelVariables\[[0-9]+\]", "g")
 		$.each($("#nurseryLevelSettings tr"), function (index, row) {
 			row.innerHTML = row.innerHTML.replace(reg, "nurseryLevelVariables" + index);
 			row.innerHTML = row.innerHTML.replace(reg2, "nurseryLevelVariables[" + index + "]");
 		});
-	} else {
+		break;
+	case 2:
 		var reg = new RegExp("plotLevelVariables[0-9]+", "g")
 		var reg2 = new RegExp("plotLevelVariables\[[0-9]+\]", "g")
 		$.each($("#plotLevelSettings tbody tr"), function (index, row) {
 			row.innerHTML = row.innerHTML.replace(reg, "plotLevelVariables" + index);
 			row.innerHTML = row.innerHTML.replace(reg2, "plotLevelVariables[" + index + "]");
+		});
+		break;
+	default:
+		var reg = new RegExp("baselineTraitVariables[0-9]+", "g")
+		var reg2 = new RegExp("baselineTraitVariables\[[0-9]+\]", "g")
+		$.each($("#baselineTraitSettings tbody tr"), function (index, row) {
+			row.innerHTML = row.innerHTML.replace(reg, "baselineTraitVariables" + index);
+			row.innerHTML = row.innerHTML.replace(reg2, "baselineTraitVariables[" + index + "]");
 		});
 	}
 }

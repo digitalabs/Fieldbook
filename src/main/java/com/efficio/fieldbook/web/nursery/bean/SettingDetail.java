@@ -13,6 +13,7 @@ package com.efficio.fieldbook.web.nursery.bean;
 
 import java.util.List;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.ValueReference;
 
 
@@ -20,6 +21,7 @@ public class SettingDetail {
 
 	private SettingVariable variable;
 	private List<ValueReference> possibleValues;
+	private String possibleValuesJson;
 	private String value;
 	private boolean isDelete;
 	
@@ -46,6 +48,21 @@ public class SettingDetail {
 	}
 	public void setPossibleValues(List<ValueReference> possibleValues) {
 		this.possibleValues = possibleValues;
+	}
+	public String getPossibleValuesJson() {
+	    return possibleValuesJson;
+	}
+	public void setPossibleValuesJson(String possibleValuesJson) {
+	    this.possibleValuesJson = possibleValuesJson;
+	}
+	public void setPossibleValuesToJson(List<ValueReference> possibleValues) {
+	    try {
+                ObjectMapper om = new ObjectMapper();
+                setPossibleValuesJson(om.writeValueAsString(possibleValues));
+            }
+            catch(Exception e) {
+                setPossibleValuesJson("err");
+            }
 	}
 	public String getValue() {
 		return value;

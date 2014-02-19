@@ -70,12 +70,15 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 	    					<table border="0" id="nurseryLevelSettings" width="100%">
 								<tr th:each="nurseryLevelVariable, rowStat : *{nurseryLevelVariables}">
 									<td width="10%">
-										<span th:if="*{nurseryLevelVariables[__${rowStat.index}__].delete}" class="glyphicon glyphicon-remove-sign"></span>
+										<span th:if="*{nurseryLevelVariables[__${rowStat.index}__].delete}" class="glyphicon glyphicon-remove-sign" 
+										th:onclick="'javascript: deleteVariable(1,\'' + *{nurseryLevelVariables[__${rowStat.index}__].variable.cvTermId} + '\',$(this))'"></span>
 										<input type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 									</td>
-									<td width="40%"><label class="control-label" th:text="*{nurseryLevelVariables[__${rowStat.index}__].variable.name}"></label></td>
+									<td width="40%"><label class="control-label" th:text="*{nurseryLevelVariables[__${rowStat.index}__].variable.name}+':*'"></label></td>
 									<td width="50%">
-										<input type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].value}" />
+										<input type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].value}" class="form-control select2" />
+										<div class="possibleValuesJson" style="display:none" th:text="*{nurseryLevelVariables[__${rowStat.index}__].possibleValuesJson}">
+										</div>
 									</td>
 								</tr>
 							</table>
@@ -122,8 +125,9 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 								<tbody>
 			    					<tr th:each="plotLevelVariable, rowStat : *{plotLevelVariables}">
 			    					<td>
-			    						 <span th:if="${plotLevelVariable[__${rowStat.index}__].delete}" class="glyphicon glyphicon-remove-sign"></span>			    						 
-			    						<input type="hidden" th:field="*{plotLevelVariable[__${rowStat.index}__].variable.cvTermId}" />
+			    						<span th:if="${plotLevelVariables[__${rowStat.index}__].delete}" class="glyphicon glyphicon-remove-sign"
+			    						th:onclick="'javascript: deleteVariable(2,\'' + *{plotLevelVariables[__${rowStat.index}__].variable.cvTermId} + '\',$(this))'"></span>			    						 
+			    						<input type="hidden" th:field="*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 		    						</td>
 			    					<td th:text="${plotLevelVariables[__${rowStat.index}__].variable.name}"></td>
 			    					<td th:text="${plotLevelVariables[__${rowStat.index}__].variable.description}"></td>
@@ -294,12 +298,10 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 <script type="text/javascript" th:src="@{/static/js/nurseryManager.js}"></script>
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[   
-            var stdVariableSuggestions;
-            var stdVariableSuggestions_obj = [];
             var varInListMessage = /*[[#{nursery.managesettings.variable.in.selected.list}]]*/;
             var addNurseryLevelSettings = /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/;
             var addPlotLevelSettings = /*[[#{nursery.managesettings.add.plot.level.settings}]]*/;
-            var addBaselineTraits = /*[[#{nursery.managesettings.add.baseline.traits}]]*/;
+            var addBaselineTraits = /*[[#{nursery.managesettings.add.baseline.traits}]]*/; 
             var deleteTemplateSettingError = /*[[#{manage.settings.delete.error}]]*/;
             var deleteTemplateSettingSuccess = /*[[#{manage.settings.delete.success}]]*/;
        		var saveTemplateSettingSuccess = /*[[#{manage.settings.save.setting.success}]]*/;
@@ -323,6 +325,17 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
  				$('#clearSettings').on('click', clearSettings);
  				$('#saveSettings').on('click', doSaveSettings);
  				$('#addNewSettings').on('click', addNewSettings);
+ 				
+ 				$.each($(".possibleValuesJson"), function (index, divElem){
+ 					if (index == 0) {
+ 						initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 
+ 		 			 			"#" + getJquerySafeId("nurseryLevelVariables0.value"), true);	
+ 					} else {
+ 						initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 
+ 		 			 			"#" + getJquerySafeId("nurseryLevelVariables1.value"), false);
+ 					}
+ 					
+ 				});
  			});    			 			     
 			
       //]]>

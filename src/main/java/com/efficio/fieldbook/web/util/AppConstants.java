@@ -85,5 +85,6 @@ public class AppConstants {
     public static final String TOOL_NAME_NURSERY_MANAGER_WEB = "nursery_manager_fieldbook_web";
     public static final String TOOL_NAME_TRIAL_MANAGER_WEB = "trial_manager_fieldbook_web";
     
-    
+    public static final String GERMPLASM_LIST_LOCAL = "Program List";
+    public static final String GERMPLASM_LIST_CENTRAL = "Public List";
 }

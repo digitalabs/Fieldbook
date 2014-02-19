@@ -5,30 +5,23 @@
 		</h1>
 	</div>			  
 </div>
+<!--  
 <div class="row">
 	<div class="col-xs-3 col-md-3">
 		<h2>Choose Location</h2>
 	</div>
-	<!-- 
-	<div class="col-xs-3 col-md-3">
-		<span style="font-weight: 400; font-size: 16px">1. SPECIFY LABEL DETAILS</span>
-	</div> 
-	<div class="col-xs-3 col-md-3">		
-		<span>2. GENERATE LABELS</span>
-	</div>
-	 -->
+	
 	<div class="col-xs-9 col-md-9">
 		&nbsp;
 	</div>
 </div>
-
+ -->
 <form onsubmit="javascript: return validateAdvanceNursery();" id="specifyLabelDetailsForm" role="form-horizontal" action="#"
 th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advancingNurseryform}" enctype="multipart/form-data">
 
 <input type="hidden" th:field="*{defaultMethodId}"/>
 
-<div class="row">
-	<div class="row">&nbsp;</div>
+<div class="row" style="margin-top: -20px">
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
 			<div class="form-group">

@@ -233,8 +233,11 @@ public class SettingsUtil {
 						condition.getScale(), condition.getMethod(), condition.getRole(), condition.getDatatype());
 				Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(variable.getRole()));
 				variable.setCvTermId(stdVar);
+				List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, variable);
 				SettingDetail settingDetail = new SettingDetail(variable,
-						getFieldPossibleVales(fieldbookService, variable), condition.getValue(), isSettingVariableDeletable(variable));
+						possibleValues, condition.getValue(), isSettingVariableDeletable(variable));
+				
+				settingDetail.setPossibleValuesToJson(possibleValues);
 				nurseryLevelConditions.add(settingDetail);
 			}
 			//plot level

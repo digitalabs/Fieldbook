@@ -469,19 +469,19 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
      * @throws MiddlewareQueryException the middleware query exception
      */
     private SettingDetail createSettingDetail(int id, String name) throws MiddlewareQueryException {
-                String variableName = "";
-                StandardVariable stdVar = fieldbookMiddlewareService.getStandardVariable(id);
-                if (name != null) {
-                    variableName = name;
-                } else {
-                    variableName = stdVar.getName();
-                }
-                if (stdVar != null) {
-                SettingVariable svar = new SettingVariable(variableName, stdVar.getDescription(), stdVar.getProperty().getName(),
+            String variableName = "";
+            StandardVariable stdVar = getStandardVariable(id);
+            if (name != null) {
+                variableName = name;
+            } else {
+                variableName = stdVar.getName();
+            }
+            if (stdVar != null) {
+            SettingVariable svar = new SettingVariable(variableName, stdVar.getDescription(), stdVar.getProperty().getName(),
 					stdVar.getScale().getName(), stdVar.getMethod().getName(), stdVar.getStoredIn().getName(), 
 					stdVar.getDataType().getName());
 			svar.setCvTermId(stdVar.getId());
-			svar.setCropOntologyId(stdVar.getCropOntologyId());
+			svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
 			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
 
 			List<ValueReference> possibleValues = fieldbookService.getAllPossibleValues(id);

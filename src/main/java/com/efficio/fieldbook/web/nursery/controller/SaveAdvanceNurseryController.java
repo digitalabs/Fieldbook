@@ -23,7 +23,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.GermplasmNameType;
-import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.GermplasmListData;
@@ -42,12 +41,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.DateUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
 /**
@@ -78,7 +79,7 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
     
     /** The workbench data manager. */
     @Resource
-    private WorkbenchDataManager workbenchDataManager;
+    private WorkbenchService workbenchService;
     
     /** The message source. */
     @Resource
@@ -255,7 +256,11 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
         String listType = AppConstants.GERMPLASM_LIST_TYPE_HARVEST;
         Integer userId = 0;
         try {
-            userId = workbenchDataManager.getWorkbenchRuntimeData().getUserId();
+            userId = workbenchService.getCurrentIbdbUserId(getCurrentProjectId());
+            if (userId == null){
+                userId = 0;
+            }
+            
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }
@@ -272,7 +277,7 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
         if (harvestLocationId != null && !harvestLocationId.equals("")){
             locationId = Integer.valueOf(harvestLocationId); 
         }
-        Integer gDate = Integer.valueOf(harvestDate); 
+        Integer gDate = Integer.valueOf(DateUtil.getCurrentDate()); 
         
         //Common germplasm list data fields
         Integer listDataId = null; 

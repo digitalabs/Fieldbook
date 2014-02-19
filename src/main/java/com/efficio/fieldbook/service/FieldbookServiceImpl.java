@@ -36,6 +36,7 @@ import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
+import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
 import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.service.NamingConventionService;
 import com.efficio.fieldbook.web.nursery.service.impl.NamingConventionServiceFactory;
@@ -55,6 +56,9 @@ public class FieldbookServiceImpl implements FieldbookService{
 	
 	@Resource
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
+	
+	@Resource
+	private PossibleValuesCache possibleValuesCache;
 	
 
 	/* (non-Javadoc)
@@ -122,22 +126,27 @@ public class FieldbookServiceImpl implements FieldbookService{
 	
 	@Override
 	public List<ValueReference> getAllPossibleValues(int id) throws MiddlewareQueryException {
-		//TODO: include other variables like site, nursery type, and person
-		if (TermId.BREEDING_METHOD.getId() == id) {
-			return getAllBreedingMethods();
+		List<ValueReference> possibleValues = possibleValuesCache.getPossibleValues(id);
+		if (possibleValues == null) {
+			
+			if (TermId.BREEDING_METHOD.getId() == id) {
+				possibleValues = getAllBreedingMethods();
+			}
+			else if (TermId.SITE_NAME.getId() == id) {
+				possibleValues = convertLocationsToValueReferences(fieldbookMiddlewareService.getAllLocations());
+			}
+			else if (TermId.PI_NAME.getId() == id) {
+				possibleValues = convertPersonsToValueReferences(fieldbookMiddlewareService.getAllPersons());
+			}
+			else if (TermId.NURSERY_TYPE.getId() == id) {
+				possibleValues = fieldbookMiddlewareService.getAllNurseryTypes();
+			}
+			else {
+				possibleValues = fieldbookMiddlewareService.getDistinctStandardVariableValues(id);
+			}
+			possibleValuesCache.addPossibleValues(id, possibleValues);
 		}
-		else if (TermId.SITE_NAME.getId() == id) {
-			return convertLocationsToValueReferences(fieldbookMiddlewareService.getAllLocations());
-		}
-		else if (TermId.PI_NAME.getId() == id) {
-			return convertPersonsToValueReferences(fieldbookMiddlewareService.getAllPersons());
-		}
-		else if (TermId.NURSERY_TYPE.getId() == id) {
-			return fieldbookMiddlewareService.getAllNurseryTypes();
-		}
-		else {
-			return fieldbookMiddlewareService.getDistinctStandardVariableValues(id);
-		}
+		return possibleValues;
 	}
 	
 	private List<ValueReference> getAllBreedingMethods() throws MiddlewareQueryException {
@@ -145,7 +154,7 @@ public class FieldbookServiceImpl implements FieldbookService{
 		List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods();
 		if (methods != null && !methods.isEmpty()) {
 			for (Method method : methods) {
-				list.add(new ValueReference(method.getMid(), method.getMname()));
+				list.add(new ValueReference(method.getMid(), method.getMname(), method.getMname()));
 			}
 		}
 		return list;
@@ -155,7 +164,7 @@ public class FieldbookServiceImpl implements FieldbookService{
 		List<ValueReference> list = new ArrayList<ValueReference>();
 		if (locations != null && !locations.isEmpty()) {
 			for (Location loc : locations) {
-				list.add(new ValueReference(loc.getLocid(), loc.getLname()));
+				list.add(new ValueReference(loc.getLocid(), loc.getLname(), loc.getLname()));
 			}
 		}
 		return list;

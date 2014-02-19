@@ -13,20 +13,13 @@ package com.efficio.fieldbook.web.nursery.controller;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
-
-import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.manager.api.WorkbenchDataManager;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
 import org.generationcp.middleware.pojos.workbench.Tool;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
-import org.generationcp.middleware.service.api.FieldbookService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,17 +30,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
+import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.bean.SettingVariable;
-import com.efficio.fieldbook.web.nursery.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
-import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class NurseryDetailsTest.
  */
@@ -58,10 +46,9 @@ public class SaveTemplateSettingsControllerTest extends AbstractJUnit4SpringCont
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(SaveTemplateSettingsControllerTest.class);
     
-    
-    /** The workbench data manager. */
+    /** The workbench service. */
     @Autowired
-    WorkbenchDataManager workbenchDataManager;
+    WorkbenchService workbenchService;
     
     /** The dataset. */
     Dataset dataset;
@@ -77,20 +64,20 @@ public class SaveTemplateSettingsControllerTest extends AbstractJUnit4SpringCont
 		
 		List<SettingDetail> nurseryLevelConditions = new ArrayList<SettingDetail>();
 		nurseryLevelConditions.add(new SettingDetail(getTestSettingVariable("1"),
-				new ArrayList(), "Test 1", true));
+				new ArrayList<ValueReference>(), "Test 1", true));
 		nurseryLevelConditions.add(new SettingDetail(getTestSettingVariable("2"),
-				new ArrayList(), "Test 2", false));
+				new ArrayList<ValueReference>(), "Test 2", false));
 		List<SettingDetail> plotsLevelList = new ArrayList<SettingDetail>();
 		plotsLevelList.add(new SettingDetail(getTestSettingVariable("3"),
-				new ArrayList(), "Test 3", true));
+				new ArrayList<ValueReference>(), "Test 3", true));
 		plotsLevelList.add(new SettingDetail(getTestSettingVariable("4"),
-				new ArrayList(), "Test 4", false));
+				new ArrayList<ValueReference>(), "Test 4", false));
 		
 		List<SettingDetail> baselineTraitsList = new ArrayList<SettingDetail>();
 		baselineTraitsList.add(new SettingDetail(getTestSettingVariable("5"),
-				new ArrayList(), "Test 5", true));
+				new ArrayList<ValueReference>(), "Test 5", true));
 		baselineTraitsList.add(new SettingDetail(getTestSettingVariable("6"),
-				new ArrayList(), "Test 6", false));
+				new ArrayList<ValueReference>(), "Test 6", false));
 		
 		datasetName = "test name";
 		dataset = SettingsUtil.convertPojoToXmlDataset(datasetName, nurseryLevelConditions, plotsLevelList, baselineTraitsList);
@@ -116,25 +103,25 @@ public class SaveTemplateSettingsControllerTest extends AbstractJUnit4SpringCont
     @Test
     public void testSaveRetrieveAndDeleteTemplateSettings() throws Exception {
     	int projectId = 1;
-    	Tool tool = workbenchDataManager.getToolWithName(AppConstants.TOOL_NAME_NURSERY_MANAGER_WEB);
+    	Tool tool = workbenchService.getToolWithName(AppConstants.TOOL_NAME_NURSERY_MANAGER_WEB);
     	 TemplateSetting templateSetting = new TemplateSetting(null, 1, "Test Name"+System.currentTimeMillis(), tool, 
     	            SettingsUtil.generateSettingsXml(dataset), Boolean.TRUE);
     	
-    	 workbenchDataManager.addTemplateSetting(templateSetting);
+    	 workbenchService.addTemplateSetting(templateSetting);
     	 
     	 TemplateSetting templateSettingFilter = new TemplateSetting();
     	 Integer id = templateSetting.getTemplateSettingId();
     	 templateSettingFilter.setTemplateSettingId(id);
     	 templateSettingFilter.setIsDefaultToNull();
-    	 List<TemplateSetting> dbTemplateSettingList = workbenchDataManager.getTemplateSettings(templateSettingFilter);
+    	 List<TemplateSetting> dbTemplateSettingList = workbenchService.getTemplateSettings(templateSettingFilter);
     	 TemplateSetting dbTemplateSetting = dbTemplateSettingList.get(0);
     	 
     	 assertEquals(templateSetting.getTemplateSettingId(), dbTemplateSetting.getTemplateSettingId());
     	 assertEquals(templateSetting.getConfiguration(), dbTemplateSetting.getConfiguration());
     	  
     	
-    	 workbenchDataManager.deleteTemplateSetting(id);
-    	 dbTemplateSettingList = workbenchDataManager.getTemplateSettings(templateSettingFilter);
+    	 workbenchService.deleteTemplateSetting(id);
+    	 dbTemplateSettingList = workbenchService.getTemplateSettings(templateSettingFilter);
     	 
     	 assertEquals(0, dbTemplateSettingList.size());
     	 

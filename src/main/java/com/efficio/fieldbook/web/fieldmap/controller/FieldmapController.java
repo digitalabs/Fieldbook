@@ -24,7 +24,6 @@ import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
@@ -38,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
@@ -69,7 +69,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     
     /** The workbench data manager. */
     @Resource
-    private WorkbenchDataManager workbenchDataManager;
+    private WorkbenchService workbenchService;
     
     /**
      * Gets the data types.
@@ -99,8 +99,8 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     public List<Location> getFavoriteLocationList() {
         try {
             
-            List<Long> locationsIds = workbenchDataManager.getFavoriteProjectLocationIds(
-                    Long.valueOf(this.getCurrentProjectId()), 0,  Integer.MAX_VALUE);
+            List<Long> locationsIds = workbenchService
+                            .getFavoriteProjectLocationIds(getCurrentProjectId());
             List<Location> dataTypes = fieldbookMiddlewareService
                                 .getFavoriteLocationByProjectId(locationsIds);
             

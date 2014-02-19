@@ -23,7 +23,6 @@ import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.dms.Variable;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.workbench.Project;
@@ -39,6 +38,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
@@ -68,7 +68,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     
     /** The workbench data manager. */
     @Resource
-    private WorkbenchDataManager workbenchDataManager;
+    private WorkbenchService workbenchService;
     
     @Resource
     private UserSelection userSelection;
@@ -109,8 +109,8 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     public List<Location> getFavoriteLocationList() {
         try {
             
-            List<Long> locationsIds = workbenchDataManager.getFavoriteProjectLocationIds(
-                    Long.valueOf(this.getCurrentProjectId()), 0,  Integer.MAX_VALUE);
+            List<Long> locationsIds = workbenchService
+                                .getFavoriteProjectLocationIds(getCurrentProjectId());
             List<Location> dataTypes = fieldbookMiddlewareService
                                 .getFavoriteLocationByProjectId(locationsIds);
             
@@ -150,13 +150,10 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     public List<Method> getFavoriteMethodList() {
     	
         try {
-          Project project = new Project();
-          project.setProjectId(Long.valueOf(this.getCurrentProjectId()));
-          
-            List<Integer> methodIds = workbenchDataManager.getFavoriteProjectMethods(
-            		project, 0,  Integer.MAX_VALUE);
-            List<Method> dataTypes = fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIds);
-            
+            List<Integer> methodIds = workbenchService
+                                .getFavoriteProjectMethods(getCurrentProjectId());
+            List<Method> dataTypes = fieldbookMiddlewareService
+                                .getFavoriteBreedingMethods(methodIds);
             return dataTypes;
         }catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
@@ -212,8 +209,8 @@ public class AdvancingController extends AbstractBaseFieldbookController{
             Project project = new Project();
             project.setProjectId(Long.valueOf(this.getCurrentProjectId()));
             
-              List<Integer> methodIds = workbenchDataManager.getFavoriteProjectMethods(
-                          project, 0,  Integer.MAX_VALUE);
+              List<Integer> methodIds = workbenchService
+                          .getFavoriteProjectMethods(getCurrentProjectId());
               List<Method> favoriteMethods = fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIds);
             result.put("success", "1");
             result.put("allMethods", convertMethodsToJson(breedingMethods));
@@ -238,8 +235,8 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         Map<String, String> result = new HashMap<String, String>();
         
         try {
-            List<Long> locationsIds = workbenchDataManager.getFavoriteProjectLocationIds(
-                    Long.valueOf(this.getCurrentProjectId()), 0,  Integer.MAX_VALUE);
+            List<Long> locationsIds = workbenchService
+                                .getFavoriteProjectLocationIds(getCurrentProjectId());
             List<Location> faveLocations = fieldbookMiddlewareService
                                 .getFavoriteLocationByProjectId(locationsIds);
             List<Location> allLocations = fieldbookMiddlewareService.getAllLocations();

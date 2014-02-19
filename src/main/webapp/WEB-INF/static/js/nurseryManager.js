@@ -526,7 +526,7 @@ function createNurseryLevelSettingVariables(data) {
 		
 		//include delete button if variable is deletable
 		if (settingDetail.delete) {
-			isDelete = "<span class='glyphicon glyphicon-remove-sign' onclick='deleteVariable(1," + 
+			isDelete = "<span class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(1," + 
 				settingDetail.variable.cvTermId + ",$(this))'></span>";
 		}
 		
@@ -557,10 +557,10 @@ function createPlotLevelSettingVariables(data) {
 		var isDelete = "";
 		
 		if (settingDetail.delete) {
-			isDelete = "<span class='glyphicon glyphicon-remove-sign' onclick='deleteVariable(2," + 
+			isDelete = "<span class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(2," + 
 			settingDetail.variable.cvTermId + ",$(this))'></span>";
 		}
-		newRow = newRow + "<td class='"+className+"'>" + isDelete + 
+		newRow = newRow + "<td style='text-align: center' class='"+className+"'>" + isDelete + 
 		"<input type='hidden' id='plotLevelVariables" + index + ".variable.cvTermId' name='plotLevelVariables[" + 
 		index + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
@@ -576,7 +576,7 @@ function createBaselineTraitVariables(data) {
 		var className = length % 2 == 1 ? 'even' : 'odd';
 		var newRow = "<tr>";
 		
-		newRow = newRow + "<td class='"+className+"'>" + "<input type='hidden' id='baselineTraitVariables" + index + 
+		newRow = newRow + "<td style='text-align: center' class='"+className+"'>" + "<input type='hidden' id='baselineTraitVariables" + index + 
 		".variable.cvTermId' name='baselineTraitVariables[" + index + "].variable.cvTermId' value='" + 
 		settingDetail.variable.cvTermId + "' />" + settingDetail.variable.name + "</td>";
 		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.description + "</td></tr>";

@@ -316,7 +316,6 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	try {
 
     		SettingVariable svar = getSettingVariable(id);
-    		System.out.println("got this : " + svar);
     		if (svar != null) {
     			ObjectMapper om = new ObjectMapper();
     			return om.writeValueAsString(svar);

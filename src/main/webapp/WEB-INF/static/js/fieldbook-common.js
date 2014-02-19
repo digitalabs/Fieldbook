@@ -1,3 +1,56 @@
+$(function() {
+
+    var newHash      = "";
+                
+    $(window).bind('hashchange', function(){
+    
+        newHash = window.location.hash.substring(1);
+        
+        if (newHash) {
+        	
+           //console.log('newHash'+newHash);
+           Spinner.toggle();	
+	   		$.ajax({
+	   			url: newHash,
+	   			type: "GET", 					
+	   			success: function (html) {
+	   				//we just paste the whole html
+	   				$('.container .row').first().html(html);				
+	   				Spinner.toggle();
+	   			}
+	   		});
+        };
+        
+    });
+    
+    $(window).trigger('hashchange');
+
+    
+});
+
+function doAjaxMainSubmit(pageMessageDivId, successMessage, overrideAction){
+	Spinner.toggle();
+	var form = $("form");
+	var action = form.attr('action');
+	var serializedData = form.serialize();
+	
+	if(overrideAction != null)
+		action = overrideAction;
+	
+	$.ajax({
+		url: action,
+		type: "POST", 	
+		data: serializedData,
+		success: function (html) {
+			//we just paste the whole html
+			$('.container .row').first().html(html);
+			
+		    showSuccessfulMessage(pageMessageDivId, successMessage);				
+			Spinner.toggle();
+		}
+	}); 							
+}
+
 function showPage(paginationUrl, pageNum, sectionDiv){
 	//$('#imported-germplasm-list').html(pageNum); 	
 	Spinner.toggle();

@@ -719,6 +719,8 @@ function deleteNurserySettings(){
 	var templateSettingsId = $('#selectedSettingId').val();
 	if(templateSettingsId > 0){
 		$('#delete-settings-confirmation').modal('hide');
+		doAjaxMainSubmit('page-message', deleteTemplateSettingSuccess, "/Fieldbook/NurseryManager/manageNurserySettings/delete/" + templateSettingsId);
+		/*
 		Spinner.toggle();
 		
 		$.ajax({
@@ -732,14 +734,16 @@ function deleteNurserySettings(){
 				Spinner.toggle();
 			}
 		});
-			
+		*/	
 	}else{
 		alert('show error mesage')
 	}
 }
 function clearSettings(){
-	Spinner.toggle();
 	var templateSettingsId = $('#selectedSettingId').val();
+	window.location.hash = "/Fieldbook/NurseryManager/manageNurserySettings/clearSettings/"+templateSettingsId;
+	/*
+	Spinner.toggle();	
 		$.ajax({
 			url: "/Fieldbook/NurseryManager/manageNurserySettings/clearSettings/"+templateSettingsId,
 			type: "GET", 					
@@ -749,10 +753,13 @@ function clearSettings(){
 				Spinner.toggle();
 			}
 		});
+		*/
 }
 function loadNurserySettings(templateSettingsId) {
 //alert($("#newVariablesList").html());
 //var serializedData = $("#saveAdvanceNurseryForm").serialize();
+	window.location.hash = "/Fieldbook/NurseryManager/manageNurserySettings/view/"+templateSettingsId;
+	/*
 	Spinner.toggle();
 	$.ajax({
 		url: "/Fieldbook/NurseryManager/manageNurserySettings/view/" + templateSettingsId,
@@ -767,9 +774,12 @@ function loadNurserySettings(templateSettingsId) {
 		complete: function() {
 			Spinner.toggle();
 		}
-	});
+	})
+	*/;
 }
 function addNewSettings(){
+	window.location.hash = "/Fieldbook/NurseryManager/manageNurserySettings/addNewSettings";
+	/*
 	Spinner.toggle();
 	
 	$.ajax({
@@ -781,6 +791,7 @@ function addNewSettings(){
 			Spinner.toggle();
 		}
 	});
+	*/
 }
 function hasDuplicateSettingName(){
 	var selectedSettingsId = $('#selectedSettingId').val();
@@ -800,22 +811,26 @@ function doSaveSettings(){
 	}else if(hasDuplicateSettingName()){
 		showErrorMessage('page-message', templateSettingNameErrorUnique);
 	return false;
-	} else{ 					
+	} else{ 		
+		doAjaxMainSubmit('page-message', saveTemplateSettingSuccess, null);
+		/*
 	Spinner.toggle();
 	var $form = $("#saveNurserySettingsForm");
 	serializedData = $form.serialize();
 	
-	$.ajax({
-		url: "/Fieldbook/NurseryManager/manageNurserySettings/save/",
-		type: "POST", 	
-		data: serializedData,
-		success: function (html) {
-			//we just paste the whole html
-			$('.container .row').first().html(html);
-			
-		    showSuccessfulMessage('page-message', saveTemplateSettingSuccess);				
-			Spinner.toggle();
-		}
-	}); 					
-	} 				
+		$.ajax({
+			url: "/Fieldbook/NurseryManager/manageNurserySettings/save/",
+			type: "POST", 	
+			data: serializedData,
+			success: function (html) {
+				//we just paste the whole html
+				$('.container .row').first().html(html);
+				
+			    showSuccessfulMessage('page-message', saveTemplateSettingSuccess);				
+				Spinner.toggle();
+			}
+		}); 
+		*/
+	}
+				
 }

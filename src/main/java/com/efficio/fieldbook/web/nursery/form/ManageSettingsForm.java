@@ -35,6 +35,8 @@ public class ManageSettingsForm {
 	
 	private List<SettingVariable> selectedVariables;
 	
+	private String projectId;
+	
 	public int getSelectedSettingId() {
 	    return selectedSettingId;
 	}
@@ -81,6 +83,14 @@ public class ManageSettingsForm {
         
         public void setIsDefault(boolean isDefault) {
             this.isDefault = isDefault;
+        }
+        
+        public String getProjectId() {
+            return projectId;
+        }
+        
+        public void setProjectId(String projectId) {
+            this.projectId = projectId;
         }
 
 		public List<SettingVariable> getSelectedVariables() {

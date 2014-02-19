@@ -224,15 +224,26 @@ function recreateLocationCombo() {
        data: "",
        success: function(data) {
     	   if (data.success == "1") {
-    		   //recreate the select2 combos to get updated list of locations
-    		   recreateLocationComboAfterClose("harvestLocationIdAll", $.parseJSON(data.allLocations));
-    		   recreateLocationComboAfterClose("harvestLocationIdFavorite", $.parseJSON(data.favoriteLocations));
-    		   showCorrectLocationCombo();
-    		   //set previously selected value of location
-    		   if ($("#showFavoriteLocation").prop("checked")) {
-    			   setComboValues(locationSuggestionsFav_obj, selectedLocationFavorite, "harvestLocationIdFavorite");
+    		   if (selectedLocationAll) {
+	    		   //recreate the select2 combos to get updated list of locations
+	    		   recreateLocationComboAfterClose("harvestLocationIdAll", $.parseJSON(data.allLocations));
+	    		   recreateLocationComboAfterClose("harvestLocationIdFavorite", $.parseJSON(data.favoriteLocations));
+	    		   showCorrectLocationCombo();
+	    		   //set previously selected value of location
+	    		   if ($("#showFavoriteLocation").prop("checked")) {
+	    			   setComboValues(locationSuggestionsFav_obj, selectedLocationFavorite, "harvestLocationIdFavorite");
+	    		   } else {
+	    			   setComboValues(locationSuggestions_obj, selectedLocationAll, "harvestLocationIdAll");
+	    		   }
     		   } else {
-    			   setComboValues(locationSuggestions_obj, selectedLocationAll, "harvestLocationIdAll");
+    			   var selectedVal = "";
+    			   if ($("#" + getJquerySafeId("nurseryLevelVariables0.value")).select2("data")) {
+    				   selectedVal = $("#" + getJquerySafeId("nurseryLevelVariables0.value")).select2("data").id;
+    			   } 
+    			   initializePossibleValuesCombo([], 
+	 			 			"#" + getJquerySafeId("nurseryLevelVariables0.value"), true, selectedVal);
+    			   initializePossibleValuesCombo($.parseJSON(data.allLocations), 
+	 			 			"#" + getJquerySafeId("nurseryLevelVariables0.value"), true, selectedVal);
     		   }
     	   } else {
     		   showErrorMessage("page-message", data.errorMessage);
@@ -595,7 +606,9 @@ function createBaselineTraitVariables(data) {
 		(length-1) + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
 		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.name + "</td>";		
-		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.description + "</td></tr>";
+		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.description + "</td>"
+		newRow = newRow + "<td class='"+className+"'>" + "<a href='javascript: void(0);' onclick='javascript:showBaselineTraitDetailsModal(" + 
+		settingDetail.variable.cvTermId + ");'><span class='glyphicon glyphicon-eye-open'></span></a></td></tr>";
 		$("#baselineTraitSettings").append(newRow);
 	});
 }
@@ -610,19 +623,28 @@ function sortByKey(array, key) {
 function initializePossibleValuesCombo(possibleValues, name, isLocation, defaultValue) {
 	var possibleValues_obj = [];
 	var defaultJsonVal = null;
+
 	$.each(possibleValues, function(index, value) {
-		var jsonVal = { 'id' : value.id,
-			  'text' : value.name
-		};
+		var jsonVal;
+		if (value.id != undefined) {
+			jsonVal = { 'id' : value.id,
+					  'text' : value.name
+				};
+		} else {
+			jsonVal = { 'id' : value.locid,
+					  'text' : value.lname
+				};
+		}
+		
 		possibleValues_obj.push(jsonVal);  
-		if(defaultValue != null && defaultValue != '' && defaultValue == value.id){
+		if(defaultValue != null && defaultValue != '' && (defaultValue == value.id) || (defaultValue == value.locid)){
 			defaultJsonVal = jsonVal;
 		}
 		
 	});
 	
 	possibleValues_obj = sortByKey(possibleValues_obj, "text");
-	
+
 	if (isLocation) {
 		$(name).select2({
 			minimumInputLength: 2,
@@ -668,7 +690,7 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation, default
 function deleteVariable(variableType, variableId, deleteButton) {
 	//remove row from UI
 	deleteButton.parent().parent().remove();
-	
+
 	//remove row from session
 	Spinner.toggle();
 	$.ajax({
@@ -818,4 +840,53 @@ function doSaveSettings(){
 		}
 	}); 					
 	} 				
+}
+
+function showBaselineTraitDetailsModal(id) {
+	if(id != ''){
+		Spinner.toggle();
+		$.ajax({
+			url: "/Fieldbook/NurseryManager/manageNurserySettings/showVariableDetails/" + id,
+			type: "GET",
+			cache: false,
+			success: function (data) {
+				populateBaselineTraits($.parseJSON(data));
+				$("#baselineTraitDetails").modal("toggle");
+			},
+			error: function(jqXHR, textStatus, errorThrown){
+				console.log("The following error occured: " + textStatus, errorThrown); 
+			},
+			complete: function() {
+				Spinner.toggle();
+			}
+		});
+	}
+}
+
+function populateBaselineTraits(standardVariable) {
+	if (standardVariable != null) {
+		$("#traitClass").text(checkIfNull(standardVariable.traitClass));
+		$("#property").text(checkIfNull(standardVariable.property));
+		$("#method").text(checkIfNull(standardVariable.method));
+		$("#scale").text(checkIfNull(standardVariable.scale));
+		$("#dataType").text(checkIfNull(standardVariable.dataType));
+		$("#role").text(checkIfNull(standardVariable.role));
+		$("#cropOntologyId").text(checkIfNull(standardVariable.cropOntologyId));
+	} else {
+		$("#traitClass").text("");
+		$("#property").text("");
+		$("#method").text("");
+		$("#scale").text("");
+		$("#dataType").text("");
+		$("#role").text("");
+		$("#cropOntologyId").text("");
+	}
+}
+
+function checkIfNull(object) {
+	if (object != null) {
+		return object;
+	} else {
+		return "";
+	}
 }

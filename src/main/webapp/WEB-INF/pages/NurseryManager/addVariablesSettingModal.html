@@ -102,8 +102,8 @@
 			         			<tbody>
 			         				<tr th:each="choice, rowStat : *{selectedVariables}">
 			         					<td>
-			         						<input type="hidden" th:field="*{selectedVariables[__${rowStat.index}__].cvTermId}" />
-			         						<input type="text" th:field="*{selectedVariables[__${rowStat.index}__].name}" />
+			         						<input type="hidden" class="addVariables" th:field="*{selectedVariables[__${rowStat.index}__].cvTermId}" />
+			         						<input type="text" class="addVariables" th:field="*{selectedVariables[__${rowStat.index}__].name}" />
 		         						</td>
 			         					<td th:text="*{selectedVariables[__${rowStat.index}__].property}"></td>
 			         					<td th:text="*{selectedVariables[__${rowStat.index}__].scale}"></td>
@@ -116,7 +116,7 @@
 			        </div>
 	         	</div>																							
 	       		<div class="modal-footer">    
-	       			<button type="button" id="addVariables" class="btn btn-primary" data-dismiss="modal" aria-hidden="true" onclick="javascript: submitSelectedVariables();">Add Variables</button>
+	       			<button type="button" id="addVariables" class="btn btn-primary" aria-hidden="true" onclick="javascript: submitSelectedVariables();">Add Variables</button>
 	       			<button type="button" class="btn btn-default" data-dismiss="modal" onclick="javascript: " aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>	
        			</div>
 	     	</div><!-- /.modal-content -->

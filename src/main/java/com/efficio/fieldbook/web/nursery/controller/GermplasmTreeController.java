@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 import com.efficio.pojos.treeview.TreeNode;
 
@@ -58,8 +59,8 @@ public class GermplasmTreeController{
 
         try {
             List<TreeNode> rootNodes = new ArrayList<TreeNode>();
-            rootNodes.add(new TreeNode("LOCAL", "My List", true, "lead", Boolean.FALSE));
-            rootNodes.add(new TreeNode("CENTRAL", "Shared List", true, "lead", Boolean.FALSE));
+            rootNodes.add(new TreeNode("LOCAL", AppConstants.GERMPLASM_LIST_LOCAL, true, "lead", Boolean.FALSE));
+            rootNodes.add(new TreeNode("CENTRAL", AppConstants.GERMPLASM_LIST_CENTRAL, true, "lead", Boolean.FALSE));
             return TreeViewUtil.convertTreeViewToJson(rootNodes);
             
         } catch(Exception e) {

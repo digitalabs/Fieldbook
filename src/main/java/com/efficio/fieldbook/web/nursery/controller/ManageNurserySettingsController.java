@@ -12,6 +12,7 @@
 package com.efficio.fieldbook.web.nursery.controller;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -354,6 +355,30 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	return "[]";
     }
     
+    @ResponseBody
+    @RequestMapping(value = "/deleteVariable/{mode}/{variableId}", method = RequestMethod.POST)
+    public String deleteVariable(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, Model model, 
+            @PathVariable int mode, @PathVariable int variableId) {
+        
+        switch (mode) {
+            case AppConstants.SEGMENT_STUDY : 
+                //form.getNurseryLevelVariables()
+                deleteVariableInSession(userSelection.getNurseryLevelConditions(), variableId);
+            default:
+                deleteVariableInSession(userSelection.getPlotsLevelList(), variableId);
+        }
+        return "";
+    }
+    
+    private void deleteVariableInSession(List<SettingDetail> variableList, int variableId) {
+        Iterator<SettingDetail> iter = variableList.iterator();
+        while (iter.hasNext()) {
+            if (iter.next().getVariable().getCvTermId().equals(new Integer(variableId))) {
+                iter.remove();
+            }
+        }
+    }
+    
     /**
      * Clear settings.
      *
@@ -423,8 +448,8 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	form.setNurseryLevelVariables(nurseryDefaults);
     	this.userSelection.setNurseryLevelConditions(nurseryDefaults);
     	
-    	//nurseryDefaults.add(createSettingDetail(TermId.SITE_NAME.getId()));
-    	nurseryDefaults.add(createSettingDetail(TermId.PI_NAME.getId()));
+    	nurseryDefaults.add(createSettingDetail(TermId.SITE_NAME.getId(), AppConstants.LOCATION));
+        nurseryDefaults.add(createSettingDetail(TermId.PI_NAME.getId(), AppConstants.PRINCIPAL_INVESTIGATOR));
     }
     
     /**
@@ -434,10 +459,16 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
      * @return the setting detail
      * @throws MiddlewareQueryException the middleware query exception
      */
-    private SettingDetail createSettingDetail(int id) throws MiddlewareQueryException {
-		StandardVariable stdVar = fieldbookMiddlewareService.getStandardVariable(id);
-		if (stdVar != null) {
-			SettingVariable svar = new SettingVariable(stdVar.getName(), stdVar.getDescription(), stdVar.getProperty().getName(),
+    private SettingDetail createSettingDetail(int id, String name) throws MiddlewareQueryException {
+                String variableName = "";
+                StandardVariable stdVar = fieldbookMiddlewareService.getStandardVariable(id);
+                if (name != null) {
+                    variableName = name;
+                } else {
+                    variableName = stdVar.getName();
+                }
+                if (stdVar != null) {
+                SettingVariable svar = new SettingVariable(variableName, stdVar.getDescription(), stdVar.getProperty().getName(),
 					stdVar.getScale().getName(), stdVar.getMethod().getName(), stdVar.getStoredIn().getName(), 
 					stdVar.getDataType().getName());
 			svar.setCvTermId(stdVar.getId());
@@ -445,7 +476,9 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
 			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : null);
 
 			List<ValueReference> possibleValues = fieldbookService.getAllPossibleValues(id);
-	    	return new SettingDetail(svar, possibleValues, null, false);
+			SettingDetail settingDetail = new SettingDetail(svar, possibleValues, null, false);
+	                settingDetail.setPossibleValuesToJson(possibleValues);
+	                return settingDetail;
 		}
 		return new SettingDetail();
     }

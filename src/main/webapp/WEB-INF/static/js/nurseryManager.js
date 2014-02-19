@@ -351,12 +351,14 @@ function getStandardVariables(variableType) {
 
 function initializeStandardVariableSearch(variables) {
 	//set values
-	stdVariableSuggestions = variables;
-	$.each(stdVariableSuggestions, function(index, value) {
+	var stdVariableSuggestions_obj = [];
+	$.each(variables, function(index, value) {
 		stdVariableSuggestions_obj.push({ 'id' : value.id,
 			  'text' : value.name
 		});  
 	});
+	
+	stdVariableSuggestions_obj = sortByKey(stdVariableSuggestions_obj, "text"); 
 
 	$("#stdVarSearch").select2({
 		query: function (query) {	
@@ -436,9 +438,9 @@ function addVariableToList() {
 	//if selected variable is not yet in the list and is not blank or new, add it
 	if (notInList($("#selectedStdVarId").val()) && $("#selectedStdVarId").val() != "") {
 		newRow = "<tr>";
-		newRow = newRow + "<td><input type='hidden' id='selectedVariables"+ ctr + ".cvTermId' " + 
+		newRow = newRow + "<td><input type='hidden' class='addVariables' id='selectedVariables"+ ctr + ".cvTermId' " +  
 			"name='selectedVariables["+ ctr + "].cvTermId' value='" + $("#selectedStdVarId").val() + "' />";
-		newRow = newRow + "<input type='text' id='selectedVariables"+ ctr + ".name' " + 
+		newRow = newRow + "<input type='text' class='addVariables' id='selectedVariables"+ ctr + ".name' " +  
 			"name='selectedVariables["+ ctr + "].name' value='" + $("#selectedName").val() + "' /></td>";
 		newRow = newRow + "<td>" + $("#selectedProperty").text() + "</td>";
 		newRow = newRow + "<td>" + $("#selectedScale").text() + "</td>";
@@ -466,35 +468,43 @@ function notInList(id) {
 }
 
 function submitSelectedVariables(variableType) {
-	var serializedData = $("#saveAdvanceNurseryForm").serialize();
-	Spinner.toggle();
-	$.ajax({
-		url: "/Fieldbook/NurseryManager/manageNurserySettings/addSettings/" + variableType,
-		type: "POST",
-		data: serializedData,
-		success: function (data) {
-			switch (variableType) {
-				case 1:
-					createNurseryLevelSettingVariables($.parseJSON(data));
-					break;
-				case 2:
-					createPlotLevelSettingVariables($.parseJSON(data));
-					break;
-				case 3:
-					createBaselineTraitVariables($.parseJSON(data));
-					break;
-				default:
-					createNurseryLevelSettingVariables($.parseJSON(data));
+	if ($("#newVariablesList tbody tr").length > 0) {
+		var serializedData = $("input.addVariables").serialize();
+		$("#page-message-modal").html("");
+		Spinner.toggle();
+		$.ajax({
+			url: "/Fieldbook/NurseryManager/manageNurserySettings/addSettings/" + variableType,
+			type: "POST",
+			data: serializedData,
+			success: function (data) {
+				switch (variableType) {
+					case 1:
+						createNurseryLevelSettingVariables($.parseJSON(data));
+						break;
+					case 2:
+						createPlotLevelSettingVariables($.parseJSON(data));
+						break;
+					case 3:
+						createBaselineTraitVariables($.parseJSON(data));
+						break;
+					default:
+						createNurseryLevelSettingVariables($.parseJSON(data));
+				}
+				
+			},
+			error: function(jqXHR, textStatus, errorThrown){
+				console.log("The following error occured: " + textStatus, errorThrown); 
+			},
+			complete: function() {
+				Spinner.toggle();
+				$("#addVariablesSettingModal").modal("hide");
 			}
-			
-		},
-		error: function(jqXHR, textStatus, errorThrown){
-			console.log("The following error occured: " + textStatus, errorThrown); 
-		},
-		complete: function() {
-			Spinner.toggle();
-		}
-	});
+		});
+	} else {
+		$("#page-message-modal").html(
+			    "<div class='alert alert-danger'>"+ varInListMessage +"</div>"
+		);
+	}
 }
 
 function getLastRowIndex(name, hasTBody) {
@@ -510,14 +520,19 @@ function createNurseryLevelSettingVariables(data) {
 	$.each(data, function (index, settingDetail) {
 		var newRow = "<tr>";
 		var isDelete = "";
+		
+		//include delete button if variable is deletable
 		if (settingDetail.delete) {
-			isDelete = "<span class='glyphicon glyphicon-remove-sign'></span>";
+			isDelete = "<span class='glyphicon glyphicon-remove-sign' onclick='deleteVariable(1," + 
+				settingDetail.variable.cvTermId + ",$(this))'></span>";
 		}
+		
+		//create html elements dynamically
 		newRow = newRow + "<td>" + isDelete + 
 		"<input type='hidden' id='nurseryLevelVariables" + ctr + ".variable.cvTermId' name='nurseryLevelVariables[" + 
 		ctr + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
-		newRow = newRow + "<td>" + settingDetail.variable.name + "</td>";
+		newRow = newRow + "<td>" + settingDetail.variable.name + ':*' +  "</td>";
 		newRow = newRow + "<td><input type='hidden' id='nurseryLevelVariables" + ctr + 
 		".value' name='nurseryLevelVariables[" + ctr + "].value' class='form-control select2' /></td></tr>";
 
@@ -525,7 +540,7 @@ function createNurseryLevelSettingVariables(data) {
 		
 		//initialize select 2 combo
 		initializePossibleValuesCombo(settingDetail.possibleValues, "#" + 
-				getJquerySafeId("nurseryLevelVariables" + ctr + ".value"));
+				getJquerySafeId("nurseryLevelVariables" + ctr + ".value"), false);
 		
 		ctr++;
 	});
@@ -537,7 +552,8 @@ function createPlotLevelSettingVariables(data) {
 		var isDelete = "";
 		
 		if (settingDetail.delete) {
-			isDelete = "<span class='glyphicon glyphicon-remove-sign'></span>";
+			isDelete = "<span class='glyphicon glyphicon-remove-sign' onclick='deleteVariable(2," + 
+			settingDetail.variable.cvTermId + ",$(this))'></span>";
 		}
 		newRow = newRow + "<td>" + isDelete + 
 		"<input type='hidden' id='plotLevelVariables" + index + ".variable.cvTermId' name='plotLevelVariables[" + 
@@ -560,31 +576,96 @@ function createBaselineTraitVariables(data) {
 	});
 }
 
-function initializePossibleValuesCombo(possibleValues, name) {
-	var possibleValues_obj = [];
+function sortByKey(array, key) {
+    return array.sort(function(a, b) {
+        var x = a[key].toLowerCase(); var y = b[key].toLowerCase();
+        return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+    });
+}
 
+function initializePossibleValuesCombo(possibleValues, name, isLocation) {
+	var possibleValues_obj = [];
 	$.each(possibleValues, function(index, value) {
 		possibleValues_obj.push({ 'id' : value.id,
 			  'text' : value.name
 		});  
 	});
-
-	$(name).select2({
-		query: function (query) {	
-	      var data = {results: possibleValues_obj}, i, j, s;
-	      // return the array that matches
-	      data.results = $.grep(data.results,function(item,index) {
-	        return ($.fn.select2.defaults.matcher(query.term,item.text));
-	      
-	      });
-	      if (data.results.length === 0){
-	    	  data.results.unshift({id:query.term,text:query.term});	        	 
-	      }
-	      
-	        query.callback(data);
-	    }
-    });
+	
+	possibleValues_obj = sortByKey(possibleValues_obj, "text");
+	
+	if (isLocation) {
+		$(name).select2({
+			minimumInputLength: 2,
+			query: function (query) {	
+		      var data = {results: possibleValues_obj}, i, j, s;
+		      // return the array that matches
+		      data.results = $.grep(data.results,function(item,index) {
+		        return ($.fn.select2.defaults.matcher(query.term,item.text));
+		      
+		      });
+		      if (data.results.length === 0){
+		    	  data.results.unshift({id:query.term,text:query.term});	        	 
+		      }
+		      
+		        query.callback(data);
+		    }
+	    });
+	} else {
+		$(name).select2({
+			query: function (query) {	
+		      var data = {results: possibleValues_obj}, i, j, s;
+		      // return the array that matches
+		      data.results = $.grep(data.results,function(item,index) {
+		        return ($.fn.select2.defaults.matcher(query.term,item.text));
+		      
+		      });
+		      if (data.results.length === 0){
+		    	  data.results.unshift({id:query.term,text:query.term});	        	 
+		      }
+		      
+		        query.callback(data);
+		    }
+	    });
+	}
 }
+
+function deleteVariable(variableType, variableId, deleteButton) {
+	//remove row from UI
+	deleteButton.parent().parent().remove();
+	
+	//remove row from session
+	Spinner.toggle();
+	$.ajax({
+		url: "/Fieldbook/NurseryManager/manageNurserySettings/deleteVariable/" + variableType + "/" + variableId,
+		cache: false,
+		type: "POST",
+		success: function() {
+			Spinner.toggle();
+		}
+	});
+	
+	//reinstantiate counters of ids and names
+	sortVariableIdsAndNames(variableType);
+}
+
+function sortVariableIdsAndNames(variableType) {
+	if (variableType == 1) {
+		var reg = new RegExp("nurseryLevelVariables[0-9]+", "g")
+		var reg2 = new RegExp("nurseryLevelVariables\[[0-9]+\]", "g")
+		$.each($("#nurseryLevelSettings tr"), function (index, row) {
+			row.innerHTML = row.innerHTML.replace(reg, "nurseryLevelVariables" + index);
+			row.innerHTML = row.innerHTML.replace(reg2, "nurseryLevelVariables[" + index + "]");
+		});
+	} else {
+		var reg = new RegExp("plotLevelVariables[0-9]+", "g")
+		var reg2 = new RegExp("plotLevelVariables\[[0-9]+\]", "g")
+		$.each($("#plotLevelSettings tbody tr"), function (index, row) {
+			row.innerHTML = row.innerHTML.replace(reg, "plotLevelVariables" + index);
+			row.innerHTML = row.innerHTML.replace(reg2, "plotLevelVariables[" + index + "]");
+		});
+	}
+}
+
 function hideDeleteConfirmation(){
 	$('#delete-settings-confirmation').modal('hide');
 }

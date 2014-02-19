@@ -11,6 +11,8 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.bean;
 
+import org.generationcp.middleware.domain.dms.StandardVariable;
+
 
 public class SettingVariable {
 
@@ -110,6 +112,17 @@ public class SettingVariable {
 	 */
 	public void setCvTermId(Integer cvTermId) {
 		this.cvTermId = cvTermId;
+	}
+	
+	public void setPSMRFromStandardVariable(StandardVariable standardVariable){
+		if(standardVariable != null){
+			this.property = standardVariable.getProperty().getName();
+			this.scale = standardVariable.getScale().getName();
+			this.method = standardVariable.getMethod().getName();
+			this.role = standardVariable.getPhenotypicType().getLabelList().get(0);
+			this.description = standardVariable.getDescription();
+			this.dataType = standardVariable.getDataType().getName();			
+		}
 	}
 
 }

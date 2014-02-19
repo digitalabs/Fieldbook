@@ -148,7 +148,8 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
             , Model model, HttpSession session) throws MiddlewareQueryException{
     	
     	//we need to get the default settings if there is
-        //only has value for clear setting, the rest null            	
+        //only has value for clear setting, the rest null       
+    	session.invalidate();
     	setupDefaultScreenValues(form, getDefaultTemplateSettingFilter());
     	return super.show(model);
     }
@@ -199,7 +200,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
             , Model model, HttpSession session) throws MiddlewareQueryException{
 		//will do the saving here
     	
-    	Dataset dataset = SettingsUtil.convertPojoToXmlDataset(form.getSettingName(), form.getNurseryLevelVariables(), form.getPlotLevelVariables(), form.getBaselineTraitVariables());
+    	Dataset dataset = SettingsUtil.convertPojoToXmlDataset(form.getSettingName(), form.getNurseryLevelVariables(), form.getPlotLevelVariables(), form.getBaselineTraitVariables(), userSelection);
     	String xml = SettingsUtil.generateSettingsXml(dataset);
     	Integer tempateSettingId = form.getSelectedSettingId() > 0 ? Integer.valueOf(form.getSelectedSettingId()) : null;
     	TemplateSetting templateSetting = new TemplateSetting(tempateSettingId, Integer.valueOf(getCurrentProjectId()), dataset.getName(), getNurseryTool(), xml, Boolean.valueOf(form.getIsDefault())) ;
@@ -316,7 +317,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	try {
 
     		SettingVariable svar = getSettingVariable(id);
-    		System.out.println("got this : " + svar);
+    		LOG.debug("got this : " + svar);
     		if (svar != null) {
     			ObjectMapper om = new ObjectMapper();
     			return om.writeValueAsString(svar);
@@ -528,6 +529,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
 	    		else {
 		    		userSelection.getNurseryLevelConditions().addAll(newDetails);
 	    		}
+	    		break;
 	    		//return URL_STUDY_SETTINGS_TABLE;
 	    	case AppConstants.SEGMENT_PLOT :
 	    		if (form.getPlotLevelVariables() == null) {
@@ -542,6 +544,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
 	    		else {
 	    			userSelection.getPlotsLevelList().addAll(newDetails);
 	    		}
+	    		break;
 	    		//return URL_PLOTS_SETTINGS_TABLE;
 	    	//case AppConstants.SEGMENT_TRAITS :
 	    	default :
@@ -557,6 +560,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
 	    		else {
 	    			userSelection.getBaselineTraitsList().addAll(newDetails);
 	    		}
+	    		break;
 	    		//return URL_TRAITS_SETTINGS_TABLE;
     	}
     	ObjectMapper om = new ObjectMapper();
@@ -620,6 +624,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
      */
     private StandardVariable getStandardVariable(int id) throws MiddlewareQueryException {
     	Set<StandardVariable> allStdVars = getAllStandardVariables();
+    	/*
     	if (allStdVars != null && !allStdVars.isEmpty()) {
     		for (StandardVariable stdvar : allStdVars) {
     			if (stdvar.getId() == id) {
@@ -628,5 +633,8 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     		}
     	}
     	return null;
+    	*/
+    	return userSelection.getCacheStandardVariable(id);
+    	
     }
 }

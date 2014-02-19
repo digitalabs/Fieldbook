@@ -12,7 +12,9 @@
 package com.efficio.fieldbook.web.nursery.bean;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -71,6 +73,8 @@ public class UserSelection implements Serializable {
     private Set<StandardVariable> allStandardVariables;
     
     private List<ImportedGermplasm> importedAdvancedGermplasmList;
+    
+    private Map<String, StandardVariable> standardVariableMap; //for easy access
     
 	/**
 	 * Gets the current page.
@@ -307,8 +311,21 @@ public class UserSelection implements Serializable {
 	 */
 	public void setAllStandardVariables(Set<StandardVariable> allStandardVariables) {
 		this.allStandardVariables = allStandardVariables;
+		
+		standardVariableMap = new HashMap();
+		if(allStandardVariables != null){
+			for(StandardVariable var : allStandardVariables){
+				standardVariableMap.put(Integer.toString(var.getId()), var);
+			}
+		}
 	}
 
+	public StandardVariable getCacheStandardVariable(int id){
+		if(standardVariableMap != null && standardVariableMap.containsKey(Integer.toString(id))){
+			return standardVariableMap.get(Integer.toString(id));
+		}
+		return null;
+	}
 	public List<ImportedGermplasm> getImportedAdvancedGermplasmList() {
 		return importedAdvancedGermplasmList;
 	}

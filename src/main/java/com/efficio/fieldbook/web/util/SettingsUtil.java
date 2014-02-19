@@ -21,6 +21,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.settings.Condition;
@@ -123,29 +124,52 @@ public class SettingsUtil {
 	 * @param baselineTraitsList the baseline traits list
 	 * @return the dataset
 	 */
-	public static Dataset convertPojoToXmlDataset(String name, List<SettingDetail> nurseryLevelConditions, List<SettingDetail> plotsLevelList, List<SettingDetail> baselineTraitsList){
+	public static Dataset convertPojoToXmlDataset(String name, List<SettingDetail> nurseryLevelConditions, List<SettingDetail> plotsLevelList, List<SettingDetail> baselineTraitsList, UserSelection userSelection){
 		Dataset dataset = new Dataset();
 		List<Condition> conditions = new ArrayList<Condition>();
 		List<Factor> factors = new ArrayList<Factor>();
 		List<Variate> variates = new ArrayList<Variate>();
 		//iterate for the nursery level
+		int index = 0;
 		for(SettingDetail settingDetail : nurseryLevelConditions){
 			SettingVariable variable = settingDetail.getVariable();
+			if(userSelection != null){
+				StandardVariable standardVariable = userSelection.getCacheStandardVariable(variable.getCvTermId());
+				variable.setPSMRFromStandardVariable(standardVariable);
+				//need to get the name from the session
+				variable.setName(userSelection.getNurseryLevelConditions().get(index++).getVariable().getName());
+			}
+			
 			Condition condition = new Condition(variable.getName(), variable.getDescription(), variable.getProperty(),
 					variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
 					settingDetail.getValue());
 			conditions.add(condition);
 		}
 		//iterate for the plot level
+		index = 0;
 		for(SettingDetail settingDetail : plotsLevelList){
 			SettingVariable variable = settingDetail.getVariable();
+			if(userSelection != null){
+				StandardVariable standardVariable = userSelection.getCacheStandardVariable(variable.getCvTermId());
+				variable.setPSMRFromStandardVariable(standardVariable);
+				//need to get the name from the session
+				variable.setName(userSelection.getPlotsLevelList().get(index++).getVariable().getName());
+			}
 			Factor factor = new Factor(variable.getName(), variable.getDescription(), variable.getProperty(),
 					variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType());
 			factors.add(factor);
 		}
 		//iterate for the baseline traits level
+		index = 0;
 		for(SettingDetail settingDetail : baselineTraitsList){
 			SettingVariable variable = settingDetail.getVariable();
+			if(userSelection != null){
+				StandardVariable standardVariable = userSelection.getCacheStandardVariable(variable.getCvTermId());
+				variable.setPSMRFromStandardVariable(standardVariable);
+				//need to get the name from the session
+				variable.setName(userSelection.getBaselineTraitsList().get(index++).getVariable().getName());
+				
+			}
 			Variate variate = new Variate(variable.getName(), variable.getDescription(), variable.getProperty(),
 					variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType());
 			variates.add(variate);

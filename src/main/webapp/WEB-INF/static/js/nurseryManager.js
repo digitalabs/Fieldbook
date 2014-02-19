@@ -435,17 +435,20 @@ function addVariableToList() {
 		ctr = parseInt(lastVarId.substring(lastVarId.indexOf("[") + 1, lastVarId.indexOf("]"))) + 1;
 	}
 
+	var length = $("#newVariablesList tbody tr").length + 1;
+	var className = length % 2 == 1 ? 'even' : 'odd';
+	
 	//if selected variable is not yet in the list and is not blank or new, add it
 	if (notInList($("#selectedStdVarId").val()) && $("#selectedStdVarId").val() != "") {
 		newRow = "<tr>";
-		newRow = newRow + "<td><input type='hidden' class='addVariables' id='selectedVariables"+ ctr + ".cvTermId' " +  
+		newRow = newRow + "<td class='"+className+"'><input type='hidden' class='addVariables' id='selectedVariables"+ ctr + ".cvTermId' " +  
 			"name='selectedVariables["+ ctr + "].cvTermId' value='" + $("#selectedStdVarId").val() + "' />";
 		newRow = newRow + "<input type='text' class='addVariables' id='selectedVariables"+ ctr + ".name' " +  
 			"name='selectedVariables["+ ctr + "].name' value='" + $("#selectedName").val() + "' /></td>";
-		newRow = newRow + "<td>" + $("#selectedProperty").text() + "</td>";
-		newRow = newRow + "<td>" + $("#selectedScale").text() + "</td>";
-		newRow = newRow + "<td>" + $("#selectedMethod").text() + "</td>";
-		newRow = newRow + "<td>" + $("#selectedRole").text() + "</td>";
+		newRow = newRow + "<td class='"+className+"'>" + $("#selectedProperty").text() + "</td>";
+		newRow = newRow + "<td class='"+className+"'>" + $("#selectedScale").text() + "</td>";
+		newRow = newRow + "<td class='"+className+"'>" + $("#selectedMethod").text() + "</td>";
+		newRow = newRow + "<td class='"+className+"'>" + $("#selectedRole").text() + "</td>";
 		newRow = newRow + "</tr>";
 		
 		$("#newVariablesList").append(newRow);
@@ -518,7 +521,7 @@ function getLastRowIndex(name, hasTBody) {
 function createNurseryLevelSettingVariables(data) {
 	var ctr = getLastRowIndex("nurseryLevelSettings", false) + 1;
 	$.each(data, function (index, settingDetail) {
-		var newRow = "<tr>";
+		var newRow = "<tr class=''>";
 		var isDelete = "";
 		
 		//include delete button if variable is deletable
@@ -548,6 +551,8 @@ function createNurseryLevelSettingVariables(data) {
 
 function createPlotLevelSettingVariables(data) {
 	$.each(data, function (index, settingDetail) {
+		var length = $("#plotLevelSettings tbody tr").length + 1;
+		var className = length % 2 == 1 ? 'even' : 'odd';
 		var newRow = "<tr>";
 		var isDelete = "";
 		
@@ -555,23 +560,26 @@ function createPlotLevelSettingVariables(data) {
 			isDelete = "<span class='glyphicon glyphicon-remove-sign' onclick='deleteVariable(2," + 
 			settingDetail.variable.cvTermId + ",$(this))'></span>";
 		}
-		newRow = newRow + "<td>" + isDelete + 
+		newRow = newRow + "<td class='"+className+"'>" + isDelete + 
 		"<input type='hidden' id='plotLevelVariables" + index + ".variable.cvTermId' name='plotLevelVariables[" + 
 		index + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
-		newRow = newRow + "<td>" + settingDetail.variable.name + "</td>"; 
-		newRow = newRow + "<td>" + settingDetail.variable.description + "</td></tr>";
+		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.name + "</td>"; 
+		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.description + "</td></tr>";
 		$("#plotLevelSettings").append(newRow);
 	});
 }
 
 function createBaselineTraitVariables(data) {
 	$.each(data, function (index, settingDetail) {
+		var length = $("#baselineTraitSettings tbody tr").length + 1;
+		var className = length % 2 == 1 ? 'even' : 'odd';
 		var newRow = "<tr>";
-		newRow = newRow + "<td>" + "<input type='hidden' id='baselineTraitVariables" + index + 
+		
+		newRow = newRow + "<td class='"+className+"'>" + "<input type='hidden' id='baselineTraitVariables" + index + 
 		".variable.cvTermId' name='baselineTraitVariables[" + index + "].variable.cvTermId' value='" + 
 		settingDetail.variable.cvTermId + "' />" + settingDetail.variable.name + "</td>";
-		newRow = newRow + "<td>" + settingDetail.variable.description + "</td></tr>";
+		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.description + "</td></tr>";
 		$("#baselineTraitSettings").append(newRow);
 	});
 }

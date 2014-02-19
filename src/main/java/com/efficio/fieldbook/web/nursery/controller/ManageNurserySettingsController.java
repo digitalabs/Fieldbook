@@ -203,12 +203,18 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	String xml = SettingsUtil.generateSettingsXml(dataset);
     	Integer tempateSettingId = form.getSelectedSettingId() > 0 ? Integer.valueOf(form.getSelectedSettingId()) : null;
     	TemplateSetting templateSetting = new TemplateSetting(tempateSettingId, Integer.valueOf(getCurrentProjectId()), dataset.getName(), getNurseryTool(), xml, Boolean.valueOf(form.getIsDefault())) ;
-    	if(templateSetting.getTemplateSettingId() != null)
-    		workbenchService.addTemplateSetting(templateSetting);
+    	int tempateSettingsId = templateSetting.getTemplateSettingId();
+    	
+    	if(templateSetting.getTemplateSettingId() != null){
+    		
+    		Integer newTemplateSettingsId = workbenchService.addTemplateSetting(templateSetting);
+    		templateSetting.setTemplateSettingId(newTemplateSettingsId);
+    		tempateSettingsId = newTemplateSettingsId;
+    	}
     	else
     		workbenchService.updateTemplateSetting(templateSetting);
     	
-    	int tempateSettingsId = templateSetting.getTemplateSettingId();
+    	
     	return viewSettings(form, tempateSettingsId, model, session);
     }
     

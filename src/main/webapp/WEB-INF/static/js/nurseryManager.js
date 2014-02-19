@@ -581,10 +581,18 @@ function createBaselineTraitVariables(data) {
 		var length = $("#baselineTraitSettings tbody tr").length + 1;
 		var className = length % 2 == 1 ? 'even' : 'odd';
 		var newRow = "<tr>";
+		var isDelete = "";
 		
-		newRow = newRow + "<td style='text-align: center' class='"+className+"'>" + "<input type='hidden' id='baselineTraitVariables" + index + 
-		".variable.cvTermId' name='baselineTraitVariables[" + index + "].variable.cvTermId' value='" + 
-		settingDetail.variable.cvTermId + "' />" + settingDetail.variable.name + "</td>";
+		if (settingDetail.delete) {
+			isDelete = "<span class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(3," + 
+			settingDetail.variable.cvTermId + ",$(this))'></span>";
+		}
+		
+		newRow = newRow + "<td style='text-align: center' class='"+className+"'>" + isDelete + 
+		"<input type='hidden' id='baselineTraitVariables" + index + ".variable.cvTermId' name='baselineTraitVariables[" + 
+		index + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
+		"</td>";
+		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.name + "</td>";		
 		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.description + "</td></tr>";
 		$("#baselineTraitSettings").append(newRow);
 	});

@@ -146,10 +146,9 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("manageSettingsForm") ManageSettingsForm form
             , Model model, HttpSession session) throws MiddlewareQueryException{
-    	
-    	//we need to get the default settings if there is
-        //only has value for clear setting, the rest null       
     	session.invalidate();
+    	//we need to get the default settings if there is
+        //only has value for clear setting, the rest null            	
     	setupDefaultScreenValues(form, getDefaultTemplateSettingFilter());
     	return super.show(model);
     }
@@ -317,7 +316,6 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	try {
 
     		SettingVariable svar = getSettingVariable(id);
-    		LOG.debug("got this : " + svar);
     		if (svar != null) {
     			ObjectMapper om = new ObjectMapper();
     			return om.writeValueAsString(svar);
@@ -371,8 +369,10 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
             case AppConstants.SEGMENT_STUDY : 
                 //form.getNurseryLevelVariables()
                 deleteVariableInSession(userSelection.getNurseryLevelConditions(), variableId);
-            default:
+            case AppConstants.SEGMENT_PLOT :
                 deleteVariableInSession(userSelection.getPlotsLevelList(), variableId);
+            default:
+                deleteVariableInSession(userSelection.getBaselineTraitsList(), variableId);
         }
         return "";
     }
@@ -573,14 +573,16 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
      */
     private void populateSettingVariable(SettingVariable var) throws MiddlewareQueryException {
     	StandardVariable  stdvar = getStandardVariable(var.getCvTermId());
-		var.setDescription(stdvar.getDescription());
-		var.setProperty(stdvar.getProperty().getName());
-		var.setScale(stdvar.getScale().getName());
-		var.setMethod(stdvar.getMethod().getName());
-		var.setDataType(stdvar.getDataType().getName());
-		var.setRole(stdvar.getStoredIn().getName());
-		var.setCropOntologyId(stdvar.getCropOntologyId() != null ? stdvar.getCropOntologyId() : "");
-		var.setTraitClass(stdvar.getIsA().getName());
+    	if (stdvar != null) {
+			var.setDescription(stdvar.getDescription());
+			var.setProperty(stdvar.getProperty().getName());
+			var.setScale(stdvar.getScale().getName());
+			var.setMethod(stdvar.getMethod().getName());
+			var.setDataType(stdvar.getDataType().getName());
+			var.setRole(stdvar.getStoredIn().getName());
+			var.setCropOntologyId(stdvar.getCropOntologyId() != null ? stdvar.getCropOntologyId() : "");
+			var.setTraitClass(stdvar.getIsA() != null ? stdvar.getIsA().getName() : "");
+    	}
     }
 
     /**
@@ -635,6 +637,5 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	return null;
     	*/
     	return userSelection.getCacheStandardVariable(id);
-    	
     }
 }

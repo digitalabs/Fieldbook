@@ -172,16 +172,20 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 	    					<table class="my-class table table-curved table-condensed" id="baselineTraitSettings">
 	    						<thead>
 								<tr>
+									<th></th>
 					                <th th:utext="#{nursery.managesettings.trait}">.Trait</th>
 					                <th th:utext="#{nursery.managesettings.trait.description}">.Description</th>
 								</tr>
 								</thead>
 								<tbody>
 			    					<tr th:each="baselineTraitVariable, rowStat : *{baselineTraitVariables}">
-			    					<td th:text="${baselineTraitVariable.variable.name}">
-			    						<input type="hidden" th:field="*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId}" />
-			    					</td>
-			    					<td th:text="${baselineTraitVariables[__${rowStat.index}__].variable.description}"></td>
+			    						<td>
+				    						<span th:if="${baselineTraitVariables[__${rowStat.index}__].delete}" class="glyphicon glyphicon-remove-sign"
+				    						th:onclick="'javascript: deleteVariable(3,\'' + *{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId} + '\',$(this))'"></span>
+				    						<input type="hidden" th:field="*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId}" />
+			    						</td>
+				    					<td th:text="${baselineTraitVariable.variable.name}"></td>
+				    					<td th:text="${baselineTraitVariables[__${rowStat.index}__].variable.description}"></td>
 			    					</tr> 
 		    					</tbody>
 	    					</table>

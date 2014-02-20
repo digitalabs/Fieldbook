@@ -241,42 +241,48 @@ public class SettingsUtil {
    		    List<SettingDetail> nurseryLevelConditions = new ArrayList<SettingDetail>();
 		    List<SettingDetail> plotsLevelList  = new ArrayList<SettingDetail>();
 		    List<SettingDetail> baselineTraitsList  = new ArrayList<SettingDetail>();
-			for(Condition condition : dataset.getConditions()){
-				
-				SettingVariable variable = new SettingVariable(condition.getName(), condition.getDescription(), condition.getProperty(),
-						condition.getScale(), condition.getMethod(), condition.getRole(), condition.getDatatype());
-				Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
-				variable.setCvTermId(stdVar);
-				List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
-				SettingDetail settingDetail = new SettingDetail(variable,
-						possibleValues, condition.getValue(), isSettingVariableDeletable(stdVar));
-				
-				settingDetail.setPossibleValuesToJson(possibleValues);
-				nurseryLevelConditions.add(settingDetail);
-			}
+		    if(dataset.getConditions() != null){
+				for(Condition condition : dataset.getConditions()){
+					
+					SettingVariable variable = new SettingVariable(condition.getName(), condition.getDescription(), condition.getProperty(),
+							condition.getScale(), condition.getMethod(), condition.getRole(), condition.getDatatype());
+					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
+					variable.setCvTermId(stdVar);
+					List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
+					SettingDetail settingDetail = new SettingDetail(variable,
+							possibleValues, condition.getValue(), isSettingVariableDeletable(stdVar));
+					
+					settingDetail.setPossibleValuesToJson(possibleValues);
+					nurseryLevelConditions.add(settingDetail);
+				}
+		    }
 			//plot level
 			//always allowed to be deleted
-			for(Factor factor : dataset.getFactors()){
-				
-				SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(),
-						factor.getScale(), factor.getMethod(), factor.getRole(), factor.getDatatype());
-				Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
-				variable.setCvTermId(stdVar);
-				SettingDetail settingDetail = new SettingDetail(variable,
-						null, null, true);
-				plotsLevelList.add(settingDetail);
+			if(dataset.getFactors() != null){
+				for(Factor factor : dataset.getFactors()){
+					
+					SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(),
+							factor.getScale(), factor.getMethod(), factor.getRole(), factor.getDatatype());
+					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
+					variable.setCvTermId(stdVar);
+					SettingDetail settingDetail = new SettingDetail(variable,
+							null, null, true);
+					plotsLevelList.add(settingDetail);
+				}
 			}
 			//baseline traits
 			//always allowed to be deleted
-			for(Variate variate : dataset.getVariates()){
-				
-				SettingVariable variable = new SettingVariable(variate.getName(), variate.getDescription(), variate.getProperty(),
-						variate.getScale(), variate.getMethod(), variate.getRole(), variate.getDatatype());
-				Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
-				variable.setCvTermId(stdVar);
-				SettingDetail settingDetail = new SettingDetail(variable,
-						null, null, true);
-				baselineTraitsList.add(settingDetail);
+			if(dataset.getVariates() != null){
+				for(Variate variate : dataset.getVariates()){
+					
+					SettingVariable variable = new SettingVariable(variate.getName(), variate.getDescription(), variate.getProperty(),
+							variate.getScale(), variate.getMethod(), variate.getRole(), variate.getDatatype());
+					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
+					variable.setCvTermId(stdVar);
+					SettingDetail settingDetail = new SettingDetail(variable,
+							null, null, true);
+					baselineTraitsList.add(settingDetail);
+				}
 			}
 			
 			userSelection.setNurseryLevelConditions(nurseryLevelConditions);

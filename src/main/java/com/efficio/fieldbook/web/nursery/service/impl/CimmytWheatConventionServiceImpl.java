@@ -55,7 +55,7 @@ implements CimmytWheatConventionService {
                 if (row.getPlantsSelected().equals(0)) {
                     newGermplasmName = origGermplasmName + "-0" + suffix;
                     addImportedGermplasmToList(list, row, newGermplasmName, 
-                            AppConstants.RANDOM_BULK_SF, index++, rows.getNurseryName());
+                            AppConstants.RANDOM_BULK_SF.getInt(), index++, rows.getNurseryName());
                 }
                 else if (row.getPlantsSelected().intValue() < 0) {
                     if (row.getGermplasm().getDesig().endsWith("T")) {
@@ -65,7 +65,7 @@ implements CimmytWheatConventionService {
                         newGermplasmName = origGermplasmName + "-0" + Math.abs(row.getPlantsSelected()) + suffix;
                     }
                     addImportedGermplasmToList(list, row, newGermplasmName, 
-                            AppConstants.SELECTED_BULK_SF, index++, rows.getNurseryName());
+                            AppConstants.SELECTED_BULK_SF.getInt(), index++, rows.getNurseryName());
                 }
                 else {
                     if (rows.isBulk()) {
@@ -77,7 +77,8 @@ implements CimmytWheatConventionService {
                         for (int i = 0; i < row.getPlantsSelected(); i++) {
                             newGermplasmName = origGermplasmName + "-" + (i+1) + suffix;
                             addImportedGermplasmToList(list, row, newGermplasmName, 
-                                    AppConstants.SINGLE_PLANT_SELECTION_SF, index++, rows.getNurseryName());
+                                    AppConstants.SINGLE_PLANT_SELECTION_SF.getInt(), 
+                                    index++, rows.getNurseryName());
                         }
                     }
                 }

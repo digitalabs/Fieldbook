@@ -111,18 +111,19 @@ public class FieldbookServiceImpl implements FieldbookService{
 		return result;
 	}
 	
-	private boolean isApplicableInCurrentMode(StandardVariable var, int mode) {
-		switch (mode) {
-			case AppConstants.SEGMENT_STUDY : return var.getPhenotypicType() == PhenotypicType.STUDY 
-													|| var.getPhenotypicType() == PhenotypicType.DATASET 
-													|| var.getPhenotypicType() == PhenotypicType.TRIAL_ENVIRONMENT;
-			case AppConstants.SEGMENT_PLOT : return var.getPhenotypicType() == PhenotypicType.TRIAL_ENVIRONMENT
-													|| var.getPhenotypicType() == PhenotypicType.TRIAL_DESIGN
-													|| var.getPhenotypicType() == PhenotypicType.GERMPLASM;
-			case AppConstants.SEGMENT_TRAITS : return var.getPhenotypicType() == PhenotypicType.VARIATE;
-		}
-		return false;
-	}
+    private boolean isApplicableInCurrentMode(StandardVariable var, int mode) {
+        if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
+            return var.getPhenotypicType() == PhenotypicType.STUDY || var.getPhenotypicType() == PhenotypicType.DATASET
+                    || var.getPhenotypicType() == PhenotypicType.TRIAL_ENVIRONMENT;
+        } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
+            return var.getPhenotypicType() == PhenotypicType.TRIAL_ENVIRONMENT
+                    || var.getPhenotypicType() == PhenotypicType.TRIAL_DESIGN
+                    || var.getPhenotypicType() == PhenotypicType.GERMPLASM;
+        } else if (mode == AppConstants.SEGMENT_TRAITS.getInt()) {
+            return var.getPhenotypicType() == PhenotypicType.VARIATE;
+        }
+        return false;
+    }
 	
 	@Override
 	public List<ValueReference> getAllPossibleValues(int id) throws MiddlewareQueryException {

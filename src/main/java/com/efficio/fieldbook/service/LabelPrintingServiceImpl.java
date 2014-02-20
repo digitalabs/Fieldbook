@@ -155,7 +155,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
             	
                 Rectangle pageSize = PageSize.LETTER;
 
-                if (pageSizeId == AppConstants.SIZE_OF_PAPER_A4)
+                if (pageSizeId == AppConstants.SIZE_OF_PAPER_A4.getInt())
                     pageSize = PageSize.A4;
 
                 Document document = new Document(pageSize);
@@ -493,68 +493,50 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         Locale locale = LocaleContextHolder.getLocale();
 
         StringBuffer buffer = new StringBuffer();
-        switch(Integer.parseInt(headerId)){           
-            
-            case AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM:
-                buffer.append(messageSource.getMessage(
-                        "label.printing.available.fields.entry.num", null, locale));                 
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_GID: 
-                buffer.append(messageSource.getMessage(
-                        "label.printing.available.fields.gid", null, locale));
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME: 
-                buffer.append(messageSource.getMessage(
-                        "label.printing.available.fields.germplasm.name", null, locale));
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_YEAR: 
-                buffer.append(messageSource.getMessage(
-                        "label.printing.available.fields.year", null, locale));
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_SEASON: 
-                buffer.append(messageSource.getMessage(
-                        "label.printing.available.fields.season", null, locale));
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME: 
-                buffer.append(messageSource.getMessage(
-                        "label.printing.available.fields.nursery.name", null, locale));
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME: 
-                buffer.append(messageSource.getMessage(
-                        "label.printing.available.fields.trial.name", null, locale));
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM: 
-                buffer.append(messageSource.getMessage(
-                        "label.printing.available.fields.trial.instance.num", null, locale));
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_REP: 
-                buffer.append(messageSource.getMessage(
-                        "label.printing.available.fields.rep", null, locale));
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION: 
-                buffer.append(messageSource.getMessage(
-                        "label.printing.available.fields.location", null, locale));
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME: 
-                buffer.append(messageSource.getMessage(
-                        "label.printing.available.fields.block.name", null, locale));
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_PLOT: 
-                buffer.append(messageSource.getMessage(
-                        "label.printing.available.fields.plot", null, locale));
-                break;
-                
-            case AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE: 
-                buffer.append(messageSource.getMessage(
-                        "label.printing.available.fields.parentage", null, locale));
-                break;
-                
-            case AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES: 
-                buffer.append(messageSource.getMessage(
-                        "label.printing.available.fields.plot.coordinates", null, locale));
-                break;
-           
-            default: break;    
+        int parseInt = Integer.parseInt(headerId);
+        if (parseInt ==  AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM.getInt()) {
+            buffer.append(messageSource.getMessage(
+                    "label.printing.available.fields.entry.num", null, locale));
+        } else if (parseInt ==  AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
+            buffer.append(messageSource.getMessage(
+                    "label.printing.available.fields.gid", null, locale));
+        } else if (parseInt ==  AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME.getInt()) {
+            buffer.append(messageSource.getMessage(
+                    "label.printing.available.fields.germplasm.name", null, locale));
+        } else if (parseInt ==  AppConstants.AVAILABLE_LABEL_FIELDS_YEAR.getInt()) {
+            buffer.append(messageSource.getMessage(
+                    "label.printing.available.fields.year", null, locale));
+        } else if (parseInt ==  AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt()) {
+            buffer.append(messageSource.getMessage(
+                    "label.printing.available.fields.season", null, locale));
+        } else if (parseInt ==  AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME.getInt()) {
+            buffer.append(messageSource.getMessage(
+                    "label.printing.available.fields.nursery.name", null, locale));
+        } else if (parseInt ==  AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME.getInt()) {
+            buffer.append(messageSource.getMessage(
+                    "label.printing.available.fields.trial.name", null, locale));
+        } else if (parseInt ==  AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM.getInt()) {
+            buffer.append(messageSource.getMessage(
+                    "label.printing.available.fields.trial.instance.num", null, locale));
+        } else if (parseInt ==  AppConstants.AVAILABLE_LABEL_FIELDS_REP.getInt()) {
+            buffer.append(messageSource.getMessage(
+                    "label.printing.available.fields.rep", null, locale));
+        } else if (parseInt ==  AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION.getInt()) {
+            buffer.append(messageSource.getMessage(
+                    "label.printing.available.fields.location", null, locale));
+        } else if (parseInt ==  AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt()) {
+            buffer.append(messageSource.getMessage(
+                    "label.printing.available.fields.block.name", null, locale));
+        } else if (parseInt ==  AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt()) {
+            buffer.append(messageSource.getMessage(
+                    "label.printing.available.fields.plot", null, locale));
+        } else if (parseInt == AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE.getInt()) {
+            buffer.append(messageSource.getMessage(
+                    "label.printing.available.fields.parentage", null, locale));
+        } else if (parseInt == AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt()) {
+            buffer.append(messageSource.getMessage(
+                    "label.printing.available.fields.plot.coordinates", null, locale));
+        } else {
         }
         return buffer.toString();
     }
@@ -570,57 +552,39 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
     private String getSpecificInfo(
             Map<String,String> moreFieldInfo, FieldMapLabel fieldMapLabel, String barcodeLabel){
         StringBuffer buffer = new StringBuffer();
-        switch(Integer.parseInt(barcodeLabel)){
-            
-            
-            case AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM:
-                buffer.append(fieldMapLabel.getEntryNumber());
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_GID: 
-                String gidTemp = fieldMapLabel.getGid() == null 
-                                ? "" : fieldMapLabel.getGid().toString();
-                buffer.append(gidTemp);
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME: 
-                buffer.append(fieldMapLabel.getGermplasmName());
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_YEAR: 
-                buffer.append(fieldMapLabel.getStartYear());
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_SEASON: 
-                buffer.append(fieldMapLabel.getSeason());
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME: 
-                buffer.append(moreFieldInfo.get("selectedName"));
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME: 
-                buffer.append(moreFieldInfo.get("selectedName"));
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM: 
-                buffer.append(moreFieldInfo.get("trialInstanceNumber"));
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_REP: 
-                buffer.append(fieldMapLabel.getRep());
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION: 
-                buffer.append(moreFieldInfo.get("locationName")); 
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME: 
-                buffer.append(moreFieldInfo.get("blockName"));
-                break;
-            case AppConstants.AVAILABLE_LABEL_FIELDS_PLOT: 
-                buffer.append(fieldMapLabel.getPlotNo());
-                break;
-                
-            case AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE: 
-                buffer.append(fieldMapLabel.getPedigree() == null ? "" : fieldMapLabel.getPedigree());
-                break;
-                
-            case AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES: 
-                buffer.append(fieldMapLabel.getPlotCoordinate());
-                break;
-           
-            default: break;    
+
+        int parseInt = Integer.parseInt(barcodeLabel);
+        if (parseInt ==  AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM.getInt()) {
+            buffer.append(fieldMapLabel.getEntryNumber());
+        } else if (parseInt == AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
+            String gidTemp = fieldMapLabel.getGid() == null 
+                            ? "" : fieldMapLabel.getGid().toString();
+            buffer.append(gidTemp);
+        } else if (parseInt == AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME.getInt()) {
+            buffer.append(fieldMapLabel.getGermplasmName());
+        } else if (parseInt == AppConstants.AVAILABLE_LABEL_FIELDS_YEAR.getInt()) {
+            buffer.append(fieldMapLabel.getStartYear());
+        } else if (parseInt == AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt()) {
+            buffer.append(fieldMapLabel.getSeason());
+        } else if (parseInt == AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME.getInt()) {
+            buffer.append(moreFieldInfo.get("selectedName"));
+        } else if (parseInt == AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME.getInt()) {
+            buffer.append(moreFieldInfo.get("selectedName"));
+        } else if (parseInt == AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM.getInt()) {
+            buffer.append(moreFieldInfo.get("trialInstanceNumber"));
+        } else if (parseInt == AppConstants.AVAILABLE_LABEL_FIELDS_REP.getInt()) {
+            buffer.append(fieldMapLabel.getRep());
+        } else if (parseInt == AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION.getInt()) {
+            buffer.append(moreFieldInfo.get("locationName"));
+        } else if (parseInt == AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt()) {
+            buffer.append(moreFieldInfo.get("blockName"));
+        } else if (parseInt == AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt()) {
+            buffer.append(fieldMapLabel.getPlotNo());
+        } else if (parseInt == AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE.getInt()) {
+            buffer.append(fieldMapLabel.getPedigree() == null ? "" : fieldMapLabel.getPedigree());
+        } else if (parseInt == AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt()) {
+            buffer.append(fieldMapLabel.getPlotCoordinate());
+        } else {
         }
         String stemp = buffer.toString();
         if(stemp != null && "null".equalsIgnoreCase(stemp))

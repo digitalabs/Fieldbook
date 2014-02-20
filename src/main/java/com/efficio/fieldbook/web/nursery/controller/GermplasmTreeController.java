@@ -59,8 +59,8 @@ public class GermplasmTreeController{
 
         try {
             List<TreeNode> rootNodes = new ArrayList<TreeNode>();
-            rootNodes.add(new TreeNode("LOCAL", AppConstants.GERMPLASM_LIST_LOCAL, true, "lead", Boolean.FALSE));
-            rootNodes.add(new TreeNode("CENTRAL", AppConstants.GERMPLASM_LIST_CENTRAL, true, "lead", Boolean.FALSE));
+            rootNodes.add(new TreeNode("LOCAL", AppConstants.GERMPLASM_LIST_LOCAL.getString(), true, "lead", Boolean.FALSE));
+            rootNodes.add(new TreeNode("CENTRAL", AppConstants.GERMPLASM_LIST_CENTRAL.getString(), true, "lead", Boolean.FALSE));
             return TreeViewUtil.convertTreeViewToJson(rootNodes);
             
         } catch(Exception e) {

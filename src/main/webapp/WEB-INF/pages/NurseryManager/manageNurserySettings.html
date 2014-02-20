@@ -35,7 +35,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			    			
 			    			<a href="javascript: void(0)" id="addNewSettings"><span class="glyphicon glyphicon-plus"></span>&nbsp; <span th:text="#{nursery.managesettings.add.new.settings}">Add New Settings</span></a>
 			    			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			    			<a href="javascript: void(0)" id="clearSettings"><span class="glyphicon glyphicon-remove"></span>&nbsp;<span th:text="#{nursery.managesettings.clear.settings}">Clear</span></a>
+			    			<a href="javascript: void(0)" id="resetSettings"><img width="15" src="/Fieldbook/static/img/reset.png"/>&nbsp;<span th:text="#{nursery.managesettings.reset.settings}">Reset</span></a>
 			    			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			    			
 			    			<a href="javascript: void(0)" id="deleteSettings" ><span class="glyphicon glyphicon-trash"></span>&nbsp;<span th:text="#{common.form.delete.text}">Delete</span></a>
@@ -51,7 +51,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 		    	<div class="panel-body">
 		    		<div class="row form-group">
 			    		<div class="col-xs-12 col-md-12">
-			    			<label class="control-label"><em th:text="#{nursery.managesettings.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
+			    			<label class="control-label"><em th:text="#{nursery.managesettings.mandatory.fields}"> Mandatory fields are noted with a *</em></label><span class="required">&nbsp;*</span>
 		    			</div>
 	    			</div>
 	    			<div class="row form-group">
@@ -74,7 +74,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 										th:onclick="'javascript: deleteVariable(1,\'' + ${nurseryLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
 										<input type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 									</td>
-									<td style="max-width:150px; min-width:150px;"><label class="control-label" th:text="${nurseryLevelVariable.variable.name}+':*'"></label></td>
+									<td style="max-width:150px; min-width:150px;"><label class="control-label" th:text="${nurseryLevelVariable.variable.name}+':'"></label><span class="required">*</span></td>
 									<td style="max-width:200px; min-width:200px;">
 										<input type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].value}" class="form-control select2" />
 										<div th:text="${nurseryLevelVariable.value}" class="div-select-val" style="display: none"/>
@@ -192,7 +192,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			    						</td>
 				    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.name}"></td>
 				    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.description}"></td>
-				    					<td>
+				    					<td th:class="${rowStat.even}? 'even' : 'odd'" >
 				    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
 												*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
 												<span class="glyphicon glyphicon-eye-open"></span></a>
@@ -276,7 +276,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
     				</div>
     				<div class="row form-group">
 	    				<div class="col-xs-5 col-md-5">
-	    					<label class="contol-label" th:text="#{nursery.managesettings.save.settings.as}+':'">Save these settings as:</label>
+	    					<label class="contol-label" th:text="#{nursery.managesettings.save.settings.as}+':'">Save these settings as:</label><span class="required">*</span>
 	    					&nbsp;&nbsp;
 	    					<input type="text" th:field="*{settingName}" />
 	    				</div>
@@ -370,7 +370,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
  	 					$('#delete-settings-confirmation').modal('show');	
  					} 					 					
  				});
- 				$('#clearSettings').on('click', clearSettings);
+ 				$('#resetSettings').on('click', clearSettings);
  				$('#saveSettings').on('click', doSaveSettings);
  				$('#addNewSettings').on('click', addNewSettings);
  				

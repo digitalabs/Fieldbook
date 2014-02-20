@@ -558,7 +558,7 @@ function createNurseryLevelSettingVariables(data) {
 		"<input type='hidden' id='nurseryLevelVariables" + ctr + ".variable.cvTermId' name='nurseryLevelVariables[" + 
 		ctr + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
-		newRow = newRow + "<td>" + settingDetail.variable.name + ':*' +  "</td>";
+		newRow = newRow + "<td>" + settingDetail.variable.name + ':' + '<span class="required">*</span>' +  "</td>";
 		newRow = newRow + "<td><input type='hidden' id='nurseryLevelVariables" + ctr + 
 		".value' name='nurseryLevelVariables[" + ctr + "].value' class='form-control select2' /></td></tr>";
 

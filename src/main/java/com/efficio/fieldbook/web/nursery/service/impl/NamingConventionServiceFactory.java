@@ -39,10 +39,12 @@ public class NamingConventionServiceFactory {
     public NamingConventionService getNamingConventionService(String namingConvention) {
         if (namingConvention != null && NumberUtils.isNumber(namingConvention)) {
             int namingConventionValue = Integer.valueOf(namingConvention);
-            switch (namingConventionValue) {
-                case AppConstants.NAMING_CONVENTION_CIMMYT_WHEAT : return wheatService;
-                case AppConstants.NAMING_CONVENTION_CIMMYT_MAIZE : return otherCropsService;
-                case AppConstants.NAMING_CONVENTION_OTHER_CROPS  : return otherCropsService;
+            if (namingConventionValue == AppConstants.NAMING_CONVENTION_CIMMYT_WHEAT.getInt()) {
+                return wheatService;
+            } else if (namingConventionValue == AppConstants.NAMING_CONVENTION_CIMMYT_MAIZE.getInt()) {
+                return otherCropsService;
+            } else if (namingConventionValue == AppConstants.NAMING_CONVENTION_OTHER_CROPS.getInt()) {
+                return otherCropsService;
             }
         }
         

@@ -24,6 +24,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
 import com.efficio.fieldbook.util.FieldbookException;
+import com.efficio.fieldbook.web.util.AppConstants;
 
 /**
  * The Class UserFieldmap.
@@ -35,12 +36,6 @@ public class UserFieldmap  implements Serializable {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
-    /** The row column. */
-    public static final int ROW_COLUMN = 1;
-    
-    /** The serpentine. */
-    public static final int SERPENTINE = 2;
-	
     /** The trial id or nursery id. */
     private Integer studyId;
     
@@ -492,9 +487,9 @@ public class UserFieldmap  implements Serializable {
     public String getPlantingOrderString(ResourceBundleMessageSource messageSource) 
             throws FieldbookException{
     	Locale locale = LocaleContextHolder.getLocale();
-    	if (plantingOrder == ROW_COLUMN){
+    	if (plantingOrder == AppConstants.ROW_COLUMN.getInt()){
     		return messageSource.getMessage("fieldmap.planting.order.row.column", null, locale);
-    	} else if (plantingOrder == SERPENTINE){
+    	} else if (plantingOrder == AppConstants.SERPENTINE.getInt()){
     		return messageSource.getMessage("fieldmap.planting.order.serpentine", null, locale);
     	}
     	throw new FieldbookException("Invalid planting order.");
@@ -506,7 +501,7 @@ public class UserFieldmap  implements Serializable {
      * @return true, if is serpentine
      */
     public boolean isSerpentine(){
-    	if (plantingOrder == SERPENTINE){
+    	if (plantingOrder == AppConstants.SERPENTINE.getInt()){
     		return true;
     	}
     	return false;

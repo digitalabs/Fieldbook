@@ -35,6 +35,7 @@ import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.label.printing.service.impl.HorizontalFieldMapLayoutIterator;
 import com.efficio.fieldbook.web.label.printing.service.impl.VerticalFieldMapLayoutIterator;
+import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
 
 /**
@@ -148,7 +149,7 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
 	public void testExportFieldMapToExcelHorizontalRowColumn() throws Exception{
 		
 	    UserFieldmap userFieldMap = createUserFieldMap();
-        userFieldMap.setPlantingOrder(UserFieldmap.ROW_COLUMN);
+        userFieldMap.setPlantingOrder(AppConstants.ROW_COLUMN.getInt());
 
         Map<String, String> deletedPlot = createDeletedPlot();
 
@@ -183,7 +184,7 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
 	public void testExportFieldMapToExcelVerticalRowColumn() throws Exception{
 
 		UserFieldmap userFieldMap = createUserFieldMap();
-        userFieldMap.setPlantingOrder(UserFieldmap.ROW_COLUMN);
+        userFieldMap.setPlantingOrder(AppConstants.ROW_COLUMN.getInt());
 
         Map<String, String> deletedPlot = createDeletedPlot();
 
@@ -222,7 +223,7 @@ public class TestExportExcelService extends AbstractJUnit4SpringContextTests {
 	        userFieldMap.setNumberOfRowsPerPlot(2);
 	        userFieldMap.setStartingColumn(2);
 	        userFieldMap.setStartingRange(2);
-	        userFieldMap.setPlantingOrder(UserFieldmap.SERPENTINE);
+	        userFieldMap.setPlantingOrder(AppConstants.SERPENTINE.getInt());
 	        userFieldMap.setNumberOfRangesInBlock(10);
 	        
 	        return userFieldMap;

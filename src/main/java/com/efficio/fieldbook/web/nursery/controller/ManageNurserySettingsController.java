@@ -367,13 +367,14 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     @RequestMapping(value = "/deleteVariable/{mode}/{variableId}", method = RequestMethod.POST)
     public String deleteVariable(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, Model model, 
             @PathVariable int mode, @PathVariable int variableId) {
-        
         switch (mode) {
             case AppConstants.SEGMENT_STUDY : 
                 //form.getNurseryLevelVariables()
                 deleteVariableInSession(userSelection.getNurseryLevelConditions(), variableId);
+                break;
             case AppConstants.SEGMENT_PLOT :
                 deleteVariableInSession(userSelection.getPlotsLevelList(), variableId);
+                break;
             default:
                 deleteVariableInSession(userSelection.getBaselineTraitsList(), variableId);
         }

@@ -637,7 +637,7 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation, default
 		}
 		
 		possibleValues_obj.push(jsonVal);  
-		if(defaultValue != null && defaultValue != '' && (defaultValue == value.id) || (defaultValue == value.locid)){
+		if(defaultValue != null && defaultValue != '' && ((defaultValue == value.id) || (defaultValue == value.locid))){
 			defaultJsonVal = jsonVal;
 		}
 		

@@ -631,7 +631,7 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation, default
 	$.each(possibleValues, function(index, value) {
 		var jsonVal;
 		if (value.id != undefined) {
-			jsonVal = { 'id' : value.id,
+			jsonVal = { 'id' : value.key,
 					  'text' : value.name
 				};
 		} else {
@@ -641,7 +641,7 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation, default
 		}
 		
 		possibleValues_obj.push(jsonVal);  
-		if(defaultValue != null && defaultValue != '' && ((defaultValue == value.id) || (defaultValue == value.locid))){
+		if(defaultValue != null && defaultValue != '' && ((defaultValue == value.key) || (defaultValue == value.locid))){
 			defaultJsonVal = jsonVal;
 		}
 		
@@ -829,6 +829,15 @@ function hasDuplicateSettingName(){
 	})
 	return hasDuplicate;
 }
+function hasEmptyNurseryValue(){
+	var hasEmpty = false;
+	$.each($("#nurseryLevelSettings tbody tr"), function(index, row) {
+		if ($($(row).children("td:nth-child(3)").children("#" + getJquerySafeId("nurseryLevelVariables"+index+".value"))).select2("data") == null) {
+			hasEmpty = true;
+		} 
+	})
+	return hasEmpty;
+}
 function doSaveSettings(){
 	$('#settingName').val($('#settingName').val().trim());
 	if($('#settingName').val() == ''){
@@ -837,6 +846,9 @@ function doSaveSettings(){
 	}else if(hasDuplicateSettingName()){
 		showErrorMessage('page-message', templateSettingNameErrorUnique);
 	return false;
+	} else if(hasEmptyNurseryValue()){
+		showErrorMessage('page-message', nurseryLevelValueEmpty);
+		return false;
 	} else{ 		
 		doAjaxMainSubmit('page-message', saveTemplateSettingSuccess, null);
 		/*

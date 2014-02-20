@@ -18,11 +18,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.settings.Condition;
@@ -31,10 +31,8 @@ import org.generationcp.middleware.pojos.workbench.settings.Factor;
 import org.generationcp.middleware.pojos.workbench.settings.Variate;
 import org.pojoxml.core.PojoXml;
 import org.pojoxml.core.PojoXmlFactory;
-import org.springframework.stereotype.Component;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.demo.bean.TestJavaBean;
 import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
@@ -388,5 +386,126 @@ public class SettingsUtil {
 		setupPojoXml(pojoXml);
 		Dataset dataset  = (Dataset) pojoXml.getPojoFromFile("testdataset.xml",Dataset.class);
 		return dataset;
+	}
+	
+	public static Workbook convertXmlDatasetToWorkbook(Dataset dataset) {
+		Workbook workbook = new Workbook();
+		
+		workbook.setConditions(convertConditionsToMeasurementVariables(dataset.getConditions()));
+		workbook.setFactors(convertFactorsToMeasurementVariables(dataset.getFactors()));
+		workbook.setVariates(convertVariatesToMeasurementVariables(dataset.getVariates()));
+		
+		return workbook;
+	}
+	
+	public static Dataset convertWorkbookToXmlDataset(Workbook workbook) {
+		Dataset dataset = new Dataset();
+		
+		dataset.setConditions(convertMeasurementVariablesToConditions(workbook.getConditions()));
+		dataset.setFactors(convertMeasurementVariablesToFactors(workbook.getFactors()));
+		dataset.setVariates(convertMeasurementVariablesToVariates(workbook.getVariates()));
+		
+		return dataset;
+	}
+	
+	private static List<Condition> convertMeasurementVariablesToConditions(List<MeasurementVariable> mlist) {
+		List<Condition> conditions = new ArrayList<Condition>();
+		
+		if (mlist != null && !mlist.isEmpty()) {
+			for (MeasurementVariable mvar : mlist) {
+				conditions.add(new Condition(
+						mvar.getName(), 
+						mvar.getDescription(), 
+						mvar.getProperty(), 
+						mvar.getScale(), 
+						mvar.getMethod(), 
+						PhenotypicType.getPhenotypicTypeForLabel(mvar.getLabel()).toString(), 
+						mvar.getDataType(), 
+						mvar.getValue()));
+			}
+		}
+		
+		return conditions;
+	}
+	private static List<Factor> convertMeasurementVariablesToFactors(List<MeasurementVariable> mlist) {
+		List<Factor> factors = new ArrayList<Factor>();
+		
+		if (mlist != null && !mlist.isEmpty()) {
+			for (MeasurementVariable mvar : mlist) {
+				factors.add(new Factor(
+						mvar.getName(), 
+						mvar.getDescription(), 
+						mvar.getProperty(), 
+						mvar.getScale(), 
+						mvar.getMethod(), 
+						PhenotypicType.getPhenotypicTypeForLabel(mvar.getLabel()).toString(), 
+						mvar.getDataType()));
+			}
+		}
+		
+		return factors;
+	}
+	private static List<Variate> convertMeasurementVariablesToVariates(List<MeasurementVariable> mlist) {
+		List<Variate> variates = new ArrayList<Variate>();
+		
+		if (mlist != null && !mlist.isEmpty()) {
+			for (MeasurementVariable mvar : mlist) {
+				variates.add(new Variate(
+						mvar.getName(), 
+						mvar.getDescription(), 
+						mvar.getProperty(), 
+						mvar.getScale(), 
+						mvar.getMethod(), 
+						PhenotypicType.VARIATE.toString(), 
+						mvar.getDataType()));
+			}
+		}
+		
+		return variates;
+	}
+	
+	private static List<MeasurementVariable> convertConditionsToMeasurementVariables(List<Condition> conditions) {
+		List<MeasurementVariable> list = new ArrayList<MeasurementVariable>();
+		if (conditions != null && !conditions.isEmpty()) {
+			for (Condition condition : conditions) {
+				list.add(convertConditionToMeasurementVariable(condition));
+			}
+		}
+		return list;
+	}
+	private static MeasurementVariable convertConditionToMeasurementVariable(Condition condition) {
+		return new MeasurementVariable(
+				condition.getName(), condition.getDescription(), condition.getScale(), condition.getMethod(), condition.getProperty(), condition.getDatatype(), 
+				condition.getValue(), PhenotypicType.valueOf(condition.getRole()).getLabelList().get(0));
+	}
+
+	private static List<MeasurementVariable> convertFactorsToMeasurementVariables(List<Factor> factors) {
+		List<MeasurementVariable> list = new ArrayList<MeasurementVariable>();
+		if (factors != null && !factors.isEmpty()) {
+			for (Factor factor : factors) {
+				list.add(convertFactorToMeasurementVariable(factor));
+			}
+		}
+		return list;
+	}
+	private static MeasurementVariable convertFactorToMeasurementVariable(Factor factor) {
+		return new MeasurementVariable(
+				factor.getName(), factor.getDescription(), factor.getScale(), factor.getMethod(), factor.getProperty(), factor.getDatatype(), null, 
+				PhenotypicType.valueOf(factor.getRole()).getLabelList().get(0));
+	}
+
+	private static List<MeasurementVariable> convertVariatesToMeasurementVariables(List<Variate> variates) {
+		List<MeasurementVariable> list = new ArrayList<MeasurementVariable>();
+		if (variates != null && !variates.isEmpty()) {
+			for (Variate variate : variates) {
+				list.add(convertVariateToMeasurementVariable(variate));
+			}
+		}
+		return list;
+	}
+	private static MeasurementVariable convertVariateToMeasurementVariable(Variate variate) {
+		return new MeasurementVariable(
+				variate.getName(), variate.getDescription(), variate.getScale(), variate.getMethod(), variate.getProperty(), variate.getDatatype(), null, 
+				PhenotypicType.TRIAL_DESIGN.getLabelList().get(0)); //because variates are mostly PLOT variables
 	}
 }

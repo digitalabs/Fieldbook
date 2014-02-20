@@ -12,6 +12,7 @@
 package com.efficio.fieldbook.web.nursery.bean;
 
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.oms.TermId;
 
 
 public class SettingVariable {
@@ -121,8 +122,17 @@ public class SettingVariable {
 			this.method = standardVariable.getMethod().getName();
 			this.role = standardVariable.getPhenotypicType().name();
 			this.description = standardVariable.getDescription();
-			this.dataType = standardVariable.getDataType().getName();			
+			this.dataType = getDataType(standardVariable.getDataType().getId());			
 		}
 	}
 
+	private String getDataType(int dataTypeId) {
+	    //datatype ids: 1120, 1125, 1128, 1130
+	    if (dataTypeId == TermId.CHARACTER_VARIABLE.getId() || dataTypeId == TermId.TIMESTAMP_VARIABLE.getId() || 
+	            dataTypeId == TermId.CHARACTER_DBID_VARIABLE.getId() || dataTypeId == TermId.CATEGORICAL_VARIABLE.getId()) {
+	        return "C";
+	    } else {
+	        return "N";
+	    }
+	}
 }

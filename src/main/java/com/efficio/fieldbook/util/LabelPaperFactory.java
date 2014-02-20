@@ -12,7 +12,7 @@ import com.efficio.fieldbook.web.util.AppConstants;
 public class LabelPaperFactory {
 	public static LabelPaper generateLabelPaper(int labelsPerRow, int numberOfRowsPerPage, int pageSize){
 		LabelPaper paper = new Paper3by7A4();
-		if(AppConstants.SIZE_OF_PAPER_LETTER == pageSize){
+		if(AppConstants.SIZE_OF_PAPER_LETTER.getInt() == pageSize){
 			if(labelsPerRow == 3){
 				switch(numberOfRowsPerPage){
 					case 7:
@@ -26,7 +26,7 @@ public class LabelPaperFactory {
 						break;
 				}
 			}
-		}else if(AppConstants.SIZE_OF_PAPER_A4 == pageSize){
+		}else if(AppConstants.SIZE_OF_PAPER_A4.getInt() == pageSize){
 			if(labelsPerRow == 3){
 				switch(numberOfRowsPerPage){
 					case 7:

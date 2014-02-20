@@ -69,12 +69,14 @@ implements OtherCropsConventionService {
         
         Name name = new Name();
         name.setGermplasmId(Integer.valueOf(source.getGermplasm().getGid()));
-        if (source.getGermplasm().getBreedingMethodId().equals(AppConstants.METHOD_UNKNOWN_DERIVATIVE_METHOD_SF)) {
+        if (source.getGermplasm().getBreedingMethodId().equals(
+                AppConstants.METHOD_UNKNOWN_DERIVATIVE_METHOD_SF.getInt())) {
             name.setTypeId(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID());
         }
         else {
-            if (source.getGermplasm().getBreedingMethodId().equals(AppConstants.METHOD_UNKNOWN_GENERATIVE_METHOD_SF)
-                && source.getGermplasm().getDesig().contains(AppConstants.NAME_SEPARATOR)) {
+            if (source.getGermplasm().getBreedingMethodId().equals(
+                    AppConstants.METHOD_UNKNOWN_GENERATIVE_METHOD_SF.getInt())
+                && source.getGermplasm().getDesig().contains(AppConstants.NAME_SEPARATOR.getString())) {
                 name.setTypeId(GermplasmNameType.CROSS_NAME.getUserDefinedFieldID());
             }
             else {

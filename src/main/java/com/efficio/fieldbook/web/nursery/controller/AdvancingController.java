@@ -183,7 +183,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	//form.setBreedingMethods();
     	Study study = fieldbookMiddlewareService.getStudy(nurseryId);
     	List<Variable> varList = study.getConditions().getVariables();
-    	form.setDefaultMethodId(Integer.toString(AppConstants.SINGLE_PLANT_SELECTION_SF));
+    	form.setDefaultMethodId(Integer.toString(AppConstants.SINGLE_PLANT_SELECTION_SF.getInt()));
     	for(Variable var : varList){
     		if(var.getVariableType().getStandardVariable().getId() == TermId.BREEDING_METHOD_ID.getId() 
     				&& var.getValue() != null && !var.getValue().equalsIgnoreCase("") && !var.getValue().equalsIgnoreCase("0")){    			

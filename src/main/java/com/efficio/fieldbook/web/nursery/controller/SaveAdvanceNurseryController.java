@@ -20,7 +20,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
-import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.pojos.Germplasm;
@@ -46,7 +45,6 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
@@ -253,7 +251,7 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
         // Create germplasm list
         String listName =  form.getNurseryAdvanceName();
         String harvestDate = advancingNursery.getHarvestDate(); 
-        String listType = AppConstants.GERMPLASM_LIST_TYPE_HARVEST;
+        String listType = AppConstants.GERMPLASM_LIST_TYPE_HARVEST.getString();
         Integer userId = 0;
         try {
             userId = workbenchService.getCurrentIbdbUserId(getCurrentProjectId());

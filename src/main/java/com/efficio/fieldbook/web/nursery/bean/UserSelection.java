@@ -312,7 +312,7 @@ public class UserSelection implements Serializable {
 	public void setAllStandardVariables(Set<StandardVariable> allStandardVariables) {
 		this.allStandardVariables = allStandardVariables;
 		
-		standardVariableMap = new HashMap();
+		standardVariableMap = new HashMap<String, StandardVariable>();
 		if(allStandardVariables != null){
 			for(StandardVariable var : allStandardVariables){
 				standardVariableMap.put(Integer.toString(var.getId()), var);

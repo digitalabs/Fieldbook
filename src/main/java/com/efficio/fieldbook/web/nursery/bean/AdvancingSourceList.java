@@ -121,9 +121,9 @@ public class AdvancingSourceList{
     
     public boolean isBulk() {
         return this.selectedMethodId != null && 
-                (this.selectedMethodId.intValue() == AppConstants.SELECTED_BULK_SF
-                    || this.selectedMethodId.intValue() == AppConstants.RANDOM_BULK_SF
-                    || this.selectedMethodId.intValue() == AppConstants.RANDOM_BULK_CF);
+                (this.selectedMethodId.intValue() == AppConstants.SELECTED_BULK_SF.getInt()
+                    || this.selectedMethodId.intValue() == AppConstants.RANDOM_BULK_SF.getInt()
+                    || this.selectedMethodId.intValue() == AppConstants.RANDOM_BULK_CF.getInt());
     }
     
     /**

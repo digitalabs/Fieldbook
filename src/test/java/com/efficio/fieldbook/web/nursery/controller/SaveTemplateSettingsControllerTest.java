@@ -103,7 +103,7 @@ public class SaveTemplateSettingsControllerTest extends AbstractJUnit4SpringCont
     @Test
     public void testSaveRetrieveAndDeleteTemplateSettings() throws Exception {
     	int projectId = 1;
-    	Tool tool = workbenchService.getToolWithName(AppConstants.TOOL_NAME_NURSERY_MANAGER_WEB);
+    	Tool tool = workbenchService.getToolWithName(AppConstants.TOOL_NAME_NURSERY_MANAGER_WEB.getString());
     	 TemplateSetting templateSetting = new TemplateSetting(null, 1, "Test Name"+System.currentTimeMillis(), tool, 
     	            SettingsUtil.generateSettingsXml(dataset), Boolean.TRUE);
     	

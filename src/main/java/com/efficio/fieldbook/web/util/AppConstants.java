@@ -11,83 +11,125 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.util;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Daniel Villafuerte
- */
-public class AppConstants {
+import java.io.IOException;
+import java.util.Properties;
 
-    /** The Constant SCALE. */
-    public final static String SCALE = "scale";
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public enum AppConstants {
+    NAME
+
+    , SCALE 
+    , METHOD
+    , PROPERTY
+    , DATA_TYPE
+
+    , PLANTING_ORDER_ROW_COLUMN
+    , PLANTING_ORDER_SERPENTINE
+
+    , SIZE_OF_PAPER_A4
+    , SIZE_OF_PAPER_LETTER
+
+    , AVAILABLE_LABEL_FIELDS_ENTRY_NUM
+    , AVAILABLE_LABEL_FIELDS_GID
+    , AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME
+    , AVAILABLE_LABEL_FIELDS_YEAR
+    , AVAILABLE_LABEL_FIELDS_SEASON
+    , AVAILABLE_LABEL_FIELDS_TRIAL_NAME
+    , AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM
+    , AVAILABLE_LABEL_FIELDS_REP
+    , AVAILABLE_LABEL_FIELDS_LOCATION
+    , AVAILABLE_LABEL_FIELDS_BLOCK_NAME
+    , AVAILABLE_LABEL_FIELDS_PLOT
+    , AVAILABLE_LABEL_FIELDS_NURSERY_NAME
+    , AVAILABLE_LABEL_FIELDS_PARENTAGE
+    , AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES
+
+    , GERMPLASM_LIST_CHOOSE_SPECIFY_CHECK_SELECT_ONE_OR_MORE_IN_THE_LIST
     
-    /** The Constant METHOD. */
-    public static final String METHOD = "method";
+    , NAMING_CONVENTION_CIMMYT_WHEAT
+    , NAMING_CONVENTION_CIMMYT_MAIZE
+    , NAMING_CONVENTION_OTHER_CROPS
     
-    /** The Constant PROPERTY. */
-    public static final String PROPERTY = "property";
+    , SINGLE_PLANT_SELECTION_SF
+
+
+    , METHOD_CHOICE_YES
+    , METHOD_CHOICE_NO
+    , LINE_CHOICE_YES
+    , LINE_CHOICE_NO
     
-    /** The Constant DATA_TYPE. */
-    public static final String DATA_TYPE = "dataType";
+    , SELECTED_BULK_SF
+    , RANDOM_BULK_SF
+    , RANDOM_BULK_CF
     
-    public static final int PLANTING_ORDER_ROW_COLUMN = 1;
-    public static final int PLANTING_ORDER_SERPENTINE = 2;
+    , METHOD_TYPE_GEN
     
-    public static final int SIZE_OF_PAPER_A4 = 1;
-    public static final int SIZE_OF_PAPER_LETTER = 2;
+    , METHOD_UNKNOWN_DERIVATIVE_METHOD_SF 
+    , METHOD_UNKNOWN_GENERATIVE_METHOD_SF 
     
-    public static final int AVAILABLE_LABEL_FIELDS_ENTRY_NUM = 1;
-    public static final int AVAILABLE_LABEL_FIELDS_GID = 2;
-    public static final int AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME = 3;
-    public static final int AVAILABLE_LABEL_FIELDS_YEAR = 4;
-    public static final int AVAILABLE_LABEL_FIELDS_SEASON = 5;
-    public static final int AVAILABLE_LABEL_FIELDS_TRIAL_NAME = 6;
-    public static final int AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM = 7;
-    public static final int AVAILABLE_LABEL_FIELDS_REP= 8;
-    public static final int AVAILABLE_LABEL_FIELDS_LOCATION = 9;
-    public static final int AVAILABLE_LABEL_FIELDS_BLOCK_NAME = 10;
-    public static final int AVAILABLE_LABEL_FIELDS_PLOT = 11;
-    public static final int AVAILABLE_LABEL_FIELDS_NURSERY_NAME = 12;
-    public static final int AVAILABLE_LABEL_FIELDS_PARENTAGE = 13;
-    public static final int AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES = 14;
+    , ENTRY_CODE_PREFIX
     
-    public static final int GERMPLASM_LIST_CHOOSE_SPECIFY_CHECK_SELECT_ONE_OR_MORE_IN_THE_LIST = 1;
+    , NAME_SEPARATOR
     
-    public static final int NAMING_CONVENTION_CIMMYT_WHEAT = 1;
-    public static final int NAMING_CONVENTION_CIMMYT_MAIZE = 2;
-    public static final int NAMING_CONVENTION_OTHER_CROPS = 3;
+    ,GERMPLASM_LIST_TYPE_HARVEST
     
-    public static final int METHOD_CHOICE_YES = 1;
-    public static final int METHOD_CHOICE_NO = 0;
-    public static final int LINE_CHOICE_YES = 1;
-    public static final int LINE_CHOICE_NO = 0;
+    , SEGMENT_STUDY
+    , SEGMENT_PLOT
+    , SEGMENT_TRAITS
     
-    public static final int SINGLE_PLANT_SELECTION_SF = 205;
-    public static final int SELECTED_BULK_SF = 206;
-    public static final int RANDOM_BULK_SF = 207;
-    public static final int RANDOM_BULK_CF = 507;
+    , TOOL_NAME_NURSERY_MANAGER_WEB
+    , TOOL_NAME_TRIAL_MANAGER_WEB
+    , GERMPLASM_LIST_LOCAL
+    , GERMPLASM_LIST_CENTRAL
     
-    public static final String METHOD_TYPE_GEN = "GEN";
+    , PRINCIPAL_INVESTIGATOR
+    , LOCATION
     
-    public static final int METHOD_UNKNOWN_DERIVATIVE_METHOD_SF = 31; 
-    public static final int METHOD_UNKNOWN_GENERATIVE_METHOD_SF = 1; 
+    // Field Map
+    , ROW_COLUMN
+    , SERPENTINE
+    ;
     
-    public static final String ENTRY_CODE_PREFIX = "E";
+    private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);
     
-    public static final String NAME_SEPARATOR = "/";
+    private static final String PROPERTY_FILE = "appconstants.properties";
     
-    public static final String GERMPLASM_LIST_TYPE_HARVEST = "Harvest";
+    public int getInt(){
+        int appConstant = -1;
+        String value = getString().trim();
+        if (value != null) {
+            appConstant = Integer.valueOf(value);
+        }
+        return appConstant;
+    }
+
+
+    public boolean isInt(){
+        String value = getString().trim();
+        if (value != null) {
+            try { 
+                Integer.valueOf(value);
+            } catch (NumberFormatException e){
+                return false;
+            }
+        }
+        return true;
+    }
     
-    public static final int SEGMENT_STUDY = 1;
-    public static final int SEGMENT_PLOT = 2;
-    public static final int SEGMENT_TRAITS = 3;
+    public String getString(){
+        Properties configFile = new Properties();
+        String value = null;
+        try {
+            configFile.load(AppConstants.class.getClassLoader().getResourceAsStream(PROPERTY_FILE));
+            value = configFile.getProperty(this.toString());
+        } catch (NumberFormatException e) {
+            LOG.error("Value not numeric.", e);
+        } catch (IOException e) {
+            LOG.error("Error accessing property file: " + PROPERTY_FILE, e);
+        }
+        return value;
+    }
     
-    
-    public static final String TOOL_NAME_NURSERY_MANAGER_WEB = "nursery_manager_fieldbook_web";
-    public static final String TOOL_NAME_TRIAL_MANAGER_WEB = "trial_manager_fieldbook_web";
-    
-    public static final String GERMPLASM_LIST_LOCAL = "Program Lists";
-    public static final String GERMPLASM_LIST_CENTRAL = "Public Lists";
-    
-    public static final String PRINCIPAL_INVESTIGATOR = "Principal Investigator";
-    public static final String LOCATION = "Site";
 }

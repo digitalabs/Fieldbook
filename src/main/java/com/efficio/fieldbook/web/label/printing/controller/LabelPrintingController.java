@@ -288,54 +288,54 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         
         labelFieldsList.add(new LabelFields(
                 messageSource.getMessage("label.printing.available.fields.entry.num", null, locale)
-                , AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM));
+                , AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM.getInt()));
         labelFieldsList.add(new LabelFields(
                 messageSource.getMessage("label.printing.available.fields.gid", null, locale)
-                , AppConstants.AVAILABLE_LABEL_FIELDS_GID));
+                , AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()));
         labelFieldsList.add(new LabelFields(
                 messageSource.getMessage("label.printing.available.fields.germplasm.name", null, locale)
-                , AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME));
+                , AppConstants.AVAILABLE_LABEL_FIELDS_GERMPLASM_NAME.getInt()));
         labelFieldsList.add(new LabelFields(
                 messageSource.getMessage("label.printing.available.fields.parentage", null, locale)
-                , AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE));
+                , AppConstants.AVAILABLE_LABEL_FIELDS_PARENTAGE.getInt()));
         labelFieldsList.add(new LabelFields(
                 messageSource.getMessage("label.printing.available.fields.year", null, locale)
-                , AppConstants.AVAILABLE_LABEL_FIELDS_YEAR));
+                , AppConstants.AVAILABLE_LABEL_FIELDS_YEAR.getInt()));
         labelFieldsList.add(new LabelFields(
                 messageSource.getMessage("label.printing.available.fields.season", null, locale)
-                , AppConstants.AVAILABLE_LABEL_FIELDS_SEASON));
+                , AppConstants.AVAILABLE_LABEL_FIELDS_SEASON.getInt()));
         labelFieldsList.add(new LabelFields(
                 messageSource.getMessage("label.printing.available.fields.location", null, locale)
-                , AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION));
+                , AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION.getInt()));
         
         if(isTrial){
             labelFieldsList.add(new LabelFields(
                     messageSource.getMessage("label.printing.available.fields.trial.name", null, locale)
-                    , AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME));
+                    , AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_NAME.getInt()));
             labelFieldsList.add(new LabelFields(
                     messageSource.getMessage("label.printing.available.fields.trial.instance.num", null, locale)
-                    , AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM));
+                    , AppConstants.AVAILABLE_LABEL_FIELDS_TRIAL_INSTANCE_NUM.getInt()));
             labelFieldsList.add(new LabelFields(
                     messageSource.getMessage("label.printing.available.fields.rep", null, locale)
-                    , AppConstants.AVAILABLE_LABEL_FIELDS_REP));
+                    , AppConstants.AVAILABLE_LABEL_FIELDS_REP.getInt()));
         }else{
             labelFieldsList.add(new LabelFields(
                     messageSource.getMessage("label.printing.available.fields.nursery.name", null, locale)
-                    , AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME));
+                    , AppConstants.AVAILABLE_LABEL_FIELDS_NURSERY_NAME.getInt()));
         }
         labelFieldsList.add(new LabelFields(
                 messageSource.getMessage("label.printing.available.fields.plot", null, locale)
-                , AppConstants.AVAILABLE_LABEL_FIELDS_PLOT));
+                , AppConstants.AVAILABLE_LABEL_FIELDS_PLOT.getInt()));
         if(isFromFieldMap){
 //            labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.rep", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_REP));
 //            labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.location", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_LOCATION));
             labelFieldsList.add(new LabelFields(
                     messageSource.getMessage("label.printing.available.fields.block.name", null, locale)
-                    , AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME));
+                    , AppConstants.AVAILABLE_LABEL_FIELDS_BLOCK_NAME.getInt()));
             //labelFieldsList.add(new LabelFields(messageSource.getMessage("label.printing.available.fields.plot", null, locale), AppConstants.AVAILABLE_LABEL_FIELDS_PLOT));
             labelFieldsList.add(new LabelFields(
                     messageSource.getMessage("label.printing.available.fields.plot.coordinates", null, locale)
-                    , AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES));
+                    , AppConstants.AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES.getInt()));
         }
         return labelFieldsList;
     }

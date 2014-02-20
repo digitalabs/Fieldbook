@@ -103,7 +103,8 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     private Tool getNurseryTool(){
     	Tool tool = null;
 		try {
-			tool = workbenchService.getToolWithName(AppConstants.TOOL_NAME_NURSERY_MANAGER_WEB);
+			tool = workbenchService.getToolWithName(
+			        AppConstants.TOOL_NAME_NURSERY_MANAGER_WEB.getString());
 		} catch (MiddlewareQueryException e) {
 		    LOG.error(e.getMessage(), e);
 		}
@@ -294,7 +295,8 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     public String showAddSettingPopup(@PathVariable int mode) {
     	try {
     		Set<StandardVariable> stdVars = getAllStandardVariables();
-        	List<StandardVariableReference> standardVariableList = fieldbookService.filterStandardVariablesForSetting(stdVars, mode, getSettingDetailList(mode));
+        	List<StandardVariableReference> standardVariableList = fieldbookService
+        	        .filterStandardVariablesForSetting(stdVars, mode, getSettingDetailList(mode));
         	if (standardVariableList != null && !standardVariableList.isEmpty()) {
         		ObjectMapper om = new ObjectMapper();
         		return om.writeValueAsString(standardVariableList);
@@ -340,14 +342,16 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
      */
     @ResponseBody
     @RequestMapping(value = "/addSettings/{mode}", method = RequestMethod.POST)
-    public String addSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, Model model, @PathVariable int mode) {
+    public String addSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, 
+            Model model, @PathVariable int mode) {
     	List<SettingDetail> newSettings = new ArrayList<SettingDetail>();
     	try {
 	    	List<SettingVariable> selectedVariables = form.getSelectedVariables();
 	    	if (selectedVariables != null && !selectedVariables.isEmpty()) {
 	    		for (SettingVariable var : selectedVariables) {
 	    			populateSettingVariable(var);
-					List<ValueReference> possibleValues = fieldbookService.getAllPossibleValues(var.getCvTermId());
+					List<ValueReference> possibleValues = 
+					        fieldbookService.getAllPossibleValues(var.getCvTermId());
 					newSettings.add(new SettingDetail(var, possibleValues, null, true));
 	    		}
 	    	}
@@ -367,16 +371,13 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     @RequestMapping(value = "/deleteVariable/{mode}/{variableId}", method = RequestMethod.POST)
     public String deleteVariable(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, Model model, 
             @PathVariable int mode, @PathVariable int variableId) {
-        switch (mode) {
-            case AppConstants.SEGMENT_STUDY : 
-                //form.getNurseryLevelVariables()
-                deleteVariableInSession(userSelection.getNurseryLevelConditions(), variableId);
-                break;
-            case AppConstants.SEGMENT_PLOT :
-                deleteVariableInSession(userSelection.getPlotsLevelList(), variableId);
-                break;
-            default:
-                deleteVariableInSession(userSelection.getBaselineTraitsList(), variableId);
+        if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
+            //form.getNurseryLevelVariables()
+            deleteVariableInSession(userSelection.getNurseryLevelConditions(), variableId);
+        } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
+            deleteVariableInSession(userSelection.getPlotsLevelList(), variableId);
+        } else {
+            deleteVariableInSession(userSelection.getBaselineTraitsList(), variableId);
         }
         return "";
     }
@@ -409,7 +410,8 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
 	    	form.setSelectedSettingId(templateSettingId);
 	    	//we need to get the default settings if there is
 	        //only has value for clear setting, the rest null
-	        Integer templateSettingIdFilter = form.getSelectedSettingId() > 0 ? Integer.valueOf(form.getSelectedSettingId()) : null;
+	        Integer templateSettingIdFilter = form.getSelectedSettingId() > 0 ? 
+	                    Integer.valueOf(form.getSelectedSettingId()) : null;
 	    	TemplateSetting templateSettingFilter = getDefaultTemplateSettingFilter();
 	    	//if there is an id query, we need to set the isDefault filter to  null
 	    	if(templateSettingIdFilter != null){
@@ -430,7 +432,8 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     }
     
     @RequestMapping(value = "addNewSettings", method = RequestMethod.GET)
-    public String addNewSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, Model model, HttpSession session) {
+    public String addNewSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, 
+            Model model, HttpSession session) {
     	
     	try {
 	    	//session.invalidate();
@@ -459,8 +462,10 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	form.setNurseryLevelVariables(nurseryDefaults);
     	this.userSelection.setNurseryLevelConditions(nurseryDefaults);
     	
-    	nurseryDefaults.add(createSettingDetail(TermId.TRIAL_LOCATION.getId(), AppConstants.LOCATION));
-        nurseryDefaults.add(createSettingDetail(TermId.PI_NAME.getId(), AppConstants.PRINCIPAL_INVESTIGATOR));
+    	nurseryDefaults.add(createSettingDetail(TermId.TRIAL_LOCATION.getId()
+    	        , AppConstants.LOCATION.getString()));
+        nurseryDefaults.add(createSettingDetail(TermId.PI_NAME.getId()
+                , AppConstants.PRINCIPAL_INVESTIGATOR.getString()));
     }
     
     /**
@@ -479,7 +484,8 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
                 variableName = stdVar.getName();
             }
             if (stdVar != null) {
-            SettingVariable svar = new SettingVariable(variableName, stdVar.getDescription(), stdVar.getProperty().getName(),
+            SettingVariable svar = new SettingVariable(
+                    variableName, stdVar.getDescription(), stdVar.getProperty().getName(),
 					stdVar.getScale().getName(), stdVar.getMethod().getName(), stdVar.getStoredIn().getName(), 
 					stdVar.getDataType().getName());
 			svar.setCvTermId(stdVar.getId());
@@ -501,11 +507,13 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
      * @return the setting detail list
      */
     private List<SettingDetail> getSettingDetailList(int mode) {
-    	switch (mode) {
-	    	case AppConstants.SEGMENT_STUDY : return userSelection.getNurseryLevelConditions(); 
-	    	case AppConstants.SEGMENT_PLOT : return userSelection.getPlotsLevelList();
-	    	case AppConstants.SEGMENT_TRAITS : return userSelection.getBaselineTraitsList(); 
-    	}
+    	if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
+            return userSelection.getNurseryLevelConditions();
+        } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
+            return userSelection.getPlotsLevelList();
+        } else if (mode == AppConstants.SEGMENT_TRAITS.getInt()) {
+            return userSelection.getBaselineTraitsList();
+        }
     	return null;
     }
     
@@ -518,55 +526,48 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
      * @return the string
      * @throws Exception the exception
      */
-    private String addNewSettingDetails(ManageSettingsForm form, int mode, List<SettingDetail> newDetails) throws Exception {
-    	switch (mode) {
-	    	case AppConstants.SEGMENT_STUDY : 
-	    		if (form.getNurseryLevelVariables() == null) {
-	    			form.setNurseryLevelVariables(newDetails);
-	    		}
-	    		else {
-		    		form.getNurseryLevelVariables().addAll(newDetails);
-	    		}
-	    		if (userSelection.getNurseryLevelConditions() == null) {
-	    			userSelection.setNurseryLevelConditions(newDetails);
-	    		}
-	    		else {
-		    		userSelection.getNurseryLevelConditions().addAll(newDetails);
-	    		}
-	    		break;
-	    		//return URL_STUDY_SETTINGS_TABLE;
-	    	case AppConstants.SEGMENT_PLOT :
-	    		if (form.getPlotLevelVariables() == null) {
-	    			form.setPlotLevelVariables(newDetails);
-	    		}
-	    		else {
-	    			form.getPlotLevelVariables().addAll(newDetails);
-	    		}
-	    		if (userSelection.getPlotsLevelList() == null) {
-	    			userSelection.setPlotsLevelList(newDetails);
-	    		}
-	    		else {
-	    			userSelection.getPlotsLevelList().addAll(newDetails);
-	    		}
-	    		break;
-	    		//return URL_PLOTS_SETTINGS_TABLE;
-	    	//case AppConstants.SEGMENT_TRAITS :
-	    	default :
-	    		if (form.getBaselineTraitVariables() == null) {
-	    			form.setBaselineTraitVariables(newDetails);
-	    		}
-	    		else {
-	    			form.getBaselineTraitVariables().addAll(newDetails);
-	    		}
-	    		if (userSelection.getBaselineTraitsList() == null) {
-	    			userSelection.setBaselineTraitsList(newDetails);
-	    		}
-	    		else {
-	    			userSelection.getBaselineTraitsList().addAll(newDetails);
-	    		}
-	    		break;
-	    		//return URL_TRAITS_SETTINGS_TABLE;
-    	}
+    private String addNewSettingDetails(ManageSettingsForm form, int mode
+            , List<SettingDetail> newDetails) throws Exception {
+    	if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
+            if (form.getNurseryLevelVariables() == null) {
+            	form.setNurseryLevelVariables(newDetails);
+            }
+            else {
+            	form.getNurseryLevelVariables().addAll(newDetails);
+            }
+            if (userSelection.getNurseryLevelConditions() == null) {
+            	userSelection.setNurseryLevelConditions(newDetails);
+            }
+            else {
+            	userSelection.getNurseryLevelConditions().addAll(newDetails);
+            }
+        } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
+            if (form.getPlotLevelVariables() == null) {
+            	form.setPlotLevelVariables(newDetails);
+            }
+            else {
+            	form.getPlotLevelVariables().addAll(newDetails);
+            }
+            if (userSelection.getPlotsLevelList() == null) {
+            	userSelection.setPlotsLevelList(newDetails);
+            }
+            else {
+            	userSelection.getPlotsLevelList().addAll(newDetails);
+            }
+        } else {
+            if (form.getBaselineTraitVariables() == null) {
+            	form.setBaselineTraitVariables(newDetails);
+            }
+            else {
+            	form.getBaselineTraitVariables().addAll(newDetails);
+            }
+            if (userSelection.getBaselineTraitsList() == null) {
+            	userSelection.setBaselineTraitsList(newDetails);
+            }
+            else {
+            	userSelection.getBaselineTraitsList().addAll(newDetails);
+            }
+        }
     	ObjectMapper om = new ObjectMapper();
     	return om.writeValueAsString(newDetails);
     }
@@ -612,8 +613,10 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     private SettingVariable getSettingVariable(int id) throws MiddlewareQueryException {
 		StandardVariable stdVar = getStandardVariable(id);
 		if (stdVar != null) {
-			SettingVariable svar = new SettingVariable(stdVar.getName(), stdVar.getDescription(), stdVar.getProperty().getName(),
-					stdVar.getScale().getName(), stdVar.getMethod().getName(), stdVar.getStoredIn().getName(), 
+			SettingVariable svar = new SettingVariable(stdVar.getName(), 
+			        stdVar.getDescription(), stdVar.getProperty().getName(),
+					stdVar.getScale().getName(), stdVar.getMethod().getName(), 
+					stdVar.getStoredIn().getName(), 
 					stdVar.getDataType().getName());
 			svar.setCvTermId(stdVar.getId());
 			svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");

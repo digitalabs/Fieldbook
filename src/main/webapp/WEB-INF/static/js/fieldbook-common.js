@@ -34,7 +34,7 @@ function doAjaxMainSubmit(pageMessageDivId, successMessage, overrideAction){
 	var action = form.attr('action');
 	var serializedData = form.serialize();
 	
-	if(overrideAction != null)
+	if(overrideAction != null && overrideAction != '')
 		action = overrideAction;
 	
 	$.ajax({
@@ -44,8 +44,8 @@ function doAjaxMainSubmit(pageMessageDivId, successMessage, overrideAction){
 		success: function (html) {
 			//we just paste the whole html
 			$('.container .row').first().html(html);
-			
-		    showSuccessfulMessage(pageMessageDivId, successMessage);				
+			if(pageMessageDivId != null && pageMessageDivId != '')
+				showSuccessfulMessage(pageMessageDivId, successMessage);				
 			Spinner.toggle();
 		}
 	}); 							

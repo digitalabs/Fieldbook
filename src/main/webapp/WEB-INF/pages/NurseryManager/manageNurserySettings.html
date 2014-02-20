@@ -192,7 +192,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			    						</td>
 				    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.name}"></td>
 				    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.description}"></td>
-				    					<td>
+				    					<td th:class="${rowStat.even}? 'even' : 'odd'" >
 				    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
 												*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
 												<span class="glyphicon glyphicon-eye-open"></span></a>

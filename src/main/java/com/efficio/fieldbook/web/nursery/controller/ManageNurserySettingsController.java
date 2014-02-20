@@ -150,6 +150,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	//we need to get the default settings if there is
         //only has value for clear setting, the rest null            	
     	setupDefaultScreenValues(form, getDefaultTemplateSettingFilter());
+    	form.setProjectId(this.getCurrentProjectId());
     	return super.show(model);
     }
     

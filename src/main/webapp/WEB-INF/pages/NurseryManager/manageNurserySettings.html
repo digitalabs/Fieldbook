@@ -35,7 +35,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			    			
 			    			<a href="javascript: void(0)" id="addNewSettings"><span class="glyphicon glyphicon-plus"></span>&nbsp; <span th:text="#{nursery.managesettings.add.new.settings}">Add New Settings</span></a>
 			    			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			    			<a href="javascript: void(0)" id="clearSettings"><span class="glyphicon glyphicon-remove"></span>&nbsp;<span th:text="#{nursery.managesettings.clear.settings}">Clear</span></a>
+			    			<a href="javascript: void(0)" id="resetSettings"><img width="15" src="/Fieldbook/static/img/reset.png"/>&nbsp;<span th:text="#{nursery.managesettings.reset.settings}">Reset</span></a>
 			    			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			    			
 			    			<a href="javascript: void(0)" id="deleteSettings" ><span class="glyphicon glyphicon-trash"></span>&nbsp;<span th:text="#{common.form.delete.text}">Delete</span></a>
@@ -51,7 +51,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 		    	<div class="panel-body">
 		    		<div class="row form-group">
 			    		<div class="col-xs-12 col-md-12">
-			    			<label class="control-label"><em th:text="#{nursery.managesettings.mandatory.fields}"> Mandatory fields are noted with a *</em></label><span class="required">*</span>
+			    			<label class="control-label"><em th:text="#{nursery.managesettings.mandatory.fields}"> Mandatory fields are noted with a *</em></label><span class="required">&nbsp;*</span>
 		    			</div>
 	    			</div>
 	    			<div class="row form-group">
@@ -369,7 +369,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
  	 					$('#delete-settings-confirmation').modal('show');	
  					} 					 					
  				});
- 				$('#clearSettings').on('click', clearSettings);
+ 				$('#resetSettings').on('click', clearSettings);
  				$('#saveSettings').on('click', doSaveSettings);
  				$('#addNewSettings').on('click', addNewSettings);
  				

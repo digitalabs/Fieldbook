@@ -93,6 +93,10 @@ function validateAdvanceNursery(){
 		return false;
 	}	
 	
+	
+	//doAjaxMainSubmit('', '', '');
+		
+	
 	//validate date
 	return true;
 }
@@ -736,7 +740,7 @@ function deleteNurserySettings(){
 		});
 		*/	
 	}else{
-		alert('show error mesage')
+		alert('show error mesage');
 	}
 }
 function clearSettings(){

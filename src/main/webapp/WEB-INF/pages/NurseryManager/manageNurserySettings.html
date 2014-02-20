@@ -355,6 +355,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
        		var templateSettingNameErrorUnique = /*[[#{manage.settings.setting.name.unique.error}]]*/;
        		var programLocationUrl = /*[[#{nursery.advance.nursery.manage.location.url}]]*/;
        		var locationIframeOpened = false;
+       		var nurseryLevelValueEmpty= /*[[#{nursery.managesettings.nursery.level.value.empty}]]*/
             
  			$( document ).ready(function() {
  				$('#selectedSettingId').on('change', function(){

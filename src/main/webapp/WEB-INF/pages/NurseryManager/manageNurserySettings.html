@@ -51,7 +51,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 		    	<div class="panel-body">
 		    		<div class="row form-group">
 			    		<div class="col-xs-12 col-md-12">
-			    			<label class="control-label"><em th:text="#{nursery.managesettings.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
+			    			<label class="control-label"><em th:text="#{nursery.managesettings.mandatory.fields}"> Mandatory fields are noted with a *</em></label><span class="required">*</span>
 		    			</div>
 	    			</div>
 	    			<div class="row form-group">
@@ -74,7 +74,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 										th:onclick="'javascript: deleteVariable(1,\'' + ${nurseryLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
 										<input type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 									</td>
-									<td style="max-width:150px; min-width:150px;"><label class="control-label" th:text="${nurseryLevelVariable.variable.name}+':*'"></label></td>
+									<td style="max-width:150px; min-width:150px;"><label class="control-label" th:text="${nurseryLevelVariable.variable.name}+':'"></label><span class="required">*</span></td>
 									<td style="max-width:200px; min-width:200px;">
 										<input type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].value}" class="form-control select2" />
 										<div th:text="${nurseryLevelVariable.value}" class="div-select-val" style="display: none"/>
@@ -276,7 +276,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
     				</div>
     				<div class="row form-group">
 	    				<div class="col-xs-5 col-md-5">
-	    					<label class="contol-label" th:text="#{nursery.managesettings.save.settings.as}+':'">Save these settings as:</label>
+	    					<label class="contol-label" th:text="#{nursery.managesettings.save.settings.as}+':'">Save these settings as:</label><span class="required">*</span>
 	    					&nbsp;&nbsp;
 	    					<input type="text" th:field="*{settingName}" />
 	    				</div>

@@ -295,7 +295,7 @@
 										<copy todir="src/main/resources" overwrite="true">
 											<fileset dir="pipeline/config/${envConfig}" id="fromDir">
 												<include name="fieldbook.properties" />
-                                                <include name="database.properties"/>
+                                                <include name="workbench.properties"/>
 											</fileset>
 										</copy>
 									</tasks>
@@ -331,7 +331,7 @@
 										<copy todir="src/main/resources" overwrite="true">
 											<fileset dir="pipeline/config/${envConfig}" id="fromDir">
 												<include name="fieldbook.properties"/>
-                                                <include name="database.properties"/>
+                                                <include name="workbench.properties"/>
 											</fileset>
 										</copy>
 									</tasks>
@@ -475,7 +475,7 @@
                     <skipPoms>true</skipPoms>
 
                     <!-- this is false by default, forces the plugin to generate the git.properties file -->
-                    <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                    <generateGitPropertiesFile>false</generateGitPropertiesFile>
 
                     <!-- The path for the to be generated properties file, it's relative to ${project.basedir} -->
                     <generateGitPropertiesFilename>src/main/resources/git.properties</generateGitPropertiesFilename>

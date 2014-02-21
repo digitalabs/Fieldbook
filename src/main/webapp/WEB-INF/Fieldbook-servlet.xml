@@ -13,7 +13,7 @@
 			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
 	<!-- Declare property file locations  -->
-	<context:property-placeholder location="classpath:git.properties, classpath:fieldbook.properties, classpath:database.properties" />
+	<context:property-placeholder location="classpath:git.properties, classpath:fieldbook.properties, classpath:workbench.properties" />
 
 	<!-- **************************************************************** -->
 	<!--  RESOURCE FOLDERS CONFIGURATION                                  -->
@@ -22,6 +22,9 @@
 	<mvc:resources mapping="/static/**" location="/WEB-INF/static/" />
 
 
+	<mvc:interceptors>
+      <bean class="com.efficio.fieldbook.web.interceptor.FieldbookHandlerInterceptor" />
+    </mvc:interceptors> 
 
 	<!-- **************************************************************** -->
 	<!--  SPRING ANNOTATION PROCESSING                                    -->
@@ -162,88 +165,85 @@
 	<!-- **************************************************************** -->
 	<!-- MIDDLEWARE Database Managers -->
 	<!-- **************************************************************** -->
-
-    <bean id="managerFactoryProvider" class="org.generationcp.commons.hibernate.DefaultManagerFactoryProvider" destroy-method="close">
-    	<property name="localUsername" value="${local.username}"/>
-    	<property name="localPassword" value="${local.password}"/>
-    	<property name="localPort"     value="${workbench.port}"/>
-    	<property name="centralUsername" value="${central.username}"/>
-    	<property name="centralPassword" value="${central.password}"/>
-    	<property name="centralPort"     value="${workbench.port}"/>
+	
+	  <bean id="workbenchDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${workbench.driver}"/>
+        <property name="url" value="${workbench.url}"/>
+        <property name="username" value="${workbench.username}"/>
+        <property name="password" value="${workbench.password}"/>
     </bean>
     
-     <bean id="ontologyDataManagerV2" class="org.generationcp.middleware.manager.OntologyDataManagerImpl">
-        <property name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
-        <property name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
-    </bean>
-    
-    <bean id="germplasmDataManagerV2" class="org.generationcp.middleware.manager.GermplasmDataManagerImpl">
-        <property name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
-        <property name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
-    </bean>
-    
-    <bean id="dataImportService" class="org.generationcp.middleware.service.DataImportServiceImpl">
-        <constructor-arg name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
-        <constructor-arg name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
-    </bean>
-    
-    <bean id="fieldbookMiddlewareService" class="org.generationcp.middleware.service.FieldbookServiceImpl">
-        <constructor-arg name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
-        <constructor-arg name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
-    </bean>
-    
-    <bean id="ontologyService" class="org.generationcp.middleware.service.OntologyServiceImpl">
-        <constructor-arg name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
-        <constructor-arg name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
-    </bean>
-    
-    <bean id="studyDataManagerV2" class="org.generationcp.middleware.manager.StudyDataManagerImpl">
-        <property name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
-        <property name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
-    </bean>
-    
-    <bean id="germplasmListManager" class="org.generationcp.middleware.manager.GermplasmListManagerImpl">
-        <property name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
-        <property name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
-    </bean>
-
-    <bean id="centralHibernateSessionProvider" class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider" scope="request" destroy-method="close">
-        <property name="sessionFactory" ref="centralSessionFactory"/>
-        <aop:scoped-proxy proxy-target-class="false"/>
-    </bean>
-    
-     <bean id="localIbdbHibernateSessionProvider" class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider" scope="request" destroy-method="close">
-        <property name="sessionFactory" ref="localIbdbSessionFactory"/>
-        <aop:scoped-proxy proxy-target-class="false"/>
-    </bean>
-    
-    <bean id="centralSessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
-        <property name="dataSource" ref="centralDataSource"/>
-        <property name="configLocation" value="classpath:ibpmidware_hib.cfg.xml"/>
-    </bean>
-
-    <bean id="localIbdbSessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
-        <property name="dataSource" ref="localIbdbDataSource"/>
-        <property name="configLocation" value="classpath:ibpmidware_hib.cfg.xml"/>
-    </bean>
     <bean id="workbenchSessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
         <property name="dataSource" ref="workbenchDataSource"/>
         <property name="configLocation" value="classpath:ibpworkbench_hib.cfg.xml"/>
     </bean>
     
-
-    <bean id="centralDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="${workbench.driver}"/>
-        <property name="url" value="${central.url}"/>
-        <property name="username" value="${central.username}"/>
-        <property name="password" value="${central.password}"/>
+    
+    <bean id="workbenchHibernateSessionProvider" class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider" scope="request">
+        <property name="sessionFactory" ref="workbenchSessionFactory"/>
+        
+        <!-- JDK Standard Proxy around this request scoped bean, so we can use it on longer scoped beans -->
+        <aop:scoped-proxy proxy-target-class="false"/>
     </bean>
-
-    <bean id="localIbdbDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="${workbench.driver}"/>
-        <property name="url" value="${local.url}"/>
-        <property name="username" value="${workbench.username}"/>
-        <property name="password" value="${workbench.password}"/>
+    
+    <bean id="managerFactoryProvider" 
+    	class="org.generationcp.commons.hibernate.DynamicManagerFactoryProvider">
+    	<constructor-arg ref="workbenchDataManager" />
+    	<property name="maxCachedLocalSessionFactories" value="1" />
+    </bean>
+    
+    <bean id="managerFactory" name="managerFactory"
+    	factory-bean="managerFactoryProvider"
+    	factory-method="createInstance"
+    	scope="session" destroy-method="close">
+    	<aop:scoped-proxy/>
+    </bean>
+    
+    <bean id="workbenchDataManager"
+        class="org.generationcp.middleware.manager.WorkbenchDataManagerImpl">
+        <constructor-arg ref="workbenchHibernateSessionProvider" />
+    </bean>
+    
+     <bean id="ontologyDataManagerV2" factory-bean="managerFactory"
+    	factory-method="getNewOntologyDataManager"
+    	scope="session">
+    	<aop:scoped-proxy/>
+    </bean>
+    
+    <bean id="germplasmDataManagerV2" factory-bean="managerFactory"
+    	factory-method="getGermplasmDataManager"
+    	scope="session">
+    	<aop:scoped-proxy/>
+    </bean>
+    
+    <bean id="dataImportService" factory-bean="managerFactory"
+    	factory-method="getDataImportService"
+    	scope="session" >
+    	<aop:scoped-proxy proxy-target-class="false"/>
+    </bean>
+    
+    <bean id="fieldbookMiddlewareService" factory-bean="managerFactory"
+    	factory-method="getFieldbookMiddlewareService"
+    	scope="session">
+    	<aop:scoped-proxy proxy-target-class="false"/>
+    </bean>
+    
+    <bean id="ontologyService" factory-bean="managerFactory"
+    	factory-method="getOntologyService"
+    	scope="session" >
+    	<aop:scoped-proxy proxy-target-class="false"/>
+    </bean>
+    
+    <bean id="studyDataManagerV2" factory-bean="managerFactory"
+    	factory-method="getNewStudyDataManager"
+    	scope="session">
+    	<aop:scoped-proxy/>
+    </bean>
+    
+    <bean id="germplasmListManager" factory-bean="managerFactory"
+    	factory-method="getGermplasmListManager"
+    	scope="session">
+    	<aop:scoped-proxy/>
     </bean>
     
    	<bean id="gitRepositoryState" class="com.efficio.fieldbook.web.util.GitRepositoryState">	
@@ -260,32 +260,12 @@
    		<property name="commitTime" value="${git.commit.time}"/>
    		<property name="commitIdAbbrev" value="${git.commit.id.abbrev}"/>   		
 	</bean>
-	
 
 	<bean id="externalToolInfo" class="com.efficio.fieldbook.web.util.ExternalToolInfo">	
    		<property name="currentProjectId" value="${workbench.currentProjectId}"/>
    		<property name="oldFieldbookPath" value="${old.fb.tool.path}"/>   			
 	</bean>	
-    
-    
-    <bean id="workbenchDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="${workbench.driver}"/>
-        <property name="url" value="${workbench.url}"/>
-        <property name="username" value="${workbench.username}"/>
-        <property name="password" value="${workbench.password}"/>
-    </bean>
-	
-	 <bean id="workbenchHibernateSessionProvider" class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider" scope="request" destroy-method="close">
-        <property name="sessionFactory" ref="workbenchSessionFactory"/>
-        
-        <!-- JDK Standard Proxy around this request scoped bean, so we can use it on longer scoped beans -->
-        <aop:scoped-proxy proxy-target-class="false"/>
-    </bean>
-	
-	<bean id="workbenchDataManager"
-        class="org.generationcp.middleware.manager.WorkbenchDataManagerImpl">
-        <constructor-arg ref="workbenchHibernateSessionProvider" />
-    </bean>
+   
     
     
 </beans>

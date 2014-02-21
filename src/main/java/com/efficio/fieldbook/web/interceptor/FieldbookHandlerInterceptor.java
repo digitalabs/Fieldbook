@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.generationcp.commons.hibernate.DynamicManagerFactoryProvider;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.ManagerFactory;
 import org.generationcp.middleware.manager.WorkbenchDataManagerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -19,9 +20,6 @@ public class FieldbookHandlerInterceptor implements HandlerInterceptor {
 	
 	@Autowired
 	private DynamicManagerFactoryProvider managerFactoryProvider; 
-	
-	@Autowired
-	private DynamicManagerFactoryProvider managerFactory; 
 	
 	
 	public FieldbookHandlerInterceptor() {
@@ -65,8 +63,7 @@ public class FieldbookHandlerInterceptor implements HandlerInterceptor {
 	public void afterCompletion(HttpServletRequest request,
 			HttpServletResponse response, Object handler, Exception ex)
 			throws Exception {
-		
-		managerFactory.close();
+	
 	}
 
 }

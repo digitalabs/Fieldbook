@@ -460,6 +460,8 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     private void assignDefaultValues(ManageSettingsForm form) throws MiddlewareQueryException {
     	List<SettingDetail> nurseryDefaults = new ArrayList<SettingDetail>();
     	form.setNurseryLevelVariables(nurseryDefaults);
+    	form.setSettingName("");
+    	form.setIsDefault(false);
     	this.userSelection.setNurseryLevelConditions(nurseryDefaults);
     	
     	nurseryDefaults.add(createSettingDetail(TermId.TRIAL_LOCATION.getId()

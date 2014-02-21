@@ -3,15 +3,12 @@ package com.efficio.fieldbook.web.interceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.generationcp.commons.hibernate.DynamicManagerFactoryProvider;
+import org.generationcp.commons.hibernate.DynamicManagerFactoryProviderConcurrency;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.manager.ManagerFactory;
 import org.generationcp.middleware.manager.WorkbenchDataManagerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-
-import com.mysql.jdbc.log.Log;
 
 public class FieldbookHandlerInterceptor implements HandlerInterceptor {
 
@@ -19,7 +16,7 @@ public class FieldbookHandlerInterceptor implements HandlerInterceptor {
 	private WorkbenchDataManagerImpl workbenchDataManager; 
 	
 	@Autowired
-	private DynamicManagerFactoryProvider managerFactoryProvider; 
+	private DynamicManagerFactoryProviderConcurrency managerFactoryProvider; 
 	
 	
 	public FieldbookHandlerInterceptor() {
@@ -63,6 +60,8 @@ public class FieldbookHandlerInterceptor implements HandlerInterceptor {
 	public void afterCompletion(HttpServletRequest request,
 			HttpServletResponse response, Object handler, Exception ex)
 			throws Exception {
+		
+		managerFactoryProvider.close();
 	
 	}
 

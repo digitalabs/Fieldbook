@@ -187,7 +187,7 @@
     </bean>
     
     <bean id="managerFactoryProvider" 
-    	class="org.generationcp.commons.hibernate.DynamicManagerFactoryProvider">
+    	class="org.generationcp.commons.hibernate.DynamicManagerFactoryProviderConcurrency">
     	<constructor-arg ref="workbenchDataManager" />
     	<property name="maxCachedLocalSessionFactories" value="1" />
     </bean>
@@ -219,19 +219,19 @@
     <bean id="dataImportService" factory-bean="managerFactory"
     	factory-method="getDataImportService"
     	scope="session" >
-    	<aop:scoped-proxy proxy-target-class="false"/>
+    	<aop:scoped-proxy/>
     </bean>
     
     <bean id="fieldbookMiddlewareService" factory-bean="managerFactory"
     	factory-method="getFieldbookMiddlewareService"
     	scope="session">
-    	<aop:scoped-proxy proxy-target-class="false"/>
+    	<aop:scoped-proxy/>
     </bean>
     
     <bean id="ontologyService" factory-bean="managerFactory"
     	factory-method="getOntologyService"
     	scope="session" >
-    	<aop:scoped-proxy proxy-target-class="false"/>
+    	<aop:scoped-proxy/>
     </bean>
     
     <bean id="studyDataManagerV2" factory-bean="managerFactory"

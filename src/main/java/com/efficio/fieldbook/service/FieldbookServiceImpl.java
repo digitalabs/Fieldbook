@@ -54,7 +54,7 @@ public class FieldbookServiceImpl implements FieldbookService{
 	@Autowired
 	private NamingConventionServiceFactory namingConventionServiceFactory;
 	
-	@Resource
+	@Autowired
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 	
 	@Resource

@@ -18,17 +18,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public enum AppConstants {
-    NAME
 
-    , SCALE 
-    , METHOD
-    , PROPERTY
-    , DATA_TYPE
-
-    , PLANTING_ORDER_ROW_COLUMN
-    , PLANTING_ORDER_SERPENTINE
-
-    , SIZE_OF_PAPER_A4
+    // Label Printing
+      SIZE_OF_PAPER_A4
     , SIZE_OF_PAPER_LETTER
 
     , AVAILABLE_LABEL_FIELDS_ENTRY_NUM
@@ -45,7 +37,16 @@ public enum AppConstants {
     , AVAILABLE_LABEL_FIELDS_NURSERY_NAME
     , AVAILABLE_LABEL_FIELDS_PARENTAGE
     , AVAILABLE_LABEL_FIELDS_PLOT_COORDINATES
+    
+    // Field Map   
+    , ROW_COLUMN
+    , SERPENTINE
+    , PLANTING_ORDER_ROW_COLUMN
+    , PLANTING_ORDER_SERPENTINE
 
+
+    // Nursery Manager
+    
     , GERMPLASM_LIST_CHOOSE_SPECIFY_CHECK_SELECT_ONE_OR_MORE_IN_THE_LIST
     
     , NAMING_CONVENTION_CIMMYT_WHEAT
@@ -53,7 +54,6 @@ public enum AppConstants {
     , NAMING_CONVENTION_OTHER_CROPS
     
     , SINGLE_PLANT_SELECTION_SF
-
 
     , METHOD_CHOICE_YES
     , METHOD_CHOICE_NO
@@ -86,10 +86,31 @@ public enum AppConstants {
     
     , PRINCIPAL_INVESTIGATOR
     , LOCATION
-    
-    // Field Map
-    , ROW_COLUMN
-    , SERPENTINE
+        
+    // Import Germplasm
+    , CONDITION
+    , DESCRIPTION
+    , PROPERTY
+    , SCALE
+    , METHOD
+    , DATA_TYPE
+    , VALUE
+    , FACTOR
+    , ENTRY
+    , DESIGNATION
+    , DESIG
+    , GID
+    , CROSS
+    , SOURCE
+    , ENTRY_CODE
+    , PLOT
+    , CHECK
+    , TYPE_OF_ENTRY
+    , CODE
+    , ASSIGNED
+    , C
+    , CONSTANT
+    , VARIATE
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

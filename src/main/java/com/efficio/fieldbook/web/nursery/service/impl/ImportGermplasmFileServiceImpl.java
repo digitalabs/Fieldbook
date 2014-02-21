@@ -46,6 +46,7 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 import com.efficio.fieldbook.web.nursery.bean.ImportedVariate;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
+import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
 import com.vaadin.data.Property.ConversionException;
 import com.vaadin.data.Property.ReadOnlyException;
@@ -56,6 +57,7 @@ import com.vaadin.data.Property.ReadOnlyException;
  * @author Daniel Jao
  * This should parse the import file from the user.  Can handle basic and advance file format
  */
+@SuppressWarnings("unused")
 public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileService{
 	
     /** The Constant LOG. */
@@ -116,72 +118,6 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
     /** The Constant FILE_TYPE_INVALID. */
     public final static String FILE_TYPE_INVALID = "common.error.invalid.file.type";
         
-    /** The Constant CONDITION_CONDITION. */
-    private final static String CONDITION_CONDITION = "CONDITION";
-    
-    /** The Constant CONDITION_DESCRIPTION. */
-    private final static String CONDITION_DESCRIPTION = "DESCRIPTION";
-    
-    /** The Constant CONDITION_PROPERTY. */
-    private final static String CONDITION_PROPERTY = "PROPERTY";
-    
-    /** The Constant CONDITION_SCALE. */
-    private final static String CONDITION_SCALE = "SCALE";
-    
-    /** The Constant CONDITION_METHOD. */
-    private final static String CONDITION_METHOD = "METHOD";
-    
-    /** The Constant CONDITION_DATA_TYPE. */
-    private final static String CONDITION_DATA_TYPE = "DATA TYPE";
-    
-    /** The Constant CONDITION_VALUE. */
-    private final static String CONDITION_VALUE = "VALUE";    
-    	
-    /** The Constant FACTOR_HEADER_FACTOR. */
-    private final static String FACTOR_HEADER_FACTOR = "FACTOR";
-    
-    /** The Constant FACTOR_HEADER_DESCRIPTION. */
-    private final static String FACTOR_HEADER_DESCRIPTION = "DESCRIPTION";
-    
-    /** The Constant FACTOR_HEADER_PROPERTY. */
-    private final static String FACTOR_HEADER_PROPERTY = "PROPERTY";
-    
-    /** The Constant FACTOR_HEADER_SCALE. */
-    private final static String FACTOR_HEADER_SCALE = "SCALE";
-    
-    /** The Constant FACTOR_HEADER_METHOD. */
-    private final static String FACTOR_HEADER_METHOD = "METHOD";
-    
-    /** The Constant FACTOR_HEADER_DATA_TYPE. */
-    private final static String FACTOR_HEADER_DATA_TYPE = "DATA TYPE";
-    
-    /** The Constant FACTOR_ENTRY. */
-    public final static String FACTOR_ENTRY = "ENTRY";
-    
-    /** The Constant FACTOR_DESIGNATION. */
-    public final static String FACTOR_DESIGNATION = "DESIGNATION";
-    
-    /** The Constant FACTOR_DESIG. */
-    public final static String FACTOR_DESIG = "DESIG";
-    
-    /** The Constant FACTOR_GID. */
-    public final static String FACTOR_GID = "GID";
-    
-    /** The Constant FACTOR_CROSS. */
-    public final static String FACTOR_CROSS = "CROSS";
-    
-    /** The Constant FACTOR_SOURCE. */
-    public final static String FACTOR_SOURCE = "SOURCE";
-    
-    /** The Constant FACTOR_ENTRY_CODE. */
-    public final static String FACTOR_ENTRY_CODE = "ENTRY CODE";
-    
-    /** The Constant FACTOR_PLOT. */
-    public final static String FACTOR_PLOT = "PLOT";
-    
-    /** The Constant FACTOR_CHECK. */
-    public final static String FACTOR_CHECK = "CHECK";
-    
     /** The error messages. */
     private Set<String> errorMessages;
         
@@ -318,22 +254,22 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
         if (importedGermplasmList.getImportedFactors() != null)
             for (int col = 0; col < importedGermplasmList.getImportedFactors().size(); col++) {
                 if (getCellStringValue(currentSheet, currentRow, col, true)
-                        .toUpperCase().equals(FACTOR_ENTRY)){
+                        .equalsIgnoreCase(AppConstants.ENTRY.getString())){
                     entryColumnIsPresent = true;
                 }else if (getCellStringValue(currentSheet, currentRow, col, true)
-                        .toUpperCase().equals(FACTOR_DESIGNATION)){
+                        .equalsIgnoreCase(AppConstants.DESIGNATION.getString())){
                     desigColumnIsPresent = true;
                 }else if (getCellStringValue(currentSheet, currentRow, col, true)
-                        .toUpperCase().equals(FACTOR_GID)){
+                        .equalsIgnoreCase(AppConstants.GID.getString())){
                     desigGidIsPresent = true;
                 }else if (getCellStringValue(currentSheet, currentRow, col, true)
-                        .toUpperCase().equals(FACTOR_CROSS)){
+                        .equalsIgnoreCase(AppConstants.CROSS.getString())){
                     desigCrossIsPresent = true;
                 }else if (getCellStringValue(currentSheet, currentRow, col, true)
-                        .toUpperCase().equals(FACTOR_SOURCE)){
+                        .equalsIgnoreCase(AppConstants.SOURCE.getString())){
                     desigSourcePresent = true;
                 }else if (getCellStringValue(currentSheet, currentRow, col, true)
-                        .toUpperCase().equals(FACTOR_ENTRY_CODE)){
+                        .equalsIgnoreCase(AppConstants.ENTRY_CODE.getString())){
                     desigEntryCodePresent = true;
                 }
             }
@@ -366,28 +302,28 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
                 importedGermplasm = new ImportedGermplasm();
                 for (int col = 0; col < importedGermplasmList.getImportedFactors().size(); col++) {
                     if (importedGermplasmList.getImportedFactors().get(col)
-                            .getFactor().toUpperCase().equals(FACTOR_ENTRY)) {
+                            .getFactor().equalsIgnoreCase(AppConstants.ENTRY.getString())) {
                         importedGermplasm.setEntryId(
                                 Integer.valueOf(getCellStringValue(currentSheet, currentRow, col, true)));
                         // LOG.debug("ENTRY:"+getCellStringValue(currentSheet, currentRow, col));
                     } else if (importedGermplasmList.getImportedFactors().get(col)
-                            .getFactor().toUpperCase() .equals(FACTOR_DESIGNATION)) {
+                            .getFactor().equalsIgnoreCase(AppConstants.DESIGNATION.getString())) {
                         importedGermplasm.setDesig(getCellStringValue(currentSheet, currentRow, col, true));
                         // LOG.debug("DESIG:"+getCellStringValue(currentSheet, currentRow, col));
                     } else if (importedGermplasmList.getImportedFactors().get(col)
-                            .getFactor().toUpperCase().equals(FACTOR_GID)) {
+                            .getFactor().equalsIgnoreCase(AppConstants.GID.getString())) {
                         importedGermplasm.setGid(getCellStringValue(currentSheet, currentRow, col, true));
                         // LOG.debug("DESIG:"+getCellStringValue(currentSheet, currentRow, col));
                     } else if (importedGermplasmList.getImportedFactors().get(col)
-                            .getFactor().toUpperCase().equals(FACTOR_CROSS)) {
+                            .getFactor().equalsIgnoreCase(AppConstants.CROSS.getString())) {
                         importedGermplasm.setCross(getCellStringValue(currentSheet, currentRow, col, true));
                         // LOG.debug("DESIG:"+getCellStringValue(currentSheet, currentRow, col));
                     } else if (importedGermplasmList.getImportedFactors().get(col)
-                            .getFactor().toUpperCase().equals(FACTOR_SOURCE)) {
+                            .getFactor().equalsIgnoreCase(AppConstants.SOURCE.getString())) {
                         importedGermplasm.setSource(getCellStringValue(currentSheet, currentRow, col, true));
                         // LOG.debug("DESIG:"+getCellStringValue(currentSheet, currentRow, col));
                     } else if (importedGermplasmList.getImportedFactors().get(col)
-                            .getFactor().toUpperCase().equals(FACTOR_ENTRY_CODE)) {
+                            .getFactor().equalsIgnoreCase(AppConstants.ENTRY_CODE.getString())) {
                         importedGermplasm.setEntryCode(getCellStringValue(currentSheet, currentRow, col, true));
                         // LOG.debug("DESIG:"+getCellStringValue(currentSheet, currentRow, col));
                     }
@@ -443,14 +379,21 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
         currentRow++; //Skip row from file info
         
         //Check if headers are correct
-        if(!getCellStringValue(currentSheet,currentRow,0,true).toUpperCase().equals(CONDITION_CONDITION) 
-            || !getCellStringValue(currentSheet,currentRow,1,true).toUpperCase().equals(CONDITION_DESCRIPTION)
-            || !getCellStringValue(currentSheet,currentRow,2,true).toUpperCase().equals(CONDITION_PROPERTY)
-            || !getCellStringValue(currentSheet,currentRow,3,true).toUpperCase().equals(CONDITION_SCALE)
-            || !getCellStringValue(currentSheet,currentRow,4,true).toUpperCase().equals(CONDITION_METHOD)
-            || !getCellStringValue(currentSheet,currentRow,5,true).toUpperCase().equals(CONDITION_DATA_TYPE)
-            || !getCellStringValue(currentSheet,currentRow,6,true).toUpperCase().equals(CONDITION_VALUE)
-            //|| !getCellStringValue(currentSheet,currentRow,7,true).toUpperCase().equals("LABEL")
+        if(!getCellStringValue(currentSheet,currentRow,0,true)
+                        .equalsIgnoreCase(AppConstants.CONDITION.getString()) 
+            || !getCellStringValue(currentSheet,currentRow,1,true)
+                        .equalsIgnoreCase(AppConstants.DESCRIPTION.getString())
+            || !getCellStringValue(currentSheet,currentRow,2,true)
+                        .equalsIgnoreCase(AppConstants.PROPERTY.getString())
+            || !getCellStringValue(currentSheet,currentRow,3,true)
+                        .equalsIgnoreCase(AppConstants.SCALE.getString())
+            || !getCellStringValue(currentSheet,currentRow,4,true)
+                        .equalsIgnoreCase(AppConstants.METHOD.getString())
+            || !getCellStringValue(currentSheet,currentRow,5,true)
+                        .equalsIgnoreCase(AppConstants.DATA_TYPE.getString())
+            || !getCellStringValue(currentSheet,currentRow,6,true)
+                        .equalsIgnoreCase(AppConstants.VALUE.getString())
+            //|| !getCellStringValue(currentSheet,currentRow,7,true).equalsIgnoreCase("LABEL")
             ){
         	/*
             showInvalidFileError("Incorrect headers for conditions.");
@@ -491,13 +434,19 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
         Boolean desigColumnIsPresent = false;
         
         //Check if headers are correct
-        if(!getCellStringValue(currentSheet,currentRow,0,true).toUpperCase().equals(FACTOR_HEADER_FACTOR) 
-            || !getCellStringValue(currentSheet,currentRow,1,true).toUpperCase().equals(FACTOR_HEADER_DESCRIPTION)
-            || !getCellStringValue(currentSheet,currentRow,2,true).toUpperCase().equals(FACTOR_HEADER_PROPERTY)
-            || !getCellStringValue(currentSheet,currentRow,3,true).toUpperCase().equals(FACTOR_HEADER_SCALE)
-            || !getCellStringValue(currentSheet,currentRow,4,true).toUpperCase().equals(FACTOR_HEADER_METHOD)
-            || !getCellStringValue(currentSheet,currentRow,5,true).toUpperCase().equals(FACTOR_HEADER_DATA_TYPE)
-            //|| !getCellStringValue(currentSheet,currentRow,7,true).toUpperCase().equals("NESTED IN")
+        if(!getCellStringValue(currentSheet,currentRow,0,true)
+                        .equalsIgnoreCase(AppConstants.FACTOR.getString()) 
+            || !getCellStringValue(currentSheet,currentRow,1,true)
+                        .equalsIgnoreCase(AppConstants.DESCRIPTION.getString())
+            || !getCellStringValue(currentSheet,currentRow,2,true)
+                        .equalsIgnoreCase(AppConstants.PROPERTY.getString())
+            || !getCellStringValue(currentSheet,currentRow,3,true)
+                        .equalsIgnoreCase(AppConstants.SCALE.getString())
+            || !getCellStringValue(currentSheet,currentRow,4,true)
+                        .equalsIgnoreCase(AppConstants.METHOD.getString())
+            || !getCellStringValue(currentSheet,currentRow,5,true)
+                        .equalsIgnoreCase(AppConstants.DATA_TYPE.getString())
+            //|| !getCellStringValue(currentSheet,currentRow,7,true).equalsIgnoreCase("NESTED IN")
             ) {
             showInvalidFileError("Incorrect headers for factors.");
             LOG.debug("Invalid file on readFactors header");
@@ -536,9 +485,9 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
                 //LOG.debug("Label:"+getCellStringValue(currentSheet,currentRow,7));
                 //
                 //Check if the current factor is ENTRY or DESIG
-                if(importedFactor.getFactor().toUpperCase().equals(FACTOR_ENTRY)){
+                if(importedFactor.getFactor().equalsIgnoreCase(AppConstants.ENTRY.getString())){
                     entryColumnIsPresent = true;
-                } else if(importedFactor.getFactor().toUpperCase().equals(FACTOR_DESIGNATION)){
+                } else if(importedFactor.getFactor().equalsIgnoreCase(AppConstants.DESIGNATION.getString())){
                     desigColumnIsPresent = true;
                 }
                 currentRow++;
@@ -558,13 +507,13 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
      */
     private void readConstants(){
         //Check if headers are correct
-        if(!getCellStringValue(currentSheet,currentRow,0,true).toUpperCase().equals("CONSTANT") 
-            || !getCellStringValue(currentSheet,currentRow,1,true).toUpperCase().equals("DESCRIPTION")
-            || !getCellStringValue(currentSheet,currentRow,2,true).toUpperCase().equals("PROPERTY")
-            || !getCellStringValue(currentSheet,currentRow,3,true).toUpperCase().equals("SCALE")
-            || !getCellStringValue(currentSheet,currentRow,4,true).toUpperCase().equals("METHOD")
-            || !getCellStringValue(currentSheet,currentRow,5,true).toUpperCase().equals("DATA TYPE")
-            || !getCellStringValue(currentSheet,currentRow,6,true).toUpperCase().equals("VALUE")) {
+        if(!getCellStringValue(currentSheet,currentRow,0,true).equalsIgnoreCase(AppConstants.CONSTANT.getString()) 
+            || !getCellStringValue(currentSheet,currentRow,1,true).equalsIgnoreCase(AppConstants.DESCRIPTION.getString())
+            || !getCellStringValue(currentSheet,currentRow,2,true).equalsIgnoreCase(AppConstants.PROPERTY.getString())
+            || !getCellStringValue(currentSheet,currentRow,3,true).equalsIgnoreCase(AppConstants.SCALE.getString())
+            || !getCellStringValue(currentSheet,currentRow,4,true).equalsIgnoreCase(AppConstants.METHOD.getString())
+            || !getCellStringValue(currentSheet,currentRow,5,true).equalsIgnoreCase(AppConstants.DATA_TYPE.getString())
+            || !getCellStringValue(currentSheet,currentRow,6,true).equalsIgnoreCase(AppConstants.VALUE.getString())) {
             showInvalidFileError("Incorrect headers for constants.");
             //LOG.debug("Invalid file on readConstants header");
         }
@@ -592,12 +541,12 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
      */
     private void readVariates(){
         //Check if headers are correct
-        if(!getCellStringValue(currentSheet,currentRow,0,true).toUpperCase().equals("VARIATE")
-            || !getCellStringValue(currentSheet,currentRow,1,true).toUpperCase().equals("DESCRIPTION")
-            || !getCellStringValue(currentSheet,currentRow,2,true).toUpperCase().equals("PROPERTY")
-            || !getCellStringValue(currentSheet,currentRow,3,true).toUpperCase().equals("SCALE")
-            || !getCellStringValue(currentSheet,currentRow,4,true).toUpperCase().equals("METHOD")
-            || !getCellStringValue(currentSheet,currentRow,5,true).toUpperCase().equals("DATA TYPE")) {
+        if(!getCellStringValue(currentSheet,currentRow,0,true).equalsIgnoreCase(AppConstants.VARIATE.getString())
+            || !getCellStringValue(currentSheet,currentRow,1,true).equalsIgnoreCase(AppConstants.DESCRIPTION.getString())
+            || !getCellStringValue(currentSheet,currentRow,2,true).equalsIgnoreCase(AppConstants.PROPERTY.getString())
+            || !getCellStringValue(currentSheet,currentRow,3,true).equalsIgnoreCase(AppConstants.SCALE.getString())
+            || !getCellStringValue(currentSheet,currentRow,4,true).equalsIgnoreCase(AppConstants.METHOD.getString())
+            || !getCellStringValue(currentSheet,currentRow,5,true).equalsIgnoreCase(AppConstants.DATA_TYPE.getString())) {
             showInvalidFileError("Incorrect headers for variates.");
             //LOG.debug("Invalid file on readVariates header");
         }
@@ -748,11 +697,22 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 		if(hasCheck){
 			//we need to add the CHECK factor if its not existing
 			List<MeasurementVariable> measurementVariables = userSelection.getWorkbook().getFactors();
-			MeasurementVariable checkVariable = new MeasurementVariable("CHECK", "TYPE OF ENTRY", "CODE", "ASSIGNED", "CHECK", "C", "", "ENTRY");
-			Integer checkVariableTermId = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(checkVariable.getProperty(), checkVariable.getScale(), checkVariable.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(checkVariable.getLabel()));
+//          MeasurementVariable checkVariable = new MeasurementVariable("CHECK", "TYPE OF ENTRY", "CODE", "ASSIGNED", "CHECK", "C", "", "ENTRY");
+          MeasurementVariable checkVariable = new MeasurementVariable(
+                  AppConstants.CHECK.getString(), AppConstants.TYPE_OF_ENTRY.getString(), 
+                  AppConstants.CODE.getString(), AppConstants.ASSIGNED.getString(), 
+                  AppConstants.CHECK.getString(), AppConstants.C.getString(), "", 
+                  AppConstants.ENTRY.getString());
+			Integer checkVariableTermId = fieldbookMiddlewareService
+			        .getStandardVariableIdByPropertyScaleMethodRole(checkVariable.getProperty(), 
+			                checkVariable.getScale(), checkVariable.getMethod(), 
+			                PhenotypicType.getPhenotypicTypeForLabel(checkVariable.getLabel()));
 			boolean checkFactorExisting = false;
 			for(MeasurementVariable var : measurementVariables){
-				Integer termId = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(var.getProperty(), var.getScale(), var.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(var.getLabel()));
+				Integer termId = fieldbookMiddlewareService
+				        .getStandardVariableIdByPropertyScaleMethodRole(
+				                var.getProperty(), var.getScale(), var.getMethod(), 
+				                PhenotypicType.getPhenotypicTypeForLabel(var.getLabel()));
 				if(termId != null && checkVariableTermId != null && termId.intValue() == checkVariableTermId.intValue()){
 					checkFactorExisting = true;
 					break;

@@ -62,6 +62,7 @@ public class FieldbookHandlerInterceptor implements HandlerInterceptor {
 			throws Exception {
 		
 		managerFactoryProvider.close();
+		workbenchDataManager.close();
 	
 	}
 

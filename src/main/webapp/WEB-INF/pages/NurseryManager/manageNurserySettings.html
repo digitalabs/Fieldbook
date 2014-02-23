@@ -386,6 +386,8 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
  					}
  					
  				});
+ 				
+ 				$.fn.modal.Constructor.prototype.enforceFocus = function() {};
  			});    			 			     
 			
       //]]>

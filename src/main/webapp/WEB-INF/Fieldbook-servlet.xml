@@ -208,7 +208,7 @@
     </bean>
     
     <bean id="workbenchDataManager"
-        class="org.generationcp.middleware.manager.WorkbenchDataManagerImpl" destroy-method="close">
+        class="org.generationcp.middleware.manager.WorkbenchDataManagerImpl">
         <constructor-arg ref="workbenchHibernateSessionProvider" />
     </bean>
     

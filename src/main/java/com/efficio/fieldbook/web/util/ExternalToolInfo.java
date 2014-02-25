@@ -13,6 +13,15 @@ package com.efficio.fieldbook.web.util;
 
 import java.util.Properties;
 
+import javax.annotation.Resource;
+
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.fieldmap.controller.FieldmapController;
+
 /**
  * The Class GitRepositoryState.
  *
@@ -26,6 +35,11 @@ public class ExternalToolInfo {
    /** The old fieldbook path. */
    private String oldFieldbookPath;
 
+   @Resource
+   private WorkbenchService workbenchService;
+   
+   private static final Logger LOG = LoggerFactory.getLogger(ExternalToolInfo.class);
+   
    /**
     * Instantiates a new external tool info.
     */
@@ -49,7 +63,14 @@ public class ExternalToolInfo {
      * @return the current project id
      */
     public String getCurrentProjectId() {
-        return currentProjectId;
+        long projectId = 0;
+        try {
+            System.out.println();
+            projectId = workbenchService.getLastOpenedProject();
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        return String.valueOf(projectId);
     }
 
     /**

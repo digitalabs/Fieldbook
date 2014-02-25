@@ -23,12 +23,19 @@
 
 
 	<mvc:interceptors>
-      <bean class="com.efficio.fieldbook.web.interceptor.FieldbookHandlerInterceptor" />
-    </mvc:interceptors> 
-
-    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
-        <property name="cacheSeconds" value="0" />
+       <bean class="com.efficio.fieldbook.web.interceptor.FieldbookHandlerInterceptor" />
+    	
+	    <bean id="webContentInterceptor" 
+          class="org.springframework.web.servlet.mvc.WebContentInterceptor">
+        <property name="cacheSeconds" value="0"/>
+        <property name="useExpiresHeader" value="true"/>
+        <property name="useCacheControlHeader" value="true"/>
+        <property name="useCacheControlNoStore" value="true"/>
     </bean>
+    </mvc:interceptors> 
+    
+    
+   
 
 	<!-- **************************************************************** -->
 	<!--  SPRING ANNOTATION PROCESSING                                    -->
@@ -193,7 +200,7 @@
     <bean id="managerFactoryProvider" 
     	class="org.generationcp.commons.hibernate.DynamicManagerFactoryProviderConcurrency">
     	<constructor-arg ref="workbenchDataManager" />
-    	<property name="maxCachedLocalSessionFactories" value="1" />
+    	<property name="maxCachedLocalSessionFactories" value="5" />
     	<property name="localPort" value="${workbench.port}" />
     	<property name="localHost" value="${workbench.host}" />
     	<property name="localUsername" value="${workbench.username}"/>
@@ -207,7 +214,7 @@
     <bean id="managerFactory" name="managerFactory"
     	factory-bean="managerFactoryProvider"
     	factory-method="createInstance"
-    	scope="session" destroy-method="close">
+    	scope="request" destroy-method="close">
     	<aop:scoped-proxy/>
     </bean>
     
@@ -218,43 +225,43 @@
     
      <bean id="ontologyDataManagerV2" factory-bean="managerFactory"
     	factory-method="getNewOntologyDataManager"
-    	scope="session">
+    	scope="request">
     	<aop:scoped-proxy/>
     </bean>
     
     <bean id="germplasmDataManagerV2" factory-bean="managerFactory"
     	factory-method="getGermplasmDataManager"
-    	scope="session">
+    	scope="request">
     	<aop:scoped-proxy/>
     </bean>
     
     <bean id="dataImportService" factory-bean="managerFactory"
     	factory-method="getDataImportService"
-    	scope="session" >
+    	scope="request" >
     	<aop:scoped-proxy/>
     </bean>
     
     <bean id="fieldbookMiddlewareService" factory-bean="managerFactory"
     	factory-method="getFieldbookMiddlewareService"
-    	scope="session">
+    	scope="request">
     	<aop:scoped-proxy/>
     </bean>
     
     <bean id="ontologyService" factory-bean="managerFactory"
     	factory-method="getOntologyService"
-    	scope="session" >
+    	scope="request" >
     	<aop:scoped-proxy/>
     </bean>
     
     <bean id="studyDataManagerV2" factory-bean="managerFactory"
     	factory-method="getNewStudyDataManager"
-    	scope="session">
+    	scope="request">
     	<aop:scoped-proxy/>
     </bean>
     
     <bean id="germplasmListManager" factory-bean="managerFactory"
     	factory-method="getGermplasmListManager"
-    	scope="session">
+    	scope="request">
     	<aop:scoped-proxy/>
     </bean>
     

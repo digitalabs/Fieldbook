@@ -37,11 +37,7 @@ public class FieldbookHandlerInterceptor implements HandlerInterceptor {
 			ModelAndView modelAndView) throws Exception {
 		// TODO Auto-generated method stub
 		
-		response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
-        response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
-        response.setDateHeader("Expires", 0);
-		
-		Boolean lastOpenedProjectChanged = true;
+		/**Boolean lastOpenedProjectChanged = true;
     	try {
 			lastOpenedProjectChanged = workbenchDataManager.isLastOpenedProjectChanged();
 		} catch (MiddlewareQueryException e) {
@@ -57,7 +53,7 @@ public class FieldbookHandlerInterceptor implements HandlerInterceptor {
     		}
     		
 			request.getSession().invalidate();
-		}
+		}**/
 		
 	}
 
@@ -67,7 +63,7 @@ public class FieldbookHandlerInterceptor implements HandlerInterceptor {
 			throws Exception {
 		
 		managerFactoryProvider.close();
-		workbenchDataManager.close();
+		//workbenchDataManager.close();
 	
 	}
 

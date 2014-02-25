@@ -22,6 +22,7 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 
+// TODO: Auto-generated Javadoc
 /**
  * This bean models the various input that the user builds up over time
  * to perform the actual loading operation.
@@ -61,19 +62,22 @@ public class UserSelection implements Serializable {
     /** The current page germplasm list. */
     private int currentPageGermplasmList;
     
-    /** Nursery level conditions in Manage Settings */
+    /**  Nursery level conditions in Manage Settings. */
     private List<SettingDetail> nurseryLevelConditions;
     
-    /** Plot level factors in Manage Settings */
+    /**  Plot level factors in Manage Settings. */
     private List<SettingDetail> plotsLevelList;
     
-    /** Baseline Traits in Manage Settings */
+    /**  Baseline Traits in Manage Settings. */
     private List<SettingDetail> baselineTraitsList;
     
+    /** The all standard variables. */
     private Set<StandardVariable> allStandardVariables;
     
+    /** The imported advanced germplasm list. */
     private List<ImportedGermplasm> importedAdvancedGermplasmList;
     
+    /** The standard variable map. */
     private Map<String, StandardVariable> standardVariableMap; //for easy access
     
 	/**
@@ -258,6 +262,8 @@ public class UserSelection implements Serializable {
 	}
 
 	/**
+	 * Gets the nursery level conditions.
+	 *
 	 * @return the nurseryLevelConditions
 	 */
 	public List<SettingDetail> getNurseryLevelConditions() {
@@ -265,6 +271,8 @@ public class UserSelection implements Serializable {
 	}
 
 	/**
+	 * Sets the nursery level conditions.
+	 *
 	 * @param nurseryLevelConditions the nurseryLevelConditions to set
 	 */
 	public void setNurseryLevelConditions(List<SettingDetail> nurseryLevelConditions) {
@@ -272,6 +280,8 @@ public class UserSelection implements Serializable {
 	}
 
 	/**
+	 * Gets the plots level list.
+	 *
 	 * @return the plotsLevelList
 	 */
 	public List<SettingDetail> getPlotsLevelList() {
@@ -279,6 +289,8 @@ public class UserSelection implements Serializable {
 	}
 
 	/**
+	 * Sets the plots level list.
+	 *
 	 * @param plotsLevelList the plotsLevelList to set
 	 */
 	public void setPlotsLevelList(List<SettingDetail> plotsLevelList) {
@@ -286,6 +298,8 @@ public class UserSelection implements Serializable {
 	}
 
 	/**
+	 * Gets the baseline traits list.
+	 *
 	 * @return the baselineTraitsList
 	 */
 	public List<SettingDetail> getBaselineTraitsList() {
@@ -293,6 +307,8 @@ public class UserSelection implements Serializable {
 	}
 
 	/**
+	 * Sets the baseline traits list.
+	 *
 	 * @param baselineTraitsList the baselineTraitsList to set
 	 */
 	public void setBaselineTraitsList(List<SettingDetail> baselineTraitsList) {
@@ -300,6 +316,8 @@ public class UserSelection implements Serializable {
 	}
 
 	/**
+	 * Gets the all standard variables.
+	 *
 	 * @return the allStandardVariables
 	 */
 	public Set<StandardVariable> getAllStandardVariables() {
@@ -307,6 +325,8 @@ public class UserSelection implements Serializable {
 	}
 
 	/**
+	 * Sets the all standard variables.
+	 *
 	 * @param allStandardVariables the allStandardVariables to set
 	 */
 	public void setAllStandardVariables(Set<StandardVariable> allStandardVariables) {
@@ -320,16 +340,33 @@ public class UserSelection implements Serializable {
 		}
 	}
 
+	/**
+	 * Gets the cache standard variable.
+	 *
+	 * @param id the id
+	 * @return the cache standard variable
+	 */
 	public StandardVariable getCacheStandardVariable(int id){
 		if(standardVariableMap != null && standardVariableMap.containsKey(Integer.toString(id))){
 			return standardVariableMap.get(Integer.toString(id));
 		}
 		return null;
 	}
+	
+	/**
+	 * Gets the imported advanced germplasm list.
+	 *
+	 * @return the imported advanced germplasm list
+	 */
 	public List<ImportedGermplasm> getImportedAdvancedGermplasmList() {
 		return importedAdvancedGermplasmList;
 	}
 
+	/**
+	 * Sets the imported advanced germplasm list.
+	 *
+	 * @param importedAdvancedGermplasmList the new imported advanced germplasm list
+	 */
 	public void setImportedAdvancedGermplasmList(
 			List<ImportedGermplasm> importedAdvancedGermplasmList) {
 		this.importedAdvancedGermplasmList = importedAdvancedGermplasmList;

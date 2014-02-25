@@ -26,6 +26,10 @@
       <bean class="com.efficio.fieldbook.web.interceptor.FieldbookHandlerInterceptor" />
     </mvc:interceptors> 
 
+    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+        <property name="cacheSeconds" value="0" />
+    </bean>
+
 	<!-- **************************************************************** -->
 	<!--  SPRING ANNOTATION PROCESSING                                    -->
 	<!-- **************************************************************** -->

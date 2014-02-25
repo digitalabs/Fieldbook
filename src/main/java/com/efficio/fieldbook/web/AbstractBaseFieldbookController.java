@@ -13,11 +13,18 @@ package com.efficio.fieldbook.web;
 
 import javax.annotation.Resource;
 
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.workbench.Tool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.ui.Model;
 
+import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.nursery.controller.ManageNurserySettingsController;
+import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExternalToolInfo;
 import com.efficio.fieldbook.web.util.GitRepositoryState;
 
@@ -52,7 +59,14 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
     
     /** The application context. */
     private ApplicationContext applicationContext;
+    
+    /** The workbench data manager. */
+    @Resource
+    private WorkbenchService workbenchService;
+    
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractBaseFieldbookController.class);
 
+    private static Tool oldFbTool = null;
     /**
      * Gets the content name.
      *
@@ -92,10 +106,24 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
      * @return the old fieldbook path
      */
     public String getOldFieldbookPath(){
+    	
+    	if(oldFbTool == null){
+			try {
+				oldFbTool = workbenchService.getToolWithName(
+				        AppConstants.TOOL_NAME_OLD_FIELDBOOK.getString());
+			} catch (MiddlewareQueryException e) {
+			    LOG.error(e.getMessage(), e);
+			}
+    	}
+		if(oldFbTool != null)
+			return oldFbTool.getPath();
+		return "";
+    	/*
         if(externalToolInfo != null){
             return externalToolInfo.getOldFieldbookPath();
         }
         return "";
+        */
     }
     
     /**

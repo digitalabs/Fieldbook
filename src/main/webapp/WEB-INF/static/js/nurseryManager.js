@@ -924,3 +924,21 @@ function checkIfNull(object) {
 		return "";
 	}
 }
+
+function createSliderInput(inputName, minVal, maxVal){
+	return '<input type="text" class="slider-input" value="" data-slider-min="'+minVal+'" data-slider-max="'+maxVal+'" data-slider-step="1" data-slider-value="-20" data-slider-orientation="horizontal" data-slider-selection="after" data-slider-tooltip="always"/>';
+}
+function createDateInput(inputName){
+	return '<input type="text" name="'+inputName+'" value="" class="date-input form-control"/>';
+}
+function createNumericalTextInput(inputName){
+	return '<input type="text" name="'+inputName+'" value="" class="numeric-input form-control"/>';
+}
+function createCharacterTextInput(inputName){
+	return '<input type="text" name="'+inputName+'" value="" class="character-input form-control"/>';
+}
+function initializeDateInputs(){
+	$('.date-input').datepicker({'format': 'yyyymmdd'}).on('changeDate', function(ev) {
+			$(this).datepicker('hide');
+		});
+}

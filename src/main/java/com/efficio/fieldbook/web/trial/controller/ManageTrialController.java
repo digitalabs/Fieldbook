@@ -66,9 +66,6 @@ public class ManageTrialController extends AbstractBaseFieldbookController{
         try {
             List<StudyDetails> nurseryDetailsList = 
                     fieldbookMiddlewareService.getAllLocalTrialStudyDetails();
-            for (StudyDetails s : nurseryDetailsList){
-            	System.out.println("Trial Manager: " + s.getStudyName());
-            }
             getTrialSelection().setStudyDetailsList(nurseryDetailsList);
             form.setTrialDetailsList(getTrialSelection().getStudyDetailsList());
             form.setCurrentPage(1);

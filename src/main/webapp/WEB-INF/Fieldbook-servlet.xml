@@ -200,7 +200,7 @@
     <bean id="managerFactoryProvider" 
     	class="org.generationcp.commons.hibernate.DynamicManagerFactoryProviderConcurrency">
     	<constructor-arg ref="workbenchDataManager" />
-    	<property name="maxCachedLocalSessionFactories" value="5" />
+    	<property name="maxCachedLocalSessionFactories" value="1" />
     	<property name="localPort" value="${workbench.port}" />
     	<property name="localHost" value="${workbench.host}" />
     	<property name="localUsername" value="${workbench.username}"/>

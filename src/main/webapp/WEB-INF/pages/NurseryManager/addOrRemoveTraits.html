@@ -12,6 +12,43 @@
 
 	<div id="page-message"> 
 	</div>
+	
+	<div class="row form-group">
+	<div class="col-xs-offset-10 col-md-offset-10 col-xs-1 col-md-1">
+		<div style="margin-left: -16px" class="btn-group">
+		  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+		    <span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;Export
+		  </button>
+		  <ul class="dropdown-menu" role="menu">
+		    <li>
+	    		<a href="javascript: exportNursery(1);"  th:text="#{nursery.export.fieldlog.fieldroid}">Fieldlog / Fieldroid</a>
+		    </li>		    
+		    <li>
+		    	<a href="javascript: exportNursery(2);"  th:text="#{nursery.export.r}">R</a> 
+		    </li>
+			<li>
+		    	<a href="javascript: exportNursery(3);"  th:text="#{nursery.export.excel}">Excel</a> 
+		    </li>
+		          
+		  </ul>
+		</div>
+	</div>
+	<div class="col-xs-1 col-md-1">
+		<div style="margin-left: -16px" class="btn-group">
+		  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+		    <span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;Import
+		  </button>
+		  <ul class="dropdown-menu" role="menu">
+		    <li>
+		    	<a href="javascript: importNursery(1);"  th:text="#{nursery.import.fieldlog.fieldroid}">Fieldlog / Fieldroid</a>
+		    </li>		    
+		    <li>
+		    	<a href="javascript: importNursery(3);" th:text="#{nursery.import.excel}">Excel</a> 
+		    </li>			    
+		  </ul>
+		</div>
+	</div>
+	</div>
 
 <div id="germplasm-measurement-list-table-div" th:include="/NurseryManager/showAddOrRemoveTraitsPagination">
     </div>
@@ -19,14 +56,55 @@
 				
 				
     		
+<form id="exportNurseryForm" role="form-horizontal" action="#"
+th:action="@{/NurseryManager/addOrRemoveTraits/export/}" method="GET">
+</form>
 
-
-<!--  
-<script type="text/javascript" th:src="@{/static/js/jquery.ba-throttle-debounce.min.js}"></script>
-<script type="text/javascript" th:src="@{/static/js/jquery.stickyheader.js}"></script>
-
- <script type="text/javascript" th:src="@{/static/js/jquery.fixedheadertable.min.js}"></script>
-  -->
+<form id="importNurseryForm" role="form-horizontal" onsubmit="return do_validation()"  class="form-horizontal" action="#" 
+     th:action="@{/NurseryManager/addOrRemoveTraits/import/}" method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data">								
+    <!-- Modal -->
+    <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" th:text="#{nursery.import.data.file}">Import File</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group" id="page-modal-message"></div>
+            <div th:class="${#fields.hasErrors('file')} ? 'form-group has-error' : 'form-group'">
+              
+              
+              <div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
+              
+              <label for="fileupload" class="col-md-2 control-label" th:text="#{nursery.import.germplasm.select.file}">Select a file</label>
+              <div class="col-xs-6 col-lg-6">
+                
+                <div class="fileupload fileupload-new" data-provides="fileupload">							    
+                <div class="input-group">
+                  <div class="form-control uneditable-input"><i class="icon-file fileupload-exists"></i> 
+                  <span class="fileupload-preview"></span>
+                </div>
+                <div class="input-group-btn">
+                  <a class="btn btn-primary btn-file">
+                    <span class="fileupload-new" th:text="#{nursery.import.germplasm.browse.file}">Browse</span>
+                    <span class="fileupload-exists" th:text="#{nursery.import.germplasm.change}">Change</span>
+                    <input id="fileupload" th:field="*{file}" type="file" class="file-input"/></a>
+                    <a href="#" class="btn btn-danger fileupload-exists" data-dismiss="fileupload" th:text="#{nursery.import.germplasm.remove}">Remove</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>																							
+        </div>
+        <div class="modal-footer">
+          <button type="submit" th:value="#{common.form.submit.text}" class="btn btn-primary" th:text="#{nursery.import.germplasm.submit}">Submit</button>			        	
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+</form>
+<script type="text/javascript" th:src="@{/static/js/bootstrap-fileupload.js}"></script>
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
 	           
@@ -87,6 +165,23 @@
     	   //console.log('true');
     	   return noError;
        }
+       
+       function do_validation() {
+    	    if ($('#fileupload').val() == "") {
+	    	    var message = /*[[#{common.error.file.no.file.selected}]]*/;
+	    	    
+	    	    
+	    	    $("#page-modal-message").html(
+	    	    "<div class='alert alert-danger'>"+ message +"</div>"
+	    	  );
+	    	  
+	    	  $('div.fileupload').parent().parent().addClass('has-error');
+	    	  
+	    	  return false;
+	    	}
+    	  
+    	  return true;
+   }
        
       //]]>
     </script>

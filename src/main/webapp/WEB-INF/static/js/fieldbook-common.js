@@ -921,3 +921,37 @@ $('#'+getJquerySafeId('methodIdFavorite')).select2({
 
 }
 
+function exportNursery(type){
+	var currentPage = $('.pagination .active a').html();
+	
+	var $form = $("#addVariableForm");	
+	var serializedData = $form.serialize();
+
+	Spinner.toggle();
+ 	$.ajax(
+         { url: paginationUrl+currentPage+"/"+currentPage+'?r=' + (Math.random() * 999),
+           type: "POST",
+           data: serializedData,
+           cache: false,
+           timeout: 70000,
+           async: false,
+           success: function(html) {
+        	   var action = $('#exportNurseryForm').attr('action');
+        	   $('#exportNurseryForm').attr('action', action+type);
+        	   $('#exportNurseryForm').submit();
+        	   $('#exportNurseryForm').attr('action', action);
+        	   Spinner.toggle();
+           }
+         }
+       );
+}
+
+function importNursery(type){
+	$('#fileupload').val("");
+	$('#page-modal-message').html('');
+	$('div.fileupload').parent().parent().removeClass('has-error');
+	$('#importModal').modal('show');
+	var action = "/Fieldbook/NurseryManager/addOrRemoveTraits/import/";
+	$('#importNurseryForm').attr('action', action+type);
+	   
+}

@@ -852,6 +852,21 @@ function addNewSettings(){
 	});
 	
 }
+function copySettings() {
+	var templateSettingsId = $('#selectedSettingId').val();
+	Spinner.toggle();
+	$.ajax({
+		url: "/Fieldbook/NurseryManager/manageNurserySettings/copy/" + templateSettingsId,
+		type: "GET", 	
+		cache: false,				
+		success: function (html) {
+			//we just paste the whole html
+			$('.container .row').first().html(html);			
+			showSuccessfulMessage('page-message', copyTemplateSettingSuccess);	
+			Spinner.toggle();
+		}
+	});
+}
 function hasDuplicateSettingName(){
 	var selectedSettingsId = $('#selectedSettingId').val();
 	var settingsName = $('#settingName').val() ;
@@ -953,4 +968,22 @@ function checkIfNull(object) {
 	} else {
 		return "";
 	}
+}
+
+function createSliderInput(inputName, minVal, maxVal){
+	return '<input type="text" class="slider-input" value="" data-slider-min="'+minVal+'" data-slider-max="'+maxVal+'" data-slider-step="1" data-slider-value="-20" data-slider-orientation="horizontal" data-slider-selection="after" data-slider-tooltip="always"/>';
+}
+function createDateInput(inputName){
+	return '<input type="text" name="'+inputName+'" value="" class="date-input form-control"/>';
+}
+function createNumericalTextInput(inputName){
+	return '<input type="text" name="'+inputName+'" value="" class="numeric-input form-control"/>';
+}
+function createCharacterTextInput(inputName){
+	return '<input type="text" name="'+inputName+'" value="" class="character-input form-control"/>';
+}
+function initializeDateInputs(){
+	$('.date-input').datepicker({'format': 'yyyymmdd'}).on('changeDate', function(ev) {
+			$(this).datepicker('hide');
+		});
 }

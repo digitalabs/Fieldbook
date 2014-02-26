@@ -125,6 +125,8 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
     private boolean isAdvanceImportType;
     @Resource
     private FieldbookService fieldbookMiddlewareService;
+    
+
 	
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService#storeImportGermplasmWorkbook(org.springframework.web.multipart.MultipartFile)
@@ -348,8 +350,17 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
         try {
             listName = getCellStringValue(0, 0, 1, true);
             listTitle = getCellStringValue(0, 1, 1, true);
-            listDate = DateUtil.parseDate(getCellStringValue(0, 2, 1, true));
-            listType = getCellStringValue(0, 3, 1, true);
+            
+            String labelIdentifier = getCellStringValue(0, 2, 0, true);
+            
+            if(AppConstants.LIST_DATE.getString().equalsIgnoreCase(labelIdentifier)){
+            	listDate = DateUtil.parseDate(getCellStringValue(0, 2, 1, true));
+            	listType = getCellStringValue(0, 3, 1, true);
+            }else if(AppConstants.LIST_TYPE.getString().equalsIgnoreCase(labelIdentifier)){            	
+            	listType = getCellStringValue(0, 2, 1, true);
+            	listDate = DateUtil.parseDate(getCellStringValue(0, 3, 1, true));
+            }
+            
 
             importedGermplasmList = new ImportedGermplasmList(
                         originalFilename, listName, listTitle, listType, listDate);

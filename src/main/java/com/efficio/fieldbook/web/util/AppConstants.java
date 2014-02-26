@@ -81,6 +81,7 @@ public enum AppConstants {
     
     , TOOL_NAME_NURSERY_MANAGER_WEB
     , TOOL_NAME_TRIAL_MANAGER_WEB
+    , TOOL_NAME_OLD_FIELDBOOK
     , GERMPLASM_LIST_LOCAL
     , GERMPLASM_LIST_CENTRAL
     
@@ -111,6 +112,15 @@ public enum AppConstants {
     , C
     , CONSTANT
     , VARIATE
+    
+    ,EXPORT_NURSERY_FIELDLOG_FIELDROID
+    ,EXPORT_NURSERY_R
+    ,EXPORT_NURSERY_EXCEL
+    ,IMPORT_NURSERY_FIELDLOG_FIELDROID
+    ,IMPORT_NURSERY_EXCEL
+    
+    ,LIST_DATE
+    ,LIST_TYPE
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

@@ -11,10 +11,16 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -33,9 +39,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.AddOrRemoveTraitsForm;
+import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
+import com.efficio.fieldbook.web.nursery.validation.ImportGermplasmListValidator;
+import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
 /**
@@ -59,6 +69,9 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     private FieldbookService fieldbookMiddlewareService;
     @Resource
     private MeasurementsGeneratorService measurementsGeneratorService;
+    
+    /** The Constant BUFFER_SIZE. */
+    private static final int BUFFER_SIZE = 4096 * 4;
     
   
 
@@ -214,6 +227,103 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     		}
     		//getUserSelection().getMeasurementRowList().set(realIndex, measurementRow);
     	}
+    }
+    
+    @ResponseBody
+    @RequestMapping(value="/export/{exportType}", method = RequestMethod.GET)
+    public String exportFile(@PathVariable int exportType, HttpServletResponse response) {
+        
+    	if(AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == exportType){
+    		
+    	}else if(AppConstants.EXPORT_NURSERY_R.getInt() == exportType){
+    		
+    	}else if(AppConstants.EXPORT_NURSERY_EXCEL.getInt() == exportType){
+    		
+    	}
+    	/*
+        String fileName = getUserLabelPrinting().getFilenameDL();
+
+        if(fileName.indexOf(".pdf") != -1){
+        	response.setContentType("application/pdf");
+        }else if (fileName.indexOf(".xls") != -1)
+        	response.setContentType("application/vnd.ms-excel");
+        
+        
+        */
+        
+        File xls = new File("sample.xls"); // the selected name + current date
+        FileInputStream in;
+        response.setContentType("application/vnd.ms-excel");
+        response.setHeader("Content-disposition","attachment; filename=" + "sample.xls");
+        try {
+            in = new FileInputStream(xls);
+            OutputStream out = response.getOutputStream();
+
+            byte[] buffer= new byte[BUFFER_SIZE]; // use bigger if you want
+            int length = 0;
+
+            while ((length = in.read(buffer)) > 0){
+                 out.write(buffer, 0, length);
+            }
+            in.close();
+            out.close();
+        } catch (FileNotFoundException e) {
+        	LOG.error(e.getMessage(), e);
+        } catch (IOException e) {
+        	LOG.error(e.getMessage(), e);
+        }
+       
+        return "";
+    }
+    
+    @RequestMapping(value="/import/{importType}", method = RequestMethod.POST)
+    public String importFile(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form
+            ,@PathVariable int importType, BindingResult result, Model model) {
+    	/*
+    	ImportGermplasmListValidator validator = new ImportGermplasmListValidator();
+    	validator.validate(form, result);
+    	//result.reject("importGermplasmListForm.file", "test error msg");    	
+    	getUserSelection().setImportValid(false);
+        if (result.hasErrors()) {
+          
+        	form.setHasError("1");
+            return show(form,model);
+        }else{
+        	try{
+        		ImportedGermplasmMainInfo mainInfo =importGermplasmFileService
+        		        .storeImportGermplasmWorkbook(form.getFile());
+        		mainInfo = importGermplasmFileService.processWorkbook(mainInfo);
+        		
+        		if(mainInfo.getFileIsValid()){
+        			form.setHasError("0");
+        			getUserSelection().setImportedGermplasmMainInfo(mainInfo);
+        			getUserSelection().setImportValid(true);
+        			form.setImportedGermplasmMainInfo(getUserSelection().getImportedGermplasmMainInfo());
+        			form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo()
+        			        .getImportedGermplasmList().getImportedGermplasms());
+        			//form.setCurrentPage(1);
+                    form.changePage(1);
+                    userSelection.setCurrentPageGermplasmList(form.getCurrentPage());
+
+        			//after this one, it goes back to the same screen, 
+        			// but the list should already be displayed
+        		}else{
+        			//meaning there is error
+        			form.setHasError("1");
+        			for(String errorMsg : mainInfo.getErrorMessages()){
+        				result.rejectValue("file", errorMsg);  
+        			}
+        			
+        		}
+        	}catch(Exception e){
+                LOG.error(e.getMessage(), e);
+        	}
+        	
+        	
+        }
+        return show(form,model);
+    	*/
+    	return super.show(model);
     }
     
     /**

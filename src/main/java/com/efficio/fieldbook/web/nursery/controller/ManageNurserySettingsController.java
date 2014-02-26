@@ -284,6 +284,47 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
         return super.showAjaxPage(model, getContentName() );
     }
     
+    @RequestMapping(value="/copy/{templateSettingId}", method = RequestMethod.GET)
+    public String copySettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, @PathVariable int templateSettingId
+            , Model model, HttpSession session) throws MiddlewareQueryException{
+		//will do the saving here
+    	
+    	if(templateSettingId != 0){    	
+	    	TemplateSetting templateSettingFilter = new TemplateSetting(Integer.valueOf(templateSettingId), Integer.valueOf(getCurrentProjectId()), null, getNurseryTool(), null, null);
+	    	templateSettingFilter.setIsDefaultToNull();
+	    	List<TemplateSetting> templateSettings = workbenchService.getTemplateSettings(templateSettingFilter);
+	    	TemplateSetting templateSetting = templateSettings.get(0); //always 1
+	    	
+	    	boolean isNameUniqueAlready = false;
+	    	String newSettingsName = "";
+	    	int index = 1;
+	    	do{
+	    		newSettingsName = templateSetting.getName() + " ("+index+")";
+	    		//this is to search for duplicatename
+	    		templateSettingFilter.setTemplateSettingId(null);
+	    		templateSettingFilter.setName(newSettingsName);
+	    		templateSettingFilter.setIsDefaultToNull();
+	    	templateSettings = workbenchService.getTemplateSettings(templateSettingFilter);
+	    	index++;
+	    	if(templateSettings == null || templateSettings.isEmpty())
+	    		isNameUniqueAlready = true;
+	    	
+	    	}while(!isNameUniqueAlready);
+	    	//we need to make sure name is unique
+	    	
+	    	//then we make a copy
+	    	TemplateSetting newTemplateSetting = new TemplateSetting(null, Integer.valueOf(getCurrentProjectId()), newSettingsName, getNurseryTool(), templateSetting.getConfiguration(), false);
+	    	int copiedTemplateSettingId = workbenchService.addTemplateSetting(newTemplateSetting);
+	    	
+	    	return viewSettings(form, copiedTemplateSettingId, model, session);
+    	}else{
+    		assignDefaultValues(form);
+    	}
+    	model.addAttribute("manageSettingsForm", form);
+    	model.addAttribute("settingsList", getSettingsList());
+        return super.showAjaxPage(model, getContentName() );
+    }
+    
     /**
      * Displays the Add Setting popup.
      *

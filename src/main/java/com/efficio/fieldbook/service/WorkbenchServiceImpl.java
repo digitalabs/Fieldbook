@@ -52,7 +52,7 @@ public class WorkbenchServiceImpl implements WorkbenchService{
     }
     
     @Override
-    public Tool getToolWithName(String toolName) throws MiddlewareQueryException{
+    public Tool getToolWithName(String toolName) throws MiddlewareQueryException{    	
         return workbenchDataManager.getToolWithName(toolName);
     }
     

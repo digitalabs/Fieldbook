@@ -30,7 +30,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			    		</div>
 			    		<div class="col-xs-6 col-md-6 add_top_padding">
 			    			
-			    			<a href="" ><img width="15" src="/Fieldbook/static/img/copy.png"/>&nbsp;  <span th:text="#{nursery.managesettings.make.copy}"></span></a>
+			    			<a href="javascript: void(0)" id="copySettings" ><img width="15" src="/Fieldbook/static/img/copy.png"/>&nbsp;  <span th:text="#{nursery.managesettings.make.copy}"></span></a>
 			    			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			    			
 			    			<a href="javascript: void(0)" id="addNewSettings"><span class="glyphicon glyphicon-plus"></span>&nbsp; <span th:text="#{nursery.managesettings.add.new.settings}">Add New Settings</span></a>
@@ -369,7 +369,9 @@ data-slider-selection="after" data-slider-tooltip="always"/>
        		var programLocationUrl = /*[[#{nursery.advance.nursery.manage.location.url}]]*/;
        		var locationIframeOpened = false;
        		var nurseryLevelValueEmpty= /*[[#{nursery.managesettings.nursery.level.value.empty}]]*/
-            
+       		var copyTemplateSettingError = /*[[#{manage.settings.copy.error}]]*/;
+       		var copyTemplateSettingSuccess = /*[[#{manage.settings.copy.setting.success}]]*/;
+       		
  			$( document ).ready(function() {
  				$('#selectedSettingId').on('change', function(){
  					//alert('load settings' + $(this).val());
@@ -387,6 +389,13 @@ data-slider-selection="after" data-slider-tooltip="always"/>
  				$('#saveSettings').on('click', doSaveSettings);
  				$('#addNewSettings').on('click', addNewSettings);
  				
+ 				$('#copySettings').on('click', function(){
+ 					if($('#selectedSettingId').val() == '0'){
+ 						showErrorMessage('page-message', copyTemplateSettingError);	
+ 					}else{ 						
+ 	 					copySettings();
+ 					} 					 					
+ 				});
  				$.each($(".possibleValuesJson"), function (index, divElem){
  					if (index == 0) {
  						initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 

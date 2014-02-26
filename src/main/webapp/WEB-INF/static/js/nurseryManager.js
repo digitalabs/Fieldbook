@@ -844,6 +844,21 @@ function addNewSettings(){
 	});
 	
 }
+function copySettings() {
+	var templateSettingsId = $('#selectedSettingId').val();
+	Spinner.toggle();
+	$.ajax({
+		url: "/Fieldbook/NurseryManager/manageNurserySettings/copy/" + templateSettingsId,
+		type: "GET", 	
+		cache: false,				
+		success: function (html) {
+			//we just paste the whole html
+			$('.container .row').first().html(html);			
+			showSuccessfulMessage('page-message', copyTemplateSettingSuccess);	
+			Spinner.toggle();
+		}
+	});
+}
 function hasDuplicateSettingName(){
 	var selectedSettingsId = $('#selectedSettingId').val();
 	var settingsName = $('#settingName').val() ;

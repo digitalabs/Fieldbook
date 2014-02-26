@@ -713,11 +713,33 @@ function deleteVariable(variableType, variableId, deleteButton) {
 function sortVariableIdsAndNames(variableType) {
 	switch (variableType) {
 	case 1:
-		var reg = new RegExp("nurseryLevelVariables[0-9]+", "g")
-		var reg2 = new RegExp("nurseryLevelVariables\[[0-9]+\]", "g")
+		var reg = new RegExp("nurseryLevelVariables[0-9]+", "g");
+		var reg2 = new RegExp("nurseryLevelVariables\[[0-9]+\]", "g");
 		$.each($("#nurseryLevelSettings tr"), function (index, row) {
-			row.innerHTML = row.innerHTML.replace(reg, "nurseryLevelVariables" + index);
+			//get the possible values of the variable
+			var possibleValuesJson = $($(row).children("td:nth-child(3)").children(".possibleValuesJson")).text();
+						
+			//get currently selected value
+			var selectedVal = null;
+			var oldSelect2 = row.innerHTML.match(reg)[0];
+		    if ($("#" + getJquerySafeId(oldSelect2 + ".value")).select2("data")) {
+			   selectedVal = $("#" + getJquerySafeId(oldSelect2 + ".value")).select2("data").id;
+		    }
+		    
+		    //change the ids and names of the objects and delete the existing select2 object
+		    row.innerHTML = row.innerHTML.replace(reg, "nurseryLevelVariables" + index);
 			row.innerHTML = row.innerHTML.replace(reg2, "nurseryLevelVariables[" + index + "]");
+			$($(row).children("td:nth-child(3)")).html("<input type='hidden' id='nurseryLevelVariables" + index + 
+				".value' name='nurseryLevelVariables[" + index + "].value' class='form-control select2' />");
+
+			//recreate the select2 object
+			if (index == 0) {
+			    initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
+				 			"#" + getJquerySafeId("nurseryLevelVariables" + index + ".value"), true, selectedVal);
+			} else {
+				initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
+			 			"#" + getJquerySafeId("nurseryLevelVariables" + index + ".value"), false, selectedVal);
+			}
 		});
 		break;
 	case 2:

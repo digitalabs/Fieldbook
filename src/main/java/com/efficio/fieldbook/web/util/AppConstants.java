@@ -112,6 +112,12 @@ public enum AppConstants {
     , C
     , CONSTANT
     , VARIATE
+    
+    ,EXPORT_NURSERY_FIELDLOG_FIELDROID
+    ,EXPORT_NURSERY_R
+    ,EXPORT_NURSERY_EXCEL
+    ,IMPORT_NURSERY_FIELDLOG_FIELDROID
+    ,IMPORT_NURSERY_EXCEL
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

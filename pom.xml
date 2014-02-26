@@ -12,10 +12,16 @@
 	</properties>
 
 	<repositories>
+	<!-- 
 		<repository>
 			<id>gcp-efficio-repo</id>
 			<url>http://gcp.efficio.us.com:8081/nexus/content/repositories/thirdparty/</url>
 		</repository>
+		 -->
+		 <repository>
+	        <id>my-local-repo</id>
+	        <url>file://${basedir}/libs</url>
+	    </repository>
 		
 	</repositories>
 
@@ -26,9 +32,12 @@
 		    <groupId>pojoxml</groupId>
 		    <artifactId>pojoxml-sdk</artifactId>
 		    <version>1.0</version>
+		    <!-- 
 		    <scope>system</scope>
-		    <systemPath>${project.basedir}/libs/pojoxml/pojoxml-sdk/1.0/pojoxml-sdk-1.0.jar</systemPath>
+		    <systemPath>${basedir}/libs/pojoxml/pojoxml-sdk/1.0/pojoxml-sdk-1.0.jar</systemPath>
+		     -->
 		</dependency> 
+		
          
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -369,6 +378,7 @@
 			</resource>
 		</resources>
 		<plugins>
+			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>

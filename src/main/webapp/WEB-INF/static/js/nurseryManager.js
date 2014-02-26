@@ -420,15 +420,23 @@ function getStandardVariableDetailsModal(id) {
 }
 		
 function populateAttributeFields(data) {
-	$("#selectedTraitClass").text(data.traitClass);
-	$("#selectedProperty").text(data.property);
-	$("#selectedMethod").text(data.method);
-	$("#selectedScale").text(data.scale);
-	$("#selectedDataType").text(data.dataType);
-	$("#selectedRole").text(data.role);
-	$("#selectedCropOntologyId").text(data.cropOntologyId);
+	$("#selectedTraitClass").html(checkIfEmpty(data.traitClass));
+	$("#selectedProperty").html(checkIfEmpty(data.property));
+	$("#selectedMethod").html(checkIfEmpty(data.method));
+	$("#selectedScale").html(checkIfEmpty(data.scale));
+	$("#selectedDataType").html(checkIfEmpty(data.dataType));
+	$("#selectedRole").html(checkIfEmpty(data.role));
+	$("#selectedCropOntologyId").html(checkIfEmpty(data.cropOntologyId));
 	$("#selectedStdVarId").val(data.cvTermId);
 	$("#selectedName").val(data.name);
+}
+
+function checkIfEmpty(value) {
+	if (value == "") {
+		return "&nbsp";
+	} else {
+		return value;
+	}
 }
 
 function clearAttributeFields() {

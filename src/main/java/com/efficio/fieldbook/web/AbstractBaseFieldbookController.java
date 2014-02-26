@@ -35,6 +35,7 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
 
     /** The Constant BASE_TEMPLATE_NAME. */
     public static final String BASE_TEMPLATE_NAME = "/template/base-template";
+    public static final String ERROR_TEMPLATE_NAME = "/template/error-template";
     
     /** The Constant TEMPLATE_NAME_ATTRIBUTE. */
     public static final String TEMPLATE_NAME_ATTRIBUTE = "templateName";
@@ -136,6 +137,18 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
         setupModelInfo(model);
         model.addAttribute(TEMPLATE_NAME_ATTRIBUTE, getContentName());
         return BASE_TEMPLATE_NAME;
+    }
+    
+    /**
+     * Base functionality for displaying the page.
+     *
+     * @param model the model
+     * @return the string
+     */
+    public String showError(Model model) {
+        setupModelInfo(model);
+        //model.addAttribute(TEMPLATE_NAME_ATTRIBUTE, getContentName());
+        return ERROR_TEMPLATE_NAME;
     }
     
     /**

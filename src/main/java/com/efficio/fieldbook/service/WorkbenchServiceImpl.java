@@ -94,4 +94,8 @@ public class WorkbenchServiceImpl implements WorkbenchService{
         return userId;
     }
     
+    @Override
+    public long getLastOpenedProject() throws MiddlewareQueryException {
+        return workbenchDataManager.getLastOpenedProject(workbenchDataManager.getWorkbenchRuntimeData().getUserId()).getProjectId();
+    }
 }

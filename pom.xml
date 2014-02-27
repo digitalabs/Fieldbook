@@ -275,7 +275,14 @@
 		    <groupId>net.sf.ehcache</groupId>
 		    <artifactId>ehcache-web</artifactId>
 		    <version>2.0.4</version>
-		</dependency>
+		  </dependency>
+		  <!-- for CSV Writing -->
+		  <dependency>
+			<groupId>net.sourceforge.javacsv</groupId>
+			<artifactId>javacsv</artifactId>
+			<version>2.0</version>
+		  </dependency>
+            		  
 	</dependencies>
 
 	<profiles>

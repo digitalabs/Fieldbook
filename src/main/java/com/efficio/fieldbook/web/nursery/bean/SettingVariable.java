@@ -202,7 +202,7 @@ public class SettingVariable {
 		this.dataTypeId = dataTypeId;
 	}
 	
-	private void setWidgetType() {
+	public void setWidgetType() {
 		if (dataTypeId != null) {
 			if (dataTypeId.equals(TermId.DATE_VARIABLE.getId())) {
 				this.widgetType = WidgetType.DATE;

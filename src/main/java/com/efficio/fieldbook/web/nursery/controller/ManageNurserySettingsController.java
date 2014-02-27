@@ -635,6 +635,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
 			var.setDataTypeId(stdvar.getDataType().getId());
 			var.setMinRange(stdvar.getConstraints() != null && stdvar.getConstraints().getMinValue() != null ? stdvar.getConstraints().getMinValue() : null);
 			var.setMaxRange(stdvar.getConstraints() != null && stdvar.getConstraints().getMaxValue() != null ? stdvar.getConstraints().getMaxValue() : null);
+			var.setWidgetType();
     	}
     }
 

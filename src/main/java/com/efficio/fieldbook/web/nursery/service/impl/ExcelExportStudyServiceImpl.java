@@ -135,7 +135,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		whiteFont.setColor(new HSSFColor.WHITE().getIndex());
 		
 		CellStyle cellStyle = xlsBook.createCellStyle();
-		cellStyle.setFillBackgroundColor(colorIndex);
+		cellStyle.setFillForegroundColor(colorIndex);
 		cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 		cellStyle.setFont(whiteFont);
 		

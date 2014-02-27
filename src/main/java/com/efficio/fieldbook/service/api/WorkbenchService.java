@@ -102,4 +102,12 @@ public interface WorkbenchService {
      * @throws MiddlewareQueryException the middleware query exception
      */
     Integer getCurrentIbdbUserId(String projectId) throws MiddlewareQueryException;
+    
+    /**
+     * Gets the last opened project any user.
+     *
+     * @return the last opened project any user
+     * @throws MiddlewareQueryException the middleware query exception
+     */
+    long getLastOpenedProject() throws MiddlewareQueryException;
 }

@@ -128,14 +128,14 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	
 	private CellStyle getHeaderStyle(HSSFWorkbook xlsBook, int c1, int c2, int c3) {
 		HSSFPalette palette = xlsBook.getCustomPalette();
-		HSSFColor maroonColor = palette.findSimilarColor(c1, c2, c3);
-		short maroonIndex = maroonColor.getIndex();
+		HSSFColor color = palette.findSimilarColor(c1, c2, c3);
+		short colorIndex = color.getIndex();
 		
 		HSSFFont whiteFont = xlsBook.createFont();
 		whiteFont.setColor(new HSSFColor.WHITE().getIndex());
 		
 		CellStyle cellStyle = xlsBook.createCellStyle();
-		cellStyle.setFillBackgroundColor(maroonIndex);
+		cellStyle.setFillBackgroundColor(colorIndex);
 		cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
 		cellStyle.setFont(whiteFont);
 		
@@ -241,7 +241,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				else {
 					cell.setCellStyle(getHeaderStyle(xlsBook, 51, 51, 153));
 				}
-				cell.setCellValue(variable.getValue());
+				cell.setCellValue(variable.getName());
 			}
 		}
 	}

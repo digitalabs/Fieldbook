@@ -43,6 +43,8 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.nursery.service.ExcelExportStudyService;
+import com.efficio.fieldbook.web.nursery.service.FieldroidExportStudyService;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.nursery.validation.ImportGermplasmListValidator;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -69,6 +71,10 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     private FieldbookService fieldbookMiddlewareService;
     @Resource
     private MeasurementsGeneratorService measurementsGeneratorService;
+    @Resource
+    private ExcelExportStudyService excelExportStudyService;
+    @Resource
+    private FieldroidExportStudyService fielddroidExportStudyService;
     
     /** The Constant BUFFER_SIZE. */
     private static final int BUFFER_SIZE = 4096 * 4;
@@ -233,12 +239,15 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     @RequestMapping(value="/export/{exportType}", method = RequestMethod.GET)
     public String exportFile(@PathVariable int exportType, HttpServletResponse response) {
         
+    	String filename = getUserSelection().getWorkbook().getStudyDetails().getStudyName();
     	if(AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == exportType){
-    		
+    		filename = filename  + ".csv";
+    		fielddroidExportStudyService.export(getUserSelection().getWorkbook(), filename);
     	}else if(AppConstants.EXPORT_NURSERY_R.getInt() == exportType){
     		
     	}else if(AppConstants.EXPORT_NURSERY_EXCEL.getInt() == exportType){
-    		
+    		filename = filename  + ".xls";
+    		excelExportStudyService.export(getUserSelection().getWorkbook(), filename);
     	}
     	/*
         String fileName = getUserLabelPrinting().getFilenameDL();
@@ -251,10 +260,10 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
         
         */
         
-        File xls = new File("sample.xls"); // the selected name + current date
+        File xls = new File(filename); // the selected name + current date
         FileInputStream in;
         response.setContentType("application/vnd.ms-excel");
-        response.setHeader("Content-disposition","attachment; filename=" + "sample.xls");
+        response.setHeader("Content-disposition","attachment; filename=" + filename);
         try {
             in = new FileInputStream(xls);
             OutputStream out = response.getOutputStream();

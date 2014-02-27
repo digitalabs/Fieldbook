@@ -31,7 +31,7 @@ public class FieldroidExportStudyServiceImpl implements
 	 */
 	@Override
 	public void export(Workbook workbook, String filename) {
-        String outputFile = filename + ".csv";
+        String outputFile = filename;
         boolean alreadyExists = new File(outputFile).exists();
         CsvWriter csvOutput = null;
         try {

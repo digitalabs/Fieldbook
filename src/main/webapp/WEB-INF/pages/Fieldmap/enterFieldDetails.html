@@ -13,10 +13,21 @@
 		
 	</div>			  
 </div>
+
+	<div class="row">
+			<div class="form-group">
+				<div  id="enter-field-details-message"></div>
+			</div>
+	</div>
+		
 <div class="row">
+	<div class="panel panel-default">
+   	<div class="panel-body">
+	
+	<div class="row">
 	
 	<form class="form-inline" role="form">
-		  <div   class="form-group fieldmap-header">
+		  <div   class="form-group fieldmap-header" style="padding-left: 15px">
 		    <h2 th:text="#{fieldmap.header.make.a.field.plan}">Make a Field Plan</h2>
 		  </div>
 		  <div   class="form-group fieldmap-header">
@@ -32,21 +43,13 @@
 	
 	
 </div>
-<form id="enterFieldDetailsForm" role="form-horizontal" class="form-horizontal" action="#"
-th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapForm}" enctype="multipart/form-data">
-
-	
-
-
-<div class="row">
-
-	<div class="form-group">
+<div class="form-group">
 		&nbsp;	
 	</div>
+	<form id="enterFieldDetailsForm" role="form-horizontal" class="form-horizontal" action="#"
+th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapForm}" enctype="multipart/form-data">
 	
-	<div id="enter-field-details-message" class="col-xs-12 col-md-12">
-	
-	</div>
+
 	
 	<div class="form-group col-xs-12 col-md-12" >
 			&nbsp;<strong class="sub-heading col-xs-12 col-md-12" th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.to.be.mapped}">TRIAL TO BE MAPPED:</strong>
@@ -220,15 +223,20 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 	      
 	    </div>
 	  </div>
-	
+	  <input type="hidden" th:field="*{projectId}"/>
+	  </form>
+	</div></div>
 </div>
 <div class="row">
 	<div id="manage-location" th:include="/Common/manageLocationsModal"></div>
 </div>
 
-<input type="hidden" th:field="*{projectId}"/>
-</form>
-<div layout:fragment="page-script">
+
+
+
+	
+	
+	<div layout:fragment="page-script">
 <script type="text/javascript" th:src="@{/static/js/jquery.treegrid.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/jquery.treegrid.bootstrap3.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/fieldMap.js}"></script>
@@ -358,5 +366,4 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
   
       //]]>
     </script>
-	
 </div>

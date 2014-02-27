@@ -10,9 +10,19 @@
 		</span>
 	</div>			  
 </div>
+	<div class="row">
+			<div class="form-group">
+				<div  id="page-message"></div>
+			</div>
+	</div>
+	
+<div class="row">
+<div class="panel panel-default">
+   	<div class="panel-body">
+
 <div class="row">
 	<form class="form-inline" role="form">
-		  <div  class="form-group fieldmap-header">
+		  <div  class="form-group fieldmap-header" style="padding-left: 15px">
 		    <h2 th:text="#{fieldmap.header.make.a.field.plan}">Make a Field Plan</h2>
 		  </div>
 		  <div   class="form-group fieldmap-header">
@@ -27,6 +37,7 @@
 	</form>
 </div>
 
+   	
 <form id="fieldmapForm" name="fieldmapForm" role="form-horizontal" action="#" onsubmit="return setAllDeletedBox();"
 th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldmapForm}" enctype="multipart/form-data">
 
@@ -35,13 +46,7 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 
 	<div>
 		<div class="row">&nbsp;</div>
-		<div class="row">
-			<div class="col-xs-12 col-md-12">
-				<div class="form-group">
-					<div class="col-xs-12 col-md-12" id="page-message"></div>
-				</div>
-			</div>
-		</div>
+		
 		<div class="row">
 			<div class="col-xs-12 col-md-12" >
 				<div class="">
@@ -141,7 +146,10 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 		    </div>
 	    </div>
 	</div>
+	
 </form>
+</div></div>
+</div>
 <div layout:fragment="page-script">
 	<script type="text/javascript" th:src="@{/static/js/fieldMap.js}"></script>
 	<script type='text/javascript' th:inline="javascript">

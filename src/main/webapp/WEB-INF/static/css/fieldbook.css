@@ -300,7 +300,11 @@ table{
 	margin-left: -25px;
 }
 .panel-body{
-	background-color: #EDEDED;
+	background-color: #E2E2E2;
+	padding: 0px;
+}
+.manage-settings-panel-body{
+	padding: 15px;
 }
 /*For the spinner*/
 #spinner-wrap {
@@ -344,8 +348,8 @@ td.validValueDesc {
 }
 
 .fieldmap-header{
-	padding-right: 25px;
-	margin-left:5px;
+	padding-right: 15px;
+	margin-left:10px;
 }
 #field-map {
 	table-layout: fixed;

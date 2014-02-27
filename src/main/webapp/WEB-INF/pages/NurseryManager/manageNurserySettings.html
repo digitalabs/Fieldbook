@@ -5,19 +5,22 @@
 		</h1>
 	</div>			  
 </div>
-
-<form id="saveNurserySettingsForm" role="form-horizontal" action="#" th:action="@{/NurseryManager/manageNurserySettings/save}" 
-method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
-<div class="move-left col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org">
-	<div class="row">
-		<div id="page-message" class="col-xs-12 col-md-12 form-group">
+<div class="row">
+		<div id="page-message" class="">
 	
 		</div>
 	</div>
+<form id="saveNurserySettingsForm" role="form-horizontal" action="#" th:action="@{/NurseryManager/manageNurserySettings/save}" 
+method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
+
+	
+<div class="row" xmlns:th="http://www.thymeleaf.org">
+	
+	
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
 			<div class="panel panel-default">
-		    	<div class="panel-body">
+		    	<div class="panel-body manage-settings-panel-body">
 		    		<div class="row form-group">
 			    		<div class="col-xs-3 col-md-3 add_top_padding">
 			    			<label class="control-label"> <strong th:text="#{nursery.managesettings.choose.saved.settings}+':'"> Choose Saved Settings: </strong></label>
@@ -48,7 +51,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
 			<div class="panel panel-default">
-		    	<div class="panel-body">
+		    	<div class="panel-body manage-settings-panel-body">
 		    		<div class="row form-group">
 			    		<div class="col-xs-12 col-md-12">
 			    			<label class="control-label"><em th:text="#{nursery.managesettings.mandatory.fields}"> Mandatory fields are noted with a *</em></label><span class="required">&nbsp;*</span>

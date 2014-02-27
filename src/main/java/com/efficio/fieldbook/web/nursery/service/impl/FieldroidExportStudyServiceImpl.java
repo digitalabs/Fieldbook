@@ -16,11 +16,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.springframework.stereotype.Service;
 
 import com.csvreader.CsvWriter;
 import com.efficio.fieldbook.web.nursery.bean.CSVOziel;
 import com.efficio.fieldbook.web.nursery.service.FieldroidExportStudyService;
 
+@Service
 public class FieldroidExportStudyServiceImpl implements
 		FieldroidExportStudyService {
 

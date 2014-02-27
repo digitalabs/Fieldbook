@@ -74,12 +74,47 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 										th:onclick="'javascript: deleteVariable(1,\'' + ${nurseryLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
 										<input type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 									</td>
-									<td style="max-width:150px; min-width:150px;"><label class="control-label" th:text="${nurseryLevelVariable.variable.name}+':'"></label><span class="required">*</span></td>
+									<td style="max-width:150px; min-width:150px;"><label class="control-label" th:text="${nurseryLevelVariable.variable.name}"></label>:</td>
 									<td style="max-width:200px; min-width:200px;">
-										<input type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].value}" class="form-control select2" />
+									 <!-- <div th:text="${nurseryLevelVariable.variable.cvTermId}"></div> --> 
+										<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" 
+										type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].value}" class="form-control select2" />
 										<div th:text="${nurseryLevelVariable.value}" class="div-select-val" style="display: none"/>
-										<div class="possibleValuesJson" style="display:none" th:text="${nurseryLevelVariable.possibleValuesJson}">
+										<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="possibleValuesJson" style="display:none" th:text="${nurseryLevelVariable.possibleValuesJson}">
 										</div>
+										
+										<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'NTEXT'}" 
+										type="text" th:field="*{nurseryLevelVariables[__${rowStat.index}__].value}" class="form-control numeric-input" />
+										
+										<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'CTEXT'}" 
+										type="text" th:field="*{nurseryLevelVariables[__${rowStat.index}__].value}" class="form-control character-input" />
+										
+										<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DATE'}" 
+										type="text" th:field="*{nurseryLevelVariables[__${rowStat.index}__].value}" class="form-control date-input" />
+										<!-- 
+										<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'SLIDER'}"  
+										type="text" 
+										th:field="*{nurseryLevelVariables[__${rowStat.index}__].value}"
+										min="0" max="1" value="1" step=".05"
+										class="form-control numeric-range-input"/>
+										 -->
+										 
+										<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'SLIDER'}" 
+										type="text" th:field="*{nurseryLevelVariables[__${rowStat.index}__].value}"
+										th:attr="data-min=${nurseryLevelVariable.variable.minRange}"
+										th:attrappend="data-max=${nurseryLevelVariable.variable.maxRange}"
+										class="form-control numeric-range-input"
+										data-step="0.1" 										 
+										/>
+										
+										<!-- 
+										<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'SLIDER'}"  
+										class="form-control numeric-range-input" type="text" 
+										data-slider-min1="-5.0" data-slider-max1="20.0" data-slider-step1="0.1" />
+										
+										<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'SLIDER'}"  class="form-control numeric-range-input" type="text" 
+										data-slider-min1="-5" data-slider-max1="20" data-slider-step1="0.1" />
+											 -->								
 									</td>
 									<td style="max-width:200px; min-width:200px;">
 										&nbsp;&nbsp;<a th:if="${nurseryLevelVariable.variable.name}=='Site'" href="javascript: openManageLocations();" th:text="#{advancing.nursery.manage.location}">Manage Location</a>
@@ -219,56 +254,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 	    					&nbsp;
 	    				</div>
     				</div>
-    				<!--  
-    				<div class="row form-group">
-	    				<div class="col-xs-12 col-md-12">
-			    			<label class="control-label"><strong class="sub-content-heading" th:text="#{nursery.managesettings.field.layout}">FIELD LAYOUT</strong></label>
-		    			</div>
-	    			</div>
-	    			<div class="row form-group">
-	    				<div class="col-xs-3 col-md-3">
-	    					<label class="contol-label">Select Field Layout for Nursery:*</label>
-	    				</div>
-	    				<div class="col-xs-4 col-md-4">
-	    					<select>
-	    						<option>Unreplicated Design With Randomization</option>
-	    					</select>
-	    				</div>
-	    				<div class="col-xs-5 col-md-5">
-	    					<a href="">Manage Field Layouts</a>
-	    				</div>
-    				</div>
-    				<div class="row form-group">
-	    				<div class="col-xs-12 col-md-12">
-	    					&nbsp;
-	    				</div>
-    				</div>
-    				<div class="row form-group">
-	    				<div class="col-xs-12 col-md-12">
-			    			<label class="control-label"><strong class="sub-content-heading">ADDITIONAL OPTIONS</strong></label>
-		    			</div>
-	    			</div>
-	    			<div class="row form-group">
-	    				<div class="col-xs-10 col-md-10">
-	    					<label class="control-label"> Will you make additional observations a about the nursery conditions during the growing season (e.g. rainfall)?: *</label>
-	    				</div>
-	    				<div class="col-xs-2 col-md-2">
-	    					<label class="radio-inline">
-							  <input checked="checked" type="radio" value="1" name="additionalObservations" id="additionalObservations" /> 
-							  <span>Yes</span>
-							</label>
-							<label class="radio-inline">
-							  <input type="radio" value="0" name="additionalObservations" id="additionalObservations"/> 
-							  <span>No</span>
-							</label>
-	    				</div>
-	    			</div>
-	    			<div class="row form-group">
-	    				<div class="col-xs-12 col-md-12">
-	    					&nbsp;
-	    				</div>
-    				</div>
-    				-->
+    				
 	    			<div class="row form-group">
 	    				<div class="col-xs-12 col-md-12">
 	    					<label class="control-label"><strong class="sub-content-heading" th:text="#{nursery.managesettings.save.settings}">SAVE SETTINGS</strong></label>
@@ -371,6 +357,7 @@ data-slider-selection="after" data-slider-tooltip="always"/>
        		var nurseryLevelValueEmpty= /*[[#{nursery.managesettings.nursery.level.value.empty}]]*/
        		var copyTemplateSettingError = /*[[#{manage.settings.copy.error}]]*/;
        		var copyTemplateSettingSuccess = /*[[#{manage.settings.copy.setting.success}]]*/;
+       		var nurseryNumericError = /*[[#{manage.settings.nursery.numeric.error}]]*/;
        		
  			$( document ).ready(function() {
  				$('#selectedSettingId').on('change', function(){
@@ -408,6 +395,7 @@ data-slider-selection="after" data-slider-tooltip="always"/>
  					}
  					
  				});
+ 				setTimeout('initializeDateAndSliderInputs()', 500);
  				
  				$.fn.modal.Constructor.prototype.enforceFocus = function() {};
  			});    			 			     

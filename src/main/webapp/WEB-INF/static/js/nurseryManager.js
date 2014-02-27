@@ -566,18 +566,41 @@ function createNurseryLevelSettingVariables(data) {
 		"<input type='hidden' id='nurseryLevelVariables" + ctr + ".variable.cvTermId' name='nurseryLevelVariables[" + 
 		ctr + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
-		newRow = newRow + "<td>" + settingDetail.variable.name + ':' + '<span class="required">*</span>' +  "</td>";
-		newRow = newRow + "<td><input type='hidden' id='nurseryLevelVariables" + ctr + 
-		".value' name='nurseryLevelVariables[" + ctr + "].value' class='form-control select2' /></td></tr>";
+		//newRow = newRow + "<td>" + settingDetail.variable.name + ':' + '<span class="required">*</span>' +  "</td>";
+		newRow = newRow + "<td><label class='control-label'>" + settingDetail.variable.name + '</label>:' + '' +  "</td>";
+		newRow = newRow + "<td>";
+		/*
+		newRow = newRow + "<input type='hidden' id='nurseryLevelVariables" + ctr + 
+		".value' name='nurseryLevelVariables[" + ctr + "].value' class='form-control select2' />";
+		*/
+		var inputHtml = '';
+				
+		if(settingDetail.variable.widgetType == 'DROPDOWN'){
+			inputHtml = createDropdownInput(ctr);
+		}else if(settingDetail.variable.widgetType == 'DATE'){
+			inputHtml = createDateInput(ctr);
+		}else if(settingDetail.variable.widgetType == 'CTEXT'){
+			inputHtml = createCharacterTextInput(ctr);
+		}else if(settingDetail.variable.widgetType == 'NTEXT'){
+			inputHtml = createNumericalTextInput(ctr);
+		}else if(settingDetail.variable.widgetType == 'SLIDER'){
+			inputHtml = createSliderInput(ctr, settingDetail.variable.minRange, settingDetail.variable.maxRange);
+		}
+		newRow = newRow + inputHtml;
+		
+		newRow = newRow + "</td></tr>";
 
 		$("#nurseryLevelSettings").append(newRow);
 		
-		//initialize select 2 combo
-		initializePossibleValuesCombo(settingDetail.possibleValues, "#" + 
-				getJquerySafeId("nurseryLevelVariables" + ctr + ".value"), false, null);
-		
+		if(settingDetail.variable.widgetType == 'DROPDOWN'){
+			//initialize select 2 combo
+			initializePossibleValuesCombo(settingDetail.possibleValues, "#" + 
+					getJquerySafeId("nurseryLevelVariables" + ctr + ".value"), false, null);
+		}
 		ctr++;
 	});
+	
+	initializeDateAndSliderInputs();
 }
 
 function createPlotLevelSettingVariables(data) {
@@ -878,13 +901,41 @@ function hasDuplicateSettingName(){
 	return hasDuplicate;
 }
 function hasEmptyNurseryValue(){
+	//would only check for the data numeric
+	/*
 	var hasEmpty = false;
 	$.each($("#nurseryLevelSettings tbody tr"), function(index, row) {
-		if ($($(row).children("td:nth-child(3)").children("#" + getJquerySafeId("nurseryLevelVariables"+index+".value"))).select2("data") == null) {
+		var input = $($(row).children("td:nth-child(3)").children("#" + getJquerySafeId("nurseryLevelVariables"+index+".value")));
+		if(input.hasClass('select2') && input.select2("data") == null) {
 			hasEmpty = true;
-		} 
+		}else if(input.hasClass('numeric-input')){
+			console.log('numeric');
+		}else if(input.hasClass('numeric-range-input')){
+			console.log('numeric range');
+		}else if(input.hasClass('character-input')){
+			console.log('character');
+		}else if(input.hasClass('date-input')){
+			console.log('date');
+		}
 	})
 	return hasEmpty;
+	*/
+	var hasError = false;
+	var name = '';
+	$('.numeric-input').each(function(){
+		$(this).val($.trim($(this).val()));
+		if(hasError == false && $(this).val() != '' && isNaN($(this).val())){
+			hasError = true;
+			name = $(this).parent().parent().find('.control-label').html();
+			
+		}
+	});
+	if(hasError){
+		showErrorMessage('page-message', name + " " + nurseryNumericError);
+	}
+		
+	return hasError;
+	
 }
 function doSaveSettings(){
 	$('#settingName').val($('#settingName').val().trim());
@@ -895,7 +946,7 @@ function doSaveSettings(){
 		showErrorMessage('page-message', templateSettingNameErrorUnique);
 	return false;
 	} else if(hasEmptyNurseryValue()){
-		showErrorMessage('page-message', nurseryLevelValueEmpty);
+		//showErrorMessage('page-message', nurseryLevelValueEmpty);
 		return false;
 	} else{ 		
 		doAjaxMainSubmit('page-message', saveTemplateSettingSuccess, null);
@@ -970,20 +1021,67 @@ function checkIfNull(object) {
 	}
 }
 
-function createSliderInput(inputName, minVal, maxVal){
-	return '<input type="text" class="slider-input" value="" data-slider-min="'+minVal+'" data-slider-max="'+maxVal+'" data-slider-step="1" data-slider-value="-20" data-slider-orientation="horizontal" data-slider-selection="after" data-slider-tooltip="always"/>';
+function createSliderInput(ctr, minVal, maxVal){
+	/*
+	return "<input type='text' id='nurseryLevelVariables" + ctr + 
+	".value' name='nurseryLevelVariables[" + ctr + "].value' class='form-control slider-input'" +
+			" data-slider-min='"+minVal+"' data-slider-max='"+maxVal+"'" + 
+				 " data-slider-step='1' data-slider-value='" +minVal+"'" +
+					" data-slider-orientation='horizontal' data-slider-selection='after'" + 
+						" data-slider-tooltip='always' />";
+	*/
+	/*
+	 * <input th:if="${nurseryLevelVariable.variable.widgetType.type == 'SLIDER'}"  
+										type="range" 
+										th:field="*{nurseryLevelVariables[__${rowStat.index}__].value}"
+										min="0" max="1" value="1" step=".05"
+										class="form-control numeric-range-input"/>
+	 */
+	return "<input data-slider-orientation='horizontal' data-slider-selection='after' type='text' data-slider-step='0.05' data-slider-min='"+minVal+"' data-slider-max='"+maxVal+"' id='nurseryLevelVariables" + ctr + 
+	".value' name='nurseryLevelVariables[" + ctr + "].value' class='form-control numeric-range-input' />";
 }
-function createDateInput(inputName){
-	return '<input type="text" name="'+inputName+'" value="" class="date-input form-control"/>';
+function createDropdownInput(ctr){
+	 return "<input type='hidden' id='nurseryLevelVariables" + ctr + 
+		".value' name='nurseryLevelVariables[" + ctr + "].value' class='form-control select2' />";
 }
-function createNumericalTextInput(inputName){
-	return '<input type="text" name="'+inputName+'" value="" class="numeric-input form-control"/>';
+function createDateInput(ctr){	
+	 return "<input type='text' id='nurseryLevelVariables" + ctr + 
+		".value' name='nurseryLevelVariables[" + ctr + "].value' class='form-control date-input' />";
+	 
 }
-function createCharacterTextInput(inputName){
-	return '<input type="text" name="'+inputName+'" value="" class="character-input form-control"/>';
+function createNumericalTextInput(ctr){
+	return "<input type='text' id='nurseryLevelVariables" + ctr + 
+	".value' name='nurseryLevelVariables[" + ctr + "].value' class='form-control numeric-input' />";
 }
-function initializeDateInputs(){
-	$('.date-input').datepicker({'format': 'yyyymmdd'}).on('changeDate', function(ev) {
+function createCharacterTextInput(ctr){
+	return "<input type='text' id='nurseryLevelVariables" + ctr + 
+	".value' name='nurseryLevelVariables[" + ctr + "].value' class='form-control character-input' />";
+
+}
+function initializeDateAndSliderInputs(){
+	if($('.date-input').length > 0){
+		$('.date-input').each(function(){
+			$(this).datepicker({'format': 'yyyymmdd'}).on('changeDate', function(ev) {
+		
 			$(this).datepicker('hide');
+		})
 		});
+	}
+	
+	if($('.numeric-range-input').length > 0){
+		
+		$('.numeric-range-input').each(function(){
+			
+			$(this).slider({
+				min: parseFloat($(this).data('min')),
+				max: parseFloat($(this).data('max')),
+				step: parseFloat($(this).data('step')),
+				value: parseFloat($(this).val()),
+				formater: function(value) {
+					return 'Value: ' + value;
+				}
+			});
+		});
+	}				
 }
+

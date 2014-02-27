@@ -955,3 +955,6 @@ function importNursery(type){
 	$('#importNurseryForm').attr('action', action+type);
 	   
 }
+function isFloat(value) { 
+    return !isNaN(parseInt(value,10)) && (parseFloat(value,10) == parseInt(value,10)); 
+}

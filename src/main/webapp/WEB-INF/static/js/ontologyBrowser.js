@@ -1379,9 +1379,6 @@ function minMaxErrorMessage(bothMinMaxRequired, notANumber, invalidValue) {
 	return "";
 }
 
-function isFloat(value) { 
-    return !isNaN(parseInt(value,10)) && (parseFloat(value,10) == parseInt(value,10)); 
-}
 
 function resetCategoricalValues() {
 	enumerations = [];
@@ -1415,3 +1412,4 @@ function enableFieldsForUpdate() {
 	$("#comboScale").select2('enable',true);
 	$("#dataType").removeAttr("disabled");
 }
+

@@ -16,7 +16,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ========================================================= */
- 
+ function roundDown(number, decimals) {
+    return (Math.floor(number*Math.pow(10, decimals))/Math.pow(10, decimals));
+}
 (function( $ ) {
 
 	var ErrorMsgs = {
@@ -470,6 +472,8 @@
 					val = this.max;
 				}
 				val = parseFloat(val);
+				//added for round down
+				val = roundDown(val, 1);
 				this.value = [val, this.value[1]];
 			}
 			return val;

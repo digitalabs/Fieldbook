@@ -62,6 +62,8 @@ public class SettingVariable {
 		this.role = role;
 		this.dataType = dataType;
 		this.dataTypeId = dataTypeId;
+		this.minRange = minRange;
+		this.maxRange = maxRange;
 		this.setWidgetType();
 	}
 
@@ -202,14 +204,13 @@ public class SettingVariable {
 		this.dataTypeId = dataTypeId;
 	}
 	
-	public void setWidgetType() {
-		if (cvTermId != null) {
-			if (cvTermId.equals(TermId.TRIAL_LOCATION.getId()) || cvTermId.equals(TermId.PI_NAME.getId()) 
-					|| cvTermId.equals(TermId.BREEDING_METHOD.getId()) || cvTermId.equals(TermId.NURSERY_TYPE.getId())) {
-				this.widgetType = WidgetType.DROPDOWN;
-			}
-		}
-		else if (dataTypeId != null) {
+	public void setWidgetType() {		
+		
+	}
+	
+	public WidgetType getWidgetType() {
+		
+		if (dataTypeId != null) {
 			if (dataTypeId.equals(TermId.DATE_VARIABLE.getId())) {
 				this.widgetType = WidgetType.DATE;
 			}
@@ -225,14 +226,18 @@ public class SettingVariable {
 			}
 			else {
 				this.widgetType = WidgetType.CTEXT;
-			}
+			}					
 		}
 		else {
 			this.widgetType = WidgetType.CTEXT;
 		}
-	}
-	
-	public WidgetType getWidgetType() {
+		
+		if (cvTermId != null) {
+			if (cvTermId.equals(TermId.TRIAL_LOCATION.getId()) || cvTermId.equals(TermId.PI_NAME.getId()) 
+					|| cvTermId.equals(TermId.BREEDING_METHOD.getId()) || cvTermId.equals(TermId.NURSERY_TYPE.getId())) {
+				this.widgetType = WidgetType.DROPDOWN;
+			}
+		}
 		return this.widgetType;
 	}
 	

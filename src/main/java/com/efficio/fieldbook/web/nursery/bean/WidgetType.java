@@ -10,4 +10,7 @@ public enum WidgetType {
 	, SLIDER
 	;
 	
+	public String getType() {
+		return this.name();
+	}
 }

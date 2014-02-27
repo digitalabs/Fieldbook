@@ -192,15 +192,30 @@ $.ajax(
        data: "",
        success: function(data) {
     	   if (data.success == "1") {
-    		   //recreate the select2 combos to get updated list of methods
-    		   recreateMethodComboAfterClose("methodIdAll", $.parseJSON(data.allMethods));
-    		   recreateMethodComboAfterClose("methodIdFavorite", $.parseJSON(data.favoriteMethods));
-    		   showCorrectMethodCombo();
-    		   //set previously selected value of method
-    		   if ($("#showFavoriteMethod").prop("checked")) {
-    			   setComboValues(methodSuggestionsFav_obj, selectedMethodFavorite, "methodIdFavorite");
+    		   if (selectedMethodAll) {
+	    		   //recreate the select2 combos to get updated list of methods
+	    		   recreateMethodComboAfterClose("methodIdAll", $.parseJSON(data.allMethods));
+	    		   recreateMethodComboAfterClose("methodIdFavorite", $.parseJSON(data.favoriteMethods));
+	    		   showCorrectMethodCombo();
+	    		   //set previously selected value of method
+	    		   if ($("#showFavoriteMethod").prop("checked")) {
+	    			   setComboValues(methodSuggestionsFav_obj, selectedMethodFavorite, "methodIdFavorite");
+	    		   } else {
+	    			   setComboValues(methodSuggestions_obj, selectedMethodAll, "methodIdAll");
+	    		   }
     		   } else {
-    			   setComboValues(methodSuggestions_obj, selectedMethodAll, "methodIdAll");
+    			   var selectedVal = null;
+    			   //get index of breeding method row
+    			   var index = getBreedingMethodRowIndex();
+    			   
+    			   if ($("#" + getJquerySafeId("nurseryLevelVariables" + index + ".value")).select2("data")) {
+    				   selectedVal = $("#" + getJquerySafeId("nurseryLevelVariables" + index + ".value")).select2("data").id;
+    			   }
+    			   //recreate select2 of breeding method
+    			   initializePossibleValuesCombo([], 
+	 			 			"#" + getJquerySafeId("nurseryLevelVariables" + index + ".value"), false, selectedVal);
+    			   initializePossibleValuesCombo($.parseJSON(data.allMethods), 
+	 			 			"#" + getJquerySafeId("nurseryLevelVariables" + index + ".value"), false, selectedVal);
     		   }
     	   } else {
     		   showErrorMessage("page-message", data.errorMessage);
@@ -209,11 +224,23 @@ $.ajax(
        error: function(jqXHR, textStatus, errorThrown){
 			console.log("The following error occured: " + textStatus, errorThrown); 
 	   }, 
-	   complete: function(){  
+	   complete: function(){
 		   Spinner.toggle();
 	   } 
      }
  );
+}
+
+function getBreedingMethodRowIndex() {
+	var rowIndex = 0;
+	$.each($("#nurseryLevelSettings tr"), function (index, row) {
+		var cvTermId = $($(row).children("td:nth-child(1)")
+				.children("#" + getJquerySafeId("nurseryLevelVariables" + index + ".variable.cvTermId"))).val();
+		if (parseInt(cvTermId) == parseInt(breedingMethodId)) {
+			rowIndex = index;
+		}
+	});
+	return rowIndex;
 }
 
 function recreateLocationCombo() {
@@ -588,7 +615,14 @@ function createNurseryLevelSettingVariables(data) {
 		}
 		newRow = newRow + inputHtml;
 		
-		newRow = newRow + "</td></tr>";
+		if (settingDetail.variable.cvTermId == breedingMethodId) {
+			newRow = newRow + "</td><td>";
+			newRow = newRow + "&nbsp;&nbsp;<a href='javascript: openManageMethods();'>" + manageMethodLabel + "</a>";
+			newRow = newRow + "</td></tr>";
+			
+		} else {
+			newRow = newRow + "</td><td></td></tr>";
+		}
 
 		$("#nurseryLevelSettings").append(newRow);
 		
@@ -665,14 +699,19 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation, default
 			jsonVal = { 'id' : value.key,
 					  'text' : value.name
 				};
-		} else {
+		} else if (value.locid != undefined){
 			jsonVal = { 'id' : value.locid,
 					  'text' : value.lname
+				};
+		} else {
+			jsonVal = { 'id' : value.mid,
+					  'text' : value.mname
 				};
 		}
 		
 		possibleValues_obj.push(jsonVal);  
-		if(defaultValue != null && defaultValue != '' && ((defaultValue == value.key) || (defaultValue == value.locid))){
+		if(defaultValue != null && defaultValue != '' && 
+				((defaultValue == value.key) || (defaultValue == value.locid) || (defaultValue == value.mid))){
 			defaultJsonVal = jsonVal;
 		}
 		

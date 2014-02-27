@@ -203,7 +203,13 @@ public class SettingVariable {
 	}
 	
 	public void setWidgetType() {
-		if (dataTypeId != null) {
+		if (cvTermId != null) {
+			if (cvTermId.equals(TermId.TRIAL_LOCATION.getId()) || cvTermId.equals(TermId.PI_NAME.getId()) 
+					|| cvTermId.equals(TermId.BREEDING_METHOD.getId()) || cvTermId.equals(TermId.NURSERY_TYPE.getId())) {
+				this.widgetType = WidgetType.DROPDOWN;
+			}
+		}
+		else if (dataTypeId != null) {
 			if (dataTypeId.equals(TermId.DATE_VARIABLE.getId())) {
 				this.widgetType = WidgetType.DATE;
 			}

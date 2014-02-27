@@ -87,6 +87,9 @@ public enum AppConstants {
     
     , PRINCIPAL_INVESTIGATOR
     , LOCATION
+    , STUDY_NAME
+    , STUDY_TITLE
+    , OBJECTIVE
         
     // Import Germplasm
     , CONDITION

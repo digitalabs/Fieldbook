@@ -509,6 +509,12 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	        , AppConstants.LOCATION.getString()));
         nurseryDefaults.add(createSettingDetail(TermId.PI_NAME.getId()
                 , AppConstants.PRINCIPAL_INVESTIGATOR.getString()));
+        nurseryDefaults.add(createSettingDetail(TermId.STUDY_NAME.getId()
+                , AppConstants.STUDY_NAME.getString()));
+        nurseryDefaults.add(createSettingDetail(TermId.STUDY_TITLE.getId()
+                , AppConstants.STUDY_TITLE.getString()));
+        nurseryDefaults.add(createSettingDetail(TermId.STUDY_OBJECTIVE.getId()
+                , AppConstants.OBJECTIVE.getString()));
     }
     
     /**

@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.dms.VariableConstraints;
 
 
 public class SettingDetail {
@@ -24,7 +25,7 @@ public class SettingDetail {
 	private String possibleValuesJson;
 	private String value;
 	private boolean isDelete;
-	
+
 	public SettingDetail(){
 		super();
 	}
@@ -76,6 +77,5 @@ public class SettingDetail {
 	public void setDelete(boolean isDelete) {
 		this.isDelete = isDelete;
 	}
-	
-	
+
 }

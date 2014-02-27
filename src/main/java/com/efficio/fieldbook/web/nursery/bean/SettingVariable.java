@@ -27,6 +27,10 @@ public class SettingVariable {
 	private String dataType;
 	private String traitClass;
 	private String cropOntologyId;
+	private Integer dataTypeId;
+	private Double minRange;
+	private Double maxRange;
+	private WidgetType widgetType;
 	
 	public SettingVariable(){
 		super();
@@ -46,6 +50,20 @@ public class SettingVariable {
 		this.dataType = dataType;
 	}
 
+	public SettingVariable(String name, String description, String property,
+			String scale, String method, String role, String dataType, Integer dataTypeId, 
+			Double minRange, Double maxRange) {
+		super();
+		this.name = name;
+		this.description = description;
+		this.property = property;
+		this.scale = scale;
+		this.method = method;
+		this.role = role;
+		this.dataType = dataType;
+		this.dataTypeId = dataTypeId;
+		this.setWidgetType();
+	}
 
 
 	public String getTraitClass() {
@@ -122,7 +140,13 @@ public class SettingVariable {
 			this.method = standardVariable.getMethod().getName();
 			this.role = standardVariable.getPhenotypicType().name();
 			this.description = standardVariable.getDescription();
-			this.dataType = getDataType(standardVariable.getDataType().getId());			
+			this.dataType = getDataType(standardVariable.getDataType().getId());
+			this.dataTypeId = standardVariable.getDataType().getId();
+			this.minRange = standardVariable.getConstraints() != null && standardVariable.getConstraints().getMinValue() != null
+					? standardVariable.getConstraints().getMinValue() : null;
+			this.maxRange = standardVariable.getConstraints() != null && standardVariable.getConstraints().getMaxValue() != null
+					? standardVariable.getConstraints().getMaxValue() : null;
+			setWidgetType();
 		}
 	}
 
@@ -135,4 +159,75 @@ public class SettingVariable {
 	        return "N";
 	    }
 	}
+
+	/**
+	 * @return the minRange
+	 */
+	public Double getMinRange() {
+		return minRange;
+	}
+
+	/**
+	 * @param minRange the minRange to set
+	 */
+	public void setMinRange(Double minRange) {
+		this.minRange = minRange;
+	}
+
+	/**
+	 * @return the maxRange
+	 */
+	public Double getMaxRange() {
+		return maxRange;
+	}
+
+	/**
+	 * @param maxRange the maxRange to set
+	 */
+	public void setMaxRange(Double maxRange) {
+		this.maxRange = maxRange;
+	}
+
+	/**
+	 * @return the dataTypeId
+	 */
+	public Integer getDataTypeId() {
+		return dataTypeId;
+	}
+
+	/**
+	 * @param dataTypeId the dataTypeId to set
+	 */
+	public void setDataTypeId(Integer dataTypeId) {
+		this.dataTypeId = dataTypeId;
+	}
+	
+	private void setWidgetType() {
+		if (dataTypeId != null) {
+			if (dataTypeId.equals(TermId.DATE_VARIABLE.getId())) {
+				this.widgetType = WidgetType.DATE;
+			}
+			else if (dataTypeId.equals(TermId.CATEGORICAL_VARIABLE.getId())) {
+				this.widgetType = WidgetType.DROPDOWN;
+			}
+			else if (minRange != null && maxRange != null) {
+				this.widgetType = WidgetType.SLIDER;
+			}
+			else if (dataTypeId.equals(TermId.NUMERIC_VARIABLE.getId()) 
+					|| dataTypeId.equals(TermId.NUMERIC_DBID_VARIABLE.getId())) {
+				this.widgetType = WidgetType.NTEXT;
+			}
+			else {
+				this.widgetType = WidgetType.CTEXT;
+			}
+		}
+		else {
+			this.widgetType = WidgetType.CTEXT;
+		}
+	}
+	
+	public WidgetType getWidgetType() {
+		return this.widgetType;
+	}
+	
 }

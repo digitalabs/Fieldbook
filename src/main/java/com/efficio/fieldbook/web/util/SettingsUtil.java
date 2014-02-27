@@ -141,7 +141,7 @@ public class SettingsUtil {
 			
 			Condition condition = new Condition(variable.getName(), variable.getDescription(), variable.getProperty(),
 					variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
-					settingDetail.getValue());
+					settingDetail.getValue(), variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
 			conditions.add(condition);
 		}
 		//iterate for the plot level
@@ -243,7 +243,8 @@ public class SettingsUtil {
 				for(Condition condition : dataset.getConditions()){
 					
 					SettingVariable variable = new SettingVariable(condition.getName(), condition.getDescription(), condition.getProperty(),
-							condition.getScale(), condition.getMethod(), condition.getRole(), condition.getDatatype());
+							condition.getScale(), condition.getMethod(), condition.getRole(), condition.getDatatype(), condition.getDataTypeId(),
+							condition.getMinRange(), condition.getMaxRange());
 					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
 					variable.setCvTermId(stdVar);
 					List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
@@ -421,7 +422,7 @@ public class SettingsUtil {
 						mvar.getMethod(), 
 						PhenotypicType.getPhenotypicTypeForLabel(mvar.getLabel()).toString(), 
 						mvar.getDataType(), 
-						mvar.getValue()));
+						mvar.getValue(), null, null, null));
 			}
 		}
 		

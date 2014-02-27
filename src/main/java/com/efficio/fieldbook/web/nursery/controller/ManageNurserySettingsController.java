@@ -530,7 +530,9 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
             SettingVariable svar = new SettingVariable(
                     variableName, stdVar.getDescription(), stdVar.getProperty().getName(),
 					stdVar.getScale().getName(), stdVar.getMethod().getName(), stdVar.getStoredIn().getName(), 
-					stdVar.getDataType().getName());
+					stdVar.getDataType().getName(), stdVar.getDataType().getId(), 
+					stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null ? stdVar.getConstraints().getMinValue() : null,
+					stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ? stdVar.getConstraints().getMaxValue() : null);
 			svar.setCvTermId(stdVar.getId());
 			svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
 			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
@@ -630,6 +632,9 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
 			var.setRole(stdvar.getStoredIn().getName());
 			var.setCropOntologyId(stdvar.getCropOntologyId() != null ? stdvar.getCropOntologyId() : "");
 			var.setTraitClass(stdvar.getIsA() != null ? stdvar.getIsA().getName() : "");
+			var.setDataTypeId(stdvar.getDataType().getId());
+			var.setMinRange(stdvar.getConstraints() != null && stdvar.getConstraints().getMinValue() != null ? stdvar.getConstraints().getMinValue() : null);
+			var.setMaxRange(stdvar.getConstraints() != null && stdvar.getConstraints().getMaxValue() != null ? stdvar.getConstraints().getMaxValue() : null);
     	}
     }
 
@@ -660,7 +665,9 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
 			        stdVar.getDescription(), stdVar.getProperty().getName(),
 					stdVar.getScale().getName(), stdVar.getMethod().getName(), 
 					stdVar.getStoredIn().getName(), 
-					stdVar.getDataType().getName());
+					stdVar.getDataType().getName(), stdVar.getDataType().getId(),
+					stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null ? stdVar.getConstraints().getMinValue() : null,
+					stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ? stdVar.getConstraints().getMaxValue() : null);
 			svar.setCvTermId(stdVar.getId());
 			svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
 			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");

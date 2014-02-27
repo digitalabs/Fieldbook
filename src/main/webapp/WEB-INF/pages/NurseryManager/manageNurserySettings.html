@@ -117,7 +117,8 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 											 -->								
 									</td>
 									<td style="max-width:200px; min-width:200px;">
-										&nbsp;&nbsp;<a th:if="${nurseryLevelVariable.variable.name}=='Site'" href="javascript: openManageLocations();" th:text="#{advancing.nursery.manage.location}">Manage Location</a>
+										&nbsp;&nbsp;<a th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.trial.location.id}" href="javascript: openManageLocations();" th:text="#{nursery.managesettings.manage.location}">Manage Location</a>
+										<a th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.breeding.method.id}" href="javascript: openManageMethods();" th:text="#{nursery.managesettings.manage.method}">Manage Method</a>
 									</td>
 								</tr>
 							</table>
@@ -306,6 +307,11 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			<input type="hidden" th:field="*{projectId}"/>
 		</div>
 	</div>
+	<div class="row">
+    	<div class="col-xs-12 col-md-12">
+			<div id="manage-location" th:include="/Common/manageMethodsModal"></div>
+		</div>
+	</div>
 </div>
 
 <div class="modal fade" id="delete-settings-confirmation">
@@ -353,11 +359,15 @@ data-slider-selection="after" data-slider-tooltip="always"/>
        		var templateSettingNameError = /*[[#{manage.settings.setting.name.error}]]*/;
        		var templateSettingNameErrorUnique = /*[[#{manage.settings.setting.name.unique.error}]]*/;
        		var programLocationUrl = /*[[#{nursery.advance.nursery.manage.location.url}]]*/;
+       		var programMethodUrl = /*[[#{nursery.advance.nursery.manage.method.url}]]*/;
        		var locationIframeOpened = false;
+       		var methodIframeOpened = false;
        		var nurseryLevelValueEmpty= /*[[#{nursery.managesettings.nursery.level.value.empty}]]*/
        		var copyTemplateSettingError = /*[[#{manage.settings.copy.error}]]*/;
        		var copyTemplateSettingSuccess = /*[[#{manage.settings.copy.setting.success}]]*/;
+       		var manageMethodLabel = /*[[#{nursery.managesettings.manage.method}]]*/;
        		var nurseryNumericError = /*[[#{manage.settings.nursery.numeric.error}]]*/;
+       		var breedingMethodId = /*[[#{nursery.managesettings.breeding.method.id}]]*/; 
        		
  			$( document ).ready(function() {
  				$('#selectedSettingId').on('change', function(){

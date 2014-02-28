@@ -246,35 +246,46 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     		//getUserSelection().getMeasurementRowList().set(realIndex, measurementRow);
     	}
     }
+    @ResponseBody
+    @RequestMapping(value="/export/{exportType}/{selectedTraitTermId}", method = RequestMethod.GET)
+    public String exportRFile(@PathVariable int exportType,@PathVariable int selectedTraitTermId, HttpServletResponse response) {
+    	return doExport(exportType, selectedTraitTermId, response);
+    	
+    }
     
     @ResponseBody
     @RequestMapping(value="/export/{exportType}", method = RequestMethod.GET)
     public String exportFile(@PathVariable int exportType, HttpServletResponse response) {
-        
+        return doExport(exportType, 0, response);
+    	
+    }
+   
+    
+    /**
+     * Do export.
+     *
+     * @param exportType the export type
+     * @param selectedTraitTermId the selected trait term id
+     * @param response the response
+     * @return the string
+     */
+    private String doExport(int exportType, int selectedTraitTermId, HttpServletResponse response){
     	String filename = getUserSelection().getWorkbook().getStudyDetails().getStudyName();
     	if(AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == exportType){
     		filename = filename  + ".csv";
     		fielddroidExportStudyService.export(getUserSelection().getWorkbook(), filename);
+    		response.setContentType("text/csv");
     	}else if(AppConstants.EXPORT_NURSERY_R.getInt() == exportType){
-    		
+    		response.setContentType("text/csv");
     	}else if(AppConstants.EXPORT_NURSERY_EXCEL.getInt() == exportType){
     		filename = filename  + ".xls";
     		excelExportStudyService.export(getUserSelection().getWorkbook(), filename);
+    		response.setContentType("application/vnd.ms-excel");
     	}
-    	/*
-        String fileName = getUserLabelPrinting().getFilenameDL();
-
-        if(fileName.indexOf(".pdf") != -1){
-        	response.setContentType("application/pdf");
-        }else if (fileName.indexOf(".xls") != -1)
-        	response.setContentType("application/vnd.ms-excel");
-        
-        
-        */
-        
+    	        
         File xls = new File(filename); // the selected name + current date
         FileInputStream in;
-        response.setContentType("application/vnd.ms-excel");
+        
         response.setHeader("Content-disposition","attachment; filename=" + filename);
         try {
             in = new FileInputStream(xls);

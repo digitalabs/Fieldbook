@@ -58,8 +58,7 @@
 	        </div>
 	        </div>
 				
-	<div class="form-group">&nbsp;
-	</div>
+
 	<div class="form-group">
 	    <div class="col-xs-5 col-md-5">&nbsp;</div> 
 	    <div class="col-xs-7 col-md-7">
@@ -89,6 +88,43 @@
 			 
 		</div>
 	</div>  
+	
+	 <div class="modal fade" id="importRModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" th:text="#{nursery.export.r.header}">Choose Trait to evaluate in R</h4>
+          </div>
+          <div class="modal-body">
+            <!--  <div class="form-group" id="page-modal-message"></div>
+             -->
+            <div class='form-group'>                                          
+              <div class="col-md-9">
+              <label for="fileupload" class="control-label" th:text="#{nursery.export.r.note}">Note: In your exported file, your trait will show as "GY"</label>
+              </div>
+              </div>
+            <div class='form-group'>                                          
+              <br />
+               <div class="col-md-3">
+              <label for="fileupload" class="control-label" th:text="#{nursery.export.r.select.trait}">Select Main Trait:</label>
+              </div>
+              <div class="col-xs-6 col-lg-6">                
+	    			<select name="selectedRTrait" id="selectedRTrait" class="form-control">
+	    				<option th:if="${measurementVariable.factor == false}" th:each="measurementVariable : *{measurementVariables}" th:value="${measurementVariable.termId}" th:utext="${measurementVariable.name + ' (' + measurementVariable.scale +')'}">Trait</option>
+	    			</select>
+               
+              </div>
+            </div>
+          </div>																							
+        
+        <div class="modal-footer">
+          <button value="Cancel" aria-hidden="true" data-dismiss="modal" class="btn btn-default" type="button" th:text="#{common.form.cancel.text}">Cancel</button>
+          <button type="button" th:value="#{common.form.submit.text}" class="btn btn-primary" th:text="#{nursery.import.germplasm.submit}" onclick="javascript: exportNurseryToR(2);">Submit</button>			        	
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
 
 </form>
 

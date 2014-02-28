@@ -102,7 +102,7 @@ public class CSVOziel {
         try {
             int tot = 0;
 
-            for (MeasurementVariable variate : this.headers) {
+            for (MeasurementVariable variate : this.variateHeaders) {
                 csvOutput.write(variate.getName());
                 tot++;
             }
@@ -474,7 +474,7 @@ public class CSVOziel {
             for (int i = 26; i < headers.length - 1; i++) {
                 String titulo = headers[i];
                 if (!titulo.equals("")) {
-                    System.out.println(titulo);
+                    System.out.println("***" + titulo);
                     titulos.add(titulo);
                 }
             }

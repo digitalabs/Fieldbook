@@ -1076,7 +1076,7 @@ function createSliderInput(ctr, minVal, maxVal){
 										min="0" max="1" value="1" step=".05"
 										class="form-control numeric-range-input"/>
 	 */
-	return "<input data-slider-orientation='horizontal' data-slider-selection='after' type='text' data-slider-step='0.05' data-slider-min='"+minVal+"' data-slider-max='"+maxVal+"' id='nurseryLevelVariables" + ctr + 
+	return "<input data-slider-orientation='horizontal' data-slider-selection='after' type='text' data-step='0.1' data-min='"+minVal+"' data-max='"+maxVal+"' id='nurseryLevelVariables" + ctr + 
 	".value' name='nurseryLevelVariables[" + ctr + "].value' class='form-control numeric-range-input' />";
 }
 function createDropdownInput(ctr){
@@ -1110,12 +1110,16 @@ function initializeDateAndSliderInputs(){
 	if($('.numeric-range-input').length > 0){
 		
 		$('.numeric-range-input').each(function(){
-			
+		console.log($(this).val());
+		console.log(parseFloat($(this).data('min')));
+		console.log(parseFloat($(this).val()));
+		var currentVal  = $(this).val() == '' ? parseFloat($(this).data('min')) : parseFloat($(this).val());
+		console.log(currentVal);
 			$(this).slider({
 				min: parseFloat($(this).data('min')),
 				max: parseFloat($(this).data('max')),
 				step: parseFloat($(this).data('step')),
-				value: parseFloat($(this).val()),
+				value: currentVal,
 				formater: function(value) {
 					return 'Value: ' + value;
 				}

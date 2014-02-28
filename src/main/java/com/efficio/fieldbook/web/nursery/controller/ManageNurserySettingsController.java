@@ -73,7 +73,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     
     /** The fieldbook middleware service. */
     @Resource
-    private FieldbookService fieldbookMiddlewareService;        
+    private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;        
     
     /** The workbench data manager. */
     @Resource

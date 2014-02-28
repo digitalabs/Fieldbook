@@ -32,6 +32,8 @@ public class FieldroidImportStudyServiceImpl implements
 		
 		validate(csv, file);
 		
+		csv.readDATAnew(file);
+		
 	}
 	
 	private void validate(CSVOziel csv, File file) throws WorkbookParserException {

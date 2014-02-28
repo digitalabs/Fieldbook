@@ -150,6 +150,35 @@ public class FieldbookServiceImpl implements FieldbookService{
 		return possibleValues;
 	}
 	
+	@Override
+        public List<ValueReference> getAllPossibleValuesFavorite(int id, String projectId) throws MiddlewareQueryException {
+                List<ValueReference> possibleValuesFavorite = null;
+                if (possibleValuesFavorite == null) {
+                    if (TermId.BREEDING_METHOD.getId() == id) {
+                        List<Integer> projectIdList = new ArrayList<Integer>();
+                        projectIdList.add(Integer.parseInt(projectId));
+                        possibleValuesFavorite = getFavoriteBreedingMethods(projectIdList);
+                    }
+                    else if (TermId.TRIAL_LOCATION.getId() == id) {
+                        List<Long> projectIdList = new ArrayList<Long>();
+                        projectIdList.add(Long.parseLong(projectId));
+                        possibleValuesFavorite = convertLocationsToValueReferences(fieldbookMiddlewareService.getFavoriteLocationByProjectId(projectIdList));
+                    }
+                }
+                return possibleValuesFavorite;
+	}
+	
+	private List<ValueReference> getFavoriteBreedingMethods(List<Integer> projectIdList) throws MiddlewareQueryException {
+	    List<ValueReference> list = new ArrayList<ValueReference>();
+            List<Method> methods = fieldbookMiddlewareService.getFavoriteBreedingMethods(projectIdList);
+            if (methods != null && !methods.isEmpty()) {
+                    for (Method method : methods) {
+                            list.add(new ValueReference(method.getMid(), method.getMname(), method.getMname()));
+                    }
+            }
+            return list;
+	}
+	
 	private List<ValueReference> getAllBreedingMethods() throws MiddlewareQueryException {
 		List<ValueReference> list = new ArrayList<ValueReference>();
 		List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods();

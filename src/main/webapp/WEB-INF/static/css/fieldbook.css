@@ -310,6 +310,12 @@ table{
 	padding: 15px;
 	background-color: #FFFFFF;
 }
+.tt-hint{
+	width: 100%;
+}
+.tt-query{
+	background-color: none;
+}
 /*For the spinner*/
 #spinner-wrap {
     position:fixed;

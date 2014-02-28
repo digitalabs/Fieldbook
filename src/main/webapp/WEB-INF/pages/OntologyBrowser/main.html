@@ -4,7 +4,12 @@
 			Standard Variables and Ontology Browser
 		</h1>
 	</div>		
-	
+</div>
+
+<div class="row">
+<div class="panel panel-default">
+		    	<div class="panel-body manage-settings-panel-body">
+		    		
 	<div class="row">
 		<div class="col-xs-10 col-md-10">	
 		&nbsp;
@@ -52,23 +57,17 @@
     </div>
     
 	<div class="row">
-		<div id="ontology-browser-tree" th:include="/OntologyBrowser/traitTree">
-		
+		<div class="col-xs-5 col-md-5">
+			<div id="ontology-browser-tree" th:include="/OntologyBrowser/traitTree">		
+		    </div>
 	    </div>
 	    <div id="ontology-detail-tabs">
 	    
 	    </div>
     </div>
-    <!-- 
-    <div class="row">
-    	<div id="ontology-add-variable" th:include="/OntologyBrowser/addVariable"></div>
-    </div>
-    
-    <div class="row">
-    	<div id="ontology-add-variable" th:include="/OntologyBrowser/addVariableSuccessful"></div>
-    </div>
-     -->
+   
      <a style="display: none" id="ontologyBaseUrl" href="/OntologyBrowser" th:href="@{/OntologyBrowser/}">test</a>
+     </div></div>
 </div>
 <div layout:fragment="page-script">		
 	<link th:href="@{/static/css/typeahead.js-bootstrap.css}" rel="stylesheet"/>
@@ -94,6 +93,7 @@
      $.fn.modal.Constructor.prototype.enforceFocus = function () {};
      $(".tt-hint").css('top','3px');
 	  $(".tt-hint").css('left','0px');
+	  $("#srch-term").css('background-color','#FFFFFF');
     });
    	
 

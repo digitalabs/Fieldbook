@@ -50,6 +50,7 @@ import com.efficio.fieldbook.web.nursery.service.ExcelImportStudyService;
 import com.efficio.fieldbook.web.nursery.service.FieldroidExportStudyService;
 import com.efficio.fieldbook.web.nursery.service.FieldroidImportStudyService;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
+import com.efficio.fieldbook.web.nursery.service.RExportStudyService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.AppConstants;
 
@@ -86,6 +87,8 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     private FileService fileService;
     @Resource
     private ValidationService validationService;
+    @Resource
+    private RExportStudyService rExportStudyService;
     
     /** The Constant BUFFER_SIZE. */
     private static final int BUFFER_SIZE = 4096 * 4;
@@ -272,13 +275,15 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     private String doExport(int exportType, int selectedTraitTermId, HttpServletResponse response){
     	String filename = getUserSelection().getWorkbook().getStudyDetails().getStudyName();
     	if(AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == exportType){
-    		filename = filename  + ".csv";
+    		filename = filename  + AppConstants.EXPORT_FIELDLOG_SUFFIX.getString();
     		fielddroidExportStudyService.export(getUserSelection().getWorkbook(), filename);
     		response.setContentType("text/csv");
     	}else if(AppConstants.EXPORT_NURSERY_R.getInt() == exportType){
+    		filename = filename  + AppConstants.EXPORT_R_SUFFIX.getString();
+    		rExportStudyService.exportToR(getUserSelection().getWorkbook(), filename, selectedTraitTermId);    		
     		response.setContentType("text/csv");
     	}else if(AppConstants.EXPORT_NURSERY_EXCEL.getInt() == exportType){
-    		filename = filename  + ".xls";
+    		filename = filename  + AppConstants.EXPORT_XLS_SUFFIX.getString();
     		excelExportStudyService.export(getUserSelection().getWorkbook(), filename);
     		response.setContentType("application/vnd.ms-excel");
     	}

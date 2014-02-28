@@ -18,11 +18,12 @@ import java.util.List;
 
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.springframework.stereotype.Service;
 
 import com.csvreader.CsvWriter;
 import com.efficio.fieldbook.web.nursery.bean.CSVOziel;
 import com.efficio.fieldbook.web.nursery.service.RExportStudyService;
-
+@Service
 public class RExportStudyServiceImpl implements RExportStudyService {
 
 	@Override

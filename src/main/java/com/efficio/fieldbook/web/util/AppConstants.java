@@ -128,6 +128,10 @@ public enum AppConstants {
     ,FILE_NOT_EXCEL_ERROR
     ,FILE_NOT_CSV_ERROR
     ,FILE_NOT_FOUND_ERROR
+    
+    ,EXPORT_FIELDLOG_SUFFIX
+    ,EXPORT_R_SUFFIX
+    ,EXPORT_XLS_SUFFIX
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

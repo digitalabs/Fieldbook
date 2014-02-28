@@ -47,6 +47,9 @@ public class AddOrRemoveTraitsForm {
 	/** The has error. */
 	private String hasError;
 	
+	/** The import val. */
+	private int importVal;
+	
 	/**
 	 * Gets the measurement row list.
 	 *
@@ -217,6 +220,24 @@ public class AddOrRemoveTraitsForm {
 	 */
 	public void setHasError(String hasError) {
 		this.hasError = hasError;
+	}
+
+	/**
+	 * Gets the import val.
+	 *
+	 * @return the import val
+	 */
+	public int getImportVal() {
+		return importVal;
+	}
+
+	/**
+	 * Sets the import val.
+	 *
+	 * @param importVal the new import val
+	 */
+	public void setImportVal(int importVal) {
+		this.importVal = importVal;
 	}
 
      

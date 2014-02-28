@@ -48,5 +48,7 @@ public interface FileService{
      * @throws IOException Signals that an I/O exception has occurred.
      */
     File retrieveFileFromFileName(String currentFilename) throws IOException;
+    
+    String getFilePath(String tempFilename);
 
 }

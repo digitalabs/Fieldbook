@@ -1,7 +1,7 @@
 <form id="addVariableForm" role="form-horizontal" onsubmit="return validateCells();" class="form-horizontal" action="#" 
 	th:action="@{/NurseryManager/addOrRemoveTraits}" method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data">
 	
-	
+	<input type="hidden" th:field="*{importVal}"/>
               
 	 <div class="germplasm-measurement-list-table  component " style="width: 100%">
 	
@@ -123,7 +123,7 @@
        	 //  $('.germplasm-measurement-list-table td input').on("change", validateCells);
        	 //  $('.germplasm-measurement-list-table td input').on("focus", validateCells);
        	 //  $('.germplasm-measurement-list-table td input').on("blur", validateCells);
-       	   if (document.URL.indexOf("viewNursery") > -1) {
+       	   if (document.URL.indexOf("viewNursery") > -1 || $('#importVal').val() == '1') {
        		   $("#btnBack").attr("href", "/Fieldbook/NurseryManager");
        		   $("#btnUpdate").show();
        		   $("#btnNext").hide();

@@ -30,13 +30,13 @@ public class FieldroidImportStudyServiceImpl implements
 		File file = new File(filename);
 		CSVOziel csv = new CSVOziel(workbook);
 		
-		validate(csv, file);
+		validate(csv, file, workbook);
 		
 		csv.readDATAnew(file);
 		
 	}
 	
-	private void validate(CSVOziel csv, File file) throws WorkbookParserException {
+	private void validate(CSVOziel csv, File file, Workbook workbook) throws WorkbookParserException {
 		if (!csv.isValid(file)) {
 			throw new WorkbookParserException("error.workbook.import.invalidFieldroidFile");
 		}

@@ -59,7 +59,6 @@ public class CSVOziel {
             try {
                 csvOutput.write(cad);
             } catch (IOException ex) {
-                System.out.println("ERROR AL GENERAR COLUMNS CSV");
             }
 
         }
@@ -72,7 +71,6 @@ public class CSVOziel {
                 csvOutput.endRecord();
             }
         } catch (IOException ex) {
-            System.out.println("ERROR AL GENERAR ROWS CSV " + ex);
         }
     }
 /*
@@ -112,7 +110,6 @@ public class CSVOziel {
 
 
         } catch (IOException ex) {
-            System.out.println("ERROR AL GENERAR TRAITS CSV " + ex);
         }
     }
 /*
@@ -255,7 +252,6 @@ public class CSVOziel {
                 mRowIndex++;
             }
         } catch (IOException ex) {
-            System.out.println("ERROR AL GENERAR DATA CSV " + ex);
         }
 
     }
@@ -465,16 +461,9 @@ public class CSVOziel {
             csvReader.readHeaders();
             String[] headers = csvReader.getHeaders();
 
-            if (headers[headers.length - 1].equals("IBFB")) {
-                System.out.println("ES DEL IBFB");
-            } else {
-                System.out.println("NO ES DEL IBFB");
-            }
-
             for (int i = 26; i < headers.length - 1; i++) {
                 String titulo = headers[i];
                 if (!titulo.equals("")) {
-                    System.out.println("***" + titulo);
                     titulos.add(titulo);
                 }
             }
@@ -482,8 +471,6 @@ public class CSVOziel {
             for (int i = 0; i < 23; i++) {
                 csvReader.skipRecord();
             }
-
-            System.out.println("TENEMOS traits: " + titulos.size());
 
             int myrow = 0;
             while (csvReader.readRecord()) {
@@ -498,9 +485,6 @@ public class CSVOziel {
                 String ped = csvReader.get("BreedersPedigree1");
                 String gid = csvReader.get("GID");
 
-                System.out.println("TRIAL : --->>>" + trial);
-                System.out.println("PLOT : --->>>" + plot);
-
                 actual = entry;
 
                 if (before.equals(entry)) {
@@ -513,8 +497,6 @@ public class CSVOziel {
                 try {
                     myrow = findRow(Integer.parseInt(plot));
                 } catch (NumberFormatException ex) {
-                    ex.printStackTrace();
-                    System.out.println("ERROR AL IMPORTAR FIELDLOG FILE");
                     return;
                 }
 
@@ -537,12 +519,8 @@ public class CSVOziel {
             }
             csvReader.close();
         } catch (FileNotFoundException ex) {
-            ex.printStackTrace();
-            System.out.println("FILE NOT FOUND. readDATAcsv. " + ex);
 
         } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("IO EXCEPTION. readDATAcsv. " + e);
         }
     }
 

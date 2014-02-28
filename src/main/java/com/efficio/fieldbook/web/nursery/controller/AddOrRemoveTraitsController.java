@@ -42,18 +42,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.service.api.FileService;
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.AddOrRemoveTraitsForm;
-import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.ExcelExportStudyService;
 import com.efficio.fieldbook.web.nursery.service.ExcelImportStudyService;
 import com.efficio.fieldbook.web.nursery.service.FieldroidExportStudyService;
 import com.efficio.fieldbook.web.nursery.service.FieldroidImportStudyService;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
-import com.efficio.fieldbook.web.nursery.validation.ImportGermplasmListValidator;
+import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
 /**
  * The Class AddOrRemoveTraitsController.
@@ -86,6 +84,8 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     private FieldroidImportStudyService fieldroidImportStudyService;
     @Resource
     private FileService fileService;
+    @Resource
+    private ValidationService validationService;
     
     /** The Constant BUFFER_SIZE. */
     private static final int BUFFER_SIZE = 4096 * 4;
@@ -199,6 +199,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
         workbook.setObservations(form.getMeasurementRowList());
 
         try { 
+        	validationService.validateObservationValues(workbook);
             fieldbookMiddlewareService.saveMeasurementRows(workbook);
             resultMap.put("status", "1");
         } catch (MiddlewareQueryException e) {

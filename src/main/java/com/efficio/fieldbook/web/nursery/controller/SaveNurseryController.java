@@ -18,6 +18,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.xmlbeans.impl.validator.ValidatorUtil;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
@@ -37,6 +38,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.SaveNurseryForm;
+import com.efficio.fieldbook.web.nursery.service.impl.ValidationServiceImpl;
 
 /**
  * The Class SaveNurseryController.
@@ -62,6 +64,9 @@ public class SaveNurseryController extends AbstractBaseFieldbookController{
     /** The message source. */
     @Resource
     private ResourceBundleMessageSource messageSource;
+    
+    @Resource
+    private ValidationServiceImpl validationService;
     
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
@@ -122,8 +127,9 @@ public class SaveNurseryController extends AbstractBaseFieldbookController{
 
         try {
     	    setStudyDetails(folderId, title, objective, nurseryBookName, workbook);
-    	    
-    		dataImportService.saveDataset(workbook, true);
+
+    	    validationService.validateObservationValues(workbook);
+    	    dataImportService.saveDataset(workbook, true);
     		
     		resultMap.put("status", "1");
     	

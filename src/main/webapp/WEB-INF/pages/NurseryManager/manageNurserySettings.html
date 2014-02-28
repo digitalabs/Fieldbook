@@ -93,7 +93,8 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 										</div>
 										<div th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.breeding.method.id}" class="possibleValuesDiv">
 										<input th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.breeding.method.id}"
-										type="checkbox" th:field="*{nurseryLevelVariables[__${rowStat.index}__].favorite}" onclick="javascript: toggleMethodDropdown();" />
+										type="checkbox" th:field="*{nurseryLevelVariables[__${rowStat.index}__].favorite}"
+										th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'" />
 										&nbsp;&nbsp;
 										<span th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.breeding.method.id}"
 										th:text="#{show.favorite.method}">Show Favorite Method</span>
@@ -101,9 +102,11 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 										
 										<!-- store possible values of variable -->
 										<div th:text="${nurseryLevelVariable.value}" class="div-select-val" style="display: none"></div>
-										<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="possibleValuesJson" style="display:none" th:text="${nurseryLevelVariable.possibleValuesJson}">
+										<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesJson' + ${rowStat.index}"
+											class="possibleValuesJson" style="display:none" th:text="${nurseryLevelVariable.possibleValuesJson}">
 										</div>
-										<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="possibleValuesFavoriteJson" style="display:none" th:text="${nurseryLevelVariable.possibleValuesFavoriteJson}">
+										<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesFavoriteJson' + ${rowStat.index}"
+											class="possibleValuesFavoriteJson" style="display:none" th:text="${nurseryLevelVariable.possibleValuesFavoriteJson}">
 										</div>
 										
 										<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'NTEXT'}" 

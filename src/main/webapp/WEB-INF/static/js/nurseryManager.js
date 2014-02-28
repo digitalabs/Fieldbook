@@ -650,17 +650,27 @@ function createNurseryLevelSettingVariables(data) {
 function toggleMethodDropdown(rowIndex) {
 	var possibleValues;  
 	var showFavorite = $("#" + getJquerySafeId("nurseryLevelVariables" + rowIndex + ".favorite1")).is(":checked");
-
+	var selectedVal;
+	
+	//get previously selected value
+	if ($("#" + getJquerySafeId("nurseryLevelVariables" + rowIndex + ".value")).select2("data")) {
+		selectedVal = $("#" + getJquerySafeId("nurseryLevelVariables" + rowIndex + ".value")).select2("data").id;
+	}
+	
+	//reset select2 combo
 	initializePossibleValuesCombo([], "#" + 
 			getJquerySafeId("nurseryLevelVariables" + rowIndex + ".value"), false, null);
 	
+	//get possible values based on checkbox
 	if (showFavorite) {
 		possibleValues = $("#possibleValuesFavoriteJson" + rowIndex).text();
 	} else {
 		possibleValues = $("#possibleValuesJson" + rowIndex).text();
 	}
+	
+	//recreate select2 combo
 	initializePossibleValuesCombo($.parseJSON(possibleValues), "#" + 
-			getJquerySafeId("nurseryLevelVariables" + rowIndex + ".value"), false, null);
+			getJquerySafeId("nurseryLevelVariables" + rowIndex + ".value"), false, selectedVal);
 }
 
 function createPlotLevelSettingVariables(data) {

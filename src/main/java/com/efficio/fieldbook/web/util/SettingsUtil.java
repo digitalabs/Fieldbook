@@ -205,6 +205,20 @@ public class SettingsUtil {
 		return possibleValueList;
 	}
 	
+	private static List<ValueReference> getFieldPossibleValuesFavorite(FieldbookService fieldbookService, Integer standardVariableId, String projectId) {
+	    List<ValueReference> possibleValueList = new ArrayList<ValueReference>();
+            
+            try {
+            
+                    //possibleValueList = fieldbookService.getAllPossibleValuesByPSMR(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(variable.getRole()));
+                    possibleValueList = fieldbookService.getAllPossibleValuesFavorite(standardVariableId, projectId);
+            } catch (MiddlewareQueryException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+            }
+            return possibleValueList;
+	}
+	
 	/**
 	 * Checks if is setting variable deletable.
 	 *
@@ -232,7 +246,7 @@ public class SettingsUtil {
 	 * @param userSelection the user selection
 	 * @throws MiddlewareQueryException 
 	 */
-	public static void convertXmlDatasetToPojo(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, com.efficio.fieldbook.service.api.FieldbookService fieldbookService, Dataset dataset, UserSelection userSelection) throws MiddlewareQueryException{
+	public static void convertXmlDatasetToPojo(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, com.efficio.fieldbook.service.api.FieldbookService fieldbookService, Dataset dataset, UserSelection userSelection, String projectId) throws MiddlewareQueryException{
 		if(dataset != null && userSelection != null){
 			//we copy it to User session object
 			//nursery level
@@ -252,6 +266,8 @@ public class SettingsUtil {
 							possibleValues, condition.getValue(), isSettingVariableDeletable(stdVar));
 					
 					settingDetail.setPossibleValuesToJson(possibleValues);
+					List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, projectId);
+					settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
 					nurseryLevelConditions.add(settingDetail);
 				}
 		    }

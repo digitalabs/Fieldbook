@@ -133,7 +133,7 @@ public class PojoXmlTester extends AbstractJUnit4SpringContextTests {
 	public void testConvertDatasetToPojo() throws MiddlewareQueryException {
 		//tests the conversion of the POJO to dataset equivalent
 		UserSelection userSelection = new UserSelection();
-		SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection);
+		SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, "1");
 		
 		assertEquals(userSelection.getNurseryLevelConditions().size(), dataset.getConditions().size());
 		assertEquals(userSelection.getPlotsLevelList().size(), dataset.getFactors().size());

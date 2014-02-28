@@ -22,9 +22,12 @@ public class SettingDetail {
 
 	private SettingVariable variable;
 	private List<ValueReference> possibleValues;
+	private List<ValueReference> possibleValuesFavorite;
 	private String possibleValuesJson;
+	private String possibleValuesFavoriteJson;
 	private String value;
 	private boolean isDelete;
+	private boolean isFavorite;
 
 	public SettingDetail(){
 		super();
@@ -50,6 +53,12 @@ public class SettingDetail {
 	public void setPossibleValues(List<ValueReference> possibleValues) {
 		this.possibleValues = possibleValues;
 	}
+	public List<ValueReference> getPossibleValuesFavorite() {
+	    return possibleValuesFavorite;
+	}
+	public void setPossibleValuesFavorite(List<ValueReference> possibleValuesFavorite) {
+	    this.possibleValuesFavorite = possibleValuesFavorite;
+	}
 	public String getPossibleValuesJson() {
 	    return possibleValuesJson;
 	}
@@ -65,6 +74,21 @@ public class SettingDetail {
                 setPossibleValuesJson("err");
             }
 	}
+	public String getPossibleValuesFavoriteJson() {
+            return possibleValuesFavoriteJson;
+        }
+        public void setPossibleValuesFavoriteJson(String possibleValuesFavoriteJson) {
+            this.possibleValuesFavoriteJson = possibleValuesFavoriteJson;
+        }
+        public void setPossibleValuesFavoriteToJson(List<ValueReference> possibleValuesFavorite) {
+            try {
+                ObjectMapper om = new ObjectMapper();
+                setPossibleValuesFavoriteJson(om.writeValueAsString(possibleValuesFavorite));
+            }
+            catch(Exception e) {
+                setPossibleValuesFavoriteJson("err");
+            }
+        }
 	public String getValue() {
 		return value;
 	}
@@ -77,5 +101,10 @@ public class SettingDetail {
 	public void setDelete(boolean isDelete) {
 		this.isDelete = isDelete;
 	}
-
+	public boolean isFavorite() {
+	        return isFavorite;
+	}
+	public void setFavorite(boolean isFavorite) {
+	        this.isFavorite = isFavorite;
+	}
 }

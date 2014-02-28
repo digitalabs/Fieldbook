@@ -70,6 +70,7 @@ public interface FieldbookService {
      */
     List<ValueReference> getAllPossibleValues(int id) throws MiddlewareQueryException;
     
+    List<ValueReference> getAllPossibleValuesFavorite(int id, String projectId) throws MiddlewareQueryException;    
     
     List<ValueReference> getAllPossibleValuesByPSMR(String property, String scale, String method, PhenotypicType phenotypeType) throws MiddlewareQueryException;
 

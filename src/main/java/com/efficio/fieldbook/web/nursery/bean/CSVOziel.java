@@ -42,6 +42,7 @@ public class CSVOziel {
 	private List<MeasurementVariable> variateHeaders;
 	
     private String stringTraitToEvaluate = "GY";
+    private Integer selectedTraitId;
 
     public CSVOziel(Workbook workbook) {
     	this.headers = workbook.getMeasurementDatasetVariables();
@@ -135,27 +136,27 @@ public class CSVOziel {
             System.out.println("ERROR AL GENERAR TRAITS CSV " + ex);
         }
     }
-
-    public void writeTraitsR(CsvWriter csvOutput, ObservationsTableModel tableModel) {
+*/
+    public void writeTraitsR(CsvWriter csvOutput) {
         try {
-            int tot = tableModel.getVariateList().size();
+            //int tot = this.variateHeaders.size();
 
-            for (int i = 0; i < tot; i++) {
-               String valor = tableModel.getVariateList().get(i).getVariateName();
+            //for (int i = 0; i < tot; i++) {
+            for (MeasurementVariable variate : this.variateHeaders) {
+               String valor = variate.getName(); //tableModel.getVariateList().get(i).getVariateName();
                 if (!valor.equals(stringTraitToEvaluate)) {
                     
-                if(valor.isEmpty()){
-                    valor=".";
-                }
-                csvOutput.write(valor);
+	                if(valor.isEmpty()){
+	                    valor=".";
+	                }
+	                csvOutput.write(valor);
                 }
             }
 
         } catch (IOException ex) {
-            System.out.println("ERROR AL GENERAR TRAITS CSV " + ex);
         }
     }
-*/
+
     /*
     public void writeDATA(CsvWriter csvOutput) {
         //int total = observations.size();
@@ -301,34 +302,35 @@ public class CSVOziel {
         }
 
     }
+*/
+    public void writeDATAR(CsvWriter csvOutput) {
+//        int total = this.observations.size();
+//        int tot = this.variateHeaders.size();
 
-    public void writeDATAR(CsvWriter csvOutput, ObservationsTableModel tableModel) {
-        int total = tableModel.getRowCount();
-        int tot = tableModel.getVariateList().size();
-
-        //  int trialColumn = tableModel.getHeaderIndex(ObservationsTableModel.NURSERY);
-        // int repColumn = tableModel.getHeaderIndex(ObservationsTableModel.REPLICATION);
-        // int blockColumn = tableModel.getHeaderIndex(ObservationsTableModel.BLOCK);
-        int plotColumn = tableModel.getHeaderIndex(ObservationsTableModel.PLOT);
-        int entryColumn = tableModel.getHeaderIndex(ObservationsTableModel.ENTRY);
-        int designColumn = tableModel.getHeaderIndex(ObservationsTableModel.DESIG);
-        int gidColumn = tableModel.getHeaderIndex(ObservationsTableModel.GID);
+//        int plotColumn = tableModel.getHeaderIndex(ObservationsTableModel.PLOT);
+//        int entryColumn = tableModel.getHeaderIndex(ObservationsTableModel.ENTRY);
+//        int designColumn = tableModel.getHeaderIndex(ObservationsTableModel.DESIG);
+//        int gidColumn = tableModel.getHeaderIndex(ObservationsTableModel.GID);
 
 
         try {
 
 
-            for (int i = 0; i < total; i++) {
+            //for (int i = 0; i < total; i++) {
+        	int rowIndex = 0;
+        	for (MeasurementRow mRow : this.observations) {
 
                 // for nursery assume alwas values are:
                 // loc = 1, replication = 1 and block =1 an
-                 csvOutput.write("1"); // lock
-                 csvOutput.write("1"); // replication
-                 csvOutput.write("1"); // blocki
+                csvOutput.write("1"); // lock
+                csvOutput.write("1"); // replication
+                csvOutput.write("1"); // blocki
                 
-                csvOutput.write(tableModel.getValueAt(i, entryColumn).toString());
-              try {
-                   csvOutput.write(tableModel.getValueAt(i, tableModel.findColumn(stringTraitToEvaluate)).toString());
+                csvOutput.write(getValueByIdInRow(TermId.ENTRY_NO.getId(), mRow));
+                //csvOutput.write(tableModel.getValueAt(i, entryColumn).toString());
+                try {
+                	csvOutput.write(getValueByIdInRow(this.selectedTraitId, mRow));
+                   //csvOutput.write(tableModel.getValueAt(i, tableModel.findColumn(stringTraitToEvaluate)).toString());
                 } catch (NullPointerException ex) {
                     String cad = ".";
                     
@@ -336,12 +338,14 @@ public class CSVOziel {
                 }
 
 
-                for (int j = 0; j < tot; j++) {
-                    String valor = tableModel.getVariateList().get(j).getVariateName();
+                for (MeasurementVariable variate : this.variateHeaders) {
+                //for (int j = 0; j < tot; j++) {
+                    String valor = variate.getName(); //tableModel.getVariateList().get(j).getVariateName();
 
                      if (!valor.equals(stringTraitToEvaluate)) {
                         try {
-                            csvOutput.write(tableModel.getValueAt(i, tableModel.findColumn(valor)).toString());
+                        	setObservationData(valor, rowIndex, getValueByIdInRow(this.selectedTraitId, mRow));
+                            //csvOutput.write(tableModel.getValueAt(i, tableModel.findColumn(valor)).toString());
                         } catch (NullPointerException ex) {
                             String cad = ".";
                             csvOutput.write(cad);
@@ -351,13 +355,13 @@ public class CSVOziel {
                 }
 
                 csvOutput.endRecord();
+                rowIndex++;
             }
         } catch (IOException ex) {
-            System.out.println("ERROR AL GENERAR DATA CSV FOR R" + ex);
         }
 
     }
-*/
+
 /*
     @SuppressWarnings("unchecked")
     public void readDATA(File file) {
@@ -669,5 +673,9 @@ public class CSVOziel {
         	}
         }
         return null;
+    }
+    
+    public void setSelectedTraitId(Integer selectedTraitId) {
+    	this.selectedTraitId = selectedTraitId;
     }
 }

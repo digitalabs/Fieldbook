@@ -332,6 +332,7 @@ public class CSVOziel {
                 	csvOutput.write(getValueByIdInRow(this.selectedTraitId, mRow));
                    //csvOutput.write(tableModel.getValueAt(i, tableModel.findColumn(stringTraitToEvaluate)).toString());
                 } catch (NullPointerException ex) {
+                	ex.printStackTrace();
                     String cad = ".";
                     
                     csvOutput.write(cad);
@@ -344,7 +345,7 @@ public class CSVOziel {
 
                      if (!valor.equals(stringTraitToEvaluate)) {
                         try {
-                        	setObservationData(valor, rowIndex, getValueByIdInRow(this.selectedTraitId, mRow));
+                        	csvOutput.write(getValueByIdInRow(variate.getTermId(), mRow));
                             //csvOutput.write(tableModel.getValueAt(i, tableModel.findColumn(valor)).toString());
                         } catch (NullPointerException ex) {
                             String cad = ".";

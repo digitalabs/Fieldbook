@@ -49,6 +49,7 @@ import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.ExcelExportStudyService;
 import com.efficio.fieldbook.web.nursery.service.ExcelImportStudyService;
 import com.efficio.fieldbook.web.nursery.service.FieldroidExportStudyService;
+import com.efficio.fieldbook.web.nursery.service.FieldroidImportStudyService;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.nursery.validation.ImportGermplasmListValidator;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -81,6 +82,8 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     private FieldroidExportStudyService fielddroidExportStudyService;
     @Resource
     private ExcelImportStudyService excelImportStudyService;
+    @Resource
+    private FieldroidImportStudyService fieldroidImportStudyService;
     @Resource
     private FileService fileService;
     
@@ -298,8 +301,31 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
             ,@PathVariable int importType, BindingResult result, Model model) {
     	    	    	    	
     	if(AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == importType){
-    		
-    		//fielddroidExportStudyService.export(getUserSelection().getWorkbook(), filename);
+    		MultipartFile file = form.getFile();
+            if (file == null) {
+           	 result.rejectValue("file", AppConstants.FILE_NOT_FOUND_ERROR.getString());
+            } else {
+                boolean isCSVFile = file.getOriginalFilename().contains(".csv");
+                if (!isCSVFile) {
+               	 	result.rejectValue("file", AppConstants.FILE_NOT_CSV_ERROR.getString());
+                }
+            }
+            if(!result.hasErrors()){
+	    		try {
+	    			String filename = fileService.saveTemporaryFile(file.getInputStream());
+	    			
+					fieldroidImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename));
+				} catch (WorkbookParserException e) {
+					// TODO Auto-generated catch block
+					//e.printStackTrace();				
+					LOG.error(e.getMessage(), e);
+					result.rejectValue("file", e.getMessage());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					//e.printStackTrace();
+					LOG.error(e.getMessage(), e);
+				}
+            }
     	}else if(AppConstants.EXPORT_NURSERY_EXCEL.getInt() == importType){
     		
     		

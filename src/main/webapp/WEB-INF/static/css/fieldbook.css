@@ -654,3 +654,11 @@ td.user-name {
 }
 .add_top_padding{
 	padding-top: 10px;
+}
+td.nurseryLevelVariableSetting {
+	vertical-align: top;
+	padding-top: 10px;
+}
+div.possibleValuesDiv{
+	padding-bottom: 5px;
+}

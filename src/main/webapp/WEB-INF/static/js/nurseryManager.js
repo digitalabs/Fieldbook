@@ -589,12 +589,12 @@ function createNurseryLevelSettingVariables(data) {
 		}
 		
 		//create html elements dynamically
-		newRow = newRow + "<td>" + isDelete + 
+		newRow = newRow + "<td class='nurseryLevelVariableSetting'>" + isDelete + 
 		"<input type='hidden' id='nurseryLevelVariables" + ctr + ".variable.cvTermId' name='nurseryLevelVariables[" + 
 		ctr + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
 		//newRow = newRow + "<td>" + settingDetail.variable.name + ':' + '<span class="required">*</span>' +  "</td>";
-		newRow = newRow + "<td><label class='control-label'>" + settingDetail.variable.name + '</label>:' + '' +  "</td>";
+		newRow = newRow + "<td class='nurseryLevelVariableSetting'><label class='control-label'>" + settingDetail.variable.name + '</label>:' + '' +  "</td>";
 		newRow = newRow + "<td>";
 		/*
 		newRow = newRow + "<input type='hidden' id='nurseryLevelVariables" + ctr + 
@@ -616,7 +616,17 @@ function createNurseryLevelSettingVariables(data) {
 		newRow = newRow + inputHtml;
 		
 		if (settingDetail.variable.cvTermId == breedingMethodId) {
-			newRow = newRow + "</td><td>";
+			//show favorite method
+			newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id='nurseryLevelVariables" + ctr + ".favorite1'" + 
+			" name='nurseryLevelVariables[" + ctr + "].favorite'" +
+			" onclick='javascript: toggleMethodDropdown(" + ctr + ");' />" +
+			"<input type='hidden' name='_nurseryLevelVariables[" + ctr + "].favorite' value='on' /> " +
+			"<span>&nbsp;&nbsp;" + showFavoriteMethodLabel + "</span></div>" + 
+			"<div id='possibleValuesJson" + ctr + "' class='possibleValuesJson' style='display:none'>" + settingDetail.possibleValuesJson + 
+			"</div><div id='possibleValuesFavoriteJson" + ctr + "' class='possibleValuesFavoriteJson' style='display:none'>" + 
+			settingDetail.possibleValuesFavoriteJson + "</div>";
+			
+			newRow = newRow + "</td><td class='nurseryLevelVariableSetting'>";
 			newRow = newRow + "&nbsp;&nbsp;<a href='javascript: openManageMethods();'>" + manageMethodLabel + "</a>";
 			newRow = newRow + "</td></tr>";
 			
@@ -635,6 +645,22 @@ function createNurseryLevelSettingVariables(data) {
 	});
 	
 	initializeDateAndSliderInputs();
+}
+
+function toggleMethodDropdown(rowIndex) {
+	var possibleValues;  
+	var showFavorite = $("#" + getJquerySafeId("nurseryLevelVariables" + rowIndex + ".favorite1")).is(":checked");
+
+	initializePossibleValuesCombo([], "#" + 
+			getJquerySafeId("nurseryLevelVariables" + rowIndex + ".value"), false, null);
+	
+	if (showFavorite) {
+		possibleValues = $("#possibleValuesFavoriteJson" + rowIndex).text();
+	} else {
+		possibleValues = $("#possibleValuesJson" + rowIndex).text();
+	}
+	initializePossibleValuesCombo($.parseJSON(possibleValues), "#" + 
+			getJquerySafeId("nurseryLevelVariables" + rowIndex + ".value"), false, null);
 }
 
 function createPlotLevelSettingVariables(data) {

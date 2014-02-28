@@ -394,7 +394,10 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
 					List<ValueReference> possibleValues = 
 					        fieldbookService.getAllPossibleValues(var.getCvTermId());
 					SettingDetail newSetting = new SettingDetail(var, possibleValues, null, true);
-					newSetting.setPossibleValuesFavorite(fieldbookService.getAllPossibleValuesFavorite(var.getCvTermId(), this.getCurrentProjectId()));
+					List<ValueReference> possibleValuesFavorite = fieldbookService.getAllPossibleValuesFavorite(var.getCvTermId(), this.getCurrentProjectId());
+					newSetting.setPossibleValuesFavorite(possibleValuesFavorite);
+					newSetting.setPossibleValuesToJson(possibleValues);
+					newSetting.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
 					newSettings.add(newSetting);
 	    		}
 	    	}

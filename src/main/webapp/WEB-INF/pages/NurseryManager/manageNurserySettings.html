@@ -72,18 +72,38 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 	    				<div class="col-xs-12 col-md-12">
 	    					<table border="0" id="nurseryLevelSettings" width="800px">
 								<tr th:each="nurseryLevelVariable, rowStat : *{nurseryLevelVariables}">
-									<td style="max-width:50px; min-width:50px;">
+									<td style="max-width:50px; min-width:50px;" class="nurseryLevelVariableSetting">
 										<span style="cursor: default; font-size: 16px;" th:if="${nurseryLevelVariable.delete}" class="glyphicon glyphicon-remove-circle" 
 										th:onclick="'javascript: deleteVariable(1,\'' + ${nurseryLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
 										<input type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 									</td>
-									<td style="max-width:150px; min-width:150px;"><label class="control-label" th:text="${nurseryLevelVariable.variable.name}"></label>:</td>
+									<td style="max-width:150px; min-width:150px;" class="nurseryLevelVariableSetting"><label class="control-label" th:text="${nurseryLevelVariable.variable.name}"></label>:</td>
 									<td style="max-width:200px; min-width:200px;">
 									 <!-- <div th:text="${nurseryLevelVariable.variable.cvTermId}"></div> --> 
 										<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" 
 										type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].value}" class="form-control select2" />
-										<div th:text="${nurseryLevelVariable.value}" class="div-select-val" style="display: none"/>
+										
+										<!-- Show Favorite Location/Method -->
+										<div th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.trial.location.id}" class="possibleValuesDiv">
+										<input th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.trial.location.id}"
+										type="checkbox" th:field="*{nurseryLevelVariables[__${rowStat.index}__].favorite}" onclick="javascript: toggleLocationDropdown();" />
+										&nbsp;&nbsp;
+										<span th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.trial.location.id}"
+										th:text="#{show.favorite.location}">Show Favorite Location</span>
+										</div>
+										<div th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.breeding.method.id}" class="possibleValuesDiv">
+										<input th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.breeding.method.id}"
+										type="checkbox" th:field="*{nurseryLevelVariables[__${rowStat.index}__].favorite}" onclick="javascript: toggleMethodDropdown();" />
+										&nbsp;&nbsp;
+										<span th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.breeding.method.id}"
+										th:text="#{show.favorite.method}">Show Favorite Method</span>
+										</div>
+										
+										<!-- store possible values of variable -->
+										<div th:text="${nurseryLevelVariable.value}" class="div-select-val" style="display: none"></div>
 										<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="possibleValuesJson" style="display:none" th:text="${nurseryLevelVariable.possibleValuesJson}">
+										</div>
+										<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="possibleValuesFavoriteJson" style="display:none" th:text="${nurseryLevelVariable.possibleValuesFavoriteJson}">
 										</div>
 										
 										<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'NTEXT'}" 
@@ -119,7 +139,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 										data-slider-min1="-5" data-slider-max1="20" data-slider-step1="0.1" />
 											 -->								
 									</td>
-									<td style="max-width:200px; min-width:200px;">
+									<td style="max-width:200px; min-width:200px;" class="nurseryLevelVariableSetting">
 										&nbsp;&nbsp;<a th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.trial.location.id}" href="javascript: openManageLocations();" th:text="#{nursery.managesettings.manage.location}">Manage Location</a>
 										<a th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.breeding.method.id}" href="javascript: openManageMethods();" th:text="#{nursery.managesettings.manage.method}">Manage Method</a>
 									</td>
@@ -370,7 +390,8 @@ data-slider-selection="after" data-slider-tooltip="always"/>
        		var copyTemplateSettingSuccess = /*[[#{manage.settings.copy.setting.success}]]*/;
        		var manageMethodLabel = /*[[#{nursery.managesettings.manage.method}]]*/;
        		var nurseryNumericError = /*[[#{manage.settings.nursery.numeric.error}]]*/;
-       		var breedingMethodId = /*[[#{nursery.managesettings.breeding.method.id}]]*/; 
+       		var breedingMethodId = /*[[#{nursery.managesettings.breeding.method.id}]]*/;
+       		var showFavoriteMethodLabel = /*[[#{show.favorite.method}]]*/;
        		
  			$( document ).ready(function() {
  				$('#selectedSettingId').on('change', function(){

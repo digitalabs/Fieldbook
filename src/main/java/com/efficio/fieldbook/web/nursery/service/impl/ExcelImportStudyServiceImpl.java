@@ -21,6 +21,7 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -66,8 +67,24 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 				for (MeasurementData wData : wRow.getDataList()) {
 					String label = wData.getLabel();
 					int xlsColIndex = findColumn(observationSheet, label);
-					String xlsValue = xlsRow.getCell(xlsColIndex).getStringCellValue();
+					Cell cell = xlsRow.getCell(xlsColIndex);
+					String xlsValue = "";
 					
+					if(cell != null){
+						if(cell.getCellType() == Cell.CELL_TYPE_NUMERIC){
+							Double doubleVal = Double.valueOf(cell.getNumericCellValue());
+							Integer intVal = Integer.valueOf(doubleVal.intValue());
+							if(Double.parseDouble(intVal.toString()) == doubleVal.doubleValue()){
+								xlsValue = intVal.toString();
+							}else{
+								xlsValue = doubleVal.toString();	
+							}
+							
+							
+						}
+						else
+							xlsValue = cell.getStringCellValue();
+					}
 					wData.setValue(xlsValue);
 				}
 				xlsRowIndex++;
@@ -161,7 +178,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	
 	private void validateObservationColumns(List<String> allXlsVariates, Workbook workbook) throws WorkbookParserException {
 		if (workbook.getMeasurementDatasetVariables() != null) {
-			for (MeasurementVariable mvar : workbook.getMeasurementDatasetVariables()) {
+			for (MeasurementVariable mvar : workbook.getVariates()) {
 				if (!allXlsVariates.contains(mvar.getName().toUpperCase())) {
 					throw new WorkbookParserException("error.workbook.import.columnsMismatch");
 				}

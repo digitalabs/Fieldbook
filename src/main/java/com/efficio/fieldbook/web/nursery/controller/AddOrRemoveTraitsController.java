@@ -27,6 +27,7 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,12 +39,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.ExcelExportStudyService;
+import com.efficio.fieldbook.web.nursery.service.ExcelImportStudyService;
 import com.efficio.fieldbook.web.nursery.service.FieldroidExportStudyService;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.nursery.validation.ImportGermplasmListValidator;
@@ -75,6 +79,10 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     private ExcelExportStudyService excelExportStudyService;
     @Resource
     private FieldroidExportStudyService fielddroidExportStudyService;
+    @Resource
+    private ExcelImportStudyService excelImportStudyService;
+    @Resource
+    private FileService fileService;
     
     /** The Constant BUFFER_SIZE. */
     private static final int BUFFER_SIZE = 4096 * 4;
@@ -288,58 +296,49 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     @RequestMapping(value="/import/{importType}", method = RequestMethod.POST)
     public String importFile(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form
             ,@PathVariable int importType, BindingResult result, Model model) {
-    	
-    	result.rejectValue("file", AppConstants.FILE_NOT_EXCEL_ERROR.getString());
-    	
-    	form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
-    	form.setMeasurementVariables(getUserSelection().getWorkbook().getMeasurementDatasetVariables());
-    	form.changePage(userSelection.getCurrentPage());
-    	userSelection.setCurrentPage(form.getCurrentPage());
-    	
-    	/*
-    	ImportGermplasmListValidator validator = new ImportGermplasmListValidator();
-    	validator.validate(form, result);
-    	//result.reject("importGermplasmListForm.file", "test error msg");    	
-    	getUserSelection().setImportValid(false);
-        if (result.hasErrors()) {
-          
-        	form.setHasError("1");
-            return show(form,model);
-        }else{
-        	try{
-        		ImportedGermplasmMainInfo mainInfo =importGermplasmFileService
-        		        .storeImportGermplasmWorkbook(form.getFile());
-        		mainInfo = importGermplasmFileService.processWorkbook(mainInfo);
-        		
-        		if(mainInfo.getFileIsValid()){
-        			form.setHasError("0");
-        			getUserSelection().setImportedGermplasmMainInfo(mainInfo);
-        			getUserSelection().setImportValid(true);
-        			form.setImportedGermplasmMainInfo(getUserSelection().getImportedGermplasmMainInfo());
-        			form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo()
-        			        .getImportedGermplasmList().getImportedGermplasms());
-        			//form.setCurrentPage(1);
-                    form.changePage(1);
-                    userSelection.setCurrentPageGermplasmList(form.getCurrentPage());
-
-        			//after this one, it goes back to the same screen, 
-        			// but the list should already be displayed
-        		}else{
-        			//meaning there is error
-        			form.setHasError("1");
-        			for(String errorMsg : mainInfo.getErrorMessages()){
-        				result.rejectValue("file", errorMsg);  
-        			}
-        			
-        		}
-        	}catch(Exception e){
-                LOG.error(e.getMessage(), e);
-        	}
+    	    	    	    	
+    	if(AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == importType){
+    		
+    		//fielddroidExportStudyService.export(getUserSelection().getWorkbook(), filename);
+    	}else if(AppConstants.EXPORT_NURSERY_EXCEL.getInt() == importType){
+    		
+    		
         	
-        	
-        }
-        return show(form,model);
-    	*/
+        	 MultipartFile file = form.getFile();
+             if (file == null) {
+            	 result.rejectValue("file", AppConstants.FILE_NOT_FOUND_ERROR.getString());
+             } else {
+                 boolean isExcelFile = file.getOriginalFilename().contains(".xls") 
+                         || file.getOriginalFilename().contains(".xlsx");
+                 if (!isExcelFile) {
+                	 result.rejectValue("file", AppConstants.FILE_NOT_EXCEL_ERROR.getString());
+                 }
+             }
+             if(!result.hasErrors()){
+	    		try {
+	    			String filename = fileService.saveTemporaryFile(file.getInputStream());
+	    			
+					excelImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename));
+				} catch (WorkbookParserException e) {
+					// TODO Auto-generated catch block
+					//e.printStackTrace();				
+					LOG.error(e.getMessage(), e);
+					result.rejectValue("file", e.getMessage());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					//e.printStackTrace();
+					LOG.error(e.getMessage(), e);
+				}
+             }
+    	}
+    	
+    	
+	    	form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
+	    	form.setMeasurementVariables(getUserSelection().getWorkbook().getMeasurementDatasetVariables());
+	    	form.changePage(userSelection.getCurrentPage());
+	    	userSelection.setCurrentPage(form.getCurrentPage());
+	    	form.setImportVal(1);
+    	    	    	
     	return super.show(model);
     }
     

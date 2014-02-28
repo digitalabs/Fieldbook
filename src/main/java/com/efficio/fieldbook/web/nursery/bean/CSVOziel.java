@@ -39,12 +39,14 @@ public class CSVOziel {
 	
 	private List<MeasurementRow> observations;
 	private List<MeasurementVariable> headers;
+	private List<MeasurementVariable> variateHeaders;
 	
     private String stringTraitToEvaluate = "GY";
 
     public CSVOziel(Workbook workbook) {
     	this.headers = workbook.getMeasurementDatasetVariables();
     	this.observations = workbook.getObservations();
+    	this.variateHeaders = workbook.getVariates();
     }
     /*public CSVOziel(JTable jTableObservations, JList list) {
         this.jTableObservations = jTableObservations;
@@ -205,13 +207,14 @@ public class CSVOziel {
     public void writeDATA(CsvWriter csvOutput) {
         //int total = tableModel.getRowCount();
         //int tot = tableModel.getVariateList().size();
-    	int tot = 0;
+    	int tot = this.variateHeaders.size();
 
 //        int plotColumn = tableModel.getHeaderIndex(ObservationsTableModel.PLOT);
 //        int entryColumn = tableModel.getHeaderIndex(ObservationsTableModel.ENTRY);
 //        int designColumn = tableModel.getHeaderIndex(ObservationsTableModel.DESIG);
 //        int gidColumn = tableModel.getHeaderIndex(ObservationsTableModel.GID);
         try {
+        	int mRowIndex = 0;
             for (MeasurementRow row : this.observations) {
 
                 csvOutput.write("1");
@@ -229,12 +232,14 @@ public class CSVOziel {
                 csvOutput.write(getValueByIdInRow(TermId.GID.getId(), row));
                 writeColums(csvOutput, 2);
 
-/*
-                for (int j = 0; j < tot; j++) {
-                    String valor = tableModel.getVariateList().get(j).getVariateName();
+
+                for (MeasurementVariable variate : this.variateHeaders) {
+                   String valor = variate.getName();
                    if (!valor.equals(stringTraitToEvaluate)) {
                         try {
-                            csvOutput.write(tableModel.getValueAt(i, tableModel.findColumn(valor)).toString());
+                            //csvOutput.write(tableModel.getValueAt(i, tableModel.findColumn(valor)).toString());
+                        	csvOutput.write(row.getMeasurementDataValue(valor));
+                        	
                         } catch (NullPointerException ex) {
                             String cad = ".";
                             csvOutput.write(cad);
@@ -242,10 +247,12 @@ public class CSVOziel {
                     }
 
                 }
-*/
+
                 writeColums(csvOutput, 104 - tot);
                 csvOutput.write("END");
                 csvOutput.endRecord();
+                
+                mRowIndex++;
             }
         } catch (IOException ex) {
             System.out.println("ERROR AL GENERAR DATA CSV " + ex);

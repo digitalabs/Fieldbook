@@ -11,14 +11,20 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.bean;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 
+import com.csvreader.CsvReader;
 import com.csvreader.CsvWriter;
 
 /**
@@ -437,13 +443,12 @@ public class CSVOziel {
             System.out.println("IO EXCEPTION. readDATAcsv. " + e);
         }
     }
-
+*/
     @SuppressWarnings("unchecked")
     public void readDATAnew(File file) {
 
-        ArrayList titulos = new ArrayList();
-        ObservationsTableModel modelo = (ObservationsTableModel) jTableObservations.getModel();
-        //DefaultTableModel modelo = (DefaultTableModel) jTableObservations.getModel();
+        List<String> titulos = new ArrayList<String>();
+        //ObservationsTableModel modelo = (ObservationsTableModel) jTableObservations.getModel();
         int add = 0;
         String before = "";
         String actual = "";
@@ -511,22 +516,19 @@ public class CSVOziel {
                     int col = buscaCol(head);
                     if (col >= 0) {
                         String data = csvReader.get(head);
-                        modelo.setValueAt(data, myrow + add, col);
+                        setObservationData(head, myrow + add, data);
+                        //modelo.setValueAt(data, myrow + add, col);
                         dataOfTraits = dataOfTraits + " " + data;
                     } else {
-                        //modelo.addColumn(head);
                         col = buscaCol(head);
                         String data = csvReader.get(head);
-                        modelo.setValueAt(data, myrow + add, col);
+                        setObservationData(head, myrow + add, data);
+                        //modelo.setValueAt(data, myrow + add, col);
                         dataOfTraits = dataOfTraits + " " + data;
                     }
                 }
-
-                //  myrow++;
-                //System.out.println(trial + " " + rep + " " + block + " " + plot + " " + entry + " " + ped + " " + gid + dataOfTraits);
             }
             csvReader.close();
-            modelo.fireTableDataChanged();
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
             System.out.println("FILE NOT FOUND. readDATAcsv. " + ex);
@@ -536,27 +538,40 @@ public class CSVOziel {
             System.out.println("IO EXCEPTION. readDATAcsv. " + e);
         }
     }
-*/
-/*    private int findRow(int plot) {
+
+    private int findRow(int plot) {
         int row = 0;
 
-        ObservationsTableModel modelo = (ObservationsTableModel) jTableObservations.getModel();
-        //  int colTrial = modelo.getHeaderIndex(ObservationsTableModel.NURSERY);
-        int colplot = modelo.getHeaderIndex(ObservationsTableModel.PLOT);
+        //ObservationsTableModel modelo = (ObservationsTableModel) jTableObservations.getModel();
+//        int colplot = modelo.getHeaderIndex(ObservationsTableModel.PLOT);
 
-
-        for (int i = 0; i < modelo.getRowCount(); i++) {
-            // int trialFromRow = Integer.parseInt(modelo.getValueAt(i, colTrial).toString()); 
-            int plotFromRow = Integer.parseInt(modelo.getValueAt(i, colplot).toString());
-            if (plot == plotFromRow) {
-                row = i;
-                break;
-            }
+//        for (int i = 0; i < modelo.getRowCount(); i++) {
+//            int plotFromRow = Integer.parseInt(modelo.getValueAt(i, colplot).toString());
+//            if (plot == plotFromRow) {
+//                row = i;
+//                break;
+//            }
+//        }
+        
+        String plotLabel = getLabel(TermId.PLOT_NO.getId());
+        if (plotLabel == null) {
+        	plotLabel = getLabel(TermId.PLOT_NNO.getId());
+        }
+        
+        for (MeasurementRow mRow : this.observations) {
+        	String plotValueStr = mRow.getMeasurementDataValue(plotLabel);
+        	if (plotValueStr != null && NumberUtils.isNumber(plotValueStr)) {
+        		int plotValue = Integer.valueOf(plotValueStr);
+        		if (plotValue == plot) {
+        			return row;
+        		}
+        	}
+        	row++;
         }
 
         return row;
     }
-
+/*
     public int dameTotalDatos(File file) {
         int total = 0;
         try {
@@ -592,7 +607,7 @@ public class CSVOziel {
 
         return total;
     }
-
+*/
     public boolean isValid(File file) {
         boolean isvalid = false;
         try {
@@ -613,18 +628,27 @@ public class CSVOziel {
     private int buscaCol(String head) {
         int col = -1;
 
-        for (int i = 0; i < this.jTableObservations.getColumnCount(); i++) {
-            if (head.equals(this.jTableObservations.getColumnName(i))) {
-                col = i;
-            }
+//        for (int i = 0; i < this.jTableObservations.getColumnCount(); i++) {
+//            if (head.equals(this.jTableObservations.getColumnName(i))) {
+//                col = i;
+//            }
+//        }
+        
+        int index = 0;
+        for (MeasurementVariable mVar : this.headers) {
+        	if (mVar.getName().equalsIgnoreCase(head)) {
+        		return index;
+        	}
+        	index++;
         }
+        
         return col;
     }
     
     public void DefineTraitToEvaluate(String stringTraitToEval) {
         this.stringTraitToEvaluate=stringTraitToEval;
     }
-*/
+
     private String getValueByIdInRow(int termId, MeasurementRow row) {
     	String label = null;
     	if (this.headers != null && !this.headers.isEmpty()) {
@@ -639,5 +663,26 @@ public class CSVOziel {
    			return row.getMeasurementDataValue(label);
     	}
     	return null;
+    }
+    
+    private void setObservationData(String label, int rowIndex, String value) {
+    	if (rowIndex < this.observations.size()) {
+	    	MeasurementRow row = this.observations.get(rowIndex);
+	    	for (MeasurementData data : row.getDataList()) {
+	    		if (data.getLabel().equals(label)) {
+	    			data.setValue(value);
+	    			break;
+	    		}
+	    	}
+    	}
+    }
+
+    private String getLabel(int termId) {
+        for (MeasurementVariable mVar : this.headers) {
+        	if (mVar.getTermId() == termId) {
+        		return mVar.getName();
+        	}
+        }
+        return null;
     }
 }

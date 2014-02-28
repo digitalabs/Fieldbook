@@ -59,6 +59,29 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 	    			</div>
 	    			<div class="row form-group">
 	    				<div class="col-xs-12 col-md-12">
+	    					<label class="control-label"><strong class="sub-content-heading" th:text="#{nursery.managesettings.save.settings}">SAVE SETTINGS</strong></label>
+	    				</div>
+    				</div>
+    				<div class="row form-group">
+	    				<div class="col-xs-5 col-md-5">
+	    					<label class="contol-label" th:text="#{nursery.managesettings.save.settings.as}+':'">Save these settings as:</label><span class="required">*</span>
+	    					&nbsp;&nbsp;
+	    					<input type="text" th:field="*{settingName}" />
+	    				</div>
+	    				<div class="col-xs-7 col-md-7 add_top_padding">
+	    					<input type="checkbox" th:field="*{isDefault}" /> 
+	    					<label class="control-label" th:text="#{nursery.managesettings.set.default}"> Set as default for this program (overrides previous defaults)</label>
+	    				</div>
+	    			</div>
+	    			<!-- 
+	    			<div class="row form-group">
+	    				<div class="col-xs-12 col-md-12">
+	    					&nbsp;
+	    				</div>
+    				</div>
+    				 -->
+	    			<div class="row form-group">
+	    				<div class="col-xs-12 col-md-12">
 			    			<label class="control-label"><strong class="sub-content-heading" th:text="#{nursery.managesettings.nursery.level.details}">NURSERY-LEVEL DETAILS</strong></label>
 		    			</div>
 	    			</div>
@@ -247,27 +270,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 	    				</div>
     				</div>
     				
-	    			<div class="row form-group">
-	    				<div class="col-xs-12 col-md-12">
-	    					<label class="control-label"><strong class="sub-content-heading" th:text="#{nursery.managesettings.save.settings}">SAVE SETTINGS</strong></label>
-	    				</div>
-    				</div>
-    				<div class="row form-group">
-	    				<div class="col-xs-5 col-md-5">
-	    					<label class="contol-label" th:text="#{nursery.managesettings.save.settings.as}+':'">Save these settings as:</label><span class="required">*</span>
-	    					&nbsp;&nbsp;
-	    					<input type="text" th:field="*{settingName}" />
-	    				</div>
-	    				<div class="col-xs-7 col-md-7 add_top_padding">
-	    					<input type="checkbox" th:field="*{isDefault}" /> 
-	    					<label class="control-label" th:text="#{nursery.managesettings.set.default}"> Set as default for this program (overrides previous defaults)</label>
-	    				</div>
-	    			</div>
-	    			<div class="row form-group">
-	    				<div class="col-xs-12 col-md-12">
-	    					&nbsp;
-	    				</div>
-    				</div>
+	    			
 	    			<div class="row form-group">
 	    				<div class="col-xs-5 col-md-5">
 	    				</div>

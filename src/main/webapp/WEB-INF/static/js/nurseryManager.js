@@ -349,6 +349,7 @@ function recreateMethodComboAfterClose(comboName, data) {
 
 function openAddVariablesSetting(variableType) {
 	//change heading of popup based on clicked link
+	$('#var-info').slideUp('fast');
 	switch (parseInt(variableType)) {
 		case 1:
 			$("#heading-modal").text(addNurseryLevelSettings);
@@ -362,7 +363,8 @@ function openAddVariablesSetting(variableType) {
 	default: 
 		$("#heading-modal").text(addNurseryLevelSettings);
 	}
-	getStandardVariables(variableType); 				
+	getStandardVariables(variableType);
+	
 }
 
 function getStandardVariables(variableType) {
@@ -433,6 +435,7 @@ function getStandardVariableDetailsModal(id) {
 			type: "GET",
 			cache: false,
 			success: function (data) {
+				$('#var-info').slideDown("slow");
 				populateAttributeFields($.parseJSON(data));
 			},
 			error: function(jqXHR, textStatus, errorThrown){

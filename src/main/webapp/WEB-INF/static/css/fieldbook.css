@@ -306,6 +306,10 @@ table{
 .manage-settings-panel-body{
 	padding: 15px;
 }
+.panel-body-modal{
+	padding: 15px;
+	background-color: #FFFFFF;
+}
 /*For the spinner*/
 #spinner-wrap {
     position:fixed;

@@ -12,6 +12,13 @@
  -->
  <br />
  <br />
+ <form role="form-horizontal"  action="#" 
+     method="post" th:object="${addOrRemoveTraitsForm}">
+ <div th:class="${#fields.hasErrors('file')} ? 'form-group has-error' : 'form-group'">
+           <div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
+  </div>
+  </form>
+  
 	<div id="page-message"> 
 	</div>
 	
@@ -52,8 +59,15 @@
 	</div>
 	</div>
 
-<div id="germplasm-measurement-list-table-div" th:include="/NurseryManager/showAddOrRemoveTraitsPagination">
-    </div>
+<div>
+	<div class="panel panel-default">
+	   	<div class="panel-body manage-settings-panel-body">
+			<div id="germplasm-measurement-list-table-div" th:include="/NurseryManager/showAddOrRemoveTraitsPagination">
+	    	</div>		    	
+	  	</div>
+	</div>
+</div>
+
      
 				
 				
@@ -74,10 +88,7 @@ th:action="@{/NurseryManager/addOrRemoveTraits/export/}" method="GET">
           </div>
           <div class="modal-body">
             <div class="form-group" id="page-modal-message"></div>
-            <div th:class="${#fields.hasErrors('file')} ? 'form-group has-error' : 'form-group'">
-              
-              
-              <div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
+            <div class='form-group'>                                          
               
               <label for="fileupload" class="col-md-2 control-label" th:text="#{nursery.import.germplasm.select.file}">Select a file</label>
               <div class="col-xs-6 col-lg-6">

@@ -124,6 +124,8 @@ public enum AppConstants {
     
     ,LIST_DATE
     ,LIST_TYPE
+    
+    ,FILE_NOT_EXCEL_ERROR
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

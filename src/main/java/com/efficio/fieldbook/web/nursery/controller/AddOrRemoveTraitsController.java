@@ -288,6 +288,14 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     @RequestMapping(value="/import/{importType}", method = RequestMethod.POST)
     public String importFile(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form
             ,@PathVariable int importType, BindingResult result, Model model) {
+    	
+    	result.rejectValue("file", AppConstants.FILE_NOT_EXCEL_ERROR.getString());
+    	
+    	form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
+    	form.setMeasurementVariables(getUserSelection().getWorkbook().getMeasurementDatasetVariables());
+    	form.changePage(userSelection.getCurrentPage());
+    	userSelection.setCurrentPage(form.getCurrentPage());
+    	
     	/*
     	ImportGermplasmListValidator validator = new ImportGermplasmListValidator();
     	validator.validate(form, result);

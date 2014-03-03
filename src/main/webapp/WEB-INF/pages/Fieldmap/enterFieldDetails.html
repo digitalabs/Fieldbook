@@ -55,7 +55,11 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 			&nbsp;<strong class="sub-heading col-xs-12 col-md-12" th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.to.be.mapped}">TRIAL TO BE MAPPED:</strong>
 			<strong class="sub-heading col-xs-12 col-md-12" th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery.to.be.mapped}">NURSERY TO BE MAPPED:</strong>		
 	</div>
-	
+	<div class="form-group col-xs-12 col-md-12" >
+		<div class="col-xs-3 col-md-3">
+			&nbsp;<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
+		</div>
+	</div>
 	<div class="form-group col-xs-12 col-md-12">
 		<strong class="col-xs-12 col-md-12">
 			&nbsp;<span class="sub-content-heading" th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.selected.trial}">Selected Trial:</span>

@@ -54,7 +54,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 		    	<div class="panel-body manage-settings-panel-body">
 		    		<div class="row form-group">
 			    		<div class="col-xs-12 col-md-12">
-			    			<label class="control-label"><em th:text="#{nursery.managesettings.mandatory.fields}"> Mandatory fields are noted with a *</em></label><span class="required">&nbsp;*</span>
+			    			<label class="control-label"><em th:utext="#{nursery.managesettings.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
 		    			</div>
 	    			</div>
 	    			<div class="row form-group">

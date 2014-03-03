@@ -62,7 +62,7 @@ function validateEnterLabelFieldsPage(type){
 	if($("#"+getJquerySafeId('userLabelPrinting.filename')).val() == ''){
 		//we need to check if either one is chosen in the drop downs
 		
-			showMessage(barcodeFieldNeededError);
+			showMessage(filenameError);
 			moveToTopScreen();
 			return false;
 		
@@ -73,7 +73,7 @@ function validateEnterLabelFieldsPage(type){
 	    
 	
 	if (!isValid){
-		showMessage(filenameError);
+		showMessage(filenameErrorCharacter);
 		moveToTopScreen();
 		return false;
 	}

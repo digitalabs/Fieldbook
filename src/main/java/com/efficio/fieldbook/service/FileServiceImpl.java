@@ -76,7 +76,8 @@ public class FileServiceImpl implements FileService{
      * @param tempFilename the temp filename
      * @return the file path
      */
-    protected String getFilePath(String tempFilename) {
+    @Override
+    public String getFilePath(String tempFilename) {
         return uploadDirectory + File.separator + tempFilename;
     }
 

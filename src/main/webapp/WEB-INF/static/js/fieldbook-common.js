@@ -922,6 +922,22 @@ $('#'+getJquerySafeId('methodIdFavorite')).select2({
 }
 
 function exportNursery(type){
+	
+	if(type == 2){
+		$('#importRModal').modal('show');
+	}else{		
+		doExportContinue(type);
+	}
+}
+
+function exportNurseryToR(type){
+	//console.log($('#selectedRTrait').val());
+	doExportContinue(type + "/" + $('#selectedRTrait').val());
+}
+
+function doExportContinue(paramUrl){
+
+	
 	var currentPage = $('.pagination .active a').html();
 	
 	var $form = $("#addVariableForm");	
@@ -937,7 +953,7 @@ function exportNursery(type){
            async: false,
            success: function(html) {
         	   var action = $('#exportNurseryForm').attr('action');
-        	   $('#exportNurseryForm').attr('action', action+type);
+        	   $('#exportNurseryForm').attr('action', action+paramUrl);
         	   $('#exportNurseryForm').submit();
         	   $('#exportNurseryForm').attr('action', action);
         	   Spinner.toggle();

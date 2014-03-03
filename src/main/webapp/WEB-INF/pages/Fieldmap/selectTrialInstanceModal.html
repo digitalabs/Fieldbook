@@ -3,13 +3,12 @@
    	<div class="modal fade" id="selectTrialInstanceModal" role="dialog" aria-labelledby="selectTrialInstanceLabel" aria-hidden="true">
 		<div class="modal-dialog modal-large">
 	    	<div class="modal-content">
+	    	<div class="modal-header">
+	            <button id="closeSelectTrialInstanceModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	            <h4 class="modal-title" th:text="#{fieldmap.label.select.instance.for.fieldmap}">Select Instances for the Field Map</h4>
+	          </div>
+	          
 	         	<div class="modal-body" id="selectTrialInstanceBody">
-	         		<div>
-	         			<button id="closeSelectTrialInstanceModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	         		</div>
-	         		<br/><br/>
-	         		<h4 class="modal-title" th:text="#{fieldmap.label.select.instance.for.fieldmap}">Select Instances for the Field Map</h4>
-	         		<br/>
 	         		<div id="page-message">
 	         		</div>
 	         		<div>
@@ -20,6 +19,7 @@
 			        </table>
 	         	</div>																							
 	       		<div class="modal-footer">    
+	       		<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
 	       			<button type="button" class="btn btn-primary" onclick="javascript: viewFieldMap();" aria-hidden="true">OK</button>	
        			</div>
 	     	</div><!-- /.modal-content -->

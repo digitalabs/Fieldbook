@@ -230,10 +230,15 @@ public class SettingsUtil {
 		
 		if (TermId.TRIAL_LOCATION.getId() == standardVariableId) {
 			return false;
-		}
-		else if (TermId.PI_NAME.getId() == standardVariableId) {
+		} else if (TermId.PI_NAME.getId() == standardVariableId) {
 			return false;
-		}
+		} else if (TermId.STUDY_NAME.getId() == standardVariableId) {
+                    return false;
+		} else if (TermId.STUDY_TITLE.getId() == standardVariableId) {
+                    return false;
+                } else if (TermId.STUDY_OBJECTIVE.getId() == standardVariableId) {
+                    return false;
+                }
 		
 		return true;
 	}

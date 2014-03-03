@@ -933,6 +933,7 @@ function exportNursery(type){
 function exportNurseryToR(type){
 	//console.log($('#selectedRTrait').val());
 	doExportContinue(type + "/" + $('#selectedRTrait').val());
+	$('#importRModal').modal('hide');
 }
 
 function doExportContinue(paramUrl){
@@ -973,4 +974,7 @@ function importNursery(type){
 }
 function isFloat(value) { 
     return !isNaN(parseInt(value,10)) && (parseFloat(value,10) == parseInt(value,10)); 
+}
+function moveToTopScreen(){
+	 $('html').scrollTop(0);
 }

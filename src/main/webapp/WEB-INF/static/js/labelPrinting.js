@@ -98,9 +98,7 @@ serializedData = $form.serialize();
 		});
 	
 }
-function moveToTopScreen(){
-	 $('html').scrollTop(0);
-}
+
 function setSelectedTrialInstanceOrder() {
 	var order = [];
 	var notIncluded = 0;

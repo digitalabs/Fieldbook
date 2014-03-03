@@ -888,7 +888,8 @@ function deleteNurserySettings(){
 				//we just paste the whole html
 				$('.container .row').first().html(html);
 				
-			    showSuccessfulMessage('page-message', deleteTemplateSettingSuccess);				
+			    showSuccessfulMessage('page-message', deleteTemplateSettingSuccess);	
+			    moveToTopScreen();
 				Spinner.toggle();
 			}
 		});
@@ -908,7 +909,8 @@ function clearSettings(){
 			cache: false,
 			success: function (html) {
 				//we just paste the whole html
-				$('.container .row').first().html(html);				
+				$('.container .row').first().html(html);
+				moveToTopScreen();
 				Spinner.toggle();
 			}
 		});
@@ -1019,15 +1021,19 @@ function doSaveSettings(){
 	$('#settingName').val($('#settingName').val().trim());
 	if($('#settingName').val() == ''){
 		showErrorMessage('page-message', templateSettingNameError);
+		moveToTopScreen();
 	return false;
 	}else if(hasDuplicateSettingName()){
 		showErrorMessage('page-message', templateSettingNameErrorUnique);
+		moveToTopScreen();
 	return false;
 	} else if(hasEmptyNurseryValue()){
 		//showErrorMessage('page-message', nurseryLevelValueEmpty);
+		moveToTopScreen();
 		return false;
 	} else{ 		
 		doAjaxMainSubmit('page-message', saveTemplateSettingSuccess, null);
+		moveToTopScreen();
 		/*
 	Spinner.toggle();
 	var $form = $("#saveNurserySettingsForm");

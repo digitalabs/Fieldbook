@@ -978,3 +978,11 @@ function isFloat(value) {
 function moveToTopScreen(){
 	 $('html').scrollTop(0);
 }
+function openImportGermplasmList() {
+	$('#importGermplasmModal').modal({ backdrop: 'static', keyboard: true });
+	$("#importGermplasmModal").modal("show");
+	if(importIframeOpened == false){
+		importIframeOpened = true;
+		$('#importFrame').attr('src', importLocationUrl);
+	}
+}

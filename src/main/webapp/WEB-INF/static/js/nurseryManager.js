@@ -1171,4 +1171,3 @@ function initializeDateAndSliderInputs(){
 		});
 	}				
 }
-

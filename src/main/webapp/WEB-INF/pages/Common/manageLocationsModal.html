@@ -21,7 +21,13 @@
 
 <div layout:fragment="page-script">
 <script type='text/javascript' th:inline="javascript">
-	//<![CDATA[            
+	//<![CDATA[      
+	           function closeLocationFrame(){
+	        	        	   
+	        	   recreateLocationCombo();
+	        	   $('#manageLocationModal').modal('hide');
+		           
+	           }
     //]]>
     </script>
 </div>

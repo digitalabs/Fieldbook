@@ -36,7 +36,7 @@ public class ValidationServiceImpl implements ValidationService {
 	
 	private boolean isValidValue(MeasurementVariable var, String value) {
 		if (var.getDataType() != null && value != null && !"".equals(value.trim()) && var.getDataType().equalsIgnoreCase(DATA_TYPE_NUMERIC)) {
-			return NumberUtils.isNumber(value);
+			return NumberUtils.isNumber(value.trim());
 		}
 		return true;
 	}

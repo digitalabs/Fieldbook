@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.FileService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
@@ -54,8 +55,11 @@ public class FieldbookServiceImpl implements FieldbookService{
 	@Autowired
 	private NamingConventionServiceFactory namingConventionServiceFactory;
 	
-	@Autowired
-	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
+    @Autowired
+    private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
+
+    @Autowired
+    private WorkbenchService workbenchService;
 	
 	@Resource
 	private PossibleValuesCache possibleValuesCache;
@@ -155,13 +159,13 @@ public class FieldbookServiceImpl implements FieldbookService{
                 List<ValueReference> possibleValuesFavorite = null;
                 if (possibleValuesFavorite == null) {
                     if (TermId.BREEDING_METHOD.getId() == id) {
-                        List<Integer> projectIdList = new ArrayList<Integer>();
-                        projectIdList.add(Integer.parseInt(projectId));
-                        possibleValuesFavorite = getFavoriteBreedingMethods(projectIdList);
+                        List<Integer> methodIds = workbenchService.getFavoriteProjectMethods(projectId);
+                        possibleValuesFavorite = getFavoriteBreedingMethods(methodIds);
                     }
                     else if (TermId.TRIAL_LOCATION.getId() == id) {
                         List<Long> projectIdList = new ArrayList<Long>();
                         projectIdList.add(Long.parseLong(projectId));
+                        
                         possibleValuesFavorite = convertLocationsToValueReferences(fieldbookMiddlewareService.getFavoriteLocationByProjectId(projectIdList));
                     }
                 }
@@ -173,7 +177,9 @@ public class FieldbookServiceImpl implements FieldbookService{
             List<Method> methods = fieldbookMiddlewareService.getFavoriteBreedingMethods(projectIdList);
             if (methods != null && !methods.isEmpty()) {
                     for (Method method : methods) {
+                        if (method != null){
                             list.add(new ValueReference(method.getMid(), method.getMname(), method.getMname()));
+                        }
                     }
             }
             return list;

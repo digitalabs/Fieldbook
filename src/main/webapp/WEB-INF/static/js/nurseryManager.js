@@ -629,12 +629,11 @@ function createNurseryLevelSettingVariables(data) {
 			"</div><div id='possibleValuesFavoriteJson" + ctr + "' class='possibleValuesFavoriteJson' style='display:none'>" + 
 			settingDetail.possibleValuesFavoriteJson + "</div>";
 			
-			newRow = newRow + "</td><td class='nurseryLevelVariableSetting'>";
-			newRow = newRow + "&nbsp;&nbsp;<a href='javascript: openManageMethods();'>" + manageMethodLabel + "</a>";
+			newRow = newRow + "<span><a href='javascript: openManageMethods();'>" + manageMethodLabel + "</a></span>";
 			newRow = newRow + "</td></tr>";
 			
 		} else {
-			newRow = newRow + "</td><td></td></tr>";
+			newRow = newRow + "</td></tr>";
 		}
 
 		$("#nurseryLevelSettings").append(newRow);

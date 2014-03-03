@@ -93,7 +93,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 	    			</div>
 	    			<div class="row form-group">
 	    				<div class="col-xs-12 col-md-12">
-	    					<table border="0" id="nurseryLevelSettings" width="800px">
+	    					<table border="0" id="nurseryLevelSettings" width="400px">
 								<tr th:each="nurseryLevelVariable, rowStat : *{nurseryLevelVariables}">
 									<td style="max-width:50px; min-width:50px;" class="nurseryLevelVariableSetting">
 										<span style="cursor: default; font-size: 16px;" th:if="${nurseryLevelVariable.delete}" class="glyphicon glyphicon-remove-circle" 
@@ -163,11 +163,12 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 										
 										<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'SLIDER'}"  class="form-control numeric-range-input" type="text" 
 										data-slider-min1="-5" data-slider-max1="20" data-slider-step1="0.1" />
-											 -->								
-									</td>
-									<td style="max-width:200px; min-width:200px;" class="nurseryLevelVariableSetting">
-										&nbsp;&nbsp;<a th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.trial.location.id}" href="javascript: openManageLocations();" th:text="#{nursery.managesettings.manage.location}">Manage Location</a>
-										<a th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.breeding.method.id}" href="javascript: openManageMethods();" th:text="#{nursery.managesettings.manage.method}">Manage Method</a>
+											 -->
+											 
+										<span>
+											<a th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.trial.location.id}" href="javascript: openManageLocations();" th:text="#{nursery.managesettings.manage.location}">Manage Location</a>
+											<a th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.breeding.method.id}" href="javascript: openManageMethods();" th:text="#{nursery.managesettings.manage.method}">Manage Method</a>
+										</span>								
 									</td>
 								</tr>
 							</table>

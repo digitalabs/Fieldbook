@@ -13,7 +13,8 @@
 <form id="saveNurserySettingsForm" role="form-horizontal" action="#" th:action="@{/NurseryManager/manageNurserySettings/save}" 
 method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 
-	
+<!-- <input type="hidden" th:field="*{initialLoad}"/> -->	
+
 <div class="row" xmlns:th="http://www.thymeleaf.org">
 	
 	
@@ -393,6 +394,11 @@ data-slider-selection="after" data-slider-tooltip="always"/>
        		var showFavoriteLocationLabel = /*[[#{show.favorite.location}]]*/;
        		
  			$( document ).ready(function() {
+ 				/*
+ 				if($('#initialLoad').val() == '1'){
+ 					doInitialNurserySettingsLoad();
+ 			    }
+ 				*/
  				$('#selectedSettingId').on('change', function(){
  					//alert('load settings' + $(this).val());
  					loadNurserySettings($(this).val());
@@ -417,14 +423,15 @@ data-slider-selection="after" data-slider-tooltip="always"/>
  					} 					 					
  				});
  				$.each($(".possibleValuesJson"), function (index, divElem){
+ 					
  					if (index == 0) {
  						initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 
  		 			 			"#" + getJquerySafeId("nurseryLevelVariables0.value"), true, $(divElem).siblings(".div-select-val").html());
- 						//console.log($(divElem).siblings(".div-select-val").html());
+ 						
  					} else {
  						initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 
  		 			 			"#" + getJquerySafeId("nurseryLevelVariables"+index+".value"), false, $(divElem).siblings(".div-select-val").html());
- 						//console.log($(divElem).siblings(".div-select-val").html());
+ 						
  					}
  					
  				});

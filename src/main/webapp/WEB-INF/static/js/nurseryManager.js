@@ -940,6 +940,7 @@ function deleteNurserySettings(){
 		alert('show error mesage');
 	}
 }
+
 function clearSettings(){
 	var templateSettingsId = $('#selectedSettingId').val();
 	//window.location.hash = "/Fieldbook/NurseryManager/manageNurserySettings/clearSettings/"+templateSettingsId+"?t=";

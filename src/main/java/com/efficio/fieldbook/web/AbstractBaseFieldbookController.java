@@ -139,6 +139,12 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
         return BASE_TEMPLATE_NAME;
     }
     
+    public String showCustom(Model model,String contentName) {
+        setupModelInfo(model);
+        model.addAttribute(TEMPLATE_NAME_ATTRIBUTE, contentName);
+        return BASE_TEMPLATE_NAME;
+    }
+    
     /**
      * Base functionality for displaying the page.
      *

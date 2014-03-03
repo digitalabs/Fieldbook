@@ -20,12 +20,23 @@
 th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advancingNurseryform}" enctype="multipart/form-data">
 
 <input type="hidden" th:field="*{defaultMethodId}"/>
+
 <div class="col-xs-12 col-md-12">
+
 <div class="row" >
 	
 	
 	
 	<div class="row">
+	<div class="col-xs-12 col-md-12" >
+			<div class="">
+				<div class="col-xs-12 col-md-12">
+				<br />
+			<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
+				</div>		
+			</div>
+		</div>
+		
 		<div class="col-xs-12 col-md-12" >
 			<div class="">
 				<div class="col-xs-12 col-md-12">
@@ -215,11 +226,11 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 			<div class="row form-group">
 				<div class="col-xs-12 col-md-12 form-group">	
 					<div class="col-xs-2 col-md-2">
-						<label for="harvestDate" class="control-label"  th:text="#{advancing.nursery.harvest.date}">Harvest Date</label>
+						<label for="harvestDate" class="control-label"  th:text="#{advancing.nursery.harvest.date}">Harvest Date</label><span class="required"></span>
 					</div>	
 			    	  			    
 					   <div class="col-xs-4 col-md-4 input-group date" id="dp3" data-date="" data-date-format="yyyymmdd">
-						     <input th:field="*{harvestDate}" class="form-control" type="text"  readonly="readonly"  />
+						     <input th:field="*{harvestDate}" class="form-control" type="text"    />
 							 <label for="harvestDate" class="input-group-addon btn datepicker"><i class="glyphicon glyphicon-calendar"></i></label>
 						
 						</div>
@@ -232,7 +243,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 			<div class="row form-group">
 				<div class="col-xs-12 col-md-12 form-group">
 					 <div class="col-xs-2 col-md-2">
-				  		<label class="control-label" th:text="#{advancing.nursery.harvest.location}">Harvest Location:</label>
+				  		<label class="control-label" th:text="#{advancing.nursery.harvest.location}">Harvest Location:</label><span class="required"></span>
 				  	</div>
 					<div class="col-xs-4 col-md-4">
 				  

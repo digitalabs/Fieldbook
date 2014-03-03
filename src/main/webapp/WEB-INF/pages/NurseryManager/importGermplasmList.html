@@ -23,7 +23,7 @@
       	
       	<div class="panel panel-default">
     
-		      <div class="panel-body">
+		      <div class="panel-body" style="padding: 15px;">
 		      	<a data-toggle="modal" href="#myModal" class="" th:text="#{nursery.import.germplasm.list}">Import File</a>
 		      </div>
 		     
@@ -35,7 +35,7 @@
 			
 			<div class="panel panel-default">
     
-		      <div class="panel-body">
+		      <div class="panel-body" style="padding: 15px;">
 		      		<div id="imported-germplasm-list" th:include="/NurseryManager/showGermplasmPagination">
         	  		</div>
 		      </div>
@@ -85,6 +85,7 @@
           </div>																							
         </div>
         <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
           <button type="submit" th:value="#{common.form.submit.text}" class="btn btn-primary" th:text="#{nursery.import.germplasm.submit}">Submit</button>			        	
         </div>
       </div><!-- /.modal-content -->

@@ -109,7 +109,8 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 										<!-- Show Favorite Location/Method -->
 										<div th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.trial.location.id}" class="possibleValuesDiv">
 										<input th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.trial.location.id}"
-										type="checkbox" th:field="*{nurseryLevelVariables[__${rowStat.index}__].favorite}" onclick="javascript: toggleLocationDropdown();" />
+										type="checkbox" th:field="*{nurseryLevelVariables[__${rowStat.index}__].favorite}" 
+										th:onclick="'javascript: toggleLocationDropdown(\'' + ${rowStat.index} + '\');'" />
 										&nbsp;&nbsp;
 										<span th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.trial.location.id}"
 										th:text="#{show.favorite.location}">Show Favorite Location</span>
@@ -118,7 +119,6 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 										<input th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.breeding.method.id}"
 										type="checkbox" th:field="*{nurseryLevelVariables[__${rowStat.index}__].favorite}" 
 										th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'" />
-										
 										&nbsp;&nbsp;
 										<span th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.breeding.method.id}"
 										th:text="#{show.favorite.method}">Show Favorite Method</span>
@@ -385,9 +385,12 @@ data-slider-selection="after" data-slider-tooltip="always"/>
        		var copyTemplateSettingError = /*[[#{manage.settings.copy.error}]]*/;
        		var copyTemplateSettingSuccess = /*[[#{manage.settings.copy.setting.success}]]*/;
        		var manageMethodLabel = /*[[#{nursery.managesettings.manage.method}]]*/;
+       		var manageLocationLabel = /*[[#{nursery.managesettings.manage.location}]]*/;
        		var nurseryNumericError = /*[[#{manage.settings.nursery.numeric.error}]]*/;
        		var breedingMethodId = /*[[#{nursery.managesettings.breeding.method.id}]]*/;
+       		var locationId = /*[[#{nursery.managesettings.trial.location.id}]]*/;
        		var showFavoriteMethodLabel = /*[[#{show.favorite.method}]]*/;
+       		var showFavoriteLocationLabel = /*[[#{show.favorite.location}]]*/;
        		
  			$( document ).ready(function() {
  				$('#selectedSettingId').on('change', function(){

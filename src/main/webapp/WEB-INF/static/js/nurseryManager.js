@@ -632,6 +632,20 @@ function createNurseryLevelSettingVariables(data) {
 			newRow = newRow + "<span><a href='javascript: openManageMethods();'>" + manageMethodLabel + "</a></span>";
 			newRow = newRow + "</td></tr>";
 			
+		} else if (settingDetail.variable.cvTermId == locationId) {
+				//show favorite method
+				newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id='nurseryLevelVariables" + ctr + ".favorite1'" + 
+				" name='nurseryLevelVariables[" + ctr + "].favorite'" +
+				" onclick='javascript: toggleLocationDropdown(" + ctr + ");' />" +
+				"<input type='hidden' name='_nurseryLevelVariables[" + ctr + "].favorite' value='on' /> " +
+				"<span>&nbsp;&nbsp;" + showFavoriteLocationLabel + "</span></div>" + 
+				"<div id='possibleValuesJson" + ctr + "' class='possibleValuesJson' style='display:none'>" + settingDetail.possibleValuesJson + 
+				"</div><div id='possibleValuesFavoriteJson" + ctr + "' class='possibleValuesFavoriteJson' style='display:none'>" + 
+				settingDetail.possibleValuesFavoriteJson + "</div>";
+				
+				newRow = newRow + "<span><a href='javascript: openManageLocations();'>" + manageLocationLabel + "</a></span>";
+				newRow = newRow + "</td></tr>";
+				
 		} else {
 			newRow = newRow + "</td></tr>";
 		}
@@ -673,6 +687,35 @@ function toggleMethodDropdown(rowIndex) {
 	//recreate select2 combo
 	initializePossibleValuesCombo($.parseJSON(possibleValues), "#" + 
 			getJquerySafeId("nurseryLevelVariables" + rowIndex + ".value"), false, selectedVal);
+}
+
+
+function toggleLocationDropdown(rowIndex) {
+	var possibleValues;  
+	var showFavorite = $("#" + getJquerySafeId("nurseryLevelVariables" + rowIndex + ".favorite1")).is(":checked");
+	var selectedVal;
+	var showAll = true;
+	
+	//get previously selected value
+	if ($("#" + getJquerySafeId("nurseryLevelVariables" + rowIndex + ".value")).select2("data")) {
+		selectedVal = $("#" + getJquerySafeId("nurseryLevelVariables" + rowIndex + ".value")).select2("data").id;
+	}
+	
+	//reset select2 combo
+	initializePossibleValuesCombo([], "#" + 
+			getJquerySafeId("nurseryLevelVariables" + rowIndex + ".value"), false, null);
+	
+	//get possible values based on checkbox
+	if (showFavorite) {
+		possibleValues = $("#possibleValuesFavoriteJson" + rowIndex).text();
+		showAll = false;
+	} else {
+		possibleValues = $("#possibleValuesJson" + rowIndex).text();
+	}
+	
+	//recreate select2 combo
+	initializePossibleValuesCombo($.parseJSON(possibleValues), "#" + 
+			getJquerySafeId("nurseryLevelVariables" + rowIndex + ".value"), showAll, selectedVal);
 }
 
 function createPlotLevelSettingVariables(data) {

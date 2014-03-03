@@ -95,25 +95,26 @@ public class FieldbookServiceImpl implements FieldbookService{
 	    return service.advanceNursery(advanceInfo);
 	}
 	
-	@Override
-	public List<StandardVariableReference> filterStandardVariablesForSetting(Collection<StandardVariable> sourceList, int mode, Collection<SettingDetail> selectedList) {
-		List<StandardVariableReference> result = new ArrayList<StandardVariableReference>();
-		if (sourceList != null && !sourceList.isEmpty()) {
-			Set<Integer> selectedIds = new HashSet<Integer>();
-			if (selectedList != null && !selectedList.isEmpty()) {
-				for (SettingDetail settingDetail : selectedList) {
-					selectedIds.add(settingDetail.getVariable().getCvTermId());
-				}
-			}
-			
-			for (StandardVariable var : sourceList) {
-				if (isApplicableInCurrentMode(var, mode) && !selectedIds.contains(var.getId())) {
-					result.add(new StandardVariableReference(var.getId(), var.getName(), var.getDescription()));
-				}
-			}
-		}
-		return result;
-	}
+    @Override
+    public List<StandardVariableReference> filterStandardVariablesForSetting(Collection<StandardVariable> sourceList,
+            int mode, Collection<SettingDetail> selectedList) {
+        List<StandardVariableReference> result = new ArrayList<StandardVariableReference>();
+        if (sourceList != null && !sourceList.isEmpty()) {
+            Set<Integer> selectedIds = new HashSet<Integer>();
+            if (selectedList != null && !selectedList.isEmpty()) {
+                for (SettingDetail settingDetail : selectedList) {
+                    selectedIds.add(settingDetail.getVariable().getCvTermId());
+                }
+            }
+
+            for (StandardVariable var : sourceList) {
+                if (isApplicableInCurrentMode(var, mode) && !selectedIds.contains(var.getId())) {
+                    result.add(new StandardVariableReference(var.getId(), var.getName(), var.getDescription()));
+                }
+            }
+        }
+        return result;
+    }
 	
     private boolean isApplicableInCurrentMode(StandardVariable var, int mode) {
         if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
@@ -129,101 +130,102 @@ public class FieldbookServiceImpl implements FieldbookService{
         return false;
     }
 	
-	@Override
-	public List<ValueReference> getAllPossibleValues(int id) throws MiddlewareQueryException {
-		List<ValueReference> possibleValues = possibleValuesCache.getPossibleValues(id);
-		if (possibleValues == null) {
-			
-			if (TermId.BREEDING_METHOD.getId() == id) {
-				possibleValues = getAllBreedingMethods();
-			}
-			else if (TermId.TRIAL_LOCATION.getId() == id) {
-				possibleValues = convertLocationsToValueReferences(fieldbookMiddlewareService.getAllLocations());
-			}
-			else if (TermId.PI_NAME.getId() == id) {
-				possibleValues = convertPersonsToValueReferences(fieldbookMiddlewareService.getAllPersons());
-			}
-			else if (TermId.NURSERY_TYPE.getId() == id) {
-				possibleValues = fieldbookMiddlewareService.getAllNurseryTypes();
-			}
-			else {
-				possibleValues = fieldbookMiddlewareService.getDistinctStandardVariableValues(id);
-			}
-			possibleValuesCache.addPossibleValues(id, possibleValues);
-		}
-		return possibleValues;
-	}
-	
-	@Override
-        public List<ValueReference> getAllPossibleValuesFavorite(int id, String projectId) throws MiddlewareQueryException {
-                List<ValueReference> possibleValuesFavorite = null;
-                if (possibleValuesFavorite == null) {
-                    if (TermId.BREEDING_METHOD.getId() == id) {
-                        List<Integer> methodIds = workbenchService.getFavoriteProjectMethods(projectId);
-                        possibleValuesFavorite = getFavoriteBreedingMethods(methodIds);
-                    }
-                    else if (TermId.TRIAL_LOCATION.getId() == id) {
-                        List<Long> projectIdList = new ArrayList<Long>();
-                        projectIdList.add(Long.parseLong(projectId));
-                        
-                        possibleValuesFavorite = convertLocationsToValueReferences(fieldbookMiddlewareService.getFavoriteLocationByProjectId(projectIdList));
-                    }
-                }
-                return possibleValuesFavorite;
-	}
-	
-	private List<ValueReference> getFavoriteBreedingMethods(List<Integer> projectIdList) throws MiddlewareQueryException {
-	    List<ValueReference> list = new ArrayList<ValueReference>();
-            List<Method> methods = fieldbookMiddlewareService.getFavoriteBreedingMethods(projectIdList);
-            if (methods != null && !methods.isEmpty()) {
-                    for (Method method : methods) {
-                        if (method != null){
-                            list.add(new ValueReference(method.getMid(), method.getMname(), method.getMname()));
-                        }
-                    }
-            }
-            return list;
-	}
-	
-	private List<ValueReference> getAllBreedingMethods() throws MiddlewareQueryException {
-		List<ValueReference> list = new ArrayList<ValueReference>();
-		List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods();
-		if (methods != null && !methods.isEmpty()) {
-			for (Method method : methods) {
-				list.add(new ValueReference(method.getMid(), method.getMname(), method.getMname()));
-			}
-		}
-		return list;
-	}
-	
-	private List<ValueReference> convertLocationsToValueReferences(List<Location> locations) {
-		List<ValueReference> list = new ArrayList<ValueReference>();
-		if (locations != null && !locations.isEmpty()) {
-			for (Location loc : locations) {
-				list.add(new ValueReference(loc.getLocid(), loc.getLname(), loc.getLname()));
-			}
-		}
-		return list;
-	}
-	
-	@Override
-	public List<ValueReference> getAllPossibleValuesByPSMR(String property,
-			String scale, String method, PhenotypicType phenotypeType)
-			throws MiddlewareQueryException {
-		List<ValueReference> list = new ArrayList<ValueReference>();
-		Integer standardVariableId = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(property, scale, method, phenotypeType);
-		if(standardVariableId != null)
-			list = getAllPossibleValues(standardVariableId.intValue());
-		return list;
-	}
+    @Override
+    public List<ValueReference> getAllPossibleValues(int id) throws MiddlewareQueryException {
+        List<ValueReference> possibleValues = possibleValuesCache.getPossibleValues(id);
+        if (possibleValues == null) {
 
-	private List<ValueReference> convertPersonsToValueReferences(List<Person> persons) {
-		List<ValueReference> list = new ArrayList<ValueReference>();
-		if (persons != null && !persons.isEmpty()) {
-			for (Person person : persons) {
-				list.add(new ValueReference(person.getId(), person.getDisplayName()));
-			}
-		}
-		return list;
+            if (TermId.BREEDING_METHOD.getId() == id) {
+                possibleValues = getAllBreedingMethods();
+            } else if (TermId.TRIAL_LOCATION.getId() == id) {
+                possibleValues = convertLocationsToValueReferences(fieldbookMiddlewareService.getAllLocations());
+            } else if (TermId.PI_NAME.getId() == id) {
+                possibleValues = convertPersonsToValueReferences(fieldbookMiddlewareService.getAllPersons());
+            } else if (TermId.NURSERY_TYPE.getId() == id) {
+                possibleValues = fieldbookMiddlewareService.getAllNurseryTypes();
+            } else {
+                possibleValues = fieldbookMiddlewareService.getDistinctStandardVariableValues(id);
+            }
+            possibleValuesCache.addPossibleValues(id, possibleValues);
+        }
+        return possibleValues;
 	}
+	
+    @Override
+    public List<ValueReference> getAllPossibleValuesFavorite(int id, String projectId) throws MiddlewareQueryException {
+        List<ValueReference> possibleValuesFavorite = null;
+        if (possibleValuesFavorite == null) {
+            if (TermId.BREEDING_METHOD.getId() == id) {
+                List<Integer> methodIds = workbenchService.getFavoriteProjectMethods(projectId);
+                possibleValuesFavorite = getFavoriteBreedingMethods(methodIds);
+            } else if (TermId.TRIAL_LOCATION.getId() == id) {
+                List<Long> locationIds = workbenchService.getFavoriteProjectLocationIds(projectId);
+                possibleValuesFavorite = convertLocationsToValueReferences(fieldbookMiddlewareService
+                        .getFavoriteLocationByProjectId(locationIds));
+            }
+        }
+        return possibleValuesFavorite;
+    }
+	
+    private List<ValueReference> getFavoriteBreedingMethods(List<Integer> projectIdList)
+            throws MiddlewareQueryException {
+        List<ValueReference> list = new ArrayList<ValueReference>();
+        List<Method> methods = fieldbookMiddlewareService.getFavoriteBreedingMethods(projectIdList);
+        if (methods != null && !methods.isEmpty()) {
+            for (Method method : methods) {
+                if (method != null) {
+                    list.add(new ValueReference(method.getMid(), method.getMname(), method.getMname()));
+                }
+            }
+        }
+        return list;
+    }
+	
+    private List<ValueReference> getAllBreedingMethods() throws MiddlewareQueryException {
+        List<ValueReference> list = new ArrayList<ValueReference>();
+        List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods();
+        if (methods != null && !methods.isEmpty()) {
+            for (Method method : methods) {
+                if (method != null) {
+                    list.add(new ValueReference(method.getMid(), method.getMname(), method.getMname()));
+                }
+            }
+        }
+        return list;
+    }
+	
+    private List<ValueReference> convertLocationsToValueReferences(List<Location> locations) {
+        List<ValueReference> list = new ArrayList<ValueReference>();
+        if (locations != null && !locations.isEmpty()) {
+            for (Location loc : locations) {
+                if (loc != null) {
+                    list.add(new ValueReference(loc.getLocid(), loc.getLname(), loc.getLname()));
+                }
+            }
+        }
+        return list;
+    }
+	
+    @Override
+    public List<ValueReference> getAllPossibleValuesByPSMR(String property, String scale, String method,
+            PhenotypicType phenotypeType) throws MiddlewareQueryException {
+        List<ValueReference> list = new ArrayList<ValueReference>();
+        Integer standardVariableId = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
+                property, scale, method, phenotypeType);
+        if (standardVariableId != null)
+            list = getAllPossibleValues(standardVariableId.intValue());
+        return list;
+    }
+
+    private List<ValueReference> convertPersonsToValueReferences(List<Person> persons) {
+        List<ValueReference> list = new ArrayList<ValueReference>();
+        if (persons != null && !persons.isEmpty()) {
+            for (Person person : persons) {
+                if (person != null) {
+                    list.add(new ValueReference(person.getId(), person.getDisplayName()));
+                }
+            }
+        }
+        return list;
+    }
 }

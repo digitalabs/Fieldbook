@@ -116,8 +116,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 										</div>
 										<div th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.breeding.method.id}" class="possibleValuesDiv">
 										<input th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.breeding.method.id}"
-										type="checkbox" th:field="*{nurseryLevelVariables[__${rowStat.index}__].favorite}"
-										th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'" />
+										type="checkbox" th:field="*{nurseryLevelVariables[__${rowStat.index}__].favorite}" onclick="javascript: toggleMethodDropdown();" />
 										&nbsp;&nbsp;
 										<span th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.breeding.method.id}"
 										th:text="#{show.favorite.method}">Show Favorite Method</span>

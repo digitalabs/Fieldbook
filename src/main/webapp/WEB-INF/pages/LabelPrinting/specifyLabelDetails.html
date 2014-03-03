@@ -40,8 +40,16 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 			</div>
 		</div>
 	</div>
+	
+			<div class="row " >
+			<div class="col-xs-12 col-md-12">
+				<div class="col-xs-12 col-md-12">
+				<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
+				</div>
+			</div>
+		</div>
+	
 
-	<div class="row">&nbsp;</div>
 	
 	
 	<div class="row" th:if="*{userLabelPrinting.fieldMapInfoList == null}">
@@ -383,8 +391,8 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 		</div>
 		<div class="col-xs-12 col-md-12" >
 			<div class="form-group">
-				<div class="col-xs-1 col-md-1">
-					<label class="control-label" th:text="#{label.printing.filename}+':'"></label>					
+				<div style="padding-right: 0px" class="col-xs-1 col-md-1">
+					<label class="control-label" th:text="#{label.printing.filename}+':'"></label><span class="required">*</span>					
 				</div>		
 				<div class="col-xs-5 col-md-5">
 					<input type="text" class="form-control"  th:field="*{userLabelPrinting.filename}" placeholder="Filename"/>					
@@ -425,7 +433,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
         var selectedFieldsError = /*[[#{label.printing.selected.fields.error}]]*/;
         var trialInstanceRequired = /*[[#{fieldmap.no.selected.trial.instance}]]*/;
   		var isTrial = /*[[${labelPrintingForm.isTrial}]]*/;
-  		var filenameError =  /*[[#{label.printing.filename.fields.error.character}]]*/;
+  		var filenameErrorCharacter =  /*[[#{label.printing.filename.fields.error.character}]]*/;
  		 $(function() {
  			setSelectedTrialsAsDraggable();
  			

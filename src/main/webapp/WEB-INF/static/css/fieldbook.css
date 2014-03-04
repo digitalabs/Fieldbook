@@ -300,7 +300,7 @@ table{
 	margin-left: -25px;
 }
 .panel-body{
-	background-color: #E2E2E2;
+	background-color: #D4D4D4;
 	padding: 0px;
 }
 .manage-settings-panel-body{
@@ -347,6 +347,7 @@ table{
 div.scrollWrapper{
   height:200px;
   overflow-y:scroll;
+  max-width: 60%;
 }
 
 td.validValueLabel, td.validValueDel {

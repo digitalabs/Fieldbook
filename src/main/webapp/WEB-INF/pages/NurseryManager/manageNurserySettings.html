@@ -423,6 +423,7 @@ data-slider-selection="after" data-slider-tooltip="always"/>
  					} 					 					
  				});
  				$.each($(".possibleValuesJson"), function (index, divElem){
+ 					var select2Index = $(divElem).attr("id").split("possibleValuesJson")[1]; 
  					
  					if (index == 0) {
  						initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 
@@ -430,7 +431,7 @@ data-slider-selection="after" data-slider-tooltip="always"/>
  						
  					} else {
  						initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 
- 		 			 			"#" + getJquerySafeId("nurseryLevelVariables"+index+".value"), false, $(divElem).siblings(".div-select-val").html());
+ 		 			 			"#" + getJquerySafeId("nurseryLevelVariables"+select2Index+".value"), false, $(divElem).siblings(".div-select-val").html());
  						
  					}
  					

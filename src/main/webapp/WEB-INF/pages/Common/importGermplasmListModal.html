@@ -5,7 +5,7 @@
 			<div class="modal-content" >
 				<div class="modal-body" id="manageLocationBody">
 					<div>
-	         			<button id="closeImportGermplasmModal" type="button" class="close" data-dismiss="modal" aria-hidden="true" onClick="doModalCleanup();">&times;</button>
+	         			<button id="closeImportGermplasmModal" type="button" class="close" data-dismiss="modal" aria-hidden="true" onClick="cancelImportGermplasm();">&times;</button>
 	         		</div>
 	         		<br/><br/>
 	         		<div>
@@ -22,15 +22,13 @@
 <div layout:fragment="page-script">
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[     
-	           function doModalCleanup(){
-	        	   //recreate the tree for the my list
-	        	   //close the window
+	           function cancelImportGermplasm(){
+	        	   $('#importGermplasmModal').modal('hide');   
 	           }
-	           function closeImportFrame(){
-	        	   
+	           function closeImportFrame(listId){
+					alert('reload tree and preselect list id ' + listId);					
 	        	   //recreateLocationCombo();
-	        	   $('#importGermplasmModal').modal('hide');
-		           
+	        	   $('#importGermplasmModal').modal('hide');		           
 	           }
     //]]>
     </script>

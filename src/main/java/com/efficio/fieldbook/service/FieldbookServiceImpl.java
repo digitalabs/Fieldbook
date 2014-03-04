@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -22,7 +23,6 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.generationcp.middleware.domain.dms.PhenotypicType;
-import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -95,39 +95,49 @@ public class FieldbookServiceImpl implements FieldbookService{
 	    return service.advanceNursery(advanceInfo);
 	}
 	
-    @Override
-    public List<StandardVariableReference> filterStandardVariablesForSetting(Collection<StandardVariable> sourceList,
-            int mode, Collection<SettingDetail> selectedList) {
-        List<StandardVariableReference> result = new ArrayList<StandardVariableReference>();
-        if (sourceList != null && !sourceList.isEmpty()) {
-            Set<Integer> selectedIds = new HashSet<Integer>();
-            if (selectedList != null && !selectedList.isEmpty()) {
-                for (SettingDetail settingDetail : selectedList) {
-                    selectedIds.add(settingDetail.getVariable().getCvTermId());
-                }
-            }
+	@Override
+	public List<StandardVariableReference> filterStandardVariablesForSetting(int mode, Collection<SettingDetail> selectedList)
+	throws MiddlewareQueryException {
+		
+		List<StandardVariableReference> result = new ArrayList<StandardVariableReference>();
 
-            for (StandardVariable var : sourceList) {
-                if (isApplicableInCurrentMode(var, mode) && !selectedIds.contains(var.getId())) {
-                    result.add(new StandardVariableReference(var.getId(), var.getName(), var.getDescription()));
-                }
-            }
-        }
-        return result;
-    }
+		Set<Integer> selectedIds = new HashSet<Integer>();
+		if (selectedList != null && !selectedList.isEmpty()) {
+			for (SettingDetail settingDetail : selectedList) {
+				selectedIds.add(settingDetail.getVariable().getCvTermId());
+			}
+		}
+
+		List<Integer> storedInIds = getStoredInIdsByMode(mode);
+		List<StandardVariableReference> dbList = fieldbookMiddlewareService.filterStandardVariablesByMode(storedInIds);
+		
+		if (dbList != null && !dbList.isEmpty()) {
+			for (StandardVariableReference ref : dbList) {
+				if (!selectedIds.contains(ref.getId())) {
+					result.add(ref);
+				}
+			}
+		}
+		
+		Collections.sort(result);
+
+		return result;
+	}
 	
-    private boolean isApplicableInCurrentMode(StandardVariable var, int mode) {
+    private List<Integer> getStoredInIdsByMode(int mode) {
+    	List<Integer> list = new ArrayList<Integer>();
         if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
-            return var.getPhenotypicType() == PhenotypicType.STUDY || var.getPhenotypicType() == PhenotypicType.DATASET
-                    || var.getPhenotypicType() == PhenotypicType.TRIAL_ENVIRONMENT;
+            list.addAll(PhenotypicType.STUDY.getTypeStorages());
+            list.addAll(PhenotypicType.DATASET.getTypeStorages());
+            list.addAll(PhenotypicType.TRIAL_ENVIRONMENT.getTypeStorages());
         } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
-            return var.getPhenotypicType() == PhenotypicType.TRIAL_ENVIRONMENT
-                    || var.getPhenotypicType() == PhenotypicType.TRIAL_DESIGN
-                    || var.getPhenotypicType() == PhenotypicType.GERMPLASM;
+            list.addAll(PhenotypicType.TRIAL_ENVIRONMENT.getTypeStorages());
+            list.addAll(PhenotypicType.TRIAL_DESIGN.getTypeStorages());
+            list.addAll(PhenotypicType.GERMPLASM.getTypeStorages());
         } else if (mode == AppConstants.SEGMENT_TRAITS.getInt()) {
-            return var.getPhenotypicType() == PhenotypicType.VARIATE;
+            list.addAll(PhenotypicType.VARIATE.getTypeStorages());
         }
-        return false;
+        return list;
     }
 	
     @Override

@@ -214,8 +214,15 @@ $.ajax(
     			   //recreate select2 of breeding method
     			   initializePossibleValuesCombo([], 
 	 			 			"#" + getJquerySafeId("nurseryLevelVariables" + index + ".value"), false, selectedVal);
-    			   initializePossibleValuesCombo($.parseJSON(data.allMethods), 
-	 			 			"#" + getJquerySafeId("nurseryLevelVariables" + index + ".value"), false, selectedVal);
+    			   
+    			   //update values of combo
+    			   if ($("#" + getJquerySafeId("nurseryLevelVariables" + index + ".favorite1")).is(":checked")) {
+					   initializePossibleValuesCombo($.parseJSON(data.favoriteMethods), 
+		 			 			"#" + getJquerySafeId("nurseryLevelVariables" + index + ".value"), false, selectedVal);
+    			   } else {
+    				   initializePossibleValuesCombo($.parseJSON(data.allMethods), 
+		 			 			"#" + getJquerySafeId("nurseryLevelVariables" + index + ".value"), false, selectedVal);
+    			   }
     		   }
     	   } else {
     		   showErrorMessage("page-message", data.errorMessage);
@@ -273,8 +280,15 @@ function recreateLocationCombo() {
     			   } 
     			   initializePossibleValuesCombo([], 
 	 			 			"#" + getJquerySafeId("nurseryLevelVariables0.value"), true, selectedVal);
-    			   initializePossibleValuesCombo($.parseJSON(data.allLocations), 
-	 			 			"#" + getJquerySafeId("nurseryLevelVariables0.value"), true, selectedVal);
+    			   
+    			   //update values in combo
+    			   if ($("#" + getJquerySafeId("nurseryLevelVariables0.favorite1")).is(":checked")) {
+	    			   initializePossibleValuesCombo($.parseJSON(data.favoriteLocations), 
+		 			 			"#" + getJquerySafeId("nurseryLevelVariables0.value"), false, selectedVal);
+    			   } else {
+    				   initializePossibleValuesCombo($.parseJSON(data.allLocations), 
+		 			 			"#" + getJquerySafeId("nurseryLevelVariables0.value"), true, selectedVal);
+    			   }
     		   }
     	   } else {
     		   showErrorMessage("page-message", data.errorMessage);
@@ -866,30 +880,27 @@ function sortVariableIdsAndNames(variableType) {
 	case 1:
 		var reg = new RegExp("nurseryLevelVariables[0-9]+", "g");
 		var reg2 = new RegExp("nurseryLevelVariables\[[0-9]+\]", "g");
-		$.each($("#nurseryLevelSettings tr"), function (index, row) {
-			//get the possible values of the variable
-			var possibleValuesJson = $($(row).children("td:nth-child(3)").children(".possibleValuesJson")).text();
-						
-			//get currently selected value
+		$.each($("#nurseryLevelSettings tr"), function (index, row) {						
+			//get currently selected value of select2 dropdown
 			var selectedVal = null;
 			var oldSelect2 = row.innerHTML.match(reg)[0];
 		    if ($("#" + getJquerySafeId(oldSelect2 + ".value")).select2("data")) {
 			   selectedVal = $("#" + getJquerySafeId(oldSelect2 + ".value")).select2("data").id;
 		    }
 		    
-		    //change the ids and names of the objects and delete the existing select2 object
+		    //if dropdown is for location or method, check if show favorite is checked
+		    var isFavoriteChecked = "";
+		    if ($("#" + getJquerySafeId(oldSelect2 + ".favorite1"))) {
+		    	isFavoriteChecked = $("#" + getJquerySafeId(oldSelect2 + ".favorite1")).is(":checked");
+		    }
+		    
+		    //change the ids and names of the objects 
 		    row.innerHTML = row.innerHTML.replace(reg, "nurseryLevelVariables" + index);
 			row.innerHTML = row.innerHTML.replace(reg2, "nurseryLevelVariables[" + index + "]");
-			$($(row).children("td:nth-child(3)")).html("<input type='hidden' id='nurseryLevelVariables" + index + 
-				".value' name='nurseryLevelVariables[" + index + "].value' class='form-control select2' />");
-
-			//recreate the select2 object
-			if (index == 0) {
-			    initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
-				 			"#" + getJquerySafeId("nurseryLevelVariables" + index + ".value"), true, selectedVal);
-			} else {
-				initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
-			 			"#" + getJquerySafeId("nurseryLevelVariables" + index + ".value"), false, selectedVal);
+			
+			//delete the existing select2 object and recreate the select2 combo and checkbox/links for location/method
+			if (row.innerHTML.indexOf("select2") > -1) {
+				recreateSelect2Combo(index, row, selectedVal, isFavoriteChecked);
 			}
 		});
 		break;
@@ -908,6 +919,76 @@ function sortVariableIdsAndNames(variableType) {
 			row.innerHTML = row.innerHTML.replace(reg, "baselineTraitVariables" + index);
 			row.innerHTML = row.innerHTML.replace(reg2, "baselineTraitVariables[" + index + "]");
 		});
+	}
+}
+
+function recreateSelect2Combo(index, row, selectedVal, isFavoriteChecked) {
+	//get the possible values of the variable
+	var possibleValuesJson = $($(row).children("td:nth-child(3)").children(".possibleValuesJson")).text();
+	var possibleValuesFavoriteJson = $($(row).children("td:nth-child(3)").children(".possibleValuesFavoriteJson")).text();
+	var cvTermId = $($(row).children("td:nth-child(1)").children("#" 
+			+ getJquerySafeId("nurseryLevelVariables" + index + ".variable.cvTermId"))).val();
+	
+	//hidden field for select2 
+	var newCell = "<input type='hidden' id='nurseryLevelVariables" + index + 
+	".value' name='nurseryLevelVariables[" + index + "].value' class='form-control select2' />";
+	
+	//newCell = newCell + "<div class='div-select-val' style='display: none'>" +  + "</div>"
+	
+	//div containing the possible values
+	newCell = newCell + "<div id='possibleValuesJson" + index + "' class='possibleValuesJson' style='display:none'>" + 
+		possibleValuesJson + "</div>";
+	
+	//div containing the favorite possible values
+	newCell = newCell + "<div id='possibleValuesFavoriteJson" + index + "' class='possibleValuesFavoriteJson' style='display:none'>" + 
+		possibleValuesFavoriteJson + "</div>";
+	
+	//div containing checkbox and label for location and method
+	var methodName = "toggleMethodDropdown";
+	var favoriteLabel = showFavoriteMethodLabel;
+	var managePopupLabel =  manageMethodLabel;
+	var manageMethodName = "openManageMethods";
+	var isChecked = "";
+	var showAll = true;
+	
+	//set possibleValues to favorite possible values
+	if (isFavoriteChecked) {
+		possibleValuesJson = possibleValuesFavoriteJson;
+		isChecked = "checked='checked'";
+		showAll = false;
+	}
+	
+	//set values for location
+	if (parseInt(cvTermId) == parseInt(locationId)) {
+		methodName = "toggleLocationDropdown";
+		favoriteLabel = showFavoriteLocationLabel;
+		managePopupLabel = manageLocationLabel;
+		manageMethodName = "openManageLocations";
+	}
+	
+	//add checkbox and manage location/method links
+	if (parseInt(cvTermId) == parseInt(breedingMethodId) || parseInt(cvTermId) == parseInt(locationId)) {
+		newCell = newCell + "<div class='possibleValuesDiv'><input type='checkbox' id='nurseryLevelVariables" + index + ".favorite1'" + 
+		" name='nurseryLevelVariables[" + index + "].favorite'" +
+		" onclick='javascript: " + methodName + "(" + index + ");' " + isChecked +  " />" +
+		"<input type='hidden' name='_nurseryLevelVariables[" + index + "].favorite' value='on' /> " +
+		"<span>&nbsp;&nbsp;" + favoriteLabel + "</span></div>";
+		
+		newCell = newCell + "<span><a href='javascript: " + manageMethodName + "();'>" + managePopupLabel + "</a></span>";
+	}
+	
+	$($(row).children("td:nth-child(3)")).html(newCell);
+	
+	//recreate the select2 object
+	if (parseInt(cvTermId) == parseInt(locationId)) {
+	    initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
+ 			"#" + getJquerySafeId("nurseryLevelVariables" + index + ".value"), showAll, selectedVal);
+	} else if (parseInt(cvTermId) == parseInt(breedingMethodId)){
+		initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
+	 			"#" + getJquerySafeId("nurseryLevelVariables" + index + ".value"), false, selectedVal);
+	} else {
+		initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
+			"#" + getJquerySafeId("nurseryLevelVariables" + index + ".value"), false, selectedVal);
 	}
 }
 

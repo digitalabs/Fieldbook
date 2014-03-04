@@ -366,6 +366,7 @@ span.dynatree-selected a
 {
 /*	color: green; */
 	font-style: italic;
+	background-color: #FFF441;
 }
 
 span.fbtree-active a

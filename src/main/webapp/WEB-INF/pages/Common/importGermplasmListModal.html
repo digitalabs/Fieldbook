@@ -26,10 +26,31 @@
 	        	   $('#importGermplasmModal').modal('hide');   
 	           }
 	           function closeImportFrame(listId){
-					alert('reload tree and preselect list id ' + listId);					
+					alert('reload tree and preselect list id ' + listId);
+					$('#importGermplasmModal').modal('hide');
+					$("#germplasmTree").dynatree("destroy")
+					displayGermplasmListTree("germplasmTree", listId);
+					
+					//displayGermplasmDetails(listId); 
+					
 	        	   //recreateLocationCombo();
-	        	   $('#importGermplasmModal').modal('hide');		           
+	        	   		           
 	           }
+	           function doInitialLoad(listId) {
+	        	   var node = $("#germplasmTree").dynatree("getTree").getNodeByKey('LOCAL');
+	        	   node.toggleExpand();
+	        	   node.appendAjax({
+		   				url: "expandGermplasmTree/LOCAL",
+		   				dataType: "json",
+		   				success: function(node) {
+		   					//do nothing
+		   					//node.toggleExpand();
+		   					displayGermplasmDetails(listId);
+		   					$("#germplasmTree").dynatree("getTree").getNodeByKey(''+listId).select(true);
+		   				},
+		   				cache: false
+		   			});
+		   		};
     //]]>
     </script>
 </div>

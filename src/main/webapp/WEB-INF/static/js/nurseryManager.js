@@ -1215,3 +1215,5 @@ function initializeDateAndSliderInputs(){
 		});
 	}				
 }
+
+

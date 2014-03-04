@@ -981,8 +981,24 @@ function moveToTopScreen(){
 function openImportGermplasmList() {
 	$('#importGermplasmModal').modal({ backdrop: 'static', keyboard: true });
 	$("#importGermplasmModal").modal("show");
-	if(importIframeOpened == false){
-		importIframeOpened = true;
+	//if(importIframeOpened == false){
+	//	importIframeOpened = true;
 		$('#importFrame').attr('src', importLocationUrl);
+	//}
+}
+function doTreeHighlight(treeName, nodeKey){
+	$("#"+treeName).dynatree("getTree").activateKey(nodeKey);
+	$('#'+treeName).find("*").removeClass('highlight');
+	//then we highlight the nodeKey and its parents
+	var elem = nodeKey.split("_");
+	var count = 0;
+	var key = "";
+	for(count = 0 ; count < elem.length ; count++){
+		if(key != '')
+			key = key + "_";
+		
+		key = key + elem[count];
+		$('.'+key).addClass('highlight');
+		console.log(key);
 	}
 }

@@ -24,8 +24,9 @@
       	<div class="panel panel-default">
     
 		      <div class="panel-body" style="padding: 15px;">
-		      	<a data-toggle="modal" href="#myModal" class="" th:text="#{nursery.import.germplasm.list}">Import File</a>
-		      	<!-- <a href="javascript: openImportGermplasmList()" th:text="#{nursery.import.germplasm.list}">Import File</a> -->
+		      	<!-- <a data-toggle="modal" href="#myModal" class="" th:text="#{nursery.import.germplasm.list}">Import File</a>
+		      	 -->
+		        <a href="javascript: openImportGermplasmList()" th:text="#{nursery.import.germplasm.list}">Import File</a>
 		      </div>
 		     
 		  </div>  
@@ -144,15 +145,10 @@
 	  }	
   
 	  //display tree
-	  displayGermplasmListTree("germplasmTree");
+	  displayGermplasmListTree("germplasmTree", 0);
   });
   
-  //]]>
-</script>
-<!-- For pagination -->
-<script type='text/javascript' th:inline="javascript">
-	//<![CDATA[
-        
+
         var importLocationUrl = /*[[#{nursery.apps.import.nursery.url}]]*/;
     	var importIframeOpened = false;
         
@@ -161,7 +157,7 @@
         }
         
         /** Germplasm Tree **/
-        function displayGermplasmListTree(treeName) {
+        function displayGermplasmListTree(treeName, listId) {
         	$("#" + treeName).dynatree({
         		title: treeName,
         		checkbox: false,
@@ -193,6 +189,10 @@
         			focused: "fbtree-focused",
         			active: "fbtree-active"
         		},
+        		 onPostInit: function (isReloading, isError) {
+        		     if(listId != 0)
+        		    	 doInitialLoad(listId);
+        		    },
         		onActivate: function(node) {
         			if (node.data.isFolder == false) {
          				displayGermplasmDetails(node.data.key);
@@ -203,6 +203,7 @@
         
         function displayGermplasmDetails(listId) {
         	Spinner.toggle();
+        	$('#'+'germplasmTree').find("*").removeClass('dynatree-selected');
         	$.ajax({
         		url: "importGermplasmList/displayGermplasmDetails/" + listId,
         		type: "GET",

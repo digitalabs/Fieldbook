@@ -190,7 +190,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
             , Model model, HttpSession session) throws MiddlewareQueryException{
 		//will do the saving here
     	
-    	Dataset dataset = SettingsUtil.convertPojoToXmlDataset(form.getSettingName(), form.getNurseryLevelVariables(), form.getPlotLevelVariables(), form.getBaselineTraitVariables(), userSelection);
+    	Dataset dataset = SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, form.getSettingName(), form.getNurseryLevelVariables(), form.getPlotLevelVariables(), form.getBaselineTraitVariables(), userSelection);
     	String xml = SettingsUtil.generateSettingsXml(dataset);
     	Integer tempateSettingId = form.getSelectedSettingId() > 0 ? Integer.valueOf(form.getSelectedSettingId()) : null;
     	TemplateSetting templateSetting = new TemplateSetting(tempateSettingId, Integer.valueOf(getCurrentProjectId()), dataset.getName(), getNurseryTool(), xml, Boolean.valueOf(form.getIsDefault())) ;

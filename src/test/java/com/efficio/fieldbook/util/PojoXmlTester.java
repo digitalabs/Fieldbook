@@ -86,7 +86,7 @@ public class PojoXmlTester extends AbstractJUnit4SpringContextTests {
 				new ArrayList(), "Test 6", false));
 		
 		datasetName = "test name";
-		dataset = SettingsUtil.convertPojoToXmlDataset(datasetName, nurseryLevelConditions, plotsLevelList, baselineTraitsList, null);
+		dataset = SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, datasetName, nurseryLevelConditions, plotsLevelList, baselineTraitsList, null);
 		
     }
 	

@@ -115,6 +115,28 @@ public class SettingsUtil {
 	}
 	
 	/**
+     * Get standard variable.
+     * @param id
+     * @return
+     * @throws MiddlewareQueryException
+     */
+    private static StandardVariable getStandardVariable(int id, UserSelection userSelection, org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
+    	StandardVariable variable = userSelection.getCacheStandardVariable(id);
+    	if (variable == null) {
+    		try {
+				variable = fieldbookMiddlewareService.getStandardVariable(id);
+			} catch (MiddlewareQueryException e) {
+				e.printStackTrace();
+			}
+    		if (variable != null) {
+    			userSelection.putStandardVariableInCache(variable);
+    		}
+    	}
+    	
+    	return variable;
+    }
+	
+	/**
 	 * Convert pojo to xml dataset.
 	 *
 	 * @param name the name
@@ -123,7 +145,7 @@ public class SettingsUtil {
 	 * @param baselineTraitsList the baseline traits list
 	 * @return the dataset
 	 */
-	public static Dataset convertPojoToXmlDataset(String name, List<SettingDetail> nurseryLevelConditions, List<SettingDetail> plotsLevelList, List<SettingDetail> baselineTraitsList, UserSelection userSelection){
+	public static Dataset convertPojoToXmlDataset(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, String name, List<SettingDetail> nurseryLevelConditions, List<SettingDetail> plotsLevelList, List<SettingDetail> baselineTraitsList, UserSelection userSelection){
 		Dataset dataset = new Dataset();
 		List<Condition> conditions = new ArrayList<Condition>();
 		List<Factor> factors = new ArrayList<Factor>();
@@ -133,7 +155,8 @@ public class SettingsUtil {
 		for(SettingDetail settingDetail : nurseryLevelConditions){
 			SettingVariable variable = settingDetail.getVariable();
 			if(userSelection != null){
-				StandardVariable standardVariable = userSelection.getCacheStandardVariable(variable.getCvTermId());
+				StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
+				
 				variable.setPSMRFromStandardVariable(standardVariable);
 				//need to get the name from the session
 				variable.setName(userSelection.getNurseryLevelConditions().get(index++).getVariable().getName());
@@ -150,7 +173,7 @@ public class SettingsUtil {
 			for(SettingDetail settingDetail : plotsLevelList){
 				SettingVariable variable = settingDetail.getVariable();
 				if(userSelection != null){
-					StandardVariable standardVariable = userSelection.getCacheStandardVariable(variable.getCvTermId());
+					StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
 					variable.setPSMRFromStandardVariable(standardVariable);
 					//need to get the name from the session
 					variable.setName(userSelection.getPlotsLevelList().get(index++).getVariable().getName());
@@ -166,7 +189,7 @@ public class SettingsUtil {
 			for(SettingDetail settingDetail : baselineTraitsList){
 				SettingVariable variable = settingDetail.getVariable();
 				if(userSelection != null){
-					StandardVariable standardVariable = userSelection.getCacheStandardVariable(variable.getCvTermId());
+					StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
 					variable.setPSMRFromStandardVariable(standardVariable);
 					//need to get the name from the session
 					variable.setName(userSelection.getBaselineTraitsList().get(index++).getVariable().getName());

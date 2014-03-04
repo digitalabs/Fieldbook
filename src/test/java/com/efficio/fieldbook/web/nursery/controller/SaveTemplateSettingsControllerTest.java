@@ -55,6 +55,9 @@ public class SaveTemplateSettingsControllerTest extends AbstractJUnit4SpringCont
     
     /** The dataset name. */
     String datasetName;
+    
+    @Autowired
+    org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
     /**
      * Sets the up.
      */
@@ -80,7 +83,7 @@ public class SaveTemplateSettingsControllerTest extends AbstractJUnit4SpringCont
 				new ArrayList<ValueReference>(), "Test 6", false));
 		
 		datasetName = "test name";
-		dataset = SettingsUtil.convertPojoToXmlDataset(datasetName, nurseryLevelConditions, plotsLevelList, baselineTraitsList, null);
+		dataset = SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, datasetName, nurseryLevelConditions, plotsLevelList, baselineTraitsList, null);
 		
     }
     

@@ -15,7 +15,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -72,13 +71,13 @@ public class UserSelection implements Serializable {
     private List<SettingDetail> baselineTraitsList;
     
     /** The all standard variables. */
-    private Set<StandardVariable> allStandardVariables;
+    //private Set<StandardVariable> allStandardVariables;
     
     /** The imported advanced germplasm list. */
     private List<ImportedGermplasm> importedAdvancedGermplasmList;
     
     /** The standard variable map. */
-    private Map<String, StandardVariable> standardVariableMap; //for easy access
+    private Map<String, StandardVariable> standardVariableMap = new HashMap<String, StandardVariable>(); //for easy access
     
 	/**
 	 * Gets the current page.
@@ -320,25 +319,25 @@ public class UserSelection implements Serializable {
 	 *
 	 * @return the allStandardVariables
 	 */
-	public Set<StandardVariable> getAllStandardVariables() {
-		return allStandardVariables;
-	}
+//	public Set<StandardVariable> getAllStandardVariables() {
+//		return allStandardVariables;
+//	}
 
 	/**
 	 * Sets the all standard variables.
 	 *
 	 * @param allStandardVariables the allStandardVariables to set
 	 */
-	public void setAllStandardVariables(Set<StandardVariable> allStandardVariables) {
-		this.allStandardVariables = allStandardVariables;
-		
-		standardVariableMap = new HashMap<String, StandardVariable>();
-		if(allStandardVariables != null){
-			for(StandardVariable var : allStandardVariables){
-				standardVariableMap.put(Integer.toString(var.getId()), var);
-			}
-		}
-	}
+//	public void setAllStandardVariables(Set<StandardVariable> allStandardVariables) {
+//		this.allStandardVariables = allStandardVariables;
+//		
+//		standardVariableMap = new HashMap<String, StandardVariable>();
+//		if(allStandardVariables != null){
+//			for(StandardVariable var : allStandardVariables){
+//				standardVariableMap.put(Integer.toString(var.getId()), var);
+//			}
+//		}
+//	}
 
 	/**
 	 * Gets the cache standard variable.
@@ -351,6 +350,10 @@ public class UserSelection implements Serializable {
 			return standardVariableMap.get(Integer.toString(id));
 		}
 		return null;
+	}
+	
+	public void putStandardVariableInCache(StandardVariable variable) {
+		standardVariableMap.put(Integer.toString(variable.getId()), variable);
 	}
 	
 	/**

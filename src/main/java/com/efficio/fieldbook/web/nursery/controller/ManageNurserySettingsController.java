@@ -58,16 +58,6 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     /** The Constant URL. */
     public static final String URL = "/NurseryManager/manageNurserySettings";
     
-    /** The Constant URL_STUDY_SETTINGS_TABLE. */
-    public static final String URL_STUDY_SETTINGS_TABLE = "/NurseryManager/nurseryLevelSettings";
-    
-    /** The Constant URL_PLOTS_SETTINGS_TABLE. */
-    public static final String URL_PLOTS_SETTINGS_TABLE = "/";
-
-    /** The Constant URL_TRAITS_SETTINGS_TABLE. */
-    public static final String URL_TRAITS_SETTINGS_TABLE = "/";
-
-    
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(ManageNurserySettingsController.class);
     
@@ -164,8 +154,6 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
      */
     private void setupDefaultScreenValues(ManageSettingsForm form, TemplateSetting templateSettingFilter) throws MiddlewareQueryException{
 
-        getAllStandardVariables();
-    	
         List<TemplateSetting> templateSettingsList = new ArrayList<TemplateSetting>();
         //NULL when its an add new setting
         if(templateSettingFilter != null) 
@@ -336,9 +324,8 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     @RequestMapping(value = "displayAddSetting/{mode}", method = RequestMethod.GET)
     public String showAddSettingPopup(@PathVariable int mode) {
     	try {
-    		Set<StandardVariable> stdVars = getAllStandardVariables();
-        	List<StandardVariableReference> standardVariableList = fieldbookService
-        	        .filterStandardVariablesForSetting(stdVars, mode, getSettingDetailList(mode));
+        	List<StandardVariableReference> standardVariableList = 
+        			fieldbookService.filterStandardVariablesForSetting(mode, getSettingDetailList(mode));
         	if (standardVariableList != null && !standardVariableList.isEmpty()) {
         		ObjectMapper om = new ObjectMapper();
         		return om.writeValueAsString(standardVariableList);
@@ -655,20 +642,6 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     }
 
     /**
-     * get All standard variables from cache.
-     * @return
-     * @throws MiddlewareQueryException
-     */
-    private Set<StandardVariable> getAllStandardVariables() throws MiddlewareQueryException {
-		Set<StandardVariable> stdVars = userSelection.getAllStandardVariables();
-		if (stdVars == null || stdVars.isEmpty()) {
-			stdVars = fieldbookMiddlewareService.getAllStandardVariables();
-			this.userSelection.setAllStandardVariables(stdVars);
-		}
-		return stdVars;
-    }
-    
-    /**
      * Get setting variable.
      * @param id
      * @return
@@ -698,17 +671,14 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
      * @throws MiddlewareQueryException
      */
     private StandardVariable getStandardVariable(int id) throws MiddlewareQueryException {
-    	Set<StandardVariable> allStdVars = getAllStandardVariables();
-    	/*
-    	if (allStdVars != null && !allStdVars.isEmpty()) {
-    		for (StandardVariable stdvar : allStdVars) {
-    			if (stdvar.getId() == id) {
-    				return stdvar;
-    			}
+    	StandardVariable variable = userSelection.getCacheStandardVariable(id);
+    	if (variable == null) {
+    		variable = fieldbookMiddlewareService.getStandardVariable(id);
+    		if (variable != null) {
+    			userSelection.putStandardVariableInCache(variable);
     		}
     	}
-    	return null;
-    	*/
-    	return userSelection.getCacheStandardVariable(id);
+    	
+    	return variable;
     }
 }

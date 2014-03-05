@@ -36,9 +36,10 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			    			
 			    			<a href="javascript: void(0)" id="copySettings" ><img width="15" src="/Fieldbook/static/img/copy.png"/>&nbsp;  <span th:text="#{nursery.managesettings.make.copy}"></span></a>
 			    			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			    			
+			    			<!-- 
 			    			<a href="javascript: void(0)" id="addNewSettings"><span class="glyphicon glyphicon-plus"></span>&nbsp; <span th:text="#{nursery.managesettings.add.new.settings}">Add New Settings</span></a>
 			    			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			    			 -->
 			    			<a href="javascript: void(0)" id="resetSettings"><img width="15" src="/Fieldbook/static/img/reset.png"/>&nbsp;<span th:text="#{nursery.managesettings.reset.settings}">Reset</span></a>
 			    			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			    			
@@ -337,13 +338,25 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
- <!-- 
-<input type="text" class="slider-input" value="" 
-data-slider-min="-20" data-slider-max="20" data-slider-step=".1" 
-data-slider-value="-20" data-slider-orientation="horizontal" 
-data-slider-selection="after" data-slider-tooltip="always"/>
- -->
+<div class="modal fade" id="reset-settings-confirmation">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Confirmation</h4>
+      </div>
+      <div class="modal-body">
+        <p th:text="#{manage.settings.reset.confirmation}">If you have made changes without saving, your changes will be lost.  Are you sure you want to continue?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.no.text}">No</button>
+        <button type="button" class="btn btn-primary" onclick="javascript: doResetNurserySettings();" th:text="#{common.form.yes.text}">Yes</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
+ 
 	
 </form>
 <div layout:fragment="page-script">
@@ -377,7 +390,7 @@ data-slider-selection="after" data-slider-tooltip="always"/>
        		var locationId = /*[[#{nursery.managesettings.trial.location.id}]]*/;
        		var showFavoriteMethodLabel = /*[[#{show.favorite.method}]]*/;
        		var showFavoriteLocationLabel = /*[[#{show.favorite.location}]]*/;
-       		
+       		var inputChange = false;
  			$( document ).ready(function() {
  				/*
  				if($('#initialLoad').val() == '1'){
@@ -396,9 +409,11 @@ data-slider-selection="after" data-slider-tooltip="always"/>
  	 					$('#delete-settings-confirmation').modal('show');	
  					} 					 					
  				});
- 				$('#resetSettings').on('click', clearSettings);
+ 				$('#resetSettings').on('click', validateReset);
  				$('#saveSettings').on('click', doSaveSettings);
- 				$('#addNewSettings').on('click', addNewSettings);
+ 				//$('#addNewSettings').on('click', addNewSettings);
+ 				
+ 				
  				
  				$('#copySettings').on('click', function(){
  					if($('#selectedSettingId').val() == '0'){
@@ -424,7 +439,10 @@ data-slider-selection="after" data-slider-tooltip="always"/>
  				setTimeout('initializeDateAndSliderInputs()', 500);
  				
  				$.fn.modal.Constructor.prototype.enforceFocus = function() {};
- 			});    			 			     
+ 				
+ 				$('input').on('change', function(){inputChange = true;})
+ 			});    	
+ 			
 			
       //]]>
     </script>

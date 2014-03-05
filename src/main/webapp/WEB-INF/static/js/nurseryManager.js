@@ -596,7 +596,7 @@ function getLastRowIndex(name, hasTBody) {
 function createNurseryLevelSettingVariables(data) {
 	var ctr = getLastRowIndex("nurseryLevelSettings", false) + 1;
 	$.each(data, function (index, settingDetail) {
-		var newRow = "<tr class=''>";
+		var newRow = "<tr class='newVariable'>";
 		var isDelete = "";
 		
 		//include delete button if variable is deletable
@@ -736,7 +736,7 @@ function createPlotLevelSettingVariables(data) {
 	$.each(data, function (index, settingDetail) {
 		var length = $("#plotLevelSettings tbody tr").length + 1;
 		var className = length % 2 == 1 ? 'even' : 'odd';
-		var newRow = "<tr>";
+		var newRow = "<tr class='newVariable'>";
 		var isDelete = "";
 		
 		if (settingDetail.delete) {
@@ -757,7 +757,7 @@ function createBaselineTraitVariables(data) {
 	$.each(data, function (index, settingDetail) {
 		var length = $("#baselineTraitSettings tbody tr").length + 1;
 		var className = length % 2 == 1 ? 'even' : 'odd';
-		var newRow = "<tr>";
+		var newRow = "<tr class='newVariable'>";
 		var isDelete = "";
 		
 		if (settingDetail.delete) {
@@ -873,6 +873,7 @@ function deleteVariable(variableType, variableId, deleteButton) {
 	
 	//reinstantiate counters of ids and names
 	sortVariableIdsAndNames(variableType);
+	inputChange=true;
 }
 
 function sortVariableIdsAndNames(variableType) {
@@ -1302,4 +1303,17 @@ function checkPlantsSelected() {
 		showErrorMessage('page-message',msgEmptyListError);
 	}
 	$("#lineChoice1").prop("checked", true);
+}
+
+function doResetNurserySettings(){
+	$('#reset-settings-confirmation').modal('hide');
+	addNewSettings();
+}
+function validateReset(){
+	if(inputChange == true || ($('.newVariable') != null && $('.newVariable').length > 0)){
+		$('#reset-settings-confirmation').modal('show');
+	}else{
+		doResetNurserySettings();	
+	}
+	
 }

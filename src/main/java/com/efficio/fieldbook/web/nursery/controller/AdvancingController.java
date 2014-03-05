@@ -180,6 +180,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	form.setLineChoice("1");
     	form.setLineSelected("1");
     	form.setProjectId(this.getCurrentProjectId());
+    	form.setPlotsWithPlantsSelected(fieldbookMiddlewareService.countPlotsWithPlantsSelectedofNursery(nurseryId));
     	//form.setBreedingMethods();
     	Study study = fieldbookMiddlewareService.getStudy(nurseryId);
     	List<Variable> varList = study.getConditions().getVariables();

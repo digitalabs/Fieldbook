@@ -193,9 +193,10 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 							  <span th:text="#{label.printing.do.you.need.bar.codes.yes}">Yes</span>
 							</label>
 							<label class="radio-inline">
-							  <input type="radio" value="0" th:field="*{lineChoice}"/> 
+							  <input type="radio" value="0" th:field="*{lineChoice}" onClick="javascript: checkPlantsSelected();" /> 
 							  <span th:text="#{label.printing.do.you.need.bar.codes.no}">No</span>
 							</label>
+							<input type="hidden" th:field="*{plotsWithPlantsSelected}" />
 						</div>		
 					</div>										 				
 				</div>
@@ -356,6 +357,8 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 	    
 	    var locationIframeOpened = false;
 	    var methodIframeOpened = false;
+	    
+	    var msgEmptyListError = /*[[#{nursery.advance.nursery.empty.list.error}]]*/;
 	    
  		 $(function() {
  			var harvestDate =  $('#harvestDate').datepicker({'format': 'yyyymmdd'}).on('changeDate', function(ev) {

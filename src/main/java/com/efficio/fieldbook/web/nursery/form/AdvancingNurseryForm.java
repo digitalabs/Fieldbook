@@ -92,7 +92,9 @@ public class AdvancingNurseryForm {
 	private int totalPages;
 	
 	/** The result per page. */
-	private int resultPerPage = 100;	
+	private int resultPerPage = 100;
+	
+	private int plotsWithPlantsSelected;
     
 	
 	/**
@@ -536,6 +538,14 @@ public class AdvancingNurseryForm {
 	            this.currentPage = 0;
 	        }
 		}
+	
+	public int getPlotsWithPlantsSelected() {
+	    return plotsWithPlantsSelected;
+	}
+	
+	public void setPlotsWithPlantsSelected(int plotsWithPlantsSelected) {
+	    this.plotsWithPlantsSelected = plotsWithPlantsSelected;
+	}
 
 		@Override
         public String toString() {

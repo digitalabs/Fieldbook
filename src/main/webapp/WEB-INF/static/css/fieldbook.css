@@ -669,3 +669,16 @@ td.nurseryLevelVariableSetting {
 div.possibleValuesDiv{
 	padding-bottom: 5px;
 }
+#addVariablesSettingBody #ontology-values-tab-li, #addVariablesSettingBody #ontology-usage-tab-li{
+	display: none;
+}
+.select-variable{
+	display: none;
+}
+.variable-detail-info{
+	display: none;
+}
+#addVariablesSettingBody .select-variable
+{
+	display: block;
+}

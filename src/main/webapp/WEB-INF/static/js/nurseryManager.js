@@ -363,19 +363,29 @@ function recreateMethodComboAfterClose(comboName, data) {
 
 function openAddVariablesSetting(variableType) {
 	//change heading of popup based on clicked link
-	$('#var-info').slideUp('fast');
+	//$('#var-info').slideUp('fast');
+	$('#ontology-detail-tabs').empty().html($('.variable-detail-info').html());		
+	//this would reset the tree view	
+	
+    
+	
 	switch (parseInt(variableType)) {
 		case 1:
 			$("#heading-modal").text(addNurseryLevelSettings);
+			$('#reminder-placeholder').html(reminderNursery);
+			
 			break;
 		case 2:
 			$("#heading-modal").text(addPlotLevelSettings);
+			$('#reminder-placeholder').html(reminderPlot);
 			break;
 		case 3:
 			$("#heading-modal").text(addBaselineTraits);
+			$('#reminder-placeholder').html(reminderTraits);
 			break;
 	default: 
 		$("#heading-modal").text(addNurseryLevelSettings);
+		$('#reminder-placeholder').html(reminderNursery);
 	}
 	getStandardVariables(variableType);
 	
@@ -389,8 +399,21 @@ function getStandardVariables(variableType) {
 		cache: false,
 		success: function (data) {
 			//clear and initialize standard variable combo
-			initializeStandardVariableSearch([]);
-			initializeStandardVariableSearch($.parseJSON(data));
+			//initializeStandardVariableSearch([]);
+			//initializeStandardVariableSearch($.parseJSON(data));
+			//console.log(data.treeData);
+			//console.log(data.searchtreeData);
+			
+			if(treeData != null){
+				$("#"+treeDivId).dynatree("destroy");				
+			}
+			treeData = data.treeData;
+			searchTreeData = data.searchTreeData;
+			displayOntologyTree(treeDivId, treeData, searchTreeData, 'srch-term');
+			$('#'+'srch-term').val('');
+			$(".tt-hint").css('top','3px');
+	  	     $(".tt-hint").css('left','0px');
+			
 			
 			//clear selected variables table and attribute fields
 			$("#newVariablesList > tbody").empty();
@@ -514,7 +537,7 @@ function addVariableToList() {
 	//if selected variable is not yet in the list and is not blank or new, add it
 	if (notInList($("#selectedStdVarId").val()) && $("#selectedStdVarId").val() != "") {
 		newRow = "<tr>";
-		newRow = newRow + "<td class='"+className+"'><input type='hidden' class='addVariables' id='selectedVariables"+ ctr + ".cvTermId' " +  
+		newRow = newRow + "<td class='"+className+"'><input type='hidden' class='addVariables cvTermIds' id='selectedVariables"+ ctr + ".cvTermId' " +  
 			"name='selectedVariables["+ ctr + "].cvTermId' value='" + $("#selectedStdVarId").val() + "' />";
 		newRow = newRow + "<input type='text' class='addVariables' id='selectedVariables"+ ctr + ".name' " +  
 			"name='selectedVariables["+ ctr + "].name' value='" + $("#selectedName").val() + "' /></td>";
@@ -526,7 +549,9 @@ function addVariableToList() {
 		
 		$("#newVariablesList").append(newRow);
 		$("#page-message-modal").html("");
+		
 	} else {
+		
 		$("#page-message-modal").html(
 			    "<div class='alert alert-danger'>"+ varInListMessage +"</div>"
 		);
@@ -535,8 +560,15 @@ function addVariableToList() {
 	
 function notInList(id) {
 	var isNotInList = true;
+	/*
 	$.each($("#newVariablesList tbody tr"), function() {
 		if ($(this).find("input[type='hidden']").val() == id) {
+			isNotInList = false;
+		}
+	});
+	*/
+	$.each($('.cvTermIds'), function() {
+		if ($(this).val() == id) {
 			isNotInList = false;
 		}
 	});
@@ -607,7 +639,7 @@ function createNurseryLevelSettingVariables(data) {
 		
 		//create html elements dynamically
 		newRow = newRow + "<td class='nurseryLevelVariableSetting'>" + isDelete + 
-		"<input type='hidden' id='nurseryLevelVariables" + ctr + ".variable.cvTermId' name='nurseryLevelVariables[" + 
+		"<input class='cvTermIds' type='hidden' id='nurseryLevelVariables" + ctr + ".variable.cvTermId' name='nurseryLevelVariables[" + 
 		ctr + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
 		//newRow = newRow + "<td>" + settingDetail.variable.name + ':' + '<span class="required">*</span>' +  "</td>";
@@ -744,7 +776,7 @@ function createPlotLevelSettingVariables(data) {
 			settingDetail.variable.cvTermId + ",$(this))'></span>";
 		}
 		newRow = newRow + "<td style='text-align: center' class='"+className+"'>" + isDelete + 
-		"<input type='hidden' id='plotLevelVariables" + (length-1) + ".variable.cvTermId' name='plotLevelVariables[" + 
+		"<input class='cvTermIds' type='hidden' id='plotLevelVariables" + (length-1) + ".variable.cvTermId' name='plotLevelVariables[" + 
 		(length-1) + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
 		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.name + "</td>"; 
@@ -766,7 +798,7 @@ function createBaselineTraitVariables(data) {
 		}
 		
 		newRow = newRow + "<td style='text-align: center' class='"+className+"'>" + isDelete + 
-		"<input type='hidden' id='baselineTraitVariables" + (length-1) + ".variable.cvTermId' name='baselineTraitVariables[" + 
+		"<input class='cvTermIds' type='hidden' id='baselineTraitVariables" + (length-1) + ".variable.cvTermId' name='baselineTraitVariables[" + 
 		(length-1) + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
 		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.name + "</td>";		

@@ -8,66 +8,19 @@
 
 <div class="row">
 <div class="panel panel-default">
-		    	<div class="panel-body manage-settings-panel-body">
+   	<div class="panel-body manage-settings-panel-body">
 		    		
-	<div class="row">
-		<div class="col-xs-10 col-md-10">	
-		&nbsp;
-		</div>
-		<div class="col-xs-2 col-md-2">	
-		
-			<!-- <input type="button" th:value="#{ontology.browser.button.manage.variable}" class="btn btn-default btn-log" 
-			data-toggle="modal" href="#addVariableModal" onClick="clearFields()" />
-			 -->
-			 <a href="/OntologyManageVariable/" class="btn btn-info" th:href="@{/OntologyManager/manage/variable}" th:text="#{ontology.browser.button.manage.variable}">.Manage Variable</a>
-		</div>
-	</div>	
-	<div class="row">
-		<div class="col-xs-5 col-md-5">        
-	        <div class="form-group" id="page-message"></div>
-	        <h4 th:text="#{ontology.search.name}">
-	            Enter a property or variable name:*
-	        </h4>
-        </div>
-        
-		<div class="col-xs-7 col-md-7">
-			<div class="form-group"></div>  
-			<h4 id="variable-details">	            
-	        </h4>      	        	        
-        </div>
-    
-    </div>
-    
-	<div class="row">
-		<div class="col-xs-5 col-md-5">        
-	        <div class="input-group">
-	            <input type="text" id="srch-term" name="srch-term" placeholder="Search" class="form-control"/>
-	            <span class="input-group-addon "><i class="glyphicon glyphicon-search"></i></span>
-	            <!-- 
-	            <div class="input-group-btn">
-	                <button type="button" class="btn btn-default" onclick="javascript: void(0)"><i class="glyphicon glyphicon-search"></i></button>
-	            </div>
-	             -->
-	        </div>
-        </div>
-    </div>	
-    
-    <div class="row">
-        &nbsp;
-    </div>
-    
-	<div class="row">
-		<div class="col-xs-5 col-md-5">
-			<div id="ontology-browser-tree" th:include="/OntologyBrowser/traitTree">		
-		    </div>
-	    </div>
-	    <div id="ontology-detail-tabs">
-	    
-	    </div>
-    </div>
-   
-     <a style="display: none" id="ontologyBaseUrl" href="/OntologyBrowser" th:href="@{/OntologyBrowser/}">test</a>
-     </div></div>
+		<div class="row">
+			<div class="col-xs-10 col-md-10">	
+			&nbsp;
+			</div>
+			<div class="col-xs-2 col-md-2">	
+				 <a href="/OntologyManageVariable/" class="btn btn-info" th:href="@{/OntologyManager/manage/variable}" th:text="#{ontology.browser.button.manage.variable}">.Manage Variable</a>
+			</div>
+		</div>	
+		<div th:include="/OntologyBrowser/browserInfo"></div>
+     </div>
+  </div>
 </div>
 <div layout:fragment="page-script">		
 	<link th:href="@{/static/css/typeahead.js-bootstrap.css}" rel="stylesheet"/>
@@ -84,18 +37,7 @@
    	
    	var ontologyUrl = $('#ontologyBaseUrl').attr('href');
    	
-   	$( document ).ready(function() {  	     
-  	  
-  	  //fix for the typeahead
-  	 
-	//display tree
-  	  displayOntologyTree(treeDivId, treeData, searchTreeData, 'srch-term');
-     $.fn.modal.Constructor.prototype.enforceFocus = function () {};
-     $(".tt-hint").css('top','3px');
-	  $(".tt-hint").css('left','0px');
-	  $("#srch-term").css('background-color','#FFFFFF');
-    });
-   	
+   
 
   	
    	$('#srch-term').on("keypress", function(e) {

@@ -99,7 +99,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 											<td style="max-width:50px; min-width:50px;" class="nurseryLevelVariableSetting">
 												<span style="cursor: default; font-size: 16px;" th:if="${nurseryLevelVariable.delete}" class="glyphicon glyphicon-remove-circle" 
 												th:onclick="'javascript: deleteVariable(1,\'' + ${nurseryLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
-												<input type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
+												<input class="cvTermIds" type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 											</td>
 											<td style="max-width:150px; min-width:150px;" class="nurseryLevelVariableSetting"><label class="control-label" th:text="${nurseryLevelVariable.variable.name}"></label>:</td>
 											<td style="max-width:200px; min-width:200px;">
@@ -196,7 +196,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 												<span style="cursor: default; font-size: 16px;" th:if="${plotLevelVariable.delete}" class="glyphicon glyphicon-remove-circle"
 					    						th:onclick="'javascript: deleteVariable(2,\'' + ${plotLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
 					    						  			    						 
-					    						<input type="hidden" th:field="*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
+					    						<input class="cvTermIds" type="hidden" th:field="*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 				    						</td>
 					    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.name}"></td>
 					    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.description}"></td>
@@ -248,7 +248,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 						    						<span style="cursor: default; font-size: 16px;" th:if="${baselineTraitVariable.delete}" class="glyphicon glyphicon-remove-circle"
 						    						th:onclick="'javascript: deleteVariable(3,\'' + ${baselineTraitVariable.variable.cvTermId} + '\',$(this))'"></span>
 						    									    					
-						    						<input type="hidden" th:field="*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId}" />
+						    						<input class="cvTermIds" type="hidden" th:field="*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId}" />
 					    						</td>
 						    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.name}"></td>
 						    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.description}"></td>
@@ -390,7 +390,16 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
        		var locationId = /*[[#{nursery.managesettings.trial.location.id}]]*/;
        		var showFavoriteMethodLabel = /*[[#{show.favorite.method}]]*/;
        		var showFavoriteLocationLabel = /*[[#{show.favorite.location}]]*/;
+       		
+       		
+       		
        		var inputChange = false;
+       		var reminderNursery = /*[[#{nursery.reminder.add.nursery.settings}]]*/;
+       		var reminderPlot = /*[[#{nursery.reminder.add.plot.settings}]]*/;
+       		var reminderTraits = /*[[#{nursery.reminder.add.trait.settings}]]*/;
+       	
+       		
+       		
  			$( document ).ready(function() {
  				/*
  				if($('#initialLoad').val() == '1'){

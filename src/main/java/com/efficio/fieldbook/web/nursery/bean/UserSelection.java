@@ -20,6 +20,7 @@ import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.TraitClassReference;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -79,6 +80,8 @@ public class UserSelection implements Serializable {
     /** The standard variable map. */
     private Map<String, StandardVariable> standardVariableMap = new HashMap<String, StandardVariable>(); //for easy access
     
+    /** The trait ref list. */
+    private List<TraitClassReference> traitRefList;
 	/**
 	 * Gets the current page.
 	 *
@@ -317,6 +320,7 @@ public class UserSelection implements Serializable {
 	/**
 	 * Gets the all standard variables.
 	 *
+	 * @param id the id
 	 * @return the allStandardVariables
 	 */
 //	public Set<StandardVariable> getAllStandardVariables() {
@@ -352,6 +356,11 @@ public class UserSelection implements Serializable {
 		return null;
 	}
 	
+	/**
+	 * Put standard variable in cache.
+	 *
+	 * @param variable the variable
+	 */
 	public void putStandardVariableInCache(StandardVariable variable) {
 		standardVariableMap.put(Integer.toString(variable.getId()), variable);
 	}
@@ -373,6 +382,24 @@ public class UserSelection implements Serializable {
 	public void setImportedAdvancedGermplasmList(
 			List<ImportedGermplasm> importedAdvancedGermplasmList) {
 		this.importedAdvancedGermplasmList = importedAdvancedGermplasmList;
+	}
+
+	/**
+	 * Gets the trait ref list.
+	 *
+	 * @return the trait ref list
+	 */
+	public List<TraitClassReference> getTraitRefList() {
+		return traitRefList;
+	}
+
+	/**
+	 * Sets the trait ref list.
+	 *
+	 * @param traitRefList the new trait ref list
+	 */
+	public void setTraitRefList(List<TraitClassReference> traitRefList) {
+		this.traitRefList = traitRefList;
 	}
 
     

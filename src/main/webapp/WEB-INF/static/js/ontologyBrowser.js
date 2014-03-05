@@ -65,7 +65,9 @@ function searchOntologyTreeNodeWithName(treeName, name) {
 
 function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId){
 	//for triggering the start of search type ahead
-	
+	if(treeData == null){
+		return;
+	}
 	var searchTypeAhead = $('#'+searchDivId).typeahead({
    	  name: 'OntologyBrowserSearchTree', 
    	  local:  $.parseJSON(searchTreeData),
@@ -141,6 +143,7 @@ function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId){
 //Tab functions
 function processTab(variableName, variableId) {
 	viewTabs(variableName, variableId);
+	
 }
 
 function showSelectedTab(selectedTabName) {
@@ -164,8 +167,15 @@ function clearAndAppendOntologyDetailsTab(variableName, html){
 		$("#variable-details").html(varDetails);
 	}		
 	else{
-		$("#ontology-detail-tabs").empty();
-		$("#variable-details").html('');
+		// we dont clear if there is an information tab
+		if($('#addVariablesSettingBody').length == 0){
+			$("#ontology-detail-tabs").empty();
+			$("#variable-details").html('');	
+		}else{
+			//we set the reminder
+			$('#ontology-detail-tabs').empty().append($('.variable-detail-info').html());
+		}
+		
 		
 	}
 		
@@ -178,7 +188,19 @@ function viewTabs(variableName, variableId) {
 		type: "get",
 		//dataType: "json",
 		success: function(html) {
-			clearAndAppendOntologyDetailsTab(variableName, html);			
+			clearAndAppendOntologyDetailsTab(variableName, html);	
+			
+			
+			if($('#selectedStdVarId').length != 0){
+				
+				$('#selectedStdVarId').val(variableId);
+				
+			}
+			if($('#selectedName').length != 0){
+				
+				$('#selectedName').val(variableName);
+				
+			}
 		},
 		error: function(jqXHR, textStatus, errorThrown){ 
 			console.log("The following error occured: " + textStatus, errorThrown); 

@@ -12,8 +12,10 @@
 package com.efficio.fieldbook.web.nursery.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -24,11 +26,13 @@ import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
 import org.generationcp.middleware.pojos.workbench.Tool;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -47,6 +51,7 @@ import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.ManageSettingsForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.TreeViewUtil;
 
 /**
  * The Class SaveAdvanceNurseryController.
@@ -76,6 +81,9 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     /** The user selection. */
     @Resource
     private UserSelection userSelection;
+    
+    @Resource
+    private OntologyService ontologyService;
          
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
@@ -126,6 +134,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     }
     
     
+    
     /**
      * Shows the screen.
      *
@@ -139,10 +148,14 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     public String show(@ModelAttribute("manageSettingsForm") ManageSettingsForm form
             , Model model, HttpSession session) throws MiddlewareQueryException{
     	session.invalidate();
+    	
+    	
+        
     	//we need to get the default settings if there is
         //only has value for clear setting, the rest null            	
     	setupDefaultScreenValues(form, getDefaultTemplateSettingFilter());
     	form.setProjectId(this.getCurrentProjectId());
+    	//setupFormData(form);
     	return super.show(model);
     }
     
@@ -231,6 +244,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	    	
     	setupDefaultScreenValues(form, getDefaultTemplateSettingFilter());
     	model.addAttribute("settingsList", getSettingsList());
+    	//setupFormData(form);
     	return super.showAjaxPage(model, getContentName() );
     }
     
@@ -270,6 +284,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	}
     	model.addAttribute("manageSettingsForm", form);
     	model.addAttribute("settingsList", getSettingsList());
+    	//setupFormData(form);
         return super.showAjaxPage(model, getContentName() );
     }
     
@@ -311,6 +326,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	}
     	model.addAttribute("manageSettingsForm", form);
     	model.addAttribute("settingsList", getSettingsList());
+    	//setupFormData(form);
         return super.showAjaxPage(model, getContentName() );
     }
     
@@ -322,20 +338,42 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
      */
     @ResponseBody
     @RequestMapping(value = "displayAddSetting/{mode}", method = RequestMethod.GET)
-    public String showAddSettingPopup(@PathVariable int mode) {
+    public Map<String, Object> showAddSettingPopup(@PathVariable int mode) {
+		Map<String, Object> result = new HashMap<String, Object>();
     	try {
+
         	List<StandardVariableReference> standardVariableList = 
         			fieldbookService.filterStandardVariablesForSetting(mode, getSettingDetailList(mode));
+        	
+        	try{
+        		if(userSelection.getTraitRefList() == null){
+        			List<TraitClassReference> traitRefList = (List<TraitClassReference>) 
+        	                ontologyService.getAllTraitGroupsHierarchy(true);
+        			userSelection.setTraitRefList(traitRefList);
+        		}
+        			List<TraitClassReference> traitRefList = userSelection.getTraitRefList();
+        			String treeData = TreeViewUtil.convertOntologyTraitsToJson(traitRefList, standardVariableList);
+        	        String searchTreeData = TreeViewUtil.convertOntologyTraitsToSearchSingleLevelJson(traitRefList, standardVariableList);
+        	        result.put("treeData", treeData);
+        	        result.put("searchTreeData", searchTreeData);
+        		
+    	        //form.setTraitClassReferenceList(traitRefList);
+    	        
+        	}catch(Exception e){
+        		LOG.error(e.getMessage());
+        	}
+        	/*
         	if (standardVariableList != null && !standardVariableList.isEmpty()) {
         		ObjectMapper om = new ObjectMapper();
         		return om.writeValueAsString(standardVariableList);
         	}
-
+			*/
     	} catch(Exception e) {
     		LOG.error(e.getMessage(), e);
     	}
     	
-    	return "[]";
+    	//return "[]";
+    	return result;
     }
     
     /**

@@ -5,7 +5,7 @@
 		<div th:if="*{dataTypeName != null AND #strings.startsWith(dataTypeName,'Numeric')}">
 		
 			<div th:if="*{constraints == null}">
-				<div th:text="#{ontology.browser.validValuesTab.noMinMaxValue}">This numeric variable has no mininum and maximum value constraint</div>
+				<div class="col-xs-12 col-md-12" th:text="#{ontology.browser.validValuesTab.noMinMaxValue}">This numeric variable has no mininum and maximum value constraint</div>
 			</div>
 			<div th:unless="*{constraints == null}">
  				<div class="form-group">
@@ -25,7 +25,7 @@
 
 		<div th:if="*{dataTypeName != null AND #strings.startsWith(dataTypeName,'Categorical')}">
 			<div th:if="*{categoricalValues == null}">
-				<div th:text="#{ontology.browser.validValuesTab.noCategoricalValue}">This categorical variable has no pre-defined set of valid values</div>
+				<div class="col-xs-12 col-md-12" th:text="#{ontology.browser.validValuesTab.noCategoricalValue}">This categorical variable has no pre-defined set of valid values</div>
 			</div>
 			<div th:unless="*{categoricalValues == null}">
 				<table style="margin-left: 12px; width: 95%" class="table table-curved">
@@ -46,7 +46,7 @@
 		</div>
 		
 		<div  th:if="*{dataTypeName != null AND #strings.startsWith(dataTypeName,'Character')}">
-			<div th:text="#{ontology.browser.validValuesTab.characterVariableValidValue}">Character variables have no pre-defined selection of values</div>
+			<div class="col-xs-12 col-md-12" th:text="#{ontology.browser.validValuesTab.characterVariableValidValue}">Character variables have no pre-defined selection of values</div>
 		</div>
 		
 	</form>

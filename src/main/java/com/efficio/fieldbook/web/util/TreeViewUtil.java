@@ -12,6 +12,7 @@
 package com.efficio.fieldbook.web.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -227,15 +228,21 @@ public class TreeViewUtil {
 	 * @throws Exception the exception
 	 */
 	public static String convertOntologyTraitsToSearchSingleLevelJson(
-	        List<TraitClassReference> traitClassReferences) throws Exception {
+	        List<TraitClassReference> traitClassReferences, List<StandardVariableReference> showStandardVariableList) throws Exception {
                 
         //return treeNodes;
-        
-        return convertSearchTreeViewToJson(getTypeAheadTreeNodes("", traitClassReferences));
+		HashMap<String, StandardVariableReference> mapVariableRef = new HashMap<String, StandardVariableReference>();
+		if(showStandardVariableList != null && !showStandardVariableList.isEmpty()){
+			for(StandardVariableReference varRef: showStandardVariableList){
+				mapVariableRef.put(varRef.getId().toString(), varRef);
+			}
+		}
+		
+        return convertSearchTreeViewToJson(getTypeAheadTreeNodes("", traitClassReferences, mapVariableRef));
     }
 	
 	private static List<TypeAheadSearchTreeNode> getTypeAheadTreeNodes(
-	        String parentId, List<TraitClassReference> traitClassReferences){
+	        String parentId, List<TraitClassReference> traitClassReferences, HashMap<String, StandardVariableReference> mapVariableRef){
 	    List<TypeAheadSearchTreeNode> treeNodes = new ArrayList<TypeAheadSearchTreeNode>();
 
 	    if (traitClassReferences != null && !traitClassReferences.isEmpty()) {
@@ -248,7 +255,7 @@ public class TreeViewUtil {
                         newParentId = parentId + "_";
                     }
                     newParentId = newParentId + reference.getId().toString();
-                    treeNodes.addAll(getTypeAheadTreeNodes(newParentId, reference.getTraitClassChildren()));
+                    treeNodes.addAll(getTypeAheadTreeNodes(newParentId, reference.getTraitClassChildren(), mapVariableRef));
                 }
                 
                 List<PropertyReference> propRefList = reference.getProperties();
@@ -268,13 +275,29 @@ public class TreeViewUtil {
                     treeNodes.add(searchTreeNode);
                     
                     for(StandardVariableReference variableRef : variableRefList){
-                        String varParentTitle = reference.getName() + " > " + propRef.getName();
-                        String varKey = key + "_" + variableRef.getId().toString();
-                        List<String> varToken = new ArrayList<String>();
-                        varToken.add(variableRef.getName());
-                        TypeAheadSearchTreeNode varSearchTreeNode = new TypeAheadSearchTreeNode(
-                                varKey, varToken, variableRef.getName(), varParentTitle, "Standard Variable");
-                        treeNodes.add(varSearchTreeNode);
+                    	boolean addVariableToSearch = true;
+                    	if(mapVariableRef != null){
+                    		if(!mapVariableRef.isEmpty()){
+                    			//we only show variables that are in the map
+                    			if(mapVariableRef.containsKey(variableRef.getId().toString())){
+                    				addVariableToSearch = true;
+                    			}else{
+                    				addVariableToSearch = false;
+                    			}
+                    		}
+                    	}
+                			
+                			
+                		
+                    	if(addVariableToSearch){
+	                        String varParentTitle = reference.getName() + " > " + propRef.getName();
+	                        String varKey = key + "_" + variableRef.getId().toString();
+	                        List<String> varToken = new ArrayList<String>();
+	                        varToken.add(variableRef.getName());
+	                        TypeAheadSearchTreeNode varSearchTreeNode = new TypeAheadSearchTreeNode(
+	                                varKey, varToken, variableRef.getName(), varParentTitle, "Standard Variable");
+	                        treeNodes.add(varSearchTreeNode);
+                    	}
                     }
                 }
                 
@@ -292,7 +315,7 @@ public class TreeViewUtil {
 	 * @return the string
 	 * @throws Exception the exception
 	 */
-	public static String convertOntologyTraitsToJson(List<TraitClassReference> traitClassReferences) 
+	public static String convertOntologyTraitsToJson(List<TraitClassReference> traitClassReferences, List<StandardVariableReference> showStandardVariableList) 
 	        throws Exception {
 	    /*
 	    TreeNode treeNode = new TreeNode();
@@ -304,7 +327,15 @@ public class TreeViewUtil {
         treeNode.setExpand(true);
         treeNode.setIcon(false);
         */
-        List<TreeNode> treeNodes = convertTraitClassReferencesToTreeView(traitClassReferences);
+		
+		HashMap<String, StandardVariableReference> mapVariableRef = new HashMap<String, StandardVariableReference>();
+		if(showStandardVariableList != null && !showStandardVariableList.isEmpty()){
+			for(StandardVariableReference varRef: showStandardVariableList){
+				mapVariableRef.put(varRef.getId().toString(), varRef);
+			}
+		}
+		
+        List<TreeNode> treeNodes = convertTraitClassReferencesToTreeView(traitClassReferences, mapVariableRef);
         
 //        treeNode.setChildren(treeNodes);
         
@@ -321,11 +352,11 @@ public class TreeViewUtil {
 	 * @return the list
 	 */
 	private static List<TreeNode> convertTraitClassReferencesToTreeView(
-	        List<TraitClassReference> traitClassReferences) {
+	        List<TraitClassReference> traitClassReferences, HashMap<String, StandardVariableReference> mapVariableRef) {
         List<TreeNode> treeNodes = new ArrayList<TreeNode>();
         if (traitClassReferences != null && !traitClassReferences.isEmpty()) {
             for (TraitClassReference reference : traitClassReferences) {
-                treeNodes.add(convertTraitClassReferenceToTreeNode("", reference));
+                treeNodes.add(convertTraitClassReferenceToTreeNode("", reference, mapVariableRef));
             }
         }
         return treeNodes;
@@ -338,7 +369,7 @@ public class TreeViewUtil {
 	 * @return the tree node
 	 */
 	private static TreeNode convertTraitClassReferenceToTreeNode(
-	        String parentParentId, TraitClassReference reference) {
+	        String parentParentId, TraitClassReference reference, HashMap<String, StandardVariableReference> mapVariableRef) {
         TreeNode treeNode = new TreeNode();
         String parentId = reference.getId().toString();
         if(parentParentId != null && !parentParentId.equalsIgnoreCase("")){
@@ -358,14 +389,14 @@ public class TreeViewUtil {
         //this is for the inner trait classes
         if(reference.getTraitClassChildren() != null && !reference.getTraitClassChildren().isEmpty()){
             for (TraitClassReference childTrait : reference.getTraitClassChildren()) {
-                treeNodes.add(convertTraitClassReferenceToTreeNode(parentId, childTrait));
+                treeNodes.add(convertTraitClassReferenceToTreeNode(parentId, childTrait, mapVariableRef));
             }
         }
         //we need to set the children for the property
         
         if(reference.getProperties() != null && !reference.getProperties().isEmpty()){
             for (PropertyReference propRef : reference.getProperties()) {
-                treeNodes.add(convertPropertyReferenceToTreeNode(parentId, propRef, reference.getName()));
+                treeNodes.add(convertPropertyReferenceToTreeNode(parentId, propRef, reference.getName(), mapVariableRef));
             }
             
         }
@@ -383,7 +414,7 @@ public class TreeViewUtil {
 	 * @return the tree node
 	 */
 	private static TreeNode convertPropertyReferenceToTreeNode(
-	        String parentId, PropertyReference reference, String parentTitle) {
+	        String parentId, PropertyReference reference, String parentTitle, HashMap<String, StandardVariableReference> mapVariableRef) {
         TreeNode treeNode = new TreeNode();
         String id = parentId+"_"+reference.getId().toString();
         treeNode.setKey(id);
@@ -400,7 +431,9 @@ public class TreeViewUtil {
         List<TreeNode> treeNodes = new ArrayList<TreeNode>();
         if(reference.getStandardVariables() != null && !reference.getStandardVariables().isEmpty()){
             for (StandardVariableReference variableRef : reference.getStandardVariables()) {
-                treeNodes.add(convertStandardVariableReferenceToTreeNode(id, variableRef, newParentTitle));
+            	TreeNode variableTreeNode = convertStandardVariableReferenceToTreeNode(id, variableRef, newParentTitle, mapVariableRef);
+    			if(variableTreeNode != null)
+    				treeNodes.add(variableTreeNode);
             }
             
         }
@@ -418,7 +451,15 @@ public class TreeViewUtil {
 	 * @return the tree node
 	 */
 	private static TreeNode convertStandardVariableReferenceToTreeNode(
-	        String parentId, StandardVariableReference reference, String parentTitle) {
+	        String parentId, StandardVariableReference reference, String parentTitle, HashMap<String, StandardVariableReference> mapVariableRef) {
+		
+		if(mapVariableRef != null && !mapVariableRef.isEmpty()){
+			//we only show variables that are in the map
+			if(!mapVariableRef.containsKey(reference.getId().toString())){
+				return null;
+			}
+		}
+		
         TreeNode treeNode = new TreeNode();
         String id = parentId+"_"+reference.getId().toString();
         treeNode.setKey(id);

@@ -91,9 +91,9 @@ public class OntologyController extends AbstractBaseFieldbookController{
             List<TraitClassReference> traitRefList = (List<TraitClassReference>) 
                     ontologyService.getAllTraitGroupsHierarchy(true);
             form.setTraitClassReferenceList(traitRefList);
-            form.setTreeData(TreeViewUtil.convertOntologyTraitsToJson(traitRefList));
+            form.setTreeData(TreeViewUtil.convertOntologyTraitsToJson(traitRefList, null));
             form.setSearchTreeData(
-                    TreeViewUtil.convertOntologyTraitsToSearchSingleLevelJson(traitRefList));                       
+                    TreeViewUtil.convertOntologyTraitsToSearchSingleLevelJson(traitRefList, null));                       
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }

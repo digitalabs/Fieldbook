@@ -13,6 +13,8 @@ package com.efficio.fieldbook.web.nursery.form;
 
 import java.util.List;
 
+import org.generationcp.middleware.domain.oms.TraitClassReference;
+
 import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.bean.SettingVariable;
 
@@ -49,6 +51,14 @@ public class ManageSettingsForm {
 	/** The initial load. */
 	private String initialLoad;
 	
+    /** The tree data. */
+    private String treeData;
+    //convert to json 1 level for the property and standard variable
+    /** The search tree data. */
+    private String searchTreeData;
+    /** The trait reference list. */
+    private List<TraitClassReference> traitClassReferenceList;
+
 	/**
 	 * Gets the selected setting id.
 	 *
@@ -212,6 +222,63 @@ public class ManageSettingsForm {
 		 */
 		public void setInitialLoad(String initialLoad) {
 			this.initialLoad = initialLoad;
+		}
+		
+		
+
+		/**
+		 * Gets the tree data.
+		 *
+		 * @return the tree data
+		 */
+		public String getTreeData() {
+			return treeData;
+		}
+
+		/**
+		 * Sets the tree data.
+		 *
+		 * @param treeData the new tree data
+		 */
+		public void setTreeData(String treeData) {
+			this.treeData = treeData;
+		}
+
+		/**
+		 * Gets the search tree data.
+		 *
+		 * @return the search tree data
+		 */
+		public String getSearchTreeData() {
+			return searchTreeData;
+		}
+
+		/**
+		 * Sets the search tree data.
+		 *
+		 * @param searchTreeData the new search tree data
+		 */
+		public void setSearchTreeData(String searchTreeData) {
+			this.searchTreeData = searchTreeData;
+		}
+		
+		/**
+		 * Gets the trait class reference list.
+		 *
+		 * @return the trait class reference list
+		 */
+		public List<TraitClassReference> getTraitClassReferenceList() {
+			return traitClassReferenceList;
+		}
+
+		/**
+		 * Sets the trait class reference list.
+		 *
+		 * @param traitClassReferenceList the new trait class reference list
+		 */
+		public void setTraitClassReferenceList(
+				List<TraitClassReference> traitClassReferenceList) {
+			this.traitClassReferenceList = traitClassReferenceList;
 		}
 
 		/**

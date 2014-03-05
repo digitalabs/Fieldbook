@@ -11,96 +11,12 @@
 		          
 	         	<div class="modal-body" id="addVariablesSettingBody">
 	         		<div class="row">
-	         		<div id="page-message-modal" class="col-xs-12 col-md-12">
-	         		</div>
-	         		</div>
-	         		
-	         		<div class="row">
-						<div class="col-xs-8 col-md-8">
-	         				<input type="text" id="stdVarSearch" class="form-control select2" />
-				        </div>
-				        <div class="col-xs-4 col-md-4">
-				        	<input type="button" id="addVariable" value="Add" th:value="#{common.form.add.text}" class="btn btn-primary" onClick="addVariableToList();" />
-				        </div>
-	         		</div>
-	         		<div class="row">
-						<div class="col-xs-12 col-md-12">&nbsp;</div>
-					</div>
-					<div class="row" id="var-info">
-						<div class="col-xs-12 col-md-12">
-							<div class="panel panel-default">
-								<div class="panel-body panel-body-modal">
-									<div class="form-group">
-										<div class="col-xs-4 col-md-4">
-											<strong class="sub-content-heading">DETAILS:</strong>
-										</div>
-										<div class="col-xs-8 col-md-8">
-										&nbsp;
-										</div>
-									</div>
-									<div class="form-group">
-										<br />
-										<div class="col-xs-4 col-md-4">
-											<label class="control-label" th:text="#{ontology.browser.detailstab.traitClass} + ':'">Trait Class:</label>
-										</div>
-										<div class="col-xs-8 col-md-8">
-											<input type="hidden" id="selectedStdVarId" value="" />
-											<input type="hidden" id="selectedName" value="" />
-											<p id="selectedTraitClass"></p>
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="col-xs-4 col-md-4">
-											<label class="control-label" th:text="#{ontology.browser.detailstab.property} + ':'">Property:</label>
-										</div>
-										<div class="col-xs-8 col-md-8">
-											<p id="selectedProperty"></p>
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="col-xs-4 col-md-4">
-											<label class="control-label" th:text="#{ontology.browser.detailstab.method} + ':'">Method:</label>
-										</div>
-										<div class="col-xs-8 col-md-8">
-											<p id="selectedMethod"></p>
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="col-xs-4 col-md-4">
-											<label class="control-label" th:text="#{ontology.browser.detailstab.scale} + ':'">Scale:</label>
-										</div>
-										<div class="col-xs-8 col-md-8">
-											<p id="selectedScale"></p>
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="col-xs-4 col-md-4">
-											<label class="control-label" th:text="#{ontology.browser.detailstab.dataType} + ':'">Data Type:</label>
-										</div>
-										<div class="col-xs-8 col-md-8">
-											<p id="selectedDataType"></p>
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="col-xs-4 col-md-4">
-											<label class="control-label" th:text="#{ontology.browser.detailstab.role} + ':'">Role:</label>
-										</div>
-										<div class="col-xs-8 col-md-8">
-											<p id="selectedRole"></p>
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="col-xs-4 col-md-4">
-											<label class="control-label" th:text="#{ontology.browser.detailstab.cropOntologyId} + ':'">Crop Ontology ID:</label>
-										</div>
-										<div class="col-xs-8 col-md-8">
-											<p id="selectedCropOntologyId"></p>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
+		         		<div id="page-message-modal" class="col-xs-12 col-md-12">
+		         		</div>
+	         		</div>	         		
+					
+					<div th:include="/OntologyBrowser/browserInfo"></div>
+					<br />
 	         		<div class="row">
 						<div class="col-xs-12 col-md-12">
 			         		<table id="newVariablesList" class="my-class table table-curved table-condensed" style="margin-left:5px;">
@@ -135,12 +51,42 @@
    		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->	
 </div>
-
+<a style="display: none" id="ontologyBaseUrl" href="/OntologyBrowser" th:href="@{/OntologyBrowser/}">test</a>
 <div layout:fragment="page-script">
-	
+	<link th:href="@{/static/css/typeahead.js-bootstrap.css}" rel="stylesheet"/>
+	<script type="text/javascript" th:src="@{/static/js/ontologyBrowser.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/typeahead.min.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/Hogan.js}"></script>
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    
-	           
+	        var treeData = /*[[${manageSettingsForm.treeData}]]*/;
+		    var searchTreeData = /*[[${manageSettingsForm.searchTreeData}]]*/;
+		    var treeDivId = 'ontologyBrowserTree';
+		    var seasrchErrorMessage = /*[[#{ontology.search.error.no.result}]]*/;
+		   	var variableDetailHeader = /*[[#{ontology.variable.details}]]*/;
+		   	
+		   	var ontologyUrl = $('#ontologyBaseUrl').attr('href');
+		   	
+		   	$( document ).ready(function() {  	     
+		  	  
+		  	  //fix for the typeahead
+		  	 
+			//display tree
+		  	  displayOntologyTree(treeDivId, treeData, searchTreeData, 'srch-term');
+		     $.fn.modal.Constructor.prototype.enforceFocus = function () {};
+		     $(".tt-hint").css('top','3px');
+			  $(".tt-hint").css('left','0px');
+			  $("#srch-term").css('background-color','#FFFFFF');
+		    });
+		   	
+		
+		  	
+		   	$('#srch-term').on("keypress", function(e) {
+		        if (e.keyCode == 13) {
+		        	//doSearchTree();
+		            return false; // prevent the button click from happening
+		        }
+			});   
     //]]>
     </script>
 </div>

@@ -240,7 +240,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
             TraitClassReference refAll = new TraitClassReference(0, "ALL");
             refAll.setTraitClassChildren(traitRefList);
             parentList.add(refAll);
-            model.addAttribute("traitClassTreeData", TreeViewUtil.convertOntologyTraitsToJson(parentList));
+            model.addAttribute("traitClassTreeData", TreeViewUtil.convertOntologyTraitsToJson(parentList, null));
             model.addAttribute("traitClassesSuggestionList", traitClass);
             model.addAttribute("propertiesSuggestionList", ontologyService.getAllPropertiesWithTraitClass());
             model.addAttribute("methodsSuggestionList", ontologyService.getAllMethods());
@@ -952,7 +952,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                 refAll.setTraitClassChildren(traitRefList);
                 parentList.add(refAll);
                 try {
-                    result.put("traitClassTreeData", TreeViewUtil.convertOntologyTraitsToJson(parentList));
+                    result.put("traitClassTreeData", TreeViewUtil.convertOntologyTraitsToJson(parentList, null));
                 } catch (Exception e) {
                     LOG.error(e.getMessage(), e);
                 }
@@ -1054,7 +1054,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                 refAll.setTraitClassChildren(traitRefList);
                 parentList.add(refAll);
                 try {
-                    result.put("traitClassTreeData", TreeViewUtil.convertOntologyTraitsToJson(parentList));
+                    result.put("traitClassTreeData", TreeViewUtil.convertOntologyTraitsToJson(parentList, null));
                 } catch (Exception e) {
                     LOG.error(e.getMessage(), e);
                 }

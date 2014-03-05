@@ -682,3 +682,14 @@ div.possibleValuesDiv{
 {
 	display: block;
 }
+#ontologyBrowserTree{
+	height: 350px;
+}
+/*
+#addVariablesSettingBody #ontologyBrowserTree{
+	height: 228px;
+}
+#addVariablesSettingBody #ontology-tabs{	 
+	min-height: 200px;	
+}
+*/

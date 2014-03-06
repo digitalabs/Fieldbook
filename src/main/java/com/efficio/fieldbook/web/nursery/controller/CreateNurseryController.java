@@ -149,8 +149,17 @@ public class CreateNurseryController extends AbstractBaseFieldbookController {
     @RequestMapping(method = RequestMethod.POST)
     public String submit(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws MiddlewareQueryException {
     	
-    	System.out.println("SAVING........................");
-    	Dataset dataset = userSelection.getDataset();
+    	String name = null;
+    	for (SettingDetail nvar : form.getNurseryLevelVariables()) {
+    		if (nvar.getVariable() != null && nvar.getVariable().getCvTermId() != null && nvar.getVariable().getCvTermId().equals(TermId.STUDY_NAME.getId())) {
+    			name = nvar.getValue();
+    			break;
+    		}
+    	}
+    	System.out.println("NAME IS " + name);
+    	
+    	Dataset dataset = SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, form.getNurseryLevelVariables(), form.getPlotLevelVariables(), form.getBaselineTraitVariables(), userSelection);
+//    	Dataset dataset = userSelection.getDataset();
     	Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);
     	userSelection.setWorkbook(workbook);
 

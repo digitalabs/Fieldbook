@@ -68,11 +68,19 @@ th:action="@{/handsontable}" method="post" th:object="${handsontableForm}" encty
 		$.each(data, function (index, row) {
 			var measurementDataRow = [];
 			$.each(row.dataList, function(index, dataRow) {
-				measurementDataRow.push(dataRow.value);
+				measurementDataRow.push(checkIsNull(dataRow.value));
 			});
 			measurementData.push(measurementDataRow);
 		})
 		return measurementData;
+	}
+	
+	function checkIsNull(value) {
+		if (value == null) {
+			return "";
+		} else {
+			return value;
+		}
 	}
 	
 	function getFixedColSize(data) {

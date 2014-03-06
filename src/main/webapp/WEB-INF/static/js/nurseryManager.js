@@ -1472,3 +1472,61 @@ function chooseSelectedNursery() {
 	    }  
 	})
 }
+
+function validateCreateNursery() {
+	var hasError = false;
+	var name;
+	var customMessage = '';
+	if ($("#selectedSettingId").val() == '0') {
+		hasError = true;
+		name = $("#settingsSelectLabel").text();
+		customMessage = requiredSettingErrorMessage;
+	}
+	else if ($("#folderId").val() == '') {
+		hasError = true;
+		name = $("#folderLabel").text();
+	}
+	else if ($("#fieldLayoutRandom").val() == '') {
+		hasError = true;
+		name = $("#expDesignLabel").text();
+	}
+	/*else if ($("#imported-germplasm-list").html().indexOf("GID") > -1) {
+		hasError = true;
+		name = $("#germplasmLabel").text();
+	}*/
+	else {
+		
+		var cvTermId;
+		$('.nurseryLevelVariableIdClass').each(function(){
+			if (!hasError) {
+				cvTermId = $(this).val();
+				
+				if ($.inArray(cvTermId, requiredFields) > -1) {
+					if ($(this).parent().find(".form-control").hasClass("select2") && $(this).parent().find(".form-control").select2("data")) {
+						idname = $(this).parent().find(".form-control").attr("id");
+						//console.log(idname);
+						value = $("#" + getJquerySafeId(idname)).select2("data").text;
+					}
+					else {
+						value = $(this).parent().find(".form-control").val();
+					}
+					value = $.trim(value);
+					if (!value) {
+						name = $(this).parent().parent().find(".control-label").html();
+						hasError = true;
+					}
+				}
+			}
+			
+		});
+	}
+	
+	if (hasError){
+		var errMsg = requiredErrorMessage + ": " + name.replace('*', '').replace(":", "");
+		if(customMessage != '')
+			errMsg = customMessage;
+		showErrorMessage('page-message', errMsg);
+		return false;
+	}
+	return true;
+}

@@ -95,6 +95,9 @@ public class AdvancingNurseryForm {
 	private int resultPerPage = 100;
 	
 	private int plotsWithPlantsSelected;
+	
+	private String locationUrl;
+    private String breedingMethodUrl;
     
 	
 	/**
@@ -546,7 +549,26 @@ public class AdvancingNurseryForm {
 	public void setPlotsWithPlantsSelected(int plotsWithPlantsSelected) {
 	    this.plotsWithPlantsSelected = plotsWithPlantsSelected;
 	}
+	
+	public String getLocationUrl() {
+		return locationUrl;
+	}
 
+	public void setLocationUrl(String locationUrl) {
+		this.locationUrl = locationUrl;
+	}
+
+	public String getBreedingMethodUrl() {
+		return breedingMethodUrl;
+	}
+
+	public void setBreedingMethodUrl(String breedingMethodUrl) {
+		this.breedingMethodUrl = breedingMethodUrl;
+	}
+
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
 		@Override
         public String toString() {
             StringBuilder builder = new StringBuilder();

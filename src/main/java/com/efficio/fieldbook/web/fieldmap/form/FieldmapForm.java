@@ -44,6 +44,8 @@ public class FieldmapForm{
     /** The project id. */
     private String projectId;
     
+    private String programLocationUrl;
+    
     
     
     /**
@@ -171,4 +173,14 @@ public class FieldmapForm{
     public void setMarkedCells(String markedCells) {
         this.markedCells = markedCells;
     }
+
+	public String getProgramLocationUrl() {
+		return programLocationUrl;
+	}
+
+	public void setProgramLocationUrl(String programLocationUrl) {
+		this.programLocationUrl = programLocationUrl;
+	}
+    
+    
 }

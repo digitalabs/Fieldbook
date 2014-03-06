@@ -49,7 +49,7 @@
 	<form id="enterFieldDetailsForm" role="form-horizontal" class="form-horizontal" action="#"
 th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapForm}" enctype="multipart/form-data">
 	
-
+	<input type="hidden" th:field="*{programLocationUrl}"/>
 	
 	<div class="form-group col-xs-12 col-md-12" >
 			&nbsp;<strong class="sub-heading col-xs-12 col-md-12" th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.to.be.mapped}">TRIAL TO BE MAPPED:</strong>
@@ -273,7 +273,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
     
     var noOfRowsLimitError = /*[[#{fieldmap.no.of.blocks.exceeds.limit}]]*/;
     
-    var programLocationUrl = /*[[#{nursery.advance.nursery.manage.location.url}]]*/;
+    var programLocationUrl = '';
     var locationIframeOpened = false;
     
     if (trial) {
@@ -291,7 +291,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
     
     
 	$( document ).ready(function() {
-		
+		programLocationUrl = $('#programLocationUrl').val();
 		setSelectedTrialsAsDraggable();
 		calculateTotalPlots();
 										   

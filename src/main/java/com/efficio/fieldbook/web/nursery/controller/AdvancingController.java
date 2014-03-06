@@ -192,6 +192,8 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     		}
     	}
     	advancingNursery.setStudy(study);
+    	form.setLocationUrl(AppConstants.LOCATION_URL.getString());
+    	form.setBreedingMethodUrl(AppConstants.BREEDING_METHOD_URL.getString());
     	return super.show(model);
     }
     

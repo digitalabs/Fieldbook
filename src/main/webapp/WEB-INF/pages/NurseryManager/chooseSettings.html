@@ -2,6 +2,12 @@
 th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
 					<input type="hidden" th:field="*{requiredFields}"/>
 					<input type="hidden" th:field="*{selectedSettingId}"/>
+					<input type="hidden" th:field="*{locationId}"/>
+					<input type="hidden" th:field="*{breedingMethodId}"/>
+					<input type="hidden" th:field="*{locationUrl}"/>
+					<input type="hidden" th:field="*{breedingMethodUrl}"/>
+					<input type="hidden" th:field="*{importLocationUrl}"/>
+					<input type="hidden" th:field="*{projectId}"/>
 					
 	    			<div class="row form-group">
 	    				<div class="col-xs-6 col-md-6">
@@ -19,7 +25,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 			    					<table border="0" id="nurseryLevelSettings" width="400px">
 	                                <tr>
 	                                    <td style="max-width:150px; min-width:150px;">
-	                                        <label id="folderLabel" for="title" th:text="#{nursery.savenursery.savein} + ':'">Save in:*</label><span class="required">*</span>
+	                                        <label id="folderLabel" for="title" th:text="#{nursery.savenursery.savein} + ':'">Save in:*</label>&nbsp;<span class="required">*</span>
 	                                    </td>
 	                                    <td  style="max-width:200px; min-width:200px;">
 	                                        <!--  <span id="folderNameSpan" name="folderNameSpan" ></span>-->
@@ -31,7 +37,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 	                                </tr>
 	                                <tr>
 	                                    <td style="max-width:150px; min-width:150px;">
-	                                        <label id="expDesignLabel" for="fieldLayoutRandom" th:text="#{nursery.nurserydetails.select.field.layout.label} + ': '"></label><span class="required">*</span>
+	                                        <label id="expDesignLabel" for="fieldLayoutRandom" th:text="#{nursery.nurserydetails.select.field.layout.label} + ': '"></label>&nbsp;<span class="required">*</span>
 	                                    </td>
 	                                    <td  style="max-width:200px; min-width:200px;">
 	                                        <select class="form-control" th:field="*{fieldLayoutRandom}">
@@ -42,7 +48,9 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 	                                </tr>
 			    					
 										<tr th:each="nurseryLevelVariable, rowStat : *{nurseryLevelVariables}">											
-											<td style="max-width:150px; min-width:150px;" class="nurseryLevelVariableSetting"><label class="control-label" th:text="${nurseryLevelVariable.variable.name}"></label>:</td>
+											<td style="max-width:150px; min-width:150px;" class="nurseryLevelVariableSetting">
+												<label class="control-label nursery-level-label" th:text="${nurseryLevelVariable.variable.name}"></label>:
+											</td>
 											<td style="max-width:200px; min-width:200px;">
 											 <!-- <div th:text="${nurseryLevelVariable.variable.cvTermId}"></div> -->
 											 <input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].variable.cvTermId}" /> 
@@ -50,20 +58,20 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 												type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].value}" class="form-control select2" />
 												
 												<!-- Show Favorite Location/Method -->
-												<div th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.trial.location.id}" class="possibleValuesDiv">
-												<input th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.trial.location.id}"
+												<div th:if="${nurseryLevelVariable.variable.cvTermId}==*{locationId}" class="possibleValuesDiv">
+												<input
 												type="checkbox" th:field="*{nurseryLevelVariables[__${rowStat.index}__].favorite}" 
 												th:onclick="'javascript: toggleLocationDropdown(\'' + ${rowStat.index} + '\');'" />
 												&nbsp;&nbsp;
-												<span th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.trial.location.id}"
+												<span 
 												th:text="#{show.favorite.location}">Show Favorite Location</span>
 												</div>
-												<div th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.breeding.method.id}" class="possibleValuesDiv">
-												<input th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.breeding.method.id}"
+												<div th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}" class="possibleValuesDiv">
+												<input 
 												type="checkbox" th:field="*{nurseryLevelVariables[__${rowStat.index}__].favorite}" 
 												th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'" />
 												&nbsp;&nbsp;
-												<span th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.breeding.method.id}"
+												<span 
 												th:text="#{show.favorite.method}">Show Favorite Method</span>
 												</div>
 												
@@ -94,8 +102,8 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 												/>
 													 
 												<span>
-													<a th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.trial.location.id}" href="javascript: openManageLocations();" th:text="#{nursery.managesettings.manage.location}">Manage Location</a>
-													<a th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.breeding.method.id}" href="javascript: openManageMethods();" th:text="#{nursery.managesettings.manage.method}">Manage Method</a>
+													<a th:if="${nurseryLevelVariable.variable.cvTermId}==*{locationId}" href="javascript: openManageLocations();" th:text="#{nursery.managesettings.manage.location}">Manage Location</a>
+													<a th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}" href="javascript: openManageMethods();" th:text="#{nursery.managesettings.manage.method}">Manage Method</a>
 												</span>								
 											</td>
 										</tr>
@@ -190,7 +198,16 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
  
 
 </form>
- 
+ <div class="row">
+    	<div class="col-xs-12 col-md-12">
+			<div id="manage-location" th:include="/Common/manageLocationsModal"></div>			
+		</div>
+	</div>
+	<div class="row">
+    	<div class="col-xs-12 col-md-12">
+			<div id="manage-location" th:include="/Common/manageMethodsModal"></div>
+		</div>
+	</div>
 
 	<!-- Modal Dialog for Choosing Folder Location -->
 	<div class="row">
@@ -213,93 +230,51 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 	
     var requiredErrorMessage = /*[[#{ontology.browser.modal.error}]]*/;
     var requiredSettingErrorMessage = /*[[#{nursery.create.nursery.required.setting}]]*/;
-    
+    var locationId = '';
+    var programLocationUrl = '';
+	var programMethodUrl = '';
+	var breedingMethodId = '';
+	var locationIframeOpened = false;
+	var methodIframeOpened = false;
+	var importLocationUrl = '';
+	var requiredFields = [];	
 	$(document).ready(function() {
-		 
 		
+		if($('#requiredFields').val() != ''){
+			requiredFields = $('#requiredFields').val().split(',');	
+		}
+		
+		locationId = $('#locationId').val();
+		breedingMethodId = $('#breedingMethodId').val();
+		programMethodUrl = $('#breedingMethodUrl').val();
+		programLocationUrl = $('#locationUrl').val();
+		importLocationUrl = $('#importLocationUrl').val();
+			
 		$('select').each(function(){
 			$(this).select2();
 		})
 		$("#folderNameSpan").html($("#folderName").val());
 		
-			$.each($(".possibleValuesJson"), function (index, divElem){
+		$.each($(".possibleValuesJson"), function (index, divElem){
+				var select2Index = $(divElem).attr("id").split("possibleValuesJson")[1]; 
+
+				if (parseInt($("#" + getJquerySafeId("nurseryLevelVariables"+select2Index+".variable.cvTermId")).val()) == parseInt(locationId)) {
+					initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 
+	 			 			"#" + getJquerySafeId("nurseryLevelVariables"+select2Index+".value"), true, $(divElem).siblings(".div-select-val").html());
 					
-					if (index == 0) {
-						initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 
-		 			 			"#" + getJquerySafeId("nurseryLevelVariables0.value"), true, $(divElem).siblings(".div-select-val").html());
-						
-					} else {
-						initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 
-		 			 			"#" + getJquerySafeId("nurseryLevelVariables"+index+".value"), false, $(divElem).siblings(".div-select-val").html());
-						
-					}
+				} else {
+					initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 
+	 			 			"#" + getJquerySafeId("nurseryLevelVariables"+select2Index+".value"), false, $(divElem).siblings(".div-select-val").html());
 					
-				});
-				setTimeout('initializeDateAndSliderInputs()', 500);
-		
-	});
-           
-	function validateCreateNursery() {
-		var hasError = false;
-		var name;
-		var customMessage = '';
-		if ($("#selectedSettingId").val() == '0') {
-			hasError = true;
-			name = $("#settingsSelectLabel").text();
-			customMessage = requiredSettingErrorMessage;
-		}
-		else if ($("#folderId").val() == '') {
-			hasError = true;
-			name = $("#folderLabel").text();
-		}
-		else if ($("#fieldLayoutRandom").val() == '') {
-			hasError = true;
-			name = $("#expDesignLabel").text();
-		}
-		/*else if ($("#imported-germplasm-list").html().indexOf("GID") > -1) {
-			hasError = true;
-			name = $("#germplasmLabel").text();
-		}*/
-		else {
-			var requiredFields = [];
-			if($('#requiredFields').val() != ''){
-				requiredFields = $('#requiredFields').val().split(',');	
-			}
-			
-			var cvTermId;
-			$('.nurseryLevelVariableIdClass').each(function(){
-				if (!hasError) {
-					cvTermId = $(this).val();
-					
-					if ($.inArray(cvTermId, requiredFields) > -1) {
-						if ($(this).parent().find(".form-control").hasClass("select2") && $(this).parent().find(".form-control").select2("data")) {
-							idname = $(this).parent().find(".form-control").attr("id");
-							//console.log(idname);
-							value = $("#" + getJquerySafeId(idname)).select2("data").text;
-						}
-						else {
-							value = $(this).parent().find(".form-control").val();
-						}
-						value = $.trim(value);
-						if (!value) {
-							name = $(this).parent().parent().find(".control-label").html();
-							hasError = true;
-						}
-					}
 				}
 				
 			});
-		}
-		
-		if (hasError){
-			var errMsg = requiredErrorMessage + ": " + name.replace('*', '').replace(":", "");
-			if(customMessage != '')
-				errMsg = customMessage;
-			showErrorMessage('page-message', errMsg);
-			return false;
-		}
-		return true;
-	}
+		setTimeout('initializeDateAndSliderInputs()', 500);
+		addCreateNurseryRequiredAsterisk();
+	});
+           
+	
+	
            
 //]]>
 </script>

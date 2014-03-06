@@ -95,21 +95,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
         return "NurseryManager/manageNurserySettings";
     }    
     
-    /**
-     * Gets the nursery tool.
-     *
-     * @return the nursery tool
-     */
-    private Tool getNurseryTool(){
-    	Tool tool = null;
-		try {
-			tool = workbenchService.getToolWithName(
-			        AppConstants.TOOL_NAME_NURSERY_MANAGER_WEB.getString());
-		} catch (MiddlewareQueryException e) {
-		    LOG.error(e.getMessage(), e);
-		}
-    	return tool;
-    }
+    
     
     /**
      * Gets the settings list.
@@ -152,6 +138,13 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
         return null;
     }
     
+    private void setFormStaticData(ManageSettingsForm form){
+    	form.setBreedingMethodId(AppConstants.BREEDING_METHOD_ID.getString());
+    	form.setLocationId(AppConstants.LOCATION_ID.getString());
+    	form.setBreedingMethodUrl(AppConstants.BREEDING_METHOD_URL.getString());
+    	form.setLocationUrl(AppConstants.LOCATION_URL.getString());
+    }
+    
     /**
      * Shows the screen.
      *
@@ -172,6 +165,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
         //only has value for clear setting, the rest null            	
     	setupDefaultScreenValues(form, getDefaultTemplateSettingFilter());
     	form.setProjectId(this.getCurrentProjectId());
+    	
     	//setupFormData(form);
     	return super.show(model);
     }
@@ -184,6 +178,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
      */
     private void setupDefaultScreenValues(ManageSettingsForm form, TemplateSetting templateSettingFilter) throws MiddlewareQueryException{
 
+    	setFormStaticData(form);
         List<TemplateSetting> templateSettingsList = new ArrayList<TemplateSetting>();
         //NULL when its an add new setting
         if(templateSettingFilter != null) 
@@ -282,7 +277,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     public String viewSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, @PathVariable int templateSettingId
             , Model model, HttpSession session) throws MiddlewareQueryException{
 		//will do the saving here
-    	
+    	setFormStaticData(form);
     	if(templateSettingId != 0){    	
 	    	TemplateSetting templateSettingFilter = new TemplateSetting(Integer.valueOf(templateSettingId), Integer.valueOf(getCurrentProjectId()), null, getNurseryTool(), null, null);
 	    	templateSettingFilter.setIsDefaultToNull();
@@ -322,6 +317,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
         model.addAttribute("manageSettingsForm", form);
         model.addAttribute("settingsList", getSettingsList());
         model.addAttribute("nurseryList", getNurseryList());
+        setFormStaticData(form);
         //setupFormData(form);
         return super.showAjaxPage(model, getContentName() );
     }
@@ -364,6 +360,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	}
     	model.addAttribute("manageSettingsForm", form);
     	model.addAttribute("settingsList", getSettingsList());
+    	setFormStaticData(form);
     	//setupFormData(form);
         return super.showAjaxPage(model, getContentName() );
     }
@@ -543,6 +540,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	} catch(Exception e) {
     		LOG.error(e.getMessage(), e);
     	}
+    	setFormStaticData(form);
     	
     	//return super.show(model);
     	return super.showAjaxPage(model, getContentName() );

@@ -13,6 +13,12 @@
 <form id="saveNurserySettingsForm" role="form-horizontal" action="#" th:action="@{/NurseryManager/manageNurserySettings/save}" 
 method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 
+
+<input type="hidden" th:field="*{locationId}"/>
+<input type="hidden" th:field="*{breedingMethodId}"/>
+<input type="hidden" th:field="*{locationUrl}"/>
+<input type="hidden" th:field="*{breedingMethodUrl}"/>
+<input type="hidden" th:field="*{projectId}"/>
 <!-- <input type="hidden" th:field="*{initialLoad}"/> -->	
 
 <div class="row" xmlns:th="http://www.thymeleaf.org">
@@ -109,20 +115,21 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 												type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].value}" class="form-control select2" />
 												
 												<!-- Show Favorite Location/Method -->
-												<div th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.trial.location.id}" class="possibleValuesDiv">
-												<input th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.trial.location.id}"
+												<div th:if="${nurseryLevelVariable.variable.cvTermId}==*{locationId}" class="possibleValuesDiv">
+												<input 
 												type="checkbox" th:field="*{nurseryLevelVariables[__${rowStat.index}__].favorite}" 
 												th:onclick="'javascript: toggleLocationDropdown(\'' + ${rowStat.index} + '\');'" />
 												&nbsp;&nbsp;
-												<span th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.trial.location.id}"
+												
+												<span
 												th:text="#{show.favorite.location}">Show Favorite Location</span>
 												</div>
-												<div th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.breeding.method.id}" class="possibleValuesDiv">
-												<input th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.breeding.method.id}"
+												<div th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}" class="possibleValuesDiv">
+												<input
 												type="checkbox" th:field="*{nurseryLevelVariables[__${rowStat.index}__].favorite}" 
 												th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'" />
 												&nbsp;&nbsp;
-												<span th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.breeding.method.id}"
+												<span 
 												th:text="#{show.favorite.method}">Show Favorite Method</span>
 												</div>
 												
@@ -153,8 +160,8 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 												/>
 													 
 												<span>
-													<a th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.trial.location.id}" href="javascript: openManageLocations();" th:text="#{nursery.managesettings.manage.location}">Manage Location</a>
-													<a th:if="${nurseryLevelVariable.variable.cvTermId}==#{nursery.managesettings.breeding.method.id}" href="javascript: openManageMethods();" th:text="#{nursery.managesettings.manage.method}">Manage Method</a>
+													<a th:if="${nurseryLevelVariable.variable.cvTermId}==*{locationId}" href="javascript: openManageLocations();" th:text="#{nursery.managesettings.manage.location}">Manage Location</a>
+													<a th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}" href="javascript: openManageMethods();" th:text="#{nursery.managesettings.manage.method}">Manage Method</a>
 												</span>								
 											</td>
 										</tr>
@@ -310,8 +317,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
     </div>
     <div class="row">
     	<div class="col-xs-12 col-md-12">
-			<div id="manage-location" th:include="/Common/manageLocationsModal"></div>
-			<input type="hidden" th:field="*{projectId}"/>
+			<div id="manage-location" th:include="/Common/manageLocationsModal"></div>			
 		</div>
 	</div>
 	<div class="row">
@@ -382,8 +388,8 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
        		var saveTemplateSettingSuccess = /*[[#{manage.settings.save.setting.success}]]*/;
        		var templateSettingNameError = /*[[#{manage.settings.setting.name.error}]]*/;
        		var templateSettingNameErrorUnique = /*[[#{manage.settings.setting.name.unique.error}]]*/;
-       		var programLocationUrl = /*[[#{nursery.advance.nursery.manage.location.url}]]*/;
-       		var programMethodUrl = /*[[#{nursery.advance.nursery.manage.method.url}]]*/;
+       		var programLocationUrl = '';
+       		var programMethodUrl = '';
        		var locationIframeOpened = false;
        		var methodIframeOpened = false;
        		var nurseryLevelValueEmpty= /*[[#{nursery.managesettings.nursery.level.value.empty}]]*/
@@ -392,8 +398,9 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
        		var manageMethodLabel = /*[[#{nursery.managesettings.manage.method}]]*/;
        		var manageLocationLabel = /*[[#{nursery.managesettings.manage.location}]]*/;
        		var nurseryNumericError = /*[[#{manage.settings.nursery.numeric.error}]]*/;
-       		var breedingMethodId = /*[[#{nursery.managesettings.breeding.method.id}]]*/;
-       		var locationId = /*[[#{nursery.managesettings.trial.location.id}]]*/;
+       		var breedingMethodId = '';
+       		var locationId = '';
+       		
        		var showFavoriteMethodLabel = /*[[#{show.favorite.method}]]*/;
        		var showFavoriteLocationLabel = /*[[#{show.favorite.location}]]*/;
        		
@@ -407,6 +414,10 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
        		
        		
  			$( document ).ready(function() {
+ 				locationId = $('#locationId').val();
+ 				breedingMethodId = $('#breedingMethodId').val();
+ 				programMethodUrl = $('#breedingMethodUrl').val();
+ 				programLocationUrl = $('#locationUrl').val();
  				/*
  				if($('#initialLoad').val() == '1'){
  					doInitialNurserySettingsLoad();

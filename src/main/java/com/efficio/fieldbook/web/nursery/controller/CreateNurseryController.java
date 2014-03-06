@@ -42,6 +42,7 @@ import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.nursery.form.ManageSettingsForm;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -99,15 +100,13 @@ public class CreateNurseryController extends AbstractBaseFieldbookController {
         return null;
     }
 	
-    private Tool getNurseryTool(){
-    	Tool tool = null;
-		try {
-			tool = workbenchService.getToolWithName(
-			        AppConstants.TOOL_NAME_NURSERY_MANAGER_WEB.getString());
-		} catch (MiddlewareQueryException e) {
-		    LOG.error(e.getMessage(), e);
-		}
-    	return tool;
+    
+    private void setFormStaticData(CreateNurseryForm form){
+    	form.setBreedingMethodId(AppConstants.BREEDING_METHOD_ID.getString());
+    	form.setLocationId(AppConstants.LOCATION_ID.getString());
+    	form.setBreedingMethodUrl(AppConstants.BREEDING_METHOD_URL.getString());
+    	form.setLocationUrl(AppConstants.LOCATION_URL.getString());
+    	form.setImportLocationUrl(AppConstants.IMPORT_GERMPLASM_URL.getString());
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -115,13 +114,14 @@ public class CreateNurseryController extends AbstractBaseFieldbookController {
     	session.invalidate();
     	form.setProjectId(this.getCurrentProjectId());
     	form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString());
+    	setFormStaticData(form);
     	return super.show(model);
     }
 
     @RequestMapping(value="/view/{templateSettingId}", method = RequestMethod.POST)
     public String viewSettings(@ModelAttribute("createNurseryForm") CreateNurseryForm form, @PathVariable int templateSettingId, 
     	Model model, HttpSession session) throws MiddlewareQueryException{
-    	
+    	setFormStaticData(form);
     	if(templateSettingId != 0){    	
 	    	TemplateSetting templateSettingFilter = new TemplateSetting(Integer.valueOf(templateSettingId), Integer.valueOf(getCurrentProjectId()), null, getNurseryTool(), null, null);
 	    	templateSettingFilter.setIsDefaultToNull();
@@ -149,7 +149,7 @@ public class CreateNurseryController extends AbstractBaseFieldbookController {
     @RequestMapping(method = RequestMethod.POST)
     public String submit(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws MiddlewareQueryException {
     	
-    	System.out.println("SAVING........................");
+    	//System.out.println("SAVING........................");
     	Dataset dataset = userSelection.getDataset();
     	Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);
     	userSelection.setWorkbook(workbook);

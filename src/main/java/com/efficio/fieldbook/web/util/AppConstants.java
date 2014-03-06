@@ -134,6 +134,13 @@ public enum AppConstants {
     ,EXPORT_XLS_SUFFIX
     
     ,CREATE_NURSERY_REQUIRED_FIELDS
+    
+    ,LOCATION_ID
+    ,BREEDING_METHOD_ID
+    
+    ,LOCATION_URL
+    ,BREEDING_METHOD_URL
+    ,IMPORT_GERMPLASM_URL
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

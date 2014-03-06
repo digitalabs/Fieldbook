@@ -41,7 +41,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.demo.form.BarCodeForm;
 import com.efficio.fieldbook.web.demo.form.HandsontableForm;
-import com.efficio.fieldbook.web.fieldmap.bean.DataValues;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 
 @Controller
@@ -71,7 +70,7 @@ public class TestHandsOnTableController extends AbstractBaseFieldbookController 
 
 	    try { 
 	        List<StudyDetails> nurseries = fieldbookMiddlewareService.getAllLocalNurseryDetails();
-	        int nurseryId;
+	        int nurseryId = 0;
 	        if (nurseries != null) {
 	            nurseryId = nurseries.get(0).getId();
 	        }

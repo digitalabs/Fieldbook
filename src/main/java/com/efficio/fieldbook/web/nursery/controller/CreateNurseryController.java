@@ -114,7 +114,7 @@ public class CreateNurseryController extends AbstractBaseFieldbookController {
     public String show(@ModelAttribute("createNurseryForm") CreateNurseryForm form, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2, Model model, HttpSession session) throws MiddlewareQueryException{
     	session.invalidate();
     	form.setProjectId(this.getCurrentProjectId());
-
+    	form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString());
     	return super.show(model);
     }
 
@@ -136,6 +136,7 @@ public class CreateNurseryController extends AbstractBaseFieldbookController {
 //	    	form.setIsDefault(templateSetting.getIsDefault().intValue() == 1 ? true : false);
 //	    	form.setSettingName(templateSetting.getName());
 	    	form.setSelectedSettingId(templateSetting.getTemplateSettingId());
+	    	form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString());
 //    	}else{
 //    		assignDefaultValues(form);
     	}
@@ -153,14 +154,9 @@ public class CreateNurseryController extends AbstractBaseFieldbookController {
     	Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);
     	userSelection.setWorkbook(workbook);
 
-    	userSelection.setMeasurementRowList(measurementsGeneratorService.generateRealMeasurementRows(userSelection));
-    	workbook.setObservations(userSelection.getMeasurementRowList());
     	
     	createStudyDetails(workbook, form.getNurseryLevelVariables(), form.getFolderId());
  
-	    validationService.validateObservationValues(workbook);
-	    dataImportService.saveDataset(workbook, true);
-    	
     	return "success";
     }
     

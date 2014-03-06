@@ -18,16 +18,25 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
 
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class CreateNurseryForm.
+ */
 public class CreateNurseryForm {
 
+	/** The project id. */
 	private String projectId;
 	
+	/** The selected setting id. */
 	private int selectedSettingId;
 
+	/** The nursery level variables. */
 	private List<SettingDetail> nurseryLevelVariables;
 	
+	/** The plot level variables. */
 	private List<SettingDetail> plotLevelVariables;
 	
+	/** The baseline trait variables. */
 	private List<SettingDetail> baselineTraitVariables;
 
 /*	private ImportedGermplasmMainInfo importedGermplasmMainInfo;
@@ -46,21 +55,30 @@ public class CreateNurseryForm {
 	
 	private String chooseSpecifyCheck;
 */	
-    private Integer folderId;
+    /** The folder id. */
+private Integer folderId;
     
+    /** The folder name. */
     private String folderName;
     
+    /** The field layout random. */
     private boolean fieldLayoutRandom = true;
 
+    /** The required fields. */
+    private String requiredFields;
 
     /**
-	 * @return the projectId
-	 */
+     * Gets the project id.
+     *
+     * @return the projectId
+     */
 	public String getProjectId() {
 		return projectId;
 	}
 
 	/**
+	 * Sets the project id.
+	 *
 	 * @param projectId the projectId to set
 	 */
 	public void setProjectId(String projectId) {
@@ -68,6 +86,8 @@ public class CreateNurseryForm {
 	}
 
 	/**
+	 * Gets the selected setting id.
+	 *
 	 * @return the selectedSettingId
 	 */
 	public int getSelectedSettingId() {
@@ -75,6 +95,8 @@ public class CreateNurseryForm {
 	}
 
 	/**
+	 * Sets the selected setting id.
+	 *
 	 * @param selectedSettingId the selectedSettingId to set
 	 */
 	public void setSelectedSettingId(int selectedSettingId) {
@@ -82,6 +104,8 @@ public class CreateNurseryForm {
 	}
 
 	/**
+	 * Gets the nursery level variables.
+	 *
 	 * @return the nurseryLevelVariables
 	 */
 	public List<SettingDetail> getNurseryLevelVariables() {
@@ -89,6 +113,8 @@ public class CreateNurseryForm {
 	}
 
 	/**
+	 * Sets the nursery level variables.
+	 *
 	 * @param nurseryLevelVariables the nurseryLevelVariables to set
 	 */
 	public void setNurseryLevelVariables(List<SettingDetail> nurseryLevelVariables) {
@@ -96,6 +122,8 @@ public class CreateNurseryForm {
 	}
 
 	/**
+	 * Gets the plot level variables.
+	 *
 	 * @return the plotLevelVariables
 	 */
 	public List<SettingDetail> getPlotLevelVariables() {
@@ -103,6 +131,8 @@ public class CreateNurseryForm {
 	}
 
 	/**
+	 * Sets the plot level variables.
+	 *
 	 * @param plotLevelVariables the plotLevelVariables to set
 	 */
 	public void setPlotLevelVariables(List<SettingDetail> plotLevelVariables) {
@@ -110,6 +140,8 @@ public class CreateNurseryForm {
 	}
 
 	/**
+	 * Gets the baseline trait variables.
+	 *
 	 * @return the baselineTraitVariables
 	 */
 	public List<SettingDetail> getBaselineTraitVariables() {
@@ -117,6 +149,8 @@ public class CreateNurseryForm {
 	}
 
 	/**
+	 * Sets the baseline trait variables.
+	 *
 	 * @param baselineTraitVariables the baselineTraitVariables to set
 	 */
 	public void setBaselineTraitVariables(List<SettingDetail> baselineTraitVariables) {
@@ -124,6 +158,8 @@ public class CreateNurseryForm {
 	}
 
 	/**
+	 * Gets the folder id.
+	 *
 	 * @return the folderId
 	 */
 	public Integer getFolderId() {
@@ -131,6 +167,8 @@ public class CreateNurseryForm {
 	}
 
 	/**
+	 * Sets the folder id.
+	 *
 	 * @param folderId the folderId to set
 	 */
 	public void setFolderId(Integer folderId) {
@@ -138,6 +176,8 @@ public class CreateNurseryForm {
 	}
 
 	/**
+	 * Gets the folder name.
+	 *
 	 * @return the folderName
 	 */
 	public String getFolderName() {
@@ -145,6 +185,8 @@ public class CreateNurseryForm {
 	}
 
 	/**
+	 * Sets the folder name.
+	 *
 	 * @param folderName the folderName to set
 	 */
 	public void setFolderName(String folderName) {
@@ -152,6 +194,8 @@ public class CreateNurseryForm {
 	}
 
 	/**
+	 * Checks if is field layout random.
+	 *
 	 * @return the fieldLayoutRandom
 	 */
 	public boolean isFieldLayoutRandom() {
@@ -159,10 +203,30 @@ public class CreateNurseryForm {
 	}
 
 	/**
+	 * Sets the field layout random.
+	 *
 	 * @param fieldLayoutRandom the fieldLayoutRandom to set
 	 */
 	public void setFieldLayoutRandom(boolean fieldLayoutRandom) {
 		this.fieldLayoutRandom = fieldLayoutRandom;
+	}
+
+	/**
+	 * Gets the required fields.
+	 *
+	 * @return the required fields
+	 */
+	public String getRequiredFields() {
+		return requiredFields;
+	}
+
+	/**
+	 * Sets the required fields.
+	 *
+	 * @param requiredFields the new required fields
+	 */
+	public void setRequiredFields(String requiredFields) {
+		this.requiredFields = requiredFields;
 	}
 
 	

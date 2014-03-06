@@ -132,6 +132,8 @@ public enum AppConstants {
     ,EXPORT_FIELDLOG_SUFFIX
     ,EXPORT_R_SUFFIX
     ,EXPORT_XLS_SUFFIX
+    
+    ,CREATE_NURSERY_REQUIRED_FIELDS
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

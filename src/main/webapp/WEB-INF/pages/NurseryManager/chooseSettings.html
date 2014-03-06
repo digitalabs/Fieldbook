@@ -1,6 +1,8 @@
 <form id="createNurseryForm" role="form-horizontal" action="#"
 th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
-
+					<input type="hidden" th:field="*{requiredFields}"/>
+					<input type="hidden" th:field="*{selectedSettingId}"/>
+					
 	    			<div class="row form-group">
 	    				<div class="col-xs-6 col-md-6">
 		    				<div class="">
@@ -17,7 +19,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 			    					<table border="0" id="nurseryLevelSettings" width="400px">
 	                                <tr>
 	                                    <td style="max-width:150px; min-width:150px;">
-	                                        <label id="folderLabel" for="title" th:text="#{nursery.savenursery.savein} + ':*'">Save in:*</label>
+	                                        <label id="folderLabel" for="title" th:text="#{nursery.savenursery.savein} + ':'">Save in:*</label><span class="required">*</span>
 	                                    </td>
 	                                    <td  style="max-width:200px; min-width:200px;">
 	                                        <!--  <span id="folderNameSpan" name="folderNameSpan" ></span>-->
@@ -43,7 +45,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 											<td style="max-width:150px; min-width:150px;" class="nurseryLevelVariableSetting"><label class="control-label" th:text="${nurseryLevelVariable.variable.name}"></label>:</td>
 											<td style="max-width:200px; min-width:200px;">
 											 <!-- <div th:text="${nurseryLevelVariable.variable.cvTermId}"></div> -->
-											 <input class="cvTermIds" type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].variable.cvTermId}" /> 
+											 <input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].variable.cvTermId}" /> 
 												<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" 
 												type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].value}" class="form-control select2" />
 												
@@ -210,7 +212,8 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 //<![CDATA[   
 	
     var requiredErrorMessage = /*[[#{ontology.browser.modal.error}]]*/;
-           
+    var requiredSettingErrorMessage = /*[[#{nursery.create.nursery.required.setting}]]*/;
+    
 	$(document).ready(function() {
 		 
 		
@@ -239,16 +242,17 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 	function validateCreateNursery() {
 		var hasError = false;
 		var name;
-
-		if (!$("#selectedSettingId").val()) {
+		var customMessage = '';
+		if ($("#selectedSettingId").val() == '0') {
 			hasError = true;
 			name = $("#settingsSelectLabel").text();
+			customMessage = requiredSettingErrorMessage;
 		}
-		else if (!$("#folderId").val()) {
+		else if ($("#folderId").val() == '') {
 			hasError = true;
 			name = $("#folderLabel").text();
 		}
-		else if (!$("#fieldLayoutRandom").val()) {
+		else if ($("#fieldLayoutRandom").val() == '') {
 			hasError = true;
 			name = $("#expDesignLabel").text();
 		}
@@ -257,15 +261,20 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 			name = $("#germplasmLabel").text();
 		}*/
 		else {
-			var requiredFields = ["8180", "8100", "8005", "8007", "8030"];
+			var requiredFields = [];
+			if($('#requiredFields').val() != ''){
+				requiredFields = $('#requiredFields').val().split(',');	
+			}
+			
 			var cvTermId;
 			$('.nurseryLevelVariableIdClass').each(function(){
 				if (!hasError) {
 					cvTermId = $(this).val();
 					
 					if ($.inArray(cvTermId, requiredFields) > -1) {
-						if ($(this).parent().find(".form-control").hasClass("select2")) {
+						if ($(this).parent().find(".form-control").hasClass("select2") && $(this).parent().find(".form-control").select2("data")) {
 							idname = $(this).parent().find(".form-control").attr("id");
+							//console.log(idname);
 							value = $("#" + getJquerySafeId(idname)).select2("data").text;
 						}
 						else {
@@ -283,7 +292,10 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 		}
 		
 		if (hasError){
-			showErrorMessage('page-message', requiredErrorMessage + ": " + name);
+			var errMsg = requiredErrorMessage + ": " + name.replace('*', '').replace(":", "");
+			if(customMessage != '')
+				errMsg = customMessage;
+			showErrorMessage('page-message', errMsg);
 			return false;
 		}
 		return true;

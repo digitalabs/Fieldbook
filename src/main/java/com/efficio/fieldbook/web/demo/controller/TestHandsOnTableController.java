@@ -75,7 +75,7 @@ public class TestHandsOnTableController extends AbstractBaseFieldbookController 
 	        if (nurseries != null) {
 	            nurseryId = nurseries.get(0).getId();
 	        }
-	        workbook = fieldbookMiddlewareService.getNurseryDataSet(-146);
+	        workbook = fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
 	    } catch (MiddlewareQueryException e) {
 	        LOG.error(e.getMessage(), e);
 	    }

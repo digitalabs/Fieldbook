@@ -250,6 +250,18 @@ function getBreedingMethodRowIndex() {
 	return rowIndex;
 }
 
+function getLocationRowIndex() {
+	var rowIndex = 0;
+	$.each($("#nurseryLevelSettings tr"), function (index, row) {
+		var cvTermId = $($(row).children("td:nth-child(1)")
+				.children("#" + getJquerySafeId("nurseryLevelVariables" + index + ".variable.cvTermId"))).val();
+		if (parseInt(cvTermId) == parseInt(locationId)) {
+			rowIndex = index;
+		}
+	});
+	return rowIndex;
+}
+
 function recreateLocationCombo() {
 	var selectedLocationAll = $("#harvestLocationIdAll").val();
 	var selectedLocationFavorite = $("#harvestLocationIdFavorite").val();
@@ -275,19 +287,21 @@ function recreateLocationCombo() {
 	    		   }
     		   } else {
     			   var selectedVal = null;
-    			   if ($("#" + getJquerySafeId("nurseryLevelVariables0.value")).select2("data")) {
-    				   selectedVal = $("#" + getJquerySafeId("nurseryLevelVariables0.value")).select2("data").id;
+    			   var index = getLocationRowIndex();
+    			   
+    			   if ($("#" + getJquerySafeId("nurseryLevelVariables"+index+".value")).select2("data")) {
+    				   selectedVal = $("#" + getJquerySafeId("nurseryLevelVariables"+index+".value")).select2("data").id;
     			   } 
     			   initializePossibleValuesCombo([], 
-	 			 			"#" + getJquerySafeId("nurseryLevelVariables0.value"), true, selectedVal);
+	 			 			"#" + getJquerySafeId("nurseryLevelVariables"+index+".value"), true, selectedVal);
     			   
     			   //update values in combo
-    			   if ($("#" + getJquerySafeId("nurseryLevelVariables0.favorite1")).is(":checked")) {
+    			   if ($("#" + getJquerySafeId("nurseryLevelVariables"+index+".favorite1")).is(":checked")) {
 	    			   initializePossibleValuesCombo($.parseJSON(data.favoriteLocations), 
-		 			 			"#" + getJquerySafeId("nurseryLevelVariables0.value"), false, selectedVal);
+		 			 			"#" + getJquerySafeId("nurseryLevelVariables"+index+".value"), false, selectedVal);
     			   } else {
     				   initializePossibleValuesCombo($.parseJSON(data.allLocations), 
-		 			 			"#" + getJquerySafeId("nurseryLevelVariables0.value"), true, selectedVal);
+		 			 			"#" + getJquerySafeId("nurseryLevelVariables"+index+".value"), true, selectedVal);
     			   }
     		   }
     	   } else {
@@ -1432,4 +1446,29 @@ function displayGermplasmDetails(listId) {
 			Spinner.toggle();
 		}
 	});
+}
+
+function openUsePreviousNurseryModal() {
+	$("#usePreviousNurseryModal").modal("show");
+}
+
+function chooseSelectedNursery() {
+	var nurseryId = $("#selectedNursery").val();
+	$("#usePreviousNurseryModal").modal("hide");
+	Spinner.toggle();
+	$.ajax({
+		url: "/Fieldbook/NurseryManager/manageNurserySettings/nursery/" + nurseryId,
+        type: "GET",
+        cache: false,
+        data: "",
+        success: function(html) {
+    	    $('.container .row').first().html(html);	    
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+			console.log("The following error occured: " + textStatus, errorThrown); 
+	    }, 
+	    complete: function(){
+		   Spinner.toggle();
+	    }  
+	})
 }

@@ -15,11 +15,11 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 	    								<label id="folderLabel" for="title" th:text="#{nursery.savenursery.savein} + ':*'">Save in:*</label>
 	    							</td>
 	    							<td>
-										<span id="folderNameSpan" name="folderNameSpan" ></span>
+										<!--  <span id="folderNameSpan" name="folderNameSpan" ></span>-->
 										<input type="hidden" th:field="*{folderId}" />
 										<input type="hidden" th:field="*{folderName}" />
-										<br/>
-										<a onclick="loadFolderAjax();" th:text="#{nursery.savenursery.chooseLocation}"></a>
+										
+										<a id="chooseLocation" onclick="loadFolderAjax();" th:text="#{nursery.create.nursery.choose.location}"></a>
 									</td>
 	    						</tr>
 	    						<tr>

@@ -352,8 +352,16 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
         			userSelection.setTraitRefList(traitRefList);
         		}
         			List<TraitClassReference> traitRefList = userSelection.getTraitRefList();
-        			String treeData = TreeViewUtil.convertOntologyTraitsToJson(traitRefList, standardVariableList);
-        	        String searchTreeData = TreeViewUtil.convertOntologyTraitsToSearchSingleLevelJson(traitRefList, standardVariableList);
+        			//we convert it to map so that it would be easier to chekc if there is a record or not
+        			HashMap<String, StandardVariableReference> mapVariableRef = new HashMap<String, StandardVariableReference>();
+        			if(standardVariableList != null && !standardVariableList.isEmpty()){
+        				for(StandardVariableReference varRef: standardVariableList){
+        					mapVariableRef.put(varRef.getId().toString(), varRef);
+        				}
+        			}
+        			
+        			String treeData = TreeViewUtil.convertOntologyTraitsToJson(traitRefList, mapVariableRef);
+        	        String searchTreeData = TreeViewUtil.convertOntologyTraitsToSearchSingleLevelJson(traitRefList, mapVariableRef);
         	        result.put("treeData", treeData);
         	        result.put("searchTreeData", searchTreeData);
         		

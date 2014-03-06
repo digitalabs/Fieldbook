@@ -91,7 +91,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 //<![CDATA[
     
 	function submitWorkbook(){
-		alert("submitWorkbook");
+		//alert("submitWorkbook");
 		var $form = $("#createNurseryForm");
 		
 		var serializedData = $form.serialize();
@@ -121,6 +121,8 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 			submitWorkbook();
 			//$("#germplasm-list-form").submit();
 			//$("#createNurseryForm").submit();
+		}else{
+			moveToTopScreen();
 		}
 	}
 	

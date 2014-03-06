@@ -1456,7 +1456,7 @@ function chooseSelectedNursery() {
 	var nurseryId = $("#selectedNursery").val();
 	var url = "/Fieldbook/NurseryManager/manageNurserySettings/nursery/";
 		
-	if ($("#chooseSettingsDiv")) {
+	if ($("#chooseSettingsDiv").length != 0) {
 		url = "/Fieldbook/NurseryManager/createNursery/nursery/";
 	}
 	
@@ -1468,7 +1468,7 @@ function chooseSelectedNursery() {
         cache: false,
         data: "",
         success: function(html) {
-        	if ($("#chooseSettingsDiv")) {
+        	if ($("#chooseSettingsDiv").length != 0) {
         		$("#chooseSettingsDiv").html(html);
         	} else {
         		$('.container .row').first().html(html);

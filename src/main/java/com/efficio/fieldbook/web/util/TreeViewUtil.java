@@ -228,15 +228,8 @@ public class TreeViewUtil {
 	 * @throws Exception the exception
 	 */
 	public static String convertOntologyTraitsToSearchSingleLevelJson(
-	        List<TraitClassReference> traitClassReferences, List<StandardVariableReference> showStandardVariableList) throws Exception {
-                
-        //return treeNodes;
-		HashMap<String, StandardVariableReference> mapVariableRef = new HashMap<String, StandardVariableReference>();
-		if(showStandardVariableList != null && !showStandardVariableList.isEmpty()){
-			for(StandardVariableReference varRef: showStandardVariableList){
-				mapVariableRef.put(varRef.getId().toString(), varRef);
-			}
-		}
+	        List<TraitClassReference> traitClassReferences, HashMap<String, StandardVariableReference> mapVariableRef) throws Exception {
+       
 		
         return convertSearchTreeViewToJson(getTypeAheadTreeNodes("", traitClassReferences, mapVariableRef));
     }
@@ -315,7 +308,7 @@ public class TreeViewUtil {
 	 * @return the string
 	 * @throws Exception the exception
 	 */
-	public static String convertOntologyTraitsToJson(List<TraitClassReference> traitClassReferences, List<StandardVariableReference> showStandardVariableList) 
+	public static String convertOntologyTraitsToJson(List<TraitClassReference> traitClassReferences, HashMap<String, StandardVariableReference> mapVariableRef) 
 	        throws Exception {
 	    /*
 	    TreeNode treeNode = new TreeNode();
@@ -328,12 +321,7 @@ public class TreeViewUtil {
         treeNode.setIcon(false);
         */
 		
-		HashMap<String, StandardVariableReference> mapVariableRef = new HashMap<String, StandardVariableReference>();
-		if(showStandardVariableList != null && !showStandardVariableList.isEmpty()){
-			for(StandardVariableReference varRef: showStandardVariableList){
-				mapVariableRef.put(varRef.getId().toString(), varRef);
-			}
-		}
+		
 		
         List<TreeNode> treeNodes = convertTraitClassReferencesToTreeView(traitClassReferences, mapVariableRef);
         

@@ -11,11 +11,15 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
@@ -39,6 +43,7 @@ import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
+import com.efficio.fieldbook.web.nursery.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
@@ -98,6 +103,157 @@ public class CreateNurseryController extends AbstractBaseFieldbookController {
 		
         return null;
     }
+    
+    /**
+     * Gets the settings list.
+     *
+     * @return the settings list
+     */
+    @ModelAttribute("nurseryList")
+    public List<StudyDetails> getNurseryList() {
+        try {
+            List<StudyDetails> nurseries = fieldbookMiddlewareService.getAllLocalNurseryDetails();
+            return nurseries;
+        }catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+                
+        return null;
+    }
+
+    @RequestMapping(value="/nursery/{nurseryId}", method = RequestMethod.GET)
+    public String useExistingNursery(@ModelAttribute("manageSettingsForm") CreateNurseryForm form, @PathVariable int nurseryId
+            , Model model, HttpSession session) throws MiddlewareQueryException{
+        if(nurseryId != 0){     
+            Workbook workbook = fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
+            Dataset dataset = SettingsUtil.convertWorkbookToXmlDataset(workbook);
+            SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
+            List<Integer> requiredFactors = buildRequiredFactors();
+            List<String> requiredFactorsLabel = buildRequiredFactorsLabel();
+            boolean[] requiredFactorsFlag = buildRequiredFactorsFlag();
+            List<SettingDetail> nurseryLevelConditions = userSelection.getNurseryLevelConditions();
+                    
+            for(SettingDetail nurseryLevelCondition : nurseryLevelConditions){
+                Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(nurseryLevelCondition.getVariable().getProperty(), 
+                        nurseryLevelCondition.getVariable().getScale(), nurseryLevelCondition.getVariable().getMethod(), 
+                        PhenotypicType.valueOf(nurseryLevelCondition.getVariable().getRole()));
+                
+                //mark required factors that are already in the list
+                int ctr = 0;
+                for (Integer requiredFactor: requiredFactors) {
+                    if (requiredFactor.equals(stdVar)) {
+                        requiredFactorsFlag[ctr] = true;
+                    }
+                    ctr++;
+                }
+            }
+            
+            
+            //add required factors that are not in existing nursery
+            for (int i = 0; i < requiredFactorsFlag.length; i++) {
+                if (!requiredFactorsFlag[i]) {
+                    nurseryLevelConditions.add(createSettingDetail(requiredFactors.get(i), requiredFactorsLabel.get(i)));
+                }
+            }
+            
+            userSelection.setNurseryLevelConditions(nurseryLevelConditions);
+            form.setNurseryLevelVariables(userSelection.getNurseryLevelConditions());
+            form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
+            form.setPlotLevelVariables(userSelection.getPlotsLevelList());
+            form.setSelectedSettingId(0);
+            form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString());
+        }
+        
+        model.addAttribute("manageSettingsForm", form);
+        model.addAttribute("settingsList", getSettingsList());
+        model.addAttribute("nurseryList", getNurseryList());
+        //setupFormData(form);
+        return super.showAjaxPage(model, getContentName() );
+    }
+    
+    /**
+     * Creates the setting detail.
+     *
+     * @param id the id
+     * @return the setting detail
+     * @throws MiddlewareQueryException the middleware query exception
+     */
+    private SettingDetail createSettingDetail(int id, String name) throws MiddlewareQueryException {
+            String variableName = "";
+            StandardVariable stdVar = getStandardVariable(id);
+            if (name != null) {
+                variableName = name;
+            } else {
+                variableName = stdVar.getName();
+            }
+            if (stdVar != null) {
+            SettingVariable svar = new SettingVariable(
+                    variableName, stdVar.getDescription(), stdVar.getProperty().getName(),
+                                        stdVar.getScale().getName(), stdVar.getMethod().getName(), stdVar.getStoredIn().getName(), 
+                                        stdVar.getDataType().getName(), stdVar.getDataType().getId(), 
+                                        stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null ? stdVar.getConstraints().getMinValue() : null,
+                                        stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ? stdVar.getConstraints().getMaxValue() : null);
+                        svar.setCvTermId(stdVar.getId());
+                        svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
+                        svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
+
+                        List<ValueReference> possibleValues = fieldbookService.getAllPossibleValues(id);
+                        SettingDetail settingDetail = new SettingDetail(svar, possibleValues, null, false);
+                        settingDetail.setPossibleValuesToJson(possibleValues);
+                        List<ValueReference> possibleValuesFavorite = fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProjectId());
+                        settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);
+                        settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
+                        return settingDetail;
+                }
+                return new SettingDetail();
+    }
+    
+    /**
+     * Get standard variable.
+     * @param id
+     * @return
+     * @throws MiddlewareQueryException
+     */
+    private StandardVariable getStandardVariable(int id) throws MiddlewareQueryException {
+        StandardVariable variable = userSelection.getCacheStandardVariable(id);
+        if (variable == null) {
+                variable = fieldbookMiddlewareService.getStandardVariable(id);
+                if (variable != null) {
+                        userSelection.putStandardVariableInCache(variable);
+                }
+        }
+        
+        return variable;
+    }
+    
+    private List<Integer> buildRequiredFactors() {
+        List<Integer> requiredFactors = new ArrayList<Integer>();
+        requiredFactors.add(TermId.TRIAL_LOCATION.getId());
+        requiredFactors.add(TermId.PI_NAME.getId());
+        requiredFactors.add(TermId.STUDY_NAME.getId());
+        requiredFactors.add(TermId.STUDY_TITLE.getId());
+        requiredFactors.add(TermId.STUDY_OBJECTIVE.getId());
+        return requiredFactors;
+    }
+    
+    private List<String> buildRequiredFactorsLabel() {
+        List<String> requiredFactors = new ArrayList<String>();
+        requiredFactors.add(AppConstants.LOCATION.getString());
+        requiredFactors.add(AppConstants.PRINCIPAL_INVESTIGATOR.getString());
+        requiredFactors.add(AppConstants.STUDY_NAME.getString());
+        requiredFactors.add(AppConstants.STUDY_TITLE.getString());
+        requiredFactors.add(AppConstants.OBJECTIVE.getString());
+        return requiredFactors;
+    }
+
+    private boolean[] buildRequiredFactorsFlag() {
+        boolean[] requiredFactorsFlag = new boolean[5];
+        
+        for (int i = 0; i < requiredFactorsFlag.length; i++) {
+            requiredFactorsFlag[i] = false;
+        }
+        return requiredFactorsFlag;
+    } 
 	
     private Tool getNurseryTool(){
     	Tool tool = null;

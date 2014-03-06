@@ -364,5 +364,6 @@ public class CreateNurseryController extends AbstractBaseFieldbookController {
         form.setBreedingMethodUrl(AppConstants.BREEDING_METHOD_URL.getString());
         form.setLocationUrl(AppConstants.LOCATION_URL.getString());
         form.setProjectId(this.getCurrentProjectId());
+        form.setImportLocationUrl(AppConstants.IMPORT_GERMPLASM_URL.getString());
     }
 }

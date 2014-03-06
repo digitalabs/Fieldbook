@@ -693,3 +693,10 @@ div.possibleValuesDiv{
 	min-height: 200px;	
 }
 */
+#addVariablesSettingBody{
+	padding-bottom: 0px;
+	padding-top: 10px;
+}
+.addVariable-footer{
+	margin-top: 0px;
+}

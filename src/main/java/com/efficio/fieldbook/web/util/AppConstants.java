@@ -141,6 +141,8 @@ public enum AppConstants {
     ,LOCATION_URL
     ,BREEDING_METHOD_URL
     ,IMPORT_GERMPLASM_URL
+    
+    ,LABEL
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);
@@ -175,6 +177,20 @@ public enum AppConstants {
         try {
             configFile.load(AppConstants.class.getClassLoader().getResourceAsStream(PROPERTY_FILE));
             value = configFile.getProperty(this.toString());
+        } catch (NumberFormatException e) {
+            LOG.error("Value not numeric.", e);
+        } catch (IOException e) {
+            LOG.error("Error accessing property file: " + PROPERTY_FILE, e);
+        }
+        return value;
+    }
+    
+    public static String getString(String labelKey){
+        Properties configFile = new Properties();
+        String value = null;
+        try {
+            configFile.load(AppConstants.class.getClassLoader().getResourceAsStream(PROPERTY_FILE));
+            value = configFile.getProperty(labelKey);
         } catch (NumberFormatException e) {
             LOG.error("Value not numeric.", e);
         } catch (IOException e) {

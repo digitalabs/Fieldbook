@@ -13,6 +13,7 @@ package com.efficio.fieldbook.web.nursery.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
@@ -228,21 +229,30 @@ public class CreateNurseryController extends AbstractBaseFieldbookController {
     
     private List<Integer> buildRequiredFactors() {
         List<Integer> requiredFactors = new ArrayList<Integer>();
-        requiredFactors.add(TermId.TRIAL_LOCATION.getId());
-        requiredFactors.add(TermId.PI_NAME.getId());
-        requiredFactors.add(TermId.STUDY_NAME.getId());
-        requiredFactors.add(TermId.STUDY_TITLE.getId());
-        requiredFactors.add(TermId.STUDY_OBJECTIVE.getId());
+        String createNurseryRequiredFields = AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString();
+        StringTokenizer token = new StringTokenizer(createNurseryRequiredFields, ",");
+        while(token.hasMoreTokens()){
+        	requiredFactors.add(Integer.valueOf(token.nextToken()));
+        }        
         return requiredFactors;
     }
     
     private List<String> buildRequiredFactorsLabel() {
+    	
         List<String> requiredFactors = new ArrayList<String>();
+        /*
         requiredFactors.add(AppConstants.LOCATION.getString());
         requiredFactors.add(AppConstants.PRINCIPAL_INVESTIGATOR.getString());
         requiredFactors.add(AppConstants.STUDY_NAME.getString());
         requiredFactors.add(AppConstants.STUDY_TITLE.getString());
         requiredFactors.add(AppConstants.OBJECTIVE.getString());
+        */
+        String createNurseryRequiredFields = AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString();
+        StringTokenizer token = new StringTokenizer(createNurseryRequiredFields, ",");
+        while(token.hasMoreTokens()){
+        	requiredFactors.add(AppConstants.getString(token.nextToken() + AppConstants.LABEL.getString()));
+        }        
+        
         return requiredFactors;
     }
 

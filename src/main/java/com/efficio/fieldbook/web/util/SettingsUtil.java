@@ -519,9 +519,18 @@ public class SettingsUtil {
 		return list;
 	}
 	private static MeasurementVariable convertConditionToMeasurementVariable(Condition condition) {
-		return new MeasurementVariable(
+		String label = null;
+//		if (condition.getRole() == null) {
+//			label = "STUDY";
+//		}
+//		else {
+			label = PhenotypicType.valueOf(condition.getRole()).getLabelList().get(0);
+//		}
+		MeasurementVariable mvar = new MeasurementVariable(
 				condition.getName(), condition.getDescription(), condition.getScale(), condition.getMethod(), condition.getProperty(), condition.getDatatype(), 
-				condition.getValue(), PhenotypicType.valueOf(condition.getRole()).getLabelList().get(0));
+				condition.getValue(), /*PhenotypicType.valueOf(condition.getRole()).getLabelList().get(0)*/ label);
+		mvar.setFactor(true);
+		return mvar;
 	}
 
 	private static List<MeasurementVariable> convertFactorsToMeasurementVariables(List<Factor> factors) {
@@ -534,9 +543,11 @@ public class SettingsUtil {
 		return list;
 	}
 	private static MeasurementVariable convertFactorToMeasurementVariable(Factor factor) {
-		return new MeasurementVariable(
+		MeasurementVariable mvar = new MeasurementVariable(
 				factor.getName(), factor.getDescription(), factor.getScale(), factor.getMethod(), factor.getProperty(), factor.getDatatype(), null, 
 				PhenotypicType.valueOf(factor.getRole()).getLabelList().get(0));
+		mvar.setFactor(true);
+		return mvar;
 	}
 
 	private static List<MeasurementVariable> convertVariatesToMeasurementVariables(List<Variate> variates) {
@@ -549,8 +560,11 @@ public class SettingsUtil {
 		return list;
 	}
 	private static MeasurementVariable convertVariateToMeasurementVariable(Variate variate) {
-		return new MeasurementVariable(
+		MeasurementVariable mvar = new MeasurementVariable(
 				variate.getName(), variate.getDescription(), variate.getScale(), variate.getMethod(), variate.getProperty(), variate.getDatatype(), null, 
 				PhenotypicType.TRIAL_DESIGN.getLabelList().get(0)); //because variates are mostly PLOT variables
+		mvar.setFactor(false);
+		return mvar;
 	}
+	
 }

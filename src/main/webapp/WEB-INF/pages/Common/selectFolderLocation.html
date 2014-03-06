@@ -68,7 +68,8 @@
 				  	selectedFolderNodeId = node.data.key;
 				  	selectedFolderNodeName = node.data.title;
 				  	$("#folderId").val(node.data.key);
-				  	$("#folderName").html(node.data.title);
+				  	$("#folderName").val(node.data.title);
+				  	$("#folderNameSpan").html(node.data.title);
 			  }
 		});
 

@@ -2,53 +2,29 @@
 <!-- Authors: Daniel Jao, Martin Senger -->
 <!-- ================================== -->
 
-<div class="page-header">
-	<h1>Step 2: Import Germplasm List</h1>
+	    			<div class="row form-group">
+	    				<div class="col-xs-12 col-md-12">
+			    			<label class="control-label" id="germplasmLabel"><strong class="sub-content-heading" th:text="#{nursery.create.germplasm.header}">GERMPLASM DETAILS</strong></label>
+		    			</div>
+	    			</div>
 
-	<div class="progress">
-		<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%;">
-			<span class="sr-only">50% Complete</span>
-		</div>
-	</div>
-</div>
+					<div class="row form-group">
+				      	<!-- Germplasm List Tree View -->
+						<div class="col-xs-4 col-md-4">
+							<div id="germplasmTree" style="height:350px; overflow:auto;"></div>
+							<br />  
+				      	
+					      	<a href="javascript: openImportGermplasmList()" th:text="#{nursery.import.germplasm.list}">Import File</a>
+						</div>
 
-<div class="col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org">
-  
-    <div class="row">
-      <div class="col-xs-4 col-md-4">
-      	<!-- Germplasm List Tree View -->
-      	
-		      	<div id="germplasmTree" style="height:350px; overflow:auto;"></div>
-		<br />  
-      	
-      	<div class="panel panel-default">
-    
-		      <div class="panel-body" style="padding: 15px;">
-		      	<!-- <a data-toggle="modal" href="#myModal" class="" th:text="#{nursery.import.germplasm.list}">Import File</a>
-		      	 -->
-		        <a href="javascript: openImportGermplasmList()" th:text="#{nursery.import.germplasm.list}">Import File</a>
-		      </div>
-		     
-		  </div>  
-        
-      </div>
-      <div class="col-xs-8 col-md-8">
-        <!-- Show the table here -->						
-			
-			<div class="panel panel-default">
-    
-		      <div class="panel-body" style="padding: 15px;">
-		      		<div id="imported-germplasm-list" th:include="/NurseryManager/showGermplasmPagination">
-        	  		</div>
-		      </div>
-		     
-		  </div>  
-        
-       
-      </div>
+				        <!-- Germplasm List Table View -->						
+				      	<div class="col-xs-8 col-md-8">
+							<div id="imported-germplasm-list" th:include="/NurseryManager/showGermplasmPagination">
+		        	  		</div>
+						</div>
+				    </div>	
 
-    </div>	
-						
+
 <form role="form-horizontal" onsubmit="return do_validation()"  class="form-horizontal" action="#" 
      th:action="@{/NurseryManager/importGermplasmList}" method="post" th:object="${importGermplasmListForm}" enctype="multipart/form-data">								
     <!-- Modal -->
@@ -99,18 +75,6 @@
 	<div id="manage-location" th:include="/Common/importGermplasmListModal"></div>
 </div>
 	
-<div class="row">
-  <div class="form-group">
-  <div class="col-xs-5 col-md-5">&nbsp;</div>
-    <div class="col-xs-7 col-md-7">
-      <a href="/NurseryManager/nurseryDetails.html" th:href="@{/NurseryManager/nurseryDetails}" class="btn btn-default" th:text="#{common.form.back.text}">.Back</a>
-      <input type="button" onclick="$('#germplasm-list-form').submit();" th:value="#{common.form.next.text}" class="btn btn-primary" />
-      
-    </div>
-  </div>
-</div>
-
-</div>
 <!-- Scripts location, note that the div tag will be remove after merging to decorator -->
 <div layout:fragment="page-script">
   <script type="text/javascript" th:src="@{/static/js/bootstrap-fileupload.js}"></script>

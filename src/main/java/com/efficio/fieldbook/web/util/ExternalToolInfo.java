@@ -64,8 +64,7 @@ public class ExternalToolInfo {
      */
     public String getCurrentProjectId() {
         long projectId = 0;
-        try {
-            System.out.println();
+        try {           
             projectId = workbenchService.getLastOpenedProject();
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);

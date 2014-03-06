@@ -33,7 +33,8 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			    			</select>
 			    		</div>
 			    		<div class="col-xs-6 col-md-6 add_top_padding">
-			    			
+			    			<a href="javascript: openUsePreviousNurseryModal()" id="usePreviousNursery" th:text="#{nursery.managesettings.use.previous.nursery}"></a>
+			    			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			    			<a href="javascript: void(0)" id="copySettings" ><img width="15" src="/Fieldbook/static/img/copy.png"/>&nbsp;  <span th:text="#{nursery.managesettings.make.copy}"></span></a>
 			    			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			    			<!-- 
@@ -318,6 +319,11 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			<div id="manage-location" th:include="/Common/manageMethodsModal"></div>
 		</div>
 	</div>
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<div th:include="/NurseryManager/usePreviousNurseryModal"></div>
+		</div>
+	</div>
 </div>
 
 <div class="modal fade" id="delete-settings-confirmation">
@@ -433,10 +439,10 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
  				});
  				$.each($(".possibleValuesJson"), function (index, divElem){
  					var select2Index = $(divElem).attr("id").split("possibleValuesJson")[1]; 
- 					
- 					if (index == 0) {
+
+ 					if (parseInt($("#" + getJquerySafeId("nurseryLevelVariables"+select2Index+".variable.cvTermId")).val()) == parseInt(locationId)) {
  						initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 
- 		 			 			"#" + getJquerySafeId("nurseryLevelVariables0.value"), true, $(divElem).siblings(".div-select-val").html());
+ 		 			 			"#" + getJquerySafeId("nurseryLevelVariables"+select2Index+".value"), true, $(divElem).siblings(".div-select-val").html());
  						
  					} else {
  						initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 

@@ -24,6 +24,8 @@ import javax.servlet.http.HttpSession;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.StudyDetails;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
@@ -133,7 +135,22 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
         return null;
     }
     
-    
+    /**
+     * Gets the settings list.
+     *
+     * @return the settings list
+     */
+    @ModelAttribute("nurseryList")
+    public List<StudyDetails> getNurseryList() {
+        try {
+            List<StudyDetails> nurseries = fieldbookMiddlewareService.getAllLocalNurseryDetails();
+            return nurseries;
+        }catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+                
+        return null;
+    }
     
     /**
      * Shows the screen.
@@ -285,6 +302,27 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	model.addAttribute("manageSettingsForm", form);
     	model.addAttribute("settingsList", getSettingsList());
     	//setupFormData(form);
+        return super.showAjaxPage(model, getContentName() );
+    }
+    
+    @RequestMapping(value="/nursery/{nurseryId}", method = RequestMethod.GET)
+    public String useExistingNursery(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, @PathVariable int nurseryId
+            , Model model, HttpSession session) throws MiddlewareQueryException{
+        if(nurseryId != 0){     
+            Workbook workbook = fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
+            Dataset dataset = SettingsUtil.convertWorkbookToXmlDataset(workbook);
+            SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
+            form.setNurseryLevelVariables(userSelection.getNurseryLevelConditions());
+            form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
+            form.setPlotLevelVariables(userSelection.getPlotsLevelList());
+            form.setIsDefault(false);
+            form.setSettingName("");
+        }
+        
+        model.addAttribute("manageSettingsForm", form);
+        model.addAttribute("settingsList", getSettingsList());
+        model.addAttribute("nurseryList", getNurseryList());
+        //setupFormData(form);
         return super.showAjaxPage(model, getContentName() );
     }
     

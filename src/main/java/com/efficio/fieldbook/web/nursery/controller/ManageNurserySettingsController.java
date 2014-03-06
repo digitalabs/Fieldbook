@@ -22,6 +22,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.StudyDetails;
@@ -32,6 +33,7 @@ import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
 import org.generationcp.middleware.pojos.workbench.Tool;
+import org.generationcp.middleware.pojos.workbench.settings.Condition;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -305,6 +307,35 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
         return super.showAjaxPage(model, getContentName() );
     }
     
+    private List<Integer> buildRequiredFactors() {
+        List<Integer> requiredFactors = new ArrayList<Integer>();
+        requiredFactors.add(TermId.TRIAL_LOCATION.getId());
+        requiredFactors.add(TermId.PI_NAME.getId());
+        requiredFactors.add(TermId.STUDY_NAME.getId());
+        requiredFactors.add(TermId.STUDY_TITLE.getId());
+        requiredFactors.add(TermId.STUDY_OBJECTIVE.getId());
+        return requiredFactors;
+    }
+    
+    private List<String> buildRequiredFactorsLabel() {
+        List<String> requiredFactors = new ArrayList<String>();
+        requiredFactors.add(AppConstants.LOCATION.getString());
+        requiredFactors.add(AppConstants.PRINCIPAL_INVESTIGATOR.getString());
+        requiredFactors.add(AppConstants.STUDY_NAME.getString());
+        requiredFactors.add(AppConstants.STUDY_TITLE.getString());
+        requiredFactors.add(AppConstants.OBJECTIVE.getString());
+        return requiredFactors;
+    }
+
+    private boolean[] buildRequiredFactorsFlag() {
+        boolean[] requiredFactorsFlag = new boolean[5];
+        
+        for (int i = 0; i < requiredFactorsFlag.length; i++) {
+            requiredFactorsFlag[i] = false;
+        }
+        return requiredFactorsFlag;
+    } 
+    
     @RequestMapping(value="/nursery/{nurseryId}", method = RequestMethod.GET)
     public String useExistingNursery(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, @PathVariable int nurseryId
             , Model model, HttpSession session) throws MiddlewareQueryException{
@@ -312,6 +343,36 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
             Workbook workbook = fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
             Dataset dataset = SettingsUtil.convertWorkbookToXmlDataset(workbook);
             SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
+            
+            List<Integer> requiredFactors = buildRequiredFactors();
+            List<String> requiredFactorsLabel = buildRequiredFactorsLabel();
+            boolean[] requiredFactorsFlag = buildRequiredFactorsFlag();
+            List<SettingDetail> nurseryLevelConditions = userSelection.getNurseryLevelConditions();
+                    
+            for(SettingDetail nurseryLevelCondition : nurseryLevelConditions){
+                Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(nurseryLevelCondition.getVariable().getProperty(), 
+                        nurseryLevelCondition.getVariable().getScale(), nurseryLevelCondition.getVariable().getMethod(), 
+                        PhenotypicType.valueOf(nurseryLevelCondition.getVariable().getRole()));
+                
+                //mark required factors that are already in the list
+                int ctr = 0;
+                for (Integer requiredFactor: requiredFactors) {
+                    if (requiredFactor.equals(stdVar)) {
+                        requiredFactorsFlag[ctr] = true;
+                    }
+                    ctr++;
+                }
+            }
+            
+            
+            //add required factors that are not in existing nursery
+            for (int i = 0; i < requiredFactorsFlag.length; i++) {
+                if (!requiredFactorsFlag[i]) {
+                    nurseryLevelConditions.add(createSettingDetail(requiredFactors.get(i), requiredFactorsLabel.get(i)));
+                }
+            }
+            
+            userSelection.setNurseryLevelConditions(nurseryLevelConditions);
             form.setNurseryLevelVariables(userSelection.getNurseryLevelConditions());
             form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
             form.setPlotLevelVariables(userSelection.getPlotsLevelList());

@@ -90,15 +90,13 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 <script type='text/javascript' th:inline="javascript">
 //<![CDATA[
     
-	function submitWorkbook(){
-		//alert("submitWorkbook");
-		var $form = $("#createNurseryForm");
+	function submitGermplasmList(){
+		var $form = $("#germplasm-list-form");
 		
 		var serializedData = $form.serialize();
 	
-		Spinner.toggle();
 	 	$.ajax({
-			url: "/Fieldbook/NurseryManager/createNursery",
+			url: "/Fieldbook/NurseryManager/importGermplasmList/next",
 			type: "POST",
 			data: serializedData,
 			cache: false,
@@ -106,11 +104,30 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 			success: function(html) {
 		    	$('#successMessageModal').modal({ backdrop: 'static', keyboard: true }) 
 		    	$("#successMessageModal").modal("show");
-				//alert(html);
-				//$("#germplasm-list-form").submit();
 			}, 
 			complete: function() {
 				Spinner.toggle();
+			}
+		});
+	}
+
+	function submitWorkbook(){
+		Spinner.toggle();
+
+		var $form = $("#createNurseryForm");
+		
+		var serializedData = $form.serialize();
+	
+	 	$.ajax({
+			url: "/Fieldbook/NurseryManager/createNursery",
+			type: "POST",
+			data: serializedData,
+			cache: false,
+			timeout: 70000,
+			success: function(html) {
+				submitGermplasmList();
+			}, 
+			complete: function() {
 			}
 		});
 	}

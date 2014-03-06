@@ -154,14 +154,9 @@ public class CreateNurseryController extends AbstractBaseFieldbookController {
     	Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);
     	userSelection.setWorkbook(workbook);
 
-    	userSelection.setMeasurementRowList(measurementsGeneratorService.generateRealMeasurementRows(userSelection));
-    	workbook.setObservations(userSelection.getMeasurementRowList());
     	
     	createStudyDetails(workbook, form.getNurseryLevelVariables(), form.getFolderId());
  
-	    validationService.validateObservationValues(workbook);
-	    dataImportService.saveDataset(workbook, true);
-    	
     	return "success";
     }
     

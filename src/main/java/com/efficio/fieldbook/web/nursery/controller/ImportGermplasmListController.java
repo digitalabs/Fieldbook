@@ -18,6 +18,7 @@ import javax.annotation.Resource;
 
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.pojos.GermplasmListData;
+import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmList;
@@ -35,6 +37,8 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
+import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
+import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.nursery.validation.ImportGermplasmListValidator;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
@@ -63,6 +67,15 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     /** The import germplasm file service. */
     @Resource
     private ImportGermplasmFileService importGermplasmFileService;
+    
+    @Resource
+    private ValidationService validationService;
+    
+    @Resource
+    private DataImportService dataImportService;
+    
+    @Resource
+    private MeasurementsGeneratorService measurementsGeneratorService;
     
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
@@ -173,11 +186,12 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
      * @return the string
      * @throws MiddlewareQueryException 
      */
+    @ResponseBody
     @RequestMapping(value="/next", method = RequestMethod.POST)
     public String nextScreen(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form
             , BindingResult result, Model model) throws MiddlewareQueryException {
     	
-    	if(getUserSelection().isImportValid()){
+    	//if(getUserSelection().isImportValid()){
     		int previewPageNum = userSelection.getCurrentPageGermplasmList();
     		for(int i = 0 ; i < form.getPaginatedImportedGermplasm().size() ; i++){
         		ImportedGermplasm importedGermplasm = form.getPaginatedImportedGermplasm().get(i);
@@ -196,13 +210,21 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     		
     		//getUserSelection().setImportedGermplasmMainInfo(form)
     		
-    	    return "redirect:" + AddOrRemoveTraitsController.URL;
-    	}
-    	else{
-    	    form.setHasError("1");
-    	    result.reject("error.no.import.germplasm.list", "Please import germplasm");
-    	    return show(form,model);
-    	}
+    	    //return "redirect:" + AddOrRemoveTraitsController.URL;
+
+        	userSelection.setMeasurementRowList(measurementsGeneratorService.generateRealMeasurementRows(userSelection));
+        	userSelection.getWorkbook().setObservations(userSelection.getMeasurementRowList());
+
+        	//validationService.validateObservationValues(userSelection.getWorkbook());
+    	    dataImportService.saveDataset(userSelection.getWorkbook(), true);
+    		
+    		return "success";
+//    	}
+//    	else{
+//    	    form.setHasError("1");
+//    	    result.reject("error.no.import.germplasm.list", "Please import germplasm");
+//    	    return show(form,model);
+//    	}
     	
     }
 

@@ -1,0 +1,98 @@
+<div class="col-md-12" xmlns:th="http://www.thymeleaf.org">
+	<div class="page-header">
+		<h1>
+			Test Hands On Table
+		</h1>				
+	</div>
+	
+	<form onsubmit="javascript: return doSubmit();" id="specifyLabelDetailsForm" role="form-horizontal" action="#"
+th:action="@{/handsontable}" method="post" th:object="${handsontableForm}" enctype="multipart/form-data">
+
+	<input type="submit" class="btn btn-primary" />
+	<input type="hidden" th:field="*{dataValuesJson}" />
+	<br /> <br />
+	
+	<div id="example" class="handsontable"></div>
+	<div id="measurementData" th:text="*{measurementRowListJson}" style='display:none'></div>
+	</form>
+</div>
+<div layout:fragment="page-script">
+<script type="text/javascript" th:src="@{/static/js/jquery.handsontable.full.js}"></script>
+<link th:href="@{/static/css/jquery.handsontable.full.css}" rel="stylesheet"/>
+<script type="text/javascript" th:inline="javascript">
+	$(function() {
+		var data = $.parseJSON($("#measurementData").text());
+		var measurementData = buildData(data); //buildMeasurementData(data);
+		var fixedColSize = getFixedColSize(data);
+		
+		MeasurementDataRenderer = function (instance, td, row, col, prop, value, cellProperties) {
+			value = instance.getDataAtCell(row, col);
+            if (value !== null) {				
+				instance.view.wt.wtDom.fastInnerText(td, value);
+				if (!data[row].dataList[col].editable) {
+					cellProperties.readOnly = true;
+				}
+			}
+		};
+		
+		Handsontable.renderers.registerRenderer('measurementData', MeasurementDataRenderer);
+					
+        $('#example').handsontable({
+        	height: 500,
+        	startRows: 0,
+            startCols: 0,
+            minSpareCols: 0,
+            minSpareRows: 1,
+            fixedColumnsLeft: fixedColSize,
+            contextMenu: true,
+    		cells: function (row, col, prop) {
+    			var cellProperties = {};
+    			cellProperties.renderer = 'measurementData';
+    			return cellProperties;
+    		}
+        });
+        var table = $("#example").handsontable("getInstance");
+        table.loadData(measurementData);
+	});
+	
+	function buildMeasurementData(data) {
+		var measurementData = [];
+		$.each(data, function (index, row) {
+			measurementData.push(row.dataList);
+		})
+		return measurementData;
+	}
+	
+	function buildData(data) {
+		var measurementData = [];
+		$.each(data, function (index, row) {
+			var measurementDataRow = [];
+			$.each(row.dataList, function(index, dataRow) {
+				measurementDataRow.push(dataRow.value);
+			});
+			measurementData.push(measurementDataRow);
+		})
+		return measurementData;
+	}
+	
+	function getFixedColSize(data) {
+		colSize = 0;
+		if (data != null) {
+			$.each(data[0].dataList, function(index, dataRow) {
+				if (dataRow.editable) {
+					colSize = index;
+					return false;
+				}
+			});
+		}
+		return colSize;
+	}
+	
+	function doSubmit() {
+		var $container = $("#example");
+		var handsontable = $container.data('handsontable');
+		$("#dataValuesJson").val(JSON.stringify(handsontable.getData()));
+		return true;
+	}
+</script>
+</div>

@@ -160,15 +160,15 @@ public class CreateNurseryController extends AbstractBaseFieldbookController {
             form.setNurseryLevelVariables(userSelection.getNurseryLevelConditions());
             form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
             form.setPlotLevelVariables(userSelection.getPlotsLevelList());
-            form.setSelectedSettingId(0);
+            form.setSelectedSettingId(1);
             form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString());
         }
         
-        model.addAttribute("manageSettingsForm", form);
+        model.addAttribute("createNurseryForm", form);
         model.addAttribute("settingsList", getSettingsList());
         model.addAttribute("nurseryList", getNurseryList());
         //setupFormData(form);
-        return super.showAjaxPage(model, getContentName() );
+        return super.showAjaxPage(model, URL_SETTINGS);
     }
     
     /**

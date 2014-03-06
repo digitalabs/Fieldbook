@@ -28,7 +28,7 @@ public class TestFieldbookServiceImpl{
     
     private static final Logger LOG = LoggerFactory.getLogger(TestFieldbookServiceImpl.class);
     
-    private static ManagerFactory      factory;
+    /*private static ManagerFactory      factory;
     private static StudyDataManager    manager;
     private static OntologyDataManager ontologyManager;
 
@@ -40,7 +40,7 @@ public class TestFieldbookServiceImpl{
         factory = new ManagerFactory(local, central);
         manager = factory.getNewStudyDataManager();
         ontologyManager = factory.getNewOntologyDataManager();
-    }
+    }*/
 
     @Resource
     private FieldbookService fieldbookService;

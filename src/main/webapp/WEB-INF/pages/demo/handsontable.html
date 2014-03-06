@@ -12,14 +12,20 @@ th:action="@{/handsontable}" method="post" th:object="${handsontableForm}" encty
 	<input type="hidden" th:field="*{dataValuesJson}" />
 	<br /> <br />
 	
-	<div id="example" class="handsontable"></div>
+	<div style="overflow: scroll; height: 500px; width: 100%">
+	<div id="example"  class="handsontable"></div>
+	</div>
 	<div id="measurementData" th:text="*{measurementRowListJson}" style='display:none'></div>
 	</form>
+	
 </div>
 <div layout:fragment="page-script">
 <script type="text/javascript" th:src="@{/static/js/jquery.handsontable.full.js}"></script>
 <link th:href="@{/static/css/jquery.handsontable.full.css}" rel="stylesheet"/>
 <script type="text/javascript" th:inline="javascript">
+
+
+
 	$(function() {
 		var data = $.parseJSON($("#measurementData").text());
 		var measurementData = buildData(data); //buildMeasurementData(data);
@@ -38,11 +44,14 @@ th:action="@{/handsontable}" method="post" th:object="${handsontableForm}" encty
 		Handsontable.renderers.registerRenderer('measurementData', MeasurementDataRenderer);
 					
         $('#example').handsontable({
-        	height: 500,
+        	
+        	//height: 500,
+        	  nativeScrollbars: true,
         	startRows: 0,
             startCols: 0,
             minSpareCols: 0,
-            minSpareRows: 1,
+            stretchH: 'all',
+            minSpareRows: 0,
             fixedColumnsLeft: fixedColSize,
             contextMenu: true,
     		cells: function (row, col, prop) {
@@ -102,5 +111,8 @@ th:action="@{/handsontable}" method="post" th:object="${handsontableForm}" encty
 		$("#dataValuesJson").val(JSON.stringify(handsontable.getData()));
 		return true;
 	}
+	
+	
+	
 </script>
 </div>

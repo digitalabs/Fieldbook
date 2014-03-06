@@ -1,0 +1,153 @@
+<div class="col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org">
+	<div class="page-header">
+		<h1>
+			CREATE NURSERY WIZARD
+		</h1>
+	</div>			  
+</div>
+
+<div class="row">
+	<div class="form-group">
+		<div id="page-message"></div>
+	</div>
+</div>
+
+<form id="createNurseryMainForm" role="form-horizontal" action="#"
+th:object="${createNurseryForm}" enctype="multipart/form-data">
+
+<div class="panel panel-default">
+   	<div class="panel-body manage-settings-panel-body">
+ 	<div class="row form-group">
+   		<div class="col-xs-3 col-md-3 add_top_padding">
+   			<label id="settingsSelectLabel" class="control-label"> <strong th:text="#{nursery.managesettings.choose.saved.settings}+':'"> Choose Saved Settings: </strong></label>
+   		</div>
+   		
+   		<div class="col-xs-3 col-md-3">
+   			<select th:field="*{selectedSettingId}" class="form-control">
+   				<option th:each="setting : ${settingsList}" th:value="${setting.templateSettingId}" th:text="${setting.name}">Nursery Type 1</option>
+   			</select>
+ 		</div>
+   	</div>
+</div>
+</div>
+
+</form>
+
+<div class="panel panel-default">
+   	<div class="panel-body manage-settings-panel-body">
+
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+					<div id="chooseSettingsDiv" th:include="/NurseryManager/chooseSettings">
+					</div>
+					
+					<div id="importGermplasmListDiv" th:include="/NurseryManager/importGermplasmList">
+					</div>
+
+		</div>
+	</div>
+
+	
+	<div class="row">
+		<div class="form-group">
+			<div class="col-xs-5 col-md-5">&nbsp;</div>
+			<div class="col-xs-7 col-md-7">
+				<a href="/NurseryManager" th:href="@{/NurseryManager}" class="btn btn-default" th:text="#{common.form.cancel.text}">.Cancel</a>
+				<input type="button" onclick="submitForm();" th:value="#{common.form.save.text}" class="btn btn-primary" />
+			</div>
+		</div>
+	</div>
+
+	</div>
+</div>
+	
+	<!-- Modal Dialog for Successful Save -->
+	<div class="form-group">
+		<div class="col-md-12">
+			<div class="modal fade" id="successMessageModal" role="dialog" aria-labelledby="successMessageModal" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-body" id="successMessageBody">
+							<div style="text-align: center">
+								<label th:text="#{common.form.save.successful.text}">Save successful!</label>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<a id="btnOK" href="" th:href="@{/NurseryManager}" th:text="#{common.form.ok.text}" class="btn btn-primary">OK</a>
+						</div>
+					</div>
+					<!-- /.modal-content -->
+				</div>
+				<!-- /.modal-dialog -->
+			</div>
+			<!-- /.modal -->
+
+		</div>
+	</div>
+
+
+<div layout:fragment="page-script">
+<script type='text/javascript' th:inline="javascript">
+//<![CDATA[
+    
+	function submitWorkbook(){
+		//alert("submitWorkbook");
+		var $form = $("#createNurseryForm");
+		
+		var serializedData = $form.serialize();
+	
+		Spinner.toggle();
+	 	$.ajax({
+			url: "/Fieldbook/NurseryManager/createNursery",
+			type: "POST",
+			data: serializedData,
+			cache: false,
+			timeout: 70000,
+			success: function(html) {
+		    	$('#successMessageModal').modal({ backdrop: 'static', keyboard: true }) 
+		    	$("#successMessageModal").modal("show");
+				//alert(html);
+				//$("#germplasm-list-form").submit();
+			}, 
+			complete: function() {
+				Spinner.toggle();
+			}
+		});
+	}
+
+	function submitForm() {
+		if (validateCreateNursery()) {
+			//$("#createNurseryForm").submit();
+			submitWorkbook();
+			//$("#germplasm-list-form").submit();
+			//$("#createNurseryForm").submit();
+		}else{
+			moveToTopScreen();
+		}
+	}
+	
+	$(document).ready(function() {
+		$('#selectedSettingId').on('change', function(){
+			//alert('load settings' + $(this).val());
+			loadNurserySettingsForCreate($(this).val());
+		})
+	});
+
+	function loadFolderAjax() {
+		Spinner.toggle();
+		$.ajax({ 
+			url: "/Fieldbook/Common/selectFolderLocation",
+		    type: "GET",
+		    data: "",
+		    success: function(html) {
+				$("#folderBrowserModal"+" .modal-content").empty().append(html);
+				$('#folderBrowserModal').modal('show');
+				$.fn.modal.Constructor.prototype.enforceFocus = function () {};
+				Spinner.toggle();
+			}
+		});
+	}
+	
+//]]>
+</script>
+</div>

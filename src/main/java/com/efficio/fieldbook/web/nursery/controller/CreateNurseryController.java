@@ -47,6 +47,7 @@ import com.efficio.fieldbook.web.nursery.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.nursery.form.ManageSettingsForm;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -163,7 +164,7 @@ public class CreateNurseryController extends AbstractBaseFieldbookController {
             form.setSelectedSettingId(1);
             form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString());
         }
-        
+        setFormStaticData(form);
         model.addAttribute("createNurseryForm", form);
         model.addAttribute("settingsList", getSettingsList());
         model.addAttribute("nurseryList", getNurseryList());
@@ -259,6 +260,7 @@ public class CreateNurseryController extends AbstractBaseFieldbookController {
     	session.invalidate();
     	form.setProjectId(this.getCurrentProjectId());
     	form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString());
+    	setFormStaticData(form);
     	return super.show(model);
     }
 
@@ -286,6 +288,7 @@ public class CreateNurseryController extends AbstractBaseFieldbookController {
     	}
 //    	model.addAttribute("createNurseryForm", form);
 //    	model.addAttribute("settingsList", getSettingsList());
+    	setFormStaticData(form);
         return super.showAjaxPage(model, URL_SETTINGS );
     }
 
@@ -345,4 +348,11 @@ public class CreateNurseryController extends AbstractBaseFieldbookController {
     	return value;
     }
     
+    private void setFormStaticData(CreateNurseryForm form){
+        form.setBreedingMethodId(AppConstants.BREEDING_METHOD_ID.getString());
+        form.setLocationId(AppConstants.LOCATION_ID.getString());
+        form.setBreedingMethodUrl(AppConstants.BREEDING_METHOD_URL.getString());
+        form.setLocationUrl(AppConstants.LOCATION_URL.getString());
+        form.setProjectId(this.getCurrentProjectId());
+    }
 }

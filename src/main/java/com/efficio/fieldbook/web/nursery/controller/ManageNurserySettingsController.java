@@ -145,6 +145,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	form.setLocationId(AppConstants.LOCATION_ID.getString());
     	form.setBreedingMethodUrl(AppConstants.BREEDING_METHOD_URL.getString());
     	form.setLocationUrl(AppConstants.LOCATION_URL.getString());
+    	form.setProjectId(this.getCurrentProjectId());
     }
     
     /**

@@ -27,6 +27,10 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
    				<option th:each="setting : ${settingsList}" th:value="${setting.templateSettingId}" th:text="${setting.name}">Nursery Type 1</option>
    			</select>
  		</div>
+ 		
+ 		<div class="col-xs-3 col-md-3">
+			<a href="javascript: openUsePreviousNurseryModal()" id="usePreviousNursery" th:text="#{nursery.managesettings.use.previous.nursery}"></a> 			
+ 		</div>
    	</div>
 </div>
 </div>
@@ -57,9 +61,16 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 			</div>
 		</div>
 	</div>
-
+	
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<div th:include="/NurseryManager/usePreviousNurseryModal"></div>
+		</div>
+	</div>
+	
 	</div>
 </div>
+
 	
 	<!-- Modal Dialog for Successful Save -->
 	<div class="form-group">

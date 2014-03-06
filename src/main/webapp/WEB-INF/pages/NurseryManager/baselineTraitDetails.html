@@ -3,13 +3,14 @@
    	<div class="modal fade" id="baselineTraitDetails" role="dialog" aria-labelledby="baselineTraitDetails" aria-hidden="true">
 		<div class="modal-dialog">
 	    	<div class="modal-content">
+	    			<div class="modal-header">
+		            <button id="closeBaselineTraitDetailsModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		             
+		             <h4 class="modal-title" th:text="#{nursery.managenurseries.nurseryDetails.plant.height.info}">Detailed Information of Plant Height</h4>
+	         		
+		          </div>
 	         	<div class="modal-body" id="baselineTraitDetailsBody">
-	         		<div>
-	         			<button id="closeBaselineTraitDetailsModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	         		</div>
-	         		<br/><br/>
-	         		<h4 class="modal-title" th:text="#{nursery.managenurseries.nurseryDetails.plant.height.info}">Detailed Information of Plant Height</h4>
-	         		<br/>
+	         			         			         		
 	         		<div class="row">
 						<label class="col-xs-4 col-lg-4 control-label" th:text="#{nursery.managenurseries.nurseryDetails.traitClass} + ':'">Trait Class:</label>
 						<div class="col-xs-6 col-lg-6">
@@ -53,6 +54,10 @@
 						</div>
 					</div>
 	         	</div>
+	         	<div class="modal-footer">    	       			
+	       			
+	       			<button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.ok.text}">OK</button>	
+       			</div>
 	     	</div><!-- /.modal-content -->
    		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->

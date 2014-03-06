@@ -1,7 +1,7 @@
 <form id="createNurseryForm" role="form-horizontal" action="#"
 th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
 					<input type="hidden" th:field="*{requiredFields}"/>
-					<input type="hidden" th:field="*{selectedSettingId}"/>
+					<input type="hidden" th:field="*{loadSettings}"/>
 					<input type="hidden" th:field="*{locationId}"/>
                     <input type="hidden" th:field="*{breedingMethodId}"/>
                     <input type="hidden" th:field="*{locationUrl}"/>
@@ -226,6 +226,11 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
             <div id="manage-location" th:include="/Common/manageMethodsModal"></div>
         </div>
     </div>
+    <div class="row">
+		<div class="col-xs-12 col-md-12">
+    		<div id="showBaselineTraitDetails" th:include="/NurseryManager/baselineTraitDetails"></div>
+   		</div>
+    </div>
 	
 
 <div layout:fragment="page-script">
@@ -276,7 +281,9 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 			});
 				setTimeout('initializeDateAndSliderInputs()', 500);
 		        addCreateNurseryRequiredAsterisk();
-
+		        $('select').each(function(){
+					$(this).select2();
+				});
 		
 	});
            
@@ -284,9 +291,8 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 		var hasError = false;
 		var name;
 		var customMessage = '';
-		if ($("#selectedSettingId").val() == '0') {
+		if ($("#loadSettings").val() == '0') {
 			hasError = true;
-			name = $("#settingsSelectLabel").text();
 			customMessage = requiredSettingErrorMessage;
 		}
 		else if ($("#folderId").val() == '') {

@@ -162,7 +162,8 @@ public class CreateNurseryController extends AbstractBaseFieldbookController {
             form.setNurseryLevelVariables(userSelection.getNurseryLevelConditions());
             form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
             form.setPlotLevelVariables(userSelection.getPlotsLevelList());
-            form.setSelectedSettingId(1);
+            //form.setSelectedSettingId(1);
+            form.setLoadSettings("1");
             form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString());
         }
         setFormStaticData(form);
@@ -241,13 +242,7 @@ public class CreateNurseryController extends AbstractBaseFieldbookController {
     private List<String> buildRequiredFactorsLabel() {
     	
         List<String> requiredFactors = new ArrayList<String>();
-        /*
-        requiredFactors.add(AppConstants.LOCATION.getString());
-        requiredFactors.add(AppConstants.PRINCIPAL_INVESTIGATOR.getString());
-        requiredFactors.add(AppConstants.STUDY_NAME.getString());
-        requiredFactors.add(AppConstants.STUDY_TITLE.getString());
-        requiredFactors.add(AppConstants.OBJECTIVE.getString());
-        */
+        
         String createNurseryRequiredFields = AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString();
         StringTokenizer token = new StringTokenizer(createNurseryRequiredFields, ",");
         while(token.hasMoreTokens()){
@@ -298,6 +293,7 @@ public class CreateNurseryController extends AbstractBaseFieldbookController {
     	}
 //    	model.addAttribute("createNurseryForm", form);
 //    	model.addAttribute("settingsList", getSettingsList());
+    	form.setLoadSettings("1");
     	setFormStaticData(form);
         return super.showAjaxPage(model, URL_SETTINGS );
     }

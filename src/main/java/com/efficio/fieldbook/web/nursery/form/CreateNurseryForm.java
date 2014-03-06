@@ -81,6 +81,9 @@ private Integer folderId;
     
     /** The import location url. */
     private String importLocationUrl;
+    
+    /** The load settings. */
+    private String loadSettings;
 
     /**
      * Gets the project id.
@@ -332,6 +335,24 @@ private Integer folderId;
 	 */
 	public void setImportLocationUrl(String importLocationUrl) {
 		this.importLocationUrl = importLocationUrl;
+	}
+
+	/**
+	 * Gets the load settings.
+	 *
+	 * @return the load settings
+	 */
+	public String getLoadSettings() {
+		return loadSettings;
+	}
+
+	/**
+	 * Sets the load settings.
+	 *
+	 * @param loadSettings the new load settings
+	 */
+	public void setLoadSettings(String loadSettings) {
+		this.loadSettings = loadSettings;
 	}
 
 	

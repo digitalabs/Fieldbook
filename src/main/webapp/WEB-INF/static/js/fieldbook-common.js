@@ -27,7 +27,7 @@ $(function() {
 
     $('select').each(function(){
 			$(this).select2();
-		})
+		});
 });
 
 function doAjaxMainSubmit(pageMessageDivId, successMessage, overrideAction){

@@ -1454,15 +1454,25 @@ function openUsePreviousNurseryModal() {
 
 function chooseSelectedNursery() {
 	var nurseryId = $("#selectedNursery").val();
+	var url = "/Fieldbook/NurseryManager/manageNurserySettings/nursery/";
+		
+	if ($("#chooseSettingsDiv")) {
+		url = "/Fieldbook/NurseryManager/createNursery/nursery/";
+	}
+	
 	$("#usePreviousNurseryModal").modal("hide");
 	Spinner.toggle();
 	$.ajax({
-		url: "/Fieldbook/NurseryManager/manageNurserySettings/nursery/" + nurseryId,
+		url: url + nurseryId,
         type: "GET",
         cache: false,
         data: "",
         success: function(html) {
-    	    $('.container .row').first().html(html);	    
+        	if ($("#chooseSettingsDiv")) {
+        		$("#chooseSettingsDiv").html(html);
+        	} else {
+        		$('.container .row').first().html(html);
+        	}
         },
         error: function(jqXHR, textStatus, errorThrown){
 			console.log("The following error occured: " + textStatus, errorThrown); 

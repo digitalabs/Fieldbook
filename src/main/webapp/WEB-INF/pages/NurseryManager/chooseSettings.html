@@ -256,10 +256,10 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 			hasError = true;
 			name = $("#expDesignLabel").text();
 		}
-		/*else if ($("#imported-germplasm-list").html().indexOf("GID") > -1) {
+		else if ($(".noGermplasmListIndicator") && $(".noGermplasmListIndicator").text()) {
 			hasError = true;
 			name = $("#germplasmLabel").text();
-		}*/
+		}
 		else {
 			var requiredFields = [];
 			if($('#requiredFields').val() != ''){

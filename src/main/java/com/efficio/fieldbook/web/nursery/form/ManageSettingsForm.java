@@ -58,6 +58,11 @@ public class ManageSettingsForm {
     private String searchTreeData;
     /** The trait reference list. */
     private List<TraitClassReference> traitClassReferenceList;
+    
+    private String locationId;
+    private String breedingMethodId;
+    private String locationUrl;
+    private String breedingMethodUrl;
 
 	/**
 	 * Gets the selected setting id.
@@ -293,4 +298,38 @@ public class ManageSettingsForm {
 			this.isDefault = false;
 			this.selectedVariables = null;
 		}
+
+		public String getLocationId() {
+			return locationId;
+		}
+
+		public void setLocationId(String locationId) {
+			this.locationId = locationId;
+		}
+
+		public String getBreedingMethodId() {
+			return breedingMethodId;
+		}
+
+		public void setBreedingMethodId(String breedingMethodId) {
+			this.breedingMethodId = breedingMethodId;
+		}
+
+		public String getLocationUrl() {
+			return locationUrl;
+		}
+
+		public void setLocationUrl(String locationUrl) {
+			this.locationUrl = locationUrl;
+		}
+
+		public String getBreedingMethodUrl() {
+			return breedingMethodUrl;
+		}
+
+		public void setBreedingMethodUrl(String breedingMethodUrl) {
+			this.breedingMethodUrl = breedingMethodUrl;
+		}
+		
+		
 }

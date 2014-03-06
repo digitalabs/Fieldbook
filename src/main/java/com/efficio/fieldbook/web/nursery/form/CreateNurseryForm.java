@@ -66,6 +66,21 @@ private Integer folderId;
 
     /** The required fields. */
     private String requiredFields;
+    
+    /** The location id. */
+    private String locationId;
+    
+    /** The breeding method id. */
+    private String breedingMethodId;
+    
+    /** The location url. */
+    private String locationUrl;
+    
+    /** The breeding method url. */
+    private String breedingMethodUrl;
+    
+    /** The import location url. */
+    private String importLocationUrl;
 
     /**
      * Gets the project id.
@@ -227,6 +242,96 @@ private Integer folderId;
 	 */
 	public void setRequiredFields(String requiredFields) {
 		this.requiredFields = requiredFields;
+	}
+
+	/**
+	 * Gets the location id.
+	 *
+	 * @return the location id
+	 */
+	public String getLocationId() {
+		return locationId;
+	}
+
+	/**
+	 * Sets the location id.
+	 *
+	 * @param locationId the new location id
+	 */
+	public void setLocationId(String locationId) {
+		this.locationId = locationId;
+	}
+
+	/**
+	 * Gets the breeding method id.
+	 *
+	 * @return the breeding method id
+	 */
+	public String getBreedingMethodId() {
+		return breedingMethodId;
+	}
+
+	/**
+	 * Sets the breeding method id.
+	 *
+	 * @param breedingMethodId the new breeding method id
+	 */
+	public void setBreedingMethodId(String breedingMethodId) {
+		this.breedingMethodId = breedingMethodId;
+	}
+
+	/**
+	 * Gets the location url.
+	 *
+	 * @return the location url
+	 */
+	public String getLocationUrl() {
+		return locationUrl;
+	}
+
+	/**
+	 * Sets the location url.
+	 *
+	 * @param locationUrl the new location url
+	 */
+	public void setLocationUrl(String locationUrl) {
+		this.locationUrl = locationUrl;
+	}
+
+	/**
+	 * Gets the breeding method url.
+	 *
+	 * @return the breeding method url
+	 */
+	public String getBreedingMethodUrl() {
+		return breedingMethodUrl;
+	}
+
+	/**
+	 * Sets the breeding method url.
+	 *
+	 * @param breedingMethodUrl the new breeding method url
+	 */
+	public void setBreedingMethodUrl(String breedingMethodUrl) {
+		this.breedingMethodUrl = breedingMethodUrl;
+	}
+
+	/**
+	 * Gets the import location url.
+	 *
+	 * @return the import location url
+	 */
+	public String getImportLocationUrl() {
+		return importLocationUrl;
+	}
+
+	/**
+	 * Sets the import location url.
+	 *
+	 * @param importLocationUrl the new import location url
+	 */
+	public void setImportLocationUrl(String importLocationUrl) {
+		this.importLocationUrl = importLocationUrl;
 	}
 
 	

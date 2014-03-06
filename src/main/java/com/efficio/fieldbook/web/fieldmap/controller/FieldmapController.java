@@ -42,6 +42,7 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
+import com.efficio.fieldbook.web.util.AppConstants;
 
 /**
  * The Class FieldmapController.
@@ -152,6 +153,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
             LOG.error(e.getMessage(), e);
         }
         result.put("nav", nav);
+        
         return result;
     }
     
@@ -400,7 +402,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         } catch (NumberFormatException e) {
             LOG.error(e.toString());
         }
-        
+        form.setProgramLocationUrl(AppConstants.LOCATION_URL.getString());
         return super.show(model);
     }
     

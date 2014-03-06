@@ -24,7 +24,8 @@
 			
 			</div>
 			<div class="col-xs-2 col-md-2">
-			 <button style="margin-left: -70px" type="button" class="btn btn-info" id="make-nursery" th:value="@{/NurseryManager/fileUpload/newNursery}"  th:text="#{nursery.managenurseries.make.new.nursery}">New Nursery</button>
+			 <!--  button style="margin-left: -70px" type="button" class="btn btn-info" id="make-nursery" th:value="@{/NurseryManager/createNursery}"  th:text="#{nursery.managenurseries.make.new.nursery}">New Nursery</button -->
+			 <a style="margin-left: -70px" class="btn btn-info" id="make-nursery" th:href="@{/NurseryManager/createNursery}"  th:text="#{nursery.managenurseries.make.new.nursery}">New Nursery</a>
 			 
 			 <!-- 
 			<a style="margin-left: -70px" class="btn btn-info" href="/NurseryManager/fileUpload.html" th:href="@{/NurseryManager/fileUpload}" th:text="#{nursery.managenurseries.make.new.nursery}">New Nursery</a>
@@ -141,7 +142,7 @@
 			$('#nurseryDetailsListPagination').bootstrapPaginator(options);	
 		}
         
-     	$('#make-nursery').on('click', function(){
+     	/* $('#make-nursery').on('click', function(){
      		Spinner.toggle();
      		$.ajax(
    		         { url: $(this).val(),
@@ -149,12 +150,12 @@
    		           data: "",
    		        	cache: false,
    		           success: function(html) {
-   		        	Spinner.toggle();
+		        	   Spinner.toggle();
    		               
    		           }
    		         }
    		       );
-     	});
+     	}); */
      	
      	$( document ).ready(function() {  	     
         	if($('#nurseryDetailsListPagination') == null || 

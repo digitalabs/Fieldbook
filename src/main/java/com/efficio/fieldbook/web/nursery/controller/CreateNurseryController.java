@@ -254,18 +254,6 @@ public class CreateNurseryController extends AbstractBaseFieldbookController {
         }
         return requiredFactorsFlag;
     } 
-	
-    private Tool getNurseryTool(){
-    	Tool tool = null;
-		try {
-			tool = workbenchService.getToolWithName(
-			        AppConstants.TOOL_NAME_NURSERY_MANAGER_WEB.getString());
-		} catch (MiddlewareQueryException e) {
-		    LOG.error(e.getMessage(), e);
-		}
-    	return tool;
-    }
-
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("createNurseryForm") CreateNurseryForm form, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2, Model model, HttpSession session) throws MiddlewareQueryException{
     	session.invalidate();

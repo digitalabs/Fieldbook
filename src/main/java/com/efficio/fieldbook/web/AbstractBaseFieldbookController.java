@@ -127,6 +127,17 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
         */
     }
     
+    public Tool getNurseryTool(){
+    	Tool tool = null;
+		try {
+			tool = workbenchService.getToolWithName(
+			        AppConstants.TOOL_NAME_NURSERY_MANAGER_WEB.getString());
+		} catch (MiddlewareQueryException e) {
+		    LOG.error(e.getMessage(), e);
+		}
+    	return tool;
+    }
+    
     /**
      * Base functionality for displaying the page.
      *

@@ -19,6 +19,8 @@
 <form onsubmit="javascript: return validateAdvanceNursery();" id="specifyLabelDetailsForm" role="form-horizontal" action="#"
 th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advancingNurseryform}" enctype="multipart/form-data">
 
+<input type="hidden" th:field="*{locationUrl}"/>
+<input type="hidden" th:field="*{breedingMethodUrl}"/>
 <input type="hidden" th:field="*{defaultMethodId}"/>
 
 <div class="col-xs-12 col-md-12">
@@ -107,16 +109,13 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 						<div class="col-xs-5 col-md-5">
 							<label class="control-label" th:text="#{advancing.nursery.breeding.method.all.plots}">Breeding Method for all plots</label>														
 						</div>		
-						<div class="col-xs-7 col-md-7">
-						<!-- 
-							<select th:field="*{methodSelected}" class="form-control">
-								<option  th:each="method, rowIndex : *{breedingMethods}" th:text="${method.mname}" th:value="${method.mid}"></option>							  					 
-							</select>
-							 -->
-							 
-							    <label>
-							      <input id="showFavoriteMethod" value="1" type="checkbox"/> <span th:text="#{show.favorite.method}">Show Favorite Method</span>
-							    </label>
+						<div class="col-xs-6 col-md-6">					
+							 <input type="hidden" th:field="*{methodIdAll}" class="form-control select2" placeholder=""/>
+						   
+						   <input type="hidden" th:field="*{methodIdFavorite}" class="form-control select2" placeholder=""/>
+						   
+						   <input type="hidden" th:field="*{breedingMethodId}"/>	
+							    
 							
 						</div>
 					
@@ -137,12 +136,10 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 							&nbsp;
 						</div>
 						<div class="col-xs-6 col-md-6">
-				  
-						   <input type="hidden" th:field="*{methodIdAll}" class="form-control select2" placeholder=""/>
-						   
-						   <input type="hidden" th:field="*{methodIdFavorite}" class="form-control select2" placeholder=""/>
-						   
-						   <input type="hidden" th:field="*{breedingMethodId}"/>						   
+				  <label>
+							      <input id="showFavoriteMethod" value="1" type="checkbox"/> <span th:text="#{show.favorite.method}">Show Favorite Method</span>
+							    </label>
+						   					   
 						   
 					    </div>
 					</div>										 				
@@ -248,9 +245,13 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 				  	</div>
 					<div class="col-xs-4 col-md-4">
 				  
-					   <label>
-					      <input id="showFavoriteLocation" value="1" type="checkbox"/> <span th:text="#{show.favorite.location}">Show Favorite Location</span>
-					    </label>
+					   <input type="hidden" th:field="*{harvestLocationIdAll}" class="form-control select2" placeholder=""/>
+					   
+					   <input type="hidden" th:field="*{harvestLocationIdFavorite}" class="form-control select2" placeholder=""/>
+					   
+					   <input type="hidden" th:field="*{harvestLocationId}"/>
+					   <input type="hidden" th:field="*{harvestLocationName}" />
+					   <input type="hidden" th:field="*{harvestLocationAbbreviation}" />
 					   
 				    </div>
 				    <div class="col-xs-3 col-md-3">
@@ -266,13 +267,10 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 					</div>
 					<div class="col-xs-4 col-md-4">
 				  
-					   <input type="hidden" th:field="*{harvestLocationIdAll}" class="form-control select2" placeholder=""/>
+				  <label>
+					      <input id="showFavoriteLocation" value="1" type="checkbox"/> <span th:text="#{show.favorite.location}">Show Favorite Location</span>
+					    </label>
 					   
-					   <input type="hidden" th:field="*{harvestLocationIdFavorite}" class="form-control select2" placeholder=""/>
-					   
-					   <input type="hidden" th:field="*{harvestLocationId}"/>
-					   <input type="hidden" th:field="*{harvestLocationName}" />
-					   <input type="hidden" th:field="*{harvestLocationAbbreviation}" />
 					   
 				    </div>
 				    <div class="col-xs-3 col-md-3">
@@ -349,8 +347,8 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 	    var msgSamplePlotError = /*[[#{advancing.nursery.number.of.plot.error}]]*/;
 	   	var msgHarvestDateError = /*[[#{advancing.nursery.harvest.date.error}]]*/;
     
-	   	var programLocationUrl = /*[[#{nursery.advance.nursery.manage.location.url}]]*/;
-	   	var programMethodUrl = /*[[#{nursery.advance.nursery.manage.method.url}]]*/;
+	   	var programLocationUrl = '';
+	   	var programMethodUrl = '';
 	   	
 	    var oldLineSelected = "";
 	    var oldMethodSelected = "";
@@ -364,6 +362,9 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
  			var harvestDate =  $('#harvestDate').datepicker({'format': 'yyyymmdd'}).on('changeDate', function(ev) {
  				$(this).datepicker('hide');
  			})
+ 			
+ 			programMethodUrl = $('#breedingMethodUrl').val();
+ 			programLocationUrl = $('#locationUrl').val();
  			
  			initializeHarvestLocationSelect2(locationSuggestions, locationSuggestions_obj);
  			initializeHarvestLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj);

@@ -42,16 +42,27 @@ import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class CreateNurseryController.
+ */
 @Controller
 @RequestMapping(CreateNurseryController.URL)
 public class CreateNurseryController extends SettingsController {
 	
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(CreateNurseryController.class);
 
+    /** The Constant URL. */
     public static final String URL = "/NurseryManager/createNursery";
+    
+    /** The Constant URL_SETTINGS. */
     public static final String URL_SETTINGS = "/NurseryManager/chooseSettings";
 	
    
+	/* (non-Javadoc)
+	 * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
+	 */
 	@Override
 	public String getContentName() {
 		return "NurseryManager/createNursery";
@@ -59,6 +70,16 @@ public class CreateNurseryController extends SettingsController {
 
     
 
+    /**
+     * Use existing nursery.
+     *
+     * @param form the form
+     * @param nurseryId the nursery id
+     * @param model the model
+     * @param session the session
+     * @return the string
+     * @throws MiddlewareQueryException the middleware query exception
+     */
     @RequestMapping(value="/nursery/{nurseryId}", method = RequestMethod.GET)
     public String useExistingNursery(@ModelAttribute("manageSettingsForm") CreateNurseryForm form, @PathVariable int nurseryId
             , Model model, HttpSession session) throws MiddlewareQueryException{
@@ -114,6 +135,7 @@ public class CreateNurseryController extends SettingsController {
      * Creates the setting detail.
      *
      * @param id the id
+     * @param name the name
      * @return the setting detail
      * @throws MiddlewareQueryException the middleware query exception
      */
@@ -148,15 +170,36 @@ public class CreateNurseryController extends SettingsController {
     }
     
     
+    /**
+     * Show.
+     *
+     * @param form the form
+     * @param form2 the form2
+     * @param model the model
+     * @param session the session
+     * @return the string
+     * @throws MiddlewareQueryException the middleware query exception
+     */
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("createNurseryForm") CreateNurseryForm form, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2, Model model, HttpSession session) throws MiddlewareQueryException{
     	session.invalidate();
     	form.setProjectId(this.getCurrentProjectId());
     	form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString());
     	setFormStaticData(form);
+    	form.setStudyNameTermId(AppConstants.STUDY_NAME_ID.getString());
     	return super.show(model);
     }
 
+    /**
+     * View settings.
+     *
+     * @param form the form
+     * @param templateSettingId the template setting id
+     * @param model the model
+     * @param session the session
+     * @return the string
+     * @throws MiddlewareQueryException the middleware query exception
+     */
     @RequestMapping(value="/view/{templateSettingId}", method = RequestMethod.POST)
     public String viewSettings(@ModelAttribute("createNurseryForm") CreateNurseryForm form, @PathVariable int templateSettingId, 
     	Model model, HttpSession session) throws MiddlewareQueryException{
@@ -186,6 +229,14 @@ public class CreateNurseryController extends SettingsController {
         return super.showAjaxPage(model, URL_SETTINGS );
     }
 
+    /**
+     * Submit.
+     *
+     * @param form the form
+     * @param model the model
+     * @return the string
+     * @throws MiddlewareQueryException the middleware query exception
+     */
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
     public String submit(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws MiddlewareQueryException {
@@ -210,6 +261,13 @@ public class CreateNurseryController extends SettingsController {
     	return "success";
     }
     
+    /**
+     * Creates the study details.
+     *
+     * @param workbook the workbook
+     * @param conditions the conditions
+     * @param folderId the folder id
+     */
     private void createStudyDetails(Workbook workbook, List<SettingDetail> conditions, Integer folderId) {
         if (workbook.getStudyDetails() == null) {
             workbook.setStudyDetails(new StudyDetails());
@@ -229,6 +287,13 @@ public class CreateNurseryController extends SettingsController {
         studyDetails.print(1);
     }
     
+    /**
+     * Gets the setting detail value.
+     *
+     * @param details the details
+     * @param termId the term id
+     * @return the setting detail value
+     */
     private String getSettingDetailValue(List<SettingDetail> details, int termId) {
     	String value = null;
     	
@@ -242,6 +307,11 @@ public class CreateNurseryController extends SettingsController {
     	return value;
     }
     
+    /**
+     * Sets the form static data.
+     *
+     * @param form the new form static data
+     */
     private void setFormStaticData(CreateNurseryForm form){
         form.setBreedingMethodId(AppConstants.BREEDING_METHOD_ID.getString());
         form.setLocationId(AppConstants.LOCATION_ID.getString());
@@ -249,5 +319,6 @@ public class CreateNurseryController extends SettingsController {
         form.setLocationUrl(AppConstants.LOCATION_URL.getString());
         form.setProjectId(this.getCurrentProjectId());
         form.setImportLocationUrl(AppConstants.IMPORT_GERMPLASM_URL.getString());
+        form.setStudyNameTermId(AppConstants.STUDY_NAME_ID.getString());
     }
 }

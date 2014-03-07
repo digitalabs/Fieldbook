@@ -240,7 +240,8 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 	
     var requiredErrorMessage = /*[[#{ontology.browser.modal.error}]]*/;
     var requiredSettingErrorMessage = /*[[#{nursery.create.nursery.required.setting}]]*/;
-    
+    var nurseryFieldsIsRequired = /*[[#{nursery.create.is.required}]]*/;
+    	    	
     var locationId = '';
     var programLocationUrl = '';
     var programMethodUrl = '';
@@ -339,7 +340,9 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 		}
 		
 		if (hasError){
-			var errMsg = requiredErrorMessage + ": " + name.replace('*', '').replace(":", "");
+			
+			//var errMsg = requiredErrorMessage + ": " + name.replace('*', '').replace(":", "");
+			var errMsg = name.replace('*', '').replace(":", "") + " " + nurseryFieldsIsRequired;
 			if(customMessage != '')
 				errMsg = customMessage;
 			showErrorMessage('page-message', errMsg);

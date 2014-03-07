@@ -21,7 +21,6 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
-import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -83,8 +82,6 @@ public class UserSelection implements Serializable {
     
     /** The trait ref list. */
     private List<TraitClassReference> traitRefList;
-    
-    private Dataset dataset;
     
 	/**
 	 * Gets the current page.
@@ -406,19 +403,4 @@ public class UserSelection implements Serializable {
 		this.traitRefList = traitRefList;
 	}
 
-	/**
-	 * @return the dataset
-	 */
-	public Dataset getDataset() {
-		return dataset;
-	}
-
-	/**
-	 * @param dataset the dataset to set
-	 */
-	public void setDataset(Dataset dataset) {
-		this.dataset = dataset;
-	}
-
-    
 }

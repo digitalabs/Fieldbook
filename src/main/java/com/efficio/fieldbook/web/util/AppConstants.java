@@ -137,6 +137,7 @@ public enum AppConstants {
     
     ,LOCATION_ID
     ,BREEDING_METHOD_ID
+    ,STUDY_NAME_ID
     
     ,LOCATION_URL
     ,BREEDING_METHOD_URL

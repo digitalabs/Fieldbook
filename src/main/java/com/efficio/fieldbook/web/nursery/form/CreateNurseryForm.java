@@ -13,8 +13,6 @@ package com.efficio.fieldbook.web.nursery.form;
 
 import java.util.List;
 
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
-import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
 
 
@@ -39,24 +37,8 @@ public class CreateNurseryForm {
 	/** The baseline trait variables. */
 	private List<SettingDetail> baselineTraitVariables;
 
-/*	private ImportedGermplasmMainInfo importedGermplasmMainInfo;
-	
-	private List<ImportedGermplasm> importedGermplasm;
-
-	private List<ImportedGermplasm> paginatedImportedGermplasm;	
-
-	private int currentPage;
-
-	private int totalPages;
-
-	private int resultPerPage = 100;	
-
-	private Integer[] check;
-	
-	private String chooseSpecifyCheck;
-*/	
     /** The folder id. */
-private Integer folderId;
+	private Integer folderId;
     
     /** The folder name. */
     private String folderName;
@@ -84,6 +66,8 @@ private Integer folderId;
     
     /** The load settings. */
     private String loadSettings;
+    
+    private String studyNameTermId;
 
     /**
      * Gets the project id.
@@ -353,6 +337,20 @@ private Integer folderId;
 	 */
 	public void setLoadSettings(String loadSettings) {
 		this.loadSettings = loadSettings;
+	}
+
+	/**
+	 * @return the studyNameTermId
+	 */
+	public String getStudyNameTermId() {
+		return studyNameTermId;
+	}
+
+	/**
+	 * @param studyNameTermId the studyNameTermId to set
+	 */
+	public void setStudyNameTermId(String studyNameTermId) {
+		this.studyNameTermId = studyNameTermId;
 	}
 
 	

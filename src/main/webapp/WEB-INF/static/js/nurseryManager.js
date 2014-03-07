@@ -1449,6 +1449,9 @@ function displayGermplasmDetails(listId) {
 }
 
 function openUsePreviousNurseryModal() {
+	$("#selectedNursery").select2("destroy");
+	$("#selectedNursery").val("")
+	$("#selectedNursery").select2();
 	$("#usePreviousNurseryModal").modal("show");
 }
 

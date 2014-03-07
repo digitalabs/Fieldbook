@@ -8,6 +8,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
                     <input type="hidden" th:field="*{breedingMethodUrl}"/>
                     <input type="hidden" th:field="*{importLocationUrl}"/>
                     <input type="hidden" th:field="*{projectId}"/>
+                    <input type="hidden" th:field="*{studyNameTermId}"/>
 					
 					
 	    			<div class="row form-group">
@@ -240,6 +241,8 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 	
     var requiredErrorMessage = /*[[#{ontology.browser.modal.error}]]*/;
     var requiredSettingErrorMessage = /*[[#{nursery.create.nursery.required.setting}]]*/;
+    var uniqueBookNameErrorMessage = /*[[#{nursery.create.already.exists}]]*/;
+    var nurseryFieldsIsRequired = /*[[#{nursery.create.is.required}]]*/;
     
     var locationId = '';
     var programLocationUrl = '';
@@ -291,6 +294,15 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 		var hasError = false;
 		var name;
 		var customMessage = '';
+		var studyBookName;
+		var studyNameId = $("#studyNameTermId").val();
+
+		$('.nurseryLevelVariableIdClass').each(function(){
+			if (studyNameId == $(this).val()) {
+				studyBookName = $(this).parent().find(".form-control").val();
+			}
+		});
+		
 		if ($("#loadSettings").val() == '0') {
 			hasError = true;
 			customMessage = requiredSettingErrorMessage;
@@ -338,13 +350,27 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 			});
 		}
 		
+		
 		if (hasError){
-			var errMsg = requiredErrorMessage + ": " + name.replace('*', '').replace(":", "");
+			var errMsg = name.replace('*', '').replace(":", "") + " " + nurseryFieldsIsRequired;
 			if(customMessage != '')
 				errMsg = customMessage;
 			showErrorMessage('page-message', errMsg);
 			return false;
 		}
+
+		var found = false;
+		$("#selectedNursery option").each(function(i) {
+			if (studyBookName == $(this).text()) {
+				found = true;
+			}
+		});
+		if (found) {
+			hasError = true;
+			showErrorMessage('page-message', uniqueBookNameErrorMessage);
+			return false;
+		}
+
 		return true;
 	}
            

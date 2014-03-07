@@ -423,7 +423,9 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
  					doInitialNurserySettingsLoad();
  			    }
  				*/
- 				
+ 				  $('select').each(function(){
+ 						$(this).select2();
+ 					});
  				$('#selectedSettingId').on('change', function(){
  					//alert('load settings' + $(this).val());
  					loadNurserySettings($(this).val());

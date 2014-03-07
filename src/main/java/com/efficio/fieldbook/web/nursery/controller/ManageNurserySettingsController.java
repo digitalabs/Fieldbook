@@ -16,8 +16,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
@@ -26,17 +24,13 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
-import org.generationcp.middleware.pojos.workbench.Tool;
-import org.generationcp.middleware.pojos.workbench.settings.Condition;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
-import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,11 +42,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.bean.SettingVariable;
-import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.ManageSettingsForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
@@ -63,29 +54,14 @@ import com.efficio.fieldbook.web.util.TreeViewUtil;
  */
 @Controller
 @RequestMapping(ManageNurserySettingsController.URL)
-public class ManageNurserySettingsController extends AbstractBaseFieldbookController{
+public class ManageNurserySettingsController extends SettingsController{
 
     /** The Constant URL. */
     public static final String URL = "/NurseryManager/manageNurserySettings";
     
     /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(ManageNurserySettingsController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ManageNurserySettingsController.class);    
     
-    /** The fieldbook middleware service. */
-    @Resource
-    private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;        
-    
-    /** The workbench data manager. */
-    @Resource
-    private WorkbenchService workbenchService;
-    
-    /** The fieldbook service. */
-    @Resource
-    private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
-    
-    /** The user selection. */
-    @Resource
-    private UserSelection userSelection;
     
     @Resource
     private OntologyService ontologyService;
@@ -96,50 +72,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     @Override
     public String getContentName() {
         return "NurseryManager/manageNurserySettings";
-    }    
-    
-    
-    
-    /**
-     * Gets the settings list.
-     *
-     * @return the settings list
-     */
-    @ModelAttribute("settingsList")
-    public List<TemplateSetting> getSettingsList() {
-        try {
-        	//need to call the MW call passing the tool id and project id
-        	//getCurrentProjectId()
-        	
-        	TemplateSetting templateSettingFilter = new TemplateSetting(null, Integer.valueOf(getCurrentProjectId()), null, getNurseryTool(), null, null);
-        	templateSettingFilter.setIsDefaultToNull();
-            List<TemplateSetting> templateSettingsList = workbenchService.getTemplateSettings(templateSettingFilter);
-         // this is for the default
-            templateSettingsList.add(0, new TemplateSetting(Integer.valueOf(0), Integer.valueOf(getCurrentProjectId()), "", null, "", false));
-            return templateSettingsList;
-        }catch (MiddlewareQueryException e) {
-            LOG.error(e.getMessage(), e);
-        }
-		
-        return null;
-    }
-    
-    /**
-     * Gets the settings list.
-     *
-     * @return the settings list
-     */
-    @ModelAttribute("nurseryList")
-    public List<StudyDetails> getNurseryList() {
-        try {
-            List<StudyDetails> nurseries = fieldbookMiddlewareService.getAllLocalNurseryDetails();
-            return nurseries;
-        }catch (MiddlewareQueryException e) {
-            LOG.error(e.getMessage(), e);
-        }
-                
-        return null;
-    }
+    }                    
     
     private void setFormStaticData(ManageSettingsForm form){
     	form.setBreedingMethodId(AppConstants.BREEDING_METHOD_ID.getString());
@@ -304,43 +237,7 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
         return super.showAjaxPage(model, getContentName() );
     }
     
-    private List<Integer> buildRequiredFactors() {
-        List<Integer> requiredFactors = new ArrayList<Integer>();
-        String createNurseryRequiredFields = AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString();
-        StringTokenizer token = new StringTokenizer(createNurseryRequiredFields, ",");
-        while(token.hasMoreTokens()){
-        	requiredFactors.add(Integer.valueOf(token.nextToken()));
-        }        
-        return requiredFactors;
-    }
     
-    private List<String> buildRequiredFactorsLabel() {
-    	
-        List<String> requiredFactors = new ArrayList<String>();
-        /*
-        requiredFactors.add(AppConstants.LOCATION.getString());
-        requiredFactors.add(AppConstants.PRINCIPAL_INVESTIGATOR.getString());
-        requiredFactors.add(AppConstants.STUDY_NAME.getString());
-        requiredFactors.add(AppConstants.STUDY_TITLE.getString());
-        requiredFactors.add(AppConstants.OBJECTIVE.getString());
-        */
-        String createNurseryRequiredFields = AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString();
-        StringTokenizer token = new StringTokenizer(createNurseryRequiredFields, ",");
-        while(token.hasMoreTokens()){
-        	requiredFactors.add(AppConstants.getString(token.nextToken() + AppConstants.LABEL.getString()));
-        }        
-        
-        return requiredFactors;
-    }
-
-    private boolean[] buildRequiredFactorsFlag() {
-        boolean[] requiredFactorsFlag = new boolean[5];
-        
-        for (int i = 0; i < requiredFactorsFlag.length; i++) {
-            requiredFactorsFlag[i] = false;
-        }
-        return requiredFactorsFlag;
-    } 
     
     @RequestMapping(value="/nursery/{nurseryId}", method = RequestMethod.GET)
     public String useExistingNursery(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, @PathVariable int nurseryId
@@ -773,66 +670,5 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
     	return om.writeValueAsString(newDetails);
     }
     
-    /**
-     * Populates Setting Variable
-     * @param var
-     */
-    private void populateSettingVariable(SettingVariable var) throws MiddlewareQueryException {
-    	StandardVariable  stdvar = getStandardVariable(var.getCvTermId());
-    	if (stdvar != null) {
-			var.setDescription(stdvar.getDescription());
-			var.setProperty(stdvar.getProperty().getName());
-			var.setScale(stdvar.getScale().getName());
-			var.setMethod(stdvar.getMethod().getName());
-			var.setDataType(stdvar.getDataType().getName());
-			var.setRole(stdvar.getStoredIn().getName());
-			var.setCropOntologyId(stdvar.getCropOntologyId() != null ? stdvar.getCropOntologyId() : "");
-			var.setTraitClass(stdvar.getIsA() != null ? stdvar.getIsA().getName() : "");
-			var.setDataTypeId(stdvar.getDataType().getId());
-			var.setMinRange(stdvar.getConstraints() != null && stdvar.getConstraints().getMinValue() != null ? stdvar.getConstraints().getMinValue() : null);
-			var.setMaxRange(stdvar.getConstraints() != null && stdvar.getConstraints().getMaxValue() != null ? stdvar.getConstraints().getMaxValue() : null);
-			var.setWidgetType();
-    	}
-    }
-
-    /**
-     * Get setting variable.
-     * @param id
-     * @return
-     * @throws MiddlewareQueryException
-     */
-    private SettingVariable getSettingVariable(int id) throws MiddlewareQueryException {
-		StandardVariable stdVar = getStandardVariable(id);
-		if (stdVar != null) {
-			SettingVariable svar = new SettingVariable(stdVar.getName(), 
-			        stdVar.getDescription(), stdVar.getProperty().getName(),
-					stdVar.getScale().getName(), stdVar.getMethod().getName(), 
-					stdVar.getStoredIn().getName(), 
-					stdVar.getDataType().getName(), stdVar.getDataType().getId(),
-					stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null ? stdVar.getConstraints().getMinValue() : null,
-					stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ? stdVar.getConstraints().getMaxValue() : null);
-			svar.setCvTermId(stdVar.getId());
-			svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
-			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
-			return svar;
-		}
-		return null;
-    }
-    /**
-     * Get standard variable.
-     * @param id
-     * @return
-     * @throws MiddlewareQueryException
-     */
-    private StandardVariable getStandardVariable(int id) throws MiddlewareQueryException {
-    	StandardVariable variable = userSelection.getCacheStandardVariable(id);
-    	if (variable == null) {
-    		variable = fieldbookMiddlewareService.getStandardVariable(id);
-    		if (variable != null) {
-    			userSelection.putStandardVariableInCache(variable);
-    		}
-    	}
-    	
-    	return variable;
-    }
+    
 }

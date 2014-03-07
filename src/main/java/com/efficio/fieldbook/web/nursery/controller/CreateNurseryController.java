@@ -11,11 +11,8 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -27,9 +24,7 @@ import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
-import org.generationcp.middleware.pojos.workbench.Tool;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
-import org.generationcp.middleware.service.api.DataImportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -40,88 +35,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.bean.SettingVariable;
-import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.nursery.form.ManageSettingsForm;
-import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
-import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 
 @Controller
 @RequestMapping(CreateNurseryController.URL)
-public class CreateNurseryController extends AbstractBaseFieldbookController {
+public class CreateNurseryController extends SettingsController {
 	
     private static final Logger LOG = LoggerFactory.getLogger(CreateNurseryController.class);
 
     public static final String URL = "/NurseryManager/createNursery";
     public static final String URL_SETTINGS = "/NurseryManager/chooseSettings";
 	
-    @Resource
-    private UserSelection userSelection;
-    
-	@Resource
-	private WorkbenchService workbenchService;
-	
-	@Resource
-	private FieldbookService fieldbookService;
-	
-	@Resource
-	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
-	
-	@Resource
-	private MeasurementsGeneratorService measurementsGeneratorService;
-	
-	@Resource
-	private ValidationService validationService;
-	
-	@Resource
-	private DataImportService dataImportService;
-	
-
+   
 	@Override
 	public String getContentName() {
 		return "NurseryManager/createNursery";
 	}
 
-    @ModelAttribute("settingsList")
-    public List<TemplateSetting> getSettingsList() {
-        try {
-        	TemplateSetting templateSettingFilter = new TemplateSetting(null, Integer.valueOf(getCurrentProjectId()), null, getNurseryTool(), null, null);
-        	templateSettingFilter.setIsDefaultToNull();
-            List<TemplateSetting> templateSettingsList = workbenchService.getTemplateSettings(templateSettingFilter);
-            templateSettingsList.add(0, new TemplateSetting(Integer.valueOf(0), Integer.valueOf(getCurrentProjectId()), "", null, "", false));
-            return templateSettingsList;
-
-        }catch (MiddlewareQueryException e) {
-            LOG.error(e.getMessage(), e);
-        }
-		
-        return null;
-    }
     
-    /**
-     * Gets the settings list.
-     *
-     * @return the settings list
-     */
-    @ModelAttribute("nurseryList")
-    public List<StudyDetails> getNurseryList() {
-        try {
-            List<StudyDetails> nurseries = fieldbookMiddlewareService.getAllLocalNurseryDetails();
-            return nurseries;
-        }catch (MiddlewareQueryException e) {
-            LOG.error(e.getMessage(), e);
-        }
-                
-        return null;
-    }
 
     @RequestMapping(value="/nursery/{nurseryId}", method = RequestMethod.GET)
     public String useExistingNursery(@ModelAttribute("manageSettingsForm") CreateNurseryForm form, @PathVariable int nurseryId
@@ -211,55 +147,7 @@ public class CreateNurseryController extends AbstractBaseFieldbookController {
                 return new SettingDetail();
     }
     
-    /**
-     * Get standard variable.
-     * @param id
-     * @return
-     * @throws MiddlewareQueryException
-     */
-    private StandardVariable getStandardVariable(int id) throws MiddlewareQueryException {
-        StandardVariable variable = userSelection.getCacheStandardVariable(id);
-        if (variable == null) {
-                variable = fieldbookMiddlewareService.getStandardVariable(id);
-                if (variable != null) {
-                        userSelection.putStandardVariableInCache(variable);
-                }
-        }
-        
-        return variable;
-    }
     
-    private List<Integer> buildRequiredFactors() {
-        List<Integer> requiredFactors = new ArrayList<Integer>();
-        String createNurseryRequiredFields = AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString();
-        StringTokenizer token = new StringTokenizer(createNurseryRequiredFields, ",");
-        while(token.hasMoreTokens()){
-        	requiredFactors.add(Integer.valueOf(token.nextToken()));
-        }        
-        return requiredFactors;
-    }
-    
-    private List<String> buildRequiredFactorsLabel() {
-    	
-        List<String> requiredFactors = new ArrayList<String>();
-        
-        String createNurseryRequiredFields = AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString();
-        StringTokenizer token = new StringTokenizer(createNurseryRequiredFields, ",");
-        while(token.hasMoreTokens()){
-        	requiredFactors.add(AppConstants.getString(token.nextToken() + AppConstants.LABEL.getString()));
-        }        
-        
-        return requiredFactors;
-    }
-
-    private boolean[] buildRequiredFactorsFlag() {
-        boolean[] requiredFactorsFlag = new boolean[5];
-        
-        for (int i = 0; i < requiredFactorsFlag.length; i++) {
-            requiredFactorsFlag[i] = false;
-        }
-        return requiredFactorsFlag;
-    } 
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("createNurseryForm") CreateNurseryForm form, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2, Model model, HttpSession session) throws MiddlewareQueryException{
     	session.invalidate();

@@ -28,6 +28,7 @@ public class SettingDetail {
 	private String value;
 	private boolean isDelete;
 	private boolean isFavorite;
+	private int order;
 
 	public SettingDetail(){
 		super();
@@ -106,5 +107,11 @@ public class SettingDetail {
 	}
 	public void setFavorite(boolean isFavorite) {
 	        this.isFavorite = isFavorite;
+	}
+	public int getOrder() {
+	        return order;
+	}
+	public void setOrder(int order) {
+	        this.order = order;
 	}
 }

@@ -12,11 +12,12 @@
 package com.efficio.fieldbook.web.nursery.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
@@ -33,10 +34,7 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
-import org.generationcp.middleware.pojos.workbench.Tool;
-import org.generationcp.middleware.pojos.workbench.settings.Condition;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
-import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -365,6 +363,8 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
                 for (Integer requiredFactor: requiredFactors) {
                     if (requiredFactor.equals(stdVar)) {
                         requiredFactorsFlag[ctr] = true;
+                        nurseryLevelCondition.setOrder((requiredFactors.size()-ctr)*-1);
+                        nurseryLevelCondition.getVariable().setName(requiredFactorsLabel.get(ctr));
                     }
                     ctr++;
                 }
@@ -374,9 +374,19 @@ public class ManageNurserySettingsController extends AbstractBaseFieldbookContro
             //add required factors that are not in existing nursery
             for (int i = 0; i < requiredFactorsFlag.length; i++) {
                 if (!requiredFactorsFlag[i]) {
-                    nurseryLevelConditions.add(createSettingDetail(requiredFactors.get(i), requiredFactorsLabel.get(i)));
+                    SettingDetail newSettingDetail = createSettingDetail(requiredFactors.get(i), requiredFactorsLabel.get(i));
+                    newSettingDetail.setOrder((requiredFactors.size()-i)*-1);
+                    nurseryLevelConditions.add(newSettingDetail);
                 }
-            }
+            } 
+            
+            //sort by required fields
+            Collections.sort(nurseryLevelConditions, new  Comparator<SettingDetail>() {
+                @Override
+                public int compare(SettingDetail o1, SettingDetail o2) {
+                        return o1.getOrder() - o2.getOrder();
+                }
+            });
             
             userSelection.setNurseryLevelConditions(nurseryLevelConditions);
             form.setNurseryLevelVariables(userSelection.getNurseryLevelConditions());

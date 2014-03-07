@@ -157,6 +157,7 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 	    					//measurementData = new MeasurementData(var.getName(), " sdasd a", false, var.getDataType());
 	    				else if(termId.intValue() == TermId.GID.getId()){	    					
 	    					//we need to check first if the germplasm is existing or not
+	    					/*
 	                    	Integer dbGid = fieldbookMiddlewareService.getGermplasmIdByName(germplasm.getDesig());
 	                    	Integer gidToBeUse = null;
 	                    	if(dbGid == null){
@@ -169,7 +170,8 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 	                    	
 	                    	
 	                    	measurementData = new MeasurementData(var.getName(), gidToBeUse.toString(), false, var.getDataType());
-	                    	
+	                    	*/
+	    					measurementData = new MeasurementData(var.getName(), germplasm.getGid(), false, var.getDataType());
 	    				}else if(termId.intValue() == TermId.ENTRY_CODE.getId())	    					
 	    					measurementData = new MeasurementData(var.getName(), germplasm.getEntryCode(), false, var.getDataType());
 	    				else if(termId.intValue() == TermId.PLOT_NO.getId())

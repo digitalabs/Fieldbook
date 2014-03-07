@@ -113,14 +113,16 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 		long start = System.currentTimeMillis();
 		int index = 0;
     	List<MeasurementRow> measurementRows = new ArrayList<MeasurementRow>();
-    	int newGid = fieldbookMiddlewareService.getNextGermplasmId();
+    	//int newGid = fieldbookMiddlewareService.getNextGermplasmId();
     	Map<String, Integer> standardVariableMap = new HashMap<String, Integer>();
     	for(ImportedGermplasm germplasm : userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms()){
     		MeasurementRow measurementRow = new MeasurementRow();
     		List<MeasurementData> dataList = new ArrayList<MeasurementData>();
     		index++;
     		
-    		for(MeasurementVariable var : userSelection.getWorkbook().getMeasurementDatasetVariables()){
+    		//for(MeasurementVariable var : userSelection.getWorkbook().getMeasurementDatasetVariables()){
+    		//iterate the non trial factors
+    		for(MeasurementVariable var : userSelection.getWorkbook().getNonTrialFactors()){    			    			
     			MeasurementData measurementData =null;
     			
     			
@@ -202,10 +204,20 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
     			
     			dataList.add(measurementData);    			
     		}
+    		//iterate the variates
+    		for(MeasurementVariable var : userSelection.getWorkbook().getVariates()){    			    			
+    			MeasurementData measurementData =null;
+    			    			    			
+            	measurementData = new MeasurementData(var.getName(), "", true, var.getDataType());
+            	//measurementData.setEditable(true);
+            	var.setFactor(false);	                			    						
+    			
+    			dataList.add(measurementData);    			
+    		}
     		measurementRow.setDataList(dataList);
     		measurementRows.add(measurementRow);
     	}
-    	LOG.info("generateRealMeasurementRows Time duration: "+ (System.currentTimeMillis() - start));
+    	LOG.info("generateRealMeasurementRows Time duration: "+ ((System.currentTimeMillis() - start)/1000));
     	return measurementRows;
 	}
 	

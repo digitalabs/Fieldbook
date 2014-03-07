@@ -111,7 +111,6 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 			type: "POST",
 			data: serializedData,
 			cache: false,
-			timeout: 70000,
 			success: function(html) {
 		    	$('#successMessageModal').modal({ backdrop: 'static', keyboard: true }) 
 		    	$("#successMessageModal").modal("show");
@@ -134,7 +133,6 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 			type: "POST",
 			data: serializedData,
 			cache: false,
-			timeout: 70000,
 			success: function(html) {
 				submitGermplasmList();
 			}, 

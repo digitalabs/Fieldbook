@@ -203,7 +203,7 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
     						
     			
     			dataList.add(measurementData); 
-    			measurementRow.addFactorDataList(measurementData);//for improvement
+    			//measurementRow.addFactorDataList(measurementData);//for improvement
     		}
     		//iterate the variates
     		for(MeasurementVariable var : userSelection.getWorkbook().getVariates()){    			    			
@@ -214,7 +214,7 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
             	var.setFactor(false);	                			    						
     			
     			dataList.add(measurementData);
-    			measurementRow.addVariateDataList(measurementData);//for improvement
+    			//measurementRow.addVariateDataList(measurementData);//for improvement
     		}
     		measurementRow.setDataList(dataList);
     		measurementRows.add(measurementRow);

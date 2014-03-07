@@ -12,6 +12,8 @@
 package com.efficio.fieldbook.web.nursery.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -262,6 +264,8 @@ public class ManageNurserySettingsController extends SettingsController{
                 for (Integer requiredFactor: requiredFactors) {
                     if (requiredFactor.equals(stdVar)) {
                         requiredFactorsFlag[ctr] = true;
+                        nurseryLevelCondition.setOrder((requiredFactors.size()-ctr)*-1);
+                        nurseryLevelCondition.getVariable().setName(requiredFactorsLabel.get(ctr));
                     }
                     ctr++;
                 }
@@ -271,9 +275,19 @@ public class ManageNurserySettingsController extends SettingsController{
             //add required factors that are not in existing nursery
             for (int i = 0; i < requiredFactorsFlag.length; i++) {
                 if (!requiredFactorsFlag[i]) {
-                    nurseryLevelConditions.add(createSettingDetail(requiredFactors.get(i), requiredFactorsLabel.get(i)));
+                    SettingDetail newSettingDetail = createSettingDetail(requiredFactors.get(i), requiredFactorsLabel.get(i));
+                    newSettingDetail.setOrder((requiredFactors.size()-i)*-1);
+                    nurseryLevelConditions.add(newSettingDetail);
                 }
-            }
+            } 
+            
+            //sort by required fields
+            Collections.sort(nurseryLevelConditions, new  Comparator<SettingDetail>() {
+                @Override
+                public int compare(SettingDetail o1, SettingDetail o2) {
+                        return o1.getOrder() - o2.getOrder();
+                }
+            });
             
             userSelection.setNurseryLevelConditions(nurseryLevelConditions);
             form.setNurseryLevelVariables(userSelection.getNurseryLevelConditions());

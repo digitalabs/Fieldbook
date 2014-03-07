@@ -47,7 +47,7 @@ import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 public class AddOrRemoveTraitsControllerTest extends AbstractJUnit4SpringContextTests {
     
     /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(NurseryDetailsTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AddOrRemoveTraitsControllerTest.class);
     
     /** The file service. */
     

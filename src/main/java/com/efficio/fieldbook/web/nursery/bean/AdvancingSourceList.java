@@ -13,6 +13,7 @@ package com.efficio.fieldbook.web.nursery.bean;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.dms.Study;
@@ -62,24 +63,24 @@ public class AdvancingSourceList{
                 for (MeasurementRow row : workbook.getObservations()) {
                     ImportedGermplasm germplasm = new ImportedGermplasm();
                     germplasm.setCross(row.getMeasurementDataValue(
-                            getHeaderLabel(workbook.getMeasurementDatasetVariables(), TermId.CROSS.getId())));
+                            getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), TermId.CROSS.getId())));
                     germplasm.setDesig(row.getMeasurementDataValue(
-                            getHeaderLabel(workbook.getMeasurementDatasetVariables(), TermId.DESIG.getId())));
+                            getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), TermId.DESIG.getId())));
                     germplasm.setEntryCode(row.getMeasurementDataValue(
-                            getHeaderLabel(workbook.getMeasurementDatasetVariables(), TermId.ENTRY_CODE.getId())));
+                            getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), TermId.ENTRY_CODE.getId())));
                     germplasm.setEntryId(getIntegerValue(row.getMeasurementDataValue(
-                            getHeaderLabel(workbook.getMeasurementDatasetVariables(), TermId.ENTRY_NO.getId()))));
+                            getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), TermId.ENTRY_NO.getId()))));
                     germplasm.setGid(row.getMeasurementDataValue(
-                            getHeaderLabel(workbook.getMeasurementDatasetVariables(), TermId.GID.getId())));
+                            getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), TermId.GID.getId())));
                     germplasm.setSource(row.getMeasurementDataValue(
-                            getHeaderLabel(workbook.getMeasurementDatasetVariables(), TermId.SOURCE.getId())));
+                            getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), TermId.SOURCE.getId())));
                     String check = row.getMeasurementDataValue(
-                            getHeaderLabel(workbook.getMeasurementDatasetVariables(), TermId.CHECK.getId()));
+                            getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), TermId.CHECK.getId()));
                     boolean isCheck = check != null && !"".equals(check);
                     Integer plantsSelected = getIntegerValue(row.getMeasurementDataValue(
-                            getHeaderLabel(workbook.getMeasurementDatasetVariables(), TermId.PLANTS_SELECTED.getId())));
+                            getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), TermId.PLANTS_SELECTED.getId())));
                     Integer methodId = getIntegerValue(row.getMeasurementDataValue(
-                                getHeaderLabel(workbook.getMeasurementDatasetVariables(), TermId.BREEDING_METHOD_ID.getId())));
+                                getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), TermId.BREEDING_METHOD_ID.getId())));
                     this.rows.add(new AdvancingSource(germplasm, plantsSelected, methodId, isCheck));
                 }
             }
@@ -105,9 +106,9 @@ public class AdvancingSourceList{
         return integerValue;
     }
     
-    private String getHeaderLabel(List<MeasurementVariable> variables, int id) {
+    private String getHeaderLabel(Map<String, MeasurementVariable> variablesMap, int id) {
         String label = "";
-        
+        /*
         if (variables != null && !variables.isEmpty()) {
             for (MeasurementVariable variable : variables) {
                 if (variable.getTermId() == id) {
@@ -115,7 +116,14 @@ public class AdvancingSourceList{
                 }
             }
         }
-        
+        */
+        String termId = Integer.toString(id);
+        if(variablesMap != null){
+        	MeasurementVariable variable = variablesMap.get(termId);
+        	if(variable != null){
+        		label = variable.getName();
+        	}
+        }
         return label;
     }
     

@@ -174,6 +174,15 @@ function clearAndAppendOntologyDetailsTab(variableName, html){
 		}else{
 			//we set the reminder
 			$('#ontology-detail-tabs').empty().append($('.variable-detail-info').html());
+			
+			if($("#heading-modal").text() == addNurseryLevelSettings)
+					$('#reminder-placeholder').html(reminderNursery);
+			else if($("#heading-modal").text() == addPlotLevelSettings)
+					$('#reminder-placeholder').html(reminderPlot);
+			else if($("#heading-modal").text() == addBaselineTraits)
+					$('#reminder-placeholder').html(reminderTraits);
+					
+				
 		}
 		
 		

@@ -12,12 +12,16 @@
 package com.efficio.fieldbook.web.nursery.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
@@ -29,6 +33,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
@@ -117,14 +122,13 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
      *
      * @return the list
      */
-    protected List<Integer> buildRequiredFactors() {
-        List<Integer> requiredFactors = new ArrayList<Integer>();
-        String createNurseryRequiredFields = AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString();
-        StringTokenizer token = new StringTokenizer(createNurseryRequiredFields, ",");
+    protected List<Integer> buildRequiredVariables(String requiredFields) {
+        List<Integer> requiredVariables = new ArrayList<Integer>();
+        StringTokenizer token = new StringTokenizer(requiredFields, ",");
         while(token.hasMoreTokens()){
-        	requiredFactors.add(Integer.valueOf(token.nextToken()));
+            requiredVariables.add(Integer.valueOf(token.nextToken()));
         }        
-        return requiredFactors;
+        return requiredVariables;
     }
     
     /**
@@ -132,23 +136,20 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
      *
      * @return the list
      */
-    protected List<String> buildRequiredFactorsLabel() {
+    protected List<String> buildRequiredVariablesLabel(String requiredFields, boolean hasLabels) {
     	
-        List<String> requiredFactors = new ArrayList<String>();
-        /*
-        requiredFactors.add(AppConstants.LOCATION.getString());
-        requiredFactors.add(AppConstants.PRINCIPAL_INVESTIGATOR.getString());
-        requiredFactors.add(AppConstants.STUDY_NAME.getString());
-        requiredFactors.add(AppConstants.STUDY_TITLE.getString());
-        requiredFactors.add(AppConstants.OBJECTIVE.getString());
-        */
-        String createNurseryRequiredFields = AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString();
-        StringTokenizer token = new StringTokenizer(createNurseryRequiredFields, ",");
+        List<String> requiredVariables = new ArrayList<String>();
+        StringTokenizer token = new StringTokenizer(requiredFields, ",");
         while(token.hasMoreTokens()){
-        	requiredFactors.add(AppConstants.getString(token.nextToken() + AppConstants.LABEL.getString()));
+            if (hasLabels) {
+                requiredVariables.add(AppConstants.getString(token.nextToken() + AppConstants.LABEL.getString()));
+            } else {
+                requiredVariables.add(null);
+                token.nextToken();
+            }
         }        
         
-        return requiredFactors;
+        return requiredVariables;
     }
 
     /**
@@ -156,14 +157,101 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
      *
      * @return the boolean[]
      */
-    protected boolean[] buildRequiredFactorsFlag() {
-        boolean[] requiredFactorsFlag = new boolean[5];
-        
-        for (int i = 0; i < requiredFactorsFlag.length; i++) {
-            requiredFactorsFlag[i] = false;
+    protected boolean[] buildRequiredVariablesFlag(String requiredFields) {
+        StringTokenizer token = new StringTokenizer(requiredFields, ",");
+        boolean[] requiredVariablesFlag = new boolean[token.countTokens()];
+        for (int i = 0; i < requiredVariablesFlag.length; i++) {
+            requiredVariablesFlag[i] = false;
         }
-        return requiredFactorsFlag;
+        return requiredVariablesFlag;
     } 
+    
+    protected List<SettingDetail> updateRequiredFields(List<Integer> requiredVariables, List<String> requiredVariablesLabel, 
+            boolean[] requiredVariablesFlag, List<SettingDetail> variables) throws MiddlewareQueryException{
+        for (SettingDetail variable : variables) {
+            Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getVariable().getProperty(), 
+                    variable.getVariable().getScale(), variable.getVariable().getMethod(), 
+                    PhenotypicType.valueOf(variable.getVariable().getRole()));
+            
+            //mark required factors that are already in the list
+            int ctr = 0;
+            for (Integer requiredFactor: requiredVariables) {
+                if (requiredFactor.equals(stdVar)) {
+                    requiredVariablesFlag[ctr] = true;
+                    variable.setOrder((requiredVariables.size()-ctr)*-1);
+                    variable.getVariable().setName(requiredVariablesLabel.get(ctr));
+                }
+                ctr++;
+            }
+        }
+        
+        //add required factors that are not in existing nursery
+        for (int i = 0; i < requiredVariablesFlag.length; i++) {
+            if (!requiredVariablesFlag[i]) {
+                SettingDetail newSettingDetail = createSettingDetail(requiredVariables.get(i), requiredVariablesLabel.get(i));
+                newSettingDetail.setOrder((requiredVariables.size()-i)*-1);
+                variables.add(newSettingDetail);
+            }
+        }
+        
+        //sort by required fields
+        Collections.sort(variables, new  Comparator<SettingDetail>() {
+            @Override
+            public int compare(SettingDetail o1, SettingDetail o2) {
+                    return o1.getOrder() - o2.getOrder();
+            }
+        });
+        
+        return variables;
+    }
+    
+    protected List<SettingDetail> buildDefaultVariables(List<SettingDetail> defaults, String requiredFields, List<String> requiredVariablesLabel) throws MiddlewareQueryException{
+        StringTokenizer token = new StringTokenizer(requiredFields, ",");
+        int ctr = 0;
+        while(token.hasMoreTokens()){
+            defaults.add(createSettingDetail(Integer.valueOf(token.nextToken()), requiredVariablesLabel.get(ctr)));
+            ctr++;
+        }
+        return defaults;
+    }
+    
+    /**
+     * Creates the setting detail.
+     *
+     * @param id the id
+     * @param name the name
+     * @return the setting detail
+     * @throws MiddlewareQueryException the middleware query exception
+     */
+    private SettingDetail createSettingDetail(int id, String name) throws MiddlewareQueryException {
+            String variableName = "";
+            StandardVariable stdVar = getStandardVariable(id);
+            if (name != null) {
+                variableName = name;
+            } else {
+                variableName = stdVar.getName();
+            }
+            if (stdVar != null) {
+            SettingVariable svar = new SettingVariable(
+                    variableName, stdVar.getDescription(), stdVar.getProperty().getName(),
+                                        stdVar.getScale().getName(), stdVar.getMethod().getName(), stdVar.getStoredIn().getName(), 
+                                        stdVar.getDataType().getName(), stdVar.getDataType().getId(), 
+                                        stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null ? stdVar.getConstraints().getMinValue() : null,
+                                        stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ? stdVar.getConstraints().getMaxValue() : null);
+                        svar.setCvTermId(stdVar.getId());
+                        svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
+                        svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
+
+                        List<ValueReference> possibleValues = fieldbookService.getAllPossibleValues(id);
+                        SettingDetail settingDetail = new SettingDetail(svar, possibleValues, null, false);
+                        settingDetail.setPossibleValuesToJson(possibleValues);
+                        List<ValueReference> possibleValuesFavorite = fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProjectId());
+                        settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);
+                        settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
+                        return settingDetail;
+                }
+                return new SettingDetail();
+    }
     
     /**
      * Populates Setting Variable.

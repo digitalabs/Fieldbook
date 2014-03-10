@@ -89,47 +89,23 @@ public class CreateNurseryController extends SettingsController {
             Workbook workbook = fieldbookMiddlewareService.getNurseryVariableSettings(nurseryId);
             Dataset dataset = SettingsUtil.convertWorkbookToXmlDataset(workbook);
             SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
-            List<Integer> requiredFactors = buildRequiredFactors();
-            List<String> requiredFactorsLabel = buildRequiredFactorsLabel();
-            boolean[] requiredFactorsFlag = buildRequiredFactorsFlag();
-            List<SettingDetail> nurseryLevelConditions = userSelection.getNurseryLevelConditions();
-                    
-            for(SettingDetail nurseryLevelCondition : nurseryLevelConditions){
-                Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(nurseryLevelCondition.getVariable().getProperty(), 
-                        nurseryLevelCondition.getVariable().getScale(), nurseryLevelCondition.getVariable().getMethod(), 
-                        PhenotypicType.valueOf(nurseryLevelCondition.getVariable().getRole()));
-                
-                //mark required factors that are already in the list
-                int ctr = 0;
-                for (Integer requiredFactor: requiredFactors) {
-                    if (requiredFactor.equals(stdVar)) {
-                        requiredFactorsFlag[ctr] = true;
-                        nurseryLevelCondition.setOrder((requiredFactors.size()-ctr)*-1);
-                        nurseryLevelCondition.getVariable().setName(requiredFactorsLabel.get(ctr));
-                    }
-                    ctr++;
-                }
-            }
+            
+            //nursery-level
+            List<SettingDetail> nurseryLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
+                    buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true), 
+                    buildRequiredVariablesFlag(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
+                    userSelection.getNurseryLevelConditions());
+            
+            //plot-level
+            List<SettingDetail> plotLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()), 
+                    buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false), 
+                    buildRequiredVariablesFlag(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()), 
+                    userSelection.getPlotsLevelList());
             
             
-            //add required factors that are not in existing nursery
-            for (int i = 0; i < requiredFactorsFlag.length; i++) {
-                if (!requiredFactorsFlag[i]) {
-                    SettingDetail newSettingDetail = createSettingDetail(requiredFactors.get(i), requiredFactorsLabel.get(i));
-                    newSettingDetail.setOrder((requiredFactors.size()-i)*-1);
-                    nurseryLevelConditions.add(newSettingDetail);
-                }
-            }
-            
-            //sort by required fields
-            Collections.sort(nurseryLevelConditions, new  Comparator<SettingDetail>() {
-                @Override
-                public int compare(SettingDetail o1, SettingDetail o2) {
-                        return o1.getOrder() - o2.getOrder();
-                }
-            });
             
             userSelection.setNurseryLevelConditions(nurseryLevelConditions);
+            userSelection.setPlotsLevelList(plotLevelConditions);
             form.setNurseryLevelVariables(userSelection.getNurseryLevelConditions());
             form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
             form.setPlotLevelVariables(userSelection.getPlotsLevelList());
@@ -144,45 +120,6 @@ public class CreateNurseryController extends SettingsController {
         //setupFormData(form);
         return super.showAjaxPage(model, URL_SETTINGS);
     }
-    
-    /**
-     * Creates the setting detail.
-     *
-     * @param id the id
-     * @param name the name
-     * @return the setting detail
-     * @throws MiddlewareQueryException the middleware query exception
-     */
-    private SettingDetail createSettingDetail(int id, String name) throws MiddlewareQueryException {
-            String variableName = "";
-            StandardVariable stdVar = getStandardVariable(id);
-            if (name != null) {
-                variableName = name;
-            } else {
-                variableName = stdVar.getName();
-            }
-            if (stdVar != null) {
-            SettingVariable svar = new SettingVariable(
-                    variableName, stdVar.getDescription(), stdVar.getProperty().getName(),
-                                        stdVar.getScale().getName(), stdVar.getMethod().getName(), stdVar.getStoredIn().getName(), 
-                                        stdVar.getDataType().getName(), stdVar.getDataType().getId(), 
-                                        stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null ? stdVar.getConstraints().getMinValue() : null,
-                                        stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ? stdVar.getConstraints().getMaxValue() : null);
-                        svar.setCvTermId(stdVar.getId());
-                        svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
-                        svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
-
-                        List<ValueReference> possibleValues = fieldbookService.getAllPossibleValues(id);
-                        SettingDetail settingDetail = new SettingDetail(svar, possibleValues, null, false);
-                        settingDetail.setPossibleValuesToJson(possibleValues);
-                        List<ValueReference> possibleValuesFavorite = fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProjectId());
-                        settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);
-                        settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
-                        return settingDetail;
-                }
-                return new SettingDetail();
-    }
-    
     
     /**
      * Show.

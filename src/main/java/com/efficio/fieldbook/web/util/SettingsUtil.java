@@ -17,6 +17,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -248,21 +249,14 @@ public class SettingsUtil {
 	 * @param variable the variable
 	 * @return true, if is setting variable deletable
 	 */
-	public static boolean isSettingVariableDeletable(Integer standardVariableId){
+	public static boolean isSettingVariableDeletable(Integer standardVariableId, String requiredFields){
 		//need to add the checking here if the specific PSM-R is deletable, for the nursery level details
-		
-		if (TermId.TRIAL_LOCATION.getId() == standardVariableId) {
-			return false;
-		} else if (TermId.PI_NAME.getId() == standardVariableId) {
-			return false;
-		} else if (TermId.STUDY_NAME.getId() == standardVariableId) {
-                    return false;
-		} else if (TermId.STUDY_TITLE.getId() == standardVariableId) {
-                    return false;
-                } else if (TermId.STUDY_OBJECTIVE.getId() == standardVariableId) {
-                    return false;
-                }
-		
+	        StringTokenizer token = new StringTokenizer(requiredFields, ",");
+	        while(token.hasMoreTokens()){ 
+	            if (standardVariableId.equals(Integer.parseInt(token.nextToken()))) {
+	                return false;
+	            }
+	        }		
 		return true;
 	}
 	
@@ -291,7 +285,7 @@ public class SettingsUtil {
 					variable.setCvTermId(stdVar);
 					List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
 					SettingDetail settingDetail = new SettingDetail(variable,
-							possibleValues, condition.getValue(), isSettingVariableDeletable(stdVar));
+							possibleValues, condition.getValue(), isSettingVariableDeletable(stdVar, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()));
 					
 					settingDetail.setPossibleValuesToJson(possibleValues);
 					List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, projectId);
@@ -309,7 +303,7 @@ public class SettingsUtil {
 					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
 					variable.setCvTermId(stdVar);
 					SettingDetail settingDetail = new SettingDetail(variable,
-							null, null, true);
+							null, null, isSettingVariableDeletable(stdVar, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()));
 					plotsLevelList.add(settingDetail);
 				}
 			}

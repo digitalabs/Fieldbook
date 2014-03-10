@@ -177,7 +177,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 										</tr>
 										</thead>
 										<tbody>
-					    					<tr th:each="baselineTraitVariable, rowStat : *{baselineTraitVariables}">
+					    					<tr class="baseline-traits" th:each="baselineTraitVariable, rowStat : *{baselineTraitVariables}">
 					    						
 						    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.name}"></td>
 						    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.description}"></td>
@@ -243,6 +243,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
     var requiredSettingErrorMessage = /*[[#{nursery.create.nursery.required.setting}]]*/;
     var uniqueBookNameErrorMessage = /*[[#{nursery.create.already.exists}]]*/;
     var nurseryFieldsIsRequired = /*[[#{nursery.create.is.required}]]*/;
+    var nurseryTraitsIsRequired = /*[[#{nursery.create.traits.is.required}]]*/;
     
     var locationId = '';
     var programLocationUrl = '';
@@ -314,6 +315,10 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 		else if ($("#fieldLayoutRandom").val() == '') {
 			hasError = true;
 			name = $("#expDesignLabel").text();
+		} else if($('.baseline-traits').length == 0){
+			hasError = true;
+			//name = $("#expDesignLabel").text();
+			customMessage = nurseryTraitsIsRequired;
 		}
 		else if ($(".noGermplasmListIndicator") && $(".noGermplasmListIndicator").text()) {
 			hasError = true;

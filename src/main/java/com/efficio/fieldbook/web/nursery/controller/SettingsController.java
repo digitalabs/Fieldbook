@@ -167,7 +167,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
     } 
     
     protected List<SettingDetail> updateRequiredFields(List<Integer> requiredVariables, List<String> requiredVariablesLabel, 
-            boolean[] requiredVariablesFlag, List<SettingDetail> variables) throws MiddlewareQueryException{
+            boolean[] requiredVariablesFlag, List<SettingDetail> variables, boolean hasLabels) throws MiddlewareQueryException{
         for (SettingDetail variable : variables) {
             Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getVariable().getProperty(), 
                     variable.getVariable().getScale(), variable.getVariable().getMethod(), 
@@ -179,7 +179,9 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
                 if (requiredFactor.equals(stdVar)) {
                     requiredVariablesFlag[ctr] = true;
                     variable.setOrder((requiredVariables.size()-ctr)*-1);
-                    variable.getVariable().setName(requiredVariablesLabel.get(ctr));
+                    if (hasLabels) {
+                        variable.getVariable().setName(requiredVariablesLabel.get(ctr));
+                    }
                 }
                 ctr++;
             }

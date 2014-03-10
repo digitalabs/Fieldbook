@@ -49,7 +49,7 @@ public class AdvancingSourceList{
             Integer breedingMethodId = null;
             if (workbook.getStudyConditions() != null && !workbook.getStudyConditions().isEmpty()) {
                 for (MeasurementVariable studyCondition : workbook.getStudyConditions()) {
-                    if (studyCondition.getTermId() == TermId.BREEDING_METHOD_ID.getId()) {
+                    if (studyCondition.getTermId() == TermId.BREEDING_METHOD_ID.getId() && NumberUtils.isNumber(studyCondition.getValue())) {
                         breedingMethodId = Integer.valueOf(studyCondition.getValue());
                         break;
                     }

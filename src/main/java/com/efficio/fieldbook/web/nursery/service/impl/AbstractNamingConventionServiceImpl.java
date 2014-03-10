@@ -114,10 +114,11 @@ implements NamingConventionService {
               , newGermplasmName
               , null /* gid */
               , source.getGermplasm().getCross()
-              , nurseryName + ":" + index
+              , nurseryName + ":" + source.getGermplasm().getEntryId() //GCP-7652 use the entry number of the originial : index
               , getEntryCode(index)
               , null /* check */
               , breedingMethod.getMid());
+        
          
          assignGermplasmAttributes(germplasm, Integer.valueOf(source.getGermplasm().getGid()), 
                  source.getGermplasm().getGnpgs(), 

@@ -160,7 +160,6 @@ public class CreateNurseryController extends SettingsController {
 	    	List<TemplateSetting> templateSettings = workbenchService.getTemplateSettings(templateSettingFilter);
 	    	TemplateSetting templateSetting = templateSettings.get(0); //always 1
 	    	Dataset dataset = SettingsUtil.parseXmlToDatasetPojo(templateSetting.getConfiguration());
-	    	userSelection.setDataset(dataset);
 	    	SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
 	    	form.setNurseryLevelVariables(userSelection.getNurseryLevelConditions());
 	    	form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
@@ -183,7 +182,6 @@ public class CreateNurseryController extends SettingsController {
      * Submit.
      *
      * @param form the form
-     * @param model the model
      * @return the string
      * @throws MiddlewareQueryException the middleware query exception
      */
@@ -198,13 +196,10 @@ public class CreateNurseryController extends SettingsController {
     			break;
     		}
     	}
-    	System.out.println("NAME IS " + name);
-    	
+
     	Dataset dataset = SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, form.getNurseryLevelVariables(), form.getPlotLevelVariables(), form.getBaselineTraitVariables(), userSelection);
-//    	Dataset dataset = userSelection.getDataset();
     	Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);
     	userSelection.setWorkbook(workbook);
-
     	
     	createStudyDetails(workbook, form.getNurseryLevelVariables(), form.getFolderId());
  

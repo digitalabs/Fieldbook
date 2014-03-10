@@ -244,6 +244,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
     var uniqueBookNameErrorMessage = /*[[#{nursery.create.already.exists}]]*/;
     var nurseryFieldsIsRequired = /*[[#{nursery.create.is.required}]]*/;
     var nurseryTraitsIsRequired = /*[[#{nursery.create.traits.is.required}]]*/;
+    var nurseryGermplasmListIsRequired = /*[[#{nursery.create.germplasm.list.is.required}]]*/;
     
     var locationId = '';
     var programLocationUrl = '';
@@ -293,7 +294,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
            
 	function validateCreateNursery() {
 		var hasError = false;
-		var name;
+		var name = '';
 		var customMessage = '';
 		var studyBookName;
 		var studyNameId = $("#studyNameTermId").val();

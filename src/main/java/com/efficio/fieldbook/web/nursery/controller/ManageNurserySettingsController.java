@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
@@ -153,7 +154,6 @@ public class ManageNurserySettingsController extends SettingsController{
     public String saveSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form
             , Model model, HttpSession session) throws MiddlewareQueryException{
 		//will do the saving here
-    	
     	Dataset dataset = SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, form.getSettingName(), form.getNurseryLevelVariables(), form.getPlotLevelVariables(), form.getBaselineTraitVariables(), userSelection);
     	String xml = SettingsUtil.generateSettingsXml(dataset);
     	Integer tempateSettingId = form.getSelectedSettingId() > 0 ? Integer.valueOf(form.getSelectedSettingId()) : null;
@@ -248,47 +248,21 @@ public class ManageNurserySettingsController extends SettingsController{
             Workbook workbook = fieldbookMiddlewareService.getNurseryVariableSettings(nurseryId);
             Dataset dataset = SettingsUtil.convertWorkbookToXmlDataset(workbook);
             SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
-            List<Integer> requiredFactors = buildRequiredFactors();
-            List<String> requiredFactorsLabel = buildRequiredFactorsLabel();
-            boolean[] requiredFactorsFlag = buildRequiredFactorsFlag();
-            List<SettingDetail> nurseryLevelConditions = userSelection.getNurseryLevelConditions();
                     
-            for(SettingDetail nurseryLevelCondition : nurseryLevelConditions){
-                Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(nurseryLevelCondition.getVariable().getProperty(), 
-                        nurseryLevelCondition.getVariable().getScale(), nurseryLevelCondition.getVariable().getMethod(), 
-                        PhenotypicType.valueOf(nurseryLevelCondition.getVariable().getRole()));
-                
-                //mark required factors that are already in the list
-                int ctr = 0;
-                for (Integer requiredFactor: requiredFactors) {
-                    if (requiredFactor.equals(stdVar)) {
-                        requiredFactorsFlag[ctr] = true;
-                        nurseryLevelCondition.setOrder((requiredFactors.size()-ctr)*-1);
-                        nurseryLevelCondition.getVariable().setName(requiredFactorsLabel.get(ctr));
-                    }
-                    ctr++;
-                }
-            }
+            //nursery-level
+            List<SettingDetail> nurseryLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
+                    buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true), 
+                    buildRequiredVariablesFlag(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
+                    userSelection.getNurseryLevelConditions(), true);
             
-            
-            //add required factors that are not in existing nursery
-            for (int i = 0; i < requiredFactorsFlag.length; i++) {
-                if (!requiredFactorsFlag[i]) {
-                    SettingDetail newSettingDetail = createSettingDetail(requiredFactors.get(i), requiredFactorsLabel.get(i));
-                    newSettingDetail.setOrder((requiredFactors.size()-i)*-1);
-                    nurseryLevelConditions.add(newSettingDetail);
-                }
-            } 
-            
-            //sort by required fields
-            Collections.sort(nurseryLevelConditions, new  Comparator<SettingDetail>() {
-                @Override
-                public int compare(SettingDetail o1, SettingDetail o2) {
-                        return o1.getOrder() - o2.getOrder();
-                }
-            });
+            //plot-level
+            List<SettingDetail> plotLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()), 
+                    buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false), 
+                    buildRequiredVariablesFlag(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()), 
+                    userSelection.getPlotsLevelList(), false);
             
             userSelection.setNurseryLevelConditions(nurseryLevelConditions);
+            userSelection.setPlotsLevelList(plotLevelConditions);
             form.setNurseryLevelVariables(userSelection.getNurseryLevelConditions());
             form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
             form.setPlotLevelVariables(userSelection.getPlotsLevelList());
@@ -557,58 +531,15 @@ public class ManageNurserySettingsController extends SettingsController{
      */
     private void assignDefaultValues(ManageSettingsForm form) throws MiddlewareQueryException {
     	List<SettingDetail> nurseryDefaults = new ArrayList<SettingDetail>();
+    	List<SettingDetail> plotDefaults = new ArrayList<SettingDetail>();
     	form.setNurseryLevelVariables(nurseryDefaults);
+    	form.setPlotLevelVariables(plotDefaults);
     	form.setSettingName("");
     	form.setIsDefault(false);
+    	nurseryDefaults = buildDefaultVariables(nurseryDefaults, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true));
     	this.userSelection.setNurseryLevelConditions(nurseryDefaults);
-    	
-    	nurseryDefaults.add(createSettingDetail(TermId.TRIAL_LOCATION.getId()
-    	        , AppConstants.LOCATION.getString()));
-        nurseryDefaults.add(createSettingDetail(TermId.PI_NAME.getId()
-                , AppConstants.PRINCIPAL_INVESTIGATOR.getString()));
-        nurseryDefaults.add(createSettingDetail(TermId.STUDY_NAME.getId()
-                , AppConstants.STUDY_NAME.getString()));
-        nurseryDefaults.add(createSettingDetail(TermId.STUDY_TITLE.getId()
-                , AppConstants.STUDY_TITLE.getString()));
-        nurseryDefaults.add(createSettingDetail(TermId.STUDY_OBJECTIVE.getId()
-                , AppConstants.OBJECTIVE.getString()));
-    }
-    
-    /**
-     * Creates the setting detail.
-     *
-     * @param id the id
-     * @return the setting detail
-     * @throws MiddlewareQueryException the middleware query exception
-     */
-    private SettingDetail createSettingDetail(int id, String name) throws MiddlewareQueryException {
-            String variableName = "";
-            StandardVariable stdVar = getStandardVariable(id);
-            if (name != null) {
-                variableName = name;
-            } else {
-                variableName = stdVar.getName();
-            }
-            if (stdVar != null) {
-            SettingVariable svar = new SettingVariable(
-                    variableName, stdVar.getDescription(), stdVar.getProperty().getName(),
-					stdVar.getScale().getName(), stdVar.getMethod().getName(), stdVar.getStoredIn().getName(), 
-					stdVar.getDataType().getName(), stdVar.getDataType().getId(), 
-					stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null ? stdVar.getConstraints().getMinValue() : null,
-					stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ? stdVar.getConstraints().getMaxValue() : null);
-			svar.setCvTermId(stdVar.getId());
-			svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
-			svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
-
-			List<ValueReference> possibleValues = fieldbookService.getAllPossibleValues(id);
-			SettingDetail settingDetail = new SettingDetail(svar, possibleValues, null, false);
-	                settingDetail.setPossibleValuesToJson(possibleValues);
-	                List<ValueReference> possibleValuesFavorite = fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProjectId());
-	                settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);
-	                settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
-	                return settingDetail;
-		}
-		return new SettingDetail();
+    	plotDefaults = buildDefaultVariables(plotDefaults, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false));
+    	this.userSelection.setPlotsLevelList(plotDefaults);
     }
     
     /**

@@ -86,14 +86,27 @@ public class OntologyController extends AbstractBaseFieldbookController{
     public String show(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form, Model model) {
         //this set the necessary info from the session variable
         //OntologyDataManager.getTraitGroups()
-        try {
+    	return setupForm(form, false, model);
+    }
+    
+    @RequestMapping(value="popup", method = RequestMethod.GET)
+    public String showPopup(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form, Model model) {
+        //this set the necessary info from the session variable
+        //OntologyDataManager.getTraitGroups()
+        return setupForm(form, true, model);
+    }
+    
+    private String setupForm(OntologyBrowserForm form, boolean showAsPopup,  Model model){
+    	try {
             //List<TraitClassReference> traitRefList = (List<TraitClassReference>) ontologyService.getTraitGroupsHierarchy(TermId.ONTOLOGY_TRAIT_CLASS);//getDummyData();    
             List<TraitClassReference> traitRefList = (List<TraitClassReference>) 
                     ontologyService.getAllTraitGroupsHierarchy(true);
             form.setTraitClassReferenceList(traitRefList);
             form.setTreeData(TreeViewUtil.convertOntologyTraitsToJson(traitRefList, null));
             form.setSearchTreeData(
-                    TreeViewUtil.convertOntologyTraitsToSearchSingleLevelJson(traitRefList, null));                       
+                    TreeViewUtil.convertOntologyTraitsToSearchSingleLevelJson(traitRefList, null));
+            
+            model.addAttribute("isPopup", showAsPopup);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }

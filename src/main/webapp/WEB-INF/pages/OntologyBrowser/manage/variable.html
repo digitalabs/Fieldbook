@@ -24,7 +24,12 @@
 	   <div class="row"> 
 	    <div class="panel panel-default">
 		    	<div class="panel-body manage-settings-panel-body">
-		    	
+		    
+		    <div class="row form-group">
+			    		<div class="col-xs-12 col-md-12">
+			    			<label class="control-label"><em th:utext="#{nursery.managesettings.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
+		    			</div>
+	    			</div>	
 	<div class="row">
 		<div class="col-xs-12 col-md-12">	
 			<h3  class="sub-heading" th:text="#{ontology.browser.manager.header.variable.details}">Variable Details:</h3>			 
@@ -267,19 +272,22 @@
 		&nbsp;      		
 				</div>
 		<div class="col-xs-7 col-md-7 ">
-		<a href="/OntologyBrowser/main.html" th:href="@{/OntologyBrowser/}" class="btn btn-default btn-md" th:text="#{common.form.back.text}">.Back</a>
-		<button type="submit" id="addVariable" th:value="#{common.form.add.text}" class="btn btn-primary" 
-      		th:text="#{common.form.add.text}" onClick="setDeleteOperation(0);">.Add</button>    
+		<a th:if="${isPopup == '0'}" href="/OntologyBrowser/main.html" th:href="@{/OntologyBrowser/}" class="btn btn-default btn-md" th:text="#{common.form.back.text}">.Back</a>
+		
+			<button type="submit" id="addVariable" th:value="#{common.form.add.text}" class="btn btn-primary" 
+      		th:text="#{common.form.add.text}" onClick="setDeleteOperation(0); ">.Add</button>    
       		<button type="submit" id="updateVariable" th:value="#{common.form.update.text}" class="btn btn-primary" 
-      		th:text="#{common.form.update.text}" onClick="setDeleteOperation(2);">.Update</button>    
+      		th:text="#{common.form.update.text}" onClick="setDeleteOperation(2); ">.Update</button>    
       		<button type="submit" id="deleteVariable" th:value="#{common.form.delete.text}" class="btn btn-primary" 
-      		th:text="#{common.form.delete.text}" onClick="setDeleteOperation(1);">.Delete</button>
+      		th:text="#{common.form.delete.text}" onClick="setDeleteOperation(1); ">.Delete</button>
       		          		
 		</div>
 	</div>
 	</div>
 		    	</div>
 		    	</div>
+		    	<input type="hidden" name="preselectVariableId" id="preselectVariableId" th:value="${preselectVariableId}"/>
+		    	<input type="hidden" th:field="*{fromPopup}"/>
 	</form>
 			
 		
@@ -331,6 +339,8 @@
   	
   	var enumerations = [];
   	var enumerations_central = [];
+  	
+  	var triggerExternalNotification = false;
   	
 	function validateCombo(combo) {
 		var message = null;
@@ -415,29 +425,66 @@
     			return false;
     		}
     	}
-    	
+    	/*
+    	Spinner.toggle()
+    	var serializedData = $("#manageVariable").serialize();
+		
+		$.ajax({
+			url: $('#manageVariable').attr('action'),
+			type: "POST",
+			data: serializedData,
+			cache: false,
+			success: function (data) {
+				Spinner.toggle();
+				var dataHtml = $(data).find('.container .row').first().html();
+				$('.container .row').first().html(dataHtml);							
+			    moveToTopScreen();
+			}			
+		});
+    	*/
 	    return true;
     }
     
-	$( document ).ready(function() {  	     
+	$( document ).ready(function() {  	
+		//alert(fromPopup);
 		loadOntologyCombos();
 		loadTraitClassTree(treeDivId, "comboTraitClass", "traitClassDescription", treeClassData, 'comboTraitClass');
 		setVisibleButtons(true, false, false);
 		clearFields();
 		
 		if (saveSuccessful == "1" ) {
+			triggerExternalNotification = true;
 			if (isDelete == 0) {
-				recreateVariableNameCombo("VariableName", varId, name);
+				recreateVariableNameCombo("VariableName", varId, name);				
 			} else if (isDelete == 1) {
-				recreateComboAfterDelete("VariableName", varId);	
+				recreateComboAfterDelete("VariableName", varId);
+				notifyIntegratingApps(varId);
 			} else {
 				preSelectAfterUpdate("VariableName", varId, name);
 			}
+			
 		}
 		
 		showSelectedValidValues(["None"]);
 		hideValidValues(["AddCatVar","DelCatVar", "Min", "Max"]);
+		if($('#preselectVariableId').val() != 0){
+			var preselectVariableId = $('#preselectVariableId').val();
+			var dataVal = null;
+			for(count = 0 ; count < variableNameSuggestions_obj.length ; count++){
+	    		if(variableNameSuggestions_obj[count].id == preselectVariableId){
+	    			dataVal = variableNameSuggestions_obj[count];
+	    			if(dataVal != null)
+	    				$("#comboVariableName").select2('data', dataVal).trigger('change');
+	    			break;
+	    		}			    			
+	    	}
+	    	
+	    	
+		}
+		
 	});
+	
+	
 	
 	function addCatVar(label, description, id) {
 		

@@ -15,7 +15,7 @@
 			&nbsp;
 			</div>
 			<div class="col-xs-2 col-md-2">	
-				 <a href="/OntologyManageVariable/" class="btn btn-info" th:href="@{/OntologyManager/manage/variable}" th:text="#{ontology.browser.button.manage.variable}">.Manage Variable</a>
+				 <a  th:if="${isPopup == false}" href="/OntologyManageVariable/" class="btn btn-info" th:href="@{/OntologyManager/manage/variable}" th:text="#{ontology.browser.button.manage.variable}">.Manage Variable</a>
 			</div>
 		</div>	
 		<div th:include="/OntologyBrowser/browserInfo"></div>

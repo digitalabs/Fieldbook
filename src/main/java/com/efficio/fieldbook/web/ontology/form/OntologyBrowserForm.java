@@ -100,6 +100,18 @@ public class OntologyBrowserForm{
     /** The enumerations. */
     private String enumerations;
     
+    private String fromPopup;
+    
+    
+    
+    public String getFromPopup() {
+		return fromPopup;
+	}
+
+	public void setFromPopup(String fromPopup) {
+		this.fromPopup = fromPopup;
+	}
+
     /**
      * Gets the checks for error.
      *

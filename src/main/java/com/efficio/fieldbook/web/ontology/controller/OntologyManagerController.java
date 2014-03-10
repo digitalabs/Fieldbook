@@ -231,6 +231,23 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      */
     @RequestMapping(value="variable", method = RequestMethod.GET)
     public String show(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form, Model model) {
+    	return showManageVariable(form, false, 0, model);
+    }
+    /**
+     * Show the main import page.
+     *
+     * @param form the form
+     * @param model the model
+     * @return the string
+     */
+    @RequestMapping(value="variable/id/{variableId}", method = RequestMethod.GET)
+    public String showVariablePopup(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form, 
+    		@PathVariable int variableId, Model model) {
+        
+    	return showManageVariable(form, true, variableId, model);
+    }
+    
+    public String showManageVariable(OntologyBrowserForm form, boolean showAsPopup, int variableId, Model model) {
         
         try {
             List<TraitClassReference> traitRefList = 
@@ -245,12 +262,14 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
             model.addAttribute("propertiesSuggestionList", ontologyService.getAllPropertiesWithTraitClass());
             model.addAttribute("methodsSuggestionList", ontologyService.getAllMethods());
             model.addAttribute("scalesSuggestionList", ontologyService.getAllScales());
+            model.addAttribute("isPopup", showAsPopup ? "1" : "0");
+            form.setFromPopup(showAsPopup ? "1" : "0");
+            model.addAttribute("preselectVariableId", variableId);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
     	return super.show(model);
     }
-    
     
     /**
      * Save new variable.
@@ -264,7 +283,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
     public String saveNewVariable(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form
             , BindingResult result, Model model) {
         OntologyBrowserValidator validator = new OntologyBrowserValidator();
-        
+        boolean isPopup = false;
         //validations for delete and update
         if (form.getIsDelete().equals(1)) {
             validateDelete(form, result);
@@ -306,7 +325,11 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                     form.setVariableName(standardVariable.getName());
                 }
                 form.setAddSuccessful("1");
+                model.addAttribute("isPopup", form.getFromPopup());
                 
+                if(form.getFromPopup() != null && form.getFromPopup().equalsIgnoreCase("1")){
+                	isPopup = true;
+                }
            } catch (MiddlewareQueryException e) {
                LOG.error(e.getMessage(), e);
                form.setAddSuccessful("2");
@@ -317,7 +340,8 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                form.setErrorMessage(errorHandlerService.getErrorMessagesAsString(e.getMessage(), null, "\n"));
            }
         }
-        return show(form, model);
+        //return show(form, model);
+        return showManageVariable(form, isPopup, 0, model);
     }
     
     /**

@@ -357,6 +357,7 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	    		enableFieldsForUpdate();
 	    		$("#traitClassBrowserTree").dynatree("enable");
 	    	}
+	    	
 	    });
 	} else {
 		//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
@@ -868,6 +869,8 @@ function getStandardVariableDetails(variableId, text) {
 			    if (data.status == "1") {
 			    	populateFields(data, variableId);
 		       	}
+			    if(triggerExternalNotification)
+		    		notifyIntegratingApps(null);
 			    Spinner.toggle();
 		   }
 		   
@@ -888,7 +891,9 @@ function populateFields(data, variableId) {
 	$("#variableId").val(variableId);
 	$("#newVariableName").val(data.name);
 	$("#variableDescription").val(data.description);
+	$('#role').select2('destroy');
 	$("#role").val(data.role).attr("disabled","disabled");
+	$('#role').select2();
 	$("#cropOntologyDisplay").html(data.cropOntologyDisplay);
 	setComboValues(traitClassesSuggestions_obj, data.traitClass, "TraitClass");
 	setComboValues(propertySuggestions_obj, data.property, "Property");

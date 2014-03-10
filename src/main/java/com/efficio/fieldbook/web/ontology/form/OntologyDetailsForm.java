@@ -60,7 +60,8 @@ public class OntologyDetailsForm{
     /** The enumerated values. */
     private List<Enumeration> categoricalValues;
     
-    /**
+   
+	/**
      * Gets the trait class name.
      *
      * @return the trait class name

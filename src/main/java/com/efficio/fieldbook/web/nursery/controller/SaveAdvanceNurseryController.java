@@ -109,7 +109,9 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form
             , Model model, HttpSession session) throws MiddlewareQueryException{
-        importedGermplasmList = fieldbookService.advanceNursery(advancingNursery);
+    	//long start = System.currentTimeMillis();
+        importedGermplasmList = fieldbookService.advanceNursery(advancingNursery, userSelection.getWorkbook());
+        //System.out.println("end show : "+(System.currentTimeMillis()-start));
         userSelection.setImportedAdvancedGermplasmList(importedGermplasmList);
         form.setGermplasmList(importedGermplasmList);
         form.setEntries(importedGermplasmList.size());

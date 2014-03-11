@@ -13,6 +13,7 @@ package com.efficio.fieldbook.web.nursery.service;
 
 import java.util.List;
 
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
@@ -32,5 +33,5 @@ public interface NamingConventionService {
      * @return
      * @throws MiddlewareQueryException
      */
-    List<ImportedGermplasm> advanceNursery(AdvancingNursery info) throws MiddlewareQueryException;
+    List<ImportedGermplasm> advanceNursery(AdvancingNursery info, Workbook workbook) throws MiddlewareQueryException;
 }

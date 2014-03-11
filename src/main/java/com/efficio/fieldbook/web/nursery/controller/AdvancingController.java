@@ -21,6 +21,7 @@ import javax.servlet.http.HttpSession;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.dms.Variable;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Location;
@@ -194,6 +195,10 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	advancingNursery.setStudy(study);
     	form.setLocationUrl(AppConstants.LOCATION_URL.getString());
     	form.setBreedingMethodUrl(AppConstants.BREEDING_METHOD_URL.getString());
+    	//long start = System.currentTimeMillis();
+    	Workbook workbook = fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
+    	//System.out.println("get nursery : " + (System.currentTimeMillis() - start));
+    	userSelection.setWorkbook(workbook);
     	return super.show(model);
     }
     

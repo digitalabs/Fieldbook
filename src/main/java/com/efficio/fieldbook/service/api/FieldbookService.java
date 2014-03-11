@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
@@ -47,7 +48,7 @@ public interface FieldbookService {
      * @return
      * @throws MiddlewareQueryException
      */
-    List<ImportedGermplasm> advanceNursery(AdvancingNursery advanceInfo) throws MiddlewareQueryException;
+    List<ImportedGermplasm> advanceNursery(AdvancingNursery advanceInfo, Workbook workbook) throws MiddlewareQueryException;
     
     /**
      * Filters the variables based on the current setting mode and excludes the selected ones.

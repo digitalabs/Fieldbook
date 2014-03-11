@@ -24,6 +24,7 @@ import javax.annotation.Resource;
 
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -85,14 +86,14 @@ public class FieldbookServiceImpl implements FieldbookService{
 	/**
 	 * Advance Nursery
 	 */
-	public List<ImportedGermplasm> advanceNursery(AdvancingNursery advanceInfo)
+	public List<ImportedGermplasm> advanceNursery(AdvancingNursery advanceInfo, Workbook workbook)
 	        throws MiddlewareQueryException {
 
         String namingConvention = advanceInfo.getNamingConvention();
 
         NamingConventionService service = namingConventionServiceFactory.getNamingConventionService(namingConvention);
 
-	    return service.advanceNursery(advanceInfo);
+	    return service.advanceNursery(advanceInfo, workbook);
 	}
 	
 	@Override

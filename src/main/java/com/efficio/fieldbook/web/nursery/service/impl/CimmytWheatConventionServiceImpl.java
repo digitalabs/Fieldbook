@@ -12,13 +12,16 @@
 package com.efficio.fieldbook.web.nursery.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.GermplasmNameType;
+import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.springframework.stereotype.Service;
@@ -47,15 +50,21 @@ implements CimmytWheatConventionService {
         List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
         String newGermplasmName;
         String suffix = rows.getLocationAbbreviation();
-        
+        long start = System.currentTimeMillis();
         int index = 1;
+        Map<String, Method> breedingMethodMap = new HashMap();
+        List<Method> methodList = fieldbookMiddlewareService.getAllBreedingMethods();
+        for(Method method: methodList){
+        	breedingMethodMap.put(method.getMid().toString(), method);
+        }
+       // System.out.println("end breedingMethodMap : " + (System.currentTimeMillis()-start));
         for (AdvancingSource row : rows.getRows()) {
             if (row.getPlantsSelected() != null && row.getGermplasm() != null && !row.isCheck()) {
                 String origGermplasmName = getOrigGermplasmName(row);
                 if (row.getPlantsSelected().equals(0)) {
                     newGermplasmName = origGermplasmName + "-0" + suffix;
                     addImportedGermplasmToList(list, row, newGermplasmName, 
-                            AppConstants.RANDOM_BULK_SF.getInt(), index++, rows.getNurseryName());
+                            AppConstants.RANDOM_BULK_SF.getInt(), index++, rows.getNurseryName(), breedingMethodMap);
                 }
                 else if (row.getPlantsSelected().intValue() < 0) {
                     if (row.getGermplasm().getDesig().endsWith("T")) {
@@ -65,26 +74,26 @@ implements CimmytWheatConventionService {
                         newGermplasmName = origGermplasmName + "-0" + Math.abs(row.getPlantsSelected()) + suffix;
                     }
                     addImportedGermplasmToList(list, row, newGermplasmName, 
-                            AppConstants.SELECTED_BULK_SF.getInt(), index++, rows.getNurseryName());
+                            AppConstants.SELECTED_BULK_SF.getInt(), index++, rows.getNurseryName(), breedingMethodMap);
                 }
                 else {
                     if (rows.isBulk()) {
                         newGermplasmName = origGermplasmName + "-" + suffix;
                         addImportedGermplasmToList(list, row, newGermplasmName, 
-                                rows.getSelectedMethodId(), index++, rows.getNurseryName());
+                                rows.getSelectedMethodId(), index++, rows.getNurseryName(), breedingMethodMap);
                     }
                     else {
                         for (int i = 0; i < row.getPlantsSelected(); i++) {
                             newGermplasmName = origGermplasmName + "-" + (i+1) + suffix;
                             addImportedGermplasmToList(list, row, newGermplasmName, 
                                     AppConstants.SINGLE_PLANT_SELECTION_SF.getInt(), 
-                                    index++, rows.getNurseryName());
+                                    index++, rows.getNurseryName(), breedingMethodMap);
                         }
                     }
                 }
             }
         }
-        
+        //System.out.println("end generateGermplasmList : " + (System.currentTimeMillis()-start));
         return list;
     }
     

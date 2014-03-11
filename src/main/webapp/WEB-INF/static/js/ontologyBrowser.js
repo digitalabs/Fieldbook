@@ -27,7 +27,7 @@ function doOntologyTreeHighlight(treeName, nodeKey){
 	
 	var node = $("#"+treeName).dynatree("getTree").getNodeByKey(nodeKey);
 	
-	if(node.data.lastChildren == true){
+	if(node != null && node.data.lastChildren == true){
 		//call ajax
 		standardVariableKey = elem[elem.length-1];
 		processTab(node.data.title, standardVariableKey);

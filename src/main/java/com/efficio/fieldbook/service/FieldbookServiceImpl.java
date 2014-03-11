@@ -146,11 +146,11 @@ public class FieldbookServiceImpl implements FieldbookService{
         List<ValueReference> possibleValues = possibleValuesCache.getPossibleValues(id);
         if (possibleValues == null) {
 
-            if (TermId.BREEDING_METHOD.getId() == id) {
+            if (TermId.BREEDING_METHOD_ID.getId() == id) {
                 possibleValues = getAllBreedingMethods();
-            } else if (TermId.TRIAL_LOCATION.getId() == id) {
+            } else if (TermId.LOCATION_ID.getId() == id) {
                 possibleValues = convertLocationsToValueReferences(fieldbookMiddlewareService.getAllLocations());
-            } else if (TermId.PI_NAME.getId() == id) {
+            } else if (TermId.PI_ID.getId() == id) {
                 possibleValues = convertPersonsToValueReferences(fieldbookMiddlewareService.getAllPersons());
             } else if (TermId.NURSERY_TYPE.getId() == id) {
                 possibleValues = fieldbookMiddlewareService.getAllNurseryTypes();
@@ -166,10 +166,10 @@ public class FieldbookServiceImpl implements FieldbookService{
     public List<ValueReference> getAllPossibleValuesFavorite(int id, String projectId) throws MiddlewareQueryException {
         List<ValueReference> possibleValuesFavorite = null;
         if (possibleValuesFavorite == null) {
-            if (TermId.BREEDING_METHOD.getId() == id) {
+            if (TermId.BREEDING_METHOD_ID.getId() == id) {
                 List<Integer> methodIds = workbenchService.getFavoriteProjectMethods(projectId);
                 possibleValuesFavorite = getFavoriteBreedingMethods(methodIds);
-            } else if (TermId.TRIAL_LOCATION.getId() == id) {
+            } else if (TermId.LOCATION_ID.getId() == id) {
                 List<Long> locationIds = workbenchService.getFavoriteProjectLocationIds(projectId);
                 possibleValuesFavorite = convertLocationsToValueReferences(fieldbookMiddlewareService
                         .getFavoriteLocationByProjectId(locationIds));

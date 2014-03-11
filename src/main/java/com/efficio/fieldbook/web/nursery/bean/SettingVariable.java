@@ -233,8 +233,8 @@ public class SettingVariable {
 		}
 		
 		if (cvTermId != null) {
-			if (cvTermId.equals(TermId.TRIAL_LOCATION.getId()) || cvTermId.equals(TermId.PI_NAME.getId()) 
-					|| cvTermId.equals(TermId.BREEDING_METHOD.getId()) || cvTermId.equals(TermId.NURSERY_TYPE.getId())) {
+			if (cvTermId.equals(TermId.LOCATION_ID.getId()) || cvTermId.equals(TermId.PI_ID.getId()) 
+					|| cvTermId.equals(TermId.BREEDING_METHOD_ID.getId()) || cvTermId.equals(TermId.NURSERY_TYPE.getId())) {
 				this.widgetType = WidgetType.DROPDOWN;
 			}
 		}

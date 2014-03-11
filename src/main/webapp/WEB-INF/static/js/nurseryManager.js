@@ -833,7 +833,7 @@ function sortByKey(array, key) {
 function initializePossibleValuesCombo(possibleValues, name, isLocation, defaultValue) {
 	var possibleValues_obj = [];
 	var defaultJsonVal = null;
-
+	
 	$.each(possibleValues, function(index, value) {
 		var jsonVal;
 		if (value.id != undefined) {
@@ -852,7 +852,8 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation, default
 		
 		possibleValues_obj.push(jsonVal);  
 		if(defaultValue != null && defaultValue != '' && 
-				((defaultValue == value.key) || (defaultValue == value.locid) || (defaultValue == value.mid))){
+				((defaultValue == value.key || defaultValue == value.locid || defaultValue == value.mid) || 
+				 (defaultValue == value.name || defaultValue == value.lname || defaultValue == value.mname))){
 			defaultJsonVal = jsonVal;
 		}
 		

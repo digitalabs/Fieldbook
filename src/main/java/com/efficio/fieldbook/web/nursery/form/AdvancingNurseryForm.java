@@ -15,6 +15,7 @@ import java.util.List;
 
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class AdvancingNurseryForm.
  */
@@ -83,6 +84,7 @@ public class AdvancingNurseryForm {
     /** The germplasm list. */
     private List<ImportedGermplasm> germplasmList;
     
+    /** The paginated germplasm list. */
     private List<ImportedGermplasm> paginatedGermplasmList;	
 	
 	/** The current page. */
@@ -94,10 +96,17 @@ public class AdvancingNurseryForm {
 	/** The result per page. */
 	private int resultPerPage = 100;
 	
+	/** The plots with plants selected. */
 	private int plotsWithPlantsSelected;
 	
+	/** The location url. */
 	private String locationUrl;
+    
+    /** The breeding method url. */
     private String breedingMethodUrl;
+    
+    /** The nursery id. */
+    private String nurseryId;
     
 	
 	/**
@@ -483,23 +492,48 @@ public class AdvancingNurseryForm {
         
         
 
+        /**
+         * Gets the paginated germplasm list.
+         *
+         * @return the paginated germplasm list
+         */
         public List<ImportedGermplasm> getPaginatedGermplasmList() {
 			return paginatedGermplasmList;
 		}
 
+		/**
+		 * Sets the paginated germplasm list.
+		 *
+		 * @param paginatedGermplasmList the new paginated germplasm list
+		 */
 		public void setPaginatedGermplasmList(
 				List<ImportedGermplasm> paginatedGermplasmList) {
 			this.paginatedGermplasmList = paginatedGermplasmList;
 		}
 
+		/**
+		 * Gets the current page.
+		 *
+		 * @return the current page
+		 */
 		public int getCurrentPage() {
 			return currentPage;
 		}
 
+		/**
+		 * Sets the current page.
+		 *
+		 * @param currentPage the new current page
+		 */
 		public void setCurrentPage(int currentPage) {
 			this.currentPage = currentPage;
 		}
 
+		/**
+		 * Gets the total pages.
+		 *
+		 * @return the total pages
+		 */
 		public int getTotalPages() {
 			 if(germplasmList != null && !germplasmList.isEmpty()){           
 	            totalPages = (int) Math.ceil((germplasmList.size() * 1f) / getResultPerPage()); 
@@ -509,14 +543,29 @@ public class AdvancingNurseryForm {
 		    return totalPages;
 		}
 
+		/**
+		 * Sets the total pages.
+		 *
+		 * @param totalPages the new total pages
+		 */
 		public void setTotalPages(int totalPages) {
 			this.totalPages = totalPages;
 		}
 
+		/**
+		 * Gets the result per page.
+		 *
+		 * @return the result per page
+		 */
 		public int getResultPerPage() {
 			return resultPerPage;
 		}
 
+		/**
+		 * Sets the result per page.
+		 *
+		 * @param resultPerPage the new result per page
+		 */
 		public void setResultPerPage(int resultPerPage) {
 			this.resultPerPage = resultPerPage;
 		}
@@ -542,28 +591,76 @@ public class AdvancingNurseryForm {
 	        }
 		}
 	
+	/**
+	 * Gets the plots with plants selected.
+	 *
+	 * @return the plots with plants selected
+	 */
 	public int getPlotsWithPlantsSelected() {
 	    return plotsWithPlantsSelected;
 	}
 	
+	/**
+	 * Sets the plots with plants selected.
+	 *
+	 * @param plotsWithPlantsSelected the new plots with plants selected
+	 */
 	public void setPlotsWithPlantsSelected(int plotsWithPlantsSelected) {
 	    this.plotsWithPlantsSelected = plotsWithPlantsSelected;
 	}
 	
+	/**
+	 * Gets the location url.
+	 *
+	 * @return the location url
+	 */
 	public String getLocationUrl() {
 		return locationUrl;
 	}
 
+	/**
+	 * Sets the location url.
+	 *
+	 * @param locationUrl the new location url
+	 */
 	public void setLocationUrl(String locationUrl) {
 		this.locationUrl = locationUrl;
 	}
 
+	/**
+	 * Gets the breeding method url.
+	 *
+	 * @return the breeding method url
+	 */
 	public String getBreedingMethodUrl() {
 		return breedingMethodUrl;
 	}
 
+	/**
+	 * Sets the breeding method url.
+	 *
+	 * @param breedingMethodUrl the new breeding method url
+	 */
 	public void setBreedingMethodUrl(String breedingMethodUrl) {
 		this.breedingMethodUrl = breedingMethodUrl;
+	}
+	
+	/**
+	 * Gets the nursery id.
+	 *
+	 * @return the nursery id
+	 */
+	public String getNurseryId() {
+		return nurseryId;
+	}
+
+	/**
+	 * Sets the nursery id.
+	 *
+	 * @param nurseryId the new nursery id
+	 */
+	public void setNurseryId(String nurseryId) {
+		this.nurseryId = nurseryId;
 	}
 
 		/* (non-Javadoc)

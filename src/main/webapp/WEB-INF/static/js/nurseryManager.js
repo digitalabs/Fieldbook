@@ -123,7 +123,7 @@ function showCorrectLocationCombo() {
 		if($('#'+getJquerySafeId("harvestLocationIdAll")).select2("data") != null){
 			$('#'+getJquerySafeId("harvestLocationId")).val($('#'+getJquerySafeId("harvestLocationIdAll")).select2("data").id);
 			$('#'+getJquerySafeId("harvestLocationName")).val($('#'+getJquerySafeId("harvestLocationIdAll")).select2("data").text);
-			$('#'+getJquerySafeId("harvestLocationAbbreviation")).val($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data").abbr);
+			$('#'+getJquerySafeId("harvestLocationAbbreviation")).val($('#'+getJquerySafeId("harvestLocationIdAll")).select2("data").abbr);
 		}else{
 			$('#'+getJquerySafeId("harvestLocationId")).val(0);
 			$('#'+getJquerySafeId("harvestLocationName")).val("");
@@ -190,10 +190,11 @@ $.ajax(
        type: "GET",
        cache: false,
        data: "",
+       async: false,
        success: function(data) {
     	   if (data.success == "1") {
-    		   if (selectedMethodAll) {
-	    		   //recreate the select2 combos to get updated list of methods
+    		   if (selectedMethodAll != null) {
+	    		   //recreate the select2 combos to get updated list of methods    			   
 	    		   recreateMethodComboAfterClose("methodIdAll", $.parseJSON(data.allMethods));
 	    		   recreateMethodComboAfterClose("methodIdFavorite", $.parseJSON(data.favoriteMethods));
 	    		   showCorrectMethodCombo();
@@ -272,9 +273,10 @@ function recreateLocationCombo() {
        type: "GET",
        cache: false,
        data: "",
+       async: false,
        success: function(data) {
     	   if (data.success == "1") {
-    		   if (selectedLocationAll) {
+    		   if (selectedLocationAll != null) {
 	    		   //recreate the select2 combos to get updated list of locations
 	    		   recreateLocationComboAfterClose("harvestLocationIdAll", $.parseJSON(data.allLocations));
 	    		   recreateLocationComboAfterClose("harvestLocationIdFavorite", $.parseJSON(data.favoriteLocations));
@@ -373,6 +375,7 @@ function recreateMethodComboAfterClose(comboName, data) {
 		methodSuggestionsFav = data;
 		initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFav_obj);
 	}
+	//console.log(methodSuggestions);
 }
 
 function openAddVariablesSetting(variableType) {

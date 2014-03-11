@@ -11,6 +11,7 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,87 +83,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         return "NurseryManager/advancingNursery";
     }
     
-    /**
-     * Gets the data types.
-     *
-     * @return the data types
-     */
-    @ModelAttribute("locationList")
-    public List<Location> getLocationList() {
-        try {
-            List<Location> dataTypesOrig = fieldbookMiddlewareService.getAllLocations();
-            List<Location> dataTypes = dataTypesOrig;
-            
-            return dataTypes;
-        }catch (MiddlewareQueryException e) {
-            LOG.error(e.getMessage(), e);
-        }
-
-        return null;
-    }
-    
-    /**
-     * Gets the favorite location list.
-     *
-     * @return the favorite location list
-     */
-    @ModelAttribute("favoriteLocationList")
-    public List<Location> getFavoriteLocationList() {
-        try {
-            
-            List<Long> locationsIds = workbenchService
-                                .getFavoriteProjectLocationIds(getCurrentProjectId());
-            List<Location> dataTypes = fieldbookMiddlewareService
-                                .getFavoriteLocationByProjectId(locationsIds);
-            
-            return dataTypes;
-        }catch (MiddlewareQueryException e) {
-            LOG.error(e.getMessage(), e);
-        }
-
-        return null;
-    }
-    
-    /**
-     * Gets the breeding method list.
-     *
-     * @return the breeding method list
-     */
-    @ModelAttribute("methodList")
-    public List<Method> getBreedingMethodList() {
-        try {
-            List<Method> dataTypesOrig = fieldbookMiddlewareService.getAllBreedingMethods();
-            List<Method> dataTypes = dataTypesOrig;
-            
-            return dataTypes;
-        }catch (MiddlewareQueryException e) {
-            LOG.error(e.getMessage(), e);
-        }
-
-        return null;
-    }
-    
-    /**
-     * Gets the favorite location list.
-     *
-     * @return the favorite location list
-     */
-    @ModelAttribute("favoriteMethodList")
-    public List<Method> getFavoriteMethodList() {
-    	
-        try {
-            List<Integer> methodIds = workbenchService
-                                .getFavoriteProjectMethods(getCurrentProjectId());
-            List<Method> dataTypes = fieldbookMiddlewareService
-                                .getFavoriteBreedingMethods(methodIds);
-            return dataTypes;
-        }catch (MiddlewareQueryException e) {
-            LOG.error(e.getMessage(), e);
-        }
-    	   
-        return null;
-    }
-    
+   
     /**
      * Shows the screen.
      *
@@ -196,10 +117,22 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	form.setLocationUrl(AppConstants.LOCATION_URL.getString());
     	form.setBreedingMethodUrl(AppConstants.BREEDING_METHOD_URL.getString());
     	//long start = System.currentTimeMillis();
-    	Workbook workbook = fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
+    	Workbook workbook = null;//fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
     	//System.out.println("get nursery : " + (System.currentTimeMillis() - start));
     	userSelection.setWorkbook(workbook);
+    	form.setNurseryId(Integer.toString(nurseryId));
     	return super.show(model);
+    }
+    @ResponseBody
+    @RequestMapping(value="/load/{nurseryId}", method = RequestMethod.GET)
+    public Map<String, String> showLoadNursery(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form
+            , Model model, HttpSession session, @PathVariable int nurseryId) throws MiddlewareQueryException{
+    	long start = System.currentTimeMillis();
+    	Map<String, String> result = new HashMap<String, String>();
+    	Workbook workbook = fieldbookMiddlewareService.getNurseryDataSet(nurseryId);    	
+    	userSelection.setWorkbook(workbook);
+    	//System.out.println("loading: " + (System.currentTimeMillis()-start));
+    	return result;
     }
     
     /**

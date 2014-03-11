@@ -22,6 +22,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 <input type="hidden" th:field="*{locationUrl}"/>
 <input type="hidden" th:field="*{breedingMethodUrl}"/>
 <input type="hidden" th:field="*{defaultMethodId}"/>
+<input type="hidden" th:field="*{nurseryId}"/>
 
 <div class="col-xs-12 col-md-12">
 
@@ -359,31 +360,37 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 	    var msgEmptyListError = /*[[#{nursery.advance.nursery.empty.list.error}]]*/;
 	    
  		 $(function() {
+ 			loadNurseryDetails();
  			var harvestDate =  $('#harvestDate').datepicker({'format': 'yyyymmdd'}).on('changeDate', function(ev) {
  				$(this).datepicker('hide');
  			})
  			
  			programMethodUrl = $('#breedingMethodUrl').val();
  			programLocationUrl = $('#locationUrl').val();
- 			
+ 			/*
  			initializeHarvestLocationSelect2(locationSuggestions, locationSuggestions_obj);
  			initializeHarvestLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj);
  			
  			initializeMethodSelect2(methodSuggestions, methodSuggestions_obj);
  			initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFav_obj);
+ 			*/
+ 			recreateLocationCombo();
+ 			recreateMethodCombo();
  			
  			$('#s2id_harvestLocationIdFavorite').hide();
  			$('#s2id_harvestLocationIdAll').show();
- 			$('#showFavoriteLocation').on('change', function(){
- 				showCorrectLocationCombo();
- 			});
- 			
  			
  			$('#s2id_methodIdFavorite').hide();
  			$('#s2id_methodIdAll').show();
+ 			
+ 			
+ 			$('#showFavoriteLocation').on('change', function(){
+ 				showCorrectLocationCombo();
+ 			})
  			$('#showFavoriteMethod').on('change', function(){
  				showCorrectMethodCombo();
  			});
+ 			
  			 $('input[type=radio][name=methodChoice]').on('change', checkMethod);
  			 
  			$('input[type=radio][name=lineChoice]').on('change', lineMethod);
@@ -406,6 +413,22 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
  			}		
  		}
  		
+ 		function loadNurseryDetails(){
+ 			Spinner.toggle();
+ 			$.ajax(
+ 					{ url: "/Fieldbook/NurseryManager/advance/nursery/load/"+$('#nurseryId').val(),
+ 				       type: "GET",
+ 				       cache: false,
+ 				       data: "",
+ 				       success: function(data) {
+ 				    	   //console.log('done');
+ 				    	  Spinner.toggle();
+ 				       }
+ 				        
+ 				     }
+ 					);
+ 		
+ 		}
  		
  		//
       //]]>

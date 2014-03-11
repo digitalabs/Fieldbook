@@ -23,15 +23,20 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.csvreader.CsvReader;
 import com.csvreader.CsvWriter;
+import com.efficio.fieldbook.web.nursery.controller.AddOrRemoveTraitsController;
 
 /**
  * This class was copied from CIMMYT's Fieldbook Code. 
  */
 public class CSVOziel {
 
+	 private static final Logger LOG = LoggerFactory.getLogger(CSVOziel.class);
+	 
 	private List<MeasurementRow> observations;
 	private List<MeasurementVariable> headers;
 	private List<MeasurementVariable> variateHeaders;

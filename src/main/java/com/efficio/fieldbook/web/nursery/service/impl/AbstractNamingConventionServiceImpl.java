@@ -72,7 +72,8 @@ implements NamingConventionService {
         	//to ensure there is workbook, not actually needed since we optimize already
         }
         //System.out.println("Time advanceNursery 1.1: " + (System.currentTimeMillis() - start));
-        Study nursery = fieldbookMiddlewareService.getStudy(nurseryId);
+        //Study nursery = fieldbookMiddlewareService.getStudy(nurseryId);
+        Study nursery = advanceInfo.getStudy();
         //System.out.println("Time advanceNursery 1.2: " + (System.currentTimeMillis() - start));
         AdvancingSourceList rows = new AdvancingSourceList(workbook, advanceInfo, nursery);
         //System.out.println("Time advanceNursery 1.3: " + (System.currentTimeMillis() - start));

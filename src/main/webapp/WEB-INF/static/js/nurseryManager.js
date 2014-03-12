@@ -1351,8 +1351,8 @@ function initializeDateAndSliderInputs(){
 function checkPlantsSelected() {
 	if (parseInt($("#plotsWithPlantsSelected").val()) == 0) {
 		showErrorMessage('page-message',msgEmptyListError);
+		$("#lineChoice1").prop("checked", true);
 	}
-	$("#lineChoice1").prop("checked", true);
 }
 
 function doResetNurserySettings(){

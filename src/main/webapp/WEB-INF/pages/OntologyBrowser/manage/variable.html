@@ -342,6 +342,8 @@
   	
   	var triggerExternalNotification = false;
   	
+  	
+  	
 	function validateCombo(combo) {
 		var message = null;
 		//check if field is blank	
@@ -458,7 +460,7 @@
 				recreateVariableNameCombo("VariableName", varId, name);				
 			} else if (isDelete == 1) {
 				recreateComboAfterDelete("VariableName", varId);
-				notifyIntegratingApps(varId);
+				//notifyIntegratingApps(varId);
 			} else {
 				preSelectAfterUpdate("VariableName", varId, name);
 			}

@@ -6,7 +6,7 @@
 	    	<div class="modal-content">
 	         	<div class="modal-body" id="addVariableSuccessfulBody">
 	         		<div>
-	         			<button id="closeAddVariableSuccessfulModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	         			<button onclick="javascript: doNotify();" id="closeAddVariableSuccessfulModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 	         		</div>
 	         		<br/><br/>
 	         		<div class="alert alert-success" th:if="${ontologyBrowserForm.isDelete} == 0" th:text="#{ontology.browser.header.add.new.variable.successful(${ontologyBrowserForm.variableName})}">Standard Variable successfully created.</div>
@@ -15,7 +15,7 @@
 	         		<input type="hidden" id="operation" name="operation" th:value="${ontologyBrowserForm.isDelete}"/>
 	         	</div>																							
 	       		<div class="modal-footer">    
-	       			<button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">OK</button>	
+	       			<button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true" onclick="javascript: doNotify();">OK</button>	
        			</div>
 	     	</div><!-- /.modal-content -->
    		</div><!-- /.modal-dialog -->
@@ -47,7 +47,8 @@
     $( document ).ready(function() {  	     
     if (addSuccessful == "1") {
 		setTimeout(function (){
-			$("#showSuccessfulModal").trigger("click");
+			$('#addVariableSuccessfulModal').modal({ backdrop: 'static', keyboard: true })
+			$("#addVariableSuccessfulModal").modal("show");
 		}, 500);	
 		
 			
@@ -59,7 +60,10 @@
 		}, 500);
     }    
     });
-
+		function doNotify(){	
+		    if(triggerExternalNotification)
+				notifyIntegratingApps(varId);	
+		}
 	    function notifyIntegratingApps(varIdDeleted){
 	    	if(typeof window.parent.applyOntologyManageVariableUpdate == 'function') {
 				 var status = "";
@@ -155,7 +159,7 @@
 			 
 				// function exists, so we can now call it
 				 window.parent.applyOntologyManageVariableUpdate(returnData,{});
-				console.log(returnData);
+				//console.log(returnData);
 			  }
 	    }
     //]]>

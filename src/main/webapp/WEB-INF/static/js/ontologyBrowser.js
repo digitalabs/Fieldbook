@@ -869,8 +869,7 @@ function getStandardVariableDetails(variableId, text) {
 			    if (data.status == "1") {
 			    	populateFields(data, variableId);
 		       	}
-			    if(triggerExternalNotification)
-		    		notifyIntegratingApps(null);
+			    
 			    Spinner.toggle();
 		   }
 		   

@@ -6,12 +6,15 @@
 	</div>	
 	</div>
 	<div class="move-left col-xs-12 col-md-12">
-	<div class="form-group">
-	
-		<div id="page-create-field-map-message" class="col-md-12 form-group">
+		<div class="form-group">
+		
+			<div id="page-create-field-map-message" class="col-md-12 form-group">
+			</div>
 		</div>
 	
 	
+	<div class="panel panel-default">
+	   	<div class="panel-body manage-settings-panel-body">
 		<div class="col-xs-10 col-md-10">			
 			 
 <!-- 			<a href="/TrialManager/fileUpload.html" th:href="@{/TrialManager/fileUpload}" th:text="#{trial.managetrial.make.new.trial}">New Trial</a> -->			
@@ -78,7 +81,7 @@
 	      </div>
 	    </div>
 
-	</div>
+	
 	<br/><br/>
 	<div id="trial-details-list" th:include="/TrialManager/showTrialPagination">
     </div>
@@ -90,7 +93,9 @@
     <div class="row">
     	<div id="ontology-add-variable" th:include="/Fieldmap/selectTrialInstanceModal"></div>
     </div>
+    </div></div>
 </div>
+
 <div layout:fragment="page-script">
 	<!-- For pagination -->
 	<script type="text/javascript" th:src="@{/static/js/bootstrap-paginator.min.js}"></script>

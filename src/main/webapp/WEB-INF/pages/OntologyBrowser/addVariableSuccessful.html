@@ -81,7 +81,7 @@
 				 if($('#comboVariableName').select2('data') != null){
 					 variableId = $('#comboVariableName').select2('data').id;
 					 variableName = $('#comboVariableName').select2('data').text;
-					 console.log($('#comboVariableName').select2('data').text);
+					 //console.log($('#comboVariableName').select2('data').text);
 					 variableName = variableName.replace(' (Shared)', '');
 				 }
 				 if($('#dataType').select2('data') != null){
@@ -134,6 +134,9 @@
 					 standardVariableObj['valid'] = null;
 					 standardVariableObj['confirmed'] =  null;
 					 standardVariableObj['headerName'] = null;
+					 
+					 standardVariableObj['variable'] = variableName;
+					 standardVariableObj['description'] = variableDescription;
 					 
 					 standardVariableObj['property'] = propertyName;
 					 standardVariableObj['propertyDescription'] = propertyDescription;

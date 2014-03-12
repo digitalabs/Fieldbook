@@ -13,6 +13,8 @@ package com.efficio.fieldbook.web.nursery.service.impl;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -26,7 +28,6 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.generationcp.middleware.domain.etl.MeasurementData;
@@ -34,18 +35,22 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.web.nursery.service.ExcelExportStudyService;
-import com.efficio.fieldbook.web.util.AppConstants;
 
 @Service
 public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	
 	@Resource
 	private MessageSource messageSource;
+	
+	private static final List<Integer> STUDY_DETAILS_IDS = Arrays.asList(TermId.STUDY_NAME.getId(), TermId.STUDY_TITLE.getId(), 
+			TermId.PM_KEY.getId(), TermId.STUDY_OBJECTIVE.getId(), TermId.START_DATE.getId(), TermId.END_DATE.getId(), 
+			TermId.STUDY_TYPE.getId(), TermId.STUDY_UID.getId(), TermId.STUDY_STATUS.getId());
 	
 	@Override
 	public void export(Workbook workbook, String filename) {
@@ -118,6 +123,12 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	}
 	
 	private int writeConditions(int currentRowNum, HSSFWorkbook xlsBook, HSSFSheet xlsSheet, List<MeasurementVariable> conditions) {
+		List<MeasurementVariable> filteredConditions = new ArrayList<MeasurementVariable>();
+		for (MeasurementVariable variable : conditions) {
+			if (!STUDY_DETAILS_IDS.contains(variable.getTermId())) {
+				filteredConditions.add(variable);
+			}
+		}
 		return writeSection(currentRowNum, xlsBook, xlsSheet, conditions, "export.study.description.column.condition", 51, 153, 102);
 	}
 	

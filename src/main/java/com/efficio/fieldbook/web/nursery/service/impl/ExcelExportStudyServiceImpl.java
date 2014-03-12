@@ -26,7 +26,9 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataFormat;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -37,6 +39,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.web.nursery.service.ExcelExportStudyService;
+import com.efficio.fieldbook.web.util.AppConstants;
 
 @Service
 public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
@@ -85,6 +88,10 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		currentRowNum = writeConstants(currentRowNum, xlsBook, xlsSheet, workbook.getConstants());
 		xlsSheet.createRow(currentRowNum++);
 		currentRowNum = writeVariates(currentRowNum, xlsBook, xlsSheet, workbook.getVariates());
+		
+		for(int i = 0 ; i < 8 ; i++){
+			xlsSheet.autoSizeColumn(i);
+		}
 	}
 
 	private void writeObservationSheet(HSSFWorkbook xlsBook, Workbook workbook) {
@@ -94,7 +101,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		
 		writeObservationHeader(currentRowNum++, xlsBook, xlsSheet, workbook.getMeasurementDatasetVariables());
 		for (MeasurementRow dataRow : workbook.getObservations()) {
-			writeObservationRow(currentRowNum++, xlsSheet, dataRow);
+			writeObservationRow(currentRowNum++, xlsSheet, dataRow, xlsBook);
 		}
 	}
 	
@@ -243,15 +250,25 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				}
 				cell.setCellValue(variable.getName());
 			}
+			
 		}
 	}
 	
-	private void writeObservationRow(int currentRowNum, HSSFSheet xlsSheet, MeasurementRow dataRow) {
+	private void writeObservationRow(int currentRowNum, HSSFSheet xlsSheet, MeasurementRow dataRow, HSSFWorkbook xlsBook) {
 		HSSFRow row = xlsSheet.createRow(currentRowNum);
 		int currentColNum = 0;
+		CellStyle style =  xlsBook.createCellStyle();
+		DataFormat format = xlsBook.createDataFormat();
+		style.setDataFormat(format.getFormat("0.#"));
 		for (MeasurementData dataCell : dataRow.getDataList()) {
 			HSSFCell cell = row.createCell(currentColNum++);
+			/*
+			if(AppConstants.NUMERIC_DATA_TYPE.getString().equalsIgnoreCase(dataCell.getDataType())){
+				cell.setCellType(Cell.CELL_TYPE_BLANK);
+				cell.setCellType(Cell.CELL_TYPE_NUMERIC);				
+			}*/
 			cell.setCellValue(dataCell.getValue());
+			
 		}
 	}
 }

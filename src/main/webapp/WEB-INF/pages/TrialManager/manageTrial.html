@@ -15,18 +15,16 @@
 	
 	<div class="panel panel-default">
 	   	<div class="panel-body manage-settings-panel-body">
-		<div class="col-xs-10 col-md-10">			
+		<div style="float:right; padding-right: 15px;">			
 			 
 <!-- 			<a href="/TrialManager/fileUpload.html" th:href="@{/TrialManager/fileUpload}" th:text="#{trial.managetrial.make.new.trial}">New Trial</a> -->			
 			
-		</div>
-		<div class="col-xs-1 col-md-1">			
+				
 			 
-			<button style="margin-left: -50px" type="button" class="btn btn-info" id="make-trial" th:value="@{/TrialManager/fileUpload/newTrial}"  th:text="#{trial.managetrial.make.new.trial}">New Trial</button>
+			<button type="button" class="btn btn-info" id="make-trial" th:value="@{/TrialManager/fileUpload/newTrial}"  th:text="#{trial.managetrial.make.new.trial}">New Trial</button>
 			
-		</div>
-		<div class="col-xs-1 col-md-1">
-			<div style="margin-left: -6px" class="btn-group">
+		
+			<div  class="btn-group">
 			  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
 			    <span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;Tools
 			  </button>

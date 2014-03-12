@@ -145,6 +145,8 @@ public enum AppConstants {
     ,IMPORT_GERMPLASM_URL
     
     ,LABEL
+    
+    ,NUMERIC_DATA_TYPE
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

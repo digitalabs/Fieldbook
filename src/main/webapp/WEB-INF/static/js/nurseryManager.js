@@ -557,7 +557,7 @@ function addVariableToList() {
 		newRow = newRow + "<td class='"+className+"'><input type='hidden' class='addVariables cvTermIds' id='selectedVariables"+ ctr + ".cvTermId' " +  
 			"name='selectedVariables["+ ctr + "].cvTermId' value='" + $("#selectedStdVarId").val() + "' />";
 		newRow = newRow + "<input type='text' class='addVariables' id='selectedVariables"+ ctr + ".name' " +  
-			"name='selectedVariables["+ ctr + "].name' value='" + $("#selectedName").val() + "' /></td>";
+			"name='selectedVariables["+ ctr + "].name' maxLength='60' value='" + $("#selectedName").val() + "' /></td>";
 		newRow = newRow + "<td class='"+className+"'>" + $("#selectedProperty").text() + "</td>";
 		newRow = newRow + "<td class='"+className+"'>" + $("#selectedScale").text() + "</td>";
 		newRow = newRow + "<td class='"+className+"'>" + $("#selectedMethod").text() + "</td>";

@@ -294,7 +294,8 @@ table{
 /*end*/
 .container{
 	max-width: none !important; 
-	/*width: 950px;*/ 
+	/*width: 950px;*/
+	min-width: 100%; 
 	padding-left: 35px; margin-top: -20px; margin-left: 0px;
 	float: left;
 }

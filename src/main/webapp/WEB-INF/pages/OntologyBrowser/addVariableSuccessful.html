@@ -100,20 +100,26 @@
 				 var methodName = '';
 				 var methodDescription = '';
 				 var traiClassName = '';
+				 var propertyId = '';
+				 var scaleId = '';
+				 var methodId = '';
 				 if($('#comboProperty').select2('data') != null){
 					 propertyName =  $('#comboProperty').select2('data').text;
 					 propertyDescription =  $('#comboProperty').select2('data').description;
 					 propertyName = propertyName.replace(' (Shared)', '');
+					 propertyId = $('#comboProperty').select2('data').id;
 				 }
 				 if($('#comboScale').select2('data') != null){
 					 scaleName =  $('#comboScale').select2('data').text;
 					 scaleDescription =  $('#comboScale').select2('data').description;
 					 scaleName = scaleName.replace(' (Shared)', '');
+					 scaleId = $('#comboScale').select2('data').id;
 				 }
 				 if($('#comboMethod').select2('data') != null){
 					 methodName =  $('#comboMethod').select2('data').text;
 					 methodDescription =  $('#comboMethod').select2('data').description;
 					 methodName = methodName.replace(' (Shared)', '');
+					 methodId = $('#comboMethod').select2('data').id;
 				 }
 				 if($('#comboTraitClass').select2('data') != null){
 					 traiClassName =  $('#comboTraitClass').select2('data').text;
@@ -134,18 +140,22 @@
 					 standardVariableObj['valid'] = null;
 					 standardVariableObj['confirmed'] =  null;
 					 standardVariableObj['headerName'] = null;
+					 standardVariableObj['hasError'] = null;
 					 
 					 standardVariableObj['variable'] = variableName;
 					 standardVariableObj['description'] = variableDescription;
 					 
 					 standardVariableObj['property'] = propertyName;
 					 standardVariableObj['propertyDescription'] = propertyDescription;
+					 standardVariableObj['propertyId'] = propertyId;
 					 
 					 standardVariableObj['scale'] =scaleName;
 					 standardVariableObj['scaleDescription'] = scaleDescription;
+					 standardVariableObj['scaleId'] = scaleId;
 					 
 					 standardVariableObj['method'] = methodName;
 					 standardVariableObj['methodDescription'] = methodDescription;
+					 standardVariableObj['methodId'] = methodId;
 					 
 					 standardVariableObj['propertyClass'] = traiClassName;
 					 standardVariableObj['storedInId'] = storedInId;

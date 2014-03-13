@@ -3,7 +3,6 @@
 /.settings
 /logs
 .classpath
-src/main/resources/git.properties
 src/main/resources/database.properties
 src/main/resources/fieldbook.properties
 pipeline/config/dev-martin

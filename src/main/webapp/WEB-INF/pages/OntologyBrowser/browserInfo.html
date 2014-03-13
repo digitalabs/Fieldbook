@@ -15,12 +15,15 @@
     </div>
     
 	<div class="row">
-		<div class="col-xs-5 col-md-5">        
-	        <div class="input-group">
-	            <input type="text" id="srch-term" name="srch-term" placeholder="Search" class="form-control"/>
-	            <span class="input-group-addon "><i class="glyphicon glyphicon-search"></i></span>
+		<div class="col-xs-5 col-md-5">      
+	
+	        <div style="padding-left: 0px;" class="col-xs-12 col-md-12">
+	        	<input type="hidden" id="search-term" class="form-control"/>
+	            <!-- <input type="text" id="srch-term" name="srch-term" placeholder="Search" class="form-control"/> -->
+	            <!-- <span class="input-group-addon "><i class="glyphicon glyphicon-search"></i></span> -->
 	           
 	        </div>
+	      
         </div>
     </div>	
     
@@ -60,7 +63,9 @@
 <div layout:fragment="page-script">		
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    
-    
+    var termSuggestions_obj = [];
+    var termSuggestions;
+    var termSuggestionsMap = {};
    	$( document ).ready(function() {  	     
     	  
     	  //fix for the typeahead

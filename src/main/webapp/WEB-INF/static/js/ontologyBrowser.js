@@ -1,3 +1,4 @@
+/*
 function doSearchTree(){
 	var result = searchOntologyTreeNodeWithName(treeDivId, $('#srch-term').val());
 	$("#page-message").html("");
@@ -7,7 +8,7 @@ function doSearchTree(){
 		console.log(result);
 	}
 } 
-
+*/
 
 function doOntologyTreeHighlight(treeName, nodeKey){
 	$("#"+treeName).dynatree("getTree").activateKey(nodeKey);
@@ -63,15 +64,69 @@ function searchOntologyTreeNodeWithName(treeName, name) {
     	
 };
 
+function formatResult(myItem) {
+    return myItem.text;
+ }
+
+function format(myItem) {
+	return "<p><strong>"+myItem.text+"</strong> ("+myItem.type+") <br /> "+myItem.parentTitle+"</p>";
+}
+
 function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId){
 	//for triggering the start of search type ahead
 	if(treeData == null){
 		return;
 	}
+	termSuggestions = $.parseJSON(searchTreeData);	
+	termSuggestions_obj = [];
+	termSuggestionsMap = {};
+		//initialize the arrays that would contain json data for the combos
+			$.each(termSuggestions, function( index, value ) {
+				var obj = { 		
+						
+						  'text' : value.value,	
+						  'parentTitle' : value.parentTitle,
+						  'type' : value.type,
+						  'key': value.key,
+						  'id': value.key
+					};
+				termSuggestions_obj.push(obj);  
+				termSuggestionsMap[obj.key] = obj;
+			});
+	
+	//getOntologySuffix(id)
+	$('#search-term').select2({
+        query: function (query) {	
+          var data = {results: sortByKey(termSuggestions_obj, "text")}, i, j, s;
+          // return the array that matches
+          data.results = $.grep(data.results,function(item,index) {
+            return ($.fn.select2.defaults.matcher(query.term,item.text));
+          
+          });
+          /*
+          if (data.results.length === 0){
+        	  data.results.unshift({id:query.term,text:query.term});	        	 
+          }
+          */
+            query.callback(data);
+        },
+        escapeMarkup: function(m) {
+            // Do not escape HTML in the select options text
+            return m;
+         },
+         formatResult: format,
+         formatSelection: formatResult
+
+    }).on("change", function(){
+    	var data = $('#search-term').select2('data');
+    	 doOntologyTreeHighlight(treeDivId, data.key);
+    	
+    });
+	
+	/*
 	$('#'+searchDivId).typeahead('destroy');
 	//console.log('true');
 	var searchTypeAhead = $('#'+searchDivId).typeahead({
-   	  /*name: 'OntologyBrowserSearchTree',*/ 
    	  local:  $.parseJSON(searchTreeData),
    	  limit : 20,   	
    	  template: '<p><strong>{{value}}</strong> ({{type}}) <br /> {{parentTitle}}</p>',
@@ -86,7 +141,7 @@ function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId){
    	    doOntologyTreeHighlight(treeDivId, data.key);
    	    return false;
    	    });
-   	
+   	*/
 	
 	var json = $.parseJSON(treeData);
 	

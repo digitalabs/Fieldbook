@@ -385,7 +385,7 @@ function openAddVariablesSetting(variableType) {
 	//this would reset the tree view	
 	
     
-	
+	$("#variable-details").html('');
 	switch (parseInt(variableType)) {
 		case 1:
 			$("#heading-modal").text(addNurseryLevelSettings);

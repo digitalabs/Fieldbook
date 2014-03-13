@@ -96,7 +96,8 @@ function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId){
 			});
 	
 	//getOntologySuffix(id)
-	$('#search-term').select2({
+			$('#'+searchDivId).select2('destroy');
+			$('#'+searchDivId).select2({
         query: function (query) {	
           var data = {results: sortByKey(termSuggestions_obj, "text")}, i, j, s;
           // return the array that matches
@@ -119,8 +120,8 @@ function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId){
          formatSelection: formatResult
 
     }).on("change", function(){
-    	var data = $('#search-term').select2('data');
-    	
+    	var data = $('#'+searchDivId).select2('data');
+    	console.log('do serch');
     	 doOntologyTreeHighlight(treeDivId, data.key);
     	 
     });

@@ -24,12 +24,12 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 			    			</div>
 			    			<div class="row form-group">
 			    				<div class="col-xs-12 col-md-12">
-			    					<table border="0" id="nurseryLevelSettings" width="400px">
+			    					<table border="0" id="nurseryLevelSettings" width="100%">
 	                                <tr>
-	                                    <td style="max-width:150px; min-width:150px;">
+	                                    <td style="max-width:25%; min-width:25%;">
 	                                        <label id="folderLabel" for="title" th:text="#{nursery.savenursery.savein} + ':'">Save in:*</label>&nbsp;<span class="required">*</span>
 	                                    </td>
-	                                    <td  style="max-width:200px; min-width:200px;">
+	                                    <td  style="max-width:65%; min-width:65%;">
 	                                        <!--  <span id="folderNameSpan" name="folderNameSpan" ></span>-->
 	                                        <input type="hidden" th:field="*{folderId}" />
 	                                        <input type="hidden" th:field="*{folderName}" />
@@ -38,10 +38,10 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 	                                    </td>
 	                                </tr>
 	                                <tr>
-	                                    <td style="max-width:150px; min-width:150px;">
+	                                    <td style="max-width:25%; min-width:25%;">
 	                                        <label id="expDesignLabel" for="fieldLayoutRandom" th:text="#{nursery.nurserydetails.select.field.layout.label} + ': '"></label>&nbsp;<span class="required">*</span>
 	                                    </td>
-	                                    <td  style="max-width:200px; min-width:200px;">
+	                                    <td  style="max-width:65%; min-width:65%;">
 	                                        <select class="form-control" th:field="*{fieldLayoutRandom}">
 	                                            <option value="true" th:text="#{nursery.nurserydetails.option.with.randomization}">Unreplicated Design with Randomization</option>
 	                                            <option value="false" th:text="#{nursery.nurserydetails.option.without.randomization}">Unreplicated Design without Randomization</option>
@@ -50,11 +50,11 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 	                                </tr>
 			    					
 										<tr th:each="nurseryLevelVariable, rowStat : *{nurseryLevelVariables}">											
-                                          <td style="max-width:150px; min-width:150px;" class="nurseryLevelVariableSetting">
+                                          <td style="max-width:25%; min-width:25%;" class="nurseryLevelVariableSetting">
                                                 <label class="control-label nursery-level-label" th:text="${nurseryLevelVariable.variable.name}"></label>:
                                             </td>
 
-											<td style="max-width:200px; min-width:200px;">
+											<td style="max-width:65%; min-width:65%;">
 											 <!-- <div th:text="${nurseryLevelVariable.variable.cvTermId}"></div> -->
 											 <input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].variable.cvTermId}" /> 
 												<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" 

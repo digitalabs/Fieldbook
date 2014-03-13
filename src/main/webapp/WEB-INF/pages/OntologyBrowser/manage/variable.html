@@ -343,7 +343,7 @@
   	var triggerExternalNotification = false;
   	
   	
-  	
+  	var psmrError = /*[[#{error.pcm.combination.exists}]]*/;
 	function validateCombo(combo) {
 		var message = null;
 		//check if field is blank	
@@ -427,24 +427,29 @@
     			return false;
     		}
     	}
-    	/*
+    	
     	Spinner.toggle()
     	var serializedData = $("#manageVariable").serialize();
-		
+		var isValid = true;
 		$.ajax({
-			url: $('#manageVariable').attr('action'),
+			url: $('#manageVariable').attr('action') + "/verify",
 			type: "POST",
 			data: serializedData,
 			cache: false,
+			async: false,
 			success: function (data) {
 				Spinner.toggle();
-				var dataHtml = $(data).find('.container .row').first().html();
-				$('.container .row').first().html(dataHtml);							
-			    moveToTopScreen();
+				if(data == 'error'){
+					isValid = false;
+					//psmrError
+					$('#add-var-err-msg').html(psmrError);
+					$('#addFailedSaveModal').modal('show');
+				}
+				//console.log(data);
 			}			
 		});
-    	*/
-	    return true;
+    	
+	    return isValid;
     }
     
 	$( document ).ready(function() {  	

@@ -35,6 +35,7 @@ import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,6 +107,8 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
     /** The error handler service. */
     @Resource
     private ErrorHandlerService errorHandlerService;
+    @Resource
+    private FieldbookService fieldbookMiddlewareService;
     
     
     /* (non-Javadoc)
@@ -342,6 +345,58 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         }
         //return show(form, model);
         return showManageVariable(form, isPopup, 0, model);
+    }
+    
+    /**
+     * Save new variable.
+     *
+     * @param form the form
+     * @param result the result
+     * @param model the model
+     * @return the string
+     */
+    @ResponseBody
+    @RequestMapping(value="variable/verify", method = RequestMethod.POST)
+    public String saveVerifyNewVariable(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form
+            , BindingResult result, Model model) {
+        OntologyBrowserValidator validator = new OntologyBrowserValidator();
+        boolean error = false;
+            try {
+               
+                    //add or update
+                    Operation operation = form.getVariableId() != null ? Operation.UPDATE : Operation.ADD;
+                    StandardVariable standardVariable = new StandardVariable();
+                    //if variable is from local, add/update the variable
+                    //if it's from central, get the standard variable object only for update of valid value
+                    if (form.getVariableId() == null || form.getVariableId() < 0) {
+                        standardVariable = createStandardVariableObject(form, operation);
+                
+                    }
+                    Integer standardVariableId = null;
+                    if (form.getVariableId() == null || form.getVariableId() < 0) {
+                        standardVariable = createStandardVariableObject(form, operation);           
+                    }
+                    
+                    standardVariableId = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(standardVariable.getProperty().getName(), standardVariable.getScale().getName(), standardVariable.getMethod().getName(),standardVariable.getPhenotypicType());
+                    
+                    if(form.getVariableId() == null && standardVariableId != null){
+                    	error = true;
+                    }else if(form.getVariableId() != null && standardVariableId != null && form.getVariableId().intValue() != standardVariableId.intValue()){
+                    	error = true;
+                    }
+                    
+                
+                
+           } catch (MiddlewareQueryException e) {
+               LOG.error(e.getMessage(), e);
+               form.setAddSuccessful("2");
+               form.setErrorMessage(errorHandlerService.getErrorMessagesAsString(e.getCode(), null, "\n"));
+           }
+            if(error){
+            	return "error";
+            }
+            return "success";
+       
     }
     
     /**

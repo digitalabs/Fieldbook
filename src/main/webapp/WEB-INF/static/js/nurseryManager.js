@@ -593,7 +593,12 @@ function notInList(id) {
 }
 
 function submitSelectedVariables(variableType) {
-	if ($("#newVariablesList tbody tr").length > 0) {
+	if($("#newVariablesList tbody tr").length == 0){
+		$("#page-message-modal").html(
+			    "<div class='alert alert-danger'>"+ noVariableAddedMessage +"</div>"
+		);
+	}
+	else if ($("#newVariablesList tbody tr").length > 0) {
 		
 		var serializedData = $("input.addVariables").serialize();
 		$("#page-message-modal").html("");

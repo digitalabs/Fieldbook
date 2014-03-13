@@ -234,7 +234,7 @@ function clearAndAppendOntologyDetailsTab(variableName, html){
 		}else{
 			//we set the reminder
 			$('#ontology-detail-tabs').empty().append($('.variable-detail-info').html());
-			
+			$("#variable-details").html('');
 			if($("#heading-modal").text() == addNurseryLevelSettings)
 					$('#reminder-placeholder').html(reminderNursery);
 			else if($("#heading-modal").text() == addPlotLevelSettings)
@@ -1498,7 +1498,7 @@ function resetCategoricalValues() {
 function disableFieldsForCentralUpdate() {
 	$("#newVariableName").attr("disabled","disabled");
 	$("#variableDescription").attr("disabled","disabled");
-	$("#role").attr("disabled","disabled");
+	$("#role").select2('disable',true);
 	$("#comboTraitClass").select2('disable',true);
 	$("#comboProperty").select2('disable',true);
 	$("#comboMethod").select2('disable',true);
@@ -1509,7 +1509,7 @@ function disableFieldsForCentralUpdate() {
 function enableFieldsForUpdate() {
 	$("#newVariableName").removeAttr("disabled");
 	$("#variableDescription").removeAttr("disabled");
-	$("#role").removeAttr("disabled");
+	$("#role").select2('enable',true);
 	$("#comboTraitClass").select2('enable',true);
 	$("#comboProperty").select2('enable',true);
 	$("#comboMethod").select2('enable',true);

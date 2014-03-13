@@ -342,7 +342,14 @@ public class CSVOziel {
 	    	MeasurementRow row = this.observations.get(rowIndex);
 	    	for (MeasurementData data : row.getDataList()) {
 	    		if (data.getLabel().equals(label)) {
-	    			data.setValue(value);
+		    		if (!"N".equalsIgnoreCase(data.getDataType())
+		    				|| ("N".equalsIgnoreCase(data.getDataType()) && value != null && NumberUtils.isNumber(value))) {
+
+		    			data.setValue(value);
+		    		}
+		    		else {
+		    			data.setValue(null);
+		    		}
 	    			break;
 	    		}
 	    	}

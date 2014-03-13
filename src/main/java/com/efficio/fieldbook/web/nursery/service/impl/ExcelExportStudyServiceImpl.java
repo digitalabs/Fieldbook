@@ -129,7 +129,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				filteredConditions.add(variable);
 			}
 		}
-		return writeSection(currentRowNum, xlsBook, xlsSheet, conditions, "export.study.description.column.condition", 51, 153, 102);
+		return writeSection(currentRowNum, xlsBook, xlsSheet, filteredConditions, "export.study.description.column.condition", 51, 153, 102);
 	}
 	
 	private int writeFactors(int currentRowNum, HSSFWorkbook xlsBook, HSSFSheet xlsSheet, List<MeasurementVariable> factors) {

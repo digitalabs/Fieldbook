@@ -68,8 +68,10 @@ function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId){
 	if(treeData == null){
 		return;
 	}
+	$('#'+searchDivId).typeahead('destroy');
+	//console.log('true');
 	var searchTypeAhead = $('#'+searchDivId).typeahead({
-   	  name: 'OntologyBrowserSearchTree', 
+   	  /*name: 'OntologyBrowserSearchTree',*/ 
    	  local:  $.parseJSON(searchTreeData),
    	  limit : 20,   	
    	  template: '<p><strong>{{value}}</strong> ({{type}}) <br /> {{parentTitle}}</p>',

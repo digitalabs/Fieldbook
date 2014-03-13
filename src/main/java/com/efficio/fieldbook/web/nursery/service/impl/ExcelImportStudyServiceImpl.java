@@ -269,7 +269,12 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
     }
     
     private Integer getExcelValueInt(HSSFRow row, int columnIndex) {
-		String xlsStr = row.getCell(columnIndex).getStringCellValue();
+    	Cell cell = row.getCell(columnIndex);
+    	String xlsStr = "";
+    	if(cell.getCellType() == Cell.CELL_TYPE_STRING)
+    		xlsStr = cell.getStringCellValue();
+    	else			
+    		xlsStr = String.valueOf((int)cell.getNumericCellValue());
     	if (NumberUtils.isNumber(xlsStr)) {
     		return Integer.valueOf(xlsStr);
     	}

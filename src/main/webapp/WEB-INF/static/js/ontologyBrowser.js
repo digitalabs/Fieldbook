@@ -251,7 +251,7 @@ function clearAndAppendOntologyDetailsTab(variableName, html){
 }
 
 function viewTabs(variableName, variableId) {
-	if(isSearchTab == true)
+	if(false && isSearchTab == true)
 		return;
 	isSearchTab = true;
 	Spinner.toggle();
@@ -561,6 +561,10 @@ function lowerCaseFirstLetter(string)
 
 function loadOntologyCombos(){
 	//create combos
+	if($('#preselectVariableId').val() == 0 && $('#fromPopup').val() == 1){
+		variableNameSuggestions = {};
+		variableNameSuggestions_obj = [];
+	}
 	initializeVariable(variableNameSuggestions, variableNameSuggestions_obj, "description", "VariableName", true);
 	
 	traitClassesSuggestions_obj.push({ 'id' : 0,

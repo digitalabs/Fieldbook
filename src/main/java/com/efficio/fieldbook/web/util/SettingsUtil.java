@@ -282,7 +282,9 @@ public class SettingsUtil {
 							condition.getScale(), condition.getMethod(), condition.getRole(), condition.getDatatype(), condition.getDataTypeId(),
 							condition.getMinRange(), condition.getMaxRange());
 					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
-					variable.setCvTermId(stdVar);
+					
+					
+					variable.setCvTermId(stdVar);										
 					List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
 					SettingDetail settingDetail = new SettingDetail(variable,
 							possibleValues, condition.getValue(), isSettingVariableDeletable(stdVar, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()));
@@ -291,6 +293,10 @@ public class SettingsUtil {
 					List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, projectId);
 					settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
 					nurseryLevelConditions.add(settingDetail);
+					if(userSelection != null){
+						StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);						
+						variable.setPSMRFromStandardVariable(standardVariable);						
+					}
 				}
 		    }
 			//plot level
@@ -305,6 +311,10 @@ public class SettingsUtil {
 					SettingDetail settingDetail = new SettingDetail(variable,
 							null, null, isSettingVariableDeletable(stdVar, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()));
 					plotsLevelList.add(settingDetail);
+					if(userSelection != null){
+						StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);						
+						variable.setPSMRFromStandardVariable(standardVariable);						
+					}
 				}
 			}
 			//baseline traits
@@ -319,6 +329,10 @@ public class SettingsUtil {
 					SettingDetail settingDetail = new SettingDetail(variable,
 							null, null, true);
 					baselineTraitsList.add(settingDetail);
+					if(userSelection != null){
+						StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);						
+						variable.setPSMRFromStandardVariable(standardVariable);						
+					}
 				}
 			}
 			

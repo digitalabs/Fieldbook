@@ -173,6 +173,7 @@ function clearAndAppendOntologyDetailsTab(variableName, html){
 		if($('#addVariablesSettingBody').length == 0){
 			$("#ontology-detail-tabs").empty();
 			$("#variable-details").html('');	
+			$('#ontology-detail-tabs').empty().append($('.variable-detail-info').html());
 		}else{
 			//we set the reminder
 			$('#ontology-detail-tabs').empty().append($('.variable-detail-info').html());

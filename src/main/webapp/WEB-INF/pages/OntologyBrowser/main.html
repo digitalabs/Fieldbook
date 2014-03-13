@@ -11,10 +11,8 @@
    	<div class="panel-body manage-settings-panel-body">
 		    		
 		<div class="row">
-			<div class="col-xs-10 col-md-10">	
-			&nbsp;
-			</div>
-			<div class="col-xs-2 col-md-2">	
+			
+			<div style="float: right">	
 				 <a  th:if="${isPopup == false}" href="/OntologyManageVariable/" class="btn btn-info" th:href="@{/OntologyManager/manage/variable}" th:text="#{ontology.browser.button.manage.variable}">.Manage Variable</a>
 			</div>
 		</div>	
@@ -46,6 +44,9 @@
             return false; // prevent the button click from happening
         }
 	});
+   	$( document ).ready(function() {  
+   		$('#ontology-detail-tabs').empty().html($('.variable-detail-info').html());
+   	});
   
       //]]>
     </script>

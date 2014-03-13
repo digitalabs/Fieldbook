@@ -11,6 +11,7 @@ function doSearchTree(){
 */
 
 function doOntologyTreeHighlight(treeName, nodeKey){
+	
 	$("#"+treeName).dynatree("getTree").activateKey(nodeKey);
 	$('#'+treeName).find("*").removeClass('highlight');
 	//then we highlight the nodeKey and its parents
@@ -30,7 +31,7 @@ function doOntologyTreeHighlight(treeName, nodeKey){
 	
 	if(node != null && node.data.lastChildren == true){
 		//call ajax
-		standardVariableKey = elem[elem.length-1];
+		standardVariableKey = elem[elem.length-1];		
 		processTab(node.data.title, standardVariableKey);
 	}else{
 		clearAndAppendOntologyDetailsTab('', '');
@@ -119,8 +120,9 @@ function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId){
 
     }).on("change", function(){
     	var data = $('#search-term').select2('data');
-    	 doOntologyTreeHighlight(treeDivId, data.key);
     	
+    	 doOntologyTreeHighlight(treeDivId, data.key);
+    	 
     });
 	
 	/*
@@ -249,10 +251,14 @@ function clearAndAppendOntologyDetailsTab(variableName, html){
 }
 
 function viewTabs(variableName, variableId) {
+	if(isSearchTab == true)
+		return;
+	isSearchTab = true;
 	Spinner.toggle();
 	$.ajax({
 		url: ontologyUrl + "details/" + variableId,
 		type: "get",
+		async: true,
 		//dataType: "json",
 		success: function(html) {
 			clearAndAppendOntologyDetailsTab(variableName, html);	
@@ -268,6 +274,7 @@ function viewTabs(variableName, variableId) {
 				$('#selectedName').val(variableName);
 				
 			}
+			isSearchTab = false;
 		},
 		error: function(jqXHR, textStatus, errorThrown){ 
 			console.log("The following error occured: " + textStatus, errorThrown); 

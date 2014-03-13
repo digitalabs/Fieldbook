@@ -101,15 +101,15 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			    			</div>
 			    			<div class="row form-group">
 			    				<div class="col-xs-12 col-md-12">
-			    					<table border="0" id="nurseryLevelSettings" width="400px">
+			    					<table border="0" id="nurseryLevelSettings" width="100%">
 										<tr th:each="nurseryLevelVariable, rowStat : *{nurseryLevelVariables}">
-											<td style="max-width:50px; min-width:50px;" class="nurseryLevelVariableSetting">
+											<td style="max-width:5%; min-width:5%;" class="nurseryLevelVariableSetting">
 												<span style="cursor: default; font-size: 16px;" th:if="${nurseryLevelVariable.delete}" class="glyphicon glyphicon-remove-circle" 
 												th:onclick="'javascript: deleteVariable(1,\'' + ${nurseryLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
 												<input class="cvTermIds" type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 											</td>
-											<td style="max-width:150px; min-width:150px;" class="nurseryLevelVariableSetting"><label class="control-label" th:text="${nurseryLevelVariable.variable.name}"></label>:</td>
-											<td style="max-width:200px; min-width:200px;">
+											<td style="max-width:25%; min-width:25%;" class="nurseryLevelVariableSetting"><label class="control-label" th:text="${nurseryLevelVariable.variable.name}"></label>:</td>
+											<td style="max-width:65%; min-width:65%;">
 											 <!-- <div th:text="${nurseryLevelVariable.variable.cvTermId}"></div> --> 
 												<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" 
 												type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].value}" class="form-control select2" />

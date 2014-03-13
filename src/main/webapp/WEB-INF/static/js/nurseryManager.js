@@ -655,13 +655,13 @@ function createNurseryLevelSettingVariables(data) {
 		}
 		
 		//create html elements dynamically
-		newRow = newRow + "<td style='max-width:50px; min-width:50px;' class='nurseryLevelVariableSetting'>" + isDelete + 
+		newRow = newRow + "<td style='max-width:5%; min-width:5%;' class='nurseryLevelVariableSetting'>" + isDelete + 
 		"<input class='cvTermIds' type='hidden' id='nurseryLevelVariables" + ctr + ".variable.cvTermId' name='nurseryLevelVariables[" + 
 		ctr + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
 		//newRow = newRow + "<td>" + settingDetail.variable.name + ':' + '<span class="required">*</span>' +  "</td>";
-		newRow = newRow + "<td style='max-width:150px; min-width:150px;'class='nurseryLevelVariableSetting'><label class='control-label'>" + settingDetail.variable.name + '</label>:' + '' +  "</td>";
-		newRow = newRow + "<td style='max-width:200px; min-width:200px;'>";
+		newRow = newRow + "<td style='max-width:25%; min-width:25%;'class='nurseryLevelVariableSetting'><label class='control-label'>" + settingDetail.variable.name + '</label>:' + '' +  "</td>";
+		newRow = newRow + "<td style='max-width:65%; min-width:65%;'>";
 		/*
 		newRow = newRow + "<input type='hidden' id='nurseryLevelVariables" + ctr + 
 		".value' name='nurseryLevelVariables[" + ctr + "].value' class='form-control select2' />";

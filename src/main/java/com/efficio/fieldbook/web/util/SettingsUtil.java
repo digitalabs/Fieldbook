@@ -311,10 +311,12 @@ public class SettingsUtil {
 					SettingDetail settingDetail = new SettingDetail(variable,
 							null, null, isSettingVariableDeletable(stdVar, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()));
 					plotsLevelList.add(settingDetail);
+					/*
 					if(userSelection != null){
 						StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);						
 						variable.setPSMRFromStandardVariable(standardVariable);						
 					}
+					*/
 				}
 			}
 			//baseline traits
@@ -329,10 +331,12 @@ public class SettingsUtil {
 					SettingDetail settingDetail = new SettingDetail(variable,
 							null, null, true);
 					baselineTraitsList.add(settingDetail);
+					/*
 					if(userSelection != null){
 						StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);						
 						variable.setPSMRFromStandardVariable(standardVariable);						
 					}
+					*/
 				}
 			}
 			

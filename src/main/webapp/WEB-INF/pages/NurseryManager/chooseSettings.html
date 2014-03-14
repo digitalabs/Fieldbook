@@ -16,46 +16,43 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 		    				<div class="">
 				    			<label class="control-label"><strong class="sub-content-heading" th:text="#{nursery.managesettings.nursery.level.details}">NURSERY-LEVEL DETAILS</strong></label>
 			    			</div>
-			    			<div class="row form-group">
+			    			<div class="row">
 			    				<div class="col-xs-12 col-md-12">
 					    			<label class="control-label" th:text="#{nursery.managesettings.nursery.level.notes}"> The settings in this section apply across all plots in the nursery. 
 					    			You can add settings at this level, or remove those that you wish to manage at the plot level.</label>
 				    			</div>
 			    			</div>
-			    			<div class="row form-group">
-			    				<div class="col-xs-12 col-md-12">
-			    					<table border="0" id="nurseryLevelSettings" width="100%">
-	                                <tr>
-	                                    <td style="max-width:25%; min-width:25%;">
-	                                        <label id="folderLabel" for="title" th:text="#{nursery.savenursery.savein} + ':'">Save in:*</label>&nbsp;<span class="required">*</span>
-	                                    </td>
-	                                    <td  style="max-width:65%; min-width:65%;">
+			    				<div class="row nurseryLevelSettings" >
+			    					<!-- <table border="0" id="nurseryLevelSettings" width="100%">
+			    					 -->
+	                                <div class="col-xs-5 col-md-5 1st">
+	                                        &nbsp;&nbsp;&nbsp;<label id="folderLabel" for="title" th:text="#{nursery.savenursery.savein} + ':'">Save in:*</label>&nbsp;<span class="required">*</span>
+	                                </div>
+	                                <div class="col-xs-7 col-md-7 2nd">
 	                                        <!--  <span id="folderNameSpan" name="folderNameSpan" ></span>-->
 	                                        <input type="hidden" th:field="*{folderId}" />
 	                                        <input type="hidden" th:field="*{folderName}" />
 	                                        
 	                                        <a id="chooseLocation" onclick="loadFolderAjax();" th:text="#{nursery.create.nursery.choose.location}"></a>
-	                                    </td>
-	                                </tr>
-	                                <tr>
-	                                    <td style="max-width:25%; min-width:25%;">
-	                                        <label id="expDesignLabel" for="fieldLayoutRandom" th:text="#{nursery.nurserydetails.select.field.layout.label} + ': '"></label>&nbsp;<span class="required">*</span>
-	                                    </td>
-	                                    <td  style="max-width:65%; min-width:65%;">
+	                                </div>
+                                </div>
+	                            <div class="row nurseryLevelSettings" >
+	                                 <div class="col-xs-5 col-md-5 1st">
+	                                       &nbsp;&nbsp;&nbsp;<label id="expDesignLabel" for="fieldLayoutRandom" th:text="#{nursery.nurserydetails.select.field.layout.label} + ': '"></label>&nbsp;<span class="required">*</span>
+	                                    </div>
+	                                <div class="col-xs-7 col-md-7 2nd">
 	                                        <select class="form-control" th:field="*{fieldLayoutRandom}">
 	                                            <option value="true" th:text="#{nursery.nurserydetails.option.with.randomization}">Unreplicated Design with Randomization</option>
 	                                            <option value="false" th:text="#{nursery.nurserydetails.option.without.randomization}">Unreplicated Design without Randomization</option>
 	                                        </select>
-	                                    </td>
-	                                </tr>
-			    					
-										<tr th:each="nurseryLevelVariable, rowStat : *{nurseryLevelVariables}">											
-                                          <td style="max-width:25%; min-width:25%;" class="nurseryLevelVariableSetting">
-                                                <label class="control-label nursery-level-label" th:text="${nurseryLevelVariable.variable.name}"></label>:
-                                            </td>
-
-											<td style="max-width:65%; min-width:65%;">
-											 <!-- <div th:text="${nurseryLevelVariable.variable.cvTermId}"></div> -->
+	                                   </div>
+			    				</div>	
+			    				<div class="row nurseryLevelSettings" th:each="nurseryLevelVariable, rowStat : *{nurseryLevelVariables}">
+			    					<div class="col-xs-5 col-md-5 1st">
+	                                        &nbsp;&nbsp;&nbsp;<label class="control-label nursery-level-label" th:text="${nurseryLevelVariable.variable.name}"></label>:
+	                                    </div>
+	                                <div class="col-xs-7 col-md-7 2nd">
+	                                       <!-- <div th:text="${nurseryLevelVariable.variable.cvTermId}"></div> -->
 											 <input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].variable.cvTermId}" /> 
 												<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" 
 												type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].value}" class="form-control select2" />
@@ -107,14 +104,12 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 												<span>
 													<a th:if="${nurseryLevelVariable.variable.cvTermId}==*{locationId}" href="javascript: openManageLocations();" th:text="#{nursery.managesettings.manage.location}">Manage Location</a>
 													<a th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}" href="javascript: openManageMethods();" th:text="#{nursery.managesettings.manage.method}">Manage Method</a>
-												</span>								
-											</td>
-										</tr>
-									</table>
+												</span>		
+	                                   </div>
 			    				</div>
-			    			</div>
+										
+			    				</div>
 			    			
-	    				</div>
 	    				<div class="col-xs-6 col-md-6">	    								    			
 		    				<div class="row">
 			    				<div class="col-xs-12 col-md-12">

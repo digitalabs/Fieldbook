@@ -557,7 +557,7 @@ function addVariableToList() {
 		newRow = newRow + "<td class='"+className+"'><input type='hidden' class='addVariables cvTermIds' id='selectedVariables"+ ctr + ".cvTermId' " +  
 			"name='selectedVariables["+ ctr + "].cvTermId' value='" + $("#selectedStdVarId").val() + "' />";
 		newRow = newRow + "<input type='text' class='addVariables' id='selectedVariables"+ ctr + ".name' " +  
-			"name='selectedVariables["+ ctr + "].name' maxLength='60' value='" + $("#selectedName").val() + "' /></td>";
+			"name='selectedVariables["+ ctr + "].name' maxLength='75' value='" + $("#selectedName").val() + "' /></td>";
 		newRow = newRow + "<td class='"+className+"'>" + $("#selectedProperty").text() + "</td>";
 		newRow = newRow + "<td class='"+className+"'>" + $("#selectedScale").text() + "</td>";
 		newRow = newRow + "<td class='"+className+"'>" + $("#selectedMethod").text() + "</td>";
@@ -648,9 +648,9 @@ function getLastRowIndex(name, hasTBody) {
 }
 
 function createNurseryLevelSettingVariables(data) {
-	var ctr = getLastRowIndex("nurseryLevelSettings", false) + 1;
+	var ctr = $('.nurseryLevelSettings').length + 1; //getLastRowIndex("nurseryLevelSettings", false) + 1;
 	$.each(data, function (index, settingDetail) {
-		var newRow = "<tr class='newVariable'>";
+		var newRow = "<div class='row nurseryLevelSettings newVariable'>";
 		var isDelete = "";
 		
 		//include delete button if variable is deletable
@@ -660,13 +660,13 @@ function createNurseryLevelSettingVariables(data) {
 		}
 		
 		//create html elements dynamically
-		newRow = newRow + "<td style='max-width:5%; min-width:5%;' class='nurseryLevelVariableSetting'>" + isDelete + 
-		"<input class='cvTermIds' type='hidden' id='nurseryLevelVariables" + ctr + ".variable.cvTermId' name='nurseryLevelVariables[" + 
+		newRow = newRow + "<div class='col-xs-4 col-md-4'>" + isDelete + 
+		"&nbsp;&nbsp;<input class='cvTermIds' type='hidden' id='nurseryLevelVariables" + ctr + ".variable.cvTermId' name='nurseryLevelVariables[" + 
 		ctr + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
 		//newRow = newRow + "<td>" + settingDetail.variable.name + ':' + '<span class="required">*</span>' +  "</td>";
-		newRow = newRow + "<td style='max-width:25%; min-width:25%;'class='nurseryLevelVariableSetting'><label class='control-label'>" + settingDetail.variable.name + '</label>:' + '' +  "</td>";
-		newRow = newRow + "<td style='max-width:65%; min-width:65%;'>";
+		newRow = newRow + "<label class='control-label'>" + settingDetail.variable.name + '</label>:' + '' +  "</div>";
+		newRow = newRow + "<div class='col-xs-8 col-md-8'>";
 		/*
 		newRow = newRow + "<input type='hidden' id='nurseryLevelVariables" + ctr + 
 		".value' name='nurseryLevelVariables[" + ctr + "].value' class='form-control select2' />";
@@ -698,7 +698,7 @@ function createNurseryLevelSettingVariables(data) {
 			settingDetail.possibleValuesFavoriteJson + "</div>";
 			
 			newRow = newRow + "<span><a href='javascript: openManageMethods();'>" + manageMethodLabel + "</a></span>";
-			newRow = newRow + "</td></tr>";
+			newRow = newRow + "</div>";
 			
 		} else if (settingDetail.variable.cvTermId == locationId) {
 				//show favorite method
@@ -712,10 +712,94 @@ function createNurseryLevelSettingVariables(data) {
 				settingDetail.possibleValuesFavoriteJson + "</div>";
 				
 				newRow = newRow + "<span><a href='javascript: openManageLocations();'>" + manageLocationLabel + "</a></span>";
-				newRow = newRow + "</td></tr>";
+				newRow = newRow + "</div>";
 				
 		} else {
-			newRow = newRow + "</td></tr>";
+			newRow = newRow + "</div>";
+		}
+
+		$("#nurseryLevelSettings-dev").append(newRow);
+		
+		if(settingDetail.variable.widgetType == 'DROPDOWN'){
+			//initialize select 2 combo
+			initializePossibleValuesCombo(settingDetail.possibleValues, "#" + 
+					getJquerySafeId("nurseryLevelVariables" + ctr + ".value"), false, null);
+		}
+		ctr++;
+	});
+	
+	initializeDateAndSliderInputs();
+}
+
+function createNurseryLevelSettingVariablesOld(data) {
+	var ctr = getLastRowIndex("nurseryLevelSettings", false) + 1;
+	$.each(data, function (index, settingDetail) {
+		var newRow = "<tr class='newVariable'>";
+		var isDelete = "";
+		
+		//include delete button if variable is deletable
+		if (settingDetail.delete) {
+			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(1," + 
+				settingDetail.variable.cvTermId + ",$(this))'></span>";
+		}
+		
+		//create html elements dynamically
+		newRow = newRow + "<div class='col-xs-4 col-md-4 1st'>" + isDelete + 
+		"<input class='cvTermIds' type='hidden' id='nurseryLevelVariables" + ctr + ".variable.cvTermId' name='nurseryLevelVariables[" + 
+		ctr + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
+		"";
+		//newRow = newRow + "<td>" + settingDetail.variable.name + ':' + '<span class="required">*</span>' +  "</td>";
+		newRow = newRow + "<label class='control-label'>" + settingDetail.variable.name + '</label>:' + '' +  "</div>";
+		newRow = newRow + "<div class='col-xs-8 col-md-8 2nd'>";
+		/*
+		newRow = newRow + "<input type='hidden' id='nurseryLevelVariables" + ctr + 
+		".value' name='nurseryLevelVariables[" + ctr + "].value' class='form-control select2' />";
+		*/
+		var inputHtml = '';
+				
+		if(settingDetail.variable.widgetType == 'DROPDOWN'){
+			inputHtml = createDropdownInput(ctr);
+		}else if(settingDetail.variable.widgetType == 'DATE'){
+			inputHtml = createDateInput(ctr);
+		}else if(settingDetail.variable.widgetType == 'CTEXT'){
+			inputHtml = createCharacterTextInput(ctr);
+		}else if(settingDetail.variable.widgetType == 'NTEXT'){
+			inputHtml = createNumericalTextInput(ctr);
+		}else if(settingDetail.variable.widgetType == 'SLIDER'){
+			inputHtml = createSliderInput(ctr, settingDetail.variable.minRange, settingDetail.variable.maxRange);
+		}
+		newRow = newRow + inputHtml;
+		
+		if (settingDetail.variable.cvTermId == breedingMethodId) {
+			//show favorite method
+			newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id='nurseryLevelVariables" + ctr + ".favorite1'" + 
+			" name='nurseryLevelVariables[" + ctr + "].favorite'" +
+			" onclick='javascript: toggleMethodDropdown(" + ctr + ");' />" +
+			"<input type='hidden' name='_nurseryLevelVariables[" + ctr + "].favorite' value='on' /> " +
+			"<span>&nbsp;&nbsp;" + showFavoriteMethodLabel + "</span></div>" + 
+			"<div id='possibleValuesJson" + ctr + "' class='possibleValuesJson' style='display:none'>" + settingDetail.possibleValuesJson + 
+			"</div><div id='possibleValuesFavoriteJson" + ctr + "' class='possibleValuesFavoriteJson' style='display:none'>" + 
+			settingDetail.possibleValuesFavoriteJson + "</div>";
+			
+			newRow = newRow + "<span><a href='javascript: openManageMethods();'>" + manageMethodLabel + "</a></span>";
+			newRow = newRow + "</div>";
+			
+		} else if (settingDetail.variable.cvTermId == locationId) {
+				//show favorite method
+				newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id='nurseryLevelVariables" + ctr + ".favorite1'" + 
+				" name='nurseryLevelVariables[" + ctr + "].favorite'" +
+				" onclick='javascript: toggleLocationDropdown(" + ctr + ");' />" +
+				"<input type='hidden' name='_nurseryLevelVariables[" + ctr + "].favorite' value='on' /> " +
+				"<span>&nbsp;&nbsp;" + showFavoriteLocationLabel + "</span></div>" + 
+				"<div id='possibleValuesJson" + ctr + "' class='possibleValuesJson' style='display:none'>" + settingDetail.possibleValuesJson + 
+				"</div><div id='possibleValuesFavoriteJson" + ctr + "' class='possibleValuesFavoriteJson' style='display:none'>" + 
+				settingDetail.possibleValuesFavoriteJson + "</div>";
+				
+				newRow = newRow + "<span><a href='javascript: openManageLocations();'>" + manageLocationLabel + "</a></span>";
+				newRow = newRow + "</div>";
+				
+		} else {
+			newRow = newRow + "</div>";
 		}
 
 		$("#nurseryLevelSettings").append(newRow);
@@ -936,7 +1020,7 @@ function sortVariableIdsAndNames(variableType) {
 	case 1:
 		var reg = new RegExp("nurseryLevelVariables[0-9]+", "g");
 		var reg2 = new RegExp("nurseryLevelVariables\[[0-9]+\]", "g");
-		$.each($("#nurseryLevelSettings tr"), function (index, row) {						
+		$.each($(".nurseryLevelSettings"), function (index, row) {						
 			//get currently selected value of select2 dropdown
 			var selectedVal = null;
 			var oldSelect2 = row.innerHTML.match(reg)[0];
@@ -946,7 +1030,7 @@ function sortVariableIdsAndNames(variableType) {
 		    
 		    //if dropdown is for location or method, check if show favorite is checked
 		    var isFavoriteChecked = "";
-		    if ($("#" + getJquerySafeId(oldSelect2 + ".favorite1"))) {
+		    if ($("#" + getJquerySafeId(oldSelect2 + ".favorite1")).length != 0) {
 		    	isFavoriteChecked = $("#" + getJquerySafeId(oldSelect2 + ".favorite1")).is(":checked");
 		    }
 		    
@@ -980,9 +1064,9 @@ function sortVariableIdsAndNames(variableType) {
 
 function recreateSelect2Combo(index, row, selectedVal, isFavoriteChecked) {
 	//get the possible values of the variable
-	var possibleValuesJson = $($(row).children("td:nth-child(3)").children(".possibleValuesJson")).text();
-	var possibleValuesFavoriteJson = $($(row).children("td:nth-child(3)").children(".possibleValuesFavoriteJson")).text();
-	var cvTermId = $($(row).children("td:nth-child(1)").children("#" 
+	var possibleValuesJson = $($(row).find(".possibleValuesJson")).text();
+	var possibleValuesFavoriteJson = $($(row).find(".possibleValuesFavoriteJson")).text();
+	var cvTermId = $($(row).find('.1st').find("#" 
 			+ getJquerySafeId("nurseryLevelVariables" + index + ".variable.cvTermId"))).val();
 	
 	//hidden field for select2 
@@ -1033,7 +1117,7 @@ function recreateSelect2Combo(index, row, selectedVal, isFavoriteChecked) {
 		newCell = newCell + "<span><a href='javascript: " + manageMethodName + "();'>" + managePopupLabel + "</a></span>";
 	}
 	
-	$($(row).children("td:nth-child(3)")).html(newCell);
+	$($(row).find(".2nd")).html(newCell);
 	
 	//recreate the select2 object
 	if (parseInt(cvTermId) == parseInt(locationId)) {

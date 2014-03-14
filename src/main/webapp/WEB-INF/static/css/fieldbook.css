@@ -707,3 +707,6 @@ div.possibleValuesDiv{
 .row{
 	margin-right: 0px;
 }
+.select2-container {
+  width: 260px;
+}

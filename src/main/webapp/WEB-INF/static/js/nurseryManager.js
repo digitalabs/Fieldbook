@@ -670,13 +670,13 @@ function createNurseryLevelSettingVariables(data) {
 		}
 		
 		//create html elements dynamically
-		newRow = newRow + "<div class='col-xs-4 col-md-4'>" + isDelete + 
+		newRow = newRow + "<div class='col-xs-5 col-md-5'>" + isDelete + 
 		"&nbsp;&nbsp;<input class='cvTermIds' type='hidden' id='nurseryLevelVariables" + ctr + ".variable.cvTermId' name='nurseryLevelVariables[" + 
 		ctr + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
 		//newRow = newRow + "<td>" + settingDetail.variable.name + ':' + '<span class="required">*</span>' +  "</td>";
 		newRow = newRow + "<label class='control-label'>" + settingDetail.variable.name + '</label>:' + '' +  "</div>";
-		newRow = newRow + "<div class='col-xs-8 col-md-8'>";
+		newRow = newRow + "<div class='col-xs-7 col-md-7'>";
 		/*
 		newRow = newRow + "<input type='hidden' id='nurseryLevelVariables" + ctr + 
 		".value' name='nurseryLevelVariables[" + ctr + "].value' class='form-control select2' />";

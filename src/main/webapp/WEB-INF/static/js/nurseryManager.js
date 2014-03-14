@@ -243,9 +243,10 @@ $.ajax(
 
 function getBreedingMethodRowIndex() {
 	var rowIndex = 0;
-	$.each($("#nurseryLevelSettings tr"), function (index, row) {
-		var cvTermId = $($(row).children("td:nth-child(1)")
-				.children("#" + getJquerySafeId("nurseryLevelVariables" + index + ".variable.cvTermId"))).val();
+	$.each($(".nurseryLevelSettings"), function (index, row) {
+		//daniel
+		var cvTermId = $($(row).find('.1st')
+				.find("#" + getJquerySafeId("nurseryLevelVariables" + index + ".variable.cvTermId"))).val();
 		if (parseInt(cvTermId) == parseInt(breedingMethodId)) {
 			rowIndex = index;
 		}
@@ -255,9 +256,9 @@ function getBreedingMethodRowIndex() {
 
 function getLocationRowIndex() {
 	var rowIndex = 0;
-	$.each($("#nurseryLevelSettings tr"), function (index, row) {
-		var cvTermId = $($(row).children("td:nth-child(1)")
-				.children("#" + getJquerySafeId("nurseryLevelVariables" + index + ".variable.cvTermId"))).val();
+	$.each($(".nurseryLevelSettings"), function (index, row) {
+		var cvTermId = $($(row).find('.1st')
+				.find("#" + getJquerySafeId("nurseryLevelVariables" + index + ".variable.cvTermId"))).val();
 		if (parseInt(cvTermId) == parseInt(locationId)) {
 			rowIndex = index;
 		}
@@ -811,7 +812,7 @@ function createNurseryLevelSettingVariablesOld(data) {
 			newRow = newRow + "</div>";
 		}
 
-		$("#nurseryLevelSettings").append(newRow);
+		$("#nurseryLevelSettings-dev").append(newRow);
 		
 		if(settingDetail.variable.widgetType == 'DROPDOWN'){
 			//initialize select 2 combo

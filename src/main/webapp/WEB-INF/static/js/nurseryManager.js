@@ -224,6 +224,8 @@ $.ajax(
     				   initializePossibleValuesCombo($.parseJSON(data.allMethods), 
 		 			 			"#" + getJquerySafeId("nurseryLevelVariables" + index + ".value"), false, selectedVal);
     			   }
+    			   
+    			   replacePossibleJsonValues(data.favoriteMethods, data.allMethods, index);
     		   }
     	   } else {
     		   showErrorMessage("page-message", data.errorMessage);
@@ -305,6 +307,8 @@ function recreateLocationCombo() {
     				   initializePossibleValuesCombo($.parseJSON(data.allLocations), 
 		 			 			"#" + getJquerySafeId("nurseryLevelVariables"+index+".value"), true, selectedVal);
     			   }
+    			   
+    			   replacePossibleJsonValues(data.favoriteLocations, data.allLocations, index);
     		   }
     	   } else {
     		   showErrorMessage("page-message", data.errorMessage);
@@ -318,6 +322,11 @@ function recreateLocationCombo() {
 	   } 
      }
  );
+}
+
+function replacePossibleJsonValues(favoriteJson, allJson, index) {
+	$("#possibleValuesJson"+index).text(allJson);
+	$("#possibleValuesFavoriteJson"+index).text(favoriteJson);
 }
 
 function setComboValues(suggestions_obj, id, name) {

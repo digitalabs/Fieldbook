@@ -658,7 +658,7 @@ function getLastRowIndex(name, hasTBody) {
 }
 
 function createNurseryLevelSettingVariables(data) {
-	var ctr = $('.nurseryLevelSettings').length + 1; //getLastRowIndex("nurseryLevelSettings", false) + 1;
+	var ctr = $('.nurseryLevelSettings').length; //getLastRowIndex("nurseryLevelSettings", false) + 1;
 	$.each(data, function (index, settingDetail) {
 		var newRow = "<div class='row nurseryLevelSettings newVariable'>";
 		var isDelete = "";

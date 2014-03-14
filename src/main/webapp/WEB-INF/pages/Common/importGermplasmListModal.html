@@ -40,7 +40,7 @@
 	        	   var node = $("#germplasmTree").dynatree("getTree").getNodeByKey('LOCAL');
 	        	   node.toggleExpand();
 	        	   node.appendAjax({
-		   				url: "expandGermplasmTree/LOCAL",
+		   				url: "/Fieldbook/NurseryManager/expandGermplasmTree/LOCAL",
 		   				dataType: "json",
 		   				success: function(node) {
 		   					//do nothing

@@ -78,7 +78,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 	</div>
 	<div class="row">
 	<br />
-		<div class="col-xs-12 col-md-12" >
+		<div class="col-xs-12 col-md-12 method-section" >
 			<div class="form-group">
 				<div class="col-xs-6 col-md-6">
 					<label class="control-label" ><strong class="sub-content-heading"  th:text="#{advancing.nursery.method}">METHOD</strong> </label>
@@ -401,7 +401,10 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
  			checkMethod();
  			lineMethod();
  			changeSuffix();
+ 			
+ 			
  		});
+ 		 
  		
  		function changeSuffix(){
  			if($('#namingConvention').val() == 3){
@@ -410,7 +413,19 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
  			}else{
  				//hide
  				$('#suffix-div').hide();
- 			}		
+ 			}	
+ 			
+ 			if($('#namingConvention').val() == 1){
+ 				//if its wheat, we disable the method section
+ 				$('.method-section input').attr('disabled', true);
+ 				$('#methodIdAll').select2('enable', false);
+ 				$('#methodIdFavorite').select2('enable', false);
+ 				
+ 			}else{
+ 				$('.method-section input').attr('disabled', false)
+ 				$('#methodIdAll').select2('enable', true);
+ 				$('#methodIdFavorite').select2('enable', true);
+ 			}
  		}
  		
  		function loadNurseryDetails(){

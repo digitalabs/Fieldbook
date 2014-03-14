@@ -129,8 +129,10 @@ public class AdvancingController extends AbstractBaseFieldbookController{
             , Model model, HttpSession session, @PathVariable int nurseryId) throws MiddlewareQueryException{
     	long start = System.currentTimeMillis();
     	Map<String, String> result = new HashMap<String, String>();
+    	
     	Workbook workbook = fieldbookMiddlewareService.getNurseryDataSet(nurseryId);    	
     	userSelection.setWorkbook(workbook);
+    	
     	//System.out.println("loading: " + (System.currentTimeMillis()-start));
     	return result;
     }

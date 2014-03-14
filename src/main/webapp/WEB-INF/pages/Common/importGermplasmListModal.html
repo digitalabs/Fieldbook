@@ -25,11 +25,16 @@
 	           function cancelImportGermplasm(){
 	        	   $('#importGermplasmModal').modal('hide');   
 	           }
-	           function closeImportFrame(listId){
+	           function closeImportFrame(listGermplasmId){
 					//alert('reload tree and preselect list id ' + listId);
 					$('#importGermplasmModal').modal('hide');
-					$("#germplasmTree").dynatree("destroy")
-					displayGermplasmListTree("germplasmTree", listId);
+					//$("#germplasmTree").dynatree("destroy")
+					//$("#" + treeName).dynatree("reload");
+					listId = listGermplasmId;
+					 $("#germplasmTree").dynatree("getTree").reload();
+					//doInitialLoad(listId) ;
+					
+					//displayGermplasmListTree("germplasmTree", listId);
 					
 					//displayGermplasmDetails(listId); 
 					
@@ -38,7 +43,17 @@
 	           }
 	           function doInitialLoad(listId) {
 	        	   var node = $("#germplasmTree").dynatree("getTree").getNodeByKey('LOCAL');
-	        	   node.toggleExpand();
+	        	   if(!node.isExpanded())
+	        	   	node.toggleExpand();	        	   
+	        	   
+	        	   displayGermplasmDetails(listId);
+	        	   var identifier = listId + '';
+	        	   //console.log(identifier);
+  					
+  					setTimeout(function(){
+  						$("#germplasmTree").dynatree("getTree").getNodeByKey(identifier).select(true);
+  					}, 500);
+  					/*
 	        	   node.appendAjax({
 		   				url: "/Fieldbook/NurseryManager/expandGermplasmTree/LOCAL",
 		   				dataType: "json",
@@ -50,6 +65,7 @@
 		   				},
 		   				cache: false
 		   			});
+	        	   */
 		   		};
     //]]>
     </script>

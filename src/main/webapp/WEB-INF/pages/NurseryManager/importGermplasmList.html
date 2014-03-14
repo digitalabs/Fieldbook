@@ -81,6 +81,7 @@
   <script type="text/javascript" th:src="@{/static/js/fieldbook-tree.js}"></script>
   <script type="text/javascript" th:inline="javascript">
     //<![CDATA[          
+               var listId = 0;
     var hasPageError = /*[[${importGermplasmListForm.hasError}]]*/;
     function do_validation() {
     if ($('#fileupload').val() == "") {
@@ -109,7 +110,8 @@
 	  }	
   
 	  //display tree
-	  displayGermplasmListTree("germplasmTree", 0);
+	  
+	  displayGermplasmListTree("germplasmTree");
   });
   
 
@@ -121,7 +123,10 @@
         }
         
         /** Germplasm Tree **/
-        function displayGermplasmListTree(treeName, listId) {
+        function displayGermplasmListTree(treeName) {
+        	/*if($('#'+treeName+' .fbtree-container').length != 0)
+        	  $("#" + treeName).dynatree("reload");
+        	*/
         	$("#" + treeName).dynatree({
         		title: treeName,
         		checkbox: false,
@@ -134,7 +139,7 @@
         		},
         		onLazyRead: function(node) {
         			node.appendAjax({
-        				url: "expandGermplasmTree/" + node.data.key,
+        				url: "/Fieldbook/NurseryManager/expandGermplasmTree/" + node.data.key,
         				dataType: "json",
         				success: function(node) {
         					//do nothing
@@ -154,8 +159,10 @@
         			active: "fbtree-active"
         		},
         		 onPostInit: function (isReloading, isError) {
+        			 //console.log('postini' + listId);
         		     if(listId != 0)
         		    	 doInitialLoad(listId);
+        		     	 listId = 0;
         		    },
         		onActivate: function(node) {
         			if (node.data.isFolder == false) {

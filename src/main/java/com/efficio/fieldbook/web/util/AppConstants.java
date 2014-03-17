@@ -151,6 +151,11 @@ public enum AppConstants {
     
     ,CROP_WHEAT
     ,CROP_MAIZE
+    
+    ,MAIZE_BREEDING_METHOD_SELFED_SHELLED
+    ,MAIZE_BREEDING_METHOD_SELFED_BULKED
+    ,MAIZE_BREEDING_METHOD_SIB_INCREASED
+    ,MAIZE_BREEDING_METHOD_COLCHICINIZE
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

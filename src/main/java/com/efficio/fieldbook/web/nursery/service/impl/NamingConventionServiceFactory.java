@@ -16,6 +16,7 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Service;
 
+import com.efficio.fieldbook.web.nursery.service.CimmytMaizeConventionService;
 import com.efficio.fieldbook.web.nursery.service.CimmytWheatConventionService;
 import com.efficio.fieldbook.web.nursery.service.NamingConventionService;
 import com.efficio.fieldbook.web.nursery.service.OtherCropsConventionService;
@@ -33,6 +34,9 @@ public class NamingConventionServiceFactory {
     private CimmytWheatConventionService wheatService;
     
     @Resource
+    private CimmytMaizeConventionService maizeService;
+    
+    @Resource
     private OtherCropsConventionService otherCropsService;
     
     
@@ -42,7 +46,7 @@ public class NamingConventionServiceFactory {
             if (namingConventionValue == AppConstants.NAMING_CONVENTION_CIMMYT_WHEAT.getInt()) {
                 return wheatService;
             } else if (namingConventionValue == AppConstants.NAMING_CONVENTION_CIMMYT_MAIZE.getInt()) {
-                return otherCropsService;
+                return maizeService;
             } else if (namingConventionValue == AppConstants.NAMING_CONVENTION_OTHER_CROPS.getInt()) {
                 return otherCropsService;
             }

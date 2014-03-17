@@ -113,12 +113,25 @@ public class FieldbookServiceImpl implements FieldbookService{
 		List<StandardVariableReference> dbList = fieldbookMiddlewareService.filterStandardVariablesByMode(storedInIds);
 		
 		if (dbList != null && !dbList.isEmpty()) {
+			
 			for (StandardVariableReference ref : dbList) {
 				if (!selectedIds.contains(ref.getId())) {
-					result.add(ref);
+					
+					 if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
+						 if(ref.getId().intValue() == TermId.STUDY_TYPE.getId()
+								 || ref.getId().intValue() == TermId.PM_KEY.getId()
+								 || ref.getId().intValue() == TermId.TRIAL_INSTANCE_FACTOR.getId())
+							 continue;
+							 
+				     } 
+					
+						result.add(ref);
 				}
 			}
 		}
+		
+		
+		 
 		
 		Collections.sort(result);
 

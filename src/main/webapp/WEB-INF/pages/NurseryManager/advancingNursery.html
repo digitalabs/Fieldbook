@@ -58,7 +58,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 				<div class="col-xs-5 col-md-5">
 					<select th:field="*{namingConvention}" class="form-control">
 					  <option th:if="*{cropType == 1}" value="1" th:text="#{advancing.nursery.naming.convention.cimmyt.wheat}">CIMMYT-WHEAT</option>
-					  <option th:if="*{cropType == 2}" value="2" th:text="#{advancing.nursery.naming.convention.cimmyt.maize}">CIMMYT-MAIZE</option>
+					  <option  value="2" th:text="#{advancing.nursery.naming.convention.cimmyt.maize}">CIMMYT-MAIZE</option>
 					  <option value="3" th:text="#{advancing.nursery.naming.convention.other.crops}">OTHER CROPS</option>					  
 					</select>
 				</div>		
@@ -111,10 +111,19 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 							<label class="control-label" th:text="#{advancing.nursery.breeding.method.all.plots}">Breeding Method for all plots</label>														
 						</div>		
 						<div class="col-xs-6 col-md-6">					
-							 <input type="hidden" th:field="*{methodIdAll}" class="form-control select2" placeholder=""/>
+							 <input type="hidden" th:field="*{methodIdAll}" class="form-control select2 non-maize-control" placeholder=""/>
 						   
-						   <input type="hidden" th:field="*{methodIdFavorite}" class="form-control select2" placeholder=""/>
+						   <input type="hidden" th:field="*{methodIdFavorite}" class="form-control select2 non-maize-control" placeholder=""/>
 						   
+						   
+						  
+						   <select id="maizeBreedingMethod" class="form-control maize-control">
+							  <option value="1" th:text="#{advance.nursery.maize.breeding.method.selfed.shelled}">Selfed and ears shelled individually (-)</option>
+							  <option value="2" th:text="#{advance.nursery.maize.breeding.method.selfed.bulked}">Selfed and ears bulked (-B)</option>
+							  <option value="3" th:text="#{advance.nursery.maize.breeding.method.sib.increased}">Sib-Increased (-#)</option>
+							  <option value="4" th:text="#{advance.nursery.maize.breeding.method.colchicinize}">Colchicinize</option>					  
+						   </select>
+							
 						   <input type="hidden" th:field="*{breedingMethodId}"/>	
 							    
 							
@@ -137,17 +146,20 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 							&nbsp;
 						</div>
 						<div class="col-xs-6 col-md-6">
-				  <label>
+				  				<label class="non-maize-control">
 							      <input id="showFavoriteMethod" value="1" type="checkbox"/> <span th:text="#{show.favorite.method}">Show Favorite Method</span>
 							    </label>
-						   					   
+						   		
+						   		<label class="maize-control">
+							      <input th:field="*{putBrackets}" value="1" type="checkbox"/> <span th:text="#{advance.nursery.maize.breeding.method.put.brackets}">Put brackets around parents</span>
+							    </label>			   
 						   
 					    </div>
 					</div>										 				
 				</div>		
 			</div>
 			
-			<div class="row">
+			<div class="row non-maize-control">
 				<div class="col-xs-6 col-md-6">					
 					<div class="row form-group">
 						<div class="col-xs-12 col-md-12">
@@ -396,6 +408,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
  			$('input[type=radio][name=lineChoice]').on('change', lineMethod);
  			
  			$('#namingConvention').on('change', changeSuffix);
+ 			$('#maizeBreedingMethod').on('change', changeMaizeBreedingMethod);
  			oldMethodSelected = $('#defaultMethodId').val();
  			oldLineSelected = $('#lineSelected').val();
  			checkMethod();
@@ -405,7 +418,9 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
  			
  		});
  		 
- 		
+ 		function changeMaizeBreedingMethod(){
+ 			 $('#'+getJquerySafeId("breedingMethodId")).val($('#maizeBreedingMethod').val());
+ 		}
  		function changeSuffix(){
  			if($('#namingConvention').val() == 3){
  				//show
@@ -424,10 +439,28 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
  			}else{
  				$('.method-section input').attr('disabled', false)
  				$('#methodIdAll').select2('enable', true);
- 				$('#methodIdFavorite').select2('enable', true);
+ 				$('#methodIdFavorite').select2('enable', true); 				
+ 			}
+ 			
+ 			if($('#namingConvention').val() == 2){
+					//meaning maize
+					adjustMaizeControl(true);
+			}else{
+				adjustMaizeControl(false);
+			}
+ 		}
+ 		function adjustMaizeControl(isShow){
+ 			//console.log(isShow);
+ 			if(isShow){
+ 				$('.maize-control').css('display', 'block');
+ 				$('.non-maize-control').css('display', 'none');
+ 				changeMaizeBreedingMethod();
+ 			}else{
+ 				$('.maize-control').css('display', 'none');
+ 				$('.non-maize-control').css('display', 'block');
+ 				showCorrectMethodCombo();
  			}
  		}
- 		
  		function loadNurseryDetails(){
  			Spinner.toggle();
  			$.ajax(

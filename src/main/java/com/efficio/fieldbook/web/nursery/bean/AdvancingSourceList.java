@@ -37,6 +37,7 @@ public class AdvancingSourceList{
     private Integer selectedMethodId;
     private String suffix;
     private String locationAbbreviation;
+    private String putBrackets;
     String nurseryName;
     
     public AdvancingSourceList(Workbook workbook, AdvancingNursery advanceInfo, Study nursery) {
@@ -44,6 +45,7 @@ public class AdvancingSourceList{
             this.suffix = advanceInfo.getSuffixConvention();
             this.selectedMethodId = getIntegerValue(advanceInfo.getBreedingMethodId());
             this.locationAbbreviation = advanceInfo.getHarvestLocationAbbreviation();
+            this.putBrackets = advanceInfo.getPutBrackets();
         }
 
         if (workbook != null) {
@@ -217,6 +219,14 @@ public class AdvancingSourceList{
     public void setNurseryName(String nurseryName) {
         this.nurseryName = nurseryName;
     }
+
+	public String getPutBrackets() {
+		return putBrackets;
+	}
+
+	public void setPutBrackets(String putBrackets) {
+		this.putBrackets = putBrackets;
+	}
     
 }
 

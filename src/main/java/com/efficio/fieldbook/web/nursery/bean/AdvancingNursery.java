@@ -53,6 +53,8 @@ public class AdvancingNursery implements Serializable {
     /** The breeding method id. */
     private String breedingMethodId;
     
+    private String putBrackets;
+    
     public Study getStudy() {
         return study;
     }
@@ -216,7 +218,17 @@ public class AdvancingNursery implements Serializable {
             return lineSelected;
     }
     
-    /**
+    
+    
+    public String getPutBrackets() {
+		return putBrackets;
+	}
+
+	public void setPutBrackets(String putBrackets) {
+		this.putBrackets = putBrackets;
+	}
+
+	/**
      * Sets the line selected.
      *
      * @param lineSelected the new line selected

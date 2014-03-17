@@ -59,6 +59,7 @@ implements CimmytWheatConventionService {
         }
        // System.out.println("end breedingMethodMap : " + (System.currentTimeMillis()-start));
         for (AdvancingSource row : rows.getRows()) {
+        	
             if (row.getPlantsSelected() != null && row.getGermplasm() != null && !row.isCheck()) {
                 String origGermplasmName = getOrigGermplasmName(row);
                 if (row.getPlantsSelected().equals(0)) {

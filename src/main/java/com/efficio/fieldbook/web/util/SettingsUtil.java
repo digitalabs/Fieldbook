@@ -283,20 +283,23 @@ public class SettingsUtil {
 							condition.getMinRange(), condition.getMaxRange());
 					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
 					
-					
-					variable.setCvTermId(stdVar);										
-					List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
-					SettingDetail settingDetail = new SettingDetail(variable,
-							possibleValues, condition.getValue(), isSettingVariableDeletable(stdVar, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()));
-					
-					settingDetail.setPossibleValuesToJson(possibleValues);
-					List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, projectId);
-					settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
-					nurseryLevelConditions.add(settingDetail);
-					if(userSelection != null){
-						StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);						
-						variable.setPSMRFromStandardVariable(standardVariable);						
-					}
+					if (!inHideNurseryFields(stdVar)) {
+					        System.out.println(stdVar);
+					        System.out.println(condition.getName());
+        					variable.setCvTermId(stdVar);										
+        					List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
+        					SettingDetail settingDetail = new SettingDetail(variable,
+        							possibleValues, condition.getValue(), isSettingVariableDeletable(stdVar, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()));
+        					
+        					settingDetail.setPossibleValuesToJson(possibleValues);
+        					List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, projectId);
+        					settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
+        					nurseryLevelConditions.add(settingDetail);
+        					if(userSelection != null){
+        						StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);						
+        						variable.setPSMRFromStandardVariable(standardVariable);						
+        					}
+    					}
 				}
 		    }
 			//plot level
@@ -344,6 +347,18 @@ public class SettingsUtil {
 			userSelection.setPlotsLevelList(plotsLevelList);			
 			userSelection.setBaselineTraitsList(baselineTraitsList);
 		}
+	}
+	
+	private static boolean inHideNurseryFields(Integer stdVarId) {
+	    StringTokenizer token = new StringTokenizer(AppConstants.HIDE_NURSERY_FIELDS.getString(), ",");
+	    boolean inList = false;
+	    while(token.hasMoreTokens()){
+	        if (stdVarId.equals(Integer.parseInt(token.nextToken()))) {
+	            inList = true;
+	            break;
+	        }
+	    }
+	    return inList;
 	}
 	
 	/**

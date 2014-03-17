@@ -284,8 +284,6 @@ public class SettingsUtil {
 					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
 					
 					if (!inHideNurseryFields(stdVar)) {
-					        System.out.println(stdVar);
-					        System.out.println(condition.getName());
         					variable.setCvTermId(stdVar);										
         					List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
         					SettingDetail settingDetail = new SettingDetail(variable,

@@ -60,8 +60,12 @@ public class UserFieldmap  implements Serializable {
     /** The field name. */
     private String fieldName;
     
+    private Integer fieldId;
+    
     /** The block name. */
     private String blockName;
+
+    private Integer blockId;
     
     /** The number of rows in block. */
     private int numberOfRowsInBlock;
@@ -848,4 +852,21 @@ public class UserFieldmap  implements Serializable {
         this.selectedFieldmapList = selectedFieldmapList;
     }
 
+	public Integer getFieldId() {
+		return fieldId;
+	}
+
+	public void setFieldId(Integer fieldId) {
+		this.fieldId = fieldId;
+	}
+
+	public Integer getBlockId() {
+		return blockId;
+	}
+
+	public void setBlockId(Integer blockId) {
+		this.blockId = blockId;
+	}
+
+    
 }

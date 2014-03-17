@@ -142,6 +142,7 @@ function initializeLocationSelect2(locationSuggestions, locationSuggestions_obj)
     }).on("change", function (){
     	$('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val($('#'+getJquerySafeId("fieldLocationIdAll")).select2("data").id);
     	$('#'+getJquerySafeId("userFieldmap.locationName")).val($('#'+getJquerySafeId("fieldLocationIdAll")).select2("data").text);
+    	loadFieldsDropdown($('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val());
     });
 	
 }
@@ -172,6 +173,7 @@ $('#'+getJquerySafeId('fieldLocationIdFavorite')).select2({
 }).on("change", function (){
 	$('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val($('#'+getJquerySafeId("fieldLocationIdFavorite")).select2("data").id);
 	$('#'+getJquerySafeId("userFieldmap.locationName")).val($('#'+getJquerySafeId("fieldLocationIdFavorite")).select2("data").text);
+	loadFieldsDropdown($('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val());
 });
 
 }
@@ -487,4 +489,70 @@ function recreateLocationComboAfterClose(comboName, data) {
 		initializeLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj);
 	}
 
+}
+
+function initializeFieldSelect2(suggestions, suggestions_obj) {
+
+	$.each(suggestions, function( index, value ) {
+		suggestions_obj.push({ 'id' : value.locid,
+			  'text' : value.lname
+		});  
+		
+	});		
+	
+	
+	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
+	$('#'+getJquerySafeId('userFieldmap.fieldId')).select2({
+		minimumInputLength: 2,
+        query: function (query) {
+          var data = {results: suggestions_obj}, i, j, s;
+          // return the array that matches
+          data.results = $.grep(data.results,function(item,index) {
+            return ($.fn.select2.defaults.matcher(query.term,item.text));
+          
+          });
+            query.callback(data);
+            
+        }
+
+    }).on("change", function (){
+    	
+    	loadBlockDropdown($('#'+getJquerySafeId("userFieldmap.fieldId")).val());
+    	//$('#fieldId').val($('#'+getJquerySafeId("userFieldmap.fieldId")).val());
+    	//$('#fieldId').trigger('change');
+    });
+	
+}
+function initializeBlockSelect2(suggestions, suggestions_obj) {
+
+	$.each(suggestions, function( index, value ) {
+		suggestions_obj.push({ 'id' : value.locid,
+			  'text' : value.lname
+		});  
+		
+	});
+	
+	
+	
+	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
+	$('#'+getJquerySafeId('userFieldmap.blockId')).select2({
+		minimumInputLength: 2,
+        query: function (query) {
+          var data = {results: suggestions_obj}, i, j, s;
+          // return the array that matches
+          data.results = $.grep(data.results,function(item,index) {
+            return ($.fn.select2.defaults.matcher(query.term,item.text));
+          
+          });
+            query.callback(data);
+            
+        }
+
+    }).on("change", function (){
+    	
+    	loadBlockInformation($('#'+getJquerySafeId("userFieldmap.blockId")).val());
+    	//$('#blockId').val($('#'+getJquerySafeId("userFieldmap.blockId")).val());
+    	//$('#blockId').trigger('change');
+    });
+	
 }

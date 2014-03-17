@@ -602,10 +602,25 @@ function notInList(id) {
 	return isNotInList;
 }
 
+function hasNoVariableName() {
+	var result = false;
+	$.each($("#newVariablesList tbody tr"), function (index, row) {
+		if ($($(row).children("td:nth-child(1)").children("#"+getJquerySafeId("selectedVariables"+index+".name"))).val() == "") {
+			result = true;
+		}
+	});
+	return result;
+}
+
 function submitSelectedVariables(variableType) {
 	if($("#newVariablesList tbody tr").length == 0){
 		$("#page-message-modal").html(
 			    "<div class='alert alert-danger'>"+ noVariableAddedMessage +"</div>"
+		);
+	}
+	else if ($("#newVariablesList tbody tr").length > 0 && hasNoVariableName()) {
+		$("#page-message-modal").html(
+			    "<div class='alert alert-danger'>"+ noVariableNameError +"</div>"
 		);
 	}
 	else if ($("#newVariablesList tbody tr").length > 0) {

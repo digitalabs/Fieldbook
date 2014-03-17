@@ -135,6 +135,7 @@ public enum AppConstants {
     
     ,CREATE_NURSERY_REQUIRED_FIELDS
     ,CREATE_PLOT_REQUIRED_FIELDS
+    ,HIDE_NURSERY_FIELDS
     
     ,LOCATION_ID
     ,BREEDING_METHOD_ID
@@ -147,6 +148,9 @@ public enum AppConstants {
     ,LABEL
     
     ,NUMERIC_DATA_TYPE
+    
+    ,CROP_WHEAT
+    ,CROP_MAIZE
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

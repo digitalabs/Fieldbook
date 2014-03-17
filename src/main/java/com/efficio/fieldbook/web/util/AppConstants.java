@@ -147,6 +147,9 @@ public enum AppConstants {
     ,LABEL
     
     ,NUMERIC_DATA_TYPE
+    
+    ,CROP_WHEAT
+    ,CROP_MAIZE
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

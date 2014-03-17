@@ -57,8 +57,8 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 				</div>
 				<div class="col-xs-5 col-md-5">
 					<select th:field="*{namingConvention}" class="form-control">
-					  <option value="1" th:text="#{advancing.nursery.naming.convention.cimmyt.wheat}">CIMMYT-WHEAT</option>
-					  <option value="2" th:text="#{advancing.nursery.naming.convention.cimmyt.maize}">CIMMYT-MAIZE</option>
+					  <option th:if="*{cropType == 1}" value="1" th:text="#{advancing.nursery.naming.convention.cimmyt.wheat}">CIMMYT-WHEAT</option>
+					  <option th:if="*{cropType == 2}" value="2" th:text="#{advancing.nursery.naming.convention.cimmyt.maize}">CIMMYT-MAIZE</option>
 					  <option value="3" th:text="#{advancing.nursery.naming.convention.other.crops}">OTHER CROPS</option>					  
 					</select>
 				</div>		

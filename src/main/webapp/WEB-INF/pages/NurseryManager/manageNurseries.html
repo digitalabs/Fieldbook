@@ -22,15 +22,15 @@
 			<div style="float:right; ">			
 		
 			 <!--  button style="margin-left: -70px" type="button" class="btn btn-info" id="make-nursery" th:value="@{/NurseryManager/createNursery}"  th:text="#{nursery.managenurseries.make.new.nursery}">New Nursery</button -->
-			<!--   
-			 <a  class="btn btn-info" id="make-nursery" th:href="@{/NurseryManager/createNursery}"  th:text="#{nursery.managenurseries.make.new.nursery}">New Nursery</a>
-			   -->
 			 
+			 <a  class="btn btn-info" id="make-nursery" th:href="@{/NurseryManager/createNursery}"  th:text="#{nursery.managenurseries.make.new.nursery}">New Nursery</a>
+			   
+			 <!-- 
 			 <button type="button" class="btn btn-info" id="make-nursery" th:value="@{/NurseryManager/fileUpload/newNursery}"  th:text="#{nursery.managenurseries.make.new.nursery}">New Nursery</button>
-			
-			<!-- 
+			 -->
+			 
 			 <a   class="btn btn-info" id="manage-nursery-settings" href="" th:href="@{/NurseryManager/manageNurserySettings}"  th:text="#{nursery.managesettings.manage.nursery.settings}">Manage Settings</a>
-			  -->
+			
 			
 				<div   class="btn-group">
 				  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
@@ -51,11 +51,12 @@
 				    	<a href="" style="display: none" id="label-printing-url" th:href="@{/LabelPrinting/specifyLabelDetails/nursery}"></a>
 				    	<a href="javascript: createLabelPrinting('nursery-table');" id="label-printing-url-link" th:text="#{tools.create.label.printing}">Create Labels</a> 
 				    </li>
+				    <!-- 
 				    <li>
 				    	<a href="" style="display: none" id="open-study-url" th:href="@{/NurseryManager/fileUpload/newNursery}"></a>
 				    	<a href="javascript: openStudy('nursery-table1');" id="open-study-url-link" th:text="#{tools.open.nursery}">Open Nursery</a> 
 				    </li>
-				    <!--
+				     -->
 					<li>
 				    	<a href="" style="display: none" id="open-study-url" th:href="@{/NurseryManager/addOrRemoveTraits/viewNursery}"></a>
 				    	<a href="javascript: openStudy('nursery-table');" id="open-study-url-link" th:text="#{tools.open.nursery}">Open Nursery</a> 
@@ -65,7 +66,7 @@
 				    	<a href="" style="display: none" id="advance-study-url" th:href="@{/NurseryManager/advance/nursery}"></a>
 				    	<a href="javascript: advanceNursery('nursery-table');" id="advance-study-url-link" th:text="#{tools.advance.nursery}">Advance Nursery</a> 
 				    </li>
-				     -->	        
+				     	        
 				  </ul>
 			</div>
 		</div>

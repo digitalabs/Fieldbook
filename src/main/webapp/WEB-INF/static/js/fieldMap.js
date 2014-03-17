@@ -491,7 +491,7 @@ function recreateLocationComboAfterClose(comboName, data) {
 
 }
 
-function initializeFieldSelect2(suggestions, suggestions_obj) {
+function initializeFieldSelect2(suggestions, suggestions_obj, addOnChange) {
 
 	$.each(suggestions, function( index, value ) {
 		suggestions_obj.push({ 'id' : value.locid,
@@ -499,8 +499,9 @@ function initializeFieldSelect2(suggestions, suggestions_obj) {
 		});  
 		
 	});		
-	
-	
+	var defaulData = {'id': 0, 'text': ''};
+	$('#'+getJquerySafeId('userFieldmap.fieldId')).select2('data', defaulData);
+	$('#'+getJquerySafeId('userFieldmap.fieldId')).val('');
 	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
 	$('#'+getJquerySafeId('userFieldmap.fieldId')).select2({
 		minimumInputLength: 2,
@@ -515,15 +516,18 @@ function initializeFieldSelect2(suggestions, suggestions_obj) {
             
         }
 
-    }).on("change", function (){
-    	
-    	loadBlockDropdown($('#'+getJquerySafeId("userFieldmap.fieldId")).val());
-    	//$('#fieldId').val($('#'+getJquerySafeId("userFieldmap.fieldId")).val());
-    	//$('#fieldId').trigger('change');
     });
 	
+	if(addOnChange){
+		$('#'+getJquerySafeId('userFieldmap.fieldId')).on("change", function (){
+	    	
+	    	loadBlockDropdown($('#'+getJquerySafeId("userFieldmap.fieldId")).val());
+	    	
+	    })
+	}
+	
 }
-function initializeBlockSelect2(suggestions, suggestions_obj) {
+function initializeBlockSelect2(suggestions, suggestions_obj, addOnChange) {
 
 	$.each(suggestions, function( index, value ) {
 		suggestions_obj.push({ 'id' : value.locid,
@@ -532,8 +536,9 @@ function initializeBlockSelect2(suggestions, suggestions_obj) {
 		
 	});
 	
-	
-	
+	var defaulData = {'id': 0, 'text': ''};
+	$('#'+getJquerySafeId('userFieldmap.blockId')).select2('data', defaulData);
+	$('#'+getJquerySafeId('userFieldmap.blockId')).val('');
 	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
 	$('#'+getJquerySafeId('userFieldmap.blockId')).select2({
 		minimumInputLength: 2,
@@ -548,11 +553,12 @@ function initializeBlockSelect2(suggestions, suggestions_obj) {
             
         }
 
-    }).on("change", function (){
-    	
-    	loadBlockInformation($('#'+getJquerySafeId("userFieldmap.blockId")).val());
-    	//$('#blockId').val($('#'+getJquerySafeId("userFieldmap.blockId")).val());
-    	//$('#blockId').trigger('change');
     });
 	
+	if(addOnChange){
+		$('#'+getJquerySafeId('userFieldmap.blockId')).on("change", function (){
+	    	
+	    	loadBlockInformation($('#'+getJquerySafeId("userFieldmap.blockId")).val());	    	
+	    })
+	}
 }

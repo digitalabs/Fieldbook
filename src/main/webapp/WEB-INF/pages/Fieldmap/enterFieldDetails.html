@@ -307,8 +307,8 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		initializeLocationSelect2(locationSuggestions, locationSuggestions_obj);
 		initializeLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj);
 		
-		initializeFieldSelect2({}, []);
-		initializeBlockSelect2({}, []);
+		initializeFieldSelect2({}, [], true);
+		initializeBlockSelect2({}, [], true);
 		
 		$('#s2id_fieldLocationIdFavorite').hide();
 		$('#s2id_fieldLocationIdAll').show();
@@ -398,8 +398,6 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
     function loadFieldsDropdown(locationId){
     	console.log('reload fields ' + locationId);
     	
-    	if(loadField == true)
-    		return false;
     	
     	loadField = true;
         
@@ -414,8 +412,8 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
     	           success: function(data) {	        	   
     	        		   //recreate the select2 combos to get updated list of locations
     	        		   $('#'+getJquerySafeId('userFieldmap.fieldId')).select2('destroy');
-    	        		   initializeFieldSelect2($.parseJSON(data.allFields), []);	   
-    	        		   initializeBlockSelect2({}, []);
+    	        		   initializeFieldSelect2($.parseJSON(data.allFields), [], false);	   
+    	        		   initializeBlockSelect2({}, [], false);
     	        	   	   Spinner.toggle();
     	        	   	console.log('here close 1');
     	        	   	loadField = false;
@@ -427,8 +425,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
     }
     function loadBlockDropdown(fieldId){
     	console.log('reload block ' + fieldId);
-    	if(loadBlock == true)
-    		return;
+    	
     	
     	loadBlock = true;
     	Spinner.toggle();
@@ -439,7 +436,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 	           data: "",
 	           success: function(data) {	  
 	        	   $('#'+getJquerySafeId('userFieldmap.blockId')).select2('destroy');
-	        		   initializeBlockSelect2($.parseJSON(data.allBlocks), []);
+	        		   initializeBlockSelect2($.parseJSON(data.allBlocks), [], false);
 	        	   	   Spinner.toggle();
 	        	   	   console.log('here close 2');
 	        	   		loadBlock = false;

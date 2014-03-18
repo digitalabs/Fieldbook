@@ -63,6 +63,8 @@ public class UserFieldmap  implements Serializable {
     /** The block name. */
     private String blockName;
 
+    private Integer fieldId;
+    
     private Integer blockId;
     
     /** The number of rows in block. */

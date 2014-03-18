@@ -447,8 +447,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
     
     function loadBlockInformation(blockId){
     	console.log('load block info' + blockId);
-    	if(loadBlockInfo == true)
-    		return;
+    	
     	loadBlockInfo = true;
     	Spinner.toggle();
     	$.ajax(

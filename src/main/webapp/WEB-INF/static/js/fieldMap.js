@@ -6,12 +6,12 @@ function validateEnterFieldPage(){
 		return false;
 	}
 	
-	if($('#'+getJquerySafeId('userFieldmap.fieldName')).val() == ""){
+	if($('#'+getJquerySafeId('userFieldmap.fieldId')).val() == ""){
 		showEnterFieldDetailsMessage(msgFieldName);
 		return false;
 	}
 	
-	if($('#'+getJquerySafeId('userFieldmap.blockName')).val() == ""){
+	if($('#'+getJquerySafeId('userFieldmap.blockId')).val() == ""){
 		showEnterFieldDetailsMessage(msgBlockName);
 		return false;
 	}
@@ -29,7 +29,7 @@ function validateEnterFieldPage(){
 		return false;
 	}
 	if(parseInt($('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val()) % 
-			parseInt($('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val()) != 0){
+			parseInt($('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('data').id) != 0){
 		//we need to check 
 		
 		showEnterFieldDetailsMessage(msgColError);
@@ -42,18 +42,21 @@ function validateEnterFieldPage(){
 	}
 	
 	var totalNoOfBlocks = (parseInt($("#"+getJquerySafeId("userFieldmap.numberOfRowsInBlock")).val())
-						/parseInt($("#"+getJquerySafeId("userFieldmap.numberOfRowsPerPlot")).val())) 
+						/parseInt($("#"+getJquerySafeId("userFieldmap.numberOfRowsPerPlot")).select2('data').id)) 
 						* parseInt($("#"+getJquerySafeId("userFieldmap.numberOfRangesInBlock")).val());
 	
 	
     totalNoOfPlots = totalNumberOfSelectedPlots;    
 	
-	if(totalNoOfPlots > totalNoOfBlocks) {
+	if(isNewBlock == true && totalNoOfPlots > totalNoOfBlocks) {
 		showEnterFieldDetailsMessage(msgBlockSizeError);
 		return false;
 	} else {
 		//no error in validation, proceed to the next step
 		setTrialInstanceOrder();
+		$('.block-details input').attr('disabled', false);
+		$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('enable', true);
+		$('#'+getJquerySafeId('numberOfRowsPerPlot')).val($('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('data').id);
 		$("#enterFieldDetailsForm").submit();
 	}
 	
@@ -62,35 +65,40 @@ function validateEnterFieldPage(){
 
 function calculateTotalPlots(){
 	var numberOrRowsPerBlock = parseInt($("#"+getJquerySafeId("userFieldmap.numberOfRowsInBlock")).val());
-	var numberOfRowsPerPlot = parseInt($("#"+getJquerySafeId("userFieldmap.numberOfRowsPerPlot")).val());
+	var numberOfRowsPerPlot = parseInt($("#"+getJquerySafeId("userFieldmap.numberOfRowsPerPlot")).select2('data').id);
 	var numberOfRangesInBlock = parseInt($("#"+getJquerySafeId("userFieldmap.numberOfRangesInBlock")).val());
 	
 	if($('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val() == "" 
 		|| !isInt($('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val())
 		|| parseInt($('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val()) < 1){
 		$('#calculatedPlots').html("-");
+		//console.log("1");
 		return false;
 	}
 	if($('#'+getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val() == "" || 
 	!isInt($('#'+getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val())
 	|| parseInt($('#'+getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val()) < 1){
 		$('#calculatedPlots').html("-");
+		//console.log("2");
 		return false;
 	}
 	
 	if(parseInt($('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val()) % 
-			parseInt($('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val()) != 0){
+			parseInt($('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('data').id) != 0){
 		//we need to check 
 		
 		$('#calculatedPlots').html("-");
+		//console.log("3");
 		return false;
 	}
 	
 	if(isNaN(numberOrRowsPerBlock) || isNaN(numberOrRowsPerBlock) || isNaN(numberOrRowsPerBlock)){
 		$('#calculatedPlots').html("-");
+		//console.log("4");
 	}else{
 		var totalNoOfBlocks = (numberOrRowsPerBlock / numberOfRowsPerPlot) * numberOfRangesInBlock;
 		$('#calculatedPlots').html(totalNoOfBlocks);
+		//console.log("5");
 	}    	    	
 }
 
@@ -561,4 +569,116 @@ function initializeBlockSelect2(suggestions, suggestions_obj, addOnChange) {
 	    	loadBlockInformation($('#'+getJquerySafeId("userFieldmap.blockId")).val());	    	
 	    })
 	}
+}
+function loadFieldsDropdown(locationId){
+	//console.log('reload fields ' + locationId);
+	
+	
+	//loadField = true;
+	showBlockDetails(true, null);
+    
+    
+		Spinner.toggle();
+    	$.ajax(
+	    	{ url: "/Fieldbook/Fieldmap/enterFieldDetails/getFields/"+locationId,
+	           type: "GET",
+	           cache: false,
+	           data: "",
+	           success: function(data) {	        	   
+	        		   //recreate the select2 combos to get updated list of locations
+	        		   $('#'+getJquerySafeId('userFieldmap.fieldId')).select2('destroy');
+	        		   initializeFieldSelect2($.parseJSON(data.allFields), [], false);	   
+	        		   initializeBlockSelect2({}, [], false);
+	        	   	   Spinner.toggle();
+	        	   	//console.log('here close 1');
+	        	   	//loadField = false;
+	           }
+	         }
+	     );
+	
+	
+}
+function loadBlockDropdown(fieldId){
+	//console.log('reload block ' + fieldId);
+	showBlockDetails(true, null);
+	
+	//loadBlock = true;
+	Spinner.toggle();
+	$.ajax(
+			{ url: "/Fieldbook/Fieldmap/enterFieldDetails/getBlocks/"+fieldId,
+           type: "GET",
+           cache: false,
+           data: "",
+           success: function(data) {	  
+        	   $('#'+getJquerySafeId('userFieldmap.blockId')).select2('destroy');
+        		   initializeBlockSelect2($.parseJSON(data.allBlocks), [], false);
+        	   	   Spinner.toggle();
+        	   	   //console.log('here close 2');
+        	   		//loadBlock = false;
+           }
+         }
+     );
+}
+
+function loadBlockInformation(blockId){
+	//console.log('load block info' + blockId);
+	
+	//loadBlockInfo = true;
+	Spinner.toggle();
+	$.ajax(
+			{ url: "/Fieldbook/Fieldmap/enterFieldDetails/getBlockInformation/"+blockId,
+           type: "GET",
+           cache: false,
+           data: "",
+           success: function(data) {	        	   
+        		   var blockInfo = $.parseJSON(data.blockInfo);
+        		   //alert('show determine if its new or used block');
+        		   showBlockDetails(false, blockInfo);
+        		   //console.log(blockInfo);
+        		   Spinner.toggle();
+        	   	   //loadBlockInfo = false;
+           }
+         }
+     );
+}
+function showBlockDetails(isHide, blockInfo){
+	if(isHide){
+		$('.block-details').slideUp( "slow", function() {
+			// Animation complete.
+			  
+		   });
+	}else{
+		$('.block-details').slideDown( "slow", function() {
+			// Animation complete.
+			/*
+			sample data: 	
+				blockId 15471	
+				machineRowCapacity 0	
+				new false	
+				numberOfRowsInPlot 20	
+				plantingOrder null	
+				rangesInBlock 20	
+				rowsInBlock 20
+			 */
+			if(blockInfo.new == false){
+				$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val(blockInfo.numberOfRowsInPlot);
+				$('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val(blockInfo.rowsInBlock);
+				$('#'+getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val(blockInfo.rangesInBlock);	
+				
+				$('.block-details input').attr('disabled', true);
+				$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('enable', false);
+				isNewBlock = false;				
+			}else{
+				//has fieldmap already
+				$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val(1);
+				$('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val(0);
+				$('#'+getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val(0);
+				$('.block-details input').attr('disabled', false);
+				$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('enable', true);
+				isNewBlock = true;
+			}
+			calculateTotalPlots();
+		   });
+	}
+	
 }

@@ -175,11 +175,11 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		  </div>						
 	</div>
 	
-	<div class="form-group col-xs-12  col-md-12">
+	<div class="form-group col-xs-12  col-md-12 block-details">
 	<br />
 		&nbsp;<strong class="sub-heading col-xs-12 col-md-12" th:text="#{fieldmap.trial.row.and.range.and.plot.details} + ':'">ROW, RANGE AND PLOT DETAILS:</strong>
 	</div>
-	<div class="form-group col-xs-12  col-md-12">			
+	<div class="form-group col-xs-12  col-md-12 block-details">			
 		  
 		  <div class="form-group col-xs-6 col-md-6">
 		  
@@ -232,6 +232,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 	    </div>
 	  </div>
 	  <input type="hidden" th:field="*{projectId}"/>
+	  <input type="hidden" th:field="*{numberOfRowsPerPlot}"/>
 	  
 	  </form>
 	</div></div>
@@ -281,9 +282,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
     var programLocationUrl = '';
     var locationIframeOpened = false;
     
-    var loadField = false;
-    var loadBlock = false;
-    var loadBlockInfo = false;
+    var isNewBlock = false;
     
     if (trial) {
     	msgBlockSizeError = /*[[#{fieldmap.plots.exceed.blocks.trial}]]*/;
@@ -309,6 +308,8 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		
 		initializeFieldSelect2({}, [], true);
 		initializeBlockSelect2({}, [], true);
+		
+		showBlockDetails(true, null);
 		
 		$('#s2id_fieldLocationIdFavorite').hide();
 		$('#s2id_fieldLocationIdAll').show();
@@ -379,92 +380,13 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 				
 			}
 		}
-		/*
-		$('#'+getJquerySafeId("userFieldmap.fieldLocationId")).on('change', function(){
-			loadFieldsDropdown($('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val());
-		})
-		
-		$('#'+getJquerySafeId("userFieldmap.fieldId")).on('change', function(){
-			loadBlockDropdown($('#'+getJquerySafeId("userFieldmap.fieldId")).val());
-		})
-		*/		
+				
 		if($('#'+getJquerySafeId("userFieldmap.fieldId")).val() != '')
 			loadFieldsDropdown($('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val());
-		/*
 		
-		*/
 	});
   	
-    function loadFieldsDropdown(locationId){
-    	console.log('reload fields ' + locationId);
-    	
-    	
-    	loadField = true;
-        
-        
-        
-    		Spinner.toggle();
-        	$.ajax(
-    	    	{ url: "/Fieldbook/Fieldmap/enterFieldDetails/getFields/"+locationId,
-    	           type: "GET",
-    	           cache: false,
-    	           data: "",
-    	           success: function(data) {	        	   
-    	        		   //recreate the select2 combos to get updated list of locations
-    	        		   $('#'+getJquerySafeId('userFieldmap.fieldId')).select2('destroy');
-    	        		   initializeFieldSelect2($.parseJSON(data.allFields), [], false);	   
-    	        		   initializeBlockSelect2({}, [], false);
-    	        	   	   Spinner.toggle();
-    	        	   	console.log('here close 1');
-    	        	   	loadField = false;
-    	           }
-    	         }
-    	     );
-    	
-    	
-    }
-    function loadBlockDropdown(fieldId){
-    	console.log('reload block ' + fieldId);
-    	
-    	
-    	loadBlock = true;
-    	Spinner.toggle();
-    	$.ajax(
-    			{ url: "/Fieldbook/Fieldmap/enterFieldDetails/getBlocks/"+fieldId,
-	           type: "GET",
-	           cache: false,
-	           data: "",
-	           success: function(data) {	  
-	        	   $('#'+getJquerySafeId('userFieldmap.blockId')).select2('destroy');
-	        		   initializeBlockSelect2($.parseJSON(data.allBlocks), [], false);
-	        	   	   Spinner.toggle();
-	        	   	   console.log('here close 2');
-	        	   		loadBlock = false;
-	           }
-	         }
-	     );
-    }
     
-    function loadBlockInformation(blockId){
-    	console.log('load block info' + blockId);
-    	
-    	loadBlockInfo = true;
-    	Spinner.toggle();
-    	$.ajax(
-    			{ url: "/Fieldbook/Fieldmap/enterFieldDetails/getBlockInformation/"+blockId,
-	           type: "GET",
-	           cache: false,
-	           data: "",
-	           success: function(data) {	        	   
-	        		   var blockInfo = $.parseJSON(data.blockInfo);
-	        		   alert('show determine if its new or used block');
-	        		   console.log(blockInfo);
-	        	   	   Spinner.toggle();
-	        	   	   loadBlockInfo = false;
-	           }
-	         }
-	     );
-    }
   
       //]]>
     </script>

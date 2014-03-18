@@ -44,11 +44,36 @@ public class FieldmapForm{
     /** The project id. */
     private String projectId;
     
+    /** The program location url. */
     private String programLocationUrl;
+	
+    /** The number of rows per plot. */
+    private Integer numberOfRowsPerPlot;
+    
     
     
     
     /**
+     * Gets the number of rows per plot.
+     *
+     * @return the number of rows per plot
+     */
+    public Integer getNumberOfRowsPerPlot() {
+		return numberOfRowsPerPlot;
+	}
+
+	/**
+	 * Sets the number of rows per plot.
+	 *
+	 * @param numberOfRowsPerPlot the new number of rows per plot
+	 */
+	public void setNumberOfRowsPerPlot(Integer numberOfRowsPerPlot) {
+		this.numberOfRowsPerPlot = numberOfRowsPerPlot;
+	}
+
+	
+
+	/**
      * Gets the project id.
      *
      * @return the project id
@@ -174,10 +199,20 @@ public class FieldmapForm{
         this.markedCells = markedCells;
     }
 
+	/**
+	 * Gets the program location url.
+	 *
+	 * @return the program location url
+	 */
 	public String getProgramLocationUrl() {
 		return programLocationUrl;
 	}
 
+	/**
+	 * Sets the program location url.
+	 *
+	 * @param programLocationUrl the new program location url
+	 */
 	public void setProgramLocationUrl(String programLocationUrl) {
 		this.programLocationUrl = programLocationUrl;
 	}

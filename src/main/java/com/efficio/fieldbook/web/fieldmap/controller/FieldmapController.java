@@ -563,8 +563,9 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         this.userFieldmap.setFieldName(form.getUserFieldmap().getFieldName());
         this.userFieldmap.setNumberOfRangesInBlock(form.getUserFieldmap().getNumberOfRangesInBlock());
         this.userFieldmap.setNumberOfRowsInBlock(form.getUserFieldmap().getNumberOfRowsInBlock());
-        this.userFieldmap.setNumberOfRowsPerPlot(form.getUserFieldmap().getNumberOfRowsPerPlot());
+        //this.userFieldmap.setNumberOfRowsPerPlot(form.getUserFieldmap().getNumberOfRowsPerPlot());
         this.userFieldmap.setLocationName(form.getUserFieldmap().getLocationName());
+        this.userFieldmap.setNumberOfRowsPerPlot(form.getNumberOfRowsPerPlot());
     }
  
     /**

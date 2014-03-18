@@ -60,8 +60,6 @@ public class UserFieldmap  implements Serializable {
     /** The field name. */
     private String fieldName;
     
-    private Integer fieldId;
-    
     /** The block name. */
     private String blockName;
 
@@ -123,6 +121,8 @@ public class UserFieldmap  implements Serializable {
     
     /** The is generated. */
     private boolean isGenerated;
+    /** The deleted plot coordinates in (row, range) format.  */
+    private List<String> deletedPlots;
 
     /**
      * Instantiates a new user fieldmap.
@@ -868,5 +868,18 @@ public class UserFieldmap  implements Serializable {
 		this.blockId = blockId;
 	}
 
+	/**
+	 * @return the deletedPlots
+	 */
+	public List<String> getDeletedPlots() {
+		return deletedPlots;
+	}
+
+	/**
+	 * @param deletedPlots the deletedPlots to set
+	 */
+	public void setDeletedPlots(List<String> deletedPlots) {
+		this.deletedPlots = deletedPlots;
+	}
     
 }

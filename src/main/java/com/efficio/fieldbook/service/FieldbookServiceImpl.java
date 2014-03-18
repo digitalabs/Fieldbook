@@ -89,9 +89,9 @@ public class FieldbookServiceImpl implements FieldbookService{
 	public List<ImportedGermplasm> advanceNursery(AdvancingNursery advanceInfo, Workbook workbook)
 	        throws MiddlewareQueryException {
 
-        String namingConvention = advanceInfo.getNamingConvention();
+        //String namingConvention = advanceInfo.getNamingConvention();
 
-        NamingConventionService service = namingConventionServiceFactory.getNamingConventionService(namingConvention);
+        NamingConventionService service = namingConventionServiceFactory.getNamingConventionService(advanceInfo);
 
 	    return service.advanceNursery(advanceInfo, workbook);
 	}

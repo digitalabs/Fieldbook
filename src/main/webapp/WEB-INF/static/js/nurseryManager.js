@@ -545,6 +545,46 @@ function clearAttributeFields() {
 	$("#selectedName").val("");
 }
 
+function getIdNameCounterpart(selectedVariable, idNameCombinationVariables) {
+	var inList = -1;
+	// return the id or name counterpart of the selected variable if it is in the combination list
+	$.each(idNameCombinationVariables, function (index, item){
+		if (parseInt(item.split("|")[0]) == parseInt(selectedVariable)) {
+			inList = parseInt(item.split("|")[1]);
+			return false;
+		} 
+		if (parseInt(item.split("|")[1]) == parseInt(selectedVariable)) {
+			inList = parseInt(item.split("|")[0]);
+			return false;
+		}
+	});
+	return inList;
+}
+
+function getIdCounterpart(selectedVariable, idNameCombinationVariables) {
+	var inList = selectedVariable;
+	// return the id counterpart of the variable selected if it is in the list
+	$.each(idNameCombinationVariables, function (index, item){ 
+		if (parseInt(item.split("|")[1]) == parseInt(selectedVariable)) {
+			inList = parseInt(item.split("|")[0]);
+			return false;
+		}
+	});
+	return inList;
+}
+
+function idNameCounterpartSelected(selectedVariable) {
+	var itemToCompare = getIdNameCounterpart(selectedVariable, $("#idNameVariables").val().split(","));
+
+	if (itemToCompare != -1) {
+		//if it is selected/added already
+		if (!notInList(itemToCompare)) {
+			return true;
+		}
+	}
+	return false;
+}
+
 function addVariableToList() { 
 	var newRow;
 	var rowCount = $("#newVariablesList tbody tr").length;
@@ -561,8 +601,13 @@ function addVariableToList() {
 	var length = $("#newVariablesList tbody tr").length + 1;
 	var className = length % 2 == 1 ? 'even' : 'odd';
 	
-	//if selected variable is not yet in the list and is not blank or new, add it
-	if (notInList($("#selectedStdVarId").val()) && $("#selectedStdVarId").val() != "") {
+	if (idNameCounterpartSelected($("#selectedStdVarId").val())) {
+		//if selected variable is an id/name counterpart of a variable already selected/added
+		$("#page-message-modal").html(
+			    "<div class='alert alert-danger'>"+ idNameCounterpartAddedError +"</div>"
+		);
+	} else if (notInList($("#selectedStdVarId").val()) && $("#selectedStdVarId").val() != "") {
+		//if selected variable is not yet in the list and is not blank or new, add it
 		newRow = "<tr>";
 		newRow = newRow + "<td class='"+className+"'><input type='hidden' class='addVariables cvTermIds' id='selectedVariables"+ ctr + ".cvTermId' " +  
 			"name='selectedVariables["+ ctr + "].cvTermId' value='" + $("#selectedStdVarId").val() + "' />";
@@ -624,7 +669,7 @@ function submitSelectedVariables(variableType) {
 		);
 	}
 	else if ($("#newVariablesList tbody tr").length > 0) {
-		
+		replaceNameVariables();
 		var serializedData = $("input.addVariables").serialize();
 		$("#page-message-modal").html("");
 		Spinner.toggle();
@@ -662,6 +707,17 @@ function submitSelectedVariables(variableType) {
 			    "<div class='alert alert-danger'>"+ varInListMessage +"</div>"
 		);
 	}
+}
+
+function replaceNameVariables() {
+	$.each($("#newVariablesList tbody tr"), function (index, row){
+		value = $($(row).children("td:nth-child(1)").children("#" + 
+				getJquerySafeId("selectedVariables"+ index + ".cvTermId"))).val();
+		//use the id counterpart of the name variable
+		$($(row).children("td:nth-child(1)").children("#" 
+				+ getJquerySafeId("selectedVariables"+ index + ".cvTermId"))).val(getIdCounterpart(value, $("#idNameVariables").val().split(",")));
+	});
+
 }
 
 function getLastRowIndex(name, hasTBody) {

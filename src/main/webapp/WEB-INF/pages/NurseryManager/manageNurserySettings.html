@@ -19,6 +19,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 <input type="hidden" th:field="*{locationUrl}"/>
 <input type="hidden" th:field="*{breedingMethodUrl}"/>
 <input type="hidden" th:field="*{projectId}"/>
+<input type="hidden" th:field="*{idNameVariables}"/>
 <!-- <input type="hidden" th:field="*{initialLoad}"/> -->	
 
 <div class="row" xmlns:th="http://www.thymeleaf.org">
@@ -468,8 +469,8 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
        		
        		var showFavoriteMethodLabel = /*[[#{show.favorite.method}]]*/;
        		var showFavoriteLocationLabel = /*[[#{show.favorite.location}]]*/;
-       		
-       		
+
+       		var idNameCounterpartAddedError = /*[[#{manage.settings.id.name.counterpart.added.error}]]*/;
        		
        		var inputChange = false;
        		var reminderNursery = /*[[#{nursery.reminder.add.nursery.settings}]]*/;

@@ -260,7 +260,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         advancingNursery.setHarvestDate(form.getHarvestDate());
         advancingNursery.setHarvestLocationId(form.getHarvestLocationId());
         advancingNursery.setHarvestLocationAbbreviation(form.getHarvestLocationAbbreviation());
-
+        advancingNursery.setPutBrackets(form.getPutBrackets());
         return "redirect:" + SaveAdvanceNurseryController.URL;
     }
     

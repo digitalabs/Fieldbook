@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
+import com.efficio.fieldbook.web.nursery.service.CimmytMaizeConventionService;
 import com.efficio.fieldbook.web.nursery.service.CimmytWheatConventionService;
 import com.efficio.fieldbook.web.util.AppConstants;
 
@@ -38,16 +39,28 @@ import com.efficio.fieldbook.web.util.AppConstants;
  *
  */
 @Service
-public class CimmytWheatConventionServiceImpl 
+public class CimmytMaizeConventionServiceImpl 
 extends AbstractNamingConventionServiceImpl 
-implements CimmytWheatConventionService {
+implements CimmytMaizeConventionService {
     
     @Resource
     private FieldbookService fieldbookMiddlewareService;
 
     @Override
     protected List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList rows) throws MiddlewareQueryException {
-        List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
+    	List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
+    	rows.getPutBrackets();
+    	if(AppConstants.MAIZE_BREEDING_METHOD_SELFED_BULKED.getString().equalsIgnoreCase(rows.getNurseryBreedingMethodId().toString())){
+    		
+    	}else if(AppConstants.MAIZE_BREEDING_METHOD_SELFED_SHELLED.getString().equalsIgnoreCase(rows.getNurseryBreedingMethodId().toString())){
+    		
+    	}else if(AppConstants.MAIZE_BREEDING_METHOD_SIB_INCREASED.getString().equalsIgnoreCase(rows.getNurseryBreedingMethodId().toString())){
+    		
+    	}else if(AppConstants.MAIZE_BREEDING_METHOD_COLCHICINIZE.getString().equalsIgnoreCase(rows.getNurseryBreedingMethodId().toString())){
+    		
+    	}
+    	/*
+        
         String newGermplasmName;
         String suffix = rows.getLocationAbbreviation();
         long start = System.currentTimeMillis();
@@ -59,7 +72,6 @@ implements CimmytWheatConventionService {
         }
        // System.out.println("end breedingMethodMap : " + (System.currentTimeMillis()-start));
         for (AdvancingSource row : rows.getRows()) {
-        	
             if (row.getPlantsSelected() != null && row.getGermplasm() != null && !row.isCheck()) {
                 String origGermplasmName = getOrigGermplasmName(row);
                 if (row.getPlantsSelected().equals(0)) {
@@ -95,22 +107,15 @@ implements CimmytWheatConventionService {
             }
         }
         //System.out.println("end generateGermplasmList : " + (System.currentTimeMillis()-start));
+        
+         */
         return list;
     }
     
-    private String getOrigGermplasmName(AdvancingSource source) throws MiddlewareQueryException {
-        String name = null;
-        if (source.getGermplasm() != null && source.getGermplasm().getGid() != null && NumberUtils.isNumber(source.getGermplasm().getGid())) {
-            name = fieldbookMiddlewareService.getCimmytWheatGermplasmNameByGid(Integer.valueOf(source.getGermplasm().getGid()));
-        }
-        if (name == null || "".equals(name)) {
-            name = source.getGermplasm().getDesig();
-        }
-        return name;
-    }
     
     @Override
     protected void assignNames(ImportedGermplasm germplasm, AdvancingSource row) {
+    	/*
         List<Name> names = new ArrayList<Name>();
         
         Name name = new Name();
@@ -138,6 +143,7 @@ implements CimmytWheatConventionService {
         names.add(name);
         
         germplasm.setNames(names);
+        */
     }
     
 }

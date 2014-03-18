@@ -63,6 +63,7 @@ public class ManageSettingsForm {
     private String breedingMethodId;
     private String locationUrl;
     private String breedingMethodUrl;
+    private String idNameVariables;
 
 	/**
 	 * Gets the selected setting id.
@@ -331,5 +332,12 @@ public class ManageSettingsForm {
 			this.breedingMethodUrl = breedingMethodUrl;
 		}
 		
+		public String getIdNameVariables() {
+		        return this.idNameVariables;
+		}
+		
+		public void setIdNameVariables(String idNameVariables) {
+		        this.idNameVariables = idNameVariables;
+		}
 		
 }

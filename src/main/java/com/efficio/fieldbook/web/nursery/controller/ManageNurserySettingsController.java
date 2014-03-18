@@ -83,6 +83,7 @@ public class ManageNurserySettingsController extends SettingsController{
     	form.setBreedingMethodUrl(AppConstants.BREEDING_METHOD_URL.getString());
     	form.setLocationUrl(AppConstants.LOCATION_URL.getString());
     	form.setProjectId(this.getCurrentProjectId());
+    	form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
     }
     
     /**

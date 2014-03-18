@@ -110,6 +110,8 @@ public class AdvancingNurseryForm {
     
     private int cropType;
     
+    private String putBrackets;
+    
 	
 	/**
 	 * Gets the method id all.
@@ -673,6 +675,14 @@ public class AdvancingNurseryForm {
 	 */
 	public void setNurseryId(String nurseryId) {
 		this.nurseryId = nurseryId;
+	}
+	
+	public String getPutBrackets() {
+		return putBrackets;
+	}
+
+	public void setPutBrackets(String putBrackets) {
+		this.putBrackets = putBrackets;
 	}
 
 		/* (non-Javadoc)

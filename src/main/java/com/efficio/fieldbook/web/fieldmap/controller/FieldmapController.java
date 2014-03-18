@@ -23,6 +23,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
+import org.generationcp.middleware.domain.fieldbook.FieldmapBlockInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -471,6 +472,79 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         return this.userFieldmap;
     }
     
+    
+    /**
+     * Gets the locations.
+     *
+     * @return the locations
+     */
+    @ResponseBody
+    @RequestMapping(value="/getFields/{locationId}", method = RequestMethod.GET)
+    public Map<String, String> getFieldLocations(@PathVariable int locationId) {
+        Map<String, String> result = new HashMap<String, String>();
+        
+        try {
+            List<Long> locationsIds = workbenchService
+                                .getFavoriteProjectLocationIds(getCurrentProjectId());
+    
+            List<Location> allFields = fieldbookMiddlewareService.getAllFieldLocations(locationId);
+            result.put("success", "1");
+            
+            result.put("allFields", convertObjectToJson(allFields));
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+            result.put("success", "-1");
+        }
+        
+        return result;
+    }
+    
+    /**
+     * Gets the locations.
+     *
+     * @return the locations
+     */
+    @ResponseBody
+    @RequestMapping(value="/getBlocks/{fieldId}", method = RequestMethod.GET)
+    public Map<String, String> getBlockFields(@PathVariable int fieldId) {
+        Map<String, String> result = new HashMap<String, String>();
+        
+        try {
+            List<Long> locationsIds = workbenchService
+                                .getFavoriteProjectLocationIds(getCurrentProjectId());
+
+            List<Location> allBlocks = fieldbookMiddlewareService.getAllBlockLocations(fieldId);
+            result.put("success", "1");
+            result.put("allBlocks", convertObjectToJson(allBlocks));
+
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+            result.put("success", "-1");
+        }
+        
+        return result;
+    }
+    
+    @ResponseBody
+    @RequestMapping(value="/getBlockInformation/{blockId}", method = RequestMethod.GET)
+    public Map<String, String> getBlockInfo(@PathVariable int blockId) {
+        Map<String, String> result = new HashMap<String, String>();
+        
+        try {
+            List<Long> locationsIds = workbenchService
+                                .getFavoriteProjectLocationIds(getCurrentProjectId());
+
+            FieldmapBlockInfo blockInfo = fieldbookMiddlewareService.getBlockInformation(blockId);
+            result.put("success", "1");
+            result.put("blockInfo", convertObjectToJson(blockInfo));
+
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+            result.put("success", "-1");
+        }
+        
+        return result;
+    }
     /**
      * Sets the user field map details.
      *

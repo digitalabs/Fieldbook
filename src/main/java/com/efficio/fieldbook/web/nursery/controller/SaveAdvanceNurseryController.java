@@ -328,8 +328,9 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
                 }
             }
             
+            Integer trueGdate = (harvestDate != null && !"".equals(harvestDate.trim()) ? Integer.valueOf(harvestDate) : gDate);
             Germplasm germplasm = new Germplasm(gid, methodId, gnpgs, gpid1, gpid2
-                    , userId, lgid, locationId, gDate, preferredName);
+                    , userId, lgid, locationId, trueGdate, preferredName);
             
             germplasms.put(germplasm, names);
                     

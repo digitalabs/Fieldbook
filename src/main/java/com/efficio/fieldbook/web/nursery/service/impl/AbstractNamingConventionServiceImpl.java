@@ -68,18 +68,21 @@ implements NamingConventionService {
         
         Name name = new Name();
         name.setGermplasmId(Integer.valueOf(source.getGermplasm().getGid()));
+        name.setTypeId(0);
         if (source.getGermplasm().getBreedingMethodId().equals(
                 AppConstants.METHOD_UNKNOWN_DERIVATIVE_METHOD_SF.getInt())) {
             name.setTypeId(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID());
         }
         else {
             if (source.getGermplasm().getBreedingMethodId().equals(
-                    AppConstants.METHOD_UNKNOWN_GENERATIVE_METHOD_SF.getInt())
-                && source.getGermplasm().getDesig().contains(AppConstants.NAME_SEPARATOR.getString())) {
-                name.setTypeId(GermplasmNameType.CROSS_NAME.getUserDefinedFieldID());
-            }
-            else {
-                name.setTypeId(GermplasmNameType.UNNAMED_CROSS.getUserDefinedFieldID());
+                    AppConstants.METHOD_UNKNOWN_GENERATIVE_METHOD_SF.getInt())) {
+                    
+                if (source.getGermplasm().getDesig().contains(AppConstants.NAME_SEPARATOR.getString())) {
+                	name.setTypeId(GermplasmNameType.CROSS_NAME.getUserDefinedFieldID());
+                }
+                else {
+                	name.setTypeId(GermplasmNameType.UNNAMED_CROSS.getUserDefinedFieldID());
+                }
             }
         }
         name.setNval(germplasm.getDesig());
@@ -177,7 +180,7 @@ implements NamingConventionService {
     }
 
     private String getEntryCode(int index) {
-        return AppConstants.ENTRY_CODE_PREFIX + String.format("%04d", index);
+        return AppConstants.ENTRY_CODE_PREFIX.getString() + String.format("%04d", index);
     }
     
     private void assignGermplasms(AdvancingSourceList list) throws MiddlewareQueryException {

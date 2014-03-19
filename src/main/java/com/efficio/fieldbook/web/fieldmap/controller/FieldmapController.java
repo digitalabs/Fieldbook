@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -43,8 +44,11 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
+import com.efficio.fieldbook.web.nursery.controller.FileUploadController;
+import com.efficio.fieldbook.web.nursery.form.NurseryDetailsForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class FieldmapController.
  * 
@@ -476,6 +480,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     /**
      * Gets the locations.
      *
+     * @param locationId the location id
      * @return the locations
      */
     @ResponseBody
@@ -502,6 +507,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     /**
      * Gets the locations.
      *
+     * @param fieldId the field id
      * @return the locations
      */
     @ResponseBody
@@ -525,6 +531,12 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         return result;
     }
     
+    /**
+     * Gets the block info.
+     *
+     * @param blockId the block id
+     * @return the block info
+     */
     @ResponseBody
     @RequestMapping(value="/getBlockInformation/{blockId}", method = RequestMethod.GET)
     public Map<String, String> getBlockInfo(@PathVariable int blockId) {
@@ -545,6 +557,74 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         
         return result;
     }
+    
+    /**
+     * Submits the details.
+     *
+     * @param form the form
+     * @param result the result
+     * @param model the model
+     * @return the string
+     */
+    @ResponseBody
+    @RequestMapping(value="/addNewField", method = RequestMethod.POST)
+    public String addNewField(@ModelAttribute("fieldmapForm") FieldmapForm form, BindingResult result, Model model) {
+        String fieldName = form.getNewFieldName();
+        Integer locationId = form.getParentLocationId();
+        try {
+			fieldbookMiddlewareService.addFieldLocation(fieldName, locationId);
+		} catch (MiddlewareQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return "success";
+    }
+    
+    /**
+     * Adds the new block.
+     *
+     * @param form the form
+     * @param result the result
+     * @param model the model
+     * @return the string
+     */
+    @ResponseBody
+    @RequestMapping(value="/addNewBlock", method = RequestMethod.POST)
+    public String addNewBlock(@ModelAttribute("fieldmapForm") FieldmapForm form, BindingResult result, Model model) {
+        String blockName = form.getNewBlockName();
+        Integer parentFieldId = form.getParentFieldId();
+        try {
+			fieldbookMiddlewareService.addBlockLocation(blockName, parentFieldId);
+		} catch (MiddlewareQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return "success";
+    }
+    
+    /**
+     * Gets the field locations.
+     *
+     * @return the field locations
+     */
+    @ResponseBody
+    @RequestMapping(value="/getFields", method = RequestMethod.GET)
+    public Map<String, String> getFieldLocations() {
+        Map<String, String> result = new HashMap<String, String>();
+        
+        try {            
+            List<Location> allLocations = fieldbookMiddlewareService.getAllFields();
+            result.put("success", "1");
+            result.put("allFields", convertObjectToJson(allLocations));
+            
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+            result.put("success", "-1");
+        }
+        
+        return result;
+    }
+    
     /**
      * Sets the user field map details.
      *

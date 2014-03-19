@@ -51,9 +51,46 @@ public class FieldmapForm{
     private Integer numberOfRowsPerPlot;
     
     
+    private String newFieldName;
+    private Integer parentLocationId;
+    private String newBlockName;
+    private Integer parentFieldId;
     
     
-    /**
+    
+    public String getNewFieldName() {
+		return newFieldName;
+	}
+
+	public void setNewFieldName(String newFieldName) {
+		this.newFieldName = newFieldName;
+	}
+
+	public Integer getParentLocationId() {
+		return parentLocationId;
+	}
+
+	public void setParentLocationId(Integer parentLocationId) {
+		this.parentLocationId = parentLocationId;
+	}
+
+	public String getNewBlockName() {
+		return newBlockName;
+	}
+
+	public void setNewBlockName(String newBlockName) {
+		this.newBlockName = newBlockName;
+	}
+
+	public Integer getParentFieldId() {
+		return parentFieldId;
+	}
+
+	public void setParentFieldId(Integer parentFieldId) {
+		this.parentFieldId = parentFieldId;
+	}
+
+	/**
      * Gets the number of rows per plot.
      *
      * @return the number of rows per plot

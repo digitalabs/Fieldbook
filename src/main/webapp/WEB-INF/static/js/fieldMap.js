@@ -57,6 +57,7 @@ function validateEnterFieldPage(){
 		$('.block-details input').attr('disabled', false);
 		$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('enable', true);
 		$('#'+getJquerySafeId('numberOfRowsPerPlot')).val($('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('data').id);
+		$('#'+getJquerySafeId('userFieldmap.new')).val(isNewBlock ? "true" : "false");
 		$("#enterFieldDetailsForm").submit();
 	}
 	

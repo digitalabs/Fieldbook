@@ -572,7 +572,8 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         String fieldName = form.getNewFieldName();
         Integer locationId = form.getParentLocationId();
         try {
-			fieldbookMiddlewareService.addFieldLocation(fieldName, locationId);
+        	Integer currentUserId = workbenchService.getCurrentIbdbUserId(getCurrentProjectId());
+			fieldbookMiddlewareService.addFieldLocation(fieldName, locationId, currentUserId);
 		} catch (MiddlewareQueryException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -594,7 +595,8 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         String blockName = form.getNewBlockName();
         Integer parentFieldId = form.getParentFieldId();
         try {
-			fieldbookMiddlewareService.addBlockLocation(blockName, parentFieldId);
+        	Integer currentUserId = workbenchService.getCurrentIbdbUserId(getCurrentProjectId());
+			fieldbookMiddlewareService.addBlockLocation(blockName, parentFieldId, currentUserId);
 		} catch (MiddlewareQueryException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -646,6 +648,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         //this.userFieldmap.setNumberOfRowsPerPlot(form.getUserFieldmap().getNumberOfRowsPerPlot());
         this.userFieldmap.setLocationName(form.getUserFieldmap().getLocationName());
         this.userFieldmap.setNumberOfRowsPerPlot(form.getNumberOfRowsPerPlot());
+        this.userFieldmap.setNew(form.getUserFieldmap().isNew());
     }
  
     /**

@@ -10,12 +10,14 @@ import javax.annotation.Resource;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.service.MaizeSibIncreaseService;
 
+@Service
 public class MaizeSibIncreaseServiceImpl extends
 		AbstractNamingConventionServiceImpl implements MaizeSibIncreaseService {
 

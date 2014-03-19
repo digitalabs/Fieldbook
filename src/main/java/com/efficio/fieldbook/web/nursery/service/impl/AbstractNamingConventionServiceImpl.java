@@ -22,9 +22,10 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.manager.GermplasmDataManagerImpl;
+import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.springframework.stereotype.Service;
 
@@ -62,7 +63,31 @@ implements NamingConventionService {
 
     protected abstract List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList list) throws MiddlewareQueryException;
     
-    protected abstract void assignNames(ImportedGermplasm germplasm, AdvancingSource source);
+    protected void assignNames(ImportedGermplasm germplasm, AdvancingSource source) {
+        List<Name> names = new ArrayList<Name>();
+        
+        Name name = new Name();
+        name.setGermplasmId(Integer.valueOf(source.getGermplasm().getGid()));
+        if (source.getGermplasm().getBreedingMethodId().equals(
+                AppConstants.METHOD_UNKNOWN_DERIVATIVE_METHOD_SF.getInt())) {
+            name.setTypeId(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID());
+        }
+        else {
+            if (source.getGermplasm().getBreedingMethodId().equals(
+                    AppConstants.METHOD_UNKNOWN_GENERATIVE_METHOD_SF.getInt())
+                && source.getGermplasm().getDesig().contains(AppConstants.NAME_SEPARATOR.getString())) {
+                name.setTypeId(GermplasmNameType.CROSS_NAME.getUserDefinedFieldID());
+            }
+            else {
+                name.setTypeId(GermplasmNameType.UNNAMED_CROSS.getUserDefinedFieldID());
+            }
+        }
+        name.setNval(germplasm.getDesig());
+        name.setNstat(1);
+        names.add(name);
+        
+        germplasm.setNames(names);
+    }
 
     private AdvancingSourceList createAdvancingSourceList(AdvancingNursery advanceInfo, Workbook workbook) throws MiddlewareQueryException {
         int nurseryId = advanceInfo.getStudy().getId();

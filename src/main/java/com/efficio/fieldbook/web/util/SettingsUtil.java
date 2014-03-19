@@ -283,7 +283,7 @@ public class SettingsUtil {
 							condition.getMinRange(), condition.getMaxRange());
 					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
 					
-					if (!inHideNurseryFields(stdVar)) {
+					if (!inHideVariableFields(stdVar, AppConstants.HIDE_NURSERY_FIELDS.getString())) {
         					variable.setCvTermId(stdVar);										
         					List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
         					SettingDetail settingDetail = new SettingDetail(variable,
@@ -308,10 +308,13 @@ public class SettingsUtil {
 					SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(),
 							factor.getScale(), factor.getMethod(), factor.getRole(), factor.getDatatype());
 					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
-					variable.setCvTermId(stdVar);
-					SettingDetail settingDetail = new SettingDetail(variable,
-							null, null, isSettingVariableDeletable(stdVar, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()));
-					plotsLevelList.add(settingDetail);
+					
+					if (!inHideVariableFields(stdVar, AppConstants.HIDE_PLOT_FIELDS.getString())) {
+        					variable.setCvTermId(stdVar);
+        					SettingDetail settingDetail = new SettingDetail(variable,
+        							null, null, isSettingVariableDeletable(stdVar, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()));
+        					plotsLevelList.add(settingDetail);
+					}
 					/*
 					if(userSelection != null){
 						StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);						
@@ -347,8 +350,8 @@ public class SettingsUtil {
 		}
 	}
 	
-	private static boolean inHideNurseryFields(Integer stdVarId) {
-	    StringTokenizer token = new StringTokenizer(AppConstants.HIDE_NURSERY_FIELDS.getString(), ",");
+	private static boolean inHideVariableFields(Integer stdVarId, String variableList) {
+	    StringTokenizer token = new StringTokenizer(variableList, ",");
 	    boolean inList = false;
 	    while(token.hasMoreTokens()){
 	        if (stdVarId.equals(Integer.parseInt(token.nextToken()))) {
@@ -358,7 +361,7 @@ public class SettingsUtil {
 	    }
 	    return inList;
 	}
-	
+		
 	/**
 	 * Generate dummy condition.
 	 *

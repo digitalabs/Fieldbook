@@ -385,8 +385,7 @@ function createHeader(hasFieldMap) {
 			newRow = newRow + "<th style='width:65%'>" + nurseryName + "</th>" +
 			"<th style='width:20%'>" + entryPlotLabel + "</th>";
 		}
-		//remove has field map column for now GCp-7295
-		//newRow = newRow + "<th style='width:15%'>" + fieldmapLabel + "</th>";
+		newRow = newRow + "<th style='width:15%'>" + fieldmapLabel + "</th>";
 	} else {
 		if (trial) {
 			newRow = newRow + "<th style='width:40%'></th>" +
@@ -416,8 +415,7 @@ function createRowForNursery(id, parentClass, value, realId, withFieldMap, datas
 	var checkBox = "<input class='checkInstance' type='checkbox' id='" + datasetId + "|" + realId + "' /> &nbsp;&nbsp;";
 	newCell = "<td>" + checkBox + "&nbsp;" + datasetName + "</td><td>" + value.entryCount + "</td>";
 	var hasFieldMap = value.hasFieldMap ? "Yes" : "No";
-	//remve the has field map column for now GCP-7295
-	//newCell = newCell + "<td class='hasFieldMap'>" + hasFieldMap + "</td>";
+	newCell = newCell + "<td class='hasFieldMap'>" + hasFieldMap + "</td>";
 	$("#studyTree").append(newRow+newCell+"</tr>");
 }
 
@@ -441,9 +439,7 @@ function createRow(id, parentClass, value, realId, withFieldMap) {
 			newCell = newCell + "<td>" + value + "</td><td></td>";
 		}
 		if (!withFieldMap) {
-			//remve the has field map column for now GCP-7295
-			//newCell = newCell + "<td></td>";
-			;
+			newCell = newCell + "<td></td>";
 		}
 	} else {
 		//trial instance level
@@ -463,8 +459,7 @@ function createRow(id, parentClass, value, realId, withFieldMap) {
 				newCell = newCell + "<td>" + value.repCount + "</td><td>" + value.plotCount + "</td>";
 			}
 			var hasFieldMap = value.hasFieldMap ? "Yes" : "No";
-			//remve the has field map column for now GCP-7295
-			//newCell = newCell + "<td class='hasFieldMap'>" + hasFieldMap + "</td>";
+			newCell = newCell + "<td class='hasFieldMap'>" + hasFieldMap + "</td>";
 		}
 	}
 	$("#studyTree").append(newRow+newCell+"</tr>");
@@ -637,19 +632,18 @@ function showCreateFieldMap() {
 			}
 			var hasFieldMap;
 			//get value hasfieldmap column
-			/* commented for now the checking for has fieldmap GCp-7295
 			if (trial) {
 				hasFieldMap = $(this).parent().next().next().next().next().html();
 			} else {
 				hasFieldMap = $(this).parent().next().next().html();
 			}
-			*/
+			
 			//build id list of selected trials instances
 			fieldmapIds.push(studyId+"|"+datasetId+"|"+id);
-			/* commented for now the checking for has fieldmap GCp-7295
+			
 			if (hasFieldMap == "Yes") {
 				selectedWithFieldMap = true;
-			}*/
+			}
 		});
 		//this is to disable the 2nd popup
 		if (selectedWithFieldMap) {

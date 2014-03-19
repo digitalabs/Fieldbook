@@ -1377,7 +1377,7 @@ function addCategoricalValidValue(id, label, description) {
 	
 	//if new valid value, add a delete button
 	if (id < 0 || id == null) {
-		deleteButton= "<button class='btn btn-primary' type='button' onClick='delCatVar($(this))'>" + 
+		deleteButton= "<button class='btn btn-info' type='button' onClick='delCatVar($(this))'>" + 
 						"<span class='glyphicon glyphicon-remove'></span>" +
 					    "</button>";
 		enumerations.push({ 'id' : id,

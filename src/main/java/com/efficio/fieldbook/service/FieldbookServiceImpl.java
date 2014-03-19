@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
@@ -121,7 +122,11 @@ public class FieldbookServiceImpl implements FieldbookService{
 								 || ref.getId().intValue() == TermId.TRIAL_INSTANCE_FACTOR.getId())
 							 continue;
 							 
-				     } 
+				         } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
+				                 if (inHideVariableFields(ref.getId(), AppConstants.HIDE_PLOT_FIELDS.getString())) {
+				                     continue;
+				                 }
+				         }
 					
 						result.add(ref);
 				}
@@ -150,6 +155,18 @@ public class FieldbookServiceImpl implements FieldbookService{
             list.addAll(PhenotypicType.VARIATE.getTypeStorages());
         }
         return list;
+    }
+    
+    private static boolean inHideVariableFields(Integer stdVarId, String variableList) {
+        StringTokenizer token = new StringTokenizer(variableList, ",");
+        boolean inList = false;
+        while(token.hasMoreTokens()){
+            if (stdVarId.equals(Integer.parseInt(token.nextToken()))) {
+                inList = true;
+                break;
+            }
+        }
+        return inList;
     }
 	
     @Override

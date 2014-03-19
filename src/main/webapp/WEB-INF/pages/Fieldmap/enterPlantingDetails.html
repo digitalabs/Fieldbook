@@ -224,10 +224,16 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	  	}
 	  	$(document).ready(function() {
 	  		$('#field-map td.plot').on('click', function() {
+	  			
+	  			
+	  			
 	  			if($(this).hasClass('deleted')){
 	  				$(this).removeClass('deleted');
 	  				$(this).html('');
 	  			}else{
+	  				if($(this).val() != ''){
+		  				return false;
+		  			}
 	  				$(this).addClass('deleted');
 	  				$(this).html("<label class='alert alert-danger'>X</label>");
 	  			}

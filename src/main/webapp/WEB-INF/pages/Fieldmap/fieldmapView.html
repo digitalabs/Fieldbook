@@ -3,7 +3,7 @@
 	
 	<thead>
 		<tr>
-			<td class="header-row-main" >Rows</td>
+			<td class="header-row-main" style="width: 70px" >Rows</td>
 			<td class="header-row-data" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock)}">
 				<p th:text="${j}"></p>				
 			</td>

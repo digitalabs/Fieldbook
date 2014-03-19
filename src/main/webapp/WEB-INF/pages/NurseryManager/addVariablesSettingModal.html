@@ -53,10 +53,13 @@
 </div>
 <a style="display: none" id="ontologyBaseUrl" href="/OntologyBrowser" th:href="@{/OntologyBrowser/}">test</a>
 <div layout:fragment="page-script">
-	<link th:href="@{/static/css/typeahead.js-bootstrap.css}" rel="stylesheet"/>
+	
 	<script type="text/javascript" th:src="@{/static/js/ontologyBrowser.js}"></script>
+	<!-- 
+	<link th:href="@{/static/css/typeahead.js-bootstrap.css}" rel="stylesheet"/>
 	<script type="text/javascript" th:src="@{/static/js/typeahead.min.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/Hogan.js}"></script>
+	 -->
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    
 	        var treeData = /*[[${manageSettingsForm.treeData}]]*/;

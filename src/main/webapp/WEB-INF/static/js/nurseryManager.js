@@ -1500,11 +1500,11 @@ function initializeDateAndSliderInputs(){
 	if($('.numeric-range-input').length > 0){
 		
 		$('.numeric-range-input').each(function(){
-		console.log($(this).val());
-		console.log(parseFloat($(this).data('min')));
-		console.log(parseFloat($(this).val()));
+		//console.log($(this).val());
+		//console.log(parseFloat($(this).data('min')));
+		//console.log(parseFloat($(this).val()));
 		var currentVal  = $(this).val() == '' ? parseFloat($(this).data('min')) : parseFloat($(this).val());
-		console.log(currentVal);
+		//console.log(currentVal);
 			$(this).slider({
 				min: parseFloat($(this).data('min')),
 				max: parseFloat($(this).data('max')),

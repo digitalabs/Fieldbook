@@ -26,6 +26,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.util.AppConstants;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class UserFieldmap.
  *
@@ -63,8 +64,10 @@ public class UserFieldmap  implements Serializable {
     /** The block name. */
     private String blockName;
 
+    /** The field id. */
     private Integer fieldId;
     
+    /** The block id. */
     private Integer blockId;
     
     /** The number of rows in block. */
@@ -126,7 +129,28 @@ public class UserFieldmap  implements Serializable {
     /** The deleted plot coordinates in (row, range) format.  */
     private List<String> deletedPlots;
 
+    /** The is new. */
+    private boolean isNew;
+    
     /**
+     * Checks if is new.
+     *
+     * @return true, if is new
+     */
+    public boolean isNew() {
+		return isNew;
+	}
+
+	/**
+	 * Sets the new.
+	 *
+	 * @param isNew the new new
+	 */
+	public void setNew(boolean isNew) {
+		this.isNew = isNew;
+	}
+
+	/**
      * Instantiates a new user fieldmap.
      */
     public UserFieldmap(){
@@ -854,23 +878,45 @@ public class UserFieldmap  implements Serializable {
         this.selectedFieldmapList = selectedFieldmapList;
     }
 
+	/**
+	 * Gets the field id.
+	 *
+	 * @return the field id
+	 */
 	public Integer getFieldId() {
 		return fieldId;
 	}
 
+	/**
+	 * Sets the field id.
+	 *
+	 * @param fieldId the new field id
+	 */
 	public void setFieldId(Integer fieldId) {
 		this.fieldId = fieldId;
 	}
 
+	/**
+	 * Gets the block id.
+	 *
+	 * @return the block id
+	 */
 	public Integer getBlockId() {
 		return blockId;
 	}
 
+	/**
+	 * Sets the block id.
+	 *
+	 * @param blockId the new block id
+	 */
 	public void setBlockId(Integer blockId) {
 		this.blockId = blockId;
 	}
 
 	/**
+	 * Gets the deleted plots.
+	 *
 	 * @return the deletedPlots
 	 */
 	public List<String> getDeletedPlots() {
@@ -878,6 +924,8 @@ public class UserFieldmap  implements Serializable {
 	}
 
 	/**
+	 * Sets the deleted plots.
+	 *
 	 * @param deletedPlots the deletedPlots to set
 	 */
 	public void setDeletedPlots(List<String> deletedPlots) {

@@ -163,6 +163,9 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		      <!-- <input type="text" class="form-control"  th:field="*{userFieldmap.fieldName}" placeholder="Field Name"/> -->
 		      <input type="hidden" th:field="*{userFieldmap.fieldId}" class="form-control select2" placeholder=""/>
 		    </div>
+		    <div class="col-xs-2 col-md-2 add_top_padding">
+		      <a href="javascript: showAddFieldPopup()">Add Fields</a>
+		    </div>
 		  </div>
 		  <div class="form-group col-xs-12 col-md-12">
 		    <div class="col-xs-2 col-md-2">
@@ -172,14 +175,18 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		      <!-- <input type="text" class="form-control" th:field="*{userFieldmap.blockName}" placeholder="Block Name"/> -->
 		      <input type="hidden" th:field="*{userFieldmap.blockId}" class="form-control select2" placeholder=""/>
 		    </div>
+		    <div class="col-xs-2 col-md-2 add_top_padding">
+		      <a href="javascript: showAddBlockPopup()">Add Blocks</a>
+		    </div>
+		    
 		  </div>						
 	</div>
 	
-	<div class="form-group col-xs-12  col-md-12">
+	<div class="form-group col-xs-12  col-md-12 block-details">
 	<br />
 		&nbsp;<strong class="sub-heading col-xs-12 col-md-12" th:text="#{fieldmap.trial.row.and.range.and.plot.details} + ':'">ROW, RANGE AND PLOT DETAILS:</strong>
 	</div>
-	<div class="form-group col-xs-12  col-md-12">			
+	<div class="form-group col-xs-12  col-md-12 block-details">			
 		  
 		  <div class="form-group col-xs-6 col-md-6">
 		  
@@ -232,6 +239,8 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 	    </div>
 	  </div>
 	  <input type="hidden" th:field="*{projectId}"/>
+	  <input type="hidden" th:field="*{numberOfRowsPerPlot}"/>
+	  <input type="hidden" th:field="*{userFieldmap.new}"/>
 	  
 	  </form>
 	</div></div>
@@ -239,9 +248,13 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 <div class="row">
 	<div id="manage-location" th:include="/Common/manageLocationsModal"></div>
 </div>
+<div class="row">
+	<div id="add-fields" th:include="/Fieldmap/addFieldsModal"></div>
+</div>
 
-
-
+<div class="row">
+	<div id="add-blocks" th:include="/Fieldmap/addBlocksModal"></div>
+</div>
 
 	
 	
@@ -278,12 +291,21 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
     
     var noOfRowsLimitError = /*[[#{fieldmap.no.of.blocks.exceeds.limit}]]*/;
     
+
+    var parentLocationRequired = /*[[#{fieldmap.add.field.parent.location.required}]]*/;
+   	var fieldNameRequired = /*[[#{fieldmap.add.field.name.required}]]*/;
+   	
+    var parentFieldRequired = /*[[#{fieldmap.add.block.parent.field.required}]]*/;
+   	var blockNameRequired = /*[[#{fieldmap.add.block.name.required}]]*/;
+   	
+   	var fieldAddedSuccessfully = /*[[#{fieldmap.field.added.successfully}]]*/;
+   	var blockAddedSuccessfully = /*[[#{fieldmap.block.added.successfully}]]*/;
+   	
+   	
     var programLocationUrl = '';
     var locationIframeOpened = false;
     
-    var loadField = false;
-    var loadBlock = false;
-    var loadBlockInfo = false;
+    var isNewBlock = false;
     
     if (trial) {
     	msgBlockSizeError = /*[[#{fieldmap.plots.exceed.blocks.trial}]]*/;
@@ -309,6 +331,8 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		
 		initializeFieldSelect2({}, [], true);
 		initializeBlockSelect2({}, [], true);
+		
+		showBlockDetails(true, null);
 		
 		$('#s2id_fieldLocationIdFavorite').hide();
 		$('#s2id_fieldLocationIdAll').show();
@@ -379,92 +403,29 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 				
 			}
 		}
-		/*
-		$('#'+getJquerySafeId("userFieldmap.fieldLocationId")).on('change', function(){
-			loadFieldsDropdown($('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val());
-		})
-		
-		$('#'+getJquerySafeId("userFieldmap.fieldId")).on('change', function(){
-			loadBlockDropdown($('#'+getJquerySafeId("userFieldmap.fieldId")).val());
-		})
-		*/		
+				
 		if($('#'+getJquerySafeId("userFieldmap.fieldId")).val() != '')
 			loadFieldsDropdown($('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val());
-		/*
 		
-		*/
+		
+		$('#addFieldsModal').on('hidden.bs.modal', function (e) {
+			  //console.log('do load now');
+			  if($('#'+getJquerySafeId('userFieldmap.fieldLocationId')).val() != '' && $('#'+getJquerySafeId('userFieldmap.fieldLocationId')).val() == $('#parentLocationId').val()){
+				  loadFieldsDropdown($('#parentLocationId').val(), $('#'+getJquerySafeId('userFieldmap.fieldId')).val());  
+			  }
+			  	
+			});
+		$('#addBlocksModal').on('hidden.bs.modal', function (e) {
+			  //console.log('do load now');
+			  if($('#'+getJquerySafeId('userFieldmap.fieldId')).val() != '' && $('#'+getJquerySafeId('userFieldmap.fieldId')).val() == $('#parentFieldId').val()){
+				  loadBlockDropdown($('#parentFieldId').val(), $('#'+getJquerySafeId('userFieldmap.blockId')).val());  
+			  }
+			  	
+			})
+
 	});
   	
-    function loadFieldsDropdown(locationId){
-    	console.log('reload fields ' + locationId);
-    	
-    	
-    	loadField = true;
-        
-        
-        
-    		Spinner.toggle();
-        	$.ajax(
-    	    	{ url: "/Fieldbook/Fieldmap/enterFieldDetails/getFields/"+locationId,
-    	           type: "GET",
-    	           cache: false,
-    	           data: "",
-    	           success: function(data) {	        	   
-    	        		   //recreate the select2 combos to get updated list of locations
-    	        		   $('#'+getJquerySafeId('userFieldmap.fieldId')).select2('destroy');
-    	        		   initializeFieldSelect2($.parseJSON(data.allFields), [], false);	   
-    	        		   initializeBlockSelect2({}, [], false);
-    	        	   	   Spinner.toggle();
-    	        	   	console.log('here close 1');
-    	        	   	loadField = false;
-    	           }
-    	         }
-    	     );
-    	
-    	
-    }
-    function loadBlockDropdown(fieldId){
-    	console.log('reload block ' + fieldId);
-    	
-    	
-    	loadBlock = true;
-    	Spinner.toggle();
-    	$.ajax(
-    			{ url: "/Fieldbook/Fieldmap/enterFieldDetails/getBlocks/"+fieldId,
-	           type: "GET",
-	           cache: false,
-	           data: "",
-	           success: function(data) {	  
-	        	   $('#'+getJquerySafeId('userFieldmap.blockId')).select2('destroy');
-	        		   initializeBlockSelect2($.parseJSON(data.allBlocks), [], false);
-	        	   	   Spinner.toggle();
-	        	   	   console.log('here close 2');
-	        	   		loadBlock = false;
-	           }
-	         }
-	     );
-    }
     
-    function loadBlockInformation(blockId){
-    	console.log('load block info' + blockId);
-    	
-    	loadBlockInfo = true;
-    	Spinner.toggle();
-    	$.ajax(
-    			{ url: "/Fieldbook/Fieldmap/enterFieldDetails/getBlockInformation/"+blockId,
-	           type: "GET",
-	           cache: false,
-	           data: "",
-	           success: function(data) {	        	   
-	        		   var blockInfo = $.parseJSON(data.blockInfo);
-	        		   alert('show determine if its new or used block');
-	        		   console.log(blockInfo);
-	        	   	   Spinner.toggle();
-	        	   	   loadBlockInfo = false;
-	           }
-	         }
-	     );
-    }
   
       //]]>
     </script>

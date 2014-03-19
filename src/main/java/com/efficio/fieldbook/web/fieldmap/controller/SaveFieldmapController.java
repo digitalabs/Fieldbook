@@ -11,7 +11,6 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.fieldmap.controller;
 
-import java.util.UUID;
 import javax.annotation.Resource;
 
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
@@ -27,6 +26,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
@@ -57,6 +57,9 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController{
     @Resource
     private FieldbookService fieldbookMiddlewareService;
     
+    @Resource
+    private WorkbenchService workbenchService;
+    
 
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
@@ -82,8 +85,9 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController{
             	
 //                String fieldmapUUID = UUID.randomUUID().toString();
                 updateSelectedFieldMapInfo();
+                int userId = workbenchService.getCurrentIbdbUserId(getCurrentProjectId());
                 fieldbookMiddlewareService.saveOrUpdateFieldmapProperties(
-                        this.userFieldmap.getSelectedFieldMaps());
+                        this.userFieldmap.getSelectedFieldMaps(), userId, userFieldmap.isNew());
             }
             
         } catch(MiddlewareQueryException e) {

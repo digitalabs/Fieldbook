@@ -121,7 +121,7 @@ function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId){
 
     }).on("change", function(){
     	var data = $('#'+searchDivId).select2('data');
-    	console.log('do serch');
+    	//console.log('do serch');
     	 doOntologyTreeHighlight(treeDivId, data.key);
     	 
     });
@@ -1377,7 +1377,7 @@ function addCategoricalValidValue(id, label, description) {
 	
 	//if new valid value, add a delete button
 	if (id < 0 || id == null) {
-		deleteButton= "<button class='btn btn-primary' type='button' onClick='delCatVar($(this))'>" + 
+		deleteButton= "<button class='btn btn-info' type='button' onClick='delCatVar($(this))'>" + 
 						"<span class='glyphicon glyphicon-remove'></span>" +
 					    "</button>";
 		enumerations.push({ 'id' : id,

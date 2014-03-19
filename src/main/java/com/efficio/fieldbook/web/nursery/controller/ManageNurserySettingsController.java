@@ -533,6 +533,7 @@ public class ManageNurserySettingsController extends SettingsController{
     private void assignDefaultValues(ManageSettingsForm form) throws MiddlewareQueryException {
     	List<SettingDetail> nurseryDefaults = new ArrayList<SettingDetail>();
     	List<SettingDetail> plotDefaults = new ArrayList<SettingDetail>();
+    	List<SettingDetail> baselineTraitsList = new ArrayList<SettingDetail>();
     	form.setNurseryLevelVariables(nurseryDefaults);
     	form.setPlotLevelVariables(plotDefaults);
     	form.setSettingName("");
@@ -541,6 +542,8 @@ public class ManageNurserySettingsController extends SettingsController{
     	this.userSelection.setNurseryLevelConditions(nurseryDefaults);
     	plotDefaults = buildDefaultVariables(plotDefaults, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false));
     	this.userSelection.setPlotsLevelList(plotDefaults);
+    	this.userSelection.setBaselineTraitsList(baselineTraitsList);
+    	
     }
     
     /**

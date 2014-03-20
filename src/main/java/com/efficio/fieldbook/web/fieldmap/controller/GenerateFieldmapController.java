@@ -150,7 +150,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
                 
                 FieldPlotLayoutIterator plotIterator = horizontalFieldMapLayoutIterator;
                 this.userFieldmap.setFieldmap(fieldmapService.generateFieldmap(this.userFieldmap, 
-                        plotIterator));
+                        plotIterator, false));
             }
             this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(
                     this.userFieldmap.getSelectedFieldMaps(), this.userFieldmap.isTrial()));
@@ -244,7 +244,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         }
 
 //        List<FieldMapLabel> labels = userFieldmap.getFieldMapLabels();
-        List<FieldMapLabel> labels = userFieldmap.getAllSelectedFieldMapLabels(true);
+        List<FieldMapLabel> labels = userFieldmap.getAllSelectedFieldMapLabelsToBeAdded(true);
 
         //we'll use vertical layouter for now
         /*

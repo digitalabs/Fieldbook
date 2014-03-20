@@ -73,12 +73,16 @@ public class FieldMapUtilityHelper {
     
         if(isStartOk){
         	
+        	
+        	
         	if(!plots[i][j].getDisplayString().equalsIgnoreCase("")){
             	return counter;
             }
-        	FieldMapLabel oldLabel = labels.get(counter);
-        	if(oldLabel.getColumn() != null && oldLabel.getRange() != null)
-        		return counter;
+        	if(counter < labels.size()){
+	        	FieldMapLabel oldLabel = labels.get(counter);
+	        	if(oldLabel.getColumn() != null && oldLabel.getRange() != null)
+	        		return counter;
+        	}
         	
             plots[i][j].setNotStarted(false);
             if(!isDeleted(i,j, deletedPlot)){
@@ -166,8 +170,12 @@ public class FieldMapUtilityHelper {
                 markDeletedCoordinates(plots, possiblyDeletedCoordinates);
                 possiblyDeletedCoordinates.clear();
             }
-            FieldMapTrialInstanceInfo trial = info.getSelectedTrialInstanceByDatasetIdAndGeolocationId(
+            FieldMapTrialInstanceInfo trial = null;
+            
+            if(plot.getDatasetId() != null &&  plot.getGeolocationId() != null){
+            info.getSelectedTrialInstanceByDatasetIdAndGeolocationId(
                                                     plot.getDatasetId(), plot.getGeolocationId());
+            }
             if (trial != null && trial.getOrder() == null) {
                 trial.setOrder(order[0]);
                 order[0] += 1;

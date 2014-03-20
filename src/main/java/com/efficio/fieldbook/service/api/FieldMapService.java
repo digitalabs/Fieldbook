@@ -50,5 +50,5 @@ public interface FieldMapService {
      * @return the plot[][]
      * @throws MiddlewareQueryException the middleware query exception
      */
-    Plot[][] generateFieldmap(UserFieldmap info, FieldPlotLayoutIterator plotIterator) throws MiddlewareQueryException;
+    Plot[][] generateFieldmap(UserFieldmap info, FieldPlotLayoutIterator plotIterator, boolean isSavedAlready) throws MiddlewareQueryException;
 }

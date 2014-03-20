@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.efficio.fieldbook.service.api.FieldMapService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.fieldmap.bean.Plot;
 import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
@@ -83,11 +84,28 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
 	        	this.userFieldmap.setSelectedFieldMaps(fieldmapInfoList);
 	            this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(
 	                    this.userFieldmap.getSelectedFieldMaps(), this.userFieldmap.isTrial()));
-
+	            this.userFieldmap.setSelectedFieldmapListToBeAdded(new SelectedFieldmapList(
+	                    this.userFieldmap.getSelectedFieldMapsToBeAdded(), this.userFieldmap.isTrial()));
 	            this.userFieldmap.setFieldMapLabels(this.userFieldmap.getAllSelectedFieldMapLabels(false));
                 FieldPlotLayoutIterator plotIterator = horizontalFieldMapLayoutIterator;
-                this.userFieldmap.setFieldmap(fieldmapService.generateFieldmap(this.userFieldmap, 
-                        plotIterator));
+                
+                if(this.userFieldmap.getFieldmap() == null)
+                	this.userFieldmap.setFieldmap(fieldmapService.generateFieldmap(this.userFieldmap, 
+                        plotIterator, true));
+                else{
+                	//data clean up
+                	Plot[][] currentPlot = this.userFieldmap.getFieldmap();
+                	for(int i = 0 ; i < currentPlot.length ; i++){
+                		for(int j = 0 ; j < currentPlot[i].length ; j++){
+                			Plot plot = currentPlot[i][j];
+                			if(!plot.isSavedAlready() && !plot.isPlotDeleted()){
+                				//we reset the the plot
+                				plot.setDisplayString("");
+                				
+                			}
+                		}
+                	}
+                }
                 
                 FieldMapTrialInstanceInfo trialInfo = this.userFieldmap.getAnySelectedTrialInstance();
                 if (trialInfo != null) {

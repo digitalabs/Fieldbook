@@ -13,6 +13,7 @@ package com.efficio.fieldbook.web.fieldmap.bean;
 
 import java.io.Serializable;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class Plot.  This would be use track the plots 
  *
@@ -49,6 +50,9 @@ public class Plot implements Serializable{
     
     /** The geolocation id. */
     private Integer geolocationId;
+    
+    /** The is saved already. */
+    private boolean isSavedAlready;
 
     /**
      * Instantiates a new plot.
@@ -226,5 +230,23 @@ public class Plot implements Serializable{
     public void setGeolocationId(Integer geolocationId) {
         this.geolocationId = geolocationId;
     }
+
+	/**
+	 * Checks if is saved already.
+	 *
+	 * @return true, if is saved already
+	 */
+	public boolean isSavedAlready() {
+		return isSavedAlready;
+	}
+
+	/**
+	 * Sets the saved already.
+	 *
+	 * @param isSavedAlready the new saved already
+	 */
+	public void setSavedAlready(boolean isSavedAlready) {
+		this.isSavedAlready = isSavedAlready;
+	}
 
 }

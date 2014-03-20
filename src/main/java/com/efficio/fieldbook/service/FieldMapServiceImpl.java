@@ -52,7 +52,7 @@ public class FieldMapServiceImpl implements FieldMapService{
         //                  , isSerpentine, deletedPlot, labels, true);
         //for testing only
         Plot[][] plots = plotLayouIterator.createFieldMap(col, range
-                , startRange, startCol, isSerpentine, deletedPlot, fieldMapLabels, true);
+                , startRange, startCol, isSerpentine, deletedPlot, fieldMapLabels, true, null);
         //setOtherFieldMapInformation(info, plots, totalColumns, totalRanges, isSerpentine);
         return plots;
     }
@@ -64,13 +64,15 @@ public class FieldMapServiceImpl implements FieldMapService{
      * @see com.efficio.fieldbook.service.api.FieldMapService#generateFieldmap(com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap)
      */
     @Override
-    public Plot[][] generateFieldmap(UserFieldmap info, FieldPlotLayoutIterator plotIterator) 
+    public Plot[][] generateFieldmap(UserFieldmap info, FieldPlotLayoutIterator plotIterator, 
+    		boolean isSavedAlready) 
             throws MiddlewareQueryException {
         
         int totalColumns = info.getNumberOfColumnsInBlock();
         int totalRanges = info.getNumberOfRangesInBlock();
         boolean isSerpentine = (info.getPlantingOrder() == 2);
         Plot[][] plots = new Plot[totalColumns][totalRanges];
+        
         List<FieldMapLabel> labels = info.getFieldMapLabels();
         initializeFieldMapArray(plots, totalColumns, totalRanges);
         for (FieldMapLabel label : labels) {
@@ -88,6 +90,7 @@ public class FieldMapServiceImpl implements FieldMapService{
                     }
                     plot.setDisplayString(FieldMapUtilityHelper.getDisplayString(label, info.isTrial()));
                     plot.setNotStarted(false);
+                    plot.setSavedAlready(isSavedAlready);
                 }
                 else {
                     throw new MiddlewareQueryException(

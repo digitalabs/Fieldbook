@@ -119,7 +119,10 @@ public class FieldbookServiceImpl implements FieldbookService{
 					 if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
 						 if(ref.getId().intValue() == TermId.STUDY_TYPE.getId()
 								 || ref.getId().intValue() == TermId.PM_KEY.getId()
-								 || ref.getId().intValue() == TermId.TRIAL_INSTANCE_FACTOR.getId())
+								 || ref.getId().intValue() == TermId.TRIAL_INSTANCE_FACTOR.getId()
+								 || ref.getId().intValue() == TermId.DATASET_NAME.getId()
+								 || ref.getId().intValue() == TermId.DATASET_TITLE.getId()
+								 || ref.getId().intValue() == TermId.DATASET_TYPE.getId())
 							 continue;
 							 
 				         } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {

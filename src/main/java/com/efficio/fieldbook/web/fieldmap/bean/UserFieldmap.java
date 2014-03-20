@@ -125,6 +125,7 @@ public class UserFieldmap  implements Serializable {
     
     /** The selected fieldmap list. */
     private SelectedFieldmapList selectedFieldmapList;
+    private SelectedFieldmapList selectedFieldmapListToBeAdded;
     
     /** The is generated. */
     private boolean isGenerated;
@@ -260,6 +261,45 @@ public class UserFieldmap  implements Serializable {
                     }
                 }
             }
+        }
+        return allLabels;
+    }
+    
+    public List<FieldMapLabel> getAllSelectedFieldMapLabelsToBeAdded(boolean isSorted) {
+        List<FieldMapLabel> allLabels = new ArrayList<FieldMapLabel>();
+        
+        if (isSorted) {
+            if (getSelectedFieldmapListToBeAdded() != null && !getSelectedFieldmapListToBeAdded().isEmpty()) {
+                for (SelectedFieldmapRow row : getSelectedFieldmapListToBeAdded().getRows()) {
+                    FieldMapTrialInstanceInfo trial = 
+                            getSelectedTrialInstanceByDatasetIdAndGeolocationId(row.getDatasetId(), 
+                                    row.getGeolocationId());
+                    allLabels.addAll(trial.getFieldMapLabels());
+                }
+            }
+        }
+        else {
+            if (getSelectedFieldmapListToBeAdded() != null && !getSelectedFieldmapListToBeAdded().isEmpty()) {
+                for (FieldMapInfo info : getSelectedFieldMapsToBeAdded()) {
+                    if (info.getDatasets() != null && !info.getDatasets().isEmpty()) {
+                        for (FieldMapDatasetInfo dataset : info.getDatasets()) {
+                            if (dataset.getTrialInstances() != null) {
+                                for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
+                                    if (trial.getFieldMapLabels() != null 
+                                            && !trial.getFieldMapLabels().isEmpty()) {
+                                        allLabels.addAll(trial.getFieldMapLabels());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        for(FieldMapLabel fieldMapLabel :allLabels){
+        	fieldMapLabel.setColumn(null);
+        	fieldMapLabel.setRange(null);
         }
         return allLabels;
     }
@@ -965,6 +1005,15 @@ public class UserFieldmap  implements Serializable {
 	public void setSelectedFieldMapsToBeAdded(
 			List<FieldMapInfo> selectedFieldMapsToBeAdded) {
 		this.selectedFieldMapsToBeAdded = selectedFieldMapsToBeAdded;
+	}
+
+	public SelectedFieldmapList getSelectedFieldmapListToBeAdded() {
+		return selectedFieldmapListToBeAdded;
+	}
+
+	public void setSelectedFieldmapListToBeAdded(
+			SelectedFieldmapList selectedFieldmapListToBeAdded) {
+		this.selectedFieldmapListToBeAdded = selectedFieldmapListToBeAdded;
 	}
     
 }

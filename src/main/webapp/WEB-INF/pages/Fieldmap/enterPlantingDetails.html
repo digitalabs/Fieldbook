@@ -174,6 +174,7 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 		var rangeNum = /*[[${fieldmapForm.userFieldmap.numberOfRangesInBlock}]]*/;
 		var rowsPerPlot = /*[[${fieldmapForm.userFieldmap.numberOfRowsPerPlot}]]*/;
 		var deletedPlots = 0;
+		var plantedPlots = 0;
 		var totalNoOfPlots = /*[[${fieldmapForm.userFieldmap.totalNumberOfSelectedPlots}]]*/;
 		var deletedPlotError = /*[[#{fieldmap.starting.coordinates.deleted}]]*/;
 		var totalBlocksError = /*[[#{fieldmap.plots.exceed.blocks.with.deleted}]]*/;
@@ -188,6 +189,7 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	  		var deletedRect = "";
 	  		var insufficientPlots = false;
 	  		deletedPlots = 0;
+	  		plantedPlots = 0;
 	  		$('#field-map td.plot.deleted').each(function(){
 	  			deletedRect += $(this).attr('id');
   				if(deletedRect != ''){
@@ -195,11 +197,20 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
   				}
   				//count number of plots marked as deleted
   				if (isHorizontal) {
-  					checkDeletedPlotsHorizontal($(this).attr('id'));
+  					checkDeletedPlotsHorizontal($(this).attr('id'), true);
   				} else {
-  					checkDeletedPlotsVertical($(this).attr('id'));
+  					checkDeletedPlotsVertical($(this).attr('id'), true);
   				}
-	  		})
+	  		});
+	  		
+	  		$("#field-map td.plot.planted").each(function(){
+	  			//count number of plots planted
+	  			if (isHorizontal) {
+	  				checkDeletedPlotsHorizontal($(this).attr('id'), false);
+  				} else {
+  					checkDeletedPlotsVertical($(this).attr('id'), false);
+  				}
+	  		});
 	  			  			  		
 	  		if(deletedRect != ''){
 	  			deletedRect = deletedRect.substr(0,deletedRect.length-1);

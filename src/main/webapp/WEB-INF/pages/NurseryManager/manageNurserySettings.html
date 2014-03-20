@@ -108,7 +108,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 												th:onclick="'javascript: deleteVariable(1,\'' + ${nurseryLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
 												<input class="cvTermIds" type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 			    							&nbsp;&nbsp;&nbsp;
-			    							<label class="control-label" th:text="${nurseryLevelVariable.variable.name}"></label>:
+			    							<span style="word-wrap: break-word"  class="control-label" th:text="${nurseryLevelVariable.variable.name}"></span>:
 			    						</div>
 			    						<div class="col-xs-7 col-md-7 2nd">
 			    						<!-- <div th:text="${nurseryLevelVariable.variable.cvTermId}"></div> --> 

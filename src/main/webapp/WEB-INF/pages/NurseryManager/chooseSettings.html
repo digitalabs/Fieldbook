@@ -49,7 +49,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 			    				</div>	
 			    				<div class="row nurseryLevelSettings" th:each="nurseryLevelVariable, rowStat : *{nurseryLevelVariables}">
 			    					<div class="col-xs-5 col-md-5 1st">
-	                                        &nbsp;&nbsp;&nbsp;<label class="control-label nursery-level-label" th:text="${nurseryLevelVariable.variable.name}"></label>:
+	                                        &nbsp;&nbsp;&nbsp;<span style="word-wrap: break-word"  class="control-label nursery-level-label" th:text="${nurseryLevelVariable.variable.name}"></span>:
 	                                    </div>
 	                                <div class="col-xs-7 col-md-7 2nd">
 	                                       <!-- <div th:text="${nurseryLevelVariable.variable.cvTermId}"></div> -->

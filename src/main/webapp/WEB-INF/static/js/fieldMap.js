@@ -234,6 +234,11 @@ function validatePlantingDetails() {
 		return false;
 	}
 	
+	if (checkStartingCoordinatesPlanted()) {
+		showMessage(plantedPlotError);
+		return false;
+	}
+	
 	return true;
 }
 
@@ -248,6 +253,22 @@ function checkStartingCoordinates() {
 	});
 	
 	if (isDeleted == 1) {
+		return true;
+	}
+	return false;
+}
+
+function checkStartingCoordinatesPlanted() {
+	var isPlanted = 0;
+	//check if starting coordinate is marked as deleted
+	$('#field-map td.plot.planted').each(function(){
+		if (isDeletedPlotAtStartCoord($(this).attr('id'))) {
+			isPlanted = 1;
+			return false;
+		}
+	});
+	
+	if (isPlanted == 1) {
 		return true;
 	}
 	return false;

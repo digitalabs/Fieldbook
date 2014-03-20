@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.ExportExcelService;
 import com.efficio.fieldbook.service.api.FieldMapService;
+import com.efficio.fieldbook.util.FieldMapUtilityHelper;
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
@@ -253,7 +254,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         */
         //we can add logic here to decide if its vertical or horizontal
         FieldPlotLayoutIterator plotIterator = horizontalFieldMapLayoutIterator;
-        
+        FieldMapUtilityHelper.markedDeletedPlot(this.userFieldmap.getFieldmap(),deletedPlot);
         Plot[][] plots = plotIterator.createFieldMap(col, ranges, startRange, startCol,
                 isSerpentine, deletedPlot, labels, userFieldmap.isTrial(), this.userFieldmap.getFieldmap());
         

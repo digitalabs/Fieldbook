@@ -324,7 +324,7 @@ function getUnavailablePlotsVertical(startingCol, startingRange) {
 }
 
 //count the no. of plots marked as deleted, starting coordinates are considered
-function checkDeletedPlotsHorizontal(id) {
+function checkDeletedPlotsHorizontal(id, isDelete) {
 	var startingCol = $('#'+getJquerySafeId("userFieldmap.startingColumn")).val();
 	var startingRange = $('#'+getJquerySafeId("userFieldmap.startingRange")).val();
 	var plantingOrder = $("input[type='radio']:checked").val();
@@ -335,7 +335,11 @@ function checkDeletedPlotsHorizontal(id) {
 	if (plantingOrder == "1") {
 		//row/column
 		if (range > startingRange || (range == startingRange && col >= startingCol)) {
-			deletedPlots++;
+			if (isDelete) {
+				deletedPlots++;
+			} else {
+				plantedPlots++;
+			}
 		}
 	} else {
 		//serpentine
@@ -343,13 +347,17 @@ function checkDeletedPlotsHorizontal(id) {
 				(range == startingRange && 
 					((col <=startingCol && range%2 == 0) || //left
 						(col >=startingCol && range%2 == 1 )))) { // right
-			deletedPlots++;
+			if (isDelete) {
+				deletedPlots++;
+			} else {
+				plantedPlots++;
+			}
 		}
 	}
 }
 
 //count the no. of plots marked as deleted, starting coordinates are considered
-function checkDeletedPlotsVertical(id) {
+function checkDeletedPlotsVertical(id, isDelete) {
 	var startingCol = $('#'+getJquerySafeId("userFieldmap.startingColumn")).val();
 	var startingRange = $('#'+getJquerySafeId("userFieldmap.startingRange")).val();
 	var plantingOrder = $("input[type='radio']:checked").val();
@@ -360,7 +368,11 @@ function checkDeletedPlotsVertical(id) {
 	if (plantingOrder == "1") {
 		//row/column
 		if (col > startingCol || (col >= startingCol && range >= startingRange)) {
-			deletedPlots++;
+			if (isDelete) {
+				deletedPlots++;
+			} else {
+				plantedPlots++;
+			}
 		}
 	} else {
 		//serpentine
@@ -368,7 +380,11 @@ function checkDeletedPlotsVertical(id) {
 				(col == startingCol && 
 						((col%2 == 0 && range <= startingRange) || //down  
 								(col%2==1 && range >= startingRange)))) { //up
-			deletedPlots++;
+			if (isDelete) {
+				deletedPlots++;
+			} else {
+				plantedPlots++;
+			}
 		}
 	}
 }

@@ -241,7 +241,8 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 	  <input type="hidden" th:field="*{projectId}"/>
 	  <input type="hidden" th:field="*{numberOfRowsPerPlot}"/>
 	  <input type="hidden" th:field="*{userFieldmap.new}"/>
-	  
+	  <input type="hidden" th:field="*{userFieldmap.blockName}"/>
+	  <input type="hidden" th:field="*{userFieldmap.fieldName}"/> 
 	  </form>
 	</div></div>
 </div>

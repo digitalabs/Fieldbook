@@ -201,7 +201,7 @@ th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" 
 						<label class="control-label" ><strong class="sub-content-heading" th:text="#{fieldmap.header.fieldmap}">FIELD MAP</strong></label>
 					</div>
 					<div class="col-xs-2 col-md-2">
-						<div class="btn-group" style="padding-left: 55px">
+						<div class="btn-group" style="float: right; padding-right: 10px">
 							<button style="marging-left: -20px" type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
 						    	<span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;Tools
 						  	</button>
@@ -243,10 +243,11 @@ th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" 
 			<div class=" col-xs-7  col-md-7">
 				<div class="form-group">
 			      <input type="button" onclick="javascript: window.history.back();" href="/Fieldmap/enterPlantingDetails.html" th:href="@{/Fieldmap/plantingDetails/}" th:value="#{common.form.back.text}" value="Back" class="btn btn-default"/>
-			      <!-- input th:if="*{userFieldmap.selectedDatasetId == null}" type="submit" class="btn btn-primary" th:value="#{common.form.finish.text}" value="Finish" / -->
+			      <input th:if="*{userFieldmap.selectedDatasetId == null}" type="submit" class="btn btn-primary" th:value="#{common.form.finish.text}" value="Finish" />
 			      <!-- this is for temporary fix, we wont be saving but woud trigger the export functionality only for now GCP-7295 -->			      
+			      <!-- 
 			      <a id="finishExport" class="btn btn-primary" th:if="*{userFieldmap.selectedDatasetId == null}"  href="javascript: void(0);" th:text="#{common.form.finish.text}">Finish</a>
-			      
+			       -->
 		      	</div>
 		    </div>
 	    </div>

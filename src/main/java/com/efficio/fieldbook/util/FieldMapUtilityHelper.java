@@ -62,6 +62,8 @@ public class FieldMapUtilityHelper {
         int i = col;
         int j = range;
         boolean hasAvailableEntries = true;
+        
+        
         if(counter < labels.size()){
             stringToDisplay = getDisplayString(labels.get(counter), isTrial);
         }else{
@@ -70,6 +72,14 @@ public class FieldMapUtilityHelper {
         //plots[i][j].setUpward(isUpward);
     
         if(isStartOk){
+        	
+        	if(!plots[i][j].getDisplayString().equalsIgnoreCase("")){
+            	return counter;
+            }
+        	FieldMapLabel oldLabel = labels.get(counter);
+        	if(oldLabel.getColumn() != null && oldLabel.getRange() != null)
+        		return counter;
+        	
             plots[i][j].setNotStarted(false);
             if(!isDeleted(i,j, deletedPlot)){
                 plots[i][j].setPlotDeleted(false);

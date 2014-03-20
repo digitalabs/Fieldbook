@@ -27,7 +27,7 @@ public interface FieldPlotLayoutIterator {
      * @return the plot[][]
      */
     Plot[][] createFieldMap(int col, int range, int startRange, int startCol, 
-            boolean isSerpentine, Map deletedPlot, List<FieldMapLabel> labels, boolean isTrial);
+            boolean isSerpentine, Map deletedPlot, List<FieldMapLabel> labels, boolean isTrial, Plot[][] currentPlots);
     
     /**
      * Sets the other field map information.

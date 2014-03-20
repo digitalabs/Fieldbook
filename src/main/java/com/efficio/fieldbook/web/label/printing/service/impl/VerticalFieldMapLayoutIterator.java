@@ -34,9 +34,12 @@ public class VerticalFieldMapLayoutIterator implements
      */
     public Plot[][] createFieldMap(int col, int range, int startRange,
             int startCol, boolean isSerpentine, Map deletedPlot,
-            List<FieldMapLabel> labels, boolean isTrial) {
+            List<FieldMapLabel> labels, boolean isTrial, Plot[][] currentPlots) {
         
     	Plot[][] plots = FieldMapUtilityHelper.initializePlots(col, range);
+    	
+    	if(currentPlots != null)
+			plots = currentPlots;
         //this is how we populate data
         int counter = 0;
         //we need to take note of the start range

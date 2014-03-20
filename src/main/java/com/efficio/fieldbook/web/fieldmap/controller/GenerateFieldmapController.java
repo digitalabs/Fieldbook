@@ -255,7 +255,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         FieldPlotLayoutIterator plotIterator = horizontalFieldMapLayoutIterator;
         
         Plot[][] plots = plotIterator.createFieldMap(col, ranges, startRange, startCol,
-                isSerpentine, deletedPlot, labels, userFieldmap.isTrial());
+                isSerpentine, deletedPlot, labels, userFieldmap.isTrial(), this.userFieldmap.getFieldmap());
         
         userFieldmap.setFieldmap(plots);
         form.setUserFieldmap(userFieldmap);

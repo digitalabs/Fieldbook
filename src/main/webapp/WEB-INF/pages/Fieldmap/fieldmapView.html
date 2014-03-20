@@ -66,7 +66,7 @@
 				<span class="plotLabel" th:if="${not #arrays.isEmpty(#object.userFieldmap.fieldmap) and j-1 &lt; #arrays.length(#object.userFieldmap.fieldmap) and i-1 &lt; #arrays.length(#object.userFieldmap.fieldmap[__${j-1}__])}">
 					<p th:if="${#object.userFieldmap.fieldmap[__${j-1}__][__${i-1}__].plotDeleted == false and #object.userFieldmap.fieldmap[__${j-1}__][__${i-1}__].savedAlready == false}" class="new-plot" th:utext="${#object.userFieldmap.fieldmap[__${j-1}__][__${i-1}__].displayString}"></p>
 					<p th:if="${#object.userFieldmap.fieldmap[__${j-1}__][__${i-1}__].plotDeleted == false and #object.userFieldmap.fieldmap[__${j-1}__][__${i-1}__].savedAlready == true}" th:utext="${#object.userFieldmap.fieldmap[__${j-1}__][__${i-1}__].displayString}"></p>
-					<p th:if="${#object.userFieldmap.fieldmap[__${j-1}__][__${i-1}__].plotDeleted == true}"><label class='alert alert-danger'>X</label></p>
+					<p th:if="${#object.userFieldmap.fieldmap[__${j-1}__][__${i-1}__].plotDeleted == true}" class="deleted-p"><label class='alert alert-danger'>X</label></p>
 				</span> 
 			</td>
 		</tr>
@@ -138,6 +138,12 @@
 	//<![CDATA[
 	    
 	  	$(document).ready(function() {
+	  		
+	  		
+	  		$('.deleted-p').each(function(){
+	  			$(this).parent().parent().addClass('deleted')
+	  		})
+	  		
 	  		if ($("#stepValue").val() == '2') {
 	  			$(".machineDirectionRow").hide();
 	  			$(".new-plot").hide();

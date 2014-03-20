@@ -11,9 +11,13 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.fieldmap.controller;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
+import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.springframework.stereotype.Controller;
@@ -27,6 +31,7 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
+import com.efficio.fieldbook.web.label.printing.service.FieldPlotLayoutIterator;
 
 /**
  * The Class PlantingDetailsController.
@@ -47,6 +52,10 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
     
     @Resource 
     private FieldbookService fieldbookMiddlewareService;
+    
+    @Resource
+    private FieldPlotLayoutIterator horizontalFieldMapLayoutIterator;
+    
    
     /**
      * Show.
@@ -60,12 +69,35 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
     public String show(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model, HttpSession session) {
     	try {
 	        setPrevValues(form);
-	        System.out.println("DATASET ID IS " + userFieldmap.getSelectedDatasetId());
-	        System.out.println("GEOLOCATION ID IS " + userFieldmap.getSelectedGeolocationId());
-	        this.userFieldmap.setSelectedFieldMaps(fieldbookMiddlewareService.getAllFieldMapsInBlockByTrialInstanceId(
-	        		userFieldmap.getSelectedDatasetId(), userFieldmap.getSelectedGeolocationId()));
-            this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(
-                    this.userFieldmap.getSelectedFieldMaps(), this.userFieldmap.isTrial()));
+	        List<FieldMapInfo> infos = fieldbookMiddlewareService.getAllFieldMapsInBlockByBlockId(
+	        		userFieldmap.getBlockId());
+	        
+	        if (infos != null && !infos.isEmpty()) {
+		        this.userFieldmap.setSelectedFieldMaps(infos);
+	            this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(
+	                    this.userFieldmap.getSelectedFieldMaps(), this.userFieldmap.isTrial()));
+
+	            this.userFieldmap.setFieldMapLabels(this.userFieldmap.getAllSelectedFieldMapLabels(false));
+                FieldPlotLayoutIterator plotIterator = horizontalFieldMapLayoutIterator;
+                this.userFieldmap.setFieldmap(fieldmapService.generateFieldmap(this.userFieldmap, 
+                        plotIterator));
+                
+                FieldMapTrialInstanceInfo trialInfo = this.userFieldmap.getAnySelectedTrialInstance();
+                if (trialInfo != null) {
+                    this.userFieldmap.setNumberOfRangesInBlock(trialInfo.getRangesInBlock());
+                    this.userFieldmap.setNumberOfRowsInBlock(trialInfo.getColumnsInBlock(), 
+                            trialInfo.getRowsPerPlot());
+                    this.userFieldmap.setNumberOfEntries(
+                            (long) this.userFieldmap.getAllSelectedFieldMapLabels(false).size()); 
+                    this.userFieldmap.setNumberOfRowsPerPlot(trialInfo.getRowsPerPlot());
+                    this.userFieldmap.setPlantingOrder(trialInfo.getPlantingOrder());
+                    this.userFieldmap.setBlockName(trialInfo.getBlockName());
+                    this.userFieldmap.setFieldName(trialInfo.getFieldName());
+                    this.userFieldmap.setLocationName(trialInfo.getLocationName());
+                    this.userFieldmap.setFieldMapLabels(this.userFieldmap.getAllSelectedFieldMapLabels(false));
+                    this.userFieldmap.setMachineRowCapacity(trialInfo.getMachineRowCapacity());
+                }
+	        }
 	        form.setUserFieldmap(this.userFieldmap);
 	        
     	} catch (Exception e) {
@@ -78,8 +110,6 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
         UserFieldmap info = new UserFieldmap();
         info.setNumberOfRangesInBlock(userFieldmap.getNumberOfRangesInBlock());
         info.setNumberOfRowsInBlock(userFieldmap.getNumberOfRowsInBlock());
-        info.setSelectedDatasetId(userFieldmap.getSelectedDatasetId());
-        info.setSelectedGeolocationId(userFieldmap.getSelectedGeolocationId());
         form.setUserFieldmap(info);
     }
     

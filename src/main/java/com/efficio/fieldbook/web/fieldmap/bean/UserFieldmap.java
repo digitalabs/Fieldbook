@@ -566,6 +566,23 @@ public class UserFieldmap  implements Serializable {
         return null;
     }
     
+    public FieldMapTrialInstanceInfo getAnySelectedTrialInstance() {
+        if (getSelectedFieldMaps() != null) {
+            for (FieldMapInfo info : getSelectedFieldMaps()) {
+                if (info.getDatasets() != null) {
+                    for (FieldMapDatasetInfo dataset : info.getDatasets()) {
+                        if (dataset.getTrialInstances() != null) {
+                            for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
+                                return trial;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Sets the number of rows in block.
      *

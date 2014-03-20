@@ -253,7 +253,7 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	  				$(this).removeClass('deleted');
 	  				$(this).html('');
 	  			}else{
-	  				if($.trim($(this).html()) != ''){
+	  				if($(this).hasClass('planted')){
 		  				return false;
 		  			}
 	  				$(this).addClass('deleted');
@@ -262,8 +262,9 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	  			//console.log($(this).attr('id'));
 	  		});
 			$('#field-map td.plot').each(function(){
-				if(!$(this).hasClass('deleted') && $.trim($(this).html()) != ''){
-	  				$(this).addClass('planted');
+				if(!$(this).hasClass('deleted')){
+					if($.trim($(this).find('.plotLabel p').html()) != '')
+	  					$(this).addClass('planted');
 	  			}
 			}
 	  		);

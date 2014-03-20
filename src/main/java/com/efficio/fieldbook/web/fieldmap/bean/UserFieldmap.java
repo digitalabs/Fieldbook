@@ -115,6 +115,8 @@ public class UserFieldmap  implements Serializable {
     /** The selected field maps. */
     private List<FieldMapInfo> selectedFieldMaps;
     
+    private List<FieldMapInfo> selectedFieldMapsToBeAdded;
+    
     /** The order. */
     private String order;
 
@@ -568,17 +570,22 @@ public class UserFieldmap  implements Serializable {
     
     public FieldMapTrialInstanceInfo getAnySelectedTrialInstance() {
         if (getSelectedFieldMaps() != null) {
-            for (FieldMapInfo info : getSelectedFieldMaps()) {
+        	FieldMapInfo info = getSelectedFieldMaps().get(getSelectedFieldMaps().size()-1);
+            //for (FieldMapInfo info : getSelectedFieldMaps()) {
                 if (info.getDatasets() != null) {
-                    for (FieldMapDatasetInfo dataset : info.getDatasets()) {
+                	FieldMapDatasetInfo dataset = info.getDatasets().get(info.getDatasets().size()-1);
+                    //for (FieldMapDatasetInfo dataset : info.getDatasets()) {
                         if (dataset.getTrialInstances() != null) {
+                        	/*
                             for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
                                 return trial;
                             }
+                            */
+                        	return dataset.getTrialInstances().get(dataset.getTrialInstances().size()-1);
                         }
-                    }
+                    //}
                 }
-            }
+            //}
         }
         return null;
     }
@@ -861,8 +868,10 @@ public class UserFieldmap  implements Serializable {
      */
     public long getTotalNumberOfSelectedPlots() {
         long total = 0;
-        
-        for (FieldMapInfo info : getSelectedFieldMaps()) {
+        List<FieldMapInfo> fieldMapTemp = getSelectedFieldMapsToBeAdded();
+        if(fieldMapTemp == null)
+        	fieldMapTemp = getSelectedFieldMaps();
+        for (FieldMapInfo info : fieldMapTemp) {
             for (FieldMapDatasetInfo dataset : info.getDatasets()) {
                 for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
                     if (isTrial()) {
@@ -947,6 +956,15 @@ public class UserFieldmap  implements Serializable {
 	 */
 	public void setDeletedPlots(List<String> deletedPlots) {
 		this.deletedPlots = deletedPlots;
+	}
+
+	public List<FieldMapInfo> getSelectedFieldMapsToBeAdded() {
+		return selectedFieldMapsToBeAdded;
+	}
+
+	public void setSelectedFieldMapsToBeAdded(
+			List<FieldMapInfo> selectedFieldMapsToBeAdded) {
+		this.selectedFieldMapsToBeAdded = selectedFieldMapsToBeAdded;
 	}
     
 }

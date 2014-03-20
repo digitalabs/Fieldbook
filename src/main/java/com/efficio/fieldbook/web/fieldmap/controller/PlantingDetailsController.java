@@ -11,6 +11,7 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.fieldmap.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -71,9 +72,15 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
 	        setPrevValues(form);
 	        List<FieldMapInfo> infos = fieldbookMiddlewareService.getAllFieldMapsInBlockByBlockId(
 	        		userFieldmap.getBlockId());
-	        
+	        if(this.userFieldmap.getSelectedFieldMapsToBeAdded() == null){
+	        	this.userFieldmap.setSelectedFieldMapsToBeAdded(new ArrayList(this.userFieldmap.getSelectedFieldMaps()));
+	        }
 	        if (infos != null && !infos.isEmpty()) {
-		        this.userFieldmap.setSelectedFieldMaps(infos);
+		       // this.userFieldmap.setSelectedFieldMaps(infos);
+	        	//this is to add the new nusery
+		        List<FieldMapInfo> fieldmapInfoList =  new ArrayList(this.userFieldmap.getSelectedFieldMapsToBeAdded());		        
+		        fieldmapInfoList.addAll(infos);
+	        	this.userFieldmap.setSelectedFieldMaps(fieldmapInfoList);
 	            this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(
 	                    this.userFieldmap.getSelectedFieldMaps(), this.userFieldmap.isTrial()));
 

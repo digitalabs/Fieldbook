@@ -58,6 +58,8 @@ function validateEnterFieldPage(){
 		$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('enable', true);
 		$('#'+getJquerySafeId('numberOfRowsPerPlot')).val($('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('data').id);
 		$('#'+getJquerySafeId('userFieldmap.new')).val(isNewBlock ? "true" : "false");
+		$('#'+getJquerySafeId('userFieldmap.fieldName')).val($('#'+getJquerySafeId('userFieldmap.fieldId')).select2('data').text);
+		$('#'+getJquerySafeId('userFieldmap.blockName')).val($('#'+getJquerySafeId('userFieldmap.blockId')).select2('data').text);
 		$("#enterFieldDetailsForm").submit();
 	}
 	

@@ -12,13 +12,17 @@
 package com.efficio.fieldbook.web.nursery.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.pojos.GermplasmListData;
+import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.service.api.DataImportService;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,6 +80,8 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     
     @Resource
     private MeasurementsGeneratorService measurementsGeneratorService;
+    @Resource
+    private FieldbookService fieldbookMiddlewareService;
     
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
@@ -301,5 +307,29 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             }
         }
         return list;
+    }
+    
+   
+    /**
+     * Gets the all check types.
+     *
+     * @return the all check types
+     */
+    @ResponseBody
+    @RequestMapping(value="/getAllCheckTypes", method = RequestMethod.GET)
+    public Map<String, String> getAllCheckTypes() {
+        Map<String, String> result = new HashMap<String, String>();
+        
+        try {            
+            List<Location> allLocations = fieldbookMiddlewareService.getAllFields();
+            result.put("success", "1");
+            result.put("allCheckTypes", convertObjectToJson(allLocations));
+            
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+            result.put("success", "-1");
+        }
+        
+        return result;
     }
 }

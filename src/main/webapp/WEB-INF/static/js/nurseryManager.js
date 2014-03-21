@@ -1717,3 +1717,64 @@ function validateCreateNursery() {
 	}
 	return true;
 }
+function reloadCheckTypeDropDown(addOnChange){
+	Spinner.toggle();
+	var currentCheckId = $('#checkId').val();
+	$.ajax(
+    	{ url: "/Fieldbook/NurseryManager/importGermplasmList/getAllCheckTypes",
+           type: "GET",
+           cache: false,
+           data: "",
+           success: function(data) {	        	   
+        		   //recreate the select2 combos to get updated list of locations
+        		   $('#checkId').select2('destroy');
+        		   $('#checkValue').val("");
+        		   initializeCheckTypeSelect2($.parseJSON(data.allCheckTypes), [], addOnChange, currentCheckId);	   
+        	   	   Spinner.toggle();
+           }
+         }
+     );
+}
+function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, currentFieldId) {
+	var defaultData = null;
+	$.each(suggestions, function( index, value ) {
+		var dataObj = { 'id' : value.locid,
+			  'text' : value.lname
+		};
+		suggestions_obj.push(dataObj);  
+		
+		if(currentFieldId != '' && currentFieldId == value.locid){
+			defaultData = dataObj;
+		}
+	});		
+	//var defaulData = {'id': 0, 'text': ''};
+	//$('#'+getJquerySafeId('checkId')).select2('data', defaulData);
+	
+	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
+	$('#'+getJquerySafeId('checkId')).select2({
+		//minimumInputLength: 2,
+        query: function (query) {
+          var data = {results: suggestions_obj}, i, j, s;
+          // return the array that matches
+          data.results = $.grep(data.results,function(item,index) {
+            return ($.fn.select2.defaults.matcher(query.term,item.text));
+          
+          });
+            query.callback(data);
+            
+        }
+
+    });
+	
+	if(addOnChange){
+		$('#'+getJquerySafeId('checkId')).on("change", function (){
+	    	
+	    	$('#'+getJquerySafeId("checkValue")).val($('#'+getJquerySafeId("checkId")).select2('data').text);
+	    	
+	    })
+	}
+	if(defaultData != null)
+		$('#'+getJquerySafeId('checkId')).select2('data', defaultData).trigger('change');
+	
+	
+}

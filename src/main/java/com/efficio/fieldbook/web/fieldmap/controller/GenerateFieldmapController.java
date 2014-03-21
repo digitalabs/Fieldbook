@@ -153,7 +153,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
                 
                 FieldPlotLayoutIterator plotIterator = horizontalFieldMapLayoutIterator;
                 this.userFieldmap.setFieldmap(fieldmapService.generateFieldmap(this.userFieldmap, 
-                        plotIterator, false));
+                        plotIterator, false, trialInfo.getDeletedPlots()));
             }
             this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(
                     this.userFieldmap.getSelectedFieldMaps(), this.userFieldmap.isTrial()));

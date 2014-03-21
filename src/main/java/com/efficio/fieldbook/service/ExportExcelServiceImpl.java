@@ -248,10 +248,12 @@ public class ExportExcelServiceImpl implements ExportExcelService{
             headerCell.setCellValue(plotsNeededHeader);
             headerCell.setCellStyle(labelStyle);
             
+            int order = 1;
             for (SelectedFieldmapRow rec : userFieldMap.getSelectedFieldmapList().getRows()) {
                 row = summarySheet.createRow(rowIndex++);
                 columnIndex = 0;
-                row.createCell(columnIndex++).setCellValue(rec.getOrder());
+//                row.createCell(columnIndex++).setCellValue(rec.getOrder());
+                row.createCell(columnIndex++).setCellValue(order++);
                 row.createCell(columnIndex++).setCellValue(rec.getStudyName());
                 if (isTrial) {
                     row.createCell(columnIndex++).setCellValue(rec.getTrialInstanceNo());

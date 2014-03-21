@@ -84,9 +84,11 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
 	        	//this is to add the new nusery
 		        List<FieldMapInfo> fieldmapInfoList =  new ArrayList(this.userFieldmap.getSelectedFieldMapsToBeAdded());		        
 		        if (infos != null && !infos.isEmpty()) {
-		        	fieldmapInfoList.addAll(infos);
+		        	//fieldmapInfoList.addAll(infos);
+		        	infos.addAll(fieldmapInfoList);
 		        }
-	        	this.userFieldmap.setSelectedFieldMaps(fieldmapInfoList);
+	        	//this.userFieldmap.setSelectedFieldMaps(fieldmapInfoList);
+	        	this.userFieldmap.setSelectedFieldMaps(infos);
 	            this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(
 	                    this.userFieldmap.getSelectedFieldMaps(), this.userFieldmap.isTrial()));
 	            this.userFieldmap.setSelectedFieldmapListToBeAdded(new SelectedFieldmapList(
@@ -123,9 +125,9 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
 	                            (long) this.userFieldmap.getAllSelectedFieldMapLabels(false).size()); 
 	                    this.userFieldmap.setNumberOfRowsPerPlot(trialInfo.getRowsPerPlot());
 	                    this.userFieldmap.setPlantingOrder(trialInfo.getPlantingOrder());
-	                    this.userFieldmap.setBlockName(trialInfo.getBlockName());
-	                    this.userFieldmap.setFieldName(trialInfo.getFieldName());
-	                    this.userFieldmap.setLocationName(trialInfo.getLocationName());
+//	                    this.userFieldmap.setBlockName(trialInfo.getBlockName());
+//	                    this.userFieldmap.setFieldName(trialInfo.getFieldName());
+//	                    this.userFieldmap.setLocationName(trialInfo.getLocationName());
 	                    this.userFieldmap.setFieldMapLabels(this.userFieldmap.getAllSelectedFieldMapLabels(false));
 	                    this.userFieldmap.setMachineRowCapacity(trialInfo.getMachineRowCapacity());
 	                    
@@ -160,6 +162,9 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
         info.setNumberOfRangesInBlock(userFieldmap.getNumberOfRangesInBlock());
         info.setNumberOfRowsInBlock(userFieldmap.getNumberOfRowsInBlock());
         info.setNumberOfRowsPerPlot(userFieldmap.getNumberOfRowsPerPlot());
+        info.setLocationName(userFieldmap.getLocationName());
+        info.setFieldName(userFieldmap.getFieldName());
+        info.setBlockName(userFieldmap.getBlockName());
         form.setUserFieldmap(info);
     }
     

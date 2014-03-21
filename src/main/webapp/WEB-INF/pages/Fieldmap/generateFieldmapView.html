@@ -80,7 +80,7 @@ th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" 
 							<th th:text="#{fieldmap.trial.plots.needed}">Plots Needed</th>
 						</thead>
 						<tr  th:each="row, rowInd : *{userFieldmap.selectedFieldmapList.rows}">
-							<td th:class="${rowInd.even}? 'even' : 'odd'" th:text="${row.order}"></td>
+							<td th:class="${rowInd.even}? 'even ordering' : 'odd ordering'" th:text="${row.order}"></td>
 							<td th:class="${rowInd.even}? 'even' : 'odd'" th:text="${row.studyName}"></td>
 							<td th:class="${rowInd.even}? 'even' : 'odd'" th:if="*{userFieldmap.trial == false}" th:text="${row.datasetName}"></td>
 							<td th:class="${rowInd.even}? 'even' : 'odd'" th:if="*{userFieldmap.trial == true}" th:text="${row.trialInstanceNo}"></td>
@@ -306,6 +306,10 @@ th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" 
 		 var url = $('#exportToExcel').attr('href');
 		 $('<iframe src="'+url+'" onload="finishLoading();" frameborder="0">').appendTo('body');
 		 
+	 });
+	 var ordering = 1;
+	 $('.ordering').each(function(){
+		 $(this).html(ordering++);
 	 })
   });
   

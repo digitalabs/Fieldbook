@@ -25,6 +25,7 @@ import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
+import org.generationcp.middleware.pojos.workbench.Tool;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,9 +86,24 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	 * @return the settings list
 	 */
 	@ModelAttribute("settingsList")
-    public List<TemplateSetting> getSettingsList() {
+    public List<TemplateSetting> getNurserySettingsList() {
         try {
         	TemplateSetting templateSettingFilter = new TemplateSetting(null, Integer.valueOf(getCurrentProjectId()), null, getNurseryTool(), null, null);
+        	templateSettingFilter.setIsDefaultToNull();
+            List<TemplateSetting> templateSettingsList = workbenchService.getTemplateSettings(templateSettingFilter);
+            templateSettingsList.add(0, new TemplateSetting(Integer.valueOf(0), Integer.valueOf(getCurrentProjectId()), "", null, "", false));
+            return templateSettingsList;
+
+        }catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+		
+        return null;
+    }
+	@ModelAttribute("settingsTrialList")
+    public List<TemplateSetting> getTrialSettingsList() {
+        try {
+        	TemplateSetting templateSettingFilter = new TemplateSetting(null, Integer.valueOf(getCurrentProjectId()), null, getTrialTool(), null, null);
         	templateSettingFilter.setIsDefaultToNull();
             List<TemplateSetting> templateSettingsList = workbenchService.getTemplateSettings(templateSettingFilter);
             templateSettingsList.add(0, new TemplateSetting(Integer.valueOf(0), Integer.valueOf(getCurrentProjectId()), "", null, "", false));
@@ -109,6 +125,17 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
     public List<StudyDetails> getNurseryList() {
         try {
             List<StudyDetails> nurseries = fieldbookMiddlewareService.getAllLocalNurseryDetails();
+            return nurseries;
+        }catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+                
+        return null;
+    }
+    @ModelAttribute("trialList")
+    public List<StudyDetails> getTrialList() {
+        try {
+            List<StudyDetails> nurseries = fieldbookMiddlewareService.getAllLocalTrialStudyDetails();
             return nurseries;
         }catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);

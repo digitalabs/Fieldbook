@@ -54,7 +54,12 @@ public class ImportGermplasmListForm {
 	private String chooseSpecifyCheck;
 	
 	private String checkValue;
+	
 	private Integer checkId;		
+	
+	private String manageCheckCode;
+	    
+	private String manageCheckValue;
 	
 	
     public String getCheckValue() {
@@ -285,7 +290,21 @@ public class ImportGermplasmListForm {
 		this.chooseSpecifyCheck = chooseSpecifyCheck;
 	}
 
-		
+	public String getManageCheckCode() {
+            return manageCheckCode;
+        }
+        
+        public void setManageCheckCode(String manageCheckCode) {
+            this.manageCheckCode = manageCheckCode;
+        }
+        
+        public String getManageCheckValue() {
+            return manageCheckValue;
+        }
+        
+        public void setManageCheckValue(String manageCheckValue) {
+            this.manageCheckValue = manageCheckValue;
+        }	
     
     
 }

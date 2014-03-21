@@ -8,7 +8,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		<div class="modal-dialog modal-large">
 	    	<div class="modal-content">
 			    	<div class="modal-header">
-		            <button id="closeAddVariablesSettingModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		            <button id="closeManageCheckTypesModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 		           <h4 class="modal-title" id="heading-modal" th:text="#{germplasm.list.manage.check.types}">
 		           	Manage Check Types
 	         		</h4>
@@ -19,31 +19,32 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		         		<div id="page-check-message-modal" class="col-xs-12 col-md-12">
 		         		</div>
 	         		</div>	         		
-					
 					<div class="row form-group">
 						<div class="col-xs-12 col-md-12">
 			         		<div class="col-xs-3  col-md-3 add_top_padding">
-						  		<label class="control-label" th:text="#{fieldmap.add.fields.parent.location}">Parent Location:</label><span class="required">*</span>
+						  		<label class="control-label" th:text="#{nursery.manager.manage.check.types.code}">Code:</label><span class="required">*</span>
 						  	</div>
 						    <div class="col-xs-6 col-md-6">
-						      <input type="hidden" class="form-control select2" placeholder=""/>						      
+						      <input id="comboCheckCode" th:field="*{manageCheckCode}" type="hidden" class="form-control select2" placeholder=""/>						      
 						    </div>
 			        	</div>
 			        </div>
 	         		<div class="row form-group">
 						<div class="col-xs-12 col-md-12">
 			         		<div class="col-xs-3  col-md-3 add_top_padding">
-						  		<label class="control-label" th:text="#{fieldmap.trial.enter.field.name}">Field Name:</label><span class="required">*</span>
+						  		<label class="control-label" th:text="#{nursery.manager.manage.check.types.value}">Value:</label><span class="required">*</span>
 						  	</div>
 						    <div class="col-xs-6 col-md-6">
-						      <input type="text" class="form-control"   placeholder="Field Name"/>						      
+						      <input type="text" th:field="*{manageCheckValue}" class="form-control" placeholder="Field Name"/>						      
 						    </div>
 			        	</div>
 			        </div>
 	         	</div>																							
 	       		<div class="modal-footer addVariable-footer">    	       			
 	       			<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
-	       			<button type="button" id="addFields" class="btn btn-primary" aria-hidden="true" onclick="javascript: validateAddCheckFields();">Save</button>	
+	       			<button type="button" id="addCheckTypes" class="btn btn-primary" aria-hidden="true" th:text="#{common.form.add.text}" onclick="javascript: addNewCheckType();">Add</button>
+	       			<button type="button" id="updateCheckTypes" class="btn btn-primary" th:text="#{common.form.update.text}" onClick="javascript: updateCheckType(); ">.Update</button>    
+      				<button type="button" id="deleteCheckTypes" class="btn btn-primary" th:text="#{common.form.delete.text}" onClick="javascript: deleteCheckType();">.Delete</button>	
        			</div>
 	     	</div><!-- /.modal-content -->
    		</div><!-- /.modal-dialog -->
@@ -54,54 +55,62 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 	
 	
 	<script type='text/javascript' th:inline="javascript">
-	//<![CDATA[    
-
-
-		   
+	//<![CDATA[      
+	        var codeRequiredError = /*[[#{nursery.manager.manage.checks.code.required}]]*/;
+	        var valueRequiredError = /*[[#{nursery.manager.manage.checks.value.required}]]*/;
+	        var valueNotUniqueError = /*[[#{nursery.manager.manage.checks.value.not.unique}]]*/;
+	        
 		   	function showManageCheckTypePopup(){
 		   		$('#page-check-message-modal').html();
 		   		//recreatePopupLocationCombo();
 		   		$('#manageCheckTypesModal').modal({ backdrop: 'static', keyboard: false });		   	
 		   	}
-		   	function validateAddCheckFields(){
-		   		/*
-		   		if($('#parentLocationId').val() == ''){
-		   			showErrorMessage('page-message-modal', parentLocationRequired);
+		   	
+		   	function addNewCheckType() {
+		   		if (validateCheckFields()) {
+		   			var $form = $("#importGermplasmListForm #manageCheckValue, #manageCheckCode");	
+		   			var serializedData = $form.serialize();
+		   			//Spinner.toggle();
+		   			$.ajax({
+		   				url: "/Fieldbook/NurseryManager/importGermplasmList/addCheckTypes",
+		   				type: "POST",
+		   	            data: serializedData,
+		   	            cache: false,
+		   	         	success: function(data) {
+			          	   
+		   	         		//Spinner.toggle();
+		             	}
+		   			});
+		   		}
+		   	}
+		   	
+		   	function validateCheckFields(){
+		   		if ($("#comboCheckCode").select2("data").text == "") {
+		   			showCheckTypeErrorMessage(codeRequiredError);
+		   			return false;
+		   		} else if ($("#manageCheckValue").val() == "") {
+		   			showCheckTypeErrorMessage(valueRequiredError);
+		   			return false;
+		   		} else if (!isValueUnique()) {
+		   			showCheckTypeErrorMessage(valueNotUniqueError);
 		   			return false;
 		   		}
-		   		
-		   		if($('#newFieldName').val() == ''){
-		   			showErrorMessage('page-message-modal', fieldNameRequired);
-		   			return false;
-		   		}
-		   		
-		   		//add
-		   		addNewFieldLocation($('#newFieldName').val(), $('#parentLocationId').val());
-		   		*/
 		   	}
-		   	/*
-		   	function addNewFieldLocation(fieldName, locationId){
-		   		Spinner.toggle();
-		   		var dataForm = $('#add-field-form').serialize()
-		   		$.ajax(
-		   		{ url: "/Fieldbook/Fieldmap/enterFieldDetails/addNewField",
-		   	       type: "POST",
-		   	       data: dataForm,
-		   	       success: function(data) {
-		   	    	   		   	    		   
-		   	    		   showSuccessfulMessage("page-message-modal", fieldAddedSuccessfully);
-		   	    	       $('#newFieldName').val('');
-		   	       },
-		   	       error: function(jqXHR, textStatus, errorThrown){
-		   				console.log("The following error occured: " + textStatus, errorThrown); 
-		   		   }, 
-		   		   complete: function(){  
-		   			   Spinner.toggle();
-		   		   } 
-		   	     }
-		   	 );
+		   	
+		   	function isValueUnique() {
+		   		var isUnique = true;
+		   		$.each(checkTypes_obj, function(index, item) {
+		   			if (item.description == $("#manageCheckValue").val()) {
+		   				isUnique = false;
+		   				return false;
+		   			}
+		   		});
+		   		return isUnique;
 		   	}
-			*/
+		   	
+		   	function showCheckTypeErrorMessage(message) {
+		   		$('#page-check-message-modal').html("<div class='alert alert-danger'>"+ message +"</div>");
+		   	}
     //]]>
     </script>
 </div>

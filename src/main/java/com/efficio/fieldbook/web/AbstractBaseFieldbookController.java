@@ -208,6 +208,6 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
                 LOG.error(e.getMessage(), e);
             }
         }
-        return "";
+        return "[]";
     }
 }

@@ -710,3 +710,6 @@ div.possibleValuesDiv{
 .select2-container {
   width: 260px;
 }
+#plotLevelSettings td, #baselineTraitSettings td{
+	word-wrap: break-word;
+}

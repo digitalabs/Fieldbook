@@ -616,12 +616,14 @@ public class UserFieldmap  implements Serializable {
                 	FieldMapDatasetInfo dataset = info.getDatasets().get(info.getDatasets().size()-1);
                     //for (FieldMapDatasetInfo dataset : info.getDatasets()) {
                         if (dataset.getTrialInstances() != null) {
-                        	/*
+                        	
                             for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
-                                return trial;
+                            	if (trial.getBlockId() != null) {
+                            		return trial;
+                            	}
                             }
-                            */
-                        	return dataset.getTrialInstances().get(dataset.getTrialInstances().size()-1);
+                            
+                        	//return dataset.getTrialInstances().get(dataset.getTrialInstances().size()-1);
                         }
                     //}
                 }

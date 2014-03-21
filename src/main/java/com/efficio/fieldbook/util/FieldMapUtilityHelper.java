@@ -189,7 +189,7 @@ public class FieldMapUtilityHelper {
             FieldMapTrialInstanceInfo trial = null;
             
             if(plot.getDatasetId() != null &&  plot.getGeolocationId() != null){
-            info.getSelectedTrialInstanceByDatasetIdAndGeolocationId(
+            	trial = info.getSelectedTrialInstanceByDatasetIdAndGeolocationId(
                                                     plot.getDatasetId(), plot.getGeolocationId());
             }
             if (trial != null && trial.getOrder() == null) {

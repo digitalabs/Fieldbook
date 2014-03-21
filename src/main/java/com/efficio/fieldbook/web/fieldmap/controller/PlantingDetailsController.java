@@ -73,6 +73,10 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
     public String show(@ModelAttribute("fieldmapForm") FieldmapForm form, Model model, HttpSession session) {
     	try {
 	        setPrevValues(form);
+	        
+	        System.out.println("BLOCK ID " + userFieldmap.getBlockId());
+	        System.out.println("SELECTED FIELD MAPS " + userFieldmap.getSelectedFieldMaps().size());
+	        
 	        List<FieldMapInfo> infos = fieldbookMiddlewareService.getAllFieldMapsInBlockByBlockId(
 		        		userFieldmap.getBlockId());
 	        if(this.userFieldmap.getSelectedFieldMapsToBeAdded() == null){
@@ -82,13 +86,19 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
 //	        if (infos != null && !infos.isEmpty()) {
 		       // this.userFieldmap.setSelectedFieldMaps(infos);
 	        	//this is to add the new nusery
-		        List<FieldMapInfo> fieldmapInfoList =  new ArrayList(this.userFieldmap.getSelectedFieldMapsToBeAdded());		        
+		        List<FieldMapInfo> fieldmapInfoList = new ArrayList<FieldMapInfo>();  
+        		System.out.println("SELECTED FIELD MAPS TO BE ADDED : " + userFieldmap.getSelectedFieldMapsToBeAdded().size());
+        		
 		        if (infos != null && !infos.isEmpty()) {
-		        	//fieldmapInfoList.addAll(infos);
-		        	infos.addAll(fieldmapInfoList);
+		        	System.out.println("FROM DB " + infos.size());
+		        	fieldmapInfoList.addAll(infos);
+		        	//infos.addAll(fieldmapInfoList);
 		        }
-	        	//this.userFieldmap.setSelectedFieldMaps(fieldmapInfoList);
-	        	this.userFieldmap.setSelectedFieldMaps(infos);
+        		fieldmapInfoList.addAll(this.userFieldmap.getSelectedFieldMapsToBeAdded());
+        		setOrder(fieldmapInfoList);
+
+        		this.userFieldmap.setSelectedFieldMaps(fieldmapInfoList);
+	        	//this.userFieldmap.setSelectedFieldMaps(infos);
 	            this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(
 	                    this.userFieldmap.getSelectedFieldMaps(), this.userFieldmap.isTrial()));
 	            this.userFieldmap.setSelectedFieldmapListToBeAdded(new SelectedFieldmapList(
@@ -209,6 +219,19 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
      */
     public UserFieldmap getUserFieldmap() {
         return this.userFieldmap;
+    }
+    
+    private void setOrder(List<FieldMapInfo> info) {
+    	int order = 1;
+    	if (info != null && !info.isEmpty()) {
+    		for (FieldMapInfo rec : info) {
+    			for (FieldMapDatasetInfo dataset : rec.getDatasets()) {
+    				for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
+    					trial.setOrder(order++);
+    				}
+    			}
+    		}
+    	}
     }
        
 }

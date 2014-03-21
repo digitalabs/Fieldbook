@@ -9,7 +9,7 @@
  * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
  * 
  *******************************************************************************/
-package com.efficio.fieldbook.web.nursery.controller;
+package com.efficio.fieldbook.web.trial.controller;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,7 +47,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.bean.SettingVariable;
-import com.efficio.fieldbook.web.nursery.form.ManageSettingsForm;
+import com.efficio.fieldbook.web.nursery.controller.SettingsController;
+import com.efficio.fieldbook.web.trial.form.ManageSettingsForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
@@ -56,14 +57,14 @@ import com.efficio.fieldbook.web.util.TreeViewUtil;
  * The Class SaveAdvanceNurseryController.
  */
 @Controller
-@RequestMapping(ManageNurserySettingsController.URL)
-public class ManageNurserySettingsController extends SettingsController{
+@RequestMapping(ManageTrialSettingsController.URL)
+public class ManageTrialSettingsController extends SettingsController{
 
     /** The Constant URL. */
-    public static final String URL = "/NurseryManager/manageNurserySettings";
+    public static final String URL = "/TrialManager/manageTrialSettings";
     
     /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(ManageNurserySettingsController.class);    
+    private static final Logger LOG = LoggerFactory.getLogger(ManageTrialSettingsController.class);    
     
     
     @Resource
@@ -74,7 +75,7 @@ public class ManageNurserySettingsController extends SettingsController{
      */
     @Override
     public String getContentName() {
-        return "NurseryManager/manageNurserySettings";
+        return "TrialManager/manageTrialSettings";
     }                    
     
     private void setFormStaticData(ManageSettingsForm form){
@@ -130,7 +131,7 @@ public class ManageNurserySettingsController extends SettingsController{
         	TemplateSetting templateSetting = templateSettingsList.get(0); //always 1
         	Dataset dataset = SettingsUtil.parseXmlToDatasetPojo(templateSetting.getConfiguration());
         	SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
-        	form.setNurseryLevelVariables(userSelection.getNurseryLevelConditions());
+        	form.setTrialLevelVariables(userSelection.getTrialLevelConditions());
         	form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
         	form.setPlotLevelVariables(userSelection.getPlotsLevelList());
         	form.setIsDefault(templateSetting.getIsDefault().intValue() == 1 ? true : false);
@@ -155,10 +156,10 @@ public class ManageNurserySettingsController extends SettingsController{
     public String saveSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form
             , Model model, HttpSession session) throws MiddlewareQueryException{
 		//will do the saving here
-    	Dataset dataset = SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, form.getSettingName(), form.getNurseryLevelVariables(), form.getPlotLevelVariables(), form.getBaselineTraitVariables(), userSelection);
+    	Dataset dataset = SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, form.getSettingName(), form.getTrialLevelVariables(), form.getPlotLevelVariables(), form.getBaselineTraitVariables(), userSelection);
     	String xml = SettingsUtil.generateSettingsXml(dataset);
     	Integer tempateSettingId = form.getSelectedSettingId() > 0 ? Integer.valueOf(form.getSelectedSettingId()) : null;
-    	TemplateSetting templateSetting = new TemplateSetting(tempateSettingId, Integer.valueOf(getCurrentProjectId()), dataset.getName(), getNurseryTool(), xml, Boolean.valueOf(form.getIsDefault())) ;
+    	TemplateSetting templateSetting = new TemplateSetting(tempateSettingId, Integer.valueOf(getCurrentProjectId()), dataset.getName(), getTrialTool(), xml, Boolean.valueOf(form.getIsDefault())) ;
     	int tempateSettingsId = templateSetting.getTemplateSettingId() != null ? templateSetting.getTemplateSettingId() : 0;
     	
     	if(templateSetting.getTemplateSettingId() == null){
@@ -195,13 +196,13 @@ public class ManageNurserySettingsController extends SettingsController{
         
     	    	
     	setupDefaultScreenValues(form, getDefaultTemplateSettingFilter());
-    	model.addAttribute("settingsList", getNurserySettingsList());
+    	model.addAttribute("settingsTrialList", getTrialSettingsList());
     	//setupFormData(form);
     	return super.showAjaxPage(model, getContentName() );
     }
     
     private TemplateSetting getDefaultTemplateSettingFilter(){
-    	return new TemplateSetting(null, Integer.valueOf(getCurrentProjectId()), null, getNurseryTool(), null, true);
+    	return new TemplateSetting(null, Integer.valueOf(getCurrentProjectId()), null, getTrialTool(), null, true);
     }
     /**
      * View settings.
@@ -219,13 +220,13 @@ public class ManageNurserySettingsController extends SettingsController{
 		//will do the saving here
     	setFormStaticData(form);
     	if(templateSettingId != 0){    	
-	    	TemplateSetting templateSettingFilter = new TemplateSetting(Integer.valueOf(templateSettingId), Integer.valueOf(getCurrentProjectId()), null, getNurseryTool(), null, null);
+	    	TemplateSetting templateSettingFilter = new TemplateSetting(Integer.valueOf(templateSettingId), Integer.valueOf(getCurrentProjectId()), null, getTrialTool(), null, null);
 	    	templateSettingFilter.setIsDefaultToNull();
 	    	List<TemplateSetting> templateSettings = workbenchService.getTemplateSettings(templateSettingFilter);
 	    	TemplateSetting templateSetting = templateSettings.get(0); //always 1
 	    	Dataset dataset = SettingsUtil.parseXmlToDatasetPojo(templateSetting.getConfiguration());
 	    	SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
-	    	form.setNurseryLevelVariables(userSelection.getNurseryLevelConditions());
+	    	form.setTrialLevelVariables(userSelection.getTrialLevelConditions());
 	    	form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
 	    	form.setPlotLevelVariables(userSelection.getPlotsLevelList());
 	    	form.setIsDefault(templateSetting.getIsDefault().intValue() == 1 ? true : false);
@@ -235,18 +236,18 @@ public class ManageNurserySettingsController extends SettingsController{
     		assignDefaultValues(form);
     	}
     	model.addAttribute("manageSettingsForm", form);
-    	model.addAttribute("settingsList", getNurserySettingsList());
+    	model.addAttribute("settingsTrialList", getTrialSettingsList());
     	//setupFormData(form);
         return super.showAjaxPage(model, getContentName() );
     }
     
     
     
-    @RequestMapping(value="/nursery/{nurseryId}", method = RequestMethod.GET)
-    public String useExistingNursery(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, @PathVariable int nurseryId
+    @RequestMapping(value="/trial/{trialId}", method = RequestMethod.GET)
+    public String useExistingNursery(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, @PathVariable int trialId
             , Model model, HttpSession session) throws MiddlewareQueryException{
-        if(nurseryId != 0){     
-            Workbook workbook = fieldbookMiddlewareService.getNurseryVariableSettings(nurseryId);
+        if(trialId != 0){     
+            Workbook workbook = fieldbookMiddlewareService.getNurseryVariableSettings(trialId);
             Dataset dataset = SettingsUtil.convertWorkbookToXmlDataset(workbook);
             SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
             
@@ -254,7 +255,7 @@ public class ManageNurserySettingsController extends SettingsController{
             List<SettingDetail> nurseryLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
                     buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true), 
                     buildRequiredVariablesFlag(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
-                    userSelection.getNurseryLevelConditions(), true);
+                    userSelection.getTrialLevelConditions(), true);
             
             //plot-level
             List<SettingDetail> plotLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()), 
@@ -262,9 +263,9 @@ public class ManageNurserySettingsController extends SettingsController{
                     buildRequiredVariablesFlag(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()), 
                     userSelection.getPlotsLevelList(), false);
             
-            userSelection.setNurseryLevelConditions(nurseryLevelConditions);
+            userSelection.setTrialLevelConditions(nurseryLevelConditions);
             userSelection.setPlotsLevelList(plotLevelConditions);
-            form.setNurseryLevelVariables(userSelection.getNurseryLevelConditions());
+            form.setTrialLevelVariables(userSelection.getTrialLevelConditions());
             form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
             form.setPlotLevelVariables(userSelection.getPlotsLevelList());
             form.setIsDefault(false);
@@ -272,8 +273,8 @@ public class ManageNurserySettingsController extends SettingsController{
         }
         
         model.addAttribute("manageSettingsForm", form);
-        model.addAttribute("settingsList", getNurserySettingsList());
-        model.addAttribute("nurseryList", getNurseryList());
+        model.addAttribute("settingsTrialList", getTrialSettingsList());
+        model.addAttribute("trialList", getTrialList());
         setFormStaticData(form);
         //setupFormData(form);
         return super.showAjaxPage(model, getContentName() );
@@ -285,7 +286,7 @@ public class ManageNurserySettingsController extends SettingsController{
 		//will do the saving here
     	
     	if(templateSettingId != 0){    	
-	    	TemplateSetting templateSettingFilter = new TemplateSetting(Integer.valueOf(templateSettingId), Integer.valueOf(getCurrentProjectId()), null, getNurseryTool(), null, null);
+	    	TemplateSetting templateSettingFilter = new TemplateSetting(Integer.valueOf(templateSettingId), Integer.valueOf(getCurrentProjectId()), null, getTrialTool(), null, null);
 	    	templateSettingFilter.setIsDefaultToNull();
 	    	List<TemplateSetting> templateSettings = workbenchService.getTemplateSettings(templateSettingFilter);
 	    	TemplateSetting templateSetting = templateSettings.get(0); //always 1
@@ -308,7 +309,7 @@ public class ManageNurserySettingsController extends SettingsController{
 	    	//we need to make sure name is unique
 	    	
 	    	//then we make a copy
-	    	TemplateSetting newTemplateSetting = new TemplateSetting(null, Integer.valueOf(getCurrentProjectId()), newSettingsName, getNurseryTool(), templateSetting.getConfiguration(), false);
+	    	TemplateSetting newTemplateSetting = new TemplateSetting(null, Integer.valueOf(getCurrentProjectId()), newSettingsName, getTrialTool(), templateSetting.getConfiguration(), false);
 	    	int copiedTemplateSettingId = workbenchService.addTemplateSetting(newTemplateSetting);
 	    	
 	    	return viewSettings(form, copiedTemplateSettingId, model, session);
@@ -316,7 +317,7 @@ public class ManageNurserySettingsController extends SettingsController{
     		assignDefaultValues(form);
     	}
     	model.addAttribute("manageSettingsForm", form);
-    	model.addAttribute("settingsList", getNurserySettingsList());
+    	model.addAttribute("settingsTrialList", getTrialSettingsList());
     	setFormStaticData(form);
     	//setupFormData(form);
         return super.showAjaxPage(model, getContentName() );
@@ -445,7 +446,7 @@ public class ManageNurserySettingsController extends SettingsController{
             @PathVariable int mode, @PathVariable int variableId) {
         if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
             //form.getNurseryLevelVariables()
-            deleteVariableInSession(userSelection.getNurseryLevelConditions(), variableId);
+            deleteVariableInSession(userSelection.getTrialLevelConditions(), variableId);
         } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
             deleteVariableInSession(userSelection.getPlotsLevelList(), variableId);
         } else {
@@ -534,12 +535,12 @@ public class ManageNurserySettingsController extends SettingsController{
     	List<SettingDetail> nurseryDefaults = new ArrayList<SettingDetail>();
     	List<SettingDetail> plotDefaults = new ArrayList<SettingDetail>();
     	List<SettingDetail> baselineTraitsList = new ArrayList<SettingDetail>();
-    	form.setNurseryLevelVariables(nurseryDefaults);
+    	form.setTrialLevelVariables(nurseryDefaults);
     	form.setPlotLevelVariables(plotDefaults);
     	form.setSettingName("");
     	form.setIsDefault(false);
     	nurseryDefaults = buildDefaultVariables(nurseryDefaults, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true));
-    	this.userSelection.setNurseryLevelConditions(nurseryDefaults);
+    	this.userSelection.setTrialLevelConditions(nurseryDefaults);
     	plotDefaults = buildDefaultVariables(plotDefaults, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false));
     	this.userSelection.setPlotsLevelList(plotDefaults);
     	this.userSelection.setBaselineTraitsList(baselineTraitsList);
@@ -554,7 +555,7 @@ public class ManageNurserySettingsController extends SettingsController{
      */
     private List<SettingDetail> getSettingDetailList(int mode) {
     	if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
-            return userSelection.getNurseryLevelConditions();
+            return userSelection.getTrialLevelConditions();
         } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
             return userSelection.getPlotsLevelList();
         } else if (mode == AppConstants.SEGMENT_TRAITS.getInt()) {
@@ -575,17 +576,17 @@ public class ManageNurserySettingsController extends SettingsController{
     private String addNewSettingDetails(ManageSettingsForm form, int mode
             , List<SettingDetail> newDetails) throws Exception {
     	if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
-            if (form.getNurseryLevelVariables() == null) {
-            	form.setNurseryLevelVariables(newDetails);
+            if (form.getTrialLevelVariables() == null) {
+            	form.setTrialLevelVariables(newDetails);
             }
             else {
-            	form.getNurseryLevelVariables().addAll(newDetails);
+            	form.getTrialLevelVariables().addAll(newDetails);
             }
-            if (userSelection.getNurseryLevelConditions() == null) {
-            	userSelection.setNurseryLevelConditions(newDetails);
+            if (userSelection.getTrialLevelConditions() == null) {
+            	userSelection.setTrialLevelConditions(newDetails);
             }
             else {
-            	userSelection.getNurseryLevelConditions().addAll(newDetails);
+            	userSelection.getTrialLevelConditions().addAll(newDetails);
             }
         } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
             if (form.getPlotLevelVariables() == null) {

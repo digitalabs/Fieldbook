@@ -141,6 +141,16 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
 		}
     	return tool;
     }
+    public Tool getTrialTool(){
+    	Tool tool = null;
+		try {
+			tool = workbenchService.getToolWithName(
+			        AppConstants.TOOL_NAME_TRIAL_MANAGER_WEB.getString());
+		} catch (MiddlewareQueryException e) {
+		    LOG.error(e.getMessage(), e);
+		}
+    	return tool;
+    }
     
     /**
      * Base functionality for displaying the page.

@@ -115,7 +115,7 @@ public class CreateNurseryController extends SettingsController {
         }
         setFormStaticData(form);
         model.addAttribute("createNurseryForm", form);
-        model.addAttribute("settingsList", getSettingsList());
+        model.addAttribute("settingsList", getNurserySettingsList());
         model.addAttribute("nurseryList", getNurseryList());
         //setupFormData(form);
         return super.showAjaxPage(model, URL_SETTINGS);

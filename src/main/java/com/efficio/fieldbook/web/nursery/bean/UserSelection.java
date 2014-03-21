@@ -64,6 +64,7 @@ public class UserSelection implements Serializable {
     
     /**  Nursery level conditions in Manage Settings. */
     private List<SettingDetail> nurseryLevelConditions;
+    private List<SettingDetail> trialLevelConditions;
     
     /**  Plot level factors in Manage Settings. */
     private List<SettingDetail> plotsLevelList;
@@ -401,6 +402,14 @@ public class UserSelection implements Serializable {
 	 */
 	public void setTraitRefList(List<TraitClassReference> traitRefList) {
 		this.traitRefList = traitRefList;
+	}
+
+	public List<SettingDetail> getTrialLevelConditions() {
+		return trialLevelConditions;
+	}
+
+	public void setTrialLevelConditions(List<SettingDetail> trialLevelConditions) {
+		this.trialLevelConditions = trialLevelConditions;
 	}
 
 }

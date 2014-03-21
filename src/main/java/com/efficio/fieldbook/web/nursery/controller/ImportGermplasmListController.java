@@ -23,6 +23,9 @@ import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.OntologyService;
+import org.generationcp.middleware.domain.dms.Enumeration;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,6 +85,10 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     private MeasurementsGeneratorService measurementsGeneratorService;
     @Resource
     private FieldbookService fieldbookMiddlewareService;
+    
+    /** The ontology service. */
+    @Resource
+    private OntologyService ontologyService;
     
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
@@ -321,7 +328,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         Map<String, String> result = new HashMap<String, String>();
         
         try {            
-            List<Location> allLocations = fieldbookMiddlewareService.getAllFields();
+            List<Enumeration> allLocations = ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
             result.put("success", "1");
             result.put("allCheckTypes", convertObjectToJson(allLocations));
             
@@ -331,5 +338,20 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         }
         
         return result;
+    }
+    
+    /**
+     * Gets the check type list.
+     *
+     * @return the check type list
+     */
+    @ModelAttribute("checkTypes")
+    public List<Enumeration> getCheckTypes() {
+        try {
+            return ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        return null;
     }
 }

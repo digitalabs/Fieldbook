@@ -1729,52 +1729,64 @@ function reloadCheckTypeDropDown(addOnChange){
         		   //recreate the select2 combos to get updated list of locations
         		   $('#checkId').select2('destroy');
         		   $('#checkValue').val("");
-        		   initializeCheckTypeSelect2($.parseJSON(data.allCheckTypes), [], addOnChange, currentCheckId);	   
+        		   initializeCheckTypeSelect2($.parseJSON(data.allCheckTypes), [], addOnChange, currentCheckId, getJquerySafeId('checkId'));	   
         	   	   Spinner.toggle();
            }
          }
      );
 }
-function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, currentFieldId) {
+function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, currentFieldId, comboName) {
 	var defaultData = null;
-	$.each(suggestions, function( index, value ) {
-		var dataObj = { 'id' : value.locid,
-			  'text' : value.lname
-		};
-		suggestions_obj.push(dataObj);  
-		
-		if(currentFieldId != '' && currentFieldId == value.locid){
-			defaultData = dataObj;
-		}
-	});		
-	//var defaulData = {'id': 0, 'text': ''};
-	//$('#'+getJquerySafeId('checkId')).select2('data', defaulData);
+	if (suggestions != null) {
+		$.each(suggestions, function( index, value ) {
+			suggestions_obj.push({ 'id' : value.id,
+				  'text' : value.name,
+				  'description' : value.description
+			});  
+			if(currentFieldId != '' && currentFieldId == value.locid){
+				defaultData = dataObj;
+			}
+		});
+	}
 	
 	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
-	$('#'+getJquerySafeId('checkId')).select2({
-		//minimumInputLength: 2,
-        query: function (query) {
-          var data = {results: suggestions_obj}, i, j, s;
-          // return the array that matches
-          data.results = $.grep(data.results,function(item,index) {
-            return ($.fn.select2.defaults.matcher(query.term,item.text));
-          
-          });
-            query.callback(data);
-            
-        }
-
-    });
+	if (comboName == "comboCheckCode") {
+		$('#'+comboName).select2({
+	        query: function (query) {
+	          var data = {results: suggestions_obj}, i, j, s;
+	          // return the array that matches
+	          data.results = $.grep(data.results,function(item,index) {
+	            return ($.fn.select2.defaults.matcher(query.term,item.text));   
+	          });
+	            query.callback(data);
+	        }
 	
-	if(addOnChange){
-		$('#'+getJquerySafeId('checkId')).on("change", function (){
-	    	
-	    	$('#'+getJquerySafeId("checkValue")).val($('#'+getJquerySafeId("checkId")).select2('data').text);
-	    	
-	    })
+	    }).on("change", function(){
+	    	$("#manageCheckValue").val($("#comboCheckCode").select2("data").description);
+	    	$("#updateCheckTypes").show();
+			$("#deleteCheckTypes").show();
+			$("#addCheckTypes").hide();
+	    });
+	} else {
+		$('#'+comboName).select2({
+	        query: function (query) {
+	          var data = {results: suggestions_obj}, i, j, s;
+	          // return the array that matches
+	          data.results = $.grep(data.results,function(item,index) {
+	            return ($.fn.select2.defaults.matcher(query.term,item.text)); 
+	          });
+	            query.callback(data);
+	        }
+	    });
+		
+		if(addOnChange){
+			$('#'+getJquerySafeId('checkId')).on("change", function (){
+		    	
+		    	$('#'+getJquerySafeId("checkValue")).val($('#'+getJquerySafeId("checkId")).select2('data').text);
+		    	
+		    })
+		}
+		if(defaultData != null)
+			$('#'+getJquerySafeId('checkId')).select2('data', defaultData).trigger('change');
 	}
-	if(defaultData != null)
-		$('#'+getJquerySafeId('checkId')).select2('data', defaultData).trigger('change');
-	
-	
 }

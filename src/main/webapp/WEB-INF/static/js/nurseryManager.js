@@ -1736,6 +1736,7 @@ function reloadCheckTypeDropDown(addOnChange){
      );
 }
 function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, currentFieldId, comboName) {
+	
 	var defaultData = null;
 	if (suggestions != null) {
 		$.each(suggestions, function( index, value ) {
@@ -1743,12 +1744,11 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, c
 				  'text' : value.name,
 				  'description' : value.description
 			});  
-			if(currentFieldId != '' && currentFieldId == value.locid){
+			if(currentFieldId != '' && currentFieldId == value.id){
 				defaultData = dataObj;
 			}
 		});
 	}
-	
 	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
 	if (comboName == "comboCheckCode") {
 		$('#'+comboName).select2({

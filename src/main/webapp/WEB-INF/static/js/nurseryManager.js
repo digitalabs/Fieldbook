@@ -1752,15 +1752,17 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, c
 	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
 	if (comboName == "comboCheckCode") {
 		$('#'+comboName).select2({
-	        query: function (query) {
-	          var data = {results: suggestions_obj}, i, j, s;
-	          // return the array that matches
-	          data.results = $.grep(data.results,function(item,index) {
-	            return ($.fn.select2.defaults.matcher(query.term,item.text));   
-	          });
-	            query.callback(data);
-	        }
-	
+			query: function (query) {	
+		          var data = {results: sortByKey(suggestions_obj, "text")}, i, j, s;
+		          // return the array that matches
+		          data.results = $.grep(data.results,function(item,index) {
+		            return ($.fn.select2.defaults.matcher(query.term,item.text));
+		          });
+		          if (data.results.length === 0){
+		        	  data.results.unshift({id:query.term,text:query.term});	        	 
+		          } 
+		            query.callback(data);
+		        }
 	    }).on("change", function(){
 	    	$("#manageCheckValue").val($("#comboCheckCode").select2("data").description);
 	    	$("#updateCheckTypes").show();

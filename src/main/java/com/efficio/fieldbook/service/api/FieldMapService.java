@@ -44,6 +44,19 @@ public interface FieldMapService {
             FieldPlotLayoutIterator plotLayouIterator);
     
     /**
+     * Generate Fieldmap.
+     * 
+     * @param info
+     * @param plotIterator
+     * @param isSavedAlready
+     * @return
+     * @throws MiddlewareQueryException
+     */
+    public Plot[][] generateFieldmap(UserFieldmap info, FieldPlotLayoutIterator plotIterator, 
+    		boolean isSavedAlready, List<String> deletedPlots) 
+            throws MiddlewareQueryException;
+    
+    /**
      * Generate fieldmap.
      *
      * @param info the info

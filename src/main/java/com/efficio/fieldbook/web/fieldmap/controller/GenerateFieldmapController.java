@@ -16,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -232,7 +234,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         int ranges = userFieldmap.getNumberOfRangesInBlock();
         int rowsPerPlot = userFieldmap.getNumberOfRowsPerPlot();
         boolean isSerpentine = userFieldmap.getPlantingOrder() == 2;
-        
+
         int col = rows / rowsPerPlot;
         //should list here the deleted plot in col-range format
         Map deletedPlot = new HashMap();
@@ -243,6 +245,9 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
                 deletedPlot.put(markedCell, markedCell);
             }
         }
+
+        markDeletedPlots(form, form.getMarkedCells());
+        
 
 //        List<FieldMapLabel> labels = userFieldmap.getFieldMapLabels();
         List<FieldMapLabel> labels = userFieldmap.getAllSelectedFieldMapLabelsToBeAdded(true);
@@ -320,4 +325,18 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         form.setUserFieldmap(info);
     }
     
+    private void markDeletedPlots(FieldmapForm form, String deletedPlots) {
+    	StringBuilder dpString = new StringBuilder();
+    	List<String> dpform = new ArrayList<String>();
+    	if (deletedPlots != null) {
+    		String[] dps = deletedPlots.split(",");
+    		for (String deletedPlot : dps) {
+    			String[] coordinates = deletedPlot.split("_");
+    			if (coordinates.length == 2 && NumberUtils.isNumber(coordinates[0]) && NumberUtils.isNumber(coordinates[1])) {
+    				dpform.add(coordinates[0] + "," + coordinates[1]);
+    			}
+    		}
+    	}
+    	this.userFieldmap.setDeletedPlots(dpform);
+    }
 }

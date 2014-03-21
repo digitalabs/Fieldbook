@@ -17,7 +17,9 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
+import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -72,15 +74,18 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
     	try {
 	        setPrevValues(form);
 	        List<FieldMapInfo> infos = fieldbookMiddlewareService.getAllFieldMapsInBlockByBlockId(
-	        		userFieldmap.getBlockId());
+		        		userFieldmap.getBlockId());
 	        if(this.userFieldmap.getSelectedFieldMapsToBeAdded() == null){
 	        	this.userFieldmap.setSelectedFieldMapsToBeAdded(new ArrayList(this.userFieldmap.getSelectedFieldMaps()));
 	        }
-	        if (infos != null && !infos.isEmpty()) {
+
+//	        if (infos != null && !infos.isEmpty()) {
 		       // this.userFieldmap.setSelectedFieldMaps(infos);
 	        	//this is to add the new nusery
 		        List<FieldMapInfo> fieldmapInfoList =  new ArrayList(this.userFieldmap.getSelectedFieldMapsToBeAdded());		        
-		        fieldmapInfoList.addAll(infos);
+		        if (infos != null && !infos.isEmpty()) {
+		        	fieldmapInfoList.addAll(infos);
+		        }
 	        	this.userFieldmap.setSelectedFieldMaps(fieldmapInfoList);
 	            this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(
 	                    this.userFieldmap.getSelectedFieldMaps(), this.userFieldmap.isTrial()));
@@ -88,41 +93,60 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
 	                    this.userFieldmap.getSelectedFieldMapsToBeAdded(), this.userFieldmap.isTrial()));
 	            this.userFieldmap.setFieldMapLabels(this.userFieldmap.getAllSelectedFieldMapLabels(false));
                 FieldPlotLayoutIterator plotIterator = horizontalFieldMapLayoutIterator;
-                
-                if(this.userFieldmap.getFieldmap() == null)
-                	this.userFieldmap.setFieldmap(fieldmapService.generateFieldmap(this.userFieldmap, 
-                        plotIterator, true));
-                else{
-                	//data clean up
-                	Plot[][] currentPlot = this.userFieldmap.getFieldmap();
-                	for(int i = 0 ; i < currentPlot.length ; i++){
-                		for(int j = 0 ; j < currentPlot[i].length ; j++){
-                			Plot plot = currentPlot[i][j];
-                			if(!plot.isSavedAlready() && !plot.isPlotDeleted()){
-                				//we reset the the plot
-                				plot.setDisplayString("");
-                				
-                			}
-                		}
-                	}
-                }
-                
+
+
                 FieldMapTrialInstanceInfo trialInfo = this.userFieldmap.getAnySelectedTrialInstance();
-                if (trialInfo != null) {
-                    this.userFieldmap.setNumberOfRangesInBlock(trialInfo.getRangesInBlock());
-                    this.userFieldmap.setNumberOfRowsInBlock(trialInfo.getColumnsInBlock(), 
-                            trialInfo.getRowsPerPlot());
-                    this.userFieldmap.setNumberOfEntries(
-                            (long) this.userFieldmap.getAllSelectedFieldMapLabels(false).size()); 
-                    this.userFieldmap.setNumberOfRowsPerPlot(trialInfo.getRowsPerPlot());
-                    this.userFieldmap.setPlantingOrder(trialInfo.getPlantingOrder());
-                    this.userFieldmap.setBlockName(trialInfo.getBlockName());
-                    this.userFieldmap.setFieldName(trialInfo.getFieldName());
-                    this.userFieldmap.setLocationName(trialInfo.getLocationName());
-                    this.userFieldmap.setFieldMapLabels(this.userFieldmap.getAllSelectedFieldMapLabels(false));
-                    this.userFieldmap.setMachineRowCapacity(trialInfo.getMachineRowCapacity());
+                if (infos != null && !infos.isEmpty()) {
+	                if (trialInfo != null) {
+	                    if(this.userFieldmap.getFieldmap() == null)
+	                    	this.userFieldmap.setFieldmap(fieldmapService.generateFieldmap(this.userFieldmap, 
+	                            plotIterator, true, trialInfo.getDeletedPlots()));
+	                    else{
+	                    	//data clean up
+	                    	Plot[][] currentPlot = this.userFieldmap.getFieldmap();
+	                    	for(int i = 0 ; i < currentPlot.length ; i++){
+	                    		for(int j = 0 ; j < currentPlot[i].length ; j++){
+	                    			Plot plot = currentPlot[i][j];
+	                    			if(!plot.isSavedAlready() && !plot.isPlotDeleted()){
+	                    				//we reset the the plot
+	                    				plot.setDisplayString("");
+	                    				
+	                    			}
+	                    		}
+	                    	}
+	                    }
+	                    
+	                    this.userFieldmap.setNumberOfRangesInBlock(trialInfo.getRangesInBlock());
+	                    this.userFieldmap.setNumberOfRowsInBlock(trialInfo.getColumnsInBlock(), 
+	                            trialInfo.getRowsPerPlot());
+	                    this.userFieldmap.setNumberOfEntries(
+	                            (long) this.userFieldmap.getAllSelectedFieldMapLabels(false).size()); 
+	                    this.userFieldmap.setNumberOfRowsPerPlot(trialInfo.getRowsPerPlot());
+	                    this.userFieldmap.setPlantingOrder(trialInfo.getPlantingOrder());
+	                    this.userFieldmap.setBlockName(trialInfo.getBlockName());
+	                    this.userFieldmap.setFieldName(trialInfo.getFieldName());
+	                    this.userFieldmap.setLocationName(trialInfo.getLocationName());
+	                    this.userFieldmap.setFieldMapLabels(this.userFieldmap.getAllSelectedFieldMapLabels(false));
+	                    this.userFieldmap.setMachineRowCapacity(trialInfo.getMachineRowCapacity());
+	                    
+	                }
                 }
-	        }
+//	        }
+//	        else {
+	        	//clearPlots();
+//		        List<FieldMapInfo> fieldmapInfoList =  new ArrayList(this.userFieldmap.getSelectedFieldMapsToBeAdded());		        
+//	        	this.userFieldmap.setSelectedFieldMaps(fieldmapInfoList);
+//	            this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(
+//	                    this.userFieldmap.getSelectedFieldMaps(), this.userFieldmap.isTrial()));
+//	            this.userFieldmap.setSelectedFieldmapListToBeAdded(new SelectedFieldmapList(
+//	                    this.userFieldmap.getSelectedFieldMapsToBeAdded(), this.userFieldmap.isTrial()));
+//	            this.userFieldmap.setFieldMapLabels(this.userFieldmap.getAllSelectedFieldMapLabels(false));
+//                FieldPlotLayoutIterator plotIterator = horizontalFieldMapLayoutIterator;
+//                
+//                if(this.userFieldmap.getFieldmap() == null)
+//                	this.userFieldmap.setFieldmap(fieldmapService.generateFieldmap(this.userFieldmap, 
+//                        plotIterator, true));
+//	        }
 	        form.setUserFieldmap(this.userFieldmap);
 	        
     	} catch (Exception e) {
@@ -135,7 +159,34 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
         UserFieldmap info = new UserFieldmap();
         info.setNumberOfRangesInBlock(userFieldmap.getNumberOfRangesInBlock());
         info.setNumberOfRowsInBlock(userFieldmap.getNumberOfRowsInBlock());
+        info.setNumberOfRowsPerPlot(userFieldmap.getNumberOfRowsPerPlot());
         form.setUserFieldmap(info);
+    }
+    
+    private void clearPlots() {
+    	for (Plot[] plotRow : userFieldmap.getFieldmap()) {
+    		for (Plot plotCell : plotRow) {
+    			//userFieldmap.setFieldmap(null);
+    			plotCell.setDisplayString("");
+    		}
+    	}
+    }
+    
+    private void markDeletedPlots(FieldmapForm form, List<String> deletedPlots) {
+    	StringBuilder dpString = new StringBuilder();
+    	if (deletedPlots != null) {
+    		for (String deletedPlot : deletedPlots) {
+    			String[] coordinates = deletedPlot.split(",");
+    			if (coordinates.length == 2) {
+    				if (dpString.length() > 0) {
+    					dpString.append(",");
+    				}
+    				dpString.append(coordinates[0] + "_" + coordinates[1]);
+    			}
+    		}
+    	}
+    	form.setMarkedCells(dpString.toString());
+    	this.userFieldmap.setDeletedPlots(deletedPlots);
     }
     
     /* (non-Javadoc)

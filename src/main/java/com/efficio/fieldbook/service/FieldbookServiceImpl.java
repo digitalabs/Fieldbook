@@ -124,7 +124,7 @@ public class FieldbookServiceImpl implements FieldbookService{
 								 || ref.getId().intValue() == TermId.DATASET_TITLE.getId()
 								 || ref.getId().intValue() == TermId.DATASET_TYPE.getId())
 							 continue;
-							 
+						 
 				         } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
 				                 if (inHideVariableFields(ref.getId(), AppConstants.HIDE_PLOT_FIELDS.getString())) {
 				                     continue;

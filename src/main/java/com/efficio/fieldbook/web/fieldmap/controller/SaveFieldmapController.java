@@ -118,7 +118,7 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController{
                 	trialInfo.setLocationId(userFieldmap.getFieldLocationId());
                 	trialInfo.setFieldId(userFieldmap.getFieldId());
                 	trialInfo.setBlockId(userFieldmap.getBlockId());
-                    trialInfo.setColumnsInBlock(userFieldmap.getNumberOfRowsInBlock());
+                    trialInfo.setRowsInBlock(userFieldmap.getNumberOfRowsInBlock());
                     trialInfo.setRangesInBlock(userFieldmap.getNumberOfRangesInBlock());
                     trialInfo.setPlantingOrder(userFieldmap.getPlantingOrder());
                     trialInfo.setRowsPerPlot(userFieldmap.getNumberOfRowsPerPlot());

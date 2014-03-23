@@ -19,9 +19,7 @@ import javax.servlet.http.HttpSession;
 
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
-import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -74,8 +72,7 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
     	try {
 	        setPrevValues(form);
 	        
-	        System.out.println("BLOCK ID " + userFieldmap.getBlockId());
-	        System.out.println("SELECTED FIELD MAPS " + userFieldmap.getSelectedFieldMaps().size());
+	        userFieldmap.setFieldmap(null);
 	        
 	        List<FieldMapInfo> infos = fieldbookMiddlewareService.getAllFieldMapsInBlockByBlockId(
 		        		userFieldmap.getBlockId());
@@ -83,82 +80,58 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
 	        	this.userFieldmap.setSelectedFieldMapsToBeAdded(new ArrayList(this.userFieldmap.getSelectedFieldMaps()));
 	        }
 
-//	        if (infos != null && !infos.isEmpty()) {
-		       // this.userFieldmap.setSelectedFieldMaps(infos);
-	        	//this is to add the new nusery
-		        List<FieldMapInfo> fieldmapInfoList = new ArrayList<FieldMapInfo>();  
-        		System.out.println("SELECTED FIELD MAPS TO BE ADDED : " + userFieldmap.getSelectedFieldMapsToBeAdded().size());
-        		
-		        if (infos != null && !infos.isEmpty()) {
-		        	System.out.println("FROM DB " + infos.size());
-		        	fieldmapInfoList.addAll(infos);
-		        	//infos.addAll(fieldmapInfoList);
-		        }
-        		fieldmapInfoList.addAll(this.userFieldmap.getSelectedFieldMapsToBeAdded());
-        		setOrder(fieldmapInfoList);
+        	//this is to add the new nusery
+	        List<FieldMapInfo> fieldmapInfoList = new ArrayList<FieldMapInfo>();
+	        List<FieldMapInfo> toBeAdded = this.userFieldmap.getSelectedFieldMapsToBeAdded();
+    		fieldmapInfoList.addAll(toBeAdded);
+    		
+	        if (infos != null && !infos.isEmpty()) {
+	        	setOrder(infos, 1);
+	        	fieldmapInfoList.addAll(infos);
+	        }
+	        setOrder(toBeAdded, infos.size()+1);
 
-        		this.userFieldmap.setSelectedFieldMaps(fieldmapInfoList);
-	        	//this.userFieldmap.setSelectedFieldMaps(infos);
-	            this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(
-	                    this.userFieldmap.getSelectedFieldMaps(), this.userFieldmap.isTrial()));
-	            this.userFieldmap.setSelectedFieldmapListToBeAdded(new SelectedFieldmapList(
-	                    this.userFieldmap.getSelectedFieldMapsToBeAdded(), this.userFieldmap.isTrial()));
-	            this.userFieldmap.setFieldMapLabels(this.userFieldmap.getAllSelectedFieldMapLabels(false));
-                FieldPlotLayoutIterator plotIterator = horizontalFieldMapLayoutIterator;
+    		this.userFieldmap.setSelectedFieldMaps(fieldmapInfoList);
+            this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(
+                    this.userFieldmap.getSelectedFieldMaps(), this.userFieldmap.isTrial()));
+            this.userFieldmap.setSelectedFieldmapListToBeAdded(new SelectedFieldmapList(
+                    this.userFieldmap.getSelectedFieldMapsToBeAdded(), this.userFieldmap.isTrial()));
+            this.userFieldmap.setFieldMapLabels(this.userFieldmap.getAllSelectedFieldMapLabels(false));
+            FieldPlotLayoutIterator plotIterator = horizontalFieldMapLayoutIterator;
 
 
-                FieldMapTrialInstanceInfo trialInfo = this.userFieldmap.getAnySelectedTrialInstance();
-                if (infos != null && !infos.isEmpty()) {
-	                if (trialInfo != null) {
-	                    if(this.userFieldmap.getFieldmap() == null)
-	                    	this.userFieldmap.setFieldmap(fieldmapService.generateFieldmap(this.userFieldmap, 
-	                            plotIterator, true, trialInfo.getDeletedPlots()));
-	                    else{
-	                    	//data clean up
-	                    	Plot[][] currentPlot = this.userFieldmap.getFieldmap();
-	                    	for(int i = 0 ; i < currentPlot.length ; i++){
-	                    		for(int j = 0 ; j < currentPlot[i].length ; j++){
-	                    			Plot plot = currentPlot[i][j];
-	                    			if(!plot.isSavedAlready() && !plot.isPlotDeleted()){
-	                    				//we reset the the plot
-	                    				plot.setDisplayString("");
-	                    				
-	                    			}
-	                    		}
-	                    	}
-	                    }
-	                    
-	                    this.userFieldmap.setNumberOfRangesInBlock(trialInfo.getRangesInBlock());
-	                    this.userFieldmap.setNumberOfRowsInBlock(trialInfo.getColumnsInBlock(), 
-	                            trialInfo.getRowsPerPlot());
-	                    this.userFieldmap.setNumberOfEntries(
-	                            (long) this.userFieldmap.getAllSelectedFieldMapLabels(false).size()); 
-	                    this.userFieldmap.setNumberOfRowsPerPlot(trialInfo.getRowsPerPlot());
-	                    this.userFieldmap.setPlantingOrder(trialInfo.getPlantingOrder());
-//	                    this.userFieldmap.setBlockName(trialInfo.getBlockName());
-//	                    this.userFieldmap.setFieldName(trialInfo.getFieldName());
-//	                    this.userFieldmap.setLocationName(trialInfo.getLocationName());
-	                    this.userFieldmap.setFieldMapLabels(this.userFieldmap.getAllSelectedFieldMapLabels(false));
-	                    this.userFieldmap.setMachineRowCapacity(trialInfo.getMachineRowCapacity());
-	                    
-	                }
+            FieldMapTrialInstanceInfo trialInfo = this.userFieldmap.getAnySelectedTrialInstance();
+            if (infos != null && !infos.isEmpty()) {
+                if (trialInfo != null) {
+                    if(this.userFieldmap.getFieldmap() == null)
+                    	this.userFieldmap.setFieldmap(fieldmapService.generateFieldmap(this.userFieldmap, 
+                            plotIterator, true, trialInfo.getDeletedPlots()));
+                    else{
+                    	//data clean up
+                    	Plot[][] currentPlot = this.userFieldmap.getFieldmap();
+                    	for(int i = 0 ; i < currentPlot.length ; i++){
+                    		for(int j = 0 ; j < currentPlot[i].length ; j++){
+                    			Plot plot = currentPlot[i][j];
+                    			if(!plot.isSavedAlready() && !plot.isPlotDeleted()){
+                    				//we reset the the plot
+                    				plot.setDisplayString("");
+                    				
+                    			}
+                    		}
+                    	}
+                    }
+                    
+                    this.userFieldmap.setNumberOfRangesInBlock(trialInfo.getRangesInBlock());
+                    this.userFieldmap.setNumberOfRowsInBlock(trialInfo.getRowsInBlock());
+                    this.userFieldmap.setNumberOfEntries(
+                            (long) this.userFieldmap.getAllSelectedFieldMapLabels(false).size()); 
+                    this.userFieldmap.setNumberOfRowsPerPlot(trialInfo.getRowsPerPlot());
+                    this.userFieldmap.setPlantingOrder(trialInfo.getPlantingOrder());
+                    this.userFieldmap.setFieldMapLabels(this.userFieldmap.getAllSelectedFieldMapLabels(false));
+                    this.userFieldmap.setMachineRowCapacity(trialInfo.getMachineRowCapacity());
+                    
                 }
-//	        }
-//	        else {
-	        	//clearPlots();
-//		        List<FieldMapInfo> fieldmapInfoList =  new ArrayList(this.userFieldmap.getSelectedFieldMapsToBeAdded());		        
-//	        	this.userFieldmap.setSelectedFieldMaps(fieldmapInfoList);
-//	            this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(
-//	                    this.userFieldmap.getSelectedFieldMaps(), this.userFieldmap.isTrial()));
-//	            this.userFieldmap.setSelectedFieldmapListToBeAdded(new SelectedFieldmapList(
-//	                    this.userFieldmap.getSelectedFieldMapsToBeAdded(), this.userFieldmap.isTrial()));
-//	            this.userFieldmap.setFieldMapLabels(this.userFieldmap.getAllSelectedFieldMapLabels(false));
-//                FieldPlotLayoutIterator plotIterator = horizontalFieldMapLayoutIterator;
-//                
-//                if(this.userFieldmap.getFieldmap() == null)
-//                	this.userFieldmap.setFieldmap(fieldmapService.generateFieldmap(this.userFieldmap, 
-//                        plotIterator, true));
-//	        }
+            }
 	        form.setUserFieldmap(this.userFieldmap);
 	        
     	} catch (Exception e) {
@@ -221,8 +194,8 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
         return this.userFieldmap;
     }
     
-    private void setOrder(List<FieldMapInfo> info) {
-    	int order = 1;
+    private void setOrder(List<FieldMapInfo> info, int start) {
+    	int order = start;
     	if (info != null && !info.isEmpty()) {
     		for (FieldMapInfo rec : info) {
     			for (FieldMapDatasetInfo dataset : rec.getDatasets()) {

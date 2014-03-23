@@ -138,7 +138,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
                                             datasetId, geolocationId);
             if (trialInfo != null) {
                 this.userFieldmap.setNumberOfRangesInBlock(trialInfo.getRangesInBlock());
-                this.userFieldmap.setNumberOfRowsInBlock(trialInfo.getColumnsInBlock(), 
+                this.userFieldmap.setNumberOfRowsInBlock(trialInfo.getRowsInBlock(), 
                         trialInfo.getRowsPerPlot());
                 this.userFieldmap.setNumberOfEntries(
                         (long) this.userFieldmap.getAllSelectedFieldMapLabels(false).size()); 

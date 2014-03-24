@@ -463,8 +463,8 @@ function setComboValues(suggestions_obj, id, name) {
 	}
 	//set the selected value of the combo
 	$("#" + name).select2('data', dataVal);
-	console.log("set data : " + name);
-	console.log(dataVal);
+	//console.log("set data : " + name);
+	//console.log(dataVal);
 }
 
 function recreateLocationComboAfterClose(comboName, data) {	

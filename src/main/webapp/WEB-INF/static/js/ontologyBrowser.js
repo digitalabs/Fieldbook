@@ -121,7 +121,7 @@ function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId){
 
     }).on("change", function(){
     	var data = $('#'+searchDivId).select2('data');
-    	console.log('do serch');
+    	//console.log('do serch');
     	 doOntologyTreeHighlight(treeDivId, data.key);
     	 
     });

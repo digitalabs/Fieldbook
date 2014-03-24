@@ -143,6 +143,7 @@
 	//<![CDATA[
         var paginationUrl = /*[[@{/NurseryManager/importGermplasmList/page/}]]*/;
         var checkTypes = /*[[${checkTypes}]]*/ null;
+        var checkTypes_obj = [];
         
         var options = {
             currentPage: /*[[${importGermplasmListForm.currentPage}]]*/,
@@ -168,7 +169,6 @@
 				  reloadCheckTypeDropDown(false);
 				});
 			reloadCheckTypeDropDown(true);
-			
 			initializeCheckTypeSelect2(checkTypes, [], false, 0, "comboCheckCode");
 			$("#updateCheckTypes").hide();
 			$("#deleteCheckTypes").hide();

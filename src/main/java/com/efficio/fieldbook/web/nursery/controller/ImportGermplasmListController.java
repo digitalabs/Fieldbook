@@ -14,6 +14,7 @@ package com.efficio.fieldbook.web.nursery.controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -25,10 +26,14 @@ import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.domain.dms.Enumeration;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -89,6 +94,10 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     /** The ontology service. */
     @Resource
     private OntologyService ontologyService;
+    
+    /** The message source. */
+    @Autowired
+    public MessageSource messageSource;
     
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
@@ -328,13 +337,74 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         Map<String, String> result = new HashMap<String, String>();
         
         try {            
-            List<Enumeration> allLocations = ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
+            List<Enumeration> allEnumerations = ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
             result.put("success", "1");
-            result.put("allCheckTypes", convertObjectToJson(allLocations));
+            result.put("allCheckTypes", convertObjectToJson(allEnumerations));
             
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
             result.put("success", "-1");
+        }
+        
+        return result;
+    }
+    
+    @ResponseBody
+    @RequestMapping(value="/addUpdateCheckType/{operation}", method = RequestMethod.POST)
+    public Map<String, String> addUpdateCheckType(@PathVariable int operation, 
+            @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, Locale local) {
+        Map<String, String> result = new HashMap<String, String>();
+        
+        try {
+            StandardVariable stdVar = ontologyService.getStandardVariable(TermId.CHECK.getId());
+            Enumeration enumeration;
+            String message = null;
+            if (operation == 1) {
+                enumeration = new Enumeration(null, form.getManageCheckCode(), form.getManageCheckValue(), 0);
+                message = messageSource.getMessage("nursery.manage.check.types.add.success", 
+                        new Object[] {form.getManageCheckValue()}, local); 
+            } else {
+                enumeration = stdVar.getEnumeration(Integer.parseInt(form.getManageCheckCode()));
+                enumeration.setDescription(form.getManageCheckCode());
+                message = messageSource.getMessage("nursery.manage.check.types.edit.success", 
+                        new Object[] {enumeration.getName()}, local);
+            }
+            ontologyService.saveOrUpdateStandardVariableEnumeration(stdVar, enumeration);
+            
+            if (operation == 1) {
+                List<Enumeration> allEnumerations = ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
+                result.put("checkTypes", convertObjectToJson(allEnumerations));
+            }
+            
+            result.put("success", "1");
+            result.put("successMessage", message);
+        } catch (MiddlewareQueryException e) {
+            LOG.debug(e.getMessage(), e);
+            result.put("success", "-1");
+            result.put("error", e.getMessage());
+        } catch (MiddlewareException e) {
+            LOG.debug(e.getMessage(), e);
+            result.put("success", "-1");
+        }
+        
+        return result;
+    }
+    
+    @ResponseBody
+    @RequestMapping(value="/deleteCheckType", method = RequestMethod.POST)
+    public Map<String, String> deleteCheckType(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, Locale local) {
+        Map<String, String> result = new HashMap<String, String>();
+
+        try {
+            String name = ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumeration(Integer.parseInt(form.getManageCheckCode())).getName();
+            ontologyService.deleteStandardVariableValidValue(TermId.CHECK.getId(), Integer.parseInt(form.getManageCheckCode()));
+            result.put("success", "1");
+            result.put("successMessage", messageSource.getMessage("nursery.manage.check.types.delete.success", 
+                    new Object[] {name}, local));
+        } catch (MiddlewareQueryException e) {
+            LOG.debug(e.getMessage(), e);
+            result.put("success", "-1");
+            result.put("error", e.getMessage());
         }
         
         return result;

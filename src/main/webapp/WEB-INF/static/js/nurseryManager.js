@@ -1736,16 +1736,22 @@ function reloadCheckTypeDropDown(addOnChange){
      );
 }
 function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, currentFieldId, comboName) {
-	
 	var defaultData = null;
 	if (suggestions != null) {
 		$.each(suggestions, function( index, value ) {
-			suggestions_obj.push({ 'id' : value.id,
-				  'text' : value.name,
-				  'description' : value.description
-			});  
+			dataObj = { 'id' : value.id,
+					  'text' : value.name,
+					  'description' : value.description};
+			suggestions_obj.push(dataObj);  
+
 			if(currentFieldId != '' && currentFieldId == value.id){
 				defaultData = dataObj;
+			}
+		});
+	} else {
+		$.each(suggestions_obj, function( index, value ) {
+			if(currentFieldId != '' && currentFieldId == value.id){
+				defaultData = value;
 			}
 		});
 	}
@@ -1764,10 +1770,19 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, c
 		            query.callback(data);
 		        }
 	    }).on("change", function(){
-	    	$("#manageCheckValue").val($("#comboCheckCode").select2("data").description);
-	    	$("#updateCheckTypes").show();
-			$("#deleteCheckTypes").show();
-			$("#addCheckTypes").hide();
+	    	if ($("#comboCheckCode").select2("data")) {
+	    		if ($("#comboCheckCode").select2("data").id == $("#comboCheckCode").select2("data").text) {
+	    			$("#manageCheckValue").val("");
+	    	    	$("#updateCheckTypes").hide();
+	    			$("#deleteCheckTypes").hide();
+	    			$("#addCheckTypes").show();
+	    		} else {
+	    			$("#manageCheckValue").val($("#comboCheckCode").select2("data").description);
+	    	    	$("#updateCheckTypes").show();
+	    			$("#deleteCheckTypes").show();
+	    			$("#addCheckTypes").hide();
+	    		}
+	    	}
 	    });
 	} else {
 		$('#'+comboName).select2({
@@ -1788,7 +1803,147 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, c
 		    	
 		    })
 		}
-		if(defaultData != null)
-			$('#'+getJquerySafeId('checkId')).select2('data', defaultData).trigger('change');
 	}
+	if(defaultData != null)
+		$('#'+comboName).select2('data', defaultData).trigger('change');
+}
+
+function showManageCheckTypePopup(){
+	$('#page-check-message-modal').html();
+	//recreatePopupLocationCombo();
+	$('#manageCheckTypesModal').modal({ backdrop: 'static', keyboard: false });		   	
+}
+
+function addUpdateCheckType(operation) {
+	if (validateCheckFields()) {
+		var $form = $("#manageCheckValue,#comboCheckCode");	
+		var serializedData = $form.serialize();
+		Spinner.toggle();
+		$.ajax({
+			url: "/Fieldbook/NurseryManager/importGermplasmList/addUpdateCheckType/" + operation,
+			type: "POST",
+            data: serializedData,
+            cache: false,
+         	success: function(data) {
+      	    if (data.success == "1") {
+      	    	//reload dropdown
+      	    	reloadCheckTypeList(data.checkTypes, operation);
+      	    	showCheckTypeMessage(data.successMessage);
+      	    } else {
+      	    	showCheckTypeErrorMessage(data.error);
+      	    }
+         		Spinner.toggle();
+     	}
+		});
+	}
+}
+
+function validateCheckFields(){
+	if ($("#comboCheckCode").select2("data").text == "") {
+		showCheckTypeErrorMessage(codeRequiredError);
+		return false;
+	} else if ($("#manageCheckValue").val() == "") {
+		showCheckTypeErrorMessage(valueRequiredError);
+		return false;
+	} else if (!isValueUnique()) {
+		showCheckTypeErrorMessage(valueNotUniqueError);
+		return false;
+	}
+	return true;
+}
+
+function isValueUnique() {
+	var isUnique = true;
+	$.each(checkTypes_obj, function(index, item) {
+		if (item.description == $("#manageCheckValue").val() && item.id != $("#comboCheckCode").select2("data").id) {
+			isUnique = false;
+			return false;
+		}
+	});
+	return isUnique;
+}
+
+function showCheckTypeErrorMessage(message) {
+	$('#page-check-message-modal').html("<div class='alert alert-danger'>"+ message +"</div>");
+}
+
+function showCheckTypeMessage(message) {
+	$('#page-check-message-modal').html("<div class='alert alert-success'>"+ message +"</div>");
+}
+
+function deleteCheckType() {
+	if ($("manageCheckCode").select2("data")) {
+		
+		var $form = $("#manageCheckValue,#comboCheckCode");	
+		var serializedData = $form.serialize();
+		Spinner.toggle();
+		$.ajax({
+			url: "/Fieldbook/NurseryManager/importGermplasmList/deleteCheckType",
+			type: "POST",
+            data: serializedData,
+            cache: false,
+         	success: function(data) {
+         		if (data.success == "1"){
+         			reloadCheckTypeList(null, 3);
+         			showCheckTypeMessage(data.successMessage);
+         		} else {
+         			showCheckTypeErrorMessage(data.error);
+         		}
+         		Spinner.toggle();
+     	}
+		});
+	} else {
+		showCheckTypeErrorMessage(noCheckSelected);
+	}
+}
+
+function reloadCheckTypeList(data, operation) {
+	var selectedValue = 0;
+	if (checkTypes_obj.length == 0) {
+		$.each(checkTypes, function (index, item){
+			checkTypes_obj.push({ 'id' : item.id,
+			  'text' : item.name,
+			  'description' : item.description
+			});
+		});
+	}
+	
+	if (operation == 1) {
+		//add check type
+		checkTypes_obj = [];
+		if (data != null) {
+		$.each($.parseJSON(data), function( index, value ) {
+			checkTypes_obj.push({ 'id' : value.id,
+				  'text' : value.name,
+				  'description' : value.description
+			});  
+		});
+		}
+	} else if (operation == 2) {
+		//update
+		var editIndex;
+		$.each(checkTypes_obj, function (index, item){
+			if ($("#comboCheckCode").select2("data").id == item.id) {
+				//update description of item 
+				item.description = $("#manageCheckValue").val();
+				return false;
+			}
+		});
+		selectedValue = $("#comboCheckCode").select2("data").id;
+	} else {
+		//delete
+		var deleteIndex;
+		$.each(checkTypes_obj, function (index, item){
+			if ($("#comboCheckCode").select2("data").id == item.id) {
+				deleteIndex = index;	
+				return false;
+			}
+		});
+		//delete item from array
+		checkTypes_obj.splice(deleteIndex, 1);
+	}
+	
+	$("#manageCheckValue").val("");
+	initializeCheckTypeSelect2(null, [], false, 0, "comboCheckCode");
+	initializeCheckTypeSelect2(null, checkTypes_obj, false, selectedValue, "comboCheckCode");
 }

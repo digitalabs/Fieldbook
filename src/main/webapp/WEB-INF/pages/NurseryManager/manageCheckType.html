@@ -42,8 +42,8 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 	         	</div>																							
 	       		<div class="modal-footer addVariable-footer">    	       			
 	       			<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
-	       			<button type="button" id="addCheckTypes" class="btn btn-primary" aria-hidden="true" th:text="#{common.form.add.text}" onclick="javascript: addNewCheckType();">Add</button>
-	       			<button type="button" id="updateCheckTypes" class="btn btn-primary" th:text="#{common.form.update.text}" onClick="javascript: updateCheckType(); ">.Update</button>    
+	       			<button type="button" id="addCheckTypes" class="btn btn-primary" aria-hidden="true" th:text="#{common.form.add.text}" onclick="javascript: addUpdateCheckType(1);">Add</button>
+	       			<button type="button" id="updateCheckTypes" class="btn btn-primary" th:text="#{common.form.update.text}" onClick="javascript: addUpdateCheckType(2); ">.Update</button>    
       				<button type="button" id="deleteCheckTypes" class="btn btn-primary" th:text="#{common.form.delete.text}" onClick="javascript: deleteCheckType();">.Delete</button>	
        			</div>
 	     	</div><!-- /.modal-content -->
@@ -59,58 +59,8 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 	        var codeRequiredError = /*[[#{nursery.manager.manage.checks.code.required}]]*/;
 	        var valueRequiredError = /*[[#{nursery.manager.manage.checks.value.required}]]*/;
 	        var valueNotUniqueError = /*[[#{nursery.manager.manage.checks.value.not.unique}]]*/;
+	        var noCheckSelected = /*[[#{nursery.manager.manage.checks.no.check.selected}]]*/;
 	        
-		   	function showManageCheckTypePopup(){
-		   		$('#page-check-message-modal').html();
-		   		//recreatePopupLocationCombo();
-		   		$('#manageCheckTypesModal').modal({ backdrop: 'static', keyboard: false });		   	
-		   	}
-		   	
-		   	function addNewCheckType() {
-		   		if (validateCheckFields()) {
-		   			var $form = $("#importGermplasmListForm #manageCheckValue, #manageCheckCode");	
-		   			var serializedData = $form.serialize();
-		   			//Spinner.toggle();
-		   			$.ajax({
-		   				url: "/Fieldbook/NurseryManager/importGermplasmList/addCheckTypes",
-		   				type: "POST",
-		   	            data: serializedData,
-		   	            cache: false,
-		   	         	success: function(data) {
-			          	   
-		   	         		//Spinner.toggle();
-		             	}
-		   			});
-		   		}
-		   	}
-		   	
-		   	function validateCheckFields(){
-		   		if ($("#comboCheckCode").select2("data").text == "") {
-		   			showCheckTypeErrorMessage(codeRequiredError);
-		   			return false;
-		   		} else if ($("#manageCheckValue").val() == "") {
-		   			showCheckTypeErrorMessage(valueRequiredError);
-		   			return false;
-		   		} else if (!isValueUnique()) {
-		   			showCheckTypeErrorMessage(valueNotUniqueError);
-		   			return false;
-		   		}
-		   	}
-		   	
-		   	function isValueUnique() {
-		   		var isUnique = true;
-		   		$.each(checkTypes_obj, function(index, item) {
-		   			if (item.description == $("#manageCheckValue").val()) {
-		   				isUnique = false;
-		   				return false;
-		   			}
-		   		});
-		   		return isUnique;
-		   	}
-		   	
-		   	function showCheckTypeErrorMessage(message) {
-		   		$('#page-check-message-modal').html("<div class='alert alert-danger'>"+ message +"</div>");
-		   	}
     //]]>
     </script>
 </div>

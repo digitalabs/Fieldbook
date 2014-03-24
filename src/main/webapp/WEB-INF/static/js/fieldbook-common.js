@@ -996,7 +996,7 @@ function doTreeHighlight(treeName, nodeKey){
 		
 		key = key + elem[count];
 		$('.'+key).addClass('highlight');
-		console.log(key);
+		//console.log(key);
 	}
 }
 

@@ -926,8 +926,8 @@ function loadTraitClassTree(treeName, comboName, descriptionName, treeData, drop
 
 //function to retrieve the standard variable details of the selected variable
 function getStandardVariableDetails(variableId, text) {
-	resetCategoricalValues();
 	if(isInt(variableId) && variableId != text){
+		resetCategoricalValues();
 		Spinner.toggle();
 		$.ajax({
 			url: ontologyUrl + "retrieve/variable/" + variableId,

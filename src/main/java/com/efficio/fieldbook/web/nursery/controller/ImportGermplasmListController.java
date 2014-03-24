@@ -220,6 +220,12 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         		int realIndex = ((previewPageNum - 1) * form.getResultPerPage()) + i;
         		getUserSelection().getImportedGermplasmMainInfo()
                 .getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheck(importedGermplasm.getCheck());
+        		if (importedGermplasm.getCheck() != null && !"".equals(importedGermplasm.getCheck())) {
+            		getUserSelection().getImportedGermplasmMainInfo()
+            			.getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckId(form.getCheckId());
+            		getUserSelection().getImportedGermplasmMainInfo()
+        				.getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckName(form.getCheckValue());
+        		}
         	}
         	
         	form.setImportedGermplasmMainInfo(getUserSelection().getImportedGermplasmMainInfo());

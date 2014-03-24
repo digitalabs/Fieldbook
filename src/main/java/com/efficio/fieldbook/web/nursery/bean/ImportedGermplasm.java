@@ -60,6 +60,10 @@ public class ImportedGermplasm implements Serializable {
     /** List of Names associated with the Germplasm */
     private List<Name> names;
     
+    private Integer checkId;
+    
+    private String checkName;
+    
     /**
      * Instantiates a new imported germplasm.
      */
@@ -291,7 +295,6 @@ public class ImportedGermplasm implements Serializable {
         this.gnpgs = gnpgs;
     }
 
-    
     /**
      * @return the names
      */
@@ -299,7 +302,6 @@ public class ImportedGermplasm implements Serializable {
         return names;
     }
 
-    
     /**
      * @param names the names to set
      */
@@ -307,7 +309,35 @@ public class ImportedGermplasm implements Serializable {
         this.names = names;
     }
 
-    /* (non-Javadoc)
+    /**
+	 * @return the checkId
+	 */
+	public Integer getCheckId() {
+		return checkId;
+	}
+
+	/**
+	 * @param checkId the checkId to set
+	 */
+	public void setCheckId(Integer checkId) {
+		this.checkId = checkId;
+	}
+
+	/**
+	 * @return the checkName
+	 */
+	public String getCheckName() {
+		return checkName;
+	}
+
+	/**
+	 * @param checkName the checkName to set
+	 */
+	public void setCheckName(String checkName) {
+		this.checkName = checkName;
+	}
+
+	/* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override

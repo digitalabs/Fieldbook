@@ -189,7 +189,9 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 							NESTED_PLOT
 	    				 */
 	    				
-	    					measurementData = new MeasurementData(var.getName(), germplasm.getCheck(), false, var.getDataType());
+//	    					measurementData = new MeasurementData(var.getName(), germplasm.getCheck(), false, var.getDataType());
+	    					measurementData = new MeasurementData(var.getName(), germplasm.getCheckName(), 
+					    							false, var.getDataType(), germplasm.getCheckId());
 	    				}else{
 	    					//meaning non factor
 	                    	measurementData = new MeasurementData(var.getName(), "", true, var.getDataType());

@@ -1740,7 +1740,7 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, c
 	if (suggestions != null) {
 		$.each(suggestions, function( index, value ) {
 			dataObj = { 'id' : value.id,
-					  'text' : value.name,
+					  'text' : value.description,
 					  'description' : value.description};
 			suggestions_obj.push(dataObj);  
 

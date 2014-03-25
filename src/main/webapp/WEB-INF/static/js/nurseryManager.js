@@ -1861,7 +1861,6 @@ function validateCheckFields(){
 	}
 
 	if (!$("#comboCheckCode").select2("data")) {
-		alert("err");
 		showCheckTypeErrorMessage(codeRequiredError);
 		return false;
 	} else if ($("#manageCheckValue").val() == "") {

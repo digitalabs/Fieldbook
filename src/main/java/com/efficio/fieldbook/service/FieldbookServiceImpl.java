@@ -148,7 +148,7 @@ public class FieldbookServiceImpl implements FieldbookService{
     	List<Integer> list = new ArrayList<Integer>();
         if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
             list.addAll(PhenotypicType.STUDY.getTypeStorages());
-            list.addAll(PhenotypicType.DATASET.getTypeStorages());
+            //list.addAll(PhenotypicType.DATASET.getTypeStorages());
             list.addAll(PhenotypicType.TRIAL_ENVIRONMENT.getTypeStorages());
         } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
             list.addAll(PhenotypicType.TRIAL_ENVIRONMENT.getTypeStorages());

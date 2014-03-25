@@ -240,6 +240,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
     var nurseryFieldsIsRequired = /*[[#{nursery.create.is.required}]]*/;
     var nurseryTraitsIsRequired = /*[[#{nursery.create.traits.is.required}]]*/;
     var nurseryGermplasmListIsRequired = /*[[#{nursery.create.germplasm.list.is.required}]]*/;
+    var checkTypeIsRequired = /*[[#{nursery.create.germplasm.list.is.required}]]*/;
     
     var locationId = '';
     var programLocationUrl = '';
@@ -319,6 +320,9 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 		else if ($(".noGermplasmListIndicator") && $(".noGermplasmListIndicator").text()) {
 			hasError = true;
 			name = $("#germplasmLabel").text();
+		}else if($('#checkId').val() == ''){
+			hasError = true;
+			customMessage = checkTypeIsRequired;
 		}
 		else {
 			var requiredFields = [];

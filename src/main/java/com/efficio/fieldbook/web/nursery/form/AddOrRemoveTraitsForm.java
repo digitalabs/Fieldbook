@@ -50,6 +50,29 @@ public class AddOrRemoveTraitsForm {
 	/** The import val. */
 	private int importVal;
 	
+	/** The study name. */
+	private String studyName;
+	
+	
+	
+	/**
+	 * Gets the study name.
+	 *
+	 * @return the study name
+	 */
+	public String getStudyName() {
+		return studyName;
+	}
+
+	/**
+	 * Sets the study name.
+	 *
+	 * @param studyName the new study name
+	 */
+	public void setStudyName(String studyName) {
+		this.studyName = studyName;
+	}
+
 	/**
 	 * Gets the measurement row list.
 	 *

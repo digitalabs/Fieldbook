@@ -140,6 +140,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
         	getUserSelection().setMeasurementRowList(workbook.getObservations());
             form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
             form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());
+            form.setStudyName(workbook.getStudyDetails().getStudyName());
             form.changePage(1);
             userSelection.setCurrentPage(form.getCurrentPage());
             userSelection.setWorkbook(workbook);
@@ -197,7 +198,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
         
         form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
     	form.setMeasurementVariables(getUserSelection().getWorkbook().getMeasurementDatasetVariables());
-      
+    	form.setStudyName(workbook.getStudyDetails().getStudyName());
     	
         workbook.setObservations(form.getMeasurementRowList());
 
@@ -231,6 +232,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     	
     	form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
     	form.setMeasurementVariables(getUserSelection().getWorkbook().getMeasurementDatasetVariables());
+    	form.setStudyName(getUserSelection().getWorkbook().getStudyDetails().getStudyName());
         form.changePage(pageNum);
         userSelection.setCurrentPage(form.getCurrentPage());
         return super.showAjaxPage(model, PAGINATION_TEMPLATE);

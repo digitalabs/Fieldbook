@@ -1,17 +1,10 @@
-<!--  <div class="page-header">
-	<h1>
-		Step 3: Add or Remove Traits
-	</h1>
-	
-	<div class="progress">
-	  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%;">
-	    <span class="sr-only">75% Complete</span>
-	  </div>
-	</div>
+ <div class="col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org">
+	<div class="page-header">
+		<h1 th:text="#{nursery.open.nursery}">
+			OPEN NURSERY
+		</h1>
+	</div>			  
 </div>
- -->
- <br />
- <br />
  <form role="form-horizontal"  action="#" 
      method="post" th:object="${addOrRemoveTraitsForm}">
  <div th:class="${#fields.hasErrors('file')} ? 'form-group has-error' : 'form-group'">
@@ -22,10 +15,19 @@
 	<div id="page-message"> 
 	</div>
 		
-<div>
+<div class="col-xs-12 col-md-12 move-left ">
 	<div class="panel panel-default">
 	   	<div class="panel-body manage-settings-panel-body">
 	   	<div class="row form-group">
+	   	
+	   	<div class="col-xs-1 col-md-1 add_top_padding">
+   			<label class="control-label"> <strong th:text="#{nursery.managenurseries.shownurseries.name}+':'"> Choose Saved Settings: </strong></label>
+   		</div>
+   		
+   		<div class="col-xs-3 col-md-3 add_top_padding">
+   			<label class="control-label" th:text="${addOrRemoveTraitsForm.studyName}"> </label>
+   		</div>
+   		
 	<div style="float: right;">
 	
 		<div  class="btn-group">

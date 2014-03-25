@@ -1901,6 +1901,9 @@ function deleteCheckType() {
          		if (data.success == "1"){
          			reloadCheckTypeList(null, 3);
          			showCheckTypeMessage(data.successMessage);
+	    	    	$("#updateCheckTypes").hide();
+	    			$("#deleteCheckTypes").hide();
+	    			$("#addCheckTypes").show();
          		} else {
          			showCheckTypeErrorMessage(data.error);
          		}
@@ -1914,6 +1917,15 @@ function deleteCheckType() {
 
 function reloadCheckTypeList(data, operation) {
 	var selectedValue = 0;
+	
+	if (checkTypes_obj.length == 0) {
+		$.each(checkTypes, function (index, item){
+			checkTypes_obj.push({ 'id' : item.id,
+			  'text' : item.name,
+			  'description' : item.description
+			});
+		});
+	}
 	
 	if (operation == 1) {
 		//add check type

@@ -65,27 +65,29 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			for (MeasurementRow wRow : workbook.getObservations()) {
 				HSSFRow xlsRow = observationSheet.getRow(xlsRowIndex);
 				for (MeasurementData wData : wRow.getDataList()) {
-					String label = wData.getLabel();
-					int xlsColIndex = findColumn(observationSheet, label);
-					Cell cell = xlsRow.getCell(xlsColIndex);
-					String xlsValue = "";
-					
-					if(cell != null){
-						if(cell.getCellType() == Cell.CELL_TYPE_NUMERIC){
-							Double doubleVal = Double.valueOf(cell.getNumericCellValue());
-							Integer intVal = Integer.valueOf(doubleVal.intValue());
-							if(Double.parseDouble(intVal.toString()) == doubleVal.doubleValue()){
-								xlsValue = intVal.toString();
-							}else{
-								xlsValue = doubleVal.toString();	
+					if (wData.isEditable()) {
+						String label = wData.getLabel();
+						int xlsColIndex = findColumn(observationSheet, label);
+						Cell cell = xlsRow.getCell(xlsColIndex);
+						String xlsValue = "";
+						
+						if(cell != null){
+							if(cell.getCellType() == Cell.CELL_TYPE_NUMERIC){
+								Double doubleVal = Double.valueOf(cell.getNumericCellValue());
+								Integer intVal = Integer.valueOf(doubleVal.intValue());
+								if(Double.parseDouble(intVal.toString()) == doubleVal.doubleValue()){
+									xlsValue = intVal.toString();
+								}else{
+									xlsValue = doubleVal.toString();	
+								}
+								
+								
 							}
-							
-							
+							else
+								xlsValue = cell.getStringCellValue();
 						}
-						else
-							xlsValue = cell.getStringCellValue();
+						wData.setValue(xlsValue);
 					}
-					wData.setValue(xlsValue);
 				}
 				xlsRowIndex++;
 			}

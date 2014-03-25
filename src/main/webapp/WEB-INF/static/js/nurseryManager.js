@@ -1742,13 +1742,13 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, c
 			if (comboName == "comboCheckCode") {
 				dataObj = { 'id' : value.id,
 					  'text' : value.name,
-					  'description' : value.description};
-			suggestions_obj.push(dataObj);  
+					  'description' : value.description};  
 			} else {
 				dataObj = { 'id' : value.id,
 					  'text' : value.description,
 					  'description' : value.description};
 			}
+			suggestions_obj.push(dataObj);
 
 			if(currentFieldId != '' && currentFieldId == value.id){
 				defaultData = dataObj;

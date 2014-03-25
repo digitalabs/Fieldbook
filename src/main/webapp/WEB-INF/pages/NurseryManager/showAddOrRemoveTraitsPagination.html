@@ -7,7 +7,7 @@
 	
        <!-- my-class table table-curved table-condensed   -->
 				<div class="factor-div" style="float: left; max-height: 400px; max-width: 40%; width: 40%; overflow-x: scroll; overflow-y: hidden">
-				<table class="overflow-y  make-sticky">
+				<table style="table-layout: fixed;" class="overflow-y  make-sticky">
 					<thead>
 						 <tr >
 			               <th th:if="${measurementVariable.factor == true}" th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'" th:each="measurementVariable, rowIndex : *{measurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>
@@ -28,7 +28,7 @@
 				</table>
 				</div>
 				<div class="variates-div" style="float: left; max-height: 400px;max-width: 60%; width: 60%; overflow: auto; overflow-x: scroll">
-				<table class="overflow-y  make-sticky"> 
+				<table style="table-layout: fixed;" class="overflow-y  make-sticky"> 
 					<thead>
 						 <tr >
 			               <th th:if="${measurementVariable.factor == false}" th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'" th:each="measurementVariable, rowIndex : *{measurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>

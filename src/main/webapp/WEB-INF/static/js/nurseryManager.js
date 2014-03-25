@@ -1778,7 +1778,10 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, c
 	    }).on("change", function(){
 	    	if ($("#comboCheckCode").select2("data")) {
 	    		if ($("#comboCheckCode").select2("data").id == $("#comboCheckCode").select2("data").text) {
-	    			resetButtonsAndFields();
+	    			$("#manageCheckValue").val("");
+	    	    	$("#updateCheckTypes").hide();
+	    			$("#deleteCheckTypes").hide();
+	    			$("#addCheckTypes").show();
 	    		} else {
 	    			$("#manageCheckValue").val($("#comboCheckCode").select2("data").description);
 	    	    	$("#updateCheckTypes").show();
@@ -1851,7 +1854,7 @@ function addUpdateCheckType(operation) {
 }
 
 function validateCheckFields(){
-	if (checkTypes_obj.length == 0) {
+	if (checkTypes_obj.length == 0 && checkTypes != null) {
 		$.each(checkTypes, function (index, item){
 			checkTypes_obj.push({ 'id' : item.id,
 			  'text' : item.name,
@@ -1859,7 +1862,7 @@ function validateCheckFields(){
 			});
 		});
 	}
-
+	
 	if (!$("#comboCheckCode").select2("data")) {
 		showCheckTypeErrorMessage(codeRequiredError);
 		return false;
@@ -1870,6 +1873,7 @@ function validateCheckFields(){
 		showCheckTypeErrorMessage(valueNotUniqueError);
 		return false;
 	}
+	
 	return true;
 }
 
@@ -1922,7 +1926,7 @@ function deleteCheckType() {
 function reloadCheckTypeList(data, operation) {
 	var selectedValue = 0;
 	
-	if (checkTypes_obj.length == 0) {
+	if (checkTypes_obj.length == 0  && checkTypes != null) {
 		$.each(checkTypes, function (index, item){
 			checkTypes_obj.push({ 'id' : item.id,
 			  'text' : item.name,

@@ -403,10 +403,18 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
 
         try {
             String name = ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumeration(Integer.parseInt(form.getManageCheckCode())).getName();
-            ontologyService.deleteStandardVariableValidValue(TermId.CHECK.getId(), Integer.parseInt(form.getManageCheckCode()));
-            result.put("success", "1");
-            result.put("successMessage", messageSource.getMessage("nursery.manage.check.types.delete.success", 
-                    new Object[] {name}, local));
+            
+            if (ontologyService.validateDeleteStandardVariableEnumeration(TermId.CHECK.getId(), Integer.parseInt(form.getManageCheckCode()))) {
+                ontologyService.deleteStandardVariableValidValue(TermId.CHECK.getId(), Integer.parseInt(form.getManageCheckCode()));
+                result.put("success", "1");
+                result.put("successMessage", messageSource.getMessage("nursery.manage.check.types.delete.success", 
+                        new Object[] {name}, local));
+            } else {
+                result.put("success", "-1");
+                result.put("error", messageSource.getMessage("nursery.manage.check.types.delete.error", 
+                        new Object[] {name}, local));
+            }
+            
         } catch (MiddlewareQueryException e) {
             LOG.debug(e.getMessage(), e);
             result.put("success", "-1");

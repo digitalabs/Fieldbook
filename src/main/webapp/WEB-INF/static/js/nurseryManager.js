@@ -1778,10 +1778,7 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, c
 	    }).on("change", function(){
 	    	if ($("#comboCheckCode").select2("data")) {
 	    		if ($("#comboCheckCode").select2("data").id == $("#comboCheckCode").select2("data").text) {
-	    			$("#manageCheckValue").val("");
-	    	    	$("#updateCheckTypes").hide();
-	    			$("#deleteCheckTypes").hide();
-	    			$("#addCheckTypes").show();
+	    			resetButtonsAndFields();
 	    		} else {
 	    			$("#manageCheckValue").val($("#comboCheckCode").select2("data").description);
 	    	    	$("#updateCheckTypes").show();
@@ -1815,9 +1812,18 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, c
 }
 
 function showManageCheckTypePopup(){
-	$('#page-check-message-modal').html();
+	$('#page-check-message-modal').html("");
+	resetButtonsAndFields();
 	//recreatePopupLocationCombo();
 	$('#manageCheckTypesModal').modal({ backdrop: 'static', keyboard: false });		   	
+}
+
+function resetButtonsAndFields() {
+	$("#manageCheckValue").val("");
+	$("#comboCheckCode").select2("val", "");
+	$("#updateCheckTypes").hide();
+	$("#deleteCheckTypes").hide();
+	$("#addCheckTypes").show();
 }
 
 function addUpdateCheckType(operation) {
@@ -1853,8 +1859,9 @@ function validateCheckFields(){
 			});
 		});
 	}
-	
-	if ($("#comboCheckCode").select2("data").text == "") {
+
+	if (!$("#comboCheckCode").select2("data")) {
+		alert("err");
 		showCheckTypeErrorMessage(codeRequiredError);
 		return false;
 	} else if ($("#manageCheckValue").val() == "") {
@@ -1901,9 +1908,7 @@ function deleteCheckType() {
          		if (data.success == "1"){
          			reloadCheckTypeList(null, 3);
          			showCheckTypeMessage(data.successMessage);
-	    	    	$("#updateCheckTypes").hide();
-	    			$("#deleteCheckTypes").hide();
-	    			$("#addCheckTypes").show();
+         			resetButtonsAndFields();
          		} else {
          			showCheckTypeErrorMessage(data.error);
          		}

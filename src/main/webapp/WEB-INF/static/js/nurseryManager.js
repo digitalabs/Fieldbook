@@ -1739,10 +1739,16 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, c
 	var defaultData = null;
 	if (suggestions != null) {
 		$.each(suggestions, function( index, value ) {
-			dataObj = { 'id' : value.id,
-					  'text' : value.description,
+			if (comboName == "comboCheckCode") {
+				dataObj = { 'id' : value.id,
+					  'text' : value.name,
 					  'description' : value.description};
 			suggestions_obj.push(dataObj);  
+			} else {
+				dataObj = { 'id' : value.id,
+					  'text' : value.description,
+					  'description' : value.description};
+			}
 
 			if(currentFieldId != '' && currentFieldId == value.id){
 				defaultData = dataObj;

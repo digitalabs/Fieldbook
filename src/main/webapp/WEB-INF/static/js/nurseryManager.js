@@ -1753,7 +1753,7 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, c
 			
 			if(currentFieldId != '' && currentFieldId == value.id){
 				defaultData = dataObj;
-			}else if(currentFieldId == '' && 'CHECK' == dataObj.text){
+			}else if(currentFieldId == '' && 'CHECK' == value.name){
 				defaultData = dataObj;
 			}
 		});

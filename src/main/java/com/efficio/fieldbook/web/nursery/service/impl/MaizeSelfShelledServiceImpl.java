@@ -16,6 +16,7 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.service.MaizeSelfShelledService;
+import com.efficio.fieldbook.web.util.AppConstants;
 
 @Service
 public class MaizeSelfShelledServiceImpl extends
@@ -38,7 +39,7 @@ public class MaizeSelfShelledServiceImpl extends
         }
         for (AdvancingSource row : rows.getRows()) {
             if (row.getGermplasm() != null && !row.isCheck() && row.getPlantsSelected() != null && row.getPlantsSelected() > 0) {
-        		breedingMethodId = 205;
+        		breedingMethodId = AppConstants.SINGLE_PLANT_SELECTION_SF.getInt();
         		for (int i = 0; i < row.getPlantsSelected(); i++) {
             		if (putBrackets) {
             			newGermplasmName = "(" + row.getGermplasm().getDesig() + ")" + "-" + (i+1);

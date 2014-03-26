@@ -63,6 +63,8 @@ public enum AppConstants {
     , SELECTED_BULK_SF
     , RANDOM_BULK_SF
     , RANDOM_BULK_CF
+    , HALF_MASS_SELECTION
+    , DOUBLE_HAPLOID_LINE
     
     , METHOD_TYPE_GEN
     

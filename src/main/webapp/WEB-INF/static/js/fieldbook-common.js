@@ -30,6 +30,7 @@ $(function() {
 		});
 });
 
+
 function doAjaxMainSubmit(pageMessageDivId, successMessage, overrideAction){
 	Spinner.toggle();
 	var form = $("form");

@@ -6,8 +6,8 @@
 	 <div class="germplasm-measurement-list-table  component " style="width: 100%; max-width: 100%">
 	
        <!-- my-class table table-curved table-condensed   -->
-				<div class="factor-div" style="float: left; max-height: 400px; max-width: 50%; width: 50%; overflow-x: scroll; overflow-y: hidden">
-				<table style="table-layout: fixed;" class="overflow-y  make-sticky">
+				<div class="factor-div" style="float: left; max-height: 400px; max-width: 50%; min-width: 50%; overflow-x: scroll; overflow-y: hidden">
+				<table style="table-layout: auto; width: 100%">
 					<thead>
 						 <tr >
 			               <th th:if="${measurementVariable.factor == true}" th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'" th:each="measurementVariable, rowIndex : *{measurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>
@@ -27,8 +27,8 @@
              	</tbody>
 				</table>
 				</div>
-				<div class="variates-div" style="float: left; max-height: 400px;max-width: 50%; width: 50%; overflow: auto; overflow-x: scroll">
-				<table style="table-layout: fixed;" class="overflow-y  make-sticky"> 
+				<div class="variates-div" style="float: left; max-height: 400px;max-width: 50%; min-width: 50%; overflow: auto; overflow-x: scroll">
+				<table style="table-layout: auto;  width: 100%"> 
 					<thead>
 						 <tr >
 			               <th th:if="${measurementVariable.factor == false}" th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'" th:each="measurementVariable, rowIndex : *{measurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>

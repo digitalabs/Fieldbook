@@ -371,7 +371,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
                         new Object[] {form.getManageCheckValue()}, local); 
             } else {
                 enumeration = stdVar.getEnumeration(Integer.parseInt(form.getManageCheckCode()));
-                enumeration.setDescription(form.getManageCheckCode());
+                enumeration.setDescription(form.getManageCheckValue());
                 message = messageSource.getMessage("nursery.manage.check.types.edit.success", 
                         new Object[] {enumeration.getName()}, local);
             }

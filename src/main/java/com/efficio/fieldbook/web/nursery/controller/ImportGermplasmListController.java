@@ -377,10 +377,8 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             }
             ontologyService.saveOrUpdateStandardVariableEnumeration(stdVar, enumeration);
             
-            if (operation == 1) {
-                List<Enumeration> allEnumerations = ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
-                result.put("checkTypes", convertObjectToJson(allEnumerations));
-            }
+            List<Enumeration> allEnumerations = ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
+            result.put("checkTypes", convertObjectToJson(allEnumerations));
             
             result.put("success", "1");
             result.put("successMessage", message);
@@ -404,15 +402,21 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         try {
             String name = ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumeration(Integer.parseInt(form.getManageCheckCode())).getName();
             
-            if (ontologyService.validateDeleteStandardVariableEnumeration(TermId.CHECK.getId(), Integer.parseInt(form.getManageCheckCode()))) {
+            if (!ontologyService.validateDeleteStandardVariableEnumeration(TermId.CHECK.getId(), Integer.parseInt(form.getManageCheckCode()))) {
+                result.put("success", "-1");
+                result.put("error", messageSource.getMessage("nursery.manage.check.types.delete.error", 
+                        new Object[] {name}, local));
+            } else if (Integer.parseInt(form.getManageCheckCode()) > 0) {
+                result.put("success", "-1");
+                result.put("error", messageSource.getMessage("nursery.manage.check.types.delete.central", 
+                        new Object[] {name}, local));
+            } else {
                 ontologyService.deleteStandardVariableValidValue(TermId.CHECK.getId(), Integer.parseInt(form.getManageCheckCode()));
                 result.put("success", "1");
                 result.put("successMessage", messageSource.getMessage("nursery.manage.check.types.delete.success", 
                         new Object[] {name}, local));
-            } else {
-                result.put("success", "-1");
-                result.put("error", messageSource.getMessage("nursery.manage.check.types.delete.error", 
-                        new Object[] {name}, local));
+                List<Enumeration> allEnumerations = ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
+                result.put("checkTypes", convertObjectToJson(allEnumerations));
             }
             
         } catch (MiddlewareQueryException e) {

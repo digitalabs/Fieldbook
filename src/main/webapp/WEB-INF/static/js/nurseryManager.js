@@ -1916,7 +1916,7 @@ function deleteCheckType() {
             cache: false,
          	success: function(data) {
          		if (data.success == "1"){
-         			reloadCheckTypeList(null, 3);
+         			reloadCheckTypeList(data.checkTypes, 3);
          			showCheckTypeMessage(data.successMessage);
          			resetButtonsAndFields();
          		} else {
@@ -1933,51 +1933,34 @@ function deleteCheckType() {
 function reloadCheckTypeList(data, operation) {
 	var selectedValue = 0;
 	
-	if (checkTypes_obj.length == 0  && checkTypes != null) {
-		$.each(checkTypes, function (index, item){
-			checkTypes_obj.push({ 'id' : item.id,
-			  'text' : item.name,
-			  'description' : item.description
-			});
-		});
+	checkTypes_obj = [];
+	
+	if (data != null) {
+	$.each($.parseJSON(data), function( index, value ) {
+		checkTypes_obj.push({ 'id' : value.id,
+			  'text' : value.name,
+			  'description' : value.description
+		});  
+	});
 	}
 	
-	if (operation == 1) {
-		//add check type
-		checkTypes_obj = [];
-		if (data != null) {
-		$.each($.parseJSON(data), function( index, value ) {
-			checkTypes_obj.push({ 'id' : value.id,
-				  'text' : value.name,
-				  'description' : value.description
-			});  
-		});
-		}
-	} else if (operation == 2) {
+	if (operation == 2) {
 		//update
-		var editIndex;
-		$.each(checkTypes_obj, function (index, item){
-			if ($("#comboCheckCode").select2("data").id == item.id) {
-				//update description of item 
-				item.description = $("#manageCheckValue").val();
-				return false;
-			}
-		});
-		selectedValue = $("#comboCheckCode").select2("data").id;
-	} else {
-		//delete
-		var deleteIndex;
-		$.each(checkTypes_obj, function (index, item){
-			if ($("#comboCheckCode").select2("data").id == item.id) {
-				deleteIndex = index;	
-				return false;
-			}
-		});
-		//delete item from array
-		checkTypes_obj.splice(deleteIndex, 1);
-	}
+		selectedValue = getIdOfValue($("#manageCheckValue").val());
+	} 
 	
 	$("#manageCheckValue").val("");
 	initializeCheckTypeSelect2(null, [], false, 0, "comboCheckCode");
 	initializeCheckTypeSelect2(null, checkTypes_obj, false, selectedValue, "comboCheckCode");
+}
+
+function getIdOfValue(value) {
+	var id = 0;
+	$.each(checkTypes_obj, function (index, item){
+		if (item.description == value) {
+			id = item.id;
+			return false;
+		}
+	});
+	return id;
 }

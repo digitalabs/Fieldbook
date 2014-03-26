@@ -1750,11 +1750,18 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, c
 					  'description' : value.description};
 			}
 			suggestions_obj.push(dataObj);
-			
-			if(currentFieldId != '' && currentFieldId == value.id){
-				defaultData = dataObj;
-			}else if(currentFieldId == '' && 'CHECK' == value.name){
-				defaultData = dataObj;
+			if (comboName != "comboCheckCode") {
+				var specificVal = '';
+				if($('#'+getJquerySafeId(comboName)).select2('data') != null)
+					specificVal = $('#'+getJquerySafeId(comboName)).select2('data').text;
+				if(defaultData == null){
+					if(currentFieldId != '' && currentFieldId == dataObj.id){
+						defaultData = dataObj;
+					}else if(currentFieldId == '' && 'CHECK' == value.name){
+						defaultData = dataObj;
+					}
+				}
+				
 			}
 		});
 	} else {

@@ -58,7 +58,8 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 
 		   
 		   	function showAddBlockPopup(){
-		   		$('#page-block-message-modal').html();
+		   		$('#page-block-message-modal').html('');
+		   		$('#newBlockName').val('');
 		   		recreatePopupFieldCombo();
 		   		$('#addBlocksModal').modal({ backdrop: 'static', keyboard: false });		   	
 		   	}

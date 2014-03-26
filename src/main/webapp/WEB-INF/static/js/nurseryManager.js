@@ -1804,7 +1804,7 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, c
 	            query.callback(data);
 	        }
 	    });
-		
+		$('#checkId').val('')
 		if(addOnChange){
 			
 			$('#'+getJquerySafeId('checkId')).on("change", function (){

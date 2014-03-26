@@ -824,7 +824,8 @@ function showBlockDetails(isHide, blockInfo){
 				rowsInBlock 20
 			 */
 			if(blockInfo.new == false){
-				$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val(blockInfo.numberOfRowsInPlot);
+				var rowsPerPlotData = {'id': blockInfo.numberOfRowsInPlot , 'text' : blockInfo.numberOfRowsInPlot};
+				$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('data', rowsPerPlotData);
 				$('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val(blockInfo.rowsInBlock);
 				$('#'+getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val(blockInfo.rangesInBlock);	
 				
@@ -833,7 +834,8 @@ function showBlockDetails(isHide, blockInfo){
 				isNewBlock = false;				
 			}else{
 				//has fieldmap already
-				$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val(1);
+				var rowsPerPlotData = {'id': 1 , 'text' : 1};
+				$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('data', rowsPerPlotData);
 				$('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val(0);
 				$('#'+getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val(0);
 				$('.block-details input').attr('disabled', false);

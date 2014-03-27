@@ -182,20 +182,20 @@ $.ajax(
     			   //get index of breeding method row
     			   var index = getBreedingMethodRowIndex();
     			   
-    			   if ($("#" + getJquerySafeId("trialLevelVariables" + index + ".value")).select2("data")) {
-    				   selectedVal = $("#" + getJquerySafeId("trialLevelVariables" + index + ".value")).select2("data").id;
+    			   if ($("#" + getJquerySafeId("studyLevelVariables" + index + ".value")).select2("data")) {
+    				   selectedVal = $("#" + getJquerySafeId("studyLevelVariables" + index + ".value")).select2("data").id;
     			   }
     			   //recreate select2 of breeding method
     			   initializePossibleValuesCombo([], 
-	 			 			"#" + getJquerySafeId("trialLevelVariables" + index + ".value"), false, selectedVal);
+	 			 			"#" + getJquerySafeId("studyLevelVariables" + index + ".value"), false, selectedVal);
     			   
     			   //update values of combo
-    			   if ($("#" + getJquerySafeId("trialLevelVariables" + index + ".favorite1")).is(":checked")) {
+    			   if ($("#" + getJquerySafeId("studyLevelVariables" + index + ".favorite1")).is(":checked")) {
 					   initializePossibleValuesCombo($.parseJSON(data.favoriteMethods), 
-		 			 			"#" + getJquerySafeId("trialLevelVariables" + index + ".value"), false, selectedVal);
+		 			 			"#" + getJquerySafeId("studyLevelVariables" + index + ".value"), false, selectedVal);
     			   } else {
     				   initializePossibleValuesCombo($.parseJSON(data.allMethods), 
-		 			 			"#" + getJquerySafeId("trialLevelVariables" + index + ".value"), false, selectedVal);
+		 			 			"#" + getJquerySafeId("studyLevelVariables" + index + ".value"), false, selectedVal);
     			   }
     			   
     			   replacePossibleJsonValues(data.favoriteMethods, data.allMethods, index);
@@ -219,7 +219,7 @@ function getBreedingMethodRowIndex() {
 	$.each($(".nurseryLevelSettings"), function (index, row) {
 		//daniel
 		var cvTermId = $($(row).find('.1st')
-				.find("#" + getJquerySafeId("trialLevelVariables" + index + ".variable.cvTermId"))).val();
+				.find("#" + getJquerySafeId("studyLevelVariables" + index + ".variable.cvTermId"))).val();
 		if (parseInt(cvTermId) == parseInt(breedingMethodId)) {
 			rowIndex = index;
 		}
@@ -231,7 +231,7 @@ function getLocationRowIndex() {
 	var rowIndex = 0;
 	$.each($(".nurseryLevelSettings"), function (index, row) {
 		var cvTermId = $($(row).find('.1st')
-				.find("#" + getJquerySafeId("trialLevelVariables" + index + ".variable.cvTermId"))).val();
+				.find("#" + getJquerySafeId("studyLevelVariables" + index + ".variable.cvTermId"))).val();
 		if (parseInt(cvTermId) == parseInt(locationId)) {
 			rowIndex = index;
 		}
@@ -267,19 +267,19 @@ function recreateLocationCombo() {
     			   var selectedVal = null;
     			   var index = getLocationRowIndex();
     			   
-    			   if ($("#" + getJquerySafeId("trialLevelVariables"+index+".value")).select2("data")) {
-    				   selectedVal = $("#" + getJquerySafeId("trialLevelVariables"+index+".value")).select2("data").id;
+    			   if ($("#" + getJquerySafeId("studyLevelVariables"+index+".value")).select2("data")) {
+    				   selectedVal = $("#" + getJquerySafeId("studyLevelVariables"+index+".value")).select2("data").id;
     			   } 
     			   initializePossibleValuesCombo([], 
-	 			 			"#" + getJquerySafeId("trialLevelVariables"+index+".value"), true, selectedVal);
+	 			 			"#" + getJquerySafeId("studyLevelVariables"+index+".value"), true, selectedVal);
     			   
     			   //update values in combo
-    			   if ($("#" + getJquerySafeId("trialLevelVariables"+index+".favorite1")).is(":checked")) {
+    			   if ($("#" + getJquerySafeId("studyLevelVariables"+index+".favorite1")).is(":checked")) {
 	    			   initializePossibleValuesCombo($.parseJSON(data.favoriteLocations), 
-		 			 			"#" + getJquerySafeId("trialLevelVariables"+index+".value"), false, selectedVal);
+		 			 			"#" + getJquerySafeId("studyLevelVariables"+index+".value"), false, selectedVal);
     			   } else {
     				   initializePossibleValuesCombo($.parseJSON(data.allLocations), 
-		 			 			"#" + getJquerySafeId("trialLevelVariables"+index+".value"), true, selectedVal);
+		 			 			"#" + getJquerySafeId("studyLevelVariables"+index+".value"), true, selectedVal);
     			   }
     			   
     			   replacePossibleJsonValues(data.favoriteLocations, data.allLocations, index);
@@ -715,15 +715,15 @@ function createTrialLevelSettingVariables(data) {
 		
 		//create html elements dynamically
 		newRow = newRow + "<div class='col-xs-5 col-md-5'>" + isDelete + 
-		"&nbsp;&nbsp;<input class='cvTermIds' type='hidden' id='trialLevelVariables" + ctr + ".variable.cvTermId' name='trialLevelVariables[" + 
+		"&nbsp;&nbsp;<input class='cvTermIds' type='hidden' id='studyLevelVariables" + ctr + ".variable.cvTermId' name='studyLevelVariables[" + 
 		ctr + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
 		//newRow = newRow + "<td>" + settingDetail.variable.name + ':' + '<span class="required">*</span>' +  "</td>";
 		newRow = newRow + "<span style='word-wrap: break-word'  class='control-label'>" + settingDetail.variable.name + '</span>:' + '' +  "</div>";
 		newRow = newRow + "<div class='col-xs-7 col-md-7'>";
 		/*
-		newRow = newRow + "<input type='hidden' id='trialLevelVariables" + ctr + 
-		".value' name='trialLevelVariables[" + ctr + "].value' class='form-control select2' />";
+		newRow = newRow + "<input type='hidden' id='studyLevelVariables" + ctr + 
+		".value' name='studyLevelVariables[" + ctr + "].value' class='form-control select2' />";
 		*/
 		var inputHtml = '';
 				
@@ -742,10 +742,10 @@ function createTrialLevelSettingVariables(data) {
 		
 		if (settingDetail.variable.cvTermId == breedingMethodId) {
 			//show favorite method
-			newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id='trialLevelVariables" + ctr + ".favorite1'" + 
-			" name='trialLevelVariables[" + ctr + "].favorite'" +
+			newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id='studyLevelVariables" + ctr + ".favorite1'" + 
+			" name='studyLevelVariables[" + ctr + "].favorite'" +
 			" onclick='javascript: toggleMethodDropdown(" + ctr + ");' />" +
-			"<input type='hidden' name='_trialLevelVariables[" + ctr + "].favorite' value='on' /> " +
+			"<input type='hidden' name='_studyLevelVariables[" + ctr + "].favorite' value='on' /> " +
 			"<span>&nbsp;&nbsp;" + showFavoriteMethodLabel + "</span></div>" + 
 			"<div id='possibleValuesJson" + ctr + "' class='possibleValuesJson' style='display:none'>" + settingDetail.possibleValuesJson + 
 			"</div><div id='possibleValuesFavoriteJson" + ctr + "' class='possibleValuesFavoriteJson' style='display:none'>" + 
@@ -756,10 +756,10 @@ function createTrialLevelSettingVariables(data) {
 			
 		} else if (settingDetail.variable.cvTermId == locationId) {
 				//show favorite method
-				newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id='trialLevelVariables" + ctr + ".favorite1'" + 
-				" name='trialLevelVariables[" + ctr + "].favorite'" +
+				newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id='studyLevelVariables" + ctr + ".favorite1'" + 
+				" name='studyLevelVariables[" + ctr + "].favorite'" +
 				" onclick='javascript: toggleLocationDropdown(" + ctr + ");' />" +
-				"<input type='hidden' name='_trialLevelVariables[" + ctr + "].favorite' value='on' /> " +
+				"<input type='hidden' name='_studyLevelVariables[" + ctr + "].favorite' value='on' /> " +
 				"<span>&nbsp;&nbsp;" + showFavoriteLocationLabel + "</span></div>" + 
 				"<div id='possibleValuesJson" + ctr + "' class='possibleValuesJson' style='display:none'>" + settingDetail.possibleValuesJson + 
 				"</div><div id='possibleValuesFavoriteJson" + ctr + "' class='possibleValuesFavoriteJson' style='display:none'>" + 
@@ -777,7 +777,7 @@ function createTrialLevelSettingVariables(data) {
 		if(settingDetail.variable.widgetType == 'DROPDOWN'){
 			//initialize select 2 combo
 			initializePossibleValuesCombo(settingDetail.possibleValues, "#" + 
-					getJquerySafeId("trialLevelVariables" + ctr + ".value"), false, null);
+					getJquerySafeId("studyLevelVariables" + ctr + ".value"), false, null);
 		}
 		ctr++;
 	});
@@ -799,15 +799,15 @@ function createNurseryLevelSettingVariablesOld(data) {
 		
 		//create html elements dynamically
 		newRow = newRow + "<div class='col-xs-4 col-md-4 1st'>" + isDelete + 
-		"<input class='cvTermIds' type='hidden' id='trialLevelVariables" + ctr + ".variable.cvTermId' name='trialLevelVariables[" + 
+		"<input class='cvTermIds' type='hidden' id='studyLevelVariables" + ctr + ".variable.cvTermId' name='studyLevelVariables[" + 
 		ctr + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"";
 		//newRow = newRow + "<td>" + settingDetail.variable.name + ':' + '<span class="required">*</span>' +  "</td>";
 		newRow = newRow + "<label class='control-label'>" + settingDetail.variable.name + '</label>:' + '' +  "</div>";
 		newRow = newRow + "<div class='col-xs-8 col-md-8 2nd'>";
 		/*
-		newRow = newRow + "<input type='hidden' id='trialLevelVariables" + ctr + 
-		".value' name='trialLevelVariables[" + ctr + "].value' class='form-control select2' />";
+		newRow = newRow + "<input type='hidden' id='studyLevelVariables" + ctr + 
+		".value' name='studyLevelVariables[" + ctr + "].value' class='form-control select2' />";
 		*/
 		var inputHtml = '';
 				
@@ -826,10 +826,10 @@ function createNurseryLevelSettingVariablesOld(data) {
 		
 		if (settingDetail.variable.cvTermId == breedingMethodId) {
 			//show favorite method
-			newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id='trialLevelVariables" + ctr + ".favorite1'" + 
-			" name='trialLevelVariables[" + ctr + "].favorite'" +
+			newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id='studyLevelVariables" + ctr + ".favorite1'" + 
+			" name='studyLevelVariables[" + ctr + "].favorite'" +
 			" onclick='javascript: toggleMethodDropdown(" + ctr + ");' />" +
-			"<input type='hidden' name='_trialLevelVariables[" + ctr + "].favorite' value='on' /> " +
+			"<input type='hidden' name='_studyLevelVariables[" + ctr + "].favorite' value='on' /> " +
 			"<span>&nbsp;&nbsp;" + showFavoriteMethodLabel + "</span></div>" + 
 			"<div id='possibleValuesJson" + ctr + "' class='possibleValuesJson' style='display:none'>" + settingDetail.possibleValuesJson + 
 			"</div><div id='possibleValuesFavoriteJson" + ctr + "' class='possibleValuesFavoriteJson' style='display:none'>" + 
@@ -840,10 +840,10 @@ function createNurseryLevelSettingVariablesOld(data) {
 			
 		} else if (settingDetail.variable.cvTermId == locationId) {
 				//show favorite method
-				newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id='trialLevelVariables" + ctr + ".favorite1'" + 
-				" name='trialLevelVariables[" + ctr + "].favorite'" +
+				newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id='studyLevelVariables" + ctr + ".favorite1'" + 
+				" name='studyLevelVariables[" + ctr + "].favorite'" +
 				" onclick='javascript: toggleLocationDropdown(" + ctr + ");' />" +
-				"<input type='hidden' name='_trialLevelVariables[" + ctr + "].favorite' value='on' /> " +
+				"<input type='hidden' name='_studyLevelVariables[" + ctr + "].favorite' value='on' /> " +
 				"<span>&nbsp;&nbsp;" + showFavoriteLocationLabel + "</span></div>" + 
 				"<div id='possibleValuesJson" + ctr + "' class='possibleValuesJson' style='display:none'>" + settingDetail.possibleValuesJson + 
 				"</div><div id='possibleValuesFavoriteJson" + ctr + "' class='possibleValuesFavoriteJson' style='display:none'>" + 
@@ -861,7 +861,7 @@ function createNurseryLevelSettingVariablesOld(data) {
 		if(settingDetail.variable.widgetType == 'DROPDOWN'){
 			//initialize select 2 combo
 			initializePossibleValuesCombo(settingDetail.possibleValues, "#" + 
-					getJquerySafeId("trialLevelVariables" + ctr + ".value"), false, null);
+					getJquerySafeId("studyLevelVariables" + ctr + ".value"), false, null);
 		}
 		ctr++;
 	});
@@ -871,17 +871,17 @@ function createNurseryLevelSettingVariablesOld(data) {
 
 function toggleMethodDropdown(rowIndex) {
 	var possibleValues;  
-	var showFavorite = $("#" + getJquerySafeId("trialLevelVariables" + rowIndex + ".favorite1")).is(":checked");
+	var showFavorite = $("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".favorite1")).is(":checked");
 	var selectedVal;
 	
 	//get previously selected value
-	if ($("#" + getJquerySafeId("trialLevelVariables" + rowIndex + ".value")).select2("data")) {
-		selectedVal = $("#" + getJquerySafeId("trialLevelVariables" + rowIndex + ".value")).select2("data").id;
+	if ($("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".value")).select2("data")) {
+		selectedVal = $("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".value")).select2("data").id;
 	}
 	
 	//reset select2 combo
 	initializePossibleValuesCombo([], "#" + 
-			getJquerySafeId("trialLevelVariables" + rowIndex + ".value"), false, null);
+			getJquerySafeId("studyLevelVariables" + rowIndex + ".value"), false, null);
 	
 	//get possible values based on checkbox
 	if (showFavorite) {
@@ -892,24 +892,24 @@ function toggleMethodDropdown(rowIndex) {
 	
 	//recreate select2 combo
 	initializePossibleValuesCombo($.parseJSON(possibleValues), "#" + 
-			getJquerySafeId("trialLevelVariables" + rowIndex + ".value"), false, selectedVal);
+			getJquerySafeId("studyLevelVariables" + rowIndex + ".value"), false, selectedVal);
 }
 
 
 function toggleLocationDropdown(rowIndex) {
 	var possibleValues;  
-	var showFavorite = $("#" + getJquerySafeId("trialLevelVariables" + rowIndex + ".favorite1")).is(":checked");
+	var showFavorite = $("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".favorite1")).is(":checked");
 	var selectedVal;
 	var showAll = true;
 	
 	//get previously selected value
-	if ($("#" + getJquerySafeId("trialLevelVariables" + rowIndex + ".value")).select2("data")) {
-		selectedVal = $("#" + getJquerySafeId("trialLevelVariables" + rowIndex + ".value")).select2("data").id;
+	if ($("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".value")).select2("data")) {
+		selectedVal = $("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".value")).select2("data").id;
 	}
 	
 	//reset select2 combo
 	initializePossibleValuesCombo([], "#" + 
-			getJquerySafeId("trialLevelVariables" + rowIndex + ".value"), false, null);
+			getJquerySafeId("studyLevelVariables" + rowIndex + ".value"), false, null);
 	
 	//get possible values based on checkbox
 	if (showFavorite) {
@@ -921,7 +921,7 @@ function toggleLocationDropdown(rowIndex) {
 	
 	//recreate select2 combo
 	initializePossibleValuesCombo($.parseJSON(possibleValues), "#" + 
-			getJquerySafeId("trialLevelVariables" + rowIndex + ".value"), showAll, selectedVal);
+			getJquerySafeId("studyLevelVariables" + rowIndex + ".value"), showAll, selectedVal);
 }
 
 function createPlotLevelSettingVariables(data) {
@@ -1072,8 +1072,8 @@ function deleteVariable(variableType, variableId, deleteButton) {
 function sortVariableIdsAndNames(variableType) {
 	switch (variableType) {
 	case 1:
-		var reg = new RegExp("trialLevelVariables[0-9]+", "g");
-		var reg2 = new RegExp("trialLevelVariables\[[0-9]+\]", "g");
+		var reg = new RegExp("studyLevelVariables[0-9]+", "g");
+		var reg2 = new RegExp("studyLevelVariables\[[0-9]+\]", "g");
 		$.each($(".nurseryLevelSettings"), function (index, row) {						
 			//get currently selected value of select2 dropdown
 			var selectedVal = null;
@@ -1089,8 +1089,8 @@ function sortVariableIdsAndNames(variableType) {
 		    }
 		    
 		    //change the ids and names of the objects 
-		    row.innerHTML = row.innerHTML.replace(reg, "trialLevelVariables" + index);
-			row.innerHTML = row.innerHTML.replace(reg2, "trialLevelVariables[" + index + "]");
+		    row.innerHTML = row.innerHTML.replace(reg, "studyLevelVariables" + index);
+			row.innerHTML = row.innerHTML.replace(reg2, "studyLevelVariables[" + index + "]");
 			
 			//delete the existing select2 object and recreate the select2 combo and checkbox/links for location/method
 			if (row.innerHTML.indexOf("select2") > -1) {
@@ -1121,11 +1121,11 @@ function recreateSelect2Combo(index, row, selectedVal, isFavoriteChecked) {
 	var possibleValuesJson = $($(row).find(".possibleValuesJson")).text();
 	var possibleValuesFavoriteJson = $($(row).find(".possibleValuesFavoriteJson")).text();
 	var cvTermId = $($(row).find('.1st').find("#" 
-			+ getJquerySafeId("trialLevelVariables" + index + ".variable.cvTermId"))).val();
+			+ getJquerySafeId("studyLevelVariables" + index + ".variable.cvTermId"))).val();
 	
 	//hidden field for select2 
-	var newCell = "<input type='hidden' id='trialLevelVariables" + index + 
-	".value' name='trialLevelVariables[" + index + "].value' class='form-control select2' />";
+	var newCell = "<input type='hidden' id='studyLevelVariables" + index + 
+	".value' name='studyLevelVariables[" + index + "].value' class='form-control select2' />";
 	
 	//newCell = newCell + "<div class='div-select-val' style='display: none'>" +  + "</div>"
 	
@@ -1162,10 +1162,10 @@ function recreateSelect2Combo(index, row, selectedVal, isFavoriteChecked) {
 	
 	//add checkbox and manage location/method links
 	if (parseInt(cvTermId) == parseInt(breedingMethodId) || parseInt(cvTermId) == parseInt(locationId)) {
-		newCell = newCell + "<div class='possibleValuesDiv'><input type='checkbox' id='trialLevelVariables" + index + ".favorite1'" + 
-		" name='trialLevelVariables[" + index + "].favorite'" +
+		newCell = newCell + "<div class='possibleValuesDiv'><input type='checkbox' id='studyLevelVariables" + index + ".favorite1'" + 
+		" name='studyLevelVariables[" + index + "].favorite'" +
 		" onclick='javascript: " + methodName + "(" + index + ");' " + isChecked +  " />" +
-		"<input type='hidden' name='_trialLevelVariables[" + index + "].favorite' value='on' /> " +
+		"<input type='hidden' name='_studyLevelVariables[" + index + "].favorite' value='on' /> " +
 		"<span>&nbsp;&nbsp;" + favoriteLabel + "</span></div>";
 		
 		newCell = newCell + "<span><a href='javascript: " + manageMethodName + "();'>" + managePopupLabel + "</a></span>";
@@ -1176,13 +1176,13 @@ function recreateSelect2Combo(index, row, selectedVal, isFavoriteChecked) {
 	//recreate the select2 object
 	if (parseInt(cvTermId) == parseInt(locationId)) {
 	    initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
- 			"#" + getJquerySafeId("trialLevelVariables" + index + ".value"), showAll, selectedVal);
+ 			"#" + getJquerySafeId("studyLevelVariables" + index + ".value"), showAll, selectedVal);
 	} else if (parseInt(cvTermId) == parseInt(breedingMethodId)){
 		initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
-	 			"#" + getJquerySafeId("trialLevelVariables" + index + ".value"), false, selectedVal);
+	 			"#" + getJquerySafeId("studyLevelVariables" + index + ".value"), false, selectedVal);
 	} else {
 		initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
-			"#" + getJquerySafeId("trialLevelVariables" + index + ".value"), false, selectedVal);
+			"#" + getJquerySafeId("studyLevelVariables" + index + ".value"), false, selectedVal);
 	}
 }
 
@@ -1408,25 +1408,25 @@ function checkIfNull(object) {
 
 function createSliderInput(ctr, minVal, maxVal){
 	
-	return "<input data-slider-orientation='horizontal' data-slider-selection='after' type='text' data-step='0.1' data-min='"+minVal+"' data-max='"+maxVal+"' id='trialLevelVariables" + ctr + 
-	".value' name='trialLevelVariables[" + ctr + "].value' class='form-control numeric-range-input' />";
+	return "<input data-slider-orientation='horizontal' data-slider-selection='after' type='text' data-step='0.1' data-min='"+minVal+"' data-max='"+maxVal+"' id='studyLevelVariables" + ctr + 
+	".value' name='studyLevelVariables[" + ctr + "].value' class='form-control numeric-range-input' />";
 }
 function createDropdownInput(ctr){
-	 return "<input type='hidden' id='trialLevelVariables" + ctr + 
-		".value' name='trialLevelVariables[" + ctr + "].value' class='form-control select2' />";
+	 return "<input type='hidden' id='studyLevelVariables" + ctr + 
+		".value' name='studyLevelVariables[" + ctr + "].value' class='form-control select2' />";
 }
 function createDateInput(ctr){	
-	 return "<input type='text' id='trialLevelVariables" + ctr + 
-		".value' name='trialLevelVariables[" + ctr + "].value' class='form-control date-input' />";
+	 return "<input type='text' id='studyLevelVariables" + ctr + 
+		".value' name='studyLevelVariables[" + ctr + "].value' class='form-control date-input' />";
 	 
 }
 function createNumericalTextInput(ctr){
-	return "<input type='text' id='trialLevelVariables" + ctr + 
-	".value' name='trialLevelVariables[" + ctr + "].value' class='form-control numeric-input' />";
+	return "<input type='text' id='studyLevelVariables" + ctr + 
+	".value' name='studyLevelVariables[" + ctr + "].value' class='form-control numeric-input' />";
 }
 function createCharacterTextInput(ctr){
-	return "<input type='text' id='trialLevelVariables" + ctr + 
-	".value' name='trialLevelVariables[" + ctr + "].value' class='form-control character-input' />";
+	return "<input type='text' id='studyLevelVariables" + ctr + 
+	".value' name='studyLevelVariables[" + ctr + "].value' class='form-control character-input' />";
 
 }
 function initializeDateAndSliderInputs(){

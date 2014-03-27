@@ -94,7 +94,7 @@ public class CreateNurseryController extends SettingsController {
             List<SettingDetail> nurseryLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
                     buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true), 
                     buildRequiredVariablesFlag(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
-                    userSelection.getNurseryLevelConditions(), true);
+                    userSelection.getStudyLevelConditions(), true);
             
             //plot-level
             List<SettingDetail> plotLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()), 
@@ -104,9 +104,9 @@ public class CreateNurseryController extends SettingsController {
             
             
             
-            userSelection.setNurseryLevelConditions(nurseryLevelConditions);
+            userSelection.setStudyLevelConditions(nurseryLevelConditions);
             userSelection.setPlotsLevelList(plotLevelConditions);
-            form.setNurseryLevelVariables(userSelection.getNurseryLevelConditions());
+            form.setStudyLevelVariables(userSelection.getStudyLevelConditions());
             form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
             form.setPlotLevelVariables(userSelection.getPlotsLevelList());
             //form.setSelectedSettingId(1);
@@ -161,7 +161,7 @@ public class CreateNurseryController extends SettingsController {
 	    	TemplateSetting templateSetting = templateSettings.get(0); //always 1
 	    	Dataset dataset = SettingsUtil.parseXmlToDatasetPojo(templateSetting.getConfiguration());
 	    	SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
-	    	form.setNurseryLevelVariables(userSelection.getNurseryLevelConditions());
+	    	form.setStudyLevelVariables(userSelection.getStudyLevelConditions());
 	    	form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
 	    	form.setPlotLevelVariables(userSelection.getPlotsLevelList());
 //	    	form.setIsDefault(templateSetting.getIsDefault().intValue() == 1 ? true : false);
@@ -190,18 +190,18 @@ public class CreateNurseryController extends SettingsController {
     public String submit(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws MiddlewareQueryException {
     	
     	String name = null;
-    	for (SettingDetail nvar : form.getNurseryLevelVariables()) {
+    	for (SettingDetail nvar : form.getStudyLevelVariables()) {
     		if (nvar.getVariable() != null && nvar.getVariable().getCvTermId() != null && nvar.getVariable().getCvTermId().equals(TermId.STUDY_NAME.getId())) {
     			name = nvar.getValue();
     			break;
     		}
     	}
 
-    	Dataset dataset = SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, form.getNurseryLevelVariables(), form.getPlotLevelVariables(), form.getBaselineTraitVariables(), userSelection);
+    	Dataset dataset = SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, form.getStudyLevelVariables(), form.getPlotLevelVariables(), form.getBaselineTraitVariables(), userSelection);
     	Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);
     	userSelection.setWorkbook(workbook);
     	
-    	createStudyDetails(workbook, form.getNurseryLevelVariables(), form.getFolderId());
+    	createStudyDetails(workbook, form.getStudyLevelVariables(), form.getFolderId());
  
     	return "success";
     }

@@ -135,11 +135,11 @@ public class PojoXmlTester extends AbstractJUnit4SpringContextTests {
 		UserSelection userSelection = new UserSelection();
 		SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, "1");
 		
-		assertEquals(userSelection.getNurseryLevelConditions().size(), dataset.getConditions().size());
+		assertEquals(userSelection.getStudyLevelConditions().size(), dataset.getConditions().size());
 		assertEquals(userSelection.getPlotsLevelList().size(), dataset.getFactors().size());
 		assertEquals(userSelection.getBaselineTraitsList().size(), dataset.getVariates().size());
 		
-		assertEquals(userSelection.getNurseryLevelConditions().get(0).getVariable().getName(), dataset.getConditions().get(0).getName());
+		assertEquals(userSelection.getStudyLevelConditions().get(0).getVariable().getName(), dataset.getConditions().get(0).getName());
 		assertEquals(userSelection.getPlotsLevelList().get(0).getVariable().getName(), dataset.getFactors().get(0).getName());
 		assertEquals(userSelection.getBaselineTraitsList().get(0).getVariable().getName(), dataset.getVariates().get(0).getName());
 		

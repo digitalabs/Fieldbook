@@ -63,14 +63,14 @@ public class UserSelection implements Serializable {
     private int currentPageGermplasmList;
     
     /**  Nursery level conditions in Manage Settings. */
-    private List<SettingDetail> nurseryLevelConditions;
-    private List<SettingDetail> trialLevelConditions;
+    private List<SettingDetail> studyLevelConditions;
     
     /**  Plot level factors in Manage Settings. */
     private List<SettingDetail> plotsLevelList;
     
     /**  Baseline Traits in Manage Settings. */
     private List<SettingDetail> baselineTraitsList;
+    private List<SettingDetail> trialLevelVariableList;
     
     /** The all standard variables. */
     //private Set<StandardVariable> allStandardVariables;
@@ -265,22 +265,14 @@ public class UserSelection implements Serializable {
 		this.measurementRowList = measurementRowList;
 	}
 
-	/**
-	 * Gets the nursery level conditions.
-	 *
-	 * @return the nurseryLevelConditions
-	 */
-	public List<SettingDetail> getNurseryLevelConditions() {
-		return nurseryLevelConditions;
+	
+
+	public List<SettingDetail> getStudyLevelConditions() {
+		return studyLevelConditions;
 	}
 
-	/**
-	 * Sets the nursery level conditions.
-	 *
-	 * @param nurseryLevelConditions the nurseryLevelConditions to set
-	 */
-	public void setNurseryLevelConditions(List<SettingDetail> nurseryLevelConditions) {
-		this.nurseryLevelConditions = nurseryLevelConditions;
+	public void setStudyLevelConditions(List<SettingDetail> studyLevelConditions) {
+		this.studyLevelConditions = studyLevelConditions;
 	}
 
 	/**
@@ -403,13 +395,15 @@ public class UserSelection implements Serializable {
 	public void setTraitRefList(List<TraitClassReference> traitRefList) {
 		this.traitRefList = traitRefList;
 	}
+	
 
-	public List<SettingDetail> getTrialLevelConditions() {
-		return trialLevelConditions;
+	public List<SettingDetail> getTrialLevelVariableList() {
+		return trialLevelVariableList;
 	}
 
-	public void setTrialLevelConditions(List<SettingDetail> trialLevelConditions) {
-		this.trialLevelConditions = trialLevelConditions;
+	public void setTrialLevelVariableList(List<SettingDetail> trialLevelVariableList) {
+		this.trialLevelVariableList = trialLevelVariableList;
 	}
 
+	
 }

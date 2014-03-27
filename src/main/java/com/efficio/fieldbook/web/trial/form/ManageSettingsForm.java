@@ -31,7 +31,7 @@ public class ManageSettingsForm {
 	private String settingName;
 	
 	/** The nursery level variables. */
-	private List<SettingDetail> trialLevelVariables;
+	private List<SettingDetail> studyLevelVariables;
 	
 	/** The plot level variables. */
 	private List<SettingDetail> plotLevelVariables;
@@ -103,12 +103,13 @@ public class ManageSettingsForm {
         
         
         
-        public List<SettingDetail> getTrialLevelVariables() {
-			return trialLevelVariables;
+        
+		public List<SettingDetail> getStudyLevelVariables() {
+			return studyLevelVariables;
 		}
 
-		public void setTrialLevelVariables(List<SettingDetail> trialLevelVariables) {
-			this.trialLevelVariables = trialLevelVariables;
+		public void setStudyLevelVariables(List<SettingDetail> studyLevelVariables) {
+			this.studyLevelVariables = studyLevelVariables;
 		}
 
 		/**
@@ -285,7 +286,7 @@ public class ManageSettingsForm {
 		public void clear() {
 			this.selectedSettingId = 0;
 			this.settingName = null;
-			this.trialLevelVariables = null;
+			this.studyLevelVariables = null;
 			this.plotLevelVariables = null;
 			this.baselineTraitVariables = null;
 			this.isDefault = false;

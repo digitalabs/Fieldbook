@@ -47,20 +47,20 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 	                                        </select>
 	                                   </div>
 			    				</div>	
-			    				<div class="row nurseryLevelSettings" th:each="nurseryLevelVariable, rowStat : *{nurseryLevelVariables}">
+			    				<div class="row nurseryLevelSettings" th:each="nurseryLevelVariable, rowStat : *{studyLevelVariables}">
 			    					<div class="col-xs-5 col-md-5 1st">
 	                                        &nbsp;&nbsp;&nbsp;<span style="word-wrap: break-word"  class="control-label nursery-level-label" th:text="${nurseryLevelVariable.variable.name}"></span>:
 	                                    </div>
 	                                <div class="col-xs-7 col-md-7 2nd">
 	                                       <!-- <div th:text="${nurseryLevelVariable.variable.cvTermId}"></div> -->
-											 <input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].variable.cvTermId}" /> 
+											 <input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" /> 
 												<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" 
-												type="hidden" th:field="*{nurseryLevelVariables[__${rowStat.index}__].value}" class="form-control select2" />
+												type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control select2" />
 												
 												<!-- Show Favorite Location/Method -->
 												<div th:if="${nurseryLevelVariable.variable.cvTermId}==*{locationId}" class="possibleValuesDiv">
 												<input 
-												type="checkbox" th:field="*{nurseryLevelVariables[__${rowStat.index}__].favorite}" 
+												type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}" 
 												th:onclick="'javascript: toggleLocationDropdown(\'' + ${rowStat.index} + '\');'" />
 												&nbsp;&nbsp;
 												<span 
@@ -68,7 +68,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 												</div>
 												<div th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}" class="possibleValuesDiv">
 												<input 
-												type="checkbox" th:field="*{nurseryLevelVariables[__${rowStat.index}__].favorite}" 
+												type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}" 
 												th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'" />
 												&nbsp;&nbsp;
 												<span 
@@ -85,16 +85,16 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 												</div>
 												
 												<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'NTEXT'}" 
-												type="text" th:field="*{nurseryLevelVariables[__${rowStat.index}__].value}" class="form-control numeric-input" />
+												type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control numeric-input" />
 												
 												<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'CTEXT'}" 
-												type="text" th:field="*{nurseryLevelVariables[__${rowStat.index}__].value}" class="form-control character-input" />
+												type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control character-input" />
 												
 												<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DATE'}" 
-												type="text" th:field="*{nurseryLevelVariables[__${rowStat.index}__].value}" class="form-control date-input" />
+												type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control date-input" />
 												 
 												<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'SLIDER'}" 
-												type="text" th:field="*{nurseryLevelVariables[__${rowStat.index}__].value}"
+												type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}"
 												th:attr="data-min=${nurseryLevelVariable.variable.minRange}"
 												th:attrappend="data-max=${nurseryLevelVariable.variable.maxRange}"
 												class="form-control numeric-range-input"
@@ -269,13 +269,13 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 		$.each($(".possibleValuesJson"), function (index, divElem){
 				var select2Index = $(divElem).attr("id").split("possibleValuesJson")[1]; 
 
-				if (parseInt($("#" + getJquerySafeId("nurseryLevelVariables"+select2Index+".variable.cvTermId")).val()) == parseInt(locationId)) {
+				if (parseInt($("#" + getJquerySafeId("studyLevelVariables"+select2Index+".variable.cvTermId")).val()) == parseInt(locationId)) {
 					initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 
-	 			 			"#" + getJquerySafeId("nurseryLevelVariables"+select2Index+".value"), true, $(divElem).siblings(".div-select-val").html());
+	 			 			"#" + getJquerySafeId("studyLevelVariables"+select2Index+".value"), true, $(divElem).siblings(".div-select-val").html());
 					
 				} else {
 					initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 
-	 			 			"#" + getJquerySafeId("nurseryLevelVariables"+select2Index+".value"), false, $(divElem).siblings(".div-select-val").html());
+	 			 			"#" + getJquerySafeId("studyLevelVariables"+select2Index+".value"), false, $(divElem).siblings(".div-select-val").html());
 					
 				}
 				

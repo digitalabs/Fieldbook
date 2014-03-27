@@ -29,7 +29,7 @@ public class CreateNurseryForm {
 	private int selectedSettingId;
 
 	/** The nursery level variables. */
-	private List<SettingDetail> nurseryLevelVariables;
+	private List<SettingDetail> studyLevelVariables;
 	
 	/** The plot level variables. */
 	private List<SettingDetail> plotLevelVariables;
@@ -105,22 +105,14 @@ public class CreateNurseryForm {
 		this.selectedSettingId = selectedSettingId;
 	}
 
-	/**
-	 * Gets the nursery level variables.
-	 *
-	 * @return the nurseryLevelVariables
-	 */
-	public List<SettingDetail> getNurseryLevelVariables() {
-		return nurseryLevelVariables;
+	
+
+	public List<SettingDetail> getStudyLevelVariables() {
+		return studyLevelVariables;
 	}
 
-	/**
-	 * Sets the nursery level variables.
-	 *
-	 * @param nurseryLevelVariables the nurseryLevelVariables to set
-	 */
-	public void setNurseryLevelVariables(List<SettingDetail> nurseryLevelVariables) {
-		this.nurseryLevelVariables = nurseryLevelVariables;
+	public void setStudyLevelVariables(List<SettingDetail> studyLevelVariables) {
+		this.studyLevelVariables = studyLevelVariables;
 	}
 
 	/**

@@ -29,6 +29,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.settings.Condition;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.pojos.workbench.settings.Factor;
+import org.generationcp.middleware.pojos.workbench.settings.TrialDataset;
 import org.generationcp.middleware.pojos.workbench.settings.Variate;
 import org.pojoxml.core.PojoXml;
 import org.pojoxml.core.PojoXmlFactory;
@@ -104,6 +105,7 @@ public class SettingsUtil {
 	 * @param pojoXml the new up pojo xml
 	 */
 	private static void setupPojoXml(PojoXml pojoXml){
+		pojoXml.addClassAlias(TrialDataset.class, "dataset");
 		pojoXml.addClassAlias(Dataset.class, "dataset");
 		pojoXml.addClassAlias(Condition.class, "condition");
 		pojoXml.addClassAlias(Variate.class, "variate");
@@ -146,7 +148,10 @@ public class SettingsUtil {
 	 * @param baselineTraitsList the baseline traits list
 	 * @return the dataset
 	 */
-	public static Dataset convertPojoToXmlDataset(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, String name, List<SettingDetail> nurseryLevelConditions, List<SettingDetail> plotsLevelList, List<SettingDetail> baselineTraitsList, UserSelection userSelection){
+    public static Dataset convertPojoToXmlDataset(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, String name, List<SettingDetail> nurseryLevelConditions, List<SettingDetail> plotsLevelList, List<SettingDetail> baselineTraitsList, UserSelection userSelection){
+    	return convertPojoToXmlDataset(fieldbookMiddlewareService, name, nurseryLevelConditions,  plotsLevelList,baselineTraitsList,  userSelection, 0, null);
+    }
+	public static Dataset convertPojoToXmlDataset(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, String name, List<SettingDetail> nurseryLevelConditions, List<SettingDetail> plotsLevelList, List<SettingDetail> baselineTraitsList, UserSelection userSelection, int numberOfInstances, List<SettingDetail> trialLevelVariablesList){
 		Dataset dataset = new Dataset();
 		List<Condition> conditions = new ArrayList<Condition>();
 		List<Factor> factors = new ArrayList<Factor>();
@@ -160,7 +165,7 @@ public class SettingsUtil {
 				
 				variable.setPSMRFromStandardVariable(standardVariable);
 				//need to get the name from the session
-				variable.setName(userSelection.getNurseryLevelConditions().get(index++).getVariable().getName());
+				variable.setName(userSelection.getStudyLevelConditions().get(index++).getVariable().getName());
 			}
 			
 			Condition condition = new Condition(variable.getName(), variable.getDescription(), variable.getProperty(),
@@ -201,12 +206,40 @@ public class SettingsUtil {
 				variates.add(variate);
 			}
 		}
+		
+		
+		if(trialLevelVariablesList != null){
+			
+			index = 0;
+			if(trialLevelVariablesList != null && !trialLevelVariablesList.isEmpty()){
+				for(SettingDetail settingDetail : trialLevelVariablesList){
+					SettingVariable variable = settingDetail.getVariable();
+					if(userSelection != null){
+						StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
+						variable.setPSMRFromStandardVariable(standardVariable);
+						//need to get the name from the session
+						variable.setName(userSelection.getTrialLevelVariableList().get(index++).getVariable().getName());
+						
+					}
+					Variate variate = new Variate(variable.getName(), variable.getDescription(), variable.getProperty(),
+							variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType());
+					variates.add(variate);
+				}
+			}
+			
+			
+			//this is a trial dataset
+			//dataset = new TrialDataset(Integer.toString(numberOfInstances), );
+		}
 		dataset.setConditions(conditions);
 		dataset.setFactors(factors);
 		dataset.setVariates(variates);
 		dataset.setName(name);
+	
+		
 		return dataset;
 	}
+	
 	
 	/**
 	 * Gets the field possible vales.
@@ -272,7 +305,7 @@ public class SettingsUtil {
 		if(dataset != null && userSelection != null){
 			//we copy it to User session object
 			//nursery level
-   		    List<SettingDetail> nurseryLevelConditions = new ArrayList<SettingDetail>();
+   		    List<SettingDetail> studyLevelConditions = new ArrayList<SettingDetail>();
 		    List<SettingDetail> plotsLevelList  = new ArrayList<SettingDetail>();
 		    List<SettingDetail> baselineTraitsList  = new ArrayList<SettingDetail>();
 		    if(dataset.getConditions() != null){
@@ -292,7 +325,7 @@ public class SettingsUtil {
         					settingDetail.setPossibleValuesToJson(possibleValues);
         					List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, projectId);
         					settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
-        					nurseryLevelConditions.add(settingDetail);
+        					studyLevelConditions.add(settingDetail);
         					if(userSelection != null){
         						StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);						
         						variable.setPSMRFromStandardVariable(standardVariable);						
@@ -344,7 +377,7 @@ public class SettingsUtil {
 				}
 			}
 			
-			userSelection.setNurseryLevelConditions(nurseryLevelConditions);
+			userSelection.setStudyLevelConditions(studyLevelConditions);
 			userSelection.setPlotsLevelList(plotsLevelList);			
 			userSelection.setBaselineTraitsList(baselineTraitsList);
 		}

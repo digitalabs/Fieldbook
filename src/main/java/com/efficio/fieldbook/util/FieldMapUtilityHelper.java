@@ -71,6 +71,10 @@ public class FieldMapUtilityHelper {
         }
         //plots[i][j].setUpward(isUpward);
     
+        
+        if(isDeleted(i,j, deletedPlot)){
+        	plots[i][j].setPlotDeleted(true);
+        }
         if(isStartOk){        	        	        	        	
         	
             plots[i][j].setNotStarted(false);

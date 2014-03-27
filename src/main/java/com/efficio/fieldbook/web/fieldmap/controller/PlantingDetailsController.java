@@ -101,6 +101,11 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
             FieldPlotLayoutIterator plotIterator = horizontalFieldMapLayoutIterator;
 
             FieldMapTrialInstanceInfo trialInfo = this.userFieldmap.getAnySelectedTrialInstance();
+            
+            if(this.userFieldmap.getFieldmap() != null){
+            	plotCleanup();
+            }
+            
             if (infos != null && !infos.isEmpty()) {
                 if (trialInfo != null) {
                     if(this.userFieldmap.getFieldmap() == null)
@@ -108,29 +113,7 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
                             plotIterator, true, trialInfo.getDeletedPlots()));
                     else{
                     	//data clean up
-                    	Plot[][] currentPlot = this.userFieldmap.getFieldmap();
-                    	for(int i = 0 ; i < currentPlot.length ; i++){
-                    		for(int j = 0 ; j < currentPlot[i].length ; j++){
-                    			Plot plot = currentPlot[i][j];
-                    			if(!plot.isSavedAlready() && !plot.isPlotDeleted()){
-                    				//we reset the the plot
-                    				plot.setDisplayString("");
-                    			}
-                    		}
-                    	}
-                    }
-                    
-                    for (FieldMapInfo info : this.userFieldmap.getSelectedFieldMapsToBeAdded()) {
-                    	for (FieldMapDatasetInfo dataset : info.getDatasets()) {
-                    		for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
-                    			if (trial.getFieldMapLabels() != null) {
-                    				for (FieldMapLabel label : trial.getFieldMapLabels()) {
-                    					label.setColumn(null);
-                    					label.setRange(null);
-                    				}
-                    			}
-                    		}
-                    	}
+                    	plotCleanup();
                     }
                     
                     this.userFieldmap.setNumberOfRangesInBlock(trialInfo.getRangesInBlock());
@@ -150,6 +133,19 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
     		e.printStackTrace();
     	}
         return super.show(model);
+    }
+    
+    private void plotCleanup(){
+    	Plot[][] currentPlot = this.userFieldmap.getFieldmap();
+    	for(int i = 0 ; i < currentPlot.length ; i++){
+    		for(int j = 0 ; j < currentPlot[i].length ; j++){
+    			Plot plot = currentPlot[i][j];
+    			if(!plot.isSavedAlready() && !plot.isPlotDeleted()){
+    				//we reset the the plot
+    				plot.setDisplayString("");
+    			}
+    		}
+    	}
     }
     
     private void setPrevValues(FieldmapForm form) {

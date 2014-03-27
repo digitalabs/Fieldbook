@@ -19,6 +19,7 @@ import javax.servlet.http.HttpSession;
 
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
+import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.springframework.stereotype.Controller;
@@ -114,7 +115,19 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
                     			if(!plot.isSavedAlready() && !plot.isPlotDeleted()){
                     				//we reset the the plot
                     				plot.setDisplayString("");
-                    				
+                    			}
+                    		}
+                    	}
+                    }
+                    
+                    for (FieldMapInfo info : this.userFieldmap.getSelectedFieldMapsToBeAdded()) {
+                    	for (FieldMapDatasetInfo dataset : info.getDatasets()) {
+                    		for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
+                    			if (trial.getFieldMapLabels() != null) {
+                    				for (FieldMapLabel label : trial.getFieldMapLabels()) {
+                    					label.setColumn(null);
+                    					label.setRange(null);
+                    				}
                     			}
                     		}
                     	}

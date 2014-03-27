@@ -269,6 +269,17 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 			}
 	  		);
 	  		
+			if ($("#stepValue").val() == '2') {
+	  				
+	  			$('.new-plot').each(function(){
+	  				
+	  				if($(this).parent().parent().hasClass('planted')){
+	  					console.log('clean');
+	  					$(this).parent().parent().removeClass('planted');
+	  				}
+	  					
+	  			})
+	  		}
 	  	});
     //]]>
     </script>

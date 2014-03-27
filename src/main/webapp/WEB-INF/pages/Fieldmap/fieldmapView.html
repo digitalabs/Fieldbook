@@ -146,7 +146,15 @@
 	  		
 	  		if ($("#stepValue").val() == '2') {
 	  			$(".machineDirectionRow").hide();
-	  			$(".new-plot").hide();
+	  			$(".new-plot").hide();	  			
+	  			$('.new-plot').each(function(){
+	  				
+	  				if($(this).parent().parent().hasClass('planted')){
+	  					console.log('clean');
+	  					$(this).parent().parent().removeClass('planted');
+	  				}
+	  					
+	  			})
 	  		}
 	  		else {
 	  			$(".machineDirectionRow").show();

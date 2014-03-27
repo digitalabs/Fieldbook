@@ -17,12 +17,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
+import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldmapBlockInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -44,8 +44,6 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
-import com.efficio.fieldbook.web.nursery.controller.FileUploadController;
-import com.efficio.fieldbook.web.nursery.form.NurseryDetailsForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 
 // TODO: Auto-generated Javadoc
@@ -427,6 +425,24 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         if (form.getUserFieldmap().getFieldmap() != null) {
             form.getUserFieldmap().setFieldmap(null);
         }
+        this.userFieldmap.setFieldmap(null);
+        this.userFieldmap.setFieldMapLabels(null);
+        
+	      if (this.userFieldmap.getSelectedFieldMapsToBeAdded() != null) {
+	        for (FieldMapInfo info : this.userFieldmap.getSelectedFieldMapsToBeAdded()) {
+	        	for (FieldMapDatasetInfo dataset : info.getDatasets()) {
+	        		for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
+	        			if (trial.getFieldMapLabels() != null) {
+	        				for (FieldMapLabel label : trial.getFieldMapLabels()) {
+	        					label.setColumn(null);
+	        					label.setRange(null);
+	        				}
+	        			}
+	        		}
+	        	}
+	        }
+	      }
+
         setUserFieldMapDetails(form);
         return "redirect:" + PlantingDetailsController.URL;
     } 

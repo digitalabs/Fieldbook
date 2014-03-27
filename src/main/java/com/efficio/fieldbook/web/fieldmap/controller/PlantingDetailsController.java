@@ -72,7 +72,7 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
     	try {
 	        setPrevValues(form);
 	        
-	        userFieldmap.setFieldmap(null);
+//	        userFieldmap.setFieldmap(null);
 	        
 	        List<FieldMapInfo> infos = fieldbookMiddlewareService.getAllFieldMapsInBlockByBlockId(
 		        		userFieldmap.getBlockId());
@@ -98,7 +98,6 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
                     this.userFieldmap.getSelectedFieldMapsToBeAdded(), this.userFieldmap.isTrial()));
             this.userFieldmap.setFieldMapLabels(this.userFieldmap.getAllSelectedFieldMapLabels(false));
             FieldPlotLayoutIterator plotIterator = horizontalFieldMapLayoutIterator;
-
 
             FieldMapTrialInstanceInfo trialInfo = this.userFieldmap.getAnySelectedTrialInstance();
             if (infos != null && !infos.isEmpty()) {

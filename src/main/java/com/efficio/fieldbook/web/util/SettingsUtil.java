@@ -158,7 +158,7 @@ public class SettingsUtil {
 		List<Condition> conditions = new ArrayList<Condition>();
 		List<Factor> factors = new ArrayList<Factor>();
 		List<Variate> variates = new ArrayList<Variate>();
-		List<Condition> trialLevelVariables = new ArrayList<Condition>();
+		List<Factor> trialLevelVariables = new ArrayList<Factor>();
 		//iterate for the nursery level
 		int index = 0;
 		for(SettingDetail settingDetail : nurseryLevelConditions){
@@ -224,16 +224,15 @@ public class SettingsUtil {
 						variable.setName(userSelection.getTrialLevelVariableList().get(index++).getVariable().getName());
 						
 					}
-					Condition condition = new Condition(variable.getName(), variable.getDescription(), variable.getProperty(),
-							variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
-							settingDetail.getValue(), variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
-					trialLevelVariables.add(condition);
+					Factor factor = new Factor(variable.getName(), variable.getDescription(), variable.getProperty(),
+							variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType());
+					trialLevelVariables.add(factor);
 				}
 			}
 			
 			
 			//this is a trial dataset
-			TrialDataset dataset = new TrialDataset(Integer.toString(numberOfInstances), trialLevelVariables);
+			TrialDataset dataset = new TrialDataset(trialLevelVariables);
 			dataset.setConditions(conditions);
 			dataset.setFactors(factors);
 			dataset.setVariates(variates);
@@ -481,29 +480,19 @@ public class SettingsUtil {
 				}
 			}
 			
-			if(dataset.getTrialLevelConditions() != null){
-				for(Condition condition : dataset.getTrialLevelConditions()){
+			if(dataset.getTrialLevelFactor() != null){
+				for(Factor factor : dataset.getTrialLevelFactor()){
 					
-					SettingVariable variable = new SettingVariable(condition.getName(), condition.getDescription(), condition.getProperty(),
-							condition.getScale(), condition.getMethod(), condition.getRole(), condition.getDatatype(), condition.getDataTypeId(),
-							condition.getMinRange(), condition.getMaxRange());
+					SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(),
+							factor.getScale(), factor.getMethod(), factor.getRole(), factor.getDatatype());
 					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
 					
-					if (!inHideVariableFields(stdVar, AppConstants.HIDE_NURSERY_FIELDS.getString())) {
-        					variable.setCvTermId(stdVar);										
-        					List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
-        					SettingDetail settingDetail = new SettingDetail(variable,
-        							possibleValues, condition.getValue(), isSettingVariableDeletable(stdVar, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()));
-        					
-        					settingDetail.setPossibleValuesToJson(possibleValues);
-        					List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, projectId);
-        					settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
-        					trialLevelVariableList.add(settingDetail);
-        					if(userSelection != null){
-        						StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);						
-        						variable.setPSMRFromStandardVariable(standardVariable);						
-        					}
-    					}
+					if (!inHideVariableFields(stdVar, AppConstants.HIDE_PLOT_FIELDS.getString())) {
+	    					variable.setCvTermId(stdVar);
+	    					SettingDetail settingDetail = new SettingDetail(variable,
+	    							null, null, isSettingVariableDeletable(stdVar, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()));
+	    					plotsLevelList.add(settingDetail);
+					}
 				}
 		    }
 			

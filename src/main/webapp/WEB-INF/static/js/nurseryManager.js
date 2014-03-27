@@ -967,7 +967,9 @@ function createPlotLevelSettingVariables(data) {
 		(length-1) + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
 		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.name + "</td>"; 
-		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.description + "</td></tr>";
+		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.description + "</td>";
+		newRow = newRow + "<td class='"+className+"'>" + "<a href='javascript: void(0);' onclick='javascript:showBaselineTraitDetailsModal(" + 
+		settingDetail.variable.cvTermId + ");'><span class='glyphicon glyphicon-eye-open'></span></a></td></tr>";
 		$("#plotLevelSettings").append(newRow);
 	});
 }
@@ -1424,21 +1426,21 @@ function showBaselineTraitDetailsModal(id) {
 
 function populateBaselineTraits(standardVariable) {
 	if (standardVariable != null) {
-		$("#traitClass").text(checkIfNull(standardVariable.traitClass));
-		$("#property").text(checkIfNull(standardVariable.property));
-		$("#method").text(checkIfNull(standardVariable.method));
-		$("#scale").text(checkIfNull(standardVariable.scale));
-		$("#dataType").text(checkIfNull(standardVariable.dataType));
-		$("#role").text(checkIfNull(standardVariable.role));
-		$("#cropOntologyId").text(checkIfNull(standardVariable.cropOntologyId));
+		$("#traitClass").html(checkIfNull(standardVariable.traitClass));
+		$("#property").html(checkIfNull(standardVariable.property));
+		$("#method").html(checkIfNull(standardVariable.method));
+		$("#scale").html(checkIfNull(standardVariable.scale));
+		$("#dataType").html(checkIfNull(standardVariable.dataType));
+		$("#role").html(checkIfNull(standardVariable.role));
+		$("#cropOntologyId").html(checkIfNull(standardVariable.cropOntologyId));
 	} else {
-		$("#traitClass").text("");
-		$("#property").text("");
-		$("#method").text("");
-		$("#scale").text("");
-		$("#dataType").text("");
-		$("#role").text("");
-		$("#cropOntologyId").text("");
+		$("#traitClass").html("");
+		$("#property").html("");
+		$("#method").html("");
+		$("#scale").html("");
+		$("#dataType").html("");
+		$("#role").html("");
+		$("#cropOntologyId").html("");
 	}
 }
 

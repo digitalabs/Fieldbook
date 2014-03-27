@@ -201,7 +201,8 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 										<tr>
 											<th width="5%"></th>
 							                <th width="45%" th:utext="#{nursery.managesettings.plot.name}">.Name</th>
-							                <th width="50%" th:utext="#{nursery.managesettings.plot.description}">.Description</th>
+							                <th width="45%" th:utext="#{nursery.managesettings.plot.description}">.Description</th>
+							                <th width="5%"></th>
 										</tr>
 										</thead>
 										<tbody>
@@ -215,6 +216,11 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 				    						</td>
 					    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.name}"></td>
 					    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.description}"></td>
+					    					<td th:class="${rowStat.even}? 'even' : 'odd'" >
+						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
+														*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
+														<span class="glyphicon glyphicon-eye-open"></span></a>
+						    					</td>
 					    					</tr> 
 				    					</tbody>
 			    					</table>

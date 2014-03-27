@@ -87,6 +87,65 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
     
 	    			<div class="row form-group">
 	    				<div class="col-xs-6 col-md-6">
+	    				
+		    					<div class="row">
+				    				<div class="col-xs-12 col-md-12">
+						    			<label class="control-label"><strong class="sub-content-heading" th:text="#{nursery.managesettings.trial.environment.level.details}">TRIAL-ENVIRONMENT DETAILS</strong></label>
+					    			</div>
+				    			</div>
+				    			<div class="row form-group">
+				    				<div class="col-xs-12 col-md-12">
+						    			<label class="control-label" th:text="#{trial.managesettings.trial.environment.level.notes}"> Select the settings you will record at the plot level in the nursery. 
+						    			These will appear as data columns in your nursery book. You can add and remove settings at this level.</label>
+					    			</div>
+				    			</div>
+				    			<div class="row form-group">
+				    				<div class="col-xs-12 col-md-12">
+				    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed" id="trialEnvironmentLevelSettings">
+				    						<thead>
+											<tr>
+												<th width="5%"></th>
+								                <th width="45%" th:utext="#{nursery.managesettings.plot.name}">.Name</th>
+								                <th width="45%" th:utext="#{nursery.managesettings.plot.description}">.Description</th>
+								                <th width="5%"></th>
+											</tr>
+											</thead>
+											<tbody>
+						    					<tr th:each="trialEnvLevelVariable, rowStat : *{trialLevelVariables}">
+						    					<td style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'">
+						    					
+													<span style="cursor: default; font-size: 16px;" th:if="${trialEnvLevelVariable.delete}" class="glyphicon glyphicon-remove-circle"
+						    						th:onclick="'javascript: deleteVariable(2,\'' + ${trialEnvLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
+						    						  			    						 
+						    						<input class="cvTermIds" type="hidden" th:field="*{trialLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
+					    						</td>
+						    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${trialEnvLevelVariable.variable.name}"></td>
+						    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${trialEnvLevelVariable.variable.description}"></td>
+						    					<td th:class="${rowStat.even}? 'even' : 'odd'" >
+						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
+														*{trialLevelVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
+														<span class="glyphicon glyphicon-eye-open"></span></a>
+						    					</td>
+						    					</tr> 
+					    					</tbody>
+				    					</table>
+				    				</div>
+				    				<div class="col-xs-3 col-md-3"></div>
+				    			</div>
+			    				
+			    				<div class="row form-group">
+				    				<div class="col-xs-12 col-md-12">
+				    					<span class="glyphicon glyphicon-plus"></span>&nbsp;
+						    			<a href="javascript: openAddVariablesSetting(4);" th:text="#{nursery.managesettings.add.trial.environment.settings}">Add Trial Environment Settings</a>
+					    			</div>
+				    			</div>
+				    			<div class="row form-group">
+				    				<div class="col-xs-12 col-md-12">
+				    					&nbsp;
+				    				</div>
+			    				</div>
+	    				
+	    				
 		    				<div class="">
 				    			<label class="control-label"><strong class="sub-content-heading" th:text="#{trial.managesettings.trial.level.details}">TRIAL-LEVEL DETAILS</strong></label>
 			    			</div>
@@ -190,7 +249,8 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 										<tr>
 											<th width="5%"></th>
 							                <th width="45%" th:utext="#{nursery.managesettings.plot.name}">.Name</th>
-							                <th width="50%" th:utext="#{nursery.managesettings.plot.description}">.Description</th>
+							                <th width="45%" th:utext="#{nursery.managesettings.plot.description}">.Description</th>
+							                <th width="5%"></th>
 										</tr>
 										</thead>
 										<tbody>
@@ -204,6 +264,11 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 				    						</td>
 					    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.name}"></td>
 					    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.description}"></td>
+					    					<td th:class="${rowStat.even}? 'even' : 'odd'" >
+						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
+														*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
+														<span class="glyphicon glyphicon-eye-open"></span></a>
+						    					</td>
 					    					</tr> 
 				    					</tbody>
 			    					</table>
@@ -378,7 +443,8 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
             var varInListMessage = /*[[#{nursery.managesettings.variable.in.selected.list}]]*/;
             var addNurseryLevelSettings = /*[[#{trial.managesettings.add.trial.level.settings}]]*/;
             var addPlotLevelSettings = /*[[#{nursery.managesettings.add.plot.level.settings}]]*/;
-            var addBaselineTraits = /*[[#{nursery.managesettings.add.baseline.traits}]]*/; 
+            var addBaselineTraits = /*[[#{nursery.managesettings.add.baseline.traits}]]*/;
+            var addTrialEnvironmentTraits = /*[[#{nursery.managesettings.add.trial.environment.variable}]]*/;
             var deleteTemplateSettingError = /*[[#{manage.settings.delete.error}]]*/;
             var deleteTemplateSettingSuccess = /*[[#{manage.settings.delete.success}]]*/;
        		var saveTemplateSettingSuccess = /*[[#{manage.settings.save.setting.success}]]*/;
@@ -406,6 +472,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
        		var reminderNursery = /*[[#{nursery.reminder.add.nursery.settings}]]*/;
        		var reminderPlot = /*[[#{nursery.reminder.add.plot.settings}]]*/;
        		var reminderTraits = /*[[#{nursery.reminder.add.trait.settings}]]*/;
+       		var reminderTrialEnvironment = /*[[#{nursery.reminder.add.trial.environment.settings}]]*/;
        	
        		var noVariableNameError = /*[[#{manage.settings.no.variable.name.error}]]*/
        		

@@ -451,6 +451,8 @@ public class ManageTrialSettingsController extends SettingsController{
             deleteVariableInSession(userSelection.getStudyLevelConditions(), variableId);
         } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
             deleteVariableInSession(userSelection.getPlotsLevelList(), variableId);
+        } else if (mode == AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt()) {
+            deleteVariableInSession(userSelection.getTrialLevelVariableList(), variableId);
         } else {
             deleteVariableInSession(userSelection.getBaselineTraitsList(), variableId);
         }
@@ -562,6 +564,8 @@ public class ManageTrialSettingsController extends SettingsController{
             return userSelection.getPlotsLevelList();
         } else if (mode == AppConstants.SEGMENT_TRAITS.getInt()) {
             return userSelection.getBaselineTraitsList();
+        }  else if (mode == AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt()) {
+            return userSelection.getTrialLevelVariableList();
         }
     	return null;
     }
@@ -597,7 +601,20 @@ public class ManageTrialSettingsController extends SettingsController{
             else {
             	userSelection.getPlotsLevelList().addAll(newDetails);
             }
-        } else {
+        } else if (mode == AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt()) {
+            if (form.getTrialLevelVariables() == null) {
+            	form.setTrialLevelVariables(newDetails);
+            }
+            else {
+            	form.getTrialLevelVariables().addAll(newDetails);
+            }
+            if (userSelection.getTrialLevelVariableList() == null) {
+            	userSelection.setTrialLevelVariableList(newDetails);
+            }
+            else {
+            	userSelection.getTrialLevelVariableList().addAll(newDetails);
+            }
+        }else {
             if (form.getBaselineTraitVariables() == null) {
             	form.setBaselineTraitVariables(newDetails);
             }

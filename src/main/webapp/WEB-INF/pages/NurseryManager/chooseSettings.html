@@ -127,14 +127,20 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed" id="plotLevelSettings">
 			    						<thead>
 										<tr>
-							                <th width="50%" th:utext="#{nursery.managesettings.plot.name}">.Name</th>
-							                <th width="50%" th:utext="#{nursery.managesettings.plot.description}">.Description</th>
+							                <th width="45%" th:utext="#{nursery.managesettings.plot.name}">.Name</th>
+							                <th width="45%" th:utext="#{nursery.managesettings.plot.description}">.Description</th>
+							                 <th width="10%"></th>
 										</tr>
 										</thead>
 										<tbody>
 					    					<tr th:each="plotLevelVariable, rowStat : *{plotLevelVariables}">
 					    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.name}"></td>
 					    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.description}"></td>
+					    					<td th:class="${rowStat.even}? 'even' : 'odd'" >
+						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
+														*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
+														<span class="glyphicon glyphicon-eye-open"></span></a>
+						    					</td>
 					    					<input class="cvTermIds" type="hidden" th:field="*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 					    					</tr> 
 				    					</tbody>
@@ -182,6 +188,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 														<span class="glyphicon glyphicon-eye-open"></span></a>
 														<input class="cvTermIds" type="hidden" th:field="*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId}" />
 						    					</td>
+						    					
 					    					</tr> 
 				    					</tbody>
 			    					</table>

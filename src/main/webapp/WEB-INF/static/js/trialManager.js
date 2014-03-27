@@ -383,6 +383,10 @@ function openAddVariablesSetting(variableType) {
 			$("#heading-modal").text(addBaselineTraits);
 			$('#reminder-placeholder').html(reminderTraits);
 			break;
+		case 4:
+			$("#heading-modal").text(addTrialEnvironmentTraits);
+			$('#reminder-placeholder').html(reminderTrialEnvironment);
+			break;
 	default: 
 		$("#heading-modal").text(addNurseryLevelSettings);
 		$('#reminder-placeholder').html(reminderNursery);
@@ -662,6 +666,9 @@ function submitSelectedVariables(variableType) {
 					case 3:
 						createBaselineTraitVariables($.parseJSON(data));
 						break;
+					case 4:
+						createTrialEnvironmentVariables($.parseJSON(data));
+						break;
 					default:
 						createTrialLevelSettingVariables($.parseJSON(data));
 				}
@@ -940,7 +947,9 @@ function createPlotLevelSettingVariables(data) {
 		(length-1) + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
 		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.name + "</td>"; 
-		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.description + "</td></tr>";
+		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.description + "</td>";
+		newRow = newRow + "<td class='"+className+"'>" + "<a href='javascript: void(0);' onclick='javascript:showBaselineTraitDetailsModal(" + 
+		settingDetail.variable.cvTermId + ");'><span class='glyphicon glyphicon-eye-open'></span></a></td></tr>";
 		$("#plotLevelSettings").append(newRow);
 	});
 }
@@ -966,6 +975,29 @@ function createBaselineTraitVariables(data) {
 		newRow = newRow + "<td class='"+className+"'>" + "<a href='javascript: void(0);' onclick='javascript:showBaselineTraitDetailsModal(" + 
 		settingDetail.variable.cvTermId + ");'><span class='glyphicon glyphicon-eye-open'></span></a></td></tr>";
 		$("#baselineTraitSettings").append(newRow);
+	});
+}
+function createTrialEnvironmentVariables(data) {
+	$.each(data, function (index, settingDetail) {
+		var length = $("#trialEnvironmentLevelSettings tbody tr").length + 1;
+		var className = length % 2 == 1 ? 'even' : 'odd';
+		var newRow = "<tr class='newVariable'>";
+		var isDelete = "";
+		
+		if (settingDetail.delete) {
+			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(4," + 
+			settingDetail.variable.cvTermId + ",$(this))'></span>";
+		}
+		
+		newRow = newRow + "<td style='text-align: center' class='"+className+"'>" + isDelete + 
+		"<input class='cvTermIds' type='hidden' id='trialLevelVariables" + (length-1) + ".variable.cvTermId' name='trialLevelVariables[" + 
+		(length-1) + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
+		"</td>";
+		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.name + "</td>";		
+		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.description + "</td>"
+		newRow = newRow + "<td class='"+className+"'>" + "<a href='javascript: void(0);' onclick='javascript:showBaselineTraitDetailsModal(" + 
+		settingDetail.variable.cvTermId + ");'><span class='glyphicon glyphicon-eye-open'></span></a></td></tr>";
+		$("#trialEnvironmentLevelSettings").append(newRow);
 	});
 }
 
@@ -1106,6 +1138,14 @@ function sortVariableIdsAndNames(variableType) {
 			row.innerHTML = row.innerHTML.replace(reg2, "plotLevelVariables[" + index + "]");
 		});
 		break;
+	case 4:
+		var reg = new RegExp("trialLevelVariables[0-9]+", "g")
+		var reg2 = new RegExp("trialLevelVariables\[[0-9]+\]", "g")
+		$.each($("#trialEnvironmentLevelSettings tbody tr"), function (index, row) {
+			row.innerHTML = row.innerHTML.replace(reg, "trialLevelVariables" + index);
+			row.innerHTML = row.innerHTML.replace(reg2, "trialLevelVariables[" + index + "]");
+		});
+		break;	
 	default:
 		var reg = new RegExp("baselineTraitVariables[0-9]+", "g")
 		var reg2 = new RegExp("baselineTraitVariables\[[0-9]+\]", "g")
@@ -1380,21 +1420,21 @@ function showBaselineTraitDetailsModal(id) {
 
 function populateBaselineTraits(standardVariable) {
 	if (standardVariable != null) {
-		$("#traitClass").text(checkIfNull(standardVariable.traitClass));
-		$("#property").text(checkIfNull(standardVariable.property));
-		$("#method").text(checkIfNull(standardVariable.method));
-		$("#scale").text(checkIfNull(standardVariable.scale));
-		$("#dataType").text(checkIfNull(standardVariable.dataType));
-		$("#role").text(checkIfNull(standardVariable.role));
-		$("#cropOntologyId").text(checkIfNull(standardVariable.cropOntologyId));
+		$("#traitClass").html(checkIfNull(standardVariable.traitClass));
+		$("#property").html(checkIfNull(standardVariable.property));
+		$("#method").html(checkIfNull(standardVariable.method));
+		$("#scale").html(checkIfNull(standardVariable.scale));
+		$("#dataType").html(checkIfNull(standardVariable.dataType));
+		$("#role").html(checkIfNull(standardVariable.role));
+		$("#cropOntologyId").html(checkIfNull(standardVariable.cropOntologyId));
 	} else {
-		$("#traitClass").text("");
-		$("#property").text("");
-		$("#method").text("");
-		$("#scale").text("");
-		$("#dataType").text("");
-		$("#role").text("");
-		$("#cropOntologyId").text("");
+		$("#traitClass").html("");
+		$("#property").html("");
+		$("#method").html("");
+		$("#scale").html("");
+		$("#dataType").html("");
+		$("#role").html("");
+		$("#cropOntologyId").html("");
 	}
 }
 

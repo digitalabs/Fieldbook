@@ -302,6 +302,9 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
    	var fieldAddedSuccessfully = /*[[#{fieldmap.field.added.successfully}]]*/;
    	var blockAddedSuccessfully = /*[[#{fieldmap.block.added.successfully}]]*/;
    	
+	var fieldNameDuplicateError = /*[[#{fieldmap.field.name.duplicate.error}]]*/;
+   	var blockNameDuplicateError = /*[[#{fieldmap.block.name.duplicate.error}]]*/;
+   	
    	
     var programLocationUrl = '';
     var locationIframeOpened = false;

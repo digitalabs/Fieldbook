@@ -86,9 +86,13 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		   	       type: "POST",
 		   	       data: dataForm,
 		   	       success: function(data) {
-		   	    	   		   	    		   
-		   	    		   showSuccessfulMessage("page-message-modal", fieldAddedSuccessfully);
-		   	    	       $('#newFieldName').val('');
+						   if(data == 'success'){
+							   showSuccessfulMessage("page-message-modal", fieldAddedSuccessfully);
+			   	    	       $('#newFieldName').val('');   
+						   }else{
+							   showErrorMessage("page-message-modal", fieldNameDuplicateError);
+						   }		   	    	   		   	    		   
+		   	    		   
 		   	       },
 		   	       error: function(jqXHR, textStatus, errorThrown){
 		   				console.log("The following error occured: " + textStatus, errorThrown); 

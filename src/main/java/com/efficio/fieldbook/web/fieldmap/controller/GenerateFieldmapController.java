@@ -259,10 +259,11 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         */
         //we can add logic here to decide if its vertical or horizontal
         FieldPlotLayoutIterator plotIterator = horizontalFieldMapLayoutIterator;
-        FieldMapUtilityHelper.markedDeletedPlot(this.userFieldmap.getFieldmap(),deletedPlot);
+        //
+        //	FieldMapUtilityHelper.markedDeletedPlot(this.userFieldmap.getFieldmap(),deletedPlot);
         Plot[][] plots = plotIterator.createFieldMap(col, ranges, startRange, startCol,
                 isSerpentine, deletedPlot, labels, userFieldmap.isTrial(), this.userFieldmap.getFieldmap());
-        
+        //FieldMapUtilityHelper.markedDeletedPlot(this.userFieldmap.getFieldmap(),deletedPlot);
         userFieldmap.setFieldmap(plots);
         form.setUserFieldmap(userFieldmap);
         

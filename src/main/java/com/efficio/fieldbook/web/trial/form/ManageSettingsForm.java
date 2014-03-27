@@ -31,13 +31,14 @@ public class ManageSettingsForm {
 	private String settingName;
 	
 	/** The nursery level variables. */
-	private List<SettingDetail> trialLevelVariables;
+	private List<SettingDetail> studyLevelVariables;
 	
 	/** The plot level variables. */
 	private List<SettingDetail> plotLevelVariables;
 	
 	/** The baseline trait variables. */
 	private List<SettingDetail> baselineTraitVariables;
+	private List<SettingDetail> trialLevelVariables;
 	
 	/** The is default. */
 	private boolean isDefault;
@@ -64,6 +65,18 @@ public class ManageSettingsForm {
     private String locationUrl;
     private String breedingMethodUrl;
     private String idNameVariables;
+    
+    private String numberOfInstances;
+    
+    
+
+	public String getNumberOfInstances() {
+		return numberOfInstances;
+	}
+
+	public void setNumberOfInstances(String numberOfInstances) {
+		this.numberOfInstances = numberOfInstances;
+	}
 
 	/**
 	 * Gets the selected setting id.
@@ -103,12 +116,13 @@ public class ManageSettingsForm {
         
         
         
-        public List<SettingDetail> getTrialLevelVariables() {
-			return trialLevelVariables;
+        
+		public List<SettingDetail> getStudyLevelVariables() {
+			return studyLevelVariables;
 		}
 
-		public void setTrialLevelVariables(List<SettingDetail> trialLevelVariables) {
-			this.trialLevelVariables = trialLevelVariables;
+		public void setStudyLevelVariables(List<SettingDetail> studyLevelVariables) {
+			this.studyLevelVariables = studyLevelVariables;
 		}
 
 		/**
@@ -285,7 +299,7 @@ public class ManageSettingsForm {
 		public void clear() {
 			this.selectedSettingId = 0;
 			this.settingName = null;
-			this.trialLevelVariables = null;
+			this.studyLevelVariables = null;
 			this.plotLevelVariables = null;
 			this.baselineTraitVariables = null;
 			this.isDefault = false;
@@ -330,6 +344,14 @@ public class ManageSettingsForm {
 		
 		public void setIdNameVariables(String idNameVariables) {
 		        this.idNameVariables = idNameVariables;
+		}
+
+		public List<SettingDetail> getTrialLevelVariables() {
+			return trialLevelVariables;
+		}
+
+		public void setTrialLevelVariables(List<SettingDetail> trialLevelVariables) {
+			this.trialLevelVariables = trialLevelVariables;
 		}
 		
 }

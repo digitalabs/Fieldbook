@@ -29,6 +29,8 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.settings.Condition;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.pojos.workbench.settings.Factor;
+import org.generationcp.middleware.pojos.workbench.settings.ParentDataset;
+import org.generationcp.middleware.pojos.workbench.settings.TrialDataset;
 import org.generationcp.middleware.pojos.workbench.settings.Variate;
 import org.pojoxml.core.PojoXml;
 import org.pojoxml.core.PojoXmlFactory;
@@ -50,7 +52,7 @@ public class SettingsUtil {
 	 * @param dataset the dataset
 	 * @return the string
 	 */
-	public static String generateSettingsXml(Dataset dataset){
+	public static String generateSettingsXml(ParentDataset dataset){
 		PojoXml pojoXml = PojoXmlFactory.createPojoXml();
 		
         setupPojoXml(pojoXml);
@@ -60,6 +62,7 @@ public class SettingsUtil {
         //Employee employee = (Employee) pojoXml.getPojoFrormFile(fullPathNamen,Employee.class);
         return xml;
 	}
+	
 	
 	/**
 	 * Parses the xml to dataset pojo.
@@ -104,6 +107,7 @@ public class SettingsUtil {
 	 * @param pojoXml the new up pojo xml
 	 */
 	private static void setupPojoXml(PojoXml pojoXml){
+		pojoXml.addClassAlias(TrialDataset.class, "dataset");
 		pojoXml.addClassAlias(Dataset.class, "dataset");
 		pojoXml.addClassAlias(Condition.class, "condition");
 		pojoXml.addClassAlias(Variate.class, "variate");
@@ -146,11 +150,15 @@ public class SettingsUtil {
 	 * @param baselineTraitsList the baseline traits list
 	 * @return the dataset
 	 */
-	public static Dataset convertPojoToXmlDataset(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, String name, List<SettingDetail> nurseryLevelConditions, List<SettingDetail> plotsLevelList, List<SettingDetail> baselineTraitsList, UserSelection userSelection){
-		Dataset dataset = new Dataset();
+    public static ParentDataset convertPojoToXmlDataset(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, String name, List<SettingDetail> nurseryLevelConditions, List<SettingDetail> plotsLevelList, List<SettingDetail> baselineTraitsList, UserSelection userSelection){
+    	return convertPojoToXmlDataset(fieldbookMiddlewareService, name, nurseryLevelConditions,  plotsLevelList,baselineTraitsList,  userSelection, 0, null);
+    }
+	public static ParentDataset convertPojoToXmlDataset(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, String name, List<SettingDetail> nurseryLevelConditions, List<SettingDetail> plotsLevelList, List<SettingDetail> baselineTraitsList, UserSelection userSelection, int numberOfInstances, List<SettingDetail> trialLevelVariablesList){
+		
 		List<Condition> conditions = new ArrayList<Condition>();
 		List<Factor> factors = new ArrayList<Factor>();
 		List<Variate> variates = new ArrayList<Variate>();
+		List<Factor> trialLevelVariables = new ArrayList<Factor>();
 		//iterate for the nursery level
 		int index = 0;
 		for(SettingDetail settingDetail : nurseryLevelConditions){
@@ -160,7 +168,7 @@ public class SettingsUtil {
 				
 				variable.setPSMRFromStandardVariable(standardVariable);
 				//need to get the name from the session
-				variable.setName(userSelection.getNurseryLevelConditions().get(index++).getVariable().getName());
+				variable.setName(userSelection.getStudyLevelConditions().get(index++).getVariable().getName());
 			}
 			
 			Condition condition = new Condition(variable.getName(), variable.getDescription(), variable.getProperty(),
@@ -201,12 +209,49 @@ public class SettingsUtil {
 				variates.add(variate);
 			}
 		}
-		dataset.setConditions(conditions);
-		dataset.setFactors(factors);
-		dataset.setVariates(variates);
-		dataset.setName(name);
-		return dataset;
+		
+		ParentDataset realDataset = null;
+		if(trialLevelVariablesList != null){
+			
+			index = 0;
+			if(trialLevelVariablesList != null && !trialLevelVariablesList.isEmpty()){
+				for(SettingDetail settingDetail : trialLevelVariablesList){
+					SettingVariable variable = settingDetail.getVariable();
+					if(userSelection != null){
+						StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
+						variable.setPSMRFromStandardVariable(standardVariable);
+						//need to get the name from the session
+						variable.setName(userSelection.getTrialLevelVariableList().get(index++).getVariable().getName());
+						
+					}
+					Factor factor = new Factor(variable.getName(), variable.getDescription(), variable.getProperty(),
+							variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType());
+					trialLevelVariables.add(factor);
+				}
+			}
+			
+			
+			//this is a trial dataset
+			TrialDataset dataset = new TrialDataset(trialLevelVariables);
+			dataset.setConditions(conditions);
+			dataset.setFactors(factors);
+			dataset.setVariates(variates);
+			dataset.setName(name);
+			realDataset = dataset;
+		}else{
+			Dataset dataset = new Dataset();
+			dataset.setConditions(conditions);
+			dataset.setFactors(factors);
+			dataset.setVariates(variates);
+			dataset.setName(name);
+			realDataset = dataset;
+		}
+		
+	
+		
+		return realDataset;
 	}
+	
 	
 	/**
 	 * Gets the field possible vales.
@@ -268,11 +313,17 @@ public class SettingsUtil {
 	 * @param userSelection the user selection
 	 * @throws MiddlewareQueryException 
 	 */
-	public static void convertXmlDatasetToPojo(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, com.efficio.fieldbook.service.api.FieldbookService fieldbookService, Dataset dataset, UserSelection userSelection, String projectId) throws MiddlewareQueryException{
+	public static void convertXmlDatasetToPojo(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, com.efficio.fieldbook.service.api.FieldbookService fieldbookService, ParentDataset dataset, UserSelection userSelection, String projectId) throws MiddlewareQueryException{
+		if(dataset instanceof Dataset)
+			 convertXmlNurseryDatasetToPojo( fieldbookMiddlewareService, fieldbookService, (Dataset) dataset,  userSelection, projectId);
+		else if(dataset instanceof TrialDataset)
+			convertXmlTrialDatasetToPojo( fieldbookMiddlewareService, fieldbookService, (TrialDataset) dataset,  userSelection, projectId);
+	}
+	private static void convertXmlNurseryDatasetToPojo(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, com.efficio.fieldbook.service.api.FieldbookService fieldbookService, Dataset dataset, UserSelection userSelection, String projectId) throws MiddlewareQueryException{
 		if(dataset != null && userSelection != null){
 			//we copy it to User session object
 			//nursery level
-   		    List<SettingDetail> nurseryLevelConditions = new ArrayList<SettingDetail>();
+   		    List<SettingDetail> studyLevelConditions = new ArrayList<SettingDetail>();
 		    List<SettingDetail> plotsLevelList  = new ArrayList<SettingDetail>();
 		    List<SettingDetail> baselineTraitsList  = new ArrayList<SettingDetail>();
 		    if(dataset.getConditions() != null){
@@ -292,7 +343,7 @@ public class SettingsUtil {
         					settingDetail.setPossibleValuesToJson(possibleValues);
         					List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, projectId);
         					settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
-        					nurseryLevelConditions.add(settingDetail);
+        					studyLevelConditions.add(settingDetail);
         					if(userSelection != null){
         						StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);						
         						variable.setPSMRFromStandardVariable(standardVariable);						
@@ -344,9 +395,112 @@ public class SettingsUtil {
 				}
 			}
 			
-			userSelection.setNurseryLevelConditions(nurseryLevelConditions);
+			
+			userSelection.setStudyLevelConditions(studyLevelConditions);
 			userSelection.setPlotsLevelList(plotsLevelList);			
 			userSelection.setBaselineTraitsList(baselineTraitsList);
+			//userSelection.setTrialLevelVariableList(trialLevelVariableList);
+		}
+	}
+	
+	private static void convertXmlTrialDatasetToPojo(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, com.efficio.fieldbook.service.api.FieldbookService fieldbookService, TrialDataset dataset, UserSelection userSelection, String projectId) throws MiddlewareQueryException{
+		if(dataset != null && userSelection != null){
+			//we copy it to User session object
+			//nursery level
+   		    List<SettingDetail> studyLevelConditions = new ArrayList<SettingDetail>();
+		    List<SettingDetail> plotsLevelList  = new ArrayList<SettingDetail>();
+		    List<SettingDetail> baselineTraitsList  = new ArrayList<SettingDetail>();
+		    List<SettingDetail> trialLevelVariableList  = new ArrayList<SettingDetail>();
+		    if(dataset.getConditions() != null){
+				for(Condition condition : dataset.getConditions()){
+					
+					SettingVariable variable = new SettingVariable(condition.getName(), condition.getDescription(), condition.getProperty(),
+							condition.getScale(), condition.getMethod(), condition.getRole(), condition.getDatatype(), condition.getDataTypeId(),
+							condition.getMinRange(), condition.getMaxRange());
+					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
+					
+					if (!inHideVariableFields(stdVar, AppConstants.HIDE_NURSERY_FIELDS.getString())) {
+        					variable.setCvTermId(stdVar);										
+        					List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
+        					SettingDetail settingDetail = new SettingDetail(variable,
+        							possibleValues, condition.getValue(), isSettingVariableDeletable(stdVar, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()));
+        					
+        					settingDetail.setPossibleValuesToJson(possibleValues);
+        					List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, projectId);
+        					settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
+        					studyLevelConditions.add(settingDetail);
+        					if(userSelection != null){
+        						StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);						
+        						variable.setPSMRFromStandardVariable(standardVariable);						
+        					}
+    					}
+				}
+		    }
+			//plot level
+			//always allowed to be deleted
+			if(dataset.getFactors() != null){
+				for(Factor factor : dataset.getFactors()){
+					
+					SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(),
+							factor.getScale(), factor.getMethod(), factor.getRole(), factor.getDatatype());
+					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
+					
+					if (!inHideVariableFields(stdVar, AppConstants.HIDE_PLOT_FIELDS.getString())) {
+        					variable.setCvTermId(stdVar);
+        					SettingDetail settingDetail = new SettingDetail(variable,
+        							null, null, isSettingVariableDeletable(stdVar, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()));
+        					plotsLevelList.add(settingDetail);
+					}
+					/*
+					if(userSelection != null){
+						StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);						
+						variable.setPSMRFromStandardVariable(standardVariable);						
+					}
+					*/
+				}
+			}
+			//baseline traits
+			//always allowed to be deleted
+			if(dataset.getVariates() != null){
+				for(Variate variate : dataset.getVariates()){
+					
+					SettingVariable variable = new SettingVariable(variate.getName(), variate.getDescription(), variate.getProperty(),
+							variate.getScale(), variate.getMethod(), variate.getRole(), variate.getDatatype());
+					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
+					variable.setCvTermId(stdVar);
+					SettingDetail settingDetail = new SettingDetail(variable,
+							null, null, true);
+					baselineTraitsList.add(settingDetail);
+					/*
+					if(userSelection != null){
+						StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);						
+						variable.setPSMRFromStandardVariable(standardVariable);						
+					}
+					*/
+				}
+			}
+			
+			if(dataset.getTrialLevelFactor() != null){
+				for(Factor factor : dataset.getTrialLevelFactor()){
+					
+					SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(),
+							factor.getScale(), factor.getMethod(), factor.getRole(), factor.getDatatype());
+					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
+					
+					if (!inHideVariableFields(stdVar, AppConstants.HIDE_PLOT_FIELDS.getString())) {
+	    					variable.setCvTermId(stdVar);
+	    					SettingDetail settingDetail = new SettingDetail(variable,
+	    							null, null, isSettingVariableDeletable(stdVar, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()));
+	    					plotsLevelList.add(settingDetail);
+					}
+				}
+		    }
+			
+			
+			userSelection.setStudyLevelConditions(studyLevelConditions);
+			userSelection.setPlotsLevelList(plotsLevelList);			
+			userSelection.setBaselineTraitsList(baselineTraitsList);
+			userSelection.setTrialLevelVariableList(trialLevelVariableList);
 		}
 	}
 	

@@ -533,9 +533,10 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         Map<String, String> result = new HashMap<String, String>();
         
         try {
+        	/*
             List<Long> locationsIds = workbenchService
                                 .getFavoriteProjectLocationIds(getCurrentProjectId());
-
+    	 	*/
             List<Location> allBlocks = fieldbookMiddlewareService.getAllBlockLocations(fieldId);
             result.put("success", "1");
             result.put("allBlocks", convertObjectToJson(allBlocks));
@@ -560,9 +561,10 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         Map<String, String> result = new HashMap<String, String>();
         
         try {
+        	/*
             List<Long> locationsIds = workbenchService
                                 .getFavoriteProjectLocationIds(getCurrentProjectId());
-
+			*/
             FieldmapBlockInfo blockInfo = fieldbookMiddlewareService.getBlockInformation(blockId);
             result.put("success", "1");
             result.put("blockInfo", convertObjectToJson(blockInfo));
@@ -588,14 +590,55 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     public String addNewField(@ModelAttribute("fieldmapForm") FieldmapForm form, BindingResult result, Model model) {
         String fieldName = form.getNewFieldName();
         Integer locationId = form.getParentLocationId();
+        String msg = "success";
         try {
         	Integer currentUserId = workbenchService.getCurrentIbdbUserId(getCurrentProjectId());
-			fieldbookMiddlewareService.addFieldLocation(fieldName, locationId, currentUserId);
+        	if(isFieldNameUnique(fieldName, locationId))
+        		fieldbookMiddlewareService.addFieldLocation(fieldName, locationId, currentUserId);
+        	else 
+        		msg = "error";
 		} catch (MiddlewareQueryException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        return "success";
+        return msg;
+    }
+    
+    private boolean isFieldNameUnique(String fieldName, Integer locationId){
+    	boolean isUnique = true;
+    	try {
+			List<Location> allFields = fieldbookMiddlewareService.getAllFieldLocations(locationId);
+			if(allFields != null && !allFields.isEmpty()){
+				for(Location loc : allFields){
+					if(fieldName.equalsIgnoreCase(loc.getLname())){
+						isUnique = false;
+						break;
+					}						
+				}
+			}
+		} catch (MiddlewareQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return isUnique;
+    }
+    private boolean isBlockNameUnique(String blockName, Integer fieldId){
+    	boolean isUnique = true;
+    	try {
+			List<Location> allBlocks = fieldbookMiddlewareService.getAllBlockLocations(fieldId);
+			if(allBlocks != null && !allBlocks.isEmpty()){
+				for(Location loc : allBlocks){
+					if(blockName.equalsIgnoreCase(loc.getLname())){
+						isUnique = false;
+						break;
+					}						
+				}
+			}
+		} catch (MiddlewareQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return isUnique;
     }
     
     /**
@@ -611,14 +654,18 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     public String addNewBlock(@ModelAttribute("fieldmapForm") FieldmapForm form, BindingResult result, Model model) {
         String blockName = form.getNewBlockName();
         Integer parentFieldId = form.getParentFieldId();
+        String msg = "success";
         try {
         	Integer currentUserId = workbenchService.getCurrentIbdbUserId(getCurrentProjectId());
-			fieldbookMiddlewareService.addBlockLocation(blockName, parentFieldId, currentUserId);
+        	if(isBlockNameUnique(blockName, parentFieldId))
+        		fieldbookMiddlewareService.addBlockLocation(blockName, parentFieldId, currentUserId);
+        	else
+        		msg = "error";
 		} catch (MiddlewareQueryException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        return "success";
+        return msg;
     }
     
     /**

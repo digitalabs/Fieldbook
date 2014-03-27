@@ -86,7 +86,7 @@ public class PojoXmlTester extends AbstractJUnit4SpringContextTests {
 				new ArrayList(), "Test 6", false));
 		
 		datasetName = "test name";
-		dataset = SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, datasetName, nurseryLevelConditions, plotsLevelList, baselineTraitsList, null);
+		dataset = (Dataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, datasetName, nurseryLevelConditions, plotsLevelList, baselineTraitsList, null);
 		
     }
 	
@@ -135,11 +135,11 @@ public class PojoXmlTester extends AbstractJUnit4SpringContextTests {
 		UserSelection userSelection = new UserSelection();
 		SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, "1");
 		
-		assertEquals(userSelection.getNurseryLevelConditions().size(), dataset.getConditions().size());
+		assertEquals(userSelection.getStudyLevelConditions().size(), dataset.getConditions().size());
 		assertEquals(userSelection.getPlotsLevelList().size(), dataset.getFactors().size());
 		assertEquals(userSelection.getBaselineTraitsList().size(), dataset.getVariates().size());
 		
-		assertEquals(userSelection.getNurseryLevelConditions().get(0).getVariable().getName(), dataset.getConditions().get(0).getName());
+		assertEquals(userSelection.getStudyLevelConditions().get(0).getVariable().getName(), dataset.getConditions().get(0).getName());
 		assertEquals(userSelection.getPlotsLevelList().get(0).getVariable().getName(), dataset.getFactors().get(0).getName());
 		assertEquals(userSelection.getBaselineTraitsList().get(0).getVariable().getName(), dataset.getVariates().get(0).getName());
 		

@@ -58,7 +58,8 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 
 		   
 		   	function showAddBlockPopup(){
-		   		$('#page-block-message-modal').html();
+		   		$('#page-block-message-modal').html('');
+		   		$('#newBlockName').val('');
 		   		recreatePopupFieldCombo();
 		   		$('#addBlocksModal').modal({ backdrop: 'static', keyboard: false });		   	
 		   	}
@@ -86,8 +87,15 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		   	       data: dataForm,
 		   	       success: function(data) {
 		   	    	   		   	    		   
-		   	    		   showSuccessfulMessage("page-block-message-modal", blockAddedSuccessfully);
-		   	    	       $('#newBlockName').val('');
+		   	    		  
+		   	    	    if(data == 'success'){
+		   	    	     		showSuccessfulMessage("page-block-message-modal", blockAddedSuccessfully);
+		   	    	       		$('#newBlockName').val(''); 
+						   }else{
+							   showErrorMessage("page-block-message-modal", blockNameDuplicateError);
+						   }		   	    	   		   	    		   
+		   	    		   
+		   	    	    
 		   	       },
 		   	       error: function(jqXHR, textStatus, errorThrown){
 		   				console.log("The following error occured: " + textStatus, errorThrown); 

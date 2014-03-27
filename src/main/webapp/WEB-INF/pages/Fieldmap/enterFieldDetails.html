@@ -182,11 +182,11 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		  </div>						
 	</div>
 	
-	<div class="form-group col-xs-12  col-md-12 block-details">
+	<div class="form-group col-xs-12  col-md-12 block-details" style="display:none">
 	<br />
 		&nbsp;<strong class="sub-heading col-xs-12 col-md-12" th:text="#{fieldmap.trial.row.and.range.and.plot.details} + ':'">ROW, RANGE AND PLOT DETAILS:</strong>
 	</div>
-	<div class="form-group col-xs-12  col-md-12 block-details">			
+	<div class="form-group col-xs-12  col-md-12 block-details" style="display:none">			
 		  
 		  <div class="form-group col-xs-6 col-md-6">
 		  
@@ -301,6 +301,9 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
    	
    	var fieldAddedSuccessfully = /*[[#{fieldmap.field.added.successfully}]]*/;
    	var blockAddedSuccessfully = /*[[#{fieldmap.block.added.successfully}]]*/;
+   	
+	var fieldNameDuplicateError = /*[[#{fieldmap.field.name.duplicate.error}]]*/;
+   	var blockNameDuplicateError = /*[[#{fieldmap.block.name.duplicate.error}]]*/;
    	
    	
     var programLocationUrl = '';

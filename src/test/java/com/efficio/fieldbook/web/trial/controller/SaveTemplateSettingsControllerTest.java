@@ -9,7 +9,7 @@
  * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
  * 
  *******************************************************************************/
-package com.efficio.fieldbook.web.nursery.controller;
+package com.efficio.fieldbook.web.trial.controller;
 
 import static org.junit.Assert.assertEquals;
 
@@ -20,6 +20,7 @@ import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
 import org.generationcp.middleware.pojos.workbench.Tool;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
+import org.generationcp.middleware.pojos.workbench.settings.TrialDataset;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,7 +52,7 @@ public class SaveTemplateSettingsControllerTest extends AbstractJUnit4SpringCont
     WorkbenchService workbenchService;
     
     /** The dataset. */
-    Dataset dataset;
+    TrialDataset dataset;
     
     /** The dataset name. */
     String datasetName;
@@ -81,9 +82,16 @@ public class SaveTemplateSettingsControllerTest extends AbstractJUnit4SpringCont
 				new ArrayList<ValueReference>(), "Test 5", true));
 		baselineTraitsList.add(new SettingDetail(getTestSettingVariable("6"),
 				new ArrayList<ValueReference>(), "Test 6", false));
+
+		List<SettingDetail> trialLevelConditions = new ArrayList<SettingDetail>();
+		trialLevelConditions.add(new SettingDetail(getTestSettingVariable("7"),
+				new ArrayList<ValueReference>(), "Test 7", true));
+		trialLevelConditions.add(new SettingDetail(getTestSettingVariable("8"),
+				new ArrayList<ValueReference>(), "Test 8", false));
+
 		
 		datasetName = "test name";
-		dataset = (Dataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, datasetName, nurseryLevelConditions, plotsLevelList, baselineTraitsList, null);
+		dataset = (TrialDataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, datasetName, nurseryLevelConditions, plotsLevelList, baselineTraitsList, null, 3, trialLevelConditions);
 		
     }
     
@@ -106,7 +114,7 @@ public class SaveTemplateSettingsControllerTest extends AbstractJUnit4SpringCont
     @Test
     public void testSaveRetrieveAndDeleteTemplateSettings() throws Exception {
     	int projectId = 1;
-    	Tool tool = workbenchService.getToolWithName(AppConstants.TOOL_NAME_NURSERY_MANAGER_WEB.getString());
+    	Tool tool = workbenchService.getToolWithName(AppConstants.TOOL_NAME_TRIAL_MANAGER_WEB.getString());
     	 TemplateSetting templateSetting = new TemplateSetting(null, 1, "Test Name"+System.currentTimeMillis(), tool, 
     	            SettingsUtil.generateSettingsXml(dataset), Boolean.TRUE);
     	
@@ -118,7 +126,7 @@ public class SaveTemplateSettingsControllerTest extends AbstractJUnit4SpringCont
     	 templateSettingFilter.setIsDefaultToNull();
     	 List<TemplateSetting> dbTemplateSettingList = workbenchService.getTemplateSettings(templateSettingFilter);
     	 TemplateSetting dbTemplateSetting = dbTemplateSettingList.get(0);
-    	 
+    	 System.out.println(templateSetting.getConfiguration());
     	 assertEquals(templateSetting.getTemplateSettingId(), dbTemplateSetting.getTemplateSettingId());
     	 assertEquals(templateSetting.getConfiguration(), dbTemplateSetting.getConfiguration());
     	  

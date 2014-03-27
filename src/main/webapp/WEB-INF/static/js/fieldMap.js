@@ -519,6 +519,15 @@ function recreatePopupLocationCombo() {
  );
 }
 
+function formatFieldResult(myItem) {
+    return myItem.text;
+ }
+
+function formatField(myItem) {
+	return "<p><strong>"+myItem.text+"</strong> <br /> Location: "+myItem.location+"</p>";
+	//return "<p><strong>"+ myItem.location +"</strong> &gt; <strong><i>"+myItem.text+"</i></strong> </p>";
+}
+
 function recreatePopupFieldCombo() {
 	
 	Spinner.toggle();
@@ -536,8 +545,10 @@ function recreatePopupFieldCombo() {
     		   
     		   
     			   $.each(popupFieldlocationSuggestions, function( index, value ) {
+    				   var parentLocation = value.parentLocationName != null ? value.parentLocationName : "";
         			   popupFieldlocationSuggestions_obj.push({ 'id' : value.locid,
-        					  'text' : value.lname
+        					  'text' : value.lname,
+        					  'location' : parentLocation 
         				});  
         				
         			});
@@ -554,7 +565,13 @@ function recreatePopupFieldCombo() {
        		          });
        		            query.callback(data);
        		            
-       		        }
+       		        },
+       		        escapeMarkup: function(m) {
+       		            // Do not escape HTML in the select options text
+       		            return m;
+       		         },
+       		         formatResult: formatField,
+       		         formatSelection: formatFieldResult
 
        		    });
        			

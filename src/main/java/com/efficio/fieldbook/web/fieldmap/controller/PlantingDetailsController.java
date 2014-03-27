@@ -19,7 +19,6 @@ import javax.servlet.http.HttpSession;
 
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
-import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.springframework.stereotype.Controller;
@@ -157,32 +156,6 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
         info.setFieldName(userFieldmap.getFieldName());
         info.setBlockName(userFieldmap.getBlockName());
         form.setUserFieldmap(info);
-    }
-    
-    private void clearPlots() {
-    	for (Plot[] plotRow : userFieldmap.getFieldmap()) {
-    		for (Plot plotCell : plotRow) {
-    			//userFieldmap.setFieldmap(null);
-    			plotCell.setDisplayString("");
-    		}
-    	}
-    }
-    
-    private void markDeletedPlots(FieldmapForm form, List<String> deletedPlots) {
-    	StringBuilder dpString = new StringBuilder();
-    	if (deletedPlots != null) {
-    		for (String deletedPlot : deletedPlots) {
-    			String[] coordinates = deletedPlot.split(",");
-    			if (coordinates.length == 2) {
-    				if (dpString.length() > 0) {
-    					dpString.append(",");
-    				}
-    				dpString.append(coordinates[0] + "_" + coordinates[1]);
-    			}
-    		}
-    	}
-    	form.setMarkedCells(dpString.toString());
-    	this.userFieldmap.setDeletedPlots(deletedPlots);
     }
     
     /* (non-Javadoc)

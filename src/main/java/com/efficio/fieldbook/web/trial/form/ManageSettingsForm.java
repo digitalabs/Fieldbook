@@ -38,6 +38,7 @@ public class ManageSettingsForm {
 	
 	/** The baseline trait variables. */
 	private List<SettingDetail> baselineTraitVariables;
+	private List<SettingDetail> trialLevelVariables;
 	
 	/** The is default. */
 	private boolean isDefault;
@@ -64,6 +65,18 @@ public class ManageSettingsForm {
     private String locationUrl;
     private String breedingMethodUrl;
     private String idNameVariables;
+    
+    private String numberOfInstances;
+    
+    
+
+	public String getNumberOfInstances() {
+		return numberOfInstances;
+	}
+
+	public void setNumberOfInstances(String numberOfInstances) {
+		this.numberOfInstances = numberOfInstances;
+	}
 
 	/**
 	 * Gets the selected setting id.
@@ -331,6 +344,14 @@ public class ManageSettingsForm {
 		
 		public void setIdNameVariables(String idNameVariables) {
 		        this.idNameVariables = idNameVariables;
+		}
+
+		public List<SettingDetail> getTrialLevelVariables() {
+			return trialLevelVariables;
+		}
+
+		public void setTrialLevelVariables(List<SettingDetail> trialLevelVariables) {
+			this.trialLevelVariables = trialLevelVariables;
 		}
 		
 }

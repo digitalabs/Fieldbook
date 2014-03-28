@@ -285,10 +285,10 @@ function checkRemainingPlotsHorizontal() {
 
 	if (plantingOrder == "1") {
 		//row/column
-		remainingPlots = (((parseInt(rowNum)/parseInt(rowsPerPlot))*rangeNum)-deletedPlots) - (((startingRange-1)*(rowNum/rowsPerPlot))+(startingCol-1));
+		remainingPlots = (((parseInt(rowNum)/parseInt(rowsPerPlot))*rangeNum)-deletedPlots-plantedPlots) - (((startingRange-1)*(rowNum/rowsPerPlot))+(startingCol-1));
 	} else {
 		//serpentine
-		remainingPlots = (((parseInt(rowNum)/parseInt(rowsPerPlot))*rangeNum)-deletedPlots) - getUnavailablePlotsHorizontal(startingCol, startingRange); 
+		remainingPlots = (((parseInt(rowNum)/parseInt(rowsPerPlot))*rangeNum)-deletedPlots-plantedPlots) - getUnavailablePlotsHorizontal(startingCol, startingRange); 
 	}
 	
 	if (totalNoOfPlots > remainingPlots) {
@@ -309,10 +309,10 @@ function checkRemainingPlotsVertical() {
 
 	if (plantingOrder == "1") {
 		//row/column
-		remainingPlots = (((parseInt(rowNum)/parseInt(rowsPerPlot))*rangeNum)-deletedPlots) - (((startingCol-1)*rangeNum)+(startingRange-1));
+		remainingPlots = (((parseInt(rowNum)/parseInt(rowsPerPlot))*rangeNum)-deletedPlots-plantedPlots) - (((startingCol-1)*rangeNum)+(startingRange-1));
 	} else {
 		//serpentine
-		remainingPlots = (((parseInt(rowNum)/parseInt(rowsPerPlot))*rangeNum)-deletedPlots) - getUnavailablePlotsVertical(startingCol, startingRange); 
+		remainingPlots = (((parseInt(rowNum)/parseInt(rowsPerPlot))*rangeNum)-deletedPlots-plantedPlots) - getUnavailablePlotsVertical(startingCol, startingRange); 
 	}
 	
 	if (totalNoOfPlots > remainingPlots) {

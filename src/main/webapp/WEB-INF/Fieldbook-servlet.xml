@@ -190,7 +190,7 @@
     </bean>
     
     
-    <bean id="workbenchHibernateSessionProvider" class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider" scope="request">
+    <bean id="workbenchHibernateSessionProvider" class="org.generationcp.middleware.hibernate.HibernateSessionPerRequestProvider" scope="request"  destroy-method="close">
         <property name="sessionFactory" ref="workbenchSessionFactory"/>
         
         <!-- JDK Standard Proxy around this request scoped bean, so we can use it on longer scoped beans -->
@@ -198,7 +198,7 @@
     </bean>
     
     <bean id="managerFactoryProvider" 
-    	class="org.generationcp.commons.hibernate.DynamicManagerFactoryProviderConcurrency">
+    	class="org.generationcp.commons.hibernate.DynamicManagerFactoryProviderConcurrency"  destroy-method="closeAllSessionFactories">
     	<constructor-arg ref="workbenchDataManager" />
     	<property name="maxCachedLocalSessionFactories" value="1" />
     	<property name="localPort" value="${workbench.port}" />
@@ -219,8 +219,8 @@
     </bean>
     
     <bean id="workbenchDataManager"
-        class="org.generationcp.middleware.manager.WorkbenchDataManagerImpl">
-        <constructor-arg ref="workbenchHibernateSessionProvider" />
+        class="org.generationcp.middleware.manager.WorkbenchDataManagerImpl" destroy-method="close">
+        <constructor-arg ref="workbenchHibernateSessionProvider"  />
     </bean>
     
      <bean id="ontologyDataManagerV2" factory-bean="managerFactory"

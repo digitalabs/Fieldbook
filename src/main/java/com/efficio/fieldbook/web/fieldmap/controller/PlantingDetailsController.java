@@ -127,6 +127,14 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
                 }
             }
             
+            this.userFieldmap.setStartingColumn(1);
+       	    this.userFieldmap.setStartingRange(1);
+            if(infos == null || infos.isEmpty()){
+            	//meaning no plants pa
+            	 this.userFieldmap.setPlantingOrder(0);            	
+            	 this.userFieldmap.setMachineRowCapacity(1);
+            }
+            
 	        form.setUserFieldmap(this.userFieldmap);
 	        
     	} catch (Exception e) {
@@ -159,9 +167,12 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
         info.setLocationName(userFieldmap.getLocationName());
         info.setFieldName(userFieldmap.getFieldName());
         info.setBlockName(userFieldmap.getBlockName());
-        userFieldmap.setStartingColumn(0);
-        userFieldmap.setStartingRange(0);
+        userFieldmap.setStartingColumn(1);
+        userFieldmap.setStartingRange(1);
         userFieldmap.setMachineRowCapacity(1);
+//        info.setStartingColumn(1);
+//        info.setStartingRange(1);
+//        info.setMachineRowCapacity(1);
         form.setUserFieldmap(info);
     }
     

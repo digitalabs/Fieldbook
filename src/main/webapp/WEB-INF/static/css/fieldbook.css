@@ -303,7 +303,7 @@ table{
 	margin-left: -25px;
 }
 .panel-body{
-	background-color: #D4D4D4;
+	background-color: #F6F6F6; /*#D4D4D4;*/
 	padding: 0px;
 }
 .manage-settings-panel-body{

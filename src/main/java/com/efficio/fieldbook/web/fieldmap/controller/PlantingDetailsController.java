@@ -126,6 +126,7 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
                     
                 }
             }
+            
 	        form.setUserFieldmap(this.userFieldmap);
 	        
     	} catch (Exception e) {
@@ -139,9 +140,12 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
     	for(int i = 0 ; i < currentPlot.length ; i++){
     		for(int j = 0 ; j < currentPlot[i].length ; j++){
     			Plot plot = currentPlot[i][j];
-    			if(!plot.isSavedAlready() && !plot.isPlotDeleted()){
+    			if(!plot.isSavedAlready()){
     				//we reset the the plot
-    				plot.setDisplayString("");
+    				if(plot.isPlotDeleted())
+    					plot.setPlotDeleted(false);
+    				else
+    					plot.setDisplayString("");
     			}
     		}
     	}

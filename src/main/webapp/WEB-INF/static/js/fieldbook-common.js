@@ -412,10 +412,13 @@ function createRowForNursery(id, parentClass, value, realId, withFieldMap, datas
 	}
 	
 	//for create new fieldmap
-	newRow = "<tr class='data-row trialInstance "+ genClassName + id + " " + genParentClassName + "'>";
-	var checkBox = "<input class='checkInstance' type='checkbox' id='" + datasetId + "|" + realId + "' /> &nbsp;&nbsp;";
-	newCell = "<td>" + checkBox + "&nbsp;" + datasetName + "</td><td>" + value.entryCount + "</td>";
 	var hasFieldMap = value.hasFieldMap ? "Yes" : "No";
+	var disabledString = value.hasFieldMap ? "disabled" : "";
+	
+	newRow = "<tr class='data-row trialInstance "+ genClassName + id + " " + genParentClassName + "'>";
+	var checkBox = "<input "+disabledString+" class='checkInstance' type='checkbox' id='" + datasetId + "|" + realId + "' /> &nbsp;&nbsp;";
+	newCell = "<td>" + checkBox + "&nbsp;" + datasetName + "</td><td>" + value.entryCount + "</td>";
+	
 	newCell = newCell + "<td class='hasFieldMap'>" + hasFieldMap + "</td>";
 	$("#studyTree").append(newRow+newCell+"</tr>");
 }

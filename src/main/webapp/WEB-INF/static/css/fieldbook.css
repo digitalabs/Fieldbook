@@ -713,3 +713,6 @@ div.possibleValuesDiv{
 #plotLevelSettings td, #baselineTraitSettings td{
 	word-wrap: break-word;
 }
+.label-bold{
+	font-weight: 600;
+}

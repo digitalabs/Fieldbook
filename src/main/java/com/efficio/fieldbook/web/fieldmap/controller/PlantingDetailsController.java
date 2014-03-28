@@ -159,6 +159,9 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
         info.setLocationName(userFieldmap.getLocationName());
         info.setFieldName(userFieldmap.getFieldName());
         info.setBlockName(userFieldmap.getBlockName());
+        userFieldmap.setStartingColumn(0);
+        userFieldmap.setStartingRange(0);
+        userFieldmap.setMachineRowCapacity(1);
         form.setUserFieldmap(info);
     }
     

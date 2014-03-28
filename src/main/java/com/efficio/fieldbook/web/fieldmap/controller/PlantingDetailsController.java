@@ -86,10 +86,10 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
     		fieldmapInfoList.addAll(toBeAdded);
     		
 	        if (infos != null && !infos.isEmpty()) {
-	        	setOrder(infos, 1);
+	        	setOrder(infos);
 	        	fieldmapInfoList.addAll(infos);
 	        }
-	        setOrder(toBeAdded, infos.size()+1);
+	        setOrder(toBeAdded, infos.size());
 
     		this.userFieldmap.setSelectedFieldMaps(fieldmapInfoList);
             this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(
@@ -175,13 +175,21 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
         return this.userFieldmap;
     }
     
-    private void setOrder(List<FieldMapInfo> info, int start) {
-    	int order = start;
+    private void setOrder(List<FieldMapInfo> info) {
+    	setOrder(info, -1);
+    }
+    private void setOrder(List<FieldMapInfo> info, int offset) {
+    	int order = 1;
     	if (info != null && !info.isEmpty()) {
     		for (FieldMapInfo rec : info) {
     			for (FieldMapDatasetInfo dataset : rec.getDatasets()) {
     				for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
-    					trial.setOrder(order++);
+    					if (offset >= 0 && trial.getOrder() != null) {
+    						trial.setOrder(trial.getOrder() + offset);
+    					}
+    					else {
+    						trial.setOrder(order++);
+    					}
     				}
     			}
     		}

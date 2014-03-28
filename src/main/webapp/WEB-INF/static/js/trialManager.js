@@ -228,7 +228,7 @@ function getBreedingMethodRowIndex() {
 }
 
 function getLocationRowIndex() {
-	var rowIndex = 0;
+	var rowIndex = -1;
 	$.each($(".nurseryLevelSettings"), function (index, row) {
 		var cvTermId = $($(row).find('.1st')
 				.find("#" + getJquerySafeId("studyLevelVariables" + index + ".variable.cvTermId"))).val();
@@ -240,6 +240,9 @@ function getLocationRowIndex() {
 }
 
 function recreateLocationCombo() {
+	 var index = getLocationRowIndex();
+	 if(index == -1)
+		 return;
 	var selectedLocationAll = $("#harvestLocationIdAll").val();
 	var selectedLocationFavorite = $("#harvestLocationIdFavorite").val();
 	
@@ -265,7 +268,7 @@ function recreateLocationCombo() {
 	    		   }
     		   } else {
     			   var selectedVal = null;
-    			   var index = getLocationRowIndex();
+    			  
     			   
     			   if ($("#" + getJquerySafeId("studyLevelVariables"+index+".value")).select2("data")) {
     				   selectedVal = $("#" + getJquerySafeId("studyLevelVariables"+index+".value")).select2("data").id;

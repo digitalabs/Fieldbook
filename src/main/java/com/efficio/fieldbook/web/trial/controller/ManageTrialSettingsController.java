@@ -130,7 +130,7 @@ public class ManageTrialSettingsController extends SettingsController{
         if(templateSettingsList != null && !templateSettingsList.isEmpty()){
         	//we only get the 1st, cause its always gonna be 1 only per project and per tool
         	TemplateSetting templateSetting = templateSettingsList.get(0); //always 1
-        	Dataset dataset = SettingsUtil.parseXmlToDatasetPojo(templateSetting.getConfiguration());
+        	TrialDataset dataset = (TrialDataset) SettingsUtil.parseXmlToDatasetPojo(templateSetting.getConfiguration(), false);
         	SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
         	form.setStudyLevelVariables(userSelection.getStudyLevelConditions());
         	form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
@@ -158,7 +158,7 @@ public class ManageTrialSettingsController extends SettingsController{
             , Model model, HttpSession session) throws MiddlewareQueryException{
 		//will do the saving here
     	
-    	TrialDataset dataset = (TrialDataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, form.getSettingName(), form.getStudyLevelVariables(), form.getPlotLevelVariables(), form.getBaselineTraitVariables(), userSelection, Integer.valueOf(form.getNumberOfInstances()), form.getTrialLevelVariables());
+    	TrialDataset dataset = (TrialDataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, form.getSettingName(), form.getStudyLevelVariables(), form.getPlotLevelVariables(), form.getBaselineTraitVariables(), userSelection, form.getTrialLevelVariables());
     	String xml = SettingsUtil.generateSettingsXml(dataset);
     	Integer tempateSettingId = form.getSelectedSettingId() > 0 ? Integer.valueOf(form.getSelectedSettingId()) : null;
     	TemplateSetting templateSetting = new TemplateSetting(tempateSettingId, Integer.valueOf(getCurrentProjectId()), dataset.getName(), getTrialTool(), xml, Boolean.valueOf(form.getIsDefault())) ;
@@ -226,11 +226,12 @@ public class ManageTrialSettingsController extends SettingsController{
 	    	templateSettingFilter.setIsDefaultToNull();
 	    	List<TemplateSetting> templateSettings = workbenchService.getTemplateSettings(templateSettingFilter);
 	    	TemplateSetting templateSetting = templateSettings.get(0); //always 1
-	    	Dataset dataset = SettingsUtil.parseXmlToDatasetPojo(templateSetting.getConfiguration());
+	    	TrialDataset dataset = (TrialDataset)SettingsUtil.parseXmlToDatasetPojo(templateSetting.getConfiguration(), false);
 	    	SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
 	    	form.setStudyLevelVariables(userSelection.getStudyLevelConditions());
 	    	form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
 	    	form.setPlotLevelVariables(userSelection.getPlotsLevelList());
+	    	form.setTrialLevelVariables(userSelection.getTrialLevelVariableList());
 	    	form.setIsDefault(templateSetting.getIsDefault().intValue() == 1 ? true : false);
 	    	form.setSettingName(templateSetting.getName());
 	    	form.setSelectedSettingId(templateSetting.getTemplateSettingId());
@@ -254,9 +255,9 @@ public class ManageTrialSettingsController extends SettingsController{
             SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
             
             //nursery-level
-            List<SettingDetail> studyLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
-                    buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true), 
-                    buildRequiredVariablesFlag(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
+            List<SettingDetail> studyLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString()), 
+                    buildRequiredVariablesLabel(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString(), true), 
+                    buildRequiredVariablesFlag(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString()), 
                     userSelection.getStudyLevelConditions(), true);
             
             //plot-level
@@ -265,11 +266,18 @@ public class ManageTrialSettingsController extends SettingsController{
                     buildRequiredVariablesFlag(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()), 
                     userSelection.getPlotsLevelList(), false);
             
+            List<SettingDetail> trialLevelVariableList = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString()), 
+                    buildRequiredVariablesLabel(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString(), false), 
+                    buildRequiredVariablesFlag(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString()), 
+                    userSelection.getTrialLevelVariableList(), false);
+            
             userSelection.setStudyLevelConditions(studyLevelConditions);
             userSelection.setPlotsLevelList(plotLevelConditions);
+            userSelection.setTrialLevelVariableList(trialLevelVariableList);
             form.setStudyLevelVariables(userSelection.getStudyLevelConditions());
             form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
             form.setPlotLevelVariables(userSelection.getPlotsLevelList());
+            form.setTrialLevelVariables(userSelection.getTrialLevelVariableList());
             form.setIsDefault(false);
             form.setSettingName("");
         }
@@ -338,7 +346,7 @@ public class ManageTrialSettingsController extends SettingsController{
     	try {
 
         	List<StandardVariableReference> standardVariableList = 
-        			fieldbookService.filterStandardVariablesForSetting(mode, getSettingDetailList(mode));
+        			fieldbookService.filterStandardVariablesForTrialSetting(mode, getSettingDetailList(mode));
         	
         	try{
         		if(userSelection.getTraitRefList() == null){
@@ -539,15 +547,21 @@ public class ManageTrialSettingsController extends SettingsController{
     	List<SettingDetail> nurseryDefaults = new ArrayList<SettingDetail>();
     	List<SettingDetail> plotDefaults = new ArrayList<SettingDetail>();
     	List<SettingDetail> baselineTraitsList = new ArrayList<SettingDetail>();
+    	List<SettingDetail> trialLevelVariableList = new ArrayList<SettingDetail>();
     	form.setStudyLevelVariables(nurseryDefaults);
     	form.setPlotLevelVariables(plotDefaults);
+    	form.setTrialLevelVariables(trialLevelVariableList);
     	form.setSettingName("");
     	form.setIsDefault(false);
-    	nurseryDefaults = buildDefaultVariables(nurseryDefaults, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true));
+    	nurseryDefaults = buildDefaultVariables(nurseryDefaults, AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString(), buildRequiredVariablesLabel(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString(), true));
     	this.userSelection.setStudyLevelConditions(nurseryDefaults);
-    	plotDefaults = buildDefaultVariables(plotDefaults, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false));
+    	plotDefaults = buildDefaultVariables(plotDefaults, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false));    	
     	this.userSelection.setPlotsLevelList(plotDefaults);
+    	
     	this.userSelection.setBaselineTraitsList(baselineTraitsList);
+    	
+    	trialLevelVariableList = buildDefaultVariables(trialLevelVariableList, AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString(), buildRequiredVariablesLabel(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString(), true));
+    	this.userSelection.setTrialLevelVariableList(trialLevelVariableList);
     	
     }
     

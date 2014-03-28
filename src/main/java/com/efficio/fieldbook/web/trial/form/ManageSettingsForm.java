@@ -304,6 +304,7 @@ public class ManageSettingsForm {
 			this.baselineTraitVariables = null;
 			this.isDefault = false;
 			this.selectedVariables = null;
+			this.trialLevelVariables = null;
 		}
 
 		public String getLocationId() {

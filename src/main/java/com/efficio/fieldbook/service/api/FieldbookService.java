@@ -59,6 +59,7 @@ public interface FieldbookService {
      * @return
      */
     List<StandardVariableReference> filterStandardVariablesForSetting(int mode, Collection<SettingDetail> selectedList) throws MiddlewareQueryException;
+    List<StandardVariableReference> filterStandardVariablesForTrialSetting(int mode, Collection<SettingDetail> selectedList) throws MiddlewareQueryException;
     
     /**
      * Get all possible values.

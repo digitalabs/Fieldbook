@@ -117,6 +117,7 @@ public class FieldMapServiceImpl implements FieldMapService{
 	            	int range = Integer.valueOf(coordinates[1]);
 	        		if (column < totalColumns && range < totalRanges) {
 	        			plots[column][range].setPlotDeleted(true);
+	        			plots[column][range].setSavedAlready(isSavedAlready);
 	        		}
 	        	}
 	        }

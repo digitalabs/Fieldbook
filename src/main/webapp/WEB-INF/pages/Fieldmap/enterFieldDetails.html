@@ -409,6 +409,8 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 			}
 		}
 				
+		$('#'+getJquerySafeId('fieldLocationIdAll')).val('');
+		$('#'+getJquerySafeId('fieldLocationIdFavorite')).val('');
 		if($('#'+getJquerySafeId("userFieldmap.fieldId")).val() != '')
 			loadFieldsDropdown($('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val());
 		

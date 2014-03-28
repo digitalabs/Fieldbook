@@ -1018,3 +1018,42 @@ function addCreateNurseryRequiredAsterisk(){
 	}
 	
 }
+
+function getDateRowIndex(divName, dateCvTermId) {
+	
+	var rowIndex = -1;
+	$('.'+divName+' .cvTermIds').each(function(index){
+		if($(this).val() ==  parseInt(dateCvTermId))
+			rowIndex = index;
+		})
+		return rowIndex;	
+}
+
+function validateStartEndDate(divName){
+	//8050 - start
+	var startDateIndex = getDateRowIndex(divName, startDateId);
+	var endDateIndex = getDateRowIndex(divName, endDateId);
+	//console.log(startDateIndex);	  
+	//console.log(endDateIndex);
+	var startDate = $("#" + getJquerySafeId("studyLevelVariables"+startDateIndex+".value")).val();
+	var endDate = $("#" + getJquerySafeId("studyLevelVariables"+endDateIndex+".value")).val();
+	//console.log(startDate);	  
+	//console.log(endDate);
+	startDate = startDate == null ? '' : startDate;
+	endDate = endDate == null ? '' : endDate;
+	//console.log(startDate);	  
+	//console.log(endDate);
+	if(startDate == '' && endDate == '')
+		return true;
+	else if(startDate != '' && endDate == ''){
+		return true;
+	}else if(startDate == '' && endDate != ''){
+		showErrorMessage("page-message", startDateRequiredError);
+		return false;
+	}else if(parseInt(startDate) > parseInt(endDate)){
+		showErrorMessage("page-message", startDateRequiredEarlierError);
+		return false;
+	}
+	return true;
+	
+}

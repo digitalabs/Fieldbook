@@ -84,6 +84,8 @@ public class ManageNurserySettingsController extends SettingsController{
     	form.setLocationUrl(AppConstants.LOCATION_URL.getString());
     	form.setProjectId(this.getCurrentProjectId());
     	form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
+    	form.setStartDateId(AppConstants.START_DATE_ID.getString());
+    	form.setEndDateId(AppConstants.END_DATE_ID.getString());
     }
     
     /**

@@ -68,6 +68,9 @@ public class CreateNurseryForm {
     private String loadSettings;
     
     private String studyNameTermId;
+    
+    private String startDateId;
+    private String endDateId;
 
     /**
      * Gets the project id.
@@ -343,6 +346,22 @@ public class CreateNurseryForm {
 	 */
 	public void setStudyNameTermId(String studyNameTermId) {
 		this.studyNameTermId = studyNameTermId;
+	}
+
+	public String getStartDateId() {
+		return startDateId;
+	}
+
+	public void setStartDateId(String startDateId) {
+		this.startDateId = startDateId;
+	}
+
+	public String getEndDateId() {
+		return endDateId;
+	}
+
+	public void setEndDateId(String endDateId) {
+		this.endDateId = endDateId;
 	}
 
 	

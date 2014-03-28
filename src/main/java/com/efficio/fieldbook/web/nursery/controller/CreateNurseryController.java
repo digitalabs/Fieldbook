@@ -265,5 +265,7 @@ public class CreateNurseryController extends SettingsController {
         form.setProjectId(this.getCurrentProjectId());
         form.setImportLocationUrl(AppConstants.IMPORT_GERMPLASM_URL.getString());
         form.setStudyNameTermId(AppConstants.STUDY_NAME_ID.getString());
+        form.setStartDateId(AppConstants.START_DATE_ID.getString());
+    	form.setEndDateId(AppConstants.END_DATE_ID.getString());
     }
 }

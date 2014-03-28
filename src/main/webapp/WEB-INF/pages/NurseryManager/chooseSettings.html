@@ -9,6 +9,8 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
                     <input type="hidden" th:field="*{importLocationUrl}"/>
                     <input type="hidden" th:field="*{projectId}"/>
                     <input type="hidden" th:field="*{studyNameTermId}"/>
+                    <input type="hidden" th:field="*{startDateId}"/>
+					<input type="hidden" th:field="*{endDateId}"/>
 					
 					
 	    			<div class="row form-group">
@@ -259,6 +261,8 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
     var methodIframeOpened = false;
     var importLocationUrl = '';
     var requiredFields = [];    
+    var startDateId = '';
+	var endDateId = '';
 
     
 	$(document).ready(function() {
@@ -266,7 +270,8 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
         if($('#requiredFields').val() != ''){
             requiredFields = $('#requiredFields').val().split(',');    
         }
-        
+        startDateId = $('#startDateId').val();
+			endDateId = $('#endDateId').val();
         locationId = $('#locationId').val();
         breedingMethodId = $('#breedingMethodId').val();
         programMethodUrl = $('#breedingMethodUrl').val();

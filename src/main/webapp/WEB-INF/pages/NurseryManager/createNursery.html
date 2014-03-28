@@ -103,7 +103,9 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 <script type="text/javascript" th:src="@{/static/js/bootstrap-slider.js}"></script>
 <script type='text/javascript' th:inline="javascript">
 //<![CDATA[
-    
+    var startDateRequiredError = /*[[#{start.end.date.validation.start.date.required}]]*/;
+    var startDateRequiredEarlierError = /*[[#{start.end.date.validation.start.date.required.earlier}]]*/;
+       		
 	function submitGermplasmList(){
 		var $form = $("#germplasm-list-form");
 		
@@ -147,6 +149,10 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 	function submitForm() {
 		if (validateCreateNursery()) {
 			//$("#createNurseryForm").submit();
+			if(!validateStartEndDate('nurseryLevelSettings')){
+				moveToTopScreen();
+				return false;
+			}
 			submitWorkbook();
 			//$("#germplasm-list-form").submit();
 			//$("#createNurseryForm").submit();

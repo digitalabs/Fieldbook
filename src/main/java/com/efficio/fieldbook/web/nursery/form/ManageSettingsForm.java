@@ -65,6 +65,9 @@ public class ManageSettingsForm {
     /** The breeding method id. */
     private String breedingMethodId;
     
+    private String startDateId;
+    private String endDateId;
+    
     /** The location url. */
     private String locationUrl;
     
@@ -399,6 +402,22 @@ public class ManageSettingsForm {
 		 */
 		public void setIdNameVariables(String idNameVariables) {
 		        this.idNameVariables = idNameVariables;
+		}
+
+		public String getStartDateId() {
+			return startDateId;
+		}
+
+		public void setStartDateId(String startDateId) {
+			this.startDateId = startDateId;
+		}
+
+		public String getEndDateId() {
+			return endDateId;
+		}
+
+		public void setEndDateId(String endDateId) {
+			this.endDateId = endDateId;
 		}
 		
 }

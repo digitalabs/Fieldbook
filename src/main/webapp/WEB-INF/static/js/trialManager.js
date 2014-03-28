@@ -1375,6 +1375,9 @@ function doSaveSettings(){
 		//showErrorMessage('page-message', nurseryLevelValueEmpty);
 		moveToTopScreen();
 		return false;
+	}  else if(!validateStartEndDate('trialLevelSettings')){
+		moveToTopScreen();
+		return false; 		
 	} else{ 		
 		doAjaxMainSubmit('page-message', saveTemplateSettingSuccess, null);
 		moveToTopScreen();

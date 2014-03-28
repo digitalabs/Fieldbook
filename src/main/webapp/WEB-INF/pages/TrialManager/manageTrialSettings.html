@@ -20,6 +20,8 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 <input type="hidden" th:field="*{breedingMethodUrl}"/>
 <input type="hidden" th:field="*{projectId}"/>
 <input type="hidden" th:field="*{idNameVariables}"/>
+<input type="hidden" th:field="*{startDateId}"/>
+<input type="hidden" th:field="*{endDateId}"/>
 <!-- <input type="hidden" th:field="*{initialLoad}"/> -->	
 
 <div class="row" xmlns:th="http://www.thymeleaf.org">
@@ -461,7 +463,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
        		var manageLocationLabel = /*[[#{nursery.managesettings.manage.location}]]*/;
        		var nurseryNumericError = /*[[#{manage.settings.nursery.numeric.error}]]*/;
        		var breedingMethodId = '';
-       		var locationId = '';
+       		var locationId = '';       		
        		
        		var showFavoriteMethodLabel = /*[[#{show.favorite.method}]]*/;
        		var showFavoriteLocationLabel = /*[[#{show.favorite.location}]]*/;
@@ -476,11 +478,17 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
        	
        		var noVariableNameError = /*[[#{manage.settings.no.variable.name.error}]]*/
        		
+       		var startDateRequiredError = /*[[#{start.end.date.validation.start.date.required}]]*/;
+       		var startDateRequiredEarlierError = /*[[#{start.end.date.validation.start.date.required.earlier}]]*/;
+       		var startDateId = '';
+       		var endDateId = '';
  			$( document ).ready(function() {
  				locationId = $('#locationId').val();
  				breedingMethodId = $('#breedingMethodId').val();
  				programMethodUrl = $('#breedingMethodUrl').val();
  				programLocationUrl = $('#locationUrl').val();
+ 				startDateId = $('#startDateId').val();
+ 				endDateId = $('#endDateId').val();
  				/*
  				if($('#initialLoad').val() == '1'){
  					doInitialNurserySettingsLoad();

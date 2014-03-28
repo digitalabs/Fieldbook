@@ -13,7 +13,8 @@
 <form id="saveNurserySettingsForm" role="form-horizontal" action="#" th:action="@{/NurseryManager/manageNurserySettings/save}" 
 method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 
-
+<input type="hidden" th:field="*{startDateId}"/>
+<input type="hidden" th:field="*{endDateId}"/>
 <input type="hidden" th:field="*{locationId}"/>
 <input type="hidden" th:field="*{breedingMethodId}"/>
 <input type="hidden" th:field="*{locationUrl}"/>
@@ -426,9 +427,16 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
        	
        		var noVariableNameError = /*[[#{manage.settings.no.variable.name.error}]]*/
        		
+       		var startDateRequiredError = /*[[#{start.end.date.validation.start.date.required}]]*/;
+       		var startDateRequiredEarlierError = /*[[#{start.end.date.validation.start.date.required.earlier}]]*/;
+       		var startDateId = '';
+       		var endDateId = '';
+       		
  			$( document ).ready(function() {
  				locationId = $('#locationId').val();
  				breedingMethodId = $('#breedingMethodId').val();
+ 				startDateId = $('#startDateId').val();
+ 				endDateId = $('#endDateId').val();
  				programMethodUrl = $('#breedingMethodUrl').val();
  				programLocationUrl = $('#locationUrl').val();
  				/*

@@ -38,6 +38,8 @@ public class ManageSettingsForm {
 	
 	/** The baseline trait variables. */
 	private List<SettingDetail> baselineTraitVariables;
+	
+	/** The trial level variables. */
 	private List<SettingDetail> trialLevelVariables;
 	
 	/** The is default. */
@@ -60,20 +62,46 @@ public class ManageSettingsForm {
     /** The trait reference list. */
     private List<TraitClassReference> traitClassReferenceList;
     
+    /** The location id. */
     private String locationId;
+    
+    /** The breeding method id. */
     private String breedingMethodId;
+    
+    /** The location url. */
     private String locationUrl;
+    
+    /** The breeding method url. */
     private String breedingMethodUrl;
+    
+    /** The id name variables. */
     private String idNameVariables;
     
+    /** The number of instances. */
     private String numberOfInstances;
+    
+    /** The start date id. */
+    private String startDateId;
+    
+    /** The end date id. */
+    private String endDateId;
     
     
 
+	/**
+	 * Gets the number of instances.
+	 *
+	 * @return the number of instances
+	 */
 	public String getNumberOfInstances() {
 		return numberOfInstances;
 	}
 
+	/**
+	 * Sets the number of instances.
+	 *
+	 * @param numberOfInstances the new number of instances
+	 */
 	public void setNumberOfInstances(String numberOfInstances) {
 		this.numberOfInstances = numberOfInstances;
 	}
@@ -117,10 +145,20 @@ public class ManageSettingsForm {
         
         
         
+		/**
+		 * Gets the study level variables.
+		 *
+		 * @return the study level variables
+		 */
 		public List<SettingDetail> getStudyLevelVariables() {
 			return studyLevelVariables;
 		}
 
+		/**
+		 * Sets the study level variables.
+		 *
+		 * @param studyLevelVariables the new study level variables
+		 */
 		public void setStudyLevelVariables(List<SettingDetail> studyLevelVariables) {
 			this.studyLevelVariables = studyLevelVariables;
 		}
@@ -307,52 +345,148 @@ public class ManageSettingsForm {
 			this.trialLevelVariables = null;
 		}
 
+		/**
+		 * Gets the location id.
+		 *
+		 * @return the location id
+		 */
 		public String getLocationId() {
 			return locationId;
 		}
 
+		/**
+		 * Sets the location id.
+		 *
+		 * @param locationId the new location id
+		 */
 		public void setLocationId(String locationId) {
 			this.locationId = locationId;
 		}
 
+		/**
+		 * Gets the breeding method id.
+		 *
+		 * @return the breeding method id
+		 */
 		public String getBreedingMethodId() {
 			return breedingMethodId;
 		}
 
+		/**
+		 * Sets the breeding method id.
+		 *
+		 * @param breedingMethodId the new breeding method id
+		 */
 		public void setBreedingMethodId(String breedingMethodId) {
 			this.breedingMethodId = breedingMethodId;
 		}
 
+		/**
+		 * Gets the location url.
+		 *
+		 * @return the location url
+		 */
 		public String getLocationUrl() {
 			return locationUrl;
 		}
 
+		/**
+		 * Sets the location url.
+		 *
+		 * @param locationUrl the new location url
+		 */
 		public void setLocationUrl(String locationUrl) {
 			this.locationUrl = locationUrl;
 		}
 
+		/**
+		 * Gets the breeding method url.
+		 *
+		 * @return the breeding method url
+		 */
 		public String getBreedingMethodUrl() {
 			return breedingMethodUrl;
 		}
 
+		/**
+		 * Sets the breeding method url.
+		 *
+		 * @param breedingMethodUrl the new breeding method url
+		 */
 		public void setBreedingMethodUrl(String breedingMethodUrl) {
 			this.breedingMethodUrl = breedingMethodUrl;
 		}
 		
+		/**
+		 * Gets the id name variables.
+		 *
+		 * @return the id name variables
+		 */
 		public String getIdNameVariables() {
 		        return this.idNameVariables;
 		}
 		
+		/**
+		 * Sets the id name variables.
+		 *
+		 * @param idNameVariables the new id name variables
+		 */
 		public void setIdNameVariables(String idNameVariables) {
 		        this.idNameVariables = idNameVariables;
 		}
 
+		/**
+		 * Gets the trial level variables.
+		 *
+		 * @return the trial level variables
+		 */
 		public List<SettingDetail> getTrialLevelVariables() {
 			return trialLevelVariables;
 		}
 
+		/**
+		 * Sets the trial level variables.
+		 *
+		 * @param trialLevelVariables the new trial level variables
+		 */
 		public void setTrialLevelVariables(List<SettingDetail> trialLevelVariables) {
 			this.trialLevelVariables = trialLevelVariables;
+		}
+
+		/**
+		 * Gets the start date id.
+		 *
+		 * @return the start date id
+		 */
+		public String getStartDateId() {
+			return startDateId;
+		}
+
+		/**
+		 * Sets the start date id.
+		 *
+		 * @param startDateId the new start date id
+		 */
+		public void setStartDateId(String startDateId) {
+			this.startDateId = startDateId;
+		}
+
+		/**
+		 * Gets the end date id.
+		 *
+		 * @return the end date id
+		 */
+		public String getEndDateId() {
+			return endDateId;
+		}
+
+		/**
+		 * Sets the end date id.
+		 *
+		 * @param endDateId the new end date id
+		 */
+		public void setEndDateId(String endDateId) {
+			this.endDateId = endDateId;
 		}
 		
 }

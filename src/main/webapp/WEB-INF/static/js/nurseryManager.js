@@ -1378,7 +1378,10 @@ function doSaveSettings(){
 		//showErrorMessage('page-message', nurseryLevelValueEmpty);
 		moveToTopScreen();
 		return false;
-	} else{ 		
+	} else if(!validateStartEndDate('nurseryLevelSettings')){
+		moveToTopScreen();
+		return false; 		
+	}else {
 		doAjaxMainSubmit('page-message', saveTemplateSettingSuccess, null);
 		moveToTopScreen();
 		/*
@@ -1682,7 +1685,7 @@ function validateCreateNursery() {
 	/*else if ($("#imported-germplasm-list").html().indexOf("GID") > -1) {
 		hasError = true;
 		name = $("#germplasmLabel").text();
-	}*/
+	}*/	
 	else {
 		
 		var cvTermId;

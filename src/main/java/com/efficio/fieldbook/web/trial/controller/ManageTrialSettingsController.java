@@ -263,9 +263,9 @@ public class ManageTrialSettingsController extends SettingsController{
                     userSelection.getStudyLevelConditions(), true);
             
             //plot-level
-            List<SettingDetail> plotLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()), 
-                    buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false), 
-                    buildRequiredVariablesFlag(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()), 
+            List<SettingDetail> plotLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString()), 
+                    buildRequiredVariablesLabel(AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString(), false), 
+                    buildRequiredVariablesFlag(AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString()), 
                     userSelection.getPlotsLevelList(), false);
             
             List<SettingDetail> trialLevelVariableList = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString()), 
@@ -557,7 +557,7 @@ public class ManageTrialSettingsController extends SettingsController{
     	form.setIsDefault(false);
     	nurseryDefaults = buildDefaultVariables(nurseryDefaults, AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString(), buildRequiredVariablesLabel(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString(), true));
     	this.userSelection.setStudyLevelConditions(nurseryDefaults);
-    	plotDefaults = buildDefaultVariables(plotDefaults, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false));    	
+    	plotDefaults = buildDefaultVariables(plotDefaults, AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString(), buildRequiredVariablesLabel(AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString(), false));    	
     	this.userSelection.setPlotsLevelList(plotDefaults);
     	
     	this.userSelection.setBaselineTraitsList(baselineTraitsList);

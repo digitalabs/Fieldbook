@@ -237,7 +237,8 @@ public class SettingsUtil {
 					
 				}
 				Variate variate = new Variate(variable.getName(), variable.getDescription(), variable.getProperty(),
-						variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType());
+						variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(), variable.getDataTypeId(),
+						settingDetail.getPossibleValues());
 				variates.add(variate);
 			}
 		}
@@ -787,7 +788,9 @@ public class SettingsUtil {
 						mvar.getScale(), 
 						mvar.getMethod(), 
 						PhenotypicType.VARIATE.toString(), 
-						mvar.getDataType()));
+						mvar.getDataType(),
+						mvar.getDataTypeId(),
+						mvar.getPossibleValues()));
 			}
 		}
 		
@@ -828,6 +831,7 @@ public class SettingsUtil {
 				condition.getName(), condition.getDescription(), condition.getScale(), condition.getMethod(), condition.getProperty(), condition.getDatatype(), 
 				condition.getValue(), /*PhenotypicType.valueOf(condition.getRole()).getLabelList().get(0)*/ label);
 		mvar.setFactor(true);
+		mvar.setDataTypeId(condition.getDataTypeId());
 		return mvar;
 	}
 
@@ -888,6 +892,8 @@ public class SettingsUtil {
 				variate.getName(), variate.getDescription(), variate.getScale(), variate.getMethod(), variate.getProperty(), variate.getDatatype(), null, 
 				PhenotypicType.TRIAL_DESIGN.getLabelList().get(0)); //because variates are mostly PLOT variables
 		mvar.setFactor(false);
+		mvar.setDataTypeId(variate.getDataTypeId());
+		mvar.setPossibleValues(variate.getPossibleValues());
 		return mvar;
 	}
 	

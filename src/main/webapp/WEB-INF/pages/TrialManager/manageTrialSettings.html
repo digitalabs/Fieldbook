@@ -32,14 +32,16 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			<div class="panel panel-default">
 		    	<div class="panel-body manage-settings-panel-body">
 		    		<div class="row form-group">
-			    		<div class="col-xs-3 col-md-3 add_top_padding">
+		    		<div class="col-xs-6 col-md-6">
+			    		<div class="col-xs-5 col-md-5 add_top_padding">
 			    			<label class="control-label"> <strong th:text="#{nursery.managesettings.choose.saved.settings}+':'"> Choose Saved Settings: </strong></label>
 			    		</div>
 			    		
-			    		<div class="col-xs-3 col-md-3">
+			    		<div class="col-xs-7 col-md-7">
 			    			<select th:field="*{selectedSettingId}" class="form-control">
 			    				<option th:each="setting : ${settingsTrialList}" th:value="${setting.templateSettingId}" th:text="${setting.name}">Nursery Type 1</option>
 			    			</select>
+			    		</div>
 			    		</div>
 			    		<div class="col-xs-6 col-md-6 add_top_padding">
 			    			<a href="javascript: openUsePreviousTrialModal()" id="usePreviousTrial" th:text="#{trial.managesettings.use.previous.trial}"></a>
@@ -73,13 +75,15 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
     				
 	    			
 	    			    <div class="row form-group">
-<div class="col-xs-3 col-md-3">
-					        <label class="contol-label" th:text="#{nursery.managesettings.save.settings.as}+':'">Save these settings as:</label><span class="required">*</span>
-	    					&nbsp;&nbsp;
+	    			    <div class="col-xs-6 col-md-6">
+							<div class="col-xs-5 col-md-5 add_top_padding">
+						        <label class="contol-label" th:text="#{nursery.managesettings.save.settings.as}+':'">Save these settings as:</label><span class="required">*</span>
+		    					&nbsp;&nbsp;
 	    					</div>
-	    					<div style="left: -35px;"  class="col-xs-3 col-md-3">
-	    					<input class="form-control" type="text" maxlength="75" th:field="*{settingName}" />
-					
+	    					
+		    					<div class="col-xs-7 col-md-7">
+		    						<input class="form-control" type="text" maxlength="75" th:field="*{settingName}" />						
+						        </div>
 					        </div>
 						<div class="col-xs-6 col-md-6 add_top_padding">
 	    					<input type="checkbox" th:field="*{isDefault}" /> 

@@ -1,0 +1,76 @@
+<div class="col-xs-7 col-md-7" xmlns:th="http://www.thymeleaf.org">
+	<!-- Modal -->
+   	<div class="modal fade" id="baselineTraitDetails" role="dialog" aria-labelledby="baselineTraitDetails" aria-hidden="true">
+		<div class="modal-dialog">
+	    	<div class="modal-content">
+	    			<div class="modal-header">
+		            <button id="closeBaselineTraitDetailsModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		             
+		             <h4 id="trialDetailsTitle" class="modal-title" th:text="#{nursery.managenurseries.nurseryDetails.plant.height.info}">Detailed Information of Plant Height</h4>
+	         		
+		          </div>
+	         	<div class="modal-body" id="baselineTraitDetailsBody">
+	         			         			         		
+	         		<div class="row">
+						<label class="col-xs-4 col-lg-4 control-label" th:text="#{nursery.managenurseries.nurseryDetails.traitClass} + ':'">Trait Class:</label>
+						<div class="col-xs-6 col-lg-6">
+							<p class="form-control-static" id="traitClass">.trait Class</p>
+						</div>
+					</div>
+					<div class="row">
+						<label class="col-xs-4 col-lg-4 control-label" th:text="#{nursery.managenurseries.nurseryDetails.property} + ':'">Property:</label>
+						<div class="col-xs-6 col-lg-6">
+							<p class="form-control-static" id="property">.property</p>
+						</div>
+					</div>
+					<div class="row">
+						<label class="col-xs-4 col-lg-4 control-label" th:text="#{nursery.managenurseries.nurseryDetails.method} + ':'">Method:</label>
+						<div class="col-xs-6 col-lg-6">
+							<p class="form-control-static" id="method">.Method</p>
+						</div>
+					</div>
+					<div class="row">
+						<label class="col-xs-4 col-lg-4 control-label" th:text="#{nursery.managenurseries.nurseryDetails.scale} + ':'">Scale:</label>
+						<div class="col-xs-6 col-lg-6">
+							<p class="form-control-static" id="scale">.Scale</p>
+						</div>
+					</div>
+					<div class="row">
+						<label class="col-xs-4 col-lg-4 control-label" th:text="#{nursery.managenurseries.nurseryDetails.dataType} + ':'">Data Type:</label>
+						<div class="col-xs-6 col-lg-6">
+							<p class="form-control-static" id="dataType">.Data Type</p>
+						</div>
+					</div>
+					<div class="row">
+						<label class="col-xs-4 col-lg-4 control-label" th:text="#{nursery.managenurseries.nurseryDetails.role} + ':'">Role:</label>
+						<div class="col-xs-6 col-lg-6">
+							<p class="form-control-static" id="role">.Role</p>
+						</div>
+					</div>
+					<div class="row">
+						<label class="col-xs-4 col-lg-4 control-label" th:text="#{nursery.managenurseries.nurseryDetails.cropOntologyId} + ':'">Crop Ontology Id:</label>
+						<div class="col-xs-6 col-lg-6">
+							<p class="form-control-static" id="cropOntologyId">.Crop Ontology Id</p>
+						</div>
+					</div>
+	         	</div>
+	         	<div class="modal-footer">    	       			
+	       			
+	       			<button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.ok.text}">OK</button>	
+       			</div>
+	     	</div><!-- /.modal-content -->
+   		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+</div>
+
+<div layout:fragment="page-script">		
+	<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[    
+	           
+	           var headerTitle = /*[[#{nursery.managenurseries.nurseryDetails.plant.height.info}]]*/;
+		$(function(){
+            
+        });
+    //]]>
+    </script>
+</div>

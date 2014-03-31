@@ -22,6 +22,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -72,7 +73,12 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 						String xlsValue = "";
 						
 						if(cell != null){
-							if(cell.getCellType() == Cell.CELL_TYPE_NUMERIC){
+							if (wData.getMeasurementVariable() != null && wData.getMeasurementVariable().getPossibleValues() != null
+									&& !wData.getMeasurementVariable().getPossibleValues().isEmpty()) {
+								
+								xlsValue = getCategoricalIdCellValue(cell.getStringCellValue(), wData.getMeasurementVariable().getPossibleValues());
+							} 
+							else if(cell.getCellType() == Cell.CELL_TYPE_NUMERIC){
 								Double doubleVal = Double.valueOf(cell.getNumericCellValue());
 								Integer intVal = Integer.valueOf(doubleVal.intValue());
 								if(Double.parseDouble(intVal.toString()) == doubleVal.doubleValue()){
@@ -281,5 +287,14 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
     		return Integer.valueOf(xlsStr);
     	}
     	return null;
+    }
+    
+    private String getCategoricalIdCellValue(String description, List<ValueReference> possibleValues) {
+    	for (ValueReference possibleValue : possibleValues) {
+    		if (description.equalsIgnoreCase(possibleValue.getDescription())) {
+    			return possibleValue.getId().toString();
+    		}
+    	}
+    	return "";
     }
 }

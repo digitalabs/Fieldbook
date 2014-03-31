@@ -20,6 +20,7 @@ import java.util.Locale;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -30,6 +31,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
+import org.generationcp.middleware.domain.dms.Enumeration;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -278,8 +281,24 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				cell.setCellType(Cell.CELL_TYPE_BLANK);
 				cell.setCellType(Cell.CELL_TYPE_NUMERIC);				
 			}*/
-			cell.setCellValue(dataCell.getValue());
+			if (dataCell.getMeasurementVariable() != null && dataCell.getMeasurementVariable().getPossibleValues() != null) {
+				cell.setCellValue(getCategoricalCellValue(dataCell.getValue(), dataCell.getMeasurementVariable().getPossibleValues()));
+			}
+			else {
+				cell.setCellValue(dataCell.getValue());
+			}
 			
 		}
+	}
+	
+	private String getCategoricalCellValue(String idValue, List<ValueReference> possibleValues) {
+		if (idValue != null && NumberUtils.isNumber(idValue)) {
+			for (ValueReference ref : possibleValues) {
+				if (ref.getId().equals(Integer.valueOf(idValue))) {
+					return ref.getDescription();
+				}
+			}
+		}
+		return "";
 	}
 }

@@ -1,0 +1,398 @@
+<form id="createNurseryForm" role="form-horizontal" action="#"
+th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
+					<input type="hidden" th:field="*{requiredFields}"/>
+					<input type="hidden" th:field="*{loadSettings}"/>
+					<input type="hidden" th:field="*{locationId}"/>
+                    <input type="hidden" th:field="*{breedingMethodId}"/>
+                    <input type="hidden" th:field="*{locationUrl}"/>
+                    <input type="hidden" th:field="*{breedingMethodUrl}"/>
+                    <input type="hidden" th:field="*{importLocationUrl}"/>
+                    <input type="hidden" th:field="*{projectId}"/>
+                    <input type="hidden" th:field="*{studyNameTermId}"/>
+                    <input type="hidden" th:field="*{startDateId}"/>
+					<input type="hidden" th:field="*{endDateId}"/>
+					
+					
+	    			<div class="row form-group">
+	    				<div class="col-xs-6 col-md-6">
+		    				<div class="">
+				    			<label class="control-label"><strong class="sub-content-heading" th:text="#{nursery.managesettings.nursery.level.details}">NURSERY-LEVEL DETAILS</strong></label>
+			    			</div>
+			    			<div class="row">
+			    				<div class="col-xs-12 col-md-12">
+					    			<label class="control-label" th:text="#{nursery.managesettings.nursery.level.notes}"> The settings in this section apply across all plots in the nursery. 
+					    			You can add settings at this level, or remove those that you wish to manage at the plot level.</label>
+				    			</div>
+			    			</div>
+			    				<div class="row nurseryLevelSettings" >
+			    					<!-- <table border="0" id="nurseryLevelSettings" width="100%">
+			    					 -->
+	                                <div class="col-xs-5 col-md-5 1st">
+	                                        &nbsp;&nbsp;&nbsp;<label id="folderLabel" for="title" th:text="#{nursery.savenursery.savein} + ':'">Save in:*</label>&nbsp;<span class="required">*</span>
+	                                </div>
+	                                <div class="col-xs-7 col-md-7 2nd">
+	                                        <!--  <span id="folderNameSpan" name="folderNameSpan" ></span>-->
+	                                        <input type="hidden" th:field="*{folderId}" />
+	                                        <input type="hidden" th:field="*{folderName}" />
+	                                        
+	                                        <a id="chooseLocation" onclick="loadFolderAjax();" th:text="#{nursery.create.nursery.choose.location}"></a>
+	                                </div>
+                                </div>
+	                            <div class="row nurseryLevelSettings" >
+	                                 <div class="col-xs-5 col-md-5 1st">
+	                                       &nbsp;&nbsp;&nbsp;<label id="expDesignLabel" for="fieldLayoutRandom" th:text="#{nursery.nurserydetails.select.field.layout.label} + ': '"></label>&nbsp;<span class="required">*</span>
+	                                    </div>
+	                                <div class="col-xs-7 col-md-7 2nd">
+	                                        <select class="form-control" th:field="*{fieldLayoutRandom}">
+	                                            <option value="true" th:text="#{nursery.nurserydetails.option.with.randomization}">Unreplicated Design with Randomization</option>
+	                                            <option value="false" th:text="#{nursery.nurserydetails.option.without.randomization}">Unreplicated Design without Randomization</option>
+	                                        </select>
+	                                   </div>
+			    				</div>	
+			    				<div class="row nurseryLevelSettings" th:each="nurseryLevelVariable, rowStat : *{studyLevelVariables}">
+			    					<div class="col-xs-5 col-md-5 1st">
+	                                        &nbsp;&nbsp;&nbsp;<span style="word-wrap: break-word"  class="control-label nursery-level-label" th:text="${nurseryLevelVariable.variable.name}"></span>:
+	                                    </div>
+	                                <div class="col-xs-7 col-md-7 2nd">
+	                                       <!-- <div th:text="${nurseryLevelVariable.variable.cvTermId}"></div> -->
+											 <input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" /> 
+												<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" 
+												type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control select2" />
+												
+												<!-- Show Favorite Location/Method -->
+												<div th:if="${nurseryLevelVariable.variable.cvTermId}==*{locationId}" class="possibleValuesDiv">
+												<input 
+												type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}" 
+												th:onclick="'javascript: toggleLocationDropdown(\'' + ${rowStat.index} + '\');'" />
+												&nbsp;&nbsp;
+												<span 
+												th:text="#{show.favorite.location}">Show Favorite Location</span>
+												</div>
+												<div th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}" class="possibleValuesDiv">
+												<input 
+												type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}" 
+												th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'" />
+												&nbsp;&nbsp;
+												<span 
+												th:text="#{show.favorite.method}">Show Favorite Method</span>
+												</div>
+												
+												<!-- store possible values of variable -->
+												<div th:text="${nurseryLevelVariable.value}" class="div-select-val" style="display: none"></div>
+												<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesJson' + ${rowStat.index}"
+													class="possibleValuesJson" style="display:none" th:text="${nurseryLevelVariable.possibleValuesJson}">
+												</div>
+												<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesFavoriteJson' + ${rowStat.index}"
+													class="possibleValuesFavoriteJson" style="display:none" th:text="${nurseryLevelVariable.possibleValuesFavoriteJson}">
+												</div>
+												
+												<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'NTEXT'}" 
+												type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control numeric-input" />
+												
+												<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'CTEXT'}" 
+												type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control character-input" />
+												
+												<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DATE'}" 
+												type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control date-input" />
+												 
+												<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'SLIDER'}" 
+												type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}"
+												th:attr="data-min=${nurseryLevelVariable.variable.minRange}"
+												th:attrappend="data-max=${nurseryLevelVariable.variable.maxRange}"
+												class="form-control numeric-range-input"
+												data-step="0.1" 										 
+												/>
+													 
+												<span>
+													<a th:if="${nurseryLevelVariable.variable.cvTermId}==*{locationId}" href="javascript: openManageLocations();" th:text="#{nursery.managesettings.manage.location}">Manage Location</a>
+													<a th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}" href="javascript: openManageMethods();" th:text="#{nursery.managesettings.manage.method}">Manage Method</a>
+												</span>		
+	                                   </div>
+			    				</div>
+										
+			    				</div>
+			    			
+	    				<div class="col-xs-6 col-md-6">	    								    			
+		    				<div class="row">
+			    				<div class="col-xs-12 col-md-12">
+					    			<label class="control-label"><strong class="sub-content-heading" th:text="#{nursery.managesettings.plot.level.details}">PLOT-LEVEL DETAILS</strong></label>
+				    			</div>
+			    			</div>
+			    			<div class="row form-group">
+			    				<div class="col-xs-12 col-md-12">
+					    			<label class="control-label" th:text="#{nursery.managesettings.plot.level.notes}"> Select the settings you will record at the plot level in the nursery. 
+					    			These will appear as data columns in your nursery book. You can add and remove settings at this level.</label>
+				    			</div>
+			    			</div>
+			    			<div class="row form-group">
+			    				<div class="col-xs-12 col-md-12">
+			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed" id="plotLevelSettings">
+			    						<thead>
+										<tr>
+							                <th width="45%" th:utext="#{nursery.managesettings.plot.name}">.Name</th>
+							                <th width="45%" th:utext="#{nursery.managesettings.plot.description}">.Description</th>
+							                 <th width="10%"></th>
+										</tr>
+										</thead>
+										<tbody>
+					    					<tr th:each="plotLevelVariable, rowStat : *{plotLevelVariables}">
+					    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.name}"></td>
+					    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.description}"></td>
+					    					<td th:class="${rowStat.even}? 'even' : 'odd'" >
+						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
+														*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
+														<span class="glyphicon glyphicon-eye-open"></span></a>
+						    					</td>
+					    					<input class="cvTermIds" type="hidden" th:field="*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
+					    					</tr> 
+				    					</tbody>
+			    					</table>
+			    				</div>
+			    				<div class="col-xs-3 col-md-3"></div>
+			    			</div>
+		    				
+		    				
+			    			<div class="row form-group">
+			    				<div class="col-xs-12 col-md-12">
+			    					&nbsp;
+			    				</div>
+		    				</div>
+		    				<div class="row">
+			    				<div class="col-xs-12 col-md-12">
+					    			<label class="control-label"><strong class="sub-content-heading" th:text="#{nursery.managesettings.baseline.traits}">BASELINE TRAITS</strong></label>
+				    			</div>
+			    			</div>
+			    			<div class="row  form-group">
+			    				<div class="col-xs-12 col-md-12">
+					    			<label class="control-label" th:text="#{nursery.managesettings.baseline.traits.notes}"> The list below shows the standard traits available for Cowpea. 
+					    			You can add and remove traits in this list to create the baseline set of traits you are working with in your program. 
+					    			You will be able to add additional traits to measure in each nursery.</label>
+				    			</div>
+			    			</div>
+			    			<div class="row form-group">
+			    				<div class="col-xs-12 col-md-12">
+			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed" id="baselineTraitSettings">
+			    						<thead>
+										<tr>
+							                <th width="45%" th:utext="#{nursery.managesettings.trait}">.Trait</th>
+							                <th width="45%" th:utext="#{nursery.managesettings.trait.description}">.Description</th>
+							                <th width="10%"></th>
+										</tr>
+										</thead>
+										<tbody>
+					    					<tr class="baseline-traits" th:each="baselineTraitVariable, rowStat : *{baselineTraitVariables}">
+					    						
+						    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.name}"></td>
+						    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.description}"></td>
+						    					<td th:class="${rowStat.even}? 'even' : 'odd'" >
+						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
+														*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
+														<span class="glyphicon glyphicon-eye-open"></span></a>
+														<input class="cvTermIds" type="hidden" th:field="*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId}" />
+						    					</td>
+						    					
+					    					</tr> 
+				    					</tbody>
+			    					</table>
+			    				</div>
+			    				<div class="col-xs-3 col-md-3"></div>
+			    			</div>
+		    				
+		    				
+	    				</div>
+	    				
+	    			</div>
+ 
+
+</form>
+ 
+
+	<!-- Modal Dialog for Choosing Folder Location -->
+	<div class="row">
+		<div class="col-md-12">	
+			<div class="modal fade" id="folderBrowserModal"  role="dialog" aria-labelledby="folderBrowserModal" aria-hidden="true">
+				<div class="modal-dialog modal-large" style="width:500px;">
+					<div class="modal-content">
+					
+					</div><!-- /.modal-content -->
+				</div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->		
+			 
+		</div>
+	</div>	
+	
+	 <div class="row">
+        <div class="col-xs-12 col-md-12">
+            <div id="manage-location" th:include="/Common/manageLocationsModal"></div>            
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-md-12">
+            <div id="manage-location" th:include="/Common/manageMethodsModal"></div>
+        </div>
+    </div>
+    <div class="row">
+		<div class="col-xs-12 col-md-12">
+    		<div id="showBaselineTraitDetails" th:include="/NurseryManager/baselineTraitDetails"></div>
+   		</div>
+    </div>
+	
+
+<div layout:fragment="page-script">
+<script type="text/javascript" th:src="@{/static/js/nurseryManager.js}"></script>
+<link th:href="@{/static/css/bootstrap-datepicker.css}" rel="stylesheet"/>
+<script type="text/javascript" th:src="@{/static/js/bootstrap-datepicker.js}"></script>
+<script type='text/javascript' th:inline="javascript">
+//<![CDATA[   
+	
+    var requiredErrorMessage = /*[[#{ontology.browser.modal.error}]]*/;
+    var requiredSettingErrorMessage = /*[[#{nursery.create.nursery.required.setting}]]*/;
+    var uniqueBookNameErrorMessage = /*[[#{nursery.create.already.exists}]]*/;
+    var nurseryFieldsIsRequired = /*[[#{nursery.create.is.required}]]*/;
+    var nurseryTraitsIsRequired = /*[[#{nursery.create.traits.is.required}]]*/;
+    var nurseryGermplasmListIsRequired = /*[[#{nursery.create.germplasm.list.is.required}]]*/;
+    var checkTypeIsRequired = /*[[#{nursery.create.check.type.is.required}]]*/;
+    
+    var locationId = '';
+    var programLocationUrl = '';
+    var programMethodUrl = '';
+    var breedingMethodId = '';
+    var locationIframeOpened = false;
+    var methodIframeOpened = false;
+    var importLocationUrl = '';
+    var requiredFields = [];    
+    var startDateId = '';
+	var endDateId = '';
+
+    
+	$(document).ready(function() {
+		 
+        if($('#requiredFields').val() != ''){
+            requiredFields = $('#requiredFields').val().split(',');    
+        }
+        startDateId = $('#startDateId').val();
+			endDateId = $('#endDateId').val();
+        locationId = $('#locationId').val();
+        breedingMethodId = $('#breedingMethodId').val();
+        programMethodUrl = $('#breedingMethodUrl').val();
+        programLocationUrl = $('#locationUrl').val();
+        importLocationUrl = $('#importLocationUrl').val();
+            
+
+		$("#folderNameSpan").html($("#folderName").val());
+		$.each($(".possibleValuesJson"), function (index, divElem){
+				var select2Index = $(divElem).attr("id").split("possibleValuesJson")[1]; 
+
+				if (parseInt($("#" + getJquerySafeId("studyLevelVariables"+select2Index+".variable.cvTermId")).val()) == parseInt(locationId)) {
+					initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 
+	 			 			"#" + getJquerySafeId("studyLevelVariables"+select2Index+".value"), true, $(divElem).siblings(".div-select-val").html());
+					
+				} else {
+					initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 
+	 			 			"#" + getJquerySafeId("studyLevelVariables"+select2Index+".value"), false, $(divElem).siblings(".div-select-val").html());
+					
+				}
+				
+			});
+				setTimeout('initializeDateAndSliderInputs()', 500);
+		        addCreateNurseryRequiredAsterisk();
+		        $('select').each(function(){
+					$(this).select2();
+				});
+		
+	});
+           
+	function validateCreateNursery() {
+		var hasError = false;
+		var name = '';
+		var customMessage = '';
+		var studyBookName;
+		var studyNameId = $("#studyNameTermId").val();
+
+		$('.nurseryLevelVariableIdClass').each(function(){
+			if (studyNameId == $(this).val()) {
+				studyBookName = $(this).parent().find(".form-control").val();
+			}
+		});
+		
+		if ($("#loadSettings").val() == '0') {
+			hasError = true;
+			customMessage = requiredSettingErrorMessage;
+		}
+		else if ($("#folderId").val() == '') {
+			hasError = true;
+			name = $("#folderLabel").text();
+		}
+		else if ($("#fieldLayoutRandom").val() == '') {
+			hasError = true;
+			name = $("#expDesignLabel").text();
+		} else if($('.baseline-traits').length == 0){
+			hasError = true;
+			//name = $("#expDesignLabel").text();
+			customMessage = nurseryTraitsIsRequired;
+		}
+		else if ($(".noGermplasmListIndicator") && $(".noGermplasmListIndicator").text()) {
+			hasError = true;
+			name = $("#germplasmLabel").text();
+		}else if($('#checkId').val() == ''){
+			hasError = true;
+			customMessage = checkTypeIsRequired;
+		}
+		else {
+			var requiredFields = [];
+			if($('#requiredFields').val() != ''){
+				requiredFields = $('#requiredFields').val().split(',');	
+			}
+			
+			var cvTermId;
+			$('.nurseryLevelVariableIdClass').each(function(){
+				if (!hasError) {
+					cvTermId = $(this).val();
+					
+					if ($.inArray(cvTermId, requiredFields) > -1) {
+						if ($(this).parent().find(".form-control").hasClass("select2") && $(this).parent().find(".form-control").select2("data")) {
+							idname = $(this).parent().find(".form-control").attr("id");
+							//console.log(idname);
+							value = $("#" + getJquerySafeId(idname)).select2("data").text;
+						}
+						else {
+							value = $(this).parent().find(".form-control").val();
+						}
+						value = $.trim(value);
+						if (!value) {
+							name = $(this).parent().parent().find(".control-label").html();
+							hasError = true;
+						}
+					}
+				}
+				
+			});
+		}
+		
+		
+		if (hasError){
+			var errMsg = name.replace('*', '').replace(":", "") + " " + nurseryFieldsIsRequired;
+			if(customMessage != '')
+				errMsg = customMessage;
+			showErrorMessage('page-message', errMsg);
+			return false;
+		}
+
+		var found = false;
+		$("#selectedNursery option").each(function(i) {
+			if (studyBookName == $(this).text()) {
+				found = true;
+			}
+		});
+		if (found) {
+			hasError = true;
+			showErrorMessage('page-message', uniqueBookNameErrorMessage);
+			return false;
+		}
+
+		return true;
+	}
+           
+//]]>
+</script>
+</div>

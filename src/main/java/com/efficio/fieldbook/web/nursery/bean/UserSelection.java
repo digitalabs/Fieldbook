@@ -22,6 +22,8 @@ import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+
 // TODO: Auto-generated Javadoc
 /**
  * This bean models the various input that the user builds up over time

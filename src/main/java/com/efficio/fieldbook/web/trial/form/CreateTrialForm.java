@@ -9,7 +9,7 @@
  * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
  * 
  *******************************************************************************/
-package com.efficio.fieldbook.web.nursery.form;
+package com.efficio.fieldbook.web.trial.form;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 /**
  * The Class CreateNurseryForm.
  */
-public class CreateNurseryForm {
+public class CreateTrialForm {
 
 	/** The project id. */
 	private String projectId;

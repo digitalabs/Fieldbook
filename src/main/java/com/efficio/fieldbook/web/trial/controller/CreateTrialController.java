@@ -9,7 +9,7 @@
  * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
  * 
  *******************************************************************************/
-package com.efficio.fieldbook.web.nursery.controller;
+package com.efficio.fieldbook.web.trial.controller;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -39,27 +39,27 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class CreateNurseryController.
+ * The Class CreateTrialController.
  */
 @Controller
-@RequestMapping(CreateNurseryController.URL)
-public class CreateNurseryController extends SettingsController {
+@RequestMapping(CreateTrialController.URL)
+public class CreateTrialController extends SettingsController {
 	
     /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(CreateNurseryController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CreateTrialController.class);
 
     /** The Constant URL. */
-    public static final String URL = "/NurseryManager/createNursery";
+    public static final String URL = "/TrialManager/createTrial";
     
     /** The Constant URL_SETTINGS. */
-    public static final String URL_SETTINGS = "/NurseryManager/chooseSettings";
+    public static final String URL_SETTINGS = "/TrialManager/chooseSettings";
 	
    
 	/* (non-Javadoc)
@@ -67,33 +67,34 @@ public class CreateNurseryController extends SettingsController {
 	 */
 	@Override
 	public String getContentName() {
-		return "NurseryManager/createNursery";
+		return "TrialManager/createTrial";
 	}
 
     
 
     /**
-     * Use existing nursery.
+     * Use existing Trial.
      *
      * @param form the form
-     * @param nurseryId the nursery id
+     * @param TrialId the Trial id
      * @param model the model
      * @param session the session
      * @return the string
      * @throws MiddlewareQueryException the middleware query exception
      */
-    @RequestMapping(value="/nursery/{nurseryId}", method = RequestMethod.GET)
-    public String useExistingNursery(@ModelAttribute("manageSettingsForm") CreateNurseryForm form, @PathVariable int nurseryId
+    @RequestMapping(value="/Trial/{TrialId}", method = RequestMethod.GET)
+    public String useExistingTrial(@ModelAttribute("manageSettingsForm") CreateTrialForm form, @PathVariable int TrialId
             , Model model, HttpSession session) throws MiddlewareQueryException{
-        if(nurseryId != 0){     
-            Workbook workbook = fieldbookMiddlewareService.getNurseryVariableSettings(nurseryId);
+        if(TrialId != 0){
+            /*
+            Workbook workbook = fieldbookMiddlewareService.getTrialVariableSettings(TrialId);
             Dataset dataset = SettingsUtil.convertWorkbookToXmlDataset(workbook);
             SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
             
-            //nursery-level
-            List<SettingDetail> nurseryLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
-                    buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true), 
-                    buildRequiredVariablesFlag(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
+            //Trial-level
+            List<SettingDetail> TrialLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_Trial_REQUIRED_FIELDS.getString()), 
+                    buildRequiredVariablesLabel(AppConstants.CREATE_Trial_REQUIRED_FIELDS.getString(), true), 
+                    buildRequiredVariablesFlag(AppConstants.CREATE_Trial_REQUIRED_FIELDS.getString()), 
                     userSelection.getStudyLevelConditions(), true);
             
             //plot-level
@@ -104,19 +105,20 @@ public class CreateNurseryController extends SettingsController {
             
             
             
-            userSelection.setStudyLevelConditions(nurseryLevelConditions);
+            userSelection.setStudyLevelConditions(TrialLevelConditions);
             userSelection.setPlotsLevelList(plotLevelConditions);
             form.setStudyLevelVariables(userSelection.getStudyLevelConditions());
             form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
             form.setPlotLevelVariables(userSelection.getPlotsLevelList());
             //form.setSelectedSettingId(1);
             form.setLoadSettings("1");
-            form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString());
+            form.setRequiredFields(AppConstants.CREATE_Trial_REQUIRED_FIELDS.getString());
+            */
         }
         setFormStaticData(form);
-        model.addAttribute("createNurseryForm", form);
-        model.addAttribute("settingsList", getNurserySettingsList());
-        model.addAttribute("nurseryList", getNurseryList());
+        model.addAttribute("createTrialForm", form);
+        model.addAttribute("settingsList", getTrialSettingsList());
+        model.addAttribute("TrialList", getTrialList());
         //setupFormData(form);
         return super.showAjaxPage(model, URL_SETTINGS);
     }
@@ -132,10 +134,10 @@ public class CreateNurseryController extends SettingsController {
      * @throws MiddlewareQueryException the middleware query exception
      */
     @RequestMapping(method = RequestMethod.GET)
-    public String show(@ModelAttribute("createNurseryForm") CreateNurseryForm form, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2, Model model, HttpSession session) throws MiddlewareQueryException{
+    public String show(@ModelAttribute("createTrialForm") CreateTrialForm form, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2, Model model, HttpSession session) throws MiddlewareQueryException{
     	session.invalidate();
     	form.setProjectId(this.getCurrentProjectId());
-    	form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString());
+    	//form.setRequiredFields(AppConstants.CREATE_Trial_REQUIRED_FIELDS.getString());
     	setFormStaticData(form);
     	return super.show(model);
     }
@@ -151,11 +153,11 @@ public class CreateNurseryController extends SettingsController {
      * @throws MiddlewareQueryException the middleware query exception
      */
     @RequestMapping(value="/view/{templateSettingId}", method = RequestMethod.POST)
-    public String viewSettings(@ModelAttribute("createNurseryForm") CreateNurseryForm form, @PathVariable int templateSettingId, 
+    public String viewSettings(@ModelAttribute("createTrialForm") CreateTrialForm form, @PathVariable int templateSettingId, 
     	Model model, HttpSession session) throws MiddlewareQueryException{
     	
     	if(templateSettingId != 0){    	
-	    	TemplateSetting templateSettingFilter = new TemplateSetting(Integer.valueOf(templateSettingId), Integer.valueOf(getCurrentProjectId()), null, getNurseryTool(), null, null);
+	    	TemplateSetting templateSettingFilter = new TemplateSetting(Integer.valueOf(templateSettingId), Integer.valueOf(getCurrentProjectId()), null, getTrialTool(), null, null);
 	    	templateSettingFilter.setIsDefaultToNull();
 	    	List<TemplateSetting> templateSettings = workbenchService.getTemplateSettings(templateSettingFilter);
 	    	TemplateSetting templateSetting = templateSettings.get(0); //always 1
@@ -167,11 +169,11 @@ public class CreateNurseryController extends SettingsController {
 //	    	form.setIsDefault(templateSetting.getIsDefault().intValue() == 1 ? true : false);
 //	    	form.setSettingName(templateSetting.getName());
 	    	form.setSelectedSettingId(templateSetting.getTemplateSettingId());
-	    	form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString());
+	    	//form.setRequiredFields(AppConstants.CREATE_Trial_REQUIRED_FIELDS.getString());
 //    	}else{
 //    		assignDefaultValues(form);
     	}
-//    	model.addAttribute("createNurseryForm", form);
+//    	model.addAttribute("createTrialForm", form);
 //    	model.addAttribute("settingsList", getSettingsList());
     	form.setLoadSettings("1");
     	setFormStaticData(form);
@@ -187,7 +189,7 @@ public class CreateNurseryController extends SettingsController {
      */
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
-    public String submit(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws MiddlewareQueryException {
+    public String submit(@ModelAttribute("createTrialForm") CreateTrialForm form, Model model) throws MiddlewareQueryException {
     	
     	String name = null;
     	for (SettingDetail nvar : form.getStudyLevelVariables()) {
@@ -257,7 +259,7 @@ public class CreateNurseryController extends SettingsController {
      *
      * @param form the new form static data
      */
-    private void setFormStaticData(CreateNurseryForm form){
+    private void setFormStaticData(CreateTrialForm form){
         form.setBreedingMethodId(AppConstants.BREEDING_METHOD_ID.getString());
         form.setLocationId(AppConstants.LOCATION_ID.getString());
         form.setBreedingMethodUrl(AppConstants.BREEDING_METHOD_URL.getString());

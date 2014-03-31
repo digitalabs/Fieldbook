@@ -9,7 +9,7 @@
  * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
  * 
  *******************************************************************************/
-package com.efficio.fieldbook.web.nursery.controller;
+package com.efficio.fieldbook.web.trial.controller;
 
 import java.util.ArrayList;
 import java.util.Collections;

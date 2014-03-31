@@ -36,8 +36,8 @@ import org.pojoxml.core.PojoXml;
 import org.pojoxml.core.PojoXmlFactory;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
-import com.efficio.fieldbook.web.nursery.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 
 

@@ -36,8 +36,8 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import com.efficio.fieldbook.service.api.CropOntologyService;
 import com.efficio.fieldbook.service.api.FieldbookService;
-import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
-import com.efficio.fieldbook.web.nursery.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.pojos.cropontology.CropTerm;

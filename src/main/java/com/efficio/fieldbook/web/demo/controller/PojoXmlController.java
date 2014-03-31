@@ -16,10 +16,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.demo.form.BarCodeForm;
 import com.efficio.fieldbook.web.demo.bean.TestJavaBean;
 import com.efficio.fieldbook.web.demo.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.bean.SettingVariable;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.pojos.histogram.HistogramNode;
 

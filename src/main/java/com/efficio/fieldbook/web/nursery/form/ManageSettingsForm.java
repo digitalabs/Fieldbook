@@ -15,8 +15,8 @@ import java.util.List;
 
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 
-import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
-import com.efficio.fieldbook.web.nursery.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
 
 // TODO: Auto-generated Javadoc
 /**

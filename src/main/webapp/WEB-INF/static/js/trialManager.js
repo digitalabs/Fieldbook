@@ -1433,6 +1433,7 @@ function populateBaselineTraits(standardVariable) {
 		$("#dataType").html(checkIfNull(standardVariable.dataType));
 		$("#role").html(checkIfNull(standardVariable.role));
 		$("#cropOntologyId").html(checkIfNull(standardVariable.cropOntologyId));
+		//$('#trialDetailsTitle').html(headerTitle + " " + );
 	} else {
 		$("#traitClass").html("");
 		$("#property").html("");

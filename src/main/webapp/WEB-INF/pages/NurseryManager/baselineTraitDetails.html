@@ -6,7 +6,7 @@
 	    			<div class="modal-header">
 		            <button id="closeBaselineTraitDetailsModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 		             
-		             <h4 class="modal-title" th:text="#{nursery.managenurseries.nurseryDetails.plant.height.info}">Detailed Information of Plant Height</h4>
+		             <h4 id="trialDetailsTitle" class="modal-title" th:text="#{nursery.managenurseries.nurseryDetails.plant.height.info}">Detailed Information of Plant Height</h4>
 	         		
 		          </div>
 	         	<div class="modal-body" id="baselineTraitDetailsBody">
@@ -66,6 +66,8 @@
 <div layout:fragment="page-script">		
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    
+	           
+	           var headerTitle = /*[[#{nursery.managenurseries.nurseryDetails.plant.height.info}]]*/;
 		$(function(){
             
         });

@@ -120,7 +120,6 @@ public class FileUploadControllerTest extends AbstractJUnit4SpringContextTests {
             assertEquals(studyDetails.getStudyName().toString(), "pheno_t7");
             assertEquals(studyDetails.getTitle().toString(), "Phenotyping trials of the Population 114");
             assertEquals(studyDetails.getObjective().toString(), "To evaluate the Population 114");
-            assertEquals(studyDetails.getPmKey().toString(), "0");
             assertEquals(studyDetails.getStartDate().toString(), "20130805");
             assertEquals(studyDetails.getEndDate().toString(), "20130805");
             assertEquals(studyDetails.getStudyType().toString(), "T");
@@ -148,7 +147,7 @@ public class FileUploadControllerTest extends AbstractJUnit4SpringContextTests {
             assertEquals(studyDetails.getStudyName().toString(), "pheno_t7");
             assertEquals(studyDetails.getTitle().toString(), "Phenotyping trials of the Population 114");
             assertEquals(studyDetails.getObjective().toString(), "To evaluate the Population 114");
-            assertEquals(studyDetails.getPmKey().toString(), "0");
+            //assertEquals(studyDetails.getPmKey().toString(), "0");
             assertEquals(studyDetails.getStartDate().toString(), "20130805");
             assertEquals(studyDetails.getEndDate().toString(), "20130805");
             assertEquals(studyDetails.getStudyType().toString(), "T");

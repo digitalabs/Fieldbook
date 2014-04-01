@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
-import com.efficio.fieldbook.web.nursery.bean.UserSelection;
+import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 
 @Controller
 @RequestMapping(OpenTrialController.URL)
@@ -27,7 +27,7 @@ public class OpenTrialController extends
     public static final String URL = "/TrialManager/addOrRemoveTraits";
 
     @Resource
-	private UserSelection userSelection;
+	private TrialSelection trialSelection;
 	
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
@@ -50,13 +50,13 @@ public class OpenTrialController extends
         }
         
         if (workbook != null) {
-        	userSelection.setMeasurementRowList(workbook.getObservations());
-            form.setMeasurementRowList(userSelection.getMeasurementRowList());
+        	trialSelection.setMeasurementRowList(workbook.getObservations());
+            form.setMeasurementRowList(trialSelection.getMeasurementRowList());
             form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());
             form.setStudyName(workbook.getStudyDetails().getStudyName());
             form.changePage(1);
-            userSelection.setCurrentPage(form.getCurrentPage());
-            userSelection.setWorkbook(workbook);
+            trialSelection.setCurrentPage(form.getCurrentPage());
+            trialSelection.setWorkbook(workbook);
         }
         
         return super.show(model);

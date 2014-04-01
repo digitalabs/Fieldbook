@@ -6,7 +6,7 @@
 
 	<input type="hidden" th:field="*{importVal}"/>
               
-	 <div class="germplasm-measurement-list-table  component " style="width: 100%; max-width: 100%">
+	 <div class="germplasm-measurement-list-table " style="width: 100%; max-width: 100%">
 	
        <!-- my-class table table-curved table-condensed   -->
 				<div class="factor-div" style="float: left; max-height: 400px; max-width: 50%; min-width: 50%; overflow-x: scroll; overflow-y: hidden">
@@ -193,7 +193,8 @@
 				<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
 	           
-        var paginationUrl = /*[[@{/Common/addOrRemoveTraits/page/}]]*/ + $("#study-type").val() + "/";
+        var paginationUrl = /*[[@{/Common/addOrRemoveTraits/page/}]]*/;
+        paginationUrl = paginationUrl + $("#study-type").val() + "/";
         
         var options = {
             currentPage: /*[[${addOrRemoveTraitsForm.currentPage}]]*/,
@@ -303,6 +304,24 @@
     	   //console.log('true');
     	   return noError;
        }
+       
+       function do_validation() {
+	    if ($('#fileupload').val() == "") {
+	    	    var message = /*[[#{common.error.file.no.file.selected}]]*/;
+	    	    
+	    	    
+	    	    $("#page-modal-message").html(
+	    	    "<div class='alert alert-danger'>"+ message +"</div>"
+	    	  );
+	    	  
+	    	  $('div.fileupload').parent().parent().addClass('has-error');
+	    	  
+	    	  return false;
+	    	}
+   	  
+	   	  return true;
+	  }
+       
        
       //]]>
     </script>

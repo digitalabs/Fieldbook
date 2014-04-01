@@ -83,22 +83,6 @@
 	            
 	           
        
-       function do_validation() {
-    	    if ($('#fileupload').val() == "") {
-	    	    var message = /*[[#{common.error.file.no.file.selected}]]*/;
-	    	    
-	    	    
-	    	    $("#page-modal-message").html(
-	    	    "<div class='alert alert-danger'>"+ message +"</div>"
-	    	  );
-	    	  
-	    	  $('div.fileupload').parent().parent().addClass('has-error');
-	    	  
-	    	  return false;
-	    	}
-    	  
-    	  return true;
-   }
        
       //]]>
     </script>

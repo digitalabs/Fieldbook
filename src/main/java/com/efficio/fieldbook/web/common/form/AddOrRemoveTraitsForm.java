@@ -39,7 +39,7 @@ public class AddOrRemoveTraitsForm {
 	private int totalPages;
 	
 	/** The result per page. */
-	private int resultPerPage = 100;	
+	private int resultPerPage = 50;	
 	
 	/** The file. */
 	private MultipartFile file;

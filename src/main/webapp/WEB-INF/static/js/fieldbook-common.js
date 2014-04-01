@@ -28,6 +28,7 @@ $(function() {
     $('select').each(function(){
 			$(this).select2();
 		});
+		
 });
 
 

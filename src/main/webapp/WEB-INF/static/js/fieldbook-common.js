@@ -1019,6 +1019,21 @@ function addCreateNurseryRequiredAsterisk(){
 	
 }
 
+function addCreateTrialRequiredAsterisk(){
+	var requiredText = "<span class='required'>*</span>";
+	//console.log('add asterisk');
+	
+	for (var i = 0; i < requiredFields.length; i++) {
+		var cvTermId = requiredFields[i];
+	    if($('.cvTermIds[value="'+cvTermId+'"]').length != 0){
+	    	
+	    	$('.cvTermIds[value="'+cvTermId+'"]').parent().parent().find('.nursery-level-label').parent().append(requiredText);
+	    }
+	    //Do something
+	}
+	
+}
+
 function getDateRowIndex(divName, dateCvTermId) {
 	
 	var rowIndex = -1;

@@ -266,7 +266,6 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 
     
 	$(document).ready(function() {
-		 
         if($('#requiredFields').val() != ''){
             requiredFields = $('#requiredFields').val().split(',');    
         }
@@ -276,8 +275,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
         breedingMethodId = $('#breedingMethodId').val();
         programMethodUrl = $('#breedingMethodUrl').val();
         programLocationUrl = $('#locationUrl').val();
-        importLocationUrl = $('#importLocationUrl').val();
-            
+        importLocationUrl = $('#importLocationUrl').val();    
 
 		$("#folderNameSpan").html($("#folderName").val());
 		$.each($(".possibleValuesJson"), function (index, divElem){
@@ -299,7 +297,6 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 		        $('select').each(function(){
 					$(this).select2();
 				});
-		
 	});
            
 	function validateCreateTrial() {

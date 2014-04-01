@@ -1615,7 +1615,7 @@ function openUsePreviousTrialModal() {
 }
 
 function chooseSelectedTrial() {
-	var nurseryId = $("#selectedNursery").val();
+	var nurseryId = $("#selectedTrial").val();
 	var url = "/Fieldbook/TrialManager/manageTrialSettings/trial/";
 		
 	if ($("#chooseSettingsDiv").length != 0) {

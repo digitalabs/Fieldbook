@@ -249,14 +249,14 @@ public class ManageTrialSettingsController extends SettingsController{
     
     
     @RequestMapping(value="/trial/{trialId}", method = RequestMethod.GET)
-    public String useExistingNursery(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, @PathVariable int trialId
+    public String useExistingTrial(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, @PathVariable int trialId
             , Model model, HttpSession session) throws MiddlewareQueryException{
         if(trialId != 0){     
-            Workbook workbook = fieldbookMiddlewareService.getNurseryVariableSettings(trialId);
-            Dataset dataset = SettingsUtil.convertWorkbookToXmlDataset(workbook);
+            Workbook workbook = fieldbookMiddlewareService.getStudyVariableSettings(trialId, false);
+            TrialDataset dataset = (TrialDataset)SettingsUtil.convertWorkbookToXmlDataset(workbook, false);
             SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
             
-            //nursery-level
+            //study-level
             List<SettingDetail> studyLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString()), 
                     buildRequiredVariablesLabel(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString(), true), 
                     buildRequiredVariablesFlag(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString()), 
@@ -269,9 +269,9 @@ public class ManageTrialSettingsController extends SettingsController{
                     userSelection.getPlotsLevelList(), false);
             
             List<SettingDetail> trialLevelVariableList = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString()), 
-                    buildRequiredVariablesLabel(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString(), false), 
+                    buildRequiredVariablesLabel(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString(), true), 
                     buildRequiredVariablesFlag(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString()), 
-                    userSelection.getTrialLevelVariableList(), false);
+                    userSelection.getTrialLevelVariableList(), true);
             
             userSelection.setStudyLevelConditions(studyLevelConditions);
             userSelection.setPlotsLevelList(plotLevelConditions);

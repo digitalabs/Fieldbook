@@ -88,7 +88,7 @@ public class CreateTrialController extends SettingsController {
             , Model model, HttpSession session) throws MiddlewareQueryException{
         if(TrialId != 0){
             /*
-            Workbook workbook = fieldbookMiddlewareService.getTrialVariableSettings(TrialId);
+            Workbook workbook = fieldbookMiddlewareService.getStudyVariableSettings(trialId, false);;
             Dataset dataset = SettingsUtil.convertWorkbookToXmlDataset(workbook);
             SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
             

@@ -23,11 +23,14 @@ $(function() {
         
     });
     
-    $(window).trigger('hashchange');
-
+    $(window).trigger('hashchange');    
+    if (typeof convertToSelect2 === 'undefined' || convertToSelect2 == true) {
+    	    // variable is undefined
+    	
     $('select').each(function(){
 			$(this).select2();
 		});
+    }
 });
 
 

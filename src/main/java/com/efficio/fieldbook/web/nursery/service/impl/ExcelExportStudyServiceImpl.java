@@ -113,7 +113,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	private int writeStudyDetails(int currentRowNum, HSSFWorkbook xlsBook, HSSFSheet xlsSheet, StudyDetails studyDetails) {
 		writeStudyDetailRow(xlsBook, xlsSheet, currentRowNum++, "export.study.description.details.study", studyDetails.getStudyName());
 		writeStudyDetailRow(xlsBook, xlsSheet, currentRowNum++, "export.study.description.details.title", studyDetails.getTitle());
-		writeStudyDetailRow(xlsBook, xlsSheet, currentRowNum++, "export.study.description.details.pmkey", studyDetails.getPmKey());
+		//writeStudyDetailRow(xlsBook, xlsSheet, currentRowNum++, "export.study.description.details.pmkey", studyDetails.getPmKey());
 		writeStudyDetailRow(xlsBook, xlsSheet, currentRowNum++, "export.study.description.details.objective", studyDetails.getObjective());
 		writeStudyDetailRow(xlsBook, xlsSheet, currentRowNum++, "export.study.description.details.startdate", studyDetails.getStartDate());
 		writeStudyDetailRow(xlsBook, xlsSheet, currentRowNum++, "export.study.description.details.enddate", studyDetails.getEndDate());

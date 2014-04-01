@@ -17,19 +17,18 @@ import java.util.List;
 import java.util.Map;
 
 import org.generationcp.middleware.domain.dms.StandardVariable;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.StudySelection;
 
 // TODO: Auto-generated Javadoc
 /**
  * This bean models the various input that the user builds up over time
  * to perform the actual loading operation.
  */
-public class UserSelection implements Serializable {
+public class UserSelection extends StudySelection implements Serializable {
     
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -41,7 +40,7 @@ public class UserSelection implements Serializable {
     private String serverFileName;
     
     /** The workbook. */
-    private transient Workbook workbook;
+//    private transient Workbook workbook;
     
     /** The field layout random. */
     private boolean fieldLayoutRandom;
@@ -56,10 +55,10 @@ public class UserSelection implements Serializable {
     private transient List<StudyDetails> studyDetailsList;
     
 	/** The measurement row list. */
-	private List<MeasurementRow> measurementRowList;
+//	private List<MeasurementRow> measurementRowList;
 	
     /** The current page. */
-    private int currentPage;
+//    private int currentPage;
     
     /** The current page germplasm list. */
     private int currentPageGermplasmList;
@@ -91,18 +90,18 @@ public class UserSelection implements Serializable {
 	 *
 	 * @return the current page
 	 */
-	public int getCurrentPage() {
-		return currentPage;
-	}
+//	public int getCurrentPage() {
+//		return currentPage;
+//	}
 
 	/**
 	 * Sets the current page.
 	 *
 	 * @param currentPage the new current page
 	 */
-	public void setCurrentPage(int currentPage) {
-		this.currentPage = currentPage;
-	}
+//	public void setCurrentPage(int currentPage) {
+//		this.currentPage = currentPage;
+//	}
 	
 	/**
      * Gets the current page germplasm list.
@@ -200,18 +199,18 @@ public class UserSelection implements Serializable {
      *
      * @return the workbook
      */
-    public Workbook getWorkbook() {
-        return workbook;
-    }
+//    public Workbook getWorkbook() {
+//        return workbook;
+//    }
 
     /**
      * Sets the workbook.
      *
      * @param workbook the new workbook
      */
-    public void setWorkbook(Workbook workbook) {
-        this.workbook = workbook;
-    }
+//    public void setWorkbook(Workbook workbook) {
+//        this.workbook = workbook;
+//    }
 
     /**
      * Gets the field layout random.
@@ -254,18 +253,18 @@ public class UserSelection implements Serializable {
 	 *
 	 * @return the measurement row list
 	 */
-	public List<MeasurementRow> getMeasurementRowList() {
-		return measurementRowList;
-	}
+//	public List<MeasurementRow> getMeasurementRowList() {
+//		return measurementRowList;
+//	}
 
 	/**
 	 * Sets the measurement row list.
 	 *
 	 * @param measurementRowList the new measurement row list
 	 */
-	public void setMeasurementRowList(List<MeasurementRow> measurementRowList) {
-		this.measurementRowList = measurementRowList;
-	}
+//	public void setMeasurementRowList(List<MeasurementRow> measurementRowList) {
+//		this.measurementRowList = measurementRowList;
+//	}
 
 	
 
@@ -405,6 +404,11 @@ public class UserSelection implements Serializable {
 
 	public void setTrialLevelVariableList(List<SettingDetail> trialLevelVariableList) {
 		this.trialLevelVariableList = trialLevelVariableList;
+	}
+
+	@Override
+	public boolean isTrial() {
+		return false;
 	}
 
 	

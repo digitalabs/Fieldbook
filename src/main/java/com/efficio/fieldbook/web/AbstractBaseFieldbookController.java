@@ -84,7 +84,7 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
      *
      * @param model the new up model info
      */
-    private void setupModelInfo(Model model){
+    protected void setupModelInfo(Model model){
         
         model.addAttribute(GIT_INFO_ATTRIBUTE, gitRepositoryState);
         model.addAttribute(EXTERNAL_INFO_ATTRIBUTE, externalToolInfo);

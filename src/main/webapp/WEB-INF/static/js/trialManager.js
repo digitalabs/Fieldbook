@@ -1615,7 +1615,7 @@ function openUsePreviousTrialModal() {
 }
 
 function chooseSelectedTrial() {
-	var nurseryId = $("#selectedNursery").val();
+	var nurseryId = $("#selectedTrial").val();
 	var url = "/Fieldbook/TrialManager/manageTrialSettings/trial/";
 		
 	if ($("#chooseSettingsDiv").length != 0) {
@@ -1949,4 +1949,51 @@ function getIdOfValue(value) {
 		}
 	});
 	return id;
+}
+
+function recreateSelect2ComboMultiple(index, row, selectedVal) {
+	$.each($(row).children("td"), function (cellIndex, cell) {
+		if (cell.innerHTML.indexOf("select2") > -1) {
+			//get the possible values of the variable
+			var possibleValuesJson = $($(cell).find(".possibleValuesJsonTrial")).text();
+			var possibleValuesFavoriteJson = $($(cell).find(".possibleValuesFavoriteJsonTrial")).text();
+			
+			var cvTermId = $($(cell).children("#" 
+					+ getJquerySafeId("trialEnvironmentValues" + index + cellIndex + ".id"))).val();
+			
+			var newCell = "<input class='cvTermIds trialLevelVariableIdClass' type='hidden' id='trialEnvironmentValues" + 
+				index + cellIndex + ".id' name='trialEnvironmentValues[" + index + "][" + cellIndex + "].id value='" + cvTermId + "' />";
+
+			//hidden field for select2 
+			newCell = newCell + "<input type='hidden' id='trialEnvironmentValues" + index + cellIndex +
+			".name' name='trialEnvironmentValues[" + index + "][" + cellIndex + "].name' class='form-control select2' />";
+			
+			//div containing the possible values
+			newCell = newCell + "<div id='possibleValuesJsonTrial" + index + "a" + cellIndex + "' class='possibleValuesJson' style='display:none'>" + 
+				possibleValuesJson + "</div>";
+			
+			//div containing the favorite possible values
+			newCell = newCell + "<div id='possibleValuesFavoriteJsonTrial" + index + "a" + cellIndex + "' class='possibleValuesFavoriteJson' style='display:none'>" + 
+				possibleValuesFavoriteJson + "</div>";
+			
+			var isFavoriteChecked = false;
+			var showAll = true;
+			//set possibleValues to favorite possible values
+			if (isFavoriteChecked && parseInt(cvTermId) == parseInt(locationId)) {
+				possibleValuesJson = possibleValuesFavoriteJson;
+				showAll = false;
+			}
+						
+			cell.innerHTML = newCell;
+			
+			//recreate the select2 object
+			if (parseInt(cvTermId) == parseInt(locationId)) {
+			    initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
+		 			"#" + getJquerySafeId("trialEnvironmentValues" + index + cellIndex +".name"), showAll, null);
+			} else {
+				initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
+					"#" + getJquerySafeId("trialEnvironmentValues" + index + cellIndex +".name"), false, null);
+			}
+		}
+	});
 }

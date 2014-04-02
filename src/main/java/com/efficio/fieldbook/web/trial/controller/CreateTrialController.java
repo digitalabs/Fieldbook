@@ -27,6 +27,7 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
+import org.generationcp.middleware.pojos.workbench.settings.TrialDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -156,26 +157,21 @@ public class CreateTrialController extends SettingsController {
     @RequestMapping(value="/view/{templateSettingId}", method = RequestMethod.POST)
     public String viewSettings(@ModelAttribute("createTrialForm") CreateTrialForm form, @PathVariable int templateSettingId, 
     	Model model, HttpSession session) throws MiddlewareQueryException{
-    	
     	if(templateSettingId != 0){    	
-	    	TemplateSetting templateSettingFilter = new TemplateSetting(Integer.valueOf(templateSettingId), Integer.valueOf(getCurrentProjectId()), null, getTrialTool(), null, null);
-	    	templateSettingFilter.setIsDefaultToNull();
-	    	List<TemplateSetting> templateSettings = workbenchService.getTemplateSettings(templateSettingFilter);
-	    	TemplateSetting templateSetting = templateSettings.get(0); //always 1
-	    	Dataset dataset = SettingsUtil.parseXmlToDatasetPojo(templateSetting.getConfiguration());
-	    	SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
-	    	form.setStudyLevelVariables(userSelection.getStudyLevelConditions());
-	    	form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
-	    	form.setPlotLevelVariables(userSelection.getPlotsLevelList());
-//	    	form.setIsDefault(templateSetting.getIsDefault().intValue() == 1 ? true : false);
-//	    	form.setSettingName(templateSetting.getName());
-	    	form.setSelectedSettingId(templateSetting.getTemplateSettingId());
-	    	//form.setRequiredFields(AppConstants.CREATE_Trial_REQUIRED_FIELDS.getString());
-//    	}else{
-//    		assignDefaultValues(form);
+            TemplateSetting templateSettingFilter = new TemplateSetting(Integer.valueOf(templateSettingId), Integer.valueOf(getCurrentProjectId()), null, getTrialTool(), null, null);
+            templateSettingFilter.setIsDefaultToNull();
+            List<TemplateSetting> templateSettings = workbenchService.getTemplateSettings(templateSettingFilter);
+            TemplateSetting templateSetting = templateSettings.get(0); //always 1
+            TrialDataset dataset = (TrialDataset)SettingsUtil.parseXmlToDatasetPojo(templateSetting.getConfiguration(), false);
+            SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
+            form.setStudyLevelVariables(userSelection.getStudyLevelConditions());
+            form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
+            form.setPlotLevelVariables(userSelection.getPlotsLevelList());
+            form.setTrialLevelVariables(userSelection.getTrialLevelVariableList());
+            form.setTrialEnvironmentValues(userSelection.getTrialEnvironmentValues());
+            form.setTrialInstances(1);
+            form.setSelectedSettingId(templateSetting.getTemplateSettingId());
     	}
-//    	model.addAttribute("createTrialForm", form);
-//    	model.addAttribute("settingsList", getSettingsList());
     	form.setLoadSettings("1");
     	setFormStaticData(form);
         return super.showAjaxPage(model, URL_SETTINGS );

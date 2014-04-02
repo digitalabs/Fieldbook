@@ -13,6 +13,8 @@ package com.efficio.fieldbook.web.trial.form;
 
 import java.util.List;
 
+import org.generationcp.middleware.domain.dms.ValueReference;
+
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 
 
@@ -36,6 +38,10 @@ public class CreateTrialForm {
 	
 	/** The baseline trait variables. */
 	private List<SettingDetail> baselineTraitVariables;
+	
+	/** The trial level variables. */
+        private List<SettingDetail> trialLevelVariables;
+        
 
     /** The folder id. */
 	private Integer folderId;
@@ -67,10 +73,20 @@ public class CreateTrialForm {
     /** The load settings. */
     private String loadSettings;
     
+    /** The study name term id. */
     private String studyNameTermId;
     
+    /** The start date id. */
     private String startDateId;
+    
+    /** The end date id. */
     private String endDateId;
+    
+    /** The trial instances. */
+    private int trialInstances;
+    
+    /** The trial environment values. */
+    private List<List<ValueReference>> trialEnvironmentValues; 
 
     /**
      * Gets the project id.
@@ -110,10 +126,20 @@ public class CreateTrialForm {
 
 	
 
+	/**
+	 * Gets the study level variables.
+	 *
+	 * @return the study level variables
+	 */
 	public List<SettingDetail> getStudyLevelVariables() {
 		return studyLevelVariables;
 	}
 
+	/**
+	 * Sets the study level variables.
+	 *
+	 * @param studyLevelVariables the new study level variables
+	 */
 	public void setStudyLevelVariables(List<SettingDetail> studyLevelVariables) {
 		this.studyLevelVariables = studyLevelVariables;
 	}
@@ -335,6 +361,8 @@ public class CreateTrialForm {
 	}
 
 	/**
+	 * Gets the study name term id.
+	 *
 	 * @return the studyNameTermId
 	 */
 	public String getStudyNameTermId() {
@@ -342,27 +370,101 @@ public class CreateTrialForm {
 	}
 
 	/**
+	 * Sets the study name term id.
+	 *
 	 * @param studyNameTermId the studyNameTermId to set
 	 */
 	public void setStudyNameTermId(String studyNameTermId) {
 		this.studyNameTermId = studyNameTermId;
 	}
 
+	/**
+	 * Gets the start date id.
+	 *
+	 * @return the start date id
+	 */
 	public String getStartDateId() {
 		return startDateId;
 	}
 
+	/**
+	 * Sets the start date id.
+	 *
+	 * @param startDateId the new start date id
+	 */
 	public void setStartDateId(String startDateId) {
 		this.startDateId = startDateId;
 	}
 
+	/**
+	 * Gets the end date id.
+	 *
+	 * @return the end date id
+	 */
 	public String getEndDateId() {
 		return endDateId;
 	}
 
+	/**
+	 * Sets the end date id.
+	 *
+	 * @param endDateId the new end date id
+	 */
 	public void setEndDateId(String endDateId) {
 		this.endDateId = endDateId;
 	}
-
 	
+	/**
+	 * Gets the trial instances.
+	 *
+	 * @return the trial instances
+	 */
+	public int getTrialInstances() {
+	    return this.trialInstances;
+	}
+	
+	/**
+	 * Sets the trial instances.
+	 *
+	 * @param trialInstances the new trial instances
+	 */
+	public void setTrialInstances(int trialInstances) {
+	    this.trialInstances = trialInstances;
+	}
+
+	/**
+         * Gets the trial level variables.
+         *
+         * @return the trial level variables
+         */
+        public List<SettingDetail> getTrialLevelVariables() {
+                return trialLevelVariables;
+        }
+
+        /**
+         * Sets the trial level variables.
+         *
+         * @param trialLevelVariables the new trial level variables
+         */
+        public void setTrialLevelVariables(List<SettingDetail> trialLevelVariables) {
+                this.trialLevelVariables = trialLevelVariables;
+        }
+        
+        /**
+         * Gets the trial environment values.
+         *
+         * @return the trial environment values
+         */
+        public List<List<ValueReference>> getTrialEnvironmentValues() {
+            return this.trialEnvironmentValues;
+        } 
+        
+        /**
+         * Sets the trial environment values.
+         *
+         * @param trialEnvironmentValues the new trial environment values
+         */
+        public void setTrialEnvironmentValues(List<List<ValueReference>> trialEnvironmentValues) {
+            this.trialEnvironmentValues = trialEnvironmentValues;
+        }
 }

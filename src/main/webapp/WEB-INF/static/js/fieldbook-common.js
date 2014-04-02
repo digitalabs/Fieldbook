@@ -1037,7 +1037,7 @@ function addCreateTrialRequiredAsterisk(){
 		var cvTermId = requiredFields[i];
 	    if($('.cvTermIds[value="'+cvTermId+'"]').length != 0){
 	    	
-	    	$('.cvTermIds[value="'+cvTermId+'"]').parent().parent().find('.nursery-level-label').parent().append(requiredText);
+	    	$('.cvTermIds[value="'+cvTermId+'"]').parent().parent().find('.trial-level-label').parent().append(requiredText);
 	    }
 	    //Do something
 	}

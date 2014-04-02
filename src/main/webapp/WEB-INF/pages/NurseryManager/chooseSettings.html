@@ -1,4 +1,11 @@
-<form id="createNurseryForm" role="form-horizontal" action="#"
+
+			<div class="">
+				<div class="">
+					<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
+				</div>		
+			</div>
+		
+		<form id="createNurseryForm" role="form-horizontal" action="#"
 th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
 					<input type="hidden" th:field="*{requiredFields}"/>
 					<input type="hidden" th:field="*{loadSettings}"/>
@@ -24,7 +31,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 					    			You can add settings at this level, or remove those that you wish to manage at the plot level.</label>
 				    			</div>
 			    			</div>
-			    				<div class="row nurseryLevelSettings" >
+			    				<div class="row form-group nurseryLevelSettings" >
 			    					<!-- <table border="0" id="nurseryLevelSettings" width="100%">
 			    					 -->
 	                                <div class="col-xs-5 col-md-5 1st">
@@ -38,7 +45,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 	                                        <a id="chooseLocation" onclick="loadFolderAjax();" th:text="#{nursery.create.nursery.choose.location}"></a>
 	                                </div>
                                 </div>
-	                            <div class="row nurseryLevelSettings" >
+	                            <div class="row form-group nurseryLevelSettings" >
 	                                 <div class="col-xs-5 col-md-5 1st">
 	                                       &nbsp;&nbsp;&nbsp;<label id="expDesignLabel" for="fieldLayoutRandom" th:text="#{nursery.nurserydetails.select.field.layout.label} + ': '"></label>&nbsp;<span class="required">*</span>
 	                                    </div>
@@ -49,7 +56,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 	                                        </select>
 	                                   </div>
 			    				</div>	
-			    				<div class="row nurseryLevelSettings" th:each="nurseryLevelVariable, rowStat : *{studyLevelVariables}">
+			    				<div class="row form-group nurseryLevelSettings" th:each="nurseryLevelVariable, rowStat : *{studyLevelVariables}">
 			    					<div class="col-xs-5 col-md-5 1st">
 	                                        &nbsp;&nbsp;&nbsp;<span style="word-wrap: break-word"  class="control-label nursery-level-label" th:text="${nurseryLevelVariable.variable.name}"></span>:
 	                                    </div>

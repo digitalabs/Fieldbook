@@ -714,7 +714,7 @@ function getLastRowIndex(name, hasTBody) {
 function createTrialLevelSettingVariables(data) {
 	var ctr = $('.trialLevelSettings').length; //getLastRowIndex("nurseryLevelSettings", false) + 1;
 	$.each(data, function (index, settingDetail) {
-		var newRow = "<div class='row trialLevelSettings newVariable'>";
+		var newRow = "<div class='row form-group trialLevelSettings newVariable'>";
 		var isDelete = "";
 		
 		//include delete button if variable is deletable

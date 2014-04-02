@@ -1,16 +1,16 @@
-<div class="row">
+<div class="row col-xs-12 col-md-12">
 	<br />
 	<table id="trialInstancesTable" class="my-class table table-curved table-condensed">
 		<thead>
 			<tr>
-				<th th:each="trialEnvLevelVariable, rowStat : *{trialLevelVariables}">
+				<th style="max-width: 80px" th:each="trialEnvLevelVariable, rowStat : *{trialLevelVariables}">
 					<label class="control-label" th:text="${trialEnvLevelVariable.variable.name}"></label>
 				</th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr th:each="trialEnvironmentValue, row : *{trialEnvironmentValues}">
-				<td th:each="trialEnvLevelVariable, rowStat : *{trialLevelVariables}">
+				<td style="max-width: 80px" th:each="trialEnvLevelVariable, rowStat : *{trialLevelVariables}">
 					<input class="cvTermIds trialLevelVariableIdClass" type="hidden" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].id}" />
 					 
 					<input th:if="${trialEnvLevelVariable.variable.widgetType.type == 'DROPDOWN'}" 

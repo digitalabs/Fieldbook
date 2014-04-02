@@ -114,8 +114,8 @@ public class CreateTrialController extends SettingsController {
             form.setPlotLevelVariables(userSelection.getPlotsLevelList());
             //form.setSelectedSettingId(1);
             form.setLoadSettings("1");
-            form.setRequiredFields(AppConstants.CREATE_Trial_REQUIRED_FIELDS.getString());
             */
+        	form.setRequiredFields(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
         }
         setFormStaticData(form);
         model.addAttribute("createTrialForm", form);
@@ -139,7 +139,7 @@ public class CreateTrialController extends SettingsController {
     public String show(@ModelAttribute("createTrialForm") CreateTrialForm form, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2, Model model, HttpSession session) throws MiddlewareQueryException{
     	session.invalidate();
     	form.setProjectId(this.getCurrentProjectId());
-    	//form.setRequiredFields(AppConstants.CREATE_Trial_REQUIRED_FIELDS.getString());
+    	form.setRequiredFields(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
     	setFormStaticData(form);
     	return super.show(model);
     }

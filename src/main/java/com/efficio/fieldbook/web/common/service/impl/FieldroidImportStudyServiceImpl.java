@@ -9,7 +9,7 @@
  * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
  *
  *******************************************************************************/
-package com.efficio.fieldbook.web.nursery.service.impl;
+package com.efficio.fieldbook.web.common.service.impl;
 
 import java.io.File;
 
@@ -17,8 +17,8 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.springframework.stereotype.Service;
 
+import com.efficio.fieldbook.web.common.service.FieldroidImportStudyService;
 import com.efficio.fieldbook.web.nursery.bean.CSVOziel;
-import com.efficio.fieldbook.web.nursery.service.FieldroidImportStudyService;
 @Service
 public class FieldroidImportStudyServiceImpl implements
 		FieldroidImportStudyService {

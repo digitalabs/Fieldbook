@@ -167,6 +167,8 @@ public enum AppConstants {
     ,MAIZE_BREEDING_METHOD_SELFED_BULKED
     ,MAIZE_BREEDING_METHOD_SIB_INCREASED
     ,MAIZE_BREEDING_METHOD_COLCHICINIZE
+    
+    ,ZIP_FILE_SUFFIX
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

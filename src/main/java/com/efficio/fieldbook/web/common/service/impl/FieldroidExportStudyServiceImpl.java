@@ -9,7 +9,7 @@
  * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
  * 
  *******************************************************************************/
-package com.efficio.fieldbook.web.nursery.service.impl;
+package com.efficio.fieldbook.web.common.service.impl;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -19,8 +19,8 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.springframework.stereotype.Service;
 
 import com.csvreader.CsvWriter;
+import com.efficio.fieldbook.web.common.service.FieldroidExportStudyService;
 import com.efficio.fieldbook.web.nursery.bean.CSVOziel;
-import com.efficio.fieldbook.web.nursery.service.FieldroidExportStudyService;
 
 @Service
 public class FieldroidExportStudyServiceImpl implements
@@ -30,7 +30,7 @@ public class FieldroidExportStudyServiceImpl implements
 	 * @see com.efficio.fieldbook.web.nursery.service.ExportStudyService#export(org.generationcp.middleware.domain.etl.Workbook, java.lang.String)
 	 */
 	@Override
-	public void export(Workbook workbook, String filename) {
+	public String export(Workbook workbook, String filename) {
         String outputFile = filename;
         boolean alreadyExists = new File(outputFile).exists();
         CsvWriter csvOutput = null;
@@ -63,6 +63,8 @@ public class FieldroidExportStudyServiceImpl implements
         		csvOutput.close();
         	}
         }
+        
+        return outputFile;
 	}
 
 }

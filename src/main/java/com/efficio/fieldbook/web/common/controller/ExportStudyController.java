@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.StudySelection;
+import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
+import com.efficio.fieldbook.web.common.service.FieldroidExportStudyService;
+import com.efficio.fieldbook.web.common.service.RExportStudyService;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.service.ExcelExportStudyService;
-import com.efficio.fieldbook.web.nursery.service.FieldroidExportStudyService;
-import com.efficio.fieldbook.web.nursery.service.RExportStudyService;
 import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 import com.efficio.fieldbook.web.util.AppConstants;
 
@@ -82,21 +82,26 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     private String doExport(int exportType, int selectedTraitTermId, HttpServletResponse response, boolean isTrial){
     	StudySelection userSelection = getUserSelection(isTrial);
     	String filename = userSelection.getWorkbook().getStudyDetails().getStudyName();
+    	String outputFilename = null;
     	if(AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == exportType){
     		filename = filename  + AppConstants.EXPORT_FIELDLOG_SUFFIX.getString();
-    		fielddroidExportStudyService.export(userSelection.getWorkbook(), filename);
+    		outputFilename = fielddroidExportStudyService.export(userSelection.getWorkbook(), filename);
     		response.setContentType("text/csv");
     	}else if(AppConstants.EXPORT_NURSERY_R.getInt() == exportType){
     		filename = filename  + AppConstants.EXPORT_R_SUFFIX.getString();
-    		rExportStudyService.exportToR(userSelection.getWorkbook(), filename, selectedTraitTermId);    		
+    		outputFilename = rExportStudyService.exportToR(userSelection.getWorkbook(), filename, selectedTraitTermId);    		
     		response.setContentType("text/csv");
     	}else if(AppConstants.EXPORT_NURSERY_EXCEL.getInt() == exportType){
     		filename = filename  + AppConstants.EXPORT_XLS_SUFFIX.getString();
-    		excelExportStudyService.export(userSelection.getWorkbook(), filename);
+    		outputFilename = excelExportStudyService.export(userSelection.getWorkbook(), filename);
     		response.setContentType("application/vnd.ms-excel");
     	}
+    	
+    	if (userSelection.getWorkbook().getTotalNumberOfInstances() > 1) {
+    		response.setContentType("application/zip");
+    	}
     	        
-        File xls = new File(filename); // the selected name + current date
+        File xls = new File(outputFilename); // the selected name + current date
         FileInputStream in;
         
         response.setHeader("Content-disposition","attachment; filename=" + filename);

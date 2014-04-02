@@ -15,14 +15,14 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.domain.etl.Workbook;
 
+import com.efficio.fieldbook.web.common.bean.StudySelection;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
 
 /**
  * This bean models the various input that the user builds up over time to perform the actual loading operation.
  */
-public class TrialSelection implements Serializable {
+public class TrialSelection extends StudySelection implements Serializable {
     
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -34,7 +34,7 @@ public class TrialSelection implements Serializable {
     private String serverFileName;
     
     /** The workbook. */
-    private Workbook workbook;
+//    private Workbook workbook;
     
     /** The field layout random. */
     private boolean fieldLayoutRandom;
@@ -126,18 +126,18 @@ public class TrialSelection implements Serializable {
      *
      * @return the workbook
      */
-    public Workbook getWorkbook() {
-        return workbook;
-    }
+//    public Workbook getWorkbook() {
+//        return workbook;
+//    }
 
     /**
      * Sets the workbook.
      *
      * @param workbook the new workbook
      */
-    public void setWorkbook(Workbook workbook) {
-        this.workbook = workbook;
-    }
+//    public void setWorkbook(Workbook workbook) {
+//        this.workbook = workbook;
+//    }
 
     /**
      * Gets the field layout random.
@@ -174,4 +174,9 @@ public class TrialSelection implements Serializable {
     public void setStudyDetailsList(List<StudyDetails> studyDetailsList) {
         this.studyDetailsList = studyDetailsList;
     }
+
+	@Override
+	public boolean isTrial() {
+		return true;
+	}
 }

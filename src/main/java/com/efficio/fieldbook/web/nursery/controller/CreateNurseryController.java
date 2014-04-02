@@ -86,8 +86,8 @@ public class CreateNurseryController extends SettingsController {
     public String useExistingNursery(@ModelAttribute("manageSettingsForm") CreateNurseryForm form, @PathVariable int nurseryId
             , Model model, HttpSession session) throws MiddlewareQueryException{
         if(nurseryId != 0){     
-            Workbook workbook = fieldbookMiddlewareService.getNurseryVariableSettings(nurseryId);
-            Dataset dataset = SettingsUtil.convertWorkbookToXmlDataset(workbook);
+            Workbook workbook = fieldbookMiddlewareService.getStudyVariableSettings(nurseryId, true);
+            Dataset dataset = (Dataset)SettingsUtil.convertWorkbookToXmlDataset(workbook);
             SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
             
             //nursery-level

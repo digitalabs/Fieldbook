@@ -544,11 +544,15 @@ public class SettingsUtil {
 					*/
 				}
 			}
-			
+				
 			if(dataset.getTrialLevelFactor() != null){
 				for(Factor factor : dataset.getTrialLevelFactor()){
+					String variableName = factor.getName();
+					String tempName = AppConstants.getString(variableName + AppConstants.LABEL.getString());
+					if(tempName != null)
+						variableName = tempName;
 					
-					SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(),
+					SettingVariable variable = new SettingVariable(variableName, factor.getDescription(), factor.getProperty(),
 							factor.getScale(), factor.getMethod(), factor.getRole(), factor.getDatatype());
 					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
 					
@@ -735,13 +739,35 @@ public class SettingsUtil {
 	 * @param workbook the workbook
 	 * @return the dataset
 	 */
-	public static Dataset convertWorkbookToXmlDataset(Workbook workbook) {
-		Dataset dataset = new Dataset();
+	public static ParentDataset convertWorkbookToXmlDataset(Workbook workbook) {
+		return convertWorkbookToXmlDataset(workbook, true);
+	}
+	public static ParentDataset convertWorkbookToXmlDataset(Workbook workbook, boolean isNursery) {
+		ParentDataset dataset = null;
 		
-		dataset.setConditions(convertMeasurementVariablesToConditions(workbook.getConditions()));
-		dataset.setFactors(convertMeasurementVariablesToFactors(workbook.getFactors()));
-		dataset.setVariates(convertMeasurementVariablesToVariates(workbook.getVariates()));
-		
+		List<Condition> conditions = convertMeasurementVariablesToConditions(workbook.getConditions());
+		List<Factor> factors = convertMeasurementVariablesToFactors(workbook.getFactors());
+		List<Variate> variates = convertMeasurementVariablesToVariates(workbook.getVariates());
+		if(isNursery){
+			Dataset nurseryDataset = new Dataset();
+			nurseryDataset.setConditions(conditions);
+			nurseryDataset.setFactors(factors);
+			nurseryDataset.setVariates(variates);
+			dataset = nurseryDataset;
+		}else{
+			TrialDataset trialDataset = new TrialDataset();
+			
+			conditions = convertMeasurementVariablesToConditions(workbook.getStudyConditions());
+			factors = convertMeasurementVariablesToFactors(workbook.getFactors());
+			variates = convertMeasurementVariablesToVariates(workbook.getVariates());
+			
+			trialDataset.setConditions(conditions);
+			trialDataset.setFactors(factors);
+			trialDataset.setVariates(variates);
+			trialDataset.setTrialLevelFactor(convertMeasurementVariablesToFactors(workbook.getTrialConditions()));
+			
+			dataset = trialDataset;
+		}
 		return dataset;
 	}
 	

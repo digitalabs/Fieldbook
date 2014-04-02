@@ -23,11 +23,14 @@ $(function() {
         
     });
     
-    $(window).trigger('hashchange');
-
+    $(window).trigger('hashchange');    
+    if (typeof convertToSelect2 === 'undefined' || convertToSelect2 == true) {
+    	    // variable is undefined
+    	
     $('select').each(function(){
 			$(this).select2();
 		});
+    }
 });
 
 
@@ -90,6 +93,7 @@ function showPostPage(paginationUrl,previewPageNum, pageNum, sectionDiv, formNam
 	
 	var serializedData = $form.serialize();
 
+	alert(paginationUrl);
 	Spinner.toggle();
  	$.ajax(
          { url: paginationUrl+pageNum+"/"+previewPageNum+'?r=' + (Math.random() * 999),
@@ -738,22 +742,22 @@ function openStudy(tableName){
 	Spinner.toggle();
 	var openStudyHref = $('#open-study-url').attr("href");
 	
-	if (tableName == "nursery-table") {
+//	if (tableName == "nursery-table") {
 		if(idVal != null){
 			location.href = openStudyHref + "/" + idVal;
 			Spinner.toggle();
 		}
-	} else {
-		$.ajax(
-	    { url: openStudyHref,
-	       type: "GET",
-	       data: "",
-	       cache: false,
-	       success: function() {    	            
-	         Spinner.toggle();  
-	       }
-	     });
-	}
+//	} else {
+//		$.ajax(
+//	    { url: openStudyHref,
+//	       type: "GET",
+//	       data: "",
+//	       cache: false,
+//	       success: function() {    	            
+//	         Spinner.toggle();  
+//	       }
+//	     });
+//	}
 }
 
 function advanceNursery(tableName){
@@ -954,10 +958,11 @@ function doExportContinue(paramUrl){
            timeout: 70000,
            async: false,
            success: function(html) {
-        	   var action = $('#exportNurseryForm').attr('action');
-        	   $('#exportNurseryForm').attr('action', action+paramUrl);
-        	   $('#exportNurseryForm').submit();
-        	   $('#exportNurseryForm').attr('action', action);
+        	   var formName = "#exportStudyForm";
+        	   var action = $(formName).attr('action');
+        	   $(formName).attr('action', action + $("#study-type").val() + "/" + paramUrl);
+        	   $(formName).submit();
+        	   $(formName).attr('action', action);
         	   Spinner.toggle();
            }
          }
@@ -969,9 +974,14 @@ function importNursery(type){
 	$('#page-modal-message').html('');
 	$('div.fileupload').parent().parent().removeClass('has-error');
 	$('#importModal').modal('show');
-	var action = "/Fieldbook/NurseryManager/addOrRemoveTraits/import/";
-	$('#importNurseryForm').attr('action', action+type);
+	var action = "/Fieldbook/ImportManager/import/" + $("#study-type").val() + "/";
+	var formName = "#importStudyForm";
+	$(formName).attr('action', action+type);
 	   
+}
+
+function submitImportStudy() {
+	$("#importStudyForm").submit();
 }
 function isFloat(value) { 
     return !isNaN(parseInt(value,10)) && (parseFloat(value,10) == parseInt(value,10)); 

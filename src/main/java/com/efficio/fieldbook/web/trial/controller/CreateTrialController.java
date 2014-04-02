@@ -167,7 +167,7 @@ public class CreateTrialController extends SettingsController {
             form.setStudyLevelVariables(userSelection.getStudyLevelConditions());
             form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
             form.setPlotLevelVariables(userSelection.getPlotsLevelList());
-            form.setTrialLevelVariables(userSelection.getTrialLevelVariableList());
+            form.setTrialLevelVariables(userSelection.getTrialLevelVariableList());           
             form.setTrialEnvironmentValues(userSelection.getTrialEnvironmentValues());
             form.setTrialInstances(1);
             form.setSelectedSettingId(templateSetting.getTemplateSettingId());

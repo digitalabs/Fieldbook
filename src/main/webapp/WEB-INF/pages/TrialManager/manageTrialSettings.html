@@ -163,7 +163,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			    			</div>
 			    			<div class="row form-group">
 			    				<div class="col-xs-12 col-md-12" id="trialLevelSettings-dev">
-			    					<div class="row trialLevelSettings" th:each="trialLevelVariable, rowStat : *{studyLevelVariables}">
+			    					<div class="row form-group trialLevelSettings" th:each="trialLevelVariable, rowStat : *{studyLevelVariables}">
 			    						<div class="col-xs-5 col-md-5 1st">
 			    							<span style="cursor: default; font-size: 16px;" th:if="${trialLevelVariable.delete}" class="glyphicon glyphicon-remove-circle" 
 												th:onclick="'javascript: deleteVariable(1,\'' + ${trialLevelVariable.variable.cvTermId} + '\',$(this))'"></span>

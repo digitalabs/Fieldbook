@@ -927,8 +927,14 @@ $('#'+getJquerySafeId('methodIdFavorite')).select2({
 }
 
 function exportTrial(type){
+	$('#page-modal-choose-instance-message-r').html('');
+	$('#page-modal-choose-instance-message').html('');
 	$('.instanceNumber:first').click();	
-	$('.spinner-input').spinedit();
+	$('.spinner-input').spinedit({
+	    minimum: 1,
+	    maximum: 5,
+	    value: 1
+	});
 	$('#exportTrialType').val(type);
 	if(type == 2){
 		$("#chooseInstance").detach().appendTo('#importRChooseInstance');
@@ -965,8 +971,43 @@ function exportNursery(type){
 
 function exportNurseryToR(type){
 	//console.log($('#selectedRTrait').val());
-	doExportContinue(type + "/" + $('#selectedRTrait').val(), true);
+	var isNursery = true;
+	if($("#study-type").val() == 'Trial')
+		isNursery = false;
+	
+	var additionalParams = '';
+	if(!isNursery){
+		additionalParams = validateTrialInstance();
+		if(additionalParams == 'false')
+			return false;
+	}
+	
+	doExportContinue(type + "/" + $('#selectedRTrait').val(), isNursery);
 	$('#importRModal').modal('hide');
+}
+
+function validateTrialInstance(){
+	var exportInstanceType = $('input:radio[name=exportInstanceType]:checked').val();
+	var additionalParams = '';
+	if(exportInstanceType == 1){
+		additionalParams = '0/0';
+	}else if(exportInstanceType == 2){
+		additionalParams = $('#exportTrialInstanceNumber').val() + "/" + $('#exportTrialInstanceNumber').val();
+	}else{
+		var start =  $('#exportTrialInstanceStart').val();
+		var end = $('#exportTrialInstanceEnd').val();
+		additionalParams = start + "/" + end;
+		var exportTrialType = $('#exportTrialType').val();
+		if(parseInt(start) >= parseInt(end)){
+			var errorDiv = "page-modal-choose-instance-message";
+			if(exportTrialType == 2)
+				errorDiv = "page-modal-choose-instance-message-r";
+			showErrorMessage(errorDiv, 'To trial instance # should be greater than the From Trial Instance #');
+			additionalParams = 'false';
+			//return false;
+		}
+	}
+	return additionalParams;
 }
 
 function doExportContinue(paramUrl, isNursery){
@@ -977,6 +1018,17 @@ function doExportContinue(paramUrl, isNursery){
 	var $form = $("#addVariableForm");	
 	var serializedData = $form.serialize();
 
+	
+	var additionalParams = ''
+	if(!isNursery){
+		additionalParams = validateTrialInstance();
+		if(additionalParams == 'false')
+			return false;
+		else{
+			$('#trialModalSelection').modal('hide');
+		}
+	}
+	
 	Spinner.toggle();
  	$.ajax(
          { url: paginationUrl+currentPage+"/"+currentPage+'?r=' + (Math.random() * 999),
@@ -992,18 +1044,10 @@ function doExportContinue(paramUrl, isNursery){
         	   	if(isNursery)
         	   		newAction = action + "export/" + paramUrl;
         	   	else{ //meaning its trial
-        	   		var exportInstanceType = $('input:radio[name=exportInstanceType]:checked').val();
-        	   		var additionalParams = '';
-        	   		if(exportInstanceType == 1){
-        	   			additionalParams = '0/0';
-        	   		}else if(exportInstanceType == 2){
-        	   			additionalParams = $('#exportTrialInstanceNumber').val() + "/" + $('#exportTrialInstanceNumber').val();
-        	   		}else{
-        	   			additionalParams = $('#exportTrialInstanceStart').val() + "/" + $('#exportTrialInstanceEnd').val();
-        	   		}
+        	   		
         	   		newAction = action + "exportTrial/" + paramUrl + "/" + additionalParams;
         	   		
-        	   		//console.log(newAction);
+        	   	console.log(newAction);
         	   	 
         	   	}
         	   

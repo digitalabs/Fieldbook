@@ -548,10 +548,11 @@ public class SettingsUtil {
 			if(dataset.getTrialLevelFactor() != null){
 				for(Factor factor : dataset.getTrialLevelFactor()){
 					String variableName = factor.getName();
+					/*
 					String tempName = AppConstants.getString(variableName + AppConstants.LABEL.getString());
 					if(tempName != null)
 						variableName = tempName;
-					
+					*/
 					SettingVariable variable = new SettingVariable(variableName, factor.getDescription(), factor.getProperty(),
 							factor.getScale(), factor.getMethod(), factor.getRole(), factor.getDatatype());
 					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));

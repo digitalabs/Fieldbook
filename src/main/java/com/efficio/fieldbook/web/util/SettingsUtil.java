@@ -568,6 +568,10 @@ public class SettingsUtil {
                                                 List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, projectId);
                                                 settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
                                                 
+                                                if (TermId.TRIAL_INSTANCE_FACTOR.getId() == variable.getCvTermId()) {
+                                                    settingDetail.setDelete(false);
+                                                }
+                                                
 	    					trialLevelVariableList.add(settingDetail);
 	    					
 	    					if(userSelection != null){
@@ -578,26 +582,11 @@ public class SettingsUtil {
 				}
 		    }
 			
-			List<List<ValueReference>> trialEnvList = createTrialEnvValueList(trialLevelVariableList, 1);
-			
 			userSelection.setStudyLevelConditions(studyLevelConditions);
 			userSelection.setPlotsLevelList(plotsLevelList);			
 			userSelection.setBaselineTraitsList(baselineTraitsList);
 			userSelection.setTrialLevelVariableList(trialLevelVariableList);
-			userSelection.setTrialEnvironmentValues(trialEnvList);
 		}
-	}
-	
-	private static List<List<ValueReference>> createTrialEnvValueList(List<SettingDetail> trialLevelVariableList, int trialInstances) {
-	    List<List<ValueReference>> trialEnvValueList = new ArrayList<List<ValueReference>>();
-	    for (int i=0; i<trialInstances; i++) {
-	        List<ValueReference> trialInstanceVariables = new ArrayList<ValueReference>();
-	        for (SettingDetail detail : trialLevelVariableList) {
-	            trialInstanceVariables.add(new ValueReference(detail.getVariable().getCvTermId(), ""));
-        	}
-	        trialEnvValueList.add(trialInstanceVariables);
-	    }
-	    return trialEnvValueList;
 	}
 	
 	/**

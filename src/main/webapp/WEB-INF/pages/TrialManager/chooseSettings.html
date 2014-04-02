@@ -16,6 +16,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
                     <input type="hidden" th:field="*{studyNameTermId}"/>
                     <input type="hidden" th:field="*{startDateId}"/>
 					<input type="hidden" th:field="*{endDateId}"/>
+					<input type="hidden" th:field="*{trialInstanceFactor}"/>
 					
 					<div class="row form-group">
 						<div class="col-xs-12 col-md-12">
@@ -346,7 +347,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
     var requiredFields = [];    
     var startDateId = '';
 	var endDateId = '';
-
+	var trialInstanceId = '';
     
 	$(document).ready(function() {
         if($('#requiredFields').val() != ''){
@@ -359,6 +360,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
         programMethodUrl = $('#breedingMethodUrl').val();
         programLocationUrl = $('#locationUrl').val();
         importLocationUrl = $('#importLocationUrl').val();    
+        trialInstanceId = $('#trialInstanceFactor').val();
         
 		$("#folderNameSpan").html($("#folderName").val());
 		
@@ -397,7 +399,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 	    $('select').each(function(){
 			$(this).select2();
 		});
-
+	    
 	    $("#showFavoriteLocationForAll").attr('disabled', 'disabled');
 	    $("#trialInstances").attr('disabled', 'disabled');
 	});

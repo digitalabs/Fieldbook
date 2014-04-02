@@ -1988,6 +1988,13 @@ function getIdOfValue(value) {
 
 function recreateSelect2ComboMultiple(index, row, selectedVal) {
 	$.each($(row).children("td"), function (cellIndex, cell) {
+		//set trial instance no.
+		
+		if (parseInt($($(cell).children(".cvTermIds")).val()) == parseInt(trialInstanceId)) {
+			$($(cell).children(".trialInstanceNo")).text(index+1);
+			$($(cell).children("#"+getJquerySafeId("trialEnvironmentValues"+ index + cellIndex +".name"))).val(index+1);
+		}
+		
 		if (cell.innerHTML.indexOf("select2") > -1) {
 			//get the possible values of the variable
 			var possibleValuesJson = $($(cell).find(".possibleValuesJsonTrial")).text();

@@ -391,6 +391,8 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 			$(this).select2();
 		});
 
+	    $("#showFavoriteLocationForAll").attr('disabled', 'disabled');
+	    $("#trialInstances").attr('disabled', 'disabled');
 	});
            
 	function validateCreateTrial() {

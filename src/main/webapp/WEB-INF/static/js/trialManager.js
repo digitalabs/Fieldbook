@@ -198,7 +198,7 @@ $.ajax(
 		 			 			"#" + getJquerySafeId("studyLevelVariables" + index + ".value"), false, selectedVal);
     			   }
     			   
-    			   replacePossibleJsonValues(data.favoriteMethods, data.allMethods, index);
+    			   replacePossibleJsonValues(data.favoriteMethods, data.allMethods, index, "");
     		   }
     	   } else {
     		   showErrorMessage("page-message", data.errorMessage);
@@ -240,11 +240,15 @@ function getLocationRowIndex() {
 }
 
 function recreateLocationCombo() {
-	 var index = getLocationRowIndex();
-	 if(index == -1)
-		 return;
 	var selectedLocationAll = $("#harvestLocationIdAll").val();
 	var selectedLocationFavorite = $("#harvestLocationIdFavorite").val();
+	var index = getLocationRowIndex();
+	var trialInstances = $("#trialInstancesTable tbody tr").length;
+	
+	if (selectedLocationAll == undefined && (trialInstances == undefined || trialInstances == 0 )) {
+		 if(index == -1)
+			 return;
+	}
 	
 	Spinner.toggle();
 	$.ajax(
@@ -266,6 +270,8 @@ function recreateLocationCombo() {
 	    		   } else {
 	    			   setComboValues(locationSuggestions_obj, selectedLocationAll, "harvestLocationIdAll");
 	    		   }
+    		   } else if (showFavoriteLocationForAll) {
+    			   recreateLocationsAfterClose(data);
     		   } else {
     			   var selectedVal = null;
     			  
@@ -285,7 +291,7 @@ function recreateLocationCombo() {
 		 			 			"#" + getJquerySafeId("studyLevelVariables"+index+".value"), true, selectedVal);
     			   }
     			   
-    			   replacePossibleJsonValues(data.favoriteLocations, data.allLocations, index);
+    			   replacePossibleJsonValues(data.favoriteLocations, data.allLocations, index, "");
     		   }
     	   } else {
     		   showErrorMessage("page-message", data.errorMessage);
@@ -301,9 +307,36 @@ function recreateLocationCombo() {
  );
 }
 
-function replacePossibleJsonValues(favoriteJson, allJson, index) {
-	$("#possibleValuesJson"+index).text(allJson);
-	$("#possibleValuesFavoriteJson"+index).text(favoriteJson);
+function recreateLocationsAfterClose(data) {
+	$.each($("#trialInstancesTable tbody tr"), function (index, row){
+		$.each($(row).children("td"), function (cellIndex, cell) {
+			if ($($(cell).children(".cvTermIds")).val() == locationId) {
+				var selectedVal = null;
+  			  
+ 			   if ($("#" + getJquerySafeId("trialEnvironmentValues"+index+cellIndex+".name")).select2("data")) {
+ 				   selectedVal = $("#" + getJquerySafeId("trialEnvironmentValues"+index+cellIndex+".name")).select2("data").id;
+ 			   } 
+ 			   initializePossibleValuesCombo([], 
+	 			 			"#" + getJquerySafeId("trialEnvironmentValues"+index+cellIndex+".name"), true, selectedVal);
+ 			   
+ 			   //update values in combo
+ 			   if ($("#showFavoriteLocationForAll").is(":checked")) {
+	    			   initializePossibleValuesCombo($.parseJSON(data.favoriteLocations), 
+		 			 			"#" + getJquerySafeId("trialEnvironmentValues"+index+cellIndex+".name"), false, selectedVal);
+ 			   } else {
+ 				   initializePossibleValuesCombo($.parseJSON(data.allLocations), 
+		 			 			"#" + getJquerySafeId("trialEnvironmentValues"+index+cellIndex+".name"), true, selectedVal);
+ 			   }
+ 			   
+ 			   replacePossibleJsonValues(data.favoriteLocations, data.allLocations, index+"a"+cellIndex, "Trial");
+			}
+		});
+	});
+}
+
+function replacePossibleJsonValues(favoriteJson, allJson, index, trialSuffix) {
+	$("#possibleValuesJson"+trialSuffix+index).text(allJson);
+	$("#possibleValuesFavoriteJson"+trialSuffix+index).text(favoriteJson);
 }
 
 function setComboValues(suggestions_obj, id, name) {
@@ -1543,6 +1576,8 @@ function loadTrialSettingsForCreate(templateSettingsId) {
 			//we just paste the whole html
 			//$('.container .row').first().html(html);
 			$("#chooseSettingsDiv").html(html);
+			$("#showFavoriteLocationForAll").removeAttr('disabled');
+		    $("#trialInstances").removeAttr('disabled');
 		},
 		error: function(jqXHR, textStatus, errorThrown){
 			console.log("The following error occured: " + textStatus, errorThrown); 

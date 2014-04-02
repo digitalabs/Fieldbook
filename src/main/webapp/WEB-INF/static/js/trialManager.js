@@ -1962,21 +1962,21 @@ function recreateSelect2ComboMultiple(index, row, selectedVal) {
 					+ getJquerySafeId("trialEnvironmentValues" + index + cellIndex + ".id"))).val();
 			
 			var newCell = "<input class='cvTermIds trialLevelVariableIdClass' type='hidden' id='trialEnvironmentValues" + 
-				index + cellIndex + ".id' name='trialEnvironmentValues[" + index + "][" + cellIndex + "].id value='" + cvTermId + "' />";
+				index + cellIndex + ".id' name='trialEnvironmentValues[" + index + "][" + cellIndex + "].id' value='" + cvTermId + "' />";
 
 			//hidden field for select2 
 			newCell = newCell + "<input type='hidden' id='trialEnvironmentValues" + index + cellIndex +
 			".name' name='trialEnvironmentValues[" + index + "][" + cellIndex + "].name' class='form-control select2' />";
 			
 			//div containing the possible values
-			newCell = newCell + "<div id='possibleValuesJsonTrial" + index + "a" + cellIndex + "' class='possibleValuesJson' style='display:none'>" + 
+			newCell = newCell + "<div id='possibleValuesJsonTrial" + index + "a" + cellIndex + "' class='possibleValuesJsonTrial' style='display:none'>" + 
 				possibleValuesJson + "</div>";
 			
 			//div containing the favorite possible values
-			newCell = newCell + "<div id='possibleValuesFavoriteJsonTrial" + index + "a" + cellIndex + "' class='possibleValuesFavoriteJson' style='display:none'>" + 
+			newCell = newCell + "<div id='possibleValuesFavoriteJsonTrial" + index + "a" + cellIndex + "' class='possibleValuesFavoriteJsonTrial' style='display:none'>" + 
 				possibleValuesFavoriteJson + "</div>";
 			
-			var isFavoriteChecked = false;
+			var isFavoriteChecked = $("#showFavoriteLocationForAll").is(":checked");
 			var showAll = true;
 			//set possibleValues to favorite possible values
 			if (isFavoriteChecked && parseInt(cvTermId) == parseInt(locationId)) {
@@ -1995,5 +1995,74 @@ function recreateSelect2ComboMultiple(index, row, selectedVal) {
 					"#" + getJquerySafeId("trialEnvironmentValues" + index + cellIndex +".name"), false, null);
 			}
 		}
+	});
+}
+
+function editTrialInstances() {
+	if($("#trialInstancesTable tbody tr").length < $("#trialInstances").val()) {
+		addTrialInstances();
+	} else if ($("#trialInstancesTable tbody tr").length > $("#trialInstances").val()) {
+		removeTrialInstances();
+	}
+}
+
+function addTrialInstances() {
+	var reg = new RegExp("trialEnvironmentValues0", "g");
+	var reg2 = new RegExp("trialEnvironmentValues\[[0-9]+\]", "g");
+	var reg3 = new RegExp("possibleValuesJsonTrial0a", "g");
+	var reg4 = new RegExp("possibleValuesFavoriteJsonTrial0a", "g");
+
+	for (var i = $("#trialInstancesTable tbody tr").length; i < $("#trialInstances").val(); i++) {
+		var cells = $("#trialInstancesTable tbody tr").get(0).innerHTML.replace(reg, "trialEnvironmentValues" + i);
+		cells = cells.replace(reg2, "trialEnvironmentValues[" + i + "]");
+		cells = cells.replace(reg3, "possibleValuesJsonTrial" + i + "a");
+		cells = cells.replace(reg4, "possibleValuesFavoriteJsonTrial" + i + "a");
+		
+		newRow = "<tr>" + cells + "</tr>";
+		$("#trialInstancesTable tbody").append(newRow);
+		
+		if (newRow.indexOf("select2") > -1) {
+			recreateSelect2ComboMultiple(i, $("#trialInstancesTable tbody tr:last"), null);
+		}
+	}
+	
+}
+
+function removeTrialInstances() {
+	for (var i = $("#trialInstancesTable tbody tr").length; i > $("#trialInstances").val(); i--) {
+		$("#trialInstancesTable tbody tr:last").remove();
+	}
+}
+
+function toggleLocationDropdownForAll(){
+	$.each($("#trialInstancesTable tbody tr"), function (index, row){
+		$.each($(row).children("td"), function (cellIndex, cell) {
+			if ($($(cell).children(".cvTermIds")).val() == locationId) {
+				//get the possible values of the variable
+				var possibleValuesJson = $($(cell).find(".possibleValuesJsonTrial")).text();
+				var possibleValuesFavoriteJson = $($(cell).find(".possibleValuesFavoriteJsonTrial")).text();
+				var isFavoriteChecked = $("#showFavoriteLocationForAll").is(":checked");
+				var showAll = true;
+				var selectedVal = null;
+				
+				//get previously selected value
+				if ($("#" + getJquerySafeId("trialEnvironmentValues" + index + cellIndex + ".name")).select2("data")) {
+					selectedVal = $("#" + getJquerySafeId("trialEnvironmentValues" + index + cellIndex + ".name")).select2("data").id;
+				}
+
+				//set possibleValues to favorite possible values
+				if (isFavoriteChecked) {
+					possibleValuesJson = possibleValuesFavoriteJson;
+					showAll = false;
+				}
+
+				initializePossibleValuesCombo([], 
+			 			"#" + getJquerySafeId("trialEnvironmentValues" + index + cellIndex +".name"), showAll, null);
+				
+				initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
+			 			"#" + getJquerySafeId("trialEnvironmentValues" + index + cellIndex +".name"), showAll, selectedVal);
+				
+			}
+		});
 	});
 }

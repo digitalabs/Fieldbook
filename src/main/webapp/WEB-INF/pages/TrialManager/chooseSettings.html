@@ -56,6 +56,16 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 			    					</select>
 			    				</div>
 			    			</div>
+			    			<div class="row">
+			    				<div class="col-xs-5 col-md-5">
+			    					<label class="control-label" th:text="#{trial.createtrial.location}+':'">Location:</label>
+			    				</div>
+			    				<div class="col-xs-7 col-md-7">
+			    					<a href="javascript: openManageLocations();" th:text="#{trial.managesettings.manage.location}">Manage Location</a> &nbsp;&nbsp;
+			    					<input type="checkbox" id="showFavoriteLocationForAll" onclick="javascript: toggleLocationDropdownForAll();" />&nbsp;&nbsp;
+									<span th:text="#{trial.createtrial.show.favorite.location.for.all}">Show Favorite Location for All</span>
+			    				</div>
+			    			</div>
 		    			</div>
 		    			<div class="col-xs-6 col-md-6">
 		    				<div class="row form-group">
@@ -293,9 +303,14 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 		</div>
 	</div>	
 	
+	<div class="row">
+        <div class="col-xs-12 col-md-12">
+            <div id="manage-location" th:include="/Common/manageLocationsModal"></div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-xs-12 col-md-12">
-            <div id="manage-location" th:include="/Common/manageMethodsModal"></div>
+            <div id="manage-method" th:include="/Common/manageMethodsModal"></div>
         </div>
     </div>
     <div class="row">
@@ -384,42 +399,6 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 		});
 
 	});
-		
-	function editTrialInstances() {
-		if($("#trialInstancesTable tbody tr").length < $("#trialInstances").val()) {
-			addTrialInstances();
-		} else if ($("#trialInstancesTable tbody tr").length > $("#trialInstances").val()) {
-			removeTrialInstances();
-		}
-	}
-	
-	function addTrialInstances() {
-		var reg = new RegExp("trialEnvironmentValues0", "g");
-		var reg2 = new RegExp("trialEnvironmentValues\[[0-9]+\]", "g");
-		var reg3 = new RegExp("possibleValuesJsonTrial0a", "g");
-		var reg4 = new RegExp("possibleValuesFavoriteJsonTrial0a", "g");
-
-		for (var i = $("#trialInstancesTable tbody tr").length; i < $("#trialInstances").val(); i++) {
-			var cells = $("#trialInstancesTable tbody tr").get(0).innerHTML.replace(reg, "trialEnvironmentValues" + i);
-			cells = cells.replace(reg2, "trialEnvironmentValues[" + i + "]");
-			cells = cells.replace(reg3, "possibleValuesJsonTrial" + i + "a");
-			cells = cells.replace(reg4, "possibleValuesFavoriteJsonTrial" + i + "a");
-			
-			newRow = "<tr>" + cells + "</tr>";
-			$("#trialInstancesTable tbody").append(newRow);
-			
-			if (newRow.indexOf("select2") > -1) {
-				recreateSelect2ComboMultiple(i, $("#trialInstancesTable tbody tr:last"), null);
-			}
-		}
-		
-	}
-	
-	function removeTrialInstances() {
-		for (var i = $("#trialInstancesTable tbody tr").length; i > $("#trialInstances").val(); i--) {
-			$("#trialInstancesTable tbody tr:last").remove();
-		}
-	}
            
 	function validateCreateTrial() {
 		var hasError = false;

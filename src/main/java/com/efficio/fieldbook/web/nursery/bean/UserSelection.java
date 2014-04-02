@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 
@@ -71,7 +72,11 @@ public class UserSelection extends StudySelection implements Serializable {
     
     /**  Baseline Traits in Manage Settings. */
     private List<SettingDetail> baselineTraitsList;
+    
+    /** The trial level variable list. */
     private List<SettingDetail> trialLevelVariableList;
+    
+    private List<List<ValueReference>> trialEnvironmentValues;
     
     /** The all standard variables. */
     //private Set<StandardVariable> allStandardVariables;
@@ -268,10 +273,20 @@ public class UserSelection extends StudySelection implements Serializable {
 
 	
 
+	/**
+	 * Gets the study level conditions.
+	 *
+	 * @return the study level conditions
+	 */
 	public List<SettingDetail> getStudyLevelConditions() {
 		return studyLevelConditions;
 	}
 
+	/**
+	 * Sets the study level conditions.
+	 *
+	 * @param studyLevelConditions the new study level conditions
+	 */
 	public void setStudyLevelConditions(List<SettingDetail> studyLevelConditions) {
 		this.studyLevelConditions = studyLevelConditions;
 	}
@@ -398,10 +413,20 @@ public class UserSelection extends StudySelection implements Serializable {
 	}
 	
 
+	/**
+	 * Gets the trial level variable list.
+	 *
+	 * @return the trial level variable list
+	 */
 	public List<SettingDetail> getTrialLevelVariableList() {
 		return trialLevelVariableList;
 	}
 
+	/**
+	 * Sets the trial level variable list.
+	 *
+	 * @param trialLevelVariableList the new trial level variable list
+	 */
 	public void setTrialLevelVariableList(List<SettingDetail> trialLevelVariableList) {
 		this.trialLevelVariableList = trialLevelVariableList;
 	}
@@ -411,5 +436,21 @@ public class UserSelection extends StudySelection implements Serializable {
 		return false;
 	}
 
-	
+	/**
+         * Gets the trial environment values.
+         *
+         * @return the trial environment values
+         */
+        public List<List<ValueReference>> getTrialEnvironmentValues() {
+            return this.trialEnvironmentValues;
+        } 
+        
+        /**
+         * Sets the trial environment values.
+         *
+         * @param trialEnvironmentValues the new trial environment values
+         */
+        public void setTrialEnvironmentValues(List<List<ValueReference>> trialEnvironmentValues) {
+            this.trialEnvironmentValues = trialEnvironmentValues;
+        }
 }

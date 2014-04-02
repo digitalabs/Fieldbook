@@ -559,19 +559,45 @@ public class SettingsUtil {
 					
 					if (!inHideVariableFields(stdVar, AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString())) {
 	    					variable.setCvTermId(stdVar);
-	    					SettingDetail settingDetail = new SettingDetail(variable,
-	    							null, null, isSettingVariableDeletable(stdVar, AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString()));
+	    					
+	    					List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
+                                                SettingDetail settingDetail = new SettingDetail(variable,
+                                                                possibleValues, null, isSettingVariableDeletable(stdVar, AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString()));
+                                                
+                                                settingDetail.setPossibleValuesToJson(possibleValues);
+                                                List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, projectId);
+                                                settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
+                                                
 	    					trialLevelVariableList.add(settingDetail);
+	    					
+	    					if(userSelection != null){
+                                                    StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);                                             
+                                                    variable.setPSMRFromStandardVariable(standardVariable);                                         
+                                                }
 					}
 				}
 		    }
 			
+			List<List<ValueReference>> trialEnvList = createTrialEnvValueList(trialLevelVariableList, 1);
 			
 			userSelection.setStudyLevelConditions(studyLevelConditions);
 			userSelection.setPlotsLevelList(plotsLevelList);			
 			userSelection.setBaselineTraitsList(baselineTraitsList);
 			userSelection.setTrialLevelVariableList(trialLevelVariableList);
+			userSelection.setTrialEnvironmentValues(trialEnvList);
 		}
+	}
+	
+	private static List<List<ValueReference>> createTrialEnvValueList(List<SettingDetail> trialLevelVariableList, int trialInstances) {
+	    List<List<ValueReference>> trialEnvValueList = new ArrayList<List<ValueReference>>();
+	    for (int i=0; i<trialInstances; i++) {
+	        List<ValueReference> trialInstanceVariables = new ArrayList<ValueReference>();
+	        for (SettingDetail detail : trialLevelVariableList) {
+	            trialInstanceVariables.add(new ValueReference(detail.getVariable().getCvTermId(), ""));
+        	}
+	        trialEnvValueList.add(trialInstanceVariables);
+	    }
+	    return trialEnvValueList;
 	}
 	
 	/**

@@ -110,7 +110,7 @@ public class ManageNurseriesControllerTest extends AbstractJUnit4SpringContextTe
 		Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);
 		System.out.println(workbook);
 		
-		Dataset newDataset = SettingsUtil.convertWorkbookToXmlDataset(workbook);
+		Dataset newDataset = (Dataset)SettingsUtil.convertWorkbookToXmlDataset(workbook);
 		Assert.assertEquals(dataset.getConditions().get(0).getName(), newDataset.getConditions().get(0).getName());
 		Assert.assertEquals(dataset.getConditions().get(0).getDescription(), newDataset.getConditions().get(0).getDescription());
 		Assert.assertEquals(dataset.getConditions().get(0).getProperty(), newDataset.getConditions().get(0).getProperty());

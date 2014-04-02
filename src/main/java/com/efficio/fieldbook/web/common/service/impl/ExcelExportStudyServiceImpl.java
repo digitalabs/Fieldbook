@@ -9,7 +9,7 @@
  * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
  *
  *******************************************************************************/
-package com.efficio.fieldbook.web.nursery.service.impl;
+package com.efficio.fieldbook.web.common.service.impl;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -31,7 +33,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
-import org.generationcp.middleware.domain.dms.Enumeration;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -43,7 +45,10 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.efficio.fieldbook.web.nursery.service.ExcelExportStudyService;
+import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
+import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.FieldbookProperty;
+import com.efficio.fieldbook.web.util.ZipUtil;
 
 @Service
 public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
@@ -56,40 +61,69 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 			TermId.STUDY_TYPE.getId(), TermId.STUDY_UID.getId(), TermId.STUDY_STATUS.getId());
 	
 	@Override
-	public void export(Workbook workbook, String filename) {
+	public String export(Workbook workbook, String filename) {
 		FileOutputStream fos = null;
-
-		try {
-			HSSFWorkbook xlsBook = new HSSFWorkbook();
+		List<String> filenameList = new ArrayList<String>();
+		String outputFilename = null;
+		
+			Map<Long, List<MeasurementRow>> map = workbook.segregateByTrialInstances();
+			Set<Long> locationIds = map.keySet();
 			
-			writeDescriptionSheet(xlsBook, workbook);
-			writeObservationSheet(xlsBook, workbook);
-			
-			fos = new FileOutputStream(new File(filename));
-			xlsBook.write(fos);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (fos != null) {
+			int instanceNumber = 1;
+			for (Long locationId : locationIds) {
 				try {
-					fos.close();
+					List<MeasurementRow> observations = map.get(locationId);
+					MeasurementRow trialObservations = workbook.getTrialObservation(locationId);
+					
+					HSSFWorkbook xlsBook = new HSSFWorkbook();
+					
+					writeDescriptionSheet(xlsBook, workbook, trialObservations);
+					writeObservationSheet(xlsBook, workbook, observations);
+					
+					String filenamePath = FieldbookProperty.getPathProperty() + File.separator + filename;
+					if (locationIds.size() > 1) {
+						int fileExtensionIndex = filenamePath.lastIndexOf(".");
+						filenamePath = filenamePath.substring(0, fileExtensionIndex) +  "-" + instanceNumber + filenamePath.substring(fileExtensionIndex);
+					}
+					fos = new FileOutputStream(new File(filenamePath));
+					xlsBook.write(fos);
+					outputFilename = filenamePath;
+					filenameList.add(filenamePath);
+
 				} catch (Exception e) {
 					e.printStackTrace();
+				} finally {
+					if (fos != null) {
+						try {
+							fos.close();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+					instanceNumber++;
 				}
 			}
-		}
+
+			if (locationIds.size() > 1) {
+				outputFilename = FieldbookProperty.getPathProperty() 
+						+ File.separator 
+						+ filename.replaceAll(AppConstants.EXPORT_XLS_SUFFIX.getString(), "") 
+						+ AppConstants.ZIP_FILE_SUFFIX.getString();
+				ZipUtil.zipIt(outputFilename, filenameList);
+			}
+			
+		return outputFilename;
 	}
 	
 	
-	private void writeDescriptionSheet(HSSFWorkbook xlsBook, Workbook workbook) {
+	private void writeDescriptionSheet(HSSFWorkbook xlsBook, Workbook workbook, MeasurementRow trialObservation) {
 		Locale locale = LocaleContextHolder.getLocale();
 		HSSFSheet xlsSheet = xlsBook.createSheet(messageSource.getMessage("export.study.sheet.description", null, locale));
 		int currentRowNum = 0;
 		
 		currentRowNum = writeStudyDetails(currentRowNum, xlsBook, xlsSheet, workbook.getStudyDetails());
 		xlsSheet.createRow(currentRowNum++);
-		currentRowNum = writeConditions(currentRowNum, xlsBook, xlsSheet, workbook.getConditions());
+		currentRowNum = writeConditions(currentRowNum, xlsBook, xlsSheet, workbook.getConditions(), trialObservation);
 		xlsSheet.createRow(currentRowNum++);
 		currentRowNum = writeFactors(currentRowNum, xlsBook, xlsSheet, workbook.getFactors());
 		xlsSheet.createRow(currentRowNum++);
@@ -102,13 +136,13 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		}
 	}
 
-	private void writeObservationSheet(HSSFWorkbook xlsBook, Workbook workbook) {
+	private void writeObservationSheet(HSSFWorkbook xlsBook, Workbook workbook, List<MeasurementRow> observations) {
 		Locale locale = LocaleContextHolder.getLocale();
 		HSSFSheet xlsSheet = xlsBook.createSheet(messageSource.getMessage("export.study.sheet.observation", null, locale));
 		int currentRowNum = 0;
 		
 		writeObservationHeader(currentRowNum++, xlsBook, xlsSheet, workbook.getMeasurementDatasetVariables());
-		for (MeasurementRow dataRow : workbook.getObservations()) {
+		for (MeasurementRow dataRow : observations) {
 			writeObservationRow(currentRowNum++, xlsSheet, dataRow, xlsBook);
 		}
 	}
@@ -125,18 +159,29 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		return currentRowNum;
 	}
 	
-	private int writeConditions(int currentRowNum, HSSFWorkbook xlsBook, HSSFSheet xlsSheet, List<MeasurementVariable> conditions) {
+	private int writeConditions(int currentRowNum, HSSFWorkbook xlsBook, HSSFSheet xlsSheet, List<MeasurementVariable> conditions,
+			MeasurementRow trialObservation) {
+		
 		List<MeasurementVariable> filteredConditions = new ArrayList<MeasurementVariable>();
 		for (MeasurementVariable variable : conditions) {
 			if (!STUDY_DETAILS_IDS.contains(variable.getTermId())) {
 				filteredConditions.add(variable);
+				if (PhenotypicType.TRIAL_ENVIRONMENT.getLabelList().contains(variable.getLabel())) {
+					variable.setValue(trialObservation.getMeasurementDataValue(variable.getName()));
+				}
 			}
 		}
 		return writeSection(currentRowNum, xlsBook, xlsSheet, filteredConditions, "export.study.description.column.condition", 51, 153, 102);
 	}
 	
 	private int writeFactors(int currentRowNum, HSSFWorkbook xlsBook, HSSFSheet xlsSheet, List<MeasurementVariable> factors) {
-		return writeSection(currentRowNum, xlsBook, xlsSheet, factors, "export.study.description.column.factor", 51, 153, 102);
+		List<MeasurementVariable> filteredFactors = new ArrayList<MeasurementVariable>();
+		for (MeasurementVariable factor : factors) {
+			if (factor.getTermId() != TermId.TRIAL_INSTANCE_FACTOR.getId()) {
+				filteredFactors.add(factor);
+			}
+		}
+		return writeSection(currentRowNum, xlsBook, xlsSheet, filteredFactors, "export.study.description.column.factor", 51, 153, 102);
 	}
 	
 	private int writeConstants(int currentRowNum, HSSFWorkbook xlsBook, HSSFSheet xlsSheet, List<MeasurementVariable> constants) {
@@ -301,4 +346,5 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		}
 		return "";
 	}
+	
 }

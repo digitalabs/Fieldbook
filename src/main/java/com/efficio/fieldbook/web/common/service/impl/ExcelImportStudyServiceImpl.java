@@ -9,7 +9,7 @@
  * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
  *
  *******************************************************************************/
-package com.efficio.fieldbook.web.nursery.service.impl;
+package com.efficio.fieldbook.web.common.service.impl;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,7 +31,7 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.springframework.stereotype.Service;
 
-import com.efficio.fieldbook.web.nursery.service.ExcelImportStudyService;
+import com.efficio.fieldbook.web.common.service.ExcelImportStudyService;
 
 @Service
 public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {

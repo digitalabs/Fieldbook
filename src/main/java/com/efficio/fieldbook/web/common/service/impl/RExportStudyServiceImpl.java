@@ -9,7 +9,7 @@
  * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
  * 
  *******************************************************************************/
-package com.efficio.fieldbook.web.nursery.service.impl;
+package com.efficio.fieldbook.web.common.service.impl;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -21,18 +21,18 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.springframework.stereotype.Service;
 
 import com.csvreader.CsvWriter;
+import com.efficio.fieldbook.web.common.service.RExportStudyService;
 import com.efficio.fieldbook.web.nursery.bean.CSVOziel;
-import com.efficio.fieldbook.web.nursery.service.RExportStudyService;
 @Service
 public class RExportStudyServiceImpl implements RExportStudyService {
 
 	@Override
-	public void export(Workbook workbook, String outputFile) {
-		exportToR(workbook, outputFile, null);
+	public String export(Workbook workbook, String outputFile) {
+		return exportToR(workbook, outputFile, null);
 	}
 	
 	@Override
-	public void exportToR(Workbook workbook, String outputFile, Integer selectedTrait) {
+	public String exportToR(Workbook workbook, String outputFile, Integer selectedTrait) {
         boolean alreadyExists = new File(outputFile).exists();
         CSVOziel csv = new CSVOziel(workbook);
         CsvWriter csvOutput = null;
@@ -57,6 +57,7 @@ public class RExportStudyServiceImpl implements RExportStudyService {
         		csvOutput.close();
         	}
         }
+        return outputFile;
 	}
 
 	private String getLabel(List<MeasurementVariable> variables, Integer termId) {

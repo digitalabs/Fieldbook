@@ -604,6 +604,12 @@ public class ManageTrialSettingsController extends SettingsController{
             else {
             	form.getStudyLevelVariables().addAll(newDetails);
             }
+            if (userSelection.getStudyLevelConditions() == null) {
+            	userSelection.setStudyLevelConditions(newDetails);
+            }
+            else {
+            	userSelection.getStudyLevelConditions().addAll(newDetails);
+            }
         } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
             if (form.getPlotLevelVariables() == null) {
             	form.setPlotLevelVariables(newDetails);

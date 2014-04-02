@@ -576,14 +576,14 @@ public class ManageNurserySettingsController extends SettingsController{
             }
             else {
             	form.getStudyLevelVariables().addAll(newDetails);
-            }/*
-            if (userSelection.getNurseryLevelConditions() == null) {
-            	userSelection.setNurseryLevelConditions(newDetails);
+            }
+            if (userSelection.getStudyLevelConditions() == null) {
+            	userSelection.setStudyLevelConditions(newDetails);
             }
             else {
-            	userSelection.getNurseryLevelConditions().addAll(newDetails);
+            	userSelection.getStudyLevelConditions().addAll(newDetails);
             }
-            */
+            
         } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
             if (form.getPlotLevelVariables() == null) {
             	form.setPlotLevelVariables(newDetails);

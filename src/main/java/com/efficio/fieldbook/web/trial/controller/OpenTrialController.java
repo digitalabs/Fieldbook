@@ -1,8 +1,13 @@
 package com.efficio.fieldbook.web.trial.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Resource;
 
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
@@ -52,7 +57,21 @@ public class OpenTrialController extends
         if (workbook != null) {
         	trialSelection.setMeasurementRowList(workbook.getObservations());
             form.setMeasurementRowList(trialSelection.getMeasurementRowList());
-            form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());
+            MeasurementVariable trialFactor = null;
+            if (workbook.getTrialFactors() != null) {
+            	for (MeasurementVariable var : workbook.getTrialFactors()) {
+            		if (var.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
+            			trialFactor = var;
+            			break;
+            		}
+            	}
+            }
+            List<MeasurementVariable> variables = new ArrayList<MeasurementVariable>();
+            if (trialFactor != null) {
+            	variables.add(trialFactor);
+            }
+            variables.addAll(workbook.getMeasurementDatasetVariables());
+            form.setMeasurementVariables(variables);
             form.setStudyName(workbook.getStudyDetails().getStudyName());
             form.changePage(1);
             trialSelection.setCurrentPage(form.getCurrentPage());

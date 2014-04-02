@@ -86,7 +86,10 @@ public class CreateTrialForm {
     private int trialInstances;
     
     /** The trial environment values. */
-    private List<List<ValueReference>> trialEnvironmentValues; 
+    private List<List<ValueReference>> trialEnvironmentValues;
+    
+    /** The trial instance factor. */
+    private String trialInstanceFactor;
 
     /**
      * Gets the project id.
@@ -466,5 +469,23 @@ public class CreateTrialForm {
          */
         public void setTrialEnvironmentValues(List<List<ValueReference>> trialEnvironmentValues) {
             this.trialEnvironmentValues = trialEnvironmentValues;
+        }
+        
+        /**
+         * Gets the trial instance factor.
+         *
+         * @return the trial instance factor
+         */
+        public String getTrialInstanceFactor() {
+            return this.trialInstanceFactor;
+        }
+        
+        /**
+         * Sets the trial instance factor.
+         *
+         * @param trialInstanceFactor the new trial instance factor
+         */
+        public void setTrialInstanceFactor(String trialInstanceFactor) {
+            this.trialInstanceFactor = trialInstanceFactor;
         }
 }

@@ -11,9 +11,11 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.trial.controller;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpSession;
 
@@ -167,14 +169,106 @@ public class CreateTrialController extends SettingsController {
             form.setStudyLevelVariables(userSelection.getStudyLevelConditions());
             form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
             form.setPlotLevelVariables(userSelection.getPlotsLevelList());
-            form.setTrialLevelVariables(userSelection.getTrialLevelVariableList());           
-            form.setTrialEnvironmentValues(userSelection.getTrialEnvironmentValues());
+            
+            List<SettingDetail> trialLevelVariableList = addDefaultTrialVariables();
+            form.setTrialLevelVariables(trialLevelVariableList);
+            
+            List<List<ValueReference>> trialEnvList = createTrialEnvValueList(trialLevelVariableList, 1, true);
+            form.setTrialEnvironmentValues(trialEnvList);
+            
             form.setTrialInstances(1);
             form.setSelectedSettingId(templateSetting.getTemplateSettingId());
     	}
     	form.setLoadSettings("1");
     	setFormStaticData(form);
         return super.showAjaxPage(model, URL_SETTINGS );
+    }
+    
+    private List<List<ValueReference>> createTrialEnvValueList(List<SettingDetail> trialLevelVariableList, int trialInstances, boolean addDefault) {
+        List<List<ValueReference>> trialEnvValueList = new ArrayList<List<ValueReference>>();
+        for (int i=0; i<trialInstances; i++) {
+            List<ValueReference> trialInstanceVariables = new ArrayList<ValueReference>();
+            for (SettingDetail detail : trialLevelVariableList) {
+                if (detail.getVariable().getCvTermId() != null) {
+                    if (detail.getVariable().getCvTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
+                        trialInstanceVariables.add(new ValueReference(detail.getVariable().getCvTermId(), String.valueOf(i+1)));
+                    } else {
+                        trialInstanceVariables.add(new ValueReference(detail.getVariable().getCvTermId(), ""));
+                    }
+                } else {
+                    trialInstanceVariables.add(new ValueReference(0, ""));
+                }
+            }
+            trialEnvValueList.add(trialInstanceVariables);
+        }
+        userSelection.setTrialEnvironmentValues(trialEnvValueList);
+        return trialEnvValueList;
+    }
+    
+    private List<SettingDetail> addDefaultTrialVariables() {
+        List<SettingDetail> trialLevelVariableList = userSelection.getTrialLevelVariableList();
+        StringTokenizer token = new StringTokenizer(AppConstants.TRIAL_ENVIRONMENT_DEFAULT_VARIABLES.getString(), ",");
+
+        while (token.hasMoreTokens()) {
+            Integer dataTypeId = Integer.valueOf(TermId.CATEGORICAL_VARIABLE.getId());
+            
+            String variableName = token.nextToken();
+            
+            if (variableName.equals(AppConstants.BLOCK_PER_REPLICATE.getString())) {
+                dataTypeId = Integer.valueOf(TermId.NUMERIC_VARIABLE.getId());
+            }
+            
+            SettingVariable variable = new SettingVariable(variableName, variableName, "",
+                    "", "", "", "", dataTypeId, null, null);
+            SettingDetail settingDetail;
+            if (variableName.equals(AppConstants.BLOCK_PER_REPLICATE.getString())) {
+                settingDetail = new SettingDetail(variable, null, null, false);
+            } else {
+                List<ValueReference> possibleValues = getPossibleValuesOfDefaultVariable(variableName);
+                settingDetail = new SettingDetail(variable, possibleValues, null, false);
+                
+                settingDetail.setPossibleValuesToJson(possibleValues);
+                settingDetail.setPossibleValuesFavoriteToJson(null);
+            }
+            
+            trialLevelVariableList.add(settingDetail);
+        }
+
+        //set orderBy
+        StringTokenizer tokenOrder = new StringTokenizer(AppConstants.TRIAL_ENVIRONMENT_ORDER.getString(), ",");
+        int i=0;
+        int tokenSize = tokenOrder.countTokens();
+        while (tokenOrder.hasMoreTokens()) {
+            String variableName = tokenOrder.nextToken();
+            for (SettingDetail settingDetail : trialLevelVariableList) {
+                if (settingDetail.getVariable().getName().equals(variableName)) {
+                    settingDetail.setOrder((tokenSize-i)*-1);
+                }
+            }
+            i++;
+        }
+
+        Collections.sort(trialLevelVariableList, new  Comparator<SettingDetail>() {
+            @Override
+            public int compare(SettingDetail o1, SettingDetail o2) {
+                    return o1.getOrder() - o2.getOrder();
+            }
+        });
+        
+        return trialLevelVariableList;
+    }
+    
+    private List<ValueReference> getPossibleValuesOfDefaultVariable(String variableName) {
+        List<ValueReference> values = new ArrayList<ValueReference>();
+        variableName = variableName.toUpperCase().replace(" ", "_");
+        
+        StringTokenizer token = new StringTokenizer(AppConstants.getString(variableName + AppConstants.VALUES.getString()), ",");
+        
+        while (token.hasMoreTokens()) {
+            values.add(new ValueReference(0, token.nextToken()));
+        }
+        
+        return values;
     }
 
     /**
@@ -266,5 +360,6 @@ public class CreateTrialController extends SettingsController {
         form.setStudyNameTermId(AppConstants.STUDY_NAME_ID.getString());
         form.setStartDateId(AppConstants.START_DATE_ID.getString());
     	form.setEndDateId(AppConstants.END_DATE_ID.getString());
+    	form.setTrialInstanceFactor(AppConstants.TRIAL_INSTANCE_FACTOR.getString());
     }
 }

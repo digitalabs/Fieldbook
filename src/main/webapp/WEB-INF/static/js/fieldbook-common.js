@@ -926,22 +926,50 @@ $('#'+getJquerySafeId('methodIdFavorite')).select2({
 
 }
 
-function exportNursery(type){
-	
+function exportTrial(type){
+	$('.instanceNumber:first').click();	
+	$('.spinner-input').spinedit();
+	$('#exportTrialType').val(type);
+	if(type == 2){
+		$("#chooseInstance").detach().appendTo('#importRChooseInstance');
+		$('#importRModal').modal('show');
+	}
+	else{
+		$("#chooseInstance").detach().appendTo('#exportChooseInstance');
+		$('#trialModalSelection').modal('show');
+	}
+		
+	/*
 	if(type == 2){
 		$('#importRModal').modal('show');
 	}else{		
 		doExportContinue(type);
 	}
+	*/
+}
+
+function doExportTrial(){
+	//console.log();
+	var exportTrialType = $('#exportTrialType').val();
+	doExportContinue(exportTrialType, false);
+}
+
+function exportNursery(type){
+	
+	if(type == 2){
+		$('#importRModal').modal('show');
+	}else{		
+		doExportContinue(type, true);
+	}
 }
 
 function exportNurseryToR(type){
 	//console.log($('#selectedRTrait').val());
-	doExportContinue(type + "/" + $('#selectedRTrait').val());
+	doExportContinue(type + "/" + $('#selectedRTrait').val(), true);
 	$('#importRModal').modal('hide');
 }
 
-function doExportContinue(paramUrl){
+function doExportContinue(paramUrl, isNursery){
 
 	
 	var currentPage = $('.pagination .active a').html();
@@ -960,7 +988,26 @@ function doExportContinue(paramUrl){
            success: function(html) {
         	   var formName = "#exportStudyForm";
         	   var action = $(formName).attr('action');
-        	   $(formName).attr('action', action + $("#study-type").val() + "/" + paramUrl);
+        	   var newAction = '';
+        	   	if(isNursery)
+        	   		newAction = action + "export/" + paramUrl;
+        	   	else{ //meaning its trial
+        	   		var exportInstanceType = $('input:radio[name=exportInstanceType]:checked').val();
+        	   		var additionalParams = '';
+        	   		if(exportInstanceType == 1){
+        	   			additionalParams = '0/0';
+        	   		}else if(exportInstanceType == 2){
+        	   			additionalParams = $('#exportTrialInstanceNumber').val() + "/" + $('#exportTrialInstanceNumber').val();
+        	   		}else{
+        	   			additionalParams = $('#exportTrialInstanceStart').val() + "/" + $('#exportTrialInstanceEnd').val();
+        	   		}
+        	   		newAction = action + "exportTrial/" + paramUrl + "/" + additionalParams;
+        	   		
+        	   		//console.log(newAction);
+        	   	 
+        	   	}
+        	   
+        	   $(formName).attr('action', newAction);
         	   $(formName).submit();
         	   $(formName).attr('action', action);
         	   Spinner.toggle();

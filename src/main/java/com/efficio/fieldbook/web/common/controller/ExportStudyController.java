@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,9 +20,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.StudySelection;
+import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
 import com.efficio.fieldbook.web.common.service.FieldroidExportStudyService;
 import com.efficio.fieldbook.web.common.service.RExportStudyService;
+import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -55,18 +58,37 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	}
 
     @ResponseBody
-    @RequestMapping(value="/export/{studyType}/{exportType}/{selectedTraitTermId}", method = RequestMethod.GET)
-    public String exportRFileForNursery(@PathVariable String studyType, @PathVariable int exportType, @PathVariable int selectedTraitTermId, HttpServletResponse response) {
-    	boolean isTrial = studyType.equalsIgnoreCase("TRIAL");
-    	return doExport(exportType, selectedTraitTermId, response, isTrial);
+    @RequestMapping(value="/export/{exportType}/{selectedTraitTermId}", method = RequestMethod.GET)
+    public String exportRFileForNursery(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form,  @PathVariable int exportType, @PathVariable int selectedTraitTermId, HttpServletResponse response) {
+    	boolean isTrial = false;
+    	return doExport(exportType, selectedTraitTermId, response, isTrial,0,0);
     	
     }
     
     @ResponseBody
-    @RequestMapping(value="/export/{studyType}/{exportType}", method = RequestMethod.GET)
-    public String exportFile(@PathVariable String studyType, @PathVariable int exportType, HttpServletResponse response) {
-    	boolean isTrial = studyType.equalsIgnoreCase("TRIAL");
-        return doExport(exportType, 0, response, isTrial);
+    @RequestMapping(value="/export/{exportType}", method = RequestMethod.GET)
+    public String exportFile(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, @PathVariable int exportType, HttpServletResponse response) {
+    	boolean isTrial = false;
+        return doExport(exportType, 0, response, isTrial,0,0);
+    	
+    }
+    
+    @ResponseBody
+    @RequestMapping(value="/exportTrial/{exportType}/{selectedTraitTermId}/{instanceNumberStart}/{instanceNumberEnd}", method = RequestMethod.GET)
+    public String exportRFileForTrial(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, @PathVariable int exportType, 
+    		@PathVariable int selectedTraitTermId, @PathVariable int instanceNumberStart,@PathVariable int instanceNumberEnd, HttpServletResponse response) {
+    	boolean isTrial = true;
+    	
+    	return doExport(exportType, selectedTraitTermId, response, isTrial, instanceNumberStart, instanceNumberEnd);
+    	
+    }
+    
+    @ResponseBody
+    @RequestMapping(value="/exportTrial/{exportType}/{instanceNumberStart}/{instanceNumberEnd}", method = RequestMethod.GET)
+    public String exportFileTrial(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form,  
+    		@PathVariable int exportType,  @PathVariable int instanceNumberStart,@PathVariable int instanceNumberEnd, HttpServletResponse response) {
+    	boolean isTrial = true;
+        return doExport(exportType, 0, response, isTrial, instanceNumberStart, instanceNumberEnd);
     	
     }
    
@@ -79,7 +101,8 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
      * @param response the response
      * @return the string
      */
-    private String doExport(int exportType, int selectedTraitTermId, HttpServletResponse response, boolean isTrial){
+    private String doExport(int exportType, int selectedTraitTermId, 
+    		HttpServletResponse response, boolean isTrial, int start, int end){
     	StudySelection userSelection = getUserSelection(isTrial);
     	String filename = userSelection.getWorkbook().getStudyDetails().getStudyName();
     	String outputFilename = null;

@@ -128,6 +128,9 @@
                
               </div>
             </div>
+            <div class="row form-group" id="importRChooseInstance">
+            	<br />
+            </div>
           </div>																							
         
         <div class="modal-footer">
@@ -138,10 +141,60 @@
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
 
+
+	<div class="modal fade" id="trialModalSelection" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Choose Trial Instance</h4>
+          </div>
+          <div class="modal-body" id="exportChooseInstance">
+          <input type="hidden" id="exportTrialType"/>
+           <div id="chooseInstance">
+            <div class=''>                                                         
+              <div class="col-xs-12 col-lg-12">                
+	    			<label class="radio-inline">
+							  <input class="instanceNumber"  type="radio" value="1" th:field="*{exportInstanceType}"/> 
+							  <span >All Trial Instance</span>
+					</label>							               
+              </div>
+            </div>
+            <div class=''>                                                         
+              <div class="col-xs-12 col-lg-12">                
+	    			<label class="radio-inline">
+							  <input class="instanceNumber" type="radio" value="2" th:field="*{exportInstanceType}"/> 
+							  <span>Trial Instance #</span>
+<input type="text" th:field="*{exportTrialInstanceNumber}" class="spinner-input" />
+					</label>							               
+              </div>
+            </div>
+            <div class=''>                                                         
+              <div class="col-xs-12 col-lg-12">                
+	    			<label class="radio-inline">
+							  <input class="instanceNumber" type="radio" value="3" th:field="*{exportInstanceType}"/> 
+							  <span>From Trial Instance #</span>
+							  <input type="text" th:field="*{exportTrialInstanceStart}" class="spinner-input" />
+							  <span>to Trial Instance #</span>
+							  <input type="text" th:field="*{exportTrialInstanceEnd}" class="spinner-input" />
+					</label>							               
+              </div>
+              </div>
+            </div>
+          </div>																							
+        
+        <div class="modal-footer">
+          <button value="Cancel" aria-hidden="true" data-dismiss="modal" class="btn btn-default" type="button" th:text="#{common.form.cancel.text}">Cancel</button>
+          <button type="button" th:value="#{common.form.submit.text}" class="btn btn-primary" th:text="#{nursery.import.germplasm.submit}" onclick="javascript: doExportTrial();">Submit</button>			        	
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
 </form>
 
 
-<form id="exportStudyForm" role="form-horizontal" action="#" th:action="@{/ExportManager/export/}" method="GET">
+<form id="exportStudyForm" role="form-horizontal" action="#" th:action="@{/ExportManager/}" method="GET">
 </form>
 
 <form id="importStudyForm" role="form-horizontal" onsubmit="return do_validation()"  class="form-horizontal" action="#" 
@@ -190,6 +243,9 @@
 
 
 <script type="text/javascript" th:src="@{/static/js/bootstrap-paginator.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/bootstrap-spinedit.js}"></script>
+<link th:href="@{/static/css/bootstrap-spinedit.css}" rel="stylesheet"/>
+
 				<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
 	           

@@ -53,6 +53,16 @@ public class AddOrRemoveTraitsForm {
 	/** The study name. */
 	private String studyName;
 	
+	/** The export instance type. */
+	private String exportInstanceType;
+    
+	 /** The export trial instance start. */
+    private String exportTrialInstanceNumber;
+    /** The export trial instance start. */
+    private String exportTrialInstanceStart;
+    
+    /** The export trial instance end. */
+    private String exportTrialInstanceEnd;
 	
 	
 	/**
@@ -261,6 +271,68 @@ public class AddOrRemoveTraitsForm {
 	 */
 	public void setImportVal(int importVal) {
 		this.importVal = importVal;
+	}
+
+	/**
+	 * Gets the export instance type.
+	 *
+	 * @return the export instance type
+	 */
+	public String getExportInstanceType() {
+		return exportInstanceType;
+	}
+
+	/**
+	 * Sets the export instance type.
+	 *
+	 * @param exportInstanceType the new export instance type
+	 */
+	public void setExportInstanceType(String exportInstanceType) {
+		this.exportInstanceType = exportInstanceType;
+	}
+
+	/**
+	 * Gets the export trial instance start.
+	 *
+	 * @return the export trial instance start
+	 */
+	public String getExportTrialInstanceStart() {
+		return exportTrialInstanceStart;
+	}
+
+	/**
+	 * Sets the export trial instance start.
+	 *
+	 * @param exportTrialInstanceStart the new export trial instance start
+	 */
+	public void setExportTrialInstanceStart(String exportTrialInstanceStart) {
+		this.exportTrialInstanceStart = exportTrialInstanceStart;
+	}
+
+	/**
+	 * Gets the export trial instance end.
+	 *
+	 * @return the export trial instance end
+	 */
+	public String getExportTrialInstanceEnd() {
+		return exportTrialInstanceEnd;
+	}
+
+	/**
+	 * Sets the export trial instance end.
+	 *
+	 * @param exportTrialInstanceEnd the new export trial instance end
+	 */
+	public void setExportTrialInstanceEnd(String exportTrialInstanceEnd) {
+		this.exportTrialInstanceEnd = exportTrialInstanceEnd;
+	}
+
+	public String getExportTrialInstanceNumber() {
+		return exportTrialInstanceNumber;
+	}
+
+	public void setExportTrialInstanceNumber(String exportTrialInstanceNumber) {
+		this.exportTrialInstanceNumber = exportTrialInstanceNumber;
 	}
 
      

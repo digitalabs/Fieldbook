@@ -36,9 +36,8 @@ public class FieldroidExportStudyServiceImpl implements
 	public String export(Workbook workbook, String filename, int start, int end) {
         String outputFile = filename;
         boolean alreadyExists = new File(outputFile).exists();
-        List<Integer> selectedLocationIds = ExportImportStudyUtil.getLocationIdsFromTrialInstances(workbook, start, end);
         CsvWriter csvOutput = null;
-        List<MeasurementRow> observations = workbook.getObservations(); 
+        List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, start, end); 
         try {
         	CSVOziel csv = new CSVOziel(workbook, observations);
             csvOutput = new CsvWriter(new FileWriter(outputFile, false), ',');

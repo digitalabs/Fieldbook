@@ -16,6 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import com.csvreader.CsvWriter;
 import com.efficio.fieldbook.web.common.service.RExportStudyService;
 import com.efficio.fieldbook.web.nursery.bean.CSVOziel;
+import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 @Service
 public class RExportStudyServiceImpl implements RExportStudyService {
 
@@ -34,7 +36,8 @@ public class RExportStudyServiceImpl implements RExportStudyService {
 	@Override
 	public String exportToR(Workbook workbook, String outputFile, Integer selectedTrait, int start, int end) {
         boolean alreadyExists = new File(outputFile).exists();
-        CSVOziel csv = new CSVOziel(workbook, workbook.getObservations());
+        List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, start, end);
+        CSVOziel csv = new CSVOziel(workbook, observations);
         CsvWriter csvOutput = null;
         try {
             csvOutput = new CsvWriter(new FileWriter(outputFile, false), ',');

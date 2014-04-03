@@ -69,11 +69,19 @@ public class ExportImportStudyUtil {
 		return locationIds;
 	}
 	
-    public static List<MeasurementRow> getApplicableObservations(Workbook workbook, List<MeasurementRow> observations, int start, int end) {
-    	List<MeasurementRow> rows = new ArrayList<MeasurementRow>();
-    	List<Integer> locationIds = getLocationIdsFromTrialInstances(workbook, start, end);
-    	for (MeasurementRow row :observations) {
-    		
+    public static List<MeasurementRow> getApplicableObservations(Workbook workbook, int start, int end) {
+    	List<MeasurementRow> rows = null;
+    	if (start > 0 && end > 0) {
+	    	rows = new ArrayList<MeasurementRow>();
+	    	List<Integer> locationIds = getLocationIdsFromTrialInstances(workbook, start, end);
+	    	for (MeasurementRow row : workbook.getObservations()) {
+	    		if (locationIds.contains((int) row.getLocationId())) {
+	    			rows.add(row);
+	    		}
+	    	}
+    	} 
+    	else {
+    		rows = workbook.getObservations();
     	}
     	return rows;
     }

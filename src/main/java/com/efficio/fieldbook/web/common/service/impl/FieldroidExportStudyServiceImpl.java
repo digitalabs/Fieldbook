@@ -9,18 +9,21 @@
  * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
  * 
  *******************************************************************************/
-package com.efficio.fieldbook.web.nursery.service.impl;
+package com.efficio.fieldbook.web.common.service.impl;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.springframework.stereotype.Service;
 
 import com.csvreader.CsvWriter;
+import com.efficio.fieldbook.web.common.service.FieldroidExportStudyService;
 import com.efficio.fieldbook.web.nursery.bean.CSVOziel;
-import com.efficio.fieldbook.web.nursery.service.FieldroidExportStudyService;
+import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 
 @Service
 public class FieldroidExportStudyServiceImpl implements
@@ -30,12 +33,14 @@ public class FieldroidExportStudyServiceImpl implements
 	 * @see com.efficio.fieldbook.web.nursery.service.ExportStudyService#export(org.generationcp.middleware.domain.etl.Workbook, java.lang.String)
 	 */
 	@Override
-	public void export(Workbook workbook, String filename) {
+	public String export(Workbook workbook, String filename, int start, int end) {
         String outputFile = filename;
         boolean alreadyExists = new File(outputFile).exists();
+        List<Integer> selectedLocationIds = ExportImportStudyUtil.getLocationIdsFromTrialInstances(workbook, start, end);
         CsvWriter csvOutput = null;
+        List<MeasurementRow> observations = workbook.getObservations(); 
         try {
-        	CSVOziel csv = new CSVOziel(workbook);
+        	CSVOziel csv = new CSVOziel(workbook, observations);
             csvOutput = new CsvWriter(new FileWriter(outputFile, false), ',');
             csvOutput.write("Trial");
             csvOutput.write("Rep");
@@ -63,6 +68,8 @@ public class FieldroidExportStudyServiceImpl implements
         		csvOutput.close();
         	}
         }
+        
+        return outputFile;
 	}
 
 }

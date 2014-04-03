@@ -19,9 +19,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.pojos.Method;
-import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +27,6 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSourceList;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.service.OtherCropsConventionService;
-import com.efficio.fieldbook.web.util.AppConstants;
 
 /**
  * 
@@ -50,7 +47,7 @@ implements OtherCropsConventionService {
         String newGermplasmName;
         Integer breedingMethodId = rows.getSelectedMethodId();
         int index = 1;
-        Map<String, Method> breedingMethodMap = new HashMap();
+        Map<String, Method> breedingMethodMap = new HashMap<String, Method>();
         List<Method> methodList = fieldbookMiddlewareService.getAllBreedingMethods();
         for(Method method: methodList){
         	breedingMethodMap.put(method.getMid().toString(), method);
@@ -76,30 +73,4 @@ implements OtherCropsConventionService {
         return list;
     }
 
-    @Override
-    protected void assignNames(ImportedGermplasm germplasm, AdvancingSource source) {
-        List<Name> names = new ArrayList<Name>();
-        
-        Name name = new Name();
-        name.setGermplasmId(Integer.valueOf(source.getGermplasm().getGid()));
-        if (source.getGermplasm().getBreedingMethodId().equals(
-                AppConstants.METHOD_UNKNOWN_DERIVATIVE_METHOD_SF.getInt())) {
-            name.setTypeId(GermplasmNameType.DERIVATIVE_NAME.getUserDefinedFieldID());
-        }
-        else {
-            if (source.getGermplasm().getBreedingMethodId().equals(
-                    AppConstants.METHOD_UNKNOWN_GENERATIVE_METHOD_SF.getInt())
-                && source.getGermplasm().getDesig().contains(AppConstants.NAME_SEPARATOR.getString())) {
-                name.setTypeId(GermplasmNameType.CROSS_NAME.getUserDefinedFieldID());
-            }
-            else {
-                name.setTypeId(GermplasmNameType.UNNAMED_CROSS.getUserDefinedFieldID());
-            }
-        }
-        name.setNval(germplasm.getDesig());
-        name.setNstat(1);
-        names.add(name);
-        
-        germplasm.setNames(names);
-    }
 }

@@ -125,6 +125,8 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		  	</div>
 		  	
 		    <div class="col-xs-4 col-md-4">
+		    
+		    
 		   <!-- 
 		       <select class="form-control" th:field="*{userFieldmap.fieldLocationId}">
 		       		<option value="0">Select</option>
@@ -158,7 +160,11 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		  		&nbsp;<label class="control-label" th:text="#{fieldmap.trial.enter.field.name}">Enter Field Name:</label><span class="required">*</span>
 		  	</div>
 		    <div class="col-xs-4 col-md-4">
-		      <input type="text" class="form-control"  th:field="*{userFieldmap.fieldName}" placeholder="Field Name"/>
+		      <!-- <input type="text" class="form-control"  th:field="*{userFieldmap.fieldName}" placeholder="Field Name"/> -->
+		      <input type="hidden" th:field="*{userFieldmap.fieldId}" class="form-control select2" placeholder=""/>
+		    </div>
+		    <div class="col-xs-2 col-md-2 add_top_padding">
+		      <a href="javascript: showAddFieldPopup()">Add Fields</a>
 		    </div>
 		  </div>
 		  <div class="form-group col-xs-12 col-md-12">
@@ -166,16 +172,21 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 		  		&nbsp;<label class="control-label" th:text="#{fieldmap.trial.enter.block.name}">Enter Block Name:</label><span class="required">*</span>
 		  	</div>
 		    <div class="col-xs-4 col-md-4">
-		      <input type="text" class="form-control" th:field="*{userFieldmap.blockName}" placeholder="Block Name"/>
+		      <!-- <input type="text" class="form-control" th:field="*{userFieldmap.blockName}" placeholder="Block Name"/> -->
+		      <input type="hidden" th:field="*{userFieldmap.blockId}" class="form-control select2" placeholder=""/>
 		    </div>
+		    <div class="col-xs-2 col-md-2 add_top_padding">
+		      <a href="javascript: showAddBlockPopup()">Add Blocks</a>
+		    </div>
+		    
 		  </div>						
 	</div>
 	
-	<div class="form-group col-xs-12  col-md-12">
+	<div class="form-group col-xs-12  col-md-12 block-details" style="display:none">
 	<br />
 		&nbsp;<strong class="sub-heading col-xs-12 col-md-12" th:text="#{fieldmap.trial.row.and.range.and.plot.details} + ':'">ROW, RANGE AND PLOT DETAILS:</strong>
 	</div>
-	<div class="form-group col-xs-12  col-md-12">			
+	<div class="form-group col-xs-12  col-md-12 block-details" style="display:none">			
 		  
 		  <div class="form-group col-xs-6 col-md-6">
 		  
@@ -228,15 +239,23 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 	    </div>
 	  </div>
 	  <input type="hidden" th:field="*{projectId}"/>
+	  <input type="hidden" th:field="*{numberOfRowsPerPlot}"/>
+	  <input type="hidden" th:field="*{userFieldmap.new}"/>
+	  <input type="hidden" th:field="*{userFieldmap.blockName}"/>
+	  <input type="hidden" th:field="*{userFieldmap.fieldName}"/> 
 	  </form>
 	</div></div>
 </div>
 <div class="row">
 	<div id="manage-location" th:include="/Common/manageLocationsModal"></div>
 </div>
+<div class="row">
+	<div id="add-fields" th:include="/Fieldmap/addFieldsModal"></div>
+</div>
 
-
-
+<div class="row">
+	<div id="add-blocks" th:include="/Fieldmap/addBlocksModal"></div>
+</div>
 
 	
 	
@@ -273,8 +292,24 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
     
     var noOfRowsLimitError = /*[[#{fieldmap.no.of.blocks.exceeds.limit}]]*/;
     
+
+    var parentLocationRequired = /*[[#{fieldmap.add.field.parent.location.required}]]*/;
+   	var fieldNameRequired = /*[[#{fieldmap.add.field.name.required}]]*/;
+   	
+    var parentFieldRequired = /*[[#{fieldmap.add.block.parent.field.required}]]*/;
+   	var blockNameRequired = /*[[#{fieldmap.add.block.name.required}]]*/;
+   	
+   	var fieldAddedSuccessfully = /*[[#{fieldmap.field.added.successfully}]]*/;
+   	var blockAddedSuccessfully = /*[[#{fieldmap.block.added.successfully}]]*/;
+   	
+	var fieldNameDuplicateError = /*[[#{fieldmap.field.name.duplicate.error}]]*/;
+   	var blockNameDuplicateError = /*[[#{fieldmap.block.name.duplicate.error}]]*/;
+   	
+   	
     var programLocationUrl = '';
     var locationIframeOpened = false;
+    
+    var isNewBlock = false;
     
     if (trial) {
     	msgBlockSizeError = /*[[#{fieldmap.plots.exceed.blocks.trial}]]*/;
@@ -297,8 +332,15 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 										   
 		initializeLocationSelect2(locationSuggestions, locationSuggestions_obj);
 		initializeLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj);
+		
+		initializeFieldSelect2({}, [], true);
+		initializeBlockSelect2({}, [], true);
+		
+		showBlockDetails(true, null);
+		
 		$('#s2id_fieldLocationIdFavorite').hide();
 		$('#s2id_fieldLocationIdAll').show();
+		$('#showFavoriteLocation').removeAttr("checked");
 		$('#showFavoriteLocation').on('change', function(){
 			var isChecked = $('#showFavoriteLocation').is(':checked');
 			//if show favorite location is checked, hide all field locations, else, show only favorite locations
@@ -324,10 +366,11 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 				}
 				
 			}
+			loadFieldsDropdown($('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val());
 		})
 		var numRowPerPlot = $('#'+getJquerySafeId("userFieldmap.numberOfRowsPerPlot")).val();
 		$('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).val(defaultRowsPerPlot);
-		if($('#'+getJquerySafeId("userFieldmap.fieldName")).val() != ''){
+		if($('#'+getJquerySafeId("userFieldmap.fieldId")).val() != ''){
 			//we preset the fieldlocation id
 			var isChecked = $('#showFavoriteLocation').is(':checked');
 			var locId = $('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val();
@@ -350,6 +393,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 				}
 				
 			}else{
+				
 				$('#s2id_fieldLocationIdFavorite').hide();
 				$('#s2id_fieldLocationIdAll').show();
 				for(var index in locationSuggestions_obj) {
@@ -364,9 +408,31 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 				
 			}
 		}
-				 
+				
+		$('#'+getJquerySafeId('fieldLocationIdAll')).val('');
+		$('#'+getJquerySafeId('fieldLocationIdFavorite')).val('');
+		if($('#'+getJquerySafeId("userFieldmap.fieldId")).val() != '')
+			loadFieldsDropdown($('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val());
+		
+		
+		$('#addFieldsModal').on('hidden.bs.modal', function (e) {
+			  //console.log('do load now');
+			  if($('#'+getJquerySafeId('userFieldmap.fieldLocationId')).val() != '' && $('#'+getJquerySafeId('userFieldmap.fieldLocationId')).val() == $('#parentLocationId').val()){
+				  loadFieldsDropdown($('#parentLocationId').val(), $('#'+getJquerySafeId('userFieldmap.fieldId')).val());  
+			  }
+			  	
+			});
+		$('#addBlocksModal').on('hidden.bs.modal', function (e) {
+			  //console.log('do load now');
+			  if($('#'+getJquerySafeId('userFieldmap.fieldId')).val() != '' && $('#'+getJquerySafeId('userFieldmap.fieldId')).val() == $('#parentFieldId').val()){
+				  loadBlockDropdown($('#parentFieldId').val(), $('#'+getJquerySafeId('userFieldmap.blockId')).val());  
+			  }
+			  	
+			})
+
 	});
   	
+    
   
       //]]>
     </script>

@@ -3,7 +3,7 @@
 	
 	<thead>
 		<tr>
-			<td class="header-row-main" >Rows</td>
+			<td class="header-row-main" style="width: 70px" >Rows</td>
 			<td class="header-row-data" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock)}">
 				<p th:text="${j}"></p>				
 			</td>
@@ -64,8 +64,9 @@
 			<td class="sub-header-row"><p th:text="'Range ' + ${i}"></p></td>
 			<td class="plot" th:id="${j-1} + '_' + ${i-1}" th:colspan="${#object.userFieldmap.numberOfRowsPerPlot}" th:each="j : ${#numbers.sequence(1, #object.userFieldmap.numberOfRowsInBlock / #object.userFieldmap.numberOfRowsPerPlot)}">
 				<span class="plotLabel" th:if="${not #arrays.isEmpty(#object.userFieldmap.fieldmap) and j-1 &lt; #arrays.length(#object.userFieldmap.fieldmap) and i-1 &lt; #arrays.length(#object.userFieldmap.fieldmap[__${j-1}__])}">
-					<p th:if="${#object.userFieldmap.fieldmap[__${j-1}__][__${i-1}__].plotDeleted == false}" th:utext="${#object.userFieldmap.fieldmap[__${j-1}__][__${i-1}__].displayString}"></p>
-					<p th:if="${#object.userFieldmap.fieldmap[__${j-1}__][__${i-1}__].plotDeleted == true}"><label class='alert alert-danger'>X</label></p>
+					<p th:if="${#object.userFieldmap.fieldmap[__${j-1}__][__${i-1}__].plotDeleted == false and #object.userFieldmap.fieldmap[__${j-1}__][__${i-1}__].savedAlready == false}" class="new-plot" th:utext="${#object.userFieldmap.fieldmap[__${j-1}__][__${i-1}__].displayString}"></p>
+					<p th:if="${#object.userFieldmap.fieldmap[__${j-1}__][__${i-1}__].plotDeleted == false and #object.userFieldmap.fieldmap[__${j-1}__][__${i-1}__].savedAlready == true}" th:utext="${#object.userFieldmap.fieldmap[__${j-1}__][__${i-1}__].displayString}"></p>
+					<p th:if="${#object.userFieldmap.fieldmap[__${j-1}__][__${i-1}__].plotDeleted == true}" class="deleted-p"><label class='alert alert-danger'>X</label></p>
 				</span> 
 			</td>
 		</tr>
@@ -137,9 +138,23 @@
 	//<![CDATA[
 	    
 	  	$(document).ready(function() {
+	  		
+	  		
+	  		$('.deleted-p').each(function(){
+	  			$(this).parent().parent().addClass('deleted')
+	  		})
+	  		
 	  		if ($("#stepValue").val() == '2') {
 	  			$(".machineDirectionRow").hide();
-	  			$(".plotLabel").hide();
+	  			$(".new-plot").hide();	  			
+	  			$('.new-plot').each(function(){
+	  				
+	  				if($(this).parent().parent().hasClass('planted')){
+	  					console.log('clean');
+	  					$(this).parent().parent().removeClass('planted');
+	  				}
+	  					
+	  			})
 	  		}
 	  		else {
 	  			$(".machineDirectionRow").show();

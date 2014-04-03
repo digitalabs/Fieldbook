@@ -13,7 +13,7 @@ package com.efficio.fieldbook.web.nursery.form;
 
 import java.util.List;
 
-import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
 
 
 // TODO: Auto-generated Javadoc
@@ -29,7 +29,7 @@ public class CreateNurseryForm {
 	private int selectedSettingId;
 
 	/** The nursery level variables. */
-	private List<SettingDetail> nurseryLevelVariables;
+	private List<SettingDetail> studyLevelVariables;
 	
 	/** The plot level variables. */
 	private List<SettingDetail> plotLevelVariables;
@@ -68,6 +68,9 @@ public class CreateNurseryForm {
     private String loadSettings;
     
     private String studyNameTermId;
+    
+    private String startDateId;
+    private String endDateId;
 
     /**
      * Gets the project id.
@@ -105,22 +108,14 @@ public class CreateNurseryForm {
 		this.selectedSettingId = selectedSettingId;
 	}
 
-	/**
-	 * Gets the nursery level variables.
-	 *
-	 * @return the nurseryLevelVariables
-	 */
-	public List<SettingDetail> getNurseryLevelVariables() {
-		return nurseryLevelVariables;
+	
+
+	public List<SettingDetail> getStudyLevelVariables() {
+		return studyLevelVariables;
 	}
 
-	/**
-	 * Sets the nursery level variables.
-	 *
-	 * @param nurseryLevelVariables the nurseryLevelVariables to set
-	 */
-	public void setNurseryLevelVariables(List<SettingDetail> nurseryLevelVariables) {
-		this.nurseryLevelVariables = nurseryLevelVariables;
+	public void setStudyLevelVariables(List<SettingDetail> studyLevelVariables) {
+		this.studyLevelVariables = studyLevelVariables;
 	}
 
 	/**
@@ -351,6 +346,22 @@ public class CreateNurseryForm {
 	 */
 	public void setStudyNameTermId(String studyNameTermId) {
 		this.studyNameTermId = studyNameTermId;
+	}
+
+	public String getStartDateId() {
+		return startDateId;
+	}
+
+	public void setStartDateId(String startDateId) {
+		this.startDateId = startDateId;
+	}
+
+	public String getEndDateId() {
+		return endDateId;
+	}
+
+	public void setEndDateId(String endDateId) {
+		this.endDateId = endDateId;
 	}
 
 	

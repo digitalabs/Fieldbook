@@ -11,9 +11,13 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.workbench.Tool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,7 +84,7 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
      *
      * @param model the new up model info
      */
-    private void setupModelInfo(Model model){
+    protected void setupModelInfo(Model model){
         
         model.addAttribute(GIT_INFO_ATTRIBUTE, gitRepositoryState);
         model.addAttribute(EXTERNAL_INFO_ATTRIBUTE, externalToolInfo);
@@ -137,6 +141,16 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
 		}
     	return tool;
     }
+    public Tool getTrialTool(){
+    	Tool tool = null;
+		try {
+			tool = workbenchService.getToolWithName(
+			        AppConstants.TOOL_NAME_TRIAL_MANAGER_WEB.getString());
+		} catch (MiddlewareQueryException e) {
+		    LOG.error(e.getMessage(), e);
+		}
+    	return tool;
+    }
     
     /**
      * Base functionality for displaying the page.
@@ -187,5 +201,23 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+    }
+    
+    /**
+     * Convert favorite location to json.
+     *
+     * @param locations the locations
+     * @return the string
+     */
+    protected String convertObjectToJson(Object objectList) {
+        if (objectList!= null) {
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                return mapper.writeValueAsString(objectList);
+            } catch(Exception e) {
+                LOG.error(e.getMessage(), e);
+            }
+        }
+        return "[]";
     }
 }

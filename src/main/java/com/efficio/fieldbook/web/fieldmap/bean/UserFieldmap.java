@@ -26,6 +26,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.util.AppConstants;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class UserFieldmap.
  *
@@ -62,6 +63,12 @@ public class UserFieldmap  implements Serializable {
     
     /** The block name. */
     private String blockName;
+
+    /** The field id. */
+    private Integer fieldId;
+    
+    /** The block id. */
+    private Integer blockId;
     
     /** The number of rows in block. */
     private int numberOfRowsInBlock;
@@ -108,6 +115,8 @@ public class UserFieldmap  implements Serializable {
     /** The selected field maps. */
     private List<FieldMapInfo> selectedFieldMaps;
     
+    private List<FieldMapInfo> selectedFieldMapsToBeAdded;
+    
     /** The order. */
     private String order;
 
@@ -116,11 +125,35 @@ public class UserFieldmap  implements Serializable {
     
     /** The selected fieldmap list. */
     private SelectedFieldmapList selectedFieldmapList;
+    private SelectedFieldmapList selectedFieldmapListToBeAdded;
     
     /** The is generated. */
     private boolean isGenerated;
+    /** The deleted plot coordinates in (row, range) format.  */
+    private List<String> deletedPlots;
 
+    /** The is new. */
+    private boolean isNew;
+    
     /**
+     * Checks if is new.
+     *
+     * @return true, if is new
+     */
+    public boolean isNew() {
+		return isNew;
+	}
+
+	/**
+	 * Sets the new.
+	 *
+	 * @param isNew the new new
+	 */
+	public void setNew(boolean isNew) {
+		this.isNew = isNew;
+	}
+
+	/**
      * Instantiates a new user fieldmap.
      */
     public UserFieldmap(){
@@ -228,6 +261,45 @@ public class UserFieldmap  implements Serializable {
                     }
                 }
             }
+        }
+        return allLabels;
+    }
+    
+    public List<FieldMapLabel> getAllSelectedFieldMapLabelsToBeAdded(boolean isSorted) {
+        List<FieldMapLabel> allLabels = new ArrayList<FieldMapLabel>();
+        
+        if (isSorted) {
+            if (getSelectedFieldmapListToBeAdded() != null && !getSelectedFieldmapListToBeAdded().isEmpty()) {
+                for (SelectedFieldmapRow row : getSelectedFieldmapListToBeAdded().getRows()) {
+                    FieldMapTrialInstanceInfo trial = 
+                            getSelectedTrialInstanceByDatasetIdAndGeolocationId(row.getDatasetId(), 
+                                    row.getGeolocationId());
+                    allLabels.addAll(trial.getFieldMapLabels());
+                }
+            }
+        }
+        else {
+            if (getSelectedFieldmapListToBeAdded() != null && !getSelectedFieldmapListToBeAdded().isEmpty()) {
+                for (FieldMapInfo info : getSelectedFieldMapsToBeAdded()) {
+                    if (info.getDatasets() != null && !info.getDatasets().isEmpty()) {
+                        for (FieldMapDatasetInfo dataset : info.getDatasets()) {
+                            if (dataset.getTrialInstances() != null) {
+                                for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
+                                    if (trial.getFieldMapLabels() != null 
+                                            && !trial.getFieldMapLabels().isEmpty()) {
+                                        allLabels.addAll(trial.getFieldMapLabels());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        for(FieldMapLabel fieldMapLabel :allLabels){
+        	fieldMapLabel.setColumn(null);
+        	fieldMapLabel.setRange(null);
         }
         return allLabels;
     }
@@ -536,6 +608,30 @@ public class UserFieldmap  implements Serializable {
         return null;
     }
     
+    public FieldMapTrialInstanceInfo getAnySelectedTrialInstance() {
+        if (getSelectedFieldMaps() != null) {
+        	FieldMapInfo info = getSelectedFieldMaps().get(getSelectedFieldMaps().size()-1);
+            //for (FieldMapInfo info : getSelectedFieldMaps()) {
+                if (info.getDatasets() != null) {
+                	FieldMapDatasetInfo dataset = info.getDatasets().get(info.getDatasets().size()-1);
+                    //for (FieldMapDatasetInfo dataset : info.getDatasets()) {
+                        if (dataset.getTrialInstances() != null) {
+                        	
+                            for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
+                            	if (trial.getBlockId() != null) {
+                            		return trial;
+                            	}
+                            }
+                            
+                        	//return dataset.getTrialInstances().get(dataset.getTrialInstances().size()-1);
+                        }
+                    //}
+                }
+            //}
+        }
+        return null;
+    }
+
     /**
      * Sets the number of rows in block.
      *
@@ -814,8 +910,10 @@ public class UserFieldmap  implements Serializable {
      */
     public long getTotalNumberOfSelectedPlots() {
         long total = 0;
-        
-        for (FieldMapInfo info : getSelectedFieldMaps()) {
+        List<FieldMapInfo> fieldMapTemp = getSelectedFieldMapsToBeAdded();
+        if(fieldMapTemp == null)
+        	fieldMapTemp = getSelectedFieldMaps();
+        for (FieldMapInfo info : fieldMapTemp) {
             for (FieldMapDatasetInfo dataset : info.getDatasets()) {
                 for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
                     if (isTrial()) {
@@ -848,4 +946,76 @@ public class UserFieldmap  implements Serializable {
         this.selectedFieldmapList = selectedFieldmapList;
     }
 
+	/**
+	 * Gets the field id.
+	 *
+	 * @return the field id
+	 */
+	public Integer getFieldId() {
+		return fieldId;
+	}
+
+	/**
+	 * Sets the field id.
+	 *
+	 * @param fieldId the new field id
+	 */
+	public void setFieldId(Integer fieldId) {
+		this.fieldId = fieldId;
+	}
+
+	/**
+	 * Gets the block id.
+	 *
+	 * @return the block id
+	 */
+	public Integer getBlockId() {
+		return blockId;
+	}
+
+	/**
+	 * Sets the block id.
+	 *
+	 * @param blockId the new block id
+	 */
+	public void setBlockId(Integer blockId) {
+		this.blockId = blockId;
+	}
+
+	/**
+	 * Gets the deleted plots.
+	 *
+	 * @return the deletedPlots
+	 */
+	public List<String> getDeletedPlots() {
+		return deletedPlots;
+	}
+
+	/**
+	 * Sets the deleted plots.
+	 *
+	 * @param deletedPlots the deletedPlots to set
+	 */
+	public void setDeletedPlots(List<String> deletedPlots) {
+		this.deletedPlots = deletedPlots;
+	}
+
+	public List<FieldMapInfo> getSelectedFieldMapsToBeAdded() {
+		return selectedFieldMapsToBeAdded;
+	}
+
+	public void setSelectedFieldMapsToBeAdded(
+			List<FieldMapInfo> selectedFieldMapsToBeAdded) {
+		this.selectedFieldMapsToBeAdded = selectedFieldMapsToBeAdded;
+	}
+
+	public SelectedFieldmapList getSelectedFieldmapListToBeAdded() {
+		return selectedFieldmapListToBeAdded;
+	}
+
+	public void setSelectedFieldmapListToBeAdded(
+			SelectedFieldmapList selectedFieldmapListToBeAdded) {
+		this.selectedFieldmapListToBeAdded = selectedFieldmapListToBeAdded;
+	}
+    
 }

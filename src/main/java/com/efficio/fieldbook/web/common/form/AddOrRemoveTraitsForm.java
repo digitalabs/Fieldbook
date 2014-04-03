@@ -9,7 +9,7 @@
  * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
  * 
  *******************************************************************************/
-package com.efficio.fieldbook.web.nursery.form;
+package com.efficio.fieldbook.web.common.form;
 
 import java.util.List;
 
@@ -50,6 +50,42 @@ public class AddOrRemoveTraitsForm {
 	/** The import val. */
 	private int importVal;
 	
+	/** The study name. */
+	private String studyName;
+	
+	/** The export instance type. */
+	private String exportInstanceType;
+    
+	 /** The export trial instance start. */
+    private String exportTrialInstanceNumber;
+    /** The export trial instance start. */
+    private String exportTrialInstanceStart;
+    
+    /** The export trial instance end. */
+    private String exportTrialInstanceEnd;
+    
+    /** The number of instances. */
+    private int numberOfInstances;
+	
+	
+	/**
+	 * Gets the study name.
+	 *
+	 * @return the study name
+	 */
+	public String getStudyName() {
+		return studyName;
+	}
+
+	/**
+	 * Sets the study name.
+	 *
+	 * @param studyName the new study name
+	 */
+	public void setStudyName(String studyName) {
+		this.studyName = studyName;
+	}
+
 	/**
 	 * Gets the measurement row list.
 	 *
@@ -240,7 +276,93 @@ public class AddOrRemoveTraitsForm {
 		this.importVal = importVal;
 	}
 
-     
-	
-	
+	/**
+	 * Gets the export instance type.
+	 *
+	 * @return the export instance type
+	 */
+	public String getExportInstanceType() {
+		return exportInstanceType;
+	}
+
+	/**
+	 * Sets the export instance type.
+	 *
+	 * @param exportInstanceType the new export instance type
+	 */
+	public void setExportInstanceType(String exportInstanceType) {
+		this.exportInstanceType = exportInstanceType;
+	}
+
+	/**
+	 * Gets the export trial instance start.
+	 *
+	 * @return the export trial instance start
+	 */
+	public String getExportTrialInstanceStart() {
+		return exportTrialInstanceStart;
+	}
+
+	/**
+	 * Sets the export trial instance start.
+	 *
+	 * @param exportTrialInstanceStart the new export trial instance start
+	 */
+	public void setExportTrialInstanceStart(String exportTrialInstanceStart) {
+		this.exportTrialInstanceStart = exportTrialInstanceStart;
+	}
+
+	/**
+	 * Gets the export trial instance end.
+	 *
+	 * @return the export trial instance end
+	 */
+	public String getExportTrialInstanceEnd() {
+		return exportTrialInstanceEnd;
+	}
+
+	/**
+	 * Sets the export trial instance end.
+	 *
+	 * @param exportTrialInstanceEnd the new export trial instance end
+	 */
+	public void setExportTrialInstanceEnd(String exportTrialInstanceEnd) {
+		this.exportTrialInstanceEnd = exportTrialInstanceEnd;
+	}
+
+	/**
+	 * Gets the export trial instance number.
+	 *
+	 * @return the export trial instance number
+	 */
+	public String getExportTrialInstanceNumber() {
+		return exportTrialInstanceNumber;
+	}
+
+	/**
+	 * Sets the export trial instance number.
+	 *
+	 * @param exportTrialInstanceNumber the new export trial instance number
+	 */
+	public void setExportTrialInstanceNumber(String exportTrialInstanceNumber) {
+		this.exportTrialInstanceNumber = exportTrialInstanceNumber;
+	}
+
+	/**
+	 * Gets the number of instances.
+	 *
+	 * @return the number of instances
+	 */
+	public int getNumberOfInstances() {
+		return numberOfInstances;
+	}
+
+	/**
+	 * Sets the number of instances.
+	 *
+	 * @param numberOfInstances the new number of instances
+	 */
+	public void setNumberOfInstances(int numberOfInstances) {
+		this.numberOfInstances = numberOfInstances;
+	} 		
 }

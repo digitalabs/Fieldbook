@@ -9,7 +9,7 @@
  * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
  * 
  *******************************************************************************/
-package com.efficio.fieldbook.web.nursery.service;
+package com.efficio.fieldbook.web.common.service;
 
 public interface FieldroidExportStudyService extends ExportStudyService {
 

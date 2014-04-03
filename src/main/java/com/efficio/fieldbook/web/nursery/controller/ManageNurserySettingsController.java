@@ -12,24 +12,18 @@
 package com.efficio.fieldbook.web.nursery.controller;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.generationcp.middleware.domain.dms.PhenotypicType;
-import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
-import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
@@ -45,8 +39,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
-import com.efficio.fieldbook.web.nursery.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.form.ManageSettingsForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
@@ -83,6 +77,9 @@ public class ManageNurserySettingsController extends SettingsController{
     	form.setBreedingMethodUrl(AppConstants.BREEDING_METHOD_URL.getString());
     	form.setLocationUrl(AppConstants.LOCATION_URL.getString());
     	form.setProjectId(this.getCurrentProjectId());
+    	form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
+    	form.setStartDateId(AppConstants.START_DATE_ID.getString());
+    	form.setEndDateId(AppConstants.END_DATE_ID.getString());
     }
     
     /**
@@ -129,7 +126,7 @@ public class ManageNurserySettingsController extends SettingsController{
         	TemplateSetting templateSetting = templateSettingsList.get(0); //always 1
         	Dataset dataset = SettingsUtil.parseXmlToDatasetPojo(templateSetting.getConfiguration());
         	SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
-        	form.setNurseryLevelVariables(userSelection.getNurseryLevelConditions());
+        	form.setStudyLevelVariables(userSelection.getStudyLevelConditions());
         	form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
         	form.setPlotLevelVariables(userSelection.getPlotsLevelList());
         	form.setIsDefault(templateSetting.getIsDefault().intValue() == 1 ? true : false);
@@ -154,7 +151,7 @@ public class ManageNurserySettingsController extends SettingsController{
     public String saveSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form
             , Model model, HttpSession session) throws MiddlewareQueryException{
 		//will do the saving here
-    	Dataset dataset = SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, form.getSettingName(), form.getNurseryLevelVariables(), form.getPlotLevelVariables(), form.getBaselineTraitVariables(), userSelection);
+    	Dataset dataset = (Dataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, form.getSettingName(), form.getStudyLevelVariables(), form.getPlotLevelVariables(), form.getBaselineTraitVariables(), userSelection);
     	String xml = SettingsUtil.generateSettingsXml(dataset);
     	Integer tempateSettingId = form.getSelectedSettingId() > 0 ? Integer.valueOf(form.getSelectedSettingId()) : null;
     	TemplateSetting templateSetting = new TemplateSetting(tempateSettingId, Integer.valueOf(getCurrentProjectId()), dataset.getName(), getNurseryTool(), xml, Boolean.valueOf(form.getIsDefault())) ;
@@ -194,7 +191,7 @@ public class ManageNurserySettingsController extends SettingsController{
         
     	    	
     	setupDefaultScreenValues(form, getDefaultTemplateSettingFilter());
-    	model.addAttribute("settingsList", getSettingsList());
+    	model.addAttribute("settingsList", getNurserySettingsList());
     	//setupFormData(form);
     	return super.showAjaxPage(model, getContentName() );
     }
@@ -224,7 +221,7 @@ public class ManageNurserySettingsController extends SettingsController{
 	    	TemplateSetting templateSetting = templateSettings.get(0); //always 1
 	    	Dataset dataset = SettingsUtil.parseXmlToDatasetPojo(templateSetting.getConfiguration());
 	    	SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
-	    	form.setNurseryLevelVariables(userSelection.getNurseryLevelConditions());
+	    	form.setStudyLevelVariables(userSelection.getStudyLevelConditions());
 	    	form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
 	    	form.setPlotLevelVariables(userSelection.getPlotsLevelList());
 	    	form.setIsDefault(templateSetting.getIsDefault().intValue() == 1 ? true : false);
@@ -234,7 +231,7 @@ public class ManageNurserySettingsController extends SettingsController{
     		assignDefaultValues(form);
     	}
     	model.addAttribute("manageSettingsForm", form);
-    	model.addAttribute("settingsList", getSettingsList());
+    	model.addAttribute("settingsList", getNurserySettingsList());
     	//setupFormData(form);
         return super.showAjaxPage(model, getContentName() );
     }
@@ -245,15 +242,15 @@ public class ManageNurserySettingsController extends SettingsController{
     public String useExistingNursery(@ModelAttribute("manageSettingsForm") ManageSettingsForm form, @PathVariable int nurseryId
             , Model model, HttpSession session) throws MiddlewareQueryException{
         if(nurseryId != 0){     
-            Workbook workbook = fieldbookMiddlewareService.getNurseryVariableSettings(nurseryId);
-            Dataset dataset = SettingsUtil.convertWorkbookToXmlDataset(workbook);
+            Workbook workbook = fieldbookMiddlewareService.getStudyVariableSettings(nurseryId, true);
+            Dataset dataset = (Dataset)SettingsUtil.convertWorkbookToXmlDataset(workbook);
             SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
             
             //nursery-level
             List<SettingDetail> nurseryLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
                     buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true), 
                     buildRequiredVariablesFlag(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
-                    userSelection.getNurseryLevelConditions(), true);
+                    userSelection.getStudyLevelConditions(), true);
             
             //plot-level
             List<SettingDetail> plotLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()), 
@@ -261,9 +258,9 @@ public class ManageNurserySettingsController extends SettingsController{
                     buildRequiredVariablesFlag(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()), 
                     userSelection.getPlotsLevelList(), false);
             
-            userSelection.setNurseryLevelConditions(nurseryLevelConditions);
+            userSelection.setStudyLevelConditions(nurseryLevelConditions);
             userSelection.setPlotsLevelList(plotLevelConditions);
-            form.setNurseryLevelVariables(userSelection.getNurseryLevelConditions());
+            form.setStudyLevelVariables(userSelection.getStudyLevelConditions());
             form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
             form.setPlotLevelVariables(userSelection.getPlotsLevelList());
             form.setIsDefault(false);
@@ -271,7 +268,7 @@ public class ManageNurserySettingsController extends SettingsController{
         }
         
         model.addAttribute("manageSettingsForm", form);
-        model.addAttribute("settingsList", getSettingsList());
+        model.addAttribute("settingsList", getNurserySettingsList());
         model.addAttribute("nurseryList", getNurseryList());
         setFormStaticData(form);
         //setupFormData(form);
@@ -315,7 +312,7 @@ public class ManageNurserySettingsController extends SettingsController{
     		assignDefaultValues(form);
     	}
     	model.addAttribute("manageSettingsForm", form);
-    	model.addAttribute("settingsList", getSettingsList());
+    	model.addAttribute("settingsList", getNurserySettingsList());
     	setFormStaticData(form);
     	//setupFormData(form);
         return super.showAjaxPage(model, getContentName() );
@@ -444,7 +441,7 @@ public class ManageNurserySettingsController extends SettingsController{
             @PathVariable int mode, @PathVariable int variableId) {
         if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
             //form.getNurseryLevelVariables()
-            deleteVariableInSession(userSelection.getNurseryLevelConditions(), variableId);
+            deleteVariableInSession(userSelection.getStudyLevelConditions(), variableId);
         } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
             deleteVariableInSession(userSelection.getPlotsLevelList(), variableId);
         } else {
@@ -532,14 +529,17 @@ public class ManageNurserySettingsController extends SettingsController{
     private void assignDefaultValues(ManageSettingsForm form) throws MiddlewareQueryException {
     	List<SettingDetail> nurseryDefaults = new ArrayList<SettingDetail>();
     	List<SettingDetail> plotDefaults = new ArrayList<SettingDetail>();
-    	form.setNurseryLevelVariables(nurseryDefaults);
+    	List<SettingDetail> baselineTraitsList = new ArrayList<SettingDetail>();
+    	form.setStudyLevelVariables(nurseryDefaults);
     	form.setPlotLevelVariables(plotDefaults);
     	form.setSettingName("");
     	form.setIsDefault(false);
     	nurseryDefaults = buildDefaultVariables(nurseryDefaults, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true));
-    	this.userSelection.setNurseryLevelConditions(nurseryDefaults);
+    	this.userSelection.setStudyLevelConditions(nurseryDefaults);
     	plotDefaults = buildDefaultVariables(plotDefaults, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false));
     	this.userSelection.setPlotsLevelList(plotDefaults);
+    	this.userSelection.setBaselineTraitsList(baselineTraitsList);
+    	
     }
     
     /**
@@ -550,7 +550,7 @@ public class ManageNurserySettingsController extends SettingsController{
      */
     private List<SettingDetail> getSettingDetailList(int mode) {
     	if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
-            return userSelection.getNurseryLevelConditions();
+            return userSelection.getStudyLevelConditions();
         } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
             return userSelection.getPlotsLevelList();
         } else if (mode == AppConstants.SEGMENT_TRAITS.getInt()) {
@@ -571,18 +571,19 @@ public class ManageNurserySettingsController extends SettingsController{
     private String addNewSettingDetails(ManageSettingsForm form, int mode
             , List<SettingDetail> newDetails) throws Exception {
     	if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
-            if (form.getNurseryLevelVariables() == null) {
-            	form.setNurseryLevelVariables(newDetails);
+            if (form.getStudyLevelVariables() == null) {
+            	form.setStudyLevelVariables(newDetails);
             }
             else {
-            	form.getNurseryLevelVariables().addAll(newDetails);
+            	form.getStudyLevelVariables().addAll(newDetails);
             }
-            if (userSelection.getNurseryLevelConditions() == null) {
-            	userSelection.setNurseryLevelConditions(newDetails);
+            if (userSelection.getStudyLevelConditions() == null) {
+            	userSelection.setStudyLevelConditions(newDetails);
             }
             else {
-            	userSelection.getNurseryLevelConditions().addAll(newDetails);
+            	userSelection.getStudyLevelConditions().addAll(newDetails);
             }
+            
         } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
             if (form.getPlotLevelVariables() == null) {
             	form.setPlotLevelVariables(newDetails);

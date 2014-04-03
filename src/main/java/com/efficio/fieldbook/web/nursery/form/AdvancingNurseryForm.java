@@ -108,6 +108,10 @@ public class AdvancingNurseryForm {
     /** The nursery id. */
     private String nurseryId;
     
+    private int cropType;
+    
+    private String putBrackets;
+    
 	
 	/**
 	 * Gets the method id all.
@@ -617,6 +621,16 @@ public class AdvancingNurseryForm {
 	public String getLocationUrl() {
 		return locationUrl;
 	}
+	
+	
+
+	public int getCropType() {
+		return cropType;
+	}
+
+	public void setCropType(int cropType) {
+		this.cropType = cropType;
+	}
 
 	/**
 	 * Sets the location url.
@@ -661,6 +675,14 @@ public class AdvancingNurseryForm {
 	 */
 	public void setNurseryId(String nurseryId) {
 		this.nurseryId = nurseryId;
+	}
+	
+	public String getPutBrackets() {
+		return putBrackets;
+	}
+
+	public void setPutBrackets(String putBrackets) {
+		this.putBrackets = putBrackets;
 	}
 
 		/* (non-Javadoc)

@@ -121,6 +121,14 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	//System.out.println("get nursery : " + (System.currentTimeMillis() - start));
     	userSelection.setWorkbook(workbook);
     	form.setNurseryId(Integer.toString(nurseryId));
+    	Project project = workbenchService.getProjectById(Long.valueOf(this.getCurrentProjectId()));
+    	if(AppConstants.CROP_MAIZE.getString().equalsIgnoreCase(project.getCropType().getCropName())){
+    		form.setCropType(2);
+    	}else if(AppConstants.CROP_WHEAT.getString().equalsIgnoreCase(project.getCropType().getCropName())){
+    		form.setCropType(1);
+    	}
+    	
+    	
     	return super.show(model);
     }
     @ResponseBody
@@ -252,7 +260,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         advancingNursery.setHarvestDate(form.getHarvestDate());
         advancingNursery.setHarvestLocationId(form.getHarvestLocationId());
         advancingNursery.setHarvestLocationAbbreviation(form.getHarvestLocationAbbreviation());
-
+        advancingNursery.setPutBrackets(form.getPutBrackets());
         return "redirect:" + SaveAdvanceNurseryController.URL;
     }
     

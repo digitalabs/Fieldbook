@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 
+
+import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.springframework.stereotype.Service;
@@ -52,25 +54,33 @@ public class FieldMapServiceImpl implements FieldMapService{
         //                  , isSerpentine, deletedPlot, labels, true);
         //for testing only
         Plot[][] plots = plotLayouIterator.createFieldMap(col, range
-                , startRange, startCol, isSerpentine, deletedPlot, fieldMapLabels, true);
+                , startRange, startCol, isSerpentine, deletedPlot, fieldMapLabels, true, null);
         //setOtherFieldMapInformation(info, plots, totalColumns, totalRanges, isSerpentine);
         return plots;
     }
     
+
+    @Override
+    public Plot[][] generateFieldmap(UserFieldmap info, FieldPlotLayoutIterator plotIterator, 
+    		boolean isSavedAlready) 
+            throws MiddlewareQueryException {
     
-    
+    	return generateFieldmap(info, plotIterator, isSavedAlready, null);
+    }    
     
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.service.api.FieldMapService#generateFieldmap(com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap)
      */
     @Override
-    public Plot[][] generateFieldmap(UserFieldmap info, FieldPlotLayoutIterator plotIterator) 
+    public Plot[][] generateFieldmap(UserFieldmap info, FieldPlotLayoutIterator plotIterator, 
+    		boolean isSavedAlready, List<String> deletedPlots) 
             throws MiddlewareQueryException {
         
         int totalColumns = info.getNumberOfColumnsInBlock();
         int totalRanges = info.getNumberOfRangesInBlock();
         boolean isSerpentine = (info.getPlantingOrder() == 2);
         Plot[][] plots = new Plot[totalColumns][totalRanges];
+        
         List<FieldMapLabel> labels = info.getFieldMapLabels();
         initializeFieldMapArray(plots, totalColumns, totalRanges);
         for (FieldMapLabel label : labels) {
@@ -88,12 +98,29 @@ public class FieldMapServiceImpl implements FieldMapService{
                     }
                     plot.setDisplayString(FieldMapUtilityHelper.getDisplayString(label, info.isTrial()));
                     plot.setNotStarted(false);
+                    plot.setSavedAlready(isSavedAlready);
                 }
                 else {
                     throw new MiddlewareQueryException(
                             "The Column/Range of the Field Map exceeded the Total Columns/Ranges");
                 }
             }
+        }
+        
+        if (deletedPlots != null) {
+	        for (String deletedPlot : deletedPlots) {
+	        	String[] coordinates = deletedPlot.split(",");
+	        	if (coordinates != null && coordinates.length == 2 
+	        			&& NumberUtils.isNumber(coordinates[0]) && NumberUtils.isNumber(coordinates[1])) {
+	        		
+	            	int column = Integer.valueOf(coordinates[0]);
+	            	int range = Integer.valueOf(coordinates[1]);
+	        		if (column < totalColumns && range < totalRanges) {
+	        			plots[column][range].setPlotDeleted(true);
+	        			plots[column][range].setSavedAlready(isSavedAlready);
+	        		}
+	        	}
+	        }
         }
         
         plotIterator.setOtherFieldMapInformation(info, plots, totalColumns, totalRanges, isSerpentine);

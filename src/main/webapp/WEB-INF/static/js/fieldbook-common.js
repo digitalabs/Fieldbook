@@ -23,12 +23,16 @@ $(function() {
         
     });
     
-    $(window).trigger('hashchange');
-
+    $(window).trigger('hashchange');    
+    if (typeof convertToSelect2 === 'undefined' || convertToSelect2 == true) {
+    	    // variable is undefined
+    	
     $('select').each(function(){
 			$(this).select2();
 		});
+    }
 });
+
 
 function doAjaxMainSubmit(pageMessageDivId, successMessage, overrideAction){
 	Spinner.toggle();
@@ -89,6 +93,7 @@ function showPostPage(paginationUrl,previewPageNum, pageNum, sectionDiv, formNam
 	
 	var serializedData = $form.serialize();
 
+	alert(paginationUrl);
 	Spinner.toggle();
  	$.ajax(
          { url: paginationUrl+pageNum+"/"+previewPageNum+'?r=' + (Math.random() * 999),
@@ -385,8 +390,7 @@ function createHeader(hasFieldMap) {
 			newRow = newRow + "<th style='width:65%'>" + nurseryName + "</th>" +
 			"<th style='width:20%'>" + entryPlotLabel + "</th>";
 		}
-		//remove has field map column for now GCp-7295
-		//newRow = newRow + "<th style='width:15%'>" + fieldmapLabel + "</th>";
+		newRow = newRow + "<th style='width:15%'>" + fieldmapLabel + "</th>";
 	} else {
 		if (trial) {
 			newRow = newRow + "<th style='width:40%'></th>" +
@@ -412,12 +416,14 @@ function createRowForNursery(id, parentClass, value, realId, withFieldMap, datas
 	}
 	
 	//for create new fieldmap
-	newRow = "<tr class='data-row trialInstance "+ genClassName + id + " " + genParentClassName + "'>";
-	var checkBox = "<input class='checkInstance' type='checkbox' id='" + datasetId + "|" + realId + "' /> &nbsp;&nbsp;";
-	newCell = "<td>" + checkBox + "&nbsp;" + datasetName + "</td><td>" + value.entryCount + "</td>";
 	var hasFieldMap = value.hasFieldMap ? "Yes" : "No";
-	//remve the has field map column for now GCP-7295
-	//newCell = newCell + "<td class='hasFieldMap'>" + hasFieldMap + "</td>";
+	var disabledString = value.hasFieldMap ? "disabled" : "";
+	
+	newRow = "<tr class='data-row trialInstance "+ genClassName + id + " " + genParentClassName + "'>";
+	var checkBox = "<input "+disabledString+" class='checkInstance' type='checkbox' id='" + datasetId + "|" + realId + "' /> &nbsp;&nbsp;";
+	newCell = "<td>" + checkBox + "&nbsp;" + datasetName + "</td><td>" + value.entryCount + "</td>";
+	
+	newCell = newCell + "<td class='hasFieldMap'>" + hasFieldMap + "</td>";
 	$("#studyTree").append(newRow+newCell+"</tr>");
 }
 
@@ -441,9 +447,7 @@ function createRow(id, parentClass, value, realId, withFieldMap) {
 			newCell = newCell + "<td>" + value + "</td><td></td>";
 		}
 		if (!withFieldMap) {
-			//remve the has field map column for now GCP-7295
-			//newCell = newCell + "<td></td>";
-			;
+			newCell = newCell + "<td></td>";
 		}
 	} else {
 		//trial instance level
@@ -463,8 +467,7 @@ function createRow(id, parentClass, value, realId, withFieldMap) {
 				newCell = newCell + "<td>" + value.repCount + "</td><td>" + value.plotCount + "</td>";
 			}
 			var hasFieldMap = value.hasFieldMap ? "Yes" : "No";
-			//remve the has field map column for now GCP-7295
-			//newCell = newCell + "<td class='hasFieldMap'>" + hasFieldMap + "</td>";
+			newCell = newCell + "<td class='hasFieldMap'>" + hasFieldMap + "</td>";
 		}
 	}
 	$("#studyTree").append(newRow+newCell+"</tr>");
@@ -637,24 +640,24 @@ function showCreateFieldMap() {
 			}
 			var hasFieldMap;
 			//get value hasfieldmap column
-			/* commented for now the checking for has fieldmap GCp-7295
 			if (trial) {
 				hasFieldMap = $(this).parent().next().next().next().next().html();
 			} else {
 				hasFieldMap = $(this).parent().next().next().html();
 			}
-			*/
+			
 			//build id list of selected trials instances
 			fieldmapIds.push(studyId+"|"+datasetId+"|"+id);
-			/* commented for now the checking for has fieldmap GCp-7295
+			
 			if (hasFieldMap == "Yes") {
 				selectedWithFieldMap = true;
-			}*/
+			}
 		});
 		//this is to disable the 2nd popup
-		if (false && selectedWithFieldMap) {
-			$("#selectTrialInstanceModal button,input").attr("disabled", true);
-			$("#confirmSubModal").modal("toggle");
+		if (selectedWithFieldMap) {
+			//$("#selectTrialInstanceModal button,input").attr("disabled", true);
+			//$("#confirmSubModal").modal("toggle");
+			showMessage(hasFieldmapError);
 		} else {
 			//redirect to step 1
 			redirectToFirstPage();
@@ -739,22 +742,22 @@ function openStudy(tableName){
 	Spinner.toggle();
 	var openStudyHref = $('#open-study-url').attr("href");
 	
-	if (tableName == "nursery-table") {
+//	if (tableName == "nursery-table") {
 		if(idVal != null){
 			location.href = openStudyHref + "/" + idVal;
 			Spinner.toggle();
 		}
-	} else {
-		$.ajax(
-	    { url: openStudyHref,
-	       type: "GET",
-	       data: "",
-	       cache: false,
-	       success: function() {    	            
-	         Spinner.toggle();  
-	       }
-	     });
-	}
+//	} else {
+//		$.ajax(
+//	    { url: openStudyHref,
+//	       type: "GET",
+//	       data: "",
+//	       cache: false,
+//	       success: function() {    	            
+//	         Spinner.toggle();  
+//	       }
+//	     });
+//	}
 }
 
 function advanceNursery(tableName){
@@ -923,22 +926,92 @@ $('#'+getJquerySafeId('methodIdFavorite')).select2({
 
 }
 
-function exportNursery(type){
-	
+function exportTrial(type){
+	$('#page-modal-choose-instance-message-r').html('');
+	$('#page-modal-choose-instance-message').html('');
+	$('.instanceNumber:first').click();	
+	var numberOfInstances = $('#numberOfInstances').val();
+	$('.spinner-input').spinedit({
+	    minimum: 1,
+	    maximum: parseInt(numberOfInstances),
+	    value: 1
+	});
+	$('#exportTrialType').val(type);
+	if(type == 2){
+		$("#chooseInstance").detach().appendTo('#importRChooseInstance');
+		$('#importRModal').modal('show');
+	}
+	else{
+		$("#chooseInstance").detach().appendTo('#exportChooseInstance');
+		$('#trialModalSelection').modal('show');
+	}
+		
+	/*
 	if(type == 2){
 		$('#importRModal').modal('show');
 	}else{		
 		doExportContinue(type);
 	}
+	*/
+}
+
+function doExportTrial(){
+	//console.log();
+	var exportTrialType = $('#exportTrialType').val();
+	doExportContinue(exportTrialType, false);
+}
+
+function exportNursery(type){
+	
+	if(type == 2){
+		$('#importRModal').modal('show');
+	}else{		
+		doExportContinue(type, true);
+	}
 }
 
 function exportNurseryToR(type){
 	//console.log($('#selectedRTrait').val());
-	doExportContinue(type + "/" + $('#selectedRTrait').val());
+	var isNursery = true;
+	if($("#study-type").val() == 'Trial')
+		isNursery = false;
+	
+	var additionalParams = '';
+	if(!isNursery){
+		additionalParams = validateTrialInstance();
+		if(additionalParams == 'false')
+			return false;
+	}
+	
+	doExportContinue(type + "/" + $('#selectedRTrait').val(), isNursery);
 	$('#importRModal').modal('hide');
 }
 
-function doExportContinue(paramUrl){
+function validateTrialInstance(){
+	var exportInstanceType = $('input:radio[name=exportInstanceType]:checked').val();
+	var additionalParams = '';
+	if(exportInstanceType == 1){
+		additionalParams = '0/0';
+	}else if(exportInstanceType == 2){
+		additionalParams = $('#exportTrialInstanceNumber').val() + "/" + $('#exportTrialInstanceNumber').val();
+	}else{
+		var start =  $('#exportTrialInstanceStart').val();
+		var end = $('#exportTrialInstanceEnd').val();
+		additionalParams = start + "/" + end;
+		var exportTrialType = $('#exportTrialType').val();
+		if(parseInt(start) >= parseInt(end)){
+			var errorDiv = "page-modal-choose-instance-message";
+			if(exportTrialType == 2)
+				errorDiv = "page-modal-choose-instance-message-r";
+			showErrorMessage(errorDiv, 'To trial instance # should be greater than the From Trial Instance #');
+			additionalParams = 'false';
+			//return false;
+		}
+	}
+	return additionalParams;
+}
+
+function doExportContinue(paramUrl, isNursery){
 
 	
 	var currentPage = $('.pagination .active a').html();
@@ -946,6 +1019,17 @@ function doExportContinue(paramUrl){
 	var $form = $("#addVariableForm");	
 	var serializedData = $form.serialize();
 
+	
+	var additionalParams = ''
+	if(!isNursery){
+		additionalParams = validateTrialInstance();
+		if(additionalParams == 'false')
+			return false;
+		else{
+			$('#trialModalSelection').modal('hide');
+		}
+	}
+	
 	Spinner.toggle();
  	$.ajax(
          { url: paginationUrl+currentPage+"/"+currentPage+'?r=' + (Math.random() * 999),
@@ -955,10 +1039,22 @@ function doExportContinue(paramUrl){
            timeout: 70000,
            async: false,
            success: function(html) {
-        	   var action = $('#exportNurseryForm').attr('action');
-        	   $('#exportNurseryForm').attr('action', action+paramUrl);
-        	   $('#exportNurseryForm').submit();
-        	   $('#exportNurseryForm').attr('action', action);
+        	   var formName = "#exportStudyForm";
+        	   var action = $(formName).attr('action');
+        	   var newAction = '';
+        	   	if(isNursery)
+        	   		newAction = action + "export/" + paramUrl;
+        	   	else{ //meaning its trial
+        	   		
+        	   		newAction = action + "exportTrial/" + paramUrl + "/" + additionalParams;
+        	   		
+        	   	console.log(newAction);
+        	   	 
+        	   	}
+        	   
+        	   $(formName).attr('action', newAction);
+        	   $(formName).submit();
+        	   $(formName).attr('action', action);
         	   Spinner.toggle();
            }
          }
@@ -970,9 +1066,14 @@ function importNursery(type){
 	$('#page-modal-message').html('');
 	$('div.fileupload').parent().parent().removeClass('has-error');
 	$('#importModal').modal('show');
-	var action = "/Fieldbook/NurseryManager/addOrRemoveTraits/import/";
-	$('#importNurseryForm').attr('action', action+type);
+	var action = "/Fieldbook/ImportManager/import/" + $("#study-type").val() + "/";
+	var formName = "#importStudyForm";
+	$(formName).attr('action', action+type);
 	   
+}
+
+function submitImportStudy() {
+	$("#importStudyForm").submit();
 }
 function isFloat(value) { 
     return !isNaN(parseInt(value,10)) && (parseFloat(value,10) == parseInt(value,10)); 
@@ -1017,5 +1118,59 @@ function addCreateNurseryRequiredAsterisk(){
 	    }
 	    //Do something
 	}
+	
+}
+
+function addCreateTrialRequiredAsterisk(){
+	var requiredText = "<span class='required'>*</span>";
+	//console.log('add asterisk');
+	
+	for (var i = 0; i < requiredFields.length; i++) {
+		var cvTermId = requiredFields[i];
+	    if($('.cvTermIds[value="'+cvTermId+'"]').length != 0){
+	    	
+	    	$('.cvTermIds[value="'+cvTermId+'"]').parent().parent().find('.trial-level-label').parent().append(requiredText);
+	    }
+	    //Do something
+	}
+	
+}
+
+function getDateRowIndex(divName, dateCvTermId) {
+	
+	var rowIndex = -1;
+	$('.'+divName+' .cvTermIds').each(function(index){
+		if($(this).val() ==  parseInt(dateCvTermId))
+			rowIndex = index;
+		})
+		return rowIndex;	
+}
+
+function validateStartEndDate(divName){
+	//8050 - start
+	var startDateIndex = getDateRowIndex(divName, startDateId);
+	var endDateIndex = getDateRowIndex(divName, endDateId);
+	//console.log(startDateIndex);	  
+	//console.log(endDateIndex);
+	var startDate = $("#" + getJquerySafeId("studyLevelVariables"+startDateIndex+".value")).val();
+	var endDate = $("#" + getJquerySafeId("studyLevelVariables"+endDateIndex+".value")).val();
+	//console.log(startDate);	  
+	//console.log(endDate);
+	startDate = startDate == null ? '' : startDate;
+	endDate = endDate == null ? '' : endDate;
+	//console.log(startDate);	  
+	//console.log(endDate);
+	if(startDate == '' && endDate == '')
+		return true;
+	else if(startDate != '' && endDate == ''){
+		return true;
+	}else if(startDate == '' && endDate != ''){
+		showErrorMessage("page-message", startDateRequiredError);
+		return false;
+	}else if(parseInt(startDate) > parseInt(endDate)){
+		showErrorMessage("page-message", startDateRequiredEarlierError);
+		return false;
+	}
+	return true;
 	
 }

@@ -14,6 +14,7 @@ package com.efficio.fieldbook.service.api;
 import java.util.List;
 
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
 import org.generationcp.middleware.pojos.workbench.Tool;
 
@@ -110,4 +111,13 @@ public interface WorkbenchService {
      * @throws MiddlewareQueryException the middleware query exception
      */
     long getLastOpenedProject() throws MiddlewareQueryException;
+    
+    /**
+     * Gets the project by id.
+     *
+     * @param projectId the project id
+     * @return the project by id
+     * @throws MiddlewareQueryException the middleware query exception
+     */
+    Project getProjectById(Long projectId) throws MiddlewareQueryException;
 }

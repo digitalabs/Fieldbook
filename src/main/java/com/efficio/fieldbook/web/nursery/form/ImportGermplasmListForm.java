@@ -53,9 +53,32 @@ public class ImportGermplasmListForm {
 	/** The choose specify check. */
 	private String chooseSpecifyCheck;
 	
+	private String checkValue;
+	
+	private Integer checkId;		
+	
+	private String manageCheckCode;
+	    
+	private String manageCheckValue;
 	
 	
-    /**
+    public String getCheckValue() {
+		return checkValue;
+	}
+
+	public void setCheckValue(String checkValue) {
+		this.checkValue = checkValue;
+	}
+
+	public Integer getCheckId() {
+		return checkId;
+	}
+
+	public void setCheckId(Integer checkId) {
+		this.checkId = checkId;
+	}
+
+	/**
      * Gets the result per page.
      *
      * @return the result per page
@@ -267,7 +290,21 @@ public class ImportGermplasmListForm {
 		this.chooseSpecifyCheck = chooseSpecifyCheck;
 	}
 
-		
+	public String getManageCheckCode() {
+            return manageCheckCode;
+        }
+        
+        public void setManageCheckCode(String manageCheckCode) {
+            this.manageCheckCode = manageCheckCode;
+        }
+        
+        public String getManageCheckValue() {
+            return manageCheckValue;
+        }
+        
+        public void setManageCheckValue(String manageCheckValue) {
+            this.manageCheckValue = manageCheckValue;
+        }	
     
     
 }

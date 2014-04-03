@@ -15,8 +15,8 @@ import java.util.List;
 
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 
-import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
-import com.efficio.fieldbook.web.nursery.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -31,7 +31,7 @@ public class ManageSettingsForm {
 	private String settingName;
 	
 	/** The nursery level variables. */
-	private List<SettingDetail> nurseryLevelVariables;
+	private List<SettingDetail> studyLevelVariables;
 	
 	/** The plot level variables. */
 	private List<SettingDetail> plotLevelVariables;
@@ -59,10 +59,23 @@ public class ManageSettingsForm {
     /** The trait reference list. */
     private List<TraitClassReference> traitClassReferenceList;
     
+    /** The location id. */
     private String locationId;
+    
+    /** The breeding method id. */
     private String breedingMethodId;
+    
+    private String startDateId;
+    private String endDateId;
+    
+    /** The location url. */
     private String locationUrl;
+    
+    /** The breeding method url. */
     private String breedingMethodUrl;
+    
+    /** The id name variables. */
+    private String idNameVariables;
 
 	/**
 	 * Gets the selected setting id.
@@ -100,25 +113,27 @@ public class ManageSettingsForm {
             this.settingName = settingName;
         }
         
-        /**
-         * Gets the nursery level variables.
-         *
-         * @return the nursery level variables
-         */
-        public List<SettingDetail> getNurseryLevelVariables() {
-            return nurseryLevelVariables;
-        }
+        
         
         /**
-         * Sets the nursery level variables.
+         * Gets the study level variables.
          *
-         * @param nurseryLevelVariables the new nursery level variables
+         * @return the study level variables
          */
-        public void setNurseryLevelVariables(List<SettingDetail> nurseryLevelVariables) {
-            this.nurseryLevelVariables = nurseryLevelVariables;
-        }
-        
-        /**
+        public List<SettingDetail> getStudyLevelVariables() {
+			return studyLevelVariables;
+		}
+
+		/**
+		 * Sets the study level variables.
+		 *
+		 * @param studyLevelVariables the new study level variables
+		 */
+		public void setStudyLevelVariables(List<SettingDetail> studyLevelVariables) {
+			this.studyLevelVariables = studyLevelVariables;
+		}
+
+		/**
          * Gets the plot level variables.
          *
          * @return the plot level variables
@@ -292,44 +307,117 @@ public class ManageSettingsForm {
 		public void clear() {
 			this.selectedSettingId = 0;
 			this.settingName = null;
-			this.nurseryLevelVariables = null;
+			this.studyLevelVariables = null;
 			this.plotLevelVariables = null;
 			this.baselineTraitVariables = null;
 			this.isDefault = false;
 			this.selectedVariables = null;
 		}
 
+		/**
+		 * Gets the location id.
+		 *
+		 * @return the location id
+		 */
 		public String getLocationId() {
 			return locationId;
 		}
 
+		/**
+		 * Sets the location id.
+		 *
+		 * @param locationId the new location id
+		 */
 		public void setLocationId(String locationId) {
 			this.locationId = locationId;
 		}
 
+		/**
+		 * Gets the breeding method id.
+		 *
+		 * @return the breeding method id
+		 */
 		public String getBreedingMethodId() {
 			return breedingMethodId;
 		}
 
+		/**
+		 * Sets the breeding method id.
+		 *
+		 * @param breedingMethodId the new breeding method id
+		 */
 		public void setBreedingMethodId(String breedingMethodId) {
 			this.breedingMethodId = breedingMethodId;
 		}
 
+		/**
+		 * Gets the location url.
+		 *
+		 * @return the location url
+		 */
 		public String getLocationUrl() {
 			return locationUrl;
 		}
 
+		/**
+		 * Sets the location url.
+		 *
+		 * @param locationUrl the new location url
+		 */
 		public void setLocationUrl(String locationUrl) {
 			this.locationUrl = locationUrl;
 		}
 
+		/**
+		 * Gets the breeding method url.
+		 *
+		 * @return the breeding method url
+		 */
 		public String getBreedingMethodUrl() {
 			return breedingMethodUrl;
 		}
 
+		/**
+		 * Sets the breeding method url.
+		 *
+		 * @param breedingMethodUrl the new breeding method url
+		 */
 		public void setBreedingMethodUrl(String breedingMethodUrl) {
 			this.breedingMethodUrl = breedingMethodUrl;
 		}
 		
+		/**
+		 * Gets the id name variables.
+		 *
+		 * @return the id name variables
+		 */
+		public String getIdNameVariables() {
+		        return this.idNameVariables;
+		}
+		
+		/**
+		 * Sets the id name variables.
+		 *
+		 * @param idNameVariables the new id name variables
+		 */
+		public void setIdNameVariables(String idNameVariables) {
+		        this.idNameVariables = idNameVariables;
+		}
+
+		public String getStartDateId() {
+			return startDateId;
+		}
+
+		public void setStartDateId(String startDateId) {
+			this.startDateId = startDateId;
+		}
+
+		public String getEndDateId() {
+			return endDateId;
+		}
+
+		public void setEndDateId(String endDateId) {
+			this.endDateId = endDateId;
+		}
 		
 }

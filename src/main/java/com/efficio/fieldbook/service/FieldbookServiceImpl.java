@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
@@ -36,10 +37,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
-import com.efficio.fieldbook.web.nursery.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.service.NamingConventionService;
 import com.efficio.fieldbook.web.nursery.service.impl.NamingConventionServiceFactory;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -89,9 +90,7 @@ public class FieldbookServiceImpl implements FieldbookService{
 	public List<ImportedGermplasm> advanceNursery(AdvancingNursery advanceInfo, Workbook workbook)
 	        throws MiddlewareQueryException {
 
-        String namingConvention = advanceInfo.getNamingConvention();
-
-        NamingConventionService service = namingConventionServiceFactory.getNamingConventionService(namingConvention);
+        NamingConventionService service = namingConventionServiceFactory.getNamingConventionService(advanceInfo);
 
 	    return service.advanceNursery(advanceInfo, workbook);
 	}
@@ -109,36 +108,125 @@ public class FieldbookServiceImpl implements FieldbookService{
 			}
 		}
 
-		List<Integer> storedInIds = getStoredInIdsByMode(mode);
+		List<Integer> storedInIds = getStoredInIdsByMode(mode, true);
 		List<StandardVariableReference> dbList = fieldbookMiddlewareService.filterStandardVariablesByMode(storedInIds);
 		
 		if (dbList != null && !dbList.isEmpty()) {
+			
 			for (StandardVariableReference ref : dbList) {
 				if (!selectedIds.contains(ref.getId())) {
-					result.add(ref);
+					
+					 if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
+						 if(ref.getId().intValue() == TermId.STUDY_TYPE.getId()
+								 || ref.getId().intValue() == TermId.PM_KEY.getId()
+								 || ref.getId().intValue() == TermId.TRIAL_INSTANCE_FACTOR.getId()
+								 || ref.getId().intValue() == TermId.DATASET_NAME.getId()
+								 || ref.getId().intValue() == TermId.DATASET_TITLE.getId()
+								 || ref.getId().intValue() == TermId.DATASET_TYPE.getId())
+							 continue;
+						 
+				         } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
+				                 if (inHideVariableFields(ref.getId(), AppConstants.HIDE_PLOT_FIELDS.getString())) {
+				                     continue;
+				                 }
+				         }
+					
+						result.add(ref);
 				}
 			}
 		}
+		
+		
+		 
 		
 		Collections.sort(result);
 
 		return result;
 	}
 	
-    private List<Integer> getStoredInIdsByMode(int mode) {
+	@Override
+	public List<StandardVariableReference> filterStandardVariablesForTrialSetting(int mode, Collection<SettingDetail> selectedList)
+	throws MiddlewareQueryException {
+		
+		List<StandardVariableReference> result = new ArrayList<StandardVariableReference>();
+
+		Set<Integer> selectedIds = new HashSet<Integer>();
+		if (selectedList != null && !selectedList.isEmpty()) {
+			for (SettingDetail settingDetail : selectedList) {
+				selectedIds.add(settingDetail.getVariable().getCvTermId());
+			}
+		}
+
+		List<Integer> storedInIds = getStoredInIdsByMode(mode, false);
+		List<StandardVariableReference> dbList = fieldbookMiddlewareService.filterStandardVariablesByMode(storedInIds);
+		
+		if (dbList != null && !dbList.isEmpty()) {
+			
+			for (StandardVariableReference ref : dbList) {
+				if (!selectedIds.contains(ref.getId())) {
+					
+					 if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
+						 if(ref.getId().intValue() == TermId.STUDY_TYPE.getId()
+								 || ref.getId().intValue() == TermId.PM_KEY.getId()
+								 || ref.getId().intValue() == TermId.TRIAL_INSTANCE_FACTOR.getId()
+								 || ref.getId().intValue() == TermId.DATASET_NAME.getId()
+								 || ref.getId().intValue() == TermId.DATASET_TITLE.getId()
+								 || ref.getId().intValue() == TermId.DATASET_TYPE.getId())
+							 continue;
+						 
+				         } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
+				                 if (inHideVariableFields(ref.getId(), AppConstants.HIDE_PLOT_FIELDS.getString())) {
+				                     continue;
+				                 }
+				         } else if (mode == AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt()) {
+			                 if (inHideVariableFields(ref.getId(), AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString())) {
+			                     continue;
+			                 }
+			         }
+					
+						result.add(ref);
+				}
+			}
+		}
+		
+		
+		 
+		
+		Collections.sort(result);
+
+		return result;
+	}
+	
+    private List<Integer> getStoredInIdsByMode(int mode, boolean isNursery) {
     	List<Integer> list = new ArrayList<Integer>();
         if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
             list.addAll(PhenotypicType.STUDY.getTypeStorages());
-            list.addAll(PhenotypicType.DATASET.getTypeStorages());
-            list.addAll(PhenotypicType.TRIAL_ENVIRONMENT.getTypeStorages());
+            //list.addAll(PhenotypicType.DATASET.getTypeStorages());
+            if(isNursery)
+            	list.addAll(PhenotypicType.TRIAL_ENVIRONMENT.getTypeStorages());
         } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
-            list.addAll(PhenotypicType.TRIAL_ENVIRONMENT.getTypeStorages());
+        	if(isNursery)
+        		list.addAll(PhenotypicType.TRIAL_ENVIRONMENT.getTypeStorages());
             list.addAll(PhenotypicType.TRIAL_DESIGN.getTypeStorages());
             list.addAll(PhenotypicType.GERMPLASM.getTypeStorages());
         } else if (mode == AppConstants.SEGMENT_TRAITS.getInt()) {
             list.addAll(PhenotypicType.VARIATE.getTypeStorages());
+        } else if (mode == AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt()) {
+            list.addAll(PhenotypicType.TRIAL_ENVIRONMENT.getTypeStorages());
         }
         return list;
+    }
+    
+    private static boolean inHideVariableFields(Integer stdVarId, String variableList) {
+        StringTokenizer token = new StringTokenizer(variableList, ",");
+        boolean inList = false;
+        while(token.hasMoreTokens()){
+            if (stdVarId.equals(Integer.parseInt(token.nextToken()))) {
+                inList = true;
+                break;
+            }
+        }
+        return inList;
     }
 	
     @Override

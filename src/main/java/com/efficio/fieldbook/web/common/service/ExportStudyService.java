@@ -9,12 +9,14 @@
  * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
  *
  *******************************************************************************/
-package com.efficio.fieldbook.web.nursery.service;
+package com.efficio.fieldbook.web.common.service;
+
+import java.util.List;
 
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.exceptions.WorkbookParserException;
 
-public interface ImportStudyService {
 
-	void importWorkbook(Workbook workbook, String filename) throws WorkbookParserException;
+public interface ExportStudyService {
+
+	String export(Workbook workbook, String filename, int start, int end);
 }

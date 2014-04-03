@@ -293,7 +293,7 @@ table{
 }
 /*end*/
 .container{
-	max-width: none !important; 
+	/*max-width: none !important;*/ 
 	/*width: 950px;*/
 	min-width: 100%; 
 	padding-left: 35px; margin-top: -20px; margin-left: 0px;
@@ -303,7 +303,7 @@ table{
 	margin-left: -25px;
 }
 .panel-body{
-	background-color: #D4D4D4;
+	background-color: #F6F6F6; /*#D4D4D4;*/
 	padding: 0px;
 }
 .manage-settings-panel-body{
@@ -529,6 +529,8 @@ padding-left: 20px; margin-top: 7px
 	background-color: blue;	
 	color: #FFFFFF;
 	*/
+	min-width: 130px;
+	max-width: 130px;
 }
 .factors{
 	/*
@@ -709,4 +711,20 @@ div.possibleValuesDiv{
 }
 .select2-container {
   width: 260px;
+}
+#plotLevelSettings td, #baselineTraitSettings td{
+	word-wrap: break-word;
+}
+.label-bold{
+	font-weight: 600;
+}
+.trialEnvironmentDiv{
+	max-height: 300px; 
+	min-height: 0px; 
+	max-width: 100%; 
+	min-width: 100%; 
+	overflow: auto; 
+	overflow-x: auto; 
+	padding: 0; 
+	margin: 0;
 }

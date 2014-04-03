@@ -17,17 +17,19 @@ import java.util.List;
 import java.util.Map;
 
 import org.generationcp.middleware.domain.dms.StandardVariable;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
+
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.StudySelection;
 
 // TODO: Auto-generated Javadoc
 /**
  * This bean models the various input that the user builds up over time
  * to perform the actual loading operation.
  */
-public class UserSelection implements Serializable {
+public class UserSelection extends StudySelection implements Serializable {
     
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -39,7 +41,7 @@ public class UserSelection implements Serializable {
     private String serverFileName;
     
     /** The workbook. */
-    private transient Workbook workbook;
+//    private transient Workbook workbook;
     
     /** The field layout random. */
     private boolean fieldLayoutRandom;
@@ -54,22 +56,27 @@ public class UserSelection implements Serializable {
     private transient List<StudyDetails> studyDetailsList;
     
 	/** The measurement row list. */
-	private List<MeasurementRow> measurementRowList;
+//	private List<MeasurementRow> measurementRowList;
 	
     /** The current page. */
-    private int currentPage;
+//    private int currentPage;
     
     /** The current page germplasm list. */
     private int currentPageGermplasmList;
     
     /**  Nursery level conditions in Manage Settings. */
-    private List<SettingDetail> nurseryLevelConditions;
+    private List<SettingDetail> studyLevelConditions;
     
     /**  Plot level factors in Manage Settings. */
     private List<SettingDetail> plotsLevelList;
     
     /**  Baseline Traits in Manage Settings. */
     private List<SettingDetail> baselineTraitsList;
+    
+    /** The trial level variable list. */
+    private List<SettingDetail> trialLevelVariableList;
+    
+    private List<List<ValueReference>> trialEnvironmentValues;
     
     /** The all standard variables. */
     //private Set<StandardVariable> allStandardVariables;
@@ -88,18 +95,18 @@ public class UserSelection implements Serializable {
 	 *
 	 * @return the current page
 	 */
-	public int getCurrentPage() {
-		return currentPage;
-	}
+//	public int getCurrentPage() {
+//		return currentPage;
+//	}
 
 	/**
 	 * Sets the current page.
 	 *
 	 * @param currentPage the new current page
 	 */
-	public void setCurrentPage(int currentPage) {
-		this.currentPage = currentPage;
-	}
+//	public void setCurrentPage(int currentPage) {
+//		this.currentPage = currentPage;
+//	}
 	
 	/**
      * Gets the current page germplasm list.
@@ -197,18 +204,18 @@ public class UserSelection implements Serializable {
      *
      * @return the workbook
      */
-    public Workbook getWorkbook() {
-        return workbook;
-    }
+//    public Workbook getWorkbook() {
+//        return workbook;
+//    }
 
     /**
      * Sets the workbook.
      *
      * @param workbook the new workbook
      */
-    public void setWorkbook(Workbook workbook) {
-        this.workbook = workbook;
-    }
+//    public void setWorkbook(Workbook workbook) {
+//        this.workbook = workbook;
+//    }
 
     /**
      * Gets the field layout random.
@@ -251,35 +258,37 @@ public class UserSelection implements Serializable {
 	 *
 	 * @return the measurement row list
 	 */
-	public List<MeasurementRow> getMeasurementRowList() {
-		return measurementRowList;
-	}
+//	public List<MeasurementRow> getMeasurementRowList() {
+//		return measurementRowList;
+//	}
 
 	/**
 	 * Sets the measurement row list.
 	 *
 	 * @param measurementRowList the new measurement row list
 	 */
-	public void setMeasurementRowList(List<MeasurementRow> measurementRowList) {
-		this.measurementRowList = measurementRowList;
+//	public void setMeasurementRowList(List<MeasurementRow> measurementRowList) {
+//		this.measurementRowList = measurementRowList;
+//	}
+
+	
+
+	/**
+	 * Gets the study level conditions.
+	 *
+	 * @return the study level conditions
+	 */
+	public List<SettingDetail> getStudyLevelConditions() {
+		return studyLevelConditions;
 	}
 
 	/**
-	 * Gets the nursery level conditions.
+	 * Sets the study level conditions.
 	 *
-	 * @return the nurseryLevelConditions
+	 * @param studyLevelConditions the new study level conditions
 	 */
-	public List<SettingDetail> getNurseryLevelConditions() {
-		return nurseryLevelConditions;
-	}
-
-	/**
-	 * Sets the nursery level conditions.
-	 *
-	 * @param nurseryLevelConditions the nurseryLevelConditions to set
-	 */
-	public void setNurseryLevelConditions(List<SettingDetail> nurseryLevelConditions) {
-		this.nurseryLevelConditions = nurseryLevelConditions;
+	public void setStudyLevelConditions(List<SettingDetail> studyLevelConditions) {
+		this.studyLevelConditions = studyLevelConditions;
 	}
 
 	/**
@@ -402,5 +411,46 @@ public class UserSelection implements Serializable {
 	public void setTraitRefList(List<TraitClassReference> traitRefList) {
 		this.traitRefList = traitRefList;
 	}
+	
 
+	/**
+	 * Gets the trial level variable list.
+	 *
+	 * @return the trial level variable list
+	 */
+	public List<SettingDetail> getTrialLevelVariableList() {
+		return trialLevelVariableList;
+	}
+
+	/**
+	 * Sets the trial level variable list.
+	 *
+	 * @param trialLevelVariableList the new trial level variable list
+	 */
+	public void setTrialLevelVariableList(List<SettingDetail> trialLevelVariableList) {
+		this.trialLevelVariableList = trialLevelVariableList;
+	}
+
+	@Override
+	public boolean isTrial() {
+		return false;
+	}
+
+	/**
+         * Gets the trial environment values.
+         *
+         * @return the trial environment values
+         */
+        public List<List<ValueReference>> getTrialEnvironmentValues() {
+            return this.trialEnvironmentValues;
+        } 
+        
+        /**
+         * Sets the trial environment values.
+         *
+         * @param trialEnvironmentValues the new trial environment values
+         */
+        public void setTrialEnvironmentValues(List<List<ValueReference>> trialEnvironmentValues) {
+            this.trialEnvironmentValues = trialEnvironmentValues;
+        }
 }

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -28,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import com.csvreader.CsvReader;
 import com.csvreader.CsvWriter;
-import com.efficio.fieldbook.web.nursery.controller.AddOrRemoveTraitsController;
+import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 
 /**
  * This class was copied from CIMMYT's Fieldbook Code. 
@@ -44,9 +45,9 @@ public class CSVOziel {
     private String stringTraitToEvaluate = "GY";
     private Integer selectedTraitId;
 
-    public CSVOziel(Workbook workbook) {
+    public CSVOziel(Workbook workbook, List<MeasurementRow> observations) {
     	this.headers = workbook.getMeasurementDatasetVariables();
-    	this.observations = workbook.getObservations();
+    	this.observations = observations; //workbook.getObservations();
     	this.variateHeaders = workbook.getVariates();
     }
 
@@ -76,7 +77,7 @@ public class CSVOziel {
             int tot = 0;
 
             for (MeasurementVariable variate : this.variateHeaders) {
-                csvOutput.write(variate.getName());
+           		csvOutput.write(variate.getName());
                 tot++;
             }
 
@@ -131,7 +132,12 @@ public class CSVOziel {
                    String valor = variate.getName();
                    if (!valor.equals(stringTraitToEvaluate)) {
                         try {
-                        	csvOutput.write(row.getMeasurementDataValue(valor));
+                        	if (variate.getPossibleValues() != null && !variate.getPossibleValues().isEmpty()) {
+                        		csvOutput.write(ExportImportStudyUtil.getCategoricalCellValue(row.getMeasurementDataValue(valor), variate.getPossibleValues()));
+                        	}
+                        	else {
+                        		csvOutput.write(row.getMeasurementDataValue(valor));
+                        	}
                         	
                         } catch (NullPointerException ex) {
                             String cad = ".";
@@ -175,7 +181,12 @@ public class CSVOziel {
 
                      if (!valor.equals(stringTraitToEvaluate)) {
                         try {
-                        	csvOutput.write(mRow.getMeasurementDataValue(variate.getName()));
+                        	if (variate.getPossibleValues() != null && !variate.getPossibleValues().isEmpty()) {
+                        		csvOutput.write(ExportImportStudyUtil.getCategoricalCellValue(mRow.getMeasurementDataValue(variate.getName()), variate.getPossibleValues()));
+                        	}
+                        	else {
+                        		csvOutput.write(mRow.getMeasurementDataValue(variate.getName()));
+                        	}
                         } catch (NullPointerException ex) {
                             String cad = ".";
                             csvOutput.write(cad);
@@ -342,14 +353,19 @@ public class CSVOziel {
 	    	MeasurementRow row = this.observations.get(rowIndex);
 	    	for (MeasurementData data : row.getDataList()) {
 	    		if (data.getLabel().equals(label)) {
-		    		if (!"N".equalsIgnoreCase(data.getDataType())
-		    				|| ("N".equalsIgnoreCase(data.getDataType()) && value != null && NumberUtils.isNumber(value))) {
-
-		    			data.setValue(value);
-		    		}
-		    		else {
-		    			data.setValue(null);
-		    		}
+	    			if (data.getMeasurementVariable().getPossibleValues() != null && !data.getMeasurementVariable().getPossibleValues().isEmpty()) {
+	    				data.setValue(ExportImportStudyUtil.getCategoricalIdCellValue(value, data.getMeasurementVariable().getPossibleValues()));
+	    			}
+	    			else {
+			    		if (!"N".equalsIgnoreCase(data.getDataType())
+			    				|| ("N".equalsIgnoreCase(data.getDataType()) && value != null && NumberUtils.isNumber(value))) {
+	
+			    			data.setValue(value);
+			    		}
+			    		else {
+			    			data.setValue(null);
+			    		}
+	    			}
 	    			break;
 	    		}
 	    	}

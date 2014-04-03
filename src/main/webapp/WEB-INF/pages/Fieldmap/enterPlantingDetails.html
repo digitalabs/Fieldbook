@@ -86,12 +86,12 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 					<div class="col-xs-4 col-md-4">
 						<div class="form-group ">
 							<label class="radio-inline">
-						    <input type="radio" th:field="*{userFieldmap.plantingOrder}" id="plantingOrder" value="1" th:text="#{fieldmap.planting.order.row.column}">
+						    <input type="radio" th:field="*{userFieldmap.plantingOrder}" id="plantingOrder" class="plantingOrder" value="1" th:text="#{fieldmap.planting.order.row.column}">
 						    	Row/Column
 						    </input>
 						  	</label>
 						  	<label class="radio-inline">
-						    <input type="radio" th:field="*{userFieldmap.plantingOrder}" id="plantingOrder" value="2" th:text="#{fieldmap.planting.order.serpentine}">
+						    <input type="radio" th:field="*{userFieldmap.plantingOrder}" id="plantingOrder" class="plantingOrder" value="2" th:text="#{fieldmap.planting.order.serpentine}">
 						    	Serpentine
 					    	</input>
 						  	</label>
@@ -155,7 +155,7 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 		    </div>
 	    </div>
 	</div>
-	
+	<input type="hidden" th:field="*{userFieldmap.new}"/>
 </form>
 </div></div>
 </div>
@@ -174,8 +174,10 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 		var rangeNum = /*[[${fieldmapForm.userFieldmap.numberOfRangesInBlock}]]*/;
 		var rowsPerPlot = /*[[${fieldmapForm.userFieldmap.numberOfRowsPerPlot}]]*/;
 		var deletedPlots = 0;
+		var plantedPlots = 0;
 		var totalNoOfPlots = /*[[${fieldmapForm.userFieldmap.totalNumberOfSelectedPlots}]]*/;
 		var deletedPlotError = /*[[#{fieldmap.starting.coordinates.deleted}]]*/;
+		var plantedPlotError = /*[[#{fieldmap.starting.coordinates.planted}]]*/;
 		var totalBlocksError = /*[[#{fieldmap.plots.exceed.blocks.with.deleted}]]*/;
 		var trial = /*[[${fieldmapForm.userFieldmap.trial}]]*/;
 		var isHorizontal = true;
@@ -188,6 +190,7 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	  		var deletedRect = "";
 	  		var insufficientPlots = false;
 	  		deletedPlots = 0;
+	  		plantedPlots = 0;
 	  		$('#field-map td.plot.deleted').each(function(){
 	  			deletedRect += $(this).attr('id');
   				if(deletedRect != ''){
@@ -195,11 +198,20 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
   				}
   				//count number of plots marked as deleted
   				if (isHorizontal) {
-  					checkDeletedPlotsHorizontal($(this).attr('id'));
+  					checkDeletedPlotsHorizontal($(this).attr('id'), true);
   				} else {
-  					checkDeletedPlotsVertical($(this).attr('id'));
+  					checkDeletedPlotsVertical($(this).attr('id'), true);
   				}
-	  		})
+	  		});
+	  		
+	  		$("#field-map td.plot.planted").each(function(){
+	  			//count number of plots planted
+	  			if (isHorizontal) {
+	  				checkDeletedPlotsHorizontal($(this).attr('id'), false);
+  				} else {
+  					checkDeletedPlotsVertical($(this).attr('id'), false);
+  				}
+	  		});
 	  			  			  		
 	  		if(deletedRect != ''){
 	  			deletedRect = deletedRect.substr(0,deletedRect.length-1);
@@ -217,23 +229,57 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	  		if (insufficientPlots) {
 	  			showMessage(totalBlocksError);
 	  			return false;
-			} 
+			}
+	  		$('.plantingOrder').attr('disabled', false);
+  			$('#'+getJquerySafeId('userFieldmap.machineRowCapacity')).select2('enable', true);
 			return true;
 	  		//$("#fieldmapForm").submit();
 	  		//setTimeout(function(){$('#submitButton').trigger('submit')}, 50);
 	  	}
 	  	$(document).ready(function() {
+	  		
+	  		if($('#'+getJquerySafeId('userFieldmap.new')).val() == 'false'){
+	  			$('.plantingOrder').attr('disabled', true);
+	  			$('#'+getJquerySafeId('userFieldmap.machineRowCapacity')).select2('enable', false);
+	  			
+	  		}
+	  			
+	  		
 	  		$('#field-map td.plot').on('click', function() {
+	  			
+	  			
+	  			
 	  			if($(this).hasClass('deleted')){
 	  				$(this).removeClass('deleted');
 	  				$(this).html('');
 	  			}else{
+	  				if($(this).hasClass('planted')){
+		  				return false;
+		  			}
 	  				$(this).addClass('deleted');
 	  				$(this).html("<label class='alert alert-danger'>X</label>");
 	  			}
 	  			//console.log($(this).attr('id'));
 	  		});
+			$('#field-map td.plot').each(function(){
+				if(!$(this).hasClass('deleted')){
+					if($.trim($(this).find('.plotLabel p').html()) != '')
+	  					$(this).addClass('planted');
+	  			}
+			}
+	  		);
 	  		
+			if ($("#stepValue").val() == '2') {
+	  				
+	  			$('.new-plot').each(function(){
+	  				
+	  				if($(this).parent().parent().hasClass('planted')){
+	  					console.log('clean');
+	  					$(this).parent().parent().removeClass('planted');
+	  				}
+	  					
+	  			})
+	  		}
 	  	});
     //]]>
     </script>

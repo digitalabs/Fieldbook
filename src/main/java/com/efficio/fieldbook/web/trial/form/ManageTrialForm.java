@@ -33,7 +33,8 @@ public class ManageTrialForm {
     private int totalPages;
     
     /** The result per page. */
-    private int resultPerPage = 10;                 
+    private int resultPerPage = 10;      
+        
     
     /**
      * Gets the result per page.

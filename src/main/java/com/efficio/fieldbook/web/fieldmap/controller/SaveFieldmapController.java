@@ -11,7 +11,6 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.fieldmap.controller;
 
-import java.util.UUID;
 import javax.annotation.Resource;
 
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
@@ -27,6 +26,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
@@ -57,6 +57,9 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController{
     @Resource
     private FieldbookService fieldbookMiddlewareService;
     
+    @Resource
+    private WorkbenchService workbenchService;
+    
 
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
@@ -79,10 +82,12 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController{
         try {
             if (userFieldmap != null && userFieldmap.getSelectedFieldMaps() != null 
                     && !userFieldmap.getSelectedFieldMaps().isEmpty()) {
-                String fieldmapUUID = UUID.randomUUID().toString();
-                updateSelectedFieldMapInfo(fieldmapUUID);
+            	
+//                String fieldmapUUID = UUID.randomUUID().toString();
+                updateSelectedFieldMapInfo();
+                int userId = workbenchService.getCurrentIbdbUserId(getCurrentProjectId());
                 fieldbookMiddlewareService.saveOrUpdateFieldmapProperties(
-                        this.userFieldmap.getSelectedFieldMaps(), fieldmapUUID);
+                        this.userFieldmap.getSelectedFieldMaps(), userId, userFieldmap.isNew());
             }
             
         } catch(MiddlewareQueryException e) {
@@ -106,19 +111,25 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController{
      *
      * @param fieldmapUUID the fieldmap uuid
      */
-    private void updateSelectedFieldMapInfo(String fieldmapUUID) {
+    private void updateSelectedFieldMapInfo() {
         for (FieldMapInfo info : this.userFieldmap.getSelectedFieldMaps()) {
             for (FieldMapDatasetInfo datasetInfo : info.getDatasets()) {
                 for (FieldMapTrialInstanceInfo trialInfo : datasetInfo.getTrialInstances()) {
-                    trialInfo.setBlockName(userFieldmap.getBlockName());
-                    trialInfo.setColumnsInBlock(userFieldmap.getNumberOfColumnsInBlock());
+                	trialInfo.setLocationId(userFieldmap.getFieldLocationId());
+                	trialInfo.setFieldId(userFieldmap.getFieldId());
+                	trialInfo.setBlockId(userFieldmap.getBlockId());
+                    trialInfo.setRowsInBlock(userFieldmap.getNumberOfRowsInBlock());
                     trialInfo.setRangesInBlock(userFieldmap.getNumberOfRangesInBlock());
                     trialInfo.setPlantingOrder(userFieldmap.getPlantingOrder());
                     trialInfo.setRowsPerPlot(userFieldmap.getNumberOfRowsPerPlot());
+                    trialInfo.setMachineRowCapacity(userFieldmap.getMachineRowCapacity());
+                    trialInfo.setDeletedPlots(userFieldmap.getDeletedPlots());
+                	
+                    //TODO: CLEAN UP, no longer needed
+                    trialInfo.setBlockName(userFieldmap.getBlockName());
                     trialInfo.setFieldName(userFieldmap.getFieldName());
                     trialInfo.setLocationName(userFieldmap.getLocationName());
-                    trialInfo.setFieldmapUUID(fieldmapUUID);
-                    trialInfo.setMachineRowCapacity(userFieldmap.getMachineRowCapacity());
+//                    trialInfo.setFieldmapUUID(fieldmapUUID);
                 }
             }
         }

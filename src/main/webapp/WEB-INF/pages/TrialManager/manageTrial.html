@@ -20,9 +20,8 @@
 <!-- 			<a href="/TrialManager/fileUpload.html" th:href="@{/TrialManager/fileUpload}" th:text="#{trial.managetrial.make.new.trial}">New Trial</a> -->			
 			
 				
-			 
-			<button type="button" class="btn btn-info" id="make-trial" th:value="@{/TrialManager/fileUpload/newTrial}"  th:text="#{trial.managetrial.make.new.trial}">New Trial</button>
-			
+			<a  class="btn btn-info" id="make-trial" th:href="@{/TrialManager/createTrial}"  th:text="#{trial.managetrial.make.new.trial}">New Trial</a> 
+			<a   class="btn btn-info" id="manage-trial-settings" href="" th:href="@{/TrialManager/manageTrialSettings}"  th:text="#{trial.managesettings.manage.trial.settings}">Manage Settings</a>
 		
 			<div  class="btn-group">
 			  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
@@ -43,10 +42,14 @@
 			    	<a href="" style="display: none" id="label-printing-url" th:href="@{/LabelPrinting/specifyLabelDetails/trial}"></a>
 			    	<a href="javascript: createLabelPrinting('trial-table');" id="label-printing-url-link" th:text="#{tools.create.label.printing}">Create Labels</a> 
 			    </li> 
-			    <li>
+			    <!-- li>
 			    	<a href="" style="display: none" id="open-study-url" th:href="@{/TrialManager/fileUpload/newTrial}"></a>
 			    	<a href="javascript: openStudy('trial-table');" id="open-study-url-link" th:text="#{tools.open.trial}">Open Trial</a> 
-			    </li>   
+			    </li -->   
+				<li>
+			    	<a href="" style="display: none" id="open-study-url" th:href="@{/TrialManager/addOrRemoveTraits/viewTrial}"></a>
+			    	<a href="javascript: openStudy('trial-table');" id="open-study-url-link" th:text="#{tools.open.trial}">Open Trial</a> 
+			    </li>
 			  </ul>
 			</div>
 		</div>

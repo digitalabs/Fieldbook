@@ -9,10 +9,12 @@
  * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
  * 
  *******************************************************************************/
-package com.efficio.fieldbook.web.nursery.bean;
+package com.efficio.fieldbook.web.common.bean;
 
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.oms.TermId;
+
+import com.efficio.fieldbook.web.nursery.bean.WidgetType;
 
 
 public class SettingVariable {

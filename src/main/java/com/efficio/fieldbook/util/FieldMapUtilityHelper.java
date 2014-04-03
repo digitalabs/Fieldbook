@@ -62,6 +62,8 @@ public class FieldMapUtilityHelper {
         int i = col;
         int j = range;
         boolean hasAvailableEntries = true;
+        
+        
         if(counter < labels.size()){
             stringToDisplay = getDisplayString(labels.get(counter), isTrial);
         }else{
@@ -69,10 +71,25 @@ public class FieldMapUtilityHelper {
         }
         //plots[i][j].setUpward(isUpward);
     
-        if(isStartOk){
+        
+        if(isDeleted(i,j, deletedPlot)){
+        	plots[i][j].setPlotDeleted(true);
+        }
+        if(isStartOk){        	        	        	        	
+        	
             plots[i][j].setNotStarted(false);
             if(!isDeleted(i,j, deletedPlot)){
                 plots[i][j].setPlotDeleted(false);
+                
+                if(!plots[i][j].getDisplayString().equalsIgnoreCase("")){
+                	return counter;
+                }
+            	if(counter < labels.size()){
+    	        	FieldMapLabel oldLabel = labels.get(counter);
+    	        	if(oldLabel.getColumn() != null && oldLabel.getRange() != null)
+    	        		return counter;
+            	}
+            	
                 if(hasAvailableEntries){
                     //meaning we can plant already and move to the next plant
                     plots[i][j].setDisplayString(stringToDisplay);
@@ -96,6 +113,21 @@ public class FieldMapUtilityHelper {
             plots[i][j].setNotStarted(true);
         }
         return counter;
+    }
+    
+    public static void markedDeletedPlot(Plot[][] plots, Map deletedPlot){
+    	Plot[][] currentPlot = plots;
+    	
+    	if(currentPlot != null){
+	    	for(int i = 0 ; i < currentPlot.length ; i++){
+	    		for(int j = 0 ; j < currentPlot[i].length ; j++){
+	    			 Plot plot = currentPlot[i][j];
+	    			 if(isDeleted(i,j, deletedPlot)){
+	    				 plot.setPlotDeleted(true);
+	    			 }
+	    		}
+	    	}
+    	}
     }
     
     /**
@@ -152,12 +184,18 @@ public class FieldMapUtilityHelper {
                 info.setStartingRange(j + 1);
                 isStarted = true;
             }
+            /*
             if (!possiblyDeletedCoordinates.isEmpty()) {
                 markDeletedCoordinates(plots, possiblyDeletedCoordinates);
                 possiblyDeletedCoordinates.clear();
             }
-            FieldMapTrialInstanceInfo trial = info.getSelectedTrialInstanceByDatasetIdAndGeolocationId(
+            */
+            FieldMapTrialInstanceInfo trial = null;
+            
+            if(plot.getDatasetId() != null &&  plot.getGeolocationId() != null){
+            	trial = info.getSelectedTrialInstanceByDatasetIdAndGeolocationId(
                                                     plot.getDatasetId(), plot.getGeolocationId());
+            }
             if (trial != null && trial.getOrder() == null) {
                 trial.setOrder(order[0]);
                 order[0] += 1;
@@ -165,7 +203,7 @@ public class FieldMapUtilityHelper {
         }
         else {
             if (isStarted) {
-                possiblyDeletedCoordinates.add(i + "_" + j);
+                //possiblyDeletedCoordinates.add(i + "_" + j);
             }
             else {
                 plot.setNotStarted(true);

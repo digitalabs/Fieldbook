@@ -43,14 +43,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
+import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
+import com.efficio.fieldbook.web.common.service.ExcelImportStudyService;
+import com.efficio.fieldbook.web.common.service.FieldroidExportStudyService;
+import com.efficio.fieldbook.web.common.service.FieldroidImportStudyService;
+import com.efficio.fieldbook.web.common.service.RExportStudyService;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.AddOrRemoveTraitsForm;
-import com.efficio.fieldbook.web.nursery.service.ExcelExportStudyService;
-import com.efficio.fieldbook.web.nursery.service.ExcelImportStudyService;
-import com.efficio.fieldbook.web.nursery.service.FieldroidExportStudyService;
-import com.efficio.fieldbook.web.nursery.service.FieldroidImportStudyService;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
-import com.efficio.fieldbook.web.nursery.service.RExportStudyService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.AppConstants;
 
@@ -63,7 +63,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
 
     /** The Constant URL. */
     public static final String URL = "/NurseryManager/addOrRemoveTraits";
-    public static final String PAGINATION_TEMPLATE = "/NurseryManager/showAddOrRemoveTraitsPagination";
+//    public static final String PAGINATION_TEMPLATE = "/NurseryManager/showAddOrRemoveTraitsPagination";
     
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(AddOrRemoveTraitsController.class);
@@ -75,23 +75,23 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     private FieldbookService fieldbookMiddlewareService;
     @Resource
     private MeasurementsGeneratorService measurementsGeneratorService;
-    @Resource
-    private ExcelExportStudyService excelExportStudyService;
-    @Resource
-    private FieldroidExportStudyService fielddroidExportStudyService;
-    @Resource
-    private ExcelImportStudyService excelImportStudyService;
-    @Resource
-    private FieldroidImportStudyService fieldroidImportStudyService;
-    @Resource
-    private FileService fileService;
+//    @Resource
+//    private ExcelExportStudyService excelExportStudyService;
+//    @Resource
+//    private FieldroidExportStudyService fielddroidExportStudyService;
+//    @Resource
+//    private ExcelImportStudyService excelImportStudyService;
+//    @Resource
+//    private FieldroidImportStudyService fieldroidImportStudyService;
+//    @Resource
+//    private FileService fileService;
     @Resource
     private ValidationService validationService;
-    @Resource
-    private RExportStudyService rExportStudyService;
+//    @Resource
+//    private RExportStudyService rExportStudyService;
     
     /** The Constant BUFFER_SIZE. */
-    private static final int BUFFER_SIZE = 4096 * 4;
+//    private static final int BUFFER_SIZE = 4096 * 4;
     
   
 
@@ -140,6 +140,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
         	getUserSelection().setMeasurementRowList(workbook.getObservations());
             form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
             form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());
+            form.setStudyName(workbook.getStudyDetails().getStudyName());
             form.changePage(1);
             userSelection.setCurrentPage(form.getCurrentPage());
             userSelection.setWorkbook(workbook);
@@ -177,64 +178,65 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     }
     
 
-    @ResponseBody
-    @RequestMapping(value="/updateTraits", method = RequestMethod.POST)
-    public  Map<String, String> updateTraits(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form,          
-            BindingResult result, Model model){
-        Map<String, String> resultMap = new HashMap<String, String>();
-        
-        Workbook workbook = userSelection.getWorkbook();
-        /*
-        int ctr = 0;
-        for (MeasurementRow observation : workbook.getObservations()) {
-            form.getMeasurementRowList().get(ctr).setExperimentId(observation.getExperimentId());
-            ctr++;
-        }
-		*/
-        int previewPageNum = userSelection.getCurrentPage();
-        
-        copyDataFromFormToUserSelection(form, previewPageNum);
-        
-        form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
-    	form.setMeasurementVariables(getUserSelection().getWorkbook().getMeasurementDatasetVariables());
-      
-    	
-        workbook.setObservations(form.getMeasurementRowList());
-
-        try { 
-        	validationService.validateObservationValues(workbook);
-            fieldbookMiddlewareService.saveMeasurementRows(workbook);
-            resultMap.put("status", "1");
-        } catch (MiddlewareQueryException e) {
-            LOG.error(e.getMessage(), e);
-            resultMap.put("status", "-1");
-            resultMap.put("errorMessage", e.getMessage());
-        }
-        
-        return resultMap;
-    }
-    /**
-     * Get for the pagination of the list
-     *
-     * @param form the form
-     * @param model the model
-     * @return the string
-     */
-    @RequestMapping(value="/page/{pageNum}/{previewPageNum}", method = RequestMethod.POST)
-    public String getPaginatedList(@PathVariable int pageNum, @PathVariable int previewPageNum
-            , @ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, Model model) {
-        //this set the necessary info from the session variable
-    	copyDataFromFormToUserSelection(form, previewPageNum);
-    	//we need to set the data in the measurementList
-    	
-    	
-    	
-    	form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
-    	form.setMeasurementVariables(getUserSelection().getWorkbook().getMeasurementDatasetVariables());
-        form.changePage(pageNum);
-        userSelection.setCurrentPage(form.getCurrentPage());
-        return super.showAjaxPage(model, PAGINATION_TEMPLATE);
-    }
+//    @ResponseBody
+//    @RequestMapping(value="/updateTraits", method = RequestMethod.POST)
+//    public  Map<String, String> updateTraits(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form,          
+//            BindingResult result, Model model){
+//        Map<String, String> resultMap = new HashMap<String, String>();
+//        
+//        Workbook workbook = userSelection.getWorkbook();
+//        /*
+//        int ctr = 0;
+//        for (MeasurementRow observation : workbook.getObservations()) {
+//            form.getMeasurementRowList().get(ctr).setExperimentId(observation.getExperimentId());
+//            ctr++;
+//        }
+//		*/
+//        int previewPageNum = userSelection.getCurrentPage();
+//        
+//        copyDataFromFormToUserSelection(form, previewPageNum);
+//        
+//        form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
+//    	form.setMeasurementVariables(getUserSelection().getWorkbook().getMeasurementDatasetVariables());
+//    	form.setStudyName(workbook.getStudyDetails().getStudyName());
+//    	
+//        workbook.setObservations(form.getMeasurementRowList());
+//
+//        try { 
+//        	validationService.validateObservationValues(workbook);
+//            fieldbookMiddlewareService.saveMeasurementRows(workbook);
+//            resultMap.put("status", "1");
+//        } catch (MiddlewareQueryException e) {
+//            LOG.error(e.getMessage(), e);
+//            resultMap.put("status", "-1");
+//            resultMap.put("errorMessage", e.getMessage());
+//        }
+//        
+//        return resultMap;
+//    }
+//    /**
+//     * Get for the pagination of the list
+//     *
+//     * @param form the form
+//     * @param model the model
+//     * @return the string
+//     */
+//    @RequestMapping(value="/page/{pageNum}/{previewPageNum}", method = RequestMethod.POST)
+//    public String getPaginatedList(@PathVariable int pageNum, @PathVariable int previewPageNum
+//            , @ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, Model model) {
+//        //this set the necessary info from the session variable
+//    	copyDataFromFormToUserSelection(form, previewPageNum);
+//    	//we need to set the data in the measurementList
+//    	
+//    	
+//    	
+//    	form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
+//    	form.setMeasurementVariables(getUserSelection().getWorkbook().getMeasurementDatasetVariables());
+//    	form.setStudyName(getUserSelection().getWorkbook().getStudyDetails().getStudyName());
+//        form.changePage(pageNum);
+//        userSelection.setCurrentPage(form.getCurrentPage());
+//        return super.showAjaxPage(model, PAGINATION_TEMPLATE);
+//    }
     
     private void copyDataFromFormToUserSelection(AddOrRemoveTraitsForm form, int previewPageNum){
     	for(int i = 0 ; i < form.getPaginatedMeasurementRowList().size() ; i++){
@@ -249,142 +251,142 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     		//getUserSelection().getMeasurementRowList().set(realIndex, measurementRow);
     	}
     }
-    @ResponseBody
-    @RequestMapping(value="/export/{exportType}/{selectedTraitTermId}", method = RequestMethod.GET)
-    public String exportRFile(@PathVariable int exportType,@PathVariable int selectedTraitTermId, HttpServletResponse response) {
-    	return doExport(exportType, selectedTraitTermId, response);
-    	
-    }
+//    @ResponseBody
+//    @RequestMapping(value="/export/{exportType}/{selectedTraitTermId}", method = RequestMethod.GET)
+//    public String exportRFile(@PathVariable int exportType,@PathVariable int selectedTraitTermId, HttpServletResponse response) {
+//    	return doExport(exportType, selectedTraitTermId, response);
+//    	
+//    }
+//    
+//    @ResponseBody
+//    @RequestMapping(value="/export/{exportType}", method = RequestMethod.GET)
+//    public String exportFile(@PathVariable int exportType, HttpServletResponse response) {
+//        return doExport(exportType, 0, response);
+//    	
+//    }
+//   
+//    
+//    /**
+//     * Do export.
+//     *
+//     * @param exportType the export type
+//     * @param selectedTraitTermId the selected trait term id
+//     * @param response the response
+//     * @return the string
+//     */
+//    private String doExport(int exportType, int selectedTraitTermId, HttpServletResponse response){
+//    	String filename = getUserSelection().getWorkbook().getStudyDetails().getStudyName();
+//    	if(AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == exportType){
+//    		filename = filename  + AppConstants.EXPORT_FIELDLOG_SUFFIX.getString();
+//    		fielddroidExportStudyService.export(getUserSelection().getWorkbook(), filename);
+//    		response.setContentType("text/csv");
+//    	}else if(AppConstants.EXPORT_NURSERY_R.getInt() == exportType){
+//    		filename = filename  + AppConstants.EXPORT_R_SUFFIX.getString();
+//    		rExportStudyService.exportToR(getUserSelection().getWorkbook(), filename, selectedTraitTermId);    		
+//    		response.setContentType("text/csv");
+//    	}else if(AppConstants.EXPORT_NURSERY_EXCEL.getInt() == exportType){
+//    		filename = filename  + AppConstants.EXPORT_XLS_SUFFIX.getString();
+//    		excelExportStudyService.export(getUserSelection().getWorkbook(), filename);
+//    		response.setContentType("application/vnd.ms-excel");
+//    	}
+//    	        
+//        File xls = new File(filename); // the selected name + current date
+//        FileInputStream in;
+//        
+//        response.setHeader("Content-disposition","attachment; filename=" + filename);
+//        try {
+//            in = new FileInputStream(xls);
+//            OutputStream out = response.getOutputStream();
+//
+//            byte[] buffer= new byte[BUFFER_SIZE]; // use bigger if you want
+//            int length = 0;
+//
+//            while ((length = in.read(buffer)) > 0){
+//                 out.write(buffer, 0, length);
+//            }
+//            in.close();
+//            out.close();
+//        } catch (FileNotFoundException e) {
+//        	LOG.error(e.getMessage(), e);
+//        } catch (IOException e) {
+//        	LOG.error(e.getMessage(), e);
+//        }
+//       
+//        return "";
+//    }
     
-    @ResponseBody
-    @RequestMapping(value="/export/{exportType}", method = RequestMethod.GET)
-    public String exportFile(@PathVariable int exportType, HttpServletResponse response) {
-        return doExport(exportType, 0, response);
-    	
-    }
-   
-    
-    /**
-     * Do export.
-     *
-     * @param exportType the export type
-     * @param selectedTraitTermId the selected trait term id
-     * @param response the response
-     * @return the string
-     */
-    private String doExport(int exportType, int selectedTraitTermId, HttpServletResponse response){
-    	String filename = getUserSelection().getWorkbook().getStudyDetails().getStudyName();
-    	if(AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == exportType){
-    		filename = filename  + AppConstants.EXPORT_FIELDLOG_SUFFIX.getString();
-    		fielddroidExportStudyService.export(getUserSelection().getWorkbook(), filename);
-    		response.setContentType("text/csv");
-    	}else if(AppConstants.EXPORT_NURSERY_R.getInt() == exportType){
-    		filename = filename  + AppConstants.EXPORT_R_SUFFIX.getString();
-    		rExportStudyService.exportToR(getUserSelection().getWorkbook(), filename, selectedTraitTermId);    		
-    		response.setContentType("text/csv");
-    	}else if(AppConstants.EXPORT_NURSERY_EXCEL.getInt() == exportType){
-    		filename = filename  + AppConstants.EXPORT_XLS_SUFFIX.getString();
-    		excelExportStudyService.export(getUserSelection().getWorkbook(), filename);
-    		response.setContentType("application/vnd.ms-excel");
-    	}
-    	        
-        File xls = new File(filename); // the selected name + current date
-        FileInputStream in;
-        
-        response.setHeader("Content-disposition","attachment; filename=" + filename);
-        try {
-            in = new FileInputStream(xls);
-            OutputStream out = response.getOutputStream();
-
-            byte[] buffer= new byte[BUFFER_SIZE]; // use bigger if you want
-            int length = 0;
-
-            while ((length = in.read(buffer)) > 0){
-                 out.write(buffer, 0, length);
-            }
-            in.close();
-            out.close();
-        } catch (FileNotFoundException e) {
-        	LOG.error(e.getMessage(), e);
-        } catch (IOException e) {
-        	LOG.error(e.getMessage(), e);
-        }
-       
-        return "";
-    }
-    
-    @RequestMapping(value="/import/{importType}", method = RequestMethod.POST)
-    public String importFile(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form
-            ,@PathVariable int importType, BindingResult result, Model model) {
-    	    	    	    	
-    	if(AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == importType){
-    		MultipartFile file = form.getFile();
-            if (file == null) {
-           	 result.rejectValue("file", AppConstants.FILE_NOT_FOUND_ERROR.getString());
-            } else {
-                boolean isCSVFile = file.getOriginalFilename().contains(".csv");
-                if (!isCSVFile) {
-               	 	result.rejectValue("file", AppConstants.FILE_NOT_CSV_ERROR.getString());
-                }
-            }
-            if(!result.hasErrors()){
-	    		try {
-	    			String filename = fileService.saveTemporaryFile(file.getInputStream());
-	    			
-					fieldroidImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename));
-				} catch (WorkbookParserException e) {
-					// TODO Auto-generated catch block
-					//e.printStackTrace();				
-					LOG.error(e.getMessage(), e);
-					result.rejectValue("file", e.getMessage());
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					//e.printStackTrace();
-					LOG.error(e.getMessage(), e);
-				}
-            }
-    	}else if(AppConstants.EXPORT_NURSERY_EXCEL.getInt() == importType){
-    		
-    		
-        	
-        	 MultipartFile file = form.getFile();
-             if (file == null) {
-            	 result.rejectValue("file", AppConstants.FILE_NOT_FOUND_ERROR.getString());
-             } else {
-                 boolean isExcelFile = file.getOriginalFilename().contains(".xls") 
-                         || file.getOriginalFilename().contains(".xlsx");
-                 if (!isExcelFile) {
-                	 result.rejectValue("file", AppConstants.FILE_NOT_EXCEL_ERROR.getString());
-                 }
-             }
-             if(!result.hasErrors()){
-	    		try {
-	    			String filename = fileService.saveTemporaryFile(file.getInputStream());
-	    			
-					excelImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename));
-				} catch (WorkbookParserException e) {
-					// TODO Auto-generated catch block
-					//e.printStackTrace();				
-					LOG.error(e.getMessage(), e);
-					result.rejectValue("file", e.getMessage());
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					//e.printStackTrace();
-					LOG.error(e.getMessage(), e);
-				}
-             }
-    	}
-    	
-    	
-	    	form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
-	    	form.setMeasurementVariables(getUserSelection().getWorkbook().getMeasurementDatasetVariables());
-	    	form.changePage(userSelection.getCurrentPage());
-	    	userSelection.setCurrentPage(form.getCurrentPage());
-	    	form.setImportVal(1);
-    	    	    	
-    	return super.show(model);
-    }
-    
+//    @RequestMapping(value="/import/{importType}", method = RequestMethod.POST)
+//    public String importFile(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form
+//            ,@PathVariable int importType, BindingResult result, Model model) {
+//    	    	    	    	
+//    	if(AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == importType){
+//    		MultipartFile file = form.getFile();
+//            if (file == null) {
+//           	 result.rejectValue("file", AppConstants.FILE_NOT_FOUND_ERROR.getString());
+//            } else {
+//                boolean isCSVFile = file.getOriginalFilename().contains(".csv");
+//                if (!isCSVFile) {
+//               	 	result.rejectValue("file", AppConstants.FILE_NOT_CSV_ERROR.getString());
+//                }
+//            }
+//            if(!result.hasErrors()){
+//	    		try {
+//	    			String filename = fileService.saveTemporaryFile(file.getInputStream());
+//	    			
+//					fieldroidImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename));
+//				} catch (WorkbookParserException e) {
+//					// TODO Auto-generated catch block
+//					//e.printStackTrace();				
+//					LOG.error(e.getMessage(), e);
+//					result.rejectValue("file", e.getMessage());
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					//e.printStackTrace();
+//					LOG.error(e.getMessage(), e);
+//				}
+//            }
+//    	}else if(AppConstants.EXPORT_NURSERY_EXCEL.getInt() == importType){
+//    		
+//    		
+//        	
+//        	 MultipartFile file = form.getFile();
+//             if (file == null) {
+//            	 result.rejectValue("file", AppConstants.FILE_NOT_FOUND_ERROR.getString());
+//             } else {
+//                 boolean isExcelFile = file.getOriginalFilename().contains(".xls") 
+//                         || file.getOriginalFilename().contains(".xlsx");
+//                 if (!isExcelFile) {
+//                	 result.rejectValue("file", AppConstants.FILE_NOT_EXCEL_ERROR.getString());
+//                 }
+//             }
+//             if(!result.hasErrors()){
+//	    		try {
+//	    			String filename = fileService.saveTemporaryFile(file.getInputStream());
+//	    			
+//					excelImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename));
+//				} catch (WorkbookParserException e) {
+//					// TODO Auto-generated catch block
+//					//e.printStackTrace();				
+//					LOG.error(e.getMessage(), e);
+//					result.rejectValue("file", e.getMessage());
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					//e.printStackTrace();
+//					LOG.error(e.getMessage(), e);
+//				}
+//             }
+//    	}
+//    	
+//    	
+//	    	form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
+//	    	form.setMeasurementVariables(getUserSelection().getWorkbook().getMeasurementDatasetVariables());
+//	    	form.changePage(userSelection.getCurrentPage());
+//	    	userSelection.setCurrentPage(form.getCurrentPage());
+//	    	form.setImportVal(1);
+//    	    	    	
+//    	return super.show(model);
+//    }
+//    
     /**
      * Gets the user selection.
      *

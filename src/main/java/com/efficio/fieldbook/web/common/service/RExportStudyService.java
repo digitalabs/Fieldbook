@@ -9,11 +9,13 @@
  * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
  * 
  *******************************************************************************/
-package com.efficio.fieldbook.web.nursery.service;
+package com.efficio.fieldbook.web.common.service;
+
+import java.util.List;
 
 import org.generationcp.middleware.domain.etl.Workbook;
 
 public interface RExportStudyService extends ExportStudyService {
 
-	void exportToR(Workbook workbook, String filename, Integer selectedTrait);
+	String exportToR(Workbook workbook, String filename, Integer selectedTrait, int start, int end);
 }

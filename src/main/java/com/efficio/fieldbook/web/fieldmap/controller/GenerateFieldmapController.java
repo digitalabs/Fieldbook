@@ -16,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -40,6 +42,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.ExportExcelService;
 import com.efficio.fieldbook.service.api.FieldMapService;
+import com.efficio.fieldbook.util.FieldMapUtilityHelper;
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
@@ -135,7 +138,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
                                             datasetId, geolocationId);
             if (trialInfo != null) {
                 this.userFieldmap.setNumberOfRangesInBlock(trialInfo.getRangesInBlock());
-                this.userFieldmap.setNumberOfRowsInBlock(trialInfo.getColumnsInBlock(), 
+                this.userFieldmap.setNumberOfRowsInBlock(trialInfo.getRowsInBlock(), 
                         trialInfo.getRowsPerPlot());
                 this.userFieldmap.setNumberOfEntries(
                         (long) this.userFieldmap.getAllSelectedFieldMapLabels(false).size()); 
@@ -150,7 +153,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
                 
                 FieldPlotLayoutIterator plotIterator = horizontalFieldMapLayoutIterator;
                 this.userFieldmap.setFieldmap(fieldmapService.generateFieldmap(this.userFieldmap, 
-                        plotIterator));
+                        plotIterator, false, trialInfo.getDeletedPlots()));
             }
             this.userFieldmap.setSelectedFieldmapList(new SelectedFieldmapList(
                     this.userFieldmap.getSelectedFieldMaps(), this.userFieldmap.isTrial()));
@@ -231,7 +234,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         int ranges = userFieldmap.getNumberOfRangesInBlock();
         int rowsPerPlot = userFieldmap.getNumberOfRowsPerPlot();
         boolean isSerpentine = userFieldmap.getPlantingOrder() == 2;
-        
+
         int col = rows / rowsPerPlot;
         //should list here the deleted plot in col-range format
         Map deletedPlot = new HashMap();
@@ -243,8 +246,11 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
             }
         }
 
+        markDeletedPlots(form, form.getMarkedCells());
+        
+
 //        List<FieldMapLabel> labels = userFieldmap.getFieldMapLabels();
-        List<FieldMapLabel> labels = userFieldmap.getAllSelectedFieldMapLabels(true);
+        List<FieldMapLabel> labels = userFieldmap.getAllSelectedFieldMapLabelsToBeAdded(true);
 
         //we'll use vertical layouter for now
         /*
@@ -253,10 +259,11 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         */
         //we can add logic here to decide if its vertical or horizontal
         FieldPlotLayoutIterator plotIterator = horizontalFieldMapLayoutIterator;
-        
+        //
+        //	FieldMapUtilityHelper.markedDeletedPlot(this.userFieldmap.getFieldmap(),deletedPlot);
         Plot[][] plots = plotIterator.createFieldMap(col, ranges, startRange, startCol,
-                isSerpentine, deletedPlot, labels, userFieldmap.isTrial());
-        
+                isSerpentine, deletedPlot, labels, userFieldmap.isTrial(), this.userFieldmap.getFieldmap());
+        //FieldMapUtilityHelper.markedDeletedPlot(this.userFieldmap.getFieldmap(),deletedPlot);
         userFieldmap.setFieldmap(plots);
         form.setUserFieldmap(userFieldmap);
         
@@ -319,4 +326,18 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
         form.setUserFieldmap(info);
     }
     
+    private void markDeletedPlots(FieldmapForm form, String deletedPlots) {
+    	StringBuilder dpString = new StringBuilder();
+    	List<String> dpform = new ArrayList<String>();
+    	if (deletedPlots != null) {
+    		String[] dps = deletedPlots.split(",");
+    		for (String deletedPlot : dps) {
+    			String[] coordinates = deletedPlot.split("_");
+    			if (coordinates.length == 2 && NumberUtils.isNumber(coordinates[0]) && NumberUtils.isNumber(coordinates[1])) {
+    				dpform.add(coordinates[0] + "," + coordinates[1]);
+    			}
+    		}
+    	}
+    	this.userFieldmap.setDeletedPlots(dpform);
+    }
 }

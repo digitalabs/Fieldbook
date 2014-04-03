@@ -1,0 +1,387 @@
+<!-- form id="addVariableForm" role="form-horizontal" onsubmit="return validateCells();" class="form-horizontal" action="#" 
+	th:action="@{/NurseryManager/addOrRemoveTraits}" method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data" -->
+	
+<form id="addVariableForm" role="form-horizontal" onsubmit="return validateCells();" class="form-horizontal" action="#" 
+	method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data">
+
+	<input type="hidden" th:field="*{importVal}"/>
+	<input type="hidden" th:field="*{numberOfInstances}" />
+              
+	 <div class="germplasm-measurement-list-table " style="width: 100%; max-width: 100%">
+	
+       <!-- my-class table table-curved table-condensed   -->
+				<div class="factor-div" style="float: left; max-height: 400px; max-width: 50%; min-width: 50%; overflow-x: scroll; overflow-y: hidden">
+				<table style="table-layout: auto; width: 100%">
+					<thead>
+						 <tr >
+			               <th th:if="${measurementVariable.factor == true}" th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'" th:each="measurementVariable, rowIndex : *{measurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>
+			
+			             </tr>	
+					</thead>
+				
+				<tbody>
+						<tr  th:class="${row.even}? 'even' : 'odd'" th:each="measurementRow, row: *{paginatedMeasurementRowList}">
+           	
+           		<td th:if="${measurementData.editable == false}" style="vertical-center; padding: 0px;" align="center" th:each="measurementData, rowIndex : ${measurementRow.dataList}"  >
+             		
+             		<label th:if="${measurementData.editable == false}" th:text="${measurementData.value}" ></label>
+             		         		
+				</td>
+				</tr>
+             	</tbody>
+				</table>
+				</div>
+				<div class="variates-div" style="float: left; max-height: 400px;max-width: 50%; min-width: 50%; overflow: auto; overflow-x: scroll">
+				<table style="table-layout: auto;  width: 100%"> 
+					<thead>
+						 <tr >
+			               <th th:if="${measurementVariable.factor == false}" th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'" th:each="measurementVariable, rowIndex : *{measurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>
+			
+			             </tr>	
+					</thead>
+					<tbody>
+						<tr  th:class="${row.even}? 'even' : 'odd'" th:each="measurementRow, row: *{paginatedMeasurementRowList}">
+           	
+             	<td  th:if="${measurementData.editable == true}" style="vertical-align:center; " align="center" th:each="measurementData, rowIndex : ${measurementRow.dataList}"  >
+             		
+             		<!-- label th:if="${measurementData.editable == false}" th:text="${measurementData.value}" ></label>
+             		<input th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" type="text" th:if="${measurementData.editable == true}" th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}"/ -->
+             		
+             		<input th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" type="text" th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues)}" th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}" />
+             		<select th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" 
+             				th:if="${not #lists.isEmpty(measurementData.measurementVariable.possibleValues)}" 
+	             			th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}" >
+	             		<option value = "" text=""></option>
+             			<option th:each="refval : ${measurementData.measurementVariable.possibleValues}" 
+             					th:value="${refval.key}" 
+             					th:text="${refval.description}"></option>
+             		</select>
+             		     		
+				</td>
+             </tr>
+					</tbody>
+				</table>
+				</div>
+				</div> 
+	
+        <div >
+	        <div th:if="*{measurementRowList != null and not #lists.isEmpty(measurementRowList)}">
+	        	<div id="measurement-data-list-pagination"></div>
+	        </div>
+	        </div>
+				
+
+	<div class="form-group">
+	    <div class="col-xs-5 col-md-5">&nbsp;</div> 
+	    <div class="col-xs-7 col-md-7">
+	      	<a id="btnBack" href="" th:href="@{/NurseryManager/importGermplasmList}"   th:text="#{common.form.back.text}" class="btn btn-default" />
+			<!-- input type="submit" id="btnNext" th:value="#{common.form.next.text}" class="btn btn-primary" / -->
+	      	<input type="submit" id="btnUpdate" th:value="#{common.form.update.text}" class="btn btn-primary" onclick="doSave();return false;"/>
+	      
+	    </div>
+	  </div>
+	  
+	<div class="form-group">
+		<div class="col-md-12">	
+			<div class="modal fade" id="successMessageModal"  role="dialog" aria-labelledby="successMessageModal" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content" >
+						<div class="modal-body" id="successMessageBody">
+							<div style="text-align: center">
+								<label th:text="#{nursery.addOrRemoveTraits.success.update.message}">Traits has been successfully updated.</label>
+							</div>
+						</div>
+						<div class="modal-footer">    
+			       			<!-- a id="btnOK" href="" th:href="@{/NurseryManager}"   th:text="#{common.form.ok.text}" class="btn btn-primary" / -->	
+			       			<a id="btnOK" href="" th:text="#{common.form.ok.text}" class="btn btn-primary" onclick="doReturn(); return false;" />	
+		       			</div>
+					</div><!-- /.modal-content -->
+				</div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->		
+			 
+		</div>
+	</div>  
+	
+	 <div class="modal fade" id="importRModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" th:text="#{nursery.export.r.header}">Choose Trait to evaluate in R</h4>
+          </div>
+          <div class="modal-body">
+            <!--  <div class="form-group" id="page-modal-message"></div>
+             -->
+             <div class="form-group" id="page-modal-choose-instance-message-r"></div>
+            <div class='form-group'>                                          
+              <div class="col-md-9">
+              <label for="fileupload" class="control-label" th:text="#{nursery.export.r.note}">Note: In your exported file, your trait will show as "GY"</label>
+              </div>
+              </div>
+            <div class='form-group'>                                          
+              <br />
+               <div class="col-md-3">
+              <label for="fileupload" class="control-label" th:text="#{nursery.export.r.select.trait}">Select Main Trait:</label>
+              </div>
+              <div class="col-xs-6 col-lg-6">                
+	    			<select name="selectedRTrait" id="selectedRTrait" class="form-control">
+	    				<option th:if="${measurementVariable.factor == false}" th:each="measurementVariable : *{measurementVariables}" th:value="${measurementVariable.termId}" th:utext="${measurementVariable.name + ' (' + measurementVariable.scale +')'}">Trait</option>
+	    			</select>
+               
+              </div>
+            </div>
+            <div class="row form-group" id="importRChooseInstance">
+            	<br />
+            </div>
+          </div>																							
+        
+        <div class="modal-footer">
+          <button value="Cancel" aria-hidden="true" data-dismiss="modal" class="btn btn-default" type="button" th:text="#{common.form.cancel.text}">Cancel</button>
+          <button type="button" th:value="#{common.form.submit.text}" class="btn btn-primary" th:text="#{nursery.import.germplasm.submit}" onclick="javascript: exportNurseryToR(2);">Submit</button>			        	
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+
+	<div class="modal fade" id="trialModalSelection" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Choose Trial Instance</h4>
+          </div>
+          <div class="modal-body" id="exportChooseInstance">
+          <div class="form-group" id="page-modal-choose-instance-message"></div>
+          <input type="hidden" id="exportTrialType"/>
+           <div id="chooseInstance">
+            <div class=''>                                                         
+              <div class="col-xs-12 col-lg-12">                
+	    			<label class="radio-inline">
+							  <input class="instanceNumber"  type="radio" value="1" th:field="*{exportInstanceType}"/> 
+							  <span >All Trial Instance</span>
+					</label>							               
+              </div>
+            </div>
+            <div class=''>                                                         
+              <div class="col-xs-12 col-lg-12">                
+	    			<label class="radio-inline">
+							  <input class="instanceNumber" type="radio" value="2" th:field="*{exportInstanceType}"/> 
+							  <span>Trial Instance #</span>
+<input type="text" th:field="*{exportTrialInstanceNumber}" class="spinner-input" />
+					</label>							               
+              </div>
+            </div>
+            <div class=''>                                                         
+              <div class="col-xs-12 col-lg-12">                
+	    			<label class="radio-inline">
+							  <input class="instanceNumber" type="radio" value="3" th:field="*{exportInstanceType}"/> 
+							  <span>From Trial Instance #</span>
+							  <input type="text" th:field="*{exportTrialInstanceStart}" class="spinner-input" />
+							  <span>to Trial Instance #</span>
+							  <input type="text" th:field="*{exportTrialInstanceEnd}" class="spinner-input" />
+					</label>							               
+              </div>
+              </div>
+            </div>
+          </div>																							
+        
+        <div class="modal-footer">
+          <button value="Cancel" aria-hidden="true" data-dismiss="modal" class="btn btn-default" type="button" th:text="#{common.form.cancel.text}">Cancel</button>
+          <button type="button" th:value="#{common.form.submit.text}" class="btn btn-primary" th:text="#{nursery.import.germplasm.submit}" onclick="javascript: doExportTrial();">Submit</button>			        	
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+</form>
+
+
+<form id="exportStudyForm" role="form-horizontal" action="#" th:action="@{/ExportManager/}" method="GET">
+</form>
+
+<form id="importStudyForm" role="form-horizontal" onsubmit="return do_validation()"  class="form-horizontal" action="#" 
+     method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data">								
+    <!-- Modal -->
+    <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" th:text="#{nursery.import.data.file}">Import File</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group" id="page-modal-message"></div>
+            <div class='form-group'>                                          
+              
+              <label for="fileupload" class="col-md-2 control-label" th:text="#{nursery.import.germplasm.select.file}">Select a file</label>
+              <div class="col-xs-6 col-lg-6">
+                
+                <div class="fileupload fileupload-new" data-provides="fileupload">							    
+                <div class="input-group">
+                  <div class="form-control uneditable-input"><i class="icon-file fileupload-exists"></i> 
+                  <span class="fileupload-preview"></span>
+                </div>
+                <div class="input-group-btn">
+                  <a class="btn btn-primary btn-file">
+                    <span class="fileupload-new" th:text="#{nursery.import.germplasm.browse.file}">Browse</span>
+                    <span class="fileupload-exists" th:text="#{nursery.import.germplasm.change}">Change</span>
+                    <input id="fileupload" th:field="*{file}" type="file" class="file-input"/></a>
+                    <a href="#" class="btn btn-danger fileupload-exists" data-dismiss="fileupload" th:text="#{nursery.import.germplasm.remove}">Remove</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>																							
+        </div>
+        <div class="modal-footer">
+          <button value="Cancel" aria-hidden="true" data-dismiss="modal" class="btn btn-default" type="button" th:text="#{common.form.cancel.text}">Cancel</button>
+          <button type="button" th:value="#{common.form.submit.text}" class="btn btn-primary" th:text="#{nursery.import.germplasm.submit}" 
+          		  onclick="javascript: submitImportStudy();">Submit</button>			        	
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+</form>
+
+
+<script type="text/javascript" th:src="@{/static/js/bootstrap-paginator.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/bootstrap-spinedit.js}"></script>
+<link th:href="@{/static/css/bootstrap-spinedit.css}" rel="stylesheet"/>
+
+				<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[
+	           
+	    convertToSelect2 = false;
+        var paginationUrl = /*[[@{/Common/addOrRemoveTraits/page/}]]*/;
+        paginationUrl = paginationUrl + $("#study-type").val() + "/";
+        
+        var options = {
+            currentPage: /*[[${addOrRemoveTraitsForm.currentPage}]]*/,
+            totalPages: /*[[${addOrRemoveTraitsForm.totalPages}]]*/,
+
+            alignment:'center',
+            useBootstrapTooltip:true,
+            onPageClicked: function(e,originalEvent,type,page){     
+            	if(validateCells()){
+            		showPostPage(paginationUrl, options.currentPage, page, 'germplasm-measurement-list-table-div', 'addVariableForm');
+            	}else{
+            		event.stopImmediatePropagation();
+            	}
+            		
+            }
+        }
+        
+		if($('#measurement-data-list-pagination') != null){
+			$('#measurement-data-list-pagination').bootstrapPaginator(options);	
+		}
+        $( document ).ready(function() {
+        	fixedTrHeight();
+        	//doStickyHeader();		     
+       	 //  $('.germplasm-measurement-list-table td input').on("change", validateCells);
+       	 //  $('.germplasm-measurement-list-table td input').on("focus", validateCells);
+       	 //  $('.germplasm-measurement-list-table td input').on("blur", validateCells);
+       	 //  if (document.URL.indexOf("view" + $("#study-type").val()) > -1 || $('#importVal').val() == '1') {
+       		   $("#btnBack").attr("href", "/Fieldbook/" + $("#study-type").val() + "Manager");
+       		   $("#btnUpdate").show();
+       		   $("#btnNext").hide();
+       	 //  } else {
+       	 //	   $("#btnUpdate").hide();
+       	 //	   $("#btnNext").show();
+       	 //  }    
+       	   
+       	$('.variates-div').scroll(function(){ 
+       	
+       		$('.factor-div').scrollTop($(this).scrollTop());
+       	
+       	}); 
+       	   //$("#freezeheader").freezeHeader({ 'height': '500px' });
+       	   //setTimeout(function(){$('#hdfreezeheader').css('top', '0px')}, 450);
+   		});
+        function fixedTrHeight(){
+        	var max = 0;    
+        	$('table tr').each(function() {
+        	    max = Math.max($(this).height(), max);
+        	}).height(max);
+        	
+        	$('table tr').css('height', max+'px');
+        		
+        }
+       
+		function doSave(){
+			if(validateCells() == false)
+				return false;
+  	      	var $form = $("#addVariableForm");
+  			serializedData = $form.serialize();
+  			$("btnUpdate").attr("disabled", "disabled");
+			Spinner.toggle();
+
+			$.ajax({
+				url: "/Fieldbook/Common/addOrRemoveTraits/" + $("#study-type").val() + "/updateTraits",
+				type: "post",
+				dataType: "json",
+				data: serializedData,
+			    success: function(data){
+				    if (data.status == "1") {
+				    	$('#successMessageModal').modal({ backdrop: 'static', keyboard: true }) 
+				    	$("#successMessageModal").modal("show");
+			       	} else if (data.status == "-1") {
+			       		showErrorMessage('page-message', data.errorMessage);
+			       	}
+			   }, 
+			   error: function(jqXHR, textStatus, errorThrown){
+					console.log("The following error occured: " + textStatus, errorThrown); 
+			   }, 
+			   complete: function(){  
+				   $("btnUpdate").removeAttr("disabled");
+				   Spinner.toggle();
+			   } 
+			});
+		}      
+		
+		
+		function doReturn() {
+			location.href = "/Fieldbook/" + $("#study-type").val() + "Manager";
+		}
+      
+       function validateCells(){
+    	   var noError = true;
+    	   $('.germplasm-measurement-list-table td input').each(function(){
+			   if($(this).data('type') == 'N'){
+	    			  if(isNaN(Number($(this).val()))){    				   
+	    				  showErrorMessage('page-message', "Please enter a numeric value for this variate");
+	    				  var id = $(this).attr('id');
+	    				  setTimeout(function() { $('#'+getJquerySafeId(id)).focus(); }, 10);
+	    				  noError = false;
+	    				  //console.log('false');
+	    				  return false;
+	    			  }
+			   }
+		   }); 
+    	   if(noError){
+    		   hideErrorMessage('page-message');
+    	   }
+    	   //console.log('true');
+    	   return noError;
+       }
+       
+       function do_validation() {
+	    if ($('#fileupload').val() == "") {
+	    	    var message = /*[[#{common.error.file.no.file.selected}]]*/;
+	    	    
+	    	    
+	    	    $("#page-modal-message").html(
+	    	    "<div class='alert alert-danger'>"+ message +"</div>"
+	    	  );
+	    	  
+	    	  $('div.fileupload').parent().parent().addClass('has-error');
+	    	  
+	    	  return false;
+	    	}
+   	  
+	   	  return true;
+	  }
+       
+       
+      //]]>
+    </script>

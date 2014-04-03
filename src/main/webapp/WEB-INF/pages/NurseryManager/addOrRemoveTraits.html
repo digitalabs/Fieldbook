@@ -1,17 +1,12 @@
-<!--  <div class="page-header">
-	<h1>
-		Step 3: Add or Remove Traits
-	</h1>
-	
-	<div class="progress">
-	  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%;">
-	    <span class="sr-only">75% Complete</span>
-	  </div>
-	</div>
+ <div class="col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org">
+	<div class="page-header">
+		<h1 th:text="#{nursery.open.nursery}">
+			OPEN NURSERY
+		</h1>
+	</div>			  
 </div>
- -->
- <br />
- <br />
+
+<input type="hidden" id="study-type" name="study-type" value="Nursery" />
  <form role="form-horizontal"  action="#" 
      method="post" th:object="${addOrRemoveTraitsForm}">
  <div th:class="${#fields.hasErrors('file')} ? 'form-group has-error' : 'form-group'">
@@ -22,11 +17,20 @@
 	<div id="page-message"> 
 	</div>
 		
-<div>
+<div class="col-xs-12 col-md-12 move-left ">
 	<div class="panel panel-default">
 	   	<div class="panel-body manage-settings-panel-body">
 	   	<div class="row form-group">
-	<div style="float: right; padding-right: 10px;">
+	   	
+	   	<div class="col-xs-1 col-md-1 add_top_padding">
+   			<label class="control-label"> <strong th:text="#{nursery.managenurseries.shownurseries.name}+':'"> Choose Saved Settings: </strong></label>
+   		</div>
+   		
+   		<div class="col-xs-3 col-md-3 add_top_padding">
+   			<label class="control-label" th:text="${addOrRemoveTraitsForm.studyName}"> </label>
+   		</div>
+   		
+	<div style="float: right;">
 	
 		<div  class="btn-group">
 		  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
@@ -62,7 +66,7 @@
 	</div>
 	</div>
 	
-			<div id="germplasm-measurement-list-table-div" th:include="/NurseryManager/showAddOrRemoveTraitsPagination">
+			<div id="germplasm-measurement-list-table-div" th:include="/Common/showAddOrRemoveTraitsPagination">
 	    	</div>		    	
 	  	</div>
 	</div>
@@ -72,130 +76,13 @@
 				
 				
     		
-<form id="exportNurseryForm" role="form-horizontal" action="#"
-th:action="@{/NurseryManager/addOrRemoveTraits/export/}" method="GET">
-</form>
-
-<form id="importNurseryForm" role="form-horizontal" onsubmit="return do_validation()"  class="form-horizontal" action="#" 
-     th:action="@{/NurseryManager/addOrRemoveTraits/import/}" method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data">								
-    <!-- Modal -->
-    <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title" th:text="#{nursery.import.data.file}">Import File</h4>
-          </div>
-          <div class="modal-body">
-            <div class="form-group" id="page-modal-message"></div>
-            <div class='form-group'>                                          
-              
-              <label for="fileupload" class="col-md-2 control-label" th:text="#{nursery.import.germplasm.select.file}">Select a file</label>
-              <div class="col-xs-6 col-lg-6">
-                
-                <div class="fileupload fileupload-new" data-provides="fileupload">							    
-                <div class="input-group">
-                  <div class="form-control uneditable-input"><i class="icon-file fileupload-exists"></i> 
-                  <span class="fileupload-preview"></span>
-                </div>
-                <div class="input-group-btn">
-                  <a class="btn btn-primary btn-file">
-                    <span class="fileupload-new" th:text="#{nursery.import.germplasm.browse.file}">Browse</span>
-                    <span class="fileupload-exists" th:text="#{nursery.import.germplasm.change}">Change</span>
-                    <input id="fileupload" th:field="*{file}" type="file" class="file-input"/></a>
-                    <a href="#" class="btn btn-danger fileupload-exists" data-dismiss="fileupload" th:text="#{nursery.import.germplasm.remove}">Remove</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>																							
-        </div>
-        <div class="modal-footer">
-          <button value="Cancel" aria-hidden="true" data-dismiss="modal" class="btn btn-default" type="button" th:text="#{common.form.cancel.text}">Cancel</button>
-          <button type="submit" th:value="#{common.form.submit.text}" class="btn btn-primary" th:text="#{nursery.import.germplasm.submit}">Submit</button>			        	
-        </div>
-      </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-  </div><!-- /.modal -->
-</form>
 <script type="text/javascript" th:src="@{/static/js/bootstrap-fileupload.js}"></script>
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
 	           
 	            
-        
 	           
-		function doSave(){
-			if(validateCells() == false)
-				return false;
-  	      	var $form = $("#addVariableForm");
-  			serializedData = $form.serialize();
-  			$("btnUpdate").attr("disabled", "disabled");
-			Spinner.toggle();
-
-			$.ajax({
-				url: "/Fieldbook/NurseryManager/addOrRemoveTraits/updateTraits",
-				type: "post",
-				dataType: "json",
-				data: serializedData,
-			    success: function(data){
-				    if (data.status == "1") {
-				    	$('#successMessageModal').modal({ backdrop: 'static', keyboard: true }) 
-				    	$("#successMessageModal").modal("show");
-			       	} else if (data.status == "-1") {
-			       		showErrorMessage('page-message', data.errorMessage);
-			       	}
-			   }, 
-			   error: function(jqXHR, textStatus, errorThrown){
-					console.log("The following error occured: " + textStatus, errorThrown); 
-			   }, 
-			   complete: function(){  
-				   $("btnUpdate").removeAttr("disabled");
-				   Spinner.toggle();
-			   } 
-			});
-		}      
-		
-	
-      
        
-       function validateCells(){
-    	   var noError = true;
-    	   $('.germplasm-measurement-list-table td input').each(function(){
-			   if($(this).data('type') == 'N'){
-	    			  if(isNaN(Number($(this).val()))){    				   
-	    				  showErrorMessage('page-message', "Please enter a numeric value for this variate");
-	    				  var id = $(this).attr('id');
-	    				  setTimeout(function() { $('#'+getJquerySafeId(id)).focus(); }, 10);
-	    				  noError = false;
-	    				  //console.log('false');
-	    				  return false;
-	    			  }
-			   }
-		   }); 
-    	   if(noError){
-    		   hideErrorMessage('page-message');
-    	   }
-    	   //console.log('true');
-    	   return noError;
-       }
-       
-       function do_validation() {
-    	    if ($('#fileupload').val() == "") {
-	    	    var message = /*[[#{common.error.file.no.file.selected}]]*/;
-	    	    
-	    	    
-	    	    $("#page-modal-message").html(
-	    	    "<div class='alert alert-danger'>"+ message +"</div>"
-	    	  );
-	    	  
-	    	  $('div.fileupload').parent().parent().addClass('has-error');
-	    	  
-	    	  return false;
-	    	}
-    	  
-    	  return true;
-   }
        
       //]]>
     </script>

@@ -209,20 +209,20 @@ $.ajax(
     			   //get index of breeding method row
     			   var index = getBreedingMethodRowIndex();
     			   
-    			   if ($("#" + getJquerySafeId("nurseryLevelVariables" + index + ".value")).select2("data")) {
-    				   selectedVal = $("#" + getJquerySafeId("nurseryLevelVariables" + index + ".value")).select2("data").id;
+    			   if ($("#" + getJquerySafeId("studyLevelVariables" + index + ".value")).select2("data")) {
+    				   selectedVal = $("#" + getJquerySafeId("studyLevelVariables" + index + ".value")).select2("data").id;
     			   }
     			   //recreate select2 of breeding method
     			   initializePossibleValuesCombo([], 
-	 			 			"#" + getJquerySafeId("nurseryLevelVariables" + index + ".value"), false, selectedVal);
+	 			 			"#" + getJquerySafeId("studyLevelVariables" + index + ".value"), false, selectedVal);
     			   
     			   //update values of combo
-    			   if ($("#" + getJquerySafeId("nurseryLevelVariables" + index + ".favorite1")).is(":checked")) {
+    			   if ($("#" + getJquerySafeId("studyLevelVariables" + index + ".favorite1")).is(":checked")) {
 					   initializePossibleValuesCombo($.parseJSON(data.favoriteMethods), 
-		 			 			"#" + getJquerySafeId("nurseryLevelVariables" + index + ".value"), false, selectedVal);
+		 			 			"#" + getJquerySafeId("studyLevelVariables" + index + ".value"), false, selectedVal);
     			   } else {
     				   initializePossibleValuesCombo($.parseJSON(data.allMethods), 
-		 			 			"#" + getJquerySafeId("nurseryLevelVariables" + index + ".value"), false, selectedVal);
+		 			 			"#" + getJquerySafeId("studyLevelVariables" + index + ".value"), false, selectedVal);
     			   }
     			   
     			   replacePossibleJsonValues(data.favoriteMethods, data.allMethods, index);
@@ -246,7 +246,7 @@ function getBreedingMethodRowIndex() {
 	$.each($(".nurseryLevelSettings"), function (index, row) {
 		//daniel
 		var cvTermId = $($(row).find('.1st')
-				.find("#" + getJquerySafeId("nurseryLevelVariables" + index + ".variable.cvTermId"))).val();
+				.find("#" + getJquerySafeId("studyLevelVariables" + index + ".variable.cvTermId"))).val();
 		if (parseInt(cvTermId) == parseInt(breedingMethodId)) {
 			rowIndex = index;
 		}
@@ -258,7 +258,7 @@ function getLocationRowIndex() {
 	var rowIndex = 0;
 	$.each($(".nurseryLevelSettings"), function (index, row) {
 		var cvTermId = $($(row).find('.1st')
-				.find("#" + getJquerySafeId("nurseryLevelVariables" + index + ".variable.cvTermId"))).val();
+				.find("#" + getJquerySafeId("studyLevelVariables" + index + ".variable.cvTermId"))).val();
 		if (parseInt(cvTermId) == parseInt(locationId)) {
 			rowIndex = index;
 		}
@@ -294,19 +294,19 @@ function recreateLocationCombo() {
     			   var selectedVal = null;
     			   var index = getLocationRowIndex();
     			   
-    			   if ($("#" + getJquerySafeId("nurseryLevelVariables"+index+".value")).select2("data")) {
-    				   selectedVal = $("#" + getJquerySafeId("nurseryLevelVariables"+index+".value")).select2("data").id;
+    			   if ($("#" + getJquerySafeId("studyLevelVariables"+index+".value")).select2("data")) {
+    				   selectedVal = $("#" + getJquerySafeId("studyLevelVariables"+index+".value")).select2("data").id;
     			   } 
     			   initializePossibleValuesCombo([], 
-	 			 			"#" + getJquerySafeId("nurseryLevelVariables"+index+".value"), true, selectedVal);
+	 			 			"#" + getJquerySafeId("studyLevelVariables"+index+".value"), true, selectedVal);
     			   
     			   //update values in combo
-    			   if ($("#" + getJquerySafeId("nurseryLevelVariables"+index+".favorite1")).is(":checked")) {
+    			   if ($("#" + getJquerySafeId("studyLevelVariables"+index+".favorite1")).is(":checked")) {
 	    			   initializePossibleValuesCombo($.parseJSON(data.favoriteLocations), 
-		 			 			"#" + getJquerySafeId("nurseryLevelVariables"+index+".value"), false, selectedVal);
+		 			 			"#" + getJquerySafeId("studyLevelVariables"+index+".value"), false, selectedVal);
     			   } else {
     				   initializePossibleValuesCombo($.parseJSON(data.allLocations), 
-		 			 			"#" + getJquerySafeId("nurseryLevelVariables"+index+".value"), true, selectedVal);
+		 			 			"#" + getJquerySafeId("studyLevelVariables"+index+".value"), true, selectedVal);
     			   }
     			   
     			   replacePossibleJsonValues(data.favoriteLocations, data.allLocations, index);
@@ -545,6 +545,46 @@ function clearAttributeFields() {
 	$("#selectedName").val("");
 }
 
+function getIdNameCounterpart(selectedVariable, idNameCombinationVariables) {
+	var inList = -1;
+	// return the id or name counterpart of the selected variable if it is in the combination list
+	$.each(idNameCombinationVariables, function (index, item){
+		if (parseInt(item.split("|")[0]) == parseInt(selectedVariable)) {
+			inList = parseInt(item.split("|")[1]);
+			return false;
+		} 
+		if (parseInt(item.split("|")[1]) == parseInt(selectedVariable)) {
+			inList = parseInt(item.split("|")[0]);
+			return false;
+		}
+	});
+	return inList;
+}
+
+function getIdCounterpart(selectedVariable, idNameCombinationVariables) {
+	var inList = selectedVariable;
+	// return the id counterpart of the variable selected if it is in the list
+	$.each(idNameCombinationVariables, function (index, item){ 
+		if (parseInt(item.split("|")[1]) == parseInt(selectedVariable)) {
+			inList = parseInt(item.split("|")[0]);
+			return false;
+		}
+	});
+	return inList;
+}
+
+function idNameCounterpartSelected(selectedVariable) {
+	var itemToCompare = getIdNameCounterpart(selectedVariable, $("#idNameVariables").val().split(","));
+
+	if (itemToCompare != -1) {
+		//if it is selected/added already
+		if (!notInList(itemToCompare)) {
+			return true;
+		}
+	}
+	return false;
+}
+
 function addVariableToList() { 
 	var newRow;
 	var rowCount = $("#newVariablesList tbody tr").length;
@@ -561,8 +601,13 @@ function addVariableToList() {
 	var length = $("#newVariablesList tbody tr").length + 1;
 	var className = length % 2 == 1 ? 'even' : 'odd';
 	
-	//if selected variable is not yet in the list and is not blank or new, add it
-	if (notInList($("#selectedStdVarId").val()) && $("#selectedStdVarId").val() != "") {
+	if (idNameCounterpartSelected($("#selectedStdVarId").val())) {
+		//if selected variable is an id/name counterpart of a variable already selected/added
+		$("#page-message-modal").html(
+			    "<div class='alert alert-danger'>"+ idNameCounterpartAddedError +"</div>"
+		);
+	} else if (notInList($("#selectedStdVarId").val()) && $("#selectedStdVarId").val() != "") {
+		//if selected variable is not yet in the list and is not blank or new, add it
 		newRow = "<tr>";
 		newRow = newRow + "<td class='"+className+"'><input type='hidden' class='addVariables cvTermIds' id='selectedVariables"+ ctr + ".cvTermId' " +  
 			"name='selectedVariables["+ ctr + "].cvTermId' value='" + $("#selectedStdVarId").val() + "' />";
@@ -624,7 +669,7 @@ function submitSelectedVariables(variableType) {
 		);
 	}
 	else if ($("#newVariablesList tbody tr").length > 0) {
-		
+		replaceNameVariables();
 		var serializedData = $("input.addVariables").serialize();
 		$("#page-message-modal").html("");
 		Spinner.toggle();
@@ -664,6 +709,17 @@ function submitSelectedVariables(variableType) {
 	}
 }
 
+function replaceNameVariables() {
+	$.each($("#newVariablesList tbody tr"), function (index, row){
+		value = $($(row).children("td:nth-child(1)").children("#" + 
+				getJquerySafeId("selectedVariables"+ index + ".cvTermId"))).val();
+		//use the id counterpart of the name variable
+		$($(row).children("td:nth-child(1)").children("#" 
+				+ getJquerySafeId("selectedVariables"+ index + ".cvTermId"))).val(getIdCounterpart(value, $("#idNameVariables").val().split(",")));
+	});
+
+}
+
 function getLastRowIndex(name, hasTBody) {
 	if (hasTBody) {
 		return $("#" + name + " tbody tr").length - 1;
@@ -675,7 +731,7 @@ function getLastRowIndex(name, hasTBody) {
 function createNurseryLevelSettingVariables(data) {
 	var ctr = $('.nurseryLevelSettings').length; //getLastRowIndex("nurseryLevelSettings", false) + 1;
 	$.each(data, function (index, settingDetail) {
-		var newRow = "<div class='row nurseryLevelSettings newVariable'>";
+		var newRow = "<div class='row form-group nurseryLevelSettings newVariable'>";
 		var isDelete = "";
 		
 		//include delete button if variable is deletable
@@ -686,15 +742,15 @@ function createNurseryLevelSettingVariables(data) {
 		
 		//create html elements dynamically
 		newRow = newRow + "<div class='col-xs-5 col-md-5'>" + isDelete + 
-		"&nbsp;&nbsp;<input class='cvTermIds' type='hidden' id='nurseryLevelVariables" + ctr + ".variable.cvTermId' name='nurseryLevelVariables[" + 
+		"&nbsp;&nbsp;<input class='cvTermIds' type='hidden' id='studyLevelVariables" + ctr + ".variable.cvTermId' name='studyLevelVariables[" + 
 		ctr + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
 		//newRow = newRow + "<td>" + settingDetail.variable.name + ':' + '<span class="required">*</span>' +  "</td>";
-		newRow = newRow + "<label class='control-label'>" + settingDetail.variable.name + '</label>:' + '' +  "</div>";
+		newRow = newRow + "<span style='word-wrap: break-word'  class='control-label'>" + settingDetail.variable.name + '</span>:' + '' +  "</div>";
 		newRow = newRow + "<div class='col-xs-7 col-md-7'>";
 		/*
-		newRow = newRow + "<input type='hidden' id='nurseryLevelVariables" + ctr + 
-		".value' name='nurseryLevelVariables[" + ctr + "].value' class='form-control select2' />";
+		newRow = newRow + "<input type='hidden' id='studyLevelVariables" + ctr + 
+		".value' name='studyLevelVariables[" + ctr + "].value' class='form-control select2' />";
 		*/
 		var inputHtml = '';
 				
@@ -713,10 +769,10 @@ function createNurseryLevelSettingVariables(data) {
 		
 		if (settingDetail.variable.cvTermId == breedingMethodId) {
 			//show favorite method
-			newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id='nurseryLevelVariables" + ctr + ".favorite1'" + 
-			" name='nurseryLevelVariables[" + ctr + "].favorite'" +
+			newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id='studyLevelVariables" + ctr + ".favorite1'" + 
+			" name='studyLevelVariables[" + ctr + "].favorite'" +
 			" onclick='javascript: toggleMethodDropdown(" + ctr + ");' />" +
-			"<input type='hidden' name='_nurseryLevelVariables[" + ctr + "].favorite' value='on' /> " +
+			"<input type='hidden' name='_studyLevelVariables[" + ctr + "].favorite' value='on' /> " +
 			"<span>&nbsp;&nbsp;" + showFavoriteMethodLabel + "</span></div>" + 
 			"<div id='possibleValuesJson" + ctr + "' class='possibleValuesJson' style='display:none'>" + settingDetail.possibleValuesJson + 
 			"</div><div id='possibleValuesFavoriteJson" + ctr + "' class='possibleValuesFavoriteJson' style='display:none'>" + 
@@ -727,10 +783,10 @@ function createNurseryLevelSettingVariables(data) {
 			
 		} else if (settingDetail.variable.cvTermId == locationId) {
 				//show favorite method
-				newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id='nurseryLevelVariables" + ctr + ".favorite1'" + 
-				" name='nurseryLevelVariables[" + ctr + "].favorite'" +
+				newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id='studyLevelVariables" + ctr + ".favorite1'" + 
+				" name='studyLevelVariables[" + ctr + "].favorite'" +
 				" onclick='javascript: toggleLocationDropdown(" + ctr + ");' />" +
-				"<input type='hidden' name='_nurseryLevelVariables[" + ctr + "].favorite' value='on' /> " +
+				"<input type='hidden' name='_studyLevelVariables[" + ctr + "].favorite' value='on' /> " +
 				"<span>&nbsp;&nbsp;" + showFavoriteLocationLabel + "</span></div>" + 
 				"<div id='possibleValuesJson" + ctr + "' class='possibleValuesJson' style='display:none'>" + settingDetail.possibleValuesJson + 
 				"</div><div id='possibleValuesFavoriteJson" + ctr + "' class='possibleValuesFavoriteJson' style='display:none'>" + 
@@ -748,7 +804,7 @@ function createNurseryLevelSettingVariables(data) {
 		if(settingDetail.variable.widgetType == 'DROPDOWN'){
 			//initialize select 2 combo
 			initializePossibleValuesCombo(settingDetail.possibleValues, "#" + 
-					getJquerySafeId("nurseryLevelVariables" + ctr + ".value"), false, null);
+					getJquerySafeId("studyLevelVariables" + ctr + ".value"), false, null);
 		}
 		ctr++;
 	});
@@ -770,15 +826,15 @@ function createNurseryLevelSettingVariablesOld(data) {
 		
 		//create html elements dynamically
 		newRow = newRow + "<div class='col-xs-4 col-md-4 1st'>" + isDelete + 
-		"<input class='cvTermIds' type='hidden' id='nurseryLevelVariables" + ctr + ".variable.cvTermId' name='nurseryLevelVariables[" + 
+		"<input class='cvTermIds' type='hidden' id='studyLevelVariables" + ctr + ".variable.cvTermId' name='studyLevelVariables[" + 
 		ctr + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"";
 		//newRow = newRow + "<td>" + settingDetail.variable.name + ':' + '<span class="required">*</span>' +  "</td>";
 		newRow = newRow + "<label class='control-label'>" + settingDetail.variable.name + '</label>:' + '' +  "</div>";
 		newRow = newRow + "<div class='col-xs-8 col-md-8 2nd'>";
 		/*
-		newRow = newRow + "<input type='hidden' id='nurseryLevelVariables" + ctr + 
-		".value' name='nurseryLevelVariables[" + ctr + "].value' class='form-control select2' />";
+		newRow = newRow + "<input type='hidden' id='studyLevelVariables" + ctr + 
+		".value' name='studyLevelVariables[" + ctr + "].value' class='form-control select2' />";
 		*/
 		var inputHtml = '';
 				
@@ -797,10 +853,10 @@ function createNurseryLevelSettingVariablesOld(data) {
 		
 		if (settingDetail.variable.cvTermId == breedingMethodId) {
 			//show favorite method
-			newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id='nurseryLevelVariables" + ctr + ".favorite1'" + 
-			" name='nurseryLevelVariables[" + ctr + "].favorite'" +
+			newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id='studyLevelVariables" + ctr + ".favorite1'" + 
+			" name='studyLevelVariables[" + ctr + "].favorite'" +
 			" onclick='javascript: toggleMethodDropdown(" + ctr + ");' />" +
-			"<input type='hidden' name='_nurseryLevelVariables[" + ctr + "].favorite' value='on' /> " +
+			"<input type='hidden' name='_studyLevelVariables[" + ctr + "].favorite' value='on' /> " +
 			"<span>&nbsp;&nbsp;" + showFavoriteMethodLabel + "</span></div>" + 
 			"<div id='possibleValuesJson" + ctr + "' class='possibleValuesJson' style='display:none'>" + settingDetail.possibleValuesJson + 
 			"</div><div id='possibleValuesFavoriteJson" + ctr + "' class='possibleValuesFavoriteJson' style='display:none'>" + 
@@ -811,10 +867,10 @@ function createNurseryLevelSettingVariablesOld(data) {
 			
 		} else if (settingDetail.variable.cvTermId == locationId) {
 				//show favorite method
-				newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id='nurseryLevelVariables" + ctr + ".favorite1'" + 
-				" name='nurseryLevelVariables[" + ctr + "].favorite'" +
+				newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id='studyLevelVariables" + ctr + ".favorite1'" + 
+				" name='studyLevelVariables[" + ctr + "].favorite'" +
 				" onclick='javascript: toggleLocationDropdown(" + ctr + ");' />" +
-				"<input type='hidden' name='_nurseryLevelVariables[" + ctr + "].favorite' value='on' /> " +
+				"<input type='hidden' name='_studyLevelVariables[" + ctr + "].favorite' value='on' /> " +
 				"<span>&nbsp;&nbsp;" + showFavoriteLocationLabel + "</span></div>" + 
 				"<div id='possibleValuesJson" + ctr + "' class='possibleValuesJson' style='display:none'>" + settingDetail.possibleValuesJson + 
 				"</div><div id='possibleValuesFavoriteJson" + ctr + "' class='possibleValuesFavoriteJson' style='display:none'>" + 
@@ -832,7 +888,7 @@ function createNurseryLevelSettingVariablesOld(data) {
 		if(settingDetail.variable.widgetType == 'DROPDOWN'){
 			//initialize select 2 combo
 			initializePossibleValuesCombo(settingDetail.possibleValues, "#" + 
-					getJquerySafeId("nurseryLevelVariables" + ctr + ".value"), false, null);
+					getJquerySafeId("studyLevelVariables" + ctr + ".value"), false, null);
 		}
 		ctr++;
 	});
@@ -842,17 +898,17 @@ function createNurseryLevelSettingVariablesOld(data) {
 
 function toggleMethodDropdown(rowIndex) {
 	var possibleValues;  
-	var showFavorite = $("#" + getJquerySafeId("nurseryLevelVariables" + rowIndex + ".favorite1")).is(":checked");
+	var showFavorite = $("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".favorite1")).is(":checked");
 	var selectedVal;
 	
 	//get previously selected value
-	if ($("#" + getJquerySafeId("nurseryLevelVariables" + rowIndex + ".value")).select2("data")) {
-		selectedVal = $("#" + getJquerySafeId("nurseryLevelVariables" + rowIndex + ".value")).select2("data").id;
+	if ($("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".value")).select2("data")) {
+		selectedVal = $("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".value")).select2("data").id;
 	}
 	
 	//reset select2 combo
 	initializePossibleValuesCombo([], "#" + 
-			getJquerySafeId("nurseryLevelVariables" + rowIndex + ".value"), false, null);
+			getJquerySafeId("studyLevelVariables" + rowIndex + ".value"), false, null);
 	
 	//get possible values based on checkbox
 	if (showFavorite) {
@@ -863,24 +919,24 @@ function toggleMethodDropdown(rowIndex) {
 	
 	//recreate select2 combo
 	initializePossibleValuesCombo($.parseJSON(possibleValues), "#" + 
-			getJquerySafeId("nurseryLevelVariables" + rowIndex + ".value"), false, selectedVal);
+			getJquerySafeId("studyLevelVariables" + rowIndex + ".value"), false, selectedVal);
 }
 
 
 function toggleLocationDropdown(rowIndex) {
 	var possibleValues;  
-	var showFavorite = $("#" + getJquerySafeId("nurseryLevelVariables" + rowIndex + ".favorite1")).is(":checked");
+	var showFavorite = $("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".favorite1")).is(":checked");
 	var selectedVal;
 	var showAll = true;
 	
 	//get previously selected value
-	if ($("#" + getJquerySafeId("nurseryLevelVariables" + rowIndex + ".value")).select2("data")) {
-		selectedVal = $("#" + getJquerySafeId("nurseryLevelVariables" + rowIndex + ".value")).select2("data").id;
+	if ($("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".value")).select2("data")) {
+		selectedVal = $("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".value")).select2("data").id;
 	}
 	
 	//reset select2 combo
 	initializePossibleValuesCombo([], "#" + 
-			getJquerySafeId("nurseryLevelVariables" + rowIndex + ".value"), false, null);
+			getJquerySafeId("studyLevelVariables" + rowIndex + ".value"), false, null);
 	
 	//get possible values based on checkbox
 	if (showFavorite) {
@@ -892,7 +948,7 @@ function toggleLocationDropdown(rowIndex) {
 	
 	//recreate select2 combo
 	initializePossibleValuesCombo($.parseJSON(possibleValues), "#" + 
-			getJquerySafeId("nurseryLevelVariables" + rowIndex + ".value"), showAll, selectedVal);
+			getJquerySafeId("studyLevelVariables" + rowIndex + ".value"), showAll, selectedVal);
 }
 
 function createPlotLevelSettingVariables(data) {
@@ -911,7 +967,9 @@ function createPlotLevelSettingVariables(data) {
 		(length-1) + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
 		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.name + "</td>"; 
-		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.description + "</td></tr>";
+		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.description + "</td>";
+		newRow = newRow + "<td class='"+className+"'>" + "<a href='javascript: void(0);' onclick='javascript:showBaselineTraitDetailsModal(" + 
+		settingDetail.variable.cvTermId + ");'><span class='glyphicon glyphicon-eye-open'></span></a></td></tr>";
 		$("#plotLevelSettings").append(newRow);
 	});
 }
@@ -1043,8 +1101,8 @@ function deleteVariable(variableType, variableId, deleteButton) {
 function sortVariableIdsAndNames(variableType) {
 	switch (variableType) {
 	case 1:
-		var reg = new RegExp("nurseryLevelVariables[0-9]+", "g");
-		var reg2 = new RegExp("nurseryLevelVariables\[[0-9]+\]", "g");
+		var reg = new RegExp("studyLevelVariables[0-9]+", "g");
+		var reg2 = new RegExp("studyLevelVariables\[[0-9]+\]", "g");
 		$.each($(".nurseryLevelSettings"), function (index, row) {						
 			//get currently selected value of select2 dropdown
 			var selectedVal = null;
@@ -1060,8 +1118,8 @@ function sortVariableIdsAndNames(variableType) {
 		    }
 		    
 		    //change the ids and names of the objects 
-		    row.innerHTML = row.innerHTML.replace(reg, "nurseryLevelVariables" + index);
-			row.innerHTML = row.innerHTML.replace(reg2, "nurseryLevelVariables[" + index + "]");
+		    row.innerHTML = row.innerHTML.replace(reg, "studyLevelVariables" + index);
+			row.innerHTML = row.innerHTML.replace(reg2, "studyLevelVariables[" + index + "]");
 			
 			//delete the existing select2 object and recreate the select2 combo and checkbox/links for location/method
 			if (row.innerHTML.indexOf("select2") > -1) {
@@ -1092,11 +1150,11 @@ function recreateSelect2Combo(index, row, selectedVal, isFavoriteChecked) {
 	var possibleValuesJson = $($(row).find(".possibleValuesJson")).text();
 	var possibleValuesFavoriteJson = $($(row).find(".possibleValuesFavoriteJson")).text();
 	var cvTermId = $($(row).find('.1st').find("#" 
-			+ getJquerySafeId("nurseryLevelVariables" + index + ".variable.cvTermId"))).val();
+			+ getJquerySafeId("studyLevelVariables" + index + ".variable.cvTermId"))).val();
 	
 	//hidden field for select2 
-	var newCell = "<input type='hidden' id='nurseryLevelVariables" + index + 
-	".value' name='nurseryLevelVariables[" + index + "].value' class='form-control select2' />";
+	var newCell = "<input type='hidden' id='studyLevelVariables" + index + 
+	".value' name='studyLevelVariables[" + index + "].value' class='form-control select2' />";
 	
 	//newCell = newCell + "<div class='div-select-val' style='display: none'>" +  + "</div>"
 	
@@ -1133,10 +1191,10 @@ function recreateSelect2Combo(index, row, selectedVal, isFavoriteChecked) {
 	
 	//add checkbox and manage location/method links
 	if (parseInt(cvTermId) == parseInt(breedingMethodId) || parseInt(cvTermId) == parseInt(locationId)) {
-		newCell = newCell + "<div class='possibleValuesDiv'><input type='checkbox' id='nurseryLevelVariables" + index + ".favorite1'" + 
-		" name='nurseryLevelVariables[" + index + "].favorite'" +
+		newCell = newCell + "<div class='possibleValuesDiv'><input type='checkbox' id='studyLevelVariables" + index + ".favorite1'" + 
+		" name='studyLevelVariables[" + index + "].favorite'" +
 		" onclick='javascript: " + methodName + "(" + index + ");' " + isChecked +  " />" +
-		"<input type='hidden' name='_nurseryLevelVariables[" + index + "].favorite' value='on' /> " +
+		"<input type='hidden' name='_studyLevelVariables[" + index + "].favorite' value='on' /> " +
 		"<span>&nbsp;&nbsp;" + favoriteLabel + "</span></div>";
 		
 		newCell = newCell + "<span><a href='javascript: " + manageMethodName + "();'>" + managePopupLabel + "</a></span>";
@@ -1147,13 +1205,13 @@ function recreateSelect2Combo(index, row, selectedVal, isFavoriteChecked) {
 	//recreate the select2 object
 	if (parseInt(cvTermId) == parseInt(locationId)) {
 	    initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
- 			"#" + getJquerySafeId("nurseryLevelVariables" + index + ".value"), showAll, selectedVal);
+ 			"#" + getJquerySafeId("studyLevelVariables" + index + ".value"), showAll, selectedVal);
 	} else if (parseInt(cvTermId) == parseInt(breedingMethodId)){
 		initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
-	 			"#" + getJquerySafeId("nurseryLevelVariables" + index + ".value"), false, selectedVal);
+	 			"#" + getJquerySafeId("studyLevelVariables" + index + ".value"), false, selectedVal);
 	} else {
 		initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
-			"#" + getJquerySafeId("nurseryLevelVariables" + index + ".value"), false, selectedVal);
+			"#" + getJquerySafeId("studyLevelVariables" + index + ".value"), false, selectedVal);
 	}
 }
 
@@ -1274,7 +1332,7 @@ function hasEmptyNurseryValue(){
 	/*
 	var hasEmpty = false;
 	$.each($("#nurseryLevelSettings tbody tr"), function(index, row) {
-		var input = $($(row).children("td:nth-child(3)").children("#" + getJquerySafeId("nurseryLevelVariables"+index+".value")));
+		var input = $($(row).children("td:nth-child(3)").children("#" + getJquerySafeId("studyLevelVariables"+index+".value")));
 		if(input.hasClass('select2') && input.select2("data") == null) {
 			hasEmpty = true;
 		}else if(input.hasClass('numeric-input')){
@@ -1320,7 +1378,10 @@ function doSaveSettings(){
 		//showErrorMessage('page-message', nurseryLevelValueEmpty);
 		moveToTopScreen();
 		return false;
-	} else{ 		
+	} else if(!validateStartEndDate('nurseryLevelSettings')){
+		moveToTopScreen();
+		return false; 		
+	}else {
 		doAjaxMainSubmit('page-message', saveTemplateSettingSuccess, null);
 		moveToTopScreen();
 		/*
@@ -1368,21 +1429,21 @@ function showBaselineTraitDetailsModal(id) {
 
 function populateBaselineTraits(standardVariable) {
 	if (standardVariable != null) {
-		$("#traitClass").text(checkIfNull(standardVariable.traitClass));
-		$("#property").text(checkIfNull(standardVariable.property));
-		$("#method").text(checkIfNull(standardVariable.method));
-		$("#scale").text(checkIfNull(standardVariable.scale));
-		$("#dataType").text(checkIfNull(standardVariable.dataType));
-		$("#role").text(checkIfNull(standardVariable.role));
-		$("#cropOntologyId").text(checkIfNull(standardVariable.cropOntologyId));
+		$("#traitClass").html(checkIfNull(standardVariable.traitClass));
+		$("#property").html(checkIfNull(standardVariable.property));
+		$("#method").html(checkIfNull(standardVariable.method));
+		$("#scale").html(checkIfNull(standardVariable.scale));
+		$("#dataType").html(checkIfNull(standardVariable.dataType));
+		$("#role").html(checkIfNull(standardVariable.role));
+		$("#cropOntologyId").html(checkIfNull(standardVariable.cropOntologyId));
 	} else {
-		$("#traitClass").text("");
-		$("#property").text("");
-		$("#method").text("");
-		$("#scale").text("");
-		$("#dataType").text("");
-		$("#role").text("");
-		$("#cropOntologyId").text("");
+		$("#traitClass").html("");
+		$("#property").html("");
+		$("#method").html("");
+		$("#scale").html("");
+		$("#dataType").html("");
+		$("#role").html("");
+		$("#cropOntologyId").html("");
 	}
 }
 
@@ -1396,8 +1457,8 @@ function checkIfNull(object) {
 
 function createSliderInput(ctr, minVal, maxVal){
 	/*
-	return "<input type='text' id='nurseryLevelVariables" + ctr + 
-	".value' name='nurseryLevelVariables[" + ctr + "].value' class='form-control slider-input'" +
+	return "<input type='text' id='studyLevelVariables" + ctr + 
+	".value' name='studyLevelVariables[" + ctr + "].value' class='form-control slider-input'" +
 			" data-slider-min='"+minVal+"' data-slider-max='"+maxVal+"'" + 
 				 " data-slider-step='1' data-slider-value='" +minVal+"'" +
 					" data-slider-orientation='horizontal' data-slider-selection='after'" + 
@@ -1406,29 +1467,29 @@ function createSliderInput(ctr, minVal, maxVal){
 	/*
 	 * <input th:if="${nurseryLevelVariable.variable.widgetType.type == 'SLIDER'}"  
 										type="range" 
-										th:field="*{nurseryLevelVariables[__${rowStat.index}__].value}"
+										th:field="*{studyLevelVariables[__${rowStat.index}__].value}"
 										min="0" max="1" value="1" step=".05"
 										class="form-control numeric-range-input"/>
 	 */
-	return "<input data-slider-orientation='horizontal' data-slider-selection='after' type='text' data-step='0.1' data-min='"+minVal+"' data-max='"+maxVal+"' id='nurseryLevelVariables" + ctr + 
-	".value' name='nurseryLevelVariables[" + ctr + "].value' class='form-control numeric-range-input' />";
+	return "<input data-slider-orientation='horizontal' data-slider-selection='after' type='text' data-step='0.1' data-min='"+minVal+"' data-max='"+maxVal+"' id='studyLevelVariables" + ctr + 
+	".value' name='studyLevelVariables[" + ctr + "].value' class='form-control numeric-range-input' />";
 }
 function createDropdownInput(ctr){
-	 return "<input type='hidden' id='nurseryLevelVariables" + ctr + 
-		".value' name='nurseryLevelVariables[" + ctr + "].value' class='form-control select2' />";
+	 return "<input type='hidden' id='studyLevelVariables" + ctr + 
+		".value' name='studyLevelVariables[" + ctr + "].value' class='form-control select2' />";
 }
 function createDateInput(ctr){	
-	 return "<input type='text' id='nurseryLevelVariables" + ctr + 
-		".value' name='nurseryLevelVariables[" + ctr + "].value' class='form-control date-input' />";
+	 return "<input type='text' id='studyLevelVariables" + ctr + 
+		".value' name='studyLevelVariables[" + ctr + "].value' class='form-control date-input' />";
 	 
 }
 function createNumericalTextInput(ctr){
-	return "<input type='text' id='nurseryLevelVariables" + ctr + 
-	".value' name='nurseryLevelVariables[" + ctr + "].value' class='form-control numeric-input' />";
+	return "<input type='text' id='studyLevelVariables" + ctr + 
+	".value' name='studyLevelVariables[" + ctr + "].value' class='form-control numeric-input' />";
 }
 function createCharacterTextInput(ctr){
-	return "<input type='text' id='nurseryLevelVariables" + ctr + 
-	".value' name='nurseryLevelVariables[" + ctr + "].value' class='form-control character-input' />";
+	return "<input type='text' id='studyLevelVariables" + ctr + 
+	".value' name='studyLevelVariables[" + ctr + "].value' class='form-control character-input' />";
 
 }
 function initializeDateAndSliderInputs(){
@@ -1624,7 +1685,7 @@ function validateCreateNursery() {
 	/*else if ($("#imported-germplasm-list").html().indexOf("GID") > -1) {
 		hasError = true;
 		name = $("#germplasmLabel").text();
-	}*/
+	}*/	
 	else {
 		
 		var cvTermId;
@@ -1660,4 +1721,258 @@ function validateCreateNursery() {
 		return false;
 	}
 	return true;
+}
+function reloadCheckTypeDropDown(addOnChange){
+	Spinner.toggle();
+	var currentCheckId = $('#checkId').val();
+	$.ajax(
+    	{ url: "/Fieldbook/NurseryManager/importGermplasmList/getAllCheckTypes",
+           type: "GET",
+           cache: false,
+           data: "",
+           success: function(data) {	        	   
+        		   //recreate the select2 combos to get updated list of locations
+        		   $('#checkId').select2('destroy');
+        		   $('#checkValue').val("");
+        		   initializeCheckTypeSelect2($.parseJSON(data.allCheckTypes), [], addOnChange, currentCheckId, getJquerySafeId('checkId'));	   
+        	   	   Spinner.toggle();
+           }
+         }
+     );
+}
+function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, currentFieldId, comboName) {
+	var defaultData = null;
+	
+	if (suggestions != null) {
+		$.each(suggestions, function( index, value ) {
+			if (comboName == "comboCheckCode") {
+				dataObj = { 'id' : value.id,
+					  'text' : value.name,
+					  'description' : value.description};  
+			} else {
+				dataObj = { 'id' : value.id,
+					  'text' : value.description,
+					  'description' : value.description};
+			}
+			suggestions_obj.push(dataObj);
+			if (comboName != "comboCheckCode") {
+				var specificVal = '';
+				if($('#'+getJquerySafeId(comboName)).select2('data') != null)
+					specificVal = $('#'+getJquerySafeId(comboName)).select2('data').text;
+				if(defaultData == null){
+					if(currentFieldId != '' && currentFieldId == dataObj.id){
+						defaultData = dataObj;
+					}else if(currentFieldId == '' && 'CHECK' == value.name){
+						defaultData = dataObj;
+					}
+				}
+				
+			}
+		});
+	} else {
+		$.each(suggestions_obj, function( index, value ) {
+			if(currentFieldId != '' && currentFieldId == value.id){
+				defaultData = value;
+			}
+		});
+	}
+	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
+	if (comboName == "comboCheckCode") {
+		$('#'+comboName).select2({
+			query: function (query) {	
+		          var data = {results: sortByKey(suggestions_obj, "text")}, i, j, s;
+		          // return the array that matches
+		          data.results = $.grep(data.results,function(item,index) {
+		            return ($.fn.select2.defaults.matcher(query.term,item.text));
+		          });
+		          if (data.results.length === 0){
+		        	  data.results.unshift({id:query.term,text:query.term});	        	 
+		          } 
+		            query.callback(data);
+		        }
+	    }).on("change", function(){
+	    	if ($("#comboCheckCode").select2("data")) {
+	    		if ($("#comboCheckCode").select2("data").id == $("#comboCheckCode").select2("data").text) {
+	    			$("#manageCheckValue").val("");
+	    	    	$("#updateCheckTypes").hide();
+	    			$("#deleteCheckTypes").hide();
+	    			$("#addCheckTypes").show();
+	    		} else {
+	    			$("#manageCheckValue").val($("#comboCheckCode").select2("data").description);
+	    	    	$("#updateCheckTypes").show();
+	    			$("#deleteCheckTypes").show();
+	    			$("#addCheckTypes").hide();
+	    		}
+	    	}
+	    });
+	} else {
+		$('#'+comboName).select2({
+	        query: function (query) {
+	          var data = {results: sortByKey(suggestions_obj, "text")}, i, j, s;
+	          // return the array that matches
+	          data.results = $.grep(data.results,function(item,index) {
+	            return ($.fn.select2.defaults.matcher(query.term,item.text)); 
+	          });
+	            query.callback(data);
+	        }
+	    });
+		$('#checkId').val('')
+		if(addOnChange){
+			
+			$('#'+getJquerySafeId('checkId')).on("change", function (){
+		    	
+		    	$('#'+getJquerySafeId("checkValue")).val($('#'+getJquerySafeId("checkId")).select2('data').text);
+		    	
+		    });
+		}
+	}
+	//console.log(defaultData);
+	if(defaultData != null){		
+		$('#'+comboName).select2('data', defaultData).trigger('change');
+	}
+		
+}
+
+function showManageCheckTypePopup(){
+	$('#page-check-message-modal').html("");
+	resetButtonsAndFields();
+	//recreatePopupLocationCombo();
+	$('#manageCheckTypesModal').modal({ backdrop: 'static', keyboard: false });		   	
+}
+
+function resetButtonsAndFields() {
+	$("#manageCheckValue").val("");
+	$("#comboCheckCode").select2("val", "");
+	$("#updateCheckTypes").hide();
+	$("#deleteCheckTypes").hide();
+	$("#addCheckTypes").show();
+}
+
+function addUpdateCheckType(operation) {
+	if (validateCheckFields()) {
+		var $form = $("#manageCheckValue,#comboCheckCode");	
+		var serializedData = $form.serialize();
+		Spinner.toggle();
+		$.ajax({
+			url: "/Fieldbook/NurseryManager/importGermplasmList/addUpdateCheckType/" + operation,
+			type: "POST",
+            data: serializedData,
+            cache: false,
+         	success: function(data) {
+      	    if (data.success == "1") {
+      	    	//reload dropdown
+      	    	reloadCheckTypeList(data.checkTypes, operation);
+      	    	showCheckTypeMessage(data.successMessage);
+      	    } else {
+      	    	showCheckTypeErrorMessage(data.error);
+      	    }
+         		Spinner.toggle();
+     	}
+		});
+	}
+}
+
+function validateCheckFields(){
+	if (checkTypes_obj.length == 0 && checkTypes != null) {
+		$.each(checkTypes, function (index, item){
+			checkTypes_obj.push({ 'id' : item.id,
+			  'text' : item.name,
+			  'description' : item.description
+			});
+		});
+	}
+	
+	if (!$("#comboCheckCode").select2("data")) {
+		showCheckTypeErrorMessage(codeRequiredError);
+		return false;
+	} else if ($("#manageCheckValue").val() == "") {
+		showCheckTypeErrorMessage(valueRequiredError);
+		return false;
+	} else if (!isValueUnique()) {
+		showCheckTypeErrorMessage(valueNotUniqueError);
+		return false;
+	}
+	
+	return true;
+}
+
+function isValueUnique() {
+	var isUnique = true;
+	$.each(checkTypes_obj, function(index, item) {
+		if (item.description == $("#manageCheckValue").val() && item.id != $("#comboCheckCode").select2("data").id) {
+			isUnique = false;
+			return false;
+		}
+	});
+	return isUnique;
+}
+
+function showCheckTypeErrorMessage(message) {
+	$('#page-check-message-modal').html("<div class='alert alert-danger'>"+ message +"</div>");
+}
+
+function showCheckTypeMessage(message) {
+	$('#page-check-message-modal').html("<div class='alert alert-success'>"+ message +"</div>");
+}
+
+function deleteCheckType() {
+	if ($("manageCheckCode").select2("data")) {
+		
+		var $form = $("#manageCheckValue,#comboCheckCode");	
+		var serializedData = $form.serialize();
+		Spinner.toggle();
+		$.ajax({
+			url: "/Fieldbook/NurseryManager/importGermplasmList/deleteCheckType",
+			type: "POST",
+            data: serializedData,
+            cache: false,
+         	success: function(data) {
+         		if (data.success == "1"){
+         			reloadCheckTypeList(data.checkTypes, 3);
+         			showCheckTypeMessage(data.successMessage);
+         			resetButtonsAndFields();
+         		} else {
+         			showCheckTypeErrorMessage(data.error);
+         		}
+         		Spinner.toggle();
+     	}
+		});
+	} else {
+		showCheckTypeErrorMessage(noCheckSelected);
+	}
+}
+
+function reloadCheckTypeList(data, operation) {
+	var selectedValue = 0;
+	
+	checkTypes_obj = [];
+	
+	if (data != null) {
+	$.each($.parseJSON(data), function( index, value ) {
+		checkTypes_obj.push({ 'id' : value.id,
+			  'text' : value.name,
+			  'description' : value.description
+		});  
+	});
+	}
+	
+	if (operation == 2) {
+		//update
+		selectedValue = getIdOfValue($("#manageCheckValue").val());
+	} 
+	
+	$("#manageCheckValue").val("");
+	initializeCheckTypeSelect2(null, [], false, 0, "comboCheckCode");
+	initializeCheckTypeSelect2(null, checkTypes_obj, false, selectedValue, "comboCheckCode");
+}
+
+function getIdOfValue(value) {
+	var id = 0;
+	$.each(checkTypes_obj, function (index, item){
+		if (item.description == value) {
+			id = item.id;
+			return false;
+		}
+	});
+	return id;
 }

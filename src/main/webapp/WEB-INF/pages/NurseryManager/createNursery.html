@@ -18,16 +18,17 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 <div class="panel panel-default">
    	<div class="panel-body manage-settings-panel-body">
  	<div class="row form-group">
-   		<div class="col-xs-3 col-md-3 add_top_padding">
-   			<label id="settingsSelectLabel" class="control-label"> <strong th:text="#{nursery.managesettings.choose.saved.settings}+':'"> Choose Saved Settings: </strong></label>
-   		</div>
-   		
-   		<div class="col-xs-3 col-md-3">
-   			<select th:field="*{selectedSettingId}" class="form-control">
-   				<option th:each="setting : ${settingsList}" th:value="${setting.templateSettingId}" th:text="${setting.name}">Nursery Type 1</option>
-   			</select>
+ 		<div class="col-xs-6 col-md-6 row">
+	   		<div class="col-xs-5 col-md-5 add_top_padding">
+	   			<label id="settingsSelectLabel" class="control-label"> <strong th:text="#{nursery.managesettings.choose.saved.settings}+':'"> Choose Saved Settings: </strong></label>
+	   		</div>
+	   		
+	   		<div class="col-xs-7 col-md-7">
+	   			<select th:field="*{selectedSettingId}" class="form-control">
+	   				<option th:each="setting : ${settingsList}" th:value="${setting.templateSettingId}" th:text="${setting.name}">Nursery Type 1</option>
+	   			</select>
+	 		</div>
  		</div>
- 		
  		<div class="col-xs-3 col-md-3 add_top_padding">
 			<a href="javascript: openUsePreviousNurseryModal()" id="usePreviousNursery" th:text="#{nursery.managesettings.use.previous.nursery}"></a> 			
  		</div>
@@ -102,7 +103,9 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 <script type="text/javascript" th:src="@{/static/js/bootstrap-slider.js}"></script>
 <script type='text/javascript' th:inline="javascript">
 //<![CDATA[
-    
+    var startDateRequiredError = /*[[#{start.end.date.validation.start.date.required}]]*/;
+    var startDateRequiredEarlierError = /*[[#{start.end.date.validation.start.date.required.earlier}]]*/;
+       		
 	function submitGermplasmList(){
 		var $form = $("#germplasm-list-form");
 		
@@ -146,6 +149,10 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 	function submitForm() {
 		if (validateCreateNursery()) {
 			//$("#createNurseryForm").submit();
+			if(!validateStartEndDate('nurseryLevelSettings')){
+				moveToTopScreen();
+				return false;
+			}
 			submitWorkbook();
 			//$("#germplasm-list-form").submit();
 			//$("#createNurseryForm").submit();

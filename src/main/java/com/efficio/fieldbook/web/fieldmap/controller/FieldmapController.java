@@ -22,7 +22,9 @@ import javax.servlet.http.HttpSession;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo;
 import org.generationcp.middleware.domain.fieldbook.FieldMapInfo;
+import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.domain.fieldbook.FieldMapTrialInstanceInfo;
+import org.generationcp.middleware.domain.fieldbook.FieldmapBlockInfo;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -44,6 +46,7 @@ import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class FieldmapController.
  * 
@@ -125,6 +128,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     @RequestMapping(value="/createFieldmap/{ids}", method = RequestMethod.GET)
     public Map<String, String> determineFieldMapNavigation(@PathVariable String ids, 
             Model model, HttpSession session) {
+    	session.invalidate();
         Map<String, String> result = new HashMap<String, String>();
         String nav = "1";
         try {
@@ -342,7 +346,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     @RequestMapping(value="/createNurseryFieldmap/{ids}", method = RequestMethod.GET)
     public Map<String, String> determineNurseryFieldMapNavigation(
             @PathVariable String ids, HttpSession session) {
-        
+        session.invalidate();
         Map<String, String> result = new HashMap<String, String>();
         
         String nav = "1";
@@ -421,6 +425,24 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         if (form.getUserFieldmap().getFieldmap() != null) {
             form.getUserFieldmap().setFieldmap(null);
         }
+        this.userFieldmap.setFieldmap(null);
+        this.userFieldmap.setFieldMapLabels(null);
+        
+	      if (this.userFieldmap.getSelectedFieldMapsToBeAdded() != null) {
+	        for (FieldMapInfo info : this.userFieldmap.getSelectedFieldMapsToBeAdded()) {
+	        	for (FieldMapDatasetInfo dataset : info.getDatasets()) {
+	        		for (FieldMapTrialInstanceInfo trial : dataset.getTrialInstances()) {
+	        			if (trial.getFieldMapLabels() != null) {
+	        				for (FieldMapLabel label : trial.getFieldMapLabels()) {
+	        					label.setColumn(null);
+	        					label.setRange(null);
+	        				}
+	        			}
+	        		}
+	        	}
+	        }
+	      }
+
         setUserFieldMapDetails(form);
         return "redirect:" + PlantingDetailsController.URL;
     } 
@@ -471,6 +493,204 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         return this.userFieldmap;
     }
     
+    
+    /**
+     * Gets the locations.
+     *
+     * @param locationId the location id
+     * @return the locations
+     */
+    @ResponseBody
+    @RequestMapping(value="/getFields/{locationId}", method = RequestMethod.GET)
+    public Map<String, String> getFieldLocations(@PathVariable int locationId) {
+        Map<String, String> result = new HashMap<String, String>();
+        
+        try {
+            List<Long> locationsIds = workbenchService
+                                .getFavoriteProjectLocationIds(getCurrentProjectId());
+    
+            List<Location> allFields = fieldbookMiddlewareService.getAllFieldLocations(locationId);
+            result.put("success", "1");
+            
+            result.put("allFields", convertObjectToJson(allFields));
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+            result.put("success", "-1");
+        }
+        
+        return result;
+    }
+    
+    /**
+     * Gets the locations.
+     *
+     * @param fieldId the field id
+     * @return the locations
+     */
+    @ResponseBody
+    @RequestMapping(value="/getBlocks/{fieldId}", method = RequestMethod.GET)
+    public Map<String, String> getBlockFields(@PathVariable int fieldId) {
+        Map<String, String> result = new HashMap<String, String>();
+        
+        try {
+        	/*
+            List<Long> locationsIds = workbenchService
+                                .getFavoriteProjectLocationIds(getCurrentProjectId());
+    	 	*/
+            List<Location> allBlocks = fieldbookMiddlewareService.getAllBlockLocations(fieldId);
+            result.put("success", "1");
+            result.put("allBlocks", convertObjectToJson(allBlocks));
+
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+            result.put("success", "-1");
+        }
+        
+        return result;
+    }
+    
+    /**
+     * Gets the block info.
+     *
+     * @param blockId the block id
+     * @return the block info
+     */
+    @ResponseBody
+    @RequestMapping(value="/getBlockInformation/{blockId}", method = RequestMethod.GET)
+    public Map<String, String> getBlockInfo(@PathVariable int blockId) {
+        Map<String, String> result = new HashMap<String, String>();
+        
+        try {
+        	/*
+            List<Long> locationsIds = workbenchService
+                                .getFavoriteProjectLocationIds(getCurrentProjectId());
+			*/
+            FieldmapBlockInfo blockInfo = fieldbookMiddlewareService.getBlockInformation(blockId);
+            result.put("success", "1");
+            result.put("blockInfo", convertObjectToJson(blockInfo));
+
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+            result.put("success", "-1");
+        }
+        
+        return result;
+    }
+    
+    /**
+     * Submits the details.
+     *
+     * @param form the form
+     * @param result the result
+     * @param model the model
+     * @return the string
+     */
+    @ResponseBody
+    @RequestMapping(value="/addNewField", method = RequestMethod.POST)
+    public String addNewField(@ModelAttribute("fieldmapForm") FieldmapForm form, BindingResult result, Model model) {
+        String fieldName = form.getNewFieldName();
+        Integer locationId = form.getParentLocationId();
+        String msg = "success";
+        try {
+        	Integer currentUserId = workbenchService.getCurrentIbdbUserId(getCurrentProjectId());
+        	if(isFieldNameUnique(fieldName, locationId))
+        		fieldbookMiddlewareService.addFieldLocation(fieldName, locationId, currentUserId);
+        	else 
+        		msg = "error";
+		} catch (MiddlewareQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return msg;
+    }
+    
+    private boolean isFieldNameUnique(String fieldName, Integer locationId){
+    	boolean isUnique = true;
+    	try {
+			List<Location> allFields = fieldbookMiddlewareService.getAllFieldLocations(locationId);
+			if(allFields != null && !allFields.isEmpty()){
+				for(Location loc : allFields){
+					if(fieldName.equalsIgnoreCase(loc.getLname())){
+						isUnique = false;
+						break;
+					}						
+				}
+			}
+		} catch (MiddlewareQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return isUnique;
+    }
+    private boolean isBlockNameUnique(String blockName, Integer fieldId){
+    	boolean isUnique = true;
+    	try {
+			List<Location> allBlocks = fieldbookMiddlewareService.getAllBlockLocations(fieldId);
+			if(allBlocks != null && !allBlocks.isEmpty()){
+				for(Location loc : allBlocks){
+					if(blockName.equalsIgnoreCase(loc.getLname())){
+						isUnique = false;
+						break;
+					}						
+				}
+			}
+		} catch (MiddlewareQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return isUnique;
+    }
+    
+    /**
+     * Adds the new block.
+     *
+     * @param form the form
+     * @param result the result
+     * @param model the model
+     * @return the string
+     */
+    @ResponseBody
+    @RequestMapping(value="/addNewBlock", method = RequestMethod.POST)
+    public String addNewBlock(@ModelAttribute("fieldmapForm") FieldmapForm form, BindingResult result, Model model) {
+        String blockName = form.getNewBlockName();
+        Integer parentFieldId = form.getParentFieldId();
+        String msg = "success";
+        try {
+        	Integer currentUserId = workbenchService.getCurrentIbdbUserId(getCurrentProjectId());
+        	if(isBlockNameUnique(blockName, parentFieldId))
+        		fieldbookMiddlewareService.addBlockLocation(blockName, parentFieldId, currentUserId);
+        	else
+        		msg = "error";
+		} catch (MiddlewareQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return msg;
+    }
+    
+    /**
+     * Gets the field locations.
+     *
+     * @return the field locations
+     */
+    @ResponseBody
+    @RequestMapping(value="/getFields", method = RequestMethod.GET)
+    public Map<String, String> getFieldLocations() {
+        Map<String, String> result = new HashMap<String, String>();
+        
+        try {            
+            List<Location> allLocations = fieldbookMiddlewareService.getAllFields();
+            result.put("success", "1");
+            result.put("allFields", convertObjectToJson(allLocations));
+            
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+            result.put("success", "-1");
+        }
+        
+        return result;
+    }
+    
     /**
      * Sets the user field map details.
      *
@@ -489,8 +709,16 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         this.userFieldmap.setFieldName(form.getUserFieldmap().getFieldName());
         this.userFieldmap.setNumberOfRangesInBlock(form.getUserFieldmap().getNumberOfRangesInBlock());
         this.userFieldmap.setNumberOfRowsInBlock(form.getUserFieldmap().getNumberOfRowsInBlock());
-        this.userFieldmap.setNumberOfRowsPerPlot(form.getUserFieldmap().getNumberOfRowsPerPlot());
+        //this.userFieldmap.setNumberOfRowsPerPlot(form.getUserFieldmap().getNumberOfRowsPerPlot());
         this.userFieldmap.setLocationName(form.getUserFieldmap().getLocationName());
+        this.userFieldmap.setNumberOfRowsPerPlot(form.getNumberOfRowsPerPlot());
+        this.userFieldmap.setNew(form.getUserFieldmap().isNew());
+        this.userFieldmap.setBlockId(form.getUserFieldmap().getBlockId());
+        this.userFieldmap.setLocationName(form.getUserFieldmap().getLocationName());
+        this.userFieldmap.setFieldName(form.getUserFieldmap().getFieldName());
+        this.userFieldmap.setBlockName(form.getUserFieldmap().getBlockName());
+        
+        
     }
  
     /**

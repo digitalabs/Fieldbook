@@ -29,7 +29,9 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
@@ -703,13 +705,15 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 				hasCheck = true;
 			}
 			sessionImportedGermplasmList.get(i).setCheck(checkVal);
+			sessionImportedGermplasmList.get(i).setCheckId(germplasm.getCheckId());
+			sessionImportedGermplasmList.get(i).setCheckName(germplasm.getCheckName());
 		}
 		
 		if(hasCheck){
 			//we need to add the CHECK factor if its not existing
 			List<MeasurementVariable> measurementVariables = userSelection.getWorkbook().getFactors();
 //          MeasurementVariable checkVariable = new MeasurementVariable("CHECK", "TYPE OF ENTRY", "CODE", "ASSIGNED", "CHECK", "C", "", "ENTRY");
-          MeasurementVariable checkVariable = new MeasurementVariable(
+/*            MeasurementVariable checkVariable = new MeasurementVariable(
                   AppConstants.CHECK.getString(), AppConstants.TYPE_OF_ENTRY.getString(), 
                   AppConstants.CODE.getString(), AppConstants.ASSIGNED.getString(), 
                   AppConstants.CHECK.getString(), AppConstants.C.getString(), "", 
@@ -718,6 +722,14 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 			        .getStandardVariableIdByPropertyScaleMethodRole(checkVariable.getProperty(), 
 			                checkVariable.getScale(), checkVariable.getMethod(), 
 			                PhenotypicType.getPhenotypicTypeForLabel(checkVariable.getLabel()));
+			                */
+			
+			Integer checkVariableTermId = TermId.CHECK.getId();
+			StandardVariable stdvar = fieldbookMiddlewareService.getStandardVariable(checkVariableTermId);
+			MeasurementVariable checkVariable = new MeasurementVariable(
+					checkVariableTermId, stdvar.getName(), stdvar.getDescription(), stdvar.getScale().getName(), stdvar.getMethod().getName(),
+					stdvar.getProperty().getName(), stdvar.getDataType().getName(), "", AppConstants.ENTRY.getString());
+			
 			boolean checkFactorExisting = false;
 			for(MeasurementVariable var : measurementVariables){
 				Integer termId = fieldbookMiddlewareService

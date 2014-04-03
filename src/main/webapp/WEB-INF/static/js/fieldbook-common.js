@@ -1048,7 +1048,7 @@ function doExportContinue(paramUrl, isNursery){
         	   		
         	   		newAction = action + "exportTrial/" + paramUrl + "/" + additionalParams;
         	   		
-        	   	console.log(newAction);
+        	   	//console.log(newAction);
         	   	 
         	   	}
         	   

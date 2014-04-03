@@ -63,6 +63,9 @@ public class AddOrRemoveTraitsForm {
     
     /** The export trial instance end. */
     private String exportTrialInstanceEnd;
+    
+    /** The number of instances. */
+    private int numberOfInstances;
 	
 	
 	/**
@@ -327,15 +330,39 @@ public class AddOrRemoveTraitsForm {
 		this.exportTrialInstanceEnd = exportTrialInstanceEnd;
 	}
 
+	/**
+	 * Gets the export trial instance number.
+	 *
+	 * @return the export trial instance number
+	 */
 	public String getExportTrialInstanceNumber() {
 		return exportTrialInstanceNumber;
 	}
 
+	/**
+	 * Sets the export trial instance number.
+	 *
+	 * @param exportTrialInstanceNumber the new export trial instance number
+	 */
 	public void setExportTrialInstanceNumber(String exportTrialInstanceNumber) {
 		this.exportTrialInstanceNumber = exportTrialInstanceNumber;
 	}
 
-     
-	
-	
+	/**
+	 * Gets the number of instances.
+	 *
+	 * @return the number of instances
+	 */
+	public int getNumberOfInstances() {
+		return numberOfInstances;
+	}
+
+	/**
+	 * Sets the number of instances.
+	 *
+	 * @param numberOfInstances the new number of instances
+	 */
+	public void setNumberOfInstances(int numberOfInstances) {
+		this.numberOfInstances = numberOfInstances;
+	} 		
 }

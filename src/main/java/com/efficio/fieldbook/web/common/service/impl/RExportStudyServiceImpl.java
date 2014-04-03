@@ -27,12 +27,12 @@ import com.efficio.fieldbook.web.nursery.bean.CSVOziel;
 public class RExportStudyServiceImpl implements RExportStudyService {
 
 	@Override
-	public String export(Workbook workbook, String outputFile) {
-		return exportToR(workbook, outputFile, null);
+	public String export(Workbook workbook, String outputFile, int start, int end) {
+		return exportToR(workbook, outputFile, null, start, end);
 	}
 	
 	@Override
-	public String exportToR(Workbook workbook, String outputFile, Integer selectedTrait) {
+	public String exportToR(Workbook workbook, String outputFile, Integer selectedTrait, int start, int end) {
         boolean alreadyExists = new File(outputFile).exists();
         CSVOziel csv = new CSVOziel(workbook);
         CsvWriter csvOutput = null;

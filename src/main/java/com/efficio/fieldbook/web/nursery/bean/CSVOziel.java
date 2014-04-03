@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import com.csvreader.CsvReader;
 import com.csvreader.CsvWriter;
+import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 
 /**
  * This class was copied from CIMMYT's Fieldbook Code. 
@@ -132,7 +133,7 @@ public class CSVOziel {
                    if (!valor.equals(stringTraitToEvaluate)) {
                         try {
                         	if (variate.getPossibleValues() != null && !variate.getPossibleValues().isEmpty()) {
-                        		csvOutput.write(getCategoricalCellValue(row.getMeasurementDataValue(valor), variate.getPossibleValues()));
+                        		csvOutput.write(ExportImportStudyUtil.getCategoricalCellValue(row.getMeasurementDataValue(valor), variate.getPossibleValues()));
                         	}
                         	else {
                         		csvOutput.write(row.getMeasurementDataValue(valor));
@@ -181,7 +182,7 @@ public class CSVOziel {
                      if (!valor.equals(stringTraitToEvaluate)) {
                         try {
                         	if (variate.getPossibleValues() != null && !variate.getPossibleValues().isEmpty()) {
-                        		csvOutput.write(getCategoricalCellValue(mRow.getMeasurementDataValue(variate.getName()), variate.getPossibleValues()));
+                        		csvOutput.write(ExportImportStudyUtil.getCategoricalCellValue(mRow.getMeasurementDataValue(variate.getName()), variate.getPossibleValues()));
                         	}
                         	else {
                         		csvOutput.write(mRow.getMeasurementDataValue(variate.getName()));
@@ -353,7 +354,7 @@ public class CSVOziel {
 	    	for (MeasurementData data : row.getDataList()) {
 	    		if (data.getLabel().equals(label)) {
 	    			if (data.getMeasurementVariable().getPossibleValues() != null && !data.getMeasurementVariable().getPossibleValues().isEmpty()) {
-	    				data.setValue(getCategoricalIdCellValue(value, data.getMeasurementVariable().getPossibleValues()));
+	    				data.setValue(ExportImportStudyUtil.getCategoricalIdCellValue(value, data.getMeasurementVariable().getPossibleValues()));
 	    			}
 	    			else {
 			    		if (!"N".equalsIgnoreCase(data.getDataType())
@@ -384,25 +385,6 @@ public class CSVOziel {
     	this.selectedTraitId = selectedTraitId;
     }
 
-	private String getCategoricalCellValue(String idValue, List<ValueReference> possibleValues) {
-		if (idValue != null && NumberUtils.isNumber(idValue)) {
-			for (ValueReference ref : possibleValues) {
-				if (ref.getId().equals(Integer.valueOf(idValue))) {
-					return ref.getDescription();
-				}
-			}
-		}
-		return "";
-	}
-
-    private String getCategoricalIdCellValue(String description, List<ValueReference> possibleValues) {
-    	for (ValueReference possibleValue : possibleValues) {
-    		if (description.equalsIgnoreCase(possibleValue.getDescription())) {
-    			return possibleValue.getId().toString();
-    		}
-    	}
-    	return "";
-    }
 
     //These methods were not used YET, temporarily commented out while not in use.
     //TODO cleanup once we have confirmed that these methods will no longer 

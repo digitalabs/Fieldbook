@@ -14,6 +14,7 @@ package com.efficio.fieldbook.web.common.service.impl;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import com.csvreader.CsvWriter;
 import com.efficio.fieldbook.web.common.service.FieldroidExportStudyService;
 import com.efficio.fieldbook.web.nursery.bean.CSVOziel;
+import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 
 @Service
 public class FieldroidExportStudyServiceImpl implements
@@ -30,9 +32,10 @@ public class FieldroidExportStudyServiceImpl implements
 	 * @see com.efficio.fieldbook.web.nursery.service.ExportStudyService#export(org.generationcp.middleware.domain.etl.Workbook, java.lang.String)
 	 */
 	@Override
-	public String export(Workbook workbook, String filename) {
+	public String export(Workbook workbook, String filename, int start, int end) {
         String outputFile = filename;
         boolean alreadyExists = new File(outputFile).exists();
+        List<Integer> selectedLocationIds = ExportImportStudyUtil.getLocationIdsFromTrialInstances(workbook, start, end);
         CsvWriter csvOutput = null;
         try {
         	CSVOziel csv = new CSVOziel(workbook);

@@ -238,7 +238,7 @@ public class FieldbookServiceImpl implements FieldbookService{
                 possibleValues = getAllBreedingMethods();
             } else if (TermId.LOCATION_ID.getId() == id) {
                 possibleValues = convertLocationsToValueReferences(fieldbookMiddlewareService.getAllLocations());
-            } else if (TermId.PI_ID.getId() == id) {
+            } else if (TermId.PI_ID.getId() == id || Integer.parseInt(AppConstants.COOPERATOR_ID.getString()) == id) {
                 possibleValues = convertPersonsToValueReferences(fieldbookMiddlewareService.getAllPersons());
             } else if (TermId.NURSERY_TYPE.getId() == id) {
                 possibleValues = fieldbookMiddlewareService.getAllNurseryTypes();

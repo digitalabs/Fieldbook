@@ -51,6 +51,7 @@ import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.label.printing.template.LabelPaper;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
@@ -591,11 +592,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         	stemp = " ";
     	return stemp;
     }
-    private String cleanSheetName(String name){
-    	name = name.replaceAll("[^a-zA-Z0-9-_.=^&'@{}$!-#()%.+~_\\[\\]]", "_");
-    	name = name.replaceAll("\"", "_");
-    	return name;
-    }
+    
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.service.api.LabelPrintingService#generateXlSLabels(org.generationcp.middleware.domain.fieldbook.FieldMapDatasetInfo, com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting, java.io.ByteArrayOutputStream)
      */
@@ -622,7 +619,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         try {
             
                     HSSFWorkbook workbook = new HSSFWorkbook();
-                    String sheetName = cleanSheetName(userLabelPrinting.getName());
+                    String sheetName = SettingsUtil.cleanSheetAndFileName(userLabelPrinting.getName());
                     if(sheetName == null)
                         sheetName = "Labels";
                     Sheet labelPrintingSheet = workbook.createSheet(sheetName);

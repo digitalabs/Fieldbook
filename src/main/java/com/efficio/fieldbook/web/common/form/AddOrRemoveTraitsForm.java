@@ -13,9 +13,12 @@ package com.efficio.fieldbook.web.common.form;
 
 import java.util.List;
 
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -66,6 +69,17 @@ public class AddOrRemoveTraitsForm {
     
     /** The number of instances. */
     private int numberOfInstances;
+    
+    /** The trial environment values. */
+    private List<List<ValueReference>> trialEnvironmentValues;
+    
+    /** The trial level variables. */
+    private List<SettingDetail> trialLevelVariables;
+    
+    /** The location id. */
+    private String locationId;
+    /** The location url. */
+    private String locationUrl;
 	
 	
 	/**
@@ -364,5 +378,80 @@ public class AddOrRemoveTraitsForm {
 	 */
 	public void setNumberOfInstances(int numberOfInstances) {
 		this.numberOfInstances = numberOfInstances;
-	} 		
+	}
+
+	/**
+	 * Gets the trial environment values.
+	 *
+	 * @return the trial environment values
+	 */
+	public List<List<ValueReference>> getTrialEnvironmentValues() {
+		return trialEnvironmentValues;
+	}
+
+	/**
+	 * Sets the trial environment values.
+	 *
+	 * @param trialEnvironmentValues the new trial environment values
+	 */
+	public void setTrialEnvironmentValues(
+			List<List<ValueReference>> trialEnvironmentValues) {
+		this.trialEnvironmentValues = trialEnvironmentValues;
+	}
+
+	/**
+	 * Gets the trial level variables.
+	 *
+	 * @return the trial level variables
+	 */
+	public List<SettingDetail> getTrialLevelVariables() {
+		return trialLevelVariables;
+	}
+
+	/**
+	 * Sets the trial level variables.
+	 *
+	 * @param trialLevelVariables the new trial level variables
+	 */
+	public void setTrialLevelVariables(List<SettingDetail> trialLevelVariables) {
+		this.trialLevelVariables = trialLevelVariables;
+	}
+
+	/**
+	 * Gets the location id.
+	 *
+	 * @return the location id
+	 */
+	public String getLocationId() {
+		return locationId;
+	}
+
+	/**
+	 * Sets the location id.
+	 *
+	 * @param locationId the new location id
+	 */
+	public void setLocationId(String locationId) {
+		this.locationId = locationId;
+	}
+
+	/**
+	 * Gets the location url.
+	 *
+	 * @return the location url
+	 */
+	public String getLocationUrl() {
+		return locationUrl;
+	}
+
+	/**
+	 * Sets the location url.
+	 *
+	 * @param locationUrl the new location url
+	 */
+	public void setLocationUrl(String locationUrl) {
+		this.locationUrl = locationUrl;
+	} 	
+	
+	
 }

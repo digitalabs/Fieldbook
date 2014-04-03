@@ -151,6 +151,7 @@ public enum AppConstants {
     ,START_DATE_ID
     ,END_DATE_ID
     ,STUDY_NAME_ID
+    ,COOPERATOR_ID
     
     ,LOCATION_URL
     ,BREEDING_METHOD_URL

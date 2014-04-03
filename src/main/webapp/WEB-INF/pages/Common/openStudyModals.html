@@ -1,0 +1,159 @@
+<form id="importStudyForm" role="form-horizontal" onsubmit="return do_validation()"  class="form-horizontal" action="#" 
+     method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data">
+<div class="form-group">
+		<div class="col-md-12">	
+			<div class="modal fade" id="successMessageModal"  role="dialog" aria-labelledby="successMessageModal" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content" >
+						<div class="modal-body" id="successMessageBody">
+							<div style="text-align: center">
+								<label th:text="#{nursery.addOrRemoveTraits.success.update.message}">Traits has been successfully updated.</label>
+							</div>
+						</div>
+						<div class="modal-footer">    
+			       			<!-- a id="btnOK" href="" th:href="@{/NurseryManager}"   th:text="#{common.form.ok.text}" class="btn btn-primary" / -->	
+			       			<a id="btnOK" href="" th:text="#{common.form.ok.text}" class="btn btn-primary" onclick="doReturn(); return false;" />	
+		       			</div>
+					</div><!-- /.modal-content -->
+				</div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->		
+			 
+		</div>
+	</div>  
+	
+	 <div class="modal fade" id="importRModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" th:text="#{nursery.export.r.header}">Choose Trait to evaluate in R</h4>
+          </div>
+          <div class="modal-body">
+            <!--  <div class="form-group" id="page-modal-message"></div>
+             -->
+             <div class="form-group" id="page-modal-choose-instance-message-r"></div>
+            <div class='form-group'>                                          
+              <div class="col-md-9">
+              <label for="fileupload" class="control-label" th:text="#{nursery.export.r.note}">Note: In your exported file, your trait will show as "GY"</label>
+              </div>
+              </div>
+            <div class='form-group'>                                          
+              <br />
+               <div class="col-md-3">
+              <label for="fileupload" class="control-label" th:text="#{nursery.export.r.select.trait}">Select Main Trait:</label>
+              </div>
+              <div class="col-xs-6 col-lg-6">                
+	    			<select name="selectedRTrait" id="selectedRTrait" class="form-control">
+	    				<option th:if="${measurementVariable.factor == false}" th:each="measurementVariable : *{measurementVariables}" th:value="${measurementVariable.termId}" th:utext="${measurementVariable.name + ' (' + measurementVariable.scale +')'}">Trait</option>
+	    			</select>
+               
+              </div>
+            </div>
+            <div class="row form-group" id="importRChooseInstance">
+            	<br />
+            </div>
+          </div>																							
+        
+        <div class="modal-footer">
+          <button value="Cancel" aria-hidden="true" data-dismiss="modal" class="btn btn-default" type="button" th:text="#{common.form.cancel.text}">Cancel</button>
+          <button type="button" th:value="#{common.form.submit.text}" class="btn btn-primary" th:text="#{nursery.import.germplasm.submit}" onclick="javascript: exportNurseryToR(2);">Submit</button>			        	
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+
+	<div class="modal fade" id="trialModalSelection" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Choose Trial Instance</h4>
+          </div>
+          <div class="modal-body" id="exportChooseInstance">
+          <div class="form-group" id="page-modal-choose-instance-message"></div>
+          <input type="hidden" id="exportTrialType"/>
+           <div id="chooseInstance">
+            <div class=''>                                                         
+              <div class="col-xs-12 col-lg-12">                
+	    			<label class="radio-inline">
+							  <input class="instanceNumber"  type="radio" value="1" th:field="*{exportInstanceType}"/> 
+							  <span >All Trial Instance</span>
+					</label>							               
+              </div>
+            </div>
+            <div class=''>                                                         
+              <div class="col-xs-12 col-lg-12">                
+	    			<label class="radio-inline">
+							  <input class="instanceNumber" type="radio" value="2" th:field="*{exportInstanceType}"/> 
+							  <span>Trial Instance #</span>
+<input type="text" th:field="*{exportTrialInstanceNumber}" class="spinner-input" />
+					</label>							               
+              </div>
+            </div>
+            <div class=''>                                                         
+              <div class="col-xs-12 col-lg-12">                
+	    			<label class="radio-inline">
+							  <input class="instanceNumber" type="radio" value="3" th:field="*{exportInstanceType}"/> 
+							  <span>From Trial Instance #</span>
+							  <input type="text" th:field="*{exportTrialInstanceStart}" class="spinner-input" />
+							  <span>to Trial Instance #</span>
+							  <input type="text" th:field="*{exportTrialInstanceEnd}" class="spinner-input" />
+					</label>							               
+              </div>
+              </div>
+            </div>
+          </div>																							
+        
+        <div class="modal-footer">
+          <button value="Cancel" aria-hidden="true" data-dismiss="modal" class="btn btn-default" type="button" th:text="#{common.form.cancel.text}">Cancel</button>
+          <button type="button" th:value="#{common.form.submit.text}" class="btn btn-primary" th:text="#{nursery.import.germplasm.submit}" onclick="javascript: doExportTrial();">Submit</button>			        	
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+  </form>
+<form id="importStudyForm" role="form-horizontal" onsubmit="return do_validation()"  class="form-horizontal" action="#" 
+     method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data">								
+    <!-- Modal -->
+    <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" th:text="#{nursery.import.data.file}">Import File</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group" id="page-modal-message"></div>
+            <div class='form-group'>                                          
+              
+              <label for="fileupload" class="col-md-2 control-label" th:text="#{nursery.import.germplasm.select.file}">Select a file</label>
+              <div class="col-xs-6 col-lg-6">
+                
+                <div class="fileupload fileupload-new" data-provides="fileupload">							    
+                <div class="input-group">
+                  <div class="form-control uneditable-input"><i class="icon-file fileupload-exists"></i> 
+                  <span class="fileupload-preview"></span>
+                </div>
+                <div class="input-group-btn">
+                  <a class="btn btn-primary btn-file">
+                    <span class="fileupload-new" th:text="#{nursery.import.germplasm.browse.file}">Browse</span>
+                    <span class="fileupload-exists" th:text="#{nursery.import.germplasm.change}">Change</span>
+                    <input id="fileupload" th:field="*{file}" type="file" class="file-input"/></a>
+                    <a href="#" class="btn btn-danger fileupload-exists" data-dismiss="fileupload" th:text="#{nursery.import.germplasm.remove}">Remove</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>																							
+        </div>
+        <div class="modal-footer">
+          <button value="Cancel" aria-hidden="true" data-dismiss="modal" class="btn btn-default" type="button" th:text="#{common.form.cancel.text}">Cancel</button>
+          <button type="button" th:value="#{common.form.submit.text}" class="btn btn-primary" th:text="#{nursery.import.germplasm.submit}" 
+          		  onclick="javascript: submitImportStudy();">Submit</button>			        	
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+</form>
+

@@ -128,7 +128,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
         File xls = new File(outputFilename); // the selected name + current date
         FileInputStream in;
         
-        response.setHeader("Content-disposition","attachment; filename=" + filename);
+        response.setHeader("Content-disposition","attachment; filename=" + outputFilename);
         try {
             in = new FileInputStream(xls);
             OutputStream out = response.getOutputStream();

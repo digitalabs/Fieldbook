@@ -25,6 +25,7 @@ import com.csvreader.CsvWriter;
 import com.efficio.fieldbook.web.common.service.RExportStudyService;
 import com.efficio.fieldbook.web.nursery.bean.CSVOziel;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
+import com.efficio.fieldbook.web.util.FieldbookProperty;
 @Service
 public class RExportStudyServiceImpl implements RExportStudyService {
 
@@ -35,12 +36,13 @@ public class RExportStudyServiceImpl implements RExportStudyService {
 	
 	@Override
 	public String exportToR(Workbook workbook, String outputFile, Integer selectedTrait, int start, int end) {
-        boolean alreadyExists = new File(outputFile).exists();
+		String outFile = FieldbookProperty.getPathProperty() + File.separator + outputFile;
+        boolean alreadyExists = new File(outFile).exists();
         List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, start, end);
         CSVOziel csv = new CSVOziel(workbook, observations);
         CsvWriter csvOutput = null;
         try {
-            csvOutput = new CsvWriter(new FileWriter(outputFile, false), ',');
+            csvOutput = new CsvWriter(new FileWriter(outFile, false), ',');
             csvOutput.write("LOC");
             csvOutput.write("REP");
             csvOutput.write("BLK");
@@ -60,7 +62,7 @@ public class RExportStudyServiceImpl implements RExportStudyService {
         		csvOutput.close();
         	}
         }
-        return outputFile;
+        return outFile;
 	}
 
 	private String getLabel(List<MeasurementVariable> variables, Integer termId) {

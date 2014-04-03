@@ -24,6 +24,7 @@ import com.csvreader.CsvWriter;
 import com.efficio.fieldbook.web.common.service.FieldroidExportStudyService;
 import com.efficio.fieldbook.web.nursery.bean.CSVOziel;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
+import com.efficio.fieldbook.web.util.FieldbookProperty;
 
 @Service
 public class FieldroidExportStudyServiceImpl implements
@@ -34,7 +35,7 @@ public class FieldroidExportStudyServiceImpl implements
 	 */
 	@Override
 	public String export(Workbook workbook, String filename, int start, int end) {
-        String outputFile = filename;
+        String outputFile = FieldbookProperty.getPathProperty() + File.separator + filename;
         boolean alreadyExists = new File(outputFile).exists();
         CsvWriter csvOutput = null;
         List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, start, end); 

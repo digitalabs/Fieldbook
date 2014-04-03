@@ -1139,6 +1139,9 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation, default
 }
 
 function isReplicateOrBlockSize(combo) {
+	if(typeof replicates === 'undefined')
+		return;
+	
 	//get the index of the column
 	var index = parseInt(combo.substring(combo.lastIndexOf("[")+1, combo.lastIndexOf("]"))) + 1;
 	var replicatesValue = 0, blockSizeValue = 0;

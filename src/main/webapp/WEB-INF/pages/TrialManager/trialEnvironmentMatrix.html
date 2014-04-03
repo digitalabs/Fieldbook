@@ -38,7 +38,7 @@
 						-->
 	
 						<!-- store possible values of variable -->
-						<div th:text="${trialEnvLevelVariable.value}" class="div-select-val" style="display: none"></div>
+						<div th:text="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" class="div-select-val" style="display: none"></div>
 						<div th:if="${trialEnvLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesJsonTrial' + ${row.index} + 'a' + ${rowStat.index}"
 							class="possibleValuesJsonTrial" style="display:none" th:text="${trialEnvLevelVariable.possibleValuesJson}">
 						</div>

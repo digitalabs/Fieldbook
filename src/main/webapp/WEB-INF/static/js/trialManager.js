@@ -1635,7 +1635,6 @@ function loadTrialSettingsForCreate(templateSettingsId) {
 		    $("#trialInstances").removeAttr('disabled');
 		    $('.spinner-input').spinedit({
 		    	minimum: 1,
-			    maximum: 5,
 			    value: 1
 		    });
 		},

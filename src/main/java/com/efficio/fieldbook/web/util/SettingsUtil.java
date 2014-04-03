@@ -574,7 +574,7 @@ public class SettingsUtil {
                                                 settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
                                                 
                                                 if (TermId.TRIAL_INSTANCE_FACTOR.getId() == variable.getCvTermId()) {
-                                                    settingDetail.setDelete(false);
+                                                    settingDetail.setDeletable(false);
                                                 }
                                                 
 	    					trialLevelVariableList.add(settingDetail);

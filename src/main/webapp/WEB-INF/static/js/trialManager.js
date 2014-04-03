@@ -751,7 +751,7 @@ function createTrialLevelSettingVariables(data) {
 		var isDelete = "";
 		
 		//include delete button if variable is deletable
-		if (settingDetail.delete) {
+		if (settingDetail.deletable) {
 			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(1," + 
 				settingDetail.variable.cvTermId + ",$(this))'></span>";
 		}
@@ -835,7 +835,7 @@ function createNurseryLevelSettingVariablesOld(data) {
 		var isDelete = "";
 		
 		//include delete button if variable is deletable
-		if (settingDetail.delete) {
+		if (settingDetail.deletable) {
 			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(1," + 
 				settingDetail.variable.cvTermId + ",$(this))'></span>";
 		}
@@ -974,7 +974,7 @@ function createPlotLevelSettingVariables(data) {
 		var newRow = "<tr class='newVariable'>";
 		var isDelete = "";
 		
-		if (settingDetail.delete) {
+		if (settingDetail.deletable) {
 			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(2," + 
 			settingDetail.variable.cvTermId + ",$(this))'></span>";
 		}
@@ -997,7 +997,7 @@ function createBaselineTraitVariables(data) {
 		var newRow = "<tr class='newVariable'>";
 		var isDelete = "";
 		
-		if (settingDetail.delete) {
+		if (settingDetail.deletable) {
 			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(3," + 
 			settingDetail.variable.cvTermId + ",$(this))'></span>";
 		}
@@ -1020,7 +1020,7 @@ function createTrialEnvironmentVariables(data) {
 		var newRow = "<tr class='newVariable'>";
 		var isDelete = "";
 		
-		if (settingDetail.delete) {
+		if (settingDetail.deletable) {
 			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(4," + 
 			settingDetail.variable.cvTermId + ",$(this))'></span>";
 		}

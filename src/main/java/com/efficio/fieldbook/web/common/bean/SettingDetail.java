@@ -26,7 +26,7 @@ public class SettingDetail {
 	private String possibleValuesJson;
 	private String possibleValuesFavoriteJson;
 	private String value;
-	private boolean isDelete;
+	private boolean isDeletable;
 	private boolean isFavorite;
 	private int order;
 
@@ -35,12 +35,12 @@ public class SettingDetail {
 	}
 
 	public SettingDetail(SettingVariable variable,
-			List<ValueReference> possibleValues, String value, boolean isDelete) {
+			List<ValueReference> possibleValues, String value, boolean isDeletable) {
 		super();
 		this.variable = variable;
 		this.possibleValues = possibleValues;
 		this.value = value;
-		this.isDelete = isDelete;
+		this.isDeletable = isDeletable;
 	}
 	public SettingVariable getVariable() {
 		return variable;
@@ -96,12 +96,15 @@ public class SettingDetail {
 	public void setValue(String value) {
 		this.value = value;
 	}
-	public boolean isDelete() {
-		return isDelete;
+	
+	public boolean isDeletable() {
+		return isDeletable;
 	}
-	public void setDelete(boolean isDelete) {
-		this.isDelete = isDelete;
+
+	public void setDeletable(boolean isDeletable) {
+		this.isDeletable = isDeletable;
 	}
+
 	public boolean isFavorite() {
 	        return isFavorite;
 	}

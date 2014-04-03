@@ -111,7 +111,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			    				<div class="col-xs-12 col-md-12" id="nurseryLevelSettings-dev">
 			    					<div class="row form-group nurseryLevelSettings" th:each="nurseryLevelVariable, rowStat : *{studyLevelVariables}">
 			    						<div class="col-xs-5 col-md-5 1st">
-			    							<span style="cursor: default; font-size: 16px;" th:if="${nurseryLevelVariable.delete}" class="glyphicon glyphicon-remove-circle" 
+			    							<span style="cursor: default; font-size: 16px;" th:if="${nurseryLevelVariable.deletable}" class="glyphicon glyphicon-remove-circle" 
 												th:onclick="'javascript: deleteVariable(1,\'' + ${nurseryLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
 												<input class="cvTermIds" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 			    							&nbsp;&nbsp;&nbsp;
@@ -210,7 +210,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 					    					<tr th:each="plotLevelVariable, rowStat : *{plotLevelVariables}">
 					    					<td style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'">
 					    					
-												<span style="cursor: default; font-size: 16px;" th:if="${plotLevelVariable.delete}" class="glyphicon glyphicon-remove-circle"
+												<span style="cursor: default; font-size: 16px;" th:if="${plotLevelVariable.deletable}" class="glyphicon glyphicon-remove-circle"
 					    						th:onclick="'javascript: deleteVariable(2,\'' + ${plotLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
 					    						  			    						 
 					    						<input class="cvTermIds" type="hidden" th:field="*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
@@ -267,7 +267,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 					    					<tr th:each="baselineTraitVariable, rowStat : *{baselineTraitVariables}">
 					    						<td style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'" >
 					    						
-						    						<span style="cursor: default; font-size: 16px;" th:if="${baselineTraitVariable.delete}" class="glyphicon glyphicon-remove-circle"
+						    						<span style="cursor: default; font-size: 16px;" th:if="${baselineTraitVariable.deletable}" class="glyphicon glyphicon-remove-circle"
 						    						th:onclick="'javascript: deleteVariable(3,\'' + ${baselineTraitVariable.variable.cvTermId} + '\',$(this))'"></span>
 						    									    					
 						    						<input class="cvTermIds" type="hidden" th:field="*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId}" />

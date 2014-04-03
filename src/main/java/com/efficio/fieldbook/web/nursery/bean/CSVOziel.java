@@ -45,9 +45,9 @@ public class CSVOziel {
     private String stringTraitToEvaluate = "GY";
     private Integer selectedTraitId;
 
-    public CSVOziel(Workbook workbook) {
+    public CSVOziel(Workbook workbook, List<MeasurementRow> observations) {
     	this.headers = workbook.getMeasurementDatasetVariables();
-    	this.observations = workbook.getObservations();
+    	this.observations = observations; //workbook.getObservations();
     	this.variateHeaders = workbook.getVariates();
     }
 

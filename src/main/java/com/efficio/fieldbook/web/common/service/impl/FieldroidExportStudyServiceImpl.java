@@ -16,6 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.springframework.stereotype.Service;
 
@@ -37,8 +38,9 @@ public class FieldroidExportStudyServiceImpl implements
         boolean alreadyExists = new File(outputFile).exists();
         List<Integer> selectedLocationIds = ExportImportStudyUtil.getLocationIdsFromTrialInstances(workbook, start, end);
         CsvWriter csvOutput = null;
+        List<MeasurementRow> observations = workbook.getObservations(); 
         try {
-        	CSVOziel csv = new CSVOziel(workbook);
+        	CSVOziel csv = new CSVOziel(workbook, observations);
             csvOutput = new CsvWriter(new FileWriter(outputFile, false), ',');
             csvOutput.write("Trial");
             csvOutput.write("Rep");

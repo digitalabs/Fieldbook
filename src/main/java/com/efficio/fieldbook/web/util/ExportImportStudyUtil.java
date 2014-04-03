@@ -69,4 +69,12 @@ public class ExportImportStudyUtil {
 		return locationIds;
 	}
 	
+    public static List<MeasurementRow> getApplicableObservations(Workbook workbook, List<MeasurementRow> observations, int start, int end) {
+    	List<MeasurementRow> rows = new ArrayList<MeasurementRow>();
+    	List<Integer> locationIds = getLocationIdsFromTrialInstances(workbook, start, end);
+    	for (MeasurementRow row :observations) {
+    		
+    	}
+    	return rows;
+    }
 }

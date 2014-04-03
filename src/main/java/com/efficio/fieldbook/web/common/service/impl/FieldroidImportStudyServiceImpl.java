@@ -28,7 +28,7 @@ public class FieldroidImportStudyServiceImpl implements
 			throws WorkbookParserException {
 	
 		File file = new File(filename);
-		CSVOziel csv = new CSVOziel(workbook);
+		CSVOziel csv = new CSVOziel(workbook, workbook.getObservations());
 		
 		validate(csv, file, workbook);
 		

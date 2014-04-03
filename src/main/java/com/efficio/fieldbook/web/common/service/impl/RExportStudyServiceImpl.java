@@ -34,7 +34,7 @@ public class RExportStudyServiceImpl implements RExportStudyService {
 	@Override
 	public String exportToR(Workbook workbook, String outputFile, Integer selectedTrait, int start, int end) {
         boolean alreadyExists = new File(outputFile).exists();
-        CSVOziel csv = new CSVOziel(workbook);
+        CSVOziel csv = new CSVOziel(workbook, workbook.getObservations());
         CsvWriter csvOutput = null;
         try {
             csvOutput = new CsvWriter(new FileWriter(outputFile, false), ',');

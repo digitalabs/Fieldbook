@@ -42,7 +42,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 			    					<label class="control-label" th:text="#{trial.createtrial.trial.instances}+':'">Trial Instances:*</label>&nbsp;<span class="required">*</span>
 			    				</div>
 			    				<div class="col-xs-4 col-md-4">
-								      <input type="text" class="spinner-input" th:field="*{trialInstances}" onChange="editTrialInstances()" />
+								      <input type="text" class="form-control spinner-input trialInstances" th:field="*{trialInstances}" onChange="editTrialInstances()" />
 			    				</div>
 			    				<div class="col-xs-3 col-md-3">
 			    				</div>

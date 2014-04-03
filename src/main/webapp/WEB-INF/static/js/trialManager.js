@@ -1092,7 +1092,7 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation, default
 		        query.callback(data);
 		    }
 	    });
-	} else if (name.indexOf("trialEnvironmentValues") > -1) {
+	} else if (name.indexOf("trialEnvironmentValues") > -1 && replicates) {
 		$(name).select2({
 			query: function (query) {	
 		      var data = {results: possibleValues_obj}, i, j, s;
@@ -1166,9 +1166,9 @@ function isReplicateOrBlockSize(combo) {
 	}
 	
 	if (replicatesValue == 0 || blockSizeValue == 0) {
-		return;
+		return false;
 	}
-	
+	return false;
 	//compute block per replicate
 }
 
@@ -2045,58 +2045,100 @@ function getIdOfValue(value) {
 	return id;
 }
 
-function recreateSelect2ComboMultiple(index, row, selectedVal) {
+function recreateMultipleObjects(index, row) {
 	$.each($(row).children("td"), function (cellIndex, cell) {
-		//set trial instance no.
 		
+		//set trial instance no.
 		if (parseInt($($(cell).children(".cvTermIds")).val()) == parseInt(trialInstanceId)) {
 			$($(cell).children(".trialInstanceNo")).text(index+1);
 			$($(cell).children("#"+getJquerySafeId("trialEnvironmentValues"+ index + cellIndex +".name"))).val(index+1);
 		}
 		
+		//recreate slider objects
+		if (cell.innerHTML.indexOf("numeric-range-input") > -1) {
+			recreateSliderMultiple(index, row, cellIndex, cell);
+		}
+		
+		//recreate select2 objects
 		if (cell.innerHTML.indexOf("select2") > -1) {
-			//get the possible values of the variable
-			var possibleValuesJson = $($(cell).find(".possibleValuesJsonTrial")).text();
-			var possibleValuesFavoriteJson = $($(cell).find(".possibleValuesFavoriteJsonTrial")).text();
-			
-			var cvTermId = $($(cell).children("#" 
-					+ getJquerySafeId("trialEnvironmentValues" + index + cellIndex + ".id"))).val();
-			
-			var newCell = "<input class='cvTermIds trialLevelVariableIdClass' type='hidden' id='trialEnvironmentValues" + 
-				index + cellIndex + ".id' name='trialEnvironmentValues[" + index + "][" + cellIndex + "].id' value='" + cvTermId + "' />";
-
-			//hidden field for select2 
-			newCell = newCell + "<input type='hidden' id='trialEnvironmentValues" + index + cellIndex +
-			".name' name='trialEnvironmentValues[" + index + "][" + cellIndex + "].name' class='form-control select2' />";
-			
-			//div containing the possible values
-			newCell = newCell + "<div id='possibleValuesJsonTrial" + index + "a" + cellIndex + "' class='possibleValuesJsonTrial' style='display:none'>" + 
-				possibleValuesJson + "</div>";
-			
-			//div containing the favorite possible values
-			newCell = newCell + "<div id='possibleValuesFavoriteJsonTrial" + index + "a" + cellIndex + "' class='possibleValuesFavoriteJsonTrial' style='display:none'>" + 
-				possibleValuesFavoriteJson + "</div>";
-			
-			var isFavoriteChecked = $("#showFavoriteLocationForAll").is(":checked");
-			var showAll = true;
-			//set possibleValues to favorite possible values
-			if (isFavoriteChecked && parseInt(cvTermId) == parseInt(locationId)) {
-				possibleValuesJson = possibleValuesFavoriteJson;
-				showAll = false;
-			}
-						
-			cell.innerHTML = newCell;
-			
-			//recreate the select2 object
-			if (parseInt(cvTermId) == parseInt(locationId)) {
-			    initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
-		 			"#" + getJquerySafeId("trialEnvironmentValues" + index + cellIndex +".name"), showAll, null);
-			} else {
-				initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
-					"#" + getJquerySafeId("trialEnvironmentValues" + index + cellIndex +".name"), false, null);
-			}
+			recreateSelect2ComboMultiple(index, row, cellIndex, cell);
 		}
 	});
+}
+
+function initializeSlider(sliderId) {
+	var currentVal  = parseFloat($(sliderId).data('min'));
+	$(sliderId).slider({
+		min: parseFloat($(sliderId).data('min')),
+		max: parseFloat($(sliderId).data('max')),
+		step: parseFloat($(sliderId).data('step')),
+		value: currentVal,
+		formater: function(value) {
+			return 'Value: ' + value;
+		}
+	});
+}
+
+function recreateSliderMultiple(index, row, cellIndex, cell) {			
+	var cvTermId = $($(cell).children("#" 
+			+ getJquerySafeId("trialEnvironmentValues" + index + cellIndex + ".id"))).val();
+	
+	var newCell = "<input class='cvTermIds trialLevelVariableIdClass' type='hidden' id='trialEnvironmentValues" + 
+	index + cellIndex + ".id' name='trialEnvironmentValues[" + index + "][" + cellIndex + "].id' value='" + cvTermId + "' />";
+	
+	//hidden field for select2 
+	newCell = newCell + "<input type='text' id='trialEnvironmentValues" + index + cellIndex +
+	".name' name='trialEnvironmentValues[" + index + "][" + cellIndex + "].name' " + 
+	" data-min='" + $($(cell).children("div").children("input")).attr("data-min") + 
+	"' data-max='" + $($(cell).children("div").children("input")).attr("data-max") + 
+	"' data-step='0.1' class='form-control numeric-range-input' />";
+	
+	cell.innerHTML = newCell;
+	
+	initializeSlider("#"+ getJquerySafeId("trialEnvironmentValues" + index + cellIndex +".name"));
+}
+
+function recreateSelect2ComboMultiple(index, row, cellIndex, cell) {
+	//get the possible values of the variable
+	var possibleValuesJson = $($(cell).find(".possibleValuesJsonTrial")).text();
+	var possibleValuesFavoriteJson = $($(cell).find(".possibleValuesFavoriteJsonTrial")).text();
+	
+	var cvTermId = $($(cell).children("#" 
+			+ getJquerySafeId("trialEnvironmentValues" + index + cellIndex + ".id"))).val();
+	
+	var newCell = "<input class='cvTermIds trialLevelVariableIdClass' type='hidden' id='trialEnvironmentValues" + 
+		index + cellIndex + ".id' name='trialEnvironmentValues[" + index + "][" + cellIndex + "].id' value='" + cvTermId + "' />";
+
+	//hidden field for select2 
+	newCell = newCell + "<input type='hidden' id='trialEnvironmentValues" + index + cellIndex +
+	".name' name='trialEnvironmentValues[" + index + "][" + cellIndex + "].name' class='form-control select2' />";
+	
+	//div containing the possible values
+	newCell = newCell + "<div id='possibleValuesJsonTrial" + index + "a" + cellIndex + "' class='possibleValuesJsonTrial' style='display:none'>" + 
+		possibleValuesJson + "</div>";
+	
+	//div containing the favorite possible values
+	newCell = newCell + "<div id='possibleValuesFavoriteJsonTrial" + index + "a" + cellIndex + "' class='possibleValuesFavoriteJsonTrial' style='display:none'>" + 
+		possibleValuesFavoriteJson + "</div>";
+	
+	var isFavoriteChecked = $("#showFavoriteLocationForAll").is(":checked");
+	var showAll = true;
+	//set possibleValues to favorite possible values
+	if (isFavoriteChecked && parseInt(cvTermId) == parseInt(locationId)) {
+		possibleValuesJson = possibleValuesFavoriteJson;
+		showAll = false;
+	}
+				
+	cell.innerHTML = newCell;
+	
+	//recreate the select2 object
+	if (parseInt(cvTermId) == parseInt(locationId)) {
+	    initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
+ 			"#" + getJquerySafeId("trialEnvironmentValues" + index + cellIndex +".name"), showAll, null);
+	} else {
+		initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
+			"#" + getJquerySafeId("trialEnvironmentValues" + index + cellIndex +".name"), false, null);
+	}
 }
 
 function editTrialInstances() {
@@ -2122,9 +2164,7 @@ function addTrialInstances() {
 		newRow = "<tr>" + cells + "</tr>";
 		$("#trialInstancesTable tbody").append(newRow);
 		
-		if (newRow.indexOf("select2") > -1) {
-			recreateSelect2ComboMultiple(i, $("#trialInstancesTable tbody tr:last"), null);
-		}
+		recreateMultipleObjects(i, $("#trialInstancesTable tbody tr:last")); 
 	}
 	
 }

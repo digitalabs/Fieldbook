@@ -16,27 +16,7 @@
 						 
 						<input th:if="${trialEnvLevelVariable.variable.widgetType.type == 'DROPDOWN'}" 
 						type="hidden" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" class="form-control select2" />
-	
-						<!-- Show Favorite Location/Method -->
-						<!--   
-						<div th:if="${trialEnvLevelVariable.variable.cvTermId}==*{locationId}" class="possibleValuesDiv">
-						<input 
-						type="checkbox" th:field="*{trialLevelVariables[__${rowStat.index}__].favorite}" 
-						th:onclick="'javascript: toggleLocationDropdown(\'' + ${rowStat.index} + '\');'" />
-						&nbsp;&nbsp;
-						<span 
-						th:text="#{show.favorite.location}">Show Favorite Location</span>
-						</div>
-						<div th:if="${trialEnvLevelVariable.variable.cvTermId}==*{breedingMethodId}" class="possibleValuesDiv">
-						<input 
-						type="checkbox" th:field="*{trialLevelVariables[__${rowStat.index}__].favorite}" 
-						th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'" />
-						&nbsp;&nbsp;
-						<span 
-						th:text="#{show.favorite.method}">Show Favorite Method</span>
-						</div>
-						-->
-	
+		
 						<!-- store possible values of variable -->
 						<div th:text="${trialEnvLevelVariable.value}" class="div-select-val" style="display: none"></div>
 						<div th:if="${trialEnvLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesJsonTrial' + ${row.index} + 'a' + ${rowStat.index}"
@@ -64,13 +44,6 @@
 						th:attrappend="data-max=${trialEnvLevelVariable.variable.maxRange}"
 						class="form-control numeric-range-input"
 						data-step="0.1" />
-							 
-						<!--  	 
-						<span>
-							<a th:if="${trialEnvLevelVariable.variable.cvTermId}==*{locationId}" href="javascript: openManageLocations();" th:text="#{trial.managesettings.manage.location}">Manage Location</a>
-							<a th:if="${trialEnvLevelVariable.variable.cvTermId}==*{breedingMethodId}" href="javascript: openManageMethods();" th:text="#{trial.managesettings.manage.method}">Manage Method</a>
-						</span>
-						-->
 					</td>
 				</tr>
 			</tbody>

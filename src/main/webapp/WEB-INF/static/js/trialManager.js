@@ -1092,6 +1092,27 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation, default
 		        query.callback(data);
 		    }
 	    });
+	} else if (name.indexOf("trialEnvironmentValues") > -1) {
+		$(name).select2({
+			query: function (query) {	
+		      var data = {results: possibleValues_obj}, i, j, s;
+		      // return the array that matches
+		      data.results = $.grep(data.results,function(item,index) {
+		        return ($.fn.select2.defaults.matcher(query.term,item.text));
+		      
+		      });
+		      if (data.results.length === 0){
+		    	  data.results.unshift({id:query.term,text:query.term});	        	 
+		      }
+		      
+		        query.callback(data);
+		    }
+	    }).on("change", function () {
+	    	if (isReplicateOrBlockSize($(this).attr("name"))) {
+	    		//compute block per replicate
+	    		
+	    	}
+	    });
 	} else {
 		$(name).select2({
 			query: function (query) {	
@@ -1115,6 +1136,40 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation, default
 		//console.log(defaultJsonVal);
 		$(name).select2('data', defaultJsonVal).trigger('change');
 	}
+}
+
+function isReplicateOrBlockSize(combo) {
+	//get the index of the column
+	var index = parseInt(combo.substring(combo.lastIndexOf("[")+1, combo.lastIndexOf("]"))) + 1;
+	var replicatesValue = 0, blockSizeValue = 0;
+	
+	if ($("#trialInstancesTable thead tr th:nth-child(" + index + ")").text() == replicates) {
+		if ($("." + getJquerySafeId(combo)).select2("data")) {
+			replicatesValue = $("." + getJquerySafeId(combo)).select2("data").text;
+		}
+		
+		var otherCombo = "";
+		if ($("." + getJquerySafeId(otherCombo)).select2("data")) {
+			blockSizeValue = $("." + getJquerySafeId(otherCombo)).select2("data").text;
+		} 
+	}
+	
+	if ($("#trialInstancesTable thead tr th:nth-child(" + index + ")").text() == blockSize) {
+		if ($("." + getJquerySafeId(combo)).select2("data")) {
+			blockSizeValue = $("." + getJquerySafeId(combo)).select2("data").text;
+		}
+		
+		var otherCombo = "";
+		if ($("." + getJquerySafeId(otherCombo)).select2("data")) {
+			replicatesValue = $("." + getJquerySafeId(otherCombo)).select2("data").text;
+		} 
+	}
+	
+	if (replicatesValue == 0 || blockSizeValue == 0) {
+		return;
+	}
+	
+	//compute block per replicate
 }
 
 function deleteVariable(variableType, variableId, deleteButton) {
@@ -1578,6 +1633,11 @@ function loadTrialSettingsForCreate(templateSettingsId) {
 			$("#chooseSettingsDiv").html(html);
 			$("#showFavoriteLocationForAll").removeAttr('disabled');
 		    $("#trialInstances").removeAttr('disabled');
+		    $('.spinner-input').spinedit({
+		    	minimum: 1,
+			    maximum: 5,
+			    value: 1
+		    });
 		},
 		error: function(jqXHR, textStatus, errorThrown){
 			console.log("The following error occured: " + textStatus, errorThrown); 

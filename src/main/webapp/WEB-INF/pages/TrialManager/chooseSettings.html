@@ -17,6 +17,8 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
                     <input type="hidden" th:field="*{startDateId}"/>
 					<input type="hidden" th:field="*{endDateId}"/>
 					<input type="hidden" th:field="*{trialInstanceFactor}"/>
+					<input type="hidden" th:field="*{replicates}"/>
+					<input type="hidden" th:field="*{blockSize}"/>
 					
 					<div class="row form-group">
 						<div class="col-xs-12 col-md-12">
@@ -40,9 +42,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 			    					<label class="control-label" th:text="#{trial.createtrial.trial.instances}+':'">Trial Instances:*</label>&nbsp;<span class="required">*</span>
 			    				</div>
 			    				<div class="col-xs-4 col-md-4">
-			    					<span class="stepper">
-								      <input class="form-control" type="number" th:field="*{trialInstances}" onChange="editTrialInstances()" />
-								    </span>
+								      <input type="text" class="spinner-input" th:field="*{trialInstances}" onChange="editTrialInstances()" />
 			    				</div>
 			    				<div class="col-xs-3 col-md-3">
 			    				</div>
@@ -326,6 +326,8 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 <link th:href="@{/static/css/bootstrap-datepicker.css}" rel="stylesheet"/>
 <script type="text/javascript" th:src="@{/static/js/bootstrap-datepicker.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/bootstrap-fileupload.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/bootstrap-spinedit.js}"></script>
+<link th:href="@{/static/css/bootstrap-spinedit.css}" rel="stylesheet"/>
 <script type='text/javascript' th:inline="javascript">
 //<![CDATA[   
 	
@@ -348,6 +350,8 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
     var startDateId = '';
 	var endDateId = '';
 	var trialInstanceId = '';
+	var replicates = '';
+	var blockSize = '';
     
 	$(document).ready(function() {
         if($('#requiredFields').val() != ''){
@@ -361,6 +365,8 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
         programLocationUrl = $('#locationUrl').val();
         importLocationUrl = $('#importLocationUrl').val();    
         trialInstanceId = $('#trialInstanceFactor').val();
+        replicates = $("#replicates").val();
+        blockSize = $("#blockSize").val();
         
 		$("#folderNameSpan").html($("#folderName").val());
 		

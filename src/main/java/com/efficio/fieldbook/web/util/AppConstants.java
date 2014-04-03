@@ -178,6 +178,8 @@ public enum AppConstants {
     ,VALUES
     ,BLOCK_PER_REPLICATE
     ,TRIAL_ENVIRONMENT_ORDER
+    ,REPLICATES
+    ,BLOCK_SIZE
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

@@ -361,5 +361,7 @@ public class CreateTrialController extends SettingsController {
         form.setStartDateId(AppConstants.START_DATE_ID.getString());
     	form.setEndDateId(AppConstants.END_DATE_ID.getString());
     	form.setTrialInstanceFactor(AppConstants.TRIAL_INSTANCE_FACTOR.getString());
+    	form.setReplicates(AppConstants.REPLICATES.getString());
+    	form.setBlockSize(AppConstants.BLOCK_SIZE.getString());
     }
 }

@@ -1,79 +1,81 @@
 <div class="row col-xs-12 col-md-12">
 	<br />
-	<table id="trialInstancesTable" class="my-class table table-curved table-condensed">
-		<thead>
-			<tr>
-				<th style="max-width: 80px" th:each="trialEnvLevelVariable, rowStat : *{trialLevelVariables}">
-					<label class="control-label" th:text="${trialEnvLevelVariable.variable.name}"></label>
-				</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr th:each="trialEnvironmentValue, row : *{trialEnvironmentValues}">
-				<td style="max-width: 80px" th:each="trialEnvLevelVariable, rowStat : *{trialLevelVariables}">
-					<input class="cvTermIds trialLevelVariableIdClass" type="hidden" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].id}" />
-					 
-					<input th:if="${trialEnvLevelVariable.variable.widgetType.type == 'DROPDOWN'}" 
-					type="hidden" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" class="form-control select2" />
-
-					<!-- Show Favorite Location/Method -->
-					<!--   
-					<div th:if="${trialEnvLevelVariable.variable.cvTermId}==*{locationId}" class="possibleValuesDiv">
-					<input 
-					type="checkbox" th:field="*{trialLevelVariables[__${rowStat.index}__].favorite}" 
-					th:onclick="'javascript: toggleLocationDropdown(\'' + ${rowStat.index} + '\');'" />
-					&nbsp;&nbsp;
-					<span 
-					th:text="#{show.favorite.location}">Show Favorite Location</span>
-					</div>
-					<div th:if="${trialEnvLevelVariable.variable.cvTermId}==*{breedingMethodId}" class="possibleValuesDiv">
-					<input 
-					type="checkbox" th:field="*{trialLevelVariables[__${rowStat.index}__].favorite}" 
-					th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'" />
-					&nbsp;&nbsp;
-					<span 
-					th:text="#{show.favorite.method}">Show Favorite Method</span>
-					</div>
-					-->
-
-					<!-- store possible values of variable -->
-					<div th:text="${trialEnvLevelVariable.value}" class="div-select-val" style="display: none"></div>
-					<div th:if="${trialEnvLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesJsonTrial' + ${row.index} + 'a' + ${rowStat.index}"
-						class="possibleValuesJsonTrial" style="display:none" th:text="${trialEnvLevelVariable.possibleValuesJson}">
-					</div>
-					<div th:if="${trialEnvLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesFavoriteJsonTrial' + ${row.index} + 'a'  + ${rowStat.index}"
-						class="possibleValuesFavoriteJsonTrial" style="display:none" th:text="${trialEnvLevelVariable.possibleValuesFavoriteJson}">
-					</div>
-					
-					<label class="control-label trialInstanceNo" th:if="${trialEnvLevelVariable.variable.widgetType.type == 'NTEXT' and trialEnvLevelVariable.delete == false}" th:text="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}"></label>
-					<input type="hidden" th:if="${trialEnvLevelVariable.variable.widgetType.type == 'NTEXT' and trialEnvLevelVariable.delete == false}" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" />
-					
-					<input th:if="${trialEnvLevelVariable.variable.widgetType.type == 'NTEXT' and trialEnvLevelVariable.delete != false}" 
-					type="text" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" class="form-control numeric-input" />
-					
-					<input th:if="${trialEnvLevelVariable.variable.widgetType.type == 'CTEXT'}" 
-					type="text" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" class="form-control character-input" />
-					
-					<input th:if="${trialEnvLevelVariable.variable.widgetType.type == 'DATE'}" 
-					type="text" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" class="form-control date-input" />
-					 
-					<input th:if="${trialEnvLevelVariable.variable.widgetType.type == 'SLIDER'}" 
-					type="text" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}"
-					th:attr="data-min=${trialEnvLevelVariable.variable.minRange}"
-					th:attrappend="data-max=${trialEnvLevelVariable.variable.maxRange}"
-					class="form-control numeric-range-input"
-					data-step="0.1" />
+	<div class="trialEnvironmentDiv">
+		<table style="table-layout: auto; width: 100%; margin: 0" id="trialInstancesTable" class="my-class table table-curved table-condensed">
+			<thead>
+				<tr>
+					<th style="max-width: 80px; min-width: 80px" th:each="trialEnvLevelVariable, rowStat : *{trialLevelVariables}">
+						<label class="control-label" th:text="${trialEnvLevelVariable.variable.name}"></label>
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="trialEnvironmentValue, row : *{trialEnvironmentValues}">
+					<td style="max-width: 80px; min-width: 80px" th:each="trialEnvLevelVariable, rowStat : *{trialLevelVariables}">
+						<input class="cvTermIds trialLevelVariableIdClass" type="hidden" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].id}" />
 						 
-					<!--  	 
-					<span>
-						<a th:if="${trialEnvLevelVariable.variable.cvTermId}==*{locationId}" href="javascript: openManageLocations();" th:text="#{trial.managesettings.manage.location}">Manage Location</a>
-						<a th:if="${trialEnvLevelVariable.variable.cvTermId}==*{breedingMethodId}" href="javascript: openManageMethods();" th:text="#{trial.managesettings.manage.method}">Manage Method</a>
-					</span>
-					-->
-				</td>
-			</tr>
-		</tbody>
-	</table>
+						<input th:if="${trialEnvLevelVariable.variable.widgetType.type == 'DROPDOWN'}" 
+						type="hidden" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" class="form-control select2" />
+	
+						<!-- Show Favorite Location/Method -->
+						<!--   
+						<div th:if="${trialEnvLevelVariable.variable.cvTermId}==*{locationId}" class="possibleValuesDiv">
+						<input 
+						type="checkbox" th:field="*{trialLevelVariables[__${rowStat.index}__].favorite}" 
+						th:onclick="'javascript: toggleLocationDropdown(\'' + ${rowStat.index} + '\');'" />
+						&nbsp;&nbsp;
+						<span 
+						th:text="#{show.favorite.location}">Show Favorite Location</span>
+						</div>
+						<div th:if="${trialEnvLevelVariable.variable.cvTermId}==*{breedingMethodId}" class="possibleValuesDiv">
+						<input 
+						type="checkbox" th:field="*{trialLevelVariables[__${rowStat.index}__].favorite}" 
+						th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'" />
+						&nbsp;&nbsp;
+						<span 
+						th:text="#{show.favorite.method}">Show Favorite Method</span>
+						</div>
+						-->
+	
+						<!-- store possible values of variable -->
+						<div th:text="${trialEnvLevelVariable.value}" class="div-select-val" style="display: none"></div>
+						<div th:if="${trialEnvLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesJsonTrial' + ${row.index} + 'a' + ${rowStat.index}"
+							class="possibleValuesJsonTrial" style="display:none" th:text="${trialEnvLevelVariable.possibleValuesJson}">
+						</div>
+						<div th:if="${trialEnvLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesFavoriteJsonTrial' + ${row.index} + 'a'  + ${rowStat.index}"
+							class="possibleValuesFavoriteJsonTrial" style="display:none" th:text="${trialEnvLevelVariable.possibleValuesFavoriteJson}">
+						</div>
+						
+						<label class="control-label trialInstanceNo" th:if="${trialEnvLevelVariable.variable.widgetType.type == 'NTEXT' and trialEnvLevelVariable.delete == false}" th:text="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}"></label>
+						<input type="hidden" th:if="${trialEnvLevelVariable.variable.widgetType.type == 'NTEXT' and trialEnvLevelVariable.delete == false}" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" />
+						
+						<input th:if="${trialEnvLevelVariable.variable.widgetType.type == 'NTEXT' and trialEnvLevelVariable.delete != false}" 
+						type="text" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" class="form-control numeric-input" />
+						
+						<input th:if="${trialEnvLevelVariable.variable.widgetType.type == 'CTEXT'}" 
+						type="text" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" class="form-control character-input" />
+						
+						<input th:if="${trialEnvLevelVariable.variable.widgetType.type == 'DATE'}" 
+						type="text" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" class="form-control date-input" />
+						 
+						<input th:if="${trialEnvLevelVariable.variable.widgetType.type == 'SLIDER'}" 
+						type="text" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}"
+						th:attr="data-min=${trialEnvLevelVariable.variable.minRange}"
+						th:attrappend="data-max=${trialEnvLevelVariable.variable.maxRange}"
+						class="form-control numeric-range-input"
+						data-step="0.1" />
+							 
+						<!--  	 
+						<span>
+							<a th:if="${trialEnvLevelVariable.variable.cvTermId}==*{locationId}" href="javascript: openManageLocations();" th:text="#{trial.managesettings.manage.location}">Manage Location</a>
+							<a th:if="${trialEnvLevelVariable.variable.cvTermId}==*{breedingMethodId}" href="javascript: openManageMethods();" th:text="#{trial.managesettings.manage.method}">Manage Method</a>
+						</span>
+						-->
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 </div>
 <div layout:fragment="page-script">
 	<script type='text/javascript' th:inline="javascript">

@@ -90,7 +90,11 @@ public class CreateTrialForm {
     
     /** The trial instance factor. */
     private String trialInstanceFactor;
-
+    
+    private String replicates;
+    
+    private String blockSize;
+    
     /**
      * Gets the project id.
      *
@@ -488,4 +492,33 @@ public class CreateTrialForm {
         public void setTrialInstanceFactor(String trialInstanceFactor) {
             this.trialInstanceFactor = trialInstanceFactor;
         }
+
+        /**
+         * @return the replicates
+         */
+        public String getReplicates() {
+            return replicates;
+        }
+
+        /**
+         * @param replicates the replicates to set
+         */
+        public void setReplicates(String replicates) {
+            this.replicates = replicates;
+        }
+
+        /**
+         * @return the blockSize
+         */
+        public String getBlockSize() {
+            return blockSize;
+        }
+
+        /**
+         * @param blockSize the blockSize to set
+         */
+        public void setBlockSize(String blockSize) {
+            this.blockSize = blockSize;
+        }
+        
 }

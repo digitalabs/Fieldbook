@@ -122,6 +122,8 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     	}
     	
     	if (userSelection.getWorkbook().getTotalNumberOfInstances() > 1) {
+    		int extensionIndex = filename.lastIndexOf(".");
+    		filename = filename.substring(0, extensionIndex) + AppConstants.ZIP_FILE_SUFFIX;
     		response.setContentType("application/zip");
     	}
     	        

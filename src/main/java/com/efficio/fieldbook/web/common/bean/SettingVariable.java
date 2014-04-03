@@ -15,6 +15,7 @@ import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 
 import com.efficio.fieldbook.web.nursery.bean.WidgetType;
+import com.efficio.fieldbook.web.util.AppConstants;
 
 
 public class SettingVariable {
@@ -236,7 +237,9 @@ public class SettingVariable {
 		
 		if (cvTermId != null) {
 			if (cvTermId.equals(TermId.LOCATION_ID.getId()) || cvTermId.equals(TermId.PI_ID.getId()) 
-					|| cvTermId.equals(TermId.BREEDING_METHOD_ID.getId()) || cvTermId.equals(TermId.NURSERY_TYPE.getId())) {
+					|| cvTermId.equals(TermId.BREEDING_METHOD_ID.getId()) || 
+					cvTermId.equals(TermId.NURSERY_TYPE.getId())
+					|| cvTermId.toString().equalsIgnoreCase(AppConstants.COOPERATOR_ID.getString())) {
 				this.widgetType = WidgetType.DROPDOWN;
 			}
 		}

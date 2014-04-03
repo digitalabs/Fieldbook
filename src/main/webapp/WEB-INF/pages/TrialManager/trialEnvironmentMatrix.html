@@ -18,7 +18,7 @@
 						type="hidden" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" class="form-control select2" />
 		
 						<!-- store possible values of variable -->
-						<div th:text="${trialEnvLevelVariable.value}" class="div-select-val" style="display: none"></div>
+						<div th:text="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" class="div-select-val" style="display: none"></div>
 						<div th:if="${trialEnvLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesJsonTrial' + ${row.index} + 'a' + ${rowStat.index}"
 							class="possibleValuesJsonTrial" style="display:none" th:text="${trialEnvLevelVariable.possibleValuesJson}">
 						</div>
@@ -26,10 +26,10 @@
 							class="possibleValuesFavoriteJsonTrial" style="display:none" th:text="${trialEnvLevelVariable.possibleValuesFavoriteJson}">
 						</div>
 						
-						<label class="control-label trialInstanceNo" th:if="${trialEnvLevelVariable.variable.widgetType.type == 'NTEXT' and trialEnvLevelVariable.delete == false}" th:text="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}"></label>
-						<input type="hidden" th:if="${trialEnvLevelVariable.variable.widgetType.type == 'NTEXT' and trialEnvLevelVariable.delete == false}" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" />
+						<label class="control-label trialInstanceNo" th:if="${trialEnvLevelVariable.variable.widgetType.type == 'NTEXT' and trialEnvLevelVariable.deletable == false}" th:text="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}"></label>
+						<input type="hidden" th:if="${trialEnvLevelVariable.variable.widgetType.type == 'NTEXT' and trialEnvLevelVariable.deletable == false}" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" />
 						
-						<input th:if="${trialEnvLevelVariable.variable.widgetType.type == 'NTEXT' and trialEnvLevelVariable.delete != false}" 
+						<input th:if="${trialEnvLevelVariable.variable.widgetType.type == 'NTEXT' and trialEnvLevelVariable.deletable != false}" 
 						type="text" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" class="form-control numeric-input" />
 						
 						<input th:if="${trialEnvLevelVariable.variable.widgetType.type == 'CTEXT'}" 

@@ -15,10 +15,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.math.NumberUtils;
-import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -30,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import com.csvreader.CsvReader;
 import com.csvreader.CsvWriter;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 /**
  * This class was copied from CIMMYT's Fieldbook Code. 
@@ -44,11 +46,13 @@ public class CSVOziel {
 	
     private String stringTraitToEvaluate = "GY";
     private Integer selectedTraitId;
+    private List<MeasurementRow> trialObservations;
 
-    public CSVOziel(Workbook workbook, List<MeasurementRow> observations) {
+    public CSVOziel(Workbook workbook, List<MeasurementRow> observations, List<MeasurementRow> trialObservations) {
     	this.headers = workbook.getMeasurementDatasetVariables();
     	this.observations = observations; //workbook.getObservations();
     	this.variateHeaders = workbook.getVariates();
+    	this.trialObservations = trialObservations;
     }
 
     public void writeColums(CsvWriter csvOutput, int columnas) {
@@ -110,21 +114,27 @@ public class CSVOziel {
     	int tot = this.variateHeaders.size();
 
     	try {
+    		
+    		Map<Long, String> map = new HashMap<Long, String>();
+    		for (MeasurementRow row : this.trialObservations) {
+   				map.put(row.getLocationId(), WorkbookUtil.getValueByIdInRow(row.getMeasurementVariables(), TermId.TRIAL_INSTANCE_FACTOR.getId(), row));
+    		}
+    		
             for (MeasurementRow row : this.observations) {
-
-                csvOutput.write("1");
-                csvOutput.write("1");
-                csvOutput.write("1");
-                String plot = getValueByIdInRow(TermId.PLOT_NO.getId(), row);
+                csvOutput.write(getDisplayValue(map.get(row.getLocationId())));
+                csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.REP_NO.getId(), row));
+                csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.BLOCK_NO.getId(), row));
+                
+                String plot = WorkbookUtil.getValueByIdInRow(this.headers, TermId.PLOT_NO.getId(), row);
                 if (plot == null || "".equals(plot.trim())) {
-                	plot = getValueByIdInRow(TermId.PLOT_NNO.getId(), row);
+                	plot = WorkbookUtil.getValueByIdInRow(this.headers, TermId.PLOT_NNO.getId(), row);
                 }
                 csvOutput.write(plot);
-                csvOutput.write(getValueByIdInRow(TermId.ENTRY_NO.getId(), row));
+                csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.ENTRY_NO.getId(), row));
                 writeColums(csvOutput, 2);
-                csvOutput.write(getValueByIdInRow(TermId.DESIG.getId(), row));
+                csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.DESIG.getId(), row));
                 writeColums(csvOutput, 15);
-                csvOutput.write(getValueByIdInRow(TermId.GID.getId(), row));
+                csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.GID.getId(), row));
                 writeColums(csvOutput, 2);
 
 
@@ -158,17 +168,19 @@ public class CSVOziel {
     public void writeDATAR(CsvWriter csvOutput) {
         try {
 
-        	for (MeasurementRow mRow : this.observations) {
+    		Map<Long, String> map = new HashMap<Long, String>();
+    		for (MeasurementRow row : this.trialObservations) {
+   				map.put(row.getLocationId(), WorkbookUtil.getValueByIdInRow(row.getMeasurementVariables(), TermId.TRIAL_INSTANCE_FACTOR.getId(), row));
+    		}
+    		
+            for (MeasurementRow mRow : this.observations) {
+                csvOutput.write(getDisplayValue(map.get(mRow.getLocationId())));
+                csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.REP_NO.getId(), mRow));
+                csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.BLOCK_NO.getId(), mRow));
 
-                // for nursery assume alwas values are:
-                // loc = 1, replication = 1 and block =1 an
-                csvOutput.write("1"); // lock
-                csvOutput.write("1"); // replication
-                csvOutput.write("1"); // blocki
-                
-                csvOutput.write(getValueByIdInRow(TermId.ENTRY_NO.getId(), mRow));
+                csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.ENTRY_NO.getId(), mRow));
                 try {
-                	csvOutput.write(getValueByIdInRow(this.selectedTraitId, mRow));
+                	csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, this.selectedTraitId, mRow));
                 } catch (NullPointerException ex) {
                     String cad = ".";
                     
@@ -332,22 +344,6 @@ public class CSVOziel {
         this.stringTraitToEvaluate=stringTraitToEval;
     }
 
-    private String getValueByIdInRow(int termId, MeasurementRow row) {
-    	String label = null;
-    	if (this.headers != null && !this.headers.isEmpty()) {
-    		for (MeasurementVariable header : headers) {
-    			if (header.getTermId() == termId) {
-    				label = header.getName();
-    				break;
-    			}
-    		}
-    	}
-    	if (label != null && observations != null && !observations.isEmpty()) {
-   			return row.getMeasurementDataValue(label);
-    	}
-    	return null;
-    }
-    
     private void setObservationData(String label, int rowIndex, String value) {
     	if (rowIndex < this.observations.size()) {
 	    	MeasurementRow row = this.observations.get(rowIndex);
@@ -385,7 +381,10 @@ public class CSVOziel {
     	this.selectedTraitId = selectedTraitId;
     }
 
-
+    private String getDisplayValue(String value) {
+    	return value != null ? value : "";
+    }
+    
     //These methods were not used YET, temporarily commented out while not in use.
     //TODO cleanup once we have confirmed that these methods will no longer 
 /*

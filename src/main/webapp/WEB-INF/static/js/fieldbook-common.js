@@ -1029,10 +1029,11 @@ function doExportContinue(paramUrl, isNursery){
 			$('#trialModalSelection').modal('hide');
 		}
 	}
-	
+	var urlPage = paginationUrl+currentPage+"/"+currentPage+'?r=' + (Math.random() * 999);
+	//alert(urlPage);
 	Spinner.toggle();
  	$.ajax(
-         { url: paginationUrl+currentPage+"/"+currentPage+'?r=' + (Math.random() * 999),
+         { url: urlPage,
            type: "POST",
            data: serializedData,
            cache: false,
@@ -1040,7 +1041,7 @@ function doExportContinue(paramUrl, isNursery){
            async: false,
            success: function(html) {
         	   var formName = "#exportStudyForm";
-        	   var action = $(formName).attr('action');
+        	   var action = submitExportUrl;
         	   var newAction = '';
         	   	if(isNursery)
         	   		newAction = action + "export/" + paramUrl;
@@ -1048,7 +1049,7 @@ function doExportContinue(paramUrl, isNursery){
         	   		
         	   		newAction = action + "exportTrial/" + paramUrl + "/" + additionalParams;
         	   		
-        	   	//console.log(newAction);
+        	   	//alert(newAction);
         	   	 
         	   	}
         	   

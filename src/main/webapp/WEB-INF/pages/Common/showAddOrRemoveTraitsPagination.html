@@ -7,10 +7,11 @@
 	<input type="hidden" th:field="*{importVal}"/>
 	<input type="hidden" th:field="*{numberOfInstances}" />
               
-	 <div class="germplasm-measurement-list-table " style="width: 100%; max-width: 100%">
+	 <div class="germplasm-measurement-list-table" style="width: 100%; max-width: 100%;">
 	
        <!-- my-class table table-curved table-condensed   -->
-				<div class="factor-div" style="float: left; max-height: 400px; max-width: 50%; min-width: 50%; overflow-x: scroll; overflow-y: hidden">
+				 <div class="factor-div" style="float: left; max-height: 400px; max-width: 50%; min-width: 50%; overflow-x: scroll; overflow-y: hidden">
+				 
 				<table style="table-layout: auto; width: 100%">
 					<thead>
 						 <tr >
@@ -32,6 +33,7 @@
 				</table>
 				</div>
 				<div class="variates-div" style="float: left; max-height: 400px;max-width: 50%; min-width: 50%; overflow: auto; overflow-x: scroll">
+				 
 				<table style="table-layout: auto;  width: 100%"> 
 					<thead>
 						 <tr >
@@ -93,15 +95,26 @@
 
 <script type="text/javascript" th:src="@{/static/js/bootstrap-paginator.min.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/bootstrap-spinedit.js}"></script>
+	<script type='text/javascript' th:inline="javascript">
+	var isIE = false;
+	</script>
+	
+<!--[if IE]>
+<script type="text/javascript">
+    isIE = true;
+    //any other IE specific stuff here
+</script>
+<![endif]-->
 <link th:href="@{/static/css/bootstrap-spinedit.css}" rel="stylesheet"/>
 
 				<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
 	           
 	    convertToSelect2 = false;
-        var paginationUrl = /*[[@{/Common/addOrRemoveTraits/page/}]]*/;
+        var paginationUrl = '/Fieldbook/Common/addOrRemoveTraits/page/'; 
         paginationUrl = paginationUrl + $("#study-type").val() + "/";
         
+        var submitExportUrl = '/Fieldbook/ExportManager/';
         var options = {
             currentPage: /*[[${addOrRemoveTraitsForm.currentPage}]]*/,
             totalPages: /*[[${addOrRemoveTraitsForm.totalPages}]]*/,
@@ -143,7 +156,19 @@
        	}); 
        	   //$("#freezeheader").freezeHeader({ 'height': '500px' });
        	   //setTimeout(function(){$('#hdfreezeheader').css('top', '0px')}, 450);
+       	   
+      
+       	
+       		if(isIE){
+       			resizeWindowForIE()
+       	 	$(window).resize(function() {           		
+       	 		resizeWindowForIE()    				
+           		});
+       		}
    		});
+        function resizeWindowForIE(){
+        	$('.germplasm-measurement-list-table').css('width', $( window ).width() + "px");
+        }
         function fixedTrHeight(){
         	var max = 0;    
         	$('table tr').each(function() {

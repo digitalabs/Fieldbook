@@ -38,8 +38,9 @@ public class RExportStudyServiceImpl implements RExportStudyService {
 	public String exportToR(Workbook workbook, String outputFile, Integer selectedTrait, int start, int end) {
 		String outFile = FieldbookProperty.getPathProperty() + File.separator + outputFile;
         boolean alreadyExists = new File(outFile).exists();
-        List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, start, end);
-        CSVOziel csv = new CSVOziel(workbook, observations);
+        List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getObservations(), start, end);
+        List<MeasurementRow> trialObservations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getTrialObservations(), start, end);
+        CSVOziel csv = new CSVOziel(workbook, observations, trialObservations);
         CsvWriter csvOutput = null;
         try {
             csvOutput = new CsvWriter(new FileWriter(outFile, false), ',');

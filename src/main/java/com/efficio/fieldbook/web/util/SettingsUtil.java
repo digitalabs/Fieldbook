@@ -47,6 +47,11 @@ import com.efficio.fieldbook.web.nursery.bean.UserSelection;
  */
 public class SettingsUtil {
 	
+	public static String cleanSheetAndFileName(String name){
+    	name = name.replaceAll("[^a-zA-Z0-9-_.=^&'@{}$!-#()%.+~_\\[\\]]", "_");
+    	name = name.replaceAll("\"", "_");
+    	return name;
+    }
 	/**
 	 * Generate settings xml.
 	 *

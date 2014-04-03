@@ -28,6 +28,7 @@ import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 
 @Controller
 @RequestMapping(ExportStudyController.URL)
@@ -130,7 +131,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
         File xls = new File(outputFilename); // the selected name + current date
         FileInputStream in;
         
-        response.setHeader("Content-disposition","attachment; filename=" + filename);
+        response.setHeader("Content-disposition","attachment; filename=" + SettingsUtil.cleanSheetAndFileName(filename));
         try {
             in = new FileInputStream(xls);
             OutputStream out = response.getOutputStream();

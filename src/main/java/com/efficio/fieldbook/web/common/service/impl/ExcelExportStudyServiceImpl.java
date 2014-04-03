@@ -22,7 +22,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -34,7 +33,6 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
-import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -47,6 +45,7 @@ import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperty;
 import com.efficio.fieldbook.web.util.ZipUtil;
 
@@ -61,47 +60,50 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 			TermId.STUDY_TYPE.getId(), TermId.STUDY_UID.getId(), TermId.STUDY_STATUS.getId());
 	
 	@Override
-	public String export(Workbook workbook, String filename) {
+	public String export(Workbook workbook, String filename, int start, int end) {
 		FileOutputStream fos = null;
 		List<String> filenameList = new ArrayList<String>();
 		String outputFilename = null;
 		
 			Map<Long, List<MeasurementRow>> map = workbook.segregateByTrialInstances();
 			Set<Long> locationIds = map.keySet();
+			List<Integer> selectedLocationIds = ExportImportStudyUtil.getLocationIdsFromTrialInstances(workbook, start, end);
 			
 			int instanceNumber = 1;
 			for (Long locationId : locationIds) {
-				try {
-					List<MeasurementRow> observations = map.get(locationId);
-					MeasurementRow trialObservations = workbook.getTrialObservation(locationId);
-					
-					HSSFWorkbook xlsBook = new HSSFWorkbook();
-					
-					writeDescriptionSheet(xlsBook, workbook, trialObservations);
-					writeObservationSheet(xlsBook, workbook, observations);
-					
-					String filenamePath = FieldbookProperty.getPathProperty() + File.separator + filename;
-					if (locationIds.size() > 1) {
-						int fileExtensionIndex = filenamePath.lastIndexOf(".");
-						filenamePath = filenamePath.substring(0, fileExtensionIndex) +  "-" + instanceNumber + filenamePath.substring(fileExtensionIndex);
-					}
-					fos = new FileOutputStream(new File(filenamePath));
-					xlsBook.write(fos);
-					outputFilename = filenamePath;
-					filenameList.add(filenamePath);
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				} finally {
-					if (fos != null) {
-						try {
-							fos.close();
-						} catch (Exception e) {
-							e.printStackTrace();
+				if (selectedLocationIds.contains(locationId.intValue())) {
+					try {
+						List<MeasurementRow> observations = map.get(locationId);
+						MeasurementRow trialObservations = workbook.getTrialObservation(locationId);
+						
+						HSSFWorkbook xlsBook = new HSSFWorkbook();
+						
+						writeDescriptionSheet(xlsBook, workbook, trialObservations);
+						writeObservationSheet(xlsBook, workbook, observations);
+						
+						String filenamePath = FieldbookProperty.getPathProperty() + File.separator + filename;
+						if (locationIds.size() > 1) {
+							int fileExtensionIndex = filenamePath.lastIndexOf(".");
+							filenamePath = filenamePath.substring(0, fileExtensionIndex) +  "-" + instanceNumber + filenamePath.substring(fileExtensionIndex);
+						}
+						fos = new FileOutputStream(new File(filenamePath));
+						xlsBook.write(fos);
+						outputFilename = filenamePath;
+						filenameList.add(filenamePath);
+	
+					} catch (Exception e) {
+						e.printStackTrace();
+					} finally {
+						if (fos != null) {
+							try {
+								fos.close();
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
 						}
 					}
-					instanceNumber++;
 				}
+				instanceNumber++;
 			}
 
 			if (locationIds.size() > 1) {
@@ -326,25 +328,16 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				cell.setCellType(Cell.CELL_TYPE_BLANK);
 				cell.setCellType(Cell.CELL_TYPE_NUMERIC);				
 			}*/
-			if (dataCell.getMeasurementVariable() != null && dataCell.getMeasurementVariable().getPossibleValues() != null) {
-				cell.setCellValue(getCategoricalCellValue(dataCell.getValue(), dataCell.getMeasurementVariable().getPossibleValues()));
+			if (dataCell.getMeasurementVariable() != null && dataCell.getMeasurementVariable().getPossibleValues() != null
+					&& !dataCell.getMeasurementVariable().getPossibleValues().isEmpty()) {
+				
+				cell.setCellValue(ExportImportStudyUtil.getCategoricalCellValue(dataCell.getValue(), dataCell.getMeasurementVariable().getPossibleValues()));
 			}
 			else {
 				cell.setCellValue(dataCell.getValue());
 			}
 			
 		}
-	}
-	
-	private String getCategoricalCellValue(String idValue, List<ValueReference> possibleValues) {
-		if (idValue != null && NumberUtils.isNumber(idValue)) {
-			for (ValueReference ref : possibleValues) {
-				if (ref.getId().equals(Integer.valueOf(idValue))) {
-					return ref.getDescription();
-				}
-			}
-		}
-		return "";
 	}
 	
 }

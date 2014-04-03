@@ -930,9 +930,10 @@ function exportTrial(type){
 	$('#page-modal-choose-instance-message-r').html('');
 	$('#page-modal-choose-instance-message').html('');
 	$('.instanceNumber:first').click();	
+	var numberOfInstances = $('#numberOfInstances').val();
 	$('.spinner-input').spinedit({
 	    minimum: 1,
-	    maximum: 5,
+	    maximum: parseInt(numberOfInstances),
 	    value: 1
 	});
 	$('#exportTrialType').val(type);

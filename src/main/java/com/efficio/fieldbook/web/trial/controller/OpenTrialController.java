@@ -74,6 +74,7 @@ public class OpenTrialController extends
             form.setMeasurementVariables(variables);
             form.setStudyName(workbook.getStudyDetails().getStudyName());
             form.changePage(1);
+            form.setNumberOfInstances(workbook.getTotalNumberOfInstances());
             trialSelection.setCurrentPage(form.getCurrentPage());
             trialSelection.setWorkbook(workbook);
         }

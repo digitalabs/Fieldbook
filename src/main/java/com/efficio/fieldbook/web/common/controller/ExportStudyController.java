@@ -103,20 +103,21 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
      */
     private String doExport(int exportType, int selectedTraitTermId, 
     		HttpServletResponse response, boolean isTrial, int start, int end){
+    	
     	StudySelection userSelection = getUserSelection(isTrial);
     	String filename = userSelection.getWorkbook().getStudyDetails().getStudyName();
     	String outputFilename = null;
     	if(AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == exportType){
     		filename = filename  + AppConstants.EXPORT_FIELDLOG_SUFFIX.getString();
-    		outputFilename = fielddroidExportStudyService.export(userSelection.getWorkbook(), filename);
+    		outputFilename = fielddroidExportStudyService.export(userSelection.getWorkbook(), filename, start, end);
     		response.setContentType("text/csv");
     	}else if(AppConstants.EXPORT_NURSERY_R.getInt() == exportType){
     		filename = filename  + AppConstants.EXPORT_R_SUFFIX.getString();
-    		outputFilename = rExportStudyService.exportToR(userSelection.getWorkbook(), filename, selectedTraitTermId);    		
+    		outputFilename = rExportStudyService.exportToR(userSelection.getWorkbook(), filename, selectedTraitTermId, start, end);    		
     		response.setContentType("text/csv");
     	}else if(AppConstants.EXPORT_NURSERY_EXCEL.getInt() == exportType){
     		filename = filename  + AppConstants.EXPORT_XLS_SUFFIX.getString();
-    		outputFilename = excelExportStudyService.export(userSelection.getWorkbook(), filename);
+    		outputFilename = excelExportStudyService.export(userSelection.getWorkbook(), filename, start, end);
     		response.setContentType("application/vnd.ms-excel");
     	}
     	

@@ -5,6 +5,7 @@
 	method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data">
 
 	<input type="hidden" th:field="*{importVal}"/>
+	<input type="hidden" th:field="*{numberOfInstances}" />
               
 	 <div class="germplasm-measurement-list-table " style="width: 100%; max-width: 100%">
 	

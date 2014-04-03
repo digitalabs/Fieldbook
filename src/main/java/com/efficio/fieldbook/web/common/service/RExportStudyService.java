@@ -11,9 +11,11 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.common.service;
 
+import java.util.List;
+
 import org.generationcp.middleware.domain.etl.Workbook;
 
 public interface RExportStudyService extends ExportStudyService {
 
-	String exportToR(Workbook workbook, String filename, Integer selectedTrait);
+	String exportToR(Workbook workbook, String filename, Integer selectedTrait, int start, int end);
 }

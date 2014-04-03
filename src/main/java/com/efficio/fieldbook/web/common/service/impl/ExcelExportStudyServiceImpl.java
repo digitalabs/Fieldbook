@@ -322,12 +322,15 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		DataFormat format = xlsBook.createDataFormat();
 		style.setDataFormat(format.getFormat("0.#"));
 		for (MeasurementData dataCell : dataRow.getDataList()) {
-			HSSFCell cell = row.createCell(currentColNum++);
 			/*
 			if(AppConstants.NUMERIC_DATA_TYPE.getString().equalsIgnoreCase(dataCell.getDataType())){
 				cell.setCellType(Cell.CELL_TYPE_BLANK);
 				cell.setCellType(Cell.CELL_TYPE_NUMERIC);				
 			}*/
+			if (dataCell.getMeasurementVariable() != null && dataCell.getMeasurementVariable().getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
+				continue;
+			}
+			HSSFCell cell = row.createCell(currentColNum++);
 			if (dataCell.getMeasurementVariable() != null && dataCell.getMeasurementVariable().getPossibleValues() != null
 					&& !dataCell.getMeasurementVariable().getPossibleValues().isEmpty()) {
 				

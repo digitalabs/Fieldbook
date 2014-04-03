@@ -46,10 +46,10 @@
 							class="possibleValuesFavoriteJsonTrial" style="display:none" th:text="${trialEnvLevelVariable.possibleValuesFavoriteJson}">
 						</div>
 						
-						<label class="control-label trialInstanceNo" th:if="${trialEnvLevelVariable.variable.widgetType.type == 'NTEXT' and trialEnvLevelVariable.delete == false}" th:text="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}"></label>
-						<input type="hidden" th:if="${trialEnvLevelVariable.variable.widgetType.type == 'NTEXT' and trialEnvLevelVariable.delete == false}" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" />
+						<label class="control-label trialInstanceNo" th:if="${trialEnvLevelVariable.variable.widgetType.type == 'NTEXT' and trialEnvLevelVariable.deletable == false}" th:text="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}"></label>
+						<input type="hidden" th:if="${trialEnvLevelVariable.variable.widgetType.type == 'NTEXT' and trialEnvLevelVariable.deletable == false}" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" />
 						
-						<input th:if="${trialEnvLevelVariable.variable.widgetType.type == 'NTEXT' and trialEnvLevelVariable.delete != false}" 
+						<input th:if="${trialEnvLevelVariable.variable.widgetType.type == 'NTEXT' and trialEnvLevelVariable.deletable != false}" 
 						type="text" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" class="form-control numeric-input" />
 						
 						<input th:if="${trialEnvLevelVariable.variable.widgetType.type == 'CTEXT'}" 

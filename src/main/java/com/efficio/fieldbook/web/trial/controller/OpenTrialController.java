@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -27,12 +28,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 @Controller
 @RequestMapping(OpenTrialController.URL)
@@ -177,20 +178,15 @@ public class OpenTrialController extends
     }
     private List<List<ValueReference>> createTrialEnvValueList(List<SettingDetail> trialLevelVariableList, int trialInstances, boolean addDefault) {
         List<List<ValueReference>> trialEnvValueList = new ArrayList<List<ValueReference>>();
-        for (int i=0; i<trialInstances; i++) {
-            List<ValueReference> trialInstanceVariables = new ArrayList<ValueReference>();
+        List<MeasurementRow> trialObservations = trialSelection.getWorkbook().getTrialObservations();
+    	for (MeasurementRow trialObservation : trialObservations) {
+    		List<ValueReference> trialInstanceVariables = new ArrayList<ValueReference>();
             for (SettingDetail detail : trialLevelVariableList) {
-                if (detail.getVariable().getCvTermId() != null) {
-                    if (detail.getVariable().getCvTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
-                        trialInstanceVariables.add(new ValueReference(detail.getVariable().getCvTermId(), String.valueOf(i+1)));
-                    } else {
-                        trialInstanceVariables.add(new ValueReference(detail.getVariable().getCvTermId(), ""));
-                    }
-                } else {
-                    trialInstanceVariables.add(new ValueReference(0, ""));
-                }
+        		String headerName = WorkbookUtil.getMeasurementVariableName(trialSelection.getWorkbook().getTrialVariables(), detail.getVariable().getCvTermId());
+        		String value = trialObservation.getMeasurementDataValue(headerName);
+        		trialInstanceVariables.add(new ValueReference(detail.getVariable().getCvTermId(), value));
             }
-            trialEnvValueList.add(trialInstanceVariables);
+        	trialEnvValueList.add(trialInstanceVariables);
         }
         userSelection.setTrialEnvironmentValues(trialEnvValueList);
         return trialEnvValueList;

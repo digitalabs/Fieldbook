@@ -11,9 +11,7 @@ import javax.servlet.http.HttpSession;
 
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
-import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.settings.TrialDataset;
 import org.slf4j.Logger;
@@ -75,21 +73,7 @@ public class OpenTrialController extends
         if (workbook != null) {
         	trialSelection.setMeasurementRowList(workbook.getObservations());
             form.setMeasurementRowList(trialSelection.getMeasurementRowList());
-            MeasurementVariable trialFactor = null;
-            if (workbook.getTrialFactors() != null) {
-            	for (MeasurementVariable var : workbook.getTrialFactors()) {
-            		if (var.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
-            			trialFactor = var;
-            			break;
-            		}
-            	}
-            }
-            List<MeasurementVariable> variables = new ArrayList<MeasurementVariable>();
-            if (trialFactor != null) {
-            	variables.add(trialFactor);
-            }
-            variables.addAll(workbook.getMeasurementDatasetVariables());
-            form.setMeasurementVariables(variables);
+            form.setMeasurementVariables(workbook.getMeasurementDatasetVariablesView());
             form.setStudyName(workbook.getStudyDetails().getStudyName());
             form.changePage(1);
             form.setNumberOfInstances(workbook.getTotalNumberOfInstances());

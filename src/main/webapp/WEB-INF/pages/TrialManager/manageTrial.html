@@ -17,12 +17,12 @@
 	   	<div class="panel-body manage-settings-panel-body">
 		<div style="float:right;">			
 			 
-<!-- 			<a href="/TrialManager/fileUpload.html" th:href="@{/TrialManager/fileUpload}" th:text="#{trial.managetrial.make.new.trial}">New Trial</a> -->			
+		<button class="btn btn-info" id="make-trial" href="/TrialManager/fileUpload.html" th:value="@{/TrialManager/fileUpload/newTrial}" th:text="#{trial.managetrial.make.new.trial}">New Trial</button> 			
 			
-				
+<!-- 				
 			<a  class="btn btn-info" id="make-trial" th:href="@{/TrialManager/createTrial}"  th:text="#{trial.managetrial.make.new.trial}">New Trial</a> 
 			<a   class="btn btn-info" id="manage-trial-settings" href="" th:href="@{/TrialManager/manageTrialSettings}"  th:text="#{trial.managesettings.manage.trial.settings}">Manage Settings</a>
-		
+	 -->	
 			<div  class="btn-group">
 			  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
 			    <span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;Tools
@@ -32,24 +32,26 @@
 			    	<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/trial}"></a>
 			    	<a href="javascript: createFieldMap('trial-table');" id="fieldmap-url-link" th:text="#{tools.create.field.map}">Create Field Map</a>
 			    </li>
-			    <!--hide this for now since saving is having problem GCP-7295 & GCP-7296
+			    <!--hide this for now since saving is having problem GCP-7295 & GCP-7296-->
 			    <li> 
 			    	<a href="" style="display: none" id="show-fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/trial}"></a>
 			    	<a href="javascript: showFieldMap('trial-table');" id="show-fieldmap-url-link" th:text="#{tools.display.existing.field.map}">Display Existing Field Map</a>
 			    </li>
-			    -->
+			    
 			    <li>
 			    	<a href="" style="display: none" id="label-printing-url" th:href="@{/LabelPrinting/specifyLabelDetails/trial}"></a>
 			    	<a href="javascript: createLabelPrinting('trial-table');" id="label-printing-url-link" th:text="#{tools.create.label.printing}">Create Labels</a> 
 			    </li> 
-			    <!-- li>
+			    <li>
 			    	<a href="" style="display: none" id="open-study-url" th:href="@{/TrialManager/fileUpload/newTrial}"></a>
-			    	<a href="javascript: openStudy('trial-table');" id="open-study-url-link" th:text="#{tools.open.trial}">Open Trial</a> 
-			    </li -->   
+			    	<a href="javascript: openStudyOldFb();" id="open-study-url-link" th:text="#{tools.open.trial}">Open Trial</a> 
+			    </li>
+			    <!--
 				<li>
 			    	<a href="" style="display: none" id="open-study-url" th:href="@{/TrialManager/addOrRemoveTraits/viewTrial}"></a>
 			    	<a href="javascript: openStudy('trial-table');" id="open-study-url-link" th:text="#{tools.open.trial}">Open Trial</a> 
 			    </li>
+			     -->   
 			  </ul>
 			</div>
 		</div>

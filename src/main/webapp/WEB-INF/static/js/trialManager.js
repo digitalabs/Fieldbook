@@ -1715,8 +1715,8 @@ function displayGermplasmListTree(treeName) {
 
 function displayGermplasmDetails(listId) {
 	Spinner.toggle();
-	$.ajax({
-		url: "importGermplasmList/displayGermplasmDetails/" + listId,
+	$.ajax({		
+		url: "/Fieldbook/NurseryManager/importGermplasmList/displayGermplasmDetails/" + listId,
 		type: "GET",
 		cache: false,
 		success: function(html) {

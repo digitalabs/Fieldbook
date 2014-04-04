@@ -1068,13 +1068,13 @@ function importNursery(type){
 	$('div.fileupload').parent().parent().removeClass('has-error');
 	$('#importModal').modal('show');
 	var action = "/Fieldbook/ImportManager/import/" + $("#study-type").val() + "/";
-	var formName = "#importStudyForm";
+	var formName = "#importStudyUploadForm";
 	$(formName).attr('action', action+type);
 	   
 }
 
 function submitImportStudy() {
-	$("#importStudyForm").submit();
+	$("#importStudyUploadForm").submit();
 }
 function isFloat(value) { 
     return !isNaN(parseInt(value,10)) && (parseFloat(value,10) == parseInt(value,10)); 

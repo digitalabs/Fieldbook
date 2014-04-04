@@ -42,7 +42,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 			    					<label class="control-label" th:text="#{trial.createtrial.trial.instances}+':'">Trial Instances:*</label>&nbsp;<span class="required">*</span>
 			    				</div>
 			    				<div class="col-xs-4 col-md-4">
-								      <input type="text" class="spinner-input" th:field="*{trialInstances}" onChange="editTrialInstances()" />
+								      <input type="text" class="form-control spinner-input-trial spinnerElement" th:field="*{trialInstances}" onChange="editTrialInstances()" />
 			    				</div>
 			    				<div class="col-xs-3 col-md-3">
 			    				</div>
@@ -183,8 +183,8 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 												type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}"
 												th:attr="data-min=${trialLevelVariable.variable.minRange}"
 												th:attrappend="data-max=${trialLevelVariable.variable.maxRange}"
-												class="form-control numeric-range-input"
-												data-step="0.1" 										 
+												class="form-control spinner-input spinnerElement"
+												data-step="0.0001" 										 
 												/>
 													 
 												<span>
@@ -323,11 +323,12 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 
 <div layout:fragment="page-script">
 <script type="text/javascript" th:src="@{/static/js/trialManager.js}"></script>
-<link th:href="@{/static/css/bootstrap-datepicker.css}" rel="stylesheet"/>
 <script type="text/javascript" th:src="@{/static/js/bootstrap-datepicker.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/bootstrap-fileupload.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/bootstrap-spinedit.js}"></script>
+<link th:href="@{/static/css/bootstrap-datepicker.css}" rel="stylesheet"/>
 <link th:href="@{/static/css/bootstrap-spinedit.css}" rel="stylesheet"/>
+<link th:href="@{/static/css/fieldbook-spinner.css}" rel="stylesheet"/>
 <script type='text/javascript' th:inline="javascript">
 //<![CDATA[   
 	

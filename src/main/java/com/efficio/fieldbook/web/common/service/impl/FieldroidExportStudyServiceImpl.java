@@ -38,9 +38,10 @@ public class FieldroidExportStudyServiceImpl implements
         String outputFile = FieldbookProperty.getPathProperty() + File.separator + filename;
         boolean alreadyExists = new File(outputFile).exists();
         CsvWriter csvOutput = null;
-        List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, start, end); 
+        List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getObservations(), start, end);
+        List<MeasurementRow> trialObservations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getTrialObservations(), start, end);
         try {
-        	CSVOziel csv = new CSVOziel(workbook, observations);
+        	CSVOziel csv = new CSVOziel(workbook, observations, trialObservations);
             csvOutput = new CsvWriter(new FileWriter(outputFile, false), ',');
             csvOutput.write("Trial");
             csvOutput.write("Rep");

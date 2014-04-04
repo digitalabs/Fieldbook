@@ -106,7 +106,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 												type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}"
 												th:attr="data-min=${nurseryLevelVariable.variable.minRange}"
 												th:attrappend="data-max=${nurseryLevelVariable.variable.maxRange}"
-												class="form-control numeric-range-input"
+												class="form-control spinner-input spinnerElement"
 												data-step="0.1" 										 
 												/>
 													 
@@ -249,6 +249,9 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 <script type="text/javascript" th:src="@{/static/js/nurseryManager.js}"></script>
 <link th:href="@{/static/css/bootstrap-datepicker.css}" rel="stylesheet"/>
 <script type="text/javascript" th:src="@{/static/js/bootstrap-datepicker.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/bootstrap-spinedit.js}"></script>
+<link th:href="@{/static/css/bootstrap-spinedit.css}" rel="stylesheet"/>
+<link th:href="@{/static/css/fieldbook-spinner.css}" rel="stylesheet"/>
 <script type='text/javascript' th:inline="javascript">
 //<![CDATA[   
 	

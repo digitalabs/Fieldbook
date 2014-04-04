@@ -1,0 +1,10 @@
+input.spinnerElement + div.spinedit i.icon-chevron-up{
+	top: -8px;
+}
+input.spinnerElement + div.spinedit i.icon-chevron-down{
+	top: 9px;
+	left: -5px;
+}
+input[type="text"].spinnerElement{
+	width: 50px;
+}

@@ -1092,7 +1092,7 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation, default
 		        query.callback(data);
 		    }
 	    });
-	} else if (name.indexOf("trialEnvironmentValues") > -1) {
+	} else if (name.indexOf("trialEnvironmentValues") > -1 && replicates) {
 		$(name).select2({
 			query: function (query) {	
 		      var data = {results: possibleValues_obj}, i, j, s;
@@ -1169,9 +1169,9 @@ function isReplicateOrBlockSize(combo) {
 	}
 	
 	if (replicatesValue == 0 || blockSizeValue == 0) {
-		return;
+		return false;
 	}
-	
+	return false;
 	//compute block per replicate
 }
 
@@ -1546,8 +1546,8 @@ function checkIfNull(object) {
 
 function createSliderInput(ctr, minVal, maxVal){
 	
-	return "<input data-slider-orientation='horizontal' data-slider-selection='after' type='text' data-step='0.1' data-min='"+minVal+"' data-max='"+maxVal+"' id='studyLevelVariables" + ctr + 
-	".value' name='studyLevelVariables[" + ctr + "].value' class='form-control numeric-range-input' />";
+	return "<input data-slider-orientation='horizontal' data-slider-selection='after' type='text' data-step='0.0001' data-min='"+minVal+"' data-max='"+maxVal+"' id='studyLevelVariables" + ctr + 
+	".value' name='studyLevelVariables[" + ctr + "].value' class='form-control spinner-input spinnerElement' />";
 }
 function createDropdownInput(ctr){
 	 return "<input type='hidden' id='studyLevelVariables" + ctr + 
@@ -1577,22 +1577,20 @@ function initializeDateAndSliderInputs(){
 		});
 	}
 	
-	if($('.numeric-range-input').length > 0){
+	if($('.spinner-input').length > 0){
 		
-		$('.numeric-range-input').each(function(){
+		$('.spinner-input').each(function(){
 		//console.log($(this).val());
 		//console.log(parseFloat($(this).data('min')));
 		//console.log(parseFloat($(this).val()));
 		var currentVal  = $(this).val() == '' ? parseFloat($(this).data('min')) : parseFloat($(this).val());
 		//console.log(currentVal);
-			$(this).slider({
-				min: parseFloat($(this).data('min')),
-				max: parseFloat($(this).data('max')),
+			$(this).spinedit({
+				minimum: parseFloat($(this).data('min')),
+				maximum: parseFloat($(this).data('max')),
 				step: parseFloat($(this).data('step')),
 				value: currentVal,
-				formater: function(value) {
-					return 'Value: ' + value;
-				}
+				numberOfDecimals: 4
 			});
 		});
 	}				
@@ -1636,7 +1634,7 @@ function loadTrialSettingsForCreate(templateSettingsId) {
 			$("#chooseSettingsDiv").html(html);
 			$("#showFavoriteLocationForAll").removeAttr('disabled');
 		    $("#trialInstances").removeAttr('disabled');
-		    $('.spinner-input').spinedit({
+		    $('.spinner-input-trial').spinedit({
 		    	minimum: 1,
 			    value: 1
 		    });
@@ -2048,58 +2046,98 @@ function getIdOfValue(value) {
 	return id;
 }
 
-function recreateSelect2ComboMultiple(index, row, selectedVal) {
+function recreateMultipleObjects(index, row) {
 	$.each($(row).children("td"), function (cellIndex, cell) {
-		//set trial instance no.
 		
+		//set trial instance no.
 		if (parseInt($($(cell).children(".cvTermIds")).val()) == parseInt(trialInstanceId)) {
 			$($(cell).children(".trialInstanceNo")).text(index+1);
 			$($(cell).children("#"+getJquerySafeId("trialEnvironmentValues"+ index + cellIndex +".name"))).val(index+1);
 		}
 		
+		//recreate slider objects
+		if (cell.innerHTML.indexOf("spinner-input") > -1) {
+			recreateSpinnerMultiple(index, row, cellIndex, cell);
+		}
+		
+		//recreate select2 objects
 		if (cell.innerHTML.indexOf("select2") > -1) {
-			//get the possible values of the variable
-			var possibleValuesJson = $($(cell).find(".possibleValuesJsonTrial")).text();
-			var possibleValuesFavoriteJson = $($(cell).find(".possibleValuesFavoriteJsonTrial")).text();
-			
-			var cvTermId = $($(cell).children("#" 
-					+ getJquerySafeId("trialEnvironmentValues" + index + cellIndex + ".id"))).val();
-			
-			var newCell = "<input class='cvTermIds trialLevelVariableIdClass' type='hidden' id='trialEnvironmentValues" + 
-				index + cellIndex + ".id' name='trialEnvironmentValues[" + index + "][" + cellIndex + "].id' value='" + cvTermId + "' />";
-
-			//hidden field for select2 
-			newCell = newCell + "<input type='hidden' id='trialEnvironmentValues" + index + cellIndex +
-			".name' name='trialEnvironmentValues[" + index + "][" + cellIndex + "].name' class='form-control select2' />";
-			
-			//div containing the possible values
-			newCell = newCell + "<div id='possibleValuesJsonTrial" + index + "a" + cellIndex + "' class='possibleValuesJsonTrial' style='display:none'>" + 
-				possibleValuesJson + "</div>";
-			
-			//div containing the favorite possible values
-			newCell = newCell + "<div id='possibleValuesFavoriteJsonTrial" + index + "a" + cellIndex + "' class='possibleValuesFavoriteJsonTrial' style='display:none'>" + 
-				possibleValuesFavoriteJson + "</div>";
-			
-			var isFavoriteChecked = $("#showFavoriteLocationForAll").is(":checked");
-			var showAll = true;
-			//set possibleValues to favorite possible values
-			if (isFavoriteChecked && parseInt(cvTermId) == parseInt(locationId)) {
-				possibleValuesJson = possibleValuesFavoriteJson;
-				showAll = false;
-			}
-						
-			cell.innerHTML = newCell;
-			
-			//recreate the select2 object
-			if (parseInt(cvTermId) == parseInt(locationId)) {
-			    initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
-		 			"#" + getJquerySafeId("trialEnvironmentValues" + index + cellIndex +".name"), showAll, null);
-			} else {
-				initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
-					"#" + getJquerySafeId("trialEnvironmentValues" + index + cellIndex +".name"), false, null);
-			}
+			recreateSelect2ComboMultiple(index, row, cellIndex, cell);
 		}
 	});
+}
+
+function initializeSpinner(sliderId) {
+	var currentVal  = parseFloat($(sliderId).data('min'));
+	$(sliderId).spinedit({
+		minimum: parseFloat($(sliderId).data('min')),
+		maximum: parseFloat($(sliderId).data('max')),
+		step: parseFloat($(sliderId).data('step')),
+		value: currentVal,
+		numberOfDecimals: 4
+	});
+}
+
+function recreateSpinnerMultiple(index, row, cellIndex, cell) {			
+	var cvTermId = $($(cell).children("#" 
+			+ getJquerySafeId("trialEnvironmentValues" + index + cellIndex + ".id"))).val();
+	
+	var newCell = "<input class='cvTermIds trialLevelVariableIdClass' type='hidden' id='trialEnvironmentValues" + 
+	index + cellIndex + ".id' name='trialEnvironmentValues[" + index + "][" + cellIndex + "].id' value='" + cvTermId + "' />";
+	
+	//hidden field for select2 
+	newCell = newCell + "<input type='text' id='trialEnvironmentValues" + index + cellIndex +
+	".name' name='trialEnvironmentValues[" + index + "][" + cellIndex + "].name' " + 
+	" data-min='" + $($(cell).children("input.spinner-input")).attr("data-min") + 
+	"' data-max='" + $($(cell).children("input.spinner-input")).attr("data-max") + 
+	"' data-step='0.0001' class='form-control spinner-input spinnerElement' />";
+	
+	cell.innerHTML = newCell;
+	
+	initializeSpinner("#"+ getJquerySafeId("trialEnvironmentValues" + index + cellIndex +".name"));
+}
+
+function recreateSelect2ComboMultiple(index, row, cellIndex, cell) {
+	//get the possible values of the variable
+	var possibleValuesJson = $($(cell).find(".possibleValuesJsonTrial")).text();
+	var possibleValuesFavoriteJson = $($(cell).find(".possibleValuesFavoriteJsonTrial")).text();
+	
+	var cvTermId = $($(cell).children("#" 
+			+ getJquerySafeId("trialEnvironmentValues" + index + cellIndex + ".id"))).val();
+	
+	var newCell = "<input class='cvTermIds trialLevelVariableIdClass' type='hidden' id='trialEnvironmentValues" + 
+		index + cellIndex + ".id' name='trialEnvironmentValues[" + index + "][" + cellIndex + "].id' value='" + cvTermId + "' />";
+
+	//hidden field for select2 
+	newCell = newCell + "<input type='hidden' id='trialEnvironmentValues" + index + cellIndex +
+	".name' name='trialEnvironmentValues[" + index + "][" + cellIndex + "].name' class='form-control select2' />";
+	
+	//div containing the possible values
+	newCell = newCell + "<div id='possibleValuesJsonTrial" + index + "a" + cellIndex + "' class='possibleValuesJsonTrial' style='display:none'>" + 
+		possibleValuesJson + "</div>";
+	
+	//div containing the favorite possible values
+	newCell = newCell + "<div id='possibleValuesFavoriteJsonTrial" + index + "a" + cellIndex + "' class='possibleValuesFavoriteJsonTrial' style='display:none'>" + 
+		possibleValuesFavoriteJson + "</div>";
+	
+	var isFavoriteChecked = $("#showFavoriteLocationForAll").is(":checked");
+	var showAll = true;
+	//set possibleValues to favorite possible values
+	if (isFavoriteChecked && parseInt(cvTermId) == parseInt(locationId)) {
+		possibleValuesJson = possibleValuesFavoriteJson;
+		showAll = false;
+	}
+				
+	cell.innerHTML = newCell;
+	
+	//recreate the select2 object
+	if (parseInt(cvTermId) == parseInt(locationId)) {
+	    initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
+ 			"#" + getJquerySafeId("trialEnvironmentValues" + index + cellIndex +".name"), showAll, null);
+	} else {
+		initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
+			"#" + getJquerySafeId("trialEnvironmentValues" + index + cellIndex +".name"), false, null);
+	}
 }
 
 function editTrialInstances() {
@@ -2125,9 +2163,7 @@ function addTrialInstances() {
 		newRow = "<tr>" + cells + "</tr>";
 		$("#trialInstancesTable tbody").append(newRow);
 		
-		if (newRow.indexOf("select2") > -1) {
-			recreateSelect2ComboMultiple(i, $("#trialInstancesTable tbody tr:last"), null);
-		}
+		recreateMultipleObjects(i, $("#trialInstancesTable tbody tr:last")); 
 	}
 	
 }

@@ -24,7 +24,6 @@ import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
 import com.efficio.fieldbook.web.common.service.FieldroidExportStudyService;
 import com.efficio.fieldbook.web.common.service.RExportStudyService;
-import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -122,9 +121,9 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     		response.setContentType("application/vnd.ms-excel");
     	}
     	
-    	if (userSelection.getWorkbook().getTotalNumberOfInstances() > 1) {
+    	if (userSelection.getWorkbook().getTotalNumberOfInstances() > 1 && AppConstants.EXPORT_NURSERY_EXCEL.getInt() == exportType) {
     		int extensionIndex = filename.lastIndexOf(".");
-    		filename = filename.substring(0, extensionIndex) + AppConstants.ZIP_FILE_SUFFIX;
+    		filename = filename.substring(0, extensionIndex) + AppConstants.ZIP_FILE_SUFFIX.getString();
     		response.setContentType("application/zip");
     	}
     	        

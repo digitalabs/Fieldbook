@@ -46,7 +46,7 @@ public class DataKaptureExportStudyServiceImpl implements
 	}
 	
 	private String exportObservations(String filename, CSVOziel csv) {
-        String outputFile = FieldbookProperty.getPathProperty() + File.separator + filename;
+        String outputFile = FieldbookProperty.getPathProperty() + File.separator + filename + AppConstants.EXPORT_CSV_SUFFIX.getString();
     	try {
             new File(outputFile).exists();
         	CsvWriter csvOutput = new CsvWriter(new FileWriter(outputFile, false), ',');

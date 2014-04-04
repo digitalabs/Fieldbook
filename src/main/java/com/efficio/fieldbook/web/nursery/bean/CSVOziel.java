@@ -424,13 +424,6 @@ public class CSVOziel {
     
     //Start copied from CSVFileManager (old Fb)
     public void writeDataDataKapture(CsvWriter csvOutput) {
-//        int total = this.observations.size();
-//        int tot = this.variateHeaders.size();
-        String strStudyType = "";
-        String trialNumber = "";
-        String strLocationName = "";
-        String strCycle = "";
-
         Map<Long, String> map = new HashMap<Long, String>();
 		for (MeasurementRow row : this.trialObservations) {
 			map.put(row.getLocationId(), WorkbookUtil.getValueByIdInRow(row.getMeasurementVariables(), TermId.TRIAL_INSTANCE_FACTOR.getId(), row));
@@ -439,8 +432,10 @@ public class CSVOziel {
 		/**
          * Type
          */
-        strStudyType = workbook.getStudyDetails().getStudyType().toString();
-
+        String strStudyType = workbook.getStudyDetails().getStudyType().toString();
+        String trialNumber = "";
+        String strLocationName = "";
+        String strCycle = "";
 
         /**
          * TrialNumber, Location Name, Cycle
@@ -459,6 +454,7 @@ public class CSVOziel {
         
         try {
             for (MeasurementRow row : observations) {
+
                 /**
                  * Site
                  */
@@ -475,9 +471,10 @@ public class CSVOziel {
                  * TrialNumber
                  */
                 if (trialNumber == null || "".equals(trialNumber)) {
-                	trialNumber = map.get(row.getLocationId());
+                    csvOutput.write(map.get(row.getLocationId()));
+                } else {
+                	csvOutput.write(trialNumber);
                 }
-                csvOutput.write(trialNumber);
 
                 /*
                  * El row y column es una manera de dividir el campo como un
@@ -590,6 +587,63 @@ public class CSVOziel {
             }
         } catch (IOException ex) {
             System.out.println("Error al generar el archivo csv: " + ex);
+        }
+    }
+
+    public void readDATACapture(File file) {
+
+        int variateCol = 0;
+        HashMap<String, Integer> traitsMap = new HashMap<String, Integer>();
+//        for (MeasurementVariable variate : this.variateHeaders) {
+//            variateCol = modelo.getHeaderIndex(Workbook.getStringWithOutBlanks(variate.getProperty()+variate.getScale()));
+//            traitsMap.put(variate.getName(), variateCol);
+//        }
+//        int add = 0;
+
+        try {
+            CsvReader csvReader = new CsvReader(file.toString());
+            csvReader.readHeaders();
+            String[] headers = csvReader.getHeaders();
+
+//            int myrow = 0;
+            while (csvReader.readRecord()) {
+
+            	for (MeasurementVariable variate : this.variateHeaders) {
+            		String csvTrial = csvReader.get("TrialNumber");
+            		String csvPlot = csvReader.get("PlotBarCode");
+            		int trial = 1;
+            		if (csvTrial != null && NumberUtils.isNumber(csvTrial)) {
+            			trial = Integer.parseInt(csvTrial); 
+            		}
+            		int plot = 1;
+            		if (csvPlot != null && NumberUtils.isNumber(csvPlot)) {
+            			plot = Integer.parseInt(csvPlot);
+            		}
+            		int rowNum = findRow(trial, plot);
+            		if (rowNum > -1) {
+	            		String value = csvReader.get(variate.getName());
+	            		setObservationData(variate.getName(), rowNum, value);
+            		}
+            	}
+            	
+//            	for (MeasurementVariable variate : this.variateHeaders) {
+//                    String head = variate.getName();
+//                    int col = traitsMap.get(head);
+//                    if (col >= 0) {
+//                        String data = csvReader.get(head);
+//                        modelo.setValueAt(data, myrow + add, col);
+//                    }
+//                }
+
+//                myrow++;
+            }
+            csvReader.close();
+            
+        } catch (FileNotFoundException ex) {
+            LOG.error("FILE NOT FOUND. readDATAcsv. " + ex);
+
+        } catch (IOException e) {
+            LOG.error("IO EXCEPTION. readDATAcsv. " + e);
         }
     }
     //end copied from CSVFileManager (old Fb)

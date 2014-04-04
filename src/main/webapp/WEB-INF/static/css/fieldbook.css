@@ -728,10 +728,3 @@ div.possibleValuesDiv{
 	padding: 0; 
 	margin: 0;
 }
-input.trialInstances + div.spinedit i.icon-chevron-up{
-	top: -8px;
-}
-input.trialInstances + div.spinedit i.icon-chevron-down{
-	top: 9px;
-	left: -5px;
-}	

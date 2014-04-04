@@ -1456,23 +1456,8 @@ function checkIfNull(object) {
 }
 
 function createSliderInput(ctr, minVal, maxVal){
-	/*
-	return "<input type='text' id='studyLevelVariables" + ctr + 
-	".value' name='studyLevelVariables[" + ctr + "].value' class='form-control slider-input'" +
-			" data-slider-min='"+minVal+"' data-slider-max='"+maxVal+"'" + 
-				 " data-slider-step='1' data-slider-value='" +minVal+"'" +
-					" data-slider-orientation='horizontal' data-slider-selection='after'" + 
-						" data-slider-tooltip='always' />";
-	*/
-	/*
-	 * <input th:if="${nurseryLevelVariable.variable.widgetType.type == 'SLIDER'}"  
-										type="range" 
-										th:field="*{studyLevelVariables[__${rowStat.index}__].value}"
-										min="0" max="1" value="1" step=".05"
-										class="form-control numeric-range-input"/>
-	 */
-	return "<input data-slider-orientation='horizontal' data-slider-selection='after' type='text' data-step='0.1' data-min='"+minVal+"' data-max='"+maxVal+"' id='studyLevelVariables" + ctr + 
-	".value' name='studyLevelVariables[" + ctr + "].value' class='form-control numeric-range-input' />";
+	return "<input data-slider-orientation='horizontal' data-slider-selection='after' type='text' data-step='0.0001' data-min='"+minVal+"' data-max='"+maxVal+"' id='studyLevelVariables" + ctr + 
+	".value' name='studyLevelVariables[" + ctr + "].value' class='form-control spinner-input spinnerElement' />";
 }
 function createDropdownInput(ctr){
 	 return "<input type='hidden' id='studyLevelVariables" + ctr + 
@@ -1502,22 +1487,20 @@ function initializeDateAndSliderInputs(){
 		});
 	}
 	
-	if($('.numeric-range-input').length > 0){
+	if($('.spinner-input').length > 0){
 		
-		$('.numeric-range-input').each(function(){
+		$('.spinner-input').each(function(){
 		//console.log($(this).val());
 		//console.log(parseFloat($(this).data('min')));
 		//console.log(parseFloat($(this).val()));
 		var currentVal  = $(this).val() == '' ? parseFloat($(this).data('min')) : parseFloat($(this).val());
 		//console.log(currentVal);
-			$(this).slider({
-				min: parseFloat($(this).data('min')),
-				max: parseFloat($(this).data('max')),
+			$(this).spinedit({
+				minimum: parseFloat($(this).data('min')),
+				maximum: parseFloat($(this).data('max')),
 				step: parseFloat($(this).data('step')),
 				value: currentVal,
-				formater: function(value) {
-					return 'Value: ' + value;
-				}
+				numberOfDecimals: 4
 			});
 		});
 	}				

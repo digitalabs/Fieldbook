@@ -1546,8 +1546,8 @@ function checkIfNull(object) {
 
 function createSliderInput(ctr, minVal, maxVal){
 	
-	return "<input data-slider-orientation='horizontal' data-slider-selection='after' type='text' data-step='0.1' data-min='"+minVal+"' data-max='"+maxVal+"' id='studyLevelVariables" + ctr + 
-	".value' name='studyLevelVariables[" + ctr + "].value' class='form-control numeric-range-input' />";
+	return "<input data-slider-orientation='horizontal' data-slider-selection='after' type='text' data-step='0.0001' data-min='"+minVal+"' data-max='"+maxVal+"' id='studyLevelVariables" + ctr + 
+	".value' name='studyLevelVariables[" + ctr + "].value' class='form-control spinner-input spinnerElement' />";
 }
 function createDropdownInput(ctr){
 	 return "<input type='hidden' id='studyLevelVariables" + ctr + 
@@ -1577,22 +1577,20 @@ function initializeDateAndSliderInputs(){
 		});
 	}
 	
-	if($('.numeric-range-input').length > 0){
+	if($('.spinner-input').length > 0){
 		
-		$('.numeric-range-input').each(function(){
+		$('.spinner-input').each(function(){
 		//console.log($(this).val());
 		//console.log(parseFloat($(this).data('min')));
 		//console.log(parseFloat($(this).val()));
 		var currentVal  = $(this).val() == '' ? parseFloat($(this).data('min')) : parseFloat($(this).val());
 		//console.log(currentVal);
-			$(this).slider({
-				min: parseFloat($(this).data('min')),
-				max: parseFloat($(this).data('max')),
+			$(this).spinedit({
+				minimum: parseFloat($(this).data('min')),
+				maximum: parseFloat($(this).data('max')),
 				step: parseFloat($(this).data('step')),
 				value: currentVal,
-				formater: function(value) {
-					return 'Value: ' + value;
-				}
+				numberOfDecimals: 4
 			});
 		});
 	}				
@@ -1636,7 +1634,7 @@ function loadTrialSettingsForCreate(templateSettingsId) {
 			$("#chooseSettingsDiv").html(html);
 			$("#showFavoriteLocationForAll").removeAttr('disabled');
 		    $("#trialInstances").removeAttr('disabled');
-		    $('.spinner-input').spinedit({
+		    $('.spinner-input-trial').spinedit({
 		    	minimum: 1,
 			    value: 1
 		    });
@@ -2058,8 +2056,8 @@ function recreateMultipleObjects(index, row) {
 		}
 		
 		//recreate slider objects
-		if (cell.innerHTML.indexOf("numeric-range-input") > -1) {
-			recreateSliderMultiple(index, row, cellIndex, cell);
+		if (cell.innerHTML.indexOf("spinner-input") > -1) {
+			recreateSpinnerMultiple(index, row, cellIndex, cell);
 		}
 		
 		//recreate select2 objects
@@ -2069,20 +2067,18 @@ function recreateMultipleObjects(index, row) {
 	});
 }
 
-function initializeSlider(sliderId) {
+function initializeSpinner(sliderId) {
 	var currentVal  = parseFloat($(sliderId).data('min'));
-	$(sliderId).slider({
-		min: parseFloat($(sliderId).data('min')),
-		max: parseFloat($(sliderId).data('max')),
+	$(sliderId).spinedit({
+		minimum: parseFloat($(sliderId).data('min')),
+		maximum: parseFloat($(sliderId).data('max')),
 		step: parseFloat($(sliderId).data('step')),
 		value: currentVal,
-		formater: function(value) {
-			return 'Value: ' + value;
-		}
+		numberOfDecimals: 4
 	});
 }
 
-function recreateSliderMultiple(index, row, cellIndex, cell) {			
+function recreateSpinnerMultiple(index, row, cellIndex, cell) {			
 	var cvTermId = $($(cell).children("#" 
 			+ getJquerySafeId("trialEnvironmentValues" + index + cellIndex + ".id"))).val();
 	
@@ -2092,13 +2088,13 @@ function recreateSliderMultiple(index, row, cellIndex, cell) {
 	//hidden field for select2 
 	newCell = newCell + "<input type='text' id='trialEnvironmentValues" + index + cellIndex +
 	".name' name='trialEnvironmentValues[" + index + "][" + cellIndex + "].name' " + 
-	" data-min='" + $($(cell).children("div").children("input")).attr("data-min") + 
-	"' data-max='" + $($(cell).children("div").children("input")).attr("data-max") + 
-	"' data-step='0.1' class='form-control numeric-range-input' />";
+	" data-min='" + $($(cell).children("input.spinner-input")).attr("data-min") + 
+	"' data-max='" + $($(cell).children("input.spinner-input")).attr("data-max") + 
+	"' data-step='0.0001' class='form-control spinner-input spinnerElement' />";
 	
 	cell.innerHTML = newCell;
 	
-	initializeSlider("#"+ getJquerySafeId("trialEnvironmentValues" + index + cellIndex +".name"));
+	initializeSpinner("#"+ getJquerySafeId("trialEnvironmentValues" + index + cellIndex +".name"));
 }
 
 function recreateSelect2ComboMultiple(index, row, cellIndex, cell) {

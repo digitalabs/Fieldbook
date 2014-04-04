@@ -37,13 +37,13 @@
 						
 						<input th:if="${trialEnvLevelVariable.variable.widgetType.type == 'DATE'}" 
 						type="text" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" class="form-control date-input" />
-						 
+						
 						<input th:if="${trialEnvLevelVariable.variable.widgetType.type == 'SLIDER'}" 
 						type="text" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}"
 						th:attr="data-min=${trialEnvLevelVariable.variable.minRange}"
 						th:attrappend="data-max=${trialEnvLevelVariable.variable.maxRange}"
-						class="form-control numeric-range-input"
-						data-step="0.1" />
+						class="form-control spinner-input spinnerElement"
+						data-step="0.0001" />
 					</td>
 				</tr>
 			</tbody>

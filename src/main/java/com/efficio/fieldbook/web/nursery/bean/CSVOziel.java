@@ -320,14 +320,12 @@ public class CSVOziel {
 	        		if (trialValueStr != null && NumberUtils.isNumber(trialValueStr)) {
 		        		int trialValue = Integer.valueOf(trialValueStr);
 		        		if (trialValue == trial) {
-		        			System.out.println("found match in " + row + " for " + trial + " and " + plot);
 		        			return row;
 		        		}
 		        		else {
 		        			match = false;
 		        		}
 	        		} else {
-	        			System.out.println("*found match in " + row + " for " + trial + " and " + plot);
 	        			return row;
 	        		}
 	        	}

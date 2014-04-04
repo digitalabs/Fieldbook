@@ -242,7 +242,7 @@ public class CSVOziel {
 
                 String dataOfTraits = "";
                 before = actual;
-//                String trial = csvReader.get("Trial");
+                String trial = csvReader.get("Trial");
 //                String rep = csvReader.get("Rep");
 //                String block = csvReader.get("Block");
                 String plot = csvReader.get("Plot");
@@ -260,7 +260,15 @@ public class CSVOziel {
 
 
                 try {
-                    myrow = findRow(Integer.parseInt(plot));
+                	int trialNumber = 1;
+                	if (trial != null && NumberUtils.isNumber(trial)) {
+                		if (trial.indexOf(".") > -1) {
+                			trialNumber = Integer.parseInt(trial.substring(0, trial.indexOf(".")));
+                		} else {
+                			trialNumber = Integer.parseInt(trial);
+                		}
+                	}
+                    myrow = findRow(trialNumber, Integer.parseInt(plot));
                 } catch (NumberFormatException ex) {
                     return;
                 }
@@ -287,23 +295,42 @@ public class CSVOziel {
         }
     }
 
-    private int findRow(int plot) {
+    private int findRow(int trial, int plot) {
         int row = 0;
 
         String plotLabel = getLabel(TermId.PLOT_NO.getId());
         if (plotLabel == null) {
         	plotLabel = getLabel(TermId.PLOT_NNO.getId());
         }
-        
-        for (MeasurementRow mRow : this.observations) {
-        	String plotValueStr = mRow.getMeasurementDataValue(plotLabel);
-        	if (plotValueStr != null && NumberUtils.isNumber(plotValueStr)) {
-        		int plotValue = Integer.valueOf(plotValueStr);
-        		if (plotValue == plot) {
-        			return row;
-        		}
-        	}
-        	row++;
+
+        if (this.observations != null) {
+        	boolean match = false;
+	        List<MeasurementVariable> variables = this.observations.get(0).getMeasurementVariables();
+	        for (MeasurementRow mRow : this.observations) {
+	        	String plotValueStr = mRow.getMeasurementDataValue(plotLabel);
+	        	String trialValueStr = WorkbookUtil.getValueByIdInRow(variables, TermId.TRIAL_INSTANCE_FACTOR.getId(), mRow);
+	        	if (plotValueStr != null && NumberUtils.isNumber(plotValueStr)) {
+	        		int plotValue = Integer.valueOf(plotValueStr);
+	        		if (plotValue == plot) {
+	        			//return row;
+	        			match = true;
+	        		}
+	        	}
+	        	if (match) {
+	        		if (trialValueStr != null && NumberUtils.isNumber(trialValueStr)) {
+		        		int trialValue = Integer.valueOf(trialValueStr);
+		        		if (trialValue == trial) {
+		        			return row;
+		        		}
+		        		else {
+		        			match = false;
+		        		}
+	        		} else {
+	        			return row;
+	        		}
+	        	}
+	        	row++;
+	        }
         }
 
         return row;

@@ -22,7 +22,7 @@
 	</div>  
 	
 	 <div class="modal fade" id="importRModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
+      <div class="modal-dialog" style="width: 600px">
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -39,7 +39,7 @@
               </div>
             <div class='form-group'>                                          
               <br />
-               <div class="col-md-3">
+               <div class="col-xs-3 col-md-3">
               <label for="fileupload" class="control-label" th:text="#{nursery.export.r.select.trait}">Select Main Trait:</label>
               </div>
               <div class="col-xs-6 col-lg-6">                
@@ -64,7 +64,7 @@
 
 
 	<div class="modal fade" id="trialModalSelection" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
+      <div class="modal-dialog" style="width: 600px">
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -113,11 +113,12 @@
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
   </form>
-<form id="importStudyForm" role="form-horizontal" onsubmit="return do_validation()"  class="form-horizontal" action="#" 
+<form id="importStudyUploadForm" role="form-horizontal" onsubmit="return do_validation()"  
+class="form-horizontal" 
      method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data">								
     <!-- Modal -->
     <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
+      <div class="modal-dialog" style="width: 600px">
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -127,7 +128,7 @@
             <div class="form-group" id="page-modal-message"></div>
             <div class='form-group'>                                          
               
-              <label for="fileupload" class="col-md-2 control-label" th:text="#{nursery.import.germplasm.select.file}">Select a file</label>
+              <label for="fileupload" class="col-xs-2 col-md-2 control-label" th:text="#{nursery.import.germplasm.select.file}">Select a file</label>
               <div class="col-xs-6 col-lg-6">
                 
                 <div class="fileupload fileupload-new" data-provides="fileupload">							    

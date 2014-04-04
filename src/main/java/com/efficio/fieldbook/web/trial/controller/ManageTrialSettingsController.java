@@ -139,7 +139,9 @@ public class ManageTrialSettingsController extends SettingsController{
         	form.setPlotLevelVariables(userSelection.getPlotsLevelList());
         	form.setIsDefault(templateSetting.getIsDefault().intValue() == 1 ? true : false);
         	form.setSettingName(templateSetting.getName());
-        	form.setSelectedSettingId(templateSetting.getTemplateSettingId());
+        	form.setSelectedSettingId(templateSetting.getTemplateSettingId());        	
+	    	form.setTrialLevelVariables(userSelection.getTrialLevelVariableList());
+	    	
         }
         else {
         	assignDefaultValues(form);

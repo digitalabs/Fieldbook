@@ -121,7 +121,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	
     	
 	    	form.setMeasurementRowList(userSelection.getMeasurementRowList());
-	    	form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
+	    	form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariablesView());
 	    	form.changePage(userSelection.getCurrentPage());
 	    	userSelection.setCurrentPage(form.getCurrentPage());
 	    	form.setImportVal(1);

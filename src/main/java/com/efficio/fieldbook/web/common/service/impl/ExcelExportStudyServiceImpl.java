@@ -288,7 +288,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		cell.setCellValue(variable.getMethod());
 
 		cell = row.createCell(5, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(variable.getDataType());
+		cell.setCellValue(variable.getDataTypeDisplay());
 
 		cell = row.createCell(6, HSSFCell.CELL_TYPE_STRING);
 		cell.setCellValue(variable.getValue());

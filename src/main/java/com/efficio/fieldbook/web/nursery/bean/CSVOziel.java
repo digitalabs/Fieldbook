@@ -38,21 +38,29 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
  */
 public class CSVOziel {
 
-	 private static final Logger LOG = LoggerFactory.getLogger(CSVOziel.class);
-	 
+	private static final Logger LOG = LoggerFactory.getLogger(CSVOziel.class);
+
+	private Workbook workbook;
 	private List<MeasurementRow> observations;
 	private List<MeasurementVariable> headers;
 	private List<MeasurementVariable> variateHeaders;
+	private boolean isDataKapture;
 	
     private String stringTraitToEvaluate = "GY";
     private Integer selectedTraitId;
     private List<MeasurementRow> trialObservations;
 
     public CSVOziel(Workbook workbook, List<MeasurementRow> observations, List<MeasurementRow> trialObservations) {
+    	this(workbook, observations, trialObservations, false);
+    }
+    
+    public CSVOziel(Workbook workbook, List<MeasurementRow> observations, List<MeasurementRow> trialObservations, boolean isDataKapture) {
+    	this.workbook = workbook;
     	this.headers = workbook.getMeasurementDatasetVariables();
     	this.observations = observations; //workbook.getObservations();
     	this.variateHeaders = workbook.getVariates();
     	this.trialObservations = trialObservations;
+    	this.isDataKapture = isDataKapture;
     }
 
     public void writeColums(CsvWriter csvOutput, int columnas) {
@@ -85,8 +93,10 @@ public class CSVOziel {
                 tot++;
             }
 
-            writeColums(csvOutput, 104 - tot);
-            csvOutput.write("IBFB");
+            if (!this.isDataKapture) {
+	            writeColums(csvOutput, 104 - tot);
+	            csvOutput.write("IBFB");
+            }
 
         } catch (IOException ex) {
         }
@@ -411,6 +421,180 @@ public class CSVOziel {
     private String getDisplayValue(String value) {
     	return value != null ? value : "";
     }
+    
+    //Start copied from CSVFileManager (old Fb)
+    public void writeDataDataKapture(CsvWriter csvOutput) {
+//        int total = this.observations.size();
+//        int tot = this.variateHeaders.size();
+        String strStudyType = "";
+        String trialNumber = "";
+        String strLocationName = "";
+        String strCycle = "";
+
+        Map<Long, String> map = new HashMap<Long, String>();
+		for (MeasurementRow row : this.trialObservations) {
+			map.put(row.getLocationId(), WorkbookUtil.getValueByIdInRow(row.getMeasurementVariables(), TermId.TRIAL_INSTANCE_FACTOR.getId(), row));
+		}
+
+		/**
+         * Type
+         */
+        strStudyType = workbook.getStudyDetails().getStudyType().toString();
+
+
+        /**
+         * TrialNumber, Location Name, Cycle
+         */
+        for (MeasurementVariable condition : workbook.getStudyConditions()) {
+            if ("TID".equalsIgnoreCase(condition.getName())) {
+                trialNumber = condition.getValue();
+            }
+            else if ("LID".equalsIgnoreCase(condition.getName())) {
+                strLocationName = condition.getValue();
+            }
+            else if ("Cycle".equalsIgnoreCase(condition.getName())) {
+                strCycle = condition.getValue();
+            }
+        }
+        
+        try {
+            for (MeasurementRow row : observations) {
+                /**
+                 * Site
+                 */
+                csvOutput.write(strLocationName);
+                /**
+                 * Type
+                 */
+                csvOutput.write(strStudyType);
+                /**
+                 * Year (cycle)
+                 */
+                csvOutput.write(strCycle);
+                /**
+                 * TrialNumber
+                 */
+                if (trialNumber == null || "".equals(trialNumber)) {
+                	trialNumber = map.get(row.getLocationId());
+                }
+                csvOutput.write(trialNumber);
+
+                /*
+                 * El row y column es una manera de dividir el campo como un
+                 * plano cartesiano. Esa manera solo aplica en experimentos de
+                 * otros paises. Aqui no se maneja de la misma forma. Mientras
+                 * no haya forma de realizarlo se imprime una constante.
+                 */
+                csvOutput.write("1");             //row
+                csvOutput.write("1");             //column 
+
+                /**
+                 * plotBarCode
+                 */
+                String plot = WorkbookUtil.getValueByIdInRow(this.headers, TermId.PLOT_NO.getId(), row);
+                if (plot == null || "".equals(plot.trim())) {
+                	plot = WorkbookUtil.getValueByIdInRow(this.headers, TermId.PLOT_NNO.getId(), row);
+                }
+                csvOutput.write(plot);
+
+                /**
+                 * GID
+                 */
+                String gid = WorkbookUtil.getValueByIdInRow(this.headers, TermId.GID.getId(), row);
+                csvOutput.write(gid);
+
+                /**
+                 * Genotype
+                 */
+                //es el Nombre, no necesariament se encuentra en las entradas del germoplasma
+                csvOutput.write("");
+
+                /**
+                 * Pedigree
+                 */
+                String desig = WorkbookUtil.getValueByIdInRow(this.headers, TermId.DESIG.getId(), row);
+                csvOutput.write(desig);
+
+                /**
+                 * Rep
+                 */
+                //Actualmente se guarda la ocurrencia, pero no necesariamente debe ser asi.
+                //se acordo con Celso dejar ahi la occurencia.
+                String rep = WorkbookUtil.getValueByIdInRow(this.headers, TermId.REP_NO.getId(), row);
+                csvOutput.write(rep);
+
+                for (int z = 0; z < this.variateHeaders.size(); z++) {
+                    csvOutput.write("");
+                }
+
+                //csvOutput.write("END");
+                csvOutput.endRecord();
+            }
+        } catch (IOException ex) {
+            System.out.println("ERROR AL GENERAR DATA CSV " + ex);
+        }
+    }
+
+    public void writeTraitsDataKapture(CsvWriter csvOutput) {
+
+        try {
+
+            for (MeasurementVariable variate : this.variateHeaders) {
+                String strTraitName = "";
+                String strTrailValRule = "";
+                String strDataType = "";
+
+                strDataType = variate.getDataTypeDisplay();
+                strTraitName = variate.getName();
+
+                /**
+                 * Trait Name
+                 */
+                csvOutput.write(strTraitName);
+
+                /**
+                 * Trait Value Rule
+                 */
+                if (variate.getMinRange() != null && variate.getMaxRange() != null) {
+                	strTrailValRule = variate.getMinRange().toString() + ".." + variate.getMaxRange().toString();
+                }
+                csvOutput.write(strTrailValRule);
+
+                /**
+                 * Data Type
+                 */
+                csvOutput.write(strDataType);
+
+                /**
+                 * Auto Progress Field Length
+                 */
+                csvOutput.write("1");
+                /**
+                 * Is Days Trait
+                 */
+                csvOutput.write("1");
+                /**
+                 * DateStamp
+                 */
+                csvOutput.write("1");
+                /**
+                 * Trait Units
+                 */
+                csvOutput.write("1");
+                /**
+                 * Connection
+                 */
+                csvOutput.write("0");
+
+                csvOutput.endRecord();
+            }
+        } catch (IOException ex) {
+            System.out.println("Error al generar el archivo csv: " + ex);
+        }
+    }
+    //end copied from CSVFileManager (old Fb)
+
+    
     
     //These methods were not used YET, temporarily commented out while not in use.
     //TODO cleanup once we have confirmed that these methods will no longer 

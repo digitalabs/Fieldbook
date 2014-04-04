@@ -122,8 +122,10 @@ public enum AppConstants {
     ,EXPORT_NURSERY_FIELDLOG_FIELDROID
     ,EXPORT_NURSERY_R
     ,EXPORT_NURSERY_EXCEL
+    ,EXPORT_DATAKAPTURE
     ,IMPORT_NURSERY_FIELDLOG_FIELDROID
     ,IMPORT_NURSERY_EXCEL
+    ,IMPORT_DATAKAPTURE
     
     ,LIST_DATE
     ,LIST_TYPE
@@ -135,6 +137,8 @@ public enum AppConstants {
     ,EXPORT_FIELDLOG_SUFFIX
     ,EXPORT_R_SUFFIX
     ,EXPORT_XLS_SUFFIX
+    ,DATAKAPTURE_TRAITS_SUFFIX
+    ,EXPORT_CSV_SUFFIX
     
     ,CREATE_NURSERY_REQUIRED_FIELDS
     ,CREATE_PLOT_REQUIRED_FIELDS
@@ -181,6 +185,7 @@ public enum AppConstants {
     ,TRIAL_ENVIRONMENT_ORDER
     ,REPLICATES
     ,BLOCK_SIZE
+    
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

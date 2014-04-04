@@ -741,13 +741,13 @@ function createNurseryLevelSettingVariables(data) {
 		}
 		
 		//create html elements dynamically
-		newRow = newRow + "<div class='col-xs-5 col-md-5'>" + isDelete + 
+		newRow = newRow + "<div class='col-xs-5 col-md-5 1st'>" + isDelete + 
 		"&nbsp;&nbsp;<input class='cvTermIds' type='hidden' id='studyLevelVariables" + ctr + ".variable.cvTermId' name='studyLevelVariables[" + 
 		ctr + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
 		//newRow = newRow + "<td>" + settingDetail.variable.name + ':' + '<span class="required">*</span>' +  "</td>";
 		newRow = newRow + "<span style='word-wrap: break-word'  class='control-label'>" + settingDetail.variable.name + '</span>:' + '' +  "</div>";
-		newRow = newRow + "<div class='col-xs-7 col-md-7'>";
+		newRow = newRow + "<div class='col-xs-7 col-md-7 2nd'>";
 		/*
 		newRow = newRow + "<input type='hidden' id='studyLevelVariables" + ctr + 
 		".value' name='studyLevelVariables[" + ctr + "].value' class='form-control select2' />";
@@ -1107,8 +1107,11 @@ function sortVariableIdsAndNames(variableType) {
 			//get currently selected value of select2 dropdown
 			var selectedVal = null;
 			var oldSelect2 = row.innerHTML.match(reg)[0];
-		    if ($("#" + getJquerySafeId(oldSelect2 + ".value")).select2("data")) {
-			   selectedVal = $("#" + getJquerySafeId(oldSelect2 + ".value")).select2("data").id;
+
+			if ($("#" + getJquerySafeId(oldSelect2 + ".value")).select2("data") && row.innerHTML.indexOf("select2") > -1) {
+			    selectedVal = $("#" + getJquerySafeId(oldSelect2 + ".value")).select2("data").id;
+		    } else {
+		    	selectedVal = $("#" + getJquerySafeId(oldSelect2 + ".value")).val();
 		    }
 		    
 		    //if dropdown is for location or method, check if show favorite is checked
@@ -1124,8 +1127,13 @@ function sortVariableIdsAndNames(variableType) {
 			//delete the existing select2 object and recreate the select2 combo and checkbox/links for location/method
 			if (row.innerHTML.indexOf("select2") > -1) {
 				recreateSelect2Combo(index, row, selectedVal, isFavoriteChecked);
+			} else if (row.innerHTML.indexOf("spinner-input") > -1) {
+				recreateSpinnerInput(index, row, selectedVal);
+			} else if (row.innerHTML.indexOf("date-input") > -1) {
+				recreateDateInput(index, row, selectedVal);
 			}
 		});
+		initializeDateAndSliderInputs();
 		break;
 	case 2:
 		var reg = new RegExp("plotLevelVariables[0-9]+", "g")
@@ -1145,6 +1153,27 @@ function sortVariableIdsAndNames(variableType) {
 	}
 }
 
+function recreateDateInput(index, row, selectedVal) {
+	var newCell = "<input type='text' id='studyLevelVariables" + index + 
+	".value' name='studyLevelVariables[" + index + "].value' " + 
+	"value='" + selectedVal +
+	"' class='form-control date-input' />";
+
+	$($(row).find(".2nd")).html(newCell);
+}
+
+function recreateSpinnerInput(index, row, selectedVal) {
+	var newCell = "<input type='text' id='studyLevelVariables" + index + 
+	".value' name='studyLevelVariables[" + index + "].value' " +
+	"data-min='" + $($(row).find(".2nd").children("input.spinner-input")).data("min") +
+	"' data-max='" + $($(row).find(".2nd").children("input.spinner-input")).data("max") + 
+	"' data-step='" + $($(row).find(".2nd").children("input.spinner-input")).data("step") +
+	"' value='" + selectedVal + 
+	"' class='form-control spinner-input spinnerElement' />";
+
+	$($(row).find(".2nd")).html(newCell);
+}
+
 function recreateSelect2Combo(index, row, selectedVal, isFavoriteChecked) {
 	//get the possible values of the variable
 	var possibleValuesJson = $($(row).find(".possibleValuesJson")).text();
@@ -1155,8 +1184,6 @@ function recreateSelect2Combo(index, row, selectedVal, isFavoriteChecked) {
 	//hidden field for select2 
 	var newCell = "<input type='hidden' id='studyLevelVariables" + index + 
 	".value' name='studyLevelVariables[" + index + "].value' class='form-control select2' />";
-	
-	//newCell = newCell + "<div class='div-select-val' style='display: none'>" +  + "</div>"
 	
 	//div containing the possible values
 	newCell = newCell + "<div id='possibleValuesJson" + index + "' class='possibleValuesJson' style='display:none'>" + 

@@ -1,9 +1,11 @@
 package com.efficio.fieldbook.web.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.oms.TermId;
 
 public class WorkbookUtil {
 
@@ -37,5 +39,18 @@ public class WorkbookUtil {
     	}
     	return null;
     }
-    
+
+    public static List<MeasurementRow> filterObservationsByTrialInstance(List<MeasurementRow> observations, String trialInstance) {
+    	List<MeasurementRow> list = new ArrayList<MeasurementRow>();
+    	if (observations != null && !observations.isEmpty()) {
+    		List<MeasurementVariable> variables = observations.get(0).getMeasurementVariables();
+    		for (MeasurementRow row : observations) {
+    			String value = getValueByIdInRow(variables, TermId.TRIAL_INSTANCE_FACTOR.getId(), row);
+    			if (value == null || value != null && value.equals(trialInstance)) {
+    				list.add(row);
+    			}
+    		}
+    	}
+    	return list;
+    }
 }

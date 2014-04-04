@@ -22,6 +22,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -32,6 +33,7 @@ import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.web.common.service.ExcelImportStudyService;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 @Service
 public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
@@ -45,11 +47,13 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	@Override
 	public void importWorkbook(Workbook workbook, String filename) throws WorkbookParserException {
 		try {
-			HSSFWorkbook xlsBook = new HSSFWorkbook(new FileInputStream(new File(filename))); //WorkbookFactory.create(new FileInputStream(new File(filename))); 
+			HSSFWorkbook xlsBook = new HSSFWorkbook(new FileInputStream(new File(filename))); //WorkbookFactory.create(new FileInputStream(new File(filename)));
+			
+			List<MeasurementRow> observations = filterObservationsByTrialInstance(xlsBook, workbook.getObservations());
 
-			validate(xlsBook, workbook);
+			validate(xlsBook, workbook, observations);
 				
-			importDataToWorkbook(xlsBook, workbook);
+			importDataToWorkbook(xlsBook, workbook, observations);
 
 		} catch (WorkbookParserException e) {
 			throw e;
@@ -59,11 +63,11 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 		}
 	}
 	
-	private void importDataToWorkbook(HSSFWorkbook xlsBook, Workbook workbook) {
-		if (workbook.getObservations() != null) {
+	private void importDataToWorkbook(HSSFWorkbook xlsBook, Workbook workbook, List<MeasurementRow> observations) {
+		if (observations != null) {
 			HSSFSheet observationSheet = xlsBook.getSheetAt(1);
 			int xlsRowIndex = 1; //row 0 is the header row
-			for (MeasurementRow wRow : workbook.getObservations()) {
+			for (MeasurementRow wRow : observations) {
 				HSSFRow xlsRow = observationSheet.getRow(xlsRowIndex);
 				for (MeasurementData wData : wRow.getDataList()) {
 					if (wData.isEditable()) {
@@ -100,7 +104,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 		}
 	}
 	
-	private void validate(HSSFWorkbook xlsBook, Workbook workbook) throws WorkbookParserException {
+	private void validate(HSSFWorkbook xlsBook, Workbook workbook, List<MeasurementRow> observations) throws WorkbookParserException {
 		HSSFSheet descriptionSheet = xlsBook.getSheetAt(0);
 		HSSFSheet observationSheet = xlsBook.getSheetAt(1);
 		
@@ -108,8 +112,8 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 		validateDescriptionSheetFirstCell(descriptionSheet);
 		validateSections(descriptionSheet);
 		validateRequiredObservationColumns(observationSheet, workbook);
-		validateNumberOfRows(observationSheet, workbook);
-		validateRowIdentifiers(observationSheet, workbook);
+		validateNumberOfRows(observationSheet, observations);
+		validateRowIdentifiers(observationSheet, workbook, observations);
 		validateObservationColumns(getAllVariates(descriptionSheet), workbook);
 	}
 	
@@ -149,14 +153,14 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 		}
 	}
 	
-	private void validateNumberOfRows(HSSFSheet observationSheet, Workbook workbook) throws WorkbookParserException {
-		if (workbook.getObservations() != null && observationSheet.getLastRowNum() != workbook.getObservations().size()) {
+	private void validateNumberOfRows(HSSFSheet observationSheet, List<MeasurementRow> observations) throws WorkbookParserException {
+		if (observations != null && observationSheet.getLastRowNum() != observations.size()) {
 			throw new WorkbookParserException("error.workbook.import.observationRowCountMismatch");
 		}
 	}
 	
-	private void validateRowIdentifiers(HSSFSheet observationSheet, Workbook workbook) throws WorkbookParserException {
-		if (workbook.getObservations() != null) {
+	private void validateRowIdentifiers(HSSFSheet observationSheet, Workbook workbook, List<MeasurementRow> observations) throws WorkbookParserException {
+		if (observations != null) {
 			String gidLabel = getColumnLabel(workbook, TermId.GID.getId());
 			String desigLabel = getColumnLabel(workbook, TermId.DESIG.getId());
 			String entryLabel = getColumnLabel(workbook, TermId.ENTRY_NO.getId());
@@ -164,7 +168,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			int desigCol = findColumn(observationSheet, desigLabel);
 			int entryCol = findColumn(observationSheet, entryLabel);
 			int rowIndex = 1;
-			for (MeasurementRow wRow : workbook.getObservations()) {
+			for (MeasurementRow wRow : observations) {
 				HSSFRow row = observationSheet.getRow(rowIndex++);
 
 				Integer gid = getMeasurementDataValueInt(wRow, gidLabel);
@@ -202,6 +206,10 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 		
 		if (startRowIndex <= endRowIndex) {
 			for (int rowIndex = startRowIndex; rowIndex <= endRowIndex; rowIndex++) {
+				if (descriptionSheet.getRow(rowIndex) == null || descriptionSheet.getRow(rowIndex).getCell(0) == null 
+						|| descriptionSheet.getRow(rowIndex).getCell(0).getStringCellValue() == null) {
+					break;
+				}
 				variates.add(descriptionSheet.getRow(rowIndex).getCell(0).getStringCellValue().toUpperCase());
 			}
 		}
@@ -296,5 +304,48 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
     		}
     	}
     	return "";
+    }
+    
+    private MeasurementRow findMeasurementRow(List<MeasurementRow> rows, int trial, int plot) {
+    	if (rows != null) {
+    		List<MeasurementVariable> variables = rows.get(0).getMeasurementVariables();
+    		for (MeasurementRow row : rows) {
+    			String trialInRow = WorkbookUtil.getValueByIdInRow(variables, TermId.TRIAL_INSTANCE_FACTOR.getId(), row);
+    			String plotInRow = WorkbookUtil.getValueByIdInRow(variables, TermId.PLOT_NO.getId(), row);
+    			if (plotInRow == null || "".equals(plotInRow)) {
+    				plotInRow = WorkbookUtil.getValueByIdInRow(variables, TermId.PLOT_NNO.getId(), row);
+    			}
+    			if (trialInRow != null && trialInRow.equals(trial)
+    					&& plotInRow != null && plotInRow.equals(plot)) {
+    				
+    				return row;
+    			}
+    		}
+    	}
+    	return null;
+    }
+    
+    private List<MeasurementRow> filterObservationsByTrialInstance(HSSFWorkbook xlsBook, List<MeasurementRow> observations) {
+    	HSSFSheet descriptionSheet = xlsBook.getSheetAt(0);
+		int conditionRow = findRow(descriptionSheet, TEMPLATE_SECTION_CONDITION);
+		int factorRow = findRow(descriptionSheet, TEMPLATE_SECTION_FACTOR);
+		int trialRow = -1;
+		String trialInstance = null;
+		for (String label : PhenotypicType.TRIAL_ENVIRONMENT.getLabelList()) {
+			trialRow = findRow(descriptionSheet, label);
+			if (trialRow > 0 && trialRow > conditionRow && trialRow < factorRow) {
+				break;
+			}
+		}
+		if (trialRow > 0) {
+			HSSFRow row = descriptionSheet.getRow(trialRow);
+			HSSFCell cell = row.getCell(6);
+			trialInstance = cell.getStringCellValue();
+		}
+		
+		if (trialInstance != null) {
+			return WorkbookUtil.filterObservationsByTrialInstance(observations, trialInstance);
+		}
+		return null;
     }
 }

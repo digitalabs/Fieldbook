@@ -1092,7 +1092,7 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation, default
 		        query.callback(data);
 		    }
 	    });
-	} else if (name.indexOf("trialEnvironmentValues") > -1 && replicates) {
+	} else if (name.indexOf("trialEnvironmentValues") > -1 && typeof replicates !== 'undefined' && replicates) {
 		$(name).select2({
 			query: function (query) {	
 		      var data = {results: possibleValues_obj}, i, j, s;

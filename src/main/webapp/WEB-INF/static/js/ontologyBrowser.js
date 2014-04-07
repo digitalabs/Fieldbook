@@ -563,8 +563,9 @@ function lowerCaseFirstLetter(string)
 function loadOntologyCombos(){
 	//create combos
 	if($('#preselectVariableId').val() == 0 && $('#fromPopup').val() == 1){
+		varNameChecking = variableNameSuggestions;
 		variableNameSuggestions = {};
-		variableNameSuggestions_obj = [];
+		variableNameSuggestions_obj = [];		
 	}
 	initializeVariable(variableNameSuggestions, variableNameSuggestions_obj, "description", "VariableName", true);
 	

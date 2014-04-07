@@ -328,6 +328,8 @@
   	var methodSuggestions_obj = [];
   	var scaleSuggestions_obj = [];
   	
+  	var varNameChecking = {};
+  	
   	var treeDivId = 'traitClassBrowserTree';
   	var treeClassData = /*[[${traitClassTreeData}]]*/;
   	
@@ -397,12 +399,14 @@
 		    if (requiredFieldsEmpty()) {	
 		    	message = /*[[#{ontology.browser.modal.error}]]*/;
 		    	showMessage(message);
+		    	moveToTopScreen()
 				return false;
 		    }
 		    //check combo values
 		    if (comboValuesInvalid()) {
 		    	message = /*[[#{ontology.browser.modal.invalid.value}]]*/;
 		    	showMessage(message);
+		    	moveToTopScreen()
 		    	return false;
 		    }
 		    //check min max values
@@ -412,6 +416,7 @@
 		    message = minMaxErrorMessage(bothMinMaxRequired, notANumber, invalidValue); 
 		    if (message != "") { 
 		    	showMessage(message);
+		    	moveToTopScreen()
 		    	return false;
 		    }
 		    
@@ -425,8 +430,23 @@
     			var variableName = $("#comboVariableName").select2('data').text.replace(" (Shared)", "");
     			message = /*[[#{ontology.browser.cannot.delete.central.variable}]]*/;
     			showMessage(message.replace("{0}", variableName));
+    			moveToTopScreen()
     			return false;
     		}
+    	}
+    	
+    	if($('#preselectVariableId').val() == 0 && $('#fromPopup').val() == 1){
+    		var varName = $('#comboVariableName').select2('data').text;
+    		for(var i = 0 ; i < varNameChecking.length ; i++)
+    		{
+    			if(varNameChecking[i].name.toLowerCase() == varName.toLowerCase()){
+    				message = /*[[#{error.name.exists}]]*/;
+    				showMessage(message);
+    				moveToTopScreen()
+    				return false;
+    			}
+    		}
+    			
     	}
     	
     	Spinner.toggle()

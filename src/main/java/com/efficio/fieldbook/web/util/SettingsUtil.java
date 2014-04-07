@@ -243,7 +243,7 @@ public class SettingsUtil {
 				}
 				Variate variate = new Variate(variable.getName(), variable.getDescription(), variable.getProperty(),
 						variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(), variable.getDataTypeId(),
-						settingDetail.getPossibleValues());
+						settingDetail.getPossibleValues(), variable.getMinRange(), variable.getMaxRange());
 				variates.add(variate);
 			}
 		}
@@ -837,7 +837,9 @@ public class SettingsUtil {
 						PhenotypicType.VARIATE.toString(), 
 						mvar.getDataType(),
 						mvar.getDataTypeId(),
-						mvar.getPossibleValues()));
+						mvar.getPossibleValues(),
+						mvar.getMinRange(),
+						mvar.getMaxRange()));
 			}
 		}
 		
@@ -876,7 +878,8 @@ public class SettingsUtil {
 //		}
 		MeasurementVariable mvar = new MeasurementVariable(
 				condition.getName(), condition.getDescription(), condition.getScale(), condition.getMethod(), condition.getProperty(), condition.getDatatype(), 
-				condition.getValue(), /*PhenotypicType.valueOf(condition.getRole()).getLabelList().get(0)*/ label);
+				condition.getValue(), /*PhenotypicType.valueOf(condition.getRole()).getLabelList().get(0)*/ label, 
+				condition.getMinRange(), condition.getMaxRange());
 		mvar.setFactor(true);
 		mvar.setDataTypeId(condition.getDataTypeId());
 		return mvar;
@@ -937,7 +940,7 @@ public class SettingsUtil {
 	private static MeasurementVariable convertVariateToMeasurementVariable(Variate variate) {
 		MeasurementVariable mvar = new MeasurementVariable(
 				variate.getName(), variate.getDescription(), variate.getScale(), variate.getMethod(), variate.getProperty(), variate.getDatatype(), null, 
-				PhenotypicType.TRIAL_DESIGN.getLabelList().get(0)); //because variates are mostly PLOT variables
+				PhenotypicType.TRIAL_DESIGN.getLabelList().get(0), variate.getMinRange(), variate.getMaxRange()); //because variates are mostly PLOT variables
 		mvar.setFactor(false);
 		mvar.setDataTypeId(variate.getDataTypeId());
 		mvar.setPossibleValues(variate.getPossibleValues());

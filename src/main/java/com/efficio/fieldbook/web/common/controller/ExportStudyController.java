@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.StudySelection;
 import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
+import com.efficio.fieldbook.web.common.service.DataKaptureExportStudyService;
 import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
 import com.efficio.fieldbook.web.common.service.FieldroidExportStudyService;
 import com.efficio.fieldbook.web.common.service.RExportStudyService;
@@ -51,6 +52,9 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     
     @Resource
     private ExcelExportStudyService excelExportStudyService;
+    
+    @Resource
+    private DataKaptureExportStudyService dataKaptureExportStudyService;
     
     @Override
 	public String getContentName() {
@@ -118,14 +122,19 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     	}else if(AppConstants.EXPORT_NURSERY_EXCEL.getInt() == exportType){
     		filename = filename  + AppConstants.EXPORT_XLS_SUFFIX.getString();
     		outputFilename = excelExportStudyService.export(userSelection.getWorkbook(), filename, start, end);
-    		response.setContentType("application/vnd.ms-excel");
+        	if (userSelection.getWorkbook().getTotalNumberOfInstances() > 1) {
+        		int extensionIndex = filename.lastIndexOf(".");
+        		filename = filename.substring(0, extensionIndex) + AppConstants.ZIP_FILE_SUFFIX.getString();
+        		response.setContentType("application/zip");
+        	} else {
+        		response.setContentType("application/vnd.ms-excel");
+        	}
+    	}else if(AppConstants.EXPORT_DATAKAPTURE.getInt() == exportType) {
+    		outputFilename = dataKaptureExportStudyService.export(userSelection.getWorkbook(), filename, start, end);
+    		response.setContentType("application/zip");
+    		filename = filename + AppConstants.ZIP_FILE_SUFFIX.getString();
     	}
     	
-    	if (userSelection.getWorkbook().getTotalNumberOfInstances() > 1 && AppConstants.EXPORT_NURSERY_EXCEL.getInt() == exportType) {
-    		int extensionIndex = filename.lastIndexOf(".");
-    		filename = filename.substring(0, extensionIndex) + AppConstants.ZIP_FILE_SUFFIX.getString();
-    		response.setContentType("application/zip");
-    	}
     	        
         File xls = new File(outputFilename); // the selected name + current date
         FileInputStream in;

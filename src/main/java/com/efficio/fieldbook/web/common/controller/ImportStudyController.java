@@ -20,6 +20,7 @@ import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.StudySelection;
 import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
+import com.efficio.fieldbook.web.common.service.DataKaptureImportStudyService;
 import com.efficio.fieldbook.web.common.service.ExcelImportStudyService;
 import com.efficio.fieldbook.web.common.service.FieldroidImportStudyService;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
@@ -48,6 +49,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     @Resource
     private ExcelImportStudyService excelImportStudyService;
     
+    @Resource
+    private DataKaptureImportStudyService dataKaptureImportStudyService;
 
     @Override
 	public String getContentName() {
@@ -117,6 +120,35 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 					LOG.error(e.getMessage(), e);
 				}
              }
+
+    	}else if(AppConstants.IMPORT_DATAKAPTURE.getInt() == importType){
+    		
+       	 	MultipartFile file = form.getFile();
+            if (file == null) {
+           	 result.rejectValue("file", AppConstants.FILE_NOT_FOUND_ERROR.getString());
+            } else {
+                boolean isCSVFile = file.getOriginalFilename().contains(".csv");
+                if (!isCSVFile) {
+               	 result.rejectValue("file", AppConstants.FILE_NOT_CSV_ERROR.getString());
+                }
+            }
+            if(!result.hasErrors()){
+	    		try {
+	    			String filename = fileService.saveTemporaryFile(file.getInputStream());
+	    			
+					dataKaptureImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename));
+					
+				} catch (WorkbookParserException e) {
+					// TODO Auto-generated catch block
+					//e.printStackTrace();				
+					LOG.error(e.getMessage(), e);
+					result.rejectValue("file", e.getMessage());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					//e.printStackTrace();
+					LOG.error(e.getMessage(), e);
+				}
+            }
     	}
     	
     	

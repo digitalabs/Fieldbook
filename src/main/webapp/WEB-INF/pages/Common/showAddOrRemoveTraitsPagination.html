@@ -168,37 +168,6 @@
         		
         }
        
-		function doSave(){
-			if(validateCells() == false)
-				return false;
-  	      	var $form = $("#addVariableForm");
-  			serializedData = $form.serialize();
-  			$("btnUpdate").attr("disabled", "disabled");
-			Spinner.toggle();
-
-			$.ajax({
-				url: "/Fieldbook/Common/addOrRemoveTraits/" + $("#study-type").val() + "/updateTraits",
-				type: "post",
-				dataType: "json",
-				data: serializedData,
-			    success: function(data){
-				    if (data.status == "1") {
-				    	$('#successMessageModal').modal({ backdrop: 'static', keyboard: true }) 
-				    	$("#successMessageModal").modal("show");
-			       	} else if (data.status == "-1") {
-			       		showErrorMessage('page-message', data.errorMessage);
-			       	}
-			   }, 
-			   error: function(jqXHR, textStatus, errorThrown){
-					console.log("The following error occured: " + textStatus, errorThrown); 
-			   }, 
-			   complete: function(){  
-				   $("btnUpdate").removeAttr("disabled");
-				   Spinner.toggle();
-			   } 
-			});
-		}      
-		
 		
 		function doReturn() {
 			location.href = "/Fieldbook/" + $("#study-type").val() + "Manager";

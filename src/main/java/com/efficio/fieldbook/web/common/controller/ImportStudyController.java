@@ -157,7 +157,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	    	form.changePage(userSelection.getCurrentPage());
 	    	userSelection.setCurrentPage(form.getCurrentPage());
 	    	form.setImportVal(1);
-    	    	    	
+	    	form.setNumberOfInstances(userSelection.getWorkbook().getTotalNumberOfInstances());
     	return show(model, isTrial);
     }
     

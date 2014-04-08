@@ -129,7 +129,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		xlsSheet.createRow(currentRowNum++);
 		currentRowNum = writeFactors(currentRowNum, xlsBook, xlsSheet, workbook.getFactors());
 		xlsSheet.createRow(currentRowNum++);
-		currentRowNum = writeConstants(currentRowNum, xlsBook, xlsSheet, workbook.getConstants());
+		currentRowNum = writeConstants(currentRowNum, xlsBook, xlsSheet, workbook.getConstants(), trialObservation);
 		xlsSheet.createRow(currentRowNum++);
 		currentRowNum = writeVariates(currentRowNum, xlsBook, xlsSheet, workbook.getVariates());
 		
@@ -186,7 +186,16 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		return writeSection(currentRowNum, xlsBook, xlsSheet, filteredFactors, "export.study.description.column.factor", 51, 153, 102);
 	}
 	
-	private int writeConstants(int currentRowNum, HSSFWorkbook xlsBook, HSSFSheet xlsSheet, List<MeasurementVariable> constants) {
+	private int writeConstants(int currentRowNum, HSSFWorkbook xlsBook, HSSFSheet xlsSheet, List<MeasurementVariable> constants, 
+			MeasurementRow trialObservation) {
+		
+		List<MeasurementVariable> filteredConditions = new ArrayList<MeasurementVariable>();
+		for (MeasurementVariable variable : constants) {
+			filteredConditions.add(variable);
+			if (PhenotypicType.TRIAL_ENVIRONMENT.getLabelList().contains(variable.getLabel())) {
+				variable.setValue(trialObservation.getMeasurementDataValue(variable.getName()));
+			}
+		}
 		return writeSection(currentRowNum, xlsBook, xlsSheet, constants, "export.study.description.column.constant", 51, 51, 153);
 	}
 	

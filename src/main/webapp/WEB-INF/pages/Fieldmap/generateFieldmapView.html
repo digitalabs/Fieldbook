@@ -293,7 +293,7 @@ th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" 
 	 } 
 	 $('#saveAndRedirectToCreateLabel').val("0");
 	 $('#step3-create-labels').on('click', function(){
-		 if(false && isGenerated){
+		 if(isGenerated){
 			 //we show the prompt
 			 $('#create-label-confirmation').modal('show');
 		 }else{

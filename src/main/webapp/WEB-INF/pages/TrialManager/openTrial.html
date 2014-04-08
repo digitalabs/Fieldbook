@@ -97,7 +97,7 @@
 				<span th:text="#{trial.createtrial.show.favorite.location.for.all}">Show Favorite Location for All</span>
   				</div>
   			</div>
-		<form id="addVariableForm" role="form-horizontal" class="form-horizontal" action="#" 
+		<form id="addVariableForm2" role="form-horizontal" class="form-horizontal" action="#" 
 	method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data">
 			<div class="col-xs-12 col-md-12">
 	    			<div th:include="/TrialManager/trialEnvironmentMatrix"></div>
@@ -177,5 +177,36 @@
 		});
 	});
 
+	function doSave(){
+		if(validateCells() == false)
+			return false;
+	      	var $form = $("#addVariableForm, #addVariableForm2");
+			serializedData = $form.serialize();
+			$("btnUpdate").attr("disabled", "disabled");
+		Spinner.toggle();
+
+		$.ajax({
+			url: "/Fieldbook/Common/addOrRemoveTraits/Trial/updateTraits",
+			type: "post",
+			dataType: "json",
+			data: serializedData,
+		    success: function(data){
+			    if (data.status == "1") {
+			    	$('#successMessageModal').modal({ backdrop: 'static', keyboard: true }) 
+			    	$("#successMessageModal").modal("show");
+		       	} else if (data.status == "-1") {
+		       		showErrorMessage('page-message', data.errorMessage);
+		       	}
+		   }, 
+		   error: function(jqXHR, textStatus, errorThrown){
+				console.log("The following error occured: " + textStatus, errorThrown); 
+		   }, 
+		   complete: function(){  
+			   $("btnUpdate").removeAttr("disabled");
+			   Spinner.toggle();
+		   } 
+		});
+	}      
+	
 	//]]>
 </script>

@@ -124,6 +124,7 @@ public class ObservationMatrixController extends
     	form.setStudyName(workbook.getStudyDetails().getStudyName());
     	
         workbook.setObservations(form.getMeasurementRowList());
+        workbook.updateTrialObservationsWithReferenceList(form.getTrialEnvironmentValues());
 
         try { 
         	validationService.validateObservationValues(workbook);

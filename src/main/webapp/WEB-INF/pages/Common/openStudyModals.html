@@ -86,20 +86,26 @@
               <div class="col-xs-12 col-lg-12">                
 	    			<label class="radio-inline">
 							  <input class="instanceNumber" type="radio" value="2" th:field="*{exportInstanceType}"/> 
-							  <span>Trial Instance #</span>
+							 
+					</label>	
+					<label class="radio-inline" style="padding-left: 0px; margin-left: -4px">	
+					 <span>Trial Instance #</span>
 <input type="text" th:field="*{exportTrialInstanceNumber}" class="spinner-input" />
-					</label>							               
+</label>					               
               </div>
             </div>
             <div class=''>                                                         
               <div class="col-xs-12 col-lg-12">                
 	    			<label class="radio-inline">
 							  <input class="instanceNumber" type="radio" value="3" th:field="*{exportInstanceType}"/> 
-							  <span>From Trial Instance #</span>
+							  
+					</label>			
+					<label class="radio-inline" style="padding-left: 0px; margin-left: -4px">
+					<span>From Trial Instance #</span>
 							  <input type="text" th:field="*{exportTrialInstanceStart}" class="spinner-input" />
 							  <span>to Trial Instance #</span>
 							  <input type="text" th:field="*{exportTrialInstanceEnd}" class="spinner-input" />
-					</label>							               
+							  </label>				               
               </div>
               </div>
             </div>

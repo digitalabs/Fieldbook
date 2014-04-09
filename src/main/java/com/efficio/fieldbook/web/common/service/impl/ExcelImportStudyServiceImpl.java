@@ -82,7 +82,13 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 							if (wData.getMeasurementVariable() != null && wData.getMeasurementVariable().getPossibleValues() != null
 									&& !wData.getMeasurementVariable().getPossibleValues().isEmpty()) {
 								
-								xlsValue = getCategoricalIdCellValue(cell.getStringCellValue(), wData.getMeasurementVariable().getPossibleValues());
+								if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+									xlsValue = getCategoricalIdCellValue(String.valueOf(Double.valueOf(cell.getNumericCellValue()).intValue()), 
+											wData.getMeasurementVariable().getPossibleValues());
+								}
+								else {
+									xlsValue = getCategoricalIdCellValue(cell.getStringCellValue(), wData.getMeasurementVariable().getPossibleValues());
+								}
 							} 
 							else if(cell.getCellType() == Cell.CELL_TYPE_NUMERIC){
 								Double doubleVal = Double.valueOf(cell.getNumericCellValue());
@@ -264,7 +270,6 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
     }
 
     private String findValueFromDescriptionSheet(HSSFWorkbook workbook, String cellValue) {
-    	System.out.println("LOOKING FOR " + cellValue);
     	HSSFSheet sheet = workbook.getSheetAt(0);
         if (cellValue != null) {
 	        int lastRow = sheet.getLastRowNum();

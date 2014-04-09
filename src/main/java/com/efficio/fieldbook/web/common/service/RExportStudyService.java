@@ -11,8 +11,6 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.common.service;
 
-import java.util.List;
-
 import org.generationcp.middleware.domain.etl.Workbook;
 
 public interface RExportStudyService extends ExportStudyService {

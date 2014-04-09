@@ -86,13 +86,9 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	    			
 					fieldroidImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename));
 				} catch (WorkbookParserException e) {
-					// TODO Auto-generated catch block
-					//e.printStackTrace();				
 					LOG.error(e.getMessage(), e);
 					result.rejectValue("file", e.getMessage());
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					//e.printStackTrace();
 					LOG.error(e.getMessage(), e);
 				}
             }
@@ -116,13 +112,9 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	    			
 					excelImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename));
 				} catch (WorkbookParserException e) {
-					// TODO Auto-generated catch block
-					//e.printStackTrace();				
 					LOG.error(e.getMessage(), e);
 					result.rejectValue("file", e.getMessage());
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					//e.printStackTrace();
 					LOG.error(e.getMessage(), e);
 				}
              }
@@ -145,13 +137,9 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 					dataKaptureImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename));
 					
 				} catch (WorkbookParserException e) {
-					// TODO Auto-generated catch block
-					//e.printStackTrace();				
 					LOG.error(e.getMessage(), e);
 					result.rejectValue("file", e.getMessage());
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					//e.printStackTrace();
 					LOG.error(e.getMessage(), e);
 				}
             }

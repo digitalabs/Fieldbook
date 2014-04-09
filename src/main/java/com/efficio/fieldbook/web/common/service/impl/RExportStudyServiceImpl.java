@@ -49,7 +49,7 @@ public class RExportStudyServiceImpl implements RExportStudyService {
             csvOutput.write("BLK");
             csvOutput.write("ENTRY");
             csvOutput.write("GY");
-            csv.DefineTraitToEvaluate(getLabel(workbook.getVariates(), selectedTrait));
+            csv.defineTraitToEvaluate(getLabel(workbook.getVariates(), selectedTrait));
             csv.setSelectedTraitId(selectedTrait);
             csv.writeTraitsR(csvOutput);
             csvOutput.endRecord();

@@ -12,16 +12,12 @@
 package com.efficio.fieldbook.util;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.pojos.workbench.settings.Condition;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,16 +28,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.web.client.HttpClientErrorException;
 
-import com.efficio.fieldbook.service.api.CropOntologyService;
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.util.SettingsUtil;
-import com.efficio.pojos.cropontology.CropTerm;
-import com.efficio.pojos.cropontology.Ontology;
 
 /**
  * The Class CropOntologyServiceTest.
@@ -70,20 +62,20 @@ public class PojoXmlTester extends AbstractJUnit4SpringContextTests {
 		
 		List<SettingDetail> nurseryLevelConditions = new ArrayList<SettingDetail>();
 		nurseryLevelConditions.add(new SettingDetail(getTestSettingVariable("1"),
-				new ArrayList(), "Test 1", true));
+				new ArrayList<ValueReference>(), "Test 1", true));
 		nurseryLevelConditions.add(new SettingDetail(getTestSettingVariable("2"),
-				new ArrayList(), "Test 2", false));
+				new ArrayList<ValueReference>(), "Test 2", false));
 		List<SettingDetail> plotsLevelList = new ArrayList<SettingDetail>();
 		plotsLevelList.add(new SettingDetail(getTestSettingVariable("3"),
-				new ArrayList(), "Test 3", true));
+				new ArrayList<ValueReference>(), "Test 3", true));
 		plotsLevelList.add(new SettingDetail(getTestSettingVariable("4"),
-				new ArrayList(), "Test 4", false));
+				new ArrayList<ValueReference>(), "Test 4", false));
 		
 		List<SettingDetail> baselineTraitsList = new ArrayList<SettingDetail>();
 		baselineTraitsList.add(new SettingDetail(getTestSettingVariable("5"),
-				new ArrayList(), "Test 5", true));
+				new ArrayList<ValueReference>(), "Test 5", true));
 		baselineTraitsList.add(new SettingDetail(getTestSettingVariable("6"),
-				new ArrayList(), "Test 6", false));
+				new ArrayList<ValueReference>(), "Test 6", false));
 		
 		datasetName = "test name";
 		dataset = (Dataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, datasetName, nurseryLevelConditions, plotsLevelList, baselineTraitsList, null);

@@ -21,7 +21,6 @@ import javax.annotation.Resource;
 
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.pojos.GermplasmListData;
-import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -88,7 +87,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     
     @Resource
     private MeasurementsGeneratorService measurementsGeneratorService;
-    @Resource
+	@Resource
     private FieldbookService fieldbookMiddlewareService;
     
     /** The ontology service. */

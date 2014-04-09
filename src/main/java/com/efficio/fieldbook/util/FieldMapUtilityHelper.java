@@ -56,7 +56,7 @@ public class FieldMapUtilityHelper {
      */
     public static int populatePlotData(int counter, List<FieldMapLabel> labels, 
             int col, int range, Plot[][] plots, boolean isUpward, int startCol, 
-            int startRange, boolean isStartOk, Map deletedPlot, boolean isTrial){
+            int startRange, boolean isStartOk, Map<String, String> deletedPlot, boolean isTrial){
 
         String stringToDisplay = "";
         int i = col;
@@ -115,7 +115,7 @@ public class FieldMapUtilityHelper {
         return counter;
     }
     
-    public static void markedDeletedPlot(Plot[][] plots, Map deletedPlot){
+    public static void markedDeletedPlot(Plot[][] plots, Map<String, String> deletedPlot){
     	Plot[][] currentPlot = plots;
     	
     	if(currentPlot != null){
@@ -138,7 +138,7 @@ public class FieldMapUtilityHelper {
      * @param deletedPlot the deleted plot
      * @return true, if is deleted
      */
-    public static boolean isDeleted(int col, int range, Map deletedPlot){
+    public static boolean isDeleted(int col, int range, Map<String, String> deletedPlot){
         if(deletedPlot.get(col+"_"+range) != null)
             return true;
         return false;

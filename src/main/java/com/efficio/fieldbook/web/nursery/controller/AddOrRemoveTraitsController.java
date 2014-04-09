@@ -11,23 +11,13 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,21 +28,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
-import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
-import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
-import com.efficio.fieldbook.web.common.service.ExcelImportStudyService;
-import com.efficio.fieldbook.web.common.service.FieldroidExportStudyService;
-import com.efficio.fieldbook.web.common.service.FieldroidImportStudyService;
-import com.efficio.fieldbook.web.common.service.RExportStudyService;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
-import com.efficio.fieldbook.web.util.AppConstants;
 
 /**
  * The Class AddOrRemoveTraitsController.
@@ -335,13 +316,9 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
 //	    			
 //					fieldroidImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename));
 //				} catch (WorkbookParserException e) {
-//					// TODO Auto-generated catch block
-//					//e.printStackTrace();				
 //					LOG.error(e.getMessage(), e);
 //					result.rejectValue("file", e.getMessage());
 //				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					//e.printStackTrace();
 //					LOG.error(e.getMessage(), e);
 //				}
 //            }
@@ -365,13 +342,9 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
 //	    			
 //					excelImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename));
 //				} catch (WorkbookParserException e) {
-//					// TODO Auto-generated catch block
-//					//e.printStackTrace();				
 //					LOG.error(e.getMessage(), e);
 //					result.rejectValue("file", e.getMessage());
 //				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					//e.printStackTrace();
 //					LOG.error(e.getMessage(), e);
 //				}
 //             }

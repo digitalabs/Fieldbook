@@ -19,8 +19,6 @@ import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpSession;
 
-import org.generationcp.middleware.domain.dms.PhenotypicType;
-import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -48,7 +46,6 @@ import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class CreateTrialController.
  */
@@ -80,16 +77,16 @@ public class CreateTrialController extends SettingsController {
      * Use existing Trial.
      *
      * @param form the form
-     * @param TrialId the Trial id
+     * @param trialId the Trial id
      * @param model the model
      * @param session the session
      * @return the string
      * @throws MiddlewareQueryException the middleware query exception
      */
     @RequestMapping(value="/Trial/{TrialId}", method = RequestMethod.GET)
-    public String useExistingTrial(@ModelAttribute("manageSettingsForm") CreateTrialForm form, @PathVariable int TrialId
+    public String useExistingTrial(@ModelAttribute("manageSettingsForm") CreateTrialForm form, @PathVariable int trialId
             , Model model, HttpSession session) throws MiddlewareQueryException{
-        if(TrialId != 0){
+        if(trialId != 0){
             /*
             Workbook workbook = fieldbookMiddlewareService.getStudyVariableSettings(trialId, false);;
             Dataset dataset = SettingsUtil.convertWorkbookToXmlDataset(workbook);

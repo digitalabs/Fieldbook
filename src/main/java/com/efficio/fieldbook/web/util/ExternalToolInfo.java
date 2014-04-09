@@ -20,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
-import com.efficio.fieldbook.web.fieldmap.controller.FieldmapController;
 
 /**
  * The Class GitRepositoryState.

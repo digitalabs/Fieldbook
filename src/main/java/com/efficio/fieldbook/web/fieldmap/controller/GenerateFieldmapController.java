@@ -42,7 +42,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.ExportExcelService;
 import com.efficio.fieldbook.service.api.FieldMapService;
-import com.efficio.fieldbook.util.FieldMapUtilityHelper;
 import com.efficio.fieldbook.util.FieldbookException;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.fieldmap.bean.Plot;
@@ -237,7 +236,7 @@ public class GenerateFieldmapController extends AbstractBaseFieldbookController{
 
         int col = rows / rowsPerPlot;
         //should list here the deleted plot in col-range format
-        Map deletedPlot = new HashMap();
+        Map<String, String> deletedPlot = new HashMap<String, String>();
         if (form.getMarkedCells() != null && !form.getMarkedCells().isEmpty()) {
             List<String> markedCells = Arrays.asList(form.getMarkedCells().split(","));
             

@@ -18,7 +18,6 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface MeasurementsGeneratorService.
  */

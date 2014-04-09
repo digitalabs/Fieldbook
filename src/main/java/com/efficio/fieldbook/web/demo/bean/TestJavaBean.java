@@ -19,7 +19,9 @@ import java.io.Serializable;
 public class TestJavaBean implements Serializable {
 
     
-    /** The name. */
+	private static final long serialVersionUID = 1L;
+
+	/** The name. */
     private String name;
 	
 	/** The age. */

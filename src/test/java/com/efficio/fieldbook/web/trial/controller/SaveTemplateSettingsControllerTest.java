@@ -19,8 +19,8 @@ import java.util.List;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
 import org.generationcp.middleware.pojos.workbench.Tool;
-import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.pojos.workbench.settings.TrialDataset;
+import org.generationcp.middleware.util.Debug;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -126,7 +126,7 @@ public class SaveTemplateSettingsControllerTest extends AbstractJUnit4SpringCont
     	 templateSettingFilter.setIsDefaultToNull();
     	 List<TemplateSetting> dbTemplateSettingList = workbenchService.getTemplateSettings(templateSettingFilter);
     	 TemplateSetting dbTemplateSetting = dbTemplateSettingList.get(0);
-    	 System.out.println(templateSetting.getConfiguration());
+    	 Debug.println(0, templateSetting.getConfiguration());
     	 assertEquals(templateSetting.getTemplateSettingId(), dbTemplateSetting.getTemplateSettingId());
     	 assertEquals(templateSetting.getConfiguration(), dbTemplateSetting.getConfiguration());
     	  

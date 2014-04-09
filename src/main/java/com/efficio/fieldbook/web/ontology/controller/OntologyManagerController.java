@@ -852,7 +852,6 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
      * @param model the model
      * @return the string
      */
-    @SuppressWarnings("rawtypes")
     @RequestMapping(value="retrieve/linked/variable/{ontologyType}/{id}", method = RequestMethod.GET)
     public String getLinkedVariable(@PathVariable String ontologyType
             , @PathVariable String id, Model model) {
@@ -871,7 +870,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
             }
             
             if(standardVariableList != null && !standardVariableList.isEmpty()){
-                Collections.sort(standardVariableList, new Comparator(){
+                Collections.sort(standardVariableList, new Comparator<Object>(){
                     @Override
                     public int compare(Object o1, Object o2) {
                         return ((StandardVariable)o1).getName().toUpperCase()

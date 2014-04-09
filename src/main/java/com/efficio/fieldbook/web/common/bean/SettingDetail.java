@@ -11,15 +11,16 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.common.bean;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.ValueReference;
-import org.generationcp.middleware.domain.dms.VariableConstraints;
 
 
-public class SettingDetail {
+public class SettingDetail implements Serializable {
 
+	private static final long serialVersionUID = 1L;
 	private SettingVariable variable;
 	private List<ValueReference> possibleValues;
 	private List<ValueReference> possibleValuesFavorite;

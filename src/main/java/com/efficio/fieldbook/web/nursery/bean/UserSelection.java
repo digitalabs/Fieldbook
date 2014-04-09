@@ -24,7 +24,6 @@ import org.generationcp.middleware.domain.oms.TraitClassReference;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.StudySelection;
 
-// TODO: Auto-generated Javadoc
 /**
  * This bean models the various input that the user builds up over time
  * to perform the actual loading operation.

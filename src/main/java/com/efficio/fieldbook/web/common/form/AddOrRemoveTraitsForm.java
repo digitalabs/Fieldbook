@@ -20,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class AddOrRemoveTraitsForm.
  */

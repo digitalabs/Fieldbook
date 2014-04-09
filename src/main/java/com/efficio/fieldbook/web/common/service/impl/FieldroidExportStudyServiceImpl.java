@@ -18,6 +18,8 @@ import java.util.List;
 
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.csvreader.CsvWriter;
@@ -29,6 +31,8 @@ import com.efficio.fieldbook.web.util.FieldbookProperty;
 @Service
 public class FieldroidExportStudyServiceImpl implements
 		FieldroidExportStudyService {
+	
+    private static final Logger LOG = LoggerFactory.getLogger(FieldroidExportStudyServiceImpl.class);
 
 	/* (non-Javadoc)
 	 * @see com.efficio.fieldbook.web.nursery.service.ExportStudyService#export(org.generationcp.middleware.domain.etl.Workbook, java.lang.String)
@@ -62,7 +66,7 @@ public class FieldroidExportStudyServiceImpl implements
             csv.writeDATA(csvOutput);
             
         } catch (IOException e) {
-            System.out.println("ERROR AL CREAR CVS fieldlog");
+            LOG.error("ERROR AL CREAR CVS fieldlog", e);
             
         } finally {
         	if (csvOutput != null) {

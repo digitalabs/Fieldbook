@@ -77,7 +77,7 @@ public class PlantingDetailsController extends AbstractBaseFieldbookController{
 	        List<FieldMapInfo> infos = fieldbookMiddlewareService.getAllFieldMapsInBlockByBlockId(
 		        		userFieldmap.getBlockId());
 	        if(this.userFieldmap.getSelectedFieldMapsToBeAdded() == null){
-	        	this.userFieldmap.setSelectedFieldMapsToBeAdded(new ArrayList(this.userFieldmap.getSelectedFieldMaps()));
+	        	this.userFieldmap.setSelectedFieldMapsToBeAdded(new ArrayList<FieldMapInfo>(this.userFieldmap.getSelectedFieldMaps()));
 	        }
 
         	//this is to add the new nusery

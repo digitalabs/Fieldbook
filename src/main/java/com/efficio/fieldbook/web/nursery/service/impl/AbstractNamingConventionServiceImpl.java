@@ -51,7 +51,7 @@ implements NamingConventionService {
 
     @Override
     public List<ImportedGermplasm> advanceNursery(AdvancingNursery info, Workbook workbook) throws MiddlewareQueryException {
-    	long start = System.currentTimeMillis();
+    	//long start = System.currentTimeMillis();
         AdvancingSourceList list = createAdvancingSourceList(info, workbook);
         //System.out.println("Time advanceNursery 1: " + (System.currentTimeMillis() - start));
         updatePlantsSelectedIfNecessary(list, info);
@@ -94,7 +94,7 @@ implements NamingConventionService {
 
     private AdvancingSourceList createAdvancingSourceList(AdvancingNursery advanceInfo, Workbook workbook) throws MiddlewareQueryException {
         int nurseryId = advanceInfo.getStudy().getId();
-        long start = System.currentTimeMillis();
+//        long start = System.currentTimeMillis();
         if(workbook == null){
         	workbook = fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
         	//to ensure there is workbook, not actually needed since we optimize already
@@ -186,7 +186,7 @@ implements NamingConventionService {
     private void assignGermplasms(AdvancingSourceList list) throws MiddlewareQueryException {
     	//long start = System.currentTimeMillis();
     	
-    	List<Integer> gidList = new ArrayList();
+    	List<Integer> gidList = new ArrayList<Integer>();
     	
         if (list != null && list.getRows() != null && !list.getRows().isEmpty()) {
             for (AdvancingSource source : list.getRows()) {
@@ -205,7 +205,7 @@ implements NamingConventionService {
                 }
             }
             List<Germplasm> germplasmList = fieldbookMiddlewareService.getGermplasms(gidList);
-            Map<String, Germplasm> germplasmMap = new HashMap();
+            Map<String, Germplasm> germplasmMap = new HashMap<String, Germplasm>();
             for(Germplasm germplasm : germplasmList){
             	germplasmMap.put(germplasm.getGid().toString(), germplasm);
             }

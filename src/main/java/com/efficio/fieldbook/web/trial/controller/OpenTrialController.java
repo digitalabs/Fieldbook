@@ -84,8 +84,7 @@ public class OpenTrialController extends
             try {
 				SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
 			} catch (MiddlewareQueryException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOG.debug(e.getMessage(), e);
 			}
            
             

@@ -14,7 +14,6 @@ package com.efficio.fieldbook.web.demo.form;
 import java.util.List;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 
 /**

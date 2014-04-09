@@ -90,7 +90,7 @@ public class DataKaptureExportStudyServiceImpl implements
             csv.writeTraitsDataKapture(csvOutput);
             csvOutput.close();
         } catch (IOException e) {
-            System.out.println("ERROR AL CREAR CVS fieldlog");
+            LOG.error("ERROR AL CREAR CVS fieldlog", e);
         }
         return outputFile;
 	}

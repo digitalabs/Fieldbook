@@ -40,7 +40,6 @@ import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.AppConstants;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class SettingsController.
  */

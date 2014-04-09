@@ -12,28 +12,21 @@
 package com.efficio.fieldbook.web.trial.controller;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.generationcp.middleware.domain.dms.PhenotypicType;
-import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
-import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
-import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.pojos.workbench.settings.TrialDataset;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
@@ -474,7 +467,7 @@ public class ManageTrialSettingsController extends SettingsController{
     private void deleteVariableInSession(List<SettingDetail> variableList, int variableId) {
         Iterator<SettingDetail> iter = variableList.iterator();
         while (iter.hasNext()) {
-            if (iter.next().getVariable().getCvTermId().equals(new Integer(variableId))) {
+            if (iter.next().getVariable().getCvTermId().equals(Integer.valueOf(variableId))) {
                 iter.remove();
             }
         }

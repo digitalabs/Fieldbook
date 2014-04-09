@@ -453,7 +453,7 @@ public class ManageNurserySettingsController extends SettingsController{
     private void deleteVariableInSession(List<SettingDetail> variableList, int variableId) {
         Iterator<SettingDetail> iter = variableList.iterator();
         while (iter.hasNext()) {
-            if (iter.next().getVariable().getCvTermId().equals(new Integer(variableId))) {
+            if (iter.next().getVariable().getCvTermId().equals(Integer.valueOf(variableId))) {
                 iter.remove();
             }
         }

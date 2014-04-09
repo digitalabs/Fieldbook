@@ -11,7 +11,6 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -135,7 +134,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     @RequestMapping(value="/load/{nurseryId}", method = RequestMethod.GET)
     public Map<String, String> showLoadNursery(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form
             , Model model, HttpSession session, @PathVariable int nurseryId) throws MiddlewareQueryException{
-    	long start = System.currentTimeMillis();
+    	//long start = System.currentTimeMillis();
     	Map<String, String> result = new HashMap<String, String>();
     	
     	Workbook workbook = fieldbookMiddlewareService.getNurseryDataSet(nurseryId);    	

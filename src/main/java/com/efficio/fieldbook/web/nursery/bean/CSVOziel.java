@@ -377,7 +377,7 @@ public class CSVOziel {
         return col;
     }
     
-    public void DefineTraitToEvaluate(String stringTraitToEval) {
+    public void defineTraitToEvaluate(String stringTraitToEval) {
         this.stringTraitToEvaluate=stringTraitToEval;
     }
 
@@ -528,7 +528,7 @@ public class CSVOziel {
                 csvOutput.endRecord();
             }
         } catch (IOException ex) {
-            System.out.println("ERROR AL GENERAR DATA CSV " + ex);
+            LOG.error("ERROR AL GENERAR DATA CSV " + ex, ex);
         }
     }
 
@@ -586,7 +586,7 @@ public class CSVOziel {
                 csvOutput.endRecord();
             }
         } catch (IOException ex) {
-            System.out.println("Error al generar el archivo csv: " + ex);
+            LOG.error("Error al generar el archivo csv: " + ex, ex);
         }
     }
 

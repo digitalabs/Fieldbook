@@ -29,6 +29,7 @@ import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.pojos.workbench.settings.Factor;
 import org.generationcp.middleware.pojos.workbench.settings.Variate;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.util.Debug;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -108,7 +109,7 @@ public class ManageNurseriesControllerTest extends AbstractJUnit4SpringContextTe
 		dataset.getVariates().add(new Variate("VARIATE1", "VARIATE1", "YIELD (GRAIN)", "Kg/ha", "Paddy Rice", PhenotypicType.VARIATE.toString(), "N", TermId.NUMERIC_VARIABLE.getId(), new ArrayList<ValueReference>(), 0.0, 0.0));
 		
 		Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);
-		System.out.println(workbook);
+		Debug.println(0, workbook);
 		
 		Dataset newDataset = (Dataset)SettingsUtil.convertWorkbookToXmlDataset(workbook);
 		Assert.assertEquals(dataset.getConditions().get(0).getName(), newDataset.getConditions().get(0).getName());

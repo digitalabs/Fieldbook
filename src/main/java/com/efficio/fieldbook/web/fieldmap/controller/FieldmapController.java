@@ -46,7 +46,6 @@ import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class FieldmapController.
  * 
@@ -598,8 +597,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         	else 
         		msg = "error";
 		} catch (MiddlewareQueryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
         return msg;
     }
@@ -617,8 +615,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
 				}
 			}
 		} catch (MiddlewareQueryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
     	return isUnique;
     }
@@ -635,8 +632,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
 				}
 			}
 		} catch (MiddlewareQueryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
     	return isUnique;
     }
@@ -662,8 +658,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         	else
         		msg = "error";
 		} catch (MiddlewareQueryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
         return msg;
     }

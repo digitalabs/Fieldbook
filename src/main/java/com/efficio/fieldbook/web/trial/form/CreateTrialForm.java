@@ -17,8 +17,6 @@ import org.generationcp.middleware.domain.dms.ValueReference;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 
-
-// TODO: Auto-generated Javadoc
 /**
  * The Class CreateNurseryForm.
  */

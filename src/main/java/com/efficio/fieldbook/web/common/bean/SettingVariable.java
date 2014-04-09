@@ -11,6 +11,8 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.common.bean;
 
+import java.io.Serializable;
+
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 
@@ -18,7 +20,9 @@ import com.efficio.fieldbook.web.nursery.bean.WidgetType;
 import com.efficio.fieldbook.web.util.AppConstants;
 
 
-public class SettingVariable {
+public class SettingVariable implements Serializable{
+
+	private static final long serialVersionUID = 1L;
 
 	private Integer cvTermId;
 	private String name;

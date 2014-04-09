@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.generationcp.middleware.util.Debug;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,7 +51,7 @@ public class ZipTester extends AbstractJUnit4SpringContextTests {
      */
     @Before
     public void setUp() {
-    	filenameList = new ArrayList();
+    	filenameList = new ArrayList<String>();
     	filenameList.add("test1.txt");
     	filenameList.add("test2.txt");
     	try {
@@ -61,8 +62,7 @@ public class ZipTester extends AbstractJUnit4SpringContextTests {
 				
 	    	}
     	} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
     }
     private void deleteFiles(){
@@ -91,14 +91,13 @@ public class ZipTester extends AbstractJUnit4SpringContextTests {
 		    int size = 0;
 		    while(entries.hasMoreElements()){
 		        ZipEntry entry = entries.nextElement();
-		        System.out.println(entry.getName());
+		        Debug.println(0, entry.getName());
 		        assertFalse(!filenameList.contains(entry.getName()));
 		        size++;
 		    }
 		    assertEquals(filenameList.size(), size);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
 		
 		deleteFiles();

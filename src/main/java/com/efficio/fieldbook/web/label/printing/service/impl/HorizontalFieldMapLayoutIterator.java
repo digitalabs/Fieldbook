@@ -30,7 +30,7 @@ public class HorizontalFieldMapLayoutIterator implements
      * @see com.efficio.fieldbook.service.api.FieldMapService#createFieldMap(int, int, int, int, boolean, java.util.Map, java.util.List, boolean)
      */
     public Plot[][] createFieldMap(int col, int range, int startRange,
-            int startCol, boolean isSerpentine, Map deletedPlot,
+            int startCol, boolean isSerpentine, Map<String, String> deletedPlot,
             List<FieldMapLabel> labels, boolean isTrial, Plot[][] currentPlots) {
         
        

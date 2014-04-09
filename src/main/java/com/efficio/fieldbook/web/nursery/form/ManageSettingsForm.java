@@ -18,7 +18,6 @@ import org.generationcp.middleware.domain.oms.TraitClassReference;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class AddOrRemoveTraitsForm.
  */

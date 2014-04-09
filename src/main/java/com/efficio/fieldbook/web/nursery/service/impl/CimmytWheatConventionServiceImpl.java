@@ -50,9 +50,9 @@ implements CimmytWheatConventionService {
         List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
         String newGermplasmName;
         String suffix = rows.getLocationAbbreviation();
-        long start = System.currentTimeMillis();
+        //long start = System.currentTimeMillis();
         int index = 1;
-        Map<String, Method> breedingMethodMap = new HashMap();
+        Map<String, Method> breedingMethodMap = new HashMap<String, Method>();
         List<Method> methodList = fieldbookMiddlewareService.getAllBreedingMethods();
         for(Method method: methodList){
         	breedingMethodMap.put(method.getMid().toString(), method);

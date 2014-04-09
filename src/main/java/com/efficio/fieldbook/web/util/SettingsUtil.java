@@ -34,19 +34,22 @@ import org.generationcp.middleware.pojos.workbench.settings.TrialDataset;
 import org.generationcp.middleware.pojos.workbench.settings.Variate;
 import org.pojoxml.core.PojoXml;
 import org.pojoxml.core.PojoXmlFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 
-
-// TODO: Auto-generated Javadoc
 /**
  * The Class SettingsUtil.
  */
 public class SettingsUtil {
-	
+
+    /** The Constant LOG. */
+    private static final Logger LOG = LoggerFactory.getLogger(SettingsUtil.class);
+
 	public static String cleanSheetAndFileName(String name){
 		if(name == null)
 			return null;
@@ -108,8 +111,7 @@ public class SettingsUtil {
 			bw.close();
 		
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
 		ParentDataset dataset  = null;
 		if(isNursery)
@@ -308,8 +310,7 @@ public class SettingsUtil {
 			//possibleValueList = fieldbookService.getAllPossibleValuesByPSMR(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(variable.getRole()));
 			possibleValueList = fieldbookService.getAllPossibleValues(standardVariableId);
 		} catch (MiddlewareQueryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
 		return possibleValueList;
 	}
@@ -330,8 +331,7 @@ public class SettingsUtil {
                     //possibleValueList = fieldbookService.getAllPossibleValuesByPSMR(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(variable.getRole()));
                     possibleValueList = fieldbookService.getAllPossibleValuesFavorite(standardVariableId, projectId);
             } catch (MiddlewareQueryException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+    			LOG.error(e.getMessage(), e);
             }
             return possibleValueList;
 	}
@@ -622,7 +622,7 @@ public class SettingsUtil {
 	 * @return the list
 	 */
 	public static List<Condition> generateDummyCondition(int limit){
-		List<Condition> conditions = new ArrayList();
+		List<Condition> conditions = new ArrayList<Condition>();
 		for(int i = 0 ; i < limit ; i++){
 			Condition condition = new Condition();
 			
@@ -646,7 +646,7 @@ public class SettingsUtil {
 	 * @return the list
 	 */
 	public static List<Factor> generateDummyFactor(int limit){
-		List<Factor> factors = new ArrayList();
+		List<Factor> factors = new ArrayList<Factor>();
 		for(int i = 0 ; i < limit ; i++){
 			Factor factor = new Factor();
 			
@@ -669,7 +669,7 @@ public class SettingsUtil {
 	 * @return the list
 	 */
 	public static List<Variate> generateDummyVariate(int limit){
-		List<Variate> variates = new ArrayList();
+		List<Variate> variates = new ArrayList<Variate>();
 		for(int i = 0 ; i < limit ; i++){
 			Variate variate = new Variate();
 			

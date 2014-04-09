@@ -50,10 +50,12 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			HSSFWorkbook xlsBook = new HSSFWorkbook(new FileInputStream(new File(filename))); //WorkbookFactory.create(new FileInputStream(new File(filename)));
 			
 			List<MeasurementRow> observations = filterObservationsByTrialInstance(xlsBook, workbook.getObservations());
+			List<MeasurementRow> trialObservations = filterObservationsByTrialInstance(xlsBook, workbook.getTrialObservations());
 
 			validate(xlsBook, workbook, observations);
 				
-			importDataToWorkbook(xlsBook, workbook, observations);
+			importDataToWorkbook(xlsBook, observations);
+			importTrialToWorkbook(xlsBook, trialObservations);
 
 		} catch (WorkbookParserException e) {
 			throw e;
@@ -63,7 +65,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 		}
 	}
 	
-	private void importDataToWorkbook(HSSFWorkbook xlsBook, Workbook workbook, List<MeasurementRow> observations) {
+	private void importDataToWorkbook(HSSFWorkbook xlsBook, List<MeasurementRow> observations) {
 		if (observations != null) {
 			HSSFSheet observationSheet = xlsBook.getSheetAt(1);
 			int xlsRowIndex = 1; //row 0 is the header row
@@ -100,6 +102,18 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 					}
 				}
 				xlsRowIndex++;
+			}
+		}
+	}
+
+	private void importTrialToWorkbook(HSSFWorkbook xlsBook, List<MeasurementRow> observations) {
+		if (observations != null) {
+			for (MeasurementRow wRow : observations) {
+				for (MeasurementData wData : wRow.getDataList()) {
+					String label = wData.getLabel();
+					String value = findValueFromDescriptionSheet(xlsBook, label);
+					wData.setValue(value);
+				}
 			}
 		}
 	}
@@ -247,6 +261,24 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	        }
         }
         return result;
+    }
+
+    private String findValueFromDescriptionSheet(HSSFWorkbook workbook, String cellValue) {
+    	System.out.println("LOOKING FOR " + cellValue);
+    	HSSFSheet sheet = workbook.getSheetAt(0);
+        if (cellValue != null) {
+	        int lastRow = sheet.getLastRowNum();
+	        for (int i = 0; i < lastRow; i++) {
+	        	HSSFRow row = sheet.getRow(i);
+	        	if (row != null) {
+		        	HSSFCell cell = row.getCell(0);
+		        	if (cell.getStringCellValue().equals(cellValue)) {
+		        		return row.getCell(6) != null ? row.getCell(6).getStringCellValue() : "";
+		        	}
+	        	}
+	        }
+        }
+        return "";
     }
 
     private String getColumnLabel(Workbook workbook, int termId) {

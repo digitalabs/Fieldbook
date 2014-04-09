@@ -1,9 +1,14 @@
 package com.efficio.fieldbook.web.common.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.StudySelection;
 import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.common.service.DataKaptureImportStudyService;
@@ -158,7 +164,29 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	    	userSelection.setCurrentPage(form.getCurrentPage());
 	    	form.setImportVal(1);
 	    	form.setNumberOfInstances(userSelection.getWorkbook().getTotalNumberOfInstances());
+	    	form.setTrialEnvironmentValues(transformTrialObservations(userSelection.getWorkbook().getTrialObservations(), nurserySelection.getTrialLevelVariableList()));
+	    	form.setTrialLevelVariables(nurserySelection.getTrialLevelVariableList());
     	return show(model, isTrial);
+    }
+    
+    private List<List<ValueReference>> transformTrialObservations(List<MeasurementRow> trialObservations, List<SettingDetail> trialHeaders) {
+    	List<List<ValueReference>> list = new ArrayList<List<ValueReference>>();
+    	if (trialObservations != null && !trialObservations.isEmpty()) {
+    		for (MeasurementRow row : trialObservations) {
+        		List<ValueReference> refList = new ArrayList<ValueReference>();
+        		for (SettingDetail header : trialHeaders) {
+        			for (MeasurementData data : row.getDataList()) {
+        				if (data.getMeasurementVariable() != null
+        					&& data.getMeasurementVariable().getTermId() == header.getVariable().getCvTermId()) {
+        					
+        					refList.add(new ValueReference(data.getMeasurementVariable().getTermId(), data.getValue()));
+        				}
+        			}
+        		}
+        		list.add(refList);
+    		}
+    	}
+    	return list;
     }
     
     private StudySelection getUserSelection(boolean isTrial) {

@@ -52,6 +52,8 @@ import com.efficio.fieldbook.web.util.ZipUtil;
 @Service
 public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	
+	private static final int PIXEL_SIZE = 250;
+	
 	@Resource
 	private MessageSource messageSource;
 	
@@ -133,9 +135,17 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		xlsSheet.createRow(currentRowNum++);
 		currentRowNum = writeVariates(currentRowNum, xlsBook, xlsSheet, workbook.getVariates());
 		
-		for(int i = 0 ; i < 8 ; i++){
-			xlsSheet.autoSizeColumn(i);
-		}
+//		for(int i = 0 ; i < 8 ; i++){
+//			xlsSheet.autoSizeColumn(i);
+//		}
+		xlsSheet.setColumnWidth(0, 20 * PIXEL_SIZE);
+		xlsSheet.setColumnWidth(1, 24 * PIXEL_SIZE);
+		xlsSheet.setColumnWidth(2, 30 * PIXEL_SIZE);
+		xlsSheet.setColumnWidth(3, 18 * PIXEL_SIZE);
+		xlsSheet.setColumnWidth(4, 18 * PIXEL_SIZE);
+		xlsSheet.setColumnWidth(5, 15 * PIXEL_SIZE);
+		xlsSheet.setColumnWidth(6, 20 * PIXEL_SIZE);
+		xlsSheet.setColumnWidth(7, 20 * PIXEL_SIZE);
 	}
 
 	private void writeObservationSheet(HSSFWorkbook xlsBook, Workbook workbook, List<MeasurementRow> observations) {
@@ -300,6 +310,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		cell.setCellValue(variable.getDataTypeDisplay());
 
 		cell = row.createCell(6, HSSFCell.CELL_TYPE_STRING);
+		cleanupValue(variable);
 		cell.setCellValue(variable.getValue());
 
 		cell = row.createCell(7, HSSFCell.CELL_TYPE_STRING);
@@ -350,6 +361,31 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 			}
 			
 		}
+	}
+	
+	private void cleanupValue(MeasurementVariable variable) {
+		if (variable.getValue() != null) {
+			variable.setValue(variable.getValue().trim());
+			List<Integer> specialDropdowns = getSpecialDropdownIds();
+			if (specialDropdowns.contains(variable.getTermId()) && "0".equals(variable.getValue())) {
+				variable.setValue("");
+			}
+			else if (variable.getDataTypeId().equals(TermId.DATE_VARIABLE.getId()) && "0".equals(variable.getValue())) {
+				variable.setValue("");
+			}
+		}
+	}
+	
+	private List<Integer> getSpecialDropdownIds() {
+		List<Integer> ids = new ArrayList<Integer>();
+		
+		String idNameCombo = AppConstants.ID_NAME_COMBINATION.getString();
+		String[] idNames = idNameCombo.split(",");
+		for (String idName : idNames) {
+			ids.add(Integer.valueOf(idName.substring(0, idName.indexOf("|"))));
+		}
+		
+		return ids;
 	}
 	
 }

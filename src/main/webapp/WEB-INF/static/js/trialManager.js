@@ -1044,7 +1044,7 @@ function sortByKey(array, key) {
     });
 }
 
-function initializePossibleValuesCombo(possibleValues, name, isLocation, defaultValue) {
+function initializePossibleValuesCombo(possibleValues, name, showAllLocation, defaultValue) {
 	var possibleValues_obj = [];
 	var defaultJsonVal = null;
 	
@@ -1075,7 +1075,7 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation, default
 	
 	possibleValues_obj = sortByKey(possibleValues_obj, "text");
 
-	if (isLocation) {
+	if (showAllLocation) {
 		$(name).select2({
 			minimumInputLength: 2,
 			query: function (query) {	
@@ -1091,6 +1091,12 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation, default
 		      
 		        query.callback(data);
 		    }
+	    }).unbind("change").on("change", function () {
+	    	if ($("#showFavoriteLocationForAll").is(":checked")) {
+	    		$(this).parent().children(".selectedFavoriteValue").val($(name).select2("data").id);
+	    	} else {
+	    		$(this).parent().children(".selectedValue").val($(name).select2("data").id);
+	    	}
 	    });
 	} else if (name.indexOf("trialEnvironmentValues") > -1 && typeof replicates !== 'undefined' && replicates) {
 		$(name).select2({
@@ -1107,7 +1113,15 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation, default
 		      
 		        query.callback(data);
 		    }
-	    }).on("change", function () {
+	    }).unbind("change").on("change", function () {
+	    	if ($(this).parent().children(".selectValue").length == 1) {
+	    		if ($("#showFavoriteLocationForAll").is(":checked")) {
+		    		$(this).parent().children(".selectedFavoriteValue").val($(name).select2("data").id);
+		    	} else {
+		    		$(this).parent().children(".selectedValue").val($(name).select2("data").id);
+		    	}
+	    	}
+	    	
 	    	if (isReplicateOrBlockSize($(this).attr("name"))) {
 	    		//compute block per replicate
 	    		
@@ -2172,10 +2186,18 @@ function recreateSelect2ComboMultiple(index, row, cellIndex, cell) {
 	newCell = newCell + "<div id='possibleValuesFavoriteJsonTrial" + index + "a" + cellIndex + "' class='possibleValuesFavoriteJsonTrial' style='display:none'>" + 
 		possibleValuesFavoriteJson + "</div>";
 	
+	if (parseInt(cvTermId) == parseInt(locationId)) {
+		
+		//hidden field for location value
+		newCell = newCell + " <input type='hidden' id='selectedValue" + index + "a" + cellIndex + "' class='selectedValue' type='hidden' value='' />";
+		newCell = newCell + " <input type='hidden' id='selectedFavoriteValue" + index + "a" + cellIndex + "' class='selectedFavoriteValue' type='hidden' value='' />";
+	}
+	
 	var isFavoriteChecked = $("#showFavoriteLocationForAll").is(":checked");
 	var showAll = true;
 	//set possibleValues to favorite possible values
 	if (isFavoriteChecked && parseInt(cvTermId) == parseInt(locationId)) {
+		//hidden field for location
 		possibleValuesJson = possibleValuesFavoriteJson;
 		showAll = false;
 	}
@@ -2205,16 +2227,19 @@ function addTrialInstances() {
 	var reg2 = new RegExp("trialEnvironmentValues\[[0-9]+\]", "g");
 	var reg3 = new RegExp("possibleValuesJsonTrial0a", "g");
 	var reg4 = new RegExp("possibleValuesFavoriteJsonTrial0a", "g");
+	var reg5 = new RegExp("selectedValue0a", "g");
+	var reg6 = new RegExp("selectedFavoriteValue0a", "g");
 
 	for (var i = $("#trialInstancesTable tbody tr").length; i < $("#trialInstances").val(); i++) {
 		var cells = $("#trialInstancesTable tbody tr").get(0).innerHTML.replace(reg, "trialEnvironmentValues" + i);
 		cells = cells.replace(reg2, "trialEnvironmentValues[" + i + "]");
 		cells = cells.replace(reg3, "possibleValuesJsonTrial" + i + "a");
 		cells = cells.replace(reg4, "possibleValuesFavoriteJsonTrial" + i + "a");
+		cells = cells.replace(reg5, "selectedValue" + i + "a");
+		cells = cells.replace(reg6, "selectedFavoriteValue" + i + "a");
 		
 		newRow = "<tr>" + cells + "</tr>";
 		$("#trialInstancesTable tbody").append(newRow);
-		
 		recreateMultipleObjects(i, $("#trialInstancesTable tbody tr:last")); 
 	}
 	
@@ -2238,7 +2263,14 @@ function toggleLocationDropdownForAll(){
 				var selectedVal = null;
 				
 				//get previously selected value
-				if ($("#" + getJquerySafeId("trialEnvironmentValues" + index + cellIndex + ".name")).select2("data")) {
+				if ($(cell).find(".selectedFavoriteValue").length == 1) { 
+					if (isFavoriteChecked) {
+						selectedVal = $($(cell).find(".selectedFavoriteValue")).val();
+					} else {
+						selectedVal = $($(cell).find(".selectedValue")).val();
+					}
+				}
+				if ($("#" + getJquerySafeId("trialEnvironmentValues" + index + cellIndex + ".name")).select2("data") && (selectedVal == "" || selectedVal == null)) {
 					selectedVal = $("#" + getJquerySafeId("trialEnvironmentValues" + index + cellIndex + ".name")).select2("data").id;
 				}
 

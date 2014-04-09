@@ -25,6 +25,13 @@
 							class="possibleValuesFavoriteJsonTrial" style="display:none" th:text="${trialEnvLevelVariable.possibleValuesFavoriteJson}">
 						</div>
 						
+						<input th:if="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].id} == *{locationId}" 
+						th:id="'selectedValue' + ${row.index} + 'a'  + ${rowStat.index}" class="selectedValue"
+						type="hidden" th:value="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" />
+						<input th:if="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].id} == *{locationId}" 
+						th:id="'selectedFavoriteValue' + ${row.index} + 'a'  + ${rowStat.index}" class="selectedFavoriteValue"
+						type="hidden" th:value="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" />
+						
 						<label class="control-label trialInstanceNo" th:if="${trialEnvLevelVariable.variable.widgetType.type == 'NTEXT' and trialEnvLevelVariable.deletable == false}" th:text="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}"></label>
 						<input type="hidden" th:if="${trialEnvLevelVariable.variable.widgetType.type == 'NTEXT' and trialEnvLevelVariable.deletable == false}" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" />
 						

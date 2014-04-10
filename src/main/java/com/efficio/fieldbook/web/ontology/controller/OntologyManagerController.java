@@ -1148,4 +1148,31 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         return result;
     }
     
+    /**
+     * Delete ontology.
+     *
+     * @param id the id
+     * @param name the name
+     * @param ontology the ontology
+     * @return the map
+     */
+    @ResponseBody
+    @RequestMapping(value = "categorical/verify/{standardVariableId}/{enumerationId}", method = RequestMethod.GET)
+    public Map<String, Object> deleteValidValue(@PathVariable String standardVariableId, 
+    		@PathVariable String enumerationId) {
+        Map<String, Object> result = new HashMap<String, Object>();
+        
+        try {
+        	boolean isValidDelete = ontologyService.validateDeleteStandardVariableEnumeration(Integer.parseInt(standardVariableId),Integer.parseInt(enumerationId));
+        	if(isValidDelete)
+        		result.put("status", "1");
+        	else
+        		result.put("status", "0");
+        } catch(MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+            result.put("status", "0");          
+        }
+        
+        return result;
+    }
 }

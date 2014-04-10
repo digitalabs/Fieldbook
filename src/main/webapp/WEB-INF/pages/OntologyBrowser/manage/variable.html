@@ -350,6 +350,8 @@
   	var roleOptionList = [];
   	var dataTypeOptionList = [];
   	
+  	var variateValidValueDeleteError = /*[[#{ontology.browser.categorical.variate.delete.error}]]*/;
+  	
   	
   	var psmrError = /*[[#{error.pcm.combination.exists}]]*/;
 	function validateCombo(combo) {
@@ -584,7 +586,7 @@
 	}
 	
 	function addCatVar(label, description, id) {
-		
+		label = $.trim(label);
 		var errorColumn = validateNewValidValue(label, description, id);
 		var message = "";
 		if (errorColumn == "") {

@@ -1441,9 +1441,36 @@ function delCatVar(button) {
 	if (enumerations[index].id == null || enumerations[index].id == "") {
 		enumerations.splice(index, 1);
 	} else {
+		
+		//we add the checking here if its being use before deleting
+		var stdVarId = $('#comboVariableName').select2('data').id;
+		var enumerationId = enumerations[index].id;
+		//console.log(stdVarId + " " + enumerationId );
+		
+		//daniel
+		
+		Spinner.toggle();
+    	
+		$.ajax({
+			url: '/Fieldbook/OntologyManager/manage/categorical/verify/'+stdVarId+"/"+enumerationId,
+			type: "GET",
+			data: "",
+			cache: false,
+			async: false,
+			success: function (data) {
+				Spinner.toggle();
+				if(data.status == '0'){					
+					showErrorMessage('page-message', variateValidValueDeleteError);
+					return;
+				}
+				//console.log(data);
+			}			
+		});
+		
+		
 		enumerations[index].operation = "-1";
 	}
-	
+	//console.log('here');
 	//remove the row
 	button.closest("tr").remove();
 	if ($("#catVarList").height() <= 200 && $("#catVarList").parent().hasClass("scrollWrapper")) {

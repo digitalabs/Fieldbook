@@ -622,24 +622,24 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                 }else{
                     traitClassId = Integer.parseInt(traitClass);
                 }
-                term = ontologyService.addProperty(property, propertyDescription, traitClassId).getTerm();
+                term = ontologyService.addProperty(property.trim(), propertyDescription, traitClassId).getTerm();
                 
             } else if (combo.equals("Method")) {
                 if (methodDescription == null || methodDescription.equals("")) {
                     methodDescription = method;
                 }
-                term = ontologyService.addMethod(method, methodDescription).getTerm();
+                term = ontologyService.addMethod(method.trim(), methodDescription).getTerm();
             } else if (combo.equals("Scale")) {
                 if (scaleDescription == null || scaleDescription.equals("")) {
                     scaleDescription = scale;
                 }
-                term = ontologyService.addScale(scale, scaleDescription).getTerm();
+                term = ontologyService.addScale(scale.trim(), scaleDescription).getTerm();
             } else {
                 if (traitClassDescription == null || traitClassDescription.equals("")) {
                     traitClassDescription = traitClass;
                 }
                 ontologyName = "Trait Class";
-                term = ontologyService.addTraitClass(traitClass, traitClassDescription
+                term = ontologyService.addTraitClass(traitClass.trim(), traitClassDescription
                         , TermId.ONTOLOGY_TRAIT_CLASS.getId()).getTerm();
             }          
               
@@ -1016,10 +1016,10 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                 ontologyName = messageSource.getMessage("ontology.browser.modal.trait.class", null, locale);
                 String desc = ((OntologyTraitClassForm) form).getManageTraitClassDescription();
                 if(desc != null && desc.equalsIgnoreCase("")){
-                    desc = ((OntologyTraitClassForm) form).getManageTraitClassName();
+                    desc = ((OntologyTraitClassForm) form).getManageTraitClassName().trim();
                 }
                 result.put("savedObject", ontologyService.addOrUpdateTraitClass(
-                        ((OntologyTraitClassForm) form).getManageTraitClassName(), 
+                        ((OntologyTraitClassForm) form).getManageTraitClassName().trim(), 
                         desc, 
                         ((OntologyTraitClassForm) form).getManageParentTraitClassId()));
 
@@ -1042,10 +1042,10 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                 ontologyName = messageSource.getMessage("ontology.browser.modal.property", null, locale);
                 String desc = ((OntologyPropertyForm) form).getManagePropertyDescription();
                 if(desc != null && desc.equalsIgnoreCase("")){
-                    desc = ((OntologyPropertyForm) form).getManagePropertyName();
+                    desc = ((OntologyPropertyForm) form).getManagePropertyName().trim();
                 }
                 result.put("savedObject", ontologyService.addOrUpdateProperty(
-                        ((OntologyPropertyForm)form).getManagePropertyName(), 
+                        ((OntologyPropertyForm)form).getManagePropertyName().trim(), 
                         desc, 
                         ((OntologyPropertyForm)form).getManagePropTraitClassId(),
                         ((OntologyPropertyForm)form).getCropOntologyId()));
@@ -1054,20 +1054,20 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                 ontologyName = messageSource.getMessage("ontology.browser.modal.scale", null, locale);
                 String desc = ((OntologyScaleForm) form).getManageScaleDescription();
                 if(desc != null && desc.equalsIgnoreCase("")){
-                    desc = ((OntologyScaleForm) form).getManageScaleName();
+                    desc = ((OntologyScaleForm) form).getManageScaleName().trim();
                 }
                 result.put("savedObject", ontologyService.addOrUpdateScale(
-                        ((OntologyScaleForm) form).getManageScaleName(), 
+                        ((OntologyScaleForm) form).getManageScaleName().trim(), 
                         desc));
             }
             else if (form instanceof OntologyMethodForm) {
                 ontologyName = messageSource.getMessage("ontology.browser.modal.method", null, locale);
                 String desc = ((OntologyMethodForm) form).getManageMethodDescription();
                 if(desc != null && desc.equalsIgnoreCase("")){
-                    desc = ((OntologyMethodForm) form).getManageMethodName();
+                    desc = ((OntologyMethodForm) form).getManageMethodName().trim();
                 }
                 result.put("savedObject", ontologyService.addOrUpdateMethod(
-                        ((OntologyMethodForm) form).getManageMethodName(), 
+                        ((OntologyMethodForm) form).getManageMethodName().trim(), 
                         desc));
             }
             

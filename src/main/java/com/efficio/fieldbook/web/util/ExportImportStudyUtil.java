@@ -16,7 +16,8 @@ public class ExportImportStudyUtil {
 		if (idValue != null && NumberUtils.isNumber(idValue)) {
 			for (ValueReference ref : possibleValues) {
 				if (ref.getId().equals(Integer.valueOf(idValue))) {
-					return ref.getDescription();
+					//return ref.getDescription();
+					return ref.getName();
 				}
 			}
 		}
@@ -25,7 +26,8 @@ public class ExportImportStudyUtil {
 	
     public static String getCategoricalIdCellValue(String description, List<ValueReference> possibleValues) {
     	for (ValueReference possibleValue : possibleValues) {
-    		if (description.equalsIgnoreCase(possibleValue.getDescription())) {
+//    		if (description.equalsIgnoreCase(possibleValue.getDescription())) {
+    		if (description.equalsIgnoreCase(possibleValue.getName())) {
     			return possibleValue.getId().toString();
     		}
     	}

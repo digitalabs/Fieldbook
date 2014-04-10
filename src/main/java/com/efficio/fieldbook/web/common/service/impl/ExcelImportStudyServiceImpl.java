@@ -23,7 +23,6 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
-import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -33,6 +32,7 @@ import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.web.common.service.ExcelImportStudyService;
+import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 @Service
@@ -84,11 +84,11 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 									&& !wData.getMeasurementVariable().getPossibleValues().isEmpty()) {
 								
 								if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-									xlsValue = getCategoricalIdCellValue(String.valueOf(Double.valueOf(cell.getNumericCellValue()).intValue()), 
+									xlsValue = ExportImportStudyUtil.getCategoricalIdCellValue(String.valueOf(Double.valueOf(cell.getNumericCellValue()).intValue()), 
 											wData.getMeasurementVariable().getPossibleValues());
 								}
 								else {
-									xlsValue = getCategoricalIdCellValue(cell.getStringCellValue(), wData.getMeasurementVariable().getPossibleValues());
+									xlsValue = ExportImportStudyUtil.getCategoricalIdCellValue(cell.getStringCellValue(), wData.getMeasurementVariable().getPossibleValues());
 								}
 							} 
 							else if(cell.getCellType() == Cell.CELL_TYPE_NUMERIC){
@@ -344,14 +344,14 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
     	return null;
     }
     
-    private String getCategoricalIdCellValue(String description, List<ValueReference> possibleValues) {
-    	for (ValueReference possibleValue : possibleValues) {
-    		if (description.equalsIgnoreCase(possibleValue.getDescription())) {
-    			return possibleValue.getId().toString();
-    		}
-    	}
-    	return "";
-    }
+//    private String getCategoricalIdCellValue(String description, List<ValueReference> possibleValues) {
+//    	for (ValueReference possibleValue : possibleValues) {
+//    		if (description.equalsIgnoreCase(possibleValue.getDescription())) {
+//    			return possibleValue.getId().toString();
+//    		}
+//    	}
+//    	return "";
+//    }
     
     private MeasurementRow findMeasurementRow(List<MeasurementRow> rows, int trial, int plot) {
     	if (rows != null) {

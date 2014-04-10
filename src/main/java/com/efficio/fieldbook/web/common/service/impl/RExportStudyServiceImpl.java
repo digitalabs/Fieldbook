@@ -50,7 +50,7 @@ public class RExportStudyServiceImpl implements RExportStudyService {
             csvOutput.write("ENTRY");
             csvOutput.write("GY");
             csv.DefineTraitToEvaluate(getLabel(workbook.getVariates(), selectedTrait));
-            csv.setSelectedTraitId(selectedTrait);
+            csv.setSelectedTrait(getMeasurementVariable(workbook.getVariates(), csv.getStringTraitToEvaluate()));
             csv.writeTraitsR(csvOutput);
             csvOutput.endRecord();
             csv.writeDATAR(csvOutput);
@@ -71,6 +71,17 @@ public class RExportStudyServiceImpl implements RExportStudyService {
 			for (MeasurementVariable variable : variables) {
 				if (variable.getTermId() == termId) {
 					return variable.getName();
+				}
+			}
+		}
+		return null;
+	}
+	
+	private MeasurementVariable getMeasurementVariable(List<MeasurementVariable> variables, String label) {
+		if (variables != null && label != null) {
+			for (MeasurementVariable variable : variables) {
+				if (variable.getName().equalsIgnoreCase(label)) {
+					return variable;
 				}
 			}
 		}

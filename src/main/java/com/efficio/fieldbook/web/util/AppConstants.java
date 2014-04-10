@@ -186,6 +186,9 @@ public enum AppConstants {
     ,BLOCK_SIZE
     ,EXPERIMENTAL_DESIGN
     ,TRIAL_ENVIRONMENT_ORDER
+    
+    ,MANNER_IN_TURN
+    ,MANNER_PER_LOCATION
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

@@ -112,7 +112,7 @@ public class ImportedGermplasm implements Serializable {
         this(entryId, desig, gid, cross, source, entryCode, check);
         this.breedingMethodId = breedingMethodId;
     }
-
+    
     /**
      * Gets the gid.
      *
@@ -350,4 +350,18 @@ public class ImportedGermplasm implements Serializable {
                 + "]";
     }
     
+    public ImportedGermplasm copy() {
+    	ImportedGermplasm rec = new ImportedGermplasm(this.entryId, 
+    			this.desig, this.gid, this.cross, this.source, this.entryCode, 
+    			this.check, this.breedingMethodId);
+
+    	rec.setGpid1(this.gpid1);
+    	rec.setGpid2(this.gpid2);
+    	rec.setGnpgs(this.gnpgs);
+    	rec.setNames(this.names);
+    	rec.setCheckId(this.checkId);
+    	rec.setCheckName(this.checkName);
+
+    	return rec;
+    }
 }

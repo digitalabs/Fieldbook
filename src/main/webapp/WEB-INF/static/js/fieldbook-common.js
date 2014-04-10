@@ -93,7 +93,7 @@ function showPostPage(paginationUrl,previewPageNum, pageNum, sectionDiv, formNam
 	
 	var serializedData = $form.serialize();
 
-	alert(paginationUrl);
+	//alert(paginationUrl);
 	Spinner.toggle();
  	$.ajax(
          { url: paginationUrl+pageNum+"/"+previewPageNum+'?r=' + (Math.random() * 999),

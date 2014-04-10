@@ -62,6 +62,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw new WorkbookParserException(e.getMessage());
 		}
 	}
 	
@@ -277,8 +278,17 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	        	HSSFRow row = sheet.getRow(i);
 	        	if (row != null) {
 		        	HSSFCell cell = row.getCell(0);
-		        	if (cell.getStringCellValue().equals(cellValue)) {
-		        		return row.getCell(6) != null ? row.getCell(6).getStringCellValue() : "";
+		        	if (cell != null && row.getCell(6) != null) {
+		        		String value = "";
+		        		if (row.getCell(6).getCellType() == Cell.CELL_TYPE_NUMERIC) {
+		        			value = String.valueOf(Double.valueOf(row.getCell(6).getNumericCellValue()).intValue());
+		        		}
+		        		else {
+		        			value = row.getCell(6).getStringCellValue();
+		        		}
+			        	if (cell.getStringCellValue().equalsIgnoreCase(cellValue)) {
+			        		return value;
+			        	}
 		        	}
 	        	}
 	        }

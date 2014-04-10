@@ -47,7 +47,7 @@ public class CSVOziel {
 	private boolean isDataKapture;
 	
     private String stringTraitToEvaluate = "GY";
-    private Integer selectedTraitId;
+    private MeasurementVariable selectedTrait;
     private List<MeasurementRow> trialObservations;
 
     public CSVOziel(Workbook workbook, List<MeasurementRow> observations, List<MeasurementRow> trialObservations) {
@@ -190,7 +190,15 @@ public class CSVOziel {
 
                 csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.ENTRY_NO.getId(), mRow));
                 try {
-                	csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, this.selectedTraitId, mRow));
+                	if (this.selectedTrait != null) {
+	                	String value = WorkbookUtil.getValueByIdInRow(this.headers, this.selectedTrait.getTermId(), mRow);
+	                	if (this.selectedTrait != null && selectedTrait.getPossibleValues() != null && !selectedTrait.getPossibleValues().isEmpty()) {
+	                		csvOutput.write(ExportImportStudyUtil.getCategoricalCellValue(value, selectedTrait.getPossibleValues()));
+	                	}
+	                	else {
+	                		csvOutput.write(value);
+	                	}
+                	}
                 } catch (NullPointerException ex) {
                     String cad = ".";
                     
@@ -378,7 +386,7 @@ public class CSVOziel {
     }
     
     public void DefineTraitToEvaluate(String stringTraitToEval) {
-        this.stringTraitToEvaluate=stringTraitToEval;
+        this.stringTraitToEvaluate = stringTraitToEval;
     }
 
     private void setObservationData(String label, int rowIndex, String value) {
@@ -414,15 +422,19 @@ public class CSVOziel {
         return null;
     }
     
-    public void setSelectedTraitId(Integer selectedTraitId) {
-    	this.selectedTraitId = selectedTraitId;
+    public void setSelectedTrait(MeasurementVariable selectedTrait) {
+    	this.selectedTrait = selectedTrait;
     }
 
     private String getDisplayValue(String value) {
     	return value != null ? value : "";
     }
     
-    //Start copied from CSVFileManager (old Fb)
+	public String getStringTraitToEvaluate() {
+		return stringTraitToEvaluate;
+	}
+
+	//Start copied from CSVFileManager (old Fb)
     public void writeDataDataKapture(CsvWriter csvOutput) {
         Map<Long, String> map = new HashMap<Long, String>();
 		for (MeasurementRow row : this.trialObservations) {

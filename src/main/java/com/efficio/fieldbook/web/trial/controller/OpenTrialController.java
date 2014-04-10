@@ -100,6 +100,7 @@ public class OpenTrialController extends
             int numberOfInstance = workbook.getTotalNumberOfInstances();
             List<List<ValueReference>> trialEnvList = createTrialEnvValueList(trialLevelVariableList, numberOfInstance, false);
             form.setTrialEnvironmentValues(trialEnvList);
+            userSelection.setTrialLevelVariableList(trialLevelVariableList);
         }
         form.setLocationId(AppConstants.LOCATION_ID.getString());
         form.setLocationUrl(AppConstants.LOCATION_URL.getString());

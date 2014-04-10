@@ -964,6 +964,7 @@ function exportTrial(type){
 	    value: 1
 	});
 	$('#exportTrialType').val(type);
+	initTrialModalSelection();
 	if(type == 2){
 		$("#chooseInstance").detach().appendTo('#importRChooseInstance');
 		$('#importRModal').modal('show');
@@ -980,6 +981,17 @@ function exportTrial(type){
 		doExportContinue(type);
 	}
 	*/
+}
+
+function initTrialModalSelection() {
+	$("#xportInstanceType").val(1);
+	$("#exportTrialInstanceNumber").val(1);
+	$('#exportTrialInstanceNumber').spinedit('setValue', 1);
+	$("#exportTrialInstanceStart").val(1);
+	$('#exportTrialInstanceStart').spinedit('setValue', 1);
+	$("#exportTrialInstanceEnd").val(1);
+	$('#exportTrialInstanceEnd').spinedit('setValue', 1);
+	$("#selectedRTrait").prop("selectedIndex", 0);
 }
 
 function doExportTrial(){
@@ -1043,7 +1055,14 @@ function doExportContinue(paramUrl, isNursery){
 	
 	var currentPage = $('.pagination .active a').html();
 	
-	var $form = $("#addVariableForm");	
+	var formname;
+	if (isNursery) {
+		formname = "#addVariableForm";	
+	}
+	else {
+		formname = "#addVariableForm, #addVariableForm2";	
+	}
+	var $form = $(formname);	
 	var serializedData = $form.serialize();
 
 	

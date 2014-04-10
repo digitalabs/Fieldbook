@@ -1,10 +1,12 @@
 package com.efficio.fieldbook.web.common.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -73,7 +75,7 @@ public class ObservationMatrixController extends
     	copyDataFromFormToUserSelection(form, previewPageNum, userSelection);
     	//we need to set the data in the measurementList
     	
-    	
+    	copyTrialDataFromFormToUserSelection(form, userSelection);
     	
     	form.setMeasurementRowList(userSelection.getMeasurementRowList());
     	form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
@@ -94,6 +96,27 @@ public class ObservationMatrixController extends
     				sessionMeasurementData.setValue(measurementData.getValue());    			
     		}
     		//getUserSelection().getMeasurementRowList().set(realIndex, measurementRow);
+    	}
+    }
+
+    private void copyTrialDataFromFormToUserSelection(AddOrRemoveTraitsForm form, StudySelection userSelection){
+    	if (userSelection.getWorkbook().getTrialObservations() != null && !userSelection.getWorkbook().getTrialObservations().isEmpty()
+    			&& form.getTrialEnvironmentValues() != null && !form.getTrialEnvironmentValues().isEmpty()) {
+    		
+	    	int index = 0;
+	    	for (List<ValueReference> refList : form.getTrialEnvironmentValues()) {
+	    		List<MeasurementRow> trialObservations = userSelection.getWorkbook().getTrialObservations();
+	    		MeasurementRow trialRow = trialObservations.get(index);
+	    		for (ValueReference ref : refList) {
+	    			for (MeasurementData data : trialRow.getDataList()) {
+	    				if (data.getMeasurementVariable().getTermId() == ref.getId()) {
+	    					data.setValue(ref.getName());
+	    					break;
+	    				}
+	    			}
+	    		}
+	    		index++;
+	    	}
     	}
     }
 

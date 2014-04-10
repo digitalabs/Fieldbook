@@ -160,6 +160,7 @@ public class CreateTrialController extends SettingsController {
     public String viewSettings(@ModelAttribute("createTrialForm") CreateTrialForm form, @PathVariable int templateSettingId, 
     	Model model, HttpSession session) throws MiddlewareQueryException{
     	if(templateSettingId != 0){    	
+    	    //get settings of selected trial setting
             TemplateSetting templateSettingFilter = new TemplateSetting(Integer.valueOf(templateSettingId), Integer.valueOf(getCurrentProjectId()), null, getTrialTool(), null, null);
             templateSettingFilter.setIsDefaultToNull();
             List<TemplateSetting> templateSettings = workbenchService.getTemplateSettings(templateSettingFilter);
@@ -170,12 +171,15 @@ public class CreateTrialController extends SettingsController {
             form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
             form.setPlotLevelVariables(userSelection.getPlotsLevelList());
             
+            //add default trial variables such as experimental design, replicates, block size and block per replicate
             List<SettingDetail> trialLevelVariableList = addDefaultTrialVariables();
             form.setTrialLevelVariables(trialLevelVariableList);
             
+            //create the matrix of trial environment variables
             List<List<ValueReference>> trialEnvList = createTrialEnvValueList(trialLevelVariableList, 1, true);
             form.setTrialEnvironmentValues(trialEnvList);
             
+            //default and minimum no of trial instances is 1
             form.setTrialInstances(1);
             form.setSelectedSettingId(templateSetting.getTemplateSettingId());
     	}
@@ -190,6 +194,7 @@ public class CreateTrialController extends SettingsController {
             List<ValueReference> trialInstanceVariables = new ArrayList<ValueReference>();
             for (SettingDetail detail : trialLevelVariableList) {
                 if (detail.getVariable().getCvTermId() != null) {
+                    //set value to empty except for trial instance no.
                     if (detail.getVariable().getCvTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
                         trialInstanceVariables.add(new ValueReference(detail.getVariable().getCvTermId(), String.valueOf(i+1)));
                     } else {
@@ -214,6 +219,7 @@ public class CreateTrialController extends SettingsController {
             
             String variableName = token.nextToken();
             
+            //set datatype to numeric if variable is block per replicate
             if (variableName.equals(AppConstants.BLOCK_PER_REPLICATE.getString())) {
                 dataTypeId = Integer.valueOf(TermId.NUMERIC_VARIABLE.getId());
             }
@@ -264,8 +270,10 @@ public class CreateTrialController extends SettingsController {
         
         StringTokenizer token = new StringTokenizer(AppConstants.getString(variableName + AppConstants.VALUES.getString()), ",");
         
+        int i = 0;
         while (token.hasMoreTokens()) {
-            values.add(new ValueReference(0, token.nextToken()));
+            values.add(new ValueReference(i, token.nextToken()));
+            i++;
         }
         
         return values;
@@ -363,5 +371,11 @@ public class CreateTrialController extends SettingsController {
     	form.setTrialInstanceFactor(AppConstants.TRIAL_INSTANCE_FACTOR.getString());
     	form.setReplicates(AppConstants.REPLICATES.getString());
     	form.setBlockSize(AppConstants.BLOCK_SIZE.getString());
+    	form.setExperimentalDesign(AppConstants.EXPERIMENTAL_DESIGN.getString());
+    }
+    
+    @ModelAttribute("experimentalDesignValues")
+    public List<ValueReference> getExperimentalDesignValues() {
+        return getPossibleValuesOfDefaultVariable(AppConstants.EXPERIMENTAL_DESIGN.getString());
     }
 }

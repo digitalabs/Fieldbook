@@ -19,6 +19,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 					<input type="hidden" th:field="*{trialInstanceFactor}"/>
 					<input type="hidden" th:field="*{replicates}"/>
 					<input type="hidden" th:field="*{blockSize}"/>
+					<input type="hidden" th:field="*{experimentalDesign}"/>
 					
 					<div class="row form-group">
 						<div class="col-xs-12 col-md-12">
@@ -52,8 +53,10 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 			    					<label class="control-label" th:text="#{trial.createtrial.select.design.layout}+':'">Select Design Layout:*</label>&nbsp;<span class="required">*</span>
 			    				</div>
 			    				<div class="col-xs-7 col-md-7">
-			    					<select id="designLayout" class="form-control">
-			    						<option>Import Design From a Layout File</option>
+			    					<select id="designLayout" class="form-control" onChange="changeExperimentalDesign()">
+			    						<option value="1" th:text="#{trial.createtrial.design.layout.same.design}">Same Design for All</option>
+			    						<option value="2" th:text="#{trial.createtrial.design.layout.individual.design}">Individual Design</option>
+			    						<option value="3" th:text="#{trial.createtrial.design.layout.import.from.file}">Import Design From a Layout File</option>
 			    					</select>
 			    				</div>
 			    			</div>
@@ -74,7 +77,15 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 			    					<br/><br/>
 			    				</div>
 		    				</div>
-			    			<div class="row form-group">
+		    				<div class="row form-group" id="experimentalDesignSection">
+			    				<div class="col-xs-3 col-md-3">
+			    					<label class="control-label" th:text="#{trial.createtrial.experimental.design}+':'">Experimental Design:</label>
+			    				</div>
+			    				<div class="col-xs-9 col-md-9">
+			    					<input type="hidden" class="form-control select2" th:field="*{experimentalDesignForAll}" />
+			    				</div>
+		    				</div>
+			    			<div class="row form-group" id="importFileSection">
 			    				<div class="col-xs-3 col-md-3">
 			    					<label class="control-label" th:text="#{trial.createtrial.file.name}+':'">File Name:</label>
 			    				</div>
@@ -88,7 +99,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 								                <a class="btn btn-primary btn-file">
 								                    <span class="fileupload-new" th:text="#{nursery.fileupload.select.file}">Select</span>
 								                    <span class="fileupload-exists" th:text="#{nursery.fileupload.change.file}">Change</span>
-								                    <input id="fileupload" type="file" class="file-input"/></a>
+								                    <input id="fileupload" th:field="*{file}" type="file" class="file-input"/></a>
 								                <a href="#" class="btn btn-danger fileupload-exists" data-dismiss="fileupload" th:text="#{nursery.fileupload.remove.file}">Remove</a>
 								            </div>
 								        </div>
@@ -339,6 +350,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
     var trialTraitsIsRequired = /*[[#{nursery.create.traits.is.required}]]*/;
     var trialGermplasmListIsRequired = /*[[#{nursery.create.germplasm.list.is.required}]]*/;
     var checkTypeIsRequired = /*[[#{nursery.create.check.type.is.required}]]*/;
+    var experimentalDesignValues = /*[[${experimentalDesignValues}]]*/ null;
     
     var locationId = '';
     var programLocationUrl = '';
@@ -353,6 +365,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 	var trialInstanceId = '';
 	var replicates = '';
 	var blockSize = '';
+	var experimentalDesign = '';
     
 	$(document).ready(function() {
         if($('#requiredFields').val() != ''){
@@ -368,9 +381,11 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
         trialInstanceId = $('#trialInstanceFactor').val();
         replicates = $("#replicates").val();
         blockSize = $("#blockSize").val();
+        experimentalDesign = $("#experimentalDesign").val();
         
 		$("#folderNameSpan").html($("#folderName").val());
 		
+		//initialize dropdowns in trial level details
 		$.each($(".possibleValuesJson"), function (index, divElem) {
 				var select2Index = $(divElem).attr("id").split("possibleValuesJson")[1]; 
 
@@ -386,6 +401,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 				
 		});
 		
+		//initialize dropdowns in trial environment details
 		$.each($(".possibleValuesJsonTrial"), function(index, divElem) {
 			var select2Index = $(divElem).attr("id").split("possibleValuesJsonTrial")[1].split("a");
 			
@@ -407,8 +423,19 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 			$(this).select2();
 		});
 	    
-	    $("#showFavoriteLocationForAll").attr('disabled', 'disabled');
-	    $("#trialInstances").attr('disabled', 'disabled');
+	    //disable fields on initial load
+	    $("#showFavoriteLocationForAll").attr("disabled", "disabled");
+	    $("#trialInstances").attr("disabled", "disabled");
+	    $("#designLayout").select2("disable", true);
+	    
+	    //hide experimental design section and import file section
+	    $("#experimentalDesignSection").hide();
+	    $("#importFileSection").hide();
+	    
+	    //initialize experimental design dropdown
+	    initializePossibleValuesCombo(experimentalDesignValues, 
+	 			 			"#experimentalDesignForAll", false, null);
+	    
 	});
            
 	function validateCreateTrial() {

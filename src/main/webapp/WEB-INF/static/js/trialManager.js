@@ -1098,6 +1098,24 @@ function initializePossibleValuesCombo(possibleValues, name, showAllLocation, de
 	    		$(this).parent().children(".selectedValue").val($(name).select2("data").id);
 	    	}
 	    });
+	} else if (name.indexOf("experimentalDesignForAll") > -1) { 
+		$(name).select2({
+			query: function (query) {	
+		      var data = {results: possibleValues_obj}, i, j, s;
+		      // return the array that matches
+		      data.results = $.grep(data.results,function(item,index) {
+		        return ($.fn.select2.defaults.matcher(query.term,item.text));
+		      
+		      });
+		      if (data.results.length === 0){
+		    	  data.results.unshift({id:query.term,text:query.term});	        	 
+		      }
+		      
+		        query.callback(data);
+		    }
+	    }).on("change", function () {
+	    	populateExperimentalDesign($("#experimentalDesignForAll").select2("data").id, $("#experimentalDesignForAll").select2("data").text);
+	    });
 	} else if (name.indexOf("trialEnvironmentValues") > -1 && typeof replicates !== 'undefined' && replicates) {
 		$(name).select2({
 			query: function (query) {	
@@ -1671,8 +1689,12 @@ function loadTrialSettingsForCreate(templateSettingsId) {
 			//we just paste the whole html
 			//$('.container .row').first().html(html);
 			$("#chooseSettingsDiv").html(html);
-			$("#showFavoriteLocationForAll").removeAttr('disabled');
-		    $("#trialInstances").removeAttr('disabled');
+			
+			//enable fields for trial instances
+			$("#showFavoriteLocationForAll").removeAttr("disabled");
+		    $("#trialInstances").removeAttr("disabled");
+		    $("#designLayout").select2("enable", true);
+		    $("#designLayout").trigger("change");
 		    $('.spinner-input-trial').spinedit({
 		    	minimum: 1,
 			    value: 1
@@ -2217,6 +2239,9 @@ function recreateSelect2ComboMultiple(index, row, cellIndex, cell) {
 function editTrialInstances() {
 	if($("#trialInstancesTable tbody tr").length < $("#trialInstances").val()) {
 		addTrialInstances();
+		//disable or enable experimental design as necessary
+		$("#designLayout").trigger("change");
+		$("#experimentalDesignForAll").trigger("change");
 	} else if ($("#trialInstancesTable tbody tr").length > $("#trialInstances").val()) {
 		removeTrialInstances();
 	}
@@ -2286,6 +2311,65 @@ function toggleLocationDropdownForAll(){
 				initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
 			 			"#" + getJquerySafeId("trialEnvironmentValues" + index + cellIndex +".name"), showAll, selectedVal);
 				
+			}
+		});
+	});
+}
+
+function changeExperimentalDesign() {
+	if ($("#designLayout").val() == 1) {
+		$("#experimentalDesignSection").show();
+		$("#importFileSection").hide();
+		enableExperimentalDesigns(false);
+	} else if ($("#designLayout").val() == 2) {
+		$("#experimentalDesignSection").hide();
+	    $("#importFileSection").hide();
+	    enableExperimentalDesigns(true);
+	} else {
+		$("#experimentalDesignSection").hide();
+		$("#importFileSection").show();
+		enableExperimentalDesigns(false);
+	}
+}
+
+function enableExperimentalDesigns(enable) {
+	var colIndex = getColIndex(experimentalDesign);
+	
+	$.each($("#trialInstancesTable tbody tr"), function (index, row) {
+		$.each($(row).children("td"), function (cellIndex, cell) {
+			if (cellIndex == colIndex) {
+				if (enable) {
+					$("#" + getJquerySafeId("trialEnvironmentValues"+index+cellIndex+".name")).select2("enable", true);
+				} else {
+					$("#" + getJquerySafeId("trialEnvironmentValues"+index+cellIndex+".name")).select2("disable", true);
+				}
+			}
+		});
+	});
+}
+
+function getColIndex(column) {
+	var colIndex = 0;
+	$.each($("#trialInstancesTable thead tr th"), function (index, cell) {
+		if (column == $(cell).text()){
+			colIndex = index;
+			return false;
+		}
+	});
+	return colIndex;
+}
+
+function populateExperimentalDesign (value, text) {
+
+	var colIndex = getColIndex(experimentalDesign);
+	
+	$.each($("#trialInstancesTable tbody tr"), function (index, row) {
+		$.each($(row).children("td"), function (cellIndex, cell) {
+			if (cellIndex == colIndex) {
+				var jsonVal = { 'id' : value,
+						  'text' : text
+					};
+				$("#" + getJquerySafeId("trialEnvironmentValues"+index+cellIndex+".name")).select2("data", jsonVal);
 			}
 		});
 	});

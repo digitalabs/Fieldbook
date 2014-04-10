@@ -91,9 +91,19 @@ public class CreateTrialForm {
     /** The trial instance factor. */
     private String trialInstanceFactor;
     
+    /** The replicates. */
     private String replicates;
     
+    /** The block size. */
     private String blockSize;
+    
+    /** The experimental design. */
+    private String experimentalDesign;
+    
+    /** The experimental design for all. */
+    private String experimentalDesignForAll;
+    
+    private String file;
     
     /**
      * Gets the project id.
@@ -494,6 +504,8 @@ public class CreateTrialForm {
         }
 
         /**
+         * Gets the replicates.
+         *
          * @return the replicates
          */
         public String getReplicates() {
@@ -501,6 +513,8 @@ public class CreateTrialForm {
         }
 
         /**
+         * Sets the replicates.
+         *
          * @param replicates the replicates to set
          */
         public void setReplicates(String replicates) {
@@ -508,6 +522,8 @@ public class CreateTrialForm {
         }
 
         /**
+         * Gets the block size.
+         *
          * @return the blockSize
          */
         public String getBlockSize() {
@@ -515,10 +531,62 @@ public class CreateTrialForm {
         }
 
         /**
+         * Sets the block size.
+         *
          * @param blockSize the blockSize to set
          */
         public void setBlockSize(String blockSize) {
             this.blockSize = blockSize;
+        }
+
+        /**
+         * Gets the experimental design.
+         *
+         * @return the experimentalDesign
+         */
+        public String getExperimentalDesign() {
+            return experimentalDesign;
+        }
+
+        /**
+         * Sets the experimental design.
+         *
+         * @param experimentalDesign the experimentalDesign to set
+         */
+        public void setExperimentalDesign(String experimentalDesign) {
+            this.experimentalDesign = experimentalDesign;
+        }
+
+        /**
+         * Gets the experimental design for all.
+         *
+         * @return the experimentalDesignForAll
+         */
+        public String getExperimentalDesignForAll() {
+            return experimentalDesignForAll;
+        }
+
+        /**
+         * Sets the experimental design for all.
+         *
+         * @param experimentalDesignForAll the experimentalDesignForAll to set
+         */
+        public void setExperimentalDesignForAll(String experimentalDesignForAll) {
+            this.experimentalDesignForAll = experimentalDesignForAll;
+        }
+
+        /**
+         * @return the file
+         */
+        public String getFile() {
+            return file;
+        }
+
+        /**
+         * @param file the file to set
+         */
+        public void setFile(String file) {
+            this.file = file;
         }
         
 }

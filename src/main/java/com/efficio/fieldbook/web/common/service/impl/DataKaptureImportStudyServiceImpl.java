@@ -40,6 +40,7 @@ public class DataKaptureImportStudyServiceImpl implements
             
         } catch (Exception e) {
         	LOG.error(e.getMessage());
+        	throw new WorkbookParserException(e.getMessage());
         }
 	}
 

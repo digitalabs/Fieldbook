@@ -449,7 +449,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
             if(!buffer.toString().equalsIgnoreCase("")){
                 buffer.append(delimiter);
             }
-            buffer.append(getSpecificInfo(moreFieldInfo, fieldMapLabel, barcodeLabel));
+            buffer.append(getSpecificInfo(moreFieldInfo, fieldMapLabel, barcodeLabel, true));
         }
         return buffer.toString();
     }
@@ -473,7 +473,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
             
             if(i == rowNumber){
                 if(barcodeLabel != null && !barcodeLabel.equalsIgnoreCase("")){                    
-                    buffer.append(getSpecificInfo(moreFieldInfo, fieldMapLabel, barcodeLabel));
+                    buffer.append(getSpecificInfo(moreFieldInfo, fieldMapLabel, barcodeLabel, true));
                     break;
                 }
             }
@@ -551,10 +551,11 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
      * @return the specific info
      */
     private String getSpecificInfo(
-            Map<String,String> moreFieldInfo, FieldMapLabel fieldMapLabel, String barcodeLabel){
+            Map<String,String> moreFieldInfo, FieldMapLabel fieldMapLabel, String barcodeLabel, boolean includeHeaderLabel){
         StringBuffer buffer = new StringBuffer();
-
+        
         int parseInt = Integer.parseInt(barcodeLabel);
+        String headerName = getHeader(barcodeLabel);
         if (parseInt ==  AppConstants.AVAILABLE_LABEL_FIELDS_ENTRY_NUM.getInt()) {
             buffer.append(fieldMapLabel.getEntryNumber());
         } else if (parseInt == AppConstants.AVAILABLE_LABEL_FIELDS_GID.getInt()) {
@@ -590,6 +591,11 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         String stemp = buffer.toString();
         if(stemp != null && "null".equalsIgnoreCase(stemp))
         	stemp = " ";
+        
+        if(false && includeHeaderLabel && headerName != null){
+        	stemp = headerName + " : " + stemp;
+        }
+        
     	return stemp;
     }
     
@@ -704,7 +710,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                             token = new StringTokenizer(leftSelectedFields, ",");
                             while(token.hasMoreTokens()){
                                 String headerId = token.nextToken();
-                                String leftText = getSpecificInfo(moreFieldInfo, fieldMapLabel, headerId);
+                                String leftText = getSpecificInfo(moreFieldInfo, fieldMapLabel, headerId, false);
                                 Cell summaryCell = row.createCell(columnIndex++);
                                 summaryCell.setCellValue(leftText);
                                 //summaryCell.setCellStyle(labelStyle);
@@ -712,7 +718,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                             token = new StringTokenizer(rightSelectedFields, ",");
                             while(token.hasMoreTokens()){
                                 String headerId = token.nextToken();
-                                String rightText = getSpecificInfo(moreFieldInfo, fieldMapLabel, headerId);
+                                String rightText = getSpecificInfo(moreFieldInfo, fieldMapLabel, headerId, false);
                                 Cell summaryCell = row.createCell(columnIndex++);
                                 summaryCell.setCellValue(rightText);
                                 //summaryCell.setCellStyle(labelStyle);

@@ -344,6 +344,11 @@
   	var enumerations_central = [];
   	
   	var triggerExternalNotification = false;
+  	var roleCategoricalVariate = 1048;
+  	var dataTypeCategoricalVariable = 1130;
+  	
+  	var roleOptionList = [];
+  	var dataTypeOptionList = [];
   	
   	
   	var psmrError = /*[[#{error.pcm.combination.exists}]]*/;
@@ -425,6 +430,28 @@
 		    if ($("#isDelete").val() == 0) {
 		    	$("#dataTypeId").val($("#dataType").val());
 		    }
+		    //add validation and make sure variate name does not have - in the string
+		    var varName = $('#comboVariableName').select2('data').text;
+		    if($("#isDelete").val() == 0 && varName.indexOf('-') != -1){
+		    	message = /*[[#{ontology.browser.modal.name.invalid.value}]]*/;
+		    	showMessage(message);
+		    	moveToTopScreen()
+		    	return false;
+		    }
+		    
+		    var roleId = $("#role").select2('data').id;
+		    var dataTypeId = $("#dataType").select2('data').id;
+		    
+		  	
+		    if(roleId == roleCategoricalVariate && dataTypeId == dataTypeCategoricalVariable){
+		    	if(!hasCategoricalValues()){
+		    		message = /*[[#{ontology.browser.categorical.value.required}]]*/;
+			    	showMessage(message);
+			    	moveToTopScreen()
+			    	return false;
+		    	}
+		    }
+		    
     	} else if ($("#isDelete").val() == 1) {
     		if (parseInt($("#comboVariableName").select2('data').id) > 0) {
     			var variableName = $("#comboVariableName").select2('data').text.replace(" (Shared)", "");
@@ -508,9 +535,53 @@
 	    	}
 		}
 		
+		
+		$('#dataType option').each(function() {
+			dataTypeOptionList.push({'id': $(this).val(), 'text':$(this).text()});
+		});
+		$('#role option').each(function() {
+			roleOptionList.push({'id': $(this).val(), 'text':$(this).text()});
+			});
+		
+		$('#role').on('change', function(){
+			//console.log($(this).val())
+			if($(this).val() == roleCategoricalVariate){
+				rebuildDataTypeOptions(true);	
+			}else{
+				rebuildDataTypeOptions(false);
+			}
+		})
+				
 	});
 	
+	function hasCategoricalValues(){
+		if($('#catVarList tr').length == 0)
+			return false;
+		return true;
+	}
 	
+	function rebuildDataTypeOptions(isCategoricalVariate){
+		$('#dataType').empty();
+		$('#dataType').select2('destroy');
+		if(isCategoricalVariate){
+			for(var i = 0 ; i < dataTypeOptionList.length ; i++){
+				var val = dataTypeOptionList[i].text;
+				var id = dataTypeOptionList[i].id;
+				//console.log(id);
+				if(id == dataTypeCategoricalVariable)
+					$('#dataType').append($('<option></option>').attr('value', id).text(val));			
+			}
+		}else{
+			for(var i = 0 ; i < dataTypeOptionList.length ; i++){
+				var val = dataTypeOptionList[i].text;
+				var id = dataTypeOptionList[i].id;
+				if(id != dataTypeCategoricalVariable)
+					$('#dataType').append($('<option></option>').attr('value', id).text(val));			
+			}
+		}
+		$('#dataType').select2();
+		$("#dataType").trigger("change");
+	}
 	
 	function addCatVar(label, description, id) {
 		

@@ -915,7 +915,7 @@ function createNurseryLevelSettingVariablesOld(data) {
 function toggleMethodDropdown(rowIndex) {
 	var possibleValues;  
 	var showFavorite = $("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".favorite1")).is(":checked");
-	var selectedVal;
+	var selectedVal = null;
 	
 	//get previously selected value
 	if ($("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".value")).select2("data")) {
@@ -942,7 +942,7 @@ function toggleMethodDropdown(rowIndex) {
 function toggleLocationDropdown(rowIndex) {
 	var possibleValues;  
 	var showFavorite = $("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".favorite1")).is(":checked");
-	var selectedVal;
+	var selectedVal = null;
 	var showAll = true;
 	
 	//get previously selected value
@@ -1007,7 +1007,7 @@ function createBaselineTraitVariables(data) {
 		(length-1) + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
 		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.name + "</td>";		
-		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.description + "</td>"
+		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.description + "</td>";
 		newRow = newRow + "<td class='"+className+"'>" + "<a href='javascript: void(0);' onclick='javascript:showBaselineTraitDetailsModal(" + 
 		settingDetail.variable.cvTermId + ");'><span class='glyphicon glyphicon-eye-open'></span></a></td></tr>";
 		$("#baselineTraitSettings").append(newRow);
@@ -1030,7 +1030,7 @@ function createTrialEnvironmentVariables(data) {
 		(length-1) + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
 		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.name + "</td>";		
-		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.description + "</td>"
+		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.description + "</td>";
 		newRow = newRow + "<td class='"+className+"'>" + "<a href='javascript: void(0);' onclick='javascript:showBaselineTraitDetailsModal(" + 
 		settingDetail.variable.cvTermId + ");'><span class='glyphicon glyphicon-eye-open'></span></a></td></tr>";
 		$("#trialEnvironmentLevelSettings").append(newRow);
@@ -1264,24 +1264,24 @@ function sortVariableIdsAndNames(variableType) {
 		initializeDateAndSliderInputs();
 		break;
 	case 2:
-		var reg = new RegExp("plotLevelVariables[0-9]+", "g")
-		var reg2 = new RegExp("plotLevelVariables\[[0-9]+\]", "g")
+		var reg = new RegExp("plotLevelVariables[0-9]+", "g");
+		var reg2 = new RegExp("plotLevelVariables\[[0-9]+\]", "g");
 		$.each($("#plotLevelSettings tbody tr"), function (index, row) {
 			row.innerHTML = row.innerHTML.replace(reg, "plotLevelVariables" + index);
 			row.innerHTML = row.innerHTML.replace(reg2, "plotLevelVariables[" + index + "]");
 		});
 		break;
 	case 4:
-		var reg = new RegExp("trialLevelVariables[0-9]+", "g")
-		var reg2 = new RegExp("trialLevelVariables\[[0-9]+\]", "g")
+		var reg = new RegExp("trialLevelVariables[0-9]+", "g");
+		var reg2 = new RegExp("trialLevelVariables\[[0-9]+\]", "g");
 		$.each($("#trialEnvironmentLevelSettings tbody tr"), function (index, row) {
 			row.innerHTML = row.innerHTML.replace(reg, "trialLevelVariables" + index);
 			row.innerHTML = row.innerHTML.replace(reg2, "trialLevelVariables[" + index + "]");
 		});
 		break;	
 	default:
-		var reg = new RegExp("baselineTraitVariables[0-9]+", "g")
-		var reg2 = new RegExp("baselineTraitVariables\[[0-9]+\]", "g")
+		var reg = new RegExp("baselineTraitVariables[0-9]+", "g");
+		var reg2 = new RegExp("baselineTraitVariables\[[0-9]+\]", "g");
 		$.each($("#baselineTraitSettings tbody tr"), function (index, row) {
 			row.innerHTML = row.innerHTML.replace(reg, "baselineTraitVariables" + index);
 			row.innerHTML = row.innerHTML.replace(reg2, "baselineTraitVariables[" + index + "]");
@@ -1486,7 +1486,7 @@ function hasDuplicateSettingName(){
 	$('#selectedSettingId option').each(function(){
 	    if(selectedSettingsId != $(this).val() &&  $(this).html().trim() == settingsName)
 	    	hasDuplicate = true;
-	})
+	});
 	return hasDuplicate;
 }
 function hasEmptyTrialValue(){
@@ -1628,9 +1628,8 @@ function initializeDateAndSliderInputs(){
 	if($('.date-input').length > 0){
 		$('.date-input').each(function(){
 			$(this).datepicker({'format': 'yyyymmdd'}).on('changeDate', function(ev) {
-		
-			$(this).datepicker('hide');
-		})
+				$(this).datepicker('hide');
+			});
 		});
 	}
 	
@@ -1690,12 +1689,8 @@ function loadTrialSettingsForCreate(templateSettingsId) {
 			//$('.container .row').first().html(html);
 			$("#chooseSettingsDiv").html(html);
 			
-			//enable fields for trial instances
-			$("#showFavoriteLocationForAll").removeAttr("disabled");
-		    $("#trialInstances").removeAttr("disabled");
-		    $("#designLayout").select2("enable", true);
-		    $("#designLayout").trigger("change");
-		    $('.spinner-input-trial').spinedit({
+			enableTrialEnvFields();
+			$('.spinner-input-trial').spinedit({
 		    	minimum: 1,
 			    value: 1
 		    });
@@ -1707,6 +1702,14 @@ function loadTrialSettingsForCreate(templateSettingsId) {
 			Spinner.toggle();
 		}
 	});
+}
+
+function enableTrialEnvFields() {
+	//enable fields for trial instances
+	$("#showFavoriteLocationForAll").removeAttr("disabled");
+    $("#trialInstances").removeAttr("disabled");
+    $("#designLayout").select2("enable", true);
+    $("#designLayout").trigger("change");
 }
 
 function displayGermplasmListTree(treeName) {
@@ -1765,7 +1768,7 @@ function displayGermplasmDetails(listId) {
 
 function openUsePreviousTrialModal() {
 	$("#selectedTrial").select2("destroy");
-	$("#selectedTrial").val("")
+	$("#selectedTrial").val("");
 	$("#selectedTrial").select2();
 	$("#usePreviousTrialModal").modal("show");
 }
@@ -1791,14 +1794,23 @@ function chooseSelectedTrial() {
         	} else {
         		$('.container .row').first().html(html);
         	}
-        	Spinner.toggle();
-        }
-	})
+        	enableTrialEnvFields();
+        	$('.spinner-input-trial').spinedit({
+		    	minimum: 1
+		    });
+        }, 
+        error: function(jqXHR, textStatus, errorThrown){
+			console.log("The following error occured: " + textStatus, errorThrown); 
+	    }, 
+	    complete: function(){
+		    Spinner.toggle();
+	    } 
+	});
 }
 
 function validateCreateTrial() {
 	var hasError = false;
-	var name;
+	var name = "";
 	var customMessage = '';
 	if ($("#selectedSettingId").val() == '0') {
 		hasError = true;
@@ -1947,7 +1959,7 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, c
 	            query.callback(data);
 	        }
 	    });
-		$('#checkId').val('')
+		$('#checkId').val('');
 		if(addOnChange){
 			
 			$('#'+getJquerySafeId('checkId')).on("change", function (){

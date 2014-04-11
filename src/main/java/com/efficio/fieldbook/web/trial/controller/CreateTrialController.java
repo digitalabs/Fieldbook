@@ -17,9 +17,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
@@ -40,11 +42,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.nursery.controller.SettingsController;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 /**
  * The Class CreateTrialController.
@@ -61,6 +65,9 @@ public class CreateTrialController extends SettingsController {
     
     /** The Constant URL_SETTINGS. */
     public static final String URL_SETTINGS = "/TrialManager/chooseSettings";
+    
+    @Resource
+    private TrialSelection trialSelection;
 	
    
 	/* (non-Javadoc)
@@ -83,44 +90,53 @@ public class CreateTrialController extends SettingsController {
      * @return the string
      * @throws MiddlewareQueryException the middleware query exception
      */
-    @RequestMapping(value="/Trial/{TrialId}", method = RequestMethod.GET)
+    @RequestMapping(value="/trial/{trialId}", method = RequestMethod.GET)
     public String useExistingTrial(@ModelAttribute("manageSettingsForm") CreateTrialForm form, @PathVariable int trialId
             , Model model, HttpSession session) throws MiddlewareQueryException{
         if(trialId != 0){
-            /*
-            Workbook workbook = fieldbookMiddlewareService.getStudyVariableSettings(trialId, false);;
-            Dataset dataset = SettingsUtil.convertWorkbookToXmlDataset(workbook);
+            Workbook workbook = null;
+            
+            try { 
+                workbook = fieldbookMiddlewareService.getTrialDataSet(trialId);
+            } catch (MiddlewareQueryException e) {
+                LOG.error(e.getMessage(), e);
+            }
+            
+            trialSelection.setWorkbook(workbook);
+            TrialDataset dataset = (TrialDataset)SettingsUtil.convertWorkbookToXmlDataset(workbook, false);
             SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
             
             //Trial-level
-            List<SettingDetail> TrialLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_Trial_REQUIRED_FIELDS.getString()), 
-                    buildRequiredVariablesLabel(AppConstants.CREATE_Trial_REQUIRED_FIELDS.getString(), true), 
-                    buildRequiredVariablesFlag(AppConstants.CREATE_Trial_REQUIRED_FIELDS.getString()), 
+            List<SettingDetail> trialLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString()), 
+                    buildRequiredVariablesLabel(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString(), true), 
+                    buildRequiredVariablesFlag(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString()), 
                     userSelection.getStudyLevelConditions(), true);
             
             //plot-level
             List<SettingDetail> plotLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()), 
                     buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false), 
                     buildRequiredVariablesFlag(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()), 
-                    userSelection.getPlotsLevelList(), false);
+                    userSelection.getPlotsLevelList(), false);            
             
-            
-            
-            userSelection.setStudyLevelConditions(TrialLevelConditions);
+            userSelection.setStudyLevelConditions(trialLevelConditions);
             userSelection.setPlotsLevelList(plotLevelConditions);
             form.setStudyLevelVariables(userSelection.getStudyLevelConditions());
             form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
             form.setPlotLevelVariables(userSelection.getPlotsLevelList());
-            //form.setSelectedSettingId(1);
+            form.setTrialLevelVariables(userSelection.getTrialLevelVariableList());
+            
+            //build trial environment details
+            List<List<ValueReference>> trialEnvList = createTrialEnvValueList(userSelection.getTrialLevelVariableList());
+            form.setTrialEnvironmentValues(trialEnvList);
+            form.setTrialInstances(workbook.getTotalNumberOfInstances());
             form.setLoadSettings("1");
-            */
-        	form.setRequiredFields(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
+            form.setRequiredFields(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
         }
         setFormStaticData(form);
         model.addAttribute("createTrialForm", form);
-        model.addAttribute("settingsList", getTrialSettingsList());
-        model.addAttribute("TrialList", getTrialList());
-        //setupFormData(form);
+        model.addAttribute("settingsTrialList", getTrialSettingsList());
+        model.addAttribute("trialList", getTrialList());
+        model.addAttribute("experimentalDesignValues", getExperimentalDesignValues());
         return super.showAjaxPage(model, URL_SETTINGS);
     }
     
@@ -200,6 +216,22 @@ public class CreateTrialController extends SettingsController {
                 } else {
                     trialInstanceVariables.add(new ValueReference(0, ""));
                 }
+            }
+            trialEnvValueList.add(trialInstanceVariables);
+        }
+        userSelection.setTrialEnvironmentValues(trialEnvValueList);
+        return trialEnvValueList;
+    }
+    
+    private List<List<ValueReference>> createTrialEnvValueList(List<SettingDetail> trialLevelVariableList) {
+        List<List<ValueReference>> trialEnvValueList = new ArrayList<List<ValueReference>>();
+        List<MeasurementRow> trialObservations = trialSelection.getWorkbook().getTrialObservations();
+        for (MeasurementRow trialObservation : trialObservations) {
+            List<ValueReference> trialInstanceVariables = new ArrayList<ValueReference>();
+            for (SettingDetail detail : trialLevelVariableList) {
+                String headerName = WorkbookUtil.getMeasurementVariableName(trialSelection.getWorkbook().getTrialVariables(), detail.getVariable().getCvTermId());
+                String value = trialObservation.getMeasurementDataValue(headerName);
+                trialInstanceVariables.add(new ValueReference(detail.getVariable().getCvTermId(), value));
             }
             trialEnvValueList.add(trialInstanceVariables);
         }

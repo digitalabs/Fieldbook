@@ -57,7 +57,7 @@ $.fn.extend({
 		};
 	})( $.fn.focus ),
 
-	scrollParent: function() {
+	scrollParent: function() {		
 		var scrollParent;
 		if (($.ui.ie && (/(static|relative)/).test(this.css("position"))) || (/absolute/).test(this.css("position"))) {
 			scrollParent = this.parents().filter(function() {

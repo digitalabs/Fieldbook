@@ -17,8 +17,8 @@
          <table th:if="*{not #lists.isEmpty(paginatedImportedGermplasm)}" class="my-class table table-curved table-condensed germplasm-list-items">
            <thead>
              <tr>
-               <!-- <th class="check-col" th:utext="#{nursery.import.header.check}">.Check</th> -->
-               <th>&nbsp;</th>
+               <!-- <th class="check-col" th:utext="#{nursery.import.header.check}">.Check</th> 
+               <th>&nbsp;</th>-->
                <th th:utext="#{nursery.import.header.entry}">.Entry</th>
                <th th:utext="#{nursery.import.header.designation}">.Designation</th>
                <th th:utext="#{nursery.import.header.gid}">.GID</th>
@@ -36,12 +36,12 @@
                <option th:each="type: ${checkLists}" th:value="${type.id}" th:text="${type.description}"></option>
                </select>
                </td>
-                -->
+               
                 <td align="center" th:class="${row.even}? 'even' : 'odd'">
 					<a href="javascript: void(0)" class="addToCheck" th:attr="data-entry=${gid.entryId}" th:attrappend="data-gid=${gid.gid}">
 						<span class="glyphicon glyphicon-plus-sign"></span>
 					</a>
-				</td>
+				</td> -->
                <td align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryId}">.1</td>
                <td align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.desig}">.2</td>
                <td align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.gid}">.3</td>
@@ -69,8 +69,8 @@
          <table th:if="*{not #lists.isEmpty(paginatedImportedGermplasm)}" class="my-class table table-curved table-condensed germplasm-list-items">
            <thead>
              <tr>
-              <!-- <th class="check-col" th:utext="#{nursery.import.header.check}">.Check</th> -->
-              <th  >&nbsp;</th>
+              <!-- <th class="check-col" th:utext="#{nursery.import.header.check}">.Check</th> 
+              <th  >&nbsp;</th>-->
                <th th:utext="#{nursery.import.header.entry}">.Entry</th>
                <th th:utext="#{nursery.import.header.designation}">.Designation</th>
              </tr>
@@ -81,12 +81,12 @@
                <select th:field="*{paginatedImportedGermplasm[__${row.index}__].check}" class="form-control primarylist-select">
                <option th:each="type: ${checkLists}" th:value="${type.id}" th:text="${type.description}"></option>
                </select>
-               </td> -->
+               </td> 
                                <td align="center" th:class="${row.even}? 'even' : 'odd'">
 					<a href="javascript: void(0)" class="addToCheck" th:attr="data-entry=${gid.entryId}" th:attrappend="data-gid=${gid.gid}">
 						<span class="glyphicon glyphicon-plus-sign"></span>
 					</a>
-				</td>
+				</td>-->
                <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryId}">.1</td>
                <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.desig}">.2</td>
              </tr>

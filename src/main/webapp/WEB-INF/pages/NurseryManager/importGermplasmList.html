@@ -133,6 +133,7 @@
     //<![CDATA[          
                var addedGid = {};
                var listId = 0;
+               var makeDraggableBool = true;
     var hasPageError = /*[[${importGermplasmListForm.hasError}]]*/;
     function do_validation() {
     if ($('#fileupload').val() == "") {
@@ -170,7 +171,7 @@
 	 
   });
   
-  function makeDropable(){
+  function makeDraggable(isDraggable){
 	  
 	  /*
 	  $('.germplasm-list-items tr').sortable({
@@ -193,14 +194,32 @@
 	        },
 		}).disableSelection();
 	  */
-	  /*
-	  $(".draggable").draggable({
-	        helper: "clone",
-	        start: function(event, ui) {
-	            c.tr = this;
-	            c.helper = ui.helper;
-	        }
-	});*/
+	  if(isDraggable){
+		  $(".germplasm-list-items tr").draggable({
+			  helper: function(event, ui) {
+		            var ret = $(this).clone();
+		            var width = $(this)[0].offsetWidth;
+		            var myHelper = [];
+		            myHelper.push('<table style="width:' + width + 'px; background-color:green;">');
+		            myHelper.push(ret.html());
+		            myHelper.push('</table>');
+
+		            helper = myHelper.join('');
+		            return helper;
+		        },
+		      revert: 'invalid',
+		      start: function (event, ui) {
+		    	  
+		          $(this).css('opacity', '.5');
+		             },
+		      stop: function (event, ui) {
+		          $(this).css('opacity', '1');
+		       }
+		});
+	  }else{
+		  if($('.germplasm-list-items .ui-draggable').length != 0)
+		  	$(".germplasm-list-items tr").draggable( "destroy" );
+	  }
   }
   
   	function changeCheckLayout(){
@@ -316,9 +335,12 @@
 	      		    	displayGermplasmCheckDetails(source.data.key)
 	      		    	$(this).removeClass('add-border');
 	      		      }
-      		     }else{
-      		    	 var entryNumber = $(source).parent().data('entry');
-      		    	var gid = ""+$(source).parent().data('gid');
+      		     }else if(isFunction(source.data) == true && $(this).hasClass('check')){
+      		    	 //var entryNumber = $(source).parent().data('entry');
+      		    	 //var gid = ""+$(source).parent().data('gid');
+      		    	 var entryNumber = $(source).data('entry');
+      		    	 var gid = ""+$(source).data('gid');
+      		    	 //console.log(entryNumber + " " + gid);
       		    	 addCheckGermplasmList(entryNumber, gid);
       		    	 
       		     }
@@ -326,10 +348,17 @@
       		  });
         }
         function hideAddCol(isHide){
-        	if(isHide)
+        	if(isHide){
         		$('.addToCheck').css('display', 'none');
-        	else
+        		makeDraggable(false);
+        		makeDraggableBool = false;
+        	}        		
+        	else{
         		$('.addToCheck').css('display', 'block');
+        		makeDraggable(true);
+        		makeDraggableBool = true;
+        	}
+        		
         }
         function addCheckGermplasmList(entryNumber, gid){
         	
@@ -373,7 +402,7 @@
         		success: function(html) {
         			$("#imported-germplasm-list").html(html);	
         			changeCheckLayout();
-        			makeDropable();
+        			makeDraggable(makeDraggableBool);
         			$('.addToCheck').on('click', function(){
         				addCheckGermplasmList($(this).data('entry'), $(this).data('gid') );
         			  })  

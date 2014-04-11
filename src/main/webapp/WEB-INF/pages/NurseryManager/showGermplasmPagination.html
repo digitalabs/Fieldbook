@@ -18,7 +18,7 @@
            <thead>
              <tr>
                <!-- <th class="check-col" th:utext="#{nursery.import.header.check}">.Check</th> -->
-               <th class="add-col">&nbsp;</th>
+               <th>&nbsp;</th>
                <th th:utext="#{nursery.import.header.entry}">.Entry</th>
                <th th:utext="#{nursery.import.header.designation}">.Designation</th>
                <th th:utext="#{nursery.import.header.gid}">.GID</th>
@@ -37,7 +37,7 @@
                </select>
                </td>
                 -->
-                <td align="center" th:class="${row.even}? 'even add-col' : 'odd add-col'">
+                <td align="center" th:class="${row.even}? 'even' : 'odd'">
 					<a href="javascript: void(0)" class="addToCheck" th:attr="data-entry=${gid.entryId}" th:attrappend="data-gid=${gid.gid}">
 						<span class="glyphicon glyphicon-plus-sign"></span>
 					</a>
@@ -70,7 +70,7 @@
            <thead>
              <tr>
               <!-- <th class="check-col" th:utext="#{nursery.import.header.check}">.Check</th> -->
-              <th class="add-col">&nbsp;</th>
+              <th  >&nbsp;</th>
                <th th:utext="#{nursery.import.header.entry}">.Entry</th>
                <th th:utext="#{nursery.import.header.designation}">.Designation</th>
              </tr>
@@ -82,7 +82,7 @@
                <option th:each="type: ${checkLists}" th:value="${type.id}" th:text="${type.description}"></option>
                </select>
                </td> -->
-                               <td align="center" th:class="${row.even}? 'even add-col' : 'odd add-col'">
+                               <td align="center" th:class="${row.even}? 'even' : 'odd'">
 					<a href="javascript: void(0)" class="addToCheck" th:attr="data-entry=${gid.entryId}" th:attrappend="data-gid=${gid.gid}">
 						<span class="glyphicon glyphicon-plus-sign"></span>
 					</a>

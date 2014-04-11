@@ -242,6 +242,8 @@ public class FieldbookServiceImpl implements FieldbookService{
                 possibleValues = convertPersonsToValueReferences(fieldbookMiddlewareService.getAllPersons());
             } else if (TermId.NURSERY_TYPE.getId() == id) {
                 possibleValues = fieldbookMiddlewareService.getAllNurseryTypes();
+            } else if (TermId.EXPERIMENT_DESIGN_FACTOR.getId() == id) {
+                possibleValues = filterValues(fieldbookMiddlewareService.getDistinctStandardVariableValues(id), AppConstants.EXPERIMENTAL_DESIGN_POSSIBLE_VALUES.getString());
             } else {
                 possibleValues = fieldbookMiddlewareService.getDistinctStandardVariableValues(id);
             }
@@ -249,6 +251,22 @@ public class FieldbookServiceImpl implements FieldbookService{
         }
         return possibleValues;
 	}
+    
+    private List<ValueReference> filterValues(List<ValueReference> possibleValues, String filter) {
+        List<ValueReference> filteredValues = new ArrayList<ValueReference>();
+        StringTokenizer token = new StringTokenizer(filter, ",");
+        
+        while (token.hasMoreTokens()) {
+            Integer id = Integer.parseInt(token.nextToken());
+            for (ValueReference value : possibleValues) {
+                if (value.getId().equals(id)) {
+                    filteredValues.add(value);
+                }
+            }
+        }
+        
+        return filteredValues;
+    }
 	
     @Override
     public List<ValueReference> getAllPossibleValuesFavorite(int id, String projectId) throws MiddlewareQueryException {

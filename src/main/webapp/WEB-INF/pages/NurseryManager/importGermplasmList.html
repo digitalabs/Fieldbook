@@ -8,16 +8,14 @@
 		    			</div>
 	    			</div>
 
-					<div class="row form-group">
-					<form onsubmit="return do_germplasm_check();" id="specify-germplasm-list-form" role="form-horizontal" class="form-horizontal" action="#"
-  th:action="@{/NurseryManager/importGermplasmList/next}" method="post" th:object="${importGermplasmListForm}" enctype="multipart/form-data">
+					<div class="row form-group">					
 <div class="col-xs-12 col-md-12" >			
 			<div class="row form-group">
 				<div class="col-xs-4 col-md-4">
 					<label class="control-label" th:text="#{germplasm.list.choose.specify.checks}+':'"></label><span class="required">*</span>
 				</div>
 				<div class="col-xs-5 col-md-5">
-					<select class="form-control" th:field="*{chooseSpecifyCheck}">
+					<select class="form-control" id="specifyCheckType">
 						<option value="1">Manually</option>
 						<option value="2" th:text="#{germplasm.list.choose.specify.checks.one.or.more}">Select one or more checks from the list</option>
 					</select>
@@ -29,8 +27,7 @@
 			
 			 
 			
-		</div>   
-</form>
+		</div>
 	    			</div>
 	    			
 					<div class="row form-group">
@@ -116,16 +113,7 @@
   <style type="text/css">
     #check-germplasm-list, #imported-germplasm-list {
       min-height: 400px;
-    }
-    
-    #droppableSample {
-      background-color: maroon;
-      color: white;
-    }
-    #droppableSample.drophover {
-      border: 1px solid green;
-    }
-  				
+    }         			
   </style>
 
 	
@@ -167,22 +155,24 @@
 	  
 	  displayGermplasmListTree("germplasmTree");
 	  
-	  $('#chooseSpecifyCheck').on('change', function(){
+	  $('#specifyCheckType').on('change', function(){
 		 changeCheckLayout(); 
 	  });
 	  changeCheckLayout();
   });
   
   	function changeCheckLayout(){
-  		if($('#chooseSpecifyCheck').val() == 1){
+  		if($('#specifyCheckType').val() == 1){
   				$('#check-germplasm-list').css('display', 'none');
   				$('#imported-germplasm-list').removeClass('col-md-9').addClass('col-md-12');
   				$('#imported-germplasm-list').css('width', '100%');
-  		}else if($('#chooseSpecifyCheck').val() == 2){
+  				$('.check-col').css('display', 'block');
+  		}else if($('#specifyCheckType').val() == 2){
   			//show the check
   			$('#check-germplasm-list').css('display', 'block');
 			$('#imported-germplasm-list').removeClass('col-md-12').addClass('col-md-9');
 			$('#imported-germplasm-list').css('width', '70%');
+			$('.check-col').css('display', 'none');
   		}
   	}
 
@@ -256,7 +246,7 @@
         		        //console.log("tree.onDragStop" + node);
         		      },
         		      onDragOver: function(node){
-        		    	  console.log('dragging');
+        		    	  //console.log('dragging');
         		      }
         		    }
         	});
@@ -291,7 +281,8 @@
         		type: "GET",
         		cache: false,
         		success: function(html) {
-        			$("#imported-germplasm-list").html(html);			
+        			$("#imported-germplasm-list").html(html);	
+        			changeCheckLayout();
         		},
         		error: function(jqXHR, textStatus, errorThrown){ 
         			console.log("The following error occured: " + textStatus, errorThrown); 

@@ -3,6 +3,9 @@
 <form onsubmit="return do_germplasm_check();" id="germplasm-list-form" role="form-horizontal" class="form-horizontal" action="#"
   th:action="@{/NurseryManager/importGermplasmList/next}" method="post" th:object="${importGermplasmListForm}" enctype="multipart/form-data">
       
+      <input type="hidden" th:field="*{chooseSpecifyCheck}"/>
+       <input type="hidden" th:field="*{totalGermplasms}"/>
+      
     <!-- case 1: no data means no table -->
      <div th:if="*{paginatedImportedGermplasm == null or #lists.isEmpty(paginatedImportedGermplasm)}">
        <span class="noGermplasmListIndicator" th:text="#{nursery.import.no.germplasm.list}">No Germplasm list</span>
@@ -14,7 +17,7 @@
          <table th:if="*{not #lists.isEmpty(paginatedImportedGermplasm)}" class="my-class table table-curved table-condensed germplasm-list-items">
            <thead>
              <tr>
-               <th th:utext="#{nursery.import.header.check}">.Check</th>
+               <th class="check-col" th:utext="#{nursery.import.header.check}">.Check</th>
                <th th:utext="#{nursery.import.header.entry}">.Entry</th>
                <th th:utext="#{nursery.import.header.designation}">.Designation</th>
                <th th:utext="#{nursery.import.header.gid}">.GID</th>
@@ -25,7 +28,7 @@
            </thead>
            <tbody th:remove="all-but-first">
              <tr th:each="gid, row : *{paginatedImportedGermplasm}">
-               <td align="center" th:class="${row.even}? 'even' : 'odd'">
+               <td align="center" th:class="${row.even}? 'even check-col' : 'odd check-col'">
                
                <select th:field="*{paginatedImportedGermplasm[__${row.index}__].check}" class="form-control primarylist-select">
                <option th:each="type: ${checkLists}" th:value="${type.id}" th:text="${type.description}"></option>
@@ -58,14 +61,14 @@
          <table th:if="*{not #lists.isEmpty(paginatedImportedGermplasm)}" class="my-class table table-curved table-condensed germplasm-list-items">
            <thead>
              <tr>
-               <th th:utext="#{nursery.import.header.check}">.Check</th>
+               <th class="check-col" th:utext="#{nursery.import.header.check}">.Check</th>
                <th th:utext="#{nursery.import.header.entry}">.Entry</th>
                <th th:utext="#{nursery.import.header.designation}">.Designation</th>
              </tr>
            </thead>
            <tbody th:remove="all-but-first">
              <tr th:each="gid, row : *{paginatedImportedGermplasm}">
-               <td align="center" th:class="${row.even}? 'even' : 'odd'">
+               <td align="center" th:class="${row.even}? 'even check-col' : 'odd check-col'">
                <select th:field="*{paginatedImportedGermplasm[__${row.index}__].check}" class="form-control primarylist-select">
                <option th:each="type: ${checkLists}" th:value="${type.id}" th:text="${type.description}"></option>
                </select>
@@ -93,28 +96,40 @@
      <div th:if="*{paginatedImportedGermplasm != null or not #lists.isEmpty(paginatedImportedGermplasm)}">
        <span class="h3" th:text="#{germplasm.list.specify.checks}">Specify Checks</span>
        
-       <div class="row">
-		
-		
-			<div class="col-xs-12 col-md-12" >			
-				<div class="row form-group">
+       <div class="row">				
+				<div class="row  form-group col-xs-12 col-md-12">
 					<div class="col-xs-4 col-md-4">
-						<label class="control-label" th:text="#{germplasm.list.choose.check.type}+':'"></label><span class="required">*</span>
-					</div>
-					<div class="col-xs-5 col-md-5">
-						<input  type="hidden" th:field="*{checkId}" class="form-control select2" />
-						<input type="hidden" th:field="*{checkValue}"/>
-					</div>	
+						<label class="control-label">&nbsp;</label>
+					</div>					
 					<div class="col-xs-3 col-md-3 add_top_padding">
 						<a href="javascript: showManageCheckTypePopup()" th:text="#{germplasm.list.manage.check.types}"></a>
 					</div>		
-				</div>
-				
-			 
-		
+				</div>							 				
 		</div>
-		
-	</div>
+		 <div class="row">				
+				<div class="row  form-group  col-xs-12 col-md-12">
+					<div class="col-xs-4 col-md-4">
+						<label class="control-label">Interval</label><span class="required">*</span>
+					</div>
+					<div class="col-xs-3 col-md-3">
+						<input style="width: 50px" type="text" th:field="*{interval}" class="form-control spinner-input" />
+					</div>		
+				</div>							 				
+		</div>
+		 <div class="row">				
+				<div class="row  form-group  col-xs-12 col-md-12">
+					<div class="col-xs-4 col-md-4">
+						<label class="control-label">Manner of Insertion</label><span class="required">*</span>
+					</div>
+					<div class="col-xs-3 col-md-3">
+						<select class="form-control" th:field="*{mannerOfInsertion}">
+							<option value="1">In turn</option>
+							<option value="2">Per Location</option>
+						</select>
+					</div>	
+							
+				</div>							 				
+		</div>
      </div>
      
      <div class="row">
@@ -162,6 +177,13 @@
 			initializeCheckTypeSelect2(checkTypes, [], false, 0, "comboCheckCode");
 			$("#updateCheckTypes").hide();
 			$("#deleteCheckTypes").hide();
+			$('#mannerOfInsertion').select2();
+			
+			$('#interval').spinedit({
+				minimum: 1,
+				maximum: parseInt($('#totalGermplasms').val()),
+				step: 1
+			});
         });
         
       //]]>

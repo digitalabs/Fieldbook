@@ -63,6 +63,7 @@ public class ImportedGermplasm implements Serializable {
     private Integer checkId;
     
     private String checkName;
+
     
     /**
      * Instantiates a new imported germplasm.
@@ -364,4 +365,6 @@ public class ImportedGermplasm implements Serializable {
 
     	return rec;
     }
+
+    
 }

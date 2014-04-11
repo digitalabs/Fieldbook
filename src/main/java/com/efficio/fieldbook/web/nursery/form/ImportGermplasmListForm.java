@@ -66,8 +66,26 @@ public class ImportGermplasmListForm {
 	    
 	private String manageCheckValue;
 	
+    
+    private String mannerOfInsertion;
+    private String interval;
+    private String startIndex;
+    private int totalGermplasms;
+    
+    
 	
-    public String getCheckValue() {
+	
+    public int getTotalGermplasms() {
+    	if(importedGermplasm != null)
+    		return importedGermplasm.size();
+    	return 0;
+	}
+
+	public void setTotalGermplasms(int totalGermplasms) {
+		this.totalGermplasms = totalGermplasms;
+	}
+
+	public String getCheckValue() {
 		return checkValue;
 	}
 
@@ -375,6 +393,30 @@ public class ImportGermplasmListForm {
 		public void setPaginatedImportedCheckGermplasm(
 				List<ImportedGermplasm> paginatedImportedCheckGermplasm) {
 			this.paginatedImportedCheckGermplasm = paginatedImportedCheckGermplasm;
+		}
+
+		public String getMannerOfInsertion() {
+			return mannerOfInsertion;
+		}
+
+		public void setMannerOfInsertion(String mannerOfInsertion) {
+			this.mannerOfInsertion = mannerOfInsertion;
+		}
+
+		public String getInterval() {
+			return interval;
+		}
+
+		public void setInterval(String interval) {
+			this.interval = interval;
+		}
+
+		public String getStartIndex() {
+			return startIndex;
+		}
+
+		public void setStartIndex(String startIndex) {
+			this.startIndex = startIndex;
 		}	
     
     

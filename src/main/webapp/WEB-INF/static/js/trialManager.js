@@ -1867,7 +1867,7 @@ function validateCreateTrial() {
 	}
 	return true;
 }
-function reloadCheckTypeDropDown(addOnChange){
+function reloadCheckTypeDropDown(addOnChange, select2ClassName){
 	Spinner.toggle();
 	var currentCheckId = $('#checkId').val();
 	$.ajax(
@@ -1877,9 +1877,9 @@ function reloadCheckTypeDropDown(addOnChange){
            data: "",
            success: function(data) {	        	   
         		   //recreate the select2 combos to get updated list of locations
-        		   $('#checkId').select2('destroy');
-        		   $('#checkValue').val("");
-        		   initializeCheckTypeSelect2($.parseJSON(data.allCheckTypes), [], addOnChange, currentCheckId, getJquerySafeId('checkId'));	   
+        		   //$('#checkId').select2('destroy');
+        		   //$('#checkValue').val("");
+        		   initializeCheckTypeSelect2($.parseJSON(data.allCheckTypes), [], addOnChange, currentCheckId, select2ClassName);	   
         	   	   Spinner.toggle();
            }
          }
@@ -1902,6 +1902,7 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, c
 			suggestions_obj.push(dataObj);
 			if (comboName != "comboCheckCode") {
 				var specificVal = '';
+				/*
 				if($('#'+getJquerySafeId(comboName)).select2('data') != null)
 					specificVal = $('#'+getJquerySafeId(comboName)).select2('data').text;
 				if(defaultData == null){
@@ -1911,7 +1912,7 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, c
 						defaultData = dataObj;
 					}
 				}
-				
+				*/
 			}
 		});
 	} else {
@@ -1951,6 +1952,7 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, c
 	    	}
 	    });
 	} else {
+		/*
 		$('#'+comboName).select2({
 	        query: function (query) {
 	          var data = {results: sortByKey(suggestions_obj, "text")}, i, j, s;
@@ -1961,19 +1963,39 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, c
 	            query.callback(data);
 	        }
 	    });
-		$('#checkId').val('');
-		if(addOnChange){
+	    */
+
+		//daniel
+		//alert('here'+comboName);
+		$('.'+comboName).each(function(){
+			var currentVal = $(this).val();
+			$(this).empty();
+			$(this).select2('destroy');
+			for(var i = 0 ; i < suggestions_obj.length ; i++){
+				var val = suggestions_obj[i].text;
+				var id = suggestions_obj[i].id;
+				var selected = '';
+				if(currentVal == id)
+					selected = 'selected';
+				$(this).append($('<option '+ selected +' ></option>').attr('value', id).text(val));			
+			}
 			
+		});
+		$('.'+comboName).select2();
+		//$('#checkId').val('');
+		if(addOnChange){
+			/*
 			$('#'+getJquerySafeId('checkId')).on("change", function (){
 		    	
 		    	$('#'+getJquerySafeId("checkValue")).val($('#'+getJquerySafeId("checkId")).select2('data').text);
 		    	
 		    });
+		    */
 		}
 	}
 	//console.log(defaultData);
 	if(defaultData != null){		
-		$('#'+comboName).select2('data', defaultData).trigger('change');
+		//$('#'+comboName).select2('data', defaultData).trigger('change');
 	}
 		
 }

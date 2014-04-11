@@ -1,0 +1,76 @@
+<div>    
+<h4>Check Germplasm List</h4>
+<form onsubmit="return do_germplasm_check();" id="check-germplasm-list-form" role="form-horizontal" class="form-horizontal" action="#"
+  th:action="@{/NurseryManager/importGermplasmList/next}" method="post" th:object="${importGermplasmListForm}" enctype="multipart/form-data">
+      
+    <!-- case 1: no data means no table -->
+     <div th:if="*{paginatedImportedCheckGermplasm == null or #lists.isEmpty(paginatedImportedCheckGermplasm)}">
+       <span class="noGermplasmListIndicator" th:text="#{nursery.import.no.germplasm.list}">No Germplasm list</span>
+     </div>     
+    
+     <!-- case 3: basic view of the importedGermplasm -->
+     <div th:if="*{paginatedImportedCheckGermplasm != null and not #lists.isEmpty(paginatedImportedCheckGermplasm)}">
+       <div class="germplasm-list-table">
+         <table th:if="*{not #lists.isEmpty(paginatedImportedCheckGermplasm)}" class="my-class table table-curved table-condensed germplasm-list-items">
+           <thead>
+             <tr>
+               <th th:utext="#{nursery.import.header.check}">.Check</th>              
+               <th th:utext="#{nursery.import.header.designation}">.Designation</th>
+             </tr>
+           </thead>
+           <tbody th:remove="all-but-first">
+             <tr th:each="gid, row : *{paginatedImportedCheckGermplasm}">
+               <td align="center" th:class="${row.even}? 'even' : 'odd'">
+               <select th:field="*{paginatedImportedCheckGermplasm[__${row.index}__].check}" class="form-control checklist-select">
+               		<option th:each="type: ${checkLists}" th:value="${type.id}" th:text="${type.description}"></option>
+               </select>               
+               </td>
+               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.desig}">.2</td>
+             </tr>
+             <tr>
+               <td>.1.1</td>
+               <td>.2</td>
+             </tr>
+           </tbody>
+         </table>
+       </div>
+     </div>
+     
+   
+   		<div> 
+	        <div th:if="*{importedCheckGermplasm != null and not #lists.isEmpty(importedCheckGermplasm)}">
+	        	<div id="check-germplasm-list-pagination"></div>
+	        </div>
+        </div>        
+     
+  
+     
+     </form>
+     
+ </div>
+ <script type="text/javascript" th:src="@{/static/js/bootstrap-paginator.min.js}"></script>
+<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[
+        var paginationCheckUrl = /*[[@{/NurseryManager/importGermplasmList/checkPage/}]]*/;
+ 
+        
+        var optionsCheck = {
+            currentPage: /*[[${importGermplasmListForm.currentCheckPage}]]*/,
+            totalPages: /*[[${importGermplasmListForm.totalCheckPages}]]*/,
+
+            alignment:'center',
+            useBootstrapTooltip:true,
+            onPageClicked: function(e,originalEvent,type,page){            	
+            	showPostPage(paginationCheckUrl, optionsCheck.currentPage, page, 'check-germplasm-list', 'check-germplasm-list-form');
+            }
+        }
+        $( document ).ready(function() {  
+			if($('#check-germplasm-list-pagination') != null){
+				$('#check-germplasm-list-pagination').bootstrapPaginator(optionsCheck);
+			}	
+			//reloadCheckTypeDropDown(true, 'checklist-select');
+			$('.checklist-select').select2();
+        });
+        
+      //]]>
+    </script>

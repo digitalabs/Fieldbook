@@ -1,4 +1,5 @@
-<div>    
+<div>   
+<h4>Primary Germplasm List</h4> 
 <form onsubmit="return do_germplasm_check();" id="germplasm-list-form" role="form-horizontal" class="form-horizontal" action="#"
   th:action="@{/NurseryManager/importGermplasmList/next}" method="post" th:object="${importGermplasmListForm}" enctype="multipart/form-data">
       
@@ -26,8 +27,9 @@
              <tr th:each="gid, row : *{paginatedImportedGermplasm}">
                <td align="center" th:class="${row.even}? 'even' : 'odd'">
                
-               <input type="checkbox"  th:field="*{paginatedImportedGermplasm[__${row.index}__].check}" value="is check" />
-               
+               <select th:field="*{paginatedImportedGermplasm[__${row.index}__].check}" class="form-control primarylist-select">
+               <option th:each="type: ${checkLists}" th:value="${type.id}" th:text="${type.description}"></option>
+               </select>
                </td>
                <td align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryId}">.1</td>
                <td align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.desig}">.2</td>
@@ -64,7 +66,9 @@
            <tbody th:remove="all-but-first">
              <tr th:each="gid, row : *{paginatedImportedGermplasm}">
                <td align="center" th:class="${row.even}? 'even' : 'odd'">
-               <input type="checkbox"  th:field="*{paginatedImportedGermplasm[__${row.index}__].check}" value="is check"/>
+               <select th:field="*{paginatedImportedGermplasm[__${row.index}__].check}" class="form-control primarylist-select">
+               <option th:each="type: ${checkLists}" th:value="${type.id}" th:text="${type.description}"></option>
+               </select>
                </td>
                <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryId}">.1</td>
                <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.desig}">.2</td>
@@ -90,24 +94,7 @@
        <span class="h3" th:text="#{germplasm.list.specify.checks}">Specify Checks</span>
        
        <div class="row">
-		<div class="col-xs-12 col-md-12" >			
-			<div class="row form-group">
-				<div class="col-xs-4 col-md-4">
-					<label class="control-label" th:text="#{germplasm.list.choose.specify.checks}+':'"></label><span class="required">*</span>
-				</div>
-				<div class="col-xs-5 col-md-5">
-					<select class="form-control" th:field="*{chooseSpecifyCheck}">
-						<option value="1" th:text="#{germplasm.list.choose.specify.checks.one.or.more}">Select one or more checks from the list</option>
-					</select>
-				</div>	
-				<div class="col-xs-3 col-md-3">
-					&nbsp;
-				</div>		
-			</div>
-			
-			 
-			
-		</div>
+		
 		
 			<div class="col-xs-12 col-md-12" >			
 				<div class="row form-group">
@@ -159,16 +146,19 @@
 			if($('#germplasm-list-pagination') != null){
 				$('#germplasm-list-pagination').bootstrapPaginator(options);
 			}
-	        
+	        /*
 			$('select').each(function(){
 				$(this).select2();
 			});
-			
+			*/
 			$('#manageCheckTypesModal').on('hidden.bs.modal', function (e) {
 				  //console.log('reload the drop down');
-				  reloadCheckTypeDropDown(false);
+				  reloadCheckTypeDropDown(false, 'primarylist-select');
+				  reloadCheckTypeDropDown(false, 'checklist-select');
 				});
-			reloadCheckTypeDropDown(true);
+			
+			//reloadCheckTypeDropDown(true, 'primarylist-select');
+			$('.primarylist-select').select2();
 			initializeCheckTypeSelect2(checkTypes, [], false, 0, "comboCheckCode");
 			$("#updateCheckTypes").hide();
 			$("#deleteCheckTypes").hide();

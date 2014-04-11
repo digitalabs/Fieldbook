@@ -106,7 +106,7 @@ public class CreateTrialController extends SettingsController {
             TrialDataset dataset = (TrialDataset)SettingsUtil.convertWorkbookToXmlDataset(workbook, false);
             SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
             
-            //Trial-level
+            //study-level
             List<SettingDetail> trialLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString()), 
                     buildRequiredVariablesLabel(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString(), true), 
                     buildRequiredVariablesFlag(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString()), 
@@ -116,10 +116,17 @@ public class CreateTrialController extends SettingsController {
             List<SettingDetail> plotLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()), 
                     buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false), 
                     buildRequiredVariablesFlag(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()), 
-                    userSelection.getPlotsLevelList(), false);            
+                    userSelection.getPlotsLevelList(), false);
+            
+            //trial environment 
+            List<SettingDetail> trialLevelVariableList = sortDefaultTrialVariables(updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString()), 
+                    buildRequiredVariablesLabel(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString(), true), 
+                    buildRequiredVariablesFlag(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString()), 
+                    userSelection.getTrialLevelVariableList(), true));
             
             userSelection.setStudyLevelConditions(trialLevelConditions);
             userSelection.setPlotsLevelList(plotLevelConditions);
+            userSelection.setTrialLevelVariableList(trialLevelVariableList);
             form.setStudyLevelVariables(userSelection.getStudyLevelConditions());
             form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
             form.setPlotLevelVariables(userSelection.getPlotsLevelList());
@@ -185,7 +192,7 @@ public class CreateTrialController extends SettingsController {
             form.setPlotLevelVariables(userSelection.getPlotsLevelList());
             
             //add default trial variables such as experimental design, replicates, block size and block per replicate
-            List<SettingDetail> trialLevelVariableList = addDefaultTrialVariables();
+            List<SettingDetail> trialLevelVariableList = sortDefaultTrialVariables(userSelection.getTrialLevelVariableList());
             form.setTrialLevelVariables(trialLevelVariableList);
             
             //create the matrix of trial environment variables
@@ -225,7 +232,8 @@ public class CreateTrialController extends SettingsController {
     
     private List<List<ValueReference>> createTrialEnvValueList(List<SettingDetail> trialLevelVariableList) {
         List<List<ValueReference>> trialEnvValueList = new ArrayList<List<ValueReference>>();
-        List<MeasurementRow> trialObservations = trialSelection.getWorkbook().getTrialObservations();
+        List<MeasurementRow> trialObservations = trialSelection.getWorkbook().getTrialObservations();        
+        
         for (MeasurementRow trialObservation : trialObservations) {
             List<ValueReference> trialInstanceVariables = new ArrayList<ValueReference>();
             for (SettingDetail detail : trialLevelVariableList) {
@@ -239,44 +247,15 @@ public class CreateTrialController extends SettingsController {
         return trialEnvValueList;
     }
     
-    private List<SettingDetail> addDefaultTrialVariables() {
-        List<SettingDetail> trialLevelVariableList = userSelection.getTrialLevelVariableList();
-//        StringTokenizer token = new StringTokenizer(AppConstants.TRIAL_ENVIRONMENT_DEFAULT_VARIABLES.getString(), ",");
-
-//        while (token.hasMoreTokens()) {
-//            Integer dataTypeId = Integer.valueOf(TermId.CATEGORICAL_VARIABLE.getId());
-//            
-//            String variableName = token.nextToken();
-//            
-//            //set datatype to numeric if variable is block per replicate
-//            if (variableName.equals(AppConstants.BLOCK_PER_REPLICATE.getString())) {
-//                dataTypeId = Integer.valueOf(TermId.NUMERIC_VARIABLE.getId());
-//            }
-//            
-//            SettingVariable variable = new SettingVariable(variableName, variableName, "",
-//                    "", "", "", "", dataTypeId, null, null);
-//            SettingDetail settingDetail;
-//            if (variableName.equals(AppConstants.BLOCK_PER_REPLICATE.getString())) {
-//                settingDetail = new SettingDetail(variable, null, null, false);
-//            } else {
-//                List<ValueReference> possibleValues = getPossibleValuesOfDefaultVariable(variableName);
-//                settingDetail = new SettingDetail(variable, possibleValues, null, false);
-//                
-//                settingDetail.setPossibleValuesToJson(possibleValues);
-//                settingDetail.setPossibleValuesFavoriteToJson(null);
-//            }
-//            
-//            trialLevelVariableList.add(settingDetail);
-//        }
-
+    private List<SettingDetail> sortDefaultTrialVariables(List<SettingDetail> trialLevelVariableList) {
         //set orderBy
         StringTokenizer tokenOrder = new StringTokenizer(AppConstants.TRIAL_ENVIRONMENT_ORDER.getString(), ",");
         int i=0;
         int tokenSize = tokenOrder.countTokens();
         while (tokenOrder.hasMoreTokens()) {
-            String variableName = tokenOrder.nextToken();
+            String variableId = tokenOrder.nextToken();
             for (SettingDetail settingDetail : trialLevelVariableList) {
-                if (settingDetail.getVariable().getName().equals(variableName)) {
+                if (settingDetail.getVariable().getCvTermId().equals(Integer.parseInt(variableId))) {
                     settingDetail.setOrder((tokenSize-i)*-1);
                 }
             }
@@ -289,7 +268,7 @@ public class CreateTrialController extends SettingsController {
                     return o1.getOrder() - o2.getOrder();
             }
         });
-        
+                
         return trialLevelVariableList;
     }
     

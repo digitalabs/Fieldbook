@@ -106,7 +106,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
        		
 	function submitGermplasmList(){
 		var $form = $("#germplasm-list-form");
-		$('#chooseSpecifyCheck').val($('#specifyCheckType').val());
+		$('#chooseSpecifyCheck').val($('input[name="specifyCheckType"]:checked').val());
 		var serializedData = $form.serialize();
 	
 	 	$.ajax({

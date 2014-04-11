@@ -11,14 +11,19 @@
 					<div class="row form-group">					
 <div class="col-xs-12 col-md-12" >			
 			<div class="row form-group">
-				<div class="col-xs-4 col-md-4">
+				<div class="col-xs-3 col-md-3">
 					<label class="control-label" th:text="#{germplasm.list.choose.specify.checks}+':'"></label><span class="required">*</span>
 				</div>
-				<div class="col-xs-5 col-md-5">
-					<select class="form-control" id="specifyCheckType">
-						<option value="1">Manually</option>
-						<option value="2" th:text="#{germplasm.list.choose.specify.checks.one.or.more}">Select one or more checks from the list</option>
-					</select>
+				<div class="col-xs-5 col-md-5">																					
+							<label class="radio-inline">
+							  <input checked="checked" type="radio" value="1" name="specifyCheckType"/> 
+							  <span>Manually</span>
+							</label>
+							<label class="radio-inline">
+							  <input type="radio" value="2" name="specifyCheckType"/> 
+							  <span th:text="#{germplasm.list.choose.specify.checks.one.or.more}">Select one or more checks from the list</span>
+							</label>
+							
 				</div>	
 				<div class="col-xs-3 col-md-3">
 					&nbsp;
@@ -45,7 +50,7 @@
 				      		<div id="imported-germplasm-list" class="list-droppable primary add-border" style="float: left; width: 70%">
 				      			<h3>Please drag and drop the primary germplasm list here</h3>
 				      		</div>
-				      		<div id="check-germplasm-list" class="list-droppable check add-border" style="float: left; width: 30%">
+				      		<div id="check-germplasm-list" class="list-droppable check add-border" style="float: left; width: 30%;padding-left: 10px; ">
 				      			<h3>Please drag and drop the germplasm check list here</h3>
 				      		</div>
 				      		<!--
@@ -121,8 +126,12 @@
 <div layout:fragment="page-script">
   <script type="text/javascript" th:src="@{/static/js/bootstrap-fileupload.js}"></script>
   <script type="text/javascript" th:src="@{/static/js/fieldbook-tree.js}"></script> 
+  <script type="text/javascript" th:src="@{/static/js/jquery-multisortable.js}"></script>
+  <script type="text/javascript" th:src="@{/static/js/jquery.tablednd.0.7.min.js}"></script>
+  
   <script type="text/javascript" th:inline="javascript">
     //<![CDATA[          
+               var addedGid = {};
                var listId = 0;
     var hasPageError = /*[[${importGermplasmListForm.hasError}]]*/;
     function do_validation() {
@@ -154,26 +163,62 @@
 	  //display tree
 	  
 	  displayGermplasmListTree("germplasmTree");
+	  $('input[name="specifyCheckType"]').on('change',changeCheckLayout)
 	  
-	  $('#specifyCheckType').on('change', function(){
-		 changeCheckLayout(); 
-	  });
 	  changeCheckLayout();
+	  
+	 
   });
   
+  function makeDropable(){
+	  
+	  /*
+	  $('.germplasm-list-items tr').sortable({
+		  	//items: 'tr',
+		    connectWith: "#check-germplasm-list",
+			receive: function(event, ui) {	
+				return false;
+	            $(ui.sender).sortable('cancel');
+	        },
+	        helper: function(e, tr)
+	        {
+	          var $originals = tr.children();
+	          var $helper = tr.clone();
+	          $helper.children().each(function(index)
+	          {
+	            // Set helper cell sizes to match the original sizes
+	            $(this).width($originals.eq(index).width());
+	          });
+	          return $helper;
+	        },
+		}).disableSelection();
+	  */
+	  /*
+	  $(".draggable").draggable({
+	        helper: "clone",
+	        start: function(event, ui) {
+	            c.tr = this;
+	            c.helper = ui.helper;
+	        }
+	});*/
+  }
+  
   	function changeCheckLayout(){
-  		if($('#specifyCheckType').val() == 1){
+  		var radioVal = $('input[name="specifyCheckType"]:checked').val();
+  		/*
+  		if(radioVal == 1){
   				$('#check-germplasm-list').css('display', 'none');
   				$('#imported-germplasm-list').removeClass('col-md-9').addClass('col-md-12');
   				$('#imported-germplasm-list').css('width', '100%');
   				$('.check-col').css('display', 'block');
-  		}else if($('#specifyCheckType').val() == 2){
+  		}else if(radioVal == 2){
   			//show the check
   			$('#check-germplasm-list').css('display', 'block');
 			$('#imported-germplasm-list').removeClass('col-md-12').addClass('col-md-9');
 			$('#imported-germplasm-list').css('width', '70%');
 			$('.check-col').css('display', 'none');
   		}
+  		*/
   	}
 
         var importLocationUrl = /*[[#{nursery.apps.import.nursery.url}]]*/;
@@ -258,20 +303,65 @@
       		      //console.log("droppable.over, "+ event+ui);
       		    },
       		    drop: function(event, ui) {
+      		    	
       		      var source = ui.helper.data("dtSourceNode") || ui.draggable;
+      		    
       		      //$(this).html("Dropped " + source);
-      		      //console.log(source.data.key);
-      		      
-      		      if($(this).hasClass('primary')){
-      		    	$(this).removeClass('add-border');  
-      		    	displayGermplasmDetails(source.data.key);
-      		      }else if($(this).hasClass('check')){
-      		    	displayGermplasmCheckDetails(source.data.key)
-      		    	$(this).removeClass('add-border');
-      		      }
+      		     //console.log(isFunction(source.data));
+      		     if(isFunction(source.data) == false){ 
+	      		      if($(this).hasClass('primary')){
+	      		    	$(this).removeClass('add-border');  
+	      		    	displayGermplasmDetails(source.data.key);
+	      		      }else if($(this).hasClass('check')){
+	      		    	displayGermplasmCheckDetails(source.data.key)
+	      		    	$(this).removeClass('add-border');
+	      		      }
+      		     }else{
+      		    	 var entryNumber = $(source).parent().data('entry');
+      		    	var gid = ""+$(source).parent().data('gid');
+      		    	 addCheckGermplasmList(entryNumber, gid);
+      		    	 
+      		     }
       		    }
       		  });
         }
+        function hideAddCol(isHide){
+        	if(isHide)
+        		$('.add-col').css('display', 'none');
+        	else
+        		$('.add-col').css('display', 'block');
+        }
+        function addCheckGermplasmList(entryNumber, gid){
+        	
+        	if(addedGid[gid] == null)
+        		addedGid[gid] = gid;
+        	else{
+        		showErrorMessage('page-message', 'Germplasm already added as check');
+        		moveToTopScreen();
+        		return;
+        	}
+        	$('#check-germplasm-list').removeClass('add-border');
+        	Spinner.toggle();
+        	$.ajax({
+        		url: "/Fieldbook/NurseryManager/importGermplasmList/addCheckGermplasmDetails/" + entryNumber,
+        		type: "GET",
+        		cache: false,
+        		success: function(html) {
+        			$("#check-germplasm-list").html(html);			
+        		},
+        		error: function(jqXHR, textStatus, errorThrown){ 
+        			console.log("The following error occured: " + textStatus, errorThrown); 
+        		},
+        		complete: function() {
+        			Spinner.toggle();
+        		}
+        	}); 	
+        }
+        
+        function isFunction(functionToCheck) {
+        	 var getType = {};
+        	 return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
+        	}
         
         function displayGermplasmDetails(listId) {
         	Spinner.toggle();
@@ -283,6 +373,10 @@
         		success: function(html) {
         			$("#imported-germplasm-list").html(html);	
         			changeCheckLayout();
+        			makeDropable();
+        			$('.addToCheck').on('click', function(){
+        				addCheckGermplasmList($(this).data('entry'), $(this).data('gid') );
+        			  })  
         		},
         		error: function(jqXHR, textStatus, errorThrown){ 
         			console.log("The following error occured: " + textStatus, errorThrown); 
@@ -294,6 +388,7 @@
         }
         
         function displayGermplasmCheckDetails(listId) {
+        	hideAddCol(true);
         	Spinner.toggle();
         	$('#'+'germplasmTree').find("*").removeClass('dynatree-selected');
         	$.ajax({
@@ -302,6 +397,28 @@
         		cache: false,
         		success: function(html) {
         			$("#check-germplasm-list").html(html);			
+        		},
+        		error: function(jqXHR, textStatus, errorThrown){ 
+        			console.log("The following error occured: " + textStatus, errorThrown); 
+        		},
+        		complete: function() {
+        			Spinner.toggle();
+        		}
+        	});
+        }
+        
+        function resetCheckList(){
+        	hideAddCol(false);
+        	Spinner.toggle();
+        	$.ajax({
+        		url: "/Fieldbook/NurseryManager/importGermplasmList/resetCheckGermplasmDetails",
+        		type: "GET",
+        		cache: false,
+        		success: function(html) {
+        			//$("#check-table").html('');		
+        			$('#check-germplasm-list').html('<h3>Please drag and drop the germplasm check list here</h3>')
+        			$('#check-germplasm-list').addClass('add-border');
+        			addedGid = {};
         		},
         		error: function(jqXHR, textStatus, errorThrown){ 
         			console.log("The following error occured: " + textStatus, errorThrown); 

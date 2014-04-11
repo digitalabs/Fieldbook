@@ -1,5 +1,14 @@
-<div>    
-<h4>Check Germplasm List</h4>
+<div>   
+<div class="row">
+	<div class="col-xs-9 col-md-9">
+		<h4>Check Germplasm List</h4>
+	</div> 
+	<div class="col-xs-3 col-md-3">
+		<a style="margin-top: -10px" href="javascript: resetCheckList()" class="btn btn-info">Reset</a>
+	</div>
+	
+</div>
+<div id="check-table">
 <form onsubmit="return do_germplasm_check();" id="check-germplasm-list-form" role="form-horizontal" class="form-horizontal" action="#"
   th:action="@{/NurseryManager/importGermplasmList/next}" method="post" th:object="${importGermplasmListForm}" enctype="multipart/form-data">
       
@@ -10,8 +19,8 @@
     
      <!-- case 3: basic view of the importedGermplasm -->
      <div th:if="*{paginatedImportedCheckGermplasm != null and not #lists.isEmpty(paginatedImportedCheckGermplasm)}">
-       <div class="germplasm-list-table">
-         <table th:if="*{not #lists.isEmpty(paginatedImportedCheckGermplasm)}" class="my-class table table-curved table-condensed germplasm-list-items">
+       <div class="check-germplasm-list-table">
+         <table th:if="*{not #lists.isEmpty(paginatedImportedCheckGermplasm)}" class="my-class table table-curved table-condensed check-germplasm-list-items">
            <thead>
              <tr>
                <th th:utext="#{nursery.import.header.check}">.Check</th>              
@@ -46,8 +55,9 @@
   
      
      </form>
-     
+   </div>  
  </div>
+ 
  <script type="text/javascript" th:src="@{/static/js/bootstrap-paginator.min.js}"></script>
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[

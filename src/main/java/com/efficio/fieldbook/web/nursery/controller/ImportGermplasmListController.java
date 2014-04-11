@@ -330,6 +330,85 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         return super.showAjaxPage(model, CHECK_PAGINATION_TEMPLATE);
     }
     
+    @RequestMapping(value="/addCheckGermplasmDetails/{entryId}", method = RequestMethod.GET)
+    public String addCheckGermplasmDetails(@PathVariable Integer entryId, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, 
+            Model model) {
+        
+        try {
+            ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+            if(userSelection.getImportedCheckGermplasmMainInfo() != null)
+            	mainInfo = userSelection.getImportedCheckGermplasmMainInfo();
+            mainInfo.setAdvanceImportType(true);
+            form.setImportedCheckGermplasmMainInfo(mainInfo);
+            
+                       
+                        
+            List<ImportedGermplasm> primaryList = userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
+            ImportedGermplasm importedGermplasm = primaryList.get(entryId-1);
+            List<ImportedGermplasm> list = new ArrayList();
+            if(userSelection.getImportedCheckGermplasmMainInfo() != null && 
+            		userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList() != null && 
+            		userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms() != null)
+            	list = userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
+            list.add(importedGermplasm);
+            
+            form.setImportedCheckGermplasm(list);
+            
+            //System.out.println(list.size());
+            
+            ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
+            importedGermplasmList.setImportedGermplasms(list);
+            mainInfo.setImportedGermplasmList(importedGermplasmList);
+            
+            
+            //form.changePage(1);
+            form.changeCheckPage(1);
+            userSelection.setCurrentPageCheckGermplasmList(form.getCurrentCheckPage());
+
+            getUserSelection().setImportedCheckGermplasmMainInfo(mainInfo);
+            getUserSelection().setImportValid(true);
+            
+            model.addAttribute("checkLists", ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations());
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+        }
+        return super.showAjaxPage(model, CHECK_PAGINATION_TEMPLATE);
+    }
+    
+    @ResponseBody
+    @RequestMapping(value="/resetCheckGermplasmDetails", method = RequestMethod.GET)
+    public String resetCheckGermplasmDetails( 
+            Model model) {
+        
+        try {
+            ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+            mainInfo.setAdvanceImportType(true);
+            //form.setImportedCheckGermplasmMainInfo(mainInfo);
+            
+            List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
+            
+            //form.setImportedCheckGermplasm(list);
+            
+            //System.out.println(list.size());
+            
+            ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
+            importedGermplasmList.setImportedGermplasms(list);
+            mainInfo.setImportedGermplasmList(importedGermplasmList);
+            
+            //form.changePage(1);
+            //form.changeCheckPage(1);
+            userSelection.setCurrentPageCheckGermplasmList(1);
+
+            getUserSelection().setImportedCheckGermplasmMainInfo(mainInfo);
+            getUserSelection().setImportValid(true);
+            
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+        }
+        return "success";
+    }
+    
+    
     @RequestMapping(value="/page/{pageNum}/{previewPageNum}", method = RequestMethod.POST)
     public String getPaginatedList(@PathVariable int pageNum, @PathVariable int previewPageNum
             , @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, Model model) {

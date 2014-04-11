@@ -513,7 +513,7 @@ padding-left: 20px; margin-top: 7px
     margin-top: 13px;
     line-height: 18px;
 }
-.germplasm-list-table, .germplasm-measurement-list-table, .advance-nursery-list-table{
+.germplasm-list-table, .germplasm-measurement-list-table, .advance-nursery-list-table, .check-germplasm-list-table{
 	max-height: 400px;
 	overflow: auto;
 }

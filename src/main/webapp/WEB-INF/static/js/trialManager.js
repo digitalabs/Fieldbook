@@ -1116,7 +1116,7 @@ function initializePossibleValuesCombo(possibleValues, name, showAllLocation, de
 	    }).on("change", function () {
 	    	populateExperimentalDesign($("#experimentalDesignForAll").select2("data").id, $("#experimentalDesignForAll").select2("data").text);
 	    });
-	} else if (name.indexOf("trialEnvironmentValues") > -1 && typeof replicates !== 'undefined' && replicates) {
+	} else if (name.indexOf("trialEnvironmentValues") > -1) {
 		$(name).select2({
 			query: function (query) {	
 		      var data = {results: possibleValues_obj}, i, j, s;
@@ -1140,10 +1140,12 @@ function initializePossibleValuesCombo(possibleValues, name, showAllLocation, de
 		    	}
 	    	}
 	    	
+	    	/*
 	    	if (isReplicateOrBlockSize($(this).attr("name"))) {
 	    		//compute block per replicate
 	    		
 	    	}
+	    	*/
 	    });
 	} else {
 		$(name).select2({

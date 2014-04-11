@@ -383,7 +383,7 @@ public class CreateTrialController extends SettingsController {
     }
     
     @ModelAttribute("experimentalDesignValues")
-    public List<ValueReference> getExperimentalDesignValues() {
-        return getPossibleValuesOfDefaultVariable(AppConstants.EXPERIMENTAL_DESIGN.getString());
+    public List<ValueReference> getExperimentalDesignValues() throws MiddlewareQueryException {
+        return fieldbookService.getAllPossibleValues(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
     }
 }

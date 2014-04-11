@@ -255,13 +255,15 @@ table{
 	
      border-left: none;
 }
+
 .table-curved > thead > tr > th:first-child,
   .table-curved > tbody > tr > th:first-child,
   .table-curved > tfoot > tr > th:first-child,
   .table-curved > thead > tr > td:first-child,
   .table-curved > tbody > tr > td:first-child,
   .table-curved > tfoot > tr > td:first-child {
-    border-left: none;
+   /* border-left: none;*/
+    border-left: 1px solid #c2c3c4;
   }
   
 .table-curved  > tbody > tr:last-child > td {	

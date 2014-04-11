@@ -32,11 +32,19 @@
 						th:id="'selectedFavoriteValue' + ${row.index} + 'a'  + ${rowStat.index}" class="selectedFavoriteValue"
 						type="hidden" th:value="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" />
 						
+						<label class="control-label trialInstanceNo" th:if="${trialEnvLevelVariable.variable.cvTermId == 8170}" th:text="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}"></label>
+						<input type="hidden" th:if="${trialEnvLevelVariable.variable.cvTermId == 8170}" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" />
+						
+						<input th:if="${trialEnvLevelVariable.variable.widgetType.type == 'NTEXT' and trialEnvLevelVariable.variable.cvTermId != 8170}" 
+						type="text" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" class="form-control numeric-input" />
+
+						<!-- 
 						<label class="control-label trialInstanceNo" th:if="${trialEnvLevelVariable.variable.widgetType.type == 'NTEXT' and trialEnvLevelVariable.deletable == false}" th:text="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}"></label>
 						<input type="hidden" th:if="${trialEnvLevelVariable.variable.widgetType.type == 'NTEXT' and trialEnvLevelVariable.deletable == false}" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" />
 						
 						<input th:if="${trialEnvLevelVariable.variable.widgetType.type == 'NTEXT' and trialEnvLevelVariable.deletable != false}" 
 						type="text" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" class="form-control numeric-input" />
+						-->
 						
 						<input th:if="${trialEnvLevelVariable.variable.widgetType.type == 'CTEXT'}" 
 						type="text" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].name}" class="form-control character-input" />

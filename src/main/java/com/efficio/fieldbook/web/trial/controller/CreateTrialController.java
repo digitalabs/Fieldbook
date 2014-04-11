@@ -241,33 +241,33 @@ public class CreateTrialController extends SettingsController {
     
     private List<SettingDetail> addDefaultTrialVariables() {
         List<SettingDetail> trialLevelVariableList = userSelection.getTrialLevelVariableList();
-        StringTokenizer token = new StringTokenizer(AppConstants.TRIAL_ENVIRONMENT_DEFAULT_VARIABLES.getString(), ",");
+//        StringTokenizer token = new StringTokenizer(AppConstants.TRIAL_ENVIRONMENT_DEFAULT_VARIABLES.getString(), ",");
 
-        while (token.hasMoreTokens()) {
-            Integer dataTypeId = Integer.valueOf(TermId.CATEGORICAL_VARIABLE.getId());
-            
-            String variableName = token.nextToken();
-            
-            //set datatype to numeric if variable is block per replicate
-            if (variableName.equals(AppConstants.BLOCK_PER_REPLICATE.getString())) {
-                dataTypeId = Integer.valueOf(TermId.NUMERIC_VARIABLE.getId());
-            }
-            
-            SettingVariable variable = new SettingVariable(variableName, variableName, "",
-                    "", "", "", "", dataTypeId, null, null);
-            SettingDetail settingDetail;
-            if (variableName.equals(AppConstants.BLOCK_PER_REPLICATE.getString())) {
-                settingDetail = new SettingDetail(variable, null, null, false);
-            } else {
-                List<ValueReference> possibleValues = getPossibleValuesOfDefaultVariable(variableName);
-                settingDetail = new SettingDetail(variable, possibleValues, null, false);
-                
-                settingDetail.setPossibleValuesToJson(possibleValues);
-                settingDetail.setPossibleValuesFavoriteToJson(null);
-            }
-            
-            trialLevelVariableList.add(settingDetail);
-        }
+//        while (token.hasMoreTokens()) {
+//            Integer dataTypeId = Integer.valueOf(TermId.CATEGORICAL_VARIABLE.getId());
+//            
+//            String variableName = token.nextToken();
+//            
+//            //set datatype to numeric if variable is block per replicate
+//            if (variableName.equals(AppConstants.BLOCK_PER_REPLICATE.getString())) {
+//                dataTypeId = Integer.valueOf(TermId.NUMERIC_VARIABLE.getId());
+//            }
+//            
+//            SettingVariable variable = new SettingVariable(variableName, variableName, "",
+//                    "", "", "", "", dataTypeId, null, null);
+//            SettingDetail settingDetail;
+//            if (variableName.equals(AppConstants.BLOCK_PER_REPLICATE.getString())) {
+//                settingDetail = new SettingDetail(variable, null, null, false);
+//            } else {
+//                List<ValueReference> possibleValues = getPossibleValuesOfDefaultVariable(variableName);
+//                settingDetail = new SettingDetail(variable, possibleValues, null, false);
+//                
+//                settingDetail.setPossibleValuesToJson(possibleValues);
+//                settingDetail.setPossibleValuesFavoriteToJson(null);
+//            }
+//            
+//            trialLevelVariableList.add(settingDetail);
+//        }
 
         //set orderBy
         StringTokenizer tokenOrder = new StringTokenizer(AppConstants.TRIAL_ENVIRONMENT_ORDER.getString(), ",");

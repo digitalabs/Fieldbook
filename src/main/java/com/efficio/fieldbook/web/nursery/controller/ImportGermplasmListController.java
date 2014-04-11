@@ -67,6 +67,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     /** The Constant URL. */
     public static final String URL = "/NurseryManager/importGermplasmList";
     public static final String PAGINATION_TEMPLATE = "/NurseryManager/showGermplasmPagination";
+    public static final String CHECK_PAGINATION_TEMPLATE = "/NurseryManager/showCheckGermplasmPagination";
     
     /** The user selection. */
     @Resource
@@ -284,11 +285,49 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
 
             getUserSelection().setImportedGermplasmMainInfo(mainInfo);
             getUserSelection().setImportValid(true);
+            model.addAttribute("checkLists", ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations());
             
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
         return super.showAjaxPage(model, PAGINATION_TEMPLATE);
+    }
+    
+    @RequestMapping(value="/displayCheckGermplasmDetails/{listId}", method = RequestMethod.GET)
+    public String displayCheckGermplasmDetails(@PathVariable Integer listId, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, 
+            Model model) {
+        
+        try {
+            ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+            mainInfo.setAdvanceImportType(true);
+            form.setImportedCheckGermplasmMainInfo(mainInfo);
+            int count = (int) germplasmListManager.countGermplasmListDataByListId(listId);
+            
+            List<GermplasmListData> data = new ArrayList<GermplasmListData>();
+            //for(int i = 0 ; i < 20 ; i++)
+            	data.addAll(germplasmListManager.getGermplasmListDataByListId(listId, 0, count));
+            List<ImportedGermplasm> list = transformGermplasmListDataToImportedGermplasm(data);
+            
+            form.setImportedCheckGermplasm(list);
+            
+            //System.out.println(list.size());
+            
+            ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
+            importedGermplasmList.setImportedGermplasms(list);
+            mainInfo.setImportedGermplasmList(importedGermplasmList);
+            
+            //form.changePage(1);
+            form.changeCheckPage(1);
+            userSelection.setCurrentPageCheckGermplasmList(form.getCurrentCheckPage());
+
+            getUserSelection().setImportedCheckGermplasmMainInfo(mainInfo);
+            getUserSelection().setImportValid(true);
+            
+            model.addAttribute("checkLists", ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations());
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+        }
+        return super.showAjaxPage(model, CHECK_PAGINATION_TEMPLATE);
     }
     
     @RequestMapping(value="/page/{pageNum}/{previewPageNum}", method = RequestMethod.POST)
@@ -308,8 +347,41 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     	form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
         form.changePage(pageNum);
         userSelection.setCurrentPageGermplasmList(form.getCurrentPage());
+        try {
+			model.addAttribute("checkLists", ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations());
+		} catch (MiddlewareQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         return super.showAjaxPage(model, PAGINATION_TEMPLATE);
     }
+    
+    @RequestMapping(value="/checkPage/{pageNum}/{previewPageNum}", method = RequestMethod.POST)
+    public String getCheckPaginatedList(@PathVariable int pageNum, @PathVariable int previewPageNum
+            , @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, Model model) {
+        //this set the necessary info from the session variable
+    	
+    	//we need to set the data in the measurementList
+    	for(int i = 0 ; i < form.getPaginatedImportedCheckGermplasm().size() ; i++){
+    		ImportedGermplasm importedGermplasm = form.getPaginatedImportedCheckGermplasm().get(i);
+    		int realIndex = ((previewPageNum - 1) * form.getResultPerPage()) + i;
+    		getUserSelection().getImportedCheckGermplasmMainInfo()
+            .getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheck(importedGermplasm.getCheck());
+    	}
+    	
+    	form.setImportedCheckGermplasmMainInfo(getUserSelection().getImportedCheckGermplasmMainInfo());
+    	form.setImportedCheckGermplasm(getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+        form.changeCheckPage(pageNum);
+        userSelection.setCurrentPageCheckGermplasmList(form.getCurrentCheckPage());
+        try {
+			model.addAttribute("checkLists", ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations());
+		} catch (MiddlewareQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return super.showAjaxPage(model, CHECK_PAGINATION_TEMPLATE);
+    }
+    
     
     private List<ImportedGermplasm> transformGermplasmListDataToImportedGermplasm(List<GermplasmListData> data) {
         List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();

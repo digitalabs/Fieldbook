@@ -31,18 +31,23 @@ public class ImportGermplasmListForm {
 	
 	/** The imported germplasm main info. */
 	private ImportedGermplasmMainInfo importedGermplasmMainInfo;
+	private ImportedGermplasmMainInfo importedCheckGermplasmMainInfo;
 	
 	/** The imported germplasm. */
 	private List<ImportedGermplasm> importedGermplasm;
+	private List<ImportedGermplasm> importedCheckGermplasm;
 	//for pagination
 	/** The paginated imported germplasm. */
-	private List<ImportedGermplasm> paginatedImportedGermplasm;	
+	private List<ImportedGermplasm> paginatedImportedGermplasm;
+	private List<ImportedGermplasm> paginatedImportedCheckGermplasm;
 	
 	/** The current page. */
 	private int currentPage;
+	private int currentCheckPage;
 	
 	/** The total pages. */
 	private int totalPages;
+	private int totalCheckPages;
 	
 	/** The result per page. */
 	private int resultPerPage = 100;	
@@ -109,8 +114,31 @@ public class ImportGermplasmListForm {
         }
 	    return totalPages;
 	}
+    
+    
 
-    /**
+    public int getCurrentCheckPage() {
+		return currentCheckPage;
+	}
+
+	public void setCurrentCheckPage(int currentCheckPage) {
+		this.currentCheckPage = currentCheckPage;
+	}
+
+	public int getTotalCheckPages() {
+		 if(importedCheckGermplasm != null && !importedCheckGermplasm.isEmpty()){           
+	            totalCheckPages = (int) Math.ceil((importedCheckGermplasm.size() * 1f) / getResultPerPage()); 
+	        }else{
+	        	totalCheckPages = 0;
+	        }
+		    return totalCheckPages;
+	}
+
+	public void setTotalCheckPages(int totalCheckPages) {
+		this.totalCheckPages = totalCheckPages;
+	}
+
+	/**
      * Gets the current page.
      *
      * @return the current page
@@ -142,6 +170,22 @@ public class ImportGermplasmListForm {
         }else{
             this.currentPage = 0;
         }
+	}
+    
+    public void changeCheckPage(int currentCheckPage){
+   	 //assumption is there is an imported germplasm already
+       if(importedCheckGermplasm != null && !importedCheckGermplasm.isEmpty()){
+           int totalItemsPerPage = getResultPerPage();
+           int start = (currentCheckPage - 1) * totalItemsPerPage;
+           int end = start + totalItemsPerPage;
+           if(importedCheckGermplasm.size() < end){
+               end = importedCheckGermplasm.size();
+           }
+           paginatedImportedCheckGermplasm = importedCheckGermplasm.subList(start, end);
+           this.currentCheckPage = currentCheckPage;
+       }else{
+           this.currentCheckPage = 0;
+       }
 	}
 
     /**
@@ -304,7 +348,34 @@ public class ImportGermplasmListForm {
         
         public void setManageCheckValue(String manageCheckValue) {
             this.manageCheckValue = manageCheckValue;
-        }	
+        }
+
+		public ImportedGermplasmMainInfo getImportedCheckGermplasmMainInfo() {
+			return importedCheckGermplasmMainInfo;
+		}
+
+		public void setImportedCheckGermplasmMainInfo(
+				ImportedGermplasmMainInfo importedCheckGermplasmMainInfo) {
+			this.importedCheckGermplasmMainInfo = importedCheckGermplasmMainInfo;
+		}
+
+		public List<ImportedGermplasm> getImportedCheckGermplasm() {
+			return importedCheckGermplasm;
+		}
+
+		public void setImportedCheckGermplasm(
+				List<ImportedGermplasm> importedCheckGermplasm) {
+			this.importedCheckGermplasm = importedCheckGermplasm;
+		}
+
+		public List<ImportedGermplasm> getPaginatedImportedCheckGermplasm() {
+			return paginatedImportedCheckGermplasm;
+		}
+
+		public void setPaginatedImportedCheckGermplasm(
+				List<ImportedGermplasm> paginatedImportedCheckGermplasm) {
+			this.paginatedImportedCheckGermplasm = paginatedImportedCheckGermplasm;
+		}	
     
     
 }

@@ -47,6 +47,7 @@ public class UserSelection extends StudySelection implements Serializable {
     
     /** The imported germplasm main info. */
     private ImportedGermplasmMainInfo importedGermplasmMainInfo;
+    private ImportedGermplasmMainInfo importedCheckGermplasmMainInfo;
 
     /** The is import valid. */
     private boolean isImportValid;
@@ -62,6 +63,7 @@ public class UserSelection extends StudySelection implements Serializable {
     
     /** The current page germplasm list. */
     private int currentPageGermplasmList;
+    private int currentPageCheckGermplasmList;
     
     /**  Nursery level conditions in Manage Settings. */
     private List<SettingDetail> studyLevelConditions;
@@ -123,6 +125,16 @@ public class UserSelection extends StudySelection implements Serializable {
 	 */
 	public void setCurrentPageGermplasmList(int currentPageGermplasmList) {
 		this.currentPageGermplasmList = currentPageGermplasmList;
+	}
+	
+	
+
+	public int getCurrentPageCheckGermplasmList() {
+		return currentPageCheckGermplasmList;
+	}
+
+	public void setCurrentPageCheckGermplasmList(int currentPageCheckGermplasmList) {
+		this.currentPageCheckGermplasmList = currentPageCheckGermplasmList;
 	}
 
 	/**
@@ -452,4 +464,15 @@ public class UserSelection extends StudySelection implements Serializable {
         public void setTrialEnvironmentValues(List<List<ValueReference>> trialEnvironmentValues) {
             this.trialEnvironmentValues = trialEnvironmentValues;
         }
+
+		public ImportedGermplasmMainInfo getImportedCheckGermplasmMainInfo() {
+			return importedCheckGermplasmMainInfo;
+		}
+
+		public void setImportedCheckGermplasmMainInfo(
+				ImportedGermplasmMainInfo importedCheckGermplasmMainInfo) {
+			this.importedCheckGermplasmMainInfo = importedCheckGermplasmMainInfo;
+		}
+        
+        
 }

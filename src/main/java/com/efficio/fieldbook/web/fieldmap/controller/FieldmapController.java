@@ -241,7 +241,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         } catch (NumberFormatException e) {
             LOG.error(e.toString());
         }
-               
+        form.setProgramLocationUrl(AppConstants.LOCATION_URL.getString());      
         return super.show(model);
     }
     

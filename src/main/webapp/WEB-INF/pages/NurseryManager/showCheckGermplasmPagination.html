@@ -1,13 +1,4 @@
 <div>   
-<div class="row">
-	<div class="col-xs-9 col-md-9">
-		<h4>Check Germplasm List</h4>
-	</div> 
-	<div class="col-xs-3 col-md-3">
-		<a style="margin-top: -10px" href="javascript: resetCheckList()" class="btn btn-info">Reset</a>
-	</div>
-	
-</div>
 <div id="check-table">
 <form onsubmit="return do_germplasm_check();" id="check-germplasm-list-form" role="form-horizontal" class="form-horizontal" action="#"
   th:action="@{/NurseryManager/importGermplasmList/next}" method="post" th:object="${importGermplasmListForm}" enctype="multipart/form-data">

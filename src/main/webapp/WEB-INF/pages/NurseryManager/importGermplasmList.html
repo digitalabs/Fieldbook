@@ -34,7 +34,27 @@
 			
 		</div>
 	    			</div>
-	    			
+	    			<div class="row form-group">
+				      	<!-- Germplasm List Tree View -->
+						<div class="col-xs-3 col-md-3">
+							<label class="control-label"><strong class="sub-content-heading">Germplasm List Tree</strong></label>
+						</div>
+
+				        <!-- Germplasm List Table View -->						
+				      	<div class="col-xs-9 col-md-9">
+				      	
+				      		<div style="float: left; width: 70%">
+				      			<label class="control-label"><strong class="sub-content-heading">Primary Germplasm List</strong></label>
+				      		</div>
+				      		<div style="float: left; width: 30%;padding-left: 10px; ">				      			
+				      			<label class="control-label"><strong class="sub-content-heading">Check Germplasm List</strong></label>
+				      			<a style="float: right; margin-top: -10px" href="javascript: resetCheckList()" class="btn btn-info">Reset</a>
+				      		</div>
+				      		
+						</div>
+					
+											
+				    </div>
 					<div class="row form-group">
 				      	<!-- Germplasm List Tree View -->
 						<div class="col-xs-3 col-md-3">
@@ -134,22 +154,21 @@
                var addedGid = {};
                var listId = 0;
                var makeDraggableBool = true;
+               var startIndex = 0;
     var hasPageError = /*[[${importGermplasmListForm.hasError}]]*/;
     function do_validation() {
-    if ($('#fileupload').val() == "") {
-    var message = /*[[#{common.error.file.no.file.selected}]]*/;
-    
-    
-    $("#page-message").html(
-    "<div class='alert alert-danger'>"+ message +"</div>"
-  );
-  
-  $('div.fileupload').parent().parent().addClass('has-error');
-  
-  return false;
-  }
-  
-  return true;
+    	var message = /*[[#{common.error.file.no.file.selected}]]*/;
+    	/*
+    	if ($('#fileupload').val() == "") {    		
+		    $("#page-message").html(
+		    "<div class='alert alert-danger'>"+ message +"</div>"
+		  );
+		  
+		  $('div.fileupload').parent().parent().addClass('has-error');		  
+		  return false;
+ 		 }	
+  		*/
+  		return true;
   }
   
   
@@ -173,27 +192,6 @@
   
   function makeDraggable(isDraggable){
 	  
-	  /*
-	  $('.germplasm-list-items tr').sortable({
-		  	//items: 'tr',
-		    connectWith: "#check-germplasm-list",
-			receive: function(event, ui) {	
-				return false;
-	            $(ui.sender).sortable('cancel');
-	        },
-	        helper: function(e, tr)
-	        {
-	          var $originals = tr.children();
-	          var $helper = tr.clone();
-	          $helper.children().each(function(index)
-	          {
-	            // Set helper cell sizes to match the original sizes
-	            $(this).width($originals.eq(index).width());
-	          });
-	          return $helper;
-	        },
-		}).disableSelection();
-	  */
 	  if(isDraggable){
 		  $(".germplasm-list-items tr").draggable({
 			  helper: function(event, ui) {

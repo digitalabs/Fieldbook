@@ -67,17 +67,24 @@
 	        	$('#interval2').spinedit({
 					minimum: 1,
 					maximum: totalGermplasm,
-					step: 1
+					step: 1,
+					value: 1
 				});
 				$('#startIndex2').spinedit({
 					minimum: 1,
 					maximum: totalGermplasm,
-					step: 1
+					step: 1,
+					value: 1
 				});
 				spinnerCreatedAlready = true;
         	}else{
         		$('#interval2').spinedit('setMaximum', totalGermplasm);
         		$('#startIndex2').spinedit('setMaximum', totalGermplasm);
+        		
+        		//set default value to 1 
+        		$('#interval2').spinedit('setValue', 1);
+        		$('#startIndex2').spinedit('setValue', 1);
+        		
         		if(totalGermplasm < parseInt($('#interval').val()))
         			$('#interval2').spinedit('setValue', totalGermplasm);
         		if(totalGermplasm < parseInt($('#startingIndex').val()))

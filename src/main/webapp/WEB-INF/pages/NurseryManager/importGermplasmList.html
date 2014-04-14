@@ -144,6 +144,28 @@
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
 </form>
+<input type="hidden" id="keyForOverwrite" value="" />
+<input type="hidden" id="lastCheckSourcePrimary" value="0" />
+<!-- Modal -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+    	<div class="modal-content">
+      		<div class="modal-body">
+      			<div>
+      				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      				<br />
+      			</div>
+        		<div class="col-xs-12 col-lg-12" th:text="#{import.germplasm.overwrite.current.checks}">
+        			Are you sure you want to overwrite existing checks with a new one?
+        		</div>																				
+      		</div>
+	  		<div class="modal-footer">
+    			<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
+      			<button type="button" th:value="#{common.form.ok.text}" data-dismiss="modal" class="btn btn-primary" th:text="#{common.form.ok.text}" onclick="javascript: overwriteChecksList();">Ok</button>			        	
+    		</div>
+  		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 <div class="row">
 	<div id="manage-location" th:include="/Common/importGermplasmListModal"></div>
@@ -169,6 +191,7 @@
                var listId = 0;
                var makeDraggableBool = true;
                var startIndex = 0;
+               
     var hasPageError = /*[[${importGermplasmListForm.hasError}]]*/;
     function do_validation() {
     	var message = /*[[#{common.error.file.no.file.selected}]]*/;
@@ -259,6 +282,11 @@
         	return true;
         }
         
+        function overwriteChecksList() {
+        	displayGermplasmCheckDetails($("#keyForOverwrite").val());
+		    $(this).removeClass('add-border');
+        }
+        
         /** Germplasm Tree **/
         function displayGermplasmListTree(treeName) {
         	/*if($('#'+treeName+' .fbtree-container').length != 0)
@@ -339,13 +367,21 @@
       		    
       		      //$(this).html("Dropped " + source);
       		     //console.log(isFunction(source.data));
-      		     if(isFunction(source.data) == false){ 
+      		     if(isFunction(source.data) == false){
+      		    	 
+      		    	  $("#lastCheckSourcePrimary").val(0);
 	      		      if($(this).hasClass('primary')){
 	      		    	$(this).removeClass('add-border');  
-	      		    	displayGermplasmDetails(source.data.key);
+	      		    	displayGermplasmDetails(source.data.key);	      		    	
 	      		      }else if($(this).hasClass('check')){
-	      		    	displayGermplasmCheckDetails(source.data.key)
-	      		    	$(this).removeClass('add-border');
+	      		    	// if there is an existing list already, ask user if data should be overwritten
+	      		    	if ($(".check-germplasm-list-items tbody tr").length > 0) {
+	      		    		$("#keyForOverwrite").val(source.data.key);
+	      		    		$("#confirmationModal").modal("show");
+	      		    	} else {
+		      		    	displayGermplasmCheckDetails(source.data.key)
+		      		    	$(this).removeClass('add-border');
+	      		    	}
 	      		      }
       		     }else if(isFunction(source.data) == true && $(this).hasClass('check')){
       		    	 //var entryNumber = $(source).parent().data('entry');
@@ -353,13 +389,14 @@
       		    	 var entryNumber = $(source).data('entry');
       		    	 var gid = ""+$(source).data('gid');
       		    	 //console.log(entryNumber + " " + gid);
+      		    	 $("#lastCheckSourcePrimary").val(1);
       		    	 addCheckGermplasmList(entryNumber, gid);
       		    	 
       		     }
       		    }
       		  });
         }
-        function hideAddCol(isHide){
+        function hideAddCol(isHide){	
         	if(isHide){
         		$('.addToCheck').css('display', 'none');
         		makeDraggable(false);
@@ -373,7 +410,6 @@
         		
         }
         function addCheckGermplasmList(entryNumber, gid){
-        	
         	if(addedGid[gid] == null)
         		addedGid[gid] = gid;
         	else{
@@ -418,8 +454,12 @@
         			makeDraggable(makeDraggableBool);
         			setSpinnerMaxValue();
         			$('.addToCheck').on('click', function(){
+        				$("#lastCheckSourcePrimary").val(1);
         				addCheckGermplasmList($(this).data('entry'), $(this).data('gid') );
-        			  })  
+        			});
+        			if ($("#lastCheckSourcePrimary").val() == 0 && $(".check-germplasm-list-items tbody tr").length > 0) {
+      		    		hideAddCol(true);
+      		    	}
         		},
         		error: function(jqXHR, textStatus, errorThrown){ 
         			console.log("The following error occured: " + textStatus, errorThrown); 

@@ -215,18 +215,20 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     	
     	//if(getUserSelection().isImportValid()){
     		int previewPageNum = userSelection.getCurrentPageGermplasmList();
-    		for(int i = 0 ; i < form.getPaginatedImportedGermplasm().size() ; i++){
-        		ImportedGermplasm importedGermplasm = form.getPaginatedImportedGermplasm().get(i);
-        		int realIndex = ((previewPageNum - 1) * form.getResultPerPage()) + i;
-        		getUserSelection().getImportedGermplasmMainInfo()
-                .getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheck(importedGermplasm.getCheck());
-        		if (importedGermplasm.getCheck() != null && !"".equals(importedGermplasm.getCheck())) {
-            		getUserSelection().getImportedGermplasmMainInfo()
-            			.getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckId(form.getCheckId());
-            		getUserSelection().getImportedGermplasmMainInfo()
-        				.getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckName(form.getCheckValue());
-        		}
-        	}
+    		if (form.getPaginatedImportedGermplasm() != null) {
+	    		for(int i = 0 ; i < form.getPaginatedImportedGermplasm().size() ; i++){
+	        		ImportedGermplasm importedGermplasm = form.getPaginatedImportedGermplasm().get(i);
+	        		int realIndex = ((previewPageNum - 1) * form.getResultPerPage()) + i;
+	        		getUserSelection().getImportedGermplasmMainInfo()
+	                .getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheck(importedGermplasm.getCheck());
+	        		if (importedGermplasm.getCheck() != null && !"".equals(importedGermplasm.getCheck())) {
+	            		getUserSelection().getImportedGermplasmMainInfo()
+	            			.getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckId(form.getCheckId());
+	            		getUserSelection().getImportedGermplasmMainInfo()
+	        				.getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckName(form.getCheckValue());
+	        		}
+	        	}
+    		}
         	
         	form.setImportedGermplasmMainInfo(getUserSelection().getImportedGermplasmMainInfo());
         	form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());

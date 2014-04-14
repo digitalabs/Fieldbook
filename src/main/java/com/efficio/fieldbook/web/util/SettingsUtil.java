@@ -209,7 +209,7 @@ public class SettingsUtil {
 				
 				variable.setPSMRFromStandardVariable(standardVariable);
 				//need to get the name from the session
-				variable.setName(userSelection.getStudyLevelConditions().get(index++).getVariable().getName());
+				variable.setName(userSelection.getStudyLevelConditions().get(index++).getVariable().getName());	
 			}
 			
 			Condition condition = new Condition(variable.getName(), variable.getDescription(), variable.getProperty(),
@@ -229,7 +229,7 @@ public class SettingsUtil {
 					variable.setName(userSelection.getPlotsLevelList().get(index++).getVariable().getName());
 				}
 				Factor factor = new Factor(variable.getName(), variable.getDescription(), variable.getProperty(),
-						variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType());
+						variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(), variable.getCvTermId());
 				factors.add(factor);
 			}
 		}
@@ -267,7 +267,7 @@ public class SettingsUtil {
 						
 					}
 					Factor factor = new Factor(variable.getName(), variable.getDescription(), variable.getProperty(),
-							variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType());
+							variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(), variable.getCvTermId());
 					trialLevelVariables.add(factor);
 				}
 			}
@@ -279,6 +279,7 @@ public class SettingsUtil {
 			dataset.setFactors(factors);
 			dataset.setVariates(variates);
 			dataset.setName(name);
+			dataset.setTrialLevelFactor(trialLevelVariables);
 			realDataset = dataset;
 		}else{
 			Dataset dataset = new Dataset();
@@ -720,12 +721,22 @@ public class SettingsUtil {
 	 * @param dataset the dataset
 	 * @return the workbook
 	 */
-	public static Workbook convertXmlDatasetToWorkbook(Dataset dataset) {
+	public static Workbook convertXmlDatasetToWorkbook(ParentDataset dataset) {
 		Workbook workbook = new Workbook();
 		
-		workbook.setConditions(convertConditionsToMeasurementVariables(dataset.getConditions()));
-		workbook.setFactors(convertFactorsToMeasurementVariables(dataset.getFactors()));
-		workbook.setVariates(convertVariatesToMeasurementVariables(dataset.getVariates()));
+		if (dataset instanceof Dataset) {
+			Dataset nurseryDataset = (Dataset) dataset;
+			workbook.setConditions(convertConditionsToMeasurementVariables(nurseryDataset.getConditions()));
+			workbook.setFactors(convertFactorsToMeasurementVariables(nurseryDataset.getFactors()));
+			workbook.setVariates(convertVariatesToMeasurementVariables(nurseryDataset.getVariates()));
+		}
+		else {
+			TrialDataset trialDataset = (TrialDataset) dataset;
+			workbook.setConditions(convertConditionsToMeasurementVariables(trialDataset.getConditions()));
+			workbook.setFactors(convertFactorsToMeasurementVariables(trialDataset.getFactors()));
+			workbook.setVariates(convertVariatesToMeasurementVariables(trialDataset.getVariates()));
+			workbook.getConditions().addAll(convertFactorsToMeasurementVariables(trialDataset.getTrialLevelFactor()));
+		}
 		
 		return workbook;
 	}
@@ -812,7 +823,7 @@ public class SettingsUtil {
 						mvar.getScale(), 
 						mvar.getMethod(), 
 						PhenotypicType.getPhenotypicTypeForLabel(mvar.getLabel()).toString(), 
-						mvar.getDataType()));
+						mvar.getDataType(), mvar.getTermId()));
 			}
 		}
 		
@@ -914,6 +925,7 @@ public class SettingsUtil {
 				factor.getName(), factor.getDescription(), factor.getScale(), factor.getMethod(), factor.getProperty(), factor.getDatatype(), null, 
 				PhenotypicType.valueOf(factor.getRole()).getLabelList().get(0));
 		mvar.setFactor(true);
+		mvar.setTermId(factor.getTermId());
 		return mvar;
 	}
 

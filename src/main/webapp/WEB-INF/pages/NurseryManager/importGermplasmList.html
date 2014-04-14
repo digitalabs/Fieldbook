@@ -146,7 +146,7 @@
   </div><!-- /.modal -->
 </form>
 <input type="hidden" id="keyForOverwrite" value="" />
-<input type="hidden" id="lastCheckSourcePrimary" value="0" />
+<input type="hidden" id="lastCheckSourcePrimary" value="" />
 <!-- Modal -->
 <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
@@ -370,11 +370,11 @@
       		     //console.log(isFunction(source.data));
       		     if(isFunction(source.data) == false){
       		    	 
-      		    	  $("#lastCheckSourcePrimary").val(0);
 	      		      if($(this).hasClass('primary')){
 	      		    	$(this).removeClass('add-border');
 	      		    	displayGermplasmDetails(source.data.key);
 	      		      }else if($(this).hasClass('check')){
+	      		    	$("#lastCheckSourcePrimary").val(0);
 	      		    	// if there is an existing list already, ask user if data should be overwritten
 	      		    	if ($(".check-germplasm-list-items tbody tr").length > 0) {
 	      		    		$("#keyForOverwrite").val(source.data.key);

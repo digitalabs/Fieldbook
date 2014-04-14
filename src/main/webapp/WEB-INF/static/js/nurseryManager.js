@@ -1624,6 +1624,8 @@ function displayGermplasmListTree(treeName) {
 
 }
 
+/*
+ * obsolete
 function displayGermplasmDetails(listId) {
 	Spinner.toggle();
 	$.ajax({
@@ -1641,7 +1643,7 @@ function displayGermplasmDetails(listId) {
 		}
 	});
 }
-
+*/
 function openUsePreviousNurseryModal() {
 	$("#selectedNursery").select2("destroy");
 	$("#selectedNursery").val("")

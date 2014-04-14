@@ -372,8 +372,8 @@
       		    	 
       		    	  $("#lastCheckSourcePrimary").val(0);
 	      		      if($(this).hasClass('primary')){
-	      		    	$(this).removeClass('add-border');  
-	      		    	displayGermplasmDetails(source.data.key);	      		    	
+	      		    	$(this).removeClass('add-border');
+	      		    	displayGermplasmDetails(source.data.key);
 	      		      }else if($(this).hasClass('check')){
 	      		    	// if there is an existing list already, ask user if data should be overwritten
 	      		    	if ($(".check-germplasm-list-items tbody tr").length > 0) {
@@ -450,7 +450,7 @@
         		type: "GET",
         		cache: false,
         		success: function(html) {
-        			$("#imported-germplasm-list").html(html);	
+        			$("#imported-germplasm-list").html(html);
         			changeCheckLayout();
         			makeDraggable(makeDraggableBool);
         			setSpinnerMaxValue();
@@ -458,8 +458,8 @@
         				$("#lastCheckSourcePrimary").val(1);
         				addCheckGermplasmList($(this).data('entry'), $(this).data('gid') );
         			});
-        			if ($("#lastCheckSourcePrimary").val() == 0 && $(".check-germplasm-list-items tbody tr").length > 0) {
-      		    		//hideAddCol(true);
+        			if ($("#lastCheckSourcePrimary").val() == 0 && $(".check-germplasm-list-items tbody tr").length > 0) {	
+      		    		hideAddCol(true);
       		    	}
         		},
         		error: function(jqXHR, textStatus, errorThrown){ 

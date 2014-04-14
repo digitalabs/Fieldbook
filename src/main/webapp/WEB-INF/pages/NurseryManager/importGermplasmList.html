@@ -46,9 +46,10 @@
 				      		<div style="float: left; width: 70%">
 				      			<label class="control-label"><strong class="sub-content-heading">Primary Germplasm List</strong></label>
 				      		</div>
-				      		<div style="float: left; width: 30%;padding-left: 10px; ">				      			
-				      			<label class="control-label"><strong class="sub-content-heading">Checks List</strong></label>
-				      			<a style="float: right; margin-top: -10px" href="javascript: resetCheckList()" class="btn btn-info">Reset</a>
+				      		<div style="float: left; width: 30%;padding-left: 10px; ">
+				      			<label class="control-label"><strong class="sub-content-heading">Checks List&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong></label>
+				      			<a style="margin-top: -10px" href="javascript: showManageCheckTypePopup()" th:text="#{germplasm.list.manage.check.types}" class="btn btn-info">Manage Checks</a>
+				      			<a style="margin-top: -10px" href="javascript: resetCheckList()" class="btn btn-info">Reset</a>
 				      		</div>
 				      		
 						</div>															
@@ -187,10 +188,10 @@
   
   <script type="text/javascript" th:inline="javascript">
     //<![CDATA[          
-               var addedGid = {};
-               var listId = 0;
-               var makeDraggableBool = true;
-               var startIndex = 0;
+    var addedGid = {};
+    var listId = 0;
+    var makeDraggableBool = true;
+    var startIndex = 0;
                
     var hasPageError = /*[[${importGermplasmListForm.hasError}]]*/;
     function do_validation() {
@@ -458,7 +459,7 @@
         				addCheckGermplasmList($(this).data('entry'), $(this).data('gid') );
         			});
         			if ($("#lastCheckSourcePrimary").val() == 0 && $(".check-germplasm-list-items tbody tr").length > 0) {
-      		    		hideAddCol(true);
+      		    		//hideAddCol(true);
       		    	}
         		},
         		error: function(jqXHR, textStatus, errorThrown){ 

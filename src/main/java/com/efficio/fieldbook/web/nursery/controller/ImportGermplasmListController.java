@@ -19,16 +19,16 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.generationcp.middleware.manager.api.GermplasmListManager;
-import org.generationcp.middleware.pojos.GermplasmListData;
-import org.generationcp.middleware.service.api.DataImportService;
-import org.generationcp.middleware.service.api.FieldbookService;
-import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.GermplasmListManager;
+import org.generationcp.middleware.pojos.GermplasmListData;
+import org.generationcp.middleware.service.api.DataImportService;
+import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +42,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.service.MergeCheckService;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmList;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
@@ -51,7 +53,6 @@ import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.nursery.validation.ImportGermplasmListValidator;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
 /**
  * This controller handles the 2nd step in the nursery manager process.
@@ -94,6 +95,9 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     /** The ontology service. */
     @Resource
     private OntologyService ontologyService;
+    
+    @Resource
+    private MergeCheckService mergeCheckService;
     
     /** The message source. */
     @Autowired
@@ -199,6 +203,22 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     	
     }
     
+    @ResponseBody
+    @RequestMapping(value="/submitCheckGermplasmList", method = RequestMethod.POST)
+    public String submitCheckGermplasmList(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form
+            , BindingResult result, Model model) {
+        int previewPageNum = userSelection.getCurrentPageGermplasmList();
+        for(int i = 0 ; i < form.getPaginatedImportedCheckGermplasm().size() ; i++){
+            ImportedGermplasm importedGermplasm = form.getPaginatedImportedCheckGermplasm().get(i);
+            int realIndex = ((previewPageNum - 1) * form.getResultPerPage()) + i;
+            getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheck(importedGermplasm.getCheck());
+            getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckId(Integer.parseInt(importedGermplasm.getCheck()));
+            getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckName(importedGermplasm.getCheckName());
+        }
+        
+        return "success";
+    }
+    
     /**
      * Goes to the Next screen.  Added validation if a germplasm list was properly uploaded
      *
@@ -213,49 +233,25 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     public String nextScreen(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form
             , BindingResult result, Model model) throws MiddlewareQueryException {
     	
-    	//if(getUserSelection().isImportValid()){
-    		int previewPageNum = userSelection.getCurrentPageGermplasmList();
-    		if (form.getPaginatedImportedGermplasm() != null) {
-	    		for(int i = 0 ; i < form.getPaginatedImportedGermplasm().size() ; i++){
-	        		ImportedGermplasm importedGermplasm = form.getPaginatedImportedGermplasm().get(i);
-	        		int realIndex = ((previewPageNum - 1) * form.getResultPerPage()) + i;
-	        		getUserSelection().getImportedGermplasmMainInfo()
-	                .getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheck(importedGermplasm.getCheck());
-	        		if (importedGermplasm.getCheck() != null && !"".equals(importedGermplasm.getCheck())) {
-	            		getUserSelection().getImportedGermplasmMainInfo()
-	            			.getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckId(form.getCheckId());
-	            		getUserSelection().getImportedGermplasmMainInfo()
-	        				.getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckName(form.getCheckValue());
-	        		}
-	        	}
-    		}
-        	
-        	form.setImportedGermplasmMainInfo(getUserSelection().getImportedGermplasmMainInfo());
-        	form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
-            
-
-    		//this would validate and add CHECK factor if necessary
-    		importGermplasmFileService.validataAndAddCheckFactor(form.getImportedGermplasm(), getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(), userSelection);
-    		
-    		
-    		//getUserSelection().setImportedGermplasmMainInfo(form)
-    		
-    	    //return "redirect:" + AddOrRemoveTraitsController.URL;
-
-        	userSelection.setMeasurementRowList(measurementsGeneratorService.generateRealMeasurementRows(userSelection));
-        	userSelection.getWorkbook().setObservations(userSelection.getMeasurementRowList());
-
-        	//validationService.validateObservationValues(userSelection.getWorkbook());
-    	    dataImportService.saveDataset(userSelection.getWorkbook(), true);
-    		
-    		return "success";
-//    	}
-//    	else{
-//    	    form.setHasError("1");
-//    	    result.reject("error.no.import.germplasm.list", "Please import germplasm");
-//    	    return show(form,model);
-//    	}
+    	form.setImportedGermplasmMainInfo(getUserSelection().getImportedGermplasmMainInfo());
+    	form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+    	form.setImportedCheckGermplasmMainInfo(getUserSelection().getImportedCheckGermplasmMainInfo());
+    	form.setImportedCheckGermplasm(getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+        
+    	//merge primary and check germplasm list
+    	getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().setImportedGermplasms(mergeCheckService.mergeGermplasmList(form.getImportedGermplasm(), 
+    	        form.getImportedCheckGermplasm(), Integer.parseInt(form.getStartIndex()), Integer.parseInt(form.getInterval()), Integer.parseInt(form.getMannerOfInsertion())));
     	
+		//this would validate and add CHECK factor if necessary
+		importGermplasmFileService.validataAndAddCheckFactor(form.getImportedGermplasm(), getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(), userSelection);
+
+    	userSelection.setMeasurementRowList(measurementsGeneratorService.generateRealMeasurementRows(userSelection));
+    	userSelection.getWorkbook().setObservations(userSelection.getMeasurementRowList());
+
+    	//validationService.validateObservationValues(userSelection.getWorkbook());
+        dataImportService.saveDataset(userSelection.getWorkbook(), true);
+		
+		return "success";
     }
 
     @RequestMapping(value="/displayGermplasmDetails/{listId}", method = RequestMethod.GET)
@@ -274,8 +270,6 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             List<ImportedGermplasm> list = transformGermplasmListDataToImportedGermplasm(data);
             
             form.setImportedGermplasm(list);
-            
-            //System.out.println(list.size());
             
             ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
             importedGermplasmList.setImportedGermplasms(list);
@@ -311,8 +305,6 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             List<ImportedGermplasm> list = transformGermplasmListDataToImportedGermplasm(data);
             
             form.setImportedCheckGermplasm(list);
-            
-            //System.out.println(list.size());
             
             ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
             importedGermplasmList.setImportedGermplasms(list);
@@ -356,8 +348,6 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             
             form.setImportedCheckGermplasm(list);
             
-            //System.out.println(list.size());
-            
             ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
             importedGermplasmList.setImportedGermplasms(list);
             mainInfo.setImportedGermplasmList(importedGermplasmList);
@@ -390,8 +380,6 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
             
             //form.setImportedCheckGermplasm(list);
-            
-            //System.out.println(list.size());
             
             ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
             importedGermplasmList.setImportedGermplasms(list);

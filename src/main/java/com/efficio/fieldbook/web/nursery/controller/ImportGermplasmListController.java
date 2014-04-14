@@ -236,8 +236,6 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         	form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
         	form.setImportedCheckGermplasmMainInfo(getUserSelection().getImportedCheckGermplasmMainInfo());
         	form.setImportedCheckGermplasm(getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
-        	
-        	System.out.println(form.getImportedCheckGermplasm().size());
             
         	//merge primary and check germplasm list
         	getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().setImportedGermplasms(mergeCheckService.mergeGermplasmList(form.getImportedGermplasm(), 
@@ -279,8 +277,6 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             
             form.setImportedGermplasm(list);
             
-            //System.out.println(list.size());
-            
             ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
             importedGermplasmList.setImportedGermplasms(list);
             mainInfo.setImportedGermplasmList(importedGermplasmList);
@@ -315,8 +311,6 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             List<ImportedGermplasm> list = transformGermplasmListDataToImportedGermplasm(data);
             
             form.setImportedCheckGermplasm(list);
-            
-            //System.out.println(list.size());
             
             ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
             importedGermplasmList.setImportedGermplasms(list);
@@ -360,8 +354,6 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             
             form.setImportedCheckGermplasm(list);
             
-            //System.out.println(list.size());
-            
             ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
             importedGermplasmList.setImportedGermplasms(list);
             mainInfo.setImportedGermplasmList(importedGermplasmList);
@@ -394,8 +386,6 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
             
             //form.setImportedCheckGermplasm(list);
-            
-            //System.out.println(list.size());
             
             ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
             importedGermplasmList.setImportedGermplasms(list);

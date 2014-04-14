@@ -2,9 +2,10 @@
 <form onsubmit="return do_germplasm_check();" id="germplasm-list-form" role="form-horizontal" class="form-horizontal" action="#"
   th:action="@{/NurseryManager/importGermplasmList/next}" method="post" th:object="${importGermplasmListForm}" enctype="multipart/form-data">
       
-      <input type="hidden" th:field="*{chooseSpecifyCheck}"/>
        <input type="hidden" th:field="*{totalGermplasms}"/>
        <input type="hidden"  th:field="*{startIndex}"/>
+       <input type="hidden"  th:field="*{interval}"/>
+       <input type="hidden"  th:field="*{mannerOfInsertion}"/>
       
     <!-- case 1: no data means no table -->
      <div th:if="*{paginatedImportedGermplasm == null or #lists.isEmpty(paginatedImportedGermplasm)}">

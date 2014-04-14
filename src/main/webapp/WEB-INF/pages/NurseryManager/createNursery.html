@@ -106,7 +106,10 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
        		
 	function submitGermplasmList(){
 		var $form = $("#germplasm-list-form");
-		$('#chooseSpecifyCheck').val($('input[name="specifyCheckType"]:checked').val());
+		//$('#chooseSpecifyCheck').val($('input[name="specifyCheckType"]:checked').val());
+		$('#startIndex').val($('#startIndex2').val());
+		$('#interval').val($('#interval2').val());
+		$('#mannerOfInsertion').val($('#mannerOfInsertion2').val());
 		var serializedData = $form.serialize();
 	
 	 	$.ajax({

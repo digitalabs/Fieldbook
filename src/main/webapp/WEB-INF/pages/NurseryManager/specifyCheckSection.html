@@ -11,13 +11,13 @@
 						<label class="control-label">Starting Index</label><span class="required">*</span>
 					</div>
 					<div class="col-xs-2 col-md-2">
-						<input style="width: 50px" type="text" id="startingIndex" class="form-control spinner-input" />
+						<input style="width: 50px" type="text" id="startIndex2" class="form-control spinner-input" />
 					</div>		
 					<div class="col-xs-2 col-md-2 add_top_padding">
 						<label class="control-label">Interval</label><span class="required">*</span>
 					</div>
 					<div class="col-xs-2 col-md-2">
-						<input style="width: 50px" type="text" id="interval" class="form-control spinner-input" />
+						<input style="width: 50px" type="text" id="interval2" class="form-control spinner-input" />
 					</div>	
 				</div>							 				
 		</div>
@@ -27,7 +27,7 @@
 						<label class="control-label">Manner of Insertion</label><span class="required">*</span>
 					</div>
 					<div class="col-xs-2 col-md-2">
-						<select class="form-control" id="mannerOfInsertion">
+						<select class="form-control" id="mannerOfInsertion2">
 							<option value="1">In turn</option>
 							<option value="2">Per Location</option>
 						</select>
@@ -64,24 +64,24 @@
         	if($('#totalGermplasms').val() != null)
         		totalGermplasm = parseInt($('#totalGermplasms').val());
         	if(spinnerCreatedAlready == false){
-	        	$('#interval').spinedit({
+	        	$('#interval2').spinedit({
 					minimum: 1,
 					maximum: totalGermplasm,
 					step: 1
 				});
-				$('#startingIndex').spinedit({
+				$('#startIndex2').spinedit({
 					minimum: 1,
 					maximum: totalGermplasm,
 					step: 1
 				});
 				spinnerCreatedAlready = true;
         	}else{
-        		$('#interval').spinedit('setMaximum', totalGermplasm);
-        		$('#startingIndex').spinedit('setMaximum', totalGermplasm);
+        		$('#interval2').spinedit('setMaximum', totalGermplasm);
+        		$('#startIndex2').spinedit('setMaximum', totalGermplasm);
         		if(totalGermplasm < parseInt($('#interval').val()))
-        			$('#interval').spinedit('setValue', totalGermplasm);
+        			$('#interval2').spinedit('setValue', totalGermplasm);
         		if(totalGermplasm < parseInt($('#startingIndex').val()))
-        			$('#startingIndex').spinedit('setValue', totalGermplasm);
+        			$('#startIndex2').spinedit('setValue', totalGermplasm);
         	}
         }
       //]]>

@@ -126,6 +126,21 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 			}
 		});
 	}
+	
+	function submitCheckGermplasmList() {
+		var $form = $("#check-germplasm-list-form");	
+		var serializedData = $form.serialize();
+	
+	 	$.ajax({
+			url: "/Fieldbook/NurseryManager/importGermplasmList/submitCheckGermplasmList",
+			type: "POST",
+			data: serializedData,
+			cache: false,
+			success: function(html) {
+				submitGermplasmList();
+			}
+		});
+	}
 
 	function submitWorkbook(){
 		Spinner.toggle();
@@ -140,7 +155,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 			data: serializedData,
 			cache: false,
 			success: function(html) {
-				submitGermplasmList();
+				submitCheckGermplasmList();
 			}, 
 			complete: function() {
 			}

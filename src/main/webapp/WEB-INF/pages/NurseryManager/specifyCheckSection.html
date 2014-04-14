@@ -1,0 +1,88 @@
+        
+     <div>
+       <span class="h3" th:text="#{germplasm.list.specify.checks}">Specify Checks</span>
+       
+       <div class="row">				
+				<div class="row  form-group col-xs-12 col-md-12">									
+					<div class="col-xs-4 col-md-4 add_top_padding">
+						<a href="javascript: showManageCheckTypePopup()" th:text="#{germplasm.list.manage.check.types}"></a>
+					</div>	
+					<div class="col-xs-2 col-md-2 add_top_padding">
+						<label class="control-label">Starting Index</label><span class="required">*</span>
+					</div>
+					<div class="col-xs-2 col-md-2">
+						<input style="width: 50px" type="text" id="startingIndex" class="form-control spinner-input" />
+					</div>		
+					<div class="col-xs-2 col-md-2 add_top_padding">
+						<label class="control-label">Interval</label><span class="required">*</span>
+					</div>
+					<div class="col-xs-2 col-md-2">
+						<input style="width: 50px" type="text" id="interval" class="form-control spinner-input" />
+					</div>	
+				</div>							 				
+		</div>
+		 <div class="row">				
+				<div class="row  form-group  col-xs-12 col-md-12">
+					<div class="col-xs-2 col-md-2 add_top_padding">
+						<label class="control-label">Manner of Insertion</label><span class="required">*</span>
+					</div>
+					<div class="col-xs-2 col-md-2">
+						<select class="form-control" id="mannerOfInsertion">
+							<option value="1">In turn</option>
+							<option value="2">Per Location</option>
+						</select>
+					</div>	
+							
+				</div>							 				
+		</div>
+     </div>
+     
+     <div class="row">
+		<div id="manage-location" th:include="/NurseryManager/manageCheckType"></div>
+	</div>
+<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[        
+        var checkTypes = /*[[${checkTypes}]]*/ null;
+        var checkTypes_obj = [];
+        var spinnerCreatedAlready = false;
+        $( document ).ready(function() {  
+			
+			$('#manageCheckTypesModal').on('hidden.bs.modal', function (e) {
+				  reloadCheckTypeDropDown(false, 'checklist-select');
+				});
+		
+			initializeCheckTypeSelect2(checkTypes, [], false, 0, "comboCheckCode");
+			$("#updateCheckTypes").hide();
+			$("#deleteCheckTypes").hide();
+			$('#mannerOfInsertion').select2();
+			
+			setSpinnerMaxValue();
+        });
+        
+        function setSpinnerMaxValue(){
+        	var totalGermplasm = 0;
+        	if($('#totalGermplasms').val() != null)
+        		totalGermplasm = parseInt($('#totalGermplasms').val());
+        	if(spinnerCreatedAlready == false){
+	        	$('#interval').spinedit({
+					minimum: 1,
+					maximum: totalGermplasm,
+					step: 1
+				});
+				$('#startingIndex').spinedit({
+					minimum: 1,
+					maximum: totalGermplasm,
+					step: 1
+				});
+				spinnerCreatedAlready = true;
+        	}else{
+        		$('#interval').spinedit('setMaximum', totalGermplasm);
+        		$('#startingIndex').spinedit('setMaximum', totalGermplasm);
+        		if(totalGermplasm < parseInt($('#interval').val()))
+        			$('#interval').spinedit('setValue', totalGermplasm);
+        		if(totalGermplasm < parseInt($('#startingIndex').val()))
+        			$('#startingIndex').spinedit('setValue', totalGermplasm);
+        	}
+        }
+      //]]>
+    </script>	

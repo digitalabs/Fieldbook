@@ -7,7 +7,7 @@
 			    			<label class="control-label" id="germplasmLabel"><strong class="sub-content-heading" th:text="#{nursery.create.germplasm.header}">GERMPLASM DETAILS</strong></label>
 		    			</div>
 	    			</div>
-
+<!-- 
 					<div class="row form-group">					
 <div class="col-xs-12 col-md-12" >			
 			<div class="row form-group">
@@ -33,7 +33,7 @@
 			 
 			
 		</div>
-	    			</div>
+	    			</div> -->
 	    			<div class="row form-group">
 				      	<!-- Germplasm List Tree View -->
 						<div class="col-xs-3 col-md-3">
@@ -47,14 +47,13 @@
 				      			<label class="control-label"><strong class="sub-content-heading">Primary Germplasm List</strong></label>
 				      		</div>
 				      		<div style="float: left; width: 30%;padding-left: 10px; ">				      			
-				      			<label class="control-label"><strong class="sub-content-heading">Check Germplasm List</strong></label>
+				      			<label class="control-label"><strong class="sub-content-heading">Checks List</strong></label>
 				      			<a style="float: right; margin-top: -10px" href="javascript: resetCheckList()" class="btn btn-info">Reset</a>
 				      		</div>
 				      		
-						</div>
-					
-											
+						</div>															
 				    </div>
+				    
 					<div class="row form-group">
 				      	<!-- Germplasm List Tree View -->
 						<div class="col-xs-3 col-md-3">
@@ -71,7 +70,7 @@
 				      			<h3>Please drag and drop the primary germplasm list here</h3>
 				      		</div>
 				      		<div id="check-germplasm-list" class="list-droppable check add-border" style="float: left; width: 30%;padding-left: 10px; ">
-				      			<h3>Please drag and drop the germplasm check list here</h3>
+				      			<h3>Please drag and drop the checks list here</h3>
 				      		</div>
 				      		<!--
 				      		<div ></div>
@@ -79,6 +78,21 @@
 							<div id="imported-germplasm-list" th:include="/NurseryManager/showGermplasmPagination">
 		        	  		</div>
 		        	  		 -->
+						</div>
+					
+											
+				    </div>	
+				    
+				    <div class="row form-group">
+				      	<!-- Germplasm List Tree View -->
+						<div class="col-xs-3 col-md-3">
+							&nbsp;
+						</div>
+
+				        <!-- Germplasm List Table View -->						
+				      	<div class="col-xs-9 col-md-9">
+				      		<div id="specifyCheckSection"  th:include="/NurseryManager/specifyCheckSection"/>
+				      		
 						</div>
 					
 											
@@ -186,7 +200,7 @@
 	  $('input[name="specifyCheckType"]').on('change',changeCheckLayout)
 	  
 	  changeCheckLayout();
-	  
+	  showSpecifyCheckSection();
 	 
   });
   
@@ -375,6 +389,7 @@
         		cache: false,
         		success: function(html) {
         			$("#check-germplasm-list").html(html);			
+        			showSpecifyCheckSection();
         		},
         		error: function(jqXHR, textStatus, errorThrown){ 
         			console.log("The following error occured: " + textStatus, errorThrown); 
@@ -401,6 +416,7 @@
         			$("#imported-germplasm-list").html(html);	
         			changeCheckLayout();
         			makeDraggable(makeDraggableBool);
+        			setSpinnerMaxValue();
         			$('.addToCheck').on('click', function(){
         				addCheckGermplasmList($(this).data('entry'), $(this).data('gid') );
         			  })  
@@ -423,7 +439,8 @@
         		type: "GET",
         		cache: false,
         		success: function(html) {
-        			$("#check-germplasm-list").html(html);			
+        			$("#check-germplasm-list").html(html);
+        			showSpecifyCheckSection();
         		},
         		error: function(jqXHR, textStatus, errorThrown){ 
         			console.log("The following error occured: " + textStatus, errorThrown); 
@@ -434,6 +451,12 @@
         	});
         }
         
+        function showSpecifyCheckSection(){
+        	if($('.check-germplasm-list-items tr').length == 0)
+        		$('#specifyCheckSection').css('display', 'none');
+        	else
+        		$('#specifyCheckSection').css('display', 'block');
+        }
         function resetCheckList(){
         	hideAddCol(false);
         	Spinner.toggle();
@@ -443,9 +466,10 @@
         		cache: false,
         		success: function(html) {
         			//$("#check-table").html('');		
-        			$('#check-germplasm-list').html('<h3>Please drag and drop the germplasm check list here</h3>')
+        			$('#check-germplasm-list').html('<h3>Please drag and drop the checks list here</h3>')
         			$('#check-germplasm-list').addClass('add-border');
         			addedGid = {};
+        			showSpecifyCheckSection();
         		},
         		error: function(jqXHR, textStatus, errorThrown){ 
         			console.log("The following error occured: " + textStatus, errorThrown); 

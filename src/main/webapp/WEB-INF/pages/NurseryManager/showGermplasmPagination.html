@@ -107,49 +107,7 @@
 	        	<div id="germplasm-list-pagination"></div>
 	        </div>
         </div>
-        
-     <div th:if="*{paginatedImportedGermplasm != null or not #lists.isEmpty(paginatedImportedGermplasm)}">
-       <span class="h3" th:text="#{germplasm.list.specify.checks}">Specify Checks</span>
-       
-       <div class="row">				
-				<div class="row  form-group col-xs-12 col-md-12">
-					<div class="col-xs-4 col-md-4">
-						<label class="control-label">&nbsp;</label>
-					</div>					
-					<div class="col-xs-3 col-md-3 add_top_padding">
-						<a href="javascript: showManageCheckTypePopup()" th:text="#{germplasm.list.manage.check.types}"></a>
-					</div>		
-				</div>							 				
-		</div>
-		 <div class="row">				
-				<div class="row  form-group  col-xs-12 col-md-12">
-					<div class="col-xs-4 col-md-4">
-						<label class="control-label">Interval</label><span class="required">*</span>
-					</div>
-					<div class="col-xs-3 col-md-3">
-						<input style="width: 50px" type="text" th:field="*{interval}" class="form-control spinner-input" />
-					</div>		
-				</div>							 				
-		</div>
-		 <div class="row">				
-				<div class="row  form-group  col-xs-12 col-md-12">
-					<div class="col-xs-4 col-md-4">
-						<label class="control-label">Manner of Insertion</label><span class="required">*</span>
-					</div>
-					<div class="col-xs-3 col-md-3">
-						<select class="form-control" th:field="*{mannerOfInsertion}">
-							<option value="1">In turn</option>
-							<option value="2">Per Location</option>
-						</select>
-					</div>	
-							
-				</div>							 				
-		</div>
-     </div>
-     
-     <div class="row">
-		<div id="manage-location" th:include="/NurseryManager/manageCheckType"></div>
-	</div>
+
      <br />
      
      </form>
@@ -176,29 +134,8 @@
 			if($('#germplasm-list-pagination') != null){
 				$('#germplasm-list-pagination').bootstrapPaginator(options);
 			}
-	        /*
-			$('select').each(function(){
-				$(this).select2();
-			});
-			*/
-			$('#manageCheckTypesModal').on('hidden.bs.modal', function (e) {
-				  //console.log('reload the drop down');
-				  reloadCheckTypeDropDown(false, 'primarylist-select');
-				  reloadCheckTypeDropDown(false, 'checklist-select');
-				});
-			
-			//reloadCheckTypeDropDown(true, 'primarylist-select');
-			$('.primarylist-select').select2();
-			initializeCheckTypeSelect2(checkTypes, [], false, 0, "comboCheckCode");
-			$("#updateCheckTypes").hide();
-			$("#deleteCheckTypes").hide();
-			$('#mannerOfInsertion').select2();
-			
-			$('#interval').spinedit({
-				minimum: 1,
-				maximum: parseInt($('#totalGermplasms').val()),
-				step: 1
-			});
+			setSpinnerMaxValue();
+	       			
         });
         
       //]]>

@@ -19,16 +19,16 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.generationcp.middleware.manager.api.GermplasmListManager;
-import org.generationcp.middleware.pojos.GermplasmListData;
-import org.generationcp.middleware.service.api.DataImportService;
-import org.generationcp.middleware.service.api.FieldbookService;
-import org.generationcp.middleware.service.api.OntologyService;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareException;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.GermplasmListManager;
+import org.generationcp.middleware.pojos.GermplasmListData;
+import org.generationcp.middleware.service.api.DataImportService;
+import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.service.MergeCheckService;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmList;
@@ -52,7 +53,6 @@ import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.nursery.validation.ImportGermplasmListValidator;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
 /**
  * This controller handles the 2nd step in the nursery manager process.
@@ -231,33 +231,32 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     @ResponseBody
     @RequestMapping(value="/next", method = RequestMethod.POST)
     public String nextScreen(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form
-            , BindingResult result, Model model) throws MiddlewareQueryException {        	
-        	form.setImportedGermplasmMainInfo(getUserSelection().getImportedGermplasmMainInfo());
-        	form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
-        	form.setImportedCheckGermplasmMainInfo(getUserSelection().getImportedCheckGermplasmMainInfo());
-        	form.setImportedCheckGermplasm(getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
-            
-        	//merge primary and check germplasm list
-        	getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().setImportedGermplasms(mergeCheckService.mergeGermplasmList(form.getImportedGermplasm(), 
-        	        form.getImportedCheckGermplasm(), Integer.parseInt(form.getStartIndex()), Integer.parseInt(form.getInterval()), Integer.parseInt(form.getMannerOfInsertion())));
-        	
-    		//this would validate and add CHECK factor if necessary
-    		importGermplasmFileService.validataAndAddCheckFactor(form.getImportedGermplasm(), getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(), userSelection);
-
-        	userSelection.setMeasurementRowList(measurementsGeneratorService.generateRealMeasurementRows(userSelection));
-        	userSelection.getWorkbook().setObservations(userSelection.getMeasurementRowList());
-
-        	//validationService.validateObservationValues(userSelection.getWorkbook());
-    	        dataImportService.saveDataset(userSelection.getWorkbook(), true);
-    		
-    		return "success";
-//    	}
-//    	else{
-//    	    form.setHasError("1");
-//    	    result.reject("error.no.import.germplasm.list", "Please import germplasm");
-//    	    return show(form,model);
-//    	}
+            , BindingResult result, Model model) throws MiddlewareQueryException {
     	
+    	form.setImportedGermplasmMainInfo(getUserSelection().getImportedGermplasmMainInfo());
+    	form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+    	form.setImportedCheckGermplasmMainInfo(getUserSelection().getImportedCheckGermplasmMainInfo());
+    	if (getUserSelection().getImportedCheckGermplasmMainInfo() != null) {
+    		form.setImportedCheckGermplasm(getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+    	}
+        
+    	//merge primary and check germplasm list
+    	if (getUserSelection().getImportedCheckGermplasmMainInfo() != null && form.getImportedCheckGermplasm() != null && form.getStartIndex() != null
+    			&& form.getInterval() != null && form.getMannerOfInsertion() != null) {
+	    	getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().setImportedGermplasms(mergeCheckService.mergeGermplasmList(form.getImportedGermplasm(), 
+	    	        form.getImportedCheckGermplasm(), Integer.parseInt(form.getStartIndex()), Integer.parseInt(form.getInterval()), Integer.parseInt(form.getMannerOfInsertion())));
+    	}
+    	
+		//this would validate and add CHECK factor if necessary
+		importGermplasmFileService.validataAndAddCheckFactor(form.getImportedGermplasm(), getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(), userSelection);
+
+    	userSelection.setMeasurementRowList(measurementsGeneratorService.generateRealMeasurementRows(userSelection));
+    	userSelection.getWorkbook().setObservations(userSelection.getMeasurementRowList());
+
+    	//validationService.validateObservationValues(userSelection.getWorkbook());
+        dataImportService.saveDataset(userSelection.getWorkbook(), true);
+		
+		return "success";
     }
 
     @RequestMapping(value="/displayGermplasmDetails/{listId}", method = RequestMethod.GET)

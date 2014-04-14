@@ -28,7 +28,6 @@ import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
-import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.pojos.workbench.settings.TrialDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,11 +40,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.SettingVariable;
-import com.efficio.fieldbook.web.trial.bean.TrialSelection;
-import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.nursery.controller.SettingsController;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.trial.bean.TrialSelection;
+import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
@@ -305,10 +303,17 @@ public class CreateTrialController extends SettingsController {
     			break;
     		}
     	}
-
-    	Dataset dataset = (Dataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, form.getStudyLevelVariables(), form.getPlotLevelVariables(), form.getBaselineTraitVariables(), userSelection);
+    	
+    	form.setTrialLevelVariables(userSelection.getTrialLevelVariableList());
+    	TrialDataset dataset = (TrialDataset) SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, form.getStudyLevelVariables(), 
+    			form.getPlotLevelVariables(), form.getBaselineTraitVariables(), userSelection, form.getTrialLevelVariables());
     	Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);
     	userSelection.setWorkbook(workbook);
+
+    	if (form.getTrialEnvironmentValues() != null && !form.getTrialEnvironmentValues().isEmpty()) {
+    		userSelection.getWorkbook().setTrialObservations(WorkbookUtil.createMeasurementRows(form.getTrialEnvironmentValues(), workbook.getTrialVariables()));
+    	}
+    	userSelection.setTrialEnvironmentValues(form.getTrialEnvironmentValues());
     	
     	createStudyDetails(workbook, form.getStudyLevelVariables(), form.getFolderId());
  
@@ -332,7 +337,7 @@ public class CreateTrialController extends SettingsController {
 	        studyDetails.setTitle(getSettingDetailValue(conditions, TermId.STUDY_TITLE.getId()));
 	        studyDetails.setObjective(getSettingDetailValue(conditions, TermId.STUDY_OBJECTIVE.getId()));
 	        studyDetails.setStudyName(getSettingDetailValue(conditions, TermId.STUDY_NAME.getId()));
-	        studyDetails.setStudyType(StudyType.N);
+	        studyDetails.setStudyType(StudyType.T);
 	        
 	        if (folderId != null) {
 	        	studyDetails.setParentFolderId(folderId);

@@ -105,7 +105,7 @@ public class ManageNurseriesControllerTest extends AbstractJUnit4SpringContextTe
 		dataset.setVariates(new ArrayList<Variate>());
 		
 		dataset.getConditions().add(new Condition("CONDITION1", "CONDITION1", "PERSON", "DBCV", "ASSIGNED", PhenotypicType.STUDY.toString(), "C", "Meeh", null, null, null));
-		dataset.getFactors().add(new Factor("FACTOR1", "FACTOR1", "GERMPLASM ENTRY", "NUMBER", "ENUMERATED", PhenotypicType.GERMPLASM.toString(), "N"));
+		dataset.getFactors().add(new Factor("FACTOR1", "FACTOR1", "GERMPLASM ENTRY", "NUMBER", "ENUMERATED", PhenotypicType.GERMPLASM.toString(), "N", 0));
 		dataset.getVariates().add(new Variate("VARIATE1", "VARIATE1", "YIELD (GRAIN)", "Kg/ha", "Paddy Rice", PhenotypicType.VARIATE.toString(), "N", TermId.NUMERIC_VARIABLE.getId(), new ArrayList<ValueReference>(), 0.0, 0.0));
 		
 		Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);

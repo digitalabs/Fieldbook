@@ -444,6 +444,9 @@ public class UserSelection extends StudySelection implements Serializable {
 
 	@Override
 	public boolean isTrial() {
+		if (this.workbook != null) {
+			return !this.workbook.isNursery();
+		}
 		return false;
 	}
 

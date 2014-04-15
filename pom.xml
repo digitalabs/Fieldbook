@@ -303,6 +303,7 @@
 						<version>1.7</version>
 						<executions>
 							<execution>
+							    <id>default-cli</id>
 								<phase>generate-resources</phase> 
 								<configuration>
 									<tasks>

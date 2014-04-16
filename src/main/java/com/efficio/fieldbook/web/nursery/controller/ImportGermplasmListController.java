@@ -13,6 +13,7 @@ package com.efficio.fieldbook.web.nursery.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -245,6 +246,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     			&& form.getInterval() != null && form.getMannerOfInsertion() != null) {
 	    	getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().setImportedGermplasms(mergeCheckService.mergeGermplasmList(form.getImportedGermplasm(), 
 	    	        form.getImportedCheckGermplasm(), Integer.parseInt(form.getStartIndex()), Integer.parseInt(form.getInterval()), Integer.parseInt(form.getMannerOfInsertion())));
+	    	form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
     	}
     	
     	//this would validate and add CHECK factor if necessary
@@ -327,6 +329,31 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             LOG.error(e.getMessage(), e);
         }
         return super.showAjaxPage(model, CHECK_PAGINATION_TEMPLATE);
+    }
+    
+    @ResponseBody
+    @RequestMapping(value="/deleteCheckGermplasmDetails/{gid}", method = RequestMethod.GET)
+    public String deleteCheckGermplasmDetails(@PathVariable Integer gid, Model model) {
+        try {
+            
+            ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+            if(userSelection.getImportedCheckGermplasmMainInfo() != null)
+                mainInfo = userSelection.getImportedCheckGermplasmMainInfo();
+            mainInfo.setAdvanceImportType(true);
+            
+            List<ImportedGermplasm> checkList = mainInfo.getImportedGermplasmList().getImportedGermplasms();
+            Iterator<ImportedGermplasm> iter = checkList.iterator();
+            while (iter.hasNext()) {
+                if (iter.next().getGid().equals(gid)) {
+                    iter.remove();
+                }
+            }
+            
+            userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList().setImportedGermplasms(checkList);
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+        }
+        return "success";
     }
     
     @RequestMapping(value="/addCheckGermplasmDetails/{entryId}", method = RequestMethod.GET)

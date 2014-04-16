@@ -733,3 +733,9 @@ div.possibleValuesDiv{
 .add-border{
 	border: 1px solid #CECECE;
 }
+table tbody tr.germplasmSelectedRow, .germplasmSelectedRow td{
+	background-color: #BED6B2;
+}
+table tbody tr.checkGermplasmSelectedRow, .checkGermplasmSelectedRow td{
+	background-color: #BED6B2;
+}

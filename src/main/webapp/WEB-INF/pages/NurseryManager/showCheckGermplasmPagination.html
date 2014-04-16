@@ -19,7 +19,7 @@
              </tr>
            </thead>
            <tbody th:remove="all-but-first">
-             <tr th:each="gid, row : *{paginatedImportedCheckGermplasm}">
+             <tr th:each="gid, row : *{paginatedImportedCheckGermplasm}" th:attr="data-entry=${gid.entryId}" th:attrappend="data-gid=${gid.gid}">
                <td align="center" th:class="${row.even}? 'even' : 'odd'">
                <select th:field="*{paginatedImportedCheckGermplasm[__${row.index}__].check}" class="form-control checklist-select">
                		<option th:each="type: ${checkLists}" th:value="${type.id}" th:text="${type.description}"></option>

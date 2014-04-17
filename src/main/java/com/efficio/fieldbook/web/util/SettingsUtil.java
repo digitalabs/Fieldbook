@@ -30,6 +30,7 @@ import org.generationcp.middleware.pojos.workbench.settings.Condition;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.pojos.workbench.settings.Factor;
 import org.generationcp.middleware.pojos.workbench.settings.ParentDataset;
+import org.generationcp.middleware.pojos.workbench.settings.TreatmentFactor;
 import org.generationcp.middleware.pojos.workbench.settings.TrialDataset;
 import org.generationcp.middleware.pojos.workbench.settings.Variate;
 import org.pojoxml.core.PojoXml;
@@ -136,11 +137,13 @@ public class SettingsUtil {
 		pojoXml.addClassAlias(Condition.class, "condition");
 		pojoXml.addClassAlias(Variate.class, "variate");
 		pojoXml.addClassAlias(Factor.class, "factor");
+		pojoXml.addClassAlias(TreatmentFactor.class, "treatmentFactor");
 		
 		
 		pojoXml.addCollectionClass("condition",Condition.class);
 		pojoXml.addCollectionClass("factor",Factor.class);
 		pojoXml.addCollectionClass("variate",Variate.class);
+		pojoXml.addCollectionClass("treatmentFactor", TreatmentFactor.class);
 	}
 	
 	/**
@@ -484,6 +487,7 @@ public class SettingsUtil {
 		    List<SettingDetail> plotsLevelList  = new ArrayList<SettingDetail>();
 		    List<SettingDetail> baselineTraitsList  = new ArrayList<SettingDetail>();
 		    List<SettingDetail> trialLevelVariableList  = new ArrayList<SettingDetail>();
+		    List<SettingDetail> treatmentFactors = new ArrayList<SettingDetail>();
 		    if(dataset.getConditions() != null){
 				for(Condition condition : dataset.getConditions()){
 					
@@ -589,6 +593,38 @@ public class SettingsUtil {
 					}
 				}
 		    }
+			
+			if (dataset.getTreatmentFactors() != null && !dataset.getTreatmentFactors().isEmpty()) {
+				int group = 1;
+				for (TreatmentFactor treatmentFactor : dataset.getTreatmentFactors()) {
+           
+					Factor levelFactor = treatmentFactor.getLevelFactor();
+					SettingVariable levelVariable = new SettingVariable(levelFactor.getName(), levelFactor.getDescription(),
+							levelFactor.getProperty(), levelFactor.getScale(), levelFactor.getMethod(), levelFactor.getRole(),
+							levelFactor.getDatatype());
+					Integer stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
+							levelVariable.getProperty(), levelVariable.getScale(), levelVariable.getMethod(), PhenotypicType.valueOf(levelVariable.getRole()));
+					List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
+					SettingDetail settingDetail = new SettingDetail(levelVariable,
+                            possibleValues, null, isSettingVariableDeletable(stdVar, AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString()));
+					settingDetail.setGroup(group);
+					treatmentFactors.add(settingDetail);
+					
+					Factor valueFactor = treatmentFactor.getValueFactor();
+					SettingVariable valueVariable = new SettingVariable(valueFactor.getName(), valueFactor.getDescription(),
+							valueFactor.getProperty(), valueFactor.getScale(), valueFactor.getMethod(), valueFactor.getRole(),
+							valueFactor.getDatatype());
+					stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
+							valueVariable.getProperty(), valueVariable.getScale(), valueVariable.getMethod(), PhenotypicType.valueOf(valueVariable.getRole()));
+					possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
+					SettingDetail valueSettingDetail = new SettingDetail(levelVariable,
+                            possibleValues, null, isSettingVariableDeletable(stdVar, AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString()));
+					valueSettingDetail.setGroup(group);
+					treatmentFactors.add(settingDetail);
+					
+					group++;
+				}
+			}
 			
 			userSelection.setStudyLevelConditions(studyLevelConditions);
 			userSelection.setPlotsLevelList(plotsLevelList);			

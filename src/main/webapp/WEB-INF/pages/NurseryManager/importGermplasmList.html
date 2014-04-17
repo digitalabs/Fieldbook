@@ -4,6 +4,7 @@
 
 	    			<div class="row form-group">
 	    				<div class="col-xs-12 col-md-12">
+	    					<img th:src="@{/static/img/review-list-details.png}" style="padding-bottom:3px;" />
 			    			<label class="control-label" id="germplasmLabel"><strong class="sub-content-heading" th:text="#{nursery.create.germplasm.header}">GERMPLASM DETAILS</strong></label>
 		    			</div>
 	    			</div>
@@ -43,10 +44,12 @@
 				        <!-- Germplasm List Table View -->						
 				      	<div class="col-xs-9 col-md-9">
 				      	
-				      		<div style="float: left; width: 70%">
+				      		<div style="float: left; width: 67%">
+				      			<img th:src="@{/static/img/build-new-list.png}" style="padding-bottom:3px;" />
 				      			<label class="control-label"><strong class="sub-content-heading">Primary Germplasm List</strong></label>
 				      		</div>
-				      		<div style="float: left; width: 30%;padding-left: 10px; ">
+				      		<div style="float: left; width: 33%;padding-left: 10px; ">
+				      			<img th:src="@{/static/img/build-new-list.png}" style="padding-bottom:3px;" />
 				      			<label class="control-label"><strong class="sub-content-heading">Checks List&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong></label>
 				      			<a style="margin-top: -10px" href="javascript: showManageCheckTypePopup()" th:text="#{germplasm.list.manage.check.types}" class="btn btn-info">Manage Checks</a>
 				      			<a style="margin-top: -10px" href="javascript: resetCheckList()" class="btn btn-info">Reset</a>
@@ -147,7 +150,8 @@
 </form>
 <input type="hidden" id="keyForOverwrite" value="" />
 <input type="hidden" id="lastCheckSourcePrimary" value="" />
-<!-- Modal -->
+
+<!-- Modal for overwriting checks list -->
 <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
     	<div class="modal-content">
@@ -167,13 +171,14 @@
   		</div><!-- /.modal-content -->
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-<!-- Modal -->
+
+<!-- Modal for removing check if it is set as starting entry -->
 <div class="modal fade" id="removeCheckModal" tabindex="-1" role="dialog" aria-labelledby="removeCheckModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
     	<div class="modal-content">
       		<div class="modal-body">
       			<div>
-      				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      				<button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="javascript: resetStartingEntry();">&times;</button>
       				<br />
       			</div>
         		<div class="col-xs-12 col-lg-12" th:text="#{import.germplasm.remove.check}">
@@ -181,7 +186,7 @@
         		</div>																				
       		</div>
 	  		<div class="modal-footer">
-    			<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
+    			<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}" onclick="javascript: resetStartingEntry();" >Cancel</button>
       			<button type="button" th:value="#{common.form.ok.text}" data-dismiss="modal" class="btn btn-primary" th:text="#{common.form.ok.text}" onclick="javascript: removeCheckFromList();">Ok</button>			        	
     		</div>
   		</div><!-- /.modal-content -->
@@ -211,11 +216,17 @@
     var listId = 0;
     var makeDraggableBool = true;
     var startIndex = 0;
+    var lastDraggedPrimaryList = 0;
+    var lastDraggedChecksList = 0;
+    var lastStartingEntry = 0;
                
     var hasPageError = /*[[${importGermplasmListForm.hasError}]]*/;
     var germplasmStartingEntry = /*[[#{import.germplasm.germplasm.specified.starting.entry}]]*/;
     var germplasmAddedAsCheck = /*[[#{import.germplasm.germplasm.added.as.check}]]*/;
     var startingEntryErr = /*[[#{import.germplasm.starting.entry.in.check.list}]]*/;
+    var sameListErr = /*[[#{import.germplasm.same.list.primary.check}]]*/;
+    var startingEntryRequired = /*[[#{import.germplasm.starting.entry.required}]]*/;
+    
     function do_validation() {
     	var message = /*[[#{common.error.file.no.file.selected}]]*/;
     	/*
@@ -230,7 +241,6 @@
   		*/
   		return true;
   }
-  
   
   
   $( document ).ready(function() {
@@ -438,36 +448,54 @@
       		     //console.log(isFunction(source.data));
       		     if(isFunction(source.data) == false){
 	      		      if($(this).hasClass('primary')){
-	      		    	//loads the primary germplasm list
-	      		    	$(this).removeClass('add-border');
-	      		    	displayGermplasmDetails(source.data.key);
+	      		    	  	if (lastDraggedChecksList != source.data.key) {
+			      		    	//loads the primary germplasm list
+			      		    	$(this).removeClass('add-border');
+			      		    	lastDraggedPrimaryList = source.data.key;
+			      		    	displayGermplasmDetails(source.data.key);
+	      		    	  	} else {
+	      		    	  		showErrorMessage("page-message", sameListErr);
+	      		    	  		moveToTopScreen();
+	      		    	  	}
 	      		      }else if($(this).hasClass('check')){
-	      		    	//loads the check list
-	      		    	
-	      		    	$("#lastCheckSourcePrimary").val(0);
-	      		    	
-	      		    	//set primary germplasm list rows' opacity to 1
-	        			$(".germplasm-list-items tbody tr").css("opacity", "1");
-	      		    	
-	      		    	// if there is an existing list already, ask user if data should be overwritten
-	      		    	if ($(".check-germplasm-list-items tbody tr").length > 0) {
-	      		    		$("#keyForOverwrite").val(source.data.key);
-	      		    		$("#confirmationModal").modal("show");
-	      		    	} else {
-		      		    	displayGermplasmCheckDetails(source.data.key)
-		      		    	$(this).removeClass('add-border');
-	      		    	}
-	      		    	makeCheckDraggable(false);
+	      		    		if (lastDraggedPrimaryList != source.data.key) {
+		      		    		//loads the check list
+			      		    	$("#lastCheckSourcePrimary").val(0);
+			      		    	lastDraggedChecksList = source.data.key;
+			      		    	
+			      		    	//set primary germplasm list rows' opacity to 1
+			        			$(".germplasm-list-items tbody tr").css("opacity", "1");
+			      		    	
+			      		    	// if there is an existing list already, ask user if data should be overwritten
+			      		    	if ($(".check-germplasm-list-items tbody tr").length > 0) {
+			      		    		$("#keyForOverwrite").val(source.data.key);
+			      		    		$("#confirmationModal").modal("show");
+			      		    	} else {
+				      		    	displayGermplasmCheckDetails(source.data.key)
+				      		    	$(this).removeClass('add-border');
+			      		    	}
+			      		    	makeCheckDraggable(false);
+	      		    		} else {
+	      		    			showErrorMessage("page-message", sameListErr);
+	      		    	  		moveToTopScreen();
+	      		    		}
 	      		      }
       		     }else if(isFunction(source.data) == true && $(this).hasClass('check') && $(ui.helper.find("tr").get(0)).hasClass("primaryRow")){
-      		    	 //adds the dragged germplasms to the check list
-      		    	 $.each(ui.helper.find("tr"), function (index, row) {
-      		    		var entryNumber = $(row).data('entry');
-         		    	var gid = ""+$(row).data('gid');
-         		    	addCheckGermplasmList(entryNumber, gid);
-         		    	$(".germplasm-list-items tr.germplasmSelectedRow").removeClass("germplasmSelectedRow");
-      		    	 });
-      		    	 $("#lastCheckSourcePrimary").val(1);      		    	 
+      		    	 //if not all items are dragged to the checks list
+      		    	 if (ui.helper.find("tr").length != $(".germplasm-list-items tbody tr").length - ui.helper.find("tr").length) {
+      		    		//adds the dragged germplasms to the check list
+	      		    	 $.each(ui.helper.find("tr"), function (index, row) {
+	      		    		var entryNumber = $(row).data('entry');
+	         		    	var gid = ""+$(row).data('gid');
+	         		    	addCheckGermplasmList(entryNumber, gid);
+	         		    	$(".germplasm-list-items tr.germplasmSelectedRow").removeClass("germplasmSelectedRow");
+	      		    	 });
+	      		    	 
+	      		    	 $("#lastCheckSourcePrimary").val(1);
+      		    	 } else {
+      		    		showErrorMessage("page-message", sameListErr);
+  		    	  		moveToTopScreen();
+      		    	 }
       		     } else if (isFunction(source.data) == true && $(this).hasClass("primary") && $(ui.helper.find("tr").get(0)).hasClass("checkRow")){      		    	 
       		    	//removes the items from the check list 
       		    	var checkListCount = $(".check-germplasm-list-items tbody tr").length;
@@ -642,6 +670,8 @@
         			makeCheckDraggable(true);
         			//set primary germplasm list rows' opacity to 1
         			$(".germplasm-list-items tbody tr").css("opacity", "1");
+        			lastDraggedChecksList = 0;
+        		    lastStartingEntry = 0;
         		},
         		error: function(jqXHR, textStatus, errorThrown){ 
         			console.log("The following error occured: " + textStatus, errorThrown); 
@@ -654,7 +684,10 @@
         
         function verifyIfCheck(startingIndex) {
         	if (isGidInCheckList(getGid($(startingIndex).val())) > 0) {
+        		$('#removeCheckModal').modal({ backdrop: 'static', keyboard: true });
         		$("#removeCheckModal").modal("show");
+        	} else {
+        		lastStartingEntry = $(startingIndex).val();
         	}
         }
         
@@ -673,7 +706,7 @@
         }
         
         function removeCheckFromList() {
-        	var gid = getGid($("#startIndex2").val())
+        	var gid = getGid($("#startIndex2").val());
         	var entryNo = isGidInCheckList(gid);
         	
         	deleteCheckGermplasmList(entryNo, gid);
@@ -683,10 +716,16 @@
 	    		}
 	    	});
 	    	
+	    	lastStartingEntry = $("#startIndex2").val();
+	    	
 	    	$(".check-germplasm-list-items tr[data-entry=" + entryNo + "]").remove();
 	    	if ($(".check-germplasm-list-items tbody tr").length == 0) {
 	    		resetCheckList();	
 	    	}
+        }
+        
+        function resetStartingEntry() {
+        	$("#startIndex2").spinedit('setValue', lastStartingEntry);
         }
       //]]>
     </script>

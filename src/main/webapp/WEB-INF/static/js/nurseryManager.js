@@ -1774,6 +1774,11 @@ function validateCreateNursery() {
 		showErrorMessage('page-message', startingEntryErr);
 		return false;
 	}
+	
+	if ($("#startIndex2").val() <= 0) {
+		showErrorMessage('page-message', startingEntryErr);
+		return false;
+	}
 
 	return true;
 }

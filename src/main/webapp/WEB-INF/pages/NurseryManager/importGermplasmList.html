@@ -670,6 +670,8 @@
         			makeCheckDraggable(true);
         			//set primary germplasm list rows' opacity to 1
         			$(".germplasm-list-items tbody tr").css("opacity", "1");
+        			lastDraggedChecksList = 0;
+        		    lastStartingEntry = 0;
         		},
         		error: function(jqXHR, textStatus, errorThrown){ 
         			console.log("The following error occured: " + textStatus, errorThrown); 

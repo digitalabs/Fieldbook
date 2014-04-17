@@ -28,7 +28,7 @@
              </tr>
            </thead>
            <tbody th:remove="all-but-first">
-             <tr class="draggable" th:each="gid, row : *{paginatedImportedGermplasm}" th:attr="data-entry=${gid.entryId}" th:attrappend="data-gid=${gid.gid}">
+             <tr class="draggable primaryRow" th:each="gid, row : *{paginatedImportedGermplasm}" th:attr="data-entry=${gid.entryId}" th:attrappend="data-gid=${gid.gid}">
              <!-- 
                <td align="center" th:class="${row.even}? 'even check-col' : 'odd check-col'">
                
@@ -70,7 +70,7 @@
              </tr>
            </thead>
            <tbody th:remove="all-but-first">
-             <tr class="draggable" th:each="gid, row : *{paginatedImportedGermplasm}" th:attr="data-entry=${gid.entryId}" th:attrappend="data-gid=${gid.gid}">
+             <tr class="draggable primaryRow" th:each="gid, row : *{paginatedImportedGermplasm}" th:attr="data-entry=${gid.entryId}" th:attrappend="data-gid=${gid.gid}">
                <!--<td align="center" th:class="${row.even}? 'even check-col' : 'odd check-col'">
                <select th:field="*{paginatedImportedGermplasm[__${row.index}__].check}" class="form-control primarylist-select">
                <option th:each="type: ${checkLists}" th:value="${type.id}" th:text="${type.description}"></option>

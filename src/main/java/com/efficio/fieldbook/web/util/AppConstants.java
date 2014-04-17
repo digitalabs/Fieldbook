@@ -190,6 +190,8 @@ public enum AppConstants {
     
     ,MANNER_IN_TURN
     ,MANNER_PER_LOCATION
+    
+    ,DESIGN_LAYOUT_SAME_FOR_ALL
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

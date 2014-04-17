@@ -53,7 +53,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 			    					<label class="control-label" th:text="#{trial.createtrial.select.design.layout}+':'">Select Design Layout:*</label>&nbsp;<span class="required">*</span>
 			    				</div>
 			    				<div class="col-xs-7 col-md-7">
-			    					<select id="designLayout" class="form-control" onChange="changeExperimentalDesign()">
+			    					<select th:field="*{designLayout}" class="form-control" onChange="changeExperimentalDesign()">
 			    						<option value="1" th:text="#{trial.createtrial.design.layout.same.design}">Same Design for All</option>
 			    						<option value="2" th:text="#{trial.createtrial.design.layout.individual.design}">Individual Design</option>
 			    						<option value="3" th:text="#{trial.createtrial.design.layout.import.from.file}">Import Design From a Layout File</option>

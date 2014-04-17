@@ -215,6 +215,7 @@
     var addedGid = {};
     var listId = 0;
     var makeDraggableBool = true;
+    var makeCheckDraggableBool = true;
     var startIndex = 0;
     var lastDraggedPrimaryList = 0;
     var lastDraggedChecksList = 0;
@@ -261,6 +262,7 @@
   });
   
   function makeCheckDraggable(isDraggable) {
+	  makeCheckDraggableBool = isDraggable;
 	  if (isDraggable){
 		  $(".check-germplasm-list-items tr").draggable({
 			  helper: function(event, ui) {
@@ -298,7 +300,6 @@
   }
   
   function makeDraggable(isDraggable){
-	  
 	  if(isDraggable){
 		  $(".germplasm-list-items tr").draggable({
 			  helper: function(event, ui) {
@@ -325,7 +326,6 @@
 		$(".germplasm-list-items tbody tr").off("click").on("click", function (){
 			  $(this).toggleClass("germplasmSelectedRow");
 		});
-		
 	  }else{
 		  if($('.germplasm-list-items .ui-draggable').length != 0)
 		  	$(".germplasm-list-items tr").draggable( "destroy" );

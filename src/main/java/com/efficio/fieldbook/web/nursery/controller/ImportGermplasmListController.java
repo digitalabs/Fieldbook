@@ -431,18 +431,9 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     }
     
     
-    @RequestMapping(value="/page/{pageNum}/{previewPageNum}", method = RequestMethod.POST)
-    public String getPaginatedList(@PathVariable int pageNum, @PathVariable int previewPageNum
-            , @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, Model model) {
+    @RequestMapping(value="/page/{pageNum}", method = RequestMethod.GET)
+    public String getPaginatedList(@PathVariable int pageNum, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, Model model) {
         //this set the necessary info from the session variable
-    	
-    	//we need to set the data in the measurementList
-    	for(int i = 0 ; i < form.getPaginatedImportedGermplasm().size() ; i++){
-    		ImportedGermplasm importedGermplasm = form.getPaginatedImportedGermplasm().get(i);
-    		int realIndex = ((previewPageNum - 1) * form.getResultPerPage()) + i;
-    		getUserSelection().getImportedGermplasmMainInfo()
-            .getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheck(importedGermplasm.getCheck());
-    	}
     	
     	form.setImportedGermplasmMainInfo(getUserSelection().getImportedGermplasmMainInfo());
     	form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());

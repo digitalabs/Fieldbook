@@ -81,6 +81,10 @@ function showPage(paginationUrl, pageNum, sectionDiv){
          		 }
              }
              
+             if (sectionDiv == 'imported-germplasm-list') {
+            	 makeDraggable(makeDraggableBool);
+             }
+             
              Spinner.toggle();  
            }
          }
@@ -92,8 +96,7 @@ function showPostPage(paginationUrl,previewPageNum, pageNum, sectionDiv, formNam
 	var $form = $("#"+formName);
 	
 	var serializedData = $form.serialize();
-
-	//alert(paginationUrl);
+	
 	Spinner.toggle();
  	$.ajax(
          { url: paginationUrl+pageNum+"/"+previewPageNum+'?r=' + (Math.random() * 999),
@@ -115,6 +118,10 @@ function showPostPage(paginationUrl,previewPageNum, pageNum, sectionDiv, formNam
          				$('tr.data-row#'+idVal).addClass('field-map-highlight');
          			}			
          		 }
+             }
+             
+             if (sectionDiv == 'check-germplasm-list') {
+            	 makeCheckDraggable(makeCheckDraggableBool);
              }
              
              Spinner.toggle();  

@@ -41,6 +41,9 @@ public class ManageSettingsForm {
 	/** The trial level variables. */
 	private List<SettingDetail> trialLevelVariables;
 	
+	/** The treatment factors. */
+	private List<SettingDetail> treatmentFactors;
+	
 	/** The is default. */
 	private boolean isDefault;
 	
@@ -486,6 +489,20 @@ public class ManageSettingsForm {
 		 */
 		public void setEndDateId(String endDateId) {
 			this.endDateId = endDateId;
+		}
+
+		/**
+		 * @return the treatmentFactors
+		 */
+		public List<SettingDetail> getTreatmentFactors() {
+			return treatmentFactors;
+		}
+
+		/**
+		 * @param treatmentFactors the treatmentFactors to set
+		 */
+		public void setTreatmentFactors(List<SettingDetail> treatmentFactors) {
+			this.treatmentFactors = treatmentFactors;
 		}
 		
 }

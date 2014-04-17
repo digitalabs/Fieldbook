@@ -21,6 +21,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -310,10 +311,23 @@ public class CreateTrialController extends SettingsController {
     	Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);
     	userSelection.setWorkbook(workbook);
 
+    	if (form.getDesignLayout() != null && form.getDesignLayout().equals(AppConstants.DESIGN_LAYOUT_SAME_FOR_ALL.getString())
+    			&& form.getExperimentalDesignForAll() != null) {
+    		
+    		for (List<ValueReference> rowValues : form.getTrialEnvironmentValues()) {
+    			for (ValueReference cellValue : rowValues) {
+    				if (cellValue.getId().equals(TermId.EXPERIMENT_DESIGN_FACTOR.getId())) {
+    					cellValue.setName(form.getExperimentalDesignForAll());
+    				}
+    			}
+    		}
+    	}
+
     	if (form.getTrialEnvironmentValues() != null && !form.getTrialEnvironmentValues().isEmpty()) {
     		userSelection.getWorkbook().setTrialObservations(WorkbookUtil.createMeasurementRows(form.getTrialEnvironmentValues(), workbook.getTrialVariables()));
     	}
-    	userSelection.setTrialEnvironmentValues(form.getTrialEnvironmentValues());
+		
+     	userSelection.setTrialEnvironmentValues(form.getTrialEnvironmentValues());
     	
     	createStudyDetails(workbook, form.getStudyLevelVariables(), form.getFolderId());
  

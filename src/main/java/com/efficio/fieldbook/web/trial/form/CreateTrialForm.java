@@ -101,6 +101,8 @@ public class CreateTrialForm {
     /** The experimental design for all. */
     private String experimentalDesignForAll;
     
+    private String designLayout;
+    
     private String file;
     
     /**
@@ -586,5 +588,13 @@ public class CreateTrialForm {
         public void setFile(String file) {
             this.file = file;
         }
+
+		public String getDesignLayout() {
+			return designLayout;
+		}
+
+		public void setDesignLayout(String designLayout) {
+			this.designLayout = designLayout;
+		}
         
 }

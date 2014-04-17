@@ -296,7 +296,64 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			    					&nbsp;
 			    				</div>
 		    				</div>
-		    				<div class="row">
+			<div class="row">
+			    				<div class="col-xs-12 col-md-12">
+					    			<label class="control-label"><strong class="sub-content-heading" th:text="#{trial.managesettings.treatment.factors}">TREATMENT FACTORS</strong></label>
+				    			</div>
+			    			</div>
+			    			<div class="row form-group">
+			    				<div class="col-xs-12 col-md-12">
+					    			<label class="control-label" th:text="#{trial.managesettings.treatment.factors.notes}"> Choose the treatment factors that will be applied in the trial.  
+					    			These will appear as data columns in your study book.  You can add and remove settings at this level.</label>
+				    			</div>
+			    			</div>
+			    			<div class="row form-group">
+			    				<div class="col-xs-12 col-md-12">
+			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed" id="treatmentFactors">
+			    						<thead>
+										<tr>
+											<th width="7%" th:utext="#{trial.managesettings.treatment.factors.group}">Group</th>
+							                <th width="43%" th:utext="#{nursery.managesettings.treatment.factors.name}">.Name</th>
+							                <th width="45%" th:utext="#{nursery.managesettings.treatment.factors.description}">.Description</th>
+							                <th width="5%"></th>
+										</tr>
+										</thead>
+										<tbody>
+					    					<tr th:each="treatmentFactor, rowStat : *{treatmentFactors}">
+					    					<td style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'"
+					    						th:text="${treatmentFactor.group}">
+					    					
+												<span style="cursor: default; font-size: 16px;" th:if="${treatmentFactor.deletable}" class="glyphicon glyphicon-remove-circle"
+					    						th:onclick="'javascript: deleteVariable(2,\'' + ${treatmentFactor.variable.cvTermId} + '\',$(this))'"></span>
+					    						  			    						 
+					    						<input class="cvTermIds" type="hidden" th:field="*{treatmentFactors[__${rowStat.index}__].variable.cvTermId}" />
+				    						</td>
+					    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${treatmentFactor.variable.name}"></td>
+					    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${treatmentFactor.variable.description}"></td>
+					    					<td th:class="${rowStat.even}? 'even' : 'odd'" >
+						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
+														*{treatmentFactors[__${rowStat.index}__].variable.cvTermId} + '\');'" >
+														<span class="glyphicon glyphicon-eye-open"></span></a>
+						    					</td>
+					    					</tr> 
+				    					</tbody>
+			    					</table>
+			    				</div>
+			    				<div class="col-xs-3 col-md-3"></div>
+			    			</div>
+		    				
+		    				<div class="row form-group">
+			    				<div class="col-xs-12 col-md-12">
+			    					<span class="glyphicon glyphicon-plus"></span>&nbsp;
+					    			<a href="javascript: openAddVariablesSetting(2);" th:text="#{trial.managesettings.treatment.factors.add}">Add Treatment Factors</a>
+				    			</div>
+			    			</div>
+			    			<div class="row form-group">
+			    				<div class="col-xs-12 col-md-12">
+			    					&nbsp;
+			    				</div>
+		    				</div>
+		    			    				<div class="row">
 			    				<div class="col-xs-12 col-md-12">
 			    					<img th:src="@{/static/img/review-list-details.png}" style="padding-bottom:3px;" />
 					    			<label class="control-label"><strong class="sub-content-heading" th:text="#{nursery.managesettings.baseline.traits}">BASELINE TRAITS</strong></label>

@@ -30,6 +30,7 @@ public class SettingDetail implements Serializable {
 	private boolean isDeletable;
 	private boolean isFavorite;
 	private int order;
+	private Integer group;
 
 	public SettingDetail(){
 		super();
@@ -117,5 +118,13 @@ public class SettingDetail implements Serializable {
 	}
 	public void setOrder(int order) {
 	        this.order = order;
+	}
+
+	public Integer getGroup() {
+		return group;
+	}
+
+	public void setGroup(Integer group) {
+		this.group = group;
 	}
 }

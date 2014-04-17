@@ -1679,16 +1679,24 @@ function chooseSelectedNursery() {
 	    complete: function(){
 		   Spinner.toggle();
 	    }  
-	})
+	});
 }
 
 function validateCreateNursery() {
 	var hasError = false;
-	var name;
+	var name = '';
 	var customMessage = '';
-	if ($("#selectedSettingId").val() == '0') {
+	var studyBookName;
+	var studyNameId = $("#studyNameTermId").val();
+
+	$('.nurseryLevelVariableIdClass').each(function(){
+		if (studyNameId == $(this).val()) {
+			studyBookName = $(this).parent().find(".form-control").val();
+		}
+	});
+	
+	if ($("#loadSettings").val() == '0') {
 		hasError = true;
-		name = $("#settingsSelectLabel").text();
 		customMessage = requiredSettingErrorMessage;
 	}
 	else if ($("#folderId").val() == '') {
@@ -1698,12 +1706,23 @@ function validateCreateNursery() {
 	else if ($("#fieldLayoutRandom").val() == '') {
 		hasError = true;
 		name = $("#expDesignLabel").text();
+	} else if($('.baseline-traits').length == 0){
+		hasError = true;
+		//name = $("#expDesignLabel").text();
+		customMessage = nurseryTraitsIsRequired;
 	}
-	/*else if ($("#imported-germplasm-list").html().indexOf("GID") > -1) {
+	else if ($(".noGermplasmListIndicator") && $(".noGermplasmListIndicator").text()) {
 		hasError = true;
 		name = $("#germplasmLabel").text();
-	}*/	
+	}else if($('#checkId').val() == ''){
+		hasError = true;
+		customMessage = checkTypeIsRequired;
+	}
 	else {
+		var requiredFields = [];
+		if($('#requiredFields').val() != ''){
+			requiredFields = $('#requiredFields').val().split(',');	
+		}
 		
 		var cvTermId;
 		$('.nurseryLevelVariableIdClass').each(function(){
@@ -1730,15 +1749,35 @@ function validateCreateNursery() {
 		});
 	}
 	
+	
 	if (hasError){
-		var errMsg = requiredErrorMessage + ": " + name.replace('*', '').replace(":", "");
+		var errMsg = name.replace('*', '').replace(":", "") + " " + nurseryFieldsIsRequired;
 		if(customMessage != '')
 			errMsg = customMessage;
 		showErrorMessage('page-message', errMsg);
 		return false;
 	}
+
+	var found = false;
+	$("#selectedNursery option").each(function(i) {
+		if (studyBookName == $(this).text()) {
+			found = true;
+		}
+	});
+	if (found) {
+		hasError = true;
+		showErrorMessage('page-message', uniqueBookNameErrorMessage);
+		return false;
+	}
+	
+	if (isGidInCheckList(getGid($("#startIndex2").val())) > 0) {
+		showErrorMessage('page-message', startingEntryErr);
+		return false;
+	}
+
 	return true;
 }
+
 function reloadCheckTypeDropDown(addOnChange, select2ClassName){
 	Spinner.toggle();
 	var currentCheckId = $('#checkId').val();
@@ -1757,6 +1796,7 @@ function reloadCheckTypeDropDown(addOnChange, select2ClassName){
          }
      );
 }
+
 function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, currentFieldId, comboName) {
 	var defaultData = null;
 	

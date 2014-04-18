@@ -157,7 +157,9 @@ public class ManageTrialSettingsController extends SettingsController{
             , Model model, HttpSession session) throws MiddlewareQueryException{
 		//will do the saving here
     	
-    	TrialDataset dataset = (TrialDataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, form.getSettingName(), form.getStudyLevelVariables(), form.getPlotLevelVariables(), form.getBaselineTraitVariables(), userSelection, form.getTrialLevelVariables());
+    	TrialDataset dataset = (TrialDataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, form.getSettingName(), 
+    			form.getStudyLevelVariables(), form.getPlotLevelVariables(), form.getBaselineTraitVariables(), 
+    			userSelection, form.getTrialLevelVariables(), form.getTreatmentFactors());
     	String xml = SettingsUtil.generateSettingsXml(dataset);
     	Integer tempateSettingId = form.getSelectedSettingId() > 0 ? Integer.valueOf(form.getSelectedSettingId()) : null;
     	TemplateSetting templateSetting = new TemplateSetting(tempateSettingId, Integer.valueOf(getCurrentProjectId()), dataset.getName(), getTrialTool(), xml, Boolean.valueOf(form.getIsDefault())) ;
@@ -226,12 +228,6 @@ public class ManageTrialSettingsController extends SettingsController{
 	    	List<TemplateSetting> templateSettings = workbenchService.getTemplateSettings(templateSettingFilter);
 	    	TemplateSetting templateSetting = templateSettings.get(0); //always 1
 	    	TrialDataset dataset = (TrialDataset)SettingsUtil.parseXmlToDatasetPojo(templateSetting.getConfiguration(), false);
-	    	
-	    	//FOR TESTING ONLY, TODO: REMOVE THIS WHEN SAVING IS ALREADY WORKING
-	    	dataset.setTreatmentFactors(new ArrayList<TreatmentFactor>());
-	    	Factor levelFactor = new Factor("FERTLE", "FERTILIZER LEVEL", "FERTILIZER", "NUMBER", "APPLIED", "TRIAL_DESIGN", "N", -12);
-	    	Factor valueFactor = new Factor("FERTAM", "FERTILIZER AMOUNT", "FERTILIZER", "KG/HA", "APPLIED", "TRIAL_DESIGN", "N", -13);
-	    	dataset.getTreatmentFactors().add(new TreatmentFactor(levelFactor, valueFactor));
 	    	
 	    	SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
 	    	form.setStudyLevelVariables(userSelection.getStudyLevelConditions());

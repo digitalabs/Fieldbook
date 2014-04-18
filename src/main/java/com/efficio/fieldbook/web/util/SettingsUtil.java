@@ -184,6 +184,14 @@ public class SettingsUtil {
     public static ParentDataset convertPojoToXmlDataset(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, String name, List<SettingDetail> nurseryLevelConditions, List<SettingDetail> plotsLevelList, List<SettingDetail> baselineTraitsList, UserSelection userSelection){
     	return convertPojoToXmlDataset(fieldbookMiddlewareService, name, nurseryLevelConditions,  plotsLevelList,baselineTraitsList,  userSelection, null);
     }
+
+	public static ParentDataset convertPojoToXmlDataset(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, 
+			String name, List<SettingDetail> nurseryLevelConditions, List<SettingDetail> plotsLevelList, List<SettingDetail> baselineTraitsList, 
+			UserSelection userSelection, List<SettingDetail> trialLevelVariablesList){
+		
+		return convertPojoToXmlDataset(fieldbookMiddlewareService, name, nurseryLevelConditions, plotsLevelList, 
+				baselineTraitsList, userSelection, trialLevelVariablesList, null);
+	}
 	
 	/**
 	 * Convert pojo to xml dataset.
@@ -197,12 +205,15 @@ public class SettingsUtil {
 	 * @param trialLevelVariablesList the trial level variables list
 	 * @return the parent dataset
 	 */
-	public static ParentDataset convertPojoToXmlDataset(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, String name, List<SettingDetail> nurseryLevelConditions, List<SettingDetail> plotsLevelList, List<SettingDetail> baselineTraitsList, UserSelection userSelection, List<SettingDetail> trialLevelVariablesList){
+	public static ParentDataset convertPojoToXmlDataset(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, 
+			String name, List<SettingDetail> nurseryLevelConditions, List<SettingDetail> plotsLevelList, List<SettingDetail> baselineTraitsList, 
+			UserSelection userSelection, List<SettingDetail> trialLevelVariablesList, List<SettingDetail> treatmentFactorList){
 		
 		List<Condition> conditions = new ArrayList<Condition>();
 		List<Factor> factors = new ArrayList<Factor>();
 		List<Variate> variates = new ArrayList<Variate>();
 		List<Factor> trialLevelVariables = new ArrayList<Factor>();
+		List<TreatmentFactor> treatmentFactors = new ArrayList<TreatmentFactor>();
 		//iterate for the nursery level
 		int index = 0;
 		for(SettingDetail settingDetail : nurseryLevelConditions){
@@ -254,6 +265,30 @@ public class SettingsUtil {
 				variates.add(variate);
 			}
 		}
+		//iterate for treatment factor details
+		if (treatmentFactorList != null && !treatmentFactorList.isEmpty()) {
+			int currentGroup = -1;
+			TreatmentFactor treatmentFactor;
+			Factor levelFactor = null, valueFactor = null;
+			
+			for (int i = 0; i < treatmentFactorList.size(); i++) {
+				currentGroup = getTreatmentGroup(userSelection, treatmentFactorList, i);
+				levelFactor = createFactor(treatmentFactorList.get(i), userSelection, fieldbookMiddlewareService, i);
+
+				int j;
+				for (j = i + 1; j < treatmentFactorList.size(); j++) {
+					int groupNumber = getTreatmentGroup(userSelection, treatmentFactorList, j);
+					if (groupNumber != currentGroup) {
+						j--;
+						break;
+					}
+					valueFactor = createFactor(treatmentFactorList.get(j), userSelection, fieldbookMiddlewareService, j);
+				}
+				i = j;
+				treatmentFactor = new TreatmentFactor(levelFactor, valueFactor);
+				treatmentFactors.add(treatmentFactor);
+			}
+		}
 		
 		ParentDataset realDataset = null;
 		if(trialLevelVariablesList != null){
@@ -283,6 +318,7 @@ public class SettingsUtil {
 			dataset.setVariates(variates);
 			dataset.setName(name);
 			dataset.setTrialLevelFactor(trialLevelVariables);
+			dataset.setTreatmentFactors(treatmentFactors);
 			realDataset = dataset;
 		}else{
 			Dataset dataset = new Dataset();
@@ -985,12 +1021,38 @@ public class SettingsUtil {
 				factor.getDatatype());
 		Integer stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
 				variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
+		variable.setCvTermId(stdVar);
 		List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
-		SettingDetail settingDetail = new SettingDetail(variable,
-                possibleValues, null, isSettingVariableDeletable(stdVar, AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString()));
+		SettingDetail settingDetail = new SettingDetail(variable, possibleValues, null, true);
 		settingDetail.setGroup(group);
+		settingDetail.setDeletable(true);
 		
 		return settingDetail;
 	}
 	
+	private static Factor createFactor(SettingDetail settingDetail, UserSelection userSelection, 
+			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, int index) {
+		
+		SettingVariable variable = settingDetail.getVariable();
+		if (userSelection != null) {
+			StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
+			variable.setPSMRFromStandardVariable(standardVariable);
+			//need to get the name from the session
+			variable.setName(userSelection.getTreatmentFactors().get(index).getVariable().getName());
+		}
+		Factor factor = new Factor(variable.getName(), variable.getDescription(), variable.getProperty(),
+				variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(), variable.getCvTermId());
+		return factor;
+	}
+	
+	private static int getTreatmentGroup(UserSelection userSelection, List<SettingDetail> treatmentFactorList, int index) {
+		Integer currentGroup;
+		if (userSelection != null) {
+			currentGroup = userSelection.getTreatmentFactors().get(index).getGroup();
+		}
+		else {
+			currentGroup = treatmentFactorList.get(index).getGroup();
+		}
+		return currentGroup != null ? currentGroup : -1;
+	}
 }

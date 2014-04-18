@@ -982,13 +982,13 @@ function createPlotLevelSettingVariables(data) {
 			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(2," + 
 			settingDetail.variable.cvTermId + ",$(this))'></span>";
 		}
-		newRow = newRow + "<td style='text-align: center' class='"+className+"'>" + isDelete + 
+		newRow = newRow + "<td width='5%' style='text-align: center' class='"+className+"'>" + isDelete + 
 		"<input class='cvTermIds' type='hidden' id='plotLevelVariables" + (length-1) + ".variable.cvTermId' name='plotLevelVariables[" + 
 		(length-1) + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
-		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.name + "</td>"; 
-		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.description + "</td>";
-		newRow = newRow + "<td class='"+className+"'>" + "<a href='javascript: void(0);' onclick='javascript:showBaselineTraitDetailsModal(" + 
+		newRow = newRow + "<td width='45%' class='"+className+"'>" + settingDetail.variable.name + "</td>"; 
+		newRow = newRow + "<td width='45%' class='"+className+"'>" + settingDetail.variable.description + "</td>";
+		newRow = newRow + "<td width='5%' class='"+className+"'>" + "<a href='javascript: void(0);' onclick='javascript:showBaselineTraitDetailsModal(" + 
 		settingDetail.variable.cvTermId + ");'><span class='glyphicon glyphicon-eye-open'></span></a></td></tr>";
 		$("#plotLevelSettings").append(newRow);
 	});
@@ -1006,13 +1006,13 @@ function createBaselineTraitVariables(data) {
 			settingDetail.variable.cvTermId + ",$(this))'></span>";
 		}
 		
-		newRow = newRow + "<td style='text-align: center' class='"+className+"'>" + isDelete + 
+		newRow = newRow + "<td width='5%' style='text-align: center' class='"+className+"'>" + isDelete + 
 		"<input class='cvTermIds' type='hidden' id='baselineTraitVariables" + (length-1) + ".variable.cvTermId' name='baselineTraitVariables[" + 
 		(length-1) + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
-		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.name + "</td>";		
-		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.description + "</td>";
-		newRow = newRow + "<td class='"+className+"'>" + "<a href='javascript: void(0);' onclick='javascript:showBaselineTraitDetailsModal(" + 
+		newRow = newRow + "<td width='45%' class='"+className+"'>" + settingDetail.variable.name + "</td>";		
+		newRow = newRow + "<td width='45%' class='"+className+"'>" + settingDetail.variable.description + "</td>";
+		newRow = newRow + "<td width='5%' class='"+className+"'>" + "<a href='javascript: void(0);' onclick='javascript:showBaselineTraitDetailsModal(" + 
 		settingDetail.variable.cvTermId + ");'><span class='glyphicon glyphicon-eye-open'></span></a></td></tr>";
 		$("#baselineTraitSettings").append(newRow);
 	});
@@ -1029,13 +1029,13 @@ function createTrialEnvironmentVariables(data) {
 			settingDetail.variable.cvTermId + ",$(this))'></span>";
 		}
 		
-		newRow = newRow + "<td style='text-align: center' class='"+className+"'>" + isDelete + 
+		newRow = newRow + "<td width='5%' style='text-align: center' class='"+className+"'>" + isDelete + 
 		"<input class='cvTermIds' type='hidden' id='trialLevelVariables" + (length-1) + ".variable.cvTermId' name='trialLevelVariables[" + 
 		(length-1) + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
-		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.name + "</td>";		
-		newRow = newRow + "<td class='"+className+"'>" + settingDetail.variable.description + "</td>";
-		newRow = newRow + "<td class='"+className+"'>" + "<a href='javascript: void(0);' onclick='javascript:showBaselineTraitDetailsModal(" + 
+		newRow = newRow + "<td width='45%' class='"+className+"'>" + settingDetail.variable.name + "</td>";		
+		newRow = newRow + "<td width='45%' class='"+className+"'>" + settingDetail.variable.description + "</td>";
+		newRow = newRow + "<td width='5%' class='"+className+"'>" + "<a href='javascript: void(0);' onclick='javascript:showBaselineTraitDetailsModal(" + 
 		settingDetail.variable.cvTermId + ");'><span class='glyphicon glyphicon-eye-open'></span></a></td></tr>";
 		$("#trialEnvironmentLevelSettings").append(newRow);
 	});

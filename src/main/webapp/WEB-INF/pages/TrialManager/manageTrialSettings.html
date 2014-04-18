@@ -108,7 +108,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 						    			These will appear as data columns in your nursery book. You can add and remove settings at this level.</label>
 					    			</div>		    			
 				    				<div class="col-xs-12 col-md-12">
-				    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed" id="trialEnvironmentLevelSettings">
+				    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll" id="trialEnvironmentLevelSettings">
 				    						<thead>
 											<tr>
 												<th width="5%"></th>
@@ -119,16 +119,16 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 											</thead>
 											<tbody>
 						    					<tr th:each="trialEnvLevelVariable, rowStat : *{trialLevelVariables}">
-						    					<td style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'">
+						    					<td width="5%" style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'">
 						    					
 													<span style="cursor: default; font-size: 16px;" th:if="${trialEnvLevelVariable.deletable}" class="glyphicon glyphicon-remove-circle"
 						    						th:onclick="'javascript: deleteVariable(4,\'' + ${trialEnvLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
 						    						  			    						 
 						    						<input class="cvTermIds" type="hidden" th:field="*{trialLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 					    						</td>
-						    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${trialEnvLevelVariable.variable.name}"></td>
-						    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${trialEnvLevelVariable.variable.description}"></td>
-						    					<td th:class="${rowStat.even}? 'even' : 'odd'" >
+						    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${trialEnvLevelVariable.variable.name}"></td>
+						    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${trialEnvLevelVariable.variable.description}"></td>
+						    					<td width="5%" th:class="${rowStat.even}? 'even' : 'odd'" >
 						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
 														*{trialLevelVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
 														<span class="glyphicon glyphicon-eye-open"></span></a>
@@ -160,7 +160,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 					    			<label class="control-label" th:text="#{trial.managesettings.trial.level.notes}"> The settings in this section apply across all plots in the nursery. 
 					    			You can add settings at this level, or remove those that you wish to manage at the plot level.</label>
 				    			</div>
-			    				<div class="col-xs-12 col-md-12" id="trialLevelSettings-dev">
+			    				<div class="col-xs-12 col-md-12 sectionContainer" id="trialLevelSettings-dev">
 			    					<div class="row form-group trialLevelSettings" th:each="trialLevelVariable, rowStat : *{studyLevelVariables}">
 			    						<div class="col-xs-5 col-md-5 1st">
 			    							<span style="cursor: default; font-size: 16px;" th:if="${trialLevelVariable.deletable}" class="glyphicon glyphicon-remove-circle" 
@@ -246,7 +246,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 					    			These will appear as data columns in your nursery book. You can add and remove settings at this level.</label>
 				    			</div>
 			    				<div class="col-xs-12 col-md-12">
-			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed" id="plotLevelSettings">
+			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll" id="plotLevelSettings">
 			    						<thead>
 										<tr>
 											<th width="5%"></th>
@@ -257,16 +257,16 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 										</thead>
 										<tbody>
 					    					<tr th:each="plotLevelVariable, rowStat : *{plotLevelVariables}">
-					    					<td style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'">
+					    					<td width="5%" style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'">
 					    					
 												<span style="cursor: default; font-size: 16px;" th:if="${plotLevelVariable.deletable}" class="glyphicon glyphicon-remove-circle"
 					    						th:onclick="'javascript: deleteVariable(2,\'' + ${plotLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
 					    						  			    						 
 					    						<input class="cvTermIds" type="hidden" th:field="*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 				    						</td>
-					    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.name}"></td>
-					    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.description}"></td>
-					    					<td th:class="${rowStat.even}? 'even' : 'odd'" >
+					    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.name}"></td>
+					    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.description}"></td>
+					    					<td width="5%" th:class="${rowStat.even}? 'even' : 'odd'" >
 						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
 														*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
 														<span class="glyphicon glyphicon-eye-open"></span></a>
@@ -299,7 +299,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 					    			These will appear as data columns in your study book.  You can add and remove settings at this level.</label>
 				    			</div>
 			    				<div class="col-xs-12 col-md-12">
-			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed" id="treatmentFactors">
+			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll" id="treatmentFactors">
 			    						<thead>
 										<tr>
 											<th width="4%"></th>
@@ -311,17 +311,17 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 										</thead>
 										<tbody>
 					    					<tr th:each="treatmentFactor, rowStat : *{treatmentFactors}">
-					    					<td style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'">
+					    					<td width="4%" style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'">
 					    					
 												<span style="cursor: default; font-size: 16px;" th:if="${treatmentFactor.deletable}" class="glyphicon glyphicon-remove-circle"
 					    						th:onclick="'javascript: deleteVariable(2,\'' + ${treatmentFactor.variable.cvTermId} + '\',$(this))'"></span>
 					    						  			    						 
 					    						<input class="cvTermIds" type="hidden" th:field="*{treatmentFactors[__${rowStat.index}__].variable.cvTermId}" />
 				    						</td>
-				    						<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${treatmentFactor.group}"></td>
-					    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${treatmentFactor.variable.name}"></td>
-					    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${treatmentFactor.variable.description}"></td>
-					    					<td th:class="${rowStat.even}? 'even' : 'odd'" >
+				    						<td width="7%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${treatmentFactor.group}"></td>
+					    					<td width="42%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${treatmentFactor.variable.name}"></td>
+					    					<td width="42%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${treatmentFactor.variable.description}"></td>
+					    					<td width="5%" th:class="${rowStat.even}? 'even' : 'odd'" >
 						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
 														*{treatmentFactors[__${rowStat.index}__].variable.cvTermId} + '\');'" >
 														<span class="glyphicon glyphicon-eye-open"></span></a>
@@ -355,7 +355,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 					    			You will be able to add additional traits to measure in each nursery.</label>
 				    			</div>
 			    				<div class="col-xs-12 col-md-12">
-			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed" id="baselineTraitSettings">
+			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll" id="baselineTraitSettings">
 			    						<thead>
 										<tr>
 											<th width="5%"></th>
@@ -366,16 +366,16 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 										</thead>
 										<tbody>
 					    					<tr th:each="baselineTraitVariable, rowStat : *{baselineTraitVariables}">
-					    						<td style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'" >
+					    						<td width="5%" style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'" >
 					    						
 						    						<span style="cursor: default; font-size: 16px;" th:if="${baselineTraitVariable.deletable}" class="glyphicon glyphicon-remove-circle"
 						    						th:onclick="'javascript: deleteVariable(3,\'' + ${baselineTraitVariable.variable.cvTermId} + '\',$(this))'"></span>
 						    									    					
 						    						<input class="cvTermIds" type="hidden" th:field="*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId}" />
 					    						</td>
-						    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.name}"></td>
-						    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.description}"></td>
-						    					<td th:class="${rowStat.even}? 'even' : 'odd'" >
+						    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.name}"></td>
+						    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.description}"></td>
+						    					<td width="5%" th:class="${rowStat.even}? 'even' : 'odd'" >
 						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
 														*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
 														<span class="glyphicon glyphicon-eye-open"></span></a>

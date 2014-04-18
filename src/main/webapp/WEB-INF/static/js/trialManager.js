@@ -423,6 +423,10 @@ function openAddVariablesSetting(variableType) {
 			$("#heading-modal").text(addTrialEnvironmentTraits);
 			$('#reminder-placeholder').html(reminderTrialEnvironment);
 			break;
+		case 5:
+			$("#heading-modal").text(addTreatmentFactors);
+			$('#reminder-placeholder').html(reminderTreatmentFactors);
+			break;
 	default: 
 		$("#heading-modal").text(addNurseryLevelSettings);
 		$('#reminder-placeholder').html(reminderNursery);

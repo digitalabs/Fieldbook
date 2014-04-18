@@ -577,8 +577,13 @@ public class ManageTrialSettingsController extends SettingsController{
     private List<SettingDetail> getSettingDetailList(int mode) {
     	if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
             return userSelection.getStudyLevelConditions();
-        } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
-            return userSelection.getPlotsLevelList();
+        } else if (mode == AppConstants.SEGMENT_PLOT.getInt() || mode == AppConstants.SEGMENT_TREATMENT_FACTORS.getInt()) {
+        	List<SettingDetail> list = new ArrayList<SettingDetail>();
+        	list.addAll(userSelection.getPlotsLevelList());
+        	if (userSelection.getTreatmentFactors() != null && !userSelection.getTreatmentFactors().isEmpty()) {
+        		list.addAll(userSelection.getTreatmentFactors());
+        	}
+            return list;
         } else if (mode == AppConstants.SEGMENT_TRAITS.getInt()) {
             return userSelection.getBaselineTraitsList();
         }  else if (mode == AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt()) {

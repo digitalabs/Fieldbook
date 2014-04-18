@@ -332,7 +332,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			    				</div>
 			    				<div class="col-xs-12 col-md-12">
 			    					<span class="glyphicon glyphicon-plus"></span>&nbsp;
-					    			<a href="javascript: openAddVariablesSetting(2);" th:text="#{trial.managesettings.treatment.factors.add}">Add Treatment Factors</a>
+					    			<a href="javascript: openAddVariablesSetting(5);" th:text="#{trial.managesettings.treatment.factors.add}">Add Treatment Factors</a>
 				    			</div>
 			    			</div>
 			    			<div class="row form-group">
@@ -490,6 +490,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
             var addPlotLevelSettings = /*[[#{nursery.managesettings.add.plot.level.settings}]]*/;
             var addBaselineTraits = /*[[#{nursery.managesettings.add.baseline.traits}]]*/;
             var addTrialEnvironmentTraits = /*[[#{nursery.managesettings.add.trial.environment.variable}]]*/;
+            var addTreatmentFactors = /*[[#{trial.managesettings.treatment.factors.add}]]*/;
             var deleteTemplateSettingError = /*[[#{manage.settings.delete.error}]]*/;
             var deleteTemplateSettingSuccess = /*[[#{manage.settings.delete.success}]]*/;
        		var saveTemplateSettingSuccess = /*[[#{manage.settings.save.setting.success}]]*/;
@@ -518,6 +519,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
        		var reminderPlot = /*[[#{nursery.reminder.add.plot.settings}]]*/;
        		var reminderTraits = /*[[#{nursery.reminder.add.trait.settings}]]*/;
        		var reminderTrialEnvironment = /*[[#{nursery.reminder.add.trial.environment.settings}]]*/;
+       		var reminderTreatmentFactors = /*[[#{trial.reminder.add.treatment.factors}]]*/;
        	
        		var noVariableNameError = /*[[#{manage.settings.no.variable.name.error}]]*/
        		

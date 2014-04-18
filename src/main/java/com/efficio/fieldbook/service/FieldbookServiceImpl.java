@@ -157,8 +157,14 @@ public class FieldbookServiceImpl implements FieldbookService{
 			}
 		}
 
-		List<Integer> storedInIds = getStoredInIdsByMode(mode, false);
-		List<StandardVariableReference> dbList = fieldbookMiddlewareService.filterStandardVariablesByMode(storedInIds);
+		List<StandardVariableReference> dbList = null;
+		if (mode == AppConstants.SEGMENT_TREATMENT_FACTORS.getInt()) {
+			dbList = fieldbookMiddlewareService.getAllTreatmentLevels();
+		}
+		else {
+			List<Integer> storedInIds = getStoredInIdsByMode(mode, false);
+			dbList = fieldbookMiddlewareService.filterStandardVariablesByMode(storedInIds);
+		}
 		
 		if (dbList != null && !dbList.isEmpty()) {
 			
@@ -174,17 +180,17 @@ public class FieldbookServiceImpl implements FieldbookService{
 								 || ref.getId().intValue() == TermId.DATASET_TYPE.getId())
 							 continue;
 						 
-				         } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
-				                 if (inHideVariableFields(ref.getId(), AppConstants.HIDE_PLOT_FIELDS.getString())) {
-				                     continue;
-				                 }
-				         } else if (mode == AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt()) {
-			                 if (inHideVariableFields(ref.getId(), AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString())) {
-			                     continue;
-			                 }
+			         } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
+		                 if (inHideVariableFields(ref.getId(), AppConstants.HIDE_PLOT_FIELDS.getString())) {
+		                     continue;
+		                 }
+			         } else if (mode == AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt()) {
+		                 if (inHideVariableFields(ref.getId(), AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString())) {
+		                     continue;
+		                 }
 			         }
 					
-						result.add(ref);
+					 result.add(ref);
 				}
 			}
 		}
@@ -213,6 +219,8 @@ public class FieldbookServiceImpl implements FieldbookService{
             list.addAll(PhenotypicType.VARIATE.getTypeStorages());
         } else if (mode == AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt()) {
             list.addAll(PhenotypicType.TRIAL_ENVIRONMENT.getTypeStorages());
+        } else if (mode == AppConstants.SEGMENT_TREATMENT_FACTORS.getInt()) {
+        	list.addAll(PhenotypicType.TRIAL_DESIGN.getTypeStorages());
         }
         return list;
     }

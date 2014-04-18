@@ -99,16 +99,16 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 	    			<div class="row form-group">
 	    				<div class="col-xs-6 col-md-6">
 		    				<div class="">
-		    					<img th:src="@{/static/img/review-list-details.png}" style="padding-bottom:3px;" />
-				    			<label class="control-label"><strong class="sub-content-heading" th:text="#{nursery.managesettings.nursery.level.details}">NURSERY-LEVEL DETAILS</strong></label>
+				    			<label class="control-label" data-toggle="collapse" data-target=".nurseryLevelDetails">
+				    				<img th:src="@{/static/img/review-list-details.png}" style="padding-bottom:3px;" />
+				    				<strong class="sub-content-heading" th:text="#{nursery.managesettings.nursery.level.details}">NURSERY-LEVEL DETAILS</strong>
+			    				</label>
 			    			</div>
-			    			<div class="row form-group">
+			    			<div class="row form-group collapse in nurseryLevelDetails">
 			    				<div class="col-xs-12 col-md-12">
 					    			<label class="control-label" th:text="#{nursery.managesettings.nursery.level.notes}"> The settings in this section apply across all plots in the nursery. 
 					    			You can add settings at this level, or remove those that you wish to manage at the plot level.</label>
 				    			</div>
-			    			</div>
-			    			<div class="row form-group">
 			    				<div class="col-xs-12 col-md-12" id="nurseryLevelSettings-dev">
 			    					<div class="row form-group nurseryLevelSettings" th:each="nurseryLevelVariable, rowStat : *{studyLevelVariables}">
 			    						<div class="col-xs-5 col-md-5 1st">
@@ -176,8 +176,6 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			    					</div>
 			    					
 			    				</div>
-			    			</div>
-			    			<div class="row form-group">
 			    				<div class="col-xs-12 col-md-12">
 			    					<span class="glyphicon glyphicon-plus"></span>&nbsp;
 					    			<a href="javascript: openAddVariablesSetting(1);" th:text="#{nursery.managesettings.add.nursery.level.settings}">Add Nursery-Level Settings</a>
@@ -187,17 +185,17 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 	    				<div class="col-xs-6 col-md-6">	    								    			
 		    				<div class="row">
 			    				<div class="col-xs-12 col-md-12">
-			    					<img th:src="@{/static/img/review-list-details.png}" style="padding-bottom:3px;" />
-					    			<label class="control-label"><strong class="sub-content-heading" th:text="#{nursery.managesettings.plot.level.details}">PLOT-LEVEL DETAILS</strong></label>
+					    			<label class="control-label" data-toggle="collapse" data-target=".plotLevelDetails">
+					    				<img th:src="@{/static/img/review-list-details.png}" style="padding-bottom:3px;" />
+					    				<strong class="sub-content-heading" th:text="#{nursery.managesettings.plot.level.details}">PLOT-LEVEL DETAILS</strong>
+				    				</label>
 				    			</div>
 			    			</div>
-			    			<div class="row form-group">
+			    			<div class="row form-group collapse in plotLevelDetails">
 			    				<div class="col-xs-12 col-md-12">
 					    			<label class="control-label" th:text="#{nursery.managesettings.plot.level.notes}"> Select the settings you will record at the plot level in the nursery. 
 					    			These will appear as data columns in your nursery book. You can add and remove settings at this level.</label>
 				    			</div>
-			    			</div>
-			    			<div class="row form-group">
 			    				<div class="col-xs-12 col-md-12">
 			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed" id="plotLevelSettings">
 			    						<thead>
@@ -228,10 +226,6 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 				    					</tbody>
 			    					</table>
 			    				</div>
-			    				<div class="col-xs-3 col-md-3"></div>
-			    			</div>
-		    				
-		    				<div class="row form-group">
 			    				<div class="col-xs-12 col-md-12">
 			    					<span class="glyphicon glyphicon-plus"></span>&nbsp;
 					    			<a href="javascript: openAddVariablesSetting(2);" th:text="#{nursery.managesettings.add.plot.level.settings}">Add Plot-Level Settings</a>
@@ -244,18 +238,18 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 		    				</div>
 		    				<div class="row">
 			    				<div class="col-xs-12 col-md-12">
-			    					<img th:src="@{/static/img/review-list-details.png}" style="padding-bottom:3px;" />
-					    			<label class="control-label"><strong class="sub-content-heading" th:text="#{nursery.managesettings.baseline.traits}">BASELINE TRAITS</strong></label>
+					    			<label class="control-label" data-toggle="collapse" data-target=".baselineTraitsDetails">
+					    				<img th:src="@{/static/img/review-list-details.png}" style="padding-bottom:3px;" />
+					    				<strong class="sub-content-heading" th:text="#{nursery.managesettings.baseline.traits}">BASELINE TRAITS</strong>
+				    				</label>
 				    			</div>
 			    			</div>
-			    			<div class="row  form-group">
+			    			<div class="row  form-group collapse in baselineTraitsDetails">
 			    				<div class="col-xs-12 col-md-12">
 					    			<label class="control-label" th:text="#{nursery.managesettings.baseline.traits.notes}"> The list below shows the standard traits available for Cowpea. 
 					    			You can add and remove traits in this list to create the baseline set of traits you are working with in your program. 
 					    			You will be able to add additional traits to measure in each nursery.</label>
 				    			</div>
-			    			</div>
-			    			<div class="row form-group">
 			    				<div class="col-xs-12 col-md-12">
 			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed" id="baselineTraitSettings">
 			    						<thead>
@@ -286,10 +280,6 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 				    					</tbody>
 			    					</table>
 			    				</div>
-			    				<div class="col-xs-3 col-md-3"></div>
-			    			</div>
-		    				
-		    				<div class="row form-group">
 			    				<div class="col-xs-12 col-md-12">
 			    					<span class="glyphicon glyphicon-plus"></span>&nbsp;
 					    			<a href="javascript: openAddVariablesSetting(3);" th:text="#{nursery.managesettings.add.baseline.traits}">Add Baseline Traits</a>

@@ -464,6 +464,15 @@ function getStandardVariables(variableType) {
 			$("#page-message-modal").html("");
 			clearAttributeFields();
 			$("#addVariables").attr("onclick", "javascript: submitSelectedVariables(" + variableType + ");");
+			$("#addSettingModalVariableType").val(variableType);
+			if (variableType == 5) {
+				$("#regularVariableListing").hide();
+				$("#treatmentFactorListing").show();
+			}
+			else {
+				$("#regularVariableListing").show();
+				$("#treatmentFactorListing").hide();
+			}
 			$("#addVariablesSettingModal").modal("show");
 		},
 		error: function(jqXHR, textStatus, errorThrown){
@@ -604,18 +613,25 @@ function idNameCounterpartSelected(selectedVariable) {
 
 function addVariableToList() { 
 	var newRow;
-	var rowCount = $("#newVariablesList tbody tr").length;
+	var tableListName;
+	if ($("#treatmentFactorListing").css("display") == "none") {
+		tableListName = "#newVariablesList";
+	}
+	else {
+		tableListName = "#newTreatmentList";
+	}
+	var rowCount = $(tableListName + " tbody tr").length;
 	var ctr;
 	
 	//get the last counter for the selected variables and add 1
 	if (rowCount == 0) {
 		ctr = 0; 
 	} else {
-		var lastVarId = $("#newVariablesList tbody tr:last-child td input[type='hidden']").attr("name");
+		var lastVarId = $(tableListName + " tbody tr:last-child td input[type='hidden']").attr("name");
 		ctr = parseInt(lastVarId.substring(lastVarId.indexOf("[") + 1, lastVarId.indexOf("]"))) + 1;
 	}
 
-	var length = $("#newVariablesList tbody tr").length + 1;
+	var length = $(tableListName + " tbody tr").length + 1;
 	var className = length % 2 == 1 ? 'even' : 'odd';
 	
 	if (idNameCounterpartSelected($("#selectedStdVarId").val())) {
@@ -636,7 +652,7 @@ function addVariableToList() {
 		newRow = newRow + "<td class='"+className+"'>" + $("#selectedRole").text() + "</td>";
 		newRow = newRow + "</tr>";
 		
-		$("#newVariablesList").append(newRow);
+		$(tableListName).append(newRow);
 		$("#page-message-modal").html("");
 		
 	} else {
@@ -709,6 +725,8 @@ function submitSelectedVariables(variableType) {
 					case 4:
 						createTrialEnvironmentVariables($.parseJSON(data));
 						break;
+					case 5:
+						createTreatmentFactors($.parseJSON(data));
 					default:
 						createTrialLevelSettingVariables($.parseJSON(data));
 				}
@@ -1038,6 +1056,30 @@ function createTrialEnvironmentVariables(data) {
 		newRow = newRow + "<td width='5%' class='"+className+"'>" + "<a href='javascript: void(0);' onclick='javascript:showBaselineTraitDetailsModal(" + 
 		settingDetail.variable.cvTermId + ");'><span class='glyphicon glyphicon-eye-open'></span></a></td></tr>";
 		$("#trialEnvironmentLevelSettings").append(newRow);
+	});
+}
+function createTreatmentFactors(data) {
+	$.each(data, function (index, settingDetail) {
+		var length = $("#treatmentFactors tbody tr").length + 1;
+		var className = length % 2 == 1 ? 'even' : 'odd';
+		var newRow = "<tr class='newVariable'>";
+		var isDelete = "";
+		
+		if (settingDetail.deletable) {
+			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(4," + 
+			settingDetail.variable.cvTermId + ",$(this))'></span>";
+		}
+		
+		newRow = newRow + "<td width='4%' style='text-align: center' class='"+className+"'>" + isDelete + 
+		"<input class='cvTermIds' type='hidden' id='treatmentFactors" + (length-1) + ".variable.cvTermId' name='treatmentFactors[" + 
+		(length-1) + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
+		"</td>";
+		newRow = newRow + "<td width='7%' class='"+className+"'>" + settingDetail.group + "</td>";		
+		newRow = newRow + "<td width='42%' class='"+className+"'>" + settingDetail.variable.name + "</td>";		
+		newRow = newRow + "<td width='42%' class='"+className+"'>" + settingDetail.variable.description + "</td>";
+		newRow = newRow + "<td width='5%' class='"+className+"'>" + "<a href='javascript: void(0);' onclick='javascript:showBaselineTraitDetailsModal(" + 
+		settingDetail.variable.cvTermId + ");'><span class='glyphicon glyphicon-eye-open'></span></a></td></tr>";
+		$("#treatmentFactors").append(newRow);
 	});
 }
 

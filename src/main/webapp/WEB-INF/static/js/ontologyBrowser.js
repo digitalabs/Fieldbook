@@ -242,7 +242,8 @@ function clearAndAppendOntologyDetailsTab(variableName, html){
 					$('#reminder-placeholder').html(reminderPlot);
 			else if($("#heading-modal").text() == addBaselineTraits)
 					$('#reminder-placeholder').html(reminderTraits);
-					
+			else if ($("#heading-modal").text() == addTreatmentFactors)
+					$("#reminder-placeholder").html(reminderTreatmentFactors);
 				
 		}
 		

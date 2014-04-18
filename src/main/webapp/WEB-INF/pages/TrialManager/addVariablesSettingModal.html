@@ -17,7 +17,7 @@
 					
 					<div  th:include="/OntologyBrowser/browserInfo"></div>
 					<br />
-	         		<div class="row">
+	         		<div class="row" id="regularVariableListing">
 						<div class="col-xs-12 col-md-12">
 			         		<table id="newVariablesList" class="my-class table table-curved table-condensed" style="margin-left:5px;">
 			         			<thead>
@@ -37,6 +37,33 @@
 			         					<td th:text="*{selectedVariables[__${rowStat.index}__].scale}"></td>
 			         					<td th:text="*{selectedVariables[__${rowStat.index}__].method}"></td>
 			         					<td th:text="*{selectedVariables[__${rowStat.index}__].role}"></td>
+			         				</tr>
+			         			</tbody>
+					        </table>
+			        	</div>
+			        </div>
+	         		<div class="row" id="treatmentFactorListing" style="display:none;">
+						<div class="col-xs-12 col-md-12">
+			         		<table id="newTreatmentList" class="my-class table table-curved table-condensed" style="margin-left:5px;">
+			         			<thead>
+			         				<th>Selected Level Name</th>
+			         				<th>Details</th>
+			         				<th>User-Defined Treatment</th>
+			         				<th>Treatment Ontology Term</th>
+			         				<th>Scale</th>
+			         				<th>Method</th>
+			         			</thead>
+			         			<tbody>
+			         				<tr th:each="choice, rowStat : *{selectedVariables}">
+			         					<td>
+			         						<input type="hidden" class="addVariables" th:field="*{selectedVariables[__${rowStat.index}__].cvTermId}" />
+			         						<input type="text" class="addVariables" th:field="*{selectedVariables[__${rowStat.index}__].name}" />
+		         						</td>
+			         					<td></td>
+			         					<td th:text="*{selectedVariables[__${rowStat.index}__].scale}"></td>
+			         					<td th:text="*{selectedVariables[__${rowStat.index}__].method}"></td>
+			         					<td th:text="*{selectedVariables[__${rowStat.index}__].role}"></td>
+			         					<td></td>
 			         				</tr>
 			         			</tbody>
 					        </table>
@@ -73,7 +100,7 @@
 		   	
 		   	$( document ).ready(function() {  	     
 		  	  
-		  	  //fix for the typeahead
+		   		//fix for the typeahead
 		  	 
 			//display tree
 		  	  displayOntologyTree(treeDivId, treeData, searchTreeData, 'srch-term');

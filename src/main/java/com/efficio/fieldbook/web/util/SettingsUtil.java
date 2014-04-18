@@ -598,29 +598,8 @@ public class SettingsUtil {
 				int group = 1;
 				for (TreatmentFactor treatmentFactor : dataset.getTreatmentFactors()) {
            
-					Factor levelFactor = treatmentFactor.getLevelFactor();
-					SettingVariable levelVariable = new SettingVariable(levelFactor.getName(), levelFactor.getDescription(),
-							levelFactor.getProperty(), levelFactor.getScale(), levelFactor.getMethod(), levelFactor.getRole(),
-							levelFactor.getDatatype());
-					Integer stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
-							levelVariable.getProperty(), levelVariable.getScale(), levelVariable.getMethod(), PhenotypicType.valueOf(levelVariable.getRole()));
-					List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
-					SettingDetail settingDetail = new SettingDetail(levelVariable,
-                            possibleValues, null, isSettingVariableDeletable(stdVar, AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString()));
-					settingDetail.setGroup(group);
-					treatmentFactors.add(settingDetail);
-					
-					Factor valueFactor = treatmentFactor.getValueFactor();
-					SettingVariable valueVariable = new SettingVariable(valueFactor.getName(), valueFactor.getDescription(),
-							valueFactor.getProperty(), valueFactor.getScale(), valueFactor.getMethod(), valueFactor.getRole(),
-							valueFactor.getDatatype());
-					stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
-							valueVariable.getProperty(), valueVariable.getScale(), valueVariable.getMethod(), PhenotypicType.valueOf(valueVariable.getRole()));
-					possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
-					SettingDetail valueSettingDetail = new SettingDetail(levelVariable,
-                            possibleValues, null, isSettingVariableDeletable(stdVar, AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString()));
-					valueSettingDetail.setGroup(group);
-					treatmentFactors.add(settingDetail);
+					treatmentFactors.add(createTreatmentFactor(treatmentFactor.getLevelFactor(), fieldbookMiddlewareService, fieldbookService, group));
+					treatmentFactors.add(createTreatmentFactor(treatmentFactor.getValueFactor(), fieldbookMiddlewareService, fieldbookService, group));
 					
 					group++;
 				}
@@ -630,6 +609,7 @@ public class SettingsUtil {
 			userSelection.setPlotsLevelList(plotsLevelList);			
 			userSelection.setBaselineTraitsList(baselineTraitsList);
 			userSelection.setTrialLevelVariableList(trialLevelVariableList);
+			userSelection.setTreatmentFactors(treatmentFactors);
 		}
 	}
 	
@@ -995,6 +975,22 @@ public class SettingsUtil {
 		mvar.setDataTypeId(variate.getDataTypeId());
 		mvar.setPossibleValues(variate.getPossibleValues());
 		return mvar;
+	}
+	
+	private static SettingDetail createTreatmentFactor(Factor factor, org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, 
+			FieldbookService fieldbookService, int group) throws MiddlewareQueryException {
+		
+		SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(),
+				factor.getProperty(), factor.getScale(), factor.getMethod(), factor.getRole(),
+				factor.getDatatype());
+		Integer stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
+				variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
+		List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
+		SettingDetail settingDetail = new SettingDetail(variable,
+                possibleValues, null, isSettingVariableDeletable(stdVar, AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString()));
+		settingDetail.setGroup(group);
+		
+		return settingDetail;
 	}
 	
 }

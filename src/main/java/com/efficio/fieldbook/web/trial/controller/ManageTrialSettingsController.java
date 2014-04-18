@@ -27,6 +27,8 @@ import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
+import org.generationcp.middleware.pojos.workbench.settings.Factor;
+import org.generationcp.middleware.pojos.workbench.settings.TreatmentFactor;
 import org.generationcp.middleware.pojos.workbench.settings.TrialDataset;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
@@ -224,11 +226,19 @@ public class ManageTrialSettingsController extends SettingsController{
 	    	List<TemplateSetting> templateSettings = workbenchService.getTemplateSettings(templateSettingFilter);
 	    	TemplateSetting templateSetting = templateSettings.get(0); //always 1
 	    	TrialDataset dataset = (TrialDataset)SettingsUtil.parseXmlToDatasetPojo(templateSetting.getConfiguration(), false);
+	    	
+	    	//FOR TESTING ONLY, TODO: REMOVE THIS WHEN SAVING IS ALREADY WORKING
+	    	dataset.setTreatmentFactors(new ArrayList<TreatmentFactor>());
+	    	Factor levelFactor = new Factor("FERTLE", "FERTILIZER LEVEL", "FERTILIZER", "NUMBER", "APPLIED", "TRIAL_DESIGN", "N", -12);
+	    	Factor valueFactor = new Factor("FERTAM", "FERTILIZER AMOUNT", "FERTILIZER", "KG/HA", "APPLIED", "TRIAL_DESIGN", "N", -13);
+	    	dataset.getTreatmentFactors().add(new TreatmentFactor(levelFactor, valueFactor));
+	    	
 	    	SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
 	    	form.setStudyLevelVariables(userSelection.getStudyLevelConditions());
 	    	form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
 	    	form.setPlotLevelVariables(userSelection.getPlotsLevelList());
 	    	form.setTrialLevelVariables(userSelection.getTrialLevelVariableList());
+	    	form.setTreatmentFactors(userSelection.getTreatmentFactors());
 	    	form.setIsDefault(templateSetting.getIsDefault().intValue() == 1 ? true : false);
 	    	form.setSettingName(templateSetting.getName());
 	    	form.setSelectedSettingId(templateSetting.getTemplateSettingId());

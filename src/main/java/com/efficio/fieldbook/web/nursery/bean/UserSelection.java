@@ -91,6 +91,8 @@ public class UserSelection extends StudySelection implements Serializable {
     /** The trait ref list. */
     private List<TraitClassReference> traitRefList;
     
+    private List<SettingDetail> treatmentFactors;
+    
 	/**
 	 * Gets the current page.
 	 *
@@ -475,6 +477,14 @@ public class UserSelection extends StudySelection implements Serializable {
 		public void setImportedCheckGermplasmMainInfo(
 				ImportedGermplasmMainInfo importedCheckGermplasmMainInfo) {
 			this.importedCheckGermplasmMainInfo = importedCheckGermplasmMainInfo;
+		}
+
+		public List<SettingDetail> getTreatmentFactors() {
+			return treatmentFactors;
+		}
+
+		public void setTreatmentFactors(List<SettingDetail> treatmentFactors) {
+			this.treatmentFactors = treatmentFactors;
 		}
         
         

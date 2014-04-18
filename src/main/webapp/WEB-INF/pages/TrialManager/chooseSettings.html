@@ -131,67 +131,69 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 					    			You can add settings at this level, or remove those that you wish to manage at the plot level.</label>
 				    			</div>
 			    			</div>
-		    				<div class="row form-group trialLevelSettings collapse in trialLevelDetails" >
-                                <div class="col-xs-5 col-md-5 1st">
-                                        &nbsp;&nbsp;&nbsp;<label id="folderLabel" for="title" th:text="#{trial.savetrial.savein} + ':'">Save in:*</label>&nbsp;<span class="required">*</span>
-                                </div>
-                                <div class="col-xs-7 col-md-7 2nd">
-                                        <!--  <span id="folderNameSpan" name="folderNameSpan" ></span>-->
-                                        <input type="hidden" th:field="*{folderId}" />
-                                        <input type="hidden" th:field="*{folderName}" />
-                                        
-                                        <a id="chooseLocation" onclick="loadFolderAjax();" th:text="#{trial.create.trial.choose.location}"></a>
-                                </div>
-                            </div>
-	    					<div class="row form-group trialLevelSettings collapse in trialLevelDetails" th:each="trialLevelVariable, rowStat : *{studyLevelVariables}">
-	    						<div class="col-xs-5 col-md-5 1st">
-                                    &nbsp;&nbsp;&nbsp;<span style="word-wrap: break-word"  class="control-label trial-level-label" th:text="${trialLevelVariable.variable.name}"></span>:
-                                </div>
-                               	<div class="col-xs-7 col-md-7 2nd">
-								 	<input class="cvTermIds trialLevelVariableIdClass" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" /> 
-									<input th:if="${trialLevelVariable.variable.widgetType.type == 'DROPDOWN'}" 
-									type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control select2" />
-									
-									<!-- Show Favorite Method -->
-									<div th:if="${trialLevelVariable.variable.cvTermId}==*{breedingMethodId}" class="possibleValuesDiv">
-									<input 
-									type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}" 
-									th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'" />
-									&nbsp;&nbsp;
-									<span 
-									th:text="#{show.favorite.method}">Show Favorite Method</span>
-									</div>
-									
-									<!-- store possible values of variable -->
-									<div th:text="${trialLevelVariable.value}" class="div-select-val" style="display: none"></div>
-									<div th:if="${trialLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesJson' + ${rowStat.index}"
-										class="possibleValuesJson" style="display:none" th:text="${trialLevelVariable.possibleValuesJson}">
-									</div>
-									<div th:if="${trialLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesFavoriteJson' + ${rowStat.index}"
-										class="possibleValuesFavoriteJson" style="display:none" th:text="${trialLevelVariable.possibleValuesFavoriteJson}">
-									</div>
-									
-									<input th:if="${trialLevelVariable.variable.widgetType.type == 'NTEXT'}" 
-									type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control numeric-input" />
-									
-									<input th:if="${trialLevelVariable.variable.widgetType.type == 'CTEXT'}" 
-									type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control character-input" />
-									
-									<input th:if="${trialLevelVariable.variable.widgetType.type == 'DATE'}" 
-									type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control date-input" />
-									 
-									<input th:if="${trialLevelVariable.variable.widgetType.type == 'SLIDER'}" 
-									type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}"
-									th:attr="data-min=${trialLevelVariable.variable.minRange}"
-									th:attrappend="data-max=${trialLevelVariable.variable.maxRange}"
-									class="form-control spinner-input spinnerElement"
-									data-step="0.0001" 										 
-									/>
+			    			<div class="sectionContainer">
+			    				<div class="row form-group trialLevelSettings collapse in trialLevelDetails" >
+	                                <div class="col-xs-5 col-md-5 1st">
+	                                        &nbsp;&nbsp;&nbsp;<label id="folderLabel" for="title" th:text="#{trial.savetrial.savein} + ':'">Save in:*</label>&nbsp;<span class="required">*</span>
+	                                </div>
+	                                <div class="col-xs-7 col-md-7 2nd">
+	                                        <!--  <span id="folderNameSpan" name="folderNameSpan" ></span>-->
+	                                        <input type="hidden" th:field="*{folderId}" />
+	                                        <input type="hidden" th:field="*{folderName}" />
+	                                        
+	                                        <a id="chooseLocation" onclick="loadFolderAjax();" th:text="#{trial.create.trial.choose.location}"></a>
+	                                </div>
+	                            </div>
+		    					<div class="row form-group trialLevelSettings collapse in trialLevelDetails" th:each="trialLevelVariable, rowStat : *{studyLevelVariables}">
+		    						<div class="col-xs-5 col-md-5 1st">
+	                                    &nbsp;&nbsp;&nbsp;<span style="word-wrap: break-word"  class="control-label trial-level-label" th:text="${trialLevelVariable.variable.name}"></span>:
+	                                </div>
+	                               	<div class="col-xs-7 col-md-7 2nd">
+									 	<input class="cvTermIds trialLevelVariableIdClass" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" /> 
+										<input th:if="${trialLevelVariable.variable.widgetType.type == 'DROPDOWN'}" 
+										type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control select2" />
+										
+										<!-- Show Favorite Method -->
+										<div th:if="${trialLevelVariable.variable.cvTermId}==*{breedingMethodId}" class="possibleValuesDiv">
+										<input 
+										type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}" 
+										th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'" />
+										&nbsp;&nbsp;
+										<span 
+										th:text="#{show.favorite.method}">Show Favorite Method</span>
+										</div>
+										
+										<!-- store possible values of variable -->
+										<div th:text="${trialLevelVariable.value}" class="div-select-val" style="display: none"></div>
+										<div th:if="${trialLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesJson' + ${rowStat.index}"
+											class="possibleValuesJson" style="display:none" th:text="${trialLevelVariable.possibleValuesJson}">
+										</div>
+										<div th:if="${trialLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesFavoriteJson' + ${rowStat.index}"
+											class="possibleValuesFavoriteJson" style="display:none" th:text="${trialLevelVariable.possibleValuesFavoriteJson}">
+										</div>
+										
+										<input th:if="${trialLevelVariable.variable.widgetType.type == 'NTEXT'}" 
+										type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control numeric-input" />
+										
+										<input th:if="${trialLevelVariable.variable.widgetType.type == 'CTEXT'}" 
+										type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control character-input" />
+										
+										<input th:if="${trialLevelVariable.variable.widgetType.type == 'DATE'}" 
+										type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control date-input" />
 										 
-									<span>
-										<a th:if="${trialLevelVariable.variable.cvTermId}==*{breedingMethodId}" href="javascript: openManageMethods();" th:text="#{trial.managesettings.manage.method}">Manage Method</a>
-									</span>		
-                            	</div>
+										<input th:if="${trialLevelVariable.variable.widgetType.type == 'SLIDER'}" 
+										type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}"
+										th:attr="data-min=${trialLevelVariable.variable.minRange}"
+										th:attrappend="data-max=${trialLevelVariable.variable.maxRange}"
+										class="form-control spinner-input spinnerElement"
+										data-step="0.0001" 										 
+										/>
+											 
+										<span>
+											<a th:if="${trialLevelVariable.variable.cvTermId}==*{breedingMethodId}" href="javascript: openManageMethods();" th:text="#{trial.managesettings.manage.method}">Manage Method</a>
+										</span>		
+	                            	</div>
+			    				</div>
 		    				</div>			
 	    				</div>
 	    				<div class="col-xs-6 col-md-6">	    								    			
@@ -209,7 +211,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 					    			These will appear as data columns in your trial book. You can add and remove settings at this level.</label>
 				    			</div>
 			    				<div class="col-xs-12 col-md-12">
-			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed" id="plotLevelSettings">
+			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll" id="plotLevelSettings">
 			    						<thead>
 										<tr>
 							                <th width="45%" th:utext="#{trial.managesettings.plot.name}">.Name</th>
@@ -219,9 +221,9 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 										</thead>
 										<tbody>
 					    					<tr th:each="plotLevelVariable, rowStat : *{plotLevelVariables}">
-					    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.name}"></td>
-					    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.description}"></td>
-					    					<td th:class="${rowStat.even}? 'even' : 'odd'" >
+					    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.name}"></td>
+					    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.description}"></td>
+					    					<td width="10%" th:class="${rowStat.even}? 'even' : 'odd'" >
 						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
 														*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
 														<span class="glyphicon glyphicon-eye-open"></span></a>
@@ -255,7 +257,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 					    			You will be able to add additional traits to measure in each trial.</label>
 				    			</div>
 			    				<div class="col-xs-12 col-md-12">
-			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed" id="baselineTraitSettings">
+			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll" id="baselineTraitSettings">
 			    						<thead>
 										<tr>
 							                <th width="45%" th:utext="#{trial.managesettings.trait}">.Trait</th>
@@ -266,9 +268,9 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 										<tbody>
 					    					<tr class="baseline-traits" th:each="baselineTraitVariable, rowStat : *{baselineTraitVariables}">
 					    						
-						    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.name}"></td>
-						    					<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.description}"></td>
-						    					<td th:class="${rowStat.even}? 'even' : 'odd'" >
+						    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.name}"></td>
+						    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.description}"></td>
+						    					<td width="10%" th:class="${rowStat.even}? 'even' : 'odd'" >
 						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
 														*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
 														<span class="glyphicon glyphicon-eye-open"></span></a>

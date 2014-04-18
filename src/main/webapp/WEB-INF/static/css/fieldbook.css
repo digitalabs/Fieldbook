@@ -739,3 +739,25 @@ table tbody tr.germplasmSelectedRow, .germplasmSelectedRow td{
 table tbody tr.checkGermplasmSelectedRow, .checkGermplasmSelectedRow td{
 	background-color: #BED6B2;
 }
+table.table-with-scroll {
+    display: table;
+    width: 100%;
+}
+table.table-with-scroll thead, table.table-with-scroll tbody {
+    float: left;
+    width: 100%;
+}
+table.table-with-scroll tbody {
+    overflow: auto;
+    max-height: 150px;
+}
+table.table-with-scroll tr {
+    width: 100%;
+    display: table;
+}
+div.sectionContainer {
+	max-height: 400px; 
+	overflow-y: auto; 
+	padding:0; 
+	margin: 0;
+}

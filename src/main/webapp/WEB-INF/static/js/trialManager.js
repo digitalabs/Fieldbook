@@ -460,7 +460,14 @@ function getStandardVariables(variableType) {
 			
 			
 			//clear selected variables table and attribute fields
-			$("#newVariablesList > tbody").empty();
+	  		var tableListName;
+	  		if ($("#treatmentFactorListing").css("display") == "none") {
+	  			tableListName = "#newVariablesList";
+	  		}
+	  		else {
+	  			tableListName = "#newTreatmentList";
+	  		}
+			$(tableListName + " > tbody").empty();
 			$("#page-message-modal").html("");
 			clearAttributeFields();
 			$("#addVariables").attr("onclick", "javascript: submitSelectedVariables(" + variableType + ");");
@@ -682,7 +689,15 @@ function notInList(id) {
 
 function hasNoVariableName() {
 	var result = false;
-	$.each($("#newVariablesList tbody tr"), function (index, row) {
+	var tableListName;
+	if ($("#treatmentFactorListing").css("display") == "none") {
+		tableListName = "#newVariablesList";
+	}
+	else {
+		tableListName = "#newTreatmentList";
+	}
+
+	$.each($(tableListName + " tbody tr"), function (index, row) {
 		if ($($(row).children("td:nth-child(1)").children("#"+getJquerySafeId("selectedVariables"+index+".name"))).val() == "") {
 			result = true;
 		}
@@ -691,17 +706,24 @@ function hasNoVariableName() {
 }
 
 function submitSelectedVariables(variableType) {
-	if($("#newVariablesList tbody tr").length == 0){
+	var tableListName;
+	if ($("#treatmentFactorListing").css("display") == "none") {
+		tableListName = "#newVariablesList";
+	}
+	else {
+		tableListName = "#newTreatmentList";
+	}
+	if($(tableListName + " tbody tr").length == 0){
 		$("#page-message-modal").html(
 			    "<div class='alert alert-danger'>"+ noVariableAddedMessage +"</div>"
 		);
 	}
-	else if ($("#newVariablesList tbody tr").length > 0 && hasNoVariableName()) {
+	else if ($(tableListName + " tbody tr").length > 0 && hasNoVariableName()) {
 		$("#page-message-modal").html(
 			    "<div class='alert alert-danger'>"+ noVariableNameError +"</div>"
 		);
 	}
-	else if ($("#newVariablesList tbody tr").length > 0) {
+	else if ($(tableListName + " tbody tr").length > 0) {
 		replaceNameVariables();
 		var serializedData = $("input.addVariables").serialize();
 		$("#page-message-modal").html("");
@@ -748,7 +770,14 @@ function submitSelectedVariables(variableType) {
 }
 
 function replaceNameVariables() {
-	$.each($("#newVariablesList tbody tr"), function (index, row){
+	var tableListName;
+	if ($("#treatmentFactorListing").css("display") == "none") {
+		tableListName = "#newVariablesList";
+	}
+	else {
+		tableListName = "#newTreatmentList";
+	}
+	$.each($(tableListName + " tbody tr"), function (index, row){
 		value = $($(row).children("td:nth-child(1)").children("#" + 
 				getJquerySafeId("selectedVariables"+ index + ".cvTermId"))).val();
 		//use the id counterpart of the name variable

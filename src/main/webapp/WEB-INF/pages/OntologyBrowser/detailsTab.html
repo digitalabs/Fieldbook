@@ -3,6 +3,7 @@
 	<form class="form-horizontal" th:object="${ontologyDetailsForm}">
 		<input type="hidden" id="selectedStdVarId" value="" />
         <input type="hidden" id="selectedName" value=""/>
+        <input type="hidden" th:field="*{possiblePairsJson}" />
 		<div class="form-group">
 			<label class="col-xs-4 col-lg-4 control-label" th:text="#{ontology.browser.detailstab.traitClass} + ':'">Trait Class:</label>
 			<div class="col-xs-6 col-lg-6">

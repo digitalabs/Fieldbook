@@ -647,17 +647,47 @@ function addVariableToList() {
 			    "<div class='alert alert-danger'>"+ idNameCounterpartAddedError +"</div>"
 		);
 	} else if (notInList($("#selectedStdVarId").val()) && $("#selectedStdVarId").val() != "") {
-		//if selected variable is not yet in the list and is not blank or new, add it
-		newRow = "<tr>";
-		newRow = newRow + "<td class='"+className+"'><input type='hidden' class='addVariables cvTermIds' id='selectedVariables"+ ctr + ".cvTermId' " +  
-			"name='selectedVariables["+ ctr + "].cvTermId' value='" + $("#selectedStdVarId").val() + "' />";
-		newRow = newRow + "<input type='text' class='addVariables' id='selectedVariables"+ ctr + ".name' " +  
-			"name='selectedVariables["+ ctr + "].name' maxLength='75' value='" + $("#selectedName").val() + "' /></td>";
-		newRow = newRow + "<td class='"+className+"'>" + $("#selectedProperty").text() + "</td>";
-		newRow = newRow + "<td class='"+className+"'>" + $("#selectedScale").text() + "</td>";
-		newRow = newRow + "<td class='"+className+"'>" + $("#selectedMethod").text() + "</td>";
-		newRow = newRow + "<td class='"+className+"'>" + $("#selectedRole").text() + "</td>";
-		newRow = newRow + "</tr>";
+		
+		if (tableListName == '#newTreatmentList') {
+			var pairs = JSON.parse($("#possiblePairsJson").val());
+			var pairScale, pairMethod;
+			if (pairs.length > 0) {
+				pairScale = pairs[0].scale.name;
+				pairMethod = pairs[0].method.name;
+				pairName = pairs[0].name;
+			}
+			newRow = "<tr>";
+			newRow = newRow + "<td class='"+className+"'><input type='hidden' class='addVariables cvTermIds' id='selectedVariables"+ ctr + ".cvTermId' " +  
+				"name='selectedVariables["+ ctr + "].cvTermId' value='" + $("#selectedStdVarId").val() + "' />";
+			newRow = newRow + "<input type='text' class='addVariables' id='selectedVariables"+ ctr + ".name' " +  
+				"name='selectedVariables["+ ctr + "].name' maxLength='75' value='" + $("#selectedName").val() + "' /></td>";
+			newRow = newRow + "<td><a href='javascript: void(0);' onclick=\"javascript:showBaselineTraitDetailsModal('" + 
+				$("#selectedStdVarId").val() + "');\"> <span class='glyphicon glyphicon-eye-open'></span></a></td>";
+			newRow = newRow + "<td><input type='hidden' class='cvTermIds' id='selectedVariables" + ctr + ".treatmentPair.cvTermId' " + 
+				"name='selectedVariables[" + ctr + "].treatmentPair.cvTermId' value='" + "' /><select onchange='changeTreatmentPair(this," + pairs + ");'>";
+			for (var i = 0; i < pairs.length; i++) {
+				newRow = newRow + "<option value=" + pairs[i].id + ">" + pairs[i].name + "</option>";
+			}
+			newRow = newRow + "</select></td>";
+			newRow = newRow + "<td><input id='pairName' type='text' id='selectedVariables"+ ctr + ".treatmentPair.name' " +  
+				"name='selectedVariables["+ ctr + "].treatmentPair.name' maxLength='75' value='" + pairName + "' /></td>";
+			newRow = newRow + "<td id='pairScale'>" + pairScale + "</td>";
+			newRow = newRow + "<td id='pairMethod'>" + pairMethod + "</td>";
+			newRow = newRow + "</tr>";
+		}
+		else {
+			//if selected variable is not yet in the list and is not blank or new, add it
+			newRow = "<tr>";
+			newRow = newRow + "<td class='"+className+"'><input type='hidden' class='addVariables cvTermIds' id='selectedVariables"+ ctr + ".cvTermId' " +  
+				"name='selectedVariables["+ ctr + "].cvTermId' value='" + $("#selectedStdVarId").val() + "' />";
+			newRow = newRow + "<input type='text' class='addVariables' id='selectedVariables"+ ctr + ".name' " +  
+				"name='selectedVariables["+ ctr + "].name' maxLength='75' value='" + $("#selectedName").val() + "' /></td>";
+			newRow = newRow + "<td class='"+className+"'>" + $("#selectedProperty").text() + "</td>";
+			newRow = newRow + "<td class='"+className+"'>" + $("#selectedScale").text() + "</td>";
+			newRow = newRow + "<td class='"+className+"'>" + $("#selectedMethod").text() + "</td>";
+			newRow = newRow + "<td class='"+className+"'>" + $("#selectedRole").text() + "</td>";
+			newRow = newRow + "</tr>";
+		}
 		
 		$(tableListName).append(newRow);
 		$("#page-message-modal").html("");
@@ -667,6 +697,14 @@ function addVariableToList() {
 		$("#page-message-modal").html(
 			    "<div class='alert alert-danger'>"+ varInListMessage +"</div>"
 		);
+	}
+}
+
+function changeTreatmentPair(obj, pairs) {
+	var selectedIndex = obj.selectedIndex;
+	if (selectedIndex < pairs.length) {
+		$("#pairScale").text(pairs[i].scale.name);
+		$("#pairMethod").text(pairs[i].method.name);
 	}
 }
 	

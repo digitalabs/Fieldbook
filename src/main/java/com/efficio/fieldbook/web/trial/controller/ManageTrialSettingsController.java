@@ -467,6 +467,8 @@ public class ManageTrialSettingsController extends SettingsController{
             deleteVariableInSession(userSelection.getPlotsLevelList(), variableId);
         } else if (mode == AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt()) {
             deleteVariableInSession(userSelection.getTrialLevelVariableList(), variableId);
+        } else if (mode == AppConstants.SEGMENT_TREATMENT_FACTORS.getInt()) {
+        	deleteVariableInSession(userSelection.getTreatmentFactors(), variableId);
         } else {
             deleteVariableInSession(userSelection.getBaselineTraitsList(), variableId);
         }
@@ -645,6 +647,19 @@ public class ManageTrialSettingsController extends SettingsController{
             else {
             	userSelection.getTrialLevelVariableList().addAll(newDetails);
             }
+        } else if (mode == AppConstants.SEGMENT_TREATMENT_FACTORS.getInt()) {
+        	if (form.getTreatmentFactors() == null) {
+        		form.setTreatmentFactors(newDetails);
+        	}
+        	else {
+        		form.getTreatmentFactors().addAll(newDetails);
+        	}
+        	if (userSelection.getTreatmentFactors() == null) {
+        		userSelection.setTreatmentFactors(newDetails);
+        	}
+        	else {
+        		userSelection.getTreatmentFactors().addAll(newDetails);
+        	}
         }else {
             if (form.getBaselineTraitVariables() == null) {
             	form.setBaselineTraitVariables(newDetails);

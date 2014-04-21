@@ -659,9 +659,9 @@ function addVariableToList() {
 			}
 			newRow = "<tr>";
 			newRow = newRow + "<td class='"+className+"'><input type='hidden' class='addVariables cvTermIds' id='selectedVariables"+ ctr*2 + ".cvTermId' " +  
-				"name='selectedVariables["+ ctr + "].cvTermId' value='" + $("#selectedStdVarId").val() + "' />";
+				"name='selectedVariables["+ ctr*2 + "].cvTermId' value='" + $("#selectedStdVarId").val() + "' />";
 			newRow = newRow + "<input type='text' class='addVariables' id='selectedVariables"+ ctr*2 + ".name' " +  
-				"name='selectedVariables["+ ctr + "].name' maxLength='75' value='" + $("#selectedName").val() + "' /></td>";
+				"name='selectedVariables["+ ctr*2 + "].name' maxLength='75' value='" + $("#selectedName").val() + "' /></td>";
 			newRow = newRow + "<td><a href='javascript: void(0);' onclick=\"javascript:showBaselineTraitDetailsModal('" + 
 				$("#selectedStdVarId").val() + "');\"> <span class='glyphicon glyphicon-eye-open'></span></a></td>";
 			newRow = newRow + "<td>";

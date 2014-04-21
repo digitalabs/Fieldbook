@@ -650,27 +650,29 @@ function addVariableToList() {
 		
 		if (tableListName == '#newTreatmentList') {
 			var pairs = JSON.parse($("#possiblePairsJson").val());
-			var pairScale, pairMethod;
+			var pairScale = '', pairMethod = '', pairId = '', pairName = '';
 			if (pairs.length > 0) {
 				pairScale = pairs[0].scale.name;
 				pairMethod = pairs[0].method.name;
 				pairName = pairs[0].name;
+				pairId = pairs[0].id;
 			}
 			newRow = "<tr>";
-			newRow = newRow + "<td class='"+className+"'><input type='hidden' class='addVariables cvTermIds' id='selectedVariables"+ ctr + ".cvTermId' " +  
+			newRow = newRow + "<td class='"+className+"'><input type='hidden' class='addVariables cvTermIds' id='selectedVariables"+ ctr*2 + ".cvTermId' " +  
 				"name='selectedVariables["+ ctr + "].cvTermId' value='" + $("#selectedStdVarId").val() + "' />";
-			newRow = newRow + "<input type='text' class='addVariables' id='selectedVariables"+ ctr + ".name' " +  
+			newRow = newRow + "<input type='text' class='addVariables' id='selectedVariables"+ ctr*2 + ".name' " +  
 				"name='selectedVariables["+ ctr + "].name' maxLength='75' value='" + $("#selectedName").val() + "' /></td>";
 			newRow = newRow + "<td><a href='javascript: void(0);' onclick=\"javascript:showBaselineTraitDetailsModal('" + 
 				$("#selectedStdVarId").val() + "');\"> <span class='glyphicon glyphicon-eye-open'></span></a></td>";
-			newRow = newRow + "<td><input type='hidden' class='cvTermIds' id='selectedVariables" + ctr + ".treatmentPair.cvTermId' " + 
-				"name='selectedVariables[" + ctr + "].treatmentPair.cvTermId' value='" + "' /><select onchange='changeTreatmentPair(this," + pairs + ");'>";
+			newRow = newRow + "<td>";
+			newRow = newRow + "<select class='addVariables' onchange='changeTreatmentPair(this," + pairs + ", " + (ctr*2+1) + ");' id='selectedVariables" + (ctr*2+1) + ".cvTermId' " + 
+				"name='selectedVariables[" + (ctr*2+1) + "].cvTermId'>";
 			for (var i = 0; i < pairs.length; i++) {
 				newRow = newRow + "<option value=" + pairs[i].id + ">" + pairs[i].name + "</option>";
 			}
 			newRow = newRow + "</select></td>";
-			newRow = newRow + "<td><input id='pairName' type='text' id='selectedVariables"+ ctr + ".treatmentPair.name' " +  
-				"name='selectedVariables["+ ctr + "].treatmentPair.name' maxLength='75' value='" + pairName + "' /></td>";
+			newRow = newRow + "<td><input class='addVariables' type='text' id='selectedVariables"+ (ctr*2+1) + ".name' " +  
+				"name='selectedVariables["+ (ctr*2+1) + "].name' maxLength='75' value='" + pairName + "' /></td>";
 			newRow = newRow + "<td id='pairScale'>" + pairScale + "</td>";
 			newRow = newRow + "<td id='pairMethod'>" + pairMethod + "</td>";
 			newRow = newRow + "</tr>";
@@ -700,11 +702,13 @@ function addVariableToList() {
 	}
 }
 
-function changeTreatmentPair(obj, pairs) {
+function changeTreatmentPair(obj, pairs, index) {
 	var selectedIndex = obj.selectedIndex;
 	if (selectedIndex < pairs.length) {
-		$("#pairScale").text(pairs[i].scale.name);
-		$("#pairMethod").text(pairs[i].method.name);
+		$("#pairScale").text(pairs[selectedIndex].scale.name);
+		$("#pairMethod").text(pairs[selectedIndex].method.name);
+		$("#selectedVariables" + (index) + ".name").val(pairs[selectedIndex].name);
+		$("#selectedVariables" + (index) + ".name").val(pairs[selectedIndex].name);
 	}
 }
 	
@@ -763,7 +767,7 @@ function submitSelectedVariables(variableType) {
 	}
 	else if ($(tableListName + " tbody tr").length > 0) {
 		replaceNameVariables();
-		var serializedData = $("input.addVariables").serialize();
+		var serializedData = $("input.addVariables, select.addVariables").serialize();
 		$("#page-message-modal").html("");
 		Spinner.toggle();
 		
@@ -787,6 +791,7 @@ function submitSelectedVariables(variableType) {
 						break;
 					case 5:
 						createTreatmentFactors($.parseJSON(data));
+						break;
 					default:
 						createTrialLevelSettingVariables($.parseJSON(data));
 				}
@@ -1141,7 +1146,7 @@ function createTreatmentFactors(data) {
 		"<input class='cvTermIds' type='hidden' id='treatmentFactors" + (length-1) + ".variable.cvTermId' name='treatmentFactors[" + 
 		(length-1) + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
-		newRow = newRow + "<td width='7%' class='"+className+"'>" + settingDetail.group + "</td>";		
+		newRow = newRow + "<td width='7%' id='groupTd' class='"+className+"'>" + settingDetail.group + "</td>";		
 		newRow = newRow + "<td width='42%' class='"+className+"'>" + settingDetail.variable.name + "</td>";		
 		newRow = newRow + "<td width='42%' class='"+className+"'>" + settingDetail.variable.description + "</td>";
 		newRow = newRow + "<td width='5%' class='"+className+"'>" + "<a href='javascript: void(0);' onclick='javascript:showBaselineTraitDetailsModal(" + 

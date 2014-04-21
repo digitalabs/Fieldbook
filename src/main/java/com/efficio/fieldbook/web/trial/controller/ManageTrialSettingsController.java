@@ -429,6 +429,7 @@ public class ManageTrialSettingsController extends SettingsController{
     	try {
 	    	List<SettingVariable> selectedVariables = form.getSelectedVariables();
 	    	if (selectedVariables != null && !selectedVariables.isEmpty()) {
+	    		int ctr = 0;
 	    		for (SettingVariable var : selectedVariables) {
 	    			populateSettingVariable(var);
 					List<ValueReference> possibleValues = 
@@ -438,7 +439,9 @@ public class ManageTrialSettingsController extends SettingsController{
 					newSetting.setPossibleValuesFavorite(possibleValuesFavorite);
 					newSetting.setPossibleValuesToJson(possibleValues);
 					newSetting.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
+					newSetting.setGroup(ctr / 2 + 1);
 					newSettings.add(newSetting);
+					ctr++;
 	    		}
 	    	}
 	    	

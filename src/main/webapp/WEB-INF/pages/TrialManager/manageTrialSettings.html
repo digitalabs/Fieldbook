@@ -318,7 +318,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 					    						  			    						 
 					    						<input class="cvTermIds" type="hidden" th:field="*{treatmentFactors[__${rowStat.index}__].variable.cvTermId}" />
 				    						</td>
-				    						<td width="7%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${treatmentFactor.group}"></td>
+				    						<td width="7%" id="groupTd" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${treatmentFactor.group}"></td>
 					    					<td width="42%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${treatmentFactor.variable.name}"></td>
 					    					<td width="42%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${treatmentFactor.variable.description}"></td>
 					    					<td width="5%" th:class="${rowStat.even}? 'even' : 'odd'" >

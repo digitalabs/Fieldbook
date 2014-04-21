@@ -55,23 +55,12 @@
 			         			</thead>
 			         			<tbody>
 			         				<tr th:each="choice, rowStat : *{selectedVariables}">
-			         					<td>
-			         						<input type="hidden" class="addVariables" th:field="*{selectedVariables[__${rowStat.index}__].cvTermId}" />
-			         						<input type="text" class="addVariables" th:field="*{selectedVariables[__${rowStat.index}__].name}" />
-		         						</td>
-			         					<td>
-			         						<input type="hidden" th:field="*{selectedVariables[__${rowStat.index}__].treatmentPair.cvTermId}" />
-				         					<input type="hidden" th:field="*{selectedVariables[__${rowStat.index}__].property}" />
-				         					<input type="hidden" th:field="*{selectedVariables[__${rowStat.index}__].scale}" />
-				         					<input type="hidden" th:field="*{selectedVariables[__${rowStat.index}__].method}" />
-				         					<input type="hidden" th:field="*{selectedVariables[__${rowStat.index}__].role}" />
-			         					</td>
-			         					<td>
-			         						<input type="hidden" th:field="*{selectedVariables[__${rowStat.index}__].treatmentPair.cvTermId}" />
-			         					</td>
-			         					<td th:text="*{selectedVariables[__${rowStat.index}__].treatmentPair.name}"></td>
-			         					<td th:text="*{selectedVariables[__${rowStat.index}__].treatmentPair.scale}"></td>
-			         					<td th:text="*{selectedVariables[__${rowStat.index}__].treatmentPair.method}"></td>
+			         					<td></td>
+			         					<td></td>
+			         					<td></td>
+			         					<td></td>
+			         					<td></td>
+			         					<td></td>
 			         				</tr>
 			         			</tbody>
 					        </table>

@@ -2475,6 +2475,8 @@ function changeExperimentalDesign() {
 		$("#experimentalDesignSection").show();
 		$("#importFileSection").hide();
 		enableExperimentalDesigns(false);
+		if($("#experimentalDesignForAll").select2("data") != null)
+			populateExperimentalDesign($("#experimentalDesignForAll").select2("data").id, $("#experimentalDesignForAll").select2("data").text);
 	} else if ($("#designLayout").val() == 2) {
 		$("#experimentalDesignSection").hide();
 	    $("#importFileSection").hide();

@@ -747,6 +747,30 @@ function hasNoVariableName() {
 	return result;
 }
 
+function hasNoTreatmentFactor() {
+	if ($("#treatmentFactorListing").css("display") == "none") {
+		return false;
+	}
+	$.each($("#treatmentFactorListing tbody tr"), function (index, row) {
+		if ($($(row).children("td:nth-child(1)").children("#"+getJquerySafeId("selectedVariables"+index+".cvTermId"))).val() == "") {
+			result = true;
+		}
+	});
+	return false;
+}
+
+function hasNoTreatmentFactorName() {
+	if ($("#treatmentFactorListing").css("display") == "none") {
+		return false;
+	}
+	$.each($("#treatmentFactorListing tbody tr"), function (index, row) {
+		if ($($(row).children("td:nth-child(1)").children("#"+getJquerySafeId("selectedVariables"+index+".name"))).val() == "") {
+			result = true;
+		}
+	});
+	return false;
+}
+
 function submitSelectedVariables(variableType) {
 	var tableListName;
 	if ($("#treatmentFactorListing").css("display") == "none") {
@@ -761,6 +785,16 @@ function submitSelectedVariables(variableType) {
 		);
 	}
 	else if ($(tableListName + " tbody tr").length > 0 && hasNoVariableName()) {
+		$("#page-message-modal").html(
+			    "<div class='alert alert-danger'>"+ noVariableNameError +"</div>"
+		);
+	}
+	else if ($(tableListName + " tbody tr").length > 0 && hasNoTreatmentFactor()) {
+		$("#page-message-modal").html(
+			    "<div class='alert alert-danger'>"+ noVariableNameError +"</div>"
+		);
+	}
+	else if ($(tableListName + " tbody tr").length > 0 && hasNoTreatmentFactorName()) {
 		$("#page-message-modal").html(
 			    "<div class='alert alert-danger'>"+ noVariableNameError +"</div>"
 		);

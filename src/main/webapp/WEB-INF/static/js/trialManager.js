@@ -648,8 +648,9 @@ function addVariableToList() {
 		);
 	} else if (notInList($("#selectedStdVarId").val()) && $("#selectedStdVarId").val() != "") {
 		
+		var pairs;
 		if (tableListName == '#newTreatmentList') {
-			var pairs = JSON.parse($("#possiblePairsJson").val());
+			pairs = JSON.parse($("#possiblePairsJson").val());
 			var pairScale = '', pairMethod = '', pairId = '', pairName = '';
 			if (pairs.length > 0) {
 				pairScale = pairs[0].scale.name;
@@ -665,7 +666,7 @@ function addVariableToList() {
 			newRow = newRow + "<td align='center' class='"+className+"'><a href='javascript: void(0);' onclick=\"javascript:showBaselineTraitDetailsModal('" + 
 				$("#selectedStdVarId").val() + "');\"> <span class='glyphicon glyphicon-eye-open'></span></a></td>";
 			newRow = newRow + "<td align='center' class='"+className+"'>";
-			newRow = newRow + "<select class='addVariables' onchange='changeTreatmentPair(this," + $("#possiblePairsJson").val() + ", " + (ctr*2+1) + ");' id='selectedVariables" + (ctr*2+1) + ".cvTermId' " + 
+			newRow = newRow + "<select class='addVariables' id='selectedVariables" + (ctr*2+1) + ".cvTermId' " + 
 				"name='selectedVariables[" + (ctr*2+1) + "].cvTermId'>";
 			for (var i = 0; i < pairs.length; i++) {
 				newRow = newRow + "<option value=" + pairs[i].id + ">" + pairs[i].name + "</option>";
@@ -676,6 +677,7 @@ function addVariableToList() {
 			newRow = newRow + "<td align='center' class='"+className+"' id='pairScale'>" + pairScale + "</td>";
 			newRow = newRow + "<td align='center' class='"+className+"' id='pairMethod'>" + pairMethod + "</td>";
 			newRow = newRow + "</tr>";
+			
 		}
 		else {
 			//if selected variable is not yet in the list and is not blank or new, add it
@@ -692,6 +694,12 @@ function addVariableToList() {
 		}
 		
 		$(tableListName).append(newRow);
+		if (tableListName == "#newTreatmentList") {
+			var name = "#" + getJquerySafeId("selectedVariables" + (ctr*2+1) + ".cvTermId");
+			$(name).change(function() {
+				changeTreatmentPair($(this), pairs, (ctr*2+1));
+			});
+		}
 		$("#page-message-modal").html("");
 		
 		if (tableListName == '#newTreatmentList'){
@@ -706,14 +714,12 @@ function addVariableToList() {
 	}
 }
 
-function changeTreatmentPair(obj, pairsJson, index) {
-	var pairs = JSON.parse(pairsJson);
-	var selectedIndex = obj.selectedIndex;
+function changeTreatmentPair(obj, pairs, index) {
+	var selectedIndex = document.getElementById("selectedVariables" + index + ".cvTermId").selectedIndex;
 	if (selectedIndex < pairs.length) {
 		$("#pairScale").text(pairs[selectedIndex].scale.name);
 		$("#pairMethod").text(pairs[selectedIndex].method.name);
-		$("#selectedVariables" + index + ".name").val(pairs[selectedIndex].name);
-		$("#selectedVariables" + index + ".name").val(pairs[selectedIndex].name);
+		$("#" + getJquerySafeId("selectedVariables" + index + ".name")).val(pairs[selectedIndex].name);
 	}
 }
 	

@@ -697,7 +697,9 @@ function addVariableToList() {
 		if (tableListName == "#newTreatmentList") {
 			var name = "#" + getJquerySafeId("selectedVariables" + (ctr*2+1) + ".cvTermId");
 			$(name).change(function() {
-				changeTreatmentPair($(this), pairs, (ctr*2+1));
+				if (pairs) {
+					changeTreatmentPair(pairs, (ctr*2+1));
+				}
 			});
 		}
 		$("#page-message-modal").html("");
@@ -714,7 +716,7 @@ function addVariableToList() {
 	}
 }
 
-function changeTreatmentPair(obj, pairs, index) {
+function changeTreatmentPair(pairs, index) {
 	var selectedIndex = document.getElementById("selectedVariables" + index + ".cvTermId").selectedIndex;
 	if (selectedIndex < pairs.length) {
 		$("#pairScale").text(pairs[selectedIndex].scale.name);

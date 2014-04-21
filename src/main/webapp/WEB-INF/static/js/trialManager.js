@@ -665,7 +665,7 @@ function addVariableToList() {
 			newRow = newRow + "<td align='center' class='"+className+"'><a href='javascript: void(0);' onclick=\"javascript:showBaselineTraitDetailsModal('" + 
 				$("#selectedStdVarId").val() + "');\"> <span class='glyphicon glyphicon-eye-open'></span></a></td>";
 			newRow = newRow + "<td align='center' class='"+className+"'>";
-			newRow = newRow + "<select class='addVariables' onchange='changeTreatmentPair(this," + pairs + ", " + (ctr*2+1) + ");' id='selectedVariables" + (ctr*2+1) + ".cvTermId' " + 
+			newRow = newRow + "<select class='addVariables' onchange='changeTreatmentPair(this," + $("#possiblePairsJson").val() + ", " + (ctr*2+1) + ");' id='selectedVariables" + (ctr*2+1) + ".cvTermId' " + 
 				"name='selectedVariables[" + (ctr*2+1) + "].cvTermId'>";
 			for (var i = 0; i < pairs.length; i++) {
 				newRow = newRow + "<option value=" + pairs[i].id + ">" + pairs[i].name + "</option>";
@@ -706,13 +706,14 @@ function addVariableToList() {
 	}
 }
 
-function changeTreatmentPair(obj, pairs, index) {
+function changeTreatmentPair(obj, pairsJson, index) {
+	var pairs = JSON.parse(pairsJson);
 	var selectedIndex = obj.selectedIndex;
 	if (selectedIndex < pairs.length) {
 		$("#pairScale").text(pairs[selectedIndex].scale.name);
 		$("#pairMethod").text(pairs[selectedIndex].method.name);
-		$("#selectedVariables" + (index) + ".name").val(pairs[selectedIndex].name);
-		$("#selectedVariables" + (index) + ".name").val(pairs[selectedIndex].name);
+		$("#selectedVariables" + index + ".name").val(pairs[selectedIndex].name);
+		$("#selectedVariables" + index + ".name").val(pairs[selectedIndex].name);
 	}
 }
 	

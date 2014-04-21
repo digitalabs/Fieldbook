@@ -429,7 +429,7 @@ public class ManageTrialSettingsController extends SettingsController{
     	try {
 	    	List<SettingVariable> selectedVariables = form.getSelectedVariables();
 	    	if (selectedVariables != null && !selectedVariables.isEmpty()) {
-	    		int ctr = 0;
+	    		int ctr = getLastGroupNumber() * 2;
 	    		for (SettingVariable var : selectedVariables) {
 	    			populateSettingVariable(var);
 					List<ValueReference> possibleValues = 
@@ -468,7 +468,14 @@ public class ManageTrialSettingsController extends SettingsController{
         } else if (mode == AppConstants.SEGMENT_TRIAL_ENVIRONMENT.getInt()) {
             deleteVariableInSession(userSelection.getTrialLevelVariableList(), variableId);
         } else if (mode == AppConstants.SEGMENT_TREATMENT_FACTORS.getInt()) {
-        	deleteVariableInSession(userSelection.getTreatmentFactors(), variableId);
+        	int group = 0;
+        	for (SettingDetail treatmentFactor : userSelection.getTreatmentFactors()) {
+        		if (treatmentFactor.getVariable().getCvTermId().equals(variableId)) {
+        			group = treatmentFactor.getGroup();
+        			break;
+        		}
+        	}
+        	deleteVariablesInSessionByGroup(userSelection.getTreatmentFactors(), group);
         } else {
             deleteVariableInSession(userSelection.getBaselineTraitsList(), variableId);
         }
@@ -479,6 +486,16 @@ public class ManageTrialSettingsController extends SettingsController{
         Iterator<SettingDetail> iter = variableList.iterator();
         while (iter.hasNext()) {
             if (iter.next().getVariable().getCvTermId().equals(Integer.valueOf(variableId))) {
+                iter.remove();
+            }
+        }
+    }
+    
+    private void deleteVariablesInSessionByGroup(List<SettingDetail> variableList, int groupId) {
+        Iterator<SettingDetail> iter = variableList.iterator();
+        while (iter.hasNext()) {
+        	SettingDetail detail = iter.next();
+            if (detail.getGroup().equals(groupId)) {
                 iter.remove();
             }
         }
@@ -678,5 +695,14 @@ public class ManageTrialSettingsController extends SettingsController{
     	return om.writeValueAsString(newDetails);
     }
     
+    private int getLastGroupNumber() {
+    	int group = 0;
+    	
+    	if (userSelection.getTreatmentFactors() != null) {
+    		return userSelection.getTreatmentFactors().get(userSelection.getTreatmentFactors().size()-1).getGroup();
+    	}
+    	
+    	return group;
+    }
     
 }

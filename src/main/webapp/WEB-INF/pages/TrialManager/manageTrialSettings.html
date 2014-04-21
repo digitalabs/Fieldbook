@@ -314,7 +314,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 					    					<td width="4%" style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'">
 					    					
 												<span style="cursor: default; font-size: 16px;" th:if="${treatmentFactor.deletable}" class="glyphicon glyphicon-remove-circle"
-					    						th:onclick="'javascript: deleteVariable(2,\'' + ${treatmentFactor.variable.cvTermId} + '\',$(this))'"></span>
+					    						th:onclick="'javascript: deleteVariable(5,\'' + ${treatmentFactor.variable.cvTermId} + '\',$(this))'"></span>
 					    						  			    						 
 					    						<input class="cvTermIds" type="hidden" th:field="*{treatmentFactors[__${rowStat.index}__].variable.cvTermId}" />
 				    						</td>

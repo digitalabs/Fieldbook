@@ -754,7 +754,6 @@ function countInList(id) {
 
 function pairsInList() {
 	var result = false;
-	var ctr = 0;
 	if ($("#treatmentFactorListing").css("display") != "none") {
 		$.each($("#treatmentFactorListing tbody tr"), function (index, row) {
 			var pairId = $($(row).children("td:nth-child(3)").children("#"+getJquerySafeId("selectedVariables"+(index*2+1)+".cvTermId"))).val();
@@ -1219,7 +1218,7 @@ function createTreatmentFactors(data) {
 		var isDelete = "";
 		
 		if (settingDetail.deletable) {
-			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(4," + 
+			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(5," + 
 			settingDetail.variable.cvTermId + ",$(this))'></span>";
 		}
 		
@@ -1410,7 +1409,19 @@ function isReplicateOrBlockSize(combo) {
 
 function deleteVariable(variableType, variableId, deleteButton) {
 	//remove row from UI
-	deleteButton.parent().parent().remove();
+	if (variableType == 5) {
+		console.log(deleteButton.parent().parent().children("#groupTd").text());
+		var groupId = deleteButton.parent().parent().children("#groupTd").text();
+		
+		$.each($("#treatmentFactors tbody tr"), function (index, row) {
+			if ($(row).children("#groupTd").text() == groupId) {
+				$(this).remove();
+			}
+		});
+	}
+	else {
+		deleteButton.parent().parent().remove();
+	}
 
 	//remove row from session
 	Spinner.toggle();
@@ -1424,7 +1435,9 @@ function deleteVariable(variableType, variableId, deleteButton) {
 	});
 	
 	//reinstantiate counters of ids and names
-	sortVariableIdsAndNames(variableType);
+	if (variableType != 5) {
+		sortVariableIdsAndNames(variableType);
+	}
 	inputChange=true;
 }
 

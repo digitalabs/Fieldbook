@@ -60,6 +60,7 @@ public class OntologyDetailsForm{
     /** The enumerated values. */
     private List<Enumeration> categoricalValues;
     
+    private String possiblePairsJson;
    
 	/**
      * Gets the trait class name.
@@ -315,6 +316,14 @@ public class OntologyDetailsForm{
             setCategoricalValues(variable.getEnumerations());
         }
     }
+
+	public String getPossiblePairsJson() {
+		return possiblePairsJson;
+	}
+
+	public void setPossiblePairsJson(String possiblePairsJson) {
+		this.possiblePairsJson = possiblePairsJson;
+	}
 
 
  }

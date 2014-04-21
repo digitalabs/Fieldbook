@@ -13,11 +13,16 @@ package com.efficio.fieldbook.web.ontology.controller;
 
 import java.text.NumberFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +52,9 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
     @Resource
     private OntologyService ontologyService;
     
+    @Resource
+    private FieldbookService fieldbookMiddlewareService;
+    
     /**
      * Gets the ontology details.
      *
@@ -72,6 +80,14 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
                                 ontologyService.countExperimentsByVariable(
                                         variableId, variable.getStoredIn().getId())));
                 form.setVariable(variable);
+                
+                if (variable.getPhenotypicType() == PhenotypicType.TRIAL_DESIGN 
+                		&& variable.getDataType().getId() == TermId.NUMERIC_VARIABLE.getId()) {
+                	//look for possible pairs
+                	List<StandardVariable> pairs = fieldbookMiddlewareService.getPossibleTreatmentPairs(variable.getId(), variable.getProperty().getId());
+                	ObjectMapper objectMapper = new ObjectMapper();
+                	form.setPossiblePairsJson(objectMapper.writeValueAsString(pairs));
+                }
             } else {
                 resultMap.put("status", "notfound");
             }

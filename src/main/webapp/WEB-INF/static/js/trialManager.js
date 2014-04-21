@@ -658,23 +658,23 @@ function addVariableToList() {
 				pairId = pairs[0].id;
 			}
 			newRow = "<tr>";
-			newRow = newRow + "<td class='"+className+"'><input type='hidden' class='addVariables cvTermIds' id='selectedVariables"+ ctr*2 + ".cvTermId' " +  
+			newRow = newRow + "<td align='center' class='"+className+"'><input type='hidden' class='addVariables cvTermIds' id='selectedVariables"+ ctr*2 + ".cvTermId' " +  
 				"name='selectedVariables["+ ctr*2 + "].cvTermId' value='" + $("#selectedStdVarId").val() + "' />";
 			newRow = newRow + "<input type='text' class='addVariables' id='selectedVariables"+ ctr*2 + ".name' " +  
 				"name='selectedVariables["+ ctr*2 + "].name' maxLength='75' value='" + $("#selectedName").val() + "' /></td>";
-			newRow = newRow + "<td><a href='javascript: void(0);' onclick=\"javascript:showBaselineTraitDetailsModal('" + 
+			newRow = newRow + "<td align='center' class='"+className+"'><a href='javascript: void(0);' onclick=\"javascript:showBaselineTraitDetailsModal('" + 
 				$("#selectedStdVarId").val() + "');\"> <span class='glyphicon glyphicon-eye-open'></span></a></td>";
-			newRow = newRow + "<td>";
+			newRow = newRow + "<td align='center' class='"+className+"'>";
 			newRow = newRow + "<select class='addVariables' onchange='changeTreatmentPair(this," + pairs + ", " + (ctr*2+1) + ");' id='selectedVariables" + (ctr*2+1) + ".cvTermId' " + 
 				"name='selectedVariables[" + (ctr*2+1) + "].cvTermId'>";
 			for (var i = 0; i < pairs.length; i++) {
 				newRow = newRow + "<option value=" + pairs[i].id + ">" + pairs[i].name + "</option>";
 			}
 			newRow = newRow + "</select></td>";
-			newRow = newRow + "<td><input class='addVariables' type='text' id='selectedVariables"+ (ctr*2+1) + ".name' " +  
+			newRow = newRow + "<td align='center' class='"+className+"'><input class='addVariables' type='text' id='selectedVariables"+ (ctr*2+1) + ".name' " +  
 				"name='selectedVariables["+ (ctr*2+1) + "].name' maxLength='75' value='" + pairName + "' /></td>";
-			newRow = newRow + "<td id='pairScale'>" + pairScale + "</td>";
-			newRow = newRow + "<td id='pairMethod'>" + pairMethod + "</td>";
+			newRow = newRow + "<td align='center' class='"+className+"' id='pairScale'>" + pairScale + "</td>";
+			newRow = newRow + "<td align='center' class='"+className+"' id='pairMethod'>" + pairMethod + "</td>";
 			newRow = newRow + "</tr>";
 		}
 		else {
@@ -693,6 +693,10 @@ function addVariableToList() {
 		
 		$(tableListName).append(newRow);
 		$("#page-message-modal").html("");
+		
+		if (tableListName == '#newTreatmentList'){
+			$('#newTreatmentList select').select2({ width: 'resolve' });
+		}
 		
 	} else {
 		

@@ -651,12 +651,11 @@ function addVariableToList() {
 		var pairs;
 		if (tableListName == '#newTreatmentList') {
 			pairs = JSON.parse($("#possiblePairsJson").val());
-			var pairScale = '', pairMethod = '', pairId = '', pairName = '';
+			var pairScale = '', pairMethod = '', pairName = '';
 			if (pairs.length > 0) {
 				pairScale = pairs[0].scale.name;
 				pairMethod = pairs[0].method.name;
 				pairName = pairs[0].name;
-				pairId = pairs[0].id;
 			}
 			newRow = "<tr>";
 			newRow = newRow + "<td align='center' class='"+className+"'><input type='hidden' class='addVariables cvTermIds' id='selectedVariables"+ ctr*2 + ".cvTermId' " +  
@@ -666,7 +665,7 @@ function addVariableToList() {
 			newRow = newRow + "<td align='center' class='"+className+"'><a href='javascript: void(0);' onclick=\"javascript:showBaselineTraitDetailsModal('" + 
 				$("#selectedStdVarId").val() + "');\"> <span class='glyphicon glyphicon-eye-open'></span></a></td>";
 			newRow = newRow + "<td align='center' class='"+className+"'>";
-			newRow = newRow + "<select class='addVariables' id='selectedVariables" + (ctr*2+1) + ".cvTermId' " + 
+			newRow = newRow + "<select class='addVariables cvTermIds' id='selectedVariables" + (ctr*2+1) + ".cvTermId' " + 
 				"name='selectedVariables[" + (ctr*2+1) + "].cvTermId'>";
 			for (var i = 0; i < pairs.length; i++) {
 				newRow = newRow + "<option value=" + pairs[i].id + ">" + pairs[i].name + "</option>";
@@ -718,6 +717,7 @@ function addVariableToList() {
 
 function changeTreatmentPair(pairs, index) {
 	var selectedIndex = document.getElementById("selectedVariables" + index + ".cvTermId").selectedIndex;
+	var id = $("#" + getJquerySafeId("selectedVariables" + index + ".cvTermId")).val();
 	if (selectedIndex < pairs.length) {
 		$("#pairScale").text(pairs[selectedIndex].scale.name);
 		$("#pairMethod").text(pairs[selectedIndex].method.name);
@@ -742,46 +742,75 @@ function notInList(id) {
 	return isNotInList;
 }
 
+function countInList(id) {
+	var ctr = 0;
+	$.each($('.cvTermIds'), function() {
+		if ($(this).val() == id) {
+			ctr = ctr + 1;
+		}
+	});
+	return ctr;
+}
+
+function pairsInList() {
+	var result = false;
+	var ctr = 0;
+	if ($("#treatmentFactorListing").css("display") != "none") {
+		$.each($("#treatmentFactorListing tbody tr"), function (index, row) {
+			var pairId = $($(row).children("td:nth-child(3)").children("#"+getJquerySafeId("selectedVariables"+(index*2+1)+".cvTermId"))).val();
+			if (countInList(pairId) > 1) {
+				result = true;
+			}
+		});
+	}
+	return result;
+}
+
 function hasNoVariableName() {
 	var result = false;
 	var tableListName;
 	if ($("#treatmentFactorListing").css("display") == "none") {
 		tableListName = "#newVariablesList";
+		$.each($(tableListName + " tbody tr"), function (index, row) {
+			if ($($(row).children("td:nth-child(1)").children("#"+getJquerySafeId("selectedVariables"+(index*2)+".name"))).val() == "") {
+				result = true;
+			}
+		});
 	}
 	else {
 		tableListName = "#newTreatmentList";
+		$.each($(tableListName + " tbody tr"), function (index, row) {
+			if ($($(row).children("td:nth-child(1)").children("#"+getJquerySafeId("selectedVariables"+index+".name"))).val() == "") {
+				result = true;
+			}
+		});
 	}
 
-	$.each($(tableListName + " tbody tr"), function (index, row) {
-		if ($($(row).children("td:nth-child(1)").children("#"+getJquerySafeId("selectedVariables"+index+".name"))).val() == "") {
-			result = true;
-		}
-	});
 	return result;
 }
 
 function hasNoTreatmentFactor() {
-	if ($("#treatmentFactorListing").css("display") == "none") {
-		return false;
+	var result = false;
+	if ($("#treatmentFactorListing").css("display") != "none") {
+		$.each($("#treatmentFactorListing tbody tr"), function (index, row) {
+			if ($($(row).children("td:nth-child(3)").children("#"+getJquerySafeId("selectedVariables"+(index*2+1)+".cvTermId"))).val() == "") {
+				result = true;
+			}
+		});
 	}
-	$.each($("#treatmentFactorListing tbody tr"), function (index, row) {
-		if ($($(row).children("td:nth-child(1)").children("#"+getJquerySafeId("selectedVariables"+index+".cvTermId"))).val() == "") {
-			result = true;
-		}
-	});
-	return false;
+	return result;
 }
 
 function hasNoTreatmentFactorName() {
-	if ($("#treatmentFactorListing").css("display") == "none") {
-		return false;
+	var result = false;
+	if ($("#treatmentFactorListing").css("display") != "none") {
+		$.each($("#treatmentFactorListing tbody tr"), function (index, row) {
+			if ($($(row).children("td:nth-child(4)").children("#"+getJquerySafeId("selectedVariables"+(index*2+1)+".name"))).val() == "") {
+				result = true;
+			}
+		});
 	}
-	$.each($("#treatmentFactorListing tbody tr"), function (index, row) {
-		if ($($(row).children("td:nth-child(1)").children("#"+getJquerySafeId("selectedVariables"+index+".name"))).val() == "") {
-			result = true;
-		}
-	});
-	return false;
+	return result;
 }
 
 function submitSelectedVariables(variableType) {
@@ -802,14 +831,19 @@ function submitSelectedVariables(variableType) {
 			    "<div class='alert alert-danger'>"+ noVariableNameError +"</div>"
 		);
 	}
-	else if ($(tableListName + " tbody tr").length > 0 && hasNoTreatmentFactor()) {
+	else if (hasNoTreatmentFactor()) {
 		$("#page-message-modal").html(
-			    "<div class='alert alert-danger'>"+ noVariableNameError +"</div>"
+			    "<div class='alert alert-danger'>"+ noTreatmentFactorPairError +"</div>"
 		);
 	}
-	else if ($(tableListName + " tbody tr").length > 0 && hasNoTreatmentFactorName()) {
+	else if (hasNoTreatmentFactorName()) {
 		$("#page-message-modal").html(
-			    "<div class='alert alert-danger'>"+ noVariableNameError +"</div>"
+			    "<div class='alert alert-danger'>"+ noTreatmentFactorPairNameError +"</div>"
+		);
+	}
+	else if (pairsInList()) {
+		$("#page-message-modal").html(
+			    "<div class='alert alert-danger'>"+ varInListMessage +"</div>"
 		);
 	}
 	else if ($(tableListName + " tbody tr").length > 0) {

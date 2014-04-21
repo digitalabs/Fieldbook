@@ -521,7 +521,9 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
        		var reminderTrialEnvironment = /*[[#{nursery.reminder.add.trial.environment.settings}]]*/;
        		var reminderTreatmentFactors = /*[[#{trial.reminder.add.treatment.factors}]]*/;
        	
-       		var noVariableNameError = /*[[#{manage.settings.no.variable.name.error}]]*/
+       		var noVariableNameError = /*[[#{manage.settings.no.variable.name.error}]]*/;
+       		var noTreatmentFactorPairError = /*[[#{manage.settings.no.treatment.factor.pair.missing}]]*/;
+       		var noTreatmentFactorPairNameError = /*[[#{manage.settings.no.treatment.factor.pair.name.missing}]]*/; 
        		
        		var startDateRequiredError = /*[[#{start.end.date.validation.start.date.required}]]*/;
        		var startDateRequiredEarlierError = /*[[#{start.end.date.validation.start.date.required.earlier}]]*/;

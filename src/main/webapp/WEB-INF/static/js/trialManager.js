@@ -2105,7 +2105,21 @@ function reloadCheckTypeDropDown(addOnChange, select2ClassName){
 }
 function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, currentFieldId, comboName) {
 	var defaultData = null;
-	
+	if(suggestions_obj.length == 0){
+		$.ajax(
+		    	{ url: "/Fieldbook/NurseryManager/importGermplasmList/getAllCheckTypes",
+		           type: "GET",
+		           cache: false,
+		           data: "",
+		           async: false,
+		           success: function(data) {	        
+		        	   checkTypes = $.parseJSON(data.allCheckTypes);
+		        	   suggestions = checkTypes;
+		        	   //alert('here');
+		           }
+		         }
+		     );
+	}
 	if (suggestions != null) {
 		$.each(suggestions, function( index, value ) {
 			if (comboName == "comboCheckCode") {

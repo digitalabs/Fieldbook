@@ -136,7 +136,7 @@ public class ManageTrialSettingsController extends SettingsController{
         	form.setSettingName(templateSetting.getName());
         	form.setSelectedSettingId(templateSetting.getTemplateSettingId());        	
 	    	form.setTrialLevelVariables(userSelection.getTrialLevelVariableList());
-	    	
+	    	form.setTreatmentFactors(userSelection.getTreatmentFactors());
         }
         else {
         	assignDefaultValues(form);
@@ -492,13 +492,19 @@ public class ManageTrialSettingsController extends SettingsController{
     }
     
     private void deleteVariablesInSessionByGroup(List<SettingDetail> variableList, int groupId) {
+    	List<SettingDetail> newDetails = new ArrayList<SettingDetail>();
         Iterator<SettingDetail> iter = variableList.iterator();
         while (iter.hasNext()) {
         	SettingDetail detail = iter.next();
             if (detail.getGroup().equals(groupId)) {
-                iter.remove();
+                //iter.remove();
+            	
+            }
+            else {
+            	newDetails.add(detail);
             }
         }
+        userSelection.setTreatmentFactors(newDetails);
     }
     
     /**
@@ -587,7 +593,7 @@ public class ManageTrialSettingsController extends SettingsController{
     	
     	trialLevelVariableList = buildDefaultVariables(trialLevelVariableList, AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString(), buildRequiredVariablesLabel(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString(), true));
     	this.userSelection.setTrialLevelVariableList(trialLevelVariableList);
-    	
+    	this.userSelection.setTreatmentFactors(null);
     }
     
     /**

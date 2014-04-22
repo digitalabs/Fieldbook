@@ -1435,9 +1435,7 @@ function deleteVariable(variableType, variableId, deleteButton) {
 	});
 	
 	//reinstantiate counters of ids and names
-	if (variableType != 5) {
-		sortVariableIdsAndNames(variableType);
-	}
+	sortVariableIdsAndNames(variableType);
 	inputChange=true;
 }
 
@@ -1491,6 +1489,14 @@ function sortVariableIdsAndNames(variableType) {
 		$.each($("#trialEnvironmentLevelSettings tbody tr"), function (index, row) {
 			row.innerHTML = row.innerHTML.replace(reg, "trialLevelVariables" + index);
 			row.innerHTML = row.innerHTML.replace(reg2, "trialLevelVariables[" + index + "]");
+		});
+		break;	
+	case 5:
+		var reg = new RegExp("treatmentFactors[0-9]+", "g");
+		var reg2 = new RegExp("treatmentFactors\[[0-9]+\]", "g");
+		$.each($("#treatmentFactors tbody tr"), function (index, row) {
+			row.innerHTML = row.innerHTML.replace(reg, "treatmentFactors" + index);
+			row.innerHTML = row.innerHTML.replace(reg2, "treatmentFactors[" + index + "]");
 		});
 		break;	
 	default:

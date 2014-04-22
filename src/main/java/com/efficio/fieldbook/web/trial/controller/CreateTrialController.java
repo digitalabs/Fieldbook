@@ -143,6 +143,7 @@ public class CreateTrialController extends SettingsController {
         model.addAttribute("settingsTrialList", getTrialSettingsList());
         model.addAttribute("trialList", getTrialList());
         model.addAttribute("experimentalDesignValues", getExperimentalDesignValues());
+        form.setDesignLayout(AppConstants.DESIGN_LAYOUT_INDIVIDUAL.getString());
         return super.showAjaxPage(model, URL_SETTINGS);
     }
     

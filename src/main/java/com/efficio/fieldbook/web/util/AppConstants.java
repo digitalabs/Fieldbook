@@ -193,6 +193,7 @@ public enum AppConstants {
     ,MANNER_PER_LOCATION
     
     ,DESIGN_LAYOUT_SAME_FOR_ALL
+    ,DESIGN_LAYOUT_INDIVIDUAL
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

@@ -669,6 +669,24 @@
         		success: function(html) {
         			$("#check-germplasm-list").html(html);
         			showSpecifyCheckSection();
+        			//load all the check box
+        			/*
+        			var checkVal = 0;
+        			for(var i = 0 ; i < checkTypes.length ; i++){
+        				if(checkTypes[i].name == 'CHECK'){
+        					checkVal	 = checkTypes[i].id;
+        					break;
+        				}        					
+        			}
+        			//alert(checkVal);
+        			if(checkVal != 0){
+        				
+        				$('.checklist-select').each(function(){
+        					console.log($(this).val());
+            				$(this).val(checkVal);
+            			})	
+        			}
+        			*/
         		},
         		error: function(jqXHR, textStatus, errorThrown){ 
         			console.log("The following error occured: " + textStatus, errorThrown); 

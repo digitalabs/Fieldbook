@@ -761,3 +761,10 @@ div.sectionContainer {
 	padding:0; 
 	margin: 0;
 }
+.variable-details{
+	max-height: 160px;
+	overflow-y: auto;	
+}
+#specifyCheckSection .spinedit{
+	top: 5px;
+}

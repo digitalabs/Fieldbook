@@ -153,6 +153,7 @@
 <input type="hidden" id="keyForOverwrite" value="" />
 <input type="hidden" id="lastCheckSourcePrimary" value="" />
 
+
 <!-- Modal for overwriting checks list -->
 <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
@@ -232,7 +233,7 @@
     var startingEntryErr = /*[[#{import.germplasm.starting.entry.in.check.list}]]*/;
     var sameListErr = /*[[#{import.germplasm.same.list.primary.check}]]*/;
     var startingEntryRequired = /*[[#{import.germplasm.starting.entry.required}]]*/;
-    
+    var itemsToAdd = [];
     function do_validation() {
     	var message = /*[[#{common.error.file.no.file.selected}]]*/;
     	/*
@@ -368,7 +369,17 @@
         }
         
         function overwriteChecksList() {
-        	displayGermplasmCheckDetails($("#keyForOverwrite").val());
+        	if($("#keyForOverwrite").val() != '')
+        		displayGermplasmCheckDetails($("#keyForOverwrite").val());
+        	else{
+        		resetCheckList();
+        		for(var i = 0 ; i < itemsToAdd.length ; i++){
+        			//console.log(itemsToAdd[i])
+        			addCheckGermplasmList(itemsToAdd[i].entry, itemsToAdd[i].gid);     
+        			$('.primaryRow[data-entry="'+itemsToAdd[i].entry+'"]').css('opacity', '0.5');
+        		}
+        		$(".germplasm-list-items tr.germplasmSelectedRow").removeClass("germplasmSelectedRow");
+        	}
 		    $(this).removeClass('add-border');
         }
         
@@ -489,12 +500,27 @@
       		    	 //if not all items are dragged to the checks list
       		    	 if (ui.helper.find("tr").length != $(".germplasm-list-items tbody tr").length - ui.helper.find("tr").length) {
       		    		//adds the dragged germplasms to the check list
-	      		    	 $.each(ui.helper.find("tr"), function (index, row) {
-	      		    		var entryNumber = $(row).data('entry');
-	         		    	var gid = ""+$(row).data('gid');
-	         		    	addCheckGermplasmList(entryNumber, gid);
-	         		    	$(".germplasm-list-items tr.germplasmSelectedRow").removeClass("germplasmSelectedRow");
-	      		    	 });
+      		    		 if(lastDraggedChecksList != 0){
+      		    			itemsToAdd = [];
+      		    			$("#keyForOverwrite").val('');
+      		    			$.each(ui.helper.find("tr"), function (index, row) {
+    	      		    		var entryNumber = $(row).data('entry');
+    	         		    	var gid = ""+$(row).data('gid');
+    	         		    	//addCheckGermplasmList(entryNumber, gid);
+    	         		    	//$(".germplasm-list-items tr.germplasmSelectedRow").removeClass("germplasmSelectedRow");
+    	         		    	itemsToAdd.push({'entry':entryNumber, 'gid': gid});
+    	      		    	 });      
+      		    			
+	      		    		$("#confirmationModal").modal("show"); 
+      		    		 }else{
+      		    			$.each(ui.helper.find("tr"), function (index, row) {
+    	      		    		var entryNumber = $(row).data('entry');
+    	         		    	var gid = ""+$(row).data('gid');
+    	         		    	addCheckGermplasmList(entryNumber, gid);
+    	         		    	$(".germplasm-list-items tr.germplasmSelectedRow").removeClass("germplasmSelectedRow");
+    	      		    	 });      		    			 
+      		    		 }
+	      		    	 
 	      		    	 
 	      		    	 $("#lastCheckSourcePrimary").val(1);
       		    	 } else {
@@ -620,7 +646,7 @@
         			});
         			*/
         			if ($("#lastCheckSourcePrimary").val() == 0 && $(".check-germplasm-list-items tbody tr").length > 0) {	
-      		    		hideAddCol(true);
+      		    		//hideAddCol(true);
       		    	}
         		},
         		error: function(jqXHR, textStatus, errorThrown){ 
@@ -633,7 +659,7 @@
         }
         
         function displayGermplasmCheckDetails(listId) {
-        	hideAddCol(true);
+        	hideAddCol(false);
         	Spinner.toggle();
         	$('#'+'germplasmTree').find("*").removeClass('dynatree-selected');
         	$.ajax({
@@ -666,6 +692,7 @@
         		url: "/Fieldbook/NurseryManager/importGermplasmList/resetCheckGermplasmDetails",
         		type: "GET",
         		cache: false,
+        		async: false,
         		success: function(html) {
         			//$("#check-table").html('');		
         			$('#check-germplasm-list').html('<h3>Please drag and drop the checks list here</h3>')

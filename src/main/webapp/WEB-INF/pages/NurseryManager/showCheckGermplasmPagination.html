@@ -19,13 +19,13 @@
              </tr>
            </thead>
            <tbody th:remove="all-but-first">
-             <tr th:each="gid, row : *{paginatedImportedCheckGermplasm}" th:attr="data-entry=${gid.entryId}" th:attrappend="data-gid=${gid.gid}" class="checkRow">
+             <tr  th:each="gid, row : *{paginatedImportedCheckGermplasm}" th:attr="data-entry=${gid.entryId}" th:attrappend="data-gid=${gid.gid}" class="checkRow">
                <td align="center" th:class="${row.even}? 'even' : 'odd'">
-               <select th:field="*{paginatedImportedCheckGermplasm[__${row.index}__].check}" class="form-control checklist-select">
+               <select  th:field="*{paginatedImportedCheckGermplasm[__${row.index}__].check}" class="form-control checklist-select">
                		<option th:each="type: ${checkLists}" th:value="${type.id}" th:text="${type.description}"></option>
                </select>               
                </td>
-               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.desig}">.2</td>
+               <td style="vertical-align: middle" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.desig}">.2</td>
              </tr>
              <tr>
                <td>.1.1</td>

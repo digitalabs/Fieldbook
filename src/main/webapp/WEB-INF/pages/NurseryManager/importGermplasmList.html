@@ -40,17 +40,17 @@
 	    			<div class="row form-group collapse in germplasmListDetails">
 				      	<!-- Germplasm List Tree View -->
 						<div class="col-xs-3 col-md-3">
-							<label class="control-label"><strong class="sub-content-heading">Germplasm List Tree</strong></label>
+							<label class="control-label"><strong class="sub-content-heading">Lists</strong></label>
 						</div>
 
 				        <!-- Germplasm List Table View -->						
 				      	<div class="col-xs-9 col-md-9">
 				      	
-				      		<div style="float: left; width: 67%">
+				      		<div style="float: left; width: 70%">
 				      			<img th:src="@{/static/img/build-new-list.png}" style="padding-bottom:3px;" />
 				      			<label class="control-label"><strong class="sub-content-heading">Primary Germplasm List</strong></label>
 				      		</div>
-				      		<div style="float: left; width: 33%;padding-left: 10px; ">
+				      		<div style="float: left; width: 30%;">
 				      			<img th:src="@{/static/img/build-new-list.png}" style="padding-bottom:3px;" />
 				      			<label class="control-label"><strong class="sub-content-heading">Checks List&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong></label>
 				      			<a style="margin-top: -10px" href="javascript: showManageCheckTypePopup()" th:text="#{germplasm.list.manage.check.types}" class="btn btn-info">Manage Checks</a>
@@ -197,6 +197,9 @@
 <div class="row">
 	<div id="manage-location" th:include="/Common/importGermplasmListModal"></div>
 </div>
+<div class="row">
+		<div id="manage-location" th:include="/NurseryManager/manageCheckType"></div>
+	</div>
 
   <style type="text/css">
     #check-germplasm-list, #imported-germplasm-list {

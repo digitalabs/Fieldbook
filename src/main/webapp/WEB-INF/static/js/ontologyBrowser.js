@@ -1464,6 +1464,9 @@ function delCatVar(button) {
 					showErrorMessage('page-message', variateValidValueDeleteError);
 					return;
 				}
+				/*else{
+					enumerations.splice(index, 1);
+				}*/
 				//console.log(data);
 			}			
 		});
@@ -1484,11 +1487,11 @@ function findIndexOfEnumeration(enumerations_obj, name, col) {
 	//check if given value is already existing
 	for (var i = 0; i < enumerations_obj.length; i++) {
 		if (col == "name") {
-		    if (enumerations_obj[i].name == name) {
+		    if (enumerations_obj[i].name == name && enumerations_obj[i].operation != '-1') {
 		        return i;
 		    }
 		} else {
-			if (enumerations_obj[i].description == name) {
+			if (enumerations_obj[i].description == name  && enumerations_obj[i].operation != '-1') {
 		        return i;
 		    }
 		}

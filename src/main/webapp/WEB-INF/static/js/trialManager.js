@@ -1410,7 +1410,7 @@ function isReplicateOrBlockSize(combo) {
 function deleteVariable(variableType, variableId, deleteButton) {
 	//remove row from UI
 	if (variableType == 5) {
-		console.log(deleteButton.parent().parent().children("#groupTd").text());
+		//console.log(deleteButton.parent().parent().children("#groupTd").text());
 		var groupId = deleteButton.parent().parent().children("#groupTd").text();
 		
 		$.each($("#treatmentFactors tbody tr"), function (index, row) {

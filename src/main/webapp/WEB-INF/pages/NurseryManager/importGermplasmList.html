@@ -46,11 +46,11 @@
 				        <!-- Germplasm List Table View -->						
 				      	<div class="col-xs-9 col-md-9">
 				      	
-				      		<div style="float: left; width: 70%">
+				      		<div id="primary-section" style="float: left; width: 70%">
 				      			<img th:src="@{/static/img/build-new-list.png}" style="padding-bottom:3px;" />
 				      			<label class="control-label"><strong class="sub-content-heading">Primary Germplasm List</strong></label>
 				      		</div>
-				      		<div style="float: left; width: 30%;">
+				      		<div id="checks-section" style="float: left; width: 30%; ">
 				      			<img th:src="@{/static/img/build-new-list.png}" style="padding-bottom:3px;" />
 				      			<label class="control-label"><strong class="sub-content-heading">Checks List&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong></label>
 				      			<a style="margin-top: -10px" href="javascript: showManageCheckTypePopup()" th:text="#{germplasm.list.manage.check.types}" class="btn btn-info">Manage Checks</a>
@@ -215,7 +215,16 @@
   <script type="text/javascript" th:src="@{/static/js/fieldbook-tree.js}"></script> 
   <script type="text/javascript" th:src="@{/static/js/jquery-multisortable.js}"></script>
   <script type="text/javascript" th:src="@{/static/js/jquery.tablednd.0.7.min.js}"></script>
-  
+  <script type='text/javascript' th:inline="javascript">
+	var isIE = false;
+	</script>
+	
+<!--[if IE]>
+<script type="text/javascript">
+    isIE = true;
+    //any other IE specific stuff here
+</script>
+<![endif]-->
   <script type="text/javascript" th:inline="javascript">
     //<![CDATA[          
     var addedGid = {};
@@ -265,6 +274,10 @@
 	  changeCheckLayout();
 	  showSpecifyCheckSection();
 	 
+	  if(isIE){
+		  $('#primary-section').css('width', '67%');
+		  $('#checks-section').css('width', '33%');
+	  }
   });
   
   function makeCheckDraggable(isDraggable) {
@@ -669,6 +682,24 @@
         		success: function(html) {
         			$("#check-germplasm-list").html(html);
         			showSpecifyCheckSection();
+        			//load all the check box
+        			/*
+        			var checkVal = 0;
+        			for(var i = 0 ; i < checkTypes.length ; i++){
+        				if(checkTypes[i].name == 'CHECK'){
+        					checkVal	 = checkTypes[i].id;
+        					break;
+        				}        					
+        			}
+        			//alert(checkVal);
+        			if(checkVal != 0){
+        				
+        				$('.checklist-select').each(function(){
+        					console.log($(this).val());
+            				$(this).val(checkVal);
+            			})	
+        			}
+        			*/
         		},
         		error: function(jqXHR, textStatus, errorThrown){ 
         			console.log("The following error occured: " + textStatus, errorThrown); 

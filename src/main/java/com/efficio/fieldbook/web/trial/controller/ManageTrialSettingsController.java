@@ -704,7 +704,7 @@ public class ManageTrialSettingsController extends SettingsController{
     private int getLastGroupNumber() {
     	int group = 0;
     	
-    	if (userSelection.getTreatmentFactors() != null) {
+    	if (userSelection.getTreatmentFactors() != null && !userSelection.getTreatmentFactors().isEmpty()) {
     		return userSelection.getTreatmentFactors().get(userSelection.getTreatmentFactors().size()-1).getGroup();
     	}
     	

@@ -648,14 +648,14 @@ function addVariableToList() {
 		);
 	} else if (notInList($("#selectedStdVarId").val()) && $("#selectedStdVarId").val() != "") {
 		
+		var pairs;
 		if (tableListName == '#newTreatmentList') {
-			var pairs = JSON.parse($("#possiblePairsJson").val());
-			var pairScale = '', pairMethod = '', pairId = '', pairName = '';
+			pairs = JSON.parse($("#possiblePairsJson").val());
+			var pairScale = '', pairMethod = '', pairName = '';
 			if (pairs.length > 0) {
 				pairScale = pairs[0].scale.name;
 				pairMethod = pairs[0].method.name;
 				pairName = pairs[0].name;
-				pairId = pairs[0].id;
 			}
 			newRow = "<tr>";
 			newRow = newRow + "<td align='center' class='"+className+"'><input type='hidden' class='addVariables cvTermIds' id='selectedVariables"+ ctr*2 + ".cvTermId' " +  
@@ -665,7 +665,7 @@ function addVariableToList() {
 			newRow = newRow + "<td align='center' class='"+className+"'><a href='javascript: void(0);' onclick=\"javascript:showBaselineTraitDetailsModal('" + 
 				$("#selectedStdVarId").val() + "');\"> <span class='glyphicon glyphicon-eye-open'></span></a></td>";
 			newRow = newRow + "<td align='center' class='"+className+"'>";
-			newRow = newRow + "<select class='addVariables' onchange='changeTreatmentPair(this," + $("#possiblePairsJson").val() + ", " + (ctr*2+1) + ");' id='selectedVariables" + (ctr*2+1) + ".cvTermId' " + 
+			newRow = newRow + "<select class='addVariables cvTermIds' id='selectedVariables" + (ctr*2+1) + ".cvTermId' " + 
 				"name='selectedVariables[" + (ctr*2+1) + "].cvTermId'>";
 			for (var i = 0; i < pairs.length; i++) {
 				newRow = newRow + "<option value=" + pairs[i].id + ">" + pairs[i].name + "</option>";
@@ -676,6 +676,7 @@ function addVariableToList() {
 			newRow = newRow + "<td align='center' class='"+className+"' id='pairScale'>" + pairScale + "</td>";
 			newRow = newRow + "<td align='center' class='"+className+"' id='pairMethod'>" + pairMethod + "</td>";
 			newRow = newRow + "</tr>";
+			
 		}
 		else {
 			//if selected variable is not yet in the list and is not blank or new, add it
@@ -692,6 +693,14 @@ function addVariableToList() {
 		}
 		
 		$(tableListName).append(newRow);
+		if (tableListName == "#newTreatmentList") {
+			var name = "#" + getJquerySafeId("selectedVariables" + (ctr*2+1) + ".cvTermId");
+			$(name).change(function() {
+				if (pairs) {
+					changeTreatmentPair(pairs, (ctr*2+1));
+				}
+			});
+		}
 		$("#page-message-modal").html("");
 		
 		if (tableListName == '#newTreatmentList'){
@@ -706,14 +715,13 @@ function addVariableToList() {
 	}
 }
 
-function changeTreatmentPair(obj, pairsJson, index) {
-	var pairs = JSON.parse(pairsJson);
-	var selectedIndex = obj.selectedIndex;
+function changeTreatmentPair(pairs, index) {
+	var selectedIndex = document.getElementById("selectedVariables" + index + ".cvTermId").selectedIndex;
+	var id = $("#" + getJquerySafeId("selectedVariables" + index + ".cvTermId")).val();
 	if (selectedIndex < pairs.length) {
 		$("#pairScale").text(pairs[selectedIndex].scale.name);
 		$("#pairMethod").text(pairs[selectedIndex].method.name);
-		$("#selectedVariables" + index + ".name").val(pairs[selectedIndex].name);
-		$("#selectedVariables" + index + ".name").val(pairs[selectedIndex].name);
+		$("#" + getJquerySafeId("selectedVariables" + index + ".name")).val(pairs[selectedIndex].name);
 	}
 }
 	
@@ -734,46 +742,74 @@ function notInList(id) {
 	return isNotInList;
 }
 
+function countInList(id) {
+	var ctr = 0;
+	$.each($('.cvTermIds'), function() {
+		if ($(this).val() == id) {
+			ctr = ctr + 1;
+		}
+	});
+	return ctr;
+}
+
+function pairsInList() {
+	var result = false;
+	if ($("#treatmentFactorListing").css("display") != "none") {
+		$.each($("#treatmentFactorListing tbody tr"), function (index, row) {
+			var pairId = $($(row).children("td:nth-child(3)").children("#"+getJquerySafeId("selectedVariables"+(index*2+1)+".cvTermId"))).val();
+			if (countInList(pairId) > 1) {
+				result = true;
+			}
+		});
+	}
+	return result;
+}
+
 function hasNoVariableName() {
 	var result = false;
 	var tableListName;
 	if ($("#treatmentFactorListing").css("display") == "none") {
 		tableListName = "#newVariablesList";
+		$.each($(tableListName + " tbody tr"), function (index, row) {
+			if ($($(row).children("td:nth-child(1)").children("#"+getJquerySafeId("selectedVariables"+(index*2)+".name"))).val() == "") {
+				result = true;
+			}
+		});
 	}
 	else {
 		tableListName = "#newTreatmentList";
+		$.each($(tableListName + " tbody tr"), function (index, row) {
+			if ($($(row).children("td:nth-child(1)").children("#"+getJquerySafeId("selectedVariables"+index+".name"))).val() == "") {
+				result = true;
+			}
+		});
 	}
 
-	$.each($(tableListName + " tbody tr"), function (index, row) {
-		if ($($(row).children("td:nth-child(1)").children("#"+getJquerySafeId("selectedVariables"+index+".name"))).val() == "") {
-			result = true;
-		}
-	});
 	return result;
 }
 
 function hasNoTreatmentFactor() {
-	if ($("#treatmentFactorListing").css("display") == "none") {
-		return false;
+	var result = false;
+	if ($("#treatmentFactorListing").css("display") != "none") {
+		$.each($("#treatmentFactorListing tbody tr"), function (index, row) {
+			if ($($(row).children("td:nth-child(3)").children("#"+getJquerySafeId("selectedVariables"+(index*2+1)+".cvTermId"))).val() == "") {
+				result = true;
+			}
+		});
 	}
-	$.each($("#treatmentFactorListing tbody tr"), function (index, row) {
-		if ($($(row).children("td:nth-child(1)").children("#"+getJquerySafeId("selectedVariables"+index+".cvTermId"))).val() == "") {
-			result = true;
-		}
-	});
-	return false;
+	return result;
 }
 
 function hasNoTreatmentFactorName() {
-	if ($("#treatmentFactorListing").css("display") == "none") {
-		return false;
+	var result = false;
+	if ($("#treatmentFactorListing").css("display") != "none") {
+		$.each($("#treatmentFactorListing tbody tr"), function (index, row) {
+			if ($($(row).children("td:nth-child(4)").children("#"+getJquerySafeId("selectedVariables"+(index*2+1)+".name"))).val() == "") {
+				result = true;
+			}
+		});
 	}
-	$.each($("#treatmentFactorListing tbody tr"), function (index, row) {
-		if ($($(row).children("td:nth-child(1)").children("#"+getJquerySafeId("selectedVariables"+index+".name"))).val() == "") {
-			result = true;
-		}
-	});
-	return false;
+	return result;
 }
 
 function submitSelectedVariables(variableType) {
@@ -794,14 +830,19 @@ function submitSelectedVariables(variableType) {
 			    "<div class='alert alert-danger'>"+ noVariableNameError +"</div>"
 		);
 	}
-	else if ($(tableListName + " tbody tr").length > 0 && hasNoTreatmentFactor()) {
+	else if (hasNoTreatmentFactor()) {
 		$("#page-message-modal").html(
-			    "<div class='alert alert-danger'>"+ noVariableNameError +"</div>"
+			    "<div class='alert alert-danger'>"+ noTreatmentFactorPairError +"</div>"
 		);
 	}
-	else if ($(tableListName + " tbody tr").length > 0 && hasNoTreatmentFactorName()) {
+	else if (hasNoTreatmentFactorName()) {
 		$("#page-message-modal").html(
-			    "<div class='alert alert-danger'>"+ noVariableNameError +"</div>"
+			    "<div class='alert alert-danger'>"+ noTreatmentFactorPairNameError +"</div>"
+		);
+	}
+	else if (pairsInList()) {
+		$("#page-message-modal").html(
+			    "<div class='alert alert-danger'>"+ varInListMessage +"</div>"
 		);
 	}
 	else if ($(tableListName + " tbody tr").length > 0) {
@@ -1177,7 +1218,7 @@ function createTreatmentFactors(data) {
 		var isDelete = "";
 		
 		if (settingDetail.deletable) {
-			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(4," + 
+			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(5," + 
 			settingDetail.variable.cvTermId + ",$(this))'></span>";
 		}
 		
@@ -1368,7 +1409,19 @@ function isReplicateOrBlockSize(combo) {
 
 function deleteVariable(variableType, variableId, deleteButton) {
 	//remove row from UI
-	deleteButton.parent().parent().remove();
+	if (variableType == 5) {
+		console.log(deleteButton.parent().parent().children("#groupTd").text());
+		var groupId = deleteButton.parent().parent().children("#groupTd").text();
+		
+		$.each($("#treatmentFactors tbody tr"), function (index, row) {
+			if ($(row).children("#groupTd").text() == groupId) {
+				$(this).remove();
+			}
+		});
+	}
+	else {
+		deleteButton.parent().parent().remove();
+	}
 
 	//remove row from session
 	Spinner.toggle();
@@ -1382,7 +1435,9 @@ function deleteVariable(variableType, variableId, deleteButton) {
 	});
 	
 	//reinstantiate counters of ids and names
-	sortVariableIdsAndNames(variableType);
+	if (variableType != 5) {
+		sortVariableIdsAndNames(variableType);
+	}
 	inputChange=true;
 }
 

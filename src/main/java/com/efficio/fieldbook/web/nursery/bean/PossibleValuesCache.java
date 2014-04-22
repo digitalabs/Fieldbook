@@ -11,6 +11,7 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.bean;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Scope(value="session", proxyMode=ScopedProxyMode.TARGET_CLASS)
-public class PossibleValuesCache {
+public class PossibleValuesCache implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private Map<Integer, List<ValueReference>> possibleValuesMap;
 	

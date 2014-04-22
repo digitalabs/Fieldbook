@@ -345,6 +345,7 @@ public class ManageSettingsForm {
 			this.isDefault = false;
 			this.selectedVariables = null;
 			this.trialLevelVariables = null;
+			this.treatmentFactors = null;
 		}
 
 		/**

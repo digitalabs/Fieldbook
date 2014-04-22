@@ -106,6 +106,9 @@ th:object="${createTrialForm}" enctype="multipart/form-data">
        		
 	function submitGermplasmList(){
 		var $form = $("#germplasm-list-form");
+		$('#startIndex').val($('#startIndex2').val());
+		$('#interval').val($('#interval2').val());
+		$('#mannerOfInsertion').val($('#mannerOfInsertion2').val());
 		
 		var serializedData = $form.serialize();
 	

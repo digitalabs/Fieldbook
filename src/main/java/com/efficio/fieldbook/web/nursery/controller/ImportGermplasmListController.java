@@ -209,12 +209,14 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     public String submitCheckGermplasmList(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form
             , BindingResult result, Model model) {
         int previewPageNum = userSelection.getCurrentPageGermplasmList();
-        for(int i = 0 ; i < form.getPaginatedImportedCheckGermplasm().size() ; i++){
-            ImportedGermplasm importedGermplasm = form.getPaginatedImportedCheckGermplasm().get(i);
-            int realIndex = ((previewPageNum - 1) * form.getResultPerPage()) + i;
-            getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheck(importedGermplasm.getCheck());
-            getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckId(Integer.parseInt(importedGermplasm.getCheck()));
-            getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckName(importedGermplasm.getCheckName());
+        if(form.getPaginatedImportedCheckGermplasm() != null){
+	        for(int i = 0 ; i < form.getPaginatedImportedCheckGermplasm().size() ; i++){
+	            ImportedGermplasm importedGermplasm = form.getPaginatedImportedCheckGermplasm().get(i);
+	            int realIndex = ((previewPageNum - 1) * form.getResultPerPage()) + i;
+	            getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheck(importedGermplasm.getCheck());
+	            getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckId(Integer.parseInt(importedGermplasm.getCheck()));
+	            getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckName(importedGermplasm.getCheckName());
+	        }
         }
         
         return "success";

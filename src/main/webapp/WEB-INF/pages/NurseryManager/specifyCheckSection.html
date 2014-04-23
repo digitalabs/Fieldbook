@@ -61,11 +61,14 @@
 					value: 1
 				});
 				$('#startIndex2').spinedit({
-					minimum: 0,
+					minimum: 1,
 					maximum: totalGermplasm,
 					step: 1
 				});
 				spinnerCreatedAlready = true;
+				$('#startIndex2').val(1);
+				$('#interval2').val(1);
+				//alert('here');
         	}else{
         		var totalAvailableGermplasm = totalGermplasm - checksFromPrimary;
         		

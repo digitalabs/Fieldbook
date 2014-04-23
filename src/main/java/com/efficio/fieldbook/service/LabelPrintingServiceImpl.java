@@ -592,7 +592,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
         if(stemp != null && "null".equalsIgnoreCase(stemp))
         	stemp = " ";
         
-        if(false && includeHeaderLabel && headerName != null){
+        if(includeHeaderLabel && headerName != null){
         	stemp = headerName + " : " + stemp;
         }
         

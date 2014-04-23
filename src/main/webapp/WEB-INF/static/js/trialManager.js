@@ -1313,7 +1313,8 @@ function initializePossibleValuesCombo(possibleValues, name, showAllLocation, de
 		        query.callback(data);
 		    }
 	    }).on("change", function () {
-	    	populateExperimentalDesign($("#experimentalDesignForAll").select2("data").id, $("#experimentalDesignForAll").select2("data").text);
+	    	if($("#experimentalDesignForAll").select2("data") != null)
+	    		populateExperimentalDesign($("#experimentalDesignForAll").select2("data").id, $("#experimentalDesignForAll").select2("data").text);
 	    });
 	} else if (name.indexOf("trialEnvironmentValues") > -1) {
 		$(name).select2({

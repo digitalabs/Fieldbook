@@ -4,13 +4,13 @@
 		<table style="table-layout: auto; width: 100%; margin: 0" id="trialInstancesTable" class="my-class table table-curved table-condensed table-with-scroll">
 			<thead>
 				<tr>
-					<th style="max-width: 100px; min-width: 100px" th:each="trialEnvLevelVariable, rowStat : *{trialLevelVariables}" th:text="${trialEnvLevelVariable.variable.name}">
+					<th style=" width: 200px" th:each="trialEnvLevelVariable, rowStat : *{trialLevelVariables}" th:text="${trialEnvLevelVariable.variable.name}">
 					</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr th:each="trialEnvironmentValue, row : *{trialEnvironmentValues}">
-					<td style="max-width: 100px; min-width: 100px" th:each="trialEnvLevelVariable, rowStat : *{trialLevelVariables}">
+					<td style=" width: 200px" th:each="trialEnvLevelVariable, rowStat : *{trialLevelVariables}">
 						<input class="cvTermIds trialLevelVariableIdClass" type="hidden" th:field="*{trialEnvironmentValues[__${row.index}__][__${rowStat.index}__].id}" />
 						 
 						<input th:if="${trialEnvLevelVariable.variable.widgetType.type == 'DROPDOWN'}" 

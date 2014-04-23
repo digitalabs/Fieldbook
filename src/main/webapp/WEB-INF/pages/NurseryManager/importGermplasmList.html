@@ -765,7 +765,9 @@
         }
         
         function verifyIfCheck(startingIndex) {
-        	if (isGidInCheckList(getGid($(startingIndex).val())) > 0) {
+        	//console.log(startingIndex);
+        	//console.log($('tr.checkRow[data-index="'+$(startingIndex).val()+'"]').length)
+        	if ($('tr.checkRow[data-index="'+$(startingIndex).val()+'"]').length != 0 ||  isGidInCheckList(getGid($(startingIndex).val())) > 0) {
         		$('#removeCheckModal').modal({ backdrop: 'static', keyboard: true });
         		$("#removeCheckModal").modal("show");
         	} else {
@@ -788,7 +790,7 @@
         }
         
         function removeCheckFromList() {
-        	var gid = getGid($("#startIndex2").val());
+        	var gid = $('tr.checkRow[data-index="'+$("#startIndex2").val()+'"]').data('gid') ;//getGid($("#startIndex2").val());
         	var entryNo = isGidInCheckList(gid);
         	
         	deleteCheckGermplasmList(entryNo, gid);

@@ -63,9 +63,21 @@ public class ImportedGermplasm implements Serializable {
     private Integer checkId;
     
     private String checkName;
+    
+    private Integer index;
+    
+    
 
     
-    /**
+    public Integer getIndex() {
+		return index;
+	}
+
+	public void setIndex(Integer index) {
+		this.index = index;
+	}
+
+	/**
      * Instantiates a new imported germplasm.
      */
     public ImportedGermplasm(){

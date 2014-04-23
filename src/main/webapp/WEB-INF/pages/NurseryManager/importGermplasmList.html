@@ -389,8 +389,8 @@
         		resetCheckList();
         		for(var i = 0 ; i < itemsToAdd.length ; i++){
         			//console.log(itemsToAdd[i])
-        			addCheckGermplasmList(itemsToAdd[i].entry, itemsToAdd[i].gid);     
-        			$('.primaryRow[data-entry="'+itemsToAdd[i].entry+'"]').css('opacity', '0.5');
+        			if(addCheckGermplasmList(itemsToAdd[i].entry, itemsToAdd[i].gid, itemsToAdd[i].index))     
+        				$('.primaryRow[data-entry="'+itemsToAdd[i].entry+'"]').css('opacity', '0.5');
         		}
         		$(".germplasm-list-items tr.germplasmSelectedRow").removeClass("germplasmSelectedRow");
         	}
@@ -520,9 +520,10 @@
       		    			$.each(ui.helper.find("tr"), function (index, row) {
     	      		    		var entryNumber = $(row).data('entry');
     	         		    	var gid = ""+$(row).data('gid');
+    	         		    	var index = $(row).data('index');
     	         		    	//addCheckGermplasmList(entryNumber, gid);
     	         		    	//$(".germplasm-list-items tr.germplasmSelectedRow").removeClass("germplasmSelectedRow");
-    	         		    	itemsToAdd.push({'entry':entryNumber, 'gid': gid});
+    	         		    	itemsToAdd.push({'entry':entryNumber, 'gid': gid, 'index': index});
     	      		    	 });      
       		    			
 	      		    		$("#confirmationModal").modal("show"); 
@@ -530,8 +531,9 @@
       		    			$.each(ui.helper.find("tr"), function (index, row) {
     	      		    		var entryNumber = $(row).data('entry');
     	         		    	var gid = ""+$(row).data('gid');
-    	         		    	addCheckGermplasmList(entryNumber, gid);
-    	         		    	$(".germplasm-list-items tr.germplasmSelectedRow").removeClass("germplasmSelectedRow");
+    	         		    	var index = ""+$(row).data('index');
+    	         		    	if(addCheckGermplasmList(entryNumber, gid, index))
+    	         		    		$(".germplasm-list-items tr.germplasmSelectedRow").removeClass("germplasmSelectedRow");
     	      		    	 });      		    			 
       		    		 }
 	      		    	 
@@ -600,21 +602,29 @@
         	});
         }
         
-        function addCheckGermplasmList(entryNumber, gid){
+        function addCheckGermplasmList(entryNumber, gid, index){
         	//if germplasm record has been specified as starting index
         	if (entryNumber == $("#startIndex2").val() 
-        			&& $('#specifyCheckSection').css("display") == "block" && addedGid[gid] == null) {
+        			&& $('#specifyCheckSection').css("display") == "block" 
+        			&& addedGid[gid] == null) {
         		showErrorMessage('page-message', germplasmStartingEntry);
         		moveToTopScreen();
-        		return;
+        		return false;
         	}
+        	if(index == $("#startIndex2").val()){
+        		index++;
+        		$('#startIndex2').val(index);
+        	}
+        	
+        	
+        	
         		
         	if(addedGid[gid] == null)
         		addedGid[gid] = gid;
         	else{
         		showErrorMessage('page-message', germplasmAddedAsCheck);
         		moveToTopScreen();
-        		return;
+        		return false;
         	}
         	
         	$('#check-germplasm-list').removeClass('add-border');
@@ -638,6 +648,7 @@
         			Spinner.toggle();
         		}
         	}); 	
+        	return true;
         }
         
         function isFunction(functionToCheck) {

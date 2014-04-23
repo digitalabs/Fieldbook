@@ -505,6 +505,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     
     private List<ImportedGermplasm> transformGermplasmListDataToImportedGermplasm(List<GermplasmListData> data, String defaultCheckId) {
         List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
+        int index = 1;
         if (data != null && data.size() > 0) {
             for (GermplasmListData aData : data) {
                 ImportedGermplasm germplasm = new ImportedGermplasm();
@@ -515,6 +516,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
                 germplasm.setEntryId(aData.getEntryId());
                 germplasm.setGid(aData.getGid().toString());
                 germplasm.setSource(aData.getSeedSource());
+                germplasm.setIndex(index++);
                 
                 list.add(germplasm);
             }

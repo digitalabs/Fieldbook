@@ -19,6 +19,7 @@
            <thead>
              <tr>
                <!-- <th class="check-col" th:utext="#{nursery.import.header.check}">.Check</th> -->
+               <th>Index</th>
                <th th:utext="#{nursery.import.header.entry}">.Entry</th>
                <th th:utext="#{nursery.import.header.designation}">.Designation</th>
                <th th:utext="#{nursery.import.header.gid}">.GID</th>
@@ -28,7 +29,7 @@
              </tr>
            </thead>
            <tbody th:remove="all-but-first">
-             <tr class="draggable primaryRow" th:each="gid, row : *{paginatedImportedGermplasm}" th:attr="data-entry=${gid.entryId}" th:attrappend="data-gid=${gid.gid}">
+             <tr class="draggable primaryRow" th:each="gid, row : *{paginatedImportedGermplasm}" th:attr="data-entry=${gid.entryId}" th:attrappend="data-gid=${gid.gid},data-index=${gid.index}">
              <!-- 
                <td align="center" th:class="${row.even}? 'even check-col' : 'odd check-col'">
                
@@ -36,7 +37,8 @@
                <option th:each="type: ${checkLists}" th:value="${type.id}" th:text="${type.description}"></option>
                </select>
                </td>
-               --> 
+               -->
+               <td align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.index}">.1</td> 
                <td align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryId}">.1</td>
                <td align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.desig}">.2</td>
                <td align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.gid}">.3</td>
@@ -45,6 +47,7 @@
                <td align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryCode}">.6</td>
              </tr>
              <tr>
+             <td>.1.1</td>
                <td>.1.1</td>
                <td>.1</td>
                <td>.2</td>
@@ -65,6 +68,7 @@
            <thead>
              <tr>
               <!-- <th class="check-col" th:utext="#{nursery.import.header.check}">.Check</th> -->
+               <th >Index</th>
                <th th:utext="#{nursery.import.header.entry}">.Entry</th>
                <th th:utext="#{nursery.import.header.designation}">.Designation</th>
              </tr>
@@ -76,12 +80,14 @@
                <option th:each="type: ${checkLists}" th:value="${type.id}" th:text="${type.description}"></option>
                </select>
                </td> -->
+               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.index}">.1</td>
                <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryId}">.1</td>
                <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.desig}">.2</td>
              </tr>
              <tr>
               <!--  <td>.1.1</td>
                -->
+               <td>.1</td>
                <td>.1</td>
                <td>.2</td>
              </tr>

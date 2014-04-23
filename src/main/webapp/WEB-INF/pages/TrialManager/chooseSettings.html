@@ -178,6 +178,9 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 										<input th:if="${trialLevelVariable.variable.widgetType.type == 'CTEXT'}" 
 										type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control character-input" />
 										
+										<textarea th:if="${trialLevelVariable.variable.widgetType.type == 'TEXTAREA'}" 
+												 th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control character-input" rows="3" />
+												 
 										<input th:if="${trialLevelVariable.variable.widgetType.type == 'DATE'}" 
 										type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control date-input" />
 										 

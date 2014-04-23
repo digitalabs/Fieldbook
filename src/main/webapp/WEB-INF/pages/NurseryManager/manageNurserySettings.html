@@ -157,6 +157,9 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 												<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'CTEXT'}" 
 												type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control character-input" />
 												
+												<textarea th:if="${nurseryLevelVariable.variable.widgetType.type == 'TEXTAREA'}" 
+												 th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control character-input" rows="3" />
+												
 												<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DATE'}" 
 												type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control date-input" />
 												 

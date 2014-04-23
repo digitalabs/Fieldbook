@@ -8,6 +8,7 @@ public enum WidgetType {
 	, CTEXT
 	, NTEXT
 	, SLIDER
+	, TEXTAREA
 	;
 	
 	public String getType() {

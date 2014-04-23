@@ -646,6 +646,7 @@
         	}
         
         function displayGermplasmDetails(listId) {
+        	//alert(makeDraggableBool);
         	Spinner.toggle();
         	$('#'+'germplasmTree').find("*").removeClass('dynatree-selected');
         	$.ajax({
@@ -658,6 +659,7 @@
         			makeDraggable(makeDraggableBool);
         			checksFromPrimary = 0;
         			setSpinnerMaxValue();
+        			
         			/*
         			$('.addToCheck').on('click', function(){
         				$("#lastCheckSourcePrimary").val(1);

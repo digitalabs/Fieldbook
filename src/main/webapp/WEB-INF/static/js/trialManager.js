@@ -1973,7 +1973,7 @@ function displayGermplasmListTree(treeName) {
 		}
 	});
 }
-
+/*
 function displayGermplasmDetails(listId) {
 	Spinner.toggle();
 	$.ajax({		
@@ -1987,7 +1987,7 @@ function displayGermplasmDetails(listId) {
 		
 	});
 }
-
+*/
 function openUsePreviousTrialModal() {
 	$("#selectedTrial").select2("destroy");
 	$("#selectedTrial").val("");

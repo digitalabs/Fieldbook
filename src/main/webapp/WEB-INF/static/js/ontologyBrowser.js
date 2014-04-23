@@ -1449,7 +1449,7 @@ function delCatVar(button) {
 		//console.log(stdVarId + " " + enumerationId );
 		
 		//daniel
-		
+		var hasError = false;
 		Spinner.toggle();
     	
 		$.ajax({
@@ -1462,7 +1462,7 @@ function delCatVar(button) {
 				Spinner.toggle();
 				if(data.status == '0'){					
 					showErrorMessage('page-message', variateValidValueDeleteError);
-					return;
+					hasError = true;
 				}
 				/*else{
 					enumerations.splice(index, 1);
@@ -1470,7 +1470,9 @@ function delCatVar(button) {
 				//console.log(data);
 			}			
 		});
-		
+		if (hasError) {
+			return;
+		}
 		
 		enumerations[index].operation = "-1";
 	}

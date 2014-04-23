@@ -243,6 +243,7 @@
     var sameListErr = /*[[#{import.germplasm.same.list.primary.check}]]*/;
     var startingEntryRequired = /*[[#{import.germplasm.starting.entry.required}]]*/;
     var itemsToAdd = [];
+    var checksFromPrimary = 0;
     function do_validation() {
     	var message = /*[[#{common.error.file.no.file.selected}]]*/;
     	/*
@@ -587,6 +588,8 @@
         		async: false,
         		success: function(data) {
         			addedGid[gid] = null;
+        			checksFromPrimary--;
+        			setSpinnerMaxValue();
         		},
         		error: function(jqXHR, textStatus, errorThrown){ 
         			console.log("The following error occured: " + textStatus, errorThrown); 
@@ -625,6 +628,8 @@
         			$("#check-germplasm-list").html(html);	
         			makeCheckDraggable(true);
         			showSpecifyCheckSection();
+        			checksFromPrimary++;
+        			setSpinnerMaxValue();
         		},
         		error: function(jqXHR, textStatus, errorThrown){ 
         			console.log("The following error occured: " + textStatus, errorThrown); 
@@ -651,6 +656,7 @@
         			$("#imported-germplasm-list").html(html);
         			changeCheckLayout();
         			makeDraggable(makeDraggableBool);
+        			checksFromPrimary = 0;
         			setSpinnerMaxValue();
         			/*
         			$('.addToCheck').on('click', function(){

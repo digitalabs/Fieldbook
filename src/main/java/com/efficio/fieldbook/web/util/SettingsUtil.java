@@ -23,6 +23,7 @@ import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -805,11 +806,12 @@ public class SettingsUtil {
 	public static ParentDataset convertWorkbookToXmlDataset(Workbook workbook, boolean isNursery) {
 		ParentDataset dataset = null;
 		
-		List<Condition> conditions = convertMeasurementVariablesToConditions(workbook.getConditions());
-		List<Factor> factors = convertMeasurementVariablesToFactors(workbook.getFactors());
-		List<Variate> variates = convertMeasurementVariablesToVariates(workbook.getVariates());
 		if(isNursery){
 			Dataset nurseryDataset = new Dataset();
+			List<Condition> conditions = convertMeasurementVariablesToConditions(workbook.getConditions());
+			List<Factor> factors = convertMeasurementVariablesToFactors(workbook.getFactors());
+			List<Variate> variates = convertMeasurementVariablesToVariates(workbook.getVariates());
+
 			nurseryDataset.setConditions(conditions);
 			nurseryDataset.setFactors(factors);
 			nurseryDataset.setVariates(variates);
@@ -817,14 +819,16 @@ public class SettingsUtil {
 		}else{
 			TrialDataset trialDataset = new TrialDataset();
 			
-			conditions = convertMeasurementVariablesToConditions(workbook.getStudyConditions());
-			factors = convertMeasurementVariablesToFactors(workbook.getFactors());
-			variates = convertMeasurementVariablesToVariates(workbook.getVariates());
+			List<Condition> conditions = convertMeasurementVariablesToConditions(workbook.getStudyConditions());
+			List<Factor> factors = convertMeasurementVariablesToFactors(workbook.getFactors());
+			List<Variate> variates = convertMeasurementVariablesToVariates(workbook.getVariates());
+			List<TreatmentFactor> treatmentFactors = convertTreatmentVariablesToTreatmentFactors(workbook.getTreatmentFactors());
 			
 			trialDataset.setConditions(conditions);
 			trialDataset.setFactors(factors);
 			trialDataset.setVariates(variates);
 			trialDataset.setTrialLevelFactor(convertMeasurementVariablesToFactors(workbook.getTrialConditions()));
+			trialDataset.setTreatmentFactors(treatmentFactors);
 			
 			dataset = trialDataset;
 		}
@@ -876,6 +880,37 @@ public class SettingsUtil {
 						mvar.getMethod(), 
 						PhenotypicType.getPhenotypicTypeForLabel(mvar.getLabel()).toString(), 
 						mvar.getDataType(), mvar.getTermId()));
+			}
+		}
+		
+		return factors;
+	}
+	
+	private static List<TreatmentFactor> convertTreatmentVariablesToTreatmentFactors(List<TreatmentVariable> mlist) {
+		List<TreatmentFactor> factors = new ArrayList<TreatmentFactor>();
+		
+		if (mlist != null && !mlist.isEmpty()) {
+			Factor levelFactor, valueFactor;
+			for (TreatmentVariable var : mlist) {
+				MeasurementVariable mvar = var.getLevelVariable();
+				MeasurementVariable vvar = var.getValueVariable();
+				levelFactor = new Factor(
+						mvar.getName(), 
+						mvar.getDescription(), 
+						mvar.getProperty(), 
+						mvar.getScale(), 
+						mvar.getMethod(), 
+						PhenotypicType.getPhenotypicTypeForLabel(mvar.getLabel()).toString(), 
+						mvar.getDataType(), mvar.getTermId());
+				valueFactor = new Factor(
+						vvar.getName(), 
+						vvar.getDescription(), 
+						vvar.getProperty(), 
+						vvar.getScale(), 
+						vvar.getMethod(), 
+						PhenotypicType.getPhenotypicTypeForLabel(vvar.getLabel()).toString(), 
+						vvar.getDataType(), vvar.getTermId());
+				factors.add(new TreatmentFactor(levelFactor, valueFactor));
 			}
 		}
 		

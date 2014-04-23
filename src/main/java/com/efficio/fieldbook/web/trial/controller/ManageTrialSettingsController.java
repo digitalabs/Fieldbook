@@ -281,6 +281,7 @@ public class ManageTrialSettingsController extends SettingsController{
             form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
             form.setPlotLevelVariables(userSelection.getPlotsLevelList());
             form.setTrialLevelVariables(userSelection.getTrialLevelVariableList());
+            form.setTreatmentFactors(userSelection.getTreatmentFactors());
             form.setIsDefault(false);
             form.setSettingName("");
         }

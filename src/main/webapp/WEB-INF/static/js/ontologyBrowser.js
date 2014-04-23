@@ -407,7 +407,7 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	          var data = {results: sortByKey(variableSuggestions_obj, "text")}, i, j, s;
 	          // return the array that matches
 	          data.results = $.grep(data.results,function(item,index) {
-	            return ($.fn.select2.defaults.matcher(query.term,item.text));
+	            return ($.fn.select2.defaults.matcher($.trim(query.term),$.trim(item.text)));
 	          
 	          });
 	          if (data.results.length === 0){
@@ -433,7 +433,7 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	          var data = {results: sortByKey(variableSuggestions_obj, "text")}, i, j, s;
 	          // return the array that matches
 	          data.results = $.grep(data.results,function(item,index) {
-	            return ($.fn.select2.defaults.matcher(query.term,item.text));
+	            return ($.fn.select2.defaults.matcher($.trim(query.term),$.trim(item.text)));
 	          
 	          });
 	          if(allowTypedValues == true){

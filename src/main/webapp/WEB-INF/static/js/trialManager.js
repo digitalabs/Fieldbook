@@ -525,6 +525,7 @@ function initializeStandardVariableSearch(variables) {
 }
 
 function getStandardVariableDetailsModal(id) {
+	
 	if(id != ''){
 		Spinner.toggle();
 		$.ajax({
@@ -552,7 +553,7 @@ function populateAttributeFields(data) {
 	$("#selectedMethod").html(checkIfEmpty(data.method));
 	$("#selectedScale").html(checkIfEmpty(data.scale));
 	$("#selectedDataType").html(checkIfEmpty(data.dataType));
-	$("#selectedRole").html(checkIfEmpty(data.role));
+	$("#selectedRole").html(checkIfEmpty(data.role));	
 	$("#selectedCropOntologyId").html(checkIfEmpty(data.cropOntologyId));
 	$("#selectedStdVarId").val(data.cvTermId);
 	$("#selectedName").val(data.name);
@@ -1800,7 +1801,8 @@ function populateBaselineTraits(standardVariable) {
 		$("#scale").html(checkIfNull(standardVariable.scale));
 		$("#dataType").html(checkIfNull(standardVariable.dataType));
 		$("#role").html(checkIfNull(standardVariable.role));
-		$("#cropOntologyId").html(checkIfNull(standardVariable.cropOntologyId));
+		$("p#cropOntologyId").html(checkIfNull(standardVariable.cropOntologyId));
+		//console.log(standardVariable.cropOntologyId);
 		//$('#trialDetailsTitle').html(headerTitle + " " + );
 	} else {
 		$("#traitClass").html("");
@@ -1809,7 +1811,7 @@ function populateBaselineTraits(standardVariable) {
 		$("#scale").html("");
 		$("#dataType").html("");
 		$("#role").html("");
-		$("#cropOntologyId").html("");
+		$("p#cropOntologyId").html("");
 	}
 }
 

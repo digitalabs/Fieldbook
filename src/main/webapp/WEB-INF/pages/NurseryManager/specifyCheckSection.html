@@ -8,7 +8,7 @@
 						<label class="control-label">Starting Index</label><span class="required">*</span>
 					</div>	
 					<div class="col-xs-2 col-md-2">
-						<input style="width: 50px" type="text" id="startIndex2" class="form-control spinner-input" onchange="verifyIfCheck(this);" />
+						<input style="width: 50px" type="text" id="startIndex2" class="form-control spinner-input" onchange="verifyIfCheck(this)" />
 					</div>
 					<div class="col-xs-2 col-md-2 add_top_padding">
 						<label class="control-label">Interval</label><span class="required">*</span>
@@ -35,6 +35,7 @@
         var checkTypes = /*[[${checkTypes}]]*/ null;
         var checkTypes_obj = [];
         var spinnerCreatedAlready = false;
+        var prevStartIndex = 0;
         $( document ).ready(function() {  
 			
 			$('#manageCheckTypesModal').on('hidden.bs.modal', function (e) {
@@ -63,7 +64,7 @@
 				$('#startIndex2').spinedit({
 					minimum: 1,
 					maximum: totalGermplasm,
-					step: 1
+					step: 1					
 				});
 				spinnerCreatedAlready = true;
 				$('#startIndex2').val(1);

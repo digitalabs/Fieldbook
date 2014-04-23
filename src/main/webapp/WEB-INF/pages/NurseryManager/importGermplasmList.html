@@ -611,10 +611,7 @@
         		moveToTopScreen();
         		return false;
         	}
-        	if(index == $("#startIndex2").val()){
-        		index++;
-        		$('#startIndex2').val(index);
-        	}
+        	
         	
         	
         	
@@ -640,6 +637,11 @@
         			showSpecifyCheckSection();
         			checksFromPrimary++;
         			setSpinnerMaxValue();
+        			if(index == $("#startIndex2").val() && $('.check-germplasm-list-items .ui-draggable').length != 0){
+                		index++;
+                		$('#startIndex2').val(index);
+                		prevStartIndex = $('#startIndex2').val();
+                	}
         		},
         		error: function(jqXHR, textStatus, errorThrown){ 
         			console.log("The following error occured: " + textStatus, errorThrown); 
@@ -770,9 +772,11 @@
         	if ($('tr.checkRow[data-index="'+$(startingIndex).val()+'"]').length != 0 ||  isGidInCheckList(getGid($(startingIndex).val())) > 0) {
         		$('#removeCheckModal').modal({ backdrop: 'static', keyboard: true });
         		$("#removeCheckModal").modal("show");
+        		
         	} else {
         		lastStartingEntry = $(startingIndex).val();
         	}
+        	
         }
         
         function getGid(index) {
@@ -809,6 +813,8 @@
         }
         
         function resetStartingEntry() {
+        	if(lastStartingEntry == 0)
+        		lastStartingEntry = prevStartIndex;
         	$("#startIndex2").spinedit('setValue', lastStartingEntry);
         }
       //]]>

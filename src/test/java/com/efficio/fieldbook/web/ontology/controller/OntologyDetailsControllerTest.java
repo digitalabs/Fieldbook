@@ -80,14 +80,12 @@ public class OntologyDetailsControllerTest  extends AbstractJUnit4SpringContextT
      * @return the standard variable
      */
     private StandardVariable createStandardVariableTestData() {
-        List<TermProperty> termProperties = new ArrayList<TermProperty>();
-        termProperties.add(new TermProperty(1, TermId.CROP_ONTOLOGY_ID.getId(), "CO:12345", 0));
-        Term property = new Term(100, "PROPERTY", "PROPERTY DEF", null, termProperties);
-        Term scale = new Term(200, "SCALE", "SCALE DEF", null, null);
-        Term method = new Term(300, "METHOD", "METHOD DEF", null, null);
-        Term dataType = new Term(400, "DATA TYPE", "DATA TYPE DEF", null, null);
-        Term storedIn = new Term(1010, "STORED IN", "STORED IN DEF", null, null);
-        Term traitClass = new Term(600, "TRAIT CLASS", "TRAIT CLASS DEF", null, null);
+        Term property = new Term(100, "PROPERTY", "PROPERTY DEF");
+        Term scale = new Term(200, "SCALE", "SCALE DEF");
+        Term method = new Term(300, "METHOD", "METHOD DEF");
+        Term dataType = new Term(400, "DATA TYPE", "DATA TYPE DEF");
+        Term storedIn = new Term(1010, "STORED IN", "STORED IN DEF");
+        Term traitClass = new Term(600, "TRAIT CLASS", "TRAIT CLASS DEF");
         VariableConstraints constraints = new VariableConstraints(10.0, 50.0);
         List<Enumeration> enumerations = new ArrayList<Enumeration>();
         enumerations.add(new Enumeration(1, "ENUM1", "ENUM1 DESC", 0));

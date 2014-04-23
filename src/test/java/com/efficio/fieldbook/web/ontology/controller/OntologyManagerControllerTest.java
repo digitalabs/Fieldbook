@@ -76,9 +76,9 @@ public class OntologyManagerControllerTest extends AbstractJUnit4SpringContextTe
         String methodName = "method name " + new Random().nextInt(10000);
         Term method = ontologyService.addTerm(methodName, methodName, CvId.METHODS);
         
-        Term dataType = new Term(400, "DATA TYPE", "DATA TYPE DEF", null, null);
-        Term storedIn = new Term(1010, "STORED IN", "STORED IN DEF", null, null);
-        Term traitClass = new Term(600, "TRAIT CLASS", "TRAIT CLASS DEF", null, null);
+        Term dataType = new Term(400, "DATA TYPE", "DATA TYPE DEF");
+        Term storedIn = new Term(1010, "STORED IN", "STORED IN DEF");
+        Term traitClass = new Term(600, "TRAIT CLASS", "TRAIT CLASS DEF");
         
         standardVariable = new StandardVariable();
         standardVariable.setName("TestVariable" + new Random().nextInt(10000));

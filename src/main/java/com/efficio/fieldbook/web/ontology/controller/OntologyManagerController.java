@@ -769,22 +769,9 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
             Property property = ontologyService.getProperty(Integer.parseInt(propertyId));
             Term term = property.getIsA();
             String traitId = term  == null ? "": Integer.toString(term.getId());
-            
-            String cropOntologyId = "";
-            if (property.getTerm() != null && property.getTerm().getProperties() != null 
-                    && !property.getTerm().getProperties().isEmpty()) {
-                for (TermProperty tp : property.getTerm().getProperties()) {
-                    if (tp.getTypeId().equals(TermId.CROP_ONTOLOGY_ID.getId()) 
-                            && tp.getValue() != null && !"".equals(tp.getValue().trim())) {
-                        cropOntologyId = tp.getValue();
-                        break;
-                    }
-                }
-            }
-            
             resultMap.put("status", "1");
             resultMap.put("traitId", traitId);
-            resultMap.put("cropOntologyId", cropOntologyId);
+            resultMap.put("cropOntologyId", property.getCropOntologyId());
             
         } catch(MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);

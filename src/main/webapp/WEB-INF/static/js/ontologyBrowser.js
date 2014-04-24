@@ -1381,14 +1381,17 @@ function addCategoricalValidValue(id, label, description) {
 	//if new valid value, add a delete button
 	if (id < 0 || id == null) {
 		deleteButton= "<button class='btn btn-info' type='button' onClick='delCatVar($(this))'>" + 
-						"<span class='glyphicon glyphicon-remove'></span>" +
-					    "</button>";
+		"<span class='glyphicon glyphicon-remove'></span>" +
+	    "</button>";	
 		enumerations.push({ 'id' : id,
 			  'name' : label, 
 			  'description' : description,
 			  'operation' : operation
 		});
 	} else {
+		deleteButton= "<button style='display: none' class='btn btn-info delete-valid-val-btn' type='button' onClick='delCatVar($(this))'>" + 
+		"<span class='glyphicon glyphicon-remove'></span>" +
+	    "</button>";
 		//read-only
 		enumerations_central.push({ 'id' : id,
 			  'name' : label, 
@@ -1551,5 +1554,41 @@ function enableFieldsForUpdate() {
 	$("#comboMethod").select2('enable',true);
 	$("#comboScale").select2('enable',true);
 	$("#dataType").removeAttr("disabled");
+	if($("#variableId").val() == ''){
+	
+		var enumerationsTemp = [];
+	  	if(enumerations_central.length != 0){
+	  		for(var index = 0 ; index < enumerations_central.length ; index++){
+	  			//console.log(enumerations_central[index].operation)
+	  			if(enumerations_central[index].operation != '-1'){  				  			
+	  				enumerationsTemp.push({ 'id' : null,
+	                			  'name' : enumerations_central[index].name, 
+	                			  'description' : enumerations_central[index].description,
+	                			  'operation' : 1
+	                		});
+	  			}
+	  		}
+	  			
+	  	}
+	  	
+	  	if(enumerations.length != 0){
+	  		for(var index = 0 ; index < enumerations.length ; index++){
+	  			//console.log(enumerations_central[index].operation)
+	  			if(enumerations[index].operation != '-1'){  				  			
+	  				enumerationsTemp.push({ 'id' : null,
+	                			  'name' : enumerations[index].name, 
+	                			  'description' : enumerations[index].description,
+	                			  'operation' : 1
+	                		});
+	  			}
+	  		}
+	  			
+	  	}
+	  	//console.log('here');
+	  	enumerations = enumerationsTemp;
+	  	enumerations_central = [];
+	  	
+	  	$('.'+getJquerySafeId('delete-valid-val-btn')).css('display', 'block');
+	}
 }
 

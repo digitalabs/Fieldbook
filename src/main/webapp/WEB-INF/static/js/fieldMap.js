@@ -481,14 +481,20 @@ function recreatePopupLocationCombo() {
     		  
     		   var popuplocationSuggestions =  $.parseJSON(data.allLocations);
     		   var popuplocationSuggestions_obj = [];
-    		   
+    		   var defaultData = null;
+    		   var currentLocId = $("#"+getJquerySafeId("userFieldmap.fieldLocationId")).val();
     		   $.each(popuplocationSuggestions, function( index, value ) {
-    			   popuplocationSuggestions_obj.push({ 'id' : value.locid,
-    					  'text' : value.lname
-    				});  
+    			   var tempData = { 'id' : value.locid,
+     					  'text' : value.lname
+   				   };
+    			   if(currentLocId == value.locid)
+    				   defaultData = tempData;
+    			   popuplocationSuggestions_obj.push(tempData);  
     				
     			});		
     			
+    		   
+    		   
     			//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
     			$('#'+getJquerySafeId('parentLocationId')).select2({
     				minimumInputLength: 2,
@@ -499,11 +505,12 @@ function recreatePopupLocationCombo() {
     		            return ($.fn.select2.defaults.matcher(query.term,item.text));
     		          
     		          });
-    		            query.callback(data);
-    		            
+    		            query.callback(data);    		            
     		        }
-
     		    });
+    			
+    			if(defaultData != null)
+    				$('#'+getJquerySafeId('parentLocationId')).select2('data', defaultData);
     			
     	   } else {
     		   showErrorMessage("page-message", data.errorMessage);
@@ -542,15 +549,19 @@ function recreatePopupFieldCombo() {
     		  
     		   var popupFieldlocationSuggestions =  $.parseJSON(data.allFields);
     		   var popupFieldlocationSuggestions_obj = [];
-    		   
+    		   var defaultData = null;
+    		   var currentLocId = $("#"+getJquerySafeId("userFieldmap.fieldId")).val();
     		   
     			   $.each(popupFieldlocationSuggestions, function( index, value ) {
     				   var parentLocation = value.parentLocationName != null ? value.parentLocationName : "";
-        			   popupFieldlocationSuggestions_obj.push({ 'id' : value.locid,
+    				   var tempData = { 'id' : value.locid,
         					  'text' : value.lname,
         					  'location' : parentLocation 
-        				});  
+        				};
+        			   popupFieldlocationSuggestions_obj.push(tempData);  
         				
+        			   if(currentLocId == value.locid)
+        				   defaultData = tempData;
         			});
     			   
     			 //if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
@@ -576,7 +587,8 @@ function recreatePopupFieldCombo() {
        		    });
        			
     		   
-    		   		
+       			if(defaultData != null)
+    				$('#'+getJquerySafeId('parentFieldId')).select2('data', defaultData);	
     			
     			
     	   } else {
@@ -666,13 +678,18 @@ function recreateLocationComboAfterClose(comboName, data) {
 
 function initializeFieldSelect2(suggestions, suggestions_obj, addOnChange, currentFieldId) {
 	var defaultData = null;
+	
+	var newlyAddedField = $('#newFieldName').val();
+	
 	$.each(suggestions, function( index, value ) {
 		var dataObj = { 'id' : value.locid,
 			  'text' : value.lname
 		};
 		suggestions_obj.push(dataObj);  
 		
-		if(currentFieldId != '' && currentFieldId == value.locid){
+		if(newlyAddedField == '' && currentFieldId != '' && currentFieldId == value.locid){
+			defaultData = dataObj;
+		}else if(newlyAddedField != '' && newlyAddedField == value.lname){
 			defaultData = dataObj;
 		}
 	});		
@@ -709,6 +726,7 @@ function initializeFieldSelect2(suggestions, suggestions_obj, addOnChange, curre
 }
 function initializeBlockSelect2(suggestions, suggestions_obj, addOnChange, currentBlockId) {
 	var defaultData = null;
+	var newlyAddedBlock = $('#newBlockName').val();
 	$.each(suggestions, function( index, value ) {
 		var dataObj = { 'id' : value.locid,
 				  'text' : value.lname
@@ -716,7 +734,9 @@ function initializeBlockSelect2(suggestions, suggestions_obj, addOnChange, curre
 		
 		suggestions_obj.push(dataObj);  
 		
-		if(currentBlockId != '' && currentBlockId == value.locid){
+		if(newlyAddedBlock == '' && currentBlockId != '' && currentBlockId == value.locid){
+			defaultData = dataObj;
+		}else if(newlyAddedBlock != '' && newlyAddedBlock == value.lname){
 			defaultData = dataObj;
 		}
 	});

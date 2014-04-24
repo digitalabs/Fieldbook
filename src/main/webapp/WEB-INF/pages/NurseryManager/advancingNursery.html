@@ -240,8 +240,8 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 						<label for="harvestDate" class="control-label"  th:text="#{advancing.nursery.harvest.date}">Harvest Date</label><span class="required"></span>
 					</div>	
 			    	  			    
-					   <div class="col-xs-4 col-md-4 input-group date" id="dp3" data-date="" data-date-format="yyyymmdd">
-						     <input th:field="*{harvestDate}" class="form-control" type="text"    />
+					   <div class="col-xs-1 col-md-1 input-group date" id="dp3" data-date="" data-date-format="yyyymmdd">
+						     <input th:field="*{harvestDate}" class="form-control" type="text"  style="width: 100px"  />
 							 <label for="harvestDate" class="input-group-addon btn datepicker"><i class="glyphicon glyphicon-calendar"></i></label>
 						
 						</div>

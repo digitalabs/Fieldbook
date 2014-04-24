@@ -703,6 +703,8 @@
         		success: function(html) {
         			$("#check-germplasm-list").html(html);
         			showSpecifyCheckSection();
+        			checksFromPrimary = 0;
+        			setSpinnerMaxValue();
         			//load all the check box
         			/*
         			var checkVal = 0;
@@ -769,9 +771,15 @@
         function verifyIfCheck(startingIndex) {
         	//console.log(startingIndex);
         	//console.log($('tr.checkRow[data-index="'+$(startingIndex).val()+'"]').length)
-        	if ($('tr.checkRow[data-index="'+$(startingIndex).val()+'"]').length != 0 ||  isGidInCheckList(getGid($(startingIndex).val())) > 0) {
-        		$('#removeCheckModal').modal({ backdrop: 'static', keyboard: true });
-        		$("#removeCheckModal").modal("show");
+        	if ($('tr.checkRow[data-index="'+$(startingIndex).val()+'"]').length != 0 ||  
+        			isGidInCheckList(getGid($(startingIndex).val())) > 0) {
+        		
+        		if($("#keyForOverwrite").val()  == ''){
+        			//only pop if its a drag item from primary
+        			$('#removeCheckModal').modal({ backdrop: 'static', keyboard: true });
+            		$("#removeCheckModal").modal("show");	
+        		}
+        		
         		
         	} else {
         		lastStartingEntry = $(startingIndex).val();

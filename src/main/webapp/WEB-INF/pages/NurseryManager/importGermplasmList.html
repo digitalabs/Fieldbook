@@ -774,7 +774,7 @@
         	if ($('tr.checkRow[data-index="'+$(startingIndex).val()+'"]').length != 0 ||  
         			isGidInCheckList(getGid($(startingIndex).val())) > 0) {
         		
-        		if($("#keyForOverwrite").val()  == ''){
+        		if(lastDraggedChecksList == 0 && $("#keyForOverwrite").val()  == ''){
         			//only pop if its a drag item from primary
         			$('#removeCheckModal').modal({ backdrop: 'static', keyboard: true });
             		$("#removeCheckModal").modal("show");	

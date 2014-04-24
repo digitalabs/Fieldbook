@@ -748,12 +748,24 @@ table.table-with-scroll thead, table.table-with-scroll tbody {
     width: 100%;
 }
 table.table-with-scroll tbody {
-    overflow: auto;
-    max-height: 150px;
+    overflow-y: auto;
+    max-height: 100px;
 }
 table.table-with-scroll tr {
     width: 100%;
     display: table;
+}
+table.table-with-scroll thead tr th:first-child, table.table-with-scroll thead tr th:last-child {
+	width: 5%;
+}
+table.table-with-scroll tbody tr td:first-child, table.table-with-scroll tbody tr td:last-child {
+	width: 5%;
+}
+table.table-with-scroll thead tr th:nth-child(2), table.table-with-scroll thead tr th:nth-child(3){
+	width: 47%;
+}
+table.table-with-scroll tbody tr td:nth-child(2), table.table-with-scroll tbody tr td:nth-child(3){
+	width: 46%;
 }
 div.sectionContainer {
 	max-height: 500px; 

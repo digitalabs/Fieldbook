@@ -739,19 +739,20 @@ table tbody tr.germplasmSelectedRow, .germplasmSelectedRow td{
 table tbody tr.checkGermplasmSelectedRow, .checkGermplasmSelectedRow td{
 	background-color: #BED6B2;
 }
-table.table-with-scroll {
+table.table-with-scroll, table.table-with-scroll-create {
     display: table;
     width: 100%;
 }
-table.table-with-scroll thead, table.table-with-scroll tbody {
+table.table-with-scroll thead, table.table-with-scroll tbody,
+table.table-with-scroll-create thead, table.table-with-scroll-create tbody{
     float: left;
     width: 100%;
 }
-table.table-with-scroll tbody {
+table.table-with-scroll tbody, table.table-with-scroll-create tbody {
     overflow-y: auto;
     max-height: 100px;
 }
-table.table-with-scroll tr {
+table.table-with-scroll tr, table.table-with-scroll-create tr{
     width: 100%;
     display: table;
 }
@@ -761,11 +762,23 @@ table.table-with-scroll thead tr th:first-child, table.table-with-scroll thead t
 table.table-with-scroll tbody tr td:first-child, table.table-with-scroll tbody tr td:last-child {
 	width: 5%;
 }
-table.table-with-scroll thead tr th:nth-child(2), table.table-with-scroll thead tr th:nth-child(3){
+table.table-with-scroll-create thead tr th:last-child {
+	width: 10%;
+}
+table.table-with-scroll-create tbody tr td:last-child {
+	width: 10%;
+}
+table.table-with-scroll thead tr th:nth-child(2), table.table-with-scroll thead tr th:nth-child(3) {
 	width: 47%;
 }
-table.table-with-scroll tbody tr td:nth-child(2), table.table-with-scroll tbody tr td:nth-child(3){
+table.table-with-scroll tbody tr td:nth-child(2), table.table-with-scroll tbody tr td:nth-child(3) {
 	width: 46%;
+}
+table.table-with-scroll-create thead tr th:nth-child(1), table.table-with-scroll-create thead tr th:nth-child(2) {
+	width: 50%;
+}
+table.table-with-scroll-create tbody tr td:nth-child(1), table.table-with-scroll-create tbody tr td:nth-child(2) {
+	width: 49%;
 }
 div.sectionContainer {
 	max-height: 500px; 

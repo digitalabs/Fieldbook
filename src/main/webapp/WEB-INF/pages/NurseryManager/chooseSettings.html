@@ -139,8 +139,8 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 					    			<label class="control-label" th:text="#{nursery.managesettings.plot.level.notes}"> Select the settings you will record at the plot level in the nursery. 
 					    			These will appear as data columns in your nursery book. You can add and remove settings at this level.</label>
 				    			</div>
-			    				<div class="col-xs-12 col-md-12 variable-details">
-			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll11" id="plotLevelSettings">
+			    				<div class="col-xs-12 col-md-12">
+			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll-create" id="plotLevelSettings">
 			    						<thead>
 										<tr>
 							                <th width="45%" th:utext="#{nursery.managesettings.plot.name}">.Name</th>
@@ -185,8 +185,8 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 					    			You can add and remove traits in this list to create the baseline set of traits you are working with in your program. 
 					    			You will be able to add additional traits to measure in each nursery.</label>
 				    			</div>
-			    				<div class="col-xs-12 col-md-12 variable-details">
-			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll1" id="baselineTraitSettings">
+			    				<div class="col-xs-12 col-md-12">
+			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll-create" id="baselineTraitSettings">
 			    						<thead>
 										<tr>
 							                <th width="45%" th:utext="#{nursery.managesettings.trait}">.Trait</th>
@@ -284,7 +284,9 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 
     
 	$(document).ready(function() {
-		 
+		if (isIE() == 8) {
+			$(".table-with-scroll-create").removeClass("table-with-scroll-create");
+		} 
         if($('#requiredFields').val() != ''){
             requiredFields = $('#requiredFields').val().split(',');    
         }

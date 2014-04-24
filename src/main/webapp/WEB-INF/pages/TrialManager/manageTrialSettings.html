@@ -107,8 +107,8 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 						    			<label class="control-label" th:text="#{trial.managesettings.trial.environment.level.notes}"> Select the settings you will record at the plot level in the nursery. 
 						    			These will appear as data columns in your nursery book. You can add and remove settings at this level.</label>
 					    			</div>		    			
-				    				<div class="col-xs-12 col-md-12 variable-details">
-				    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll1" id="trialEnvironmentLevelSettings">
+				    				<div class="col-xs-12 col-md-12">
+				    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll" id="trialEnvironmentLevelSettings">
 				    						<thead>
 											<tr>
 												<th width="5%"></th>
@@ -248,8 +248,8 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 					    			<label class="control-label" th:text="#{trial.managesettings.plot.level.notes}"> Select the settings you will record at the plot level in the nursery. 
 					    			These will appear as data columns in your nursery book. You can add and remove settings at this level.</label>
 				    			</div>
-			    				<div class="col-xs-12 col-md-12 variable-details">
-			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll1" id="plotLevelSettings">
+			    				<div class="col-xs-12 col-md-12">
+			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll" id="plotLevelSettings">
 			    						<thead>
 										<tr>
 											<th width="5%"></th>
@@ -301,8 +301,8 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 					    			<label class="control-label" th:text="#{trial.managesettings.treatment.factors.notes}"> Choose the treatment factors that will be applied in the trial.  
 					    			These will appear as data columns in your study book.  You can add and remove settings at this level.</label>
 				    			</div>
-			    				<div class="col-xs-12 col-md-12 variable-details">
-			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll1" id="treatmentFactors">
+			    				<div class="col-xs-12 col-md-12">
+			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll" id="treatmentFactors">
 			    						<thead>
 										<tr>
 											<th width="4%"></th>
@@ -357,8 +357,8 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 					    			You can add and remove traits in this list to create the baseline set of traits you are working with in your program. 
 					    			You will be able to add additional traits to measure in each nursery.</label>
 				    			</div>
-			    				<div class="col-xs-12 col-md-12 variable-details">
-			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll1" id="baselineTraitSettings">
+			    				<div class="col-xs-12 col-md-12">
+			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll" id="baselineTraitSettings">
 			    						<thead>
 										<tr>
 											<th width="5%"></th>
@@ -533,6 +533,11 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
        		var startDateId = '';
        		var endDateId = '';
  			$( document ).ready(function() {
+ 				
+ 				if (isIE() == 8) {
+ 					$(".table-with-scroll").removeClass("table-with-scroll");
+ 				}
+ 				
  				locationId = $('#locationId').val();
  				breedingMethodId = $('#breedingMethodId').val();
  				programMethodUrl = $('#breedingMethodUrl').val();

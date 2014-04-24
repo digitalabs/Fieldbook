@@ -9,10 +9,11 @@ function checkMethod(){
 			setCorrectMethodValues(true);
 		}else{
 			//$('#methodSelected').prop('disabled', 'disabled');
-			$('#showFavoriteMethod').prop('disabled', 'disabled');
-			$('#methodIdFavorite').select2('enable', false);
-			$('#methodIdAll').select2('enable', false);
-			
+			if($('#namingConvention').val() != 3){
+				$('#showFavoriteMethod').prop('disabled', 'disabled');
+				$('#methodIdFavorite').select2('enable', false);
+				$('#methodIdAll').select2('enable', false);
+			}
 			oldMethodSelected = $('#'+getJquerySafeId("breedingMethodId")).val();
 			 $('#methodSelected').val($('#defaultMethodId').val());
 			 setCorrectMethodValues(false);
@@ -93,6 +94,11 @@ function validateAdvanceNursery(){
 		return false;
 	}	
 	
+	if($('#namingConvention').val() == 3  
+			&& $('#breedingMethodId').val() == 0){
+		showErrorMessage('page-message',msgMethodError);
+		return false;
+	}
 	
 	//doAjaxMainSubmit('', '', '');
 		

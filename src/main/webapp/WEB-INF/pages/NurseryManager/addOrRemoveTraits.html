@@ -46,7 +46,14 @@
 			<li>
 		    	<a href="javascript: exportNursery(3);"  th:text="#{nursery.export.excel}">Excel</a> 
 		    </li>
-		          
+		   
+			  <li class="dropdown-submenu">
+			    <a  href="javascript: void(0)">KSU Fieldbook</a>
+			    <ul class="dropdown-menu">
+			      <li><a href="#">Excel</a></li>			     
+			      <li><a href="#">CSV</a></li>
+			    </ul>
+			  </li>  
 		  </ul>
 		</div>
 	
@@ -126,10 +133,7 @@
 				   Spinner.toggle();
 			   } 
 			});
-		}      
-		
-	           
-       
+		}     
        
       //]]>
     </script>

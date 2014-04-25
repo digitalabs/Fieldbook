@@ -285,6 +285,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
     
 	$(document).ready(function() {
 		if (isIE() == 8) {
+			$(".table-with-scroll-create").parent().addClass("variable-details");
 			$(".table-with-scroll-create").removeClass("table-with-scroll-create");
 		} 
         if($('#requiredFields').val() != ''){

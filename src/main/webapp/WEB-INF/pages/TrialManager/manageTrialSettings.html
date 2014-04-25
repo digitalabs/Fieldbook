@@ -302,7 +302,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 					    			These will appear as data columns in your study book.  You can add and remove settings at this level.</label>
 				    			</div>
 			    				<div class="col-xs-12 col-md-12">
-			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll" id="treatmentFactors">
+			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll-treatment" id="treatmentFactors">
 			    						<thead>
 										<tr>
 											<th width="4%"></th>
@@ -535,7 +535,10 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
  			$( document ).ready(function() {
  				
  				if (isIE() == 8) {
+ 					$(".table-with-scroll").parent().addClass("variable-details");
+ 					$(".table-with-scroll-treatment").parent().addClass("variable-details");
  					$(".table-with-scroll").removeClass("table-with-scroll");
+ 					$(".table-with-scroll-treatment").removeClass("table-with-scroll-treatment");
  				}
  				
  				locationId = $('#locationId').val();

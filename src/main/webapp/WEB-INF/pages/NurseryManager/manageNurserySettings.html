@@ -432,6 +432,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
  			$( document ).ready(function() {
  				
  				if (isIE() == 8) {
+ 					$(".table-with-scroll").parent().addClass("variable-details");
  					$(".table-with-scroll").removeClass("table-with-scroll");
  				}
  				

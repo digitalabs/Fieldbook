@@ -197,9 +197,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 										</span>		
 	                            	</div>
 			    				</div>
-		    				</div>			
-	    				</div>
-	    				<div class="col-xs-6 col-md-6">	    								    			
+		    				</div>
 		    				<div class="row">
 			    				<div class="col-xs-12 col-md-12">
 					    			<label class="control-label" data-toggle="collapse" data-target=".plotLevelDetails">
@@ -237,9 +235,11 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 			    					</table>
 			    				</div>
 			    				<div class="col-xs-3 col-md-3"></div>
-			    			</div>
+			    			</div>			
+	    				</div>
+	    				<div class="col-xs-6 col-md-6">	    								    			
 		    				
-		    				
+			    				
 			    			<div class="row form-group">
 			    				<div class="col-xs-12 col-md-12">
 			    					&nbsp;
@@ -364,6 +364,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
     
 	$(document).ready(function() {
 		if (isIE() == 8) {
+			$(".table-with-scroll-create").parent().addClass("variable-details");
 			$(".table-with-scroll-create").removeClass("table-with-scroll-create");
 		}
         if($('#requiredFields').val() != ''){

@@ -69,7 +69,7 @@ public class KsuFieldbookUtil {
 						value = ExportImportStudyUtil.getCategoricalCellValue(row.getMeasurementData(label.getName()).getValue(), label.getPossibleValues());
 					}
 					else {
-						value = row.getMeasurementDataValue(label.getName());
+						value = row.getMeasurementData(label.getName()).getValue();
 					}
 					dataRow.add(value);
 				}

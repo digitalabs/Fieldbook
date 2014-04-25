@@ -789,6 +789,10 @@ public class SettingsUtil {
 			workbook.setFactors(convertFactorsToMeasurementVariables(trialDataset.getFactors()));
 			workbook.setVariates(convertVariatesToMeasurementVariables(trialDataset.getVariates()));
 			workbook.getConditions().addAll(convertFactorsToMeasurementVariables(trialDataset.getTrialLevelFactor()));
+			if (workbook.getTreatmentFactors() == null) {
+				workbook.setTreatmentFactors(new ArrayList<TreatmentVariable>());
+			}
+			workbook.getTreatmentFactors().addAll(convertTreatmentFactorsToTreatmentVariables(trialDataset.getTreatmentFactors()));
 		}
 		
 		return workbook;
@@ -1013,6 +1017,25 @@ public class SettingsUtil {
 				PhenotypicType.valueOf(factor.getRole()).getLabelList().get(0));
 		mvar.setFactor(true);
 		mvar.setTermId(factor.getTermId());
+		return mvar;
+	}
+
+	private static List<TreatmentVariable> convertTreatmentFactorsToTreatmentVariables(List<TreatmentFactor> factors) {
+		List<TreatmentVariable> list = new ArrayList<TreatmentVariable>();
+		if (factors != null && !factors.isEmpty()) {
+			for (TreatmentFactor factor : factors) {
+				list.add(convertTreatmentFactorToTreatmentVariable(factor));
+			}
+		}
+		return list;
+	}
+
+	private static TreatmentVariable convertTreatmentFactorToTreatmentVariable(TreatmentFactor factor) {
+		TreatmentVariable mvar = new TreatmentVariable();
+		MeasurementVariable levelVariable = convertFactorToMeasurementVariable(factor.getLevelFactor());
+		MeasurementVariable valueVariable = convertFactorToMeasurementVariable(factor.getValueFactor());
+		mvar.setLevelVariable(levelVariable);
+		mvar.setValueVariable(valueVariable);
 		return mvar;
 	}
 

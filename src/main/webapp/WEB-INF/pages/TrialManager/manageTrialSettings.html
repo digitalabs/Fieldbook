@@ -534,7 +534,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
        		var endDateId = '';
  			$( document ).ready(function() {
  				
- 				if (isIE() == 8) {
+ 				if (getIEVersion() == 8) {
  					$(".table-with-scroll").parent().addClass("variable-details");
  					$(".table-with-scroll-treatment").parent().addClass("variable-details");
  					$(".table-with-scroll").removeClass("table-with-scroll");

@@ -41,6 +41,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
 import com.efficio.fieldbook.web.nursery.controller.SettingsController;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.bean.TrialSelection;
@@ -190,6 +191,7 @@ public class CreateTrialController extends SettingsController {
             form.setStudyLevelVariables(userSelection.getStudyLevelConditions());
             form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
             form.setPlotLevelVariables(userSelection.getPlotsLevelList());
+            form.setTreatmentFactors(convertSettingDetailToTreatment(userSelection.getTreatmentFactors()));
             
             //add default trial variables such as experimental design, replicates, block size and block per replicate
             List<SettingDetail> trialLevelVariableList = sortDefaultTrialVariables(userSelection.getTrialLevelVariableList());
@@ -206,6 +208,26 @@ public class CreateTrialController extends SettingsController {
     	form.setLoadSettings("1");
     	setFormStaticData(form);
         return super.showAjaxPage(model, URL_SETTINGS );
+    }
+    
+    private List<TreatmentFactorDetail> convertSettingDetailToTreatment(List<SettingDetail> treatmentFactors) {
+        List<TreatmentFactorDetail> newTreatmentFactors = new ArrayList<TreatmentFactorDetail>();
+        int index = 0;
+        for (SettingDetail settingDetail : treatmentFactors) {
+            if (index%2 == 0) {
+                newTreatmentFactors.add(new TreatmentFactorDetail(settingDetail.getVariable().getCvTermId(), 
+                        treatmentFactors.get(index+1).getVariable().getCvTermId(), settingDetail.getValue(), 
+                        treatmentFactors.get(index+1).getValue(), settingDetail.getVariable().getName(), 
+                        treatmentFactors.get(index+1).getVariable().getName(), 
+                        treatmentFactors.get(index+1).getVariable().getDataTypeId(),
+                        treatmentFactors.get(index+1).getPossibleValuesJson()));
+                index++;
+            } else {
+                index++;
+                continue;
+            }
+        }
+        return newTreatmentFactors;
     }
     
     private List<List<ValueReference>> createTrialEnvValueList(List<SettingDetail> trialLevelVariableList, int trialInstances, boolean addDefault) {

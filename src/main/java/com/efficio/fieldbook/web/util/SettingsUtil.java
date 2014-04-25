@@ -635,8 +635,8 @@ public class SettingsUtil {
 				int group = 1;
 				for (TreatmentFactor treatmentFactor : dataset.getTreatmentFactors()) {
            
-					treatmentFactors.add(createTreatmentFactor(treatmentFactor.getLevelFactor(), fieldbookMiddlewareService, fieldbookService, group));
-					treatmentFactors.add(createTreatmentFactor(treatmentFactor.getValueFactor(), fieldbookMiddlewareService, fieldbookService, group));
+					treatmentFactors.add(createTreatmentFactor(treatmentFactor.getLevelFactor(), fieldbookMiddlewareService, fieldbookService, group, userSelection));
+					treatmentFactors.add(createTreatmentFactor(treatmentFactor.getValueFactor(), fieldbookMiddlewareService, fieldbookService, group, userSelection));
 					
 					group++;
 				}
@@ -1049,15 +1049,15 @@ public class SettingsUtil {
 	}
 	
 	private static SettingDetail createTreatmentFactor(Factor factor, org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, 
-			FieldbookService fieldbookService, int group) throws MiddlewareQueryException {
+			FieldbookService fieldbookService, int group, UserSelection userSelection) throws MiddlewareQueryException {
 		
 		SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(),
 				factor.getProperty(), factor.getScale(), factor.getMethod(), factor.getRole(),
 				factor.getDatatype());
-		Integer stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(
-				variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
-		variable.setCvTermId(stdVar);
-		List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
+		StandardVariable standardVariable = getStandardVariable(factor.getTermId(), userSelection, fieldbookMiddlewareService);
+                variable.setPSMRFromStandardVariable(standardVariable);
+		variable.setCvTermId(standardVariable.getId());
+		List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, standardVariable.getId());
 		SettingDetail settingDetail = new SettingDetail(variable, possibleValues, null, true);
 		settingDetail.setGroup(group);
 		settingDetail.setDeletable(true);

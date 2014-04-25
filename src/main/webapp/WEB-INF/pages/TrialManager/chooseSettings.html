@@ -238,8 +238,63 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 			    			</div>			
 	    				</div>
 	    				<div class="col-xs-6 col-md-6">	    								    			
-		    				
-			    				
+		    				<div class="row">
+			    				<div class="col-xs-12 col-md-12">
+					    			<label class="control-label" data-toggle="collapse" data-target=".treatmentFactorsDetails">
+					    				<img th:src="@{/static/img/review-list-details.png}" style="padding-bottom:3px;" />
+					    				<strong class="sub-content-heading" th:text="#{trial.managesettings.treatment.factors}">TREATMENT FACTORS</strong>
+				    				</label>
+				    			</div>
+			    			</div>
+			    			<div class="row form-group collapse in treatmentFactorsDetails">
+			    				<div class="col-xs-12 col-md-12">
+					    			<label class="control-label" th:text="#{trial.managesettings.treatment.factors.notes}"> Choose the treatment factors that will be applied in the trial.  These will appear as data columns in your study book.  You can add and remove settings at this level.</label>
+				    			</div>
+			    				<div class="col-xs-12 col-md-12">
+			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed">
+			    						<thead>
+											<tr>
+								                <th width="40%" th:utext="#{trial.managesettings.treatment.factors.name}">.Name</th>
+								                <th width="20%" th:utext="#{trial.managesettings.treatment.factors.level}">.Level</th>
+								                <th width="35%" th:utext="#{trial.managesettings.treatment.factors.value}">.Value</th>
+								                <th width="5%"></th>
+											</tr>
+										</thead>
+										<tbody>
+					    					<tr th:each="treatmentFactor, rowStat : *{treatmentFactors}">
+						    					<td width="40%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${treatmentFactor.amountName}">
+						    						<input class="cvTermIds" type="hidden" th:field="${treatmentFactor.levelId}" />
+						    						<input class="cvTermIds" type="hidden" th:field="${treatmentFactor.amountId}" />
+						    					</td>
+						    					<td width="20%" th:class="${rowStat.even}? 'even' : 'odd'">
+						    						<input class="cvTermIds" type="hidden" th:field="*{treatmentFactors[__${rowStat.index}__].levelValue}" />
+						    					</td>
+						    					<td width="35%" th:class="${rowStat.even}? 'even' : 'odd'">
+						    						<input th:if="${treatmentFactor.widgetType.type == 'DROPDOWN'}" 
+														type="hidden" th:field="*{treatmentFactors[__${rowStat.index}__].amountValue}" class="form-control select2" />
+													<div th:if="${treatmentFactor.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesJson' + ${rowStat.index}"
+														class="possibleValuesJson" style="display:none" th:text="${treatmentFactor.possibleValuesJson}">
+													</div>	
+													<input th:if="${treatmentFactor.widgetType.type == 'NTEXT'}" 
+													type="text" th:field="*{treatmentFactors[__${rowStat.index}__].amountValue}" class="form-control numeric-input" />
+													
+													<input th:if="${treatmentFactor.widgetType.type == 'CTEXT'}" 
+													type="text" th:field="*{treatmentFactors[__${rowStat.index}__].amountValue}" class="form-control character-input" />
+													
+													<input th:if="${treatmentFactor.widgetType.type == 'DATE'}" 
+													type="text" th:field="*{treatmentFactors[__${rowStat.index}__].amountValue}" class="form-control date-input" />
+						    					</td>
+						    					<td width="5%" th:class="${rowStat.even}? 'even' : 'odd'" >
+						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
+														*{treatmentFactors[__${rowStat.index}__].amountId} + '\');'" >
+														<span class="glyphicon glyphicon-eye-open"></span></a>
+						    					</td>
+					    					</tr> 
+				    					</tbody>
+			    					</table>
+			    				</div>
+								<div class="col-xs-3 col-md-3"></div>
+			    			</div>
 			    			<div class="row form-group">
 			    				<div class="col-xs-12 col-md-12">
 			    					&nbsp;
@@ -363,7 +418,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 	var experimentalDesign = '';
     
 	$(document).ready(function() {
-		if (isIE() == 8) {
+		if (getIEVersion() == 8) {
 			$(".table-with-scroll-create").parent().addClass("variable-details");
 			$(".table-with-scroll-create").removeClass("table-with-scroll-create");
 		}

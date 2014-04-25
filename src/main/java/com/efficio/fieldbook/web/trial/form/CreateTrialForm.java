@@ -16,6 +16,7 @@ import java.util.List;
 import org.generationcp.middleware.domain.dms.ValueReference;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
 
 /**
  * The Class CreateNurseryForm.
@@ -39,6 +40,8 @@ public class CreateTrialForm {
 	
 	/** The trial level variables. */
         private List<SettingDetail> trialLevelVariables;
+        
+        private List<TreatmentFactorDetail> treatmentFactors;
         
 
     /** The folder id. */
@@ -596,5 +599,19 @@ public class CreateTrialForm {
 		public void setDesignLayout(String designLayout) {
 			this.designLayout = designLayout;
 		}
+
+        /**
+         * @return the treatmentFactors
+         */
+        public List<TreatmentFactorDetail> getTreatmentFactors() {
+            return treatmentFactors;
+        }
+
+        /**
+         * @param treatmentFactors the treatmentFactors to set
+         */
+        public void setTreatmentFactors(List<TreatmentFactorDetail> treatmentFactors) {
+            this.treatmentFactors = treatmentFactors;
+        }
         
 }

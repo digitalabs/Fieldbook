@@ -159,7 +159,10 @@
 		}
 	}
 	$(document).ready(function() {
-		locationId = $('#locationId').val();
+   		//disable experimental design related variables
+   		disableEnableExperimentalFields(true);
+
+    	locationId = $('#locationId').val();
 		programLocationUrl = $('#locationUrl').val();
 		$.each($(".possibleValuesJsonTrial"), function(index, divElem) {
 			var select2Index = $(divElem).attr("id").split("possibleValuesJsonTrial")[1].split("a");
@@ -180,9 +183,10 @@
 	function doSave(){
 		if(validateCells() == false)
 			return false;
-	      	var $form = $("#addVariableForm, #addVariableForm2");
-			serializedData = $form.serialize();
-			$("btnUpdate").attr("disabled", "disabled");
+		disableEnableExperimentalFields(false);
+      	var $form = $("#addVariableForm, #addVariableForm2");
+		serializedData = $form.serialize();
+		$("btnUpdate").attr("disabled", "disabled");
 		Spinner.toggle();
 
 		$.ajax({
@@ -206,7 +210,16 @@
 			   Spinner.toggle();
 		   } 
 		});
-	}      
+	}
+	
+	function disableEnableExperimentalFields(isDisabled) {
+   		var cvTermIds = $("#trialInstancesTable").find(".cvTermIds");
+   		$.each(cvTermIds, function(i, elem) {
+   			if ($(elem).val() == 8135 || $(elem).val() == 77793 || $(elem).val() == 77795 || $(elem).val() == 77797) {
+   				$(elem).parent().children(".form-control").attr("disabled", isDisabled);
+   			}
+   		});
+	}
 	
 	//]]>
 </script>

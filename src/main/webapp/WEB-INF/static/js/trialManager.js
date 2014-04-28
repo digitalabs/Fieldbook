@@ -2669,8 +2669,22 @@ function editTreatmentFactors() {
 		addTreatmentFactorLevel(treatmentLevelCount);
 	} else if (treatmentLevelCount > $("#trialInstances").val()) {
 		removeTreatmentFactorLevel(treatmentLevelCount);
+		changeTreatmentFactorIdsClasses();
 	}
 	correctTreatmentBackground();
+}
+
+function changeTreatmentFactorIdsClasses() {
+	var reg = new RegExp("treatmentFactors[0-9]+", "g");
+	var reg2 = new RegExp("treatmentFactors\[[0-9]+\]", "g");
+	var reg3 = new RegExp("possibleValuesJsonTreatment", "g");
+	$.each($("#treatmentFactors tbody tr"), function (index, row){
+		row.innerHTML = row.innerHTML.replace(reg, "treatmentFactors" + index);
+		row.innerHTML = row.innerHTML.replace(reg2, "treatmentFactors[" + index + "]");
+		row.innerHTML = row.innerHTML.replace(reg3, "possibleValuesJsonTreatment" + index);
+		
+		//recreateMultipleObjects(i, $("#treatmentFactors tbody tr:last"));
+	});
 }
 
 function correctTreatmentBackground() {

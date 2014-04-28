@@ -216,7 +216,7 @@ public class CreateTrialController extends SettingsController {
         for (SettingDetail settingDetail : treatmentFactors) {
             if (index%2 == 0) {
                 newTreatmentFactors.add(new TreatmentFactorDetail(settingDetail.getVariable().getCvTermId(), 
-                        treatmentFactors.get(index+1).getVariable().getCvTermId(), settingDetail.getValue(), 
+                        treatmentFactors.get(index+1).getVariable().getCvTermId(), "1", 
                         treatmentFactors.get(index+1).getValue(), settingDetail.getVariable().getName(), 
                         treatmentFactors.get(index+1).getVariable().getName(), 
                         treatmentFactors.get(index+1).getVariable().getDataTypeId(),

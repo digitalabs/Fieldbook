@@ -2647,3 +2647,85 @@ function populateExperimentalDesign (value, text) {
 		});
 	});
 }
+
+function setTreatmentLevelValue(treatmentLevel) {
+	$("#treatmentLevelValue").spinedit('setValue', countTreatmentFactorsById($(treatmentLevel).val()));
+}
+
+function countTreatmentFactorsById(selectedTreatmentLevel) {
+	var treatmentCount = 0;
+	$.each($("#treatmentFactors tbody tr"), function(index, row) {
+		if ($($($(row).children("td").get(0)).children(".levelId")).val() == selectedTreatmentLevel) {
+			treatmentCount++;
+		}
+	});
+	return treatmentCount;
+}
+
+function editTreatmentFactors() {
+	//count total no. of levels for the selected treatement factor
+	var treatmentLevelCount = countTreatmentFactorsById($("#treatmentLevel").val());
+	if( treatmentLevelCount < $("#treatmentLevelValue").val()) {
+		addTreatmentFactorLevel(treatmentLevelCount);
+	} else if (treatmentLevelCount > $("#trialInstances").val()) {
+		removeTreatmentFactorLevel(treatmentLevelCount);
+	}
+	correctTreatmentBackground();
+}
+
+function correctTreatmentBackground() {
+	$.each($("#treatmentFactors tbody tr"), function (index, row){
+		if (index%2 == 0) {
+			$(row).children("td").removeClass("odd").removeClass("even").addClass("odd");
+		} else {
+			$(row).children("td").removeClass("odd").removeClass("even").addClass("even");
+		}
+	});
+}
+
+function addTreatmentFactorLevel(treatmentLevelCount) {
+	var reg = new RegExp("treatmentFactors[0-9]+", "g");
+	var reg2 = new RegExp("treatmentFactors\[[0-9]+\]", "g");
+	var reg3 = new RegExp("possibleValuesJsonTreatment", "g");
+	var lastIndexOfTreatment = getLastIndexOfTreatment($("#treatmentLevel").val());
+	var lastIndexOfTable = $("#treatmentFactors tbody tr").length;
+	var insertIndex = lastIndexOfTreatment;
+	var levelValue = treatmentLevelCount+1;
+
+	//lastIndexOfTreatment + 1 + newLevelValue - prevLevelValue 
+	for (var i = lastIndexOfTreatment+1; i < lastIndexOfTreatment+1+(parseInt($("#treatmentLevelValue").val())-treatmentLevelCount); i++) {
+		var cells = $("#treatmentFactors tbody tr").get(lastIndexOfTreatment).innerHTML.replace(reg, "treatmentFactors" + lastIndexOfTable);
+		cells = cells.replace(reg2, "treatmentFactors[" + lastIndexOfTable + "]");
+		cells = cells.replace(reg3, "possibleValuesJsonTreatment" + lastIndexOfTable);
+		newRow = "<tr>" + cells + "</tr>";
+		
+		//insert row after the last level of the selected treatment factor
+		$($("#treatmentFactors tbody tr").get(insertIndex)).after(newRow);
+		
+		//set the level
+		$($($("#treatmentFactors tbody tr").get(insertIndex+1)).children("td:nth-child(2)").children(".levelValue")).text(levelValue);
+		
+		levelValue++;
+		insertIndex++;
+		lastIndexOfTable++;
+		//recreateMultipleObjects(i, $("#treatmentFactors tbody tr:last")); 
+	}
+}
+
+function removeTreatmentFactorLevel(treatmentLevelCount) {
+	var lastIndexOfTreatment = getLastIndexOfTreatment($("#treatmentLevel").val());
+	for (var i = treatmentLevelCount; i > $("#treatmentLevelValue").val(); i--) {
+		$($("#treatmentFactors tbody tr").get(lastIndexOfTreatment)).remove();
+		lastIndexOfTreatment--;
+	}
+}
+
+function getLastIndexOfTreatment(selectedTreatmentLevel) {
+	var lastIndex = 0;
+	$.each($("#treatmentFactors tbody tr"), function(index, row) {
+		if ($($($(row).children("td").get(0)).children(".levelId")).val() == selectedTreatmentLevel) {
+			lastIndex = index;
+		}
+	});
+	return lastIndex;
+}

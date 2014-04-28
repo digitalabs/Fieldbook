@@ -18,6 +18,7 @@ import org.generationcp.middleware.domain.dms.ValueReference;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class CreateNurseryForm.
  */
@@ -41,78 +42,80 @@ public class CreateTrialForm {
 	/** The trial level variables. */
         private List<SettingDetail> trialLevelVariables;
         
+        /** The treatment factors. */
         private List<TreatmentFactorDetail> treatmentFactors;
         
-
-    /** The folder id. */
+        /** The folder id. */
 	private Integer folderId;
     
-    /** The folder name. */
-    private String folderName;
+        /** The folder name. */
+        private String folderName;
+        
+        /** The field layout random. */
+        private boolean fieldLayoutRandom = true;
     
-    /** The field layout random. */
-    private boolean fieldLayoutRandom = true;
-
-    /** The required fields. */
-    private String requiredFields;
+        /** The required fields. */
+        private String requiredFields;
+        
+        /** The location id. */
+        private String locationId;
+        
+        /** The breeding method id. */
+        private String breedingMethodId;
+        
+        /** The location url. */
+        private String locationUrl;
+        
+        /** The breeding method url. */
+        private String breedingMethodUrl;
+        
+        /** The import location url. */
+        private String importLocationUrl;
+        
+        /** The load settings. */
+        private String loadSettings;
+        
+        /** The study name term id. */
+        private String studyNameTermId;
+        
+        /** The start date id. */
+        private String startDateId;
+        
+        /** The end date id. */
+        private String endDateId;
+        
+        /** The trial instances. */
+        private int trialInstances;
+        
+        /** The trial environment values. */
+        private List<List<ValueReference>> trialEnvironmentValues;
+        
+        /** The trial instance factor. */
+        private String trialInstanceFactor;
+        
+        /** The replicates. */
+        private String replicates;
+        
+        /** The block size. */
+        private String blockSize;
+        
+        /** The experimental design. */
+        private String experimentalDesign;
+        
+        /** The experimental design for all. */
+        private String experimentalDesignForAll;
+        
+        /** The design layout. */
+        private String designLayout;
+        
+        /** The file. */
+        private String file;
     
-    /** The location id. */
-    private String locationId;
-    
-    /** The breeding method id. */
-    private String breedingMethodId;
-    
-    /** The location url. */
-    private String locationUrl;
-    
-    /** The breeding method url. */
-    private String breedingMethodUrl;
-    
-    /** The import location url. */
-    private String importLocationUrl;
-    
-    /** The load settings. */
-    private String loadSettings;
-    
-    /** The study name term id. */
-    private String studyNameTermId;
-    
-    /** The start date id. */
-    private String startDateId;
-    
-    /** The end date id. */
-    private String endDateId;
-    
-    /** The trial instances. */
-    private int trialInstances;
-    
-    /** The trial environment values. */
-    private List<List<ValueReference>> trialEnvironmentValues;
-    
-    /** The trial instance factor. */
-    private String trialInstanceFactor;
-    
-    /** The replicates. */
-    private String replicates;
-    
-    /** The block size. */
-    private String blockSize;
-    
-    /** The experimental design. */
-    private String experimentalDesign;
-    
-    /** The experimental design for all. */
-    private String experimentalDesignForAll;
-    
-    private String designLayout;
-    
-    private String file;
-    
-    /**
-     * Gets the project id.
-     *
-     * @return the projectId
-     */
+        /**
+         * Gets the project id.
+         *
+         * @return the projectId
+         */
 	public String getProjectId() {
 		return projectId;
 	}
@@ -579,6 +582,8 @@ public class CreateTrialForm {
         }
 
         /**
+         * Gets the file.
+         *
          * @return the file
          */
         public String getFile() {
@@ -586,21 +591,35 @@ public class CreateTrialForm {
         }
 
         /**
+         * Sets the file.
+         *
          * @param file the file to set
          */
         public void setFile(String file) {
             this.file = file;
         }
 
+		/**
+		 * Gets the design layout.
+		 *
+		 * @return the design layout
+		 */
 		public String getDesignLayout() {
 			return designLayout;
 		}
 
+		/**
+		 * Sets the design layout.
+		 *
+		 * @param designLayout the new design layout
+		 */
 		public void setDesignLayout(String designLayout) {
 			this.designLayout = designLayout;
 		}
 
         /**
+         * Gets the treatment factors.
+         *
          * @return the treatmentFactors
          */
         public List<TreatmentFactorDetail> getTreatmentFactors() {
@@ -608,6 +627,8 @@ public class CreateTrialForm {
         }
 
         /**
+         * Sets the treatment factors.
+         *
          * @param treatmentFactors the treatmentFactors to set
          */
         public void setTreatmentFactors(List<TreatmentFactorDetail> treatmentFactors) {

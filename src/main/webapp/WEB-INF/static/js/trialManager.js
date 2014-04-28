@@ -705,7 +705,7 @@ function addVariableToList() {
 		$("#page-message-modal").html("");
 		
 		if (tableListName == '#newTreatmentList'){
-			$('#newTreatmentList select').select2({ width: 'resolve' });
+			$('#newTreatmentList select').select2({ width: '120' });
 		}
 		
 	} else {

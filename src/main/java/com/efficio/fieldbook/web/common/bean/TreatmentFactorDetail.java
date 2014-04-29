@@ -17,25 +17,70 @@ import org.generationcp.middleware.domain.oms.TermId;
 
 import com.efficio.fieldbook.web.nursery.bean.WidgetType;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class TreatmentFactorDetail.
+ */
 public class TreatmentFactorDetail implements Serializable {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
+	
+	/** The level id. */
 	private Integer levelId;
+	
+	/** The amount id. */
 	private Integer amountId;
+	
+	/** The level value. */
 	private String levelValue;
+	
+	/** The amount value. */
 	private String amountValue;
+	
+	/** The level name. */
 	private String levelName;
+	
+	/** The amount name. */
 	private String amountName;
+	
+	/** The amount data type id. */
 	private Integer amountDataTypeId;
+	
+	/** The possible values json. */
 	private String possibleValuesJson;
+	
+	/** The widget type. */
 	private WidgetType widgetType; 
+	
+	/** The min range. */
+	private Double minRange;
+	
+	/** The max range. */
+	private Double maxRange;
 
+	/**
+	 * Instantiates a new treatment factor detail.
+	 */
 	public TreatmentFactorDetail(){
 		super();
 	}
 
+	/**
+	 * Instantiates a new treatment factor detail.
+	 *
+	 * @param levelId the level id
+	 * @param amountId the amount id
+	 * @param levelValue the level value
+	 * @param amountValue the amount value
+	 * @param levelName the level name
+	 * @param amountName the amount name
+	 * @param amountDataTypeId the amount data type id
+	 * @param possibleValuesJson the possible values json
+	 */
 	public TreatmentFactorDetail(Integer levelId, Integer amountId, String levelValue, 
-	        String amountValue, String levelName, String amountName, Integer amountDataTypeId, String possibleValuesJson) {
+	        String amountValue, String levelName, String amountName, Integer amountDataTypeId, String possibleValuesJson,
+	        Double minRange, Double maxRange) {
 		super();
 		this.setLevelId(levelId);
 		this.setAmountId(amountId);
@@ -45,11 +90,15 @@ public class TreatmentFactorDetail implements Serializable {
 		this.amountName = amountName;
 		this.amountDataTypeId = amountDataTypeId;
 		this.possibleValuesJson = possibleValuesJson;
+		this.minRange = minRange;
+		this.maxRange = maxRange;
 		setWidgetType();
 	}
 
     
         /**
+         * Gets the amount value.
+         *
          * @return the amountValue
          */
         public String getAmountValue() {
@@ -57,6 +106,8 @@ public class TreatmentFactorDetail implements Serializable {
         }
     
         /**
+         * Sets the amount value.
+         *
          * @param amountValue the amountValue to set
          */
         public void setAmountValue(String amountValue) {
@@ -64,6 +115,8 @@ public class TreatmentFactorDetail implements Serializable {
         }
     
         /**
+         * Gets the level name.
+         *
          * @return the levelName
          */
         public String getLevelName() {
@@ -71,6 +124,8 @@ public class TreatmentFactorDetail implements Serializable {
         }
     
         /**
+         * Sets the level name.
+         *
          * @param levelName the levelName to set
          */
         public void setLevelName(String levelName) {
@@ -78,6 +133,8 @@ public class TreatmentFactorDetail implements Serializable {
         }
     
         /**
+         * Gets the amount name.
+         *
          * @return the amountName
          */
         public String getAmountName() {
@@ -85,6 +142,8 @@ public class TreatmentFactorDetail implements Serializable {
         }
     
         /**
+         * Sets the amount name.
+         *
          * @param amountName the amountName to set
          */
         public void setAmountName(String amountName) {
@@ -92,6 +151,8 @@ public class TreatmentFactorDetail implements Serializable {
         }
 
         /**
+         * Gets the level id.
+         *
          * @return the levelId
          */
         public Integer getLevelId() {
@@ -99,6 +160,8 @@ public class TreatmentFactorDetail implements Serializable {
         }
 
         /**
+         * Sets the level id.
+         *
          * @param levelId the levelId to set
          */
         public void setLevelId(Integer levelId) {
@@ -106,6 +169,8 @@ public class TreatmentFactorDetail implements Serializable {
         }
 
         /**
+         * Gets the amount id.
+         *
          * @return the amountId
          */
         public Integer getAmountId() {
@@ -113,6 +178,8 @@ public class TreatmentFactorDetail implements Serializable {
         }
 
         /**
+         * Sets the amount id.
+         *
          * @param amountId the amountId to set
          */
         public void setAmountId(Integer amountId) {
@@ -120,6 +187,8 @@ public class TreatmentFactorDetail implements Serializable {
         }
 
         /**
+         * Gets the level value.
+         *
          * @return the levelValue
          */
         public String getLevelValue() {
@@ -127,6 +196,8 @@ public class TreatmentFactorDetail implements Serializable {
         }
 
         /**
+         * Sets the level value.
+         *
          * @param levelValue the levelValue to set
          */
         public void setLevelValue(String levelValue) {
@@ -134,6 +205,8 @@ public class TreatmentFactorDetail implements Serializable {
         }
 
         /**
+         * Gets the widget type.
+         *
          * @return the widgetType
          */
         public WidgetType getWidgetType() {
@@ -141,6 +214,9 @@ public class TreatmentFactorDetail implements Serializable {
                     if (amountDataTypeId.equals(TermId.DATE_VARIABLE.getId())) {
                             this.widgetType = WidgetType.DATE;
                     }
+                    //else if (minRange != null && maxRange != null) {
+                     //   this.widgetType = WidgetType.SLIDER;
+                    //}
                     else if (amountDataTypeId.equals(TermId.CATEGORICAL_VARIABLE.getId())) {
                             this.widgetType = WidgetType.DROPDOWN;
                     }
@@ -157,12 +233,15 @@ public class TreatmentFactorDetail implements Serializable {
         }
 
         /**
-         * @param widgetType the widgetType to set
+         * Sets the widget type.
+         *
          */
         public void setWidgetType() {
         }
 
         /**
+         * Gets the amount data type id.
+         *
          * @return the amountDataTypeId
          */
         public Integer getAmountDataTypeId() {
@@ -170,6 +249,8 @@ public class TreatmentFactorDetail implements Serializable {
         }
 
         /**
+         * Sets the amount data type id.
+         *
          * @param amountDataTypeId the amountDataTypeId to set
          */
         public void setAmountDataTypeId(Integer amountDataTypeId) {
@@ -177,6 +258,8 @@ public class TreatmentFactorDetail implements Serializable {
         }
 
         /**
+         * Gets the possible values json.
+         *
          * @return the possibleValuesJson
          */
         public String getPossibleValuesJson() {
@@ -184,10 +267,47 @@ public class TreatmentFactorDetail implements Serializable {
         }
 
         /**
+         * Sets the possible values json.
+         *
          * @param possibleValuesJson the possibleValuesJson to set
          */
         public void setPossibleValuesJson(String possibleValuesJson) {
             this.possibleValuesJson = possibleValuesJson;
         }
 	
+        /**
+         * Gets the min range.
+         *
+         * @return the min range
+         */
+        public Double getMinRange() {
+            return minRange;
+        }
+        
+        /**
+         * Sets the min range.
+         *
+         * @param minRange the new min range
+         */
+        public void setMinRange(Double minRange) {
+            this.minRange = minRange;
+        }
+        
+        /**
+         * Gets the max range.
+         *
+         * @return the max range
+         */
+        public Double getMaxRange() {
+            return maxRange;
+        }
+        
+        /**
+         * Sets the max range.
+         *
+         * @param maxRange the new max range
+         */
+        public void setMaxRange(Double maxRange) {
+            this.maxRange = maxRange;
+        }
 }

@@ -220,7 +220,9 @@ public class CreateTrialController extends SettingsController {
                         treatmentFactors.get(index+1).getValue(), settingDetail.getVariable().getName(), 
                         treatmentFactors.get(index+1).getVariable().getName(), 
                         treatmentFactors.get(index+1).getVariable().getDataTypeId(),
-                        treatmentFactors.get(index+1).getPossibleValuesJson()));
+                        treatmentFactors.get(index+1).getPossibleValuesJson(), 
+                        treatmentFactors.get(index+1).getVariable().getMinRange(), 
+                        treatmentFactors.get(index+1).getVariable().getMaxRange()));
                 index++;
             } else {
                 index++;

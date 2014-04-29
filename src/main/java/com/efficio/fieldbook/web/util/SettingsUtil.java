@@ -231,7 +231,7 @@ public class SettingsUtil {
 			
 			Condition condition = new Condition(variable.getName(), variable.getDescription(), variable.getProperty(),
 					variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
-					settingDetail.getValue(), variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
+					HtmlUtils.htmlEscape(settingDetail.getValue()), variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
 			conditions.add(condition);
 		}
 		//iterate for the plot level
@@ -444,7 +444,7 @@ public class SettingsUtil {
         					variable.setCvTermId(stdVar);										
         					List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
         					SettingDetail settingDetail = new SettingDetail(variable,
-        							possibleValues, condition.getValue(), isSettingVariableDeletable(stdVar, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()));
+        							possibleValues, HtmlUtils.htmlUnescape(condition.getValue()), isSettingVariableDeletable(stdVar, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()));
         					
         					settingDetail.setPossibleValuesToJson(possibleValues);
         					List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, projectId);
@@ -541,7 +541,7 @@ public class SettingsUtil {
         					variable.setCvTermId(stdVar);										
         					List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
         					SettingDetail settingDetail = new SettingDetail(variable,
-        							possibleValues, condition.getValue(), isSettingVariableDeletable(stdVar, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()));
+        							possibleValues, HtmlUtils.htmlUnescape(condition.getValue()), isSettingVariableDeletable(stdVar, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()));
         					
         					settingDetail.setPossibleValuesToJson(possibleValues);
         					List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, projectId);

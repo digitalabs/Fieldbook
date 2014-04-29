@@ -15,6 +15,7 @@ import java.io.Serializable;
 
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.springframework.web.util.HtmlUtils;
 
 import com.efficio.fieldbook.web.nursery.bean.WidgetType;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -144,11 +145,11 @@ public class SettingVariable implements Serializable{
 	
 	public void setPSMRFromStandardVariable(StandardVariable standardVariable){
 		if(standardVariable != null){
-			this.property = standardVariable.getProperty().getName();
-			this.scale = standardVariable.getScale().getName();
-			this.method = standardVariable.getMethod().getName();
-			this.role = standardVariable.getPhenotypicType().name();
-			this.description = standardVariable.getDescription();
+			this.property = HtmlUtils.htmlEscape(standardVariable.getProperty().getName());
+			this.scale = HtmlUtils.htmlEscape(standardVariable.getScale().getName());
+			this.method = HtmlUtils.htmlEscape(standardVariable.getMethod().getName());
+			this.role = HtmlUtils.htmlEscape(standardVariable.getPhenotypicType().name());
+			this.description = HtmlUtils.htmlEscape(standardVariable.getDescription());
 			this.dataType = getDataType(standardVariable.getDataType().getId());
 			this.dataTypeId = standardVariable.getDataType().getId();
 			this.minRange = standardVariable.getConstraints() != null && standardVariable.getConstraints().getMinValue() != null
@@ -156,6 +157,7 @@ public class SettingVariable implements Serializable{
 			this.maxRange = standardVariable.getConstraints() != null && standardVariable.getConstraints().getMaxValue() != null
 					? standardVariable.getConstraints().getMaxValue() : null;
 			setWidgetType();
+			
 		}
 	}
 

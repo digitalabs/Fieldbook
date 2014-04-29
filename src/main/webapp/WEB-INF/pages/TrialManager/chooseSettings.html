@@ -246,12 +246,12 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 				    				</label>
 				    			</div>
 			    			</div>
-			    			<div class="row form-group collapse in treatmentFactorsDetails">
+			    			<div class="row form-group collapse treatmentFactorsDetails">
 			    				<div class="col-xs-12 col-md-12">
 					    			<label class="control-label" th:text="#{trial.managesettings.treatment.factors.notes}"> Choose the treatment factors that will be applied in the trial.  These will appear as data columns in your study book.  You can add and remove settings at this level.</label>
 				    			</div>
 			    			</div>
-			    			<div class="row form-group collapse in treatmentFactorsDetails">
+			    			<div class="row form-group collapse treatmentFactorsDetails">
 		    					<div class="col-xs-4 col-md-4">
 			    					<select id="treatmentLevel" class="form-control" onchange="setTreatmentLevelValue(this)">
 				    						<option th:each="treatmentFactorLevel : *{treatmentFactors}" th:value="${treatmentFactorLevel.levelId}" th:text="${treatmentFactorLevel.levelName}"></option>
@@ -262,7 +262,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 				    			</div>
 				    			<div class="col-xs-4 col-md-4">&nbsp;</div>
 		    				</div>
-		    				<div class="row form-group collapse in treatmentFactorsDetails">
+		    				<div class="row form-group collapse treatmentFactorsDetails">
 		    					<div class="col-xs-12 col-md-12">
 			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed" id="treatmentFactors">
 			    						<thead>
@@ -290,7 +290,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 						    						<input th:if="${treatmentFactor.widgetType.type == 'DROPDOWN'}" 
 														type="hidden" th:field="*{treatmentFactors[__${rowStat.index}__].amountValue}" class="form-control select2" />
 													<div th:if="${treatmentFactor.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesJsonTreatment' + ${rowStat.index}"
-														class="possibleValuesJson" style="display:none" th:text="${treatmentFactor.possibleValuesJson}">
+														class="possibleValuesJsonTreatment" style="display:none" th:text="${treatmentFactor.possibleValuesJson}">
 													</div>	
 													<input th:if="${treatmentFactor.widgetType.type == 'NTEXT'}" 
 													type="text" th:field="*{treatmentFactors[__${rowStat.index}__].amountValue}" class="form-control numeric-input" />
@@ -300,6 +300,14 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 													
 													<input th:if="${treatmentFactor.widgetType.type == 'DATE'}" 
 													type="text" th:field="*{treatmentFactors[__${rowStat.index}__].amountValue}" class="form-control date-input" />
+													
+													<input th:if="${treatmentFactor.widgetType.type == 'SLIDER'}" 
+													type="text" th:field="*{treatmentFactors[__${rowStat.index}__].amountValue}"
+													th:attr="data-min=${treatmentFactor.minRange}"
+													th:attrappend="data-max=${treatmentFactor.maxRange}"
+													class="form-control spinner-input spinnerElement"
+													data-step="0.0001" 										 
+													/>
 						    					</td>
 						    					<td width="5%" th:class="${rowStat.even}? 'even' : 'odd'" >
 						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
@@ -459,13 +467,17 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 		//initialize dropdowns in trial level details
 		$.each($(".possibleValuesJson"), function (index, divElem) {
 				var select2Index = $(divElem).attr("id").split("possibleValuesJson")[1]; 
-
+				var possibleValues = [];
+				if (divElem.innerHTML != "") {
+					possibleValues = $.parseJSON(divElem.innerHTML);
+				}
+				
 				if (parseInt($("#" + getJquerySafeId("studyLevelVariables"+select2Index+".variable.cvTermId")).val()) == parseInt(locationId)) {
-					initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 
+					initializePossibleValuesCombo(possibleValues, 
 	 			 			"#" + getJquerySafeId("studyLevelVariables"+select2Index+".value"), true, $(divElem).siblings(".div-select-val").html());
 					
 				} else {
-					initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 
+					initializePossibleValuesCombo(possibleValues, 
 	 			 			"#" + getJquerySafeId("studyLevelVariables"+select2Index+".value"), false, $(divElem).siblings(".div-select-val").html());
 					
 				}
@@ -475,19 +487,34 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 		//initialize dropdowns in trial environment details
 		$.each($(".possibleValuesJsonTrial"), function(index, divElem) {
 			var select2Index = $(divElem).attr("id").split("possibleValuesJsonTrial")[1].split("a");
-			
+			var possibleValues = [];
+			if (divElem.innerHTML != "") {
+				possibleValues = $.parseJSON(divElem.innerHTML);
+			}
 			
 			if (parseInt($("#" + getJquerySafeId("trialEnvironmentValues"+select2Index[0]+select2Index[1]+".id")).val()) == parseInt(locationId)) {
-				initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 
+				initializePossibleValuesCombo(possibleValues, 
  			 			"#" + getJquerySafeId("trialEnvironmentValues"+select2Index[0]+select2Index[1]+".name"), true, $(divElem).siblings(".div-select-val").html());
 				
 			} else {
-				initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 
+				initializePossibleValuesCombo(possibleValues, 
  			 			"#" + getJquerySafeId("trialEnvironmentValues"+select2Index[0]+select2Index[1]+".name"), false, $(divElem).siblings(".div-select-val").html());
 				
 			}
 		});
 		
+		//initialize dropdowns in treatment factors details
+		$.each($(".possibleValuesJsonTreatment"), function(index, divElem) {
+			var possibleValues = [];
+			var select2Index = $(divElem).attr("id").split("possibleValuesJsonTreatment")[1];
+			if (divElem.innerHTML != "") {
+				possibleValues = $.parseJSON(divElem.innerHTML);
+			}
+			initializePossibleValuesCombo(possibleValues, 
+		 		"#" + getJquerySafeId("treatmentFactors"+select2Index+".amountValue"), false, null);
+			
+		});
+
 		setTimeout('initializeDateAndSliderInputs()', 500);
 	    addCreateTrialRequiredAsterisk();
 	    $('select').each(function(){

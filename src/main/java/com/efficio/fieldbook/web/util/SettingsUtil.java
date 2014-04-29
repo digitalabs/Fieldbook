@@ -38,6 +38,7 @@ import org.pojoxml.core.PojoXml;
 import org.pojoxml.core.PojoXmlFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.util.HtmlUtils;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
@@ -146,6 +147,7 @@ public class SettingsUtil {
 		pojoXml.addCollectionClass("factor",Factor.class);
 		pojoXml.addCollectionClass("variate",Variate.class);
 		pojoXml.addCollectionClass("treatmentFactor", TreatmentFactor.class);
+		pojoXml.enableCDATA(true);
 	}
 	
 	/**
@@ -223,7 +225,7 @@ public class SettingsUtil {
 			
 			Condition condition = new Condition(variable.getName(), variable.getDescription(), variable.getProperty(),
 					variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
-					settingDetail.getValue(), variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
+					HtmlUtils.htmlEscape(settingDetail.getValue()), variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
 			conditions.add(condition);
 		}
 		//iterate for the plot level
@@ -444,13 +446,14 @@ public class SettingsUtil {
 					SettingVariable variable = new SettingVariable(condition.getName(), condition.getDescription(), condition.getProperty(),
 							condition.getScale(), condition.getMethod(), condition.getRole(), condition.getDatatype(), condition.getDataTypeId(),
 							condition.getMinRange(), condition.getMaxRange());
-					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
+					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), 
+							HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
 					
 					if (!inHideVariableFields(stdVar, AppConstants.HIDE_NURSERY_FIELDS.getString())) {
         					variable.setCvTermId(stdVar);										
         					List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
         					SettingDetail settingDetail = new SettingDetail(variable,
-        							possibleValues, condition.getValue(), isSettingVariableDeletable(stdVar, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()));
+        							possibleValues, HtmlUtils.htmlUnescape(condition.getValue()), isSettingVariableDeletable(stdVar, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()));
         					
         					settingDetail.setPossibleValuesToJson(possibleValues);
         					List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, projectId);
@@ -470,7 +473,7 @@ public class SettingsUtil {
 					
 					SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(),
 							factor.getScale(), factor.getMethod(), factor.getRole(), factor.getDatatype());
-					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
+					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
 					
 					if (!inHideVariableFields(stdVar, AppConstants.HIDE_PLOT_FIELDS.getString())) {
         					variable.setCvTermId(stdVar);
@@ -493,7 +496,7 @@ public class SettingsUtil {
 					
 					SettingVariable variable = new SettingVariable(variate.getName(), variate.getDescription(), variate.getProperty(),
 							variate.getScale(), variate.getMethod(), variate.getRole(), variate.getDatatype());
-					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
+					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
 					variable.setCvTermId(stdVar);
 					SettingDetail settingDetail = new SettingDetail(variable,
 							null, null, true);
@@ -540,13 +543,14 @@ public class SettingsUtil {
 					SettingVariable variable = new SettingVariable(condition.getName(), condition.getDescription(), condition.getProperty(),
 							condition.getScale(), condition.getMethod(), condition.getRole(), condition.getDatatype(), condition.getDataTypeId(),
 							condition.getMinRange(), condition.getMaxRange());
-					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
+					//Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
+					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
 					
 					if (!inHideVariableFields(stdVar, AppConstants.HIDE_NURSERY_FIELDS.getString())) {
         					variable.setCvTermId(stdVar);										
         					List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
         					SettingDetail settingDetail = new SettingDetail(variable,
-        							possibleValues, condition.getValue(), isSettingVariableDeletable(stdVar, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()));
+        							possibleValues, HtmlUtils.htmlUnescape(condition.getValue()), isSettingVariableDeletable(stdVar, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()));
         					
         					settingDetail.setPossibleValuesToJson(possibleValues);
         					List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, projectId);
@@ -566,8 +570,8 @@ public class SettingsUtil {
 					
 					SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(),
 							factor.getScale(), factor.getMethod(), factor.getRole(), factor.getDatatype());
-					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
-					
+					//Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
+					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
 					if (!inHideVariableFields(stdVar, AppConstants.HIDE_PLOT_FIELDS.getString())) {
         					variable.setCvTermId(stdVar);
         					SettingDetail settingDetail = new SettingDetail(variable,
@@ -589,7 +593,8 @@ public class SettingsUtil {
 					
 					SettingVariable variable = new SettingVariable(variate.getName(), variate.getDescription(), variate.getProperty(),
 							variate.getScale(), variate.getMethod(), variate.getRole(), variate.getDatatype());
-					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
+					//Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
+					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
 					variable.setCvTermId(stdVar);
 					SettingDetail settingDetail = new SettingDetail(variable,
 							null, null, true);
@@ -613,8 +618,8 @@ public class SettingsUtil {
 					*/
 					SettingVariable variable = new SettingVariable(variableName, factor.getDescription(), factor.getProperty(),
 							factor.getScale(), factor.getMethod(), factor.getRole(), factor.getDatatype());
-					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
-					
+					//Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
+					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
 					if (!inHideVariableFields(stdVar, AppConstants.HIDE_TRIAL_ENVIRONMENT_FIELDS.getString())) {
 	    					variable.setCvTermId(stdVar);
 	    					
@@ -1096,6 +1101,7 @@ public class SettingsUtil {
 		variable.setCvTermId(standardVariable.getId());
 		List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, standardVariable.getId());
 		SettingDetail settingDetail = new SettingDetail(variable, possibleValues, null, true);
+		settingDetail.setPossibleValuesToJson(possibleValues);
 		settingDetail.setGroup(group);
 		settingDetail.setDeletable(true);
 		

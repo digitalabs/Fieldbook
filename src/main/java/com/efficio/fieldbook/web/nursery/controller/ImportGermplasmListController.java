@@ -311,7 +311,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             List<Enumeration> checksList = ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
             String checkId =  null;
             for(Enumeration enumVar : checksList){
-            	if(enumVar.getName().equalsIgnoreCase("CHECK")){
+            	if(enumVar.getName().equalsIgnoreCase("C")){
             		checkId = enumVar.getId().toString();
             		break;
             	}

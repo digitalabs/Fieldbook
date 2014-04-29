@@ -1777,8 +1777,11 @@ function validateCreateNursery() {
 	}
 	
 	if (isGidInCheckList(getGid($("#startIndex2").val())) > 0) {
-		showErrorMessage('page-message', startingEntryErr);
-		return false;
+		if(lastDraggedChecksList == 0){
+			showErrorMessage('page-message', startingEntryErr);
+			return false;	
+		}
+		
 	}
 	
 	if ($("#startIndex2").val() <= 0) {

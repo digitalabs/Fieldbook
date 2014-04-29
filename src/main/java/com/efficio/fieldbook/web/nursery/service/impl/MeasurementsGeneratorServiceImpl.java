@@ -13,8 +13,11 @@ package com.efficio.fieldbook.web.nursery.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -24,7 +27,7 @@ import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
-import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -48,70 +51,12 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 	/** The fieldbook middleware service. */
 	@Resource
     private FieldbookService fieldbookMiddlewareService;
-	
-	//TODO: currently used for generating test data.. 
-	//but in the future can be used to call a Middleware service that will 
-	//generate the measurements row
-	/* (non-Javadoc)
-	 * @see com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService#generateMeasurementRows(com.efficio.fieldbook.web.nursery.bean.UserSelection)
-	 */
-	public List<MeasurementRow> generateMeasurementRows(UserSelection userSelection) {
-		Workbook workbook = userSelection.getWorkbook();
-		List<MeasurementRow> rows = new ArrayList<MeasurementRow>();
-		List<ImportedGermplasm> germplasms = null;
-		if (userSelection.getImportedGermplasmMainInfo() != null
-				&& userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList() != null
-				&& userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms() != null 
-				&& userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().size() > 0) {
-			germplasms = userSelection.getImportedGermplasmMainInfo()
-			        .getImportedGermplasmList().getImportedGermplasms();
-		}
-				
-		int count = germplasms != null ? germplasms.size() : 20;
-		for (int i = 0; i < count; i++) {
-			MeasurementRow row = new MeasurementRow();
-			List<MeasurementData> rowCells = new ArrayList<MeasurementData>();
-			row.setDataList(rowCells);
-			
-			if (workbook.getFactors() != null && workbook.getFactors().size() > 0) {
-				for (MeasurementVariable factor : workbook.getFactors()) {
-					if (germplasms != null) {
-						if (factor.getName().equals("DESIG")) {
-							rowCells.add(new MeasurementData(factor.getName(), germplasms.get(i).getDesig()));
-						} else if (factor.getName().equals("GID")) {
-							rowCells.add(new MeasurementData(factor.getName(), germplasms.get(i).getGid()));
-						} else if (factor.getName().equals("SOURCE")) {
-							rowCells.add(new MeasurementData(factor.getName(), germplasms.get(i).getSource()));
-						} else if (factor.getName().equals("CROSS")) {
-							rowCells.add(new MeasurementData(factor.getName(), germplasms.get(i).getCross()));
-						} else if (factor.getName().startsWith("ENTRY")) {
-							rowCells.add(new MeasurementData(factor.getName(), germplasms.get(i).getEntryId().toString()));
-						} else if (factor.getName().startsWith("CHECK")) {
-							rowCells.add(new MeasurementData(factor.getName(), germplasms.get(i).getEntryCode()));
-						} else {
-							rowCells.add(new MeasurementData(factor.getName(), String.valueOf(i)));
-						}
-					} else {
-						rowCells.add(new MeasurementData(factor.getName(), String.valueOf(i)));
-					}
-				}
-			}
-			
-			if (workbook.getVariates() != null && workbook.getVariates().size() > 0) {
-				for (MeasurementVariable variate : workbook.getVariates()) {
-					rowCells.add(new MeasurementData(variate.getName(), String.valueOf(i)));
-				}
-			}
-			rows.add(row);
-		}
-		
-		return rows;
-	}
-	
+
 	
 	/* (non-Javadoc)
 	 * @see com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService#generateRealMeasurementRows(com.efficio.fieldbook.web.nursery.bean.UserSelection)
 	 */
+	@Override
 	public List<MeasurementRow> generateRealMeasurementRows(UserSelection userSelection) throws MiddlewareQueryException {
 		long start = System.currentTimeMillis();
     	List<MeasurementRow> measurementRows = new ArrayList<MeasurementRow>();
@@ -120,6 +65,9 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
     	int entryNo, plotNo;
     	
     	List<ExperimentalDesignInfo> designInfos = getExperimentalDesignInfo(userSelection.getTrialEnvironmentValues());
+    	
+    	MeasurementData[][] treatmentFactorPermutations = generateTreatmentFactorPermutations(userSelection.getWorkbook().getTreatmentFactors(), standardVariableMap);
+    	
     	for (ExperimentalDesignInfo designInfo : designInfos) {
     		
     		int trialNo = designInfo.getTrialNumber();
@@ -129,12 +77,12 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
     			
     			entryNo = 1;
     			for (int blockNo = 1; blockNo <= designInfo.getBlocksPerRep(); blockNo++) {
-    	
+    				
 			    	for(ImportedGermplasm germplasm : userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms()){
-
-			    		MeasurementRow measurementRow = createMeasurementRow(userSelection, trialNo, repNo, blockNo, 
-			    				germplasm, entryNo++, plotNo++, standardVariableMap);
-			    		measurementRows.add(measurementRow);
+			    		
+			    		List<MeasurementRow> measurementRow = createMeasurementRows(userSelection, trialNo, repNo, blockNo, 
+			    				germplasm, entryNo++, plotNo++, standardVariableMap, treatmentFactorPermutations);
+			    		measurementRows.addAll(measurementRow);
 			    	}
     			}
     		}
@@ -143,124 +91,128 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
     	return measurementRows;
 	}
 	
-	private MeasurementRow createMeasurementRow(UserSelection userSelection, int trialNo, int repNo, int blockNo, 
+	private List<MeasurementRow> createMeasurementRows(UserSelection userSelection, int trialNo, int repNo, int blockNo, 
+			ImportedGermplasm germplasm, int entryNo, int plotNo, Map<String, Integer> standardVariableMap,
+			MeasurementData[][] treatmentFactorPermutations)
+	throws MiddlewareQueryException {
+		
+		List<MeasurementRow> measurementRows = new ArrayList<MeasurementRow>();
+		
+		int count = 1;
+		if (treatmentFactorPermutations != null && treatmentFactorPermutations.length > 0) {
+			count = treatmentFactorPermutations.length;
+		}
+		
+		for (int i = 0; i < count; i++) {
+			
+			MeasurementRow measurementRow = new MeasurementRow();
+			List<MeasurementData> dataList = new ArrayList<MeasurementData>();
+			
+	    	if (userSelection.isTrial()) {
+	    		createTrialInstanceDataList(dataList, userSelection, trialNo);
+	    	}
+	    	
+	    	createFactorDataList(dataList, userSelection, repNo, blockNo, germplasm, entryNo, plotNo, standardVariableMap);
+	    	
+	    	if (treatmentFactorPermutations != null && treatmentFactorPermutations.length > 0) {
+	    		for (MeasurementData treatmentFactor : treatmentFactorPermutations[i]) {
+	    			dataList.add(treatmentFactor);
+	    		}
+	    	}
+	    	
+	    	createVariateDataList(dataList, userSelection);
+    	
+	    	measurementRow.setDataList(dataList);
+	    	measurementRows.add(measurementRow);
+		}
+		
+		return measurementRows;
+	}
+	
+	private void createTrialInstanceDataList(List<MeasurementData> dataList, UserSelection userSelection, int trialNo) {
+		MeasurementVariable trialInstanceVar = 
+				WorkbookUtil.getMeasurementVariable(userSelection.getWorkbook().getTrialVariables(), TermId.TRIAL_INSTANCE_FACTOR.getId());
+		MeasurementData measurementData = new MeasurementData(trialInstanceVar.getName(), Integer.toString(trialNo), false, 
+				trialInstanceVar.getDataType(), trialInstanceVar);
+		dataList.add(measurementData);
+	}
+	
+	private void createFactorDataList(List<MeasurementData> dataList, UserSelection userSelection, int repNo, int blockNo, 
 			ImportedGermplasm germplasm, int entryNo, int plotNo, Map<String, Integer> standardVariableMap)
 	throws MiddlewareQueryException {
 		
-		MeasurementRow measurementRow = new MeasurementRow();
-		List<MeasurementData> dataList = new ArrayList<MeasurementData>();
-		
-    	if (userSelection.isTrial()) {
-    		MeasurementVariable trialInstanceVar = 
-    				WorkbookUtil.getMeasurementVariable(userSelection.getWorkbook().getTrialVariables(), TermId.TRIAL_INSTANCE_FACTOR.getId());
-			MeasurementData measurementData = new MeasurementData(trialInstanceVar.getName(), Integer.toString(trialNo), false, 
-					trialInstanceVar.getDataType(), trialInstanceVar);
-			dataList.add(measurementData);
-    	}
-    	
-		//for(MeasurementVariable var : userSelection.getWorkbook().getMeasurementDatasetVariables()){
-		//iterate the non trial factors
-		for(MeasurementVariable var : userSelection.getWorkbook().getNonTrialFactors()){    			    			
-			MeasurementData measurementData =null;
+		for(MeasurementVariable var : userSelection.getWorkbook().getNonTrialFactors()){
 			
-			
-			Integer termId = null;//fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(var.getProperty(), var.getScale(), var.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(var.getLabel()));
-			String key = var.getProperty() + ":" + var.getScale() + ":" + var.getMethod() + ":" + PhenotypicType.getPhenotypicTypeForLabel(var.getLabel());
-			if(standardVariableMap.get(key) == null){
-				termId = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(var.getProperty(), var.getScale(), var.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(var.getLabel()));
-				standardVariableMap.put(key, termId);
-			}else{
-				termId = (Integer)standardVariableMap.get(key);
-						
-			}
-			
-			var.setFactor(true);    
-			
-			if(termId == null){
-				//we default if null, but should not happen
-				measurementData = new MeasurementData(var.getName(), "", true, var.getDataType(), var);
-            	var.setFactor(false);
-            	measurementData.setEditable(true);
-			}else{
+			//do not include treatment factors
+			if (var.getTreatmentLabel() == null || "".equals(var.getTreatmentLabel())) {
+				MeasurementData measurementData =null;
 				
-    			
-    				if(termId.intValue() == TermId.ENTRY_NO.getId())
-    					measurementData = new MeasurementData(var.getName(), Integer.toString(entryNo), false, var.getDataType(), var);
-    				else if(termId.intValue() == TermId.SOURCE.getId())
-    					measurementData = new MeasurementData(var.getName(), "", false, var.getDataType(), var);
-    				else if(termId.intValue() == TermId.CROSS.getId())	
-    					measurementData = new MeasurementData(var.getName(), germplasm.getCross(), false, var.getDataType(), var);
-    				else if(termId.intValue() == TermId.DESIG.getId())	
-    					measurementData = new MeasurementData(var.getName(), germplasm.getDesig(), false, var.getDataType(), var);
-    					//measurementData = new MeasurementData(var.getName(), " sdasd a", false, var.getDataType());
-    				else if(termId.intValue() == TermId.GID.getId()){	    					
-    					//we need to check first if the germplasm is existing or not
-    					/*
-                    	Integer dbGid = fieldbookMiddlewareService.getGermplasmIdByName(germplasm.getDesig());
-                    	Integer gidToBeUse = null;
-                    	if(dbGid == null){
-                    		
-                    		gidToBeUse = Integer.valueOf(newGid);
-                    		newGid--;
-                    	}else{
-                    		gidToBeUse = dbGid;
-                    	}
-                    	
-                    	
-                    	measurementData = new MeasurementData(var.getName(), gidToBeUse.toString(), false, var.getDataType());
-                    	*/
-    					measurementData = new MeasurementData(var.getName(), germplasm.getGid(), false, var.getDataType(), var);
-    				}else if(termId.intValue() == TermId.ENTRY_CODE.getId())	    					
-    					measurementData = new MeasurementData(var.getName(), germplasm.getEntryCode(), false, var.getDataType(), var);
-    				else if(termId.intValue() == TermId.PLOT_NO.getId())
-    					measurementData = new MeasurementData(var.getName(), Integer.toString(plotNo), false, var.getDataType(), var);
-    				else if(termId.intValue() == TermId.CHECK.getId()){
-    					
-    				/*
-    				 * NESTED_PLOT FOR TRIAL ONLY
-    				 * BLOCK
-						REP
-						COL
-						ROW
-						NESTED_PLOT
-    				 */
-    				
-//	    					measurementData = new MeasurementData(var.getName(), germplasm.getCheck(), false, var.getDataType());
-    					measurementData = new MeasurementData(var.getName(), germplasm.getCheckName(), 
+				
+				Integer termId = null;//fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(var.getProperty(), var.getScale(), var.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(var.getLabel()));
+				String key = var.getProperty() + ":" + var.getScale() + ":" + var.getMethod() + ":" + PhenotypicType.getPhenotypicTypeForLabel(var.getLabel());
+				if(standardVariableMap.get(key) == null){
+					termId = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(var.getProperty(), var.getScale(), var.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(var.getLabel()));
+					standardVariableMap.put(key, termId);
+				}else{
+					termId = (Integer)standardVariableMap.get(key);
+							
+				}
+				
+				var.setFactor(true);    
+				
+				if(termId == null){
+					//we default if null, but should not happen
+					measurementData = new MeasurementData(var.getName(), "", true, var.getDataType(), var);
+	            	var.setFactor(false);
+	            	measurementData.setEditable(true);
+				}else{
+	    			
+					if(termId.intValue() == TermId.ENTRY_NO.getId())
+						measurementData = new MeasurementData(var.getName(), Integer.toString(entryNo), false, var.getDataType(), var);
+					else if(termId.intValue() == TermId.SOURCE.getId())
+						measurementData = new MeasurementData(var.getName(), "", false, var.getDataType(), var);
+					else if(termId.intValue() == TermId.CROSS.getId())	
+						measurementData = new MeasurementData(var.getName(), germplasm.getCross(), false, var.getDataType(), var);
+					else if(termId.intValue() == TermId.DESIG.getId())	
+						measurementData = new MeasurementData(var.getName(), germplasm.getDesig(), false, var.getDataType(), var);
+					else if(termId.intValue() == TermId.GID.getId()){	    					
+						measurementData = new MeasurementData(var.getName(), germplasm.getGid(), false, var.getDataType(), var);
+					}else if(termId.intValue() == TermId.ENTRY_CODE.getId())	    					
+						measurementData = new MeasurementData(var.getName(), germplasm.getEntryCode(), false, var.getDataType(), var);
+					else if(termId.intValue() == TermId.PLOT_NO.getId())
+						measurementData = new MeasurementData(var.getName(), Integer.toString(plotNo), false, var.getDataType(), var);
+					else if(termId.intValue() == TermId.CHECK.getId()){
+						measurementData = new MeasurementData(var.getName(), germplasm.getCheckName(), 
 				    							false, var.getDataType(), germplasm.getCheckId(), var);
-    					
-    				} else if (termId.intValue() == TermId.REP_NO.getId()) {
-    					measurementData = new MeasurementData(var.getName(), Integer.toString(repNo), false, var.getDataType(), var);
-    					
-    				} else if (termId.intValue() == TermId.BLOCK_NO.getId()) {
-    					measurementData = new MeasurementData(var.getName(), Integer.toString(blockNo), false, var.getDataType(), var);
-    					
-    				}else{
-    					//meaning non factor
-                    	measurementData = new MeasurementData(var.getName(), "", true, var.getDataType(), var);
-                    	//measurementData.setEditable(true);
-                    	var.setFactor(false);
-                    	//measurementData.set
-    					
-    				}
-    			}
-			
-			dataList.add(measurementData); 
-			//measurementRow.addFactorDataList(measurementData);//for improvement
+						
+					} else if (termId.intValue() == TermId.REP_NO.getId()) {
+						measurementData = new MeasurementData(var.getName(), Integer.toString(repNo), false, var.getDataType(), var);
+						
+					} else if (termId.intValue() == TermId.BLOCK_NO.getId()) {
+						measurementData = new MeasurementData(var.getName(), Integer.toString(blockNo), false, var.getDataType(), var);
+						
+					}else{
+						//meaning non factor
+	                	measurementData = new MeasurementData(var.getName(), "", true, var.getDataType(), var);
+	                	var.setFactor(false);
+					}
+				}
+				
+				dataList.add(measurementData); 
+				//measurementRow.addFactorDataList(measurementData);//for improvement
+			}
 		}
-		//iterate the variates
+	}
+	
+	private void createVariateDataList(List<MeasurementData> dataList, UserSelection userSelection) {
 		for(MeasurementVariable var : userSelection.getWorkbook().getVariates()){    			    			
 			MeasurementData measurementData =null;
 			    			    			
         	measurementData = new MeasurementData(var.getName(), "", true, var.getDataType(), var);
-        	//measurementData.setEditable(true);
         	var.setFactor(false);	                			    						
 			
 			dataList.add(measurementData);
-			//measurementRow.addVariateDataList(measurementData);//for improvement
 		}
-		measurementRow.setDataList(dataList);
-		return measurementRow;
 	}
 	
 	private List<ExperimentalDesignInfo> getExperimentalDesignInfo(List<List<ValueReference>> trialInfo) {
@@ -298,6 +250,93 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 		}
 		
 		return result;
+	}
+	
+	private MeasurementData[][] generateTreatmentFactorPermutations(List<TreatmentVariable> treatmentVariables,
+			Map<String, Integer> standardVariableMap)
+			throws MiddlewareQueryException {
+		
+		MeasurementData[][] output = null;
+		if (treatmentVariables != null && !treatmentVariables.isEmpty()) {
+			List<List<TreatmentVariable>> lists = rearrangeTreatmentVariables(treatmentVariables); 
+			int totalPermutations = getTotalPermutations(lists);
+			output = new MeasurementData[totalPermutations][lists.size()*2];
+			
+			int currentPermutation = 1;
+			int listIndex = 0;
+			for (List<TreatmentVariable> list : lists) {
+				int size = list.size();
+				currentPermutation *= size;
+				int reps = totalPermutations / currentPermutation;
+				
+				for (int i = 0; i < currentPermutation; i++) {
+					for (int j = 0; j < reps; j++) {
+						TreatmentVariable factor = list.get(i % size);
+						MeasurementData levelData = createMeasurementData(factor.getLevelVariable(), standardVariableMap);
+						MeasurementData valueData = createMeasurementData(factor.getValueVariable(), standardVariableMap);
+						output[reps * i + j][listIndex*2] = levelData;
+						output[reps * i + j][listIndex*2+1] = valueData;
+					}
+				}
+				listIndex++;
+			}
+		}
+		
+		return output;
+	}
+	
+	private List<List<TreatmentVariable>> rearrangeTreatmentVariables(List<TreatmentVariable> treatmentVariables) {
+		List<List<TreatmentVariable>> groupedFactors = new ArrayList<List<TreatmentVariable>>();
+		Integer levelFactorId = null;
+		Map<Integer, List<TreatmentVariable>> map = new LinkedHashMap<Integer, List<TreatmentVariable>>();
+		for (TreatmentVariable treatmentFactor : treatmentVariables) {
+			levelFactorId = treatmentFactor.getLevelVariable().getTermId();
+			List<TreatmentVariable> treatments = map.get(levelFactorId);
+			if (treatments == null) {
+				treatments = new ArrayList<TreatmentVariable>();
+				map.put(levelFactorId, treatments);
+			}
+			treatments.add(treatmentFactor);
+		}
+		Set<Integer> keys = map.keySet();
+		for (Iterator<Integer> iterator = keys.iterator(); iterator.hasNext(); ) {
+			groupedFactors.add(map.get(iterator.next()));
+		}
+		return groupedFactors;
+	}
+
+	private int getTotalPermutations(List<List<TreatmentVariable>> lists) {
+		int totalPermutations = 1;
+		for (List<TreatmentVariable> list : lists) {
+			totalPermutations *= list.size();
+		}
+		return totalPermutations;
+	}
+	
+	private MeasurementData createMeasurementData(MeasurementVariable variable, Map<String, Integer> standardVariableMap) 
+	throws MiddlewareQueryException {
+		
+		Integer termId = variable.getTermId();
+		if (termId == 0) {
+			termId = getTermId(variable, standardVariableMap);
+		}
+		
+		return new MeasurementData(variable.getName(), variable.getValue(), false, variable.getDataType(), variable);
+	}
+	
+	private Integer getTermId(MeasurementVariable var, Map<String, Integer> standardVariableMap) throws MiddlewareQueryException {
+		
+		Integer termId = null;
+		String key = var.getProperty() + ":" + var.getScale() + ":" + var.getMethod() + ":" + PhenotypicType.getPhenotypicTypeForLabel(var.getLabel());
+		if(standardVariableMap.get(key) == null){
+			termId = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(var.getProperty(), var.getScale(), var.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(var.getLabel()));
+			standardVariableMap.put(key, termId);
+		}else{
+			termId = (Integer)standardVariableMap.get(key);
+					
+		}
+		
+		return termId;    
 	}
 	
 	class ExperimentalDesignInfo {

@@ -214,9 +214,9 @@ public class TreatmentFactorDetail implements Serializable {
                     if (amountDataTypeId.equals(TermId.DATE_VARIABLE.getId())) {
                             this.widgetType = WidgetType.DATE;
                     }
-                    //else if (minRange != null && maxRange != null) {
-                     //   this.widgetType = WidgetType.SLIDER;
-                    //}
+                    else if (minRange != null && maxRange != null) {
+                        this.widgetType = WidgetType.SLIDER;
+                    }
                     else if (amountDataTypeId.equals(TermId.CATEGORICAL_VARIABLE.getId())) {
                             this.widgetType = WidgetType.DROPDOWN;
                     }

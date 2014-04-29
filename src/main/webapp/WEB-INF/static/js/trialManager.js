@@ -1917,6 +1917,10 @@ function loadTrialSettingsForCreate(templateSettingsId) {
 		    	minimum: 1,
 			    value: 1
 		    });
+			
+			if ($("#treatmentFactors tbody tr").length > 0) {
+				$(".treatmentFactorsDetails").addClass("in");
+			}
 		},
 		error: function(jqXHR, textStatus, errorThrown){
 			console.log("The following error occured: " + textStatus, errorThrown); 

@@ -246,12 +246,12 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 				    				</label>
 				    			</div>
 			    			</div>
-			    			<div class="row form-group collapse in treatmentFactorsDetails">
+			    			<div class="row form-group collapse treatmentFactorsDetails">
 			    				<div class="col-xs-12 col-md-12">
 					    			<label class="control-label" th:text="#{trial.managesettings.treatment.factors.notes}"> Choose the treatment factors that will be applied in the trial.  These will appear as data columns in your study book.  You can add and remove settings at this level.</label>
 				    			</div>
 			    			</div>
-			    			<div class="row form-group collapse in treatmentFactorsDetails">
+			    			<div class="row form-group collapse treatmentFactorsDetails">
 		    					<div class="col-xs-4 col-md-4">
 			    					<select id="treatmentLevel" class="form-control" onchange="setTreatmentLevelValue(this)">
 				    						<option th:each="treatmentFactorLevel : *{treatmentFactors}" th:value="${treatmentFactorLevel.levelId}" th:text="${treatmentFactorLevel.levelName}"></option>
@@ -262,7 +262,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 				    			</div>
 				    			<div class="col-xs-4 col-md-4">&nbsp;</div>
 		    				</div>
-		    				<div class="row form-group collapse in treatmentFactorsDetails">
+		    				<div class="row form-group collapse treatmentFactorsDetails">
 		    					<div class="col-xs-12 col-md-12">
 			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed" id="treatmentFactors">
 			    						<thead>
@@ -301,8 +301,8 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 													
 													<input th:if="${treatmentFactor.widgetType.type == 'SLIDER'}" 
 													type="text" th:field="*{treatmentFactors[__${rowStat.index}__].amountValue}"
-													th:attr="data-min=${treatmentFactors.minRange}"
-													th:attrappend="data-max=${treatmentFactors.maxRange}"
+													th:attr="data-min=${treatmentFactor.minRange}"
+													th:attrappend="data-max=${treatmentFactor.maxRange}"
 													class="form-control spinner-input spinnerElement"
 													data-step="0.0001" 										 
 													/>

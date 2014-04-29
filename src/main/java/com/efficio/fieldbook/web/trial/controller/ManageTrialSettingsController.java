@@ -160,6 +160,7 @@ public class ManageTrialSettingsController extends SettingsController{
     	TrialDataset dataset = (TrialDataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, form.getSettingName(), 
     			form.getStudyLevelVariables(), form.getPlotLevelVariables(), form.getBaselineTraitVariables(), 
     			userSelection, form.getTrialLevelVariables(), form.getTreatmentFactors());
+    	
     	String xml = SettingsUtil.generateSettingsXml(dataset);
     	Integer tempateSettingId = form.getSelectedSettingId() > 0 ? Integer.valueOf(form.getSelectedSettingId()) : null;
     	TemplateSetting templateSetting = new TemplateSetting(tempateSettingId, Integer.valueOf(getCurrentProjectId()), dataset.getName(), getTrialTool(), xml, Boolean.valueOf(form.getIsDefault())) ;

@@ -1082,6 +1082,7 @@ public class SettingsUtil {
 		variable.setCvTermId(standardVariable.getId());
 		List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, standardVariable.getId());
 		SettingDetail settingDetail = new SettingDetail(variable, possibleValues, null, true);
+		settingDetail.setPossibleValuesToJson(possibleValues);
 		settingDetail.setGroup(group);
 		settingDetail.setDeletable(true);
 		

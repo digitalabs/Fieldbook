@@ -2683,7 +2683,7 @@ function changeTreatmentFactorIdsClasses() {
 		row.innerHTML = row.innerHTML.replace(reg2, "treatmentFactors[" + index + "]");
 		row.innerHTML = row.innerHTML.replace(reg3, "possibleValuesJsonTreatment" + index);
 		
-		//recreateMultipleObjects(i, $("#treatmentFactors tbody tr:last"));
+		recreateMultipleObjectsTreatment(index, row);
 	});
 }
 
@@ -2700,11 +2700,12 @@ function correctTreatmentBackground() {
 function addTreatmentFactorLevel(treatmentLevelCount) {
 	var reg = new RegExp("treatmentFactors[0-9]+", "g");
 	var reg2 = new RegExp("treatmentFactors\[[0-9]+\]", "g");
-	var reg3 = new RegExp("possibleValuesJsonTreatment", "g");
-	var lastIndexOfTreatment = getLastIndexOfTreatment($("#treatmentLevel").val());
+	var reg3 = new RegExp("possibleValuesJsonTreatment[0-9]+", "g");
+	var lastIndexOfTreatment = parseInt(getLastIndexOfTreatment($("#treatmentLevel").val()));
 	var lastIndexOfTable = $("#treatmentFactors tbody tr").length;
 	var insertIndex = lastIndexOfTreatment;
-	var levelValue = treatmentLevelCount+1;
+	var levelValue = treatmentLevelCount;
+	var rowIndexToRecreate = 0;
 
 	//lastIndexOfTreatment + 1 + newLevelValue - prevLevelValue 
 	for (var i = lastIndexOfTreatment+1; i < lastIndexOfTreatment+1+(parseInt($("#treatmentLevelValue").val())-treatmentLevelCount); i++) {
@@ -2716,14 +2717,77 @@ function addTreatmentFactorLevel(treatmentLevelCount) {
 		//insert row after the last level of the selected treatment factor
 		$($("#treatmentFactors tbody tr").get(insertIndex)).after(newRow);
 		
-		//set the level
-		$($($("#treatmentFactors tbody tr").get(insertIndex+1)).children("td:nth-child(2)").children(".levelValue")).text(levelValue);
-		
 		levelValue++;
 		insertIndex++;
 		lastIndexOfTable++;
-		//recreateMultipleObjects(i, $("#treatmentFactors tbody tr:last")); 
+		rowIndexToRecreate = insertIndex + 1;
+		
+		//set the level value
+		$($($("#treatmentFactors tbody tr").get(insertIndex)).children("td:nth-child(2)").children(".levelValue")).text(levelValue);
+		
+		recreateMultipleObjectsTreatment(insertIndex, $("#treatmentFactors tbody tr:nth-child("+ rowIndexToRecreate + ")")); 
 	}
+}
+
+function recreateMultipleObjectsTreatment(index, row){
+	cell = $(row).children("td:nth-child(3)");
+	
+	//recreate slider objects
+	if (cell.html().indexOf("spinner-input") > -1) {
+		recreateSpinnerMultipleTreatment(index, row, cell);
+	}
+	
+	//recreate date objects
+	if (cell.html().indexOf("date-input") > -1) {
+		recreateDateMultipleTreatment(index, row, cell);
+	}
+	
+	//recreate select2 objects
+	if (cell.html().indexOf("select2") > -1) {
+		recreateSelect2ComboMultipleTreatment(index, row, cell);
+	}
+}
+
+function recreateSpinnerMultipleTreatment(index, row, cell) {
+	//new input field for spinner
+	var newCell = "<input type='text' id='treatmentFactors" + index + 
+	".amountValue' name='treatmentFactors[" + index + "].amountValue' " + 
+	" data-min='" + $($(cell).children("input.spinner-input")).data("min") + 
+	"' data-max='" + $($(cell).children("input.spinner-input")).data("max") + 
+	"' data-step='" + $($(cell).children("input.spinner-input")).data("step") + "' class='form-control spinner-input spinnerElement' />";
+
+	cell.html(newCell);
+	
+	initializeSpinner("#"+ getJquerySafeId("treatmentFactors" + index +".amountValue"));
+}
+
+function recreateDateMultipleTreatment(index, row, cell) {
+	//new input field for date 
+	var newCell = "<input type='text' id='treatmentFactors" + index + 
+	".amountValue' name='treatmentFactors[" + index + "].amountValue' " + 
+	" class='form-control date-input' />";
+	
+	cell.html(newCell);
+	
+	initializeDate("#"+ getJquerySafeId("treatmentFactors" + index +".amountValue"));
+}
+
+function recreateSelect2ComboMultipleTreatment(index, row, cell) {
+	//get the possible values of the variable
+	var possibleValuesJson = $($(cell).find(".possibleValuesJsonTreatment")).text();
+
+	//hidden field for select2 
+	var newCell = "<input type='hidden' id='treatmentFactors" + index + 
+	".amountValue' name='treatmentFactors[" + index + "]" + ".amountValue' class='form-control select2' />";
+	
+	//div containing the possible values
+	newCell = newCell + "<div id='possibleValuesJsonTreatment" + index + "' class='possibleValuesJsonTreatment' style='display:none'>" + 
+		possibleValuesJson + "</div>";
+
+	cell.html(newCell);
+	
+	initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
+			"#" + getJquerySafeId("treatmentFactors" + index + ".amountValue"), false, null);
 }
 
 function removeTreatmentFactorLevel(treatmentLevelCount) {

@@ -2669,9 +2669,9 @@ function countTreatmentFactorsById(selectedTreatmentLevel) {
 function editTreatmentFactors() {
 	//count total no. of levels for the selected treatement factor
 	var treatmentLevelCount = countTreatmentFactorsById($("#treatmentLevel").val());
-	if( treatmentLevelCount < $("#treatmentLevelValue").val()) {
+	if( treatmentLevelCount < $("#treatmentLevelValue").val() && treatmentLevelCount != 0) {
 		addTreatmentFactorLevel(treatmentLevelCount);
-	} else if (treatmentLevelCount > $("#trialInstances").val()) {
+	} else if (treatmentLevelCount > $("#treatmentLevelValue").val()) {
 		removeTreatmentFactorLevel(treatmentLevelCount);
 		changeTreatmentFactorIdsClasses();
 	}

@@ -2728,6 +2728,7 @@ function addTreatmentFactorLevel(treatmentLevelCount) {
 		
 		//set the level value
 		$($($("#treatmentFactors tbody tr").get(insertIndex)).children("td:nth-child(2)").children(".levelValue")).text(levelValue);
+		$($($("#treatmentFactors tbody tr").get(insertIndex)).children("td:nth-child(2)").children("#" + getJquerySafeId("treatmentFactors" + insertIndex + ".levelValue"))).val(levelValue);
 		
 		recreateMultipleObjectsTreatment(insertIndex, $("#treatmentFactors tbody tr:nth-child("+ rowIndexToRecreate + ")")); 
 	}

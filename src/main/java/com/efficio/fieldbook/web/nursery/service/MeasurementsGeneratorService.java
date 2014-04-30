@@ -24,14 +24,6 @@ import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 public interface MeasurementsGeneratorService {
 
 	/**
-	 * Generate measurement rows.
-	 *
-	 * @param userSelection the user selection
-	 * @return the list
-	 */
-	List<MeasurementRow> generateMeasurementRows(UserSelection userSelection);
-	
-	/**
 	 * Generate real measurement rows.
 	 *
 	 * @param userSelection the user selection

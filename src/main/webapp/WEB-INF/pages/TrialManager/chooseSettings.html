@@ -277,6 +277,8 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 					    					<tr th:each="treatmentFactor, rowStat : *{treatmentFactors}">
 						    					<td width="40%" th:class="${rowStat.even}? 'even' : 'odd'">
 						    						<span th:text="${treatmentFactor.amountName}"></span>
+						    						<input type="hidden" th:field="*{treatmentFactors[__${rowStat.index}__].levelName}" />
+						    						<input type="hidden" th:field="*{treatmentFactors[__${rowStat.index}__].amountName}" />
 						    						<input class="cvTermIds levelId" type="hidden" th:field="*{treatmentFactors[__${rowStat.index}__].levelId}" />
 						    						<input class="cvTermIds" type="hidden" th:field="*{treatmentFactors[__${rowStat.index}__].amountId}" />
 						    					</td>

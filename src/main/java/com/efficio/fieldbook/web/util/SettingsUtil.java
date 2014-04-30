@@ -43,6 +43,7 @@ import org.springframework.web.util.HtmlUtils;
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
+import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 
 /**
@@ -185,17 +186,9 @@ public class SettingsUtil {
 	 * @return the dataset
 	 */
     public static ParentDataset convertPojoToXmlDataset(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, String name, List<SettingDetail> nurseryLevelConditions, List<SettingDetail> plotsLevelList, List<SettingDetail> baselineTraitsList, UserSelection userSelection){
-    	return convertPojoToXmlDataset(fieldbookMiddlewareService, name, nurseryLevelConditions,  plotsLevelList,baselineTraitsList,  userSelection, null);
+    	return convertPojoToXmlDataset(fieldbookMiddlewareService, name, nurseryLevelConditions,  plotsLevelList,baselineTraitsList,  userSelection, null, null, null);
     }
 
-	public static ParentDataset convertPojoToXmlDataset(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, 
-			String name, List<SettingDetail> nurseryLevelConditions, List<SettingDetail> plotsLevelList, List<SettingDetail> baselineTraitsList, 
-			UserSelection userSelection, List<SettingDetail> trialLevelVariablesList){
-		
-		return convertPojoToXmlDataset(fieldbookMiddlewareService, name, nurseryLevelConditions, plotsLevelList, 
-				baselineTraitsList, userSelection, trialLevelVariablesList, null);
-	}
-	
 	/**
 	 * Convert pojo to xml dataset.
 	 *
@@ -210,7 +203,8 @@ public class SettingsUtil {
 	 */
 	public static ParentDataset convertPojoToXmlDataset(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, 
 			String name, List<SettingDetail> nurseryLevelConditions, List<SettingDetail> plotsLevelList, List<SettingDetail> baselineTraitsList, 
-			UserSelection userSelection, List<SettingDetail> trialLevelVariablesList, List<SettingDetail> treatmentFactorList){
+			UserSelection userSelection, List<SettingDetail> trialLevelVariablesList, List<SettingDetail> treatmentFactorList, 
+			List<TreatmentFactorDetail> treatmentDetailList){
 		
 		List<Condition> conditions = new ArrayList<Condition>();
 		List<Factor> factors = new ArrayList<Factor>();
@@ -268,8 +262,21 @@ public class SettingsUtil {
 				variates.add(variate);
 			}
 		}
+		
 		//iterate for treatment factor details
-		if (treatmentFactorList != null && !treatmentFactorList.isEmpty()) {
+		if (treatmentDetailList != null && !treatmentDetailList.isEmpty()) {
+			List<Integer> addedTreatmentFactors = new ArrayList<Integer>();
+			for (TreatmentFactorDetail detail : treatmentDetailList) {
+				TreatmentFactor treatmentFactor = convertTreatmentFactorDetailToTreatmentFactor(detail, userSelection, fieldbookMiddlewareService);
+				treatmentFactors.add(treatmentFactor);
+				if (!addedTreatmentFactors.contains(treatmentFactor.getLevelFactor().getTermId())) {
+					factors.add(treatmentFactor.getLevelFactor());
+					factors.add(treatmentFactor.getValueFactor());
+					addedTreatmentFactors.add(treatmentFactor.getLevelFactor().getTermId());
+				}
+			}
+		}
+		else if (treatmentFactorList != null && !treatmentFactorList.isEmpty()) {
 			int currentGroup = -1;
 			TreatmentFactor treatmentFactor;
 			Factor levelFactor = null, valueFactor = null;
@@ -277,6 +284,7 @@ public class SettingsUtil {
 			for (int i = 0; i < treatmentFactorList.size(); i++) {
 				currentGroup = getTreatmentGroup(userSelection, treatmentFactorList, i);
 				levelFactor = createFactor(treatmentFactorList.get(i), userSelection, fieldbookMiddlewareService, i);
+				levelFactor.setTreatmentLabel(treatmentFactorList.get(i).getVariable().getName());
 
 				int j;
 				for (j = i + 1; j < treatmentFactorList.size(); j++) {
@@ -286,6 +294,7 @@ public class SettingsUtil {
 						break;
 					}
 					valueFactor = createFactor(treatmentFactorList.get(j), userSelection, fieldbookMiddlewareService, j);
+					valueFactor.setTreatmentLabel(treatmentFactorList.get(i).getVariable().getName());
 				}
 				i = j;
 				treatmentFactor = new TreatmentFactor(levelFactor, valueFactor);
@@ -1022,6 +1031,7 @@ public class SettingsUtil {
 				PhenotypicType.valueOf(factor.getRole()).getLabelList().get(0));
 		mvar.setFactor(true);
 		mvar.setTermId(factor.getTermId());
+		mvar.setTreatmentLabel(factor.getTreatmentLabel());
 		return mvar;
 	}
 
@@ -1039,6 +1049,10 @@ public class SettingsUtil {
 		TreatmentVariable mvar = new TreatmentVariable();
 		MeasurementVariable levelVariable = convertFactorToMeasurementVariable(factor.getLevelFactor());
 		MeasurementVariable valueVariable = convertFactorToMeasurementVariable(factor.getValueFactor());
+		levelVariable.setValue(factor.getLevelNumber() != null ? factor.getLevelNumber().toString() : null);
+		levelVariable.setTreatmentLabel(factor.getLevelFactor().getName());
+		valueVariable.setValue(factor.getValue());
+		valueVariable.setTreatmentLabel(factor.getLevelFactor().getName());
 		mvar.setLevelVariable(levelVariable);
 		mvar.setValueVariable(valueVariable);
 		return mvar;
@@ -1119,4 +1133,31 @@ public class SettingsUtil {
 		}
 		return currentGroup != null ? currentGroup : -1;
 	}
+	
+	private static TreatmentFactor convertTreatmentFactorDetailToTreatmentFactor(TreatmentFactorDetail detail, UserSelection userSelection,
+			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
+		
+		Factor levelFactor = createFactor(detail.getLevelId(), detail.getLevelName(), userSelection, fieldbookMiddlewareService);
+		Factor valueFactor = createFactor(detail.getAmountId(), detail.getAmountName(), userSelection, fieldbookMiddlewareService);
+		levelFactor.setTreatmentLabel(detail.getLevelName());
+		valueFactor.setTreatmentLabel(detail.getLevelName());
+		
+		return new TreatmentFactor(levelFactor, valueFactor, Integer.valueOf(detail.getLevelValue()), detail.getAmountValue());
+	}
+
+	private static Factor createFactor(int id, String name, UserSelection userSelection, 
+			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) {
+		
+		StandardVariable variable = null;
+		if (userSelection != null) {
+			variable = getStandardVariable(id, userSelection, fieldbookMiddlewareService);
+		}
+		if (variable != null) {
+			return  new Factor(name, variable.getDescription(), variable.getProperty().getName(),
+					variable.getScale().getName(), variable.getMethod().getName(), 
+					variable.getPhenotypicType().name(), variable.getDataType().getName(), id);
+		}
+		return null;
+	}
+	
 }

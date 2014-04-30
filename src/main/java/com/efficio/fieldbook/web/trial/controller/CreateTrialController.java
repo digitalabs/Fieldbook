@@ -332,7 +332,7 @@ public class CreateTrialController extends SettingsController {
     	
     	form.setTrialLevelVariables(userSelection.getTrialLevelVariableList());
     	TrialDataset dataset = (TrialDataset) SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, form.getStudyLevelVariables(), 
-    			form.getPlotLevelVariables(), form.getBaselineTraitVariables(), userSelection, form.getTrialLevelVariables());
+    			form.getPlotLevelVariables(), form.getBaselineTraitVariables(), userSelection, form.getTrialLevelVariables(), null, form.getTreatmentFactors());
     	Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);
     	userSelection.setWorkbook(workbook);
 

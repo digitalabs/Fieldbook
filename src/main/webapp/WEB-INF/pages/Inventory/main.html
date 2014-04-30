@@ -2,7 +2,7 @@
 	    			
 	    			<div class="col-xs-12 col-md-12">
 						<div class="page-header">
-							<h1>
+							<h1 th:text="#{seed.inventory.header}">
 								SEED STORE INVENTORY
 							</h1>
 						</div>			  
@@ -103,7 +103,7 @@
 <![endif]-->
   <script type="text/javascript" th:inline="javascript">
     //<![CDATA[          
-    var addedGid = {};
+    var selectedIndexIds = new Array();
     var listId = 0;
     
     function do_validation() {
@@ -241,7 +241,9 @@
         		type: "GET",
         		cache: false,
         		success: function(html) {
-        			$("#inventory-germplasm-list").html(html);        			        			        			        			
+        			selectedIndexIds = new Array();
+        			$("#inventory-germplasm-list").html(html);   
+        			
         		},
         		error: function(jqXHR, textStatus, errorThrown){ 
         			console.log("The following error occured: " + textStatus, errorThrown); 

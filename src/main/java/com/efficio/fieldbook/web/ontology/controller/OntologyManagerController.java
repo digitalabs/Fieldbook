@@ -475,12 +475,25 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         for (EnumerationOperation enumeration : enumerations) {
             if (enumeration.getOperation() > 0) {
                 //add valid value
+            	//to make sure the standard variable is updated 
+            	//stdVariable = ontologyService.getStandardVariable(form.getVariableId());
                 ontologyService.addStandardVariableValidValue(stdVariable, 
                         new Enumeration(enumeration.getId(), enumeration.getName()
                                 , enumeration.getDescription(), 0));
             } else if (enumeration.getOperation() < 0) {
                 //delete valid value
                 ontologyService.deleteStandardVariableValidValue(stdVariable.getId(), enumeration.getId());
+                List<Enumeration> enumerationVar = stdVariable.getEnumerations();
+                List<Enumeration> newStdEnumList = new ArrayList();
+                for(int i = 0 ; i < enumerationVar.size() ; i++){
+                	Enumeration enumVar = enumerationVar.get(i);
+                	if(enumeration.getId() != null && enumVar.getId().intValue() == enumeration.getId().intValue()){
+                		continue;
+                	}else{
+                		newStdEnumList.add(enumVar);
+                	}
+                }
+                stdVariable.setEnumerations(newStdEnumList);
             }
         }
     } 
@@ -1148,4 +1161,31 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         return result;
     }
     
+    /**
+     * Delete ontology.
+     *
+     * @param id the id
+     * @param name the name
+     * @param ontology the ontology
+     * @return the map
+     */
+    @ResponseBody
+    @RequestMapping(value = "categorical/verify/{standardVariableId}/{enumerationId}", method = RequestMethod.GET)
+    public Map<String, Object> deleteValidValue(@PathVariable String standardVariableId, 
+    		@PathVariable String enumerationId) {
+        Map<String, Object> result = new HashMap<String, Object>();
+        
+        try {
+        	boolean isValidDelete = ontologyService.validateDeleteStandardVariableEnumeration(Integer.parseInt(standardVariableId),Integer.parseInt(enumerationId));
+        	if(isValidDelete)
+        		result.put("status", "1");
+        	else
+        		result.put("status", "0");
+        } catch(MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+            result.put("status", "0");          
+        }
+        
+        return result;
+    }
 }

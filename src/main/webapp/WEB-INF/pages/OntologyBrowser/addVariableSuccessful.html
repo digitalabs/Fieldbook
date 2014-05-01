@@ -59,7 +59,9 @@
 			
 
     if (addSuccessful == "1") {
-		setTimeout(function (){
+    	$('#role').select2('data',{'id': $('#role option:first').val(), 'text': $('#role option:first').text()});
+		$('#dataType').select2('data',{'id': $('#dataType option:first').val(), 'text': $('#dataType option:first').text()});
+		setTimeout(function (){			
 			$('#addVariableSuccessfulModal').modal({ backdrop: 'static', keyboard: true })
 			$("#addVariableSuccessfulModal").modal("show");
 		}, 500);	

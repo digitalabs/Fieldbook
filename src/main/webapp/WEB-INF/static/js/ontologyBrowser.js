@@ -406,7 +406,7 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	          var data = {results: sortByKey(variableSuggestions_obj, "text")}, i, j, s;
 	          // return the array that matches
 	          data.results = $.grep(data.results,function(item,index) {
-	            return ($.fn.select2.defaults.matcher(query.term,item.text));
+	            return ($.fn.select2.defaults.matcher($.trim(query.term),$.trim(item.text)));
 	          
 	          });
 	          if (data.results.length === 0){
@@ -432,7 +432,7 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	          var data = {results: sortByKey(variableSuggestions_obj, "text")}, i, j, s;
 	          // return the array that matches
 	          data.results = $.grep(data.results,function(item,index) {
-	            return ($.fn.select2.defaults.matcher(query.term,item.text));
+	            return ($.fn.select2.defaults.matcher($.trim(query.term),$.trim(item.text)));
 	          
 	          });
 	          if(allowTypedValues == true){
@@ -1380,14 +1380,17 @@ function addCategoricalValidValue(id, label, description) {
 	//if new valid value, add a delete button
 	if (id < 0 || id == null) {
 		deleteButton= "<button class='btn btn-info' type='button' onClick='delCatVar($(this))'>" + 
-						"<span class='glyphicon glyphicon-remove'></span>" +
-					    "</button>";
+		"<span class='glyphicon glyphicon-remove'></span>" +
+	    "</button>";	
 		enumerations.push({ 'id' : id,
 			  'name' : label, 
 			  'description' : description,
 			  'operation' : operation
 		});
 	} else {
+		deleteButton= "<button style='display: none' class='btn btn-info delete-valid-val-btn' type='button' onClick='delCatVar($(this))'>" + 
+		"<span class='glyphicon glyphicon-remove'></span>" +
+	    "</button>";
 		//read-only
 		enumerations_central.push({ 'id' : id,
 			  'name' : label, 
@@ -1441,9 +1444,41 @@ function delCatVar(button) {
 	if (enumerations[index].id == null || enumerations[index].id == "") {
 		enumerations.splice(index, 1);
 	} else {
+		
+		//we add the checking here if its being use before deleting
+		var stdVarId = $('#comboVariableName').select2('data').id;
+		var enumerationId = enumerations[index].id;
+		//console.log(stdVarId + " " + enumerationId );
+		
+		//daniel
+		var hasError = false;
+		Spinner.toggle();
+    	
+		$.ajax({
+			url: '/Fieldbook/OntologyManager/manage/categorical/verify/'+stdVarId+"/"+enumerationId,
+			type: "GET",
+			data: "",
+			cache: false,
+			async: false,
+			success: function (data) {
+				Spinner.toggle();
+				if(data.status == '0'){					
+					showErrorMessage('page-message', variateValidValueDeleteError);
+					hasError = true;
+				}
+				/*else{
+					enumerations.splice(index, 1);
+				}*/
+				//console.log(data);
+			}			
+		});
+		if (hasError) {
+			return;
+		}
+		
 		enumerations[index].operation = "-1";
 	}
-	
+	//console.log('here');
 	//remove the row
 	button.closest("tr").remove();
 	if ($("#catVarList").height() <= 200 && $("#catVarList").parent().hasClass("scrollWrapper")) {
@@ -1456,11 +1491,11 @@ function findIndexOfEnumeration(enumerations_obj, name, col) {
 	//check if given value is already existing
 	for (var i = 0; i < enumerations_obj.length; i++) {
 		if (col == "name") {
-		    if (enumerations_obj[i].name == name) {
+		    if (enumerations_obj[i].name == name && enumerations_obj[i].operation != '-1') {
 		        return i;
 		    }
 		} else {
-			if (enumerations_obj[i].description == name) {
+			if (enumerations_obj[i].description == name  && enumerations_obj[i].operation != '-1') {
 		        return i;
 		    }
 		}
@@ -1518,5 +1553,41 @@ function enableFieldsForUpdate() {
 	$("#comboMethod").select2('enable',true);
 	$("#comboScale").select2('enable',true);
 	$("#dataType").removeAttr("disabled");
+	if($("#variableId").val() == ''){
+	
+		var enumerationsTemp = [];
+	  	if(enumerations_central.length != 0){
+	  		for(var index = 0 ; index < enumerations_central.length ; index++){
+	  			//console.log(enumerations_central[index].operation)
+	  			if(enumerations_central[index].operation != '-1'){  				  			
+	  				enumerationsTemp.push({ 'id' : null,
+	                			  'name' : enumerations_central[index].name, 
+	                			  'description' : enumerations_central[index].description,
+	                			  'operation' : 1
+	                		});
+	  			}
+	  		}
+	  			
+	  	}
+	  	
+	  	if(enumerations.length != 0){
+	  		for(var index = 0 ; index < enumerations.length ; index++){
+	  			//console.log(enumerations_central[index].operation)
+	  			if(enumerations[index].operation != '-1'){  				  			
+	  				enumerationsTemp.push({ 'id' : null,
+	                			  'name' : enumerations[index].name, 
+	                			  'description' : enumerations[index].description,
+	                			  'operation' : 1
+	                		});
+	  			}
+	  		}
+	  			
+	  	}
+	  	//console.log('here');
+	  	enumerations = enumerationsTemp;
+	  	enumerations_central = [];
+	  	
+	  	$('.'+getJquerySafeId('delete-valid-val-btn')).css('display', 'block');
+	}
 }
 

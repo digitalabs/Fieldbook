@@ -326,6 +326,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
     
     
 	$( document ).ready(function() {
+		$('#'+getJquerySafeId('userFieldmap.fieldLocationId')).val('');
 		programLocationUrl = $('#programLocationUrl').val();
 		setSelectedTrialsAsDraggable();
 		calculateTotalPlots();

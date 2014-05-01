@@ -24,6 +24,7 @@ import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.common.service.DataKaptureExportStudyService;
 import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
 import com.efficio.fieldbook.web.common.service.FieldroidExportStudyService;
+import com.efficio.fieldbook.web.common.service.KsuCsvExportStudyService;
 import com.efficio.fieldbook.web.common.service.KsuExceIExportStudyService;
 import com.efficio.fieldbook.web.common.service.RExportStudyService;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
@@ -59,6 +60,9 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     
     @Resource
     private KsuExceIExportStudyService ksuExcelExportStudyService;
+    
+    @Resource
+    private KsuCsvExportStudyService ksuCsvExportStudyService;
     
     @Override
 	public String getContentName() {
@@ -141,6 +145,10 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     		filename = filename + AppConstants.EXPORT_XLS_SUFFIX.getString();
     		outputFilename = ksuExcelExportStudyService.export(userSelection.getWorkbook(), filename, start, end);
     		response.setContentType("application/vnd.ms-excel");
+    	}else if (AppConstants.EXPORT_KSU_CSV.getInt() == exportType) {
+    		filename = filename + AppConstants.EXPORT_CSV_SUFFIX.getString();
+    		outputFilename = ksuCsvExportStudyService.export(userSelection.getWorkbook(), filename, start, end);
+    		response.setContentType("text/csv");
     	}
     	
     	        

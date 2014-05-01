@@ -1,0 +1,259 @@
+
+	    			
+	    			<div class="col-xs-12 col-md-12">
+						<div class="page-header">
+							<h1 th:text="#{seed.inventory.header}">
+								SEED STORE INVENTORY
+							</h1>
+						</div>			  
+					</div>
+
+<div class="form-group">
+	
+		<div id="page-message" class="">
+		</div>				
+		
+	</div>
+	<div class="move-left col-xs-12 col-md-12"> 
+	<div class="panel panel-default">
+	   	<div class="panel-body manage-settings-panel-body">
+	   	
+	    			<div class="row form-group collapse in germplasmListDetails">
+				      	<!-- Germplasm List Tree View -->
+						<div class="col-xs-3 col-md-3">
+							<img th:src="@{/static/img/build-new-list.png}" style="padding-bottom:3px;" />
+							<label class="control-label"><strong class="sub-content-heading">Lists</strong></label>
+						</div>
+
+				        <!-- Germplasm List Table View -->						
+				      	<div class="col-xs-9 col-md-9">
+				      	
+				      		<div id="primary-section" style="float: left; width: 70%">
+				      			<img th:src="@{/static/img/build-new-list.png}" style="padding-bottom:3px;" />
+				      			<label class="control-label"><strong class="sub-content-heading">Germplasm List</strong></label>
+				      		</div>
+				      		<!-- 
+				      		<div id="checks-section" style="float: left; width: 30%; ">
+				      			<img th:src="@{/static/img/build-new-list.png}" style="padding-bottom:3px;" />
+				      			<label class="control-label"><strong class="sub-content-heading">Checks List&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong></label>
+				      			<a style="margin-top: -10px; padding: 6px 8px;" href="javascript: showManageCheckTypePopup()" th:text="#{germplasm.list.manage.check.types}" class="btn btn-info">Manage Checks</a>
+				      			<a style="margin-top: -10px; padding: 6px 8px;" href="javascript: resetCheckList()" class="btn btn-info">Reset</a>
+				      		</div>
+				      		 -->
+				      		 
+				      		 <div style="float:right; ">			
+		
+							
+							
+								<div   class="btn-group">
+								  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+								    <span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;Tools
+								  </button>
+								  <ul class="dropdown-menu" role="menu">
+								    <li>
+								    	<a href="javascript: addLot();" th:text="#{seed.inventory.add.lot}">Add Lot</a>
+								    </li>
+								   
+								     	      
+								  </ul>
+							</div>
+						</div>
+						</div>															
+				    </div>
+				    
+					<div class="row form-group collapse in germplasmListDetails">
+				      	<!-- Germplasm List Tree View -->
+						<div class="col-xs-3 col-md-3">
+							<div id="germplasmTree" style="height:350px; overflow:auto;"></div>
+							<br />  
+				      	</div>
+
+				        <!-- Germplasm List Table View -->						
+				      	<div class="col-xs-9 col-md-9">
+				      	
+				      		<div id="inventory-germplasm-list" class="list-droppable primary add-border" style="float: left; width: 100%">
+				      			<h3>Please drag and drop the germplasm list here</h3>
+				      		</div>
+				      		
+				      		
+						</div>
+					
+											
+				    </div>	
+				</div>
+			</div>
+		</div>
+
+	
+<!-- Scripts location, note that the div tag will be remove after merging to decorator -->
+<div layout:fragment="page-script">
+  <script type="text/javascript" th:src="@{/static/js/inventory.js}"></script>
+  <script type="text/javascript" th:src="@{/static/js/fieldbook-tree.js}"></script> 
+  <script type="text/javascript" th:src="@{/static/js/jquery-multisortable.js}"></script>
+  <script type="text/javascript" th:src="@{/static/js/jquery.tablednd.0.7.min.js}"></script>
+  <script type='text/javascript' th:inline="javascript">
+	var isIE = false;
+	</script>
+	
+<!--[if IE]>
+<script type="text/javascript">
+    isIE = true;
+    //any other IE specific stuff here
+</script>
+<![endif]-->
+  <script type="text/javascript" th:inline="javascript">
+    //<![CDATA[          
+    var selectedIndexIds = new Array();
+    var listId = 0;
+    
+    function do_validation() {
+    	var message = /*[[#{common.error.file.no.file.selected}]]*/;
+    	
+  		return true;
+  }
+  
+  
+  $( document ).ready(function() {
+	  
+  
+	  //display tree
+	  
+	  displayGermplasmListTree("germplasmTree");
+	 
+	  if(isIE){
+//		  $('#primary-section').css('width', '67%');
+
+	  }
+  });
+  
+  	
+
+        
+        function do_germplasm_check(){        	
+        	return true;
+        }
+        
+        /** Germplasm Tree **/
+        function displayGermplasmListTree(treeName) {
+        	
+        	$("#" + treeName).dynatree({
+        		title: treeName,
+        		checkbox: false,
+        		noLink: false,
+        		autoFocus: false,
+        		imagePath: "../img/",
+        		activeVisible: true,
+        		initAjax: {url: "/Fieldbook/NurseryManager/loadInitGermplasmTree",
+        			dataType: "json"
+        		},
+        		onLazyRead: function(node) {
+        			node.appendAjax({
+        				url: "/Fieldbook/NurseryManager/expandGermplasmTree/" + node.data.key,
+        				dataType: "json",
+        				success: function(node) {
+        					//do nothing
+        				},
+        				error: function(node, XMLHttpRequest, textStatus, errorThrown) {
+        					console.log("The following error occured: " + textStatus, errorThrown); 
+        				},
+        				cache: false
+        			});
+        		},
+        		classNames: {
+        			container: "fbtree-container",
+        			expander: "fbtree-expander",
+        			nodeIcon: "fbtree-icon",
+        			combinedIconPrefix: "fbtree-ico-",
+        			focused: "fbtree-focused",
+        			active: "fbtree-active"
+        		},
+        		 onPostInit: function (isReloading, isError) {
+        			 //console.log('postini' + listId);
+        		     if(listId != 0)
+        		    	 doInitialLoad(listId);
+        		     	 listId = 0;
+        		    },
+        		onActivate: function(node) {
+        			if (node.data.isFolder == false) {
+         				;//displayGermplasmDetails(node.data.key);
+        			}
+        		},
+        		dnd: {
+        		      revert: false, // true: slide helper back to source if drop is rejected
+        		      onDragStart: function(node) {
+        		        /** This function MUST be defined to enable dragging for the tree.
+        		         *  Return false to cancel dragging of node.
+        		         */
+        		        //console.log("tree.onDragStart" + node);
+        		        if(node.data.isFolder){
+        		          return false;
+        		        }
+        		        return true;
+        		      },
+        		      onDragStop: function(node) {
+        		        //console.log("tree.onDragStop" + node);
+        		      },
+        		      onDragOver: function(node){
+        		    	  //console.log('dragging');
+        		      }
+        		    }
+        	});
+        	
+        	  $(".list-droppable").droppable({
+      		    hoverClass: "drophover",
+      		    addClasses: true,
+      		    over: function(event, ui) {
+      		      //console.log("droppable.over, "+ event+ui);
+      		    },
+      		    drop: function(event, ui) {
+      		      var source = ui.helper.data("dtSourceNode") || ui.draggable;
+      		    	
+      		     //$(this).html("Dropped " + source);
+      		     //console.log(isFunction(source.data));
+      		     if(isFunction(source.data) == false){
+	      		      if($(this).hasClass('primary')){
+	      		    	  	//if (lastDraggedChecksList != source.data.key) {
+			      		    	//loads the primary germplasm list
+			      		    	$(this).removeClass('add-border');
+			      		    	//lastDraggedPrimaryList = source.data.key;
+			      		    	displayGermplasmDetails(source.data.key);
+	      		    	  	//} else {
+	      		    	  	//	showErrorMessage("page-message", sameListErr);
+	      		    	  	//	moveToTopScreen();
+	      		    	  	//}
+	      		      }
+      		     }
+      		    }
+      		  });
+        }
+        
+        function isFunction(functionToCheck) {
+        	 var getType = {};
+        	 return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
+        	}
+        
+        function displayGermplasmDetails(listId) {
+        	//alert(makeDraggableBool);
+        	Spinner.toggle();
+        	$('#'+'germplasmTree').find("*").removeClass('dynatree-selected');
+        	$.ajax({
+        		url: "/Fieldbook/SeedStoreManager/displayGermplasmDetails/" + listId,
+        		type: "GET",
+        		cache: false,
+        		success: function(html) {
+        			selectedIndexIds = new Array();
+        			$("#inventory-germplasm-list").html(html);   
+        			
+        		},
+        		error: function(jqXHR, textStatus, errorThrown){ 
+        			console.log("The following error occured: " + textStatus, errorThrown); 
+        		},
+        		complete: function() {
+        			Spinner.toggle();
+        		}
+        	});
+        }
+        
+      //]]>
+    </script>
+</div>

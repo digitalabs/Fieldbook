@@ -79,6 +79,16 @@ function showPage(paginationUrl, pageNum, sectionDiv){
          				$('tr.data-row#'+idVal).addClass('field-map-highlight');
          			}			
          		 }
+             }else if(sectionDiv == 'inventory-germplasm-list'){
+            	 //we highlight the previously clicked
+            	 for(var index in selectedIndexIds) {
+         			//console.log( index + " : " + selectedTableIds[index]);
+         			var idVal = selectedIndexIds[index];
+         			if(idVal != null){
+         				//we need to highlight
+         				$('tr.primaryRow[data-index='+idVal+']').addClass('field-map-highlight');
+         			}			
+         		 }
              }
              
              if (sectionDiv == 'imported-germplasm-list') {

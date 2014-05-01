@@ -513,7 +513,9 @@ padding-left: 20px; margin-top: 7px
     margin-top: 13px;
     line-height: 18px;
 }
-.germplasm-list-table, .germplasm-measurement-list-table, .advance-nursery-list-table, .check-germplasm-list-table{
+.germplasm-list-table, .germplasm-measurement-list-table, .advance-nursery-list-table, .check-germplasm-list-table,
+.inventory-germplasm-list-table
+{
 	max-height: 400px;
 	overflow: auto;
 }
@@ -739,13 +741,14 @@ table tbody tr.germplasmSelectedRow, .germplasmSelectedRow td{
 table tbody tr.checkGermplasmSelectedRow, .checkGermplasmSelectedRow td{
 	background-color: #BED6B2;
 }
-table.table-with-scroll, table.table-with-scroll-create, table.table-with-scroll-treatment {
+table.table-with-scroll, table.table-with-scroll-create, table.table-with-scroll-treatment, table.table-with-scroll-inventory  {
     display: table;
     width: 100%;
 }
 table.table-with-scroll thead, table.table-with-scroll tbody,
 table.table-with-scroll-create thead, table.table-with-scroll-create tbody,
-table.table-with-scroll-treatment thead, table.table-with-scroll-treatment tbody{
+table.table-with-scroll-treatment thead, table.table-with-scroll-treatment tbody,
+table.table-with-scroll-inventory thead, table.table-with-scroll-inventory tbody{
     float: left;
     width: 100%;
 }
@@ -754,8 +757,14 @@ table.table-with-scroll-treatment tbody{
     overflow-y: auto;
     max-height: 200px;
 }
+
+table.table-with-scroll-inventory tbody{
+    overflow-y: auto;
+    max-height: 500px;
+}
+
 table.table-with-scroll tr, table.table-with-scroll-create tr,
-table.table-with-scroll-treatment tr{
+table.table-with-scroll-treatment tr, table.table-with-scroll-inventory tr{
     width: 100%;
     display: table;
 }
@@ -807,3 +816,10 @@ div.sectionContainer {
 .dropdown-submenu>a:after{display:block;content:" ";float:right;width:0;height:0;border-color:transparent;border-style:solid;border-width:5px 0 5px 5px;border-left-color:#cccccc;margin-top:5px;margin-right:-10px;}
 .dropdown-submenu:hover>a:after{border-left-color:#ffffff;}
 .dropdown-submenu.pull-left{float:none;}.dropdown-submenu.pull-left>.dropdown-menu{left:-100%;margin-left:10px;-webkit-border-radius:6px 0 6px 6px;-moz-border-radius:6px 0 6px 6px;border-radius:6px 0 6px 6px;}
+
+#inventory-germplasm-list {
+      min-height: 400px;
+    }
+.table-with-scroll-inventory th, .table-with-scroll-inventory td{
+	text-align: center;
+}    

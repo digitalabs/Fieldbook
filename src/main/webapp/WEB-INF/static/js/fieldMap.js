@@ -487,8 +487,12 @@ function recreatePopupLocationCombo() {
     			   var tempData = { 'id' : value.locid,
      					  'text' : value.lname
    				   };
-    			   if(currentLocId == value.locid)
-    				   defaultData = tempData;
+    			   if(currentLocId != '' && currentLocId == value.locid){
+    				   defaultData = tempData;    				   
+    			   }
+    				   
+    			   
+    			   //console.log(currentLocId);
     			   popuplocationSuggestions_obj.push(tempData);  
     				
     			});		

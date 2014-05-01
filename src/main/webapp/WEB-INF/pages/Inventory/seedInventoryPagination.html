@@ -24,7 +24,7 @@
              </tr>
            </thead>
            <tbody th:remove="all-but-first">
-             <tr class="primaryRow" th:each="gid, row : *{paginatedInventoryList}" th:attr="data-index=${gid.index}">
+             <tr class="primaryRow" th:each="gid, row : *{paginatedInventoryList}" th:attr="data-gid=${gid.gid}">
             
                <td width="10%" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.gid}">.1</td> 
                <td width="20%" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.germplasmName}">.1</td>

@@ -3,25 +3,35 @@ function triggerInventoryTableSelection(tableName){
 		//$('#'+tableName).find("*").removeClass('field-map-highlight');
 		
 			$(this).toggleClass('field-map-highlight');
-			var index = $(this).data('index') + "";
+			var gid = $(this).data('gid') + "";
 			if($(this).hasClass('field-map-highlight')){				
-				selectedIndexIds[index] = index;
+				selectedGids[gid] = gid;
 				
 			}else{
-				selectedIndexIds[index] = null;
+				selectedGids[gid] = null;
 			}
 		
 	});
 }
 
-function getSelectedInventoryIndexes(){
+function getSelectedInventoryGids(){
 	var ids = [];
-	for(var index in selectedIndexIds) {
+	for(var gid in selectedGids) {
 		//console.log( index + " : " + selectedTableIds[index]);
-		var idVal = selectedIndexIds[index];
+		var idVal = selectedGids[gid];
 		if(idVal != null){
 			ids.push(idVal);
 		}			
 	}
 	return ids;
+}
+
+function addLot(){
+	var gids = getSelectedInventoryGids();
+	if(gids.length == 0){
+		showErrorMessage('page-message', germplasmSelectError);
+		return;		
+	}
+	
+	alert('Show chikkas popup');
 }

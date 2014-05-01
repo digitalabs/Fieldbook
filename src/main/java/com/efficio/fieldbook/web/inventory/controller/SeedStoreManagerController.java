@@ -95,7 +95,7 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
             	inventoryDetailList.add(new InventoryDetails(i, "Germplasm " + i, null,
             			null, "Location " + i, null,
             			new Integer(0), null, "Source " + i,
-            			null, "Scale "+ i));
+            			null, "Scale "+ i, null));
             }
             
             int index = 0;

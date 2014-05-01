@@ -81,12 +81,12 @@ function showPage(paginationUrl, pageNum, sectionDiv){
          		 }
              }else if(sectionDiv == 'inventory-germplasm-list'){
             	 //we highlight the previously clicked
-            	 for(var index in selectedIndexIds) {
+            	 for(var index in selectedGids) {
          			//console.log( index + " : " + selectedTableIds[index]);
-         			var idVal = selectedIndexIds[index];
+         			var idVal = selectedGids[index];
          			if(idVal != null){
          				//we need to highlight
-         				$('tr.primaryRow[data-index='+idVal+']').addClass('field-map-highlight');
+         				$('tr.primaryRow[data-gid='+idVal+']').addClass('field-map-highlight');
          			}			
          		 }
              }

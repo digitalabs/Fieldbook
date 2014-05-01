@@ -8,13 +8,13 @@
 						</div>			  
 					</div>
 
-<div class="form-group">
+<div class="row form-group">
 	
 		<div id="page-message" class="">
 		</div>				
 		
 	</div>
-	<div class="move-left col-xs-12 col-md-12"> 
+	<div class="row form-group"> 
 	<div class="panel panel-default">
 	   	<div class="panel-body manage-settings-panel-body">
 	   	
@@ -103,14 +103,14 @@
 <![endif]-->
   <script type="text/javascript" th:inline="javascript">
     //<![CDATA[          
-    var selectedIndexIds = new Array();
+    var selectedGids = new Array();
     var listId = 0;
+    var germplasmSelectError = /*[[#{seed.inventory.select.germplasm.error}]]*/;
     
     function do_validation() {
-    	var message = /*[[#{common.error.file.no.file.selected}]]*/;
     	
   		return true;
-  }
+   }
   
   
   $( document ).ready(function() {
@@ -241,7 +241,7 @@
         		type: "GET",
         		cache: false,
         		success: function(html) {
-        			selectedIndexIds = new Array();
+        			selectedGids = new Array();
         			$("#inventory-germplasm-list").html(html);   
         			
         		},

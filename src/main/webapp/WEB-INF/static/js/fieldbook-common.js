@@ -460,13 +460,17 @@ function createRow(id, parentClass, value, realId, withFieldMap) {
 			}
 		} else {
 			//for create new fieldmap
+			
+			var hasFieldMap = value.hasFieldMap ? "Yes" : "No";
+			var disabledString = value.hasFieldMap ? "disabled" : "";
+			
 			newRow = "<tr class='data-row trialInstance "+ genClassName + id + " " + genParentClassName + "'>";
-			var checkBox = "<input class='checkInstance' type='checkbox' id='" + realId + "' /> &nbsp;&nbsp;";
+			var checkBox = "<input "+disabledString+" class='checkInstance' type='checkbox' id='" + realId + "' /> &nbsp;&nbsp;";
 			newCell = "<td>" + checkBox + "&nbsp;" + value.trialInstanceNo + "</td><td>" + value.entryCount + "</td>";
 			if (trial) {
 				newCell = newCell + "<td>" + value.repCount + "</td><td>" + value.plotCount + "</td>";
 			}
-			var hasFieldMap = value.hasFieldMap ? "Yes" : "No";
+			
 			newCell = newCell + "<td class='hasFieldMap'>" + hasFieldMap + "</td>";
 		}
 	}

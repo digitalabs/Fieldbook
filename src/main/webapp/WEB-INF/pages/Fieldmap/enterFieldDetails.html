@@ -352,7 +352,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 					$('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val($('#'+getJquerySafeId("fieldLocationIdFavorite")).select2("data").id);
 					$('#'+getJquerySafeId("userFieldmap.locationName")).val($('#'+getJquerySafeId("fieldLocationIdFavorite")).select2("data").text);
 				}else{
-					$('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val(0);
+					$('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val("");
 					$('#'+getJquerySafeId("userFieldmap.locationName")).val("");
 				}
 			}else{
@@ -362,7 +362,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 					$('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val($('#'+getJquerySafeId("fieldLocationIdAll")).select2("data").id);
 					$('#'+getJquerySafeId("userFieldmap.locationName")).val($('#'+getJquerySafeId("fieldLocationIdAll")).select2("data").text);	
 				}else{
-					$('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val(0);
+					$('#'+getJquerySafeId("userFieldmap.fieldLocationId")).val("");
 					$('#'+getJquerySafeId("userFieldmap.locationName")).val("");
 				}
 				

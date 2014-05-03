@@ -791,7 +791,10 @@ function loadFieldsDropdown(locationId, currentFieldId){
 	           success: function(data) {	        	   
 	        		   //recreate the select2 combos to get updated list of locations
 	        		   $('#'+getJquerySafeId('userFieldmap.fieldId')).select2('destroy');
-	        		   initializeFieldSelect2($.parseJSON(data.allFields), [], false, currentFieldId);	   
+	        		   if(locationId != '')
+	        			   initializeFieldSelect2($.parseJSON(data.allFields), [], false, currentFieldId);
+	        		   else
+	        			   initializeFieldSelect2({}, [], false, "");
 	        		   initializeBlockSelect2({}, [], false, "");
 	        	   	   Spinner.toggle();
 	        	   	//console.log('here close 1');

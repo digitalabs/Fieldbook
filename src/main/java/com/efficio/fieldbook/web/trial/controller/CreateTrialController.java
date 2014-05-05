@@ -131,6 +131,7 @@ public class CreateTrialController extends SettingsController {
             form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
             form.setPlotLevelVariables(userSelection.getPlotsLevelList());
             form.setTrialLevelVariables(userSelection.getTrialLevelVariableList());
+            form.setTreatmentFactors(convertSettingDetailToTreatment(userSelection.getTreatmentFactors()));
             
             //build trial environment details
             List<List<ValueReference>> trialEnvList = createTrialEnvValueList(userSelection.getTrialLevelVariableList());
@@ -213,6 +214,7 @@ public class CreateTrialController extends SettingsController {
     private List<TreatmentFactorDetail> convertSettingDetailToTreatment(List<SettingDetail> treatmentFactors) {
         List<TreatmentFactorDetail> newTreatmentFactors = new ArrayList<TreatmentFactorDetail>();
         int index = 0;
+        
         for (SettingDetail settingDetail : treatmentFactors) {
             if (index%2 == 0) {
                 newTreatmentFactors.add(new TreatmentFactorDetail(settingDetail.getVariable().getCvTermId(), 

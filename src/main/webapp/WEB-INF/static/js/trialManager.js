@@ -2681,12 +2681,12 @@ function editTreatmentFactors() {
 function changeTreatmentFactorIdsClasses() {
 	var reg = new RegExp("treatmentFactors[0-9]+", "g");
 	var reg2 = new RegExp("treatmentFactors\[[0-9]+\]", "g");
-	var reg3 = new RegExp("possibleValuesJsonTreatment", "g");
 	$.each($("#treatmentFactors tbody tr"), function (index, row){
 		row.innerHTML = row.innerHTML.replace(reg, "treatmentFactors" + index);
 		row.innerHTML = row.innerHTML.replace(reg2, "treatmentFactors[" + index + "]");
-		row.innerHTML = row.innerHTML.replace(reg3, "possibleValuesJsonTreatment" + index);
-		
+	});
+	
+	$.each($("#treatmentFactors tbody tr"), function (index, row){
 		recreateMultipleObjectsTreatment(index, row);
 	});
 }
@@ -2704,7 +2704,6 @@ function correctTreatmentBackground() {
 function addTreatmentFactorLevel(treatmentLevelCount) {
 	var reg = new RegExp("treatmentFactors[0-9]+", "g");
 	var reg2 = new RegExp("treatmentFactors\[[0-9]+\]", "g");
-	var reg3 = new RegExp("possibleValuesJsonTreatment[0-9]+", "g");
 	var lastIndexOfTreatment = parseInt(getLastIndexOfTreatment($("#treatmentLevel").val()));
 	var lastIndexOfTable = $("#treatmentFactors tbody tr").length;
 	var insertIndex = lastIndexOfTreatment;
@@ -2715,7 +2714,6 @@ function addTreatmentFactorLevel(treatmentLevelCount) {
 	for (var i = lastIndexOfTreatment+1; i < lastIndexOfTreatment+1+(parseInt($("#treatmentLevelValue").val())-treatmentLevelCount); i++) {
 		var cells = $("#treatmentFactors tbody tr").get(lastIndexOfTreatment).innerHTML.replace(reg, "treatmentFactors" + lastIndexOfTable);
 		cells = cells.replace(reg2, "treatmentFactors[" + lastIndexOfTable + "]");
-		cells = cells.replace(reg3, "possibleValuesJsonTreatment" + lastIndexOfTable);
 		newRow = "<tr>" + cells + "</tr>";
 		
 		//insert row after the last level of the selected treatment factor
@@ -2723,14 +2721,17 @@ function addTreatmentFactorLevel(treatmentLevelCount) {
 		
 		levelValue++;
 		insertIndex++;
-		lastIndexOfTable++;
-		rowIndexToRecreate = insertIndex + 1;
 		
 		//set the level value
 		$($($("#treatmentFactors tbody tr").get(insertIndex)).children("td:nth-child(2)").children(".levelValue")).text(levelValue);
-		$($($("#treatmentFactors tbody tr").get(insertIndex)).children("td:nth-child(2)").children("#" + getJquerySafeId("treatmentFactors" + insertIndex + ".levelValue"))).val(levelValue);
+		$($($("#treatmentFactors tbody tr").get(insertIndex)).children("td:nth-child(2)").children("#" + getJquerySafeId("treatmentFactors" + lastIndexOfTable + ".levelValue"))).val(levelValue);
 		
-		recreateMultipleObjectsTreatment(insertIndex, $("#treatmentFactors tbody tr:nth-child("+ rowIndexToRecreate + ")")); 
+		//value to be used to get the new row added
+		rowIndexToRecreate = insertIndex + 1;
+		
+		recreateMultipleObjectsTreatment(lastIndexOfTable, $("#treatmentFactors tbody tr:nth-child("+ rowIndexToRecreate + ")"));
+		
+		lastIndexOfTable++;
 	}
 }
 
@@ -2757,9 +2758,9 @@ function recreateSpinnerMultipleTreatment(index, row, cell) {
 	//new input field for spinner
 	var newCell = "<input type='text' id='treatmentFactors" + index + 
 	".amountValue' name='treatmentFactors[" + index + "].amountValue' " + 
-	" data-min='" + $($(cell).children("input.spinner-input")).data("min") + 
-	"' data-max='" + $($(cell).children("input.spinner-input")).data("max") + 
-	"' data-step='" + $($(cell).children("input.spinner-input")).data("step") + "' class='form-control spinner-input spinnerElement' />";
+	" data-min='" + $(cell.children("input.spinner-input")).data("min") + 
+	"' data-max='" + $(cell.children("input.spinner-input")).data("max") + 
+	"' data-step='" + $(cell.children("input.spinner-input")).data("step") + "' class='form-control spinner-input spinnerElement' />";
 
 	cell.html(newCell);
 	
@@ -2779,8 +2780,8 @@ function recreateDateMultipleTreatment(index, row, cell) {
 
 function recreateSelect2ComboMultipleTreatment(index, row, cell) {
 	//get the possible values of the variable
-	var possibleValuesJson = $($(cell).find(".possibleValuesJsonTreatment")).text();
-
+	var possibleValuesJson = $(cell.find(".possibleValuesJsonTreatment")).text();
+	
 	//hidden field for select2 
 	var newCell = "<input type='hidden' id='treatmentFactors" + index + 
 	".amountValue' name='treatmentFactors[" + index + "]" + ".amountValue' class='form-control select2' />";

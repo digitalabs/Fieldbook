@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.inventory.bean.SeedSelection;
 import com.efficio.fieldbook.web.inventory.form.SeedStoreForm;
@@ -31,11 +32,14 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
+import org.generationcp.middleware.domain.oms.Scale;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.GermplasmListData;
+import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.InventoryService;
+import org.generationcp.middleware.service.api.OntologyService;
 
 /**
  * The Class ManageNurseriesController.
@@ -60,6 +64,40 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
     @Resource
     private SeedSelection seedSelection;
     
+    /** The ontology service. */
+    @Resource
+    private OntologyService ontologyService;
+    
+    /**
+     * Gets the data types.
+     *
+     * @return the data types
+     */
+    @ModelAttribute("locationList")
+    public List<Location> getLocationList() {
+        try {
+            List<Location> dataTypesOrig = fieldbookMiddlewareService.getAllLocations();
+            List<Location> dataTypes = dataTypesOrig;
+            
+            return dataTypes;
+        }catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+
+        return null;
+    }
+    
+    @ModelAttribute("scaleList")
+    public List<Scale> getScaleList() {
+        try {
+            return ontologyService.getAllScales();
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        
+        return null;
+    }
+    
     /**
      * Shows the manage nurseries screen
      *
@@ -81,6 +119,7 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
         */
     	return super.show(model);
     }
+    
     @RequestMapping(value="/displayGermplasmDetails/{listId}", method = RequestMethod.GET)
     public String displayGermplasmDetails(@PathVariable Integer listId,  @ModelAttribute("seedStoreForm") SeedStoreForm form,
             Model model) {
@@ -113,6 +152,7 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
         }
         return super.showAjaxPage(model, PAGINATION_TEMPLATE);
     }
+    
     /**
      * Get for the pagination of the list
      *
@@ -129,6 +169,18 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
             form.setCurrentPage(pageNum);
         }
         return super.showAjaxPage(model, PAGINATION_TEMPLATE);
+    }
+
+    @ResponseBody
+    @RequestMapping(value="/save/lots", method = RequestMethod.POST)
+    public String saveLots(@ModelAttribute("seedStoreForm") SeedStoreForm form,
+            Model model) {
+        List<Integer> gidList = new ArrayList<Integer>();
+        for (String gid : form.getGidList().split(",")) {
+            gidList.add(Integer.parseInt(gid));
+        }
+        
+        return "success";
     }
     
     /* (non-Javadoc)

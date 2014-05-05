@@ -23,12 +23,12 @@ import org.generationcp.middleware.domain.inventory.InventoryDetails;
  */
 public class SeedStoreForm {
 	 
- 	/** The inventory list. */
- 	private List<InventoryDetails> inventoryList;
+    /** The inventory list. */
+    private List<InventoryDetails> inventoryList;
 	 
-	//for pagination
+    //for pagination
     /** The paginated inventory list. */
-	private List<InventoryDetails> paginatedInventoryList;     
+    private List<InventoryDetails> paginatedInventoryList;     
     
     /** The current page. */
     private int currentPage;
@@ -37,7 +37,19 @@ public class SeedStoreForm {
     private int totalPages;
     
     /** The result per page. */
-    private int resultPerPage = 100;                 
+    private int resultPerPage = 100;    
+    
+    /** The location id. */
+    private int locationId;
+    
+    /** The scale id. */
+    private int scaleId;
+    
+    /** The comments. */
+    private String comments;
+    
+    /** The gid list. */
+    private String gidList;
     
     /**
      * Gets the result per page.
@@ -147,5 +159,77 @@ public class SeedStoreForm {
 			List<InventoryDetails> paginatedInventoryList) {
 		this.paginatedInventoryList = paginatedInventoryList;
 	}
+
+    /**
+     * Gets the location id.
+     *
+     * @return the locationId
+     */
+    public int getLocationId() {
+        return locationId;
+    }
+
+    /**
+     * Sets the location id.
+     *
+     * @param locationId the locationId to set
+     */
+    public void setLocationId(int locationId) {
+        this.locationId = locationId;
+    }
+
+    /**
+     * Gets the scale id.
+     *
+     * @return the scaleId
+     */
+    public int getScaleId() {
+        return scaleId;
+    }
+
+    /**
+     * Sets the scale id.
+     *
+     * @param scaleId the scaleId to set
+     */
+    public void setScaleId(int scaleId) {
+        this.scaleId = scaleId;
+    }
+
+    /**
+     * Gets the comments.
+     *
+     * @return the comments
+     */
+    public String getComments() {
+        return comments;
+    }
+
+    /**
+     * Sets the comments.
+     *
+     * @param comments the comments to set
+     */
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
+    /**
+     * Gets the gid list.
+     *
+     * @return the gidList
+     */
+    public String getGidList() {
+        return gidList;
+    }
+
+    /**
+     * Sets the gid list.
+     *
+     * @param gidList the gidList to set
+     */
+    public void setGidList(String gidList) {
+        this.gidList = gidList;
+    }
     
 }

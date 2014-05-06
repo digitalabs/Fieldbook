@@ -127,7 +127,7 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
         try {
                         
             List<InventoryDetails> inventoryDetailList = inventoryMiddlewareService.getInventoryDetailsByGermplasmList(listId);
-            
+            /*
             //for testing
             inventoryDetailList = new ArrayList();
             for(int i = 0 ; i < 300 ; i++){
@@ -141,7 +141,7 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
             for(InventoryDetails inventoryDetail : inventoryDetailList){
             	inventoryDetail.setIndex(index++);
             }
-            
+            */
             getSeedSelection().setInventoryList(inventoryDetailList);
             form.setInventoryList(inventoryDetailList);
             //form.changePage(1);

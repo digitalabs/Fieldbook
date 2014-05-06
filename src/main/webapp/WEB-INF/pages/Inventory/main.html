@@ -27,7 +27,6 @@
 
 				        <!-- Germplasm List Table View -->						
 				      	<div class="col-xs-9 col-md-9">
-				      	
 				      		<div id="primary-section" style="float: left; width: 70%">
 				      			<img th:src="@{/static/img/build-new-list.png}" style="padding-bottom:3px;" />
 				      			<label class="control-label"><strong class="sub-content-heading">Germplasm List</strong></label>
@@ -83,7 +82,7 @@
 				</div>
 			</div>
 		</div>
-
+<input type="hidden" id ="listIdSelected" />
 	
 <!-- Scripts location, note that the div tag will be remove after merging to decorator -->
 <div layout:fragment="page-script">
@@ -234,6 +233,7 @@
         
         function displayGermplasmDetails(listId) {
         	//alert(makeDraggableBool);
+        	$("#listIdSelected").val(listId);
         	Spinner.toggle();
         	$('#'+'germplasmTree').find("*").removeClass('dynatree-selected');
         	$.ajax({

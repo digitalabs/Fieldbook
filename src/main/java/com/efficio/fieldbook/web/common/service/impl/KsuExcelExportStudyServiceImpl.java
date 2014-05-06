@@ -2,6 +2,7 @@ package com.efficio.fieldbook.web.common.service.impl;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -13,9 +14,11 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.web.common.service.KsuExceIExportStudyService;
+import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.FieldbookProperty;
 import com.efficio.fieldbook.web.util.KsuFieldbookUtil;
+import com.efficio.fieldbook.web.util.ZipUtil;
 
 @Service
 public class KsuExcelExportStudyServiceImpl implements
@@ -28,27 +31,45 @@ public class KsuExcelExportStudyServiceImpl implements
 		FileOutputStream fos = null;
 
         try {
-            List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getObservations(), start, end);
-            List<List<String>> dataTable = KsuFieldbookUtil.convertWorkbookData(observations, workbook.getMeasurementDatasetVariables());
-
-			HSSFWorkbook xlsBook = new HSSFWorkbook();
-
-			if (dataTable != null && !dataTable.isEmpty()) {
-				HSSFSheet xlsSheet = xlsBook.createSheet(filename.substring(0, filename.lastIndexOf(".")));
-				for (int rowIndex = 0; rowIndex < dataTable.size(); rowIndex++) {
-					HSSFRow xlsRow = xlsSheet.createRow(rowIndex); 
-					
-					for (int colIndex = 0; colIndex < dataTable.get(rowIndex).size(); colIndex++) {
-						HSSFCell cell = xlsRow.createCell(colIndex);
-						cell.setCellValue(dataTable.get(rowIndex).get(colIndex));
+        	List<String> filenameList = new ArrayList<String>();
+        	for (int i = start; i <= end; i++) {
+        		
+	            List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getObservations(), i, i);
+	            List<List<String>> dataTable = KsuFieldbookUtil.convertWorkbookData(observations, workbook.getMeasurementDatasetVariables());
+	
+				HSSFWorkbook xlsBook = new HSSFWorkbook();
+	
+				if (dataTable != null && !dataTable.isEmpty()) {
+					HSSFSheet xlsSheet = xlsBook.createSheet(filename.substring(0, filename.lastIndexOf(".")));
+					for (int rowIndex = 0; rowIndex < dataTable.size(); rowIndex++) {
+						HSSFRow xlsRow = xlsSheet.createRow(rowIndex); 
+						
+						for (int colIndex = 0; colIndex < dataTable.get(rowIndex).size(); colIndex++) {
+							HSSFCell cell = xlsRow.createCell(colIndex);
+							cell.setCellValue(dataTable.get(rowIndex).get(colIndex));
+						}
 					}
 				}
-			}
-			
-			String filenamePath = FieldbookProperty.getPathProperty() + File.separator + filename;
-			fos = new FileOutputStream(new File(filenamePath));
-			xlsBook.write(fos);
-			outputFilename = filenamePath;
+				
+				int fileExtensionIndex = filename.lastIndexOf(".");
+				String filenamePath = FieldbookProperty.getPathProperty() + File.separator 
+						+ filename.substring(0, fileExtensionIndex)
+						+ "-" + String.valueOf(i) + filename.substring(fileExtensionIndex);
+				fos = new FileOutputStream(new File(filenamePath));
+				xlsBook.write(fos);
+				filenameList.add(filenamePath);
+        	}
+        	
+        	if (filenameList.size() == 1) {
+        		outputFilename = filenameList.get(0);
+        	}
+        	else { //multi-trial instances
+				outputFilename = FieldbookProperty.getPathProperty() 
+						+ File.separator 
+						+ filename.replaceAll(AppConstants.EXPORT_XLS_SUFFIX.getString(), "") 
+						+ AppConstants.ZIP_FILE_SUFFIX.getString();
+				ZipUtil.zipIt(outputFilename, filenameList);
+        	}
         	
 		} catch (Exception e) {
 			e.printStackTrace();

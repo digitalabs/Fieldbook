@@ -3,8 +3,8 @@
 	<div class="trialEnvironmentDiv">
 		<table style="table-layout: auto; width: 100%; margin: 0" id="trialInstancesTable" class="my-class table table-curved table-condensed table-with-scroll1">
 			<thead>
-				<tr>
-					<th style=" width: 200px" th:each="trialEnvLevelVariable, rowStat : *{trialLevelVariables}" th:text="${trialEnvLevelVariable.variable.name}">
+				<tr class="environmentTr">
+					<th  style=" width: 200px" th:each="trialEnvLevelVariable, rowStat : *{trialLevelVariables}" th:text="${trialEnvLevelVariable.variable.name}">
 					</th>
 				</tr>
 			</thead>
@@ -68,7 +68,9 @@
 <div layout:fragment="page-script">
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    
-   
+   		$(document).ready(function() {
+   			$('.environmentTr').height('0px');
+	});
     //]]>
     </script>
 </div>

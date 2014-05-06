@@ -1,5 +1,6 @@
 package com.efficio.fieldbook.web.util;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -31,7 +32,8 @@ public class ZipUtil {
     	for(String file : filenameList){
  
     		//System.out.println("File Added : " + file);
-    		ZipEntry ze= new ZipEntry(file);
+    		File f = new File(file);
+    		ZipEntry ze= new ZipEntry(f.getName());
         	zos.putNextEntry(ze);
  
         	FileInputStream in =  new FileInputStream(file);

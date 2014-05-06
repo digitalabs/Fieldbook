@@ -12,10 +12,10 @@
        <!-- my-class table table-curved table-condensed   -->
 				 <div class="factor-div" style="float: left; max-height: 400px; max-width: 50%; min-width: 50%; overflow-x: scroll; overflow-y: hidden">
 				 
-				<table id="factor-table" style="table-layout: auto; width: 100%">
+				<table class="table-curved table-condensed" id="factor-table" style="table-layout: auto; width: 100%">
 					<thead>
 						 <tr >
-			               <th th:if="${measurementVariable.factor == true}" th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'" th:each="measurementVariable, rowIndex : *{measurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>
+			               <th style="white-space: nowrap" th:if="${measurementVariable.factor == true}" th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'" th:each="measurementVariable, rowIndex : *{measurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>
 			
 			             </tr>	
 					</thead>
@@ -23,7 +23,7 @@
 				<tbody>
 						<tr  th:class="${row.even}? 'even' : 'odd'" th:each="measurementRow, row: *{paginatedMeasurementRowList}">
            	
-           		<td th:if="${measurementData.editable == false}" style="vertical-center; padding: 0px;" align="center" th:each="measurementData, rowIndex : ${measurementRow.dataList}"  >
+           		<td  th:if="${measurementData.editable == false}" style="vertical-center; padding: 0px; white-space: nowrap; padding-left: 5px; padding-right: 5px;" align="center" th:each="measurementData, rowIndex : ${measurementRow.dataList}"  >
              		
              		<label th:if="${measurementData.editable == false}" th:text="${measurementData.value}" ></label>
              		         		
@@ -34,7 +34,7 @@
 				</div>
 				<div class="variates-div" style="float: left; max-height: 400px;max-width: 50%; min-width: 50%; overflow: auto; overflow-x: scroll">
 				 
-				<table id="variate-table" style="table-layout: auto;  width: 100%"> 
+				<table class="table-curved table-condensed"  id="variate-table" style="table-layout: auto;  width: 100%"> 
 					<thead>
 						 <tr >
 			               <th th:if="${measurementVariable.factor == false}" th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'" th:each="measurementVariable, rowIndex : *{measurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>
@@ -162,6 +162,7 @@
         	syncTableHeight();
         }
         function syncTableHeight(){
+        	
         	var factorHeight = $('#factor-table').height();
         	var variateHeight = $('#variate-table').height();
         	
@@ -186,13 +187,20 @@
         		
         }
         function fixedTrHeight(){
+        	
+        	$('#factor-table tr').each(function(index){
+        		//console.log(index + " = " + $(this).height());
+        		$('#variate-table tr').eq(index).css('height',  $(this).height() + "px");
+        	})
+        	/*
+        	return;
         	var max = 0;    
         	$('table tr').each(function() {
         	    max = Math.max($(this).height(), max);
         	}).height(max);
         	
         	$('table tr').css('height', max+'px');
-        		
+        	*/	
         }
        
 		

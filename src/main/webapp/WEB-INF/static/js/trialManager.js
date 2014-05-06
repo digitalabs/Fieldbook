@@ -2408,7 +2408,7 @@ function recreateMultipleObjects(index, row) {
 }
 
 function initializeSpinner(sliderId) {
-	var currentVal  = parseFloat($(sliderId).data('min'));
+	var currentVal  = $(sliderId).val() == '' ? parseFloat($(sliderId).data('min')) : parseFloat($(sliderId).val());
 	$(sliderId).spinedit({
 		minimum: parseFloat($(sliderId).data('min')),
 		maximum: parseFloat($(sliderId).data('max')),
@@ -2682,6 +2682,26 @@ function changeTreatmentFactorIdsClasses() {
 	var reg = new RegExp("treatmentFactors[0-9]+", "g");
 	var reg2 = new RegExp("treatmentFactors\[[0-9]+\]", "g");
 	$.each($("#treatmentFactors tbody tr"), function (index, row){
+		//save current value
+		if ($(row).children("td:nth-child(3)").html().indexOf("spinner-input") > -1 ||
+				$(row).children("td:nth-child(3)").html().indexOf("date-input") > -1) {
+			$($(row).children("td:nth-child(3)").children("input.prevTreatmentValue"))
+				.val($($(row).children("td:nth-child(3)").children("input.spinner-input")).val());
+		} else if ($(row).children("td:nth-child(3)").html().indexOf("select2") > -1) {
+			//get the index of the select2 dropdown
+			var select2Index = row.innerHTML.match(reg2)[0].split("treatmentFactors[")[1].split("]")[0];
+			//check if there is a selected value
+			var selectedValue = $($(row).children("td:nth-child(3)").children("#" + 
+					getJquerySafeId("treatmentFactors" + select2Index + ".amountValue"))).select2("data");
+			if (selectedValue) {
+				selectedValue = selectedValue.id;
+			} else {
+				selectedValue = null;
+			}
+			//set the hidden field to the current value
+			$($(row).children("td:nth-child(3)").children("input.prevTreatmentValue"))
+				.val(selectedValue);
+		}
 		row.innerHTML = row.innerHTML.replace(reg, "treatmentFactors" + index);
 		row.innerHTML = row.innerHTML.replace(reg2, "treatmentFactors[" + index + "]");
 	});
@@ -2755,12 +2775,15 @@ function recreateMultipleObjectsTreatment(index, row){
 }
 
 function recreateSpinnerMultipleTreatment(index, row, cell) {
+	var newCell = "<input type='hidden' class='prevTreatmentValue' value='" + $(cell.children("input.prevTreatmentValue")).val() + "' />";
 	//new input field for spinner
-	var newCell = "<input type='text' id='treatmentFactors" + index + 
+	newCell = newCell + "<input type='text' id='treatmentFactors" + index + 
 	".amountValue' name='treatmentFactors[" + index + "].amountValue' " + 
 	" data-min='" + $(cell.children("input.spinner-input")).data("min") + 
 	"' data-max='" + $(cell.children("input.spinner-input")).data("max") + 
-	"' data-step='" + $(cell.children("input.spinner-input")).data("step") + "' class='form-control spinner-input spinnerElement' />";
+	"' data-step='" + $(cell.children("input.spinner-input")).data("step") +
+	"' value='" + $(cell.children("input.prevTreatmentValue")).val() +  
+	"' class='form-control spinner-input spinnerElement' />";
 
 	cell.html(newCell);
 	
@@ -2768,10 +2791,13 @@ function recreateSpinnerMultipleTreatment(index, row, cell) {
 }
 
 function recreateDateMultipleTreatment(index, row, cell) {
+	var newCell = "<input type='hidden' class='prevTreatmentValue' value='" + $(cell.children("input.prevTreatmentValue")).val() + "' />";
+	
 	//new input field for date 
-	var newCell = "<input type='text' id='treatmentFactors" + index + 
-	".amountValue' name='treatmentFactors[" + index + "].amountValue' " + 
-	" class='form-control date-input' />";
+	newCell = newCell + "<input type='text' id='treatmentFactors" + index + 
+	".amountValue' name='treatmentFactors[" + index + "].amountValue' " +
+	" value='" + $(cell.children("input.prevTreatmentValue")).val() +
+	"' class='form-control date-input' />";
 	
 	cell.html(newCell);
 	
@@ -2779,11 +2805,13 @@ function recreateDateMultipleTreatment(index, row, cell) {
 }
 
 function recreateSelect2ComboMultipleTreatment(index, row, cell) {
+	
 	//get the possible values of the variable
 	var possibleValuesJson = $(cell.find(".possibleValuesJsonTreatment")).text();
-	
+
+	var newCell = "<input type='hidden' class='prevTreatmentValue' value='" + $(cell.children("input.prevTreatmentValue")).val() + "' />";
 	//hidden field for select2 
-	var newCell = "<input type='hidden' id='treatmentFactors" + index + 
+	newCell = newCell + "<input type='hidden' id='treatmentFactors" + index + 
 	".amountValue' name='treatmentFactors[" + index + "]" + ".amountValue' class='form-control select2' />";
 	
 	//div containing the possible values
@@ -2793,7 +2821,7 @@ function recreateSelect2ComboMultipleTreatment(index, row, cell) {
 	cell.html(newCell);
 	
 	initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
-			"#" + getJquerySafeId("treatmentFactors" + index + ".amountValue"), false, null);
+			"#" + getJquerySafeId("treatmentFactors" + index + ".amountValue"), false, $(cell.children("input.prevTreatmentValue")).val());
 }
 
 function removeTreatmentFactorLevel(treatmentLevelCount) {

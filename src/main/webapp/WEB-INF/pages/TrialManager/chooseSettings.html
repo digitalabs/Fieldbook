@@ -287,6 +287,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 						    						<input class="cvTermIds" type="hidden" th:field="*{treatmentFactors[__${rowStat.index}__].levelValue}" />
 						    					</td>
 						    					<td width="35%" th:class="${rowStat.even}? 'even' : 'odd'">
+						    						<input type="hidden" class="prevTreatmentValue" />
 						    						<input th:if="${treatmentFactor.widgetType.type == 'DROPDOWN'}" 
 														type="hidden" th:field="*{treatmentFactors[__${rowStat.index}__].amountValue}" class="form-control select2" />
 													<div th:if="${treatmentFactor.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesJsonTreatment' + ${rowStat.index}"

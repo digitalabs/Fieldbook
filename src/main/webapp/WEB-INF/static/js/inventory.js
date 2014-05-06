@@ -119,11 +119,12 @@ function saveLots() {
 			type: "POST",
 			data: serializedData,
 		    success: function(data) {
-		    	if (data == "success") {
-			    	showSuccessfulMessage("page-message", "Save successful");
+		    	if (data.success == 1) {
+			    	showSuccessfulMessage("page-message", data.message);
 			    	$("#addLotsModal").modal("hide");
+			    	displayGermplasmDetails($("#listIdSelected").val());
 		    	} else {
-		    		showErrorMessage("page-message-lots", data);
+		    		showErrorMessage("page-message-lots", data.message);
 		    	}
 		    },
 			error: function (jqXHR, textStatus, errorThrown) {

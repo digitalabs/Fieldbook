@@ -3,13 +3,18 @@ package com.efficio.fieldbook.web.inventory.controller;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.inventory.bean.SeedSelection;
 import com.efficio.fieldbook.web.inventory.form.SeedStoreForm;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
@@ -37,6 +43,7 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.GermplasmListData;
 import org.generationcp.middleware.pojos.Location;
+import org.generationcp.middleware.pojos.LotsResult;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.InventoryService;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -59,6 +66,13 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
     
     @Resource
     private InventoryService inventoryMiddlewareService;
+    
+    @Resource
+    private WorkbenchService workbenchService;
+    
+    /** The message source. */
+    @Autowired
+    public MessageSource messageSource;
     
     /** The user selection. */
     @Resource
@@ -171,16 +185,52 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
         return super.showAjaxPage(model, PAGINATION_TEMPLATE);
     }
 
+    private String createUnsavedGidList(List<Integer> gids) {
+        StringBuilder gidList = new StringBuilder();
+        int counter = 0;
+        for (Integer gid: gids) {
+            gidList.append(String.valueOf(gid));
+            if (counter < gids.size()) {
+                gidList.append(", ");
+            }
+        }
+        return gidList.toString();
+    }
+    
     @ResponseBody
     @RequestMapping(value="/save/lots", method = RequestMethod.POST)
-    public String saveLots(@ModelAttribute("seedStoreForm") SeedStoreForm form,
-            Model model) {
+    public Map<String, Object> saveLots(@ModelAttribute("seedStoreForm") SeedStoreForm form,
+            Model model, Locale local) {
+        Map<String, Object> result = new HashMap<String, Object>();
         List<Integer> gidList = new ArrayList<Integer>();
+
         for (String gid : form.getGidList().split(",")) {
             gidList.add(Integer.parseInt(gid));
         }
         
-        return "success";
+        try {
+            LotsResult lotsResult = inventoryMiddlewareService.addLots(gidList, form.getLocationId(), form.getScaleId(), form.getComments(), workbenchService.getCurrentWorkbenchUserId());
+            String gidSkipped = createUnsavedGidList(lotsResult.getGidsSkipped());
+            if (lotsResult.getLotIdsAdded().size() == lotsResult.getGidsSkipped().size()) {
+                result.put("message", messageSource
+                        .getMessage("seed.inventory.add.lot.all.combinations.exist", null, local));
+                result.put("success", 0);
+            } else if (lotsResult.getGidsSkipped().size() != 0) { 
+                result.put("message", messageSource
+                        .getMessage("seed.inventory.add.lot.save.success.with.warning", new Object[] {gidSkipped}, local));
+                result.put("success", 1);
+            } else {
+                result.put("message", messageSource
+                        .getMessage("seed.inventory.add.lot.save.success", null, local));
+                result.put("success", 1);
+            }
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+            result.put("message", "error: " + e.getMessage());
+            result.put("success", 0);
+        }
+        
+        return result;
     }
     
     /* (non-Javadoc)

@@ -115,8 +115,13 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
      */
     private String doExport(int exportType, int selectedTraitTermId, 
     		HttpServletResponse response, boolean isTrial, int start, int end){
-    	
+
     	StudySelection userSelection = getUserSelection(isTrial);
+    	if (start == 0 || end == 0) { //all
+    		start = 1;
+    		end = userSelection.getWorkbook().getTotalNumberOfInstances(); 
+    	}
+    	
     	String filename = userSelection.getWorkbook().getStudyDetails().getStudyName();
     	String outputFilename = null;
     	if(AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == exportType){
@@ -130,7 +135,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     	}else if(AppConstants.EXPORT_NURSERY_EXCEL.getInt() == exportType){
     		filename = filename  + AppConstants.EXPORT_XLS_SUFFIX.getString();
     		outputFilename = excelExportStudyService.export(userSelection.getWorkbook(), filename, start, end);
-        	if (userSelection.getWorkbook().getTotalNumberOfInstances() > 1) {
+    		if (end - start > 0) {
         		int extensionIndex = filename.lastIndexOf(".");
         		filename = filename.substring(0, extensionIndex) + AppConstants.ZIP_FILE_SUFFIX.getString();
         		response.setContentType("application/zip");
@@ -144,14 +149,27 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     	}else if (AppConstants.EXPORT_KSU_EXCEL.getInt() == exportType) {
     		filename = filename + AppConstants.EXPORT_XLS_SUFFIX.getString();
     		outputFilename = ksuExcelExportStudyService.export(userSelection.getWorkbook(), filename, start, end);
-    		response.setContentType("application/vnd.ms-excel");
+    		if (end - start > 0) {
+        		int extensionIndex = filename.lastIndexOf(".");
+        		filename = filename.substring(0, extensionIndex) + AppConstants.ZIP_FILE_SUFFIX.getString();
+        		response.setContentType("application/zip");
+    		}
+    		else {
+        		response.setContentType("application/vnd.ms-excel");
+    		}
     	}else if (AppConstants.EXPORT_KSU_CSV.getInt() == exportType) {
     		filename = filename + AppConstants.EXPORT_CSV_SUFFIX.getString();
     		outputFilename = ksuCsvExportStudyService.export(userSelection.getWorkbook(), filename, start, end);
-    		response.setContentType("text/csv");
+    		if (end - start > 0) {
+        		int extensionIndex = filename.lastIndexOf(".");
+        		filename = filename.substring(0, extensionIndex) + AppConstants.ZIP_FILE_SUFFIX.getString();
+        		response.setContentType("application/zip");
+    		}
+    		else {
+    			response.setContentType("text/csv");
+    		}
     	}
     	
-    	        
         File xls = new File(outputFilename); // the selected name + current date
         FileInputStream in;
         

@@ -23,7 +23,7 @@
 				<tbody>
 						<tr  th:class="${row.even}? 'even' : 'odd'" th:each="measurementRow, row: *{paginatedMeasurementRowList}">
            	
-           		<td  th:if="${measurementData.editable == false}" style="vertical-center; padding: 0px; white-space: nowrap" align="center" th:each="measurementData, rowIndex : ${measurementRow.dataList}"  >
+           		<td  th:if="${measurementData.editable == false}" style="vertical-center; padding: 0px; white-space: nowrap; padding-left: 5px; padding-right: 5px;" align="center" th:each="measurementData, rowIndex : ${measurementRow.dataList}"  >
              		
              		<label th:if="${measurementData.editable == false}" th:text="${measurementData.value}" ></label>
              		         		

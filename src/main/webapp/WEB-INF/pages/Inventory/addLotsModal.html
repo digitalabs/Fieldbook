@@ -61,15 +61,8 @@
 <div layout:fragment="page-script">		
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    
-		var locationSuggestions = /*[[${locationList}]]*/ null;    
-    	var scaleSuggestions = /*[[${scaleList}]]*/ null;
-    	var locationRequired = /*[[#{seed.inventory.location.required}]]*/;
-    	var scaleRequired = /*[[#{seed.inventory.scale.required}]]*/;
+		
     	
-    	$( document ).ready(function() {
-    		initializePossibleValuesCombo(locationSuggestions, "#locationId", true, null);
-    		initializePossibleValuesCombo(scaleSuggestions, "#scaleId", false, null);
-    	});
     //]]>
     </script>
 </div>

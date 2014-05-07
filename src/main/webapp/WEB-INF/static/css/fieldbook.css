@@ -779,7 +779,7 @@ table.table-with-scroll-create thead tr th:last-child {
 }
 table.table-with-scroll-create tbody tr td:last-child {
 	width: 10%;
-}
+} 
 table.table-with-scroll thead tr th:nth-child(2), table.table-with-scroll thead tr th:nth-child(3) {
 	width: 47%;
 }
@@ -792,7 +792,27 @@ table.table-with-scroll-create thead tr th:nth-child(1), table.table-with-scroll
 table.table-with-scroll-create tbody tr td:nth-child(1), table.table-with-scroll-create tbody tr td:nth-child(2) {
 	width: 49%;
 }
-
+table.table-with-scroll-inventory thead tr th:nth-child(1) {
+	width: 10%;
+}
+table.table-with-scroll-inventory thead tr th:nth-child(2) {
+	width: 12%;
+} 
+table.table-with-scroll-inventory thead tr th:nth-child(3) {
+	width: 18%;
+} 
+table.table-with-scroll-inventory thead tr th:nth-child(4) {
+	width: 15%;
+}
+table.table-with-scroll-inventory thead tr th:nth-child(5) {
+	width: 5%;
+}
+table.table-with-scroll-inventory thead tr th:nth-child(6) {
+	width: 16%;
+}
+table.table-with-scroll-inventory thead tr th:nth-child(7) {
+	width: 12%;
+}
 div.sectionContainer {
 	max-height: 500px; 
 	overflow-y: auto; 

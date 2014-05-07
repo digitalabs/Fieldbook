@@ -2025,6 +2025,9 @@ function chooseSelectedTrial() {
         	$('.spinner-input-trial').spinedit({
 		    	minimum: 1
 		    });
+        	if ($("#treatmentFactors tbody tr").length > 0) {
+				$(".treatmentFactorsDetails").addClass("in");
+			}
         }, 
         error: function(jqXHR, textStatus, errorThrown){
 			console.log("The following error occured: " + textStatus, errorThrown); 

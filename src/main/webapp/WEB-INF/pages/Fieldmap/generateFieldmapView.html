@@ -18,16 +18,16 @@
    	
    	<div class="row">
 	<form class="form-inline" role="form">
-		  <div  class="form-group fieldmap-header" style="padding-left: 15px">
+		  <div  class="form-group fieldmap-header" style="padding-left: 15px;">
 		    <h2 th:text="#{fieldmap.header.make.a.field.plan}">Make a Field Plan</h2>
 		  </div>
-		  <div  class="form-group fieldmap-header">
+		  <div  class="form-group fieldmap-header" >
 		    <h2 class="light" th:text="#{fieldmap.header.enter.details}">1. ENTER FIELD DETAILS</h2>
 		  </div>
-		  <div  class="form-group fieldmap-header">
+		  <div  class="form-group fieldmap-header" >
 		    <h2 class="light" th:text="#{fieldmap.header.enter.planting.details}">2. ENTER PLANTING DETAILS</h2>
 		  </div>
-		  <div class="form-group fieldmap-header">
+		  <div class="form-group fieldmap-header" >
 		    <h2  th:text="#{fieldmap.header.generate.field.map}">3. GENERATE FIELD MAP</h2>
 		  </div>
 	</form>
@@ -233,8 +233,8 @@ th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" 
 		<div class="row">
 			<div class="col-xs-12 col-md-12">
 				<input type="hidden" id="markedCells" name="markedCells" />
-				<div class="table-responsive">
-					<div id="fieldmap-area" style="1000px; overflow:auto;" th:include="/Fieldmap/fieldmapView"></div>					
+				<div class="table-responsive" >
+					<div id="fieldmap-area"  th:include="/Fieldmap/fieldmapView"></div>					
 				</div>
 			</div>
 		</div>

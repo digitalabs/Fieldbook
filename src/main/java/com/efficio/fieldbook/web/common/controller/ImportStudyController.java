@@ -159,20 +159,22 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     
     private List<List<ValueReference>> transformTrialObservations(List<MeasurementRow> trialObservations, List<SettingDetail> trialHeaders) {
     	List<List<ValueReference>> list = new ArrayList<List<ValueReference>>();
-    	if (trialObservations != null && !trialObservations.isEmpty()) {
-    		for (MeasurementRow row : trialObservations) {
-        		List<ValueReference> refList = new ArrayList<ValueReference>();
-        		for (SettingDetail header : trialHeaders) {
-        			for (MeasurementData data : row.getDataList()) {
-        				if (data.getMeasurementVariable() != null
-        					&& data.getMeasurementVariable().getTermId() == header.getVariable().getCvTermId()) {
-        					
-        					refList.add(new ValueReference(data.getMeasurementVariable().getTermId(), data.getValue()));
-        				}
-        			}
-        		}
-        		list.add(refList);
-    		}
+    	if (trialHeaders != null && !trialHeaders.isEmpty()) {
+	    	if (trialObservations != null && !trialObservations.isEmpty()) {
+	    		for (MeasurementRow row : trialObservations) {
+	        		List<ValueReference> refList = new ArrayList<ValueReference>();
+	        		for (SettingDetail header : trialHeaders) {
+	        			for (MeasurementData data : row.getDataList()) {
+	        				if (data.getMeasurementVariable() != null
+	        					&& data.getMeasurementVariable().getTermId() == header.getVariable().getCvTermId()) {
+	        					
+	        					refList.add(new ValueReference(data.getMeasurementVariable().getTermId(), data.getValue()));
+	        				}
+	        			}
+	        		}
+	        		list.add(refList);
+	    		}
+	    	}
     	}
     	return list;
     }

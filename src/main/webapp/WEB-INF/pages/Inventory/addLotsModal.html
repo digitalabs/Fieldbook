@@ -1,4 +1,6 @@
 <div class="col-xs-7 col-md-7" xmlns:th="http://www.thymeleaf.org">
+	<form id="add-plot-form" role="form-horizontal" class="form-horizontal" action="#" 
+		method="post" th:object="${seedStoreForm}" enctype="multipart/form-data">
 	<!-- Modal -->
    	<div class="modal fade" id="addLotsModal" role="dialog" aria-labelledby="addLotsLabel" aria-hidden="true">
 		<div class="modal-dialog">
@@ -56,13 +58,13 @@
 	     	</div><!-- /.modal-content -->
   		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
+	</form>
 </div>
 
 <div layout:fragment="page-script">		
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    
 		
-    	
     //]]>
     </script>
 </div>

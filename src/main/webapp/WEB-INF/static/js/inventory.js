@@ -35,6 +35,7 @@ function addLot(){
 	$("#locationId").select2("data", null);
 	$("#scaleId").select2("data", null);
 	$("#comments").val("");
+	$("#page-message-lots").html("");
 	$("#addLotsModal").modal("show");
 }
 

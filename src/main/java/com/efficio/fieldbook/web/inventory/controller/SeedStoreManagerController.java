@@ -189,10 +189,16 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
         StringBuilder gidList = new StringBuilder();
         int counter = 0;
         for (Integer gid: gids) {
-            gidList.append(String.valueOf(gid));
-            if (counter < gids.size()) {
+            for (InventoryDetails inventory : seedSelection.getInventoryList()) {
+                if (inventory.getGid().equals(gid)) {
+                    gidList.append(inventory.getGermplasmName());
+                    break;
+                }
+            }
+            if (counter < gids.size()-1) {
                 gidList.append(", ");
             }
+            counter++;
         }
         return gidList.toString();
     }
@@ -209,15 +215,15 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
         }
         
         try {
-            LotsResult lotsResult = inventoryMiddlewareService.addLots(gidList, form.getLocationId(), form.getScaleId(), form.getComments(), workbenchService.getCurrentWorkbenchUserId());
-            String gidSkipped = createUnsavedGidList(lotsResult.getGidsSkipped());
-            if (lotsResult.getLotIdsAdded().size() == lotsResult.getGidsSkipped().size()) {
+            LotsResult lotsResult = inventoryMiddlewareService.addLots(gidList, form.getLocationId(), form.getScaleId(), form.getComments(), workbenchService.getCurrentIbdbUserId(this.getCurrentProjectId()));
+            if (gidList.size() == lotsResult.getGidsSkipped().size()) {
                 result.put("message", messageSource
                         .getMessage("seed.inventory.add.lot.all.combinations.exist", null, local));
                 result.put("success", 0);
-            } else if (lotsResult.getGidsSkipped().size() != 0) { 
+            } else if (lotsResult.getGidsSkipped().size() != 0) {
+                String germplasmNames = createUnsavedGidList(lotsResult.getGidsSkipped());
                 result.put("message", messageSource
-                        .getMessage("seed.inventory.add.lot.save.success.with.warning", new Object[] {gidSkipped}, local));
+                        .getMessage("seed.inventory.add.lot.save.success.with.warning", new Object[] {germplasmNames}, local));
                 result.put("success", 1);
             } else {
                 result.put("message", messageSource

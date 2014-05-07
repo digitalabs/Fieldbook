@@ -32,6 +32,10 @@ function addLot(){
 		showErrorMessage('page-message', germplasmSelectError);
 		return;		
 	}
+	$("#locationId").select2("data", null);
+	$("#scaleId").select2("data", null);
+	$("#comments").val("");
+	$("#page-message-lots").html("");
 	$("#addLotsModal").modal("show");
 }
 
@@ -112,7 +116,7 @@ function saveLots() {
 	} else if (!$("#scaleId").select2("data")) {
 		showErrorMessage("page-message-lots", scaleRequired);
 	} else {
-		var serializedData = $("#germplasm-list-form").serialize();
+		var serializedData = $("#add-plot-form").serialize();
 		
 		$.ajax({
 			url: "/Fieldbook/SeedStoreManager/save/lots",

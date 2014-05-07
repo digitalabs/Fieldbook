@@ -7,7 +7,7 @@
 	<input type="hidden" th:field="*{importVal}"/>
 	<input type="hidden" th:field="*{numberOfInstances}" />
               
-	 <div class="germplasm-measurement-list-table" style="width: 100%; max-width: 100%;">
+	 <div class="germplasm-measurement-list-table" style="width: 100%; max-width: 100%; height: 500px; min-height: 500px">
 	
        <!-- my-class table table-curved table-condensed   -->
 				 <div class="factor-div" style="float: left; max-height: 400px; max-width: 50%; min-width: 50%; overflow-x: scroll; overflow-y: hidden">
@@ -154,11 +154,17 @@
        		syncTableHeight();
        		if(isIE){
        			resizeWindowForIE()       	 	
-       		}
+       		}else{
+        		
+        	}
    		});
         function resizeWindowForIE(){
-        	if(isIE)
-        		$('.germplasm-measurement-list-table').css('width', $( window ).width() + "px");
+        	if(isIE){
+        		$('.germplasm-measurement-list-table').css('width', $( window ).width() + "px");   
+        		$('.factor-div').css('min-width', '48.5%');
+        		$('.factor-div').css('max-width', '48.5%');
+        	}
+        		
         	syncTableHeight();
         }
         function syncTableHeight(){
@@ -187,20 +193,21 @@
         		
         }
         function fixedTrHeight(){
-        	
+        	/*
         	$('#factor-table tr').each(function(index){
         		//console.log(index + " = " + $(this).height());
         		$('#variate-table tr').eq(index).css('height',  $(this).height() + "px");
         	})
-        	/*
+        	
         	return;
+        	*/
         	var max = 0;    
         	$('table tr').each(function() {
         	    max = Math.max($(this).height(), max);
         	}).height(max);
         	
         	$('table tr').css('height', max+'px');
-        	*/	
+        		
         }
        
 		

@@ -413,7 +413,8 @@ td.validValueDesc {
 	border:1px dashed; 
 	overflow:auto; 
 	border-bottom:none;
-	max-width: 1200px;
+	/*max-width: 1200px;*/
+	max-width: 100%;
 }
 
 

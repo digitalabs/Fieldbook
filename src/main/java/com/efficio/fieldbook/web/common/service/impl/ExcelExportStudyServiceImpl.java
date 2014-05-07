@@ -108,7 +108,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 				instanceNumber++;
 			}
 
-			if (locationIds.size() > 1) {
+			if (end - start > 0) {
 				outputFilename = FieldbookProperty.getPathProperty() 
 						+ File.separator 
 						+ filename.replaceAll(AppConstants.EXPORT_XLS_SUFFIX.getString(), "") 

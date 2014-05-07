@@ -14,8 +14,8 @@
          <table th:if="*{not #lists.isEmpty(paginatedImportedCheckGermplasm)}" class="my-class table table-curved table-condensed check-germplasm-list-items">
            <thead>
              <tr>
-               <th th:utext="#{nursery.import.header.check}">.Check</th>              
-               <th th:utext="#{nursery.import.header.designation}">.Designation</th>
+               <th style="text-align: center; vertical-align: middle" th:utext="#{nursery.import.header.check}">.Check</th>              
+               <th style="text-align: center; vertical-align: middle" th:utext="#{nursery.import.header.designation}">.Designation</th>
              </tr>
            </thead>
            <tbody th:remove="all-but-first">
@@ -25,7 +25,7 @@
                		<option th:each="type: ${checkLists}" th:value="${type.id}" th:text="${type.description}"></option>
                </select>               
                </td>
-               <td style="vertical-align: middle" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.desig}">.2</td>
+               <td style="text-align: center; vertical-align: middle" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.desig}">.2</td>
              </tr>
              <tr>
                <td>.1.1</td>

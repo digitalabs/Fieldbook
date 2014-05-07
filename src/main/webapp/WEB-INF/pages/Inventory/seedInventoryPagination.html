@@ -14,25 +14,25 @@
          <table id="inventory-table" th:if="*{not #lists.isEmpty(paginatedInventoryList)}" class="my-class table table-curved table-condensed germplasm-list-items table-with-scroll-inventory">
            <thead>
              <tr>
-               <th width="10%"  style="text-align: center; " th:utext="#{seed.inventory.gid}">.GID</th>
-               <th width="20%"  style="text-align: center; " th:utext="#{seed.inventory.name}">.Name</th>
-               <th width="20%"  style="text-align: center; " th:utext="#{seed.inventory.location}">.Location</th>               
-               <th width="15%"  style="text-align: center; " th:utext="#{seed.inventory.user}">.User</th>
-               <th width="10%"  style="text-align: center; " th:utext="#{seed.inventory.amount}">.Amount</th>
-               <th width="10%"  style="text-align: center; " th:utext="#{seed.inventory.source}">.Source</th>
-               <th width="15%"  style="text-align: center; " th:utext="#{seed.inventory.scale}">.Scale</th>
+               <th width="10%"  style="text-align: center; vertical-align: middle" th:utext="#{seed.inventory.gid}">.GID</th>
+               <th width="18%"  style="text-align: center; vertical-align: middle" th:utext="#{seed.inventory.name}">.Name</th>
+               <th width="18%"  style="text-align: center; vertical-align: middle" th:utext="#{seed.inventory.location}">.Location</th>               
+               <th width="15%"  style="text-align: center; vertical-align: middle" th:utext="#{seed.inventory.user}">.User</th>
+               <th width="10%"  style="text-align: center; vertical-align: middle" th:utext="#{seed.inventory.amount}">.Amount</th>
+               <th width="20%"  style="text-align: center; vertical-align: middle" th:utext="#{seed.inventory.source}">.Source</th>
+               <th width="14%"  style="text-align: center; vertical-align: middle" th:utext="#{seed.inventory.scale}">.Scale</th>
              </tr>
            </thead>
            <tbody th:remove="all-but-first">
              <tr class="primaryRow" th:each="gid, row : *{paginatedInventoryList}" th:attr="data-gid=${gid.gid}">
             
-               <td width="10%" style="text-align: center; " align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.gid}">.1</td> 
-               <td width="20%" style="text-align: center; " align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.germplasmName}">.1</td>
-               <td width="20%" style="text-align: center; " align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.locationName}">.2</td>
-               <td width="15%" style="text-align: center; " align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.userName}">.3</td>
-               <td width="10%" style="text-align: center; " align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.amount}">.4</td>
-               <td width="10%" style="text-align: center; " align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.sourceName}">.5</td>
-               <td width="15%" style="text-align: center; " align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.scaleName}">.6</td>
+               <td width="10%" style="text-align: center; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.gid}">.1</td> 
+               <td width="18%" style="text-align: center; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.germplasmName}">.1</td>
+               <td width="18%" style="text-align: center; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.locationName}">.2</td>
+               <td width="15%" style="text-align: center; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.userName}">.3</td>
+               <td width="10%" style="text-align: center; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.amount}">.4</td>
+               <td width="20%" style="text-align: center; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.sourceName}">.5</td>
+               <td width="14%" style="text-align: center; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.scaleName}">.6</td>
              </tr>
              <tr>
                <td>.1.1</td>

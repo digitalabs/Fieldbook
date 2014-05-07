@@ -32,6 +32,9 @@ function addLot(){
 		showErrorMessage('page-message', germplasmSelectError);
 		return;		
 	}
+	$("#locationId").select2("data", null);
+	$("#scaleId").select2("data", null);
+	$("#comments").val("");
 	$("#addLotsModal").modal("show");
 }
 

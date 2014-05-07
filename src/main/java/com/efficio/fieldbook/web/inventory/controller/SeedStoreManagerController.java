@@ -211,7 +211,7 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
         try {
             LotsResult lotsResult = inventoryMiddlewareService.addLots(gidList, form.getLocationId(), form.getScaleId(), form.getComments(), workbenchService.getCurrentIbdbUserId(this.getCurrentProjectId()));
             String gidSkipped = createUnsavedGidList(lotsResult.getGidsSkipped());
-            if (lotsResult.getLotIdsAdded().size() == lotsResult.getGidsSkipped().size()) {
+            if (gidList.size() == lotsResult.getGidsSkipped().size()) {
                 result.put("message", messageSource
                         .getMessage("seed.inventory.add.lot.all.combinations.exist", null, local));
                 result.put("success", 0);

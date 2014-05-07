@@ -198,6 +198,7 @@ public enum AppConstants {
     ,DESIGN_LAYOUT_INDIVIDUAL
     
     ,OBJECTIVE_ID
+    ,OCC
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

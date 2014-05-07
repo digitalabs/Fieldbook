@@ -54,6 +54,8 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	
 	private static final int PIXEL_SIZE = 250;
 	
+	private static final String OCC_8170_LABEL = "8170_LABEL";
+	
 	@Resource
 	private MessageSource messageSource;
 	
@@ -292,7 +294,11 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		HSSFRow row = xlsSheet.createRow(currentRowNum);
 
 		HSSFCell cell = row.createCell(0, HSSFCell.CELL_TYPE_STRING);
-		cell.setCellValue(variable.getName());
+		String occName = variable.getName();
+		String appConstant8170 = AppConstants.getString(OCC_8170_LABEL);
+		if(appConstant8170 != null && appConstant8170.equalsIgnoreCase(occName))
+			occName = AppConstants.OCC.getString();
+		cell.setCellValue(occName);
 
 		cell = row.createCell(1, HSSFCell.CELL_TYPE_STRING);
 		cell.setCellValue(variable.getDescription());

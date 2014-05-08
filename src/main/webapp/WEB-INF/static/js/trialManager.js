@@ -2686,10 +2686,12 @@ function changeTreatmentFactorIdsClasses() {
 	var reg2 = new RegExp("treatmentFactors\[[0-9]+\]", "g");
 	$.each($("#treatmentFactors tbody tr"), function (index, row){
 		//save current value
-		if ($(row).children("td:nth-child(3)").html().indexOf("spinner-input") > -1 ||
-				$(row).children("td:nth-child(3)").html().indexOf("date-input") > -1) {
+		if ($(row).children("td:nth-child(3)").html().indexOf("spinner-input") > -1) {
 			$($(row).children("td:nth-child(3)").children("input.prevTreatmentValue"))
 				.val($($(row).children("td:nth-child(3)").children("input.spinner-input")).val());
+		} else if ($(row).children("td:nth-child(3)").html().indexOf("date-input") > -1) {
+			$($(row).children("td:nth-child(3)").children("input.prevTreatmentValue"))
+			.val($($(row).children("td:nth-child(3)").children("input.date-input")).val());
 		} else if ($(row).children("td:nth-child(3)").html().indexOf("select2") > -1) {
 			//get the index of the select2 dropdown
 			var select2Index = row.innerHTML.match(reg2)[0].split("treatmentFactors[")[1].split("]")[0];

@@ -16,10 +16,10 @@
          		</div>	         		
 				<div class="row form-group">
 					<div class="col-xs-12 col-md-12">
-		         		<div class="col-xs-3  col-md-3 add_top_padding">
+		         		<div class="col-xs-4  col-md-4 add_top_padding">
 					  		<label class="control-label" th:text="#{browse.nursery.folder.name}">Folder Name:</label><span class="required">*</span>
 					  	</div>
-					    <div class="col-xs-6 col-md-6">
+					    <div class="col-xs-7 col-md-7">
 					      <input id="folderName" name="folderName" type="text" class="form-control select2" placeholder="Folder Name"/>						      
 					    </div>
 		        	</div>
@@ -40,8 +40,7 @@
     	<div class="modal-content">
 		    	<div class="modal-header">
 	            	<button id="closeRenameStudyFolder" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			           <h4 class="modal-title" id="heading-modal" th:text="#{browse.nursery.rename.folder.name}">
-			           
+			           <h4 class="modal-title" id="heading-modal" th:text="#{browse.nursery.rename.folder.name}">			           
 			         		Rename Folder
 		         	   </h4>
 	          	</div>
@@ -53,7 +52,7 @@
          		</div>	         		
 				<div class="row form-group">
 					<div class="col-xs-12 col-md-12">
-		         		<div class="col-xs-3  col-md-3 add_top_padding">
+		         		<div class="col-xs-4  col-md-4 add_top_padding">
 					  		<label class="control-label" th:text="#{browse.nursery.folder.name}">Folder Name:</label><span class="required">*</span>
 					  	</div>
 					    <div class="col-xs-6 col-md-6">
@@ -71,12 +70,73 @@
   		</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->	
 
+<div class="modal fade" id="deleteStudyFolder" role="dialog" aria-labelledby="deleteStudyFolder" aria-hidden="true">
+	<div class="modal-dialog modal-small">
+    	<div class="modal-content">
+		    	<div class="modal-header">
+	            	<button id="closeDeleteStudyFolder" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			           <h4 class="modal-title" id="heading-modal" th:text="#{browse.nursery.delete.folder.name}">			           
+			         		Delete Folder
+		         	   </h4>
+	          	</div>
+	          
+         	<div class="modal-body" id="manageCheckTypesModalBody">
+         		<div class="row">
+	         		<div id="page-delete-study-folder-message-modal" class="col-xs-12 col-md-12">
+	         		</div>
+         		</div>	         		
+				<div class="row form-group">
+					<div class="col-xs-12 col-md-12">
+					<div class="col-xs-2  col-md-2 add_top_padding">
+					</div>
+		         		<div class="col-xs-9  col-md-9 add_top_padding">
+					  		<label class="control-label" id="delete-confirmation"></label>
+					  	</div>					    
+		        	</div>
+		        </div>
+         	
+         	</div>																							
+       		<div class="modal-footer addVariable-footer">    	       			
+       			<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.no.text}">Cancel</button>
+       			<button type="button" class="btn btn-primary" aria-hidden="true" th:text="#{common.form.yes.text}" onclick="javascript: submitDeleteFolder();">Ok</button>
+      			</div>
+     	</div><!-- /.modal-content -->
+  		</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id="moveStudyFolder" role="dialog" aria-labelledby="moveStudyFolder" aria-hidden="true">
+	<div class="modal-dialog modal-small">
+    	<div class="modal-content">
+		    	<div class="modal-header">
+	            	<button id="closeMoveStudyFolder" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			           <h4 class="modal-title" id="heading-modal">			           
+			         		Invalid Operation
+		         	   </h4>
+	          	</div>
+	          
+         	<div class="modal-body" id="manageCheckTypesModalBody">
+         		<div class="row">
+	         		<div id="page-move-study-folder-message-modal" class="col-xs-12 col-md-12">
+	         		</div>
+         		</div>	         						
+         	
+         	</div>																							
+       		<div class="modal-footer addVariable-footer">    	       			
+       			<button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.ok.text}" >Ok</button>
+      			</div>
+     	</div><!-- /.modal-content -->
+  		</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
 <div layout:fragment="page-script">  
   <script type="text/javascript" th:inline="javascript">
     //<![CDATA[          
     
           var folderNameRequiredMessage = /*[[#{browse.nursery.add.folder.name.blank}]]*/;
-          var renameFolderHeader =      /*[[#{browse.nursery.rename.folder.name}]]*/
+          var renameFolderHeader =      /*[[#{browse.nursery.rename.folder.name}]]*/;
+        	  
+          var deleteConfirmation = /*[[#{browse.nursery.delete.folder.name.confirmation}]]*/;
 		  function addFolder(object){
 			  if(!$(object).hasClass('disable-image')){
 				  $('#folderName').val('');
@@ -105,8 +165,12 @@
 		        		success: function(data) {
 		        			if(data.isSuccess == 1){
 		        				$('#addStudyFolder').modal('hide');
+		        				
 		        				//lazy load the node
-		        				doStudyLazyLoad($('#studyTree').dynatree("getTree").getActiveNode());
+		        				var node = $('#studyTree').dynatree("getTree").getActiveNode();
+		        				doStudyLazyLoad(node);		        				
+		        				node.focus();
+		        				
 		        			}else{
 		        				showErrorMessage('page-add-study-folder-message-modal', data.message);
 		        			}
@@ -128,15 +192,93 @@
 		  }
 		  
 		  function submitRenameFolder(){
-			  
+			  var folderName = $.trim($('#newFolderName').val());
+			  if(folderName == ''){
+				  showErrorMessage('page-rename-study-folder-message-modal', folderNameRequiredMessage);
+				  return false;
+			  }else{
+				  //alert('Ajax Submit')
+				  var parentFolderId = $('#studyTree').dynatree("getTree").getActiveNode().data.key;
+				  if(parentFolderId == 'LOCAL')
+					  parentFolderId = 1;
+				  
+				  Spinner.toggle();
+		        	$.ajax({
+		        		url: "/Fieldbook/StudyTreeManager/renameStudyFolder",
+		        		type: "POST",
+		        		data: "folderId="+parentFolderId+"&newFolderName="+folderName,
+		        		cache: false,
+		        		success: function(data) {
+		        			if(data.isSuccess == 1){
+		        				$('#renameStudyFolder').modal('hide');
+		        				var node = $('#studyTree').dynatree("getTree").getActiveNode();
+		        				node.data.title = folderName
+		        				$(node.span).find('a').html(folderName);
+		        				node.focus();
+		        				//lazy load the node
+		        				//doStudyLazyLoad($('#studyTree').dynatree("getTree").getActiveNode());
+		        			}else{
+		        				showErrorMessage('page-rename-study-folder-message-modal', data.message);
+		        			}
+		        			Spinner.toggle();
+		        		}		        		
+		        	});
+			  }
 		  }
 		  
-		  function deleteFolder(){
-			  
+		  function deleteFolder(object){
+			  if(!$(object).hasClass('disable-image')){
+				  $('#deleteStudyFolder').modal('show');
+				  var currentFolderName = $('#studyTree').dynatree("getTree").getActiveNode().data.title
+				  $('#delete-confirmation').html(deleteConfirmation + " " + currentFolderName + "?");
+				  
+			  }  
 		  }
 		  
-		  function moveStudy(){
+		  function submitDeleteFolder(){
+			  var folderId = $('#studyTree').dynatree("getTree").getActiveNode().data.key;
 			  
+			  Spinner.toggle();
+	        	$.ajax({
+	        		url: "/Fieldbook/StudyTreeManager/deleteStudyFolder",
+	        		type: "POST",
+	        		data: "folderId="+folderId,
+	        		cache: false,
+	        		success: function(data) {
+	        			if(data.isSuccess == 1){
+	        				$('#deleteStudyFolder').modal('hide');
+	        				var node = $('#studyTree').dynatree("getTree").getActiveNode();
+	        				node.remove();
+	        			}else{
+	        				showErrorMessage('page-rename-study-folder-message-modal', data.message);
+	        			}
+	        			Spinner.toggle();
+	        		}		        		
+	        	});
+		  }
+		  
+		  function moveStudy(sourceNode, targetNode){
+			  //console.log(sourceNode.data.title + " to " + targetNode.data.title)
+			  var sourceId = sourceNode.data.key;
+			  var targetId = targetNode.data.key;
+			  var isStudy = sourceNode.data.isFolder == true ? 0 : 1;
+			  
+			  if(targetId == 'LOCAL')
+				  targetId = 1;
+			  
+			  Spinner.toggle();
+	        	$.ajax({
+	        		url: "/Fieldbook/StudyTreeManager/moveStudyFolder",
+	        		type: "POST",
+	        		data: "sourceId="+sourceId+"&targetId="+targetId + "&isStudy="+isStudy,
+	        		cache: false,
+	        		success: function(data) {
+	        			var node = targetNode;
+        				doStudyLazyLoad(node);		        				
+        				node.focus();
+	        			Spinner.toggle();
+	        		}		        		
+	        	});
 		  }
       //]]>
     </script>

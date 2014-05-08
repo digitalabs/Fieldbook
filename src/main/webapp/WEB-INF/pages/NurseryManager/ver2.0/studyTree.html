@@ -7,7 +7,7 @@
 		<div style="float: right">
 			<img width="30px" onclick="javascript: addFolder(this)" height="30px" th:src="@{/static/img/add 2.png}" class="image-padding browse-nursery-action" />
 			<img width="30px" onclick="javascript: renameFolder(this)" height="30px" th:src="@{/static/img/edit.png}" class="image-padding browse-nursery-action edit-folder" />
-			<img width="30px" onclick="javascript: addFolder(this)" height="30px" th:src="@{/static/img/delete.png}" class="image-padding browse-nursery-action delete-folder" />
+			<img width="30px" onclick="javascript: deleteFolder(this)" height="30px" th:src="@{/static/img/delete.png}" class="image-padding browse-nursery-action delete-folder" />
 		</div>
 	</div>
 </div>
@@ -28,6 +28,9 @@
     
   		var url = "";
       	var lazyReadUrl = "";
+
+      	var cannotMove =  /*[[#{browse.nursery.move.can.not}]]*/;
+      	var hasChildrenString =  /*[[#{browse.nursery.move.has.children}]]*/;
       	
   
 	  $( document ).ready(function() {	 
@@ -45,6 +48,9 @@
     					//node.focus();
     					//addStudyTreeHighlight(node);
     					setTimeout(function(){node.focus()}, 50);
+    					if(node.hasChildren()){
+    						$('.delete-folder').addClass('disable-image');
+    					}
     				},
     				error: function(node, XMLHttpRequest, textStatus, errorThrown) {
     					console.log("The following error occured: " + textStatus, errorThrown); 
@@ -130,24 +136,103 @@
         			
         		},
         		dnd: {
-        		      revert: false, // true: slide helper back to source if drop is rejected
         		      onDragStart: function(node) {
         		        /** This function MUST be defined to enable dragging for the tree.
         		         *  Return false to cancel dragging of node.
         		         */
-        		        //console.log("tree.onDragStart" + node);
-        		        if(node.data.isFolder){
-        		          return false;
-        		        }
+        		         //console.log(node);
+        		         //if(node.hasChildren() == true || node.data.key > 0 || node.childList == null)
+       		        	 if(node.data.key > 0)
+       		        	 	return false;
+        		        //logMsg("tree.onDragStart(%o)", node);
         		        return true;
         		      },
         		      onDragStop: function(node) {
-        		        //console.log("tree.onDragStop" + node);
+        		        // This function is optional.
+        		        //logMsg("tree.onDragStop(%o)", node);
         		      },
-        		      onDragOver: function(node){
-        		    	  //console.log('dragging');
+        		      
+        		      preventVoidMoves: true, // Prevent dropping nodes 'before self', etc.
+        		      onDragEnter: function(node, sourceNode) {
+        		        /** sourceNode may be null for non-dynatree droppables.
+        		         *  Return false to disallow dropping on node. In this case
+        		         *  onDragOver and onDragLeave are not called.
+        		         *  Return 'over', 'before, or 'after' to force a hitMode.
+        		         *  Return ['before', 'after'] to restrict available hitModes.
+        		         *  Any other return value will calc the hitMode from the cursor position.
+        		         */
+        		        //logMsg("tree.onDragEnter(%o, %o)", node, sourceNode);
+        		        return true;
+        		      },
+        		      onDragOver: function(node, sourceNode, hitMode) {
+        		        /** Return false to disallow dropping this node.
+        		         *
+        		         */
+        		        //logMsg("tree.onDragOver(%o, %o, %o)", node, sourceNode, hitMode);
+        		        
+        		        // Prevent dropping a parent below it's own child
+        		        
+        		        /*
+        		        if(node.isDescendantOf(sourceNode)){
+        		          return false;
+        		        }
+        		        */
+        		        // Prohibit creating childs in non-folders (only sorting allowed)
+        		        /*
+        		        if( !node.data.isFolder && hitMode === "over" ){
+        		          return "after";
+        		        }
+        		        */
+        		      },
+        		      onDrop: function(node, sourceNode, hitMode, ui, draggable) {
+        		        /** This function MUST be defined to enable dropping of items on
+        		         * the tree.
+        		         */
+        		         //console.log("============== dropping ======== " + hitMode);
+        		         if(sourceNode.hasChildren()){
+        		        	 //alert('Source folder has children');
+        		        	 //return false;
+        		        	 showErrorMessage('page-move-study-folder-message-modal', cannotMove + " " + sourceNode.data.title + " " + hasChildrenString);
+        		        	 $('#moveStudyFolder').modal('show');
+        		         }else{
+        		        	 //logMsg("tree.onDrop(%o, %o, %s)", node, sourceNode, hitMode);
+        		        	 
+        		        	 
+    				
+    				
+        		        	 $.ajax({
+        		        		url: lazyReadUrl + sourceNode.data.key,
+				        		type: "GET",
+				        		cache: false,
+				        		aysnc: false,
+				        		success: function(data) {
+				        			var childCount = $.parseJSON(data).length;
+				        			if(childCount == 0){
+				        				sourceNode.move(node, hitMode);
+			             		        moveStudy(sourceNode, node);				        				
+				        			}else{				        				
+				        				showErrorMessage('page-move-study-folder-message-modal', cannotMove + " " + sourceNode.data.title + " " + hasChildrenString)
+				        				$('#moveStudyFolder').modal('show');
+				        			}
+											
+				        		}		        		
+				        	});
+        		        	 
+             		        
+        		         }
+        		        	 
+        		        
+        		        // expand the drop target
+//        		        sourceNode.expand(true);
+        		      },
+        		      onDragLeave: function(node, sourceNode) {
+        		        /** Always called if onDragEnter was called.
+        		         */
+        		        //logMsg("tree.onDragLeave(%o, %o)", node, sourceNode);
         		      }
         		    }
+
+
         	});
         	
         }

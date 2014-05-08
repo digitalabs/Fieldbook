@@ -69,45 +69,39 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		List<String> filenameList = new ArrayList<String>();
 		String outputFilename = null;
 		
-			Map<Long, List<MeasurementRow>> map = workbook.segregateByTrialInstances();
-			Set<Long> locationIds = map.keySet();
-			List<Integer> selectedLocationIds = ExportImportStudyUtil.getLocationIdsFromTrialInstances(workbook, start, end);
-			
-			int instanceNumber = 1;
-			for (Long locationId : locationIds) {
-				if (selectedLocationIds.contains(locationId.intValue())) {
-					try {
-						List<MeasurementRow> observations = map.get(locationId);
-						MeasurementRow trialObservations = workbook.getTrialObservation(locationId);
-						
-						HSSFWorkbook xlsBook = new HSSFWorkbook();
-						
-						writeDescriptionSheet(xlsBook, workbook, trialObservations);
-						writeObservationSheet(xlsBook, workbook, observations);
-						
-						String filenamePath = FieldbookProperty.getPathProperty() + File.separator + filename;
-						if (locationIds.size() > 1) {
-							int fileExtensionIndex = filenamePath.lastIndexOf(".");
-							filenamePath = filenamePath.substring(0, fileExtensionIndex) +  "-" + instanceNumber + filenamePath.substring(fileExtensionIndex);
-						}
-						fos = new FileOutputStream(new File(filenamePath));
-						xlsBook.write(fos);
-						outputFilename = filenamePath;
-						filenameList.add(filenamePath);
-	
-					} catch (Exception e) {
-						e.printStackTrace();
-					} finally {
-						if (fos != null) {
-							try {
-								fos.close();
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
+        	for (int i = start; i <= end; i++) {
+        		
+	            List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getObservations(), i, i);
+	            List<MeasurementRow> trialObservations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getObservations(), i, i);
+				try {
+					MeasurementRow trialObservation = trialObservations.get(0);
+					
+					HSSFWorkbook xlsBook = new HSSFWorkbook();
+					
+					writeDescriptionSheet(xlsBook, workbook, trialObservation);
+					writeObservationSheet(xlsBook, workbook, observations);
+					
+					String filenamePath = FieldbookProperty.getPathProperty() + File.separator + filename;
+					if (end - start > 0) {
+						int fileExtensionIndex = filenamePath.lastIndexOf(".");
+						filenamePath = filenamePath.substring(0, fileExtensionIndex) +  "-" + i + filenamePath.substring(fileExtensionIndex);
+					}
+					fos = new FileOutputStream(new File(filenamePath));
+					xlsBook.write(fos);
+					outputFilename = filenamePath;
+					filenameList.add(filenamePath);
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					if (fos != null) {
+						try {
+							fos.close();
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
 					}
 				}
-				instanceNumber++;
 			}
 
 			if (end - start > 0) {

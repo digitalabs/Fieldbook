@@ -890,14 +890,16 @@ public class SettingsUtil {
 		
 		if (mlist != null && !mlist.isEmpty()) {
 			for (MeasurementVariable mvar : mlist) {
-				factors.add(new Factor(
+				Factor factor = new Factor(
 						mvar.getName(), 
 						mvar.getDescription(), 
 						mvar.getProperty(), 
 						mvar.getScale(), 
 						mvar.getMethod(), 
 						PhenotypicType.getPhenotypicTypeForLabel(mvar.getLabel()).toString(), 
-						mvar.getDataType(), mvar.getTermId()));
+						mvar.getDataType(), mvar.getTermId());
+				factor.setTreatmentLabel(mvar.getTreatmentLabel());
+				factors.add(factor);
 			}
 		}
 		

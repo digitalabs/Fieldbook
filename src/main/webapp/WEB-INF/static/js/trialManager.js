@@ -2688,7 +2688,7 @@ function changeTreatmentFactorIdsClasses() {
 	var reg = new RegExp("treatmentFactors[0-9]+", "g");
 	var reg2 = new RegExp("treatmentFactors\[[0-9]+\]", "g");
 	$.each($("#treatmentFactors tbody tr"), function (index, row){
-		//save current value
+		//save current value in hidden field to use for object recreation
 		if ($(row).children("td:nth-child(3)").html().indexOf("spinner-input") > -1) {
 			$($(row).children("td:nth-child(3)").children("input.prevTreatmentValue"))
 				.val($($(row).children("td:nth-child(3)").children("input.spinner-input")).val());
@@ -2709,12 +2709,25 @@ function changeTreatmentFactorIdsClasses() {
 			//set the hidden field to the current value
 			$($(row).children("td:nth-child(3)").children("input.prevTreatmentValue"))
 				.val(selectedValue);
+		} else {
+			$($(row).children("td:nth-child(3)").children("input.prevTreatmentValue"))
+			.val($($(row).children("td:nth-child(3)").children("input.form-control")).val());
 		}
+		
+		//reset indeces used
 		row.innerHTML = row.innerHTML.replace(reg, "treatmentFactors" + index);
 		row.innerHTML = row.innerHTML.replace(reg2, "treatmentFactors[" + index + "]");
+		
+		//retain previous value for plain textfields
+		if ($(row).children("td:nth-child(3)").html().indexOf("numeric-input") > -1 ||
+				$(row).children("td:nth-child(3)").html().indexOf("character-input") > -1) {
+			$($(row).children("td:nth-child(3)").children("input.form-control")).val(
+			$($(row).children("td:nth-child(3)").children("input.prevTreatmentValue")).val());
+		}
 	});
 	
 	$.each($("#treatmentFactors tbody tr"), function (index, row){
+		//code for spinner, date and dropdown fields
 		recreateMultipleObjectsTreatment(index, row);
 	});
 }
@@ -2816,7 +2829,6 @@ function recreateDateMultipleTreatment(index, row, cell) {
 }
 
 function recreateSelect2ComboMultipleTreatment(index, row, cell) {
-	
 	//get the possible values of the variable
 	var possibleValuesJson = $(cell.find(".possibleValuesJsonTreatment")).text();
 

@@ -241,7 +241,16 @@ public class MeasurementsGeneratorServiceImpl implements MeasurementsGeneratorSe
 						}
 					}
 				}
-				result.add(info);
+				if (info.getNumberOfReps() == null || info.getNumberOfReps() == 0) {
+					info.setNumberOfReps(1);
+				}
+				if (info.getTrialNumber() == null || info.getTrialNumber() == 0) {
+					info.setTrialNumber(1);
+				}
+				if (info.getBlocksPerRep() == null || info.getBlocksPerRep() == 0) {
+					info.setBlocksPerRep(1);
+				}
+				result.add(info); 
 			}
 		}
 		

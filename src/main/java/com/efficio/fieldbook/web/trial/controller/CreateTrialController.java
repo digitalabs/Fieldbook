@@ -118,7 +118,7 @@ public class CreateTrialController extends SettingsController {
                     buildRequiredVariablesFlag(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()), 
                     userSelection.getPlotsLevelList(), false);
             
-            //trial environment 
+            //trial or study level variables 
             List<SettingDetail> trialLevelVariableList = sortDefaultTrialVariables(updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString()), 
                     buildRequiredVariablesLabel(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString(), true), 
                     buildRequiredVariablesFlag(AppConstants.CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS.getString()), 
@@ -134,9 +134,9 @@ public class CreateTrialController extends SettingsController {
             form.setTreatmentFactors(convertSettingDetailToTreatment(userSelection.getTreatmentFactors()));
             
             //build trial environment details
-            List<List<ValueReference>> trialEnvList = createTrialEnvValueList(userSelection.getTrialLevelVariableList());
+            List<List<ValueReference>> trialEnvList = createTrialEnvValueList(userSelection.getTrialLevelVariableList(), 1, true);
             form.setTrialEnvironmentValues(trialEnvList);
-            form.setTrialInstances(workbook.getTotalNumberOfInstances());
+            form.setTrialInstances(1);
             form.setLoadSettings("1");
             form.setRequiredFields(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
         }

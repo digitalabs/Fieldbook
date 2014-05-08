@@ -1660,6 +1660,9 @@ function loadNurserySettings(templateSettingsId) {
 		success: function (html) {
 			//we just paste the whole html
 			$('.container .row').first().html(html);
+        	if ($("#treatmentFactors tbody tr").length > 0) {
+				$(".treatmentFactorsDetails").addClass("in");
+			}
 		},
 		error: function(jqXHR, textStatus, errorThrown){
 			console.log("The following error occured: " + textStatus, errorThrown); 

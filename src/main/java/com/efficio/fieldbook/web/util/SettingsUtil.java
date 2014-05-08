@@ -568,22 +568,25 @@ public class SettingsUtil {
 			if(dataset.getFactors() != null){
 				for(Factor factor : dataset.getFactors()){
 					
-					SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(),
-							factor.getScale(), factor.getMethod(), factor.getRole(), factor.getDatatype());
-					//Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
-					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
-					if (!inHideVariableFields(stdVar, AppConstants.HIDE_PLOT_FIELDS.getString())) {
-        					variable.setCvTermId(stdVar);
-        					SettingDetail settingDetail = new SettingDetail(variable,
-        							null, null, isSettingVariableDeletable(stdVar, AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString()));
-        					plotsLevelList.add(settingDetail);
+					if (factor.getTreatmentLabel() == null || "".equals(factor.getTreatmentLabel())) {
+					
+						SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(),
+								factor.getScale(), factor.getMethod(), factor.getRole(), factor.getDatatype());
+						//Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getProperty(), variable.getScale(), variable.getMethod(), PhenotypicType.valueOf(variable.getRole()));
+						Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
+						if (!inHideVariableFields(stdVar, AppConstants.HIDE_PLOT_FIELDS.getString())) {
+	        					variable.setCvTermId(stdVar);
+	        					SettingDetail settingDetail = new SettingDetail(variable,
+	        							null, null, isSettingVariableDeletable(stdVar, AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString()));
+	        					plotsLevelList.add(settingDetail);
+						}
+						/*
+						if(userSelection != null){
+							StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);						
+							variable.setPSMRFromStandardVariable(standardVariable);						
+						}
+						*/
 					}
-					/*
-					if(userSelection != null){
-						StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);						
-						variable.setPSMRFromStandardVariable(standardVariable);						
-					}
-					*/
 				}
 			}
 			//baseline traits

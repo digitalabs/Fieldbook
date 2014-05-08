@@ -22,8 +22,12 @@ import org.generationcp.middleware.domain.dms.Reference;
 import org.generationcp.middleware.domain.oms.PropertyReference;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import com.efficio.fieldbook.web.common.controller.StudyTreeController;
 import com.efficio.pojos.treeview.TreeNode;
 import com.efficio.pojos.treeview.TypeAheadSearchTreeNode;
 
@@ -31,7 +35,7 @@ import com.efficio.pojos.treeview.TypeAheadSearchTreeNode;
  * The Class TreeViewUtil.
  */
 public class TreeViewUtil {
-
+	
 	/**
 	 * Convert references to json.
 	 *
@@ -41,6 +45,27 @@ public class TreeViewUtil {
 	 */
 	public static String convertReferencesToJson(List<Reference> references) throws Exception {
 		List<TreeNode> treeNodes = convertReferencesToTreeView(references);
+		return convertTreeViewToJson(treeNodes);
+	}
+	
+	public static List<FolderReference> convertReferenceToFolderReference(List<Reference> refList){
+		 List<FolderReference> folRefs = new ArrayList();
+         for(Reference ref : refList){
+         	FolderReference folderReference = new FolderReference(ref.getId(), ref.getName());                	
+         	folRefs.add(folderReference);
+         }
+         return folRefs;
+	}
+	
+	/**
+	 * Convert folder references to json.
+	 *
+	 * @param references the references
+	 * @return the string
+	 * @throws Exception the exception
+	 */
+	public static String convertStudyFolderReferencesToJson(List<FolderReference> references, boolean isLazy, StudyDataManager studyDataManager) throws Exception {		
+		List<TreeNode> treeNodes = convertStudyFolderReferencesToTreeView(references, isLazy , studyDataManager);
 		return convertTreeViewToJson(treeNodes);
 	}
 	
@@ -121,6 +146,21 @@ public class TreeViewUtil {
         return treeNodes;
     }
 
+    private static List<TreeNode> convertStudyFolderReferencesToTreeView(List<FolderReference> references, boolean isLazy,StudyDataManager studyDataManager) {
+        List<TreeNode> treeNodes = new ArrayList<TreeNode>();
+        TreeNode treeNode;
+        if (references != null && !references.isEmpty()) {
+            for (FolderReference reference : references) {
+                treeNode = convertStudyReferenceToTreeNode(reference, studyDataManager);
+                treeNode.setIsLazy(isLazy);
+                treeNodes.add(treeNode);
+                if (reference.getSubFolders() != null && !reference.getSubFolders().isEmpty()) {
+                    treeNode.setChildren(convertFolderReferencesToTreeView(reference.getSubFolders(), isLazy));
+                }
+            }
+        }
+        return treeNodes;
+    }
     /**
      * Convert dataset references to tree view.
      *
@@ -165,6 +205,42 @@ public class TreeViewUtil {
 		treeNode.setKey(reference.getId().toString());
 		treeNode.setTitle(reference.getName());
 		treeNode.setIsFolder(reference instanceof DatasetReference ? false : true);
+		treeNode.setIsLazy(true);
+
+		return treeNode;
+	}
+	
+	public static boolean isFolder(Integer value, StudyDataManager studyDataManager) {
+        try {
+            boolean isStudy = studyDataManager.isStudy(value);
+           
+            return !isStudy;
+        } catch (MiddlewareQueryException e) {
+           
+        }
+
+        return false;
+    }
+	/**
+	 * Convert reference to tree node.
+	 *
+	 * @param reference the reference
+	 * @return the tree node
+	 */
+	private static TreeNode convertStudyReferenceToTreeNode(Reference reference, StudyDataManager studyDataManager) {
+		TreeNode treeNode = new TreeNode();
+		
+		treeNode.setKey(reference.getId().toString());
+		treeNode.setTitle(reference.getName());
+		boolean isFolder = isFolder(reference.getId(), studyDataManager);
+		treeNode.setIsFolder(isFolder);
+		if(isFolder){
+			treeNode.setIcon(StudyTreeController.FOLDER_ICON_PNG);
+		}
+		else{
+			treeNode.setIcon(StudyTreeController.STUDY_ICON_PNG);
+		}
+		
 		treeNode.setIsLazy(true);
 
 		return treeNode;

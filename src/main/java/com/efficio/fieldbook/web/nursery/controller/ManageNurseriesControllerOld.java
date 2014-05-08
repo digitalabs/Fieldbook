@@ -11,7 +11,6 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -25,34 +24,28 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.ManageNurseriesForm;
 import com.efficio.fieldbook.web.nursery.form.NurseryDetailsForm;
-import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.TreeViewUtil;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.pojos.treeview.TreeNode;
 
-import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.manager.Database;
-import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.FieldbookService;
 
 /**
  * The Class ManageNurseriesController.
  */
 @Controller
-@RequestMapping({"/NurseryManager", ManageNurseriesController.URL})
-public class ManageNurseriesController extends AbstractBaseFieldbookController{
+@RequestMapping({"/NurseryManagerOld", ManageNurseriesControllerOld.URL})
+public class ManageNurseriesControllerOld extends AbstractBaseFieldbookController{
     
-    private static final Logger LOG = LoggerFactory.getLogger(ManageNurseriesController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ManageNurseriesControllerOld.class);
     
     /** The Constant URL. */
-    public static final String URL = "/NurseryManager/manageNurseries";
+    public static final String URL = "/NurseryManagerOld/manageNurseries";
+    public static final String PAGINATION_TEMPLATE = "/NurseryManagerOld/showNurseriesPagination";
 
     @Resource
     private FieldbookService fieldbookMiddlewareService;
@@ -83,15 +76,45 @@ public class ManageNurseriesController extends AbstractBaseFieldbookController{
         }
     	return super.show(model);
     }
-          
+    
+    /**
+     * Get for the pagination of the list
+     *
+     * @param form the form
+     * @param model the model
+     * @return the string
+     */
+    @RequestMapping(value="/page/{pageNum}", method = RequestMethod.GET)
+    public String getPaginatedList(@PathVariable int pageNum
+            , @ModelAttribute("manageNurseriesForm") ManageNurseriesForm form, Model model) {
+        List<StudyDetails> nurseryDetailsList = getUserSelection().getStudyDetailsList();
+        if(nurseryDetailsList != null){
+            form.setNurseryDetailsList(nurseryDetailsList);
+            form.setCurrentPage(pageNum);
+        }
+        return super.showAjaxPage(model, PAGINATION_TEMPLATE);
+    }
+    
+    /**
+     * Submits the details.
+     *
+     * @param form the form
+     * @param result the result
+     * @param model the model
+     * @return the string
+     */
+    @RequestMapping(method = RequestMethod.POST)
+    public String submitDetails(@ModelAttribute("manageNurseriesForm") NurseryDetailsForm form
+            , BindingResult result, Model model) {
+        return "redirect:" + FileUploadController.URL;
+    }
     
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
      */
     @Override
     public String getContentName() {
-        //return "NurseryManager/manageNurseries";
-    	return "NurseryManager/ver2.0/manageNurseries";
+        return "NurseryManager/manageNurseries";
     }
     
     /**

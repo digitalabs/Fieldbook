@@ -107,8 +107,8 @@ span.fbtree-icon {
 /** Used by 'icon' node option: */
 ul.fbtree-container img
 {
-	width: 16px;
-	height: 16px;
+	width: 23px;
+	height: 23px;
 	margin-left: 3px;
 	vertical-align: top;
 	border-style: none;
@@ -480,35 +480,42 @@ span.dynatree-drop-target.dynatree-drop-after a
 #ontologyBrowserTree span.dynatree-node.highlight,
 #traitClassBrowserTree span.dynatree-node.highlight,
 #manageParentTraitClassBrowserTree span.dynatree-node.highlight,
-#managePropTraitClassBrowserTree span.dynatree-node.highlight
+#managePropTraitClassBrowserTree span.dynatree-node.highlight,
+#studyTree span.dynatree-node.highlight
 {
-	background-color: #518CC6;
+	background-color: #BED6B2;
 }
 #ontologyBrowserTree ul.fbtree-container.highlight a:hover,
 #traitClassBrowserTree ul.fbtree-container.highlight a:hover,
 #manageParentTraitClassBrowserTree ul.fbtree-container.highlight a:hover,
 #managePropTraitClassBrowserTree ul.fbtree-container.highlight a:hover
+#studyTree ul.fbtree-container.highlight a:hover
 {
-	background-color: #518CC6;
+	background-color: #BED6B2;
+}
+a.tree-highlight{
+	background-color: #BED6B2;
 }
 #ontologyBrowserTree ul.fbtree-container a:focus,
-#ontologyBrowserTree span.fbtree-focused a:link  /* @IE */
+#ontologyBrowserTree span.fbtree-focused a:link,  /* @IE */
+#studyTree ul.fbtree-container a:focus,
+#studyTree span.fbtree-focused a:link  /* @IE */
 {
-	background-color: #518CC6;
+	background-color: #BED6B2;
 }
 
 #traitClassBrowserTree ul.fbtree-container a:focus,
 #traitClassBrowserTree span.fbtree-focused a:link  /* @IE */
 {
-	background-color: #518CC6;
+	background-color: #BED6B2;
 }
 #manageParentTraitClassBrowserTree ul.fbtree-container a:focus,
 #manageParentTraitClassBrowserTree span.fbtree-focused a:link  /* @IE */
 {
-	background-color: #518CC6;
+	background-color: #BED6B2;
 }
 #managePropTraitClassBrowserTree ul.fbtree-container a:focus,
 #managePropTraitClassBrowserTree span.fbtree-focused a:link  /* @IE */
 {
-	background-color: #518CC6;
+	background-color: #BED6B2;
 }

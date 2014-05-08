@@ -238,6 +238,22 @@ table{
 	border-top: 0px; 	
 }
 
+#nursery-tabs{
+	background-color: #f6f6f6;
+	border:1px solid #e4e4e4;  
+	min-height: 650px;
+	border-top: 0px; 	
+}
+
+#studyTree{	
+	height:500px; 
+	overflow:auto;
+	padding-left: 15px;
+    padding-right: 10px;
+    padding-top: 10px;
+}
+
+
 .table-curved {
    border-collapse: separate;
    border: solid #e4e4e4 1px;
@@ -844,4 +860,14 @@ div.sectionContainer {
     }
 .table-with-scroll-inventory th, .table-with-scroll-inventory td{
 	text-align: center;
-}    
+} 
+.image-padding{
+	padding-top:0px;
+}   
+.image-padding-with-text{
+	float: left;
+	padding-right: 5px;
+}
+.disable-image{
+	opacity: 0.5
+}

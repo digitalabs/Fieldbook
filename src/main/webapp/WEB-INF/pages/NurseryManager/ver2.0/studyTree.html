@@ -1,0 +1,158 @@
+<div class="row">
+	<div class="col-xs-7 col-md-7">	
+		<img th:src="@{/static/img/manage-nursuries.png}" class="image-padding image-padding-with-text"  /> 
+		<label class="h2" th:text="#{browse.nurseries.header}"></label>
+	</div>
+	<div class="col-xs-5 col-md-5">
+		<div style="float: right">
+			<img width="30px" onclick="javascript: addFolder(this)" height="30px" th:src="@{/static/img/add 2.png}" class="image-padding browse-nursery-action" />
+			<img width="30px" onclick="javascript: renameFolder(this)" height="30px" th:src="@{/static/img/edit.png}" class="image-padding browse-nursery-action edit-folder" />
+			<img width="30px" onclick="javascript: addFolder(this)" height="30px" th:src="@{/static/img/delete.png}" class="image-padding browse-nursery-action delete-folder" />
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div id="studyTree">
+	</div>
+</div>
+
+<div class="row">
+	<div th:include="/NurseryManager/ver2.0/manageNurseryOperation"/>
+</div>
+
+<div layout:fragment="page-script">
+  <script type="text/javascript" th:src="@{/static/js/fieldbook-tree.js}"></script>
+  <script type="text/javascript" th:src="@{/static/js/nurseryManager.js}"></script>  
+  <script type="text/javascript" th:inline="javascript">
+    //<![CDATA[          
+    
+  		var url = "";
+      	var lazyReadUrl = "";
+      	
+  
+	  $( document ).ready(function() {	 
+		  displayStudyListTree("studyTree", "N");	
+		  changeBrowseNurseryButtonBehavior(false);
+	  });
+
+        function doStudyLazyLoad(node){
+        	if (node.data.isFolder == true){
+    			node.appendAjax({
+    				url: lazyReadUrl + node.data.key,
+    				dataType: "json",
+    				success: function(node) {
+    					//do nothing
+    					//node.focus();
+    					//addStudyTreeHighlight(node);
+    					setTimeout(function(){node.focus()}, 50);
+    				},
+    				error: function(node, XMLHttpRequest, textStatus, errorThrown) {
+    					console.log("The following error occured: " + textStatus, errorThrown); 
+    				},
+    				cache: false
+    			});
+    			node.expand();
+			}
+        }
+        /** Germplasm Tree **/
+        function displayStudyListTree(treeName, studyType) {
+        	if(studyType == 'N'){        		
+          		url = "/Fieldbook/StudyTreeManager/loadInitialNurseryTree";
+          		lazyReadUrl = "/Fieldbook/StudyTreeManager/expandNurseryTree/";
+          	}
+         	else{
+       			url = "/Fieldbook/StudyTreeManager/loadInitialTrialTree";
+       			lazyReadUrl = "/Fieldbook/StudyTreeManager/expandTrialTree/";       			
+         	}
+       			
+        	
+        	$("#" + treeName).dynatree({
+        		title: treeName,
+        		checkbox: false,
+        		noLink: false,
+        		autoFocus: false,
+        		imagePath: "/Fieldbook/static/img/",
+        		activeVisible: true,
+        		initAjax: {url: url,
+        			dataType: "json"
+        		},
+        		
+        		onLazyRead: function(node) {
+        			
+        			doStudyLazyLoad(node);
+        			
+        			if(node.data.isFolder == false){
+        				addDetailsTab(node.data.key);
+        				changeBrowseNurseryButtonBehavior(false);
+        			}else{
+        				if(node.data.key > 1 || node.data.key == 'CENTRAL'){
+        					changeBrowseNurseryButtonBehavior(false);        					     				
+        				}else if(node.data.key == 'LOCAL'){
+        					changeBrowseNurseryButtonBehavior(true);
+        					$('.edit-folder').addClass('disable-image');
+       						$('.delete-folder').addClass('disable-image');   
+        				}
+        				else
+        					changeBrowseNurseryButtonBehavior(true);
+        			}
+        			
+        		},
+        		classNames: {
+        			container: "fbtree-container",
+        			expander: "fbtree-expander",
+        			nodeIcon: "fbtree-icon",
+        			combinedIconPrefix: "fbtree-ico-",
+        			focused: "fbtree-focused",
+        			active: "fbtree-active"
+        		},
+        		        		
+        		 onPostInit: function (isReloading, isError) {
+        			 
+        		    },
+        		   
+        		onActivate: function(node) {
+        			
+        			
+        			if(node.data.isFolder == false){
+        				addDetailsTab(node.data.key);
+        				changeBrowseNurseryButtonBehavior(false);
+        			}else{
+        				if(node.data.key > 1 || node.data.key == 'CENTRAL'){
+        					changeBrowseNurseryButtonBehavior(false);
+       					}else if(node.data.key == 'LOCAL'){
+							changeBrowseNurseryButtonBehavior(true);
+           					$('.edit-folder').addClass('disable-image');
+          					$('.delete-folder').addClass('disable-image');   
+           				}
+        				else
+        					changeBrowseNurseryButtonBehavior(true);
+        			}
+        			
+        		},
+        		dnd: {
+        		      revert: false, // true: slide helper back to source if drop is rejected
+        		      onDragStart: function(node) {
+        		        /** This function MUST be defined to enable dragging for the tree.
+        		         *  Return false to cancel dragging of node.
+        		         */
+        		        //console.log("tree.onDragStart" + node);
+        		        if(node.data.isFolder){
+        		          return false;
+        		        }
+        		        return true;
+        		      },
+        		      onDragStop: function(node) {
+        		        //console.log("tree.onDragStop" + node);
+        		      },
+        		      onDragOver: function(node){
+        		    	  //console.log('dragging');
+        		      }
+        		    }
+        	});
+        	
+        }
+        
+        
+      //]]>
+    </script>
+</div>

@@ -2085,3 +2085,24 @@ function getIdOfValue(value) {
 	});
 	return id;
 }
+
+function changeBrowseNurseryButtonBehavior(isEnable){
+	if(isEnable)
+		$('.browse-nursery-action').removeClass('disable-image');
+	else
+		$('.browse-nursery-action').addClass('disable-image');
+	
+	
+}
+
+function addDetailsTab(studyId){
+	alert("Add Tab " + studyId);	
+}
+
+function addStudyTreeHighlight(node){
+	//$('#studyTree').find("*").removeClass('tree-highlight');
+	$(node.span).addClass('fbtree-focused');
+	console.log($(node.span).parent().html());
+	//console.log('add highlight' + $(node.span).html());
+	//console.log();
+}

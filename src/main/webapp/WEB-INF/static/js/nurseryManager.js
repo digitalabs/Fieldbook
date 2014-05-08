@@ -1019,7 +1019,7 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation, default
 		var jsonVal;
 		if (value.id != undefined) {
 			jsonVal = { 'id' : value.key,
-					  'text' : value.name
+					  'text' : value.description
 				};
 		} else if (value.locid != undefined){
 			jsonVal = { 'id' : value.locid,

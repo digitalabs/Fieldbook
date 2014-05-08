@@ -347,7 +347,7 @@ public class FieldbookServiceImpl implements FieldbookService{
         if (persons != null && !persons.isEmpty()) {
             for (Person person : persons) {
                 if (person != null) {
-                    list.add(new ValueReference(person.getId(), person.getDisplayName()));
+                    list.add(new ValueReference(person.getId(), person.getDisplayName(), person.getDisplayName()));
                 }
             }
         }

@@ -1251,7 +1251,7 @@ function initializePossibleValuesCombo(possibleValues, name, showAllLocation, de
 		var jsonVal;
 		if (value.id != undefined) {
 			jsonVal = { 'id' : value.key,
-					  'text' : value.name
+					  'text' : value.description
 				};
 		} else if (value.locid != undefined){
 			jsonVal = { 'id' : value.locid,
@@ -2750,6 +2750,8 @@ function addTreatmentFactorLevel(treatmentLevelCount) {
 		//set the level value
 		$($($("#treatmentFactors tbody tr").get(insertIndex)).children("td:nth-child(2)").children(".levelValue")).text(levelValue);
 		$($($("#treatmentFactors tbody tr").get(insertIndex)).children("td:nth-child(2)").children("#" + getJquerySafeId("treatmentFactors" + lastIndexOfTable + ".levelValue"))).val(levelValue);
+		
+		//set the previous value to empty
 		$($($("#treatmentFactors tbody tr").get(insertIndex)).children("td:nth-child(3)").children("input.prevTreatmentValue")).val("");
 		
 		//value to be used to get the new row added

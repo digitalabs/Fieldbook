@@ -902,3 +902,7 @@ div.sectionContainer {
 	padding-left: 10px; 
 	margin-top: -2px;
 } 
+
+#check-germplasm-list, #imported-germplasm-list {
+  min-height: 300px;
+}         			

@@ -199,6 +199,13 @@ public enum AppConstants {
     
     ,OBJECTIVE_ID
     ,OCC
+    
+    ,PROGRAM_NURSERIES
+    ,PUBLIC_NURSERIES
+    
+    ,FOLDER_ICON_PNG
+    ,STUDY_ICON_PNG
+    ,BASIC_DETAILS_PNG
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

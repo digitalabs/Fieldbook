@@ -4,32 +4,32 @@
        
        <div class="row">				
 				<div class="row  form-group col-xs-12 col-md-12">									
-					<div class="col-xs-2 col-md-2 add_top_padding">
-						<label class="control-label">Starting Index</label><span class="required">*</span>
+					<div class="col-xs-3 col-md-3 add_top_padding">
+						<label class="control-label" th:text="#{germplasm.list.choose.check.type.starting.index}">Starting Index</label><span class="required">*</span>
 					</div>	
-					<div class="col-xs-2 col-md-2">
+					<div class="col-xs-1 col-md-1">
 						<input style="width: 50px" type="text" id="startIndex2" class="form-control spinner-input" onchange="verifyIfCheck(this)" />
 					</div>
-					<div class="col-xs-2 col-md-2 add_top_padding">
-						<label class="control-label">Interval</label><span class="required">*</span>
+					<div class="col-xs-3 col-md-3 add_top_padding">
+						<label class="control-label" th:text="#{germplasm.list.choose.check.type.interval}">Interval</label><span class="required">*</span>
 					</div>		
-					<div class="col-xs-2 col-md-2">
+					<div class="col-xs-1 col-md-1">
 						<input style="width: 50px" type="text" id="interval2" class="form-control spinner-input" />
 					</div>
 					<div class="col-xs-2 col-md-2 add_top_padding">
-						<label class="control-label">Manner of Insertion</label><span class="required">*</span>
+						<label class="control-label" th:text="#{germplasm.list.choose.check.type.manner.of.insertion}">Manner of Insertion</label>
+						<!-- <span class="required">*</span> -->
 					</div>	
 					<div class="col-xs-2 col-md-2">
 						<select class="form-control" id="mannerOfInsertion2">
-							<option value="1">In turn</option>
-							<option value="2">Per Location</option>
+							<option value="1" th:text="#{germplasm.list.choose.check.type.manner.of.insertion.in.turn}">In turn</option>
+							<option value="2" th:text="#{germplasm.list.choose.check.type.manner.of.insertion.per.location}">Per Location</option>
 						</select>
 					</div>
 				</div>							 				
 		</div>
      </div>
-     
-    
+   
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[        
         var checkTypes = /*[[${checkTypes}]]*/ null;

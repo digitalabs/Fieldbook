@@ -137,6 +137,7 @@
           var renameFolderHeader =      /*[[#{browse.nursery.rename.folder.name}]]*/;
         	  
           var deleteConfirmation = /*[[#{browse.nursery.delete.folder.name.confirmation}]]*/;
+          var deleteFolderHasTrial = /*[[#{browse.nursery.delete.folder.has.trial.children}]]*/;
 		  function addFolder(object){
 			  if(!$(object).hasClass('disable-image')){
 				  $('#folderName').val('');
@@ -231,7 +232,7 @@
 				  $('#deleteStudyFolder').modal('show');
 				  var currentFolderName = $('#studyTree').dynatree("getTree").getActiveNode().data.title
 				  $('#delete-confirmation').html(deleteConfirmation + " " + currentFolderName + "?");
-				  
+				  $('#page-delete-study-folder-message-modal').html('');
 			  }  
 		  }
 		  
@@ -250,7 +251,7 @@
 	        				var node = $('#studyTree').dynatree("getTree").getActiveNode();
 	        				node.remove();
 	        			}else{
-	        				showErrorMessage('page-rename-study-folder-message-modal', data.message);
+	        				showErrorMessage('page-delete-study-folder-message-modal', deleteFolderHasTrial);
 	        			}
 	        			Spinner.toggle();
 	        		}		        		

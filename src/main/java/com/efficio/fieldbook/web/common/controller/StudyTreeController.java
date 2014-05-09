@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.math.NumberUtils;
@@ -15,6 +16,7 @@ import org.generationcp.middleware.manager.Database;
 import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.dms.DmsProject;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +37,10 @@ public class StudyTreeController extends AbstractBaseFieldbookController {
 	private static final Logger LOG = LoggerFactory.getLogger(StudyTreeController.class);
     public static final String URL = "/StudyTreeManager";
     
-    @Autowired
-	private transient StudyDataManager studyDataManager;
+    @Resource
+    private FieldbookService fieldbookMiddlewareService;
+    @Resource
+    private StudyDataManager studyDataManager;
     
     private static final String PROGRAM_NURSERIES = "Program Nurseries";
     private static final String PUBLIC_NURSERIES = "Public Nurseries";
@@ -87,8 +91,8 @@ public class StudyTreeController extends AbstractBaseFieldbookController {
             		 if(Database.CENTRAL.toString().equals(parentKey))
             			 instance = Database.CENTRAL;
             		 
-                     List<FolderReference> rootFolders = studyDataManager.getRootFolders(instance);
-                     String jsonResponse = TreeViewUtil.convertStudyFolderReferencesToJson(rootFolders, true, studyDataManager);
+                     List<FolderReference> rootFolders = fieldbookMiddlewareService.getRootFolders(instance);
+                     String jsonResponse = TreeViewUtil.convertStudyFolderReferencesToJson(rootFolders, true, false, true, fieldbookMiddlewareService);
                      LOG.debug(jsonResponse);
                      return jsonResponse;
                  
@@ -100,13 +104,69 @@ public class StudyTreeController extends AbstractBaseFieldbookController {
             else if (NumberUtils.isNumber(parentKey)) {
             	
                 int parentId = Integer.valueOf(parentKey);
-                List<Reference> folders = studyDataManager
+                List<Reference> folders = fieldbookMiddlewareService
                             .getChildrenOfFolder(parentId);
                 //convert reference to folder refence
                 List<FolderReference> folRefs = TreeViewUtil.convertReferenceToFolderReference(folders);
                 
                 
-                return TreeViewUtil.convertStudyFolderReferencesToJson(folRefs, true, studyDataManager);
+                return TreeViewUtil.convertStudyFolderReferencesToJson(folRefs, true, false, true, fieldbookMiddlewareService);
+                
+            }
+            else {
+                LOG.error("parentKey = " + parentKey + " is not a number");
+            }
+            
+        } catch(Exception e) {
+            LOG.error(e.getMessage(), e);
+        }
+        
+        return "[]";
+    }
+    
+    /**
+     * Expand germplasm tree.
+     *
+     * @param parentKey the parent key
+     * @return the string
+     */
+    @ResponseBody
+    @RequestMapping(value = "/retrieveChildren/{parentKey}", method = RequestMethod.GET)
+    public String retrieveChildren(@PathVariable String parentKey) {
+       
+        try {
+            if (Database.LOCAL.toString().equals(parentKey) 
+                    || Database.CENTRAL.toString().equals(parentKey)) {
+            	/*
+                List<GermplasmList> rootLists = germplasmListManager
+                            .getAllTopLevelListsBatched(BATCH_SIZE, Database.valueOf(parentKey));
+                return TreeViewUtil.convertGermplasmListToJson(rootLists);
+                */
+            	 try {
+            		 Database instance = Database.LOCAL;
+            		 if(Database.CENTRAL.toString().equals(parentKey))
+            			 instance = Database.CENTRAL;
+            		 
+                     List<FolderReference> rootFolders = fieldbookMiddlewareService.getRootFolders(instance);
+                     String jsonResponse = TreeViewUtil.convertStudyFolderReferencesToJson(rootFolders, false, true, true, fieldbookMiddlewareService);
+                     LOG.debug(jsonResponse);
+                     return jsonResponse;
+                 
+                 } catch (Exception e) {
+                     LOG.error(e.getMessage());
+                 }
+                 return "[]";
+            } 
+            else if (NumberUtils.isNumber(parentKey)) {
+            	
+                int parentId = Integer.valueOf(parentKey);
+                List<Reference> folders = fieldbookMiddlewareService
+                            .getChildrenOfFolder(parentId);
+                //convert reference to folder refence
+                List<FolderReference> folRefs = TreeViewUtil.convertReferenceToFolderReference(folders);
+                
+                
+                return TreeViewUtil.convertStudyFolderReferencesToJson(folRefs, false, true, true, fieldbookMiddlewareService);
                 
             }
             else {
@@ -128,7 +188,7 @@ public class StudyTreeController extends AbstractBaseFieldbookController {
 		Map<String, Object> resultsMap = new HashMap<String, Object>();
         try {
         Integer parentFolderId = Integer.parseInt(parentKey);
-        if (!TreeViewUtil.isFolder(parentFolderId, studyDataManager)) {
+        if (!TreeViewUtil.isFolder(parentFolderId, fieldbookMiddlewareService)) {
             //get parent
             DmsProject project = studyDataManager.getParentFolder(parentFolderId);
             if (project == null) {

@@ -273,6 +273,7 @@
 	        		data: "sourceId="+sourceId+"&targetId="+targetId + "&isStudy="+isStudy,
 	        		cache: false,
 	        		success: function(data) {
+	        			sourceNode.remove();
 	        			var node = targetNode;
         				doStudyLazyLoad(node);		        				
         				node.focus();

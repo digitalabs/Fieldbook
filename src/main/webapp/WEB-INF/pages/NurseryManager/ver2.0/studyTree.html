@@ -88,7 +88,7 @@
         			doStudyLazyLoad(node);
         			
         			if(node.data.isFolder == false){
-        				addDetailsTab(node.data.key);
+        				addDetailsTab(node.data.key, node.data.title);
         				changeBrowseNurseryButtonBehavior(false);
         			}else{
         				if(node.data.key > 1 || node.data.key == 'CENTRAL'){
@@ -120,7 +120,7 @@
         			
         			
         			if(node.data.isFolder == false){
-        				addDetailsTab(node.data.key);
+        				addDetailsTab(node.data.key, node.data.title);
         				changeBrowseNurseryButtonBehavior(false);
         			}else{
         				if(node.data.key > 1 || node.data.key == 'CENTRAL'){
@@ -208,7 +208,7 @@
 				        		success: function(data) {
 				        			var childCount = $.parseJSON(data).length;
 				        			if(childCount == 0){
-				        				sourceNode.move(node, hitMode);
+				        				//sourceNode.move(node, hitMode);
 			             		        moveStudy(sourceNode, node);				        				
 				        			}else{				        				
 				        				showErrorMessage('page-move-study-folder-message-modal', cannotMove + " " + sourceNode.data.title + " " + hasChildrenString)

@@ -42,10 +42,8 @@ public class StudyTreeController extends AbstractBaseFieldbookController {
     @Resource
     private StudyDataManager studyDataManager;
     
-    private static final String PROGRAM_NURSERIES = "Program Nurseries";
-    private static final String PUBLIC_NURSERIES = "Public Nurseries";
-    public static final String FOLDER_ICON_PNG = "folder-icon.png";
-    public static final String STUDY_ICON_PNG = "trial-icon.png";
+
+
 	/**
      * Load initial germplasm tree.
      *
@@ -57,8 +55,8 @@ public class StudyTreeController extends AbstractBaseFieldbookController {
 
         try {
             List<TreeNode> rootNodes = new ArrayList<TreeNode>();
-            rootNodes.add(new TreeNode("LOCAL", PROGRAM_NURSERIES, true, "lead", FOLDER_ICON_PNG));
-            rootNodes.add(new TreeNode("CENTRAL", PUBLIC_NURSERIES, true, "lead", FOLDER_ICON_PNG));
+            rootNodes.add(new TreeNode("LOCAL", AppConstants.PROGRAM_NURSERIES.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG.getString()));
+            rootNodes.add(new TreeNode("CENTRAL", AppConstants.PUBLIC_NURSERIES.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG.getString()));
             return TreeViewUtil.convertTreeViewToJson(rootNodes);
             
         } catch(Exception e) {

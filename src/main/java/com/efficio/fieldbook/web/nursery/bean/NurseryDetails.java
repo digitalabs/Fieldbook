@@ -11,6 +11,10 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.bean;
 
+import java.util.List;
+
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
+
 /**
  * The Class NurseryDetails.
  *
@@ -18,6 +22,8 @@ package com.efficio.fieldbook.web.nursery.bean;
  */
 public class NurseryDetails{
     
+	private Integer id;
+	
     /** The name. */
     private String name;
     
@@ -39,6 +45,14 @@ public class NurseryDetails{
     /** The site name. */
     private String siteName;
     
+    private List<SettingDetail> basicStudyDetails;
+    
+    private List<SettingDetail> managementDetails;
+    
+    private List<SettingDetail> factorDetails;
+    
+    private List<SettingDetail> variateDetails;
+
     /**
      * Instantiates a new nursery details.
      */
@@ -192,5 +206,75 @@ public class NurseryDetails{
      */
     public void setSiteName(String siteName){
         this.siteName = siteName;
-    }    
+    }
+
+	/**
+	 * @return the basicStudyDetails
+	 */
+	public List<SettingDetail> getBasicStudyDetails() {
+		return basicStudyDetails;
+	}
+
+	/**
+	 * @param basicStudyDetails the basicStudyDetails to set
+	 */
+	public void setBasicStudyDetails(List<SettingDetail> basicStudyDetails) {
+		this.basicStudyDetails = basicStudyDetails;
+	}
+
+	/**
+	 * @return the managementDetails
+	 */
+	public List<SettingDetail> getManagementDetails() {
+		return managementDetails;
+	}
+
+	/**
+	 * @param managementDetails the managementDetails to set
+	 */
+	public void setManagementDetails(List<SettingDetail> managementDetails) {
+		this.managementDetails = managementDetails;
+	}
+
+	/**
+	 * @return the factorDetails
+	 */
+	public List<SettingDetail> getFactorDetails() {
+		return factorDetails;
+	}
+
+	/**
+	 * @param factorDetails the factorDetails to set
+	 */
+	public void setFactorDetails(List<SettingDetail> factorDetails) {
+		this.factorDetails = factorDetails;
+	}
+
+	/**
+	 * @return the variateDetails
+	 */
+	public List<SettingDetail> getVariateDetails() {
+		return variateDetails;
+	}
+
+	/**
+	 * @param variateDetails the variateDetails to set
+	 */
+	public void setVariateDetails(List<SettingDetail> variateDetails) {
+		this.variateDetails = variateDetails;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public Integer getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Integer id) {
+		this.id = id;
+	}
 }

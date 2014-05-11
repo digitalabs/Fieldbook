@@ -71,6 +71,7 @@ public class CreateTrialForm {
         
         /** The import location url. */
         private String importLocationUrl;
+        private String openGermplasmUrl;
         
         /** The load settings. */
         private String loadSettings;
@@ -634,5 +635,13 @@ public class CreateTrialForm {
         public void setTreatmentFactors(List<TreatmentFactorDetail> treatmentFactors) {
             this.treatmentFactors = treatmentFactors;
         }
+
+		public String getOpenGermplasmUrl() {
+			return openGermplasmUrl;
+		}
+
+		public void setOpenGermplasmUrl(String openGermplasmUrl) {
+			this.openGermplasmUrl = openGermplasmUrl;
+		}
         
 }

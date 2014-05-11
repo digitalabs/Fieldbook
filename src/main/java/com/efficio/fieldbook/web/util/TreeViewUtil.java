@@ -241,10 +241,10 @@ public class TreeViewUtil {
 		boolean isFolder = isFolder(reference.getId(), fieldbookService);
 		treeNode.setIsFolder(isFolder);
 		if(isFolder){
-			treeNode.setIcon(StudyTreeController.FOLDER_ICON_PNG);
+			treeNode.setIcon(AppConstants.FOLDER_ICON_PNG.getString());
 		}
 		else{
-			treeNode.setIcon(StudyTreeController.STUDY_ICON_PNG);
+			treeNode.setIcon(AppConstants.STUDY_ICON_PNG.getString());
 			if(!isAll){
 				if(!isNurseryStudy(reference.getId(), isNursery, fieldbookService))
 					return null;
@@ -289,6 +289,10 @@ public class TreeViewUtil {
 	    treeNode.setIsFolder(germplasmList.getType() != null 
 	            && germplasmList.getType().equals("FOLDER") ? true : false);
 	    treeNode.setIsLazy(true);
+	    if(treeNode.getIsFolder())
+	    	treeNode.setIcon(AppConstants.FOLDER_ICON_PNG.getString());
+	    else
+	    	treeNode.setIcon(AppConstants.BASIC_DETAILS_PNG.getString());
 	    
 	    return treeNode;
 	}

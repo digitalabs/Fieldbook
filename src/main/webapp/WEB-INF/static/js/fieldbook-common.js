@@ -162,7 +162,7 @@ function triggerFieldMapTableSelection(tableName){
 }
 
 function createFieldMap(tableName){
-	if($('#'+tableName+' .field-map-highlight').attr('id') != null){
+	if($('#'+tableName+' .field-map-highlight').attr('id') != null || tableName == 'nursery-table'){
 		var ids = [];
 		//$('#'+tableName+' .field-map-highlight').each(function(){ ids.push(this.id); });
 		//get selected studies
@@ -1157,6 +1157,7 @@ function openImportGermplasmList() {
 		$('#importFrame').attr('src', importLocationUrl);
 	//}
 }
+
 function doTreeHighlight(treeName, nodeKey){
 	$("#"+treeName).dynatree("getTree").activateKey(nodeKey);
 	$('#'+treeName).find("*").removeClass('highlight');

@@ -42,26 +42,28 @@ import com.efficio.fieldbook.web.util.SettingsUtil;
  * The Class CreateNurseryController.
  */
 @Controller
-@RequestMapping(CreateNurseryController.URL)
-public class CreateNurseryController extends SettingsController {
+@RequestMapping(CreateNurseryControllerOld.URL)
+public class CreateNurseryControllerOld extends SettingsController {
 	
     /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(CreateNurseryController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CreateNurseryControllerOld.class);
 
     /** The Constant URL. */
-    public static final String URL = "/NurseryManager/createNursery";
+    public static final String URL = "/NurseryManagerOld/createNursery";
     
     /** The Constant URL_SETTINGS. */
-    public static final String URL_SETTINGS = "/NurseryManager/chooseSettings";
+    public static final String URL_SETTINGS = "/NurseryManagerOld/chooseSettings";
 	
    
-    /* (non-Javadoc)
-     * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
-     */
-    @Override
-    public String getContentName() {
-	return "NurseryManager/ver2.0/createNursery";
-    }
+	/* (non-Javadoc)
+	 * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
+	 */
+	@Override
+	public String getContentName() {
+		return "NurseryManager/createNursery";
+	}
+
+    
 
     /**
      * Use existing nursery.

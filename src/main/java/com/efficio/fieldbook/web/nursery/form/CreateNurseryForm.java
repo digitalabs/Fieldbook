@@ -14,6 +14,7 @@ package com.efficio.fieldbook.web.nursery.form;
 import java.util.List;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
 
 
 /**
@@ -69,8 +70,21 @@ public class CreateNurseryForm {
     private String studyNameTermId;
     
     private String startDateId;
+    
     private String endDateId;
+    
+    /** The tree data. */
+    private String treeData;
+    
+    //convert to json 1 level for the property and standard variable
+    /** The search tree data. */
+    private String searchTreeData;
+    
+    /** The selected variables. */
+    private List<SettingVariable> selectedVariables;
 
+    private List<SettingDetail> basicDetails;
+    
     /**
      * Gets the project id.
      *
@@ -363,5 +377,71 @@ public class CreateNurseryForm {
 		this.endDateId = endDateId;
 	}
 
-	
+	/**
+         * Gets the tree data.
+         *
+         * @return the tree data
+         */
+        public String getTreeData() {
+                return treeData;
+        }
+
+        /**
+         * Sets the tree data.
+         *
+         * @param treeData the new tree data
+         */
+        public void setTreeData(String treeData) {
+                this.treeData = treeData;
+        }
+
+        /**
+         * Gets the search tree data.
+         *
+         * @return the search tree data
+         */
+        public String getSearchTreeData() {
+                return searchTreeData;
+        }
+
+        /**
+         * Sets the search tree data.
+         *
+         * @param searchTreeData the new search tree data
+         */
+        public void setSearchTreeData(String searchTreeData) {
+                this.searchTreeData = searchTreeData;
+        }
+        
+        /**
+         * Gets the selected variables.
+         *
+         * @return the selected variables
+         */
+        public List<SettingVariable> getSelectedVariables() {
+                return selectedVariables;
+        }
+
+        /**
+         * Sets the selected variables.
+         *
+         * @param selectedVariables the new selected variables
+         */
+        public void setSelectedVariables(List<SettingVariable> selectedVariables) {
+                this.selectedVariables = selectedVariables;
+        }
+
+        /**
+         * @return the basicDetails
+         */
+        public List<SettingDetail> getBasicDetails() {
+            return basicDetails;
+        }
+
+        /**
+         * @param basicDetails the basicDetails to set
+         */
+        public void setBasicDetails(List<SettingDetail> basicDetails) {
+            this.basicDetails = basicDetails;
+        }
 }

@@ -1157,6 +1157,7 @@ function openImportGermplasmList() {
 		$('#importFrame').attr('src', importLocationUrl);
 	//}
 }
+
 function doTreeHighlight(treeName, nodeKey){
 	$("#"+treeName).dynatree("getTree").activateKey(nodeKey);
 	$('#'+treeName).find("*").removeClass('highlight');

@@ -154,6 +154,9 @@
 <div class="row">
 	<div id="manage-location" th:include="/NurseryManager/manageCheckType"></div>
 </div>
+<div class="row">
+	<div id="open-germplasm" th:include="/Common/openGermplasmDetailsModal"></div>
+</div>
 
  
 	
@@ -193,6 +196,10 @@
     var itemsToAdd = [];
     var checksFromPrimary = 0;
     var openTreeType = 0;
+    var germplasmDetailUrl = '';
+    var importLocationUrl = /*[[#{nursery.apps.import.nursery.url}]]*/;
+	var importIframeOpened = false;
+
     function do_validation() {
     	var message = /*[[#{common.error.file.no.file.selected}]]*/;
     	
@@ -206,7 +213,7 @@
 		  //we show the modal dialog again
 		  $('#myModal').modal('show');
 	  }	
-  
+	  germplasmDetailUrl = $('#openGermplasmUrl').val();	  
 	  //display tree
 	  
 	  displayGermplasmListTree("germplasmTree");
@@ -302,8 +309,6 @@
   		
   	}
 
-        var importLocationUrl = /*[[#{nursery.apps.import.nursery.url}]]*/;
-    	var importIframeOpened = false;
         
         function do_germplasm_check(){        	
         	return true;

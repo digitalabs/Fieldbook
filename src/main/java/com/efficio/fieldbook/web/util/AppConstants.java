@@ -163,6 +163,7 @@ public enum AppConstants {
     ,LOCATION_URL
     ,BREEDING_METHOD_URL
     ,IMPORT_GERMPLASM_URL
+    ,GERMPLASM_DETAILS_URL
     
     ,LABEL
     

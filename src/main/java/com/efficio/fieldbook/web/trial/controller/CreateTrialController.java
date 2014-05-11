@@ -426,6 +426,7 @@ public class CreateTrialController extends SettingsController {
     	form.setReplicates(AppConstants.REPLICATES.getString());
     	form.setBlockSize(AppConstants.BLOCK_SIZE.getString());
     	form.setExperimentalDesign(AppConstants.EXPERIMENTAL_DESIGN.getString());
+    	form.setOpenGermplasmUrl(AppConstants.GERMPLASM_DETAILS_URL.getString());
     }
     
     @ModelAttribute("experimentalDesignValues")

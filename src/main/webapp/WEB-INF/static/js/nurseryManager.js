@@ -2095,14 +2095,52 @@ function changeBrowseNurseryButtonBehavior(isEnable){
 	
 }
 
-function addDetailsTab(studyId){
-	alert("Add Tab " + studyId);	
-}
-
 function addStudyTreeHighlight(node){
 	//$('#studyTree').find("*").removeClass('tree-highlight');
 	$(node.span).addClass('fbtree-focused');
 	console.log($(node.span).parent().html());
 	//console.log('add highlight' + $(node.span).html());
 	//console.log();
+}
+
+function initializeStudyTabs(){
+	 $('#study-tab-headers li').on('click', function(){
+		 $('#study-tab-headers li').removeClass('active');
+		 $(this).addClass('active');
+		 $('#study-tabs .info').hide();
+		 $('.info#'+$(this).attr('id')).show();
+	 });
+	 $('#study-tab-headers .close').on('click', function(){
+		 var studyId = $(this).attr('id');	
+		 var showFirst = false;
+		 if($(this).parent().parent().hasClass('active')){
+			 //console.log('get the first item');
+			 showFirst = true;
+		 }
+		 $('li#study'+studyId).remove();
+		 $('.info#study'+studyId).remove();
+		 if(showFirst && $('#study-tab-headers li').length > 0){			 
+			 var studyIdString = $('#study-tab-headers li:eq(0)').attr('id');
+			 $('li#'+studyIdString).addClass('active');
+			 $('.info#'+studyIdString).show();
+		 }
+	 });
+}
+function addDetailsTab(studyId, title){
+	 //if the study is already existing, we show that tab
+	 $('#study-tab-headers li').removeClass('active');
+	 $('#study-tabs .info').hide();
+	 if($('li#study'+studyId).length != 0){
+		 $('li#study'+studyId).addClass('active');
+		 $('.info#study'+studyId).show();
+	 }else{
+		 var close = '   <button type="button" id="'+studyId+'" class="close">×</button>';
+		 $('#study-tab-headers').append("<li id='study"+studyId+"' class='active'><a>"+title+" " + close + "</a></li>");
+	   	 $('#study-tabs').append('<div class="info" id="study'+studyId+'">'+title+'</div>')
+	   	 $('.info#study'+studyId).show();
+	   	 initializeStudyTabs();
+	 }
+	 
+	 //if not we get the info
+	//alert("Add Tab " + studyId);	        		        	
 }

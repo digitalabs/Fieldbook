@@ -62,6 +62,7 @@ public class CreateNurseryForm {
     
     /** The import location url. */
     private String importLocationUrl;
+    private String openGermplasmUrl;
     
     /** The load settings. */
     private String loadSettings;
@@ -361,6 +362,14 @@ public class CreateNurseryForm {
 
 	public void setEndDateId(String endDateId) {
 		this.endDateId = endDateId;
+	}
+
+	public String getOpenGermplasmUrl() {
+		return openGermplasmUrl;
+	}
+
+	public void setOpenGermplasmUrl(String openGermplasmUrl) {
+		this.openGermplasmUrl = openGermplasmUrl;
 	}
 
 	

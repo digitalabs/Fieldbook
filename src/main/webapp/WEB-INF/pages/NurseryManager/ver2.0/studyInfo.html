@@ -10,3 +10,38 @@
 		</div>
 	</div>
 </div>
+<div class="row">
+	<div id="study-details">
+		<ul id="study-tab-headers" class="nav nav-tabs" >
+			<!-- 
+			<li id="nurseries" class="active"><a th:text="#{browse.nurseries}">.Browse Nurseries</a></li>
+			<li id="nurseries1"><a th:text="#{browse.nurseries}">.Browse Nurseries</a></li>
+			 -->			
+		</ul>
+		<!-- details section -->
+		<div id="study-tabs">
+			<!-- 
+			<div class="info" id="nurseries">
+				1
+			</div>
+			<div class="info" id="nurseries1">
+				2
+			</div>
+			 -->
+		</div>
+	</div>
+</div>
+<div layout:fragment="page-script">
+	<!-- For pagination -->
+	<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[    
+         $( document ).ready(function() {	 
+        	 $('#study-tabs .info').hide();
+        	 initializeStudyTabs();
+		  });
+         
+         
+        
+      //]]>
+    </script>
+</div>

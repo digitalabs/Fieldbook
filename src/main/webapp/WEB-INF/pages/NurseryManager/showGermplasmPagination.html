@@ -40,7 +40,9 @@
                -->
                <td align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.index}">.1</td> 
                <td align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryId}">.1</td>
-               <td align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.desig}">.2</td>
+               <td align="center" th:class="${row.even}? 'even' : 'odd'" >
+                	<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${gid.desig}" th:attr="data-gid=${gid.gid}">.2</a>               	
+               </td>
                <td align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.gid}">.3</td>
                <td align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.cross}">.4</td>
                <td align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.source}">.5</td>
@@ -82,7 +84,9 @@
                </td> -->
                <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.index}">.1</td>
                <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryId}">.1</td>
-               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.desig}">.2</td>
+               <td th:class="${row.even}? 'even' : 'odd'">
+               	<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${gid.desig}" th:attr="data-gid=${gid.gid}">.2</a>
+               </td>
              </tr>
              <tr>
               <!--  <td>.1.1</td>

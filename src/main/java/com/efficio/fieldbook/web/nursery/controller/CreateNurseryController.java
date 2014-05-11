@@ -260,5 +260,6 @@ public class CreateNurseryController extends SettingsController {
         form.setStudyNameTermId(AppConstants.STUDY_NAME_ID.getString());
         form.setStartDateId(AppConstants.START_DATE_ID.getString());
     	form.setEndDateId(AppConstants.END_DATE_ID.getString());
+    	form.setOpenGermplasmUrl(AppConstants.GERMPLASM_DETAILS_URL.getString());
     }
 }

@@ -25,7 +25,9 @@
                		<option th:each="type: ${checkLists}" th:value="${type.id}" th:text="${type.description}"></option>
                </select>               
                </td>
-               <td style="text-align: center; vertical-align: middle" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.desig}">.2</td>
+               <td style="text-align: center; vertical-align: middle" th:class="${row.even}? 'even' : 'odd'">
+               		<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${gid.desig}" th:attr="data-gid=${gid.gid}">.2</a>
+               </td>
              </tr>
              <tr>
                <td>.1.1</td>

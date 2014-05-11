@@ -74,4 +74,5 @@ public interface FieldbookService {
     
     List<ValueReference> getAllPossibleValuesByPSMR(String property, String scale, String method, PhenotypicType phenotypeType) throws MiddlewareQueryException;
 
+    String getValue(int id, String valueOrId, boolean isCategorical) throws MiddlewareQueryException;
 }

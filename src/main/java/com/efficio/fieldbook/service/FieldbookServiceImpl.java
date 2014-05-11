@@ -23,15 +23,18 @@ import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
+import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Person;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
@@ -62,6 +65,9 @@ public class FieldbookServiceImpl implements FieldbookService{
 
     @Autowired
     private WorkbenchService workbenchService;
+    
+    @Autowired
+    private OntologyService ontologyService;
 	
 	@Resource
 	private PossibleValuesCache possibleValuesCache;
@@ -352,5 +358,61 @@ public class FieldbookServiceImpl implements FieldbookService{
             }
         }
         return list;
+    }
+
+    @Override
+    public String getValue(int id, String valueOrId, boolean isCategorical) throws MiddlewareQueryException {
+        List<ValueReference> possibleValues = possibleValuesCache.getPossibleValues(id);
+        if (!NumberUtils.isNumber(valueOrId)) {
+        	return valueOrId;
+        }
+        if (possibleValues != null && !possibleValues.isEmpty()) {
+        	for (ValueReference possibleValue : possibleValues) {
+        		if (possibleValue.equals(valueOrId)) {
+        			return possibleValue.getDescription();
+        		}
+        	}
+        }
+
+        Integer valueId = Integer.valueOf(valueOrId);
+        if (TermId.BREEDING_METHOD_ID.getId() == id) {
+        	return getBreedingMethodById(valueId);
+        } else if (TermId.LOCATION_ID.getId() == id) {
+            return getLocationById(valueId);
+        } else if (TermId.PI_ID.getId() == id || Integer.parseInt(AppConstants.COOPERATOR_ID.getString()) == id) {
+            return getPersonById(valueId);
+        } else if (isCategorical) {
+        	Term term = ontologyService.getTermById(valueId);
+        	if (term != null) {
+        		return term.getDefinition();
+        	}
+        } else {
+        	return valueOrId;
+        }
+        return null;
+	}
+    
+    private String getBreedingMethodById(int id) throws MiddlewareQueryException {
+        Method method = fieldbookMiddlewareService.getBreedingMethodById(id);
+        if (method != null) {
+        	return method.getMdesc();
+        }
+        return null;
+    }
+    
+    private String getLocationById(int id) throws MiddlewareQueryException {
+    	Location location = fieldbookMiddlewareService.getLocationById(id);
+    	if (location != null) {
+    		return location.getLname();
+    	}
+    	return null;
+    }
+    
+    private String getPersonById(int id) throws MiddlewareQueryException {
+    	Person person = fieldbookMiddlewareService.getPersonById(id);
+    	if (person != null) {
+    		return person.getDisplayName();
+    	}
+    	return null;
     }
 }

@@ -199,6 +199,16 @@ public enum AppConstants {
     
     ,OBJECTIVE_ID
     ,OCC
+    
+    ,NURSERY_BASIC_REQUIRED_FIELDS
+    ,NURSERY_MANAGEMENT_REQUIRED_FIELDS
+    ,Entries_LABEL
+    ,HasMeasurements_LABEL
+    ,HasFieldMap_LABEL
+    ,HIDDEN_FIELDS
+    ,SPFLD_ENTRIES
+    ,SPFLD_HAS_MEASUREMENTS
+    ,SPFLD_HAS_FIELDMAP
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

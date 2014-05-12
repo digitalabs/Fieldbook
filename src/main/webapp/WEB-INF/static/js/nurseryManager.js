@@ -2124,7 +2124,9 @@ function initializeStudyTabs(){
 			 $('li#'+studyIdString).addClass('active');
 			 $('.info#'+studyIdString).show();
 		 }
+		 
 	 });
+	 determineIfShowCloseAllStudyTabs();
 }
 function addDetailsTab(studyId, title){
 	 //if the study is already existing, we show that tab
@@ -2140,7 +2142,23 @@ function addDetailsTab(studyId, title){
 	   	 $('.info#study'+studyId).show();
 	   	 initializeStudyTabs();
 	 }
-	 
+	 determineIfShowCloseAllStudyTabs();
 	 //if not we get the info
 	//alert("Add Tab " + studyId);	        		        	
+}
+function determineIfShowCloseAllStudyTabs(){
+	if($('#study-tab-headers li').length > 0){
+		$('#closeAllStudytabs').css('display', 'block');
+	}else{
+		$('#closeAllStudytabs').css('display', 'none');
+	}
+}
+function openStudyTree(){
+	$('#studyTreeModal').modal('show');
+}
+function closeAllStudyTabs(){
+	 
+	 $('#study-tab-headers').html('');
+	 $('#study-tabs').html('');
+	 determineIfShowCloseAllStudyTabs();
 }

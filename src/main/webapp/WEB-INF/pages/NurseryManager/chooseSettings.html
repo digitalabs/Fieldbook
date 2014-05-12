@@ -19,7 +19,6 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
                     <input type="hidden" th:field="*{startDateId}"/>
 					<input type="hidden" th:field="*{endDateId}"/>
 					<input type="hidden" th:field="*{openGermplasmUrl}"/>
-					<input type="hidden" th:field="*{germplasmListDetailUrl}"/>
 					
 					
 					
@@ -278,7 +277,6 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
     var programLocationUrl = '';
     var programMethodUrl = '';
     var breedingMethodId = '';
-    var germplasmListDetailUrl = '';
     var locationIframeOpened = false;
     var methodIframeOpened = false;
     var importLocationUrl = '';
@@ -302,7 +300,6 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
         programMethodUrl = $('#breedingMethodUrl').val();
         programLocationUrl = $('#locationUrl').val();
         importLocationUrl = $('#importLocationUrl').val();
-        germplasmListDetailUrl = $('#germplasmListDetailUrl').val();
             
 
 		$("#folderNameSpan").html($("#folderName").val());

@@ -22,8 +22,8 @@
 			<label class="control-label"><a href="javascript: openStudyTree()">Browse</a> for a nursery to work with.</label>
 		</div>
 		<div class="col-xs-5 col-md-5">
-			<div style="float: right">
-				<button type="button" class="btn btn-info" th:utext="#{browse.nursery.start.new.nursery}">+ Start a New Nursery</button>				
+			<div style="float: right;padding-right: 10px;">
+				<a href="" th:href="@{/NurseryManager/createNursery}" class="btn btn-info" th:utext="#{browse.nursery.start.new.nursery}">+ Start a New Nursery</a>				
 			</div>
 		</div>
 	</div>	

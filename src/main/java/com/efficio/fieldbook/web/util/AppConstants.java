@@ -217,6 +217,7 @@ public enum AppConstants {
     ,SPFLD_ENTRIES
     ,SPFLD_HAS_MEASUREMENTS
     ,SPFLD_HAS_FIELDMAP
+    ,SELECTION_VARIATES_PROPERTIES
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

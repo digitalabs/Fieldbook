@@ -127,6 +127,7 @@ public class CreateNurseryController extends SettingsController {
     	session.invalidate();
     	form.setProjectId(this.getCurrentProjectId());
     	form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString());
+    	form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
     	setFormStaticData(form);
     	return super.show(model);
     }

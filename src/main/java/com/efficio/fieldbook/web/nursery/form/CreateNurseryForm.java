@@ -17,25 +17,29 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class CreateNurseryForm.
  */
 public class CreateNurseryForm {
 
-	/** The project id. */
-	private String projectId;
+    /** The project id. */
+    private String projectId;
 	
-	/** The selected setting id. */
-	private int selectedSettingId;
+    /** The selected setting id. */
+    private int selectedSettingId;
 
-	/** The nursery level variables. */
-	private List<SettingDetail> studyLevelVariables;
+    /** The nursery level variables. */
+    private List<SettingDetail> studyLevelVariables;
 	
-	/** The plot level variables. */
-	private List<SettingDetail> plotLevelVariables;
+    /** The plot level variables. */
+    private List<SettingDetail> plotLevelVariables;
 	
-	/** The baseline trait variables. */
-	private List<SettingDetail> baselineTraitVariables;
+    /** The baseline trait variables. */
+    private List<SettingDetail> baselineTraitVariables;
+    
+    /** The selection variates variables. */
+    private List<SettingDetail> selectionVariatesVariables;
 
     /** The folder id. */
 	private Integer folderId;
@@ -63,15 +67,20 @@ public class CreateNurseryForm {
     
     /** The import location url. */
     private String importLocationUrl;
+    
+    /** The open germplasm url. */
     private String openGermplasmUrl;
     
     /** The load settings. */
     private String loadSettings;
     
+    /** The study name term id. */
     private String studyNameTermId;
     
+    /** The start date id. */
     private String startDateId;
     
+    /** The end date id. */
     private String endDateId;
     
     /** The tree data. */
@@ -84,7 +93,11 @@ public class CreateNurseryForm {
     /** The selected variables. */
     private List<SettingVariable> selectedVariables;
 
+    /** The basic details. */
     private List<SettingDetail> basicDetails;
+    
+    /** The id name variables. */
+    private String idNameVariables;
     
     /**
      * Gets the project id.
@@ -124,10 +137,20 @@ public class CreateNurseryForm {
 
 	
 
+	/**
+	 * Gets the study level variables.
+	 *
+	 * @return the study level variables
+	 */
 	public List<SettingDetail> getStudyLevelVariables() {
 		return studyLevelVariables;
 	}
 
+	/**
+	 * Sets the study level variables.
+	 *
+	 * @param studyLevelVariables the new study level variables
+	 */
 	public void setStudyLevelVariables(List<SettingDetail> studyLevelVariables) {
 		this.studyLevelVariables = studyLevelVariables;
 	}
@@ -349,6 +372,8 @@ public class CreateNurseryForm {
 	}
 
 	/**
+	 * Gets the study name term id.
+	 *
 	 * @return the studyNameTermId
 	 */
 	public String getStudyNameTermId() {
@@ -356,32 +381,64 @@ public class CreateNurseryForm {
 	}
 
 	/**
+	 * Sets the study name term id.
+	 *
 	 * @param studyNameTermId the studyNameTermId to set
 	 */
 	public void setStudyNameTermId(String studyNameTermId) {
 		this.studyNameTermId = studyNameTermId;
 	}
 
+	/**
+	 * Gets the start date id.
+	 *
+	 * @return the start date id
+	 */
 	public String getStartDateId() {
 		return startDateId;
 	}
 
+	/**
+	 * Sets the start date id.
+	 *
+	 * @param startDateId the new start date id
+	 */
 	public void setStartDateId(String startDateId) {
 		this.startDateId = startDateId;
 	}
 
+	/**
+	 * Gets the end date id.
+	 *
+	 * @return the end date id
+	 */
 	public String getEndDateId() {
 		return endDateId;
 	}
 
+	/**
+	 * Sets the end date id.
+	 *
+	 * @param endDateId the new end date id
+	 */
 	public void setEndDateId(String endDateId) {
 		this.endDateId = endDateId;
 	}
 
+	/**
+	 * Gets the open germplasm url.
+	 *
+	 * @return the open germplasm url
+	 */
 	public String getOpenGermplasmUrl() {
 		return openGermplasmUrl;
 	}
 
+	/**
+	 * Sets the open germplasm url.
+	 *
+	 * @param openGermplasmUrl the new open germplasm url
+	 */
 	public void setOpenGermplasmUrl(String openGermplasmUrl) {
 		this.openGermplasmUrl = openGermplasmUrl;
 	}
@@ -441,6 +498,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Gets the basic details.
+         *
          * @return the basicDetails
          */
         public List<SettingDetail> getBasicDetails() {
@@ -448,9 +507,44 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Sets the basic details.
+         *
          * @param basicDetails the basicDetails to set
          */
         public void setBasicDetails(List<SettingDetail> basicDetails) {
             this.basicDetails = basicDetails;
+        }
+
+        /**
+         * Gets the selection variates variables.
+         *
+         * @return the selectionVariatesVariables
+         */
+        public List<SettingDetail> getSelectionVariatesVariables() {
+            return selectionVariatesVariables;
+        }
+
+        /**
+         * Sets the selection variates variables.
+         *
+         * @param selectionVariatesVariables the selectionVariatesVariables to set
+         */
+        public void setSelectionVariatesVariables(
+                List<SettingDetail> selectionVariatesVariables) {
+            this.selectionVariatesVariables = selectionVariatesVariables;
+        }
+
+        /**
+         * @return the idNameVariables
+         */
+        public String getIdNameVariables() {
+            return idNameVariables;
+        }
+
+        /**
+         * @param idNameVariables the idNameVariables to set
+         */
+        public void setIdNameVariables(String idNameVariables) {
+            this.idNameVariables = idNameVariables;
         }
 }

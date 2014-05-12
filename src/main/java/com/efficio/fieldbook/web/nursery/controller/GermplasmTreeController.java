@@ -11,14 +11,20 @@
 package com.efficio.fieldbook.web.nursery.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Database;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.Person;
+import org.generationcp.middleware.pojos.User;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -27,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 import com.efficio.pojos.treeview.TreeNode;
@@ -47,6 +54,8 @@ public class GermplasmTreeController{
     /** The germplasm list manager. */
     @Resource
     private GermplasmListManager germplasmListManager;
+    @Resource
+    private FieldbookService fieldbookMiddlewareService;
     
     /**
      * Load initial germplasm tree.
@@ -69,6 +78,33 @@ public class GermplasmTreeController{
         
         return "[]";
     }
+    
+    /**
+     * Load initial germplasm tree.
+     *
+     * @return the string
+     */
+    @ResponseBody
+    @RequestMapping(value = "/germplasm/list/header/details/{listId}", method = RequestMethod.GET)
+    public Map<String, Object> getGermplasmListHeaderDetails(@PathVariable int listId) {
+    	HashMap<String, Object> dataResults = new HashMap<String, Object>();
+        try {
+        	GermplasmList germplasmList = fieldbookMiddlewareService.getGermplasmListById(listId);
+        	dataResults.put("name", germplasmList.getName());
+        	dataResults.put("description", germplasmList.getDescription());
+        	dataResults.put("type", germplasmList.getType());
+        	dataResults.put("status", germplasmList.getStatusString());
+        	dataResults.put("date", germplasmList.getDate());
+        	dataResults.put("owner", fieldbookMiddlewareService.getOwnerListName(germplasmList.getUserId()));
+        	dataResults.put("notes", germplasmList.getNotes());
+            
+        } catch(Exception e) {
+            LOG.error(e.getMessage(), e);
+        }
+        
+        return dataResults;
+    }
+   
     
     /**
      * Expand germplasm tree.
@@ -103,5 +139,6 @@ public class GermplasmTreeController{
         
         return "[]";
     }
+
     
 }

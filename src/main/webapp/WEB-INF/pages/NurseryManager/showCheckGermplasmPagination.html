@@ -13,20 +13,21 @@
        <div class="check-germplasm-list-table">
          <table th:if="*{not #lists.isEmpty(paginatedImportedCheckGermplasm)}" class="my-class table table-curved table-condensed check-germplasm-list-items">
            <thead>
-             <tr>
-               <th style="text-align: center; vertical-align: middle" th:utext="#{nursery.import.header.check}">.Check</th>              
-               <th style="text-align: center; vertical-align: middle" th:utext="#{nursery.import.header.designation}">.Designation</th>
+             <tr>                             
+               <th style="text-align: left; vertical-align: middle" th:utext="#{nursery.import.header.designation}">.Designation</th>
+               <th style="text-align: left; vertical-align: middle" th:utext="#{nursery.import.header.check}">.Check</th>
              </tr>
            </thead>
            <tbody th:remove="all-but-first">
              <tr  th:each="gid, row : *{paginatedImportedCheckGermplasm}" th:attr="data-entry=${gid.entryId}" th:attrappend="data-gid=${gid.gid},data-index=${gid.index}" class="checkRow">
-               <td align="center" th:class="${row.even}? 'even' : 'odd'">
+               
+               <td style="text-align: left; vertical-align: middle" th:class="${row.even}? 'even' : 'odd'">
+               		<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${gid.desig}" th:attr="data-gid=${gid.gid}" th:attrappend="data-desig=${gid.desig}">.2</a>
+               </td>
+               <td align="left" th:class="${row.even}? 'even' : 'odd'">
                <select  th:field="*{paginatedImportedCheckGermplasm[__${row.index}__].check}" class="form-control checklist-select">
                		<option th:each="type: ${checkLists}" th:value="${type.id}" th:text="${type.description}"></option>
                </select>               
-               </td>
-               <td style="text-align: center; vertical-align: middle" th:class="${row.even}? 'even' : 'odd'">
-               		<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${gid.desig}" th:attr="data-gid=${gid.gid}">.2</a>
                </td>
              </tr>
              <tr>

@@ -42,14 +42,15 @@ h4,
 }
 */
 h1,h2,h3,h4,h5,h6,
-.h1,.h2,.h2_no_transform,.h3,.h4,.h5,.h6{display:block;color:#333;font-family:'Open Sans','Segoe UI','Helvetica Neue',Arial,sans-serif;letter-spacing:normal;font-weight:500;margin-bottom:5px;margin-left:0;margin-right:0;margin-top:10px;box-sizing:border-box}
+.h1,.h2,.h2_no_transform,.h3,.h3_no_transform,.h4,.h5,.h6{display:block;color:#333;font-family:'Open Sans','Segoe UI','Helvetica Neue',Arial,sans-serif;letter-spacing:normal;font-weight:500;margin-bottom:5px;margin-left:0;margin-right:0;margin-top:10px;box-sizing:border-box}
 h4,h5,h6,
 .h4,.h5,.h6{margin-top:5px}
 h1,.h1{font-size:26px;font-weight:500;height:26px;line-height:26px;text-transform:uppercase}
 h2,.h2{font-size:18px;height:18px;line-height:18px;font-weight:600;text-transform:uppercase}
-h2,.h2_no_transform{font-size:18px;height:18px;line-height:18px;font-weight:600;}
+.h2_no_transform{font-size:18px;height:18px;line-height:18px;font-weight:600;}
 h2.light,.h2.light{font-weight: 300; color:#999;}
 h3,.h3{font-size:16px;height:16px;line-height:16px;font-weight:600;text-transform:uppercase}
+.h3_no_transform{font-size:16px;height:16px;line-height:16px;font-weight:600;}
 h4,.h4{font-size:15.5px;height:15px;line-height:15px;font-weight:500}
 h5,.h5{font-size:15px;font-weight:500;height:15px;line-height:15px;text-transform:uppercase}
 h6,.h6{font-size:13px;font-weight:500;line-height:13px}
@@ -561,7 +562,7 @@ padding-left: 20px; margin-top: 7px
 	overflow: auto;
 }
 .germplasm-measurement-list-table thead th, .germplasm-list-table thead th{
-   text-align: center;
+   text-align: left;
 }
 .germplasm-measurement-list-table td  {
    vertical-align: middle;
@@ -926,3 +927,9 @@ div.sectionContainer {
 #check-germplasm-list, #imported-germplasm-list {
   min-height: 300px;
 }         			
+.btn{
+	font-weight: bold;
+}
+.control-label-bold{
+	font-weight: bold;
+}

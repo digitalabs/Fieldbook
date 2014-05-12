@@ -25,7 +25,7 @@
 	     var headerMsg1 = /*[[#{open.germplasm.header}]]*/;
 	     var headerMsg2 = /*[[#{open.germplasm.gid}]]*/;
 	     function openGermplasmDetailsPopop(aObject) {
-			var desig = $(aObject).html();
+			var desig = $(aObject).data('desig');
 			var gid = $(aObject).data('gid');
 			//console.log( $(aObject));
 			$('#openGermplasmFrame').attr('src', germplasmDetailUrl+gid);

@@ -130,6 +130,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     public String show(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form
             , Model model) {
         //this set the necessary info from the session variable
+    	 
         form.setImportedGermplasmMainInfo(getUserSelection().getImportedGermplasmMainInfo());
         if(getUserSelection().getImportedGermplasmMainInfo() != null 
                 && getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList() != null){

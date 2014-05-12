@@ -1,0 +1,106 @@
+<div class="col-xs-7 col-md-7" xmlns:th="http://www.thymeleaf.org">
+	<!-- Modal -->
+   	<div class="modal fade" id="openGermplasmListModal"  role="dialog" aria-labelledby="openGermplasmListModal" aria-hidden="true">
+		<div class="modal-dialog modal-small">
+			<div class="modal-content" >
+				<div class="modal-header">
+		            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		            	<h4 class="modal-title">List Header Details</h4>
+		          </div>
+				<div class="modal-body" id="openGermplasmListBody">				
+	         		<div class="row">
+	         			<div class="col-xs-4 col-md-4">
+	         				<label class="control-label control-label-bold">List Name:</label>
+	         			</div>
+						<div class="col-xs-8 col-md-8">
+							<label class="germplasm-header-details" id="list-name"></label>
+						</div>	
+					</div>
+					<div class="row">
+						<div class="col-xs-4 col-md-4">
+							<label class="control-label control-label-bold">List Owner:</label>
+						</div>
+						<div class="col-xs-8 col-md-8">
+							<label class="germplasm-header-details" id="list-owner"></label>
+						</div>		
+					</div>
+					<div class="row">
+						<div class="col-xs-4 col-md-4">
+							<label class="control-label control-label-bold">Status:</label>
+						</div>	
+						<div class="col-xs-8 col-md-8">
+							<label class="germplasm-header-details" id="list-status"></label>
+						</div>	
+					</div>
+					<div class="row">
+						<div class="col-xs-4 col-md-4">
+							<label class="control-label control-label-bold">Description:</label>
+						</div>	
+						<div class="col-xs-8 col-md-8">
+							<label class="germplasm-header-details" id="list-description"></label>
+						</div>	
+					</div>
+					<div class="row">
+						<div class="col-xs-4 col-md-4">
+							<label class="control-label control-label-bold">Type:</label>
+						</div>	
+						<div class="col-xs-8 col-md-8">
+							<label class="germplasm-header-details" id="list-type"></label>
+						</div>	
+					</div>
+					<div class="row">
+						<div class="col-xs-4 col-md-4">
+							<label class="control-label control-label-bold">Date:</label>
+						</div>	
+						<div class="col-xs-8 col-md-8">
+							<label class="germplasm-header-details" id="list-date"></label>
+						</div>	
+					</div>
+					<div class="row">
+						<div class="col-xs-4 col-md-4">
+							<label class="control-label control-label-bold">Notes:</label>
+						</div>	
+						<div class="col-xs-8 col-md-8">
+							<label class="germplasm-header-details" id="list-notes"></label>
+						</div>	
+					</div>
+				</div>				
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->		
+</div>
+
+<div layout:fragment="page-script">
+<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[   
+	     function openGermplasmListDetailsPopop(listId) {
+	    	 Spinner.toggle();
+	    	 $('.germplasm-header-details').html('');
+	    	 $.ajax({
+	 			url: "/Fieldbook/NurseryManager/germplasm/list/header/details/"+listId,
+	 			type: "GET",
+	 			cache: false,
+	 			success: function(data) {
+	 				//console.log(data);
+	 				$('#list-name').html(data.name);
+	 				$('#list-description').html(data.description);
+	 				$('#list-status').html(data.status);
+	 				$('#list-date').html(data.date);
+	 				$('#list-owner').html(data.owner);
+	 				$('#list-type').html(data.type);
+	 				var notes = data.notes == null ? '-' : data.notes;
+	 				$('#list-notes').html(notes);
+	 		    	$('#openGermplasmListModal').modal({ backdrop: 'static', keyboard: true });
+	 				$("#openGermplasmListModal").modal("show");
+	 			}, 
+	 			complete: function() {
+	 				Spinner.toggle();
+	 			}
+	 		});
+					
+			
+			
+		}     
+    //]]>
+    </script>
+</div>

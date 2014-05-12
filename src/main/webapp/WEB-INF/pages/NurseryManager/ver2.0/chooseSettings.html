@@ -11,7 +11,8 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
                     <input type="hidden" th:field="*{studyNameTermId}"/>
                     <input type="hidden" th:field="*{startDateId}"/>
 					<input type="hidden" th:field="*{endDateId}"/>
-					
+					<input type="hidden" th:field="*{openGermplasmUrl}"/>
+					<input type="hidden" th:field="*{germplasmListDetailUrl}"/>
 					
 	    			<div class="row form-group">
 	    				<div class="col-xs-6 col-md-6">
@@ -275,6 +276,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
     var requiredFields = [];    
     var startDateId = '';
 	var endDateId = '';
+	var germplasmListDetailUrl = '';
 
     
 	$(document).ready(function() {
@@ -292,7 +294,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
         programMethodUrl = $('#breedingMethodUrl').val();
         programLocationUrl = $('#locationUrl').val();
         importLocationUrl = $('#importLocationUrl').val();
-            
+        germplasmListDetailUrl = $('#germplasmListDetailUrl').val();   
 
 		$("#folderNameSpan").html($("#folderName").val());
 		$.each($(".possibleValuesJson"), function (index, divElem){

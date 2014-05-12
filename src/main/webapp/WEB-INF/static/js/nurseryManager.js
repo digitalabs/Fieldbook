@@ -2162,3 +2162,47 @@ function closeAllStudyTabs(){
 	 $('#study-tabs').html('');
 	 determineIfShowCloseAllStudyTabs();
 }
+
+function loadDatasetDropdown(optionTag) {
+	Spinner.toggle();
+	$.ajax({ 
+		url: "/Fieldbook/NurseryManager/reviewNurseryDetails/datasets/" + getCurrentNurseryIdInTab(),
+	    type: "GET",
+	    cache: false,
+	    success: function(data) {
+	    	for (var i = 0; i < data.length; i++) {
+	    		optionTag.append(new Option(data[i].name, data[i].id));
+	    	}
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+        	console.log("The following error occured: " + textStatus, errorThrown); 
+        }, 
+        complete: function(){
+        	Spinner.toggle();
+        } 
+	});
+}
+
+function getCurrentNurseryIdInTab() {
+	return document.location.pathname.substring(document.location.pathname.lastIndexOf("/")+1);
+}
+
+function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
+	Spinner.toggle();
+	$.ajax({ 
+		url: "/Fieldbook/NurseryManager/addOrRemoveTraits/viewNurseryAjax/" + getCurrentNurseryIdInTab(),
+	    type: "GET",
+	    cache: false,
+	    success: function(html) {
+			$("#measurement-tab-headers").append("<li class='active'><a>" + datasetName + "</a></li>");
+			$("#measurement-tabs").append("<div id='dset-tab-" + datasetId + "'>" + html + "</div>");
+			$(".measurement-section").show();
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+        	console.log("The following error occured: " + textStatus, errorThrown); 
+        }, 
+        complete: function(){
+        	Spinner.toggle();
+        } 
+	});
+}

@@ -13,9 +13,10 @@
 <div class="row form-group" th:object="${nurseryDetails}">
 	<input type="hidden" id="studyId" class="field-map-highlight" th:value="*{id}" />
 	<div class="col-xs-12 col-md-12">
-		<label class="control-label section-toggle" data-toggle="collapse" data-target=".nurseryDetails">
-			<img class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" style="padding-bottom:3px;" />
-			<img class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" style="padding-bottom:3px; display:none;" />
+		<label class="control-label section-toggle toggle-icon" data-toggle="collapse" data-target=".nurseryDetails">
+			<img th:src="@{/static/img/basic-details.png}" />
+			<img class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
+			<img class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" style="display:none;" />
 			<strong class="sub-content-heading" th:text="#{nursery.nurserydetails.header} + ': ' + *{name}">NURSERY DETAILS</strong>
 		</label>
 		<div style="float:right;">
@@ -46,7 +47,7 @@
 	</div>
 	<div class="sectionContainer collapse in nurseryDetails">
 		<div th:each="basicDetail, rowStat : *{basicStudyDetails}">
-			<div class="col-xs-5 col-md-5">
+			<div class="col-xs-4 col-md-4">
 				&nbsp;&nbsp;&nbsp;<strong><span style="word-wrap: break-word"  class="control-label" th:text="${basicDetail.variable.name}"></span>:</strong>
 				&nbsp;<span th:text="${basicDetail.value}" class="div-select-val"></span>
 				<span th:if="${basicDetail.variable.name == 'Field Map Created'}">
@@ -55,93 +56,150 @@
 					<a href="javascript: showFieldMap('nursery-table');" id="view-fieldmap-url-link" th:text="#{nursery.nurserydetails.viewFieldMap}">View</a>
 				</span>
 			</div>
-			<div class="col-xs-2 col-md-2" th:if="${rowStat.odd}"></div>
+			<!-- div class="col-xs-2 col-md-2" th:if="${rowStat.odd}"></div -->
 		</div>
 	</div>
 	<br/>
 	<div class="col-xs-12 col-md-12">
-		<label class="control-label section-toggle" data-toggle="collapse" data-target=".managementDetails">
-			<img class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" style="padding-bottom:3px;" />
-			<img class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" style="padding-bottom:3px; display:none;" />
+		<label class="control-label section-toggle toggle-icon" data-toggle="collapse" data-target=".managementDetails">
+			<img class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
+			<img class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" style="display:none;" />
 			<strong class="sub-content-heading" th:text="#{nursery.nurserydetails.management}">MANAGEMENT DETAILS</strong>
 		</label>
 		
 	</div>
 	<div class="sectionContainer collapse in managementDetails">
 		<div th:each="managementDetail, rowStat : *{managementDetails}">
-			<div class="col-xs-5 col-md-5">
+			<div class="col-xs-4 col-md-4">
 				&nbsp;&nbsp;&nbsp;<strong><span style="word-wrap: break-word"  class="control-label" th:text="${managementDetail.variable.name}"></span>:</strong>
 				&nbsp;<span th:text="${managementDetail.value}" class="div-select-val"></span>
 			</div>
-			<div class="col-xs-2 col-md-2" th:if="${rowStat.odd}"></div>
 		</div>
 	</div>
 	<br/>
 	<div class="col-xs-12 col-md-12">
-		<label class="control-label section-toggle" data-toggle="collapse" data-target=".factorDetails">
-			<img class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" style="padding-bottom:3px; display:none;" />
-			<img class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" style="padding-bottom:3px;" />
-			<strong class="sub-content-heading" th:text="#{nursery.nurserydetails.factors}">FACTORS</strong>
-		</label>
-		
+		<a id="toggle-additional-link" class="section-toggle" data-toggle="collapse" data-target=".additionalDetails" th:text="#{nursery.nurserydetails.additional.show}"></a>
+		&nbsp;<span th:text="#{nursery.nurserydetails.additional.text}"></span>
 	</div>
-	<div class="sectionContainer collapse factorDetails">
-		<div class="col-xs-12 col-md-12">
-			<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll-create" id="factorDetails">
-				<thead>
-				<tr>
-	                <th width="45%" th:utext="#{nursery.managesettings.plot.name}">.Name</th>
-	                <th width="45%" th:utext="#{nursery.managesettings.plot.description}">.Description</th>
-	                <th width="10%"></th>
-				</tr>
-				</thead>
-				<tbody>
-  					<tr th:each="factorDetail, rowStat : *{factorDetails}">
-	  					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${factorDetail.variable.name}"></td>
-	  					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${factorDetail.variable.description}"></td>
-	  					<td width="10%" th:class="${rowStat.even}? 'even' : 'odd'" >
-	   						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
-								*{factorDetails[__${rowStat.index}__].variable.cvTermId} + '\');'" >
-								<span class="glyphicon glyphicon-eye-open"></span></a>
-	   					</td>
-  					</tr> 
-				</tbody>
-			</table>
-		</div>
-	</div>	
-	<br/>
-	<div class="col-xs-12 col-md-12">
-		<label class="control-label section-toggle" data-toggle="collapse" data-target=".variateDetails">
-			<img class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" style="padding-bottom:3px; display:none;" />
-			<img class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" style="padding-bottom:3px;" />
-			<strong class="sub-content-heading" th:text="#{nursery.nurserydetails.traits}">TRAITS</strong>
-		</label>
-		
-	</div>
-	<div class="sectionContainer collapse variateDetails">
-		<div class="col-xs-12 col-md-12">
-			<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll-create" id="variateDetails">
-				<thead>
+	<div class="sectionContainer collapse additionalDetails">
+		<div class="col-xs-6 col-md-6">
+			<div class="col-xs-12 col-md-12">
+				<label class="control-label">
+					<strong class="sub-content-heading" th:text="#{nursery.nurserydetails.nurseryConditions}">NURSERY CONDITIONS</strong>
+				</label>
+			</div>
+			<div class="col-xs-12 col-md-12">
+				<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll-create" id="nurseryConditionDetails">
+					<thead>
 					<tr>
 		                <th width="45%" th:utext="#{nursery.managesettings.plot.name}">.Name</th>
 		                <th width="45%" th:utext="#{nursery.managesettings.plot.description}">.Description</th>
 		                <th width="10%"></th>
 					</tr>
-				</thead>
-				<tbody>
-  					<tr th:each="variateDetail, rowStat : *{variateDetails}">
-	  					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${variateDetail.variable.name}"></td>
-	  					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${variateDetail.variable.description}"></td>
-	  					<td width="10%" th:class="${rowStat.even}? 'even' : 'odd'" >
-	   						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
-								*{variateDetails[__${rowStat.index}__].variable.cvTermId} + '\');'" >
-								<span class="glyphicon glyphicon-eye-open"></span></a>
-	   					</td>
-  					</tr> 
-				</tbody>
-			</table>
+					</thead>
+					<tbody>
+	  					<tr th:each="nurseryConditionDetail, rowStat : *{nurseryConditionDetails}">
+		  					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${nurseryConditionDetail.variable.name}"></td>
+		  					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${nurseryConditionDetail.variable.description}"></td>
+		  					<td width="10%" th:class="${rowStat.even}? 'even' : 'odd'" >
+		   						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
+									*{nurseryConditionDetails[__${rowStat.index}__].variable.cvTermId} + '\');'" >
+									<span class="glyphicon glyphicon-eye-open"></span></a>
+		   					</td>
+	  					</tr> 
+					</tbody>
+				</table>
+			</div>
 		</div>
-	</div>	
+		<div class="col-xs-6 col-md-6">
+			<div class="col-xs-12 col-md-12">
+				<label class="control-label">
+					<strong class="sub-content-heading" th:text="#{nursery.nurserydetails.factors}">FACTORS</strong>
+				</label>
+			</div>
+			<div class="col-xs-12 col-md-12">
+				<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll-create" id="factorDetails">
+					<thead>
+					<tr>
+		                <th width="45%" th:utext="#{nursery.managesettings.plot.name}">.Name</th>
+		                <th width="45%" th:utext="#{nursery.managesettings.plot.description}">.Description</th>
+		                <th width="10%"></th>
+					</tr>
+					</thead>
+					<tbody>
+	  					<tr th:each="factorDetail, rowStat : *{factorDetails}">
+		  					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${factorDetail.variable.name}"></td>
+		  					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${factorDetail.variable.description}"></td>
+		  					<td width="10%" th:class="${rowStat.even}? 'even' : 'odd'" >
+		   						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
+									*{factorDetails[__${rowStat.index}__].variable.cvTermId} + '\');'" >
+									<span class="glyphicon glyphicon-eye-open"></span></a>
+		   					</td>
+	  					</tr> 
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="col-xs-6 col-md-6">
+			<div class="col-xs-12 col-md-12">
+				<label class="control-label">
+					<strong class="sub-content-heading" th:text="#{nursery.nurserydetails.traits}">TRAITS</strong>
+				</label>
+			</div>
+			<div class="col-xs-12 col-md-12">
+				<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll-create" id="variateDetails">
+					<thead>
+						<tr>
+			                <th width="45%" th:utext="#{nursery.managesettings.plot.name}">.Name</th>
+			                <th width="45%" th:utext="#{nursery.managesettings.plot.description}">.Description</th>
+			                <th width="10%"></th>
+						</tr>
+					</thead>
+					<tbody>
+	  					<tr th:each="variateDetail, rowStat : *{variateDetails}">
+		  					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${variateDetail.variable.name}"></td>
+		  					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${variateDetail.variable.description}"></td>
+		  					<td width="10%" th:class="${rowStat.even}? 'even' : 'odd'" >
+		   						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
+									*{variateDetails[__${rowStat.index}__].variable.cvTermId} + '\');'" >
+									<span class="glyphicon glyphicon-eye-open"></span></a>
+		   					</td>
+	  					</tr> 
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="col-xs-6 col-md-6">
+			<div class="col-xs-12 col-md-12">
+				<label class="control-label">
+					<strong class="sub-content-heading" th:text="#{nursery.nurserydetails.variates}">SELECTION VARIATES</strong>
+				</label>
+			</div>
+			<div class="col-xs-12 col-md-12">
+				<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll-create" id="selectionVariateDetails">
+					<thead>
+						<tr>
+			                <th width="45%" th:utext="#{nursery.managesettings.plot.name}">.Name</th>
+			                <th width="45%" th:utext="#{nursery.managesettings.plot.description}">.Description</th>
+			                <th width="10%"></th>
+						</tr>
+					</thead>
+					<tbody>
+	  					<tr th:each="selectionVariateDetail, rowStat : *{selectionVariateDetails}">
+		  					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${selectionVariateDetail.variable.name}"></td>
+		  					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${selectionVariateDetail.variable.description}"></td>
+		  					<td width="10%" th:class="${rowStat.even}? 'even' : 'odd'" >
+		   						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
+									*{selectionVariateDetails[__${rowStat.index}__].variable.cvTermId} + '\');'" >
+									<span class="glyphicon glyphicon-eye-open"></span></a>
+		   					</td>
+	  					</tr> 
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div> <!-- section container -->	
+	<br/>
 </div>
 
 <div class="row">
@@ -203,9 +261,11 @@ var noFieldMapExists = /*[[#{common.error.no.existing.fieldmap(#{fieldmap.nurser
 var openStudyError = /*[[#{common.error.open.study(#{fieldmap.nursery})}]]*/;
 var advanceStudyError = /*[[#{common.error.advance.study(#{fieldmap.nursery})}]]*/;
 var selectedTableIds = new Array();
+var showText = /*[[#{nursery.nurserydetails.additional.show}]]*/;
+var hideText = /*[[#{nursery.nurserydetails.additional.hide}]]*/;
 
 $(document).ready(function() {
-	$('.section-toggle').click(function(){ 
+	$('.toggle-icon').click(function(){ 
 		var expandedImg = $(this).find(".section-expanded");
 		var collapsedImg = $(this).find(".section-collapsed");
 	   	expandedImg.toggle();
@@ -230,6 +290,15 @@ $(document).ready(function() {
 
 	$("#view-fieldmap-url-link").click(function() {
 		selectedTableIds[0] = $("#studyId").val();
+	});
+	
+	$("#toggle-additional-link").click(function() {
+		if ($(this).text() == showText) {
+			$(this).text(hideText);
+		}
+		else {
+			$(this).text(showText);
+		}
 	});
 });
 

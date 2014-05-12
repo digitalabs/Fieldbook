@@ -27,6 +27,7 @@ import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.settings.Condition;
@@ -1178,7 +1179,11 @@ public class SettingsUtil {
 				fieldbookMiddlewareService, fieldbookService, userSelection, workbook.getStudyId().toString());
 		
 		nurseryDetails.setFactorDetails(convertWorkbookFactorsToSettingDetails(workbook.getFactors(), fieldbookMiddlewareService));
-		nurseryDetails.setVariateDetails(convertWorkbookVariatesToSettingDetails(workbook.getVariates(), fieldbookMiddlewareService));
+		List<SettingDetail> traits = new ArrayList<SettingDetail>();
+		List<SettingDetail> selectionVariateDetails = new ArrayList<SettingDetail>();
+		convertWorkbookVariatesToSettingDetails(workbook.getVariates(), fieldbookMiddlewareService, fieldbookService, traits, selectionVariateDetails);
+		nurseryDetails.setVariateDetails(traits);
+		nurseryDetails.setSelectionVariateDetails(selectionVariateDetails);
 		
 		return nurseryDetails;
 	}
@@ -1194,6 +1199,7 @@ public class SettingsUtil {
 		
 		List<SettingDetail> basicDetails = new ArrayList<SettingDetail>();
 		List<SettingDetail> managementDetails = new ArrayList<SettingDetail>();
+		List<SettingDetail> nurseryConditionDetails = new ArrayList<SettingDetail>();
 		
 		List<String> basicFields = Arrays.asList(AppConstants.NURSERY_BASIC_REQUIRED_FIELDS.getString().split(","));
 		List<String> managementRequiredFields = Arrays.asList(AppConstants.NURSERY_MANAGEMENT_REQUIRED_FIELDS.getString().split(","));
@@ -1205,19 +1211,21 @@ public class SettingsUtil {
 	    	}
 	    	basicDetails = convertWorkbookToSettingDetails(basicFields, conditions, fieldbookMiddlewareService, fieldbookService, userSelection, workbook);
 	    	managementDetails = convertWorkbookToSettingDetails(managementRequiredFields, conditions, fieldbookMiddlewareService, fieldbookService, userSelection, workbook);
-	    	convertWorkbookOtherStudyVariablesToSettingDetails(conditions, managementDetails.size(), userSelection, managementDetails, fieldbookMiddlewareService, fieldbookService);
+	    	nurseryConditionDetails = convertWorkbookOtherStudyVariablesToSettingDetails(conditions, managementDetails.size(), userSelection, fieldbookMiddlewareService, fieldbookService);
 	    }
 		
 		details.setBasicStudyDetails(basicDetails);
 		details.setManagementDetails(managementDetails);
+		details.setNurseryConditionDetails(nurseryConditionDetails);
 		return details;
 	}
 	
-	private static void convertWorkbookOtherStudyVariablesToSettingDetails(List<MeasurementVariable> conditions, int index, 
-			UserSelection userSelection, List<SettingDetail> details, 
+	private static List<SettingDetail> convertWorkbookOtherStudyVariablesToSettingDetails(List<MeasurementVariable> conditions, int index, 
+			UserSelection userSelection,  
 			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, FieldbookService fieldbookService) 
 	throws MiddlewareQueryException {
 		
+		List<SettingDetail> details = new ArrayList<SettingDetail>();
 		List<String> basicFields = Arrays.asList(AppConstants.NURSERY_BASIC_REQUIRED_FIELDS.getString().split(","));
 		List<String> managementRequiredFields = Arrays.asList(AppConstants.NURSERY_MANAGEMENT_REQUIRED_FIELDS.getString().split(","));
 		List<String> hiddenFields = Arrays.asList(AppConstants.HIDDEN_FIELDS.getString().split(","));
@@ -1235,6 +1243,7 @@ public class SettingsUtil {
 				index = addToList(details, settingDetail, index, null, null);
 			}
 		}
+		return details;
 	}
 	
 	private static List<SettingDetail> convertWorkbookToSettingDetails(List<String> fields, List<MeasurementVariable> conditions,
@@ -1332,11 +1341,13 @@ public class SettingsUtil {
 		return plotsLevelList;
 	}
 	
-	private static List<SettingDetail> convertWorkbookVariatesToSettingDetails(List<MeasurementVariable> variates,
-			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) 
+	private static void convertWorkbookVariatesToSettingDetails(List<MeasurementVariable> variates,
+			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
+			FieldbookService fieldbookService, List<SettingDetail> traits, List<SettingDetail> selectedVariates) 
 	throws MiddlewareQueryException {
+
+		List<String> svProperties = getSelectedVariatesPropertyNames(fieldbookService);
 		
-		List<SettingDetail> baselineTraitsList = new ArrayList<SettingDetail>();
 		if (variates != null) {
 			for (MeasurementVariable variate : variates){
 				SettingVariable variable = new SettingVariable(variate.getName(), variate.getDescription(), variate.getProperty(),
@@ -1347,10 +1358,26 @@ public class SettingsUtil {
 						PhenotypicType.VARIATE);
 				variable.setCvTermId(stdVar);
 				SettingDetail settingDetail = new SettingDetail(variable, null, null, true);
-				baselineTraitsList.add(settingDetail);
+				if (svProperties.contains(variate.getProperty())) {
+					selectedVariates.add(settingDetail);
+				}
+				else {
+					traits.add(settingDetail);
+				}
 			}
 		}
-		return baselineTraitsList;
+	}
+	
+	private static List<String> getSelectedVariatesPropertyNames(FieldbookService fieldbookService) throws MiddlewareQueryException {
+		List<String> names = new ArrayList<String>();
+		List<String> ids = Arrays.asList(AppConstants.SELECTION_VARIATES_PROPERTIES.getString().split(","));
+		for (String id : ids) {
+			Term term = fieldbookService.getTermById(Integer.valueOf(id));
+			if (term != null) {
+				names.add(term.getName());
+			}
+		}
+		return names;
 	}
 	
 	private static SettingVariable getSettingVariable(String name, String description, String property, String scale, String method, String role, String dataType, 

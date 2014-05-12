@@ -415,4 +415,9 @@ public class FieldbookServiceImpl implements FieldbookService{
     	}
     	return null;
     }
+    
+    @Override
+    public Term getTermById(int termId) throws MiddlewareQueryException {
+    	return ontologyService.getTermById(termId);
+    }
 }

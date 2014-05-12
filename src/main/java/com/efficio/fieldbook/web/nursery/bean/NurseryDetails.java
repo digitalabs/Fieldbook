@@ -49,9 +49,14 @@ public class NurseryDetails{
     
     private List<SettingDetail> managementDetails;
     
+    private List<SettingDetail> nurseryConditionDetails;
+    
     private List<SettingDetail> factorDetails;
     
     private List<SettingDetail> variateDetails;
+    
+    private List<SettingDetail> selectionVariateDetails;
+    
 
     /**
      * Instantiates a new nursery details.
@@ -277,4 +282,35 @@ public class NurseryDetails{
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
+	/**
+	 * @return the nurseryConditionDetails
+	 */
+	public List<SettingDetail> getNurseryConditionDetails() {
+		return nurseryConditionDetails;
+	}
+
+	/**
+	 * @param nurseryConditionDetails the nurseryConditionDetails to set
+	 */
+	public void setNurseryConditionDetails(
+			List<SettingDetail> nurseryConditionDetails) {
+		this.nurseryConditionDetails = nurseryConditionDetails;
+	}
+
+	/**
+	 * @return the selectionVariateDetails
+	 */
+	public List<SettingDetail> getSelectionVariateDetails() {
+		return selectionVariateDetails;
+	}
+
+	/**
+	 * @param selectionVariateDetails the selectionVariateDetails to set
+	 */
+	public void setSelectionVariateDetails(
+			List<SettingDetail> selectionVariateDetails) {
+		this.selectionVariateDetails = selectionVariateDetails;
+	}
+
 }

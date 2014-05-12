@@ -20,6 +20,7 @@ import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
+import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
@@ -75,4 +76,6 @@ public interface FieldbookService {
     List<ValueReference> getAllPossibleValuesByPSMR(String property, String scale, String method, PhenotypicType phenotypeType) throws MiddlewareQueryException;
 
     String getValue(int id, String valueOrId, boolean isCategorical) throws MiddlewareQueryException;
+
+    Term getTermById(int termId) throws MiddlewareQueryException;
 }

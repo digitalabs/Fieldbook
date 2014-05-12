@@ -3,20 +3,22 @@
 	
 	<img width="30" height="30" th:src="@{/static/img/study-details.png}" class="image-padding image-padding-with-text"  />
 	
-		<label class="h2" th:text="#{browse.nurseries.review.details}"></label>
+		<label class="h2_no_transform" th:text="#{browse.nurseries.review.details}"></label>
 	</div>
 	<div class="col-xs-6 col-md-6">
 		<div style="float: right">
+			<a id='closeAllStudytabs' href="javascript: void(0)" onclick="javascript: closeAllStudyTabs()">Close All Tabs</a>
 		</div>
 	</div>
 </div>
 <div class="row">
-	<div id="study-details">
+	<div id="study-details" class="col-xs-12 col-md-12">
 		<ul id="study-tab-headers" class="nav nav-tabs" >
 			<!-- 
 			<li id="nurseries" class="active"><a th:text="#{browse.nurseries}">.Browse Nurseries</a></li>
 			<li id="nurseries1"><a th:text="#{browse.nurseries}">.Browse Nurseries</a></li>
 			 -->			
+			
 		</ul>
 		<!-- details section -->
 		<div id="study-tabs">

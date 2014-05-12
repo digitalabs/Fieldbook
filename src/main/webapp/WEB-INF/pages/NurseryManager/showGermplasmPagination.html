@@ -20,7 +20,7 @@
              <tr>
                <!-- <th class="check-col" th:utext="#{nursery.import.header.check}">.Check</th> -->
                <th>Index</th>
-               <th th:utext="#{nursery.import.header.entry}">.Entry</th>
+               <th style="text-align:center" th:utext="#{nursery.import.header.entry}">.Entry</th>
                <th th:utext="#{nursery.import.header.designation}">.Designation</th>
                <th th:utext="#{nursery.import.header.gid}">.GID</th>
                <th th:utext="#{nursery.import.header.cross}">.Cross</th>
@@ -38,15 +38,17 @@
                </select>
                </td>
                -->
-               <td align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.index}">.1</td> 
+               <td align="left" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.index}">.1</td> 
                <td align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryId}">.1</td>
-               <td align="center" th:class="${row.even}? 'even' : 'odd'" >
-                	<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${gid.desig}" th:attr="data-gid=${gid.gid}">.2</a>               	
+               <td align="left" th:class="${row.even}? 'even' : 'odd'" >
+                	<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${gid.desig}" th:attr="data-gid=${gid.gid}" th:attrappend="data-desig=${gid.desig}">.2</a>               	
                </td>
-               <td align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.gid}">.3</td>
-               <td align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.cross}">.4</td>
-               <td align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.source}">.5</td>
-               <td align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryCode}">.6</td>
+               <td align="left" th:class="${row.even}? 'even' : 'odd'">
+               		<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${gid.gid}" th:attr="data-gid=${gid.gid}" th:attrappend="data-desig=${gid.desig}">.3</a>
+               </td>
+               <td align="left" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.cross}">.4</td>
+               <td align="left" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.source}">.5</td>
+               <td align="left" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryCode}">.6</td>
              </tr>
              <tr>
              <td>.1.1</td>
@@ -85,7 +87,7 @@
                <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.index}">.1</td>
                <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryId}">.1</td>
                <td th:class="${row.even}? 'even' : 'odd'">
-               	<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${gid.desig}" th:attr="data-gid=${gid.gid}">.2</a>
+               	<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${gid.desig}" th:attr="data-gid=${gid.gid}" th:attrappend="data-desig=${gid.desig}">.2</a>
                </td>
              </tr>
              <tr>

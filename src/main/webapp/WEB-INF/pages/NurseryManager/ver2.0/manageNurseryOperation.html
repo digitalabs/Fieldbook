@@ -1,9 +1,9 @@
 <!-- Modal -->
-<div class="modal fade" id="addStudyFolder" role="dialog" aria-labelledby="addStudyFolder" aria-hidden="true">
-	<div class="modal-dialog modal-small">
+<div class="modal fade" id="addStudyFolder" role="dialog" aria-labelledby="addStudyFolder" aria-hidden="true" style="overflow: hidden">
+	<div class="modal-dialog modal-extra-small">
     	<div class="modal-content">
 		    	<div class="modal-header">
-	            	<button id="closeAddStudyFolder" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	            	<button id="closeAddStudyFolder" type="button" class="close" onclick="javascript: closeModal('addStudyFolder')">&times;</button>
 			           <h4 class="modal-title" id="heading-modal" th:text="#{browse.nursery.add.folder.name}">
 			         		Add New Folder
 		         	   </h4>
@@ -27,7 +27,7 @@
          	
          	</div>																							
        		<div class="modal-footer addVariable-footer">    	       			
-       			<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
+       			<button type="button" class="btn btn-default" onclick="javascript: closeModal('addStudyFolder')" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
        			<button type="button" class="btn btn-primary" aria-hidden="true" th:text="#{common.form.add.text}" onclick="javascript: createFolder();">Ok</button>
       			</div>
      	</div><!-- /.modal-content -->
@@ -35,11 +35,11 @@
 </div><!-- /.modal -->	
 
 
-<div class="modal fade" id="renameStudyFolder" role="dialog" aria-labelledby="renameStudyFolder" aria-hidden="true">
-	<div class="modal-dialog modal-small">
+<div class="modal fade" id="renameStudyFolder" role="dialog" aria-labelledby="renameStudyFolder" aria-hidden="true" style="overflow: hidden">
+	<div class="modal-dialog modal-extra-small">
     	<div class="modal-content">
 		    	<div class="modal-header">
-	            	<button id="closeRenameStudyFolder" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	            	<button id="closeRenameStudyFolder" type="button" class="close" onclick="javascript: closeModal('renameStudyFolder')">&times;</button>
 			           <h4 class="modal-title" id="heading-modal" th:text="#{browse.nursery.rename.folder.name}">			           
 			         		Rename Folder
 		         	   </h4>
@@ -63,18 +63,18 @@
          	
          	</div>																							
        		<div class="modal-footer addVariable-footer">    	       			
-       			<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
+       			<button type="button" class="btn btn-default" onclick="javascript: closeModal('renameStudyFolder')" th:text="#{common.form.cancel.text}">Cancel</button>
        			<button type="button" class="btn btn-primary" aria-hidden="true" th:text="#{common.form.ok.text}" onclick="javascript: submitRenameFolder();">Ok</button>
       			</div>
      	</div><!-- /.modal-content -->
   		</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->	
 
-<div class="modal fade" id="deleteStudyFolder" role="dialog" aria-labelledby="deleteStudyFolder" aria-hidden="true">
-	<div class="modal-dialog modal-small">
+<div class="modal fade" id="deleteStudyFolder" role="dialog" aria-labelledby="deleteStudyFolder" aria-hidden="true" style="overflow: hidden">
+	<div class="modal-dialog modal-extra-small">
     	<div class="modal-content">
 		    	<div class="modal-header">
-	            	<button id="closeDeleteStudyFolder" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	            	<button id="closeDeleteStudyFolder" type="button" class="close" onclick="javascript: closeModal('deleteStudyFolder')">&times;</button>
 			           <h4 class="modal-title" id="heading-modal" th:text="#{browse.nursery.delete.folder.name}">			           
 			         		Delete Folder
 		         	   </h4>
@@ -97,18 +97,18 @@
          	
          	</div>																							
        		<div class="modal-footer addVariable-footer">    	       			
-       			<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.no.text}">Cancel</button>
+       			<button type="button" class="btn btn-default" onclick="javascript: closeModal('deleteStudyFolder')" th:text="#{common.form.no.text}">Cancel</button>
        			<button type="button" class="btn btn-primary" aria-hidden="true" th:text="#{common.form.yes.text}" onclick="javascript: submitDeleteFolder();">Ok</button>
       			</div>
      	</div><!-- /.modal-content -->
   		</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<div class="modal fade" id="moveStudyFolder" role="dialog" aria-labelledby="moveStudyFolder" aria-hidden="true">
-	<div class="modal-dialog modal-small">
+<div class="modal fade" id="moveStudyFolder" role="dialog" aria-labelledby="moveStudyFolder" aria-hidden="true" style="overflow: hidden">
+	<div class="modal-dialog modal-extra-small">
     	<div class="modal-content">
 		    	<div class="modal-header">
-	            	<button id="closeMoveStudyFolder" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	            	<button id="closeMoveStudyFolder" type="button" class="close" onclick="javascript: closeModal('moveStudyFolder')">&times;</button>
 			           <h4 class="modal-title" id="heading-modal">			           
 			         		Invalid Operation
 		         	   </h4>
@@ -122,7 +122,7 @@
          	
          	</div>																							
        		<div class="modal-footer addVariable-footer">    	       			
-       			<button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.ok.text}" >Ok</button>
+       			<button type="button" class="btn btn-primary" onclick="javascript: closeModal('moveStudyFolder')" th:text="#{common.form.ok.text}" >Ok</button>
       			</div>
      	</div><!-- /.modal-content -->
   		</div><!-- /.modal-dialog -->
@@ -145,7 +145,9 @@
 				  $('#addStudyFolder').modal('show');
 			  }
 		  }
-		  
+		  function  closeModal(modalId){
+			  $('#'+modalId).modal('hide');
+		  }
 		  function createFolder(){
 			  var folderName = $.trim($('#folderName').val());
 			  if(folderName == ''){

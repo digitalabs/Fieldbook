@@ -11,21 +11,26 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
+import org.generationcp.middleware.domain.dms.DatasetReference;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.nursery.bean.NurseryDetails;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.util.SettingsUtil;
@@ -49,11 +54,11 @@ public class ReviewNurseryDetailsController extends AbstractBaseFieldbookControl
     
     @Override
 	public String getContentName() {
-		return "NurseryManager/reviewNurseryDetails";
+		return "NurseryManager/ver2.0/reviewNurseryDetails";
 	}
 
-    @RequestMapping(value = "/nursery/{id}", method = RequestMethod.GET)
-    public String show(@PathVariable int id, Model model) throws MiddlewareQueryException {
+    @RequestMapping(value = "/show/{id}", method = RequestMethod.GET)
+    public String show(@PathVariable int id, @ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, Model model) throws MiddlewareQueryException {
     	
         if (id != 0) {     
             Workbook workbook = fieldbookMiddlewareService.getStudyVariableSettings(id, true);
@@ -65,6 +70,10 @@ public class ReviewNurseryDetailsController extends AbstractBaseFieldbookControl
     	return show(model);
     }
     
-    
+    @ResponseBody
+    @RequestMapping(value="/datasets/{nurseryId}")
+    public List<DatasetReference> loadDatasets(@PathVariable int nurseryId) throws MiddlewareQueryException {
+    	return fieldbookMiddlewareService.getDatasetReferences(nurseryId);
+    }
     
 }

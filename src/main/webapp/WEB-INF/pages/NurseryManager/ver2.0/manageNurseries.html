@@ -14,27 +14,38 @@
 		</div>
 	
 	<div>
-		
-		
-		<!-- Tab Navigation section -->
-		
-		<ul id="ontology-tab-headers" class="nav nav-tabs" >
-			<li id="browser-nurseries" class="active"><a th:text="#{browse.nurseries}">.Browse Nurseries</a></li>			
-		</ul>
-		
-		<!-- details section -->
-		<div id="nursery-tabs" style="padding-top: 15px;">
-			<div id="browser-nurseries">
-				<div class="col-xs-3 col-md-3">				
-					<div th:include="/NurseryManager/ver2.0/studyTree"/>
-				</div>
-				<div class="col-xs-9 col-md-9">
-				    <div th:include="/NurseryManager/ver2.0/studyInfo"/>	
-				</div>
+
+	<div class="row">
+		<div class="col-xs-7 col-md-7">	
+			<img th:src="@{/static/img/new-nursery.png}" class="image-padding image-padding-with-text"  /> 
+			<label class="h2_no_transform" th:text="#{browse.nurseries.header}"></label>
+			<label class="control-label"><a href="javascript: openStudyTree()">Browse</a> for a nursery to work with.</label>
+		</div>
+		<div class="col-xs-5 col-md-5">
+			<div style="float: right;padding-right: 10px;">
+				<a href="" th:href="@{/NurseryManager/createNursery}" class="btn btn-info" th:utext="#{browse.nursery.start.new.nursery}">+ Start a New Nursery</a>				
 			</div>
 		</div>
+	</div>	
+	
+	<div class="row">
+	&nbsp;
+	</div>
+		
+		<!-- details section -->
+	<div class="row">	
+		<div id="browser-nurseries">
+			<div class="col-xs-12 col-md-12">
+			    <div th:include="/NurseryManager/ver2.0/studyInfo"/>	
+			</div>
+		</div>
+	</div>
 		
 	</div>
+</div>
+
+<div class="row">				
+	<div th:include="/NurseryManager/ver2.0/studyTree"/>
 </div>
 <div layout:fragment="page-script">
 	<!-- For pagination -->

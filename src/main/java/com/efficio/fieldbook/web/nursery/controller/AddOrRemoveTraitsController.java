@@ -44,6 +44,8 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
 
     /** The Constant URL. */
     public static final String URL = "/NurseryManager/addOrRemoveTraits";
+    
+    public static final String OBSERVATIONS_HTML = "NurseryManager/ver2.0/observations";
 //    public static final String PAGINATION_TEMPLATE = "/NurseryManager/showAddOrRemoveTraitsPagination";
     
     /** The Constant LOG. */
@@ -369,4 +371,27 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
         return this.userSelection;
     }
 
+    @RequestMapping(value="/viewNurseryAjax/{datasetId}", method = RequestMethod.GET)
+    public String viewNurseryAjax(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, Model model, 
+            @PathVariable int datasetId) {
+        Workbook workbook = null;
+        
+        try { 
+            workbook = fieldbookMiddlewareService.getNurseryDataSet(datasetId);
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        
+        if (workbook != null) {
+        	getUserSelection().setMeasurementRowList(workbook.getObservations());
+            form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
+            form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());
+            form.setStudyName(workbook.getStudyDetails().getStudyName());
+            form.changePage(1);
+            userSelection.setCurrentPage(form.getCurrentPage());
+            userSelection.setWorkbook(workbook);
+        }
+        
+        return super.showAjaxPage(model, OBSERVATIONS_HTML);
+    }
 }

@@ -272,6 +272,69 @@
 <script type="text/javascript" th:src="@{/static/js/fieldbook-common.js}"></script>
 <script type='text/javascript' th:inline="javascript">
 //<![CDATA[   
+     	$(document).ready(function() {
+     		$('.toggle-icon').click(function(){ 
+     			var expandedImg = $(this).find(".section-expanded");
+     			var collapsedImg = $(this).find(".section-collapsed");
+     		   	expandedImg.toggle();
+     		   	collapsedImg.toggle();
+     		});
+
+     		$("#open-study-url-link").click(function() {
+     			selectedTableIds[0] = $("#studyId").val();
+     		});
+
+     		$("#advance-study-url-link").click(function() {
+     			selectedTableIds[0] = $("#studyId").val();
+     		});
+
+     		$("#fieldmap-url-link").click(function() {
+     			selectedTableIds[0] = $("#studyId").val();
+     		});
+
+     		$("#label-printing-url-link").click(function() {
+     			selectedTableIds[0] = $("#studyId").val();
+     		});
+
+     		$("#view-fieldmap-url-link").click(function() {
+     			selectedTableIds[0] = $("#studyId").val();
+     		});
+     		
+     		$("#toggle-additional-link").click(function() {
+     			if ($(this).text() == showText) {
+     				$(this).text(hideText);
+     			}
+     			else {
+     				$(this).text(showText);
+     			}
+     		});
+     		
+     		$(".dataset-toggle").click(function() {
+     			alert("here");
+     			loadDatasetDropdown($(this).parent().find("#dataset-selection"));
+     		});
+     		
+     		$("#dataset-selection").change(function() {
+     			if ($(this).val()) {
+     				var id = $(this).val();
+     				var name = $(this).find("option:selected").text();
+     				var found = false;
+     				$(this).parent().parent().find("#measurement-tabs").children().hide();
+     				$(this).parent().parent().find("#measurement-tab-headers").find("li").each(function(index) {
+     					$(this).removeClass("active");
+     					if ($(this).text() == name) {
+     						$(this).addClass("active");
+     						$("#dset-tab-" + id).show();
+     						found = true;
+     					}
+     				});
+     				if (!found) {
+     					loadDatasetMeasurementRowsViewOnly(id, name);
+     				}
+     			}
+     		});
+     	});
+        
 
 //]]>
 </script>

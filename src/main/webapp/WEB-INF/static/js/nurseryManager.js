@@ -2258,7 +2258,7 @@ function closeAllStudyTabs(){
 function loadDatasetDropdown(optionTag) {
 	Spinner.toggle();
 	$.ajax({ 
-		url: "/Fieldbook/NurseryManager/reviewNurseryDetails/datasets/" + getCurrentNurseryIdInTab(),
+		url: "/Fieldbook/NurseryManager/reviewNurseryDetails/datasets/" + getCurrentStudyIdInTab(),
 	    type: "GET",
 	    cache: false,
 	    success: function(data) {
@@ -2275,14 +2275,15 @@ function loadDatasetDropdown(optionTag) {
 	});
 }
 
-function getCurrentNurseryIdInTab() {
-	return document.location.pathname.substring(document.location.pathname.lastIndexOf("/")+1);
+function getCurrentStudyIdInTab() {
+	//return document.location.pathname.substring(document.location.pathname.lastIndexOf("/")+1);
+	return $('#study-tab-headers li.active .close').attr('id');
 }
 
 function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
 	Spinner.toggle();
 	$.ajax({ 
-		url: "/Fieldbook/NurseryManager/addOrRemoveTraits/viewNurseryAjax/" + getCurrentNurseryIdInTab(),
+		url: "/Fieldbook/NurseryManager/addOrRemoveTraits/viewNurseryAjax/" + getCurrentStudyIdInTab(),
 	    type: "GET",
 	    cache: false,
 	    success: function(html) {

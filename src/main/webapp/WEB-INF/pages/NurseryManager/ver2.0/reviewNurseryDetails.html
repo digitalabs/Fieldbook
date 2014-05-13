@@ -3,7 +3,7 @@
 <div class="row form-group" th:object="${nurseryDetails}">
 	<input type="hidden" id="studyId" class="field-map-highlight" th:value="*{id}" />
 	<div class="col-xs-12 col-md-12">
-		<label class="control-label section-toggle toggle-icon" data-toggle="collapse" data-target=".nurseryDetails">
+		<label class="control-label section-toggle toggle-icon"  data-target=".nurseryDetails">
 			<img th:src="@{/static/img/basic-details.png}" />
 			<img style="margin-left: -10px" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
 			<img style="display:none; margin-left: -10px"  class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
@@ -51,7 +51,7 @@
 	</div>
 	<br/>
 	<div class="col-xs-12 col-md-12">
-		<label class="control-label section-toggle toggle-icon" data-toggle="collapse" data-target=".managementDetails">
+		<label class="control-label section-toggle toggle-icon"  data-target=".managementDetails">
 			<img class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
 			<img class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" style="display:none;" />
 			<strong class="sub-content-heading" th:text="#{nursery.nurserydetails.management}">MANAGEMENT DETAILS</strong>
@@ -69,7 +69,7 @@
 	<br />
 	<div class="form-group">
 		<div class="col-xs-12 col-md-12" style="padding-left: 20px">
-			<a id="toggle-additional-link" class="section-toggle" data-toggle="collapse" data-target=".additionalDetails" th:text="#{nursery.nurserydetails.additional.show}"></a>
+			<a id="toggle-additional-link" class="section-toggle"  data-target=".additionalDetails" th:text="#{nursery.nurserydetails.additional.show}"></a>
 			&nbsp;<span th:text="#{nursery.nurserydetails.additional.text}"></span>
 		</div>
 	</div>
@@ -185,7 +185,7 @@
 	<br/>
 
 	<div class="col-xs-12 col-md-12">
-		<label class="control-label section-toggle toggle-icon dataset-toggle" data-toggle="collapse" data-target=".datasetDetails">
+		<label class="control-label section-toggle toggle-icon dataset-toggle"  data-target=".datasetDetails">
 			<img th:src="@{/static/img/matching-nurseries.png}" />
 			<img class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" style="display:none;" />
 			<img class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
@@ -267,7 +267,11 @@
      		   	expandedImg.toggle();
      		   	collapsedImg.toggle();
      		});
-
+			$('.section-toggle').on('click', function(){
+				var className = $(this).data('target')
+				$('#study'+getCurrentStudyIdInTab() + " "+className).toggle();
+			})
+			
      		$("#open-study-url-link").click(function() {
      			selectedTableIds[0] = $("#studyId").val();
      		});

@@ -18,9 +18,9 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 	<div class="row">
 		<div class="col-xs-2 col-md-2">
 			<img width="30" height="30" th:src="@{/static/img/new-nursery.png}" class="image-padding image-padding-with-text"  />
-			<h2 th:text="#{nursery.create.nursery.label}">Create Nursery</h2>
+			<label class="h2_no_transform" th:text="#{nursery.create.nursery.label}">Create Nursery</label>
 		</div>
-		<div class="col-xs-1 col-md-1">
+		<div class="col-xs-1 col-md-1 add_top_padding_small">
 			<input type="button" onclick="submitForm();" th:value="#{common.form.save.text}" class="btn btn-info" />
 		</div>
 		<div class="col-xs-9 col-md-9"></div>
@@ -48,7 +48,8 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 		<label th:text="#{nursery.create.nursery.nursery.name} + ': '"></label>&nbsp;<span class="required">*</span>
 	</div>
 	<div class="col-xs-4 col-md-4">
-		<input type="text" class="form-control character-input" />
+		<input type="hidden" th:field="*{basicDetails[0].variable.cvTermId}" />
+		<input type="text" class="form-control character-input" th:field="*{basicDetails[0].value}" />
 	</div>
 	<div class="col-xs-2 col-md-2">
 		<label th:text="#{nursery.savenursery.savein} + ': '"></label>&nbsp;<span class="required">*</span>
@@ -67,13 +68,15 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 		<label th:text="#{nursery.create.nursery.description} + ': '"></label>&nbsp;<span class="required">*</span>
 	</div>
 	<div class="col-xs-4 col-md-4">
-		<input type="text" class="form-control character-input" />
+		<input type="hidden" th:field="*{basicDetails[1].variable.cvTermId}" />
+		<input type="text" class="form-control character-input" th:field="*{basicDetails[1].value}" />
 	</div>
 	<div class="col-xs-2 col-md-2">
 		<label th:text="#{nursery.create.nursery.creation.date} + ': '"></label>&nbsp;<span class="required">*</span>
 	</div>
 	<div class="col-xs-4 col-md-4">
-		<input type="text" class="form-control date-input" />
+		<input type="hidden" th:field="*{basicDetails[2].variable.cvTermId}" />
+		<input type="text" class="form-control date-input" th:field="*{basicDetails[2].value}" />
 	</div>
 </div>
 <div class="row form-group">
@@ -81,13 +84,15 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
  		<label th:text="#{nursery.create.nursery.objective} + ': '"></label>&nbsp;<span class="required">*</span>
  	</div>
   	<div class="col-xs-4 col-md-4">
-  		<textarea class="form-control character-input" rows="3"></textarea>
+  		<input type="hidden" th:field="*{basicDetails[3].variable.cvTermId}" />
+  		<textarea class="form-control character-input" rows="3" th:field="*{basicDetails[3].value}"></textarea>
   	</div>
   	<div class="col-xs-2 col-md-2">
   		<label th:text="#{nursery.create.nursery.completion.date} + ': '"></label>&nbsp;<span class="required">*</span>
   	</div>
   	<div class="col-xs-4 col-md-4">
-  		<input type="text" class="form-control date-input" />
+  		<input type="hidden" th:field="*{basicDetails[4].variable.cvTermId}" />
+  		<input type="text" class="form-control date-input" th:field="*{basicDetails[4].value}" />
   	</div>
 </div>
 <div class="row">
@@ -181,10 +186,12 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
     var addPlotLevelSettings = /*[[#{nursery.managesettings.add.plot.level.settings}]]*/;
     var addBaselineTraits = /*[[#{nursery.managesettings.add.baseline.traits}]]*/;
     var addSelectionVariates = /*[[#{nursery.managesettings.add.selection.variates}]]*/;
+    var addNurseryConditions = /*[[#{nursery.managesettings.add.nursery.conditions}]]*/;
     var reminderNursery = /*[[#{nursery.reminder.add.nursery.settings}]]*/;
 	var reminderPlot = /*[[#{nursery.reminder.add.plot.settings}]]*/;
 	var reminderTraits = /*[[#{nursery.reminder.add.trait.settings}]]*/;
 	var reminderSelectionVariates = /*[[#{nursery.reminder.add.selection.variates}]]*/;
+	var reminderNurseryCondtions = /*[[#{nursery.reminder.add.nursery.conditions}]]*/;
        		
 	function submitGermplasmList(){
 		var $form = $("#germplasm-list-form");

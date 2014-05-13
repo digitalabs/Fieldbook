@@ -227,7 +227,7 @@ public class SettingVariable implements Serializable{
 				this.widgetType = WidgetType.DROPDOWN;
 			}
 			else if (minRange != null && maxRange != null) {
-				this.widgetType = WidgetType.NTEXT;
+				this.widgetType = WidgetType.SLIDER;
 			}
 			else if (dataTypeId.equals(TermId.NUMERIC_VARIABLE.getId()) 
 					|| dataTypeId.equals(TermId.NUMERIC_DBID_VARIABLE.getId())) {

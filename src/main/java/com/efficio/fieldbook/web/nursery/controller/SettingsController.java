@@ -40,6 +40,7 @@ import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.AppConstants;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class SettingsController.
  */
@@ -61,8 +62,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	protected org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 	
 	/** The user selection. */
-    @Resource
-    protected UserSelection userSelection;    
+        @Resource
+        protected UserSelection userSelection;    
 	
 	/** The measurements generator service. */
 	@Resource
@@ -78,12 +79,12 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	
 
 	
-	/**
-	 * Gets the settings list.
-	 *
-	 * @return the settings list
-	 */
-	@ModelAttribute("settingsList")
+    /**
+     * Gets the settings list.
+     *
+     * @return the settings list
+     */
+    @ModelAttribute("settingsList")
     public List<TemplateSetting> getNurserySettingsList() {
         try {
         	TemplateSetting templateSettingFilter = new TemplateSetting(null, Integer.valueOf(getCurrentProjectId()), null, getNurseryTool(), null, null);
@@ -98,7 +99,13 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 		
         return null;
     }
-	@ModelAttribute("settingsTrialList")
+    
+    /**
+     * Gets the trial settings list.
+     *
+     * @return the trial settings list
+     */
+    @ModelAttribute("settingsTrialList")
     public List<TemplateSetting> getTrialSettingsList() {
         try {
         	TemplateSetting templateSettingFilter = new TemplateSetting(null, Integer.valueOf(getCurrentProjectId()), null, getTrialTool(), null, null);
@@ -130,6 +137,12 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
                 
         return null;
     }
+    
+    /**
+     * Gets the trial list.
+     *
+     * @return the trial list
+     */
     @ModelAttribute("trialList")
     public List<StudyDetails> getTrialList() {
         try {
@@ -145,6 +158,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
     /**
      * Builds the required factors.
      *
+     * @param requiredFields the required fields
      * @return the list
      */
     protected List<Integer> buildRequiredVariables(String requiredFields) {
@@ -159,6 +173,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
     /**
      * Builds the required factors label.
      *
+     * @param requiredFields the required fields
+     * @param hasLabels the has labels
      * @return the list
      */
     protected List<String> buildRequiredVariablesLabel(String requiredFields, boolean hasLabels) {
@@ -180,6 +196,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
     /**
      * Builds the required factors flag.
      *
+     * @param requiredFields the required fields
      * @return the boolean[]
      */
     protected boolean[] buildRequiredVariablesFlag(String requiredFields) {
@@ -191,6 +208,17 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
         return requiredVariablesFlag;
     } 
     
+    /**
+     * Update required fields.
+     *
+     * @param requiredVariables the required variables
+     * @param requiredVariablesLabel the required variables label
+     * @param requiredVariablesFlag the required variables flag
+     * @param variables the variables
+     * @param hasLabels the has labels
+     * @return the list
+     * @throws MiddlewareQueryException the middleware query exception
+     */
     protected List<SettingDetail> updateRequiredFields(List<Integer> requiredVariables, List<String> requiredVariablesLabel, 
             boolean[] requiredVariablesFlag, List<SettingDetail> variables, boolean hasLabels) throws MiddlewareQueryException{
         for (SettingDetail variable : variables) {
@@ -232,6 +260,15 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
         return variables;
     }
     
+    /**
+     * Builds the default variables.
+     *
+     * @param defaults the defaults
+     * @param requiredFields the required fields
+     * @param requiredVariablesLabel the required variables label
+     * @return the list
+     * @throws MiddlewareQueryException the middleware query exception
+     */
     protected List<SettingDetail> buildDefaultVariables(List<SettingDetail> defaults, String requiredFields, List<String> requiredVariablesLabel) throws MiddlewareQueryException{
         StringTokenizer token = new StringTokenizer(requiredFields, ",");
         int ctr = 0;

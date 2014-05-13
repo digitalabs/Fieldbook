@@ -83,6 +83,7 @@ public enum AppConstants {
     , SEGMENT_TRIAL_ENVIRONMENT
     , SEGMENT_TREATMENT_FACTORS
     , SEGMENT_SELECTION_VARIATES
+    , SEGMENT_NURSERY_CONDITIONS
     
     , TOOL_NAME_NURSERY_MANAGER_WEB
     , TOOL_NAME_TRIAL_MANAGER_WEB
@@ -219,6 +220,7 @@ public enum AppConstants {
     ,SPFLD_HAS_MEASUREMENTS
     ,SPFLD_HAS_FIELDMAP
     ,SELECTION_VARIATES_PROPERTIES
+    ,FIXED_NURSERY_VARIABLES
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

@@ -141,19 +141,26 @@ public class CreateNurseryController extends SettingsController {
      * @throws MiddlewareQueryException the middleware query exception
      */
     private void assignDefaultValues(CreateNurseryForm form) throws MiddlewareQueryException {
+        List<SettingDetail> basicDetails = new ArrayList<SettingDetail>();
         List<SettingDetail> nurseryDefaults = new ArrayList<SettingDetail>();
         List<SettingDetail> plotDefaults = new ArrayList<SettingDetail>();
         List<SettingDetail> baselineTraitsList = new ArrayList<SettingDetail>();
+        List<SettingDetail> nurseryConditions = new ArrayList<SettingDetail>();
+        
+        basicDetails = buildDefaultVariables(basicDetails, AppConstants.FIXED_NURSERY_VARIABLES.getString(), buildRequiredVariablesLabel(AppConstants.FIXED_NURSERY_VARIABLES.getString(), false));
+        form.setBasicDetails(basicDetails);
         form.setStudyLevelVariables(nurseryDefaults);
         form.setPlotLevelVariables(plotDefaults);
         nurseryDefaults = buildDefaultVariables(nurseryDefaults, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true));
-        this.userSelection.setStudyLevelConditions(nurseryDefaults);
         plotDefaults = buildDefaultVariables(plotDefaults, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false));
+        
+        this.userSelection.setBasicDetails(basicDetails);
+        this.userSelection.setStudyLevelConditions(nurseryDefaults);
         this.userSelection.setPlotsLevelList(plotDefaults);
         this.userSelection.setBaselineTraitsList(baselineTraitsList);
-        
+        this.userSelection.setNurseryConditions(nurseryConditions);
     }
-
+    
     /**
      * View settings.
      *

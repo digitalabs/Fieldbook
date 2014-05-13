@@ -39,10 +39,7 @@ public class UserSelection extends StudySelection implements Serializable {
     
     /** The server file name. */
     private String serverFileName;
-    
-    /** The workbook. */
-//    private transient Workbook workbook;
-    
+        
     /** The field layout random. */
     private boolean fieldLayoutRandom;
     
@@ -57,12 +54,6 @@ public class UserSelection extends StudySelection implements Serializable {
     
     /** The study details list.*/
     private transient List<StudyDetails> studyDetailsList;
-    
-	/** The measurement row list. */
-//	private List<MeasurementRow> measurementRowList;
-	
-    /** The current page. */
-//    private int currentPage;
     
     /** The current page germplasm list. */
     private int currentPageGermplasmList;
@@ -103,23 +94,11 @@ public class UserSelection extends StudySelection implements Serializable {
     /** The selection variates. */
     private List<SettingDetail> selectionVariates;
     
-	/**
-	 * Gets the current page.
-	 *
-	 * @return the current page
-	 */
-//	public int getCurrentPage() {
-//		return currentPage;
-//	}
-
-	/**
-	 * Sets the current page.
-	 *
-	 * @param currentPage the new current page
-	 */
-//	public void setCurrentPage(int currentPage) {
-//		this.currentPage = currentPage;
-//	}
+    /** The basic details. */
+    private List<SettingDetail> basicDetails;
+    
+    /** The nursery conditions. */
+    private List<SettingDetail> nurseryConditions;
 	
 	/**
      * Gets the current page germplasm list.
@@ -546,6 +525,38 @@ public class UserSelection extends StudySelection implements Serializable {
          */
         public void setSelectionVariates(List<SettingDetail> selectionVariates) {
             this.selectionVariates = selectionVariates;
+        }
+
+        /**
+         * Gets the basic details.
+         *
+         * @return the basicDetails
+         */
+        public List<SettingDetail> getBasicDetails() {
+            return basicDetails;
+        }
+
+        /**
+         * Sets the basic details.
+         *
+         * @param basicDetails the basicDetails to set
+         */
+        public void setBasicDetails(List<SettingDetail> basicDetails) {
+            this.basicDetails = basicDetails;
+        }
+
+        /**
+         * @return the nurseryConditions
+         */
+        public List<SettingDetail> getNurseryConditions() {
+            return nurseryConditions;
+        }
+
+        /**
+         * @param nurseryConditions the nurseryConditions to set
+         */
+        public void setNurseryConditions(List<SettingDetail> nurseryConditions) {
+            this.nurseryConditions = nurseryConditions;
         }
         
         

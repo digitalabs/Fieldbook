@@ -958,3 +958,6 @@ div.sectionContainer {
 	padding-bottom: 10px;
 	padding-left: 40px;
 }
+.add_top_padding_small {
+	padding-top: 5px;
+}

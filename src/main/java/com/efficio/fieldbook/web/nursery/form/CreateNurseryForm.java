@@ -96,6 +96,9 @@ public class CreateNurseryForm {
     /** The basic details. */
     private List<SettingDetail> basicDetails;
     
+    /** The nursery conditions. */
+    private List<SettingDetail> nurseryConditions;
+    
     /** The id name variables. */
     private String idNameVariables;
     
@@ -546,5 +549,19 @@ public class CreateNurseryForm {
          */
         public void setIdNameVariables(String idNameVariables) {
             this.idNameVariables = idNameVariables;
+        }
+
+        /**
+         * @return the nurseryConditions
+         */
+        public List<SettingDetail> getNurseryConditions() {
+            return nurseryConditions;
+        }
+
+        /**
+         * @param nurseryConditions the nurseryConditions to set
+         */
+        public void setNurseryConditions(List<SettingDetail> nurseryConditions) {
+            this.nurseryConditions = nurseryConditions;
         }
 }

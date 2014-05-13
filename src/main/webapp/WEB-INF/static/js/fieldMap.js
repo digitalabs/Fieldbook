@@ -116,10 +116,10 @@ function setTrialInstanceOrder() {
 
 function setValuesForCounts() {
 	//set values for counts
-	$("#"+getJquerySafeId("userFieldmap.numberOfEntries")).val($('#studyTree .field-map-highlight td:nth-child(2)').html());
+	$("#"+getJquerySafeId("userFieldmap.numberOfEntries")).val($('#studyFieldMapTree .field-map-highlight td:nth-child(2)').html());
 	if (trial) {
-		$("#"+getJquerySafeId("userFieldmap.numberOfReps")).val($('#studyTree .field-map-highlight td:nth-child(3)').html());
-		$("#"+getJquerySafeId("userFieldmap.totalNumberOfPlots")).val($('#studyTree .field-map-highlight td:nth-child(4)').html());
+		$("#"+getJquerySafeId("userFieldmap.numberOfReps")).val($('#studyFieldMapTree .field-map-highlight td:nth-child(3)').html());
+		$("#"+getJquerySafeId("userFieldmap.totalNumberOfPlots")).val($('#studyFieldMapTree .field-map-highlight td:nth-child(4)').html());
 	}
 }
 

@@ -143,7 +143,7 @@ function showPostPage(paginationUrl,previewPageNum, pageNum, sectionDiv, formNam
 function triggerFieldMapTableSelection(tableName){
 	$('#'+tableName+' tr.data-row').on('click', function() {	
 		//$('#'+tableName).find("*").removeClass('field-map-highlight');
-		if (tableName == "studyTree") {
+		if (tableName == "studyFieldMapTree") {
 			$(this).toggleClass("trialInstance");
 			$(this).toggleClass('field-map-highlight');
 			
@@ -166,13 +166,16 @@ function createFieldMap(tableName){
 		var ids = [];
 		//$('#'+tableName+' .field-map-highlight').each(function(){ ids.push(this.id); });
 		//get selected studies
-		for(var index in selectedTableIds) {
-			//console.log( index + " : " + selectedTableIds[index]);
+		/*
+		for(var index in selectedTableIds) {			
 			var idVal = selectedTableIds[index];
 			if(idVal != null){
 				ids.push(idVal);
 			}			
 		}
+		//daniel
+		*/
+		ids.push(getCurrentStudyIdInTab());
 		var idList = ids.join(",");
 		$('#page-message').html("");
 		
@@ -372,10 +375,10 @@ function createStudyTree(fieldMapInfoList, hasFieldMap, tableName) {
 	
 	//set as highlightable
 	if (hasFieldMap) {
-		triggerFieldMapTableSelection('studyTree');
+		triggerFieldMapTableSelection('studyFieldMapTree');
 		
 	}
-	styleDynamicTree('studyTree');
+	styleDynamicTree('studyFieldMapTree');
 }
 
 function getPrefixName(cat, id) {
@@ -420,7 +423,7 @@ function createHeader(hasFieldMap) {
 		}
 	}
 	newRow = newRow + "</tr></thead>";
-	$("#studyTree").append(newRow+"<tbody></tbody>");
+	$("#studyFieldMapTree").append(newRow+"<tbody></tbody>");
 }
 
 function createRowForNursery(id, parentClass, value, realId, withFieldMap, datasetName, datasetId) {
@@ -441,7 +444,7 @@ function createRowForNursery(id, parentClass, value, realId, withFieldMap, datas
 	newCell = "<td>" + checkBox + "&nbsp;" + datasetName + "</td><td>" + value.entryCount + "</td>";
 	
 	newCell = newCell + "<td class='hasFieldMap'>" + hasFieldMap + "</td>";
-	$("#studyTree").append(newRow+newCell+"</tr>");
+	$("#studyFieldMapTree").append(newRow+newCell+"</tr>");
 }
 
 function createRow(id, parentClass, value, realId, withFieldMap) {
@@ -491,11 +494,11 @@ function createRow(id, parentClass, value, realId, withFieldMap) {
 			newCell = newCell + "<td class='hasFieldMap'>" + hasFieldMap + "</td>";
 		}
 	}
-	$("#studyTree").append(newRow+newCell+"</tr>");
+	$("#studyFieldMapTree").append(newRow+newCell+"</tr>");
 }
 
 function clearStudyTree() {
-	$("#studyTree").empty();
+	$("#studyFieldMapTree").empty();
 }
 
 function showMessage(message) {
@@ -508,6 +511,7 @@ function createLabelPrinting(tableName){
 	
 	var count = 0;
 	var idVal = null;
+	/*
 	for(var index in selectedTableIds) {
 		//console.log( index + " : " + selectedTableIds[index]);
 		var tempVal = selectedTableIds[index];
@@ -516,6 +520,9 @@ function createLabelPrinting(tableName){
 			count++;
 		}			
 	}
+	*/
+	idVal = getCurrentStudyIdInTab();
+	count++; 
 	
 	if(count != 1){
 		$('#page-create-field-map-message').html("<div class='alert alert-danger'>"+createLabelErrorMsg+"</div>");
@@ -629,11 +636,11 @@ function viewFieldMap() {
 
 //redirect to step 3
 function showGeneratedFieldMap() {
-	if ($('#studyTree .field-map-highlight').attr('id')) {
-		if ($('#studyTree .field-map-highlight').size() == 1) {
+	if ($('#studyFieldMapTree .field-map-highlight').attr('id')) {
+		if ($('#studyFieldMapTree .field-map-highlight').size() == 1) {
 			$("#selectTrialInstanceModal").modal("toggle");
-			var id = $('#studyTree .field-map-highlight').attr('id');
-			var datasetId = $('#studyTree .field-map-highlight').treegrid('getParentNode').attr("id");
+			var id = $('#studyFieldMapTree .field-map-highlight').attr('id');
+			var datasetId = $('#studyFieldMapTree .field-map-highlight').treegrid('getParentNode').attr("id");
 			location.href = "/Fieldbook/Fieldmap/generateFieldmapView/viewFieldmap/trial/" + datasetId + "/" + id;
 		} else {
 			showMessage(multipleSelectError);
@@ -644,10 +651,10 @@ function showGeneratedFieldMap() {
 }
 
 function showCreateFieldMap() {
-	if ($('#studyTree .checkInstance:checked').attr('id')) {
+	if ($('#studyFieldMapTree .checkInstance:checked').attr('id')) {
 		var selectedWithFieldMap = false;
 		fieldmapIds = [];
-		$('#studyTree .checkInstance:checked').each(function(){
+		$('#studyFieldMapTree .checkInstance:checked').each(function(){
 			var id = this.id;
 			var datasetId;
 			var studyId;

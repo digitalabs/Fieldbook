@@ -15,7 +15,7 @@
 	         			<label class="control-label" th:text="#{fieldmap.select.trial.instance}+':'">Select Trial Instance:</label>
 	         			<br/>
 	         		</div>
-	         		<table class="table tree table-curved table-condensed" id="studyTree" style="margin-left:5px;">
+	         		<table class="table tree table-curved table-condensed" id="studyFieldMapTree" style="margin-left:5px;">
 			        </table>
 	         	</div>																							
 	       		<div class="modal-footer">    
@@ -50,8 +50,10 @@
 </div>
 
 <div layout:fragment="page-script">
+
 	<script type="text/javascript" th:src="@{/static/js/jquery.treegrid.js}"></script>
-	<script type="text/javascript" th:src="@{/static/js/jquery.treegrid.bootstrap3.js}"></script>		
+	<script type="text/javascript" th:src="@{/static/js/jquery.treegrid.bootstrap3.js}"></script>
+	  		
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    
         var noSelectedTrialInstance = /*[[#{fieldmap.no.selected.trial.instance}]]*/;

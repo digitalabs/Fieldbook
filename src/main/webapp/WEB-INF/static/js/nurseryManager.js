@@ -2266,3 +2266,7 @@ function showSelectedTab(selectedTabName) {
 		}
 	}
 }
+
+function showStudyInfo() {
+	$("#folderBrowserModal").modal("show");
+}

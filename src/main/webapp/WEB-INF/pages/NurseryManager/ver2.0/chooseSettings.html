@@ -28,20 +28,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 				    			</div>
 			    			</div>
 			    			<div class="sectionContainer">
-			    				<div class="row form-group nurseryLevelSettings collapse in nurseryLevelDetails">
-			    					<!-- <table border="0" id="nurseryLevelSettings" width="100%">
-			    					 -->
-	                                <div class="col-xs-5 col-md-5 1st">
-	                                        &nbsp;&nbsp;&nbsp;<label id="folderLabel" for="title" th:text="#{nursery.savenursery.savein} + ':'">Save in:*</label>&nbsp;<span class="required">*</span>
-	                                </div>
-	                                <div class="col-xs-7 col-md-7 2nd">
-	                                        <!--  <span id="folderNameSpan" name="folderNameSpan" ></span>-->
-	                                        <input type="hidden" th:field="*{folderId}" />
-	                                        <input type="hidden" th:field="*{folderName}" />
-	                                        
-	                                        <a id="chooseLocation" onclick="loadFolderAjax();" th:text="#{nursery.create.nursery.choose.location}"></a>
-	                                </div>
-	                            </div>
+			    				<!--  
 		                        <div class="row form-group nurseryLevelSettings collapse in nurseryLevelDetails">
 	                              	<div class="col-xs-5 col-md-5 1st">
 		                            	&nbsp;&nbsp;&nbsp;<label id="expDesignLabel" for="fieldLayoutRandom" th:text="#{nursery.nurserydetails.select.field.layout.label} + ': '"></label>&nbsp;<span class="required">*</span>
@@ -52,7 +39,8 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 		                                    <option value="false" th:text="#{nursery.nurserydetails.option.without.randomization}">Unreplicated Design without Randomization</option>
 		                                </select>
 		                            </div>
-				    			</div>	
+				    			</div>
+				    			-->	
 				    			<div class="row form-group nurseryLevelSettings collapse in nurseryLevelDetails" th:each="nurseryLevelVariable, rowStat : *{studyLevelVariables}">
 				    				<div class="col-xs-5 col-md-5 1st">
 		                            	&nbsp;&nbsp;&nbsp;<span style="word-wrap: break-word"  class="control-label nursery-level-label" th:text="${nurseryLevelVariable.variable.name}"></span>:
@@ -268,21 +256,6 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 		</div>
 	</div>
 </form>
- 
-
-	<!-- Modal Dialog for Choosing Folder Location -->
-	<div class="row">
-		<div class="col-md-12">	
-			<div class="modal fade" id="folderBrowserModal"  role="dialog" aria-labelledby="folderBrowserModal" aria-hidden="true">
-				<div class="modal-dialog modal-large" style="width:500px;">
-					<div class="modal-content">
-					
-					</div><!-- /.modal-content -->
-				</div><!-- /.modal-dialog -->
-			</div><!-- /.modal -->		
-			 
-		</div>
-	</div>	
 	
 	 <div class="row">
         <div class="col-xs-12 col-md-12">

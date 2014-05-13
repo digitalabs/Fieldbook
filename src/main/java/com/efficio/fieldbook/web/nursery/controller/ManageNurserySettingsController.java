@@ -446,8 +446,10 @@ public class ManageNurserySettingsController extends SettingsController{
             deleteVariableInSession(userSelection.getPlotsLevelList(), variableId);
         } else if (mode == AppConstants.SEGMENT_TRAITS.getInt()){
             deleteVariableInSession(userSelection.getBaselineTraitsList(), variableId);
-        } else {
+        } else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()){
             deleteVariableInSession(userSelection.getSelectionVariates(), variableId);
+        } else {
+            deleteVariableInSession(userSelection.getNurseryConditions(), variableId);
         }
         return "";
     }
@@ -559,6 +561,8 @@ public class ManageNurserySettingsController extends SettingsController{
             return userSelection.getBaselineTraitsList();
         } else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
             return userSelection.getSelectionVariates();
+        } else if (mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt()) {
+            return userSelection.getNurseryConditions();
         }
     	return null;
     }

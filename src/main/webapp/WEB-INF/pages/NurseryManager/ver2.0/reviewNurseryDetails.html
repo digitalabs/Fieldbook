@@ -1,13 +1,4 @@
-<!-- 
-<div class="col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org">
 
-<div class="move-left col-xs-12 col-md-12">
-	<div class="form-group">
-		<div id="page-create-field-map-message" class="">
-		</div>				
-	</div>
-</div>
- -->
 <div class="row col-xs-12 col-md-12" style="padding-top: 10px;">
 <div class="row form-group" th:object="${nurseryDetails}">
 	<input type="hidden" id="studyId" class="field-map-highlight" th:value="*{id}" />
@@ -263,9 +254,6 @@
       </div>
     </div>
 </div>
-<!-- 
-</div>
- -->
 
 <div layout:fragment="page-script">
 <script type="text/javascript" th:src="@{/static/js/nurseryManager.js}"></script>

@@ -67,7 +67,7 @@ public class ReviewNurseryDetailsController extends AbstractBaseFieldbookControl
             
             model.addAttribute("nurseryDetails", details);
         }    	
-    	return show(model);
+    	return showAjaxPage(model, getContentName());
     }
     
     @ResponseBody

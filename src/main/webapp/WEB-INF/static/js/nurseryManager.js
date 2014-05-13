@@ -433,7 +433,7 @@ function openAddVariablesSetting(variableType) {
 function getStandardVariables(variableType) {
 	Spinner.toggle();
 	$.ajax({
-		url: "/Fieldbook/NurseryManager/manageNurserySettings/displayAddSetting/" + variableType,
+		url: "/Fieldbook/NurseryManager/createNursery/displayAddSetting/" + variableType,
 		type: "GET",
 		cache: false,
 		success: function (data) {
@@ -507,7 +507,7 @@ function getStandardVariableDetailsModal(id) {
 	if(id != ''){
 		Spinner.toggle();
 		$.ajax({
-			url: "/Fieldbook/NurseryManager/manageNurserySettings/showVariableDetails/" + id,
+			url: "/Fieldbook/NurseryManager/createNursery/showVariableDetails/" + id,
 			type: "GET",
 			cache: false,
 			success: function (data) {
@@ -687,7 +687,7 @@ function submitSelectedVariables(variableType) {
 		Spinner.toggle();
 		
 		$.ajax({
-			url: "/Fieldbook/NurseryManager/manageNurserySettings/addSettings/" + variableType,
+			url: "/Fieldbook/NurseryManager/createNursery/addSettings/" + variableType,
 			type: "POST",
 			data: serializedData,
 			success: function (data) {
@@ -995,7 +995,7 @@ function createBaselineTraitVariables(data) {
 	$.each(data, function (index, settingDetail) {
 		var length = $("#baselineTraitSettings tbody tr").length + 1;
 		var className = length % 2 == 1 ? 'even' : 'odd';
-		var newRow = "<tr class='newVariable'>";
+		var newRow = "<tr class='newVariable baseline-traits'>";
 		var isDelete = "";
 		
 		if (settingDetail.deletable) {
@@ -1147,7 +1147,7 @@ function deleteVariable(variableType, variableId, deleteButton) {
 	//remove row from session
 	Spinner.toggle();
 	$.ajax({
-		url: "/Fieldbook/NurseryManager/manageNurserySettings/deleteVariable/" + variableType + "/" + variableId,
+		url: "/Fieldbook/NurseryManager/createNursery/deleteVariable/" + variableType + "/" + variableId,
 		cache: false,
 		type: "POST",
 		success: function() {
@@ -1780,23 +1780,28 @@ function validateCreateNursery() {
 		}
 	});
 	
+	/*
 	if ($("#loadSettings").val() == '0') {
 		hasError = true;
 		customMessage = requiredSettingErrorMessage;
 	}
-	else if ($("#folderId").val() == '') {
+	*/
+	if ($("#folderId").val() == '') {
 		hasError = true;
 		name = $("#folderLabel").text();
 	}
+	/*
 	else if ($("#fieldLayoutRandom").val() == '') {
 		hasError = true;
 		name = $("#expDesignLabel").text();
-	} else if($('.baseline-traits').length == 0){
+	} */
+	else if($('.baseline-traits').length == 0){
 		hasError = true;
 		//name = $("#expDesignLabel").text();
 		customMessage = nurseryTraitsIsRequired;
 	}
 	else if ($(".noGermplasmListIndicator") && $(".noGermplasmListIndicator").text()) {
+		
 		hasError = true;
 		name = $("#germplasmLabel").text();
 	}else if($('#checkId').val() == ''){
@@ -1825,7 +1830,7 @@ function validateCreateNursery() {
 					}
 					value = $.trim(value);
 					if (!value) {
-						name = $(this).parent().parent().find(".control-label").html();
+						name = $(this).parent().prev().find(".control-label").html();
 						hasError = true;
 					}
 				}

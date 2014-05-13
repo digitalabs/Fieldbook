@@ -46,10 +46,11 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 											th:onclick="'javascript: deleteVariable(1,\'' + ${nurseryLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
 											<input class="cvTermIds" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 		    							&nbsp;&nbsp;&nbsp;
-		    							<span style="word-wrap: break-word"  class="control-label" th:text="${nurseryLevelVariable.variable.name}"></span>:
+		    							<span style="word-wrap: break-word"  class="control-label nursery-level-label" th:text="${nurseryLevelVariable.variable.name}"></span>:
 		    						</div>
 		    						<div class="col-xs-7 col-md-7 2nd">
-		    						<!-- <div th:text="${nurseryLevelVariable.variable.cvTermId}"></div> --> 
+		    						<!-- <div th:text="${nurseryLevelVariable.variable.cvTermId}"></div> -->
+		    								<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" /> 
 											<input style="width: 30%" th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" 
 											type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control select2" />
 											
@@ -226,7 +227,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 										</tr>
 										</thead>
 										<tbody>
-					    					<tr class="nursery-conditions" th:each="nurseryCondition, rowStat : *{nurseryConditions}">
+					    					<tr th:each="nurseryCondition, rowStat : *{nurseryConditions}">
 					    						<td width="5%" style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'" >
 						    						<span style="cursor: default; font-size: 16px;" th:if="${nurseryCondition.deletable}" class="glyphicon glyphicon-remove-circle"
 						    						th:onclick="'javascript: deleteVariable(7,\'' + ${nurseryCondition.variable.cvTermId} + '\',$(this))'"></span>
@@ -348,6 +349,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 	var manageLocationLabel = /*[[#{nursery.managesettings.manage.location}]]*/;
 	
 	var varInListMessage = /*[[#{nursery.managesettings.variable.in.selected.list}]]*/;
+	var idNameCounterpartAddedError = /*[[#{manage.settings.id.name.counterpart.added.error}]]*/;
     
     var locationId = '';
     var programLocationUrl = '';

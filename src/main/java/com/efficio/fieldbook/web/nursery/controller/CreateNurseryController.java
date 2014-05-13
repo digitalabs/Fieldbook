@@ -12,17 +12,26 @@
 package com.efficio.fieldbook.web.nursery.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -34,10 +43,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.TreeViewUtil;
 
 /**
  * The Class CreateNurseryController.
@@ -54,6 +65,9 @@ public class CreateNurseryController extends SettingsController {
     
     /** The Constant URL_SETTINGS. */
     public static final String URL_SETTINGS = "/NurseryManager/chooseSettings";
+    
+    @Resource
+    private OntologyService ontologyService;
 	
    
     /* (non-Javadoc)
@@ -103,7 +117,7 @@ public class CreateNurseryController extends SettingsController {
             form.setPlotLevelVariables(userSelection.getPlotsLevelList());
             //form.setSelectedSettingId(1);
             form.setLoadSettings("1");
-            form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString());
+            form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + "," + AppConstants.FIXED_NURSERY_VARIABLES.getString());
         }
         setFormStaticData(form);
         model.addAttribute("createNurseryForm", form);
@@ -127,7 +141,7 @@ public class CreateNurseryController extends SettingsController {
     public String show(@ModelAttribute("createNurseryForm") CreateNurseryForm form, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2, Model model, HttpSession session) throws MiddlewareQueryException{
     	session.invalidate();
     	form.setProjectId(this.getCurrentProjectId());
-    	form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString());
+    	form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + "," + AppConstants.FIXED_NURSERY_VARIABLES.getString());
     	form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
     	setFormStaticData(form);
     	assignDefaultValues(form);
@@ -188,7 +202,7 @@ public class CreateNurseryController extends SettingsController {
 //	    	form.setIsDefault(templateSetting.getIsDefault().intValue() == 1 ? true : false);
 //	    	form.setSettingName(templateSetting.getName());
 	    	form.setSelectedSettingId(templateSetting.getTemplateSettingId());
-	    	form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString());
+	    	form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + "," + AppConstants.FIXED_NURSERY_VARIABLES.getString());
 //    	}else{
 //    		assignDefaultValues(form);
     	}
@@ -211,18 +225,22 @@ public class CreateNurseryController extends SettingsController {
     public String submit(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws MiddlewareQueryException {
     	
     	String name = null;
-    	for (SettingDetail nvar : form.getStudyLevelVariables()) {
+    	for (SettingDetail nvar : form.getBasicDetails()) {
     		if (nvar.getVariable() != null && nvar.getVariable().getCvTermId() != null && nvar.getVariable().getCvTermId().equals(TermId.STUDY_NAME.getId())) {
     			name = nvar.getValue();
     			break;
     		}
     	}
 
-    	Dataset dataset = (Dataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, form.getStudyLevelVariables(), form.getPlotLevelVariables(), form.getBaselineTraitVariables(), userSelection);
+    	List<SettingDetail> studyLevelVariables = form.getStudyLevelVariables();
+    	studyLevelVariables.addAll(form.getStudyLevelVariables());
+    	userSelection.setStudyLevelConditions(studyLevelVariables);
+    	
+    	Dataset dataset = (Dataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, studyLevelVariables, form.getPlotLevelVariables(), form.getBaselineTraitVariables(), userSelection);
     	Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);
     	userSelection.setWorkbook(workbook);
     	
-    	createStudyDetails(workbook, form.getStudyLevelVariables(), form.getFolderId());
+    	createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId());
  
     	return "success";
     }
@@ -289,5 +307,248 @@ public class CreateNurseryController extends SettingsController {
         form.setStartDateId(AppConstants.START_DATE_ID.getString());
     	form.setEndDateId(AppConstants.END_DATE_ID.getString());
     	form.setOpenGermplasmUrl(AppConstants.GERMPLASM_DETAILS_URL.getString());
+    }
+    
+    /**
+     * Gets the setting detail list.
+     *
+     * @param mode the mode
+     * @return the setting detail list
+     */
+    private List<SettingDetail> getSettingDetailList(int mode) {
+        if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
+            return userSelection.getStudyLevelConditions();
+        } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
+            return userSelection.getPlotsLevelList();
+        } else if (mode == AppConstants.SEGMENT_TRAITS.getInt() || mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt()) {
+            List<SettingDetail> newList = new ArrayList<SettingDetail>();
+            
+            for (SettingDetail setting : userSelection.getBaselineTraitsList()) {
+                newList.add(setting);
+            }
+            
+            for (SettingDetail setting : userSelection.getNurseryConditions()) {
+                newList.add(setting);
+            }
+                
+            return newList;
+        } else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
+            return userSelection.getSelectionVariates();
+        }
+        return null;
+    }
+    
+    /**
+     * Displays the Add Setting popup.
+     *
+     * @param mode the mode
+     * @return the string
+     */
+    @ResponseBody
+    @RequestMapping(value = "displayAddSetting/{mode}", method = RequestMethod.GET)
+    public Map<String, Object> showAddSettingPopup(@PathVariable int mode) {
+                Map<String, Object> result = new HashMap<String, Object>();
+        try {
+
+                List<StandardVariableReference> standardVariableList = 
+                                fieldbookService.filterStandardVariablesForSetting(mode, getSettingDetailList(mode));
+                
+                try{
+                        if(userSelection.getTraitRefList() == null){
+                                List<TraitClassReference> traitRefList = (List<TraitClassReference>) 
+                                ontologyService.getAllTraitGroupsHierarchy(true);
+                                userSelection.setTraitRefList(traitRefList);
+                        }
+                                List<TraitClassReference> traitRefList = userSelection.getTraitRefList();
+                                //we convert it to map so that it would be easier to chekc if there is a record or not
+                                HashMap<String, StandardVariableReference> mapVariableRef = new HashMap<String, StandardVariableReference>();
+                                if(standardVariableList != null && !standardVariableList.isEmpty()){
+                                        for(StandardVariableReference varRef: standardVariableList){
+                                                mapVariableRef.put(varRef.getId().toString(), varRef);
+                                        }
+                                }
+                                
+                                String treeData = TreeViewUtil.convertOntologyTraitsToJson(traitRefList, mapVariableRef);
+                        String searchTreeData = TreeViewUtil.convertOntologyTraitsToSearchSingleLevelJson(traitRefList, mapVariableRef);
+                        result.put("treeData", treeData);
+                        result.put("searchTreeData", searchTreeData);                
+                }catch(Exception e){
+                        LOG.error(e.getMessage());
+                }
+        } catch(Exception e) {
+                LOG.error(e.getMessage(), e);
+        }
+        
+        //return "[]";
+        return result;
+    }
+    
+    /**
+     * Show variable details.
+     *
+     * @param id the id
+     * @return the string
+     */
+    @ResponseBody
+    @RequestMapping(value="showVariableDetails/{id}", method = RequestMethod.GET)
+    public String showVariableDetails(@PathVariable int id) {
+        try {
+
+                SettingVariable svar = getSettingVariable(id);
+                if (svar != null) {
+                        ObjectMapper om = new ObjectMapper();
+                        return om.writeValueAsString(svar);
+                }
+                
+        } catch(Exception e) {
+                LOG.error(e.getMessage(), e);
+        }
+        return "[]";
+    }
+    
+    /**
+     * Adds the settings.
+     *
+     * @param form the form
+     * @param model the model
+     * @param mode the mode
+     * @return the string
+     */
+    @ResponseBody
+    @RequestMapping(value = "/addSettings/{mode}", method = RequestMethod.POST)
+    public String addSettings(@ModelAttribute("createNurseryForm") CreateNurseryForm form, 
+            Model model, @PathVariable int mode) {
+        List<SettingDetail> newSettings = new ArrayList<SettingDetail>();
+        try {
+                List<SettingVariable> selectedVariables = form.getSelectedVariables();
+                if (selectedVariables != null && !selectedVariables.isEmpty()) {
+                        for (SettingVariable var : selectedVariables) {
+                                populateSettingVariable(var);
+                                        List<ValueReference> possibleValues = 
+                                                fieldbookService.getAllPossibleValues(var.getCvTermId());
+                                        SettingDetail newSetting = new SettingDetail(var, possibleValues, null, true);
+                                        List<ValueReference> possibleValuesFavorite = fieldbookService.getAllPossibleValuesFavorite(var.getCvTermId(), this.getCurrentProjectId());
+                                        newSetting.setPossibleValuesFavorite(possibleValuesFavorite);
+                                        newSetting.setPossibleValuesToJson(possibleValues);
+                                        newSetting.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
+                                        newSettings.add(newSetting);
+                        }
+                }
+                
+                if (newSettings != null && !newSettings.isEmpty()) {
+                        return addNewSettingDetails(form, mode, newSettings);
+                }
+                
+        } catch(Exception e) {
+                LOG.error(e.getMessage(), e);
+        }
+        
+        return "[]";
+    }
+    
+    /**
+     * Adds the new setting details.
+     *
+     * @param form the form
+     * @param mode the mode
+     * @param newDetails the new details
+     * @return the string
+     * @throws Exception the exception
+     */
+    private String addNewSettingDetails(CreateNurseryForm form, int mode
+            , List<SettingDetail> newDetails) throws Exception {
+        if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
+            if (form.getStudyLevelVariables() == null) {
+                form.setStudyLevelVariables(newDetails);
+            }
+            else {
+                form.getStudyLevelVariables().addAll(newDetails);
+            }
+            if (userSelection.getStudyLevelConditions() == null) {
+                userSelection.setStudyLevelConditions(newDetails);
+            }
+            else {
+                userSelection.getStudyLevelConditions().addAll(newDetails);
+            }
+            
+        } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
+            if (form.getPlotLevelVariables() == null) {
+                form.setPlotLevelVariables(newDetails);
+            }
+            else {
+                form.getPlotLevelVariables().addAll(newDetails);
+            }
+            if (userSelection.getPlotsLevelList() == null) {
+                userSelection.setPlotsLevelList(newDetails);
+            }
+            else {
+                userSelection.getPlotsLevelList().addAll(newDetails);
+            }
+        } else if (mode == AppConstants.SEGMENT_TRAITS.getInt()){
+            if (form.getBaselineTraitVariables() == null) {
+                form.setBaselineTraitVariables(newDetails);
+            }
+            else {
+                form.getBaselineTraitVariables().addAll(newDetails);
+            }
+            if (userSelection.getBaselineTraitsList() == null) {
+                userSelection.setBaselineTraitsList(newDetails);
+            }
+            else {
+                userSelection.getBaselineTraitsList().addAll(newDetails);
+            }
+        } else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
+            if (form.getSelectionVariatesVariables() == null) {
+                form.setSelectionVariatesVariables(newDetails);
+            } else {
+                form.getSelectionVariatesVariables().addAll(newDetails);
+            }
+            if (userSelection.getSelectionVariates() == null) {
+                userSelection.setSelectionVariates(newDetails);
+            } else {
+                userSelection.getSelectionVariates().addAll(newDetails);
+            }
+        } else {
+            if (form.getNurseryConditions() == null) {
+                form.setNurseryConditions(newDetails);
+            } else {
+                form.getNurseryConditions().addAll(newDetails);
+            }
+            if (userSelection.getNurseryConditions() == null) {
+                userSelection.setNurseryConditions(newDetails);
+            } else {
+                userSelection.getNurseryConditions().addAll(newDetails);
+            }
+        }
+        ObjectMapper om = new ObjectMapper();
+        return om.writeValueAsString(newDetails);
+    }
+    
+    @ResponseBody
+    @RequestMapping(value = "/deleteVariable/{mode}/{variableId}", method = RequestMethod.POST)
+    public String deleteVariable(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, 
+            @PathVariable int mode, @PathVariable int variableId) {
+        if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
+            //form.getNurseryLevelVariables()
+            deleteVariableInSession(userSelection.getStudyLevelConditions(), variableId);
+        } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
+            deleteVariableInSession(userSelection.getPlotsLevelList(), variableId);
+        } else if (mode == AppConstants.SEGMENT_TRAITS.getInt()){
+            deleteVariableInSession(userSelection.getBaselineTraitsList(), variableId);
+        } else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()){
+            deleteVariableInSession(userSelection.getSelectionVariates(), variableId);
+        } else {
+            deleteVariableInSession(userSelection.getNurseryConditions(), variableId);
+        }
+        return "";
+    }
+    
+    private void deleteVariableInSession(List<SettingDetail> variableList, int variableId) {
+        Iterator<SettingDetail> iter = variableList.iterator();
+        while (iter.hasNext()) {
+            if (iter.next().getVariable().getCvTermId().equals(Integer.valueOf(variableId))) {
+                iter.remove();
+            }
+        }
     }
 }

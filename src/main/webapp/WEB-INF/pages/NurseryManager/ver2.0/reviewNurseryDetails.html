@@ -49,7 +49,7 @@
 			<div style="padding-bottom: 5px" class="col-xs-4 col-md-4" th:each="basicDetail, rowStat : *{basicStudyDetails}">
 				&nbsp;&nbsp;&nbsp;<strong><span style="word-wrap: break-word"  class="control-label" th:text="${basicDetail.variable.name}"></span>:</strong>
 				&nbsp;<span th:text="${basicDetail.value}" class="div-select-val"></span>
-				<span th:if="${basicDetail.variable.name == 'Field Map Created'}">
+				<span th:if="${basicDetail.variable.name == 'Field Map Created' and basicDetail.value == 'Yes'}">
 					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 					<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
 					<a href="javascript: showFieldMap('nursery-table');" id="view-fieldmap-url-link" th:text="#{nursery.nurserydetails.viewFieldMap}">View</a>

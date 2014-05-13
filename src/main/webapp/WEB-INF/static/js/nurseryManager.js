@@ -2282,14 +2282,15 @@ function getCurrentStudyIdInTab() {
 
 function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
 	Spinner.toggle();
+	var currentStudyId = getCurrentStudyIdInTab();
 	$.ajax({ 
-		url: "/Fieldbook/NurseryManager/addOrRemoveTraits/viewNurseryAjax/" + getCurrentStudyIdInTab(),
+		url: "/Fieldbook/NurseryManager/addOrRemoveTraits/viewNurseryAjax/" + currentStudyId,
 	    type: "GET",
 	    cache: false,
 	    success: function(html) {
-			$("#measurement-tab-headers").append("<li class='active'><a>" + datasetName + "</a></li>");
-			$("#measurement-tabs").append("<div id='dset-tab-" + datasetId + "'>" + html + "</div>");
-			$(".measurement-section").show();
+			$("#study"+currentStudyId+" #measurement-tab-headers").append("<li class='active'><a>" + datasetName + "</a></li>");
+			$("#study"+currentStudyId+" #measurement-tabs").append("<div id='dset-tab-" + datasetId + "'>" + html + "</div>");
+			$("#study"+currentStudyId+" .measurement-section").show();
         },
         error: function(jqXHR, textStatus, errorThrown){
         	console.log("The following error occured: " + textStatus, errorThrown); 

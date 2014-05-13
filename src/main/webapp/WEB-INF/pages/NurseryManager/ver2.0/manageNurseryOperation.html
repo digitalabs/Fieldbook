@@ -16,11 +16,11 @@
          		</div>	         		
 				<div class="row form-group">
 					<div class="col-xs-12 col-md-12">
-		         		<div class="col-xs-4  col-md-4 add_top_padding">
+		         		<div class="col-xs-5  col-md-5 add_top_padding">
 					  		<label class="control-label" th:text="#{browse.nursery.folder.name}">Folder Name:</label><span class="required">*</span>
 					  	</div>
 					    <div class="col-xs-7 col-md-7">
-					      <input id="folderName" name="folderName" type="text" class="form-control select2" placeholder="Folder Name"/>						      
+					      <input id="addFolderName" name="addFolderName" type="text" class="form-control select2" placeholder="Folder Name"/>						      
 					    </div>
 		        	</div>
 		        </div>
@@ -140,7 +140,7 @@
           var deleteFolderHasTrial = /*[[#{browse.nursery.delete.folder.has.trial.children}]]*/;
 		  function addFolder(object){
 			  if(!$(object).hasClass('disable-image')){
-				  $('#folderName').val('');
+				  $('#addFolderName').val('');
 				  $('#page-add-study-folder-message-modal').html('');
 				  $('#addStudyFolder').modal('show');
 			  }
@@ -149,7 +149,7 @@
 			  $('#'+modalId).modal('hide');
 		  }
 		  function createFolder(){
-			  var folderName = $.trim($('#folderName').val());
+			  var folderName = $.trim($('#addFolderName').val());
 			  if(folderName == ''){
 				  showErrorMessage('page-add-study-folder-message-modal', folderNameRequiredMessage);
 				  return false;

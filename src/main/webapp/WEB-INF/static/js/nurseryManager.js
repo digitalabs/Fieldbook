@@ -1713,6 +1713,29 @@ function chooseSelectedNursery() {
 	});
 }
 
+function choosePreviousNursery(studyId) {
+		
+	if ($("#chooseSettingsDiv").length != 0) {
+		url = "/Fieldbook/NurseryManager/createNursery/nursery/";
+	}
+	
+	Spinner.toggle();
+	$.ajax({
+		url: url + studyId,
+        type: "GET",
+        cache: false,
+        data: "",
+        success: function(html) {
+        	if ($("#chooseSettingsDiv").length != 0) {
+        		$("#chooseSettingsDiv").html(html);
+        	} else {
+        		$('.container .row').first().html(html);
+        	}
+        	Spinner.toggle();
+        }  
+	});
+}
+
 function validateCreateNursery() {
 	var hasError = false;
 	var name = '';
@@ -2200,8 +2223,9 @@ function determineIfShowCloseAllStudyTabs(){
 		$('#closeAllStudytabs').css('display', 'none');
 	}
 }
-function openStudyTree(){
+function openStudyTree(type){
 	$('#studyTreeModal').modal('show');
+	choosingType = type;
 }
 function closeAllStudyTabs(){
 	 

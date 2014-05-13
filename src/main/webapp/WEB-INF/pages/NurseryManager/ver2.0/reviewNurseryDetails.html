@@ -3,7 +3,7 @@
 <div class="row form-group" th:object="${nurseryDetails}">
 	<input type="hidden" id="studyId" class="field-map-highlight" th:value="*{id}" />
 	<div class="col-xs-12 col-md-12">
-		<label class="control-label section-toggle toggle-icon"  data-target=".nurseryDetails">
+		<label style="padding-left: 5px"  class="control-label section-toggle toggle-icon"  data-target=".nurseryDetails">
 			<img th:src="@{/static/img/basic-details.png}" />
 			<img style="margin-left: -10px" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
 			<img style="display:none; margin-left: -10px"  class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
@@ -68,7 +68,7 @@
 	</div>
 	<br />
 	<div class="form-group">
-		<div class="col-xs-12 col-md-12" style="padding-left: 20px">
+		<div class="col-xs-12 col-md-12" style="padding-left: 25px">
 			<a id="toggle-additional-link" class="section-toggle"  data-target=".additionalDetails" th:text="#{nursery.nurserydetails.additional.show}"></a>
 			&nbsp;<span th:text="#{nursery.nurserydetails.additional.text}"></span>
 		</div>
@@ -185,10 +185,10 @@
 	<br/>
 
 	<div class="col-xs-12 col-md-12">
-		<label class="control-label section-toggle toggle-icon dataset-toggle"  data-target=".datasetDetails">
+		<label style="padding-left: 5px"  class="control-label section-toggle toggle-icon dataset-toggle"  data-target=".datasetDetails">
 			<img th:src="@{/static/img/matching-nurseries.png}" />
-			<img class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" style="display:none;" />
-			<img class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
+			<img class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" style="display:none; margin-left: -10px" />
+			<img class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}"  style=" margin-left: -10px"/>
 			<strong class="sub-content-heading" th:text="#{nursery.nurserydetails.datasets}">DATASETS</strong>
 		</label>
 		<div class="collapse datasetDetails">

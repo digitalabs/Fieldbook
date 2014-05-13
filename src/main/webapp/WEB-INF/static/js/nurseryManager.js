@@ -1801,7 +1801,7 @@ function validateCreateNursery() {
 		showErrorMessage('page-message', uniqueBookNameErrorMessage);
 		return false;
 	}
-	
+	/*
 	if (isGidInCheckList(getGid($("#startIndex2").val())) > 0) {
 		if(lastDraggedChecksList == 0){
 			showErrorMessage('page-message', startingEntryErr);
@@ -1814,7 +1814,29 @@ function validateCreateNursery() {
 		showErrorMessage('page-message', startingEntryErr);
 		return false;
 	}
-
+	*/
+	/*
+	 * Validate Position is less than the total germplasm
+	 * Validate the Interval should be less than the total germplasm
+	 */
+	
+	if(isInt($("#startIndex2").val()) == false){
+		showErrorMessage('page-message', "Position should be a whole number");
+		return false;
+	}
+	if(isInt($("#interval2").val()) == false){
+		showErrorMessage('page-message', "Interval should be a whole number");
+		return false;
+	}
+	var totalGermplasms = $('#totalGermplasms').val();
+	if(parseInt($("#startIndex2").val()) < 0 || parseInt($("#startIndex2").val()) > totalGermplasms){
+		showErrorMessage('page-message', "Interval should be a whole number");
+		return false;
+	}
+	if(parseInt($("#interval2").val()) < 0 || parseInt($("#interval2").val()) > totalGermplasms){
+		showErrorMessage('page-message', "Interval should be a whole number");
+		return false;
+	}
 	return true;
 }
 

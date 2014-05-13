@@ -185,9 +185,6 @@
   <script type="text/javascript" th:src="@{/static/js/fieldbook-tree.js}"></script> 
   <script type="text/javascript" th:src="@{/static/js/jquery-multisortable.js}"></script>
   <script type="text/javascript" th:src="@{/static/js/jquery.tablednd.0.7.min.js}"></script>
-  <script type="text/javascript" th:src="@{/static/js/bootstrap-spinedit.js}"></script>
-<link th:href="@{/static/css/bootstrap-spinedit.css}" rel="stylesheet"/>
-<link th:href="@{/static/css/fieldbook-spinner.css}" rel="stylesheet"/>
   
   <script type='text/javascript' th:inline="javascript">
 	var isIE = false;
@@ -770,9 +767,11 @@
         }
         
         function resetStartingEntry() {
+        	/*
         	if(lastStartingEntry == 0)
         		lastStartingEntry = prevStartIndex;
         	$("#startIndex2").spinedit('setValue', lastStartingEntry);
+        	*/
         }
         function openListTree(type){
         	openTreeType = type;

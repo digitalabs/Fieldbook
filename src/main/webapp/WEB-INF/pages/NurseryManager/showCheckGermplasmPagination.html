@@ -26,6 +26,7 @@
                </td>
                <td align="left" th:class="${row.even}? 'even' : 'odd'">
                <select  th:field="*{paginatedImportedCheckGermplasm[__${row.index}__].check}" class="form-control checklist-select">
+                	<option value="">Please Choose</option>
                		<option th:each="type: ${checkLists}" th:value="${type.id}" th:text="${type.description}"></option>
                </select>               
                </td>

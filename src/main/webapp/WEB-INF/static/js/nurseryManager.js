@@ -2216,11 +2216,26 @@ function addDetailsTab(studyId, title){
 		 $('li#study'+studyId).addClass('active');
 		 $('.info#study'+studyId).show();
 	 }else{
-		 var close = '   <button type="button" id="'+studyId+'" class="close">×</button>';
-		 $('#study-tab-headers').append("<li id='study"+studyId+"' class='active'><a>"+title+" " + close + "</a></li>");
-	   	 $('#study-tabs').append('<div class="info" id="study'+studyId+'">'+title+'</div>')
-	   	 $('.info#study'+studyId).show();
-	   	 initializeStudyTabs();
+		 
+	   	 
+	   	 
+	   	 
+	   	 
+	   	 
+	   	Spinner.toggle();
+		$.ajax({ 
+			url: "/Fieldbook/NurseryManager/reviewNurseryDetails/show/" + studyId,
+		    type: "GET",
+		    cache: false,
+		    success: function(data) {
+		    	var close = '   <button type="button" id="'+studyId+'" class="close">×</button>';
+				 $('#study-tab-headers').append("<li id='study"+studyId+"' class='active'><a>"+title+" " + close + "</a></li>");
+				 $('#study-tabs').append('<div class="info" id="study'+studyId+'">'+data+'</div>')
+			   	 $('.info#study'+studyId).show();
+			   	 initializeStudyTabs();
+				 Spinner.toggle();
+	        } 
+		});
 	 }
 	 determineIfShowCloseAllStudyTabs();
 	 //if not we get the info

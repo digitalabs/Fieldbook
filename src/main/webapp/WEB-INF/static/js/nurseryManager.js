@@ -1609,7 +1609,7 @@ function loadNurserySettingsForCreate(templateSettingsId) {
 		}
 	});
 }
-
+/*
 function displayGermplasmListTree(treeName) {
 	
 	$("#" + treeName).dynatree({
@@ -1654,7 +1654,7 @@ function displayGermplasmListTree(treeName) {
 	
 
 }
-
+*/
 /*
  * obsolete
 function displayGermplasmDetails(listId) {

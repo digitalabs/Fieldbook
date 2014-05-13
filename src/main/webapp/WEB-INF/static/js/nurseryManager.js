@@ -400,13 +400,11 @@ function openAddVariablesSetting(variableType) {
 	$('#ontology-detail-tabs').empty().html($('.variable-detail-info').html());		
 	//this would reset the tree view	
 	
-    
 	$("#variable-details").html('');
 	switch (parseInt(variableType)) {
 		case 1:
 			$("#heading-modal").text(addNurseryLevelSettings);
 			$('#reminder-placeholder').html(reminderNursery);
-			
 			break;
 		case 2:
 			$("#heading-modal").text(addPlotLevelSettings);
@@ -419,6 +417,7 @@ function openAddVariablesSetting(variableType) {
 		case 6:
 			$("#heading-modal").text(addSelectionVariates);
 			$('#reminder-placeholder').html(reminderSelectionVariates);
+			break;
 		default: 
 			$("#heading-modal").text(addNurseryLevelSettings);
 			$('#reminder-placeholder').html(reminderNursery);

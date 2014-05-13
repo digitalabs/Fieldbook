@@ -8,7 +8,7 @@
 						<label class="control-label" th:text="#{germplasm.list.choose.check.type.starting.index}">Starting Index</label><span class="required">*</span>
 					</div>	
 					<div class="col-xs-2 col-md-2">
-						<input style="width: 50px" type="text" id="startIndex2" class="form-control spinner-input" onchange="verifyIfCheck(this)" />
+						<input style="width: 50px" type="text" id="startIndex2" class="form-control" onchange="verifyIfCheck(this)" />
 					</div>
 					<div class="col-xs-2 col-md-2 add_top_padding">
 						<label class="control-label" th:text="#{germplasm.list.choose.check.type.manner.of.insertion}">Manner of Insertion</label>
@@ -30,7 +30,7 @@
 						<label class="control-label" th:text="#{germplasm.list.choose.check.type.interval}">Interval</label><span class="required">*</span>
 					</div>		
 					<div class="col-xs-2 col-md-2">
-						<input style="width: 50px" type="text" id="interval2" class="form-control spinner-input" />
+						<input style="width: 50px" type="text" id="interval2" class="form-control" />
 					</div>
 			</div>
 		</div>
@@ -57,6 +57,8 @@
         });
         
         function setSpinnerMaxValue(){
+        	$('#startIndex2').val(1);
+			$('#interval2').val(1);
         	/*
         	var totalGermplasm = 0;
         	if($('#totalGermplasms').val() != null)

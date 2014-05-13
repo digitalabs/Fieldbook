@@ -43,7 +43,7 @@ function displayTree(treeName, initMethodName, expandMethodName) {
 		checkbox: false,
 		noLink: false,
 		autoFocus: false,
-		imagePath: "../img/",
+		imagePath: "/Fieldbook/static/img/",
 		activeVisible: true,
 		initAjax: {url: initMethodName,
 			dataType: "json"

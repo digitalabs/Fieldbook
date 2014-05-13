@@ -1640,7 +1640,7 @@ function loadNurserySettingsForCreate(templateSettingsId) {
 		}
 	});
 }
-
+/*
 function displayGermplasmListTree(treeName) {
 	
 	$("#" + treeName).dynatree({
@@ -1685,7 +1685,7 @@ function displayGermplasmListTree(treeName) {
 	
 
 }
-
+*/
 /*
  * obsolete
 function displayGermplasmDetails(listId) {
@@ -2196,10 +2196,20 @@ function changeBrowseNurseryButtonBehavior(isEnable){
 	
 }
 
+function changeBrowseGermplasmButtonBehavior(isEnable){
+	if(isEnable)
+		$('.browse-germplasm-action').removeClass('disable-image');
+	else
+		$('.browse-germplasm-action').addClass('disable-image');
+	
+	
+}
+
+
 function addStudyTreeHighlight(node){
 	//$('#studyTree').find("*").removeClass('tree-highlight');
 	$(node.span).addClass('fbtree-focused');
-	console.log($(node.span).parent().html());
+	//console.log($(node.span).parent().html());
 	//console.log('add highlight' + $(node.span).html());
 	//console.log();
 }
@@ -2225,7 +2235,7 @@ function initializeStudyTabs(){
 			 $('li#'+studyIdString).addClass('active');
 			 $('.info#'+studyIdString).show();
 		 }
-		 
+		 determineIfShowCloseAllStudyTabs();	 
 	 });
 	 determineIfShowCloseAllStudyTabs();
 }
@@ -2237,11 +2247,22 @@ function addDetailsTab(studyId, title){
 		 $('li#study'+studyId).addClass('active');
 		 $('.info#study'+studyId).show();
 	 }else{
-		 var close = '   <button type="button" id="'+studyId+'" class="close">×</button>';
-		 $('#study-tab-headers').append("<li id='study"+studyId+"' class='active'><a>"+title+" " + close + "</a></li>");
-	   	 $('#study-tabs').append('<div class="info" id="study'+studyId+'">'+title+'</div>')
-	   	 $('.info#study'+studyId).show();
-	   	 initializeStudyTabs();
+		 
+	   	 
+	   	Spinner.toggle();
+		$.ajax({ 
+			url: "/Fieldbook/NurseryManager/reviewNurseryDetails/show/" + studyId,
+		    type: "GET",
+		    cache: false,
+		    success: function(data) {
+		    	var close = '   <button type="button" id="'+studyId+'" class="close">X</button>';
+				 $('#study-tab-headers').append("<li id='study"+studyId+"' class='active'><a>"+title+" " + close + "</a></li>");
+				 $('#study-tabs').append('<div class="info" id="study'+studyId+'">'+data+'</div>')
+			   	 $('.info#study'+studyId).show();
+			   	 initializeStudyTabs();
+				 Spinner.toggle();
+	        } 
+		});
 	 }
 	 determineIfShowCloseAllStudyTabs();
 	 //if not we get the info
@@ -2268,7 +2289,7 @@ function closeAllStudyTabs(){
 function loadDatasetDropdown(optionTag) {
 	Spinner.toggle();
 	$.ajax({ 
-		url: "/Fieldbook/NurseryManager/reviewNurseryDetails/datasets/" + getCurrentNurseryIdInTab(),
+		url: "/Fieldbook/NurseryManager/reviewNurseryDetails/datasets/" + getCurrentStudyIdInTab(),
 	    type: "GET",
 	    cache: false,
 	    success: function(data) {
@@ -2285,20 +2306,22 @@ function loadDatasetDropdown(optionTag) {
 	});
 }
 
-function getCurrentNurseryIdInTab() {
-	return document.location.pathname.substring(document.location.pathname.lastIndexOf("/")+1);
+function getCurrentStudyIdInTab() {
+	//return document.location.pathname.substring(document.location.pathname.lastIndexOf("/")+1);
+	return $('#study-tab-headers li.active .close').attr('id');
 }
 
 function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
 	Spinner.toggle();
+	var currentStudyId = getCurrentStudyIdInTab();
 	$.ajax({ 
-		url: "/Fieldbook/NurseryManager/addOrRemoveTraits/viewNurseryAjax/" + getCurrentNurseryIdInTab(),
+		url: "/Fieldbook/NurseryManager/addOrRemoveTraits/viewNurseryAjax/" + currentStudyId,
 	    type: "GET",
 	    cache: false,
 	    success: function(html) {
-			$("#measurement-tab-headers").append("<li class='active'><a>" + datasetName + "</a></li>");
-			$("#measurement-tabs").append("<div id='dset-tab-" + datasetId + "'>" + html + "</div>");
-			$(".measurement-section").show();
+			$("#study"+currentStudyId+" #measurement-tab-headers").append("<li class='active'><a>" + datasetName + "</a></li>");
+			$("#study"+currentStudyId+" #measurement-tabs").append("<div id='dset-tab-" + datasetId + "'>" + html + "</div>");
+			$("#study"+currentStudyId+" .measurement-section").show();
         },
         error: function(jqXHR, textStatus, errorThrown){
         	console.log("The following error occured: " + textStatus, errorThrown); 

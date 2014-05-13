@@ -223,8 +223,8 @@
         		         if(sourceNode.hasChildren()){
         		        	 //alert('Source folder has children');
         		        	 //return false;
-        		        	 showErrorMessage('page-move-study-folder-message-modal', cannotMove + " " + sourceNode.data.title + " " + hasChildrenString);
-        		        	 $('#moveStudyFolder').modal('show');
+        		        	 showErrorMessage('page-study-tree-message-modal', cannotMove + " " + sourceNode.data.title + " " + hasChildrenString);
+        		        	 //$('#moveStudyFolder').modal('show');
         		         }else{
         		        	 //logMsg("tree.onDrop(%o, %o, %s)", node, sourceNode, hitMode);
         		        	 
@@ -242,8 +242,8 @@
 				        				//sourceNode.move(node, hitMode);
 			             		        moveStudy(sourceNode, node);				        				
 				        			}else{				        				
-				        				showErrorMessage('page-move-study-folder-message-modal', cannotMove + " " + sourceNode.data.title + " " + hasChildrenString)
-				        				$('#moveStudyFolder').modal('show');
+				        				showErrorMessage('page-study-tree-message-modal', cannotMove + " " + sourceNode.data.title + " " + hasChildrenString)
+				        				//$('#moveStudyFolder').modal('show');
 				        			}
 											
 				        		}		        		

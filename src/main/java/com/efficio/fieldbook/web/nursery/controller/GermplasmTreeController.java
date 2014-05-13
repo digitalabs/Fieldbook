@@ -10,29 +10,36 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Database;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
+import org.generationcp.middleware.manager.api.WorkbenchDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.User;
+import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
@@ -43,7 +50,7 @@ import com.efficio.pojos.treeview.TreeNode;
  */
 @Controller
 @RequestMapping(value = "/NurseryManager")
-public class GermplasmTreeController{
+public class GermplasmTreeController  extends AbstractBaseFieldbookController{
 
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(GermplasmTreeController.class);
@@ -56,7 +63,13 @@ public class GermplasmTreeController{
     private GermplasmListManager germplasmListManager;
     @Resource
     private FieldbookService fieldbookMiddlewareService;
+    @Autowired
+    private WorkbenchDataManager manager;
+    @Resource
+    private WorkbenchService workbenchService;
     
+    private String NAME_NOT_UNIQUE = "Name not unique";
+    private String HAS_CHILDREN = "Folder has children";    
     /**
      * Load initial germplasm tree.
      *
@@ -140,5 +153,159 @@ public class GermplasmTreeController{
         return "[]";
     }
 
+    private void checkIfUnique(String folderName) throws MiddlewareQueryException, Exception {
+    	List<GermplasmList> centralDuplicate = germplasmListManager.
+            	getGermplasmListByName(folderName, 0, 1, null, Database.CENTRAL);
+        if(centralDuplicate!=null && !centralDuplicate.isEmpty()) {
+        	throw new Exception(NAME_NOT_UNIQUE);
+        }
+        List<GermplasmList> localDuplicate = germplasmListManager.
+            	getGermplasmListByName(folderName, 0, 1, null, Database.LOCAL);
+        if(localDuplicate!=null && !localDuplicate.isEmpty()) {
+        	throw new Exception(NAME_NOT_UNIQUE);
+        }
+	}
     
+    @ResponseBody
+    @RequestMapping(value = "/addGermplasmFolder", method = RequestMethod.POST)
+    public Map<String, Object> addGermplasmFolder(HttpServletRequest req) {
+        String id = req.getParameter("parentFolderId");
+        String folderName = req.getParameter("folderName");
+		Map<String, Object> resultsMap = new HashMap<String, Object>();
+		
+        
+        GermplasmList gpList = null;
+        GermplasmList newList = null;
+        try {
+        	
+        	checkIfUnique(folderName);
+        	Integer userId =workbenchService.getCurrentIbdbUserId(this.getCurrentProjectId());
+
+            if (id == null) {
+                newList = new GermplasmList(null,folderName,Long.valueOf((new SimpleDateFormat("yyyyMMdd")).format(Calendar.getInstance().getTime())),"FOLDER",userId,folderName,null,0);
+            }
+            else {
+                gpList = germplasmListManager.getGermplasmListById(Integer.parseInt(id));
+
+                if (!gpList.isFolder()) {
+                    GermplasmList parent = null;
+
+                    parent = gpList.getParent();
+
+                    if (parent == null) {
+                        newList = new GermplasmList(null,folderName,Long.valueOf((new SimpleDateFormat("yyyyMMdd")).format(Calendar.getInstance().getTime())),"FOLDER",userId,folderName,null,0);
+                    } else {
+                        newList = new GermplasmList(null,folderName,Long.valueOf((new SimpleDateFormat("yyyyMMdd")).format(Calendar.getInstance().getTime())),"FOLDER",userId,folderName,parent,0);
+                    }
+                } else {
+                    newList = new GermplasmList(null,folderName,Long.valueOf((new SimpleDateFormat("yyyyMMdd")).format(Calendar.getInstance().getTime())),"FOLDER",userId,folderName,gpList,0);
+                }
+
+            }
+
+            newList.setDescription("(NEW FOLDER) " + folderName);
+            Integer germplasmListFolderId =  germplasmListManager.addGermplasmList(newList);
+            resultsMap.put("isSuccess", "1");
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultsMap.put("isSuccess", "0");
+        	resultsMap.put("message", e.getMessage());
+        }
+        return resultsMap;
+    }
+    
+    @ResponseBody
+    @RequestMapping(value = "/renameGermplasmFolder", method = RequestMethod.POST)
+    public Map<String, Object> renameStudyFolder(HttpServletRequest req) {
+    	Map<String, Object> resultsMap = new HashMap<String, Object>();
+    	String newName = req.getParameter("newFolderName");
+        String folderId = req.getParameter("folderId");        
+        
+        try {
+
+            GermplasmList gpList = germplasmListManager.getGermplasmListById(Integer.parseInt(folderId));
+
+            checkIfUnique(newName);
+            gpList.setName(newName);
+
+            germplasmListManager.updateGermplasmList(gpList);
+
+            resultsMap.put("isSuccess", "1");
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultsMap.put("isSuccess", "0");
+        	resultsMap.put("message", e.getMessage());
+        }
+        return resultsMap;
+    }
+    
+    public boolean hasChildren(Integer id) throws MiddlewareQueryException {
+        return !germplasmListManager.getGermplasmListByParentFolderId(id,0,Integer.MAX_VALUE).isEmpty();
+    }
+    @ResponseBody
+    @RequestMapping(value = "/deleteGermplasmFolder", method = RequestMethod.POST)
+    public Map<String, Object> deleteGermplasmFolder(HttpServletRequest req) {
+    	Map<String, Object> resultsMap = new HashMap<String, Object>();
+       
+        GermplasmList gpList = null;
+        String folderId = req.getParameter("folderId");
+        try {
+            gpList = germplasmListManager.getGermplasmListById(Integer.parseInt(folderId));
+
+       
+        
+            if (hasChildren(gpList.getId())) {
+                throw new Exception(HAS_CHILDREN);
+            }
+       
+
+       
+            germplasmListManager.deleteGermplasmList(gpList);
+            resultsMap.put("isSuccess", "1");
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultsMap.put("isSuccess", "0");
+        	resultsMap.put("message", e.getMessage());
+        }
+        return resultsMap;
+    }
+    
+    @ResponseBody
+    @RequestMapping(value = "/moveGermplasmFolder", method = RequestMethod.POST)
+    public Map<String, Object> moveStudyFolder(HttpServletRequest req) {
+		 String sourceId =  req.getParameter("sourceId");
+		 String targetId =  req.getParameter("targetId");
+		 
+		 
+		 Map<String, Object> resultsMap = new HashMap<String, Object>();     
+        
+        try {
+            GermplasmList gpList = germplasmListManager.getGermplasmListById(Integer.parseInt(sourceId));
+
+            /*if (!gpList.isFolder())
+                 throw new Error(NOT_FOLDER);*/
+
+            if (targetId != null) {
+                GermplasmList parent = germplasmListManager.getGermplasmListById(Integer.parseInt(targetId));
+                            gpList.setParent(parent);
+            } else {
+                gpList.setParent(null);
+            }
+
+
+            germplasmListManager.updateGermplasmList(gpList);
+
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            //throw new Error(messageSource.getMessage(Message.ERROR_DATABASE));
+        }
+        return resultsMap;
+    }
+    
+
+	@Override
+	public String getContentName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

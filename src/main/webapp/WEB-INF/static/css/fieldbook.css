@@ -924,6 +924,27 @@ div.sectionContainer {
 	margin-top: -2px;
 } 
 
+#create-nursery-tabs{
+	min-height: 460px;
+	background-color: #f6f6f6;
+	border:1px solid #e4e4e4;  
+	border-top: 0px;
+}
+#create-nursery-tab-headers  > li > a, 
+#create-nursery-tab-headers  > li > a:hover, 
+#create-nursery-tab-headers  > li > a:focus {
+    
+    border-bottom: 1px solid #E4E4E4;
+    
+}
+#create-nursery-tab-headers  > li.active > a, 
+#create-nursery-tab-headers  > li.active > a:hover, 
+#create-nursery-tab-headers > li.active > a:focus {
+    
+    border-bottom: 0px;
+    
+}
+
 #check-germplasm-list, #imported-germplasm-list {
   min-height: 300px;
 }         			

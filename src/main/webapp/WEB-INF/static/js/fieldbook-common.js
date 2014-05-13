@@ -780,6 +780,7 @@ function openStudyOldFb(){
 function openStudy(tableName){	
 	
 	var count = 0;
+	/*
 	for(var index in selectedTableIds) {
 		//console.log( index + " : " + selectedTableIds[index]);
 		var tempVal = selectedTableIds[index];
@@ -788,7 +789,9 @@ function openStudy(tableName){
 			count++;
 		}			
 	}
-	
+	*/
+	idVal = getCurrentStudyIdInTab();
+	count++;
 	if(count != 1){
 		$('#page-create-field-map-message').html("<div class='alert alert-danger'>"+openStudyError+"</div>");
 		return;
@@ -817,6 +820,7 @@ function openStudy(tableName){
 
 function advanceNursery(tableName){
 	var count = 0;
+	/*
 	for(var index in selectedTableIds) {
 		//console.log( index + " : " + selectedTableIds[index]);
 		var tempVal = selectedTableIds[index];
@@ -825,7 +829,9 @@ function advanceNursery(tableName){
 			count++;
 		}			
 	}
-	
+	*/
+	idVal = getCurrentStudyIdInTab();
+	count++;
 	if(count != 1){
 		$('#page-create-field-map-message').html("<div class='alert alert-danger'>"+advanceStudyError+"</div>");
 		return;

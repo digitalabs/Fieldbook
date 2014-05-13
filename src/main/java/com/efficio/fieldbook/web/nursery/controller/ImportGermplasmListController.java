@@ -310,13 +310,15 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             int count = (int) germplasmListManager.countGermplasmListDataByListId(listId);
             
             List<Enumeration> checksList = ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
-            String checkId =  null;
+            String checkId =  "";
+            /*
             for(Enumeration enumVar : checksList){
             	if(enumVar.getName().equalsIgnoreCase("C")){
             		checkId = enumVar.getId().toString();
             		break;
             	}
             }
+            */
             List<GermplasmListData> data = new ArrayList<GermplasmListData>();
             //for(int i = 0 ; i < 20 ; i++)
             	data.addAll(germplasmListManager.getGermplasmListDataByListId(listId, 0, count));

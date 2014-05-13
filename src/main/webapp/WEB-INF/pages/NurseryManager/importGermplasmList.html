@@ -451,8 +451,8 @@
       		         if(sourceNode.hasChildren()){
       		        	 //alert('Source folder has children');
       		        	 //return false;
-      		        	 showErrorMessage('page-move-germplasm-folder-message-modal', cannotMove + " " + sourceNode.data.title + " " + hasChildrenString);
-      		        	 $('#moveGermplasmFolder').modal('show');
+      		        	 showErrorMessage('page-import-message-modal', cannotMove + " " + sourceNode.data.title + " " + hasChildrenString);
+      		        	 //$('#moveGermplasmFolder').modal('show');      		        	
       		         }else{
       		        	 //logMsg("tree.onDrop(%o, %o, %s)", node, sourceNode, hitMode);
       		        	 
@@ -470,8 +470,8 @@
 				        				//sourceNode.move(node, hitMode);
 			             		        moveGermplasm(sourceNode, node);				        				
 				        			}else{				        				
-				        				showErrorMessage('page-move-germplasm-folder-message-modal', cannotMove + " " + sourceNode.data.title + " " + hasChildrenString)
-				        				$('#moveGermplasmFolder').modal('show');
+				        				showErrorMessage('page-import-message-modal', cannotMove + " " + sourceNode.data.title + " " + hasChildrenString)
+				        				//$('#moveGermplasmFolder').modal('show');
 				        			}
 											
 				        		}		        		

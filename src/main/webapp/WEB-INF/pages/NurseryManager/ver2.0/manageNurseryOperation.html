@@ -268,8 +268,7 @@
 			  
 			  if(targetId == 'CENTRAL' || targetId > 0){
 				  var title = $('#studyTree').dynatree("getTree").getNodeByKey('CENTRAL').data.title;
-				  $('#moveStudyFolder').modal('show');
-				  showErrorMessage('page-move-germplasm-folder-message-modal', "Can not move to " + title);
+				  showErrorMessage('page-study-tree-message-modal', "Can not move to " + title);
 				  return false;
 			  }
 			  

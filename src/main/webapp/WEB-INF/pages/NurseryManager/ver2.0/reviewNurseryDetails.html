@@ -68,8 +68,8 @@
 		
 	</div>
 	<div class="sectionContainer collapse in managementDetails">
-		<div th:each="managementDetail, rowStat : *{managementDetails}">
-			<div class="col-xs-4 col-md-4">
+		<div class="form-group" >
+			<div style="padding-bottom: 5px" class="col-xs-4 col-md-4" th:each="managementDetail, rowStat : *{managementDetails}">
 				&nbsp;&nbsp;&nbsp;<strong><span style="word-wrap: break-word"  class="control-label" th:text="${managementDetail.variable.name}"></span>:</strong>
 				&nbsp;<span th:text="${managementDetail.value}" class="div-select-val"></span>
 			</div>
@@ -82,7 +82,7 @@
 			&nbsp;<span th:text="#{nursery.nurserydetails.additional.text}"></span>
 		</div>
 	</div>
-	<div class="sectionContainer collapse additionalDetails">
+	<div class="sectionContainer collapse additionalDetails" style="padding-top: 10px;">
 		<div class="col-xs-6 col-md-6">
 			<div class="col-xs-12 col-md-12">
 				<label class="control-label">

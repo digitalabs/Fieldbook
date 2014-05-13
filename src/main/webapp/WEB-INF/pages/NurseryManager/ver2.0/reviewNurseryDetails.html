@@ -261,13 +261,13 @@
 <script type='text/javascript' th:inline="javascript">
 //<![CDATA[   
      	$(document).ready(function() {
-     		$('.toggle-icon').click(function(){ 
+     		$('#study'+getCurrentStudyIdInTab() + " " + '.toggle-icon').click(function(){ 
      			var expandedImg = $(this).find(".section-expanded");
      			var collapsedImg = $(this).find(".section-collapsed");
      		   	expandedImg.toggle();
      		   	collapsedImg.toggle();
      		});
-			$('.section-toggle').on('click', function(){
+			$('#study'+getCurrentStudyIdInTab() + " " + '.section-toggle').on('click', function(){
 				var className = $(this).data('target')
 				$('#study'+getCurrentStudyIdInTab() + " "+className).toggle();
 			})

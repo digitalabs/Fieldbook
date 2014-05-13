@@ -418,6 +418,10 @@ function openAddVariablesSetting(variableType) {
 			$("#heading-modal").text(addSelectionVariates);
 			$('#reminder-placeholder').html(reminderSelectionVariates);
 			break;
+		case 7:
+			$("#heading-modal").text(addNurseryConditions);
+			$('#reminder-placeholder').html(reminderNurseryCondtions);
+			break;
 		default: 
 			$("#heading-modal").text(addNurseryLevelSettings);
 			$('#reminder-placeholder').html(reminderNursery);
@@ -699,6 +703,10 @@ function submitSelectedVariables(variableType) {
 						break;
 					case 6:
 						createSelectionVariatesVariables($.parseJSON(data));
+						break;
+					case 7:
+						createNurseryConditionsVariables($.parseJSON(data));
+						break;
 					default:
 						createNurseryLevelSettingVariables($.parseJSON(data));
 				}
@@ -1026,6 +1034,29 @@ function createSelectionVariatesVariables(data) {
 		settingDetail.variable.cvTermId + ");' ><span>" + settingDetail.variable.name + "</span></a></td>"; 		
 		newRow = newRow + "<td width='50%' class='"+className+"'>" + settingDetail.variable.description + "</td></tr>";
 		$("#selectionVariatesSettings").append(newRow);
+	});
+}
+
+function createNurseryConditionsVariables(data) {
+	$.each(data, function (index, settingDetail) {
+		var length = $("#nurseryConditionsSettings tbody tr").length + 1;
+		var className = length % 2 == 1 ? 'even' : 'odd';
+		var newRow = "<tr class='newVariable'>";
+		var isDelete = "";
+		
+		if (settingDetail.deletable) {
+			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(7," + 
+			settingDetail.variable.cvTermId + ",$(this))'></span>";
+		}
+		
+		newRow = newRow + "<td width='5%' style='text-align: center' class='"+className+"'>" + isDelete + 
+		"<input class='cvTermIds' type='hidden' id='nurseryConditions" + (length-1) + ".variable.cvTermId' name='nurseryConditions[" + 
+		(length-1) + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
+		"</td>";
+		newRow = newRow + "<td width='45%' class='"+className+"'><a href='javascript: void(0);' onclick='javascript:showBaselineTraitDetailsModal(" + 
+		settingDetail.variable.cvTermId + ");' ><span>" + settingDetail.variable.name + "</span></a></td>"; 		
+		newRow = newRow + "<td width='50%' class='"+className+"'>" + settingDetail.variable.description + "</td></tr>";
+		$("#nurseryConditionsSettings").append(newRow);
 	});
 }
 
@@ -1514,8 +1545,8 @@ function checkIfNull(object) {
 }
 
 function createSliderInput(ctr, minVal, maxVal){
-	return "<input data-slider-orientation='horizontal' data-slider-selection='after' type='text' data-step='0.0001' data-min='"+minVal+"' data-max='"+maxVal+"' id='studyLevelVariables" + ctr + 
-	".value' name='studyLevelVariables[" + ctr + "].value' class='form-control spinner-input spinnerElement' />";
+	return "<input data-slider-orientation='horizontal' data-slider-selection='after' type='text' data-min='"+minVal+"' data-max='"+maxVal+"' id='studyLevelVariables" + ctr + 
+	".value' name='studyLevelVariables[" + ctr + "].value' class='form-control numeric-input' />";
 }
 function createDropdownInput(ctr){
 	 return "<input type='hidden' id='studyLevelVariables" + ctr + 

@@ -2165,6 +2165,16 @@ function changeBrowseNurseryButtonBehavior(isEnable){
 	
 }
 
+function changeBrowseGermplasmButtonBehavior(isEnable){
+	if(isEnable)
+		$('.browse-germplasm-action').removeClass('disable-image');
+	else
+		$('.browse-germplasm-action').addClass('disable-image');
+	
+	
+}
+
+
 function addStudyTreeHighlight(node){
 	//$('#studyTree').find("*").removeClass('tree-highlight');
 	$(node.span).addClass('fbtree-focused');

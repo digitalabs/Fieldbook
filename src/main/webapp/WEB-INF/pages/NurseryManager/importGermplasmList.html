@@ -142,14 +142,25 @@
 	         		<div id="page-import-message-modal" class="col-xs-12 col-md-12">
 	         		</div>
          		</div>	 
-      			<div class="row  col-xs-12 col-md-12">      			
-	      			<img th:src="@{/static/img/build-new-list.png}" style="padding-bottom:3px;" />
-	      			<label class="control-label"><strong class="sub-content-heading" th:text="#{browse.for.list.all.list}">All List</strong></label>	      						      						      		
+      			<div class="row  ">    
+      				<div class="col-xs-7 col-md-7">  			
+		      			<img th:src="@{/static/img/build-new-list.png}" style="padding-bottom:3px;" />
+		      			<label class="control-label"><strong class="sub-content-heading" th:text="#{browse.for.list.all.list}">All List</strong></label>
+	      			</div>
+	      			<div class="col-xs-5 col-md-5">
+						<div style="float: right; padding-right: 15px">
+							<img width="30px" onclick="javascript: addGermplasmFolder(this)" height="30px" th:src="@{/static/img/add 2.png}" class="image-padding browse-germplasm-action" />
+							<img width="30px" onclick="javascript: renameGermplasmFolder(this)" height="30px" th:src="@{/static/img/edit.png}" class="image-padding browse-germplasm-action edit-germplasm-folder" />
+							<img width="30px" onclick="javascript: deleteGermplasmFolder(this)" height="30px" th:src="@{/static/img/delete.png}" class="image-padding browse-germplasm-action delete-germplasm-folder" />
+							<button id="closeStudyTreeModal" type="button" class="close" data-dismiss="modal" aria-hidden="true" style="padding-top: 5px">&nbsp;&nbsp;&nbsp;X</button>
+						</div>
+					</div>	      						      						      		
       			</div>
         		<div class="row  col-xs-12 col-md-12" >
         			<!-- Germplasm List Tree View -->
 					
 					<div id="germplasmTree" style="height:350px; overflow:auto;"></div>
+					
 					<br />  
 		      	
 			      	<a href="javascript: openImportGermplasmList()" th:text="#{nursery.import.germplasm.list}">Import File</a>
@@ -177,7 +188,9 @@
 <div class="row">
 	<div id="open-germplasm" th:include="/Common/openGermplasmListDetailsModal"></div>
 </div>
- 
+ <div class="row">
+	<div id="open-germplasm-list" th:include="/NurseryManager/ver2.0/manageGermplasmListOperation"></div>
+</div>
 	
 <!-- Scripts location, note that the div tag will be remove after merging to decorator -->
 <div layout:fragment="page-script">
@@ -207,6 +220,9 @@
     var lastDraggedChecksList = 0;
     var lastStartingEntry = 0;
                
+    var cannotMove =  /*[[#{browse.nursery.move.can.not}]]*/;
+  	var hasChildrenString =  /*[[#{browse.nursery.move.has.children}]]*/;
+  	
     var hasPageError = /*[[${importGermplasmListForm.hasError}]]*/;
     var germplasmStartingEntry = /*[[#{import.germplasm.germplasm.specified.starting.entry}]]*/;
     var germplasmAddedAsCheck = /*[[#{import.germplasm.germplasm.added.as.check}]]*/;
@@ -248,6 +264,7 @@
 		  $('#checks-section').css('width', '33%');
 	  }
 	  $('#entries-details').css('display', 'none');
+	  changeBrowseGermplasmButtonBehavior(false);
   });
   
   function makeCheckDraggable(isDraggable) {
@@ -367,17 +384,7 @@
         			dataType: "json"
         		},
         		onLazyRead: function(node) {
-        			node.appendAjax({
-        				url: "/Fieldbook/NurseryManager/expandGermplasmTree/" + node.data.key,
-        				dataType: "json",
-        				success: function(node) {
-        					//do nothing
-        				},
-        				error: function(node, XMLHttpRequest, textStatus, errorThrown) {
-        					console.log("The following error occured: " + textStatus, errorThrown); 
-        				},
-        				cache: false
-        			});
+        			doGermplasmLazyLoad(node);
         		},
         		classNames: {
         			container: "fbtree-container",
@@ -394,29 +401,95 @@
         		     	 listId = 0;
         		    },
         		onActivate: function(node) {
-        			if (node.data.isFolder == false) {
-         				;//displayGermplasmDetails(node.data.key);
+        			
+        			if(node.data.isFolder == false){
+        				//addDetailsTab(node.data.key, node.data.title);
+        				changeBrowseGermplasmButtonBehavior(false);
+        			}else{
+        				if(node.data.key > 1 || node.data.key == 'CENTRAL'){
+        					changeBrowseGermplasmButtonBehavior(false);
+       					}else if(node.data.key == 'LOCAL'){
+       						changeBrowseGermplasmButtonBehavior(true);
+           					$('.edit-germplasm-folder').addClass('disable-image');
+          					$('.delete-germplasm-folder').addClass('disable-image');   
+           				}
+        				else
+        					changeBrowseGermplasmButtonBehavior(true);
         			}
         		},
         		dnd: {
-        		      revert: false, // true: slide helper back to source if drop is rejected
-        		      onDragStart: function(node) {
-        		        /** This function MUST be defined to enable dragging for the tree.
-        		         *  Return false to cancel dragging of node.
-        		         */
-        		        //console.log("tree.onDragStart" + node);
-        		        if(node.data.isFolder){
-        		          return false;
-        		        }
-        		        return true;
-        		      },
-        		      onDragStop: function(node) {
-        		        //console.log("tree.onDragStop" + node);
-        		      },
-        		      onDragOver: function(node){
-        		    	  //console.log('dragging');
-        		      }
-        		    }
+      		      onDragStart: function(node) {
+      		        /** This function MUST be defined to enable dragging for the tree.
+      		         *  Return false to cancel dragging of node.
+      		         */
+      		         //console.log(node);
+      		         //if(node.hasChildren() == true || node.data.key > 0 || node.childList == null)
+     		        	 if(node.data.key > 0)
+     		        	 	return false;
+      		        //logMsg("tree.onDragStart(%o)", node);
+      		        return true;
+      		      },
+      		      onDragStop: function(node) {
+      		        // This function is optional.
+      		        //logMsg("tree.onDragStop(%o)", node);
+      		      },
+      		      
+      		      preventVoidMoves: true, // Prevent dropping nodes 'before self', etc.
+      		      onDragEnter: function(node, sourceNode) {
+      		     
+      		        return true;
+      		      },
+      		      onDragOver: function(node, sourceNode, hitMode) {
+      		       
+      		      },
+      		      onDrop: function(node, sourceNode, hitMode, ui, draggable) {
+      		        /** This function MUST be defined to enable dropping of items on
+      		         * the tree.
+      		         */
+      		         //console.log("============== dropping ======== " + hitMode);
+      		        
+      		         if(sourceNode.hasChildren()){
+      		        	 //alert('Source folder has children');
+      		        	 //return false;
+      		        	 showErrorMessage('page-move-germplasm-folder-message-modal', cannotMove + " " + sourceNode.data.title + " " + hasChildrenString);
+      		        	 $('#moveGermplasmFolder').modal('show');
+      		         }else{
+      		        	 //logMsg("tree.onDrop(%o, %o, %s)", node, sourceNode, hitMode);
+      		        	 
+      		         	 
+  				
+  				
+      		        	 $.ajax({
+      		        		url: "/Fieldbook/NurseryManager/expandGermplasmTree/" + sourceNode.data.key,
+				        		type: "GET",
+				        		cache: false,
+				        		aysnc: false,
+				        		success: function(data) {
+				        			var childCount = $.parseJSON(data).length;
+				        			if(childCount == 0){
+				        				//sourceNode.move(node, hitMode);
+			             		        moveGermplasm(sourceNode, node);				        				
+				        			}else{				        				
+				        				showErrorMessage('page-move-germplasm-folder-message-modal', cannotMove + " " + sourceNode.data.title + " " + hasChildrenString)
+				        				$('#moveGermplasmFolder').modal('show');
+				        			}
+											
+				        		}		        		
+				        	});
+      		        	 
+           		        
+      		         }
+      		        	 
+      		        
+      		        // expand the drop target
+//      		        sourceNode.expand(true);
+      		      },
+      		      onDragLeave: function(node, sourceNode) {
+      		        /** Always called if onDragEnter was called.
+      		         */
+      		        //logMsg("tree.onDragLeave(%o, %o)", node, sourceNode);
+      		      }
+      		    }
         	});
         	
         	  $(".list-droppable").droppable({
@@ -426,9 +499,13 @@
       		      //console.log("droppable.over, "+ event+ui);
       		    },
       		    drop: function(event, ui) {
+      		    	
+      		    	if($('#listTreeModal').hasClass('in') == true)
+      		    		return false;
+      		    	
       		      var source = ui.helper.data("dtSourceNode") || ui.draggable;
       		    	
-      		  
+      		    
       		     if(isFunction(source.data) == false){
 	      		      if($(this).hasClass('primary')){
 	      		    	  	if (lastDraggedChecksList != source.data.key) {
@@ -824,6 +901,42 @@
         }
         function viewGermplasmLitDetails(){
         	openGermplasmListDetailsPopop(listId);
+        }
+        
+
+        function doGermplasmLazyLoad(node){
+        	if (node.data.isFolder == true){
+    			node.appendAjax({
+    				url: "/Fieldbook/NurseryManager/expandGermplasmTree/" + node.data.key,
+    				dataType: "json",
+    				success: function(node) {
+    					//do nothing
+    					setTimeout(function(){node.focus()}, 50);
+    					if(node.hasChildren()){
+    						$('.delete-germplasm-folder').addClass('disable-image');
+    					}
+    					
+    					if(node.data.isFolder == false){
+    						changeBrowseGermplasmButtonBehavior(false);
+            			}else{
+            				if(node.data.key > 1 || node.data.key == 'CENTRAL'){
+            					changeBrowseGermplasmButtonBehavior(false);        					     				
+            				}else if(node.data.key == 'LOCAL'){
+            					changeBrowseGermplasmButtonBehavior(true);
+            					$('.edit-germplasm-folder').addClass('disable-image');
+           						$('.delete-germplasm-folder').addClass('disable-image');   
+            				}
+            				else
+            					changeBrowseGermplasmButtonBehavior(true);
+            			}
+    				},
+    				error: function(node, XMLHttpRequest, textStatus, errorThrown) {
+    					console.log("The following error occured: " + textStatus, errorThrown); 
+    				},
+    				cache: false
+    			});
+    			node.expand();
+			}
         }
       //]]>
     </script>

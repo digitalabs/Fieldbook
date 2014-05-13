@@ -103,6 +103,7 @@
      	var hideText = /*[[#{nursery.nurserydetails.additional.hide}]]*/;
         
         var selectedTableIds = new Array();
+        var currentStudyId = getCurrentStudyIdInTab();
         
         
      	 $('#make-nursery').on('click', function(){
@@ -121,68 +122,6 @@
      	}); 
      	
 
-     	$(document).ready(function() {
-     		$('.toggle-icon').click(function(){ 
-     			var expandedImg = $(this).find(".section-expanded");
-     			var collapsedImg = $(this).find(".section-collapsed");
-     		   	expandedImg.toggle();
-     		   	collapsedImg.toggle();
-     		});
-
-     		$("#open-study-url-link").click(function() {
-     			selectedTableIds[0] = $("#studyId").val();
-     		});
-
-     		$("#advance-study-url-link").click(function() {
-     			selectedTableIds[0] = $("#studyId").val();
-     		});
-
-     		$("#fieldmap-url-link").click(function() {
-     			selectedTableIds[0] = $("#studyId").val();
-     		});
-
-     		$("#label-printing-url-link").click(function() {
-     			selectedTableIds[0] = $("#studyId").val();
-     		});
-
-     		$("#view-fieldmap-url-link").click(function() {
-     			selectedTableIds[0] = $("#studyId").val();
-     		});
-     		
-     		$("#toggle-additional-link").click(function() {
-     			if ($(this).text() == showText) {
-     				$(this).text(hideText);
-     			}
-     			else {
-     				$(this).text(showText);
-     			}
-     		});
-     		
-     		$(".dataset-toggle").click(function() {
-     			loadDatasetDropdown($(this).parent().find("#dataset-selection"));
-     		});
-     		
-     		$("#dataset-selection").change(function() {
-     			if ($("#dataset-selection").val()) {
-     				var id = $("#dataset-selection").val();
-     				var name = $("#dataset-selection option:selected").text();
-     				var found = false;
-     				$("#measurement-tabs").children().hide();
-     				$("#measurement-tab-headers").find("li").each(function(index) {
-     					$(this).removeClass("active");
-     					if ($(this).text() == name) {
-     						$(this).addClass("active");
-     						$("#dset-tab-" + id).show();
-     						found = true;
-     					}
-     				});
-     				if (!found) {
-     					loadDatasetMeasurementRowsViewOnly(id, name);
-     				}
-     			}
-     		});
-     	});
-        
       //]]>
     </script>
 </div>

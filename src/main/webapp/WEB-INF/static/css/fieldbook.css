@@ -954,3 +954,7 @@ div.sectionContainer {
 .control-label-bold{
 	font-weight: bold;
 }
+.add-bottom-padding {
+	padding-bottom: 10px;
+	padding-left: 40px;
+}

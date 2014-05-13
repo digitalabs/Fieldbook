@@ -11,6 +11,7 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -129,7 +130,28 @@ public class CreateNurseryController extends SettingsController {
     	form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString());
     	form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
     	setFormStaticData(form);
+    	assignDefaultValues(form);
     	return super.show(model);
+    }
+    
+    /**
+     * Assign default values.
+     *
+     * @param form the form
+     * @throws MiddlewareQueryException the middleware query exception
+     */
+    private void assignDefaultValues(CreateNurseryForm form) throws MiddlewareQueryException {
+        List<SettingDetail> nurseryDefaults = new ArrayList<SettingDetail>();
+        List<SettingDetail> plotDefaults = new ArrayList<SettingDetail>();
+        List<SettingDetail> baselineTraitsList = new ArrayList<SettingDetail>();
+        form.setStudyLevelVariables(nurseryDefaults);
+        form.setPlotLevelVariables(plotDefaults);
+        nurseryDefaults = buildDefaultVariables(nurseryDefaults, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true));
+        this.userSelection.setStudyLevelConditions(nurseryDefaults);
+        plotDefaults = buildDefaultVariables(plotDefaults, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false));
+        this.userSelection.setPlotsLevelList(plotDefaults);
+        this.userSelection.setBaselineTraitsList(baselineTraitsList);
+        
     }
 
     /**

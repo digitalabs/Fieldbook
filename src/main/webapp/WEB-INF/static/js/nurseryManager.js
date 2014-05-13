@@ -416,7 +416,7 @@ function openAddVariablesSetting(variableType) {
 			$("#heading-modal").text(addBaselineTraits);
 			$('#reminder-placeholder').html(reminderTraits);
 			break;
-		case 4:
+		case 6:
 			$("#heading-modal").text(addSelectionVariates);
 			$('#reminder-placeholder').html(reminderSelectionVariates);
 		default: 
@@ -698,7 +698,7 @@ function submitSelectedVariables(variableType) {
 					case 3:
 						createBaselineTraitVariables($.parseJSON(data));
 						break;
-					case 4:
+					case 6:
 						createSelectionVariatesVariables($.parseJSON(data));
 					default:
 						createNurseryLevelSettingVariables($.parseJSON(data));
@@ -1015,7 +1015,7 @@ function createSelectionVariatesVariables(data) {
 		var isDelete = "";
 		
 		if (settingDetail.deletable) {
-			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(4," + 
+			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(6," + 
 			settingDetail.variable.cvTermId + ",$(this))'></span>";
 		}
 		

@@ -24,6 +24,7 @@ import org.generationcp.middleware.domain.oms.TraitClassReference;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.StudySelection;
 
+// TODO: Auto-generated Javadoc
 /**
  * This bean models the various input that the user builds up over time
  * to perform the actual loading operation.
@@ -47,6 +48,8 @@ public class UserSelection extends StudySelection implements Serializable {
     
     /** The imported germplasm main info. */
     private ImportedGermplasmMainInfo importedGermplasmMainInfo;
+    
+    /** The imported check germplasm main info. */
     private ImportedGermplasmMainInfo importedCheckGermplasmMainInfo;
 
     /** The is import valid. */
@@ -63,6 +66,8 @@ public class UserSelection extends StudySelection implements Serializable {
     
     /** The current page germplasm list. */
     private int currentPageGermplasmList;
+    
+    /** The current page check germplasm list. */
     private int currentPageCheckGermplasmList;
     
     /**  Nursery level conditions in Manage Settings. */
@@ -77,6 +82,7 @@ public class UserSelection extends StudySelection implements Serializable {
     /** The trial level variable list. */
     private List<SettingDetail> trialLevelVariableList;
     
+    /** The trial environment values. */
     private List<List<ValueReference>> trialEnvironmentValues;
     
     /** The all standard variables. */
@@ -91,7 +97,11 @@ public class UserSelection extends StudySelection implements Serializable {
     /** The trait ref list. */
     private List<TraitClassReference> traitRefList;
     
+    /** The treatment factors. */
     private List<SettingDetail> treatmentFactors;
+    
+    /** The selection variates. */
+    private List<SettingDetail> selectionVariates;
     
 	/**
 	 * Gets the current page.
@@ -131,10 +141,20 @@ public class UserSelection extends StudySelection implements Serializable {
 	
 	
 
+	/**
+	 * Gets the current page check germplasm list.
+	 *
+	 * @return the current page check germplasm list
+	 */
 	public int getCurrentPageCheckGermplasmList() {
 		return currentPageCheckGermplasmList;
 	}
 
+	/**
+	 * Sets the current page check germplasm list.
+	 *
+	 * @param currentPageCheckGermplasmList the new current page check germplasm list
+	 */
 	public void setCurrentPageCheckGermplasmList(int currentPageCheckGermplasmList) {
 		this.currentPageCheckGermplasmList = currentPageCheckGermplasmList;
 	}
@@ -444,6 +464,9 @@ public class UserSelection extends StudySelection implements Serializable {
 		this.trialLevelVariableList = trialLevelVariableList;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.efficio.fieldbook.web.common.bean.StudySelection#isTrial()
+	 */
 	@Override
 	public boolean isTrial() {
 		if (this.workbook != null) {
@@ -470,22 +493,60 @@ public class UserSelection extends StudySelection implements Serializable {
             this.trialEnvironmentValues = trialEnvironmentValues;
         }
 
+		/**
+		 * Gets the imported check germplasm main info.
+		 *
+		 * @return the imported check germplasm main info
+		 */
 		public ImportedGermplasmMainInfo getImportedCheckGermplasmMainInfo() {
 			return importedCheckGermplasmMainInfo;
 		}
 
+		/**
+		 * Sets the imported check germplasm main info.
+		 *
+		 * @param importedCheckGermplasmMainInfo the new imported check germplasm main info
+		 */
 		public void setImportedCheckGermplasmMainInfo(
 				ImportedGermplasmMainInfo importedCheckGermplasmMainInfo) {
 			this.importedCheckGermplasmMainInfo = importedCheckGermplasmMainInfo;
 		}
 
+		/**
+		 * Gets the treatment factors.
+		 *
+		 * @return the treatment factors
+		 */
 		public List<SettingDetail> getTreatmentFactors() {
 			return treatmentFactors;
 		}
 
+		/**
+		 * Sets the treatment factors.
+		 *
+		 * @param treatmentFactors the new treatment factors
+		 */
 		public void setTreatmentFactors(List<SettingDetail> treatmentFactors) {
 			this.treatmentFactors = treatmentFactors;
 		}
+
+        /**
+         * Gets the selection variates.
+         *
+         * @return the selectionVariates
+         */
+        public List<SettingDetail> getSelectionVariates() {
+            return selectionVariates;
+        }
+
+        /**
+         * Sets the selection variates.
+         *
+         * @param selectionVariates the selectionVariates to set
+         */
+        public void setSelectionVariates(List<SettingDetail> selectionVariates) {
+            this.selectionVariates = selectionVariates;
+        }
         
         
 }

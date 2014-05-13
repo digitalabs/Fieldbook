@@ -177,12 +177,12 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 				    			</div>
 				    			<div class="col-xs-2 col-md-2">
 				    				<span class="glyphicon glyphicon-plus"></span>&nbsp;
-						    		<a href="javascript: openAddVariablesSetting(4);" th:text="#{nursery.create.nursery.add.settings}">Add</a>
+						    		<a href="javascript: openAddVariablesSetting(6);" th:text="#{nursery.create.nursery.add.settings}">Add</a>
 				    			</div>
 			    			</div>
 			    			<div class="row form-group collapse in selectionVariatesDetails">
 			    				<div class="col-xs-12 col-md-12">
-			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll-create" id="selectionVariatesSettings">
+			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll" id="selectionVariatesSettings">
 			    						<thead>
 										<tr>
 											<th width="5%"></th>
@@ -194,7 +194,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 					    					<tr th:each="selectionVariatesVariable, rowStat : *{selectionVariatesVariables}">
 					    						<td width="5%" style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'">
 													<span style="cursor: default; font-size: 16px;" th:if="${selectionVariatesVariable.deletable}" class="glyphicon glyphicon-remove-circle"
-						    						th:onclick="'javascript: deleteVariable(4,\'' + ${selectionVariatesVariable.variable.cvTermId} + '\',$(this))'"></span>
+						    						th:onclick="'javascript: deleteVariable(6,\'' + ${selectionVariatesVariable.variable.cvTermId} + '\',$(this))'"></span>
 						    						  			    						 
 						    						<input class="cvTermIds" type="hidden" th:field="*{selectionVariatesVariables[__${rowStat.index}__].variable.cvTermId}" />
 				    							</td>
@@ -203,7 +203,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 															*{selectionVariatesVariable,Variables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
 															<span th:text="${selectionVariatesVariable,.variable.name}"></span></a>
 						    					</td>
-						    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${selectionVariatesVariable,.variable.description}"></td>
+						    					<td width="50%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${selectionVariatesVariable,.variable.description}"></td>
 					    					</tr> 
 				    					</tbody>
 			    					</table>

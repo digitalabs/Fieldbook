@@ -26,97 +26,115 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 		<div class="col-xs-9 col-md-9"></div>
 	</div>
 </div>
-<div class="panel panel-default">
-   	<div class="panel-body manage-settings-panel-body">
-   	<div class="row">
-		<div class="col-xs-12 col-md-12">
-			<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
-		</div>		
+<div class="row">
+	<div class="col-xs-12 col-md-12">
+		&nbsp;
 	</div>
- 	<div class="row">
- 		<div class="col-xs-12 col-md-12">
-			<label class="control-label">
- 				<strong class="sub-content-heading" th:text="#{nursery.create.nursery.basic.details}">BASIC DETAILS</strong>
- 			</label>
- 		</div>
-   	</div>
-   	<div class="row form-group">
-   		<div class="col-xs-2 col-md-2">
-   			<label th:text="#{nursery.create.nursery.nursery.name} + ': '"></label>&nbsp;<span class="required">*</span>
-   		</div>
-   		<div class="col-xs-4 col-md-4">
-   			<input type="text" class="form-control character-input" />
-   		</div>
-   		<div class="col-xs-2 col-md-2">
-   			<label th:text="#{nursery.savenursery.savein} + ': '"></label>&nbsp;<span class="required">*</span>
-   		</div>
-   		<div class="col-xs-4 col-md-4">
-   		</div>
-   	</div>
-   	<div class="row form-group">
-   		<div class="col-xs-2 col-md-2">
-   			<label th:text="#{nursery.create.nursery.description} + ': '"></label>&nbsp;<span class="required">*</span>
-   		</div>
-   		<div class="col-xs-4 col-md-4">
-   			<input type="text" class="form-control character-input" />
-   		</div>
-   		<div class="col-xs-2 col-md-2">
-   			<label th:text="#{nursery.create.nursery.creation.date} + ': '"></label>&nbsp;<span class="required">*</span>
-   		</div>
-   		<div class="col-xs-4 col-md-4">
-   			<input type="text" class="form-control date-input" />
-   		</div>
-   	</div>
-   	<div class="row form-group">
-   		<div class="col-xs-2 col-md-2">
-   			<label th:text="#{nursery.create.nursery.objective} + ': '"></label>&nbsp;<span class="required">*</span>
-   		</div>
-   		<div class="col-xs-4 col-md-4">
-   			<textarea class="form-control character-input" rows="3"></textarea>
-   		</div>
-   		<div class="col-xs-2 col-md-2">
-   			<label th:text="#{nursery.create.nursery.completion.date} + ': '"></label>&nbsp;<span class="required">*</span>
-   		</div>
-   		<div class="col-xs-4 col-md-4">
-   			<input type="text" class="form-control date-input" />
-   		</div>
-   	</div>
-   	<div class="row form-group">
-   		<div class="col-xs-12 col-md-12">
-   			<label th:text="#{nursery.create.nursery.build.nursery} + '? '">How would you like to build your nursery?</label>
-   		</div>
+</div>
+<div class="row">
+	<div class="col-xs-12 col-md-12">
+		<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
+	</div>		
+</div>
+<div class="row">
+	<div class="col-xs-12 col-md-12">
+	<label class="control-label">
+			<strong class="sub-content-heading" th:text="#{nursery.create.nursery.basic.details}">BASIC DETAILS</strong>
+		</label>
+	</div>
+</div>
+<div class="row form-group">
+	<div class="col-xs-2 col-md-2">
+		<label th:text="#{nursery.create.nursery.nursery.name} + ': '"></label>&nbsp;<span class="required">*</span>
+	</div>
+	<div class="col-xs-4 col-md-4">
+		<input type="text" class="form-control character-input" />
+	</div>
+	<div class="col-xs-2 col-md-2">
+		<label th:text="#{nursery.savenursery.savein} + ': '"></label>&nbsp;<span class="required">*</span>
+	</div>
+	<div class="col-xs-4 col-md-4">
+	</div>
+</div>
+<div class="row form-group">
+	<div class="col-xs-2 col-md-2">
+		<label th:text="#{nursery.create.nursery.description} + ': '"></label>&nbsp;<span class="required">*</span>
+	</div>
+	<div class="col-xs-4 col-md-4">
+		<input type="text" class="form-control character-input" />
+	</div>
+	<div class="col-xs-2 col-md-2">
+		<label th:text="#{nursery.create.nursery.creation.date} + ': '"></label>&nbsp;<span class="required">*</span>
+	</div>
+	<div class="col-xs-4 col-md-4">
+		<input type="text" class="form-control date-input" />
+	</div>
+</div>
+<div class="row form-group">
+  	<div class="col-xs-2 col-md-2">
+ 		<label th:text="#{nursery.create.nursery.objective} + ': '"></label>&nbsp;<span class="required">*</span>
+ 	</div>
+  	<div class="col-xs-4 col-md-4">
+  		<textarea class="form-control character-input" rows="3"></textarea>
   	</div>
-  	<div class="row form-group">
-   		<div class="col-xs-4 col-md-4">
-   			<select>
-   				<option>Start with Blank Nursery</option>
-   				<option th:text="#{nursery.managesettings.use.previous.nursery}">Use Previous Nursery</option>
-   			</select>
-   			&nbsp;&nbsp;
-   			<input type="button" th:value="#{common.form.choose.text}" class="btn btn-info" />
-   		</div>
-   		<div class="col-xs-8 col-md-8">
-   			&nbsp;
-   		</div>
+  	<div class="col-xs-2 col-md-2">
+  		<label th:text="#{nursery.create.nursery.completion.date} + ': '"></label>&nbsp;<span class="required">*</span>
+  	</div>
+  	<div class="col-xs-4 col-md-4">
+  		<input type="text" class="form-control date-input" />
   	</div>
 </div>
+<div class="row">
+	<div class="col-xs-12 col-md-12">
+		&nbsp;
+	</div>
 </div>
-
+<div class="row form-group">
+	<div class="col-xs-12 col-md-12">
+  		<label th:text="#{nursery.create.nursery.build.nursery} + '? '">How would you like to build your nursery?</label>
+  	</div>
+</div>
+<div class="row form-group">
+ 	<div class="col-xs-4 col-md-4">
+ 		<select>
+ 			<option>Start with Blank Nursery</option>
+ 			<option th:text="#{nursery.managesettings.use.previous.nursery}">Use Previous Nursery</option>
+ 		</select>
+ 		&nbsp;&nbsp;
+ 		<input type="button" th:value="#{common.form.choose.text}" class="btn btn-info" />
+ 	</div>
+ 	<div class="col-xs-8 col-md-8">
+ 		&nbsp;
+ 	</div>
+</div>
+<div class="row">
+	<div class="col-xs-12 col-md-12">
+		&nbsp;
+	</div>
+</div>
 </form>
 
 <ul id="create-nursery-tab-headers" class="nav nav-tabs" >
-	<li id="nursery-settings" class="active"><a th:text="#{nursery.create.nursery.nursery.settings}">.Nursery Settings</a></li>			
+	<li id="nursery-settings-li" class="active"><a href="javascript:showSelectedTab('nursery-settings');" th:text="#{nursery.create.nursery.nursery.settings}">.Nursery Settings</a></li>
+	<li id="nursery-germplasm-list-li"><a href="javascript:showSelectedTab('nursery-germplasm-list');" th:text="#{nursery.create.nursery.germplasm.list.tab}">.Germplasm and Checks</a></li>			
 </ul>
 	
-	<div id="nursery-tabs" style="padding-top: 15px;">
+	<div id="create-nursery-tabs" style="padding-top: 15px;">
 		<div id="nursery-settings">
 			<div class="col-xs-12 col-md-12">
 				<div id="chooseSettingsDiv" th:include="/NurseryManager/ver2.0/chooseSettings">
 				</div>
 			</div>
 		</div>
+		<div id="nursery-germplasm-list" style="display:none;">
+			<div class="col-xs-12 col-md-12">
+				<div id="chooseGermplasmAndChecks" th:include="/NurseryManager/importGermplasmList">
+				</div>
+			</div>
+		</div>
 	</div>
 	
+	<!--  
 	<div class="row">
 		<div class="form-group">
 			<div class="col-xs-5 col-md-5">&nbsp;</div>
@@ -125,6 +143,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 			</div>
 		</div>
 	</div>
+	-->
 	
 	<!-- Modal Dialog for Successful Save -->
 	<div class="form-group">
@@ -161,9 +180,11 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
     var addNurseryLevelSettings = /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/;
     var addPlotLevelSettings = /*[[#{nursery.managesettings.add.plot.level.settings}]]*/;
     var addBaselineTraits = /*[[#{nursery.managesettings.add.baseline.traits}]]*/;
+    var addSelectionVariates = /*[[#{nursery.managesettings.add.selection.variates}]]*/;
     var reminderNursery = /*[[#{nursery.reminder.add.nursery.settings}]]*/;
 	var reminderPlot = /*[[#{nursery.reminder.add.plot.settings}]]*/;
 	var reminderTraits = /*[[#{nursery.reminder.add.trait.settings}]]*/;
+	var reminderSelectionVariates = /*[[#{nursery.reminder.add.selection.variates}]]*/;
        		
 	function submitGermplasmList(){
 		var $form = $("#germplasm-list-form");

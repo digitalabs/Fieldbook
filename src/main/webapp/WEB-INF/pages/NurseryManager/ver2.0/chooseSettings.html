@@ -12,7 +12,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
                     <input type="hidden" th:field="*{startDateId}"/>
 					<input type="hidden" th:field="*{endDateId}"/>
 					<input type="hidden" th:field="*{openGermplasmUrl}"/>
-					
+					<input type="hidden" th:field="*{idNameVariables}"/>
 	    			<div class="row form-group">
 	    				<div class="col-xs-6 col-md-6">
 	    					<div class="row">
@@ -135,24 +135,75 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 			    			</div>
 			    			<div class="row form-group collapse in plotLevelDetails">
 			    				<div class="col-xs-12 col-md-12">
-			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll-create" id="plotLevelSettings">
+			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll" id="plotLevelSettings">
 			    						<thead>
 										<tr>
+							                <th width="5%"></th>
 							                <th width="45%" th:utext="#{nursery.managesettings.plot.name}">.Name</th>
-							                <th width="45%" th:utext="#{nursery.managesettings.plot.description}">.Description</th>
-							                 <th width="10%"></th>
+							                <th width="50%" th:utext="#{nursery.managesettings.plot.description}">.Description</th>
 										</tr>
 										</thead>
 										<tbody>
 					    					<tr th:each="plotLevelVariable, rowStat : *{plotLevelVariables}">
-					    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.name}"></td>
-					    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.description}"></td>
-					    					<td width="10%" th:class="${rowStat.even}? 'even' : 'odd'" >
+					    						<td width="5%" style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'">
+													<span style="cursor: default; font-size: 16px;" th:if="${plotLevelVariable.deletable}" class="glyphicon glyphicon-remove-circle"
+						    						th:onclick="'javascript: deleteVariable(2,\'' + ${plotLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
+						    						  			    						 
+						    						<input class="cvTermIds" type="hidden" th:field="*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
+				    							</td>
+						    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
 						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
-														*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
-														<span class="glyphicon glyphicon-eye-open"></span></a>
+															*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
+															<span th:text="${plotLevelVariable.variable.name}"></span></a>
 						    					</td>
-					    					<input class="cvTermIds" type="hidden" th:field="*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
+						    					<td width="50%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.description}"></td>
+					    					</tr> 
+				    					</tbody>
+			    					</table>
+			    				</div>
+			    				<div class="col-xs-3 col-md-3"></div>
+			    			</div>
+			    			<div class="row form-group">
+			    				<div class="col-xs-12 col-md-12">
+			    					&nbsp;
+			    				</div>
+		    				</div>
+		    				<div class="row">
+			    				<div class="col-xs-10 col-md-10">
+				    				<label class="control-label" data-toggle="collapse" data-target=".selectionVariatesDetails">
+				    					<strong class="sub-content-heading" th:text="#{nursery.create.nursery.selection.variates}">SELECTION VARIATES</strong>
+				    				</label>
+				    				<span class="help-tooltip-nursery" data-placement="right" data-toggle="tooltip" th:title="#{nursery.create.nursery.selection.variates.notes}">?</span>
+				    			</div>
+				    			<div class="col-xs-2 col-md-2">
+				    				<span class="glyphicon glyphicon-plus"></span>&nbsp;
+						    		<a href="javascript: openAddVariablesSetting(4);" th:text="#{nursery.create.nursery.add.settings}">Add</a>
+				    			</div>
+			    			</div>
+			    			<div class="row form-group collapse in selectionVariatesDetails">
+			    				<div class="col-xs-12 col-md-12">
+			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll-create" id="selectionVariatesSettings">
+			    						<thead>
+										<tr>
+											<th width="5%"></th>
+							                <th width="45%" th:utext="#{nursery.create.nursery.selection.variate.name}">.Name</th>
+							                <th width="50%" th:utext="#{nursery.create.nursery.selection.variate.description}">.Description</th>
+										</tr>
+										</thead>
+										<tbody>
+					    					<tr th:each="selectionVariatesVariable, rowStat : *{selectionVariatesVariables}">
+					    						<td width="5%" style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'">
+													<span style="cursor: default; font-size: 16px;" th:if="${selectionVariatesVariable.deletable}" class="glyphicon glyphicon-remove-circle"
+						    						th:onclick="'javascript: deleteVariable(4,\'' + ${selectionVariatesVariable.variable.cvTermId} + '\',$(this))'"></span>
+						    						  			    						 
+						    						<input class="cvTermIds" type="hidden" th:field="*{selectionVariatesVariables[__${rowStat.index}__].variable.cvTermId}" />
+				    							</td>
+						    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
+						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
+															*{selectionVariatesVariable,Variables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
+															<span th:text="${selectionVariatesVariable,.variable.name}"></span></a>
+						    					</td>
+						    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${selectionVariatesVariable,.variable.description}"></td>
 					    					</tr> 
 				    					</tbody>
 			    					</table>
@@ -176,26 +227,29 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 			    			</div>
 			    			<div class="row form-group collapse in baselineTraitDetails">
 			    				<div class="col-xs-12 col-md-12">
-			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll-create" id="baselineTraitSettings">
+			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll" id="baselineTraitSettings">
 			    						<thead>
 										<tr>
+							                <th width="5%"></th>
 							                <th width="45%" th:utext="#{nursery.managesettings.trait}">.Trait</th>
-							                <th width="45%" th:utext="#{nursery.managesettings.trait.description}">.Description</th>
-							                <th width="10%"></th>
+							                <th width="50%" th:utext="#{nursery.managesettings.trait.description}">.Description</th>
 										</tr>
 										</thead>
 										<tbody>
 					    					<tr class="baseline-traits" th:each="baselineTraitVariable, rowStat : *{baselineTraitVariables}">
-					    						
-						    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.name}"></td>
-						    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.description}"></td>
-						    					<td width="10%" th:class="${rowStat.even}? 'even' : 'odd'" >
+					    						<td width="5%" style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'" >
+						    						<span style="cursor: default; font-size: 16px;" th:if="${baselineTraitVariable.deletable}" class="glyphicon glyphicon-remove-circle"
+						    						th:onclick="'javascript: deleteVariable(3,\'' + ${baselineTraitVariable.variable.cvTermId} + '\',$(this))'"></span>
+						    									    					
+						    						<input class="cvTermIds" type="hidden" th:field="*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId}" />
+					    						</td>
+						    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
 						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
 														*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
-														<span class="glyphicon glyphicon-eye-open"></span></a>
+														<span th:text="${baselineTraitVariable.variable.name}"></span></a>
 														<input class="cvTermIds" type="hidden" th:field="*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId}" />
 						    					</td>
-						    					
+						    					<td width="50%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.description}"></td>						    					
 					    					</tr> 
 				    					</tbody>
 			    					</table>

@@ -93,19 +93,16 @@
 					<thead>
 					<tr>
 		                <th width="45%" th:utext="#{nursery.managesettings.plot.name}">.Name</th>
-		                <th width="45%" th:utext="#{nursery.managesettings.plot.description}">.Description</th>
-		                <th width="10%"></th>
+		                <th width="55%" th:utext="#{nursery.managesettings.plot.description}">.Description</th>
 					</tr>
 					</thead>
 					<tbody>
 	  					<tr th:each="nurseryConditionDetail, rowStat : *{nurseryConditionDetails}">
-		  					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${nurseryConditionDetail.variable.name}"></td>
-		  					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${nurseryConditionDetail.variable.description}"></td>
-		  					<td width="10%" th:class="${rowStat.even}? 'even' : 'odd'" >
+		  					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${nurseryConditionDetail.variable.name}">
 		   						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
-									*{nurseryConditionDetails[__${rowStat.index}__].variable.cvTermId} + '\');'" >
-									<span class="glyphicon glyphicon-eye-open"></span></a>
-		   					</td>
+									*{nurseryConditionDetails[__${rowStat.index}__].variable.cvTermId} + '\');'" ></a>
+		  					</td>
+		  					<td width="55%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${nurseryConditionDetail.variable.description}"></td>
 	  					</tr> 
 					</tbody>
 				</table>
@@ -122,19 +119,16 @@
 					<thead>
 					<tr>
 		                <th width="45%" th:utext="#{nursery.managesettings.plot.name}">.Name</th>
-		                <th width="45%" th:utext="#{nursery.managesettings.plot.description}">.Description</th>
-		                <th width="10%"></th>
+		                <th width="55%" th:utext="#{nursery.managesettings.plot.description}">.Description</th>
 					</tr>
 					</thead>
 					<tbody>
 	  					<tr th:each="factorDetail, rowStat : *{factorDetails}">
-		  					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${factorDetail.variable.name}"></td>
-		  					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${factorDetail.variable.description}"></td>
-		  					<td width="10%" th:class="${rowStat.even}? 'even' : 'odd'" >
+		  					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${factorDetail.variable.name}">
 		   						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
-									*{factorDetails[__${rowStat.index}__].variable.cvTermId} + '\');'" >
-									<span class="glyphicon glyphicon-eye-open"></span></a>
-		   					</td>
+									*{factorDetails[__${rowStat.index}__].variable.cvTermId} + '\');'" ></a>
+		  					</td>
+		  					<td width="55%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${factorDetail.variable.description}"></td>
 	  					</tr> 
 					</tbody>
 				</table>
@@ -151,19 +145,16 @@
 					<thead>
 						<tr>
 			                <th width="45%" th:utext="#{nursery.managesettings.plot.name}">.Name</th>
-			                <th width="45%" th:utext="#{nursery.managesettings.plot.description}">.Description</th>
-			                <th width="10%"></th>
+			                <th width="55%" th:utext="#{nursery.managesettings.plot.description}">.Description</th>
 						</tr>
 					</thead>
 					<tbody>
 	  					<tr th:each="variateDetail, rowStat : *{variateDetails}">
-		  					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${variateDetail.variable.name}"></td>
-		  					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${variateDetail.variable.description}"></td>
-		  					<td width="10%" th:class="${rowStat.even}? 'even' : 'odd'" >
+		  					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
 		   						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
-									*{variateDetails[__${rowStat.index}__].variable.cvTermId} + '\');'" >
-									<span class="glyphicon glyphicon-eye-open"></span></a>
-		   					</td>
+									*{variateDetails[__${rowStat.index}__].variable.cvTermId} + '\');'" th:text="${variateDetail.variable.name}"></a>
+		  					</td>
+		  					<td width="55%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${variateDetail.variable.description}"></td>
 	  					</tr> 
 					</tbody>
 				</table>
@@ -180,19 +171,16 @@
 					<thead>
 						<tr>
 			                <th width="45%" th:utext="#{nursery.managesettings.plot.name}">.Name</th>
-			                <th width="45%" th:utext="#{nursery.managesettings.plot.description}">.Description</th>
-			                <th width="10%"></th>
+			                <th width="55%" th:utext="#{nursery.managesettings.plot.description}">.Description</th>
 						</tr>
 					</thead>
 					<tbody>
 	  					<tr th:each="selectionVariateDetail, rowStat : *{selectionVariateDetails}">
-		  					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${selectionVariateDetail.variable.name}"></td>
-		  					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${selectionVariateDetail.variable.description}"></td>
-		  					<td width="10%" th:class="${rowStat.even}? 'even' : 'odd'" >
+		  					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${selectionVariateDetail.variable.name}">
 		   						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
-									*{selectionVariateDetails[__${rowStat.index}__].variable.cvTermId} + '\');'" >
-									<span class="glyphicon glyphicon-eye-open"></span></a>
-		   					</td>
+									*{selectionVariateDetails[__${rowStat.index}__].variable.cvTermId} + '\');'" ></a>
+		  					</td>
+		  					<td width="55%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${selectionVariateDetail.variable.description}"></td>
 	  					</tr> 
 					</tbody>
 				</table>
@@ -200,6 +188,34 @@
 		</div>
 	</div> <!-- section container -->	
 	<br/>
+
+	<div class="col-xs-12 col-md-12">
+		<label class="control-label section-toggle toggle-icon dataset-toggle" data-toggle="collapse" data-target=".datasetDetails">
+			<img class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" style="display:none;" />
+			<img class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
+			<strong class="sub-content-heading" th:text="#{nursery.nurserydetails.datasets}">DATASETS</strong>
+		</label>
+		<div class="collapse datasetDetails">
+			<div class="col-xs-12 col-md-12">
+				<label class="control-label">
+					<strong><span th:text="#{nursery.nurserydetails.datasets.choose}"></span></strong>&nbsp;&nbsp;
+				</label>
+				<select id="dataset-selection">
+					<option id="" value="Please Choose"></option>
+				</select>
+			</div>
+			<div class="row measurement-section" style="display:none;">
+				<div id="measurement-details" class="col-xs-12 col-md-12">
+					<ul id="measurement-tab-headers" class="nav nav-tabs">
+					</ul>
+					<div id="measurement-tabs">
+					</div>
+				</div>
+			</div>
+		</div>	
+	</div>	
+	
+	
 </div>
 
 <div class="row">
@@ -298,6 +314,30 @@ $(document).ready(function() {
 		}
 		else {
 			$(this).text(showText);
+		}
+	});
+	
+	$(".dataset-toggle").click(function() {
+		loadDatasetDropdown($(this).parent().find("#dataset-selection"));
+	});
+	
+	$("#dataset-selection").change(function() {
+		if ($("#dataset-selection").val()) {
+			var id = $("#dataset-selection").val();
+			var name = $("#dataset-selection option:selected").text();
+			var found = false;
+			$("#measurement-tabs").children().hide();
+			$("#measurement-tab-headers").find("li").each(function(index) {
+				$(this).removeClass("active");
+				if ($(this).text() == name) {
+					$(this).addClass("active");
+					$("#dset-tab-" + id).show();
+					found = true;
+				}
+			});
+			if (!found) {
+				loadDatasetMeasurementRowsViewOnly(id, name);
+			}
 		}
 	});
 });

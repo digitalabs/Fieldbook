@@ -416,9 +416,12 @@ function openAddVariablesSetting(variableType) {
 			$("#heading-modal").text(addBaselineTraits);
 			$('#reminder-placeholder').html(reminderTraits);
 			break;
-	default: 
-		$("#heading-modal").text(addNurseryLevelSettings);
-		$('#reminder-placeholder').html(reminderNursery);
+		case 4:
+			$("#heading-modal").text(addSelectionVariates);
+			$('#reminder-placeholder').html(reminderSelectionVariates);
+		default: 
+			$("#heading-modal").text(addNurseryLevelSettings);
+			$('#reminder-placeholder').html(reminderNursery);
 	}
 	getStandardVariables(variableType);
 	
@@ -695,6 +698,8 @@ function submitSelectedVariables(variableType) {
 					case 3:
 						createBaselineTraitVariables($.parseJSON(data));
 						break;
+					case 4:
+						createSelectionVariatesVariables($.parseJSON(data));
 					default:
 						createNurseryLevelSettingVariables($.parseJSON(data));
 				}
@@ -972,10 +977,9 @@ function createPlotLevelSettingVariables(data) {
 		"<input class='cvTermIds' type='hidden' id='plotLevelVariables" + (length-1) + ".variable.cvTermId' name='plotLevelVariables[" + 
 		(length-1) + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
-		newRow = newRow + "<td width='45%' class='"+className+"'>" + settingDetail.variable.name + "</td>"; 
-		newRow = newRow + "<td width='45%' class='"+className+"'>" + settingDetail.variable.description + "</td>";
-		newRow = newRow + "<td width='5%' class='"+className+"'>" + "<a href='javascript: void(0);' onclick='javascript:showBaselineTraitDetailsModal(" + 
-		settingDetail.variable.cvTermId + ");'><span class='glyphicon glyphicon-eye-open'></span></a></td></tr>";
+		newRow = newRow + "<td width='45%' class='"+className+"'><a href='javascript: void(0);' onclick='javascript:showBaselineTraitDetailsModal(" + 
+				settingDetail.variable.cvTermId + ");' ><span>" + settingDetail.variable.name + "</span></a></td>"; 
+		newRow = newRow + "<td width='50%' class='"+className+"'>" + settingDetail.variable.description + "</td></tr>";
 		$("#plotLevelSettings").append(newRow);
 	});
 }
@@ -996,11 +1000,33 @@ function createBaselineTraitVariables(data) {
 		"<input class='cvTermIds' type='hidden' id='baselineTraitVariables" + (length-1) + ".variable.cvTermId' name='baselineTraitVariables[" + 
 		(length-1) + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
-		newRow = newRow + "<td width='45%' class='"+className+"'>" + settingDetail.variable.name + "</td>";		
-		newRow = newRow + "<td width='45%' class='"+className+"'>" + settingDetail.variable.description + "</td>"
-		newRow = newRow + "<td width='5%' class='"+className+"'>" + "<a href='javascript: void(0);' onclick='javascript:showBaselineTraitDetailsModal(" + 
-		settingDetail.variable.cvTermId + ");'><span class='glyphicon glyphicon-eye-open'></span></a></td></tr>";
+		newRow = newRow + "<td width='45%' class='"+className+"'><a href='javascript: void(0);' onclick='javascript:showBaselineTraitDetailsModal(" + 
+		settingDetail.variable.cvTermId + ");' ><span>" + settingDetail.variable.name + "</span></a></td>"; 		
+		newRow = newRow + "<td width='50%' class='"+className+"'>" + settingDetail.variable.description + "</td></tr>";
 		$("#baselineTraitSettings").append(newRow);
+	});
+}
+
+function createSelectionVariatesVariables(data) {
+	$.each(data, function (index, settingDetail) {
+		var length = $("#selectionVariatesSettings tbody tr").length + 1;
+		var className = length % 2 == 1 ? 'even' : 'odd';
+		var newRow = "<tr class='newVariable'>";
+		var isDelete = "";
+		
+		if (settingDetail.deletable) {
+			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(4," + 
+			settingDetail.variable.cvTermId + ",$(this))'></span>";
+		}
+		
+		newRow = newRow + "<td width='5%' style='text-align: center' class='"+className+"'>" + isDelete + 
+		"<input class='cvTermIds' type='hidden' id='selectionVariatesVariables" + (length-1) + ".variable.cvTermId' name='selectionVariatesVariables[" + 
+		(length-1) + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
+		"</td>";
+		newRow = newRow + "<td width='45%' class='"+className+"'><a href='javascript: void(0);' onclick='javascript:showBaselineTraitDetailsModal(" + 
+		settingDetail.variable.cvTermId + ");' ><span>" + settingDetail.variable.name + "</span></a></td>"; 		
+		newRow = newRow + "<td width='50%' class='"+className+"'>" + settingDetail.variable.description + "</td></tr>";
+		$("#selectionVariatesSettings").append(newRow);
 	});
 }
 
@@ -2183,4 +2209,61 @@ function closeAllStudyTabs(){
 	 $('#study-tab-headers').html('');
 	 $('#study-tabs').html('');
 	 determineIfShowCloseAllStudyTabs();
+}
+
+function loadDatasetDropdown(optionTag) {
+	Spinner.toggle();
+	$.ajax({ 
+		url: "/Fieldbook/NurseryManager/reviewNurseryDetails/datasets/" + getCurrentNurseryIdInTab(),
+	    type: "GET",
+	    cache: false,
+	    success: function(data) {
+	    	for (var i = 0; i < data.length; i++) {
+	    		optionTag.append(new Option(data[i].name, data[i].id));
+	    	}
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+        	console.log("The following error occured: " + textStatus, errorThrown); 
+        }, 
+        complete: function(){
+        	Spinner.toggle();
+        } 
+	});
+}
+
+function getCurrentNurseryIdInTab() {
+	return document.location.pathname.substring(document.location.pathname.lastIndexOf("/")+1);
+}
+
+function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
+	Spinner.toggle();
+	$.ajax({ 
+		url: "/Fieldbook/NurseryManager/addOrRemoveTraits/viewNurseryAjax/" + getCurrentNurseryIdInTab(),
+	    type: "GET",
+	    cache: false,
+	    success: function(html) {
+			$("#measurement-tab-headers").append("<li class='active'><a>" + datasetName + "</a></li>");
+			$("#measurement-tabs").append("<div id='dset-tab-" + datasetId + "'>" + html + "</div>");
+			$(".measurement-section").show();
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+        	console.log("The following error occured: " + textStatus, errorThrown); 
+        }, 
+        complete: function(){
+        	Spinner.toggle();
+        } 
+	});
+}
+function showSelectedTab(selectedTabName) {
+	$("#create-nursery-tab-headers").show();
+	var tabs = $("#create-nursery-tabs").children();
+	for (var i = 0; i < tabs.length; i++) {
+		if (tabs[i].id == selectedTabName) {
+			$("#" + tabs[i].id + "-li").addClass("active");
+			$("#" + tabs[i].id).show();
+		} else {
+			$("#" + tabs[i].id + "-li").removeClass("active");
+			$("#" + tabs[i].id).hide();
+		}
+	}
 }

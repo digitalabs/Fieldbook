@@ -90,7 +90,7 @@
 					<div class="col-xs-2  col-md-2 add_top_padding">
 					</div>
 		         		<div class="col-xs-9  col-md-9 add_top_padding">
-					  		<label class="control-label" id="delete-confirmation"></label>
+					  		<label class="control-label" id="delete-folder-confirmation"></label>
 					  	</div>					    
 		        	</div>
 		        </div>
@@ -155,7 +155,7 @@
 				  return false;
 			  }else{
 				  //alert('Ajax Submit')
-				  var parentFolderId = $('#germplasmTree').dynatree("getTree").getActiveNode().data.key;
+				  var parentFolderId = $('#'+getDisplayedTreeName()).dynatree("getTree").getActiveNode().data.key;
 				  if(parentFolderId == 'LOCAL')
 					  parentFolderId = 1;
 				  
@@ -170,7 +170,7 @@
 		        				$('#addGermplasmFolder').modal('hide');
 		        				
 		        				//lazy load the node
-		        				var node = $('#germplasmTree').dynatree("getTree").getActiveNode();
+		        				var node = $('#'+getDisplayedTreeName()).dynatree("getTree").getActiveNode();
 		        				doGermplasmLazyLoad(node);		        				
 		        				node.focus();
 		        				
@@ -188,7 +188,7 @@
 				  $('#newGermplasmFolderName').val('');
 				  $('#page-rename-germplasm-folder-message-modal').html('');
 				  $('#renameGermplasmFolder').modal('show');
-				  var currentFolderName = $('#germplasmTree').dynatree("getTree").getActiveNode().data.title
+				  var currentFolderName = $('#'+getDisplayedTreeName()).dynatree("getTree").getActiveNode().data.title
 				  $('#renameGermplasmFolder #heading-modal').html(renameFolderHeader + " " + currentFolderName);
 				  
 			  }
@@ -201,7 +201,7 @@
 				  return false;
 			  }else{
 				  //alert('Ajax Submit')
-				  var parentFolderId = $('#germplasmTree').dynatree("getTree").getActiveNode().data.key;
+				  var parentFolderId = $('#'+getDisplayedTreeName()).dynatree("getTree").getActiveNode().data.key;
 				  if(parentFolderId == 'LOCAL')
 					  parentFolderId = 1;
 				  
@@ -214,7 +214,7 @@
 		        		success: function(data) {
 		        			if(data.isSuccess == 1){
 		        				$('#renameGermplasmFolder').modal('hide');
-		        				var node = $('#germplasmTree').dynatree("getTree").getActiveNode();
+		        				var node = $('#'+getDisplayedTreeName()).dynatree("getTree").getActiveNode();
 		        				node.data.title = folderName
 		        				$(node.span).find('a').html(folderName);
 		        				node.focus();
@@ -232,14 +232,15 @@
 		  function deleteGermplasmFolder(object){
 			  if(!$(object).hasClass('disable-image')){
 				  $('#deleteGermplasmFolder').modal('show');
-				  var currentFolderName = $('#germplasmTree').dynatree("getTree").getActiveNode().data.title
-				  $('#delete-confirmation').html(deleteConfirmation + " " + currentFolderName + "?");
+				  var currentFolderName = $('#'+getDisplayedTreeName()).dynatree("getTree").getActiveNode().data.title				  
+				  $('#delete-folder-confirmation').html(deleteConfirmation + " " + currentFolderName + "?");
+				  
 				  $('#page-delete-germplasm-folder-message-modal').html('');
 			  }  
 		  }
 		  
 		  function submitDeleteGermplasmFolder(){
-			  var folderId = $('#germplasmTree').dynatree("getTree").getActiveNode().data.key;
+			  var folderId = $('#'+getDisplayedTreeName()).dynatree("getTree").getActiveNode().data.key;
 			  
 			  Spinner.toggle();
 	        	$.ajax({
@@ -250,7 +251,7 @@
 	        		success: function(data) {
 	        			if(data.isSuccess == 1){
 	        				$('#deleteGermplasmFolder').modal('hide');
-	        				var node = $('#germplasmTree').dynatree("getTree").getActiveNode();
+	        				var node = $('#'+getDisplayedTreeName()).dynatree("getTree").getActiveNode();
 	        				node.remove();
 	        			}else{
 	        				showErrorMessage('page-delete-germplasm-folder-message-modal', data.message);
@@ -266,7 +267,7 @@
 			  var targetId = targetNode.data.key;
 			  
 			  if(targetId == 'CENTRAL' || targetId > 0){
-				  var title = $('#germplasmTree').dynatree("getTree").getNodeByKey('CENTRAL').data.title;
+				  var title = $('#'+getDisplayedTreeName()).dynatree("getTree").getNodeByKey('CENTRAL').data.title;
 				  showErrorMessage('page-import-message-modal', "Can not move to " + title);
 				  return false;
 			  }
@@ -288,6 +289,14 @@
 	        			Spinner.toggle();
 	        		}		        		
 	        	});
+		  }
+		  
+		  function getDisplayedTreeName(){
+			  
+			  if($('#listTreeModal').hasClass('in') == true)
+				  return 'germplasmTree';
+			  else if($('#saveListTreeModal').hasClass('in') == true)
+				  return 'germplasmFolderTree';
 		  }
       //]]>
     </script>

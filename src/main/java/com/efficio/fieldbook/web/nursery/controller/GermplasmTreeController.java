@@ -187,7 +187,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
             else {
                 gpList = germplasmListManager.getGermplasmListById(Integer.parseInt(id));
 
-                if (!gpList.isFolder()) {
+                if (gpList != null && !gpList.isFolder()) {
                     GermplasmList parent = null;
 
                     parent = gpList.getParent();

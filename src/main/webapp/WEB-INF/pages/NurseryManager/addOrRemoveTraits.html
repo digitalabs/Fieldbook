@@ -33,28 +33,9 @@
 	<div style="float: right;">
 	
 		<div  class="btn-group">
-		  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+		  <button type="button" class="btn btn-info" onclick="javascript: $('#exportStudyModal').modal('show')">
 		    <span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;Export
-		  </button>
-		  <ul class="dropdown-menu" role="menu">
-		    <li>
-	    		<a href="javascript: exportNursery(1);"  th:text="#{nursery.export.fieldlog.fieldroid}">Fieldlog / Fieldroid</a>
-		    </li>		    
-		    <li>
-		    	<a href="javascript: exportNursery(2);"  th:text="#{nursery.export.r}">R</a> 
-		    </li>
-			<li>
-		    	<a href="javascript: exportNursery(3);"  th:text="#{nursery.export.excel}">Excel</a> 
-		    </li>
-		   
-			  <li class="dropdown-submenu">
-			    <a  href="javascript: void(0)">KSU Fieldbook</a>
-			    <ul class="dropdown-menu">
-			      <li><a href="javascript: exportNursery(5);">Excel</a></li>			     
-			      <li><a href="javascript: exportNursery(6);">CSV</a></li>
-			    </ul>
-			  </li>  
-		  </ul>
+		  </button>		  
 		</div>
 	
 		<div  class="btn-group">
@@ -96,7 +77,12 @@
         </div>
     </div>
      
-				
+    <div class="row">
+        <div class="col-xs-12 col-md-12">
+            <div id="manage-location" th:include="/NurseryManager/ver2.0/exportStudy"></div>
+        </div>
+    </div>
+     				
 				
     		
 <script type="text/javascript" th:src="@{/static/js/bootstrap-fileupload.js}"></script>

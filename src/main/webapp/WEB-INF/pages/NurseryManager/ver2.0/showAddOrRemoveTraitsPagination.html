@@ -1,13 +1,15 @@
 <!-- form id="addVariableForm" role="form-horizontal" onsubmit="return validateCells();" class="form-horizontal" action="#" 
 	th:action="@{/NurseryManager/addOrRemoveTraits}" method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data" -->
-	
+	<div class="row">&nbsp;</div>
 <form id="addVariableForm" role="form-horizontal" onsubmit="return validateCells();" class="form-horizontal" action="#" 
 	method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data">
 
 	<input type="hidden" th:field="*{importVal}"/>
 	<input type="hidden" th:field="*{numberOfInstances}" />
               
-	 <div class="germplasm-measurement-list-table" style="width: 100%; max-width: 100%; height: 500px; min-height: 500px">
+	   <div class="row" style="padding-left: 10px; padding-right: 10px">         
+	 <div class="germplasm-measurement-list-table col-xs-12 col-md-12" 
+	 style="height: 500px;">
 	
        <!-- my-class table table-curved table-condensed   -->
 				 <div class="factor-div" style="float: left; max-height: 400px; overflow-y: hidden">
@@ -40,7 +42,7 @@
 	        </div>
 	        </div>
 				
-
+	</div>  
 
 </form>
 

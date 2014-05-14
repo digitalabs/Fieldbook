@@ -3,11 +3,11 @@
 <div class="row form-group" th:object="${nurseryDetails}" th:id="'div-nursery-tab-' + *{id}">
 	<input type="hidden" id="studyId" class="field-map-highlight" th:value="*{id}" />
 	<div class="col-xs-12 col-md-12">
-		<label style="padding-left: 5px"  class="control-label section-toggle toggle-icon"  data-target=".nurseryDetails">
+		<label style="padding-left: 5px" class="control-label section-toggle toggle-icon"  data-target=".nurseryDetails">
 			<img th:src="@{/static/img/basic-details.png}" />
 			<img style="margin-left: -10px" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
 			<img style="display:none; margin-left: -10px"  class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
-			<strong class="sub-content-heading" th:text="#{nursery.nurserydetails.header} + ': ' + *{name}">NURSERY DETAILS</strong>
+			<strong class="sub-content-heading" th:text="#{nursery.nurserydetails.header}">NURSERY DETAILS</strong>
 		</label>
 		<div style="float:right;">
 			<div class="btn-group">	
@@ -36,7 +36,7 @@
 		</div>
 	</div>
 	<div class="sectionContainer collapse in nurseryDetails">
-		<div class="form-group" >
+		<div style="padding-left: 5px" class="form-group" >
 			<div style="padding-bottom: 5px" class="col-xs-4 col-md-4" th:each="basicDetail, rowStat : *{basicStudyDetails}">
 				&nbsp;&nbsp;&nbsp;<strong><span style="word-wrap: break-word"  class="control-label" th:text="${basicDetail.variable.name}"></span>:</strong>
 				&nbsp;<span th:text="${basicDetail.value}" class="div-select-val"></span>
@@ -50,15 +50,16 @@
 	</div>
 	<br/>
 	<div class="col-xs-12 col-md-12">
-		<label class="control-label section-toggle toggle-icon"  data-target=".managementDetails">
-			<img class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
-			<img class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" style="display:none;" />
+		<label style="padding-left: 5px" class="control-label section-toggle toggle-icon"  data-target=".managementDetails">
+			<img th:src="@{/static/img/basic-details.png}" />
+			<img style="margin-left: -10px; display:none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
+			<img style="margin-left: -10px" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
 			<strong class="sub-content-heading" th:text="#{nursery.nurserydetails.management}">MANAGEMENT DETAILS</strong>
 		</label>
 		
 	</div>
 	<div class="sectionContainer collapse in managementDetails">
-		<div class="form-group" >
+		<div style="padding-left: 5px" class="form-group" >
 			<div style="padding-bottom: 5px" class="col-xs-4 col-md-4" th:each="managementDetail, rowStat : *{managementDetails}">
 				&nbsp;&nbsp;&nbsp;<strong><span style="word-wrap: break-word"  class="control-label" th:text="${managementDetail.variable.name}"></span>:</strong>
 				&nbsp;<span th:text="${managementDetail.value}" class="div-select-val"></span>
@@ -67,15 +68,16 @@
 	</div>
 	<br/>
 	<div class="col-xs-12 col-md-12">
-		<label class="control-label section-toggle toggle-icon"  data-target=".nurseryConditions">
-			<img class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
-			<img class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" style="display:none;" />
+		<label style="padding-left: 5px" class="control-label section-toggle toggle-icon"  data-target=".nurseryConditions">
+			<img th:src="@{/static/img/basic-details.png}" />
+			<img style="margin-left: -10px; display:none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
+			<img style="margin-left: -10px" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
 			<strong class="sub-content-heading" th:text="#{nursery.nurserydetails.nurseryConditions}">NURSERY CONDITIONS</strong>
 		</label>
 		
 	</div>
-	<div class="sectionContainer collapse in nurseryConditions">
-		<div class="form-group" >
+	<div class="sectionContainer collapse nurseryConditions">
+		<div style="padding-left: 5px" class="form-group" >
 			<div style="padding-bottom: 5px" class="col-xs-4 col-md-4" th:each="nurseryConditionDetail, rowStat : *{nurseryConditionDetails}">
 				&nbsp;&nbsp;&nbsp;<strong><span style="word-wrap: break-word"  class="control-label" th:text="${nurseryConditionDetail.variable.name}"></span>:</strong>
 				&nbsp;<span th:text="${nurseryConditionDetail.value}" class="div-select-val"></span>
@@ -84,9 +86,10 @@
 	</div>
 	<br />
 	<div class="form-group col-xs-12 col-md-12">
-		<label class="control-label section-toggle toggle-icon"  data-target=".additionalDetails">
-			<img class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
-			<img class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" style="display:none;" />
+		<label style="padding-left: 5px" class="control-label section-toggle toggle-icon"  data-target=".additionalDetails">
+			<img th:src="@{/static/img/basic-details.png}" />
+			<img style="margin-left: -10px; display:none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
+			<img style="margin-left: -10px" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
 			<strong class="sub-content-heading" th:text="#{nursery.nurserydetails.variables}">VARIABLES</strong>
 		</label>
 		
@@ -94,14 +97,14 @@
 	<div class="sectionContainer collapse additionalDetails col-xs-12 col-md-12" style="padding-top: 10px;">
 		<div class="row">
 			<div class="col-xs-6 col-md-6">
-				<div class="col-xs-12 col-md-12">
-					<label class="control-label">
-						<img th:src="@{/static/img/factors.png}" />
+				<div class="col-xs-12 col-md-12 form-group">
+					<label style="padding-left: 15px" class="control-label">
+						<img heigth="16" th:src="@{/static/img/factors.png}" />
 						<strong class="sub-content-heading" th:text="#{nursery.nurserydetails.factors}">FACTORS</strong>
 					</label>
 				</div>
 				<div class="col-xs-12 col-md-12">
-					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll-create" id="factorDetails">
+					<table style="table-layout: fixed; padding-left: 15px;" class="my-class table table-curved table-condensed table-with-scroll-create" id="factorDetails">
 						<thead>
 						<tr>
 			                <th width="45%" th:utext="#{nursery.managesettings.plot.name}">.Name</th>
@@ -122,13 +125,13 @@
 			</div>
 			<div class="col-xs-6 col-md-6">
 				<div class="col-xs-12 col-md-12">
-					<label class="control-label">
-						<img th:src="@{/static/img/baseline-traits.png}" />
+					<label style="padding-left: 15px" class="control-label">
+						<img height="25" th:src="@{/static/img/baseline-traits.png}" />
 						<strong class="sub-content-heading" th:text="#{nursery.nurserydetails.traits}">TRAITS</strong>
 					</label>
 				</div>
 				<div class="col-xs-12 col-md-12">
-					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll-create" id="variateDetails">
+					<table style="table-layout: fixed; padding-left:15px;" class="my-class table table-curved table-condensed table-with-scroll-create" id="variateDetails">
 						<thead>
 							<tr>
 				                <th width="45%" th:utext="#{nursery.managesettings.plot.name}">.Name</th>
@@ -151,13 +154,13 @@
 		<div class="row">
 			<div class="col-xs-6 col-md-6">
 				<div class="col-xs-12 col-md-12">
-					<label class="control-label">
-						<img th:src="@{/static/img/variates.png}" />
+					<label style="padding-left: 15px" class="control-label">
+						<img height="16" th:src="@{/static/img/variates.png}" />
 						<strong class="sub-content-heading" th:text="#{nursery.nurserydetails.variates}">SELECTION VARIATES</strong>
 					</label>
 				</div>
 				<div class="col-xs-12 col-md-12">
-					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll-create" id="selectionVariateDetails">
+					<table style="table-layout: fixed; padding-left:15px;" class="my-class table table-curved table-condensed table-with-scroll-create" id="selectionVariateDetails">
 						<thead>
 							<tr>
 				                <th width="45%" th:utext="#{nursery.managesettings.plot.name}">.Name</th>

@@ -31,6 +31,7 @@ import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.settings.Condition;
+import org.generationcp.middleware.pojos.workbench.settings.Constant;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.pojos.workbench.settings.Factor;
 import org.generationcp.middleware.pojos.workbench.settings.ParentDataset;
@@ -191,8 +192,9 @@ public class SettingsUtil {
 	 * @param userSelection the user selection
 	 * @return the dataset
 	 */
-    public static ParentDataset convertPojoToXmlDataset(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, String name, List<SettingDetail> nurseryLevelConditions, List<SettingDetail> plotsLevelList, List<SettingDetail> baselineTraitsList, UserSelection userSelection){
-    	return convertPojoToXmlDataset(fieldbookMiddlewareService, name, nurseryLevelConditions,  plotsLevelList,baselineTraitsList,  userSelection, null, null, null);
+    public static ParentDataset convertPojoToXmlDataset(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, String name, List<SettingDetail> nurseryLevelConditions, 
+            List<SettingDetail> plotsLevelList, List<SettingDetail> baselineTraitsList, UserSelection userSelection, List<SettingDetail> nurseryConditions){
+    	return convertPojoToXmlDataset(fieldbookMiddlewareService, name, nurseryLevelConditions,  plotsLevelList,baselineTraitsList,  userSelection, null, null, null, nurseryConditions);
     }
 
 	/**
@@ -210,13 +212,14 @@ public class SettingsUtil {
 	public static ParentDataset convertPojoToXmlDataset(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, 
 			String name, List<SettingDetail> nurseryLevelConditions, List<SettingDetail> plotsLevelList, List<SettingDetail> baselineTraitsList, 
 			UserSelection userSelection, List<SettingDetail> trialLevelVariablesList, List<SettingDetail> treatmentFactorList, 
-			List<TreatmentFactorDetail> treatmentDetailList){
+			List<TreatmentFactorDetail> treatmentDetailList, List<SettingDetail> nurseryConditions){
 		
 		List<Condition> conditions = new ArrayList<Condition>();
 		List<Factor> factors = new ArrayList<Factor>();
 		List<Variate> variates = new ArrayList<Variate>();
 		List<Factor> trialLevelVariables = new ArrayList<Factor>();
 		List<TreatmentFactor> treatmentFactors = new ArrayList<TreatmentFactor>();
+		List<Constant> constants = new ArrayList<Constant>();
 		//iterate for the nursery level
 		int index = 0;
 		for(SettingDetail settingDetail : nurseryLevelConditions){
@@ -268,6 +271,24 @@ public class SettingsUtil {
 				variates.add(variate);
 			}
 		}
+		
+		//iterate for the nursery conditions/constants
+                index = 0;
+                for(SettingDetail settingDetail : nurseryConditions){
+                        SettingVariable variable = settingDetail.getVariable();
+                        if(userSelection != null){
+                                StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
+                                
+                                variable.setPSMRFromStandardVariable(standardVariable);
+                                //need to get the name from the session
+                                variable.setName(userSelection.getNurseryConditions().get(index++).getVariable().getName()); 
+                        }
+                        
+                        Constant constant= new Constant(variable.getName(), variable.getDescription(), variable.getProperty(),
+                                        variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
+                                        HtmlUtils.htmlEscape(settingDetail.getValue()), variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
+                        constants.add(constant);
+                }
 		
 		//iterate for treatment factor details
 		if (treatmentDetailList != null && !treatmentDetailList.isEmpty()) {
@@ -343,6 +364,7 @@ public class SettingsUtil {
 			dataset.setConditions(conditions);
 			dataset.setFactors(factors);
 			dataset.setVariates(variates);
+			dataset.setConstants(constants);
 			dataset.setName(name);
 			realDataset = dataset;
 		}
@@ -446,6 +468,8 @@ public class SettingsUtil {
    		    List<SettingDetail> studyLevelConditions = new ArrayList<SettingDetail>();
 		    List<SettingDetail> plotsLevelList  = new ArrayList<SettingDetail>();
 		    List<SettingDetail> baselineTraitsList  = new ArrayList<SettingDetail>();
+		    List<SettingDetail> nurseryConditions = new ArrayList<SettingDetail>();
+		    List<SettingDetail> selectionVariates = new ArrayList<SettingDetail>();
 		    if(dataset.getConditions() != null){
 				for(Condition condition : dataset.getConditions()){
 					
@@ -504,9 +528,15 @@ public class SettingsUtil {
 							variate.getScale(), variate.getMethod(), variate.getRole(), variate.getDatatype());
 					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
 					variable.setCvTermId(stdVar);
+					StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
+					
 					SettingDetail settingDetail = new SettingDetail(variable,
-							null, null, true);
-					baselineTraitsList.add(settingDetail);
+                                                null, null, true);
+					if (inPropertyList(standardVariable.getProperty().getId())) {
+					    selectionVariates.add(settingDetail);
+					} else {
+					    baselineTraitsList.add(settingDetail);
+					}
 					/*
 					if(userSelection != null){
 						StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);						
@@ -516,12 +546,51 @@ public class SettingsUtil {
 				}
 			}
 			
+			//nursery conditions/constants
+			if(dataset.getConstants() != null){
+                            for(Constant constant : dataset.getConstants()){
+                                    SettingVariable variable = new SettingVariable(constant.getName(), constant.getDescription(), constant.getProperty(),
+                                                    constant.getScale(), constant.getMethod(), constant.getRole(), constant.getDatatype(), constant.getDataTypeId(),
+                                                    constant.getMinRange(), constant.getMaxRange());
+                                    Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), 
+                                                    HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.VARIATE);
+                                                                        
+                                    variable.setCvTermId(stdVar);      
+                                    
+                                    List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
+                                    SettingDetail settingDetail = new SettingDetail(variable,
+                                                    possibleValues, HtmlUtils.htmlUnescape(constant.getValue()), isSettingVariableDeletable(stdVar, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()));
+                                    
+                                    settingDetail.setPossibleValuesToJson(possibleValues);
+                                    List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, projectId);
+                                    settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
+                                    nurseryConditions.add(settingDetail);
+                                    if(userSelection != null){
+                                            StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);                                             
+                                            variable.setPSMRFromStandardVariable(standardVariable);                                         
+                                    }
+                            }
+                        }
 			
 			userSelection.setStudyLevelConditions(studyLevelConditions);
 			userSelection.setPlotsLevelList(plotsLevelList);			
 			userSelection.setBaselineTraitsList(baselineTraitsList);
+			userSelection.setNurseryConditions(nurseryConditions);
+			userSelection.setSelectionVariates(selectionVariates);
 			//userSelection.setTrialLevelVariableList(trialLevelVariableList);
 		}
+	}
+	
+	private static boolean inPropertyList(int propertyId) {
+	    StringTokenizer token = new StringTokenizer(AppConstants.SELECTION_VARIATES_PROPERTIES.getString(), ",");
+            while(token.hasMoreTokens()){
+                int propId = Integer.parseInt(token.nextToken());
+                
+                if (propId == propertyId) {
+                    return true;
+                }
+            }
+            return false;
 	}
 	
 	/**
@@ -805,6 +874,7 @@ public class SettingsUtil {
 			workbook.setConditions(convertConditionsToMeasurementVariables(nurseryDataset.getConditions()));
 			workbook.setFactors(convertFactorsToMeasurementVariables(nurseryDataset.getFactors()));
 			workbook.setVariates(convertVariatesToMeasurementVariables(nurseryDataset.getVariates()));
+			workbook.setConstants(convertConstantsToMeasurementVariables(nurseryDataset.getConstants()));
 		}
 		else {
 			TrialDataset trialDataset = (TrialDataset) dataset;
@@ -838,10 +908,12 @@ public class SettingsUtil {
 			List<Condition> conditions = convertMeasurementVariablesToConditions(workbook.getConditions());
 			List<Factor> factors = convertMeasurementVariablesToFactors(workbook.getFactors());
 			List<Variate> variates = convertMeasurementVariablesToVariates(workbook.getVariates());
+			List<Constant> constants = convertMeasurementVariablesToConstants(workbook.getConstants());
 
 			nurseryDataset.setConditions(conditions);
 			nurseryDataset.setFactors(factors);
 			nurseryDataset.setVariates(variates);
+			nurseryDataset.setConstants(constants);
 			dataset = nurseryDataset;
 		}else{
 			TrialDataset trialDataset = new TrialDataset();
@@ -887,6 +959,27 @@ public class SettingsUtil {
 		
 		return conditions;
 	}
+	
+	private static List<Constant> convertMeasurementVariablesToConstants(List<MeasurementVariable> mlist) {
+            List<Constant> constants = new ArrayList<Constant>();
+            
+            if (mlist != null && !mlist.isEmpty()) {
+                    
+                    for (MeasurementVariable mvar : mlist) {
+                        constants.add(new Constant(
+                                            mvar.getName(), 
+                                            mvar.getDescription(), 
+                                            mvar.getProperty(), 
+                                            mvar.getScale(), 
+                                            mvar.getMethod(), 
+                                            PhenotypicType.getPhenotypicTypeForLabel(mvar.getLabel()).toString(), 
+                                            mvar.getDataType(), 
+                                            mvar.getValue(), null, null, null));
+                    }
+            }
+            
+            return constants;
+        }
 	
 	/**
 	 * Convert measurement variables to factors.
@@ -991,6 +1084,16 @@ public class SettingsUtil {
 		return list;
 	}
 	
+	private static List<MeasurementVariable> convertConstantsToMeasurementVariables(List<Constant> constants) {
+    	        List<MeasurementVariable> list = new ArrayList<MeasurementVariable>();
+                if (constants != null && !constants.isEmpty()) {
+                        for (Constant constant : constants) {
+                                list.add(convertConstantToMeasurementVariable(constant));
+                        }
+                }
+                return list;
+	}
+	
 	/**
 	 * Convert condition to measurement variable.
 	 *
@@ -1012,6 +1115,20 @@ public class SettingsUtil {
 		mvar.setFactor(true);
 		mvar.setDataTypeId(condition.getDataTypeId());
 		return mvar;
+	}
+	
+	private static MeasurementVariable convertConstantToMeasurementVariable(Constant constant) {
+	    String label = null;
+
+            label = PhenotypicType.valueOf(constant.getRole()).getLabelList().get(0);
+            
+            MeasurementVariable mvar = new MeasurementVariable(
+                    constant.getName(), constant.getDescription(), constant.getScale(), constant.getMethod(), constant.getProperty(), constant.getDatatype(), 
+                    constant.getValue(), /*PhenotypicType.valueOf(condition.getRole()).getLabelList().get(0)*/ label, 
+                    constant.getMinRange(), constant.getMaxRange());
+            mvar.setFactor(true);
+            mvar.setDataTypeId(constant.getDataTypeId());
+            return mvar;
 	}
 
 	/**

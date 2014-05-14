@@ -387,7 +387,17 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 		if (trialRow > 0) {
 			HSSFRow row = descriptionSheet.getRow(trialRow);
 			HSSFCell cell = row.getCell(6);
-			trialInstance = cell.getStringCellValue();
+			//trialInstance = cell.getStringCellValue();
+			if(cell == null)
+				trialInstance = "1";
+			else if(cell.getCellType() == Cell.CELL_TYPE_NUMERIC){
+				Double temp = Double.valueOf(cell.getNumericCellValue());
+				
+				trialInstance = Integer.toString(temp.intValue());
+			}
+			else if(cell.getCellType() == Cell.CELL_TYPE_STRING){
+				trialInstance = cell.getStringCellValue();
+			}
 		}
 		
 		if (trialInstance != null) {

@@ -18,10 +18,10 @@
 					
 					
 	         		<div class="row form-group">
-						<div class="col-xs-4 col-md-4">
-							Export Format:
+						<div class="col-xs-5 col-md-5">
+							Export Format:<span class="required">*</span>
 						</div>
-						<div class="col-xs-8 col-md-8">
+						<div class="col-xs-6 col-md-6">
 							<select id="exportType">
 								<option value="0">Please Choose</option>
 								<option value="1" th:text="#{nursery.export.fieldlog.fieldroid}"></option>
@@ -34,10 +34,10 @@
 			        </div>
 			        
 			        <div class="row form-group">
-						<div class="col-xs-4 col-md-4">
-							<label class="control-label">Way to be exported:</label>
+						<div class="col-xs-5 col-md-5">
+							<label class="control-label">Way to be exported:</label><span class="required">*</span>
 						</div>
-						<div class="col-xs-8 col-md-8">
+						<div class="col-xs-6 col-md-6">
 							<select id="exportType">
 								<option value="1">Row/Col</option>								
 								<option value="2">Serpentine (over range)</option>
@@ -55,11 +55,11 @@
 			        		<label for="fileupload" class="control-label" th:text="#{nursery.export.r.note}">Note: In your exported file, your trait will show as "GY"</label>
 			        	</div>
 			        	<div class="col-xs-12 col-md-12">&nbsp;</div>
-			        	<div class="col-xs-4 col-md-4">
+			        	<div class="col-xs-5 col-md-5">
 			        		 <label for="fileupload" class="control-label" th:text="#{nursery.export.r.select.trait}">Select Main Trait:</label>
 			        	</div>
 			        	<form id="importStudyForm" role="form-horizontal" class="form-horizontal" action="#" method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data">
-			        	<div class="col-xs-8 col-md-8">
+			        	<div class="col-xs-6 col-md-6">
 	        		 		<select name="selectedRTrait" id="selectedRTrait" class="form-control">
 			    				<option th:if="${measurementVariable.factor == false}" th:each="measurementVariable : *{measurementVariables}" th:value="${measurementVariable.termId}" th:utext="${measurementVariable.name + ' (' + measurementVariable.scale +')'}">Trait</option>
 			    			</select>
@@ -80,6 +80,7 @@
 	
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    
+	           var submitExportUrl = '/Fieldbook/ExportManager/';
 		   	$( document ).ready(function() {  	     
 				$('#exportStudyModal select').select2();
 				$('#exportType').on('change', function(){

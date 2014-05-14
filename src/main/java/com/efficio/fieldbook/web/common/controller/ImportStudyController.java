@@ -154,6 +154,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	    	form.setNumberOfInstances(userSelection.getWorkbook().getTotalNumberOfInstances());
 	    	form.setTrialEnvironmentValues(transformTrialObservations(userSelection.getWorkbook().getTrialObservations(), nurserySelection.getTrialLevelVariableList()));
 	    	form.setTrialLevelVariables(nurserySelection.getTrialLevelVariableList());
+	    	
+	    	
     	return show(model, isTrial);
     }
     
@@ -185,7 +187,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     
     public String show(Model model, boolean isTrial) {
         setupModelInfo(model);
-        model.addAttribute(TEMPLATE_NAME_ATTRIBUTE, getContentName(isTrial));
+        model.addAttribute(TEMPLATE_NAME_ATTRIBUTE, getContentName(isTrial));        
         return BASE_TEMPLATE_NAME;
     }
     

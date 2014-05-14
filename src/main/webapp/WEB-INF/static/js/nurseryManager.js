@@ -821,8 +821,13 @@ function createNurseryLevelSettingVariables(data) {
 		
 		if(settingDetail.variable.widgetType == 'DROPDOWN'){
 			//initialize select 2 combo
-			initializePossibleValuesCombo(settingDetail.possibleValues, "#" + 
-					getJquerySafeId("studyLevelVariables" + ctr + ".value"), false, null);
+			if (settingDetail.variable.cvTermId == locationId) {
+				initializePossibleValuesCombo(settingDetail.possibleValues, "#" + 
+						getJquerySafeId("studyLevelVariables" + ctr + ".value"), true, null);
+			} else {
+				initializePossibleValuesCombo(settingDetail.possibleValues, "#" + 
+						getJquerySafeId("studyLevelVariables" + ctr + ".value"), false, null);
+			}
 		}
 		ctr++;
 	});

@@ -152,6 +152,7 @@ public class ManageTrialSettingsController extends SettingsController{
      * @return the map
      * @throws MiddlewareQueryException the middleware query exception
      */
+    /*
     @RequestMapping(value="/save", method = RequestMethod.POST)
     public String saveSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form
             , Model model, HttpSession session) throws MiddlewareQueryException{
@@ -177,7 +178,7 @@ public class ManageTrialSettingsController extends SettingsController{
     	
     	return viewSettings(form, tempateSettingsId, model, session);
     }
-    
+    */
     /**
      * For deletion of nursery setting.
      *

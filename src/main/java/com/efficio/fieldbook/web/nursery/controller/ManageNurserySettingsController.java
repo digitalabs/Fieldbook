@@ -147,6 +147,7 @@ public class ManageNurserySettingsController extends SettingsController{
      * @return the map
      * @throws MiddlewareQueryException the middleware query exception
      */
+    /*
     @RequestMapping(value="/save", method = RequestMethod.POST)
     public String saveSettings(@ModelAttribute("manageSettingsForm") ManageSettingsForm form
             , Model model, HttpSession session) throws MiddlewareQueryException{
@@ -169,7 +170,7 @@ public class ManageNurserySettingsController extends SettingsController{
     	
     	return viewSettings(form, tempateSettingsId, model, session);
     }
-    
+    */
     /**
      * For deletion of nursery setting.
      *

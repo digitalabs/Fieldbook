@@ -120,7 +120,7 @@ public class GermplasmTreeControllerTest extends AbstractJUnit4SpringContextTest
         ReflectionTestUtils.setField(controller, "germplasmListManager"
                 , germplasmListManager, GermplasmListManager.class);
 
-        String jsonResponse = controller.expandGermplasmTree("LOCAL");
+        String jsonResponse = controller.expandGermplasmTree("LOCAL", "0");
         Assert.assertNotNull(jsonResponse);
         TreeNode[] treeNodes = objectMapper.readValue(jsonResponse, TreeNode[].class);
         
@@ -146,7 +146,7 @@ public class GermplasmTreeControllerTest extends AbstractJUnit4SpringContextTest
         ReflectionTestUtils.setField(controller, "germplasmListManager"
                 , germplasmListManager, GermplasmListManager.class);
 
-        String jsonResponse = controller.expandGermplasmTree("CENTRAL");
+        String jsonResponse = controller.expandGermplasmTree("CENTRAL", "0");
         Assert.assertNotNull(jsonResponse);
         TreeNode[] treeNodes = objectMapper.readValue(jsonResponse, TreeNode[].class);
         
@@ -173,7 +173,7 @@ public class GermplasmTreeControllerTest extends AbstractJUnit4SpringContextTest
         ReflectionTestUtils.setField(controller, "germplasmListManager"
                 , germplasmListManager, GermplasmListManager.class);
 
-        String jsonResponse = controller.expandGermplasmTree("Local List 1");
+        String jsonResponse = controller.expandGermplasmTree("Local List 1", "0");
         Assert.assertEquals("[]", jsonResponse);
     }
 }

@@ -5,11 +5,12 @@
   			var hasChildrenString =  /*[[#{browse.nursery.move.has.children}]]*/;
   			var openTreeType = 0;
   			var pleaseChooseFolder = /*[[#{import.germplasm.choose.a.list}]]*/;
-  			
+  			var lazyLoadUrl = "/Fieldbook/NurseryManager/expandGermplasmTree/";
+  			var additionalLazyLoadUrl = '';
   			function doGermplasmLazyLoad(node){
   	        	if (node.data.isFolder == true){
   	    			node.appendAjax({
-  	    				url: "/Fieldbook/NurseryManager/expandGermplasmTree/" + node.data.key,
+  	    				url: lazyLoadUrl + node.data.key + additionalLazyLoadUrl,
   	    				dataType: "json",
   	    				success: function(node) {
   	    					//do nothing
@@ -42,10 +43,14 @@
   	        }
   			
   			/** Germplasm Tree **/
-  	        function displayGermplasmListTree(treeName) {
+  	        function displayGermplasmListTree(treeName, isFolderOnly) {
   	        	/*if($('#'+treeName+' .fbtree-container').length != 0)
   	        	  $("#" + treeName).dynatree("reload");
   	        	*/
+  	        	console
+  	        	var lazyLoadUrlGetChildren = "/Fieldbook/NurseryManager/expandGermplasmTree/";
+  	        	var initLoadUrl = "/Fieldbook/NurseryManager/loadInitGermplasmTree";  	        	
+  	        	
   	        	$("#" + treeName).dynatree({
   	        		title: treeName,
   	        		checkbox: false,
@@ -53,7 +58,7 @@
   	        		autoFocus: false,
   	        		imagePath: "/Fieldbook/static/img/",
   	        		activeVisible: true,
-  	        		initAjax: {url: "/Fieldbook/NurseryManager/loadInitGermplasmTree",
+  	        		initAjax: {url: initLoadUrl,
   	        			dataType: "json"
   	        		},
   	        		onLazyRead: function(node) {
@@ -134,7 +139,7 @@
   	  				
   	  				
   	      		        	 $.ajax({
-  	      		        		url: "/Fieldbook/NurseryManager/expandGermplasmTree/" + sourceNode.data.key,
+  	      		        		url: lazyLoadUrlGetChildren + sourceNode.data.key,
   					        		type: "GET",
   					        		cache: false,
   					        		aysnc: false,
@@ -175,6 +180,13 @@
 	        		msgDiv = 'page-save-list-message-modal';
 	        	 return msgDiv;
   			}
+  			function getDisplayedTreeName(){
+  			  
+  			  if($('#listTreeModal').hasClass('in') == true)
+  				  return 'germplasmTree';
+  			  else if($('#saveListTreeModal').hasClass('in') == true)
+  				  return 'germplasmFolderTree';
+  		  }
     //]]>
     </script>
 </div>

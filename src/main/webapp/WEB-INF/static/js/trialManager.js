@@ -1941,7 +1941,7 @@ function enableTrialEnvFields() {
     $("#designLayout").select2("enable", true);
     $("#designLayout").trigger("change");
 }
-
+/*
 function displayGermplasmListTree(treeName) {
 	$("#" + treeName).dynatree({
 		title: treeName,
@@ -1981,7 +1981,7 @@ function displayGermplasmListTree(treeName) {
 		}
 	});
 }
-/*
+
 function displayGermplasmDetails(listId) {
 	Spinner.toggle();
 	$.ajax({		

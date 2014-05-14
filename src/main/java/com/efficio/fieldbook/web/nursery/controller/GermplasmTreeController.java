@@ -126,21 +126,22 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
      * @return the string
      */
     @ResponseBody
-    @RequestMapping(value = "/expandGermplasmTree/{parentKey}", method = RequestMethod.GET)
-    public String expandGermplasmTree(@PathVariable String parentKey) {
+    @RequestMapping(value = "/expandGermplasmTree/{parentKey}/{isFolderOnly}", method = RequestMethod.GET)
+    public String expandGermplasmTree(@PathVariable String parentKey, @PathVariable String isFolderOnly) {
         
         try {
+        	boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;
             if (Database.LOCAL.toString().equals(parentKey) 
                     || Database.CENTRAL.toString().equals(parentKey)) {
                 List<GermplasmList> rootLists = germplasmListManager
                             .getAllTopLevelListsBatched(BATCH_SIZE, Database.valueOf(parentKey));
-                return TreeViewUtil.convertGermplasmListToJson(rootLists);
+                return TreeViewUtil.convertGermplasmListToJson(rootLists, isFolderOnlyBool);
             } 
             else if (NumberUtils.isNumber(parentKey)) {
                 int parentId = Integer.valueOf(parentKey);
                 List<GermplasmList> childLists = germplasmListManager
                             .getGermplasmListByParentFolderIdBatched(parentId, BATCH_SIZE);
-                return TreeViewUtil.convertGermplasmListToJson(childLists);
+                return TreeViewUtil.convertGermplasmListToJson(childLists, isFolderOnlyBool);
             }
             else {
                 LOG.error("parentKey = " + parentKey + " is not a number");

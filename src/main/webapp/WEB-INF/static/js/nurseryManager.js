@@ -1645,72 +1645,7 @@ function loadNurserySettingsForCreate(templateSettingsId) {
 		}
 	});
 }
-/*
-function displayGermplasmListTree(treeName) {
-	
-	$("#" + treeName).dynatree({
-		title: treeName,
-		checkbox: false,
-		noLink: false,
-		autoFocus: false,
-		imagePath: "../img/",
-		activeVisible: true,
-		initAjax: {url: "loadInitGermplasmTree",
-			dataType: "json"
-		},
-		onLazyRead: function(node) {
-			node.appendAjax({
-				url: "expandGermplasmTree/" + node.data.key,
-				dataType: "json",
-				success: function(node) {
-					//do nothing
-				},
-				error: function(node, XMLHttpRequest, textStatus, errorThrown) {
-					console.log("The following error occured: " + textStatus, errorThrown); 
-				},
-				cache: false
-			});
-		},
-		classNames: {
-			container: "fbtree-container",
-			expander: "fbtree-expander",
-			nodeIcon: "fbtree-icon",
-			combinedIconPrefix: "fbtree-ico-",
-			focused: "fbtree-focused",
-			active: "fbtree-active"
-		},
-		onActivate: function(node) {
-			if (node.data.isFolder == false) {
- 				displayGermplasmDetails(node.data.key);
-			}
-		}
 
-	});
-	
-	
-
-}
-*/
-/*
- * obsolete
-function displayGermplasmDetails(listId) {
-	Spinner.toggle();
-	$.ajax({
-		url: "/Fieldbook/NurseryManager/importGermplasmList/displayGermplasmDetails/" + listId,
-		type: "GET",
-		cache: false,
-		success: function(html) {
-			$("#imported-germplasm-list").html(html);			
-		},
-		error: function(jqXHR, textStatus, errorThrown){ 
-			console.log("The following error occured: " + textStatus, errorThrown); 
-		},
-		complete: function() {
-			Spinner.toggle();
-		}
-	});
-}
-*/
 function openUsePreviousNurseryModal() {
 	$("#selectedNursery").select2("destroy");
 	$("#selectedNursery").val("")

@@ -44,7 +44,7 @@
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<a href="javascript: void(0)" onclick="javascript: $('#saveListTreeModal').modal('show')">Show Test Save</a> 
+<a href="javascript: void(0)" onclick="javascript: openSaveListModal()">Show Test Save</a> 
 <div id="list-tree-include" th:include="/Common/listTreeInclude"></div>
 
 <div layout:fragment="page-script">
@@ -54,8 +54,16 @@
 			  
 			  displayGermplasmListTree("germplasmFolderTree");  				    				 
 			  changeBrowseGermplasmButtonBehavior(false);
-				 
+			  $('#saveListTreeModal').on('hide.bs.modal', function() {
+				  $('#'+getDisplayedTreeName()).dynatree("getTree").reload();
+				  changeBrowseGermplasmButtonBehavior(false);
+				})
+				
 		  });
+          function openSaveListModal(){
+        	  $('#saveListTreeModal').modal('show');
+        	  additionalLazyLoadUrl = "/1";
+          }
     //]]>
     </script>
 </div>

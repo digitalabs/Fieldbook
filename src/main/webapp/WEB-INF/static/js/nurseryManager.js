@@ -2332,9 +2332,11 @@ function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
 	    type: "GET",
 	    cache: false,
 	    success: function(html) {
-			$("#study"+currentStudyId+" #measurement-tab-headers").append("<li class='active'><a>" + datasetName + "</a></li>");
+	    	var close = "<button class='close' id='dset-tab-closer-" + datasetId + "'>X</button>";
+			$("#study"+currentStudyId+" #measurement-tab-headers").append("<li class='active'><a>" + datasetName + "&nbsp;&nbsp;" + close + "</a> "+ "</li>");
 			$("#study"+currentStudyId+" #measurement-tabs").append("<div id='dset-tab-" + datasetId + "'>" + html + "</div>");
 			$("#study"+currentStudyId+" .measurement-section").show();
+			initializeMeasurementTab();
         },
         error: function(jqXHR, textStatus, errorThrown){
         	console.log("The following error occured: " + textStatus, errorThrown); 
@@ -2360,4 +2362,13 @@ function showSelectedTab(selectedTabName) {
 
 function showStudyInfo() {
 	$("#folderBrowserModal").modal("show");
+}
+
+function initializeMeasurementTab() {
+	$('#measurement-tab-headers .close').on('click', function() {
+		var buttonId = $(this).attr("id");
+		var datasetId = buttonId.replace("dset-tab-closer-", "");
+		$("#dset-tab-" + datasetId).hide();
+		$(this).parent().remove();
+	});
 }

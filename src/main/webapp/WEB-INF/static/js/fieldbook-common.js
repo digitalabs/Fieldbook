@@ -1034,13 +1034,24 @@ function doExportTrial(){
 	doExportContinue(exportTrialType, false);
 }
 
-function exportNursery(type){
-	
+function exportNursery(){
+	/*
 	if(type == 2){
 		$('#importRModal').modal('show');
 	}else{		
 		doExportContinue(type, true);
 	}
+	*/
+	var type = $('#exportType').val();
+	if(type==0){
+		showErrorMessage('page-export-message-modal', 'Please choose export type');
+		return false;
+	}
+	
+	if(type == 2){
+		exportNurseryToR(type);
+	}else
+		doExportContinue(type, true);
 }
 
 function exportNurseryToR(type){
@@ -1057,7 +1068,7 @@ function exportNurseryToR(type){
 	}
 	
 	doExportContinue(type + "/" + $('#selectedRTrait').val(), isNursery);
-	$('#importRModal').modal('hide');
+	//$('#importRModal').modal('hide');
 }
 
 function validateTrialInstance(){
@@ -1109,6 +1120,7 @@ function doExportContinue(paramUrl, isNursery){
 			$('#trialModalSelection').modal('hide');
 		}
 	}
+	var exportWayType = '/'+$('#exportType').val();
 	var urlPage = paginationUrl+currentPage+"/"+currentPage+'?r=' + (Math.random() * 999);
 	//alert(urlPage);
 	Spinner.toggle();
@@ -1129,13 +1141,15 @@ function doExportContinue(paramUrl, isNursery){
         	   		
         	   		newAction = action + "exportTrial/" + paramUrl + "/" + additionalParams;
         	   		
-        	   	//alert(newAction);
+        	   
         	   	 
         	   	}
-        	   
+        		newAction += exportWayType;
+
         	   $(formName).attr('action', newAction);
         	   $(formName).submit();
         	   $(formName).attr('action', action);
+        	   $('#exportStudyModal').modal('hide');
         	   Spinner.toggle();
            }
          }

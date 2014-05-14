@@ -61,6 +61,7 @@ public class SaveTemplateSettingsControllerTest extends AbstractJUnit4SpringCont
     /**
      * Sets the up.
      */
+    /*
     @Before
     public void setUp() {
     	
@@ -86,23 +87,25 @@ public class SaveTemplateSettingsControllerTest extends AbstractJUnit4SpringCont
 		dataset = (Dataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, datasetName, nurseryLevelConditions, plotsLevelList, baselineTraitsList, null);
 		
     }
-    
+    */
     /**
      * Gets the test setting variable.
      *
      * @param prefix the prefix
      * @return the test setting variable
      */
+    /*
     private SettingVariable getTestSettingVariable(String prefix){
 		return new SettingVariable(prefix + " name", prefix + " description", prefix + "  property",
 				prefix + "  scale", prefix + "  method", prefix + "  role", prefix + "  dataType");
 	}
-    
+    */
     /**
      * Test valid nursery workbook.
      *
      * @throws Exception the exception
      */
+    /*
     @Test
     public void testSaveRetrieveAndDeleteTemplateSettings() throws Exception {
     	int projectId = 1;
@@ -130,5 +133,5 @@ public class SaveTemplateSettingsControllerTest extends AbstractJUnit4SpringCont
     	 
     }
     
-        
+    */    
 }

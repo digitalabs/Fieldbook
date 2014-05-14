@@ -56,6 +56,7 @@ public class PojoXmlTester extends AbstractJUnit4SpringContextTests {
     /**
      * Sets the up.
      */
+    /* since no more export xml
     @Before
     public void setUp() {
     	
@@ -81,12 +82,9 @@ public class PojoXmlTester extends AbstractJUnit4SpringContextTests {
 		dataset = (Dataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, datasetName, nurseryLevelConditions, plotsLevelList, baselineTraitsList, null);
 		
     }
-	
+	*/
 	/* =========== search terms =========== */
-	
-	/**
-	 * Test search terms.
-	 */
+	/*
 	@Test
 	public void testCreatePojoXmlAndParse() {
 		Dataset dataset = new Dataset();
@@ -136,4 +134,5 @@ public class PojoXmlTester extends AbstractJUnit4SpringContextTests {
 		assertEquals(userSelection.getBaselineTraitsList().get(0).getVariable().getName(), dataset.getVariates().get(0).getName());
 		
 	}
+	*/
 }

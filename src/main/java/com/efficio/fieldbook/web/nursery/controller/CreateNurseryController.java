@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
@@ -64,7 +65,7 @@ public class CreateNurseryController extends SettingsController {
     public static final String URL = "/NurseryManager/createNursery";
     
     /** The Constant URL_SETTINGS. */
-    public static final String URL_SETTINGS = "/NurseryManager/chooseSettings";
+    public static final String URL_SETTINGS = "/NurseryManager/ver2.0/chooseSettings";
     
     @Resource
     private OntologyService ontologyService;
@@ -108,13 +109,16 @@ public class CreateNurseryController extends SettingsController {
                     buildRequiredVariablesFlag(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()), 
                     userSelection.getPlotsLevelList(), false);
             
-            
+            removeBasicDetailsVariables(nurseryLevelConditions);
             
             userSelection.setStudyLevelConditions(nurseryLevelConditions);
             userSelection.setPlotsLevelList(plotLevelConditions);
+            
             form.setStudyLevelVariables(userSelection.getStudyLevelConditions());
             form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
+            form.setSelectionVariatesVariables(userSelection.getSelectionVariates());
             form.setPlotLevelVariables(userSelection.getPlotsLevelList());
+            form.setNurseryConditions(userSelection.getNurseryConditions());
             //form.setSelectedSettingId(1);
             form.setLoadSettings("1");
             form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + "," + AppConstants.FIXED_NURSERY_VARIABLES.getString());
@@ -125,6 +129,25 @@ public class CreateNurseryController extends SettingsController {
         model.addAttribute("nurseryList", getNurseryList());
         //setupFormData(form);
         return super.showAjaxPage(model, URL_SETTINGS);
+    }
+    
+    private void removeBasicDetailsVariables(List<SettingDetail> nurseryLevelConditions) {
+        Iterator<SettingDetail> iter = nurseryLevelConditions.iterator();
+        while (iter.hasNext()) {
+            if (inFixedNurseryList(iter.next().getVariable().getCvTermId())) {
+                iter.remove();
+            }
+        }
+    }
+    
+    private boolean inFixedNurseryList(int propertyId) {
+        StringTokenizer token = new StringTokenizer(AppConstants.FIXED_NURSERY_VARIABLES.getString(), ",");
+        while(token.hasMoreTokens()){
+            if (Integer.parseInt(token.nextToken()) == propertyId) {
+                return true;
+            }
+        }
+        return false;
     }
     
     /**
@@ -232,14 +255,27 @@ public class CreateNurseryController extends SettingsController {
     		}
     	}
 
-    	List<SettingDetail> studyLevelVariables = form.getStudyLevelVariables();
+    	List<SettingDetail> studyLevelVariables = new ArrayList<SettingDetail>();
+    	studyLevelVariables.addAll(form.getBasicDetails());
     	studyLevelVariables.addAll(form.getStudyLevelVariables());
-    	userSelection.setStudyLevelConditions(studyLevelVariables);
+    	 
+    	List<SettingDetail> studyLevelVariablesSession = userSelection.getBasicDetails();
+    	userSelection.getStudyLevelConditions().addAll(studyLevelVariablesSession);
     	
-    	Dataset dataset = (Dataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, studyLevelVariables, form.getPlotLevelVariables(), form.getBaselineTraitVariables(), userSelection);
+    	List<SettingDetail> baselineTraits = form.getBaselineTraitVariables();
+    	List<SettingDetail> baselineTraitsSession = userSelection.getSelectionVariates();
+    	if (baselineTraits == null) {
+    	    baselineTraits = form.getSelectionVariatesVariables();
+    	} else if (form.getSelectionVariatesVariables() != null) {
+    	    baselineTraits.addAll(form.getSelectionVariatesVariables());
+    	    userSelection.getBaselineTraitsList().addAll(baselineTraitsSession);
+    	}
+    	
+    	Dataset dataset = (Dataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, studyLevelVariables, 
+    	        form.getPlotLevelVariables(), baselineTraits, userSelection, form.getNurseryConditions());
     	Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);
     	userSelection.setWorkbook(workbook);
-    	
+    	    	
     	createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId());
  
     	return "success";

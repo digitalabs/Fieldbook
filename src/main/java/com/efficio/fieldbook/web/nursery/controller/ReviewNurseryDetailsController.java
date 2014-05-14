@@ -79,7 +79,7 @@ public class ReviewNurseryDetailsController extends AbstractBaseFieldbookControl
     public List<DatasetReference> loadDatasets(@PathVariable int nurseryId) throws MiddlewareQueryException {
     	List<DatasetReference> datasetList = new ArrayList<DatasetReference>();
     	Database database = nurseryId > 0 ? Database.CENTRAL : Database.LOCAL;
-    	StudyDetails studyDetails = fieldbookMiddlewareService.getStudyDetails(database, StudyType.N, nurseryId);
+    	StudyDetails studyDetails = null; //fieldbookMiddlewareService.getStudyDetails(database, StudyType.N, nurseryId);
     	int datasetId = fieldbookMiddlewareService.getMeasurementDatasetId(nurseryId, studyDetails.getStudyName()); 
     	List<DatasetReference> datasets = fieldbookMiddlewareService.getDatasetReferences(nurseryId);
     	if (datasets != null && !datasets.isEmpty()) {

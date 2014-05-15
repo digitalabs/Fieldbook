@@ -1157,18 +1157,25 @@ function doExportContinue(paramUrl, isNursery){
 }
 
 function importNursery(type){
-	$('#fileupload').val("");
-	$('#page-modal-message').html('');
-	$('div.fileupload').parent().parent().removeClass('has-error');
-	$('#importModal').modal('show');
-	var action = "/Fieldbook/ImportManager/import/" + $("#study-type").val() + "/";
+		
+	var action = "/Fieldbook/ImportManager/import/" + $("#study-type").val() + "/"+type;
 	var formName = "#importStudyUploadForm";
-	$(formName).attr('action', action+type);
-	   
+	$(formName).attr('action', action);
+	//console.log(action);   
 }
 
 function submitImportStudy() {
-	$("#importStudyUploadForm").submit();
+	if($('#importType').val() == 0){
+		showErrorMessage('page-import-message-modal', 'Please choose import type');
+		return false;
+	}
+	
+	if($('#fileupload').val() == ''){
+		showErrorMessage('page-import-message-modal', 'Please choose a file to import');
+		return false;
+	}
+	Spinner.toggle();
+	 $("#importStudyUploadForm").ajaxForm(importOptions).submit();  
 }
 function isFloat(value) { 
     return !isNaN(parseInt(value,10)) && (parseFloat(value,10) == parseInt(value,10)); 

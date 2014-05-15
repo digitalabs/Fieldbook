@@ -2,7 +2,10 @@ package com.efficio.fieldbook.web.common.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -12,6 +15,8 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,6 +24,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.service.api.FileService;
@@ -58,13 +64,17 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     @Resource
     private DataKaptureImportStudyService dataKaptureImportStudyService;
 
+    /** The message source. */
+    @Resource
+    private ResourceBundleMessageSource messageSource;
+    
     @Override
 	public String getContentName() {
 		return null;
 	}
-
+    @ResponseBody
     @RequestMapping(value="/import/{studyType}/{importType}", method = RequestMethod.POST)
-    public String importFile(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form
+    public Map<String, Object> importFile(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form
             ,@PathVariable String studyType
     		,@PathVariable int importType, BindingResult result, Model model) {
 
@@ -144,7 +154,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 				}
             }
     	}
-    	
+    	Map<String, Object> resultsMap = new HashMap<String,Object>();
+    	if(!result.hasErrors()){
     	
 	    	form.setMeasurementRowList(userSelection.getMeasurementRowList());
 	    	form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariablesView());
@@ -154,7 +165,17 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	    	form.setNumberOfInstances(userSelection.getWorkbook().getTotalNumberOfInstances());
 	    	form.setTrialEnvironmentValues(transformTrialObservations(userSelection.getWorkbook().getTrialObservations(), nurserySelection.getTrialLevelVariableList()));
 	    	form.setTrialLevelVariables(nurserySelection.getTrialLevelVariableList());
-    	return show(model, isTrial);
+	    	resultsMap.put("isSuccess", 1);
+    	}else{
+    		resultsMap.put("isSuccess", 0);
+    		String errorCode = result.getFieldError("file").getCode();
+    		Locale locale = LocaleContextHolder.getLocale();
+    		resultsMap.put("error", messageSource.getMessage(
+    				errorCode, null, locale));
+    	}
+	    	
+    	//return show(model, isTrial);
+    	return resultsMap;
     }
     
     private List<List<ValueReference>> transformTrialObservations(List<MeasurementRow> trialObservations, List<SettingDetail> trialHeaders) {
@@ -185,7 +206,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     
     public String show(Model model, boolean isTrial) {
         setupModelInfo(model);
-        model.addAttribute(TEMPLATE_NAME_ATTRIBUTE, getContentName(isTrial));
+        model.addAttribute(TEMPLATE_NAME_ATTRIBUTE, getContentName(isTrial));        
         return BASE_TEMPLATE_NAME;
     }
     

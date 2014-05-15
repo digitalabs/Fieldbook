@@ -80,48 +80,4 @@
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
   </form>
-<form id="importStudyUploadForm" role="form-horizontal" onsubmit="return do_validation()"  
-class="form-horizontal" 
-     method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data">								
-    <!-- Modal -->
-    <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-      <div class="modal-dialog" style="width: 600px">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title" th:text="#{nursery.import.data.file}">Import File</h4>
-          </div>
-          <div class="modal-body">
-            <div class="form-group" id="page-modal-message"></div>
-            <div class='form-group'>                                          
-              
-              <label for="fileupload" class="col-xs-2 col-md-2 control-label" th:text="#{nursery.import.germplasm.select.file}">Select a file</label>
-              <div class="col-xs-6 col-lg-6">
-                
-                <div class="fileupload fileupload-new" data-provides="fileupload">							    
-                <div class="input-group">
-                  <div class="form-control uneditable-input"><i class="icon-file fileupload-exists"></i> 
-                  <span class="fileupload-preview"></span>
-                </div>
-                <div class="input-group-btn">
-                  <a class="btn btn-primary btn-file">
-                    <span class="fileupload-new" th:text="#{nursery.import.germplasm.browse.file}">Browse</span>
-                    <span class="fileupload-exists" th:text="#{nursery.import.germplasm.change}">Change</span>
-                    <input id="fileupload" th:field="*{file}" type="file" class="file-input"/></a>
-                    <a href="#" class="btn btn-danger fileupload-exists" data-dismiss="fileupload" th:text="#{nursery.import.germplasm.remove}">Remove</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>																							
-        </div>
-        <div class="modal-footer">
-          <button value="Cancel" aria-hidden="true" data-dismiss="modal" class="btn btn-default" type="button" th:text="#{common.form.cancel.text}">Cancel</button>
-          <button type="button" th:value="#{common.form.submit.text}" class="btn btn-primary" th:text="#{nursery.import.germplasm.submit}" 
-          		  onclick="javascript: submitImportStudy();">Submit</button>			        	
-        </div>
-      </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-  </div><!-- /.modal -->
-</form>
 

@@ -1,28 +1,35 @@
 <div class="col-xs-7 col-md-7" xmlns:th="http://www.thymeleaf.org">
 	<!-- Modal -->
    	<div class="modal fade" id="exportStudyModal" role="dialog" aria-labelledby="exportStudyModal" aria-hidden="true">
-		<div class="modal-dialog modal-small">
+		<div class="modal-dialog modal-medium">
 	    	<div class="modal-content">
 			    	<div class="modal-header">
 		            <button id="close" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 		            <h4 class="modal-title" id="heading-modal">
-		            Export
+		            	
 	         		</h4>
 		          </div>
 		          
+	        
+	           
 	         	<div class="modal-body" id="exportStudyModalBody">
 	         		<div class="row form-group">
 		         		<div id="page-export-message-modal" class="col-xs-12 col-md-12">
 		         		</div>
 	         		</div>	         		
-					
+					<div class="row form-group">
+						<div class="col-xs-12 col-md-12">
+							<label class="control-label h4" th:text="#{study.export.format.header}"></label>
+						</div>
+						
+			        </div>
 					
 	         		<div class="row form-group">
-						<div class="col-xs-4 col-md-4">
-							Export Format:
+						<div class="col-xs-5 col-md-5">
+							<label class="control-label add_top_padding" th:text="#{study.export.choose.format}">Export Format:</label><span class="required">*</span>
 						</div>
-						<div class="col-xs-8 col-md-8">
-							<select id="exportType">
+						<div class="col-xs-4 col-md-4">
+							<select id="exportType"  style="width: 170px">
 								<option value="0">Please Choose</option>
 								<option value="1" th:text="#{nursery.export.fieldlog.fieldroid}"></option>
 								<option value="2" th:text="#{nursery.export.r}"></option>
@@ -33,16 +40,28 @@
 						</div>
 			        </div>
 			        
-			        <div class="row form-group">
-						<div class="col-xs-4 col-md-4">
-							<label class="control-label">Way to be exported:</label>
+     				<div class="row form-group">
+						<div class="col-xs-12 col-md-12">
+							<label class="control-label h4" th:text="#{study.export.data.collection.header}"></label>
 						</div>
-						<div class="col-xs-8 col-md-8">
-							<select id="exportType">
-								<option value="1">Row/Col</option>								
-								<option value="2">Serpentine (over range)</option>
-								<option value="3">Serpentine (over column)</option>								
-							</select>
+						
+			        </div>
+			        
+			        
+			        <div class="row form-group">
+						<div class="col-xs-5 col-md-5">
+							<label class="control-label add_top_padding" th:text="#{study.export.choose.data.collection.order}">Way to be exported:</label><span class="required">*</span>
+						</div>
+						<div class="col-xs-4 col-md-4">
+							<select id="exportType" style="width: 170px">
+								<option value="1" th:text="#{study.export.data.collection.row.col}">Row/Col</option>								
+								<option value="2" th:text="#{study.export.data.collection.serpentine.along.rows}">Serpentine (over range)</option>
+								<option value="3" th:text="#{study.export.data.collection.serpentine.along.columns}">Serpentine (over column)</option>		
+	           						
+							</select>							
+						</div>
+						<div style="padding-top: 7px">
+							<span class="help-tooltip-nursery" data-placement="right" data-toggle="tooltip" th:title="#{study.export.data.collection.serpentine.tool.tip}">?</span>
 						</div>
 			        </div>
 			        
@@ -52,15 +71,15 @@
 			        		<label class="control-label h4" th:text="#{nursery.export.r.header}">Choose Trait to evaluate in R</label>	
 			        	</div>
 			        	<div class="col-xs-12 col-md-12">
-			        		<label for="fileupload" class="control-label" th:text="#{nursery.export.r.note}">Note: In your exported file, your trait will show as "GY"</label>
+			        		<label  class="control-label" th:text="#{nursery.export.r.note}">Note: In your exported file, your trait will show as "GY"</label>
 			        	</div>
 			        	<div class="col-xs-12 col-md-12">&nbsp;</div>
-			        	<div class="col-xs-4 col-md-4">
-			        		 <label for="fileupload" class="control-label" th:text="#{nursery.export.r.select.trait}">Select Main Trait:</label>
+			        	<div class="col-xs-5 col-md-5">
+			        		 <label class="control-label add_top_padding" th:text="#{nursery.export.r.select.trait}">Select Main Trait:</label>
 			        	</div>
 			        	<form id="importStudyForm" role="form-horizontal" class="form-horizontal" action="#" method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data">
-			        	<div class="col-xs-8 col-md-8">
-	        		 		<select name="selectedRTrait" id="selectedRTrait" class="form-control">
+			        	<div class="col-xs-4 col-md-4">
+	        		 		<select name="selectedRTrait" id="selectedRTrait" class="form-control" style="width: 170px">
 			    				<option th:if="${measurementVariable.factor == false}" th:each="measurementVariable : *{measurementVariables}" th:value="${measurementVariable.termId}" th:utext="${measurementVariable.name + ' (' + measurementVariable.scale +')'}">Trait</option>
 			    			</select>
 			        	</div>
@@ -80,8 +99,12 @@
 	
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    
+	           var submitExportUrl = '/Fieldbook/ExportManager/';
+	           var exportHeader = /*[[#{study.export.study.header}]]*/;
+	           var exportBookHeader = /*[[#{study.export.study.book.header}]]*/;	           	          	           
+	           
 		   	$( document ).ready(function() {  	     
-				$('#exportStudyModal select').select2();
+				$('#exportStudyModal select').select2({width: 'copy'});
 				$('#exportType').on('change', function(){
 					if($(this).val() == 2){
 						$('.exportRSection').css('display', 'block');	
@@ -90,6 +113,7 @@
 					}
 				})
 				
+				$('#exportStudyModal #heading-modal').html(exportHeader + " " +  $("#study-type").val() + " " + exportBookHeader);
 				$('#exportStudyModal').on('hide.bs.modal', function() {
 				    $("#page-export-message-modal").html('');				    
 				})

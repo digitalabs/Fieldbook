@@ -1,0 +1,69 @@
+<div class="modal fade" id="saveListTreeModal" tabindex="-1" role="dialog" aria-labelledby="saveListTreeModal" aria-hidden="true">
+	<div class="modal-dialog modal-large">
+    	<div class="modal-content">
+    		<div class="modal-header">
+	            	<button id="closeSaveListTreeModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			           <h4 class="modal-title" id="heading-modal">
+			         		Edit List Header
+		         	   </h4>
+	          	</div>
+      		<div class="modal-body">
+      			<div class="row">
+	         		<div id="page-save-list-message-modal" class="col-xs-12 col-md-12">
+	         		</div>
+         		</div>         		
+         		<div class="row"> 
+         			<div class="col-xs-6 col-md-6">   
+						<div style="margin-left: -10px" class="col-xs-6 col-md-6">  			
+				  			<img th:src="@{/static/img/build-new-list.png}" style="padding-bottom:3px;" />
+				  			<label class="control-label"><strong class="sub-content-heading">List Location</strong></label>
+				 		</div>
+						 <div style="margin-left: 10px" class="col-xs-6 col-md-6">
+							<div style="float: right; ">
+								<img width="30px" onclick="javascript: addGermplasmFolder(this)" height="30px" th:src="@{/static/img/add 2.png}" class="image-padding browse-germplasm-action" />
+								<img width="30px" onclick="javascript: renameGermplasmFolder(this)" height="30px" th:src="@{/static/img/edit.png}" class="image-padding browse-germplasm-action edit-germplasm-folder" />
+								<img width="30px" onclick="javascript: deleteGermplasmFolder(this)" height="30px" th:src="@{/static/img/delete.png}" class="image-padding browse-germplasm-action delete-germplasm-folder" />
+							</div>
+						</div>
+					</div>	      						      						      		
+				</div>
+         		<div class="row">    
+					<div class="col-xs-6 col-md-6">  			
+				  		<div id="germplasmFolderTree" style="height:350px; overflow:auto;"></div>
+			 		</div>
+					 <div class="col-xs-6 col-md-6">
+					</div>	      						      						      		
+				</div>
+																		
+      		</div>
+	  		<div class="modal-footer">
+    			<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
+      			<button type="button" class="btn btn-primary" th:text="#{common.form.select.text}" onclick="javascript: chooseList();">Ok</button>			        	
+    		</div>
+  		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<a href="javascript: void(0)" onclick="javascript: openSaveListModal()">Show Test Save</a> 
+<div id="list-tree-include" th:include="/Common/listTreeInclude"></div>
+
+<div layout:fragment="page-script">
+<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[     
+         $( document ).ready(function() {
+			  
+			  displayGermplasmListTree("germplasmFolderTree");  				    				 
+			  changeBrowseGermplasmButtonBehavior(false);
+			  $('#saveListTreeModal').on('hide.bs.modal', function() {
+				  $('#'+getDisplayedTreeName()).dynatree("getTree").reload();
+				  changeBrowseGermplasmButtonBehavior(false);
+				})
+				
+		  });
+          function openSaveListModal(){
+        	  $('#saveListTreeModal').modal('show');
+        	  additionalLazyLoadUrl = "/1";
+          }
+    //]]>
+    </script>
+</div>

@@ -104,8 +104,8 @@ public class TreeViewUtil {
      * @return the string
      * @throws Exception the exception
      */
-    public static String convertGermplasmListToJson(List<GermplasmList> germplasmLists) throws Exception {
-        List<TreeNode> treeNodes = convertGermplasmListToTreeView(germplasmLists);
+    public static String convertGermplasmListToJson(List<GermplasmList> germplasmLists, boolean isFolderOnly) throws Exception {
+        List<TreeNode> treeNodes = convertGermplasmListToTreeView(germplasmLists, isFolderOnly);
         return convertTreeViewToJson(treeNodes);
     }
     
@@ -189,11 +189,13 @@ public class TreeViewUtil {
      * @param germplasmLists the germplasm lists
      * @return the list
      */
-    private static List<TreeNode> convertGermplasmListToTreeView(List<GermplasmList> germplasmLists) {
+    private static List<TreeNode> convertGermplasmListToTreeView(List<GermplasmList> germplasmLists, boolean isFolderOnly) {
         List<TreeNode> treeNodes = new ArrayList<TreeNode>();
         if (germplasmLists != null && !germplasmLists.isEmpty()) {
             for (GermplasmList germplasmList : germplasmLists) {
-                treeNodes.add(convertGermplasmListToTreeNode(germplasmList));
+            	TreeNode node = convertGermplasmListToTreeNode(germplasmList, isFolderOnly);
+            	if(node != null)
+            		treeNodes.add(node);
             }
         }
         return treeNodes;
@@ -281,7 +283,7 @@ public class TreeViewUtil {
 	 * @param germplasmList the germplasm list
 	 * @return the tree node
 	 */
-	private static TreeNode convertGermplasmListToTreeNode(GermplasmList germplasmList) {
+	private static TreeNode convertGermplasmListToTreeNode(GermplasmList germplasmList, boolean isFolderOnly) {
 	    TreeNode treeNode = new TreeNode();
 	    
 	    treeNode.setKey(germplasmList.getId().toString());
@@ -293,6 +295,12 @@ public class TreeViewUtil {
 	    	treeNode.setIcon(AppConstants.FOLDER_ICON_PNG.getString());
 	    else
 	    	treeNode.setIcon(AppConstants.BASIC_DETAILS_PNG.getString());
+	    if(isFolderOnly){
+	    	//we dont return if its not a folder
+	    	if(!treeNode.getIsFolder())
+	    		return null;
+	    }
+	    	
 	    
 	    return treeNode;
 	}

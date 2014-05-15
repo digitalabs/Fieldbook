@@ -178,6 +178,7 @@ public class CreateNurseryControllerOld extends SettingsController {
      * @return the string
      * @throws MiddlewareQueryException the middleware query exception
      */
+    /*
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
     public String submit(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws MiddlewareQueryException {
@@ -198,7 +199,7 @@ public class CreateNurseryControllerOld extends SettingsController {
  
     	return "success";
     }
-    
+    */
     /**
      * Creates the study details.
      *

@@ -56,6 +56,28 @@ public class ObservationMatrixController extends
 	public String getContentName() {
 		return null;
 	}
+	
+	/**
+     * Get for the pagination of the list
+     *
+     * @param form the form
+     * @param model the model
+     * @return the string
+     */
+    @RequestMapping(value="/reload/{studyType}/{pageNum}/{previewPageNum}", method = RequestMethod.GET)
+    public String getPaginatedListAfterImport(@PathVariable String studyType, @PathVariable int pageNum, @PathVariable int previewPageNum
+            , @ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, Model model) {
+
+    	boolean isTrial = studyType.equalsIgnoreCase("TRIAL");
+    	StudySelection userSelection = getUserSelection(isTrial);    	
+    	
+    	form.setMeasurementRowList(userSelection.getMeasurementRowList());
+    	form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
+    	form.setStudyName(userSelection.getWorkbook().getStudyDetails().getStudyName());
+        form.changePage(pageNum);
+        userSelection.setCurrentPage(form.getCurrentPage());
+        return super.showAjaxPage(model, PAGINATION_TEMPLATE);
+    }
 
     /**
      * Get for the pagination of the list

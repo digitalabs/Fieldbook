@@ -320,6 +320,7 @@ public class CreateTrialController extends SettingsController {
      * @return the string
      * @throws MiddlewareQueryException the middleware query exception
      */
+    /*
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
     public String submit(@ModelAttribute("createTrialForm") CreateTrialForm form, Model model) throws MiddlewareQueryException {
@@ -360,7 +361,7 @@ public class CreateTrialController extends SettingsController {
  
     	return "success";
     }
-    
+    */
     /**
      * Creates the study details.
      *

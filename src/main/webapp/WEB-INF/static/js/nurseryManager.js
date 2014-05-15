@@ -1504,72 +1504,7 @@ function loadNurserySettingsForCreate(templateSettingsId) {
 		}
 	});
 }
-/*
-function displayGermplasmListTree(treeName) {
-	
-	$("#" + treeName).dynatree({
-		title: treeName,
-		checkbox: false,
-		noLink: false,
-		autoFocus: false,
-		imagePath: "../img/",
-		activeVisible: true,
-		initAjax: {url: "loadInitGermplasmTree",
-			dataType: "json"
-		},
-		onLazyRead: function(node) {
-			node.appendAjax({
-				url: "expandGermplasmTree/" + node.data.key,
-				dataType: "json",
-				success: function(node) {
-					//do nothing
-				},
-				error: function(node, XMLHttpRequest, textStatus, errorThrown) {
-					console.log("The following error occured: " + textStatus, errorThrown); 
-				},
-				cache: false
-			});
-		},
-		classNames: {
-			container: "fbtree-container",
-			expander: "fbtree-expander",
-			nodeIcon: "fbtree-icon",
-			combinedIconPrefix: "fbtree-ico-",
-			focused: "fbtree-focused",
-			active: "fbtree-active"
-		},
-		onActivate: function(node) {
-			if (node.data.isFolder == false) {
- 				displayGermplasmDetails(node.data.key);
-			}
-		}
 
-	});
-	
-	
-
-}
-*/
-/*
- * obsolete
-function displayGermplasmDetails(listId) {
-	Spinner.toggle();
-	$.ajax({
-		url: "/Fieldbook/NurseryManager/importGermplasmList/displayGermplasmDetails/" + listId,
-		type: "GET",
-		cache: false,
-		success: function(html) {
-			$("#imported-germplasm-list").html(html);			
-		},
-		error: function(jqXHR, textStatus, errorThrown){ 
-			console.log("The following error occured: " + textStatus, errorThrown); 
-		},
-		complete: function() {
-			Spinner.toggle();
-		}
-	});
-}
-*/
 function openUsePreviousNurseryModal() {
 	$("#selectedNursery").select2("destroy");
 	$("#selectedNursery").val("")
@@ -2191,11 +2126,9 @@ function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
 	    type: "GET",
 	    cache: false,
 	    success: function(html) {
-	    	var close = "<button class='close' id='dset-tab-closer-" + datasetId + "'>X</button>";
-			$("#study"+currentStudyId+" #measurement-tab-headers").append("<li class='active'><a>" + datasetName + "&nbsp;&nbsp;" + close + "</a> "+ "</li>");
+			$("#study"+currentStudyId+" #measurement-tab-headers").append("<li class='active'><a>" + datasetName + "</a> "+ "</li>");
 			$("#study"+currentStudyId+" #measurement-tabs").append("<div id='dset-tab-" + datasetId + "'>" + html + "</div>");
 			$("#study"+currentStudyId+" .measurement-section").show();
-			initializeMeasurementTab();
         },
         error: function(jqXHR, textStatus, errorThrown){
         	console.log("The following error occured: " + textStatus, errorThrown); 
@@ -2223,11 +2156,3 @@ function showStudyInfo() {
 	$("#folderBrowserModal").modal("show");
 }
 
-function initializeMeasurementTab() {
-	$('#measurement-tab-headers .close').on('click', function() {
-		var buttonId = $(this).attr("id");
-		var datasetId = buttonId.replace("dset-tab-closer-", "");
-		$("#dset-tab-" + datasetId).hide();
-		$(this).parent().remove();
-	});
-}

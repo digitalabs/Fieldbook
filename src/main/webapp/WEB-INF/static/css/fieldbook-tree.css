@@ -481,7 +481,9 @@ span.dynatree-drop-target.dynatree-drop-after a
 #traitClassBrowserTree span.dynatree-node.highlight,
 #manageParentTraitClassBrowserTree span.dynatree-node.highlight,
 #managePropTraitClassBrowserTree span.dynatree-node.highlight,
-#studyTree span.dynatree-node.highlight
+#studyTree span.dynatree-node.highlight,
+#germplasmTree span.dynatree-node.highlight,
+#germplasmFolderTree span.dynatree-node.highlight
 {
 	background-color: #BED6B2;
 }
@@ -489,7 +491,9 @@ span.dynatree-drop-target.dynatree-drop-after a
 #traitClassBrowserTree ul.fbtree-container.highlight a:hover,
 #manageParentTraitClassBrowserTree ul.fbtree-container.highlight a:hover,
 #managePropTraitClassBrowserTree ul.fbtree-container.highlight a:hover
-#studyTree ul.fbtree-container.highlight a:hover
+#studyTree ul.fbtree-container.highlight a:hover,
+#germplasmTree ul.fbtree-container.highlight a:hover,
+#germplasmFolderTree ul.fbtree-container.highlight a:hover
 {
 	background-color: #BED6B2;
 }
@@ -499,7 +503,11 @@ a.tree-highlight{
 #ontologyBrowserTree ul.fbtree-container a:focus,
 #ontologyBrowserTree span.fbtree-focused a:link,  /* @IE */
 #studyTree ul.fbtree-container a:focus,
-#studyTree span.fbtree-focused a:link  /* @IE */
+#studyTree span.fbtree-focused a:link,  /* @IE */
+#germplasmTree ul.fbtree-container a:focus,
+#germplasmTree span.fbtree-focused a:link,  /* @IE */
+#germplasmFolderTree ul.fbtree-container a:focus,
+#germplasmFolderTree span.fbtree-focused a:link  /* @IE */
 {
 	background-color: #BED6B2;
 }
@@ -517,5 +525,8 @@ a.tree-highlight{
 #managePropTraitClassBrowserTree ul.fbtree-container a:focus,
 #managePropTraitClassBrowserTree span.fbtree-focused a:link  /* @IE */
 {
+	background-color: #BED6B2;
+}
+span.fbtree-active a{
 	background-color: #BED6B2;
 }

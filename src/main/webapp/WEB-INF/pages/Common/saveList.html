@@ -25,44 +25,116 @@
 								<img width="30px" onclick="javascript: deleteGermplasmFolder(this)" height="30px" th:src="@{/static/img/delete.png}" class="image-padding browse-germplasm-action delete-germplasm-folder" />
 							</div>
 						</div>
-					</div>	      						      						      		
+					</div>	  
+					<div class="col-xs-6 col-md-6">   
+						<div style="top: 8px; left: -15px" class="col-xs-12 col-md-12">  							  			
+				  			<label class="control-label"><strong class="sub-content-heading">List Details</strong></label>
+				 		</div>						 
+					</div>	    						      						      		
 				</div>
          		<div class="row">    
 					<div class="col-xs-6 col-md-6">  			
 				  		<div id="germplasmFolderTree" style="height:350px; overflow:auto;"></div>
 			 		</div>
-					 <div class="col-xs-6 col-md-6">
+					<div class="col-xs-6 col-md-6" id="saveGermplasmRightSection">
 					</div>	      						      						      		
 				</div>
 																		
       		</div>
 	  		<div class="modal-footer">
     			<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
-      			<button type="button" class="btn btn-primary" th:text="#{common.form.select.text}" onclick="javascript: chooseList();">Ok</button>			        	
+      			<button type="button" class="btn btn-primary" th:text="#{common.form.save.text}" onclick="javascript: saveGermplasmList();">Ok</button>			        	
     		</div>
   		</div><!-- /.modal-content -->
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<a href="javascript: void(0)" onclick="javascript: openSaveListModal()">Show Test Save</a> 
+<a href="javascript: void(0)" onclick="javascript: openSaveListModal('1111')">Show Test Save</a> 
 <div id="list-tree-include" th:include="/Common/listTreeInclude"></div>
 
 <div layout:fragment="page-script">
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[     
+	           var folderRequired = 'Please choose a folder';
+	           var nameRequired = 'List Name is required';
+	           var descriptionRequired = 'List Description is required';
+	           var dateRequired = 'List Date is required';
+	           var typeRequired = 'List type is required';
+	           var nameDuplicateError = "List Name should be unique";
+	           var treeReloading = 1; // this will prevent reloading
          $( document ).ready(function() {
 			  
-			  displayGermplasmListTree("germplasmFolderTree");  				    				 
+			  displayGermplasmListTree("germplasmFolderTree", true);  				    				 
 			  changeBrowseGermplasmButtonBehavior(false);
-			  $('#saveListTreeModal').on('hide.bs.modal', function() {
-				  $('#'+getDisplayedTreeName()).dynatree("getTree").reload();
+			  $('#saveListTreeModal').on('hidden.bs.modal', function() {
+				  treeReloading = 0;
+				  $('#germplasmFolderTree').dynatree("getTree").reload();
 				  changeBrowseGermplasmButtonBehavior(false);
 				})
-				
+				 
 		  });
-          function openSaveListModal(){
-        	  $('#saveListTreeModal').modal('show');
+          function openSaveListModal(listIdentifier){
         	  additionalLazyLoadUrl = "/1";
+        	  Spinner.toggle();
+       		  $.ajax(
+     		         { url: "/Fieldbook/ListTreeManager/saveList/"+listIdentifier,
+     		           type: "GET",     		           
+     		           cache: false,
+     		           success: function(html) {
+     		        	    $('#page-save-list-message-modal').html('');
+  		        	   	    $('#saveGermplasmRightSection').html(html)							
+  		        	 		$('#saveListTreeModal').modal({
+  		        	            show: true,
+  		        	            keyboard: false,
+  		        	            backdrop: 'static'
+  		        	        });
+  		        	 		Spinner.toggle();
+     		           }
+     		         }
+    		       );
+        	  
+        	  
+          }
+          function saveGermplasmList(){
+			var chosenNodeFolder = $('#'+getDisplayedTreeName()).dynatree("getTree").getActiveNode();
+			var errorMessageDiv = 'page-save-list-message-modal';
+			if(chosenNodeFolder == null){
+				showErrorMessage(errorMessageDiv, folderRequired);
+				return false;
+			}
+			if($('#listName').val() == ''){
+				showErrorMessage(errorMessageDiv, nameRequired);
+				return false;
+			}
+			if($('#listDescription').val() == ''){
+				showErrorMessage(errorMessageDiv, descriptionRequired);
+				return false;
+			}
+			if($('#listType').val() == ''){
+				showErrorMessage(errorMessageDiv, typeRequired);
+				return false;
+			}
+			if($('#listDate').val() == ''){
+				showErrorMessage(errorMessageDiv, dateRequired);
+				return false;
+			}
+			
+			var dataForm = $('#saveListForm').serialize()
+      		  $.ajax(
+    		         { url: "/Fieldbook/ListTreeManager/saveList/",
+    		           type: "POST", 
+    		           data: dataForm,
+    		           cache: false,
+    		           success: function(data) {
+    		        	    if(data.isSuccess == 1){
+    		        	    	$('#saveListTreeModal').modal('hide');
+    		        	    }else{
+    		        	    	showErrorMessage('page-save-list-message-modal', data.message);
+    		        	    }
+    		           }
+    		         }
+   		       );
+			
           }
     //]]>
     </script>

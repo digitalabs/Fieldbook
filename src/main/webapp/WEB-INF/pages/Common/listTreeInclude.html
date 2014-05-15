@@ -5,7 +5,7 @@
   			var hasChildrenString =  /*[[#{browse.nursery.move.has.children}]]*/;
   			var openTreeType = 0;
   			var pleaseChooseFolder = /*[[#{import.germplasm.choose.a.list}]]*/;
-  			var lazyLoadUrl = "/Fieldbook/NurseryManager/expandGermplasmTree/";
+  			var lazyLoadUrl = "/Fieldbook/ListTreeManager/expandGermplasmTree/";
   			var additionalLazyLoadUrl = '';
   			function doGermplasmLazyLoad(node){
   	        	if (node.data.isFolder == true){
@@ -43,13 +43,15 @@
   	        }
   			
   			/** Germplasm Tree **/
-  	        function displayGermplasmListTree(treeName, isFolderOnly) {
+  	        function displayGermplasmListTree(treeName, isLocalOnly) {
   	        	/*if($('#'+treeName+' .fbtree-container').length != 0)
   	        	  $("#" + treeName).dynatree("reload");
   	        	*/
-  	        	console
-  	        	var lazyLoadUrlGetChildren = "/Fieldbook/NurseryManager/expandGermplasmTree/";
-  	        	var initLoadUrl = "/Fieldbook/NurseryManager/loadInitGermplasmTree";  	        	
+  	        	var lazyLoadUrlGetChildren = "/Fieldbook/ListTreeManager/expandGermplasmTree/";
+  	        	var initLoadUrl = "/Fieldbook/ListTreeManager/loadInitGermplasmTree";  	        	
+  	        	
+  	        	if(isLocalOnly == true)
+  	        		initLoadUrl = "/Fieldbook/ListTreeManager/loadInitGermplasmLocalTree";
   	        	
   	        	$("#" + treeName).dynatree({
   	        		title: treeName,

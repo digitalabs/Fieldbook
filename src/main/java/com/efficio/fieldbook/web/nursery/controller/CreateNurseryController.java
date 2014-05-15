@@ -47,6 +47,7 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
+import com.efficio.fieldbook.web.nursery.form.ManageSettingsForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
@@ -480,6 +481,35 @@ public class CreateNurseryController extends SettingsController {
         }
         
         return "[]";
+    }
+    
+    /**
+     * Clear settings.
+     *
+     * @param form the form
+     * @param model the model
+     * @param session the session
+     * @return the string
+     */
+    @RequestMapping(value = "/clearSettings", method = RequestMethod.GET)
+    public String clearSettings(@ModelAttribute("createNurseryForm") CreateNurseryForm form,
+                Model model, HttpSession session) {
+        
+        try {
+            form.setProjectId(this.getCurrentProjectId());
+            form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + "," + AppConstants.FIXED_NURSERY_VARIABLES.getString());
+            form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
+            setFormStaticData(form);
+            assignDefaultValues(form);
+        } catch(Exception e) {
+                LOG.error(e.getMessage(), e);
+        }
+        
+        model.addAttribute("createNurseryForm", form);
+        model.addAttribute("settingsList", getNurserySettingsList());
+        model.addAttribute("nurseryList", getNurseryList());
+        
+        return super.showAjaxPage(model, URL_SETTINGS);
     }
     
     /**

@@ -693,22 +693,22 @@ function submitSelectedVariables(variableType) {
 			success: function (data) {
 				switch (variableType) {
 					case 1:
-						createNurseryLevelSettingVariables($.parseJSON(data));
+						createDynamicSettingVariables($.parseJSON(data), "studyLevelVariables", "nurseryLevelSettings-dev", "nurseryLevelSettings", variableType, "");
 						break;
 					case 2:
-						createPlotLevelSettingVariables($.parseJSON(data));
+						createTableSettingVariables($.parseJSON(data), "plotLevelVariables", "plotLevelSettings", variableType);
 						break;
 					case 3:
-						createBaselineTraitVariables($.parseJSON(data));
+						createTableSettingVariables($.parseJSON(data), "baselineTraitVariables", "baselineTraitSettings", variableType);
 						break;
 					case 6:
-						createSelectionVariatesVariables($.parseJSON(data));
+						createTableSettingVariables($.parseJSON(data), "selectionVariatesVariables", "selectionVariatesSettings", variableType);
 						break;
 					case 7:
-						createNurseryConditionsVariables($.parseJSON(data));
+						createDynamicSettingVariables($.parseJSON(data), "nurseryConditions", "nurseryConditionsSettings", "nurseryConditionsSettings", variableType, "Cons");
 						break;
 					default:
-						createNurseryLevelSettingVariables($.parseJSON(data));
+						createDynamicSettingVariables($.parseJSON(data), "studyLevelVariables", "nurseryLevelSettings-dev", "nurseryLevelSettings", variableType, "");
 				}
 				
 			},
@@ -746,21 +746,21 @@ function getLastRowIndex(name, hasTBody) {
 	}
 }
 
-function createNurseryLevelSettingVariables(data) {
-	var ctr = $('.nurseryLevelSettings').length; //getLastRowIndex("nurseryLevelSettings", false) + 1;
+function createDynamicSettingVariables(data, name, tableId, rowClass, varType, posValSuffix) {
+	var ctr = $('.'+rowClass).length; //getLastRowIndex("nurseryLevelSettings", false) + 1;
 	$.each(data, function (index, settingDetail) {
-		var newRow = "<div class='row form-group nurseryLevelSettings newVariable'>";
+		var newRow = "<div class='row form-group "+rowClass+" newVariable'>";
 		var isDelete = "";
 		
 		//include delete button if variable is deletable
 		if (settingDetail.deletable) {
-			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(1," + 
+			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable("+varType+"," + 
 				settingDetail.variable.cvTermId + ",$(this))'></span>";
 		}
 		
 		//create html elements dynamically
 		newRow = newRow + "<div class='col-xs-5 col-md-5 1st'>" + isDelete + 
-		"&nbsp;&nbsp;<input class='cvTermIds' type='hidden' id='studyLevelVariables" + ctr + ".variable.cvTermId' name='studyLevelVariables[" + 
+		"&nbsp;&nbsp;<input class='cvTermIds' type='hidden' id='" + name + ctr + ".variable.cvTermId' name='"+name+"[" + 
 		ctr + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
 		//newRow = newRow + "<td>" + settingDetail.variable.name + ':' + '<span class="required">*</span>' +  "</td>";
@@ -773,24 +773,24 @@ function createNurseryLevelSettingVariables(data) {
 		var inputHtml = '';
 				
 		if(settingDetail.variable.widgetType == 'DROPDOWN'){
-			inputHtml = createDropdownInput(ctr);
+			inputHtml = createDropdownInput(ctr, name);
 		}else if(settingDetail.variable.widgetType == 'DATE'){
-			inputHtml = createDateInput(ctr);
+			inputHtml = createDateInput(ctr, name);
 		}else if(settingDetail.variable.widgetType == 'CTEXT'){
-			inputHtml = createCharacterTextInput(ctr);
+			inputHtml = createCharacterTextInput(ctr, name);
 		}else if(settingDetail.variable.widgetType == 'NTEXT'){
-			inputHtml = createNumericalTextInput(ctr);
+			inputHtml = createNumericalTextInput(ctr, name);
 		}else if(settingDetail.variable.widgetType == 'SLIDER'){
-			inputHtml = createSliderInput(ctr, settingDetail.variable.minRange, settingDetail.variable.maxRange);
+			inputHtml = createSliderInput(ctr, settingDetail.variable.minRange, settingDetail.variable.maxRange, name);
 		}
 		newRow = newRow + inputHtml;
 		
 		if (settingDetail.variable.cvTermId == breedingMethodId) {
 			//show favorite method
-			newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id='studyLevelVariables" + ctr + ".favorite1'" + 
-			" name='studyLevelVariables[" + ctr + "].favorite'" +
+			newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id=" + name + ctr + ".favorite1'" + 
+			" name='" + name + "[" + ctr + "].favorite'" +
 			" onclick='javascript: toggleMethodDropdown(" + ctr + ");' />" +
-			"<input type='hidden' name='_studyLevelVariables[" + ctr + "].favorite' value='on' /> " +
+			"<input type='hidden' name='_"+name+"[" + ctr + "].favorite' value='on' /> " +
 			"<span>&nbsp;&nbsp;" + showFavoriteMethodLabel + "</span></div>" + 
 			"<div id='possibleValuesJson" + ctr + "' class='possibleValuesJson' style='display:none'>" + settingDetail.possibleValuesJson + 
 			"</div><div id='possibleValuesFavoriteJson" + ctr + "' class='possibleValuesFavoriteJson' style='display:none'>" + 
@@ -801,10 +801,10 @@ function createNurseryLevelSettingVariables(data) {
 			
 		} else if (settingDetail.variable.cvTermId == locationId) {
 				//show favorite method
-				newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id='studyLevelVariables" + ctr + ".favorite1'" + 
-				" name='studyLevelVariables[" + ctr + "].favorite'" +
+				newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id='" + name + ctr + ".favorite1'" + 
+				" name='"+name+"[" + ctr + "].favorite'" +
 				" onclick='javascript: toggleLocationDropdown(" + ctr + ");' />" +
-				"<input type='hidden' name='_studyLevelVariables[" + ctr + "].favorite' value='on' /> " +
+				"<input type='hidden' name='_"+name+"[" + ctr + "].favorite' value='on' /> " +
 				"<span>&nbsp;&nbsp;" + showFavoriteLocationLabel + "</span></div>" + 
 				"<div id='possibleValuesJson" + ctr + "' class='possibleValuesJson' style='display:none'>" + settingDetail.possibleValuesJson + 
 				"</div><div id='possibleValuesFavoriteJson" + ctr + "' class='possibleValuesFavoriteJson' style='display:none'>" + 
@@ -814,104 +814,21 @@ function createNurseryLevelSettingVariables(data) {
 				newRow = newRow + "</div>";
 				
 		} else {
-			newRow = newRow + "</div>";
+			newRow = newRow + "<div id='possibleValuesJson" + posValSuffix + ctr + "' class='possibleValuesJson" + posValSuffix + "' style='display:none'>" + 
+			settingDetail.possibleValuesJson + "</div></div>";
 		}
 
-		$("#nurseryLevelSettings-dev").append(newRow);
+		$("#"+tableId).append(newRow);
 		
 		if(settingDetail.variable.widgetType == 'DROPDOWN'){
 			//initialize select 2 combo
 			if (settingDetail.variable.cvTermId == locationId) {
 				initializePossibleValuesCombo(settingDetail.possibleValues, "#" + 
-						getJquerySafeId("studyLevelVariables" + ctr + ".value"), true, null);
+						getJquerySafeId(name + ctr + ".value"), true, null);
 			} else {
 				initializePossibleValuesCombo(settingDetail.possibleValues, "#" + 
-						getJquerySafeId("studyLevelVariables" + ctr + ".value"), false, null);
+						getJquerySafeId(name + ctr + ".value"), false, null);
 			}
-		}
-		ctr++;
-	});
-	
-	initializeDateAndSliderInputs();
-}
-
-function createNurseryLevelSettingVariablesOld(data) {
-	var ctr = getLastRowIndex("nurseryLevelSettings", false) + 1;
-	$.each(data, function (index, settingDetail) {
-		var newRow = "<tr class='newVariable'>";
-		var isDelete = "";
-		
-		//include delete button if variable is deletable
-		if (settingDetail.deletable) {
-			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(1," + 
-				settingDetail.variable.cvTermId + ",$(this))'></span>";
-		}
-		
-		//create html elements dynamically
-		newRow = newRow + "<div class='col-xs-4 col-md-4 1st'>" + isDelete + 
-		"<input class='cvTermIds' type='hidden' id='studyLevelVariables" + ctr + ".variable.cvTermId' name='studyLevelVariables[" + 
-		ctr + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
-		"";
-		//newRow = newRow + "<td>" + settingDetail.variable.name + ':' + '<span class="required">*</span>' +  "</td>";
-		newRow = newRow + "<label class='control-label'>" + settingDetail.variable.name + '</label>:' + '' +  "</div>";
-		newRow = newRow + "<div class='col-xs-8 col-md-8 2nd'>";
-		/*
-		newRow = newRow + "<input type='hidden' id='studyLevelVariables" + ctr + 
-		".value' name='studyLevelVariables[" + ctr + "].value' class='form-control select2' />";
-		*/
-		var inputHtml = '';
-				
-		if(settingDetail.variable.widgetType == 'DROPDOWN'){
-			inputHtml = createDropdownInput(ctr);
-		}else if(settingDetail.variable.widgetType == 'DATE'){
-			inputHtml = createDateInput(ctr);
-		}else if(settingDetail.variable.widgetType == 'CTEXT'){
-			inputHtml = createCharacterTextInput(ctr);
-		}else if(settingDetail.variable.widgetType == 'NTEXT'){
-			inputHtml = createNumericalTextInput(ctr);
-		}else if(settingDetail.variable.widgetType == 'SLIDER'){
-			inputHtml = createSliderInput(ctr, settingDetail.variable.minRange, settingDetail.variable.maxRange);
-		}
-		newRow = newRow + inputHtml;
-		
-		if (settingDetail.variable.cvTermId == breedingMethodId) {
-			//show favorite method
-			newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id='studyLevelVariables" + ctr + ".favorite1'" + 
-			" name='studyLevelVariables[" + ctr + "].favorite'" +
-			" onclick='javascript: toggleMethodDropdown(" + ctr + ");' />" +
-			"<input type='hidden' name='_studyLevelVariables[" + ctr + "].favorite' value='on' /> " +
-			"<span>&nbsp;&nbsp;" + showFavoriteMethodLabel + "</span></div>" + 
-			"<div id='possibleValuesJson" + ctr + "' class='possibleValuesJson' style='display:none'>" + settingDetail.possibleValuesJson + 
-			"</div><div id='possibleValuesFavoriteJson" + ctr + "' class='possibleValuesFavoriteJson' style='display:none'>" + 
-			settingDetail.possibleValuesFavoriteJson + "</div>";
-			
-			newRow = newRow + "<span><a href='javascript: openManageMethods();'>" + manageMethodLabel + "</a></span>";
-			newRow = newRow + "</div>";
-			
-		} else if (settingDetail.variable.cvTermId == locationId) {
-				//show favorite method
-				newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id='studyLevelVariables" + ctr + ".favorite1'" + 
-				" name='studyLevelVariables[" + ctr + "].favorite'" +
-				" onclick='javascript: toggleLocationDropdown(" + ctr + ");' />" +
-				"<input type='hidden' name='_studyLevelVariables[" + ctr + "].favorite' value='on' /> " +
-				"<span>&nbsp;&nbsp;" + showFavoriteLocationLabel + "</span></div>" + 
-				"<div id='possibleValuesJson" + ctr + "' class='possibleValuesJson' style='display:none'>" + settingDetail.possibleValuesJson + 
-				"</div><div id='possibleValuesFavoriteJson" + ctr + "' class='possibleValuesFavoriteJson' style='display:none'>" + 
-				settingDetail.possibleValuesFavoriteJson + "</div>";
-				
-				newRow = newRow + "<span><a href='javascript: openManageLocations();'>" + manageLocationLabel + "</a></span>";
-				newRow = newRow + "</div>";
-				
-		} else {
-			newRow = newRow + "</div>";
-		}
-
-		$("#nurseryLevelSettings-dev").append(newRow);
-		
-		if(settingDetail.variable.widgetType == 'DROPDOWN'){
-			//initialize select 2 combo
-			initializePossibleValuesCombo(settingDetail.possibleValues, "#" + 
-					getJquerySafeId("studyLevelVariables" + ctr + ".value"), false, null);
 		}
 		ctr++;
 	});
@@ -945,7 +862,6 @@ function toggleMethodDropdown(rowIndex) {
 			getJquerySafeId("studyLevelVariables" + rowIndex + ".value"), false, selectedVal);
 }
 
-
 function toggleLocationDropdown(rowIndex) {
 	var possibleValues;  
 	var showFavorite = $("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".favorite1")).is(":checked");
@@ -974,94 +890,25 @@ function toggleLocationDropdown(rowIndex) {
 			getJquerySafeId("studyLevelVariables" + rowIndex + ".value"), showAll, selectedVal);
 }
 
-function createPlotLevelSettingVariables(data) {
+function createTableSettingVariables(data, name, tableId, varType) {
 	$.each(data, function (index, settingDetail) {
-		var length = $("#plotLevelSettings tbody tr").length + 1;
+		var length = $("#" + tableId + " tbody tr").length + 1;
 		var className = length % 2 == 1 ? 'even' : 'odd';
 		var newRow = "<tr class='newVariable'>";
 		var isDelete = "";
 		
 		if (settingDetail.deletable) {
-			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(2," + 
+			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable("+varType+"," + 
 			settingDetail.variable.cvTermId + ",$(this))'></span>";
 		}
 		newRow = newRow + "<td width='5%' style='text-align: center' class='"+className+"'>" + isDelete + 
-		"<input class='cvTermIds' type='hidden' id='plotLevelVariables" + (length-1) + ".variable.cvTermId' name='plotLevelVariables[" + 
+		"<input class='cvTermIds' type='hidden' id='" + name + (length-1) + ".variable.cvTermId' name='"+name+"[" + 
 		(length-1) + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
 		newRow = newRow + "<td width='45%' class='"+className+"'><a href='javascript: void(0);' onclick='javascript:showBaselineTraitDetailsModal(" + 
 				settingDetail.variable.cvTermId + ");' ><span>" + settingDetail.variable.name + "</span></a></td>"; 
 		newRow = newRow + "<td width='50%' class='"+className+"'>" + settingDetail.variable.description + "</td></tr>";
-		$("#plotLevelSettings").append(newRow);
-	});
-}
-
-function createBaselineTraitVariables(data) {
-	$.each(data, function (index, settingDetail) {
-		var length = $("#baselineTraitSettings tbody tr").length + 1;
-		var className = length % 2 == 1 ? 'even' : 'odd';
-		var newRow = "<tr class='newVariable baseline-traits'>";
-		var isDelete = "";
-		
-		if (settingDetail.deletable) {
-			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(3," + 
-			settingDetail.variable.cvTermId + ",$(this))'></span>";
-		}
-		
-		newRow = newRow + "<td width='5%' style='text-align: center' class='"+className+"'>" + isDelete + 
-		"<input class='cvTermIds' type='hidden' id='baselineTraitVariables" + (length-1) + ".variable.cvTermId' name='baselineTraitVariables[" + 
-		(length-1) + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
-		"</td>";
-		newRow = newRow + "<td width='45%' class='"+className+"'><a href='javascript: void(0);' onclick='javascript:showBaselineTraitDetailsModal(" + 
-		settingDetail.variable.cvTermId + ");' ><span>" + settingDetail.variable.name + "</span></a></td>"; 		
-		newRow = newRow + "<td width='50%' class='"+className+"'>" + settingDetail.variable.description + "</td></tr>";
-		$("#baselineTraitSettings").append(newRow);
-	});
-}
-
-function createSelectionVariatesVariables(data) {
-	$.each(data, function (index, settingDetail) {
-		var length = $("#selectionVariatesSettings tbody tr").length + 1;
-		var className = length % 2 == 1 ? 'even' : 'odd';
-		var newRow = "<tr class='newVariable'>";
-		var isDelete = "";
-		
-		if (settingDetail.deletable) {
-			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(6," + 
-			settingDetail.variable.cvTermId + ",$(this))'></span>";
-		}
-		
-		newRow = newRow + "<td width='5%' style='text-align: center' class='"+className+"'>" + isDelete + 
-		"<input class='cvTermIds' type='hidden' id='selectionVariatesVariables" + (length-1) + ".variable.cvTermId' name='selectionVariatesVariables[" + 
-		(length-1) + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
-		"</td>";
-		newRow = newRow + "<td width='45%' class='"+className+"'><a href='javascript: void(0);' onclick='javascript:showBaselineTraitDetailsModal(" + 
-		settingDetail.variable.cvTermId + ");' ><span>" + settingDetail.variable.name + "</span></a></td>"; 		
-		newRow = newRow + "<td width='50%' class='"+className+"'>" + settingDetail.variable.description + "</td></tr>";
-		$("#selectionVariatesSettings").append(newRow);
-	});
-}
-
-function createNurseryConditionsVariables(data) {
-	$.each(data, function (index, settingDetail) {
-		var length = $("#nurseryConditionsSettings tbody tr").length + 1;
-		var className = length % 2 == 1 ? 'even' : 'odd';
-		var newRow = "<tr class='newVariable'>";
-		var isDelete = "";
-		
-		if (settingDetail.deletable) {
-			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable(7," + 
-			settingDetail.variable.cvTermId + ",$(this))'></span>";
-		}
-		
-		newRow = newRow + "<td width='5%' style='text-align: center' class='"+className+"'>" + isDelete + 
-		"<input class='cvTermIds' type='hidden' id='nurseryConditions" + (length-1) + ".variable.cvTermId' name='nurseryConditions[" + 
-		(length-1) + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
-		"</td>";
-		newRow = newRow + "<td width='45%' class='"+className+"'><a href='javascript: void(0);' onclick='javascript:showBaselineTraitDetailsModal(" + 
-		settingDetail.variable.cvTermId + ");' ><span>" + settingDetail.variable.name + "</span></a></td>"; 		
-		newRow = newRow + "<td width='50%' class='"+className+"'>" + settingDetail.variable.description + "</td></tr>";
-		$("#nurseryConditionsSettings").append(newRow);
+		$("#"+tableId).append(newRow);
 	});
 }
 
@@ -1139,8 +986,6 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation, default
 	}
 	
 	if(defaultJsonVal != null){
-		//console.log(defaultValue);
-		//console.log(defaultJsonVal);
 		$(name).select2('data', defaultJsonVal).trigger('change');
 	}
 }
@@ -1165,73 +1010,85 @@ function deleteVariable(variableType, variableId, deleteButton) {
 	inputChange=true;
 }
 
+function recreateDynamicFieldsAfterDelete(name, tableId, rowClass, posValSuffix) {
+	var reg = new RegExp(name+"[0-9]+", "g");
+	var reg2 = new RegExp(name+"\[[0-9]+\]", "g");
+	$.each($("."+rowClass), function (index, row) {						
+		//get currently selected value of select2 dropdown
+		var selectedVal = null;
+		var oldSelect2 = row.innerHTML.match(reg)[0];
+
+		if ($("#" + getJquerySafeId(oldSelect2 + ".value")).select2("data") && row.innerHTML.indexOf("select2") > -1) {
+		    selectedVal = $("#" + getJquerySafeId(oldSelect2 + ".value")).select2("data").id;
+	    } else {
+	    	selectedVal = $("#" + getJquerySafeId(oldSelect2 + ".value")).val();
+	    }
+	    
+	    //if dropdown is for location or method, check if show favorite is checked
+	    var isFavoriteChecked = "";
+	    if ($("#" + getJquerySafeId(oldSelect2 + ".favorite1")).length != 0) {
+	    	isFavoriteChecked = $("#" + getJquerySafeId(oldSelect2 + ".favorite1")).is(":checked");
+	    }
+	    
+	    //change the ids and names of the objects 
+	    row.innerHTML = row.innerHTML.replace(reg, name + index);
+		row.innerHTML = row.innerHTML.replace(reg2, name + "[" + index + "]");
+		
+		//delete the existing select2 object and recreate the select2 combo and checkbox/links for location/method
+		if (row.innerHTML.indexOf("select2") > -1) {
+			recreateSelect2Combo(index, row, selectedVal, isFavoriteChecked, name, posValSuffix);
+		} else if (row.innerHTML.indexOf("spinner-input") > -1) {
+			recreateSpinnerInput(index, row, selectedVal, name);
+		} else if (row.innerHTML.indexOf("date-input") > -1) {
+			recreateDateInput(index, row, selectedVal, name);
+		}
+	});
+	initializeDateAndSliderInputs();
+}
+
+function resetIdsOfTables(name, tableId) {
+	var reg = new RegExp(name+"[0-9]+", "g");
+	var reg2 = new RegExp(name+"\[[0-9]+\]", "g");
+	$.each($("#"+tableId+" tbody tr"), function (index, row) {
+		row.innerHTML = row.innerHTML.replace(reg, name + index);
+		row.innerHTML = row.innerHTML.replace(reg2, name+"[" + index + "]");
+	});
+}
+
 function sortVariableIdsAndNames(variableType) {
 	switch (variableType) {
 	case 1:
-		var reg = new RegExp("studyLevelVariables[0-9]+", "g");
-		var reg2 = new RegExp("studyLevelVariables\[[0-9]+\]", "g");
-		$.each($(".nurseryLevelSettings"), function (index, row) {						
-			//get currently selected value of select2 dropdown
-			var selectedVal = null;
-			var oldSelect2 = row.innerHTML.match(reg)[0];
-
-			if ($("#" + getJquerySafeId(oldSelect2 + ".value")).select2("data") && row.innerHTML.indexOf("select2") > -1) {
-			    selectedVal = $("#" + getJquerySafeId(oldSelect2 + ".value")).select2("data").id;
-		    } else {
-		    	selectedVal = $("#" + getJquerySafeId(oldSelect2 + ".value")).val();
-		    }
-		    
-		    //if dropdown is for location or method, check if show favorite is checked
-		    var isFavoriteChecked = "";
-		    if ($("#" + getJquerySafeId(oldSelect2 + ".favorite1")).length != 0) {
-		    	isFavoriteChecked = $("#" + getJquerySafeId(oldSelect2 + ".favorite1")).is(":checked");
-		    }
-		    
-		    //change the ids and names of the objects 
-		    row.innerHTML = row.innerHTML.replace(reg, "studyLevelVariables" + index);
-			row.innerHTML = row.innerHTML.replace(reg2, "studyLevelVariables[" + index + "]");
-			
-			//delete the existing select2 object and recreate the select2 combo and checkbox/links for location/method
-			if (row.innerHTML.indexOf("select2") > -1) {
-				recreateSelect2Combo(index, row, selectedVal, isFavoriteChecked);
-			} else if (row.innerHTML.indexOf("spinner-input") > -1) {
-				recreateSpinnerInput(index, row, selectedVal);
-			} else if (row.innerHTML.indexOf("date-input") > -1) {
-				recreateDateInput(index, row, selectedVal);
-			}
-		});
-		initializeDateAndSliderInputs();
+		recreateDynamicFieldsAfterDelete("studyLevelVariables", "nurseryLevelSettings-dev", "nurseryLevelSettings", "");
 		break;
 	case 2:
-		var reg = new RegExp("plotLevelVariables[0-9]+", "g")
-		var reg2 = new RegExp("plotLevelVariables\[[0-9]+\]", "g")
-		$.each($("#plotLevelSettings tbody tr"), function (index, row) {
-			row.innerHTML = row.innerHTML.replace(reg, "plotLevelVariables" + index);
-			row.innerHTML = row.innerHTML.replace(reg2, "plotLevelVariables[" + index + "]");
-		});
+		resetIdsOfTables("plotLevelVariables", "plotLevelSettings");
+		break;
+	case 3:
+		resetIdsOfTables("baselineTraitVariables", "baselineTraitSettings");
+		break;
+	case 6:
+		resetIdsOfTables("selectionVariatesVariables", "selectionVariatesSettings");
+		break;
+	case 7:
+		recreateDynamicFieldsAfterDelete("nurseryConditions", "nurseryConditionsSettings", "nurseryConditionsSettings", "Cons");
 		break;
 	default:
-		var reg = new RegExp("baselineTraitVariables[0-9]+", "g")
-		var reg2 = new RegExp("baselineTraitVariables\[[0-9]+\]", "g")
-		$.each($("#baselineTraitSettings tbody tr"), function (index, row) {
-			row.innerHTML = row.innerHTML.replace(reg, "baselineTraitVariables" + index);
-			row.innerHTML = row.innerHTML.replace(reg2, "baselineTraitVariables[" + index + "]");
-		});
+		
 	}
 }
 
-function recreateDateInput(index, row, selectedVal) {
-	var newCell = "<input type='text' id='studyLevelVariables" + index + 
-	".value' name='studyLevelVariables[" + index + "].value' " + 
+function recreateDateInput(index, row, selectedVal, name) {
+	var newCell = "<input type='text' id='" + name + index + 
+	".value' name='"+name+"[" + index + "].value' " + 
 	"value='" + selectedVal +
 	"' class='form-control date-input' />";
 
 	$($(row).find(".2nd")).html(newCell);
 }
 
-function recreateSpinnerInput(index, row, selectedVal) {
-	var newCell = "<input type='text' id='studyLevelVariables" + index + 
-	".value' name='studyLevelVariables[" + index + "].value' " +
+function recreateSpinnerInput(index, row, selectedVal, name) {
+	var newCell = "<input type='text' id='" + name + index + 
+	".value' name='"+name+"[" + index + "].value' " +
 	"data-min='" + $($(row).find(".2nd").children("input.spinner-input")).data("min") +
 	"' data-max='" + $($(row).find(".2nd").children("input.spinner-input")).data("max") + 
 	"' data-step='" + $($(row).find(".2nd").children("input.spinner-input")).data("step") +
@@ -1241,24 +1098,26 @@ function recreateSpinnerInput(index, row, selectedVal) {
 	$($(row).find(".2nd")).html(newCell);
 }
 
-function recreateSelect2Combo(index, row, selectedVal, isFavoriteChecked) {
+function recreateSelect2Combo(index, row, selectedVal, isFavoriteChecked, name, posValSuffix) {
 	//get the possible values of the variable
-	var possibleValuesJson = $($(row).find(".possibleValuesJson")).text();
-	var possibleValuesFavoriteJson = $($(row).find(".possibleValuesFavoriteJson")).text();
+	var possibleValuesJson = $($(row).find(".possibleValuesJson"+posValSuffix)).text();
+	var possibleValuesFavoriteJson = $($(row).find(".possibleValuesFavoriteJson"+posValSuffix)).text();
 	var cvTermId = $($(row).find('.1st').find("#" 
-			+ getJquerySafeId("studyLevelVariables" + index + ".variable.cvTermId"))).val();
-	
+			+ getJquerySafeId(name + index + ".variable.cvTermId"))).val();
+
 	//hidden field for select2 
-	var newCell = "<input type='hidden' id='studyLevelVariables" + index + 
-	".value' name='studyLevelVariables[" + index + "].value' class='form-control select2' />";
+	var newCell = "<input type='hidden' id='" + name + index + 
+	".value' name='"+name+"[" + index + "].value' class='form-control select2' />";
 	
 	//div containing the possible values
-	newCell = newCell + "<div id='possibleValuesJson" + index + "' class='possibleValuesJson' style='display:none'>" + 
+	newCell = newCell + "<div id='possibleValuesJson" + posValSuffix + index + "' class='possibleValuesJson"+posValSuffix+"' style='display:none'>" + 
 		possibleValuesJson + "</div>";
 	
 	//div containing the favorite possible values
-	newCell = newCell + "<div id='possibleValuesFavoriteJson" + index + "' class='possibleValuesFavoriteJson' style='display:none'>" + 
-		possibleValuesFavoriteJson + "</div>";
+	if (possibleValuesFavoriteJson != "") {
+		newCell = newCell + "<div id='possibleValuesFavoriteJson" + posValSuffix + index + "' class='possibleValuesFavoriteJson"+posValSuffix+"' style='display:none'>" + 
+			possibleValuesFavoriteJson + "</div>";
+	}
 	
 	//div containing checkbox and label for location and method
 	var methodName = "toggleMethodDropdown";
@@ -1285,10 +1144,10 @@ function recreateSelect2Combo(index, row, selectedVal, isFavoriteChecked) {
 	
 	//add checkbox and manage location/method links
 	if (parseInt(cvTermId) == parseInt(breedingMethodId) || parseInt(cvTermId) == parseInt(locationId)) {
-		newCell = newCell + "<div class='possibleValuesDiv'><input type='checkbox' id='studyLevelVariables" + index + ".favorite1'" + 
-		" name='studyLevelVariables[" + index + "].favorite'" +
+		newCell = newCell + "<div class='possibleValuesDiv'><input type='checkbox' id='" + name + index + ".favorite1'" + 
+		" name='"+name+"[" + index + "].favorite'" +
 		" onclick='javascript: " + methodName + "(" + index + ");' " + isChecked +  " />" +
-		"<input type='hidden' name='_studyLevelVariables[" + index + "].favorite' value='on' /> " +
+		"<input type='hidden' name='_"+name+"[" + index + "].favorite' value='on' /> " +
 		"<span>&nbsp;&nbsp;" + favoriteLabel + "</span></div>";
 		
 		newCell = newCell + "<span><a href='javascript: " + manageMethodName + "();'>" + managePopupLabel + "</a></span>";
@@ -1299,19 +1158,20 @@ function recreateSelect2Combo(index, row, selectedVal, isFavoriteChecked) {
 	//recreate the select2 object
 	if (parseInt(cvTermId) == parseInt(locationId)) {
 	    initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
- 			"#" + getJquerySafeId("studyLevelVariables" + index + ".value"), showAll, selectedVal);
+ 			"#" + getJquerySafeId(name + index + ".value"), showAll, selectedVal);
 	} else if (parseInt(cvTermId) == parseInt(breedingMethodId)){
 		initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
-	 			"#" + getJquerySafeId("studyLevelVariables" + index + ".value"), false, selectedVal);
+	 			"#" + getJquerySafeId(name + index + ".value"), false, selectedVal);
 	} else {
 		initializePossibleValuesCombo($.parseJSON(possibleValuesJson), 
-			"#" + getJquerySafeId("studyLevelVariables" + index + ".value"), false, selectedVal);
+			"#" + getJquerySafeId(name + index + ".value"), false, selectedVal);
 	}
 }
 
 function hideDeleteConfirmation(){
 	$('#delete-settings-confirmation').modal('hide');
 }
+
 function deleteNurserySettings(){
 	var templateSettingsId = $('#selectedSettingId').val();
 	if(templateSettingsId > 0){
@@ -1340,17 +1200,16 @@ function deleteNurserySettings(){
 }
 
 function clearSettings(){
-	var templateSettingsId = $('#selectedSettingId').val();
+	//var templateSettingsId = $('#selectedSettingId').val();
 	//window.location.hash = "/Fieldbook/NurseryManager/manageNurserySettings/clearSettings/"+templateSettingsId+"?t=";
 	
 	Spinner.toggle();	
 		$.ajax({
-			url: "/Fieldbook/NurseryManager/manageNurserySettings/clearSettings/"+templateSettingsId,
+			url: "/Fieldbook/NurseryManager/createNursery/clearSettings",
 			type: "GET", 	
 			cache: false,
 			success: function (html) {
-				//we just paste the whole html
-				$('.container .row').first().html(html);
+				$("#chooseSettingsDiv").html(html);
 				moveToTopScreen();
 				Spinner.toggle();
 			}
@@ -1549,26 +1408,26 @@ function checkIfNull(object) {
 	}
 }
 
-function createSliderInput(ctr, minVal, maxVal){
-	return "<input data-slider-orientation='horizontal' data-slider-selection='after' type='text' data-min='"+minVal+"' data-max='"+maxVal+"' id='studyLevelVariables" + ctr + 
-	".value' name='studyLevelVariables[" + ctr + "].value' class='form-control numeric-input' />";
+function createSliderInput(ctr, minVal, maxVal, name){
+	return "<input data-slider-orientation='horizontal' data-slider-selection='after' type='text' data-min='"+minVal+"' data-max='"+maxVal+"' id='" + name + ctr + 
+	".value' name='" + name + "[" + ctr + "].value' class='form-control numeric-input' />";
 }
-function createDropdownInput(ctr){
-	 return "<input type='hidden' id='studyLevelVariables" + ctr + 
-		".value' name='studyLevelVariables[" + ctr + "].value' class='form-control select2' />";
+function createDropdownInput(ctr, name){
+	 return "<input type='hidden' id='" + name + ctr + 
+		".value' name='" + name + "[" + ctr + "].value' class='form-control select2' />";
 }
-function createDateInput(ctr){	
-	 return "<input type='text' id='studyLevelVariables" + ctr + 
-		".value' name='studyLevelVariables[" + ctr + "].value' class='form-control date-input' />";
+function createDateInput(ctr, name){	
+	 return "<input type='text' id='" + name+ ctr + 
+		".value' name='" + name + "[" + ctr + "].value' class='form-control date-input' />";
 	 
 }
-function createNumericalTextInput(ctr){
-	return "<input type='text' id='studyLevelVariables" + ctr + 
-	".value' name='studyLevelVariables[" + ctr + "].value' class='form-control numeric-input' />";
+function createNumericalTextInput(ctr, name){
+	return "<input type='text' id='" + name + ctr + 
+	".value' name='" + name +"[" + ctr + "].value' class='form-control numeric-input' />";
 }
-function createCharacterTextInput(ctr){
-	return "<input type='text' id='studyLevelVariables" + ctr + 
-	".value' name='studyLevelVariables[" + ctr + "].value' class='form-control character-input' />";
+function createCharacterTextInput(ctr, name){
+	return "<input type='text' id='" + name + ctr + 
+	".value' name='" + name + "[" + ctr + "].value' class='form-control character-input' />";
 
 }
 function initializeDateAndSliderInputs(){

@@ -38,6 +38,7 @@ public class ObservationMatrixController extends
     private static final Logger LOG = LoggerFactory.getLogger(ObservationMatrixController.class);
     public static final String URL = "/Common/addOrRemoveTraits";
     public static final String PAGINATION_TEMPLATE = "/Common/showAddOrRemoveTraitsPagination";
+    public static final String PAGINATION_TEMPLATE_VIEW_ONLY = "/NurseryManager/ver2.0/showAddOrRemoveTraitsPagination";
 
 	@Resource
 	private UserSelection nurserySelection;
@@ -93,6 +94,10 @@ public class ObservationMatrixController extends
     	boolean isTrial = studyType.equalsIgnoreCase("TRIAL");
     	StudySelection userSelection = getUserSelection(isTrial);
     	
+    	if (form.getPaginatedMeasurementRowList() == null && form.getMeasurementRowList() == null) {
+    		form.setMeasurementRowList(userSelection.getMeasurementRowList());
+    		form.changePage(previewPageNum);
+    	}
     	//this set the necessary info from the session variable
     	copyDataFromFormToUserSelection(form, previewPageNum, userSelection);
     	//we need to set the data in the measurementList
@@ -105,6 +110,31 @@ public class ObservationMatrixController extends
         form.changePage(pageNum);
         userSelection.setCurrentPage(form.getCurrentPage());
         return super.showAjaxPage(model, PAGINATION_TEMPLATE);
+    }
+
+    @RequestMapping(value="/pageView/{studyType}/{pageNum}/{previewPageNum}", method = RequestMethod.POST)
+    public String getPaginatedListViewOnly(@PathVariable String studyType, @PathVariable int pageNum, @PathVariable int previewPageNum
+            , @ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, Model model) {
+
+    	boolean isTrial = studyType.equalsIgnoreCase("TRIAL");
+    	StudySelection userSelection = getUserSelection(isTrial);
+    	
+    	if (form.getPaginatedMeasurementRowList() == null && form.getMeasurementRowList() == null) {
+    		form.setMeasurementRowList(userSelection.getMeasurementRowList());
+    		form.changePage(previewPageNum);
+    	}
+    	//this set the necessary info from the session variable
+    	copyDataFromFormToUserSelection(form, previewPageNum, userSelection);
+    	//we need to set the data in the measurementList
+    	
+    	copyTrialDataFromFormToUserSelection(form, userSelection);
+    	
+    	form.setMeasurementRowList(userSelection.getMeasurementRowList());
+    	form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
+    	form.setStudyName(userSelection.getWorkbook().getStudyDetails().getStudyName());
+        form.changePage(pageNum);
+        userSelection.setCurrentPage(form.getCurrentPage());
+        return super.showAjaxPage(model, PAGINATION_TEMPLATE_VIEW_ONLY);
     }
 
     private void copyDataFromFormToUserSelection(AddOrRemoveTraitsForm form, int previewPageNum, StudySelection userSelection){

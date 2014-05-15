@@ -3,9 +3,9 @@
     	<div class="modal-content">
     		<div class="modal-header">
 	            	<button id="closeSaveListTreeModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			           <h4 class="modal-title" id="heading-modal">
+			           <h4 class="modal-title" id="heading-modal" th:text="#{germplasm.save.list.header}">
 			         		Edit List Header
-		         	   </h4>
+		         	   </h4>		         	   		         	   	           
 	          	</div>
       		<div class="modal-body">
       			<div class="row">
@@ -55,13 +55,17 @@
 <div layout:fragment="page-script">
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[     
-	           var folderRequired = 'Please choose a folder';
-	           var nameRequired = 'List Name is required';
-	           var descriptionRequired = 'List Description is required';
-	           var dateRequired = 'List Date is required';
-	           var typeRequired = 'List type is required';
-	           var nameDuplicateError = "List Name should be unique";
+	           var folderRequired = /*[[#{germplasm.save.list.folder.error}]]*/;
+	           var nameRequired = /*[[#{germplasm.save.list.name.error}]]*/;
+	           var descriptionRequired = /*[[#{germplasm.save.list.description.error}]]*/;
+	           var dateRequired = /*[[#{germplasm.save.list.date.error}]]*/;
+	           var typeRequired = /*[[#{germplasm.save.list.type.error}]]*/;
+	           var nameDuplicateError = /*[[#{germplasm.save.list.name.unique.error}]]*/;
 	           var treeReloading = 1; // this will prevent reloading
+	           
+	         
+	          
+	           
          $( document ).ready(function() {
 			  
 			  displayGermplasmListTree("germplasmFolderTree", true);  				    				 

@@ -31,6 +31,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import com.efficio.fieldbook.web.common.controller.GermplasmTreeController;
 import com.efficio.pojos.treeview.TreeNode;
 
 /**

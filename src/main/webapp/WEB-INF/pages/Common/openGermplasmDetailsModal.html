@@ -27,11 +27,23 @@
 	     function openGermplasmDetailsPopop(aObject) {
 			var desig = $(aObject).data('desig');
 			var gid = $(aObject).data('gid');
-			//console.log( $(aObject));
-			$('#openGermplasmFrame').attr('src', germplasmDetailUrl+gid);
-			$('#openGermplasmModal .modal-title').html(headerMsg1 + " " + desig + " (" + headerMsg2 + " "+ gid +")")
-			$('#openGermplasmModal').modal({ backdrop: 'static', keyboard: true });
-			$("#openGermplasmModal").modal("show");
+			
+			$.ajax(
+	   		         { url: "/Fieldbook/ListTreeManager/germplasm/detail/url",
+	   		           type: "GET",
+	   		           data: "",
+	   		        	cache: false,
+	   		           success: function(html) {
+	   		        	    var germplasmDetailsUrl = html;
+		   		        	$('#openGermplasmFrame').attr('src', germplasmDetailsUrl+gid);
+		   					$('#openGermplasmModal .modal-title').html(headerMsg1 + " " + desig + " (" + headerMsg2 + " "+ gid +")")
+		   					$('#openGermplasmModal').modal({ backdrop: 'static', keyboard: true });
+		   					$("#openGermplasmModal").modal("show");
+	   		               
+	   		           }
+	   		         }
+	   		       );
+			
 			
 		}     
     //]]>

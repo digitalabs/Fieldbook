@@ -225,7 +225,6 @@
     var itemsToAdd = [];
     var checksFromPrimary = 0;
     
-    var germplasmDetailUrl = '';
     var importLocationUrl = /*[[#{nursery.apps.import.nursery.url}]]*/;
 	var importIframeOpened = false;
 	
@@ -242,7 +241,6 @@
 		  //we show the modal dialog again
 		  $('#myModal').modal('show');
 	  }	
-	  germplasmDetailUrl = $('#openGermplasmUrl').val();	  
 	  //display tree
 	  
 	  $('input[name="specifyCheckType"]').on('change',changeCheckLayout)

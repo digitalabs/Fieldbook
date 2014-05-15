@@ -1184,11 +1184,17 @@ function moveToTopScreen(){
 	 $('html').scrollTop(0);
 }
 function openImportGermplasmList() {
-	$('#importGermplasmModal').modal({ backdrop: 'static', keyboard: true });
-	$("#importGermplasmModal").modal("show");
+	$('#listTreeModal').modal('hide');
+	
+	setTimeout(function(){
+		$('#importFrame').attr('src', importLocationUrl);
+		$('#importGermplasmModal').modal({ backdrop: 'static', keyboard: true });
+		}, 500);
+
+	
 	//if(importIframeOpened == false){
 	//	importIframeOpened = true;
-		$('#importFrame').attr('src', importLocationUrl);
+		
 	//}
 }
 

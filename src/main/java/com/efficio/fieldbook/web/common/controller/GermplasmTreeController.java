@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -35,6 +36,8 @@ import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -76,6 +79,8 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
     
     private String NAME_NOT_UNIQUE = "Name not unique";
     private String HAS_CHILDREN = "Folder has children";
+    @Resource
+    private ResourceBundleMessageSource messageSource;
     
     
     /**
@@ -118,7 +123,10 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         		results.put("isSuccess", 1);
         	}else{
         		results.put("isSuccess", 0);
-        		results.put("message", "List Name should be unique");
+        		String nameUniqueError = "germplasm.save.list.name.unique.error";
+        		Locale locale = LocaleContextHolder.getLocale();
+        		results.put("message", messageSource.getMessage(
+        				nameUniqueError, null, locale));
         	}
         	
         } catch(Exception e) {
@@ -128,6 +136,18 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         }
         
         return results;
+    }
+    
+    /**
+     * Load initial germplasm tree.
+     *
+     * @return the string
+     */
+    @ResponseBody
+    @RequestMapping(value = "/germplasm/detail/url", method = RequestMethod.GET)
+    public String getGermplasmUrl() {
+
+        return AppConstants.GERMPLASM_DETAILS_URL.getString();
     }
     
     /**

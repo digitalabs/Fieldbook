@@ -216,34 +216,49 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 						    		<a class="btn btn-info" href="javascript: openAddVariablesSetting(7);" th:text="#{nursery.create.nursery.add.settings}">Add</a>
 				    			</div>
 			    			</div>
-			    			<div class="row form-group collapse in nurseryConditionsDetails">
-			    				<div class="col-xs-12 col-md-12">
-			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll" id="nurseryConditionsSettings">
-			    						<thead>
-										<tr>
-							                <th width="5%"></th>
-							                <th width="45%" th:utext="#{nursery.create.nursery.condition.name}">.Name</th>
-							                <th width="50%" th:utext="#{nursery.create.nursery.condition.description}">.Description</th>
-										</tr>
-										</thead>
-										<tbody>
-					    					<tr th:each="nurseryCondition, rowStat : *{nurseryConditions}">
-					    						<td width="5%" style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'" >
-						    						<span style="cursor: default; font-size: 16px;" th:if="${nurseryCondition.deletable}" class="glyphicon glyphicon-remove-circle"
-						    						th:onclick="'javascript: deleteVariable(7,\'' + ${nurseryCondition.variable.cvTermId} + '\',$(this))'"></span>
-						    									    					
-						    						<input class="cvTermIds" type="hidden" th:field="*{nurseryConditions[__${rowStat.index}__].variable.cvTermId}" />
-					    						</td>
-						    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
-						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
-														*{nurseryConditions[__${rowStat.index}__].variable.cvTermId} + '\');'" >
-														<span th:text="${nurseryCondition.variable.name}"></span></a>
-						    					</td>
-						    					<td width="50%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${nurseryCondition.variable.description}"></td>						    					
-					    					</tr> 
-				    					</tbody>
-			    					</table>
-			    				</div>
+			    			<div class="sectionContainer collapse in nurseryConditionsDetails" id="nurseryConditionsSettings">
+		    					<div class="row form-group nurseryConditionsSettings" th:each="nurseryCondition, rowStat : *{nurseryConditions}">
+		    						<div class="col-xs-5 col-md-5 1st">
+		    							<span style="cursor: default; font-size: 16px;" th:if="${nurseryCondition.deletable}" class="glyphicon glyphicon-remove-circle" 
+											th:onclick="'javascript: deleteVariable(7,\'' + ${nurseryCondition.variable.cvTermId} + '\',$(this))'"></span>
+											<input class="cvTermIds" type="hidden" th:field="*{nurseryConditions[__${rowStat.index}__].variable.cvTermId}" />
+		    							&nbsp;&nbsp;&nbsp;
+		    							<span style="word-wrap: break-word"  class="control-label nursery-condition-label" th:text="${nurseryCondition.variable.name}"></span>:
+		    						</div>
+		    						<div class="col-xs-7 col-md-7 2nd">
+		    								<input class="cvTermIds nurseryConditionVariableIdClass" type="hidden" th:field="*{nurseryConditions[__${rowStat.index}__].variable.cvTermId}" /> 
+											<input style="width: 30%" th:if="${nurseryCondition.variable.widgetType.type == 'DROPDOWN'}" 
+											type="hidden" th:field="*{nurseryConditions[__${rowStat.index}__].value}" class="form-control select2" />
+																						
+											<!-- store possible values of variable -->
+											<div th:text="${nurseryCondition.value}" class="div-select-val" style="display: none"></div>
+											<div th:if="${nurseryCondition.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesJsonCons' + ${rowStat.index}"
+												class="possibleValuesJsonCons" style="display:none" th:text="${nurseryCondition.possibleValuesJson}">
+											</div>
+											<div th:if="${nurseryCondition.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesFavoriteJsonCons' + ${rowStat.index}"
+												class="possibleValuesFavoriteJsonCons" style="display:none" th:text="${nurseryCondition.possibleValuesFavoriteJson}">
+											</div>
+											
+											<input th:if="${nurseryCondition.variable.widgetType.type == 'NTEXT'}" 
+											type="text" th:field="*{nurseryConditions[__${rowStat.index}__].value}" class="form-control numeric-input" />
+											
+											<input th:if="${nurseryCondition.variable.widgetType.type == 'CTEXT'}" 
+											type="text" th:field="*{nurseryConditions[__${rowStat.index}__].value}" class="form-control character-input" />
+											
+											<textarea th:if="${nurseryCondition.variable.widgetType.type == 'TEXTAREA'}" 
+											 th:field="*{nurseryConditions[__${rowStat.index}__].value}" class="form-control character-input" rows="3" />
+											
+											<input th:if="${nurseryCondition.variable.widgetType.type == 'DATE'}" 
+											type="text" th:field="*{nurseryConditions[__${rowStat.index}__].value}" class="form-control date-input" />
+											 
+											<input th:if="${nurseryCondition.variable.widgetType.type == 'SLIDER'}" 
+											type="text" th:field="*{nurseryConditions[__${rowStat.index}__].value}"
+											th:attr="data-min=${nurseryCondition.variable.minRange}"
+											th:attrappend="data-max=${nurseryCondition.variable.maxRange}"
+											class="form-control numeric-input" 										 
+											/>
+									</div>
+		    					</div>
 		    				</div>
 	    					<div class="row form-group">
 			    				<div class="col-xs-12 col-md-12">

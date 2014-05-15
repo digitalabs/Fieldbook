@@ -2,6 +2,8 @@
 <div class="row col-xs-12 col-md-12" style="padding-top: 10px;">
 <div class="row form-group" th:object="${nurseryDetails}" th:id="'div-nursery-tab-' + *{id}">
 	<input type="hidden" id="studyId" class="field-map-highlight" th:value="*{id}" />
+	<input type="hidden" id="study-type" name="study-type" value="Nursery" />
+	
 	<div class="col-xs-12 col-md-12">
 		<label style="padding-left: 5px" class="control-label section-toggle toggle-icon"  data-target=".nurseryDetails">
 			<img th:src="@{/static/img/basic-details.png}" />
@@ -275,6 +277,7 @@
 			</div><!-- /.modal-content -->
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->		
+
 
 
 <div layout:fragment="page-script">

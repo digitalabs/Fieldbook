@@ -53,6 +53,7 @@ import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 import com.efficio.pojos.treeview.TreeNode;
+import com.vaadin.ui.Label;
 
 /**
  * The Class GermplasmTreeController.
@@ -206,8 +207,14 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         	GermplasmList germplasmList = fieldbookMiddlewareService.getGermplasmListById(listId);
         	dataResults.put("name", germplasmList.getName());
         	dataResults.put("description", germplasmList.getDescription());
-        	dataResults.put("type", germplasmList.getType());
-        	dataResults.put("status", germplasmList.getStatusString());
+        	dataResults.put("type", getTypeString(germplasmList.getType()));
+        	
+        	String statusValue = "Unlocked List";
+    		if(germplasmList.getStatus() >= 100){
+    			statusValue = "Locked List";
+    		}
+    		
+        	dataResults.put("status", statusValue);
         	dataResults.put("date", germplasmList.getDate());
         	dataResults.put("owner", fieldbookMiddlewareService.getOwnerListName(germplasmList.getUserId()));
         	dataResults.put("notes", germplasmList.getNotes());
@@ -218,7 +225,22 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         
         return dataResults;
     }
-   
+    private String getTypeString(String typeCode) {
+		try{
+	        List<UserDefinedField> listTypes = germplasmListManager.getGermplasmListTypes();
+	        
+	        for (UserDefinedField listType : listTypes) {
+	            if(typeCode.equals(listType.getFcode())){
+	            	return listType.getFname();
+	            }
+	        }
+		}catch(MiddlewareQueryException ex){
+			LOG.error("Error in getting list types.", ex);
+			return "Error in getting list types.";
+		}
+        
+        return "Germplasm List";
+    }
     
     /**
      * Expand germplasm tree.

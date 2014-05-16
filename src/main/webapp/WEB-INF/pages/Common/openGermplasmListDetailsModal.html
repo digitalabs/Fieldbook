@@ -77,7 +77,7 @@
 	    	 Spinner.toggle();
 	    	 $('.germplasm-header-details').html('');
 	    	 $.ajax({
-	 			url: "/Fieldbook/NurseryManager/germplasm/list/header/details/"+listId,
+	 			url: "/Fieldbook/ListTreeManager/germplasm/list/header/details/"+listId,
 	 			type: "GET",
 	 			cache: false,
 	 			success: function(data) {
@@ -91,7 +91,6 @@
 	 				var notes = data.notes == null ? '-' : data.notes;
 	 				$('#list-notes').html(notes);
 	 		    	$('#openGermplasmListModal').modal({ backdrop: 'static', keyboard: true });
-	 				$("#openGermplasmListModal").modal("show");
 	 			}, 
 	 			complete: function() {
 	 				Spinner.toggle();

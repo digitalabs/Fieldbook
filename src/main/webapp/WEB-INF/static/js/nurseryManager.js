@@ -1611,7 +1611,7 @@ function validateCreateNursery() {
 		hasError = true;
 		name = $("#expDesignLabel").text();
 	} */
-	else if($('.baseline-traits').length == 0){
+	else if($('.baseline-traits').length == 0 && $("#selectionVariatesSettings tbody tr").length == 0){
 		hasError = true;
 		//name = $("#expDesignLabel").text();
 		customMessage = nurseryTraitsIsRequired;

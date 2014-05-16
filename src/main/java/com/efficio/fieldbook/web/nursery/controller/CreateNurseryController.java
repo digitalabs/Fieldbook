@@ -260,7 +260,9 @@ public class CreateNurseryController extends SettingsController {
 
     	List<SettingDetail> studyLevelVariables = new ArrayList<SettingDetail>();
     	studyLevelVariables.addAll(form.getBasicDetails());
-    	studyLevelVariables.addAll(form.getStudyLevelVariables());
+    	if (form.getStudyLevelVariables() != null && !form.getStudyLevelVariables().isEmpty()) {
+    		studyLevelVariables.addAll(form.getStudyLevelVariables());
+    	}
     	 
     	List<SettingDetail> studyLevelVariablesSession = userSelection.getBasicDetails();
     	userSelection.getStudyLevelConditions().addAll(studyLevelVariablesSession);

@@ -754,7 +754,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType, p
 		
 		//include delete button if variable is deletable
 		if (settingDetail.deletable) {
-			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable("+varType+"," + 
+			isDelete = "<span style='cursor: default; font-size: 16px;' class='delete-icon' onclick='deleteVariable("+varType+"," + 
 				settingDetail.variable.cvTermId + ",$(this))'></span>";
 		}
 		
@@ -902,7 +902,7 @@ function createTableSettingVariables(data, name, tableId, varType) {
 		var isDelete = "";
 		
 		if (settingDetail.deletable) {
-			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable("+varType+"," + 
+			isDelete = "<span style='cursor: default; font-size: 16px;' class='delete-icon' onclick='deleteVariable("+varType+"," + 
 			settingDetail.variable.cvTermId + ",$(this))'></span>";
 		}
 		newRow = newRow + "<td width='5%' style='text-align: center' class='"+className+"'>" + isDelete + 

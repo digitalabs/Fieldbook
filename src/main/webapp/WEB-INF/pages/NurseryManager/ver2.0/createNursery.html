@@ -291,7 +291,8 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 			loadNurserySettingsForCreate($(this).val());
 		})
 		$('#studyBuildOption').on('change', changeBuildOption);
-		changeBuildOption();
+		$('#choosePreviousStudy').hide();
+		//changeBuildOption();
 		
 	});
 

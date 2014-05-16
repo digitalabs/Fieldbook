@@ -65,6 +65,7 @@ function showPage(paginationUrl, pageNum, sectionDiv){
            type: "GET",
            data: "",
            cache: false,
+           //async: false,
            success: function(html) {
         	   
              $("#"+sectionDiv).empty().append(html);
@@ -93,6 +94,22 @@ function showPage(paginationUrl, pageNum, sectionDiv){
              
              if (sectionDiv == 'imported-germplasm-list') {
             	 makeDraggable(makeDraggableBool);
+            	//we'll do the highlight
+             	if(typeof itemsIndexAdded === 'undefined');
+             	else{
+             		
+             		if(itemsIndexAdded != null && itemsIndexAdded.length > 0){
+             			for(var indexItems = 0 ; indexItems < itemsIndexAdded.length ; indexItems++){
+             				if(itemsIndexAdded[indexItems] != null){
+             					var rowIndex = itemsIndexAdded[indexItems].index;
+             					if($('.primaryRow[data-index="'+rowIndex+'"]').length != 0){
+             						$('.primaryRow[data-index="'+rowIndex+'"]').css('opacity', '0.5');	
+             					}
+             				}
+             			}
+             		}
+             		
+             	}
              }
              
              Spinner.toggle();  

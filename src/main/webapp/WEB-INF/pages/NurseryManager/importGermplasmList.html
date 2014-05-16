@@ -223,6 +223,8 @@
     var importLocationUrl = /*[[#{nursery.apps.import.nursery.url}]]*/;
 	var importIframeOpened = false;
 	
+	var itemsIndexAdded = [];
+	
     function do_validation() {
     	var message = /*[[#{common.error.file.no.file.selected}]]*/;
     	
@@ -389,6 +391,15 @@
         			addedGid[gid] = null;
         			checksFromPrimary--;
         			setSpinnerMaxValue();
+        			if(itemsIndexAdded != null && itemsIndexAdded.length > 0){
+            			for(var indexItems = 0 ; indexItems < itemsIndexAdded.length ; indexItems++){
+            					var rowGid = itemsIndexAdded[indexItems].gid;
+            					if(rowGid == gid){
+            						itemsIndexAdded[indexItems] = null;
+            						break;
+            					}
+            			}
+            		}
         		},
         		error: function(jqXHR, textStatus, errorThrown){ 
         			console.log("The following error occured: " + textStatus, errorThrown); 
@@ -430,11 +441,13 @@
         			showSpecifyCheckSection();
         			checksFromPrimary++;
         			setSpinnerMaxValue();
+        			itemsIndexAdded.push({'entry':entryNumber, 'gid': gid, 'index': index});
         			if(index == $("#startIndex2").val() && $('.check-germplasm-list-items .ui-draggable').length != 0){
                 		index++;
                 		//$('#startIndex2').val(index);
                 		prevStartIndex = $('#startIndex2').val();
                 	}
+        			
         		},
         		error: function(jqXHR, textStatus, errorThrown){ 
         			console.log("The following error occured: " + textStatus, errorThrown); 
@@ -474,6 +487,7 @@
         			
         			$('#numberOfEntries').html($('#totalGermplasms').val());
         			$('#imported-germplasm-list-reset-button').css('opacity', '1');
+        			itemsIndexAdded = [];
         		},
         		error: function(jqXHR, textStatus, errorThrown){ 
         			console.log("The following error occured: " + textStatus, errorThrown); 
@@ -497,6 +511,7 @@
         			showSpecifyCheckSection();
         			checksFromPrimary = 0;
         			setSpinnerMaxValue();
+        			itemsIndexAdded = [];
         			
         		},
         		error: function(jqXHR, textStatus, errorThrown){ 
@@ -559,13 +574,12 @@
         function verifyIfCheck(startingIndex) {
         	//console.log(startingIndex);
         	//console.log($('tr.checkRow[data-index="'+$(startingIndex).val()+'"]').length)
-        	if ($('tr.checkRow[data-index="'+$(startingIndex).val()+'"]').length != 0 ||  
-        			isGidInCheckList(getGid($(startingIndex).val())) > 0) {
+        	if (false && ($('tr.checkRow[data-index="'+$(startingIndex).val()+'"]').length != 0 ||  
+        			isGidInCheckList(getGid($(startingIndex).val())) > 0)) {
         		
         		if(lastDraggedChecksList == 0 && $("#keyForOverwrite").val()  == ''){
         			//only pop if its a drag item from primary
         			$('#removeCheckModal').modal({ backdrop: 'static', keyboard: true });
-            		$("#removeCheckModal").modal("show");	
         		}
         		
         		

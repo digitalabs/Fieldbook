@@ -118,7 +118,7 @@ public class FieldbookServiceImpl implements FieldbookService{
 		List<Integer> propertyIds = getPropertyIdsByMode(mode);
 		
 		List<StandardVariableReference> dbList = fieldbookMiddlewareService.filterStandardVariablesByMode(storedInIds, propertyIds, 
-		                mode == AppConstants.SEGMENT_TRAITS.getInt() ? true : false);
+		                mode == AppConstants.SEGMENT_TRAITS.getInt() || mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt() ? true : false);
 		
 		if (dbList != null && !dbList.isEmpty()) {
                     
@@ -235,7 +235,9 @@ public class FieldbookServiceImpl implements FieldbookService{
     private List<Integer> getPropertyIdsByMode(int mode) {
         List<Integer> list = new ArrayList<Integer>();
         
-        if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt() || mode == AppConstants.SEGMENT_TRAITS.getInt()) {
+        if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt() || mode == AppConstants.SEGMENT_TRAITS.getInt()
+        		|| mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt()) {
+        	
             StringTokenizer token = new StringTokenizer(AppConstants.SELECTION_VARIATES_PROPERTIES.getString(), ",");
             
             while(token.hasMoreTokens()){

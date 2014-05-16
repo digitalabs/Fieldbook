@@ -28,6 +28,7 @@ import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -56,6 +57,8 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     /** The Constant URL. */
     public static final String URL = "/NurseryManager/advance/nursery";
     
+    private static final String MODAL_URL = "NurseryManager/ver2.0/advanceNurseryModal";
+    
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(AdvancingController.class);
     
@@ -73,6 +76,9 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     
     @Resource
     private UserSelection userSelection;
+    
+    @Resource
+    private OntologyService ontologyService;
     
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
@@ -127,8 +133,10 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     		form.setCropType(1);
     	}
     	
+    	form.setMethodVariates(ontologyService.getStandardVariableReferencesByProperty(TermId.BREEDING_METHOD_PROP.getId()));
+    	form.setLineVariates(ontologyService.getStandardVariableReferencesByProperty(TermId.PLANTS_SELECTED_PROP.getId()));
     	
-    	return super.show(model);
+    	return super.showAjaxPage(model, MODAL_URL);
     }
     @ResponseBody
     @RequestMapping(value="/load/{nurseryId}", method = RequestMethod.GET)

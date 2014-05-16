@@ -13,6 +13,8 @@ package com.efficio.fieldbook.web.nursery.form;
 
 import java.util.List;
 
+import org.generationcp.middleware.domain.oms.StandardVariableReference;
+
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 
 /**
@@ -111,7 +113,14 @@ public class AdvancingNurseryForm {
     
     private String putBrackets;
     
-	
+    private Integer methodVariateId;
+    
+    private Integer lineVariateId;
+    
+    private List<StandardVariableReference> methodVariates;
+    
+    private List<StandardVariableReference> lineVariates;
+
 	/**
 	 * Gets the method id all.
 	 *
@@ -682,6 +691,62 @@ public class AdvancingNurseryForm {
 
 	public void setPutBrackets(String putBrackets) {
 		this.putBrackets = putBrackets;
+	}
+
+		/**
+	 * @return the methodVariateId
+	 */
+	public Integer getMethodVariateId() {
+		return methodVariateId;
+	}
+
+	/**
+	 * @param methodVariateId the methodVariateId to set
+	 */
+	public void setMethodVariateId(Integer methodVariateId) {
+		this.methodVariateId = methodVariateId;
+	}
+
+	/**
+	 * @return the lineVariateId
+	 */
+	public Integer getLineVariateId() {
+		return lineVariateId;
+	}
+
+	/**
+	 * @param lineVariateId the lineVariateId to set
+	 */
+	public void setLineVariateId(Integer lineVariateId) {
+		this.lineVariateId = lineVariateId;
+	}
+
+		/**
+	 * @return the methodVariates
+	 */
+	public List<StandardVariableReference> getMethodVariates() {
+		return methodVariates;
+	}
+
+	/**
+	 * @param methodVariates the methodVariates to set
+	 */
+	public void setMethodVariates(List<StandardVariableReference> methodVariates) {
+		this.methodVariates = methodVariates;
+	}
+
+	/**
+	 * @return the lineVariates
+	 */
+	public List<StandardVariableReference> getLineVariates() {
+		return lineVariates;
+	}
+
+	/**
+	 * @param lineVariates the lineVariates to set
+	 */
+	public void setLineVariates(List<StandardVariableReference> lineVariates) {
+		this.lineVariates = lineVariates;
 	}
 
 		/* (non-Javadoc)

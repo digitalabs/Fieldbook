@@ -836,17 +836,31 @@ function advanceNursery(tableName){
 		$('#page-create-field-map-message').html("<div class='alert alert-danger'>"+advanceStudyError+"</div>");
 		return;
 	}
-	
+
 	Spinner.toggle();
 	var advanceStudyHref = $('#advance-study-url').attr("href");
 	
 	if (tableName == "nursery-table") {
 		if(idVal != null){
-			location.href = advanceStudyHref + "/" + idVal;
-			Spinner.toggle();
+
+			$.ajax({ 
+				url: advanceStudyHref + "/" + encodeURIComponent(idVal),
+			    type: "GET",
+			    success: function(html) {
+			    	$("#advance-nursery-modal-div").html(html);
+					$("#advanceNurseryModal").modal("show");
+		        },
+				error: function(jqXHR, textStatus, errorThrown){
+					console.log("The following error occured: " + textStatus , errorThrown);
+			    }, 
+			    complete: function(){ 
+				   Spinner.toggle();
+			    } 
+			});
 		}
 	}
 }
+
 function showErrorMessage(messageDivId, message) {
 	//console.log(message);
 	$("#" + messageDivId).html(

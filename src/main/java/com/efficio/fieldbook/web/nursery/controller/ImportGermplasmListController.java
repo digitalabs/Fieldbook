@@ -396,7 +396,8 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             ImportedGermplasm importedGermplasm = null;//primaryList.get(entryId-1);
             for(ImportedGermplasm impGerm : primaryList){
             	if(impGerm.getEntryId().intValue() == entryId.intValue()){
-            		importedGermplasm = impGerm;
+            		importedGermplasm = impGerm.copy();
+            		
             		break;
             	}
             		

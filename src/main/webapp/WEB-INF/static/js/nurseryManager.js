@@ -765,7 +765,11 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType, p
 		"</td>";
 		//newRow = newRow + "<td>" + settingDetail.variable.name + ':' + '<span class="required">*</span>' +  "</td>";
 		newRow = newRow + "<span style='word-wrap: break-word'  class='control-label'>" + settingDetail.variable.name + "</span>: &nbsp;<span class='required'>*</span></div>";
-		newRow = newRow + "<div class='col-xs-7 col-md-7 2nd'>";
+		
+		if(settingDetail.variable.widgetType == 'DATE'){
+			newRow = newRow + "<div class='col-xs-3 col-md-3 2nd input-group date'>";
+		}else
+			newRow = newRow + "<div class='col-xs-7 col-md-7 2nd'>";
 		/*
 		newRow = newRow + "<input type='hidden' id='studyLevelVariables" + ctr + 
 		".value' name='studyLevelVariables[" + ctr + "].value' class='form-control select2' />";
@@ -1086,6 +1090,8 @@ function recreateDateInput(index, row, selectedVal, name) {
 	".value' name='"+name+"[" + index + "].value' " + 
 	"value='" + selectedVal +
 	"' class='form-control date-input' />";
+	newCell += '<label for="' + name + index + '.value" class="input-group-addon btn datepicker"><img width="20" height="22" th:src="/Fieldbook/static/img/calendar.png" style="padding-bottom:3px;" /></label>';
+	 
 
 	$($(row).find(".2nd")).html(newCell);
 }
@@ -1422,7 +1428,8 @@ function createDropdownInput(ctr, name){
 }
 function createDateInput(ctr, name){	
 	 return "<input type='text' id='" + name+ ctr + 
-		".value' name='" + name + "[" + ctr + "].value' class='form-control date-input' />";
+		".value' name='" + name + "[" + ctr + "].value' class='form-control date-input' />" +
+	'<label for="' + name + ctr + '.value" class="input-group-addon btn datepicker"><img width="20" height="22" src="/Fieldbook/static/img/calendar.png" style="padding-bottom:3px;" /></label>';
 	 
 }
 function createNumericalTextInput(ctr, name){

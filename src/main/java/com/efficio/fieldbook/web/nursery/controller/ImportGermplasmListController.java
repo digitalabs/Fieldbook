@@ -56,6 +56,7 @@ import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.nursery.validation.ImportGermplasmListValidator;
 
+// TODO: Auto-generated Javadoc
 /**
  * This controller handles the 2nd step in the nursery manager process.
  * 
@@ -65,17 +66,23 @@ import com.efficio.fieldbook.web.nursery.validation.ImportGermplasmListValidator
 @RequestMapping(ImportGermplasmListController.URL)
 public class ImportGermplasmListController extends AbstractBaseFieldbookController{
     
+    /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(ImportGermplasmListController.class);
     
     /** The Constant URL. */
     public static final String URL = "/NurseryManager/importGermplasmList";
+    
+    /** The Constant PAGINATION_TEMPLATE. */
     public static final String PAGINATION_TEMPLATE = "/NurseryManager/showGermplasmPagination";
+    
+    /** The Constant CHECK_PAGINATION_TEMPLATE. */
     public static final String CHECK_PAGINATION_TEMPLATE = "/NurseryManager/showCheckGermplasmPagination";
     
     /** The user selection. */
     @Resource
     private UserSelection userSelection;
     
+    /** The germplasm list manager. */
     @Resource
     private GermplasmListManager germplasmListManager;
 
@@ -83,14 +90,19 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     @Resource
     private ImportGermplasmFileService importGermplasmFileService;
     
+    /** The validation service. */
     @Resource
     private ValidationService validationService;
     
+    /** The data import service. */
     @Resource
     private DataImportService dataImportService;
     
+    /** The measurements generator service. */
     @Resource
     private MeasurementsGeneratorService measurementsGeneratorService;
+	
+	/** The fieldbook middleware service. */
 	@Resource
     private FieldbookService fieldbookMiddlewareService;
     
@@ -98,6 +110,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     @Resource
     private OntologyService ontologyService;
     
+    /** The merge check service. */
     @Resource
     private MergeCheckService mergeCheckService;
     
@@ -116,12 +129,17 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getUserSelection()
      */
+    /**
+     * Gets the user selection.
+     *
+     * @return the user selection
+     */
     public UserSelection getUserSelection() {
         return this.userSelection;
     }
     
     /**
-     * Show the main import page
+     * Show the main import page.
      *
      * @param form the form
      * @param model the model
@@ -148,7 +166,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     
 
     /**
-     * Process the imported file and just show the information again
+     * Process the imported file and just show the information again.
      *
      * @param form the form
      * @param result the result
@@ -206,6 +224,14 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     	
     }
     
+    /**
+     * Submit check germplasm list.
+     *
+     * @param form the form
+     * @param result the result
+     * @param model the model
+     * @return the string
+     */
     @ResponseBody
     @RequestMapping(value="/submitCheckGermplasmList", method = RequestMethod.POST)
     public String submitCheckGermplasmList(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form
@@ -233,7 +259,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
      * @param result the result
      * @param model the model
      * @return the string
-     * @throws MiddlewareQueryException 
+     * @throws MiddlewareQueryException the middleware query exception
      */
     @ResponseBody
     @RequestMapping(value="/next", method = RequestMethod.POST)
@@ -267,6 +293,14 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
 		return "success";
     }
 
+    /**
+     * Display germplasm details.
+     *
+     * @param listId the list id
+     * @param form the form
+     * @param model the model
+     * @return the string
+     */
     @RequestMapping(value="/displayGermplasmDetails/{listId}", method = RequestMethod.GET)
     public String displayGermplasmDetails(@PathVariable Integer listId, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, 
             Model model) {
@@ -302,6 +336,14 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         return super.showAjaxPage(model, PAGINATION_TEMPLATE);
     }
     
+    /**
+     * Display check germplasm details.
+     *
+     * @param listId the list id
+     * @param form the form
+     * @param model the model
+     * @return the string
+     */
     @RequestMapping(value="/displayCheckGermplasmDetails/{listId}", method = RequestMethod.GET)
     public String displayCheckGermplasmDetails(@PathVariable Integer listId, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, 
             Model model) {
@@ -347,6 +389,13 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         return super.showAjaxPage(model, CHECK_PAGINATION_TEMPLATE);
     }
     
+    /**
+     * Delete check germplasm details.
+     *
+     * @param gid the gid
+     * @param model the model
+     * @return the string
+     */
     @ResponseBody
     @RequestMapping(value="/deleteCheckGermplasmDetails/{gid}", method = RequestMethod.GET)
     public String deleteCheckGermplasmDetails(@PathVariable Integer gid, Model model) {
@@ -372,6 +421,14 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         return "success";
     }
     
+    /**
+     * Adds the check germplasm details.
+     *
+     * @param entryId the entry id
+     * @param form the form
+     * @param model the model
+     * @return the string
+     */
     @RequestMapping(value="/addCheckGermplasmDetails/{entryId}", method = RequestMethod.GET)
     public String addCheckGermplasmDetails(@PathVariable Integer entryId, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, 
             Model model) {
@@ -434,6 +491,12 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         return super.showAjaxPage(model, CHECK_PAGINATION_TEMPLATE);
     }
     
+    /**
+     * Reset check germplasm details.
+     *
+     * @param model the model
+     * @return the string
+     */
     @ResponseBody
     @RequestMapping(value="/resetCheckGermplasmDetails", method = RequestMethod.GET)
     public String resetCheckGermplasmDetails( 
@@ -466,6 +529,14 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     }
     
     
+    /**
+     * Gets the paginated list.
+     *
+     * @param pageNum the page num
+     * @param form the form
+     * @param model the model
+     * @return the paginated list
+     */
     @RequestMapping(value="/page/{pageNum}", method = RequestMethod.GET)
     public String getPaginatedList(@PathVariable int pageNum, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, Model model) {
         //this set the necessary info from the session variable
@@ -483,6 +554,15 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         return super.showAjaxPage(model, PAGINATION_TEMPLATE);
     }
     
+    /**
+     * Gets the check paginated list.
+     *
+     * @param pageNum the page num
+     * @param previewPageNum the preview page num
+     * @param form the form
+     * @param model the model
+     * @return the check paginated list
+     */
     @RequestMapping(value="/checkPage/{pageNum}/{previewPageNum}", method = RequestMethod.POST)
     public String getCheckPaginatedList(@PathVariable int pageNum, @PathVariable int previewPageNum
             , @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, Model model) {
@@ -510,6 +590,13 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     }
     
     
+    /**
+     * Transform germplasm list data to imported germplasm.
+     *
+     * @param data the data
+     * @param defaultCheckId the default check id
+     * @return the list
+     */
     private List<ImportedGermplasm> transformGermplasmListDataToImportedGermplasm(List<GermplasmListData> data, String defaultCheckId) {
         List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
         int index = 1;
@@ -555,6 +642,14 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         return result;
     }
     
+    /**
+     * Adds the update check type.
+     *
+     * @param operation the operation
+     * @param form the form
+     * @param local the local
+     * @return the map
+     */
     @ResponseBody
     @RequestMapping(value="/addUpdateCheckType/{operation}", method = RequestMethod.POST)
     public Map<String, String> addUpdateCheckType(@PathVariable int operation, 
@@ -594,6 +689,13 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         return result;
     }
     
+    /**
+     * Delete check type.
+     *
+     * @param form the form
+     * @param local the local
+     * @return the map
+     */
     @ResponseBody
     @RequestMapping(value="/deleteCheckType", method = RequestMethod.POST)
     public Map<String, String> deleteCheckType(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, Locale local) {

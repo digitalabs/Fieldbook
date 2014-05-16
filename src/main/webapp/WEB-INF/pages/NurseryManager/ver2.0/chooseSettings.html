@@ -412,6 +412,13 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 				});
 		
 		$(".help-tooltip-nursery").tooltip();
+		$('#srch-term').on("change", function(event){
+	    	 
+	    	var data = $('#srch-term').select2('data');
+	    	//console.log('do serch');
+	    	 doOntologyTreeHighlight(treeDivId, data.key);
+	    	 //console.log("1");
+	    });
 	});
            
 //]]>

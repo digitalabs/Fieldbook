@@ -119,32 +119,17 @@ function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId){
          formatResult: format,
          formatSelection: formatResult
 
-    }).on("change", function(){
+    });
+			/*
+	$('#'+searchDivId).on("change", function(event){
+    	 
     	var data = $('#'+searchDivId).select2('data');
     	//console.log('do serch');
     	 doOntologyTreeHighlight(treeDivId, data.key);
-    	 
+    	 //console.log("1");
     });
+	*/
 	
-	/*
-	$('#'+searchDivId).typeahead('destroy');
-	//console.log('true');
-	var searchTypeAhead = $('#'+searchDivId).typeahead({
-   	  local:  $.parseJSON(searchTreeData),
-   	  limit : 20,   	
-   	  template: '<p><strong>{{value}}</strong> ({{type}}) <br /> {{parentTitle}}</p>',
-   	  engine: Hogan,   	
-   	});
-   	
-   	searchTypeAhead.on('typeahead:selected',function(evt,data){   	    
-   	    doOntologyTreeHighlight(treeDivId, data.key);
-   	    return false;
-   	    });
-   	searchTypeAhead.on('typeahead:autocomplete',function(evt,data){   	    
-   	    doOntologyTreeHighlight(treeDivId, data.key);
-   	    return false;
-   	    });
-   	*/
 	
 	var json = $.parseJSON(treeData);
 	

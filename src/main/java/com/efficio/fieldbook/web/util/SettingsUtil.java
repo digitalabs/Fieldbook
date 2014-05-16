@@ -273,6 +273,7 @@ public class SettingsUtil {
 		}
 		
 		//iterate for the nursery conditions/constants
+		if (nurseryConditions != null && !nurseryConditions.isEmpty()) {
                 index = 0;
                 for(SettingDetail settingDetail : nurseryConditions){
                         SettingVariable variable = settingDetail.getVariable();
@@ -289,6 +290,7 @@ public class SettingsUtil {
                                         HtmlUtils.htmlEscape(settingDetail.getValue()), variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
                         constants.add(constant);
                 }
+		}
 		
 		//iterate for treatment factor details
 		if (treatmentDetailList != null && !treatmentDetailList.isEmpty()) {

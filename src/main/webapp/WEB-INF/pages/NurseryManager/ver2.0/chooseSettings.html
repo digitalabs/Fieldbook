@@ -132,9 +132,8 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 		    						<div class="col-xs-5 col-md-5 1st">
 		    							<span style="cursor: default; font-size: 16px;" th:if="${nurseryCondition.deletable}" class="delete-icon" 
 											th:onclick="'javascript: deleteVariable(7,\'' + ${nurseryCondition.variable.cvTermId} + '\',$(this))'"></span>
-											<input class="cvTermIds" type="hidden" th:field="*{nurseryConditions[__${rowStat.index}__].variable.cvTermId}" />
-		    							&nbsp;&nbsp;&nbsp;
-		    							<span style="word-wrap: break-word"  class="control-label nursery-condition-label" th:text="${nurseryCondition.variable.name}"></span>:
+											<input class="cvTermIds" type="hidden" th:field="*{nurseryConditions[__${rowStat.index}__].variable.cvTermId}" />&nbsp;&nbsp;&nbsp;
+											<span style="word-wrap: break-word"  class="control-label nursery-condition-label" th:text="${nurseryCondition.variable.name}"></span>:
 		    							&nbsp;<span class="required">*</span>
 		    						</div>
 		    						<div class="col-xs-7 col-md-7 2nd">

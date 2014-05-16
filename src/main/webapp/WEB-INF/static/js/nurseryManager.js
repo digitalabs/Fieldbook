@@ -760,20 +760,13 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType, p
 		
 		//create html elements dynamically
 		newRow = newRow + "<div class='col-xs-5 col-md-5 1st'>" + isDelete + 
-		"&nbsp;&nbsp;<input class='cvTermIds nurseryLevelVariableIdClass' type='hidden' id='" + name + ctr + ".variable.cvTermId' name='"+name+"[" + 
-		ctr + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
-		"</td>";
-		//newRow = newRow + "<td>" + settingDetail.variable.name + ':' + '<span class="required">*</span>' +  "</td>";
+		"<input class='cvTermIds nurseryLevelVariableIdClass' type='hidden' id='" + name + ctr + ".variable.cvTermId' name='"+name+"[" + 
+		ctr + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />&nbsp;&nbsp;&nbsp;&nbsp;";
+
 		newRow = newRow + "<span style='word-wrap: break-word'  class='control-label'>" + settingDetail.variable.name + "</span>: &nbsp;<span class='required'>*</span></div>";
 		
-		if(settingDetail.variable.widgetType == 'DATE'){
-			newRow = newRow + "<div class='col-xs-3 col-md-3 2nd input-group date'>";
-		}else
-			newRow = newRow + "<div class='col-xs-7 col-md-7 2nd'>";
-		/*
-		newRow = newRow + "<input type='hidden' id='studyLevelVariables" + ctr + 
-		".value' name='studyLevelVariables[" + ctr + "].value' class='form-control select2' />";
-		*/
+		newRow = newRow + "<div class='col-xs-7 col-md-7 2nd'>";
+
 		var inputHtml = '';
 				
 		if(settingDetail.variable.widgetType == 'DROPDOWN'){

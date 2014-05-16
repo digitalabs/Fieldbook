@@ -123,6 +123,8 @@ public class CreateNurseryController extends SettingsController {
             //form.setSelectedSettingId(1);
             form.setLoadSettings("1");
             form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + "," + AppConstants.FIXED_NURSERY_VARIABLES.getString());
+            form.setProjectId(this.getCurrentProjectId());
+            form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
         }
         setFormStaticData(form);
         model.addAttribute("createNurseryForm", form);

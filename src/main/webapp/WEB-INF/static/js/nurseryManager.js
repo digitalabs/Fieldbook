@@ -760,20 +760,13 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType, p
 		
 		//create html elements dynamically
 		newRow = newRow + "<div class='col-xs-5 col-md-5 1st'>" + isDelete + 
-		"&nbsp;&nbsp;<input class='cvTermIds nurseryLevelVariableIdClass' type='hidden' id='" + name + ctr + ".variable.cvTermId' name='"+name+"[" + 
-		ctr + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
-		"</td>";
-		//newRow = newRow + "<td>" + settingDetail.variable.name + ':' + '<span class="required">*</span>' +  "</td>";
+		"<input class='cvTermIds nurseryLevelVariableIdClass' type='hidden' id='" + name + ctr + ".variable.cvTermId' name='"+name+"[" + 
+		ctr + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />&nbsp;&nbsp;&nbsp;&nbsp;";
+
 		newRow = newRow + "<span style='word-wrap: break-word'  class='control-label'>" + settingDetail.variable.name + "</span>: &nbsp;<span class='required'>*</span></div>";
 		
-		if(settingDetail.variable.widgetType == 'DATE'){
-			newRow = newRow + "<div class='col-xs-3 col-md-3 2nd input-group date'>";
-		}else
-			newRow = newRow + "<div class='col-xs-7 col-md-7 2nd'>";
-		/*
-		newRow = newRow + "<input type='hidden' id='studyLevelVariables" + ctr + 
-		".value' name='studyLevelVariables[" + ctr + "].value' class='form-control select2' />";
-		*/
+		newRow = newRow + "<div class='col-xs-7 col-md-7 2nd'>";
+
 		var inputHtml = '';
 				
 		if(settingDetail.variable.widgetType == 'DROPDOWN'){
@@ -843,7 +836,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType, p
 function toggleMethodDropdown(rowIndex) {
 	var possibleValues;  
 	var showFavorite = $("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".favorite1")).is(":checked");
-	var selectedVal;
+	var selectedVal = "";
 	
 	//get previously selected value
 	if ($("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".value")).select2("data")) {
@@ -857,8 +850,12 @@ function toggleMethodDropdown(rowIndex) {
 	//get possible values based on checkbox
 	if (showFavorite) {
 		possibleValues = $("#possibleValuesFavoriteJson" + rowIndex).text();
+		$($("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".value")).parent().find(".selectedValue")).val(selectedVal);
+		selectedVal = $($("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".value")).parent().find(".selectedValueFave")).val();
 	} else {
 		possibleValues = $("#possibleValuesJson" + rowIndex).text();
+		$($("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".value")).parent().find(".selectedValueFave")).val(selectedVal);
+		selectedVal = $($("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".value")).parent().find(".selectedValue")).val();
 	}
 	
 	//recreate select2 combo
@@ -869,7 +866,7 @@ function toggleMethodDropdown(rowIndex) {
 function toggleLocationDropdown(rowIndex) {
 	var possibleValues;  
 	var showFavorite = $("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".favorite1")).is(":checked");
-	var selectedVal;
+	var selectedVal = "";
 	var showAll = true;
 	
 	//get previously selected value
@@ -885,8 +882,12 @@ function toggleLocationDropdown(rowIndex) {
 	if (showFavorite) {
 		possibleValues = $("#possibleValuesFavoriteJson" + rowIndex).text();
 		showAll = false;
+		$($("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".value")).parent().find(".selectedValue")).val(selectedVal);
+		selectedVal = $($("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".value")).parent().find(".selectedValueFave")).val();
 	} else {
 		possibleValues = $("#possibleValuesJson" + rowIndex).text();
+		$($("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".value")).parent().find(".selectedValueFave")).val(selectedVal);
+		selectedVal = $($("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".value")).parent().find(".selectedValue")).val();
 	}
 	
 	//recreate select2 combo
@@ -1424,7 +1425,9 @@ function createSliderInput(ctr, minVal, maxVal, name){
 }
 function createDropdownInput(ctr, name){
 	 return "<input type='hidden' id='" + name + ctr + 
-		".value' name='" + name + "[" + ctr + "].value' class='form-control select2' />";
+		".value' name='" + name + "[" + ctr + "].value' class='form-control select2' />" +
+		"<input class='selectedValue' type='hidden' />" +
+		"<input class='selectedValueFave' type='hidden' />";
 }
 function createDateInput(ctr, name){	
 	 return "<input type='text' id='" + name+ ctr + 

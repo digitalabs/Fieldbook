@@ -1619,8 +1619,7 @@ function validateCreateNursery() {
 	}else if($('#checkId').val() == ''){
 		hasError = true;
 		customMessage = checkTypeIsRequired;
-	}
-	else {		
+	}else {		
 		$('.nurseryLevelVariableIdClass').each(function(){
 			if (!hasError) {
 
@@ -1650,7 +1649,13 @@ function validateCreateNursery() {
 		showErrorMessage('page-message', errMsg);
 		return false;
 	}
-
+	
+	var valid = validateStartEndDateBasic();
+	
+	if (!valid) {
+		return false;
+	} 
+	
 	$.each($(".numeric-input"), function (index, textField) {
 		if (isNaN($(textField).val())) {
 			hasError = true;
@@ -2182,3 +2187,24 @@ function showStudyInfo() {
 	$("#folderBrowserModal").modal("show");
 }
 
+function validateStartEndDateBasic(){
+	var startDate = $("#" + getJquerySafeId("basicDetails.value2")).val();
+	var endDate = $("#" + getJquerySafeId("basicDetails.value4")).val();
+
+	startDate = startDate == null ? '' : startDate;
+	endDate = endDate == null ? '' : endDate;
+
+	if(startDate == '' && endDate == '')
+		return true;
+	else if(startDate != '' && endDate == ''){
+		return true;
+	}else if(startDate == '' && endDate != ''){
+		showErrorMessage("page-message", startDateRequiredError);
+		return false;
+	}else if(parseInt(startDate) > parseInt(endDate)){
+		showErrorMessage("page-message", startDateRequiredEarlierError);
+		return false;
+	}
+	return true;
+	
+}

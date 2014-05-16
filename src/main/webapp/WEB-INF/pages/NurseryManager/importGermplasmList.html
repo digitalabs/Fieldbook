@@ -14,7 +14,7 @@
   	
   		<div id="primary-section" style="float: left; width: 70%">
   			<img th:src="@{/static/img/review-list-details.png}" style="padding-bottom:3px;" />
-  			<label class="control-label"><strong class="sub-content-heading">Nursery List</strong></label>
+  			<label class="control-label"><strong id="germplasmLabel" class="sub-content-heading">Nursery List</strong></label>
   			<br />
   			<label class="control-label"><a href="javascript: openListTree(1)">Browse</a> for a list to work with.</label>				      			
   		</div>
@@ -129,7 +129,7 @@
 </div><!-- /.modal -->
 
 <div class="modal fade" id="listTreeModal" tabindex="-1" role="dialog" aria-labelledby="listTreeModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
+	<div class="modal-dialog modal-small">
     	<div class="modal-content">
     		<div class="modal-header">
 	            	<button id="closelistTreeModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -225,7 +225,6 @@
     var itemsToAdd = [];
     var checksFromPrimary = 0;
     
-    var germplasmDetailUrl = '';
     var importLocationUrl = /*[[#{nursery.apps.import.nursery.url}]]*/;
 	var importIframeOpened = false;
 	
@@ -242,7 +241,6 @@
 		  //we show the modal dialog again
 		  $('#myModal').modal('show');
 	  }	
-	  germplasmDetailUrl = $('#openGermplasmUrl').val();	  
 	  //display tree
 	  
 	  $('input[name="specifyCheckType"]').on('change',changeCheckLayout)
@@ -257,7 +255,7 @@
 	  $('#entries-details').css('display', 'none');
 	  
 			  
-	  displayGermplasmListTree("germplasmTree");  	
+	  displayGermplasmListTree("germplasmTree", false);  	
 	  activateDroppable();
 	  changeBrowseGermplasmButtonBehavior(false);
 	  

@@ -760,11 +760,11 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType, p
 		
 		//create html elements dynamically
 		newRow = newRow + "<div class='col-xs-5 col-md-5 1st'>" + isDelete + 
-		"&nbsp;&nbsp;<input class='cvTermIds' type='hidden' id='" + name + ctr + ".variable.cvTermId' name='"+name+"[" + 
+		"&nbsp;&nbsp;<input class='cvTermIds nurseryLevelVariableIdClass' type='hidden' id='" + name + ctr + ".variable.cvTermId' name='"+name+"[" + 
 		ctr + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />" + 
 		"</td>";
 		//newRow = newRow + "<td>" + settingDetail.variable.name + ':' + '<span class="required">*</span>' +  "</td>";
-		newRow = newRow + "<span style='word-wrap: break-word'  class='control-label'>" + settingDetail.variable.name + '</span>:' + '' +  "</div>";
+		newRow = newRow + "<span style='word-wrap: break-word'  class='control-label'>" + settingDetail.variable.name + "</span>: &nbsp;<span class='required'>*</span></div>";
 		newRow = newRow + "<div class='col-xs-7 col-md-7 2nd'>";
 		/*
 		newRow = newRow + "<input type='hidden' id='studyLevelVariables" + ctr + 
@@ -894,7 +894,11 @@ function createTableSettingVariables(data, name, tableId, varType) {
 	$.each(data, function (index, settingDetail) {
 		var length = $("#" + tableId + " tbody tr").length + 1;
 		var className = length % 2 == 1 ? 'even' : 'odd';
-		var newRow = "<tr class='newVariable'>";
+		var rowClass = "";
+		if (varType == 3) { 
+			rowClass = "baseline-traits";
+		}
+		var newRow = "<tr class='newVariable " + rowClass + "'>";
 		var isDelete = "";
 		
 		if (settingDetail.deletable) {
@@ -1599,39 +1603,29 @@ function validateCreateNursery() {
 		//name = $("#expDesignLabel").text();
 		customMessage = nurseryTraitsIsRequired;
 	}
-	else if ($(".noGermplasmListIndicator") && $(".noGermplasmListIndicator").text()) {
-		
+	else if ($(".germplasm-list-items").length == 0) {
 		hasError = true;
 		name = $("#germplasmLabel").text();
 	}else if($('#checkId').val() == ''){
 		hasError = true;
 		customMessage = checkTypeIsRequired;
 	}
-	else {
-		var requiredFields = [];
-		if($('#requiredFields').val() != ''){
-			requiredFields = $('#requiredFields').val().split(',');	
-		}
-		
-		var cvTermId;
+	else {		
 		$('.nurseryLevelVariableIdClass').each(function(){
 			if (!hasError) {
-				cvTermId = $(this).val();
-				
-				if ($.inArray(cvTermId, requiredFields) > -1) {
-					if ($(this).parent().find(".form-control").hasClass("select2") && $(this).parent().find(".form-control").select2("data")) {
-						idname = $(this).parent().find(".form-control").attr("id");
-						//console.log(idname);
-						value = $("#" + getJquerySafeId(idname)).select2("data").text;
-					}
-					else {
-						value = $(this).parent().find(".form-control").val();
-					}
-					value = $.trim(value);
-					if (!value) {
-						name = $(this).parent().prev().find(".control-label").html();
-						hasError = true;
-					}
+
+				if ($(this).parent().next().find(".form-control").hasClass("select2") && $(this).parent().next().find(".form-control").select2("data")) {
+					idname = $(this).parent().next().find(".form-control").attr("id");
+					//console.log(idname);
+					value = $("#" + getJquerySafeId(idname)).select2("data").text;
+				}
+				else {
+					value = $(this).parent().next().find(".form-control").val();
+				}
+				value = $.trim(value);
+				if (!value) {
+					name = $(this).parent().find(".control-label").html();
+					hasError = true;
 				}
 			}
 			
@@ -1644,6 +1638,27 @@ function validateCreateNursery() {
 		if(customMessage != '')
 			errMsg = customMessage;
 		showErrorMessage('page-message', errMsg);
+		return false;
+	}
+
+	$.each($(".numeric-input"), function (index, textField) {
+		if (isNaN($(textField).val())) {
+			hasError = true;
+			name = $(this).parent().prev().find(".control-label").html();
+			customMessage = name + " " + valueNotNumeric;
+		}
+	});
+
+	$.each($(".numeric-input"), function (index, textField) {
+		if (parseFloat($(textField).val()) > $(textField).data("max") || parseFloat($(textField).val()) < $(textField).data("min")) {
+			hasError = true;
+			name = $(this).parent().prev().find(".control-label").html();
+			customMessage = name + " " + valueNotWIMinMax + " " +$(textField).data("min") + " to " + $(textField).data("max");
+		}
+	});
+	
+	if (hasError){
+		showErrorMessage('page-message', customMessage.replace('*', '').replace(":", ""));
 		return false;
 	}
 

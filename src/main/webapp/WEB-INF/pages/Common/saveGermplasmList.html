@@ -1,0 +1,94 @@
+
+<form id="saveListForm" role="form-horizontal" action="#"
+th:object="${saveListForm}" enctype="multipart/form-data">
+	<input type="hidden" th:field="*{listIdentifier}"/>
+	
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
+		</div>		
+	</div>
+	<div class="row form-group">
+		<div class="col-xs-5 col-md-5">
+			<label class="control-label" th:text="#{germplasm.save.list.name.label}">List Name:</label><span class="required">*</span>
+		</div>
+		<div class="col-xs-7 col-md-7">
+			<input type="text" class="form-control" th:field="*{listName}"/>
+		</div>
+	</div>
+	
+	<div class="row form-group">
+		<div class="col-xs-5 col-md-5">
+			<label class="control-label" th:text="#{germplasm.save.list.description.label}">List Description:</label><span class="required">*</span>
+		</div>
+		<div class="col-xs-7 col-md-7">
+			<input type="text" class="form-control" th:field="*{listDescription}"/>
+		</div>
+	</div>
+	
+	<div class="row form-group">
+		<div class="col-xs-5 col-md-5">
+			<label class="control-label" th:text="#{germplasm.save.list.type.label}">List Type:</label><span class="required">*</span>
+		</div>
+		<div class="col-xs-7 col-md-7">
+			<select class="form-control" th:field="*{listType}">
+				<option th:value="${listType.fldno}" th:text="${listType.fname}" th:each="listType : ${germplasmListTypes}">0</option>
+			</select>
+		</div>
+	</div>
+	
+	<div class="row form-group">
+		<div class="col-xs-5 col-md-5">
+			<label class="control-label" th:text="#{germplasm.save.list.date.label}">List Date:</label><span class="required">*</span>
+		</div>
+		<div class="col-xs-3 col-md-3 input-group date" data-date="" data-date-format="yyyymmdd">
+			<input type="text" class="form-control  date-input" th:field="*{listDate}" style="width: 100px"/>
+			<!-- 		
+			<label for="listDate" class="input-group-addon btn datepicker">
+				<img width="20" height="22" th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;" />
+			</label>
+			 -->
+		</div>
+	</div>
+	
+	<div class="row form-group">
+		<div class="col-xs-5 col-md-5">
+			<label class="control-label" th:text="#{germplasm.save.list.notes.label}">Notes:</label>
+		</div>
+		<div class="col-xs-7 col-md-7">
+			<textarea  rows="5" cols="20" class="form-control" th:field="*{listNotes}"/>
+		</div>
+	</div>
+		
+</form>
+
+<div layout:fragment="page-script">
+<link th:href="@{/static/css/bootstrap-datepicker.css}" rel="stylesheet"/>
+<script type="text/javascript" th:src="@{/static/js/bootstrap-datepicker.js}"></script>
+<script type='text/javascript' th:inline="javascript">
+//<![CDATA[
+   
+   $(document).ready(function() {
+	  $('#saveListForm select').select2(); 
+	  $('#saveListForm #listDate').datepicker({'format': 'yyyymmdd'}).on('changeDate', function(ev) {
+			$(this).datepicker('hide');
+		})
+		
+		if($('#saveListForm .date-input').length > 0){
+			$('#saveListForm .date-input').each(function(){
+				$(this).datepicker({'format': 'yyyymmdd'}).on('changeDate', function(ev) {			
+				$(this).datepicker('hide');				
+				
+			}).on('show', function(){
+				treeReloading = 1;
+			}).on('hide', function(){
+				setTimeout(function(){treeReloading = 0;}, 1000);
+			})
+			});
+		}
+
+   });
+	
+//]]>
+</script>
+</div>

@@ -326,7 +326,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
     protected void populateSettingVariable(SettingVariable var) throws MiddlewareQueryException {
     	StandardVariable  stdvar = getStandardVariable(var.getCvTermId());
     	if (stdvar != null) {
-    	                var.setName(getCustomName(var.getCvTermId(), var.getName()));
 			var.setDescription(stdvar.getDescription());
 			var.setProperty(stdvar.getProperty().getName());
 			var.setScale(stdvar.getScale().getName());
@@ -342,15 +341,6 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
     	}
     }
     
-    private String getCustomName(Integer cvTermId, String oldName) {
-        String label = AppConstants.getString(cvTermId + AppConstants.LABEL.getString());
-        if (label == null) {
-            return oldName;
-        } else {
-            return label;
-        }
-    }
-
     /**
      * Get setting variable.
      *

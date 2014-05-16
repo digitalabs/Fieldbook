@@ -158,12 +158,12 @@
         		autoFocus: false,
         		imagePath: "../img/",
         		activeVisible: true,
-        		initAjax: {url: "/Fieldbook/NurseryManager/loadInitGermplasmTree",
+        		initAjax: {url: "/Fieldbook/ListTreeManager/loadInitGermplasmTree",
         			dataType: "json"
         		},
         		onLazyRead: function(node) {
         			node.appendAjax({
-        				url: "/Fieldbook/NurseryManager/expandGermplasmTree/" + node.data.key,
+        				url: "/Fieldbook/ListTreeManager/expandGermplasmTree/" + node.data.key,
         				dataType: "json",
         				success: function(node) {
         					//do nothing

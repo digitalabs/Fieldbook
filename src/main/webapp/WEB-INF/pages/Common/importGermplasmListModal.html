@@ -23,23 +23,19 @@
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[     
 	           function cancelImportGermplasm(){
-	        	   $('#importGermplasmModal').modal('hide');   
+	        	   
+	        	   $('#importGermplasmModal').modal('hide');
+	        	   setTimeout(function(){$('#listTreeModal').modal('show');}, 300);
+	        	   
 	           }
 	           function closeImportFrame(listGermplasmId){
 					//alert('reload tree and preselect list id ' + listId);
+					//console.log('closeImportFrame');
 					$('#importGermplasmModal').modal('hide');
-					//$("#germplasmTree").dynatree("destroy")
-					//$("#" + treeName).dynatree("reload");
+					
 					listId = listGermplasmId;
 					 $("#germplasmTree").dynatree("getTree").reload();
-					//doInitialLoad(listId) ;
-					
-					//displayGermplasmListTree("germplasmTree", listId);
-					
-					//displayGermplasmDetails(listId); 
-					
-	        	   //recreateLocationCombo();
-	        	   		           
+					 $('#listTreeModal').modal('show');						        	   		           
 	           }
 	           function doInitialLoad(listId) {
 	        	   var node = $("#germplasmTree").dynatree("getTree").getNodeByKey('LOCAL');
@@ -55,7 +51,7 @@
   					}, 500);
   					/*
 	        	   node.appendAjax({
-		   				url: "/Fieldbook/NurseryManager/expandGermplasmTree/LOCAL",
+		   				url: "/Fieldbook/ListTreeManager/expandGermplasmTree/LOCAL",
 		   				dataType: "json",
 		   				success: function(node) {
 		   					//do nothing

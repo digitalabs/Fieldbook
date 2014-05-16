@@ -987,3 +987,10 @@ div.sectionContainer {
 .add_top_padding_small {
 	padding-top: 5px;
 }
+.delete-icon { 
+    background:url(../img/delete-icon.png) left top; 
+    width:18px; 
+    height:18px;
+    display: block;
+    float: left;
+}

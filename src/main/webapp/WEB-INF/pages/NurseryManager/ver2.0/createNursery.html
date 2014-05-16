@@ -222,7 +222,6 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 			cache: false,
 			success: function(html) {
 		    	$('#successMessageModal').modal({ backdrop: 'static', keyboard: true }) 
-		    	$("#successMessageModal").modal("show");
 			}, 
 			complete: function() {
 				Spinner.toggle();
@@ -299,6 +298,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 			$('#choosePreviousStudy').show();
 		}
 	}
+	/*
 	function loadFolderAjax() {
 		Spinner.toggle();
 		$.ajax({ 
@@ -313,7 +313,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 			}
 		});
 	}
-	
+	*/
 //]]>
 </script>
 </div>

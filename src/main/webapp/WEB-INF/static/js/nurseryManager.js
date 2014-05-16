@@ -169,7 +169,7 @@ function showCorrectMethodCombo() {
 
 function openManageLocations() {
 	$('#manageLocationModal').modal({ backdrop: 'static', keyboard: true });
-	$("#manageLocationModal").modal("show");
+	//$("#manageLocationModal").modal("show");
 	if(locationIframeOpened == false){
 		locationIframeOpened = true;
 		$('#locationFrame').attr('src', programLocationUrl + $('#projectId').val());
@@ -179,7 +179,7 @@ function openManageLocations() {
 
 function openManageMethods() {
 	$('#manageMethodModal').modal({ backdrop: 'static', keyboard: true });
-	$("#manageMethodModal").modal("show");
+	//$("#manageMethodModal").modal("show");
 	if(methodIframeOpened == false){
 		methodIframeOpened = true;
 		$('#methodFrame').attr('src', programMethodUrl + $('#projectId').val());
@@ -754,7 +754,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType, p
 		
 		//include delete button if variable is deletable
 		if (settingDetail.deletable) {
-			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable("+varType+"," + 
+			isDelete = "<span style='cursor: default; font-size: 16px;' class='delete-icon' onclick='deleteVariable("+varType+"," + 
 				settingDetail.variable.cvTermId + ",$(this))'></span>";
 		}
 		
@@ -902,7 +902,7 @@ function createTableSettingVariables(data, name, tableId, varType) {
 		var isDelete = "";
 		
 		if (settingDetail.deletable) {
-			isDelete = "<span style='cursor: default; font-size: 16px;' class='glyphicon glyphicon-remove-circle' onclick='deleteVariable("+varType+"," + 
+			isDelete = "<span style='cursor: default; font-size: 16px;' class='delete-icon' onclick='deleteVariable("+varType+"," + 
 			settingDetail.variable.cvTermId + ",$(this))'></span>";
 		}
 		newRow = newRow + "<td width='5%' style='text-align: center' class='"+className+"'>" + isDelete + 
@@ -2098,7 +2098,8 @@ function determineIfShowCloseAllStudyTabs(){
 	}
 }
 function openStudyTree(type){
-	$('#studyTreeModal').modal('show');
+	$('#studyTreeModal').modal({ backdrop: 'static', keyboard: true });
+	//$('#studyTreeModal').modal('show');
 	choosingType = type;
 }
 function closeAllStudyTabs(){

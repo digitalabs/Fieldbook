@@ -1713,6 +1713,14 @@ function validateCreateNursery() {
 	 */
 	if($('.checkRow').length > 0){
 		//we validate only if there is a check
+		//wetry to validate if all the check row has check
+		for(var checkIndex = 0 ; checkIndex < $('.checkRow').length ; checkIndex++){
+			if($('select.checklist-select:eq('+checkIndex+')').val() == ''){
+				showErrorMessage('page-message', "Please make sure all selected checks have their check type");
+				return false;
+			}
+		}
+		
 		if(isInt($("#startIndex2").val()) == false){
 			showErrorMessage('page-message', "Position should be a whole number");
 			return false;

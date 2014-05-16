@@ -388,15 +388,15 @@ public class FieldbookServiceImpl implements FieldbookService{
         	}
         }
 
-        Integer valueId = Integer.valueOf(valueOrId);
+        Double valueId = Double.valueOf(valueOrId);
         if (TermId.BREEDING_METHOD_ID.getId() == id) {
-        	return getBreedingMethodById(valueId);
+        	return getBreedingMethodById(valueId.intValue());
         } else if (TermId.LOCATION_ID.getId() == id) {
-            return getLocationById(valueId);
+            return getLocationById(valueId.intValue());
         } else if (TermId.PI_ID.getId() == id || Integer.parseInt(AppConstants.COOPERATOR_ID.getString()) == id) {
-            return getPersonById(valueId);
+            return getPersonById(valueId.intValue());
         } else if (isCategorical) {
-        	Term term = ontologyService.getTermById(valueId);
+        	Term term = ontologyService.getTermById(valueId.intValue());
         	if (term != null) {
         		return term.getName();
         	}

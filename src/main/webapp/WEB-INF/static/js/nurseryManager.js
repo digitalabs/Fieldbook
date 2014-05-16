@@ -836,7 +836,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType, p
 function toggleMethodDropdown(rowIndex) {
 	var possibleValues;  
 	var showFavorite = $("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".favorite1")).is(":checked");
-	var selectedVal;
+	var selectedVal = "";
 	
 	//get previously selected value
 	if ($("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".value")).select2("data")) {
@@ -850,8 +850,12 @@ function toggleMethodDropdown(rowIndex) {
 	//get possible values based on checkbox
 	if (showFavorite) {
 		possibleValues = $("#possibleValuesFavoriteJson" + rowIndex).text();
+		$($("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".value")).parent().find(".selectedValue")).val(selectedVal);
+		selectedVal = $($("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".value")).parent().find(".selectedValueFave")).val();
 	} else {
 		possibleValues = $("#possibleValuesJson" + rowIndex).text();
+		$($("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".value")).parent().find(".selectedValueFave")).val(selectedVal);
+		selectedVal = $($("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".value")).parent().find(".selectedValue")).val();
 	}
 	
 	//recreate select2 combo
@@ -862,7 +866,7 @@ function toggleMethodDropdown(rowIndex) {
 function toggleLocationDropdown(rowIndex) {
 	var possibleValues;  
 	var showFavorite = $("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".favorite1")).is(":checked");
-	var selectedVal;
+	var selectedVal = "";
 	var showAll = true;
 	
 	//get previously selected value
@@ -878,8 +882,12 @@ function toggleLocationDropdown(rowIndex) {
 	if (showFavorite) {
 		possibleValues = $("#possibleValuesFavoriteJson" + rowIndex).text();
 		showAll = false;
+		$($("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".value")).parent().find(".selectedValue")).val(selectedVal);
+		selectedVal = $($("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".value")).parent().find(".selectedValueFave")).val();
 	} else {
 		possibleValues = $("#possibleValuesJson" + rowIndex).text();
+		$($("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".value")).parent().find(".selectedValueFave")).val(selectedVal);
+		selectedVal = $($("#" + getJquerySafeId("studyLevelVariables" + rowIndex + ".value")).parent().find(".selectedValue")).val();
 	}
 	
 	//recreate select2 combo
@@ -1417,7 +1425,9 @@ function createSliderInput(ctr, minVal, maxVal, name){
 }
 function createDropdownInput(ctr, name){
 	 return "<input type='hidden' id='" + name + ctr + 
-		".value' name='" + name + "[" + ctr + "].value' class='form-control select2' />";
+		".value' name='" + name + "[" + ctr + "].value' class='form-control select2' />" +
+		"<input class='selectedValue' type='hidden' />" +
+		"<input class='selectedValueFave' type='hidden' />";
 }
 function createDateInput(ctr, name){	
 	 return "<input type='text' id='" + name+ ctr + 

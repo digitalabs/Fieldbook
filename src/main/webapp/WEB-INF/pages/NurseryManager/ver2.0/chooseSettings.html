@@ -55,17 +55,20 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 											<input style="width: 30%" th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" 
 											type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control select2" />
 											
+											<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="selectedValue" type="hidden" th:value="*{studyLevelVariables[__${rowStat.index}__].value}" />
+											<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="selectedValueFave" type="hidden" th:value="*{studyLevelVariables[__${rowStat.index}__].value}" />
+											
 											<!-- Show Favorite Location/Method -->
 											<div style="width: 100%" th:if="${nurseryLevelVariable.variable.cvTermId}==*{locationId}" class="possibleValuesDiv">
 											<input 
 											type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}" 
 											th:onclick="'javascript: toggleLocationDropdown(\'' + ${rowStat.index} + '\');'" />
 											&nbsp;&nbsp;
-											
 											<span
 											th:text="#{show.favorite.location}">Show Favorite Location</span>
 											</div>
 											<div style="width: 100%" th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}" class="possibleValuesDiv">
+											
 											<input
 											type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}" 
 											th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'" />

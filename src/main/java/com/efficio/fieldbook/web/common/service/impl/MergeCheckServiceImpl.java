@@ -24,11 +24,6 @@ public class MergeCheckServiceImpl implements MergeCheckService {
 			return primaryList;
 		}
 		
-		if (needToCloneCheckList(primaryList)) {
-			checkList = cloneCheckList(checkList);
-			cleanUpPrimaryList(primaryList);
-		}
-		
 		List<ImportedGermplasm> newList = new ArrayList<ImportedGermplasm>();
 
 		int primaryEntry = 1;
@@ -86,34 +81,5 @@ public class MergeCheckServiceImpl implements MergeCheckService {
 		germplasm.setEntryId(entryNumber);
 		germplasm.setEntryCode(String.valueOf(entryNumber));
 		return germplasm;
-	}
-	
-	private void cleanUpPrimaryList(List<ImportedGermplasm> primaryList) {
-		if (primaryList != null) {
-			for (ImportedGermplasm primary : primaryList) {
-				primary.setCheck(null);
-				primary.setCheckId(null);
-				primary.setCheckName(null);
-			}
-		}
-	}
-	
-	private boolean needToCloneCheckList(List<ImportedGermplasm> primaryList) {
-		if (primaryList != null) {
-			for (ImportedGermplasm primary : primaryList) {
-				if (primary.getCheck() != null && !"".equals(primary.getCheck().trim())) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	
-	private List<ImportedGermplasm> cloneCheckList(List<ImportedGermplasm> checkList) {
-		List<ImportedGermplasm> newList = new ArrayList<ImportedGermplasm>();
-		for (ImportedGermplasm check : checkList) {
-			newList.add(check.copy());
-		}
-		return newList;
 	}
 }

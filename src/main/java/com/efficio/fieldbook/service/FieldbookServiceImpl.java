@@ -383,7 +383,7 @@ public class FieldbookServiceImpl implements FieldbookService{
         if (possibleValues != null && !possibleValues.isEmpty()) {
         	for (ValueReference possibleValue : possibleValues) {
         		if (possibleValue.equals(valueOrId)) {
-        			return possibleValue.getDescription();
+        			return possibleValue.getName();
         		}
         	}
         }
@@ -398,7 +398,7 @@ public class FieldbookServiceImpl implements FieldbookService{
         } else if (isCategorical) {
         	Term term = ontologyService.getTermById(valueId);
         	if (term != null) {
-        		return term.getDefinition();
+        		return term.getName();
         	}
         } else {
         	return valueOrId;
@@ -409,7 +409,7 @@ public class FieldbookServiceImpl implements FieldbookService{
     private String getBreedingMethodById(int id) throws MiddlewareQueryException {
         Method method = fieldbookMiddlewareService.getBreedingMethodById(id);
         if (method != null) {
-        	return method.getMdesc();
+        	return method.getMname();
         }
         return null;
     }

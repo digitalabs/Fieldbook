@@ -2142,6 +2142,10 @@ function closeAllStudyTabs(){
 }
 
 function loadDatasetDropdown(optionTag) {
+	//console.log($(optionTag).attr('id'));
+	
+	if($('#study'+getCurrentStudyIdInTab() + " #dataset-selection option").length > 1)
+		return;
 	Spinner.toggle();
 	$.ajax({ 
 		url: "/Fieldbook/NurseryManager/reviewNurseryDetails/datasets/" + getCurrentStudyIdInTab(),

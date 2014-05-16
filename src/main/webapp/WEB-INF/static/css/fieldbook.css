@@ -994,3 +994,8 @@ div.sectionContainer {
     display: block;
     float: left;
 }
+.nav-tabs > li .close {
+    margin: -2px 0 0 10px;
+    font-size: 18px;
+    top: -5px;
+}

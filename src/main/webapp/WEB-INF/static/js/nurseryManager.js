@@ -2097,8 +2097,8 @@ function addDetailsTab(studyId, title){
 		    type: "GET",
 		    cache: false,
 		    success: function(data) {
-		    	var close = '   <button type="button" id="'+studyId+'" class="close">X</button>';
-				 $('#study-tab-headers').append("<li id='study"+studyId+"' class='active'><a>"+title+" " + close + "</a></li>");
+		    	var close = '<button style="float: right" type="button" id="'+studyId+'" class="close">x</button>';
+				 $('#study-tab-headers').append("<li id='study"+studyId+"' class='active'><a>"+title+close + "</a></li>");
 				 $('#study-tabs').append('<div class="info" id="study'+studyId+'">'+data+'</div>');
 			   	 $('.info#study'+studyId).show();
 			   	 initializeStudyTabs();

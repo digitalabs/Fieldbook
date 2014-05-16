@@ -56,6 +56,7 @@
 
       	var cannotMove =  /*[[#{browse.nursery.move.can.not}]]*/;
       	var hasChildrenString =  /*[[#{browse.nursery.move.has.children}]]*/;
+      	var isAStudy = /*[[#{browse.nursery.move.is.study}]]*/;
       	/*
       	1 - Can choose folder / study
       	2 - Can choose folder only
@@ -227,6 +228,8 @@
         		        	 //return false;
         		        	 showErrorMessage('page-study-tree-message-modal', cannotMove + " " + sourceNode.data.title + " " + hasChildrenString);
         		        	 //$('#moveStudyFolder').modal('show');
+        		         }else if(node.data.isFolder == false){
+        		        	 showErrorMessage('page-study-tree-message-modal', cannotMove + " " + node.data.title + " " + isAStudy);
         		         }else{
         		        	 //logMsg("tree.onDrop(%o, %o, %s)", node, sourceNode, hitMode);
         		        	 

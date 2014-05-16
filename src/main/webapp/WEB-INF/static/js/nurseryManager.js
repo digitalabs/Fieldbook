@@ -1646,7 +1646,9 @@ function validateCreateNursery() {
 	
 	
 	if (hasError){
-		var errMsg = name.replace('*', '').replace(":", "") + " " + nurseryFieldsIsRequired;
+		var errMsg = '';
+		if(name != '')
+			errMsg = name.replace('*', '').replace(":", "") + " " + nurseryFieldsIsRequired;
 		if(customMessage != '')
 			errMsg = customMessage;
 		showErrorMessage('page-message', errMsg);

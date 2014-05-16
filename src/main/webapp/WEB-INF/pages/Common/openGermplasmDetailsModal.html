@@ -25,9 +25,9 @@
 	     var headerMsg1 = /*[[#{open.germplasm.header}]]*/;
 	     var headerMsg2 = /*[[#{open.germplasm.gid}]]*/;
 	     function openGermplasmDetailsPopop(aObject) {
+	    	 
 			var desig = $(aObject).data('desig');
 			var gid = $(aObject).data('gid');
-			
 			$.ajax(
 	   		         { url: "/Fieldbook/ListTreeManager/germplasm/detail/url",
 	   		           type: "GET",
@@ -38,7 +38,6 @@
 		   		        	$('#openGermplasmFrame').attr('src', germplasmDetailsUrl+gid);
 		   					$('#openGermplasmModal .modal-title').html(headerMsg1 + " " + desig + " (" + headerMsg2 + " "+ gid +")")
 		   					$('#openGermplasmModal').modal({ backdrop: 'static', keyboard: true });
-		   					$("#openGermplasmModal").modal("show");
 	   		               
 	   		           }
 	   		         }

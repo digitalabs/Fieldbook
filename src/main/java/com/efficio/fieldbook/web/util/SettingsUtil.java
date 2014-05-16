@@ -273,6 +273,7 @@ public class SettingsUtil {
 		}
 		
 		//iterate for the nursery conditions/constants
+		if (nurseryConditions != null && !nurseryConditions.isEmpty()) {
                 index = 0;
                 for(SettingDetail settingDetail : nurseryConditions){
                         SettingVariable variable = settingDetail.getVariable();
@@ -289,6 +290,7 @@ public class SettingsUtil {
                                         HtmlUtils.htmlEscape(settingDetail.getValue()), variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
                         constants.add(constant);
                 }
+		}
 		
 		//iterate for treatment factor details
 		if (treatmentDetailList != null && !treatmentDetailList.isEmpty()) {
@@ -1331,7 +1333,7 @@ public class SettingsUtil {
 	    	managementDetails = convertWorkbookToSettingDetails(managementRequiredFields, conditions, fieldbookMiddlewareService, fieldbookService, userSelection, workbook);
 //	    	nurseryConditionDetails = convertWorkbookOtherStudyVariablesToSettingDetails(conditions, managementDetails.size(), userSelection, fieldbookMiddlewareService, fieldbookService);
 	    	managementDetails.addAll(convertWorkbookOtherStudyVariablesToSettingDetails(conditions, managementDetails.size(), userSelection, fieldbookMiddlewareService, fieldbookService));
-	    	nurseryConditionDetails = convertWorkbookOtherStudyVariablesToSettingDetails(constants, 1, userSelection, fieldbookMiddlewareService, fieldbookService);
+	    	nurseryConditionDetails = convertWorkbookOtherStudyVariablesToSettingDetails(constants, 1, userSelection, fieldbookMiddlewareService, fieldbookService, true);
 	    }
 		
 		details.setBasicStudyDetails(basicDetails);
@@ -1344,6 +1346,13 @@ public class SettingsUtil {
 			UserSelection userSelection,  
 			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, FieldbookService fieldbookService) 
 	throws MiddlewareQueryException {
+		return convertWorkbookOtherStudyVariablesToSettingDetails(conditions, index, userSelection, fieldbookMiddlewareService, fieldbookService, false);
+	}
+	
+	private static List<SettingDetail> convertWorkbookOtherStudyVariablesToSettingDetails(List<MeasurementVariable> conditions, int index, 
+			UserSelection userSelection,  
+			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, FieldbookService fieldbookService, boolean isVariate) 
+	throws MiddlewareQueryException {
 		
 		List<SettingDetail> details = new ArrayList<SettingDetail>();
 		List<String> basicFields = Arrays.asList(AppConstants.NURSERY_BASIC_REQUIRED_FIELDS.getString().split(","));
@@ -1353,9 +1362,10 @@ public class SettingsUtil {
 		if (conditions != null) {
 			for (MeasurementVariable condition : conditions) {
 				String id = String.valueOf(condition.getTermId());
+				String role = (isVariate) ? PhenotypicType.VARIATE.toString() : PhenotypicType.getPhenotypicTypeForLabel(condition.getLabel()).toString();
 				if (!basicFields.contains(id) && !managementRequiredFields.contains(id) && !hiddenFields.contains(id)) {
 					SettingVariable variable = getSettingVariable(condition.getName(), condition.getDescription(), condition.getProperty(),
-							condition.getScale(), condition.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(condition.getLabel()).toString(), 
+							condition.getScale(), condition.getMethod(), role, 
 							condition.getDataType(), condition.getDataTypeId(), condition.getMinRange(), condition.getMaxRange(), userSelection, fieldbookMiddlewareService);
 					variable.setCvTermId(condition.getTermId());
 					String value = fieldbookService.getValue(variable.getCvTermId(), HtmlUtils.htmlUnescape(condition.getValue()), 

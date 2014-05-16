@@ -27,31 +27,20 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 				    			</div>
 			    			</div>
 			    			<div class="sectionContainer" id="nurseryLevelSettings-dev">
-			    				<!--  
-		                        <div class="row form-group nurseryLevelSettings collapse in nurseryLevelDetails">
-	                              	<div class="col-xs-5 col-md-5 1st">
-		                            	&nbsp;&nbsp;&nbsp;<label id="expDesignLabel" for="fieldLayoutRandom" th:text="#{nursery.nurserydetails.select.field.layout.label} + ': '"></label>&nbsp;<span class="required">*</span>
-	                                </div>
-		                            <div class="col-xs-7 col-md-7 2nd">
-		                            	<select class="form-control" th:field="*{fieldLayoutRandom}">
-		                                	<option value="true" th:text="#{nursery.nurserydetails.option.with.randomization}">Unreplicated Design with Randomization</option>
-		                                    <option value="false" th:text="#{nursery.nurserydetails.option.without.randomization}">Unreplicated Design without Randomization</option>
-		                                </select>
-		                            </div>
-				    			</div>
-				    			-->	
+			    				
 		    					<div class="row form-group nurseryLevelSettings" th:each="nurseryLevelVariable, rowStat : *{studyLevelVariables}">
 		    						<div class="col-xs-5 col-md-5 1st">
 		    							<span style="cursor: default; font-size: 16px;" th:if="${nurseryLevelVariable.deletable}" class="delete-icon" 
 											th:onclick="'javascript: deleteVariable(1,\'' + ${nurseryLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
-											<input class="cvTermIds" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
+											<input class="cvTermIds  nurseryLevelVariableIdClass" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 		    							&nbsp;&nbsp;&nbsp;
 		    							<span style="word-wrap: break-word"  class="control-label nursery-level-label" th:text="${nurseryLevelVariable.variable.name}"></span>:
 		    							&nbsp;<span class="required">*</span>
 		    						</div>
 		    						<div class="col-xs-7 col-md-7 2nd">
 		    						<!-- <div th:text="${nurseryLevelVariable.variable.cvTermId}"></div> -->
-		    								<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" /> 
+		    								<!-- <input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
+		    								 --> 
 											<input style="width: 30%" th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" 
 											type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control select2" />
 											

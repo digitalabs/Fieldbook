@@ -20,6 +20,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -215,7 +216,9 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
 	            ImportedGermplasm importedGermplasm = form.getPaginatedImportedCheckGermplasm().get(i);
 	            int realIndex = ((previewPageNum - 1) * form.getResultPerPage()) + i;
 	            getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheck(importedGermplasm.getCheck());
-	            getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckId(Integer.parseInt(importedGermplasm.getCheck()));
+	            if (importedGermplasm.getCheck() != null && NumberUtils.isNumber(importedGermplasm.getCheck())) {
+	            	getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckId(Integer.parseInt(importedGermplasm.getCheck()));
+	            }
 	            getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckName(importedGermplasm.getCheckName());
 	        }
         }

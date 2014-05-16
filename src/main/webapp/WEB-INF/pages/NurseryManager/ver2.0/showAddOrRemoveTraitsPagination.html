@@ -27,7 +27,7 @@
            	
            		<td  th:switch="${measurementData.measurementVariable.termId}" style="vertical-center; padding: 0px; white-space: nowrap; padding-left: 5px; padding-right: 5px;" align="left" th:each="measurementData, rowIndex : ${measurementRow.dataList}"  >
 
-                	<a th:case="8240" class="gid-link" href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${measurementData.value}"></a>               	
+                	<a th:case="8240" class="gid-link" href="javascript: void(0)"  th:text="${measurementData.value}"></a>               	
                 	<a th:case="8250" class="desig-link" href="javascript: void(0)" th:text="${measurementData.value}"></a>               	
              		
              		<label th:case="*" th:text="${measurementData.value}" ></label>
@@ -74,18 +74,7 @@
 	           
 	     var headerMsg1 = /*[[#{open.germplasm.header}]]*/;
 	     var headerMsg2 = /*[[#{open.germplasm.gid}]]*/;
-	     var germplasmDetailUrl = /*[[#{GERMPLASM_DETAILS_URL}]]*/;
-	     
-	     function openGermplasmDetailsPopop(aObject) {
-			var desig = $(aObject).data('desig');
-			var gid = $(aObject).data('gid');
-			//console.log( $(aObject));
-			$('#openGermplasmFrame').attr('src', germplasmDetailUrl+gid);
-			$('#openGermplasmModal .modal-title').html(headerMsg1 + " " + desig + " (" + headerMsg2 + " "+ gid +")")
-			$('#openGermplasmModal').modal({ backdrop: 'static', keyboard: true });
-			$("#openGermplasmModal").modal("show");
-			
-		}     
+	       
 	    convertToSelect2 = false;
         var paginationUrl = '/Fieldbook/Common/addOrRemoveTraits/pageView/'; 
         paginationUrl = paginationUrl + $("#study-type").val() + "/";

@@ -1711,24 +1711,27 @@ function validateCreateNursery() {
 	 * Validate Position is less than the total germplasm
 	 * Validate the Interval should be less than the total germplasm
 	 */
+	if($('.checkRow').length > 0){
+		//we validate only if there is a check
+		if(isInt($("#startIndex2").val()) == false){
+			showErrorMessage('page-message', "Position should be a whole number");
+			return false;
+		}
+		if(isInt($("#interval2").val()) == false){
+			showErrorMessage('page-message', "Interval should be a whole number");
+			return false;
+		}
+		var totalGermplasms = $('#totalGermplasms').val();
+		if(parseInt($("#startIndex2").val()) < 0 || parseInt($("#startIndex2").val()) > totalGermplasms){
+			showErrorMessage('page-message', "Position should be between 0 to "+totalGermplasms);
+			return false;
+		}
+		if(parseInt($("#interval2").val()) < 0 || parseInt($("#interval2").val()) > totalGermplasms){
+			showErrorMessage('page-message', "Interval should be between 0 to "+totalGermplasms);
+			return false;
+		}		
+	}
 	
-	if(isInt($("#startIndex2").val()) == false){
-		showErrorMessage('page-message', "Position should be a whole number");
-		return false;
-	}
-	if(isInt($("#interval2").val()) == false){
-		showErrorMessage('page-message', "Interval should be a whole number");
-		return false;
-	}
-	var totalGermplasms = $('#totalGermplasms').val();
-	if(parseInt($("#startIndex2").val()) < 0 || parseInt($("#startIndex2").val()) > totalGermplasms){
-		showErrorMessage('page-message', "Interval should be a whole number");
-		return false;
-	}
-	if(parseInt($("#interval2").val()) < 0 || parseInt($("#interval2").val()) > totalGermplasms){
-		showErrorMessage('page-message', "Interval should be a whole number");
-		return false;
-	}
 	return true;
 }
 

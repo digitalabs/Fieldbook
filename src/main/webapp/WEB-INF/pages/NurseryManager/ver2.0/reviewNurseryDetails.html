@@ -284,8 +284,7 @@
 
 
 <div layout:fragment="page-script">
-<script type="text/javascript" th:src="@{/static/js/nurseryManager.js}"></script>
-<script type="text/javascript" th:src="@{/static/js/fieldbook-common.js}"></script>
+
 <script type='text/javascript' th:inline="javascript">
 //<![CDATA[   
     
@@ -304,27 +303,27 @@
 		$('#study'+getCurrentStudyIdInTab() + " "+className).toggle();
 	})
 	
-   		$("#open-study-url-link").click(function() {
-   			selectedTableIds[0] = $("#studyId").val();
+   		$("#div-nursery-tab-" + getCurrentStudyIdInTab() + " #open-study-url-link").click(function() {
+   			selectedTableIds[0] = $("#div-nursery-tab-" + getCurrentStudyIdInTab() + " #studyId").val();
    		});
 
-   		$("#advance-study-url-link").click(function() {
-   			selectedTableIds[0] = $("#studyId").val();
+   		$("#div-nursery-tab-" + getCurrentStudyIdInTab() + " #advance-study-url-link").click(function() {
+   			selectedTableIds[0] = $("#div-nursery-tab-" + getCurrentStudyIdInTab() + " #studyId").val();
    		});
 
-   		$("#fieldmap-url-link").click(function() {
-   			selectedTableIds[0] = $("#studyId").val();
+   		$("#div-nursery-tab-" + getCurrentStudyIdInTab() + " #div-nursery-tab-" + getCurrentStudyIdInTab() + " #fieldmap-url-link").click(function() {
+   			selectedTableIds[0] = $("#div-nursery-tab-" + getCurrentStudyIdInTab() + " #studyId").val();
    		});
 
-   		$("#label-printing-url-link").click(function() {
-   			selectedTableIds[0] = $("#studyId").val();
+   		$("#div-nursery-tab-" + getCurrentStudyIdInTab() + " #label-printing-url-link").click(function() {
+   			selectedTableIds[0] = $("#div-nursery-tab-" + getCurrentStudyIdInTab() + " #studyId").val();
    		});
 
-   		$("#view-fieldmap-url-link").click(function() {
-   			selectedTableIds[0] = $("#studyId").val();
+   		$("#div-nursery-tab-" + getCurrentStudyIdInTab() + " #view-fieldmap-url-link").click(function() {
+   			selectedTableIds[0] = $("#div-nursery-tab-" + getCurrentStudyIdInTab() + " #studyId").val();
    		});
    		
-   		$("#toggle-additional-link").click(function() {
+   		$("#div-nursery-tab-" + getCurrentStudyIdInTab() + " #toggle-additional-link").click(function() {
    			if ($(this).text() == showText) {
    				$(this).text(hideText);
    			}
@@ -333,11 +332,11 @@
    			}
    		});
    		
-   		$(".dataset-toggle").click(function() {
+   		$("#div-nursery-tab-"+getCurrentStudyIdInTab()+" .dataset-toggle").click(function() {
    			loadDatasetDropdown($(this).parent().find("#dataset-selection"));
    		});
    		
-   		$("#dataset-selection").change(function() {
+   		$("#div-nursery-tab-"+getCurrentStudyIdInTab()+" #dataset-selection").change(function() {
    			if ($(this).val()) {
    				var id = $(this).val();
    				var name = $(this).find("option:selected").text();
@@ -372,14 +371,14 @@
    		});
    			
    		if (!hasMeasurements) {
-   			$("#open-study-url-link").hide();
-   			$("#advance-study-url-link").hide();
-   			$("#fieldmap-url-link").hide();
-   			$("#label-printing-ur7l-link").hide();
+   			$("#div-nursery-tab-" + getCurrentStudyIdInTab() + " #open-study-url-link").hide();
+   			$("#div-nursery-tab-" + getCurrentStudyIdInTab() + " #advance-study-url-link").hide();
+   			$("#div-nursery-tab-" + getCurrentStudyIdInTab() + " #fieldmap-url-link").hide();
+   			$("#div-nursery-tab-" + getCurrentStudyIdInTab() + " #label-printing-ur7l-link").hide();
    		}
    		
    		if (hasFieldmap) {
-   			$("#fieldmap-url-link").hide();
+   			$("#div-nursery-tab-" + getCurrentStudyIdInTab() + " #fieldmap-url-link").hide();
    		}
    		
    	});

@@ -96,7 +96,7 @@
             }
         }
         
-		if($('#measurement-data-list-pagination') != null){
+		if($("#div-nursery-tab-"+getCurrentStudyIdInTab()+' #measurement-data-list-pagination') != null){
 			$('#measurement-data-list-pagination').bootstrapPaginator(options);	
 		}
         $( document ).ready(function() {
@@ -134,14 +134,14 @@
         		
         	}
        		
-       		$(".desig-link").click(function() {
+       		$("#div-nursery-tab-"+getCurrentStudyIdInTab()+" .desig-link").click(function() {
        			var gidValue = $(this).parent().parent().find(".gid-link").text();
        			$(this).data("gid", gidValue);
        			$(this).data("desig", $(this).text());
        			openGermplasmDetailsPopop($(this));
        		});
        		
-       		$(".gid-link").click(function() {
+       		$("#div-nursery-tab-"+getCurrentStudyIdInTab()+" .gid-link").click(function() {
        			var desigValue = $(this).parent().parent().find(".desig-link").text();
        			$(this).data("gid", $(this).text());
        			$(this).data("desig", desigValue);

@@ -2105,6 +2105,7 @@ function determineIfShowCloseAllStudyTabs(){
 	}
 }
 function openStudyTree(type){
+	$('#page-study-tree-message-modal').html('');
 	$('#studyTreeModal').modal({ backdrop: 'static', keyboard: true });
 	//$('#studyTreeModal').modal('show');
 	choosingType = type;

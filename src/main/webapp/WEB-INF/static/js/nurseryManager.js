@@ -765,7 +765,10 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType, p
 
 		newRow = newRow + "<span style='word-wrap: break-word'  class='control-label'>" + settingDetail.variable.name + "</span>: &nbsp;<span class='required'>*</span></div>";
 		
-		newRow = newRow + "<div class='col-xs-7 col-md-7 2nd'>";
+		if(settingDetail.variable.widgetType == 'DATE'){
+			newRow = newRow + "<div class='col-xs-3 col-md-3 2nd input-group date'>";
+		}else
+			newRow = newRow + "<div class='col-xs-7 col-md-7 2nd'>";
 
 		var inputHtml = '';
 				

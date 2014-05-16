@@ -357,7 +357,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             List<ImportedGermplasm> checkList = mainInfo.getImportedGermplasmList().getImportedGermplasms();
             Iterator<ImportedGermplasm> iter = checkList.iterator();
             while (iter.hasNext()) {
-                if (iter.next().getGid().equals(gid)) {
+                if (iter.next().getGid().equalsIgnoreCase(gid.toString())) {
                     iter.remove();
                 }
             }

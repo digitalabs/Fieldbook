@@ -57,6 +57,9 @@
       	var cannotMove =  /*[[#{browse.nursery.move.can.not}]]*/;
       	var hasChildrenString =  /*[[#{browse.nursery.move.has.children}]]*/;
       	var isAStudy = /*[[#{browse.nursery.move.is.study}]]*/;
+      	
+      	var chooseProgramListFolderError = /*[[#{browse.nursery.please.choose.program.list.folder}]]*/;
+      	var chooseStudyError = /*[[#{browse.nursery.please.choose.program.study}]]*/;
       	/*
       	1 - Can choose folder / study
       	2 - Can choose folder only
@@ -285,23 +288,27 @@
 	        			
 	        		$('#studyTreeModal').modal('hide');
 	        	}else{
-	        		showErrorMessage('page-study-tree-message-modal', 'Please choose a study');
+	        		showErrorMessage('page-study-tree-message-modal', chooseStudyError);
 	        	}
         	}else if(choosingType == 2){
         		if(node.data.isFolder == true){	       
-        				
-        				$("#folderId").val(node.data.key);
-    				  	$("#folderName").val(node.data.title);
-    				  	$("#folderNameLabel").html(node.data.title + " > ");
+        				if(node.data.key > 0 || node.data.key == 'CENTRAL'){
+        					showErrorMessage('page-study-tree-message-modal', chooseProgramListFolderError);		
+        				}else{
+        					var folderDataId = node.data.key == 'LOCAL' ? 1 : node.data.key;
+        					$("#folderId").val(folderDataId);
+        				  	$("#folderName").val(node.data.title);
+        				  	$("#folderNameLabel").html(node.data.title + " > ");
 
-	        		$('#studyTreeModal').modal('hide');
+	    	        		$('#studyTreeModal').modal('hide');
+	
+        				}
 	        	}else{
-	        		showErrorMessage('page-study-tree-message-modal', 'Please choose a folder');
+	        		showErrorMessage('page-study-tree-message-modal', chooseProgramListFolderError);
 	        	}
         	}
         	
         }
-        
         
       //]]>
     </script>

@@ -1602,9 +1602,17 @@ function validateCreateNursery() {
 		customMessage = requiredSettingErrorMessage;
 	}
 	*/
+	
+	var startDate = $("#" + getJquerySafeId("basicDetails.value2")).val();
+	
+	
 	if ($("#folderId").val() == '') {
 		hasError = true;
 		name = $("#folderLabel").text();
+	}else if(startDate == ''){
+		//validate creation date
+		hasError = true;
+		name = "Creation Date";
 	}
 	/*
 	else if ($("#fieldLayoutRandom").val() == '') {

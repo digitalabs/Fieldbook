@@ -161,7 +161,7 @@
 				  
 				  Spinner.toggle();
 		        	$.ajax({
-		        		url: "/Fieldbook/NurseryManager/addGermplasmFolder",
+		        		url: "/Fieldbook/ListTreeManager/addGermplasmFolder",
 		        		type: "POST",
 		        		data: "parentFolderId="+parentFolderId+"&folderName="+folderName,
 		        		cache: false,
@@ -207,7 +207,7 @@
 				  
 				  Spinner.toggle();
 		        	$.ajax({
-		        		url: "/Fieldbook/NurseryManager/renameGermplasmFolder",
+		        		url: "/Fieldbook/ListTreeManager/renameGermplasmFolder",
 		        		type: "POST",
 		        		data: "folderId="+parentFolderId+"&newFolderName="+folderName,
 		        		cache: false,
@@ -244,7 +244,7 @@
 			  
 			  Spinner.toggle();
 	        	$.ajax({
-	        		url: "/Fieldbook/NurseryManager/deleteGermplasmFolder",
+	        		url: "/Fieldbook/ListTreeManager/deleteGermplasmFolder",
 	        		type: "POST",
 	        		data: "folderId="+folderId,
 	        		cache: false,
@@ -277,7 +277,7 @@
 			  
 			  Spinner.toggle();
 	        	$.ajax({
-	        		url: "/Fieldbook/NurseryManager/moveGermplasmFolder",
+	        		url: "/Fieldbook/ListTreeManager/moveGermplasmFolder",
 	        		type: "POST",
 	        		data: "sourceId="+sourceId+"&targetId="+targetId,
 	        		cache: false,

@@ -1,7 +1,7 @@
 <!-- form id="addVariableForm" role="form-horizontal" onsubmit="return validateCells();" class="form-horizontal" action="#" 
 	th:action="@{/NurseryManager/addOrRemoveTraits}" method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data" -->
 	<div class="row">&nbsp;</div>
-<form id="addVariableForm" role="form-horizontal" onsubmit="return validateCells();" class="form-horizontal" action="#" 
+<form id="addVariableForm" role="form-horizontal" class="form-horizontal" action="#" 
 	method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data">
 
 	<input type="hidden" th:field="*{importVal}"/>
@@ -12,7 +12,7 @@
 	 style="height: 500px;">
 	
        <!-- my-class table table-curved table-condensed   -->
-				 <div class="factor-div" style="float: left; max-height: 400px; overflow-y: hidden">
+				 <div class="factor-div" style="float: left;  max-height: 400px; overflow-x: scroll; overflow-y: hidden">
 				 
 				<table class="table-curved table-condensed" id="factor-table" style="table-layout: auto; width: 100%">
 					<thead>
@@ -24,7 +24,6 @@
 				
 				<tbody>
 						<tr  th:class="${row.even}? 'even' : 'odd'" th:each="measurementRow, row: *{paginatedMeasurementRowList}">
-           	
            		<td  th:switch="${measurementData.measurementVariable.termId}" style="vertical-center; padding: 0px; white-space: nowrap; padding-left: 5px; padding-right: 5px;" align="left" th:each="measurementData, rowIndex : ${measurementRow.dataList}"  >
 
                 	<a th:case="8240" class="gid-link" href="javascript: void(0)"  th:text="${measurementData.value}"></a>               	
@@ -40,6 +39,7 @@
 				</div> 
 	
         <div >
+        <span th:text="*{#lists.isEmpty(measurementRowList)}"></span>
 	        <div th:if="*{measurementRowList != null and not #lists.isEmpty(measurementRowList)}">
 	        	<div id="measurement-data-list-pagination"></div>
 	        </div>
@@ -87,17 +87,14 @@
             alignment:'center',
             useBootstrapTooltip:true,
             onPageClicked: function(e,originalEvent,type,page){     
-            	if(validateCells()){
-            		showPostPage(paginationUrl, options.currentPage, page, 'germplasm-measurement-list-table-div', 'addVariableForm');
-            	}else{
-            		event.stopImmediatePropagation();
-            	}
+            		showPostPage(paginationUrl, options.currentPage, page, "#div-nursery-tab-"+getCurrentStudyIdInTab()+' #germplasm-measurement-list-table-div', 
+            				"#div-nursery-tab-"+getCurrentStudyIdInTab()+ ' #addVariableForm');
             		
             }
         }
         
 		if($("#div-nursery-tab-"+getCurrentStudyIdInTab()+' #measurement-data-list-pagination') != null){
-			$('#measurement-data-list-pagination').bootstrapPaginator(options);	
+			$("#div-nursery-tab-"+getCurrentStudyIdInTab()+' #measurement-data-list-pagination').bootstrapPaginator(options);	
 		}
         $( document ).ready(function() {
         	fixedTrHeight();
@@ -205,27 +202,6 @@
 			location.href = "/Fieldbook/" + $("#study-type").val() + "Manager";
 		}
       
-       function validateCells(){
-    	   var noError = true;
-    	   $('.germplasm-measurement-list-table td input').each(function(){
-			   if($(this).data('type') == 'N'){
-	    			  if(isNaN(Number($(this).val()))){    				   
-	    				  showErrorMessage('page-message', "Please enter a numeric value for this variate");
-	    				  var id = $(this).attr('id');
-	    				  setTimeout(function() { $('#'+getJquerySafeId(id)).focus(); }, 10);
-	    				  noError = false;
-	    				  //console.log('false');
-	    				  return false;
-	    			  }
-			   }
-		   }); 
-    	   if(noError){
-    		   hideErrorMessage('page-message');
-    	   }
-    	   //console.log('true');
-    	   return noError;
-       }
-       
        function do_validation() {
 	    if ($('#fileupload').val() == "") {
 	    	    var message = /*[[#{common.error.file.no.file.selected}]]*/;

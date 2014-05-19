@@ -119,8 +119,22 @@ function showPage(paginationUrl, pageNum, sectionDiv){
 }
 
 function showPostPage(paginationUrl,previewPageNum, pageNum, sectionDiv, formName){
-	//$('#imported-germplasm-list').html(pageNum); 	
-	var $form = $("#"+formName);
+	//$('#imported-germplasm-list').html(pageNum);
+	var $form;
+	if (formName.indexOf("#") > -1) {
+		$form = $(formName);
+	} 
+	else {
+		$form = $("#"+formName);
+	}
+	
+	var completeSectionDivName;
+	if (sectionDiv.indexOf("#") > -1) {
+		completeSectionDivName = sectionDiv;
+	}
+	else {
+		completeSectionDivName = "#" + sectionDiv;
+	}
 	
 	var serializedData = $form.serialize();
 	
@@ -133,7 +147,7 @@ function showPostPage(paginationUrl,previewPageNum, pageNum, sectionDiv, formNam
            timeout: 70000,
            success: function(html) {
         	   
-             $("#"+sectionDiv).empty().append(html);
+             $(completeSectionDivName).empty().append(html);
              
              if(sectionDiv == 'trial-details-list' || sectionDiv == 'nursery-details-list'){
             	 //we highlight the previously clicked

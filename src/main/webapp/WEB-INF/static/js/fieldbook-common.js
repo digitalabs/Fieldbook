@@ -1151,7 +1151,7 @@ function doExportContinue(paramUrl, isNursery){
 			$('#trialModalSelection').modal('hide');
 		}
 	}
-	var exportWayType = '/'+$('#exportType').val();
+	var exportWayType = '/'+$('#exportWayType').val();
 	var urlPage = paginationUrl+currentPage+"/"+currentPage+'?r=' + (Math.random() * 999);
 	//alert(urlPage);
 	Spinner.toggle();

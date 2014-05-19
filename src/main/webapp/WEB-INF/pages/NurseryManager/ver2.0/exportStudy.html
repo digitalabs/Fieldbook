@@ -53,7 +53,7 @@
 							<label class="control-label add_top_padding" th:text="#{study.export.choose.data.collection.order}">Way to be exported:</label><span class="required">*</span>
 						</div>
 						<div class="col-xs-4 col-md-4">
-							<select id="exportType" style="width: 170px">
+							<select id="exportWayType" style="width: 170px">
 								<option value="1" th:text="#{study.export.data.collection.row.col}">Row/Col</option>								
 								<option value="2" th:text="#{study.export.data.collection.serpentine.along.rows}">Serpentine (over range)</option>
 								<option value="3" th:text="#{study.export.data.collection.serpentine.along.columns}">Serpentine (over column)</option>		
@@ -118,7 +118,27 @@
 				    $("#page-export-message-modal").html('');				    
 				})
 		    });
-		   	
+		   	function showExportOptions(){
+		   		Spinner.toggle();
+				$.ajax({
+					url: "/Fieldbook/ExportManager/study/hasFieldMap/",
+					type: "GET",
+					cache: false,
+					success: function (data) {
+						if(data == 0){
+							//we disable the export order of serpentine
+							$('#exportWayType option').each(function(index){
+									if(index != 0){
+										$(this).remove()
+									}
+							});
+						}
+						$('#exportStudyModal').modal({ backdrop: 'static', keyboard: false });
+						Spinner.toggle();
+					}
+				});
+		   		
+		   	}
     //]]>
     </script>
 </div>

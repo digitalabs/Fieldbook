@@ -10,6 +10,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -24,10 +27,14 @@ import com.efficio.fieldbook.web.common.bean.StudySelection;
 import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.common.service.DataKaptureExportStudyService;
 import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
+import com.efficio.fieldbook.web.common.service.ExportDataCollectionOrderService;
 import com.efficio.fieldbook.web.common.service.FieldroidExportStudyService;
 import com.efficio.fieldbook.web.common.service.KsuCsvExportStudyService;
 import com.efficio.fieldbook.web.common.service.KsuExceIExportStudyService;
 import com.efficio.fieldbook.web.common.service.RExportStudyService;
+import com.efficio.fieldbook.web.common.service.impl.ExportOrderingRowColImpl;
+import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverColImpl;
+import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverRangeImpl;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -64,6 +71,15 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     
     @Resource
     private KsuCsvExportStudyService ksuCsvExportStudyService;
+    @Resource
+    private FieldbookService fieldbookMiddlewareService;
+    
+    @Resource
+    private ExportOrderingRowColImpl exportOrderingRowColService;
+    @Resource
+    private ExportOrderingSerpentineOverRangeImpl exportOrderingSerpentineOverRangeService;
+    @Resource
+    private ExportOrderingSerpentineOverColImpl exportOrderingSerpentineOverColumnService;
     
     @Override
 	public String getContentName() {
@@ -117,6 +133,29 @@ HttpServletRequest req, HttpServletResponse response) {
     	
     }
    
+    @ResponseBody
+    @RequestMapping(value="/study/hasFieldMap", method = RequestMethod.GET)
+    public String hasFieldMap(HttpServletRequest req, HttpServletResponse response) {
+    	StudySelection userSelection = getUserSelection(false);    	
+    	userSelection.getWorkbook().getTotalNumberOfInstances();     	    	
+    	Integer datasetId = userSelection.getWorkbook().getMeasurementDatesetId();
+    	boolean hasFieldMap = false;
+		try {
+			hasFieldMap = fieldbookMiddlewareService.hasFieldMap(datasetId);
+		} catch (MiddlewareQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return hasFieldMap ? "1" : "0";
+    }
+    @ResponseBody
+    @RequestMapping(value="/studyTrial/hasFieldMap", method = RequestMethod.GET)
+    public String hasTrialFieldMap(HttpServletRequest req, HttpServletResponse response) {
+    	StudySelection userSelection = getUserSelection(false);    	
+    	userSelection.getWorkbook().getTotalNumberOfInstances();     	    	
+    	Integer datasetId = userSelection.getWorkbook().getMeasurementDatesetId();
+    	return datasetId.toString();
+    }
     
     /**
      * Do export.
@@ -135,11 +174,18 @@ HttpServletRequest req, HttpServletResponse response) {
     	 * 2 - serpentine (range)
     	 * 3 - serpentine (col)
     	 */
+    	ExportDataCollectionOrderService exportDataCollectionService = getExportOrderService(exportWayType);
+    	
+    	
     	StudySelection userSelection = getUserSelection(isTrial);
     	if (start == 0 || end == 0) { //all
     		start = 1;
     		end = userSelection.getWorkbook().getTotalNumberOfInstances(); 
     	}
+    	Workbook workbook = userSelection.getWorkbook();
+    	
+    	
+    	exportDataCollectionService.reorderWorkbook(workbook);
     	
     	String filename = userSelection.getWorkbook().getStudyDetails().getStudyName();
     	String outputFilename = null;
@@ -216,5 +262,16 @@ HttpServletRequest req, HttpServletResponse response) {
     
     private StudySelection getUserSelection(boolean isTrial) {
     	return isTrial ? this.trialSelection : this.nurserySelection;
+    }
+    
+    private ExportDataCollectionOrderService getExportOrderService(int exportWayType){
+    	if(exportWayType == 1){
+    		return exportOrderingRowColService;
+    	}else if(exportWayType == 2){
+    		return exportOrderingSerpentineOverRangeService;
+    	}else if(exportWayType == 3){
+    		return exportOrderingSerpentineOverColumnService;
+    	}
+    	return exportOrderingRowColService;
     }
 }

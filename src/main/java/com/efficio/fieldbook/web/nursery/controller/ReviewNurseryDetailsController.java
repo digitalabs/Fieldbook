@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.nursery.bean.NurseryDetails;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
@@ -68,6 +69,7 @@ public class ReviewNurseryDetailsController extends AbstractBaseFieldbookControl
             Workbook workbook = fieldbookMiddlewareService.getStudyVariableSettings(id, true);
             workbook.setStudyId(id);
             NurseryDetails details = SettingsUtil.convertWorkbookToNurseryDetails(workbook, fieldbookMiddlewareService, fieldbookService, userSelection);
+            rearrangeDetails(details);
             
             model.addAttribute("nurseryDetails", details);
         }    	
@@ -90,6 +92,30 @@ public class ReviewNurseryDetailsController extends AbstractBaseFieldbookControl
     		}
     	}
     	return datasetList;
+    }
+    
+    private void rearrangeDetails(NurseryDetails details) {
+    	details.setBasicStudyDetails(rearrangeSettingDetails(details.getBasicStudyDetails()));
+    	details.setManagementDetails(rearrangeSettingDetails(details.getManagementDetails()));
+    }
+    
+    private List<SettingDetail> rearrangeSettingDetails(List<SettingDetail> list) {
+    	List<SettingDetail> newList = new ArrayList<SettingDetail>();
+    	final int COLS = 3;
+    	
+    	if (list != null && !list.isEmpty()) {
+    		int rows = Double.valueOf(Math.ceil(list.size()/(double)COLS)).intValue();
+    		for (int i = 0; i < list.size(); i++) {
+    			int computedIndex = (i % COLS) * rows + i / COLS;
+    			if (computedIndex < list.size()) {
+    				newList.add(list.get(computedIndex));
+    			}
+    			else {
+    				newList.add(list.get(computedIndex - 1));
+    			}
+    		}
+    	}
+    	return newList;
     }
     
 }

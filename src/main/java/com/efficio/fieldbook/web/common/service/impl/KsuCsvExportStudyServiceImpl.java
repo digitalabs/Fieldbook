@@ -37,7 +37,7 @@ public class KsuCsvExportStudyServiceImpl implements KsuCsvExportStudyService {
 	        boolean alreadyExists = new File(filenamePath).exists();
 	        CsvWriter csvWriter = null;
 	        try {
-	            List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getObservations(), i, i);
+	            List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), i, i);
 	            List<List<String>> dataTable = KsuFieldbookUtil.convertWorkbookData(observations, workbook.getMeasurementDatasetVariables());
 	
 	            csvWriter = new CsvWriter(new FileWriter(filenamePath, false), ',');

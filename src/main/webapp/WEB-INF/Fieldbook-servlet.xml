@@ -115,6 +115,13 @@
 
 	<bean id="exportExcelService" class="com.efficio.fieldbook.service.ExportExcelServiceImpl">
 	</bean>
+	
+	<bean id="exportOrderingSerpentineOverRangeService" class="com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverRangeImpl">
+	</bean>
+	<bean id="exportOrderingSerpentineOverColumnService" class="com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverColImpl">
+	</bean>
+	<bean id="exportOrderingRowColService" class="com.efficio.fieldbook.web.common.service.impl.ExportOrderingRowColImpl">
+	</bean>
 
 	<bean id="multipartResolver"
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">

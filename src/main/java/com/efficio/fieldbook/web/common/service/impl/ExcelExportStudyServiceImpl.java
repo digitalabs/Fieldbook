@@ -71,8 +71,8 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		
         	for (int i = start; i <= end; i++) {
         		
-	            List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getObservations(), i, i);
-	            List<MeasurementRow> trialObservations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getObservations(), i, i);
+	            List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), i, i);
+	            List<MeasurementRow> trialObservations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getTrialObservations(), i, i);
 				try {
 					MeasurementRow trialObservation = trialObservations.get(0);
 					

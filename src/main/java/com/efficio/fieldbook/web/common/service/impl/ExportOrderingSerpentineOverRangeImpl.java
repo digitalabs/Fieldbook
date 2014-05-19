@@ -30,8 +30,8 @@ public class ExportOrderingSerpentineOverRangeImpl extends ExportDataCollectionO
 		try {
 			Integer numberOfTrialInstance = workbook.getTrialObservations().size();
 			for(int trialInstanceNum = 1 ; trialInstanceNum <= numberOfTrialInstance ; trialInstanceNum++){
-				
-				Integer blockId = workbook.getFieldMapBlockIdByTrialInstance(Integer.toString(trialInstanceNum));
+				String blockId = fieldbookMiddlewareService.getBlockId(workbook.getTrialDatasetId(), Integer.toString(trialInstanceNum));
+								
 				List<MeasurementRow> observationsPerInstance = new ArrayList<MeasurementRow>();
 				List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getObservations(), trialInstanceNum, trialInstanceNum);
 				if(blockId == null){
@@ -39,7 +39,7 @@ public class ExportOrderingSerpentineOverRangeImpl extends ExportDataCollectionO
 					//we just set the normal observations
 					arrangedExportObservations.addAll(observations);
 				}else{
-					FieldmapBlockInfo blockInfo = fieldbookMiddlewareService.getBlockInformation(blockId);
+					FieldmapBlockInfo blockInfo = fieldbookMiddlewareService.getBlockInformation(Integer.valueOf(blockId));
 					int ranges = blockInfo.getRangesInBlock();
 					int columns = blockInfo.getRowsInBlock() / blockInfo.getNumberOfRowsInPlot();
 					
@@ -49,7 +49,7 @@ public class ExportOrderingSerpentineOverRangeImpl extends ExportDataCollectionO
 					Map<String, MeasurementRow> fieldMapExperimentMap = this.getFieldMapExperimentsMap(observations);
 					
 					boolean leftToRight = true;
-			        for(int y = 0 ; y <= ranges ; y++){
+			        for(int y = 1 ; y <= ranges ; y++){
 			        	if(leftToRight){
 					        for(int x = 0 ; x <= columns; x++){
 					        	//for left to right planting

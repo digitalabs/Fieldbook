@@ -2,6 +2,7 @@
 <form id="saveListForm" role="form-horizontal" action="#"
 th:object="${saveListForm}" enctype="multipart/form-data">
 	<input type="hidden" th:field="*{listIdentifier}"/>
+	<input type="hidden" th:field="*{parentId}"/>
 	
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
@@ -25,7 +26,7 @@ th:object="${saveListForm}" enctype="multipart/form-data">
 			<input type="text" class="form-control" th:field="*{listDescription}"/>
 		</div>
 	</div>
-	
+	<!-- 
 	<div class="row form-group">
 		<div class="col-xs-5 col-md-5">
 			<label class="control-label" th:text="#{germplasm.save.list.type.label}">List Type:</label><span class="required">*</span>
@@ -36,7 +37,7 @@ th:object="${saveListForm}" enctype="multipart/form-data">
 			</select>
 		</div>
 	</div>
-	
+	 -->
 	<div class="row form-group">
 		<div class="col-xs-5 col-md-5">
 			<label class="control-label" th:text="#{germplasm.save.list.date.label}">List Date:</label><span class="required">*</span>

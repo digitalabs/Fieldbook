@@ -146,13 +146,13 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
                 resultMap.put("errorMessage", errorMessages);
                 return resultMap;
             }
-            
+            /*
             Map<Germplasm, List<Name>> germplasms = new HashMap<Germplasm, List<Name>>();
             Map<Germplasm, GermplasmListData> listDataItems = new HashMap<Germplasm, GermplasmListData>();
             GermplasmList germplasmList = createNurseryAdvanceGermplasmList(form, germplasms, listDataItems);
             fieldbookMiddlewareService.saveNurseryAdvanceGermplasmList(germplasms, listDataItems, germplasmList);
             resultMap.put("status", "1");
-
+			*/
         } catch(Exception e) {
             LOG.error(e.getMessage(), e);
             resultMap.put("status", "-1");
@@ -250,6 +250,7 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
      * @param listDataItems the list data items
      * @return the germplasm list
      */
+    /*
     private GermplasmList createNurseryAdvanceGermplasmList(AdvancingNurseryForm form
                                     , Map<Germplasm, List<Name>> germplasms
                                     , Map<Germplasm, GermplasmListData> listDataItems){
@@ -356,5 +357,5 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
         
         return germplasmList;
     }
-    
+    */
 }

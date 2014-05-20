@@ -25,9 +25,13 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Database;
+import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.manager.api.GermplasmListManager;
 import org.generationcp.middleware.manager.api.WorkbenchDataManager;
+import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.GermplasmList;
+import org.generationcp.middleware.pojos.GermplasmListData;
+import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.pojos.Person;
 import org.generationcp.middleware.pojos.User;
 import org.generationcp.middleware.pojos.UserDefinedField;
@@ -49,8 +53,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.form.SaveListForm;
+import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
+import com.efficio.fieldbook.web.nursery.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.DateUtil;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 import com.efficio.pojos.treeview.TreeNode;
 import com.vaadin.ui.Label;
@@ -82,6 +90,9 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
     private String HAS_CHILDREN = "Folder has children";
     @Resource
     private ResourceBundleMessageSource messageSource;
+    
+    @Resource
+    private UserSelection userSelection;
     
     
     /**
@@ -118,9 +129,18 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
     		Model model, HttpSession session) {
     	Map<String,Object> results = new HashMap<String, Object>();
         try {
-        	GermplasmList germplasmList = fieldbookMiddlewareService.getGermplasmListByName(form.getListName());
-        	if(germplasmList == null){
+        	AdvancingNurseryForm advancingNurseryForm = userSelection.getAdvanceDetails(Long.valueOf(form.getListIdentifier()));
+        	
+        	
+        	GermplasmList germplasmListIsNew = fieldbookMiddlewareService.getGermplasmListByName(form.getListName());
+        	if(germplasmListIsNew == null){
         		//we do the saving
+        		Map<Germplasm, List<Name>> germplasms = new HashMap<Germplasm, List<Name>>();
+                Map<Germplasm, GermplasmListData> listDataItems = new HashMap<Germplasm, GermplasmListData>();
+                GermplasmList germplasmList = createNurseryAdvanceGermplasmList(advancingNurseryForm, form, germplasms, listDataItems);
+                fieldbookMiddlewareService.saveNurseryAdvanceGermplasmList(germplasms, listDataItems, germplasmList);
+            	
+                
         		results.put("isSuccess", 1);
         	}else{
         		results.put("isSuccess", 0);
@@ -137,6 +157,136 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         }
         
         return results;
+    }
+    /**
+     * Creates the nursery advance germplasm list.
+     *
+     * @param form the form
+     * @param germplasms the germplasms
+     * @param listDataItems the list data items
+     * @return the germplasm list
+     */
+    
+    private GermplasmList createNurseryAdvanceGermplasmList(AdvancingNurseryForm form, SaveListForm saveListForm
+                                    , Map<Germplasm, List<Name>> germplasms
+                                    , Map<Germplasm, GermplasmListData> listDataItems){
+        
+        // Create germplasm list
+        String listName =  saveListForm.getListName();
+        String harvestDate = form.getHarvestDate(); 
+        String listType = AppConstants.GERMPLASM_LIST_TYPE_HARVEST.getString();
+        Integer userId = 0;
+        try {
+            userId = workbenchService.getCurrentIbdbUserId(getCurrentProjectId());
+            if (userId == null){
+                userId = 0;
+            }
+            
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        String description = saveListForm.getListDescription();
+        GermplasmList parent = null; //lhierarchy = 0
+        Integer parentId = Integer.valueOf(saveListForm.getParentId());
+        GermplasmList gpList = null;
+		try {
+			gpList = germplasmListManager.getGermplasmListById(parentId);
+		} catch (MiddlewareQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+        if (gpList != null && !gpList.isFolder()) {           
+
+            parent = gpList.getParent();
+
+        }
+        
+        Integer status = 1; 
+        GermplasmList germplasmList = new GermplasmList(null, listName, Long.valueOf(saveListForm.getListDate()), listType, userId,
+                description, parent, status, saveListForm.getListNotes());
+
+        //Common germplasm fields
+        Integer lgid = 0;
+        Integer locationId = 0;
+        String harvestLocationId = form.getHarvestLocationId();
+        if (harvestLocationId != null && !harvestLocationId.equals("")){
+            locationId = Integer.valueOf(harvestLocationId); 
+        }
+        Integer gDate = Integer.valueOf(DateUtil.getCurrentDate()); 
+        
+        //Common germplasm list data fields
+        Integer listDataId = null; 
+        Integer listDataStatus = 0; //lrstatus = 0
+        Integer localRecordId = 0; //llrecid = 0
+        
+        //Common name fields
+        Integer nDate = gDate;
+        Integer nRef = 0;
+
+        // Create germplasms to save - Map<Germplasm, List<Name>> 
+        for (ImportedGermplasm importedGermplasm : form.getGermplasmList()){
+   
+            Integer gid = null;
+            if (importedGermplasm.getGid() != null){
+                gid = Integer.valueOf(importedGermplasm.getGid());
+            }
+            Integer methodId = importedGermplasm.getBreedingMethodId();
+            Integer gnpgs = importedGermplasm.getGnpgs();
+            Integer gpid1 = importedGermplasm.getGpid1();
+            Integer gpid2 = importedGermplasm.getGpid2();
+            
+            List<Name> names = importedGermplasm.getNames();
+            Name preferredName = names.get(0);
+
+            for (Name name : names) {
+                
+                name.setLocationId(locationId);
+                name.setNdate(nDate);
+                name.setUserId(userId);
+                name.setReferenceId(nRef);
+
+                // If crop == CIMMYT WHEAT (crop with more than one name saved)
+                // Germplasm name is the Names entry with NType = 1027, NVal = table.desig, NStat = 0
+                if (names.size() > 0 && name.getNstat() == 0
+                        && name.getTypeId() == GermplasmNameType.UNRESOLVED_NAME.getUserDefinedFieldID()) {
+                    preferredName = name;
+                }
+            }
+            
+            if (names.size() > 1){
+                for (Name name : names) {
+                    if (name.getTypeId() == GermplasmNameType.UNRESOLVED_NAME.getUserDefinedFieldID()
+                            && name.getNstat() == 0) {
+                        preferredName = name;
+                        break;
+                    }
+                }
+            }
+            
+            Integer trueGdate = (harvestDate != null && !"".equals(harvestDate.trim()) ? Integer.valueOf(harvestDate) : gDate);
+            Germplasm germplasm = new Germplasm(gid, methodId, gnpgs, gpid1, gpid2
+                    , userId, lgid, locationId, trueGdate, preferredName);
+            
+            germplasms.put(germplasm, names);
+                    
+            // Create list data items to save - Map<Germplasm, GermplasmListData> 
+            Integer entryId = importedGermplasm.getEntryId();  
+            String entryCode = importedGermplasm.getEntryCode(); 
+            String seedSource = importedGermplasm.getSource(); 
+            String designation = importedGermplasm.getDesig(); 
+            String groupName = importedGermplasm.getCross(); 
+            if (groupName == null){
+                groupName = "-"; // Default value if null
+            }
+            
+            GermplasmListData listData = new GermplasmListData(listDataId, germplasmList, gid, entryId, entryCode, seedSource,
+                     designation, groupName, listDataStatus, localRecordId);
+            
+            listDataItems.put(germplasm, listData);
+        }
+        
+        return germplasmList;
     }
     
     /**

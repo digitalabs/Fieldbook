@@ -144,6 +144,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         		results.put("isSuccess", 1);
         		results.put("germplasmListId", germplasmListId);
         		results.put("uniqueId", form.getListIdentifier());
+        		results.put("listName", form.getListName());
         	}else{
         		results.put("isSuccess", 0);
         		String nameUniqueError = "germplasm.save.list.name.unique.error";

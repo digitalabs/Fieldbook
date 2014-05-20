@@ -116,7 +116,7 @@ public class EditNurseryController extends SettingsController {
             userSelection.setBasicDetails(basicDetails);
             userSelection.setStudyLevelConditions(nurseryLevelConditions);
             userSelection.setPlotsLevelList(plotLevelConditions);
-            
+            form.setStudyId(nurseryId);
             form.setBasicDetails(userSelection.getBasicDetails());
             form.setStudyLevelVariables(userSelection.getStudyLevelConditions());
             form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());

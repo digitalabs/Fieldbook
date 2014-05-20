@@ -861,8 +861,7 @@ function advanceNursery(tableName){
 		}			
 	}
 	*/
-	idVal = getCurrentStudyIdInTab();
-	idVal = -167;
+	idVal = $("#createNurseryMainForm #studyId").val();
 	count++;
 	if(count != 1){
 		$('#page-create-field-map-message').html("<div class='alert alert-danger'>"+advanceStudyError+"</div>");

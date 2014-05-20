@@ -151,6 +151,8 @@ public class CreateNurseryForm {
     /** The export trial instance end. */
     private String exportTrialInstanceEnd;
     
+    private Integer studyId;
+    
     /**
      * Gets the project id.
      *
@@ -846,4 +848,15 @@ public class CreateNurseryForm {
             this.exportTrialInstanceEnd = exportTrialInstanceEnd;
         }
 
+		public Integer getStudyId() {
+			return studyId;
+		}
+
+		public void setStudyId(Integer studyId) {
+			this.studyId = studyId;
+		}
+
+		
+
+        
 }

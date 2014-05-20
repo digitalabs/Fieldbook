@@ -26,6 +26,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.dms.Variable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Location;
@@ -47,6 +48,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.ChoiceKeyVal;
+import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
@@ -138,8 +140,9 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     		form.setCropType(1);
     	}
     	
-    	form.setMethodVariates(ontologyService.getStandardVariableReferencesByProperty(TermId.BREEDING_METHOD_PROP.getId()));
-    	form.setLineVariates(ontologyService.getStandardVariableReferencesByProperty(TermId.PLANTS_SELECTED_PROP.getId()));
+        form.setMethodVariates(filterVariablesByProperty(userSelection.getSelectionVariates(), AppConstants.PROPERTY_BREEDING_METHOD.getString()));
+        form.setLineVariates(filterVariablesByProperty(userSelection.getSelectionVariates(), AppConstants.PROPERTY_PLANTS_SELECTED.getString()));
+
     	
     	SimpleDateFormat sdf = new SimpleDateFormat("YYYY");
     	SimpleDateFormat sdfMonth = new SimpleDateFormat("MM");
@@ -304,4 +307,18 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         return "redirect:" + SaveAdvanceNurseryController.URL;
     }
     
+    private List<StandardVariableReference> filterVariablesByProperty(List<SettingDetail> variables, String propertyName) {
+        List<StandardVariableReference> list = new ArrayList<StandardVariableReference>();
+        if (variables != null && !variables.isEmpty()) {
+            for (SettingDetail detail : variables) {
+                if (detail.getVariable() != null && detail.getVariable().getProperty() != null 
+                        && propertyName.equalsIgnoreCase(detail.getVariable().getProperty())) {
+                    list.add(new StandardVariableReference(detail.getVariable().getCvTermId(), detail.getVariable().getName(), detail.getVariable().getDescription()));
+                }
+            }
+        }
+        return list;
+    }
+    
+
 }

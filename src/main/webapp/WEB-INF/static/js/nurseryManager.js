@@ -2211,6 +2211,8 @@ function showSelectedTab(selectedTabName) {
 			$("#" + tabs[i].id).hide();
 		}
 	}
+	if(selectedTabName == 'nursery-measurements')
+		fixedTrHeight();
 }
 
 function showStudyInfo() {

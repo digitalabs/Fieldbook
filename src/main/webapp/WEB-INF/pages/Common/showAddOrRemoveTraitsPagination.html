@@ -102,11 +102,11 @@
 	    convertToSelect2 = false;
         var paginationUrl = '/Fieldbook/Common/addOrRemoveTraits/page/'; 
         paginationUrl = paginationUrl + $("#study-type").val() + "/";
-        
+
         var submitExportUrl = '/Fieldbook/ExportManager/';
         var options = {
-            currentPage: /*[[${addOrRemoveTraitsForm.currentPage}]]*/,
-            totalPages: /*[[${addOrRemoveTraitsForm.totalPages}]]*/,
+            currentPage: /*[[${createNurseryForm.currentPage}]]*/,
+            totalPages: /*[[${createNurseryForm.totalPages}]]*/,
 
             alignment:'center',
             useBootstrapTooltip:true,
@@ -123,21 +123,13 @@
 		if($('#measurement-data-list-pagination') != null){
 			$('#measurement-data-list-pagination').bootstrapPaginator(options);	
 		}
+
         $( document ).ready(function() {
-        	fixedTrHeight();
-        	//doStickyHeader();		     
-       	 //  $('.germplasm-measurement-list-table td input').on("change", validateCells);
-       	 //  $('.germplasm-measurement-list-table td input').on("focus", validateCells);
-       	 //  $('.germplasm-measurement-list-table td input').on("blur", validateCells);
-       	 //  if (document.URL.indexOf("view" + $("#study-type").val()) > -1 || $('#importVal').val() == '1') {
+        	   fixedTrHeight();
        		   $("#btnBack").attr("href", "/Fieldbook/" + $("#study-type").val() + "Manager");
        		   $("#btnUpdate").show();
        		   $("#btnNext").hide();
-       	 //  } else {
-       	 //	   $("#btnUpdate").hide();
-       	 //	   $("#btnNext").show();
-       	 //  }    
-       	   
+       	     
        	$('.variates-div').scroll(function(){ 
        	
        		$('.factor-div').scrollTop($(this).scrollTop());
@@ -157,6 +149,7 @@
        		}else{
         		
         	}
+       		
    		});
         function resizeWindowForIE(){
         	if(isIE){
@@ -202,11 +195,11 @@
         	return;
         	*/
         	var max = 0;    
-        	$('table tr').each(function() {
+        	$('.germplasm-measurement-list-table table tr').each(function() {
         	    max = Math.max($(this).height(), max);
         	}).height(max);
         	
-        	$('table tr').css('height', max+'px');
+        	$('.germplasm-measurement-list-table table tr').css('height', max+'px');
         		
         }
        

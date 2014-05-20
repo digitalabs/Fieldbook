@@ -391,6 +391,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
         importLocationUrl = $('#importLocationUrl').val();
 
 		$("#folderNameSpan").html($("#folderName").val());
+		
 		$.each($(".possibleValuesJson"), function (index, divElem){
 				var select2Index = $(divElem).attr("id").split("possibleValuesJson")[1]; 
 
@@ -405,11 +406,13 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 				}
 				
 			});
-				setTimeout('initializeDateAndSliderInputs()', 500);
-		        addCreateNurseryRequiredAsterisk();
-		        $('select').each(function(){
-					$(this).select2();
-				});
+		
+		
+		setTimeout('initializeDateAndSliderInputs()', 500);
+        addCreateNurseryRequiredAsterisk();
+        $('select').each(function(){
+			$(this).select2();
+		});
 		
 		$(".help-tooltip-nursery").tooltip();
 		$('#srch-term').on("change", function(event){

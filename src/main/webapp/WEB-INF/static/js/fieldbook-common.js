@@ -206,7 +206,10 @@ function createFieldMap(tableName){
 		}
 		//daniel
 		*/
-		ids.push(getCurrentStudyIdInTab());
+		if($("#createNurseryMainForm #studyId").length  == 1)
+			ids.push($("#createNurseryMainForm #studyId").val());
+		else
+			ids.push(getCurrentStudyIdInTab());
 		var idList = ids.join(",");
 		$('#page-message').html("");
 		
@@ -552,7 +555,10 @@ function createLabelPrinting(tableName){
 		}			
 	}
 	*/
-	idVal = getCurrentStudyIdInTab();
+	if($("#createNurseryMainForm #studyId").length  == 1)
+		idVal = ($("#createNurseryMainForm #studyId").val());
+	else
+		idVal = getCurrentStudyIdInTab();
 	count++; 
 	
 	if(count != 1){
@@ -880,6 +886,7 @@ function advanceNursery(tableName){
 			    success: function(html) {
 			    	$("#advance-nursery-modal-div").html(html);
 					$("#advanceNurseryModal").modal("show");
+					$('#advanceNurseryModal select').select2();
 		        },
 				error: function(jqXHR, textStatus, errorThrown){
 					console.log("The following error occured: " + textStatus , errorThrown);
@@ -998,7 +1005,7 @@ function initializeMethodSelect2(methodSuggestions, methodSuggestions_obj) {
         }
 
     }).on("change", function (){
-    	$('#'+getJquerySafeId("advanceBreedingMethodId")).val($('#'+getJquerySafeId("methodIdAll")).select2("data").id);
+    	$('#'+getJquerySafeId("breedingMethodId")).val($('#'+getJquerySafeId("methodIdAll")).select2("data").id);
     });
 	
 }
@@ -1027,7 +1034,7 @@ $('#'+getJquerySafeId('methodIdFavorite')).select2({
     }
 
 }).on("change", function (){
-	$('#'+getJquerySafeId("advanceBreedingMethodId")).val($('#'+getJquerySafeId("methodIdFavorite")).select2("data").id);
+	$('#'+getJquerySafeId("breedingMethodId")).val($('#'+getJquerySafeId("methodIdFavorite")).select2("data").id);
 });
 
 }
@@ -1336,7 +1343,7 @@ function getIEVersion() {
 function callAdvanceNursery() {
 	Spinner.toggle();
 	var serializedData = $("#advanceNurseryModalForm").serialize();
-	alert(serializedData);
+	return false;
  	$.ajax({ 
  		url: "/Fieldbook/NurseryManager/advance/nursery",
         type: "POST",

@@ -35,9 +35,41 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 </div>
 <div class="row">
 	<div class="col-xs-12 col-md-12">
-	<label class="control-label">
+		<label class="control-label">
 			<strong class="sub-content-heading" th:text="#{nursery.create.nursery.basic.details}">BASIC DETAILS</strong>
 		</label>
+		<div style="float:right;">
+			<div class="btn-group">	
+				<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+					<span th:text="#{nursery.nurserydetails.actions}">Actions</span>
+				</button>
+				<ul class="dropdown-menu" role="menu">
+					<li>
+						<a href="" style="display: none" id="open-study-url"></a>
+						<a href="javascript: showExportOptions();" id="open-study-url-link" th:text="#{nursery.nurserydetails.action.export.nursery}">Export Nursery Book</a> 
+					</li>
+					<li>
+						<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
+						<a href="javascript: createFieldMap('nursery-table');" id="fieldmap-url-link" th:text="#{nursery.nurserydetails.action.createFieldmap}">Make Field Map</a>
+					</li>
+					<li>
+						<a href="" style="display: none" id="label-printing-url" th:href="@{/LabelPrinting/specifyLabelDetails/nursery}"></a>
+						<a href="javascript: createLabelPrinting('nursery-table');" id="label-printing-url-link" th:text="#{nursery.nurserydetails.action.printLabels}">Print Labels</a> 
+					</li>
+					<li>
+						<a href="" style="display: none" id="open-study-url"></a>
+						<a href="javascript: $('#importStudyModal').modal('show')" id="open-study-url-link" th:text="#{nursery.nurserydetails.action.import.nursery}">Import Measurements</a> 
+					</li>
+					<li>
+						<a href="" style="display: none" id="advance-study-url" th:href="@{/NurseryManager/advance/nursery}"></a>
+						<a href="javascript: advanceNursery('nursery-table');" id="advance-study-url-link" th:text="#{nursery.nurserydetails.action.advance}">Advance Nursery</a> 
+					</li>
+					<li>
+						<a th:href="@{/NurseryManager/manageNurseries}" id="close-nursery-url-link" th:text="#{nursery.nurserydetails.action.close.nursery}">Close Nursery</a> 
+					</li>
+				</ul>
+			</div>
+		</div>
 	</div>
 </div>
 <div class="row form-group">

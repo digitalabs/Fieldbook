@@ -79,7 +79,8 @@
 				})
 				 
 		  });
-          function openSaveListModal(listIdentifier){
+          function openSaveListModal(object){
+        	  var listIdentifier = $(object).attr('id');
         	  additionalLazyLoadUrl = "/1";
         	  Spinner.toggle();
        		  $.ajax(

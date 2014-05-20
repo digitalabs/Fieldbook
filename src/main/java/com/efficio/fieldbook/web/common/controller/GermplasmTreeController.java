@@ -138,10 +138,12 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         		Map<Germplasm, List<Name>> germplasms = new HashMap<Germplasm, List<Name>>();
                 Map<Germplasm, GermplasmListData> listDataItems = new HashMap<Germplasm, GermplasmListData>();
                 GermplasmList germplasmList = createNurseryAdvanceGermplasmList(advancingNurseryForm, form, germplasms, listDataItems);
-                fieldbookMiddlewareService.saveNurseryAdvanceGermplasmList(germplasms, listDataItems, germplasmList);
+                Integer germplasmListId = fieldbookMiddlewareService.saveNurseryAdvanceGermplasmList(germplasms, listDataItems, germplasmList);
             	
                 
         		results.put("isSuccess", 1);
+        		results.put("germplasmListId", germplasmListId);
+        		results.put("uniqueId", form.getListIdentifier());
         	}else{
         		results.put("isSuccess", 0);
         		String nameUniqueError = "germplasm.save.list.name.unique.error";
@@ -196,9 +198,9 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
 			e.printStackTrace();
 		}
 
-        if (gpList != null && !gpList.isFolder()) {           
+        if (gpList != null && gpList.isFolder()) {           
 
-            parent = gpList.getParent();
+            parent = gpList;
 
         }
         

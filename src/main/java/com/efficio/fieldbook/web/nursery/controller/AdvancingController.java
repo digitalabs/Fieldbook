@@ -50,6 +50,7 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.ChoiceKeyVal;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -86,6 +87,12 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     
     @Resource
     private OntologyService ontologyService;
+    
+    @Resource
+    private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
+    
+    /** The imported germplasm list. */
+    private List<ImportedGermplasm> importedGermplasmList;
     
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
@@ -308,7 +315,16 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         advancingNursery.setLineVariateId(form.getLineVariateId());
         advancingNursery.setPlotVariateId(form.getPlotVariateId());
         advancingNursery.setMethodVariateId(form.getMethodVariateId());
-        return "redirect:" + SaveAdvanceNurseryController.URL;
+        
+        importedGermplasmList = fieldbookService.advanceNursery(advancingNursery, userSelection.getWorkbook());
+        userSelection.setImportedAdvancedGermplasmList(importedGermplasmList);
+        form.setGermplasmList(importedGermplasmList);
+        form.setEntries(importedGermplasmList.size());
+        form.changePage(1);
+        long id = (new Date()).getTime();
+        userSelection.addAdvanceDetails(id, form);
+        form.setUniqueId(id);
+    	return super.showAjaxPage(model, "NurseryManager/ver2.0/saveAdvanceNursery");
     }
     
     private List<StandardVariableReference> filterVariablesByProperty(List<SettingDetail> variables, String propertyName) {

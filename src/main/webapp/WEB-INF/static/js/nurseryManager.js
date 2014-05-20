@@ -6,13 +6,13 @@ function checkMethod(){
 			$('#showFavoriteMethod').prop('disabled', false);
 			
 			//$('#methodSelected').val(oldMethodSelected);
-			console.log("1");
+			//console.log("1");
 			$("#method-variates-section").hide();
 			setCorrectMethodValues(true);
 			
 		}else{
 			$("#method-variates-section").show();
-			console.log("2");
+			//console.log("2");
 			//$('#methodSelected').prop('disabled', 'disabled');
 			if($('#namingConvention').val() != 3){
 				$('#showFavoriteMethod').prop('disabled', 'disabled');

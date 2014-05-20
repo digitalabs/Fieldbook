@@ -141,21 +141,7 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
         try {
                         
             List<InventoryDetails> inventoryDetailList = inventoryMiddlewareService.getInventoryDetailsByGermplasmList(listId);
-            /*
-            //for testing
-            inventoryDetailList = new ArrayList();
-            for(int i = 0 ; i < 300 ; i++){
-            	inventoryDetailList.add(new InventoryDetails(i, "Germplasm " + i, null,
-            			null, "Location " + i, null,
-            			new Double(0), null, "Source " + i,
-            			null, "Scale "+ i));
-            }
             
-            int index = 0;
-            for(InventoryDetails inventoryDetail : inventoryDetailList){
-            	inventoryDetail.setIndex(index++);
-            }
-            */
             getSeedSelection().setInventoryList(inventoryDetailList);
             form.setInventoryList(inventoryDetailList);
             //form.changePage(1);
@@ -165,6 +151,27 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
             LOG.error(e.getMessage(), e);
         }
         return super.showAjaxPage(model, PAGINATION_TEMPLATE);
+    }
+    
+    @RequestMapping(value="/advance/displayGermplasmDetails/{listId}", method = RequestMethod.GET)
+    public String displayAdvanceGermplasmDetails(@PathVariable Integer listId,  @ModelAttribute("seedStoreForm") SeedStoreForm form,
+            Model model) {
+        
+        try {
+                        
+            List<InventoryDetails> inventoryDetailList = inventoryMiddlewareService.getInventoryDetailsByGermplasmList(listId);
+            
+            getSeedSelection().setInventoryList(inventoryDetailList);
+            form.setInventoryList(inventoryDetailList);
+            //form.changePage(1);
+            form.setDoPagination(false);
+            form.setCurrentPage(1);
+            form.setGidList(Integer.toString(listId));
+            
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+        }
+        return super.showAjaxPage(model, "/NurseryManager/ver2.0/savedFinalAdvanceList");
     }
     
     /**

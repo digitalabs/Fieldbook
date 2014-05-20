@@ -1,0 +1,94 @@
+<div class="col-xs-12 col-md-12">   
+<form onsubmit="return do_germplasm_check();" id="germplasm-list-form" role="form-horizontal" class="form-horizontal" action="#"
+  th:action="@{/SeedStoreManager/next}" method="post" th:object="${seedStoreForm}" enctype="multipart/form-data">
+     
+      
+    <!-- case 1: no data means no table -->
+     <div th:if="*{paginatedInventoryList == null or #lists.isEmpty(paginatedInventoryList)}">
+       <span class="noGermplasmListIndicator" th:text="#{nursery.import.no.germplasm.list}">No Germplasm list</span>
+     </div>
+     
+     <!-- case 2: advanced view of the importedGermplasm -->
+     <div th:if="*{paginatedInventoryList != null and not #lists.isEmpty(paginatedInventoryList)}">
+       <div class="">
+         <table id="inventory-table" th:if="*{not #lists.isEmpty(paginatedInventoryList)}" class="my-class table table-curved table-condensed germplasm-list-items 1table-with-scroll-inventory">
+           <thead>
+             <tr>
+               <th  style="text-align: left; vertical-align: middle">Entry #</th>
+               <th  style="text-align: left; vertical-align: middle">Designation</th>
+               <th style="text-align: left; vertical-align: middle">Parentage</th>
+               <th  style="text-align: left; vertical-align: middle" th:utext="#{seed.inventory.gid}">.GID</th>
+               <th  style="text-align: left; vertical-align: middle" th:utext="#{seed.inventory.source}">.Source</th>
+               <th  style="text-align: left; vertical-align: middle" th:utext="#{seed.inventory.location}">.Location</th>
+               <th  style="text-align: left; vertical-align: middle" th:utext="#{seed.inventory.amount}">.Amount</th>
+               <th  style="text-align: left; vertical-align: middle" th:utext="#{seed.inventory.scale}">.Scale</th>
+               <th  style="text-align: left; vertical-align: middle">Comment</th>               
+             </tr>
+           </thead>
+           <tbody>
+             <tr class="primaryRow" th:each="gid, row : *{paginatedInventoryList}" th:attr="data-gid=${gid.gid}">
+            
+               <td  style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryId}">.1</td> 
+               <td  style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.germplasmName}">.1</td>
+               <td style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.parentage}">.2</td>
+               <td style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.gid}">.2</td>
+               <td style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.source}">.2</td>
+               <td style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.locationName}">.2</td>
+               <td style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.amount}">.4</td>
+               <td  style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.scaleName}">.6</td>
+               <td  style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.comment}">.6</td>
+             </tr>             
+           </tbody>
+         </table>
+       </div>
+     </div>
+
+     
+     
+   
+   		<div> 
+	        <div th:if="*{inventoryList != null and not #lists.isEmpty(inventoryList)}">
+	        	<div id="inventory-germplasm-list-pagination"></div>
+	        </div>
+        </div>
+
+     	<br />
+     </form>
+     
+ </div>
+ <script type="text/javascript" th:src="@{/static/js/bootstrap-paginator.min.js}"></script>
+<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[
+        var paginationUrl = /*[[@{/SeedStoreManager/page/}]]*/;
+
+        
+        var options = {
+            currentPage: /*[[${seedStoreForm.currentPage}]]*/,
+            totalPages: /*[[${seedStoreForm.totalPages}]]*/,
+
+            alignment:'center',
+            useBootstrapTooltip:true,
+            onPageClicked: function(e,originalEvent,type,page){            	
+            	showPage(paginationUrl, page, 'inventory-germplasm-list');
+            }
+        }
+        $( document ).ready(function() {  
+        	
+        });
+        /*
+        $( document ).ready(function() {  
+			if($('#inventory-germplasm-list-pagination') != null){
+				$('#inventory-germplasm-list-pagination').bootstrapPaginator(options);
+			}
+			
+			if (getIEVersion() == 8) {
+				$(".table-with-scroll-inventory").parent().addClass("inventory-germplasm-list-table");
+				$(".table-with-scroll-inventory").removeClass("table-with-scroll-inventory");
+			}
+			
+			triggerInventoryTableSelection('inventory-table');
+	       			
+        });
+        */
+      //]]>
+    </script>

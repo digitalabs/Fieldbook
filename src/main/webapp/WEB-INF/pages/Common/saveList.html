@@ -138,6 +138,7 @@
     		           success: function(data) {
     		        	    if(data.isSuccess == 1){
     		        	    	$('#saveListTreeModal').modal('hide');
+    		        	    	displayAdvanceList(data.uniqueId, data.germplasmListId);
     		        	    }else{
     		        	    	showErrorMessage('page-save-list-message-modal', data.message);
     		        	    }

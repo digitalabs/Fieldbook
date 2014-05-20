@@ -68,8 +68,8 @@ public class TreeViewUtil {
 	 * @return the string
 	 * @throws Exception the exception
 	 */
-	public static String convertStudyFolderReferencesToJson(List<FolderReference> references, boolean isNursery,boolean isAll, boolean isLazy, FieldbookService fieldbookService) throws Exception {		
-		List<TreeNode> treeNodes = convertStudyFolderReferencesToTreeView(references, isNursery, isAll, isLazy , fieldbookService);
+	public static String convertStudyFolderReferencesToJson(List<FolderReference> references, boolean isNursery,boolean isAll, boolean isLazy, FieldbookService fieldbookService, boolean isFolderOnly) throws Exception {		
+		List<TreeNode> treeNodes = convertStudyFolderReferencesToTreeView(references, isNursery, isAll, isLazy , fieldbookService, isFolderOnly);
 		return convertTreeViewToJson(treeNodes);
 	}
 	
@@ -150,12 +150,12 @@ public class TreeViewUtil {
         return treeNodes;
     }
 
-    private static List<TreeNode> convertStudyFolderReferencesToTreeView(List<FolderReference> references, boolean isNursery, boolean isAll, boolean isLazy,FieldbookService fieldbookService) {
+    private static List<TreeNode> convertStudyFolderReferencesToTreeView(List<FolderReference> references, boolean isNursery, boolean isAll, boolean isLazy,FieldbookService fieldbookService, boolean isFolderOnly) {
         List<TreeNode> treeNodes = new ArrayList<TreeNode>();
         TreeNode treeNode;
         if (references != null && !references.isEmpty()) {
             for (FolderReference reference : references) {
-                treeNode = convertStudyReferenceToTreeNode(reference, isNursery,isAll, fieldbookService);
+                treeNode = convertStudyReferenceToTreeNode(reference, isNursery,isAll, fieldbookService, isFolderOnly);
                 if(treeNode == null)
                 	continue;
                 treeNode.setIsLazy(isLazy);
@@ -235,17 +235,23 @@ public class TreeViewUtil {
 	 * @param reference the reference
 	 * @return the tree node
 	 */
-	private static TreeNode convertStudyReferenceToTreeNode(Reference reference, boolean isNursery,boolean isAll, FieldbookService fieldbookService) {
+	private static TreeNode convertStudyReferenceToTreeNode(Reference reference, 
+			boolean isNursery,boolean isAll, FieldbookService fieldbookService, boolean isFolderOnly) {
 		TreeNode treeNode = new TreeNode();
 		
 		treeNode.setKey(reference.getId().toString());
 		treeNode.setTitle(reference.getName());
 		boolean isFolder = isFolder(reference.getId(), fieldbookService);
 		treeNode.setIsFolder(isFolder);
+		treeNode.setIsLazy(true);
 		if(isFolder){
 			treeNode.setIcon(AppConstants.FOLDER_ICON_PNG.getString());
 		}
 		else{
+			
+			if(isFolderOnly)
+				return null;
+			
 			treeNode.setIcon(AppConstants.STUDY_ICON_PNG.getString());
 			if(!isAll){
 				if(!isNurseryStudy(reference.getId(), isNursery, fieldbookService))
@@ -254,8 +260,8 @@ public class TreeViewUtil {
 			
 		}
 		
-		treeNode.setIsLazy(true);
-
+		
+		
 		return treeNode;
 	}
 	

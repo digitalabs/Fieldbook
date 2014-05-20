@@ -102,11 +102,11 @@
 	    convertToSelect2 = false;
         var paginationUrl = '/Fieldbook/Common/addOrRemoveTraits/page/'; 
         paginationUrl = paginationUrl + $("#study-type").val() + "/";
-        
+
         var submitExportUrl = '/Fieldbook/ExportManager/';
         var options = {
-            currentPage: /*[[${addOrRemoveTraitsForm.currentPage}]]*/,
-            totalPages: /*[[${addOrRemoveTraitsForm.totalPages}]]*/,
+            currentPage: /*[[${createNurseryForm.currentPage}]]*/,
+            totalPages: /*[[${createNurseryForm.totalPages}]]*/,
 
             alignment:'center',
             useBootstrapTooltip:true,
@@ -123,6 +123,7 @@
 		if($('#measurement-data-list-pagination') != null){
 			$('#measurement-data-list-pagination').bootstrapPaginator(options);	
 		}
+
         $( document ).ready(function() {
         	fixedTrHeight();
         	//doStickyHeader();		     
@@ -137,7 +138,6 @@
        	 //	   $("#btnUpdate").hide();
        	 //	   $("#btnNext").show();
        	 //  }    
-       	   
        	$('.variates-div').scroll(function(){ 
        	
        		$('.factor-div').scrollTop($(this).scrollTop());
@@ -157,6 +157,7 @@
        		}else{
         		
         	}
+       		
    		});
         function resizeWindowForIE(){
         	if(isIE){

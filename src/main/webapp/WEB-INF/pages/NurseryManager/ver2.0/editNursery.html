@@ -38,7 +38,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 		<label class="control-label">
 			<strong class="sub-content-heading" th:text="#{nursery.create.nursery.basic.details}">BASIC DETAILS</strong>
 		</label>
-		<div style="float:right;">
+		<div style="float:right;  margin-right: 50px;">
 			<div class="btn-group">	
 				<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
 					<span th:text="#{nursery.nurserydetails.actions}">Actions</span>
@@ -89,7 +89,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
         <label class="control-label" id="folderNameLabel"></label>
 	</div>
 	<div  class="col-xs-2 col-md-2">
-	<a id="chooseLocation" onclick="openStudyTree(2);" th:text="#{nursery.create.nursery.choose.location}"></a>
+	<a style="position: relative; left: -50px" id="chooseLocation" onclick="openStudyTree(2);" th:text="#{nursery.create.nursery.choose.location}"></a>
 	</div>
 </div>
 <div class="row form-group">
@@ -198,6 +198,12 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 <div class="row">
 	<div id="open-germplasm-list" th:include="/NurseryManager/ver2.0/manageGermplasmListOperation"></div>
 </div>	
+<div class="row">
+    <div id="export-study" th:include="/NurseryManager/ver2.0/exportStudy"></div>
+</div>
+<div class="row">
+	<div id="import-study" th:include="/NurseryManager/ver2.0/importStudy"></div>
+</div>
 <div layout:fragment="page-script">
 <script type='text/javascript' th:inline="javascript">
 //<![CDATA[

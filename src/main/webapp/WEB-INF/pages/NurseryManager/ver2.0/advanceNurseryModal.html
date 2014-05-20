@@ -63,13 +63,13 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 							<option value="3" th:text="#{advance.nursery.maize.breeding.method.sib.increased}">Sib-Increased (-#)</option>
 							<option value="4" th:text="#{advance.nursery.maize.breeding.method.colchicinize}">Colchicinize</option>					  
 						</select>
-						<input type="hidden" th:field="*{breedingMethodId}"/>	
+						<input type="hidden" th:field="*{advanceBreedingMethodId}"/>	
 					</div>
 					<div class="row form-group col-xs-6 col-md-6">
 					</div>
 					<div class="row form-group col-xs-6 col-md-6">					
 						<label class="non-maize-control">
-							<input id="showFavoriteMethod" value="1" type="checkbox"/> <span th:text="#{show.favorite.method}">Show Favorite Method</span>
+							<input id="showAdvanceFavoriteMethod" value="1" type="checkbox"/> <span th:text="#{show.favorite.method}">Show Favorite Method</span>
 							&nbsp;&nbsp;
 							<a class="form-group" href="javascript: openManageMethods()" th:text="#{advancing.nursery.manage.method}">Manage Methods</a>	
 						</label>
@@ -225,7 +225,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 			initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFav_obj);
 			*/
 			recreateLocationCombo();
-			recreateMethodCombo();
+			recreateModalMethodCombo("advanceBreedingMethodId", "showAdvanceFavoriteMethod");
 			
 			$('#s2id_harvestLocationIdFavorite').hide();
 			$('#s2id_harvestLocationIdAll').show();

@@ -1343,6 +1343,7 @@ function getIEVersion() {
 function callAdvanceNursery() {
 	Spinner.toggle();
 	var serializedData = $("#advanceNurseryModalForm").serialize();
+	
  	$.ajax({ 
  		url: "/Fieldbook/NurseryManager/advance/nursery",
         type: "POST",
@@ -1350,9 +1351,15 @@ function callAdvanceNursery() {
         cache: false,
         success: function(html) {
         	$("#advanceNurseryModal").modal("hide");
-        	$("#create-nursery-tab-headers").append("<li id='advance-list-li'>Advance List</li>");
-        	$("#create-nursery-tabs").append("<div id='advance-list'>" + html + "</div>");       	
-        	showSelectedTab("advance-list");
+        	$('#create-nursery-tab-headers li').removeClass('active');
+       	 	$('#create-nursery-tabs .info').hide();
+       	 
+        	var uniqueId = $(html).find('.uniqueId').attr('id');
+        	var close = '<button style="float: right" onclick="javascript: closeAdvanceListTab('+uniqueId+')" type="button" id="'+uniqueId+'" class="close">x</button>';
+        	var aHtml = "<a href='javascript: showSelectedAdvanceTab("+uniqueId+")'>Advance List "+close+"</a>";
+        	$("#create-nursery-tab-headers").append("<li class='active' id='advance-list"+uniqueId+"-li'>"+aHtml+"</li>");
+        	$("#create-nursery-tabs").append("<div class='info' id='advance-list"+uniqueId+"'>" + html + "</div>");       	
+        	showSelectedTab("advance-list"+uniqueId);
         	
         },
 		error: function(jqXHR, textStatus, errorThrown){
@@ -1362,4 +1369,21 @@ function callAdvanceNursery() {
 	    	Spinner.toggle();
 	    } 
 	});
+}
+function showSelectedAdvanceTab(uniqueId){
+	//$('#create-nursery-tab-headers li').removeClass('active');
+	//$('#create-nursery-tabs .info').hide();
+	showSelectedTab('advance-list'+uniqueId);
+}
+function closeAdvanceListTab(uniqueId){
+	
+	$('li#advance-list'+uniqueId+"-li").remove();
+	$('.info#advance-list'+uniqueId).remove();
+	setTimeout(function(){
+	$('#create-nursery-tab-headers li').removeClass('active');
+	$('#create-nursery-tabs .info').hide();
+	$('#create-nursery-tab-headers li:eq(0)').addClass('active');
+	$('#create-nursery-tabs .info:eq(0)').css('display', 'block');
+	}, 100);
+	
 }

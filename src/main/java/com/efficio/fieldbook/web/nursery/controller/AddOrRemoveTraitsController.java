@@ -30,8 +30,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 
@@ -95,7 +95,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
      * @return the string
      */
     @RequestMapping(method = RequestMethod.GET)
-    public String show(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form
+    public String show(@ModelAttribute("createNurseryForm") CreateNurseryForm form
             , Model model, HttpSession session) throws MiddlewareQueryException{
     	
     	//getUserSelection().getWorkbook().getMeasurementDatasetVariables();
@@ -109,7 +109,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     }
     
     @RequestMapping(value="/viewNursery/{nurseryId}", method = RequestMethod.GET)
-    public String viewNursery(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, Model model, 
+    public String viewNursery(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, 
             @PathVariable int nurseryId) {
         Workbook workbook = null;
         
@@ -141,7 +141,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
      * @return the string
      */
     @RequestMapping(method = RequestMethod.POST)
-    public String showDetails(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form,          
+    public String showDetails(@ModelAttribute("createNurseryForm") CreateNurseryForm form,          
             BindingResult result, Model model) {
         // If operation = add new nursery
         Workbook workbook = userSelection.getWorkbook();
@@ -163,7 +163,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
 
 //    @ResponseBody
 //    @RequestMapping(value="/updateTraits", method = RequestMethod.POST)
-//    public  Map<String, String> updateTraits(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form,          
+//    public  Map<String, String> updateTraits(@ModelAttribute("createNurseryForm") CreateNurseryForm form,          
 //            BindingResult result, Model model){
 //        Map<String, String> resultMap = new HashMap<String, String>();
 //        
@@ -206,7 +206,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
 //     */
 //    @RequestMapping(value="/page/{pageNum}/{previewPageNum}", method = RequestMethod.POST)
 //    public String getPaginatedList(@PathVariable int pageNum, @PathVariable int previewPageNum
-//            , @ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, Model model) {
+//            , @ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
 //        //this set the necessary info from the session variable
 //    	copyDataFromFormToUserSelection(form, previewPageNum);
 //    	//we need to set the data in the measurementList
@@ -221,7 +221,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
 //        return super.showAjaxPage(model, PAGINATION_TEMPLATE);
 //    }
     
-    private void copyDataFromFormToUserSelection(AddOrRemoveTraitsForm form, int previewPageNum){
+    private void copyDataFromFormToUserSelection(CreateNurseryForm form, int previewPageNum){
     	for(int i = 0 ; i < form.getPaginatedMeasurementRowList().size() ; i++){
     		MeasurementRow measurementRow = form.getPaginatedMeasurementRowList().get(i);
     		int realIndex = ((previewPageNum - 1) * form.getResultPerPage()) + i;
@@ -299,7 +299,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
 //    }
     
 //    @RequestMapping(value="/import/{importType}", method = RequestMethod.POST)
-//    public String importFile(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form
+//    public String importFile(@ModelAttribute("createNurseryForm") CreateNurseryForm form
 //            ,@PathVariable int importType, BindingResult result, Model model) {
 //    	    	    	    	
 //    	if(AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == importType){
@@ -372,7 +372,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     }
 
     @RequestMapping(value="/viewNurseryAjax/{datasetId}", method = RequestMethod.GET)
-    public String viewNurseryAjax(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, Model model, 
+    public String viewNurseryAjax(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, 
             @PathVariable int datasetId) {
         Workbook workbook = null;
         

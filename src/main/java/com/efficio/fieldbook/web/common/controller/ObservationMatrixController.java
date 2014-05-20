@@ -25,8 +25,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.StudySelection;
-import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 
@@ -67,7 +67,7 @@ public class ObservationMatrixController extends
      */
     @RequestMapping(value="/reload/{studyType}/{pageNum}/{previewPageNum}", method = RequestMethod.GET)
     public String getPaginatedListAfterImport(@PathVariable String studyType, @PathVariable int pageNum, @PathVariable int previewPageNum
-            , @ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, Model model) {
+            , @ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
 
     	boolean isTrial = studyType.equalsIgnoreCase("TRIAL");
     	StudySelection userSelection = getUserSelection(isTrial);    	
@@ -89,7 +89,7 @@ public class ObservationMatrixController extends
      */
     @RequestMapping(value="/page/{studyType}/{pageNum}/{previewPageNum}", method = RequestMethod.POST)
     public String getPaginatedList(@PathVariable String studyType, @PathVariable int pageNum, @PathVariable int previewPageNum
-            , @ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, Model model) {
+            , @ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
 
     	boolean isTrial = studyType.equalsIgnoreCase("TRIAL");
     	StudySelection userSelection = getUserSelection(isTrial);
@@ -114,7 +114,7 @@ public class ObservationMatrixController extends
 
     @RequestMapping(value="/pageView/{studyType}/{pageNum}/{previewPageNum}", method = RequestMethod.POST)
     public String getPaginatedListViewOnly(@PathVariable String studyType, @PathVariable int pageNum, @PathVariable int previewPageNum
-            , @ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, Model model) {
+            , @ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
 
     	boolean isTrial = studyType.equalsIgnoreCase("TRIAL");
     	StudySelection userSelection = getUserSelection(isTrial);
@@ -137,7 +137,7 @@ public class ObservationMatrixController extends
         return super.showAjaxPage(model, PAGINATION_TEMPLATE_VIEW_ONLY);
     }
 
-    private void copyDataFromFormToUserSelection(AddOrRemoveTraitsForm form, int previewPageNum, StudySelection userSelection){
+    private void copyDataFromFormToUserSelection(CreateNurseryForm form, int previewPageNum, StudySelection userSelection){
     	for(int i = 0 ; i < form.getPaginatedMeasurementRowList().size() ; i++){
     		MeasurementRow measurementRow = form.getPaginatedMeasurementRowList().get(i);
     		int realIndex = ((previewPageNum - 1) * form.getResultPerPage()) + i;
@@ -151,7 +151,7 @@ public class ObservationMatrixController extends
     	}
     }
 
-    private void copyTrialDataFromFormToUserSelection(AddOrRemoveTraitsForm form, StudySelection userSelection){
+    private void copyTrialDataFromFormToUserSelection(CreateNurseryForm form, StudySelection userSelection){
     	if (userSelection.getWorkbook().getTrialObservations() != null && !userSelection.getWorkbook().getTrialObservations().isEmpty()
     			&& form.getTrialEnvironmentValues() != null && !form.getTrialEnvironmentValues().isEmpty()) {
     		
@@ -174,7 +174,7 @@ public class ObservationMatrixController extends
 
     @ResponseBody
     @RequestMapping(value="/{studyType}/updateTraits", method = RequestMethod.POST)
-    public  Map<String, String> updateTraits(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form,          
+    public  Map<String, String> updateTraits(@ModelAttribute("createNurseryForm") CreateNurseryForm form,          
             @PathVariable String studyType, BindingResult result, Model model){
 
     	boolean isTrial = studyType.equalsIgnoreCase("TRIAL");

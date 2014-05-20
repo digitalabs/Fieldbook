@@ -2238,3 +2238,64 @@ function validateStartEndDateBasic(){
 	return true;
 	
 }
+
+function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
+	var selectedMethodAll = $("#methodIdAll").val();
+	var selectedMethodFavorite = $("#methodIdFavorite").val();
+
+	Spinner.toggle();
+	$.ajax(
+	     { url: "/Fieldbook/NurseryManager/advance/nursery/getBreedingMethods",
+	       type: "GET",
+	       cache: false,
+	       data: "",
+	       async: false,
+	       success: function(data) {
+	    	   if (data.success == "1") {
+	    		   if (selectedMethodAll != null) {
+		    		   //recreate the select2 combos to get updated list of methods    			   
+		    		   recreateMethodComboAfterClose("methodIdAll", $.parseJSON(data.allMethods));
+		    		   recreateMethodComboAfterClose("methodIdFavorite", $.parseJSON(data.favoriteMethods));
+		    		   showCorrectMethodCombo();
+		    		   //set previously selected value of method
+		    		   if ($("#showFavoriteMethod").prop("checked")) {
+		    			   setComboValues(methodSuggestionsFav_obj, selectedMethodFavorite, "methodIdFavorite");
+		    		   } else {
+		    			   setComboValues(methodSuggestions_obj, selectedMethodAll, "methodIdAll");
+		    		   }
+	    		   } else {
+	    			   var selectedVal = null;
+	    			   //get index of breeding method row
+	    			   var index = getBreedingMethodRowIndex();
+	    			   
+	    			   if ($("#" + getJquerySafeId(comboName)).select2("data")) {
+	    				   selectedVal = $("#" + getJquerySafeId(comboName)).select2("data").id;
+	    			   }
+	    			   //recreate select2 of breeding method
+	    			   initializePossibleValuesCombo([], 
+		 			 			"#" + getJquerySafeId(comboName), false, selectedVal);
+	    			   
+	    			   //update values of combo
+	    			   if ($("#" + getJquerySafeId(comboFaveCBoxName)).is(":checked")) {
+						   initializePossibleValuesCombo($.parseJSON(data.favoriteMethods), 
+			 			 			"#" + getJquerySafeId(comboName), false, selectedVal);
+	    			   } else {
+	    				   initializePossibleValuesCombo($.parseJSON(data.allMethods), 
+			 			 			"#" + getJquerySafeId(comboName), false, selectedVal);
+	    			   }
+	    			   
+	    			   replacePossibleJsonValues(data.favoriteMethods, data.allMethods, index);
+	    		   }
+	    	   } else {
+	    		   showErrorMessage("page-message", data.errorMessage);
+	    	   }
+	       },
+	       error: function(jqXHR, textStatus, errorThrown){
+				console.log("The following error occured: " + textStatus, errorThrown); 
+		   }, 
+		   complete: function(){
+			   Spinner.toggle();
+		   } 
+	     }
+	 );
+	}

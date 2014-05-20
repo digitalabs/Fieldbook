@@ -62,7 +62,7 @@ public class AdvancingNurseryForm {
     private String defaultMethodId;
        
     /** The breeding method id. */
-    private String breedingMethodId;
+    private String advanceBreedingMethodId;
     
     /** The field location id all. */
     private String methodIdAll;
@@ -313,8 +313,8 @@ public class AdvancingNurseryForm {
 	 *
 	 * @return the breeding method id
 	 */
-	public String getBreedingMethodId() {
-		return breedingMethodId;
+	public String getAdvanceBreedingMethodId() {
+		return advanceBreedingMethodId;
 	}
 
 	/**
@@ -322,8 +322,8 @@ public class AdvancingNurseryForm {
 	 *
 	 * @param breedingMethodId the new breeding method id
 	 */
-	public void setBreedingMethodId(String breedingMethodId) {
-		this.breedingMethodId = breedingMethodId;
+	public void setAdvanceBreedingMethodId(String breedingMethodId) {
+		this.advanceBreedingMethodId = breedingMethodId;
 	}
 
 	/**
@@ -830,7 +830,7 @@ public class AdvancingNurseryForm {
             builder.append(", defaultMethodId=");
             builder.append(defaultMethodId);
             builder.append(", breedingMethodId=");
-            builder.append(breedingMethodId);
+            builder.append(advanceBreedingMethodId);
             builder.append(", methodIdAll=");
             builder.append(methodIdAll);
             builder.append(", methodIdFavorite=");

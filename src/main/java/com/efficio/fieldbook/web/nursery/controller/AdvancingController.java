@@ -261,7 +261,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         advancingNursery.setNamingConvention(form.getNamingConvention());
         advancingNursery.setSuffixConvention(form.getSuffixConvention());
         advancingNursery.setMethodChoice(form.getMethodChoice());
-        advancingNursery.setBreedingMethodId(form.getBreedingMethodId());
+        advancingNursery.setBreedingMethodId(form.getAdvanceBreedingMethodId());
         advancingNursery.setLineChoice(form.getLineChoice());
         advancingNursery.setLineSelected(form.getLineSelected());
         advancingNursery.setHarvestDate(form.getHarvestDate());

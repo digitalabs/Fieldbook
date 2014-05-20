@@ -998,7 +998,7 @@ function initializeMethodSelect2(methodSuggestions, methodSuggestions_obj) {
         }
 
     }).on("change", function (){
-    	$('#'+getJquerySafeId("breedingMethodId")).val($('#'+getJquerySafeId("methodIdAll")).select2("data").id);
+    	$('#'+getJquerySafeId("advanceBreedingMethodId")).val($('#'+getJquerySafeId("methodIdAll")).select2("data").id);
     });
 	
 }
@@ -1027,7 +1027,7 @@ $('#'+getJquerySafeId('methodIdFavorite')).select2({
     }
 
 }).on("change", function (){
-	$('#'+getJquerySafeId("breedingMethodId")).val($('#'+getJquerySafeId("methodIdFavorite")).select2("data").id);
+	$('#'+getJquerySafeId("advanceBreedingMethodId")).val($('#'+getJquerySafeId("methodIdFavorite")).select2("data").id);
 });
 
 }
@@ -1336,6 +1336,7 @@ function getIEVersion() {
 function callAdvanceNursery() {
 	Spinner.toggle();
 	var serializedData = $("#advanceNurseryModalForm").serialize();
+	alert(serializedData);
  	$.ajax({ 
  		url: "/Fieldbook/NurseryManager/advance/nursery",
         type: "POST",

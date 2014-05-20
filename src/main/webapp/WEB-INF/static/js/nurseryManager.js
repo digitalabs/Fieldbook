@@ -7,6 +7,7 @@ function checkMethod(){
 			
 			//$('#methodSelected').val(oldMethodSelected);
 			setCorrectMethodValues(true);
+			$("#method-variates-section").hide();
 		}else{
 			//$('#methodSelected').prop('disabled', 'disabled');
 			if($('#namingConvention').val() != 3){
@@ -17,6 +18,7 @@ function checkMethod(){
 			oldMethodSelected = $('#'+getJquerySafeId("breedingMethodId")).val();
 			 $('#methodSelected').val($('#defaultMethodId').val());
 			 setCorrectMethodValues(false);
+				$("#method-variates-section").show();
 		} 	
 }
 function setCorrectMethodValues(isCheckMethod){
@@ -67,10 +69,12 @@ function lineMethod(){
 	if($('input[type=radio][name=lineChoice]:checked').val() == 1){
 			$('#lineSelected').prop('disabled', false);
 			$('#lineSelected').val(oldLineSelected);
+			$("#line-variates-section").hide();
 		}else{
 			$('#lineSelected').prop('disabled', 'disabled');
 			oldLineSelected = $('#lineSelected').val();
 			$('#lineSelected').val(1);
+			$("#line-variates-section").show();
 		} 
 }
 

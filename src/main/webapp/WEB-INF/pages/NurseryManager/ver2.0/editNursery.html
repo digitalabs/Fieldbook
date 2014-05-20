@@ -1,3 +1,7 @@
+<!-- Modal for Advancing Nursery -->
+<div class="row">
+	<div id="advance-nursery-modal-div"></div>
+</div>
 <div class="col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org">
 	<div class="page-header">
 		<h1>
@@ -5,6 +9,7 @@
 		</h1>
 	</div>			  
 </div>
+
 
 <div class="">
 	<div class="form-group">
@@ -145,6 +150,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 	<li id="nursery-germplasm-list-li" th:if="${createNurseryForm.measurementRowList.size() == 0}"><a href="javascript:showSelectedTab('nursery-germplasm-list');" th:text="#{nursery.create.nursery.germplasm.list.tab}">.Germplasm and Checks</a></li>			
 </ul>
 	
+	
 	<div id="create-nursery-tabs" style="padding-top: 15px;">
 		<div id="nursery-settings" class="info">
 			<div class="col-xs-12 col-md-12">
@@ -214,10 +220,6 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 	<div id="import-study" th:include="/NurseryManager/ver2.0/importStudy"></div>
 </div>
 
-<!-- Modal for Advancing Nursery -->
-<div class="row">
-	<div id="advance-nursery-modal-div"></div>
-</div>
 
 
 <div class="row">

@@ -221,6 +221,8 @@ public enum AppConstants {
     ,SPFLD_HAS_FIELDMAP
     ,SELECTION_VARIATES_PROPERTIES
     ,FIXED_NURSERY_VARIABLES
+    
+    ,START_YEAR
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

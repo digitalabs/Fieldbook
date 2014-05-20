@@ -358,6 +358,9 @@ table{
 #spinner-wrap img{
 	padding-top: 45px;
 }
+.modal-extra-large {
+    width: 950px;
+}
 .modal-large {
     width: 800px;
 }

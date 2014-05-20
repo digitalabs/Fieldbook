@@ -1,14 +1,18 @@
 function checkMethod(){
-	if($('input[type=radio][name=methodChoice]:checked').val() == 1){
+	if($('input[type=checkbox][name=methodChoice]:checked').val() == 1){
 			//$('#methodSelected').prop('disabled', false);
 			$('#methodIdFavorite').select2('enable', true);
 			$('#methodIdAll').select2('enable', true);
 			$('#showFavoriteMethod').prop('disabled', false);
 			
 			//$('#methodSelected').val(oldMethodSelected);
-			setCorrectMethodValues(true);
+			console.log("1");
 			$("#method-variates-section").hide();
+			setCorrectMethodValues(true);
+			
 		}else{
+			$("#method-variates-section").show();
+			console.log("2");
 			//$('#methodSelected').prop('disabled', 'disabled');
 			if($('#namingConvention').val() != 3){
 				$('#showFavoriteMethod').prop('disabled', 'disabled');
@@ -18,7 +22,7 @@ function checkMethod(){
 			oldMethodSelected = $('#'+getJquerySafeId("breedingMethodId")).val();
 			 $('#methodSelected').val($('#defaultMethodId').val());
 			 setCorrectMethodValues(false);
-				$("#method-variates-section").show();
+			
 		} 	
 }
 function setCorrectMethodValues(isCheckMethod){
@@ -66,7 +70,7 @@ function setCorrectMethodValues(isCheckMethod){
 	 }
 }
 function lineMethod(){
-	if($('input[type=radio][name=lineChoice]:checked').val() == 1){
+	if($('input[type=checkbox][name=lineChoice]:checked').val() == 1){
 			$('#lineSelected').prop('disabled', false);
 			$('#lineSelected').val(oldLineSelected);
 			$("#line-variates-section").hide();
@@ -147,7 +151,7 @@ function showCorrectMethodCombo() {
 	var isChecked = $('#showFavoriteMethod').is(':checked');
 	//if show favorite Method is checked, hide all field locations, else, show only favorite methods
 	var methodSelect = false;
-	if($('input[type=radio][name=methodChoice]:checked').val() == 1)
+	if($('input[type=checkbox][name=methodChoice]:checked').val() == 1)
 		methodSelect = true;
 	
 	if(isChecked){

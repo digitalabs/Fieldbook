@@ -11,6 +11,10 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +46,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.ChoiceKeyVal;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
@@ -136,8 +141,34 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	form.setMethodVariates(ontologyService.getStandardVariableReferencesByProperty(TermId.BREEDING_METHOD_PROP.getId()));
     	form.setLineVariates(ontologyService.getStandardVariableReferencesByProperty(TermId.PLANTS_SELECTED_PROP.getId()));
     	
+    	SimpleDateFormat sdf = new SimpleDateFormat("YYYY");
+    	SimpleDateFormat sdfMonth = new SimpleDateFormat("MM");
+    	String currentYear = sdf.format(new Date());
+    	form.setHarvestYear(currentYear);
+    	form.setHarvestMonth(sdfMonth.format(new Date()));
+    	
+    	model.addAttribute("yearChoices", generateYearChoices(Integer.parseInt(currentYear)));
+    	model.addAttribute("monthChoices", generateMonthChoices());
+    	
     	return super.showAjaxPage(model, MODAL_URL);
     }
+    private List<ChoiceKeyVal> generateYearChoices(int currentYear){
+    	List<ChoiceKeyVal> yearList = new ArrayList();
+    	int startYear = AppConstants.START_YEAR.getInt();
+    	for(int i = startYear ; i <= currentYear ; i++){
+    		yearList.add(new ChoiceKeyVal(Integer.toString(i), Integer.toString(i)));
+    	}
+    	return yearList;
+    }
+    private List<ChoiceKeyVal> generateMonthChoices(){
+    	List<ChoiceKeyVal> monthList = new ArrayList();
+    	DecimalFormat df2 = new DecimalFormat( "00" );
+    	for(double i = 1 ; i <= 12 ; i++){
+    		monthList.add(new ChoiceKeyVal(df2.format(i), df2.format(i)));
+    	}
+    	return monthList;
+    }
+    
     @ResponseBody
     @RequestMapping(value="/load/{nurseryId}", method = RequestMethod.GET)
     public Map<String, String> showLoadNursery(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form

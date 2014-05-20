@@ -34,6 +34,17 @@ public class SaveListForm {
 	
 	private String listIdentifier; //to be use for dynamic of advance list		
 	
+	private String parentId;
+	
+	
+	public String getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(String parentId) {
+		this.parentId = parentId;
+	}
+
 	public String getListIdentifier() {
 		return listIdentifier;
 	}

@@ -206,7 +206,10 @@ function createFieldMap(tableName){
 		}
 		//daniel
 		*/
-		ids.push(getCurrentStudyIdInTab());
+		if($("#createNurseryMainForm #studyId").length  == 1)
+			ids.push($("#createNurseryMainForm #studyId").val());
+		else
+			ids.push(getCurrentStudyIdInTab());
 		var idList = ids.join(",");
 		$('#page-message').html("");
 		
@@ -552,7 +555,10 @@ function createLabelPrinting(tableName){
 		}			
 	}
 	*/
-	idVal = getCurrentStudyIdInTab();
+	if($("#createNurseryMainForm #studyId").length  == 1)
+		idVal = ($("#createNurseryMainForm #studyId").val());
+	else
+		idVal = getCurrentStudyIdInTab();
 	count++; 
 	
 	if(count != 1){
@@ -880,6 +886,7 @@ function advanceNursery(tableName){
 			    success: function(html) {
 			    	$("#advance-nursery-modal-div").html(html);
 					$("#advanceNurseryModal").modal("show");
+					$('#advanceNurseryModal select').select2();
 		        },
 				error: function(jqXHR, textStatus, errorThrown){
 					console.log("The following error occured: " + textStatus , errorThrown);

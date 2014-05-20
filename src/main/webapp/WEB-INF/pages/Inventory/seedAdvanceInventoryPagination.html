@@ -1,4 +1,4 @@
-<div class="col-xs-12 col-md-12">   
+<div class="col-xs-12 col-md-12 advance-nursery-list-table">   
 <form onsubmit="return do_germplasm_check();" id="germplasm-list-form" role="form-horizontal" class="form-horizontal" action="#"
   th:action="@{/SeedStoreManager/next}" method="post" th:object="${seedStoreForm}" enctype="multipart/form-data">
      
@@ -29,9 +29,14 @@
              <tr class="primaryRow" th:each="gid, row : *{paginatedInventoryList}" th:attr="data-gid=${gid.gid}">
             
                <td  style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryId}">.1</td> 
-               <td  style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.germplasmName}">.1</td>
+               <td  style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" >
+				<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${gid.germplasmName}" th:attr="data-gid=${gid.gid}" th:attrappend="data-desig=${gid.germplasmName}">.2</a>      
+				</td>
                <td style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.parentage}">.2</td>
-               <td style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.gid}">.2</td>
+               <td style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" >
+               	<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${gid.gid}" th:attr="data-gid=${gid.gid}" th:attrappend="data-desig=${gid.germplasmName}">.3</a>
+               
+               </td>
                <td style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.source}">.2</td>
                <td style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.locationName}">.2</td>
                <td style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.amount}">.4</td>

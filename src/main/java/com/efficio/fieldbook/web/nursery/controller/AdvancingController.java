@@ -264,15 +264,19 @@ public class AdvancingController extends AbstractBaseFieldbookController{
             , BindingResult result, Model model) throws MiddlewareQueryException{
         
         advancingNursery.setNamingConvention(form.getNamingConvention());
-        advancingNursery.setSuffixConvention(form.getSuffixConvention());
+        advancingNursery.setSuffixConvention(form.getSuffixConvention() != null ? form.getSuffixConvention() : "");
         advancingNursery.setMethodChoice(form.getMethodChoice());
         advancingNursery.setBreedingMethodId(form.getAdvanceBreedingMethodId());
         advancingNursery.setLineChoice(form.getLineChoice());
         advancingNursery.setLineSelected(form.getLineSelected());
         advancingNursery.setHarvestDate(form.getHarvestDate());
         advancingNursery.setHarvestLocationId(form.getHarvestLocationId());
-        advancingNursery.setHarvestLocationAbbreviation(form.getHarvestLocationAbbreviation());
+        advancingNursery.setHarvestLocationAbbreviation(form.getHarvestLocationAbbreviation() != null ? form.getHarvestLocationAbbreviation() : "");
         advancingNursery.setPutBrackets(form.getPutBrackets());
+        advancingNursery.setAllPlotsChoice(form.getAllPlotsChoice());
+        advancingNursery.setLineVariateId(form.getLineVariateId());
+        advancingNursery.setPlotVariateId(form.getPlotVariateId());
+        advancingNursery.setMethodVariateId(form.getMethodVariateId());
         return "redirect:" + SaveAdvanceNurseryController.URL;
     }
     

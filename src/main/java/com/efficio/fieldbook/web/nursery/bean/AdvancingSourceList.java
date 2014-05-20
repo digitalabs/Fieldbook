@@ -17,7 +17,6 @@ import java.util.Map;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.dms.Study;
-import org.generationcp.middleware.domain.dms.Variable;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -41,6 +40,11 @@ public class AdvancingSourceList{
     String nurseryName;
     
     public AdvancingSourceList(Workbook workbook, AdvancingNursery advanceInfo, Study nursery) {
+    	
+    	Integer methodVariateId = advanceInfo.getMethodVariateId();
+    	Integer lineVariateId = advanceInfo.getLineVariateId();
+    	Integer plotVariateId = advanceInfo.getPlotVariateId();
+    	
         if (advanceInfo != null) {
             this.suffix = advanceInfo.getSuffixConvention();
             this.selectedMethodId = getIntegerValue(advanceInfo.getBreedingMethodId());
@@ -50,14 +54,14 @@ public class AdvancingSourceList{
 
         if (workbook != null) {
             Integer breedingMethodId = null;
-            if (workbook.getStudyConditions() != null && !workbook.getStudyConditions().isEmpty()) {
+            /*if (workbook.getStudyConditions() != null && !workbook.getStudyConditions().isEmpty()) {
                 for (MeasurementVariable studyCondition : workbook.getStudyConditions()) {
                     if (studyCondition.getTermId() == TermId.BREEDING_METHOD_ID.getId() && NumberUtils.isNumber(studyCondition.getValue())) {
                         breedingMethodId = Integer.valueOf(studyCondition.getValue());
                         break;
                     }
                 }
-            }
+            }*/
             this.nurseryBreedingMethodId = breedingMethodId;
             
             if (workbook.getObservations() != null && !workbook.getObservations().isEmpty()) {
@@ -79,23 +83,35 @@ public class AdvancingSourceList{
                     String check = row.getMeasurementDataValue(
                             getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), TermId.CHECK.getId()));
                     boolean isCheck = check != null && !"".equals(check);
-                    Integer plantsSelected = getIntegerValue(row.getMeasurementDataValue(
-                            getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), TermId.PLANTS_SELECTED.getId())));
                     Integer methodId = getIntegerValue(row.getMeasurementDataValue(
-                                getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), TermId.BREEDING_METHOD_ID.getId())));
+                            getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), methodVariateId)));
+                    Integer plantsSelected = null; 
+                    if (isBulk(methodId)) {
+                        plantsSelected = getIntegerValue(row.getMeasurementDataValue(
+                                getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), plotVariateId)));
+                    }
+                    else {
+                        plantsSelected = getIntegerValue(row.getMeasurementDataValue(
+                                getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), lineVariateId)));
+                    }
                     this.rows.add(new AdvancingSource(germplasm, plantsSelected, methodId, isCheck));
                 }
             }
         }
         if (nursery != null) {
-            if (nursery.getConditions() != null && nursery.getConditions().size() > 0) {
+            /*if (nursery.getConditions() != null && nursery.getConditions().size() > 0) {
                 Variable breedingMethod = nursery.getConditions().findById(TermId.BREEDING_METHOD_ID.getId());
                 if (breedingMethod != null && breedingMethod.getValue() != null && NumberUtils.isNumber(breedingMethod.getValue())) {
                     this.nurseryBreedingMethodId = Integer.valueOf(breedingMethod.getValue());
                 }
-            }
+            }*/
             this.nurseryName = nursery.getName();
         }
+    }
+    
+    private boolean isBulk(int methodId) {
+    	//TODO: apply logic for determining bulk or non-bulk
+    	return false;
     }
     
     private Integer getIntegerValue(String value) {

@@ -55,6 +55,14 @@ public class AdvancingNursery implements Serializable {
     
     private String putBrackets;
     
+    private String allPlotsChoice;
+    
+    private Integer lineVariateId;
+    
+    private Integer methodVariateId;
+    
+    private Integer plotVariateId;
+    
     public Study getStudy() {
         return study;
     }
@@ -229,6 +237,20 @@ public class AdvancingNursery implements Serializable {
 	}
 
 	/**
+	 * @return the allPlotsChoice
+	 */
+	public String getAllPlotsChoice() {
+		return allPlotsChoice;
+	}
+
+	/**
+	 * @param allPlotsChoice the allPlotsChoice to set
+	 */
+	public void setAllPlotsChoice(String allPlotsChoice) {
+		this.allPlotsChoice = allPlotsChoice;
+	}
+
+	/**
      * Sets the line selected.
      *
      * @param lineSelected the new line selected
@@ -237,7 +259,49 @@ public class AdvancingNursery implements Serializable {
             this.lineSelected = lineSelected;
     }
     
-    @Override
+    /**
+	 * @return the lineVariateId
+	 */
+	public Integer getLineVariateId() {
+		return lineVariateId;
+	}
+
+	/**
+	 * @param lineVariateId the lineVariateId to set
+	 */
+	public void setLineVariateId(Integer lineVariateId) {
+		this.lineVariateId = lineVariateId;
+	}
+
+	/**
+	 * @return the methodVariateId
+	 */
+	public Integer getMethodVariateId() {
+		return methodVariateId;
+	}
+
+	/**
+	 * @param methodVariateId the methodVariateId to set
+	 */
+	public void setMethodVariateId(Integer methodVariateId) {
+		this.methodVariateId = methodVariateId;
+	}
+
+	/**
+	 * @return the plotVariateId
+	 */
+	public Integer getPlotVariateId() {
+		return plotVariateId;
+	}
+
+	/**
+	 * @param plotVariateId the plotVariateId to set
+	 */
+	public void setPlotVariateId(Integer plotVariateId) {
+		this.plotVariateId = plotVariateId;
+	}
+
+	@Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("AdvancingNursery [study=");

@@ -50,13 +50,20 @@ public class SeedStoreForm {
     
     /** The gid list. */
     private String gidList;
-    
-    private boolean doPagination = true;
+    private String listId;
     private int totalNumberOfGermplasms;
     
+     
     
-    
-    public int getTotalNumberOfGermplasms() {
+    public String getListId() {
+		return listId;
+	}
+
+	public void setListId(String listId) {
+		this.listId = listId;
+	}
+
+	public int getTotalNumberOfGermplasms() {
     	if(inventoryList != null)
     		return inventoryList.size();
     	return 0;
@@ -114,9 +121,6 @@ public class SeedStoreForm {
      */
     public void setCurrentPage(int currentPage) {
         
-    	if(doPagination == false){
-    		this.paginatedInventoryList = inventoryList;
-    	}else{
 	        //assumption is there are nursery list already
 	        if(inventoryList != null && !inventoryList.isEmpty()){
 	            int totalItemsPerPage = getResultPerPage();
@@ -130,7 +134,7 @@ public class SeedStoreForm {
 	        }else{
 	            this.currentPage = 0;
 	        }
-    	}
+    	
     }
     
     /**
@@ -251,12 +255,4 @@ public class SeedStoreForm {
         this.gidList = gidList;
     }
 
-	public boolean isDoPagination() {
-		return doPagination;
-	}
-
-	public void setDoPagination(boolean doPagination) {
-		this.doPagination = doPagination;
-	}
-    
 }

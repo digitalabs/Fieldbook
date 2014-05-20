@@ -168,6 +168,11 @@
 		scope="session">
 		<aop:scoped-proxy />
 	</bean>
+	
+	<bean id="paginationListSelection" class="com.efficio.fieldbook.web.common.bean.PaginationListSelection"
+		scope="session">
+		<aop:scoped-proxy />
+	</bean>
 	<!-- **************************************************************** -->
 	<!-- RESTful Web Service -->
 	<!-- **************************************************************** -->

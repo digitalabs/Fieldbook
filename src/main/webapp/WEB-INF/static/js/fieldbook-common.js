@@ -118,6 +118,41 @@ function showPage(paginationUrl, pageNum, sectionDiv){
        );
 }
 
+function showMultiTabPage(paginationUrl, pageNum, sectionDiv, sectionContainerId, paginationListIdentifier){
+	//$('#imported-germplasm-list').html(pageNum); 	
+	Spinner.toggle();
+ 	$.ajax(
+         { url: paginationUrl+pageNum+"?listIdentifier="+paginationListIdentifier,
+           type: "GET",
+           data: "",
+           cache: false,
+           //async: false,
+           success: function(html) {
+        	   var paginationDiv = "#"+sectionContainerId + " #" + sectionDiv;        	   
+        	   $(paginationDiv).empty().append(html);    
+        	   
+        	   if(sectionDiv == 'inventory-germplasm-list'){
+              	 //we highlight the previously clicked
+        		   var listDivIdentifier  = $('#create-nursery-tab-headers li.active button').attr('id');
+               	   var sectionContainerDiv = 'advance-list'+listDivIdentifier;
+               	
+        		   var selectedGidArray = selectedGidsForAdvance[getCurrentAdvanceTabListIdentifier()];
+        		   for(var index in selectedGidArray) {
+           			//console.log( index + " : " + selectedTableIds[index]);
+           			var idVal = selectedGidArray[index];
+           			if(idVal != null){
+           				//we need to highlight
+           				$('#'+sectionContainerDiv+' tr.primaryRow[data-gid='+idVal+']').addClass('field-map-highlight');
+           			}			
+           		 }
+               }
+               
+        	   Spinner.toggle();  
+           }
+         }
+       );
+}
+
 function showPostPage(paginationUrl,previewPageNum, pageNum, sectionDiv, formName){
 	//$('#imported-germplasm-list').html(pageNum);
 	var $form;

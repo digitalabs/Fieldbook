@@ -24,6 +24,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.ui.Model;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
+import com.efficio.fieldbook.web.inventory.bean.SeedSelection;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExternalToolInfo;
 import com.efficio.fieldbook.web.util.GitRepositoryState;
@@ -68,6 +70,9 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
     private static final Logger LOG = LoggerFactory.getLogger(AbstractBaseFieldbookController.class);
 
     private static Tool oldFbTool = null;
+    
+    @Resource
+    private PaginationListSelection paginationListSelection;
     /**
      * Gets the content name.
      *
@@ -216,4 +221,15 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
         }
         return "[]";
     }
+
+	public PaginationListSelection getPaginationListSelection() {
+		return paginationListSelection;
+	}
+
+	public void setPaginationListSelection(
+			PaginationListSelection paginationListSelection) {
+		this.paginationListSelection = paginationListSelection;
+	}
+    
+    
 }

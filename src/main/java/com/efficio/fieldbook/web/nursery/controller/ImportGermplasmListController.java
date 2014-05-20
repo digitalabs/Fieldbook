@@ -266,31 +266,33 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     public String nextScreen(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form
             , BindingResult result, Model model) throws MiddlewareQueryException {
     	
-    	form.setImportedGermplasmMainInfo(getUserSelection().getImportedGermplasmMainInfo());
-    	form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
-    	form.setImportedCheckGermplasmMainInfo(getUserSelection().getImportedCheckGermplasmMainInfo());
-    	if (getUserSelection().getImportedCheckGermplasmMainInfo() != null) {
-    		form.setImportedCheckGermplasm(getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
-    	}
-        
-    	//merge primary and check germplasm list
-    	if (getUserSelection().getImportedCheckGermplasmMainInfo() != null && form.getImportedCheckGermplasm() != null && form.getStartIndex() != null
-    			&& form.getInterval() != null && form.getMannerOfInsertion() != null) {
-	    	getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().setImportedGermplasms(mergeCheckService.mergeGermplasmList(form.getImportedGermplasm(), 
-	    	        form.getImportedCheckGermplasm(), Integer.parseInt(form.getStartIndex()), Integer.parseInt(form.getInterval()), Integer.parseInt(form.getMannerOfInsertion())));
-	    	form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
-    	}
-    	
-    	//this would validate and add CHECK factor if necessary
-        importGermplasmFileService.validataAndAddCheckFactor(form.getImportedGermplasm(), getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(), userSelection);
-
-    	userSelection.setMeasurementRowList(measurementsGeneratorService.generateRealMeasurementRows(userSelection));
-    	userSelection.getWorkbook().setObservations(userSelection.getMeasurementRowList());
+        if (getUserSelection().getImportedGermplasmMainInfo() != null) {
+        	form.setImportedGermplasmMainInfo(getUserSelection().getImportedGermplasmMainInfo());
+        	form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+        	form.setImportedCheckGermplasmMainInfo(getUserSelection().getImportedCheckGermplasmMainInfo());
+        	if (getUserSelection().getImportedCheckGermplasmMainInfo() != null) {
+        		form.setImportedCheckGermplasm(getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+        	}
+            
+        	//merge primary and check germplasm list
+        	if (getUserSelection().getImportedCheckGermplasmMainInfo() != null && form.getImportedCheckGermplasm() != null && form.getStartIndex() != null
+        			&& form.getInterval() != null && form.getMannerOfInsertion() != null) {
+    	    	getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().setImportedGermplasms(mergeCheckService.mergeGermplasmList(form.getImportedGermplasm(), 
+    	    	        form.getImportedCheckGermplasm(), Integer.parseInt(form.getStartIndex()), Integer.parseInt(form.getInterval()), Integer.parseInt(form.getMannerOfInsertion())));
+    	    	form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
+        	}
+        	
+        	//this would validate and add CHECK factor if necessary
+            importGermplasmFileService.validataAndAddCheckFactor(form.getImportedGermplasm(), getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(), userSelection);
+            
+            userSelection.setMeasurementRowList(measurementsGeneratorService.generateRealMeasurementRows(userSelection));
+            userSelection.getWorkbook().setObservations(userSelection.getMeasurementRowList());
+        }
 
     	//validationService.validateObservationValues(userSelection.getWorkbook());
         dataImportService.saveDataset(userSelection.getWorkbook(), true);
 		
-		return "success";
+	return "success";
     }
 
     /**

@@ -14,11 +14,12 @@
 		<div style="float:right;">
 			<div class="btn-group">	
 				<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
-					<span th:text="#{nursery.nurserydetails.actions}">Actions</span>
+					<span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;<span th:text="#{nursery.nurserydetails.actions}">Actions</span>
+					
 				</button>
 				<ul class="dropdown-menu" role="menu">
 					<li>
-						<a href="" style="display: none" id="open-study-url" th:href="@{/NurseryManager/addOrRemoveTraits/viewNursery}"></a>
+						<a href="" style="display: none" id="open-study-url" th:href="@{/NurseryManager/editNursery/viewNursery}"></a>
 						<a href="javascript: openStudy('nursery-table');" id="open-study-url-link" th:text="#{nursery.nurserydetails.action.edit}">Edit Nursery</a> 
 					</li>
 					<li>

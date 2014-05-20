@@ -30,7 +30,6 @@ import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.pojos.workbench.TemplateSetting;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
@@ -47,7 +46,6 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.nursery.form.ManageSettingsForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
@@ -56,14 +54,14 @@ import com.efficio.fieldbook.web.util.TreeViewUtil;
  * The Class CreateNurseryController.
  */
 @Controller
-@RequestMapping(CreateNurseryController.URL)
-public class CreateNurseryController extends SettingsController {
+@RequestMapping(EditNurseryController.URL)
+public class EditNurseryController extends SettingsController {
 	
     /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(CreateNurseryController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EditNurseryController.class);
 
     /** The Constant URL. */
-    public static final String URL = "/NurseryManager/createNursery";
+    public static final String URL = "/NurseryManager/editNursery";
     
     /** The Constant URL_SETTINGS. */
     public static final String URL_SETTINGS = "/NurseryManager/ver2.0/chooseSettings";
@@ -77,7 +75,7 @@ public class CreateNurseryController extends SettingsController {
      */
     @Override
     public String getContentName() {
-	return "NurseryManager/ver2.0/createNursery";
+	return "NurseryManager/ver2.0/editNursery";
     }
 
     /**
@@ -90,10 +88,11 @@ public class CreateNurseryController extends SettingsController {
      * @return the string
      * @throws MiddlewareQueryException the middleware query exception
      */
-    @RequestMapping(value="/nursery/{nurseryId}", method = RequestMethod.GET)
+    @RequestMapping(value="/viewNursery/{nurseryId}", method = RequestMethod.GET)
     public String useExistingNursery(@ModelAttribute("createNurseryForm") CreateNurseryForm form, @PathVariable int nurseryId
             , Model model, HttpSession session) throws MiddlewareQueryException{
         if(nurseryId != 0){     
+            //settings part
             Workbook workbook = fieldbookMiddlewareService.getStudyVariableSettings(nurseryId, true);
             
             Dataset dataset = (Dataset)SettingsUtil.convertWorkbookToXmlDataset(workbook);
@@ -104,6 +103,8 @@ public class CreateNurseryController extends SettingsController {
                     buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true), 
                     buildRequiredVariablesFlag(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
                     userSelection.getStudyLevelConditions(), true);
+            List<SettingDetail> basicDetails = getBasicDetails(nurseryLevelConditions);
+            
             removeBasicDetailsVariables(nurseryLevelConditions);
             
             //plot-level
@@ -112,9 +113,11 @@ public class CreateNurseryController extends SettingsController {
                     buildRequiredVariablesFlag(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()), 
                     userSelection.getPlotsLevelList(), false);
             
+            userSelection.setBasicDetails(basicDetails);
             userSelection.setStudyLevelConditions(nurseryLevelConditions);
             userSelection.setPlotsLevelList(plotLevelConditions);
             
+            form.setBasicDetails(userSelection.getBasicDetails());
             form.setStudyLevelVariables(userSelection.getStudyLevelConditions());
             form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
             form.setSelectionVariatesVariables(userSelection.getSelectionVariates());
@@ -125,13 +128,36 @@ public class CreateNurseryController extends SettingsController {
             form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + "," + AppConstants.FIXED_NURSERY_VARIABLES.getString());
             form.setProjectId(this.getCurrentProjectId());
             form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
+            
+            //measurements part
+            workbook = fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
+            
+            if (workbook != null) {
+                userSelection.setMeasurementRowList(workbook.getObservations());
+                form.setMeasurementRowList(userSelection.getMeasurementRowList());
+                form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());
+                form.setStudyName(workbook.getStudyDetails().getStudyName());
+                form.changePage(1);
+                userSelection.setCurrentPage(form.getCurrentPage());
+                userSelection.setWorkbook(workbook);
+            }
         }
         setFormStaticData(form);
         model.addAttribute("createNurseryForm", form);
         model.addAttribute("settingsList", getNurserySettingsList());
         model.addAttribute("nurseryList", getNurseryList());
         //setupFormData(form);
-        return super.showAjaxPage(model, URL_SETTINGS);
+        return super.show(model);
+    }
+    
+    private List<SettingDetail> getBasicDetails(List<SettingDetail> nurseryLevelConditions) {
+        List<SettingDetail> basicDetails = new ArrayList<SettingDetail>();
+        for (SettingDetail setting : nurseryLevelConditions) {
+            if (inFixedNurseryList(setting.getVariable().getCvTermId())) {
+                basicDetails.add(setting);
+            }
+        }
+        return basicDetails;
     }
     
     private void removeBasicDetailsVariables(List<SettingDetail> nurseryLevelConditions) {
@@ -199,45 +225,7 @@ public class CreateNurseryController extends SettingsController {
         this.userSelection.setPlotsLevelList(plotDefaults);
         this.userSelection.setBaselineTraitsList(baselineTraitsList);
         this.userSelection.setNurseryConditions(nurseryConditions);
-    }
-    
-    /**
-     * View settings.
-     *
-     * @param form the form
-     * @param templateSettingId the template setting id
-     * @param model the model
-     * @param session the session
-     * @return the string
-     * @throws MiddlewareQueryException the middleware query exception
-     */
-    @RequestMapping(value="/view/{templateSettingId}", method = RequestMethod.POST)
-    public String viewSettings(@ModelAttribute("createNurseryForm") CreateNurseryForm form, @PathVariable int templateSettingId, 
-    	Model model, HttpSession session) throws MiddlewareQueryException{
-    	
-    	if(templateSettingId != 0){    	
-	    	TemplateSetting templateSettingFilter = new TemplateSetting(Integer.valueOf(templateSettingId), Integer.valueOf(getCurrentProjectId()), null, getNurseryTool(), null, null);
-	    	templateSettingFilter.setIsDefaultToNull();
-	    	List<TemplateSetting> templateSettings = workbenchService.getTemplateSettings(templateSettingFilter);
-	    	TemplateSetting templateSetting = templateSettings.get(0); //always 1
-	    	Dataset dataset = SettingsUtil.parseXmlToDatasetPojo(templateSetting.getConfiguration());
-	    	SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
-	    	form.setStudyLevelVariables(userSelection.getStudyLevelConditions());
-	    	form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
-	    	form.setPlotLevelVariables(userSelection.getPlotsLevelList());
-//	    	form.setIsDefault(templateSetting.getIsDefault().intValue() == 1 ? true : false);
-//	    	form.setSettingName(templateSetting.getName());
-	    	form.setSelectedSettingId(templateSetting.getTemplateSettingId());
-	    	form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + "," + AppConstants.FIXED_NURSERY_VARIABLES.getString());
-//    	}else{
-//    		assignDefaultValues(form);
-    	}
-//    	model.addAttribute("createNurseryForm", form);
-//    	model.addAttribute("settingsList", getSettingsList());
-    	form.setLoadSettings("1");
-    	setFormStaticData(form);
-        return super.showAjaxPage(model, URL_SETTINGS );
-    }
+    }    
 
     /**
      * Submit.

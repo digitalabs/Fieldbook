@@ -1144,7 +1144,7 @@ function validateTrialInstance(){
 function doExportContinue(paramUrl, isNursery){
 
 	
-	var currentPage = $('.pagination .active a').html();
+	var currentPage = $('#measurement-data-list-pagination .pagination .active a').html();
 	
 	var formname;
 	if (isNursery) {

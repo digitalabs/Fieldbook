@@ -2,7 +2,7 @@
 	th:action="@{/NurseryManager/addOrRemoveTraits}" method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data" -->
 	
 <form id="addVariableForm" role="form-horizontal" onsubmit="return validateCells();" class="form-horizontal" action="#" 
-	method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data">
+	method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
 
 	<input type="hidden" th:field="*{importVal}"/>
 	<input type="hidden" th:field="*{numberOfInstances}" />

@@ -69,7 +69,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 					</div>
 					<div class="row form-group col-xs-6 col-md-6">					
 						<label class="non-maize-control">
-							<input id="showAdvanceFavoriteMethod" value="1" type="checkbox"/> <span th:text="#{show.favorite.method}">Show Favorite Method</span>
+							<input id="showFavoriteMethod" value="1" type="checkbox"/> <span th:text="#{show.favorite.method}">Show Favorite Method</span>
 							&nbsp;&nbsp;
 							<a class="form-group" href="javascript: openManageMethods()" th:text="#{advancing.nursery.manage.method}">Manage Methods</a>	
 						</label>
@@ -142,19 +142,19 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 					  		<a href="javascript: openManageLocations()" th:text="#{advancing.nursery.manage.location}">Manage Locations</a>	
 						</label>
 				    </div>
-					<div class="row form-group col-xs-12 col-md-12">
-						<div class="row form-group col-xs-6 col-md-6">
-							<label for="harvestDate" class="control-label"  th:text="#{advancing.nursery.harvest.date}">Harvest Date</label><span class="required"></span>
-						</div>	
-						<div class="row col-xs-12 col-md-12 form-group">
-						   	<div class="col-xs-1 col-md-1 input-group date" id="dp3" data-date="" data-date-format="yyyymmdd">
-							     <input th:field="*{harvestDate}" class="form-control" type="text"  style="width: 100px"  />
-								 <label for="harvestDate" class="input-group-addon btn datepicker"><i class="glyphicon glyphicon-calendar"></i></label>
-							</div>
+					
+				</div>							
+				<div class="row form-group col-xs-12 col-md-12">
+					<div class="row form-group col-xs-6 col-md-6">
+						<label for="harvestDate" class="control-label"  th:text="#{advancing.nursery.harvest.date}">Harvest Date</label><span class="required"></span>
+					</div>	
+					<div class="row col-xs-12 col-md-12 form-group">
+					   	<div class="col-xs-1 col-md-1 input-group date" id="dp3" data-date="" data-date-format="yyyymmdd">
+						     <input th:field="*{harvestDate}" class="form-control" type="text"  style="width: 100px"  />
+							 <label for="harvestDate" class="input-group-addon btn datepicker"><i class="glyphicon glyphicon-calendar"></i></label>
 						</div>
 					</div>
-				</div>							
-
+				</div>
 
 			</div> <!-- Modal Body -->
 			
@@ -171,12 +171,6 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 </form>
 </div>
 
-<div class="row">
-	<div id="manage-method" th:include="/Common/manageMethodsModal"></div>
-</div>
-<div class="row">
-	<div id="manage-location" th:include="/Common/manageLocationsModal"></div>
-</div>
 
 
 <div layout:fragment="page-script">
@@ -210,7 +204,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
     var msgEmptyListError = /*[[#{nursery.advance.nursery.empty.list.error}]]*/;
     
 		 $(function() {
-			loadNurseryDetails();
+			//loadNurseryDetails();
 			var harvestDate =  $('#harvestDate').datepicker({'format': 'yyyymmdd'}).on('changeDate', function(ev) {
 				$(this).datepicker('hide');
 			})
@@ -225,7 +219,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 			initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFav_obj);
 			*/
 			recreateLocationCombo();
-			recreateModalMethodCombo("advanceBreedingMethodId", "showAdvanceFavoriteMethod");
+ 			recreateModalMethodCombo("advanceBreedingMethodId", "showAdvanceFavoriteMethod");
 			
 			$('#s2id_harvestLocationIdFavorite').hide();
 			$('#s2id_harvestLocationIdAll').show();

@@ -91,6 +91,7 @@ public class EditNurseryController extends SettingsController {
     @RequestMapping(value="/viewNursery/{nurseryId}", method = RequestMethod.GET)
     public String useExistingNursery(@ModelAttribute("createNurseryForm") CreateNurseryForm form, @PathVariable int nurseryId
             , Model model, HttpSession session) throws MiddlewareQueryException{
+        session.invalidate();
         if(nurseryId != 0){     
             //settings part
             Workbook workbook = fieldbookMiddlewareService.getStudyVariableSettings(nurseryId, true);

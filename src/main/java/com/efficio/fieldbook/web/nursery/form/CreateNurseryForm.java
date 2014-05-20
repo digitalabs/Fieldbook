@@ -711,6 +711,11 @@ public class CreateNurseryForm {
          * @return the totalPages
          */
         public int getTotalPages() {
+            if(measurementRowList != null && !measurementRowList.isEmpty()){           
+                totalPages = (int) Math.ceil((measurementRowList.size() * 1f) / getResultPerPage()); 
+            }else{
+                totalPages = 0;
+            }
             return totalPages;
         }
 

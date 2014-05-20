@@ -23,6 +23,7 @@ import javax.servlet.http.HttpSession;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
@@ -125,6 +126,7 @@ public class CreateNurseryController extends SettingsController {
             form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + "," + AppConstants.FIXED_NURSERY_VARIABLES.getString());
             form.setProjectId(this.getCurrentProjectId());
             form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
+            form.setMeasurementRowList(new ArrayList<MeasurementRow>());
         }
         setFormStaticData(form);
         model.addAttribute("createNurseryForm", form);
@@ -171,6 +173,7 @@ public class CreateNurseryController extends SettingsController {
     	form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
     	setFormStaticData(form);
     	assignDefaultValues(form);
+    	form.setMeasurementRowList(new ArrayList<MeasurementRow>());
     	return super.show(model);
     }
     

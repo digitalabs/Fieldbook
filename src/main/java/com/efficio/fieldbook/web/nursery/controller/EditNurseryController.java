@@ -88,9 +88,9 @@ public class EditNurseryController extends SettingsController {
      * @return the string
      * @throws MiddlewareQueryException the middleware query exception
      */
-    @RequestMapping(value="/viewNursery/{nurseryId}", method = RequestMethod.GET)
-    public String useExistingNursery(@ModelAttribute("createNurseryForm") CreateNurseryForm form, @PathVariable int nurseryId
-            , Model model, HttpSession session) throws MiddlewareQueryException{
+    @RequestMapping(value="/{nurseryId}", method = RequestMethod.GET)
+    public String useExistingNursery(@ModelAttribute("createNurseryForm") CreateNurseryForm form, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2, 
+            @PathVariable int nurseryId, Model model, HttpSession session) throws MiddlewareQueryException{
         session.invalidate();
         if(nurseryId != 0){     
             //settings part
@@ -122,7 +122,7 @@ public class EditNurseryController extends SettingsController {
             form.setStudyLevelVariables(userSelection.getStudyLevelConditions());
             form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
             form.setSelectionVariatesVariables(userSelection.getSelectionVariates());
-            form.setPlotLevelVariables(userSelection.getPlotsLevelList());
+            
             form.setNurseryConditions(userSelection.getNurseryConditions());
             //form.setSelectedSettingId(1);
             form.setLoadSettings("1");
@@ -142,6 +142,14 @@ public class EditNurseryController extends SettingsController {
                 userSelection.setCurrentPage(form.getCurrentPage());
                 userSelection.setWorkbook(workbook);
             }
+            
+            if (userSelection.getMeasurementRowList() != null && userSelection.getMeasurementRowList().size() > 0) {
+                for (SettingDetail setting : userSelection.getPlotsLevelList()) {
+                    setting.setDeletable(false);
+                }
+            }
+            
+            form.setPlotLevelVariables(userSelection.getPlotsLevelList());
         }
         setFormStaticData(form);
         model.addAttribute("createNurseryForm", form);

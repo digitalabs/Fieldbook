@@ -146,13 +146,13 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 </ul>
 	
 	<div id="create-nursery-tabs" style="padding-top: 15px;">
-		<div id="nursery-settings">
+		<div id="nursery-settings" class="info">
 			<div class="col-xs-12 col-md-12">
 				<div id="chooseSettingsDiv" th:include="/NurseryManager/ver2.0/chooseSettings">
 				</div>
 			</div>
 		</div>
-		<div id="nursery-measurements" style="display:none;">
+		<div id="nursery-measurements" class="info" style="display:none;">
 			<div class="col-xs-12 col-md-12">
 				<div id="measurementsDiv" th:include="/NurseryManager/addOrRemoveTraits">
 				</div>

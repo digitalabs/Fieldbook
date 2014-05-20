@@ -1392,3 +1392,17 @@ function closeAdvanceListTab(uniqueId){
 	}, 100);
 	
 }
+
+function displayAdvanceList(uniqueId, germplasmListId){
+	Spinner.toggle();
+	
+ 	$.ajax({  		
+ 		url: "/Fieldbook/SeedStoreManager/advance/displayGermplasmDetails/"+germplasmListId,
+        type: "GET",       
+        cache: false,
+        success: function(html) {
+       	 	$('#advance-list'+uniqueId).html(html);
+        	Spinner.toggle();
+        }
+	});
+}

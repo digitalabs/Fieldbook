@@ -23,12 +23,14 @@ public class AdvancingSource {
     private Integer breedingMethodId;
     private boolean isCheck;
     private String methodType;
+    private boolean isBulk;
 
-    public AdvancingSource(ImportedGermplasm germplasm, Integer plantsSelected, Integer breedingMethodId, boolean isCheck) {
+    public AdvancingSource(ImportedGermplasm germplasm, Integer plantsSelected, Integer breedingMethodId, boolean isCheck, boolean isBulk) {
         this.germplasm = germplasm;
         this.plantsSelected = plantsSelected;
         this.breedingMethodId = breedingMethodId;
         this.isCheck = isCheck;
+        this.isBulk = isBulk;
     }
     
     /**
@@ -100,6 +102,20 @@ public class AdvancingSource {
     public void setMethodType(String methodType) {
         this.methodType = methodType;
     }
+
+	/**
+	 * @return the isBulk
+	 */
+	public boolean isBulk() {
+		return isBulk;
+	}
+
+	/**
+	 * @param isBulk the isBulk to set
+	 */
+	public void setBulk(boolean isBulk) {
+		this.isBulk = isBulk;
+	}
     
     
 }

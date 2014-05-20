@@ -78,7 +78,7 @@ implements CimmytWheatConventionService {
                             AppConstants.SELECTED_BULK_SF.getInt(), index++, rows.getNurseryName(), breedingMethodMap);
                 }
                 else {
-                    if (rows.isBulk()) {
+                    if (row.isBulk()) {
                         newGermplasmName = origGermplasmName + "-" + suffix;
                         addImportedGermplasmToList(list, row, newGermplasmName, 
                                 rows.getSelectedMethodId(), index++, rows.getNurseryName(), breedingMethodMap);

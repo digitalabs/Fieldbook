@@ -60,7 +60,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 					</li>
 					<li>
 						<a href="" style="display: none" id="open-study-url"></a>
-						<a href="javascript: $('#importStudyModal').modal('show')" id="open-study-url-link" th:text="#{nursery.nurserydetails.action.import.nursery}">Import Measurements</a> 
+						<a href="javascript: showImportOptions();" id="open-study-url-link" th:text="#{nursery.nurserydetails.action.import.nursery}">Import Measurements</a> 
 					</li>
 					<li>
 						<a href="" style="display: none" id="advance-study-url" th:href="@{/NurseryManager/advance/nursery}"></a>

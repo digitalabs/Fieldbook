@@ -13,6 +13,10 @@ package com.efficio.fieldbook.web.nursery.form;
 
 import java.util.List;
 
+import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 
@@ -101,6 +105,51 @@ public class CreateNurseryForm {
     
     /** The id name variables. */
     private String idNameVariables;
+    
+    /** The measurement row list. */
+    private List<MeasurementRow> measurementRowList;
+    
+    /** The measurement variables. */
+    private List<MeasurementVariable> measurementVariables;
+    
+    /** The study name. */
+    private String studyName;
+    
+    /** The paginated imported germplasm. */
+    private List<MeasurementRow> paginatedMeasurementRowList;       
+    
+    /** The current page. */
+    private int currentPage;
+            
+    /** The total pages. */
+    private int totalPages;
+    
+    /** The result per page. */
+    private int resultPerPage = 100;
+    
+    /** The file. */
+    private MultipartFile file;
+    
+    /** The has error. */
+    private String hasError;
+    
+    /** The import val. */
+    private int importVal;
+    
+    /** The number of instances. */
+    private int numberOfInstances;
+    
+    /** The export instance type. */
+    private String exportInstanceType;
+    
+    /** The export trial instance start. */
+    private String exportTrialInstanceNumber;
+    
+    /** The export trial instance start. */
+    private String exportTrialInstanceStart;
+    
+    /** The export trial instance end. */
+    private String exportTrialInstanceEnd;
     
     /**
      * Gets the project id.
@@ -564,4 +613,237 @@ public class CreateNurseryForm {
         public void setNurseryConditions(List<SettingDetail> nurseryConditions) {
             this.nurseryConditions = nurseryConditions;
         }
+
+        /**
+         * @return the measurementRowList
+         */
+        public List<MeasurementRow> getMeasurementRowList() {
+            return measurementRowList;
+        }
+
+        /**
+         * @param measurementRowList the measurementRowList to set
+         */
+        public void setMeasurementRowList(List<MeasurementRow> measurementRowList) {
+            this.measurementRowList = measurementRowList;
+        }
+
+        /**
+         * @return the measurementVariables
+         */
+        public List<MeasurementVariable> getMeasurementVariables() {
+            return measurementVariables;
+        }
+
+        /**
+         * @param measurementVariables the measurementVariables to set
+         */
+        public void setMeasurementVariables(List<MeasurementVariable> measurementVariables) {
+            this.measurementVariables = measurementVariables;
+        }
+
+        /**
+         * @return the studyName
+         */
+        public String getStudyName() {
+            return studyName;
+        }
+
+        /**
+         * @param studyName the studyName to set
+         */
+        public void setStudyName(String studyName) {
+            this.studyName = studyName;
+        }
+        
+        /**
+         * Change page.
+         *
+         * @param currentPage the current page
+         */
+        public void changePage(int currentPage){
+                if(measurementRowList != null && !measurementRowList.isEmpty()){
+            int totalItemsPerPage = getResultPerPage();
+            int start = (currentPage - 1) * totalItemsPerPage;
+            int end = start + totalItemsPerPage;
+            if(measurementRowList.size() < end){
+                end = measurementRowList.size();
+            }
+            setPaginatedMeasurementRowList(measurementRowList.subList(start, end));
+            this.setCurrentPage(currentPage);
+        }else{
+            this.setCurrentPage(0);
+        }
+        }
+
+        /**
+         * @return the paginatedMeasurementRowList
+         */
+        public List<MeasurementRow> getPaginatedMeasurementRowList() {
+            return paginatedMeasurementRowList;
+        }
+
+        /**
+         * @param paginatedMeasurementRowList the paginatedMeasurementRowList to set
+         */
+        public void setPaginatedMeasurementRowList(
+                List<MeasurementRow> paginatedMeasurementRowList) {
+            this.paginatedMeasurementRowList = paginatedMeasurementRowList;
+        }
+
+        /**
+         * @return the currentPage
+         */
+        public int getCurrentPage() {
+            return currentPage;
+        }
+
+        /**
+         * @param currentPage the currentPage to set
+         */
+        public void setCurrentPage(int currentPage) {
+            this.currentPage = currentPage;
+        }
+
+        /**
+         * @return the totalPages
+         */
+        public int getTotalPages() {
+            return totalPages;
+        }
+
+        /**
+         * @param totalPages the totalPages to set
+         */
+        public void setTotalPages(int totalPages) {
+            this.totalPages = totalPages;
+        }
+
+        /**
+         * @return the resultPerPage
+         */
+        public int getResultPerPage() {
+            return resultPerPage;
+        }
+
+        /**
+         * @param resultPerPage the resultPerPage to set
+         */
+        public void setResultPerPage(int resultPerPage) {
+            this.resultPerPage = resultPerPage;
+        }
+
+        /**
+         * @return the file
+         */
+        public MultipartFile getFile() {
+            return file;
+        }
+
+        /**
+         * @param file the file to set
+         */
+        public void setFile(MultipartFile file) {
+            this.file = file;
+        }
+
+        /**
+         * @return the hasError
+         */
+        public String getHasError() {
+            return hasError;
+        }
+
+        /**
+         * @param hasError the hasError to set
+         */
+        public void setHasError(String hasError) {
+            this.hasError = hasError;
+        }
+
+        /**
+         * @return the importVal
+         */
+        public int getImportVal() {
+            return importVal;
+        }
+
+        /**
+         * @param importVal the importVal to set
+         */
+        public void setImportVal(int importVal) {
+            this.importVal = importVal;
+        }
+
+        /**
+         * @return the numberOfInstances
+         */
+        public int getNumberOfInstances() {
+            return numberOfInstances;
+        }
+
+        /**
+         * @param numberOfInstances the numberOfInstances to set
+         */
+        public void setNumberOfInstances(int numberOfInstances) {
+            this.numberOfInstances = numberOfInstances;
+        }
+
+        /**
+         * @return the exportInstanceType
+         */
+        public String getExportInstanceType() {
+            return exportInstanceType;
+        }
+
+        /**
+         * @param exportInstanceType the exportInstanceType to set
+         */
+        public void setExportInstanceType(String exportInstanceType) {
+            this.exportInstanceType = exportInstanceType;
+        }
+
+        /**
+         * @return the exportTrialInstanceNumber
+         */
+        public String getExportTrialInstanceNumber() {
+            return exportTrialInstanceNumber;
+        }
+
+        /**
+         * @param exportTrialInstanceNumber the exportTrialInstanceNumber to set
+         */
+        public void setExportTrialInstanceNumber(
+                String exportTrialInstanceNumber) {
+            this.exportTrialInstanceNumber = exportTrialInstanceNumber;
+        }
+
+        /**
+         * @return the exportTrialInstanceStart
+         */
+        public String getExportTrialInstanceStart() {
+            return exportTrialInstanceStart;
+        }
+
+        /**
+         * @param exportTrialInstanceStart the exportTrialInstanceStart to set
+         */
+        public void setExportTrialInstanceStart(String exportTrialInstanceStart) {
+            this.exportTrialInstanceStart = exportTrialInstanceStart;
+        }
+
+        /**
+         * @return the exportTrialInstanceEnd
+         */
+        public String getExportTrialInstanceEnd() {
+            return exportTrialInstanceEnd;
+        }
+
+        /**
+         * @param exportTrialInstanceEnd the exportTrialInstanceEnd to set
+         */
+        public void setExportTrialInstanceEnd(String exportTrialInstanceEnd) {
+            this.exportTrialInstanceEnd = exportTrialInstanceEnd;
+        }
+
 }

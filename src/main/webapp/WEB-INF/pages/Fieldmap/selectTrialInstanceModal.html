@@ -55,7 +55,12 @@
 	<script type="text/javascript" th:src="@{/static/js/jquery.treegrid.bootstrap3.js}"></script>
 	  		
 	<script type='text/javascript' th:inline="javascript">
-	//<![CDATA[    
+	//<![CDATA[  
+	    var createLabelErrorMsg = /*[[#{common.error.create.label.nursery}]]*/;
+        var fieldMapStudyRequired = /*[[#{common.error.select.study(#{fieldmap.nursery})}]]*/;
+        var fieldMapOneStudyErrorMsg = /*[[#{common.error.select.one.study.show.fieldmap(#{fieldmap.nursery})}]]*/;
+        var noFieldMapExists = /*[[#{common.error.no.existing.fieldmap(#{fieldmap.nursery})}]]*/;
+        
         var noSelectedTrialInstance = /*[[#{fieldmap.no.selected.trial.instance}]]*/;
         var multipleSelectError = /*[[#{common.error.select.one.trial.instance}]]*/;
         var trialName = /*[[#{label.printing.trial.name}]]*/;

@@ -120,6 +120,12 @@ public class AdvancingNurseryForm {
     private List<StandardVariableReference> methodVariates;
     
     private List<StandardVariableReference> lineVariates;
+    
+    private Integer harvestYear;
+    
+    private Integer harvestMonth;
+    
+    private Long uniqueId;
 
 	/**
 	 * Gets the method id all.
@@ -747,6 +753,48 @@ public class AdvancingNurseryForm {
 	 */
 	public void setLineVariates(List<StandardVariableReference> lineVariates) {
 		this.lineVariates = lineVariates;
+	}
+	
+	/**
+	 * @return the harvestYear
+	 */
+	public Integer getHarvestYear() {
+		return harvestYear;
+	}
+
+	/**
+	 * @param harvestYear the harvestYear to set
+	 */
+	public void setHarvestYear(Integer harvestYear) {
+		this.harvestYear = harvestYear;
+	}
+
+	/**
+	 * @return the harvestMonth
+	 */
+	public Integer getHarvestMonth() {
+		return harvestMonth;
+	}
+
+	/**
+	 * @param harvestMonth the harvestMonth to set
+	 */
+	public void setHarvestMonth(Integer harvestMonth) {
+		this.harvestMonth = harvestMonth;
+	}
+
+	/**
+	 * @return the uniqueId
+	 */
+	public Long getUniqueId() {
+		return uniqueId;
+	}
+
+	/**
+	 * @param uniqueId the uniqueId to set
+	 */
+	public void setUniqueId(Long uniqueId) {
+		this.uniqueId = uniqueId;
 	}
 
 		/* (non-Javadoc)

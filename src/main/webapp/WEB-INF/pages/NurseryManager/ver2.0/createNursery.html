@@ -56,8 +56,8 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
         <input type="hidden" th:field="*{folderName}" />
         <label class="control-label" id="folderNameLabel"></label>
 	</div>
-	<div  class="col-xs-2 col-md-2">
-	<a id="chooseLocation" onclick="openStudyTree(2);" th:text="#{nursery.create.nursery.choose.location}"></a>
+	<div  class="col-xs-2 col-md-2">	
+	<a style="position: relative; left: -50px" id="chooseLocation" onclick="openStudyTree(2);" th:text="#{nursery.create.nursery.choose.location}"></a>
 	</div>
 </div>
 <div class="row form-group">

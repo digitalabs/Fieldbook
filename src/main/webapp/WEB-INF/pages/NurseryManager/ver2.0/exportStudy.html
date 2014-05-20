@@ -112,14 +112,14 @@
 						$('.exportRSection').css('display', 'none');
 					}
 				})
-				
-				$('#exportStudyModal #heading-modal').html(exportHeader + " " +  $("#study-type").val() + " " + exportBookHeader);
+								
 				$('#exportStudyModal').on('hide.bs.modal', function() {
 				    $("#page-export-message-modal").html('');				    
 				})
 		    });
 		   	function showExportOptions(){
 		   		Spinner.toggle();
+		   		$('#exportStudyModal #heading-modal').html(exportHeader + " " +  $("#study-type").val() + " " + exportBookHeader);
 				$.ajax({
 					url: "/Fieldbook/ExportManager/study/hasFieldMap/",
 					type: "GET",

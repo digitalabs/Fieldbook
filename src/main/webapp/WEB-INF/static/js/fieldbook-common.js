@@ -206,7 +206,10 @@ function createFieldMap(tableName){
 		}
 		//daniel
 		*/
-		ids.push(getCurrentStudyIdInTab());
+		if($("#createNurseryMainForm #studyId").length  == 1)
+			ids.push($("#createNurseryMainForm #studyId").val());
+		else
+			ids.push(getCurrentStudyIdInTab());
 		var idList = ids.join(",");
 		$('#page-message').html("");
 		
@@ -552,7 +555,10 @@ function createLabelPrinting(tableName){
 		}			
 	}
 	*/
-	idVal = getCurrentStudyIdInTab();
+	if($("#createNurseryMainForm #studyId").length  == 1)
+		idVal = ($("#createNurseryMainForm #studyId").val());
+	else
+		idVal = getCurrentStudyIdInTab();
 	count++; 
 	
 	if(count != 1){
@@ -861,7 +867,7 @@ function advanceNursery(tableName){
 		}			
 	}
 	*/
-	idVal = getCurrentStudyIdInTab();
+	idVal = $("#createNurseryMainForm #studyId").val();
 	count++;
 	if(count != 1){
 		$('#page-create-field-map-message').html("<div class='alert alert-danger'>"+advanceStudyError+"</div>");
@@ -880,6 +886,7 @@ function advanceNursery(tableName){
 			    success: function(html) {
 			    	$("#advance-nursery-modal-div").html(html);
 					$("#advanceNurseryModal").modal("show");
+					$('#advanceNurseryModal select').select2();
 		        },
 				error: function(jqXHR, textStatus, errorThrown){
 					console.log("The following error occured: " + textStatus , errorThrown);
@@ -1143,7 +1150,7 @@ function validateTrialInstance(){
 function doExportContinue(paramUrl, isNursery){
 
 	
-	var currentPage = $('.pagination .active a').html();
+	var currentPage = $('#measurement-data-list-pagination .pagination .active a').html();
 	
 	var formname;
 	if (isNursery) {
@@ -1331,4 +1338,28 @@ function validateStartEndDate(divName){
 function getIEVersion() {
     var myNav = navigator.userAgent.toLowerCase();
     return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
+}
+
+function callAdvanceNursery() {
+	Spinner.toggle();
+	var serializedData = $("#advanceNurseryModalForm").serialize();
+ 	$.ajax({ 
+ 		url: "/Fieldbook/NurseryManager/advance/nursery",
+        type: "POST",
+        data: serializedData,
+        cache: false,
+        success: function(html) {
+        	$("#advanceNurseryModal").modal("hide");
+        	$("#create-nursery-tab-headers").append("<li id='advance-list-li'>Advance List</li>");
+        	$("#create-nursery-tabs").append("<div id='advance-list'>" + html + "</div>");       	
+        	showSelectedTab("advance-list");
+        	
+        },
+		error: function(jqXHR, textStatus, errorThrown){
+			console.log("The following error occured: " + textStatus , errorThrown);
+	    }, 
+	    complete: function(){ 
+	    	Spinner.toggle();
+	    } 
+	});
 }

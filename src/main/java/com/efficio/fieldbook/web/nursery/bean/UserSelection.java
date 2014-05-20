@@ -23,6 +23,7 @@ import org.generationcp.middleware.domain.oms.TraitClassReference;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.StudySelection;
+import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -99,6 +100,8 @@ public class UserSelection extends StudySelection implements Serializable {
     
     /** The nursery conditions. */
     private List<SettingDetail> nurseryConditions;
+    
+    private Map<Long, AdvancingNurseryForm> advanceMap = new HashMap<Long, AdvancingNurseryForm>();
 	
 	/**
      * Gets the current page germplasm list.
@@ -558,6 +561,13 @@ public class UserSelection extends StudySelection implements Serializable {
         public void setNurseryConditions(List<SettingDetail> nurseryConditions) {
             this.nurseryConditions = nurseryConditions;
         }
-        
+
+		public void addAdvanceDetails(long id, AdvancingNurseryForm form) {
+			this.advanceMap.put(id, form);
+		}
+		
+		public AdvancingNurseryForm getAdvanceDetails(long id) {
+			return this.advanceMap.get(id);
+		}
         
 }

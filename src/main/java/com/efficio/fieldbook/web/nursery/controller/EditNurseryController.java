@@ -94,7 +94,7 @@ public class EditNurseryController extends SettingsController {
         session.invalidate();
         if(nurseryId != 0){     
             //settings part
-            Workbook workbook = fieldbookMiddlewareService.getStudyVariableSettings(nurseryId, true);
+            Workbook workbook = fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
             
             Dataset dataset = (Dataset)SettingsUtil.convertWorkbookToXmlDataset(workbook);
             SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
@@ -131,9 +131,9 @@ public class EditNurseryController extends SettingsController {
             form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
             
             //measurements part
-            workbook = fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
-            
             if (workbook != null) {
+                form.setFolderId(Integer.valueOf((int)workbook.getStudyDetails().getParentFolderId()));
+                form.setFolderName(fieldbookMiddlewareService.getFolderNameById(form.getFolderId()));
                 userSelection.setMeasurementRowList(workbook.getObservations());
                 form.setMeasurementRowList(userSelection.getMeasurementRowList());
                 form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());

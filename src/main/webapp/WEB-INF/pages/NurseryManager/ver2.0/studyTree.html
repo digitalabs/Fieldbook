@@ -70,12 +70,26 @@
 	  $( document ).ready(function() {	 
 		  displayStudyListTree("studyTree", "N");	
 		  changeBrowseNurseryButtonBehavior(false);
+		  
+		  $('#studyTreeModal').on('hide.bs.modal', function() {
+			  //console.log('here');
+			  if( $('#create-nursery  #studyTree').length != 0){
+			  	$('#create-nursery  #studyTree').dynatree("getTree").reloadStudyTree();
+			  	changeBrowseGermplasmButtonBehavior(false);
+			  }
+		  })
 	  });
 
         function doStudyLazyLoad(node){
+        	var additionalUrl = "/0";
+        	if(choosingType == 2){
+        		additionalUrl = "/1";
+        	}
+       			
+        	
         	if (node.data.isFolder == true){
     			node.appendAjax({
-    				url: lazyReadUrl + node.data.key,
+    				url: lazyReadUrl + node.data.key +additionalUrl,
     				dataType: "json",
     				success: function(node) {
     					//do nothing
@@ -119,6 +133,10 @@
        			url = "/Fieldbook/StudyTreeManager/loadInitialTrialTree";
        			lazyReadUrl = "/Fieldbook/StudyTreeManager/expandTrialTree/";       			
          	}
+        	var additionalUrl = "/0";
+        	if(choosingType == 2){
+        		additionalUrl = "/1";
+        	}
        			
         	
         	$("#" + treeName).dynatree({
@@ -240,7 +258,7 @@
     				
     				
         		        	 $.ajax({
-        		        		url: lazyReadAllUrl + sourceNode.data.key,
+        		        		url: lazyReadAllUrl + sourceNode.data.key + additionalUrl,
 				        		type: "GET",
 				        		cache: false,
 				        		aysnc: false,

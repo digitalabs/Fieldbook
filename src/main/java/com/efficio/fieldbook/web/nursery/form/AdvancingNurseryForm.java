@@ -121,9 +121,9 @@ public class AdvancingNurseryForm {
     
     private List<StandardVariableReference> lineVariates;
     
-    private Integer harvestYear;
+    private String harvestYear;
     
-    private Integer harvestMonth;
+    private String harvestMonth;
     
     private Long uniqueId;
     
@@ -764,28 +764,28 @@ public class AdvancingNurseryForm {
 	/**
 	 * @return the harvestYear
 	 */
-	public Integer getHarvestYear() {
+	public String getHarvestYear() {
 		return harvestYear;
 	}
 
 	/**
 	 * @param harvestYear the harvestYear to set
 	 */
-	public void setHarvestYear(Integer harvestYear) {
+	public void setHarvestYear(String harvestYear) {
 		this.harvestYear = harvestYear;
 	}
 
 	/**
 	 * @return the harvestMonth
 	 */
-	public Integer getHarvestMonth() {
+	public String getHarvestMonth() {
 		return harvestMonth;
 	}
 
 	/**
 	 * @param harvestMonth the harvestMonth to set
 	 */
-	public void setHarvestMonth(Integer harvestMonth) {
+	public void setHarvestMonth(String harvestMonth) {
 		this.harvestMonth = harvestMonth;
 	}
 

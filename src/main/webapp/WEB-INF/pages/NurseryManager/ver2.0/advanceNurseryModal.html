@@ -50,7 +50,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 					</div>
 					<div class="row form-group col-xs-6 col-md-6">
 						<label class="control-label">
-							<input type="checkbox" th:field="*{lineChoice}" value="*{lineChoice}"/>
+							<input type="checkbox" th:field="*{methodChoice}" th:value="*{methodChoice}"/>
 							<span th:text="#{advancing.nursery.breeding.method.the.same}">Breeding Method is the same for each advance</span>
 						</label>														
 					</div>
@@ -74,14 +74,16 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 							<a class="form-group" href="javascript: openManageMethods()" th:text="#{advancing.nursery.manage.method}">Manage Methods</a>	
 						</label>
 					</div>
-					<div class="row form-group col-xs-6 col-md-6">
-						<label class="control-label" th:text="#{advancing.nursery.method.variate} + ':'">Choose a variate that defines the breeding method for each advance:</label>
-					</div>
-					<div class="row form-group col-xs-6 col-md-6">
-						<select th:field="*{methodVariateId}">
-							<option th:each="methodVariate : *{methodVariates}" th:value="${methodVariate.id}" th:text="${methodVariate.description}">
-							</option>
-						</select>
+					<div id="method-variates-section">
+						<div class="row form-group col-xs-6 col-md-6">
+							<label class="control-label" th:text="#{advancing.nursery.method.variate} + ':'">Choose a variate that defines the breeding method for each advance:</label>
+						</div>
+						<div class="row form-group col-xs-6 col-md-6">
+							<select th:field="*{methodVariateId}">
+								<option th:each="methodVariate : *{methodVariates}" th:value="${methodVariate.id}" th:text="${methodVariate.description}">
+								</option>
+							</select>
+						</div>
 					</div>
 				</div>
 
@@ -92,7 +94,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 					</div>
 					<div class="row form-group col-xs-6 col-md-6">
 						<label class="control-label">
-							<input type="checkbox" th:field="*{lineChoice}" value="*{lineChoice}"/>
+							<input type="checkbox" th:field="*{lineChoice}" th:value="*{lineChoice}"/>
 							<span th:text="#{advancing.nursery.line.the.same}">Same number of lines is selected for each plot</span>
 						</label>
 					</div>
@@ -106,15 +108,17 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 					</div>
 					<div class="row form-group col-xs-6 col-md-6">
 						<input class="form-control" type="text" th:field="*{lineSelected}"/>
-					</div>										
-					<div class="row form-group col-xs-6 col-md-6">
-						<label class="control-label" th:text="#{advancing.nursery.lines.variate}"></label>
 					</div>
-					<div class="row form-group col-xs-6 col-md-6">
-						<select th:field="*{lineVariateId}">
-							<option th:each="lineVariate : *{lineVariates}" th:value="${lineVariate.id}" th:text="${lineVariate.description}">
-							</option>
-						</select>
+					<div id="line-variates-section">
+						<div class="row form-group col-xs-6 col-md-6">
+							<label class="control-label" th:text="#{advancing.nursery.lines.variate}"></label>
+						</div>
+						<div class="row form-group col-xs-6 col-md-6">
+							<select th:field="*{lineVariateId}">
+								<option th:each="lineVariate : *{lineVariates}" th:value="${lineVariate.id}" th:text="${lineVariate.description}">
+								</option>
+							</select>
+						</div>
 					</div>
 				</div>
 				
@@ -235,9 +239,9 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 				showCorrectMethodCombo();
 			});
 			
-			 $('input[type=radio][name=methodChoice]').on('change', checkMethod);
+			 $('input[type=checkbox][name=methodChoice]').on('change', checkMethod);
 			 
-			$('input[type=radio][name=lineChoice]').on('change', lineMethod);
+			$('input[type=checkbox][name=lineChoice]').on('change', lineMethod);
 			
 			$('#namingConvention').on('change', changeSuffix);
 			$('#maizeBreedingMethod').on('change', changeMaizeBreedingMethod);

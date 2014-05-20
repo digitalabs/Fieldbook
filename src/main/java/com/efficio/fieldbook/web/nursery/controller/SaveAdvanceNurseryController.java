@@ -11,6 +11,7 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -41,13 +42,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 
 /**
  * The Class SaveAdvanceNurseryController.
@@ -58,7 +59,7 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
 
     /** The Constant URL. */
     public static final String URL = "/NurseryManager/saveAdvanceNursery";
-    public static final String PAGINATION_TEMPLATE = "/NurseryManager/showSaveAdvanceNurseryPagination";
+    public static final String PAGINATION_TEMPLATE = "/NurseryManager/ver2.0/showSaveAdvanceNurseryPagination";
     
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(SaveAdvanceNurseryController.class);
@@ -94,7 +95,7 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
      */
     @Override
     public String getContentName() {
-        return "NurseryManager/saveAdvanceNursery";
+        return "NurseryManager/ver2.0/saveAdvanceNursery";
     }    
     
     /**
@@ -116,7 +117,10 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
         form.setGermplasmList(importedGermplasmList);
         form.setEntries(importedGermplasmList.size());
         form.changePage(1);
-    	return super.show(model);
+        long id = (new Date()).getTime();
+        userSelection.addAdvanceDetails(id, form);
+        form.setUniqueId(id);
+    	return super.showAjaxPage(model, getContentName());
     }
        
     /**

@@ -862,6 +862,7 @@ function advanceNursery(tableName){
 	}
 	*/
 	idVal = getCurrentStudyIdInTab();
+	idVal = -167;
 	count++;
 	if(count != 1){
 		$('#page-create-field-map-message').html("<div class='alert alert-danger'>"+advanceStudyError+"</div>");
@@ -1331,4 +1332,28 @@ function validateStartEndDate(divName){
 function getIEVersion() {
     var myNav = navigator.userAgent.toLowerCase();
     return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
+}
+
+function callAdvanceNursery() {
+	Spinner.toggle();
+	var serializedData = $("#advanceNurseryModalForm").serialize();
+ 	$.ajax({ 
+ 		url: "/Fieldbook/NurseryManager/advance/nursery",
+        type: "POST",
+        data: serializedData,
+        cache: false,
+        success: function(html) {
+        	$("#advanceNurseryModal").modal("hide");
+        	$("#create-nursery-tab-headers").append("<li id='advance-list-li'>Advance List</li>");
+        	$("#create-nursery-tabs").append("<div id='advance-list'>" + html + "</div>");       	
+        	showSelectedTab("advance-list");
+        	
+        },
+		error: function(jqXHR, textStatus, errorThrown){
+			console.log("The following error occured: " + textStatus , errorThrown);
+	    }, 
+	    complete: function(){ 
+	    	Spinner.toggle();
+	    } 
+	});
 }

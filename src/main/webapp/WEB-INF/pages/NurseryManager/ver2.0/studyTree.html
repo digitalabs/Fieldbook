@@ -73,8 +73,10 @@
 		  
 		  $('#studyTreeModal').on('hide.bs.modal', function() {
 			  //console.log('here');
-			  $('#create-nursery  #studyTree').dynatree("getTree").reloadStudyTree();
-			  changeBrowseGermplasmButtonBehavior(false);
+			  if( $('#create-nursery  #studyTree').length != 0){
+			  	$('#create-nursery  #studyTree').dynatree("getTree").reloadStudyTree();
+			  	changeBrowseGermplasmButtonBehavior(false);
+			  }
 		  })
 	  });
 

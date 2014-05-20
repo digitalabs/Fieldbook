@@ -73,9 +73,9 @@ public class StudyTreeController extends AbstractBaseFieldbookController {
      * @return the string
      */
     @ResponseBody
-    @RequestMapping(value = "/expandNurseryTree/{parentKey}", method = RequestMethod.GET)
-    public String expandGermplasmTree(@PathVariable String parentKey) {
-       
+    @RequestMapping(value = "/expandNurseryTree/{parentKey}/{isFolderOnly}", method = RequestMethod.GET)
+    public String expandGermplasmTree(@PathVariable String parentKey, @PathVariable String isFolderOnly) {
+    	boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;
         try {
             if (Database.LOCAL.toString().equals(parentKey) 
                     || Database.CENTRAL.toString().equals(parentKey)) {
@@ -90,7 +90,7 @@ public class StudyTreeController extends AbstractBaseFieldbookController {
             			 instance = Database.CENTRAL;
             		 
                      List<FolderReference> rootFolders = fieldbookMiddlewareService.getRootFolders(instance);
-                     String jsonResponse = TreeViewUtil.convertStudyFolderReferencesToJson(rootFolders, true, false, true, fieldbookMiddlewareService);
+                     String jsonResponse = TreeViewUtil.convertStudyFolderReferencesToJson(rootFolders, true, false, true, fieldbookMiddlewareService, isFolderOnlyBool);
                      LOG.debug(jsonResponse);
                      return jsonResponse;
                  
@@ -108,7 +108,7 @@ public class StudyTreeController extends AbstractBaseFieldbookController {
                 List<FolderReference> folRefs = TreeViewUtil.convertReferenceToFolderReference(folders);
                 
                 
-                return TreeViewUtil.convertStudyFolderReferencesToJson(folRefs, true, false, true, fieldbookMiddlewareService);
+                return TreeViewUtil.convertStudyFolderReferencesToJson(folRefs, true, false, true, fieldbookMiddlewareService, isFolderOnlyBool);
                 
             }
             else {
@@ -146,7 +146,7 @@ public class StudyTreeController extends AbstractBaseFieldbookController {
             			 instance = Database.CENTRAL;
             		 
                      List<FolderReference> rootFolders = fieldbookMiddlewareService.getRootFolders(instance);
-                     String jsonResponse = TreeViewUtil.convertStudyFolderReferencesToJson(rootFolders, false, true, true, fieldbookMiddlewareService);
+                     String jsonResponse = TreeViewUtil.convertStudyFolderReferencesToJson(rootFolders, false, true, true, fieldbookMiddlewareService, false);
                      LOG.debug(jsonResponse);
                      return jsonResponse;
                  
@@ -164,7 +164,7 @@ public class StudyTreeController extends AbstractBaseFieldbookController {
                 List<FolderReference> folRefs = TreeViewUtil.convertReferenceToFolderReference(folders);
                 
                 
-                return TreeViewUtil.convertStudyFolderReferencesToJson(folRefs, false, true, true, fieldbookMiddlewareService);
+                return TreeViewUtil.convertStudyFolderReferencesToJson(folRefs, false, true, true, fieldbookMiddlewareService, false);
                 
             }
             else {

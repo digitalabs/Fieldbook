@@ -6,9 +6,10 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 <input type="hidden" th:field="*{breedingMethodUrl}"/>
 <input type="hidden" th:field="*{defaultMethodId}"/>
 <input type="hidden" th:field="*{nurseryId}"/>
+<input type="hidden" th:field="*{harvestDate}"/>
 
 <div class="modal fade" id="advanceNurseryModal" role="dialog" aria-labelledby="advanceNurseryModal" aria-hidden="true">
-	<div class="modal-dialog modal-large">
+	<div class="modal-dialog modal-extra-large">
     	<div class="modal-content">
 			<div class="modal-header">
 				<button id="closeAdvanceNurseryModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -152,11 +153,16 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 					<div class="row form-group col-xs-6 col-md-6">
 						<label for="harvestDate" class="control-label"  th:text="#{advancing.nursery.harvest.date}">Harvest Date</label><span class="required"></span>
 					</div>	
-					<div class="row col-xs-12 col-md-12 form-group">
-					   	<div class="col-xs-1 col-md-1 input-group date" id="dp3" data-date="" data-date-format="yyyymmdd">
-						     <input th:field="*{harvestDate}" class="form-control" type="text"  style="width: 100px"  />
-							 <label for="harvestDate" class="input-group-addon btn datepicker"><i class="glyphicon glyphicon-calendar"></i></label>
-						</div>
+					<div class="row  col-xs-2 col-md-2 form-group">
+					   	<select th:field="*{harvestYear}" style="width: 100px">
+						   	<option th:each="year : ${yearChoices}" th:value="${year.val}" th:text="${year.name}">
+								</option>
+					   	</select>
+					</div>
+					<div class="row  col-xs-1 col-md-1 form-group">
+					   	<select th:field="*{harvestMonth}" style="width: 100px">
+						   	<option th:each="month : ${monthChoices}" th:value="${month.val}" th:text="${month.name}"></option>
+					   	</select>
 					</div>
 				</div>
 

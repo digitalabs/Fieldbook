@@ -11,7 +11,10 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +47,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.ChoiceKeyVal;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
@@ -105,7 +109,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     @RequestMapping(value="/{nurseryId}", method = RequestMethod.GET)
     public String show(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form
             , Model model, HttpSession session, @PathVariable int nurseryId) throws MiddlewareQueryException{
-    	//session.invalidate();
+    	session.invalidate();
     	form.setMethodChoice("1");
     	form.setLineChoice("1");
     	form.setLineSelected("1");
@@ -136,11 +140,38 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     		form.setCropType(1);
     	}
     	
-    	form.setMethodVariates(filterVariablesByProperty(userSelection.getSelectionVariates(), AppConstants.PROPERTY_BREEDING_METHOD.getString()));
-    	form.setLineVariates(filterVariablesByProperty(userSelection.getSelectionVariates(), AppConstants.PROPERTY_PLANTS_SELECTED.getString()));
+        form.setMethodVariates(filterVariablesByProperty(userSelection.getSelectionVariates(), AppConstants.PROPERTY_BREEDING_METHOD.getString()));
+        form.setLineVariates(filterVariablesByProperty(userSelection.getSelectionVariates(), AppConstants.PROPERTY_PLANTS_SELECTED.getString()));
+
+    	
+    	SimpleDateFormat sdf = new SimpleDateFormat("YYYY");
+    	SimpleDateFormat sdfMonth = new SimpleDateFormat("MM");
+    	String currentYear = sdf.format(new Date());
+    	form.setHarvestYear(currentYear);
+    	form.setHarvestMonth(sdfMonth.format(new Date()));
+    	
+    	model.addAttribute("yearChoices", generateYearChoices(Integer.parseInt(currentYear)));
+    	model.addAttribute("monthChoices", generateMonthChoices());
     	
     	return super.showAjaxPage(model, MODAL_URL);
     }
+    private List<ChoiceKeyVal> generateYearChoices(int currentYear){
+    	List<ChoiceKeyVal> yearList = new ArrayList();
+    	int startYear = AppConstants.START_YEAR.getInt();
+    	for(int i = startYear ; i <= currentYear ; i++){
+    		yearList.add(new ChoiceKeyVal(Integer.toString(i), Integer.toString(i)));
+    	}
+    	return yearList;
+    }
+    private List<ChoiceKeyVal> generateMonthChoices(){
+    	List<ChoiceKeyVal> monthList = new ArrayList();
+    	DecimalFormat df2 = new DecimalFormat( "00" );
+    	for(double i = 1 ; i <= 12 ; i++){
+    		monthList.add(new ChoiceKeyVal(df2.format(i), df2.format(i)));
+    	}
+    	return monthList;
+    }
+    
     @ResponseBody
     @RequestMapping(value="/load/{nurseryId}", method = RequestMethod.GET)
     public Map<String, String> showLoadNursery(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form
@@ -277,16 +308,17 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     }
     
     private List<StandardVariableReference> filterVariablesByProperty(List<SettingDetail> variables, String propertyName) {
-    	List<StandardVariableReference> list = new ArrayList<StandardVariableReference>();
-    	if (variables != null && !variables.isEmpty()) {
-    		for (SettingDetail detail : variables) {
-    			if (detail.getVariable() != null && detail.getVariable().getProperty() != null 
-    					&& propertyName.equalsIgnoreCase(detail.getVariable().getProperty())) {
-    				list.add(new StandardVariableReference(detail.getVariable().getCvTermId(), detail.getVariable().getName(), detail.getVariable().getDescription()));
-    			}
-    		}
-    	}
-    	return list;
+        List<StandardVariableReference> list = new ArrayList<StandardVariableReference>();
+        if (variables != null && !variables.isEmpty()) {
+            for (SettingDetail detail : variables) {
+                if (detail.getVariable() != null && detail.getVariable().getProperty() != null 
+                        && propertyName.equalsIgnoreCase(detail.getVariable().getProperty())) {
+                    list.add(new StandardVariableReference(detail.getVariable().getCvTermId(), detail.getVariable().getName(), detail.getVariable().getDescription()));
+                }
+            }
+        }
+        return list;
     }
     
+
 }

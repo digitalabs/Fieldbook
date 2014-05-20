@@ -224,6 +224,8 @@ public enum AppConstants {
     
     ,PROPERTY_BREEDING_METHOD
     ,PROPERTY_PLANTS_SELECTED
+
+    ,START_YEAR
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

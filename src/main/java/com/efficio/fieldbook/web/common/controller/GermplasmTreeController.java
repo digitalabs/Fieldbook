@@ -173,7 +173,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         
         // Create germplasm list
         String listName =  saveListForm.getListName();
-        String harvestDate = form.getHarvestDate(); 
+        String harvestDate = form.getHarvestYear() + form.getHarvestMonth() + "00";//form.getHarvestDate(); 
         String listType = AppConstants.GERMPLASM_LIST_TYPE_HARVEST.getString();
         Integer userId = 0;
         try {

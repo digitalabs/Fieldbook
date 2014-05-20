@@ -6,6 +6,10 @@
 			</div>				
 		</div>
 	</div>
+	
+	<div class="row" th:object="${advancingNurseryform}">
+		<button id="*{uniqueId}" type="button" class="btn btn-primary" aria-hidden="true" onclick="javascript: openSaveListModal(this);" th:text="#{common.form.finish.text}">Finish</button>
+	</div>	
 		
 	<div class="row form-group">	
 		

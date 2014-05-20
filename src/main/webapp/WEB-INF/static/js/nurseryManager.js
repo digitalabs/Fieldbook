@@ -1624,11 +1624,12 @@ function validateCreateNursery() {
 		hasError = true;
 		//name = $("#expDesignLabel").text();
 		customMessage = nurseryTraitsIsRequired;
-	}*/
+	}
 	else if ($(".germplasm-list-items").length == 0) {
 		hasError = true;
 		name = $("#germplasmLabel").text();
-	}else if($('#checkId').val() == ''){
+	}*/
+	else if($('#checkId').val() == ''){
 		hasError = true;
 		customMessage = checkTypeIsRequired;
 	}else {		

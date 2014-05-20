@@ -561,7 +561,7 @@ public class SettingsUtil {
                                     
                                     List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
                                     SettingDetail settingDetail = new SettingDetail(variable,
-                                                    possibleValues, HtmlUtils.htmlUnescape(constant.getValue()), isSettingVariableDeletable(stdVar, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()));
+                                                    possibleValues, HtmlUtils.htmlUnescape(constant.getValue()), true);
                                     
                                     settingDetail.setPossibleValuesToJson(possibleValues);
                                     List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, projectId);

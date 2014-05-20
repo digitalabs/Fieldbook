@@ -1343,6 +1343,7 @@ function getIEVersion() {
 function callAdvanceNursery() {
 	Spinner.toggle();
 	var serializedData = $("#advanceNurseryModalForm").serialize();
+	return false;
  	$.ajax({ 
  		url: "/Fieldbook/NurseryManager/advance/nursery",
         type: "POST",

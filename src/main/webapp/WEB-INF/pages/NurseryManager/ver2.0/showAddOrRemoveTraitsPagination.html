@@ -1,8 +1,8 @@
 <!-- form id="addVariableForm" role="form-horizontal" onsubmit="return validateCells();" class="form-horizontal" action="#" 
-	th:action="@{/NurseryManager/addOrRemoveTraits}" method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data" -->
+	th:action="@{/NurseryManager/addOrRemoveTraits}" method="post" th:object="${createNurseryForm}" enctype="multipart/form-data" -->
 	<div class="row">&nbsp;</div>
-<form id="addVariableForm" role="form-horizontal" class="form-horizontal" action="#" 
-	method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data">
+<form id="createNurseryForm" role="form-horizontal" class="form-horizontal" action="#" 
+	method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
 
 	<input type="hidden" th:field="*{importVal}"/>
 	<input type="hidden" th:field="*{numberOfInstances}" />
@@ -80,14 +80,14 @@
         
         
         var options = {
-            currentPage: /*[[${addOrRemoveTraitsForm.currentPage}]]*/,
-            totalPages: /*[[${addOrRemoveTraitsForm.totalPages}]]*/,
+            currentPage: /*[[${createNurseryForm.currentPage}]]*/,
+            totalPages: /*[[${createNurseryForm.totalPages}]]*/,
 
             alignment:'center',
             useBootstrapTooltip:true,
             onPageClicked: function(e,originalEvent,type,page){     
             		showPostPage(paginationUrl, options.currentPage, page, "#div-nursery-tab-"+getCurrentStudyIdInTab()+' #germplasm-measurement-list-table-div', 
-            				"#div-nursery-tab-"+getCurrentStudyIdInTab()+ ' #addVariableForm');
+            				"#div-nursery-tab-"+getCurrentStudyIdInTab()+ ' #createNurseryForm');
             		
             }
         }
@@ -96,39 +96,9 @@
 			$("#div-nursery-tab-"+getCurrentStudyIdInTab()+' #measurement-data-list-pagination').bootstrapPaginator(options);	
 		}
         $( document ).ready(function() {
-        	fixedTrHeight();
-        	//doStickyHeader();		     
-       	 //  $('.germplasm-measurement-list-table td input').on("change", validateCells);
-       	 //  $('.germplasm-measurement-list-table td input').on("focus", validateCells);
-       	 //  $('.germplasm-measurement-list-table td input').on("blur", validateCells);
-       	 //  if (document.URL.indexOf("view" + $("#study-type").val()) > -1 || $('#importVal').val() == '1') {
+        
        		   $("#btnBack").attr("href", "/Fieldbook/" + $("#study-type").val() + "Manager");
-       		   $("#btnUpdate").show();
-       		   $("#btnNext").hide();
-       	 //  } else {
-       	 //	   $("#btnUpdate").hide();
-       	 //	   $("#btnNext").show();
-       	 //  }    
-       	   
-       	$('.variates-div').scroll(function(){ 
-       	
-       		$('.factor-div').scrollTop($(this).scrollTop());
-       	
-       	}); 
-       	   //$("#freezeheader").freezeHeader({ 'height': '500px' });
-       	   //setTimeout(function(){$('#hdfreezeheader').css('top', '0px')}, 450);
-       	   
-      
-       		$(window).resize(function() {           		
-       	 		resizeWindowForIE();
-       	 		syncTableHeight();
-          	});
-       		syncTableHeight();
-       		if(isIE){
-       			resizeWindowForIE()       	 	
-       		}else{
-        		
-        	}
+       		  
        		
        		$("#div-nursery-tab-"+getCurrentStudyIdInTab()+" .desig-link").click(function() {
        			var gidValue = $(this).parent().parent().find(".gid-link").text();
@@ -144,57 +114,7 @@
        			openGermplasmDetailsPopop($(this));
        		});
    		});
-        function resizeWindowForIE(){
-        	if(isIE){
-        		$('.germplasm-measurement-list-table').css('width', $( window ).width() + "px");   
-        		$('.factor-div').css('min-width', '48.5%');
-        		$('.factor-div').css('max-width', '48.5%');
-        	}
-        		
-        	syncTableHeight();
-        }
-        function syncTableHeight(){
-        	
-        	var factorHeight = $('#factor-table').height();
-        	var variateHeight = $('#variate-table').height();
-        	
-        	if(factorHeight > variateHeight){
-        		$('#variate-table').css('height', factorHeight+"px");
-        		 $('#variate-table tr').each(function(i) {
-         	        var tableOneRow = this;
-         	        var tableTwoRow = $('#factor-table tr').get(i);
-         	        $(this).height($(tableTwoRow).height());
-         	    });
-        	}        		
-        	else if(variateHeight > factorHeight){
-        		$('#factor-table').css('height', variateHeight+"px");
-        		 $('#factor-table tr').each(function(i) {
-         	        var tableOneRow = this;
-         	        var tableTwoRow = $('#variate-table tr').get(i);
-         	        $(this).height($(tableTwoRow).height());
-         	    });
-        	}
-        	
-        	
-        		
-        }
-        function fixedTrHeight(){
-        	/*
-        	$('#factor-table tr').each(function(index){
-        		//console.log(index + " = " + $(this).height());
-        		$('#variate-table tr').eq(index).css('height',  $(this).height() + "px");
-        	})
-        	
-        	return;
-        	*/
-        	var max = 0;    
-        	$('table tr').each(function() {
-        	    max = Math.max($(this).height(), max);
-        	}).height(max);
-        	
-        	$('table tr').css('height', max+'px');
-        		
-        }
+       
        
 		
 		function doReturn() {

@@ -13,6 +13,7 @@ package com.efficio.fieldbook.web.nursery.form;
 
 import java.util.List;
 
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.springframework.web.multipart.MultipartFile;
@@ -152,6 +153,12 @@ public class CreateNurseryForm {
     private String exportTrialInstanceEnd;
     
     private Integer studyId;
+    
+    /** The trial environment values. */
+    private List<List<ValueReference>> trialEnvironmentValues;
+    
+    /** The trial level variables. */
+    private List<SettingDetail> trialLevelVariables;
     
     /**
      * Gets the project id.
@@ -859,6 +866,23 @@ public class CreateNurseryForm {
 
 		public void setStudyId(Integer studyId) {
 			this.studyId = studyId;
+		}
+
+		public List<List<ValueReference>> getTrialEnvironmentValues() {
+			return trialEnvironmentValues;
+		}
+
+		public void setTrialEnvironmentValues(
+				List<List<ValueReference>> trialEnvironmentValues) {
+			this.trialEnvironmentValues = trialEnvironmentValues;
+		}
+
+		public List<SettingDetail> getTrialLevelVariables() {
+			return trialLevelVariables;
+		}
+
+		public void setTrialLevelVariables(List<SettingDetail> trialLevelVariables) {
+			this.trialLevelVariables = trialLevelVariables;
 		}
 
 		

@@ -83,10 +83,17 @@ public class AdvancingSourceList{
                     String check = row.getMeasurementDataValue(
                             getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), TermId.CHECK.getId()));
                     boolean isCheck = check != null && !"".equals(check);
-                    Integer methodId = getIntegerValue(row.getMeasurementDataValue(
+                    Integer methodId = null;
+                    if (methodVariateId != null) {
+                    	methodId = getIntegerValue(row.getMeasurementDataValue(
                             getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), methodVariateId)));
+                    } 
+                    else {
+                    	methodId = this.selectedMethodId;
+                    }
                     Integer plantsSelected = null; 
-                    if (isBulk(methodId)) {
+                    boolean isBulk = isBulk(methodId); 
+                    if (isBulk) {
                         plantsSelected = getIntegerValue(row.getMeasurementDataValue(
                                 getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), plotVariateId)));
                     }
@@ -94,7 +101,7 @@ public class AdvancingSourceList{
                         plantsSelected = getIntegerValue(row.getMeasurementDataValue(
                                 getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), lineVariateId)));
                     }
-                    this.rows.add(new AdvancingSource(germplasm, plantsSelected, methodId, isCheck));
+                    this.rows.add(new AdvancingSource(germplasm, plantsSelected, methodId, isCheck, isBulk));
                 }
             }
         }
@@ -111,7 +118,10 @@ public class AdvancingSourceList{
     
     private boolean isBulk(int methodId) {
     	//TODO: apply logic for determining bulk or non-bulk
-    	return false;
+        return 
+                (methodId == AppConstants.SELECTED_BULK_SF.getInt()
+                    || methodId == AppConstants.RANDOM_BULK_SF.getInt()
+                    || methodId == AppConstants.RANDOM_BULK_CF.getInt());
     }
     
     private Integer getIntegerValue(String value) {

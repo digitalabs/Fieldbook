@@ -5,8 +5,8 @@
 			<tr>
 				<th th:utext="#{nursery.import.header.entry}">.Entry</th>
                 <th th:utext="#{nursery.import.header.designation}">.Designation</th>
-                <th th:utext="#{nursery.import.header.gid}">.GID</th>
-                <th th:utext="#{nursery.import.header.cross}">.Cross</th>
+                <th th:utext="#{nursery.import.header.parentage}">Parentage</th>
+                <th th:utext="#{nursery.import.header.gid}">.GID</th>                
                 <th th:utext="#{nursery.import.header.source}">.Source</th>
 			</tr>
 		</thead>
@@ -14,8 +14,10 @@
 			<tr th:each="choice, rowStat : *{paginatedGermplasmList}">
 				<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{paginatedGermplasmList[__${rowStat.index}__].entryId}">Entry</td>
 				<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{paginatedGermplasmList[__${rowStat.index}__].desig}">Designation</td>
-				<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{paginatedGermplasmList[__${rowStat.index}__].gid}">GID</td>
 				<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{paginatedGermplasmList[__${rowStat.index}__].cross}">Cross</td>
+				<!-- <td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{paginatedGermplasmList[__${rowStat.index}__].gid}">GID</td> -->
+				<td th:class="${rowStat.even}? 'even' : 'odd'" >Pending</td> 
+				
 				<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{paginatedGermplasmList[__${rowStat.index}__].source}">Source</td>
 			</tr>
 		</tbody>

@@ -94,12 +94,16 @@ public class AdvancingSourceList{
                     Integer plantsSelected = null; 
                     boolean isBulk = isBulk(methodId); 
                     if (isBulk) {
-                        plantsSelected = getIntegerValue(row.getMeasurementDataValue(
-                                getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), plotVariateId)));
+                    	if (plotVariateId != null) {
+	                        plantsSelected = getIntegerValue(row.getMeasurementDataValue(
+	                                getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), plotVariateId)));
+                    	}
                     }
                     else {
-                        plantsSelected = getIntegerValue(row.getMeasurementDataValue(
-                                getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), lineVariateId)));
+                    	if (lineVariateId != null) {
+                    		plantsSelected = getIntegerValue(row.getMeasurementDataValue(
+                    				getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), lineVariateId)));
+                    	}
                     }
                     this.rows.add(new AdvancingSource(germplasm, plantsSelected, methodId, isCheck, isBulk));
                 }

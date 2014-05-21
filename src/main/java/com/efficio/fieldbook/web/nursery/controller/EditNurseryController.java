@@ -269,6 +269,7 @@ public class EditNurseryController extends SettingsController {
     	List<SettingDetail> baselineTraitsSession = userSelection.getSelectionVariates();
     	if (baselineTraits == null) {
     	    baselineTraits = form.getSelectionVariatesVariables();
+    	    userSelection.getBaselineTraitsList().addAll(baselineTraitsSession);
     	} else if (form.getSelectionVariatesVariables() != null) {
     	    baselineTraits.addAll(form.getSelectionVariatesVariables());
     	    userSelection.getBaselineTraitsList().addAll(baselineTraitsSession);

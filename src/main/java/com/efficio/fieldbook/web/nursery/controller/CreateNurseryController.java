@@ -274,16 +274,17 @@ public class CreateNurseryController extends SettingsController {
     	List<SettingDetail> baselineTraitsSession = userSelection.getSelectionVariates();
     	if (baselineTraits == null) {
     	    baselineTraits = form.getSelectionVariatesVariables();
+    	    userSelection.getBaselineTraitsList().addAll(baselineTraitsSession);
     	} else if (form.getSelectionVariatesVariables() != null) {
     	    baselineTraits.addAll(form.getSelectionVariatesVariables());
     	    userSelection.getBaselineTraitsList().addAll(baselineTraitsSession);
     	}
-    	    	
+    	  	
     	Dataset dataset = (Dataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, studyLevelVariables, 
     	        form.getPlotLevelVariables(), baselineTraits, userSelection, form.getNurseryConditions());
     	Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);
     	userSelection.setWorkbook(workbook);
-    	    	
+
     	createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId());
  
     	return "success";

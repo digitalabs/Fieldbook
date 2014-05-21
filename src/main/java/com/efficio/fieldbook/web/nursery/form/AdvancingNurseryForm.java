@@ -126,6 +126,12 @@ public class AdvancingNurseryForm {
     private String harvestMonth;
     
     private Long uniqueId;
+    
+    private String allPlotsChoice;
+    
+    private List<StandardVariableReference> plotVariates;
+    
+    private Integer plotVariateId;
 
 	/**
 	 * Gets the method id all.
@@ -795,6 +801,48 @@ public class AdvancingNurseryForm {
 	 */
 	public void setUniqueId(Long uniqueId) {
 		this.uniqueId = uniqueId;
+	}
+
+		/**
+	 * @return the allPlotsChoice
+	 */
+	public String getAllPlotsChoice() {
+		return allPlotsChoice;
+	}
+
+	/**
+	 * @param allPlotsChoice the allPlotsChoice to set
+	 */
+	public void setAllPlotsChoice(String allPlotsChoice) {
+		this.allPlotsChoice = allPlotsChoice;
+	}
+
+	/**
+	 * @return the plotVariates
+	 */
+	public List<StandardVariableReference> getPlotVariates() {
+		return plotVariates;
+	}
+
+	/**
+	 * @param plotVariates the plotVariates to set
+	 */
+	public void setPlotVariates(List<StandardVariableReference> plotVariates) {
+		this.plotVariates = plotVariates;
+	}
+
+		/**
+	 * @return the plotVariateId
+	 */
+	public Integer getPlotVariateId() {
+		return plotVariateId;
+	}
+
+	/**
+	 * @param plotVariateId the plotVariateId to set
+	 */
+	public void setPlotVariateId(Integer plotVariateId) {
+		this.plotVariateId = plotVariateId;
 	}
 
 		/* (non-Javadoc)

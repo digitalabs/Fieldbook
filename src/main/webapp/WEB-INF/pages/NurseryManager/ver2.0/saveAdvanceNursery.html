@@ -7,10 +7,18 @@
 		</div>
 	</div>
 	
-	<div class="row" th:object="${advancingNurseryform}">
-		<button th:id="*{uniqueId}" type="button" class="btn btn-primary uniqueId" aria-hidden="true" onclick="javascript: openSaveListModal(this);" th:text="#{common.form.save.text}">Save</button>
-	</div>	
-		
+	<div class="row form-group" th:object="${advancingNurseryform}">
+		<div class="col-xs-12 col-md-12">
+			<div class="col-xs-2 col-md-2">
+				<label class="control-label h4" th:text="#{advancing.nursery.header}"></label>
+			</div>
+			<div class="col-xs-5 col-md-5">
+				<label th:text="#{advancing.nursery.entries.total}">Total Entries:</label> <label class="control-label control-label-bold"  th:text="*{#lists.size(germplasmList)}"></label>
+				<button style="margin-left: 20px" th:id="*{uniqueId}" type="button" class="btn btn-primary uniqueId" aria-hidden="true" onclick="javascript: openSaveListModal(this);" th:text="#{common.form.save.text}">Save</button>
+			</div>
+		</div>			
+	</div>
+	
 	<div class="row form-group">	
 		
 			<div class="col-xs-12 col-md-12">
@@ -20,18 +28,6 @@
 	      		</div>
       		</div>
      			
-	</div>
-	<div class="row form-group">
-		<div class="col-xs-12 col-md-12" >
-			<div class="row form-group">
-				<div class="col-xs-5 col-md-5">&nbsp;</div>
-				<div class="col-xs-7 col-md-7">
-					<input type="button" onclick="javascript: window.history.back();"  value="Cancel" th:value="#{common.form.cancel.text}" class="btn btn-default"/>
-      				<input type="button" value="Save" th:value="#{common.form.save.text}" class="btn btn-primary" onclick="doSave();" />
-				</div>
-				<div class="col-xs-4 col-md-4">&nbsp;</div>
-			</div>
-		</div>
 	</div>
 	
 	<div class="form-group">

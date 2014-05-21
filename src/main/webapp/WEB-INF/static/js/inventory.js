@@ -1,24 +1,35 @@
-function triggerInventoryTableSelection(tableName){
-	$('#'+tableName+' tr.primaryRow').on('click', function() {	
+function triggerInventoryTableSelection(tableName, sectionContainerDiv, listIdentifier){
+	$('#' + sectionContainerDiv + ' #'+tableName+' tr.primaryRow').on('click', function() {	
 		//$('#'+tableName).find("*").removeClass('field-map-highlight');
 		
 			$(this).toggleClass('field-map-highlight');
 			var gid = $(this).data('gid') + "";
+			if(selectedGidsForAdvance[listIdentifier] == null)
+				selectedGidsForAdvance[listIdentifier] = new Array();
+			
 			if($(this).hasClass('field-map-highlight')){				
-				selectedGids[gid] = gid;
-				
+				//selectedGids[gid] = gid;
+				selectedGidsForAdvance[listIdentifier][gid] = gid;
 			}else{
-				selectedGids[gid] = null;
+				//selectedGids[gid] = null;
+				//selectedGidsForAdvance
+				selectedGidsForAdvance[listIdentifier][gid] = null;
 			}
 		
 	});
 }
-
+function getCurrentAdvanceTabListIdentifier(){
+	var listDivIdentifier  = $('#create-nursery-tab-headers li.active button').attr('id');
+	var sectionContainerDiv = 'advance-list'+listDivIdentifier;
+	var listIdentifier = $('#'+getJquerySafeId(sectionContainerDiv) + ' #listId').val();
+	return listIdentifier;
+}
 function getSelectedInventoryGids(){
 	var ids = [];
-	for(var gid in selectedGids) {
+	var selectedGidArray = selectedGidsForAdvance[getCurrentAdvanceTabListIdentifier()];
+	for(var gid in selectedGidArray) {
 		//console.log( index + " : " + selectedTableIds[index]);
-		var idVal = selectedGids[gid];
+		var idVal = selectedGidArray[gid];
 		if(idVal != null){
 			ids.push(idVal);
 		}			

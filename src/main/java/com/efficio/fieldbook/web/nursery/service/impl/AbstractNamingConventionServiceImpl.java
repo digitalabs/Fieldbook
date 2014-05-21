@@ -112,6 +112,7 @@ implements NamingConventionService {
     
     private void updatePlantsSelectedIfNecessary(AdvancingSourceList list, AdvancingNursery info) {
         boolean lineChoiceSame = info.getLineChoice() != null && "1".equals(info.getLineChoice());
+        boolean allPlotsChoice = info.getAllPlotsChoice() != null && "1".equals(info.getAllPlotsChoice());
         int plantsSelected = 0;
         if (info.getLineSelected() != null && NumberUtils.isNumber(info.getLineSelected())) {
             plantsSelected = Integer.valueOf(info.getLineSelected()); 
@@ -119,9 +120,14 @@ implements NamingConventionService {
         else {
             lineChoiceSame = false;
         }
-        if (list != null && list.getRows() != null && !list.getRows().isEmpty() && lineChoiceSame && plantsSelected > 0) {
+        if (list != null && list.getRows() != null && !list.getRows().isEmpty() && (lineChoiceSame && plantsSelected > 0 || allPlotsChoice)) {
             for (AdvancingSource row : list.getRows()) {
-                row.setPlantsSelected(plantsSelected);
+            	if (!row.isBulk() && lineChoiceSame) {
+            		row.setPlantsSelected(plantsSelected);
+            	}
+            	else if (row.isBulk() && allPlotsChoice) {
+            		row.setPlantsSelected(1); //set it to 1, it does not matter since it's bulked
+            	}
             }
         }
     }

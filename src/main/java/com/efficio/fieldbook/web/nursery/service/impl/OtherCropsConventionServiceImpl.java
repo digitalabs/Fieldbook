@@ -45,7 +45,7 @@ implements OtherCropsConventionService {
     public List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList rows) throws MiddlewareQueryException {
         List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
         String newGermplasmName;
-        Integer breedingMethodId = rows.getSelectedMethodId();
+        //Integer breedingMethodId = rows.getSelectedMethodId();
         int index = 1;
         Map<String, Method> breedingMethodMap = new HashMap<String, Method>();
         List<Method> methodList = fieldbookMiddlewareService.getAllBreedingMethods();
@@ -54,17 +54,17 @@ implements OtherCropsConventionService {
         }
         for (AdvancingSource row : rows.getRows()) {
             if (row.getGermplasm() != null && !row.isCheck() && row.getPlantsSelected() != null && row.getPlantsSelected() > 0) {
-                if (rows.isBulk()) {
+                if (row.isBulk()) {
                     newGermplasmName = row.getGermplasm().getDesig() + "-" + rows.getSuffix();
-                    addImportedGermplasmToList(list, row, newGermplasmName, breedingMethodId, index++, rows.getNurseryName(), breedingMethodMap);
+                    addImportedGermplasmToList(list, row, newGermplasmName, row.getBreedingMethodId(), index++, rows.getNurseryName(), breedingMethodMap);
                 }
                 else {
                     for (int i = 0; i < row.getPlantsSelected(); i++) {
                         newGermplasmName = row.getGermplasm().getDesig() + "-" + (i+1) + rows.getSuffix();
-                        if (breedingMethodId == null) {
-                            breedingMethodId = row.getBreedingMethodId();
-                        }
-                        addImportedGermplasmToList(list, row, newGermplasmName, breedingMethodId, index++, rows.getNurseryName(), breedingMethodMap);
+//                        if (breedingMethodId == null) {
+//                            breedingMethodId = row.getBreedingMethodId();
+//                        }
+                        addImportedGermplasmToList(list, row, newGermplasmName, row.getBreedingMethodId(), index++, rows.getNurseryName(), breedingMethodMap);
                     }
                 }
             }

@@ -126,6 +126,34 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 				<br/>
 				<div class="row form-group col-xs-12 col-md-12">
 					<div class="row form-group col-xs-12 col-md-12">
+						<label class="control-label" ><strong class="sub-content-heading"  th:text="#{advancing.nursery.bulks}">BULKS</strong> </label>
+					</div>
+					<div class="row form-group col-xs-6 col-md-6">
+						<label class="control-label">
+							<input type="checkbox" th:field="*{allPlotsChoice}" th:value="*{allPlotsChoice}"/>
+							<span th:text="#{advancing.nursery.all.plots.selected}">All plots are selected</span>
+						</label>
+					</div>
+					<div class="row form-group col-xs-6 col-md-6">
+					</div>
+				</div>
+				<div class="row form-group col-xs-12 col-md-12">
+					<div id="line-variates-section">
+						<div class="row form-group col-xs-6 col-md-6">
+							<label class="control-label" th:text="#{advancing.nursery.bulks.variate}"></label>
+						</div>
+						<div class="row form-group col-xs-6 col-md-6">
+							<select th:field="*{lineVariateId}">
+								<option th:each="plotVariate : *{plotVariates}" th:value="${plotVariate.id}" th:text="${plotVariate.description}">
+								</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				
+				<br/>
+				<div class="row form-group col-xs-12 col-md-12">
+					<div class="row form-group col-xs-12 col-md-12">
 						<label class="control-label" ><strong class="sub-content-heading"  th:text="#{advancing.nursery.harvest.information}">Harvest Details</strong> </label>
 					</div>
 					<div class="row form-group col-xs-6 col-md-6">

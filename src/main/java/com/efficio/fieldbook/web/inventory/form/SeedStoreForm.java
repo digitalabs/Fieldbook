@@ -50,8 +50,30 @@ public class SeedStoreForm {
     
     /** The gid list. */
     private String gidList;
+    private String listId;
+    private int totalNumberOfGermplasms;
     
-    /**
+     
+    
+    public String getListId() {
+		return listId;
+	}
+
+	public void setListId(String listId) {
+		this.listId = listId;
+	}
+
+	public int getTotalNumberOfGermplasms() {
+    	if(inventoryList != null)
+    		return inventoryList.size();
+    	return 0;
+	}
+
+	public void setTotalNumberOfGermplasms(int totalNumberOfGermplasms) {
+		this.totalNumberOfGermplasms = totalNumberOfGermplasms;
+	}
+
+	/**
      * Gets the result per page.
      *
      * @return the result per page
@@ -99,19 +121,20 @@ public class SeedStoreForm {
      */
     public void setCurrentPage(int currentPage) {
         
-        //assumption is there are nursery list already
-        if(inventoryList != null && !inventoryList.isEmpty()){
-            int totalItemsPerPage = getResultPerPage();
-            int start = (currentPage - 1) * totalItemsPerPage;
-            int end = start + totalItemsPerPage;
-            if(inventoryList.size() < end){
-                end = inventoryList.size();
-            }
-            this.paginatedInventoryList = inventoryList.subList(start, end);
-            this.currentPage = currentPage;
-        }else{
-            this.currentPage = 0;
-        }
+	        //assumption is there are nursery list already
+	        if(inventoryList != null && !inventoryList.isEmpty()){
+	            int totalItemsPerPage = getResultPerPage();
+	            int start = (currentPage - 1) * totalItemsPerPage;
+	            int end = start + totalItemsPerPage;
+	            if(inventoryList.size() < end){
+	                end = inventoryList.size();
+	            }
+	            this.paginatedInventoryList = inventoryList.subList(start, end);
+	            this.currentPage = currentPage;
+	        }else{
+	            this.currentPage = 0;
+	        }
+    	
     }
     
     /**
@@ -231,5 +254,5 @@ public class SeedStoreForm {
     public void setGidList(String gidList) {
         this.gidList = gidList;
     }
-    
+
 }

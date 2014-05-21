@@ -23,6 +23,8 @@ import javax.servlet.http.HttpSession;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
@@ -246,7 +248,7 @@ public class EditNurseryController extends SettingsController {
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
     public String submit(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws MiddlewareQueryException {
-    	
+        System.out.println("i'm here");
     	String name = null;
     	for (SettingDetail nvar : form.getBasicDetails()) {
     		if (nvar.getVariable() != null && nvar.getVariable().getCvTermId() != null && nvar.getVariable().getCvTermId().equals(TermId.STUDY_NAME.getId())) {
@@ -276,11 +278,40 @@ public class EditNurseryController extends SettingsController {
     	Dataset dataset = (Dataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, studyLevelVariables, 
     	        form.getPlotLevelVariables(), baselineTraits, userSelection, form.getNurseryConditions());
     	Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);
-    	userSelection.setWorkbook(workbook);
     	    	
     	createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId());
- 
-    	return "success";
+    	
+    	System.out.println("i'm here");
+    	
+    	if (userSelection.getMeasurementRowList() != null && userSelection.getMeasurementRowList().size() > 0) {
+    	    int previewPageNum = userSelection.getCurrentPage();
+            
+            copyDataFromFormToUserSelection(form, previewPageNum);
+            form.setMeasurementRowList(userSelection.getMeasurementRowList());
+            form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
+          
+            workbook.setObservations(form.getMeasurementRowList());
+            userSelection.setWorkbook(workbook);
+            System.out.println("i'm here");
+            return "redirect:" + SaveNurseryController.URL;
+    	} else {
+    	    return "success";
+    	}
+    	
+    }
+    
+    private void copyDataFromFormToUserSelection(CreateNurseryForm form, int previewPageNum){
+        for(int i = 0 ; i < form.getPaginatedMeasurementRowList().size() ; i++){
+                MeasurementRow measurementRow = form.getPaginatedMeasurementRowList().get(i);
+                int realIndex = ((previewPageNum - 1) * form.getResultPerPage()) + i;
+                for(int index = 0 ; index < measurementRow.getDataList().size() ; index++){
+                        MeasurementData measurementData =  measurementRow.getDataList().get(index);
+                        MeasurementData sessionMeasurementData = userSelection.getMeasurementRowList().get(realIndex).getDataList().get(index);
+                        if(sessionMeasurementData.isEditable())
+                                sessionMeasurementData.setValue(measurementData.getValue());                            
+                }
+                //getUserSelection().getMeasurementRowList().set(realIndex, measurementRow);
+        }
     }
     
     /**

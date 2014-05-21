@@ -320,12 +320,16 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 		var serializedData = $form.serialize();
 	
 	 	$.ajax({
-			url: "/Fieldbook/NurseryManager/createNursery",
+			url: "/Fieldbook/NurseryManager/editNursery",
 			type: "POST",
 			data: serializedData,
 			cache: false,
-			success: function(html) {
-				submitCheckGermplasmList();
+			success: function(data) {
+				if ($(".germplasm-list-items").length > 0) {
+					submitCheckGermplasmList();
+				} else if (data.status == 1) {
+					$('#successMessageModal').modal({ backdrop: 'static', keyboard: true });
+				}
 			}, 
 			complete: function() {
 			}
@@ -347,25 +351,6 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 		}
 	}
 	
-	$(document).ready(function() {
-		$('#selectedSettingId').on('change', function(){
-			//alert('load settings' + $(this).val());
-			loadNurserySettingsForCreate($(this).val());
-		})
-		$('#studyBuildOption').on('change', changeBuildOption);
-		$('#choosePreviousStudy').hide();
-		//changeBuildOption();
-		
-	});
-
-	function changeBuildOption(){
-		if($('#studyBuildOption').val() == 1){
-			$('#choosePreviousStudy').hide();
-			clearSettings();
-		}else if($('#studyBuildOption').val() == 2){
-			$('#choosePreviousStudy').show();
-		}
-	}
 //]]>
 </script>
 </div>

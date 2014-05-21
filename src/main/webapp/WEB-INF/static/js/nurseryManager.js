@@ -9,7 +9,7 @@ function checkMethod(){
 			//console.log("1");
 			$("#method-variates-section").hide();
 			setCorrectMethodValues(true);
-			
+			changeAdvanceBreedingMethod();
 		}else{
 			$("#method-variates-section").show();
 			//console.log("2");
@@ -19,10 +19,12 @@ function checkMethod(){
 				$('#methodIdFavorite').select2('enable', false);
 				$('#methodIdAll').select2('enable', false);
 			}
-			oldMethodSelected = $('#'+getJquerySafeId("breedingMethodId")).val();
+			oldMethodSelected = $('#'+getJquerySafeId("advanceBreedingMethodId")).val();
 			 $('#methodSelected').val($('#defaultMethodId').val());
 			 setCorrectMethodValues(false);
-			
+			//we show the bulk and lines section
+			 $('.bulk-section').css('display', 'block');
+			 $('.lines-section').css('display', 'block');
 		} 	
 }
 function setCorrectMethodValues(isCheckMethod){

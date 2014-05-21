@@ -23,6 +23,8 @@ import javax.servlet.http.HttpSession;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
@@ -245,8 +247,7 @@ public class EditNurseryController extends SettingsController {
      */
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
-    public String submit(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws MiddlewareQueryException {
-    	
+    public Map<String, String> submit(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws MiddlewareQueryException {
     	String name = null;
     	for (SettingDetail nvar : form.getBasicDetails()) {
     		if (nvar.getVariable() != null && nvar.getVariable().getCvTermId() != null && nvar.getVariable().getCvTermId().equals(TermId.STUDY_NAME.getId())) {
@@ -254,7 +255,7 @@ public class EditNurseryController extends SettingsController {
     			break;
     		}
     	}
-
+    	
     	List<SettingDetail> studyLevelVariables = new ArrayList<SettingDetail>();
     	if (form.getStudyLevelVariables() != null && !form.getStudyLevelVariables().isEmpty()) {
     		studyLevelVariables.addAll(form.getStudyLevelVariables());
@@ -276,11 +277,55 @@ public class EditNurseryController extends SettingsController {
     	Dataset dataset = (Dataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, studyLevelVariables, 
     	        form.getPlotLevelVariables(), baselineTraits, userSelection, form.getNurseryConditions());
     	Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);
-    	userSelection.setWorkbook(workbook);
     	    	
     	createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId());
- 
-    	return "success";
+    	userSelection.setWorkbook(workbook);
+    	
+    	Map<String, String> resultMap = new HashMap<String, String>();
+    	//saving of measurement rows
+    	if (userSelection.getMeasurementRowList() != null && userSelection.getMeasurementRowList().size() > 0) {
+            try {
+                dataImportService.saveDataset(workbook, true);
+                
+                int previewPageNum = userSelection.getCurrentPage();
+                
+                copyDataFromFormToUserSelection(form, previewPageNum);
+                form.setMeasurementRowList(userSelection.getMeasurementRowList());
+                form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
+              
+                workbook.setObservations(form.getMeasurementRowList());
+                userSelection.setWorkbook(workbook);
+                validationService.validateObservationValues(workbook);
+                fieldbookMiddlewareService.saveMeasurementRows(workbook);
+                
+                resultMap.put("status", "1");
+            } catch (MiddlewareQueryException e) {
+                LOG.error(e.getMessage());
+                resultMap.put("status", "-1");
+                resultMap.put("errorMessage", e.getMessage());
+            }
+            return resultMap;
+    	} else {
+    	    resultMap.put("status", "1");
+    	    return resultMap;
+    	}
+    	
+    }
+    
+    private void copyDataFromFormToUserSelection(CreateNurseryForm form, int previewPageNum){
+        if (form.getPaginatedMeasurementRowList() != null) {
+            for(int i = 0 ; i < form.getPaginatedMeasurementRowList().size() ; i++){
+                    MeasurementRow measurementRow = form.getPaginatedMeasurementRowList().get(i);
+                    int realIndex = ((previewPageNum - 1) * form.getResultPerPage()) + i;
+                    for(int index = 0 ; index < measurementRow.getDataList().size() ; index++){
+                            MeasurementData measurementData =  measurementRow.getDataList().get(index);
+                            MeasurementData sessionMeasurementData = userSelection.getMeasurementRowList().get(realIndex).getDataList().get(index);
+                            if(sessionMeasurementData.isEditable())
+                                    sessionMeasurementData.setValue(measurementData.getValue());                            
+                    }
+                    //getUserSelection().getMeasurementRowList().set(realIndex, measurementRow);
+            }
+        }
     }
     
     /**

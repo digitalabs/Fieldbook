@@ -111,19 +111,16 @@ public class SaveNurseryController extends AbstractBaseFieldbookController{
     @RequestMapping(method = RequestMethod.POST)
     public Map<String, String> saveNursery(@RequestParam Integer folderId, @RequestParam String title, @RequestParam String objective,
             @RequestParam String nurseryBookName) {
-    	
         Map<String, String> resultMap = new HashMap<String, String>();
         
         Workbook workbook = getWorkbook();
     	
         String errorMessages = validate(folderId, title, objective, nurseryBookName);
-    	
         if (errorMessages != null) {
             resultMap.put("status", "-1");
             resultMap.put("errorMessage", errorMessages);
             return resultMap;
         }
-
         try {
     	    setStudyDetails(folderId, title, objective, nurseryBookName, workbook);
 

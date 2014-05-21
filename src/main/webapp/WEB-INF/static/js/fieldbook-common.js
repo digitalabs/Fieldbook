@@ -121,6 +121,7 @@ function showPage(paginationUrl, pageNum, sectionDiv){
 function showMultiTabPage(paginationUrl, pageNum, sectionDiv, sectionContainerId, paginationListIdentifier){
 	//$('#imported-germplasm-list').html(pageNum); 	
 	Spinner.toggle();
+	
  	$.ajax(
          { url: paginationUrl+pageNum+"?listIdentifier="+paginationListIdentifier,
            type: "GET",
@@ -1026,8 +1027,11 @@ function initializeMethodSelect2(methodSuggestions, methodSuggestions_obj) {
     }).on("change", function (){
     	
     	//	$('#'+getJquerySafeId("breedingMethodId")).val($('#'+getJquerySafeId("methodIdAll")).select2("data").id);
-    	if($('#'+getJquerySafeId("advanceBreedingMethodId")).length != 0)
+    	if($('#'+getJquerySafeId("advanceBreedingMethodId")).length != 0){
     		$('#'+getJquerySafeId("advanceBreedingMethodId")).val($('#'+getJquerySafeId("methodIdAll")).select2("data").id);
+    		$('#'+getJquerySafeId("advanceBreedingMethodId")).trigger('change');
+    	}
+    		
     });
 	
 }
@@ -1057,8 +1061,10 @@ $('#'+getJquerySafeId('methodIdFavorite')).select2({
 
 }).on("change", function (){
 	//$('#'+getJquerySafeId("breedingMethodId")).val($('#'+getJquerySafeId("methodIdFavorite")).select2("data").id);
-	if($('#'+getJquerySafeId("advanceBreedingMethodId")).length != 0)
+	if($('#'+getJquerySafeId("advanceBreedingMethodId")).length != 0){
 		$('#'+getJquerySafeId("advanceBreedingMethodId")).val($('#'+getJquerySafeId("methodIdFavorite")).select2("data").id);
+		$('#'+getJquerySafeId("advanceBreedingMethodId")).trigger('change');
+	}
 });
 
 }

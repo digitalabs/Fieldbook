@@ -37,9 +37,9 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 						<strong><label th:text="#{advancing.nursery.naming.convention}+'*:'"></label></strong>
 						&nbsp;&nbsp;
 						<select id="namingConvention">
-						<option value="3" th:text="#{advancing.nursery.naming.convention.other.crops}">OTHER CROPS</option>
-						  <option th:if="*{cropType == 1}" value="1" th:text="#{advancing.nursery.naming.convention.cimmyt.wheat}">CIMMYT-WHEAT</option>
-						  <option th:if="*{cropType == 2}" value="2" th:text="#{advancing.nursery.naming.convention.cimmyt.maize}">CIMMYT-MAIZE</option>
+						  <option value="3" th:text="#{advancing.nursery.naming.convention.other.crops}">OTHER CROPS</option>
+						  <option th:if="*{true or cropType == 1}" value="1" th:text="#{advancing.nursery.naming.convention.cimmyt.wheat}">CIMMYT-WHEAT</option>
+						  <option th:if="*{true or cropType == 2}" value="2" th:text="#{advancing.nursery.naming.convention.cimmyt.maize}">CIMMYT-MAIZE</option>
 						  					  
 						</select>
 					</div>		
@@ -90,7 +90,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 				</div>
 
 				<br/>
-				<div class="row form-group col-xs-12 col-md-12">
+				<div class="row form-group col-xs-12 col-md-12 lines-section">
 					<div class="row form-group col-xs-12 col-md-12">
 						<label class="control-label" ><strong class="sub-content-heading"  th:text="#{advancing.nursery.lines}">LINES</strong> </label>
 					</div>
@@ -103,7 +103,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 					<div class="row form-group col-xs-6 col-md-6">
 					</div>
 				</div>
-				<div class="row form-group col-xs-12 col-md-12">
+				<div class="row form-group col-xs-12 col-md-12 lines-section">
 					<input type="hidden" th:field="*{plotsWithPlantsSelected}" />
 					<div class="row form-group col-xs-6 col-md-6">
 						<label class="control-label" th:text="#{advancing.nursery.number.of.samples.plot} + ':'">Lines Selected per Plot:</label>														
@@ -125,7 +125,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 				</div>
 				
 				<br/>
-				<div class="row form-group col-xs-12 col-md-12">
+				<div class="row form-group col-xs-12 col-md-12 bulk-section">
 					<div class="row form-group col-xs-12 col-md-12">
 						<label class="control-label" ><strong class="sub-content-heading"  th:text="#{advancing.nursery.bulks}">BULKS</strong> </label>
 					</div>
@@ -138,7 +138,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 					<div class="row form-group col-xs-6 col-md-6">
 					</div>
 				</div>
-				<div class="row form-group col-xs-12 col-md-12">
+				<div class="row form-group col-xs-12 col-md-12 bulk-section">
 					<div id="line-variates-section">
 						<div class="row form-group col-xs-6 col-md-6">
 							<label class="control-label" th:text="#{advancing.nursery.bulks.variate}"></label>
@@ -285,11 +285,13 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 			lineMethod();
 			changeSuffix();
 			
-			
+			$('#advanceBreedingMethodId').on('change', changeAdvanceBreedingMethod);
+			changeAdvanceBreedingMethod();
 		});
 		 
 		function changeMaizeBreedingMethod(){
-			 $('#'+getJquerySafeId("breedingMethodId")).val($('#maizeBreedingMethod').val());
+			 $('#'+getJquerySafeId("advanceBreedingMethodId")).val($('#maizeBreedingMethod').val());
+			 $('#advanceBreedingMethodId').change();
 		}
 		function changeSuffix(){
 			$('input[type=checkbox][name=methodChoice]').prop('disabled', false)
@@ -320,6 +322,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 			}else{
 				adjustMaizeControl(false);
 			}
+			checkMethod();
 		}
 		function adjustMaizeControl(isShow){
 			//console.log(isShow);
@@ -329,7 +332,8 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 				changeMaizeBreedingMethod();
 				$('input[type=checkbox][name=methodChoice]').prop('checked', true);
 				checkMethod();
-				$('input[type=checkbox][name=methodChoice]').prop('disabled', true)
+				$('input[type=checkbox][name=methodChoice]').prop('disabled', true);
+				changeMaizeBreedingMethod();
 			}else{
 				$('.maize-control').css('display', 'none');
 				$('.non-maize-control').css('display', 'block');
@@ -337,6 +341,38 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 			}
 		}
 		
+		function changeAdvanceBreedingMethod(){
+			var bMethodId = $('#advanceBreedingMethodId').val();
+			var isBulk = false;
+			if($('#namingConvention').val() == 2){
+				//means maize is chose
+				if(bMethodId == 2) //Selfed and Ears Bulked
+					isBulk = true;
+			}else{
+				 for( var i = 0 ; i < methodSuggestions.length ; i++){
+				   if(methodSuggestions[i].mid == bMethodId){
+					   if(methodSuggestions[i].geneq == 1){ //means bulk
+					   	isBulk = true;
+					   }
+					   break;
+				   }
+				 }
+			}
+			showBulkSection(isBulk);
+		}
+		function showBulkSection(isBulk){
+			if($('input[type=checkbox][name=methodChoice]:checked').val() != 1){
+				$('.bulk-section').css('display', 'block');
+				$('.lines-section').css('display', 'block');	
+			}
+			else if(isBulk){
+				$('.bulk-section').css('display', 'block');
+				$('.lines-section').css('display', 'none');
+			}else{
+				$('.bulk-section').css('display', 'none');
+				$('.lines-section').css('display', 'block');
+			}
+		}
 //]]>
 </script>
 </div>

@@ -18,6 +18,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
@@ -85,7 +86,7 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
     private ResourceBundleMessageSource messageSource;
 
     /** The imported germplasm list. */
-    private List<ImportedGermplasm> importedGermplasmList;
+    //private List<ImportedGermplasm> importedGermplasmList;
     
     @Resource
     private UserSelection userSelection;
@@ -131,8 +132,10 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
      * @return the map
      * @throws MiddlewareQueryException the middleware query exception
      */
+    /*
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
+   
     public Map<String, String> postAdvanceNursery(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form
             , Model model, HttpSession session) throws MiddlewareQueryException{
     	
@@ -145,13 +148,7 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
                 resultMap.put("errorMessage", errorMessages);
                 return resultMap;
             }
-            /*
-            Map<Germplasm, List<Name>> germplasms = new HashMap<Germplasm, List<Name>>();
-            Map<Germplasm, GermplasmListData> listDataItems = new HashMap<Germplasm, GermplasmListData>();
-            GermplasmList germplasmList = createNurseryAdvanceGermplasmList(form, germplasms, listDataItems);
-            fieldbookMiddlewareService.saveNurseryAdvanceGermplasmList(germplasms, listDataItems, germplasmList);
-            resultMap.put("status", "1");
-			*/
+           
         } catch(Exception e) {
             LOG.error(e.getMessage(), e);
             resultMap.put("status", "-1");
@@ -160,7 +157,7 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
         
         return resultMap;
     }
-    
+    */
     /**
      * Gets the paginated list.
      *
@@ -172,11 +169,14 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
      */
     @RequestMapping(value="/page/{pageNum}", method = RequestMethod.GET)
     public String getPaginatedList(@PathVariable int pageNum
-            , @ModelAttribute("advancingNurseryform") AdvancingNurseryForm form, Model model) {
-    	 List<ImportedGermplasm> importedAdvanceGermplasmList = userSelection.getImportedAdvancedGermplasmList();
+            , @ModelAttribute("advancingNurseryform") AdvancingNurseryForm form, Model model, HttpServletRequest req) {
+    	 String listIdentifier = req.getParameter("listIdentifier");
+    	 AdvancingNurseryForm formFromSession  = getPaginationListSelection().getAdvanceDetails(listIdentifier);
+    	 
+    	 List<ImportedGermplasm> importedAdvanceGermplasmList = formFromSession.getGermplasmList(); //userSelection.getImportedAdvancedGermplasmList();
          if(importedAdvanceGermplasmList != null){
-        	 form.setGermplasmList(importedGermplasmList);
-             form.setEntries(importedGermplasmList.size());
+        	 form.setGermplasmList(importedAdvanceGermplasmList);
+             form.setEntries(importedAdvanceGermplasmList.size());
              form.changePage(pageNum);
          }
          return super.showAjaxPage(model, PAGINATION_TEMPLATE);
@@ -188,6 +188,7 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
      * @param form the form
      * @return the string
      */
+    /*
     private String validate(AdvancingNurseryForm form) {
         Locale locale = LocaleContextHolder.getLocale();
         StringBuilder errorMessages = null;
@@ -240,7 +241,7 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
 
         return errorMessages != null ? errorMessages.toString() : null;
     }
-    
+    */
     /**
      * Creates the nursery advance germplasm list.
      *

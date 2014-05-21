@@ -62,7 +62,7 @@
      </form>
      
  </div>
- <script type="text/javascript" th:src="@{/static/js/bootstrap-paginator.min.js}"></script>
+ 
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
         var paginationUrl = /*[[@{/SeedStoreManager/page/advance/}]]*/;
@@ -79,6 +79,20 @@
             	var sectionContainerDiv = 'advance-list'+listDivIdentifier;
             	var listIdentifier = $('#'+getJquerySafeId(sectionContainerDiv) + ' #listId').val();
             	showMultiTabPage(paginationUrl, page, 'inventory-germplasm-list', sectionContainerDiv, listIdentifier);
+            	
+            	
+                 	 //we highlight the previously clicked
+                  	
+           		   var selectedGidArray = selectedGidsForAdvance[getCurrentAdvanceTabListIdentifier()];
+           		   for(var index in selectedGidArray) {
+              			//console.log( index + " : " + selectedTableIds[index]);
+              			var idVal = selectedGidArray[index];
+              			if(idVal != null){
+              				//we need to highlight
+              				$('#'+sectionContainerDiv+' tr.primaryRow[data-gid='+idVal+']').addClass('field-map-highlight');
+              			}			
+              		 }
+                
             }
         }
         $( document ).ready(function() {  

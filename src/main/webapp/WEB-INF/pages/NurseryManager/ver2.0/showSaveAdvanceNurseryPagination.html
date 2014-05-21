@@ -5,8 +5,8 @@
 			<tr>
 				<th th:utext="#{nursery.import.header.entry}">.Entry</th>
                 <th th:utext="#{nursery.import.header.designation}">.Designation</th>
-                <th th:utext="#{nursery.import.header.gid}">.GID</th>
-                <th th:utext="#{nursery.import.header.cross}">.Cross</th>
+                <th th:utext="#{nursery.import.header.parentage}">Parentage</th>
+                <th th:utext="#{nursery.import.header.gid}">.GID</th>                
                 <th th:utext="#{nursery.import.header.source}">.Source</th>
 			</tr>
 		</thead>
@@ -14,8 +14,10 @@
 			<tr th:each="choice, rowStat : *{paginatedGermplasmList}">
 				<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{paginatedGermplasmList[__${rowStat.index}__].entryId}">Entry</td>
 				<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{paginatedGermplasmList[__${rowStat.index}__].desig}">Designation</td>
-				<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{paginatedGermplasmList[__${rowStat.index}__].gid}">GID</td>
 				<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{paginatedGermplasmList[__${rowStat.index}__].cross}">Cross</td>
+				<!-- <td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{paginatedGermplasmList[__${rowStat.index}__].gid}">GID</td> -->
+				<td th:class="${rowStat.even}? 'even' : 'odd'" >Pending</td> 
+				
 				<td th:class="${rowStat.even}? 'even' : 'odd'" th:text="*{paginatedGermplasmList[__${rowStat.index}__].source}">Source</td>
 			</tr>
 		</tbody>
@@ -28,25 +30,39 @@
  </div>
 
 <div layout:fragment="page-script">
-<script type="text/javascript" th:src="@{/static/js/bootstrap-paginator.min.js}"></script>
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[   
  		       
-	    var paginationUrl = /*[[@{/NurseryManager/saveAdvanceNursery/page/}]]*/;
-        
-        var options = {
-            currentPage: /*[[${advancingNurseryform.currentPage}]]*/,
-            totalPages: /*[[${advancingNurseryform.totalPages}]]*/,
-
-            alignment:'center',
-            useBootstrapTooltip:true,
-            onPageClicked: function(e,originalEvent,type,page){     
-            	showPage(paginationUrl, page, 'advance-nursery-germplasm-list')
-            }
-        }
+	     
         $( document ).ready(function() {  
-		if($('#advance-nursery-germplasm-list-pagination') != null){
-			$('#advance-nursery-germplasm-list-pagination').bootstrapPaginator(options);
+        	var listDivIdentifier  = $('#create-nursery-tab-headers li.active button').attr('id');
+        	var sectionContainerDiv = 'advance-list'+listDivIdentifier;
+        	var listIdentifier = listDivIdentifier;
+        	
+        	
+		if($('#' + sectionContainerDiv + ' #advance-nursery-germplasm-list-pagination') != null){
+			
+			var paginationUrlAdvance = /*[[@{/NurseryManager/saveAdvanceNursery/page/}]]*/;
+	        
+	        var optionsAdvance = {
+	            currentPage: /*[[${advancingNurseryform.currentPage}]]*/,
+	            totalPages: /*[[${advancingNurseryform.totalPages}]]*/,
+
+	            alignment:'center',
+	            useBootstrapTooltip:true,
+	            onPageClicked: function(e,originalEvent,type,page){     
+	            	
+	            	var listDivIdentifier  = $('#create-nursery-tab-headers li.active button').attr('id');
+	            	var sectionContainerDiv = 'advance-list'+listDivIdentifier;
+	            	var listIdentifier = listDivIdentifier;
+	            	showMultiTabPage(paginationUrlAdvance, page, 'advance-nursery-germplasm-list', sectionContainerDiv, listIdentifier);
+	            	            	
+	           		   
+	            }
+	        }
+	        
+			$('#' + sectionContainerDiv + ' #advance-nursery-germplasm-list-pagination').bootstrapPaginator(optionsAdvance);
+	        
 		}
         
         });

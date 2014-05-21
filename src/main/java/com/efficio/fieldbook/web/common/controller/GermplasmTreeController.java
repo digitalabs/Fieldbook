@@ -129,7 +129,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
     		Model model, HttpSession session) {
     	Map<String,Object> results = new HashMap<String, Object>();
         try {
-        	AdvancingNurseryForm advancingNurseryForm = userSelection.getAdvanceDetails(Long.valueOf(form.getListIdentifier()));
+        	AdvancingNurseryForm advancingNurseryForm = getPaginationListSelection().getAdvanceDetails(form.getListIdentifier());
         	
         	
         	GermplasmList germplasmListIsNew = fieldbookMiddlewareService.getGermplasmListByName(form.getListName());

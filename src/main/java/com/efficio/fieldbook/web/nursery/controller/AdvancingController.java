@@ -66,6 +66,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     public static final String URL = "/NurseryManager/advance/nursery";
     
     private static final String MODAL_URL = "NurseryManager/ver2.0/advanceNurseryModal";
+    private static final String SAVE_ADVANCE_NURSERY_PAGE_TEMPLATE = "NurseryManager/ver2.0/saveAdvanceNursery";
     
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(AdvancingController.class);
@@ -322,9 +323,9 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         form.setEntries(importedGermplasmList.size());
         form.changePage(1);
         long id = (new Date()).getTime();
-        userSelection.addAdvanceDetails(id, form);
+        getPaginationListSelection().addAdvanceDetails(Long.toString(id), form);
         form.setUniqueId(id);
-    	return super.showAjaxPage(model, "NurseryManager/ver2.0/saveAdvanceNursery");
+    	return super.showAjaxPage(model, SAVE_ADVANCE_NURSERY_PAGE_TEMPLATE);
     }
     
     private List<StandardVariableReference> filterVariablesByProperty(List<SettingDetail> variables, String propertyName) {

@@ -1,11 +1,4 @@
 <div class="col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org">
-	<div class="row">
-		<div >				
-			<div class="form-group">
-				<div  id="page-message"></div>
-			</div>				
-		</div>
-	</div>
 	
 	<div class="row form-group" th:object="${advancingNurseryform}">
 		<div class="col-xs-12 col-md-12">
@@ -23,83 +16,11 @@
 		
 			<div class="col-xs-12 col-md-12">
 				<div class="col-xs-12 col-md-12">				
-					<div  id="advance-nursery-germplasm-list" th:include="/NurseryManager/showSaveAdvanceNurseryPagination">
+					<div  id="advance-nursery-germplasm-list" th:include="/NurseryManager/ver2.0/showSaveAdvanceNurseryPagination">
 		      		</div>							
 	      		</div>
       		</div>
      			
 	</div>
-	
-	<div class="form-group">
-		<div class="col-md-12">
-			<div class="modal fade" id="successMessageModal" role="dialog" aria-labelledby="successMessageModal" aria-hidden="true">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-body" id="successMessageBody">
-							<div style="text-align: center">
-								<label th:text="#{common.form.save.successful.text}">Save successful!</label>
-							</div>
-						</div>
-						<div class="modal-footer">
-							<a id="btnOK" href="" th:href="@{/NurseryManager}" th:text="#{common.form.ok.text}" class="btn btn-primary">OK</a>
-						</div>
-					</div>
-					<!-- /.modal-content -->
-				</div>
-				<!-- /.modal-dialog -->
-			</div>
-			<!-- /.modal -->
-
-		</div>
-	</div>
-
-
-</div>
-
-<div layout:fragment="page-script">
-<script type='text/javascript' th:inline="javascript">
-	//<![CDATA[   
- 		var nurseryAdvanceNameRequiredMessage = /*[[#{nursery.save.advance.nursery.nursery.advance.name.required}]]*/;
-        var nurseryAdvanceDescriptionRequiredMessage = /*[[#{nursery.save.advance.nursery.description.required}]]*/;
-        
-		function doSave(){
-			
-			if($('#nurseryAdvanceName').val() == ''){
-				showErrorMessage('page-message', nurseryAdvanceNameRequiredMessage);
-				return false;
-			}else if($('#nurseryAdvanceDescription').val() == ''){
-				showErrorMessage('page-message', nurseryAdvanceDescriptionRequiredMessage);
-				return false;
-			}
-			
-			
-  	      	var $form = $("#saveAdvanceNurseryForm");
-  			serializedData = $form.serialize();
-			Spinner.toggle();
-
-			$.ajax({
-				url: "/Fieldbook/NurseryManager/saveAdvanceNursery",
-				type: "post",
-				dataType: "json",
-				data: serializedData,
-			    success: function(data){
-				    if (data.status == "1") {
-				    	$('#successMessageModal').modal({ backdrop: 'static', keyboard: true }) 
-				    	$("#successMessageModal").modal("show");
-			       	} else if (data.status == "-1") {
-			       		showErrorMessage('page-message', data.errorMessage);
-			       	}
-			   }, 
-			   error: function(jqXHR, textStatus, errorThrown){
-					console.log("The following error occured: " + textStatus, errorThrown); 
-			   }, 
-			   complete: function(){  
-				   Spinner.toggle();
-			   } 
-			});
-		}      
-	
-      //]]>
-    </script>
 	
 </div>

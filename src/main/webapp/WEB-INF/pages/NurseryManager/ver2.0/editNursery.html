@@ -330,10 +330,14 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 				if ($(".germplasm-list-items").length > 0) {
 					submitCheckGermplasmList();
 				} else if (data.status == 1) {
-					$('#successMessageModal').modal({ backdrop: 'static', keyboard: true });
+					$('#successMessageModal').modal("show");
+					//$('#successMessageModal').modal({ backdrop: 'static', keyboard: true });
 				}
 			}, 
 			complete: function() {
+				if ($(".germplasm-list-items").length == 0) { 
+					Spinner.toggle();
+				}
 			}
 		});
 	}

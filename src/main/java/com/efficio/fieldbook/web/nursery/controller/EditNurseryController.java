@@ -247,8 +247,7 @@ public class EditNurseryController extends SettingsController {
      */
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
-    public String submit(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws MiddlewareQueryException {
-        System.out.println("i'm here");
+    public Map<String, String> submit(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws MiddlewareQueryException {
     	String name = null;
     	for (SettingDetail nvar : form.getBasicDetails()) {
     		if (nvar.getVariable() != null && nvar.getVariable().getCvTermId() != null && nvar.getVariable().getCvTermId().equals(TermId.STUDY_NAME.getId())) {
@@ -256,7 +255,7 @@ public class EditNurseryController extends SettingsController {
     			break;
     		}
     	}
-
+    	
     	List<SettingDetail> studyLevelVariables = new ArrayList<SettingDetail>();
     	if (form.getStudyLevelVariables() != null && !form.getStudyLevelVariables().isEmpty()) {
     		studyLevelVariables.addAll(form.getStudyLevelVariables());
@@ -280,37 +279,52 @@ public class EditNurseryController extends SettingsController {
     	Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);
     	    	
     	createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId());
+    	userSelection.setWorkbook(workbook);
     	
-    	System.out.println("i'm here");
-    	
+    	Map<String, String> resultMap = new HashMap<String, String>();
+    	//saving of measurement rows
     	if (userSelection.getMeasurementRowList() != null && userSelection.getMeasurementRowList().size() > 0) {
-    	    int previewPageNum = userSelection.getCurrentPage();
-            
-            copyDataFromFormToUserSelection(form, previewPageNum);
-            form.setMeasurementRowList(userSelection.getMeasurementRowList());
-            form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
-          
-            workbook.setObservations(form.getMeasurementRowList());
-            userSelection.setWorkbook(workbook);
-            System.out.println("i'm here");
-            return "redirect:" + SaveNurseryController.URL;
+            try {
+                dataImportService.saveDataset(workbook, true);
+                
+                int previewPageNum = userSelection.getCurrentPage();
+                
+                copyDataFromFormToUserSelection(form, previewPageNum);
+                form.setMeasurementRowList(userSelection.getMeasurementRowList());
+                form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
+              
+                workbook.setObservations(form.getMeasurementRowList());
+                userSelection.setWorkbook(workbook);
+                validationService.validateObservationValues(workbook);
+                fieldbookMiddlewareService.saveMeasurementRows(workbook);
+                
+                resultMap.put("status", "1");
+            } catch (MiddlewareQueryException e) {
+                LOG.error(e.getMessage());
+                resultMap.put("status", "-1");
+                resultMap.put("errorMessage", e.getMessage());
+            }
+            return resultMap;
     	} else {
-    	    return "success";
+    	    resultMap.put("status", "1");
+    	    return resultMap;
     	}
     	
     }
     
     private void copyDataFromFormToUserSelection(CreateNurseryForm form, int previewPageNum){
-        for(int i = 0 ; i < form.getPaginatedMeasurementRowList().size() ; i++){
-                MeasurementRow measurementRow = form.getPaginatedMeasurementRowList().get(i);
-                int realIndex = ((previewPageNum - 1) * form.getResultPerPage()) + i;
-                for(int index = 0 ; index < measurementRow.getDataList().size() ; index++){
-                        MeasurementData measurementData =  measurementRow.getDataList().get(index);
-                        MeasurementData sessionMeasurementData = userSelection.getMeasurementRowList().get(realIndex).getDataList().get(index);
-                        if(sessionMeasurementData.isEditable())
-                                sessionMeasurementData.setValue(measurementData.getValue());                            
-                }
-                //getUserSelection().getMeasurementRowList().set(realIndex, measurementRow);
+        if (form.getPaginatedMeasurementRowList() != null) {
+            for(int i = 0 ; i < form.getPaginatedMeasurementRowList().size() ; i++){
+                    MeasurementRow measurementRow = form.getPaginatedMeasurementRowList().get(i);
+                    int realIndex = ((previewPageNum - 1) * form.getResultPerPage()) + i;
+                    for(int index = 0 ; index < measurementRow.getDataList().size() ; index++){
+                            MeasurementData measurementData =  measurementRow.getDataList().get(index);
+                            MeasurementData sessionMeasurementData = userSelection.getMeasurementRowList().get(realIndex).getDataList().get(index);
+                            if(sessionMeasurementData.isEditable())
+                                    sessionMeasurementData.setValue(measurementData.getValue());                            
+                    }
+                    //getUserSelection().getMeasurementRowList().set(realIndex, measurementRow);
+            }
         }
     }
     

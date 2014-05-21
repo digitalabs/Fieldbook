@@ -380,8 +380,8 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
     
 	$(document).ready(function() {
 		if (getIEVersion() == 8) {
-			$(".table-with-scroll-create").parent().addClass("variable-details");
-			$(".table-with-scroll-create").removeClass("table-with-scroll-create");
+			$(".table-with-scroll").parent().addClass("variable-details");
+			$(".table-with-scroll").removeClass("table-with-scroll");
 		} 
         if($('#requiredFields').val() != ''){
             requiredFields = $('#requiredFields').val().split(',');    

@@ -28,8 +28,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
@@ -72,6 +74,9 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     private ValidationService validationService;
 //    @Resource
 //    private RExportStudyService rExportStudyService;
+    
+    @Resource
+    private PaginationListSelection paginationListSelection;
     
     /** The Constant BUFFER_SIZE. */
 //    private static final int BUFFER_SIZE = 4096 * 4;
@@ -387,6 +392,8 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
             form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
             form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());
             form.setStudyName(workbook.getStudyDetails().getStudyName());
+            paginationListSelection.addReviewDetailsList(String.valueOf(workbook.getMeasurementDatesetId()), form.getMeasurementRowList());
+            paginationListSelection.addReviewVariableList(String.valueOf(workbook.getMeasurementDatesetId()), form.getMeasurementVariables());
             form.changePage(1);
             userSelection.setCurrentPage(form.getCurrentPage());
             userSelection.setWorkbook(workbook);

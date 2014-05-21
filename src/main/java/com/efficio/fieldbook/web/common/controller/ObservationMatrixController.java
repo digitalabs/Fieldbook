@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -21,9 +22,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.bean.StudySelection;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
@@ -51,6 +54,9 @@ public class ObservationMatrixController extends
 	
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
+	
+	@Resource
+	private PaginationListSelection paginationListSelection;
 	
 	
 	@Override
@@ -112,26 +118,32 @@ public class ObservationMatrixController extends
         return super.showAjaxPage(model, PAGINATION_TEMPLATE);
     }
 
-    @RequestMapping(value="/pageView/{studyType}/{pageNum}/{previewPageNum}", method = RequestMethod.POST)
-    public String getPaginatedListViewOnly(@PathVariable String studyType, @PathVariable int pageNum, @PathVariable int previewPageNum
-            , @ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
+    @RequestMapping(value="/pageView/{studyType}/{pageNum}", method = RequestMethod.GET)
+    public String getPaginatedListViewOnly(@PathVariable String studyType, @PathVariable int pageNum,
+            @ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, @RequestParam("listIdentifier") String datasetId) {
 
     	boolean isTrial = studyType.equalsIgnoreCase("TRIAL");
     	StudySelection userSelection = getUserSelection(isTrial);
     	
-    	if (form.getPaginatedMeasurementRowList() == null && form.getMeasurementRowList() == null) {
-    		form.setMeasurementRowList(userSelection.getMeasurementRowList());
-    		form.changePage(previewPageNum);
+    	List<MeasurementRow> rows = paginationListSelection.getReviewDetailsList(datasetId);
+    	if (rows != null) {
+    		form.setMeasurementRowList(rows);
+    		form.changePage(pageNum);
     	}
+    	
     	//this set the necessary info from the session variable
-    	copyDataFromFormToUserSelection(form, previewPageNum, userSelection);
+    	//copyDataFromFormToUserSelection(form, previewPageNum, userSelection);
     	//we need to set the data in the measurementList
     	
-    	copyTrialDataFromFormToUserSelection(form, userSelection);
+    	//copyTrialDataFromFormToUserSelection(form, userSelection);
     	
     	form.setMeasurementRowList(userSelection.getMeasurementRowList());
-    	form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
-    	form.setStudyName(userSelection.getWorkbook().getStudyDetails().getStudyName());
+    	List<MeasurementVariable> variables = paginationListSelection.getReviewVariableList(datasetId);
+    	if (variables != null) {
+    		form.setMeasurementVariables(variables);
+    	}
+    	//form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
+    	//form.setStudyName(userSelection.getWorkbook().getStudyDetails().getStudyName());
         form.changePage(pageNum);
         userSelection.setCurrentPage(form.getCurrentPage());
         return super.showAjaxPage(model, PAGINATION_TEMPLATE_VIEW_ONLY);

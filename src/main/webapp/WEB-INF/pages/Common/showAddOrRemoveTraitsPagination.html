@@ -126,10 +126,7 @@
 
         $( document ).ready(function() {
         	   fixedTrHeight();
-       		   $("#btnBack").attr("href", "/Fieldbook/" + $("#study-type").val() + "Manager");
-       		   $("#btnUpdate").show();
-       		   $("#btnNext").hide();
-       	     
+       		 
        	$('.variates-div').scroll(function(){ 
        	
        		$('.factor-div').scrollTop($(this).scrollTop());
@@ -154,8 +151,8 @@
         function resizeWindowForIE(){
         	if(isIE){
         		$('.germplasm-measurement-list-table').css('width', $( window ).width() + "px");   
-        		$('.factor-div').css('min-width', '48.5%');
-        		$('.factor-div').css('max-width', '48.5%');
+        		$('.factor-div').css('min-width', '35.5%');
+        		$('.factor-div').css('max-width', '35.5%');
         	}
         		
         	syncTableHeight();

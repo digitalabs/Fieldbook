@@ -42,10 +42,10 @@ th:object="${saveListForm}" enctype="multipart/form-data">
 		<div class="col-xs-5 col-md-5">
 			<label class="control-label" th:text="#{germplasm.save.list.date.label}">List Date:</label><span class="required">*</span>
 		</div>
-		<div class="col-xs-3 col-md-3 input-group date" data-date="" data-date-format="yyyymmdd">
+		<div class="col-xs-7 col-md-7" data-date="" data-date-format="yyyymmdd">
 			<input type="text" class="form-control  date-input" th:field="*{listDate}" style="width: 100px"/>
 			 		
-			<label for="listDate" class="input-group-addon btn datepicker">
+			<label for="listDate" class="btn datepicker">
 				<img width="20" height="22" th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;" />
 			</label>
 			
@@ -64,8 +64,10 @@ th:object="${saveListForm}" enctype="multipart/form-data">
 </form>
 
 <div layout:fragment="page-script">
+<!-- 
 <link th:href="@{/static/css/bootstrap-datepicker.css}" rel="stylesheet"/>
 <script type="text/javascript" th:src="@{/static/js/bootstrap-datepicker.js}"></script>
+ -->
 <script type='text/javascript' th:inline="javascript">
 //<![CDATA[
    
@@ -88,6 +90,7 @@ th:object="${saveListForm}" enctype="multipart/form-data">
 			});
 		}
 
+	  	initializeDateAndSliderInputs();
    });
 	
 //]]>

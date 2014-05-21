@@ -774,7 +774,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType, p
 		newRow = newRow + "<span style='word-wrap: break-word'  class='control-label'>" + settingDetail.variable.name + "</span>: &nbsp;<span class='required'>*</span></div>";
 		
 		if(settingDetail.variable.widgetType == 'DATE'){
-			newRow = newRow + "<div class='col-xs-3 col-md-3 2nd input-group date'>";
+			newRow = newRow + "<div class='col-xs-3 col-md-3 2nd'>";
 		}else
 			newRow = newRow + "<div class='col-xs-7 col-md-7 2nd'>";
 
@@ -1102,7 +1102,7 @@ function recreateDateInput(index, row, selectedVal, name) {
 	".value' name='"+name+"[" + index + "].value' " + 
 	"value='" + selectedVal +
 	"' class='form-control date-input' />";
-	newCell += '<label for="' + name + index + '.value" class="input-group-addon btn datepicker"><img  src="/Fieldbook/static/img/calendar.png" style="padding-bottom:3px;" /></label>';
+	newCell += '<label for="' + name + index + '.value" class="btn datepicker"><img  src="/Fieldbook/static/img/calendar.png" style="padding-bottom:3px;" /></label>';
 	 
 
 	$($(row).find(".2nd")).html(newCell);
@@ -1443,7 +1443,7 @@ function createDropdownInput(ctr, name){
 function createDateInput(ctr, name){	
 	 return "<input type='text' id='" + name+ ctr + 
 		".value' name='" + name + "[" + ctr + "].value' class='form-control date-input' />" +
-	'<label for="' + name + ctr + '.value" class="input-group-addon btn datepicker"><img src="/Fieldbook/static/img/calendar.png" style="padding-bottom:3px;" /></label>';
+	'<label for="' + name + ctr + '.value" class="btn datepicker"><img src="/Fieldbook/static/img/calendar.png" style="padding-bottom:3px;" /></label>';
 	 
 }
 function createNumericalTextInput(ctr, name){
@@ -1455,6 +1455,7 @@ function createCharacterTextInput(ctr, name){
 	".value' name='" + name + "[" + ctr + "].value' class='form-control character-input' />";
 
 }
+
 function initializeDateAndSliderInputs(){
 	if($('.date-input').length > 0){
 		$('.date-input').each(function(){
@@ -1464,7 +1465,11 @@ function initializeDateAndSliderInputs(){
 		})
 		});
 	}
-	
+	if($('.datepicker img').length > 0){
+		$('.datepicker img').on('click', function(){
+			$(this).parent().parent().find('.date-input').datepicker('show');
+		})
+	}
 	if($('.spinner-input').length > 0){
 		
 		$('.spinner-input').each(function(){

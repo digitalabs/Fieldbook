@@ -30,6 +30,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.workbench.settings.Condition;
 import org.generationcp.middleware.pojos.workbench.settings.Constant;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
@@ -235,6 +236,7 @@ public class SettingsUtil {
 			Condition condition = new Condition(variable.getName(), variable.getDescription(), variable.getProperty(),
 					variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
 					HtmlUtils.htmlEscape(settingDetail.getValue()), variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
+			condition.setOperation(variable.getOperation());
 			conditions.add(condition);
 		}
 		//iterate for the plot level
@@ -268,6 +270,7 @@ public class SettingsUtil {
 				Variate variate = new Variate(variable.getName(), variable.getDescription(), variable.getProperty(),
 						variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(), variable.getDataTypeId(),
 						settingDetail.getPossibleValues(), variable.getMinRange(), variable.getMaxRange());
+				variate.setOperation(variable.getOperation());
 				variates.add(variate);
 			}
 		}
@@ -288,6 +291,7 @@ public class SettingsUtil {
                         Constant constant= new Constant(variable.getName(), variable.getDescription(), variable.getProperty(),
                                         variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
                                         HtmlUtils.htmlEscape(settingDetail.getValue()), variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
+                        constant.setOperation(variable.getOperation());
                         constants.add(constant);
                 }
 		}
@@ -478,6 +482,7 @@ public class SettingsUtil {
 					SettingVariable variable = new SettingVariable(condition.getName(), condition.getDescription(), condition.getProperty(),
 							condition.getScale(), condition.getMethod(), condition.getRole(), condition.getDatatype(), condition.getDataTypeId(),
 							condition.getMinRange(), condition.getMaxRange());
+					variable.setOperation(Operation.UPDATE);
 					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), 
 							HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
 					
@@ -505,6 +510,7 @@ public class SettingsUtil {
 					
 					SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(),
 							factor.getScale(), factor.getMethod(), factor.getRole(), factor.getDatatype());
+					variable.setOperation(Operation.UPDATE);
 					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
 					
 					if (!inHideVariableFields(stdVar, AppConstants.HIDE_PLOT_FIELDS.getString())) {
@@ -528,6 +534,7 @@ public class SettingsUtil {
 					
 					SettingVariable variable = new SettingVariable(variate.getName(), variate.getDescription(), variate.getProperty(),
 							variate.getScale(), variate.getMethod(), variate.getRole(), variate.getDatatype());
+					variable.setOperation(Operation.UPDATE);
 					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
 					variable.setCvTermId(stdVar);
 					StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
@@ -554,6 +561,7 @@ public class SettingsUtil {
                                     SettingVariable variable = new SettingVariable(constant.getName(), constant.getDescription(), constant.getProperty(),
                                                     constant.getScale(), constant.getMethod(), constant.getRole(), constant.getDatatype(), constant.getDataTypeId(),
                                                     constant.getMinRange(), constant.getMaxRange());
+                                    variable.setOperation(Operation.UPDATE);
                                     Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), 
                                                     HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.VARIATE);
                                                                         
@@ -1114,6 +1122,7 @@ public class SettingsUtil {
 				condition.getName(), condition.getDescription(), condition.getScale(), condition.getMethod(), condition.getProperty(), condition.getDatatype(), 
 				condition.getValue(), /*PhenotypicType.valueOf(condition.getRole()).getLabelList().get(0)*/ label, 
 				condition.getMinRange(), condition.getMaxRange());
+		mvar.setOperation(condition.getOperation());
 		mvar.setFactor(true);
 		mvar.setDataTypeId(condition.getDataTypeId());
 		return mvar;
@@ -1128,7 +1137,9 @@ public class SettingsUtil {
                     constant.getName(), constant.getDescription(), constant.getScale(), constant.getMethod(), constant.getProperty(), constant.getDatatype(), 
                     constant.getValue(), /*PhenotypicType.valueOf(condition.getRole()).getLabelList().get(0)*/ label, 
                     constant.getMinRange(), constant.getMaxRange());
-            mvar.setFactor(true);
+            
+            mvar.setOperation(constant.getOperation());
+            mvar.setFactor(false);
             mvar.setDataTypeId(constant.getDataTypeId());
             return mvar;
 	}
@@ -1214,6 +1225,7 @@ public class SettingsUtil {
 		MeasurementVariable mvar = new MeasurementVariable(
 				variate.getName(), variate.getDescription(), variate.getScale(), variate.getMethod(), variate.getProperty(), variate.getDatatype(), null, 
 				PhenotypicType.TRIAL_DESIGN.getLabelList().get(0), variate.getMinRange(), variate.getMaxRange()); //because variates are mostly PLOT variables
+		mvar.setOperation(variate.getOperation());
 		mvar.setFactor(false);
 		mvar.setDataTypeId(variate.getDataTypeId());
 		mvar.setPossibleValues(variate.getPossibleValues());

@@ -15,6 +15,7 @@ import java.io.Serializable;
 
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.manager.Operation;
 import org.springframework.web.util.HtmlUtils;
 
 import com.efficio.fieldbook.web.nursery.bean.WidgetType;
@@ -39,6 +40,7 @@ public class SettingVariable implements Serializable{
 	private Double minRange;
 	private Double maxRange;
 	private WidgetType widgetType;
+	private Operation operation;
 	
 	public SettingVariable(){
 		super();
@@ -255,5 +257,23 @@ public class SettingVariable implements Serializable{
 		}
 		return this.widgetType;
 	}
+
+
+
+    /**
+     * @return the operation
+     */
+    public Operation getOperation() {
+        return operation;
+    }
+
+
+
+    /**
+     * @param operation the operation to set
+     */
+    public void setOperation(Operation operation) {
+        this.operation = operation;
+    }
 	
 }

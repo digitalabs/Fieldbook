@@ -1221,7 +1221,8 @@ function doExportContinue(paramUrl, isNursery){
         	   	 
         	   	}
         		newAction += exportWayType;
-
+        		//alert(newAction);
+        		//alert(formName);
         	   $(formName).attr('action', newAction);
         	   $(formName).submit();
         	   $(formName).attr('action', action);
@@ -1380,7 +1381,7 @@ function callAdvanceNursery() {
        	 
         	var uniqueId = $(html).find('.uniqueId').attr('id');
         	var close = '<button style="float: right" onclick="javascript: closeAdvanceListTab('+uniqueId+')" type="button" id="'+uniqueId+'" class="close">x</button>';
-        	var aHtml = "<a id='advanceHref"+uniqueId+"' href='javascript: showSelectedAdvanceTab("+uniqueId+")'>Advance List "+close+"</a>";
+        	var aHtml = "<a id='advanceHref"+uniqueId+"' href='javascript: showSelectedAdvanceTab("+uniqueId+")'>Advance List"+close+"</a>";
         	$("#create-nursery-tab-headers").append("<li class='active' id='advance-list"+uniqueId+"-li'>"+aHtml+"</li>");
         	$("#create-nursery-tabs").append("<div class='info' id='advance-list"+uniqueId+"'>" + html + "</div>");       	
         	showSelectedTab("advance-list"+uniqueId);

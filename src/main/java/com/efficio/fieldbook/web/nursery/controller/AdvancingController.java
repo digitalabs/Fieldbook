@@ -54,6 +54,7 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.DateUtil;
 
 /**
  * The Class AddOrRemoveTraitsController.
@@ -137,9 +138,9 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	form.setLocationUrl(AppConstants.LOCATION_URL.getString());
     	form.setBreedingMethodUrl(AppConstants.BREEDING_METHOD_URL.getString());
     	//long start = System.currentTimeMillis();
-    	Workbook workbook = null;//fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
-    	//System.out.println("get nursery : " + (System.currentTimeMillis() - start));
-    	userSelection.setWorkbook(workbook);
+    	//Workbook workbook = null;//fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
+    	//System.out.println("get nursery : " + (System.currentTimeMillis() - start));    	
+    	//userSelection.setWorkbook(workbook);
     	form.setNurseryId(Integer.toString(nurseryId));
     	Project project = workbenchService.getProjectById(Long.valueOf(this.getCurrentProjectId()));
     	if(AppConstants.CROP_MAIZE.getString().equalsIgnoreCase(project.getCropType().getCropName())){
@@ -158,28 +159,13 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	form.setHarvestYear(currentYear);
     	form.setHarvestMonth(sdfMonth.format(new Date()));
     	
-    	model.addAttribute("yearChoices", generateYearChoices(Integer.parseInt(currentYear)));
-    	model.addAttribute("monthChoices", generateMonthChoices());
+    	model.addAttribute("yearChoices", DateUtil.generateYearChoices(Integer.parseInt(currentYear)));
+    	model.addAttribute("monthChoices", DateUtil.generateMonthChoices());
     	
     	return super.showAjaxPage(model, MODAL_URL);
     }
-    private List<ChoiceKeyVal> generateYearChoices(int currentYear){
-    	List<ChoiceKeyVal> yearList = new ArrayList();
-    	int startYear = AppConstants.START_YEAR.getInt();
-    	for(int i = startYear ; i <= currentYear ; i++){
-    		yearList.add(new ChoiceKeyVal(Integer.toString(i), Integer.toString(i)));
-    	}
-    	return yearList;
-    }
-    private List<ChoiceKeyVal> generateMonthChoices(){
-    	List<ChoiceKeyVal> monthList = new ArrayList();
-    	DecimalFormat df2 = new DecimalFormat( "00" );
-    	for(double i = 1 ; i <= 12 ; i++){
-    		monthList.add(new ChoiceKeyVal(df2.format(i), df2.format(i)));
-    	}
-    	return monthList;
-    }
     
+    /*
     @ResponseBody
     @RequestMapping(value="/load/{nurseryId}", method = RequestMethod.GET)
     public Map<String, String> showLoadNursery(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form
@@ -195,7 +181,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	//System.out.println("loading: " + (System.currentTimeMillis()-start));
     	return result;
     }
-    
+    */
     /**
      * Gets the breeding methods.
      *

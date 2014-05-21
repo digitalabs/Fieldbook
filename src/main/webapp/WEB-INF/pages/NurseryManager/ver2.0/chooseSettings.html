@@ -180,10 +180,12 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 				    				</label>
 				    				<span class="help-tooltip-nursery" data-placement="right" data-toggle="tooltip" th:title="#{nursery.managesettings.plot.level.notes}">?</span>
 				    			</div>
-				    			<div class="col-xs-2 col-md-2 add-bottom-padding">
+				    			<div class="col-xs-2 col-md-2 add-bottom-padding" th:if="${createNurseryForm.measurementRowList.size() == 0}">
 						    		<a class="btn btn-info" href="javascript: openAddVariablesSetting(2);" 
-					    			th:if="${createNurseryForm.measurementRowList.size() == 0}" 
-						    		th:text="#{nursery.create.nursery.add.settings}">Add</a>
+					    			 th:text="#{nursery.create.nursery.add.settings}">Add</a>						    		
+				    			</div>
+				    			<div class="col-xs-2 col-md-2 add-bottom-padding" th:if="${createNurseryForm.measurementRowList.size() != 0}" style="padding-top: 30px">
+						    								    		
 				    			</div>
 			    			</div>
 			    			<div class="row form-group collapse in plotLevelDetails">

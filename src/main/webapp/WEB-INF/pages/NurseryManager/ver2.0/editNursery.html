@@ -271,12 +271,20 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
     var addBaselineTraits = /*[[#{nursery.managesettings.add.baseline.traits}]]*/;
     var addSelectionVariates = /*[[#{nursery.managesettings.add.selection.variates}]]*/;
     var addNurseryConditions = /*[[#{nursery.managesettings.add.nursery.conditions}]]*/;
+    
+    
+    var addTrialEnvironmentTraits = /*[[#{nursery.managesettings.add.trial.environment.variable}]]*/;
+    var addTreatmentFactors = /*[[#{trial.managesettings.treatment.factors.add}]]*/;
+    
     var reminderNursery = /*[[#{nursery.reminder.add.nursery.settings}]]*/;
 	var reminderPlot = /*[[#{nursery.reminder.add.plot.settings}]]*/;
 	var reminderTraits = /*[[#{nursery.reminder.add.trait.settings}]]*/;
 	var reminderSelectionVariates = /*[[#{nursery.reminder.add.selection.variates}]]*/;
-	var reminderNurseryCondtions = /*[[#{nursery.reminder.add.nursery.conditions}]]*/;
-       		
+	var reminderNurseryCondtions = /*[[#{nursery.reminder.add.nursery.conditions}]]*/;	
+	var reminderTrialEnvironment = /*[[#{nursery.reminder.add.trial.environment.settings}]]*/;
+	var reminderTreatmentFactors = /*[[#{trial.reminder.add.treatment.factors}]]*/;
+	
+		
 	function submitGermplasmList(){
 		var $form = $("#germplasm-list-form");
 		//$('#chooseSpecifyCheck').val($('input[name="specifyCheckType"]:checked').val());

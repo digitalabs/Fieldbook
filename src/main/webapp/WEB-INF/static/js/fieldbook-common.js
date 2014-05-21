@@ -121,6 +121,7 @@ function showPage(paginationUrl, pageNum, sectionDiv){
 function showMultiTabPage(paginationUrl, pageNum, sectionDiv, sectionContainerId, paginationListIdentifier){
 	//$('#imported-germplasm-list').html(pageNum); 	
 	Spinner.toggle();
+	
  	$.ajax(
          { url: paginationUrl+pageNum+"?listIdentifier="+paginationListIdentifier,
            type: "GET",

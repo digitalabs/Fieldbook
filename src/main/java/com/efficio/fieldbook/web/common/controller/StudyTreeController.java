@@ -91,7 +91,7 @@ public class StudyTreeController extends AbstractBaseFieldbookController {
             		 
                      List<FolderReference> rootFolders = fieldbookMiddlewareService.getRootFolders(instance);
                      String jsonResponse = TreeViewUtil.convertStudyFolderReferencesToJson(rootFolders, true, false, true, fieldbookMiddlewareService, isFolderOnlyBool);
-                     LOG.debug(jsonResponse);
+                     //LOG.debug(jsonResponse);
                      return jsonResponse;
                  
                  } catch (Exception e) {
@@ -147,7 +147,7 @@ public class StudyTreeController extends AbstractBaseFieldbookController {
             		 
                      List<FolderReference> rootFolders = fieldbookMiddlewareService.getRootFolders(instance);
                      String jsonResponse = TreeViewUtil.convertStudyFolderReferencesToJson(rootFolders, false, true, true, fieldbookMiddlewareService, false);
-                     LOG.debug(jsonResponse);
+                     //LOG.debug(jsonResponse);
                      return jsonResponse;
                  
                  } catch (Exception e) {

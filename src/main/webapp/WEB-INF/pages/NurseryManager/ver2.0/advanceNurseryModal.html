@@ -37,9 +37,10 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 						<strong><label th:text="#{advancing.nursery.naming.convention}+'*:'"></label></strong>
 						&nbsp;&nbsp;
 						<select id="namingConvention">
+						<option value="3" th:text="#{advancing.nursery.naming.convention.other.crops}">OTHER CROPS</option>
 						  <option th:if="*{cropType == 1}" value="1" th:text="#{advancing.nursery.naming.convention.cimmyt.wheat}">CIMMYT-WHEAT</option>
 						  <option th:if="*{cropType == 2}" value="2" th:text="#{advancing.nursery.naming.convention.cimmyt.maize}">CIMMYT-MAIZE</option>
-						  <option value="3" th:text="#{advancing.nursery.naming.convention.other.crops}">OTHER CROPS</option>					  
+						  					  
 						</select>
 					</div>		
 				</div>
@@ -241,8 +242,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
     
     var msgEmptyListError = /*[[#{nursery.advance.nursery.empty.list.error}]]*/;
     
-		 $(function() {
-			//loadNurseryDetails();
+		 $(function() {			
 			var harvestDate =  $('#harvestDate').datepicker({'format': 'yyyymmdd'}).on('changeDate', function(ev) {
 				$(this).datepicker('hide');
 			})
@@ -292,6 +292,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 			 $('#'+getJquerySafeId("breedingMethodId")).val($('#maizeBreedingMethod').val());
 		}
 		function changeSuffix(){
+			$('input[type=checkbox][name=methodChoice]').prop('disabled', false)
 			if($('#namingConvention').val() == 3){
 				//show
 				$('#suffix-div').show();
@@ -315,9 +316,10 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 			if($('#namingConvention').val() == 2){
 				//meaning maize
 				adjustMaizeControl(true);
-		}else{
-			adjustMaizeControl(false);
-		}
+				
+			}else{
+				adjustMaizeControl(false);
+			}
 		}
 		function adjustMaizeControl(isShow){
 			//console.log(isShow);
@@ -325,28 +327,16 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 				$('.maize-control').css('display', 'block');
 				$('.non-maize-control').css('display', 'none');
 				changeMaizeBreedingMethod();
+				$('input[type=checkbox][name=methodChoice]').prop('checked', true);
+				checkMethod();
+				$('input[type=checkbox][name=methodChoice]').prop('disabled', true)
 			}else{
 				$('.maize-control').css('display', 'none');
 				$('.non-maize-control').css('display', 'block');
 				showCorrectMethodCombo();
 			}
 		}
-		function loadNurseryDetails(){
-			Spinner.toggle();
-			$.ajax(
-					{ url: "/Fieldbook/NurseryManager/advance/nursery/load/"+$('#nurseryId').val(),
-				       type: "GET",
-				       cache: false,
-				       data: "",
-				       success: function(data) {
-				    	   //console.log('done');
-				    	  Spinner.toggle();
-				       }
-				        
-				     }
-					);
 		
-		}
 //]]>
 </script>
 </div>

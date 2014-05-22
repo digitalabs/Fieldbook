@@ -50,7 +50,8 @@
              		<input th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" type="text" th:if="${measurementData.editable == true}" th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}"/ -->
              		
              		<input th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" type="text" th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues)}" th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}" />
-             		<select class="variates-select" th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" 
+             		 
+             		<select class="variates-select" th:attr="data-type=${measurementData.dataType}" style="width: 100%;" size="1" 
              				th:if="${not #lists.isEmpty(measurementData.measurementVariable.possibleValues)}" 
 	             			th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}" >
 	             		<option value = "" text=""></option>
@@ -58,7 +59,7 @@
              					th:value="${refval.key}" 
              					th:text="${refval.description}"></option>
              		</select>
-             		     		
+             		      		
 				</td>
              </tr>
 					</tbody>

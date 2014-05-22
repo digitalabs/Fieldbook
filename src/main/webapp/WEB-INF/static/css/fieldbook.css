@@ -1002,3 +1002,22 @@ div.sectionContainer {
     font-size: 18px;
     top: -5px;
 }
+#check-table .select2-container .select2-choice,
+.germplasm-measurement-list-table .select2-container .select2-choice {
+    height: 24px;
+}
+#check-table  .select2-container.form-control,
+.germplasm-measurement-list-table .select2-container.form-control{
+	 height: 24px;
+}
+#check-table  .select2-chosen, 
+#check-table .select2-choice > span:first-child, 
+#check-table .select2-container .select2-choices .select2-search-field input,
+.germplasm-measurement-list-table  .select2-chosen, 
+.germplasm-measurement-list-table .select2-choice > span:first-child, 
+.germplasm-measurement-list-table .select2-container .select2-choices .select2-search-field input {
+    padding: 2px 12px;
+}
+#check-table span.select2-arrow{
+	top: -3px;
+}

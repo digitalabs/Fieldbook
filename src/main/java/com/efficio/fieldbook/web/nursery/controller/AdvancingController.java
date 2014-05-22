@@ -122,22 +122,22 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	form.setLineSelected("1");
     	form.setProjectId(this.getCurrentProjectId());
     	List<Integer> variateIds = new ArrayList<Integer>();
-    	boolean isMixed = form.getMethodChoice() == null || form.getMethodChoice().equals("0");
-    	if (isMixed) {
-    		variateIds.add(form.getLineVariateId());
-    		variateIds.add(form.getPlotVariateId());
-    	}
-    	else if (form.getAdvanceBreedingMethodId() != null && NumberUtils.isNumber(form.getAdvanceBreedingMethodId())) {
-    		Method method = fieldbookMiddlewareService.getBreedingMethodById(Double.valueOf(form.getAdvanceBreedingMethodId()).intValue());
-    		boolean isBulk = method.getGeneq() != null && method.getGeneq().equals(1);
-    		if (isBulk) {
-    			variateIds.add(form.getPlotVariateId());
-    		}
-    		else {
-    			variateIds.add(form.getLineVariateId());
-    		}
-    	}
-		form.setPlotsWithPlantsSelected(fieldbookMiddlewareService.countPlotsWithPlantsSelectedofNursery(nurseryId, variateIds));
+//    	boolean isMixed = form.getMethodChoice() == null || form.getMethodChoice().equals("0");
+//    	if (isMixed) {
+//    		variateIds.add(form.getLineVariateId());
+//    		variateIds.add(form.getPlotVariateId());
+//    	}
+//    	else if (form.getAdvanceBreedingMethodId() != null && NumberUtils.isNumber(form.getAdvanceBreedingMethodId())) {
+//    		Method method = fieldbookMiddlewareService.getBreedingMethodById(Double.valueOf(form.getAdvanceBreedingMethodId()).intValue());
+//    		boolean isBulk = method.getGeneq() != null && method.getGeneq().equals(1);
+//    		if (isBulk) {
+//    			variateIds.add(form.getPlotVariateId());
+//    		}
+//    		else {
+//    			variateIds.add(form.getLineVariateId());
+//    		}
+//    	}
+//		form.setPlotsWithPlantsSelected(fieldbookMiddlewareService.countPlotsWithPlantsSelectedofNursery(nurseryId, variateIds));
     	//form.setBreedingMethods();
     	Study study = fieldbookMiddlewareService.getStudy(nurseryId);
     	List<Variable> varList = study.getConditions().getVariables();
@@ -341,5 +341,16 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         return list;
     }
     
+    @ResponseBody
+    @RequestMapping(value="/countPlots/{ids}", method=RequestMethod.GET)
+    public int countPlots(@PathVariable String ids) throws MiddlewareQueryException {
+    	String[] idList = ids.split(",");
+    	List<Integer> idParams = new ArrayList<Integer>();
+    	for (String id : idList) {
+    		idParams.add(Double.valueOf(id).intValue());
+    	}
+   		return fieldbookMiddlewareService.countPlotsWithPlantsSelectedofNursery(userSelection.getWorkbook().getMeasurementDatesetId(), idParams);
+    		
+    }
 
 }

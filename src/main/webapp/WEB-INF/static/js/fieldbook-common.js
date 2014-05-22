@@ -1372,13 +1372,71 @@ function getIEVersion() {
     return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
 }
 
+function validatePlantsSelected() {
+	var ids = "";
+	var isMixed = false;
+	var isBulk = false;
+	
+	if ($(".bulk-section").is(":visible")) {
+		if (ids != "") {
+			ids = ids + ",";
+		}
+		ids = ids + $("#plotVariateId").val();
+		isBulk = true;
+	}
+	if ($(".lines-section").is(":visible")) {
+		ids = ids + $("#lineVariateId").val();
+		if (isBulk) {
+			isMixed = true;
+		}
+	}
+	
+	
+	var valid = true;
+	Spinner.toggle();
+	$.ajax({
+		url: "/Fieldbook/NurseryManager/advance/nursery/countPlots/" + ids,
+		type: "GET",
+		cache: false,
+		success: function (data) {
+			if (isMixed) {
+				if (data == 0) {
+					showErrorMessage('page-message', msgEmptyListError);
+					valid = false;
+				}
+			}
+			else if (isBulk) {
+				var choice = !$("#plot-variates-section").is(":visible");
+				if (choice == false && data == "0") {
+					showErrorMessage('page-message', msgEmptyListError);
+					valid = false;
+				}
+			}
+			else {
+				var choice = !$("#line-variates-section").is(":visible");
+				if (choice == false && data == "0") {
+					showErrorMessage('page-message', msgEmptyListError);
+					valid = false;
+				}
+			}
+		},
+		error: function(jqXHR, textStatus, errorThrown){
+			console.log("The following error occured: " + textStatus, errorThrown); 
+		},
+		complete: function() {
+			Spinner.toggle();
+		}
+	});
+	return valid;
+}
+
 function callAdvanceNursery() {
 	var lines = $("#lineSelected").val();
 	if (!lines.match(/^\s*(\+|-)?\d+\s*$/)) {
 		showErrorMessage('page-message', linesNotWholeNumberError);
 		return false;
 	}
-	else {
+	else if (validatePlantsSelected()) {
 		doAdvanceNursery();
 	}
 }

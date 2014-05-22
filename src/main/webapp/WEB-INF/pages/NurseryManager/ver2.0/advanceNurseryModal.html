@@ -116,7 +116,6 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 					</div>
 				</div>
 				<div class="row form-group col-xs-12 col-md-12 lines-section">
-					<input type="hidden" th:field="*{plotsWithPlantsSelected}" />
 					<div class="row form-group col-xs-6 col-md-6">
 						<label class="control-label" th:text="#{advancing.nursery.number.of.samples.plot} + ':'">Lines Selected per Plot:</label>														
 					</div>
@@ -151,7 +150,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 					</div>
 				</div>
 				<div class="row form-group col-xs-12 col-md-12 bulk-section">
-					<div id="line-variates-section">
+					<div id="plot-variates-section">
 						<div class="row form-group col-xs-6 col-md-6">
 							<label class="control-label" th:text="#{advancing.nursery.bulks.variate}"></label>
 						</div>

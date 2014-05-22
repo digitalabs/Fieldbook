@@ -11,7 +11,6 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,10 +21,10 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.dms.Variable;
-import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -47,7 +46,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.ChoiceKeyVal;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
@@ -123,7 +121,23 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	form.setLineChoice("1");
     	form.setLineSelected("1");
     	form.setProjectId(this.getCurrentProjectId());
-    	form.setPlotsWithPlantsSelected(fieldbookMiddlewareService.countPlotsWithPlantsSelectedofNursery(nurseryId));
+    	List<Integer> variateIds = new ArrayList<Integer>();
+    	boolean isMixed = form.getMethodChoice() == null || form.getMethodChoice().equals("0");
+    	if (isMixed) {
+    		variateIds.add(form.getLineVariateId());
+    		variateIds.add(form.getPlotVariateId());
+    	}
+    	else if (form.getAdvanceBreedingMethodId() != null && NumberUtils.isNumber(form.getAdvanceBreedingMethodId())) {
+    		Method method = fieldbookMiddlewareService.getBreedingMethodById(Double.valueOf(form.getAdvanceBreedingMethodId()).intValue());
+    		boolean isBulk = method.getGeneq() != null && method.getGeneq().equals(1);
+    		if (isBulk) {
+    			variateIds.add(form.getPlotVariateId());
+    		}
+    		else {
+    			variateIds.add(form.getLineVariateId());
+    		}
+    	}
+		form.setPlotsWithPlantsSelected(fieldbookMiddlewareService.countPlotsWithPlantsSelectedofNursery(nurseryId, variateIds));
     	//form.setBreedingMethods();
     	Study study = fieldbookMiddlewareService.getStudy(nurseryId);
     	List<Variable> varList = study.getConditions().getVariables();
@@ -151,7 +165,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	
         form.setMethodVariates(filterVariablesByProperty(userSelection.getSelectionVariates(), AppConstants.PROPERTY_BREEDING_METHOD.getString()));
         form.setLineVariates(filterVariablesByProperty(userSelection.getSelectionVariates(), AppConstants.PROPERTY_PLANTS_SELECTED.getString()));
-
+        form.setPlotVariates(form.getLineVariates());
     	
     	SimpleDateFormat sdf = new SimpleDateFormat("YYYY");
     	SimpleDateFormat sdfMonth = new SimpleDateFormat("MM");
@@ -293,7 +307,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         advancingNursery.setMethodChoice(form.getMethodChoice());
         advancingNursery.setBreedingMethodId(form.getAdvanceBreedingMethodId());
         advancingNursery.setLineChoice(form.getLineChoice());
-        advancingNursery.setLineSelected(form.getLineSelected());
+        advancingNursery.setLineSelected(form.getLineSelected() != null ? form.getLineSelected().trim() : null);
         advancingNursery.setHarvestDate(form.getHarvestDate());
         advancingNursery.setHarvestLocationId(form.getHarvestLocationId());
         advancingNursery.setHarvestLocationAbbreviation(form.getHarvestLocationAbbreviation() != null ? form.getHarvestLocationAbbreviation() : "");

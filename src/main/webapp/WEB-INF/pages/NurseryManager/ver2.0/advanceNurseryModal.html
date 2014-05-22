@@ -17,6 +17,11 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 			</div>
 	          
          	<div class="modal-body">
+				<div class="row">
+					<div class="form-group">
+						<div id="page-message"></div>
+					</div>
+				</div>
          		<div class="row">
 	         		<div id="page-block-message-modal" class="col-xs-12 col-md-12">
 	         		</div>
@@ -46,7 +51,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 				</div>
 			
 				<br/>
-				<div class="row form-group col-xs-12 col-md-12">
+				<div class="row form-group col-xs-12 col-md-12" id="methods-section">
 					<div class="row form-group col-xs-12 col-md-12">
 						<label class="control-label" ><strong class="sub-content-heading"  th:text="#{advancing.nursery.method}">METHODS</strong> </label>
 					</div>
@@ -76,6 +81,13 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 							<a class="form-group" href="javascript: openManageMethods()" th:text="#{advancing.nursery.manage.method}">Manage Methods</a>	
 						</label>
 					</div>
+					<div class="row form-group col-xs-6 col-md-6">
+					</div>
+					<div class="row form-group col-xs-6 col-md-6">					
+						<label class="maize-control">
+							<input th:field="*{putBrackets}" value="1" type="checkbox"/> <span th:text="#{advance.nursery.maize.breeding.method.put.brackets}">Put brackets around parents</span>
+						</label>			   
+					</div>					
 					<div id="method-variates-section">
 						<div class="row form-group col-xs-6 col-md-6">
 							<label class="control-label" th:text="#{advancing.nursery.method.variate} + ':'">Choose a variate that defines the breeding method for each advance:</label>
@@ -116,7 +128,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 							<label class="control-label" th:text="#{advancing.nursery.lines.variate}"></label>
 						</div>
 						<div class="row form-group col-xs-6 col-md-6">
-							<select th:field="*{lineVariateId}">
+							<select th:field="*{lineVariateId}" class="ps-variate-selection">
 								<option th:each="lineVariate : *{lineVariates}" th:value="${lineVariate.id}" th:text="${lineVariate.description}">
 								</option>
 							</select>
@@ -131,7 +143,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 					</div>
 					<div class="row form-group col-xs-6 col-md-6">
 						<label class="control-label">
-							<input type="checkbox" th:field="*{allPlotsChoice}" th:value="*{allPlotsChoice}"/>
+							<input type="checkbox" th:field="*{allPlotsChoice}" th:value="*{allPlotsChoice}" />
 							<span th:text="#{advancing.nursery.all.plots.selected}">All plots are selected</span>
 						</label>
 					</div>
@@ -144,7 +156,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 							<label class="control-label" th:text="#{advancing.nursery.bulks.variate}"></label>
 						</div>
 						<div class="row form-group col-xs-6 col-md-6">
-							<select th:field="*{lineVariateId}">
+							<select th:field="*{plotVariateId}">
 								<option th:each="plotVariate : *{plotVariates}" th:value="${plotVariate.id}" th:text="${plotVariate.description}">
 								</option>
 							</select>
@@ -240,7 +252,11 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
     var locationIframeOpened = false;
     var methodIframeOpened = false;
     
+    var linesNotWholeNumberError = /*[[#{error.advancing.nursery.whole.numeric.lines}]]*/;
     var msgEmptyListError = /*[[#{nursery.advance.nursery.empty.list.error}]]*/;
+    var noMethodVariatesError = /*[[#{error.advancing.nursery.no.method.variates}]]*/;
+    var noLineVariatesError = /*[[#{error.advancing.nursery.no.line.variates}]]*/;
+    var noPlotVariatesError = /*[[#{error.advancing.nursery.no.plot.variates}]]*/;
     
 		 $(function() {			
 			var harvestDate =  $('#harvestDate').datepicker({'format': 'yyyymmdd'}).on('changeDate', function(ev) {
@@ -277,6 +293,12 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 			 
 			$('input[type=checkbox][name=lineChoice]').on('change', lineMethod);
 			
+			$("input[type=checkbox][name=allPlotsChoice]").on("change", plotMethod);
+			
+			$(".ps-variate-selection").on("change", function() {
+				validatePlantsSelected($(this));
+			});
+			
 			$('#namingConvention').on('change', changeSuffix);
 			$('#maizeBreedingMethod').on('change', changeMaizeBreedingMethod);
 			oldMethodSelected = $('#defaultMethodId').val();
@@ -295,24 +317,26 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 		}
 		function changeSuffix(){
 			$('input[type=checkbox][name=methodChoice]').prop('disabled', false)
-			if($('#namingConvention').val() == 3){
+			//if($('#namingConvention').val() == 3){
 				//show
-				$('#suffix-div').show();
-			}else{
+			//	$('#suffix-div').show();
+			//}else{
 				//hide
-				$('#suffix-div').hide();
-			}	
+			//	$('#suffix-div').hide();
+			//}	
 			
 			if($('#namingConvention').val() == 1){
 				//if its wheat, we disable the method section
 				$('.method-section input').attr('disabled', true);
 				$('#methodIdAll').select2('enable', false);
 				$('#methodIdFavorite').select2('enable', false);
+				$("#methods-section").hide();
 				
 			}else{
 				$('.method-section input').attr('disabled', false)
 				$('#methodIdAll').select2('enable', true);
 				$('#methodIdFavorite').select2('enable', true); 				
+				$("#methods-section").show();
 			}
 			
 			if($('#namingConvention').val() == 2){

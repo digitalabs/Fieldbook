@@ -7,7 +7,7 @@
 	<input type="hidden" th:field="*{importVal}"/>
 	<input type="hidden" th:field="*{numberOfInstances}" />
               
-	 <div class="germplasm-measurement-list-table" style="width: 100%; max-width: 100%; height: 500px; min-height: 500px">
+	 <div class="germplasm-measurement-list-table" style="width: 100%; max-width: 100%; height: 400px; min-height: 400px">
 	
        <!-- my-class table table-curved table-condensed   -->
 				 <div class="factor-div" style="float: left; max-height: 400px; max-width: 50%; min-width: 50%; overflow-x: scroll; overflow-y: hidden">
@@ -50,7 +50,7 @@
              		<input th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" type="text" th:if="${measurementData.editable == true}" th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}"/ -->
              		
              		<input th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" type="text" th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues)}" th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}" />
-             		<select th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" 
+             		<select class="variates-select" th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" 
              				th:if="${not #lists.isEmpty(measurementData.measurementVariable.possibleValues)}" 
 	             			th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}" >
 	             		<option value = "" text=""></option>
@@ -211,6 +211,7 @@
 			   if($(this).data('type') == 'N'){
 	    			  if(isNaN(Number($(this).val()))){    				   
 	    				  showErrorMessage('page-message', "Please enter a numeric value for this variate");
+	    				  moveToTopScreen();
 	    				  var id = $(this).attr('id');
 	    				  setTimeout(function() { $('#'+getJquerySafeId(id)).focus(); }, 10);
 	    				  noError = false;
@@ -225,23 +226,6 @@
     	   //console.log('true');
     	   return noError;
        }
-       
-       function do_validation() {
-	    if ($('#fileupload').val() == "") {
-	    	    var message = /*[[#{common.error.file.no.file.selected}]]*/;
-	    	    
-	    	    
-	    	    $("#page-modal-message").html(
-	    	    "<div class='alert alert-danger'>"+ message +"</div>"
-	    	  );
-	    	  
-	    	  $('div.fileupload').parent().parent().addClass('has-error');
-	    	  
-	    	  return false;
-	    	}
-   	  
-	   	  return true;
-	  }
        
        
       //]]>

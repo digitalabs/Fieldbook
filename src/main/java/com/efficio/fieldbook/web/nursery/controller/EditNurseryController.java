@@ -25,6 +25,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
@@ -32,7 +33,9 @@ import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
+import org.generationcp.middleware.pojos.workbench.settings.Variate;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -274,27 +277,40 @@ public class EditNurseryController extends SettingsController {
     	    baselineTraits.addAll(form.getSelectionVariatesVariables());
     	    userSelection.getBaselineTraitsList().addAll(baselineTraitsSession);
     	}
-    	    	
+    	
+    	//include deleted list if measurements are available
+    	if (userSelection.getMeasurementRowList() != null && userSelection.getMeasurementRowList().size() > 0) {
+    	    addDeletedSettingsList(studyLevelVariables, userSelection.getDeletedStudyLevelConditions(), 
+    	        userSelection.getStudyLevelConditions());
+    	    addDeletedSettingsList(baselineTraits, userSelection.getDeletedBaselineTraitsList(), 
+    	        userSelection.getBaselineTraitsList());
+    	    addDeletedSettingsList(form.getNurseryConditions(), userSelection.getDeletedNurseryConditions(), 
+                userSelection.getNurseryConditions());
+    	}        
+    	    
     	Dataset dataset = (Dataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, studyLevelVariables, 
     	        form.getPlotLevelVariables(), baselineTraits, userSelection, form.getNurseryConditions());
     	Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);
     	    	
-    	createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId());
+    	createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), form.getStudyId());
     	userSelection.setWorkbook(workbook);
     	
     	Map<String, String> resultMap = new HashMap<String, String>();
     	//saving of measurement rows
     	if (userSelection.getMeasurementRowList() != null && userSelection.getMeasurementRowList().size() > 0) {
             try {
-                dataImportService.saveDataset(workbook, true);
-                
+                for (MeasurementVariable variate : workbook.getVariates()) {
+                    System.out.println(variate.getName() + ":" + variate.getOperation());
+                }
+                for (MeasurementVariable variate : workbook.getConditions()) {
+                    System.out.println(variate.getName() + ":" + variate.getOperation());
+                }
                 int previewPageNum = userSelection.getCurrentPage();
-                
                 copyDataFromFormToUserSelection(form, previewPageNum);
                 form.setMeasurementRowList(userSelection.getMeasurementRowList());
                 form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
-              
                 workbook.setObservations(form.getMeasurementRowList());
+                
                 userSelection.setWorkbook(workbook);
                 validationService.validateObservationValues(workbook);
                 fieldbookMiddlewareService.saveMeasurementRows(workbook);
@@ -311,6 +327,16 @@ public class EditNurseryController extends SettingsController {
     	    return resultMap;
     	}
     	
+    }
+    
+    private void addDeletedSettingsList(List<SettingDetail> formList, List<SettingDetail> deletedList, List<SettingDetail> sessionList) {
+        if (deletedList != null) {
+            for (SettingDetail setting : deletedList) {
+                setting.getVariable().setOperation(Operation.DELETE);
+            }
+            formList.addAll(deletedList);
+            sessionList.addAll(deletedList);
+        }
     }
     
     private void copyDataFromFormToUserSelection(CreateNurseryForm form, int previewPageNum){
@@ -336,13 +362,14 @@ public class EditNurseryController extends SettingsController {
      * @param conditions the conditions
      * @param folderId the folder id
      */
-    private void createStudyDetails(Workbook workbook, List<SettingDetail> conditions, Integer folderId) {
+    private void createStudyDetails(Workbook workbook, List<SettingDetail> conditions, Integer folderId, Integer studyId) {
         if (workbook.getStudyDetails() == null) {
             workbook.setStudyDetails(new StudyDetails());
         }
         StudyDetails studyDetails = workbook.getStudyDetails();
 
         if (conditions != null && !conditions.isEmpty()) {
+                studyDetails.setId(studyId);
 	        studyDetails.setTitle(getSettingDetailValue(conditions, TermId.STUDY_TITLE.getId()));
 	        studyDetails.setObjective(getSettingDetailValue(conditions, TermId.STUDY_OBJECTIVE.getId()));
 	        studyDetails.setStudyName(getSettingDetailValue(conditions, TermId.STUDY_NAME.getId()));

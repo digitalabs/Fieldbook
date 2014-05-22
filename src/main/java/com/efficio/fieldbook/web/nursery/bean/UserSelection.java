@@ -101,6 +101,11 @@ public class UserSelection extends StudySelection implements Serializable {
     /** The nursery conditions. */
     private List<SettingDetail> nurseryConditions;
     
+    private List<SettingDetail> deletedStudyLevelConditions;
+    
+    private List<SettingDetail> deletedBaselineTraitsList;
+    
+    private List<SettingDetail> deletedNurseryConditions;    
     
 	
 	/**
@@ -562,6 +567,49 @@ public class UserSelection extends StudySelection implements Serializable {
             this.nurseryConditions = nurseryConditions;
         }
 
-		
-        
-}
+        /**
+         * @return the deletedStudyLevelConditions
+         */
+        public List<SettingDetail> getDeletedStudyLevelConditions() {
+            return deletedStudyLevelConditions;
+        }
+
+        /**
+         * @param deletedStudyLevelConditions the deletedStudyLevelConditions to set
+         */
+        public void setDeletedStudyLevelConditions(
+                List<SettingDetail> deletedStudyLevelConditions) {
+            this.deletedStudyLevelConditions = deletedStudyLevelConditions;
+        }
+
+        /**
+         * @return the deletedBaselineTraitsList
+         */
+        public List<SettingDetail> getDeletedBaselineTraitsList() {
+            return deletedBaselineTraitsList;
+        }
+
+        /**
+         * @param deletedBaselineTraitsList the deletedBaselineTraitsList to set
+         */
+        public void setDeletedBaselineTraitsList(
+                List<SettingDetail> deletedBaselineTraitsList) {
+            this.deletedBaselineTraitsList = deletedBaselineTraitsList;
+        }
+
+        /**
+         * @return the deletedNurseryConditions
+         */
+        public List<SettingDetail> getDeletedNurseryConditions() {
+            return deletedNurseryConditions;
+        }
+
+        /**
+         * @param deletedNurseryConditions the deletedNurseryConditions to set
+         */
+        public void setDeletedNurseryConditions(
+                List<SettingDetail> deletedNurseryConditions) {
+            this.deletedNurseryConditions = deletedNurseryConditions;
+        }
+
+ }

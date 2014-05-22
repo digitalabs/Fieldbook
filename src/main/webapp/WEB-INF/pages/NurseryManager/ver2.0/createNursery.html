@@ -293,7 +293,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 		$('#studyBuildOption').on('change', changeBuildOption);
 		$('#choosePreviousStudy').hide();
 		//changeBuildOption();
-		
+		setTimeout(function(){$('#'+getJquerySafeId('basicDetails.value2')).datepicker("setDate", new Date())}, 600);
 	});
 
 	function changeBuildOption(){

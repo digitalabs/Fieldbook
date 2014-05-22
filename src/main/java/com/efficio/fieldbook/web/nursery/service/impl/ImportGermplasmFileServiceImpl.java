@@ -727,7 +727,7 @@ public class ImportGermplasmFileServiceImpl implements ImportGermplasmFileServic
 			Integer checkVariableTermId = TermId.CHECK.getId();
 			StandardVariable stdvar = fieldbookMiddlewareService.getStandardVariable(checkVariableTermId);
 			MeasurementVariable checkVariable = new MeasurementVariable(
-					checkVariableTermId, stdvar.getName(), stdvar.getDescription(), stdvar.getScale().getName(), stdvar.getMethod().getName(),
+					checkVariableTermId, "CHECK", stdvar.getDescription(), stdvar.getScale().getName(), stdvar.getMethod().getName(),
 					stdvar.getProperty().getName(), stdvar.getDataType().getName(), "", AppConstants.ENTRY.getString());
 			
 			boolean checkFactorExisting = false;

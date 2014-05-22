@@ -296,6 +296,11 @@ function recreateLocationCombo() {
 	var selectedLocationAll = $("#harvestLocationIdAll").val();
 	var selectedLocationFavorite = $("#harvestLocationIdFavorite").val();
 	
+	var inventoryPopup = false;
+	
+	if($('#addLotsModal').length != 0 && $('#addLotsModal').hasClass('in'));
+		inventoryPopup = true;
+	
 	Spinner.toggle();
 	$.ajax(
 	{ url: "/Fieldbook/NurseryManager/advance/nursery/getLocations",
@@ -305,7 +310,19 @@ function recreateLocationCombo() {
        async: false,
        success: function(data) {
     	   if (data.success == "1") {
-    		   if (selectedLocationAll != null) {
+    		   if(inventoryPopup){
+    			   //console.log('here');
+    			   recreateLocationComboAfterClose("inventoryMethodIdAll", $.parseJSON(data.allLocations));
+	    		   recreateLocationComboAfterClose("inventoryMethodIdFavorite", $.parseJSON(data.favoriteLocations));
+	    		   showCorrectLocationInventoryCombo();
+	    		   //set previously selected value of location
+	    		   if ($("#showFavoriteLocationInventory").prop("checked")) {
+	    			   setComboValues(locationSuggestionsFav_obj, $("#inventoryMethodIdFavorite").val(), "inventoryMethodIdFavorite");
+	    		   } else {
+	    			   setComboValues(locationSuggestions_obj,  $("#inventoryMethodIdAll").val(), "inventoryMethodIdAll");
+	    		   }
+    		   }
+    		   else if (selectedLocationAll != null) {
 	    		   //recreate the select2 combos to get updated list of locations
 	    		   recreateLocationComboAfterClose("harvestLocationIdAll", $.parseJSON(data.allLocations));
 	    		   recreateLocationComboAfterClose("harvestLocationIdFavorite", $.parseJSON(data.favoriteLocations));
@@ -317,6 +334,9 @@ function recreateLocationCombo() {
 	    			   setComboValues(locationSuggestions_obj, selectedLocationAll, "harvestLocationIdAll");
 	    		   }
     		   } else {
+    			   
+    			   
+    			   
     			   var selectedVal = null;
     			   var index = getLocationRowIndex();
     			   
@@ -381,7 +401,12 @@ function recreateLocationComboAfterClose(comboName, data) {
 		//reload the data retrieved
 		locationSuggestions = data;
 		initializeHarvestLocationSelect2(locationSuggestions, locationSuggestions_obj);
-	} else {
+	} else if (comboName == "inventoryMethodIdAll") {
+		//clear all locations dropdown
+		initializePossibleValuesComboInventory(data, "#inventoryMethodIdAll", true, null);    	    	
+	} else if (comboName == "inventoryMethodIdFavorite") {		
+		initializePossibleValuesComboInventory(data, "#inventoryMethodIdFavorite", false, null);
+	}else {
 		//clear the favorite locations dropdown
 		locationSuggestionsFav = [];
 		locationSuggestionsFav_obj = [];
@@ -992,10 +1017,11 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation, default
 		        return ($.fn.select2.defaults.matcher(query.term,item.text));
 		      
 		      });
+		      /*
 		      if (data.results.length === 0){
 		    	  data.results.unshift({id:query.term,text:query.term});	        	 
 		      }
-		      
+		      */
 		        query.callback(data);
 		    }
 	    });
@@ -1008,10 +1034,11 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation, default
 		        return ($.fn.select2.defaults.matcher(query.term,item.text));
 		      
 		      });
+		      /*
 		      if (data.results.length === 0){
 		    	  data.results.unshift({id:query.term,text:query.term});	        	 
 		      }
-		      
+		      */
 		        query.callback(data);
 		    }
 	    });

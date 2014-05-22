@@ -30,11 +30,31 @@
 		         				<label class="control-label" th:text="#{seed.inventory.location}+':'">Location:</label>&nbsp;<span class="required">*</span>
 		         			</div>
 		         			<div class="col-xs-6 col-md-6">
-		         				<input type="hidden" th:field="*{inventoryLocationId}" class="form-control select2" />
+		         				<input type="hidden" th:field="*{inventoryLocationId}" class="form-control" />
+		         				<input type="hidden" name="inventoryMethodIdAll" id="inventoryMethodIdAll" class="form-control select2" placeholder=""/>
+								<input type="hidden" name="inventoryMethodIdFavorite" id="inventoryMethodIdFavorite" class="form-control select2" placeholder=""/>
+						
 		         			</div>
-		         			<div class="col-xs-3 col-md-3">&nbsp;</div>
-	         			</div>
+		         			<div class="col-xs-3 col-md-3 add_top_padding"><a class="" href="javascript: openManageLocations()" th:text="#{advancing.nursery.manage.location}">Manage Methods</a></div>
+	         			</div>	         				         			
 	         		</div>
+	         		
+	         		<div class="row form-group">
+	         			<div class="col-xs-12 col-md-12">
+		         			<div class="col-xs-3 col-md-3">
+		         				&nbsp;
+		         			</div>
+		         			<div class="col-xs-6 col-md-6">
+		         									
+									<label>
+										<input id="showFavoriteLocationInventory" value="1" type="checkbox"/> <span th:text="#{show.favorite.location}">Show Favorite Method</span>
+										&nbsp;&nbsp;
+											
+									</label>								
+		         			</div>
+		         			</div>		         			
+					</div>
+	         			
 	         		<div class="row form-group">
 	         			<div class="col-xs-12 col-md-12">
 		         			<div class="col-xs-3 col-md-3">
@@ -71,11 +91,16 @@
 <div layout:fragment="page-script">		
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    
-		 var locationSuggestions = /*[[${locationList}]]*/ null;    
+		 var inventoryLocationSuggestions = /*[[${locationList}]]*/ null;
+		 var inventoryFavoriteLocationSuggestions = /*[[${favoriteLocationList}]]*/ null;
 		 var scaleSuggestions = /*[[${scaleList}]]*/ null;
 		 $( document ).ready(function() {			  			  
-			  initializePossibleValuesCombo(locationSuggestions, "#inventoryLocationId", true, null);
-			  initializePossibleValuesCombo(scaleSuggestions, "#inventoryScaleId", false, null);
+			  //initializePossibleValuesCombo(inventoryLocationSuggestions, "#inventoryLocationId", true, null);
+			  //initializePossibleValuesCombo(scaleSuggestions, "#inventoryScaleId", false, null);
+			  
+			 $('#showFavoriteLocationInventory').on('change', function(){
+				 showCorrectLocationInventoryCombo();
+			})
 		  });
 		  
     //]]>

@@ -43,13 +43,13 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 <div class="row form-group">
 	<div class="col-xs-2 col-md-2">
 		<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{basicDetails[0].variable.cvTermId}" />
-		<label th:text="#{nursery.create.nursery.nursery.name} + ': '" class="control-label"></label>&nbsp;<span class="required">*</span>
+		<label th:text="#{nursery.create.nursery.nursery.name} + ': '" class="control-label label-bold"></label>&nbsp;<span class="required">*</span>
 	</div>
 	<div class="col-xs-4 col-md-4">
 		<input type="text" class="form-control character-input" th:field="*{basicDetails[0].value}" />
 	</div>
 	<div class="col-xs-2 col-md-2">
-		<label id="folderLabel" th:text="#{nursery.savenursery.savein} + ': '"></label>&nbsp;<span class="required">*</span>
+		<label class="label-bold" id="folderLabel" th:text="#{nursery.savenursery.savein} + ': '"></label>&nbsp;<span class="required">*</span>
 	</div>
 	<div class="col-xs-2 col-md-2">
 		<input type="hidden" th:field="*{folderId}" />
@@ -63,14 +63,14 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 <div class="row form-group">
 	<div class="col-xs-2 col-md-2">
 		<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{basicDetails[1].variable.cvTermId}" />
-		<label th:text="#{nursery.create.nursery.description} + ': '" class="control-label"></label>&nbsp;<span class="required">*</span>
+		<label th:text="#{nursery.create.nursery.description} + ': '" class="control-label label-bold"></label>&nbsp;<span class="required">*</span>
 	</div>
 	<div class="col-xs-4 col-md-4">
 		<input type="text" class="form-control character-input" th:field="*{basicDetails[1].value}" />
 	</div>
 	<div class="col-xs-2 col-md-2">
 		<input class="cvTermIds" type="hidden" th:field="*{basicDetails[2].variable.cvTermId}" />
-		<label th:text="#{nursery.create.nursery.creation.date} + ': '" class="control-label"></label>&nbsp;<span class="required">*</span>		
+		<label th:text="#{nursery.create.nursery.creation.date} + ': '" class="control-label label-bold"></label>&nbsp;<span class="required">*</span>		
 	</div>
 	<div class="col-xs-2 col-md-2">
 		<input id="basicDetails.value2" style="width: 100px" type="text" class="form-control date-input" th:field="*{basicDetails[2].value}" />
@@ -82,14 +82,14 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 <div class="row form-group">
   	<div class="col-xs-2 col-md-2">
   		<input class="cvTermIds" type="hidden" th:field="*{basicDetails[3].variable.cvTermId}" />
- 		<label th:text="#{nursery.create.nursery.objective} + ': '" class="control-label"></label>
+ 		<label th:text="#{nursery.create.nursery.objective} + ': '" class="control-label label-bold"></label>
  	</div>
   	<div class="col-xs-4 col-md-4">
   		<textarea class="form-control character-input" rows="3" th:field="*{basicDetails[3].value}"></textarea>
   	</div>
   	<div class="col-xs-2 col-md-2">
   		<input class="cvTermIds" type="hidden" th:field="*{basicDetails[4].variable.cvTermId}" />
-  		<label th:text="#{nursery.create.nursery.completion.date} + ': '" class="control-label"></label>
+  		<label th:text="#{nursery.create.nursery.completion.date} + ': '" class="control-label label-bold"></label>
   	</div>
   	<div class="col-xs-2 col-md-2">
   		<input id="basicDetails.value4" style="width: 100px" type="text" class="form-control date-input" th:field="*{basicDetails[4].value}" />
@@ -105,7 +105,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 </div>
 <div class="row form-group">
 	<div class="col-xs-12 col-md-12">
-  		<label th:text="#{nursery.create.nursery.build.nursery} + '? '">How would you like to build your nursery?</label>
+  		<label class="label-bold" th:text="#{nursery.create.nursery.build.nursery} + '? '">How would you like to build your nursery?</label>
   	</div>
 </div>
 <div class="row form-group">
@@ -195,6 +195,16 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 <div class="row">
 	<div id="open-germplasm-list" th:include="/NurseryManager/ver2.0/manageGermplasmListOperation"></div>
 </div>	
+<div class="row">
+     <div class="col-xs-12 col-md-12">
+         <div id="manage-location" th:include="/Common/manageLocationsModal"></div>            
+     </div>
+ </div>
+ <div class="row">
+     <div class="col-xs-12 col-md-12">
+         <div id="manage-location" th:include="/Common/manageMethodsModal"></div>
+     </div>
+ </div>
 <div layout:fragment="page-script">
 <script type='text/javascript' th:inline="javascript">
 //<![CDATA[

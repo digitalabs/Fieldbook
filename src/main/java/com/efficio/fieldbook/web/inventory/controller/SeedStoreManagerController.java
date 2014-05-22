@@ -101,6 +101,27 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
 
         return null;
     }
+    /**
+     * Gets the favorite location list.
+     *
+     * @return the favorite location list
+     */
+    @ModelAttribute("favoriteLocationList")
+    public List<Location> getFavoriteLocationList() {
+        try {
+            
+            List<Long> locationsIds = workbenchService
+                            .getFavoriteProjectLocationIds(getCurrentProjectId());
+            List<Location> dataTypes = fieldbookMiddlewareService
+                                .getFavoriteLocationByProjectId(locationsIds);
+            
+            return dataTypes;
+        }catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+
+        return null;
+    }
     
     @ModelAttribute("scaleList")
     public List<Scale> getScaleList() {

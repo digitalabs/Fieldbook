@@ -277,8 +277,13 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         	//merge primary and check germplasm list
         	if (getUserSelection().getImportedCheckGermplasmMainInfo() != null && form.getImportedCheckGermplasm() != null && form.getStartIndex() != null
         			&& form.getInterval() != null && form.getMannerOfInsertion() != null) {
-        		form.getLastDraggedChecksList();
-        		//we do the cleaning here
+        		String lastDragCheckList = form.getLastDraggedChecksList();        		
+        		if("0".equalsIgnoreCase(lastDragCheckList)){
+        			//we do the cleaning here	
+        			List<ImportedGermplasm> newNurseryGermplasm = cleanGermplasmList(form.getImportedGermplasm(), 
+        	    	        form.getImportedCheckGermplasm());
+        			form.setImportedGermplasm(newNurseryGermplasm);
+        		}
         		
         		List<ImportedGermplasm> newImportedGermplasm = mergeCheckService.mergeGermplasmList(form.getImportedGermplasm(), 
     	    	        form.getImportedCheckGermplasm(), 
@@ -303,6 +308,24 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
 	return "success";
     }
 
+    private List<ImportedGermplasm> cleanGermplasmList(List<ImportedGermplasm> primaryList, 
+			List<ImportedGermplasm> checkList){
+    	
+    	if(checkList == null || checkList.size() == 0 )
+    		return primaryList;
+    	
+    	List<ImportedGermplasm> newPrimaryList = new ArrayList();
+    	Map<Integer, ImportedGermplasm> checkGermplasmMap = new HashMap();
+    	for (ImportedGermplasm checkGermplasm : checkList) {
+    		checkGermplasmMap.put(checkGermplasm.getIndex(), checkGermplasm);	
+    	}
+    	
+    	for (ImportedGermplasm primaryGermplasm : primaryList) {
+    		if(checkGermplasmMap.get(primaryGermplasm.getIndex()) == null)
+    			newPrimaryList.add(primaryGermplasm);
+    	}
+    	return newPrimaryList;
+    }
     /**
      * Display germplasm details.
      *

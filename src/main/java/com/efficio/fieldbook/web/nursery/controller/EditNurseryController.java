@@ -299,12 +299,6 @@ public class EditNurseryController extends SettingsController {
     	//saving of measurement rows
     	if (userSelection.getMeasurementRowList() != null && userSelection.getMeasurementRowList().size() > 0) {
             try {
-                for (MeasurementVariable variate : workbook.getVariates()) {
-                    System.out.println(variate.getName() + ":" + variate.getOperation());
-                }
-                for (MeasurementVariable variate : workbook.getConditions()) {
-                    System.out.println(variate.getName() + ":" + variate.getOperation());
-                }
                 int previewPageNum = userSelection.getCurrentPage();
                 copyDataFromFormToUserSelection(form, previewPageNum);
                 form.setMeasurementRowList(userSelection.getMeasurementRowList());

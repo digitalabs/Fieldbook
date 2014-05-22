@@ -277,8 +277,16 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         	//merge primary and check germplasm list
         	if (getUserSelection().getImportedCheckGermplasmMainInfo() != null && form.getImportedCheckGermplasm() != null && form.getStartIndex() != null
         			&& form.getInterval() != null && form.getMannerOfInsertion() != null) {
-    	    	getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().setImportedGermplasms(mergeCheckService.mergeGermplasmList(form.getImportedGermplasm(), 
-    	    	        form.getImportedCheckGermplasm(), Integer.parseInt(form.getStartIndex()), Integer.parseInt(form.getInterval()), Integer.parseInt(form.getMannerOfInsertion())));
+        		form.getLastDraggedChecksList();
+        		//we do the cleaning here
+        		
+        		List<ImportedGermplasm> newImportedGermplasm = mergeCheckService.mergeGermplasmList(form.getImportedGermplasm(), 
+    	    	        form.getImportedCheckGermplasm(), 
+    	    	        Integer.parseInt(form.getStartIndex()), 
+    	    	        Integer.parseInt(form.getInterval()), 
+    	    	        Integer.parseInt(form.getMannerOfInsertion()));
+        		
+    	    	getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().setImportedGermplasms(newImportedGermplasm);
     	    	form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
         	}
         	

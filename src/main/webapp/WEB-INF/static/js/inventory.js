@@ -25,6 +25,7 @@ function getCurrentAdvanceTabListIdentifier(){
 	return listIdentifier;
 }
 function getSelectedInventoryGids(){
+	/*
 	var ids = [];
 	var selectedGidArray = selectedGidsForAdvance[getCurrentAdvanceTabListIdentifier()];
 	for(var gid in selectedGidArray) {
@@ -35,6 +36,14 @@ function getSelectedInventoryGids(){
 		}			
 	}
 	return ids;
+	*/
+	var ids = [];
+	var listDivIdentifier  = $('#create-nursery-tab-headers li.active button').attr('id');
+	var sectionContainerDiv = 'advance-list'+listDivIdentifier;
+	$('#'+sectionContainerDiv + " .advancingListGid:checked").each(function(){
+		ids.push($(this).data('gid'));
+	});
+	return ids;
 }
 
 function addLot(){
@@ -43,11 +52,27 @@ function addLot(){
 		showErrorMessage('page-message', germplasmSelectError);
 		return;		
 	}
-	$("#locationId").select2("data", null);
-	$("#scaleId").select2("data", null);
-	$("#comments").val("");
-	$("#page-message-lots").html("");
-	$("#addLotsModal").modal("show");
+	
+	Spinner.toggle();
+	$.ajax({
+		url: "/Fieldbook/SeedStoreManager/ajax",
+		type: "GET",
+		async: false,
+	    success: function(data) {
+	    	$('#addLotsModalDiv').html(data);
+	    	$("#locationId").select2("data", null);
+	    	$("#scaleId").select2("data", null);
+	    	$("#comments").val("");
+	    	$("#page-message-lots").html("");
+	    	$("#addLotsModal").modal("show");
+	    	initializePossibleValuesCombo(locationSuggestions, "#locationId", true, null);
+	  	  	initializePossibleValuesCombo(scaleSuggestions, "#scaleId", false, null);
+	    	Spinner.toggle();
+	    }
+	});
+	
+	
+	
 }
 
 function initializePossibleValuesCombo(possibleValues, name, showAllLocation, defaultValue) {

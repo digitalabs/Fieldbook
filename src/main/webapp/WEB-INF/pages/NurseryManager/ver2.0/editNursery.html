@@ -189,7 +189,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 							</div>
 						</div>
 						<div class="modal-footer">
-							<a id="btnOK" href="" th:href="@{/NurseryManager}" th:text="#{common.form.ok.text}" class="btn btn-primary">OK</a>
+							<a id="btnOK" href="" th:href="@{/NurseryManager/editNursery/}+${createNurseryForm.studyId}" th:text="#{common.form.ok.text}" class="btn btn-primary">OK</a>
 						</div>
 					</div>
 					<!-- /.modal-content -->
@@ -218,6 +218,9 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 </div>
 <div class="row">
 	<div id="import-study" th:include="/NurseryManager/ver2.0/importStudy"></div>
+</div>
+<div class="row" id="addLotsModalDiv">
+	
 </div>
 
 
@@ -283,7 +286,12 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 	var reminderNurseryCondtions = /*[[#{nursery.reminder.add.nursery.conditions}]]*/;	
 	var reminderTrialEnvironment = /*[[#{nursery.reminder.add.trial.environment.settings}]]*/;
 	var reminderTreatmentFactors = /*[[#{trial.reminder.add.treatment.factors}]]*/;
-	
+	var germplasmSelectError = /*[[#{seed.inventory.select.germplasm.error}]]*/;
+    var locationSuggestions = /*[[${locationList}]]*/ ;    
+	var scaleSuggestions = /*[[${scaleList}]]*/ ;
+	var locationRequired = /*[[#{seed.inventory.location.required}]]*/;
+	var scaleRequired = /*[[#{seed.inventory.scale.required}]]*/;
+
 		
 	function submitGermplasmList(){
 		var $form = $("#germplasm-list-form");
@@ -292,7 +300,9 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 		$('#interval').val($('#interval2').val());
 		$('#mannerOfInsertion').val($('#mannerOfInsertion2').val());
 		var serializedData = $form.serialize();
-	
+		
+		$('#lastDraggedChecksList').val(lastDraggedChecksList);
+		
 	 	$.ajax({
 			url: "/Fieldbook/NurseryManager/importGermplasmList/next",
 			type: "POST",

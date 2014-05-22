@@ -137,7 +137,7 @@ public class ObservationMatrixController extends
     	
     	//copyTrialDataFromFormToUserSelection(form, userSelection);
     	
-    	form.setMeasurementRowList(userSelection.getMeasurementRowList());
+    	//form.setMeasurementRowList(userSelection.getMeasurementRowList());
     	List<MeasurementVariable> variables = paginationListSelection.getReviewVariableList(datasetId);
     	if (variables != null) {
     		form.setMeasurementVariables(variables);

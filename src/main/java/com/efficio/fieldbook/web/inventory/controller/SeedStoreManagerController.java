@@ -133,6 +133,11 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
         }
         */
     	return super.show(model);
+    }    
+    @RequestMapping(value="/ajax", method = RequestMethod.GET)
+    public String showAjax(@ModelAttribute("seedStoreForm") SeedStoreForm form, Model model, HttpSession session) {
+    	
+    	return super.showAjaxPage(model, "Inventory/addLotsModal");
     }
     
     @RequestMapping(value="/displayGermplasmDetails/{listId}", method = RequestMethod.GET)
@@ -240,7 +245,7 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
         }
         
         try {
-            LotsResult lotsResult = inventoryMiddlewareService.addLots(gidList, form.getLocationId(), form.getScaleId(), form.getComments(), workbenchService.getCurrentIbdbUserId(this.getCurrentProjectId()));
+            LotsResult lotsResult = inventoryMiddlewareService.addLots(gidList, form.getInventoryLocationId(), form.getInventoryScaleId(), form.getInventoryComments(), workbenchService.getCurrentIbdbUserId(this.getCurrentProjectId()));
             if (gidList.size() == lotsResult.getGidsSkipped().size()) {
                 result.put("message", messageSource
                         .getMessage("seed.inventory.add.lot.all.combinations.exist", null, local));

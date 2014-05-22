@@ -71,11 +71,19 @@ public class ImportGermplasmListForm {
     private String interval;
     private String startIndex;
     private int totalGermplasms;
+    private String lastDraggedChecksList = "0";
     
     
 	
-	
-    public int getTotalGermplasms() {
+    public String getLastDraggedChecksList() {
+		return lastDraggedChecksList;
+	}
+
+	public void setLastDraggedChecksList(String lastDraggedChecksList) {
+		this.lastDraggedChecksList = lastDraggedChecksList;
+	}
+
+	public int getTotalGermplasms() {
     	if(importedGermplasm != null)
     		return importedGermplasm.size();
     	return 0;

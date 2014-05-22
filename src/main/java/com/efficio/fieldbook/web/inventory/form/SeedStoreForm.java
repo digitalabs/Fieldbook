@@ -37,38 +37,62 @@ public class SeedStoreForm {
     private int totalPages;
     
     /** The result per page. */
-    private int resultPerPage = 100;    
+    private int resultPerPage = 5;    
     
     /** The location id. */
-    private int locationId;
+    private int inventoryLocationId;
     
     /** The scale id. */
-    private int scaleId;
+    private int inventoryScaleId;
     
     /** The comments. */
-    private String comments;
+    private String inventoryComments;
     
     /** The gid list. */
     private String gidList;
+    
+    /** The list id. */
     private String listId;
+    
+    /** The total number of germplasms. */
     private int totalNumberOfGermplasms;
     
      
     
+    /**
+     * Gets the list id.
+     *
+     * @return the list id
+     */
     public String getListId() {
 		return listId;
 	}
 
+	/**
+	 * Sets the list id.
+	 *
+	 * @param listId the new list id
+	 */
 	public void setListId(String listId) {
 		this.listId = listId;
 	}
 
+	/**
+	 * Gets the total number of germplasms.
+	 *
+	 * @return the total number of germplasms
+	 */
 	public int getTotalNumberOfGermplasms() {
     	if(inventoryList != null)
     		return inventoryList.size();
     	return 0;
 	}
 
+	/**
+	 * Sets the total number of germplasms.
+	 *
+	 * @param totalNumberOfGermplasms the new total number of germplasms
+	 */
 	public void setTotalNumberOfGermplasms(int totalNumberOfGermplasms) {
 		this.totalNumberOfGermplasms = totalNumberOfGermplasms;
 	}
@@ -183,61 +207,63 @@ public class SeedStoreForm {
 		this.paginatedInventoryList = paginatedInventoryList;
 	}
 
-    /**
-     * Gets the location id.
-     *
-     * @return the locationId
-     */
-    public int getLocationId() {
-        return locationId;
-    }
+    
 
     /**
-     * Sets the location id.
+     * Gets the inventory location id.
      *
-     * @param locationId the locationId to set
+     * @return the inventory location id
      */
-    public void setLocationId(int locationId) {
-        this.locationId = locationId;
-    }
+    public int getInventoryLocationId() {
+		return inventoryLocationId;
+	}
 
-    /**
-     * Gets the scale id.
-     *
-     * @return the scaleId
-     */
-    public int getScaleId() {
-        return scaleId;
-    }
+	/**
+	 * Sets the inventory location id.
+	 *
+	 * @param inventoryLocationId the new inventory location id
+	 */
+	public void setInventoryLocationId(int inventoryLocationId) {
+		this.inventoryLocationId = inventoryLocationId;
+	}
 
-    /**
-     * Sets the scale id.
-     *
-     * @param scaleId the scaleId to set
-     */
-    public void setScaleId(int scaleId) {
-        this.scaleId = scaleId;
-    }
+	/**
+	 * Gets the inventory scale id.
+	 *
+	 * @return the inventory scale id
+	 */
+	public int getInventoryScaleId() {
+		return inventoryScaleId;
+	}
 
-    /**
-     * Gets the comments.
-     *
-     * @return the comments
-     */
-    public String getComments() {
-        return comments;
-    }
+	/**
+	 * Sets the inventory scale id.
+	 *
+	 * @param inventoryScaleId the new inventory scale id
+	 */
+	public void setInventoryScaleId(int inventoryScaleId) {
+		this.inventoryScaleId = inventoryScaleId;
+	}
 
-    /**
-     * Sets the comments.
-     *
-     * @param comments the comments to set
-     */
-    public void setComments(String comments) {
-        this.comments = comments;
-    }
+	/**
+	 * Gets the inventory comments.
+	 *
+	 * @return the inventory comments
+	 */
+	public String getInventoryComments() {
+		return inventoryComments;
+	}
 
-    /**
+	/**
+	 * Sets the inventory comments.
+	 *
+	 * @param inventoryComments the new inventory comments
+	 */
+	public void setInventoryComments(String inventoryComments) {
+		this.inventoryComments = inventoryComments;
+	}
+
+	/**
      * Gets the gid list.
      *
      * @return the gidList

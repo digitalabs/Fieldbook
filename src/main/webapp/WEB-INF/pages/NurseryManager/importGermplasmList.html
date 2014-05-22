@@ -81,6 +81,7 @@
 <input type="hidden" id="lastCheckSourcePrimary" value="" />
 
 
+
 <!-- Modal for overwriting checks list -->
 <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
@@ -488,6 +489,11 @@
         			$('#numberOfEntries').html($('#totalGermplasms').val());
         			$('#imported-germplasm-list-reset-button').css('opacity', '1');
         			itemsIndexAdded = [];
+        			
+        			if(lastDraggedChecksList == 0){
+        				//we clear the list in the check
+        				resetCheckList();
+        			}
         		},
         		error: function(jqXHR, textStatus, errorThrown){ 
         			console.log("The following error occured: " + textStatus, errorThrown); 

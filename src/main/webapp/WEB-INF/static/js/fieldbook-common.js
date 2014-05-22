@@ -27,8 +27,9 @@ $(function() {
     if (typeof convertToSelect2 === 'undefined' || convertToSelect2 == true) {
     	    // variable is undefined
     	
-    $('select').each(function(){
-			$(this).select2();
+    $('select').each(function(){    	
+    		
+    			$(this).select2();
 		});
     }
 });

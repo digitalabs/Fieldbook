@@ -2229,6 +2229,7 @@ function showSelectedTab(selectedTabName) {
 	}
 	if(selectedTabName == 'nursery-measurements')
 		fixedTrHeight();
+	
 }
 
 function showStudyInfo() {

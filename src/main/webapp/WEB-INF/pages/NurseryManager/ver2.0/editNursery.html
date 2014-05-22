@@ -108,8 +108,8 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 		<input type="text" class="form-control character-input" th:field="*{basicDetails[1].value}" />
 	</div>
 	<div class="col-xs-2 col-md-2">
-		<input class="cvTermIds" type="hidden" th:field="*{basicDetails[2].variable.cvTermId}" />
-		<label th:text="#{nursery.create.nursery.creation.date} + ': '" class="control-label"></label>&nbsp;		
+		<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{basicDetails[2].variable.cvTermId}" />
+		<label th:text="#{nursery.create.nursery.creation.date} + ': '" class="control-label"></label>&nbsp;<span class="required">*</span>	
 	</div>
 	<div class="col-xs-2 col-md-2">
 		<input id="basicDetails.value2" style="width: 100px" type="text" class="form-control date-input" th:field="*{basicDetails[2].value}" />
@@ -180,7 +180,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 	<!-- Modal Dialog for Successful Save -->
 	<div class="form-group">
 		<div class="col-md-12">
-			<div class="modal fade" id="successMessageModal" role="dialog" aria-labelledby="successMessageModal" aria-hidden="true">
+			<div class="modal fade" id="successMessageModalUpdate" role="dialog" aria-labelledby="successMessageModalUpdate" aria-hidden="true">
 				<div class="modal-dialog"  style="width: 600px">
 					<div class="modal-content">
 						<div class="modal-body" id="successMessageBody">
@@ -309,7 +309,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 			data: serializedData,
 			cache: false,
 			success: function(html) {
-		    	$('#successMessageModal').modal({ backdrop: 'static', keyboard: true }) 
+		    	$('#successMessageModalUpdate').modal({ backdrop: 'static', keyboard: true }) 
 			}, 
 			complete: function() {
 				Spinner.toggle();
@@ -348,8 +348,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 				if ($(".germplasm-list-items").length > 0) {
 					submitCheckGermplasmList();
 				} else if (data.status == 1) {
-					$('#successMessageModal').modal("show");
-					//$('#successMessageModal').modal({ backdrop: 'static', keyboard: true });
+					$('#successMessageModalUpdate').modal({ backdrop: 'static', keyboard: true });
 				}
 			}, 
 			complete: function() {

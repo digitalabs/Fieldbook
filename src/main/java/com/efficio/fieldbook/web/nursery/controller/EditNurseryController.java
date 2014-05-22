@@ -25,6 +25,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
@@ -34,6 +35,7 @@ import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
+import org.generationcp.middleware.pojos.workbench.settings.Variate;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -279,12 +281,12 @@ public class EditNurseryController extends SettingsController {
     	//include deleted list if measurements are available
     	if (userSelection.getMeasurementRowList() != null && userSelection.getMeasurementRowList().size() > 0) {
     	    addDeletedSettingsList(studyLevelVariables, userSelection.getDeletedStudyLevelConditions(), 
-    	            userSelection.getStudyLevelConditions());
-    	    addDeletedSettingsList(baselineTraits, userSelection.getDeletedStudyLevelConditions(), 
+    	        userSelection.getStudyLevelConditions());
+    	    addDeletedSettingsList(baselineTraits, userSelection.getDeletedBaselineTraitsList(), 
     	        userSelection.getBaselineTraitsList());
     	    addDeletedSettingsList(form.getNurseryConditions(), userSelection.getDeletedNurseryConditions(), 
                 userSelection.getNurseryConditions());
-    	}
+    	}        
     	    
     	Dataset dataset = (Dataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, studyLevelVariables, 
     	        form.getPlotLevelVariables(), baselineTraits, userSelection, form.getNurseryConditions());
@@ -297,6 +299,12 @@ public class EditNurseryController extends SettingsController {
     	//saving of measurement rows
     	if (userSelection.getMeasurementRowList() != null && userSelection.getMeasurementRowList().size() > 0) {
             try {
+                for (MeasurementVariable variate : workbook.getVariates()) {
+                    System.out.println(variate.getName() + ":" + variate.getOperation());
+                }
+                for (MeasurementVariable variate : workbook.getConditions()) {
+                    System.out.println(variate.getName() + ":" + variate.getOperation());
+                }
                 int previewPageNum = userSelection.getCurrentPage();
                 copyDataFromFormToUserSelection(form, previewPageNum);
                 form.setMeasurementRowList(userSelection.getMeasurementRowList());

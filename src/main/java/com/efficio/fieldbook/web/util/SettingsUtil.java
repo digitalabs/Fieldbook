@@ -230,14 +230,18 @@ public class SettingsUtil {
 				
 				variable.setPSMRFromStandardVariable(standardVariable);
 				//need to get the name from the session
-				variable.setName(userSelection.getStudyLevelConditions().get(index++).getVariable().getName());	
-			}
+				variable.setName(userSelection.getStudyLevelConditions().get(index).getVariable().getName());
+				
 			
-			Condition condition = new Condition(variable.getName(), variable.getDescription(), variable.getProperty(),
-					variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
-					HtmlUtils.htmlEscape(settingDetail.getValue()), variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
-			condition.setOperation(variable.getOperation());
-			conditions.add(condition);
+        			
+        			Condition condition = new Condition(variable.getName(), variable.getDescription(), variable.getProperty(),
+        					variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
+        					HtmlUtils.htmlEscape(settingDetail.getValue()), variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
+        			condition.setOperation(userSelection.getStudyLevelConditions().get(index++).getVariable().getOperation());
+        			condition.setStoredIn(standardVariable.getStoredIn().getId());
+        			condition.setId(variable.getCvTermId());
+        			conditions.add(condition);
+			}
 		}
 		//iterate for the plot level
 		index = 0;
@@ -264,14 +268,17 @@ public class SettingsUtil {
 					StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
 					variable.setPSMRFromStandardVariable(standardVariable);
 					//need to get the name from the session
-					variable.setName(userSelection.getBaselineTraitsList().get(index++).getVariable().getName());
+					variable.setName(userSelection.getBaselineTraitsList().get(index).getVariable().getName());
 					
+				
+        				Variate variate = new Variate(variable.getName(), variable.getDescription(), variable.getProperty(),
+        						variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(), variable.getDataTypeId(),
+        						settingDetail.getPossibleValues(), variable.getMinRange(), variable.getMaxRange());
+        				variate.setOperation(userSelection.getBaselineTraitsList().get(index++).getVariable().getOperation());
+        				variate.setStoredIn(standardVariable.getStoredIn().getId());
+        				variate.setId(variable.getCvTermId());
+        				variates.add(variate);
 				}
-				Variate variate = new Variate(variable.getName(), variable.getDescription(), variable.getProperty(),
-						variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(), variable.getDataTypeId(),
-						settingDetail.getPossibleValues(), variable.getMinRange(), variable.getMaxRange());
-				variate.setOperation(variable.getOperation());
-				variates.add(variate);
 			}
 		}
 		
@@ -285,14 +292,17 @@ public class SettingsUtil {
                                 
                                 variable.setPSMRFromStandardVariable(standardVariable);
                                 //need to get the name from the session
-                                variable.setName(userSelection.getNurseryConditions().get(index++).getVariable().getName()); 
-                        }
+                                variable.setName(userSelection.getNurseryConditions().get(index).getVariable().getName()); 
                         
-                        Constant constant= new Constant(variable.getName(), variable.getDescription(), variable.getProperty(),
-                                        variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
-                                        HtmlUtils.htmlEscape(settingDetail.getValue()), variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
-                        constant.setOperation(variable.getOperation());
-                        constants.add(constant);
+                        
+                                Constant constant= new Constant(variable.getName(), variable.getDescription(), variable.getProperty(),
+                                                variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
+                                                HtmlUtils.htmlEscape(settingDetail.getValue()), variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
+                                constant.setOperation(userSelection.getNurseryConditions().get(index++).getVariable().getOperation());
+                                constant.setStoredIn(standardVariable.getStoredIn().getId());
+                                constant.setId(variable.getCvTermId());
+                                constants.add(constant);
+                        }
                 }
 		}
 		
@@ -1123,6 +1133,8 @@ public class SettingsUtil {
 				condition.getValue(), /*PhenotypicType.valueOf(condition.getRole()).getLabelList().get(0)*/ label, 
 				condition.getMinRange(), condition.getMaxRange());
 		mvar.setOperation(condition.getOperation());
+		mvar.setTermId(condition.getId());
+		mvar.setStoredIn(condition.getStoredIn());
 		mvar.setFactor(true);
 		mvar.setDataTypeId(condition.getDataTypeId());
 		return mvar;
@@ -1139,6 +1151,8 @@ public class SettingsUtil {
                     constant.getMinRange(), constant.getMaxRange());
             
             mvar.setOperation(constant.getOperation());
+            mvar.setTermId(constant.getId());
+            mvar.setStoredIn(constant.getStoredIn());
             mvar.setFactor(false);
             mvar.setDataTypeId(constant.getDataTypeId());
             return mvar;
@@ -1226,6 +1240,8 @@ public class SettingsUtil {
 				variate.getName(), variate.getDescription(), variate.getScale(), variate.getMethod(), variate.getProperty(), variate.getDatatype(), null, 
 				PhenotypicType.TRIAL_DESIGN.getLabelList().get(0), variate.getMinRange(), variate.getMaxRange()); //because variates are mostly PLOT variables
 		mvar.setOperation(variate.getOperation());
+		mvar.setTermId(variate.getId());
+		mvar.setStoredIn(variate.getStoredIn());
 		mvar.setFactor(false);
 		mvar.setDataTypeId(variate.getDataTypeId());
 		mvar.setPossibleValues(variate.getPossibleValues());

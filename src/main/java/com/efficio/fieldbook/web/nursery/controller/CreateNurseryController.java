@@ -470,6 +470,7 @@ public class CreateNurseryController extends SettingsController {
                 if (selectedVariables != null && !selectedVariables.isEmpty()) {
                         for (SettingVariable var : selectedVariables) {
                                 Operation operation = removeVarFromDeletedList(var, mode);
+                                
                                 var.setOperation(operation);
                                 populateSettingVariable(var);
                                         List<ValueReference> possibleValues = 
@@ -514,7 +515,7 @@ public class CreateNurseryController extends SettingsController {
                     iter.remove();
                 }
             }
-        }
+        }        
         return operation;
     }
     
@@ -631,31 +632,51 @@ public class CreateNurseryController extends SettingsController {
             @PathVariable int mode, @PathVariable int variableId) {
         if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
             //form.getNurseryLevelVariables()
-            addVariableInDeletedList(userSelection.getStudyLevelConditions(), userSelection.getDeletedStudyLevelConditions(), variableId);
+            addVariableInDeletedList(userSelection.getStudyLevelConditions(), mode, variableId);
             deleteVariableInSession(userSelection.getStudyLevelConditions(), variableId);
         } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
             deleteVariableInSession(userSelection.getPlotsLevelList(), variableId);
         } else if (mode == AppConstants.SEGMENT_TRAITS.getInt()){
-            addVariableInDeletedList(userSelection.getBaselineTraitsList(), userSelection.getDeletedBaselineTraitsList(), variableId);
+            addVariableInDeletedList(userSelection.getBaselineTraitsList(), mode, variableId);
             deleteVariableInSession(userSelection.getBaselineTraitsList(), variableId);
         } else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()){
-            addVariableInDeletedList(userSelection.getSelectionVariates(), userSelection.getDeletedBaselineTraitsList(), variableId);
+            addVariableInDeletedList(userSelection.getSelectionVariates(), mode, variableId);
             deleteVariableInSession(userSelection.getSelectionVariates(), variableId);
         } else {
-            addVariableInDeletedList(userSelection.getNurseryConditions(), userSelection.getDeletedNurseryConditions(), variableId);
+            addVariableInDeletedList(userSelection.getNurseryConditions(), mode, variableId);
             deleteVariableInSession(userSelection.getNurseryConditions(), variableId);
         }
         return "";
     }
     
-    private void addVariableInDeletedList(List<SettingDetail> currentList, List<SettingDetail> deletedList, int variableId) {
+    private void addVariableInDeletedList(List<SettingDetail> currentList, int mode, int variableId) {
+        SettingDetail newSetting = null;
         for (SettingDetail setting : currentList) {
             if (setting.getVariable().getCvTermId().equals(Integer.valueOf(variableId))) {
-                if (deletedList == null) {
-                    deletedList = new ArrayList<SettingDetail>();
-                }
-                deletedList.add(setting);
+                newSetting = setting;
             }
+        }
+        
+        if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
+            if (userSelection.getDeletedStudyLevelConditions() == null) {
+                userSelection.setDeletedStudyLevelConditions(new ArrayList<SettingDetail>());
+            } 
+            userSelection.getDeletedStudyLevelConditions().add(newSetting);            
+        } else if (mode == AppConstants.SEGMENT_TRAITS.getInt()) {
+            if (userSelection.getDeletedBaselineTraitsList() == null) {
+                userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
+            } 
+            userSelection.getDeletedBaselineTraitsList().add(newSetting);
+        } else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
+            if (userSelection.getDeletedBaselineTraitsList() == null) {
+                userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
+            } 
+            userSelection.getDeletedBaselineTraitsList().add(newSetting);
+        } else if (mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt()) {
+            if (userSelection.getDeletedNurseryConditions() == null) {
+                userSelection.setDeletedNurseryConditions(new ArrayList<SettingDetail>());
+            } 
+            userSelection.getDeletedNurseryConditions().add(newSetting);
         }
     }
     

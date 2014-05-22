@@ -1373,6 +1373,16 @@ function getIEVersion() {
 }
 
 function callAdvanceNursery() {
+	var lines = $("#lineSelected").val();
+	if (!lines.match(/^\s*(\+|-)?\d+\s*$/)) {
+		showErrorMessage('page-message', linesNotWholeNumberError);
+		return false;
+	}
+	else {
+		doAdvanceNursery();
+	}
+}
+function doAdvanceNursery() {
 	Spinner.toggle();
 	var serializedData = $("#advanceNurseryModalForm").serialize();
 	

@@ -25,6 +25,11 @@ function checkMethod(){
 			//we show the bulk and lines section
 			 $('.bulk-section').css('display', 'block');
 			 $('.lines-section').css('display', 'block');
+			 if ($("#methodVariateId").has("option").length == 0) {
+				 $('input[type=checkbox][name=methodChoice]').prop('checked', true);
+				 $('input[type=checkbox][name=methodChoice]').change();
+				 showErrorMessage("page-message", noMethodVariatesError);
+			 }
 		} 	
 }
 function setCorrectMethodValues(isCheckMethod){
@@ -81,6 +86,11 @@ function lineMethod(){
 			oldLineSelected = $('#lineSelected').val();
 			$('#lineSelected').val(1);
 			$("#line-variates-section").show();
+			 if ($("#lineVariateId").has("option").length == 0) {
+				 $('input[type=checkbox][name=lineChoice]').prop('checked', true);
+				 $('input[type=checkbox][name=lineChoice]').change();
+				 showErrorMessage("page-message", noLineVariatesError);
+			 }
 		} 
 }
 
@@ -2317,3 +2327,13 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 	     }
 	 );
 	}
+function plotMethod(){
+	if($('input[type=checkbox][name=allPlotsChoice]:checked').val() == 1){
+	}else{
+		 if ($("#plotVariateId").has("option").length == 0) {
+			 $('input[type=checkbox][name=allPlotsChoice]').prop('checked', true);
+			 $('input[type=checkbox][name=allPlotsChoice]').change();
+			 showErrorMessage("page-message", noPlotVariatesError);
+		 }
+	} 
+}

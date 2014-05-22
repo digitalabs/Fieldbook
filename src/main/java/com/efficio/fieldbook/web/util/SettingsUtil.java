@@ -230,13 +230,13 @@ public class SettingsUtil {
 				
 				variable.setPSMRFromStandardVariable(standardVariable);
 				//need to get the name from the session
-				variable.setName(userSelection.getStudyLevelConditions().get(index++).getVariable().getName());	
+				variable.setName(userSelection.getStudyLevelConditions().get(index).getVariable().getName());	
 			}
 			
 			Condition condition = new Condition(variable.getName(), variable.getDescription(), variable.getProperty(),
 					variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
 					HtmlUtils.htmlEscape(settingDetail.getValue()), variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
-			condition.setOperation(variable.getOperation());
+			condition.setOperation(userSelection.getStudyLevelConditions().get(index++).getVariable().getOperation());
 			conditions.add(condition);
 		}
 		//iterate for the plot level
@@ -264,13 +264,13 @@ public class SettingsUtil {
 					StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
 					variable.setPSMRFromStandardVariable(standardVariable);
 					//need to get the name from the session
-					variable.setName(userSelection.getBaselineTraitsList().get(index++).getVariable().getName());
+					variable.setName(userSelection.getBaselineTraitsList().get(index).getVariable().getName());
 					
 				}
 				Variate variate = new Variate(variable.getName(), variable.getDescription(), variable.getProperty(),
 						variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(), variable.getDataTypeId(),
 						settingDetail.getPossibleValues(), variable.getMinRange(), variable.getMaxRange());
-				variate.setOperation(variable.getOperation());
+				variate.setOperation(userSelection.getBaselineTraitsList().get(index++).getVariable().getOperation());
 				variates.add(variate);
 			}
 		}
@@ -285,13 +285,13 @@ public class SettingsUtil {
                                 
                                 variable.setPSMRFromStandardVariable(standardVariable);
                                 //need to get the name from the session
-                                variable.setName(userSelection.getNurseryConditions().get(index++).getVariable().getName()); 
+                                variable.setName(userSelection.getNurseryConditions().get(index).getVariable().getName()); 
                         }
                         
                         Constant constant= new Constant(variable.getName(), variable.getDescription(), variable.getProperty(),
                                         variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
                                         HtmlUtils.htmlEscape(settingDetail.getValue()), variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
-                        constant.setOperation(variable.getOperation());
+                        constant.setOperation(userSelection.getNurseryConditions().get(index++).getVariable().getOperation());
                         constants.add(constant);
                 }
 		}

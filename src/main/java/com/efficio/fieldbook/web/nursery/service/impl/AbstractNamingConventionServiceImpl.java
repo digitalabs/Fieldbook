@@ -103,7 +103,7 @@ implements NamingConventionService {
         //Study nursery = fieldbookMiddlewareService.getStudy(nurseryId);
         Study nursery = advanceInfo.getStudy();
         //System.out.println("Time advanceNursery 1.2: " + (System.currentTimeMillis() - start));
-        AdvancingSourceList rows = new AdvancingSourceList(workbook, advanceInfo, nursery);
+        AdvancingSourceList rows = new AdvancingSourceList(workbook, advanceInfo, nursery, fieldbookMiddlewareService);
         //System.out.println("Time advanceNursery 1.3: " + (System.currentTimeMillis() - start));
         assignGermplasms(rows);
         //System.out.println("Time advanceNursery 1.4: " + (System.currentTimeMillis() - start));

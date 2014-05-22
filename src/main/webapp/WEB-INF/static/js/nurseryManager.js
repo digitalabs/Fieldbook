@@ -1739,6 +1739,10 @@ function validateCreateNursery() {
 		}
 	});
 	
+	if (!validateCells()) {
+		return false;
+	}
+	
 	if (hasError){
 		showErrorMessage('page-message', customMessage.replace('*', '').replace(":", ""));
 		return false;

@@ -21,6 +21,9 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.service.api.FieldbookService;
 
 import com.efficio.fieldbook.web.util.AppConstants;
 
@@ -39,7 +42,8 @@ public class AdvancingSourceList{
     private String putBrackets;
     String nurseryName;
     
-    public AdvancingSourceList(Workbook workbook, AdvancingNursery advanceInfo, Study nursery) {
+    public AdvancingSourceList(Workbook workbook, AdvancingNursery advanceInfo, Study nursery, FieldbookService fieldbookMiddlewareService)
+    throws MiddlewareQueryException {
     	
     	Integer methodVariateId = advanceInfo.getMethodVariateId();
     	Integer lineVariateId = advanceInfo.getLineVariateId();
@@ -92,7 +96,7 @@ public class AdvancingSourceList{
                     	methodId = this.selectedMethodId;
                     }
                     Integer plantsSelected = null; 
-                    boolean isBulk = isBulk(methodId); 
+                    boolean isBulk = isBulk(fieldbookMiddlewareService, methodId); 
                     if (isBulk) {
                     	if (plotVariateId != null) {
 	                        plantsSelected = getIntegerValue(row.getMeasurementDataValue(
@@ -120,12 +124,9 @@ public class AdvancingSourceList{
         }
     }
     
-    private boolean isBulk(int methodId) {
-    	//TODO: apply logic for determining bulk or non-bulk
-        return 
-                (methodId == AppConstants.SELECTED_BULK_SF.getInt()
-                    || methodId == AppConstants.RANDOM_BULK_SF.getInt()
-                    || methodId == AppConstants.RANDOM_BULK_CF.getInt());
+    private boolean isBulk(FieldbookService fieldbookMiddlewareService, int methodId) throws MiddlewareQueryException {
+    	Method method = fieldbookMiddlewareService.getBreedingMethodById(methodId);
+    	return method != null && method.getGeneq() != null && method.getGeneq().equals(1);
     }
     
     private Integer getIntegerValue(String value) {

@@ -217,8 +217,8 @@ public class FieldbookServiceImpl implements FieldbookService{
             if(isNursery)
             	list.addAll(PhenotypicType.TRIAL_ENVIRONMENT.getTypeStorages());
         } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
-        	if(isNursery)
-        		list.addAll(PhenotypicType.TRIAL_ENVIRONMENT.getTypeStorages());
+//        	if(isNursery)
+//        		list.addAll(PhenotypicType.TRIAL_ENVIRONMENT.getTypeStorages());
             list.addAll(PhenotypicType.TRIAL_DESIGN.getTypeStorages());
             list.addAll(PhenotypicType.GERMPLASM.getTypeStorages());
         } else if (mode == AppConstants.SEGMENT_TRAITS.getInt() || mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt() 

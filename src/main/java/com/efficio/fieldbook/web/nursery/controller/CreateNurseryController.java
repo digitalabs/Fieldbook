@@ -273,7 +273,7 @@ public class CreateNurseryController extends SettingsController {
     	
     	List<SettingDetail> baselineTraits = form.getBaselineTraitVariables();
     	List<SettingDetail> baselineTraitsSession = userSelection.getSelectionVariates();
-    	if (baselineTraits == null) {
+    	if (baselineTraits == null && form.getSelectionVariatesVariables() != null) {
     	    baselineTraits = form.getSelectionVariatesVariables();
     	    userSelection.getBaselineTraitsList().addAll(baselineTraitsSession);
     	} else if (form.getSelectionVariatesVariables() != null) {

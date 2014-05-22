@@ -189,7 +189,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 							</div>
 						</div>
 						<div class="modal-footer">
-							<a id="btnOK" href="" th:href="@{/NurseryManager}" th:text="#{common.form.ok.text}" class="btn btn-primary">OK</a>
+							<a id="btnOK" href="" th:href="@{/NurseryManager/editNursery/}+${createNurseryForm.studyId}" th:text="#{common.form.ok.text}" class="btn btn-primary">OK</a>
 						</div>
 					</div>
 					<!-- /.modal-content -->
@@ -346,7 +346,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 	function submitWorkbook(){
 		Spinner.toggle();
 
-		var $form = $("#createNurseryForm, #createNurseryMainForm");
+		var $form = $("#createNurseryForm, #createNurseryMainForm, #addVariableForm");
 		
 		var serializedData = $form.serialize();
 	

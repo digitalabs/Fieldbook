@@ -128,7 +128,7 @@ function showMultiTabPage(paginationUrl, pageNum, sectionDiv, sectionContainerId
            type: "GET",
            data: "",
            cache: false,
-           async: false,
+           //async: false,
            success: function(html) {
         	   var paginationDiv = "#"+sectionContainerId + " #" + sectionDiv;        	   
         	   $(paginationDiv).empty().append(html);    

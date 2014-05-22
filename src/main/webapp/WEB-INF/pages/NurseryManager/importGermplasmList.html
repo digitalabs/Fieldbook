@@ -258,7 +258,7 @@
 	  changeBrowseGermplasmButtonBehavior(false);
 	  
 	  $('#listTreeModal').on('hide.bs.modal', function() {
-		  $('#'+getDisplayedTreeName()).dynatree("getTree").reload();
+		  $('#'+getDisplayedTreeName()).dynatree("getTree").reloadStudyTree();
 		  changeBrowseGermplasmButtonBehavior(false);
 		})
 		 

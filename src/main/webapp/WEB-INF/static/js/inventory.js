@@ -57,16 +57,17 @@ function addLot(){
 	$.ajax({
 		url: "/Fieldbook/SeedStoreManager/ajax",
 		type: "GET",
-		async: false,
 	    success: function(data) {
 	    	$('#addLotsModalDiv').html(data);
 	    	$("#locationId").select2("data", null);
 	    	$("#scaleId").select2("data", null);
 	    	$("#comments").val("");
 	    	$("#page-message-lots").html("");
-	    	$("#addLotsModal").modal("show");
-	    	initializePossibleValuesCombo(locationSuggestions, "#locationId", true, null);
-	  	  	initializePossibleValuesCombo(scaleSuggestions, "#scaleId", false, null);
+	    	$("#addLotsModal").modal({ backdrop: 'static', keyboard: true });
+	    	initializePossibleValuesComboInventory(inventoryLocationSuggestions, "#inventoryMethodIdAll", true, null);
+	    	initializePossibleValuesComboInventory(inventoryFavoriteLocationSuggestions, "#inventoryMethodIdFavorite", false, null);
+	  	  	initializePossibleValuesComboScale(scaleSuggestions, "#inventoryScaleId", false, null);
+	  	    showCorrectLocationInventoryCombo();
 	    	Spinner.toggle();
 	    }
 	});
@@ -74,8 +75,53 @@ function addLot(){
 	
 	
 }
+function initializePossibleValuesComboScale(possibleValues, name, isLocation, defaultValue) {
+	var possibleValues_obj = [];
+	var defaultJsonVal = null;
+	
+	$.each(possibleValues, function(index, value) {
+		var jsonVal;
+		if (value.id != undefined) {
+			jsonVal = { 'id' : value.id,
+					  'text' : value.name
+				};
+		}
+		
+		possibleValues_obj.push(jsonVal);  
+		if(defaultValue != null && defaultValue != '' && 
+				((defaultValue == value.key || defaultValue == value.locid || defaultValue == value.mid) || 
+				 (defaultValue == value.name || defaultValue == value.lname || defaultValue == value.mname))){
+			defaultJsonVal = jsonVal;
+		}
+		
+	});
+	
+	possibleValues_obj = sortByKey(possibleValues_obj, "text");
 
-function initializePossibleValuesCombo(possibleValues, name, showAllLocation, defaultValue) {
+	
+		$(name).select2({
+			query: function (query) {	
+		      var data = {results: possibleValues_obj}, i, j, s;
+		      // return the array that matches
+		      data.results = $.grep(data.results,function(item,index) {
+		        return ($.fn.select2.defaults.matcher(query.term,item.text));
+		      
+		      });
+		      /*
+		      if (data.results.length === 0){
+		    	  data.results.unshift({id:query.term,text:query.term});	        	 
+		      }
+		      */
+		        query.callback(data);
+		    }
+	    });
+	
+	
+	if(defaultJsonVal != null){
+		$(name).select2('data', defaultJsonVal).trigger('change');
+	}
+}
+function initializePossibleValuesComboInventory(possibleValues, name, showAllLocation, defaultValue) {
 	var possibleValues_obj = [];
 	var defaultJsonVal = null;
 	
@@ -115,7 +161,11 @@ function initializePossibleValuesCombo(possibleValues, name, showAllLocation, de
 		      
 		      query.callback(data);
 		    }
-	    });
+	    }).on("change", function (){
+	    	if($('#'+getJquerySafeId("inventoryLocationId")).length != 0){
+	    		$('#'+getJquerySafeId("inventoryLocationId")).val($('#'+getJquerySafeId("inventoryMethodIdAll")).select2("data").id);
+	    	}
+	    });;
 	} else {
 		$(name).select2({
 			query: function (query) {	
@@ -128,7 +178,12 @@ function initializePossibleValuesCombo(possibleValues, name, showAllLocation, de
 		      
 		      query.callback(data);
 		    }
-	    });
+	    }).on("change", function (){
+	    	//$('#'+getJquerySafeId("breedingMethodId")).val($('#'+getJquerySafeId("methodIdFavorite")).select2("data").id);
+	    	if($('#'+getJquerySafeId("inventoryLocationId")).length != 0){
+	    		$('#'+getJquerySafeId("inventoryLocationId")).val($('#'+getJquerySafeId("inventoryMethodIdFavorite")).select2("data").id);
+	    	}
+	    });;
 	}
 	
 	if(defaultJsonVal != null){
@@ -171,5 +226,31 @@ function saveLots() {
 				showErrorMessage("page-message", errorThrown);
 			}
 		});
+	}
+}
+
+function showCorrectLocationInventoryCombo() {
+	var isChecked = $('#showFavoriteLocationInventory').is(':checked');
+	//if show favorite location is checked, hide all field locations, else, show only favorite locations
+	if(isChecked){
+		$('#s2id_inventoryMethodIdFavorite').show();
+		$('#s2id_inventoryMethodIdAll').hide();
+		if($('#'+getJquerySafeId("inventoryMethodIdFavorite")).select2("data") != null){
+			$('#'+getJquerySafeId("inventoryLocationId")).val($('#'+getJquerySafeId("inventoryMethodIdFavorite")).select2("data").id);
+			
+		}else{
+			$('#'+getJquerySafeId("inventoryLocationId")).val(0);
+		}
+	}else{
+		$('#s2id_inventoryMethodIdFavorite').hide();
+		$('#s2id_inventoryMethodIdAll').show();
+		if($('#'+getJquerySafeId("inventoryMethodIdAll")).select2("data") != null){
+			$('#'+getJquerySafeId("inventoryLocationId")).val($('#'+getJquerySafeId("inventoryMethodIdAll")).select2("data").id);
+		
+		}else{
+			$('#'+getJquerySafeId("inventoryLocationId")).val(0);
+		
+		}
+		
 	}
 }

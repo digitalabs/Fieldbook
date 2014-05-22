@@ -374,6 +374,7 @@ public class ImportedGermplasm implements Serializable {
     	rec.setNames(this.names);
     	rec.setCheckId(this.checkId);
     	rec.setCheckName(this.checkName);
+    	rec.setIndex(this.index);
 
     	return rec;
     }

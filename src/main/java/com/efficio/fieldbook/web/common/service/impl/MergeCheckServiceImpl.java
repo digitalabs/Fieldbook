@@ -43,9 +43,6 @@ public class MergeCheckServiceImpl implements MergeCheckService {
 				intervalEntry++;
 			}
 			
-			newList.add(assignNewGermplasm(primaryGermplasm, newEntry));
-			newEntry++;
-			
 			if (shouldInsert /*&& primaryGermplasm != primaryList.get(primaryList.size()-1)*/) {
 				shouldInsert = false;
 				List<ImportedGermplasm> checks = generateChecksToInsert(checkList, checkIndex, manner, newEntry);
@@ -53,6 +50,11 @@ public class MergeCheckServiceImpl implements MergeCheckService {
 				newEntry += checks.size();
 				newList.addAll(checks);
 			}
+			
+			newList.add(assignNewGermplasm(primaryGermplasm, newEntry));
+			newEntry++;
+			
+			
 			
 			primaryEntry++;
 		}

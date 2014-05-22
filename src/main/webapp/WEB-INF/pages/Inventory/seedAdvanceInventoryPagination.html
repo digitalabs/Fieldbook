@@ -1,4 +1,4 @@
-<div class="col-xs-12 col-md-12 advance-nursery-list-table" >   
+<div class="col-xs-12 col-md-12" >   
 <form onsubmit="return do_germplasm_check();" id="germplasm-list-form" role="form-horizontal" class="form-horizontal" action="#"
   th:action="@{/SeedStoreManager/next}" method="post" th:object="${seedStoreForm}" enctype="multipart/form-data">
      
@@ -10,14 +10,14 @@
      </div>
      
      <!-- case 2: advanced view of the importedGermplasm -->
-     <div th:if="*{paginatedInventoryList != null and not #lists.isEmpty(paginatedInventoryList)}">
-       <div class="">
+     <div  class="advance-nursery-list-table" th:if="*{paginatedInventoryList != null and not #lists.isEmpty(paginatedInventoryList)}">      
          <table id="inventory-table" th:if="*{not #lists.isEmpty(paginatedInventoryList)}" class="my-class table table-curved table-condensed germplasm-list-items 1table-with-scroll-inventory">
            <thead>
              <tr>
+               <th  style="text-align: left; vertical-align: middle">&nbsp;</th>
                <th  style="text-align: left; vertical-align: middle">Entry #</th>
                <th  style="text-align: left; vertical-align: middle">Designation</th>
-               <th style="text-align: left; vertical-align: middle">Parentage</th>
+               <th  style="text-align: left; vertical-align: middle">Parentage</th>
                <th  style="text-align: left; vertical-align: middle" th:utext="#{seed.inventory.gid}">.GID</th>
                <th  style="text-align: left; vertical-align: middle" th:utext="#{seed.inventory.source}">.Source</th>
                <th  style="text-align: left; vertical-align: middle" th:utext="#{seed.inventory.location}">.Location</th>
@@ -28,7 +28,7 @@
            </thead>
            <tbody>
              <tr class="primaryRow" th:each="gid, row : *{paginatedInventoryList}" th:attr="data-gid=${gid.gid}">
-            
+            	<td style="text-align: center; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'"><input type="checkbox" class="advancingListGid" th:attr="data-gid=${gid.gid}" th:attrappend="data-lotId=${gid.locationId}" name="advancingListGid" id="advancingListGid"/> </td>
                <td  style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryId}">.1</td> 
                <td  style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" >
 				<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${gid.germplasmName}" th:attr="data-gid=${gid.gid}" th:attrappend="data-desig=${gid.germplasmName}">.2</a>      
@@ -45,23 +45,21 @@
                <td  style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.comment}">.6</td>
              </tr>             
            </tbody>
-         </table>
-       </div>
-     </div>
-
-     
-     
+         </table> 
+     </div>	           
    
-   		<div> 
-	        <div th:if="*{inventoryList != null and not #lists.isEmpty(inventoryList)}">
-	        	<div id="inventory-germplasm-list-pagination"></div>
-	        </div>
+   		
+        <div th:if="*{inventoryList != null and not #lists.isEmpty(inventoryList)}">
+        	<div id="inventory-germplasm-list-pagination"></div>
         </div>
-
-     	<br />
+        
+     	<div class="row col-xs-12 col-md-12" th:if="*{paginatedInventoryList != null and not #lists.isEmpty(paginatedInventoryList)}">
+	 		<input type="checkbox" class="selectAllAdvance" name="selectAllAdvance" id="selectAllAdvance"/> <label class="control-label">&nbsp;Select All</label>
+	    </div>
      </form>
      
  </div>
+ 		
  
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
@@ -109,9 +107,17 @@
 				$('#' + sectionContainerDiv + " .table-with-scroll-inventory").removeClass("table-with-scroll-inventory");
 			}
 			
-			triggerInventoryTableSelection('inventory-table', sectionContainerDiv, listIdentifier);
-	       			
+			//triggerInventoryTableSelection('inventory-table', sectionContainerDiv, listIdentifier);
+	       		
+			$('#'+getJquerySafeId(sectionContainerDiv) + ' .selectAllAdvance').on('change', function(){
+				//select all the checkbox in the section container div
+				var isChecked = $(this).prop('checked');
+				$('#'+getJquerySafeId(sectionContainerDiv) + ' .advancingListGid').each(function(){
+					$(this).prop('checked', isChecked);
+				})
+			})
         });
+        
         
       //]]>
     </script>

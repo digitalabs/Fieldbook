@@ -888,7 +888,7 @@ div.sectionContainer {
 .dropdown-submenu.pull-left{float:none;}.dropdown-submenu.pull-left>.dropdown-menu{left:-100%;margin-left:10px;-webkit-border-radius:6px 0 6px 6px;-moz-border-radius:6px 0 6px 6px;border-radius:6px 0 6px 6px;}
 
 #inventory-germplasm-list {
-      min-height: 400px;
+      min-height: 500px;
     }
 .table-with-scroll-inventory th, .table-with-scroll-inventory td{
 	text-align: center;

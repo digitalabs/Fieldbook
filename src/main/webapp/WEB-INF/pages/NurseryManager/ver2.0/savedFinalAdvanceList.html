@@ -6,6 +6,23 @@
 		<div class="col-xs-3 col-md-3" th:object="${seedStoreForm}">
 			<label th:text="#{advancing.nursery.entries.total}">Total Entries:</label> <label class="control-label control-label-bold" id="numberOfEntries" th:text="*{totalNumberOfGermplasms}"></label>
 		</div>
+		<div class="col-xs-7 col-md-7">
+		<div style="float:right;  margin-right: 10px;">
+			<div class="btn-group">	
+				<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+					<span>Update Inventory</span>
+				</button>
+				<ul class="dropdown-menu" role="menu">
+					<li>
+						<a href="javascript: addLot();">Add Lot</a> 
+					</li>
+					<li>
+						<a href="javascript: void(0)">Deposit</a>
+					</li>					
+				</ul>
+			</div>
+		</div>
+		</div>
 	</div>	
 </div>
 <div class="row">

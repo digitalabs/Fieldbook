@@ -349,8 +349,22 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	for (String id : idList) {
     		idParams.add(Double.valueOf(id).intValue());
     	}
-   		return fieldbookMiddlewareService.countPlotsWithPlantsSelectedofNursery(userSelection.getWorkbook().getMeasurementDatesetId(), idParams);
+   		return fieldbookMiddlewareService.countPlotsWithRecordedVariatesInDataset(userSelection.getWorkbook().getMeasurementDatesetId(), idParams);
     		
     }
+    
+    @ResponseBody
+    @RequestMapping(value="/checkMethod/{lineVariateId}/{ids}", method=RequestMethod.GET)
+    public int checkMethod(@PathVariable String ids) throws MiddlewareQueryException {
+    	String[] idList = ids.split(",");
+    	List<Integer> idParams = new ArrayList<Integer>();
+    	for (String id : idList) {
+    		idParams.add(Double.valueOf(id).intValue());
+    	}
+   		return fieldbookMiddlewareService.countPlotsWithRecordedVariatesInDataset(userSelection.getWorkbook().getMeasurementDatesetId(), idParams);
+    		
+    }
+    
+    
 
 }

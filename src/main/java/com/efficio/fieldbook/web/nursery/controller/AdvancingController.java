@@ -167,7 +167,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         form.setLineVariates(filterVariablesByProperty(userSelection.getSelectionVariates(), AppConstants.PROPERTY_PLANTS_SELECTED.getString()));
         form.setPlotVariates(form.getLineVariates());
     	
-    	SimpleDateFormat sdf = new SimpleDateFormat("YYYY");
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
     	SimpleDateFormat sdfMonth = new SimpleDateFormat("MM");
     	String currentYear = sdf.format(new Date());
     	form.setHarvestYear(currentYear);

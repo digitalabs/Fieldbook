@@ -89,7 +89,7 @@
 //            		showPostPage(paginationUrl, options.currentPage, page, "#div-nursery-tab-"+getCurrentStudyIdInTab()+' #germplasm-measurement-list-table-div', 
 //            				"#div-nursery-tab-"+getCurrentStudyIdInTab()+ ' #createNurseryForm');
                	var sectionContainerDiv = "div-nursery-tab-"+getCurrentStudyIdInTab();
-               	var listIdentifier = $("#dataset-selection").val()
+               	var listIdentifier = $("#study"+getCurrentStudyIdInTab()+" #dataset-selection").val();
            		showMultiTabPage(paginationUrl, page, 'germplasm-measurement-list-table-div', sectionContainerDiv, listIdentifier);
             		
             }

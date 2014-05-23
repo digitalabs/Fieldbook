@@ -345,15 +345,32 @@
    				var id = $(this).val();
    				var name = $(this).find("option:selected").text();
    				var found = false;
+   				if($(this).val() == 'Please Choose')
+   					return;
+   				
+   				//we remove all active
+   				/*
+   				$('#study'+getCurrentStudyIdInTab()+' #measurement-tab-headers li').removeClass('active');
+   				$('#study'+getCurrentStudyIdInTab()+' .fb-tabs').hide();
+   				if($('#study'+getCurrentStudyIdInTab()+' #measurement-tab-headers li#dataset-li'+id).length == 1){
+   					$('#study'+getCurrentStudyIdInTab()+' #measurement-tab-headers li#dataset-li'+id).addClass('active');
+   					$("#dset-tab-" + id).show();
+   					found = true;
+   				}
+   				*/
+   				
    				$(this).parent().parent().find("#measurement-tabs").children().hide();
    				$(this).parent().parent().find("#measurement-tab-headers").find("li").each(function(index) {
-   					$(this).removeClass("active");
-   					if ($(this).text() == name) {
+   					$(this).removeClass("active");   	
+   					
+   					if ($.trim($(this).text()) == $.trim(name)) {
+   						
    						$(this).addClass("active");
    						$("#dset-tab-" + id).show();
    						found = true;
    					}
    				});
+   				
    				if (!found) {
    					loadDatasetMeasurementRowsViewOnly(id, name);
    				}

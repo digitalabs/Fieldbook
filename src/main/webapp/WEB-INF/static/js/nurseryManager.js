@@ -1886,7 +1886,12 @@ function validateCreateNursery() {
 		if(parseInt($("#interval2").val()) < 0 || parseInt($("#interval2").val()) > totalGermplasms){
 			showErrorMessage('page-message', "Interval should be between 0 to "+totalGermplasms);
 			return false;
-		}		
+		}
+		var totalNumberOfChecks = $('#totalNumberOfChecks').val();
+		if(parseInt($("#interval2").val()) <= totalNumberOfChecks){
+			showErrorMessage('page-message', "Interval should be greater than the number of checks ("+totalNumberOfChecks + ")");
+			return false;
+		}
 	}
 	
 	return true;
@@ -2320,14 +2325,17 @@ function getCurrentStudyIdInTab() {
 }
 
 function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
-	Spinner.toggle();
+	
 	var currentStudyId = getCurrentStudyIdInTab();
+	if(datasetId == 'Please Choose' || $("#"+getJquerySafeId('dset-tab-')+datasetId).length != 0)
+		return;
+	Spinner.toggle();
 	$.ajax({ 
 		url: "/Fieldbook/NurseryManager/addOrRemoveTraits/viewNurseryAjax/" + currentStudyId,
 	    type: "GET",
 	    cache: false,
 	    success: function(html) {
-			$("#study"+currentStudyId+" #measurement-tab-headers").append("<li class='active'><a>" + datasetName + "</a> "+ "</li>");
+			$("#study"+currentStudyId+" #measurement-tab-headers").append("<li class='active' id='dataset-li'"+datasetId+"><a>" + datasetName + "</a> "+ "</li>");
 			$("#study"+currentStudyId+" #measurement-tabs").append("<div id='dset-tab-" + datasetId + "'>" + html + "</div>");
 			$("#study"+currentStudyId+" .measurement-section").show();
         },

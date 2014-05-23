@@ -37,7 +37,7 @@ public class SeedStoreForm {
     private int totalPages;
     
     /** The result per page. */
-    private int resultPerPage = 5;    
+    private int resultPerPage = 100;    
     
     /** The location id. */
     private int inventoryLocationId;

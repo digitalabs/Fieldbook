@@ -251,6 +251,7 @@ public class EditNurseryController extends SettingsController {
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
     public Map<String, String> submit(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws MiddlewareQueryException {
+        //get the name of the nursery
     	String name = null;
     	for (SettingDetail nvar : form.getBasicDetails()) {
     		if (nvar.getVariable() != null && nvar.getVariable().getCvTermId() != null && nvar.getVariable().getCvTermId().equals(TermId.STUDY_NAME.getId())) {
@@ -258,16 +259,18 @@ public class EditNurseryController extends SettingsController {
     			break;
     		}
     	}
-    	
+
+    	//combine all study conditions (basic details and management details)
     	List<SettingDetail> studyLevelVariables = new ArrayList<SettingDetail>();
     	if (form.getStudyLevelVariables() != null && !form.getStudyLevelVariables().isEmpty()) {
     		studyLevelVariables.addAll(form.getStudyLevelVariables());
     	}
     	studyLevelVariables.addAll(form.getBasicDetails());
-    	 
+    	    	 
     	List<SettingDetail> studyLevelVariablesSession = userSelection.getBasicDetails();
     	userSelection.getStudyLevelConditions().addAll(studyLevelVariablesSession);
-    	
+
+    	//combine all variates (traits and selection variates)
     	List<SettingDetail> baselineTraits = form.getBaselineTraitVariables();
     	List<SettingDetail> baselineTraitsSession = userSelection.getSelectionVariates();
     	if (baselineTraits == null) {

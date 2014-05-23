@@ -1739,8 +1739,10 @@ function validateCreateNursery() {
 		}
 	});
 	
-	if (!validateCells()) {
-		return false;
+	if ($(".germplasm-measurement-list-table").length > 0) {
+		if (!validateCells()) {
+			return false;
+		}
 	}
 	
 	if (hasError){

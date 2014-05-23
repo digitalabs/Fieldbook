@@ -179,6 +179,36 @@ public class StudyTreeController extends AbstractBaseFieldbookController {
     }
     
     @ResponseBody
+    @RequestMapping(value = "/isNameUnique", method = RequestMethod.POST)
+    public Map<String, Object> isNameUnique(HttpServletRequest req) {
+        String studyId = req.getParameter("studyId");
+        String studyName = req.getParameter("name");
+        Integer studyIdInt = Integer.valueOf(studyId);
+		Map<String, Object> resultsMap = new HashMap<String, Object>();
+        try {
+        
+            int studyIdDb = studyDataManager.getStudyIdByName(studyName);
+            if(studyIdInt.intValue() == 0 && studyIdDb != 0){
+            	//meaning new
+            	resultsMap.put("isSuccess", "0");
+            }else if(studyIdInt.intValue() == studyIdDb){
+            	resultsMap.put("isSuccess", "1");	
+            }
+            
+        }catch(NullPointerException ee){
+        	//meaning there is no study
+        	resultsMap.put("isSuccess", "1");
+        	
+        }catch(Exception e){
+        	e.printStackTrace();
+        	resultsMap.put("isSuccess", "0");
+        	resultsMap.put("message", e.getMessage());
+        }        
+        return resultsMap;
+        
+    }
+    
+    @ResponseBody
     @RequestMapping(value = "/addStudyFolder", method = RequestMethod.POST)
     public Map<String, Object> addStudyFolder(HttpServletRequest req) {
         String parentKey = req.getParameter("parentFolderId");

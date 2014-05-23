@@ -297,9 +297,11 @@ function recreateLocationCombo() {
 	var selectedLocationFavorite = $("#harvestLocationIdFavorite").val();
 	
 	var inventoryPopup = false;
-	
-	if($('#addLotsModal').length != 0 && $('#addLotsModal').hasClass('in'));
+	var advancePopup = false;
+	if($('#addLotsModal').length != 0 && $('#addLotsModal').hasClass('in'))
 		inventoryPopup = true;
+	else if($('#advanceNurseryModal').length != 0 && $('#advanceNurseryModal').hasClass('in'))
+		advancePopup = true;
 	
 	Spinner.toggle();
 	$.ajax(
@@ -322,7 +324,7 @@ function recreateLocationCombo() {
 	    			   setComboValues(locationSuggestions_obj,  $("#inventoryMethodIdAll").val(), "inventoryMethodIdAll");
 	    		   }
     		   }
-    		   else if (selectedLocationAll != null) {
+    		   else if (advancePopup == true || selectedLocationAll != null) {
 	    		   //recreate the select2 combos to get updated list of locations
 	    		   recreateLocationComboAfterClose("harvestLocationIdAll", $.parseJSON(data.allLocations));
 	    		   recreateLocationComboAfterClose("harvestLocationIdFavorite", $.parseJSON(data.favoriteLocations));
@@ -1634,7 +1636,31 @@ function choosePreviousNursery(studyId) {
         }  
 	});
 }
-
+function isStudyNameUnique(){
+	var studyId = '0';
+	if($('#createNurseryMainForm #studyId').length != 0)
+		studyId = $('#createNurseryMainForm #studyId').val();
+	var studyName = $.trim($('#'+getJquerySafeId('basicDetails0.value')).val());
+	
+	$('#'+getJquerySafeId('basicDetails0.value')).val(studyName);
+	
+	var isUnique = true;
+	$.ajax({
+		url: "/Fieldbook/StudyTreeManager/isNameUnique",
+		type: "POST",
+		data: "studyId="+studyId+"&name="+studyName,
+		cache: false,
+		async: false,
+		success: function(data) {
+			if(data.isSuccess == 1){
+				isUnique = true;
+			}else{
+				isUnique = false;
+			}			
+		}		        		
+	});
+	return isUnique;
+}
 function validateCreateNursery() {
 	var hasError = false;
 	var name = '';
@@ -1657,8 +1683,11 @@ function validateCreateNursery() {
 	
 	var startDate = $("#" + getJquerySafeId("basicDetails.value2")).val();
 	
-	
-	if ($("#folderId").val() == '') {
+	if(isStudyNameUnique() == false){
+		hasError = true;
+		customMessage = "Name should be unique";
+	}
+	else if ($("#folderId").val() == '') {
 		hasError = true;
 		name = $("#folderLabel").text();
 	}else if(startDate == ''){

@@ -88,24 +88,26 @@ public class AdvancingSourceList{
                             getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), TermId.CHECK.getId()));
                     boolean isCheck = check != null && !"".equals(check);
                     Integer methodId = null;
-                    if (methodVariateId != null) {
-                    	methodId = getIntegerValue(row.getMeasurementDataValue(
-                            getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), methodVariateId)));
-                    } 
+                    if (advanceInfo.getMethodChoice() == null || "0".equals(advanceInfo.getMethodChoice())) {
+                        if (methodVariateId != null) {
+                        	methodId = getIntegerValue(row.getMeasurementDataValue(
+                                getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), methodVariateId)));
+                        } 
+                    }
                     else {
                     	methodId = this.selectedMethodId;
                     }
                     Integer plantsSelected = null; 
-                    Boolean isBulk = isBulk(fieldbookMiddlewareService, methodId); 
+                    Boolean isBulk = isBulk(fieldbookMiddlewareService, methodId);
                     if (isBulk != null) {
-                    	if (isBulk.booleanValue()) {
+                    	if (isBulk.booleanValue() && (advanceInfo.getAllPlotsChoice() == null || "0".equals(advanceInfo.getAllPlotsChoice()))) {
 	                    	if (plotVariateId != null) {
 		                        plantsSelected = getIntegerValue(row.getMeasurementDataValue(
 		                                getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), plotVariateId)));
 	                    	}
                     	}
 	                    else {
-	                    	if (lineVariateId != null) {
+	                    	if (lineVariateId != null && (advanceInfo.getLineChoice() == null || "0".equals(advanceInfo.getLineChoice()))) {
 	                    		plantsSelected = getIntegerValue(row.getMeasurementDataValue(
 	                    				getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), lineVariateId)));
 	                    	}

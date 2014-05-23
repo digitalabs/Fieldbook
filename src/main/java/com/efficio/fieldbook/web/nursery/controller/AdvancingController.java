@@ -347,7 +347,9 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	String[] idList = ids.split(",");
     	List<Integer> idParams = new ArrayList<Integer>();
     	for (String id : idList) {
-    		idParams.add(Double.valueOf(id).intValue());
+    		if (id != null && NumberUtils.isNumber(id)) {
+    			idParams.add(Double.valueOf(id).intValue());
+    		}
     	}
    		return fieldbookMiddlewareService.countPlotsWithRecordedVariatesInDataset(userSelection.getWorkbook().getMeasurementDatesetId(), idParams);
     		

@@ -130,8 +130,9 @@ function showMultiTabPage(paginationUrl, pageNum, sectionDiv, sectionContainerId
            cache: false,
            //async: false,
            success: function(html) {
-        	   var paginationDiv = "#"+sectionContainerId + " #" + sectionDiv;        	   
-        	   $(paginationDiv).empty().append(html);    
+        	   var paginationDiv = "#"+sectionContainerId + " #" + sectionDiv;
+        	   //console.log(paginationDiv);
+        	   $(paginationDiv).html(html);    
         	   
         	   Spinner.toggle();  
            }

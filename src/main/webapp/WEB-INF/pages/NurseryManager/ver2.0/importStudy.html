@@ -88,8 +88,10 @@
 	          
 	        	   
 	
-	           var importOptions = { 
+	           var importOptions = {
+	        		dataType: 'text',
 			        success:       showImportResponse  // post-submit callback 
+			        
 			    }; 
 		   	$( document ).ready(function() {  	     
 				$('#importStudyModal select').select2({width: 'copy'});
@@ -112,7 +114,9 @@
 		   	
 		   	function showImportResponse(responseText, statusText, xhr, $form)  { 
 		        //reload the screen
-		        if(responseText.isSuccess == 1){
+		        var resp = $.parseJSON(responseText);
+		        //console.log(resp.isSuccess);
+		        if(resp.isSuccess == 1){
 		        	var paginationUrl = '/Fieldbook/Common/addOrRemoveTraits/reload/'; 
 	        		paginationUrl = paginationUrl + $("#study-type").val() + "/";
 	        		var currentPage = $('#measurement-data-list-pagination .pagination .active a').html();
@@ -132,7 +136,7 @@
 	        		         }
 	        		       );
 		        }else{
-		        	showErrorMessage('page-import-message-modal', responseText.error);
+		        	showErrorMessage('page-import-message-modal', resp.error);
 		        	 Spinner.toggle();  
 		        }		         
 		    }

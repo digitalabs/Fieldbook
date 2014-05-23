@@ -429,6 +429,12 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         
         return "[]";
     }
+   
+    @ResponseBody
+    @RequestMapping(value = "/expandGermplasmTree/{parentKey}", method = RequestMethod.GET)
+    public String expandGermplasmAllTree(@PathVariable String parentKey) {
+        return expandGermplasmTree(parentKey, "0");
+    }
 
     private void checkIfUnique(String folderName) throws MiddlewareQueryException, Exception {
     	List<GermplasmList> centralDuplicate = germplasmListManager.

@@ -8,7 +8,7 @@
   			var lazyLoadUrl = "/Fieldbook/ListTreeManager/expandGermplasmTree/";
   			var additionalLazyLoadUrl = '';
   			function doGermplasmLazyLoad(node){
-  	        	if (node.data.isFolder == true){
+  	        	if (node.data.isFolder == true){  	        		
   	    			node.appendAjax({
   	    				url: lazyLoadUrl + node.data.key + additionalLazyLoadUrl,
   	    				dataType: "json",

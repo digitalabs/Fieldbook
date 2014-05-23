@@ -325,7 +325,9 @@ public class EditNurseryController extends SettingsController {
             for (SettingDetail setting : deletedList) {
                 setting.getVariable().setOperation(Operation.DELETE);
             }
+            if (formList == null) formList = new ArrayList<SettingDetail>();
             formList.addAll(deletedList);
+            if (sessionList == null) sessionList = new ArrayList<SettingDetail>();
             sessionList.addAll(deletedList);
         }
     }

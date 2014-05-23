@@ -834,7 +834,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType, p
 		
 		if (settingDetail.variable.cvTermId == breedingMethodId) {
 			//show favorite method
-			newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id=" + name + ctr + ".favorite1'" + 
+			newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id='" + name + ctr + ".favorite1'" + 
 			" name='" + name + "[" + ctr + "].favorite'" +
 			" onclick='javascript: toggleMethodDropdown(" + ctr + ");' />" +
 			"<input type='hidden' name='_"+name+"[" + ctr + "].favorite' value='on' /> " +
@@ -847,7 +847,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType, p
 			newRow = newRow + "</div>";
 			
 		} else if (settingDetail.variable.cvTermId == locationId) {
-				//show favorite method
+				//show favorite location
 				newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id='" + name + ctr + ".favorite1'" + 
 				" name='"+name+"[" + ctr + "].favorite'" +
 				" onclick='javascript: toggleLocationDropdown(" + ctr + ");' />" +

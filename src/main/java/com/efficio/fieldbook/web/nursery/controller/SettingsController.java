@@ -24,6 +24,7 @@ import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.slf4j.Logger;
@@ -305,6 +306,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
                         svar.setCvTermId(stdVar.getId());
                         svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
                         svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
+                        svar.setOperation(Operation.ADD);
 
                         List<ValueReference> possibleValues = fieldbookService.getAllPossibleValues(id);
                         SettingDetail settingDetail = new SettingDetail(svar, possibleValues, null, false);

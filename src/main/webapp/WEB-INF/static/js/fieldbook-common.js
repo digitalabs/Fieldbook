@@ -1393,6 +1393,8 @@ function validatePlantsSelected() {
 	
 	
 	var valid = true;
+	
+	//if (isMixed || )
 	Spinner.toggle();
 	$.ajax({
 		url: "/Fieldbook/NurseryManager/advance/nursery/countPlots/" + ids,
@@ -1414,7 +1416,8 @@ function validatePlantsSelected() {
 			}
 			else {
 				var choice = !$("#line-variates-section").is(":visible");
-				if (choice == false && data == "0") {
+				var lineSameForAll = $('input[type=checkbox][name=lineChoice]:checked').val() == 1;
+				if (lineSameForAll == false && choice == false && data == "0") {
 					showErrorMessage('page-message', msgEmptyListError);
 					valid = false;
 				}
@@ -1500,4 +1503,30 @@ function displayAdvanceList(uniqueId, germplasmListId, listName){
         	Spinner.toggle();
         }
 	});
+}
+
+function validateBreedingMethod() {
+	var id = $("#methodVariateId").val();
+
+	if ($("#breed"))
+	var valid = true;
+	Spinner.toggle();
+	$.ajax({
+		url: "/Fieldbook/NurseryManager/advance/nursery/countPlots/" + id,
+		type: "GET",
+		cache: false,
+		success: function (data) {
+			if (data == 0) {
+				showErrorMessage('page-message', msgEmptyListError);
+				valid = false;
+			}
+		},
+		error: function(jqXHR, textStatus, errorThrown){
+			console.log("The following error occured: " + textStatus, errorThrown); 
+		},
+		complete: function() {
+			Spinner.toggle();
+		}
+	});
+	return valid;
 }

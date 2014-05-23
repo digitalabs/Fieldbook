@@ -31,6 +31,7 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
+import org.generationcp.middleware.pojos.workbench.settings.Factor;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -284,14 +286,13 @@ public class EditNurseryController extends SettingsController {
 	addDeletedSettingsList(form.getNurseryConditions(), userSelection.getDeletedNurseryConditions(), 
             userSelection.getNurseryConditions());
         
-    	    
     	Dataset dataset = (Dataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, studyLevelVariables, 
-    	        form.getPlotLevelVariables(), baselineTraits, userSelection, form.getNurseryConditions());
+    	        form.getPlotLevelVariables(), baselineTraits, userSelection, form.getNurseryConditions());    	
     	Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);
     	    	
     	createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), form.getStudyId());
     	userSelection.setWorkbook(workbook);
-    	    	
+    	
     	Map<String, String> resultMap = new HashMap<String, String>();
     	//saving of measurement rows
     	if (userSelection.getMeasurementRowList() != null && userSelection.getMeasurementRowList().size() > 0) {
@@ -322,13 +323,19 @@ public class EditNurseryController extends SettingsController {
     
     private void addDeletedSettingsList(List<SettingDetail> formList, List<SettingDetail> deletedList, List<SettingDetail> sessionList) {
         if (deletedList != null) {
+            List<SettingDetail> newDeletedList = new ArrayList<SettingDetail>();
             for (SettingDetail setting : deletedList) {
-                setting.getVariable().setOperation(Operation.DELETE);
+                if (setting.getVariable().getOperation().equals(Operation.UPDATE)) {
+                    setting.getVariable().setOperation(Operation.DELETE);
+                    newDeletedList.add(setting);
+                }
             }
-            if (formList == null) formList = new ArrayList<SettingDetail>();
-            formList.addAll(deletedList);
-            if (sessionList == null) sessionList = new ArrayList<SettingDetail>();
-            sessionList.addAll(deletedList);
+            if (!newDeletedList.isEmpty()) {
+                if (formList == null) formList = new ArrayList<SettingDetail>();
+                formList.addAll(newDeletedList);
+                if (sessionList == null) sessionList = new ArrayList<SettingDetail>();
+                sessionList.addAll(newDeletedList);
+            }
         }
     }
     

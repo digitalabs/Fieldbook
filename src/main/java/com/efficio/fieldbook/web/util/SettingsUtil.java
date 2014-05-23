@@ -252,11 +252,15 @@ public class SettingsUtil {
 					StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
 					variable.setPSMRFromStandardVariable(standardVariable);
 					//need to get the name from the session
-					variable.setName(userSelection.getPlotsLevelList().get(index++).getVariable().getName());
+					variable.setName(userSelection.getPlotsLevelList().get(index).getVariable().getName());
+				
+        				Factor factor = new Factor(variable.getName(), variable.getDescription(), variable.getProperty(),
+        						variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(), variable.getCvTermId());
+        				factor.setOperation(userSelection.getPlotsLevelList().get(index++).getVariable().getOperation());
+        				factor.setStoredIn(standardVariable.getStoredIn().getId());
+        				factor.setId(standardVariable.getId());
+        				factors.add(factor);
 				}
-				Factor factor = new Factor(variable.getName(), variable.getDescription(), variable.getProperty(),
-						variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(), variable.getCvTermId());
-				factors.add(factor);
 			}
 		}
 		//iterate for the baseline traits level
@@ -1185,7 +1189,9 @@ public class SettingsUtil {
 				factor.getName(), factor.getDescription(), factor.getScale(), factor.getMethod(), factor.getProperty(), factor.getDatatype(), null, 
 				PhenotypicType.valueOf(factor.getRole()).getLabelList().get(0));
 		mvar.setFactor(true);
-		mvar.setTermId(factor.getTermId());
+		mvar.setOperation(factor.getOperation());
+		mvar.setStoredIn(factor.getStoredIn());
+		mvar.setTermId(factor.getId());
 		mvar.setTreatmentLabel(factor.getTreatmentLabel());
 		return mvar;
 	}

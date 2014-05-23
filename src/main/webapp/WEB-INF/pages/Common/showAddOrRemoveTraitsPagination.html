@@ -114,6 +114,7 @@
             onPageClicked: function(e,originalEvent,type,page){     
             	if(validateCells()){
             		showPostPage(paginationUrl, options.currentPage, page, 'germplasm-measurement-list-table-div', 'addVariableForm');
+            		$('.germplasm-measurement-list-table select').select2();
             	}else{
             		event.stopImmediatePropagation();
             	}
@@ -126,6 +127,7 @@
 		}
 
         $( document ).ready(function() {
+        	$('.germplasm-measurement-list-table select').select2();
         	   fixedTrHeight();
        		 
        	$('.variates-div').scroll(function(){ 

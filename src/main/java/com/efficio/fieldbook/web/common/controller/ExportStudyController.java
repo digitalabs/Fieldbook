@@ -137,10 +137,10 @@ HttpServletRequest req, HttpServletResponse response) {
     @RequestMapping(value="/study/hasFieldMap", method = RequestMethod.GET)
     public String hasFieldMap(HttpServletRequest req, HttpServletResponse response) {
     	StudySelection userSelection = getUserSelection(false);    	
-    	userSelection.getWorkbook().getTotalNumberOfInstances();     	    	
-    	Integer datasetId = userSelection.getWorkbook().getMeasurementDatesetId();
     	boolean hasFieldMap = false;
 		try {
+	    	userSelection.getWorkbook().getTotalNumberOfInstances();     	    	
+	    	Integer datasetId = userSelection.getWorkbook().getMeasurementDatesetId();
 			hasFieldMap = fieldbookMiddlewareService.hasFieldMap(datasetId);
 		} catch (MiddlewareQueryException e) {
 			// TODO Auto-generated catch block

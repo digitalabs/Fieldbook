@@ -367,6 +367,8 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
     var startDateId = '';
 	var endDateId = '';
 
+	var selectionVariatesSegment = /*[[${createNurseryForm.selectionVariatesSegment}]]*/;
+	var baselineTraitsSegment = /*[[${createNurseryForm.baselineTraitsSegment}]]*/;
     
 	$(document).ready(function() {
 		if (getIEVersion() == 8) {
@@ -401,6 +403,11 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 				
 			});
 		
+		$.each($(".possibleValuesJsonCons"), function (index, divElem){
+			var select2Index = $(divElem).attr("id").split("possibleValuesJsonCons")[1]; 
+			initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 
+ 				"#" + getJquerySafeId("nurseryConditions"+select2Index+".value"), false, $(divElem).siblings(".div-select-val").html());
+		});		
 		
 		setTimeout('initializeDateAndSliderInputs()', 500);
 		

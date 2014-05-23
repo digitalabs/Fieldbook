@@ -1051,7 +1051,59 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation, default
 	}
 }
 
+function checkMeasurementData(variableType, variableId) {
+	var hasData = "0";
+	$.ajax({
+		url: "/Fieldbook/NurseryManager/editNursery/checkMeasurementData/" + variableType + "/" + variableId,
+		cache: false,
+		type: "GET",
+		async: false,
+		success: function(data) {
+			hasData = data.hasMeasurementData;
+		}
+	});
+	return hasData;
+}
+
 function deleteVariable(variableType, variableId, deleteButton) {
+	var hasMeasurementData = false;
+	if (variableType == selectionVariatesSegment || variableType == baselineTraitsSegment) {
+		hasMeasurementData = checkMeasurementData(variableType, variableId);
+	} 
+
+	//if no data for measurement rows is saved yet, proceed with delete
+	if (hasMeasurementData == "0") {
+		//remove row from UI
+		deleteButton.parent().parent().remove();
+	
+		//remove row from session
+		Spinner.toggle();
+		$.ajax({
+			url: "/Fieldbook/NurseryManager/createNursery/deleteVariable/" + variableType + "/" + variableId,
+			cache: false,
+			type: "POST",
+			success: function() {
+				Spinner.toggle();
+			}
+		});
+		
+		//reinstantiate counters of ids and names
+		sortVariableIdsAndNames(variableType);
+		inputChange=true;
+	} else {
+		//show confirmation popup
+		$("#variateDeleteConfirmationModal").modal({ backdrop: 'static', keyboard: false });
+		$("#varToDelete").val(variableId);
+		$("#variableType").val(variableType);
+		buttonToDelete = deleteButton; 
+	}
+}
+
+function proceedWithDelete() {
+	var variableId = $("#varToDelete").val();
+	var variableType = $("#variableType").val();
+	var deleteButton = buttonToDelete;
+	
 	//remove row from UI
 	deleteButton.parent().parent().remove();
 

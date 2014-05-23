@@ -152,6 +152,7 @@ public class CreateNurseryForm {
     /** The export trial instance end. */
     private String exportTrialInstanceEnd;
     
+    /** The study id. */
     private Integer studyId;
     
     /** The trial environment values. */
@@ -159,6 +160,12 @@ public class CreateNurseryForm {
     
     /** The trial level variables. */
     private List<SettingDetail> trialLevelVariables;
+    
+    /** The selection variates segment. */
+    private String selectionVariatesSegment;
+    
+    /** The baseline traits segment. */
+    private String baselineTraitsSegment;
     
     /**
      * Gets the project id.
@@ -596,6 +603,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Gets the id name variables.
+         *
          * @return the idNameVariables
          */
         public String getIdNameVariables() {
@@ -603,6 +612,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Sets the id name variables.
+         *
          * @param idNameVariables the idNameVariables to set
          */
         public void setIdNameVariables(String idNameVariables) {
@@ -610,6 +621,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Gets the nursery conditions.
+         *
          * @return the nurseryConditions
          */
         public List<SettingDetail> getNurseryConditions() {
@@ -617,6 +630,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Sets the nursery conditions.
+         *
          * @param nurseryConditions the nurseryConditions to set
          */
         public void setNurseryConditions(List<SettingDetail> nurseryConditions) {
@@ -624,6 +639,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Gets the measurement row list.
+         *
          * @return the measurementRowList
          */
         public List<MeasurementRow> getMeasurementRowList() {
@@ -631,6 +648,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Sets the measurement row list.
+         *
          * @param measurementRowList the measurementRowList to set
          */
         public void setMeasurementRowList(List<MeasurementRow> measurementRowList) {
@@ -638,6 +657,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Gets the measurement variables.
+         *
          * @return the measurementVariables
          */
         public List<MeasurementVariable> getMeasurementVariables() {
@@ -645,6 +666,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Sets the measurement variables.
+         *
          * @param measurementVariables the measurementVariables to set
          */
         public void setMeasurementVariables(List<MeasurementVariable> measurementVariables) {
@@ -652,6 +675,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Gets the study name.
+         *
          * @return the studyName
          */
         public String getStudyName() {
@@ -659,6 +684,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Sets the study name.
+         *
          * @param studyName the studyName to set
          */
         public void setStudyName(String studyName) {
@@ -686,6 +713,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Gets the paginated measurement row list.
+         *
          * @return the paginatedMeasurementRowList
          */
         public List<MeasurementRow> getPaginatedMeasurementRowList() {
@@ -693,6 +722,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Sets the paginated measurement row list.
+         *
          * @param paginatedMeasurementRowList the paginatedMeasurementRowList to set
          */
         public void setPaginatedMeasurementRowList(
@@ -701,6 +732,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Gets the current page.
+         *
          * @return the currentPage
          */
         public int getCurrentPage() {
@@ -708,6 +741,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Sets the current page.
+         *
          * @param currentPage the currentPage to set
          */
         public void setCurrentPage(int currentPage) {
@@ -715,6 +750,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Gets the total pages.
+         *
          * @return the totalPages
          */
         public int getTotalPages() {
@@ -727,6 +764,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Sets the total pages.
+         *
          * @param totalPages the totalPages to set
          */
         public void setTotalPages(int totalPages) {
@@ -734,6 +773,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Gets the result per page.
+         *
          * @return the resultPerPage
          */
         public int getResultPerPage() {
@@ -741,6 +782,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Sets the result per page.
+         *
          * @param resultPerPage the resultPerPage to set
          */
         public void setResultPerPage(int resultPerPage) {
@@ -748,6 +791,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Gets the file.
+         *
          * @return the file
          */
         public MultipartFile getFile() {
@@ -755,6 +800,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Sets the file.
+         *
          * @param file the file to set
          */
         public void setFile(MultipartFile file) {
@@ -762,6 +809,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Gets the checks for error.
+         *
          * @return the hasError
          */
         public String getHasError() {
@@ -769,6 +818,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Sets the checks for error.
+         *
          * @param hasError the hasError to set
          */
         public void setHasError(String hasError) {
@@ -776,6 +827,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Gets the import val.
+         *
          * @return the importVal
          */
         public int getImportVal() {
@@ -783,6 +836,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Sets the import val.
+         *
          * @param importVal the importVal to set
          */
         public void setImportVal(int importVal) {
@@ -790,6 +845,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Gets the number of instances.
+         *
          * @return the numberOfInstances
          */
         public int getNumberOfInstances() {
@@ -797,6 +854,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Sets the number of instances.
+         *
          * @param numberOfInstances the numberOfInstances to set
          */
         public void setNumberOfInstances(int numberOfInstances) {
@@ -804,6 +863,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Gets the export instance type.
+         *
          * @return the exportInstanceType
          */
         public String getExportInstanceType() {
@@ -811,6 +872,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Sets the export instance type.
+         *
          * @param exportInstanceType the exportInstanceType to set
          */
         public void setExportInstanceType(String exportInstanceType) {
@@ -818,6 +881,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Gets the export trial instance number.
+         *
          * @return the exportTrialInstanceNumber
          */
         public String getExportTrialInstanceNumber() {
@@ -825,6 +890,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Sets the export trial instance number.
+         *
          * @param exportTrialInstanceNumber the exportTrialInstanceNumber to set
          */
         public void setExportTrialInstanceNumber(
@@ -833,6 +900,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Gets the export trial instance start.
+         *
          * @return the exportTrialInstanceStart
          */
         public String getExportTrialInstanceStart() {
@@ -840,6 +909,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Sets the export trial instance start.
+         *
          * @param exportTrialInstanceStart the exportTrialInstanceStart to set
          */
         public void setExportTrialInstanceStart(String exportTrialInstanceStart) {
@@ -847,6 +918,8 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Gets the export trial instance end.
+         *
          * @return the exportTrialInstanceEnd
          */
         public String getExportTrialInstanceEnd() {
@@ -854,36 +927,104 @@ public class CreateNurseryForm {
         }
 
         /**
+         * Sets the export trial instance end.
+         *
          * @param exportTrialInstanceEnd the exportTrialInstanceEnd to set
          */
         public void setExportTrialInstanceEnd(String exportTrialInstanceEnd) {
             this.exportTrialInstanceEnd = exportTrialInstanceEnd;
         }
 
+		/**
+		 * Gets the study id.
+		 *
+		 * @return the study id
+		 */
 		public Integer getStudyId() {
 			return studyId;
 		}
 
+		/**
+		 * Sets the study id.
+		 *
+		 * @param studyId the new study id
+		 */
 		public void setStudyId(Integer studyId) {
 			this.studyId = studyId;
 		}
 
+		/**
+		 * Gets the trial environment values.
+		 *
+		 * @return the trial environment values
+		 */
 		public List<List<ValueReference>> getTrialEnvironmentValues() {
 			return trialEnvironmentValues;
 		}
 
+		/**
+		 * Sets the trial environment values.
+		 *
+		 * @param trialEnvironmentValues the new trial environment values
+		 */
 		public void setTrialEnvironmentValues(
 				List<List<ValueReference>> trialEnvironmentValues) {
 			this.trialEnvironmentValues = trialEnvironmentValues;
 		}
 
+		/**
+		 * Gets the trial level variables.
+		 *
+		 * @return the trial level variables
+		 */
 		public List<SettingDetail> getTrialLevelVariables() {
 			return trialLevelVariables;
 		}
 
+		/**
+		 * Sets the trial level variables.
+		 *
+		 * @param trialLevelVariables the new trial level variables
+		 */
 		public void setTrialLevelVariables(List<SettingDetail> trialLevelVariables) {
 			this.trialLevelVariables = trialLevelVariables;
 		}
+
+        /**
+         * Gets the baseline traits segment.
+         *
+         * @return the baselineTraitsSegment
+         */
+        public String getBaselineTraitsSegment() {
+            return baselineTraitsSegment;
+        }
+
+        /**
+         * Sets the baseline traits segment.
+         *
+         * @param baselineTraitsSegment the baselineTraitsSegment to set
+         */
+        public void setBaselineTraitsSegment(String baselineTraitsSegment) {
+            this.baselineTraitsSegment = baselineTraitsSegment;
+        }
+
+        /**
+         * Gets the selection variates segment.
+         *
+         * @return the selectionVariatesSegment
+         */
+        public String getSelectionVariatesSegment() {
+            return selectionVariatesSegment;
+        }
+
+        /**
+         * Sets the selection variates segment.
+         *
+         * @param selectionVariatesSegment the selectionVariatesSegment to set
+         */
+        public void setSelectionVariatesSegment(String selectionVariatesSegment) {
+            this.selectionVariatesSegment = selectionVariatesSegment;
+        }
 
 		
 

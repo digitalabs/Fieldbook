@@ -103,6 +103,8 @@ public class UserSelection extends StudySelection implements Serializable {
     
     private List<SettingDetail> deletedStudyLevelConditions;
     
+    private List<SettingDetail> deletedPlotLevelList;
+    
     private List<SettingDetail> deletedBaselineTraitsList;
     
     private List<SettingDetail> deletedNurseryConditions;    
@@ -610,6 +612,20 @@ public class UserSelection extends StudySelection implements Serializable {
         public void setDeletedNurseryConditions(
                 List<SettingDetail> deletedNurseryConditions) {
             this.deletedNurseryConditions = deletedNurseryConditions;
+        }
+
+        /**
+         * @return the deletedPlotLevelList
+         */
+        public List<SettingDetail> getDeletedPlotLevelList() {
+            return deletedPlotLevelList;
+        }
+
+        /**
+         * @param deletedPlotLevelList the deletedPlotLevelList to set
+         */
+        public void setDeletedPlotLevelList(List<SettingDetail> deletedPlotLevelList) {
+            this.deletedPlotLevelList = deletedPlotLevelList;
         }
 
  }

@@ -190,7 +190,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 			    			</div>
 			    			<div class="row form-group collapse in plotLevelDetails">
 			    				<div class="col-xs-12 col-md-12">
-			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll" id="plotLevelSettings">
+			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll-create" id="plotLevelSettings">
 			    						<thead>
 										<tr>
 							                <th width="5%"></th>
@@ -234,7 +234,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 			    			</div>
 			    			<div class="row form-group collapse in baselineTraitDetails">
 			    				<div class="col-xs-12 col-md-12">
-			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll" id="baselineTraitSettings">
+			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll-create" id="baselineTraitSettings">
 			    						<thead>
 										<tr>
 							                <th width="5%"></th>
@@ -280,7 +280,7 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 			    			</div>
 			    			<div class="row form-group collapse in selectionVariatesDetails">
 			    				<div class="col-xs-12 col-md-12">
-			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll" id="selectionVariatesSettings">
+			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll-create" id="selectionVariatesSettings">
 			    						<thead>
 										<tr>
 											<th width="5%"></th>
@@ -367,11 +367,13 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
     var startDateId = '';
 	var endDateId = '';
 
+	var selectionVariatesSegment = /*[[${createNurseryForm.selectionVariatesSegment}]]*/;
+	var baselineTraitsSegment = /*[[${createNurseryForm.baselineTraitsSegment}]]*/;
     
 	$(document).ready(function() {
 		if (getIEVersion() == 8) {
-			$(".table-with-scroll").parent().addClass("variable-details");
-			$(".table-with-scroll").removeClass("table-with-scroll");
+			$(".table-with-scroll-create").parent().addClass("variable-details");
+			$(".table-with-scroll-create").removeClass("table-with-scroll-create");
 		} 
         if($('#requiredFields').val() != ''){
             requiredFields = $('#requiredFields').val().split(',');    
@@ -401,6 +403,11 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 				
 			});
 		
+		$.each($(".possibleValuesJsonCons"), function (index, divElem){
+			var select2Index = $(divElem).attr("id").split("possibleValuesJsonCons")[1]; 
+			initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 
+ 				"#" + getJquerySafeId("nurseryConditions"+select2Index+".value"), false, $(divElem).siblings(".div-select-val").html());
+		});		
 		
 		setTimeout('initializeDateAndSliderInputs()', 500);
 		

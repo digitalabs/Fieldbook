@@ -25,12 +25,12 @@ public class AdvancingSource {
     private String methodType;
     private boolean isBulk;
 
-    public AdvancingSource(ImportedGermplasm germplasm, Integer plantsSelected, Integer breedingMethodId, boolean isCheck, boolean isBulk) {
+    public AdvancingSource(ImportedGermplasm germplasm, Integer plantsSelected, Integer breedingMethodId, boolean isCheck, Boolean isBulk) {
         this.germplasm = germplasm;
         this.plantsSelected = plantsSelected;
         this.breedingMethodId = breedingMethodId;
         this.isCheck = isCheck;
-        this.isBulk = isBulk;
+        this.isBulk = isBulk != null && isBulk.booleanValue();
     }
     
     /**

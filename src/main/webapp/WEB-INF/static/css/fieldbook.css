@@ -579,18 +579,18 @@ padding-left: 20px; margin-top: 7px
    font-size: 10px;
 }
 .variates{
-	/*
+	
 	background-color: blue;	
 	color: #FFFFFF;
-	*/
+	
 	min-width: 130px;
 	max-width: 130px;
 }
 .factors{
-	/*
+	
 	background-color: green;
 	color: #FFFFFF;
-	*/	
+		
 }
 .lead {
     font-size: 10pt;
@@ -1020,4 +1020,7 @@ div.sectionContainer {
 }
 #check-table span.select2-arrow{
 	top: -3px;
+}
+.fileupload-exists .uneditable-input{
+	width: 100px;
 }

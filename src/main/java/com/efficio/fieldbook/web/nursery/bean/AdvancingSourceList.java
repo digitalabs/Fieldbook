@@ -96,19 +96,21 @@ public class AdvancingSourceList{
                     	methodId = this.selectedMethodId;
                     }
                     Integer plantsSelected = null; 
-                    boolean isBulk = isBulk(fieldbookMiddlewareService, methodId); 
-                    if (isBulk) {
-                    	if (plotVariateId != null) {
-	                        plantsSelected = getIntegerValue(row.getMeasurementDataValue(
-	                                getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), plotVariateId)));
+                    Boolean isBulk = isBulk(fieldbookMiddlewareService, methodId); 
+                    if (isBulk != null) {
+                    	if (isBulk.booleanValue()) {
+	                    	if (plotVariateId != null) {
+		                        plantsSelected = getIntegerValue(row.getMeasurementDataValue(
+		                                getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), plotVariateId)));
+	                    	}
                     	}
-                    }
-                    else {
-                    	if (lineVariateId != null) {
-                    		plantsSelected = getIntegerValue(row.getMeasurementDataValue(
-                    				getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), lineVariateId)));
-                    	}
-                    }
+	                    else {
+	                    	if (lineVariateId != null) {
+	                    		plantsSelected = getIntegerValue(row.getMeasurementDataValue(
+	                    				getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), lineVariateId)));
+	                    	}
+	                    }
+                    } //else skipped, bec method or line can not be determined
                     this.rows.add(new AdvancingSource(germplasm, plantsSelected, methodId, isCheck, isBulk));
                 }
             }
@@ -124,9 +126,12 @@ public class AdvancingSourceList{
         }
     }
     
-    private boolean isBulk(FieldbookService fieldbookMiddlewareService, int methodId) throws MiddlewareQueryException {
-    	Method method = fieldbookMiddlewareService.getBreedingMethodById(methodId);
-    	return method != null && method.getGeneq() != null && method.getGeneq().equals(1);
+    private Boolean isBulk(FieldbookService fieldbookMiddlewareService, Integer methodId) throws MiddlewareQueryException {
+    	if (methodId != null) {
+    		Method method = fieldbookMiddlewareService.getBreedingMethodById(methodId);
+    		return method != null && method.getGeneq() != null && method.getGeneq().equals(1);
+    	}
+    	return null;
     }
     
     private Integer getIntegerValue(String value) {
@@ -160,12 +165,12 @@ public class AdvancingSourceList{
         return label;
     }
     
-    public boolean isBulk() {
-        return this.selectedMethodId != null && 
-                (this.selectedMethodId.intValue() == AppConstants.SELECTED_BULK_SF.getInt()
-                    || this.selectedMethodId.intValue() == AppConstants.RANDOM_BULK_SF.getInt()
-                    || this.selectedMethodId.intValue() == AppConstants.RANDOM_BULK_CF.getInt());
-    }
+//    public boolean isBulk() {
+//        return this.selectedMethodId != null && 
+//                (this.selectedMethodId.intValue() == AppConstants.SELECTED_BULK_SF.getInt()
+//                    || this.selectedMethodId.intValue() == AppConstants.RANDOM_BULK_SF.getInt()
+//                    || this.selectedMethodId.intValue() == AppConstants.RANDOM_BULK_CF.getInt());
+//    }
     
     /**
      * @return the rows

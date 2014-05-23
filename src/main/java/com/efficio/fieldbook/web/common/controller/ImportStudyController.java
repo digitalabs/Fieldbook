@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -74,7 +75,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	}
     @ResponseBody
     @RequestMapping(value="/import/{studyType}/{importType}", method = RequestMethod.POST)
-    public Map<String, Object> importFile(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form
+    public String importFile(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form
             ,@PathVariable String studyType
     		,@PathVariable int importType, BindingResult result, Model model) {
 
@@ -175,7 +176,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	}
 	    	
     	//return show(model, isTrial);
-    	return resultsMap;
+    	//return resultsMap;
+    	return super.convertObjectToJson(resultsMap);
     }
     
     private List<List<ValueReference>> transformTrialObservations(List<MeasurementRow> trialObservations, List<SettingDetail> trialHeaders) {

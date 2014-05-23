@@ -129,7 +129,7 @@ public class StudyTreeController extends AbstractBaseFieldbookController {
      * @return the string
      */
     @ResponseBody
-    @RequestMapping(value = "/retrieveChildren/{parentKey}", method = RequestMethod.GET)
+    @RequestMapping(value = "/retrieveChildren/{parentKey}/{isFolder}", method = RequestMethod.GET)
     public String retrieveChildren(@PathVariable String parentKey) {
        
         try {

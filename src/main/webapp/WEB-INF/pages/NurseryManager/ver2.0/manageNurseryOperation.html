@@ -167,12 +167,14 @@
 		        		cache: false,
 		        		success: function(data) {
 		        			if(data.isSuccess == 1){
-		        				$('#addStudyFolder').modal('hide');
-		        				
-		        				//lazy load the node
 		        				var node = $('#studyTree').dynatree("getTree").getActiveNode();
 		        				doStudyLazyLoad(node);		        				
 		        				node.focus();
+		        				node.expand();
+		        				$('#addStudyFolder').modal('hide');
+		        				
+		        				//lazy load the node
+		        				
 		        				
 		        			}else{
 		        				showErrorMessage('page-add-study-folder-message-modal', data.message);

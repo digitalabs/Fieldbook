@@ -94,7 +94,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 						</div>
 						<div class="row form-group col-xs-6 col-md-6">
 							<select th:field="*{methodVariateId}">
-								<option th:each="methodVariate : *{methodVariates}" th:value="${methodVariate.id}" th:text="${methodVariate.description}">
+								<option th:each="methodVariate : *{methodVariates}" th:value="${methodVariate.id}" th:text="${methodVariate.name}">
 								</option>
 							</select>
 						</div>
@@ -128,7 +128,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 						</div>
 						<div class="row form-group col-xs-6 col-md-6">
 							<select th:field="*{lineVariateId}" class="ps-variate-selection">
-								<option th:each="lineVariate : *{lineVariates}" th:value="${lineVariate.id}" th:text="${lineVariate.description}">
+								<option th:each="lineVariate : *{lineVariates}" th:value="${lineVariate.id}" th:text="${lineVariate.name}">
 								</option>
 							</select>
 						</div>
@@ -156,7 +156,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 						</div>
 						<div class="row form-group col-xs-6 col-md-6">
 							<select th:field="*{plotVariateId}">
-								<option th:each="plotVariate : *{plotVariates}" th:value="${plotVariate.id}" th:text="${plotVariate.description}">
+								<option th:each="plotVariate : *{plotVariates}" th:value="${plotVariate.id}" th:text="${plotVariate.name}">
 								</option>
 							</select>
 						</div>

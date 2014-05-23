@@ -356,14 +356,14 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 			data: serializedData,
 			cache: false,
 			success: function(data) {
-				if ($(".germplasm-list-items").length > 0) {
+				if ($("#nursery-germplasm-list").length > 0) {
 					submitCheckGermplasmList();
 				} else if (data.status == 1) {
 					$('#successMessageModalUpdate').modal({ backdrop: 'static', keyboard: true });
 				}
 			}, 
 			complete: function() {
-				if ($(".germplasm-list-items").length == 0) { 
+				if ($("#nursery-germplasm-list").length == 0) { 
 					Spinner.toggle();
 				}
 			}

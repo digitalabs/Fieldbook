@@ -167,13 +167,14 @@
 		        		cache: false,
 		        		success: function(data) {
 		        			if(data.isSuccess == 1){
-		        				$('#addGermplasmFolder').modal('hide');
+		        				
 		        				
 		        				//lazy load the node
 		        				var node = $('#'+getDisplayedTreeName()).dynatree("getTree").getActiveNode();
 		        				doGermplasmLazyLoad(node);		        				
 		        				node.focus();
-		        				
+		        				node.expand();
+		        				$('#addGermplasmFolder').modal('hide');
 		        			}else{
 		        				showErrorMessage('page-add-germplasm-folder-message-modal', data.message);
 		        			}

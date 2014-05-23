@@ -282,14 +282,13 @@ public class EditNurseryController extends SettingsController {
     	}
     	
     	//include deleted list if measurements are available
-    	if (userSelection.getMeasurementRowList() != null && userSelection.getMeasurementRowList().size() > 0) {
-    	    addDeletedSettingsList(studyLevelVariables, userSelection.getDeletedStudyLevelConditions(), 
-    	        userSelection.getStudyLevelConditions());
-    	    addDeletedSettingsList(baselineTraits, userSelection.getDeletedBaselineTraitsList(), 
-    	        userSelection.getBaselineTraitsList());
-    	    addDeletedSettingsList(form.getNurseryConditions(), userSelection.getDeletedNurseryConditions(), 
-                userSelection.getNurseryConditions());
-    	}        
+	addDeletedSettingsList(studyLevelVariables, userSelection.getDeletedStudyLevelConditions(), 
+	    userSelection.getStudyLevelConditions());
+	addDeletedSettingsList(baselineTraits, userSelection.getDeletedBaselineTraitsList(), 
+	    userSelection.getBaselineTraitsList());
+	addDeletedSettingsList(form.getNurseryConditions(), userSelection.getDeletedNurseryConditions(), 
+            userSelection.getNurseryConditions());
+        
     	    
     	Dataset dataset = (Dataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, studyLevelVariables, 
     	        form.getPlotLevelVariables(), baselineTraits, userSelection, form.getNurseryConditions());

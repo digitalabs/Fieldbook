@@ -840,7 +840,7 @@ table.table-with-scroll-create thead tr th:nth-child(2), table.table-with-scroll
 	width: 12%;
 }
 table.table-with-scroll-create tbody tr td:nth-child(2), table.table-with-scroll-create tbody tr td:nth-child(3) {
-	width: 12%;
+	width: 14%;
 }
 table.table-with-scroll-inventory thead tr th:nth-child(1) {
 	width: 10%;

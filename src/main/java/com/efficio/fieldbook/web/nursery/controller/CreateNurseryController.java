@@ -353,6 +353,8 @@ public class CreateNurseryController extends SettingsController {
         form.setStartDateId(AppConstants.START_DATE_ID.getString());
     	form.setEndDateId(AppConstants.END_DATE_ID.getString());
     	form.setOpenGermplasmUrl(AppConstants.GERMPLASM_DETAILS_URL.getString());
+    	form.setBaselineTraitsSegment(AppConstants.SEGMENT_TRAITS.getString());
+        form.setSelectionVariatesSegment(AppConstants.SEGMENT_SELECTION_VARIATES.getString());
     }
     
     /**
@@ -499,6 +501,8 @@ public class CreateNurseryController extends SettingsController {
         List<SettingDetail> settingsList = new ArrayList<SettingDetail>();
         if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
             settingsList = userSelection.getDeletedStudyLevelConditions();
+        } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
+            settingsList = userSelection.getDeletedPlotLevelList();
         } else if (mode == AppConstants.SEGMENT_TRAITS.getInt() || mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()){
             settingsList = userSelection.getDeletedBaselineTraitsList();
         } else if (mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt()){
@@ -662,6 +666,11 @@ public class CreateNurseryController extends SettingsController {
                 userSelection.setDeletedStudyLevelConditions(new ArrayList<SettingDetail>());
             } 
             userSelection.getDeletedStudyLevelConditions().add(newSetting);            
+        } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
+            if (userSelection.getDeletedPlotLevelList() == null) {
+                userSelection.setDeletedPlotLevelList(new ArrayList<SettingDetail>());
+            } 
+            userSelection.getDeletedPlotLevelList().add(newSetting);
         } else if (mode == AppConstants.SEGMENT_TRAITS.getInt()) {
             if (userSelection.getDeletedBaselineTraitsList() == null) {
                 userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());

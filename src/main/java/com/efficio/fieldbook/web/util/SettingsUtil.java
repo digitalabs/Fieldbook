@@ -591,7 +591,8 @@ public class SettingsUtil {
                                     nurseryConditions.add(settingDetail);
                                     if(userSelection != null){
                                             StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);                                             
-                                            variable.setPSMRFromStandardVariable(standardVariable);                                         
+                                            variable.setPSMRFromStandardVariable(standardVariable); 
+                                            settingDetail.setValue(standardVariable.getEnumerationByDescription(constant.getValue()).getName());
                                     }
                             }
                         }

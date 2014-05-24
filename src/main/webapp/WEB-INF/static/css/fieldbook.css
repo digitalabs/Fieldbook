@@ -772,6 +772,7 @@ div.possibleValuesDiv{
 .label-bold{
 	font-weight: 600;
 }
+
 .trialEnvironmentDiv{
 	max-height: 500px; 
 	min-height: 0px; 
@@ -825,10 +826,10 @@ table.table-with-scroll tbody tr td:first-child, table.table-with-scroll tbody t
 	width: 5%;
 }
 table.table-with-scroll-create thead tr th:first-child {
-	width: 2%;
+	width: 1%;
 }
-table.table-with-scroll-create tbody tr td:first-child {
-	width: 2%;
+table.table-with-scroll-create tbody tr td:last-child {
+	width: 10%;
 } 
 table.table-with-scroll thead tr th:nth-child(2), table.table-with-scroll thead tr th:nth-child(3) {
 	width: 47%;
@@ -836,11 +837,14 @@ table.table-with-scroll thead tr th:nth-child(2), table.table-with-scroll thead 
 table.table-with-scroll tbody tr td:nth-child(2), table.table-with-scroll tbody tr td:nth-child(3) {
 	width: 46%;
 }
-table.table-with-scroll-create thead tr th:nth-child(2), table.table-with-scroll-create thead tr th:nth-child(3) {
-	width: 12%;
+table.table-with-scroll-create thead tr th:nth-child(2){
+	width: 8%;
+}
+table.table-with-scroll-create thead tr th:nth-child(3) {
+	width: 7%;
 }
 table.table-with-scroll-create tbody tr td:nth-child(2), table.table-with-scroll-create tbody tr td:nth-child(3) {
-	width: 14%;
+	width: 37%;
 }
 table.table-with-scroll-inventory thead tr th:nth-child(1) {
 	width: 10%;

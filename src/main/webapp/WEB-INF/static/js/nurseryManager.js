@@ -818,7 +818,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType, p
 		"<input class='cvTermIds nurseryLevelVariableIdClass' type='hidden' id='" + name + ctr + ".variable.cvTermId' name='"+name+"[" + 
 		ctr + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />&nbsp;&nbsp;&nbsp;&nbsp;";
 
-		newRow = newRow + "<span style='word-wrap: break-word'  class='control-label'>" + settingDetail.variable.name + "</span>: &nbsp;<span class='required'>*</span></div>";
+		newRow = newRow + "<span style='word-wrap: break-word'  class='control-label label-bold'>" + settingDetail.variable.name + "</span>: &nbsp;<span class='required'>*</span></div>";
 		
 		if(settingDetail.variable.widgetType == 'DATE'){
 			newRow = newRow + "<div class='col-xs-3 col-md-3 2nd'>";
@@ -842,7 +842,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType, p
 		
 		if (settingDetail.variable.cvTermId == breedingMethodId) {
 			//show favorite method
-			newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id=" + name + ctr + ".favorite1'" + 
+			newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id='" + name + ctr + ".favorite1'" + 
 			" name='" + name + "[" + ctr + "].favorite'" +
 			" onclick='javascript: toggleMethodDropdown(" + ctr + ");' />" +
 			"<input type='hidden' name='_"+name+"[" + ctr + "].favorite' value='on' /> " +
@@ -855,7 +855,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType, p
 			newRow = newRow + "</div>";
 			
 		} else if (settingDetail.variable.cvTermId == locationId) {
-				//show favorite method
+				//show favorite location
 				newRow = newRow + "<div class='possibleValuesDiv'><input type='checkbox' id='" + name + ctr + ".favorite1'" + 
 				" name='"+name+"[" + ctr + "].favorite'" +
 				" onclick='javascript: toggleLocationDropdown(" + ctr + ");' />" +
@@ -1894,7 +1894,12 @@ function validateCreateNursery() {
 		if(parseInt($("#interval2").val()) < 0 || parseInt($("#interval2").val()) > totalGermplasms){
 			showErrorMessage('page-message', "Interval should be between 0 to "+totalGermplasms);
 			return false;
-		}		
+		}
+		var totalNumberOfChecks = $('#totalNumberOfChecks').val();
+		if(parseInt($("#interval2").val()) <= totalNumberOfChecks){
+			showErrorMessage('page-message', "Interval should be greater than the number of checks ("+totalNumberOfChecks + ")");
+			return false;
+		}
 	}
 	
 	return true;
@@ -2328,14 +2333,17 @@ function getCurrentStudyIdInTab() {
 }
 
 function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
-	Spinner.toggle();
+	
 	var currentStudyId = getCurrentStudyIdInTab();
+	if(datasetId == 'Please Choose' || $("#"+getJquerySafeId('dset-tab-')+datasetId).length != 0)
+		return;
+	Spinner.toggle();
 	$.ajax({ 
 		url: "/Fieldbook/NurseryManager/addOrRemoveTraits/viewNurseryAjax/" + currentStudyId,
 	    type: "GET",
 	    cache: false,
 	    success: function(html) {
-			$("#study"+currentStudyId+" #measurement-tab-headers").append("<li class='active'><a>" + datasetName + "</a> "+ "</li>");
+			$("#study"+currentStudyId+" #measurement-tab-headers").append("<li class='active' id='dataset-li'"+datasetId+"><a>" + datasetName + "</a> "+ "</li>");
 			$("#study"+currentStudyId+" #measurement-tabs").append("<div id='dset-tab-" + datasetId + "'>" + html + "</div>");
 			$("#study"+currentStudyId+" .measurement-section").show();
         },

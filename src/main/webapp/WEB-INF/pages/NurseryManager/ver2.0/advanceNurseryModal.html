@@ -39,7 +39,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 						<label class="control-label" ><strong class="sub-content-heading"  th:text="#{advancing.nursery.convention}"></strong></label>
 					</div>
 					<div class="row form-group col-xs-12 col-md-12">
-						<strong><label th:text="#{advancing.nursery.naming.convention}+'*:'"></label></strong>
+						<strong><label class="label-bold" th:text="#{advancing.nursery.naming.convention}+'*:'"></label></strong>
 						&nbsp;&nbsp;
 						<select id="namingConvention">
 						  <option value="3" th:text="#{advancing.nursery.naming.convention.other.crops}">OTHER CROPS</option>
@@ -58,7 +58,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 					<div class="row form-group col-xs-6 col-md-6">
 						<label class="control-label">
 							<input type="checkbox" th:field="*{methodChoice}" th:value="*{methodChoice}"/>
-							<span th:text="#{advancing.nursery.breeding.method.the.same}">Breeding Method is the same for each advance</span>
+							<span class="label-bold" th:text="#{advancing.nursery.breeding.method.the.same}">Breeding Method is the same for each advance</span>
 						</label>														
 					</div>
 					<div class="row form-group col-xs-6 col-md-6 method-selection-div">					
@@ -90,7 +90,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 					</div>					
 					<div id="method-variates-section">
 						<div class="row form-group col-xs-6 col-md-6">
-							<label class="control-label" th:text="#{advancing.nursery.method.variate} + ':'">Choose a variate that defines the breeding method for each advance:</label>
+							<label class="control-label label-bold" th:text="#{advancing.nursery.method.variate} + ':'">Choose a variate that defines the breeding method for each advance:</label>
 						</div>
 						<div class="row form-group col-xs-6 col-md-6">
 							<select th:field="*{methodVariateId}">
@@ -109,7 +109,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 					<div class="row form-group col-xs-6 col-md-6">
 						<label class="control-label">
 							<input type="checkbox" th:field="*{lineChoice}" th:value="*{lineChoice}"/>
-							<span th:text="#{advancing.nursery.line.the.same}">Same number of lines is selected for each plot</span>
+							<span class="label-bold" th:text="#{advancing.nursery.line.the.same}">Same number of lines is selected for each plot</span>
 						</label>
 					</div>
 					<div class="row form-group col-xs-6 col-md-6">
@@ -117,14 +117,14 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 				</div>
 				<div class="row form-group col-xs-12 col-md-12 lines-section">
 					<div class="row form-group col-xs-6 col-md-6">
-						<label class="control-label" th:text="#{advancing.nursery.number.of.samples.plot} + ':'">Lines Selected per Plot:</label>														
+						<label class="control-label label-bold" th:text="#{advancing.nursery.number.of.samples.plot} + ':'">Lines Selected per Plot:</label>														
 					</div>
 					<div class="row form-group col-xs-6 col-md-6">
 						<input class="form-control" type="text" th:field="*{lineSelected}"/>
 					</div>
 					<div id="line-variates-section">
 						<div class="row form-group col-xs-6 col-md-6">
-							<label class="control-label" th:text="#{advancing.nursery.lines.variate}"></label>
+							<label class="control-label label-bold" th:text="#{advancing.nursery.lines.variate}"></label>
 						</div>
 						<div class="row form-group col-xs-6 col-md-6">
 							<select th:field="*{lineVariateId}" class="ps-variate-selection">
@@ -143,7 +143,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 					<div class="row form-group col-xs-6 col-md-6">
 						<label class="control-label">
 							<input type="checkbox" th:field="*{allPlotsChoice}" th:value="*{allPlotsChoice}" />
-							<span th:text="#{advancing.nursery.all.plots.selected}">All plots are selected</span>
+							<span class="label-bold" th:text="#{advancing.nursery.all.plots.selected}">All plots are selected</span>
 						</label>
 					</div>
 					<div class="row form-group col-xs-6 col-md-6">
@@ -152,7 +152,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 				<div class="row form-group col-xs-12 col-md-12 bulk-section">
 					<div id="plot-variates-section">
 						<div class="row form-group col-xs-6 col-md-6">
-							<label class="control-label" th:text="#{advancing.nursery.bulks.variate}"></label>
+							<label class="control-label label-bold" th:text="#{advancing.nursery.bulks.variate}"></label>
 						</div>
 						<div class="row form-group col-xs-6 col-md-6">
 							<select th:field="*{plotVariateId}">
@@ -169,7 +169,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 						<label class="control-label" ><strong class="sub-content-heading"  th:text="#{advancing.nursery.harvest.information}">Harvest Details</strong> </label>
 					</div>
 					<div class="row form-group col-xs-6 col-md-6">
-					  	<label class="control-label" th:text="#{advancing.nursery.harvest.location}">Harvest Location:</label><span class="required"></span>
+					  	<label class="control-label label-bold" th:text="#{advancing.nursery.harvest.location}">Harvest Location:</label><span class="required"></span>
 					</div>
 					<div class="row form-group col-xs-6 col-md-6">
 					   <input type="hidden" th:field="*{harvestLocationIdAll}" class="form-control select2" placeholder=""/>
@@ -191,7 +191,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 				</div>							
 				<div class="row form-group col-xs-12 col-md-12">
 					<div class="row form-group col-xs-6 col-md-6">
-						<label for="harvestDate" class="control-label"  th:text="#{advancing.nursery.harvest.date}">Harvest Date</label><span class="required"></span>
+						<label for="harvestDate" class="control-label label-bold"  th:text="#{advancing.nursery.harvest.date}">Harvest Date</label><span class="required"></span>
 					</div>	
 					<div class="row  col-xs-2 col-md-2 form-group">
 					   	<select th:field="*{harvestYear}" style="width: 100px">

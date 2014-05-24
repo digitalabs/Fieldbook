@@ -61,7 +61,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 							<span th:text="#{advancing.nursery.breeding.method.the.same}">Breeding Method is the same for each advance</span>
 						</label>														
 					</div>
-					<div class="row form-group col-xs-6 col-md-6">					
+					<div class="row form-group col-xs-6 col-md-6 method-selection-div">					
 						<input type="hidden" th:field="*{methodIdAll}" class="form-control select2 non-maize-control" placeholder=""/>
 						<input type="hidden" th:field="*{methodIdFavorite}" class="form-control select2 non-maize-control" placeholder=""/>
 						<select id="maizeBreedingMethod" class="form-control maize-control">
@@ -74,7 +74,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 					</div>
 					<div class="row form-group col-xs-6 col-md-6">
 					</div>
-					<div class="row form-group col-xs-6 col-md-6">					
+					<div class="row form-group col-xs-6 col-md-6 method-selection-div">					
 						<label class="non-maize-control">
 							<input id="showFavoriteMethod" value="1" type="checkbox"/> <span th:text="#{show.favorite.method}">Show Favorite Method</span>
 							&nbsp;&nbsp;
@@ -304,6 +304,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 			oldLineSelected = $('#lineSelected').val();
 			checkMethod();
 			lineMethod();
+			plotMethod();
 			changeSuffix();
 			
 			$('#advanceBreedingMethodId').on('change', changeAdvanceBreedingMethod);

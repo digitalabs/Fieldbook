@@ -180,11 +180,16 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 					  	<label class="control-label label-bold" th:text="#{advancing.nursery.harvest.location}">Harvest Location:</label><span class="required"></span>
 					</div>
 					<div class="row form-group col-xs-6 col-md-6">
-					   <input type="hidden" th:field="*{harvestLocationIdAll}" class="form-control select2" placeholder=""/>
-					   <input type="hidden" th:field="*{harvestLocationIdFavorite}" class="form-control select2" placeholder=""/>
-					   <input type="hidden" th:field="*{harvestLocationId}"/>
-					   <input type="hidden" th:field="*{harvestLocationName}" />
-					   <input type="hidden" th:field="*{harvestLocationAbbreviation}" />
+						<div class="row form-group col-xs-11 col-md-11">
+						   <input type="hidden" th:field="*{harvestLocationIdAll}" class="form-control select2" placeholder=""/>
+						   <input type="hidden" th:field="*{harvestLocationIdFavorite}" class="form-control select2" placeholder=""/>
+						   <input type="hidden" th:field="*{harvestLocationId}"/>
+						   <input type="hidden" th:field="*{harvestLocationName}" />
+						   <input type="hidden" th:field="*{harvestLocationAbbreviation}" />
+						</div>
+						<div class="col-xs-1 col-md-1">
+							<span id="harvestloc-tooltip" class="help-tooltip-nursery" data-placement="right" data-toggle="tooltip">?</span>
+						</div>
 				    </div>
 					<div class="row form-group col-xs-6 col-md-6">
 					</div>

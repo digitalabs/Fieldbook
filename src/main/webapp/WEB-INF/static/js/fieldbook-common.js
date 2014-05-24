@@ -967,6 +967,9 @@ function initializeHarvestLocationSelect2(locationSuggestions, locationSuggestio
     	$('#'+getJquerySafeId("harvestLocationId")).val($('#'+getJquerySafeId("harvestLocationIdAll")).select2("data").id);
     	$('#'+getJquerySafeId("harvestLocationName")).val($('#'+getJquerySafeId("harvestLocationIdAll")).select2("data").text);
     	$('#'+getJquerySafeId("harvestLocationAbbreviation")).val($('#'+getJquerySafeId("harvestLocationIdAll")).select2("data").abbr);
+    	if ($("#harvestloc-tooltip")) {
+    		$("#harvestloc-tooltip").attr("title", $('#'+getJquerySafeId("harvestLocationIdAll")).select2("data").abbr);
+    	}
     });
 	
 }
@@ -999,6 +1002,9 @@ $('#'+getJquerySafeId('harvestLocationIdFavorite')).select2({
 	$('#'+getJquerySafeId("harvestLocationId")).val($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data").id);
 	$('#'+getJquerySafeId("harvestLocationName")).val($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data").text);
 	$('#'+getJquerySafeId("harvestLocationAbbreviation")).val($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data").abbr);
+	if ($("#harvestloc-tooltip")) {
+		$("#harvestloc-tooltip").attr("title", $('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data").abbr);
+	}
 });
 
 }
@@ -1032,7 +1038,9 @@ function initializeMethodSelect2(methodSuggestions, methodSuggestions_obj) {
     	//	$('#'+getJquerySafeId("breedingMethodId")).val($('#'+getJquerySafeId("methodIdAll")).select2("data").id);
     	if($('#'+getJquerySafeId("advanceBreedingMethodId")).length != 0){
     		$('#'+getJquerySafeId("advanceBreedingMethodId")).val($('#'+getJquerySafeId("methodIdAll")).select2("data").id);
-			$("#method-tooltip").attr("title", $('#'+getJquerySafeId("methodIdAll")).select2("data").tooltip);
+    		if ($("#method-tooltip")) {
+    			$("#method-tooltip").attr("title", $('#'+getJquerySafeId("methodIdAll")).select2("data").tooltip);
+    		}
     		$('#'+getJquerySafeId("advanceBreedingMethodId")).trigger('change');
     	}
     		
@@ -1068,7 +1076,9 @@ $('#'+getJquerySafeId('methodIdFavorite')).select2({
 	//$('#'+getJquerySafeId("breedingMethodId")).val($('#'+getJquerySafeId("methodIdFavorite")).select2("data").id);
 	if($('#'+getJquerySafeId("advanceBreedingMethodId")).length != 0){
 		$('#'+getJquerySafeId("advanceBreedingMethodId")).val($('#'+getJquerySafeId("methodIdFavorite")).select2("data").id);
-		$("#method-tooltip").attr("title", $('#'+getJquerySafeId("methodIdFavorite")).select2("data").tooltip);
+		if ($("#method-tooltip")) {
+			$("#method-tooltip").attr("title", $('#'+getJquerySafeId("methodIdFavorite")).select2("data").tooltip);
+		}
 		$('#'+getJquerySafeId("advanceBreedingMethodId")).trigger('change');
 	}
 });

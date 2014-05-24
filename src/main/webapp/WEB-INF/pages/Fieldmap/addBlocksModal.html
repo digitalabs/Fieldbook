@@ -22,7 +22,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 					<div class="row form-group">
 						<div class="col-xs-12 col-md-12">
 			         		<div class="col-xs-3  col-md-3 add_top_padding">
-						  		<label class="control-label" th:text="#{fieldmap.add.blocks.parent.field}">Parent Field:</label><span class="required">*</span>
+						  		<label class="control-label label-bold" th:text="#{fieldmap.add.blocks.parent.field}">Parent Field:</label><span class="required">*</span>
 						  	</div>
 						    <div class="col-xs-6 col-md-6">
 						      <input type="hidden" th:field="*{parentFieldId}" class="form-control select2" placeholder=""/>						      
@@ -32,7 +32,7 @@ th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapFo
 	         		<div class="row form-group">
 						<div class="col-xs-12 col-md-12">
 			         		<div class="col-xs-3  col-md-3 add_top_padding">
-						  		<label class="control-label" th:text="#{fieldmap.trial.enter.block.name}">Block Name:</label><span class="required">*</span>
+						  		<label class="control-label label-bold" th:text="#{fieldmap.trial.enter.block.name}">Block Name:</label><span class="required">*</span>
 						  	</div>
 						    <div class="col-xs-6 col-md-6">
 						      <input type="text" class="form-control"  th:field="*{newBlockName}"  placeholder="Block Name"/>						      

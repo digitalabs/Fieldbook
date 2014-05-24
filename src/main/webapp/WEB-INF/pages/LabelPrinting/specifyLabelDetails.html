@@ -108,7 +108,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 				</table>
 			</div>
 			<div class="col-xs-12 col-md-12" align="right" th:if="*{isTrial == true}">
-				<label class="control-label" th:text="#{label.printing.total.number.of.labels} + ':'"> Total # of Labels to Print: </label> &nbsp; 
+				<label class="control-label label-bold" th:text="#{label.printing.total.number.of.labels} + ':'"> Total # of Labels to Print: </label> &nbsp; 
 				<span th:text="*{userLabelPrinting.totalNumberOfLabelToPrint}"></span>
 			</div>
 		</div>
@@ -178,12 +178,12 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 		<div class="col-xs-6 col-md-6" >
 			<div class="form-group">
 				<div class="col-xs-12 col-md-12">
-					<label class="control-label" th:text="#{label.printing.enter.specs.for.label}"></label>
+					<label class="control-label " th:text="#{label.printing.enter.specs.for.label}"></label>
 				</div>		
 			</div>
 			<div class="row form-group">
 				<div class="col-xs-7 col-md-7">
-					&nbsp;&nbsp;&nbsp;&nbsp;<label class="control-label" th:text="#{label.printing.size.of.label.sheet}+':'"></label>
+					&nbsp;&nbsp;&nbsp;&nbsp;<label class="control-label label-bold" th:text="#{label.printing.size.of.label.sheet}+':'"></label>
 				</div>
 				<div class="col-xs-5 col-md-5">
 					<select th:field="*{userLabelPrinting.sizeOfLabelSheet}" class="form-control">
@@ -209,7 +209,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 			 
 			<div class="row form-group">
 				<div class="col-xs-7 col-md-7">
-					&nbsp;&nbsp;&nbsp;&nbsp;<label class="control-label" th:text="#{label.printing.number.of.rows.per.page}+':'"></label>					
+					&nbsp;&nbsp;&nbsp;&nbsp;<label class="control-label label-bold" th:text="#{label.printing.number.of.rows.per.page}+':'"></label>					
 				</div>		
 				<div class="col-xs-5 col-md-5">
 					<select th:field="*{userLabelPrinting.numberOfRowsPerPageOfLabel}" class="form-control">
@@ -249,7 +249,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 					<label class="control-label" th:utext="#{label.printing.choose.option.fields}">Choose up to six fields you would like printed on your labels.</label>
 				</div>	
 				<div class="col-xs-6 col-md-6">
-					<label class="control-label" th:text="#{label.printing.do.you.need.bar.codes}">Do you need barcodes on your labels?</label>
+					<label class="control-label label-bold" th:text="#{label.printing.do.you.need.bar.codes}">Do you need barcodes on your labels?</label>
 					&nbsp;&nbsp;&nbsp;
 					<label class="radio-inline">
 					  <input checked="checked" type="radio" value="1" th:field="*{userLabelPrinting.barcodeNeeded}"/> 
@@ -318,7 +318,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 					&nbsp;
 				</div>	
 				<div class="col-xs-2 col-md-2">
-					<label class="control-label" th:text="#{label.printing.first.bar.code.field}+':'"></label>
+					<label class="control-label label-bold" th:text="#{label.printing.first.bar.code.field}+':'"></label>
 				</div>	
 				<div class="col-xs-3 col-md-3">
 					<select th:field="*{userLabelPrinting.firstBarcodeField}" class="form-control">
@@ -333,7 +333,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 					&nbsp;
 				</div>
 				<div class="col-xs-2 col-md-2">
-					<label class="control-label" th:text="#{label.printing.second.bar.code.field}+':'"></label>
+					<label class="control-label label-bold" th:text="#{label.printing.second.bar.code.field}+':'"></label>
 				</div>	
 				<div class="col-xs-3 col-md-3">
 					<select th:field="*{userLabelPrinting.secondBarcodeField}" class="form-control">
@@ -348,7 +348,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 					&nbsp;
 				</div>
 				<div class="col-xs-2 col-md-2">
-					<label class="control-label" th:text="#{label.printing.third.bar.code.field}+':'"></label>
+					<label class="control-label label-bold" th:text="#{label.printing.third.bar.code.field}+':'"></label>
 				</div>	
 				<div class="col-xs-3 col-md-3">
 					<select th:field="*{userLabelPrinting.thirdBarcodeField}" class="form-control">
@@ -392,7 +392,7 @@ th:action="@{/LabelPrinting/specifyLabelDetails}" method="post" th:object="${lab
 		<div class="col-xs-12 col-md-12" >
 			<div class="form-group">
 				<div style="padding-right: 0px" class="col-xs-1 col-md-1">
-					<label class="control-label" th:text="#{label.printing.filename}+':'"></label><span class="required">*</span>					
+					<label class="control-label label-bold" th:text="#{label.printing.filename}+':'"></label><span class="required">*</span>					
 				</div>		
 				<div class="col-xs-5 col-md-5">
 					<input type="text" class="form-control"  th:field="*{userLabelPrinting.filename}" placeholder="Filename"/>					

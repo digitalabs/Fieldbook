@@ -11,7 +11,7 @@ th:object="${saveListForm}" enctype="multipart/form-data">
 	</div>
 	<div class="row form-group">
 		<div class="col-xs-5 col-md-5">
-			<label class="control-label" th:text="#{germplasm.save.list.name.label}">List Name:</label><span class="required">*</span>
+			<label class="control-label label-bold" th:text="#{germplasm.save.list.name.label}">List Name:</label><span class="required">*</span>
 		</div>
 		<div class="col-xs-7 col-md-7">
 			<input type="text" class="form-control" th:field="*{listName}"/>
@@ -20,7 +20,7 @@ th:object="${saveListForm}" enctype="multipart/form-data">
 	
 	<div class="row form-group">
 		<div class="col-xs-5 col-md-5">
-			<label class="control-label" th:text="#{germplasm.save.list.description.label}">List Description:</label><span class="required">*</span>
+			<label class="control-label label-bold" th:text="#{germplasm.save.list.description.label}">List Description:</label><span class="required">*</span>
 		</div>
 		<div class="col-xs-7 col-md-7">
 			<input type="text" class="form-control" th:field="*{listDescription}"/>
@@ -29,7 +29,7 @@ th:object="${saveListForm}" enctype="multipart/form-data">
 	<!-- 
 	<div class="row form-group">
 		<div class="col-xs-5 col-md-5">
-			<label class="control-label" th:text="#{germplasm.save.list.type.label}">List Type:</label><span class="required">*</span>
+			<label class="control-label label-bold" th:text="#{germplasm.save.list.type.label}">List Type:</label><span class="required">*</span>
 		</div>
 		<div class="col-xs-7 col-md-7">
 			<select class="form-control" th:field="*{listType}">
@@ -40,7 +40,7 @@ th:object="${saveListForm}" enctype="multipart/form-data">
 	 -->
 	<div class="row form-group">
 		<div class="col-xs-5 col-md-5">
-			<label class="control-label" th:text="#{germplasm.save.list.date.label}">List Date:</label><span class="required">*</span>
+			<label class="control-label label-bold" th:text="#{germplasm.save.list.date.label}">List Date:</label><span class="required">*</span>
 		</div>
 		<div class="col-xs-7 col-md-7" data-date="" data-date-format="yyyymmdd">
 			<input type="text" class="form-control  date-input" th:field="*{listDate}" style="width: 100px"/>
@@ -54,7 +54,7 @@ th:object="${saveListForm}" enctype="multipart/form-data">
 	
 	<div class="row form-group">
 		<div class="col-xs-5 col-md-5">
-			<label class="control-label" th:text="#{germplasm.save.list.notes.label}">Notes:</label>
+			<label class="control-label label-bold" th:text="#{germplasm.save.list.notes.label}">Notes:</label>
 		</div>
 		<div class="col-xs-7 col-md-7">
 			<textarea  rows="5" cols="20" class="form-control" th:field="*{listNotes}"/>
@@ -64,10 +64,6 @@ th:object="${saveListForm}" enctype="multipart/form-data">
 </form>
 
 <div layout:fragment="page-script">
-<!-- 
-<link th:href="@{/static/css/bootstrap-datepicker.css}" rel="stylesheet"/>
-<script type="text/javascript" th:src="@{/static/js/bootstrap-datepicker.js}"></script>
- -->
 <script type='text/javascript' th:inline="javascript">
 //<![CDATA[
    

@@ -69,7 +69,7 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 			<div class="col-xs-12 col-md-12">
 				<div class="form-group">
 				<div class="col-xs-2 col-md-2">
-					<label class="control-label" th:text="#{fieldmap.label.starting.coordinates} + ':'">Starting Coordinates:</label>
+					<label class="control-label label-bold " th:text="#{fieldmap.label.starting.coordinates} + ':'">Starting Coordinates:</label>
 				</div>
 				<div class="col-xs-4 col-md-4">
 					<input th:field="*{userFieldmap.startingColumn}" type="text" style="width: 20%;" />&nbsp;
@@ -81,7 +81,7 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 				</div>
 				<div class="form-group">
 					<div class="col-xs-2 col-md-2">
-						<label class="control-label" th:text="#{fieldmap.trial.planting.order}">Planting Order:</label><span class="required">*</span>
+						<label class="control-label label-bold" th:text="#{fieldmap.trial.planting.order}">Planting Order:</label><span class="required">*</span>
 					</div>
 					<div class="col-xs-4 col-md-4">
 						<div class="form-group ">
@@ -104,7 +104,7 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 			<div class="col-xs-12 col-md-12">
 				<div class="form-group">
 					<div class="col-xs-2 col-md-2">
-						<label class="control-label" th:text="#{fieldmap.label.row.capacity.machine} + ':'">Row Capacity of Planting Machine:</label>
+						<label class="control-label label-bold" th:text="#{fieldmap.label.row.capacity.machine} + ':'">Row Capacity of Planting Machine:</label>
 					</div>
 					<div class="col-xs-4 col-md-4">
 				        <select class="form-control" th:field="*{userFieldmap.machineRowCapacity}">

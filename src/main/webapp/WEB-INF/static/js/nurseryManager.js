@@ -8,10 +8,18 @@ function checkMethod(){
 			//$('#methodSelected').val(oldMethodSelected);
 			//console.log("1");
 			$("#method-variates-section").hide();
+			$(".method-selection-div").find("input,select").prop("disabled", false);
+			$("#methodIdAll").select2("enable", true);
+			$("#methodIdFavorite").select2("enable", true);
+
 			setCorrectMethodValues(true);
 			changeAdvanceBreedingMethod();
 		}else{
 			$("#method-variates-section").show();
+			$(".method-selection-div").find("input,select").prop("disabled", true);
+			$("#methodIdAll").select2("enable", false);
+			$("#methodIdFavorite").select2("enable", false);
+			
 			//console.log("2");
 			//$('#methodSelected').prop('disabled', 'disabled');
 			if($('#namingConvention').val() != 3){
@@ -2452,7 +2460,9 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 	}
 function plotMethod(){
 	if($('input[type=checkbox][name=allPlotsChoice]:checked').val() == 1){
+		$("#plot-variates-section").hide();
 	}else{
+		$("#plot-variates-section").show();
 		 if ($("#plotVariateId").has("option").length == 0) {
 			 $('input[type=checkbox][name=allPlotsChoice]').prop('checked', true);
 			 $('input[type=checkbox][name=allPlotsChoice]').change();

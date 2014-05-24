@@ -120,6 +120,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	form.setMethodChoice("1");
     	form.setLineChoice("1");
     	form.setLineSelected("1");
+    	form.setAllPlotsChoice("1");
     	form.setProjectId(this.getCurrentProjectId());
     	List<Integer> variateIds = new ArrayList<Integer>();
 //    	boolean isMixed = form.getMethodChoice() == null || form.getMethodChoice().equals("0");

@@ -42,9 +42,12 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 </div>
 <div class="row">
 	<div class="col-xs-12 col-md-12">
-		<label class="control-label">
+		<label class="control-label section-toggle toggle-icon" id="basicDetails" data-target=".basicDetailsSection">
+			<img style="margin-left: -10px; display:none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
+			<img style="margin-left: -10px;" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
 			<strong class="sub-content-heading" th:text="#{nursery.create.nursery.basic.details}">BASIC DETAILS</strong>
 		</label>
+		
 		<div style="float:right;  margin-right: 50px;">
 			<div class="btn-group">	
 				<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
@@ -79,6 +82,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 		</div>
 	</div>
 </div>
+<div class="basicDetailsSection" style="display: none">
 <div class="row form-group">
 	<div class="col-xs-2 col-md-2">
 		<input class="cvTermIds" type="hidden" th:field="*{basicDetails[0].variable.cvTermId}" />
@@ -137,6 +141,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 			<img th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;" />
 		</label>
   	</div>
+</div>
 </div>
 <div class="row">
 	<div class="col-xs-12 col-md-12">
@@ -413,6 +418,16 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 			moveToTopScreen();
 		}
 	}
+	$(document).ready(function() {
+		$('#basicDetails.toggle-icon').click(function(){ 
+   			var expandedImg = $(this).find(".section-expanded");
+   			var collapsedImg = $(this).find(".section-collapsed");
+   		   	expandedImg.toggle();
+   		   	collapsedImg.toggle();
+			var className = $(this).data('target')
+			$(className).slideToggle();
+   		});
+	});
 	
 //]]>
 </script>

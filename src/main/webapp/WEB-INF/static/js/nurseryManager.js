@@ -810,7 +810,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType, p
 		"<input class='cvTermIds nurseryLevelVariableIdClass' type='hidden' id='" + name + ctr + ".variable.cvTermId' name='"+name+"[" + 
 		ctr + "].variable.cvTermId' value='" + settingDetail.variable.cvTermId + "' />&nbsp;&nbsp;&nbsp;&nbsp;";
 
-		newRow = newRow + "<span style='word-wrap: break-word'  class='control-label'>" + settingDetail.variable.name + "</span>: &nbsp;<span class='required'>*</span></div>";
+		newRow = newRow + "<span style='word-wrap: break-word'  class='control-label label-bold'>" + settingDetail.variable.name + "</span>: &nbsp;<span class='required'>*</span></div>";
 		
 		if(settingDetail.variable.widgetType == 'DATE'){
 			newRow = newRow + "<div class='col-xs-3 col-md-3 2nd'>";

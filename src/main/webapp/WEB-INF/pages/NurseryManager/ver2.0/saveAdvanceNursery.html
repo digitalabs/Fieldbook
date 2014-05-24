@@ -6,7 +6,7 @@
 				<label class="control-label h4" th:text="#{advancing.nursery.header}"></label>
 			</div>
 			<div class="col-xs-5 col-md-5">
-				<label th:text="#{advancing.nursery.entries.total}">Total Entries:</label> <label class="control-label control-label-bold"  th:text="*{#lists.size(germplasmList)}"></label>
+				<label th:text="#{advancing.nursery.entries.total}">Total Entries:</label> <label class="control-label control-label-bold advance-list-size"  th:text="*{#lists.size(germplasmList)}"></label>
 				<button style="margin-left: 20px" th:id="*{uniqueId}" type="button" class="btn btn-primary uniqueId" aria-hidden="true" onclick="javascript: openSaveListModal(this);" th:text="#{common.form.save.text}">Save</button>
 			</div>
 		</div>			

@@ -1379,57 +1379,66 @@ function validatePlantsSelected() {
 	var isBulk = false;
 	
 	if ($(".bulk-section").is(":visible")) {
-		ids = ids + $("#plotVariateId").val();
+		if (!$('input[type=checkbox][name=allPlotsChoice]:checked').val() == 1) {
+			ids = ids + $("#plotVariateId").val();
+		}
 		isBulk = true;
 	}
 	if ($(".lines-section").is(":visible")) {
-		if (ids != "") {
-			ids = ids + ",";
+		if (!$('input[type=checkbox][name=lineChoice]:checked').val() == 1) {
+			if (ids != "") {
+				ids = ids + ",";
+			}
+			ids = ids + $("#lineVariateId").val();
 		}
-		ids = ids + $("#lineVariateId").val();
 		if (isBulk) {
 			isMixed = true;
 		}
 	}
 	
-	
 	var valid = true;
-	
-	Spinner.toggle();
-	$.ajax({
-		url: "/Fieldbook/NurseryManager/advance/nursery/countPlots/" + ids,
-		type: "GET",
-		cache: false,
-		success: function (data) {
-			if (isMixed) {
-				if (data == 0) {
-					showErrorMessage('page-message', msgEmptyListError);
-					valid = false;
+	if (ids != "")	{
+		Spinner.toggle();
+		$.ajax({
+			url: "/Fieldbook/NurseryManager/advance/nursery/countPlots/" + ids,
+			type: "GET",
+			cache: false,
+			async: false,
+			success: function (data) {
+				if (isMixed) {
+					if (data == 0) {
+						alert('error');
+						showErrorMessage('page-message', msgEmptyListError);
+						valid = false;
+					}
 				}
-			}
-			else if (isBulk) {
-				var choice = !$("#plot-variates-section").is(":visible");
-				if (choice == false && data == "0") {
-					showErrorMessage('page-message', msgEmptyListError);
-					valid = false;
+				else if (isBulk) {
+					var choice = !$("#plot-variates-section").is(":visible");
+					if (choice == false && data == "0") {
+						showErrorMessage('page-message', msgEmptyListError);
+						valid = false;
+					}
 				}
-			}
-			else {
-				var choice = !$("#line-variates-section").is(":visible");
-				var lineSameForAll = $('input[type=checkbox][name=lineChoice]:checked').val() == 1;
-				if (lineSameForAll == false && choice == false && data == "0") {
-					showErrorMessage('page-message', msgEmptyListError);
-					valid = false;
+				else {
+					var choice = !$("#line-variates-section").is(":visible");
+					var lineSameForAll = $('input[type=checkbox][name=lineChoice]:checked').val() == 1;
+					if (lineSameForAll == false && choice == false && data == "0") {
+						showErrorMessage('page-message', msgEmptyListError);
+						valid = false;
+					}
 				}
+			},
+			error: function(jqXHR, textStatus, errorThrown){
+				console.log("The following error occured: " + textStatus, errorThrown); 
+			},
+			complete: function() {
+				Spinner.toggle();
 			}
-		},
-		error: function(jqXHR, textStatus, errorThrown){
-			console.log("The following error occured: " + textStatus, errorThrown); 
-		},
-		complete: function() {
-			Spinner.toggle();
-		}
-	});
+		});
+	}
+	if (valid && isMixed) {
+		return validateBreedingMethod();
+	}
 	return valid;
 }
 
@@ -1454,16 +1463,22 @@ function doAdvanceNursery() {
         data: serializedData,
         cache: false,
         success: function(html) {
-        	$("#advanceNurseryModal").modal("hide");
-        	$('#create-nursery-tab-headers li').removeClass('active');
-       	 	$('#create-nursery-tabs .info').hide();
-       	 
-        	var uniqueId = $(html).find('.uniqueId').attr('id');
-        	var close = '<button style="float: right" onclick="javascript: closeAdvanceListTab('+uniqueId+')" type="button" id="'+uniqueId+'" class="close">x</button>';
-        	var aHtml = "<a id='advanceHref"+uniqueId+"' href='javascript: showSelectedAdvanceTab("+uniqueId+")'>Advance List"+close+"</a>";
-        	$("#create-nursery-tab-headers").append("<li class='active' id='advance-list"+uniqueId+"-li'>"+aHtml+"</li>");
-        	$("#create-nursery-tabs").append("<div class='info' id='advance-list"+uniqueId+"'>" + html + "</div>");       	
-        	showSelectedTab("advance-list"+uniqueId);
+       	 	var listSize = $(html).find(".advance-list-size").text();
+       	 	if (listSize == 0) {
+				showErrorMessage('page-message', msgEmptyListError);
+       	 	} 
+       	 	else {
+            	$("#advanceNurseryModal").modal("hide");
+            	$('#create-nursery-tab-headers li').removeClass('active');
+           	 	$('#create-nursery-tabs .info').hide();
+           	 
+	        	var uniqueId = $(html).find('.uniqueId').attr('id');
+	        	var close = '<button style="float: right" onclick="javascript: closeAdvanceListTab('+uniqueId+')" type="button" id="'+uniqueId+'" class="close">x</button>';
+	        	var aHtml = "<a id='advanceHref"+uniqueId+"' href='javascript: showSelectedAdvanceTab("+uniqueId+")'>Advance List"+close+"</a>";
+	        	$("#create-nursery-tab-headers").append("<li class='active' id='advance-list"+uniqueId+"-li'>"+aHtml+"</li>");
+	        	$("#create-nursery-tabs").append("<div class='info' id='advance-list"+uniqueId+"'>" + html + "</div>");       	
+	        	showSelectedTab("advance-list"+uniqueId);
+       	 	}
         	
         },
 		error: function(jqXHR, textStatus, errorThrown){
@@ -1509,25 +1524,27 @@ function displayAdvanceList(uniqueId, germplasmListId, listName){
 function validateBreedingMethod() {
 	var id = $("#methodVariateId").val();
 
-	if ($("#breed"))
 	var valid = true;
-	Spinner.toggle();
-	$.ajax({
-		url: "/Fieldbook/NurseryManager/advance/nursery/countPlots/" + id,
-		type: "GET",
-		cache: false,
-		success: function (data) {
-			if (data == 0) {
-				showErrorMessage('page-message', msgEmptyListError);
-				valid = false;
+	if (id) {
+		Spinner.toggle();
+		$.ajax({
+			url: "/Fieldbook/NurseryManager/advance/nursery/countPlots/" + id,
+			type: "GET",
+			cache: false,
+			async: false,
+			success: function (data) {
+				if (data == 0) {
+					showErrorMessage('page-message', msgEmptyListError);
+					valid = false;
+				}
+			},
+			error: function(jqXHR, textStatus, errorThrown){
+				console.log("The following error occured: " + textStatus, errorThrown); 
+			},
+			complete: function() {
+				Spinner.toggle();
 			}
-		},
-		error: function(jqXHR, textStatus, errorThrown){
-			console.log("The following error occured: " + textStatus, errorThrown); 
-		},
-		complete: function() {
-			Spinner.toggle();
-		}
-	});
+		});
+	}
 	return valid;
 }

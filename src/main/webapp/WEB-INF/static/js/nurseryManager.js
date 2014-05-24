@@ -89,11 +89,13 @@ function lineMethod(){
 			$('#lineSelected').prop('disabled', false);
 			$('#lineSelected').val(oldLineSelected);
 			$("#line-variates-section").hide();
+			$(".lines-per-plot-section").show();
 		}else{
 			$('#lineSelected').prop('disabled', 'disabled');
 			oldLineSelected = $('#lineSelected').val();
 			$('#lineSelected').val(1);
 			$("#line-variates-section").show();
+			$(".lines-per-plot-section").hide();
 			 if ($("#lineVariateId").has("option").length == 0) {
 				 $('input[type=checkbox][name=lineChoice]').prop('checked', true);
 				 $('input[type=checkbox][name=lineChoice]').change();

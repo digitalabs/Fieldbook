@@ -1007,7 +1007,8 @@ function initializeMethodSelect2(methodSuggestions, methodSuggestions_obj) {
 
 	$.each(methodSuggestions, function( index, value ) {
 		methodSuggestions_obj.push({ 'id' : value.mid,
-			  'text' : value.mname
+			  'text' : value.mname,
+			  'tooltip' : value.mdesc
 		});  
 		
 	});		
@@ -1031,6 +1032,7 @@ function initializeMethodSelect2(methodSuggestions, methodSuggestions_obj) {
     	//	$('#'+getJquerySafeId("breedingMethodId")).val($('#'+getJquerySafeId("methodIdAll")).select2("data").id);
     	if($('#'+getJquerySafeId("advanceBreedingMethodId")).length != 0){
     		$('#'+getJquerySafeId("advanceBreedingMethodId")).val($('#'+getJquerySafeId("methodIdAll")).select2("data").id);
+			$("#method-tooltip").attr("title", $('#'+getJquerySafeId("methodIdAll")).select2("data").tooltip);
     		$('#'+getJquerySafeId("advanceBreedingMethodId")).trigger('change');
     	}
     		
@@ -1043,6 +1045,7 @@ function initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFav_o
 	$.each(methodSuggestionsFav, function( index, value ) {
 		methodSuggestionsFav_obj.push({ 'id' : value.mid,
 			  'text' : value.mname,
+			  'tooltip' : value.mdesc
 		});  
   		
 	});
@@ -1065,6 +1068,7 @@ $('#'+getJquerySafeId('methodIdFavorite')).select2({
 	//$('#'+getJquerySafeId("breedingMethodId")).val($('#'+getJquerySafeId("methodIdFavorite")).select2("data").id);
 	if($('#'+getJquerySafeId("advanceBreedingMethodId")).length != 0){
 		$('#'+getJquerySafeId("advanceBreedingMethodId")).val($('#'+getJquerySafeId("methodIdFavorite")).select2("data").id);
+		$("#method-tooltip").attr("title", $('#'+getJquerySafeId("methodIdFavorite")).select2("data").tooltip);
 		$('#'+getJquerySafeId("advanceBreedingMethodId")).trigger('change');
 	}
 });

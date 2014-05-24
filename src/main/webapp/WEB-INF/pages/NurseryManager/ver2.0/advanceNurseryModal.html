@@ -49,7 +49,6 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 						  <option value="3" th:text="#{advancing.nursery.naming.convention.other.crops}">OTHER CROPS</option>
 						  <option th:if="*{true or cropType == 1}" value="1" th:text="#{advancing.nursery.naming.convention.cimmyt.wheat}">CIMMYT-WHEAT</option>
 						  <option th:if="*{true or cropType == 2}" value="2" th:text="#{advancing.nursery.naming.convention.cimmyt.maize}">CIMMYT-MAIZE</option>
-						  					  
 						</select>
 					</div>		
 				</div>
@@ -66,15 +65,20 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 						</label>														
 					</div>
 					<div class="row form-group col-xs-6 col-md-6 method-selection-div">					
-						<input type="hidden" th:field="*{methodIdAll}" class="form-control select2 non-maize-control" placeholder=""/>
-						<input type="hidden" th:field="*{methodIdFavorite}" class="form-control select2 non-maize-control" placeholder=""/>
-						<select id="maizeBreedingMethod" class="form-control maize-control">
-							<option value="1" th:text="#{advance.nursery.maize.breeding.method.selfed.shelled}">Selfed and ears shelled individually (-)</option>
-							<option value="2" th:text="#{advance.nursery.maize.breeding.method.selfed.bulked}">Selfed and ears bulked (-B)</option>
-							<option value="3" th:text="#{advance.nursery.maize.breeding.method.sib.increased}">Sib-Increased (-#)</option>
-							<option value="4" th:text="#{advance.nursery.maize.breeding.method.colchicinize}">Colchicinize</option>					  
-						</select>
-						<input type="hidden" th:field="*{advanceBreedingMethodId}"/>	
+						<div class="row form-group col-xs-11 col-md-11 method-selection-div">					
+							<input type="hidden" th:field="*{methodIdAll}" class="form-control select2 non-maize-control" placeholder=""/>
+							<input type="hidden" th:field="*{methodIdFavorite}" class="form-control select2 non-maize-control" placeholder=""/>
+							<select id="maizeBreedingMethod" class="form-control maize-control">
+								<option value="1" th:text="#{advance.nursery.maize.breeding.method.selfed.shelled}">Selfed and ears shelled individually (-)</option>
+								<option value="2" th:text="#{advance.nursery.maize.breeding.method.selfed.bulked}">Selfed and ears bulked (-B)</option>
+								<option value="3" th:text="#{advance.nursery.maize.breeding.method.sib.increased}">Sib-Increased (-#)</option>
+								<option value="4" th:text="#{advance.nursery.maize.breeding.method.colchicinize}">Colchicinize</option>					  
+							</select>
+							<input type="hidden" th:field="*{advanceBreedingMethodId}"/>
+						</div>
+						<div class="col-xs-1 col-md-1 method-selection-div">	
+							<span id="method-tooltip" class="help-tooltip-nursery" data-placement="right" data-toggle="tooltip" style="display:inline;">?</span>
+						</div>
 					</div>
 					<div class="row form-group col-xs-6 col-md-6">
 					</div>

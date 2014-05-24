@@ -13,8 +13,7 @@
 				<table class="table-curved table-condensed" id="factor-table" style="table-layout: auto; width: 100%">
 					<thead>
 						 <tr >
-			               <th style="white-space: nowrap" th:if="${measurementVariable.factor == true}" th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'" th:each="measurementVariable, rowIndex : *{measurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>
-						   <th style="white-space: nowrap" th:if="${measurementVariable.factor == false}" th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'" th:each="measurementVariable, rowIndex : *{measurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>
+			               <th style="white-space: nowrap"  th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'" th:each="measurementVariable, rowIndex : *{measurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>
 			             </tr>	
 					</thead>
 				

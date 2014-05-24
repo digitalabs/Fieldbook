@@ -7,6 +7,10 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 <input type="hidden" th:field="*{defaultMethodId}"/>
 <input type="hidden" th:field="*{nurseryId}"/>
 <input type="hidden" th:field="*{harvestDate}"/>
+<input type="hidden" th:field="*{maizeSelfMethodId}" />
+<input type="hidden" th:field="*{maizeBulkMethodId}" />
+<input type="hidden" th:field="*{maizeSibMethodId}" />
+<input type="hidden" th:field="*{maizeColchMethodId}" />
 
 <div class="modal fade" id="advanceNurseryModal" role="dialog" aria-labelledby="advanceNurseryModal" aria-hidden="true">
 	<div class="modal-dialog modal-extra-large">
@@ -41,7 +45,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 					<div class="row form-group col-xs-12 col-md-12">
 						<strong><label class="label-bold" th:text="#{advancing.nursery.naming.convention}+'*:'"></label></strong>
 						&nbsp;&nbsp;
-						<select id="namingConvention">
+						<select th:field="*{namingConvention}">
 						  <option value="3" th:text="#{advancing.nursery.naming.convention.other.crops}">OTHER CROPS</option>
 						  <option th:if="*{true or cropType == 1}" value="1" th:text="#{advancing.nursery.naming.convention.cimmyt.wheat}">CIMMYT-WHEAT</option>
 						  <option th:if="*{true or cropType == 2}" value="2" th:text="#{advancing.nursery.naming.convention.cimmyt.maize}">CIMMYT-MAIZE</option>
@@ -312,11 +316,20 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 		});
 		 
 		function changeMaizeBreedingMethod(){
-			 $('#'+getJquerySafeId("advanceBreedingMethodId")).val($('#maizeBreedingMethod').val());
+			if ($("#maizeBreedingMethod").val() == 1) {
+				 $('#'+getJquerySafeId("advanceBreedingMethodId")).val($("#maizeSelfMethodId").val());
+			} else  if ($("#maizeBreedingMethod").val() == 2) {
+				 $('#'+getJquerySafeId("advanceBreedingMethodId")).val($("#maizeBulkMethodId").val());
+			} else if ($("#maizeBreedingMethod").val() == 3) {
+				 $('#'+getJquerySafeId("advanceBreedingMethodId")).val($("#maizeSibMethodId").val());
+			} else if ($("#maizeBreedingMethod").val() == 4) {
+				 $('#'+getJquerySafeId("advanceBreedingMethodId")).val($("#maizeColchMethodId").val());
+			}
+//			 $('#'+getJquerySafeId("advanceBreedingMethodId")).val($('#maizeBreedingMethod').val());
 			 $('#advanceBreedingMethodId').change();
 		}
 		function changeSuffix(){
-			$('input[type=checkbox][name=methodChoice]').prop('disabled', false)
+			$('input[type=checkbox][name=methodChoice]').prop('disabled', false);
 			//if($('#namingConvention').val() == 3){
 				//show
 			//	$('#suffix-div').show();
@@ -331,6 +344,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 				$('#methodIdAll').select2('enable', false);
 				$('#methodIdFavorite').select2('enable', false);
 				$("#methods-section").hide();
+				$('input[type=checkbox][name=methodChoice]').prop('checked', true);
 				
 			}else{
 				$('.method-section input').attr('disabled', false)
@@ -370,7 +384,7 @@ th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advanc
 			var isBulk = false;
 			if($('#namingConvention').val() == 2){
 				//means maize is chose
-				if(bMethodId == 2) //Selfed and Ears Bulked
+				if(bMethodId == $("#maizeBulkMethodId").val()) //Selfed and Ears Bulked
 					isBulk = true;
 			}else{
 				 for( var i = 0 ; i < methodSuggestions.length ; i++){

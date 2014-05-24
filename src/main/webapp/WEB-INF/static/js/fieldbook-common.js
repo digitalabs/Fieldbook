@@ -1379,13 +1379,13 @@ function validatePlantsSelected() {
 	var isBulk = false;
 	
 	if ($(".bulk-section").is(":visible")) {
-		if (ids != "") {
-			ids = ids + ",";
-		}
 		ids = ids + $("#plotVariateId").val();
 		isBulk = true;
 	}
 	if ($(".lines-section").is(":visible")) {
+		if (ids != "") {
+			ids = ids + ",";
+		}
 		ids = ids + $("#lineVariateId").val();
 		if (isBulk) {
 			isMixed = true;
@@ -1395,7 +1395,6 @@ function validatePlantsSelected() {
 	
 	var valid = true;
 	
-	//if (isMixed || )
 	Spinner.toggle();
 	$.ajax({
 		url: "/Fieldbook/NurseryManager/advance/nursery/countPlots/" + ids,
@@ -1446,6 +1445,7 @@ function callAdvanceNursery() {
 }
 function doAdvanceNursery() {
 	Spinner.toggle();
+	$('input[type=checkbox][name=methodChoice]').prop('disabled', false);
 	var serializedData = $("#advanceNurseryModalForm").serialize();
 	
  	$.ajax({ 

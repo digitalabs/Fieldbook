@@ -16,6 +16,7 @@ import java.util.List;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
+import com.efficio.fieldbook.web.util.AppConstants;
 
 /**
  * The Class AdvancingNurseryForm.
@@ -132,6 +133,11 @@ public class AdvancingNurseryForm {
     private List<StandardVariableReference> plotVariates;
     
     private Integer plotVariateId;
+    
+    public static final int maizeSelfMethodId = AppConstants.SINGLE_PLANT_SELECTION_SF.getInt();
+    public static final int maizeBulkMethodId = AppConstants.SELECTED_BULK_SF.getInt();
+    public static final int maizeSibMethodId = AppConstants.HALF_MASS_SELECTION.getInt();
+    public static final int maizeColchMethodId = AppConstants.DOUBLE_HAPLOID_LINE.getInt();
 
 	/**
 	 * Gets the method id all.
@@ -843,6 +849,58 @@ public class AdvancingNurseryForm {
 	 */
 	public void setPlotVariateId(Integer plotVariateId) {
 		this.plotVariateId = plotVariateId;
+	}
+
+		/**
+	 * @return the maizeSelfMethodId
+	 */
+	public int getMaizeSelfMethodId() {
+		return maizeSelfMethodId;
+	}
+
+	/**
+	 * @param maizeSelfMethodId the maizeSelfMethodId to set
+	 */
+	public void setMaizeSelfMethodId(int maizeSelfMethodId) {
+	}
+
+	/**
+	 * @return the maizeBulkMethodId
+	 */
+	public int getMaizeBulkMethodId() {
+		return maizeBulkMethodId;
+	}
+
+	/**
+	 * @param maizeBulkMethodId the maizeBulkMethodId to set
+	 */
+	public void setMaizeBulkMethodId(int maizeBulkMethodId) {
+	}
+
+	/**
+	 * @return the maizeSibMethodId
+	 */
+	public int getMaizeSibMethodId() {
+		return maizeSibMethodId;
+	}
+
+	/**
+	 * @param maizeSibMethodId the maizeSibMethodId to set
+	 */
+	public void setMaizeSibMethodId(int maizeSibMethodId) {
+	}
+
+	/**
+	 * @return the maizeColchMethodId
+	 */
+	public int getMaizeColchMethodId() {
+		return maizeColchMethodId;
+	}
+
+	/**
+	 * @param maizeColchMethodId the maizeColchMethodId to set
+	 */
+	public void setMaizeColchMethodId(int maizeColchMethodId) {
 	}
 
 		/* (non-Javadoc)

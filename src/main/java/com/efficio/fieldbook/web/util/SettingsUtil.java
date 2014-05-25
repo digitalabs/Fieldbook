@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -592,7 +593,10 @@ public class SettingsUtil {
                                     if(userSelection != null){
                                             StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);                                             
                                             variable.setPSMRFromStandardVariable(standardVariable); 
-                                            settingDetail.setValue(standardVariable.getEnumerationByDescription(constant.getValue()).getName());
+                                            Enumeration enumerationByDescription = standardVariable.getEnumerationByDescription(constant.getValue());
+                                            if(enumerationByDescription != null) {
+                                            	settingDetail.setValue(enumerationByDescription.getName());
+                                            }
                                     }
                             }
                         }

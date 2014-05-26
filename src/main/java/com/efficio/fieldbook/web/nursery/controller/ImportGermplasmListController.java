@@ -561,6 +561,40 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         return "success";
     }
     
+    /**
+     * Reset check germplasm details.
+     *
+     * @param model the model
+     * @return the string
+     */
+    @ResponseBody
+    @RequestMapping(value="/resetNurseryGermplasmDetails", method = RequestMethod.GET)
+    public String resetNurseryGermplasmDetails( 
+            Model model) {
+        
+        try {
+            ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
+            mainInfo.setAdvanceImportType(true);
+            //form.setImportedCheckGermplasmMainInfo(mainInfo);
+            
+            List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
+            
+            //form.setImportedCheckGermplasm(list);
+            
+            ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
+            importedGermplasmList.setImportedGermplasms(list);
+            mainInfo.setImportedGermplasmList(importedGermplasmList);
+                        
+
+            getUserSelection().setImportedGermplasmMainInfo(mainInfo);
+            getUserSelection().setImportValid(true);
+            
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+        }
+        return "success";
+    }
+    
     
     /**
      * Gets the paginated list.

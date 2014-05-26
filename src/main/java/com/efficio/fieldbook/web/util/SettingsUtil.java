@@ -523,23 +523,26 @@ public class SettingsUtil {
 			if(dataset.getFactors() != null){
 				for(Factor factor : dataset.getFactors()){
 					
-					SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(),
-							factor.getScale(), factor.getMethod(), factor.getRole(), factor.getDatatype());
-					variable.setOperation(Operation.UPDATE);
-					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
-					
-					if (!inHideVariableFields(stdVar, AppConstants.HIDE_PLOT_FIELDS.getString())) {
-        					variable.setCvTermId(stdVar);
-        					SettingDetail settingDetail = new SettingDetail(variable,
-        							null, null, isSettingVariableDeletable(stdVar, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()));
-        					plotsLevelList.add(settingDetail);
+					if (factor.getRole() != null && !factor.getRole().equals(PhenotypicType.TRIAL_ENVIRONMENT.name())) {
+						
+						SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(),
+								factor.getScale(), factor.getMethod(), factor.getRole(), factor.getDatatype());
+						variable.setOperation(Operation.UPDATE);
+						Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
+						
+						if (!inHideVariableFields(stdVar, AppConstants.HIDE_PLOT_FIELDS.getString())) {
+	        					variable.setCvTermId(stdVar);
+	        					SettingDetail settingDetail = new SettingDetail(variable,
+	        							null, null, isSettingVariableDeletable(stdVar, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()));
+	        					plotsLevelList.add(settingDetail);
+						}
+						/*
+						if(userSelection != null){
+							StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);						
+							variable.setPSMRFromStandardVariable(standardVariable);						
+						}
+						*/
 					}
-					/*
-					if(userSelection != null){
-						StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);						
-						variable.setPSMRFromStandardVariable(standardVariable);						
-					}
-					*/
 				}
 			}
 			//baseline traits
@@ -672,7 +675,8 @@ public class SettingsUtil {
 			if(dataset.getFactors() != null){
 				for(Factor factor : dataset.getFactors()){
 					
-					if (factor.getTreatmentLabel() == null || "".equals(factor.getTreatmentLabel())) {
+					if (factor.getTreatmentLabel() == null || "".equals(factor.getTreatmentLabel()) 
+							&& factor.getRole() != null && !factor.getRole().equals(PhenotypicType.TRIAL_ENVIRONMENT.name())) {
 					
 						SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(),
 								factor.getScale(), factor.getMethod(), factor.getRole(), factor.getDatatype());
@@ -1336,7 +1340,7 @@ public class SettingsUtil {
 		NurseryDetails nurseryDetails = convertWorkbookStudyLevelVariablesToNurserDetails(workbook, 
 				fieldbookMiddlewareService, fieldbookService, userSelection, workbook.getStudyId().toString());
 		
-		nurseryDetails.setFactorDetails(convertWorkbookFactorsToSettingDetails(workbook.getFactors(), fieldbookMiddlewareService));
+		nurseryDetails.setFactorDetails(convertWorkbookFactorsToSettingDetails(workbook.getNonTrialFactors(), fieldbookMiddlewareService));
 		List<SettingDetail> traits = new ArrayList<SettingDetail>();
 		List<SettingDetail> selectionVariateDetails = new ArrayList<SettingDetail>();
 		convertWorkbookVariatesToSettingDetails(workbook.getVariates(), fieldbookMiddlewareService, fieldbookService, traits, selectionVariateDetails);

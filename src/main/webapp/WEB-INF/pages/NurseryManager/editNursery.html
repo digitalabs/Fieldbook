@@ -54,23 +54,23 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 					<span th:text="#{nursery.nurserydetails.actions}">Actions</span>
 				</button>
 				<ul class="dropdown-menu" role="menu">
-					<li>
+					<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
 						<a href="" style="display: none" id="open-study-url"></a>
 						<a href="javascript: showExportOptions();" id="open-study-url-link" th:text="#{nursery.nurserydetails.action.export.nursery}">Export Nursery Book</a> 
 					</li>
-					<li>
+					<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
 						<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
 						<a href="javascript: createFieldMap('nursery-table');" id="fieldmap-url-link" th:text="#{nursery.nurserydetails.action.createFieldmap}">Make Field Map</a>
 					</li>
-					<li>
+					<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
 						<a href="" style="display: none" id="label-printing-url" th:href="@{/LabelPrinting/specifyLabelDetails/nursery}"></a>
 						<a href="javascript: createLabelPrinting('nursery-table');" id="label-printing-url-link" th:text="#{nursery.nurserydetails.action.printLabels}">Print Labels</a> 
 					</li>
-					<li>
+					<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
 						<a href="" style="display: none" id="open-study-url"></a>
 						<a href="javascript: showImportOptions();" id="open-study-url-link" th:text="#{nursery.nurserydetails.action.import.nursery}">Import Measurements</a> 
 					</li>
-					<li>
+					<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
 						<a href="" style="display: none" id="advance-study-url" th:href="@{/NurseryManager/advance/nursery}"></a>
 						<a href="javascript: advanceNursery('nursery-table');" id="advance-study-url-link" th:text="#{nursery.nurserydetails.action.advance}">Advance Nursery</a> 
 					</li>
@@ -431,6 +431,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 		if($('#folderId').val() == 1){
 			$('#folderNameLabel').html(programNurseriesText);
 		}
+	
 	});
 	
 //]]>

@@ -23,8 +23,7 @@
 						<a href="javascript: openStudy('nursery-table');" id="open-study-url-link" th:text="#{nursery.nurserydetails.action.edit}">Edit Nursery</a> 
 					</li>
 					<li>
-						<a href="" style="display: none" id="open-study-url"></a>
-						<a href="javascript: showExportOptions();" id="open-study-url-link" th:text="#{nursery.nurserydetails.action.export.nursery}">Export Nursery Book</a> 
+						<a href="javascript: showExportOptions();" id="export-study-link" th:text="#{nursery.nurserydetails.action.export.nursery}">Export Nursery Book</a> 
 					</li>
 					<!-- 
 					<li>
@@ -343,6 +342,7 @@
    			$("#div-nursery-tab-" + getCurrentStudyIdInTab() + " #advance-study-url-link").hide();
    			$("#div-nursery-tab-" + getCurrentStudyIdInTab() + " #fieldmap-url-link").hide();
    			$("#div-nursery-tab-" + getCurrentStudyIdInTab() + " #label-printing-url-link").hide();
+   			$("#div-nursery-tab-" + getCurrentStudyIdInTab() + " #export-study-link").hide();
    		}
    		
    		if (hasFieldmap) {

@@ -1894,7 +1894,7 @@ function validateCreateNursery() {
 			showErrorMessage('page-message', "Position should be between 1 to "+totalGermplasms);
 			return false;
 		}
-		if(parseInt($("#interval2").val()) < 0 || parseInt($("#interval2").val()) > totalGermplasms){
+		if(parseInt($("#interval2").val()) < 0){
 			showErrorMessage('page-message', "Interval should be between 1 to "+totalGermplasms);
 			return false;
 		}

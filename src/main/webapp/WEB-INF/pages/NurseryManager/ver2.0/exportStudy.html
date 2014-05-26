@@ -168,24 +168,28 @@
 				
 		    });
 		   	function checkBeforeExport(){
-		   		Spinner.toggle();
 		   		
-				$.ajax({
-					url: "/Fieldbook/ExportManager/study/hasFieldMap/",
-					type: "GET",
-					cache: false,
-					success: function (data) {
-						if(data == 0){
-							//we disable the export order of serpentine
-							$('#exportStudyModal').modal('hide');
-							$('#exportStudyConfirmationModal').modal({ backdrop: 'static', keyboard: false });
-						}else{
-							exportNursery();
+		   		if($('#exportWayType').val() != 1){
+			   		Spinner.toggle();
+			   		
+					$.ajax({
+						url: "/Fieldbook/ExportManager/study/hasFieldMap/",
+						type: "GET",
+						cache: false,
+						success: function (data) {
+							if(data == 0){
+								//we disable the export order of serpentine
+								$('#exportStudyModal').modal('hide');
+								$('#exportStudyConfirmationModal').modal({ backdrop: 'static', keyboard: false });
+							}else{
+								exportNursery();
+							}
+							Spinner.toggle();
 						}
-						Spinner.toggle();
-					}
-				});
-		   		
+					});
+		   		}else{
+		   			exportNursery();
+		   		}
 		   	}
 		   	function doConfirmGoBack(){
 		   		$('#exportStudyConfirmationModal').modal('hide');

@@ -97,7 +97,10 @@
 			        	<form id="importStudyForm" role="form-horizontal" class="form-horizontal" action="#" method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
 			        	<div class="col-xs-4 col-md-4">
 	        		 		<select name="selectedRTrait" id="selectedRTrait" class="form-control" style="width: 170px">
-			    				<option th:if="${measurementVariable.factor == false}" th:each="measurementVariable : *{measurementVariables}" th:value="${measurementVariable.termId}" th:utext="${measurementVariable.name + ' (' + measurementVariable.scale +')'}">Trait</option>
+			    				<option th:if="${measurementVariable.factor == false}"
+			    						th:each="measurementVariable : *{measurementVariables}"
+			    						th:value="${measurementVariable.termId}"
+			    						th:text="${measurementVariable.name + ' (' + measurementVariable.scale +')'}">Trait</option>
 			    			</select>
 			        	</div>
 			        	</form>

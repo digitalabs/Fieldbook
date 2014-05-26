@@ -545,6 +545,20 @@
         	$('#entries-details').css('display', 'none');
         	listId = 0;
         	lastDraggedPrimaryList = 0;
+        	
+        	Spinner.toggle();
+        	$.ajax({
+        		url: "/Fieldbook/NurseryManager/importGermplasmList/resetNurseryGermplasmDetails",
+        		type: "GET",
+        		cache: false,
+        		async: false,
+        		success: function(html) {
+        			Spinner.toggle();
+        		}
+        			
+        		
+        	});
+        	
         }
         function resetCheckList(){
         	hideAddCol(false);

@@ -46,7 +46,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.LabelPrintingService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;

@@ -13,7 +13,6 @@ package com.efficio.fieldbook.web.inventory.form;
 
 import java.util.List;
 
-import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 
 

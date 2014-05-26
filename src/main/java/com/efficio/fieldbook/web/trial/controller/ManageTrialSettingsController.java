@@ -27,8 +27,6 @@ import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
-import org.generationcp.middleware.pojos.workbench.settings.Factor;
-import org.generationcp.middleware.pojos.workbench.settings.TreatmentFactor;
 import org.generationcp.middleware.pojos.workbench.settings.TrialDataset;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;

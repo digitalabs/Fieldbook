@@ -1,7 +1,6 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +13,6 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.springframework.stereotype.Service;
 
-import com.efficio.fieldbook.util.FieldMapUtilityHelper;
 import com.efficio.fieldbook.web.common.service.ExportDataCollectionOrderService;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 @Service

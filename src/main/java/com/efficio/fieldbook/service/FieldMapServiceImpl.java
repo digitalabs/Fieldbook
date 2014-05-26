@@ -14,8 +14,6 @@ package com.efficio.fieldbook.service;
 import java.util.List;
 import java.util.Map;
 
-
-
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.fieldbook.FieldMapLabel;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;

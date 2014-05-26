@@ -15,6 +15,9 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.generationcp.middleware.domain.etl.StudyDetails;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -25,14 +28,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.nursery.form.ManageNurseriesForm;
 import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 import com.efficio.fieldbook.web.trial.form.ManageTrialForm;
-import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-
-import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.service.api.FieldbookService;
 
 /**
  * The Class ManageTrialController.

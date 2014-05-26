@@ -23,7 +23,6 @@ import org.generationcp.middleware.domain.oms.TraitClassReference;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.StudySelection;
-import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 
 // TODO: Auto-generated Javadoc
 /**

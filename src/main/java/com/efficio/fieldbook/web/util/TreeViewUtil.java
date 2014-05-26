@@ -21,17 +21,12 @@ import org.generationcp.middleware.domain.dms.FolderReference;
 import org.generationcp.middleware.domain.dms.Reference;
 import org.generationcp.middleware.domain.oms.PropertyReference;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
-import org.generationcp.middleware.domain.oms.StudyType;
-import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.manager.api.StudyDataManager;
 import org.generationcp.middleware.pojos.GermplasmList;
 import org.generationcp.middleware.service.api.FieldbookService;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import com.efficio.fieldbook.web.common.controller.StudyTreeController;
 import com.efficio.pojos.treeview.TreeNode;
 import com.efficio.pojos.treeview.TypeAheadSearchTreeNode;
 

@@ -1229,13 +1229,16 @@ function doExportContinue(paramUrl, isNursery){
         	   	 
         	   	}
         		newAction += exportWayType;
-        		//alert(newAction);
-        		//alert(formName);
+        		
         	   $(formName).attr('action', newAction);
+        	   
         	   $(formName).submit();
         	   $(formName).attr('action', action);
         	   $('#exportStudyModal').modal('hide');
+        	   
         	   Spinner.toggle();
+        	   
+        	   //$(formName).ajaxForm(exportOptions).submit();  
            }
          }
        );

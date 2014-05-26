@@ -308,7 +308,7 @@
    		});
 	$('#study'+getCurrentStudyIdInTab() + " " + '.section-toggle').on('click', function(){
 		var className = $(this).data('target')
-		$('#study'+getCurrentStudyIdInTab() + " "+className).toggle();
+		$('#study'+getCurrentStudyIdInTab() + " "+className).slideToggle();
 	})
 	
    		$("#div-nursery-tab-" + getCurrentStudyIdInTab() + " #open-study-url-link").click(function() {

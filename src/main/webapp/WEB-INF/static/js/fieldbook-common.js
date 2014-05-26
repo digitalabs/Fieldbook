@@ -1449,7 +1449,6 @@ function validatePlantsSelected() {
 			success: function (data) {
 				if (isMixed) {
 					if (data == 0) {
-						alert('error');
 						showErrorMessage('page-message', msgEmptyListError);
 						valid = false;
 					}

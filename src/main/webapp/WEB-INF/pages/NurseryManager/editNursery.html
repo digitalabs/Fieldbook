@@ -336,6 +336,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 	var scaleSuggestions = /*[[${scaleList}]]*/ ;
 	var locationRequired = /*[[#{seed.inventory.location.required}]]*/;
 	var scaleRequired = /*[[#{seed.inventory.scale.required}]]*/;
+	var programNurseriesText = /*[[#{program.nurseries}]]*/;
 	var buttonToDelete = null;
 		
 	function submitGermplasmList(){
@@ -427,6 +428,9 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 			var className = $(this).data('target')
 			$(className).slideToggle();
    		});
+		if($('#folderId').val() == 1){
+			$('#folderNameLabel').html(programNurseriesText);
+		}
 	});
 	
 //]]>

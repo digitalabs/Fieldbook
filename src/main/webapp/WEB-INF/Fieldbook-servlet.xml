@@ -129,11 +129,7 @@
 		<property name="maxUploadSize" value="10000000" />
 	</bean>
 
-	<bean id="demoUserSelection" class="com.efficio.fieldbook.web.demo.bean.UserSelection"
-		scope="session">
-		<aop:scoped-proxy />
-	</bean>
-
+	
 	<bean id="advancingNursery" class="com.efficio.fieldbook.web.nursery.bean.AdvancingNursery"
 		scope="session">
 		<aop:scoped-proxy />
@@ -164,10 +160,6 @@
 		<aop:scoped-proxy />
 	</bean>
 
-	<bean id="testJavaBean" class="com.efficio.fieldbook.web.demo.bean.TestJavaBean"
-		scope="session">
-		<aop:scoped-proxy />
-	</bean>
 	
 	<bean id="paginationListSelection" class="com.efficio.fieldbook.web.common.bean.PaginationListSelection"
 		scope="session">

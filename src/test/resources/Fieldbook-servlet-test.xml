@@ -109,11 +109,6 @@
 		<property name="maxUploadSize" value="10000000" />
 	</bean>
 
-	<bean id="demoUserSelection" class="com.efficio.fieldbook.web.demo.bean.UserSelection"
-		scope="session">
-		<aop:scoped-proxy />
-	</bean>
-
 	<bean id="advancingNursery" class="com.efficio.fieldbook.web.nursery.bean.AdvancingNursery"
 		scope="session">
 		<aop:scoped-proxy />
@@ -139,10 +134,6 @@
 		<aop:scoped-proxy />
 	</bean>
 
-	<bean id="testJavaBean" class="com.efficio.fieldbook.web.demo.bean.TestJavaBean"
-		scope="session">
-		<aop:scoped-proxy />
-	</bean>
 	
 	
 	<!-- **************************************************************** -->
@@ -250,22 +241,7 @@
         <property name="password" value="${workbench.password}"/>
     </bean>
     
-   	<bean id="gitRepositoryState" class="com.efficio.fieldbook.web.util.GitRepositoryState">	
-   		<property name="branch" value="${git.branch}"/>
-   		<property name="describe" value="${git.commit.id.describe}"/>
-   		<property name="commitId" value="${git.commit.id}"/>
-   		<property name="buildUserName" value="${git.build.user.name}"/>
-   		<property name="buildUserEmail" value="${git.build.user.email}"/>
-   		<property name="buildTime" value="${git.build.time}"/>
-   		<property name="commitUserName" value="${git.commit.user.name}"/>
-   		<property name="commitUserEmail" value="${git.commit.user.email}"/>
-   		<property name="commitMessageShort" value="${git.commit.message.short}"/>
-   		<property name="commitMessageFull" value="${git.commit.message.full}"/>
-   		<property name="commitTime" value="${git.commit.time}"/>
-   		<property name="commitIdAbbrev" value="${git.commit.id.abbrev}"/>   		
-	</bean>
-	
-	<bean id="externalToolInfo" class="com.efficio.fieldbook.web.util.ExternalToolInfo">	
+   	<bean id="externalToolInfo" class="com.efficio.fieldbook.web.util.ExternalToolInfo">	
    		<property name="currentProjectId" value="${workbench.currentProjectId}"/>
    		<property name="oldFieldbookPath" value="${old.fb.tool.path}"/>   			
 	</bean>	

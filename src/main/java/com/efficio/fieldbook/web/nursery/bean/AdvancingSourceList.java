@@ -23,9 +23,6 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Method;
-import org.generationcp.middleware.service.api.FieldbookService;
-
-import com.efficio.fieldbook.web.util.AppConstants;
 
 /**
  * 
@@ -42,7 +39,7 @@ public class AdvancingSourceList{
     private String putBrackets;
     String nurseryName;
     
-    public AdvancingSourceList(Workbook workbook, AdvancingNursery advanceInfo, Study nursery, FieldbookService fieldbookMiddlewareService)
+    public AdvancingSourceList(Workbook workbook, AdvancingNursery advanceInfo, Study nursery, Map<Integer, Method> breedingMethodMap)
     throws MiddlewareQueryException {
     	
     	Integer methodVariateId = advanceInfo.getMethodVariateId();
@@ -57,16 +54,16 @@ public class AdvancingSourceList{
         }
 
         if (workbook != null) {
-            Integer breedingMethodId = null;
-            /*if (workbook.getStudyConditions() != null && !workbook.getStudyConditions().isEmpty()) {
+            /*Integer breedingMethodId = null;
+            if (workbook.getStudyConditions() != null && !workbook.getStudyConditions().isEmpty()) {
                 for (MeasurementVariable studyCondition : workbook.getStudyConditions()) {
                     if (studyCondition.getTermId() == TermId.BREEDING_METHOD_ID.getId() && NumberUtils.isNumber(studyCondition.getValue())) {
                         breedingMethodId = Integer.valueOf(studyCondition.getValue());
                         break;
                     }
                 }
-            }*/
-            this.nurseryBreedingMethodId = breedingMethodId;
+            }
+            this.nurseryBreedingMethodId = breedingMethodId; */
             
             if (workbook.getObservations() != null && !workbook.getObservations().isEmpty()) {
                 this.rows = new ArrayList<AdvancingSource>();
@@ -97,23 +94,26 @@ public class AdvancingSourceList{
                     else {
                     	methodId = this.selectedMethodId;
                     }
-                    Integer plantsSelected = null; 
-                    Boolean isBulk = isBulk(fieldbookMiddlewareService, methodId);
-                    if (isBulk != null) {
-                    	if (isBulk.booleanValue() && (advanceInfo.getAllPlotsChoice() == null || "0".equals(advanceInfo.getAllPlotsChoice()))) {
-	                    	if (plotVariateId != null) {
-		                        plantsSelected = getIntegerValue(row.getMeasurementDataValue(
-		                                getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), plotVariateId)));
-	                    	}
-                    	}
-	                    else {
-	                    	if (lineVariateId != null && (advanceInfo.getLineChoice() == null || "0".equals(advanceInfo.getLineChoice()))) {
-	                    		plantsSelected = getIntegerValue(row.getMeasurementDataValue(
-	                    				getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), lineVariateId)));
-	                    	}
-	                    }
-                    } //else skipped, bec method or line can not be determined
-                    this.rows.add(new AdvancingSource(germplasm, plantsSelected, methodId, isCheck, isBulk));
+
+                    if (methodId != null) {
+		                Integer plantsSelected = null; 
+		                Boolean isBulk = isBulk(methodId, breedingMethodMap);
+		                if (isBulk != null) {
+		                	if (isBulk.booleanValue() && (advanceInfo.getAllPlotsChoice() == null || "0".equals(advanceInfo.getAllPlotsChoice()))) {
+		                    	if (plotVariateId != null) {
+			                        plantsSelected = getIntegerValue(row.getMeasurementDataValue(
+			                                getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), plotVariateId)));
+		                    	}
+		                	}
+		                    else {
+		                    	if (lineVariateId != null && (advanceInfo.getLineChoice() == null || "0".equals(advanceInfo.getLineChoice()))) {
+		                    		plantsSelected = getIntegerValue(row.getMeasurementDataValue(
+		                    				getHeaderLabel(workbook.getMeasurementDatasetVariablesMap(), lineVariateId)));
+		                    	}
+		                    }
+		                }
+		                this.rows.add(new AdvancingSource(germplasm, plantsSelected, methodId, isCheck, isBulk));
+                    } //skip those without assigned method
                 }
             }
         }
@@ -128,9 +128,9 @@ public class AdvancingSourceList{
         }
     }
     
-    private Boolean isBulk(FieldbookService fieldbookMiddlewareService, Integer methodId) throws MiddlewareQueryException {
+    private Boolean isBulk(Integer methodId, Map<Integer, Method> methodMap) throws MiddlewareQueryException {
     	if (methodId != null) {
-    		Method method = fieldbookMiddlewareService.getBreedingMethodById(methodId);
+    		Method method = methodMap.get(methodId);
     		return method != null && method.getGeneq() != null && method.getGeneq().equals(1);
     	}
     	return null;
@@ -166,13 +166,6 @@ public class AdvancingSourceList{
         }
         return label;
     }
-    
-//    public boolean isBulk() {
-//        return this.selectedMethodId != null && 
-//                (this.selectedMethodId.intValue() == AppConstants.SELECTED_BULK_SF.getInt()
-//                    || this.selectedMethodId.intValue() == AppConstants.RANDOM_BULK_SF.getInt()
-//                    || this.selectedMethodId.intValue() == AppConstants.RANDOM_BULK_CF.getInt());
-//    }
     
     /**
      * @return the rows

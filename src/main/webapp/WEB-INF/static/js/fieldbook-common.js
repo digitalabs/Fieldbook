@@ -967,6 +967,9 @@ function initializeHarvestLocationSelect2(locationSuggestions, locationSuggestio
     	$('#'+getJquerySafeId("harvestLocationId")).val($('#'+getJquerySafeId("harvestLocationIdAll")).select2("data").id);
     	$('#'+getJquerySafeId("harvestLocationName")).val($('#'+getJquerySafeId("harvestLocationIdAll")).select2("data").text);
     	$('#'+getJquerySafeId("harvestLocationAbbreviation")).val($('#'+getJquerySafeId("harvestLocationIdAll")).select2("data").abbr);
+    	if ($("#harvestloc-tooltip")) {
+    		$("#harvestloc-tooltip").attr("title", $('#'+getJquerySafeId("harvestLocationIdAll")).select2("data").abbr);
+    	}
     });
 	
 }
@@ -999,6 +1002,9 @@ $('#'+getJquerySafeId('harvestLocationIdFavorite')).select2({
 	$('#'+getJquerySafeId("harvestLocationId")).val($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data").id);
 	$('#'+getJquerySafeId("harvestLocationName")).val($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data").text);
 	$('#'+getJquerySafeId("harvestLocationAbbreviation")).val($('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data").abbr);
+	if ($("#harvestloc-tooltip")) {
+		$("#harvestloc-tooltip").attr("title", $('#'+getJquerySafeId("harvestLocationIdFavorite")).select2("data").abbr);
+	}
 });
 
 }
@@ -1007,7 +1013,8 @@ function initializeMethodSelect2(methodSuggestions, methodSuggestions_obj) {
 
 	$.each(methodSuggestions, function( index, value ) {
 		methodSuggestions_obj.push({ 'id' : value.mid,
-			  'text' : value.mname
+			  'text' : value.mname,
+			  'tooltip' : value.mdesc
 		});  
 		
 	});		
@@ -1031,6 +1038,9 @@ function initializeMethodSelect2(methodSuggestions, methodSuggestions_obj) {
     	//	$('#'+getJquerySafeId("breedingMethodId")).val($('#'+getJquerySafeId("methodIdAll")).select2("data").id);
     	if($('#'+getJquerySafeId("advanceBreedingMethodId")).length != 0){
     		$('#'+getJquerySafeId("advanceBreedingMethodId")).val($('#'+getJquerySafeId("methodIdAll")).select2("data").id);
+    		if ($("#method-tooltip")) {
+    			$("#method-tooltip").attr("title", $('#'+getJquerySafeId("methodIdAll")).select2("data").tooltip);
+    		}
     		$('#'+getJquerySafeId("advanceBreedingMethodId")).trigger('change');
     	}
     		
@@ -1043,6 +1053,7 @@ function initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFav_o
 	$.each(methodSuggestionsFav, function( index, value ) {
 		methodSuggestionsFav_obj.push({ 'id' : value.mid,
 			  'text' : value.mname,
+			  'tooltip' : value.mdesc
 		});  
   		
 	});
@@ -1065,6 +1076,9 @@ $('#'+getJquerySafeId('methodIdFavorite')).select2({
 	//$('#'+getJquerySafeId("breedingMethodId")).val($('#'+getJquerySafeId("methodIdFavorite")).select2("data").id);
 	if($('#'+getJquerySafeId("advanceBreedingMethodId")).length != 0){
 		$('#'+getJquerySafeId("advanceBreedingMethodId")).val($('#'+getJquerySafeId("methodIdFavorite")).select2("data").id);
+		if ($("#method-tooltip")) {
+			$("#method-tooltip").attr("title", $('#'+getJquerySafeId("methodIdFavorite")).select2("data").tooltip);
+		}
 		$('#'+getJquerySafeId("advanceBreedingMethodId")).trigger('change');
 	}
 });
@@ -1382,58 +1396,66 @@ function validatePlantsSelected() {
 	var isBulk = false;
 	
 	if ($(".bulk-section").is(":visible")) {
-		if (ids != "") {
-			ids = ids + ",";
+		if (!$('input[type=checkbox][name=allPlotsChoice]:checked').val() == 1) {
+			ids = ids + $("#plotVariateId").val();
 		}
-		ids = ids + $("#plotVariateId").val();
 		isBulk = true;
 	}
 	if ($(".lines-section").is(":visible")) {
-		ids = ids + $("#lineVariateId").val();
+		if (!$('input[type=checkbox][name=lineChoice]:checked').val() == 1) {
+			if (ids != "") {
+				ids = ids + ",";
+			}
+			ids = ids + $("#lineVariateId").val();
+		}
 		if (isBulk) {
 			isMixed = true;
 		}
 	}
 	
-	
 	var valid = true;
-	
-	//if (isMixed || )
-	Spinner.toggle();
-	$.ajax({
-		url: "/Fieldbook/NurseryManager/advance/nursery/countPlots/" + ids,
-		type: "GET",
-		cache: false,
-		success: function (data) {
-			if (isMixed) {
-				if (data == 0) {
-					showErrorMessage('page-message', msgEmptyListError);
-					valid = false;
+	if (ids != "")	{
+		Spinner.toggle();
+		$.ajax({
+			url: "/Fieldbook/NurseryManager/advance/nursery/countPlots/" + ids,
+			type: "GET",
+			cache: false,
+			async: false,
+			success: function (data) {
+				if (isMixed) {
+					if (data == 0) {
+						alert('error');
+						showErrorMessage('page-message', msgEmptyListError);
+						valid = false;
+					}
 				}
-			}
-			else if (isBulk) {
-				var choice = !$("#plot-variates-section").is(":visible");
-				if (choice == false && data == "0") {
-					showErrorMessage('page-message', msgEmptyListError);
-					valid = false;
+				else if (isBulk) {
+					var choice = !$("#plot-variates-section").is(":visible");
+					if (choice == false && data == "0") {
+						showErrorMessage('page-message', msgEmptyListError);
+						valid = false;
+					}
 				}
-			}
-			else {
-				var choice = !$("#line-variates-section").is(":visible");
-				var lineSameForAll = $('input[type=checkbox][name=lineChoice]:checked').val() == 1;
-				if (lineSameForAll == false && choice == false && data == "0") {
-					showErrorMessage('page-message', msgEmptyListError);
-					valid = false;
+				else {
+					var choice = !$("#line-variates-section").is(":visible");
+					var lineSameForAll = $('input[type=checkbox][name=lineChoice]:checked').val() == 1;
+					if (lineSameForAll == false && choice == false && data == "0") {
+						showErrorMessage('page-message', msgEmptyListError);
+						valid = false;
+					}
 				}
+			},
+			error: function(jqXHR, textStatus, errorThrown){
+				console.log("The following error occured: " + textStatus, errorThrown); 
+			},
+			complete: function() {
+				Spinner.toggle();
 			}
-		},
-		error: function(jqXHR, textStatus, errorThrown){
-			console.log("The following error occured: " + textStatus, errorThrown); 
-		},
-		complete: function() {
-			Spinner.toggle();
-		}
-	});
+		});
+	}
+	if (valid && isMixed) {
+		return validateBreedingMethod();
+	}
 	return valid;
 }
 
@@ -1449,6 +1471,7 @@ function callAdvanceNursery() {
 }
 function doAdvanceNursery() {
 	Spinner.toggle();
+	$('input[type=checkbox][name=methodChoice]').prop('disabled', false);
 	var serializedData = $("#advanceNurseryModalForm").serialize();
 	
  	$.ajax({ 
@@ -1457,16 +1480,22 @@ function doAdvanceNursery() {
         data: serializedData,
         cache: false,
         success: function(html) {
-        	$("#advanceNurseryModal").modal("hide");
-        	$('#create-nursery-tab-headers li').removeClass('active');
-       	 	$('#create-nursery-tabs .info').hide();
-       	 
-        	var uniqueId = $(html).find('.uniqueId').attr('id');
-        	var close = '<button style="float: right" onclick="javascript: closeAdvanceListTab('+uniqueId+')" type="button" id="'+uniqueId+'" class="close">x</button>';
-        	var aHtml = "<a id='advanceHref"+uniqueId+"' href='javascript: showSelectedAdvanceTab("+uniqueId+")'>Advance List"+close+"</a>";
-        	$("#create-nursery-tab-headers").append("<li class='active' id='advance-list"+uniqueId+"-li'>"+aHtml+"</li>");
-        	$("#create-nursery-tabs").append("<div class='info' id='advance-list"+uniqueId+"'>" + html + "</div>");       	
-        	showSelectedTab("advance-list"+uniqueId);
+       	 	var listSize = $(html).find(".advance-list-size").text();
+       	 	if (listSize == 0) {
+				showErrorMessage('page-message', msgEmptyListError);
+       	 	} 
+       	 	else {
+            	$("#advanceNurseryModal").modal("hide");
+            	$('#create-nursery-tab-headers li').removeClass('active');
+           	 	$('#create-nursery-tabs .info').hide();
+           	 
+	        	var uniqueId = $(html).find('.uniqueId').attr('id');
+	        	var close = '<button style="float: right" onclick="javascript: closeAdvanceListTab('+uniqueId+')" type="button" id="'+uniqueId+'" class="close">x</button>';
+	        	var aHtml = "<a id='advanceHref"+uniqueId+"' href='javascript: showSelectedAdvanceTab("+uniqueId+")'>Advance List"+close+"</a>";
+	        	$("#create-nursery-tab-headers").append("<li class='active' id='advance-list"+uniqueId+"-li'>"+aHtml+"</li>");
+	        	$("#create-nursery-tabs").append("<div class='info' id='advance-list"+uniqueId+"'>" + html + "</div>");       	
+	        	showSelectedTab("advance-list"+uniqueId);
+       	 	}
         	
         },
 		error: function(jqXHR, textStatus, errorThrown){
@@ -1512,25 +1541,27 @@ function displayAdvanceList(uniqueId, germplasmListId, listName){
 function validateBreedingMethod() {
 	var id = $("#methodVariateId").val();
 
-	if ($("#breed"))
 	var valid = true;
-	Spinner.toggle();
-	$.ajax({
-		url: "/Fieldbook/NurseryManager/advance/nursery/countPlots/" + id,
-		type: "GET",
-		cache: false,
-		success: function (data) {
-			if (data == 0) {
-				showErrorMessage('page-message', msgEmptyListError);
-				valid = false;
+	if (id) {
+		Spinner.toggle();
+		$.ajax({
+			url: "/Fieldbook/NurseryManager/advance/nursery/countPlots/" + id,
+			type: "GET",
+			cache: false,
+			async: false,
+			success: function (data) {
+				if (data == 0) {
+					showErrorMessage('page-message', msgEmptyListError);
+					valid = false;
+				}
+			},
+			error: function(jqXHR, textStatus, errorThrown){
+				console.log("The following error occured: " + textStatus, errorThrown); 
+			},
+			complete: function() {
+				Spinner.toggle();
 			}
-		},
-		error: function(jqXHR, textStatus, errorThrown){
-			console.log("The following error occured: " + textStatus, errorThrown); 
-		},
-		complete: function() {
-			Spinner.toggle();
-		}
-	});
+		});
+	}
 	return valid;
 }

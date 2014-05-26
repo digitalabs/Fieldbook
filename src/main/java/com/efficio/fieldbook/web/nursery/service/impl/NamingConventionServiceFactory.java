@@ -17,6 +17,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
+import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.CimmytWheatConventionService;
 import com.efficio.fieldbook.web.nursery.service.MaizeColchicinizeService;
 import com.efficio.fieldbook.web.nursery.service.MaizeSelfBulkedService;
@@ -60,13 +61,13 @@ public class NamingConventionServiceFactory {
             if (namingConventionValue == AppConstants.NAMING_CONVENTION_CIMMYT_WHEAT.getInt()) {
                 return wheatService;
             } else if (namingConventionValue == AppConstants.NAMING_CONVENTION_CIMMYT_MAIZE.getInt()) {
-            	if(AppConstants.MAIZE_BREEDING_METHOD_SELFED_BULKED.getString().equalsIgnoreCase(advanceInfo.getBreedingMethodId().toString())) {
+            	if(AdvancingNurseryForm.maizeBulkMethodId == Integer.valueOf(advanceInfo.getBreedingMethodId())) {
             		return maizeSelfBulkedService;
-            	}else if(AppConstants.MAIZE_BREEDING_METHOD_SELFED_SHELLED.getString().equalsIgnoreCase(advanceInfo.getBreedingMethodId().toString())) {
+            	}else if(AdvancingNurseryForm.maizeSelfMethodId == Integer.valueOf(advanceInfo.getBreedingMethodId())) {
             		return maizeSelfShelledService;
-            	}else if(AppConstants.MAIZE_BREEDING_METHOD_SIB_INCREASED.getString().equalsIgnoreCase(advanceInfo.getBreedingMethodId().toString())) {
+            	}else if(AdvancingNurseryForm.maizeSibMethodId == Integer.valueOf(advanceInfo.getBreedingMethodId())) {
             		return maizeSibIncreaseService;
-            	}else if(AppConstants.MAIZE_BREEDING_METHOD_COLCHICINIZE.getString().equalsIgnoreCase(advanceInfo.getBreedingMethodId().toString())) {
+            	}else if(AdvancingNurseryForm.maizeColchMethodId == Integer.valueOf(advanceInfo.getBreedingMethodId())) {
             		return maizeColchicinizeService;
             	}
             } else if (namingConventionValue == AppConstants.NAMING_CONVENTION_OTHER_CROPS.getInt()) {

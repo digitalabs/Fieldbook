@@ -42,28 +42,19 @@ implements OtherCropsConventionService {
 	private FieldbookService fieldbookMiddlewareService;
 	 
     @Override
-    public List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList rows) throws MiddlewareQueryException {
+    public List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList rows, Map<Integer, Method> breedingMethodMap) throws MiddlewareQueryException {
         List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
         String newGermplasmName;
-        //Integer breedingMethodId = rows.getSelectedMethodId();
         int index = 1;
-        Map<String, Method> breedingMethodMap = new HashMap<String, Method>();
-        List<Method> methodList = fieldbookMiddlewareService.getAllBreedingMethods();
-        for(Method method: methodList){
-        	breedingMethodMap.put(method.getMid().toString(), method);
-        }
         for (AdvancingSource row : rows.getRows()) {
             if (row.getGermplasm() != null && !row.isCheck() && row.getPlantsSelected() != null && row.getPlantsSelected() > 0) {
                 if (row.isBulk()) {
-                    newGermplasmName = row.getGermplasm().getDesig() + "-" + rows.getSuffix();
+                    newGermplasmName = row.getGermplasm().getDesig() + (rows.getSuffix() != null  && rows.getSuffix().length() > 0 ? "-" + rows.getSuffix() : "");
                     addImportedGermplasmToList(list, row, newGermplasmName, row.getBreedingMethodId(), index++, rows.getNurseryName(), breedingMethodMap);
                 }
                 else {
                     for (int i = 0; i < row.getPlantsSelected(); i++) {
                         newGermplasmName = row.getGermplasm().getDesig() + "-" + (i+1) + rows.getSuffix();
-//                        if (breedingMethodId == null) {
-//                            breedingMethodId = row.getBreedingMethodId();
-//                        }
                         addImportedGermplasmToList(list, row, newGermplasmName, row.getBreedingMethodId(), index++, rows.getNurseryName(), breedingMethodMap);
                     }
                 }

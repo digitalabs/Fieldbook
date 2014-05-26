@@ -1,7 +1,6 @@
 package com.efficio.fieldbook.web.nursery.service.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,16 +25,11 @@ public class MaizeColchicinizeServiceImpl extends
 	private FieldbookService fieldbookMiddlewareService;
 	
 	@Override
-	protected List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList rows) throws MiddlewareQueryException {
+	protected List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList rows, Map<Integer, Method> breedingMethodMap) throws MiddlewareQueryException {
         List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
         String newGermplasmName;
         Integer breedingMethodId = null;
         int index = 1;
-        Map<String, Method> breedingMethodMap = new HashMap<String, Method>();
-        List<Method> methodList = fieldbookMiddlewareService.getAllBreedingMethods();
-        for(Method method: methodList){
-        	breedingMethodMap.put(method.getMid().toString(), method);
-        }
         for (AdvancingSource row : rows.getRows()) {
             if (row.getGermplasm() != null && !row.isCheck() && row.getPlantsSelected() != null && row.getPlantsSelected() > 0) {
         		breedingMethodId = AppConstants.DOUBLE_HAPLOID_LINE.getInt();

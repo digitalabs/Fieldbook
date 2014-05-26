@@ -51,17 +51,22 @@ implements NamingConventionService {
 
     @Override
     public List<ImportedGermplasm> advanceNursery(AdvancingNursery info, Workbook workbook) throws MiddlewareQueryException {
+        Map<Integer, Method> breedingMethodMap = new HashMap<Integer, Method>();
+        List<Method> methodList = fieldbookMiddlewareService.getAllBreedingMethods();
+        for(Method method: methodList){
+        	breedingMethodMap.put(method.getMid(), method);
+        }
     	//long start = System.currentTimeMillis();
-        AdvancingSourceList list = createAdvancingSourceList(info, workbook);
+        AdvancingSourceList list = createAdvancingSourceList(info, workbook, breedingMethodMap);
         //System.out.println("Time advanceNursery 1: " + (System.currentTimeMillis() - start));
         updatePlantsSelectedIfNecessary(list, info);
         //System.out.println("Time advanceNursery 2: " + (System.currentTimeMillis() - start));
-        List<ImportedGermplasm> importedGermplasmList =  generateGermplasmList(list);
+        List<ImportedGermplasm> importedGermplasmList =  generateGermplasmList(list, breedingMethodMap);
         //System.out.println("Time advanceNursery 3: " + (System.currentTimeMillis() - start));
         return importedGermplasmList;
     }
 
-    protected abstract List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList list) throws MiddlewareQueryException;
+    protected abstract List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList list, Map<Integer, Method> methodMap) throws MiddlewareQueryException;
     
     protected void assignNames(ImportedGermplasm germplasm, AdvancingSource source) {
         List<Name> names = new ArrayList<Name>();
@@ -92,7 +97,9 @@ implements NamingConventionService {
         germplasm.setNames(names);
     }
 
-    private AdvancingSourceList createAdvancingSourceList(AdvancingNursery advanceInfo, Workbook workbook) throws MiddlewareQueryException {
+    private AdvancingSourceList createAdvancingSourceList(AdvancingNursery advanceInfo, Workbook workbook, Map<Integer, Method> breedingMethodMap) 
+    throws MiddlewareQueryException {
+    	
         int nurseryId = advanceInfo.getStudy().getId();
 //        long start = System.currentTimeMillis();
         if(workbook == null){
@@ -103,7 +110,7 @@ implements NamingConventionService {
         //Study nursery = fieldbookMiddlewareService.getStudy(nurseryId);
         Study nursery = advanceInfo.getStudy();
         //System.out.println("Time advanceNursery 1.2: " + (System.currentTimeMillis() - start));
-        AdvancingSourceList rows = new AdvancingSourceList(workbook, advanceInfo, nursery, fieldbookMiddlewareService);
+        AdvancingSourceList rows = new AdvancingSourceList(workbook, advanceInfo, nursery, breedingMethodMap);
         //System.out.println("Time advanceNursery 1.3: " + (System.currentTimeMillis() - start));
         assignGermplasms(rows);
         //System.out.println("Time advanceNursery 1.4: " + (System.currentTimeMillis() - start));
@@ -152,18 +159,18 @@ implements NamingConventionService {
     }
 
     protected void addImportedGermplasmToList(List<ImportedGermplasm> list, AdvancingSource source, 
-            String newGermplasmName, int breedingMethodId, int index, String nurseryName, Map<String, Method> breedingMethodMap) 
+            String newGermplasmName, int breedingMethodId, int index, String nurseryName, Map<Integer, Method> breedingMethodMap) 
     throws MiddlewareQueryException {
         
         Method breedingMethod = null; //fieldbookMiddlewareService.getBreedingMethodById(breedingMethodId);
         
-        if(breedingMethodMap.get(Integer.toString(breedingMethodId)) != null){
-        	breedingMethod = breedingMethodMap.get(Integer.toString(breedingMethodId));
+        if(breedingMethodMap.get(breedingMethodId) != null){
+        	breedingMethod = breedingMethodMap.get(breedingMethodId);
         }else{
         	breedingMethod = fieldbookMiddlewareService.getBreedingMethodById(breedingMethodId);
-        	breedingMethodMap.put(Integer.toString(breedingMethodId), breedingMethod);
-        	
+        	breedingMethodMap.put(breedingMethodId, breedingMethod);
         }
+
         ImportedGermplasm germplasm = new ImportedGermplasm(
                 index
               , newGermplasmName

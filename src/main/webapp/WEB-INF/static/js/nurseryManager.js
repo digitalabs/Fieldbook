@@ -1891,11 +1891,11 @@ function validateCreateNursery() {
 		}
 		var totalGermplasms = $('#totalGermplasms').val();
 		if(parseInt($("#startIndex2").val()) < 0 || parseInt($("#startIndex2").val()) > totalGermplasms){
-			showErrorMessage('page-message', "Position should be between 0 to "+totalGermplasms);
+			showErrorMessage('page-message', "Position should be between 1 to "+totalGermplasms);
 			return false;
 		}
 		if(parseInt($("#interval2").val()) < 0 || parseInt($("#interval2").val()) > totalGermplasms){
-			showErrorMessage('page-message', "Interval should be between 0 to "+totalGermplasms);
+			showErrorMessage('page-message', "Interval should be between 1 to "+totalGermplasms);
 			return false;
 		}
 		var totalNumberOfChecks = $('#totalNumberOfChecks').val();

@@ -516,7 +516,8 @@ function getStandardVariables(variableType) {
 			$("#page-message-modal").html("");
 			clearAttributeFields();
 			$("#addVariables").attr("onclick", "javascript: submitSelectedVariables(" + variableType + ");");
-			$("#addVariablesSettingModal").modal("show");
+			$("#addVariablesSettingModal").modal({ backdrop: 'static', keyboard: false });
+			
 		},
 		error: function(jqXHR, textStatus, errorThrown){
 			console.log("The following error occured: " + textStatus, errorThrown); 

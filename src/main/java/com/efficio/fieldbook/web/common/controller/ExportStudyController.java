@@ -6,7 +6,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -90,6 +92,42 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
 	}
 
     @ResponseBody
+    @RequestMapping(value="/download/file", method = RequestMethod.GET)
+    public String downloadFile(HttpServletRequest req, HttpServletResponse response) {
+    	String outputFilename = req.getParameter("outputFilename");
+    	String filename = req.getParameter("filename");
+    	String contentType = req.getParameter("contentType");
+    	
+        File xls = new File(outputFilename); // the selected name + current date
+        FileInputStream in;
+        
+        response.setHeader("Content-disposition","attachment; filename=" + SettingsUtil.cleanSheetAndFileName(filename));
+        response.setContentType(contentType);
+        try {
+            in = new FileInputStream(xls);
+            OutputStream out = response.getOutputStream();
+
+            byte[] buffer= new byte[BUFFER_SIZE]; // use bigger if you want
+            int length = 0;
+
+            while ((length = in.read(buffer)) > 0){
+                 out.write(buffer, 0, length);
+            }
+            in.close();
+            out.close();
+            
+        } catch (FileNotFoundException e) {
+        	LOG.error(e.getMessage(), e);
+        } catch (IOException e) {
+        	LOG.error(e.getMessage(), e);
+        }
+       
+        return "";
+        
+    	
+    }
+    
+    @ResponseBody
     @RequestMapping(value="/export/{exportType}/{selectedTraitTermId}/{exportWayType}", method = RequestMethod.GET)
     public String exportRFileForNursery(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form,  
 @PathVariable int exportType, @PathVariable int selectedTraitTermId,
@@ -147,15 +185,12 @@ HttpServletRequest req, HttpServletResponse response) {
 			if("0".equalsIgnoreCase(studyId)){
 				
 				workbook = userSelection.getWorkbook();
-				
+				studyId = workbook.getStudyDetails().getId().toString();
 			}else{
 				//meaning for the session
 				workbook = this.getPaginationListSelection().getReviewWorkbook(studyId);				
 			}
-			
-	    	//userSelection.getWorkbook().getTotalNumberOfInstances();     	    	
-	    	Integer datasetId = workbook.getMeasurementDatesetId();
-			hasFieldMap = fieldbookMiddlewareService.hasFieldMap(datasetId);
+			hasFieldMap = fieldbookMiddlewareService.checkIfStudyHasFieldmap(Integer.valueOf(studyId));
 		} catch (MiddlewareQueryException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -226,7 +261,7 @@ HttpServletRequest req, HttpServletResponse response) {
     	
     	StudySelection userSelection = getUserSelection(isTrial);
     	try {
-	    	String studyId = req.getParameter("studyId");
+	    	String studyId = req.getParameter("studyExportId");
 	    	if(!"0".equalsIgnoreCase(studyId)){
 	    		//we need to get the workbook and set it in the userSelectionObject
 	    		if(isTrial);
@@ -307,30 +342,12 @@ HttpServletRequest req, HttpServletResponse response) {
     			response.setContentType("text/csv");
     		}
     	}
+    	Map<String, Object> results = new HashMap<String, Object>();
+    	results.put("outputFilename", outputFilename);
+    	results.put("filename", SettingsUtil.cleanSheetAndFileName(filename));
+    	results.put("contentType", response.getContentType());
     	
-        File xls = new File(outputFilename); // the selected name + current date
-        FileInputStream in;
-        
-        response.setHeader("Content-disposition","attachment; filename=" + SettingsUtil.cleanSheetAndFileName(filename));
-        try {
-            in = new FileInputStream(xls);
-            OutputStream out = response.getOutputStream();
-
-            byte[] buffer= new byte[BUFFER_SIZE]; // use bigger if you want
-            int length = 0;
-
-            while ((length = in.read(buffer)) > 0){
-                 out.write(buffer, 0, length);
-            }
-            in.close();
-            out.close();
-        } catch (FileNotFoundException e) {
-        	LOG.error(e.getMessage(), e);
-        } catch (IOException e) {
-        	LOG.error(e.getMessage(), e);
-        }
-       
-        return "";
+    	return super.convertObjectToJson(results);
     }
     
     private StudySelection getUserSelection(boolean isTrial) {

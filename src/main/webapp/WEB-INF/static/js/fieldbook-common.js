@@ -1209,7 +1209,7 @@ function doExportContinue(paramUrl, isNursery){
 	var serializedData = $form.serialize();
 
 	
-	var additionalParams = ''
+	var additionalParams = '';
 	if(!isNursery){
 		additionalParams = validateTrialInstance();
 		if(additionalParams == 'false')
@@ -1219,53 +1219,69 @@ function doExportContinue(paramUrl, isNursery){
 		}
 	}
 	var exportWayType = '/'+$('#exportWayType').val();
-	var urlPage = paginationUrl+currentPage+"/"+currentPage+'?r=' + (Math.random() * 999);
-	//alert(urlPage);
-	Spinner.toggle();
- 	$.ajax(
-         { url: urlPage,
-           type: "POST",
-           data: serializedData,
-           cache: false,
-           timeout: 70000,
-           async: false,
-           success: function(html) {
-        	   var formName = "#exportStudyForm";
-        	   var action = submitExportUrl;
-        	   var newAction = '';
-        	   	if(isNursery)
-        	   		newAction = action + "export/" + paramUrl;
-        	   	else{ //meaning its trial
-        	   		
-        	   		newAction = action + "exportTrial/" + paramUrl + "/" + additionalParams;
-        	   		
-        	   
-        	   	 
-        	   	}
-        		newAction += exportWayType;
-        		
-        		
-		   		var studyId = '0';
-		   		if($('#browser-nurseries').length != 0){
-		   			//meaning we are on the landing page
-		   			studyId = getCurrentStudyIdInTab();
-		   		}
-		   		newAction += "?studyId="+studyId;
-        		
-        	   $(formName).attr('action', newAction);
-        	   
-        	   $(formName).submit();
-        	   $(formName).attr('action', action);
-        	   $('#exportStudyModal').modal('hide');
-        	   
-        	   Spinner.toggle();
-        	   
-        	   //$(formName).ajaxForm(exportOptions).submit();  
-           }
-         }
-       );
+	if($('#browser-nurseries').length != 0){
+		studyId = getCurrentStudyIdInTab();
+		
+		doFinalExport(paramUrl, additionalParams,exportWayType, isNursery);
+	}else{
+		
+		var urlPage = paginationUrl+currentPage+"/"+currentPage+'?r=' + (Math.random() * 999);
+		//alert(urlPage);
+		
+	 	$.ajax(
+	         { url: urlPage,
+	           type: "POST",
+	           data: serializedData,
+	           cache: false,
+	           timeout: 70000,
+	           async: false,
+	           success: function(html) {
+	        	  
+	        	   doFinalExport(paramUrl, additionalParams,exportWayType, isNursery);
+	        	   
+	        	   
+	        	   //$(formName).ajaxForm(exportOptions).submit();  
+	           }
+	         }
+	       );
+	}
+	
+	
 }
 
+function doFinalExport(paramUrl, additionalParams, exportWayType, isNursery){
+	   var formName = "#exportStudyForm";
+	   var action = submitExportUrl;
+	   var newAction = '';
+	   	if(isNursery)
+	   		newAction = action + "export/" + paramUrl;
+	   	else{ //meaning its trial
+	   		
+	   		newAction = action + "exportTrial/" + paramUrl + "/" + additionalParams;
+	   		
+	   
+	   	 
+	   	}
+		newAction += exportWayType;
+		
+		
+ 		var studyId = '0';
+ 		if($('#browser-nurseries').length != 0){
+ 			//meaning we are on the landing page
+ 			studyId = getCurrentStudyIdInTab();
+ 		}
+ 		//newAction += "?studyId="+studyId;
+		$('#exportStudyForm #studyExportId').val(studyId);
+	   $(formName).attr('action', newAction);
+	   /*
+	   $(formName).submit();
+	   $(formName).attr('action', action);
+	   */
+	   Spinner.toggle();
+	   $(formName).ajaxForm(exportOptions).submit();
+	   $('#exportStudyForm #studyExportId').val('0');
+	   
+}
 function importNursery(type){
 		
 	var action = "/Fieldbook/ImportManager/import/" + $("#study-type").val() + "/"+type;

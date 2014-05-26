@@ -146,6 +146,14 @@
    		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->	
 </div>
+<form  id="exportStudyForm" role="form-horizontal" action="#" th:action="@{/ExportManager/}" method="GET">
+<input type="hidden" name="studyExportId" id="studyExportId" value="0"/>
+</form>
+<form  id="exportStudyDownloadForm" role="form-horizontal" action="#" th:action="@{/ExportManager/download/file}" method="GET">
+<input type="hidden" name="outputFilename" id="outputFilename" value=""/>
+<input type="hidden" name="filename" id="filename" value=""/>
+<input type="hidden" name="contentType" id="contentType" value=""/>
+</form>
 
 <div layout:fragment="page-script">
 	
@@ -154,6 +162,12 @@
 	           var submitExportUrl = '/Fieldbook/ExportManager/';
 	           var exportHeader = /*[[#{study.export.study.header}]]*/;
 	           var exportBookHeader = /*[[#{study.export.study.book.header}]]*/;	           	          	           
+	           
+	           var exportOptions = {
+	        		   dataType: 'text',
+				        success:       showExportResponse  // post-submit callback 
+				        
+				    }; 
 	           
 		   	$( document ).ready(function() {  	     
 				$('#exportStudyModal select').select2({width: 'copy'});
@@ -242,7 +256,16 @@
 				});
 				
 		   	}
-		   	
+		   	function showExportResponse(responseText, statusText, xhr, $form)  { 
+		        var resp = $.parseJSON(responseText);
+		        
+		        $('#exportStudyDownloadForm #outputFilename').val(resp.outputFilename);
+		        $('#exportStudyDownloadForm #filename').val(resp.filename);
+		        $('#exportStudyDownloadForm #contentType').val(resp.contentType);
+		        $('#exportStudyDownloadForm').submit();
+		        $('#exportStudyModal').modal('hide');
+		        Spinner.toggle();
+		    }
 		   	
     //]]>
     </script>

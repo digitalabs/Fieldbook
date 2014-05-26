@@ -272,6 +272,16 @@ public class EditNurseryController extends SettingsController {
     	    baselineTraits.addAll(form.getSelectionVariatesVariables());
     	    userSelection.getBaselineTraitsList().addAll(baselineTraitsSession);
     	}
+
+    	if (form.getPlotLevelVariables() == null) {
+    		form.setPlotLevelVariables(new ArrayList<SettingDetail>());
+    	}
+    	if (baselineTraits == null) {
+    		baselineTraits = new ArrayList<SettingDetail>();
+    	}
+    	if (form.getNurseryConditions() == null) {
+    		form.setNurseryConditions(new ArrayList<SettingDetail>());
+    	}
     	
     	//include deleted list if measurements are available
 	addDeletedSettingsList(studyLevelVariables, userSelection.getDeletedStudyLevelConditions(), 

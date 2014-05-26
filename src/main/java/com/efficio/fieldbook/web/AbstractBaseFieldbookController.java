@@ -28,7 +28,6 @@ import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.inventory.bean.SeedSelection;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExternalToolInfo;
-import com.efficio.fieldbook.web.util.GitRepositoryState;
 
 /**
  * The Class AbstractBaseFieldbookController.
@@ -51,9 +50,7 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
     /** The Constant USER_SELECTION_ID_SUFFIX. */
     public static final String USER_SELECTION_ID_SUFFIX = "TestUserSelection";
     
-    /** The git repository state. */
-    @Resource
-    public GitRepositoryState gitRepositoryState;
+  
     
     /** The external tool info. */
     @Resource
@@ -87,7 +84,6 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
      */
     protected void setupModelInfo(Model model){
         
-        model.addAttribute(GIT_INFO_ATTRIBUTE, gitRepositoryState);
         model.addAttribute(EXTERNAL_INFO_ATTRIBUTE, externalToolInfo);
     }
         

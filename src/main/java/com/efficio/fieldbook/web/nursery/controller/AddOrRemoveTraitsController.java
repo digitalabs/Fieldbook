@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
@@ -47,7 +46,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     /** The Constant URL. */
     public static final String URL = "/NurseryManager/addOrRemoveTraits";
     
-    public static final String OBSERVATIONS_HTML = "NurseryManager/ver2.0/observations";
+    public static final String OBSERVATIONS_HTML = "NurseryManager/observations";
 //    public static final String PAGINATION_TEMPLATE = "/NurseryManager/showAddOrRemoveTraitsPagination";
     
     /** The Constant LOG. */
@@ -60,20 +59,9 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     private FieldbookService fieldbookMiddlewareService;
     @Resource
     private MeasurementsGeneratorService measurementsGeneratorService;
-//    @Resource
-//    private ExcelExportStudyService excelExportStudyService;
-//    @Resource
-//    private FieldroidExportStudyService fielddroidExportStudyService;
-//    @Resource
-//    private ExcelImportStudyService excelImportStudyService;
-//    @Resource
-//    private FieldroidImportStudyService fieldroidImportStudyService;
-//    @Resource
-//    private FileService fileService;
+
     @Resource
     private ValidationService validationService;
-//    @Resource
-//    private RExportStudyService rExportStudyService;
     
     @Resource
     private PaginationListSelection paginationListSelection;

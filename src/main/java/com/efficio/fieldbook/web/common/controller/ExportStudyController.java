@@ -5,11 +5,15 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -136,11 +140,22 @@ HttpServletRequest req, HttpServletResponse response) {
     @ResponseBody
     @RequestMapping(value="/study/hasFieldMap", method = RequestMethod.GET)
     public String hasFieldMap(HttpServletRequest req, HttpServletResponse response) {
+    	String studyId = req.getParameter("studyId");
     	StudySelection userSelection = getUserSelection(false);    	
     	boolean hasFieldMap = false;
 		try {
-	    	userSelection.getWorkbook().getTotalNumberOfInstances();     	    	
-	    	Integer datasetId = userSelection.getWorkbook().getMeasurementDatesetId();
+			Workbook workbook = null;
+			if("0".equalsIgnoreCase(studyId)){
+				
+				workbook = userSelection.getWorkbook();
+				
+			}else{
+				//meaning for the session
+				workbook = this.getPaginationListSelection().getReviewWorkbook(studyId);				
+			}
+			
+	    	//userSelection.getWorkbook().getTotalNumberOfInstances();     	    	
+	    	Integer datasetId = workbook.getMeasurementDatesetId();
 			hasFieldMap = fieldbookMiddlewareService.hasFieldMap(datasetId);
 		} catch (MiddlewareQueryException e) {
 			// TODO Auto-generated catch block
@@ -155,6 +170,38 @@ HttpServletRequest req, HttpServletResponse response) {
     	userSelection.getWorkbook().getTotalNumberOfInstances();     	    	
     	Integer datasetId = userSelection.getWorkbook().getMeasurementDatesetId();
     	return datasetId.toString();
+    }
+    
+    @ResponseBody
+    @RequestMapping(value="/study/traits", method = RequestMethod.GET)
+    public String getStudyTraits(HttpServletRequest req, HttpServletResponse response) {
+    	String studyId = req.getParameter("studyId");
+    	
+    	StudySelection userSelection = getUserSelection(false);    	
+    	List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();
+		try {
+			List<MeasurementVariable> tempVariates = new ArrayList<MeasurementVariable>();
+			if("0".equalsIgnoreCase(studyId)){
+			
+				tempVariates = userSelection.getWorkbook().getMeasurementDatasetVariables();
+				
+			}else{
+				//meaning for the session
+				Workbook workbook = this.getPaginationListSelection().getReviewWorkbook(studyId);
+				tempVariates = workbook.getVariates();
+			}
+			
+			for(MeasurementVariable var : tempVariates){
+				if(var.isFactor() == false){
+					variates.add(var);
+				}
+			}
+	    	
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return super.convertObjectToJson(variates);
     }
     
     /**
@@ -177,7 +224,34 @@ HttpServletRequest req, HttpServletResponse response) {
     	ExportDataCollectionOrderService exportDataCollectionService = getExportOrderService(exportWayType);
     	
     	
+    	
     	StudySelection userSelection = getUserSelection(isTrial);
+    	try {
+	    	String studyId = req.getParameter("studyId");
+	    	if(!"0".equalsIgnoreCase(studyId)){
+	    		//we need to get the workbook and set it in the userSelectionObject
+	    		if(isTrial);
+	    		else{
+	    			//meaning nursery
+	    				Workbook workbookSession = null;
+	    				if(getPaginationListSelection().getReviewFullWorkbook(studyId) == null){
+	    					workbookSession = fieldbookMiddlewareService.getNurseryDataSet(Integer.valueOf(studyId));
+	    					
+	    					getPaginationListSelection().addReviewFullWorkbook(studyId, workbookSession);
+	    				}else{
+	    					workbookSession = getPaginationListSelection().getReviewFullWorkbook(studyId);
+	    				}
+	    				userSelection.setWorkbook(workbookSession);
+	    		}
+	    	}
+    	} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MiddlewareQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
     	if (start == 0 || end == 0) { //all
     		start = 1;
     		end = userSelection.getWorkbook().getTotalNumberOfInstances(); 

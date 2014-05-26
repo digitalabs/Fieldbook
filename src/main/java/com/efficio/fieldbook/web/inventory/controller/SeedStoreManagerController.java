@@ -201,7 +201,7 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
-        return super.showAjaxPage(model, "/NurseryManager/ver2.0/savedFinalAdvanceList");
+        return super.showAjaxPage(model, "/NurseryManager/savedFinalAdvanceList");
     }
     
     /**

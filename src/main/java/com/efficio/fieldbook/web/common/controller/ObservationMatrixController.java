@@ -41,7 +41,7 @@ public class ObservationMatrixController extends
     private static final Logger LOG = LoggerFactory.getLogger(ObservationMatrixController.class);
     public static final String URL = "/Common/addOrRemoveTraits";
     public static final String PAGINATION_TEMPLATE = "/Common/showAddOrRemoveTraitsPagination";
-    public static final String PAGINATION_TEMPLATE_VIEW_ONLY = "/NurseryManager/ver2.0/showAddOrRemoveTraitsPagination";
+    public static final String PAGINATION_TEMPLATE_VIEW_ONLY = "/NurseryManager/showAddOrRemoveTraitsPagination";
 
 	@Resource
 	private UserSelection nurserySelection;

@@ -1244,6 +1244,14 @@ function doExportContinue(paramUrl, isNursery){
         	   	}
         		newAction += exportWayType;
         		
+        		
+		   		var studyId = '0';
+		   		if($('#browser-nurseries').length != 0){
+		   			//meaning we are on the landing page
+		   			studyId = getCurrentStudyIdInTab();
+		   		}
+		   		newAction += "?studyId="+studyId;
+        		
         	   $(formName).attr('action', newAction);
         	   
         	   $(formName).submit();

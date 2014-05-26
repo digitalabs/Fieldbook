@@ -59,7 +59,7 @@ public class ReviewNurseryDetailsController extends AbstractBaseFieldbookControl
     
     @Override
 	public String getContentName() {
-		return "NurseryManager/ver2.0/reviewNurseryDetails";
+		return "NurseryManager/reviewNurseryDetails";
 	}
 
     @RequestMapping(value = "/show/{id}", method = RequestMethod.GET)
@@ -70,6 +70,7 @@ public class ReviewNurseryDetailsController extends AbstractBaseFieldbookControl
             workbook.setStudyId(id);
             NurseryDetails details = SettingsUtil.convertWorkbookToNurseryDetails(workbook, fieldbookMiddlewareService, fieldbookService, userSelection);
             rearrangeDetails(details);
+            this.getPaginationListSelection().addReviewWorkbook(Integer.toString(id), workbook);
             
             model.addAttribute("nurseryDetails", details);
         }    	

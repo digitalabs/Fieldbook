@@ -60,7 +60,7 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
 
     /** The Constant URL. */
     public static final String URL = "/NurseryManager/saveAdvanceNursery";
-    public static final String PAGINATION_TEMPLATE = "/NurseryManager/ver2.0/showSaveAdvanceNurseryPagination";
+    public static final String PAGINATION_TEMPLATE = "/NurseryManager/showSaveAdvanceNurseryPagination";
     
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(SaveAdvanceNurseryController.class);
@@ -96,7 +96,7 @@ public class SaveAdvanceNurseryController extends AbstractBaseFieldbookControlle
      */
     @Override
     public String getContentName() {
-        return "NurseryManager/ver2.0/saveAdvanceNursery";
+        return "NurseryManager/saveAdvanceNursery";
     }    
     
     /**

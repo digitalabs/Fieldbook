@@ -1,11 +1,4 @@
-
-			<div class="">
-				<div class="">
-					<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
-				</div>		
-			</div>
-		
-		<form id="createNurseryForm" role="form-horizontal" action="#"
+<form id="createNurseryForm" role="form-horizontal" action="#"
 th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
 					<input type="hidden" th:field="*{requiredFields}"/>
 					<input type="hidden" th:field="*{loadSettings}"/>
@@ -19,236 +12,317 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
                     <input type="hidden" th:field="*{startDateId}"/>
 					<input type="hidden" th:field="*{endDateId}"/>
 					<input type="hidden" th:field="*{openGermplasmUrl}"/>
-					
-					
-					
+					<input type="hidden" th:field="*{idNameVariables}"/>
+	
 	    			<div class="row form-group">
 	    				<div class="col-xs-6 col-md-6">
-		    				<div class="">
-			    				<label class="control-label" data-toggle="collapse" data-target=".nurseryLevelDetails">
-			    					<img th:src="@{/static/img/review-list-details.png}" style="padding-bottom:3px;" />
-			    					<strong class="sub-content-heading" th:text="#{nursery.managesettings.nursery.level.details}">NURSERY-LEVEL DETAILS</strong>
-			    				</label>
-			    			</div>
-			    			<div class="row collapse in nurseryLevelDetails">
-			    				<div class="col-xs-12 col-md-12">
-					    			<label class="control-label" th:text="#{nursery.managesettings.nursery.level.notes}"> The settings in this section apply across all plots in the nursery. 
-					    			You can add settings at this level, or remove those that you wish to manage at the plot level.</label>
-				    			</div>
-			    			</div>
-			    			<div class="sectionContainer">
-			    				<div class="row form-group nurseryLevelSettings collapse in nurseryLevelDetails">
-			    					<!-- <table border="0" id="nurseryLevelSettings" width="100%">
-			    					 -->
-	                                <div class="col-xs-5 col-md-5 1st">
-	                                        &nbsp;&nbsp;&nbsp;<label id="folderLabel" for="title" th:text="#{nursery.savenursery.savein} + ':'">Save in:*</label>&nbsp;<span class="required">*</span>
-	                                </div>
-	                                <div class="col-xs-7 col-md-7 2nd">
-	                                        <!--  <span id="folderNameSpan" name="folderNameSpan" ></span>-->
-	                                        <input type="hidden" th:field="*{folderId}" />
-	                                        <input type="hidden" th:field="*{folderName}" />
-	                                        
-	                                        <a id="chooseLocation" onclick="loadFolderAjax();" th:text="#{nursery.create.nursery.choose.location}"></a>
-	                                </div>
-	                            </div>
-		                        <div class="row form-group nurseryLevelSettings collapse in nurseryLevelDetails">
-	                              	<div class="col-xs-5 col-md-5 1st">
-		                            	&nbsp;&nbsp;&nbsp;<label id="expDesignLabel" for="fieldLayoutRandom" th:text="#{nursery.nurserydetails.select.field.layout.label} + ': '"></label>&nbsp;<span class="required">*</span>
-	                                </div>
-		                            <div class="col-xs-7 col-md-7 2nd">
-		                            	<select class="form-control" th:field="*{fieldLayoutRandom}">
-		                                	<option value="true" th:text="#{nursery.nurserydetails.option.with.randomization}">Unreplicated Design with Randomization</option>
-		                                    <option value="false" th:text="#{nursery.nurserydetails.option.without.randomization}">Unreplicated Design without Randomization</option>
-		                                </select>
-		                            </div>
-				    			</div>	
-				    			<div class="row form-group nurseryLevelSettings collapse in nurseryLevelDetails" th:each="nurseryLevelVariable, rowStat : *{studyLevelVariables}">
-				    				<div class="col-xs-5 col-md-5 1st">
-		                            	&nbsp;&nbsp;&nbsp;<span style="word-wrap: break-word"  class="control-label nursery-level-label" th:text="${nurseryLevelVariable.variable.name}"></span>:
-		                            </div>
-		                            <div class="col-xs-7 col-md-7 2nd">
-										<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" /> 
-										<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" 
-										type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control select2" />
-										
-										<!-- Show Favorite Location/Method -->
-										<div th:if="${nurseryLevelVariable.variable.cvTermId}==*{locationId}" class="possibleValuesDiv">
-										<input 
-										type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}" 
-										th:onclick="'javascript: toggleLocationDropdown(\'' + ${rowStat.index} + '\');'" />
-										&nbsp;&nbsp;
-										<span 
-										th:text="#{show.favorite.location}">Show Favorite Location</span>
-										</div>
-										<div th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}" class="possibleValuesDiv">
-										<input 
-										type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}" 
-										th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'" />
-										&nbsp;&nbsp;
-										<span 
-										th:text="#{show.favorite.method}">Show Favorite Method</span>
-										</div>
-										
-										<!-- store possible values of variable -->
-										<div th:text="${nurseryLevelVariable.value}" class="div-select-val" style="display: none"></div>
-										<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesJson' + ${rowStat.index}"
-											class="possibleValuesJson" style="display:none" th:text="${nurseryLevelVariable.possibleValuesJson}">
-										</div>
-										<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesFavoriteJson' + ${rowStat.index}"
-											class="possibleValuesFavoriteJson" style="display:none" th:text="${nurseryLevelVariable.possibleValuesFavoriteJson}">
-										</div>
-										
-										<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'NTEXT'}" 
-										type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control numeric-input" />
-										
-										<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'CTEXT'}" 
-										type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control character-input" />
-										
-										<textarea th:if="${nurseryLevelVariable.variable.widgetType.type == 'TEXTAREA'}" 
-												 th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control character-input" rows="3" />
-												 
-										<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DATE'}" 
-										type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control date-input" />
-										 
-										<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'SLIDER'}" 
-										type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}"
-										th:attr="data-min=${nurseryLevelVariable.variable.minRange}"
-										th:attrappend="data-max=${nurseryLevelVariable.variable.maxRange}"
-										class="form-control spinner-input spinnerElement"
-										data-step="0.0001" 										 
-										/>
-											 
-										<span>
-											<a th:if="${nurseryLevelVariable.variable.cvTermId}==*{locationId}" href="javascript: openManageLocations();" th:text="#{nursery.managesettings.manage.location}">Manage Location</a>
-											<a th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}" href="javascript: openManageMethods();" th:text="#{nursery.managesettings.manage.method}">Manage Method</a>
-										</span>		
-		                            </div>
-			    				</div>
-		    				</div>
-						</div>
-			    			
-	    				<div class="col-xs-6 col-md-6">	    								    			
-		    				<div class="row">
-			    				<div class="col-xs-12 col-md-12">
-					    			<label class="control-label" data-toggle="collapse" data-target=".plotLevelDetails">
-					    				<img th:src="@{/static/img/review-list-details.png}" style="padding-bottom:3px;" />
-					    				<strong class="sub-content-heading" th:text="#{nursery.managesettings.plot.level.details}">PLOT-LEVEL DETAILS</strong>
+	    					<div class="row">
+			    				<div class="col-xs-10 col-md-10">
+				    				<label class="control-label" data-toggle="collapse" data-target=".nurseryLevelDetails">
+				    					<strong class="sub-content-heading" th:text="#{nursery.managesettings.management.details}">MANAGEMENT DETAILS</strong>
 				    				</label>
+				    				<span class="help-tooltip-nursery" data-placement="right" data-toggle="tooltip" th:title="#{nursery.managesettings.nursery.level.notes}">?</span>
+				    			</div>
+				    			<div class="col-xs-2 col-md-2 add-bottom-padding">
+						    		<a class="btn btn-info" href="javascript: openAddVariablesSetting(1);" th:text="#{nursery.create.nursery.add.settings}">Add</a>
 				    			</div>
 			    			</div>
-			    			<div class="row form-group collapse in plotLevelDetails">
-			    				<div class="col-xs-12 col-md-12">
-					    			<label class="control-label" th:text="#{nursery.managesettings.plot.level.notes}"> Select the settings you will record at the plot level in the nursery. 
-					    			These will appear as data columns in your nursery book. You can add and remove settings at this level.</label>
-				    			</div>
-			    				<div class="col-xs-12 col-md-12">
-			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll-create" id="plotLevelSettings">
-			    						<thead>
-										<tr>
-							                <th width="45%" th:utext="#{nursery.managesettings.plot.name}">.Name</th>
-							                <th width="45%" th:utext="#{nursery.managesettings.plot.description}">.Description</th>
-							                 <th width="10%"></th>
-										</tr>
-										</thead>
-										<tbody>
-					    					<tr th:each="plotLevelVariable, rowStat : *{plotLevelVariables}">
-					    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.name}"></td>
-					    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.description}"></td>
-					    					<td width="10%" th:class="${rowStat.even}? 'even' : 'odd'" >
-						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
-														*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
-														<span class="glyphicon glyphicon-eye-open"></span></a>
-						    					</td>
-					    					<input class="cvTermIds" type="hidden" th:field="*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
-					    					</tr> 
-				    					</tbody>
-			    					</table>
-			    				</div>
-			    				<div class="col-xs-3 col-md-3"></div>
-			    			</div>
-		    				
-		    				
+			    			<div class="sectionContainer" id="nurseryLevelSettings-dev">
+			    				
+		    					<div class="row form-group nurseryLevelSettings" th:each="nurseryLevelVariable, rowStat : *{studyLevelVariables}">
+		    						<div class="col-xs-5 col-md-5 1st">
+		    							<span style="cursor: default; font-size: 16px;" th:if="${nurseryLevelVariable.deletable}" class="delete-icon" 
+											th:onclick="'javascript: deleteVariable(1,\'' + ${nurseryLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
+											<input class="cvTermIds  nurseryLevelVariableIdClass" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
+		    							&nbsp;&nbsp;&nbsp;
+		    							<span style="word-wrap: break-word"  class="control-label nursery-level-label label-bold" th:text="${nurseryLevelVariable.variable.name}"></span>:
+		    							&nbsp;<span class="required">*</span>
+		    						</div>
+		    						<div class="col-xs-7 col-md-7 2nd">
+		    						<!-- <div th:text="${nurseryLevelVariable.variable.cvTermId}"></div> -->
+		    								<!-- <input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
+		    								 --> 
+											<input style="width: 30%" th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" 
+											type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control select2" />
+											
+											<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="selectedValue" type="hidden" th:value="*{studyLevelVariables[__${rowStat.index}__].value}" />
+											<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="selectedValueFave" type="hidden" th:value="*{studyLevelVariables[__${rowStat.index}__].value}" />
+											
+											<!-- Show Favorite Location/Method -->
+											<div style="width: 100%" th:if="${nurseryLevelVariable.variable.cvTermId}==*{locationId}" class="possibleValuesDiv">
+											<input 
+											type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}" 
+											th:onclick="'javascript: toggleLocationDropdown(\'' + ${rowStat.index} + '\');'" />
+											&nbsp;&nbsp;
+											<span
+											th:text="#{show.favorite.location}">Show Favorite Location</span>
+											</div>
+											<div style="width: 100%" th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}" class="possibleValuesDiv">
+											
+											<input
+											type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}" 
+											th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'" />
+											&nbsp;&nbsp;
+											<span 
+											th:text="#{show.favorite.method}">Show Favorite Method</span>
+											</div>
+											
+											<!-- store possible values of variable -->
+											<div th:text="${nurseryLevelVariable.value}" class="div-select-val" style="display: none"></div>
+											<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesJson' + ${rowStat.index}"
+												class="possibleValuesJson" style="display:none" th:text="${nurseryLevelVariable.possibleValuesJson}">
+											</div>
+											<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesFavoriteJson' + ${rowStat.index}"
+												class="possibleValuesFavoriteJson" style="display:none" th:text="${nurseryLevelVariable.possibleValuesFavoriteJson}">
+											</div>
+											
+											<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'NTEXT'}" 
+											type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control numeric-input" />
+											
+											<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'CTEXT'}" 
+											type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control character-input" />
+											
+											<textarea th:if="${nurseryLevelVariable.variable.widgetType.type == 'TEXTAREA'}" 
+											 th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control character-input" rows="3" />
+											
+											<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DATE'}" 
+											type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control date-input" />
+											 
+											<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'SLIDER'}" 
+											type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}"
+											th:attr="data-min=${nurseryLevelVariable.variable.minRange}"
+											th:attrappend="data-max=${nurseryLevelVariable.variable.maxRange}"
+											class="form-control numeric-input" 										 
+											/>
+												 
+											<span>
+												<a th:if="${nurseryLevelVariable.variable.cvTermId}==*{locationId}" href="javascript: openManageLocations();" th:text="#{nursery.managesettings.manage.location}">Manage Location</a>
+												<a th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}" href="javascript: openManageMethods();" th:text="#{nursery.managesettings.manage.method}">Manage Method</a>
+											</span>		
+									</div>
+		    					</div>
+		    				</div>
 			    			<div class="row form-group">
 			    				<div class="col-xs-12 col-md-12">
 			    					&nbsp;
 			    				</div>
 		    				</div>
-		    				<div class="row">
-			    				<div class="col-xs-12 col-md-12">
-					    			<label class="control-label" data-toggle="collapse" data-target=".baselineTraitDetails">
-					    				<img th:src="@{/static/img/review-list-details.png}" style="padding-bottom:3px;" />
-					    				<strong class="sub-content-heading" th:text="#{nursery.managesettings.baseline.traits}">BASELINE TRAITS</strong>
+						</div>
+	    				<div class="col-xs-6 col-md-6">
+	    					<div class="row">
+			    				<div class="col-xs-10 col-md-10">
+				    				<label class="control-label" data-toggle="collapse" data-target=".nurseryConditionsDetails">
+				    					<strong class="sub-content-heading" th:text="#{nursery.create.nursery.conditions}">NURSERY CONDITIONS</strong>
 				    				</label>
+				    				<span class="help-tooltip-nursery" data-placement="right" data-toggle="tooltip" th:title="#{nursery.create.nursery.conditions.notes}">?</span>
+				    			</div>
+				    			<div class="col-xs-2 col-md-2 add-bottom-padding">
+						    		<a class="btn btn-info" href="javascript: openAddVariablesSetting(7);" th:text="#{nursery.create.nursery.add.settings}">Add</a>
 				    			</div>
 			    			</div>
-			    			<div class="row form-group collapse in baselineTraitDetails">
+			    			<div class="sectionContainer collapse in nurseryConditionsDetails" id="nurseryConditionsSettings">
+		    					<div class="row form-group nurseryConditionsSettings" th:each="nurseryCondition, rowStat : *{nurseryConditions}">
+		    						<div class="col-xs-5 col-md-5 1st">
+		    							<span style="cursor: default; font-size: 16px;" th:if="${nurseryCondition.deletable}" class="delete-icon" 
+											th:onclick="'javascript: deleteVariable(7,\'' + ${nurseryCondition.variable.cvTermId} + '\',$(this))'"></span>
+											<input class="cvTermIds" type="hidden" th:field="*{nurseryConditions[__${rowStat.index}__].variable.cvTermId}" />&nbsp;&nbsp;&nbsp;
+											<span style="word-wrap: break-word"  class="control-label nursery-condition-label label-bold" th:text="${nurseryCondition.variable.name}"></span>:
+		    							&nbsp;<span class="required">*</span>
+		    						</div>
+		    						<div class="col-xs-7 col-md-7 2nd">
+		    								<input class="cvTermIds nurseryConditionVariableIdClass" type="hidden" th:field="*{nurseryConditions[__${rowStat.index}__].variable.cvTermId}" /> 
+											<input style="width: 30%" th:if="${nurseryCondition.variable.widgetType.type == 'DROPDOWN'}" 
+											type="hidden" th:field="*{nurseryConditions[__${rowStat.index}__].value}" class="form-control select2" />
+																						
+											<!-- store possible values of variable -->
+											<div th:text="${nurseryCondition.value}" class="div-select-val" style="display: none"></div>
+											<div th:if="${nurseryCondition.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesJsonCons' + ${rowStat.index}"
+												class="possibleValuesJsonCons" style="display:none" th:text="${nurseryCondition.possibleValuesJson}">
+											</div>
+											<div th:if="${nurseryCondition.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesFavoriteJsonCons' + ${rowStat.index}"
+												class="possibleValuesFavoriteJsonCons" style="display:none" th:text="${nurseryCondition.possibleValuesFavoriteJson}">
+											</div>
+											
+											<input th:if="${nurseryCondition.variable.widgetType.type == 'NTEXT'}" 
+											type="text" th:field="*{nurseryConditions[__${rowStat.index}__].value}" class="form-control numeric-input" />
+											
+											<input th:if="${nurseryCondition.variable.widgetType.type == 'CTEXT'}" 
+											type="text" th:field="*{nurseryConditions[__${rowStat.index}__].value}" class="form-control character-input" />
+											
+											<textarea th:if="${nurseryCondition.variable.widgetType.type == 'TEXTAREA'}" 
+											 th:field="*{nurseryConditions[__${rowStat.index}__].value}" class="form-control character-input" rows="3" />
+											
+											<input th:if="${nurseryCondition.variable.widgetType.type == 'DATE'}" 
+											type="text" th:field="*{nurseryConditions[__${rowStat.index}__].value}" class="form-control date-input" />
+											 
+											<input th:if="${nurseryCondition.variable.widgetType.type == 'SLIDER'}" 
+											type="text" th:field="*{nurseryConditions[__${rowStat.index}__].value}"
+											th:attr="data-min=${nurseryCondition.variable.minRange}"
+											th:attrappend="data-max=${nurseryCondition.variable.maxRange}"
+											class="form-control numeric-input" 										 
+											/>
+									</div>
+		    					</div>
+		    				</div>
+	    					<div class="row form-group">
 			    				<div class="col-xs-12 col-md-12">
-					    			<label class="control-label" th:text="#{nursery.managesettings.baseline.traits.notes}"> The list below shows the standard traits available for Cowpea. 
-					    			You can add and remove traits in this list to create the baseline set of traits you are working with in your program. 
-					    			You will be able to add additional traits to measure in each nursery.</label>
+			    					&nbsp;
+			    				</div>
+		    				</div>
+	    				</div>
+    				</div>
+	    			<div class="row form-group">
+	    				<div class="col-xs-6 col-md-6">
+	    					<div class="row">
+			    				<div class="col-xs-10 col-md-10">
+			    					<img width="23" height="23" th:src="@{/static/img/factors.png}" class="image-padding" /> &nbsp;
+				    				<label class="control-label" data-toggle="collapse" data-target=".plotLevelDetails">
+				    					<strong class="sub-content-heading" th:text="#{nursery.managesettings.plot.level.details}">PLOT-LEVEL DETAILS</strong>
+				    				</label>
+				    				<span class="help-tooltip-nursery" data-placement="right" data-toggle="tooltip" th:title="#{nursery.managesettings.plot.level.notes}">?</span>
 				    			</div>
+				    			<div class="col-xs-2 col-md-2 add-bottom-padding" th:if="${createNurseryForm.measurementRowList.size() == 0}">
+						    		<a class="btn btn-info" href="javascript: openAddVariablesSetting(2);" 
+					    			 th:text="#{nursery.create.nursery.add.settings}">Add</a>						    		
+				    			</div>
+				    			<div class="col-xs-2 col-md-2 add-bottom-padding" th:if="${createNurseryForm.measurementRowList.size() != 0}" style="padding-top: 30px">
+						    								    		
+				    			</div>
+			    			</div>
+			    			<div class="row form-group collapse in plotLevelDetails">
 			    				<div class="col-xs-12 col-md-12">
-			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll-create" id="baselineTraitSettings">
+			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll-create" id="plotLevelSettings">
 			    						<thead>
 										<tr>
-							                <th width="45%" th:utext="#{nursery.managesettings.trait}">.Trait</th>
-							                <th width="45%" th:utext="#{nursery.managesettings.trait.description}">.Description</th>
-							                <th width="10%"></th>
+							                <th width="5%"></th>
+							                <th width="45%" th:utext="#{nursery.managesettings.plot.name}">.Name</th>
+							                <th width="50%" th:utext="#{nursery.managesettings.plot.description}">.Description</th>
 										</tr>
 										</thead>
 										<tbody>
-					    					<tr class="baseline-traits" th:each="baselineTraitVariable, rowStat : *{baselineTraitVariables}">
-					    						
-						    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.name}"></td>
-						    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.description}"></td>
-						    					<td width="10%" th:class="${rowStat.even}? 'even' : 'odd'" >
+					    					<tr th:each="plotLevelVariable, rowStat : *{plotLevelVariables}">
+					    						<td width="5%" style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'">
+													<span style="cursor: default; font-size: 16px;" th:if="${plotLevelVariable.deletable}" class="delete-icon"
+						    						th:onclick="'javascript: deleteVariable(2,\'' + ${plotLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
+						    						  			    						 
+						    						<input class="cvTermIds" type="hidden" th:field="*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
+				    							</td>
+						    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
 						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
-														*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
-														<span class="glyphicon glyphicon-eye-open"></span></a>
-														<input class="cvTermIds" type="hidden" th:field="*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId}" />
+															*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
+															<span th:text="${plotLevelVariable.variable.name}"></span></a>
 						    					</td>
-						    					
+						    					<td width="50%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.description}"></td>
 					    					</tr> 
 				    					</tbody>
 			    					</table>
 			    				</div>
 			    				<div class="col-xs-3 col-md-3"></div>
 			    			</div>
-		    				
-		    				
 	    				</div>
-	    				
-	    			</div>
+	    				<div class="col-xs-6 col-md-6">
+	    					<div class="row">
+			    				<div class="col-xs-10 col-md-10">
+			    					<img width="23" height="23" th:src="@{/static/img/baseline-traits.png}" class="image-padding" /> &nbsp;
+				    				<label class="control-label" data-toggle="collapse" data-target=".baselineTraitDetails">
+				    					<strong class="sub-content-heading" th:text="#{nursery.managesettings.baseline.traits}">BASELINE TRAITS</strong>
+				    				</label>
+				    				<span class="help-tooltip-nursery" data-placement="right" data-toggle="tooltip" th:title="#{nursery.managesettings.baseline.traits.notes}">?</span>
+				    			</div>
+				    			<div class="col-xs-2 col-md-2 add-bottom-padding">
+						    		<a class="btn btn-info" href="javascript: openAddVariablesSetting(3);" th:text="#{nursery.create.nursery.add.settings}">Add</a>
+				    			</div>
+			    			</div>
+			    			<div class="row form-group collapse in baselineTraitDetails">
+			    				<div class="col-xs-12 col-md-12">
+			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll-create" id="baselineTraitSettings">
+			    						<thead>
+										<tr>
+							                <th width="5%"></th>
+							                <th width="45%" th:utext="#{nursery.managesettings.trait}">.Trait</th>
+							                <th width="50%" th:utext="#{nursery.managesettings.trait.description}">.Description</th>
+										</tr>
+										</thead>
+										<tbody>
+					    					<tr class="baseline-traits" th:each="baselineTraitVariable, rowStat : *{baselineTraitVariables}">
+					    						<td width="5%" style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'" >
+						    						<span style="cursor: default; font-size: 16px;" th:if="${baselineTraitVariable.deletable}" class="delete-icon"
+						    						th:onclick="'javascript: deleteVariable(3,\'' + ${baselineTraitVariable.variable.cvTermId} + '\',$(this))'"></span>
+						    									    					
+						    						<input class="cvTermIds" type="hidden" th:field="*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId}" />
+					    						</td>
+						    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
+						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
+														*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
+														<span th:text="${baselineTraitVariable.variable.name}"></span></a>
+						    					</td>
+						    					<td width="50%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.description}"></td>						    					
+					    					</tr> 
+				    					</tbody>
+			    					</table>
+			    				</div>
+			    				<div class="col-xs-3 col-md-3"></div>
+			    			</div>
+	    				</div>
+    				</div>
+    				<div class="row form-group">
+	    				<div class="col-xs-6 col-md-6">
+	    					<div class="row">
+			    				<div class="col-xs-10 col-md-10">
+			    					<img width="23" height="23" th:src="@{/static/img/variates.png}" class="image-padding" /> &nbsp;
+				    				<label class="control-label" data-toggle="collapse" data-target=".selectionVariatesDetails">
+				    					<strong class="sub-content-heading" th:text="#{nursery.create.nursery.selection.variates}">SELECTION VARIATES</strong>
+				    				</label>
+				    				<span class="help-tooltip-nursery" data-placement="right" data-toggle="tooltip" th:title="#{nursery.create.nursery.selection.variates.notes}">?</span>
+				    			</div>
+				    			<div class="col-xs-2 col-md-2 add-bottom-padding">
+						    		<a class="btn btn-info" href="javascript: openAddVariablesSetting(6);" th:text="#{nursery.create.nursery.add.settings}">Add</a>
+				    			</div>
+			    			</div>
+			    			<div class="row form-group collapse in selectionVariatesDetails">
+			    				<div class="col-xs-12 col-md-12">
+			    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll-create" id="selectionVariatesSettings">
+			    						<thead>
+										<tr>
+											<th width="5%"></th>
+							                <th width="45%" th:utext="#{nursery.create.nursery.selection.variate.name}">.Name</th>
+							                <th width="50%" th:utext="#{nursery.create.nursery.selection.variate.description}">.Description</th>
+										</tr>
+										</thead>
+										<tbody>
+					    					<tr th:each="selectionVariatesVariable, rowStat : *{selectionVariatesVariables}">
+					    						<td width="5%" style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'">
+													<span style="cursor: default; font-size: 16px;" th:if="${selectionVariatesVariable.deletable}" class="delete-icon"
+						    						th:onclick="'javascript: deleteVariable(6,\'' + ${selectionVariatesVariable.variable.cvTermId} + '\',$(this))'"></span>
+						    						  			    						 
+						    						<input class="cvTermIds" type="hidden" th:field="*{selectionVariatesVariables[__${rowStat.index}__].variable.cvTermId}" />
+				    							</td>
+						    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
+						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
+															*{selectionVariatesVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
+															<span th:text="${selectionVariatesVariable.variable.name}"></span></a>
+						    					</td>
+						    					<td width="50%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${selectionVariatesVariable.variable.description}"></td>
+					    					</tr> 
+				    					</tbody>
+			    					</table>
+			    				</div>
+			    				<div class="col-xs-3 col-md-3"></div>
+			    			</div>
+	    				</div>
+	    				<div class="col-xs-6 col-md-6">
+	    				</div>
+    				</div>
  
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<div th:include="/NurseryManager/addVariablesSettingModal"></div>
+		</div>
+	</div>
 
 </form>
- 
-
-	<!-- Modal Dialog for Choosing Folder Location -->
+		 
 	<div class="row">
-		<div class="col-md-12">	
-			<div class="modal fade" id="folderBrowserModal"  role="dialog" aria-labelledby="folderBrowserModal" aria-hidden="true">
-				<div class="modal-dialog modal-large" style="width:500px;">
-					<div class="modal-content">
-					
-					</div><!-- /.modal-content -->
-				</div><!-- /.modal-dialog -->
-			</div><!-- /.modal -->		
-			 
-		</div>
-	</div>	
-	
-	 <div class="row">
-        <div class="col-xs-12 col-md-12">
-            <div id="manage-location" th:include="/Common/manageLocationsModal"></div>            
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-12 col-md-12">
-            <div id="manage-location" th:include="/Common/manageMethodsModal"></div>
-        </div>
-    </div>
-    <div class="row">
 		<div class="col-xs-12 col-md-12">
     		<div id="showBaselineTraitDetails" th:include="/NurseryManager/baselineTraitDetails"></div>
    		</div>
@@ -273,6 +347,17 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
     var nurseryGermplasmListIsRequired = /*[[#{nursery.create.germplasm.list.is.required}]]*/;
     var checkTypeIsRequired = /*[[#{nursery.create.check.type.is.required}]]*/;
     
+    //labels for method and location
+    var showFavoriteMethodLabel = /*[[#{show.favorite.method}]]*/;
+    var showFavoriteLocationLabel = /*[[#{show.favorite.location}]]*/;
+    var manageMethodLabel = /*[[#{nursery.managesettings.manage.method}]]*/;
+	var manageLocationLabel = /*[[#{nursery.managesettings.manage.location}]]*/;
+	
+	var varInListMessage = /*[[#{nursery.managesettings.variable.in.selected.list}]]*/;
+	var idNameCounterpartAddedError = /*[[#{manage.settings.id.name.counterpart.added.error}]]*/;
+	var valueNotNumeric = /*[[#{nursery.create.nursery.value.not.numeric}]]*/;
+	var valueNotWIMinMax = /*[[#{nursery.create.nursery.value.not.within.min.max}]]*/;
+    
     var locationId = '';
     var programLocationUrl = '';
     var programMethodUrl = '';
@@ -284,6 +369,8 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
     var startDateId = '';
 	var endDateId = '';
 
+	var selectionVariatesSegment = 6;
+	var baselineTraitsSegment = 3;
     
 	$(document).ready(function() {
 		if (getIEVersion() == 8) {
@@ -300,9 +387,9 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
         programMethodUrl = $('#breedingMethodUrl').val();
         programLocationUrl = $('#locationUrl').val();
         importLocationUrl = $('#importLocationUrl').val();
-            
 
 		$("#folderNameSpan").html($("#folderName").val());
+		
 		$.each($(".possibleValuesJson"), function (index, divElem){
 				var select2Index = $(divElem).attr("id").split("possibleValuesJson")[1]; 
 
@@ -317,12 +404,28 @@ th:action="@{/NurseryManager/createNursery}" method="post" th:object="${createNu
 				}
 				
 			});
-				setTimeout('initializeDateAndSliderInputs()', 500);
-		        addCreateNurseryRequiredAsterisk();
-		        $('select').each(function(){
-					$(this).select2();
-				});
 		
+		$.each($(".possibleValuesJsonCons"), function (index, divElem){
+			var select2Index = $(divElem).attr("id").split("possibleValuesJsonCons")[1]; 
+			initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 
+ 				"#" + getJquerySafeId("nurseryConditions"+select2Index+".value"), false, $(divElem).siblings(".div-select-val").html());
+		});		
+		
+		setTimeout('initializeDateAndSliderInputs()', 500);
+		
+        addCreateNurseryRequiredAsterisk();
+        $('select').each(function(){
+			$(this).select2();
+		});
+		
+		$(".help-tooltip-nursery").tooltip();
+		$('#srch-term').on("change", function(event){
+	    	 
+	    	var data = $('#srch-term').select2('data');
+	    	//console.log('do serch');
+	    	 doOntologyTreeHighlight(treeDivId, data.key);
+	    	 //console.log("1");
+	    });
 	});
            
 //]]>

@@ -1,162 +1,36 @@
-<div class="col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org">
-	<div class="page-header">
-		<h1>
-			ADVANCE NURSERY WIZARD
-		</h1>
-	</div>			  
-</div>
-<div class="row">
-			<div >				
-					<div class="form-group">
-						<div  id="page-message"></div>
-					</div>				
+<div class="col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org" th:object="${advancingNurseryform}">
+	
+	<div class="row form-group">
+		<div class="col-xs-12 col-md-12">
+			<div class="col-xs-2 col-md-2">
+				<label class="control-label h4" th:text="#{advancing.nursery.header}"></label>
 			</div>
-		</div>
-	<div class="row">
-		<div class="panel panel-default">
-   	<div class="panel-body">
-   	
+			<div class="col-xs-5 col-md-5">
+				<label th:text="#{advancing.nursery.entries.total}">Total Entries:</label> <label class="control-label control-label-bold advance-list-size"  th:text="*{#lists.size(germplasmList)}"></label>
+				<button style="margin-left: 20px" th:id="*{uniqueId}" type="button" class="btn btn-primary uniqueId" aria-hidden="true" onclick="javascript: openSaveListModal(this);" th:text="#{common.form.save.text}">Save</button>
+			</div>
+		</div>			
+	</div>
+	
+	<div class="row form-group">	
 		
-		<form id="saveAdvanceNurseryForm" role="form-horizontal" class="form-horizontal" action="#"
-th:action="@{/NurseryManager/saveAdvanceNursery}" method="post" th:object="${advancingNurseryform}" enctype="multipart/form-data">
-		<div class="row form-group">
-    		<div class="col-xs-12 col-md-12">
-    			<div class="col-xs-4 col-md-4">
-    				<label class="control-label"><em th:utext="#{nursery.managesettings.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
-   				</div>
-   			</div>
-  		</div>
-		<div class="row form-group" >
-			<div class="col-xs-12 col-md-12" >				
-					<div class="col-xs-4 col-md-4">
-						<label class="control-label" th:text="#{nursery.save.advance.nursery.nursery.advance.name}+':'"></label><span class="required">*</span>
-					</div>
-					<div class="col-xs-4 col-md-4">
-						<input type="text" th:field="*{nurseryAdvanceName}" class="form-control"/>
-					</div>
-					<div class="col-xs-4 col-md-4">
-					</div>
-			</div>
-		</div>
-		<div class="row form-group">
-				<div class="col-xs-12 col-md-12" >
-					<div class="col-xs-4 col-md-4">
-						<label class="control-label" th:text="#{nursery.save.advance.nursery.description}+':'"></label><span class="required">*</span>
-					</div>
-					<div class="col-xs-8 col-md-8">
-						<input type="text" th:field="*{nurseryAdvanceDescription}" class="form-control"/>
-					</div>
-				</div>
-		</div>
-		<div class="row form-group">
 			<div class="col-xs-12 col-md-12">
-				<div class="col-xs-4 col-md-4">
-					<label class="control-label" th:text="#{nursery.save.advance.nursery.entries}+':'"></label>
-				</div>
-				<div class="col-xs-8 col-md-8">
-					<label th:text="*{entries}"></label>
-				</div>
-			</div>
-		</div>
-		<br />
-		
-		</form>
-		<div class="row form-group">	
-			
-				<div class="col-xs-12 col-md-12">
-					<div class="col-xs-12 col-md-12">				
-						<div  id="advance-nursery-germplasm-list" th:include="/NurseryManager/showSaveAdvanceNurseryPagination">
-			      		</div>							
-		      		</div>
+				<div class="col-xs-12 col-md-12">				
+					<div  id="advance-nursery-germplasm-list" th:include="/NurseryManager/showSaveAdvanceNurseryPagination">
+		      		</div>							
 	      		</div>
-      			
-		</div>
-		<div class="row form-group">
-			<div class="col-xs-12 col-md-12" >
-				<div class="row form-group">
-					<div class="col-xs-5 col-md-5">&nbsp;</div>
-					<div class="col-xs-7 col-md-7">
-						<input type="button" onclick="javascript: window.history.back();"  value="Cancel" th:value="#{common.form.cancel.text}" class="btn btn-default"/>
-	      				<input type="button" value="Save" th:value="#{common.form.save.text}" class="btn btn-primary" onclick="doSave();" />
-					</div>
-					<div class="col-xs-4 col-md-4">&nbsp;</div>
-				</div>
-			</div>
-		</div>
-		
-		</div></div>
+      		</div>
+     			
 	</div>
-
-	<div class="form-group">
-		<div class="col-md-12">
-			<div class="modal fade" id="successMessageModal" role="dialog" aria-labelledby="successMessageModal" aria-hidden="true">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-body" id="successMessageBody">
-							<div style="text-align: center">
-								<label th:text="#{common.form.save.successful.text}">Save successful!</label>
-							</div>
-						</div>
-						<div class="modal-footer">
-							<a id="btnOK" href="" th:href="@{/NurseryManager}" th:text="#{common.form.ok.text}" class="btn btn-primary">OK</a>
-						</div>
-					</div>
-					<!-- /.modal-content -->
-				</div>
-				<!-- /.modal-dialog -->
-			</div>
-			<!-- /.modal -->
-
-		</div>
-	</div>
-
-
+	
+</div>
 
 
 <div layout:fragment="page-script">
 <script type='text/javascript' th:inline="javascript">
-	//<![CDATA[   
- 		var nurseryAdvanceNameRequiredMessage = /*[[#{nursery.save.advance.nursery.nursery.advance.name.required}]]*/;
-        var nurseryAdvanceDescriptionRequiredMessage = /*[[#{nursery.save.advance.nursery.description.required}]]*/;
-        
-		function doSave(){
-			
-			if($('#nurseryAdvanceName').val() == ''){
-				showErrorMessage('page-message', nurseryAdvanceNameRequiredMessage);
-				return false;
-			}else if($('#nurseryAdvanceDescription').val() == ''){
-				showErrorMessage('page-message', nurseryAdvanceDescriptionRequiredMessage);
-				return false;
-			}
-			
-			
-  	      	var $form = $("#saveAdvanceNurseryForm");
-  			serializedData = $form.serialize();
-			Spinner.toggle();
-
-			$.ajax({
-				url: "/Fieldbook/NurseryManager/saveAdvanceNursery",
-				type: "post",
-				dataType: "json",
-				data: serializedData,
-			    success: function(data){
-				    if (data.status == "1") {
-				    	$('#successMessageModal').modal({ backdrop: 'static', keyboard: true }) 
-				    	$("#successMessageModal").modal("show");
-			       	} else if (data.status == "-1") {
-			       		showErrorMessage('page-message', data.errorMessage);
-			       	}
-			   }, 
-			   error: function(jqXHR, textStatus, errorThrown){
-					console.log("The following error occured: " + textStatus, errorThrown); 
-			   }, 
-			   complete: function(){  
-				   Spinner.toggle();
-			   } 
-			});
-		}      
-	
-      //]]>
-    </script>
-	
+//<![CDATA[    
+    var noAssignedMethodWarning = /*[[#{warning.advancing.nursery.skipped.no.breeding.method}]]*/;
+    
+//]]>
+</script>
 </div>

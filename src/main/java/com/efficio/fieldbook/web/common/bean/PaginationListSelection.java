@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.inventory.InventoryDetails;
 
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
@@ -43,6 +44,9 @@ public class PaginationListSelection implements Serializable{
 	
 	/** The advance map. */
 	private Map<String, AdvancingNurseryForm> advanceMap = new HashMap<String, AdvancingNurseryForm>();
+	
+	private Map<String, Workbook> reviewWorkbookList = new HashMap<String, Workbook>();
+	private Map<String, Workbook> reviewFullWorkbookList = new HashMap<String, Workbook>();
 	
 	/**
 	 * Adds the final advanced list.
@@ -122,5 +126,45 @@ public class PaginationListSelection implements Serializable{
 	 */
 	public AdvancingNurseryForm getAdvanceDetails(String id) {
 		return this.advanceMap.get(id);
+	}
+	
+	/**
+	 * Adds the advance details.
+	 *
+	 * @param id the id
+	 * @param form the form
+	 */
+	public void addReviewWorkbook(String id, Workbook workbook) {
+		this.reviewWorkbookList.put(id, workbook);
+	}
+	
+	/**
+	 * Gets the advance details.
+	 *
+	 * @param id the id
+	 * @return the advance details
+	 */
+	public Workbook getReviewWorkbook(String id) {
+		return this.reviewWorkbookList.get(id);
+	}
+	
+	/**
+	 * Adds the advance details.
+	 *
+	 * @param id the id
+	 * @param form the form
+	 */
+	public void addReviewFullWorkbook(String id, Workbook workbook) {
+		this.reviewFullWorkbookList.put(id, workbook);
+	}
+	
+	/**
+	 * Gets the advance details.
+	 *
+	 * @param id the id
+	 * @return the advance details
+	 */
+	public Workbook getReviewFullWorkbook(String id) {
+		return this.reviewFullWorkbookList.get(id);
 	}
 }

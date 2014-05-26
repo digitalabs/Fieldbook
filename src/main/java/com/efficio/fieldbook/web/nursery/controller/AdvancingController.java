@@ -64,8 +64,8 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     /** The Constant URL. */
     public static final String URL = "/NurseryManager/advance/nursery";
     
-    private static final String MODAL_URL = "NurseryManager/ver2.0/advanceNurseryModal";
-    private static final String SAVE_ADVANCE_NURSERY_PAGE_TEMPLATE = "NurseryManager/ver2.0/saveAdvanceNursery";
+    private static final String MODAL_URL = "NurseryManager/advanceNurseryModal";
+    private static final String SAVE_ADVANCE_NURSERY_PAGE_TEMPLATE = "NurseryManager/saveAdvanceNursery";
     
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(AdvancingController.class);

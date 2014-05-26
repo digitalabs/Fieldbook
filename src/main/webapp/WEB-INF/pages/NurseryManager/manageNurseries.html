@@ -1,3 +1,7 @@
+
+<div class="row">
+	<div id="open-germplasm" th:include="/Common/openGermplasmDetailsModal"></div>
+</div>
 <div class="col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org">
 	<div class="page-header">
 		<h1 th:text="#{nursery.managenurseries.header}">
@@ -6,86 +10,58 @@
 	</div>	
 	</div>
 	<div class="move-left col-xs-12 col-md-12">
-	<div class="form-group">
+		<div class="form-group">
+		
+			<div id="page-message" class="">
+			</div>				
+			
+		</div>
 	
-		<div id="page-create-field-map-message" class="">
-		</div>				
-		
-	</div>
 	<div>
-	<div class="panel panel-default">
-	   	<div class="panel-body manage-settings-panel-body">
-	   	
-	   	<div class="row">
-		
-			
-			<div style="float:right; ">			
-		
-			 <!-- <button style="margin-left: -70px" type="button" class="btn btn-info" id="make-nursery" th:value="@{/NurseryManager/createNursery}"  th:text="#{nursery.managenurseries.make.new.nursery}">New Nursery</button
-			  --> 			 
-			 <!-- <a  class="btn btn-info" id="make-nursery" th:href="@{/NurseryManager/createNursery}"  th:text="#{nursery.managenurseries.make.new.nursery}">New Nursery</a>
-			  -->
-			   
-			  
-			 <button type="button" class="btn btn-info" id="make-nursery" th:value="@{/NurseryManager/fileUpload/newNursery}"  th:text="#{nursery.managenurseries.make.new.nursery}">New Nursery</button>
-			 
-			 <!-- 
-			 <a class="btn btn-info" id="manage-nursery-settings" href="" th:href="@{/NurseryManager/manageNurserySettings}"  th:text="#{nursery.managesettings.manage.nursery.settings}">Manage Settings</a>
-			 -->
-			
-				<div   class="btn-group">
-				  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
-				    <span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;Tools
-				  </button>
-				  <ul class="dropdown-menu" role="menu">
-				    <li>
-				    	<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
-				    	<a href="javascript: createFieldMap('nursery-table');" id="fieldmap-url-link" th:text="#{tools.create.field.map}">Create Field Map</a>
-				    </li>
-				    <!--hide this for now since saving is having problem GCP-7295 & GCP-7296 -->
-				    <li>
-				    	<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
-				    	<a href="javascript: showFieldMap('nursery-table');" id="fieldmap-url-link" th:text="#{tools.display.existing.field.map}">Display Existing Field Map</a>
-				    </li>
-				     
-				    <li>
-				    	<a href="" style="display: none" id="label-printing-url" th:href="@{/LabelPrinting/specifyLabelDetails/nursery}"></a>
-				    	<a href="javascript: createLabelPrinting('nursery-table');" id="label-printing-url-link" th:text="#{tools.create.label.printing}">Create Labels</a> 
-				    </li>
-				     
-				    <li>
-				    	<a href="" style="display: none" id="open-study-url" th:href="@{/NurseryManager/fileUpload/newNursery}"></a>
-				    	<a href="javascript: openStudyOldFb();" id="open-study-url-link" th:text="#{tools.open.nursery}">Open Nursery</a> 
-				    </li>
-				     <!--
-					<li>
-				    	<a href="" style="display: none" id="open-study-url" th:href="@{/NurseryManager/addOrRemoveTraits/viewNursery}"></a>
-				    	<a href="javascript: openStudy('nursery-table');" id="open-study-url-link" th:text="#{tools.open.nursery}">Open Nursery</a> 
-				    </li>
-				     -->
-				      <!--
-				    <li>
-				    	<a href="" style="display: none" id="advance-study-url" th:href="@{/NurseryManager/advance/nursery}"></a>
-				    	<a href="javascript: advanceNursery('nursery-table');" id="advance-study-url-link" th:text="#{tools.advance.nursery}">Advance Nursery</a> 
-				    </li>
-				     -->  	      
-				  </ul>
+
+	<div class="row">
+		<div class="col-xs-7 col-md-7">	
+			<img th:src="@{/static/img/new-nursery.png}" class="image-padding image-padding-with-text"  /> 
+			<label class="h2_no_transform" th:text="#{browse.nurseries.header}"></label>
+			<label class="control-label"><a href="javascript: openStudyTree(1)">Browse</a> for a nursery to work with.</label>
+		</div>
+		<div class="col-xs-5 col-md-5">
+			<div style="float: right;padding-right: 10px;">
+				<a href="" th:href="@{/NurseryManager/createNursery}" class="btn btn-info" th:utext="#{browse.nursery.start.new.nursery}">+ Start a New Nursery</a>				
 			</div>
 		</div>
-		</div>
-		<br />
+	</div>	
 	
-	<div id="nursery-details-list" th:include="/NurseryManager/showNurseriesPagination">
-    </div>
-    <div th:object="${manageNurseriesForm}">
-		<div th:if="*{nurseryDetailsList != null and not #lists.isEmpty(nurseryDetailsList)}">
-			<div id="nurseryDetailsListPagination"></div>
-		</div>
-    </div>
-    </div></div></div>
 	<div class="row">
-    	<div id="ontology-add-variable" th:include="/Fieldmap/selectTrialInstanceModal"></div>
-    </div>
+	&nbsp;
+	</div>
+		
+		<!-- details section -->
+	<div class="row">	
+		<div id="browser-nurseries">
+			<div class="col-xs-12 col-md-12">
+			    <div th:include="/NurseryManager/studyInfo"/>	
+			</div>
+		</div>
+	</div>
+		
+	</div>
+</div>
+
+<div class="row">				
+	<div th:include="/NurseryManager/studyTree"/>
+</div>
+
+<div class="row">
+	<div class="col-xs-12 col-md-12">
+		<div id="showBaselineTraitDetails" th:include="/NurseryManager/baselineTraitDetails"></div>
+	</div>
+</div>
+
+<div class="row">
+	<div id="ontology-add-variable" th:include="/Fieldmap/selectTrialInstanceModal"></div>
+</div>
+
     <div class="modal fade" id="manageTrialConfirmation" tabindex="-1" role="dialog" aria-labelledby="manageTrialConfirmationLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -115,36 +91,25 @@
         </div>
       </div>
     </div>
-</div>
+     
+<div class="row">
+    <div id="export-study" th:include="/NurseryManager/exportStudy"></div>
+</div>    
+
 <div layout:fragment="page-script">
 	<!-- For pagination -->
-	<script type="text/javascript" th:src="@{/static/js/bootstrap-paginator.min.js}"></script>
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    
-        var createLabelErrorMsg = /*[[#{common.error.create.label.nursery}]]*/;
-        var paginationUrl = /*[[@{/NurseryManager/manageNurseries/page/}]]*/;
-        var fieldMapStudyRequired = /*[[#{common.error.select.study(#{fieldmap.nursery})}]]*/;
-        var fieldMapOneStudyErrorMsg = /*[[#{common.error.select.one.study.show.fieldmap(#{fieldmap.nursery})}]]*/;
-        var noFieldMapExists = /*[[#{common.error.no.existing.fieldmap(#{fieldmap.nursery})}]]*/;
+        
         var openStudyError = /*[[#{common.error.open.study(#{fieldmap.nursery})}]]*/;
         var advanceStudyError = /*[[#{common.error.advance.study(#{fieldmap.nursery})}]]*/;
-        var options = {
-            currentPage: /*[[${manageNurseriesForm.currentPage}]]*/,
-            totalPages: /*[[${manageNurseriesForm.totalPages}]]*/,
-            //size:'small',
-            alignment:'center',
-            useBootstrapTooltip:true,
-            onPageClicked: function(e,originalEvent,type,page){
-            	showPage(paginationUrl, page, 'nursery-details-list');
-                //alert("Page item clicked, type: "+type+" page: "+page);
-            }
-        }
+     	var paginationUrl = /*[[@{/NurseryManager/manageNurseries/page/}]]*/;
+     	var showText = /*[[#{nursery.nurserydetails.additional.show}]]*/;
+     	var hideText = /*[[#{nursery.nurserydetails.additional.hide}]]*/;
         
         var selectedTableIds = new Array();
+        var currentStudyId = getCurrentStudyIdInTab();
         
-		if($('#nurseryDetailsListPagination') != null){
-			$('#nurseryDetailsListPagination').bootstrapPaginator(options);	
-		}
         
      	 $('#make-nursery').on('click', function(){
      		Spinner.toggle();
@@ -161,16 +126,7 @@
    		       );
      	}); 
      	
-     	$( document ).ready(function() {  	     
-        	if($('#nurseryDetailsListPagination') == null || 
-       			$('#nurseryDetailsListPagination').length == 0){
-       			        		//we disable the buttons
-       			        		$('.dropdown-menu li').addClass('disabled');
-       			        	}
-       			        	        	
-		});
-        
-        
+
       //]]>
     </script>
 </div>

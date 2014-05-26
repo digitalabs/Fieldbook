@@ -62,8 +62,8 @@
 	 -->
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    
-	        var treeData = /*[[${manageSettingsForm.treeData}]]*/;
-		    var searchTreeData = /*[[${manageSettingsForm.searchTreeData}]]*/;
+	        var treeData = /*[[${createNurseryForm.treeData}]]*/;
+		    var searchTreeData = /*[[${createNurseryForm.searchTreeData}]]*/;
 		    var treeDivId = 'ontologyBrowserTree';
 		    var seasrchErrorMessage = /*[[#{ontology.search.error.no.result}]]*/;
 		   	var variableDetailHeader = /*[[#{ontology.variable.details}]]*/;
@@ -74,7 +74,7 @@
 		   	$( document ).ready(function() {  	     
 		  	  
 		  	  //fix for the typeahead
-		  	 
+
 			//display tree
 		  	  displayOntologyTree(treeDivId, treeData, searchTreeData, 'srch-term');
 		     $.fn.modal.Constructor.prototype.enforceFocus = function () {};

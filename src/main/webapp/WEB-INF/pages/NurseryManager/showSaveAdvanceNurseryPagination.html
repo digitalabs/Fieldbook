@@ -30,25 +30,39 @@
  </div>
 
 <div layout:fragment="page-script">
-<script type="text/javascript" th:src="@{/static/js/bootstrap-paginator.min.js}"></script>
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[   
  		       
-	    var paginationUrl = /*[[@{/NurseryManager/saveAdvanceNursery/page/}]]*/;
-        
-        var options = {
-            currentPage: /*[[${advancingNurseryform.currentPage}]]*/,
-            totalPages: /*[[${advancingNurseryform.totalPages}]]*/,
-
-            alignment:'center',
-            useBootstrapTooltip:true,
-            onPageClicked: function(e,originalEvent,type,page){     
-            	showPage(paginationUrl, page, 'advance-nursery-germplasm-list')
-            }
-        }
+	     
         $( document ).ready(function() {  
-		if($('#advance-nursery-germplasm-list-pagination') != null){
-			$('#advance-nursery-germplasm-list-pagination').bootstrapPaginator(options);
+        	var listDivIdentifier  = $('#create-nursery-tab-headers li.active button').attr('id');
+        	var sectionContainerDiv = 'advance-list'+listDivIdentifier;
+        	var listIdentifier = listDivIdentifier;
+        	
+        	
+		if($('#' + sectionContainerDiv + ' #advance-nursery-germplasm-list-pagination') != null){
+			
+			var paginationUrlAdvance = /*[[@{/NurseryManager/saveAdvanceNursery/page/}]]*/;
+	        
+	        var optionsAdvance = {
+	            currentPage: /*[[${advancingNurseryform.currentPage}]]*/,
+	            totalPages: /*[[${advancingNurseryform.totalPages}]]*/,
+
+	            alignment:'center',
+	            useBootstrapTooltip:true,
+	            onPageClicked: function(e,originalEvent,type,page){     
+	            	
+	            	var listDivIdentifier  = $('#create-nursery-tab-headers li.active button').attr('id');
+	            	var sectionContainerDiv = 'advance-list'+listDivIdentifier;
+	            	var listIdentifier = listDivIdentifier;
+	            	showMultiTabPage(paginationUrlAdvance, page, 'advance-nursery-germplasm-list', sectionContainerDiv, listIdentifier);
+	            	            	
+	           		   
+	            }
+	        }
+	        
+			$('#' + sectionContainerDiv + ' #advance-nursery-germplasm-list-pagination').bootstrapPaginator(optionsAdvance);
+	        
 		}
         
         });

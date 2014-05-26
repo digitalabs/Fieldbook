@@ -64,7 +64,7 @@ public class EditNurseryController extends SettingsController {
     public static final String URL = "/NurseryManager/editNursery";
     
     /** The Constant URL_SETTINGS. */
-    public static final String URL_SETTINGS = "/NurseryManager/ver2.0/chooseSettings";
+    public static final String URL_SETTINGS = "/NurseryManager/chooseSettings";
     
     @Resource
     private OntologyService ontologyService;
@@ -75,7 +75,7 @@ public class EditNurseryController extends SettingsController {
      */
     @Override
     public String getContentName() {
-	return "NurseryManager/ver2.0/editNursery";
+	return "NurseryManager/editNursery";
     }
 
     /**

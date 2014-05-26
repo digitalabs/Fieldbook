@@ -29,7 +29,7 @@
                 	<a th:case="8240" class="gid-link" href="javascript: void(0)"  th:text="${measurementData.value}"></a>               	
                 	<a th:case="8250" class="desig-link" href="javascript: void(0)" th:text="${measurementData.value}"></a>               	
              		
-             		<label th:case="*" th:text="${measurementData.value}" ></label>
+             		<label th:case="*" th:text="${measurementData.displayValue}" ></label>
              		         		
 				</td>
 				</tr>

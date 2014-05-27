@@ -3,65 +3,61 @@
 		<h1  th:text="#{ontology.browser.header}">
 			Standard Variables and Ontology Browser
 		</h1>
-	</div>		
+	</div>
 </div>
 <div th:if="${isPopup == true}" class="row">
-	&nbsp;		
+	&nbsp;
 </div>
 <div th:if="${isPopup == true}" class="row">
-	&nbsp;		
+	&nbsp;
 </div>
 <div class="row">
 <div class="panel panel-default">
    	<div class="panel-body manage-settings-panel-body">
-		    		
+
 		<div class="row">
-			
-			<div style="float: right">	
+
+			<div style="float: right">
 				 <a  th:if="${isPopup == false}" href="/OntologyManageVariable/" class="btn btn-info" th:href="@{/OntologyManager/manage/variable}" th:text="#{ontology.browser.button.manage.variable}">.Manage Variable</a>
 			</div>
-		</div>	
+		</div>
 		<div th:include="/OntologyBrowser/browserInfo"></div>
      </div>
   </div>
 </div>
-<div layout:fragment="page-script">		
-	
+<div layout:fragment="page-script">
+
 	<script type="text/javascript" th:src="@{/static/js/ontologyBrowser.js}"></script>
-	<!-- 
-	<link th:href="@{/static/css/typeahead.js-bootstrap.css}" rel="stylesheet"/>
-	<script type="text/javascript" th:src="@{/static/js/typeahead.min.js}"></script>
-	<script type="text/javascript" th:src="@{/static/js/Hogan.js}"></script> -->
 	<script type='text/javascript' th:inline="javascript">
-	//<![CDATA[    
+	//<![CDATA[
     var treeData = /*[[${ontologyBrowserForm.treeData}]]*/;
     var searchTreeData = /*[[${ontologyBrowserForm.searchTreeData}]]*/;
     var treeDivId = 'ontologyBrowserTree';
     var seasrchErrorMessage = /*[[#{ontology.search.error.no.result}]]*/;
    	var variableDetailHeader = /*[[#{ontology.variable.details}]]*/;
-   	
-   	var ontologyUrl = $('#ontologyBaseUrl').attr('href');
-   	
-   
 
-  	
+   	var ontologyUrl = $('#ontologyBaseUrl').attr('href');
+
+
+
+
    	$('#srch-term').on("keypress", function(e) {
         if (e.keyCode == 13) {
         	//doSearchTree();
             return false; // prevent the button click from happening
         }
 	});
-   	$( document ).ready(function() {  
+   	$( document ).ready(function() {
    		$('#ontology-detail-tabs').empty().html($('.variable-detail-info').html());
    		$('#srch-term').on("change", function(event){
-	    	 
+
 	    	var data = $('#srch-term').select2('data');
 	    	//console.log('do serch');
 	    	 doOntologyTreeHighlight(treeDivId, data.key);
 	    	 //console.log("1");
 	    });
    	});
-  
+
       //]]>
     </script>
 </div>

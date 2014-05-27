@@ -8,13 +8,13 @@
 		           <h4 class="modal-title" id="heading-modal">
 	         		</h4>
 		          </div>
-		          
+
 	         	<div class="modal-body" id="addVariablesSettingBody">
 	         		<div class="row">
 		         		<div id="page-message-modal" class="col-xs-12 col-md-12">
 		         		</div>
-	         		</div>	         		
-					
+	         		</div>
+
 					<div  th:include="/OntologyBrowser/browserInfo"></div>
 					<br />
 	         		<div class="row">
@@ -42,38 +42,31 @@
 					        </table>
 			        	</div>
 			        </div>
-	         	</div>																							
-	       		<div class="modal-footer addVariable-footer">    	       			
+	         	</div>
+	       		<div class="modal-footer addVariable-footer">
 	       			<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
-	       			<button type="button" id="addVariables" class="btn btn-primary" aria-hidden="true" onclick="javascript: submitSelectedVariables();">Add Variables</button>	
+	       			<button type="button" id="addVariables" class="btn btn-primary" aria-hidden="true" onclick="javascript: submitSelectedVariables();">Add Variables</button>
        			</div>
 	     	</div><!-- /.modal-content -->
    		</div><!-- /.modal-dialog -->
-	</div><!-- /.modal -->	
+	</div><!-- /.modal -->
 </div>
 <a style="display: none" id="ontologyBaseUrl" href="/OntologyBrowser" th:href="@{/OntologyBrowser/}">test</a>
 <div layout:fragment="page-script">
-	
+
 	<script type="text/javascript" th:src="@{/static/js/ontologyBrowser.js}"></script>
-	<!-- 
-	<link th:href="@{/static/css/typeahead.js-bootstrap.css}" rel="stylesheet"/>
-	<script type="text/javascript" th:src="@{/static/js/typeahead.min.js}"></script>
-	<script type="text/javascript" th:src="@{/static/js/Hogan.js}"></script>
-	 -->
 	<script type='text/javascript' th:inline="javascript">
-	//<![CDATA[    
+	//<![CDATA[
 	        var treeData = /*[[${createNurseryForm.treeData}]]*/;
 		    var searchTreeData = /*[[${createNurseryForm.searchTreeData}]]*/;
 		    var treeDivId = 'ontologyBrowserTree';
 		    var seasrchErrorMessage = /*[[#{ontology.search.error.no.result}]]*/;
 		   	var variableDetailHeader = /*[[#{ontology.variable.details}]]*/;
 		   	var noVariableAddedMessage = /*[[#{nursery.managesettings.select.variable}]]*/;
-		   	
+
 		   	var ontologyUrl = $('#ontologyBaseUrl').attr('href');
-		   	
-		   	$( document ).ready(function() {  	     
-		  	  
-		  	  //fix for the typeahead
+
+		   	$( document ).ready(function() {
 
 			//display tree
 		  	  displayOntologyTree(treeDivId, treeData, searchTreeData, 'srch-term');
@@ -82,15 +75,15 @@
 			  $(".tt-hint").css('left','0px');
 			  $("#srch-term").css('background-color','#FFFFFF');
 		    });
-		   	
-		
-		  	
+
+
+
 		   	$('#srch-term').on("keypress", function(e) {
 		        if (e.keyCode == 13) {
 		        	//doSearchTree();
 		            return false; // prevent the button click from happening
 		        }
-			});   
+			});
     //]]>
     </script>
 </div>

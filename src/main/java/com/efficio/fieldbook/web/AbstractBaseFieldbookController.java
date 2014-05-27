@@ -25,6 +25,7 @@ import org.springframework.ui.Model;
 
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
+import com.efficio.fieldbook.web.common.service.ProjectActivityService;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExternalToolInfo;
 
@@ -62,6 +63,8 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
     /** The workbench data manager. */
     @Resource
     private WorkbenchService workbenchService;
+    @Resource 
+    private ProjectActivityService projectActivityService; 
     
     private static final Logger LOG = LoggerFactory.getLogger(AbstractBaseFieldbookController.class);
 
@@ -225,6 +228,10 @@ public abstract class AbstractBaseFieldbookController implements ApplicationCont
 			PaginationListSelection paginationListSelection) {
 		this.paginationListSelection = paginationListSelection;
 	}
-    
+
+	public ProjectActivityService getProjectActivityService() {
+		return projectActivityService;
+	}
+
     
 }

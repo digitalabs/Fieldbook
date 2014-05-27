@@ -122,6 +122,9 @@
 	</bean>
 	<bean id="exportOrderingRowColService" class="com.efficio.fieldbook.web.common.service.impl.ExportOrderingRowColImpl">
 	</bean>
+	
+	<bean id="projectActivityService" class="com.efficio.fieldbook.web.common.service.impl.ProjectActivityServiceImpl">
+	</bean>
 
 	<bean id="multipartResolver"
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">

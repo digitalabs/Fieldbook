@@ -127,7 +127,7 @@ public class SaveNurseryController extends AbstractBaseFieldbookController{
     	    validationService.validateObservationValues(workbook);
     	    dataImportService.saveDataset(workbook, true);
     		
-    		resultMap.put("status", "1");
+    		resultMap.put("status", "1");    		    		
     	
     	} catch(Exception e) {
     		LOG.error(e.getMessage());

@@ -1,74 +1,18 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE9" />
-    <title>Fieldbook Application</title>
-
-    <meta name="description" content=""/>
-    <meta name="author" content=""/>
-
-    <!-- Le styles -->
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-     -->
-    <!-- Bootstrap -->
-    <link th:href="@{/static/css/bootstrap.min.css}" rel="stylesheet" media="screen" />
-
-    <link th:href="@{/static/css/dataset-importer.css}" rel="stylesheet"/>
-    <link th:href="@{/static/css/bootstrap-datepicker.css}" rel="stylesheet"/>
-    <link th:href="@{/static/css/bootstrap-fileupload.css}" rel="stylesheet"/>
-    <link th:href="@{/static/css/select2.css}" rel="stylesheet"/>
-    <link th:href="@{/static/css/select2-bootstrap.css}" rel="stylesheet"/>
-    <link th:href="@{/static/css/lib/jquery/jquery.treegrid.css}" rel="stylesheet"/>
-
-	<!-- Fieldbook Styles -->
-    <link th:href="@{/static/css/fieldbook-tree.css}" rel="stylesheet"/>
-    <link th:href="@{/static/css/fieldbook.css}" rel="stylesheet"/>
-
-    <!-- Fav and touch icons -->
-    <link rel="apple-touch-icon-precomposed" sizes="144x144"
-          th:href="@{/static/ico/apple-touch-icon-144-precomposed.png}"/>
-    <link rel="apple-touch-icon-precomposed" sizes="114x114"
-          th:href="@{/static/ico/apple-touch-icon-114-precomposed.png}"/>
-    <link rel="apple-touch-icon-precomposed" sizes="72x72"
-          th:href="@{/static/ico/apple-touch-icon-72-precomposed.png}"/>
-    <link rel="apple-touch-icon-precomposed" th:href="@{/static/ico/apple-touch-icon-57-precomposed.png}"/>
-    <link rel="shortcut icon" th:href="@{/static/ico/favicon.png}"/>
-
-    <link rel="stylesheet" type="text/css" th:href="@{/static/css/themes/bootstrap/jquery-ui.css}"/>
-
-
-
-
-	<!-- Tree View Javascript -->
-	<script type="text/javascript" th:src="@{/static/js/jquery.dynatree.min.js}"></script>
-
-    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-    <script type="text/javascript" th:src="@{/static/js/lib/html5shiv.js"></script>
-    <![endif]-->
-	</head>
-
-  <body>
-
- 	<div class="jumbotron" th:substituteby="/template/header"></div>
-
-	  <div class="container" >
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE9" />
+	<title>Fieldbook Application</title>
+	<link th:href="@{/static/css/bootstrap.min.css}" rel="stylesheet" media="screen" />
+</head>
+<body>
+	<div class="container">
 		<div class="row">
 			<div class="jumbotron">
-			  <div class="alert alert-danger">There's a problem... something went wrong, please try again...</div>
-
-			  <p>&nbsp;</p>
+				<div class="alert alert-danger">There's a problem... something went wrong, please try again...</div>
 			</div>
-
+		</div>
 	</div>
-
-  </div>
-
-
-
-
 </body>
-
 </html>

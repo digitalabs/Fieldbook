@@ -15,8 +15,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
@@ -25,9 +28,11 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.dms.Variable;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.GermplasmDataManager;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.workbench.Project;
@@ -35,6 +40,8 @@ import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -91,6 +98,12 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     @Resource
     private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
     
+    @Resource
+    private GermplasmDataManager germplasmDataManager;
+    
+    @Resource
+    private ResourceBundleMessageSource messageSource;
+    
     /** The imported germplasm list. */
     private List<ImportedGermplasm> importedGermplasmList;
     
@@ -122,24 +135,6 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	form.setLineSelected("1");
     	form.setAllPlotsChoice("1");
     	form.setProjectId(this.getCurrentProjectId());
-    	List<Integer> variateIds = new ArrayList<Integer>();
-//    	boolean isMixed = form.getMethodChoice() == null || form.getMethodChoice().equals("0");
-//    	if (isMixed) {
-//    		variateIds.add(form.getLineVariateId());
-//    		variateIds.add(form.getPlotVariateId());
-//    	}
-//    	else if (form.getAdvanceBreedingMethodId() != null && NumberUtils.isNumber(form.getAdvanceBreedingMethodId())) {
-//    		Method method = fieldbookMiddlewareService.getBreedingMethodById(Double.valueOf(form.getAdvanceBreedingMethodId()).intValue());
-//    		boolean isBulk = method.getGeneq() != null && method.getGeneq().equals(1);
-//    		if (isBulk) {
-//    			variateIds.add(form.getPlotVariateId());
-//    		}
-//    		else {
-//    			variateIds.add(form.getLineVariateId());
-//    		}
-//    	}
-//		form.setPlotsWithPlantsSelected(fieldbookMiddlewareService.countPlotsWithPlantsSelectedofNursery(nurseryId, variateIds));
-    	//form.setBreedingMethods();
     	Study study = fieldbookMiddlewareService.getStudy(nurseryId);
     	List<Variable> varList = study.getConditions().getVariables();
     	form.setDefaultMethodId(Integer.toString(AppConstants.SINGLE_PLANT_SELECTION_SF.getInt()));
@@ -152,10 +147,6 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	advancingNursery.setStudy(study);
     	form.setLocationUrl(AppConstants.LOCATION_URL.getString());
     	form.setBreedingMethodUrl(AppConstants.BREEDING_METHOD_URL.getString());
-    	//long start = System.currentTimeMillis();
-    	//Workbook workbook = null;//fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
-    	//System.out.println("get nursery : " + (System.currentTimeMillis() - start));    	
-    	//userSelection.setWorkbook(workbook);
     	form.setNurseryId(Integer.toString(nurseryId));
     	Project project = workbenchService.getProjectById(Long.valueOf(this.getCurrentProjectId()));
     	if(AppConstants.CROP_MAIZE.getString().equalsIgnoreCase(project.getCropType().getCropName())){
@@ -180,23 +171,6 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	return super.showAjaxPage(model, MODAL_URL);
     }
     
-    /*
-    @ResponseBody
-    @RequestMapping(value="/load/{nurseryId}", method = RequestMethod.GET)
-    public Map<String, String> showLoadNursery(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form
-            , Model model, HttpSession session, @PathVariable int nurseryId) throws MiddlewareQueryException{
-    	//long start = System.currentTimeMillis();
-    	Map<String, String> result = new HashMap<String, String>();
-    	
-    	if (userSelection.getWorkbook() == null) {
-    		Workbook workbook = fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
-        	userSelection.setWorkbook(workbook);
-    	}
-    	
-    	//System.out.println("loading: " + (System.currentTimeMillis()-start));
-    	return result;
-    }
-    */
     /**
      * Gets the breeding methods.
      *
@@ -357,17 +331,40 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     }
     
     @ResponseBody
-    @RequestMapping(value="/checkMethod/{lineVariateId}/{ids}", method=RequestMethod.GET)
-    public int checkMethod(@PathVariable String ids) throws MiddlewareQueryException {
-    	String[] idList = ids.split(",");
-    	List<Integer> idParams = new ArrayList<Integer>();
-    	for (String id : idList) {
-    		idParams.add(Double.valueOf(id).intValue());
+    @RequestMapping(value="/checkMethodTypeMode/{methodVariateId}", method=RequestMethod.GET)
+    public String checkMethodTypeMode(@PathVariable int methodVariateId) throws MiddlewareQueryException {
+    	List<MeasurementRow> observations = userSelection.getWorkbook().getObservations();
+    	if (observations != null && !observations.isEmpty()) {
+    		Set<Integer> methodIds = new HashSet<Integer>();
+    		for (MeasurementRow row : observations) {
+    			String value = row.getMeasurementDataValue(methodVariateId);
+    			if (value != null && NumberUtils.isNumber(value)) {
+    				methodIds.add(Double.valueOf(value).intValue());
+    			}
+    		}
+    		if (!methodIds.isEmpty()) {
+    			List<Method> methods = germplasmDataManager.getMethodsByIDs(new ArrayList<Integer>(methodIds));
+    			boolean isBulk = false;
+    			boolean isLine = false;
+    			for (Method method : methods) {
+    				if (method.getGeneq() != null && method.getGeneq().equals("1")) {
+    					isBulk = true;
+    				} else {
+    					isLine = true;
+    				}
+    				if (isBulk && isLine) {
+    					return "MIXED";
+    				}
+    			}
+    			if (isBulk) {
+    				return "BULK";
+    			} else {
+    				return "LINE";
+    			}
+    		}
     	}
-   		return fieldbookMiddlewareService.countPlotsWithRecordedVariatesInDataset(userSelection.getWorkbook().getMeasurementDatesetId(), idParams);
-    		
+    	Locale locale = LocaleContextHolder.getLocale();
+    	return messageSource.getMessage("nursery.advance.nursery.empty.method.error", null, locale);
     }
     
-    
-
 }

@@ -164,50 +164,7 @@ public class CreateTrialController extends SettingsController {
     	form.setRequiredFields(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
     	setFormStaticData(form);
     	return super.show(model);
-    }
-
-    /**
-     * View settings.
-     *
-     * @param form the form
-     * @param templateSettingId the template setting id
-     * @param model the model
-     * @param session the session
-     * @return the string
-     * @throws MiddlewareQueryException the middleware query exception
-     */
-    @RequestMapping(value="/view/{templateSettingId}", method = RequestMethod.POST)
-    public String viewSettings(@ModelAttribute("createTrialForm") CreateTrialForm form, @PathVariable int templateSettingId, 
-    	Model model, HttpSession session) throws MiddlewareQueryException{
-    	if(templateSettingId != 0){    	
-    	    //get settings of selected trial setting
-            TemplateSetting templateSettingFilter = new TemplateSetting(Integer.valueOf(templateSettingId), Integer.valueOf(getCurrentProjectId()), null, getTrialTool(), null, null);
-            templateSettingFilter.setIsDefaultToNull();
-            List<TemplateSetting> templateSettings = workbenchService.getTemplateSettings(templateSettingFilter);
-            TemplateSetting templateSetting = templateSettings.get(0); //always 1
-            TrialDataset dataset = (TrialDataset)SettingsUtil.parseXmlToDatasetPojo(templateSetting.getConfiguration(), false);
-            SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
-            form.setStudyLevelVariables(userSelection.getStudyLevelConditions());
-            form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
-            form.setPlotLevelVariables(userSelection.getPlotsLevelList());
-            form.setTreatmentFactors(convertSettingDetailToTreatment(userSelection.getTreatmentFactors()));
-            
-            //add default trial variables such as experimental design, replicates, block size and block per replicate
-            List<SettingDetail> trialLevelVariableList = sortDefaultTrialVariables(userSelection.getTrialLevelVariableList());
-            form.setTrialLevelVariables(trialLevelVariableList);
-            
-            //create the matrix of trial environment variables
-            List<List<ValueReference>> trialEnvList = createTrialEnvValueList(trialLevelVariableList, 1, true);
-            form.setTrialEnvironmentValues(trialEnvList);
-            
-            //default and minimum no of trial instances is 1
-            form.setTrialInstances(1);
-            form.setSelectedSettingId(templateSetting.getTemplateSettingId());
-    	}
-    	form.setLoadSettings("1");
-    	setFormStaticData(form);
-        return super.showAjaxPage(model, URL_SETTINGS );
-    }
+    }    
     
     private List<TreatmentFactorDetail> convertSettingDetailToTreatment(List<SettingDetail> treatmentFactors) {
         List<TreatmentFactorDetail> newTreatmentFactors = new ArrayList<TreatmentFactorDetail>();

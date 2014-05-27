@@ -204,43 +204,6 @@ public class CreateNurseryController extends SettingsController {
         this.userSelection.setNurseryConditions(nurseryConditions);
     }
     
-    /**
-     * View settings.
-     *
-     * @param form the form
-     * @param templateSettingId the template setting id
-     * @param model the model
-     * @param session the session
-     * @return the string
-     * @throws MiddlewareQueryException the middleware query exception
-     */
-    @RequestMapping(value="/view/{templateSettingId}", method = RequestMethod.POST)
-    public String viewSettings(@ModelAttribute("createNurseryForm") CreateNurseryForm form, @PathVariable int templateSettingId, 
-    	Model model, HttpSession session) throws MiddlewareQueryException{
-    	
-    	if(templateSettingId != 0){    	
-	    	TemplateSetting templateSettingFilter = new TemplateSetting(Integer.valueOf(templateSettingId), Integer.valueOf(getCurrentProjectId()), null, getNurseryTool(), null, null);
-	    	templateSettingFilter.setIsDefaultToNull();
-	    	List<TemplateSetting> templateSettings = workbenchService.getTemplateSettings(templateSettingFilter);
-	    	TemplateSetting templateSetting = templateSettings.get(0); //always 1
-	    	Dataset dataset = SettingsUtil.parseXmlToDatasetPojo(templateSetting.getConfiguration());
-	    	SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
-	    	form.setStudyLevelVariables(userSelection.getStudyLevelConditions());
-	    	form.setBaselineTraitVariables(userSelection.getBaselineTraitsList());
-	    	form.setPlotLevelVariables(userSelection.getPlotsLevelList());
-//	    	form.setIsDefault(templateSetting.getIsDefault().intValue() == 1 ? true : false);
-//	    	form.setSettingName(templateSetting.getName());
-	    	form.setSelectedSettingId(templateSetting.getTemplateSettingId());
-	    	form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + "," + AppConstants.FIXED_NURSERY_VARIABLES.getString());
-//    	}else{
-//    		assignDefaultValues(form);
-    	}
-//    	model.addAttribute("createNurseryForm", form);
-//    	model.addAttribute("settingsList", getSettingsList());
-    	form.setLoadSettings("1");
-    	setFormStaticData(form);
-        return super.showAjaxPage(model, URL_SETTINGS );
-    }
 
     /**
      * Submit.

@@ -40,8 +40,6 @@ import org.generationcp.middleware.pojos.workbench.settings.ParentDataset;
 import org.generationcp.middleware.pojos.workbench.settings.TreatmentFactor;
 import org.generationcp.middleware.pojos.workbench.settings.TrialDataset;
 import org.generationcp.middleware.pojos.workbench.settings.Variate;
-import org.pojoxml.core.PojoXml;
-import org.pojoxml.core.PojoXmlFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.HtmlUtils;
@@ -68,95 +66,8 @@ public class SettingsUtil {
     	name = name.replaceAll("\"", "_");
     	return name;
     }
-	/**
-	 * Generate settings xml.
-	 *
-	 * @param dataset the dataset
-	 * @return the string
-	 */
-	public static String generateSettingsXml(ParentDataset dataset){
-		PojoXml pojoXml = PojoXmlFactory.createPojoXml();
-		
-        setupPojoXml(pojoXml);
-		
-        String xml = pojoXml.getXml(dataset);
-        //pojoXml.saveXml(dataset,"testdataset.xml");
-        //Employee employee = (Employee) pojoXml.getPojoFrormFile(fullPathNamen,Employee.class);
-        return xml;
-	}
 	
-	/**
-	 * Parses the xml to dataset pojo.
-	 *
-	 * @param xml the xml
-	 * @return the dataset
-	 */
-	public static Dataset parseXmlToDatasetPojo(String xml){
-		return (Dataset)parseXmlToDatasetPojo(xml, true);
-	}
-	
-	/**
-	 * Parses the xml to dataset pojo.
-	 *
-	 * @param xml the xml
-	 * @param isNursery the is nursery
-	 * @return the dataset
-	 */
-	public static ParentDataset parseXmlToDatasetPojo(String xml, boolean isNursery){
-		PojoXml pojoXml = PojoXmlFactory.createPojoXml();
-		setupPojoXml(pojoXml);
-		String filename = System.currentTimeMillis() + ".tmp";
-		File file = new File(filename);
-		 
-		// if file doesnt exists, then create it
-		try {
-			if (!file.exists()) {
-				file.createNewFile();
-			}
-				
-	
-			FileWriter fw = new FileWriter(file.getAbsoluteFile());
-			
-			BufferedWriter bw = new BufferedWriter(fw);
-			bw.write(xml);
-			bw.close();
-		
-		} catch (IOException e) {
-			LOG.error(e.getMessage(), e);
-		}
-		ParentDataset dataset  = null;
-		if(isNursery)
-			dataset = (Dataset) pojoXml.getPojoFromFile(file.getAbsolutePath(), Dataset.class);
-		else
-			dataset = (TrialDataset) pojoXml.getPojoFromFile(file.getAbsolutePath(), TrialDataset.class);
-		
-		if(file.exists()){
-			file.delete();
-		}
-		return dataset;
-	}
-	
-	/**
-	 * Sets the up pojo xml.
-	 *
-	 * @param pojoXml the new up pojo xml
-	 */
-	private static void setupPojoXml(PojoXml pojoXml){
-		pojoXml.addClassAlias(TrialDataset.class, "dataset");
-		pojoXml.addClassAlias(Dataset.class, "dataset");
-		pojoXml.addClassAlias(Condition.class, "condition");
-		pojoXml.addClassAlias(Variate.class, "variate");
-		pojoXml.addClassAlias(Factor.class, "factor");
-		pojoXml.addClassAlias(TreatmentFactor.class, "treatmentFactor");
-		
-		
-		pojoXml.addCollectionClass("condition",Condition.class);
-		pojoXml.addCollectionClass("factor",Factor.class);
-		pojoXml.addCollectionClass("variate",Variate.class);
-		pojoXml.addCollectionClass("treatmentFactor", TreatmentFactor.class);
-		pojoXml.enableCDATA(true);
-	}
-	
+
 	/**
 	 * Get standard variable.
 	 *
@@ -862,36 +773,8 @@ public class SettingsUtil {
 			variates.add(variate);
 		}
 		return variates;
-	}
+	}	
 	
-	/**
-	 * Generate dummy settings xml.
-	 *
-	 * @param dataset the dataset
-	 * @return the string
-	 */
-	public static String generateDummySettingsXml(Dataset dataset){
-		PojoXml pojoXml = PojoXmlFactory.createPojoXml();
-
-        setupPojoXml(pojoXml);
-		
-        String xml = pojoXml.getXml(dataset);
-        pojoXml.saveXml(dataset,"testdataset.xml");
-        //Employee employee = (Employee) pojoXml.getPojoFrormFile(fullPathNamen,Employee.class);
-        return xml;
-	}
-	
-	/**
-	 * Parses the dummy xml to dataset pojo.
-	 *
-	 * @return the dataset
-	 */
-	public static Dataset parseDummyXmlToDatasetPojo(){
-		PojoXml pojoXml = PojoXmlFactory.createPojoXml();
-		setupPojoXml(pojoXml);
-		Dataset dataset  = (Dataset) pojoXml.getPojoFromFile("testdataset.xml",Dataset.class);
-		return dataset;
-	}
 	
 	/**
 	 * Convert xml dataset to workbook.

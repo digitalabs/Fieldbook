@@ -13,15 +13,18 @@ package com.efficio.fieldbook.web.common.service.impl;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
@@ -46,8 +49,9 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	
 	@Override
 	public void importWorkbook(Workbook workbook, String filename) throws WorkbookParserException {
+		
 		try {
-			HSSFWorkbook xlsBook = new HSSFWorkbook(new FileInputStream(new File(filename))); //WorkbookFactory.create(new FileInputStream(new File(filename)));
+			org.apache.poi.ss.usermodel.Workbook xlsBook = parseFile(filename);
 			
 			List<MeasurementRow> observations = filterObservationsByTrialInstance(xlsBook, workbook.getObservations());
 			List<MeasurementRow> trialObservations = filterObservationsByTrialInstance(xlsBook, workbook.getTrialObservations());
@@ -66,12 +70,34 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 		}
 	}
 	
-	private void importDataToWorkbook(HSSFWorkbook xlsBook, List<MeasurementRow> observations) {
+	private org.apache.poi.ss.usermodel.Workbook parseFile(String filename) throws Exception {
+		org.apache.poi.ss.usermodel.Workbook readWorkbook = null;
+		try{
+			HSSFWorkbook xlsBook = new HSSFWorkbook(new FileInputStream(new File(filename))); //WorkbookFactory.create(new FileInputStream(new File(filename)));
+			readWorkbook = xlsBook;
+		}catch(OfficeXmlFileException officeException){
+			try {
+				XSSFWorkbook xlsxBook = new XSSFWorkbook(new FileInputStream(new File(filename)));
+				readWorkbook = xlsxBook;
+			} catch (FileNotFoundException e) {
+				throw e;
+			} catch (IOException e) {
+				throw e;
+			} 
+		} catch (FileNotFoundException e) {
+			throw e;
+		} catch (IOException e) {
+			throw e;
+		}
+		return readWorkbook;
+	}
+	
+	private void importDataToWorkbook(org.apache.poi.ss.usermodel.Workbook xlsBook, List<MeasurementRow> observations) {
 		if (observations != null) {
-			HSSFSheet observationSheet = xlsBook.getSheetAt(1);
+			Sheet observationSheet = xlsBook.getSheetAt(1);
 			int xlsRowIndex = 1; //row 0 is the header row
 			for (MeasurementRow wRow : observations) {
-				HSSFRow xlsRow = observationSheet.getRow(xlsRowIndex);
+				Row xlsRow = observationSheet.getRow(xlsRowIndex);
 				for (MeasurementData wData : wRow.getDataList()) {
 					if (wData.isEditable()) {
 						String label = wData.getLabel();
@@ -113,7 +139,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 		}
 	}
 
-	private void importTrialToWorkbook(HSSFWorkbook xlsBook, List<MeasurementRow> observations) {
+	private void importTrialToWorkbook(org.apache.poi.ss.usermodel.Workbook xlsBook, List<MeasurementRow> observations) {
 		if (observations != null) {
 			for (MeasurementRow wRow : observations) {
 				for (MeasurementData wData : wRow.getDataList()) {
@@ -125,9 +151,9 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 		}
 	}
 	
-	private void validate(HSSFWorkbook xlsBook, Workbook workbook, List<MeasurementRow> observations) throws WorkbookParserException {
-		HSSFSheet descriptionSheet = xlsBook.getSheetAt(0);
-		HSSFSheet observationSheet = xlsBook.getSheetAt(1);
+	private void validate(org.apache.poi.ss.usermodel.Workbook xlsBook, Workbook workbook, List<MeasurementRow> observations) throws WorkbookParserException {
+		Sheet descriptionSheet = xlsBook.getSheetAt(0);
+		Sheet observationSheet = xlsBook.getSheetAt(1);
 		
 		validateNumberOfSheets(xlsBook);
 		validateDescriptionSheetFirstCell(descriptionSheet);
@@ -138,19 +164,19 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 		validateObservationColumns(getAllVariates(descriptionSheet), workbook);
 	}
 	
-	private void validateNumberOfSheets(HSSFWorkbook xlsBook) throws WorkbookParserException {
+	private void validateNumberOfSheets(org.apache.poi.ss.usermodel.Workbook xlsBook) throws WorkbookParserException {
 		if (xlsBook.getNumberOfSheets() != 2) {
 			throw new WorkbookParserException("error.workbook.import.invalidNumberOfSheets");
 		}
 	}
 	
-	private void validateDescriptionSheetFirstCell(HSSFSheet descriptionSheet) throws WorkbookParserException {
+	private void validateDescriptionSheetFirstCell(Sheet descriptionSheet) throws WorkbookParserException {
 		if (!TEMPLATE_DESCRIPTION_SHEET_FIRST_VALUE.equalsIgnoreCase(descriptionSheet.getRow(0).getCell(0).getStringCellValue())) {
 			throw new WorkbookParserException("error.workbook.import.invalidFormatDescriptionSheet");
 		}
 	}
 	
-	private void validateSections(HSSFSheet descriptionSheet) throws WorkbookParserException {
+	private void validateSections(Sheet descriptionSheet) throws WorkbookParserException {
 		int conditionRow = findRow(descriptionSheet, TEMPLATE_SECTION_CONDITION);
 		int factorRow = findRow(descriptionSheet, TEMPLATE_SECTION_FACTOR);
 		int constantRow = findRow(descriptionSheet, TEMPLATE_SECTION_CONSTANT);
@@ -161,7 +187,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 		}			
 	}
 	
-	private void validateRequiredObservationColumns(HSSFSheet obsSheet, Workbook workbook) throws WorkbookParserException {
+	private void validateRequiredObservationColumns(Sheet obsSheet, Workbook workbook) throws WorkbookParserException {
 		int entryCol = findColumn(obsSheet, getColumnLabel(workbook, TermId.ENTRY_NO.getId()));
 		int plotCol = findColumn(obsSheet, getColumnLabel(workbook, TermId.PLOT_NO.getId()));
 		if (plotCol == -1) {
@@ -174,13 +200,13 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 		}
 	}
 	
-	private void validateNumberOfRows(HSSFSheet observationSheet, List<MeasurementRow> observations) throws WorkbookParserException {
+	private void validateNumberOfRows(Sheet observationSheet, List<MeasurementRow> observations) throws WorkbookParserException {
 		if (observations != null && observationSheet.getLastRowNum() != observations.size()) {
 			throw new WorkbookParserException("error.workbook.import.observationRowCountMismatch");
 		}
 	}
 	
-	private void validateRowIdentifiers(HSSFSheet observationSheet, Workbook workbook, List<MeasurementRow> observations) throws WorkbookParserException {
+	private void validateRowIdentifiers(Sheet observationSheet, Workbook workbook, List<MeasurementRow> observations) throws WorkbookParserException {
 		if (observations != null) {
 			String gidLabel = getColumnLabel(workbook, TermId.GID.getId());
 			String desigLabel = getColumnLabel(workbook, TermId.DESIG.getId());
@@ -190,7 +216,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			int entryCol = findColumn(observationSheet, entryLabel);
 			int rowIndex = 1;
 			for (MeasurementRow wRow : observations) {
-				HSSFRow row = observationSheet.getRow(rowIndex++);
+				Row row = observationSheet.getRow(rowIndex++);
 
 				Integer gid = getMeasurementDataValueInt(wRow, gidLabel);
 				String desig = getMeasurementDataValue(wRow, desigLabel);
@@ -219,7 +245,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 		}
 	}
 	
-	private List<String> getAllVariates(HSSFSheet descriptionSheet) {
+	private List<String> getAllVariates(Sheet descriptionSheet) {
 		List<String> variates = new ArrayList<String>();
 		
 		int startRowIndex = findRow(descriptionSheet, TEMPLATE_SECTION_VARIATE) + 1;
@@ -238,12 +264,12 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 		return variates;
 	}
 	
-    private int findRow(HSSFSheet sheet, String cellValue) {
+    private int findRow(Sheet sheet, String cellValue) {
         int result = 0;
         for (int i = 0; i < sheet.getLastRowNum(); i++) {
-            HSSFRow row = sheet.getRow(i);
+            Row row = sheet.getRow(i);
             if (row != null) {
-                HSSFCell cell = row.getCell(0);
+                Cell cell = row.getCell(0);
                 if (cell != null && cell.getStringCellValue() != null) {
                     if (cell.getStringCellValue().equals(cellValue)) {
                         return i;
@@ -255,13 +281,13 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
         return result;
     }
 
-    private int findColumn(HSSFSheet sheet, String cellValue) {
+    private int findColumn(Sheet sheet, String cellValue) {
         int result = -1;
         if (cellValue != null) {
-	        HSSFRow row = sheet.getRow(0); //Encabezados
+	        Row row = sheet.getRow(0); //Encabezados
 	        int cells = row.getLastCellNum();
 	        for (int i = 0; i < cells; i++) {
-	            HSSFCell cell = row.getCell(i);
+	            Cell cell = row.getCell(i);
 	            if (cell.getStringCellValue().equals(cellValue)) {
 	                return i;
 	            }
@@ -270,14 +296,14 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
         return result;
     }
 
-    private String findValueFromDescriptionSheet(HSSFWorkbook workbook, String cellValue) {
-    	HSSFSheet sheet = workbook.getSheetAt(0);
+    private String findValueFromDescriptionSheet(org.apache.poi.ss.usermodel.Workbook workbook, String cellValue) {
+    	Sheet sheet = workbook.getSheetAt(0);
         if (cellValue != null) {
 	        int lastRow = sheet.getLastRowNum();
 	        for (int i = 0; i < lastRow; i++) {
-	        	HSSFRow row = sheet.getRow(i);
+	        	Row row = sheet.getRow(i);
 	        	if (row != null) {
-		        	HSSFCell cell = row.getCell(0);
+		        	Cell cell = row.getCell(0);
 		        	if (cell != null && row.getCell(6) != null) {
 		        		String value = "";
 		        		if (row.getCell(6).getCellType() == Cell.CELL_TYPE_NUMERIC) {
@@ -331,7 +357,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
     	return null;
     }
     
-    private Integer getExcelValueInt(HSSFRow row, int columnIndex) {
+    private Integer getExcelValueInt(Row row, int columnIndex) {
     	Cell cell = row.getCell(columnIndex);
     	String xlsStr = "";
     	if(cell.getCellType() == Cell.CELL_TYPE_STRING)
@@ -372,8 +398,9 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
     	return null;
     }
     
-    private List<MeasurementRow> filterObservationsByTrialInstance(HSSFWorkbook xlsBook, List<MeasurementRow> observations) {
-    	HSSFSheet descriptionSheet = xlsBook.getSheetAt(0);
+    private List<MeasurementRow> filterObservationsByTrialInstance(org.apache.poi.ss.usermodel.Workbook xlsBook, List<MeasurementRow> observations) {
+    	
+    	Sheet descriptionSheet = xlsBook.getSheetAt(0);
 		int conditionRow = findRow(descriptionSheet, TEMPLATE_SECTION_CONDITION);
 		int factorRow = findRow(descriptionSheet, TEMPLATE_SECTION_FACTOR);
 		int trialRow = -1;
@@ -385,8 +412,8 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			}
 		}
 		if (trialRow > 0) {
-			HSSFRow row = descriptionSheet.getRow(trialRow);
-			HSSFCell cell = row.getCell(6);
+			Row row = descriptionSheet.getRow(trialRow);
+			Cell cell = row.getCell(6);
 			//trialInstance = cell.getStringCellValue();
 			if(cell == null)
 				trialInstance = "1";

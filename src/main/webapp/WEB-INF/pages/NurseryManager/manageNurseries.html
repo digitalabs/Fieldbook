@@ -27,7 +27,7 @@
 		<div class="row">
 			<div id="browser-nurseries">
 				<div class="col-xs-12 col-md-12">
-					<div th:include="/NurseryManager/studyInfo"></div>
+					<div th:include="/NurseryManager/includes/studyInfo"></div>
 				</div>
 			</div>
 		</div>
@@ -35,17 +35,17 @@
 </div>
 
 <div class="row">
-	<div th:include="/NurseryManager/studyTree"></div>
+	<div th:include="/NurseryManager/includes/studyTree"></div>
 </div>
 
 <div class="row">
 	<div class="col-xs-12 col-md-12">
-		<div id="showBaselineTraitDetails" th:include="/NurseryManager/baselineTraitDetails"></div>
+		<div id="showBaselineTraitDetails" th:include="/NurseryManager/includes/baselineTraitDetails"></div>
 	</div>
 </div>
 
 <div class="row">
-	<div id="ontology-add-variable" th:include="/Fieldmap/selectTrialInstanceModal"></div>
+	<div id="ontology-add-variable" th:include="/Fieldmap/includes/selectTrialInstanceModal"></div>
 </div>
 
 <div class="modal fade" id="manageTrialConfirmation" tabindex="-1" role="dialog"
@@ -83,11 +83,12 @@ aria-labelledby="manageTrialConfirmationLabel" aria-hidden="true">
 </div>
 
 <div class="row">
-	<div id="export-study" th:include="/NurseryManager/exportStudy"></div>
+	<div id="export-study" th:include="/NurseryManager/includes/exportStudy"></div>
 </div>
 
+<!-- FIXME Remove this dupliated code -->
 <div class="row">
-	<div id="ontology-add-variable" th:include="/Fieldmap/selectTrialInstanceModal"></div>
+	<div id="ontology-add-variable" th:include="/Fieldmap/includes/selectTrialInstanceModal"></div>
 </div>
 
 <div class="modal fade" id="manageTrialConfirmation" tabindex="-1" role="dialog"
@@ -125,21 +126,16 @@ aria-labelledby="manageTrialConfirmationLabel" aria-hidden="true">
 </div>
 
 <div class="row">
-	<div id="open-germplasm" th:include="/Common/openGermplasmDetailsModal"></div>
+	<div id="open-germplasm" th:include="/Common/includes/openGermplasmDetailsModal"></div>
 </div>
-
-<div layout:fragment="page-script">
-	<!-- For pagination -->
-	<script type='text/javascript' th:inline="javascript">
-		//<![CDATA[
-		var openStudyError = /*[[#{common.error.open.study(#{fieldmap.nursery})}]]*/;
-		var advanceStudyError = /*[[#{common.error.advance.study(#{fieldmap.nursery})}]]*/;
-		var paginationUrl = /*[[@{/NurseryManager/manageNurseries/page/}]]*/;
-		var showText = /*[[#{nursery.nurserydetails.additional.show}]]*/;
-		var hideText = /*[[#{nursery.nurserydetails.additional.hide}]]*/;
-
-		var selectedTableIds = new Array();
-		var currentStudyId = getCurrentStudyIdInTab();
-		//]]>
-	</script>
-</div>
+<script type='text/javascript' th:inline="javascript">
+//<![CDATA[
+	var openStudyError = /*[[#{common.error.open.study(#{fieldmap.nursery})}]]*/ '',
+		advanceStudyError = /*[[#{common.error.advance.study(#{fieldmap.nursery})}]]*/ '',
+		paginationUrl = /*[[@{/NurseryManager/manageNurseries/page/}]]*/ '',
+		showText = /*[[#{nursery.nurserydetails.additional.show}]]*/ '',
+		hideText = /*[[#{nursery.nurserydetails.additional.hide}]]*/ '',
+		currentStudyId = getCurrentStudyIdInTab(),
+		selectedTableIds = [];
+//]]>
+</script>

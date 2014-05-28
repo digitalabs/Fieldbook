@@ -56,31 +56,23 @@
 
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
-	    var createLabelErrorMsg = /*[[#{common.error.create.label.nursery}]]*/;
-        var fieldMapStudyRequired = /*[[#{common.error.select.study(#{fieldmap.nursery})}]]*/;
-        var fieldMapOneStudyErrorMsg = /*[[#{common.error.select.one.study.show.fieldmap(#{fieldmap.nursery})}]]*/;
-        var noFieldMapExists = /*[[#{common.error.no.existing.fieldmap(#{fieldmap.nursery})}]]*/;
-
-        var noSelectedTrialInstance = /*[[#{fieldmap.no.selected.trial.instance}]]*/;
-        var multipleSelectError = /*[[#{common.error.select.one.trial.instance}]]*/;
-        var trialName = /*[[#{label.printing.trial.name}]]*/;
-        var nurseryName = /*[[#{label.printing.nursery.name}]]*/;
-        var entryLabel = /*[[#{fieldmap.trial.number.of.entries}]]*/;
-        var repLabel = /*[[#{fieldmap.trial.number.of.reps}]]*/;
-        var plotLabel = /*[[#{fieldmap.trial.total.number.of.plots}]]*/;
-        var fieldmapLabel = /*[[#{fieldmap.has.fieldmap}]]*/;
-        var entryPlotLabel = /*[[#{fieldmap.trial.number.of.entries.and.plots}]]*/;
-        var hasFieldmapError = /*[[#{fieldmap.has.existing.fieldmap.error}]]*/;
-		var trial = true;
-		var isViewFieldmap = true;
-		var fieldmapIds = [];
-
-		$(function(){
-            $('#confirmSubModal').on('hidden.bs.modal', function () {
-            	$("#selectTrialInstanceModal button,input").removeAttr("disabled");
-            });
-
-        });
+	    var createLabelErrorMsg = /*[[#{common.error.create.label.nursery}]]*/ '',
+        	fieldMapStudyRequired = /*[[#{common.error.select.study(#{fieldmap.nursery})}]]*/ '',
+        	fieldMapOneStudyErrorMsg = /*[[#{common.error.select.one.study.show.fieldmap(#{fieldmap.nursery})}]]*/ '',
+        	noFieldMapExists = /*[[#{common.error.no.existing.fieldmap(#{fieldmap.nursery})}]]*/ '',
+        	noSelectedTrialInstance = /*[[#{fieldmap.no.selected.trial.instance}]]*/ '',
+        	multipleSelectError = /*[[#{common.error.select.one.trial.instance}]]*/ '',
+        	trialName = /*[[#{label.printing.trial.name}]]*/ '',
+        	nurseryName = /*[[#{label.printing.nursery.name}]]*/ '',
+        	entryLabel = /*[[#{fieldmap.trial.number.of.entries}]]*/ '',
+        	repLabel = /*[[#{fieldmap.trial.number.of.reps}]]*/ '',
+        	plotLabel = /*[[#{fieldmap.trial.total.number.of.plots}]]*/ '',
+        	fieldmapLabel = /*[[#{fieldmap.has.fieldmap}]]*/ '',
+        	entryPlotLabel = /*[[#{fieldmap.trial.number.of.entries.and.plots}]]*/ '',
+        	hasFieldmapError = /*[[#{fieldmap.has.existing.fieldmap.error}]]*/ '',
+			trial = true,
+			isViewFieldmap = true,
+			fieldmapIds = [];
     //]]>
     </script>
 </div>

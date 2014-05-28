@@ -179,7 +179,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 
 <!-- Modal Dialog for Choosing Folder Location -->
 <div class="form-group" id="create-nursery">
-	<div th:include="/NurseryManager/studyTree" />
+	<div th:include="/NurseryManager/includes/studyTree" />
 </div>
 
 <!-- Modal Dialog for Successful Save -->
@@ -232,13 +232,13 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 	<div id="example-germplasm" th:include="/Common/saveList"></div>
 </div>
 <div class="row">
-	<div id="open-germplasm" th:include="/Common/openGermplasmDetailsModal"></div>
+	<div id="open-germplasm" th:include="/Common/includes/openGermplasmDetailsModal"></div>
 </div>
 <div class="row">
 	<div id="open-germplasm-list" th:include="/NurseryManager/manageGermplasmListOperation"></div>
 </div>
 <div class="row">
-	<div id="export-study" th:include="/NurseryManager/exportStudy"></div>
+	<div id="export-study" th:include="/NurseryManager/includes/exportStudy"></div>
 </div>
 <div class="row">
 	<div id="import-study" th:include="/NurseryManager/importStudy"></div>
@@ -258,7 +258,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 </div>
 
 <div class="row">
-	<div id="ontology-add-variable" th:include="/Fieldmap/selectTrialInstanceModal"></div>
+	<div id="ontology-add-variable" th:include="/Fieldmap/includes/selectTrialInstanceModal"></div>
 </div>
 
 <div class="modal fade" id="manageTrialConfirmation" tabindex="-1" role="dialog" aria-labelledby="manageTrialConfirmationLabel" aria-hidden="true">

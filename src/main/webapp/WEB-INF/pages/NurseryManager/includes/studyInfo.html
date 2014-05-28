@@ -15,13 +15,12 @@
 		<div id="study-tabs"></div>
 	</div>
 </div>
-<div layout:fragment="page-script">
-	<script type='text/javascript' th:inline="javascript">
-		//<![CDATA[
-		$( document ).ready(function() {
+
+<script type='text/javascript' th:inline="javascript">
+//<![CDATA[
+		$(document).ready(function() {
 			$('#study-tabs .info').hide();
 			initializeStudyTabs();
 		});
-		//]]>
-	</script>
-</div>
+//]]>
+</script>

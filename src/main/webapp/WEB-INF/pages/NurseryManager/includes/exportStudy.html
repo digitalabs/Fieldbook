@@ -135,50 +135,55 @@
 
 <div layout:fragment="page-script">
 	<script type='text/javascript' th:inline="javascript">
-		//<![CDATA[
-		var submitExportUrl = '/Fieldbook/ExportManager/';
-		var exportHeader = /*[[#{study.export.study.header}]]*/;
-		var exportBookHeader = /*[[#{study.export.study.book.header}]]*/;
+	//<![CDATA[
 
-		var exportOptions = {
-			dataType: 'text',
-				success: showExportResponse // post-submit callback
-			};
+		var submitExportUrl = '/Fieldbook/ExportManager/',
+			exportHeader = /*[[#{study.export.study.header}]]*/ '',
+			exportBookHeader = /*[[#{study.export.study.book.header}]]*/ '',
 
-		$( document ).ready(function() {
+			exportOptions = {
+				dataType: 'text',
+					success: showExportResponse // post-submit callback
+				};
+
+		$(document).ready(function() {
+
 			$('#exportStudyModal select').select2({width: 'copy'});
 			$('#exportType').on('change', function(){
-				if($(this).val() == 2){
+				if ($(this).val() === 2) {
 					$('.exportRSection').css('display', 'block');
-				}else{
+				} else {
 					$('.exportRSection').css('display', 'none');
 				}
-			})
+			});
 
 			$('#exportStudyModal').on('hide.bs.modal', function() {
 				$("#page-export-message-modal").html('');
-			})
+			});
 
 		});
-		function checkBeforeExport(){
+
+		function checkBeforeExport() {
+
 			var studyId = '0';
-			if($('#browser-nurseries').length != 0){
-				//meaning we are on the landing page
+
+			if ($('#browser-nurseries').length !== 0) {
+				// We are on the landing page
 				studyId = getCurrentStudyIdInTab();
 			}
 
 			Spinner.toggle();
 
 			$.ajax({
-				url: "/Fieldbook/ExportManager/study/hasFieldMap?studyId="+studyId,
-				type: "GET",
+				url: '/Fieldbook/ExportManager/study/hasFieldMap?studyId=' + studyId,
+				type: 'GET',
 				cache: false,
 				success: function (data) {
-					if(data == 0){
-						//we disable the export order of serpentine
+					if (data === 0) {
+						// Disable the export order of serpentine
 						$('#exportStudyModal').modal('hide');
 						$('#exportStudyConfirmationModal').modal({ backdrop: 'static', keyboard: false });
-					}else{
+					} else {
 						exportNursery();
 					}
 					Spinner.toggle();
@@ -186,39 +191,50 @@
 			});
 
 		}
-		function doConfirmGoBack(){
+
+		function doConfirmGoBack() {
 			$('#exportStudyConfirmationModal').modal('hide');
 			$('#exportStudyModal').modal({ backdrop: 'static', keyboard: false });
 		}
-		function doConfirmExport(){
+
+		function doConfirmExport() {
 			exportNursery();
 			$('#exportStudyConfirmationModal').modal('hide');
 		}
-		function showExportOptions(){
-			var studyType = '';
-			var studyId = '0';
-			if($('#browser-nurseries').length != 0){
-				//meaning we are on the landing page
+
+		function showExportOptions() {
+			var studyType = '',
+				studyId = '0';
+
+			if ($('#browser-nurseries').length !== 0) {
+				// We are on the landing page
 				studyType = $("#study"+getCurrentStudyIdInTab()+" #study-type").val();
 				studyId = getCurrentStudyIdInTab();
-			}else
-			studyType = $("#study-type").val();
-			$('#exportStudyModal #heading-modal').html(exportHeader + " " + studyType + " " + exportBookHeader);
+			} else {
+				studyType = $("#study-type").val();
+			}
 
+			$('#exportStudyModal #heading-modal').html(exportHeader + " " + studyType + " " + exportBookHeader);
 			$('#selectedRTrait').empty();
 			$('#selectedRTrait').select2('destroy');
+
 			Spinner.toggle();
+
 			$.ajax({
-				url: "/Fieldbook/ExportManager/study/traits/?studyId="+studyId,
-				type: "GET",
+				url: '/Fieldbook/ExportManager/study/traits/?studyId='+studyId,
+				type: 'GET',
 				cache: false,
 				success: function (data) {
-					var variatesList = $.parseJSON(data);
-					//we build the R options
-					if(variatesList.length != 0){
-						for(var index = 0 ; index < variatesList.length; index++){
-							var id = variatesList[index].termId;
-							var val = variatesList[index].name + " (" + variatesList[index].scale +")";
+					var variatesList = $.parseJSON(data),
+						index,
+						id,
+						val;
+
+					// We build the R options
+					if (variatesList.length !== 0) {
+						for (index = 0 ; index < variatesList.length; index++){
+							id = variatesList[index].termId;
+							val = variatesList[index].name + ' (' + variatesList[index].scale +')';
 							$('#selectedRTrait').append($('<option></option>').attr('value', id).text(val));
 						}
 					}
@@ -239,6 +255,6 @@
 			$('#exportStudyModal').modal('hide');
 			Spinner.toggle();
 		}
-		//]]>
+	//]]>
 	</script>
 </div>

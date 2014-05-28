@@ -150,7 +150,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 
 <!-- Modal Dialog for Choosing Folder Location -->
 <div class="form-group" id="create-nursery">
-	<div th:include="/NurseryManager/studyTree" />
+	<div th:include="/NurseryManager/includes/studyTree" />
 </div>
 
 <!-- Modal Dialog for Successful Save -->
@@ -177,7 +177,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 	<div id="example-germplasm" th:include="/Common/saveList"></div>
 </div>
 <div class="row">
-	<div id="open-germplasm" th:include="/Common/openGermplasmDetailsModal"></div>
+	<div id="open-germplasm" th:include="/Common/includes/openGermplasmDetailsModal"></div>
 </div>
 <div class="row">
 	<div id="open-germplasm-list" th:include="/NurseryManager/manageGermplasmListOperation"></div>

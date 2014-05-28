@@ -44,7 +44,7 @@
 <div class="row form-group collapse in germplasmListDetails">
 	<!-- Germplasm List Table View -->
 	<div class="col-xs-12 col-md-12">
-		<div id="specifyCheckSection" style="display: none" th:include="/NurseryManager/specifyCheckSection"/>
+		<div id="specifyCheckSection" style="display: none" th:include="/NurseryManager/includes/importGermplasmListCheckSection"/>
 	</div>
 </div>
 
@@ -138,14 +138,14 @@
 </div>
 
 <div class="row">
-	<div id="manage-location" th:include="/Common/importGermplasmListModal"></div>
+	<div id="manage-location" th:include="/NurseryManager/includes/importGermplasmListModal"></div>
 </div>
 <div class="row">
-	<div id="manage-location" th:include="/NurseryManager/manageCheckType"></div>
+	<div id="manage-location" th:include="/NurseryManager/includes/importGermplasmListManageCheckType"></div>
 </div>
 
 <div class="row">
-	<div id="open-germplasm" th:include="/Common/openGermplasmListDetailsModal"></div>
+	<div id="open-germplasm" th:include="/NurseryManager/includes/importGermplasmListDetailsModal"></div>
 </div>
 
 <!-- Scripts location, note that the div tag will be remove after merging to decorator -->

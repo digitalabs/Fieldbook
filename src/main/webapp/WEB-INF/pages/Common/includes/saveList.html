@@ -5,16 +5,16 @@
 	            	<button id="closeSaveListTreeModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			           <h4 class="modal-title" id="heading-modal" th:text="#{germplasm.save.list.header}">
 			         		Edit List Header
-		         	   </h4>		         	   		         	   	           
+		         	   </h4>
 	          	</div>
       		<div class="modal-body">
       			<div class="row">
 	         		<div id="page-save-list-message-modal" class="col-xs-12 col-md-12">
 	         		</div>
-         		</div>         		
-         		<div class="row"> 
-         			<div class="col-xs-6 col-md-6">   
-						<div style="margin-left: -10px" class="col-xs-6 col-md-6">  			
+         		</div>
+         		<div class="row">
+         			<div class="col-xs-6 col-md-6">
+						<div style="margin-left: -10px" class="col-xs-6 col-md-6">
 				  			<img th:src="@{/static/img/build-new-list.png}" style="padding-bottom:3px;" />
 				  			<label class="control-label"><strong class="sub-content-heading">List Location</strong></label>
 				 		</div>
@@ -25,38 +25,38 @@
 								<img  onclick="javascript: deleteGermplasmFolder(this)"  th:src="@{/static/img/delete.png}" class="image-padding browse-germplasm-action delete-germplasm-folder" />
 							</div>
 						</div>
-					</div>	  
-					<div class="col-xs-6 col-md-6">   
-						<div style="top: 8px; left: -15px" class="col-xs-12 col-md-12">  							  			
+					</div>
+					<div class="col-xs-6 col-md-6">
+						<div style="top: 8px; left: -15px" class="col-xs-12 col-md-12">
 				  			<label class="control-label"><strong class="sub-content-heading">List Details</strong></label>
-				 		</div>						 
-					</div>	    						      						      		
+				 		</div>
+					</div>
 				</div>
-         		<div class="row">    
-					<div class="col-xs-6 col-md-6">  			
+         		<div class="row">
+					<div class="col-xs-6 col-md-6">
 				  		<div id="germplasmFolderTree" style="height:350px; overflow:auto;"></div>
 			 		</div>
 					<div class="col-xs-6 col-md-6" id="saveGermplasmRightSection">
-					</div>	      						      						      		
+					</div>
 				</div>
-																		
+
       		</div>
 	  		<div class="modal-footer">
     			<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
-      			<button type="button" class="btn btn-primary" th:text="#{common.form.save.text}" onclick="javascript: saveGermplasmList();">Ok</button>			        	
+      			<button type="button" class="btn btn-primary" th:text="#{common.form.save.text}" onclick="javascript: saveGermplasmList();">Ok</button>
     		</div>
   		</div><!-- /.modal-content -->
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-<div id="list-tree-include" th:include="/Common/listTreeInclude"></div>
-<!-- 
+<div id="list-tree-include" th:include="/Common/includes/listTreeInclude"></div>
+<!--
 <a href="javascript: void(0)" onclick="javascript: openSaveListModal('1111')">Show Test Save</a>
- --> 
+ -->
 
 
 <div layout:fragment="page-script">
 <script type='text/javascript' th:inline="javascript">
-	//<![CDATA[     
+	//<![CDATA[
 	           var folderRequired = /*[[#{germplasm.save.list.folder.error}]]*/;
 	           var nameRequired = /*[[#{germplasm.save.list.name.error}]]*/;
 	           var descriptionRequired = /*[[#{germplasm.save.list.description.error}]]*/;
@@ -64,20 +64,20 @@
 	           var typeRequired = /*[[#{germplasm.save.list.type.error}]]*/;
 	           var nameDuplicateError = /*[[#{germplasm.save.list.name.unique.error}]]*/;
 	           var treeReloading = 1; // this will prevent reloading
-	           
-	         
-	          
-	           
+
+
+
+
          $( document ).ready(function() {
-			  
-			  displayGermplasmListTree("germplasmFolderTree", true);  				    				 
+
+			  displayGermplasmListTree("germplasmFolderTree", true);
 			  changeBrowseGermplasmButtonBehavior(false);
 			  $('#saveListTreeModal').on('hidden.bs.modal', function() {
 				  treeReloading = 0;
 				  $('#germplasmFolderTree').dynatree("getTree").reload();
 				  changeBrowseGermplasmButtonBehavior(false);
 				})
-				 
+
 		  });
           function openSaveListModal(object){
         	  var listIdentifier = $(object).attr('id');
@@ -85,11 +85,11 @@
         	  Spinner.toggle();
        		  $.ajax(
      		         { url: "/Fieldbook/ListTreeManager/saveList/"+listIdentifier,
-     		           type: "GET",     		           
+     		           type: "GET",
      		           cache: false,
      		           success: function(html) {
      		        	    $('#page-save-list-message-modal').html('');
-  		        	   	    $('#saveGermplasmRightSection').html(html)							
+  		        	   	    $('#saveGermplasmRightSection').html(html)
   		        	 		$('#saveListTreeModal').modal({
   		        	            show: true,
   		        	            keyboard: false,
@@ -99,8 +99,8 @@
      		           }
      		         }
     		       );
-        	  
-        	  
+
+
           }
           function saveGermplasmList(){
 			var chosenNodeFolder = $('#'+getDisplayedTreeName()).dynatree("getTree").getActiveNode();
@@ -132,7 +132,7 @@
 			var dataForm = $('#saveListForm').serialize()
       		  $.ajax(
     		         { url: "/Fieldbook/ListTreeManager/saveList/",
-    		           type: "POST", 
+    		           type: "POST",
     		           data: dataForm,
     		           cache: false,
     		           success: function(data) {
@@ -145,7 +145,7 @@
     		           }
     		         }
    		       );
-			
+
           }
     //]]>
     </script>

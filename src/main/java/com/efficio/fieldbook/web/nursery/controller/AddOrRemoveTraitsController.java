@@ -47,7 +47,6 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     public static final String URL = "/NurseryManager/addOrRemoveTraits";
     
     public static final String OBSERVATIONS_HTML = "NurseryManager/observations";
-//    public static final String PAGINATION_TEMPLATE = "/NurseryManager/showAddOrRemoveTraitsPagination";
     
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(AddOrRemoveTraitsController.class);
@@ -65,9 +64,6 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     
     @Resource
     private PaginationListSelection paginationListSelection;
-    
-    /** The Constant BUFFER_SIZE. */
-//    private static final int BUFFER_SIZE = 4096 * 4;
     
   
 
@@ -124,49 +120,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
         
         return super.show(model);
     }
-    
-    /**
-     * Show details.
-     *
-     * @param form the form
-     * @param result the result
-     * @param model the model
-     * @return the string
-     */
-    @RequestMapping(method = RequestMethod.POST)
-    public String showDetails(@ModelAttribute("createNurseryForm") CreateNurseryForm form,          
-            BindingResult result, Model model) {
-        // If operation = add new nursery
-        Workbook workbook = userSelection.getWorkbook();
-        if (workbook == null) {
-            workbook = new Workbook();
-        }
-        int previewPageNum = userSelection.getCurrentPage();
-        copyDataFromFormToUserSelection(form, previewPageNum);
-        form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
-    	form.setMeasurementVariables(getUserSelection().getWorkbook().getMeasurementDatasetVariables());
       
-        
-        workbook.setObservations(form.getMeasurementRowList());
-        userSelection.setWorkbook(workbook);
-        
-        return "redirect:" + SaveNurseryController.URL;
-    }
-    
-    
-    private void copyDataFromFormToUserSelection(CreateNurseryForm form, int previewPageNum){
-    	for(int i = 0 ; i < form.getPaginatedMeasurementRowList().size() ; i++){
-    		MeasurementRow measurementRow = form.getPaginatedMeasurementRowList().get(i);
-    		int realIndex = ((previewPageNum - 1) * form.getResultPerPage()) + i;
-    		for(int index = 0 ; index < measurementRow.getDataList().size() ; index++){
-    			MeasurementData measurementData =  measurementRow.getDataList().get(index);
-    			MeasurementData sessionMeasurementData = getUserSelection().getMeasurementRowList().get(realIndex).getDataList().get(index);
-    			if(sessionMeasurementData.isEditable())
-    				sessionMeasurementData.setValue(measurementData.getValue());    			
-    		}
-    		//getUserSelection().getMeasurementRowList().set(realIndex, measurementRow);
-    	}
-    }
     /**
      * Gets the user selection.
      *

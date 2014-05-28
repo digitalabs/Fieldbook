@@ -54,7 +54,6 @@ import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
-import com.efficio.fieldbook.web.nursery.validation.ImportGermplasmListValidator;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -161,68 +160,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             
         }
     	return super.show(model);
-    }
-    
-    
-
-    /**
-     * Process the imported file and just show the information again.
-     *
-     * @param form the form
-     * @param result the result
-     * @param model the model
-     * @return the string
-     */
-    @RequestMapping(method = RequestMethod.POST)
-    public String showDetails(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form
-            , BindingResult result, Model model) {
-    	
-    	ImportGermplasmListValidator validator = new ImportGermplasmListValidator();
-    	validator.validate(form, result);
-    	//result.reject("importGermplasmListForm.file", "test error msg");    	
-    	getUserSelection().setImportValid(false);
-        if (result.hasErrors()) {
-            /**
-             * Return the user back to form to show errors
-             */
-        	form.setHasError("1");
-            return show(form,model);
-        }else{
-        	try{
-        		ImportedGermplasmMainInfo mainInfo =importGermplasmFileService
-        		        .storeImportGermplasmWorkbook(form.getFile());
-        		mainInfo = importGermplasmFileService.processWorkbook(mainInfo);
-        		
-        		if(mainInfo.getFileIsValid()){
-        			form.setHasError("0");
-        			getUserSelection().setImportedGermplasmMainInfo(mainInfo);
-        			getUserSelection().setImportValid(true);
-        			form.setImportedGermplasmMainInfo(getUserSelection().getImportedGermplasmMainInfo());
-        			form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo()
-        			        .getImportedGermplasmList().getImportedGermplasms());
-        			//form.setCurrentPage(1);
-                    form.changePage(1);
-                    userSelection.setCurrentPageGermplasmList(form.getCurrentPage());
-
-        			//after this one, it goes back to the same screen, 
-        			// but the list should already be displayed
-        		}else{
-        			//meaning there is error
-        			form.setHasError("1");
-        			for(String errorMsg : mainInfo.getErrorMessages()){
-        				result.rejectValue("file", errorMsg);  
-        			}
-        			
-        		}
-        	}catch(Exception e){
-                LOG.error(e.getMessage(), e);
-        	}
-        	
-        	
-        }
-        return show(form,model);
-    	
-    }
+    }        
     
     /**
      * Submit check germplasm list.

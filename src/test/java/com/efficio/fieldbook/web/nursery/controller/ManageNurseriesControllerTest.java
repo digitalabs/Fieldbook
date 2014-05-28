@@ -25,6 +25,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
+import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "file:src/main/webapp/WEB-INF/Fieldbook-servlet.xml" })
 public class ManageNurseriesControllerTest extends AbstractJUnit4SpringContextTests {
@@ -51,7 +53,7 @@ public class ManageNurseriesControllerTest extends AbstractJUnit4SpringContextTe
 
 		ModelAndViewAssert.assertViewName(mav, ManageNurseriesController.BASE_TEMPLATE_NAME);
 		ModelAndViewAssert.assertModelAttributeValue(mav, 
-		        SaveNurseryController.TEMPLATE_NAME_ATTRIBUTE, "NurseryManager/manageNurseries");
+				AbstractBaseFieldbookController.TEMPLATE_NAME_ATTRIBUTE, "NurseryManager/manageNurseries");
 
 	}
 

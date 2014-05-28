@@ -21,14 +21,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.nursery.validation.FileUploadFormValidator;
 import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 import com.efficio.fieldbook.web.trial.form.FileUploadForm;
 import com.efficio.fieldbook.web.util.ToolUtil;
@@ -90,52 +88,7 @@ public class TrialFileUploadController extends AbstractBaseFieldbookController{
         return super.show(model);
     }
 
-    /**
-     * Uploads file if it passes validation
-     *
-     * @param uploadForm the upload form
-     * @param result the result
-     * @param model the model
-     * @param session the session
-     * @return the string
-     */
-    @RequestMapping(method = RequestMethod.POST)
-    public String uploadFile(@ModelAttribute("fileUploadForm") FileUploadForm uploadForm
-            , BindingResult result, Model model, HttpSession session) {
-    	FileUploadFormValidator validator = new FileUploadFormValidator();
-        validator.validate(uploadForm, result);
-
-        if (result.hasErrors()) {
-            /**
-             * Return the user back to form to show errors
-             */
-        	return show(uploadForm,model,session);
-        } else {
-
-
-            try {
-            	String tempFileName = fieldbookService.storeUserWorkbook(
-            	        uploadForm.getFile().getInputStream());
-            	trialSelection.setServerFileName(tempFileName);
-            	trialSelection.setActualFileName(uploadForm.getFile().getOriginalFilename());
-                /*
-                Workbook datasetWorkbook = null;
-                File file = importWorkbookFileService.retrieveCurrentWorkbookAsFile(trialSelection);
-                datasetWorkbook = dataImportService.parseWorkbook(file);
-                trialSelection.setWorkbook(datasetWorkbook);
-                */
-            }catch (IOException e) {
-                LOG.error(e.getMessage(), e);
-                result.reject("uploadForm.file", "Error occurred while uploading file.");
-            }/* catch(WorkbookParserException e){
-                LOG.error(e.getMessage(), e);
-                result.reject("uploadForm.file", "Error occurred while parsing file.");
-            }*/
-            
-            //return "redirect:" + NurseryDetailsController.URL;
-            return show(uploadForm,model,session);
-        }
-    }
+    
     
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()

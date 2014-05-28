@@ -1,81 +1,81 @@
-<!-- form id="addVariableForm" role="form-horizontal" onsubmit="return validateCells();" class="form-horizontal" action="#" 
+<!-- form id="addVariableForm" role="form-horizontal" onsubmit="return validateCells();" class="form-horizontal" action="#"
 	th:action="@{/NurseryManager/addOrRemoveTraits}" method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data" -->
-	
-<form id="addVariableForm" role="form-horizontal" onsubmit="return validateCells();" class="form-horizontal" action="#" 
+
+<form id="addVariableForm" role="form-horizontal" onsubmit="return validateCells();" class="form-horizontal" action="#"
 	method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
 
 	<input type="hidden" th:field="*{importVal}"/>
 	<input type="hidden" th:field="*{numberOfInstances}" />
-              
+
 	 <div class="germplasm-measurement-list-table" style="width: 100%; max-width: 100%; max-height: 500px; margin-bottom: 20px;">
-	
-       <!-- my-class table table-curved table-condensed   -->				
+
+       <!-- my-class table table-curved table-condensed   -->
 				<table class="table-curved table-condensed" id="factor-table" style="table-layout: auto; width: 100%">
 					<thead>
 						 <tr >
 			               <th style="white-space: nowrap"  th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'" th:each="measurementVariable, rowIndex : *{measurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>
-			             </tr>	
+			             </tr>
 					</thead>
-				
+
 				<tbody>
 						<tr  th:class="${row.even}? 'even' : 'odd'" th:each="measurementRow, row: *{paginatedMeasurementRowList}">
-           	
+
            		<td  th:if="${measurementData.editable == false}" style="vertical-center; padding: 0px; white-space: nowrap; padding-left: 5px; padding-right: 5px;" align="left" th:each="measurementData, rowIndex : ${measurementRow.dataList}"  >
-             		
+
              		<label th:if="${measurementData.editable == false}" th:text="${measurementData.value}" ></label>
-             		         		
+
 				</td>
 				<td  th:if="${measurementData.editable == true}" style="vertical-align:center; " align="center" th:each="measurementData, rowIndex : ${measurementRow.dataList}"  >
-             		
-             		
+
+
              		<input th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" type="text" th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues)}" th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}" />
-             		 
-             		<select class="variates-select" th:attr="data-type=${measurementData.dataType}" style="width: 100%;" size="1" 
-             				th:if="${not #lists.isEmpty(measurementData.measurementVariable.possibleValues)}" 
+
+             		<select class="variates-select" th:attr="data-type=${measurementData.dataType}" style="width: 100%;" size="1"
+             				th:if="${not #lists.isEmpty(measurementData.measurementVariable.possibleValues)}"
 	             			th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}" >
 	             		<option value = "" text=""></option>
-             			<option th:each="refval : ${measurementData.measurementVariable.possibleValues}" 
-             					th:value="${refval.key}" 
+             			<option th:each="refval : ${measurementData.measurementVariable.possibleValues}"
+             					th:value="${refval.key}"
              					th:text="${refval.description}"></option>
              		</select>
-             		      		
+
 				</td>
 				</tr>
              	</tbody>
 				</table>
-		</div>	
-			 
-	
+		</div>
+
+
         <div >
 	        <div th:if="*{measurementRowList != null and not #lists.isEmpty(measurementRowList)}">
 	        	<div id="measurement-data-list-pagination"></div>
 	        </div>
 	        </div>
-				
+
 
 
 </form>
 
 
-<script type="text/javascript" th:src="@{/static/js/bootstrap-paginator.min.js}"></script>
-<script type="text/javascript" th:src="@{/static/js/bootstrap-spinedit.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-paginator.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-spinedit.js}"></script>
 	<script type='text/javascript' th:inline="javascript">
 	var isIE = false;
 	</script>
-	
+
 <!--[if IE]>
 <script type="text/javascript">
     isIE = true;
     //any other IE specific stuff here
 </script>
 <![endif]-->
-<link th:href="@{/static/css/bootstrap-spinedit.css}" rel="stylesheet"/>
+<link th:href="@{/static/css/lib/bootstrap/bootstrap-spinedit.css}" rel="stylesheet"/>
 
 				<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
-	           
+
 	    convertToSelect2 = false;
-        var paginationUrl = '/Fieldbook/Common/addOrRemoveTraits/page/'; 
+        var paginationUrl = '/Fieldbook/Common/addOrRemoveTraits/page/';
         paginationUrl = paginationUrl + $("#study-type").val() + "/";
 
         var submitExportUrl = '/Fieldbook/ExportManager/';
@@ -85,60 +85,60 @@
 
             alignment:'center',
             useBootstrapTooltip:true,
-            onPageClicked: function(e,originalEvent,type,page){     
+            onPageClicked: function(e,originalEvent,type,page){
             	if(validateCells()){
             		showPostPage(paginationUrl, options.currentPage, page, 'germplasm-measurement-list-table-div', 'addVariableForm');
             		$('.germplasm-measurement-list-table select').select2();
             	}else{
             		event.stopImmediatePropagation();
             	}
-            		
+
             }
         }
-        
+
 		if($('#measurement-data-list-pagination') != null){
-			$('#measurement-data-list-pagination').bootstrapPaginator(options);	
+			$('#measurement-data-list-pagination').bootstrapPaginator(options);
 		}
 
         $( document ).ready(function() {
         	$('.germplasm-measurement-list-table select').select2();
         	   fixedTrHeight();
-       		 
-       	$('.variates-div').scroll(function(){ 
-       	
+
+       	$('.variates-div').scroll(function(){
+
        		$('.factor-div').scrollTop($(this).scrollTop());
-       	
-       	}); 
+
+       	});
        	   //$("#freezeheader").freezeHeader({ 'height': '500px' });
        	   //setTimeout(function(){$('#hdfreezeheader').css('top', '0px')}, 450);
-       	   
-      
-       		$(window).resize(function() {           		
+
+
+       		$(window).resize(function() {
        	 		resizeWindowForIE();
        	 		syncTableHeight();
           	});
        		syncTableHeight();
        		if(isIE){
-       			resizeWindowForIE()       	 	
+       			resizeWindowForIE()
        		}else{
-        		
+
         	}
-       		
+
    		});
         function resizeWindowForIE(){
         	if(isIE){
-        		$('.germplasm-measurement-list-table').css('width', $( window ).width() + "px");   
+        		$('.germplasm-measurement-list-table').css('width', $( window ).width() + "px");
         		$('.factor-div').css('min-width', '35.5%');
         		$('.factor-div').css('max-width', '35.5%');
         	}
-        		
+
         	syncTableHeight();
         }
         function syncTableHeight(){
-        	
+
         	var factorHeight = $('#factor-table').height();
         	var variateHeight = $('#variate-table').height();
-        	
+
         	if(factorHeight > variateHeight){
         		$('#variate-table').css('height', factorHeight+"px");
         		 $('#variate-table tr').each(function(i) {
@@ -146,7 +146,7 @@
          	        var tableTwoRow = $('#factor-table tr').get(i);
          	        $(this).height($(tableTwoRow).height());
          	    });
-        	}        		
+        	}
         	else if(variateHeight > factorHeight){
         		$('#factor-table').css('height', variateHeight+"px");
         		 $('#factor-table tr').each(function(i) {
@@ -155,9 +155,9 @@
          	        $(this).height($(tableTwoRow).height());
          	    });
         	}
-        	
-        	
-        		
+
+
+
         }
         function fixedTrHeight(){
         	/*
@@ -165,28 +165,28 @@
         		//console.log(index + " = " + $(this).height());
         		$('#variate-table tr').eq(index).css('height',  $(this).height() + "px");
         	})
-        	
+
         	return;
         	*/
-        	var max = 0;    
+        	var max = 0;
         	$('.germplasm-measurement-list-table table tr').each(function() {
         	    max = Math.max($(this).height(), max);
         	}).height(max);
-        	
+
         	$('.germplasm-measurement-list-table table tr').css('height', max+'px');
-        		
+
         }
-       
-		
+
+
 		function doReturn() {
 			location.href = "/Fieldbook/" + $("#study-type").val() + "Manager";
 		}
-      
+
        function validateCells(){
     	   var noError = true;
     	   $('.germplasm-measurement-list-table td input').each(function(){
 			   if($(this).data('type') == 'N'){
-	    			  if(isNaN(Number($(this).val()))){    				   
+	    			  if(isNaN(Number($(this).val()))){
 	    				  showErrorMessage('page-message', "Please enter a numeric value for this variate");
 	    				  moveToTopScreen();
 	    				  var id = $(this).attr('id');
@@ -196,14 +196,14 @@
 	    				  return false;
 	    			  }
 			   }
-		   }); 
+		   });
     	   if(noError){
     		   hideErrorMessage('page-message');
     	   }
     	   //console.log('true');
     	   return noError;
        }
-       
-       
+
+
       //]]>
     </script>

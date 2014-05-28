@@ -1,13 +1,13 @@
-<div>   
+<div>
 <form onsubmit="return do_germplasm_check();" id="germplasm-list-form" role="form-horizontal" class="form-horizontal" action="#"
   th:action="@{/SeedStoreManager/next}" method="post" th:object="${seedStoreForm}" enctype="multipart/form-data">
-      
-      
+
+
     <!-- case 1: no data means no table -->
      <div th:if="*{paginatedInventoryList == null or #lists.isEmpty(paginatedInventoryList)}">
        <span class="noGermplasmListIndicator" th:text="#{nursery.import.no.germplasm.list}">No Germplasm list</span>
      </div>
-     
+
      <!-- case 2: advanced view of the importedGermplasm -->
      <div th:if="*{paginatedInventoryList != null and not #lists.isEmpty(paginatedInventoryList)}">
        <div class="">
@@ -16,7 +16,7 @@
              <tr>
                <th width="12%"  style="text-align: center; vertical-align: middle" th:utext="#{seed.inventory.gid}">.GID</th>
                <th width="16%"  style="text-align: center; vertical-align: middle" th:utext="#{seed.inventory.name}">.Name</th>
-               <th width="16%"  style="text-align: center; vertical-align: middle" th:utext="#{seed.inventory.location}">.Location</th>               
+               <th width="16%"  style="text-align: center; vertical-align: middle" th:utext="#{seed.inventory.location}">.Location</th>
                <th width="16%"  style="text-align: center; vertical-align: middle" th:utext="#{seed.inventory.user}">.User</th>
                <th width="12%"  style="text-align: center; vertical-align: middle" th:utext="#{seed.inventory.amount}">.Amount</th>
                <th width="16%"  style="text-align: center; vertical-align: middle" th:utext="#{seed.inventory.source}">.Source</th>
@@ -25,8 +25,8 @@
            </thead>
            <tbody th:remove="all-but-first">
              <tr class="primaryRow" th:each="gid, row : *{paginatedInventoryList}" th:attr="data-gid=${gid.gid}">
-            
-               <td width="12%" style="text-align: center; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.gid}">.1</td> 
+
+               <td width="12%" style="text-align: center; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.gid}">.1</td>
                <td width="16%" style="text-align: center; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.germplasmName}">.1</td>
                <td width="16%" style="text-align: center; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.locationName}">.2</td>
                <td width="16%" style="text-align: center; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.userName}">.3</td>
@@ -48,10 +48,10 @@
        </div>
      </div>
 
-     
-     
-   
-   		<div> 
+
+
+
+   		<div>
 	        <div th:if="*{inventoryList != null and not #lists.isEmpty(inventoryList)}">
 	        	<div id="inventory-germplasm-list-pagination"></div>
 	        </div>
@@ -59,37 +59,37 @@
 
      	<br />
      </form>
-     
+
  </div>
- <script type="text/javascript" th:src="@{/static/js/bootstrap-paginator.min.js}"></script>
+ <script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-paginator.min.js}"></script>
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
         var paginationUrl = /*[[@{/SeedStoreManager/page/}]]*/;
 
-        
+
         var options = {
             currentPage: /*[[${seedStoreForm.currentPage}]]*/,
             totalPages: /*[[${seedStoreForm.totalPages}]]*/,
 
             alignment:'center',
             useBootstrapTooltip:true,
-            onPageClicked: function(e,originalEvent,type,page){            	
+            onPageClicked: function(e,originalEvent,type,page){
             	showPage(paginationUrl, page, 'inventory-germplasm-list');
             }
         }
-        $( document ).ready(function() {  
+        $( document ).ready(function() {
 			if($('#inventory-germplasm-list-pagination') != null){
 				$('#inventory-germplasm-list-pagination').bootstrapPaginator(options);
 			}
-			
+
 			if (getIEVersion() == 8) {
 				$(".table-with-scroll-inventory").parent().addClass("inventory-germplasm-list-table");
 				$(".table-with-scroll-inventory").removeClass("table-with-scroll-inventory");
 			}
-			
+
 			triggerInventoryTableSelection('inventory-table');
-	       			
+
         });
-        
+
       //]]>
     </script>

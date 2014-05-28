@@ -3,14 +3,14 @@
 		<h1 th:text="#{trial.managesettings.manage.saved.trial.settings}">
 			Manage Trial Settings
 		</h1>
-	</div>			  
+	</div>
 </div>
 <div class="row">
 		<div id="page-message" class="">
-	
+
 		</div>
 	</div>
-<form id="saveTrialSettingsForm" role="form-horizontal" action="#" th:action="@{/TrialManager/manageTrialSettings/save}" 
+<form id="saveTrialSettingsForm" role="form-horizontal" action="#" th:action="@{/TrialManager/manageTrialSettings/save}"
 method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 
 
@@ -22,11 +22,11 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 <input type="hidden" th:field="*{idNameVariables}"/>
 <input type="hidden" th:field="*{startDateId}"/>
 <input type="hidden" th:field="*{endDateId}"/>
-<!-- <input type="hidden" th:field="*{initialLoad}"/> -->	
+<!-- <input type="hidden" th:field="*{initialLoad}"/> -->
 
 <div class="row" xmlns:th="http://www.thymeleaf.org">
-	
-	
+
+
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
 			<div class="panel panel-default">
@@ -36,7 +36,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			    		<div class="col-xs-5 col-md-5 add_top_padding">
 			    			<label class="control-label"> <strong th:text="#{nursery.managesettings.choose.saved.settings}+':'"> Choose Saved Settings: </strong></label>
 			    		</div>
-			    		
+
 			    		<div class="col-xs-7 col-md-7">
 			    			<select th:field="*{selectedSettingId}" class="form-control">
 			    				<option th:each="setting : ${settingsTrialList}" th:value="${setting.templateSettingId}" th:text="${setting.name}">Nursery Type 1</option>
@@ -47,15 +47,15 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			    			<a href="javascript: openUsePreviousTrialModal()" id="usePreviousTrial" th:text="#{trial.managesettings.use.previous.trial}"></a>
 			    			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			    			<a href="javascript: void(0)" id="copySettings" ><img width="15" src="/Fieldbook/static/img/copy.png"/>&nbsp;  <span th:text="#{nursery.managesettings.make.copy}"></span></a>
-			    			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;			    			
+			    			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			    			<a href="javascript: void(0)" id="resetSettings"><img width="15" src="/Fieldbook/static/img/reset.png"/>&nbsp;<span th:text="#{nursery.managesettings.reset.settings}">Reset</span></a>
 			    			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			    			
+
 			    			<a href="javascript: void(0)" id="deleteSettings" ><span class="glyphicon glyphicon-trash"></span>&nbsp;<span th:text="#{common.form.delete.text}">Delete</span></a>
 			    		</div>
 		    		</div>
 		    	</div>
-	    	</div>		
+	    	</div>
 		</div>
 	</div>
 	<div class="row">
@@ -72,28 +72,28 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 	    					<label class="control-label"><strong class="sub-content-heading" th:text="#{nursery.managesettings.save.settings}">SAVE SETTINGS</strong></label>
 	    				</div>
     				</div>
-    				
-	    			
+
+
 	    			    <div class="row form-group">
 	    			    <div class="col-xs-6 col-md-6">
 							<div class="col-xs-5 col-md-5 add_top_padding">
 						        <label class="contol-label" th:text="#{nursery.managesettings.save.settings.as}+':'">Save these settings as:</label><span class="required">*</span>
 		    					&nbsp;&nbsp;
 	    					</div>
-	    					
+
 		    					<div class="col-xs-7 col-md-7">
-		    						<input class="form-control" type="text" maxlength="75" th:field="*{settingName}" />						
+		    						<input class="form-control" type="text" maxlength="75" th:field="*{settingName}" />
 						        </div>
 					        </div>
 						<div class="col-xs-6 col-md-6 add_top_padding">
-	    					<input type="checkbox" th:field="*{isDefault}" /> 
+	    					<input type="checkbox" th:field="*{isDefault}" />
 	    					<label class="control-label" th:text="#{nursery.managesettings.set.default}"> Set as default for this program (overrides previous defaults)</label>
 	    				</div>
 					    </div>
-    
+
 	    			<div class="row form-group">
 	    				<div class="col-xs-6 col-md-6">
-	    				
+
 		    					<div class="row">
 				    				<div class="col-xs-12 col-md-12">
 				    					<label class="control-label" data-toggle="collapse" data-target=".trialEnvironmentDetails">
@@ -104,9 +104,9 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 				    			</div>
 				    			<div class="row form-group collapse in trialEnvironmentDetails">
 				    				<div class="col-xs-12 col-md-12">
-						    			<label class="control-label" th:text="#{trial.managesettings.trial.environment.level.notes}"> Select the settings you will record at the plot level in the nursery. 
+						    			<label class="control-label" th:text="#{trial.managesettings.trial.environment.level.notes}"> Select the settings you will record at the plot level in the nursery.
 						    			These will appear as data columns in your nursery book. You can add and remove settings at this level.</label>
-					    			</div>		    			
+					    			</div>
 				    				<div class="col-xs-12 col-md-12">
 				    					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll" id="trialEnvironmentLevelSettings">
 				    						<thead>
@@ -120,20 +120,20 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 											<tbody>
 						    					<tr th:each="trialEnvLevelVariable, rowStat : *{trialLevelVariables}">
 						    					<td width="5%" style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'">
-						    					
+
 													<span style="cursor: default; font-size: 16px;" th:if="${trialEnvLevelVariable.deletable}" class="glyphicon glyphicon-remove-circle"
 						    						th:onclick="'javascript: deleteVariable(4,\'' + ${trialEnvLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
-						    						  			    						 
+
 						    						<input class="cvTermIds" type="hidden" th:field="*{trialLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 					    						</td>
 						    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${trialEnvLevelVariable.variable.name}"></td>
 						    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${trialEnvLevelVariable.variable.description}"></td>
 						    					<td width="5%" th:class="${rowStat.even}? 'even' : 'odd'" >
-						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
+						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
 														*{trialLevelVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
 														<span class="glyphicon glyphicon-eye-open"></span></a>
 						    					</td>
-						    					</tr> 
+						    					</tr>
 					    					</tbody>
 				    					</table>
 				    				</div>
@@ -147,8 +147,8 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 				    					&nbsp;
 				    				</div>
 			    				</div>
-	    				
-	    				
+
+
 		    				<div class="">
 				    			<label class="control-label" data-toggle="collapse" data-target=".trialLevelDetails">
 				    				<img th:src="@{/static/img/review-list-details.png}" style="padding-bottom:3px;" />
@@ -157,41 +157,41 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			    			</div>
 			    			<div class="row form-group collapse in trialLevelDetails">
 			    				<div class="col-xs-12 col-md-12">
-					    			<label class="control-label" th:text="#{trial.managesettings.trial.level.notes}"> The settings in this section apply across all plots in the nursery. 
+					    			<label class="control-label" th:text="#{trial.managesettings.trial.level.notes}"> The settings in this section apply across all plots in the nursery.
 					    			You can add settings at this level, or remove those that you wish to manage at the plot level.</label>
 				    			</div>
 			    				<div class="col-xs-12 col-md-12 sectionContainer" id="trialLevelSettings-dev">
 			    					<div class="row form-group trialLevelSettings" th:each="trialLevelVariable, rowStat : *{studyLevelVariables}">
 			    						<div class="col-xs-5 col-md-5 1st">
-			    							<span style="cursor: default; font-size: 16px;" th:if="${trialLevelVariable.deletable}" class="glyphicon glyphicon-remove-circle" 
+			    							<span style="cursor: default; font-size: 16px;" th:if="${trialLevelVariable.deletable}" class="glyphicon glyphicon-remove-circle"
 												th:onclick="'javascript: deleteVariable(1,\'' + ${trialLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
 												<input class="cvTermIds" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 			    							&nbsp;&nbsp;&nbsp;
 			    							<span style="word-wrap: break-word"  class="control-label" th:text="${trialLevelVariable.variable.name}"></span>:
 			    						</div>
 			    						<div class="col-xs-7 col-md-7 2nd">
-												<input style="width: 30%" th:if="${trialLevelVariable.variable.widgetType.type == 'DROPDOWN'}" 
+												<input style="width: 30%" th:if="${trialLevelVariable.variable.widgetType.type == 'DROPDOWN'}"
 												type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control select2" />
-												
+
 												<!-- Show Favorite Location/Method -->
 												<div style="width: 100%" th:if="${trialLevelVariable.variable.cvTermId}==*{locationId}" class="possibleValuesDiv">
-												<input 
-												type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}" 
+												<input
+												type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}"
 												th:onclick="'javascript: toggleLocationDropdown(\'' + ${rowStat.index} + '\');'" />
 												&nbsp;&nbsp;
-												
+
 												<span
 												th:text="#{show.favorite.location}">Show Favorite Location</span>
 												</div>
 												<div style="width: 100%" th:if="${trialLevelVariable.variable.cvTermId}==*{breedingMethodId}" class="possibleValuesDiv">
 												<input
-												type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}" 
+												type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}"
 												th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'" />
 												&nbsp;&nbsp;
-												<span 
+												<span
 												th:text="#{show.favorite.method}">Show Favorite Method</span>
 												</div>
-												
+
 												<!-- store possible values of variable -->
 												<div th:text="${trialLevelVariable.value}" class="div-select-val" style="display: none"></div>
 												<div th:if="${trialLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesJson' + ${rowStat.index}"
@@ -200,33 +200,33 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 												<div th:if="${trialLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesFavoriteJson' + ${rowStat.index}"
 													class="possibleValuesFavoriteJson" style="display:none" th:text="${trialLevelVariable.possibleValuesFavoriteJson}">
 												</div>
-												
-												<input th:if="${trialLevelVariable.variable.widgetType.type == 'NTEXT'}" 
+
+												<input th:if="${trialLevelVariable.variable.widgetType.type == 'NTEXT'}"
 												type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control numeric-input" />
-												
-												<input th:if="${trialLevelVariable.variable.widgetType.type == 'CTEXT'}" 
+
+												<input th:if="${trialLevelVariable.variable.widgetType.type == 'CTEXT'}"
 												type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control character-input" />
-												
-												<textarea th:if="${trialLevelVariable.variable.widgetType.type == 'TEXTAREA'}" 
+
+												<textarea th:if="${trialLevelVariable.variable.widgetType.type == 'TEXTAREA'}"
 												 th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control character-input" rows="3" />
-												 
-												<input th:if="${trialLevelVariable.variable.widgetType.type == 'DATE'}" 
+
+												<input th:if="${trialLevelVariable.variable.widgetType.type == 'DATE'}"
 												type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control date-input" />
-												 
-												<input th:if="${trialLevelVariable.variable.widgetType.type == 'SLIDER'}" 
+
+												<input th:if="${trialLevelVariable.variable.widgetType.type == 'SLIDER'}"
 												type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}"
 												th:attr="data-min=${trialLevelVariable.variable.minRange}"
 												th:attrappend="data-max=${trialLevelVariable.variable.maxRange}"
 												class="form-control spinner-input spinnerElement"
-												data-step="0.0001" 										 
+												data-step="0.0001"
 												/>
-													 
+
 												<span>
 													<a th:if="${trialLevelVariable.variable.cvTermId}==*{locationId}" href="javascript: openManageLocations();" th:text="#{nursery.managesettings.manage.location}">Manage Location</a>
 													<a th:if="${trialLevelVariable.variable.cvTermId}==*{breedingMethodId}" href="javascript: openManageMethods();" th:text="#{nursery.managesettings.manage.method}">Manage Method</a>
-												</span>		
+												</span>
 												</div>
-			    					</div>	
+			    					</div>
 			    				</div>
 			    				<div class="col-xs-12 col-md-12">
 			    					<span class="glyphicon glyphicon-plus"></span>&nbsp;
@@ -234,7 +234,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 				    			</div>
 			    			</div>
 	    				</div>
-	    				<div class="col-xs-6 col-md-6">	    								    			
+	    				<div class="col-xs-6 col-md-6">
 		    				<div class="row">
 			    				<div class="col-xs-12 col-md-12">
 					    			<label class="control-label" data-toggle="collapse" data-target=".plotLevelDetails">
@@ -245,7 +245,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			    			</div>
 			    			<div class="row form-group collapse in plotLevelDetails">
 			    				<div class="col-xs-12 col-md-12">
-					    			<label class="control-label" th:text="#{trial.managesettings.plot.level.notes}"> Select the settings you will record at the plot level in the nursery. 
+					    			<label class="control-label" th:text="#{trial.managesettings.plot.level.notes}"> Select the settings you will record at the plot level in the nursery.
 					    			These will appear as data columns in your nursery book. You can add and remove settings at this level.</label>
 				    			</div>
 			    				<div class="col-xs-12 col-md-12">
@@ -261,20 +261,20 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 										<tbody>
 					    					<tr th:each="plotLevelVariable, rowStat : *{plotLevelVariables}">
 					    					<td width="5%" style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'">
-					    					
+
 												<span style="cursor: default; font-size: 16px;" th:if="${plotLevelVariable.deletable}" class="glyphicon glyphicon-remove-circle"
 					    						th:onclick="'javascript: deleteVariable(2,\'' + ${plotLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
-					    						  			    						 
+
 					    						<input class="cvTermIds" type="hidden" th:field="*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 				    						</td>
 					    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.name}"></td>
 					    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.description}"></td>
 					    					<td width="5%" th:class="${rowStat.even}? 'even' : 'odd'" >
-						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
+						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
 														*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
 														<span class="glyphicon glyphicon-eye-open"></span></a>
 						    					</td>
-					    					</tr> 
+					    					</tr>
 				    					</tbody>
 			    					</table>
 			    				</div>
@@ -298,7 +298,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			    			</div>
 			    			<div class="row form-group collapse treatmentFactorsDetails">
 			    				<div class="col-xs-12 col-md-12">
-					    			<label class="control-label" th:text="#{trial.managesettings.treatment.factors.notes}"> Choose the treatment factors that will be applied in the trial.  
+					    			<label class="control-label" th:text="#{trial.managesettings.treatment.factors.notes}"> Choose the treatment factors that will be applied in the trial.
 					    			These will appear as data columns in your study book.  You can add and remove settings at this level.</label>
 				    			</div>
 			    				<div class="col-xs-12 col-md-12">
@@ -315,21 +315,21 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 										<tbody>
 					    					<tr th:each="treatmentFactor, rowStat : *{treatmentFactors}">
 					    					<td width="4%" style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'">
-					    					
+
 												<span style="cursor: default; font-size: 16px;" th:if="${treatmentFactor.deletable}" class="glyphicon glyphicon-remove-circle"
 					    						th:onclick="'javascript: deleteVariable(5,\'' + ${treatmentFactor.variable.cvTermId} + '\',$(this))'"></span>
-					    						  			    						 
+
 					    						<input class="cvTermIds" type="hidden" th:field="*{treatmentFactors[__${rowStat.index}__].variable.cvTermId}" />
 				    						</td>
 				    						<td width="7%" id="groupTd" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${treatmentFactor.group}"></td>
 					    					<td width="42%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${treatmentFactor.variable.name}"></td>
 					    					<td width="42%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${treatmentFactor.variable.description}"></td>
 					    					<td width="5%" th:class="${rowStat.even}? 'even' : 'odd'" >
-						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
+						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
 														*{treatmentFactors[__${rowStat.index}__].variable.cvTermId} + '\');'" >
 														<span class="glyphicon glyphicon-eye-open"></span></a>
 						    					</td>
-					    					</tr> 
+					    					</tr>
 				    					</tbody>
 			    					</table>
 			    				</div>
@@ -353,8 +353,8 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 			    			</div>
 			    			<div class="row  form-group collapse in baselineTraitsDetails">
 			    				<div class="col-xs-12 col-md-12">
-					    			<label class="control-label" th:text="#{trial.managesettings.baseline.traits.notes}"> The list below shows the standard traits available for Cowpea. 
-					    			You can add and remove traits in this list to create the baseline set of traits you are working with in your program. 
+					    			<label class="control-label" th:text="#{trial.managesettings.baseline.traits.notes}"> The list below shows the standard traits available for Cowpea.
+					    			You can add and remove traits in this list to create the baseline set of traits you are working with in your program.
 					    			You will be able to add additional traits to measure in each nursery.</label>
 				    			</div>
 			    				<div class="col-xs-12 col-md-12">
@@ -370,20 +370,20 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 										<tbody>
 					    					<tr th:each="baselineTraitVariable, rowStat : *{baselineTraitVariables}">
 					    						<td width="5%" style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'" >
-					    						
+
 						    						<span style="cursor: default; font-size: 16px;" th:if="${baselineTraitVariable.deletable}" class="glyphicon glyphicon-remove-circle"
 						    						th:onclick="'javascript: deleteVariable(3,\'' + ${baselineTraitVariable.variable.cvTermId} + '\',$(this))'"></span>
-						    									    					
+
 						    						<input class="cvTermIds" type="hidden" th:field="*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId}" />
 					    						</td>
 						    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.name}"></td>
 						    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.description}"></td>
 						    					<td width="5%" th:class="${rowStat.even}? 'even' : 'odd'" >
-						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
+						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
 														*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
 														<span class="glyphicon glyphicon-eye-open"></span></a>
 						    					</td>
-					    					</tr> 
+					    					</tr>
 				    					</tbody>
 			    					</table>
 			    				</div>
@@ -410,7 +410,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
 	    				</div>
     				</div>
 		    	</div>
-	    	</div>	
+	    	</div>
 		</div>
 	</div>
 	<div class="row">
@@ -425,7 +425,7 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
     </div>
     <div class="row">
     	<div class="col-xs-12 col-md-12">
-			<div id="manage-location" th:include="/Common/manageLocationsModal"></div>			
+			<div id="manage-location" th:include="/Common/manageLocationsModal"></div>
 		</div>
 	</div>
 	<div class="row">
@@ -476,18 +476,18 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
- 
-	
+
+
 </form>
 <div layout:fragment="page-script">
 <script type="text/javascript" th:src="@{/static/js/trialManager.js}"></script>
-<script type="text/javascript" th:src="@{/static/js/bootstrap-datepicker.js}"></script>
-<script type="text/javascript" th:src="@{/static/js/bootstrap-spinedit.js}"></script>
-<link th:href="@{/static/css/bootstrap-datepicker.css}" rel="stylesheet"/>
-<link th:href="@{/static/css/bootstrap-spinedit.css}" rel="stylesheet"/>
+<link th:href="@{/static/css/lib/bootstrap/bootstrap-datepicker.css}" rel="stylesheet"/>
+<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-datepicker.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-spinedit.js}"></script>
+<link th:href="@{/static/css/lib/bootstrap/bootstrap-spinedit.css}" rel="stylesheet"/>
 <link th:href="@{/static/css/fieldbook-spinner.css}" rel="stylesheet"/>
 <script type='text/javascript' th:inline="javascript">
-	//<![CDATA[   
+	//<![CDATA[
             var varInListMessage = /*[[#{nursery.managesettings.variable.in.selected.list}]]*/;
             var addNurseryLevelSettings = /*[[#{trial.managesettings.add.trial.level.settings}]]*/;
             var addPlotLevelSettings = /*[[#{nursery.managesettings.add.plot.level.settings}]]*/;
@@ -510,37 +510,37 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
        		var manageLocationLabel = /*[[#{nursery.managesettings.manage.location}]]*/;
        		var nurseryNumericError = /*[[#{manage.settings.nursery.numeric.error}]]*/;
        		var breedingMethodId = '';
-       		var locationId = '';       		
-       		
+       		var locationId = '';
+
        		var showFavoriteMethodLabel = /*[[#{show.favorite.method}]]*/;
        		var showFavoriteLocationLabel = /*[[#{show.favorite.location}]]*/;
 
        		var idNameCounterpartAddedError = /*[[#{manage.settings.id.name.counterpart.added.error}]]*/;
-       		
+
        		var inputChange = false;
        		var reminderNursery = /*[[#{trial.reminder.add.trial.settings}]]*/;
        		var reminderPlot = /*[[#{nursery.reminder.add.plot.settings}]]*/;
        		var reminderTraits = /*[[#{nursery.reminder.add.trait.settings}]]*/;
        		var reminderTrialEnvironment = /*[[#{nursery.reminder.add.trial.environment.settings}]]*/;
        		var reminderTreatmentFactors = /*[[#{trial.reminder.add.treatment.factors}]]*/;
-       	
+
        		var noVariableNameError = /*[[#{manage.settings.no.variable.name.error}]]*/;
        		var noTreatmentFactorPairError = /*[[#{manage.settings.no.treatment.factor.pair.missing}]]*/;
-       		var noTreatmentFactorPairNameError = /*[[#{manage.settings.no.treatment.factor.pair.name.missing}]]*/; 
-       		
+       		var noTreatmentFactorPairNameError = /*[[#{manage.settings.no.treatment.factor.pair.name.missing}]]*/;
+
        		var startDateRequiredError = /*[[#{start.end.date.validation.start.date.required}]]*/;
        		var startDateRequiredEarlierError = /*[[#{start.end.date.validation.start.date.required.earlier}]]*/;
        		var startDateId = '';
        		var endDateId = '';
  			$( document ).ready(function() {
- 				
+
  				if (getIEVersion() == 8) {
  					$(".table-with-scroll").parent().addClass("variable-details");
  					$(".table-with-scroll-treatment").parent().addClass("variable-details");
  					$(".table-with-scroll").removeClass("table-with-scroll");
  					$(".table-with-scroll-treatment").removeClass("table-with-scroll-treatment");
  				}
- 				
+
  				locationId = $('#locationId').val();
  				breedingMethodId = $('#breedingMethodId').val();
  				programMethodUrl = $('#breedingMethodUrl').val();
@@ -558,51 +558,51 @@ method="post" th:object="${manageSettingsForm}" enctype="multipart/form-data">
  				$('#selectedSettingId').on('change', function(){
  					//alert('load settings' + $(this).val());
  					loadNurserySettings($(this).val());
- 					
+
  				})
  				$('#deleteSettings').on('click', function(){
  					if($('#selectedSettingId').val() == '0'){
- 						showErrorMessage('page-message', deleteTemplateSettingError);	
- 					}else{ 						
- 	 					$('#delete-settings-confirmation').modal('show');	
- 					} 					 					
+ 						showErrorMessage('page-message', deleteTemplateSettingError);
+ 					}else{
+ 	 					$('#delete-settings-confirmation').modal('show');
+ 					}
  				});
  				$('#resetSettings').on('click', validateReset);
  				$('#saveSettings').on('click', doSaveSettings);
  				//$('#addNewSettings').on('click', addNewSettings);
- 				
- 				
- 				
+
+
+
  				$('#copySettings').on('click', function(){
  					if($('#selectedSettingId').val() == '0'){
- 						showErrorMessage('page-message', copyTemplateSettingError);	
- 					}else{ 						
+ 						showErrorMessage('page-message', copyTemplateSettingError);
+ 					}else{
  	 					copySettings();
- 					} 					 					
+ 					}
  				});
  				$.each($(".possibleValuesJson"), function (index, divElem){
- 					var select2Index = $(divElem).attr("id").split("possibleValuesJson")[1]; 
+ 					var select2Index = $(divElem).attr("id").split("possibleValuesJson")[1];
 
  					if (parseInt($("#" + getJquerySafeId("studyLevelVariables"+select2Index+".variable.cvTermId")).val()) == parseInt(locationId)) {
- 						initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 
+ 						initializePossibleValuesCombo($.parseJSON(divElem.innerHTML),
  		 			 			"#" + getJquerySafeId("studyLevelVariables"+select2Index+".value"), true, $(divElem).siblings(".div-select-val").html());
- 						
+
  					} else {
- 						initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 
+ 						initializePossibleValuesCombo($.parseJSON(divElem.innerHTML),
  		 			 			"#" + getJquerySafeId("studyLevelVariables"+select2Index+".value"), false, $(divElem).siblings(".div-select-val").html());
- 						
+
  					}
- 					
+
  				});
  				setTimeout('initializeDateAndSliderInputs()', 500);
- 				
+
  				$.fn.modal.Constructor.prototype.enforceFocus = function() {};
- 				
+
  				$('input').on('change', function(){inputChange = true;})
- 			});    	
- 			
-			
+ 			});
+
+
       //]]>
     </script>
-	
+
 </div>

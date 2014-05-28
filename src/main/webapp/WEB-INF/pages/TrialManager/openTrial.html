@@ -3,12 +3,12 @@
 		<h1 th:text="#{trial.open.trial}">
 			OPEN TRIAL
 		</h1>
-	</div>			  
+	</div>
 </div>
 
 <input type="hidden" id="study-type" name="study-type" value="Trial" />
 
-<form role="form-horizontal"  action="#" 
+<form role="form-horizontal"  action="#"
       method="post" th:object="${addOrRemoveTraitsForm}">
  	<input type="hidden" th:field="*{locationId}"/>
  	<input type="hidden" th:field="*{locationUrl}"/>
@@ -16,25 +16,25 @@
            <div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
    </div>
 </form>
-  
-<div id="page-message"> 
+
+<div id="page-message">
 </div>
-		
+
 <div class="col-xs-12 col-md-12 move-left ">
 	<div class="panel panel-default">
 	   	<div class="panel-body manage-settings-panel-body">
 	   	<div class="row form-group">
-	   	
+
 	   	<div class="col-xs-1 col-md-1 add_top_padding">
    			<label class="control-label"> <strong th:text="#{nursery.managenurseries.shownurseries.name}+':'"> Choose Saved Settings: </strong></label>
    		</div>
-   		
+
    		<div class="col-xs-3 col-md-3 add_top_padding">
    			<label class="control-label" th:text="${addOrRemoveTraitsForm.studyName}"> </label>
    		</div>
-   		
+
 	<div style="float: right;">
-	
+
 		<div  class="btn-group">
 		  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
 		    <span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;Export
@@ -42,27 +42,27 @@
 		  <ul class="dropdown-menu" role="menu">
 		    <li>
 	    		<a href="javascript: exportTrial(1);"  th:text="#{nursery.export.fieldlog.fieldroid}">Fieldlog / Fieldroid</a>
-		    </li>		    
+		    </li>
 		    <li>
-		    	<a href="javascript: exportTrial(2);"  th:text="#{nursery.export.r}">R</a> 
+		    	<a href="javascript: exportTrial(2);"  th:text="#{nursery.export.r}">R</a>
 		    </li>
 			<li>
-		    	<a href="javascript: exportTrial(3);"  th:text="#{nursery.export.excel}">Excel</a> 
+		    	<a href="javascript: exportTrial(3);"  th:text="#{nursery.export.excel}">Excel</a>
 		    </li>
 			<li>
-		    	<a href="javascript: exportTrial(4);"  th:text="#{nursery.export.datakapture}">Data Kapture</a> 
+		    	<a href="javascript: exportTrial(4);"  th:text="#{nursery.export.datakapture}">Data Kapture</a>
 		    </li>
 			  <li class="dropdown-submenu">
 			    <a  href="javascript: void(0)">KSU Fieldbook</a>
 			    <ul class="dropdown-menu">
-			      <li><a href="javascript: exportTrial(5);">Excel</a></li>			     
+			      <li><a href="javascript: exportTrial(5);">Excel</a></li>
 			      <li><a href="javascript: exportTrial(6);">CSV</a></li>
 			    </ul>
-			  </li>  
-		          
+			  </li>
+
 		  </ul>
 		</div>
-	
+
 		<div  class="btn-group">
 		  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
 		    <span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;Import
@@ -70,20 +70,20 @@
 		  <ul class="dropdown-menu" role="menu">
 		    <li>
 		    	<a href="javascript: importNursery(1);"  th:text="#{nursery.import.fieldlog.fieldroid}">Fieldlog / Fieldroid</a>
-		    </li>		    
+		    </li>
 		    <li>
-		    	<a href="javascript: importNursery(3);" th:text="#{nursery.import.excel}">Excel</a> 
-		    </li>			    
+		    	<a href="javascript: importNursery(3);" th:text="#{nursery.import.excel}">Excel</a>
+		    </li>
 		    <li>
-		    	<a href="javascript: importNursery(4);" th:text="#{nursery.import.datakapture}">Data Kapture</a> 
-		    </li>			    
+		    	<a href="javascript: importNursery(4);" th:text="#{nursery.import.datakapture}">Data Kapture</a>
+		    </li>
 		  </ul>
 		</div>
 	</div>
 	</div>
-	
+
 	<!-- Tab Navigation section -->
-	
+
 	<ul id="trial-tab-headers" class="nav nav-tabs" >
 		<li id="germplasm-measurement-list-table-div-li" class="active"><a href="javascript:showSelectedTab('germplasm-measurement-list-table-div');" th:text="#{trial.tab.measurements}">Measurements</a></li>
 		<li id="trial-trials-tab-li"><a href="javascript:showSelectedTab('trial-trials-tab');" th:text="#{trial.tab.trials}">Trials</a></li>
@@ -91,9 +91,9 @@
 
 	<div id="trial-tabs" style="padding-top: 15px;">
 		<div id="germplasm-measurement-list-table-div" th:include="/Common/showAddOrRemoveTraitsPagination">
-    	</div>		    	
+    	</div>
 		<div id="trial-trials-tab" style="padding-top: 15px; display:none;">
-		
+
 			<div class="row col-xs-12 col-md-12">
   				<div class="col-xs-1 col-md-1">
   					<label class="control-label" th:text="#{trial.createtrial.location}+':'">Location:</label>
@@ -104,24 +104,24 @@
 				<span th:text="#{trial.createtrial.show.favorite.location.for.all}">Show Favorite Location for All</span>
   				</div>
   			</div>
-		<form id="addVariableForm2" role="form-horizontal" class="form-horizontal" action="#" 
+		<form id="addVariableForm2" role="form-horizontal" class="form-horizontal" action="#"
 	method="post" th:object="${addOrRemoveTraitsForm}" enctype="multipart/form-data">
 			<div class="col-xs-12 col-md-12">
 	    			<div th:include="/TrialManager/trialEnvironmentMatrix"></div>
     			</div>
     			</form>
-		</div>	
+		</div>
 
 	<div class="form-group">
-	    <div class="col-xs-5 col-md-5">&nbsp;</div> 
+	    <div class="col-xs-5 col-md-5">&nbsp;</div>
 	    <div class="col-xs-7 col-md-7">
 	      	<a id="btnBack" href="" th:href="@{/NurseryManager/importGermplasmList}"   th:text="#{common.form.back.text}" class="btn btn-default" />
 	      	<input type="button" id="btnUpdate" th:value="#{common.form.update.text}" class="btn btn-primary" onclick="doSave();return false;"/>
-	      
+
 	    </div>
 	  </div>
-	  
-	
+
+
 	</div>
 
 	</div>
@@ -140,12 +140,12 @@
     </div>
 
 
-<script type="text/javascript" th:src="@{/static/js/bootstrap-fileupload.js}"></script>
-<link th:href="@{/static/css/bootstrap-slider.css}" rel="stylesheet"/>
+<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-fileupload.js}"></script>
+<link th:href="@{/static/css/lib/bootstrap/bootstrap-slider.css}" rel="stylesheet"/>
 <script type="text/javascript" th:src="@{/static/js/trialManager.js}"></script>
-<script type="text/javascript" th:src="@{/static/js/bootstrap-slider.js}"></script>
-<link th:href="@{/static/css/bootstrap-datepicker.css}" rel="stylesheet"/>
-<script type="text/javascript" th:src="@{/static/js/bootstrap-datepicker.js}"></script>
+<link th:href="@{/static/css/lib/bootstrap/bootstrap-datepicker.css}" rel="stylesheet"/>
+<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-slider.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-datepicker.js}"></script>
 
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
@@ -173,16 +173,16 @@
 		programLocationUrl = $('#locationUrl').val();
 		$.each($(".possibleValuesJsonTrial"), function(index, divElem) {
 			var select2Index = $(divElem).attr("id").split("possibleValuesJsonTrial")[1].split("a");
-			
-			
+
+
 			if (parseInt($("#" + getJquerySafeId("trialEnvironmentValues"+select2Index[0]+select2Index[1]+".id")).val()) == parseInt(locationId)) {
-				initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 
+				initializePossibleValuesCombo($.parseJSON(divElem.innerHTML),
 				 			"#" + getJquerySafeId("trialEnvironmentValues"+select2Index[0]+select2Index[1]+".name"), true, $(divElem).siblings(".div-select-val").html());
-				
+
 			} else {
-				initializePossibleValuesCombo($.parseJSON(divElem.innerHTML), 
+				initializePossibleValuesCombo($.parseJSON(divElem.innerHTML),
 				 			"#" + getJquerySafeId("trialEnvironmentValues"+select2Index[0]+select2Index[1]+".name"), false, $(divElem).siblings(".div-select-val").html());
-				
+
 			}
 		});
 	});
@@ -203,22 +203,22 @@
 			data: serializedData,
 		    success: function(data){
 			    if (data.status == "1") {
-			    	$('#successMessageModal').modal({ backdrop: 'static', keyboard: true }) 
+			    	$('#successMessageModal').modal({ backdrop: 'static', keyboard: true })
 			    	$("#successMessageModal").modal("show");
 		       	} else if (data.status == "-1") {
 		       		showErrorMessage('page-message', data.errorMessage);
 		       	}
-		   }, 
+		   },
 		   error: function(jqXHR, textStatus, errorThrown){
-				console.log("The following error occured: " + textStatus, errorThrown); 
-		   }, 
-		   complete: function(){  
+				console.log("The following error occured: " + textStatus, errorThrown);
+		   },
+		   complete: function(){
 			   $("btnUpdate").removeAttr("disabled");
 			   Spinner.toggle();
-		   } 
+		   }
 		});
 	}
-	
+
 	function disableEnableExperimentalFields(isDisabled) {
    		var cvTermIds = $("#trialInstancesTable").find(".cvTermIds");
    		$.each(cvTermIds, function(i, elem) {
@@ -227,6 +227,6 @@
    			}
    		});
 	}
-	
+
 	//]]>
 </script>

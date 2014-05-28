@@ -1,7 +1,7 @@
 <div class="">
 	<div class="">
 		<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
-	</div>		
+	</div>
 </div>
 <form id="createTrialForm" role="form-horizontal" action="#"
 th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialForm}" enctype="multipart/form-data">
@@ -21,7 +21,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 					<input type="hidden" th:field="*{blockSize}"/>
 					<input type="hidden" th:field="*{experimentalDesign}"/>
 					<input type="hidden" th:field="*{openGermplasmUrl}"/>
-					
+
 					<div class="row form-group">
 						<div class="col-xs-12 col-md-12">
 							<div class="row">
@@ -34,7 +34,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 			    			</div>
 			    			<div class="row collapse in trialEnvironmentDetailsSection">
 			    				<div class="col-xs-12 col-md-12">
-					    			<label class="control-label" th:text="#{trial.createtrial.trial.environment.notes}"> The settings in this section apply across all plots in the trial. 
+					    			<label class="control-label" th:text="#{trial.createtrial.trial.environment.notes}"> The settings in this section apply across all plots in the trial.
 					    			You can add settings at this level, or remove those that you wish to manage at the plot level.</label>
 				    			</div>
 			    			</div>
@@ -96,7 +96,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 			    				<div class="col-xs-9 col-md-9">
 			    					<div class="fileupload fileupload-new" data-provides="fileupload">
 								        <div class="input-group">
-								            <div class="form-control uneditable-input"><i class="icon-file fileupload-exists"></i> 
+								            <div class="form-control uneditable-input"><i class="icon-file fileupload-exists"></i>
 								                <span class="fileupload-preview"></span>
 								            </div>
 								            <div class="input-group-btn">
@@ -117,7 +117,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 			    			<div th:include="/TrialManager/trialEnvironmentMatrix"></div>
 		    			</div>
 					</div>
-					
+
 	    			<div class="row form-group">
 	    				<div class="col-xs-6 col-md-6">
 		    				<div class="">
@@ -128,7 +128,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 			    			</div>
 			    			<div class="row collapse in trialLevelDetails">
 			    				<div class="col-xs-12 col-md-12">
-					    			<label class="control-label" th:text="#{trial.managesettings.trial.level.notes}"> The settings in this section apply across all plots in the trial. 
+					    			<label class="control-label" th:text="#{trial.managesettings.trial.level.notes}"> The settings in this section apply across all plots in the trial.
 					    			You can add settings at this level, or remove those that you wish to manage at the plot level.</label>
 				    			</div>
 			    			</div>
@@ -141,7 +141,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 	                                        <!--  <span id="folderNameSpan" name="folderNameSpan" ></span>-->
 	                                        <input type="hidden" th:field="*{folderId}" />
 	                                        <input type="hidden" th:field="*{folderName}" />
-	                                        
+
 	                                        <a id="chooseLocation" onclick="loadFolderAjax();" th:text="#{trial.create.trial.choose.location}"></a>
 	                                </div>
 	                            </div>
@@ -150,20 +150,20 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 	                                    &nbsp;&nbsp;&nbsp;<span style="word-wrap: break-word"  class="control-label trial-level-label" th:text="${trialLevelVariable.variable.name}"></span>:
 	                                </div>
 	                               	<div class="col-xs-7 col-md-7 2nd">
-									 	<input class="cvTermIds trialLevelVariableIdClass" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" /> 
-										<input th:if="${trialLevelVariable.variable.widgetType.type == 'DROPDOWN'}" 
+									 	<input class="cvTermIds trialLevelVariableIdClass" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
+										<input th:if="${trialLevelVariable.variable.widgetType.type == 'DROPDOWN'}"
 										type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control select2" />
-										
+
 										<!-- Show Favorite Method -->
 										<div th:if="${trialLevelVariable.variable.cvTermId}==*{breedingMethodId}" class="possibleValuesDiv">
-										<input 
-										type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}" 
+										<input
+										type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}"
 										th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'" />
 										&nbsp;&nbsp;
-										<span 
+										<span
 										th:text="#{show.favorite.method}">Show Favorite Method</span>
 										</div>
-										
+
 										<!-- store possible values of variable -->
 										<div th:text="${trialLevelVariable.value}" class="div-select-val" style="display: none"></div>
 										<div th:if="${trialLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesJson' + ${rowStat.index}"
@@ -172,30 +172,30 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 										<div th:if="${trialLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesFavoriteJson' + ${rowStat.index}"
 											class="possibleValuesFavoriteJson" style="display:none" th:text="${trialLevelVariable.possibleValuesFavoriteJson}">
 										</div>
-										
-										<input th:if="${trialLevelVariable.variable.widgetType.type == 'NTEXT'}" 
+
+										<input th:if="${trialLevelVariable.variable.widgetType.type == 'NTEXT'}"
 										type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control numeric-input" />
-										
-										<input th:if="${trialLevelVariable.variable.widgetType.type == 'CTEXT'}" 
+
+										<input th:if="${trialLevelVariable.variable.widgetType.type == 'CTEXT'}"
 										type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control character-input" />
-										
-										<textarea th:if="${trialLevelVariable.variable.widgetType.type == 'TEXTAREA'}" 
+
+										<textarea th:if="${trialLevelVariable.variable.widgetType.type == 'TEXTAREA'}"
 												 th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control character-input" rows="3" />
-												 
-										<input th:if="${trialLevelVariable.variable.widgetType.type == 'DATE'}" 
+
+										<input th:if="${trialLevelVariable.variable.widgetType.type == 'DATE'}"
 										type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control date-input" />
-										 
-										<input th:if="${trialLevelVariable.variable.widgetType.type == 'SLIDER'}" 
+
+										<input th:if="${trialLevelVariable.variable.widgetType.type == 'SLIDER'}"
 										type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}"
 										th:attr="data-min=${trialLevelVariable.variable.minRange}"
 										th:attrappend="data-max=${trialLevelVariable.variable.maxRange}"
 										class="form-control spinner-input spinnerElement"
-										data-step="0.0001" 										 
+										data-step="0.0001"
 										/>
-											 
+
 										<span>
 											<a th:if="${trialLevelVariable.variable.cvTermId}==*{breedingMethodId}" href="javascript: openManageMethods();" th:text="#{trial.managesettings.manage.method}">Manage Method</a>
-										</span>		
+										</span>
 	                            	</div>
 			    				</div>
 		    				</div>
@@ -209,7 +209,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 			    			</div>
 			    			<div class="row form-group collapse in plotLevelDetails">
 			    				<div class="col-xs-12 col-md-12">
-					    			<label class="control-label" th:text="#{trial.managesettings.plot.level.notes}"> Select the settings you will record at the plot level in the trial. 
+					    			<label class="control-label" th:text="#{trial.managesettings.plot.level.notes}"> Select the settings you will record at the plot level in the trial.
 					    			These will appear as data columns in your trial book. You can add and remove settings at this level.</label>
 				    			</div>
 			    				<div class="col-xs-12 col-md-12">
@@ -226,19 +226,19 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 					    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.name}"></td>
 					    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.description}"></td>
 					    					<td width="10%" th:class="${rowStat.even}? 'even' : 'odd'" >
-						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
+						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
 														*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
 														<span class="glyphicon glyphicon-eye-open"></span></a>
 						    					</td>
 					    					<input class="cvTermIds" type="hidden" th:field="*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
-					    					</tr> 
+					    					</tr>
 				    					</tbody>
 			    					</table>
 			    				</div>
 			    				<div class="col-xs-3 col-md-3"></div>
-			    			</div>			
+			    			</div>
 	    				</div>
-	    				<div class="col-xs-6 col-md-6">	    								    			
+	    				<div class="col-xs-6 col-md-6">
 		    				<div class="row">
 			    				<div class="col-xs-12 col-md-12">
 					    			<label class="control-label" data-toggle="collapse" data-target=".treatmentFactorsDetails">
@@ -289,34 +289,34 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 						    					</td>
 						    					<td width="35%" th:class="${rowStat.even}? 'even' : 'odd'">
 						    						<input type="hidden" class="prevTreatmentValue" />
-						    						<input th:if="${treatmentFactor.widgetType.type == 'DROPDOWN'}" 
+						    						<input th:if="${treatmentFactor.widgetType.type == 'DROPDOWN'}"
 														type="hidden" th:field="*{treatmentFactors[__${rowStat.index}__].amountValue}" class="form-control select2" />
 													<div th:if="${treatmentFactor.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesJsonTreatment' + ${rowStat.index}"
 														class="possibleValuesJsonTreatment" style="display:none" th:text="${treatmentFactor.possibleValuesJson}">
-													</div>	
-													<input th:if="${treatmentFactor.widgetType.type == 'NTEXT'}" 
+													</div>
+													<input th:if="${treatmentFactor.widgetType.type == 'NTEXT'}"
 													type="text" th:field="*{treatmentFactors[__${rowStat.index}__].amountValue}" class="form-control numeric-input" />
-													
-													<input th:if="${treatmentFactor.widgetType.type == 'CTEXT'}" 
+
+													<input th:if="${treatmentFactor.widgetType.type == 'CTEXT'}"
 													type="text" th:field="*{treatmentFactors[__${rowStat.index}__].amountValue}" class="form-control character-input" />
-													
-													<input th:if="${treatmentFactor.widgetType.type == 'DATE'}" 
+
+													<input th:if="${treatmentFactor.widgetType.type == 'DATE'}"
 													type="text" th:field="*{treatmentFactors[__${rowStat.index}__].amountValue}" class="form-control date-input" />
-													
-													<input th:if="${treatmentFactor.widgetType.type == 'SLIDER'}" 
+
+													<input th:if="${treatmentFactor.widgetType.type == 'SLIDER'}"
 													type="text" th:field="*{treatmentFactors[__${rowStat.index}__].amountValue}"
 													th:attr="data-min=${treatmentFactor.minRange}"
 													th:attrappend="data-max=${treatmentFactor.maxRange}"
 													class="form-control spinner-input spinnerElement"
-													data-step="0.0001" 										 
+													data-step="0.0001"
 													/>
 						    					</td>
 						    					<td width="5%" th:class="${rowStat.even}? 'even' : 'odd'" >
-						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
+						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
 														*{treatmentFactors[__${rowStat.index}__].amountId} + '\');'" >
 														<span class="glyphicon glyphicon-eye-open"></span></a>
 						    					</td>
-					    					</tr> 
+					    					</tr>
 				    					</tbody>
 			    					</table>
 			    				</div>
@@ -337,8 +337,8 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 			    			</div>
 			    			<div class="row  form-group collapse in baselineTraitDetails">
 			    				<div class="col-xs-12 col-md-12">
-					    			<label class="control-label" th:text="#{trial.managesettings.baseline.traits.notes}"> The list below shows the standard traits available for Cowpea. 
-					    			You can add and remove traits in this list to create the baseline set of traits you are working with in your program. 
+					    			<label class="control-label" th:text="#{trial.managesettings.baseline.traits.notes}"> The list below shows the standard traits available for Cowpea.
+					    			You can add and remove traits in this list to create the baseline set of traits you are working with in your program.
 					    			You will be able to add additional traits to measure in each trial.</label>
 				    			</div>
 			    				<div class="col-xs-12 col-md-12">
@@ -352,46 +352,46 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 										</thead>
 										<tbody>
 					    					<tr class="baseline-traits" th:each="baselineTraitVariable, rowStat : *{baselineTraitVariables}">
-					    						
+
 						    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.name}"></td>
 						    					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.description}"></td>
 						    					<td width="10%" th:class="${rowStat.even}? 'even' : 'odd'" >
-						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' + 
+						    						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
 														*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
 														<span class="glyphicon glyphicon-eye-open"></span></a>
 														<input class="cvTermIds" type="hidden" th:field="*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId}" />
 						    					</td>
-						    					
-					    					</tr> 
+
+					    					</tr>
 				    					</tbody>
 			    					</table>
 			    				</div>
 			    				<div class="col-xs-3 col-md-3"></div>
 			    			</div>
-		    				
-		    				
+
+
 	    				</div>
-	    				
+
 	    			</div>
- 
+
 
 </form>
- 
+
 
 	<!-- Modal Dialog for Choosing Folder Location -->
 	<div class="row">
-		<div class="col-md-12">	
+		<div class="col-md-12">
 			<div class="modal fade" id="folderBrowserModal"  role="dialog" aria-labelledby="folderBrowserModal" aria-hidden="true">
 				<div class="modal-dialog modal-large" style="width:500px;">
 					<div class="modal-content">
-					
+
 					</div><!-- /.modal-content -->
 				</div><!-- /.modal-dialog -->
-			</div><!-- /.modal -->		
-			 
+			</div><!-- /.modal -->
+
 		</div>
-	</div>	
-	
+	</div>
+
 	<div class="row">
         <div class="col-xs-12 col-md-12">
             <div id="manage-location" th:include="/Common/manageLocationsModal"></div>
@@ -407,19 +407,19 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
     		<div id="showBaselineTraitDetails" th:include="/TrialManager/baselineTraitDetails"></div>
    		</div>
     </div>
-	
+
 
 <div layout:fragment="page-script">
 <script type="text/javascript" th:src="@{/static/js/trialManager.js}"></script>
-<script type="text/javascript" th:src="@{/static/js/bootstrap-datepicker.js}"></script>
-<script type="text/javascript" th:src="@{/static/js/bootstrap-fileupload.js}"></script>
-<script type="text/javascript" th:src="@{/static/js/bootstrap-spinedit.js}"></script>
-<link th:href="@{/static/css/bootstrap-datepicker.css}" rel="stylesheet"/>
-<link th:href="@{/static/css/bootstrap-spinedit.css}" rel="stylesheet"/>
+<link th:href="@{/static/css/lib/bootstrap/bootstrap-datepicker.css}" rel="stylesheet"/>
+<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-datepicker.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-fileupload.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-spinedit.js}"></script>
+<link th:href="@{/static/css/lib/bootstrap/bootstrap-spinedit.css}" rel="stylesheet"/>
 <link th:href="@{/static/css/fieldbook-spinner.css}" rel="stylesheet"/>
 <script type='text/javascript' th:inline="javascript">
-//<![CDATA[   
-	
+//<![CDATA[
+
     var requiredErrorMessage = /*[[#{ontology.browser.modal.error}]]*/;
     var requiredSettingErrorMessage = /*[[#{nursery.create.nursery.required.setting}]]*/;
     var uniqueBookNameErrorMessage = /*[[#{nursery.create.already.exists}]]*/;
@@ -428,7 +428,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
     var trialGermplasmListIsRequired = /*[[#{nursery.create.germplasm.list.is.required}]]*/;
     var checkTypeIsRequired = /*[[#{nursery.create.check.type.is.required}]]*/;
     var experimentalDesignValues = /*[[${experimentalDesignValues}]]*/ null;
-    
+
     var locationId = '';
     var programLocationUrl = '';
     var programMethodUrl = '';
@@ -436,21 +436,21 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
     var locationIframeOpened = false;
     var methodIframeOpened = false;
     var importLocationUrl = '';
-    var requiredFields = [];    
+    var requiredFields = [];
     var startDateId = '';
 	var endDateId = '';
 	var trialInstanceId = '';
 	var replicates = '';
 	var blockSize = '';
 	var experimentalDesign = '';
-    
+
 	$(document).ready(function() {
 		if (getIEVersion() == 8) {
 			$(".table-with-scroll-create").parent().addClass("variable-details");
 			$(".table-with-scroll-create").removeClass("table-with-scroll-create");
 		}
         if($('#requiredFields').val() != ''){
-            requiredFields = $('#requiredFields').val().split(',');    
+            requiredFields = $('#requiredFields').val().split(',');
         }
         startDateId = $('#startDateId').val();
 			endDateId = $('#endDateId').val();
@@ -458,34 +458,34 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
         breedingMethodId = $('#breedingMethodId').val();
         programMethodUrl = $('#breedingMethodUrl').val();
         programLocationUrl = $('#locationUrl').val();
-        importLocationUrl = $('#importLocationUrl').val();    
+        importLocationUrl = $('#importLocationUrl').val();
         trialInstanceId = $('#trialInstanceFactor').val();
         replicates = $("#replicates").val();
         blockSize = $("#blockSize").val();
         experimentalDesign = $("#experimentalDesign").val();
-        
+
 		$("#folderNameSpan").html($("#folderName").val());
-		
+
 		//initialize dropdowns in trial level details
 		$.each($(".possibleValuesJson"), function (index, divElem) {
-				var select2Index = $(divElem).attr("id").split("possibleValuesJson")[1]; 
+				var select2Index = $(divElem).attr("id").split("possibleValuesJson")[1];
 				var possibleValues = [];
 				if (divElem.innerHTML != "") {
 					possibleValues = $.parseJSON(divElem.innerHTML);
 				}
-				
+
 				if (parseInt($("#" + getJquerySafeId("studyLevelVariables"+select2Index+".variable.cvTermId")).val()) == parseInt(locationId)) {
-					initializePossibleValuesCombo(possibleValues, 
+					initializePossibleValuesCombo(possibleValues,
 	 			 			"#" + getJquerySafeId("studyLevelVariables"+select2Index+".value"), true, $(divElem).siblings(".div-select-val").html());
-					
+
 				} else {
-					initializePossibleValuesCombo(possibleValues, 
+					initializePossibleValuesCombo(possibleValues,
 	 			 			"#" + getJquerySafeId("studyLevelVariables"+select2Index+".value"), false, $(divElem).siblings(".div-select-val").html());
-					
+
 				}
-				
+
 		});
-		
+
 		//initialize dropdowns in trial environment details
 		$.each($(".possibleValuesJsonTrial"), function(index, divElem) {
 			var select2Index = $(divElem).attr("id").split("possibleValuesJsonTrial")[1].split("a");
@@ -493,18 +493,18 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 			if (divElem.innerHTML != "") {
 				possibleValues = $.parseJSON(divElem.innerHTML);
 			}
-			
+
 			if (parseInt($("#" + getJquerySafeId("trialEnvironmentValues"+select2Index[0]+select2Index[1]+".id")).val()) == parseInt(locationId)) {
-				initializePossibleValuesCombo(possibleValues, 
+				initializePossibleValuesCombo(possibleValues,
  			 			"#" + getJquerySafeId("trialEnvironmentValues"+select2Index[0]+select2Index[1]+".name"), true, $(divElem).siblings(".div-select-val").html());
-				
+
 			} else {
-				initializePossibleValuesCombo(possibleValues, 
+				initializePossibleValuesCombo(possibleValues,
  			 			"#" + getJquerySafeId("trialEnvironmentValues"+select2Index[0]+select2Index[1]+".name"), false, $(divElem).siblings(".div-select-val").html());
-				
+
 			}
 		});
-		
+
 		//initialize dropdowns in treatment factors details
 		$.each($(".possibleValuesJsonTreatment"), function(index, divElem) {
 			var possibleValues = [];
@@ -512,9 +512,9 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 			if (divElem.innerHTML != "") {
 				possibleValues = $.parseJSON(divElem.innerHTML);
 			}
-			initializePossibleValuesCombo(possibleValues, 
+			initializePossibleValuesCombo(possibleValues,
 		 		"#" + getJquerySafeId("treatmentFactors"+select2Index+".amountValue"), false, null);
-			
+
 		});
 
 		setTimeout('initializeDateAndSliderInputs()', 500);
@@ -522,22 +522,22 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 	    $('select').each(function(){
 			$(this).select2();
 		});
-	    
+
 	    //disable fields on initial load
 	    $("#showFavoriteLocationForAll").attr("disabled", "disabled");
 	    $("#trialInstances").attr("disabled", "disabled");
 	    $("#designLayout").select2("disable", true);
-	    
+
 	    //hide experimental design section and import file section
 	    $("#experimentalDesignSection").hide();
 	    $("#importFileSection").hide();
-	    
+
 	    //initialize experimental design dropdown
-	    initializePossibleValuesCombo(experimentalDesignValues, 
+	    initializePossibleValuesCombo(experimentalDesignValues,
 	 			 			"#experimentalDesignForAll", false, null);
-	    
+
 	});
-           
+
 	function validateCreateTrial() {
 		var hasError = false;
 		var name = '';
@@ -550,7 +550,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 				studyBookName = $(this).parent().find(".form-control").val();
 			}
 		});
-		
+
 		if ($("#loadSettings").val() == '0') {
 			hasError = true;
 			customMessage = requiredSettingErrorMessage;
@@ -577,14 +577,14 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 		else {
 			var requiredFields = [];
 			if($('#requiredFields').val() != ''){
-				requiredFields = $('#requiredFields').val().split(',');	
+				requiredFields = $('#requiredFields').val().split(',');
 			}
-			
+
 			var cvTermId;
 			$('.trialLevelVariableIdClass').each(function(){
 				if (!hasError) {
 					cvTermId = $(this).val();
-					
+
 					if ($.inArray(cvTermId, requiredFields) > -1) {
 						if ($(this).parent().find(".form-control").hasClass("select2") && $(this).parent().find(".form-control").select2("data")) {
 							idname = $(this).parent().find(".form-control").attr("id");
@@ -601,11 +601,11 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 						}
 					}
 				}
-				
+
 			});
 		}
-		
-		
+
+
 		if (hasError){
 			var errMsg = name.replace('*', '').replace(":", "") + " " + trialFieldsIsRequired;
 			if(customMessage != '')
@@ -628,7 +628,7 @@ th:action="@{/TrialManager/createTrial}" method="post" th:object="${createTrialF
 
 		return true;
 	}
-           
+
 //]]>
 </script>
 </div>

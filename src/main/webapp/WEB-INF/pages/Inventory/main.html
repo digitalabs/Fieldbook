@@ -1,29 +1,29 @@
 
-	    			
+
 	    			<div class="col-xs-12 col-md-12">
 						<div class="page-header">
-							
+
 							<span class="h1" style="float: left" th:text="#{seed.inventory.header}">
-								SEED STORE INVENTORY						
+								SEED STORE INVENTORY
 							</span>
-							<!-- 
-							<span class="h1" > 
+							<!--
+							<span class="h1" >
 								<span class="help-tooltip" data-placement="right" data-toggle="tooltip" th:title="#{fieldmap.header.field.plan.help}">?</span>
 							</span>
 							 -->
-						</div>			  
+						</div>
 					</div>
 
 <div class="row form-group">
-	
+
 		<div id="page-message" class="">
-		</div>				
-		
+		</div>
+
 	</div>
-	<div class="row form-group"> 
+	<div class="row form-group">
 	<div class="panel panel-default">
 	   	<div class="panel-body manage-settings-panel-body">
-	   	
+
 	    			<div class="row form-group collapse in germplasmListDetails">
 				      	<!-- Germplasm List Tree View -->
 						<div class="col-xs-3 col-md-3">
@@ -31,13 +31,13 @@
 							<label class="control-label"><strong class="sub-content-heading">Lists</strong></label>
 						</div>
 
-				        <!-- Germplasm List Table View -->						
+				        <!-- Germplasm List Table View -->
 				      	<div class="col-xs-9 col-md-9">
 				      		<div id="primary-section" style="float: left; width: 70%">
 				      			<img th:src="@{/static/img/build-new-list.png}" style="padding-bottom:3px;" />
 				      			<label class="control-label"><strong class="sub-content-heading">Germplasm List</strong></label>
 				      		</div>
-				      		<!-- 
+				      		<!--
 				      		<div id="checks-section" style="float: left; width: 30%; ">
 				      			<img th:src="@{/static/img/build-new-list.png}" style="padding-bottom:3px;" />
 				      			<label class="control-label"><strong class="sub-content-heading">Checks List&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong></label>
@@ -45,11 +45,11 @@
 				      			<a style="margin-top: -10px; padding: 6px 8px;" href="javascript: resetCheckList()" class="btn btn-info">Reset</a>
 				      		</div>
 				      		 -->
-				      		 
-				      		 <div style="float:right; ">			
-		
-							
-							
+
+				      		 <div style="float:right; ">
+
+
+
 								<div   class="btn-group">
 								  <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
 								    <span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;Tools
@@ -58,33 +58,33 @@
 								    <li>
 								    	<a href="javascript: addLot();" th:text="#{seed.inventory.add.lot}">Add Lot</a>
 								    </li>
-								   
-								     	      
+
+
 								  </ul>
 							</div>
 						</div>
-						</div>															
+						</div>
 				    </div>
-				    
+
 					<div class="row form-group collapse in germplasmListDetails">
 				      	<!-- Germplasm List Tree View -->
 						<div class="col-xs-3 col-md-3">
 							<div id="germplasmTree" style="height:350px; overflow:auto;"></div>
-							<br />  
+							<br />
 				      	</div>
 
-				        <!-- Germplasm List Table View -->						
+				        <!-- Germplasm List Table View -->
 				      	<div class="col-xs-9 col-md-9">
-				      	
+
 				      		<div id="inventory-germplasm-list" class="list-droppable primary add-border" style="float: left; width: 100%">
 				      			<h3>Please drag and drop the germplasm list here</h3>
 				      		</div>
-				      		
-				      		
+
+
 						</div>
-					
-											
-				    </div>	
+
+
+				    </div>
 				</div>
 			</div>
 		</div>
@@ -92,17 +92,17 @@
 			<div th:include="/Inventory/addLotsModal"></div>
 		</div>
 <input type="hidden" id ="listIdSelected" />
-	
+
 <!-- Scripts location, note that the div tag will be remove after merging to decorator -->
 <div layout:fragment="page-script">
   <script type="text/javascript" th:src="@{/static/js/inventory.js}"></script>
-  <script type="text/javascript" th:src="@{/static/js/fieldbook-tree.js}"></script> 
-  <script type="text/javascript" th:src="@{/static/js/jquery-multisortable.js}"></script>
-  <script type="text/javascript" th:src="@{/static/js/jquery.tablednd.0.7.min.js}"></script>
+  <script type="text/javascript" th:src="@{/static/js/fieldbook-tree.js}"></script>
+  <script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery-multisortable.js}"></script>
+  <script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery.tablednd.0.7.min.js}"></script>
   <script type='text/javascript' th:inline="javascript">
 	var isIE = false;
 	</script>
-	
+
 <!--[if IE]>
 <script type="text/javascript">
     isIE = true;
@@ -110,46 +110,46 @@
 </script>
 <![endif]-->
   <script type="text/javascript" th:inline="javascript">
-    //<![CDATA[          
+    //<![CDATA[
     var selectedGids = new Array();
     var listId = 0;
     var germplasmSelectError = /*[[#{seed.inventory.select.germplasm.error}]]*/;
-   
+
 	var locationRequired = /*[[#{seed.inventory.location.required}]]*/;
 	var scaleRequired = /*[[#{seed.inventory.scale.required}]]*/;
-    
+
     function do_validation() {
-    	
+
   		return true;
    }
-  
-  
+
+
   $( document ).ready(function() {
-	  
-  
+
+
 	  //display tree
-	  
+
 	  displayGermplasmListTree("germplasmTree");
-	 
+
 	  if(isIE){
 //		  $('#primary-section').css('width', '67%');
 
 	  }
-	  
+
 	  //initializePossibleValuesCombo(locationSuggestions, "#locationId", true, null);
 	  //initializePossibleValuesCombo(scaleSuggestions, "#scaleId", false, null);
   });
-  
-  	
 
-        
-        function do_germplasm_check(){        	
+
+
+
+        function do_germplasm_check(){
         	return true;
         }
-        
+
         /** Germplasm Tree **/
         function displayGermplasmListTree(treeName) {
-        	
+
         	$("#" + treeName).dynatree({
         		title: treeName,
         		checkbox: false,
@@ -168,7 +168,7 @@
         					//do nothing
         				},
         				error: function(node, XMLHttpRequest, textStatus, errorThrown) {
-        					console.log("The following error occured: " + textStatus, errorThrown); 
+        					console.log("The following error occured: " + textStatus, errorThrown);
         				},
         				cache: false
         			});
@@ -212,7 +212,7 @@
         		      }
         		    }
         	});
-        	
+
         	  $(".list-droppable").droppable({
       		    hoverClass: "drophover",
       		    addClasses: true,
@@ -221,7 +221,7 @@
       		    },
       		    drop: function(event, ui) {
       		      var source = ui.helper.data("dtSourceNode") || ui.draggable;
-      		    	
+
       		     //$(this).html("Dropped " + source);
       		     //console.log(isFunction(source.data));
       		     if(isFunction(source.data) == false){
@@ -241,12 +241,12 @@
       		    }
       		  });
         }
-        
+
         function isFunction(functionToCheck) {
         	 var getType = {};
         	 return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
         	}
-        
+
         function displayGermplasmDetails(listId) {
         	//alert(makeDraggableBool);
         	$("#listIdSelected").val(listId);
@@ -258,18 +258,18 @@
         		cache: false,
         		success: function(html) {
         			selectedGids = new Array();
-        			$("#inventory-germplasm-list").html(html);   
-        			
+        			$("#inventory-germplasm-list").html(html);
+
         		},
-        		error: function(jqXHR, textStatus, errorThrown){ 
-        			console.log("The following error occured: " + textStatus, errorThrown); 
+        		error: function(jqXHR, textStatus, errorThrown){
+        			console.log("The following error occured: " + textStatus, errorThrown);
         		},
         		complete: function() {
         			Spinner.toggle();
         		}
         	});
         }
-        
+
       //]]>
     </script>
 </div>

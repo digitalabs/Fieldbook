@@ -4,10 +4,10 @@
 			Upload a Template Excel File
 		</h1>
 	</div>
-	
+
 	<div id="page-message">
-		<form  th:object="${fileUploadForm}" th:remove="tag">	
-	        <div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div> 
+		<form  th:object="${fileUploadForm}" th:remove="tag">
+	        <div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
 		</form>
 	</div>
 
@@ -16,12 +16,12 @@
 			<div class="col-xs-12 col-md-12">
 				<label for="fileupload" class="control-label" th:text="#{trial.fileupload.select.template.file}">Select File:</label>
 			</div>
-		</div>		
+		</div>
 		<div th:class="${#fields.hasErrors('file')} ? 'form-group has-error' : 'form-group'">
 			<div class="col-xs-6 col-lg-6">
 			    <div class="fileupload fileupload-new" data-provides="fileupload">
 			        <div class="input-group">
-			            <div class="form-control uneditable-input"><i class="icon-file fileupload-exists"></i> 
+			            <div class="form-control uneditable-input"><i class="icon-file fileupload-exists"></i>
 			                <span class="fileupload-preview"></span>
 			            </div>
 			            <div class="input-group-btn">
@@ -35,39 +35,39 @@
 			    </div>
 			</div>
 		</div>
-		
+
 		<div class="form-group">
 			<div class="col-xs-12 col-md-12">
 				<input type="submit" th:value="#{common.form.submit.text}" class="btn btn-primary"/>
 			</div>
 		</div>
-	
+
 	</form>
 </div>
 
 <!-- Scripts location, note that the div tag will be remove after merging to decorator -->
 <div layout:fragment="page-script">
-<script type="text/javascript" th:src="@{/static/js/bootstrap-fileupload.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-fileupload.js}"></script>
 <script type="text/javascript" th:inline="javascript">
-		//<![CDATA[          
-		           
+		//<![CDATA[
+
 		function do_validation() {
 			if ($('#fileupload').val() == "") {
 				var message = /*[[#{common.error.file.no.file.selected}]]*/;
-				
-				
+
+
 				$("#page-message").html(
 		    			"<div class='alert alert-danger'>"+ message +"</div>"
 		    		);
-				
+
 				$('div.fileupload').parent().parent().addClass('has-error');
-				
+
 				return false;
 			}
-			
+
 			return true;
 		}
-			
+
 		//]]>
 </script>
 

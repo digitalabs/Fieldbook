@@ -1,18 +1,18 @@
 <div class="col-xs-7 col-md-7" xmlns:th="http://www.thymeleaf.org">
 	<!-- Modal -->
-   	<div class="modal fade" id="baselineTraitDetails" role="dialog" aria-labelledby="baselineTraitDetails" aria-hidden="true">
+	<div class="modal fade" id="baselineTraitDetails" role="dialog" aria-labelledby="baselineTraitDetails" aria-hidden="true">
 		<div class="modal-dialog">
-	    	<div class="modal-content">
-	    			<div class="modal-header">
-		            <button id="closeBaselineTraitDetailsModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		             
-		             <h4 id="trialDetailsTitle" class="modal-title" th:text="#{nursery.managenurseries.nurseryDetails.plant.height.info}">Detailed Information of Plant Height</h4>
-	         		
-		          </div>
-	         	<div class="modal-body" id="baselineTraitDetailsBody">
-	         			         			         		
-	         		<div class="row">
-	         			<div class="col-xs-4 col-lg-4">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button id="closeBaselineTraitDetailsModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+
+					<h4 id="trialDetailsTitle" class="modal-title" th:text="#{nursery.managenurseries.nurseryDetails.plant.height.info}">Detailed Information of Plant Height</h4>
+
+				</div>
+				<div class="modal-body" id="baselineTraitDetailsBody">
+
+					<div class="row">
+						<div class="col-xs-4 col-lg-4">
 							<p class="form-control-static" th:text="#{nursery.managenurseries.nurseryDetails.traitClass} + ':'">Trait Class:</p>
 						</div>
 						<div class="col-xs-6 col-lg-6">
@@ -21,7 +21,7 @@
 					</div>
 					<div class="row">
 						<div class="col-xs-4 col-lg-4 ">
-						<p class="form-control-static" th:text="#{nursery.managenurseries.nurseryDetails.property} + ':'">Property:</p>
+							<p class="form-control-static" th:text="#{nursery.managenurseries.nurseryDetails.property} + ':'">Property:</p>
 						</div>
 						<div class="col-xs-6 col-lg-6">
 							<p class="form-control-static" id="property">.property</p>
@@ -29,7 +29,7 @@
 					</div>
 					<div class="row">
 						<div class="col-xs-4 col-lg-4 ">
-							<p class="form-control-static"  th:text="#{nursery.managenurseries.nurseryDetails.method} + ':'">Method:</p>
+							<p class="form-control-static" th:text="#{nursery.managenurseries.nurseryDetails.method} + ':'">Method:</p>
 						</div>
 						<div class="col-xs-6 col-lg-6">
 							<p class="form-control-static" id="method">.Method</p>
@@ -37,7 +37,7 @@
 					</div>
 					<div class="row">
 						<div class="col-xs-4 col-lg-4 ">
-							<p class="form-control-static"  th:text="#{nursery.managenurseries.nurseryDetails.scale} + ':'">Scale:</p>
+							<p class="form-control-static" th:text="#{nursery.managenurseries.nurseryDetails.scale} + ':'">Scale:</p>
 						</div>
 						<div class="col-xs-6 col-lg-6">
 							<p class="form-control-static" id="scale">.Scale</p>
@@ -45,7 +45,7 @@
 					</div>
 					<div class="row">
 						<div class="col-xs-4 col-lg-4 ">
-							<p class="form-control-static"  th:text="#{nursery.managenurseries.nurseryDetails.dataType} + ':'">Data Type:</p>
+							<p class="form-control-static" th:text="#{nursery.managenurseries.nurseryDetails.dataType} + ':'">Data Type:</p>
 						</div>
 						<div class="col-xs-6 col-lg-6">
 							<p class="form-control-static" id="dataType">.Data Type</p>
@@ -53,7 +53,7 @@
 					</div>
 					<div class="row">
 						<div class="col-xs-4 col-lg-4 ">
-							<p class="form-control-static"  th:text="#{nursery.managenurseries.nurseryDetails.role} + ':'">Role:</p>
+							<p class="form-control-static" th:text="#{nursery.managenurseries.nurseryDetails.role} + ':'">Role:</p>
 						</div>
 						<div class="col-xs-6 col-lg-6">
 							<p class="form-control-static" id="role">.Role</p>
@@ -61,30 +61,29 @@
 					</div>
 					<div class="row">
 						<div class="col-xs-4 col-lg-4 ">
-							<p class="form-control-static"  th:text="#{nursery.managenurseries.nurseryDetails.cropOntologyId} + ':'">Crop Ontology Id:</p>
+							<p class="form-control-static" th:text="#{nursery.managenurseries.nurseryDetails.cropOntologyId} + ':'">Crop Ontology Id:</p>
 						</div>
 						<div class="col-xs-6 col-lg-6">
 							<p class="form-control-static" id="cropOntologyId">.Crop Ontology Id</p>
 						</div>
 					</div>
-	         	</div>
-	         	<div class="modal-footer">    	       			
-	       			
-	       			<button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.ok.text}">OK</button>	
-       			</div>
-	     	</div><!-- /.modal-content -->
-   		</div><!-- /.modal-dialog -->
-	</div><!-- /.modal -->
+				</div>
+				<div class="modal-footer">
+
+					<button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.ok.text}">OK</button>
+				</div>
+			</div>
+		</div>
+	</div><!-- Modal -->
 </div>
 
-<div layout:fragment="page-script">		
+<div layout:fragment="page-script">
 	<script type='text/javascript' th:inline="javascript">
-	//<![CDATA[    
-	           
-	           var headerTitle = /*[[#{nursery.managenurseries.nurseryDetails.plant.height.info}]]*/;
+		//<![CDATA[
+		var headerTitle = /*[[#{nursery.managenurseries.nurseryDetails.plant.height.info}]]*/;
 		$(function(){
-            
-        });
-    //]]>
-    </script>
+
+		});
+		//]]>
+	</script>
 </div>

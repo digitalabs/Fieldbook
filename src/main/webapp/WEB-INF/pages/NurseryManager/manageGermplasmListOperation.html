@@ -1,298 +1,291 @@
 <!-- Modal -->
 <div class="modal fade" id="addGermplasmFolder" role="dialog" aria-labelledby="addGermplasmFolder" aria-hidden="true" style="overflow: hidden">
 	<div class="modal-dialog modal-extra-small">
-    	<div class="modal-content">
-		    	<div class="modal-header">
-	            	<button id="closeAddGermplasmFolder" type="button" class="close" onclick="javascript: closeGermplasmModal('addGermplasmFolder')">&times;</button>
-			           <h4 class="modal-title" id="heading-modal" th:text="#{browse.nursery.add.folder.name}">
-			         		Add New Folder
-		         	   </h4>
-	          	</div>
-	          
-         	<div class="modal-body" id="manageCheckTypesModalBody">
-         		<div class="row">
-	         		<div id="page-add-germplasm-folder-message-modal" class="col-xs-12 col-md-12">
-	         		</div>
-         		</div>	         		
+		<div class="modal-content">
+			<div class="modal-header">
+				<button id="closeAddGermplasmFolder" type="button" class="close" onclick="javascript: closeGermplasmModal('addGermplasmFolder')">&times;</button>
+				<h4 class="modal-title" id="heading-modal" th:text="#{browse.nursery.add.folder.name}">
+					Add New Folder
+				</h4>
+			</div>
+			<div class="modal-body" id="manageCheckTypesModalBody">
+				<div class="row">
+					<div id="page-add-germplasm-folder-message-modal" class="col-xs-12 col-md-12">
+					</div>
+				</div>
 				<div class="row form-group">
 					<div class="col-xs-12 col-md-12">
-		         		<div class="col-xs-5  col-md-5 add_top_padding">
-					  		<label class="control-label" th:text="#{browse.nursery.folder.name}">Folder Name:</label><span class="required">*</span>
-					  	</div>
-					    <div class="col-xs-7 col-md-7">
-					      <input id="addGermplasmFolderName" name="addGermplasmFolderName" type="text" class="form-control select2" placeholder="Folder Name"/>						      
-					    </div>
-		        	</div>
-		        </div>
-         	
-         	</div>																							
-       		<div class="modal-footer addVariable-footer">    	       			
-       			<button type="button" class="btn btn-default" onclick="javascript: closeGermplasmModal('addGermplasmFolder')" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
-       			<button type="button" class="btn btn-primary" aria-hidden="true" th:text="#{common.form.add.text}" onclick="javascript: createGermplasmFolder();">Ok</button>
-      			</div>
-     	</div><!-- /.modal-content -->
-  		</div><!-- /.modal-dialog -->
-</div><!-- /.modal -->	
-
+						<div class="col-xs-5 col-md-5 add_top_padding">
+							<label class="control-label" th:text="#{browse.nursery.folder.name}">Folder Name:</label><span class="required">*</span>
+						</div>
+						<div class="col-xs-7 col-md-7">
+							<input id="addGermplasmFolderName" name="addGermplasmFolderName" type="text" class="form-control select2" placeholder="Folder Name"/>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer addVariable-footer">
+				<button type="button" class="btn btn-default" onclick="javascript: closeGermplasmModal('addGermplasmFolder')" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
+				<button type="button" class="btn btn-primary" aria-hidden="true" th:text="#{common.form.add.text}" onclick="javascript: createGermplasmFolder();">Ok</button>
+			</div>
+		</div>
+	</div>
+</div>
 
 <div class="modal fade" id="renameGermplasmFolder" role="dialog" aria-labelledby="renameGermplasmFolder" aria-hidden="true" style="overflow: hidden">
 	<div class="modal-dialog modal-extra-small">
-    	<div class="modal-content">
-		    	<div class="modal-header">
-	            	<button id="closeRenameGermplasmFolder" type="button" class="close" onclick="javascript: closeGermplasmModal('renameGermplasmFolder')">&times;</button>
-			           <h4 class="modal-title" id="heading-modal" th:text="#{browse.nursery.rename.folder.name}">			           
-			         		Rename Folder
-		         	   </h4>
-	          	</div>
-	          
-         	<div class="modal-body" id="manageCheckTypesModalBody">
-         		<div class="row">
-	         		<div id="page-rename-germplasm-folder-message-modal" class="col-xs-12 col-md-12">
-	         		</div>
-         		</div>	         		
+		<div class="modal-content">
+			<div class="modal-header">
+				<button id="closeRenameGermplasmFolder" type="button" class="close" onclick="javascript: closeGermplasmModal('renameGermplasmFolder')">&times;</button>
+				<h4 class="modal-title" id="heading-modal" th:text="#{browse.nursery.rename.folder.name}">
+					Rename Folder
+				</h4>
+			</div>
+
+			<div class="modal-body" id="manageCheckTypesModalBody">
+				<div class="row">
+					<div id="page-rename-germplasm-folder-message-modal" class="col-xs-12 col-md-12">
+					</div>
+				</div>
 				<div class="row form-group">
 					<div class="col-xs-12 col-md-12">
-		         		<div class="col-xs-5  col-md-5 add_top_padding">
-					  		<label class="control-label" th:text="#{browse.nursery.folder.name}">Folder Name:</label><span class="required">*</span>
-					  	</div>
-					    <div class="col-xs-7 col-md-7">
-					      <input id="newGermplasmFolderName" name="newGermplasmFolderName" type="text" class="form-control select2" placeholder="Folder Name"/>						      
-					    </div>
-		        	</div>
-		        </div>
-         	
-         	</div>																							
-       		<div class="modal-footer addVariable-footer">    	       			
-       			<button type="button" class="btn btn-default" onclick="javascript: closeGermplasmModal('renameGermplasmFolder')" th:text="#{common.form.cancel.text}">Cancel</button>
-       			<button type="button" class="btn btn-primary" aria-hidden="true" th:text="#{common.form.ok.text}" onclick="javascript: submitRenameGermplasmFolder();">Ok</button>
-      			</div>
-     	</div><!-- /.modal-content -->
-  		</div><!-- /.modal-dialog -->
-</div><!-- /.modal -->	
+						<div class="col-xs-5 col-md-5 add_top_padding">
+							<label class="control-label" th:text="#{browse.nursery.folder.name}">Folder Name:</label><span class="required">*</span>
+						</div>
+						<div class="col-xs-7 col-md-7">
+							<input id="newGermplasmFolderName" name="newGermplasmFolderName" type="text" class="form-control select2" placeholder="Folder Name"/>
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<div class="modal-footer addVariable-footer">
+				<button type="button" class="btn btn-default" onclick="javascript: closeGermplasmModal('renameGermplasmFolder')" th:text="#{common.form.cancel.text}">Cancel</button>
+				<button type="button" class="btn btn-primary" aria-hidden="true" th:text="#{common.form.ok.text}" onclick="javascript: submitRenameGermplasmFolder();">Ok</button>
+			</div>
+		</div>
+	</div>
+</div>
 
 <div class="modal fade" id="deleteGermplasmFolder" role="dialog" aria-labelledby="deleteGermplasmFolder" aria-hidden="true" style="overflow: hidden">
 	<div class="modal-dialog modal-extra-small">
-    	<div class="modal-content">
-		    	<div class="modal-header">
-	            	<button id="closeDeleteGermplasmFolder" type="button" class="close" onclick="javascript: closeGermplasmModal('deleteGermplasmFolder')">&times;</button>
-			           <h4 class="modal-title" id="heading-modal" th:text="#{browse.nursery.delete.folder.name}">			           
-			         		Delete Folder
-		         	   </h4>
-	          	</div>
-	          
-         	<div class="modal-body" id="manageCheckTypesModalBody">
-         		<div class="row">
-	         		<div id="page-delete-germplasm-folder-message-modal" class="col-xs-12 col-md-12">
-	         		</div>
-         		</div>	         		
+		<div class="modal-content">
+			<div class="modal-header">
+				<button id="closeDeleteGermplasmFolder" type="button" class="close" onclick="javascript: closeGermplasmModal('deleteGermplasmFolder')">&times;</button>
+				<h4 class="modal-title" id="heading-modal" th:text="#{browse.nursery.delete.folder.name}">
+					Delete Folder
+				</h4>
+			</div>
+
+			<div class="modal-body" id="manageCheckTypesModalBody">
+				<div class="row">
+					<div id="page-delete-germplasm-folder-message-modal" class="col-xs-12 col-md-12">
+					</div>
+				</div>
 				<div class="row form-group">
 					<div class="col-xs-12 col-md-12">
-					<div class="col-xs-2  col-md-2 add_top_padding">
+						<div class="col-xs-2 col-md-2 add_top_padding">
+						</div>
+						<div class="col-xs-9 col-md-9 add_top_padding">
+							<label class="control-label" id="delete-folder-confirmation"></label>
+						</div>
 					</div>
-		         		<div class="col-xs-9  col-md-9 add_top_padding">
-					  		<label class="control-label" id="delete-folder-confirmation"></label>
-					  	</div>					    
-		        	</div>
-		        </div>
-         	
-         	</div>																							
-       		<div class="modal-footer addVariable-footer">    	       			
-       			<button type="button" class="btn btn-default" onclick="javascript: closeGermplasmModal('deleteGermplasmFolder')" th:text="#{common.form.no.text}">Cancel</button>
-       			<button type="button" class="btn btn-primary" aria-hidden="true" th:text="#{common.form.yes.text}" onclick="javascript: submitDeleteGermplasmFolder();">Ok</button>
-      			</div>
-     	</div><!-- /.modal-content -->
-  		</div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+				</div>
+
+			</div>
+			<div class="modal-footer addVariable-footer">
+				<button type="button" class="btn btn-default" onclick="javascript: closeGermplasmModal('deleteGermplasmFolder')" th:text="#{common.form.no.text}">Cancel</button>
+				<button type="button" class="btn btn-primary" aria-hidden="true" th:text="#{common.form.yes.text}" onclick="javascript: submitDeleteGermplasmFolder();">Ok</button>
+			</div>
+		</div>
+	</div>
+</div>
 
 <div class="modal fade" id="moveGermplasmFolder" role="dialog" aria-labelledby="moveGermplasmFolder" aria-hidden="true" style="overflow: hidden">
 	<div class="modal-dialog modal-extra-small">
-    	<div class="modal-content">
-		    	<div class="modal-header">
-	            	<button id="closeMoveGermplasmFolder" type="button" class="close" onclick="javascript: closeGermplasmModal('moveGermplasmFolder')">&times;</button>
-			           <h4 class="modal-title" id="heading-modal">			           
-			         		Invalid Operation
-		         	   </h4>
-	          	</div>
-	          
-         	<div class="modal-body" id="manageCheckTypesModalBody">
-         		<div class="row">
-	         		<div id="page-move-germplasm-folder-message-modal" class="col-xs-12 col-md-12">
-	         		</div>
-         		</div>	         						
-         	
-         	</div>																							
-       		<div class="modal-footer addVariable-footer">    	       			
-       			<button type="button" class="btn btn-primary" onclick="javascript: closeGermplasmModal('moveGermplasmFolder')" th:text="#{common.form.ok.text}" >Ok</button>
-      			</div>
-     	</div><!-- /.modal-content -->
-  		</div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+		<div class="modal-content">
+			<div class="modal-header">
+				<button id="closeMoveGermplasmFolder" type="button" class="close" onclick="javascript: closeGermplasmModal('moveGermplasmFolder')">&times;</button>
+				<h4 class="modal-title" id="heading-modal">
+					Invalid Operation
+				</h4>
+			</div>
+
+			<div class="modal-body" id="manageCheckTypesModalBody">
+				<div class="row">
+					<div id="page-move-germplasm-folder-message-modal" class="col-xs-12 col-md-12">
+					</div>
+				</div>
+
+			</div>
+			<div class="modal-footer addVariable-footer">
+				<button type="button" class="btn btn-primary" onclick="javascript: closeGermplasmModal('moveGermplasmFolder')" th:text="#{common.form.ok.text}" >Ok</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div layout:fragment="page-script">
+	<script type="text/javascript" th:inline="javascript">
+		//<![CDATA[
+		var folderNameRequiredMessage = /*[[#{browse.nursery.add.folder.name.blank}]]*/;
+		var renameFolderHeader =/*[[#{browse.nursery.rename.folder.name}]]*/;
+
+		var deleteConfirmation = /*[[#{browse.nursery.delete.folder.name.confirmation}]]*/;
+		var deleteFolderHasTrial = /*[[#{browse.nursery.delete.folder.has.trial.children}]]*/;
+		function addGermplasmFolder(object){
+			if(!$(object).hasClass('disable-image')){
+				$('#addGermplasmFolderName').val('');
+				$('#page-add-germplasm-folder-message-modal').html('');
+				$('#addGermplasmFolder').modal('show');
+			}
+		}
+		function closeGermplasmModal(modalId){
+			$('#'+modalId).modal('hide');
+		}
+		function createGermplasmFolder(){
+			var folderName = $.trim($('#addGermplasmFolderName').val());
+			if(folderName == ''){
+				showErrorMessage('page-add-germplasm-folder-message-modal', folderNameRequiredMessage);
+				return false;
+			}else{
+				//alert('Ajax Submit')
+				var parentFolderId = $('#'+getDisplayedTreeName()).dynatree("getTree").getActiveNode().data.key;
+				if(parentFolderId == 'LOCAL')
+					parentFolderId = 1;
+
+				Spinner.toggle();
+				$.ajax({
+					url: "/Fieldbook/ListTreeManager/addGermplasmFolder",
+					type: "POST",
+					data: "parentFolderId="+parentFolderId+"&folderName="+folderName,
+					cache: false,
+					success: function(data) {
+						if(data.isSuccess == 1){
 
 
-<div layout:fragment="page-script">  
-  <script type="text/javascript" th:inline="javascript">
-    //<![CDATA[          
-    
-          var folderNameRequiredMessage = /*[[#{browse.nursery.add.folder.name.blank}]]*/;
-          var renameFolderHeader =      /*[[#{browse.nursery.rename.folder.name}]]*/;
-        	  
-          var deleteConfirmation = /*[[#{browse.nursery.delete.folder.name.confirmation}]]*/;
-          var deleteFolderHasTrial = /*[[#{browse.nursery.delete.folder.has.trial.children}]]*/;
-		  function addGermplasmFolder(object){
-			  if(!$(object).hasClass('disable-image')){
-				  $('#addGermplasmFolderName').val('');
-				  $('#page-add-germplasm-folder-message-modal').html('');
-				  $('#addGermplasmFolder').modal('show');
-			  }
-		  }
-		  function  closeGermplasmModal(modalId){
-			  $('#'+modalId).modal('hide');
-		  }
-		  function createGermplasmFolder(){
-			  var folderName = $.trim($('#addGermplasmFolderName').val());
-			  if(folderName == ''){
-				  showErrorMessage('page-add-germplasm-folder-message-modal', folderNameRequiredMessage);
-				  return false;
-			  }else{
-				  //alert('Ajax Submit')
-				  var parentFolderId = $('#'+getDisplayedTreeName()).dynatree("getTree").getActiveNode().data.key;
-				  if(parentFolderId == 'LOCAL')
-					  parentFolderId = 1;
-				  
-				  Spinner.toggle();
-		        	$.ajax({
-		        		url: "/Fieldbook/ListTreeManager/addGermplasmFolder",
-		        		type: "POST",
-		        		data: "parentFolderId="+parentFolderId+"&folderName="+folderName,
-		        		cache: false,
-		        		success: function(data) {
-		        			if(data.isSuccess == 1){
-		        				
-		        				
-		        				//lazy load the node
-		        				var node = $('#'+getDisplayedTreeName()).dynatree("getTree").getActiveNode();
-		        				doGermplasmLazyLoad(node);		        				
-		        				node.focus();
-		        				node.expand();
-		        				$('#addGermplasmFolder').modal('hide');
-		        			}else{
-		        				showErrorMessage('page-add-germplasm-folder-message-modal', data.message);
-		        			}
-		        			Spinner.toggle();
-		        		}		        		
-		        	});
-			  }
-		  }
-		  
-		  function renameGermplasmFolder(object){
-			  if(!$(object).hasClass('disable-image')){
-				  $('#newGermplasmFolderName').val('');
-				  $('#page-rename-germplasm-folder-message-modal').html('');
-				  $('#renameGermplasmFolder').modal('show');
-				  var currentFolderName = $('#'+getDisplayedTreeName()).dynatree("getTree").getActiveNode().data.title
-				  $('#renameGermplasmFolder #heading-modal').html(renameFolderHeader + " " + currentFolderName);
-				  
-			  }
-		  }
-		  
-		  function submitRenameGermplasmFolder(){
-			  var folderName = $.trim($('#newGermplasmFolderName').val());
-			  if(folderName == ''){
-				  showErrorMessage('page-rename-germplasm-folder-message-modal', folderNameRequiredMessage);
-				  return false;
-			  }else{
-				  //alert('Ajax Submit')
-				  var parentFolderId = $('#'+getDisplayedTreeName()).dynatree("getTree").getActiveNode().data.key;
-				  if(parentFolderId == 'LOCAL')
-					  parentFolderId = 1;
-				  
-				  Spinner.toggle();
-		        	$.ajax({
-		        		url: "/Fieldbook/ListTreeManager/renameGermplasmFolder",
-		        		type: "POST",
-		        		data: "folderId="+parentFolderId+"&newFolderName="+folderName,
-		        		cache: false,
-		        		success: function(data) {
-		        			if(data.isSuccess == 1){
-		        				$('#renameGermplasmFolder').modal('hide');
-		        				var node = $('#'+getDisplayedTreeName()).dynatree("getTree").getActiveNode();
-		        				node.data.title = folderName
-		        				$(node.span).find('a').html(folderName);
-		        				node.focus();
-		        				//lazy load the node
-		        				//doStudyLazyLoad($('#studyTree').dynatree("getTree").getActiveNode());
-		        			}else{
-		        				showErrorMessage('page-rename-germplasm-folder-message-modal', data.message);
-		        			}
-		        			Spinner.toggle();
-		        		}		        		
-		        	});
-			  }
-		  }
-		  
-		  function deleteGermplasmFolder(object){
-			  if(!$(object).hasClass('disable-image')){
-				  $('#deleteGermplasmFolder').modal('show');
-				  var currentFolderName = $('#'+getDisplayedTreeName()).dynatree("getTree").getActiveNode().data.title				  
-				  $('#delete-folder-confirmation').html(deleteConfirmation + " " + currentFolderName + "?");
-				  
-				  $('#page-delete-germplasm-folder-message-modal').html('');
-			  }  
-		  }
-		  
-		  function submitDeleteGermplasmFolder(){
-			  var folderId = $('#'+getDisplayedTreeName()).dynatree("getTree").getActiveNode().data.key;
-			  
-			  Spinner.toggle();
-	        	$.ajax({
-	        		url: "/Fieldbook/ListTreeManager/deleteGermplasmFolder",
-	        		type: "POST",
-	        		data: "folderId="+folderId,
-	        		cache: false,
-	        		success: function(data) {
-	        			if(data.isSuccess == 1){
-	        				$('#deleteGermplasmFolder').modal('hide');
-	        				var node = $('#'+getDisplayedTreeName()).dynatree("getTree").getActiveNode();
-	        				node.remove();
-	        			}else{
-	        				showErrorMessage('page-delete-germplasm-folder-message-modal', data.message);
-	        			}
-	        			Spinner.toggle();
-	        		}		        		
-	        	});
-		  }
-		  
-		  function moveGermplasm(sourceNode, targetNode){
-			  //console.log(sourceNode.data.title + " to " + targetNode.data.title)
-			  var sourceId = sourceNode.data.key;
-			  var targetId = targetNode.data.key;
-			  
-			  if(targetId == 'CENTRAL' || targetId > 0){
-				  var title = $('#'+getDisplayedTreeName()).dynatree("getTree").getNodeByKey('CENTRAL').data.title;
-				  showErrorMessage('page-import-message-modal', "Can not move to " + title);
-				  return false;
-			  }
-			  
-			  if(targetId == 'LOCAL')
-				  targetId = 1;
-			  
-			  Spinner.toggle();
-	        	$.ajax({
-	        		url: "/Fieldbook/ListTreeManager/moveGermplasmFolder",
-	        		type: "POST",
-	        		data: "sourceId="+sourceId+"&targetId="+targetId,
-	        		cache: false,
-	        		success: function(data) {
-	        			sourceNode.remove();
-	        			var node = targetNode;
-	        			doGermplasmLazyLoad(node);		        				
-        				node.focus();
-	        			Spinner.toggle();
-	        		}		        		
-	        	});
-		  }
-		  
-		  
-      //]]>
-    </script>
+								//lazy load the node
+								var node = $('#'+getDisplayedTreeName()).dynatree("getTree").getActiveNode();
+								doGermplasmLazyLoad(node);
+								node.focus();
+								node.expand();
+								$('#addGermplasmFolder').modal('hide');
+							}else{
+								showErrorMessage('page-add-germplasm-folder-message-modal', data.message);
+							}
+							Spinner.toggle();
+						}
+					});
+			}
+		}
+
+		function renameGermplasmFolder(object){
+			if(!$(object).hasClass('disable-image')){
+				$('#newGermplasmFolderName').val('');
+				$('#page-rename-germplasm-folder-message-modal').html('');
+				$('#renameGermplasmFolder').modal('show');
+				var currentFolderName = $('#'+getDisplayedTreeName()).dynatree("getTree").getActiveNode().data.title
+				$('#renameGermplasmFolder #heading-modal').html(renameFolderHeader + " " + currentFolderName);
+
+			}
+		}
+
+		function submitRenameGermplasmFolder(){
+			var folderName = $.trim($('#newGermplasmFolderName').val());
+			if(folderName == ''){
+				showErrorMessage('page-rename-germplasm-folder-message-modal', folderNameRequiredMessage);
+				return false;
+			}else{
+				//alert('Ajax Submit')
+				var parentFolderId = $('#'+getDisplayedTreeName()).dynatree("getTree").getActiveNode().data.key;
+				if(parentFolderId == 'LOCAL')
+					parentFolderId = 1;
+
+				Spinner.toggle();
+				$.ajax({
+					url: "/Fieldbook/ListTreeManager/renameGermplasmFolder",
+					type: "POST",
+					data: "folderId="+parentFolderId+"&newFolderName="+folderName,
+					cache: false,
+					success: function(data) {
+						if(data.isSuccess == 1){
+							$('#renameGermplasmFolder').modal('hide');
+							var node = $('#'+getDisplayedTreeName()).dynatree("getTree").getActiveNode();
+							node.data.title = folderName
+							$(node.span).find('a').html(folderName);
+							node.focus();
+								//lazy load the node
+								//doStudyLazyLoad($('#studyTree').dynatree("getTree").getActiveNode());
+							}else{
+								showErrorMessage('page-rename-germplasm-folder-message-modal', data.message);
+							}
+							Spinner.toggle();
+						}
+					});
+			}
+		}
+
+		function deleteGermplasmFolder(object){
+			if(!$(object).hasClass('disable-image')){
+				$('#deleteGermplasmFolder').modal('show');
+				var currentFolderName = $('#'+getDisplayedTreeName()).dynatree("getTree").getActiveNode().data.title
+				$('#delete-folder-confirmation').html(deleteConfirmation + " " + currentFolderName + "?");
+
+				$('#page-delete-germplasm-folder-message-modal').html('');
+			}
+		}
+
+		function submitDeleteGermplasmFolder(){
+			var folderId = $('#'+getDisplayedTreeName()).dynatree("getTree").getActiveNode().data.key;
+
+			Spinner.toggle();
+			$.ajax({
+				url: "/Fieldbook/ListTreeManager/deleteGermplasmFolder",
+				type: "POST",
+				data: "folderId="+folderId,
+				cache: false,
+				success: function(data) {
+					if(data.isSuccess == 1){
+						$('#deleteGermplasmFolder').modal('hide');
+						var node = $('#'+getDisplayedTreeName()).dynatree("getTree").getActiveNode();
+						node.remove();
+					}else{
+						showErrorMessage('page-delete-germplasm-folder-message-modal', data.message);
+					}
+					Spinner.toggle();
+				}
+			});
+		}
+
+		function moveGermplasm(sourceNode, targetNode){
+			//console.log(sourceNode.data.title + " to " + targetNode.data.title)
+			var sourceId = sourceNode.data.key;
+			var targetId = targetNode.data.key;
+
+			if(targetId == 'CENTRAL' || targetId > 0){
+				var title = $('#'+getDisplayedTreeName()).dynatree("getTree").getNodeByKey('CENTRAL').data.title;
+				showErrorMessage('page-import-message-modal', "Can not move to " + title);
+				return false;
+			}
+
+			if(targetId == 'LOCAL')
+				targetId = 1;
+
+			Spinner.toggle();
+			$.ajax({
+				url: "/Fieldbook/ListTreeManager/moveGermplasmFolder",
+				type: "POST",
+				data: "sourceId="+sourceId+"&targetId="+targetId,
+				cache: false,
+				success: function(data) {
+					sourceNode.remove();
+					var node = targetNode;
+					doGermplasmLazyLoad(node);
+					node.focus();
+					Spinner.toggle();
+				}
+			});
+		}
+		//]]>
+	</script>
 </div>

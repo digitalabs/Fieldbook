@@ -1,56 +1,50 @@
  <input type="hidden" id="study-type" name="study-type" value="Nursery" />
- <form role="form-horizontal"  action="#" 
-     method="post" th:object="${createNurseryForm}">
+ <form role="form-horizontal" action="#" method="post" th:object="${createNurseryForm}">
  <div th:class="${#fields.hasErrors('file')} ? 'form-group has-error' : 'form-group'">
-           <div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
-  </div>
-  </form>
-  
-<div class="col-xs-12 col-md-12">  	
-	<div id="germplasm-measurement-list-table-div" th:include="/Common/showAddOrRemoveTraitsPagination">
-   	</div>		    			
+ 	<div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
+ </div>
+</form>
+
+<div class="col-xs-12 col-md-12">
+	<div id="germplasm-measurement-list-table-div" th:include="/Common/showAddOrRemoveTraitsPagination"></div>
 </div>
-    <div class="row">
-        <div class="col-xs-12 col-md-12">
-            <div id="manage-location" th:include="/Common/openStudyModals"></div>
-        </div>
-    </div>
-          								    		
+<div class="row">
+	<div class="col-xs-12 col-md-12">
+		<div id="manage-location" th:include="/Common/openStudyModals"></div>
+	</div>
+</div>
 
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
-	           
-	            
-		function doSave(){
-			if(validateCells() == false)
-				return false;
-  	      	var $form = $("#addVariableForm");
-  			serializedData = $form.serialize();
-  			$("btnUpdate").attr("disabled", "disabled");
-			Spinner.toggle();
+	function doSave(){
+		if(validateCells() == false)
+			return false;
+		var $form = $("#addVariableForm");
+		serializedData = $form.serialize();
+		$("btnUpdate").attr("disabled", "disabled");
+		Spinner.toggle();
 
-			$.ajax({
-				url: "/Fieldbook/Common/addOrRemoveTraits/Nursery/updateTraits",
-				type: "post",
-				dataType: "json",
-				data: serializedData,
-			    success: function(data){
-				    if (data.status == "1") {
-				    	$('#successMessageModal').modal({ backdrop: 'static', keyboard: true }) 
-				    	$("#successMessageModal").modal("show");
-			       	} else if (data.status == "-1") {
-			       		showErrorMessage('page-message', data.errorMessage);
-			       	}
-			   }, 
-			   error: function(jqXHR, textStatus, errorThrown){
-					console.log("The following error occured: " + textStatus, errorThrown); 
-			   }, 
-			   complete: function(){  
-				   $("btnUpdate").removeAttr("disabled");
-				   Spinner.toggle();
-			   } 
-			});
-		}     
-       
-      //]]>
-    </script>
+		$.ajax({
+			url: "/Fieldbook/Common/addOrRemoveTraits/Nursery/updateTraits",
+			type: "post",
+			dataType: "json",
+			data: serializedData,
+			success: function(data){
+				if (data.status == "1") {
+					$('#successMessageModal').modal({ backdrop: 'static', keyboard: true })
+					$("#successMessageModal").modal("show");
+				} else if (data.status == "-1") {
+					showErrorMessage('page-message', data.errorMessage);
+				}
+			},
+			error: function(jqXHR, textStatus, errorThrown){
+				console.log("The following error occured: " + textStatus, errorThrown);
+			},
+			complete: function(){
+				$("btnUpdate").removeAttr("disabled");
+				Spinner.toggle();
+			}
+		});
+	}
+	//]]>
+</script>

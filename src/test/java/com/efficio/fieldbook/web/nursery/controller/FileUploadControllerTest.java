@@ -125,34 +125,7 @@ public class FileUploadControllerTest extends AbstractJUnit4SpringContextTests {
             assertEquals(studyDetails.getEndDate().toString(), "20130805");
             assertEquals(studyDetails.getStudyType().toString(), "T");
         }
-	
-	/**
-	 * Test valid file xlsx.
-	 *
-	 * @throws Exception the exception
-	 */
-	@Test
-        public void testValidFileXLSX() throws Exception{
-                
-        // Get the file
-            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(FILE_NAME_XLSX);
-            String tempFileName = fieldbookService.storeUserWorkbook(inputStream);
-            userSelection.setActualFileName(FILE_NAME_XLSX);
-            userSelection.setServerFileName(tempFileName);
-    
-            // Parse the file to create Workbook
-            File file = fileService.retrieveCurrentWorkbookAsFile(userSelection);
-            Workbook datasetWorkbook = dataImportService.parseWorkbook(file);
-            StudyDetails studyDetails = datasetWorkbook.getStudyDetails();
-            
-            assertEquals(studyDetails.getStudyName().toString(), "pheno_t7");
-            assertEquals(studyDetails.getTitle().toString(), "Phenotyping trials of the Population 114");
-            assertEquals(studyDetails.getObjective().toString(), "To evaluate the Population 114");
-//            assertEquals(studyDetails.getPmKey().toString(), "0");
-            assertEquals(studyDetails.getStartDate().toString(), "20130805");
-            assertEquals(studyDetails.getEndDate().toString(), "20130805");
-            assertEquals(studyDetails.getStudyType().toString(), "T");
-        }
+		
 
 	
 	/**

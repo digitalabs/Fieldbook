@@ -121,40 +121,6 @@ public class NurseryDetailsTest extends AbstractJUnit4SpringContextTests {
     }
     
     /**
-     * Test invalid nursery workbook.
-     *
-     * @throws Exception the exception
-     */
-    @Test
-    public void testInvalidNurseryWorkbook() throws Exception {
-        
-        Workbook datasetWorkbook = null;
-        
-        try{
-            
-            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(FILE_NAME_INVALID);
-            
-            String tempFileName = fieldbookService.storeUserWorkbook(inputStream);
-            UserSelection userSelection = new UserSelection();
-            userSelection.setActualFileName(FILE_NAME_VALID);
-            userSelection.setServerFileName(tempFileName);
-    
-            File file = fileService.retrieveCurrentWorkbookAsFile(userSelection);
-            datasetWorkbook = dataImportService.parseWorkbook(file);
-            userSelection.setWorkbook(datasetWorkbook);
-    
-            controllerInvalid = new NurseryDetailsController();
-            controllerInvalid.setUserSelection(userSelection);
-    
-        } catch (WorkbookParserException e){
-            assertNull(datasetWorkbook); // Workbook was not parsed properly due to format errors
-        }catch (NullPointerException e){
-            assertNull(datasetWorkbook); // Workbook was not parsed properly due to format errors
-        }
-
-    }    
-
-    /**
      * Prints the measurement variables.
      *
      * @param mVariables the m variables

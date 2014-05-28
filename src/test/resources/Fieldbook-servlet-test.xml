@@ -123,7 +123,12 @@
 		scope="session">
 		<aop:scoped-proxy />
 	</bean>
-	
+
+	<bean id="seedSelection" class="com.efficio.fieldbook.web.inventory.bean.SeedSelection"
+		scope="session">
+		<aop:scoped-proxy />
+	</bean>
+		
 	<bean id="userFieldmap" class="com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap"
 		scope="session">
 		<aop:scoped-proxy />
@@ -134,7 +139,10 @@
 		<aop:scoped-proxy />
 	</bean>
 
-	
+	<bean id="paginationListSelection" class="com.efficio.fieldbook.web.common.bean.PaginationListSelection"
+		scope="session">
+		<aop:scoped-proxy />
+	</bean>
 	
 	<!-- **************************************************************** -->
 	<!-- RESTful Web Service -->
@@ -185,6 +193,12 @@
         <constructor-arg name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
         <constructor-arg name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
     </bean>
+    
+    <bean id="inventoryMiddlewareService" class="org.generationcp.middleware.service.InventoryServiceImpl">
+    	<constructor-arg name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>
+        <constructor-arg name="sessionProviderForCentral" ref="centralHibernateSessionProvider"/>
+    </bean>
+    
     
     <bean id="ontologyService" class="org.generationcp.middleware.service.OntologyServiceImpl">
         <constructor-arg name="sessionProviderForLocal" ref="localIbdbHibernateSessionProvider"/>

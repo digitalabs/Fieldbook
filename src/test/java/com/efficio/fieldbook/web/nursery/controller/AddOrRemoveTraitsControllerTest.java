@@ -22,6 +22,8 @@ import javax.annotation.Resource;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.StudyDetails;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -102,6 +104,9 @@ public class AddOrRemoveTraitsControllerTest extends AbstractJUnit4SpringContext
          }
          UserSelection userSelection = new UserSelection();
          userSelection.setWorkbook(new org.generationcp.middleware.domain.etl.Workbook());
+         StudyDetails details = new StudyDetails();
+         details.setStudyType(StudyType.N);
+         userSelection.getWorkbook().setStudyDetails(details);
          List<MeasurementVariable> factors = new ArrayList<MeasurementVariable>();
          MeasurementVariable checkVariable = new MeasurementVariable("CHECK", "TYPE OF ENTRY", "CODE", "ASSIGNED", "CHECK", "C", "", "ENTRY");
          factors.add(checkVariable);

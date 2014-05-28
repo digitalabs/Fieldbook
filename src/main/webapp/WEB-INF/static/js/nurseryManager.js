@@ -1489,7 +1489,7 @@ function showBaselineTraitDetailsModal(id) {
 	if(id != ''){
 		Spinner.toggle();
 		$.ajax({
-			url: "/Fieldbook/NurseryManager/manageNurserySettings/showVariableDetails/" + id,
+			url: "/Fieldbook/NurseryManager/createNursery/showVariableDetails/" + id,
 			type: "GET",
 			cache: false,
 			success: function (data) {

@@ -7,7 +7,7 @@
 	            <button id="closeSelectTrialInstanceModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 	            <h4 class="modal-title" th:text="#{fieldmap.label.select.instance.for.fieldmap}">Select Instances for the Field Map</h4>
 	          </div>
-	          
+
 	         	<div class="modal-body" id="selectTrialInstanceBody">
 	         		<div id="page-message">
 	         		</div>
@@ -17,15 +17,15 @@
 	         		</div>
 	         		<table class="table tree table-curved table-condensed" id="studyFieldMapTree" style="margin-left:5px;">
 			        </table>
-	         	</div>																							
-	       		<div class="modal-footer">    
+	         	</div>
+	       		<div class="modal-footer">
 	       		<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
-	       			<button type="button" class="btn btn-primary" onclick="javascript: viewFieldMap();" aria-hidden="true">OK</button>	
+	       			<button type="button" class="btn btn-primary" onclick="javascript: viewFieldMap();" aria-hidden="true">OK</button>
        			</div>
 	     	</div><!-- /.modal-content -->
    		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
-	
+
 	<div class="modal fade" id="confirmSubModal" role="dialog" aria-labelledby="confirmSubModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-large" style="width:500px">
 	    	<div class="modal-content">
@@ -39,10 +39,10 @@
 	         				<span th:text="#{fieldmap.confirm.overwrite.existing.fieldmap}">Are you sure you want to include instances with existing fieldmaps?</span>
 	         			</div>
 	         		</div>
-	         	</div>																							
-	       		<div class="modal-footer">    
+	         	</div>
+	       		<div class="modal-footer">
 	       			<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">No</button>
-	       			<button type="button" class="btn btn-primary" onclick="javascript: redirectToFirstPage();" aria-hidden="true">Yes</button>	
+	       			<button type="button" class="btn btn-primary" onclick="javascript: redirectToFirstPage();" aria-hidden="true">Yes</button>
        			</div>
 	     	</div><!-- /.modal-content -->
    		</div><!-- /.modal-dialog -->
@@ -51,16 +51,16 @@
 
 <div layout:fragment="page-script">
 
-	<script type="text/javascript" th:src="@{/static/js/jquery.treegrid.js}"></script>
-	<script type="text/javascript" th:src="@{/static/js/jquery.treegrid.bootstrap3.js}"></script>
-	  		
+	<script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery.treegrid.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery.treegrid.bootstrap3.js}"></script>
+
 	<script type='text/javascript' th:inline="javascript">
-	//<![CDATA[  
+	//<![CDATA[
 	    var createLabelErrorMsg = /*[[#{common.error.create.label.nursery}]]*/;
         var fieldMapStudyRequired = /*[[#{common.error.select.study(#{fieldmap.nursery})}]]*/;
         var fieldMapOneStudyErrorMsg = /*[[#{common.error.select.one.study.show.fieldmap(#{fieldmap.nursery})}]]*/;
         var noFieldMapExists = /*[[#{common.error.no.existing.fieldmap(#{fieldmap.nursery})}]]*/;
-        
+
         var noSelectedTrialInstance = /*[[#{fieldmap.no.selected.trial.instance}]]*/;
         var multipleSelectError = /*[[#{common.error.select.one.trial.instance}]]*/;
         var trialName = /*[[#{label.printing.trial.name}]]*/;
@@ -74,12 +74,12 @@
 		var trial = true;
 		var isViewFieldmap = true;
 		var fieldmapIds = [];
-		
+
 		$(function(){
             $('#confirmSubModal').on('hidden.bs.modal', function () {
             	$("#selectTrialInstanceModal button,input").removeAttr("disabled");
             });
-            
+
         });
     //]]>
     </script>

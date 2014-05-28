@@ -1,8 +1,6 @@
 <div class="row">
-	<div class="col-xs-6 col-md-6">	
-	
-	<img style="padding-top: 7px" th:src="@{/static/img/study-details.png}" class="image-padding image-padding-with-text"  />
-	
+	<div class="col-xs-6 col-md-6">
+		<img style="padding-top: 7px" th:src="@{/static/img/study-details.png}" class="image-padding image-padding-with-text" />
 		<label class="h2_no_transform" th:text="#{browse.nurseries.review.details}"></label>
 	</div>
 	<div class="col-xs-6 col-md-6">
@@ -13,38 +11,17 @@
 </div>
 <div class="row">
 	<div id="study-details" class="col-xs-12 col-md-12" style="padding-bottom: 20px">
-	
-		<ul id="study-tab-headers" class="nav nav-tabs" >
-			<!-- 
-			<li id="nurseries" class="active"><a th:text="#{browse.nurseries}">.Browse Nurseries</a></li>
-			<li id="nurseries1"><a th:text="#{browse.nurseries}">.Browse Nurseries</a></li>
-			 -->						
-			
-		</ul>
-		<!-- details section -->
-		<div id="study-tabs">
-			<!-- 
-			<div class="info" id="nurseries">
-				1
-			</div>
-			<div class="info" id="nurseries1">
-				2
-			</div>
-			 -->
-		</div>
+		<ul id="study-tab-headers" class="nav nav-tabs"></ul>
+		<div id="study-tabs"></div>
 	</div>
 </div>
 <div layout:fragment="page-script">
-	<!-- For pagination -->
 	<script type='text/javascript' th:inline="javascript">
-	//<![CDATA[    
-         $( document ).ready(function() {	 
-        	 $('#study-tabs .info').hide();
-        	 initializeStudyTabs();
-		  });
-         
-         
-        
-      //]]>
-    </script>
+		//<![CDATA[
+		$( document ).ready(function() {
+			$('#study-tabs .info').hide();
+			initializeStudyTabs();
+		});
+		//]]>
+	</script>
 </div>

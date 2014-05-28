@@ -1,30 +1,29 @@
 <div class="col-xs-7 col-md-7" xmlns:th="http://www.thymeleaf.org">
-	<!-- Modal -->
-   	<div class="modal fade" id="manageMethodModal"  role="dialog" aria-labelledby="manageMethodModal" aria-hidden="true">
+	<div class="modal fade" id="manageMethodModal"  role="dialog" aria-labelledby="manageMethodModal" aria-hidden="true">
 		<div class="modal-dialog" style="width: 98%">
 			<div class="modal-content" >
 				<div class="modal-body" id="manageMethodBody">
 					<div>
-	         			<button id="closeManageMethodModal" type="button" class="close" data-dismiss="modal" aria-hidden="true" onClick="recreateMethodCombo();">&times;</button>
-	         		</div>	         	
-	         		<div>
+						<button id="closeManageMethodModal" type="button" class="close" data-dismiss="modal" aria-hidden="true" onClick="recreateMethodCombo();">&times;</button>
+					</div>
+					<div>
 						<iframe id="methodFrame"  name="myframe" width="100%" height="650px" frameborder="0"></iframe>
 					</div>
 				</div>
-				<div class="modal-footer">    	
-       			</div>
-			</div><!-- /.modal-content -->
-		</div><!-- /.modal-dialog -->
-	</div><!-- /.modal -->	
+				<div class="modal-footer">
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
-<div layout:fragment="page-script">		
+<div layout:fragment="page-script">
 	<script type='text/javascript' th:inline="javascript">
-	//<![CDATA[  
-	           function closeMethodFrame(){	        	   
-	        	   recreateMethodCombo();
-	        	   $('#manageMethodModal').modal('hide');
-	           }
-    //]]>
-    </script>
+	//<![CDATA[
+	function closeMethodFrame(){
+		recreateMethodCombo();
+		$('#manageMethodModal').modal('hide');
+	}
+	//]]>
+</script>
 </div>

@@ -1,44 +1,38 @@
 <div xmlns:th="http://www.thymeleaf.org">
-  
 	<div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 		<h4 class="modal-title" ><strong th:text="#{common.form.selectLocation.text}">Select Location</strong></h4>
 	</div>
 
 	<div class="modal-body">
-		<div id="folderBrowserModalMessage" class="alert alert-danger" style="display:none;">
-		</div>
-	
-		<div class="col-xs-12 col-md-12" id="folderBrowserTree" style="height:200px; overflow:auto;">
-		</div>
+		<div id="folderBrowserModalMessage" class="alert alert-danger" style="display:none;"></div>
+		<div class="col-xs-12 col-md-12" id="folderBrowserTree" style="height:200px; overflow:auto;"></div>
 	</div>
-	
+
 	<div class="modal-footer">
 		<div class="col-xs-12 col-md-12">
 			<input type="button" onclick="cancelChooseFolderModal();" th:value="#{common.form.cancel.text}" class="btn btn-default" />
 			<input type="button" onclick="selectFolder();" th:value="#{common.form.selectLocation.text}" class="btn btn-primary" />
 		</div>
 	</div>
-
-
 </div>
 
 <script type='text/javascript' th:inline="javascript">
-//<![CDATA[    
+//<![CDATA[
 
-    var treeData = /*[[${folderBrowserTree}]]*/;
-    var selectedFolderNodeId = null;
-    var selectedFolderNodeName = null;
+	var treeData = /*[[${folderBrowserTree}]]*/;
+	var selectedFolderNodeId = null;
+	var selectedFolderNodeName = null;
 
 	function closeChooseFolderModal() {
 		$('#folderBrowserModal').modal('hide');
 	}
-	
+
 	function cancelChooseFolderModal() {
 		selectedFolderNodeId = null;
 		closeChooseFolderModal();
 	}
-	
+
 	function selectFolder() {
 		if (selectedFolderNodeId == null) {
 			$("#folderBrowserModalMessage").html("please select a folder");
@@ -51,10 +45,10 @@
 
 	function loadFolderTree(treeName, comboName, descriptionName, treeData, dropDownId){
 		var json = $.parseJSON(treeData);
-		
+
 		$("#" + treeName).dynatree({
-		      checkbox: false,
-		      classNames: {
+			checkbox: false,
+			classNames: {
 					container: "fbtree-container",
 					expander: "fbtree-expander",
 					nodeIcon: "fbtree-icon",
@@ -62,23 +56,21 @@
 					focused: "fbtree-focused",
 					active: "fbtree-active"
 				},
-		      selectMode: 1,
-		      children: json,
-			  onActivate: function(node) {
-				  	selectedFolderNodeId = node.data.key;
-				  	selectedFolderNodeName = node.data.title;
-				  	$("#folderId").val(node.data.key);
-				  	$("#folderName").val(node.data.title);
-				  	$("#chooseLocation").html(node.data.title);
-			  }
+			selectMode: 1,
+			children: json,
+			onActivate: function(node) {
+					selectedFolderNodeId = node.data.key;
+					selectedFolderNodeName = node.data.title;
+					$("#folderId").val(node.data.key);
+					$("#folderName").val(node.data.title);
+					$("#chooseLocation").html(node.data.title);
+			}
 		});
-
 	}
-	
+
 	$(document).ready(function() {
-		
 		loadFolderTree('folderBrowserTree', null, null, treeData, null);
 	});
-	
+
 //]]>
 </script>

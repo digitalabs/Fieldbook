@@ -1,12 +1,9 @@
 function checkMethod(){
 	if($('input[type=checkbox][name=methodChoice]:checked').val() == 1){
-			//$('#methodSelected').prop('disabled', false);
 			$('#methodIdFavorite').select2('enable', true);
 			$('#methodIdAll').select2('enable', true);
 			$('#showFavoriteMethod').prop('disabled', false);
 			
-			//$('#methodSelected').val(oldMethodSelected);
-			//console.log("1");
 			$("#method-variates-section").hide();
 			$(".method-selection-div").find("input,select").prop("disabled", false);
 			$("#methodIdAll").select2("enable", true);
@@ -20,8 +17,6 @@ function checkMethod(){
 			$("#methodIdAll").select2("enable", false);
 			$("#methodIdFavorite").select2("enable", false);
 			
-			//console.log("2");
-			//$('#methodSelected').prop('disabled', 'disabled');
 			if($('#namingConvention').val() != 3){
 				$('#showFavoriteMethod').prop('disabled', 'disabled');
 				$('#methodIdFavorite').select2('enable', false);
@@ -129,11 +124,6 @@ function validateAdvanceNursery(){
 		showErrorMessage('page-message',msgMethodError);
 		return false;
 	}
-	
-	//doAjaxMainSubmit('', '', '');
-		
-	
-	//validate date
 	return true;
 }
 
@@ -199,7 +189,6 @@ function showCorrectMethodCombo() {
 
 function openManageLocations() {
 	$('#manageLocationModal').modal({ backdrop: 'static', keyboard: true });
-	//$("#manageLocationModal").modal("show");
 	if(locationIframeOpened == false){
 		locationIframeOpened = true;
 		$('#locationFrame').attr('src', programLocationUrl + $('#projectId').val());
@@ -209,7 +198,6 @@ function openManageLocations() {
 
 function openManageMethods() {
 	$('#manageMethodModal').modal({ backdrop: 'static', keyboard: true });
-	//$("#manageMethodModal").modal("show");
 	if(methodIframeOpened == false){
 		methodIframeOpened = true;
 		$('#methodFrame').attr('src', programMethodUrl + $('#projectId').val());
@@ -280,7 +268,6 @@ $.ajax(
 function getBreedingMethodRowIndex() {
 	var rowIndex = 0;
 	$.each($(".nurseryLevelSettings"), function (index, row) {
-		//daniel
 		var cvTermId = $($(row).find('.1st')
 				.find("#" + getJquerySafeId("studyLevelVariables" + index + ".variable.cvTermId"))).val();
 		if (parseInt(cvTermId) == parseInt(breedingMethodId)) {
@@ -346,9 +333,6 @@ function recreateLocationCombo() {
 	    			   setComboValues(locationSuggestions_obj, selectedLocationAll, "harvestLocationIdAll");
 	    		   }
     		   } else {
-    			   
-    			   
-    			   
     			   var selectedVal = null;
     			   var index = getLocationRowIndex();
     			   
@@ -448,12 +432,10 @@ function recreateMethodComboAfterClose(comboName, data) {
 		methodSuggestionsFav = data;
 		initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFav_obj);
 	}
-	//console.log(methodSuggestions);
 }
 
 function openAddVariablesSetting(variableType) {
 	//change heading of popup based on clicked link
-	//$('#var-info').slideUp('fast');
 	$('#ontology-detail-tabs').empty().html($('.variable-detail-info').html());		
 	//this would reset the tree view	
 	
@@ -494,12 +476,6 @@ function getStandardVariables(variableType) {
 		type: "GET",
 		cache: false,
 		success: function (data) {
-			//clear and initialize standard variable combo
-			//initializeStandardVariableSearch([]);
-			//initializeStandardVariableSearch($.parseJSON(data));
-			//console.log(data.treeData);
-			//console.log(data.searchtreeData);
-			
 			if(treeData != null){
 				$("#"+treeDivId).dynatree("destroy");				
 			}
@@ -541,7 +517,7 @@ function initializeStandardVariableSearch(variables) {
 
 	$("#stdVarSearch").select2({
 		query: function (query) {	
-      var data = {results: stdVariableSuggestions_obj}, i, j, s;
+      var data = {results: stdVariableSuggestions_obj};
       // return the array that matches
       data.results = $.grep(data.results,function(item,index) {
         return ($.fn.select2.defaults.matcher(query.term,item.text));
@@ -702,13 +678,6 @@ function addVariableToList() {
 	
 function notInList(id) {
 	var isNotInList = true;
-	/*
-	$.each($("#newVariablesList tbody tr"), function() {
-		if ($(this).find("input[type='hidden']").val() == id) {
-			isNotInList = false;
-		}
-	});
-	*/
 	$.each($('.cvTermIds'), function() {
 		if ($(this).val() == id) {
 			isNotInList = false;
@@ -1024,24 +993,19 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation, default
 		$(name).select2({
 			minimumInputLength: 2,
 			query: function (query) {	
-		      var data = {results: possibleValues_obj}, i, j, s;
+		      var data = {results: possibleValues_obj};
 		      // return the array that matches
 		      data.results = $.grep(data.results,function(item,index) {
 		        return ($.fn.select2.defaults.matcher(query.term,item.text));
 		      
 		      });
-		      /*
-		      if (data.results.length === 0){
-		    	  data.results.unshift({id:query.term,text:query.term});	        	 
-		      }
-		      */
-		        query.callback(data);
+		      query.callback(data);
 		    }
 	    });
 	} else {
 		$(name).select2({
 			query: function (query) {	
-		      var data = {results: possibleValues_obj}, i, j, s;
+		      var data = {results: possibleValues_obj};
 		      // return the array that matches
 		      data.results = $.grep(data.results,function(item,index) {
 		        return ($.fn.select2.defaults.matcher(query.term,item.text));
@@ -1320,29 +1284,10 @@ function hasDuplicateSettingName(){
 	$('#selectedSettingId option').each(function(){
 	    if(selectedSettingsId != $(this).val() &&  $(this).html().trim() == settingsName)
 	    	hasDuplicate = true;
-	})
+	});
 	return hasDuplicate;
 }
 function hasEmptyNurseryValue(){
-	//would only check for the data numeric
-	/*
-	var hasEmpty = false;
-	$.each($("#nurseryLevelSettings tbody tr"), function(index, row) {
-		var input = $($(row).children("td:nth-child(3)").children("#" + getJquerySafeId("studyLevelVariables"+index+".value")));
-		if(input.hasClass('select2') && input.select2("data") == null) {
-			hasEmpty = true;
-		}else if(input.hasClass('numeric-input')){
-			console.log('numeric');
-		}else if(input.hasClass('numeric-range-input')){
-			console.log('numeric range');
-		}else if(input.hasClass('character-input')){
-			console.log('character');
-		}else if(input.hasClass('date-input')){
-			console.log('date');
-		}
-	})
-	return hasEmpty;
-	*/
 	var hasError = false;
 	var name = '';
 	$('.numeric-input').each(function(){
@@ -1465,22 +1410,18 @@ function initializeDateAndSliderInputs(){
 			$(this).datepicker({'format': 'yyyymmdd'}).on('changeDate', function(ev) {
 		
 			$(this).datepicker('hide');
-		})
+		});
 		});
 	}
 	if($('.datepicker img').length > 0){
 		$('.datepicker img').on('click', function(){
 			$(this).parent().parent().find('.date-input').datepicker('show');
-		})
+		});
 	}
 	if($('.spinner-input').length > 0){
 		
 		$('.spinner-input').each(function(){
-		//console.log($(this).val());
-		//console.log(parseFloat($(this).data('min')));
-		//console.log(parseFloat($(this).val()));
 		var currentVal  = $(this).val() == '' ? parseFloat($(this).data('min')) : parseFloat($(this).val());
-		//console.log(currentVal);
 			$(this).spinedit({
 				minimum: parseFloat($(this).data('min')),
 				maximum: parseFloat($(this).data('max')),
@@ -1512,8 +1453,6 @@ function loadNurserySettingsForCreate(templateSettingsId) {
 		cache: false,
 		timeout: 70000,
 		success: function (html) {
-			//we just paste the whole html
-			//$('.container .row').first().html(html);
 			$("#chooseSettingsDiv").html(html);
 		},
 		error: function(jqXHR, textStatus, errorThrown){
@@ -1527,7 +1466,7 @@ function loadNurserySettingsForCreate(templateSettingsId) {
 
 function openUsePreviousNurseryModal() {
 	$("#selectedNursery").select2("destroy");
-	$("#selectedNursery").val("")
+	$("#selectedNursery").val("");
 	$("#selectedNursery").select2();
 	$("#usePreviousNurseryModal").modal("show");
 }
@@ -1592,13 +1531,6 @@ function validateCreateNursery() {
 		}
 	});
 	
-	/*
-	if ($("#loadSettings").val() == '0') {
-		hasError = true;
-		customMessage = requiredSettingErrorMessage;
-	}
-	*/
-	
 	var startDate = $("#" + getJquerySafeId("basicDetails.value2")).val();
 	
 	if(isStudyNameUnique() == false){
@@ -1613,21 +1545,6 @@ function validateCreateNursery() {
 		hasError = true;
 		name = "Creation Date";
 	}
-	/*
-	else if ($("#fieldLayoutRandom").val() == '') {
-		hasError = true;
-		name = $("#expDesignLabel").text();
-	} */
-	/*
-	else if($('.baseline-traits').length == 0 && $("#selectionVariatesSettings tbody tr").length == 0){
-		hasError = true;
-		//name = $("#expDesignLabel").text();
-		customMessage = nurseryTraitsIsRequired;
-	}
-	else if ($(".germplasm-list-items").length == 0) {
-		hasError = true;
-		name = $("#germplasmLabel").text();
-	}*/
 	else if($('#checkId').val() == ''){
 		hasError = true;
 		customMessage = checkTypeIsRequired;
@@ -1709,20 +1626,6 @@ function validateCreateNursery() {
 		return false;
 	}
 	/*
-	if (isGidInCheckList(getGid($("#startIndex2").val())) > 0) {
-		if(lastDraggedChecksList == 0){
-			showErrorMessage('page-message', startingEntryErr);
-			return false;	
-		}
-		
-	}
-	
-	if ($("#startIndex2").val() <= 0) {
-		showErrorMessage('page-message', startingEntryErr);
-		return false;
-	}
-	*/
-	/*
 	 * Validate Position is less than the total germplasm
 	 * Validate the Interval should be less than the total germplasm
 	 */
@@ -1772,9 +1675,6 @@ function reloadCheckTypeDropDown(addOnChange, select2ClassName){
            cache: false,
            data: "",
            success: function(data) {	        	   
-        		   //recreate the select2 combos to get updated list of locations
-        		   //$('#checkId').select2('destroy');
-        		   //$('#checkValue').val("");
         		   initializeCheckTypeSelect2($.parseJSON(data.allCheckTypes), [], addOnChange, currentCheckId, select2ClassName);	   
         	   	   Spinner.toggle();
            }
@@ -1813,20 +1713,6 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, c
 					  'description' : value.description};
 			}
 			suggestions_obj.push(dataObj);
-			if (comboName != "comboCheckCode") {
-				var specificVal = '';
-				/*
-				if($('#'+getJquerySafeId(comboName)).select2('data') != null)
-					specificVal = $('#'+getJquerySafeId(comboName)).select2('data').text;
-				if(defaultData == null){
-					if(currentFieldId != '' && currentFieldId == dataObj.id){
-						defaultData = dataObj;
-					}else if(currentFieldId == '' && 'CHECK' == value.name){
-						defaultData = dataObj;
-					}
-				}
-				*/
-			}
 		});
 	} else {
 		$.each(suggestions_obj, function( index, value ) {
@@ -1839,7 +1725,7 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, c
 	if (comboName == "comboCheckCode") {
 		$('#'+comboName).select2({
 			query: function (query) {	
-		          var data = {results: sortByKey(suggestions_obj, "text")}, i, j, s;
+		          var data = {results: sortByKey(suggestions_obj, "text")};
 		          // return the array that matches
 		          data.results = $.grep(data.results,function(item,index) {
 		            return ($.fn.select2.defaults.matcher(query.term,item.text));
@@ -1865,21 +1751,6 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, c
 	    	}
 	    });
 	} else {
-		/*
-		$('#'+comboName).select2({
-	        query: function (query) {
-	          var data = {results: sortByKey(suggestions_obj, "text")}, i, j, s;
-	          // return the array that matches
-	          data.results = $.grep(data.results,function(item,index) {
-	            return ($.fn.select2.defaults.matcher(query.term,item.text)); 
-	          });
-	            query.callback(data);
-	        }
-	    });
-	    */
-
-		//daniel
-		//alert('here'+comboName);
 		$('.'+comboName).each(function(){
 			var currentVal = $(this).val();
 			$(this).empty();
@@ -1895,28 +1766,12 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange, c
 			
 		});
 		$('.'+comboName).select2();
-		//$('#checkId').val('');
-		if(addOnChange){
-			/*
-			$('#'+getJquerySafeId('checkId')).on("change", function (){
-		    	
-		    	$('#'+getJquerySafeId("checkValue")).val($('#'+getJquerySafeId("checkId")).select2('data').text);
-		    	
-		    });
-		    */
-		}
-	}
-	//console.log(defaultData);
-	if(defaultData != null){		
-		//$('#'+comboName).select2('data', defaultData).trigger('change');
-	}
-		
+	}		
 }
 
 function showManageCheckTypePopup(){
 	$('#page-check-message-modal').html("");
 	resetButtonsAndFields();
-	//recreatePopupLocationCombo();
 	$('#manageCheckTypesModal').modal({ backdrop: 'static', keyboard: false });		   	
 }
 
@@ -2077,11 +1932,7 @@ function changeBrowseGermplasmButtonBehavior(isEnable){
 
 
 function addStudyTreeHighlight(node){
-	//$('#studyTree').find("*").removeClass('tree-highlight');
 	$(node.span).addClass('fbtree-focused');
-	//console.log($(node.span).parent().html());
-	//console.log('add highlight' + $(node.span).html());
-	//console.log();
 }
 
 function initializeStudyTabs(){
@@ -2139,8 +1990,8 @@ function addDetailsTab(studyId, title){
 	 }
 	 determineIfShowCloseAllStudyTabs();
 	 //if not we get the info
-	//alert("Add Tab " + studyId);	        		        	
 }
+
 function determineIfShowCloseAllStudyTabs(){
 	if($('#study-tab-headers li').length > 0){
 		$('#closeAllStudytabs').css('display', 'block');
@@ -2148,6 +1999,7 @@ function determineIfShowCloseAllStudyTabs(){
 		$('#closeAllStudytabs').css('display', 'none');
 	}
 }
+
 function openStudyTree(type){
 	$('#page-study-tree-message-modal').html('');
 	$('#studyTreeModal').modal({ backdrop: 'static', keyboard: true });
@@ -2162,8 +2014,6 @@ function closeAllStudyTabs(){
 }
 
 function loadDatasetDropdown(optionTag) {
-	//console.log($(optionTag).attr('id'));
-	
 	if($('#study'+getCurrentStudyIdInTab() + " #dataset-selection option").length > 1)
 		return;
 	Spinner.toggle();
@@ -2186,7 +2036,6 @@ function loadDatasetDropdown(optionTag) {
 }
 
 function getCurrentStudyIdInTab() {
-	//return document.location.pathname.substring(document.location.pathname.lastIndexOf("/")+1);
 	return $('#study-tab-headers li.active .close').attr('id');
 }
 

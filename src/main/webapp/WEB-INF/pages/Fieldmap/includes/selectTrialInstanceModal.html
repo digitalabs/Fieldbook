@@ -1,52 +1,50 @@
 <div class="col-xs-7 col-md-7" xmlns:th="http://www.thymeleaf.org">
-	<!-- Modal -->
-   	<div class="modal fade" id="selectTrialInstanceModal" role="dialog" aria-labelledby="selectTrialInstanceLabel" aria-hidden="true">
+	<div class="modal fade" id="selectTrialInstanceModal" role="dialog" aria-labelledby="selectTrialInstanceLabel" aria-hidden="true">
 		<div class="modal-dialog modal-large">
-	    	<div class="modal-content">
-	    	<div class="modal-header">
-	            <button id="closeSelectTrialInstanceModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	            <h4 class="modal-title" th:text="#{fieldmap.label.select.instance.for.fieldmap}">Select Instances for the Field Map</h4>
-	          </div>
-
-	         	<div class="modal-body" id="selectTrialInstanceBody">
-	         		<div id="page-message">
-	         		</div>
-	         		<div>
-	         			<label class="control-label" th:text="#{fieldmap.select.trial.instance}+':'">Select Trial Instance:</label>
-	         			<br/>
-	         		</div>
-	         		<table class="table tree table-curved table-condensed" id="studyFieldMapTree" style="margin-left:5px;">
-			        </table>
-	         	</div>
-	       		<div class="modal-footer">
-	       		<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
-	       			<button type="button" class="btn btn-primary" onclick="javascript: viewFieldMap();" aria-hidden="true">OK</button>
-       			</div>
-	     	</div><!-- /.modal-content -->
-   		</div><!-- /.modal-dialog -->
-	</div><!-- /.modal -->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button id="closeSelectTrialInstanceModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title" th:text="#{fieldmap.label.select.instance.for.fieldmap}">Select Instances for the Field Map</h4>
+				</div>
+				<div class="modal-body" id="selectTrialInstanceBody">
+					<div id="page-message">
+					</div>
+					<div>
+						<label class="control-label" th:text="#{fieldmap.select.trial.instance}+':'">Select Trial Instance:</label>
+						<br/>
+					</div>
+					<table class="table tree table-curved table-condensed" id="studyFieldMapTree" style="margin-left:5px;">
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
+					<button type="button" class="btn btn-primary" onclick="javascript: viewFieldMap();" aria-hidden="true">OK</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<div class="modal fade" id="confirmSubModal" role="dialog" aria-labelledby="confirmSubModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-large" style="width:500px">
-	    	<div class="modal-content">
-	         	<div class="modal-body" id="selectTrialInstanceBody">
-	         		<div>
-	         			<button id="closeConfirmSubModalModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	         		</div>
-	         		<br/><br/>
-	         		<div id="page-message">
-	         			<div class="alert alert-danger">
-	         				<span th:text="#{fieldmap.confirm.overwrite.existing.fieldmap}">Are you sure you want to include instances with existing fieldmaps?</span>
-	         			</div>
-	         		</div>
-	         	</div>
-	       		<div class="modal-footer">
-	       			<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">No</button>
-	       			<button type="button" class="btn btn-primary" onclick="javascript: redirectToFirstPage();" aria-hidden="true">Yes</button>
-       			</div>
-	     	</div><!-- /.modal-content -->
-   		</div><!-- /.modal-dialog -->
-	</div><!-- /.modal -->
+			<div class="modal-content">
+				<div class="modal-body" id="selectTrialInstanceBody">
+					<div>
+						<button id="closeConfirmSubModalModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					</div>
+					<br/><br/>
+					<div id="page-message">
+						<div class="alert alert-danger">
+							<span th:text="#{fieldmap.confirm.overwrite.existing.fieldmap}">Are you sure you want to include instances with existing fieldmaps?</span>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true">No</button>
+					<button type="button" class="btn btn-primary" onclick="javascript: redirectToFirstPage();" aria-hidden="true">Yes</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <div layout:fragment="page-script">
@@ -56,23 +54,23 @@
 
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
-	    var createLabelErrorMsg = /*[[#{common.error.create.label.nursery}]]*/ '',
-        	fieldMapStudyRequired = /*[[#{common.error.select.study(#{fieldmap.nursery})}]]*/ '',
-        	fieldMapOneStudyErrorMsg = /*[[#{common.error.select.one.study.show.fieldmap(#{fieldmap.nursery})}]]*/ '',
-        	noFieldMapExists = /*[[#{common.error.no.existing.fieldmap(#{fieldmap.nursery})}]]*/ '',
-        	noSelectedTrialInstance = /*[[#{fieldmap.no.selected.trial.instance}]]*/ '',
-        	multipleSelectError = /*[[#{common.error.select.one.trial.instance}]]*/ '',
-        	trialName = /*[[#{label.printing.trial.name}]]*/ '',
-        	nurseryName = /*[[#{label.printing.nursery.name}]]*/ '',
-        	entryLabel = /*[[#{fieldmap.trial.number.of.entries}]]*/ '',
-        	repLabel = /*[[#{fieldmap.trial.number.of.reps}]]*/ '',
-        	plotLabel = /*[[#{fieldmap.trial.total.number.of.plots}]]*/ '',
-        	fieldmapLabel = /*[[#{fieldmap.has.fieldmap}]]*/ '',
-        	entryPlotLabel = /*[[#{fieldmap.trial.number.of.entries.and.plots}]]*/ '',
-        	hasFieldmapError = /*[[#{fieldmap.has.existing.fieldmap.error}]]*/ '',
-			trial = true,
-			isViewFieldmap = true,
-			fieldmapIds = [];
-    //]]>
-    </script>
+	var createLabelErrorMsg = /*[[#{common.error.create.label.nursery}]]*/ '',
+	fieldMapStudyRequired = /*[[#{common.error.select.study(#{fieldmap.nursery})}]]*/ '',
+	fieldMapOneStudyErrorMsg = /*[[#{common.error.select.one.study.show.fieldmap(#{fieldmap.nursery})}]]*/ '',
+	noFieldMapExists = /*[[#{common.error.no.existing.fieldmap(#{fieldmap.nursery})}]]*/ '',
+	noSelectedTrialInstance = /*[[#{fieldmap.no.selected.trial.instance}]]*/ '',
+	multipleSelectError = /*[[#{common.error.select.one.trial.instance}]]*/ '',
+	trialName = /*[[#{label.printing.trial.name}]]*/ '',
+	nurseryName = /*[[#{label.printing.nursery.name}]]*/ '',
+	entryLabel = /*[[#{fieldmap.trial.number.of.entries}]]*/ '',
+	repLabel = /*[[#{fieldmap.trial.number.of.reps}]]*/ '',
+	plotLabel = /*[[#{fieldmap.trial.total.number.of.plots}]]*/ '',
+	fieldmapLabel = /*[[#{fieldmap.has.fieldmap}]]*/ '',
+	entryPlotLabel = /*[[#{fieldmap.trial.number.of.entries.and.plots}]]*/ '',
+	hasFieldmapError = /*[[#{fieldmap.has.existing.fieldmap.error}]]*/ '',
+	trial = true,
+	isViewFieldmap = true,
+	fieldmapIds = [];
+	//]]>
+</script>
 </div>

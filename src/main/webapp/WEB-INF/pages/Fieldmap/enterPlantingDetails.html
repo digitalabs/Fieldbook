@@ -2,99 +2,95 @@
 	<div class="page-header">
 		<span>
 			<span class="h1" style="float: left" th:text="#{fieldmap.header.field.plan}">
-				FIELD PLAN						
+				FIELD PLAN
 			</span>
-			<span class="h1" > 
+			<span class="h1" >
 				<span class="help-tooltip" data-placement="right" data-toggle="tooltip" th:title="#{fieldmap.header.field.plan.help}">?</span>
 			</span>
 		</span>
-	</div>			  
-</div>
-	<div class="row">
-			<div class="form-group">
-				<div  id="page-message"></div>
-			</div>
 	</div>
-	
+</div>
 <div class="row">
-<div class="panel panel-default">
-   	<div class="panel-body">
-
-<div class="row">
-	<form class="form-inline" role="form">
-		  <div  class="form-group fieldmap-header" style="padding-left: 15px">
-		    <h2 th:text="#{fieldmap.header.make.a.field.plan}">Make a Field Plan</h2>
-		  </div>
-		  <div   class="form-group fieldmap-header">
-		    <h2 class="light" th:text="#{fieldmap.header.enter.details}">1. ENTER FIELD DETAILS</h2>
-		  </div>
-		  <div   class="form-group fieldmap-header">
-		    <h2 th:text="#{fieldmap.header.enter.planting.details}">2. ENTER PLANTING DETAILS</h2>
-		  </div>
-		  <div   class="form-group fieldmap-header">
-		    <h2 class="light" th:text="#{fieldmap.header.generate.field.map}">3. GENERATE FIELD MAP</h2>
-		  </div>
-	</form>
+	<div class="form-group">
+		<div  id="page-message"></div>
+	</div>
 </div>
 
+<div class="row">
+	<div class="panel panel-default">
+		<div class="panel-body">
 
-
-   	
-<form id="fieldmapForm" name="fieldmapForm" role="form-horizontal" action="#" onsubmit="return setAllDeletedBox();"
-th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldmapForm}" enctype="multipart/form-data">
-
-<input type="hidden" id="markedCells" name="markedCells" />
-<input type="hidden" id="stepValue" name="stepValue" value="2" />
-
-	<div>
-		<div class="row">&nbsp;</div>
-		
-		<div class="row">
-			<div class="col-xs-12 col-md-12" >
-				<div class="">
-					<div class="col-xs-12 col-md-12">
-						<label ><strong class="sub-content-heading" th:text="#{fieldmap.header.planting.details}">PLANTING DETAILS</strong></label>
+			<div class="row">
+				<form class="form-inline" role="form">
+					<div  class="form-group fieldmap-header" style="padding-left: 15px">
+						<h2 th:text="#{fieldmap.header.make.a.field.plan}">Make a Field Plan</h2>
 					</div>
-				</div>
-			</div>	
-		</div>
-		<div class="row " >
-			<div class="col-xs-12 col-md-12">
-				<div class="col-xs-12 col-md-12">
-				<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
-				</div>
+					<div   class="form-group fieldmap-header">
+						<h2 class="light" th:text="#{fieldmap.header.enter.details}">1. ENTER FIELD DETAILS</h2>
+					</div>
+					<div   class="form-group fieldmap-header">
+						<h2 th:text="#{fieldmap.header.enter.planting.details}">2. ENTER PLANTING DETAILS</h2>
+					</div>
+					<div   class="form-group fieldmap-header">
+						<h2 class="light" th:text="#{fieldmap.header.generate.field.map}">3. GENERATE FIELD MAP</h2>
+					</div>
+				</form>
 			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-12 col-md-12">
-				<div class="form-group">
-				<div class="col-xs-2 col-md-2">
-					<label class="control-label label-bold " th:text="#{fieldmap.label.starting.coordinates} + ':'">Starting Coordinates:</label>
-				</div>
-				<div class="col-xs-4 col-md-4">
-					<input th:field="*{userFieldmap.startingColumn}" type="text" style="width: 20%;" />&nbsp;
-					<strong><em th:text="#{fieldmap.label.column}">column</em></strong>
-					&nbsp;&nbsp;&nbsp;
-					<input th:field="*{userFieldmap.startingRange}" type="text" style="width: 20%;" />&nbsp;
-					<strong><em th:text="#{fieldmap.label.range}">range</em></strong>
-				</div>
-				</div>
-				<div class="form-group">
-					<div class="col-xs-2 col-md-2">
-						<label class="control-label label-bold" th:text="#{fieldmap.trial.planting.order}">Planting Order:</label><span class="required">*</span>
+
+			<form id="fieldmapForm" name="fieldmapForm" role="form-horizontal" action="#" onsubmit="return setAllDeletedBox();" th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldmapForm}" enctype="multipart/form-data">
+
+			<input type="hidden" id="markedCells" name="markedCells" />
+			<input type="hidden" id="stepValue" name="stepValue" value="2" />
+
+			<div>
+				<div class="row">&nbsp;</div>
+
+				<div class="row">
+					<div class="col-xs-12 col-md-12" >
+						<div class="">
+							<div class="col-xs-12 col-md-12">
+								<label ><strong class="sub-content-heading" th:text="#{fieldmap.header.planting.details}">PLANTING DETAILS</strong></label>
+							</div>
+						</div>
 					</div>
-					<div class="col-xs-4 col-md-4">
-						<div class="form-group ">
-							<label class="radio-inline">
-						    <input type="radio" th:field="*{userFieldmap.plantingOrder}" id="plantingOrder" class="plantingOrder" value="1" th:text="#{fieldmap.planting.order.row.column}">
-						    	Row/Column
-						    </input>
-						  	</label>
-						  	<label class="radio-inline">
-						    <input type="radio" th:field="*{userFieldmap.plantingOrder}" id="plantingOrder" class="plantingOrder" value="2" th:text="#{fieldmap.planting.order.serpentine}">
-						    	Serpentine
-					    	</input>
-						  	</label>
+				</div>
+				<div class="row " >
+					<div class="col-xs-12 col-md-12">
+						<div class="col-xs-12 col-md-12">
+							<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12 col-md-12">
+						<div class="form-group">
+							<div class="col-xs-2 col-md-2">
+								<label class="control-label label-bold " th:text="#{fieldmap.label.starting.coordinates} + ':'">Starting Coordinates:</label>
+							</div>
+							<div class="col-xs-4 col-md-4">
+								<input th:field="*{userFieldmap.startingColumn}" type="text" style="width: 20%;" />&nbsp;
+								<strong><em th:text="#{fieldmap.label.column}">column</em></strong>
+								&nbsp;&nbsp;&nbsp;
+								<input th:field="*{userFieldmap.startingRange}" type="text" style="width: 20%;" />&nbsp;
+								<strong><em th:text="#{fieldmap.label.range}">range</em></strong>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-xs-2 col-md-2">
+								<label class="control-label label-bold" th:text="#{fieldmap.trial.planting.order}">Planting Order:</label><span class="required">*</span>
+							</div>
+							<div class="col-xs-4 col-md-4">
+								<div class="form-group ">
+									<label class="radio-inline">
+										<input type="radio" th:field="*{userFieldmap.plantingOrder}" id="plantingOrder" class="plantingOrder" value="1" th:text="#{fieldmap.planting.order.row.column}">
+										Row/Column
+									</input>
+								</label>
+								<label class="radio-inline">
+									<input type="radio" th:field="*{userFieldmap.plantingOrder}" id="plantingOrder" class="plantingOrder" value="2" th:text="#{fieldmap.planting.order.serpentine}">
+									Serpentine
+								</input>
+							</label>
 						</div>
 					</div>
 				</div>
@@ -107,12 +103,12 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 						<label class="control-label label-bold" th:text="#{fieldmap.label.row.capacity.machine} + ':'">Row Capacity of Planting Machine:</label>
 					</div>
 					<div class="col-xs-4 col-md-4">
-				        <select class="form-control" th:field="*{userFieldmap.machineRowCapacity}">
-				        	<option value="1">1</option>
-				        	<option value="2">2</option>
-				        	<option value="4">4</option>
-				        	<option value="8">8</option>
-					    </select>
+						<select class="form-control" th:field="*{userFieldmap.machineRowCapacity}">
+							<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="4">4</option>
+							<option value="8">8</option>
+						</select>
 					</div>
 				</div>
 			</div>
@@ -120,40 +116,40 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 		<div class="row">&nbsp;</div>
 		<div class="row">
 			<div class="col-xs-12 col-md-12" >
-				
-					<div class="col-xs-12 col-md-12">
-						<label><strong class="sub-content-heading" th:text="#{fieldmap.header.unavailable.plots}">UNAVAILABLE PLOTS</strong></label>
-					</div>
-				
-			</div>	
+
+				<div class="col-xs-12 col-md-12">
+					<label><strong class="sub-content-heading" th:text="#{fieldmap.header.unavailable.plots}">UNAVAILABLE PLOTS</strong></label>
+				</div>
+
+			</div>
 		</div>
 		<div class="row">
 			<div class="col-xs-12 col-md-12" >
 				<div class="form-group">
 					<div class="col-xs-12 col-md-12">
 						<text th:text="#{fieldmap.instruction.unavailable.plots}">
-						If there are any plots in this block that are unusable, mark them with an X.
+							If there are any plots in this block that are unusable, mark them with an X.
 						</text>
 					</div>
 				</div>
-			</div>	
+			</div>
 		</div>
 		<div class="row">
 			<div class="col-xs-12 col-md-12" >
 				<div id="fieldmap-area" th:include="/Fieldmap/fieldmapView">
 				</div>
-			</div>	
+			</div>
 		</div>
 		<div class="row">
-		<div class="col-xs-5 col-md-5">&nbsp;</div>
+			<div class="col-xs-5 col-md-5">&nbsp;</div>
 			<div class=" col-xs-7  col-md-7">
 				<div class="form-group">
-			      <input type="button" onclick="javascript: window.history.back();" href="/Fieldmap/enterFieldDetails.html" th:href="@{/Fieldmap/enterFieldDetails/trial/-10}" th:value="#{common.form.back.text}" value="Back" class="btn btn-default"/>
-			      <input type="submit"  th:value="#{common.form.next.text}" value="Next" class="btn btn-primary"/>
-			      
-		      	</div>
-		    </div>
-	    </div>
+					<input type="button" onclick="javascript: window.history.back();" href="/Fieldmap/enterFieldDetails.html" th:href="@{/Fieldmap/enterFieldDetails/trial/-10}" th:value="#{common.form.back.text}" value="Back" class="btn btn-default"/>
+					<input type="submit"  th:value="#{common.form.next.text}" value="Next" class="btn btn-primary"/>
+
+				</div>
+			</div>
+		</div>
 	</div>
 	<input type="hidden" th:field="*{userFieldmap.new}"/>
 </form>
@@ -163,124 +159,124 @@ th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldma
 	<script type="text/javascript" th:src="@{/static/js/fieldMap.js}"></script>
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
-        var startColError = /*[[#{fieldmap.starting.coordinates.required(#{fieldmap.label.column})}]]*/;
-        var startRangeError = /*[[#{fieldmap.starting.coordinates.required(#{fieldmap.label.range})}]]*/;
-		var plantingOrderError = /*[[#{fieldmap.planting.order.required}]]*/;
-		var startColInvalid = /*[[#{fieldmap.starting.coordinates.invalid(#{fieldmap.label.column},#{fieldmap.label.column})}]]*/;
-		var startRangeInvalid = /*[[#{fieldmap.starting.coordinates.invalid(#{fieldmap.label.range},#{fieldmap.label.range})}]]*/;
-		var startColNotInt = /*[[#{fieldmap.starting.coordinates.not.an.integer(#{fieldmap.label.column})}]]*/;
-		var startRangeNotInt = /*[[#{fieldmap.starting.coordinates.not.an.integer(#{fieldmap.label.range})}]]*/;
-		var rowNum = /*[[${fieldmapForm.userFieldmap.numberOfRowsInBlock}]]*/;
-		var rangeNum = /*[[${fieldmapForm.userFieldmap.numberOfRangesInBlock}]]*/;
-		var rowsPerPlot = /*[[${fieldmapForm.userFieldmap.numberOfRowsPerPlot}]]*/;
-		var deletedPlots = 0;
-		var plantedPlots = 0;
-		var totalNoOfPlots = /*[[${fieldmapForm.userFieldmap.totalNumberOfSelectedPlots}]]*/;
-		var deletedPlotError = /*[[#{fieldmap.starting.coordinates.deleted}]]*/;
-		var plantedPlotError = /*[[#{fieldmap.starting.coordinates.planted}]]*/;
-		var totalBlocksError = /*[[#{fieldmap.plots.exceed.blocks.with.deleted}]]*/;
-		var trial = /*[[${fieldmapForm.userFieldmap.trial}]]*/;
-		var isHorizontal = true;
-				
-	  	function setAllDeletedBox(){
-			var ret = validatePlantingDetails();
-			if(ret == false)
-				return false;
-			
-	  		var deletedRect = "";
-	  		var insufficientPlots = false;
-	  		deletedPlots = 0;
-	  		plantedPlots = 0;
-	  		$('#field-map td.plot.deleted').each(function(){
-	  			deletedRect += $(this).attr('id');
-  				if(deletedRect != ''){
-  					deletedRect += ",";
-  				}
-  				//count number of plots marked as deleted
-  				if (isHorizontal) {
-  					checkDeletedPlotsHorizontal($(this).attr('id'), true);
-  				} else {
-  					checkDeletedPlotsVertical($(this).attr('id'), true);
-  				}
-	  		});
-	  		
-	  		$("#field-map td.plot.planted").each(function(){
-	  			//count number of plots planted
-	  			if (isHorizontal) {
-	  				checkDeletedPlotsHorizontal($(this).attr('id'), false);
-  				} else {
-  					checkDeletedPlotsVertical($(this).attr('id'), false);
-  				}
-	  		});
-	  			  			  		
-	  		if(deletedRect != ''){
-	  			deletedRect = deletedRect.substr(0,deletedRect.length-1);
-	  		}
-	  		$('#markedCells').val(deletedRect);
-	  		//console.log(deletedRect);
-	  		
-	  		//validate that total no. of plots does not exceed total no. of blocks
-	  		if (isHorizontal) {
-	  			insufficientPlots = checkRemainingPlotsHorizontal(); 
-	  		} else {
-	  			insufficientPlots = checkRemainingPlotsVertical();
-	  		}
-	  		
-	  		if (insufficientPlots) {
-	  			showMessage(totalBlocksError);
-	  			return false;
+	var startColError = /*[[#{fieldmap.starting.coordinates.required(#{fieldmap.label.column})}]]*/;
+	var startRangeError = /*[[#{fieldmap.starting.coordinates.required(#{fieldmap.label.range})}]]*/;
+	var plantingOrderError = /*[[#{fieldmap.planting.order.required}]]*/;
+	var startColInvalid = /*[[#{fieldmap.starting.coordinates.invalid(#{fieldmap.label.column},#{fieldmap.label.column})}]]*/;
+	var startRangeInvalid = /*[[#{fieldmap.starting.coordinates.invalid(#{fieldmap.label.range},#{fieldmap.label.range})}]]*/;
+	var startColNotInt = /*[[#{fieldmap.starting.coordinates.not.an.integer(#{fieldmap.label.column})}]]*/;
+	var startRangeNotInt = /*[[#{fieldmap.starting.coordinates.not.an.integer(#{fieldmap.label.range})}]]*/;
+	var rowNum = /*[[${fieldmapForm.userFieldmap.numberOfRowsInBlock}]]*/;
+	var rangeNum = /*[[${fieldmapForm.userFieldmap.numberOfRangesInBlock}]]*/;
+	var rowsPerPlot = /*[[${fieldmapForm.userFieldmap.numberOfRowsPerPlot}]]*/;
+	var deletedPlots = 0;
+	var plantedPlots = 0;
+	var totalNoOfPlots = /*[[${fieldmapForm.userFieldmap.totalNumberOfSelectedPlots}]]*/;
+	var deletedPlotError = /*[[#{fieldmap.starting.coordinates.deleted}]]*/;
+	var plantedPlotError = /*[[#{fieldmap.starting.coordinates.planted}]]*/;
+	var totalBlocksError = /*[[#{fieldmap.plots.exceed.blocks.with.deleted}]]*/;
+	var trial = /*[[${fieldmapForm.userFieldmap.trial}]]*/;
+	var isHorizontal = true;
+
+	function setAllDeletedBox(){
+		var ret = validatePlantingDetails();
+		if(ret == false)
+			return false;
+
+		var deletedRect = "";
+		var insufficientPlots = false;
+		deletedPlots = 0;
+		plantedPlots = 0;
+		$('#field-map td.plot.deleted').each(function(){
+			deletedRect += $(this).attr('id');
+			if(deletedRect != ''){
+				deletedRect += ",";
 			}
-	  		$('.plantingOrder').attr('disabled', false);
-  			$('#'+getJquerySafeId('userFieldmap.machineRowCapacity')).select2('enable', true);
+				//count number of plots marked as deleted
+				if (isHorizontal) {
+					checkDeletedPlotsHorizontal($(this).attr('id'), true);
+				} else {
+					checkDeletedPlotsVertical($(this).attr('id'), true);
+				}
+			});
+
+		$("#field-map td.plot.planted").each(function(){
+				//count number of plots planted
+				if (isHorizontal) {
+					checkDeletedPlotsHorizontal($(this).attr('id'), false);
+				} else {
+					checkDeletedPlotsVertical($(this).attr('id'), false);
+				}
+			});
+
+		if(deletedRect != ''){
+			deletedRect = deletedRect.substr(0,deletedRect.length-1);
+		}
+		$('#markedCells').val(deletedRect);
+			//console.log(deletedRect);
+
+			//validate that total no. of plots does not exceed total no. of blocks
+			if (isHorizontal) {
+				insufficientPlots = checkRemainingPlotsHorizontal();
+			} else {
+				insufficientPlots = checkRemainingPlotsVertical();
+			}
+
+			if (insufficientPlots) {
+				showMessage(totalBlocksError);
+				return false;
+			}
+			$('.plantingOrder').attr('disabled', false);
+			$('#'+getJquerySafeId('userFieldmap.machineRowCapacity')).select2('enable', true);
 			return true;
-	  		//$("#fieldmapForm").submit();
-	  		//setTimeout(function(){$('#submitButton').trigger('submit')}, 50);
-	  	}
-	  	$(document).ready(function() {
-	  		
-	  		if($('#'+getJquerySafeId('userFieldmap.new')).val() == 'false'){
-	  			$('.plantingOrder').attr('disabled', true);
-	  			$('#'+getJquerySafeId('userFieldmap.machineRowCapacity')).select2('enable', false);
-	  			
-	  		}
-	  			
-	  		
-	  		$('#field-map td.plot').on('click', function() {
-	  			
-	  			
-	  			
-	  			if($(this).hasClass('deleted')){
-	  				$(this).removeClass('deleted');
-	  				$(this).html('');
-	  			}else{
-	  				if($(this).hasClass('planted')){
-		  				return false;
-		  			}
-	  				$(this).addClass('deleted');
-	  				$(this).html("<label class='alert alert-danger'>X</label>");
-	  			}
-	  			//console.log($(this).attr('id'));
-	  		});
+			//$("#fieldmapForm").submit();
+			//setTimeout(function(){$('#submitButton').trigger('submit')}, 50);
+		}
+		$(document).ready(function() {
+
+			if($('#'+getJquerySafeId('userFieldmap.new')).val() == 'false'){
+				$('.plantingOrder').attr('disabled', true);
+				$('#'+getJquerySafeId('userFieldmap.machineRowCapacity')).select2('enable', false);
+
+			}
+
+
+			$('#field-map td.plot').on('click', function() {
+
+
+
+				if($(this).hasClass('deleted')){
+					$(this).removeClass('deleted');
+					$(this).html('');
+				}else{
+					if($(this).hasClass('planted')){
+						return false;
+					}
+					$(this).addClass('deleted');
+					$(this).html("<label class='alert alert-danger'>X</label>");
+				}
+				//console.log($(this).attr('id'));
+			});
 			$('#field-map td.plot').each(function(){
 				if(!$(this).hasClass('deleted')){
 					if($.trim($(this).find('.plotLabel p').html()) != '')
-	  					$(this).addClass('planted');
-	  			}
+						$(this).addClass('planted');
+				}
 			}
-	  		);
-	  		
+			);
+
 			if ($("#stepValue").val() == '2') {
-	  				
-	  			$('.new-plot').each(function(){
-	  				
-	  				if($(this).parent().parent().hasClass('planted')){
-	  					console.log('clean');
-	  					$(this).parent().parent().removeClass('planted');
-	  				}
-	  					
-	  			})
-	  		}
-	  	});
-    //]]>
-    </script>
+
+				$('.new-plot').each(function(){
+
+					if($(this).parent().parent().hasClass('planted')){
+						console.log('clean');
+						$(this).parent().parent().removeClass('planted');
+					}
+
+				})
+			}
+		});
+	//]]>
+</script>
 </div>

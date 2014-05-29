@@ -2,328 +2,318 @@
 	<div class="page-header">
 		<span>
 			<span class="h1" style="float: left" th:text="#{fieldmap.header.field.plan}">
-				FIELD PLAN						
+				FIELD PLAN
 			</span>
-			<span class="h1" > 
+			<span class="h1" >
 				<span class="help-tooltip" data-placement="right" data-toggle="tooltip" th:title="#{fieldmap.header.field.plan.help}">?</span>
 			</span>
 		</span>
-	</div>			  
+	</div>
 </div>
 
-	
 <div>
-<div class="row panel panel-default">
-   	<div class="panel-body">
-   	
-   	<div class="row">
-	<form class="form-inline" role="form">
-		  <div  class="form-group fieldmap-header" style="padding-left: 15px;">
-		    <h2 th:text="#{fieldmap.header.make.a.field.plan}">Make a Field Plan</h2>
-		  </div>
-		  <div  class="form-group fieldmap-header" >
-		    <h2 class="light" th:text="#{fieldmap.header.enter.details}">1. ENTER FIELD DETAILS</h2>
-		  </div>
-		  <div  class="form-group fieldmap-header" >
-		    <h2 class="light" th:text="#{fieldmap.header.enter.planting.details}">2. ENTER PLANTING DETAILS</h2>
-		  </div>
-		  <div class="form-group fieldmap-header" >
-		    <h2  th:text="#{fieldmap.header.generate.field.map}">3. GENERATE FIELD MAP</h2>
-		  </div>
-	</form>
-</div>
-   	
-   	
-<form id="fieldmapForm" name="fieldmapForm" role="form-horizontal" action="#"
-th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" enctype="multipart/form-data">
-<input type="hidden" id="stepValue" name="stepValue" value="3" />
-<input type="hidden" th:field="*{userFieldmap.generated}"/>
-<input type="hidden" th:field="*{saveAndRedirectToCreateLabel}"/>
-<input type="hidden" th:field="*{userFieldmap.trial}"/>
-<a th:if="*{userFieldmap.trial == true}" th:href="@{/TrialManager}" href="" style="display: none" id="landing-page-url"></a>
-<a th:if="*{userFieldmap.trial == false}" th:href="@{/NurseryManager}" href="" style="display: none" id="landing-page-url"></a>
+	<div class="row panel panel-default">
+		<div class="panel-body">
 
-	<div>
-		<div class="row">&nbsp;</div>
-		<div class="row">
-			<div class="col-xs-12 col-md-12" >
-				<div class="form-group">
-					<div class="col-xs-12  col-md-12">
-						<label th:if="*{userFieldmap.trial == true}" ><strong class="sub-content-heading" th:text="#{fieldmap.header.summary.for.trial}">SUMMARY OF TRIAL, FIELD AND PLANTING DETAILS</strong></label>
-						<label th:if="*{userFieldmap.trial == false}" ><strong class="sub-content-heading" th:text="#{fieldmap.header.summary.for.nursery}">SUMMARY OF NURSERY, FIELD AND PLANTING DETAILS</strong></label>
+			<div class="row">
+				<form class="form-inline" role="form">
+					<div  class="form-group fieldmap-header" style="padding-left: 15px;">
+						<h2 th:text="#{fieldmap.header.make.a.field.plan}">Make a Field Plan</h2>
 					</div>
-				</div>
-			</div>	
-		</div>
-		
-		<div class="row">
-			<div class="col-xs-12 col-md-12">
-				<div class="col-xs-12 col-md-12">
-					<label class="control-label  label-bold" th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.selected.trial}">Selected Trials:</label>
-					<label class="control-label  label-bold" th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery.selected.nursery}">Selected Nurseries:</label>
-				</div>
+					<div  class="form-group fieldmap-header" >
+						<h2 class="light" th:text="#{fieldmap.header.enter.details}">1. ENTER FIELD DETAILS</h2>
+					</div>
+					<div  class="form-group fieldmap-header" >
+						<h2 class="light" th:text="#{fieldmap.header.enter.planting.details}">2. ENTER PLANTING DETAILS</h2>
+					</div>
+					<div class="form-group fieldmap-header" >
+						<h2  th:text="#{fieldmap.header.generate.field.map}">3. GENERATE FIELD MAP</h2>
+					</div>
+				</form>
 			</div>
-		</div>
 
-		<div class="row">
-			<div class="col-xs-12 col-md-12">
-				<div class="col-xs-12 col-md-12">
-					<table class="table table-curved table-condensed">
-						<thead>
-							<th th:text="#{fieldmap.trial.order}">Order</th>
-							<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial}">Trial</th>
-							<th th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery}">Nursery</th>
-							<th th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery.dataset}">Dataset</th>
-							<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.instance}">Instance</th>
-							<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.entry.count}"># of Entries</th>
-							<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.reps.count}"># of Reps</th>
-							<th th:text="#{fieldmap.trial.plots.needed}">Plots Needed</th>
-						</thead>
-						<tr  th:each="row, rowInd : *{userFieldmap.selectedFieldmapList.rows}">
-							<td th:class="${rowInd.even}? 'even ordering' : 'odd ordering'" th:text="${row.order}"></td>
-							<td th:class="${rowInd.even}? 'even' : 'odd'" th:text="${row.studyName}"></td>
-							<td th:class="${rowInd.even}? 'even' : 'odd'" th:if="*{userFieldmap.trial == false}" th:text="${row.datasetName}"></td>
-							<td th:class="${rowInd.even}? 'even' : 'odd'" th:if="*{userFieldmap.trial == true}" th:text="${row.trialInstanceNo}"></td>
-							<td th:class="${rowInd.even}? 'even' : 'odd'" th:text="${row.entryCount}"></td>
-							<td th:class="${rowInd.even}? 'even' : 'odd'" th:if="*{userFieldmap.trial == true}" th:text="${row.repCount}"></td>
-							<td th:class="${rowInd.even}? 'even' : 'odd'" th:if="*{userFieldmap.trial == true}" th:text="${row.plotCount}"></td>
-						</tr>
-					</table>
-				</div>
-				<div class="col-xs-12 col-md-12">
-					<label class="control-label label-bold" th:text="#{fieldmap.trial.total.number.of.plots}"> Total # of Plots Needed: </label> &nbsp;: 
-					<span th:text="*{userFieldmap.selectedFieldmapList.totalNumberOfPlots}"></span>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-		&nbsp;
-		</div>
-		<div class="row">
-			<div class="col-xs-12 col-md-12">
-				<div class="form-group">
-					<div class="col-xs-4 col-md-4">
-						<label class="control-label" ><strong class="sub-content-heading" th:text="#{fieldmap.trial.field.and.block.details}">FIELD AND BLOCK DETAILS:</strong></label>
+			<form id="fieldmapForm" name="fieldmapForm" role="form-horizontal" action="#"
+			th:action="@{/Fieldmap/saveFieldmap}" method="post" th:object="${fieldmapForm}" enctype="multipart/form-data">
+				<input type="hidden" id="stepValue" name="stepValue" value="3" />
+				<input type="hidden" th:field="*{userFieldmap.generated}"/>
+				<input type="hidden" th:field="*{saveAndRedirectToCreateLabel}"/>
+				<input type="hidden" th:field="*{userFieldmap.trial}"/>
+				<a th:if="*{userFieldmap.trial == true}" th:href="@{/TrialManager}" href="" style="display: none" id="landing-page-url"></a>
+				<a th:if="*{userFieldmap.trial == false}" th:href="@{/NurseryManager}" href="" style="display: none" id="landing-page-url"></a>
+
+				<div>
+					<div class="row">&nbsp;</div>
+					<div class="row">
+						<div class="col-xs-12 col-md-12" >
+							<div class="form-group">
+								<div class="col-xs-12  col-md-12">
+									<label th:if="*{userFieldmap.trial == true}" ><strong class="sub-content-heading" th:text="#{fieldmap.header.summary.for.trial}">SUMMARY OF TRIAL, FIELD AND PLANTING DETAILS</strong></label>
+									<label th:if="*{userFieldmap.trial == false}" ><strong class="sub-content-heading" th:text="#{fieldmap.header.summary.for.nursery}">SUMMARY OF NURSERY, FIELD AND PLANTING DETAILS</strong></label>
+								</div>
+							</div>
+						</div>
 					</div>
-				</div>
-				<div class="form-group">
-					<div class="col-xs-4 col-md-4">
-						<label class="control-label" ><strong class="sub-content-heading" th:text="#{fieldmap.trial.row.and.range.and.plot.details}">ROW, RANGE AND PLOT DETAILS:</strong></label>
+
+					<div class="row">
+						<div class="col-xs-12 col-md-12">
+							<div class="col-xs-12 col-md-12">
+								<label class="control-label  label-bold" th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.selected.trial}">Selected Trials:</label>
+								<label class="control-label  label-bold" th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery.selected.nursery}">Selected Nurseries:</label>
+							</div>
+						</div>
 					</div>
-				</div>
-				<div class="form-group">
-					<div class="col-xs-4 col-md-4">
-						<label class="control-label" ><strong class="sub-content-heading" th:text="#{fieldmap.header.planting.details}">PLANTING DETAILS</strong></label>
+
+					<div class="row">
+						<div class="col-xs-12 col-md-12">
+							<div class="col-xs-12 col-md-12">
+								<table class="table table-curved table-condensed">
+									<thead>
+										<th th:text="#{fieldmap.trial.order}">Order</th>
+										<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial}">Trial</th>
+										<th th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery}">Nursery</th>
+										<th th:if="*{userFieldmap.trial == false}" th:text="#{fieldmap.nursery.dataset}">Dataset</th>
+										<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.instance}">Instance</th>
+										<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.entry.count}"># of Entries</th>
+										<th th:if="*{userFieldmap.trial == true}" th:text="#{fieldmap.trial.reps.count}"># of Reps</th>
+										<th th:text="#{fieldmap.trial.plots.needed}">Plots Needed</th>
+									</thead>
+									<tr  th:each="row, rowInd : *{userFieldmap.selectedFieldmapList.rows}">
+										<td th:class="${rowInd.even}? 'even ordering' : 'odd ordering'" th:text="${row.order}"></td>
+										<td th:class="${rowInd.even}? 'even' : 'odd'" th:text="${row.studyName}"></td>
+										<td th:class="${rowInd.even}? 'even' : 'odd'" th:if="*{userFieldmap.trial == false}" th:text="${row.datasetName}"></td>
+										<td th:class="${rowInd.even}? 'even' : 'odd'" th:if="*{userFieldmap.trial == true}" th:text="${row.trialInstanceNo}"></td>
+										<td th:class="${rowInd.even}? 'even' : 'odd'" th:text="${row.entryCount}"></td>
+										<td th:class="${rowInd.even}? 'even' : 'odd'" th:if="*{userFieldmap.trial == true}" th:text="${row.repCount}"></td>
+										<td th:class="${rowInd.even}? 'even' : 'odd'" th:if="*{userFieldmap.trial == true}" th:text="${row.plotCount}"></td>
+									</tr>
+								</table>
+							</div>
+							<div class="col-xs-12 col-md-12">
+								<label class="control-label label-bold" th:text="#{fieldmap.trial.total.number.of.plots}"> Total # of Plots Needed: </label> &nbsp;:
+								<span th:text="*{userFieldmap.selectedFieldmapList.totalNumberOfPlots}"></span>
+							</div>
+						</div>
 					</div>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-12 col-md-12">
-				<div class="form-group">
-					<div class="col-xs-4 col-md-4">
-						<label class="control-label label-bold" th:text="#{fieldmap.trial.field.location}">Field Location:</label>
-						<span th:text="*{userFieldmap.locationName}"></span>
+					<div class="row">
+						&nbsp;
 					</div>
-				</div>
-				<div class="form-group">
-					<div class="col-xs-4 col-md-4">
-						<label class="control-label label-bold" th:text="#{fieldmap.label.block.capacity} + ':'">Block Capacity:</label>
-						<span th:text="*{userFieldmap.numberOfRowsInBlock}"></span>
-						<span th:text="#{fieldmap.label.rows}  + ', '"></span>
-						<span th:text="*{userFieldmap.numberOfRangesInBlock}"></span>
-						<span th:text="#{fieldmap.label.ranges}"></span>
+					<div class="row">
+						<div class="col-xs-12 col-md-12">
+							<div class="form-group">
+								<div class="col-xs-4 col-md-4">
+									<label class="control-label" ><strong class="sub-content-heading" th:text="#{fieldmap.trial.field.and.block.details}">FIELD AND BLOCK DETAILS:</strong></label>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-xs-4 col-md-4">
+									<label class="control-label" ><strong class="sub-content-heading" th:text="#{fieldmap.trial.row.and.range.and.plot.details}">ROW, RANGE AND PLOT DETAILS:</strong></label>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-xs-4 col-md-4">
+									<label class="control-label" ><strong class="sub-content-heading" th:text="#{fieldmap.header.planting.details}">PLANTING DETAILS</strong></label>
+								</div>
+							</div>
+						</div>
 					</div>
-				</div>
-				<div class="form-group">
-					<div class="col-xs-4 col-md-4">
-						<label class="control-label label-bold" th:text="#{fieldmap.label.starting.coordinates} + ':'">Starting Coordinates:</label>
-						<span th:text="#{fieldmap.label.capitalized.column}"></span>
-						<span th:text="*{userFieldmap.startingColumn} + ', '"></span>
-						<span th:text="#{fieldmap.label.capitalized.range}"></span>
-						<span th:text="*{userFieldmap.startingRange}"></span>
+					<div class="row">
+						<div class="col-xs-12 col-md-12">
+							<div class="form-group">
+								<div class="col-xs-4 col-md-4">
+									<label class="control-label label-bold" th:text="#{fieldmap.trial.field.location}">Field Location:</label>
+									<span th:text="*{userFieldmap.locationName}"></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-xs-4 col-md-4">
+									<label class="control-label label-bold" th:text="#{fieldmap.label.block.capacity} + ':'">Block Capacity:</label>
+									<span th:text="*{userFieldmap.numberOfRowsInBlock}"></span>
+									<span th:text="#{fieldmap.label.rows}  + ', '"></span>
+									<span th:text="*{userFieldmap.numberOfRangesInBlock}"></span>
+									<span th:text="#{fieldmap.label.ranges}"></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-xs-4 col-md-4">
+									<label class="control-label label-bold" th:text="#{fieldmap.label.starting.coordinates} + ':'">Starting Coordinates:</label>
+									<span th:text="#{fieldmap.label.capitalized.column}"></span>
+									<span th:text="*{userFieldmap.startingColumn} + ', '"></span>
+									<span th:text="#{fieldmap.label.capitalized.range}"></span>
+									<span th:text="*{userFieldmap.startingRange}"></span>
+								</div>
+							</div>
+						</div>
 					</div>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-12 col-md-12">
-				<div class="form-group">
-					<div class="col-xs-4 col-md-4">
-						<label class="control-label label-bold" th:text="#{fieldmap.label.field.name} + ':'">Field Name:</label>
-						<span th:text="*{userFieldmap.fieldName}"></span>
+					<div class="row">
+						<div class="col-xs-12 col-md-12">
+							<div class="form-group">
+								<div class="col-xs-4 col-md-4">
+									<label class="control-label label-bold" th:text="#{fieldmap.label.field.name} + ':'">Field Name:</label>
+									<span th:text="*{userFieldmap.fieldName}"></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-xs-4 col-md-4">
+									<label class="control-label label-bold" th:text="#{fieldmap.label.rows.per.plot} + ':'">Rows per Plot:</label>
+									<span th:text="*{userFieldmap.numberOfRowsPerPlot}"></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-xs-4 col-md-4">
+									<label class="control-label label-bold" th:text="#{fieldmap.trial.planting.order}">Planting Order:</label>
+									<span th:if="*{userFieldmap.plantingOrder == 1}" th:text="#{fieldmap.planting.order.row.column}">Row/Column</span>
+									<span th:if="*{userFieldmap.plantingOrder == 2}" th:text="#{fieldmap.planting.order.serpentine}">Serpentine</span>
+								</div>
+							</div>
+						</div>
 					</div>
-				</div>
-				<div class="form-group">
-					<div class="col-xs-4 col-md-4">
-						<label class="control-label label-bold" th:text="#{fieldmap.label.rows.per.plot} + ':'">Rows per Plot:</label>
-						<span th:text="*{userFieldmap.numberOfRowsPerPlot}"></span>
+					<div class="row">
+						<div class="col-xs-12 col-md-12">
+							<div class="form-group">
+								<div class="col-xs-4 col-md-4">
+									<label class="control-label label-bold" th:text="#{fieldmap.label.block.name} + ':'">Block Name:</label>
+									<span th:text="*{userFieldmap.blockName}"></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-xs-4 col-md-4">
+									<label class="control-label label-bold" th:text="#{fieldmap.label.columns} + ':'">Columns:</label>
+									<span th:text="*{userFieldmap.numberOfColumnsInBlock}"></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-xs-4 col-md-4">
+									<label class="control-label label-bold" th:text="#{fieldmap.label.row.capacity.machine} + ':'">Row Capacity of Planting Machine:</label>
+									<span th:text="*{userFieldmap.machineRowCapacity}"></span>
+								</div>
+							</div>
+						</div>
 					</div>
-				</div>
-				<div class="form-group">
-					<div class="col-xs-4 col-md-4">
-						<label class="control-label label-bold" th:text="#{fieldmap.trial.planting.order}">Planting Order:</label>
-						<span th:if="*{userFieldmap.plantingOrder == 1}" th:text="#{fieldmap.planting.order.row.column}">Row/Column</span>
-						<span th:if="*{userFieldmap.plantingOrder == 2}" th:text="#{fieldmap.planting.order.serpentine}">Serpentine</span>
+					<div class="row">
+						&nbsp;
 					</div>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-12 col-md-12">
-				<div class="form-group">
-					<div class="col-xs-4 col-md-4">
-						<label class="control-label label-bold" th:text="#{fieldmap.label.block.name} + ':'">Block Name:</label>
-						<span th:text="*{userFieldmap.blockName}"></span>
+					<div class="row">
+						<div class="col-xs-12 col-md-12">
+							<div class="form-group">
+								<div class="col-xs-10 col-md-10">
+									<label class="control-label" ><strong class="sub-content-heading" th:text="#{fieldmap.header.fieldmap}">FIELD MAP</strong></label>
+								</div>
+								<div class="col-xs-2 col-md-2">
+									<div class="btn-group" style="float: right; padding-right: 10px">
+										<button style="marging-left: -20px" type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+											<span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;<span th:text="#{nursery.nurserydetails.actions}">Actions</span>
+										</button>
+										<ul class="dropdown-menu" role="menu" style="z-index: 99999">
+											<li>
+												<a id="exportToExcel" th:href="@{/Fieldmap/generateFieldmapView/exportExcel}" href="" th:text="#{fieldmap.tools.export.to.excel}">Export to Excel</a>
+											</li>
+											<li>
+												<a th:href="@{/LabelPrinting/specifyLabelDetails/fieldmap}" href="" style="display: none" id="step3-create-labels-url"></a>
+												<a href="javascript: void(0);" id="step3-create-labels" th:text="#{tools.create.label.printing}">Create Labels</a>
+											</li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
-				</div>
-				<div class="form-group">
-					<div class="col-xs-4 col-md-4">
-						<label class="control-label label-bold" th:text="#{fieldmap.label.columns} + ':'">Columns:</label>
-						<span th:text="*{userFieldmap.numberOfColumnsInBlock}"></span>
+
+					<div class="row">
+						<div class="col-xs-12 col-md-12">
+							<div class="form-group">
+								<div class="col-xs-10 col-md-10">
+									<label class="control-label" th:text="#{fieldmap.header.fieldmap.note}">Arrows indicate direction of travel of the planting machine.</label>
+								</div>
+							</div>
+						</div>
 					</div>
-				</div>
-				<div class="form-group">
-					<div class="col-xs-4 col-md-4">
-						<label class="control-label label-bold" th:text="#{fieldmap.label.row.capacity.machine} + ':'">Row Capacity of Planting Machine:</label>
-						<span th:text="*{userFieldmap.machineRowCapacity}"></span>
+
+					<div class="row">
+						<div class="col-xs-12 col-md-12">
+							<input type="hidden" id="markedCells" name="markedCells" />
+							<div class="table-responsive" >
+								<div id="fieldmap-area"  th:include="/Fieldmap/fieldmapView"></div>
+							</div>
+						</div>
 					</div>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-		&nbsp;
-		</div>
-		<div class="row">
-			<div class="col-xs-12 col-md-12">
-				<div class="form-group">
-					<div class="col-xs-10 col-md-10">
-						<label class="control-label" ><strong class="sub-content-heading" th:text="#{fieldmap.header.fieldmap}">FIELD MAP</strong></label>
-					</div>
-					<div class="col-xs-2 col-md-2">
-						<div class="btn-group" style="float: right; padding-right: 10px">
-							<button style="marging-left: -20px" type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">						    	
-						    	<span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;<span th:text="#{nursery.nurserydetails.actions}">Actions</span>
-						  	</button>
-						  	<ul class="dropdown-menu" role="menu" style="z-index: 99999">
-							    <li>							    
-							    	<a id="exportToExcel" th:href="@{/Fieldmap/generateFieldmapView/exportExcel}" href="" th:text="#{fieldmap.tools.export.to.excel}">Export to Excel</a>
-							    </li> 
-							    <li>
-							    	<a th:href="@{/LabelPrinting/specifyLabelDetails/fieldmap}" href="" style="display: none" id="step3-create-labels-url"></a>
-							    	<a href="javascript: void(0);" id="step3-create-labels" th:text="#{tools.create.label.printing}">Create Labels</a>
-							    </li>   
-						  	</ul>
+					<div class="row">
+						<div class="col-xs-5 col-md-5">&nbsp;</div>
+						<div class=" col-xs-7  col-md-7">
+							<div class="form-group">
+								<input type="button" onclick="javascript: window.history.back();" href="/Fieldmap/enterPlantingDetails.html" th:href="@{/Fieldmap/plantingDetails/}" th:value="#{common.form.back.text}" value="Back" class="btn btn-default"/>
+								<input th:if="*{userFieldmap.selectedDatasetId == null}" type="submit" class="btn btn-primary" th:value="#{common.form.finish.text}" value="Finish" />
+								<!-- this is for temporary fix, we wont be saving but woud trigger the export functionality only for now GCP-7295 -->
+								  <!--<a id="finishExport" class="btn btn-primary" th:if="*{userFieldmap.selectedDatasetId == null}"  href="javascript: void(0);" th:text="#{common.form.finish.text}">Finish</a>-->
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-		</div>
-		
-		<div class="row">
-			<div class="col-xs-12 col-md-12">
-				<div class="form-group">
-					<div class="col-xs-10 col-md-10">						
-						<label class="control-label" th:text="#{fieldmap.header.fieldmap.note}">Arrows indicate direction of travel of the planting machine.</label>
-					</div>					
+				<div class="modal fade" id="create-label-confirmation">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+								<h4 class="modal-title">Confirmation</h4>
+							</div>
+							<div class="modal-body">
+								<p th:text="#{fieldmap.create.label.save.fieldmap}">Do you want to save the fieldmap?</p>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal" onclick="javascript: redirectToCreateLabel();">No</button>
+								<button type="button" class="btn btn-primary" onclick="javascript: saveAndRedirectToCreateLabels();">Yes</button>
+							</div>
+						</div>
+					</div>
 				</div>
-			</div>
+			</form>
 		</div>
-		
-		<div class="row">
-			<div class="col-xs-12 col-md-12">
-				<input type="hidden" id="markedCells" name="markedCells" />
-				<div class="table-responsive" >
-					<div id="fieldmap-area"  th:include="/Fieldmap/fieldmapView"></div>					
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-5 col-md-5">&nbsp;</div>
-			<div class=" col-xs-7  col-md-7">
-				<div class="form-group">
-			      <input type="button" onclick="javascript: window.history.back();" href="/Fieldmap/enterPlantingDetails.html" th:href="@{/Fieldmap/plantingDetails/}" th:value="#{common.form.back.text}" value="Back" class="btn btn-default"/>
-			      <input th:if="*{userFieldmap.selectedDatasetId == null}" type="submit" class="btn btn-primary" th:value="#{common.form.finish.text}" value="Finish" />
-			      <!-- this is for temporary fix, we wont be saving but woud trigger the export functionality only for now GCP-7295 -->			      
-			      <!-- 
-			      <a id="finishExport" class="btn btn-primary" th:if="*{userFieldmap.selectedDatasetId == null}"  href="javascript: void(0);" th:text="#{common.form.finish.text}">Finish</a>
-			       -->
-		      	</div>
-		    </div>
-	    </div>
 	</div>
-	
-<div class="modal fade" id="create-label-confirmation">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title">Confirmation</h4>
-      </div>
-      <div class="modal-body">
-        <p th:text="#{fieldmap.create.label.save.fieldmap}">Do you want to save the fieldmap?</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="javascript: redirectToCreateLabel();">No</button>
-        <button type="button" class="btn btn-primary" onclick="javascript: saveAndRedirectToCreateLabels();">Yes</button>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-	
-	
-	
-</form>
-</div></div></div>
+</div>
 
-<div layout:fragment="page-script">		
-<script type='text/javascript' th:inline="javascript">
-	//<![CDATA[    
-	           
-  function finishLoading(){
-	  var url =  $('#landing-page-url').attr('href');			 	
-      location.href = url;
-  }  
-    
-  var isGenerated = false;
-  $( document ).ready(function() {
-	  $('#create-label-confirmation').modal('hide');
-	 if($('#'+getJquerySafeId("userFieldmap.generated")).val() == 'true'){
-		 isGenerated = true;	 
-	 } 
-	 $('#saveAndRedirectToCreateLabel').val("0");
-	 $('#step3-create-labels').on('click', function(){
-		 if(isGenerated){
+<div layout:fragment="page-script">
+	<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[
+
+	function finishLoading(){
+		var url =  $('#landing-page-url').attr('href');
+		location.href = url;
+	}
+
+	var isGenerated = false;
+	$( document ).ready(function() {
+		$('#create-label-confirmation').modal('hide');
+		if($('#'+getJquerySafeId("userFieldmap.generated")).val() == 'true'){
+			isGenerated = true;
+		}
+		$('#saveAndRedirectToCreateLabel').val("0");
+		$('#step3-create-labels').on('click', function(){
+			if(isGenerated){
 			 //we show the prompt
 			 $('#create-label-confirmation').modal('show');
-		 }else{
-			 redirectToCreateLabel(); 
-		 }
-	 })
-	 //console.log(isGenerated);
+			}else{
+				redirectToCreateLabel();
+			}
+		})
 	 //for the workaround
 	 $('#finishExport').on("click", function(){
-		 var url = $('#exportToExcel').attr('href');
-		 $('<iframe src="'+url+'" onload="finishLoading();" frameborder="0">').appendTo('body');
-		 
+	 	var url = $('#exportToExcel').attr('href');
+	 	$('<iframe src="'+url+'" onload="finishLoading();" frameborder="0">').appendTo('body');
+
 	 });
 	 var ordering = 1;
 	 $('.ordering').each(function(){
-		 $(this).html(ordering++);
+	 	$(this).html(ordering++);
 	 })
-  });
-  
-  function redirectToCreateLabel(){
-	var url =  $('#step3-create-labels-url').attr('href');	  
-	location.href = url;
-  }
-  function saveAndRedirectToCreateLabels(){
-	  $('#saveAndRedirectToCreateLabel').val("1");
-	  $('#fieldmapForm').submit(); 
-  }  
-	
-  	
-  
-      //]]>
-    </script>	
+	});
+
+	function redirectToCreateLabel(){
+		var url =  $('#step3-create-labels-url').attr('href');
+		location.href = url;
+	}
+	function saveAndRedirectToCreateLabels(){
+		$('#saveAndRedirectToCreateLabel').val("1");
+		$('#fieldmapForm').submit();
+	}
+	  //]]>
+	</script>
 </div>

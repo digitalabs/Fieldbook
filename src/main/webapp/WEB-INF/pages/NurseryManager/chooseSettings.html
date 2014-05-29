@@ -331,48 +331,63 @@
 	<link th:href="@{/static/css/lib/bootstrap/bootstrap-spinedit.css}" rel="stylesheet"/>
 	<link th:href="@{/static/css/fieldbook-spinner.css}" rel="stylesheet"/>
 	<script type='text/javascript' th:inline="javascript">
-		//<![CDATA[
-		var requiredErrorMessage = /*[[#{ontology.browser.modal.error}]]*/;
-		var requiredSettingErrorMessage = /*[[#{nursery.create.nursery.required.setting}]]*/;
-		var uniqueBookNameErrorMessage = /*[[#{nursery.create.already.exists}]]*/;
-		var nurseryFieldsIsRequired = /*[[#{nursery.create.is.required}]]*/;
-		var nurseryTraitsIsRequired = /*[[#{nursery.create.traits.is.required}]]*/;
-		var nurseryGermplasmListIsRequired = /*[[#{nursery.create.germplasm.list.is.required}]]*/;
-		var checkTypeIsRequired = /*[[#{nursery.create.check.type.is.required}]]*/;
+	//<![CDATA[
 
-		//labels for method and location
-		var showFavoriteMethodLabel = /*[[#{show.favorite.method}]]*/;
-		var showFavoriteLocationLabel = /*[[#{show.favorite.location}]]*/;
-		var manageMethodLabel = /*[[#{nursery.managesettings.manage.method}]]*/;
-		var manageLocationLabel = /*[[#{nursery.managesettings.manage.location}]]*/;
+		// FIXME Should not be using global variables or functions
+		/*global getIEVersion, getJquerySafeId, initializePossibleValuesCombo, setTimeout*/
+		/*global addCreateNurseryRequiredAsterisk, doOntologyTreeHighlight, treeDivId*/
 
-		var varInListMessage = /*[[#{nursery.managesettings.variable.in.selected.list}]]*/;
-		var idNameCounterpartAddedError = /*[[#{manage.settings.id.name.counterpart.added.error}]]*/;
-		var valueNotNumeric = /*[[#{nursery.create.nursery.value.not.numeric}]]*/;
-		var valueNotWIMinMax = /*[[#{nursery.create.nursery.value.not.within.min.max}]]*/;
+		// FIXME These variables should not be global. Dangerous to fix right now,
+		// because they are used in so many other files. Don't use ignore! This should be fixed!
 
-		var locationId = '';
-		var programLocationUrl = '';
-		var programMethodUrl = '';
-		var breedingMethodId = '';
-		var locationIframeOpened = false;
-		var methodIframeOpened = false;
-		var importLocationUrl = '';
-		var requiredFields = [];
-		var startDateId = '';
-		var endDateId = '';
+		/* jshint ignore:start */
+		var requiredErrorMessage = /*[[#{ontology.browser.modal.error}]]*/ '',
+			requiredSettingErrorMessage = /*[[#{nursery.create.nursery.required.setting}]]*/ '',
+			uniqueBookNameErrorMessage = /*[[#{nursery.create.already.exists}]]*/ '',
+			nurseryFieldsIsRequired = /*[[#{nursery.create.is.required}]]*/ '',
+			nurseryTraitsIsRequired = /*[[#{nursery.create.traits.is.required}]]*/ '',
+			nurseryGermplasmListIsRequired = /*[[#{nursery.create.germplasm.list.is.required}]]*/ '',
+			checkTypeIsRequired = /*[[#{nursery.create.check.type.is.required}]]*/ '',
 
-		var selectionVariatesSegment = 6;
-		var baselineTraitsSegment = 3;
+			// Labels for method and location
+			showFavoriteMethodLabel = /*[[#{show.favorite.method}]]*/ '',
+			showFavoriteLocationLabel = /*[[#{show.favorite.location}]]*/ '',
+			manageMethodLabel = /*[[#{nursery.managesettings.manage.method}]]*/ '',
+			manageLocationLabel = /*[[#{nursery.managesettings.manage.location}]]*/ '',
+
+			varInListMessage = /*[[#{nursery.managesettings.variable.in.selected.list}]]*/ '',
+			idNameCounterpartAddedError = /*[[#{manage.settings.id.name.counterpart.added.error}]]*/ '',
+			valueNotNumeric = /*[[#{nursery.create.nursery.value.not.numeric}]]*/ '',
+			valueNotWIMinMax = /*[[#{nursery.create.nursery.value.not.within.min.max}]]*/ '',
+
+			locationIframeOpened = false,
+			methodIframeOpened = false,
+
+			selectionVariatesSegment = 6,
+			baselineTraitsSegment = 3;
+		/* jshint ignore:end */
+
+		var locationId = '',
+			programLocationUrl = '',
+			programMethodUrl = '',
+			breedingMethodId = '',
+			importLocationUrl = '',
+			requiredFields = [],
+			startDateId = '',
+			endDateId = '';
 
 		$(document).ready(function() {
-			if (getIEVersion() == 8) {
-				$(".table-with-scroll-create").parent().addClass("variable-details");
-				$(".table-with-scroll-create").removeClass("table-with-scroll-create");
+			'use strict';
+
+			// FIXME Shouldn't be user agent checking
+			if (getIEVersion() === 8) {
+				$('.table-with-scroll-create').parent().addClass('variable-details');
+				$('.table-with-scroll-create').removeClass('table-with-scroll-create');
 			}
-			if($('#requiredFields').val() != ''){
+			if ($('#requiredFields').val() !== ''){
 				requiredFields = $('#requiredFields').val().split(',');
 			}
+
 			startDateId = $('#startDateId').val();
 			endDateId = $('#endDateId').val();
 			locationId = $('#locationId').val();
@@ -381,29 +396,32 @@
 			programLocationUrl = $('#locationUrl').val();
 			importLocationUrl = $('#importLocationUrl').val();
 
-			$("#folderNameSpan").html($("#folderName").val());
+			$('#folderNameSpan').html($('#folderName').val());
 
-			$.each($(".possibleValuesJson"), function (index, divElem){
-				var select2Index = $(divElem).attr("id").split("possibleValuesJson")[1];
+			$.each($('.possibleValuesJson'), function (index, divElem){
+				var select2Index = $(divElem).attr('id').split('possibleValuesJson')[1];
 
-				if (parseInt($("#" + getJquerySafeId("studyLevelVariables"+select2Index+".variable.cvTermId")).val()) == parseInt(locationId)) {
+				if (parseInt($('#' + getJquerySafeId('studyLevelVariables' + select2Index +
+					'.variable.cvTermId')).val(), 10) === parseInt(locationId, 10)) {
+
 					initializePossibleValuesCombo($.parseJSON(divElem.innerHTML),
-						"#" + getJquerySafeId("studyLevelVariables"+select2Index+".value"), true, $(divElem).siblings(".div-select-val").html());
-
+						'#' + getJquerySafeId('studyLevelVariables' + select2Index +
+						 '.value'), true, $(divElem).siblings('.div-select-val').html());
 				} else {
 					initializePossibleValuesCombo($.parseJSON(divElem.innerHTML),
-						"#" + getJquerySafeId("studyLevelVariables"+select2Index+".value"), false, $(divElem).siblings(".div-select-val").html());
-
+						'#' + getJquerySafeId('studyLevelVariables' + select2Index +
+							'.value'), false, $(divElem).siblings('.div-select-val').html());
 				}
-
 			});
 
-			$.each($(".possibleValuesJsonCons"), function (index, divElem){
-				var select2Index = $(divElem).attr("id").split("possibleValuesJsonCons")[1];
+			$.each($('.possibleValuesJsonCons'), function (index, divElem){
+				var select2Index = $(divElem).attr('id').split('possibleValuesJsonCons')[1];
 				initializePossibleValuesCombo($.parseJSON(divElem.innerHTML),
-					"#" + getJquerySafeId("nurseryConditions"+select2Index+".value"), false, $(divElem).siblings(".div-select-val").html());
+					'#' + getJquerySafeId('nurseryConditions' + select2Index +
+						'.value'), false, $(divElem).siblings('.div-select-val').html());
 			});
 
+			// FIXME - Shouldn't pass a string here
 			setTimeout('initializeDateAndSliderInputs()', 500);
 
 			addCreateNurseryRequiredAsterisk();
@@ -411,13 +429,12 @@
 				$(this).select2();
 			});
 
-			$(".help-tooltip-nursery").tooltip();
-			$('#srch-term').on("change", function(event){
-
+			$('.help-tooltip-nursery').tooltip();
+			$('#srch-term').on('change', function(){
 				var data = $('#srch-term').select2('data');
 				doOntologyTreeHighlight(treeDivId, data.key);
 			});
 		});
-		//]]>
+	//]]>
 	</script>
 </div>

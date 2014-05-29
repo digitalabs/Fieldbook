@@ -235,168 +235,130 @@
 </div>
 <div layout:fragment="page-script">
 	<script type='text/javascript' th:inline="javascript">
-		//<![CDATA[
-		var locationSuggestions = /*[[${locationList}]]*/ null;
-		var locationSuggestions_obj = [];
+	//<![CDATA[
 
-		var locationSuggestionsFav = /*[[${favoriteLocationList}]]*/ null;
-		var locationSuggestionsFav_obj = [];
+		// FIXME Should not be using global variables or functions
+		/*global getJquerySafeId, recreateLocationCombo, recreateModalMethodCombo, showCorrectLocationCombo*/
+		/*global showCorrectMethodCombo, checkMethod, lineMethod, plotMethod, validatePlantsSelected*/
+		/*global oldMethodSelected, oldLineSelected, lineMethod, plotMethod, validatePlantsSelected*/
+		/*global methodSuggestions*/
 
-		var methodSuggestions = /*[[${methodList}]]*/ null;
-		var methodSuggestions_obj = [];
+		// FIXME These variables should be camel case, and should not be global. Dangerous to fix right now,
+		// because they are used in so many other files. Don't use ignore! This should be fixed!
 
-		var methodSuggestionsFav = /*[[${favoriteMethodList}]]*/ null;
-		var methodSuggestionsFav_obj = [];
+		/* jshint ignore:start */
+		var locationSuggestions = /*[[${locationList}]]*/ null,
+			locationSuggestions_obj = [],
 
+			locationSuggestionsFav = /*[[${favoriteLocationList}]]*/ null,
+			locationSuggestionsFav_obj = [],
 
-		var msgSamplePlotError = /*[[#{advancing.nursery.number.of.plot.error}]]*/;
-		var msgHarvestDateError = /*[[#{advancing.nursery.harvest.date.error}]]*/;
-		var msgMethodError = /*[[#{advancing.nursery.method.error}]]*/;
-		var programLocationUrl = '';
-		var programMethodUrl = '';
+			methodSuggestions = /*[[${methodList}]]*/ null,
+			methodSuggestions_obj = [],
 
-		var oldLineSelected = "";
-		var oldMethodSelected = "";
+			methodSuggestionsFav = /*[[${favoriteMethodList}]]*/ null,
+			methodSuggestionsFav_obj = [],
 
-		var locationIframeOpened = false;
-		var methodIframeOpened = false;
+			msgSamplePlotError = /*[[#{advancing.nursery.number.of.plot.error}]]*/ '',
+			msgHarvestDateError = /*[[#{advancing.nursery.harvest.date.error}]]*/ '',
+			msgMethodError = /*[[#{advancing.nursery.method.error}]]*/ '',
+			programLocationUrl = '',
+			programMethodUrl = '',
 
-		var linesNotWholeNumberError = /*[[#{error.advancing.nursery.whole.numeric.lines}]]*/;
-		var msgEmptyListError = /*[[#{nursery.advance.nursery.empty.list.error}]]*/;
-		var noMethodVariatesError = /*[[#{error.advancing.nursery.no.method.variates}]]*/;
-		var noLineVariatesError = /*[[#{error.advancing.nursery.no.line.variates}]]*/;
-		var noPlotVariatesError = /*[[#{error.advancing.nursery.no.plot.variates}]]*/;
+			oldLineSelected = '',
+			oldMethodSelected = '',
 
-		$(function() {
-			var harvestDate = $('#harvestDate').datepicker({'format': 'yyyymmdd'}).on('changeDate', function(ev) {
-				$(this).datepicker('hide');
-			})
+			locationIframeOpened = false,
+			methodIframeOpened = false,
 
-			programMethodUrl = $('#breedingMethodUrl').val();
-			programLocationUrl = $('#locationUrl').val();
-			/*
-			initializeHarvestLocationSelect2(locationSuggestions, locationSuggestions_obj);
-			initializeHarvestLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj);
+			linesNotWholeNumberError = /*[[#{error.advancing.nursery.whole.numeric.lines}]]*/ '',
+			msgEmptyListError = /*[[#{nursery.advance.nursery.empty.list.error}]]*/ '',
+			noMethodVariatesError = /*[[#{error.advancing.nursery.no.method.variates}]]*/ '',
+			noLineVariatesError = /*[[#{error.advancing.nursery.no.line.variates}]]*/ '',
+			noPlotVariatesError = /*[[#{error.advancing.nursery.no.plot.variates}]]*/ '';
+		/* jshint ignore:end */
 
-			initializeMethodSelect2(methodSuggestions, methodSuggestions_obj);
-			initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFav_obj);
-			*/
-			recreateLocationCombo();
-			recreateModalMethodCombo("advanceBreedingMethodId", "showAdvanceFavoriteMethod");
+		function changeMaizeBreedingMethod() {
+			'use strict';
 
-			$('#s2id_harvestLocationIdFavorite').hide();
-			$('#s2id_harvestLocationIdAll').show();
+			var maizeBreedingMethod = $('#maizeBreedingMethod').val(),
+				methodId;
 
-			$('#s2id_methodIdFavorite').hide();
-			$('#s2id_methodIdAll').show();
-
-
-			$('#showFavoriteLocation').on('change', function(){
-				showCorrectLocationCombo();
-			})
-			$('#showFavoriteMethod').on('change', function(){
-				showCorrectMethodCombo();
-			});
-
-			$('input[type=checkbox][name=methodChoice]').on('change', checkMethod);
-
-			$('input[type=checkbox][name=lineChoice]').on('change', lineMethod);
-
-			$("input[type=checkbox][name=allPlotsChoice]").on("change", plotMethod);
-
-			$(".ps-variate-selection").on("change", function() {
-				validatePlantsSelected($(this));
-			});
-
-			$('#namingConvention').on('change', changeSuffix);
-			$('#maizeBreedingMethod').on('change', changeMaizeBreedingMethod);
-			oldMethodSelected = $('#defaultMethodId').val();
-			oldLineSelected = $('#lineSelected').val();
-			checkMethod();
-			lineMethod();
-			plotMethod();
-			changeSuffix();
-
-			$('#advanceBreedingMethodId').on('change', changeAdvanceBreedingMethod);
-			changeAdvanceBreedingMethod();
-		});
-
-		function changeMaizeBreedingMethod(){
-			if ($("#maizeBreedingMethod").val() == 1) {
-				$('#'+getJquerySafeId("advanceBreedingMethodId")).val($("#maizeSelfMethodId").val());
-			} else if ($("#maizeBreedingMethod").val() == 2) {
-				$('#'+getJquerySafeId("advanceBreedingMethodId")).val($("#maizeBulkMethodId").val());
-			} else if ($("#maizeBreedingMethod").val() == 3) {
-				$('#'+getJquerySafeId("advanceBreedingMethodId")).val($("#maizeSibMethodId").val());
-			} else if ($("#maizeBreedingMethod").val() == 4) {
-				$('#'+getJquerySafeId("advanceBreedingMethodId")).val($("#maizeColchMethodId").val());
+			// TODO Add error checking
+			switch (maizeBreedingMethod) {
+				case 1:
+					methodId = $('#maizeSelfMethodId').val();
+					break;
+				case 2:
+					methodId = $('#maizeBulkMethodId').val();
+					break;
+				case 3:
+					methodId = $('#maizeSibMethodId').val();
+					break;
+				case 4:
+					methodId = $('#maizeColchMethodId').val();
+					break;
 			}
+			$('#' + getJquerySafeId('advanceBreedingMethodId')).val(methodId);
 			$('#advanceBreedingMethodId').change();
 		}
-		function changeSuffix(){
-			$('input[type=checkbox][name=methodChoice]').prop('disabled', false);
 
-			if($('#namingConvention').val() == 1){
-				//if its wheat, we disable the method section
-				$('.method-section input').attr('disabled', true);
-				$('#methodIdAll').select2('enable', false);
-				$('#methodIdFavorite').select2('enable', false);
-				$("#methods-section").hide();
-				$('input[type=checkbox][name=methodChoice]').prop('checked', true);
+		function adjustMaizeControl(isShow) {
+			'use strict';
 
-			}else{
-				$('.method-section input').attr('disabled', false)
-				$('#methodIdAll').select2('enable', true);
-				$('#methodIdFavorite').select2('enable', true);
-				$("#methods-section").show();
-			}
+			var $maizeControl = $('.maize-control'),
+				$nonMaizeControl = $('.non-maize-control');
 
-			if($('#namingConvention').val() == 2){
-				//meaning maize
-				adjustMaizeControl(true);
-
-			}else{
-				adjustMaizeControl(false);
-			}
-			checkMethod();
-		}
-		function adjustMaizeControl(isShow){
-			if(isShow){
-				$('.maize-control').css('display', 'block');
-				$('.non-maize-control').css('display', 'none');
+			if (isShow){
+				$maizeControl.css('display', 'block');
+				$nonMaizeControl.css('display', 'none');
 				changeMaizeBreedingMethod();
 				$('input[type=checkbox][name=methodChoice]').prop('checked', true);
 				checkMethod();
 				$('input[type=checkbox][name=methodChoice]').prop('disabled', true);
 				changeMaizeBreedingMethod();
-			}else{
-				$('.maize-control').css('display', 'none');
-				$('.non-maize-control').css('display', 'block');
+			} else {
+				$maizeControl.css('display', 'none');
+				$nonMaizeControl.css('display', 'block');
 				showCorrectMethodCombo();
 			}
 		}
 
-		function changeAdvanceBreedingMethod(){
-			var bMethodId = $('#advanceBreedingMethodId').val();
-			var isBulk = false;
-			if($('#namingConvention').val() == 2){
-				//means maize is chose
-				if(bMethodId == $("#maizeBulkMethodId").val()) //Selfed and Ears Bulked
-					isBulk = true;
-			}else{
-				for( var i = 0 ; i < methodSuggestions.length ; i++){
-					if(methodSuggestions[i].mid == bMethodId){
-					 if(methodSuggestions[i].geneq == 1){ //means bulk
-					 	isBulk = true;
-					 }
-					 break;
-					}
-				}
+		function changeSuffix() {
+			'use strict';
+
+			var $input = $('input[type=checkbox][name=methodChoice]'),
+				$methodSelectionInput = $('.method-section input'),
+				$methodIdAll = $('#methodIdAll'),
+				$methodIdFavorite = $('#methodIdFavorite'),
+				$methodsSection = $('#methods-section'),
+				namingConvention = $('#namingConvention').val();
+
+			$input.prop('disabled', false);
+
+			// FIXME This is relying on implicit type conversion - also see other uses of == in this file
+			if (namingConvention == 1) {
+				// If it's wheat, we disable the method section
+				$methodSelectionInput.attr('disabled', true);
+				$methodIdAll.select2('enable', false);
+				$methodIdFavorite.select2('enable', false);
+				$methodsSection.hide();
+				$input.prop('checked', true);
+			} else {
+				$methodSelectionInput.attr('disabled', false);
+				$methodIdAll.select2('enable', true);
+				$methodIdFavorite.select2('enable', true);
+				$methodsSection.show();
 			}
-			showBulkSection(isBulk);
+
+			adjustMaizeControl(namingConvention == 2);
+			checkMethod();
 		}
-		function showBulkSection(isBulk){
-			if($('input[type=checkbox][name=methodChoice]:checked').val() != 1){
+
+		function showBulkSection(isBulk) {
+			'use strict';
+
+			if($('input[type=checkbox][name=methodChoice]:checked').val() !== 1) {
 				$('.bulk-section').css('display', 'block');
 				$('.lines-section').css('display', 'block');
 			}
@@ -408,6 +370,77 @@
 				$('.lines-section').css('display', 'block');
 			}
 		}
-		//]]>
+
+		function changeAdvanceBreedingMethod() {
+			'use strict';
+
+			var bMethodId = $('#advanceBreedingMethodId').val(),
+				isBulk = false,
+				i;
+
+			if($('#namingConvention').val() == 2){
+				// Maize has been chosen
+				if(bMethodId == $('#maizeBulkMethodId').val()) { // Selfed and Ears Bulked
+					isBulk = true;
+				}
+			} else {
+				for (i = 0; i < methodSuggestions.length; i++) {
+					if (methodSuggestions[i].mid == bMethodId) {
+						if (methodSuggestions[i].geneq == 1) { // Bulk
+					 		isBulk = true;
+					 	}
+						break;
+					}
+				}
+			}
+			showBulkSection(isBulk);
+		}
+
+		$(function() {
+			'use strict';
+
+			recreateLocationCombo();
+			recreateModalMethodCombo('advanceBreedingMethodId', 'showAdvanceFavoriteMethod');
+
+			$('#s2id_harvestLocationIdFavorite').hide();
+			$('#s2id_harvestLocationIdAll').show();
+
+			$('#s2id_methodIdFavorite').hide();
+			$('#s2id_methodIdAll').show();
+
+
+			$('#showFavoriteLocation').on('change', function(){
+				showCorrectLocationCombo();
+			});
+
+			$('#showFavoriteMethod').on('change', function(){
+				showCorrectMethodCombo();
+			});
+
+			$('input[type=checkbox][name=methodChoice]').on('change', checkMethod);
+
+			$('input[type=checkbox][name=lineChoice]').on('change', lineMethod);
+
+			$('input[type=checkbox][name=allPlotsChoice]').on('change', plotMethod);
+
+			$('.ps-variate-selection').on('change', function() {
+				validatePlantsSelected($(this));
+			});
+
+			$('#namingConvention').on('change', changeSuffix);
+			$('#maizeBreedingMethod').on('change', changeMaizeBreedingMethod);
+
+			oldMethodSelected = $('#defaultMethodId').val();
+			oldLineSelected = $('#lineSelected').val();
+
+			checkMethod();
+			lineMethod();
+			plotMethod();
+			changeSuffix();
+
+			$('#advanceBreedingMethodId').on('change', changeAdvanceBreedingMethod);
+			changeAdvanceBreedingMethod();
+		});
+	//]]>
 	</script>
 </div>

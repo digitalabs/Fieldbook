@@ -29,7 +29,7 @@ public class DataKaptureImportStudyServiceImpl implements
 	private static final Logger LOG = LoggerFactory.getLogger(DataKaptureImportStudyServiceImpl.class);
 	
 	@Override
-	public void importWorkbook(Workbook workbook, String filename)
+	public int importWorkbook(Workbook workbook, String filename)
 			throws WorkbookParserException {
 
         try {
@@ -37,6 +37,7 @@ public class DataKaptureImportStudyServiceImpl implements
 
     		File file = new File(filename);
             csv.readDATACapture(file);
+            return EDIT_ONLY;
             
         } catch (Exception e) {
         	LOG.error(e.getMessage());

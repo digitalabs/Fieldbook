@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -52,7 +53,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	private static final String TEMPLATE_SECTION_VARIATE = "VARIATE";
 	
 	@Override
-	public void importWorkbook(Workbook workbook, String filename) throws WorkbookParserException {
+	public int importWorkbook(Workbook workbook, String filename) throws WorkbookParserException {
 		
 		try {
 			org.apache.poi.ss.usermodel.Workbook xlsBook = parseFile(filename);
@@ -63,10 +64,12 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 
 			validate(xlsBook, workbook, observations);
 			
+			resetWorkbookObservations(workbook);
 			Map<String, MeasurementRow> rowsMap = createMeasurementRowsMap(workbook.getObservations());
-			importDataToWorkbook(xlsBook, rowsMap, workbook.getFactors(), trialInstanceNumber);
+			int mode = importDataToWorkbook(xlsBook, rowsMap, workbook.getFactors(), trialInstanceNumber, workbook.getObservations());
 			importTrialToWorkbook(xlsBook, trialObservations);
-
+			return mode;
+			
 		} catch (WorkbookParserException e) {
 			throw e;
 			
@@ -98,29 +101,28 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 		return readWorkbook;
 	}
 	
-	private List<MeasurementRow> importDataToWorkbook(org.apache.poi.ss.usermodel.Workbook xlsBook, Map<String, MeasurementRow> rowsMap, List<MeasurementVariable> variables, String trialInstanceNumber) {
-		List<MeasurementRow> importedObservations = new ArrayList<MeasurementRow>();
+	private int importDataToWorkbook(org.apache.poi.ss.usermodel.Workbook xlsBook, Map<String, MeasurementRow> rowsMap, List<MeasurementVariable> variables, 
+			String trialInstanceNumber, List<MeasurementRow> observations) {
+		int mode = EDIT_ONLY;
 		if (rowsMap != null && !rowsMap.isEmpty()) {
 			Sheet observationSheet = xlsBook.getSheetAt(1);
 			int lastXlsRowIndex = observationSheet.getLastRowNum();
 			String indexes = getColumnIndexesFromXlsSheet(observationSheet, variables, trialInstanceNumber);
-			if (indexes == null) {
-				return importedObservations;
-			}
 			Row headerRow = observationSheet.getRow(0);
-			for (int i = 1; i < lastXlsRowIndex; i++) {
+			for (int i = 1; i <= lastXlsRowIndex; i++) {
 				Row xlsRow = observationSheet.getRow(i);
 				int lastXlsColIndex = xlsRow.getLastCellNum();
 				String key = getKeyIdentifierFromXlsRow(xlsRow, indexes);
 				MeasurementRow wRow = rowsMap.get(key);
-				if (wRow != null) {
-					MeasurementRow newRow = wRow.copy();
-					importedObservations.add(newRow);
-					for (int j = 0; j < lastXlsColIndex; j++) {
+				if (wRow == null) {
+					mode = ADD_ONLY;
+				} else if (wRow != null) {
+					rowsMap.remove(key);
+					for (int j = 0; j <= lastXlsColIndex; j++) {
 						Cell headerCell = headerRow.getCell(j);
 						if (headerCell != null) {
 
-							MeasurementData wData = newRow.getMeasurementData(headerCell.getStringCellValue());
+							MeasurementData wData = wRow.getMeasurementData(headerCell.getStringCellValue());
 							if (wData.isEditable()) {
 								Cell cell = xlsRow.getCell(j);
 								String xlsValue = "";
@@ -156,10 +158,23 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 						}
 					}
 				}
+			}
+			if(rowsMap.size() != 0){
+				//meaning there are items in the original list, so there are items deleted
+				if(mode == ADD_ONLY){
+					mode = MIXED;
+				}else{
+					mode = DELETE_ONLY;
+				}
 				
+				Set<String> keys = rowsMap.keySet();
+				for (String key : keys) {
+					observations.remove(rowsMap.get(key));
+				}
 			}
 		}
-		return importedObservations;
+		return mode;
+		//return importedObservations;
 	}
 
 	private void importTrialToWorkbook(org.apache.poi.ss.usermodel.Workbook xlsBook, List<MeasurementRow> observations) {
@@ -502,5 +517,23 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
     	return indexArray[0] 
     			+ "-" + xlsRow.getCell(Integer.valueOf(indexArray[1]))
     			+ "-" + xlsRow.getCell(Integer.valueOf(indexArray[2]));
+    }
+    
+    private void resetWorkbookObservations(Workbook workbook) {
+    	if (workbook.getObservations() != null && !workbook.getObservations().isEmpty()) {
+	    	if (workbook.getOriginalObservations() == null || workbook.getOriginalObservations().isEmpty()) {
+	    		List<MeasurementRow> origObservations = new ArrayList<MeasurementRow>();
+	    		for (MeasurementRow row : workbook.getObservations()) {
+	    			origObservations.add(row.copy());
+	    		}
+	    		workbook.setOriginalObservations(origObservations);
+	    	} else {
+	    		List<MeasurementRow> observations = new ArrayList<MeasurementRow>();
+	    		for (MeasurementRow row : workbook.getOriginalObservations()) {
+	    			observations.add(row.copy());
+	    		}
+	    		workbook.setObservations(observations);
+	    	}
+    	}
     }
 }

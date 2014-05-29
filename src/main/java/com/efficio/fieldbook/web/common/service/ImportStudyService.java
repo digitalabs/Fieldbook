@@ -16,5 +16,10 @@ import org.generationcp.middleware.exceptions.WorkbookParserException;
 
 public interface ImportStudyService {
 
-	void importWorkbook(Workbook workbook, String filename) throws WorkbookParserException;
+	final static int EDIT_ONLY = 0;
+	final static int ADD_ONLY = 1;
+	final static int DELETE_ONLY = 2;
+	final static int MIXED = 3;
+	
+	int importWorkbook(Workbook workbook, String filename) throws WorkbookParserException;
 }

@@ -72,6 +72,33 @@
 	</form>
 </div>
 
+<div class="modal fade" id="importStudyConfirmationModal" role="dialog" aria-labelledby="importStudyConfirmationModal" aria-hidden="true">
+	<div class="modal-dialog modal-medium">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="heading-modal">
+					Confirmation
+				</h4>
+			</div>
+
+			<div class="modal-body" id="importStudyConfirmationModalBody">
+				
+				<div class="row form-group">
+					<div class="col-xs-12 col-md-12">
+						<label class="control-label import-confirmation"></label>
+					</div>
+				</div>
+
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default"  onclick="javascript:goBackToImport();" th:text="#{nursery.go.back}">Cancel</button>
+				<button type="button" class="btn btn-primary"  onclick="javascript:confirmStudyImport();" th:text="#{nursery.proceed}">Import</button>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+
 <div layout:fragment="page-script">
 	<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-fileupload.js}"></script>
 	<script type='text/javascript' th:inline="javascript">
@@ -105,33 +132,62 @@
 		function showImportResponse(responseText, statusText, xhr, $form) {
 			//reload the screen
 			var resp = $.parseJSON(responseText);
+			Spinner.toggle();
 			//console.log(resp.isSuccess);
 			if(resp.isSuccess == 1){
-				var paginationUrl = '/Fieldbook/Common/addOrRemoveTraits/reload/';
-				paginationUrl = paginationUrl + $("#study-type").val() + "/";
-				var currentPage = $('#measurement-data-list-pagination .pagination .active a').html();
-
-				$.ajax(
-					{ url: paginationUrl+currentPage+"/"+currentPage+'?r=' + (Math.random() * 999),
-					type: "GET",
-					data: "",
-					cache: false,
-					timeout: 70000,
-					success: function(html) {
-
-						$("#germplasm-measurement-list-table-div").empty().append(html);
-						Spinner.toggle();
-						$('#importStudyModal').modal('hide');
-					}
+				if(resp.mode == 0){
+					confirmStudyImport();
+				}else{
+					$('#importStudyModal').modal('hide');
+					setTimeout(function(){$('#importStudyConfirmationModal').modal({ backdrop: 'static', keyboard: false });}, 300);
+					$('#importStudyConfirmationModal .import-confirmation').html(resp.message);
 				}
-				);
 			}else{
 				showErrorMessage('page-import-message-modal', resp.error);
-				Spinner.toggle();
+				
 			}
+		}
+		function confirmStudyImport(){
+			var paginationUrl = '/Fieldbook/Common/addOrRemoveTraits/reload/';
+			paginationUrl = paginationUrl + $("#study-type").val() + "/";
+			var currentPage = $('#measurement-data-list-pagination .pagination .active a').html();
+			Spinner.toggle();
+			$.ajax(
+				{ url: paginationUrl+currentPage+"/"+currentPage+'?r=' + (Math.random() * 999),
+				type: "GET",
+				data: "",
+				cache: false,
+				timeout: 70000,
+				success: function(html) {
+
+					$("#germplasm-measurement-list-table-div").empty().append(html);
+					
+					$('#importStudyModal').modal('hide');
+					$('#importStudyConfirmationModal').modal('hide');
+					Spinner.toggle();
+				}
+			});
 		}
 		function showImportOptions(){
 			$('#importStudyModal').modal({ backdrop: 'static', keyboard: false });
+		}
+		function goBackToImport(){
+			//trigger something to return the data
+			Spinner.toggle();
+			var revertUrl = '/Fieldbook/ImportManager/revert/data';
+			$.ajax(
+				{ url: revertUrl,
+				type: "GET",
+				data: "",
+				cache: false,
+				success: function(html) {
+
+					$('#importStudyConfirmationModal').modal('hide');
+					setTimeout(function(){$('#importStudyModal').modal({ backdrop: 'static', keyboard: false });}, 300);
+					Spinner.toggle();
+				}
+			});
+			
 		}
 		//]]>
 	</script>

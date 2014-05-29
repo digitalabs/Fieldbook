@@ -24,7 +24,7 @@ public class FieldroidImportStudyServiceImpl implements
 		FieldroidImportStudyService {
 
 	@Override
-	public void importWorkbook(Workbook workbook, String filename)
+	public int importWorkbook(Workbook workbook, String filename)
 			throws WorkbookParserException {
 	
 		File file = new File(filename);
@@ -33,7 +33,7 @@ public class FieldroidImportStudyServiceImpl implements
 		validate(csv, file, workbook);
 		
 		csv.readDATAnew(file);
-		
+		return EDIT_ONLY;
 	}
 	
 	private void validate(CSVOziel csv, File file, Workbook workbook) throws WorkbookParserException {

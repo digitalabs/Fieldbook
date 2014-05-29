@@ -35,6 +35,7 @@ import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.common.service.DataKaptureImportStudyService;
 import com.efficio.fieldbook.web.common.service.ExcelImportStudyService;
 import com.efficio.fieldbook.web.common.service.FieldroidImportStudyService;
+import com.efficio.fieldbook.web.common.service.ImportStudyService;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -79,6 +80,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     		,@PathVariable int importType, BindingResult result, Model model) {
 
     	boolean isTrial = studyType.equalsIgnoreCase("TRIAL");
+    	Integer mode = ImportStudyService.EDIT_ONLY;
     	StudySelection userSelection = getUserSelection(isTrial);
     	if(AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == importType){
     		MultipartFile file = form.getFile();
@@ -94,7 +96,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	    		try {
 	    			String filename = fileService.saveTemporaryFile(file.getInputStream());
 	    			
-					fieldroidImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename));
+					mode = fieldroidImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename));
 				} catch (WorkbookParserException e) {
 					LOG.error(e.getMessage(), e);
 					result.rejectValue("file", e.getMessage());
@@ -120,7 +122,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	    		try {
 	    			String filename = fileService.saveTemporaryFile(file.getInputStream());
 	    			
-					excelImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename));
+					mode = excelImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename));
 				} catch (WorkbookParserException e) {
 					LOG.error(e.getMessage(), e);
 					result.rejectValue("file", e.getMessage());
@@ -144,7 +146,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	    		try {
 	    			String filename = fileService.saveTemporaryFile(file.getInputStream());
 	    			
-					dataKaptureImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename));
+					mode = dataKaptureImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename));
 					
 				} catch (WorkbookParserException e) {
 					LOG.error(e.getMessage(), e);
@@ -154,6 +156,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 				}
             }
     	}
+
+    	Locale locale = LocaleContextHolder.getLocale();
     	Map<String, Object> resultsMap = new HashMap<String,Object>();
     	if(!result.hasErrors()){
     	
@@ -166,10 +170,15 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	    	form.setTrialEnvironmentValues(transformTrialObservations(userSelection.getWorkbook().getTrialObservations(), nurserySelection.getTrialLevelVariableList()));
 	    	form.setTrialLevelVariables(nurserySelection.getTrialLevelVariableList());
 	    	resultsMap.put("isSuccess", 1);
+	    	resultsMap.put("mode", mode);
+	    	String reminderConfirmation = "";
+	    	if(mode != ImportStudyService.EDIT_ONLY){
+	    		reminderConfirmation = messageSource.getMessage("confirmation.import." + mode, null, locale);
+	    	}
+	    	resultsMap.put("message", reminderConfirmation);
     	}else{
     		resultsMap.put("isSuccess", 0);
     		String errorCode = result.getFieldError("file").getCode();
-    		Locale locale = LocaleContextHolder.getLocale();
     		resultsMap.put("error", messageSource.getMessage(
     				errorCode, null, locale));
     	}
@@ -213,5 +222,20 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     
     private String getContentName(boolean isTrial) {
     	return isTrial ? "TrialManager/openTrial" : "NurseryManager/addOrRemoveTraits";
+    }
+    
+    @ResponseBody
+    @RequestMapping(value="/revert/data", method=RequestMethod.GET)
+    public String revertData(Model model) {
+    	UserSelection userSelection = (UserSelection) getUserSelection(false);
+    	
+    	List<MeasurementRow> list = new ArrayList<MeasurementRow>();
+    	for (MeasurementRow row : userSelection.getWorkbook().getOriginalObservations()) {
+    		list.add(row.copy());
+    	}
+    	userSelection.getWorkbook().setObservations(list);
+    	userSelection.setMeasurementRowList(list);
+    	
+    	return "success";
     }
 }

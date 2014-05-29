@@ -78,7 +78,7 @@ public class ObservationMatrixController extends
     	boolean isTrial = studyType.equalsIgnoreCase("TRIAL");
     	StudySelection userSelection = getUserSelection(isTrial);    	
     	
-    	form.setMeasurementRowList(userSelection.getMeasurementRowList());
+    	form.setMeasurementRowList(userSelection.getWorkbook().getObservations());
     	form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
     	form.setStudyName(userSelection.getWorkbook().getStudyDetails().getStudyName());
         form.changePage(pageNum);

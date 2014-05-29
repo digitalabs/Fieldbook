@@ -19,8 +19,8 @@
 	<input type="hidden" th:field="*{studyId}" />
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
-			<img width="30" height="30" th:src="@{/static/img/new-nursery.png}" class="image-padding image-padding-with-text" /> 
-			<label class="heading" th:text="#{nursery.edit.nursery.label}">Edit Nursery</label>  
+			<img width="30" height="30" th:src="@{/static/img/new-nursery.png}" class="image-padding image-padding-with-text" />
+			<label class="heading" th:text="#{nursery.edit.nursery.label}">Edit Nursery</label>
 			<input type="button" onclick="submitForm();" th:value="#{common.form.save.text}" class="btn btn-info" />
 		</div>
 	</div>
@@ -34,9 +34,9 @@
 	</div>
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
-			<label class="control-label section-toggle toggle-icon" id="basicDetails" data-target=".basicDetailsSection"> 
-				<img style="margin-left: -10px; display: none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" /> 
-				<img style="margin-left: -7px;" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" /> 
+			<label class="control-label section-toggle toggle-icon" id="basicDetails" data-target=".basicDetailsSection">
+				<img style="margin-left: -10px; display: none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
+				<img style="margin-left: -7px;" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
 				<strong class="sub-content-heading" th:text="#{nursery.create.nursery.basic.details}">BASIC DETAILS</strong>
 			</label>
 			<div style="float: right; margin-right: 50px;">
@@ -46,13 +46,13 @@
 					</button>
 					<ul class="dropdown-menu" role="menu">
 						<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
-							<a href="" style="display: none" id="open-study-url"></a> 
+							<a href="" style="display: none" id="open-study-url"></a>
 							<a href="javascript: showExportOptions();" id="open-study-url-link"
 								th:text="#{nursery.nurserydetails.action.export.nursery}">Export Nursery Book</a>
 						</li>
 						<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
-							<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a> 
-							<a href="javascript: createFieldMap('nursery-table');" id="fieldmap-url-link" 
+							<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
+							<a href="javascript: createFieldMap('nursery-table');" id="fieldmap-url-link"
 								th:text="#{nursery.nurserydetails.action.createFieldmap}">Make Field Map</a>
 						</li>
 						<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
@@ -61,13 +61,13 @@
 								th:text="#{nursery.nurserydetails.action.printLabels}">Print Labels</a>
 						</li>
 						<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
-							<a href="" style="display: none" id="open-study-url"></a> 
-							<a href="javascript: showImportOptions();" id="open-study-url-link" 
+							<a href="" style="display: none" id="open-study-url"></a>
+							<a href="javascript: showImportOptions();" id="open-study-url-link"
 								th:text="#{nursery.nurserydetails.action.import.nursery}">Import Measurements</a>
 						</li>
 						<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
-							<a href="" style="display: none" id="advance-study-url" th:href="@{/NurseryManager/advance/nursery}"></a> 
-							<a href="javascript: advanceNursery('nursery-table');" id="advance-study-url-link" 
+							<a href="" style="display: none" id="advance-study-url" th:href="@{/NurseryManager/advance/nursery}"></a>
+							<a href="javascript: advanceNursery('nursery-table');" id="advance-study-url-link"
 								th:text="#{nursery.nurserydetails.action.advance}">Advance Nursery</a>
 							</li>
 						<li>
@@ -79,23 +79,23 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<div class="basicDetailsSection" style="display: none">
 		<div class="row form-group">
 			<div class="col-xs-2 col-md-2">
-				<input class="cvTermIds" type="hidden" th:field="*{basicDetails[0].variable.cvTermId}" /> 
+				<input class="cvTermIds" type="hidden" th:field="*{basicDetails[0].variable.cvTermId}" />
 				<label th:text="#{nursery.create.nursery.nursery.name} + ': '" class="control-label label-bold"></label>&nbsp;<span class="required">*</span>
 			</div>
 			<div class="col-xs-4 col-md-4">
-				<label th:text="*{basicDetails[0].value}" class="control-label"> </label> 
+				<label th:text="*{basicDetails[0].value}" class="control-label"> </label>
 				<input type="hidden" class="form-control" th:field="*{basicDetails[0].value}" />
 			</div>
 			<div class="col-xs-2 col-md-2">
 				<label class="label-bold" id="folderLabel" th:text="#{nursery.savenursery.savein} + ': '"></label>&nbsp;<span class="required">*</span>
 			</div>
 			<div class="col-xs-2 col-md-2">
-				<input type="hidden" th:field="*{folderId}" /> 
-				<input type="hidden" th:field="*{folderName}" /> 
+				<input type="hidden" th:field="*{folderId}" />
+				<input type="hidden" th:field="*{folderName}" />
 				<label class="control-label" id="folderNameLabel" th:text="*{folderName}"></label>
 			</div>
 			<div class="col-xs-2 col-md-2">
@@ -105,14 +105,14 @@
 		</div>
 		<div class="row form-group">
 			<div class="col-xs-2 col-md-2">
-				<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{basicDetails[1].variable.cvTermId}" /> 
+				<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{basicDetails[1].variable.cvTermId}" />
 				<label th:text="#{nursery.create.nursery.description} + ': '" class="control-label label-bold"></label>&nbsp;<span class="required">*</span>
 			</div>
 			<div class="col-xs-4 col-md-4">
 				<input type="text" class="form-control character-input" th:field="*{basicDetails[1].value}" />
 			</div>
 			<div class="col-xs-2 col-md-2">
-				<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{basicDetails[2].variable.cvTermId}" /> 
+				<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{basicDetails[2].variable.cvTermId}" />
 				<label th:text="#{nursery.create.nursery.creation.date} + ': '" class="control-label label-bold"></label>&nbsp;<span class="required">*</span>
 			</div>
 			<div class="col-xs-2 col-md-2">
@@ -122,14 +122,14 @@
 		</div>
 		<div class="row form-group">
 			<div class="col-xs-2 col-md-2">
-				<input class="cvTermIds" type="hidden" th:field="*{basicDetails[3].variable.cvTermId}" /> 
+				<input class="cvTermIds" type="hidden" th:field="*{basicDetails[3].variable.cvTermId}" />
 				<label th:text="#{nursery.create.nursery.objective} + ': '" class="control-label label-bold"></label>
 			</div>
 			<div class="col-xs-4 col-md-4">
 				<textarea class="form-control character-input" rows="3" th:field="*{basicDetails[3].value}"></textarea>
 			</div>
 			<div class="col-xs-2 col-md-2">
-				<input class="cvTermIds" type="hidden" th:field="*{basicDetails[4].variable.cvTermId}" /> 
+				<input class="cvTermIds" type="hidden" th:field="*{basicDetails[4].variable.cvTermId}" />
 				<label th:text="#{nursery.create.nursery.completion.date} + ': '" class="control-label label-bold"></label>
 			</div>
 			<div class="col-xs-2 col-md-2">
@@ -138,7 +138,7 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<div class="row">
 		<div class="col-xs-12 col-md-12">&nbsp;</div>
 	</div>
@@ -205,13 +205,13 @@
 	<div class="col-md-12">
 		<div class="modal fade" id="variateDeleteConfirmationModal" role="dialog" aria-labelledby="variateDeleteConfirmationModal"
 			aria-hidden="true">
-			
+
 			<div class="modal-dialog" style="width: 600px">
 				<div class="modal-content">
 					<div class="modal-body" id="variateDeleteConfirmationBody">
 						<div style="text-align: center">
-							<input type="hidden" id="varToDelete" /> 
-							<input type="hidden" id="variableType" /> 
+							<input type="hidden" id="varToDelete" />
+							<input type="hidden" id="variableType" />
 							<label th:text="#{nursery.edit.nursery.confirm.delete.variate}">This variable has existing measurement data, do you want to proceed
 								with deletion?</label>
 						</div>
@@ -223,7 +223,7 @@
 					</div>
 				</div>
 			</div>
-		
+
 		</div>
 	</div>
 </div>
@@ -284,8 +284,8 @@
 				<div class="row">
 					<div class="col-xs-offset-5 col-xs-7 col-md-offset-5 col-md-7">
 						<div class="form-group">
-							<input type="hidden" id="fieldmapStudyId" name="fieldmapStudyId" /> 
-							<input type="hidden" id="fieldmapDatasetId" name="fieldmapDatasetId" /> 
+							<input type="hidden" id="fieldmapStudyId" name="fieldmapStudyId" />
+							<input type="hidden" id="fieldmapDatasetId" name="fieldmapDatasetId" />
 							<input type="hidden" id="fieldmapGeolocationId" name="fieldmapGeolocationId" />
 							<button type="button" class="btn btn-danger" th:value="#{common.form.yes.text}" onclick="javascript: proceedToCreateFieldMap();">No</button>
 							<button type="button" class="btn btn-primary" th:value="#{common.form.no.text}" onclick="javascript: proceedToGenerateFieldMap();">Yes</button>
@@ -296,43 +296,49 @@
 		</div>
 	</div>
 </div>
-
 <div layout:fragment="page-script">
 	<script type='text/javascript' th:inline="javascript">
 		//<![CDATA[
-		var selectedGidsForAdvance = new Array();
-		var startDateRequiredError = /*[[#{start.end.date.validation.start.date.required}]]*/;
-		var startDateRequiredEarlierError = /*[[#{start.end.date.validation.start.date.required.earlier}]]*/;
 
-		//for adding new variables
-		var addNurseryLevelSettings = /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/;
-		var addPlotLevelSettings = /*[[#{nursery.managesettings.add.plot.level.settings}]]*/;
-		var addBaselineTraits = /*[[#{nursery.managesettings.add.baseline.traits}]]*/;
-		var addSelectionVariates = /*[[#{nursery.managesettings.add.selection.variates}]]*/;
-		var addNurseryConditions = /*[[#{nursery.managesettings.add.nursery.conditions}]]*/;
+		// FIXME Should not be using global variables or functions
+		/*global lastDraggedChecksList, Spinner, validateCreateNursery, validateStartEndDate, moveToTopScreen*/
 
+		// FIXME These variables should not be global. Dangerous to fix right now,
+		// because they are used in so many other files. Don't use ignore! This should be fixed!
 
-		var addTrialEnvironmentTraits = /*[[#{nursery.managesettings.add.trial.environment.variable}]]*/;
-		var addTreatmentFactors = /*[[#{trial.managesettings.treatment.factors.add}]]*/;
+		/* jshint ignore:start */
+		var selectedGidsForAdvance = [],
+			startDateRequiredError = /*[[#{start.end.date.validation.start.date.required}]]*/ '',
+			startDateRequiredEarlierError = /*[[#{start.end.date.validation.start.date.required.earlier}]]*/ '',
+			addNurseryLevelSettings = /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
+			addPlotLevelSettings = /*[[#{nursery.managesettings.add.plot.level.settings}]]*/ '',
+			addBaselineTraits = /*[[#{nursery.managesettings.add.baseline.traits}]]*/ '',
+			addSelectionVariates = /*[[#{nursery.managesettings.add.selection.variates}]]*/ '',
+			addNurseryConditions = /*[[#{nursery.managesettings.add.nursery.conditions}]]*/ '',
+			addTrialEnvironmentTraits = /*[[#{nursery.managesettings.add.trial.environment.variable}]]*/ '',
+			addTreatmentFactors = /*[[#{trial.managesettings.treatment.factors.add}]]*/ '',
+			reminderNursery = /*[[#{nursery.reminder.add.nursery.settings}]]*/ '',
+			reminderPlot = /*[[#{nursery.reminder.add.plot.settings}]]*/ '',
+			reminderTraits = /*[[#{nursery.reminder.add.trait.settings}]]*/ '',
+			reminderSelectionVariates = /*[[#{nursery.reminder.add.selection.variates}]]*/ '',
+			reminderNurseryCondtions = /*[[#{nursery.reminder.add.nursery.conditions}]]*/ '',
+			reminderTrialEnvironment = /*[[#{nursery.reminder.add.trial.environment.settings}]]*/ '',
+			reminderTreatmentFactors = /*[[#{trial.reminder.add.treatment.factors}]]*/ '',
+			germplasmSelectError = /*[[#{seed.inventory.select.germplasm.error}]]*/ '',
+			locationSuggestions = /*[[${locationList}]]*/ '',
+			scaleSuggestions = /*[[${scaleList}]]*/  '',
+			locationRequired = /*[[#{seed.inventory.location.required}]]*/ '',
+			scaleRequired = /*[[#{seed.inventory.scale.required}]]*/ '',
+			buttonToDelete = null;
+			/* jshint ignore:end */
 
-		var reminderNursery = /*[[#{nursery.reminder.add.nursery.settings}]]*/;
-		var reminderPlot = /*[[#{nursery.reminder.add.plot.settings}]]*/;
-		var reminderTraits = /*[[#{nursery.reminder.add.trait.settings}]]*/;
-		var reminderSelectionVariates = /*[[#{nursery.reminder.add.selection.variates}]]*/;
-		var reminderNurseryCondtions = /*[[#{nursery.reminder.add.nursery.conditions}]]*/;
-		var reminderTrialEnvironment = /*[[#{nursery.reminder.add.trial.environment.settings}]]*/;
-		var reminderTreatmentFactors = /*[[#{trial.reminder.add.treatment.factors}]]*/;
-		var germplasmSelectError = /*[[#{seed.inventory.select.germplasm.error}]]*/;
-		var locationSuggestions = /*[[${locationList}]]*/ ;
-		var scaleSuggestions = /*[[${scaleList}]]*/ ;
-		var locationRequired = /*[[#{seed.inventory.location.required}]]*/;
-		var scaleRequired = /*[[#{seed.inventory.scale.required}]]*/;
-		var programNurseriesText = /*[[#{program.nurseries}]]*/;
-		var buttonToDelete = null;
+		var programNurseriesText = /*[[#{program.nurseries}]]*/ '';
 
-		function submitGermplasmList(){
-			var $form = $("#germplasm-list-form");
-			//$('#chooseSpecifyCheck').val($('input[name="specifyCheckType"]:checked').val());
+		function submitGermplasmList() {
+			'use strict';
+
+			var $form = $('#germplasm-list-form');
+
 			$('#startIndex').val($('#startIndex2').val());
 			$('#interval').val($('#interval2').val());
 			$('#mannerOfInsertion').val($('#mannerOfInsertion2').val());
@@ -341,12 +347,12 @@
 			$('#lastDraggedChecksList').val(lastDraggedChecksList);
 
 			$.ajax({
-				url: "/Fieldbook/NurseryManager/importGermplasmList/next",
-				type: "POST",
+				url: '/Fieldbook/NurseryManager/importGermplasmList/next',
+				type: 'POST',
 				data: serializedData,
 				cache: false,
-				success: function(html) {
-					$('#successMessageModalUpdate').modal({ backdrop: 'static', keyboard: true })
+				success: function() {
+					$('#successMessageModalUpdate').modal({ backdrop: 'static', keyboard: true });
 				},
 				complete: function() {
 					Spinner.toggle();
@@ -355,43 +361,46 @@
 		}
 
 		function submitCheckGermplasmList() {
-			var $form = $("#check-germplasm-list-form");
+			'use strict';
+			var $form = $('#check-germplasm-list-form');
 			var serializedData = $form.serialize();
 
 			$.ajax({
-				url: "/Fieldbook/NurseryManager/importGermplasmList/submitCheckGermplasmList",
-				type: "POST",
+				url: '/Fieldbook/NurseryManager/importGermplasmList/submitCheckGermplasmList',
+				type: 'POST',
 				data: serializedData,
 				cache: false,
-				success: function(html) {
+				success: function() {
 					submitGermplasmList();
 				}
 			});
 		}
 
 		function submitWorkbook(){
+			'use strict';
+
 			Spinner.toggle();
 
-			var $form = $("#createNurseryForm, #createNurseryMainForm, #addVariableForm");
-
-			var serializedData = $form.serialize();
+			var $form = $('#createNurseryForm, #createNurseryMainForm, #addVariableForm'),
+				serializedData = $form.serialize();
 
 			$.ajax({
-				url: "/Fieldbook/NurseryManager/editNursery",
-				type: "POST",
+				url: '/Fieldbook/NurseryManager/editNursery',
+				type: 'POST',
 				data: serializedData,
 				cache: false,
+
 				success: function(data) {
-					if(data.status == -1){
+					if (data.status == -1) {
 						showErrorMessage('page-message', data.errorMessage);
-					}else if ($("#nursery-germplasm-list").length > 0) {
+					} else if ($("#nursery-germplasm-list").length > 0) {
 						submitCheckGermplasmList();
 					} else if (data.status == 1) {
 						$('#successMessageModalUpdate').modal({ backdrop: 'static', keyboard: true });
 					}
 				},
 				complete: function() {
-					if ($("#nursery-germplasm-list").length == 0) {
+					if ($('#nursery-germplasm-list').length == 0) {
 						Spinner.toggle();
 					}
 				}
@@ -399,30 +408,36 @@
 		}
 
 		function submitForm() {
+			'use strict';
+
 			if (validateCreateNursery()) {
-				if(!validateStartEndDate('nurseryLevelSettings')){
+				if(!validateStartEndDate('nurseryLevelSettings')) {
 					moveToTopScreen();
 					return false;
 				}
 				submitWorkbook();
-			}else{
+			} else {
 				moveToTopScreen();
 			}
 		}
+
 		$(document).ready(function() {
+			'use strict';
+
 			$('#basicDetails.toggle-icon').click(function(){
-				var expandedImg = $(this).find(".section-expanded");
-				var collapsedImg = $(this).find(".section-collapsed");
+				var expandedImg = $(this).find('.section-expanded'),
+					collapsedImg = $(this).find('.section-collapsed'),
+					className = $(this).data('target');
+
 				expandedImg.toggle();
 				collapsedImg.toggle();
-				var className = $(this).data('target')
 				$(className).slideToggle();
 			});
-			if($('#folderId').val() == 1){
+
+			if ($('#folderId').val() == 1) {
 				$('#folderNameLabel').html(programNurseriesText);
 			}
-
 		});
-		//]]>
+	//]]>
 	</script>
 </div>

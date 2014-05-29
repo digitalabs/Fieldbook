@@ -1298,37 +1298,7 @@ function hideDeleteConfirmation(){
 	$('#delete-settings-confirmation').modal('hide');
 }
 
-function deleteNurserySettings(){
-	var templateSettingsId = $('#selectedSettingId').val();
-	if(templateSettingsId > 0){
-		$('#delete-settings-confirmation').modal('hide');
-		//doAjaxMainSubmit('page-message', deleteTemplateSettingSuccess, "/Fieldbook/NurseryManager/manageNurserySettings/delete/" + templateSettingsId);
-		
-		Spinner.toggle();
-		
-		$.ajax({
-			url: "/Fieldbook/NurseryManager/manageNurserySettings/delete/" + templateSettingsId,
-			type: "POST", 	
-			cache: false,
-			success: function (html) {
-				//we just paste the whole html
-				$('.container .row').first().html(html);
-				
-			    showSuccessfulMessage('page-message', deleteTemplateSettingSuccess);	
-			    moveToTopScreen();
-				Spinner.toggle();
-			}
-		});
-			
-	}else{
-		alert('show error mesage');
-	}
-}
-
 function clearSettings(){
-	//var templateSettingsId = $('#selectedSettingId').val();
-	//window.location.hash = "/Fieldbook/NurseryManager/manageNurserySettings/clearSettings/"+templateSettingsId+"?t=";
-	
 	Spinner.toggle();	
 		$.ajax({
 			url: "/Fieldbook/NurseryManager/createNursery/clearSettings",
@@ -1342,60 +1312,7 @@ function clearSettings(){
 		});
 		
 }
-function loadNurserySettings(templateSettingsId) {
-//alert($("#newVariablesList").html());
-//var serializedData = $("#saveAdvanceNurseryForm").serialize();
-	//window.location.hash = "/Fieldbook/NurseryManager/manageNurserySettings/view/"+templateSettingsId;
-	
-	Spinner.toggle();
-	$.ajax({
-		url: "/Fieldbook/NurseryManager/manageNurserySettings/view/" + templateSettingsId,
-		type: "GET", 	
-		cache: false,				
-		success: function (html) {
-			//we just paste the whole html
-			$('.container .row').first().html(html);
-		},
-		error: function(jqXHR, textStatus, errorThrown){
-			console.log("The following error occured: " + textStatus, errorThrown); 
-		},
-		complete: function() {
-			Spinner.toggle();
-		}
-	});
-}
-function addNewSettings(){
-	//window.location.hash = "/Fieldbook/NurseryManager/manageNurserySettings/addNewSettings";
-	
-	Spinner.toggle();
-	
-	$.ajax({
-		url: "/Fieldbook/NurseryManager/manageNurserySettings/addNewSettings",
-		type: "GET",
-		cache: false,
-		success: function (html) {
-			//we just paste the whole html
-			$('.container .row').first().html(html);				
-			Spinner.toggle();
-		}
-	});
-	
-}
-function copySettings() {
-	var templateSettingsId = $('#selectedSettingId').val();
-	Spinner.toggle();
-	$.ajax({
-		url: "/Fieldbook/NurseryManager/manageNurserySettings/copy/" + templateSettingsId,
-		type: "GET", 	
-		cache: false,				
-		success: function (html) {
-			//we just paste the whole html
-			$('.container .row').first().html(html);			
-			showSuccessfulMessage('page-message', copyTemplateSettingSuccess);	
-			Spinner.toggle();
-		}
-	});
-}
+
 function hasDuplicateSettingName(){
 	var selectedSettingsId = $('#selectedSettingId').val();
 	var settingsName = $('#settingName').val() ;
@@ -1463,24 +1380,6 @@ function doSaveSettings(){
 	}else {
 		doAjaxMainSubmit('page-message', saveTemplateSettingSuccess, null);
 		moveToTopScreen();
-		/*
-	Spinner.toggle();
-	var $form = $("#saveNurserySettingsForm");
-	serializedData = $form.serialize();
-	
-		$.ajax({
-			url: "/Fieldbook/NurseryManager/manageNurserySettings/save/",
-			type: "POST", 	
-			data: serializedData,
-			success: function (html) {
-				//we just paste the whole html
-				$('.container .row').first().html(html);
-				
-			    showSuccessfulMessage('page-message', saveTemplateSettingSuccess);				
-				Spinner.toggle();
-			}
-		}); 
-		*/
 	}
 				
 }
@@ -1600,19 +1499,6 @@ function checkPlantsSelected() {
 	}
 }
 
-function doResetNurserySettings(){
-	$('#reset-settings-confirmation').modal('hide');
-	addNewSettings();
-}
-function validateReset(){
-	if(inputChange == true || ($('.newVariable') != null && $('.newVariable').length > 0)){
-		$('#reset-settings-confirmation').modal('show');
-	}else{
-		doResetNurserySettings();	
-	}
-	
-}
-
 function loadNurserySettingsForCreate(templateSettingsId) {
  	Spinner.toggle();
 	var $form = $("#createNurseryForm");
@@ -1644,37 +1530,6 @@ function openUsePreviousNurseryModal() {
 	$("#selectedNursery").val("")
 	$("#selectedNursery").select2();
 	$("#usePreviousNurseryModal").modal("show");
-}
-
-function chooseSelectedNursery() {
-	var nurseryId = $("#selectedNursery").val();
-	var url = "/Fieldbook/NurseryManager/manageNurserySettings/nursery/";
-		
-	if ($("#chooseSettingsDiv").length != 0) {
-		url = "/Fieldbook/NurseryManager/createNursery/nursery/";
-	}
-	
-	$("#usePreviousNurseryModal").modal("hide");
-	Spinner.toggle();
-	$.ajax({
-		url: url + nurseryId,
-        type: "GET",
-        cache: false,
-        data: "",
-        success: function(html) {
-        	if ($("#chooseSettingsDiv").length != 0) {
-        		$("#chooseSettingsDiv").html(html);
-        	} else {
-        		$('.container .row').first().html(html);
-        	}
-        },
-        error: function(jqXHR, textStatus, errorThrown){
-			console.log("The following error occured: " + textStatus, errorThrown); 
-	    }, 
-	    complete: function(){
-		   Spinner.toggle();
-	    }  
-	});
 }
 
 function choosePreviousNursery(studyId) {

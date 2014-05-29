@@ -16,35 +16,57 @@
 
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
+
+	// FIXME Should not be using global variables or functions
+	/*global validateCells, serializedData, Spinner, showErrorMessage, console*/
+
 	function doSave(){
-		if(validateCells() == false)
+		'use strict';
+
+		var $form,
+			$btnUpdate;
+
+		if (!validateCells()) {
 			return false;
-		var $form = $("#addVariableForm");
+		}
+
+		$form = $('#addVariableForm');
+		$btnUpdate = $('btnUpdate');
+
 		serializedData = $form.serialize();
-		$("btnUpdate").attr("disabled", "disabled");
+
+		$btnUpdate.attr('disabled', 'disabled');
+
 		Spinner.toggle();
 
 		$.ajax({
-			url: "/Fieldbook/Common/addOrRemoveTraits/Nursery/updateTraits",
-			type: "post",
-			dataType: "json",
+			url: '/Fieldbook/Common/addOrRemoveTraits/Nursery/updateTraits',
+			type: 'post',
+			dataType: 'json',
 			data: serializedData,
+
 			success: function(data){
-				if (data.status == "1") {
-					$('#successMessageModal').modal({ backdrop: 'static', keyboard: true })
-					$("#successMessageModal").modal("show");
-				} else if (data.status == "-1") {
+				var $successMessageModal = $('#successMessageModal');
+
+				if (data.status === '1') {
+					$successMessageModal.modal({ backdrop: 'static', keyboard: true });
+					$successMessageModal.modal('show');
+				} else if (data.status === '-1') {
 					showErrorMessage('page-message', data.errorMessage);
 				}
 			},
+
 			error: function(jqXHR, textStatus, errorThrown){
-				console.log("The following error occured: " + textStatus, errorThrown);
+				if (console) {
+					console.log('The following error occured: ' + textStatus, errorThrown);
+				}
 			},
+
 			complete: function(){
-				$("btnUpdate").removeAttr("disabled");
+				$btnUpdate.removeAttr('disabled');
 				Spinner.toggle();
 			}
 		});
 	}
-	//]]>
+//]]>
 </script>

@@ -1329,47 +1329,6 @@ function doSaveSettings(){
 				
 }
 
-function showBaselineTraitDetailsModal(id) {
-	if(id != ''){
-		Spinner.toggle();
-		$.ajax({
-			url: "/Fieldbook/NurseryManager/createNursery/showVariableDetails/" + id,
-			type: "GET",
-			cache: false,
-			success: function (data) {
-				populateBaselineTraits($.parseJSON(data));
-				$("#baselineTraitDetails").modal("toggle");
-			},
-			error: function(jqXHR, textStatus, errorThrown){
-				console.log("The following error occured: " + textStatus, errorThrown); 
-			},
-			complete: function() {
-				Spinner.toggle();
-			}
-		});
-	}
-}
-
-function populateBaselineTraits(standardVariable) {
-	if (standardVariable != null) {
-		$("#traitClass").html(checkIfNull(standardVariable.traitClass));
-		$("#property").html(checkIfNull(standardVariable.property));
-		$("#method").html(checkIfNull(standardVariable.method));
-		$("#scale").html(checkIfNull(standardVariable.scale));
-		$("#dataType").html(checkIfNull(standardVariable.dataType));
-		$("#role").html(checkIfNull(standardVariable.role));
-		$("#cropOntologyId").html(checkIfNull(standardVariable.cropOntologyId));
-	} else {
-		$("#traitClass").html("");
-		$("#property").html("");
-		$("#method").html("");
-		$("#scale").html("");
-		$("#dataType").html("");
-		$("#role").html("");
-		$("#cropOntologyId").html("");
-	}
-}
-
 function checkIfNull(object) {
 	if (object != null) {
 		return object;

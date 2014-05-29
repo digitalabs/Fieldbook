@@ -1776,49 +1776,6 @@ function doSaveSettings(){
 				
 }
 
-function showBaselineTraitDetailsModal(id) {
-	if(id != ''){
-		Spinner.toggle();
-		$.ajax({
-			url: "/Fieldbook/TrialManager/manageTrialSettings/showVariableDetails/" + id,
-			type: "GET",
-			cache: false,
-			success: function (data) {
-				populateBaselineTraits($.parseJSON(data));
-				$("#baselineTraitDetails").modal("toggle");
-			},
-			error: function(jqXHR, textStatus, errorThrown){
-				console.log("The following error occured: " + textStatus, errorThrown); 
-			},
-			complete: function() {
-				Spinner.toggle();
-			}
-		});
-	}
-}
-
-function populateBaselineTraits(standardVariable) {
-	if (standardVariable != null) {
-		$("#traitClass").html(checkIfNull(standardVariable.traitClass));
-		$("#property").html(checkIfNull(standardVariable.property));
-		$("#method").html(checkIfNull(standardVariable.method));
-		$("#scale").html(checkIfNull(standardVariable.scale));
-		$("#dataType").html(checkIfNull(standardVariable.dataType));
-		$("#role").html(checkIfNull(standardVariable.role));
-		$("p#cropOntologyId").html(checkIfNull(standardVariable.cropOntologyId));
-		//console.log(standardVariable.cropOntologyId);
-		//$('#trialDetailsTitle').html(headerTitle + " " + );
-	} else {
-		$("#traitClass").html("");
-		$("#property").html("");
-		$("#method").html("");
-		$("#scale").html("");
-		$("#dataType").html("");
-		$("#role").html("");
-		$("p#cropOntologyId").html("");
-	}
-}
-
 function checkIfNull(object) {
 	if (object != null) {
 		return object;

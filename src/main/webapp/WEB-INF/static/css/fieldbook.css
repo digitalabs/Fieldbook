@@ -1028,3 +1028,12 @@ div.sectionContainer {
 .fileupload-exists .uneditable-input{
 	width: 100px;
 }
+
+.dl-horizontal dt {
+	padding: 4px;
+}
+
+.dl-horizontal dd {
+	padding: 4px;
+}
+}

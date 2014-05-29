@@ -4,9 +4,7 @@
 </div>
 <div class="col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org">
 	<div class="page-header">
-		<h1>
-			MANAGE NURSERIES
-		</h1>
+		<h1>MANAGE NURSERIES</h1>
 	</div>
 </div>
 
@@ -16,170 +14,176 @@
 	</div>
 </div>
 
-<form id="createNurseryMainForm" role="form-horizontal" action="#"
-th:object="${createNurseryForm}" enctype="multipart/form-data">
+<form id="createNurseryMainForm" role="form-horizontal" action="#" th:object="${createNurseryForm}" enctype="multipart/form-data">
 
-<input type="hidden" th:field="*{studyId}"/>
-<div class="">
+	<input type="hidden" th:field="*{studyId}" />
+
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
-			<img width="30" height="30" th:src="@{/static/img/new-nursery.png}" class="image-padding image-padding-with-text" />
-			<label class="heading" th:text="#{nursery.edit.nursery.label}">Edit Nursery</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<img width="30" height="30" th:src="@{/static/img/new-nursery.png}" class="image-padding image-padding-with-text" /> 
+			<label class="heading" th:text="#{nursery.edit.nursery.label}">Edit Nursery</label>  
 			<input type="button" onclick="submitForm();" th:value="#{common.form.save.text}" class="btn btn-info" />
 		</div>
 	</div>
-</div>
-<div class="row">
-	<div class="col-xs-12 col-md-12">
-		&nbsp;
-	</div>
-</div>
-<div class="row">
-	<div class="col-xs-12 col-md-12">
-		<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
-	</div>
-</div>
-<div class="row">
-	<div class="col-xs-12 col-md-12">
-		<label class="control-label section-toggle toggle-icon" id="basicDetails" data-target=".basicDetailsSection">
-			<img style="margin-left: -10px; display:none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
-			<img style="margin-left: -7px;" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
-			<strong class="sub-content-heading" th:text="#{nursery.create.nursery.basic.details}">BASIC DETAILS</strong>
-		</label>
 
-		<div style="float:right; margin-right: 50px;">
-			<div class="btn-group">
-				<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
-					<span th:text="#{nursery.nurserydetails.actions}">Actions</span>
-				</button>
-				<ul class="dropdown-menu" role="menu">
-					<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
-						<a href="" style="display: none" id="open-study-url"></a>
-						<a href="javascript: showExportOptions();" id="open-study-url-link" th:text="#{nursery.nurserydetails.action.export.nursery}">Export Nursery Book</a>
-					</li>
-					<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
-						<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
-						<a href="javascript: createFieldMap('nursery-table');" id="fieldmap-url-link" th:text="#{nursery.nurserydetails.action.createFieldmap}">Make Field Map</a>
-					</li>
-					<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
-						<a href="" style="display: none" id="label-printing-url" th:href="@{/LabelPrinting/specifyLabelDetails/nursery}"></a>
-						<a href="javascript: createLabelPrinting('nursery-table');" id="label-printing-url-link" th:text="#{nursery.nurserydetails.action.printLabels}">Print Labels</a>
-					</li>
-					<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
-						<a href="" style="display: none" id="open-study-url"></a>
-						<a href="javascript: showImportOptions();" id="open-study-url-link" th:text="#{nursery.nurserydetails.action.import.nursery}">Import Measurements</a>
-					</li>
-					<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
-						<a href="" style="display: none" id="advance-study-url" th:href="@{/NurseryManager/advance/nursery}"></a>
-						<a href="javascript: advanceNursery('nursery-table');" id="advance-study-url-link" th:text="#{nursery.nurserydetails.action.advance}">Advance Nursery</a>
-					</li>
-					<li>
-						<a th:href="@{/NurseryManager/manageNurseries}" id="close-nursery-url-link" th:text="#{nursery.nurserydetails.action.close.nursery}">Close Nursery</a>
-					</li>
-				</ul>
+	<div class="row">
+		<div class="col-xs-12 col-md-12">&nbsp;</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-xs-12 col-md-12">
+			
+			<label class="control-label section-toggle toggle-icon" id="basicDetails" data-target=".basicDetailsSection"> 
+				<img style="margin-left: -10px; display: none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" /> 
+				<img style="margin-left: -7px;" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" /> 
+				<strong class="sub-content-heading" th:text="#{nursery.create.nursery.basic.details}">BASIC DETAILS</strong>
+			</label>
+
+			<div style="float: right; margin-right: 50px;">
+				<div class="btn-group">
+					<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+						<span th:text="#{nursery.nurserydetails.actions}">Actions</span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
+							<a href="" style="display: none" id="open-study-url"></a> 
+							<a href="javascript: showExportOptions();" id="open-study-url-link"
+								th:text="#{nursery.nurserydetails.action.export.nursery}">Export Nursery Book</a>
+						</li>
+						<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
+							<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a> 
+							<a href="javascript: createFieldMap('nursery-table');" id="fieldmap-url-link" 
+								th:text="#{nursery.nurserydetails.action.createFieldmap}">Make Field Map</a>
+						</li>
+						<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
+							<a href="" style="display: none" id="label-printing-url" th:href="@{/LabelPrinting/specifyLabelDetails/nursery}"></a>
+							<a href="javascript: createLabelPrinting('nursery-table');" id="label-printing-url-link"
+								th:text="#{nursery.nurserydetails.action.printLabels}">Print Labels</a>
+						</li>
+						<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
+							<a href="" style="display: none" id="open-study-url"></a> 
+							<a href="javascript: showImportOptions();" id="open-study-url-link" 
+								th:text="#{nursery.nurserydetails.action.import.nursery}">Import Measurements</a>
+						</li>
+						<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
+							<a href="" style="display: none" id="advance-study-url" th:href="@{/NurseryManager/advance/nursery}"></a> 
+							<a href="javascript: advanceNursery('nursery-table');" id="advance-study-url-link" 
+								th:text="#{nursery.nurserydetails.action.advance}">Advance Nursery</a>
+							</li>
+						<li>
+							<a th:href="@{/NurseryManager/manageNurseries}" id="close-nursery-url-link"
+								th:text="#{nursery.nurserydetails.action.close.nursery}">Close Nursery</a>
+						</li>
+					</ul>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
-<div class="basicDetailsSection" style="display: none">
-	<div class="row form-group">
-		<div class="col-xs-2 col-md-2">
-			<input class="cvTermIds" type="hidden" th:field="*{basicDetails[0].variable.cvTermId}" />
-			<label th:text="#{nursery.create.nursery.nursery.name} + ': '" class="control-label label-bold"></label>&nbsp;<span class="required">*</span>
+	
+	<div class="basicDetailsSection" style="display: none">
+		<div class="row form-group">
+			<div class="col-xs-2 col-md-2">
+				<input class="cvTermIds" type="hidden" th:field="*{basicDetails[0].variable.cvTermId}" /> 
+				<label th:text="#{nursery.create.nursery.nursery.name} + ': '" class="control-label label-bold"></label>&nbsp;<span class="required">*</span>
+			</div>
+			<div class="col-xs-4 col-md-4">
+				<label th:text="*{basicDetails[0].value}" class="control-label"> </label> 
+				<input type="hidden" class="form-control" th:field="*{basicDetails[0].value}" />
+			</div>
+			<div class="col-xs-2 col-md-2">
+				<label class="label-bold" id="folderLabel" th:text="#{nursery.savenursery.savein} + ': '"></label>&nbsp;<span class="required">*</span>
+			</div>
+			<div class="col-xs-2 col-md-2">
+				<input type="hidden" th:field="*{folderId}" /> 
+				<input type="hidden" th:field="*{folderName}" /> 
+				<label class="control-label" id="folderNameLabel" th:text="*{folderName}"></label>
+			</div>
+			<div class="col-xs-2 col-md-2">
+				<a style="position: relative; left: -50px" id="chooseLocation" onclick="openStudyTree(2);"
+					th:text="#{nursery.create.nursery.choose.location}"></a>
+			</div>
 		</div>
-		<div class="col-xs-4 col-md-4">
-			<label th:text="*{basicDetails[0].value}" class="control-label"> </label>
-			<input type="hidden" class="form-control" th:field="*{basicDetails[0].value}" />
+		<div class="row form-group">
+			<div class="col-xs-2 col-md-2">
+				<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{basicDetails[1].variable.cvTermId}" /> 
+				<label th:text="#{nursery.create.nursery.description} + ': '" class="control-label label-bold"></label>&nbsp;<span class="required">*</span>
+			</div>
+			<div class="col-xs-4 col-md-4">
+				<input type="text" class="form-control character-input" th:field="*{basicDetails[1].value}" />
+			</div>
+			<div class="col-xs-2 col-md-2">
+				<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{basicDetails[2].variable.cvTermId}" /> 
+				<label th:text="#{nursery.create.nursery.creation.date} + ': '" class="control-label label-bold"></label>&nbsp;<span class="required">*</span>
+			</div>
+			<div class="col-xs-2 col-md-2">
+				<input id="basicDetails.value2" style="width: 100px" type="text" class="form-control date-input" th:field="*{basicDetails[2].value}" />
+				<label for="basicDetails.value2" class="btn datepicker"> <img th:src="@{/static/img/calendar.png}" style="padding-bottom: 3px;" /></label>
+			</div>
 		</div>
-		<div class="col-xs-2 col-md-2">
-			<label class="label-bold" id="folderLabel" th:text="#{nursery.savenursery.savein} + ': '"></label>&nbsp;<span class="required">*</span>
-		</div>
-		<div class="col-xs-2 col-md-2">
-			<input type="hidden" th:field="*{folderId}" />
-			<input type="hidden" th:field="*{folderName}" />
-			<label class="control-label" id="folderNameLabel" th:text="*{folderName}"></label>
-		</div>
-		<div class="col-xs-2 col-md-2">
-			<a style="position: relative; left: -50px" id="chooseLocation" onclick="openStudyTree(2);" th:text="#{nursery.create.nursery.choose.location}"></a>
-		</div>
-	</div>
-	<div class="row form-group">
-		<div class="col-xs-2 col-md-2">
-			<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{basicDetails[1].variable.cvTermId}" />
-			<label th:text="#{nursery.create.nursery.description} + ': '" class="control-label label-bold"></label>&nbsp;<span class="required">*</span>
-		</div>
-		<div class="col-xs-4 col-md-4">
-			<input type="text" class="form-control character-input" th:field="*{basicDetails[1].value}" />
-		</div>
-		<div class="col-xs-2 col-md-2">
-			<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{basicDetails[2].variable.cvTermId}" />
-			<label th:text="#{nursery.create.nursery.creation.date} + ': '" class="control-label label-bold"></label>&nbsp;<span class="required">*</span>
-		</div>
-		<div class="col-xs-2 col-md-2">
-			<input id="basicDetails.value2" style="width: 100px" type="text" class="form-control date-input" th:field="*{basicDetails[2].value}" />
-			<label for="basicDetails.value2" class="btn datepicker">
-				<img th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;" />
-			</label>
-		</div>
-	</div>
-	<div class="row form-group">
-		<div class="col-xs-2 col-md-2">
-			<input class="cvTermIds" type="hidden" th:field="*{basicDetails[3].variable.cvTermId}" />
-			<label th:text="#{nursery.create.nursery.objective} + ': '" class="control-label label-bold"></label>
-		</div>
-		<div class="col-xs-4 col-md-4">
-			<textarea class="form-control character-input" rows="3" th:field="*{basicDetails[3].value}"></textarea>
-		</div>
-		<div class="col-xs-2 col-md-2">
-			<input class="cvTermIds" type="hidden" th:field="*{basicDetails[4].variable.cvTermId}" />
-			<label th:text="#{nursery.create.nursery.completion.date} + ': '" class="control-label label-bold"></label>
-		</div>
-		<div class="col-xs-2 col-md-2">
-			<input id="basicDetails.value4" style="width: 100px" type="text" class="form-control date-input" th:field="*{basicDetails[4].value}" />
-			<label for="basicDetails.value4" class="btn datepicker">
-				<img th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;" />
-			</label>
+		<div class="row form-group">
+			<div class="col-xs-2 col-md-2">
+				<input class="cvTermIds" type="hidden" th:field="*{basicDetails[3].variable.cvTermId}" /> 
+				<label th:text="#{nursery.create.nursery.objective} + ': '" class="control-label label-bold"></label>
+			</div>
+			<div class="col-xs-4 col-md-4">
+				<textarea class="form-control character-input" rows="3" th:field="*{basicDetails[3].value}"></textarea>
+			</div>
+			<div class="col-xs-2 col-md-2">
+				<input class="cvTermIds" type="hidden" th:field="*{basicDetails[4].variable.cvTermId}" /> 
+				<label th:text="#{nursery.create.nursery.completion.date} + ': '" class="control-label label-bold"></label>
+			</div>
+			<div class="col-xs-2 col-md-2">
+				<input id="basicDetails.value4" style="width: 100px" type="text" class="form-control date-input" th:field="*{basicDetails[4].value}" />
+				<label for="basicDetails.value4" class="btn datepicker"> <img th:src="@{/static/img/calendar.png}" style="padding-bottom: 3px;" /></label>
+			</div>
 		</div>
 	</div>
-</div>
-<div class="row">
-	<div class="col-xs-12 col-md-12">
-		&nbsp;
+	
+	<div class="row">
+		<div class="col-xs-12 col-md-12">&nbsp;</div>
 	</div>
-</div>
+
 </form>
 
-<ul id="create-nursery-tab-headers" class="nav nav-tabs" >
-	<li id="nursery-settings-li" class="active"><a href="javascript:showSelectedTab('nursery-settings');" th:text="#{nursery.create.nursery.nursery.settings}">.Nursery Settings</a></li>
-	<li id="nursery-measurements-li" th:if="${createNurseryForm.measurementRowList.size() != 0}"><a href="javascript:showSelectedTab('nursery-measurements');" th:text="#{nursery.edit.nursery.measurements}">.Measurements</a></li>
-	<li id="nursery-germplasm-list-li" th:if="${createNurseryForm.measurementRowList.size() == 0}"><a href="javascript:showSelectedTab('nursery-germplasm-list');" th:text="#{nursery.create.nursery.germplasm.list.tab}">.Germplasm and Checks</a></li>
+<ul id="create-nursery-tab-headers" class="nav nav-tabs">
+	<li id="nursery-settings-li" class="active">
+		<a href="javascript:showSelectedTab('nursery-settings');" th:text="#{nursery.create.nursery.nursery.settings}">.Nursery Settings</a>
+	</li>
+	<li id="nursery-measurements-li" th:if="${createNurseryForm.measurementRowList.size() != 0}">
+		<a href="javascript:showSelectedTab('nursery-measurements');" th:text="#{nursery.edit.nursery.measurements}">.Measurements</a>
+	</li>
+	<li id="nursery-germplasm-list-li" th:if="${createNurseryForm.measurementRowList.size() == 0}">
+		<a href="javascript:showSelectedTab('nursery-germplasm-list');" th:text="#{nursery.create.nursery.germplasm.list.tab}">.Germplasm and Checks</a>
+	</li>
 </ul>
-
 
 <div id="create-nursery-tabs" style="padding-top: 15px;">
 	<div id="nursery-settings" class="info">
 		<div class="col-xs-12 col-md-12">
-			<div id="chooseSettingsDiv" th:include="/NurseryManager/chooseSettings">
-			</div>
+			<div id="chooseSettingsDiv" th:include="/NurseryManager/chooseSettings"></div>
 		</div>
 	</div>
-	<div id="nursery-measurements" class="info" style="display:none;" th:if="${createNurseryForm.measurementRowList.size() != 0}">
+	<div id="nursery-measurements" class="info" style="display: none;" th:if="${createNurseryForm.measurementRowList.size() != 0}">
 		<div class="col-xs-12 col-md-12">
-			<div id="measurementsDiv" th:include="/NurseryManager/addOrRemoveTraits">
-			</div>
+			<div id="measurementsDiv" th:include="/NurseryManager/addOrRemoveTraits"></div>
 		</div>
 	</div>
-	<div id="nursery-germplasm-list" class="info" style="display:none;" th:if="${createNurseryForm.measurementRowList.size() == 0}">
+	<div id="nursery-germplasm-list" class="info" style="display: none;" th:if="${createNurseryForm.measurementRowList.size() == 0}">
 		<div class="col-xs-12 col-md-12">
-			<div id="chooseGermplasmAndChecks" th:include="/NurseryManager/importGermplasmList">
-			</div>
+			<div id="chooseGermplasmAndChecks" th:include="/NurseryManager/importGermplasmList"></div>
 		</div>
 	</div>
 </div>
 
 <!-- Modal Dialog for Choosing Folder Location -->
 <div class="form-group" id="create-nursery">
-	<div th:include="/NurseryManager/includes/studyTree" />
+	<div th:include="/NurseryManager/includes/studyTree"></div>
 </div>
 
 <!-- Modal Dialog for Successful Save -->
@@ -194,7 +198,8 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 						</div>
 					</div>
 					<div class="modal-footer">
-						<a id="btnOK" href="" th:href="@{/NurseryManager/editNursery/}+${createNurseryForm.studyId}" th:text="#{common.form.ok.text}" class="btn btn-primary">OK</a>
+						<a id="btnOK" href="" th:href="@{/NurseryManager/editNursery/}+${createNurseryForm.studyId}" th:text="#{common.form.ok.text}"
+							class="btn btn-primary">OK</a>
 					</div>
 				</div>
 			</div>
@@ -205,23 +210,27 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 <!-- Modal Dialog for Delete Confirmation -->
 <div class="form-group">
 	<div class="col-md-12">
-		<div class="modal fade" id="variateDeleteConfirmationModal" role="dialog" aria-labelledby="variateDeleteConfirmationModal" aria-hidden="true">
+		<div class="modal fade" id="variateDeleteConfirmationModal" role="dialog" aria-labelledby="variateDeleteConfirmationModal"
+			aria-hidden="true">
+			
 			<div class="modal-dialog" style="width: 600px">
 				<div class="modal-content">
 					<div class="modal-body" id="variateDeleteConfirmationBody">
 						<div style="text-align: center">
-							<input type="hidden" id="varToDelete" />
-							<input type="hidden" id="variableType" />
-							<label th:text="#{nursery.edit.nursery.confirm.delete.variate}">This variable has existing measurement data, do you want to proceed with deletion?</label>
+							<input type="hidden" id="varToDelete" /> 
+							<input type="hidden" id="variableType" /> 
+							<label th:text="#{nursery.edit.nursery.confirm.delete.variate}">This variable has existing measurement data, do you want to proceed
+								with deletion?</label>
 						</div>
 					</div>
 					<div class="modal-footer">
 						<button id="cancelDelete" data-dismiss="modal" th:text="#{common.form.cancel.text}" class="btn btn-default">Cancel</button>
-						<button id="continueDelete" data-dismiss="modal" th:text="#{common.form.continue.text}"
-						onClick="javascript: proceedWithDelete();" class="btn btn-primary">Continue</button>
+						<button id="continueDelete" data-dismiss="modal" th:text="#{common.form.continue.text}" onClick="javascript: proceedWithDelete();"
+							class="btn btn-primary">Continue</button>
 					</div>
 				</div>
 			</div>
+		
 		</div>
 	</div>
 </div>
@@ -231,26 +240,30 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 <div class="row">
 	<div id="example-germplasm" th:include="/Common/includes/saveList"></div>
 </div>
+
 <div class="row">
 	<div id="open-germplasm" th:include="/Common/includes/openGermplasmDetailsModal"></div>
 </div>
+
 <div class="row">
 	<div id="open-germplasm-list" th:include="/NurseryManager/includes/manageGermplasmListOperation"></div>
 </div>
+
 <div class="row">
 	<div id="export-study" th:include="/NurseryManager/includes/exportStudy"></div>
 </div>
+
 <div class="row">
 	<div id="import-study" th:include="/NurseryManager/includes/importStudy"></div>
 </div>
-<div class="row">
-	<div class="row" id="addLotsModalDiv">
 
-	</div>
+<div class="row">
+	<div class="row" id="addLotsModalDiv"></div>
 	<div class="col-xs-12 col-md-12">
 		<div id="manage-location" th:include="/Common/includes/manageLocationsModal"></div>
 	</div>
 </div>
+
 <div class="row">
 	<div class="col-xs-12 col-md-12">
 		<div id="manage-location" th:include="/Common/includes/manageMethodsModal"></div>
@@ -261,7 +274,8 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 	<div id="ontology-add-variable" th:include="/Fieldmap/includes/selectTrialInstanceModal"></div>
 </div>
 
-<div class="modal fade" id="manageTrialConfirmation" tabindex="-1" role="dialog" aria-labelledby="manageTrialConfirmationLabel" aria-hidden="true">
+<div class="modal fade" id="manageTrialConfirmation" tabindex="-1" role="dialog" aria-labelledby="manageTrialConfirmationLabel"
+	aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -274,13 +288,12 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 						<p th:text="#{fieldmap.confirmation.for.viewing.generated.fieldmap}">Do you wish to view the generated fieldmap(s)?</p>
 					</div>
 				</div>
-				<br/>
+				<br />
 				<div class="row">
 					<div class="col-xs-offset-5 col-xs-7 col-md-offset-5 col-md-7">
 						<div class="form-group">
-							<input type="hidden" id="fieldmapStudyId" name="fieldmapStudyId" />
-							<input type="hidden" id="fieldmapDatasetId" name="fieldmapDatasetId" />
-							<input type="hidden" id="fieldmapGeolocationId" name="fieldmapGeolocationId" />
+							<input type="hidden" id="fieldmapStudyId" name="fieldmapStudyId" /> 
+							<input type="hidden" id="fieldmapDatasetId" name="fieldmapDatasetId" /> <input type="hidden" id="fieldmapGeolocationId" name="fieldmapGeolocationId" />
 							<button type="button" class="btn btn-danger" th:value="#{common.form.yes.text}" onclick="javascript: proceedToCreateFieldMap();">No</button>
 							<button type="button" class="btn btn-primary" th:value="#{common.form.no.text}" onclick="javascript: proceedToGenerateFieldMap();">Yes</button>
 						</div>

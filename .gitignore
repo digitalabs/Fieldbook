@@ -1,15 +1,10 @@
-/target
 /.idea
 /.settings
 /logs
 .classpath
-src/main/resources/database.properties
 src/main/resources/fieldbook.properties
-pipeline/config/dev-martin
-pheno_t77833_20131118.xls
+src/main/resources/workbench.properties
 *.xls
 *.doc
-readMe-DAN.txt
-/target
 /target
 /bin

@@ -1506,7 +1506,7 @@ function doAdvanceNursery() {
         success: function(html) {
        	 	var listSize = $(html).find(".advance-list-size").text();
        	 	if (listSize == 0) {
-				showErrorMessage('page-message', msgEmptyListError);
+				showErrorMessage('page-message', listShouldNotBeEmptyError);
        	 	} 
        	 	else {
             	$("#advanceNurseryModal").modal("hide");
@@ -1566,7 +1566,7 @@ function validateBreedingMethod() {
 	var id = $("#methodVariateId").val();
 
 	var valid = true;
-	if (id) {
+	if ($('input[type=checkbox][name=methodChoice]:checked').val() !== "1" && id) {
 		Spinner.toggle();
 		$.ajax({
 			url: "/Fieldbook/NurseryManager/advance/nursery/countPlots/" + id,
@@ -1575,7 +1575,7 @@ function validateBreedingMethod() {
 			async: false,
 			success: function (data) {
 				if (data == 0) {
-					showErrorMessage('page-message', msgEmptyListError);
+					showErrorMessage('page-message', noMethodValueError);
 					valid = false;
 				}
 			},

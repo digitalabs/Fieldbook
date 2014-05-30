@@ -125,9 +125,9 @@
 
 
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default"  onclick="javascript:goBackToImport();" >Cancel</button>
-				<button type="button" class="btn btn-default"  onclick="javascript:confirmDesignation(0);">Skip</button>
-				<button type="button" class="btn btn-primary"  onclick="javascript:confirmDesignation(1);">Yes</button>
+				<button type="button" class="btn btn-default"  onclick="javascript:goBackToImport();" th:text="#{common.form.cancel.text}" >Cancel</button>
+				<button type="button" class="btn btn-default"  onclick="javascript:confirmDesignation(0);" th:text="#{common.form.skip.text}">Skip</button>
+				<button type="button" class="btn btn-primary"  onclick="javascript:confirmDesignation(1);" th:text="#{common.form.yes.text}">Yes</button>
 			</div>
 		</div>
 	</div>

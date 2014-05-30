@@ -276,6 +276,8 @@
 			noMethodVariatesError = /*[[#{error.advancing.nursery.no.method.variates}]]*/ '',
 			noLineVariatesError = /*[[#{error.advancing.nursery.no.line.variates}]]*/ '',
 			noPlotVariatesError = /*[[#{error.advancing.nursery.no.plot.variates}]]*/ '';
+			noMethodValueError = /*[[#{nursery.advance.nursery.empty.method.error}]]*/ '';
+			listShouldNotBeEmptyError = /*[[#{nursery.save.advance.error.row.list.empty}]]*/ '';
 		/* jshint ignore:end */
 
 		function changeMaizeBreedingMethod() {
@@ -358,7 +360,7 @@
 		function showBulkSection(isBulk) {
 			'use strict';
 
-			if($('input[type=checkbox][name=methodChoice]:checked').val() !== 1) {
+			if($('input[type=checkbox][name=methodChoice]:checked').val() !== "1") {
 				$('.bulk-section').css('display', 'block');
 				$('.lines-section').css('display', 'block');
 			}

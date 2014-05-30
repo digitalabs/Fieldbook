@@ -579,18 +579,11 @@ padding-left: 20px; margin-top: 7px
    font-size: 10px;
 }
 .variates{
-	
-	background-color: blue;	
-	color: #FFFFFF;
-	
 	min-width: 130px;
 	max-width: 130px;
 }
 .factors{
-	
-	background-color: green;
-	color: #FFFFFF;
-		
+	background-color: #a4a4a4
 }
 .lead {
     font-size: 10pt;
@@ -603,22 +596,14 @@ padding-left: 20px; margin-top: 7px
 }
 
 /* For appearance */
-.component {
-	
+.component {	
 	line-height: 1.5em;
 	margin: 0 auto;
-	/*padding: 2em 0 3em;*/
 	width: 90%;
 	max-width: 1000px;
 	overflow: hidden;
 	max-height: none;
 }
-/*
-.component .filler {
-	font-family: "Blokk", Arial, sans-serif;
-	color: #d3d3d3;
-}
-*/
 table.make-sticky{
     border-collapse: collapse;    
     width: 100%;

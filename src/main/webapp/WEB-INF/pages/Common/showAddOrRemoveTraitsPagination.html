@@ -13,8 +13,12 @@ method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
 			</thead>
 			<tbody>
 				<tr th:class="${row.even}? 'even' : 'odd'" th:each="measurementRow, row: *{paginatedMeasurementRowList}">
-					<td th:if="${measurementData.editable == false}" style="vertical-center; padding: 0px; white-space: nowrap; padding-left: 5px; padding-right: 5px;" align="left" th:each="measurementData, rowIndex : ${measurementRow.dataList}" >
-						<label th:if="${measurementData.editable == false}" th:text="${measurementData.value}"></label>
+					<td th:if="${measurementData.editable == false}" th:switch="${measurementData.measurementVariable.termId}" style="vertical-center; padding: 0px; white-space: nowrap; padding-left: 5px; padding-right: 5px;" align="left" th:each="measurementData, rowIndex : ${measurementRow.dataList}" >
+						
+						<a th:case="8240" class="gid-link" href="javascript: void(0)" th:text="${measurementData.value}"></a>
+						<a th:case="8250" class="desig-link" href="javascript: void(0)" th:text="${measurementData.value}"></a>
+						<label th:case="*" th:text="${measurementData.value}" ></label>
+						
 					</td>
 					<td th:if="${measurementData.editable == true}" style="vertical-align:center; " align="center" th:each="measurementData, rowIndex : ${measurementRow.dataList}" >
 
@@ -37,18 +41,7 @@ method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
 </form>
 
 <script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-paginator.min.js}"></script>
-<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-spinedit.js}"></script>
-<script type='text/javascript' th:inline="javascript">
-	var isIE = false;
-</script>
 
-<!--[if IE]>
-<script type="text/javascript">
-	isIE = true;
-	//any other IE specific stuff here
-</script>
-<![endif]-->
-<link th:href="@{/static/css/lib/bootstrap/bootstrap-spinedit.css}" rel="stylesheet"/>
 <script type='text/javascript' th:inline="javascript">
 //<![CDATA[
 
@@ -80,80 +73,24 @@ method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
 
 	$( document ).ready(function() {
 		$('.germplasm-measurement-list-table select').select2();
-		fixedTrHeight();
-
-		$('.variates-div').scroll(function(){
-
-			$('.factor-div').scrollTop($(this).scrollTop());
-
+		
+		$(".germplasm-measurement-list-table .desig-link").click(function() {
+			var gidValue = $(this).parent().parent().find(".gid-link").text();
+			$(this).data("gid", gidValue);
+			$(this).data("desig", $(this).text());
+			openGermplasmDetailsPopop($(this));
 		});
-		 //$("#freezeheader").freezeHeader({ 'height': '500px' });
-		 //setTimeout(function(){$('#hdfreezeheader').css('top', '0px')}, 450);
 
-
-		 $(window).resize(function() {
-		 	resizeWindowForIE();
-		 	syncTableHeight();
-		 });
-		 syncTableHeight();
-		 if(isIE){
-		 	resizeWindowForIE()
-		 }else{
-
-		 }
-
+		$(".germplasm-measurement-list-table .gid-link").click(function() {
+			var desigValue = $(this).parent().parent().find(".desig-link").text();
+			$(this).data("gid", $(this).text());
+			$(this).data("desig", desigValue);
+			openGermplasmDetailsPopop($(this));
 		});
-	function resizeWindowForIE(){
-		if(isIE){
-			$('.germplasm-measurement-list-table').css('width', $( window ).width() + "px");
-			$('.factor-div').css('min-width', '35.5%');
-			$('.factor-div').css('max-width', '35.5%');
-		}
-
-		syncTableHeight();
-	}
-	function syncTableHeight(){
-
-		var factorHeight = $('#factor-table').height();
-		var variateHeight = $('#variate-table').height();
-
-		if(factorHeight > variateHeight){
-			$('#variate-table').css('height', factorHeight+"px");
-			$('#variate-table tr').each(function(i) {
-				var tableOneRow = this;
-				var tableTwoRow = $('#factor-table tr').get(i);
-				$(this).height($(tableTwoRow).height());
-			});
-		}
-		else if(variateHeight > factorHeight){
-			$('#factor-table').css('height', variateHeight+"px");
-			$('#factor-table tr').each(function(i) {
-				var tableOneRow = this;
-				var tableTwoRow = $('#variate-table tr').get(i);
-				$(this).height($(tableTwoRow).height());
-			});
-		}
 
 
-
-	}
-	function fixedTrHeight(){
-			/*
-			$('#factor-table tr').each(function(index){
-				//console.log(index + " = " + $(this).height());
-				$('#variate-table tr').eq(index).css('height',$(this).height() + "px");
-			})
-
-			return;
-			*/
-			var max = 0;
-			$('.germplasm-measurement-list-table table tr').each(function() {
-				max = Math.max($(this).height(), max);
-			}).height(max);
-
-			$('.germplasm-measurement-list-table table tr').css('height', max+'px');
-
-		}
+	});
+	
 
 
 		function doReturn() {
@@ -162,24 +99,7 @@ method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
 
 		function validateCells(){
 			var noError = true;
-			$('.germplasm-measurement-list-table td input').each(function(){
-				if($(this).data('type') == 'N'){
-					if(isNaN(Number($(this).val()))){
-						showErrorMessage('page-message', "Please enter a numeric value for this variate");
-						moveToTopScreen();
-						var id = $(this).attr('id');
-						setTimeout(function() { $('#'+getJquerySafeId(id)).focus(); }, 10);
-						noError = false;
-						//console.log('false');
-						return false;
-					}
-				}
-			});
-			if(noError){
-				hideErrorMessage('page-message');
-			}
-		 //console.log('true');
-		 return noError;
+			return noError;
 		}
 
 

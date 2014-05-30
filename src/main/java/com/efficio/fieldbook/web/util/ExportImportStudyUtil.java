@@ -25,13 +25,16 @@ public class ExportImportStudyUtil {
 	}
 	
     public static String getCategoricalIdCellValue(String description, List<ValueReference> possibleValues) {
+    	return getCategoricalIdCellValue(description, possibleValues, false);
+    }
+    
+    public static String getCategoricalIdCellValue(String description, List<ValueReference> possibleValues, boolean isReturnOriginalValue) {
     	for (ValueReference possibleValue : possibleValues) {
-//    		if (description.equalsIgnoreCase(possibleValue.getDescription())) {
     		if (description.equalsIgnoreCase(possibleValue.getName())) {
     			return possibleValue.getId().toString();
     		}
     	}
-    	return "";
+    	return isReturnOriginalValue ? description : "";
     }
 
     public static List<Integer> getLocationIdsFromTrialInstances(Workbook workbook, int start, int end) {

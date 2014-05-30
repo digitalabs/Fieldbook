@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -36,10 +38,17 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
+import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.manager.api.GermplasmDataManager;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.springframework.stereotype.Service;
 
+import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
+import com.efficio.fieldbook.web.common.bean.ImportResult;
 import com.efficio.fieldbook.web.common.service.ExcelImportStudyService;
+import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
@@ -52,8 +61,14 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	private static final String TEMPLATE_SECTION_CONSTANT = "CONSTANT";
 	private static final String TEMPLATE_SECTION_VARIATE = "VARIATE";
 	
+	@Resource
+	private FieldbookService fieldbookMiddlewareService;
+	
+	@Resource
+	private ValidationService validationService;
+	
 	@Override
-	public int importWorkbook(Workbook workbook, String filename) throws WorkbookParserException {
+	public ImportResult importWorkbook(Workbook workbook, String filename) throws WorkbookParserException {
 		
 		try {
 			org.apache.poi.ss.usermodel.Workbook xlsBook = parseFile(filename);
@@ -65,14 +80,26 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			validate(xlsBook, workbook, observations);
 			
 			resetWorkbookObservations(workbook);
+			
+			List<GermplasmChangeDetail> changeDetailsList = new ArrayList<GermplasmChangeDetail>();
+			
 			Map<String, MeasurementRow> rowsMap = createMeasurementRowsMap(workbook.getObservations());
-			int mode = importDataToWorkbook(xlsBook, rowsMap, workbook.getFactors(), trialInstanceNumber, workbook.getObservations());
+			int mode = importDataToWorkbook(xlsBook, rowsMap, workbook.getFactors(), trialInstanceNumber, workbook.getObservations(), changeDetailsList);
+
+			try {
+				validationService.validateObservationValues(workbook);
+			} catch (MiddlewareQueryException e) {
+				resetWorkbookObservations(workbook);
+				return new ImportResult(e.getMessage());
+			}
+			
 			importTrialToWorkbook(xlsBook, trialObservations);
-			return mode;
+			return new ImportResult(mode, changeDetailsList);
+			
 			
 		} catch (WorkbookParserException e) {
 			throw e;
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new WorkbookParserException(e.getMessage());
@@ -102,12 +129,16 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	}
 	
 	private int importDataToWorkbook(org.apache.poi.ss.usermodel.Workbook xlsBook, Map<String, MeasurementRow> rowsMap, List<MeasurementVariable> variables, 
-			String trialInstanceNumber, List<MeasurementRow> observations) {
+			String trialInstanceNumber, List<MeasurementRow> observations, List<GermplasmChangeDetail> changeDetailsList)
+	throws MiddlewareQueryException {
+		
 		int mode = EDIT_ONLY;
 		if (rowsMap != null && !rowsMap.isEmpty()) {
 			Sheet observationSheet = xlsBook.getSheetAt(1);
 			int lastXlsRowIndex = observationSheet.getLastRowNum();
 			String indexes = getColumnIndexesFromXlsSheet(observationSheet, variables, trialInstanceNumber);
+			int desigColumn = findColumn(observationSheet, getColumnLabel(variables, TermId.DESIG.getId()));
+			int gidColumn = findColumn(observationSheet, getColumnLabel(variables, TermId.GID.getId()));
 			Row headerRow = observationSheet.getRow(0);
 			for (int i = 1; i <= lastXlsRowIndex; i++) {
 				Row xlsRow = observationSheet.getRow(i);
@@ -118,6 +149,20 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 					mode = ADD_ONLY;
 				} else if (wRow != null) {
 					rowsMap.remove(key);
+					
+					String originalDesig = wRow.getMeasurementDataValue(TermId.DESIG.getId());
+					String newDesig = xlsRow.getCell(desigColumn).getStringCellValue().trim();
+					
+					if (originalDesig != null && !originalDesig.equalsIgnoreCase(newDesig)) {
+						Integer newGid = fieldbookMiddlewareService.getGermplasmIdByName(newDesig);
+						if (newGid != null) {
+							int index = observations.indexOf(wRow);
+							String originalGid = wRow.getMeasurementDataValue(TermId.GID.getId());
+							GermplasmChangeDetail changeDetail = new GermplasmChangeDetail(index, originalDesig, originalGid, newDesig, newGid.toString());
+							changeDetailsList.add(changeDetail);
+						}
+					}
+					
 					for (int j = 0; j <= lastXlsColIndex; j++) {
 						Cell headerCell = headerRow.getCell(j);
 						if (headerCell != null) {
@@ -132,10 +177,10 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 										
 										if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
 											xlsValue = ExportImportStudyUtil.getCategoricalIdCellValue(String.valueOf(Double.valueOf(cell.getNumericCellValue()).intValue()), 
-													wData.getMeasurementVariable().getPossibleValues());
+													wData.getMeasurementVariable().getPossibleValues(), true);
 										}
 										else {
-											xlsValue = ExportImportStudyUtil.getCategoricalIdCellValue(cell.getStringCellValue(), wData.getMeasurementVariable().getPossibleValues());
+											xlsValue = ExportImportStudyUtil.getCategoricalIdCellValue(cell.getStringCellValue(), wData.getMeasurementVariable().getPossibleValues(), true);
 										}
 									} 
 									else if(cell.getCellType() == Cell.CELL_TYPE_NUMERIC){
@@ -189,7 +234,9 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 		}
 	}
 	
-	private void validate(org.apache.poi.ss.usermodel.Workbook xlsBook, Workbook workbook, List<MeasurementRow> observations) throws WorkbookParserException {
+	private void validate(org.apache.poi.ss.usermodel.Workbook xlsBook, Workbook workbook, List<MeasurementRow> observations) 
+			throws WorkbookParserException, MiddlewareQueryException {
+		
 		Sheet descriptionSheet = xlsBook.getSheetAt(0);
 		Sheet observationSheet = xlsBook.getSheetAt(1);
 		
@@ -378,6 +425,10 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 
     private String getColumnLabel(Workbook workbook, int termId) {
     	List<MeasurementVariable> variables = workbook.getMeasurementDatasetVariables();
+    	return getColumnLabel(variables, termId);
+    }
+    
+    private String getColumnLabel(List<MeasurementVariable> variables, int termId) {
     	for (MeasurementVariable variable : variables) {
     		if (variable.getTermId() == termId) {
     			return variable.getName();

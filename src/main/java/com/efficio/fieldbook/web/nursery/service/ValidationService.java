@@ -11,10 +11,12 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.service;
 
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
 public interface ValidationService {
 
+	boolean isValidValue(MeasurementVariable var, String value);
 	void validateObservationValues(Workbook workbook) throws MiddlewareQueryException;
 }

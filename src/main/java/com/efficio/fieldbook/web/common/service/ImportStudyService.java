@@ -12,7 +12,10 @@
 package com.efficio.fieldbook.web.common.service;
 
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
+
+import com.efficio.fieldbook.web.common.bean.ImportResult;
 
 public interface ImportStudyService {
 
@@ -21,5 +24,5 @@ public interface ImportStudyService {
 	final static int DELETE_ONLY = 2;
 	final static int MIXED = 3;
 	
-	int importWorkbook(Workbook workbook, String filename) throws WorkbookParserException;
+	ImportResult importWorkbook(Workbook workbook, String filename) throws WorkbookParserException;
 }

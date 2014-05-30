@@ -9,9 +9,11 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,11 +26,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
+import com.efficio.fieldbook.web.common.bean.ImportResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.StudySelection;
 import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
@@ -80,7 +85,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     		,@PathVariable int importType, BindingResult result, Model model) {
 
     	boolean isTrial = studyType.equalsIgnoreCase("TRIAL");
-    	Integer mode = ImportStudyService.EDIT_ONLY;
+    	ImportResult importResult = null;
     	StudySelection userSelection = getUserSelection(isTrial);
     	if(AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == importType){
     		MultipartFile file = form.getFile();
@@ -96,7 +101,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	    		try {
 	    			String filename = fileService.saveTemporaryFile(file.getInputStream());
 	    			
-					mode = fieldroidImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename));
+	    			importResult = fieldroidImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename));
 				} catch (WorkbookParserException e) {
 					LOG.error(e.getMessage(), e);
 					result.rejectValue("file", e.getMessage());
@@ -121,8 +126,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
              if(!result.hasErrors()){
 	    		try {
 	    			String filename = fileService.saveTemporaryFile(file.getInputStream());
-	    			
-					mode = excelImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename));
+	    			importResult = excelImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename));
 				} catch (WorkbookParserException e) {
 					LOG.error(e.getMessage(), e);
 					result.rejectValue("file", e.getMessage());
@@ -146,7 +150,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	    		try {
 	    			String filename = fileService.saveTemporaryFile(file.getInputStream());
 	    			
-					mode = dataKaptureImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename));
+	    			importResult = dataKaptureImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename));
 					
 				} catch (WorkbookParserException e) {
 					LOG.error(e.getMessage(), e);
@@ -169,13 +173,24 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	    	form.setNumberOfInstances(userSelection.getWorkbook().getTotalNumberOfInstances());
 	    	form.setTrialEnvironmentValues(transformTrialObservations(userSelection.getWorkbook().getTrialObservations(), nurserySelection.getTrialLevelVariableList()));
 	    	form.setTrialLevelVariables(nurserySelection.getTrialLevelVariableList());
-	    	resultsMap.put("isSuccess", 1);
-	    	resultsMap.put("mode", mode);
-	    	String reminderConfirmation = "";
-	    	if(mode != ImportStudyService.EDIT_ONLY){
-	    		reminderConfirmation = messageSource.getMessage("confirmation.import." + mode, null, locale);
+	    	
+	    	if(importResult.getErrorMessage() != null && !importResult.getErrorMessage().equalsIgnoreCase("")){
+	    		resultsMap.put("isSuccess", 0);	    		
+	    		resultsMap.put("error", importResult.getErrorMessage());
+	    	}else{
+	    		resultsMap.put("isSuccess", 1);
+		    	resultsMap.put("mode", importResult.getMode());
+		    	populateConfirmationMessages(importResult.getChangeDetails());
+		    	resultsMap.put("changeDetails", importResult.getChangeDetails());
+		    	resultsMap.put("errorMessage", importResult.getErrorMessage());
+		    	String reminderConfirmation = "";
+		    	if(importResult.getMode() != ImportStudyService.EDIT_ONLY){
+		    		reminderConfirmation = messageSource.getMessage("confirmation.import." + importResult.getMode(), null, locale);
+		    	}
+		    	resultsMap.put("message", reminderConfirmation);
 	    	}
-	    	resultsMap.put("message", reminderConfirmation);
+	    	
+	    	
     	}else{
     		resultsMap.put("isSuccess", 0);
     		String errorCode = result.getFieldError("file").getCode();
@@ -237,5 +252,38 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	userSelection.setMeasurementRowList(list);
     	
     	return "success";
+    }
+    
+    @ResponseBody
+    @RequestMapping(value="/apply/change/details", method=RequestMethod.POST)
+    public String applyChangeDetails(@RequestParam(value="data") String userResponses) throws Exception {
+    	UserSelection userSelection = (UserSelection) getUserSelection(false);
+    	ObjectMapper objectMapper = new ObjectMapper();
+    	GermplasmChangeDetail[] responseDetails = objectMapper.readValue(userResponses, GermplasmChangeDetail[].class);
+    	List<MeasurementRow> observations = userSelection.getWorkbook().getObservations();
+    	for (GermplasmChangeDetail responseDetail : responseDetails) {
+    		if (responseDetail.getIndex() < observations.size()) {
+    			MeasurementRow row = observations.get(responseDetail.getIndex());
+    			if (responseDetail.getStatus() == 1) { 
+    				MeasurementData desigData = row.getMeasurementData(TermId.DESIG.getId());
+    				desigData.setValue(responseDetail.getNewDesig());
+    				MeasurementData gidData = row.getMeasurementData(TermId.GID.getId());
+    				gidData.setValue(responseDetail.getNewGid());
+    			}
+    		}
+    	}
+    	
+    	return "success";
+    }
+    
+    private void populateConfirmationMessages(List<GermplasmChangeDetail> details) {
+    	if (details != null && !details.isEmpty()) {
+    		for (int index = 0 ; index < details.size() ; index++) {
+    			String[] args = new String[] {String.valueOf(index+1), String.valueOf(details.size()), 
+    					details.get(index).getOriginalDesig(), details.get(index).getNewDesig()};
+    			String message = messageSource.getMessage("import.change.desig.confirmation", args, LocaleContextHolder.getLocale());
+    			details.get(index).setMessage(message);
+    		}
+    	}
     }
 }

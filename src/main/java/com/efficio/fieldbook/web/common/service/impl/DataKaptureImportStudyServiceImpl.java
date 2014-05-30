@@ -12,6 +12,7 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
@@ -19,6 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
+import com.efficio.fieldbook.web.common.bean.ImportResult;
 import com.efficio.fieldbook.web.common.service.DataKaptureImportStudyService;
 import com.efficio.fieldbook.web.nursery.bean.CSVOziel;
 
@@ -29,7 +32,7 @@ public class DataKaptureImportStudyServiceImpl implements
 	private static final Logger LOG = LoggerFactory.getLogger(DataKaptureImportStudyServiceImpl.class);
 	
 	@Override
-	public int importWorkbook(Workbook workbook, String filename)
+	public ImportResult importWorkbook(Workbook workbook, String filename)
 			throws WorkbookParserException {
 
         try {
@@ -37,7 +40,7 @@ public class DataKaptureImportStudyServiceImpl implements
 
     		File file = new File(filename);
             csv.readDATACapture(file);
-            return EDIT_ONLY;
+            return new ImportResult(EDIT_ONLY, new ArrayList<GermplasmChangeDetail>());
             
         } catch (Exception e) {
         	LOG.error(e.getMessage());

@@ -296,6 +296,7 @@ public class EditNurseryController extends SettingsController {
     	Dataset dataset = (Dataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, studyLevelVariables, 
     	        form.getPlotLevelVariables(), baselineTraits, userSelection, form.getNurseryConditions());    	
     	Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);
+    	workbook.setOriginalObservations(userSelection.getWorkbook().getOriginalObservations());
     	    	
     	createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), form.getStudyId());
     	userSelection.setWorkbook(workbook);
@@ -313,6 +314,7 @@ public class EditNurseryController extends SettingsController {
                 userSelection.setWorkbook(workbook);
                 validationService.validateObservationValues(workbook);
                 fieldbookMiddlewareService.saveMeasurementRows(workbook);
+                workbook.setOriginalObservations(workbook.getObservations());
                 
                 resultMap.put("status", "1");
             } catch (MiddlewareQueryException e) {

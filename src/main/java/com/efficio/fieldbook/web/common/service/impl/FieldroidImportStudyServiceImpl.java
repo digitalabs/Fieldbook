@@ -12,11 +12,14 @@
 package com.efficio.fieldbook.web.common.service.impl;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.springframework.stereotype.Service;
 
+import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
+import com.efficio.fieldbook.web.common.bean.ImportResult;
 import com.efficio.fieldbook.web.common.service.FieldroidImportStudyService;
 import com.efficio.fieldbook.web.nursery.bean.CSVOziel;
 @Service
@@ -24,7 +27,7 @@ public class FieldroidImportStudyServiceImpl implements
 		FieldroidImportStudyService {
 
 	@Override
-	public void importWorkbook(Workbook workbook, String filename)
+	public ImportResult importWorkbook(Workbook workbook, String filename)
 			throws WorkbookParserException {
 	
 		File file = new File(filename);
@@ -33,7 +36,7 @@ public class FieldroidImportStudyServiceImpl implements
 		validate(csv, file, workbook);
 		
 		csv.readDATAnew(file);
-		
+		return new ImportResult(EDIT_ONLY, new ArrayList<GermplasmChangeDetail>());
 	}
 	
 	private void validate(CSVOziel csv, File file, Workbook workbook) throws WorkbookParserException {

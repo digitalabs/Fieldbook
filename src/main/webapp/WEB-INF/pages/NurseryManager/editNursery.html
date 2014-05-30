@@ -382,7 +382,9 @@
 				data: serializedData,
 				cache: false,
 				success: function(data) {
-					if ($("#nursery-germplasm-list").length > 0) {
+					if(data.status == -1){
+						showErrorMessage('page-message', data.errorMessage);
+					}else if ($("#nursery-germplasm-list").length > 0) {
 						submitCheckGermplasmList();
 					} else if (data.status == 1) {
 						$('#successMessageModalUpdate').modal({ backdrop: 'static', keyboard: true });

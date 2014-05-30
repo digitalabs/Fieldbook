@@ -21,6 +21,7 @@ import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 
+import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.StudySelection;
 
@@ -106,7 +107,9 @@ public class UserSelection extends StudySelection implements Serializable {
     
     private List<SettingDetail> deletedBaselineTraitsList;
     
-    private List<SettingDetail> deletedNurseryConditions;    
+    private List<SettingDetail> deletedNurseryConditions;
+    
+    private List<GermplasmChangeDetail> changeDetails;
     
 	
 	/**
@@ -626,5 +629,19 @@ public class UserSelection extends StudySelection implements Serializable {
         public void setDeletedPlotLevelList(List<SettingDetail> deletedPlotLevelList) {
             this.deletedPlotLevelList = deletedPlotLevelList;
         }
+
+		/**
+		 * @return the changeDetails
+		 */
+		public List<GermplasmChangeDetail> getChangeDetails() {
+			return changeDetails;
+		}
+
+		/**
+		 * @param changeDetails the changeDetails to set
+		 */
+		public void setChangeDetails(List<GermplasmChangeDetail> changeDetails) {
+			this.changeDetails = changeDetails;
+		}
 
  }

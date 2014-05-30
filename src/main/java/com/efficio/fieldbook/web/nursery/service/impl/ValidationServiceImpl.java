@@ -16,6 +16,7 @@ import java.util.Locale;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -34,11 +35,32 @@ public class ValidationServiceImpl implements ValidationService {
 	@Resource
 	private ResourceBundleMessageSource messageSource;
 	
-	private boolean isValidValue(MeasurementVariable var, String value) {
-		if (var.getDataType() != null && value != null && !"".equals(value.trim()) && var.getDataType().equalsIgnoreCase(DATA_TYPE_NUMERIC)) {
-			return NumberUtils.isNumber(value.trim());
+	@Override
+	public boolean isValidValue(MeasurementVariable var, String value) {
+		if (value == null || "".equals(value.trim())) {
+			return true;
 		}
-		return true;
+		if (var.getMinRange() != null && var.getMaxRange() != null) {
+			if (!NumberUtils.isNumber(value)) {
+				return false;
+			} else {
+				Double numericValue = Double.valueOf(value);
+				return numericValue <= var.getMaxRange() && numericValue >= var.getMinRange();
+			}
+			
+		} else if (var.getDataType() != null && value != null && !"".equals(value.trim()) && var.getDataType().equalsIgnoreCase(DATA_TYPE_NUMERIC)) {
+			return NumberUtils.isNumber(value.trim());
+			
+		} else if (var.getPossibleValues() != null && !var.getPossibleValues().isEmpty()) {
+			for (ValueReference ref : var.getPossibleValues()) {
+				if (ref.getId().equals(value)) {
+					return true;
+				}
+			}
+		} else {
+			return true;
+		}
+		return false;
 	}
 	
 	@Override

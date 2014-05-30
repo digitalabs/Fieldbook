@@ -69,14 +69,7 @@
 		$( document ).ready(function() {
 			displayStudyListTree("studyTree", "N");
 			changeBrowseNurseryButtonBehavior(false);
-
-			$('#studyTreeModal').on('hide.bs.modal', function() {
-			 //console.log('here');
-			 if( $('#create-nursery #studyTree').length != 0){
-			 	$('#create-nursery #studyTree').dynatree("getTree").reloadStudyTree();
-			 	changeBrowseGermplasmButtonBehavior(false);
-			 }
-			})
+			
 		});
 
 		function doStudyLazyLoad(node){
@@ -90,7 +83,7 @@
 					dataType: "json",
 					success: function(node) {
 						//do nothing
-						setTimeout(function(){node.focus()}, 50);
+						setTimeout(function(){node.focus(); node.expand()}, 50);
 						if(node.hasChildren()){
 							$('.delete-folder').addClass('disable-image');
 						}
@@ -108,6 +101,12 @@
 							}
 							else
 								changeBrowseNurseryButtonBehavior(true);
+						}
+						
+						if(choosingType == 2){
+							var nodeCentral = $('#studyTree').dynatree("getTree").getNodeByKey('CENTRAL');
+							if(nodeCentral != null)
+								nodeCentral.remove();
 						}
 					},
 					error: function(node, XMLHttpRequest, textStatus, errorThrown) {
@@ -133,6 +132,8 @@
 				additionalUrl = "/1";
 			}
 
+			url = url + additionalUrl;
+			
 			$("#" + treeName).dynatree({
 				title: treeName,
 				checkbox: false,
@@ -157,6 +158,12 @@
 				},
 
 				onPostInit: function (isReloading, isError) {
+					if(choosingType == 2){
+						var nodeCentral = $('#create-nursery #studyTree').dynatree("getTree").getNodeByKey('CENTRAL');
+						if(nodeCentral != null) {
+							nodeCentral.remove();
+						}
+					}
 				},
 
 				onActivate: function(node) {

@@ -2207,18 +2207,16 @@ function determineIfShowCloseAllStudyTabs() {
 
 function openStudyTree(type) {
 	$('#page-study-tree-message-modal').html('');
-	if (type == 2) {
-		var nodeCentral = $('#studyTree').dynatree("getTree").getNodeByKey(
-				'CENTRAL');
-		if (nodeCentral != null)
-			nodeCentral.remove();
-	}
+	if( $('#create-nursery #studyTree').length != 0){
+		 	$('#create-nursery #studyTree').dynatree("getTree").reloadStudyTree();
+		 	changeBrowseGermplasmButtonBehavior(false);
+	}	
+	
 	$('#studyTreeModal').modal({
 		backdrop : 'static',
 		keyboard : true
 	});
-	choosingType = type;
-
+	choosingType = type;	
 }
 function closeAllStudyTabs() {
 

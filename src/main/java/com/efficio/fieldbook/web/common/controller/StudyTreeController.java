@@ -42,15 +42,17 @@ public class StudyTreeController {
 	private StudyDataManager studyDataManager;
 
 	@ResponseBody
-	@RequestMapping(value = "/loadInitialNurseryTree", method = RequestMethod.GET)
-	public String loadInitialNurseryTree() {
-
+	@RequestMapping(value = "/loadInitialNurseryTree/{isFolderOnly}", method = RequestMethod.GET)
+	public String loadInitialNurseryTree(@PathVariable String isFolderOnly) {
+		boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;
 		try {
 			List<TreeNode> rootNodes = new ArrayList<TreeNode>();
 			rootNodes.add(new TreeNode("LOCAL", AppConstants.PROGRAM_NURSERIES.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG
 					.getString()));
-			rootNodes.add(new TreeNode("CENTRAL", AppConstants.PUBLIC_NURSERIES.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG
+			if(isFolderOnlyBool == false){
+				rootNodes.add(new TreeNode("CENTRAL", AppConstants.PUBLIC_NURSERIES.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG
 					.getString()));
+			}
 			return TreeViewUtil.convertTreeViewToJson(rootNodes);
 
 		} catch (Exception e) {

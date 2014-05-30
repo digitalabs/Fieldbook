@@ -1,5 +1,6 @@
 package com.efficio.fieldbook.web.common.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -228,5 +229,40 @@ public class ObservationMatrixController extends
 
     private StudySelection getUserSelection(boolean isTrial) {
     	return isTrial ? this.trialSelection : this.nurserySelection;
+    }
+    
+    @RequestMapping(value="/data/table", method = RequestMethod.GET)
+    public String demoPageDataTables(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
+    	
+    	StudySelection userSelection = getUserSelection(false);
+    
+    	form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
+    	
+        return super.showCustom(model, "/NurseryManager/datatable");
+    }
+    @ResponseBody
+    @RequestMapping(value="/data/table/ajax", method = RequestMethod.GET)
+    public Map<String, Object> demoPageDataTablesAjax(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
+    	
+    	StudySelection userSelection = getUserSelection(false);
+    	List<MeasurementRow> tempList = new ArrayList();
+    	for(int i = 0 ; i < 10; i++)
+    		tempList.addAll(userSelection.getMeasurementRowList());
+    	form.setMeasurementRowList(tempList);
+    	
+    	List<List<String>> masterList = new ArrayList();
+    	
+    	for(MeasurementRow row : tempList){
+    		List<String> dataList = new ArrayList();
+    		for(MeasurementData data : row.getDataList()){
+    			dataList.add(data.getValue());
+    		}
+    		masterList.add(dataList);
+    	}
+    	
+    	
+    	HashMap map = new HashMap();
+    	map.put("data", masterList);
+    	return map;
     }
 }

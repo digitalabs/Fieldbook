@@ -30,7 +30,7 @@
 		        "lengthMenu": [[50, 75, 100, -1], [50, 75, 100, "All"]],
 		        //"deferRender":    true,
 	            //"dom":            "frtiS",
-	             
+	              "bAutoWidth": true,
 		        "iDisplayLength": 100,
 		        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 		        	var toolTip = "GID: " + aData[1] + " Designation: " + aData[2];
@@ -42,7 +42,8 @@
 		            	console.log(toolTip);
 		            });
 		            */
-		            $(nRow).find('td:eq(0)').html('<a href="javascript: editExperiment('+aData[0]+', '+iDisplayIndexFull+')" class="edit-experiment">Edit</a>');
+		            
+		            $(nRow).find('td:eq(0)').html('<a href="javascript: editExperiment('+aData[0]+', '+iDisplayIndexFull+')" class="fbk-edit-experiment"></a>');
 		            return nRow;
 		        },
 		        "fnInitComplete": function(oSettings, json){

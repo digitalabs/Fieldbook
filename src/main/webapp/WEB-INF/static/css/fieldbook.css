@@ -1030,6 +1030,13 @@ div.sectionContainer {
 .fbk-search-data-table{
 	margin-right: 15px;
 	position: relative;
-    top: 5px;
-	
+    top: 5px;	
+}
+a.fbk-edit-experiment{	
+	background-image: url('../img/edit.png');
+	display:block;
+    height:20px;
+	margin-left: 5px;
+    text-align: center;
+    background-repeat:no-repeat;
 }

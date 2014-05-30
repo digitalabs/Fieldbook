@@ -245,7 +245,7 @@ public class ObservationMatrixController extends
     	
     	StudySelection userSelection = getUserSelection(false);
     	List<MeasurementRow> tempList = new ArrayList();
-    	for(int i = 0 ; i < 20; i++)
+    	//for(int i = 0 ; i < 20; i++)
     		tempList.addAll(userSelection.getMeasurementRowList());
     	form.setMeasurementRowList(tempList);
     	

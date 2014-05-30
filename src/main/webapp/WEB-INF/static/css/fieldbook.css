@@ -1021,4 +1021,6 @@ div.sectionContainer {
 .dl-horizontal dd {
 	padding: 4px;
 }
+.fbk-open-button-left-margin{
+	margin-left: 20px;
 }

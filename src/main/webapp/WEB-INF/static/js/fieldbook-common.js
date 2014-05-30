@@ -840,16 +840,7 @@ function openStudyOldFb(){
 function openStudy(tableName){	
 	
 	var count = 0;
-	/*
-	for(var index in selectedTableIds) {
-		//console.log( index + " : " + selectedTableIds[index]);
-		var tempVal = selectedTableIds[index];
-		if(tempVal != null){
-			idVal = tempVal;
-			count++;
-		}			
-	}
-	*/
+	
 	idVal = getCurrentStudyIdInTab();
 	count++;
 	if(count != 1){
@@ -860,36 +851,15 @@ function openStudy(tableName){
 	Spinner.toggle();
 	var openStudyHref = $('#open-study-url').attr("href");
 	
-//	if (tableName == "nursery-table") {
-		if(idVal != null){
-			location.href = openStudyHref + "/" + idVal;
-			Spinner.toggle();
-		}
-//	} else {
-//		$.ajax(
-//	    { url: openStudyHref,
-//	       type: "GET",
-//	       data: "",
-//	       cache: false,
-//	       success: function() {    	            
-//	         Spinner.toggle();  
-//	       }
-//	     });
-//	}
+	if(idVal != null){
+		location.href = openStudyHref + "/" + idVal;
+		Spinner.toggle();
+	}
 }
 
 function advanceNursery(tableName){
 	var count = 0;
-	/*
-	for(var index in selectedTableIds) {
-		//console.log( index + " : " + selectedTableIds[index]);
-		var tempVal = selectedTableIds[index];
-		if(tempVal != null){
-			idVal = tempVal;
-			count++;
-		}			
-	}
-	*/
+	
 	idVal = $("#createNurseryMainForm #studyId").val();
 	count++;
 	if(count != 1){
@@ -1620,6 +1590,7 @@ function populateVariableDetails(standardVariable) {
 		$("#dataType").html(checkIfNull(standardVariable.dataType));
 		$("#role").html(checkIfNull(standardVariable.role));
 		$("#cropOntologyId").html(checkIfNull(standardVariable.cropOntologyId));
+		$('#variableDetailsModal .modal-title').html(variableDetailsHeader + " " + checkIfNull(standardVariable.name));
 	} else {
 		$("#traitClass").html("");
 		$("#property").html("");
@@ -1628,6 +1599,7 @@ function populateVariableDetails(standardVariable) {
 		$("#dataType").html("");
 		$("#role").html("");
 		$("#cropOntologyId").html("");
+		$('#variableDetailsModal .modal-title').html();
 	}
 }
 

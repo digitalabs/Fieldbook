@@ -120,16 +120,6 @@ function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId){
          formatSelection: formatResult
 
     });
-			/*
-	$('#'+searchDivId).on("change", function(event){
-    	 
-    	var data = $('#'+searchDivId).select2('data');
-    	//console.log('do serch');
-    	 doOntologyTreeHighlight(treeDivId, data.key);
-    	 //console.log("1");
-    });
-	*/
-	
 	
 	var json = $.parseJSON(treeData);
 	
@@ -153,23 +143,10 @@ function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId){
 	        var selKeys = $.map(selNodes, function(node){
 	             return "[" + node.data.key + "]: '" + node.data.title + "'";
 	        });
-	        //$('.fbtree-focused').addClass("highlight");
 	        doOntologyTreeHighlight(treeName, node.data.key);
 	      },
 	      onSelect: function(select, node) {
-	        // Display list of selected nodes
-	    	  /*
-	        var s = node.tree.getSelectedNodes().join(", ");
-	        //alert("onSelect" + s);
-	        
-	        if(node.data.lastChildren == true){
-	        	alert("Trigger Ajax 2");
-	        	//$('.'+node.data.key).addClass("highlight");
-	        	
-	        	
-	        }
-	        */
-	        //$('.fbtree-focused').addClass("highlight");
+	        // Display list of selected nodes	    	
 	        doOntologyTreeHighlight(treeName, node.data.key);
 	      },
 	      onDblClick: function(node, event) {
@@ -228,13 +205,9 @@ function clearAndAppendOntologyDetailsTab(variableName, html){
 			else if($("#heading-modal").text() == addBaselineTraits)
 					$('#reminder-placeholder').html(reminderTraits);
 			else if ($("#heading-modal").text() == addTreatmentFactors)
-					$("#reminder-placeholder").html(reminderTreatmentFactors);
-				
-		}
-		
-		
-	}
-		
+					$("#reminder-placeholder").html(reminderTreatmentFactors);			
+		}		
+	}		
 }
 
 function viewTabs(variableName, variableId) {
@@ -246,20 +219,13 @@ function viewTabs(variableName, variableId) {
 		url: ontologyUrl + "details/" + variableId,
 		type: "get",
 		async: true,
-		//dataType: "json",
 		success: function(html) {
-			clearAndAppendOntologyDetailsTab(variableName, html);	
-			
-			
+			clearAndAppendOntologyDetailsTab(variableName, html);				
 			if($('#selectedStdVarId').length != 0){
-				
-				$('#selectedStdVarId').val(variableId);
-				
+				$('#selectedStdVarId').val(variableId);				
 			}
 			if($('#selectedName').length != 0){
-				
-				$('#selectedName').val(variableName);
-				
+				$('#selectedName').val(variableName);				
 			}
 			isSearchTab = false;
 		},
@@ -278,9 +244,7 @@ function doSave(combo) {
 		//get form data
 		var $form = $("#addVariableForm");
 		serializedData = $form.serialize();
-		
-		Spinner.toggle();
-		
+		Spinner.toggle();		
 		$.ajax({
 			url: ontologyUrl + "addVariable/" + combo,
 			type: "post",
@@ -291,31 +255,20 @@ function doSave(combo) {
 			    	//add the newly inserted ontology in its corresponding dropdown
 			    	recreateCombo(combo, data);	
 			    	showSuccessMessage(data.successMessage);
-			    	
 			    	if(data.addedNewTrait == "1"){
 			    		//we need to recreate the combo for the traitClass			    		
 			    		var newData = {id:data.traitId, name:data.traitName, definition:data.traitDefinition};
-			    		recreateCombo('TraitClass', newData);
-			    		
+			    		recreateCombo('TraitClass', newData);			    		
 			    	}
-			    	//$("#comboTraitClass").select2('data', dataVal).trigger('change');
 		       	} else {
 		       		showMessage(data.errorMessage);
 		       	}
-		   }, 
-		   error: function(jqXHR, textStatus, errorThrown){
-				console.log("The following error occured: " + textStatus, errorThrown);
-		   }, 
-		   complete: function(){ 
-			   Spinner.toggle();
+			    Spinner.toggle();
 		   } 
-		});
-		
+		});		
 		$("#page-message-modal").html("");
 	}
 }
-
-
 
 function setCorrespondingTraitClass(propertyId){
 	var dataVal = {id:'',text:'',description:''}; //default value
@@ -339,10 +292,8 @@ function setCorrespondingTraitClass(propertyId){
 			    	}
 			    	$("#cropOntologyId").val(data.cropOntologyId);
 			    	$("#comboManagePropTraitClass").select2('data', dataVal).trigger('change');
-			    	
 		       	}
-		   }
-		   
+		   }		   
 		});
 	}
 }
@@ -425,9 +376,7 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	        	  if (data.results.length === 0) 
 	        		  data.results.unshift({id:query.term,text:query.term});  
 	          }
-	            
-	            query.callback(data);
-	            
+	            query.callback(data);	            
 	        }
 	
 	    }).on("change", function(){
@@ -477,16 +426,10 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 					    			dataVal = traitClassesSuggestions_obj[count];			    			
 					    			break;
 					    		}			    			
-					    	}
-					    	
+					    	}					    	
 					    	$("#comboManageParentTraitClass").select2('data', dataVal).trigger('change');
-
-		    			}
-		    			
-				    	
-		    		}
-		    		
-		    		
+		    			}		    							    	
+		    		}		    				    		
 		    		if(name == 'ManageProperty'){
 		    			setCorrespondingTraitClass($("#combo"+name).select2("data").id);
 		    			if (parseInt($("#combo"+name).select2("data").id) > 0) {
@@ -497,17 +440,16 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 		    		}
 		    		
 	    		} else { //add mode
-	    			if(name != 'ManageProperty')
+	    			if(name != 'ManageProperty'){
 	    				clearForm(lowerCaseFirstLetter(name) + "Form");
-	    			
+	    			}
 			    	$("#" + lowerCaseFirstLetter(name) + "Id").val('');
 			    	$("#" + lowerCaseFirstLetter(name) + "Name").val($("#combo"+name).select2("data").id);
 		    		$("#btnAdd" + name).show();
 		    		$("#btnUpdate" + name).hide();
 		    		$("#btnDelete" + name).hide();
 		    		$("#" + lowerCaseFirstLetter(name) + "NameText").html($("#combo"+name).select2("data").id);
-		    		$("#manageLinkedVariableList").html("");
-		    		
+		    		$("#manageLinkedVariableList").html("");		    		
 	    		}
 	    	}	    	
 	    });
@@ -527,7 +469,6 @@ function enablePropertyFields() {
 }
 
 function retrieveLinkedVariables(ontologyType, ontologyId){
-	//console.log(ontologyType + " = " + ontologyId);
 	Spinner.toggle();
 	$.ajax({
 		url: ontologyUrl + "retrieve/linked/variable/" + ontologyType + "/"+ontologyId,
@@ -540,9 +481,7 @@ function retrieveLinkedVariables(ontologyType, ontologyId){
 	
 }
 
-
-function lowerCaseFirstLetter(string)
-{
+function lowerCaseFirstLetter(string){
     return string.charAt(0).toLowerCase() + string.slice(1);
 }
 
@@ -576,21 +515,9 @@ function loadTraitOntologyCombos(){
 	initializeVariable(traitClassesSuggestions, traitClassesSuggestions_obj, "description", "TraitClass", false);
 	//initialize main tree
 	loadTraitClassTree("traitClassBrowserTree", "comboTraitClass", "traitClassDescription", treeClassData, 'comboTraitClass');
-	
-	
-	//initializeVariable(traitClassesSuggestions, traitClassesSuggestions_obj, "definition", "ManageTraitClass", true);
-	//initializeVariable(traitClassesSuggestions, traitClassesSuggestions_obj, "definition", "ManageParentTraitClass", false);
-	//loadTraitClassTree("manageParentTraitClassBrowserTree", "comboManageParentTraitClass", "manageParentTraitClassDescription", treeClassData, "comboManageParentTraitClass");
-	//loadTraitClassTree("managePropTraitClassBrowserTree", "comboManagePropTraitClass", "managePropTraitClassDescription", treeClassData, "comboManagePropTraitClass");
-	/*
-	$("#comboManageParentTraitClass").on("change", function() {
-		filterPropertyCombo("manageParentTraitClassBrowserTree", "comboManageParentTraitClass", "manageParentTraitClassDescription", 
-				$("#comboManageParentTraitClass").val(), true);
-	});
-	*/
+		
 	$("#traitClassBrowserTree").dynatree("getTree").reload();
-	//$("#manageParentTraitClassBrowserTree").dynatree("getTree").reload();
-
+	
 }
 
 function clearFields() {
@@ -731,14 +658,11 @@ function doTraitClassTreeHighlight(treeName, comboName, descriptionName, nodeKey
 function getNodeKeyFromTraitClass(traitClassId, treeName){
 
 	var rootNode = $("#"+treeName).dynatree("getRoot");
-
-	//console.log(rootNode.data.key);
-
+	
 	var children=rootNode.getChildren() ;
 	var i = 0;
 	var nodeKey = '';
 	for(i=0;i<children.length;i++){
-		//console.log("child key:"+children[i].data.key);
 		nodeKey = getTreeChildren(children[i], traitClassId);
 		if(nodeKey != ''){
 			break;
@@ -747,21 +671,16 @@ function getNodeKeyFromTraitClass(traitClassId, treeName){
 	return nodeKey;
 }
 function getTreeChildren(child, traitClassId){
-	//console.log("parent child key:"+child.data.key);
 	var nodeKey = "";
 	if( child.data.key.indexOf(traitClassId) != -1){
-		//console.log("FOUND");
 		return child.data.key;
 	}
 	
 	var children=child.getChildren();
 	if(children != null){
-		//console.log("Children Length:"+children.length);
 		var i = 0;
 		for(i=0;i<children.length;i++){
-			//console.log("child key:"+children[i].data.key);	
 			if(children[i].data.key.indexOf(traitClassId) != -1){
-				//console.log("FOUND");
 				return children[i].data.key;
 			}
 			if(children[i].getChildren() != null)
@@ -776,18 +695,12 @@ function getTreeChildren(child, traitClassId){
 }
 
 function filterPropertyCombo(treeName, comboName, descriptionName, traitClassId, isFromDropDown){
-	//console.log("Load property of trait class id: "+traitClassId);
 	if(isFromDropDown){
 		$('#'+treeName).find("*").removeClass('highlight');
-		//if(traitClassId != 0){
 			var nodeKey = getNodeKeyFromTraitClass(traitClassId, treeName);
-			//console.log("Activate: "+ nodeKey);
-			//console.log(json);
-			//we need to highlight the tree
+			
 			$("#"+treeName).dynatree("getTree").activateKey(nodeKey);
-			
 			//then we highlight the nodeKey and its parents		
-			
 			if(nodeKey != ''){
 				var elem = nodeKey.split("_");
 				var count = 0;
@@ -800,16 +713,12 @@ function filterPropertyCombo(treeName, comboName, descriptionName, traitClassId,
 					$('.'+key).addClass('highlight');
 				}
 			}
-		//}
-		
-		
 		
 	}else {
 		var counter = 0;
 		for(counter = 0 ; counter < traitClassesSuggestions_obj.length ; counter++){
 			if(traitClassId == traitClassesSuggestions_obj[counter].id){
 				var dataVal = traitClassesSuggestions_obj[counter];
-				//console.log(dataVal);
 				$("#" + comboName).select2('data', dataVal);
 				$("#" + descriptionName).val(dataVal.description);
 				break;
@@ -840,24 +749,17 @@ function filterPropertyCombo(treeName, comboName, descriptionName, traitClassId,
 	                return ($.fn.select2.defaults.matcher(query.term,item.text));
 	              
 	              });
-	              
-	              //if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
-	              
-	                query.callback(data);
-	                
-	            }
-		
-	});
+	              	query.callback(data);	                
+	            }		
+		});
 		$("#propertyDescription").val("");
 		$("#cropOntologyDisplay").html("");
 	}
 	
 }
 function loadTraitClassTree(treeName, comboName, descriptionName, treeData, dropDownId){
-	//for triggering the start of search type ahead
-			
+	//for triggering the start of search type ahead			
 	var json = $.parseJSON(treeData);
-	
 	
 	$("#" + treeName).dynatree({
 	      checkbox: false,
@@ -882,16 +784,12 @@ function loadTraitClassTree(treeName, comboName, descriptionName, treeData, drop
 		  	        });
 		  	       
 		  	        doTraitClassTreeHighlight(treeName, comboName, descriptionName, node.data.key);
-	    	  }
-	        
-	      
-	        
-	    	
+	    	  }	        
 	      },
 	      onSelect: function(select, node) {
 	        // Display list of selected nodes		
 	    	  if(!$(this).hasClass('ui-dynatree-disabled')){
-	        doTraitClassTreeHighlight(treeName, comboName, descriptionName, node.data.key);
+	    		  doTraitClassTreeHighlight(treeName, comboName, descriptionName, node.data.key);
 	    	  }
 	      },
 	      onDblClick: function(node, event) {
@@ -908,9 +806,7 @@ function loadTraitClassTree(treeName, comboName, descriptionName, treeData, drop
 	        }
 	      },
 	    });
-
 }
-
 //function to retrieve the standard variable details of the selected variable
 function getStandardVariableDetails(variableId, text) {
 	if(isInt(variableId) && variableId != text){
@@ -1030,26 +926,23 @@ function setDeleteOperation(val) {
 function loadOntologyModal(ontologyName){
 		Spinner.toggle();
 		$.ajax(
-		         { url: ontologyUrl + ontologyName,
-		           type: "GET",
-		           data: "",
-		           success: function(html) {
-		        	   
-		             $("#manageOntologyModal"+" .modal-content").empty().append(html);
-		               
-		             $('#manageOntologyModal').modal('show');
-		             $.fn.modal.Constructor.prototype.enforceFocus = function () {};
-		             Spinner.toggle();
-		           }
-		         }
-		       );
-	}
+	         { url: ontologyUrl + ontologyName,
+	           type: "GET",
+	           data: "",
+	           success: function(html) {
+	        	   
+	             $("#manageOntologyModal"+" .modal-content").empty().append(html);
+	               
+	             $('#manageOntologyModal').modal('show');
+	             $.fn.modal.Constructor.prototype.enforceFocus = function () {};
+	             Spinner.toggle();
+	           }
+	         }
+	       );
+}
 
 function showErrorMessageInModal(messageDivId, message) {
-	//console.log(message);
-	$("#" + messageDivId).html(
-			"<div class='alert alert-danger'>"+ message +"</div>"
-	);
+	$("#" + messageDivId).html("<div class='alert alert-danger'>"+ message +"</div>");
 }
 function showSuccessMessageInModal(message) {
 	$("#page-message-modal").html(

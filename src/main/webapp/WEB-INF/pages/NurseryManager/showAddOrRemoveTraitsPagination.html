@@ -39,18 +39,7 @@ method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
 </form>
 
 <script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-paginator.min.js}"></script>
-<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-spinedit.js}"></script>
-<script type='text/javascript' th:inline="javascript">
-	var isIE = false;
-</script>
 
-<!--[if IE]>
-<script type="text/javascript">
-	isIE = true;
-	//any other IE specific stuff here
-</script>
-<![endif]-->
-<link th:href="@{/static/css/lib/bootstrap/bootstrap-spinedit.css}" rel="stylesheet"/>
 
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
@@ -99,14 +88,5 @@ method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
 		location.href = "/Fieldbook/" + $("#study-type").val() + "Manager";
 	}
 
-	function do_validation() {
-		if ($('#fileupload').val() == "") {
-			var message = /*[[#{common.error.file.no.file.selected}]]*/;
-			$("#page-modal-message").html("<div class='alert alert-danger'>"+ message +"</div>");
-			$('div.fileupload').parent().parent().addClass('has-error');
-			return false;
-		}
-		return true;
-	}
 	//]]>
 </script>

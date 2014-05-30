@@ -68,17 +68,8 @@
 				//display tree
 				displayOntologyTree(treeDivId, treeData, searchTreeData, 'srch-term');
 				$.fn.modal.Constructor.prototype.enforceFocus = function () {};
-				$(".tt-hint").css('top','3px');
-				$(".tt-hint").css('left','0px');
-				$("#srch-term").css('background-color','#FFFFFF');
 			});
 
-		$('#srch-term').on("keypress", function(e) {
-			if (e.keyCode == 13) {
-				//doSearchTree();
-				return false; // prevent the button click from happening
-			}
-		});
 		//]]>
 	</script>
 </div>

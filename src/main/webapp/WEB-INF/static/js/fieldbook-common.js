@@ -1755,3 +1755,14 @@ function recreateMethodComboAfterClose(comboName, data) {
 		initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFav_obj);
 	}
 }
+
+function changeBuildOption() {
+	'use strict';
+
+	if ($('#studyBuildOption').val() === '1') {
+		$('#choosePreviousStudy').hide();
+		clearSettings();
+	} else if ($('#studyBuildOption').val() === '2') {
+		$('#choosePreviousStudy').show();
+	}
+}

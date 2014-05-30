@@ -11,10 +11,6 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.util;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -1248,7 +1244,6 @@ public class SettingsUtil {
 		List<SettingDetail> nurseryConditionDetails = new ArrayList<SettingDetail>();
 		
 		List<String> basicFields = Arrays.asList(AppConstants.NURSERY_BASIC_REQUIRED_FIELDS.getString().split(","));
-		List<String> managementRequiredFields = Arrays.asList(AppConstants.NURSERY_MANAGEMENT_REQUIRED_FIELDS.getString().split(","));
 		
 	    if(conditions != null){
 	    	MeasurementVariable studyName = WorkbookUtil.getMeasurementVariable(conditions, TermId.STUDY_NAME.getId());
@@ -1256,9 +1251,7 @@ public class SettingsUtil {
 	    		details.setName(studyName.getValue());
 	    	}
 	    	basicDetails = convertWorkbookToSettingDetails(basicFields, conditions, fieldbookMiddlewareService, fieldbookService, userSelection, workbook);
-	    	managementDetails = convertWorkbookToSettingDetails(managementRequiredFields, conditions, fieldbookMiddlewareService, fieldbookService, userSelection, workbook);
-//	    	nurseryConditionDetails = convertWorkbookOtherStudyVariablesToSettingDetails(conditions, managementDetails.size(), userSelection, fieldbookMiddlewareService, fieldbookService);
-	    	managementDetails.addAll(convertWorkbookOtherStudyVariablesToSettingDetails(conditions, managementDetails.size(), userSelection, fieldbookMiddlewareService, fieldbookService));
+	    	managementDetails = convertWorkbookOtherStudyVariablesToSettingDetails(conditions, managementDetails.size(), userSelection, fieldbookMiddlewareService, fieldbookService);
 	    	nurseryConditionDetails = convertWorkbookOtherStudyVariablesToSettingDetails(constants, 1, userSelection, fieldbookMiddlewareService, fieldbookService, true);
 	    }
 		
@@ -1282,14 +1275,13 @@ public class SettingsUtil {
 		
 		List<SettingDetail> details = new ArrayList<SettingDetail>();
 		List<String> basicFields = Arrays.asList(AppConstants.NURSERY_BASIC_REQUIRED_FIELDS.getString().split(","));
-		List<String> managementRequiredFields = Arrays.asList(AppConstants.NURSERY_MANAGEMENT_REQUIRED_FIELDS.getString().split(","));
 		List<String> hiddenFields = Arrays.asList(AppConstants.HIDDEN_FIELDS.getString().split(","));
 		
 		if (conditions != null) {
 			for (MeasurementVariable condition : conditions) {
 				String id = String.valueOf(condition.getTermId());
 				String role = (isVariate) ? PhenotypicType.VARIATE.toString() : PhenotypicType.getPhenotypicTypeForLabel(condition.getLabel()).toString();
-				if (!basicFields.contains(id) && !managementRequiredFields.contains(id) && !hiddenFields.contains(id)) {
+				if (!basicFields.contains(id) && !hiddenFields.contains(id)) {
 					SettingVariable variable = getSettingVariable(condition.getName(), condition.getDescription(), condition.getProperty(),
 							condition.getScale(), condition.getMethod(), role, 
 							condition.getDataType(), condition.getDataTypeId(), condition.getMinRange(), condition.getMaxRange(), userSelection, fieldbookMiddlewareService);
@@ -1315,44 +1307,46 @@ public class SettingsUtil {
     	String studyName = studyNameVar != null ? studyNameVar.getValue() : "";
 		int datasetId = fieldbookMiddlewareService.getMeasurementDatasetId(workbook.getStudyId(), studyName);
     	for (String strFieldId : fields) {
-    		boolean found = false;
-			String label = AppConstants.getString(strFieldId + "_LABEL");
-			if (conditions != null) {
-	    		for (MeasurementVariable condition : conditions) {
-	    			if (NumberUtils.isNumber(strFieldId) ) {
-		    			if (condition.getTermId() == Integer.valueOf(strFieldId)) {
-							if (label == null || "".equals(label.trim())) {
-								label = condition.getName();
-							}
-							if (NumberUtils.isNumber(strFieldId) ) {
-								SettingVariable variable = getSettingVariable(label, condition.getDescription(), condition.getProperty(),
-										condition.getScale(), condition.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(condition.getLabel()).toString(), 
-										condition.getDataType(), condition.getDataTypeId(), condition.getMinRange(), condition.getMaxRange(), userSelection, fieldbookMiddlewareService);
-								variable.setCvTermId(Integer.valueOf(strFieldId));						
-								String value = fieldbookService.getValue(variable.getCvTermId(), HtmlUtils.htmlUnescape(condition.getValue()), 
-										condition.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId());
-								SettingDetail settingDetail = new SettingDetail(variable, null,
-										HtmlUtils.htmlUnescape(value), false);
-			    				index = addToList(details, settingDetail, index, fields, strFieldId);
+    		if (strFieldId != null && !"".equals(strFieldId)) {
+	    		boolean found = false;
+				String label = AppConstants.getString(strFieldId + "_LABEL");
+				if (conditions != null) {
+		    		for (MeasurementVariable condition : conditions) {
+		    			if (NumberUtils.isNumber(strFieldId) ) {
+			    			if (condition.getTermId() == Integer.valueOf(strFieldId)) {
+								if (label == null || "".equals(label.trim())) {
+									label = condition.getName();
+								}
+								if (NumberUtils.isNumber(strFieldId) ) {
+									SettingVariable variable = getSettingVariable(label, condition.getDescription(), condition.getProperty(),
+											condition.getScale(), condition.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(condition.getLabel()).toString(), 
+											condition.getDataType(), condition.getDataTypeId(), condition.getMinRange(), condition.getMaxRange(), userSelection, fieldbookMiddlewareService);
+									variable.setCvTermId(Integer.valueOf(strFieldId));						
+									String value = fieldbookService.getValue(variable.getCvTermId(), HtmlUtils.htmlUnescape(condition.getValue()), 
+											condition.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId());
+									SettingDetail settingDetail = new SettingDetail(variable, null,
+											HtmlUtils.htmlUnescape(value), false);
+				    				index = addToList(details, settingDetail, index, fields, strFieldId);
+				    			}
+								found = true;
+								break;
 			    			}
-							found = true;
-							break;
 		    			}
-	    			}
-	    			else { //special field
-	        			SettingVariable variable = new SettingVariable(label, null, null, null, null, null, null, null, null, null);
-	        			String value = getSpecialFieldValue(strFieldId, datasetId, fieldbookMiddlewareService);
-	        			SettingDetail settingDetail = new SettingDetail(variable, null, value, false);
-	        			index = addToList(details, settingDetail, index, fields, strFieldId);
-	        			found = true;
-	        			break;
-	    			}
+		    			else { //special field
+		        			SettingVariable variable = new SettingVariable(label, null, null, null, null, null, null, null, null, null);
+		        			String value = getSpecialFieldValue(strFieldId, datasetId, fieldbookMiddlewareService);
+		        			SettingDetail settingDetail = new SettingDetail(variable, null, value, false);
+		        			index = addToList(details, settingDetail, index, fields, strFieldId);
+		        			found = true;
+		        			break;
+		    			}
+		    		}
+				}
+	    		if (!found) { //required field but has no value
+	    			SettingVariable variable = new SettingVariable(label, null, null, null, null, null, null, null, null, null);
+	    			SettingDetail settingDetail = new SettingDetail(variable, null, "", false);
+	    			index = addToList(details, settingDetail, index, fields, strFieldId);
 	    		}
-			}
-    		if (!found) { //required field but has no value
-    			SettingVariable variable = new SettingVariable(label, null, null, null, null, null, null, null, null, null);
-    			SettingDetail settingDetail = new SettingDetail(variable, null, "", false);
-    			index = addToList(details, settingDetail, index, fields, strFieldId);
     		}
     	}
     	return details;

@@ -211,7 +211,6 @@ public enum AppConstants {
     ,BASIC_DETAILS_PNG
 
     ,NURSERY_BASIC_REQUIRED_FIELDS
-    ,NURSERY_MANAGEMENT_REQUIRED_FIELDS
     ,Entries_LABEL
     ,HasMeasurements_LABEL
     ,HasFieldMap_LABEL

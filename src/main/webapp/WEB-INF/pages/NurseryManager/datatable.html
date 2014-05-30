@@ -1,0 +1,32 @@
+<div>
+<div >
+<br />
+<br />
+<br />
+<form id="createNurseryForm" role="form-horizontal" class="form-horizontal" action="#"
+method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
+				<table id="test-table" >
+					<thead>
+						<tr>
+							<th style="white-space: nowrap" th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'" th:each="measurementVariable, rowIndex : *{measurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>
+						</tr>
+					</thead>
+					
+				</table>
+				</form>
+</div>
+</div>
+<link th:href="@{/static/css/jquery.dataTables.css}" rel="stylesheet"/>
+<script type="text/javascript" th:src="@{/static/js/jquery.dataTables.js}"></script>
+<script type='text/javascript' th:inline="javascript">
+	//<![CDATA[
+	
+	$( document ).ready(function() {
+		  $('#test-table').dataTable( {			  	
+		        "ajax": "/Fieldbook/Common/addOrRemoveTraits/data/table/ajax"
+		    } );
+	});
+
+
+	//]]>
+</script>

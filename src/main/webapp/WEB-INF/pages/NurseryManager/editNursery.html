@@ -2,6 +2,7 @@
 <div class="row">
 	<div id="advance-nursery-modal-div"></div>
 </div>
+
 <div class="col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org">
 	<div class="page-header">
 		<h1>MANAGE NURSERIES</h1>
@@ -15,9 +16,7 @@
 </div>
 
 <form id="createNurseryMainForm" role="form-horizontal" action="#" th:object="${createNurseryForm}" enctype="multipart/form-data">
-
 	<input type="hidden" th:field="*{studyId}" />
-
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
 			<img width="30" height="30" th:src="@{/static/img/new-nursery.png}" class="image-padding image-padding-with-text" /> 
@@ -25,26 +24,21 @@
 			<input type="button" onclick="submitForm();" th:value="#{common.form.save.text}" class="btn btn-info" />
 		</div>
 	</div>
-
 	<div class="row">
 		<div class="col-xs-12 col-md-12">&nbsp;</div>
 	</div>
-	
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
 			<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
 		</div>
 	</div>
-	
 	<div class="row">
 		<div class="col-xs-12 col-md-12">
-			
 			<label class="control-label section-toggle toggle-icon" id="basicDetails" data-target=".basicDetailsSection"> 
 				<img style="margin-left: -10px; display: none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" /> 
 				<img style="margin-left: -7px;" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" /> 
 				<strong class="sub-content-heading" th:text="#{nursery.create.nursery.basic.details}">BASIC DETAILS</strong>
 			</label>
-
 			<div style="float: right; margin-right: 50px;">
 				<div class="btn-group">
 					<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
@@ -148,7 +142,6 @@
 	<div class="row">
 		<div class="col-xs-12 col-md-12">&nbsp;</div>
 	</div>
-
 </form>
 
 <ul id="create-nursery-tab-headers" class="nav nav-tabs">
@@ -274,8 +267,7 @@
 	<div id="ontology-add-variable" th:include="/Fieldmap/includes/selectTrialInstanceModal"></div>
 </div>
 
-<div class="modal fade" id="manageTrialConfirmation" tabindex="-1" role="dialog" aria-labelledby="manageTrialConfirmationLabel"
-	aria-hidden="true">
+<div class="modal fade" id="manageTrialConfirmation" tabindex="-1" role="dialog" aria-labelledby="manageTrialConfirmationLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -288,12 +280,13 @@
 						<p th:text="#{fieldmap.confirmation.for.viewing.generated.fieldmap}">Do you wish to view the generated fieldmap(s)?</p>
 					</div>
 				</div>
-				<br />
+				<br/>
 				<div class="row">
 					<div class="col-xs-offset-5 col-xs-7 col-md-offset-5 col-md-7">
 						<div class="form-group">
 							<input type="hidden" id="fieldmapStudyId" name="fieldmapStudyId" /> 
-							<input type="hidden" id="fieldmapDatasetId" name="fieldmapDatasetId" /> <input type="hidden" id="fieldmapGeolocationId" name="fieldmapGeolocationId" />
+							<input type="hidden" id="fieldmapDatasetId" name="fieldmapDatasetId" /> 
+							<input type="hidden" id="fieldmapGeolocationId" name="fieldmapGeolocationId" />
 							<button type="button" class="btn btn-danger" th:value="#{common.form.yes.text}" onclick="javascript: proceedToCreateFieldMap();">No</button>
 							<button type="button" class="btn btn-primary" th:value="#{common.form.no.text}" onclick="javascript: proceedToGenerateFieldMap();">Yes</button>
 						</div>
@@ -405,14 +398,11 @@
 
 		function submitForm() {
 			if (validateCreateNursery()) {
-				//$("#createNurseryForm").submit();
 				if(!validateStartEndDate('nurseryLevelSettings')){
 					moveToTopScreen();
 					return false;
 				}
 				submitWorkbook();
-				//$("#germplasm-list-form").submit();
-				//$("#createNurseryForm").submit();
 			}else{
 				moveToTopScreen();
 			}

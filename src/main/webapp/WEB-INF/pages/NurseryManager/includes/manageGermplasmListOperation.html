@@ -8,6 +8,7 @@
 					Add New Folder
 				</h4>
 			</div>
+			<form onsubmit="return createGermplasmFolder();">
 			<div class="modal-body" id="manageCheckTypesModalBody">
 				<div class="row">
 					<div id="page-add-germplasm-folder-message-modal" class="col-xs-12 col-md-12">
@@ -24,6 +25,7 @@
 					</div>
 				</div>
 			</div>
+			</form>
 			<div class="modal-footer addVariable-footer">
 				<button type="button" class="btn btn-default" onclick="javascript: closeGermplasmModal('addGermplasmFolder')" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
 				<button type="button" class="btn btn-primary" aria-hidden="true" th:text="#{common.form.add.text}" onclick="javascript: createGermplasmFolder();">Ok</button>
@@ -177,6 +179,7 @@
 						}
 					});
 			}
+			return false;
 		}
 
 		function renameGermplasmFolder(object){

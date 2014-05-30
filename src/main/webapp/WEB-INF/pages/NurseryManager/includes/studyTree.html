@@ -182,6 +182,9 @@
 						}
 					}
 				},
+				onDblClick: function(node, event) {
+					chooseStudy();
+				},
 				dnd: {
 					onDragStart: function(node) {
 						/** This function MUST be defined to enable dragging for the tree.
@@ -210,6 +213,7 @@
 					},
 					onDragOver: function(node, sourceNode, hitMode) {
 					},
+					
 					onDrop: function(node, sourceNode, hitMode, ui, draggable) {
 						/** This function MUST be defined to enable dropping of items on
 						 * the tree.

@@ -1829,9 +1829,12 @@ function determineIfShowCloseAllStudyTabs(){
 
 function openStudyTree(type){
 	$('#page-study-tree-message-modal').html('');
+	if(type == 2){
+		$('#studyTree').dynatree("getTree").getNodeByKey('CENTRAL').remove();
+	}
 	$('#studyTreeModal').modal({ backdrop: 'static', keyboard: true });
-	//$('#studyTreeModal').modal('show');
 	choosingType = type;
+	
 }
 function closeAllStudyTabs(){
 	 

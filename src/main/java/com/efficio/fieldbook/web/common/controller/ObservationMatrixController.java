@@ -235,8 +235,7 @@ public class ObservationMatrixController extends
     public String demoPageDataTables(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
     	
     	StudySelection userSelection = getUserSelection(false);
-    
-    	form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
+    	form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());    
     	
         return super.showCustom(model, "/NurseryManager/datatable");
     }
@@ -246,7 +245,7 @@ public class ObservationMatrixController extends
     	
     	StudySelection userSelection = getUserSelection(false);
     	List<MeasurementRow> tempList = new ArrayList();
-    	for(int i = 0 ; i < 10; i++)
+    	for(int i = 0 ; i < 20; i++)
     		tempList.addAll(userSelection.getMeasurementRowList());
     	form.setMeasurementRowList(tempList);
     	
@@ -254,15 +253,37 @@ public class ObservationMatrixController extends
     	
     	for(MeasurementRow row : tempList){
     		List<String> dataList = new ArrayList();
+    		dataList.add(Integer.toString(row.getExperimentId()));
     		for(MeasurementData data : row.getDataList()){
-    			dataList.add(data.getValue());
+    			dataList.add(data.getDisplayValue());
     		}
+    		
     		masterList.add(dataList);
     	}
     	
     	
     	HashMap map = new HashMap();
     	map.put("data", masterList);
+    	return map;
+    }
+    @ResponseBody
+    @RequestMapping(value="/data/table/ajax/submit/{index}", method = RequestMethod.POST)
+    public Map<String, Object> demoPageDataTablesAjaxSubmit(@PathVariable int index) {
+    	
+    	StudySelection userSelection = getUserSelection(false);
+    	List<MeasurementRow> tempList = new ArrayList();
+    	tempList.addAll(userSelection.getMeasurementRowList());
+
+    	MeasurementRow row = tempList.get(index);
+		List<String> dataList = new ArrayList();
+		dataList.add(Integer.toString(row.getExperimentId()));
+		for(MeasurementData data : row.getDataList()){
+			dataList.add(data.getDisplayValue() + "Edited");
+		}
+    	
+    	
+    	HashMap map = new HashMap();
+    	map.put("data", dataList);
     	return map;
     }
 }

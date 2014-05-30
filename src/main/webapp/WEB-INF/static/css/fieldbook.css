@@ -190,10 +190,10 @@ table .even{
   
   
 
-table .field-map-highlight {
+table .highlight, table .field-map-highlight {
     /* background-color: #BED6B2;*/
 }
-table .field-map-highlight td{
+table .highlight td, table .field-map-highlight td{
      background-color: #BED6B2;
 }
 .pagination {
@@ -304,7 +304,7 @@ table{
     border-bottom-left-radius: 10px;
 }
 .table-curved > :last-child > :last-child > :last-child {
-    border-bottom-right-radius: 10px;
+    border-bottom-right-radius: 0px;
 }
 .form-group {
     margin-bottom: 6px;
@@ -1026,4 +1026,10 @@ div.sectionContainer {
 }
 .nav-tabs li a{
 	font-weight: bold;
+}
+.fbk-search-data-table{
+	margin-right: 15px;
+	position: relative;
+    top: 5px;
+	
 }

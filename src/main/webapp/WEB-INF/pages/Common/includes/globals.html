@@ -1,7 +1,19 @@
 <div layout:fragment="page-script">
 	<script type="text/javascript" th:inline="javascript">
 		//<![CDATA[
-		var variableDetailsHeader = /*[[#{variable.details.heading}]]*/;		
+		var variableDetailsHeader = /*[[#{variable.details.heading}]]*/ '',	
+		startDateRequiredError = /*[[#{start.end.date.validation.start.date.required}]]*/ '',
+		startDateRequiredEarlierError = /*[[#{start.end.date.validation.start.date.required.earlier}]]*/ '',
+		addNurseryLevelSettings = /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
+		addPlotLevelSettings = /*[[#{nursery.managesettings.add.plot.level.settings}]]*/ '',
+		addBaselineTraits = /*[[#{nursery.managesettings.add.baseline.traits}]]*/ '',
+		addSelectionVariates = /*[[#{nursery.managesettings.add.selection.variates}]]*/ '',
+		addNurseryConditions = /*[[#{nursery.managesettings.add.nursery.conditions}]]*/ '',
+		reminderNursery = /*[[#{nursery.reminder.add.nursery.settings}]]*/ '',
+		reminderPlot = /*[[#{nursery.reminder.add.plot.settings}]]*/ '',
+		reminderTraits = /*[[#{nursery.reminder.add.trait.settings}]]*/ '',
+		reminderSelectionVariates = /*[[#{nursery.reminder.add.selection.variates}]]*/ '',
+		reminderNurseryCondtions = /*[[#{nursery.reminder.add.nursery.conditions}]]*/ '';
 		//]]>
 	</script>
 </div>

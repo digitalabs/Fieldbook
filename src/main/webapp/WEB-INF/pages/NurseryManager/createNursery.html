@@ -170,7 +170,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 						</div>
 					</div>
 					<div class="modal-footer">
-						<a id="btnOK" href="" th:href="@{/NurseryManager}" th:text="#{common.form.ok.text}" class="btn btn-primary">OK</a>
+						<a id="btnOK" href="" th:href="@{/NurseryManager/editNursery}" th:text="#{common.form.ok.text}" class="btn btn-primary">OK</a>
 					</div>
 				</div>
 			</div>
@@ -208,20 +208,6 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 		// FIXME These variables should not be global. Dangerous to fix right now,
 		// because they are used in so many other files. Don't use ignore! This should be fixed!
 
-		/* jshint ignore:start */
-		var startDateRequiredError = /*[[#{start.end.date.validation.start.date.required}]]*/ '',
-			startDateRequiredEarlierError = /*[[#{start.end.date.validation.start.date.required.earlier}]]*/ '',
-			addNurseryLevelSettings = /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
-			addPlotLevelSettings = /*[[#{nursery.managesettings.add.plot.level.settings}]]*/ '',
-			addBaselineTraits = /*[[#{nursery.managesettings.add.baseline.traits}]]*/ '',
-			addSelectionVariates = /*[[#{nursery.managesettings.add.selection.variates}]]*/ '',
-			addNurseryConditions = /*[[#{nursery.managesettings.add.nursery.conditions}]]*/ '',
-			reminderNursery = /*[[#{nursery.reminder.add.nursery.settings}]]*/ '',
-			reminderPlot = /*[[#{nursery.reminder.add.plot.settings}]]*/ '',
-			reminderTraits = /*[[#{nursery.reminder.add.trait.settings}]]*/ '',
-			reminderSelectionVariates = /*[[#{nursery.reminder.add.selection.variates}]]*/ '',
-			reminderNurseryCondtions = /*[[#{nursery.reminder.add.nursery.conditions}]]*/ '';
-		/* jshint ignore:end */
 
 		function submitGermplasmList(){
 			'use strict';
@@ -239,7 +225,9 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 				type: 'POST',
 				data: serializedData,
 				cache: false,
-				success: function() {
+				success: function(dataResponse) {
+					var successHref = $('#successMessageModal #btnOK').attr('href') +"/"+dataResponse;
+					$('#successMessageModal #btnOK').attr('href', successHref );
 					$('#successMessageModal').modal({ backdrop: 'static', keyboard: true });
 				},
 				complete: function() {

@@ -240,10 +240,9 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             userSelection.getWorkbook().setObservations(userSelection.getMeasurementRowList());
         }
 
-    	//validationService.validateObservationValues(userSelection.getWorkbook());
-        dataImportService.saveDataset(userSelection.getWorkbook(), true);
+        int studyId = dataImportService.saveDataset(userSelection.getWorkbook(), true);
 		
-	return "success";
+        return Integer.toString(studyId);
     }
 
     private List<ImportedGermplasm> cleanGermplasmList(List<ImportedGermplasm> primaryList, 

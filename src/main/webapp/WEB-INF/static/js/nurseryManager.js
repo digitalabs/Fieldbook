@@ -1,4 +1,4 @@
-/*global getJquerySafeId, showErrorMessage, oldLineSelected, changeAdvanceBreedingMethod, setCorrecMethodValues, noMethodVariatesError, oldMethodSelected, msgSamplePlotError, msgHarvestDateError, noLineVariatesError, setCorrectMethodValues, methodSuggestionsFav_obj, isInt, breedingMethodId*/
+/*global getJquerySafeId, showErrorMessage, oldLineSelected, changeAdvanceBreedingMethod, setCorrecMethodValues, noMethodVariatesError, oldMethodSelected, msgSamplePlotError, msgHarvestDateError, noLineVariatesError, setCorrectMethodValues, methodSuggestionsFav_obj, isInt, breedingMethodId, oldMethodSelected*/
 function checkMethod() {
 	'use strict';
 	if ($('input[type=checkbox][name=methodChoice]:checked').val() == 1) {
@@ -24,14 +24,13 @@ function checkMethod() {
 			$('#methodIdFavorite').select2('enable', false);
 			$('#methodIdAll').select2('enable', false);
 		}
-		oldMethodSelected = $('#' + getJquerySafeId("advanceBreedingMethodId"))
-				.val();
+		oldMethodSelected = $('#' + getJquerySafeId("advanceBreedingMethodId")).val();
 		$('#methodSelected').val($('#defaultMethodId').val());
 		setCorrectMethodValues(false);
 		// we show the bulk and lines section
 		$('.bulk-section').css('display', 'block');
 		$('.lines-section').css('display', 'block');
-		if ($("#methodVariateId").has("option").length == 0) {
+		if ($("#methodVariateId").has("option").length === 0) {
 			$('input[type=checkbox][name=methodChoice]').prop('checked', true);
 			$('input[type=checkbox][name=methodChoice]').change();
 			showErrorMessage("page-message", noMethodVariatesError);
@@ -93,7 +92,7 @@ function lineMethod() {
 		$('#lineSelected').val(1);
 		$("#line-variates-section").show();
 		$(".lines-per-plot-section").hide();
-		if ($("#lineVariateId").has("option").length == 0) {
+		if ($("#lineVariateId").has("option").length === 0) {
 			$('input[type=checkbox][name=lineChoice]').prop('checked', true);
 			$('input[type=checkbox][name=lineChoice]').change();
 			showErrorMessage("page-message", noLineVariatesError);
@@ -104,7 +103,7 @@ function lineMethod() {
 function validateAdvanceNursery() {
 	// validate number of sample per plot
 	var numberOfSamplePerPlot = $('#lineSelected').val();
-	if (numberOfSamplePerPlot == '') {
+	if (numberOfSamplePerPlot === '') {
 		showErrorMessage('page-message', msgSamplePlotError);
 		return false;
 	}
@@ -117,12 +116,12 @@ function validateAdvanceNursery() {
 		showErrorMessage('page-message', msgSamplePlotError);
 		return false;
 	}
-	if ($('#harvestDate').val() == '') {
+	if ($('#harvestDate').val() === '') {
 		showErrorMessage('page-message', msgHarvestDateError);
 		return false;
 	}
 
-	if ($('#namingConvention').val() == 3 && $('#breedingMethodId').val() == 0) {
+	if ($('#namingConvention').val() === '3' && $('#breedingMethodId').val() === '0') {
 		showErrorMessage('page-message', msgMethodError);
 		return false;
 	}
@@ -173,7 +172,7 @@ function showCorrectMethodCombo() {
 	// if show favorite Method is checked, hide all field locations, else, show
 	// only favorite methods
 	var methodSelect = false;
-	if ($('input[type=checkbox][name=methodChoice]:checked').val() == 1)
+	if ($('input[type=checkbox][name=methodChoice]:checked').val() === '1')
 		methodSelect = true;
 
 	if (isChecked) {
@@ -226,10 +225,10 @@ function recreateLocationCombo() {
 
 	var inventoryPopup = false;
 	var advancePopup = false;
-	if ($('#addLotsModal').length != 0 && $('#addLotsModal').hasClass('in')){
+	if ($('#addLotsModal').length !== 0 && $('#addLotsModal').hasClass('in')){
 		inventoryPopup = true;
 	}
-	else if ($('#advanceNurseryModal').length != 0 && $('#advanceNurseryModal').hasClass('in')) {
+	else if ($('#advanceNurseryModal').length !== 0 && $('#advanceNurseryModal').hasClass('in')) {
 		advancePopup = true;
 	}
 
@@ -254,7 +253,7 @@ function recreateLocationCombo() {
 							} else {
 								setComboValues(locationSuggestions_obj, $("#inventoryMethodIdAll").val(),"inventoryMethodIdAll");
 							}
-						} else if (advancePopup == true
+						} else if (advancePopup === true
 								|| selectedLocationAll != null) {
 							// recreate the select2 combos to get updated list
 							// of locations
@@ -496,11 +495,11 @@ function getIdNameCounterpart(selectedVariable, idNameCombinationVariables) {
 	// return the id or name counterpart of the selected variable if it is in
 	// the combination list
 	$.each(idNameCombinationVariables, function(index, item) {
-		if (parseInt(item.split("|")[0], 10) == parseInt(selectedVariable, 10)) {
+		if (parseInt(item.split("|")[0], 10) === parseInt(selectedVariable, 10)) {
 			inList = parseInt(item.split("|")[1], 10);
 			return false;
 		}
-		if (parseInt(item.split("|")[1], 10) == parseInt(selectedVariable, 10)) {
+		if (parseInt(item.split("|")[1], 10) === parseInt(selectedVariable, 10)) {
 			inList = parseInt(item.split("|")[0], 10);
 			return false;
 		}
@@ -512,7 +511,7 @@ function getIdCounterpart(selectedVariable, idNameCombinationVariables) {
 	var inList = selectedVariable;
 	// return the id counterpart of the variable selected if it is in the list
 	$.each(idNameCombinationVariables, function(index, item) {
-		if (parseInt(item.split("|")[1], 10) == parseInt(selectedVariable, 10)) {
+		if (parseInt(item.split("|")[1], 10) === parseInt(selectedVariable, 10)) {
 			inList = parseInt(item.split("|")[0], 10);
 			return false;
 		}
@@ -539,7 +538,7 @@ function addVariableToList() {
 	var ctr;
 
 	// get the last counter for the selected variables and add 1
-	if (rowCount == 0) {
+	if (rowCount === 0) {
 		ctr = 0;
 	} else {
 		var lastVarId = $(
@@ -1062,17 +1061,16 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 	var possibleValues_obj = [];
 	var defaultJsonVal = null;
 
-	$
-			.each(
+	$.each(
 					possibleValues,
 					function(index, value) {
 						var jsonVal;
-						if (value.id != undefined) {
+						if (value.id !== undefined) {
 							jsonVal = {
 								'id' : value.key,
 								'text' : value.description
 							};
-						} else if (value.locid != undefined) {
+						} else if (value.locid !== undefined) {
 							jsonVal = {
 								'id' : value.locid,
 								'text' : value.lname
@@ -1085,9 +1083,9 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 						}
 
 						possibleValues_obj.push(jsonVal);
-						if (defaultValue != null
-								&& defaultValue != ''
-								&& ((defaultValue == value.key
+						if (defaultValue !== null
+								&& defaultValue !== ''
+								&& ((defaultValue === value.key
 										|| defaultValue == value.locid || defaultValue == value.mid) || (defaultValue == value.name
 										|| defaultValue == value.lname || defaultValue == value.mname))) {
 							defaultJsonVal = jsonVal;
@@ -1095,7 +1093,7 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 
 					});
 
-	possibleValues_obj = sortByKey(possibleValues_obj, "text");
+	//possibleValues_obj = sortByKey(possibleValues_obj, "text");
 
 	if (isLocation) {
 		$(name).select2(
@@ -1371,7 +1369,7 @@ function recreateSelect2Combo(index, row, selectedVal, isFavoriteChecked, name,
 			+ "' style='display:none'>" + possibleValuesJson + "</div>";
 
 	// div containing the favorite possible values
-	if (possibleValuesFavoriteJson != "") {
+	if (possibleValuesFavoriteJson !== "") {
 		newCell = newCell + "<div id='possibleValuesFavoriteJson"
 				+ posValSuffix + index + "' class='possibleValuesFavoriteJson"
 				+ posValSuffix + "' style='display:none'>"
@@ -1394,7 +1392,7 @@ function recreateSelect2Combo(index, row, selectedVal, isFavoriteChecked, name,
 	}
 
 	// set values for location
-	if (parseInt(cvTermId) == parseInt(locationId)) {
+	if (parseInt(cvTermId, 10) === parseInt(locationId, 10)) {
 		methodName = "toggleLocationDropdown";
 		favoriteLabel = showFavoriteLocationLabel;
 		managePopupLabel = manageLocationLabel;
@@ -1402,8 +1400,8 @@ function recreateSelect2Combo(index, row, selectedVal, isFavoriteChecked, name,
 	}
 
 	// add checkbox and manage location/method links
-	if (parseInt(cvTermId) == parseInt(breedingMethodId)
-			|| parseInt(cvTermId) == parseInt(locationId)) {
+	if (parseInt(cvTermId, 10) === parseInt(breedingMethodId, 10)
+			|| parseInt(cvTermId, 10) === parseInt(locationId, 10)) {
 		newCell = newCell
 				+ "<div class='possibleValuesDiv'><input type='checkbox' id='"
 				+ name + index + ".favorite1'" + " name='" + name + "[" + index
@@ -1420,11 +1418,11 @@ function recreateSelect2Combo(index, row, selectedVal, isFavoriteChecked, name,
 	$($(row).find(".2nd")).html(newCell);
 
 	// recreate the select2 object
-	if (parseInt(cvTermId) == parseInt(locationId)) {
+	if (parseInt(cvTermId, 10) === parseInt(locationId, 10)) {
 		initializePossibleValuesCombo($.parseJSON(possibleValuesJson), "#"
 				+ getJquerySafeId(name + index + ".value"), showAll,
 				selectedVal);
-	} else if (parseInt(cvTermId) == parseInt(breedingMethodId)) {
+	} else if (parseInt(cvTermId, 10) === parseInt(breedingMethodId, 10)) {
 		initializePossibleValuesCombo($.parseJSON(possibleValuesJson), "#"
 				+ getJquerySafeId(name + index + ".value"), false, selectedVal);
 	} else {
@@ -1457,7 +1455,7 @@ function hasEmptyNurseryValue() {
 	var name = '';
 	$('.numeric-input').each(function() {
 		$(this).val($.trim($(this).val()));
-		if (hasError == false && $(this).val() != '' && isNaN($(this).val())) {
+		if (hasError === false && $(this).val() !== '' && isNaN($(this).val())) {
 			hasError = true;
 			name = $(this).parent().parent().find('.control-label').html();
 
@@ -1581,7 +1579,7 @@ function initializeDateAndSliderInputs() {
 }
 
 function checkPlantsSelected() {
-	if (parseInt($("#plotsWithPlantsSelected").val()) == 0) {
+	if (parseInt($("#plotsWithPlantsSelected").val()) === 0) {
 		showErrorMessage('page-message', msgEmptyListError);
 		$("#lineChoice1").prop("checked", true);
 	}
@@ -1622,7 +1620,7 @@ function openUsePreviousNurseryModal() {
 
 function choosePreviousNursery(studyId) {
 
-	if ($("#chooseSettingsDiv").length != 0) {
+	if ($("#chooseSettingsDiv").length !== 0) {
 		url = "/Fieldbook/NurseryManager/createNursery/nursery/";
 	}
 
@@ -1633,7 +1631,7 @@ function choosePreviousNursery(studyId) {
 		cache : false,
 		data : "",
 		success : function(html) {
-			if ($("#chooseSettingsDiv").length != 0) {
+			if ($("#chooseSettingsDiv").length !== 0) {
 				$("#chooseSettingsDiv").html(html);
 			} else {
 				$('.container .row').first().html(html);
@@ -1644,7 +1642,7 @@ function choosePreviousNursery(studyId) {
 }
 function isStudyNameUnique() {
 	var studyId = '0';
-	if ($('#createNurseryMainForm #studyId').length != 0)
+	if ($('#createNurseryMainForm #studyId').length !== 0)
 		studyId = $('#createNurseryMainForm #studyId').val();
 	var studyName = $.trim($('#' + getJquerySafeId('basicDetails0.value'))
 			.val());
@@ -1683,17 +1681,17 @@ function validateCreateNursery() {
 
 	var startDate = $("#" + getJquerySafeId("basicDetails.value2")).val();
 
-	if (isStudyNameUnique() == false) {
+	if (isStudyNameUnique() === false) {
 		hasError = true;
 		customMessage = "Name should be unique";
-	} else if ($("#folderId").val() == '') {
+	} else if ($("#folderId").val() === '') {
 		hasError = true;
 		name = $("#folderLabel").text();
 	} else if (startDate == '') {
 		// validate creation date
 		hasError = true;
 		name = "Creation Date";
-	} else if ($('#checkId').val() == '') {
+	} else if ($('#checkId').val() === '') {
 		hasError = true;
 		customMessage = checkTypeIsRequired;
 	} else {
@@ -1729,10 +1727,10 @@ function validateCreateNursery() {
 
 	if (hasError) {
 		var errMsg = '';
-		if (name != '')
+		if (name !== '')
 			errMsg = name.replace('*', '').replace(":", "") + " "
 					+ nurseryFieldsIsRequired;
-		if (customMessage != '')
+		if (customMessage !== '')
 			errMsg = customMessage;
 		showErrorMessage('page-message', errMsg);
 		return false;
@@ -1802,30 +1800,30 @@ function validateCreateNursery() {
 			}
 		}
 
-		if (isInt($("#startIndex2").val()) == false) {
+		if (isInt($("#startIndex2").val()) === false) {
 			showErrorMessage('page-message',
 					"Position should be a whole number");
 			return false;
 		}
-		if (isInt($("#interval2").val()) == false) {
+		if (isInt($("#interval2").val()) === false) {
 			showErrorMessage('page-message',
 					"Interval should be a whole number");
 			return false;
 		}
 		var totalGermplasms = $('#totalGermplasms').val();
-		if (parseInt($("#startIndex2").val()) < 0
-				|| parseInt($("#startIndex2").val()) > totalGermplasms) {
+		if (parseInt($("#startIndex2").val(), 10) < 0
+				|| parseInt($("#startIndex2").val(), 10) > totalGermplasms) {
 			showErrorMessage('page-message', "Position should be between 1 to "
 					+ totalGermplasms);
 			return false;
 		}
-		if (parseInt($("#interval2").val()) < 0) {
+		if (parseInt($("#interval2").val(), 10) < 0) {
 			showErrorMessage('page-message', "Interval should be between 1 to "
 					+ totalGermplasms);
 			return false;
 		}
 		var totalNumberOfChecks = $('#totalNumberOfChecks').val();
-		if (parseInt($("#interval2").val()) <= totalNumberOfChecks) {
+		if (parseInt($("#interval2").val(), 10) <= totalNumberOfChecks) {
 			showErrorMessage('page-message',
 					"Interval should be greater than the number of checks ("
 							+ totalNumberOfChecks + ")");
@@ -1856,7 +1854,7 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
 		currentFieldId, comboName) {
 	var defaultData = null;
 
-	if (suggestions_obj.length == 0) {
+	if (suggestions_obj.length === 0) {
 		$
 				.ajax({
 					url : "/Fieldbook/NurseryManager/importGermplasmList/getAllCheckTypes",
@@ -2005,7 +2003,7 @@ function addUpdateCheckType(operation) {
 }
 
 function validateCheckFields() {
-	if (checkTypes_obj.length == 0 && checkTypes != null) {
+	if (checkTypes_obj.length === 0 && checkTypes != null) {
 		$.each(checkTypes, function(index, item) {
 			checkTypes_obj.push({
 				'id' : item.id,
@@ -2018,7 +2016,7 @@ function validateCheckFields() {
 	if (!$("#comboCheckCode").select2("data")) {
 		showCheckTypeErrorMessage(codeRequiredError);
 		return false;
-	} else if ($("#manageCheckValue").val() == "") {
+	} else if ($("#manageCheckValue").val() === "") {
 		showCheckTypeErrorMessage(valueRequiredError);
 		return false;
 	} else if (!isValueUnique()) {
@@ -2165,7 +2163,7 @@ function addDetailsTab(studyId, title) {
 	// if the study is already existing, we show that tab
 	$('#study-tab-headers li').removeClass('active');
 	$('#study-tabs .info').hide();
-	if ($('li#study' + studyId).length != 0) {
+	if ($('li#study' + studyId).length !== 0) {
 		$('li#study' + studyId).addClass('active');
 		$('.info#study' + studyId).show();
 	} else {
@@ -2208,7 +2206,7 @@ function determineIfShowCloseAllStudyTabs() {
 
 function openStudyTree(type) {
 	$('#page-study-tree-message-modal').html('');
-	if( $('#create-nursery #studyTree').length != 0){
+	if( $('#create-nursery #studyTree').length !== 0){
 		 	$('#create-nursery #studyTree').dynatree("getTree").reloadStudyTree();
 		 	changeBrowseNurseryButtonBehavior(false);
 	}	
@@ -2259,7 +2257,7 @@ function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
 
 	var currentStudyId = getCurrentStudyIdInTab();
 	if (datasetId == 'Please Choose'
-			|| $("#" + getJquerySafeId('dset-tab-') + datasetId).length != 0)
+			|| $("#" + getJquerySafeId('dset-tab-') + datasetId).length !== 0)
 		return;
 	Spinner.toggle();
 	$.ajax({
@@ -2310,11 +2308,11 @@ function validateStartEndDateBasic() {
 	startDate = startDate == null ? '' : startDate;
 	endDate = endDate == null ? '' : endDate;
 
-	if (startDate == '' && endDate == '')
+	if (startDate === '' && endDate === '')
 		return true;
-	else if (startDate != '' && endDate == '') {
+	else if (startDate !== '' && endDate === '') {
 		return true;
-	} else if (startDate == '' && endDate != '') {
+	} else if (startDate === '' && endDate !== '') {
 		showErrorMessage("page-message", startDateRequiredError);
 		return false;
 	} else if (parseInt(startDate) > parseInt(endDate)) {
@@ -2401,7 +2399,7 @@ function plotMethod() {
 		$("#plot-variates-section").hide();
 	} else {
 		$("#plot-variates-section").show();
-		if ($("#plotVariateId").has("option").length == 0) {
+		if ($("#plotVariateId").has("option").length === 0) {
 			$('input[type=checkbox][name=allPlotsChoice]')
 					.prop('checked', true);
 			$('input[type=checkbox][name=allPlotsChoice]').change();

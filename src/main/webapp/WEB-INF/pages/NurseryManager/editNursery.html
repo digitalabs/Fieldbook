@@ -191,8 +191,7 @@
 						</div>
 					</div>
 					<div class="modal-footer">
-						<a id="btnOK" href="" th:href="@{/NurseryManager/editNursery/}+${createNurseryForm.studyId}" th:text="#{common.form.ok.text}"
-							class="btn btn-primary">OK</a>
+						<button id="btnOK" onclick="refreshEditNursery();" th:text="#{common.form.ok.text}" class="btn btn-primary">OK</button>
 					</div>
 				</div>
 			</div>
@@ -385,25 +384,19 @@
 				serializedData = $form.serialize();
 
 			$.ajax({
-				url: '/Fieldbook/NurseryManager/editNursery',
-				type: 'POST',
+				url: "/Fieldbook/NurseryManager/editNursery",
+				type: "POST",
 				data: serializedData,
 				cache: false,
-
 				success: function(data) {
-					if (data.status == -1) {
-						showErrorMessage('page-message', data.errorMessage);
-					} else if ($("#nursery-germplasm-list").length > 0) {
+                    if (data.status == -1) {
+                        showErrorMessage('page-message', data.errorMessage);
+                    } else if ($("#nursery-germplasm-list").length > 0) {
 						submitCheckGermplasmList();
 					} else if (data.status == 1) {
-						$('#successMessageModalUpdate').modal({ backdrop: 'static', keyboard: true });
+						recreateSessionVariables();
 					}
-				},
-				complete: function() {
-					if ($('#nursery-germplasm-list').length == 0) {
-						Spinner.toggle();
-					}
-				}
+				} 
 			});
 		}
 

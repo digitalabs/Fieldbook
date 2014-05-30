@@ -328,7 +328,8 @@ public class FieldbookServiceImpl implements FieldbookService{
         return list;
     }
 	
-    private List<ValueReference> getAllBreedingMethods() throws MiddlewareQueryException {
+    @Override
+    public List<ValueReference> getAllBreedingMethods() throws MiddlewareQueryException {
         List<ValueReference> list = new ArrayList<ValueReference>();
         List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods();
         if (methods != null && !methods.isEmpty()) {

@@ -101,15 +101,23 @@ public class UserSelection extends StudySelection implements Serializable {
     /** The nursery conditions. */
     private List<SettingDetail> nurseryConditions;
     
+    /** The deleted study level conditions. */
     private List<SettingDetail> deletedStudyLevelConditions;
     
+    /** The deleted plot level list. */
     private List<SettingDetail> deletedPlotLevelList;
     
+    /** The deleted baseline traits list. */
     private List<SettingDetail> deletedBaselineTraitsList;
     
+    /** The deleted nursery conditions. */
     private List<SettingDetail> deletedNurseryConditions;
     
+    /** The change details. */
     private List<GermplasmChangeDetail> changeDetails;
+    
+    /** The removed factors. */
+    private List<SettingDetail> removedFactors;
     
 	
 	/**
@@ -558,6 +566,8 @@ public class UserSelection extends StudySelection implements Serializable {
         }
 
         /**
+         * Gets the nursery conditions.
+         *
          * @return the nurseryConditions
          */
         public List<SettingDetail> getNurseryConditions() {
@@ -565,6 +575,8 @@ public class UserSelection extends StudySelection implements Serializable {
         }
 
         /**
+         * Sets the nursery conditions.
+         *
          * @param nurseryConditions the nurseryConditions to set
          */
         public void setNurseryConditions(List<SettingDetail> nurseryConditions) {
@@ -572,6 +584,8 @@ public class UserSelection extends StudySelection implements Serializable {
         }
 
         /**
+         * Gets the deleted study level conditions.
+         *
          * @return the deletedStudyLevelConditions
          */
         public List<SettingDetail> getDeletedStudyLevelConditions() {
@@ -579,6 +593,8 @@ public class UserSelection extends StudySelection implements Serializable {
         }
 
         /**
+         * Sets the deleted study level conditions.
+         *
          * @param deletedStudyLevelConditions the deletedStudyLevelConditions to set
          */
         public void setDeletedStudyLevelConditions(
@@ -587,6 +603,8 @@ public class UserSelection extends StudySelection implements Serializable {
         }
 
         /**
+         * Gets the deleted baseline traits list.
+         *
          * @return the deletedBaselineTraitsList
          */
         public List<SettingDetail> getDeletedBaselineTraitsList() {
@@ -594,6 +612,8 @@ public class UserSelection extends StudySelection implements Serializable {
         }
 
         /**
+         * Sets the deleted baseline traits list.
+         *
          * @param deletedBaselineTraitsList the deletedBaselineTraitsList to set
          */
         public void setDeletedBaselineTraitsList(
@@ -602,6 +622,8 @@ public class UserSelection extends StudySelection implements Serializable {
         }
 
         /**
+         * Gets the deleted nursery conditions.
+         *
          * @return the deletedNurseryConditions
          */
         public List<SettingDetail> getDeletedNurseryConditions() {
@@ -609,6 +631,8 @@ public class UserSelection extends StudySelection implements Serializable {
         }
 
         /**
+         * Sets the deleted nursery conditions.
+         *
          * @param deletedNurseryConditions the deletedNurseryConditions to set
          */
         public void setDeletedNurseryConditions(
@@ -617,6 +641,8 @@ public class UserSelection extends StudySelection implements Serializable {
         }
 
         /**
+         * Gets the deleted plot level list.
+         *
          * @return the deletedPlotLevelList
          */
         public List<SettingDetail> getDeletedPlotLevelList() {
@@ -624,6 +650,8 @@ public class UserSelection extends StudySelection implements Serializable {
         }
 
         /**
+         * Sets the deleted plot level list.
+         *
          * @param deletedPlotLevelList the deletedPlotLevelList to set
          */
         public void setDeletedPlotLevelList(List<SettingDetail> deletedPlotLevelList) {
@@ -631,6 +659,8 @@ public class UserSelection extends StudySelection implements Serializable {
         }
 
 		/**
+		 * Gets the change details.
+		 *
 		 * @return the changeDetails
 		 */
 		public List<GermplasmChangeDetail> getChangeDetails() {
@@ -638,10 +668,30 @@ public class UserSelection extends StudySelection implements Serializable {
 		}
 
 		/**
+		 * Sets the change details.
+		 *
 		 * @param changeDetails the changeDetails to set
 		 */
 		public void setChangeDetails(List<GermplasmChangeDetail> changeDetails) {
 			this.changeDetails = changeDetails;
+		}
+
+		/**
+		 * Gets the removed factors.
+		 *
+		 * @return the removed factors
+		 */
+		public List<SettingDetail> getRemovedFactors() {
+			return removedFactors;
+		}
+
+		/**
+		 * Sets the removed factors.
+		 *
+		 * @param removedFactors the new removed factors
+		 */
+		public void setRemovedFactors(List<SettingDetail> removedFactors) {
+			this.removedFactors = removedFactors;
 		}
 
  }

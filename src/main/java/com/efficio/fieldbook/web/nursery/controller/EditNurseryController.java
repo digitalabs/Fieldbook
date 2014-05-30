@@ -21,8 +21,13 @@ import java.util.StringTokenizer;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.generationcp.middleware.domain.dms.Enumeration;
+import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.StudyType;
@@ -41,12 +46,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class CreateNurseryController.
  */
@@ -61,11 +69,15 @@ public class EditNurseryController extends SettingsController {
     public static final String URL = "/NurseryManager/editNursery";
     
     /** The Constant URL_SETTINGS. */
-    public static final String URL_SETTINGS = "/NurseryManager/chooseSettings";
+    public static final String URL_SETTINGS = "/NurseryManager/addOrRemoveTraits";
     
+    /** The ontology service. */
     @Resource
     private OntologyService ontologyService;
 	
+    /** The fieldbook service. */
+    @Resource
+    private FieldbookService fieldbookService;
    
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
@@ -79,6 +91,7 @@ public class EditNurseryController extends SettingsController {
      * Use existing nursery.
      *
      * @param form the form
+     * @param form2 the form2
      * @param nurseryId the nursery id
      * @param model the model
      * @param session the session
@@ -94,6 +107,7 @@ public class EditNurseryController extends SettingsController {
             Workbook workbook = fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
             
             Dataset dataset = (Dataset)SettingsUtil.convertWorkbookToXmlDataset(workbook);
+            
             SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
             
             //nursery-level
@@ -126,20 +140,16 @@ public class EditNurseryController extends SettingsController {
             form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + "," + AppConstants.FIXED_NURSERY_VARIABLES.getString());
             form.setProjectId(this.getCurrentProjectId());
             form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
+            form.setFolderId(Integer.valueOf((int)workbook.getStudyDetails().getParentFolderId()));
+            form.setFolderName(fieldbookMiddlewareService.getFolderNameById(form.getFolderId()));
+            
             
             //measurements part
             if (workbook != null) {
-                form.setFolderId(Integer.valueOf((int)workbook.getStudyDetails().getParentFolderId()));
-                form.setFolderName(fieldbookMiddlewareService.getFolderNameById(form.getFolderId()));
-                userSelection.setMeasurementRowList(workbook.getObservations());
-                form.setMeasurementRowList(userSelection.getMeasurementRowList());
-                form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());
-                form.setStudyName(workbook.getStudyDetails().getStudyName());
-                form.changePage(1);
-                userSelection.setCurrentPage(form.getCurrentPage());
-                userSelection.setWorkbook(workbook);
+            	setMeasurementsData(form, workbook);
             }
             
+            //make factors uneditable if experiments exist already
             if (userSelection.getMeasurementRowList() != null && userSelection.getMeasurementRowList().size() > 0) {
                 for (SettingDetail setting : userSelection.getPlotsLevelList()) {
                     setting.setDeletable(false);
@@ -148,14 +158,35 @@ public class EditNurseryController extends SettingsController {
             
             form.setPlotLevelVariables(userSelection.getPlotsLevelList());
         }
+
         setFormStaticData(form);
         model.addAttribute("createNurseryForm", form);
-        model.addAttribute("settingsList", getNurserySettingsList());
-        model.addAttribute("nurseryList", getNurseryList());
-        //setupFormData(form);
+        
         return super.show(model);
     }
     
+    /**
+     * Sets the measurements data.
+     *
+     * @param form the form
+     * @param workbook the workbook
+     */
+    private void setMeasurementsData(CreateNurseryForm form, Workbook workbook) {
+    	userSelection.setMeasurementRowList(workbook.getObservations());
+        form.setMeasurementRowList(userSelection.getMeasurementRowList());
+        form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());
+        form.setStudyName(workbook.getStudyDetails().getStudyName());
+        form.changePage(1);
+        userSelection.setCurrentPage(form.getCurrentPage());
+        userSelection.setWorkbook(workbook);
+    }
+    
+    /**
+     * Gets the basic details.
+     *
+     * @param nurseryLevelConditions the nursery level conditions
+     * @return the basic details
+     */
     private List<SettingDetail> getBasicDetails(List<SettingDetail> nurseryLevelConditions) {
         List<SettingDetail> basicDetails = new ArrayList<SettingDetail>();
         for (SettingDetail setting : nurseryLevelConditions) {
@@ -166,6 +197,11 @@ public class EditNurseryController extends SettingsController {
         return basicDetails;
     }
     
+    /**
+     * Removes the basic details variables.
+     *
+     * @param nurseryLevelConditions the nursery level conditions
+     */
     private void removeBasicDetailsVariables(List<SettingDetail> nurseryLevelConditions) {
         Iterator<SettingDetail> iter = nurseryLevelConditions.iterator();
         while (iter.hasNext()) {
@@ -175,6 +211,12 @@ public class EditNurseryController extends SettingsController {
         }
     }
     
+    /**
+     * In fixed nursery list.
+     *
+     * @param propertyId the property id
+     * @return true, if successful
+     */
     private boolean inFixedNurseryList(int propertyId) {
         StringTokenizer token = new StringTokenizer(AppConstants.FIXED_NURSERY_VARIABLES.getString(), ",");
         while(token.hasMoreTokens()){
@@ -237,6 +279,7 @@ public class EditNurseryController extends SettingsController {
      * Submit.
      *
      * @param form the form
+     * @param model the model
      * @return the string
      * @throws MiddlewareQueryException the middleware query exception
      */
@@ -261,7 +304,13 @@ public class EditNurseryController extends SettingsController {
     	    	 
     	List<SettingDetail> studyLevelVariablesSession = userSelection.getBasicDetails();
     	userSelection.getStudyLevelConditions().addAll(studyLevelVariablesSession);
-
+    	
+    	//add hidden variables like OCC
+    	if (userSelection.getRemovedFactors() != null) {
+    		form.getPlotLevelVariables().addAll(userSelection.getRemovedFactors());
+    		userSelection.getPlotsLevelList().addAll(userSelection.getRemovedFactors());
+    	}
+    	
     	//combine all variates (traits and selection variates)
     	List<SettingDetail> baselineTraits = form.getBaselineTraitVariables();
     	List<SettingDetail> baselineTraitsSession = userSelection.getSelectionVariates();
@@ -330,6 +379,13 @@ public class EditNurseryController extends SettingsController {
     	
     }
     
+    /**
+     * Adds the deleted settings list.
+     *
+     * @param formList the form list
+     * @param deletedList the deleted list
+     * @param sessionList the session list
+     */
     private void addDeletedSettingsList(List<SettingDetail> formList, List<SettingDetail> deletedList, List<SettingDetail> sessionList) {
         if (deletedList != null) {
             List<SettingDetail> newDeletedList = new ArrayList<SettingDetail>();
@@ -348,6 +404,12 @@ public class EditNurseryController extends SettingsController {
         }
     }
     
+    /**
+     * Copy data from form to user selection.
+     *
+     * @param form the form
+     * @param previewPageNum the preview page num
+     */
     private void copyDataFromFormToUserSelection(CreateNurseryForm form, int previewPageNum){
         if (form.getPaginatedMeasurementRowList() != null) {
             for(int i = 0 ; i < form.getPaginatedMeasurementRowList().size() ; i++){
@@ -370,6 +432,7 @@ public class EditNurseryController extends SettingsController {
      * @param workbook the workbook
      * @param conditions the conditions
      * @param folderId the folder id
+     * @param studyId the study id
      */
     private void createStudyDetails(Workbook workbook, List<SettingDetail> conditions, Integer folderId, Integer studyId) {
         if (workbook.getStudyDetails() == null) {
@@ -431,6 +494,15 @@ public class EditNurseryController extends SettingsController {
     	form.setSelectionVariatesSegment(AppConstants.SEGMENT_SELECTION_VARIATES.getString());
     }
     
+    /**
+     * Check measurement data.
+     *
+     * @param form the form
+     * @param model the model
+     * @param mode the mode
+     * @param variableId the variable id
+     * @return the map
+     */
     @ResponseBody
     @RequestMapping(value = "/checkMeasurementData/{mode}/{variableId}", method = RequestMethod.GET)
     public Map<String, String> checkMeasurementData(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, 
@@ -457,5 +529,251 @@ public class EditNurseryController extends SettingsController {
             resultMap.put("hasMeasurementData", "0");
         
         return resultMap;
+    }
+        
+    /**
+     * Removes the deleted set update.
+     *
+     * @param settingList the setting list
+     * @param variableList the variable list
+     */
+    private void removeDeletedSetUpdate(List<SettingDetail> settingList, List<MeasurementVariable> variableList) {
+    	if (settingList != null) {
+    		//remove all variables having delete and add operation
+	    	Iterator<SettingDetail> iter = settingList.iterator();
+	        while (iter.hasNext()) {
+	        	SettingDetail setting = iter.next();
+	        	if (setting.getVariable().getOperation().equals(Operation.DELETE)) {
+	        		iter.remove();
+	        	} else if (setting.getVariable().getOperation().equals(Operation.ADD)) {
+	        		setting.getVariable().setOperation(Operation.UPDATE);
+	        	} 
+	        }
+    	}
+        
+    	if (variableList != null) {
+    		//remove all variables having delete and add operation
+	        Iterator<MeasurementVariable> iter2 = variableList.iterator();
+	        while (iter2.hasNext()) {
+	        	MeasurementVariable var = iter2.next();
+	        	if (var.getOperation().equals(Operation.DELETE)) {
+	        		iter2.remove();
+	        	} else if (var.getOperation().equals(Operation.ADD)) {
+	        		var.setOperation(Operation.UPDATE);
+	        	}
+	        }
+    	}
+    }
+    
+    /**
+     * Reset deleted lists.
+     */
+    private void resetDeletedLists() {
+    	userSelection.setDeletedStudyLevelConditions(new ArrayList<SettingDetail>());
+    	userSelection.setDeletedPlotLevelList(new ArrayList<SettingDetail>());
+    	userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
+    	userSelection.setDeletedNurseryConditions(new ArrayList<SettingDetail>());
+    }
+    
+    /**
+     * Gets the data type.
+     *
+     * @param dataTypeId the data type id
+     * @return the data type
+     */
+    private String getDataType(int dataTypeId) {
+	    //datatype ids: 1120, 1125, 1128, 1130
+	    if (dataTypeId == TermId.CHARACTER_VARIABLE.getId() || dataTypeId == TermId.TIMESTAMP_VARIABLE.getId() || 
+	            dataTypeId == TermId.CHARACTER_DBID_VARIABLE.getId() || dataTypeId == TermId.CATEGORICAL_VARIABLE.getId()) {
+	        return "C";
+	    } else {
+	        return "N";
+	    }
+	}
+    
+    /**
+     * Removes the selection variates from traits.
+     *
+     * @param traits the traits
+     * @throws MiddlewareQueryException the middleware query exception
+     */
+    private void removeSelectionVariatesFromTraits(List<SettingDetail> traits) throws MiddlewareQueryException {
+    	if (traits != null) {
+    		Iterator<SettingDetail> iter = traits.iterator();
+    		while (iter.hasNext()) {
+    			SettingDetail var = iter.next();
+    			if (SettingsUtil.inPropertyList(ontologyService.getProperty(var.getVariable().getProperty()).getId())) {
+    				iter.remove();
+    			}
+    		}
+    	}
+    }
+    
+    /**
+     * Transform possible values.
+     *
+     * @param enumerations the enumerations
+     * @return the list
+     */
+    private List<ValueReference> transformPossibleValues(List<Enumeration> enumerations) {
+		List<ValueReference> list = new ArrayList<ValueReference>();
+		
+		if (enumerations != null) {
+			for (Enumeration enumeration : enumerations) {
+				list.add(new ValueReference(enumeration.getId(), enumeration.getName(), enumeration.getDescription()));
+			}
+		}
+		
+		return list;
+	}
+    
+    /**
+     * Removes the hidden variables.
+     *
+     * @param nurseryLevelConditions the nursery level conditions
+     */
+    private void removeHiddenVariables(List<SettingDetail> nurseryLevelConditions) {
+        Iterator<SettingDetail> iter = nurseryLevelConditions.iterator();
+        while (iter.hasNext()) {
+            if (SettingsUtil.inHideVariableFields(iter.next().getVariable().getCvTermId(), AppConstants.HIDE_PLOT_FIELDS.getString())) {
+                iter.remove();
+            }
+        }
+    }
+    
+    /**
+     * Reset session variables after save.
+     *
+     * @param form the form
+     * @param model the model
+     * @param session the session
+     * @return the string
+     * @throws MiddlewareQueryException the middleware query exception
+     */
+    @RequestMapping(value="/recreate/session/variables", method = RequestMethod.GET)
+    public String resetSessionVariablesAfterSave(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, 
+    		HttpSession session) throws MiddlewareQueryException{
+    	Workbook workbook = userSelection.getWorkbook();
+    	
+    	//remove deleted variables in measurement rows & header
+    	if (userSelection.getDeletedBaselineTraitsList() != null) {
+	    	for (SettingDetail setting : userSelection.getDeletedBaselineTraitsList()) {
+	    		//remove from measurement rows
+	    		int index = 0;
+	    		int varIndex = 0;
+	    		for (MeasurementRow row : userSelection.getMeasurementRowList()) {
+	    			if (index == 0) {
+	    				for (MeasurementData var : row.getDataList()) {
+	    					if (var.getMeasurementVariable().getTermId() == setting.getVariable().getCvTermId()) {
+	    						break;
+	    					}
+	    					varIndex++;
+	    				}
+	    			}
+	    			row.getDataList().remove(varIndex);
+	    			index++;
+	        	}
+	    		//remove from header
+	    		if (workbook.getMeasurementDatasetVariables() != null) {
+	    			Iterator<MeasurementVariable> iter = workbook.getMeasurementDatasetVariables().iterator();
+	    			while(iter.hasNext()) {
+	    				if (iter.next().getTermId() == setting.getVariable().getCvTermId()) {
+	    					iter.remove();
+	    				}
+	    			}
+	        	}
+	    	}
+    	}
+    	    	
+    	//add new variables in measurement rows
+    	for (MeasurementVariable variable : workbook.getVariates()) {
+    		if (variable.getOperation().equals(Operation.ADD)) {    			
+    			StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId());
+    			
+	            MeasurementData measurementData = new MeasurementData(variable.getName(), 
+	                    variable.getValue(), true,  
+	                    getDataType(variable.getDataTypeId()),
+	                    variable);
+	            
+	            measurementData.setPhenotypeId(null);
+	            for (MeasurementRow row : userSelection.getMeasurementRowList()) {
+	            	row.getDataList().add(measurementData);
+	            }
+	            
+	            if (ontologyService.getProperty(variable.getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId()) {
+			        variable.setPossibleValues(fieldbookService.getAllBreedingMethods());
+			    } else {
+			    	variable.setPossibleValues(transformPossibleValues(stdVariable.getEnumerations()));
+			    }
+    		}
+        }
+    	
+    	//remove deleted variables in the original lists
+    	//and change add operation to update
+    	removeDeletedSetUpdate(userSelection.getStudyLevelConditions(), workbook.getConditions());
+    	removeDeletedSetUpdate(userSelection.getBaselineTraitsList(), workbook.getVariates());
+    	removeDeletedSetUpdate(userSelection.getNurseryConditions(), workbook.getConstants());
+    	removeDeletedSetUpdate(userSelection.getSelectionVariates(), null);
+    	workbook.setMeasurementDatasetVariables(null);
+    	
+    	//reorder variates based on measurementrow order
+    	int index = 0;
+		List<MeasurementVariable> newVariatesList = new ArrayList<MeasurementVariable>();
+		for (MeasurementRow row : userSelection.getMeasurementRowList()) {
+			if (index == 0) {
+				for (MeasurementData var : row.getDataList()) {
+					for (MeasurementVariable varToArrange : workbook.getVariates()) {
+						if (var.getMeasurementVariable().getTermId() == varToArrange.getTermId()) {
+							newVariatesList.add(varToArrange);
+						}
+			    	}
+					
+				}
+			}
+			index++;
+			break;
+		}
+    	workbook.setVariates(newVariatesList);
+		    	
+    	//remove deleted variables in the deleted lists
+    	resetDeletedLists();
+    	
+    	//remove basic details & hidden variables from study level variables
+    	removeBasicDetailsVariables(userSelection.getStudyLevelConditions());
+    	removeHiddenVariables(userSelection.getPlotsLevelList());
+    	
+    	//set measurement session variables to form
+    	setMeasurementsData(form, workbook);
+        
+        //remove selection variates from traits list
+        removeSelectionVariatesFromTraits(userSelection.getBaselineTraitsList());
+        
+    	setFormStaticData(form);
+        model.addAttribute("createNurseryForm", form);
+    	
+        return super.showAjaxPage(model, URL_SETTINGS);
+    }
+    
+    /**
+     * Show variable details.
+     *
+     * @param id the id
+     * @return the string
+     */
+    @ResponseBody
+    @RequestMapping(value="/showVariableDetails/{id}", method = RequestMethod.GET)
+    public String showVariableDetails(@PathVariable int id) {
+    	try {
+
+    		SettingVariable svar = getSettingVariable(id);
+    		if (svar != null) {
+    			ObjectMapper om = new ObjectMapper();
+    			return om.writeValueAsString(svar);
+    		}
+    		
+    	} catch(Exception e) {
+    		LOG.error(e.getMessage(), e);
+    	}
+    	return "[]";
     }
 }

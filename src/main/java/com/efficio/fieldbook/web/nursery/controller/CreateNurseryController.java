@@ -32,7 +32,6 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
-import org.generationcp.middleware.pojos.workbench.TemplateSetting;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
@@ -78,7 +77,7 @@ public class CreateNurseryController extends SettingsController {
      */
     @Override
     public String getContentName() {
-	return "NurseryManager/createNursery";
+	return "/NurseryManager/createNursery";
     }
 
     /**
@@ -130,7 +129,6 @@ public class CreateNurseryController extends SettingsController {
         }
         setFormStaticData(form);
         model.addAttribute("createNurseryForm", form);
-        model.addAttribute("settingsList", getNurserySettingsList());
         model.addAttribute("nurseryList", getNurseryList());
         //setupFormData(form);
         return super.showAjaxPage(model, URL_SETTINGS);
@@ -496,19 +494,18 @@ public class CreateNurseryController extends SettingsController {
     @RequestMapping(value = "/clearSettings", method = RequestMethod.GET)
     public String clearSettings(@ModelAttribute("createNurseryForm") CreateNurseryForm form,
                 Model model, HttpSession session) {
-        
         try {
             form.setProjectId(this.getCurrentProjectId());
             form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + "," + AppConstants.FIXED_NURSERY_VARIABLES.getString());
             form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
             setFormStaticData(form);
             assignDefaultValues(form);
+            form.setMeasurementRowList(new ArrayList<MeasurementRow>());
         } catch(Exception e) {
                 LOG.error(e.getMessage(), e);
         }
         
         model.addAttribute("createNurseryForm", form);
-        model.addAttribute("settingsList", getNurserySettingsList());
         model.addAttribute("nurseryList", getNurseryList());
         
         return super.showAjaxPage(model, URL_SETTINGS);

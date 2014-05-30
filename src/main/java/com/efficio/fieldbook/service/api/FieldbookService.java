@@ -78,4 +78,6 @@ public interface FieldbookService {
     String getValue(int id, String valueOrId, boolean isCategorical) throws MiddlewareQueryException;
 
     Term getTermById(int termId) throws MiddlewareQueryException;
+    
+    List<ValueReference> getAllBreedingMethods() throws MiddlewareQueryException;
 }

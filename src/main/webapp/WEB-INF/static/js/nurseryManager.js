@@ -1470,6 +1470,7 @@ function hasEmptyNurseryValue() {
 	return hasError;
 
 }
+
 function doSaveSettings() {
 	$('#settingName').val($('#settingName').val().trim());
 	if ($('#settingName').val() == '') {
@@ -1491,7 +1492,6 @@ function doSaveSettings() {
 		doAjaxMainSubmit('page-message', saveTemplateSettingSuccess, null);
 		moveToTopScreen();
 	}
-
 }
 
 function checkIfNull(object) {
@@ -1501,6 +1501,7 @@ function checkIfNull(object) {
 		return "";
 	}
 }
+
 
 function createSliderInput(ctr, minVal, maxVal, name) {
 	return "<input data-slider-orientation='horizontal' data-slider-selection='after' type='text' data-min='"
@@ -1553,7 +1554,6 @@ function initializeDateAndSliderInputs() {
 			$(this).datepicker({
 				'format' : 'yyyymmdd'
 			}).on('changeDate', function(ev) {
-
 				$(this).datepicker('hide');
 			});
 		});
@@ -2408,4 +2408,30 @@ function plotMethod() {
 			showErrorMessage("page-message", noPlotVariatesError);
 		}
 	}
+}
+
+function refreshEditNursery() {
+	if ($(".germplasm-measurement-list-table").length > 0) {
+		$("#successMessageModalUpdate").modal("hide");
+	} else {
+		location.href = "/Fieldbook/NurseryManager/editNursery/" + $("#studyId").val();
+	}
+}
+
+function recreateSessionVariables() {
+	$.ajax({
+		url: "/Fieldbook/NurseryManager/editNursery/recreate/session/variables",
+		type: "GET",
+		data: "",
+		success: function (html) {
+			$("#measurementsDiv").html(html);
+			$('#successMessageModalUpdate').modal({ backdrop: 'static', keyboard: true });
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			console.log(errorThrown);
+		},
+		complete: function () {
+			Spinner.toggle();
+		}	
+	});
 }

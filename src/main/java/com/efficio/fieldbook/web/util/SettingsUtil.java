@@ -398,9 +398,9 @@ public class SettingsUtil {
 		    List<SettingDetail> baselineTraitsList  = new ArrayList<SettingDetail>();
 		    List<SettingDetail> nurseryConditions = new ArrayList<SettingDetail>();
 		    List<SettingDetail> selectionVariates = new ArrayList<SettingDetail>();
+		    List<SettingDetail> removedFactors = new ArrayList<SettingDetail>();
 		    if(dataset.getConditions() != null){
-				for(Condition condition : dataset.getConditions()){
-					
+				for(Condition condition : dataset.getConditions()){					
 					SettingVariable variable = new SettingVariable(condition.getName(), condition.getDescription(), condition.getProperty(),
 							condition.getScale(), condition.getMethod(), condition.getRole(), condition.getDatatype(), condition.getDataTypeId(),
 							condition.getMinRange(), condition.getMaxRange());
@@ -408,47 +408,48 @@ public class SettingsUtil {
 					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), 
 							HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
 					
-					if (!inHideVariableFields(stdVar, AppConstants.HIDE_NURSERY_FIELDS.getString())) {
-        					variable.setCvTermId(stdVar);										
-        					List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
-        					SettingDetail settingDetail = new SettingDetail(variable,
-        							possibleValues, HtmlUtils.htmlUnescape(condition.getValue()), isSettingVariableDeletable(stdVar, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()));
-        					
-        					settingDetail.setPossibleValuesToJson(possibleValues);
-        					List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, projectId);
-        					settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
-        					studyLevelConditions.add(settingDetail);
-        					if(userSelection != null){
-        						StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);						
-        						variable.setPSMRFromStandardVariable(standardVariable);						
-        					}
-    					}
+                    if (!inHideVariableFields(stdVar, AppConstants.HIDE_NURSERY_FIELDS.getString())) {
+                        variable.setCvTermId(stdVar);                                        
+                        List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
+                        SettingDetail settingDetail = new SettingDetail(variable,
+                                possibleValues, HtmlUtils.htmlUnescape(condition.getValue()), isSettingVariableDeletable(stdVar, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()));
+                        
+                        settingDetail.setPossibleValuesToJson(possibleValues);
+                        List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, projectId);
+                        settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
+                        studyLevelConditions.add(settingDetail);
+                        if(userSelection != null){
+                            StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
+                            variable.setPSMRFromStandardVariable(standardVariable);                        
+                            Enumeration enumerationByDescription = standardVariable.getEnumerationByDescription(condition.getValue());
+                            if(enumerationByDescription != null) {
+                            	settingDetail.setValue(enumerationByDescription.getName());
+                            }
+                        }
+                    }
 				}
 		    }
 			//plot level
 			//always allowed to be deleted
 			if(dataset.getFactors() != null){
 				for(Factor factor : dataset.getFactors()){
+					SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(),
+							factor.getScale(), factor.getMethod(), factor.getRole(), factor.getDatatype());
+					variable.setOperation(Operation.UPDATE);
+					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
+					
+					variable.setCvTermId(stdVar);
+					SettingDetail settingDetail = new SettingDetail(variable,
+							null, null, isSettingVariableDeletable(stdVar, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()));
 					
 					if (factor.getRole() != null && !factor.getRole().equals(PhenotypicType.TRIAL_ENVIRONMENT.name())) {
-						
-						SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(),
-								factor.getScale(), factor.getMethod(), factor.getRole(), factor.getDatatype());
-						variable.setOperation(Operation.UPDATE);
-						Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
-						
 						if (!inHideVariableFields(stdVar, AppConstants.HIDE_PLOT_FIELDS.getString())) {
-	        					variable.setCvTermId(stdVar);
-	        					SettingDetail settingDetail = new SettingDetail(variable,
-	        							null, null, isSettingVariableDeletable(stdVar, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()));
-	        					plotsLevelList.add(settingDetail);
+							plotsLevelList.add(settingDetail);
+						} else {
+							removedFactors.add(settingDetail);
 						}
-						/*
-						if(userSelection != null){
-							StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);						
-							variable.setPSMRFromStandardVariable(standardVariable);						
-						}
-						*/
+					} else {
+						removedFactors.add(settingDetail);
 					}
 				}
 			}
@@ -516,11 +517,11 @@ public class SettingsUtil {
 			userSelection.setBaselineTraitsList(baselineTraitsList);
 			userSelection.setNurseryConditions(nurseryConditions);
 			userSelection.setSelectionVariates(selectionVariates);
-			//userSelection.setTrialLevelVariableList(trialLevelVariableList);
+			userSelection.setRemovedFactors(removedFactors);
 		}
 	}
 	
-	private static boolean inPropertyList(int propertyId) {
+	public static boolean inPropertyList(int propertyId) {
 	    StringTokenizer token = new StringTokenizer(AppConstants.SELECTION_VARIATES_PROPERTIES.getString(), ",");
             while(token.hasMoreTokens()){
                 int propId = Integer.parseInt(token.nextToken());
@@ -689,7 +690,7 @@ public class SettingsUtil {
 	 * @param variableList the variable list
 	 * @return true, if successful
 	 */
-	private static boolean inHideVariableFields(Integer stdVarId, String variableList) {
+	public static boolean inHideVariableFields(Integer stdVarId, String variableList) {
 	    StringTokenizer token = new StringTokenizer(variableList, ",");
 	    boolean inList = false;
 	    while(token.hasMoreTokens()){

@@ -187,83 +187,7 @@ function showCorrectMethodCombo() {
 	}
 }
 
-function openManageLocations() {
-	$('#manageLocationModal').modal({ backdrop: 'static', keyboard: true });
-	if(locationIframeOpened == false){
-		locationIframeOpened = true;
-		$('#locationFrame').attr('src', programLocationUrl + $('#projectId').val());
-	}
-	
-}
 
-function openManageMethods() {
-	$('#manageMethodModal').modal({ backdrop: 'static', keyboard: true });
-	if(methodIframeOpened == false){
-		methodIframeOpened = true;
-		$('#methodFrame').attr('src', programMethodUrl + $('#projectId').val());
-	}
-}
-
-function recreateMethodCombo() {
-var selectedMethodAll = $("#methodIdAll").val();
-var selectedMethodFavorite = $("#methodIdFavorite").val();
-
-Spinner.toggle();
-$.ajax(
-     { url: "/Fieldbook/NurseryManager/advance/nursery/getBreedingMethods",
-       type: "GET",
-       cache: false,
-       data: "",
-       async: false,
-       success: function(data) {
-    	   if (data.success == "1") {
-    		   if (selectedMethodAll != null) {
-	    		   //recreate the select2 combos to get updated list of methods    			   
-	    		   recreateMethodComboAfterClose("methodIdAll", $.parseJSON(data.allMethods));
-	    		   recreateMethodComboAfterClose("methodIdFavorite", $.parseJSON(data.favoriteMethods));
-	    		   showCorrectMethodCombo();
-	    		   //set previously selected value of method
-	    		   if ($("#showFavoriteMethod").prop("checked")) {
-	    			   setComboValues(methodSuggestionsFav_obj, selectedMethodFavorite, "methodIdFavorite");
-	    		   } else {
-	    			   setComboValues(methodSuggestions_obj, selectedMethodAll, "methodIdAll");
-	    		   }
-    		   } else {
-    			   var selectedVal = null;
-    			   //get index of breeding method row
-    			   var index = getBreedingMethodRowIndex();
-    			   
-    			   if ($("#" + getJquerySafeId("studyLevelVariables" + index + ".value")).select2("data")) {
-    				   selectedVal = $("#" + getJquerySafeId("studyLevelVariables" + index + ".value")).select2("data").id;
-    			   }
-    			   //recreate select2 of breeding method
-    			   initializePossibleValuesCombo([], 
-	 			 			"#" + getJquerySafeId("studyLevelVariables" + index + ".value"), false, selectedVal);
-    			   
-    			   //update values of combo
-    			   if ($("#" + getJquerySafeId("studyLevelVariables" + index + ".favorite1")).is(":checked")) {
-					   initializePossibleValuesCombo($.parseJSON(data.favoriteMethods), 
-		 			 			"#" + getJquerySafeId("studyLevelVariables" + index + ".value"), false, selectedVal);
-    			   } else {
-    				   initializePossibleValuesCombo($.parseJSON(data.allMethods), 
-		 			 			"#" + getJquerySafeId("studyLevelVariables" + index + ".value"), false, selectedVal);
-    			   }
-    			   
-    			   replacePossibleJsonValues(data.favoriteMethods, data.allMethods, index);
-    		   }
-    	   } else {
-    		   showErrorMessage("page-message", data.errorMessage);
-    	   }
-       },
-       error: function(jqXHR, textStatus, errorThrown){
-			console.log("The following error occured: " + textStatus, errorThrown); 
-	   }, 
-	   complete: function(){
-		   Spinner.toggle();
-	   } 
-     }
- );
-}
 
 function getBreedingMethodRowIndex() {
 	var rowIndex = 0;
@@ -386,52 +310,6 @@ function setComboValues(suggestions_obj, id, name) {
 	}
 	//set the selected value of the combo
 	$("#" + name).select2('data', dataVal);
-}
-
-function recreateLocationComboAfterClose(comboName, data) {	
-	if (comboName == "harvestLocationIdAll") {
-		//clear all locations dropdown
-		locationSuggestions = [];
-		locationSuggestions_obj = [];
-		initializeHarvestLocationSelect2(locationSuggestions, locationSuggestions_obj);
-		//reload the data retrieved
-		locationSuggestions = data;
-		initializeHarvestLocationSelect2(locationSuggestions, locationSuggestions_obj);
-	} else if (comboName == "inventoryMethodIdAll") {
-		//clear all locations dropdown
-		initializePossibleValuesComboInventory(data, "#inventoryMethodIdAll", true, null);    	    	
-	} else if (comboName == "inventoryMethodIdFavorite") {		
-		initializePossibleValuesComboInventory(data, "#inventoryMethodIdFavorite", false, null);
-	}else {
-		//clear the favorite locations dropdown
-		locationSuggestionsFav = [];
-		locationSuggestionsFav_obj = [];
-		initializeHarvestLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj);
-		//reload the data
-		locationSuggestionsFav = data;
-		initializeHarvestLocationFavSelect2(locationSuggestionsFav, locationSuggestionsFav_obj);
-	}
-
-}
-
-function recreateMethodComboAfterClose(comboName, data) {
-	if (comboName == "methodIdAll") {
-		//clear the all methods dropdown
-		methodSuggestions = [];
-		methodSuggestions_obj = [];
-		initializeMethodSelect2(methodSuggestions, methodSuggestions_obj);
-		//reload the data
-		methodSuggestions = data;
-		initializeMethodSelect2(methodSuggestions, methodSuggestions_obj);
-	} else {
-		//clear the favorite methods dropdown
-		methodSuggestionsFav = [];
-		methodSuggestionsFav_obj = [];
-		initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFav_obj);
-		//reload the data
-		methodSuggestionsFav = data;
-		initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFav_obj);
-	}
 }
 
 function openAddVariablesSetting(variableType) {
@@ -1277,16 +1155,6 @@ function clearSettings(){
 		
 }
 
-function hasDuplicateSettingName(){
-	var selectedSettingsId = $('#selectedSettingId').val();
-	var settingsName = $('#settingName').val() ;
-	var hasDuplicate = false;
-	$('#selectedSettingId option').each(function(){
-	    if(selectedSettingsId != $(this).val() &&  $(this).html().trim() == settingsName)
-	    	hasDuplicate = true;
-	});
-	return hasDuplicate;
-}
 function hasEmptyNurseryValue(){
 	var hasError = false;
 	var name = '';
@@ -2033,8 +1901,6 @@ function showSelectedTab(selectedTabName) {
 			$("#" + tabs[i].id).hide();
 		}
 	}
-	if(selectedTabName == 'nursery-measurements')
-		fixedTrHeight();
 	
 }
 

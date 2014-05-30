@@ -141,7 +141,17 @@ public class EditNurseryController extends SettingsController {
             form.setProjectId(this.getCurrentProjectId());
             form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
             form.setFolderId(Integer.valueOf((int)workbook.getStudyDetails().getParentFolderId()));
-            form.setFolderName(fieldbookMiddlewareService.getFolderNameById(form.getFolderId()));
+            if (form.getFolderId() == 1) {
+            	if (nurseryId > 0) {
+            		form.setFolderName(AppConstants.PUBLIC_NURSERIES.getString());
+            	}
+            	else {
+            		form.setFolderName(AppConstants.PROGRAM_NURSERIES.getString());
+            	}
+            }
+            else {
+            	form.setFolderName(fieldbookMiddlewareService.getFolderNameById(form.getFolderId()));
+            }
             
             
             //measurements part

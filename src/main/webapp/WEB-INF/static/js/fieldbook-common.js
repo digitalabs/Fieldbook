@@ -1738,21 +1738,66 @@ function changeBuildOption() {
 		$('#choosePreviousStudy').show();
 	}
 }
+function openGermplasmDetailsPopopWithGidAndDesig(gid, desig) {
+
+	$.ajax({
+		url: '/Fieldbook/ListTreeManager/germplasm/detail/url',
+		type: 'GET',
+		data: '',
+		cache: false,
+		success: function(html) {
+			var germplasmDetailsUrl = html;
+			$('#openGermplasmFrame').attr('src', germplasmDetailsUrl+gid);
+			$('#openGermplasmModal .modal-title').html(headerMsg1 + ' ' + desig + ' (' + headerMsg2 + ' '+ gid +')');
+			$('#openGermplasmModal').modal({ backdrop: 'static', keyboard: true });
+		}
+	});
+}
 function initializeMeasurementsDatatable(tableIdentifier, ajaxUrl){
 	var columns = [];
+	var columnsDef = [];
 	$(tableIdentifier + ' thead tr th').each(function(){
-		columns.push({'data':$(this).html()})
+		//console.log('here' + ($(this).data('term-id') == '8240'));
+		columns.push({'data':$(this).html()});
+		if($(this).data('term-id') == '8240'){
+			//for GID
+			columnsDef.push({
+				'targets': columns.length - 1, 
+				'data' : $(this).html(), 
+				'render' : function ( data, type, full, meta ) {
+	              return '<a class="gid-link" href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;'+full['GID']+'&quot;,&quot;'+full['DESIGNATION']+'&quot;)">'+data+'</a>';
+				 }  
+			});
+		}else if($(this).data('term-id') == '8250'){
+			//for designation
+			columnsDef.push({
+				'targets': columns.length - 1, 
+				'data' : $(this).html(), 
+				'render' : function ( data, type, full, meta ) {
+					return '<a class="desig-link" href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;'+full['GID']+'&quot;,&quot;'+full['DESIGNATION']+'&quot;)">'+data+'</a>';
+				 }  
+			});
+		}else if($(this).data('term-id') == 'Action'){
+			//for designation
+			columnsDef.push({
+				'targets': columns.length - 1, 
+				'data' : $(this).html(), 
+				'render' : function ( data, type, full, meta ) {
+					return '<a href="javascript: editExperiment(&quot;'+tableIdentifier+'&quot;,'+data+','+meta.row+')" class="fbk-edit-experiment">1</a>';					
+				 }  
+			});
+		}
+		
 	});
-	
 	var table =  $(tableIdentifier).DataTable( {			  	
 	        "ajax": ajaxUrl,
 	        "columns": columns,
 	        "scrollY": 500,
 	        "scrollX": true,
 	        "scrollCollapse": true,
-	        "lengthMenu": [[50, 75, 100, -1], [50, 75, 100, "All"]],
-
-              "bAutoWidth": true,
+	        "columnDefs": columnsDef,
+	        "lengthMenu": [[50, 75, 100, -1], [50, 75, 100, "All"]],	      
+            "bAutoWidth": true,
 	        "iDisplayLength": 100,
 	        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
 	        	var toolTip = "GID: " + aData['GID'] + " Designation: " + aData['DESIGNATION'];
@@ -1760,12 +1805,10 @@ function initializeMeasurementsDatatable(tableIdentifier, ajaxUrl){
 	        	
 	            $(nRow).attr("id", aData['experimentId']);
 	            $(nRow).attr("title", toolTip);
-	           
-	            $(nRow).find('td:eq(0)').html('<a href="javascript: editExperiment(&quot;'+tableIdentifier+'&quot;,'+aData['GID']+', '+this.fnGetPosition( nRow )+')" class="fbk-edit-experiment">1</a>');
 	            return nRow;
 	        },
 	        "fnInitComplete": function(oSettings, json){
-	        	$(tableIdentifier+ "_wrapper select").select2();
+	        	$(tableIdentifier+ "_wrapper select").select2();	        	
 	        },
 	        "language": {
 				           "search": "<span class='fbk-search-data-table'>Search:</span>"
@@ -1778,14 +1821,19 @@ function initializeMeasurementsDatatable(tableIdentifier, ajaxUrl){
 	            showAll: "Show all"
 	        }
 	        //for column re-ordering
+	        /*
 	        ,"colReorder": {
 	            "fixedColumns": 1
 	        }
+	        */
 	    } );
+	
+	
 
 	//new $.fn.dataTable.FixedColumns( table,  {'iLeftColumns' : 3} );		
 }
 function editExperiment(tableIdentifier, expId, rowIndex){
+	
 	//console.log(expId + "  " + rowIndex);
 	$.ajax({
 		url: '/Fieldbook/Common/addOrRemoveTraits/data/table/ajax/submit/' + rowIndex,
@@ -1793,7 +1841,7 @@ function editExperiment(tableIdentifier, expId, rowIndex){
 		success: function(dataResp) {
 			//console.log(dataResp.data);
 			var oTable = $(tableIdentifier).dataTable();				
-			 oTable.fnUpdate( dataResp.data, rowIndex, null); // Row				
+			 oTable.fnUpdate( dataResp.data, rowIndex, null, false); // Row				
 			 oTable.fnAdjustColumnSizing();
 			
 		}

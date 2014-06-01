@@ -253,15 +253,8 @@ public class ObservationMatrixController extends
     	List<Map> masterList = new ArrayList();
     	
     	for(MeasurementRow row : tempList){
-    		
-    		Map<String, Object> dataMap = new HashMap<String, Object>();
-    		dataMap.put("Action", Integer.toString(row.getExperimentId()));
-    		dataMap.put("experimentId", Integer.toString(row.getExperimentId()));
-    		dataMap.put("GID", row.getMeasurementData(TermId.GID.getId()));
-    		dataMap.put("DESIGNATION", row.getMeasurementData(TermId.DESIG.getId()));
-    		for(MeasurementData data : row.getDataList()){    			
-    			dataMap.put(data.getMeasurementVariable().getName(), data.getDisplayValue());
-    		}
+    		    		
+    		Map<String, Object> dataMap = generateDatatableDataMap(row, null);
     		
     		masterList.add(dataMap);
     	}
@@ -279,18 +272,30 @@ public class ObservationMatrixController extends
     	tempList.addAll(userSelection.getMeasurementRowList());
 
     	MeasurementRow row = tempList.get(index);
-		Map<String, Object> dataMap = new HashMap<String, Object>();
-		dataMap.put("Action", Integer.toString(row.getExperimentId()));
-		dataMap.put("experimentId", Integer.toString(row.getExperimentId()));
-		dataMap.put("GID", row.getMeasurementData(TermId.GID.getId()));
-		dataMap.put("DESIGNATION", row.getMeasurementData(TermId.DESIG.getId()));
-		for(MeasurementData data : row.getDataList()){
-			dataMap.put(data.getMeasurementVariable().getName(), data.getDisplayValue() + "Edited");
-		}
+		
+		
+    	Map<String, Object> dataMap = generateDatatableDataMap(row, "Edited");
+		
     	
     	
     	HashMap map = new HashMap();
     	map.put("data", dataMap);
     	return map;
+    }
+    
+    private Map<String, Object> generateDatatableDataMap(MeasurementRow row, String suffix){
+    	Map<String, Object> dataMap = new HashMap<String, Object>();
+    	//the 4 attributes are needed always
+    	dataMap.put("Action", Integer.toString(row.getExperimentId()));
+		dataMap.put("experimentId", Integer.toString(row.getExperimentId()));
+		dataMap.put("GID", row.getMeasurementDataValue(TermId.GID.getId()));
+		dataMap.put("DESIGNATION", row.getMeasurementDataValue(TermId.DESIG.getId()));
+		for(MeasurementData data : row.getDataList()){
+			String displayVal = data.getDisplayValue();
+			if(suffix != null)
+				displayVal += suffix;
+			dataMap.put(data.getMeasurementVariable().getName(), displayVal);
+		}
+		return dataMap;
     }
 }

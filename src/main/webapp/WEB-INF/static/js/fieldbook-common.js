@@ -218,19 +218,18 @@ function triggerFieldMapTableSelection(tableName){
 function createFieldMap(tableName){
 	if($('#'+tableName+' .field-map-highlight').attr('id') != null || tableName == 'nursery-table'){
 		var ids = [];
-		//$('#'+tableName+' .field-map-highlight').each(function(){ ids.push(this.id); });
-		//get selected studies
-		/*
-		for(var index in selectedTableIds) {			
-			var idVal = selectedTableIds[index];
-			if(idVal != null){
-				ids.push(idVal);
-			}			
-		}
-		//daniel
-		*/
-		if($("#createNurseryMainForm #studyId").length  == 1)
+		//get selected studies		
+		if($("#createNurseryMainForm #studyId").length  === 1) {
 			ids.push($("#createNurseryMainForm #studyId").val());
+		}
+		else if($('#trial-table').length === 1) {
+			for(var index in selectedTableIds) {			
+				var idVal = selectedTableIds[index];
+				if(idVal != null){
+					ids.push(idVal);
+				}			
+			}
+		}
 		else
 			ids.push(getCurrentStudyIdInTab());
 		var idList = ids.join(",");
@@ -488,7 +487,7 @@ function createRowForNursery(id, parentClass, value, realId, withFieldMap, datas
 	var genParentClassName = "";
 	var newRow = "";
 	var newCell = "";	
-	if (parentClass != "") {
+	if (parentClass !== "") {
 		genParentClassName = "treegrid-parent-" + parentClass;
 	}
 	
@@ -509,7 +508,7 @@ function createRow(id, parentClass, value, realId, withFieldMap) {
 	var genParentClassName = "";
 	var newRow = "";
 	var newCell = "";	
-	if (parentClass != "") {
+	if (parentClass !== "") {
 		genParentClassName = "treegrid-parent-" + parentClass;
 	}
 	
@@ -568,28 +567,31 @@ function createLabelPrinting(tableName){
 	
 	var count = 0;
 	var idVal = null;
-	/*
-	for(var index in selectedTableIds) {
-		//console.log( index + " : " + selectedTableIds[index]);
-		var tempVal = selectedTableIds[index];
-		if(tempVal != null){
-			idVal = tempVal;
-			count++;
-		}			
-	}
-	*/
-	if($("#createNurseryMainForm #studyId").length  == 1)
-		idVal = ($("#createNurseryMainForm #studyId").val());
-	else
-		idVal = getCurrentStudyIdInTab();
-	count++; 
 	
-	if(count != 1){
+	if($("#createNurseryMainForm #studyId").length  === 1) {
+		idVal = ($("#createNurseryMainForm #studyId").val());
+		count++;
+	}else if($('#trial-table').length === 1) {
+		for(var index in selectedTableIds) {
+			//console.log( index + " : " + selectedTableIds[index]);
+			var tempVal = selectedTableIds[index];
+			if(tempVal != null){
+				idVal = tempVal;
+				count++;
+			}			
+		}
+	}
+	else{
+		idVal = getCurrentStudyIdInTab();
+		count++; 
+	}
+	
+	if(count !== 1){
 		$('#page-create-field-map-message').html("<div class='alert alert-danger'>"+createLabelErrorMsg+"</div>");
 		return;
 	}
 	
-	if(idVal != null){
+	if(idVal !== null){
 		var labelPrintingHref = $('#label-printing-url').attr("href");
 		var id = idVal;
 		Spinner.toggle();
@@ -599,7 +601,7 @@ function createLabelPrinting(tableName){
 	    
 	}else{
 		var type = 'Trial';
-		if(tableName == 'nursery-table')
+		if(tableName === 'nursery-table')
 			type='Nursery';
 		$('#page-create-field-map-message').html("<div class='alert alert-danger'>"+createLabelErrorMsg+"</div>");
 	}
@@ -633,7 +635,7 @@ function showFieldMap(tableName) {
 //show popup to select instances for field map creation
 function showFieldMapPopUpCreate(tableName, ids) {
 	var link = "";
-	if (tableName == "trial-table") {
+	if (tableName === "trial-table") {
 		link = "/Fieldbook/Fieldmap/enterFieldDetails/createFieldmap/";
 		trial = true;
 	} else {

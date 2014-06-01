@@ -1040,3 +1040,10 @@ a.fbk-edit-experiment{
     text-align: center;
     background-repeat:no-repeat;
 }
+.fbk-data-table-paginate{
+	margin-top: 20px;
+}
+.fbk-data-table-info .dataTables_info{
+	left: 20px;
+    position: relative;
+}

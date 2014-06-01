@@ -3,7 +3,7 @@
 <br />
 <br />
 <br />
-				<table th:object="${createNurseryForm}" id="test-table" width="100%" class="table-curved table-condensed" >
+				<table th:object="${createNurseryForm}" id="measurement-table" width="100%" class="table-curved table-condensed" >
 					<thead>
 						<tr>
 							<th  class="factors">Action</th>
@@ -19,78 +19,10 @@
 
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
-	var tableName = 'test-table';
 	$( document ).ready(function() {
-		
-		var table =  $('#'+tableName).DataTable( {			  	
-		        "ajax": "/Fieldbook/Common/addOrRemoveTraits/data/table/ajax",
-		        "scrollY": 500,
-		        "scrollX": true,
-		        "scrollCollapse": true,
-		        "lengthMenu": [[50, 75, 100, -1], [50, 75, 100, "All"]],
-		        //"deferRender":    true,
-	            //"dom":            "frtiS",
-	              "bAutoWidth": true,
-		        "iDisplayLength": 100,
-		        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-		        	var toolTip = "GID: " + aData[1] + " Designation: " + aData[2];
-		            // assuming ID is in last column
-		            $(nRow).attr("id", aData[0]);
-		            $(nRow).attr("title", toolTip);
-		            /*
-		            $(nRow).on('mouseover', function(){		            	
-		            	console.log(toolTip);
-		            });
-		            */
-		            
-		            $(nRow).find('td:eq(0)').html('<a href="javascript: editExperiment('+aData[0]+', '+this.fnGetPosition( nRow )+')" class="fbk-edit-experiment"></a>');
-		            return nRow;
-		        },
-		        "fnInitComplete": function(oSettings, json){
-		        	$('#'+tableName+ "_wrapper select").select2();
-		        },
-		        "language": {
-					           "search": "<span class='fbk-search-data-table'>Search:</span>"
-					 }
-		    } );
-		//new $.fn.dataTable.FixedColumns( table,  {'iLeftColumns' : 3} );
-		/*
-		 $('#'+tableName+' tbody').on( 'click', 'tr', function () {
-	        if ( $(this).hasClass('highlight') ) {
-	            $(this).removeClass('highlight');
-	        }
-	        else {
-	            table.$('tr.highlight').removeClass('highlight');
-	            $(this).addClass('highlight');
-	        }
-	    } );
-			*/ 
-		 
-		$('#'+tableName+' tbody').on( 'hover', 'tr', function () {
-	        if ( $(this).hasClass('highlight') ) {
-	            $(this).removeClass('highlight');
-	        }
-	        else {
-	            table.$('tr.highlight').removeClass('highlight');
-	            $(this).addClass('highlight');
-	        }
-	    } );
-		
+		initializeMeasurementsDatatable('#measurement-table', "/Fieldbook/Common/addOrRemoveTraits/data/table/ajax");		
 	});
-	function editExperiment(expId, rowIndex){
-		//console.log(expId + "  " + rowIndex);
-		$.ajax({
-			url: '/Fieldbook/Common/addOrRemoveTraits/data/table/ajax/submit/' + rowIndex,
-			type: 'POST',
-			success: function(dataResp) {
-				//console.log(dataResp.data);
-				var oTable = $('#'+tableName).dataTable();				
-				 oTable.fnUpdate( dataResp.data, rowIndex, null); // Row				
-				 oTable.fnAdjustColumnSizing();
-				
-			}
-		});
-	}
+	
 
 
 	//]]>

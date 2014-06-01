@@ -12,6 +12,7 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
@@ -249,21 +250,24 @@ public class ObservationMatrixController extends
     		tempList.addAll(userSelection.getMeasurementRowList());
     	form.setMeasurementRowList(tempList);
     	
-    	List<List<String>> masterList = new ArrayList();
+    	List<Map> masterList = new ArrayList();
     	
     	for(MeasurementRow row : tempList){
-    		List<String> dataList = new ArrayList();
-    		dataList.add(Integer.toString(row.getExperimentId()));
-    		for(MeasurementData data : row.getDataList()){
-    			dataList.add(data.getDisplayValue());
+    		
+    		Map<String, Object> dataMap = new HashMap<String, Object>();
+    		dataMap.put("Action", Integer.toString(row.getExperimentId()));
+    		dataMap.put("experimentId", Integer.toString(row.getExperimentId()));
+    		dataMap.put("GID", row.getMeasurementData(TermId.GID.getId()));
+    		dataMap.put("DESIGNATION", row.getMeasurementData(TermId.DESIG.getId()));
+    		for(MeasurementData data : row.getDataList()){    			
+    			dataMap.put(data.getMeasurementVariable().getName(), data.getDisplayValue());
     		}
     		
-    		masterList.add(dataList);
+    		masterList.add(dataMap);
     	}
-    	
-    	
     	HashMap map = new HashMap();
     	map.put("data", masterList);
+    	//map.put("columns", masterColumnList);    	
     	return map;
     }
     @ResponseBody
@@ -275,15 +279,18 @@ public class ObservationMatrixController extends
     	tempList.addAll(userSelection.getMeasurementRowList());
 
     	MeasurementRow row = tempList.get(index);
-		List<String> dataList = new ArrayList();
-		dataList.add(Integer.toString(row.getExperimentId()));
+		Map<String, Object> dataMap = new HashMap<String, Object>();
+		dataMap.put("Action", Integer.toString(row.getExperimentId()));
+		dataMap.put("experimentId", Integer.toString(row.getExperimentId()));
+		dataMap.put("GID", row.getMeasurementData(TermId.GID.getId()));
+		dataMap.put("DESIGNATION", row.getMeasurementData(TermId.DESIG.getId()));
 		for(MeasurementData data : row.getDataList()){
-			dataList.add(data.getDisplayValue() + "Edited");
+			dataMap.put(data.getMeasurementVariable().getName(), data.getDisplayValue() + "Edited");
 		}
     	
     	
     	HashMap map = new HashMap();
-    	map.put("data", dataList);
+    	map.put("data", dataMap);
     	return map;
     }
 }

@@ -1738,3 +1738,64 @@ function changeBuildOption() {
 		$('#choosePreviousStudy').show();
 	}
 }
+function initializeMeasurementsDatatable(tableIdentifier, ajaxUrl){
+	var columns = [];
+	$(tableIdentifier + ' thead tr th').each(function(){
+		columns.push({'data':$(this).html()})
+	});
+	
+	var table =  $(tableIdentifier).DataTable( {			  	
+	        "ajax": ajaxUrl,
+	        "columns": columns,
+	        "scrollY": 500,
+	        "scrollX": true,
+	        "scrollCollapse": true,
+	        "lengthMenu": [[50, 75, 100, -1], [50, 75, 100, "All"]],
+
+              "bAutoWidth": true,
+	        "iDisplayLength": 100,
+	        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+	        	var toolTip = "GID: " + aData['GID'] + " Designation: " + aData['DESIGNATION'];
+	            // assuming ID is in last column
+	        	
+	            $(nRow).attr("id", aData['experimentId']);
+	            $(nRow).attr("title", toolTip);
+	           
+	            $(nRow).find('td:eq(0)').html('<a href="javascript: editExperiment(&quot;'+tableIdentifier+'&quot;,'+aData['GID']+', '+this.fnGetPosition( nRow )+')" class="fbk-edit-experiment">1</a>');
+	            return nRow;
+	        },
+	        "fnInitComplete": function(oSettings, json){
+	        	$(tableIdentifier+ "_wrapper select").select2();
+	        },
+	        "language": {
+				           "search": "<span class='fbk-search-data-table'>Search:</span>"
+				 }
+	        ,"dom": 'R<<"row"<"col-md-6"l<"fbk-data-table-info"i>><"col-md-4"f><"col-md-2"C>>r<t><"row col-md-12 fbk-data-table-paginate"p>>'
+	        //for column visibility
+	        ,"colVis": {
+	            exclude: [ 0 ],
+	            restore: "Restore",
+	            showAll: "Show all"
+	        }
+	        //for column re-ordering
+	        ,"colReorder": {
+	            "fixedColumns": 1
+	        }
+	    } );
+
+	//new $.fn.dataTable.FixedColumns( table,  {'iLeftColumns' : 3} );		
+}
+function editExperiment(tableIdentifier, expId, rowIndex){
+	//console.log(expId + "  " + rowIndex);
+	$.ajax({
+		url: '/Fieldbook/Common/addOrRemoveTraits/data/table/ajax/submit/' + rowIndex,
+		type: 'POST',
+		success: function(dataResp) {
+			//console.log(dataResp.data);
+			var oTable = $(tableIdentifier).dataTable();				
+			 oTable.fnUpdate( dataResp.data, rowIndex, null); // Row				
+			 oTable.fnAdjustColumnSizing();
+			
+		}
+	});
+}

@@ -43,7 +43,7 @@
 		            });
 		            */
 		            
-		            $(nRow).find('td:eq(0)').html('<a href="javascript: editExperiment('+aData[0]+', '+iDisplayIndexFull+')" class="fbk-edit-experiment"></a>');
+		            $(nRow).find('td:eq(0)').html('<a href="javascript: editExperiment('+aData[0]+', '+this.fnGetPosition( nRow )+')" class="fbk-edit-experiment"></a>');
 		            return nRow;
 		        },
 		        "fnInitComplete": function(oSettings, json){
@@ -83,13 +83,10 @@
 			url: '/Fieldbook/Common/addOrRemoveTraits/data/table/ajax/submit/' + rowIndex,
 			type: 'POST',
 			success: function(dataResp) {
-				console.log(dataResp);
-				var oTable = $('#'+tableName).dataTable();
-				var index = 1; //since 0 is the number
-				for(index = 1; index < dataResp.data.length ; index++){
-					$('#'+tableName + " tbody tr:eq("+rowIndex+") td:eq("+index+")").html(dataResp.data[index]);
-				}
-				  oTable.fnAdjustColumnSizing();
+				//console.log(dataResp.data);
+				var oTable = $('#'+tableName).dataTable();				
+				 oTable.fnUpdate( dataResp.data, rowIndex, null); // Row				
+				 oTable.fnAdjustColumnSizing();
 				
 			}
 		});

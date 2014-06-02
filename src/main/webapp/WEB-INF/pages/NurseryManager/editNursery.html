@@ -18,28 +18,32 @@
 <form id="createNurseryMainForm" role="form-horizontal" action="#" th:object="${createNurseryForm}" enctype="multipart/form-data">
 	<input type="hidden" th:field="*{studyId}" />
 	<div class="row">
-		<div class="col-xs-12 col-md-12">
+		<div class="col-md-6">
 			<img width="30" height="30" th:src="@{/static/img/new-nursery.png}" class="image-padding image-padding-with-text" />
 			<label class="heading" th:text="#{nursery.edit.nursery.label}">Edit Nursery</label>
-			<input type="button" onclick="submitForm();" th:value="#{common.form.save.text}" class="btn btn-info" />
+			<label class="heading" th:text="*{basicDetails[0].value}"></label>
+			<input type="button" onclick="submitForm();" th:value="#{common.form.save.text}" class="btn btn-info fbk-save-button-left-margin" />
+		</div>
+		<div class="col-md-4">
+		</div>
+		<div class="col-md-2 add_top_padding">
+			<a th:href="@{/NurseryManager/manageNurseries}" th:text="#{return.to.manage.nurseries}">Return to Manage Nurseries</a>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-xs-12 col-md-12">&nbsp;</div>
 	</div>
 	<div class="row">
-		<div class="col-xs-12 col-md-12">
-			<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-xs-12 col-md-12">
+		<div class="col-md-12">
+			<div class="col-md-8">
 			<label class="control-label section-toggle toggle-icon" id="basicDetails" data-target=".basicDetailsSection">
 				<img style="margin-left: -10px; display: none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
 				<img style="margin-left: -7px;" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
 				<strong class="sub-content-heading" th:text="#{nursery.create.nursery.basic.details}">BASIC DETAILS</strong>
 			</label>
-			<div style="float: right; margin-right: 50px;">
+			</div>
+			<div class="col-md-4">
+			<div style="float: right; ">
 				<div class="btn-group">
 					<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
 						<span th:text="#{nursery.nurserydetails.actions}">Actions</span>
@@ -77,9 +81,9 @@
 					</ul>
 				</div>
 			</div>
+			</div>
 		</div>
 	</div>
-
 	<div class="basicDetailsSection" style="display: none">
 		<div class="row form-group">
 			<div class="col-xs-2 col-md-2">
@@ -99,8 +103,7 @@
 				<label class="control-label" id="folderNameLabel" th:text="*{folderName}"></label>
 			</div>
 			<div class="col-xs-2 col-md-2">
-				<a style="position: relative; left: -50px" id="chooseLocation" onclick="openStudyTree(2);"
-					th:text="#{nursery.create.nursery.choose.location}"></a>
+				<a id="chooseLocation" onclick="openStudyTree(2);" th:text="#{nursery.create.nursery.choose.location}"></a>
 			</div>
 		</div>
 		<div class="row form-group">
@@ -137,10 +140,6 @@
 				<label for="basicDetails.value4" class="btn datepicker"> <img th:src="@{/static/img/calendar.png}" style="padding-bottom: 3px;" /></label>
 			</div>
 		</div>
-	</div>
-
-	<div class="row">
-		<div class="col-xs-12 col-md-12">&nbsp;</div>
 	</div>
 </form>
 
@@ -300,38 +299,14 @@
 		//<![CDATA[
 
 		// FIXME Should not be using global variables or functions
-		/*global lastDraggedChecksList, Spinner, validateCreateNursery, validateStartEndDate, moveToTopScreen*/
+		/*global showErrorMessage,recreateSessionVariables, lastDraggedChecksList, Spinner, validateCreateNursery, validateStartEndDate, moveToTopScreen*/
 
-		// FIXME These variables should not be global. Dangerous to fix right now,
-		// because they are used in so many other files. Don't use ignore! This should be fixed!
+		
 
 		/* jshint ignore:start */
 		var selectedGidsForAdvance = [],
-			startDateRequiredError = /*[[#{start.end.date.validation.start.date.required}]]*/ '',
-			startDateRequiredEarlierError = /*[[#{start.end.date.validation.start.date.required.earlier}]]*/ '',
-			addNurseryLevelSettings = /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
-			addPlotLevelSettings = /*[[#{nursery.managesettings.add.plot.level.settings}]]*/ '',
-			addBaselineTraits = /*[[#{nursery.managesettings.add.baseline.traits}]]*/ '',
-			addSelectionVariates = /*[[#{nursery.managesettings.add.selection.variates}]]*/ '',
-			addNurseryConditions = /*[[#{nursery.managesettings.add.nursery.conditions}]]*/ '',
-			addTrialEnvironmentTraits = /*[[#{nursery.managesettings.add.trial.environment.variable}]]*/ '',
-			addTreatmentFactors = /*[[#{trial.managesettings.treatment.factors.add}]]*/ '',
-			reminderNursery = /*[[#{nursery.reminder.add.nursery.settings}]]*/ '',
-			reminderPlot = /*[[#{nursery.reminder.add.plot.settings}]]*/ '',
-			reminderTraits = /*[[#{nursery.reminder.add.trait.settings}]]*/ '',
-			reminderSelectionVariates = /*[[#{nursery.reminder.add.selection.variates}]]*/ '',
-			reminderNurseryCondtions = /*[[#{nursery.reminder.add.nursery.conditions}]]*/ '',
-			reminderTrialEnvironment = /*[[#{nursery.reminder.add.trial.environment.settings}]]*/ '',
-			reminderTreatmentFactors = /*[[#{trial.reminder.add.treatment.factors}]]*/ '',
-			germplasmSelectError = /*[[#{seed.inventory.select.germplasm.error}]]*/ '',
-			locationSuggestions = /*[[${locationList}]]*/ '',
-			scaleSuggestions = /*[[${scaleList}]]*/  '',
-			locationRequired = /*[[#{seed.inventory.location.required}]]*/ '',
-			scaleRequired = /*[[#{seed.inventory.scale.required}]]*/ '',
 			buttonToDelete = null;
 			/* jshint ignore:end */
-
-		var programNurseriesText = /*[[#{program.nurseries}]]*/ '';
 
 		function submitGermplasmList() {
 			'use strict';
@@ -384,16 +359,16 @@
 				serializedData = $form.serialize();
 
 			$.ajax({
-				url: "/Fieldbook/NurseryManager/editNursery",
+				url: '/Fieldbook/NurseryManager/editNursery',
 				type: "POST",
 				data: serializedData,
 				cache: false,
 				success: function(data) {
-                    if (data.status == -1) {
+                    if (data.status === '-1') {
                         showErrorMessage('page-message', data.errorMessage);
-                    } else if ($("#nursery-germplasm-list").length > 0) {
+                    } else if ($('#nursery-germplasm-list').length > 0) {
 						submitCheckGermplasmList();
-					} else if (data.status == 1) {
+					} else if (data.status === '1') {
 						recreateSessionVariables();
 					}
 				} 
@@ -427,7 +402,7 @@
 				$(className).slideToggle();
 			});
 
-			if ($('#folderId').val() == 1) {
+			if ($('#folderId').val() === '1') {
 				$('#folderNameLabel').html(programNurseriesText);
 			}
 		});

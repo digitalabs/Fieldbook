@@ -1024,6 +1024,11 @@ div.sectionContainer {
 .fbk-open-button-left-margin{
 	margin-left: 20px;
 }
+.fbk-save-button-left-margin{
+	margin-left: 20px;
+	position: relative;
+    top: -5px;
+}
 .nav-tabs li a{
 	font-weight: bold;
 }

@@ -19,7 +19,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 			<div class="col-md-6">
 				<img width="30" height="30" th:src="@{/static/img/new-nursery.png}" class="image-padding image-padding-with-text" />
 				<label class="heading" th:text="#{nursery.create.nursery.label}">Create Nursery</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<input type="button" onclick="submitForm();" th:value="#{common.form.save.text}" class="btn btn-info" />
+				<input type="button" onclick="submitForm();" th:value="#{common.form.save.text}" class="btn btn-info fbk-save-button-left-margin" />
 			</div>
 			<div class="col-md-4">
 			</div>
@@ -203,10 +203,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 
 		// FIXME Should not be using global variables or functions
 		/*global lastDraggedChecksList, Spinner, validateCreateNursery, validateStartEndDate, moveToTopScreen*/
-		/*global clearSettings, loadNurserySettingsForCreate, getJquerySafeId*/
-
-		// FIXME These variables should not be global. Dangerous to fix right now,
-		// because they are used in so many other files. Don't use ignore! This should be fixed!
+		/*global loadNurserySettingsForCreate, getJquerySafeId, changeBuildOption*/
 
 
 		function submitGermplasmList(){

@@ -3,6 +3,7 @@ package com.efficio.fieldbook.web.common.controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -18,6 +19,9 @@ import org.generationcp.middleware.pojos.dms.DmsProject;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +44,8 @@ public class StudyTreeController {
 	
 	@Resource
 	private StudyDataManager studyDataManager;
+	@Autowired
+    public MessageSource messageSource;
 
 	@ResponseBody
 	@RequestMapping(value = "/loadInitialNurseryTree/{isFolderOnly}", method = RequestMethod.GET)
@@ -176,7 +182,13 @@ public class StudyTreeController {
 		String parentKey = req.getParameter("parentFolderId");
 		String folderName = req.getParameter("folderName");
 		Map<String, Object> resultsMap = new HashMap<String, Object>();
+		 Locale locale = LocaleContextHolder.getLocale();
 		try {
+			if(folderName.equalsIgnoreCase(AppConstants.PROGRAM_NURSERIES.getString()) ||
+					folderName.equalsIgnoreCase(AppConstants.PUBLIC_NURSERIES.getString())){
+				
+				 throw new MiddlewareQueryException(messageSource.getMessage("folder.name.not.unique", null, locale));
+			}
 			Integer parentFolderId = Integer.parseInt(parentKey);
 			if (!TreeViewUtil.isFolder(parentFolderId, fieldbookMiddlewareService)) {
 				DmsProject project = studyDataManager.getParentFolder(parentFolderId);
@@ -200,9 +212,16 @@ public class StudyTreeController {
 	@RequestMapping(value = "/renameStudyFolder", method = RequestMethod.POST)
 	public Map<String, Object> renameStudyFolder(HttpServletRequest req) {
 		Map<String, Object> resultsMap = new HashMap<String, Object>();
+		 Locale locale = LocaleContextHolder.getLocale();
 		try {
 			String newFolderName = req.getParameter("newFolderName");
 			String folderId = req.getParameter("folderId");
+			if(newFolderName.equalsIgnoreCase(AppConstants.PROGRAM_NURSERIES.getString()) ||
+					newFolderName.equalsIgnoreCase(AppConstants.PUBLIC_NURSERIES.getString())){
+				
+				 throw new MiddlewareQueryException(messageSource.getMessage("folder.name.not.unique", null, locale));
+			}
+			
 			this.studyDataManager.renameSubFolder(newFolderName, Integer.parseInt(folderId));
 			resultsMap.put("isSuccess", "1");
 		} catch (MiddlewareQueryException e) {

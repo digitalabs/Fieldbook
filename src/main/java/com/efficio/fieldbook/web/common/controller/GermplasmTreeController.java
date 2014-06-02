@@ -442,6 +442,10 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         if(localDuplicate!=null && !localDuplicate.isEmpty()) {
         	throw new Exception(NAME_NOT_UNIQUE);
         }
+        if(folderName.equalsIgnoreCase(AppConstants.GERMPLASM_LIST_LOCAL.getString()) ||
+        		folderName.equalsIgnoreCase(AppConstants.GERMPLASM_LIST_CENTRAL.getString())){
+        	throw new Exception(NAME_NOT_UNIQUE);
+        }
 	}
     
     @ResponseBody

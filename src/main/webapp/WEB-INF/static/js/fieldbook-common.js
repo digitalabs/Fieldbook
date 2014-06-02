@@ -1763,7 +1763,8 @@ function initializeMeasurementsDatatable(tableIdentifier, ajaxUrl){
 			//for GID
 			columnsDef.push({
 				'targets': columns.length - 1, 
-				'data' : $(this).html(), 
+				'data' : $(this).html(),
+				'width' : "100px",
 				'render' : function ( data, type, full, meta ) {
 	              return '<a class="gid-link" href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;'+full['GID']+'&quot;,&quot;'+full['DESIGNATION']+'&quot;)">'+data+'</a>';
 				 }  
@@ -1781,9 +1782,9 @@ function initializeMeasurementsDatatable(tableIdentifier, ajaxUrl){
 			//for designation
 			columnsDef.push({
 				'targets': columns.length - 1, 
-				'data' : $(this).html(), 
+				'data' : $(this).html(),				
 				'render' : function ( data, type, full, meta ) {
-					return '<a href="javascript: editExperiment(&quot;'+tableIdentifier+'&quot;,'+data+','+meta.row+')" class="fbk-edit-experiment">1</a>';					
+					return '<a href="javascript: editExperiment(&quot;'+tableIdentifier+'&quot;,'+data+','+meta.row+')" class="fbk-edit-experiment"></a>';					
 				 }  
 			});
 		}
@@ -1792,8 +1793,8 @@ function initializeMeasurementsDatatable(tableIdentifier, ajaxUrl){
 	var table =  $(tableIdentifier).DataTable( {			  	
 	        "ajax": ajaxUrl,
 	        "columns": columns,
-	        "scrollY": 500,
-	        "scrollX": true,
+	        "scrollY": "500px",
+	        "scrollX": "100%",
 	        "scrollCollapse": true,
 	        "columnDefs": columnsDef,
 	        "lengthMenu": [[50, 75, 100, -1], [50, 75, 100, "All"]],	      
@@ -1808,9 +1809,12 @@ function initializeMeasurementsDatatable(tableIdentifier, ajaxUrl){
 	            return nRow;
 	        },
 	        "fnInitComplete": function(oSettings, json){
-	        	$(tableIdentifier+ "_wrapper select").select2();	        	
-	        },
-	        "language": {
+	        	$(tableIdentifier+ "_wrapper select").select2();
+	        	//there is a bug in datatable for now
+	        	setTimeout(function(){$(tableIdentifier).dataTable().fnAdjustColumnSizing();}, 1000);
+	        }
+			
+	        ,"language": {
 				           "search": "<span class='fbk-search-data-table'>Search:</span>"
 				 }
 	        ,"dom": 'R<<"row"<"col-md-6"l<"fbk-data-table-info"i>><"col-md-4"f><"col-md-2"C>>r<t><"row col-md-12 fbk-data-table-paginate"p>>'
@@ -1820,31 +1824,23 @@ function initializeMeasurementsDatatable(tableIdentifier, ajaxUrl){
 	            restore: "Restore",
 	            showAll: "Show all"
 	        }
+	        //problem with reordering plugin and fixed column
 	        //for column re-ordering
 	        /*
 	        ,"colReorder": {
-	            "fixedColumns": 1
+	            "fixedColumns": 3
 	        }
 	        */
 	    } );
-	
+		$(tableIdentifier).dataTable().bind('sort', function () {
+			$(tableIdentifier).dataTable().fnAdjustColumnSizing();
+		} ); 
 	
 
 	//new $.fn.dataTable.FixedColumns( table,  {'iLeftColumns' : 3} );		
 }
 function editExperiment(tableIdentifier, expId, rowIndex){
-	/*
-	$.ajax({
-		url: '/Fieldbook/Common/addOrRemoveTraits/data/table/ajax/submit/' + rowIndex,
-		type: 'POST',
-		success: function(dataResp) {
-			//console.log(dataResp.data);
-			var oTable = $(tableIdentifier).dataTable();				
-			 oTable.fnUpdate( dataResp.data, rowIndex, null, false); // Row				
-			 oTable.fnAdjustColumnSizing();			
-		}
-	});
-	*/
+	
 	//we show the ajax page here
 	$.ajax({
 		url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/' + rowIndex,

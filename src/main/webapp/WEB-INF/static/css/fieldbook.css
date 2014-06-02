@@ -1036,9 +1036,10 @@ a.fbk-edit-experiment{
 	background-image: url('../img/edit.png');
 	display:block;
     height:20px;
-	margin-left: 5px;
+	margin-left: 15px;
     text-align: center;
     background-repeat:no-repeat;
+    width: 25px;
 }
 .fbk-data-table-paginate{
 	margin-top: 20px;
@@ -1046,4 +1047,13 @@ a.fbk-edit-experiment{
 .fbk-data-table-info .dataTables_info{
 	left: 20px;
     position: relative;
+}
+.DTFC_LeftBodyLiner{
+	overflow-x: hidden;
+}
+.DTFC_LeftWrapper .table-curved  > *:first-child > *:first-child > *:last-child {
+    border-top-right-radius: 0px;	
+}
+table .even, div.DTFC_LeftHeadWrapper table, div.DTFC_LeftFootWrapper table, div.DTFC_RightHeadWrapper table, div.DTFC_RightFootWrapper table, table.DTFC_Cloned tr.even {
+    background-color: #f0eeee;
 }

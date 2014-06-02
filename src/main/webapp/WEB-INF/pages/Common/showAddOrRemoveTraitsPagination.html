@@ -10,7 +10,7 @@ method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
 		<thead>
 			<tr>
 				<th  data-term-id="Action" class="factors">Action</th>
-				<th th:attr="data-term-id=${measurementVariable.termId}" th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'" th:each="measurementVariable, rowIndex : *{measurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>
+				<th th:attr="data-term-id=${measurementVariable.termId}" th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'" th:each="measurementVariable, rowIndex : *{arrangeMeasurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>
 				
 			</tr>
 		</thead>	

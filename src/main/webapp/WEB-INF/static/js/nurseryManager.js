@@ -2288,6 +2288,12 @@ function showSelectedTab(selectedTabName) {
 			$("#" + tabs[i].id).hide();
 		}
 	}
+	
+	if(selectedTabName === 'nursery-measurements') {
+		var dataTable = $('#measurement-table').dataTable();
+		if(dataTable != null)
+			dataTable.fnAdjustColumnSizing();
+	}
 
 }
 

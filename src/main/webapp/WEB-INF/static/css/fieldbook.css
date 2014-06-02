@@ -771,6 +771,9 @@ div.possibleValuesDiv{
 .add-border{
 	border: 1px solid #CECECE;
 }
+table .even, div.DTFC_LeftHeadWrapper table, div.DTFC_LeftFootWrapper table, div.DTFC_RightHeadWrapper table, div.DTFC_RightFootWrapper table, table.DTFC_Cloned tr.even {
+    background-color: #f0eeee;
+}
 table tbody tr.germplasmSelectedRow, .germplasmSelectedRow td{
 	background-color: #BED6B2;
 }
@@ -1053,7 +1056,4 @@ a.fbk-edit-experiment{
 }
 .DTFC_LeftWrapper .table-curved  > *:first-child > *:first-child > *:last-child {
     border-top-right-radius: 0px;	
-}
-table .even, div.DTFC_LeftHeadWrapper table, div.DTFC_LeftFootWrapper table, div.DTFC_RightHeadWrapper table, div.DTFC_RightFootWrapper table, table.DTFC_Cloned tr.even {
-    background-color: #f0eeee;
 }

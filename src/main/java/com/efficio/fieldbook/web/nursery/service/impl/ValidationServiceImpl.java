@@ -53,7 +53,7 @@ public class ValidationServiceImpl implements ValidationService {
 			
 		} else if (var.getPossibleValues() != null && !var.getPossibleValues().isEmpty()) {
 			for (ValueReference ref : var.getPossibleValues()) {
-				if (ref.getId().equals(value)) {
+				if (value != null && !value.equalsIgnoreCase("") && ref.getId().intValue()  == Integer.valueOf(value)) {
 					return true;
 				}
 			}

@@ -252,8 +252,10 @@ public class ObservationMatrixController extends
     	List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
     	tempList.addAll(userSelection.getMeasurementRowList());
 
-    	MeasurementRow row = tempList.get(index);    	
-    	form.setUpdateObservation(row);
+    	MeasurementRow row = tempList.get(index);    
+    	MeasurementRow copyRow = row.copy();
+    	copyMeasurementValue(copyRow, row);
+    	form.setUpdateObservation(copyRow);
     	form.setExperimentIndex(index);
         return super.showAjaxPage(model, EDIT_EXPERIMENT_TEMPLATE);
     }
@@ -314,9 +316,14 @@ public class ObservationMatrixController extends
     	for(int index = 0 ; index < origRow.getDataList().size() ; index++){
     		MeasurementData data =  origRow.getDataList().get(index);
     		MeasurementData valueRowData = valueRow.getDataList().get(index);
-    		data.setcValueId(valueRowData.getcValueId());
     		if(data.getMeasurementVariable().getPossibleValues() != null && !data.getMeasurementVariable().getPossibleValues().isEmpty()){
-    			data.setValue(valueRowData.getcValueId());
+    			if(valueRowData.getcValueId() != null){
+	    			data.setcValueId(valueRowData.getcValueId());
+	    			data.setValue(valueRowData.getcValueId());
+    			}else if(valueRowData.getValue() != null){
+    				data.setcValueId(valueRowData.getValue());
+	    			data.setValue(valueRowData.getValue());
+    			}
     		}else
     			data.setValue(valueRowData.getValue());
     	}

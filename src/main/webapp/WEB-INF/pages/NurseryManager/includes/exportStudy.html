@@ -171,25 +171,29 @@
 				// We are on the landing page
 				studyId = getCurrentStudyIdInTab();
 			}
+			
+			if($('#exportWayType').val() === '1') {
+				exportNursery();
+			}else {
 
-			Spinner.toggle();
-
-			$.ajax({
-				url: '/Fieldbook/ExportManager/study/hasFieldMap?studyId=' + studyId,
-				type: 'GET',
-				cache: false,
-				success: function (data) {
-					if (data === "0") {
-						// Disable the export order of serpentine
-						$('#exportStudyModal').modal('hide');
-						$('#exportStudyConfirmationModal').modal({ backdrop: 'static', keyboard: false });
-					} else {
-						exportNursery();
+				Spinner.toggle();
+	
+				$.ajax({
+					url: '/Fieldbook/ExportManager/study/hasFieldMap?studyId=' + studyId,
+					type: 'GET',
+					cache: false,
+					success: function (data) {
+						if (data === "0") {
+							// Disable the export order of serpentine
+							$('#exportStudyModal').modal('hide');
+							$('#exportStudyConfirmationModal').modal({ backdrop: 'static', keyboard: false });
+						} else {
+							exportNursery();
+						}
+						Spinner.toggle();
 					}
-					Spinner.toggle();
-				}
-			});
-
+				});
+			}
 		}
 
 		function doConfirmGoBack() {

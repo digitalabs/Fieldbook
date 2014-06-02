@@ -130,165 +130,17 @@
 <div layout:fragment="page-script">
 	<script type="text/javascript" th:inline="javascript">
 		//<![CDATA[
-		var folderNameRequiredMessage = /*[[#{browse.nursery.add.folder.name.blank}]]*/;
-		var renameFolderHeader = /*[[#{browse.nursery.rename.folder.name}]]*/;
-
-		var deleteConfirmation = /*[[#{browse.nursery.delete.folder.name.confirmation}]]*/;
-		var deleteFolderHasTrial = /*[[#{browse.nursery.delete.folder.has.trial.children}]]*/;
+		
 		function addFolder(object){
+			'use strict';
 			if(!$(object).hasClass('disable-image')){
 				$('#addFolderName').val('');
 				$('#page-add-study-folder-message-modal').html('');
 				$('#addStudyFolder').modal('show');
 			}
 		}
-		function closeModal(modalId){
-			$('#'+modalId).modal('hide');
-		}
-		function createFolder(){
-			var folderName = $.trim($('#addFolderName').val());
-			if(folderName == ''){
-				showErrorMessage('page-add-study-folder-message-modal', folderNameRequiredMessage);
-				return false;
-			}else{
-				//alert('Ajax Submit')
-				var parentFolderId = $('#studyTree').dynatree("getTree").getActiveNode().data.key;
-				if(parentFolderId == 'LOCAL')
-					parentFolderId = 1;
-
-				Spinner.toggle();
-				$.ajax({
-					url: "/Fieldbook/StudyTreeManager/addStudyFolder",
-					type: "POST",
-					data: "parentFolderId="+parentFolderId+"&folderName="+folderName,
-					cache: false,
-					success: function(data) {
-						if(data.isSuccess == 1){
-							var node = $('#studyTree').dynatree("getTree").getActiveNode();
-							doStudyLazyLoad(node);
-							node.focus();
-							node.expand();
-							$('#addStudyFolder').modal('hide');
-
-							}else{
-								showErrorMessage('page-add-study-folder-message-modal', data.message);
-							}
-							Spinner.toggle();
-						}
-					});
-			}
-			return false;
-		}
-
-		function renameFolder(object){
-			if(!$(object).hasClass('disable-image')){
-				$('#newFolderName').val('');
-				$('#page-rename-study-folder-message-modal').html('');
-				$('#renameStudyFolder').modal('show');
-				var currentFolderName = $('#studyTree').dynatree("getTree").getActiveNode().data.title
-				$('#renameStudyFolder #heading-modal').html(renameFolderHeader + " " + currentFolderName);
-
-			}
-		}
-
-		function submitRenameFolder(){
-			var folderName = $.trim($('#newFolderName').val());
-			if(folderName == ''){
-				showErrorMessage('page-rename-study-folder-message-modal', folderNameRequiredMessage);
-				return false;
-			}else{
-				//alert('Ajax Submit')
-				var parentFolderId = $('#studyTree').dynatree("getTree").getActiveNode().data.key;
-				if(parentFolderId == 'LOCAL')
-					parentFolderId = 1;
-
-				Spinner.toggle();
-				$.ajax({
-					url: "/Fieldbook/StudyTreeManager/renameStudyFolder",
-					type: "POST",
-					data: "folderId="+parentFolderId+"&newFolderName="+folderName,
-					cache: false,
-					success: function(data) {
-						if(data.isSuccess == 1){
-							$('#renameStudyFolder').modal('hide');
-							var node = $('#studyTree').dynatree("getTree").getActiveNode();
-							node.data.title = folderName
-							$(node.span).find('a').html(folderName);
-							node.focus();
-								//lazy load the node
-								//doStudyLazyLoad($('#studyTree').dynatree("getTree").getActiveNode());
-							}else{
-								showErrorMessage('page-rename-study-folder-message-modal', data.message);
-							}
-							Spinner.toggle();
-						}
-					});
-			}
-		}
-
-		function deleteFolder(object){
-			if(!$(object).hasClass('disable-image')){
-				$('#deleteStudyFolder').modal('show');
-				var currentFolderName = $('#studyTree').dynatree("getTree").getActiveNode().data.title
-				$('#delete-confirmation').html(deleteConfirmation + " " + currentFolderName + "?");
-				$('#page-delete-study-folder-message-modal').html('');
-			}
-		}
-
-		function submitDeleteFolder(){
-			var folderId = $('#studyTree').dynatree("getTree").getActiveNode().data.key;
-
-			Spinner.toggle();
-			$.ajax({
-				url: "/Fieldbook/StudyTreeManager/deleteStudyFolder",
-				type: "POST",
-				data: "folderId="+folderId,
-				cache: false,
-				success: function(data) {
-					if(data.isSuccess == 1){
-						$('#deleteStudyFolder').modal('hide');
-						var node = $('#studyTree').dynatree("getTree").getActiveNode();
-						if(node != null)
-							node.remove();
-						changeBrowseNurseryButtonBehavior(false);
-					}else{
-						showErrorMessage('page-delete-study-folder-message-modal', deleteFolderHasTrial);
-					}
-					Spinner.toggle();
-				}
-			});
-		}
-
-		function moveStudy(sourceNode, targetNode){
-			//console.log(sourceNode.data.title + " to " + targetNode.data.title)
-			var sourceId = sourceNode.data.key;
-			var targetId = targetNode.data.key;
-			var isStudy = sourceNode.data.isFolder == true ? 0 : 1;
-
-			if(targetId == 'CENTRAL' || targetId > 0){
-				var title = $('#studyTree').dynatree("getTree").getNodeByKey('CENTRAL').data.title;
-				showErrorMessage('page-study-tree-message-modal', "Can not move to " + title);
-				return false;
-			}
-
-			if(targetId == 'LOCAL')
-				targetId = 1;
-
-			Spinner.toggle();
-			$.ajax({
-				url: "/Fieldbook/StudyTreeManager/moveStudyFolder",
-				type: "POST",
-				data: "sourceId="+sourceId+"&targetId="+targetId + "&isStudy="+isStudy,
-				cache: false,
-				success: function(data) {
-					sourceNode.remove();
-					var node = targetNode;
-					doStudyLazyLoad(node);
-					node.focus();
-					Spinner.toggle();
-				}
-			});
-		}
+		
+		
 		//]]>
 	</script>
 </div>

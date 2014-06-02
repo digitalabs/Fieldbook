@@ -1826,18 +1826,18 @@ function initializeMeasurementsDatatable(tableIdentifier, ajaxUrl){
 	        }
 	        //problem with reordering plugin and fixed column
 	        //for column re-ordering
-	        /*
+	        
 	        ,"colReorder": {
 	            "fixedColumns": 3
 	        }
-	        */
+	        
 	    } );
 		$(tableIdentifier).dataTable().bind('sort', function () {
 			$(tableIdentifier).dataTable().fnAdjustColumnSizing();
 		} ); 
 	
 
-	//new $.fn.dataTable.FixedColumns( table,  {'iLeftColumns' : 3} );		
+	new $.fn.dataTable.FixedColumns( table,  {'iLeftColumns' : 3} );		
 }
 function editExperiment(tableIdentifier, expId, rowIndex){
 	

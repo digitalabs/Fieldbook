@@ -223,9 +223,14 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
     protected List<SettingDetail> updateRequiredFields(List<Integer> requiredVariables, List<String> requiredVariablesLabel, 
             boolean[] requiredVariablesFlag, List<SettingDetail> variables, boolean hasLabels) throws MiddlewareQueryException{
         for (SettingDetail variable : variables) {
-            Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getVariable().getProperty(), 
+            Integer  stdVar = null;
+            if (variable.getVariable().getCvTermId() != null) {
+            	stdVar = variable.getVariable().getCvTermId();
+            } else {
+            	stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(variable.getVariable().getProperty(), 
                     variable.getVariable().getScale(), variable.getVariable().getMethod(), 
                     PhenotypicType.valueOf(variable.getVariable().getRole()));
+            }
             
             //mark required factors that are already in the list
             int ctr = 0;

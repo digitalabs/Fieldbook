@@ -436,7 +436,12 @@ public class SettingsUtil {
 					SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(),
 							factor.getScale(), factor.getMethod(), factor.getRole(), factor.getDatatype());
 					variable.setOperation(Operation.UPDATE);
-					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
+					Integer stdVar = null;
+					if (factor.getTermId() != null) {
+						stdVar = factor.getTermId();
+					} else {
+						stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
+					}
 					
 					variable.setCvTermId(stdVar);
 					SettingDetail settingDetail = new SettingDetail(variable,

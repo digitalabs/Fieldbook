@@ -76,4 +76,15 @@ public class ValidationServiceImpl implements ValidationService {
 			}
 		}
 	}
+	@Override
+	public void validateObservationValues(Workbook workbook, MeasurementRow row) throws MiddlewareQueryException {
+		Locale locale = LocaleContextHolder.getLocale();
+		if (workbook.getObservations() != null) {			
+				for (MeasurementVariable variate : workbook.getVariates()) {
+					if (!isValidValue(variate, row.getMeasurementDataValue(variate.getName()))) {
+						throw new MiddlewareQueryException(messageSource.getMessage("error.workbook.save.invalidCellValue", new Object[] {variate.getName()}, locale));
+					}
+				}			
+		}
+	}
 }

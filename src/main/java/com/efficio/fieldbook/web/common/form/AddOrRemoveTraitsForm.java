@@ -80,6 +80,9 @@ public class AddOrRemoveTraitsForm {
     /** The location url. */
     private String locationUrl;
 	
+    private MeasurementRow updateObservation;
+    private Integer experimentIndex;
+    
 	
 	/**
 	 * Gets the study name.
@@ -450,6 +453,22 @@ public class AddOrRemoveTraitsForm {
 	 */
 	public void setLocationUrl(String locationUrl) {
 		this.locationUrl = locationUrl;
+	}
+
+	public MeasurementRow getUpdateObservation() {
+		return updateObservation;
+	}
+
+	public void setUpdateObservation(MeasurementRow updateObservation) {
+		this.updateObservation = updateObservation;
+	}
+
+	public Integer getExperimentIndex() {
+		return experimentIndex;
+	}
+
+	public void setExperimentIndex(Integer experimentIndex) {
+		this.experimentIndex = experimentIndex;
 	} 	
 	
 	

@@ -1833,8 +1833,7 @@ function initializeMeasurementsDatatable(tableIdentifier, ajaxUrl){
 	//new $.fn.dataTable.FixedColumns( table,  {'iLeftColumns' : 3} );		
 }
 function editExperiment(tableIdentifier, expId, rowIndex){
-	
-	//console.log(expId + "  " + rowIndex);
+	/*
 	$.ajax({
 		url: '/Fieldbook/Common/addOrRemoveTraits/data/table/ajax/submit/' + rowIndex,
 		type: 'POST',
@@ -1842,8 +1841,18 @@ function editExperiment(tableIdentifier, expId, rowIndex){
 			//console.log(dataResp.data);
 			var oTable = $(tableIdentifier).dataTable();				
 			 oTable.fnUpdate( dataResp.data, rowIndex, null, false); // Row				
-			 oTable.fnAdjustColumnSizing();
-			
+			 oTable.fnAdjustColumnSizing();			
+		}
+	});
+	*/
+	//we show the ajax page here
+	$.ajax({
+		url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/' + rowIndex,
+		type: 'GET',
+		cache: false,
+		success: function(dataResp) {
+			$('.edit-experiment-section').html(dataResp);
+			$('.updateExperimentModal').modal({ backdrop: 'static', keyboard: true });
 		}
 	});
 }

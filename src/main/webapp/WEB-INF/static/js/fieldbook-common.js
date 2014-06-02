@@ -1521,7 +1521,7 @@ function closeAdvanceListTab(uniqueId){
 }
 
 function displayAdvanceList(uniqueId, germplasmListId, listName){
-	$('#advanceHref'+uniqueId).append(': '+listName);
+	$('#advanceHref'+uniqueId).append(': ['+listName+"]");
 	Spinner.toggle();	
  	$.ajax({  		
  		url: "/Fieldbook/SeedStoreManager/advance/displayGermplasmDetails/"+germplasmListId,
@@ -1538,7 +1538,7 @@ function validateBreedingMethod() {
 	var id = $("#methodVariateId").val();
 
 	var valid = true;
-	if ($('input[type=checkbox][name=methodChoice]:checked').val() !== "1" && id) {
+	if ($('input[type=checkbox][name=methodChoice]:checked').val() !== '1' && id) {
 		Spinner.toggle();
 		$.ajax({
 			url: "/Fieldbook/NurseryManager/advance/nursery/countPlots/" + id,

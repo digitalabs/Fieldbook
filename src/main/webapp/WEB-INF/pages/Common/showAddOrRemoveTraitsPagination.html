@@ -2,96 +2,26 @@
 method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
 
 	<input type="hidden" th:field="*{importVal}"/>
-	<input type="hidden" th:field="*{numberOfInstances}"/>
-
-	<div class="germplasm-measurement-list-table" style="width: 100%; max-width: 100%; max-height: 500px; margin-bottom: 20px;">
-		<table class="table-curved table-condensed" id="factor-table" style="table-layout: auto; width: 100%">
-			<thead>
-				<tr>
-					<th style="white-space: nowrap" th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'" th:each="measurementVariable, rowIndex : *{measurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:class="${row.even}? 'even' : 'odd'" th:each="measurementRow, row: *{paginatedMeasurementRowList}">
-					<td th:if="${measurementData.editable == false}" th:switch="${measurementData.measurementVariable.termId}" style="vertical-center; padding: 0px; white-space: nowrap; padding-left: 5px; padding-right: 5px;" align="left" th:each="measurementData, rowIndex : ${measurementRow.dataList}" >
-						
-						<a th:case="8240" class="gid-link" href="javascript: void(0)" th:text="${measurementData.value}"></a>
-						<a th:case="8250" class="desig-link" href="javascript: void(0)" th:text="${measurementData.value}"></a>
-						<label th:case="*" th:text="${measurementData.value}" ></label>
-						
-					</td>
-					<td th:if="${measurementData.editable == true}" style="vertical-align:center; " align="center" th:each="measurementData, rowIndex : ${measurementRow.dataList}" >
-
-						<input th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" type="text" th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues)}" th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}"/>
-
-						<select class="variates-select" th:attr="data-type=${measurementData.dataType}" style="width: 100%;" size="1" th:if="${not #lists.isEmpty(measurementData.measurementVariable.possibleValues)}" th:field="*{paginatedMeasurementRowList[__${row.index}__].dataList[__${rowIndex.index}__].value}">
-							<option value = "" text=""></option>
-							<option th:each="refval : ${measurementData.measurementVariable.possibleValues}" th:value="${refval.key}" th:text="${refval.description}"></option>
-						</select>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-	<div >
-		<div th:if="*{measurementRowList != null and not #lists.isEmpty(measurementRowList)}">
-			<div id="measurement-data-list-pagination"></div>
-		</div>
-	</div>
+	<input type="hidden" th:field="*{numberOfInstances}"/>	
+	
 </form>
+<div class="germplasm-measurement-list-table1">
+	<table th:object="${createNurseryForm}" id="measurement-table" width="100%" class="table-curved table-condensed" >
+		<thead>
+			<tr>
+				<th  data-term-id="Action" class="factors">Action</th>
+				<th th:attr="data-term-id=${measurementVariable.termId}" th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'" th:each="measurementVariable, rowIndex : *{measurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>
+				
+			</tr>
+		</thead>	
+	</table>
+</div>
+<div class="row edit-experiment-section">
+</div>
 
-<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-paginator.min.js}"></script>
 
 <script type='text/javascript' th:inline="javascript">
 //<![CDATA[
-
-	convertToSelect2 = false;
-	var paginationUrl = '/Fieldbook/Common/addOrRemoveTraits/page/';
-	paginationUrl = paginationUrl + $("#study-type").val() + "/";
-
-	var submitExportUrl = '/Fieldbook/ExportManager/';
-	var options = {
-		currentPage: /*[[${createNurseryForm.currentPage}]]*/,
-		totalPages: /*[[${createNurseryForm.totalPages}]]*/,
-
-		alignment:'center',
-		useBootstrapTooltip:true,
-		onPageClicked: function(e,originalEvent,type,page){
-			if(validateCells()){
-				showPostPage(paginationUrl, options.currentPage, page, 'germplasm-measurement-list-table-div', 'addVariableForm');
-				$('.germplasm-measurement-list-table select').select2();
-			}else{
-				event.stopImmediatePropagation();
-			}
-
-		}
-	}
-
-	if($('#measurement-data-list-pagination') != null){
-		$('#measurement-data-list-pagination').bootstrapPaginator(options);
-	}
-
-	$( document ).ready(function() {
-		$('.germplasm-measurement-list-table select').select2();
-		
-		$(".germplasm-measurement-list-table .desig-link").click(function() {
-			var gidValue = $(this).parent().parent().find(".gid-link").text();
-			$(this).data("gid", gidValue);
-			$(this).data("desig", $(this).text());
-			openGermplasmDetailsPopop($(this));
-		});
-
-		$(".germplasm-measurement-list-table .gid-link").click(function() {
-			var desigValue = $(this).parent().parent().find(".desig-link").text();
-			$(this).data("gid", $(this).text());
-			$(this).data("desig", desigValue);
-			openGermplasmDetailsPopop($(this));
-		});
-
-
-	});
-	
-
 
 		function doReturn() {
 			location.href = "/Fieldbook/" + $("#study-type").val() + "Manager";
@@ -102,6 +32,9 @@ method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
 			return noError;
 		}
 
+		$( document ).ready(function() {
+			initializeMeasurementsDatatable('#measurement-table', "/Fieldbook/Common/addOrRemoveTraits/data/table/ajax");		
+		});
 
 	//]]>
 </script>

@@ -55,6 +55,7 @@
 					$('.updateExperimentModal select').select2();
 			});
 		function saveExperimentMeasurements(){
+			'use strict'
 			Spinner.toggle();
 			var rowIndex = $('.updateExperimentForm #experimentIndex').val();
 			$.ajax({

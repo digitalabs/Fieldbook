@@ -352,10 +352,14 @@ public class EditNurseryController extends SettingsController {
 	addDeletedSettingsList(form.getNurseryConditions(), userSelection.getDeletedNurseryConditions(), 
             userSelection.getNurseryConditions());
         
+		int trialDatasetId = userSelection.getWorkbook().getTrialDatasetId();
+		int measurementDatasetId = userSelection.getWorkbook().getMeasurementDatesetId();
     	Dataset dataset = (Dataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, studyLevelVariables, 
-    	        form.getPlotLevelVariables(), baselineTraits, userSelection, form.getNurseryConditions());    	
+    	        form.getPlotLevelVariables(), baselineTraits, userSelection, form.getNurseryConditions());
     	Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);
     	workbook.setOriginalObservations(userSelection.getWorkbook().getOriginalObservations());
+    	workbook.setTrialDatasetId(trialDatasetId);
+    	workbook.setMeasurementDatesetId(measurementDatasetId);
     	    	
     	createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), form.getStudyId());
     	userSelection.setWorkbook(workbook);
@@ -373,6 +377,8 @@ public class EditNurseryController extends SettingsController {
                 userSelection.setWorkbook(workbook);
                 validationService.validateObservationValues(workbook);
                 fieldbookMiddlewareService.saveMeasurementRows(workbook);
+                workbook.setTrialObservations(
+                		fieldbookMiddlewareService.buildTrialObservations(trialDatasetId, workbook.getTrialConditions(), workbook.getTrialConstants()));
                 workbook.setOriginalObservations(workbook.getObservations());
                 
                 resultMap.put("status", "1");

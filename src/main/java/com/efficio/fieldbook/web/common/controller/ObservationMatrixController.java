@@ -90,37 +90,6 @@ public class ObservationMatrixController extends
         return super.showAjaxPage(model, PAGINATION_TEMPLATE);
     }
 
-    /**
-     * Get for the pagination of the list
-     *
-     * @param form the form
-     * @param model the model
-     * @return the string
-     */
-    @RequestMapping(value="/page/{studyType}/{pageNum}/{previewPageNum}", method = RequestMethod.POST)
-    public String getPaginatedList(@PathVariable String studyType, @PathVariable int pageNum, @PathVariable int previewPageNum
-            , @ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
-
-    	boolean isTrial = studyType.equalsIgnoreCase("TRIAL");
-    	StudySelection userSelection = getUserSelection(isTrial);
-    	
-    	if (form.getPaginatedMeasurementRowList() == null && form.getMeasurementRowList() == null) {
-    		form.setMeasurementRowList(userSelection.getMeasurementRowList());
-    		form.changePage(previewPageNum);
-    	}
-    	//this set the necessary info from the session variable
-    	copyDataFromFormToUserSelection(form, previewPageNum, userSelection);
-    	//we need to set the data in the measurementList
-    	
-    	copyTrialDataFromFormToUserSelection(form, userSelection);
-    	
-    	form.setMeasurementRowList(userSelection.getMeasurementRowList());
-    	form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
-    	form.setStudyName(userSelection.getWorkbook().getStudyDetails().getStudyName());
-        form.changePage(pageNum);
-        userSelection.setCurrentPage(form.getCurrentPage());
-        return super.showAjaxPage(model, PAGINATION_TEMPLATE);
-    }
 
     @RequestMapping(value="/pageView/{studyType}/{pageNum}", method = RequestMethod.GET)
     public String getPaginatedListViewOnly(@PathVariable String studyType, @PathVariable int pageNum,
@@ -134,58 +103,13 @@ public class ObservationMatrixController extends
     		form.setMeasurementRowList(rows);
     		form.changePage(pageNum);
     	}
-    	
-    	//this set the necessary info from the session variable
-    	//copyDataFromFormToUserSelection(form, previewPageNum, userSelection);
-    	//we need to set the data in the measurementList
-    	
-    	//copyTrialDataFromFormToUserSelection(form, userSelection);
-    	
-    	//form.setMeasurementRowList(userSelection.getMeasurementRowList());
     	List<MeasurementVariable> variables = paginationListSelection.getReviewVariableList(datasetId);
     	if (variables != null) {
     		form.setMeasurementVariables(variables);
     	}
-    	//form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
-    	//form.setStudyName(userSelection.getWorkbook().getStudyDetails().getStudyName());
         form.changePage(pageNum);
         userSelection.setCurrentPage(form.getCurrentPage());
         return super.showAjaxPage(model, PAGINATION_TEMPLATE_VIEW_ONLY);
-    }
-
-    private void copyDataFromFormToUserSelection(CreateNurseryForm form, int previewPageNum, StudySelection userSelection){
-    	for(int i = 0 ; i < form.getPaginatedMeasurementRowList().size() ; i++){
-    		MeasurementRow measurementRow = form.getPaginatedMeasurementRowList().get(i);
-    		int realIndex = ((previewPageNum - 1) * form.getResultPerPage()) + i;
-    		for(int index = 0 ; index < measurementRow.getDataList().size() ; index++){
-    			MeasurementData measurementData =  measurementRow.getDataList().get(index);
-    			MeasurementData sessionMeasurementData = userSelection.getMeasurementRowList().get(realIndex).getDataList().get(index);
-    			if(sessionMeasurementData.isEditable())
-    				sessionMeasurementData.setValue(measurementData.getValue());    			
-    		}
-    		//getUserSelection().getMeasurementRowList().set(realIndex, measurementRow);
-    	}
-    }
-
-    private void copyTrialDataFromFormToUserSelection(CreateNurseryForm form, StudySelection userSelection){
-    	if (userSelection.getWorkbook().getTrialObservations() != null && !userSelection.getWorkbook().getTrialObservations().isEmpty()
-    			&& form.getTrialEnvironmentValues() != null && !form.getTrialEnvironmentValues().isEmpty()) {
-    		
-	    	int index = 0;
-	    	for (List<ValueReference> refList : form.getTrialEnvironmentValues()) {
-	    		List<MeasurementRow> trialObservations = userSelection.getWorkbook().getTrialObservations();
-	    		MeasurementRow trialRow = trialObservations.get(index);
-	    		for (ValueReference ref : refList) {
-	    			for (MeasurementData data : trialRow.getDataList()) {
-	    				if (data.getMeasurementVariable().getTermId() == ref.getId()) {
-	    					data.setValue(ref.getName());
-	    					break;
-	    				}
-	    			}
-	    		}
-	    		index++;
-	    	}
-    	}
     }
 
     @ResponseBody
@@ -199,16 +123,8 @@ public class ObservationMatrixController extends
     	Map<String, String> resultMap = new HashMap<String, String>();
         
         Workbook workbook = userSelection.getWorkbook();
-        /*
-        int ctr = 0;
-        for (MeasurementRow observation : workbook.getObservations()) {
-            form.getMeasurementRowList().get(ctr).setExperimentId(observation.getExperimentId());
-            ctr++;
-        }
-		*/
-        int previewPageNum = userSelection.getCurrentPage();
         
-        copyDataFromFormToUserSelection(form, previewPageNum, userSelection);
+        int previewPageNum = userSelection.getCurrentPage();       
         
         form.setMeasurementRowList(userSelection.getMeasurementRowList());
     	form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
@@ -264,12 +180,12 @@ public class ObservationMatrixController extends
     public Map<String, Object> demoPageDataTablesAjax(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
     	
     	StudySelection userSelection = getUserSelection(false);
-    	List<MeasurementRow> tempList = new ArrayList();
+    	List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
     	//for(int i = 0 ; i < 20; i++)
     		tempList.addAll(userSelection.getMeasurementRowList());
     	form.setMeasurementRowList(tempList);
     	
-    	List<Map> masterList = new ArrayList();
+    	List<Map<String, Object>> masterList = new ArrayList<Map<String, Object>>();
     	
     	for(MeasurementRow row : tempList){
     		    		
@@ -277,7 +193,7 @@ public class ObservationMatrixController extends
     		
     		masterList.add(dataMap);
     	}
-    	HashMap map = new HashMap();
+    	HashMap<String, Object> map = new HashMap<String, Object>();
     	map.put("data", masterList);
     	//map.put("columns", masterColumnList);    	
     	return map;

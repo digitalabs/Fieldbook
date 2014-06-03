@@ -1070,3 +1070,9 @@ a.fbk-edit-experiment{
 	background-color: #e9e9e9;
 	font-weight: bold;
 }
+.list-details{
+	display: none;
+}
+.list-details-show{
+	display: block;
+}

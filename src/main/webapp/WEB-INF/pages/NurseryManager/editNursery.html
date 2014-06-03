@@ -316,7 +316,7 @@
 		//<![CDATA[
 
 		// FIXME Should not be using global variables or functions
-		/*global showErrorMessage,recreateSessionVariables, lastDraggedChecksList, Spinner, validateCreateNursery, validateStartEndDate, moveToTopScreen*/
+		/*global showErrorMessage,recreateSessionVariables, lastDraggedChecksList, Spinner, validateCreateNursery, validateStartEndDate, moveToTopScreen, programNurseriesText*/
 
 		
 
@@ -378,7 +378,7 @@
 
 			$.ajax({
 				url: '/Fieldbook/NurseryManager/editNursery',
-				type: "POST",
+				type: 'POST',
 				data: serializedData,
 				cache: false,
 				success: function(data) {

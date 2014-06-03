@@ -373,7 +373,6 @@ public class EditNurseryController extends SettingsController {
     	if (userSelection.getMeasurementRowList() != null && userSelection.getMeasurementRowList().size() > 0) {
             try {
                 int previewPageNum = userSelection.getCurrentPage();
-                copyDataFromFormToUserSelection(form, previewPageNum);
                 form.setMeasurementRowList(userSelection.getMeasurementRowList());
                 form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
                 workbook.setObservations(form.getMeasurementRowList());
@@ -424,27 +423,6 @@ public class EditNurseryController extends SettingsController {
         }
     }
     
-    /**
-     * Copy data from form to user selection.
-     *
-     * @param form the form
-     * @param previewPageNum the preview page num
-     */
-    private void copyDataFromFormToUserSelection(CreateNurseryForm form, int previewPageNum){
-        if (form.getPaginatedMeasurementRowList() != null) {
-            for(int i = 0 ; i < form.getPaginatedMeasurementRowList().size() ; i++){
-                    MeasurementRow measurementRow = form.getPaginatedMeasurementRowList().get(i);
-                    int realIndex = ((previewPageNum - 1) * form.getResultPerPage()) + i;
-                    for(int index = 0 ; index < measurementRow.getDataList().size() ; index++){
-                            MeasurementData measurementData =  measurementRow.getDataList().get(index);
-                            MeasurementData sessionMeasurementData = userSelection.getMeasurementRowList().get(realIndex).getDataList().get(index);
-                            if(sessionMeasurementData.isEditable())
-                                    sessionMeasurementData.setValue(measurementData.getValue());                            
-                    }
-                    //getUserSelection().getMeasurementRowList().set(realIndex, measurementRow);
-            }
-        }
-    }
     
     /**
      * Creates the study details.

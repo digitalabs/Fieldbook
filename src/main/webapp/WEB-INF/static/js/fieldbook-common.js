@@ -19,7 +19,7 @@ $(function() {
 	   				Spinner.toggle();
 	   			}
 	   		});
-        };
+        }
         
     });
     
@@ -36,7 +36,8 @@ $(function() {
 
 
 function doAjaxMainSubmit(pageMessageDivId, successMessage, overrideAction){
-	Spinner.toggle();
+	
+	Spinner.toggle();	
 	var form = $("form");
 	var action = form.attr('action');
 	var serializedData = form.serialize();
@@ -51,15 +52,16 @@ function doAjaxMainSubmit(pageMessageDivId, successMessage, overrideAction){
 		success: function (html) {
 			//we just paste the whole html
 			$('.container .row').first().html(html);
-			if(pageMessageDivId != null && pageMessageDivId != '')
+			if(pageMessageDivId != null && pageMessageDivId != '') {
 				showSuccessfulMessage(pageMessageDivId, successMessage);				
+			}
 			Spinner.toggle();
 		}
 	}); 							
 }
 
 function showPage(paginationUrl, pageNum, sectionDiv){
-	//$('#imported-germplasm-list').html(pageNum); 	
+	'use strict';
 	Spinner.toggle();
  	$.ajax(
          { url: paginationUrl+pageNum,
@@ -71,7 +73,7 @@ function showPage(paginationUrl, pageNum, sectionDiv){
         	   
              $("#"+sectionDiv).empty().append(html);
              
-             if(sectionDiv == 'trial-details-list' || sectionDiv == 'nursery-details-list'){
+             if(sectionDiv === 'trial-details-list' || sectionDiv === 'nursery-details-list'){
             	 //we highlight the previously clicked
             	 for(var index in selectedTableIds) {
          			//console.log( index + " : " + selectedTableIds[index]);
@@ -81,29 +83,29 @@ function showPage(paginationUrl, pageNum, sectionDiv){
          				$('tr.data-row#'+idVal).addClass('field-map-highlight');
          			}			
          		 }
-             }else if(sectionDiv == 'inventory-germplasm-list'){
+             }else if(sectionDiv === 'inventory-germplasm-list'){
             	 //we highlight the previously clicked
             	 for(var index in selectedGids) {
          			//console.log( index + " : " + selectedTableIds[index]);
          			var idVal = selectedGids[index];
-         			if(idVal != null){
+         			if(idVal !== null){
          				//we need to highlight
          				$('tr.primaryRow[data-gid='+idVal+']').addClass('field-map-highlight');
          			}			
          		 }
              }
              
-             if (sectionDiv == 'imported-germplasm-list') {
+             if (sectionDiv === 'imported-germplasm-list') {
             	 makeDraggable(makeDraggableBool);
             	//we'll do the highlight
              	if(typeof itemsIndexAdded === 'undefined');
              	else{
              		
-             		if(itemsIndexAdded != null && itemsIndexAdded.length > 0){
+             		if(itemsIndexAdded !== null && itemsIndexAdded.length > 0){
              			for(var indexItems = 0 ; indexItems < itemsIndexAdded.length ; indexItems++){
              				if(itemsIndexAdded[indexItems] != null){
              					var rowIndex = itemsIndexAdded[indexItems].index;
-             					if($('.primaryRow[data-index="'+rowIndex+'"]').length != 0){
+             					if($('.primaryRow[data-index="'+rowIndex+'"]').length !== 0){
              						$('.primaryRow[data-index="'+rowIndex+'"]').css('opacity', '0.5');	
              					}
              				}
@@ -121,19 +123,20 @@ function showPage(paginationUrl, pageNum, sectionDiv){
 
 function showMultiTabPage(paginationUrl, pageNum, sectionDiv, sectionContainerId, paginationListIdentifier){
 	//$('#imported-germplasm-list').html(pageNum); 	
+	'use strict';
 	Spinner.toggle();
 	
  	$.ajax(
-         { url: paginationUrl+pageNum+"?listIdentifier="+paginationListIdentifier,
+         { url: paginationUrl+pageNum+'?listIdentifier='+paginationListIdentifier,
            type: "GET",
            data: "",
            cache: false,
            //async: false,
            success: function(html) {
-        	   var paginationDiv = "#"+sectionContainerId + " #" + sectionDiv;
+        	   var paginationDiv = '#'+sectionContainerId + ' #' + sectionDiv;
         	   //console.log(paginationDiv);
-        	   $(paginationDiv + ":eq(0)").html('');
-        	   $(paginationDiv + ":eq(0)").html(html);    
+        	   $(paginationDiv + ':eq(0)').html('');
+        	   $(paginationDiv + ':eq(0)').html(html);    
         	   
         	   Spinner.toggle();  
            }
@@ -1193,30 +1196,10 @@ function doExportContinue(paramUrl, isNursery){
 	}
 	var exportWayType = '/'+$('#exportWayType').val();
 	if($('#browser-nurseries').length != 0){
-		studyId = getCurrentStudyIdInTab();
-		
+		studyId = getCurrentStudyIdInTab();		
 		doFinalExport(paramUrl, additionalParams,exportWayType, isNursery);
 	}else{
-		
-		var urlPage = paginationUrl+currentPage+"/"+currentPage+'?r=' + (Math.random() * 999);
-		//alert(urlPage);
-		
-	 	$.ajax(
-	         { url: urlPage,
-	           type: "POST",
-	           data: serializedData,
-	           cache: false,
-	           timeout: 70000,
-	           async: false,
-	           success: function(html) {
-	        	  
-	        	   doFinalExport(paramUrl, additionalParams,exportWayType, isNursery);
-	        	   
-	        	   
-	        	   //$(formName).ajaxForm(exportOptions).submit();  
-	           }
-	         }
-	       );
+		doFinalExport(paramUrl, additionalParams,exportWayType, isNursery);
 	}
 	
 	
@@ -1563,7 +1546,8 @@ function validateBreedingMethod() {
 }
 
 function showBaselineTraitDetailsModal(id) {
-	if(id != ''){
+	'use strict';
+	if(id !== ''){
 		Spinner.toggle();
 		$.ajax({
 			url: "/Fieldbook/NurseryManager/createNursery/showVariableDetails/" + id,
@@ -1571,12 +1555,7 @@ function showBaselineTraitDetailsModal(id) {
 			cache: false,
 			success: function (data) {
 				populateVariableDetails($.parseJSON(data));
-				$("#variableDetailsModal").modal("toggle");
-			},
-			error: function(jqXHR, textStatus, errorThrown){
-				console.log("The following error occured: " + textStatus, errorThrown); 
-			},
-			complete: function() {
+				$('#variableDetailsModal').modal('toggle');
 				Spinner.toggle();
 			}
 		});
@@ -2078,7 +2057,7 @@ function initializeMeasurementsDatatable(tableIdentifier, ajaxUrl){
 				'data' : $(this).html(),
 				'width' : "100px",
 				'render' : function ( data, type, full, meta ) {
-	              return '<a class="gid-link" href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;'+full['GID']+'&quot;,&quot;'+full['DESIGNATION']+'&quot;)">'+data+'</a>';
+	              return '<a class="gid-link" href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;'+full.GID+'&quot;,&quot;'+full.DESIGNATION+'&quot;)">'+data+'</a>';
 				 }  
 			});
 		}else if($(this).data('term-id') == '8250'){
@@ -2087,7 +2066,7 @@ function initializeMeasurementsDatatable(tableIdentifier, ajaxUrl){
 				'targets': columns.length - 1, 
 				'data' : $(this).html(), 
 				'render' : function ( data, type, full, meta ) {
-					return '<a class="desig-link" href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;'+full['GID']+'&quot;,&quot;'+full['DESIGNATION']+'&quot;)">'+data+'</a>';
+					return '<a class="desig-link" href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;'+full.GID+'&quot;,&quot;'+full.DESIGNATION+'&quot;)">'+data+'</a>';
 				 }  
 			});
 		}else if($(this).data('term-id') == 'Action'){
@@ -2113,15 +2092,15 @@ function initializeMeasurementsDatatable(tableIdentifier, ajaxUrl){
             'bAutoWidth': true,
 	        'iDisplayLength': 100,
 	        'fnRowCallback': function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-	        	var toolTip = 'GID: ' + aData['GID'] + ' Designation: ' + aData['DESIGNATION'];
+	        	var toolTip = 'GID: ' + aData.GID + ' Designation: ' + aData.DESIGNATION;
 	            // assuming ID is in last column
 	        	
-	            $(nRow).attr('id', aData['experimentId']);
+	            $(nRow).attr('id', aData.experimentId);
 	            $(nRow).attr('title', toolTip);
 	            return nRow;
 	        },
 	        'fnInitComplete': function(oSettings, json){
-	        	$(tableIdentifier+ "_wrapper select").select2();
+	        	$(tableIdentifier+ '_wrapper select').select2();
 	        	//there is a bug in datatable for now
 	        	setTimeout(function(){$(tableIdentifier).dataTable().fnAdjustColumnSizing();}, 1000);
 	        }

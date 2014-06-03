@@ -47,8 +47,8 @@
 								&nbsp;&nbsp;
 								<select th:field="*{namingConvention}">
 									<option value="3" th:text="#{advancing.nursery.naming.convention.other.crops}">OTHER CROPS</option>
-									<option th:if="*{true or cropType == 1}" value="1" th:text="#{advancing.nursery.naming.convention.cimmyt.wheat}">CIMMYT-WHEAT</option>
-									<option th:if="*{true or cropType == 2}" value="2" th:text="#{advancing.nursery.naming.convention.cimmyt.maize}">CIMMYT-MAIZE</option>
+									<option th:if="*{cropType == 1}" value="1" th:text="#{advancing.nursery.naming.convention.cimmyt.wheat}">CIMMYT-WHEAT</option>
+									<option th:if="*{cropType == 2}" value="2" th:text="#{advancing.nursery.naming.convention.cimmyt.maize}">CIMMYT-MAIZE</option>
 								</select>
 							</div>
 						</div>
@@ -288,16 +288,16 @@
 
 			// TODO Add error checking
 			switch (maizeBreedingMethod) {
-				case "1":
+				case '1':
 					methodId = $('#maizeSelfMethodId').val();
 					break;
-				case "2":
+				case '2':
 					methodId = $('#maizeBulkMethodId').val();
 					break;
-				case "3":
+				case '3':
 					methodId = $('#maizeSibMethodId').val();
 					break;
-				case "4":
+				case '4':
 					methodId = $('#maizeColchMethodId').val();
 					break;
 			}
@@ -339,7 +339,7 @@
 			$input.prop('disabled', false);
 
 			// FIXME This is relying on implicit type conversion - also see other uses of == in this file
-			if (namingConvention == 1) {
+			if (namingConvention === '1') {
 				// If it's wheat, we disable the method section
 				$methodSelectionInput.attr('disabled', true);
 				$methodIdAll.select2('enable', false);
@@ -353,14 +353,14 @@
 				$methodsSection.show();
 			}
 
-			adjustMaizeControl(namingConvention == 2);
+			adjustMaizeControl(namingConvention === '2');
 			checkMethod();
 		}
 
 		function showBulkSection(isBulk) {
 			'use strict';
 
-			if($('input[type=checkbox][name=methodChoice]:checked').val() !== "1") {
+			if($('input[type=checkbox][name=methodChoice]:checked').val() !== '1') {
 				$('.bulk-section').css('display', 'block');
 				$('.lines-section').css('display', 'block');
 			}
@@ -380,15 +380,15 @@
 				isBulk = false,
 				i;
 
-			if($('#namingConvention').val() == 2){
+			if($('#namingConvention').val() === '2'){
 				// Maize has been chosen
-				if(bMethodId == $('#maizeBulkMethodId').val()) { // Selfed and Ears Bulked
+				if(bMethodId === $('#maizeBulkMethodId').val()) { // Selfed and Ears Bulked
 					isBulk = true;
 				}
 			} else {
 				for (i = 0; i < methodSuggestions.length; i++) {
 					if (methodSuggestions[i].mid == bMethodId) {
-						if (methodSuggestions[i].geneq == 1) { // Bulk
+						if (methodSuggestions[i].geneq === 1) { // Bulk
 					 		isBulk = true;
 					 	}
 						break;

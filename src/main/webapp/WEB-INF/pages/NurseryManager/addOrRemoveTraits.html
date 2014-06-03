@@ -18,17 +18,13 @@
 	//<![CDATA[
 
 	// FIXME Should not be using global variables or functions
-	/*global validateCells, serializedData, Spinner, showErrorMessage, console*/
+	/*global serializedData, Spinner, showErrorMessage, console*/
 
 	function doSave(){
 		'use strict';
 
 		var $form,
 			$btnUpdate;
-
-		if (!validateCells()) {
-			return false;
-		}
 
 		$form = $('#addVariableForm');
 		$btnUpdate = $('btnUpdate');

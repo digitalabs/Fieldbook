@@ -29,7 +29,7 @@ $(function() {
     	
     $('select').each(function(){    	
     		
-    			$(this).select2();
+    			$(this).select2({'minimumResultsForSearch' : 20});
 		});
     }
 });
@@ -884,7 +884,7 @@ function advanceNursery(tableName){
 			    success: function(html) {
 			    	$("#advance-nursery-modal-div").html(html);
 					$("#advanceNurseryModal").modal("show");
-					$('#advanceNurseryModal select').select2();
+					$('#advanceNurseryModal select').select2({'minimumResultsForSearch' : 20});
 		        },
 				error: function(jqXHR, textStatus, errorThrown){
 					console.log("The following error occured: " + textStatus , errorThrown);
@@ -2100,7 +2100,7 @@ function initializeMeasurementsDatatable(tableIdentifier, ajaxUrl){
 	            return nRow;
 	        },
 	        'fnInitComplete': function(oSettings, json){
-	        	$(tableIdentifier+ '_wrapper select').select2();
+	        	$(tableIdentifier+ '_wrapper .dataTables_length select').select2({'minimumResultsForSearch' : 10});
 	        	//there is a bug in datatable for now
 	        	setTimeout(function(){$(tableIdentifier).dataTable().fnAdjustColumnSizing();}, 1000);
 	        }
@@ -2108,7 +2108,7 @@ function initializeMeasurementsDatatable(tableIdentifier, ajaxUrl){
 	        ,'language': {
 				           'search': '<span class="fbk-search-data-table">Search:</span>'
 				 }
-	        ,'dom': 'R<<"row"<"col-md-6"l<"fbk-data-table-info"i>><"col-md-4"f><"col-md-2"C>>r<t><"row col-md-12 fbk-data-table-paginate"p>>'
+	        ,'dom': 'R<<"row"<"col-md-6"l<"fbk-data-table-info"i>><"col-md-4"f><"col-md-2 fbk-colvis-btn">>r<t><"row col-md-12 fbk-data-table-paginate"p>>'
 	        //for column visibility
 	        ,'colVis': {
 	            exclude: [ 0 ],
@@ -2129,6 +2129,27 @@ function initializeMeasurementsDatatable(tableIdentifier, ajaxUrl){
 	
 
 	new $.fn.dataTable.FixedColumns( table,  {'iLeftColumns' : 3} );		
+	$('.measurement-show-hide-drop-down').appendTo('.fbk-colvis-btn');
+	$('.measurement-dropdown-menu a').click(function(e) {
+	    e.stopPropagation();
+	    if($(this).parent().hasClass('fbk-dropdown-select-fade')) {
+	    	$(this).parent().removeClass('fbk-dropdown-select-fade');
+	    	$(this).parent().addClass('fbk-dropdown-select-highlight');
+	    	
+	    }else {
+	    	$(this).parent().addClass('fbk-dropdown-select-fade');
+	    	$(this).parent().removeClass('fbk-dropdown-select-highlight');
+	    }
+	    
+	 // Get the column API object
+        var column = table.column( $(this).attr('data-index') );
+        console.log($(this).attr('data-index'));
+        // Toggle the visibility
+        column.visible( ! column.visible() );
+        
+	   
+	});
+	
 }
 function editExperiment(tableIdentifier, expId, rowIndex){	
 	//we show the ajax page here

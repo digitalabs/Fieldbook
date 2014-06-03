@@ -1076,3 +1076,16 @@ a.fbk-edit-experiment{
 .list-details-show{
 	display: block;
 }
+.fbk-dropdown-select-highlight{
+	/*background-color: #428bca;*/
+	color: #000000;
+}
+.fbk-dropdown-select-fade{
+	opacity: 0.5;
+}
+.measurement-show-hide-drop-down{
+	float: right;
+}
+/*
+, ul.ColVis_collection li
+*/

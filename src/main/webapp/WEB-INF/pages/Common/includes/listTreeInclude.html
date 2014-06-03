@@ -1,3 +1,62 @@
+<div class="list-details">
+<div class="row">
+			<div class="col-xs-6 col-md-6">
+				<label class="control-label control-label-bold">List Name:</label>
+			</div>
+	<div class="col-xs-6 col-md-6">
+		<label class="germplasm-header-details" id="list-name"></label>
+	</div>	
+</div>
+<div class="row">
+	<div class="col-xs-6 col-md-6">
+		<label class="control-label control-label-bold">List Owner:</label>
+	</div>
+	<div class="col-xs-6 col-md-6">
+		<label class="germplasm-header-details" id="list-owner"></label>
+	</div>		
+</div>
+<div class="row">
+	<div class="col-xs-6 col-md-6">
+		<label class="control-label control-label-bold">Status:</label>
+	</div>	
+	<div class="col-xs-6 col-md-6">
+		<label class="germplasm-header-details" id="list-status"></label>
+	</div>	
+</div>
+<div class="row">
+	<div class="col-xs-6 col-md-6">
+		<label class="control-label control-label-bold">Description:</label>
+	</div>	
+	<div class="col-xs-6 col-md-6">
+		<label class="germplasm-header-details" id="list-description"></label>
+	</div>	
+</div>
+<div class="row">
+	<div class="col-xs-6 col-md-6">
+		<label class="control-label control-label-bold">Type:</label>
+	</div>	
+	<div class="col-xs-6 col-md-6">
+		<label class="germplasm-header-details" id="list-type"></label>
+	</div>	
+</div>
+<div class="row">
+	<div class="col-xs-6 col-md-6">
+		<label class="control-label control-label-bold">Date:</label>
+	</div>	
+	<div class="col-xs-6 col-md-6">
+		<label class="germplasm-header-details" id="list-date"></label>
+	</div>	
+</div>
+<div class="row">
+	<div class="col-xs-6 col-md-6">
+		<label class="control-label control-label-bold">Notes:</label>
+	</div>	
+	<div class="col-xs-6 col-md-6">
+		<label class="germplasm-header-details" id="list-notes"></label>
+	</div>	
+</div>
+</div>
+
 <div layout:fragment="page-script">
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
@@ -41,7 +100,34 @@
 					node.expand();
 				}
 			}
-
+			function showListTreeToolTip(node, nodeSpan){
+				$.ajax({
+		 			url: "/Fieldbook/ListTreeManager/germplasm/list/header/details/"+node.data.key,
+		 			type: "GET",
+		 			cache: false,
+		 			success: function(data) {
+		 				var listDetails = $('.list-details').clone();
+		 				
+		 				$(listDetails).find('#list-name').html(data.name);
+		 				$(listDetails).find('#list-description').html(data.description);
+		 				$(listDetails).find('#list-status').html(data.status);
+		 				$(listDetails).find('#list-date').html(data.date);
+		 				$(listDetails).find('#list-owner').html(data.owner);
+		 				$(listDetails).find('#list-type').html(data.type);
+		 				var notes = data.notes == null ? '-' : data.notes;
+		 				$(listDetails).find('#list-notes').html(notes);	
+		 				
+		 				$(nodeSpan).find('a.dynatree-title').popover({'html':true, 
+		 					'title': "List Details", 
+							'content': $(listDetails).html(), 
+							'trigger': 'hover', 
+							'placement' : 'right'
+							});
+		 			}
+		 		});		
+				
+				
+			}
 			/** Germplasm Tree **/
 			function displayGermplasmListTree(treeName, isLocalOnly) {
 				var lazyLoadUrlGetChildren = "/Fieldbook/ListTreeManager/expandGermplasmTree/";
@@ -63,8 +149,14 @@
 					onLazyRead: function(node) {
 						doGermplasmLazyLoad(node);
 					},
-					onRender: function(){
-	                    $(".dynatree-title").tooltip({'title': 'hello', 'trigger': 'hover', 'placement' : 'right'});
+					onRender: function(node, nodeSpan){
+						//console.log(node);
+						if(node.data.key != 'LOCAL'
+							&& node.data.key != 'CENTRAL'
+							&& node.data.key != '_statusNode'
+							&& node.data.isFolder === false) {
+								showListTreeToolTip(node, nodeSpan);
+						}
 	                },
 					classNames: {
 						container: "fbtree-container",

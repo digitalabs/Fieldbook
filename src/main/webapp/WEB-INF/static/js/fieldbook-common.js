@@ -2027,7 +2027,7 @@ function moveGermplasm(sourceNode, targetNode){
 		return false;
 	}
 
-	if(targetId == 'LOCAL')
+	if(targetId === 'LOCAL')
 		targetId = 1;
 
 	Spinner.toggle();
@@ -2050,7 +2050,7 @@ function closeModal(modalId){
 	$('#'+modalId).modal('hide');
 }
 function openGermplasmDetailsPopopWithGidAndDesig(gid, desig) {
-
+	'use strict';
 	$.ajax({
 		url: '/Fieldbook/ListTreeManager/germplasm/detail/url',
 		type: 'GET',
@@ -2065,6 +2065,7 @@ function openGermplasmDetailsPopopWithGidAndDesig(gid, desig) {
 	});
 }
 function initializeMeasurementsDatatable(tableIdentifier, ajaxUrl){
+	'use strict';
 	var columns = [];
 	var columnsDef = [];
 	$(tableIdentifier + ' thead tr th').each(function(){
@@ -2102,43 +2103,43 @@ function initializeMeasurementsDatatable(tableIdentifier, ajaxUrl){
 		
 	});
 	var table =  $(tableIdentifier).DataTable( {			  	
-	        "ajax": ajaxUrl,
-	        "columns": columns,
-	        "scrollY": "500px",
-	        "scrollX": "100%",
-	        "scrollCollapse": true,
-	        "columnDefs": columnsDef,
-	        "lengthMenu": [[50, 75, 100, -1], [50, 75, 100, "All"]],	      
-            "bAutoWidth": true,
-	        "iDisplayLength": 100,
-	        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-	        	var toolTip = "GID: " + aData['GID'] + " Designation: " + aData['DESIGNATION'];
+	        'ajax': ajaxUrl,
+	        'columns': columns,
+	        'scrollY': '500px',
+	        'scrollX': '100%',
+	        'scrollCollapse': true,
+	        'columnDefs': columnsDef,
+	        'lengthMenu': [[50, 75, 100, -1], [50, 75, 100, "All"]],	      
+            'bAutoWidth': true,
+	        'iDisplayLength': 100,
+	        'fnRowCallback': function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+	        	var toolTip = 'GID: ' + aData['GID'] + ' Designation: ' + aData['DESIGNATION'];
 	            // assuming ID is in last column
 	        	
-	            $(nRow).attr("id", aData['experimentId']);
-	            $(nRow).attr("title", toolTip);
+	            $(nRow).attr('id', aData['experimentId']);
+	            $(nRow).attr('title', toolTip);
 	            return nRow;
 	        },
-	        "fnInitComplete": function(oSettings, json){
+	        'fnInitComplete': function(oSettings, json){
 	        	$(tableIdentifier+ "_wrapper select").select2();
 	        	//there is a bug in datatable for now
 	        	setTimeout(function(){$(tableIdentifier).dataTable().fnAdjustColumnSizing();}, 1000);
 	        }
 			
-	        ,"language": {
-				           "search": "<span class='fbk-search-data-table'>Search:</span>"
+	        ,'language': {
+				           'search': '<span class="fbk-search-data-table">Search:</span>'
 				 }
-	        ,"dom": 'R<<"row"<"col-md-6"l<"fbk-data-table-info"i>><"col-md-4"f><"col-md-2"C>>r<t><"row col-md-12 fbk-data-table-paginate"p>>'
+	        ,'dom': 'R<<"row"<"col-md-6"l<"fbk-data-table-info"i>><"col-md-4"f><"col-md-2"C>>r<t><"row col-md-12 fbk-data-table-paginate"p>>'
 	        //for column visibility
-	        ,"colVis": {
+	        ,'colVis': {
 	            exclude: [ 0 ],
-	            restore: "Restore",
-	            showAll: "Show all"
+	            restore: 'Restore',
+	            showAll: 'Show all'
 	        }
 	        //problem with reordering plugin and fixed column
 	        //for column re-ordering
 	        
-	        ,"colReorder": {
+	        ,'colReorder': {
 	            "fixedColumns": 3
 	        }
 	        
@@ -2150,9 +2151,9 @@ function initializeMeasurementsDatatable(tableIdentifier, ajaxUrl){
 
 	new $.fn.dataTable.FixedColumns( table,  {'iLeftColumns' : 3} );		
 }
-function editExperiment(tableIdentifier, expId, rowIndex){
-	
+function editExperiment(tableIdentifier, expId, rowIndex){	
 	//we show the ajax page here
+	'use strict';
 	$.ajax({
 		url: '/Fieldbook/Common/addOrRemoveTraits/update/experiment/' + rowIndex,
 		type: 'GET',
@@ -2162,4 +2163,31 @@ function editExperiment(tableIdentifier, expId, rowIndex){
 			$('.updateExperimentModal').modal({ backdrop: 'static', keyboard: true });
 		}
 	});
+}
+function showListTreeToolTip(node, nodeSpan){
+	'use strict';
+	$.ajax({
+			url: '/Fieldbook/ListTreeManager/germplasm/list/header/details/'+node.data.key,
+			type: 'GET',
+			cache: false,
+			success: function(data) {
+				var listDetails = $('.list-details').clone();
+				
+				$(listDetails).find('#list-name').html(data.name);
+				$(listDetails).find('#list-description').html(data.description);
+				$(listDetails).find('#list-status').html(data.status);
+				$(listDetails).find('#list-date').html(data.date);
+				$(listDetails).find('#list-owner').html(data.owner);
+				$(listDetails).find('#list-type').html(data.type);
+				var notes = data.notes == null ? '-' : data.notes;
+				$(listDetails).find('#list-notes').html(notes);	
+				
+				$(nodeSpan).find('a.dynatree-title').popover({'html':true, 
+					'title': "List Details", 
+				'content': $(listDetails).html(), 
+				'trigger': 'hover', 
+				'placement' : 'right'
+				});
+			}
+		});						
 }

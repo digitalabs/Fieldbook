@@ -1,30 +1,92 @@
+<div class="list-details">
+<div class="row">
+			<div class="col-xs-6 col-md-6">
+				<label class="control-label control-label-bold">List Name:</label>
+			</div>
+	<div class="col-xs-6 col-md-6">
+		<label class="germplasm-header-details" id="list-name"></label>
+	</div>	
+</div>
+<div class="row">
+	<div class="col-xs-6 col-md-6">
+		<label class="control-label control-label-bold">List Owner:</label>
+	</div>
+	<div class="col-xs-6 col-md-6">
+		<label class="germplasm-header-details" id="list-owner"></label>
+	</div>		
+</div>
+<div class="row">
+	<div class="col-xs-6 col-md-6">
+		<label class="control-label control-label-bold">Status:</label>
+	</div>	
+	<div class="col-xs-6 col-md-6">
+		<label class="germplasm-header-details" id="list-status"></label>
+	</div>	
+</div>
+<div class="row">
+	<div class="col-xs-6 col-md-6">
+		<label class="control-label control-label-bold">Description:</label>
+	</div>	
+	<div class="col-xs-6 col-md-6">
+		<label class="germplasm-header-details" id="list-description"></label>
+	</div>	
+</div>
+<div class="row">
+	<div class="col-xs-6 col-md-6">
+		<label class="control-label control-label-bold">Type:</label>
+	</div>	
+	<div class="col-xs-6 col-md-6">
+		<label class="germplasm-header-details" id="list-type"></label>
+	</div>	
+</div>
+<div class="row">
+	<div class="col-xs-6 col-md-6">
+		<label class="control-label control-label-bold">Date:</label>
+	</div>	
+	<div class="col-xs-6 col-md-6">
+		<label class="germplasm-header-details" id="list-date"></label>
+	</div>	
+</div>
+<div class="row">
+	<div class="col-xs-6 col-md-6">
+		<label class="control-label control-label-bold">Notes:</label>
+	</div>	
+	<div class="col-xs-6 col-md-6">
+		<label class="germplasm-header-details" id="list-notes"></label>
+	</div>	
+</div>
+</div>
+
 <div layout:fragment="page-script">
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
-			var cannotMove = /*[[#{browse.nursery.move.can.not}]]*/;
-			var hasChildrenString = /*[[#{browse.nursery.move.has.children}]]*/;
-			var openTreeType = 0;
-			var pleaseChooseFolder = /*[[#{import.germplasm.choose.a.list}]]*/;
-			var lazyLoadUrl = "/Fieldbook/ListTreeManager/expandGermplasmTree/";
-			var additionalLazyLoadUrl = '';
-			function doGermplasmLazyLoad(node){
-				if (node.data.isFolder == true){
+			var cannotMove = /*[[#{browse.nursery.move.can.not}]]*/ '',
+				hasChildrenString = /*[[#{browse.nursery.move.has.children}]]*/ '',
+				pleaseChooseFolder = /*[[#{import.germplasm.choose.a.list}]]*/ '';
+				lazyLoadUrl = '/Fieldbook/ListTreeManager/expandGermplasmTree/',
+				additionalLazyLoadUrl = '';
+				
+			var openTreeType = 0;						
+			
+			function doGermplasmLazyLoad(node) {
+				'use strict';
+				if (node.data.isFolder === true){
 					node.appendAjax({
 						url: lazyLoadUrl + node.data.key + additionalLazyLoadUrl,
 						dataType: "json",
 						success: function(node) {
 							//do nothing
 							setTimeout(function(){node.focus()}, 50);
-							if(node.hasChildren()){
+							if(node.hasChildren()) {
 								$('.delete-germplasm-folder').addClass('disable-image');
 							}
 
-							if(node.data.isFolder == false){
+							if(node.data.isFolder === false) {
 								changeBrowseGermplasmButtonBehavior(false);
 							}else{
-								if(node.data.key > 1 || node.data.key == 'CENTRAL'){
+								if(node.data.key > 1 || node.data.key === 'CENTRAL'){
 									changeBrowseGermplasmButtonBehavior(false);
-								}else if(node.data.key == 'LOCAL'){
+								}else if(node.data.key === 'LOCAL') {
 									changeBrowseGermplasmButtonBehavior(true);
 									$('.edit-germplasm-folder').addClass('disable-image');
 									$('.delete-germplasm-folder').addClass('disable-image');
@@ -41,47 +103,56 @@
 					node.expand();
 				}
 			}
-
+			
 			/** Germplasm Tree **/
 			function displayGermplasmListTree(treeName, isLocalOnly) {
-				var lazyLoadUrlGetChildren = "/Fieldbook/ListTreeManager/expandGermplasmTree/";
-				var initLoadUrl = "/Fieldbook/ListTreeManager/loadInitGermplasmTree";
+				'use strict';
+				var lazyLoadUrlGetChildren = '/Fieldbook/ListTreeManager/expandGermplasmTree/';
+				var initLoadUrl = '/Fieldbook/ListTreeManager/loadInitGermplasmTree';
 
-				if(isLocalOnly == true)
-					initLoadUrl = "/Fieldbook/ListTreeManager/loadInitGermplasmLocalTree";
+				if(isLocalOnly === true)
+					initLoadUrl = '/Fieldbook/ListTreeManager/loadInitGermplasmLocalTree';
 
-				$("#" + treeName).dynatree({
+				$('#' + treeName).dynatree({
 					title: treeName,
 					checkbox: false,
 					noLink: false,
 					autoFocus: false,
-					imagePath: "/Fieldbook/static/img/",
+					imagePath: '/Fieldbook/static/img/',
 					activeVisible: true,
 					initAjax: {url: initLoadUrl,
-						dataType: "json"
+						dataType: 'json'
 					},
 					onLazyRead: function(node) {
 						doGermplasmLazyLoad(node);
 					},
+					onRender: function(node, nodeSpan){
+						//console.log(node);
+						if(node.data.key !== 'LOCAL'
+							&& node.data.key !== 'CENTRAL'
+							&& node.data.key !== '_statusNode'
+							&& node.data.isFolder === false) {
+								showListTreeToolTip(node, nodeSpan);
+						}
+	                },
 					classNames: {
-						container: "fbtree-container",
-						expander: "fbtree-expander",
-						nodeIcon: "fbtree-icon",
-						combinedIconPrefix: "fbtree-ico-",
-						focused: "fbtree-focused",
-						active: "fbtree-active"
+						container: 'fbtree-container',
+						expander: 'fbtree-expander',
+						nodeIcon: 'fbtree-icon',
+						combinedIconPrefix: 'fbtree-ico-',
+						focused: 'fbtree-focused',
+						active: 'fbtree-active'
 					},
 					 onPostInit: function (isReloading, isError) {
 						},
 					onActivate: function(node) {
 
-						if(node.data.isFolder == false){
-							//addDetailsTab(node.data.key, node.data.title);
+						if(node.data.isFolder === false){
 							changeBrowseGermplasmButtonBehavior(false);
 						}else{
-							if(node.data.key > 1 || node.data.key == 'CENTRAL'){
+							if(node.data.key > 1 || node.data.key === 'CENTRAL'){
 								changeBrowseGermplasmButtonBehavior(false);
-							}else if(node.data.key == 'LOCAL'){
+							}else if(node.data.key === 'LOCAL'){
 								changeBrowseGermplasmButtonBehavior(true);
 								$('.edit-germplasm-folder').addClass('disable-image');
 								$('.delete-germplasm-folder').addClass('disable-image');
@@ -105,10 +176,8 @@
 					onDragStop: function(node) {
 						// This function is optional.
 					},
-
 					preventVoidMoves: true, // Prevent dropping nodes 'before self', etc.
 					onDragEnter: function(node, sourceNode) {
-
 						return true;
 					},
 					onDragOver: function(node, sourceNode, hitMode) {
@@ -119,16 +188,16 @@
 						 * the tree.
 						 */
 						 if(sourceNode.hasChildren()){
-							 showErrorMessage(getMessageErrorDiv(), cannotMove + " " + sourceNode.data.title + " " + hasChildrenString);
+							 showErrorMessage(getMessageErrorDiv(), cannotMove + ' ' + sourceNode.data.title + ' ' + hasChildrenString);
 						 }else{
 							 $.ajax({
 								url: lazyLoadUrlGetChildren + sourceNode.data.key,
-									type: "GET",
+									type: 'GET',
 									cache: false,
 									aysnc: false,
 									success: function(data) {
 										var childCount = $.parseJSON(data).length;
-										if(childCount == 0){
+										if(childCount === 0){
 											moveGermplasm(sourceNode, node);
 										}else{
 											showErrorMessage(getMessageErrorDiv(), cannotMove + " " + sourceNode.data.title + " " + hasChildrenString)
@@ -137,7 +206,6 @@
 									}
 								});
 						 }
-						// expand the drop target
 					},
 					onDragLeave: function(node, sourceNode) {
 						/** Always called if onDragEnter was called.
@@ -148,18 +216,19 @@
 			}
 
 			function getMessageErrorDiv(){
+				'use strict';
 				 var msgDiv = 'page-import-message-modal';
-				 if(getDisplayedTreeName() == 'germplasmFolderTree')
+				 if(getDisplayedTreeName() === 'germplasmFolderTree')
 					msgDiv = 'page-save-list-message-modal';
 				 return msgDiv;
 			}
 			function getDisplayedTreeName(){
-
-			if($('#listTreeModal').hasClass('in') == true)
-				return 'germplasmTree';
-			else if($('#saveListTreeModal').hasClass('in') == true)
-				return 'germplasmFolderTree';
-		}
+				'use strict'
+				if($('#listTreeModal').hasClass('in') === true)
+					return 'germplasmTree';
+				else if($('#saveListTreeModal').hasClass('in') === true)
+					return 'germplasmFolderTree';
+			}
 	//]]>
 	</script>
 </div>

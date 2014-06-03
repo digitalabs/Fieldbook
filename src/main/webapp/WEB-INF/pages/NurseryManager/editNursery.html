@@ -385,7 +385,7 @@
                     if (data.status === '-1') {
                         showErrorMessage('page-message', data.errorMessage);
                         Spinner.toggle();
-                    } else if ($('#nursery-germplasm-list').length > 0) {
+                    } else if ($('.germplasm-list-items tbody tr').length > 0) {
 						submitCheckGermplasmList();
 					} else if (data.status === '1') {
 						recreateSessionVariables();

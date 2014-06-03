@@ -138,53 +138,59 @@
 	<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-fileupload.js}"></script>
 	<script type='text/javascript' th:inline="javascript">
 		//<![CDATA[
-		var importStudyHeader = /*[[#{study.import.study.header}]]*/;
-		var importStudyBookHeader = /*[[#{study.import.study.book.header}]]*/;
-		var changeConfirmationDetails = [];
-		var currentConfirmationIndex = 0;
-		var importOptions = {
+
+		/*globals importNursery, Spinner, showErrorMessage*/
+
+		var importStudyHeader = /*[[#{study.import.study.header}]]*/ '',
+			importStudyBookHeader = /*[[#{study.import.study.book.header}]]*/ '',
+			changeConfirmationDetails = [],
+			currentConfirmationIndex = 0,
+			importOptions = {
 			dataType: 'text',
 				success: showImportResponse // post-submit callback
 			};
 
 		$( document ).ready(function() {
+			'use strict';
 			$('#importStudyModal select').select2({width: 'copy'});
 			$('#importType').on('change', function(){
-				if($(this).val() != 0){
+				if($(this).val() !== '0'){
 					importNursery($(this).val());
 				}
 			});
 
 			$('#importStudyModal').on('hide.bs.modal', function() {
-				$("#page-import-message-modal").html('');
-				$('#fileupload').val("");
+				$('#page-import-message-modal').html('');
+				$('#fileupload').val('');
 				$('div.fileupload').parent().parent().removeClass('has-error');
 				$('#importStudyModal .fileupload-exists').click();
 			});
 			
 			$('#importStudyDesigConfirmationModal').on('hide.bs.modal', function() {
 				$('input[type=checkbox][name=yesToAllDesig]').prop('checked', false);
-			})
+			});
 
-			$('#importStudyModal #heading-modal').html(importStudyHeader + " " + $("#study-type").val() + " " + importStudyBookHeader);
+			$('#importStudyModal #heading-modal').html(importStudyHeader + ' ' + $('#study-type').val() + ' ' + importStudyBookHeader);
 		});
-
+		function doMeasurementsReload(){
+			'use strict';
+			$('#measurement-table').DataTable().ajax.reload();
+		}
 		function showImportResponse(responseText, statusText, xhr, $form) {
 			//reload the screen
+			'use strict';
 			var resp = $.parseJSON(responseText);
 			changeConfirmationDetails = [];
 			currentConfirmationIndex = 0;
-			if(resp.changeDetails != null && resp.changeDetails.length != 0){
-				for(var index = 0 ; index < resp.changeDetails.length ; index++){
-					//var msg = "("+(index+1)+" of "+resp.changeDetails.length+") Do you want change '"+resp.changeDetails[index].originalDesig+"' to '"+resp.changeDetails[index].newDesig+"'?";
+			if(resp.changeDetails != null && resp.changeDetails.length !== 0){
+				for(var index = 0 ; index < resp.changeDetails.length ; index++){					
 					changeConfirmationDetails.push(resp.changeDetails[index]);
 				}
 				
 			}
 			Spinner.toggle();
-			//console.log(resp.isSuccess);
-			if(resp.isSuccess == 1){
-				if(resp.mode == 0){
+			if(resp.isSuccess === '1'){
+				if(resp.mode === '0'){
 					confirmStudyImport();
 				}else{
 					$('#importStudyModal').modal('hide');
@@ -197,22 +203,28 @@
 			}
 		}
 		function applyChangeDetails(){
+			'use strict';
 			Spinner.toggle();
 			var data = JSON.stringify(changeConfirmationDetails);
 			$.ajax(
-				{ url: "/Fieldbook/ImportManager/apply/change/details",
-				type: "POST",
-				data: "data=" + data,
-				success: function(html) {
+				{ url: '/Fieldbook/ImportManager/apply/change/details',
+				type: 'POST',
+				data: 'data=' + data,
+				success: function() {
 					$('#importStudyDesigConfirmationModal').modal('hide');
 					doMeasurementsReload();
 					Spinner.toggle();
 				}
 			});
 		}
+		function showDesignationConfirmationMessage(){
+			'use strict';
+			$('#importStudyDesigConfirmationModal .import-desig-confirmation').html(changeConfirmationDetails[currentConfirmationIndex].message);
+		}
 		function confirmDesignation(status){
+			'use strict';
 			var applyDetails = false;
-			if($('input[type=checkbox][name=yesToAllDesig]:checked').val() == 1){
+			if($('input[type=checkbox][name=yesToAllDesig]:checked').val() === '1'){
 				for(var index = currentConfirmationIndex ; index < changeConfirmationDetails.length ; index++){
 					changeConfirmationDetails[index].status = status;	
 				}
@@ -220,11 +232,11 @@
 			}else{
 				changeConfirmationDetails[currentConfirmationIndex].status = status;
 				currentConfirmationIndex++;
-				if(currentConfirmationIndex == changeConfirmationDetails.length){
+				if(currentConfirmationIndex === changeConfirmationDetails.length){
 					//meaning we've gone through all the confirmation
 					applyDetails = true;
 				}else{
-					showDesignationConfirmationMessage(currentConfirmationIndex);
+					showDesignationConfirmationMessage();
 				}
 				
 			}
@@ -233,58 +245,39 @@
 			}
 				
 		}
+
 		function showDesigConfirmation(){
+			'use strict';
 			$('#importStudyModal').modal('hide');
 			$('#importStudyConfirmationModal').modal('hide');
 			setTimeout(function(){$('#importStudyDesigConfirmationModal').modal({ backdrop: 'static', keyboard: false });}, 300);
-			showDesignationConfirmationMessage(currentConfirmationIndex);
+			showDesignationConfirmationMessage();
 		}
-		function showDesignationConfirmationMessage(index){
-			$('#importStudyDesigConfirmationModal .import-desig-confirmation').html(changeConfirmationDetails[currentConfirmationIndex].message);
-		}
+		
 		function confirmStudyImport(){
-			if(changeConfirmationDetails.length != 0){
+			'use strict';
+			if(changeConfirmationDetails.length !== 0){
 				showDesigConfirmation();
 			}else{
 				doMeasurementsReload();
 			}
 			
 		}
-		function doMeasurementsReload(){
-			
-			var paginationUrl = '/Fieldbook/Common/addOrRemoveTraits/reload/';
-			paginationUrl = paginationUrl + $("#study-type").val() + "/";
-			var currentPage = $('#measurement-data-list-pagination .pagination .active a').html();
-			Spinner.toggle();
-			$.ajax(
-				{ url: paginationUrl+currentPage+"/"+currentPage+'?r=' + (Math.random() * 999),
-				type: "GET",
-				data: "",
-				cache: false,
-				timeout: 70000,
-				success: function(html) {
-
-					$("#germplasm-measurement-list-table-div").empty().append(html);
-					
-					$('#importStudyModal').modal('hide');
-					$('#importStudyConfirmationModal').modal('hide');
-					Spinner.toggle();
-				}
-			});
-		}
+		
 		function showImportOptions(){
+			'use strict';
 			$('#importStudyModal').modal({ backdrop: 'static', keyboard: false });
 		}
 		function goBackToImport(){
-			//trigger something to return the data
+			'use strict';
 			Spinner.toggle();
 			var revertUrl = '/Fieldbook/ImportManager/revert/data';
 			$.ajax(
 				{ url: revertUrl,
-				type: "GET",
-				data: "",
+				type: 'GET',
+				data: '',
 				cache: false,
-				success: function(html) {
+				success: function() {
 
 					$('#importStudyConfirmationModal').modal('hide');
 					$('#importStudyDesigConfirmationModal').modal('hide');

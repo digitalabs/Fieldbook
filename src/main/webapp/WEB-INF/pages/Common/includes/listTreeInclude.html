@@ -63,6 +63,9 @@
 					onLazyRead: function(node) {
 						doGermplasmLazyLoad(node);
 					},
+					onRender: function(){
+	                    $(".dynatree-title").tooltip({'title': 'hello', 'trigger': 'hover', 'placement' : 'right'});
+	                },
 					classNames: {
 						container: "fbtree-container",
 						expander: "fbtree-expander",

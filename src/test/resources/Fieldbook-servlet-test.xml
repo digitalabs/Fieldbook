@@ -13,7 +13,7 @@
 			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
 	<!-- Declare property file locations  -->
-	<context:property-placeholder location="classpath:git.properties, classpath:fieldbook.properties, classpath:database.properties" />
+	<context:property-placeholder location="classpath:fieldbook.properties, classpath:database.properties" />
 
 	<!-- **************************************************************** -->
 	<!--  RESOURCE FOLDERS CONFIGURATION                                  -->

@@ -3,7 +3,7 @@ method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
 
 	<input type="hidden" th:field="*{importVal}"/>
 	<input type="hidden" th:field="*{numberOfInstances}"/>	
-	
+	<input type="hidden" th:field="*{measurementDataExisting}"/>
 </form>
 <div class="germplasm-measurement-list-table1">
 	<table th:object="${createNurseryForm}" id="measurement-table" width="100%" class="table-curved table-condensed" >

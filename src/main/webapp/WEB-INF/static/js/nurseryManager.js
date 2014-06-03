@@ -2423,6 +2423,9 @@ function recreateSessionVariables() {
 		data: "",
 		success: function (html) {
 			$("#measurementsDiv").html(html);
+			if ($("#measurementDataExisting")) {
+				displayCorrespondingGermplasmSections();
+			}
 			$('#successMessageModalUpdate').modal({ backdrop: 'static', keyboard: true });
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
@@ -2432,4 +2435,26 @@ function recreateSessionVariables() {
 			Spinner.toggle();
 		}	
 	});
+}
+
+function displayCorrespondingGermplasmSections() {
+	if ($("#measurementDataExisting").val() === "true") {
+		$("#chooseGermplasmAndChecks").hide();
+		$(".overwrite-germplasm-list").hide();
+		$(".observation-exists-notif").show();
+	} else if (measurementRowCount > 0) {
+		$("#chooseGermplasmAndChecks").hide();
+		$(".observation-exists-notif").hide();
+		$(".overwrite-germplasm-list").show();
+	} else {
+		$("#chooseGermplasmAndChecks").show();
+		$(".observation-exists-notif").hide();
+		$(".overwrite-germplasm-list").hide();
+	}
+}
+
+function showGermplasmDetailsSection() {
+	$("#chooseGermplasmAndChecks").show();
+	$(".observation-exists-notif").hide();
+	$(".overwrite-germplasm-list").hide();
 }

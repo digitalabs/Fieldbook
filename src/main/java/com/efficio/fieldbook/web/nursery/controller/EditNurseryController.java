@@ -105,6 +105,7 @@ public class EditNurseryController extends SettingsController {
         if(nurseryId != 0){     
             //settings part
             Workbook workbook = fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
+            form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), buildVariates(workbook.getVariates())));
             
             Dataset dataset = (Dataset)SettingsUtil.convertWorkbookToXmlDataset(workbook);
             
@@ -296,6 +297,7 @@ public class EditNurseryController extends SettingsController {
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
     public Map<String, String> submit(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws MiddlewareQueryException {
+        
         //get the name of the nursery
     	String name = null;
     	for (SettingDetail nvar : form.getBasicDetails()) {
@@ -343,17 +345,19 @@ public class EditNurseryController extends SettingsController {
     	}
     	
     	//include deleted list if measurements are available
-	addDeletedSettingsList(studyLevelVariables, userSelection.getDeletedStudyLevelConditions(), 
-	    userSelection.getStudyLevelConditions());
-	addDeletedSettingsList(form.getPlotLevelVariables(), userSelection.getDeletedPlotLevelList(), 
-	    userSelection.getPlotsLevelList());
-	addDeletedSettingsList(baselineTraits, userSelection.getDeletedBaselineTraitsList(), 
-	    userSelection.getBaselineTraitsList());
-	addDeletedSettingsList(form.getNurseryConditions(), userSelection.getDeletedNurseryConditions(), 
+    	addDeletedSettingsList(studyLevelVariables, userSelection.getDeletedStudyLevelConditions(), 
+    	    userSelection.getStudyLevelConditions());
+    	addDeletedSettingsList(form.getPlotLevelVariables(), userSelection.getDeletedPlotLevelList(), 
+    	    userSelection.getPlotsLevelList());
+    	addDeletedSettingsList(baselineTraits, userSelection.getDeletedBaselineTraitsList(), 
+    	    userSelection.getBaselineTraitsList());
+    	addDeletedSettingsList(form.getNurseryConditions(), userSelection.getDeletedNurseryConditions(), 
             userSelection.getNurseryConditions());
         
 		int trialDatasetId = userSelection.getWorkbook().getTrialDatasetId();
-		int measurementDatasetId = userSelection.getWorkbook().getMeasurementDatesetId();
+	    //retain measurement dataset id
+	    int measurementDatasetId = userSelection.getWorkbook().getMeasurementDatesetId(); 
+
     	Dataset dataset = (Dataset)SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, studyLevelVariables, 
     	        form.getPlotLevelVariables(), baselineTraits, userSelection, form.getNurseryConditions());
     	Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);
@@ -670,7 +674,7 @@ public class EditNurseryController extends SettingsController {
     public String resetSessionVariablesAfterSave(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, 
     		HttpSession session) throws MiddlewareQueryException{
     	Workbook workbook = userSelection.getWorkbook();
-    	
+    	form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), buildVariates(workbook.getVariates())));
     	//remove deleted variables in measurement rows & header
     	if (userSelection.getDeletedBaselineTraitsList() != null) {
 	    	for (SettingDetail setting : userSelection.getDeletedBaselineTraitsList()) {
@@ -791,5 +795,33 @@ public class EditNurseryController extends SettingsController {
     		LOG.error(e.getMessage(), e);
     	}
     	return "[]";
+    }
+    
+    private List<Integer> buildVariates(List<MeasurementVariable> variates) {
+        List<Integer> variateList = new ArrayList<Integer>();
+        if (variates != null) {
+            for (MeasurementVariable var : variates) {
+                variateList.add(new Integer(var.getTermId()));
+            }
+        }
+        return variateList;
+    }
+    
+    @ResponseBody
+    @RequestMapping(value="/deleteMeasurementRows", method = RequestMethod.POST)
+    public Map<String, String> deleteMeasurementRows() {
+        Map<String, String> resultMap = new HashMap<String, String>();
+        
+        try {
+            fieldbookMiddlewareService.deleteObservationsOfStudy(userSelection.getWorkbook().getMeasurementDatesetId());
+            resultMap.put("status", "1");
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage());
+            resultMap.put("status", "-1");
+            resultMap.put("errorMessage", e.getMessage());   
+        }
+        
+        userSelection.setMeasurementRowList(null);
+        return resultMap;
     }
 }

@@ -169,6 +169,8 @@ public class CreateNurseryForm {
     /** The baseline traits segment. */
     private String baselineTraitsSegment;
     
+    private boolean isMeasurementDataExisting;
+    
     /**
      * Gets the project id.
      *
@@ -1029,8 +1031,8 @@ public class CreateNurseryForm {
         }
 
 		public List<MeasurementVariable> getArrangeMeasurementVariables(){
-			List<MeasurementVariable> measureList = new ArrayList();
-			List<MeasurementVariable> newMeasureList = new ArrayList();
+			List<MeasurementVariable> measureList = new ArrayList<MeasurementVariable>();
+			List<MeasurementVariable> newMeasureList = new ArrayList<MeasurementVariable>();
 			if(getMeasurementVariables() != null && !getMeasurementVariables().isEmpty()){
 				//we arrange and make GID and Designation always first
 				MeasurementVariable gidVariable = null;
@@ -1057,6 +1059,14 @@ public class CreateNurseryForm {
 			}
 			return newMeasureList;
 		}
+		
+        public boolean isMeasurementDataExisting() {
+            return isMeasurementDataExisting;
+        }
+
+        public void setMeasurementDataExisting(boolean isMeasurementDataExisting) {
+            this.isMeasurementDataExisting = isMeasurementDataExisting;
+        }
 
         
 }

@@ -147,11 +147,11 @@
 	<li id="nursery-settings-li" class="active">
 		<a href="javascript:showSelectedTab('nursery-settings');" th:text="#{nursery.create.nursery.nursery.settings}">.Nursery Settings</a>
 	</li>
+	<li id="nursery-germplasm-list-li">
+		<a href="javascript:showSelectedTab('nursery-germplasm-list');" th:text="#{nursery.create.nursery.germplasm.list.tab}">.Germplasm and Checks</a>
+	</li>
 	<li id="nursery-measurements-li" th:if="${createNurseryForm.measurementRowList.size() != 0}">
 		<a href="javascript:showSelectedTab('nursery-measurements');" th:text="#{nursery.edit.nursery.measurements}">.Measurements</a>
-	</li>
-	<li id="nursery-germplasm-list-li" th:if="${createNurseryForm.measurementRowList.size() == 0}">
-		<a href="javascript:showSelectedTab('nursery-germplasm-list');" th:text="#{nursery.create.nursery.germplasm.list.tab}">.Germplasm and Checks</a>
 	</li>
 </ul>
 
@@ -161,14 +161,31 @@
 			<div id="chooseSettingsDiv" th:include="/NurseryManager/chooseSettings"></div>
 		</div>
 	</div>
+	<div id="nursery-germplasm-list" class="info" style="display: none;">
+		<div class="col-xs-12 col-md-12">
+			<div id="chooseGermplasmAndChecks" th:include="/NurseryManager/importGermplasmList"></div>
+			<div class="row form-group overwrite-germplasm-list">
+				<div class="col-xs-12 col-md-12">
+					<label class="control-label">
+						<strong class="sub-content-heading">This Nursery has a saved germplasm list, do you want to overwrite it?</strong>
+					</label>
+					&nbsp;&nbsp;&nbsp;
+					<button class="btn btn-primary" onclick="showGermplasmDetailsSection();">Overwrite</button>
+				</div>
+			</div>
+			
+			<div class="row form-group observation-exists-notif">
+				<div class="col-xs-12 col-md-12">
+					<label class="control-label">
+						<strong class="sub-content-heading">This Nursery has saved observations, germplasm list cannot be modified.</strong>
+					</label>
+				</div>
+			</div>
+		</div>
+	</div>
 	<div id="nursery-measurements" class="info" style="display: none;" th:if="${createNurseryForm.measurementRowList.size() != 0}">
 		<div class="col-xs-12 col-md-12">
 			<div id="measurementsDiv" th:include="/NurseryManager/addOrRemoveTraits"></div>
-		</div>
-	</div>
-	<div id="nursery-germplasm-list" class="info" style="display: none;" th:if="${createNurseryForm.measurementRowList.size() == 0}">
-		<div class="col-xs-12 col-md-12">
-			<div id="chooseGermplasmAndChecks" th:include="/NurseryManager/importGermplasmList"></div>
 		</div>
 	</div>
 </div>
@@ -305,6 +322,7 @@
 
 		/* jshint ignore:start */
 		var selectedGidsForAdvance = [],
+			measurementRowCount = /*[[${createNurseryForm.measurementRowList.size()}]]*/ 0, 
 			buttonToDelete = null;
 			/* jshint ignore:end */
 
@@ -366,12 +384,35 @@
 				success: function(data) {
                     if (data.status === '-1') {
                         showErrorMessage('page-message', data.errorMessage);
+                        Spinner.toggle();
                     } else if ($('#nursery-germplasm-list').length > 0) {
 						submitCheckGermplasmList();
 					} else if (data.status === '1') {
 						recreateSessionVariables();
 					}
 				} 
+			});
+		}
+		
+		function deleteMeasurementRows() {
+			'use strict';
+
+			Spinner.toggle();
+
+			$.ajax({
+				url: '/Fieldbook/NurseryManager/editNursery/deleteMeasurementRows',
+				type: 'POST',
+				data: '',
+				cache: false,
+				success: function(data) {
+                    if (data.status == -1) {
+                        showErrorMessage('page-message', data.errorMessage);
+                        Spinner.toggle();
+                    } else {
+                    	Spinner.toggle();
+                    	submitWorkbook();
+					}
+				}
 			});
 		}
 
@@ -383,7 +424,11 @@
 					moveToTopScreen();
 					return false;
 				}
-				submitWorkbook();
+				if ($(".germplasm-list-items tbody tr").length > 0 && measurementRowCount > 0) {
+					deleteMeasurementRows();
+				} else {
+					submitWorkbook();	
+				}
 			} else {
 				moveToTopScreen();
 			}
@@ -405,7 +450,12 @@
 			if ($('#folderId').val() === '1') {
 				$('#folderNameLabel').html(programNurseriesText);
 			}
+			
+			if ($("#measurementDataExisting")) {
+				displayCorrespondingGermplasmSections();
+			}
 		});
+		
 	//]]>
 	</script>
 </div>

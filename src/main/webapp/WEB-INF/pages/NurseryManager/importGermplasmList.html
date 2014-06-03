@@ -327,9 +327,16 @@
 			if (addedGid[gid] == null) {
 				addedGid[gid] = gid;
 			} else {
-				showErrorMessage('page-message', germplasmAddedAsCheck);
-				moveToTopScreen();
-				return false;
+				var itemsAddedCounter = 0;
+				for(itemsAddedCounter = 0 ; itemsAddedCounter < itemsIndexAdded.length ; itemsAddedCounter++){
+					if(parseInt(itemsIndexAdded[itemsAddedCounter].index, 10) == index) {
+						showErrorMessage('page-message', germplasmAddedAsCheck);
+						moveToTopScreen();
+						return false;
+					}
+				}
+				
+				
 			}
 
 			$('#check-germplasm-list').removeClass('add-border');

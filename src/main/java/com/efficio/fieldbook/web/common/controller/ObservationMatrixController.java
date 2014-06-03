@@ -1,5 +1,6 @@
 package com.efficio.fieldbook.web.common.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.bean.StudySelection;
+import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
@@ -42,7 +45,8 @@ public class ObservationMatrixController extends
     public static final String URL = "/Common/addOrRemoveTraits";
     public static final String PAGINATION_TEMPLATE = "/Common/showAddOrRemoveTraitsPagination";
     public static final String PAGINATION_TEMPLATE_VIEW_ONLY = "/NurseryManager/showAddOrRemoveTraitsPagination";
-
+    public static final String EDIT_EXPERIMENT_TEMPLATE = "/Common/updateExperimentModal";
+    
 	@Resource
 	private UserSelection nurserySelection;
 	
@@ -228,5 +232,116 @@ public class ObservationMatrixController extends
 
     private StudySelection getUserSelection(boolean isTrial) {
     	return isTrial ? this.trialSelection : this.nurserySelection;
+    }
+    
+    @RequestMapping(value="/data/table", method = RequestMethod.GET)
+    public String demoPageDataTables(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
+    	
+    	StudySelection userSelection = getUserSelection(false);
+    	form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());    
+    	
+        return super.showCustom(model, "/NurseryManager/datatable");
+    }
+    @RequestMapping(value="/update/experiment/{index}", method = RequestMethod.GET)
+    public String editExperimentModal(@PathVariable int index,
+            @ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, 
+            Model model) {
+
+    	
+    	StudySelection userSelection = getUserSelection(false);
+    	List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
+    	tempList.addAll(userSelection.getMeasurementRowList());
+
+    	MeasurementRow row = tempList.get(index);    
+    	MeasurementRow copyRow = row.copy();
+    	copyMeasurementValue(copyRow, row);
+    	form.setUpdateObservation(copyRow);
+    	form.setExperimentIndex(index);
+        return super.showAjaxPage(model, EDIT_EXPERIMENT_TEMPLATE);
+    }
+    @ResponseBody
+    @RequestMapping(value="/data/table/ajax", method = RequestMethod.GET)
+    public Map<String, Object> demoPageDataTablesAjax(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
+    	
+    	StudySelection userSelection = getUserSelection(false);
+    	List<MeasurementRow> tempList = new ArrayList();
+    	//for(int i = 0 ; i < 20; i++)
+    		tempList.addAll(userSelection.getMeasurementRowList());
+    	form.setMeasurementRowList(tempList);
+    	
+    	List<Map> masterList = new ArrayList();
+    	
+    	for(MeasurementRow row : tempList){
+    		    		
+    		Map<String, Object> dataMap = generateDatatableDataMap(row, null);
+    		
+    		masterList.add(dataMap);
+    	}
+    	HashMap map = new HashMap();
+    	map.put("data", masterList);
+    	//map.put("columns", masterColumnList);    	
+    	return map;
+    }
+    @ResponseBody
+    @RequestMapping(value="/data/table/ajax/submit/{index}", method = RequestMethod.POST)
+    public Map<String, Object> dataTablesAjaxSubmit(@PathVariable int index, @ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form) {
+    	HashMap<String, Object> map = new HashMap<String, Object>();
+    	StudySelection userSelection = getUserSelection(false);
+    	List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
+    	tempList.addAll(userSelection.getMeasurementRowList());
+
+    	MeasurementRow row = form.getUpdateObservation();
+    	MeasurementRow originalRow = userSelection.getMeasurementRowList().get(index);
+    	MeasurementRow copyRow = originalRow.copy();
+    	copyMeasurementValue(copyRow, row);
+    	
+		try {
+			validationService.validateObservationValues(userSelection.getWorkbook(), copyRow);
+			//if there are no error, meaning everything is good, thats the time we copy it to the original
+			copyMeasurementValue(originalRow, row);
+			map.put("success", "1");
+			Map<String, Object> dataMap = generateDatatableDataMap(originalRow, null);
+	    	map.put("data", dataMap);
+		} catch (MiddlewareQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			map.put("success", "0");
+			map.put("errorMessage", e.getMessage());
+		}
+		    			    	    	    
+    	return map;
+    }
+    
+    private void copyMeasurementValue(MeasurementRow origRow, MeasurementRow valueRow){
+    	for(int index = 0 ; index < origRow.getDataList().size() ; index++){
+    		MeasurementData data =  origRow.getDataList().get(index);
+    		MeasurementData valueRowData = valueRow.getDataList().get(index);
+    		if(data.getMeasurementVariable().getPossibleValues() != null && !data.getMeasurementVariable().getPossibleValues().isEmpty()){
+    			if(valueRowData.getcValueId() != null){
+	    			data.setcValueId(valueRowData.getcValueId());
+	    			data.setValue(valueRowData.getcValueId());
+    			}else if(valueRowData.getValue() != null){
+    				data.setcValueId(valueRowData.getValue());
+	    			data.setValue(valueRowData.getValue());
+    			}
+    		}else
+    			data.setValue(valueRowData.getValue());
+    	}
+    }
+    
+    private Map<String, Object> generateDatatableDataMap(MeasurementRow row, String suffix){
+    	Map<String, Object> dataMap = new HashMap<String, Object>();
+    	//the 4 attributes are needed always
+    	dataMap.put("Action", Integer.toString(row.getExperimentId()));
+		dataMap.put("experimentId", Integer.toString(row.getExperimentId()));
+		dataMap.put("GID", row.getMeasurementDataValue(TermId.GID.getId()));
+		dataMap.put("DESIGNATION", row.getMeasurementDataValue(TermId.DESIG.getId()));
+		for(MeasurementData data : row.getDataList()){
+			String displayVal = data.getDisplayValue();
+			if(suffix != null)
+				displayVal += suffix;
+			dataMap.put(data.getMeasurementVariable().getName(), displayVal);
+		}
+		return dataMap;
     }
 }

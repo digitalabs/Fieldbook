@@ -190,10 +190,10 @@ table .even{
   
   
 
-table .field-map-highlight {
+table .highlight, table .field-map-highlight {
     /* background-color: #BED6B2;*/
 }
-table .field-map-highlight td{
+table .highlight td, table .field-map-highlight td{
      background-color: #BED6B2;
 }
 .pagination {
@@ -304,7 +304,7 @@ table{
     border-bottom-left-radius: 10px;
 }
 .table-curved > :last-child > :last-child > :last-child {
-    border-bottom-right-radius: 10px;
+    border-bottom-right-radius: 0px;
 }
 .form-group {
     margin-bottom: 6px;
@@ -771,6 +771,9 @@ div.possibleValuesDiv{
 .add-border{
 	border: 1px solid #CECECE;
 }
+table .even, div.DTFC_LeftHeadWrapper table, div.DTFC_LeftFootWrapper table, div.DTFC_RightHeadWrapper table, div.DTFC_RightFootWrapper table, table.DTFC_Cloned tr.even {
+    background-color: #f0eeee;
+}
 table tbody tr.germplasmSelectedRow, .germplasmSelectedRow td{
 	background-color: #BED6B2;
 }
@@ -1030,5 +1033,40 @@ div.sectionContainer {
     top: -5px;
 }
 .nav-tabs li a{
+	font-weight: bold;
+}
+.fbk-search-data-table{
+	margin-right: 15px;
+	position: relative;
+    top: 5px;	
+}
+a.fbk-edit-experiment{	
+	background-image: url('../img/edit.png');
+	display:block;
+    height:20px;
+	margin-left: 15px;
+    text-align: center;
+    background-repeat:no-repeat;
+    width: 25px;
+}
+.fbk-data-table-paginate{
+	margin-top: 20px;
+}
+.fbk-data-table-info .dataTables_info{
+	left: 20px;
+    position: relative;
+}
+.DTFC_LeftBodyLiner{
+	overflow-x: hidden;
+}
+.DTFC_LeftWrapper .table-curved  > *:first-child > *:first-child > *:last-child {
+    border-top-right-radius: 0px;	
+}
+.dynatree-node .popover{
+	width: 500px;
+}
+.dynatree-node .popover-title{
+	height: 30px;
+	background-color: #e9e9e9;
 	font-weight: bold;
 }

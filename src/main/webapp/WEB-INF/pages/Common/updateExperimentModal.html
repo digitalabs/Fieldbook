@@ -1,0 +1,80 @@
+<!-- Modal -->
+ <form role="form-horizontal" action="#" method="post" class="updateExperimentForm" th:object="${addOrRemoveTraitsForm}">
+ <input type="hidden" th:field="*{experimentIndex}"/>
+<div class="modal fade updateExperimentModal" role="dialog" aria-labelledby="updateExperimentModal" aria-hidden="true">
+	<div class="modal-dialog modal-medium">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close closeUpdateExperimentModal" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title heading-modal" th:text="#{obervation.edit.entry}"></h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-12" id="page-update-experiment-message-modal"></div>
+				</div>
+				<div class="row form-group" th:each="measurementData, rowIndex : *{updateObservation.dataList}">
+					<div class="col-md-4">
+						<label class="control-label label-bold" th:text="${measurementData.measurementVariable.name}" ></label>:			
+					</div>
+					<div class="col-md-8" th:if="${measurementData.editable == false}">
+						<label th:text="${measurementData.value}" ></label>		
+						<input type="hidden" th:attr="data-type=${measurementData.dataType}" 
+						th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues)}" 
+						th:field="*{updateObservation.dataList[__${rowIndex.index}__].value}"/>				
+					</div>
+					<div class="col-md-8" th:if="${measurementData.editable == true}">
+						<input th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" type="text" th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues)}" 
+						th:field="*{updateObservation.dataList[__${rowIndex.index}__].value}"/>
+
+						<select class="variates-select" th:attr="data-type=${measurementData.dataType}" style="width: 100%;" size="1" 
+						th:if="${not #lists.isEmpty(measurementData.measurementVariable.possibleValues)}" 
+						th:field="*{updateObservation.dataList[__${rowIndex.index}__].cValueId}">
+							<option value = "" text=""></option>
+							<option th:each="refval : ${measurementData.measurementVariable.possibleValues}" 
+							th:value="${refval.key}" th:text="${refval.description}"></option>
+						</select>
+						
+					</div>
+				</div>				
+				
+			</div>
+			<div class="modal-footer addVariable-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
+				<button type="button" class="btn btn-primary" aria-hidden="true" onclick="javascript: saveExperimentMeasurements();" th:text="#{common.form.save.text}">Save</button>
+			</div>
+		</div>
+	</div>
+</div><!-- Modal -->
+</form>
+
+<div layout:fragment="page-script">
+	<script type='text/javascript' th:inline="javascript">
+		//<![CDATA[
+
+		$( document ).ready(function() {
+					$('.updateExperimentModal select').select2();
+			});
+		function saveExperimentMeasurements(){
+			'use strict'
+			Spinner.toggle();
+			var rowIndex = $('.updateExperimentForm #experimentIndex').val();
+			$.ajax({
+				url: '/Fieldbook/Common/addOrRemoveTraits/data/table/ajax/submit/' + rowIndex,
+				type: 'POST',
+				data: $('.updateExperimentForm').serialize(),
+				success: function(data) {
+					if(data.success === '1'){
+						var oTable = $('#measurement-table').dataTable();				
+						 oTable.fnUpdate( data.data, rowIndex, null, false); // Row				
+						 oTable.fnAdjustColumnSizing();	
+						 $('.updateExperimentModal').modal('hide');
+					}else{
+						showErrorMessage('page-update-experiment-message-modal', data.errorMessage);
+					}
+					Spinner.toggle();		
+				}
+			});
+		}
+		//]]>
+	</script>
+</div>

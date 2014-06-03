@@ -1761,12 +1761,6 @@ function validateCreateNursery() {
 		}
 	});
 
-	if ($(".germplasm-measurement-list-table").length > 0) {
-		if (!validateCells()) {
-			return false;
-		}
-	}
-
 	if (hasError) {
 		showErrorMessage('page-message', customMessage.replace('*', '')
 				.replace(":", ""));
@@ -2294,6 +2288,12 @@ function showSelectedTab(selectedTabName) {
 			$("#" + tabs[i].id).hide();
 		}
 	}
+	
+	if(selectedTabName === 'nursery-measurements') {
+		var dataTable = $('#measurement-table').dataTable();
+		if(dataTable != null)
+			dataTable.fnAdjustColumnSizing();
+	}
 
 }
 
@@ -2409,7 +2409,7 @@ function plotMethod() {
 }
 
 function refreshEditNursery() {
-	if ($(".germplasm-measurement-list-table").length > 0) {
+	if ($(".germplasm-measurement-list-table1").length > 0) {
 		$("#successMessageModalUpdate").modal("hide");
 	} else {
 		location.href = "/Fieldbook/NurseryManager/editNursery/" + $("#studyId").val();

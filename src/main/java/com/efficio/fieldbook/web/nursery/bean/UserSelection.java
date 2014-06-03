@@ -119,6 +119,9 @@ public class UserSelection extends StudySelection implements Serializable {
     /** The removed factors. */
     private List<SettingDetail> removedFactors;
     
+    /** The removed conditions. */
+    private List<SettingDetail> removedConditions;
+    
 	
 	/**
      * Gets the current page germplasm list.
@@ -693,5 +696,23 @@ public class UserSelection extends StudySelection implements Serializable {
 		public void setRemovedFactors(List<SettingDetail> removedFactors) {
 			this.removedFactors = removedFactors;
 		}
+
+        /**
+         * Gets the removed conditions.
+         *
+         * @return the removed conditions
+         */
+        public List<SettingDetail> getRemovedConditions() {
+            return removedConditions;
+        }
+
+        /**
+         * Sets the removed conditions.
+         *
+         * @param removedConditions the new removed conditions
+         */
+        public void setRemovedConditions(List<SettingDetail> removedConditions) {
+            this.removedConditions = removedConditions;
+        }
 
  }

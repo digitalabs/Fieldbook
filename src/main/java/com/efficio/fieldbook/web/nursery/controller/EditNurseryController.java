@@ -307,7 +307,7 @@ public class EditNurseryController extends SettingsController {
     		}
     	}
 
-    	//combine all study conditions (basic details and management details)
+    	//combine all study conditions (basic details and management details and hidden variables)
     	List<SettingDetail> studyLevelVariables = new ArrayList<SettingDetail>();
     	if (form.getStudyLevelVariables() != null && !form.getStudyLevelVariables().isEmpty()) {
     		studyLevelVariables.addAll(form.getStudyLevelVariables());
@@ -316,8 +316,12 @@ public class EditNurseryController extends SettingsController {
     	    	 
     	List<SettingDetail> studyLevelVariablesSession = userSelection.getBasicDetails();
     	userSelection.getStudyLevelConditions().addAll(studyLevelVariablesSession);
-    	
-    	//add hidden variables like OCC
+    	if (userSelection.getRemovedConditions() != null) {
+    	    studyLevelVariables.addAll(userSelection.getRemovedConditions());
+    	    userSelection.getStudyLevelConditions().addAll(userSelection.getRemovedConditions());
+    	}
+    	    	
+    	//add hidden variables like OCC in factors list
     	if (userSelection.getRemovedFactors() != null) {
     		form.getPlotLevelVariables().addAll(userSelection.getRemovedFactors());
     		userSelection.getPlotsLevelList().addAll(userSelection.getRemovedFactors());
@@ -367,7 +371,6 @@ public class EditNurseryController extends SettingsController {
     	    	
     	createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), form.getStudyId());
     	userSelection.setWorkbook(workbook);
-    	
     	Map<String, String> resultMap = new HashMap<String, String>();
     	//saving of measurement rows
     	if (userSelection.getMeasurementRowList() != null && userSelection.getMeasurementRowList().size() > 0) {
@@ -630,11 +633,13 @@ public class EditNurseryController extends SettingsController {
      *
      * @param nurseryLevelConditions the nursery level conditions
      */
-    private void removeHiddenVariables(List<SettingDetail> nurseryLevelConditions) {
-        Iterator<SettingDetail> iter = nurseryLevelConditions.iterator();
-        while (iter.hasNext()) {
-            if (SettingsUtil.inHideVariableFields(iter.next().getVariable().getCvTermId(), AppConstants.HIDE_PLOT_FIELDS.getString())) {
-                iter.remove();
+    private void removeHiddenVariables(List<SettingDetail> settingList, String hiddenVarList) {
+        if (settingList != null) {
+            Iterator<SettingDetail> iter = settingList.iterator();
+            while (iter.hasNext()) {
+                if (SettingsUtil.inHideVariableFields(iter.next().getVariable().getCvTermId(), hiddenVarList)) {
+                    iter.remove();
+                }
             }
         }
     }
@@ -738,7 +743,8 @@ public class EditNurseryController extends SettingsController {
     	
     	//remove basic details & hidden variables from study level variables
     	removeBasicDetailsVariables(userSelection.getStudyLevelConditions());
-    	removeHiddenVariables(userSelection.getPlotsLevelList());
+    	removeHiddenVariables(userSelection.getStudyLevelConditions(), AppConstants.HIDE_NURSERY_FIELDS.getString());
+    	removeHiddenVariables(userSelection.getPlotsLevelList(), AppConstants.HIDE_PLOT_FIELDS.getString());
     	
     	//set measurement session variables to form
     	setMeasurementsData(form, workbook);
@@ -800,6 +806,8 @@ public class EditNurseryController extends SettingsController {
         }
         
         userSelection.setMeasurementRowList(null);
+        userSelection.getWorkbook().setOriginalObservations(null);
+        userSelection.getWorkbook().setObservations(null);
         return resultMap;
     }
 }

@@ -63,8 +63,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	protected org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 	
 	/** The user selection. */
-        @Resource
-        protected UserSelection userSelection;    
+    @Resource
+    protected UserSelection userSelection;    
 	
 	/** The measurements generator service. */
 	@Resource

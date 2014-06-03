@@ -399,6 +399,7 @@ public class SettingsUtil {
 		    List<SettingDetail> nurseryConditions = new ArrayList<SettingDetail>();
 		    List<SettingDetail> selectionVariates = new ArrayList<SettingDetail>();
 		    List<SettingDetail> removedFactors = new ArrayList<SettingDetail>();
+		    List<SettingDetail> removedConditions = new ArrayList<SettingDetail>();
 		    if(dataset.getConditions() != null){
 				for(Condition condition : dataset.getConditions()){					
 					SettingVariable variable = new SettingVariable(condition.getName(), condition.getDescription(), condition.getProperty(),
@@ -408,24 +409,27 @@ public class SettingsUtil {
 					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), 
 							HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
 					
-                    if (!inHideVariableFields(stdVar, AppConstants.HIDE_NURSERY_FIELDS.getString())) {
-                        variable.setCvTermId(stdVar);                                        
-                        List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
-                        SettingDetail settingDetail = new SettingDetail(variable,
-                                possibleValues, HtmlUtils.htmlUnescape(condition.getValue()), isSettingVariableDeletable(stdVar, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()));
-                        
-                        settingDetail.setPossibleValuesToJson(possibleValues);
-                        List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, projectId);
-                        settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
-                        studyLevelConditions.add(settingDetail);
-                        if(userSelection != null){
-                            StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
-                            variable.setPSMRFromStandardVariable(standardVariable);                        
-                            Enumeration enumerationByDescription = standardVariable.getEnumerationByDescription(condition.getValue());
-                            if(enumerationByDescription != null) {
-                            	settingDetail.setValue(enumerationByDescription.getName());
-                            }
+                    variable.setCvTermId(stdVar);                                        
+                    List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
+                    SettingDetail settingDetail = new SettingDetail(variable,
+                            possibleValues, HtmlUtils.htmlUnescape(condition.getValue()), isSettingVariableDeletable(stdVar, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()));
+                    
+                    settingDetail.setPossibleValuesToJson(possibleValues);
+                    List<ValueReference> possibleValuesFavorite = getFieldPossibleValuesFavorite(fieldbookService, stdVar, projectId);
+                    settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
+                    
+                    if(userSelection != null){
+                        StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
+                        variable.setPSMRFromStandardVariable(standardVariable);                        
+                        Enumeration enumerationByDescription = standardVariable.getEnumerationByDescription(condition.getValue());
+                        if(enumerationByDescription != null) {
+                        	settingDetail.setValue(enumerationByDescription.getName());
                         }
+                    }
+                    if (!inHideVariableFields(stdVar, AppConstants.HIDE_NURSERY_FIELDS.getString())) {
+                        studyLevelConditions.add(settingDetail);
+                    } else {
+                        removedConditions.add(settingDetail);
                     }
 				}
 		    }
@@ -523,6 +527,7 @@ public class SettingsUtil {
 			userSelection.setNurseryConditions(nurseryConditions);
 			userSelection.setSelectionVariates(selectionVariates);
 			userSelection.setRemovedFactors(removedFactors);
+			userSelection.setRemovedConditions(removedConditions);
 		}
 	}
 	

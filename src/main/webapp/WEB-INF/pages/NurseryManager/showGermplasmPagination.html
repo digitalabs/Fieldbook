@@ -1,5 +1,5 @@
 <div>
-	<form onsubmit="return do_germplasm_check();" id="germplasm-list-form" role="form-horizontal" class="form-horizontal" action="#"
+	<form id="germplasm-list-form" role="form-horizontal" class="form-horizontal" action="#"
 	th:action="@{/NurseryManager/importGermplasmList/next}" method="post" th:object="${importGermplasmListForm}" enctype="multipart/form-data">
 
 	<input type="hidden" th:field="*{totalGermplasms}"/>

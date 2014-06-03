@@ -1,5 +1,5 @@
 <div class="col-xs-12 col-md-12" >   
-<form onsubmit="return do_germplasm_check();" id="germplasm-list-form" role="form-horizontal" class="form-horizontal" action="#"
+<form id="germplasm-list-form" role="form-horizontal" class="form-horizontal" action="#"
   th:action="@{/SeedStoreManager/next}" method="post" th:object="${seedStoreForm}" enctype="multipart/form-data">
      
      <input type="hidden" th:field="*{listId}"/>

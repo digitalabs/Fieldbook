@@ -107,6 +107,7 @@ public class EditNurseryController extends SettingsController {
         if(nurseryId != 0){     
             //settings part
             Workbook workbook = fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
+
             form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), buildVariates(workbook.getVariates())));
             
             Dataset dataset = (Dataset)SettingsUtil.convertWorkbookToXmlDataset(workbook);
@@ -377,6 +378,7 @@ public class EditNurseryController extends SettingsController {
     	    	
     	createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), form.getStudyId());
     	userSelection.setWorkbook(workbook);
+    	        
     	Map<String, String> resultMap = new HashMap<String, String>();
     	//saving of measurement rows
     	if (userSelection.getMeasurementRowList() != null && userSelection.getMeasurementRowList().size() > 0) {
@@ -732,19 +734,21 @@ public class EditNurseryController extends SettingsController {
     	//reorder variates based on measurementrow order
     	int index = 0;
 		List<MeasurementVariable> newVariatesList = new ArrayList<MeasurementVariable>();
-		for (MeasurementRow row : userSelection.getMeasurementRowList()) {
-			if (index == 0) {
-				for (MeasurementData var : row.getDataList()) {
-					for (MeasurementVariable varToArrange : workbook.getVariates()) {
-						if (var.getMeasurementVariable().getTermId() == varToArrange.getTermId()) {
-							newVariatesList.add(varToArrange);
-						}
-			    	}
-					
-				}
-			}
-			index++;
-			break;
+		if (userSelection.getMeasurementRowList() != null) {
+    		for (MeasurementRow row : userSelection.getMeasurementRowList()) {
+    			if (index == 0) {
+    				for (MeasurementData var : row.getDataList()) {
+    					for (MeasurementVariable varToArrange : workbook.getVariates()) {
+    						if (var.getMeasurementVariable().getTermId() == varToArrange.getTermId()) {
+    							newVariatesList.add(varToArrange);
+    						}
+    			    	}
+    					
+    				}
+    			}
+    			index++;
+    			break;
+    		}
 		}
     	workbook.setVariates(newVariatesList);
 		    	

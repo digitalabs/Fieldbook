@@ -370,7 +370,7 @@
                     if (data.status === '-1') {
                         showErrorMessage('page-message', data.errorMessage);
                         Spinner.toggle();
-                    } else if ($('.germplasm-list-items tbody tr').length > 0) {
+                    } else if ($('.germplasm-list-items tbody tr').length > 0 || measurementRowCount === 0) {
 						submitCheckGermplasmList();
 					} else if (data.status === '1') {
 						recreateSessionVariables();

@@ -2409,7 +2409,7 @@ function plotMethod() {
 }
 
 function refreshEditNursery() {
-	if ($(".germplasm-list-items").length == 0) {
+	if ($(".germplasm-list-items").length === 0 || measurementRowCount > 0) {
 		$("#successMessageModalUpdate").modal("hide");
 		$("#page-message").html("");
 	} else {

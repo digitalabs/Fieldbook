@@ -422,15 +422,20 @@ public class SettingsUtil {
                         StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
                         variable.setPSMRFromStandardVariable(standardVariable);                        
                         Enumeration enumerationByDescription = standardVariable.getEnumerationByDescription(condition.getValue());
-                        if(enumerationByDescription != null) {
-                        	settingDetail.setValue(enumerationByDescription.getName());
+                        
+                        if (!inHideVariableFields(stdVar, AppConstants.HIDE_NURSERY_FIELDS.getString())) {
+                            if(enumerationByDescription != null) {
+                                settingDetail.setValue(enumerationByDescription.getName());
+                            }
+                            studyLevelConditions.add(settingDetail);
+                        } else {
+                            if(enumerationByDescription != null) {
+                                settingDetail.setValue(enumerationByDescription.getId().toString());
+                            }
+                            removedConditions.add(settingDetail);
                         }
                     }
-                    if (!inHideVariableFields(stdVar, AppConstants.HIDE_NURSERY_FIELDS.getString())) {
-                        studyLevelConditions.add(settingDetail);
-                    } else {
-                        removedConditions.add(settingDetail);
-                    }
+                    
 				}
 		    }
 			//plot level

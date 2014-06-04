@@ -2409,8 +2409,9 @@ function plotMethod() {
 }
 
 function refreshEditNursery() {
-	if ($(".germplasm-measurement-list-table1").length > 0) {
+	if ($(".germplasm-list-items").length == 0) {
 		$("#successMessageModalUpdate").modal("hide");
+		$("#page-message").html("");
 	} else {
 		location.href = "/Fieldbook/NurseryManager/editNursery/" + $("#studyId").val();
 	}

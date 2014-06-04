@@ -24,10 +24,8 @@
 			<label class="heading" th:text="*{basicDetails[0].value}"></label>
 			<input type="button" onclick="submitForm();" th:value="#{common.form.save.text}" class="btn btn-info fbk-save-button-left-margin" />
 		</div>
-		<div class="col-md-4">
-		</div>
-		<div class="col-md-2 add_top_padding">
-			<a th:href="@{/NurseryManager/manageNurseries}" th:text="#{return.to.manage.nurseries}">Return to Manage Nurseries</a>
+		<div class="col-md-6 add_top_padding">
+			<a  class="fbk-float-right"  th:href="@{/NurseryManager/manageNurseries}" th:text="#{return.to.manage.nurseries}">Return to Manage Nurseries</a>
 		</div>
 	</div>
 	<div class="row">
@@ -43,7 +41,7 @@
 			</label>
 			</div>
 			<div class="col-md-4">
-			<div style="float: right; ">
+			<div  class="fbk-float-right-with-top-pos">
 				<div class="btn-group">
 					<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
 						<span th:text="#{nursery.nurserydetails.actions}">Actions</span>
@@ -103,7 +101,7 @@
 				<label class="control-label" id="folderNameLabel" th:text="*{folderName}"></label>
 			</div>
 			<div class="col-xs-2 col-md-2">
-				<a id="chooseLocation" onclick="openStudyTree(2);" th:text="#{nursery.create.nursery.choose.location}"></a>
+				<a class="fbk-float-right" id="chooseLocation" onclick="openStudyTree(2);" th:text="#{nursery.create.nursery.choose.location}"></a>
 			</div>
 		</div>
 		<div class="row form-group">

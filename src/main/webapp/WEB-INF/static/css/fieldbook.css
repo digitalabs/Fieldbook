@@ -1092,6 +1092,11 @@ a.fbk-edit-experiment{
 .measurement-show-hide-drop-down{
 	float: right;
 }
-/*
-, ul.ColVis_collection li
-*/
+.fbk-float-right{
+	float: right;
+}
+.fbk-float-right-with-top-pos{
+	float: right;
+	position:relative;
+	top: -10px;
+}

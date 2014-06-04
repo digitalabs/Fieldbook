@@ -157,26 +157,6 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 <div class="form-group" id="create-nursery">
 	<div th:include="/NurseryManager/includes/studyTree" />
 </div>
-
-<!-- Modal Dialog for Successful Save -->
-<div class="form-group">
-	<div class="col-md-12">
-		<div class="modal fade" id="successMessageModal" role="dialog" aria-labelledby="successMessageModal" aria-hidden="true">
-			<div class="modal-dialog" style="width: 600px">
-				<div class="modal-content">
-					<div class="modal-body" id="successMessageBody">
-						<div style="text-align: center">
-							<label th:text="#{common.form.save.successful.text}">Save successful!</label>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<a id="btnOK" href="" th:href="@{/NurseryManager/editNursery}" th:text="#{common.form.ok.text}" class="btn btn-primary">OK</a>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
 <div id="list-tree-include" th:include="/Common/includes/listTreeInclude"></div>
 <div class="row">
 	<div id="example-germplasm" th:include="/Common/includes/saveList"></div>
@@ -204,7 +184,21 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 		// FIXME Should not be using global variables or functions
 		/*global lastDraggedChecksList, Spinner, validateCreateNursery, validateStartEndDate, moveToTopScreen*/
 		/*global loadNurserySettingsForCreate, getJquerySafeId, changeBuildOption*/
-
+		function refreshStudyAfterSave(studyId){
+			'use strict';
+			$.ajax({
+				url: '/Fieldbook/NurseryManager/editNursery/'+studyId,
+				type: 'GET',
+				data: 'isAjax=1',
+				dataType: 'html',
+				cache: false,
+				success: function(html) {					
+					$('.container .row:eq(0)').html(html);
+					$('#successMessageModal').modal({ backdrop: 'static', keyboard: true });
+					Spinner.toggle();
+				}
+			});
+		}
 
 		function submitGermplasmList(){
 			'use strict';
@@ -223,15 +217,11 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 				data: serializedData,
 				cache: false,
 				success: function(dataResponse) {
-					var successHref = $('#successMessageModal #btnOK').attr('href') +"/"+dataResponse;
-					$('#successMessageModal #btnOK').attr('href', successHref );
-					$('#successMessageModal').modal({ backdrop: 'static', keyboard: true });
-				},
-				complete: function() {
-					Spinner.toggle();
+					refreshStudyAfterSave(dataResponse);										
 				}
 			});
 		}
+				
 
 		function submitCheckGermplasmList() {
 			'use strict';

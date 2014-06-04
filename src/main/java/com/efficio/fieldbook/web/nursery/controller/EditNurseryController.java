@@ -44,6 +44,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
@@ -99,8 +100,9 @@ public class EditNurseryController extends SettingsController {
      * @throws MiddlewareQueryException the middleware query exception
      */
     @RequestMapping(value="/{nurseryId}", method = RequestMethod.GET)
-    public String useExistingNursery(@ModelAttribute("createNurseryForm") CreateNurseryForm form, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2, 
-            @PathVariable int nurseryId, Model model, HttpSession session) throws MiddlewareQueryException{
+    public String useExistingNursery(@ModelAttribute("createNurseryForm") CreateNurseryForm form, 
+    		@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2, 
+            @PathVariable int nurseryId,@RequestParam(required=false) String isAjax, Model model, HttpSession session) throws MiddlewareQueryException{
         session.invalidate();
         if(nurseryId != 0){     
             //settings part
@@ -172,6 +174,9 @@ public class EditNurseryController extends SettingsController {
 
         setFormStaticData(form);
         model.addAttribute("createNurseryForm", form);
+        if(isAjax != null && isAjax.equalsIgnoreCase("1")) {
+        	return super.showAjaxPage(model, getContentName());
+        }
         
         return super.show(model);
     }

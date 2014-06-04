@@ -2135,7 +2135,7 @@ function initializeStudyTabs() {
 		$('#study-tabs .info').hide();
 		$('.info#' + $(this).attr('id')).show();
 	});
-	$('#study-tab-headers .close').on('click', function() {
+	$('#study-tab-headers .fbk-close-tab').on('click', function() {
 		var studyId = $(this).attr('id');
 		var showFirst = false;
 		if ($(this).parent().parent().hasClass('active')) {
@@ -2169,8 +2169,7 @@ function addDetailsTab(studyId, title) {
 			type : "GET",
 			cache : false,
 			success : function(data) {
-				var close = '<button style="float: right" type="button" id="'
-						+ studyId + '" class="close">x</button>';
+				var close = '<i class="glyphicon glyphicon-remove fbk-close-tab" id="'+studyId+'"></i>';
 				$('#study-tab-headers').append(
 						"<li id='study" + studyId + "' class='active'><a>"
 								+ title + close + "</a></li>");

@@ -1409,8 +1409,7 @@ function doAdvanceNursery() {
 				$('#create-nursery-tabs .info').hide();
 
 				uniqueId = $(html).find('.uniqueId').attr('id');
-				close = '<button style="float: right" onclick="javascript: closeAdvanceListTab(' + uniqueId +
-					')" type="button" id="' + uniqueId + '" class="close">x</button>';
+				close = '<i class="glyphicon glyphicon-remove fbk-close-tab" id="'+uniqueId+'" onclick="javascript: closeAdvanceListTab(' + uniqueId +')"></i>';
 				aHtml = '<a id="advanceHref' + uniqueId + '" href="javascript: showSelectedAdvanceTab(' + uniqueId + ')">Advance List' + close + '</a>';
 				$('#create-nursery-tab-headers').append('<li class="active" id="advance-list' + uniqueId + '-li">' + aHtml + '</li>');
 				$('#create-nursery-tabs').append('<div class="info" id="advance-list' + uniqueId + '">' + html + '</div>');

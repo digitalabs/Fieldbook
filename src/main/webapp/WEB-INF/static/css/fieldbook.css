@@ -1100,3 +1100,6 @@ a.fbk-edit-experiment{
 	position:relative;
 	top: -10px;
 }
+.fbk-close-tab{
+	padding-left: 10px;
+}

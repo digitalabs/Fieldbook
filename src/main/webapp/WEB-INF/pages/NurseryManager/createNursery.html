@@ -194,7 +194,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 				cache: false,
 				success: function(html) {					
 					$('.container .row:eq(0)').html(html);
-					$('#successMessageModal').modal({ backdrop: 'static', keyboard: true });
+					$('#successStudyMessageModal').modal({ backdrop: 'static', keyboard: true });
 					Spinner.toggle();
 				}
 			});

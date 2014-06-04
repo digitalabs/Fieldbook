@@ -69,15 +69,18 @@ function showPage(paginationUrl, pageNum, sectionDiv) {
 		cache: false,
 		success: function(html) {
 
+			var tableId,
+				gid,
+				idVal,
+				indexItems,
+				rowIndex;
+
 			$('#' + sectionDiv).empty().append(html);
 
 			if (sectionDiv === 'trial-details-list' || sectionDiv === 'nursery-details-list') {
-
 				// We highlight the previously clicked
-				for (var tableId in selectedTableIds) {
-
-					var idVal = selectedTableIds[tableId];
-
+				for (tableId in selectedTableIds) {
+					idVal = selectedTableIds[tableId];
 					if (idVal != null) {
 						// We need to highlight
 						$('tr.data-row#' + idVal).addClass('field-map-highlight');
@@ -85,8 +88,8 @@ function showPage(paginationUrl, pageNum, sectionDiv) {
 				}
 			} else if (sectionDiv === 'inventory-germplasm-list') {
 				// We highlight the previously clicked
-				for (var index in selectedGids) {
-					var idVal = selectedGids[index];
+				for (gid in selectedGids) {
+					idVal = selectedGids[gid];
 					if (idVal !== null) {
 						// We need to highlight
 						$('tr.primaryRow[data-gid=' + idVal + ']').addClass('field-map-highlight');
@@ -96,22 +99,20 @@ function showPage(paginationUrl, pageNum, sectionDiv) {
 
 			if (sectionDiv === 'imported-germplasm-list') {
 				makeDraggable(makeDraggableBool);
-				// We'll do the highlight
-				if (typeof itemsIndexAdded === 'undefined');
-				else {
-					if (itemsIndexAdded !== null && itemsIndexAdded.length > 0) {
-						for (var indexItems = 0 ; indexItems < itemsIndexAdded.length ; indexItems++) {
-							if (itemsIndexAdded[indexItems] != null) {
-								var rowIndex = itemsIndexAdded[indexItems].index;
-								if ($('.primaryRow[data-index=""+rowIndex+""]').length !== 0) {
-									$('.primaryRow[data-index=""+rowIndex+""]').css('opacity', '0.5');
-								}
+
+				// Highlight
+				if (itemsIndexAdded && itemsIndexAdded.length > 0) {
+					for (indexItems = 0; indexItems < itemsIndexAdded.length ; indexItems++) {
+						if (itemsIndexAdded[indexItems] != null) {
+							rowIndex = itemsIndexAdded[indexItems].index;
+							if ($('.primaryRow[data-index=""+rowIndex+""]').length !== 0) {
+								$('.primaryRow[data-index=""+rowIndex+""]').css('opacity', '0.5');
 							}
 						}
 					}
 				}
 			}
-		Spinner.toggle();
+			Spinner.toggle();
 		}
 	});
 }

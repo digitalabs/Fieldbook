@@ -147,10 +147,10 @@
 				};
 
 		$(document).ready(function() {
-
+			'use strict';
 			$('#exportStudyModal select').select2({width: 'copy'});
 			$('#exportType').on('change', function(){
-				if ($(this).val() === 2) {
+				if ($(this).val() === '2') {
 					$('.exportRSection').css('display', 'block');
 				} else {
 					$('.exportRSection').css('display', 'none');

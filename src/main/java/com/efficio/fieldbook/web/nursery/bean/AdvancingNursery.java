@@ -63,6 +63,8 @@ public class AdvancingNursery implements Serializable {
     
     private Integer plotVariateId;
     
+    private boolean forcedBulk;
+    
     public Study getStudy() {
         return study;
     }
@@ -299,6 +301,20 @@ public class AdvancingNursery implements Serializable {
 	 */
 	public void setPlotVariateId(Integer plotVariateId) {
 		this.plotVariateId = plotVariateId;
+	}
+
+	/**
+	 * @return the forceIsBulked
+	 */
+	public boolean isForcedBulk() {
+		return forcedBulk;
+	}
+
+	/**
+	 * @param forceIsBulked the forceIsBulked to set
+	 */
+	public void setForcedBulk(boolean forceIsBulked) {
+		this.forcedBulk = forceIsBulked;
 	}
 
 	@Override

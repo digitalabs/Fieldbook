@@ -31,11 +31,6 @@ public class MaizeSelfBulkedServiceImpl extends
         Integer breedingMethodId = null;
         boolean putBrackets = (rows.getPutBrackets() != null ? true : false);
         int index = 1;
-//        Map<String, Method> breedingMethodMap = new HashMap<String, Method>();
-//        List<Method> methodList = fieldbookMiddlewareService.getAllBreedingMethods();
-//        for(Method method: methodList){
-//        	breedingMethodMap.put(method.getMid().toString(), method);
-//        }
         for (AdvancingSource row : rows.getRows()) {
             if (row.getGermplasm() != null && !row.isCheck() && row.getPlantsSelected() != null && row.getPlantsSelected() > 0) {
         		breedingMethodId = AppConstants.SELECTED_BULK_SF.getInt();

@@ -54,17 +54,6 @@ public class AdvancingSourceList{
         }
 
         if (workbook != null) {
-            /*Integer breedingMethodId = null;
-            if (workbook.getStudyConditions() != null && !workbook.getStudyConditions().isEmpty()) {
-                for (MeasurementVariable studyCondition : workbook.getStudyConditions()) {
-                    if (studyCondition.getTermId() == TermId.BREEDING_METHOD_ID.getId() && NumberUtils.isNumber(studyCondition.getValue())) {
-                        breedingMethodId = Integer.valueOf(studyCondition.getValue());
-                        break;
-                    }
-                }
-            }
-            this.nurseryBreedingMethodId = breedingMethodId; */
-            
             if (workbook.getObservations() != null && !workbook.getObservations().isEmpty()) {
                 this.rows = new ArrayList<AdvancingSource>();
                 for (MeasurementRow row : workbook.getObservations()) {
@@ -97,7 +86,7 @@ public class AdvancingSourceList{
 
                     if (methodId != null) {
 		                Integer plantsSelected = null; 
-		                Boolean isBulk = isBulk(methodId, breedingMethodMap);
+		                Boolean isBulk = advanceInfo.isForcedBulk() || isBulk(methodId, breedingMethodMap);
 		                if (isBulk != null) {
 		                	if (isBulk.booleanValue() && (advanceInfo.getAllPlotsChoice() == null || "0".equals(advanceInfo.getAllPlotsChoice()))) {
 		                    	if (plotVariateId != null) {

@@ -563,6 +563,12 @@ padding-left: 20px; margin-top: 7px
     margin-top: 13px;
     line-height: 18px;
 }
+.help-tooltip-nursery-advance{
+	margin-left: 0px;  
+	position: relative;
+	left: -15px;
+	top: 5px;
+}
 .germplasm-list-table, .germplasm-measurement-list-table, .advance-nursery-list-table, .check-germplasm-list-table,
 .inventory-germplasm-list-table
 {

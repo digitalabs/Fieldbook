@@ -2,7 +2,7 @@
 method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
 
 	<input type="hidden" th:field="*{importVal}"/>
-	<input type="hidden" th:field="*{numberOfInstances}"/>	
+	<input type="hidden" th:field="*{numberOfInstances}"/>
 	<input type="hidden" th:field="*{measurementDataExisting}"/>
 </form>
 
@@ -10,13 +10,13 @@ method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
 		<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
 			<span>Show/Hide Columns</span>
 		</button>
-		<ul class="dropdown-menu measurement-dropdown-menu" role="menu"  th:object="${createNurseryForm}">						
-			<li th:each="measurementVariable, rowIndex : *{arrangeMeasurementVariables}" >							
-				<a href="javascript: void(0)" 
-				th:text="${measurementVariable.name}" 
+		<ul class="dropdown-menu measurement-dropdown-menu" role="menu"  th:object="${createNurseryForm}">
+			<li th:each="measurementVariable, rowIndex : *{arrangeMeasurementVariables}" >
+				<a href="javascript: void(0)"
+				th:text="${measurementVariable.name}"
 				th:attr="data-column-name=${measurementVariable.name}"
 				th:attrappend="data-index=${rowIndex.index+1}">GID</a>
-			</li>						
+			</li>
 		</ul>
 	</div>
 
@@ -25,12 +25,12 @@ method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
 		<thead>
 			<tr>
 				<th  data-term-id="Action" class="factors">Action</th>
-				<th th:attr="data-term-id=${measurementVariable.termId}" 
-				th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'" 
+				<th th:attr="data-term-id=${measurementVariable.termId}"
+				th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'"
 				th:each="measurementVariable, rowIndex : *{arrangeMeasurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>
-				
+
 			</tr>
-		</thead>	
+		</thead>
 	</table>
 </div>
 <div class="row edit-experiment-section">
@@ -47,7 +47,7 @@ method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
 
 		$( document ).ready(function() {
 			'use strict';
-			initializeMeasurementsDatatable('#measurement-table', '/Fieldbook/Common/addOrRemoveTraits/data/table/ajax');		
+			initializeMeasurementsDatatable('#measurement-table', '/Fieldbook/Common/addOrRemoveTraits/data/table/ajax');
 		});
 
 	//]]>

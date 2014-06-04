@@ -381,7 +381,9 @@ public class EditNurseryController extends SettingsController {
     	//saving of measurement rows
     	if (userSelection.getMeasurementRowList() != null && userSelection.getMeasurementRowList().size() > 0) {
             try {
-                int previewPageNum = userSelection.getCurrentPage();
+                //int previewPageNum = userSelection.getCurrentPage();
+                addMeasurementDataToRows(workbook);
+                workbook.setMeasurementDatasetVariables(null);
                 form.setMeasurementRowList(userSelection.getMeasurementRowList());
                 form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
                 workbook.setObservations(form.getMeasurementRowList());
@@ -650,6 +652,31 @@ public class EditNurseryController extends SettingsController {
         }
     }
     
+    private void addMeasurementDataToRows(Workbook workbook) throws MiddlewareQueryException{
+      //add new variables in measurement rows
+        for (MeasurementVariable variable : workbook.getVariates()) {
+            if (variable.getOperation().equals(Operation.ADD)) {                
+                StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId());
+                
+                MeasurementData measurementData = new MeasurementData(variable.getName(), 
+                        variable.getValue(), true,  
+                        getDataType(variable.getDataTypeId()),
+                        variable);
+                
+                measurementData.setPhenotypeId(null);
+                for (MeasurementRow row : userSelection.getMeasurementRowList()) {
+                    row.getDataList().add(measurementData);
+                }
+                
+                if (ontologyService.getProperty(variable.getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId()) {
+                    variable.setPossibleValues(fieldbookService.getAllBreedingMethods());
+                } else {
+                    variable.setPossibleValues(transformPossibleValues(stdVariable.getEnumerations()));
+                }
+            }
+        }
+    }
+    
     /**
      * Reset session variables after save.
      *
@@ -693,29 +720,6 @@ public class EditNurseryController extends SettingsController {
 	        	}
 	    	}
     	}
-    	    	
-    	//add new variables in measurement rows
-    	for (MeasurementVariable variable : workbook.getVariates()) {
-    		if (variable.getOperation().equals(Operation.ADD)) {    			
-    			StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId());
-    			
-	            MeasurementData measurementData = new MeasurementData(variable.getName(), 
-	                    variable.getValue(), true,  
-	                    getDataType(variable.getDataTypeId()),
-	                    variable);
-	            
-	            measurementData.setPhenotypeId(null);
-	            for (MeasurementRow row : userSelection.getMeasurementRowList()) {
-	            	row.getDataList().add(measurementData);
-	            }
-	            
-	            if (ontologyService.getProperty(variable.getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId()) {
-			        variable.setPossibleValues(fieldbookService.getAllBreedingMethods());
-			    } else {
-			    	variable.setPossibleValues(transformPossibleValues(stdVariable.getEnumerations()));
-			    }
-    		}
-        }
     	
     	//remove deleted variables in the original lists
     	//and change add operation to update

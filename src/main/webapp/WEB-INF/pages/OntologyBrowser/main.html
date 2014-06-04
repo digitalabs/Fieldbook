@@ -30,31 +30,20 @@
 	<script type="text/javascript" th:src="@{/static/js/ontologyBrowser.js}"></script>
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
-    var treeData = /*[[${ontologyBrowserForm.treeData}]]*/;
-    var searchTreeData = /*[[${ontologyBrowserForm.searchTreeData}]]*/;
-    var treeDivId = 'ontologyBrowserTree';
-    var seasrchErrorMessage = /*[[#{ontology.search.error.no.result}]]*/;
-   	var variableDetailHeader = /*[[#{ontology.variable.details}]]*/;
+	/*globals doOntologyTreeHighlight*/
 
+    var treeData = /*[[${ontologyBrowserForm.treeData}]]*/ '';
+    var searchTreeData = /*[[${ontologyBrowserForm.searchTreeData}]]*/ '';
+    var treeDivId = 'ontologyBrowserTree';
    	var ontologyUrl = $('#ontologyBaseUrl').attr('href');
 
 
-
-
-   	$('#srch-term').on("keypress", function(e) {
-        if (e.keyCode == 13) {
-        	//doSearchTree();
-            return false; // prevent the button click from happening
-        }
-	});
    	$( document ).ready(function() {
+   		'use strict';
    		$('#ontology-detail-tabs').empty().html($('.variable-detail-info').html());
-   		$('#srch-term').on("change", function(event){
-
+   		$('#srch-term').on('change', function(event) {
 	    	var data = $('#srch-term').select2('data');
-	    	//console.log('do serch');
-	    	 doOntologyTreeHighlight(treeDivId, data.key);
-	    	 //console.log("1");
+	    	doOntologyTreeHighlight(treeDivId, data.key);
 	    });
    	});
 

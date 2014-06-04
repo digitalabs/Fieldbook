@@ -20,7 +20,7 @@
 	</div>
 	</div>			
 	
-	<form id="manageVariable" role="form-horizontal" onsubmit="return do_validation()"  class="form-horizontal" action="#" 
+	<form id="manageVariable" role="form-horizontal" onsubmit="return doValidation()"  class="form-horizontal" action="#" 
 	    th:action="@{/OntologyManager/manage/variable}" method="post" enctype="multipart/form-data" th:object="${ontologyBrowserForm}">
 	   <div class="row"> 
 	    <div class="panel panel-default">
@@ -399,7 +399,7 @@
 		return true;
 	}
 	
-    function do_validation() {
+    function doValidation() {
     	var message = null;
     	if ($("#isDelete").val() != 1) {
 	    	//check required fields
@@ -503,7 +503,7 @@
     }
     
 	$( document ).ready(function() {  	
-		//alert(fromPopup);
+		
 		loadOntologyCombos();
 		loadTraitClassTree(treeDivId, "comboTraitClass", "traitClassDescription", treeClassData, 'comboTraitClass');
 		setVisibleButtons(true, false, false);

@@ -2409,12 +2409,8 @@ function plotMethod() {
 }
 
 function refreshEditNursery() {
-	if ((measurementRowCount > 0 && $('.germplasm-list-items tbody tr').length === 0)) {
-		$('#successMessageModalUpdate').modal('hide');
-		$('#page-message').html('');
-	} else {
-		location.href = "/Fieldbook/NurseryManager/editNursery/" + $("#studyId").val();
-	}
+	$('#successStudyMessageModal').modal('hide');
+	$('#page-message').html('');
 }
 
 function recreateSessionVariables() {
@@ -2427,7 +2423,7 @@ function recreateSessionVariables() {
 			if ($("#measurementDataExisting")) {
 				displayCorrespondingGermplasmSections();
 			}
-			$('#successMessageModalUpdate').modal({ backdrop: 'static', keyboard: true });
+			$('#successStudyMessageModal').modal({ backdrop: 'static', keyboard: true });
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
 			console.log(errorThrown);
@@ -2458,4 +2454,24 @@ function showGermplasmDetailsSection() {
 	$("#chooseGermplasmAndChecks").show();
 	$(".observation-exists-notif").hide();
 	$(".overwrite-germplasm-list").hide();
+}
+
+//FIXME Should not be using global variables or functions
+/*global lastDraggedChecksList, Spinner, validateCreateNursery, validateStartEndDate, moveToTopScreen*/
+/*global loadNurserySettingsForCreate, getJquerySafeId, changeBuildOption*/
+function refreshStudyAfterSave(studyId){
+	'use strict';
+	$.ajax({
+		url: '/Fieldbook/NurseryManager/editNursery/'+studyId,
+		type: 'GET',
+		data: 'isAjax=1',
+		dataType: 'html',
+		cache: false,
+		async: false,
+		success: function(html) {	
+			$('.container .row:eq(0)').html(html);
+			$('#successStudyMessageModal').modal({ backdrop: 'static', keyboard: true });
+			Spinner.toggle(); 
+		} 
+	});
 }

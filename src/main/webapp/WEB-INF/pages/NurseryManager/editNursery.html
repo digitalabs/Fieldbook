@@ -329,10 +329,8 @@
 				data: serializedData,
 				cache: false,
 				success: function() {
-					$('#successMessageModalUpdate').modal({ backdrop: 'static', keyboard: true });
-				},
-				complete: function() {
-					Spinner.toggle();
+					refreshStudyAfterSave($("#studyId").val());
+					$('#successStudyMessageModal').modal({ backdrop: 'static', keyboard: true });
 				}
 			});
 		}

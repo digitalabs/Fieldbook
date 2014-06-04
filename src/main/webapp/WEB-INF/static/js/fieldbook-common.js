@@ -2092,7 +2092,7 @@ function initializeMeasurementsDatatable(tableIdentifier, ajaxUrl) {
 		language: {
 			search: '<span class="fbk-search-data-table">Search:</span>'
 		},
-		dom: 'R<<"row"<"col-md-6"l<"fbk-data-table-info"i>><"col-md-4"f><"col-md-2 fbk-colvis-btn">>r<t><"row col-md-12 fbk-data-table-paginate"p>>',
+		dom: 'R<<"row"<"col-md-1"l><"col-md-5 fbk-data-table-info"i><"col-md-4"f><"col-md-2 fbk-colvis-btn">>r<t><"row col-md-12 fbk-data-table-paginate"p>>',
 		// For column visibility
 		colVis: {
 			exclude: [0],

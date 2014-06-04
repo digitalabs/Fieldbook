@@ -62,21 +62,6 @@ public class MergeCheckServiceImpl implements MergeCheckService {
 			primaryEntry++;
 		}
 		
-		//for the last
-		if (intervalEntry == interval) {
-			isStarted = true;
-			shouldInsert = true;
-		}
-		
-		
-		if (shouldInsert /*&& primaryGermplasm != primaryList.get(primaryList.size()-1)*/) {
-			shouldInsert = false;
-			List<ImportedGermplasm> checks = generateChecksToInsert(checkList, checkIndex, manner, newEntry);
-			checkIndex++;
-			newEntry += checks.size();
-			newList.addAll(checks);
-		}
-		
 		return newList;
 	}
 	

@@ -2128,7 +2128,6 @@ function initializeMeasurementsDatatable(tableIdentifier, ajaxUrl) {
 
 		// Get the column API object
 		column = table.column($(this).attr('data-index'));
-		console.log($(this).attr('data-index'));
 		// Toggle the visibility
 		column.visible(!column.visible());
 	});

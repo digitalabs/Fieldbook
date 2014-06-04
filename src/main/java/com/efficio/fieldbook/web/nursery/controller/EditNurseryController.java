@@ -206,10 +206,16 @@ public class EditNurseryController extends SettingsController {
      */
     private List<SettingDetail> getBasicDetails(List<SettingDetail> nurseryLevelConditions) {
         List<SettingDetail> basicDetails = new ArrayList<SettingDetail>();
-        for (SettingDetail setting : nurseryLevelConditions) {
-            if (inFixedNurseryList(setting.getVariable().getCvTermId())) {
-                basicDetails.add(setting);
+        
+        StringTokenizer token = new StringTokenizer(AppConstants.FIXED_NURSERY_VARIABLES.getString(), ",");
+        while(token.hasMoreTokens()){
+            Integer termId = Integer.valueOf(token.nextToken());
+            for (SettingDetail setting : nurseryLevelConditions) {
+                if (termId.equals(setting.getVariable().getCvTermId())) {
+                    basicDetails.add(setting);
+                }
             }
+            
         }
         return basicDetails;
     }

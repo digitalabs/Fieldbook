@@ -152,13 +152,20 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 					
 					String originalDesig = wRow.getMeasurementDataValue(TermId.DESIG.getId());
 					String newDesig = xlsRow.getCell(desigColumn).getStringCellValue().trim();
+					String originalGid = wRow.getMeasurementDataValue(TermId.GID.getId());
 					
 					if (originalDesig != null && !originalDesig.equalsIgnoreCase(newDesig)) {
-						Integer newGid = fieldbookMiddlewareService.getGermplasmIdByName(newDesig);
-						if (newGid != null) {
+						List<Integer> newGids = fieldbookMiddlewareService.getGermplasmIdsByName(newDesig);
+						if (originalGid != null && newGids.contains(Integer.valueOf(originalGid))) {
+							MeasurementData wData = wRow.getMeasurementData(TermId.DESIG.getId());
+							wData.setValue(newDesig);
+						} 
+						else {
 							int index = observations.indexOf(wRow);
-							String originalGid = wRow.getMeasurementDataValue(TermId.GID.getId());
-							GermplasmChangeDetail changeDetail = new GermplasmChangeDetail(index, originalDesig, originalGid, newDesig, newGid.toString());
+							GermplasmChangeDetail changeDetail = new GermplasmChangeDetail(index, originalDesig, originalGid, newDesig, "");
+							if (newGids != null && !newGids.isEmpty()) {
+								changeDetail.setMatchingGids(newGids);
+							}
 							changeDetailsList.add(changeDetail);
 						}
 					}

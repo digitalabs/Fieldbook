@@ -15,6 +15,7 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
+import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.efficio.fieldbook.service.api.FileService;
+import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.ImportResult;
@@ -69,7 +71,13 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     
     @Resource
     private DataKaptureImportStudyService dataKaptureImportStudyService;
+    
+    @Resource
+    private FieldbookService fieldbookMiddlewareService;
 
+    @Resource
+    private WorkbenchService workbenchService;
+    
     /** The message source. */
     @Resource
     private ResourceBundleMessageSource messageSource;
@@ -264,11 +272,23 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	for (GermplasmChangeDetail responseDetail : responseDetails) {
     		if (responseDetail.getIndex() < observations.size()) {
     			MeasurementRow row = observations.get(responseDetail.getIndex());
-    			if (responseDetail.getStatus() == 1) { 
-    				MeasurementData desigData = row.getMeasurementData(TermId.DESIG.getId());
+				int userId = workbenchService.getCurrentIbdbUserId(getCurrentProjectId());
+				MeasurementData desigData = row.getMeasurementData(TermId.DESIG.getId());
+				MeasurementData gidData = row.getMeasurementData(TermId.GID.getId());
+    			if (responseDetail.getStatus() == 1) { // add germplasm name to gid
+    				int newGid = fieldbookMiddlewareService.addGermplasmName(responseDetail.getNewDesig(), Integer.valueOf(responseDetail.getOriginalGid()), userId);
     				desigData.setValue(responseDetail.getNewDesig());
-    				MeasurementData gidData = row.getMeasurementData(TermId.GID.getId());
-    				gidData.setValue(responseDetail.getNewGid());
+    				gidData.setValue(String.valueOf(newGid));
+    			}
+    			else if (responseDetail.getStatus() == 2) { //create new germlasm 
+    				int newGid = fieldbookMiddlewareService.addGermplasm(responseDetail.getNewDesig(), userId);
+    				desigData.setValue(responseDetail.getNewDesig());
+    				gidData.setValue(String.valueOf(newGid));
+    			}
+    			else if (responseDetail.getStatus() == 3) { //choose gids
+    				desigData.setValue(responseDetail.getNewDesig());
+    				gidData.setValue(String.valueOf(responseDetail.getSelectedGid()));
+    				
     			}
     		}
     	}

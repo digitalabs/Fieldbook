@@ -1,5 +1,7 @@
 package com.efficio.fieldbook.web.common.bean;
 
+import java.util.List;
+
 public class GermplasmChangeDetail {
 
 	private int index;
@@ -9,6 +11,8 @@ public class GermplasmChangeDetail {
 	private String newGid;
 	private String message;
 	private int status;
+	private List<Integer> matchingGids;
+	private Integer selectedGid;
 	
 	public GermplasmChangeDetail() {
 	}
@@ -110,6 +114,34 @@ public class GermplasmChangeDetail {
 	 */
 	public void setStatus(int status) {
 		this.status = status;
+	}
+
+	/**
+	 * @return the matchingGids
+	 */
+	public List<Integer> getMatchingGids() {
+		return matchingGids;
+	}
+
+	/**
+	 * @param matchingGids the matchingGids to set
+	 */
+	public void setMatchingGids(List<Integer> matchingGids) {
+		this.matchingGids = matchingGids;
+	}
+
+	/**
+	 * @return the selectedGid
+	 */
+	public Integer getSelectedGid() {
+		return selectedGid;
+	}
+
+	/**
+	 * @param selectedGid the selectedGid to set
+	 */
+	public void setSelectedGid(Integer selectedGid) {
+		this.selectedGid = selectedGid;
 	}
 
 

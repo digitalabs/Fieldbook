@@ -368,6 +368,7 @@ public class EditNurseryController extends SettingsController {
     	workbook.setOriginalObservations(userSelection.getWorkbook().getOriginalObservations());
     	workbook.setTrialDatasetId(trialDatasetId);
     	workbook.setMeasurementDatesetId(measurementDatasetId);
+    	workbook.setTrialObservations(userSelection.getWorkbook().getTrialObservations());
     	    	
     	createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), form.getStudyId());
     	userSelection.setWorkbook(workbook);

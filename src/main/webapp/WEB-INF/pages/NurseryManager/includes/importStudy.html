@@ -117,17 +117,39 @@
 				</div>
 				
 				<div class="row form-group">
+					<div class="col-xs-5 col-md-5">
+						<label class="control-label label-bold" th:text="#{import.change.action} + ':'">Action:</label>
+					</div>
+					<div class="col-xs-7 col-md-7">
+						<select style="width: 205px" id="import-action-type" onchange="doImportActionChange();">
+							<option value="0" th:text="#{import.change.option.skip}">Skip</option>
+							<option value="1" th:text="#{import.change.option.add.desig.to.gid}">Add the New Designation to the Germplasm</option>
+							<option value="2" th:text="#{import.change.option.create.new.desig}">Create a New Germplasm</option>
+							<option value="3" th:text="#{import.change.option.choose.gids}" class="choose-gids">Choose GIDs</option>
+						</select>
+					</div>
+				</div>
+				
+				<div class="row form-group choose-gids">
+					<div class="col-xs-5 col-md-5">
+						<label class="control-label label-bold" th:text="#{import.change.option.choose.gids} + ':'">Choose GIDs:</label>
+					</div>
+					<div class="col-xs-7 col-md-7">
+						<select style="width: 205px" id="matching-gid">
+						</select>
+					</div>
+				</div>
+				
+				<div class="row form-group no-choose-gids">
 					<div class="col-xs-12 col-md-12">
 						<input type="checkbox" id="yesToAllDesig" name="yesToAllDesig" value="1"/>
 						<label class="control-label">Accept All Changes</label>
 					</div>
 				</div>
 
-
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default"  onclick="javascript:goBackToImport();" th:text="#{common.form.cancel.text}" >Cancel</button>
-				<button type="button" class="btn btn-default"  onclick="javascript:confirmDesignation(0);" th:text="#{common.form.skip.text}">Skip</button>
-				<button type="button" class="btn btn-primary"  onclick="javascript:confirmDesignation(1);" th:text="#{common.form.yes.text}">Yes</button>
+				<button type="button" class="btn btn-primary"  onclick="javascript:confirmDesignation();" th:text="#{common.form.ok.text}">OK</button>
 			</div>
 		</div>
 	</div>
@@ -138,7 +160,6 @@
 	<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-fileupload.js}"></script>
 	<script type='text/javascript' th:inline="javascript">
 		//<![CDATA[
-
 		/*globals importNursery, Spinner, showErrorMessage*/
 
 		var importStudyHeader = /*[[#{study.import.study.header}]]*/ '',
@@ -146,7 +167,7 @@
 			changeConfirmationDetails = [],
 			currentConfirmationIndex = 0,
 			importOptions = {
-			dataType: 'text',
+				dataType: 'text',
 				success: showImportResponse // post-submit callback
 			};
 
@@ -217,13 +238,11 @@
 				}
 			});
 		}
-		function showDesignationConfirmationMessage(){
+		function confirmDesignation(){
 			'use strict';
-			$('#importStudyDesigConfirmationModal .import-desig-confirmation').html(changeConfirmationDetails[currentConfirmationIndex].message);
-		}
-		function confirmDesignation(status){
-			'use strict';
-			var applyDetails = false;
+			var status = $("#import-action-type").val(),
+				applyDetails = false;
+			
 			if($('input[type=checkbox][name=yesToAllDesig]:checked').val() === '1'){
 				for(var index = currentConfirmationIndex ; index < changeConfirmationDetails.length ; index++){
 					changeConfirmationDetails[index].status = status;	
@@ -231,6 +250,7 @@
 				applyDetails = true;
 			}else{
 				changeConfirmationDetails[currentConfirmationIndex].status = status;
+				changeConfirmationDetails[currentConfirmationIndex].selectedGid = $('#matching-gid').val();
 				currentConfirmationIndex++;
 				if(currentConfirmationIndex === changeConfirmationDetails.length){
 					//meaning we've gone through all the confirmation
@@ -253,6 +273,38 @@
 			setTimeout(function(){$('#importStudyDesigConfirmationModal').modal({ backdrop: 'static', keyboard: false });}, 300);
 			showDesignationConfirmationMessage();
 		}
+		function showDesignationConfirmationMessage(){
+			'use strict';
+			$('#import-action-type option:selected').prop('selected', false);
+			$('#import-action-type option[value=0]').prop('selected', true);
+			$('#import-action-type').change();
+			$('#importStudyDesigConfirmationModal .import-desig-confirmation').html(changeConfirmationDetails[currentConfirmationIndex].message);
+			if (changeConfirmationDetails[currentConfirmationIndex].matchingGids && changeConfirmationDetails[currentConfirmationIndex].matchingGids.length > 0) {
+				$('#matching-gid').empty();
+				for (var i = 0; i < changeConfirmationDetails[currentConfirmationIndex].matchingGids.length; i++) {
+					$('#matching-gid').append(
+							new Option(changeConfirmationDetails[currentConfirmationIndex].matchingGids[i],
+									changeConfirmationDetails[currentConfirmationIndex].matchingGids[i]));
+				}
+				$('#matching-gid').change();
+				
+				$('#import-action-type option[value=3]').prop('disabled', false);
+				if ($('#import-action-type').val() == 3) {
+					$('.choose-gids').show();
+					$('.no-choose-gids').hide();
+				} 
+				else {
+					$('.choose-gids').hide();
+					$('.no-choose-gisd').show();
+				}
+			}
+			else {
+				$('#import-action-type option[value=3]').prop('disabled', true);
+				$('.choose-gids').hide();
+				$('.no-choose-gids').show();
+			}
+			
+		}
 		
 		function confirmStudyImport(){
 			'use strict';
@@ -263,7 +315,6 @@
 			}
 			
 		}
-		
 		function showImportOptions(){
 			'use strict';
 			$('#importStudyModal').modal({ backdrop: 'static', keyboard: false });
@@ -286,6 +337,18 @@
 				}
 			});
 			
+		}
+		
+		function doImportActionChange() {
+			'use strict';
+			if ($('#import-action-type').val() == 3) {
+				$('.choose-gids').show();
+				$('.no-choose-gids').hide();
+			}
+			else {
+				$('.choose-gids').hide();
+				$('.no-choose-gids').show();
+			}
 		}
 		//]]>
 	</script>

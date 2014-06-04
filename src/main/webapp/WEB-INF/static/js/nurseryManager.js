@@ -2243,7 +2243,7 @@ function loadDatasetDropdown(optionTag) {
 }
 
 function getCurrentStudyIdInTab() {
-	return $('#study-tab-headers li.active .close').attr('id');
+	return $('#study-tab-headers li.active .fbk-close-tab').attr('id');
 }
 
 function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {

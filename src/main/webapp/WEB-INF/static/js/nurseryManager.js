@@ -1694,6 +1694,9 @@ function validateCreateNursery() {
 	} else if ($('#checkId').val() === '') {
 		hasError = true;
 		customMessage = checkTypeIsRequired;
+	} else if ($('.check-germplasm-list-items tbody tr').length > 0 && $('.germplasm-list-items tbody tr').length === 0){
+		hasError = true;
+		customMessage = nurseryGermplasmListIsRequired;
 	} else {
 		$('.nurseryLevelVariableIdClass')
 				.each(

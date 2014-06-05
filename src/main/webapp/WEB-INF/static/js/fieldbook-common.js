@@ -2067,3 +2067,25 @@ function showListTreeToolTip(node, nodeSpan) {
 		}
 	});
 }
+function truncateStudyVariableNames(charLimit){
+	'use strict';
+	$('.study-variable-name').each(function(){
+		var htmlString = $(this).html();
+		if(htmlString.length > charLimit){
+			if(!$(this).parent().hasClass('variable-tooltip')){
+				$(this).parent().addClass('variable-tooltip');
+				$(this).parent().attr('title',htmlString);
+				
+				htmlString = htmlString.substring(0,charLimit) + '...';
+					
+			}
+			$(this).html(htmlString);
+		}
+				
+	});
+	$('.variable-tooltip').each(function(){
+		$(this).data('toggle', 'tooltip');
+		$(this).data('placement', 'right');
+		$(this).tooltip();
+	});
+}

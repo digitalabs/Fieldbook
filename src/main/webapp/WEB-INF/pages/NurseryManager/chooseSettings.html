@@ -34,7 +34,7 @@
 						th:onclick="'javascript: deleteVariable(1,\'' + ${nurseryLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
 						<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 						&nbsp;&nbsp;&nbsp;
-						<span style="word-wrap: break-word" class="control-label nursery-level-label label-bold" th:text="${nurseryLevelVariable.variable.name}"></span>:
+						<span style="word-wrap: break-word" class="control-label nursery-level-label label-bold study-variable-name" th:text="${nurseryLevelVariable.variable.name}"></span>:
 						&nbsp;<span class="required">*</span>
 					</div>
 					<div class="col-xs-7 col-md-7 2nd">
@@ -125,7 +125,7 @@
 								<span style="cursor: default; font-size: 16px;" th:if="${nurseryCondition.deletable}" class="delete-icon"
 								th:onclick="'javascript: deleteVariable(7,\'' + ${nurseryCondition.variable.cvTermId} + '\',$(this))'"></span>
 								<input class="cvTermIds" type="hidden" th:field="*{nurseryConditions[__${rowStat.index}__].variable.cvTermId}" />&nbsp;&nbsp;&nbsp;
-								<span style="word-wrap: break-word" class="control-label nursery-condition-label label-bold" th:text="${nurseryCondition.variable.name}"></span>:
+								<span style="word-wrap: break-word" class="control-label nursery-condition-label label-bold study-variable-name" th:text="${nurseryCondition.variable.name}"></span>:
 								&nbsp;<span class="required">*</span>
 							</div>
 							<div class="col-xs-7 col-md-7 2nd">
@@ -434,6 +434,7 @@
 				var data = $('#srch-term').select2('data');
 				doOntologyTreeHighlight(treeDivId, data.key);
 			});
+			truncateStudyVariableNames(17);
 		});
 	//]]>
 	</script>

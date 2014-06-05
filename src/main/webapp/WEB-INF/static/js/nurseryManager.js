@@ -747,7 +747,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 								+ "' />&nbsp;&nbsp;&nbsp;&nbsp;";
 
 						newRow = newRow
-								+ "<span style='word-wrap: break-word'  class='control-label label-bold'>"
+								+ "<span style='word-wrap: break-word'  class='control-label label-bold study-variable-name'>"
 								+ settingDetail.variable.name
 								+ "</span>: &nbsp;<span class='required'>*</span></div>";
 
@@ -1576,6 +1576,7 @@ function initializeDateAndSliderInputs() {
 					});
 				});
 	}
+	truncateStudyVariableNames(17);
 }
 
 function checkPlantsSelected() {

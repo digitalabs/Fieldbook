@@ -13,10 +13,18 @@ import org.generationcp.middleware.domain.oms.TermId;
 public class ExportImportStudyUtil {
 
 	public static String getCategoricalCellValue(String idValue, List<ValueReference> possibleValues) {
+		//With the New Data Table, the idValue will contain the long text instead of the id.
+		if (idValue != null && possibleValues != null && !possibleValues.isEmpty()) {
+			for (ValueReference possibleValue : possibleValues) {
+				if (idValue.equalsIgnoreCase(possibleValue.getDescription())) {
+					return possibleValue.getName();
+				}
+			}
+		}
+		//just in case an id was passed, but this won't be the case most of the time
 		if (idValue != null && NumberUtils.isNumber(idValue)) {
 			for (ValueReference ref : possibleValues) {
 				if (ref.getId().equals(Integer.valueOf(idValue))) {
-					//return ref.getDescription();
 					return ref.getName();
 				}
 			}

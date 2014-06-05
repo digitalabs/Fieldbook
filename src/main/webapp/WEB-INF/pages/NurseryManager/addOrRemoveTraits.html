@@ -1,11 +1,8 @@
 <!-- This is the Measurements Tab -->
  <input type="hidden" id="study-type" name="study-type" value="Nursery" />
  <form role="form-horizontal" action="#" method="post" th:object="${createNurseryForm}">
- <div th:class="${#fields.hasErrors('file')} ? 'form-group has-error' : 'form-group'">
- 	<div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
- </div>
+	 <div th:class="${#fields.hasErrors('file')} ? 'form-group has-error' : 'form-group'">
+	 	<div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
+	 </div>
 </form>
-
-<div class="col-xs-12 col-md-12">
-	<div id="germplasm-measurement-list-table-div" th:include="/Common/showAddOrRemoveTraitsPagination"></div>
-</div>
+<div th:include="/Common/showAddOrRemoveTraitsPagination"></div>

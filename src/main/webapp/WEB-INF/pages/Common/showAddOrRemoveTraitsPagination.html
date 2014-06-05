@@ -1,38 +1,29 @@
-<form id="addVariableForm" role="form-horizontal" class="form-horizontal" action="#"
-method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
-
-	<input type="hidden" th:field="*{importVal}"/>
-	<input type="hidden" th:field="*{numberOfInstances}"/>
-	<input type="hidden" th:field="*{measurementDataExisting}"/>
-</form>
-
-<div class="btn-group measurement-show-hide-drop-down">
-		<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
-			<span>Show/Hide Columns</span>
-		</button>
-		<ul class="dropdown-menu measurement-dropdown-menu" role="menu"  th:object="${createNurseryForm}">
-			<li th:each="measurementVariable, rowIndex : *{arrangeMeasurementVariables}" >
-				<a href="javascript: void(0)"
-				th:text="${measurementVariable.name}"
-				th:attr="data-column-name=${measurementVariable.name}"
-				th:attrappend="data-index=${rowIndex.index+1}">GID</a>
-			</li>
-		</ul>
-	</div>
-
-<div class="germplasm-measurement-list-table1">
-	<table th:object="${createNurseryForm}" id="measurement-table" width="100%" class="table-curved table-condensed" >
-		<thead>
-			<tr>
-				<th  data-term-id="Action" class="factors">Action</th>
-				<th th:attr="data-term-id=${measurementVariable.termId}"
-				th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'"
-				th:each="measurementVariable, rowIndex : *{arrangeMeasurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>
-
-			</tr>
-		</thead>
-	</table>
+<div class="btn-group mdt-columns">
+	<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+		<span>Show/Hide Columns</span>
+	</button>
+	<ul class="dropdown-menu measurement-dropdown-menu" role="menu"  th:object="${createNurseryForm}">
+		<li th:each="measurementVariable, rowIndex : *{arrangeMeasurementVariables}" >
+			<a href="javascript: void(0)"
+			th:text="${measurementVariable.name}"
+			th:attr="data-column-name=${measurementVariable.name}"
+			th:attrappend="data-index=${rowIndex.index+1}">GID</a>
+		</li>
+	</ul>
 </div>
+
+<table th:object="${createNurseryForm}" id="measurement-table" width="100%" class="table-curved table-condensed" >
+	<thead>
+		<tr>
+			<th  data-term-id="Action" class="factors">Action</th>
+			<th th:attr="data-term-id=${measurementVariable.termId}"
+			th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'"
+			th:each="measurementVariable, rowIndex : *{arrangeMeasurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>
+
+		</tr>
+	</thead>
+</table>
+
 <div class="row edit-experiment-section">
 </div>
 

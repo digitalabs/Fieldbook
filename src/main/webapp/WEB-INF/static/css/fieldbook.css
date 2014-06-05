@@ -1041,11 +1041,7 @@ div.sectionContainer {
 .nav-tabs li a{
 	font-weight: bold;
 }
-.fbk-search-data-table{
-	margin-right: 15px;
-	position: relative;
-    top: 5px;
-}
+
 a.fbk-edit-experiment{
 	background-image: url('../img/edit.png');
 	display:block;
@@ -1054,13 +1050,6 @@ a.fbk-edit-experiment{
     text-align: center;
     background-repeat:no-repeat;
     width: 25px;
-}
-.fbk-data-table-paginate{
-	margin-top: 20px;
-}
-.fbk-data-table-info .dataTables_info{
-	left: -20px;
-    position: relative;
 }
 .DTFC_LeftBodyLiner{
 	overflow-x: hidden;
@@ -1089,9 +1078,6 @@ a.fbk-edit-experiment{
 .fbk-dropdown-select-fade{
 	opacity: 0.5;
 }
-.measurement-show-hide-drop-down{
-	float: right;
-}
 .fbk-float-right{
 	float: right;
 }
@@ -1102,4 +1088,48 @@ a.fbk-edit-experiment{
 }
 .fbk-close-tab{
 	padding-left: 10px;
+}
+
+/* Measurements Tab */
+
+.mdt-header {
+	height: 46px;
+}
+
+.mdt-header > div {
+	height: 30px;
+}
+
+.mdt-header .dataTables_length,
+.mdt-header .dataTables_info {
+	float: left;
+}
+.mdt-header .mdt-filtering,
+.mdt-header .mdt-columns {
+	float: right;
+}
+
+.mdt-header .dataTables_info {
+	padding: 0;
+}
+
+.mdt-header .mdt-filtering-label,
+.mdt-header .dataTables_info {
+	height: 30px;
+	line-height: 30px;
+	vertical-align: middle;
+}
+
+.mdt-header .dataTables_length,
+.mdt-header .mdt-filtering-label {
+	margin-right: 15px;
+}
+
+.mdt-header .dataTables_filter {
+	margin-right: 20px;
+}
+
+.dataTables_wrapper .dataTables_paginate {
+	margin-top: 16px;
+	margin-bottom: 10px;
 }

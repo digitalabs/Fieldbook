@@ -90,9 +90,9 @@ BMS.NurseryManager.MeasurementsDataTable = (function($) {
 				setTimeout(function() {$(tableIdentifier).dataTable().fnAdjustColumnSizing();}, 1000);
 			},
 			language: {
-				search: '<span class="fbk-search-data-table">Search:</span>'
+				search: '<span class="mdt-filtering-label">Search:</span>'
 			},
-			dom: 'R<<"row"<"col-md-6"l<"fbk-data-table-info"i>><"col-md-4"f><"col-md-2 fbk-colvis-btn">>r<t><"row col-md-12 fbk-data-table-paginate"p>>',
+			dom: '<<"mdt-header"rli<"mdt-filtering"f>r><t>p>',
 			// For column visibility
 			colVis: {
 				exclude: [0],
@@ -111,7 +111,7 @@ BMS.NurseryManager.MeasurementsDataTable = (function($) {
 
 		new $.fn.dataTable.FixedColumns(table, {iLeftColumns: 3});
 
-		$('.measurement-show-hide-drop-down').appendTo('.fbk-colvis-btn');
+		$('.mdt-columns').detach().insertBefore('.mdt-filtering');
 		$('.measurement-dropdown-menu a').click(function(e) {
 			var column;
 

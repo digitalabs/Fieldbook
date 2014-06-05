@@ -298,7 +298,6 @@ public class EditNurseryController extends SettingsController {
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
     public Map<String, String> submit(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws MiddlewareQueryException {
-        
         //get the name of the nursery
     	String name = null;
     	for (SettingDetail nvar : form.getBasicDetails()) {
@@ -380,6 +379,7 @@ public class EditNurseryController extends SettingsController {
             try {
                 //int previewPageNum = userSelection.getCurrentPage();
                 addMeasurementDataToRows(workbook);
+
                 workbook.setMeasurementDatasetVariables(null);
                 form.setMeasurementRowList(userSelection.getMeasurementRowList());
                 form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
@@ -654,14 +654,13 @@ public class EditNurseryController extends SettingsController {
         for (MeasurementVariable variable : workbook.getVariates()) {
             if (variable.getOperation().equals(Operation.ADD)) {                
                 StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId());
-                
-                MeasurementData measurementData = new MeasurementData(variable.getName(), 
-                        variable.getValue(), true,  
-                        getDataType(variable.getDataTypeId()),
-                        variable);
-                
-                measurementData.setPhenotypeId(null);
                 for (MeasurementRow row : userSelection.getMeasurementRowList()) {
+                    MeasurementData measurementData = new MeasurementData(variable.getName(), 
+                            "", true,  
+                            getDataType(variable.getDataTypeId()),
+                            variable);
+                    
+                    measurementData.setPhenotypeId(null);
                     row.getDataList().add(measurementData);
                 }
                 

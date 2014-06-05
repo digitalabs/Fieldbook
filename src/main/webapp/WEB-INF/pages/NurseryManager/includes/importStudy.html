@@ -196,6 +196,8 @@
 		function doMeasurementsReload(){
 			'use strict';
 			$('#measurement-table').DataTable().ajax.reload();
+			$('#importStudyModal').modal('hide');
+			$('#importStudyConfirmationModal').modal('hide');
 		}
 		function showImportResponse(responseText, statusText, xhr, $form) {
 			//reload the screen
@@ -210,8 +212,8 @@
 				
 			}
 			Spinner.toggle();
-			if(resp.isSuccess === '1'){
-				if(resp.mode === '0'){
+			if(resp.isSuccess === 1){
+				if(resp.mode === 0){
 					confirmStudyImport();
 				}else{
 					$('#importStudyModal').modal('hide');

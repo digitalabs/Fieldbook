@@ -2293,7 +2293,7 @@ function showSelectedTab(selectedTabName) {
 	
 	if(selectedTabName === 'nursery-measurements') {
 		var dataTable = $('#measurement-table').dataTable();
-		if(dataTable != null)
+		if(dataTable.length != 0)
 			dataTable.fnAdjustColumnSizing();
 	}
 

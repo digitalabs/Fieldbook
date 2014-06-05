@@ -1184,13 +1184,14 @@ function importNursery(type) {
 }
 
 function submitImportStudy() {
+	
 	if ($('#importType').val() === '0') {
-		showErrorMessage('page-import-message-modal', 'Please choose import type');
+		showErrorMessage('page-import-study-message-modal', 'Please choose import type');
 		return false;
 	}
 
 	if ($('#fileupload').val() === '') {
-		showErrorMessage('page-import-message-modal', 'Please choose a file to import');
+		showErrorMessage('page-import-study-message-modal', 'Please choose a file to import');
 		return false;
 	}
 	Spinner.toggle();

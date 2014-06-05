@@ -171,6 +171,8 @@ public class CreateNurseryForm {
     
     private boolean isMeasurementDataExisting;
     
+    private int charLimit;
+    
     /**
      * Gets the project id.
      *
@@ -1066,6 +1068,14 @@ public class CreateNurseryForm {
 
         public void setMeasurementDataExisting(boolean isMeasurementDataExisting) {
             this.isMeasurementDataExisting = isMeasurementDataExisting;
+        }
+
+        public int getCharLimit() {
+            return charLimit;
+        }
+
+        public void setCharLimit(int charLimit) {
+            this.charLimit = charLimit;
         }
 
         

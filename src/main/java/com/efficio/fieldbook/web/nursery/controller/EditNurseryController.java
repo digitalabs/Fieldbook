@@ -379,7 +379,7 @@ public class EditNurseryController extends SettingsController {
             try {
                 //int previewPageNum = userSelection.getCurrentPage();
                 addMeasurementDataToRows(workbook);
-
+                
                 workbook.setMeasurementDatasetVariables(null);
                 form.setMeasurementRowList(userSelection.getMeasurementRowList());
                 form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
@@ -498,6 +498,7 @@ public class EditNurseryController extends SettingsController {
     	form.setOpenGermplasmUrl(AppConstants.GERMPLASM_DETAILS_URL.getString());
     	form.setBaselineTraitsSegment(AppConstants.SEGMENT_TRAITS.getString());
     	form.setSelectionVariatesSegment(AppConstants.SEGMENT_SELECTION_VARIATES.getString());
+    	form.setCharLimit(Integer.parseInt(AppConstants.CHAR_LIMIT.getString()));
     }
     
     /**

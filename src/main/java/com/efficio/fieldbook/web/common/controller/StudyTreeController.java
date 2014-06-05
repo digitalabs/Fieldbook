@@ -237,6 +237,7 @@ public class StudyTreeController {
 	@RequestMapping(value = "/deleteStudyFolder", method = RequestMethod.POST)
 	public Map<String, Object> deleteStudyListFolder(HttpServletRequest req) {
 		Map<String, Object> resultsMap = new HashMap<String, Object>();
+		Locale locale = LocaleContextHolder.getLocale();
 		try {
 			String folderId = req.getParameter("folderId");
 			studyDataManager.deleteEmptyFolder(Integer.parseInt(folderId));
@@ -244,7 +245,8 @@ public class StudyTreeController {
 		} catch (MiddlewareQueryException e) {
 			LOG.error(e.toString() + "\n" + e.getStackTrace());
 			resultsMap.put("isSuccess", "0");
-			resultsMap.put("message", e.getMessage());
+			resultsMap.put("message", messageSource.getMessage("browse.nursery.delete.folder.has.children", null, locale));
+			
 		}
 		return resultsMap;
 	}

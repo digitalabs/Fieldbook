@@ -155,7 +155,8 @@ public class StudyTreeController {
 		Map<String, Object> resultsMap = new HashMap<String, Object>();
 		try {
 
-			int studyIdDb = studyDataManager.getStudyIdByName(studyName);
+			int studyIdDb = fieldbookMiddlewareService.getProjectIdByName(studyName);									
+			
 			if (studyIdInt.intValue() == 0 && studyIdDb != 0) {
 				// meaning new
 				resultsMap.put("isSuccess", "0");

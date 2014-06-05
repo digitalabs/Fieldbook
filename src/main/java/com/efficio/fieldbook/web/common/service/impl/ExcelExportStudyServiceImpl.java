@@ -352,12 +352,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 			if (dataCell.getMeasurementVariable() != null && dataCell.getMeasurementVariable().getPossibleValues() != null
 					&& !dataCell.getMeasurementVariable().getPossibleValues().isEmpty()) {
 
-				if (dataCell.isEditable()) {
-					cell.setCellValue(ExportImportStudyUtil.getCategoricalCellValue(dataCell.getValue(), dataCell.getMeasurementVariable().getPossibleValues()));
-				}
-				else { //if cell is not editable in UI, the UI will not pass any ID, but the value will already contain the display value
-					cell.setCellValue(dataCell.getValue());
-				}
+				cell.setCellValue(ExportImportStudyUtil.getCategoricalCellValue(dataCell.getValue(), dataCell.getMeasurementVariable().getPossibleValues()));
 			}
 			else {
 				cell.setCellValue(dataCell.getValue());

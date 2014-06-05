@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
 
@@ -42,6 +43,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
@@ -400,7 +402,9 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
      * @return the string
      */
     @RequestMapping(value="/addCheckGermplasmDetails/{entryId}", method = RequestMethod.GET)
-    public String addCheckGermplasmDetails(@PathVariable Integer entryId, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, 
+    public String addCheckGermplasmDetails(@PathVariable Integer entryId, 
+    		@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form,
+    		@RequestParam("selectedCheckVal") String selectedCheckVal,
             Model model) {
         
         try {
@@ -436,8 +440,21 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             List<ImportedGermplasm> list = new ArrayList();
             if(userSelection.getImportedCheckGermplasmMainInfo() != null && 
             		userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList() != null && 
-            		userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms() != null)
+            		userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms() != null){
+            	//we set it here
             	list = userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
+            	StringTokenizer checkTokenizer = new StringTokenizer(selectedCheckVal, ":");
+            	int checkIndex = 0 ;
+            	while(checkTokenizer.hasMoreElements()){
+            		String selectedCheck = checkTokenizer.nextToken();
+            		if(selectedCheck != null){
+            			if(list != null && checkIndex < list.size()){
+            				list.get(checkIndex).setCheck(selectedCheck);
+            			}
+            		}
+            		checkIndex++;
+            	}
+            }
             list.add(importedGermplasm);
             
             form.setImportedCheckGermplasm(list);

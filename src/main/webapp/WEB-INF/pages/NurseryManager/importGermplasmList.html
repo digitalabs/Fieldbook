@@ -311,13 +311,6 @@
 			// FIXME Not sure if the following condition is relying on implicit type conversion. See other instances of this in this file
 
 			// If the germplasm record has been specified as starting index
-			if (false && entryNumber == $('#startIndex2').val() &&
-				$('#specifyCheckSection').css('display') === 'block' && addedGid[gid] == null) {
-				showErrorMessage('page-message', germplasmStartingEntry);
-				moveToTopScreen();
-				return false;
-			}
-
 			if (addedGid[gid] == null) {
 				addedGid[gid] = gid;
 			} else {
@@ -336,10 +329,18 @@
 			$('#check-germplasm-list').removeClass('add-border');
 
 			Spinner.toggle();
+			var selectedCheckVal = '';
+			for (var checkIndex = 0; checkIndex < $('.checkRow').length; checkIndex++) {
+				var checkId = $('select.checklist-select:eq(' + checkIndex + ')').val() ;
+				if(checkId === '')
+					checkId = '0'
+				selectedCheckVal += checkId + ':'; 							
+			}
 
 			$.ajax({
 				url: '/Fieldbook/NurseryManager/importGermplasmList/addCheckGermplasmDetails/' + entryNumber,
 				type: 'GET',
+				data: 'selectedCheckVal='+selectedCheckVal,
 				cache: false,
 				async: false,
 
@@ -495,12 +496,15 @@
 					if (itemsIndexAdded != null && itemsIndexAdded.length > 0) {
 
 						for (indexItems = 0 ; indexItems < itemsIndexAdded.length ; indexItems++) {
-							rowGid = itemsIndexAdded[indexItems].gid;
+							if(itemsIndexAdded[indexItems] != null) {
+								rowGid = itemsIndexAdded[indexItems].gid;
 
-							// FIXME Not sure if this is relying on implicit type conversion
-							if (rowGid == gid) {
-								itemsIndexAdded[indexItems] = null;
-								break;
+								// FIXME Not sure if this is relying on implicit type conversion
+								if (rowGid == gid) {
+									itemsIndexAdded[indexItems] = null;
+									break;
+								}
+	
 							}
 						}
 					}

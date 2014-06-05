@@ -352,13 +352,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 			if (dataCell.getMeasurementVariable() != null && dataCell.getMeasurementVariable().getPossibleValues() != null
 					&& !dataCell.getMeasurementVariable().getPossibleValues().isEmpty()) {
 				
-				if (dataCell.getMeasurementVariable().isFactor()) {
-					//for factors, since it is read only on the page, no need to use the id, the value = definition
-					cell.setCellValue(dataCell.getValue());
-				}
-				else {
-					cell.setCellValue(ExportImportStudyUtil.getCategoricalCellValue(dataCell.getValue(), dataCell.getMeasurementVariable().getPossibleValues()));
-				}
+				cell.setCellValue(ExportImportStudyUtil.getCategoricalCellValue(dataCell.getValue(), dataCell.getMeasurementVariable().getPossibleValues()));
 			}
 			else {
 				cell.setCellValue(dataCell.getValue());

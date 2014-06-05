@@ -1794,7 +1794,7 @@ function submitDeleteFolder() {
 				}
 				changeBrowseNurseryButtonBehavior(false);
 			} else {
-				showErrorMessage('page-delete-study-folder-message-modal', deleteFolderHasTrial);
+				showErrorMessage('page-delete-study-folder-message-modal', data.message);
 			}
 			Spinner.toggle();
 		}

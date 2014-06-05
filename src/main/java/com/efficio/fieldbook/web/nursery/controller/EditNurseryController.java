@@ -115,23 +115,12 @@ public class EditNurseryController extends SettingsController {
             SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
             
             //nursery-level
-            List<SettingDetail> nurseryLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
-                    buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true), 
-                    buildRequiredVariablesFlag(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
-                    userSelection.getStudyLevelConditions(), true);
+            List<SettingDetail> nurseryLevelConditions = userSelection.getStudyLevelConditions();
             List<SettingDetail> basicDetails = getBasicDetails(nurseryLevelConditions);
             
             removeBasicDetailsVariables(nurseryLevelConditions);
             
-            //plot-level
-            List<SettingDetail> plotLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()), 
-                    buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false), 
-                    buildRequiredVariablesFlag(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()), 
-                    userSelection.getPlotsLevelList(), false);
-            
             userSelection.setBasicDetails(basicDetails);
-            userSelection.setStudyLevelConditions(nurseryLevelConditions);
-            userSelection.setPlotsLevelList(plotLevelConditions);
             form.setStudyId(nurseryId);
             form.setBasicDetails(userSelection.getBasicDetails());
             form.setStudyLevelVariables(userSelection.getStudyLevelConditions());

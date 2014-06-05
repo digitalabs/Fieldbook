@@ -753,7 +753,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 
 						if (settingDetail.variable.widgetType == 'DATE') {
 							newRow = newRow
-									+ "<div class='col-xs-3 col-md-3 2nd'>";
+									+ "<div class='col-xs-4 col-md-4 2nd'>";
 						} else
 							newRow = newRow
 									+ "<div class='col-xs-7 col-md-7 2nd'>";

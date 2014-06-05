@@ -1133,3 +1133,7 @@ a.fbk-edit-experiment{
 	margin-top: 16px;
 	margin-bottom: 10px;
 }
+.fbk-right-button-drop-down{
+	right: 0; 
+	left: auto;
+}

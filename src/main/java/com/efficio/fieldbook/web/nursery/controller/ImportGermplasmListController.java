@@ -691,13 +691,19 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
                 message = messageSource.getMessage("nursery.manage.check.types.edit.success", 
                         new Object[] {enumeration.getName()}, local);
             }
-            ontologyService.saveOrUpdateStandardVariableEnumeration(stdVar, enumeration);
+            if (!validateEnumerationDescription(stdVar.getEnumerations(), enumeration)) {
+            	result.put("success", "-1");
+            	result.put("error",  messageSource.getMessage("error.add.check.duplicate.description", null, local));
+            }
+            else {
+            	ontologyService.saveOrUpdateStandardVariableEnumeration(stdVar, enumeration);
+                List<Enumeration> allEnumerations = ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
+                result.put("checkTypes", convertObjectToJson(allEnumerations));
+                
+                result.put("success", "1");
+                result.put("successMessage", message);
+            }
             
-            List<Enumeration> allEnumerations = ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
-            result.put("checkTypes", convertObjectToJson(allEnumerations));
-            
-            result.put("success", "1");
-            result.put("successMessage", message);
         } catch (MiddlewareQueryException e) {
             LOG.debug(e.getMessage(), e);
             result.put("success", "-1");
@@ -764,5 +770,18 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             LOG.error(e.getMessage(), e);
         }
         return null;
+    }
+    
+    private boolean validateEnumerationDescription(List<Enumeration> enumerations, Enumeration newEnumeration) {
+    	if (enumerations != null && !enumerations.isEmpty() && newEnumeration != null && newEnumeration.getDescription() != null) {
+    		for (Enumeration enumeration : enumerations) {
+    			if (enumeration.getDescription() != null 
+    					&& newEnumeration.getDescription().trim().equalsIgnoreCase(enumeration.getDescription().trim())
+    					&& !enumeration.getId().equals(newEnumeration.getId())) {
+    				return false;
+    			}
+    		}
+    	}
+    	return true;
     }
 }

@@ -2,7 +2,7 @@
 /*Added to style properly*/
 body {
   font-family: 'Open Sans', 'Segoe UI','Helvetica Neue', Arial, sans-serif;
-  font-size: 13px;  
+  font-size: 13px;
 }
 /*
 h1,
@@ -17,7 +17,7 @@ h6,
 .h4,
 .h5,
 .h6 {
-  font-family: 'Open Sans', 'Segoe UI','Helvetica Neue', Arial, sans-serif;  
+  font-family: 'Open Sans', 'Segoe UI','Helvetica Neue', Arial, sans-serif;
 }
 
 h1,
@@ -91,7 +91,7 @@ label{
   color: #ffffff;
   background-color: #ff8109;
   border-color:  #ff8109;
-  opacity: 0.7	
+  opacity: 0.7
 }
 
 
@@ -108,7 +108,7 @@ label{
   color: #ffffff;
   background-color: #828282;
   border-color: #828282;
-  opacity: 0.7	
+  opacity: 0.7
 }
 
 .btn-info {
@@ -124,10 +124,10 @@ label{
   color: #ffffff;
   background-color: #1b95b2;
   border-color: #1b95b2;
-  opacity: 0.7	
+  opacity: 0.7
 }
 .btn {
-    font-size: 11px;    
+    font-size: 11px;
 }
 /*
 table th, table td{
@@ -187,8 +187,8 @@ table .even{
   .table-bordered > tfoot > tr:last-child > td {
     border-bottom: none;
   }
-  
-  
+
+
 
 table .highlight, table .field-map-highlight {
     /* background-color: #BED6B2;*/
@@ -216,14 +216,14 @@ table{
 .nav-tabs > li > a:hover,
 .nav-tabs > li > a:focus{
     color: #333333;
-    background-color: #eeeeee;  
-} 
+    background-color: #eeeeee;
+}
 .nav-tabs > li.active > a,
 .nav-tabs > li.active > a:hover,
 .nav-tabs > li.active > a:focus{
     color: #333333;
-    background-color: #f6f6f6;  
-    border-color: #e4e4e4;  
+    background-color: #f6f6f6;
+    border-color: #e4e4e4;
 }
 
 .nav-tabs > li > a {
@@ -236,20 +236,20 @@ table{
 }
 #ontology-tabs{
 	background-color: #f6f6f6;
-	border:1px solid #e4e4e4;  
+	border:1px solid #e4e4e4;
 	min-height: 320px;
-	border-top: 0px; 	
+	border-top: 0px;
 }
 
 #nursery-tabs{
 	background-color: #f6f6f6;
-	border:1px solid #e4e4e4;  
+	border:1px solid #e4e4e4;
 	min-height: 650px;
-	border-top: 0px; 	
+	border-top: 0px;
 }
 
-#studyTree{	
-	height:350px; 
+#studyTree{
+	height:350px;
 	overflow:auto;
 	padding-left: 15px;
     padding-right: 10px;
@@ -265,13 +265,13 @@ table{
    border-top: 0px;
 }
 .table-curved > thead:first-child > tr:first-child > th {
-	
+
      border-bottom: none;
 }
 .table-curved > tbody > tr > td:first-child,
 .table-curved > thead > tr > th:first-child,
 .table-curved > th:first:child  {
-	
+
      border-left: none;
 }
 
@@ -284,13 +284,13 @@ table{
    /* border-left: none;*/
     border-left: 1px solid #c2c3c4;
   }
-  
-.table-curved  > tbody > tr:last-child > td {	
+
+.table-curved  > tbody > tr:last-child > td {
      border-bottom: none;
 }
 
 .table-curved td, .table-curved th {
-	
+
     border-left: 1px solid #c2c3c4;
     border-bottom: none;
 }
@@ -314,9 +314,9 @@ table{
 }
 /*end*/
 .container{
-	/*max-width: none !important;*/ 
+	/*max-width: none !important;*/
 	/*width: 950px;*/
-	min-width: 100%; 
+	min-width: 100%;
 	padding-left: 35px; margin-top: -20px; margin-left: 0px;
 	float: left;
 }
@@ -444,18 +444,18 @@ td.validValueDesc {
 
 
 .fieldmap-container {
-	padding:10px; 
-	margin:20px; 
-	border:1px dashed; 
-	overflow:auto; 
+	padding:10px;
+	margin:20px;
+	border:1px dashed;
+	overflow:auto;
 	border-bottom:none;
 	/*max-width: 1200px;*/
 	max-width: 100%;
 }
 
 
-#availableFields, #leftSelectedFields, #rightSelectedFields 
-{ list-style-type: none; margin: 0; padding: 0; float: left; 
+#availableFields, #leftSelectedFields, #rightSelectedFields
+{ list-style-type: none; margin: 0; padding: 0; float: left;
 margin-right: 10px; background: #eee; padding: 5px; width: 100%;
 min-height: 50px;
 }
@@ -501,26 +501,26 @@ tr.trialInstance {
 #ontology-tab-headers{
 	/*border-bottom:none;*/
 }
-#ontology-tab-headers  > li > a, 
-#ontology-tab-headers  > li > a:hover, 
+#ontology-tab-headers  > li > a,
+#ontology-tab-headers  > li > a:hover,
 #ontology-tab-headers  > li > a:focus {
-    
+
     border-bottom: 1px solid #E4E4E4;
-    
+
 }
-#ontology-tab-headers  > li.active > a, 
-#ontology-tab-headers  > li.active > a:hover, 
+#ontology-tab-headers  > li.active > a,
+#ontology-tab-headers  > li.active > a:hover,
 #ontology-tab-headers  > li.active > a:focus {
-    
+
     border-bottom: 0px;
-    
+
 }
 
 .page-header {
 	border-bottom: 0;
 }
 .tooltip-inner {
-    background-color: #5A5A5A;    
+    background-color: #5A5A5A;
     max-width: 350px;
     margin-top: 40px;
     padding: 15px;
@@ -529,7 +529,7 @@ tr.trialInstance {
 }
 .tooltip.right .tooltip-arrow {
     border-right-color: #5A5A5A;
-    /*margin-top: -5px;*/    
+    /*margin-top: -5px;*/
 }
 /*
 .help-tooltip{
@@ -545,7 +545,7 @@ padding-left: 20px; margin-top: 7px
     margin-right: 20px;
     padding: 0 5px;
     text-decoration: none;
-    float: left; 
+    float: left;
     margin-left: 15px;
     margin-top: 13px;
     line-height: 18px;
@@ -558,13 +558,13 @@ padding-left: 20px; margin-top: 7px
     font-size: 12px;
     margin-right: 20px;
     padding: 0 5px;
-    text-decoration: none; 
+    text-decoration: none;
     margin-left: 15px;
     margin-top: 13px;
     line-height: 18px;
 }
 .help-tooltip-nursery-advance{
-	margin-left: 0px;  
+	margin-left: 0px;
 	position: relative;
 	left: -15px;
 	top: 5px;
@@ -598,11 +598,11 @@ padding-left: 20px; margin-top: 7px
 	padding: 8.5px 12px;
 }
 .fileupload-exists{
-	padding: 0px;	
+	padding: 0px;
 }
 
 /* For appearance */
-.component {	
+.component {
 	line-height: 1.5em;
 	margin: 0 auto;
 	width: 90%;
@@ -611,13 +611,13 @@ padding-left: 20px; margin-top: 7px
 	max-height: none;
 }
 table.make-sticky{
-    border-collapse: collapse;    
+    border-collapse: collapse;
     width: 100%;
     background: #fff;
 }
 .sticky-wrap td, th {
     /*adding: 0.75em 1.5em;*/
-    padding: 5px 5px; 
+    padding: 5px 5px;
     text-align: left;
 }
 /*
@@ -740,8 +740,8 @@ div.possibleValuesDiv{
 #addVariablesSettingBody #ontologyBrowserTree{
 	height: 228px;
 }
-#addVariablesSettingBody #ontology-tabs{	 
-	min-height: 200px;	
+#addVariablesSettingBody #ontology-tabs{
+	min-height: 200px;
 }
 */
 #addVariablesSettingBody{
@@ -765,13 +765,13 @@ div.possibleValuesDiv{
 }
 
 .trialEnvironmentDiv{
-	max-height: 500px; 
-	min-height: 0px; 
-	max-width: 100%; 
-	min-width: 100%; 
-	overflow: auto; 
-	overflow-x: auto; 
-	padding: 0; 
+	max-height: 500px;
+	min-height: 0px;
+	max-width: 100%;
+	min-width: 100%;
+	overflow: auto;
+	overflow-x: auto;
+	padding: 0;
 	margin: 0;
 }
 .add-border{
@@ -797,7 +797,7 @@ table.table-with-scroll-inventory thead, table.table-with-scroll-inventory tbody
     float: left;
     width: 100%;
 }
-table.table-with-scroll tbody, table.table-with-scroll-create tbody, 
+table.table-with-scroll tbody, table.table-with-scroll-create tbody,
 table.table-with-scroll-treatment tbody{
     overflow-y: auto;
     max-height: 200px;
@@ -824,7 +824,7 @@ table.table-with-scroll-create thead tr th:first-child {
 }
 table.table-with-scroll-create tbody tr td:last-child {
 	width: 10%;
-} 
+}
 table.table-with-scroll thead tr th:nth-child(2), table.table-with-scroll thead tr th:nth-child(3) {
 	width: 47%;
 }
@@ -845,10 +845,10 @@ table.table-with-scroll-inventory thead tr th:nth-child(1) {
 }
 table.table-with-scroll-inventory thead tr th:nth-child(2) {
 	width: 12%;
-} 
+}
 table.table-with-scroll-inventory thead tr th:nth-child(3) {
 	width: 18%;
-} 
+}
 table.table-with-scroll-inventory thead tr th:nth-child(4) {
 	width: 15%;
 }
@@ -862,14 +862,14 @@ table.table-with-scroll-inventory thead tr th:nth-child(7) {
 	width: 12%;
 }
 div.sectionContainer {
-	max-height: 500px; 
-	overflow-y: auto; 
-	padding:0; 
+	max-height: 500px;
+	overflow-y: auto;
+	padding:0;
 	margin: 0;
 }
 .variable-details{
 	max-height: 250px;
-	overflow-y: auto;	
+	overflow-y: auto;
 }
 #specifyCheckSection .spinedit{
 	top: 5px;
@@ -890,10 +890,10 @@ div.sectionContainer {
     }
 .table-with-scroll-inventory th, .table-with-scroll-inventory td{
 	text-align: center;
-} 
+}
 .image-padding{
 	padding-top:0px;
-}   
+}
 .image-padding-with-text{
 	float: left;
 	padding-right: 5px;
@@ -907,74 +907,74 @@ div.sectionContainer {
 #study-tabs{
 	min-height: 250px;
 	background-color: #f6f6f6;
-	border:1px solid #e4e4e4;  
+	border:1px solid #e4e4e4;
 	border-top: 0px;
 }
-#study-tab-headers  > li > a, 
-#study-tab-headers  > li > a:hover, 
+#study-tab-headers  > li > a,
+#study-tab-headers  > li > a:hover,
 #study-tab-headers  > li > a:focus {
-    
+
     border-bottom: 1px solid #E4E4E4;
-    
+
 }
-#study-tab-headers  > li.active > a, 
-#study-tab-headers  > li.active > a:hover, 
+#study-tab-headers  > li.active > a,
+#study-tab-headers  > li.active > a:hover,
 #study-tab-headers  > li.active > a:focus {
-    
+
     border-bottom: 0px;
-    
+
 }
 #study-tab-headers .close
 {
-	padding-left: 10px; 
+	padding-left: 10px;
 	margin-top: -2px;
-} 
+}
 
 #create-nursery-tabs{
 	min-height: 460px;
 	background-color: #f6f6f6;
-	border:1px solid #e4e4e4;  
+	border:1px solid #e4e4e4;
 	border-top: 0px;
 }
-#create-nursery-tab-headers  > li > a, 
-#create-nursery-tab-headers  > li > a:hover, 
+#create-nursery-tab-headers  > li > a,
+#create-nursery-tab-headers  > li > a:hover,
 #create-nursery-tab-headers  > li > a:focus {
-    
+
     border-bottom: 1px solid #E4E4E4;
-    
+
 }
-#create-nursery-tab-headers  > li.active > a, 
-#create-nursery-tab-headers  > li.active > a:hover, 
+#create-nursery-tab-headers  > li.active > a,
+#create-nursery-tab-headers  > li.active > a:hover,
 #create-nursery-tab-headers > li.active > a:focus {
-    
+
     border-bottom: 0px;
-    
+
 }
 
 .fb-tabs{
 	/*min-height: 460px;*/
 	background-color: #f6f6f6;
-	border:1px solid #e4e4e4;  
+	border:1px solid #e4e4e4;
 	border-top: 0px;
 }
-.fb-tabs-headers  > li > a, 
-.fb-tabs-headers  > li > a:hover, 
+.fb-tabs-headers  > li > a,
+.fb-tabs-headers  > li > a:hover,
 .fb-tabs-headers  > li > a:focus {
-    
+
     border-bottom: 1px solid #E4E4E4;
-    
+
 }
-.fb-tabs-headers  > li.active > a, 
-.fb-tabs-headers  > li.active > a:hover, 
+.fb-tabs-headers  > li.active > a,
+.fb-tabs-headers  > li.active > a:hover,
 .fb-tabs-headers > li.active > a:focus {
-    
+
     border-bottom: 0px;
-    
+
 }
 
 #check-germplasm-list, #imported-germplasm-list {
   min-height: 300px;
-}         			
+}
 .btn{
 	font-weight: bold;
 }
@@ -988,9 +988,9 @@ div.sectionContainer {
 .add_top_padding_small {
 	padding-top: 5px;
 }
-.delete-icon { 
-    background:url(../img/delete-icon.png) left top; 
-    width:18px; 
+.delete-icon {
+    background:url(../img/delete-icon.png) left top;
+    width:18px;
     height:18px;
     display: block;
     float: left;
@@ -1008,11 +1008,11 @@ div.sectionContainer {
 .germplasm-measurement-list-table .select2-container.form-control{
 	 height: 24px;
 }
-#check-table  .select2-chosen, 
-#check-table .select2-choice > span:first-child, 
+#check-table  .select2-chosen,
+#check-table .select2-choice > span:first-child,
 #check-table .select2-container .select2-choices .select2-search-field input,
-.germplasm-measurement-list-table  .select2-chosen, 
-.germplasm-measurement-list-table .select2-choice > span:first-child, 
+.germplasm-measurement-list-table  .select2-chosen,
+.germplasm-measurement-list-table .select2-choice > span:first-child,
 .germplasm-measurement-list-table .select2-container .select2-choices .select2-search-field input {
     padding: 2px 12px;
 }
@@ -1044,9 +1044,9 @@ div.sectionContainer {
 .fbk-search-data-table{
 	margin-right: 15px;
 	position: relative;
-    top: 5px;	
+    top: 5px;
 }
-a.fbk-edit-experiment{	
+a.fbk-edit-experiment{
 	background-image: url('../img/edit.png');
 	display:block;
     height:20px;
@@ -1066,7 +1066,7 @@ a.fbk-edit-experiment{
 	overflow-x: hidden;
 }
 .DTFC_LeftWrapper .table-curved  > *:first-child > *:first-child > *:last-child {
-    border-top-right-radius: 0px;	
+    border-top-right-radius: 0px;
 }
 .dynatree-node .popover{
 	width: 500px;

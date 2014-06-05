@@ -172,8 +172,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	Locale locale = LocaleContextHolder.getLocale();
     	Map<String, Object> resultsMap = new HashMap<String,Object>();
     	if(!result.hasErrors()){
-    	
-	    	form.setMeasurementRowList(userSelection.getMeasurementRowList());
+    		userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
+	    	//form.setMeasurementRowList(userSelection.getMeasurementRowList());
 	    	form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariablesView());
 	    	form.changePage(userSelection.getCurrentPage());
 	    	userSelection.setCurrentPage(form.getCurrentPage());

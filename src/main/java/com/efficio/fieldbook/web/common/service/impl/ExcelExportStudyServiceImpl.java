@@ -123,7 +123,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		xlsSheet.createRow(currentRowNum++);
 		currentRowNum = writeConditions(currentRowNum, xlsBook, xlsSheet, workbook.getConditions(), trialObservation);
 		xlsSheet.createRow(currentRowNum++);
-		currentRowNum = writeFactors(currentRowNum, xlsBook, xlsSheet, workbook.getFactors());
+		currentRowNum = writeFactors(currentRowNum, xlsBook, xlsSheet, workbook.getNonTrialFactors());
 		xlsSheet.createRow(currentRowNum++);
 		currentRowNum = writeConstants(currentRowNum, xlsBook, xlsSheet, workbook.getConstants(), trialObservation);
 		xlsSheet.createRow(currentRowNum++);

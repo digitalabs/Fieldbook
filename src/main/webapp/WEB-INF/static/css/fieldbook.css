@@ -526,6 +526,7 @@ tr.trialInstance {
     padding: 15px;
     text-align: left;
     text-transform: none;
+    word-wrap: break-word;
 }
 .tooltip.right .tooltip-arrow {
     border-right-color: #5A5A5A;

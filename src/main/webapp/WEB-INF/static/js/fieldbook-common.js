@@ -1444,7 +1444,7 @@ function closeAdvanceListTab(uniqueId) {
 }
 
 function displayAdvanceList(uniqueId, germplasmListId, listName) {
-	$('#advanceHref' + uniqueId).append(': [' + listName + ']');
+	$('#advanceHref' + uniqueId + ' .fbk-close-tab').before(': [' + listName + ']');
 	Spinner.toggle();
 	$.ajax({
 		url: '/Fieldbook/SeedStoreManager/advance/displayGermplasmDetails/' + germplasmListId,

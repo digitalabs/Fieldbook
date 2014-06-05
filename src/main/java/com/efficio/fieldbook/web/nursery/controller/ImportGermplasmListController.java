@@ -523,7 +523,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             mainInfo.setImportedGermplasmList(importedGermplasmList);
                         
 
-            getUserSelection().setImportedGermplasmMainInfo(mainInfo);
+            getUserSelection().setImportedGermplasmMainInfo(null);
             getUserSelection().setImportValid(true);
             
         } catch (Exception e) {

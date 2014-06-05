@@ -148,7 +148,7 @@
 	<li id="nursery-germplasm-list-li">
 		<a href="javascript:showSelectedTab('nursery-germplasm-list');" th:text="#{nursery.create.nursery.germplasm.list.tab}">.Germplasm and Checks</a>
 	</li>
-	<li id="nursery-measurements-li" th:if="${createNurseryForm.measurementRowList.size() != 0}">
+	<li id="nursery-measurements-li">
 		<a href="javascript:showSelectedTab('nursery-measurements');" th:text="#{nursery.edit.nursery.measurements}">.Measurements</a>
 	</li>
 </ul>
@@ -165,25 +165,33 @@
 			<div class="row form-group overwrite-germplasm-list">
 				<div class="col-xs-12 col-md-12">
 					<label class="control-label">
-						<strong class="sub-content-heading">This Nursery has a saved germplasm list, do you want to overwrite it?</strong>
+						<strong class="sub-content-heading" th:text="#{nursery.edit.nursery.overwrite.germplasm.list.message}">
+							This Nursery has a saved germplasm list, do you want to overwrite it?
+						</strong>
 					</label>
 					&nbsp;&nbsp;&nbsp;
 					<button class="btn btn-primary" onclick="showGermplasmDetailsSection();">Overwrite</button>
 				</div>
 			</div>
-			
 			<div class="row form-group observation-exists-notif">
 				<div class="col-xs-12 col-md-12">
 					<label class="control-label">
-						<strong class="sub-content-heading">This Nursery has saved observations, germplasm list cannot be modified.</strong>
+						<strong class="sub-content-heading" th:text="#{nursery.edit.nursery.cannot.modify.germplasm.list.message}">This Nursery has saved observations, germplasm list cannot be modified.</strong>
 					</label>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div id="nursery-measurements" class="info" style="display: none;" th:if="${createNurseryForm.measurementRowList.size() != 0}">
+	<div id="nursery-measurements" class="info" style="display: none;">
 		<div class="col-xs-12 col-md-12">
-			<div id="measurementsDiv" th:include="/NurseryManager/addOrRemoveTraits"></div>
+			<div id="measurementsDiv" th:include="/NurseryManager/addOrRemoveTraits" th:if="${createNurseryForm.measurementRowList.size() != 0}"></div>
+			<div class="row form-group no-measurements-message" th:if="${createNurseryForm.measurementRowList.size() == 0}">
+				<div class="col-xs-12 col-md-12">
+					<label class="control-label">
+						<strong class="sub-content-heading" th:text="#{nursery.create.nursery.no.measurements.message}">Choose a germplasm list and save your nursery before proceeding in this Tab.</strong>
+					</label>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

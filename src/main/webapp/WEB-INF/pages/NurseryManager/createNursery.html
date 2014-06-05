@@ -134,6 +134,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 <ul id="create-nursery-tab-headers" class="nav nav-tabs" >
 	<li id="nursery-settings-li" class="active"><a href="javascript:showSelectedTab('nursery-settings');" th:text="#{nursery.create.nursery.nursery.settings}">.Nursery Settings</a></li>
 	<li id="nursery-germplasm-list-li"><a href="javascript:showSelectedTab('nursery-germplasm-list');" th:text="#{nursery.create.nursery.germplasm.list.tab}">.Germplasm and Checks</a></li>
+	<li id="nursery-measurements-li"><a href="javascript:showSelectedTab('nursery-measurements');" th:text="#{nursery.edit.nursery.measurements}">.Measurements</a></li>
 </ul>
 
 <div id="create-nursery-tabs" style="padding-top: 15px;">
@@ -146,6 +147,17 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 	<div id="nursery-germplasm-list" class="info" style="display:none;">
 		<div class="col-xs-12 col-md-12">
 			<div id="chooseGermplasmAndChecks" th:include="/NurseryManager/importGermplasmList">
+			</div>
+		</div>
+	</div>
+	<div id="nursery-measurements" class="info" style="display: none;">
+		<div class="col-xs-12 col-md-12">
+			<div class="row form-group no-measurements-message">
+				<div class="col-xs-12 col-md-12">
+					<label class="control-label">
+						<strong class="sub-content-heading" th:text="#{nursery.create.nursery.no.measurements.message}">Choose a germplasm list and save your nursery before proceeding in this Tab.</strong>
+					</label>
+				</div>
 			</div>
 		</div>
 	</div>

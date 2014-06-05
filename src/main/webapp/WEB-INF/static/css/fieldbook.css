@@ -1138,3 +1138,13 @@ a.fbk-edit-experiment{
 	right: 0; 
 	left: auto;
 }
+.fbk-label-overflow{
+	overflow:hidden;
+    text-overflow:ellipsis;
+    width:100%;
+}
+.fbk-span-overflow{
+	overflow:hidden;
+	white-space:nowrap;
+	text-overflow:ellipsis;
+}

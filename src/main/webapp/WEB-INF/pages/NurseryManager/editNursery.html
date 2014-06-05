@@ -90,7 +90,7 @@
 				<label th:text="#{nursery.create.nursery.nursery.name} + ': '" class="control-label label-bold"></label>&nbsp;<span class="required">*</span>
 			</div>
 			<div class="col-xs-4 col-md-4">
-				<label th:text="*{basicDetails[0].value}" class="control-label"> </label>
+				<label th:text="*{basicDetails[0].value}" class="control-label fbk-label-overflow"> </label>
 				<input type="hidden" class="form-control" th:field="*{basicDetails[0].value}" />
 			</div>
 			<div class="col-xs-2 col-md-2">
@@ -99,7 +99,7 @@
 			<div class="col-xs-2 col-md-2">
 				<input type="hidden" th:field="*{folderId}" />
 				<input type="hidden" th:field="*{folderName}" />
-				<label class="control-label" id="folderNameLabel" th:text="*{folderName}"></label>
+				<label class="control-label fbk-label-overflow" id="folderNameLabel" th:text="*{folderName}"></label>
 			</div>
 			<div class="col-xs-2 col-md-2">
 				<a class="fbk-float-right" id="chooseLocation" onclick="openStudyTree(2);" th:text="#{nursery.create.nursery.choose.location}"></a>

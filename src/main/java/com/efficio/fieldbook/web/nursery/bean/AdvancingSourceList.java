@@ -24,6 +24,8 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Method;
 
+import com.efficio.fieldbook.web.util.AppConstants;
+
 /**
  * 
  * The POJO for the Germplasm List when Advancing a Nursery.
@@ -84,9 +86,10 @@ public class AdvancingSourceList{
                     	methodId = this.selectedMethodId;
                     }
 
-                    if (methodId != null) {
+                    if (methodId != null || AppConstants.NAMING_CONVENTION_CIMMYT_WHEAT.getString().equals(advanceInfo.getNamingConvention())) {
 		                Integer plantsSelected = null; 
-		                Boolean isBulk = advanceInfo.isForcedBulk() || isBulk(methodId, breedingMethodMap);
+		                Boolean isMethodBulked = isBulk(methodId, breedingMethodMap);
+		                Boolean isBulk = advanceInfo.isForcedBulk() || isMethodBulked != null && isMethodBulked.booleanValue();
 		                if (isBulk != null) {
 		                	if (isBulk.booleanValue() && (advanceInfo.getAllPlotsChoice() == null || "0".equals(advanceInfo.getAllPlotsChoice()))) {
 		                    	if (plotVariateId != null) {
@@ -102,7 +105,7 @@ public class AdvancingSourceList{
 		                    }
 		                }
 		                this.rows.add(new AdvancingSource(germplasm, plantsSelected, methodId, isCheck, isBulk));
-                    } //skip those without assigned method
+                    } //skip those without assigned method except for cimmyt wheat
                 }
             }
         }

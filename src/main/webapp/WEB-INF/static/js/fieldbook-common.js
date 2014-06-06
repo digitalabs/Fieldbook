@@ -1328,6 +1328,7 @@ function validatePlantsSelected() {
 
 	valid = true;
 	if ($('input[type=checkbox][name=methodChoice]:checked').val() === '1'
+		&& $('#namingConvention').val() !== '1'
 		&& $('#advanceBreedingMethodId').val() === '') {
 		showErrorMessage('page-message', msgMethodError);
 		valid = false;

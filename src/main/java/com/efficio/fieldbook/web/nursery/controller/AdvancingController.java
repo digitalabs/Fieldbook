@@ -291,7 +291,8 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         advancingNursery.setLineVariateId(form.getLineVariateId());
         advancingNursery.setPlotVariateId(form.getPlotVariateId());
         advancingNursery.setMethodVariateId(form.getMethodVariateId());
-        advancingNursery.setForcedBulk(form.getNamingConvention().equals(AppConstants.NAMING_CONVENTION_CIMMYT_MAIZE.getString()));
+        advancingNursery.setForcedBulk(form.getNamingConvention().equals(AppConstants.NAMING_CONVENTION_CIMMYT_MAIZE.getString())
+        		&& AppConstants.SELECTED_BULK_SF.getString().equals(form.getAdvanceBreedingMethodId()));
         
         importedGermplasmList = fieldbookService.advanceNursery(advancingNursery, userSelection.getWorkbook());
         userSelection.setImportedAdvancedGermplasmList(importedGermplasmList);

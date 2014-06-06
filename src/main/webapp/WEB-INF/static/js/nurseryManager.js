@@ -1576,7 +1576,7 @@ function initializeDateAndSliderInputs() {
 					});
 				});
 	}
-	truncateStudyVariableNames(17);
+	truncateStudyVariableNames('.study-variable-name', 19);
 }
 
 function checkPlantsSelected() {

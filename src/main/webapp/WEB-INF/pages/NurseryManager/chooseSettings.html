@@ -188,7 +188,7 @@
 			</div>
 			<div class="row form-group collapse in plotLevelDetails">
 				<div class="col-xs-12 col-md-12">
-					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll-create" id="plotLevelSettings">
+					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed" id="plotLevelSettings">
 						<thead>
 							<tr>
 								<th width="5%"></th>
@@ -232,7 +232,7 @@
 			</div>
 			<div class="row form-group collapse in baselineTraitDetails">
 				<div class="col-xs-12 col-md-12">
-					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll-create" id="baselineTraitSettings">
+					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed" id="baselineTraitSettings">
 						<thead>
 							<tr>
 								<th width="5%"></th>
@@ -278,7 +278,7 @@
 			</div>
 			<div class="row form-group collapse in selectionVariatesDetails">
 				<div class="col-xs-12 col-md-12">
-					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed table-with-scroll-create" id="selectionVariatesSettings">
+					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed" id="selectionVariatesSettings">
 						<thead>
 							<tr>
 								<th width="5%"></th>
@@ -434,7 +434,7 @@
 				var data = $('#srch-term').select2('data');
 				doOntologyTreeHighlight(treeDivId, data.key);
 			});
-			truncateStudyVariableNames(17);
+			truncateStudyVariableNames('.study-variable-name', 19);
 		});
 	//]]>
 	</script>

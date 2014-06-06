@@ -14,7 +14,7 @@
 				</div>
 				<div class="row form-group" th:each="measurementData, rowIndex : *{updateObservation.dataList}">
 					<div class="col-md-4">
-						<label class="control-label label-bold" th:text="${measurementData.measurementVariable.name}" ></label>:			
+						<label class="control-label label-bold study-experiment-variable-name" th:text="${measurementData.measurementVariable.name}" ></label>:			
 					</div>
 					<div class="col-md-8" th:if="${measurementData.editable == false}">
 						<label th:text="${measurementData.value}" ></label>		
@@ -52,7 +52,8 @@
 		//<![CDATA[
 
 		$( document ).ready(function() {
-					$('.updateExperimentModal select').select2({minimumResultsForSearch: 20});
+					$('.updateExperimentModal select').select2({minimumResultsForSearch: 20});					
+					truncateStudyVariableNames('.study-experiment-variable-name', 19);
 			});
 		function saveExperimentMeasurements(){
 			'use strict'

@@ -2067,9 +2067,9 @@ function showListTreeToolTip(node, nodeSpan) {
 		}
 	});
 }
-function truncateStudyVariableNames(charLimit){
+function truncateStudyVariableNames(domSelector, charLimit){
 	'use strict';
-	$('.study-variable-name').each(function(){
+	$(domSelector).each(function(){
 		var htmlString = $(this).html();
 		if(htmlString.length > charLimit){
 			if(!$(this).parent().hasClass('variable-tooltip')){

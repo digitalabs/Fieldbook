@@ -585,9 +585,7 @@ padding-left: 20px; margin-top: 7px
 .germplasm-measurement-list-table td input {
    font-size: 10px;
 }
-.variates{
-	min-width: 130px;
-	max-width: 130px;
+.variates{	
 }
 .factors{
 	background-color: #a4a4a4

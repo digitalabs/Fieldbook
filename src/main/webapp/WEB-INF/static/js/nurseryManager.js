@@ -1255,6 +1255,8 @@ function recreateDynamicFieldsAfterDelete(name, tableId, rowClass, posValSuffix)
 							recreateSpinnerInput(index, row, selectedVal, name);
 						} else if (row.innerHTML.indexOf("date-input") > -1) {
 							recreateDateInput(index, row, selectedVal, name);
+						} else {
+							$('#'+getJquerySafeId(name+index+'.value')).val(selectedVal);
 						}
 					});
 	initializeDateAndSliderInputs();

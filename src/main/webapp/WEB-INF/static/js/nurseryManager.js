@@ -2247,32 +2247,26 @@ function getCurrentStudyIdInTab() {
 }
 
 function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
-
+	'use strict';
 	var currentStudyId = getCurrentStudyIdInTab();
 	if (datasetId == 'Please Choose'
 			|| $("#" + getJquerySafeId('dset-tab-') + datasetId).length !== 0)
 		return;
 	Spinner.toggle();
 	$.ajax({
-		url : "/Fieldbook/NurseryManager/addOrRemoveTraits/viewNurseryAjax/"
-				+ currentStudyId,
-		type : "GET",
+		url : '/Fieldbook/NurseryManager/addOrRemoveTraits/viewNurseryAjax/' + currentStudyId,
+		type : 'GET',
 		cache : false,
 		success : function(html) {
-			$("#study" + currentStudyId + " #measurement-tab-headers").append(
-					"<li class='active' id='dataset-li'" + datasetId + "><a>"
-							+ datasetName + "</a> " + "</li>");
-			$("#study" + currentStudyId + " #measurement-tabs").append(
-					"<div id='dset-tab-" + datasetId + "'>" + html + "</div>");
-			$("#study" + currentStudyId + " .measurement-section").show();
-		},
-		error : function(jqXHR, textStatus, errorThrown) {
-			console.log("The following error occured: " + textStatus,
-					errorThrown);
-		},
-		complete : function() {
+			$('#study' + currentStudyId + ' #measurement-tab-headers').append(
+					'<li class="active" id="dataset-li' + datasetId + '"><a><span class="review-dataset-name">'
+							+ datasetName + '</span></a> ' + '</li>');
+			$('#study' + currentStudyId + " #measurement-tabs").append(
+					'<div id="dset-tab-' + datasetId + '">' + html + '</div>');
+			$('#study' + currentStudyId + ' .measurement-section').show();
+			truncateStudyVariableNames('#dataset-li'+datasetId+' .review-dataset-name', 40);
 			Spinner.toggle();
-		}
+		}		
 	});
 }
 function showSelectedTab(selectedTabName) {

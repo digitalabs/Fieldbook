@@ -47,8 +47,8 @@
 								&nbsp;&nbsp;
 								<select th:field="*{namingConvention}">
 									<option value="3" th:text="#{advancing.nursery.naming.convention.other.crops}">OTHER CROPS</option>
-									<option th:if="*{cropType == 1 or true}" value="1" th:text="#{advancing.nursery.naming.convention.cimmyt.wheat}">CIMMYT-WHEAT</option>
-									<option th:if="*{cropType == 2 or true}" value="2" th:text="#{advancing.nursery.naming.convention.cimmyt.maize}">CIMMYT-MAIZE</option>
+									<option th:if="*{cropType == 1}" value="1" th:text="#{advancing.nursery.naming.convention.cimmyt.wheat}">CIMMYT-WHEAT</option>
+									<option th:if="*{cropType == 2}" value="2" th:text="#{advancing.nursery.naming.convention.cimmyt.maize}">CIMMYT-MAIZE</option>
 								</select>
 							</div>
 						</div>

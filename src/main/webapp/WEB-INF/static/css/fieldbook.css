@@ -1018,9 +1018,6 @@ div.sectionContainer {
 #check-table span.select2-arrow{
 	top: -3px;
 }
-.fileupload-exists .uneditable-input{
-	width: 100px;
-}
 
 .dl-horizontal dt {
 	padding: 4px;
@@ -1145,4 +1142,7 @@ a.fbk-edit-experiment{
 	overflow:hidden;
 	white-space:nowrap;
 	text-overflow:ellipsis;
+}
+.fbk-import-upload-file{
+	margin-right: 20px;
 }

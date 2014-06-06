@@ -52,22 +52,27 @@
 
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
-	var paginationCheckUrl = /*[[@{/NurseryManager/importGermplasmList/checkPage/}]]*/;
-	var optionsCheck = {
-		currentPage: /*[[${importGermplasmListForm.currentCheckPage}]]*/,
-		totalPages: /*[[${importGermplasmListForm.totalCheckPages}]]*/,
+	/*globals showPostPage*/
 
-		alignment:'center',
-		useBootstrapTooltip:true,
-		onPageClicked: function(e,originalEvent,type,page){
-			showPostPage(paginationCheckUrl, optionsCheck.currentPage, page, 'check-germplasm-list', 'check-germplasm-list-form');
-		}
-	}
+	var paginationCheckUrl = /*[[@{/NurseryManager/importGermplasmList/checkPage/}]]*/ '',
+		optionsCheck = {
+			currentPage: /*[[${importGermplasmListForm.currentCheckPage}]]*/ '',
+			totalPages: /*[[${importGermplasmListForm.totalCheckPages}]]*/ '',
+
+			alignment:'center',
+			useBootstrapTooltip:true,
+			onPageClicked: function(e,originalEvent,type,page){
+				'use strict';
+				showPostPage(paginationCheckUrl, optionsCheck.currentPage, page, 'check-germplasm-list', 'check-germplasm-list-form');
+			}
+		};
+	
 	$( document ).ready(function() {
+		'use strict';
 		if($('#check-germplasm-list-pagination') != null){
 			$('#check-germplasm-list-pagination').bootstrapPaginator(optionsCheck);
 		}
-		$('.checklist-select').select2();
+		$('.checklist-select').select2({minimumResultsForSearch: 20});
 	});
 	//]]>
 </script>

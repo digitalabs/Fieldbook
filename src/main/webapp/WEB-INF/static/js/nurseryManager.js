@@ -1938,19 +1938,25 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
 					$(this).empty();
 					$(this).select2('destroy');
 					var i = 0;
+					var selected = '';
+					if (currentVal === '')
+						selected = 'selected';
+					
+					$(this).append($('<option ' + selected + ' ></option>').attr('value', '').text('Please Choose'));
 					for (i = 0; i < suggestions_obj.length; i++) {
 						var val = suggestions_obj[i].text;
 						var id = suggestions_obj[i].id;
-						var selected = '';
+						selected = '';
 						if (currentVal == id)
 							selected = 'selected';
+
 						$(this).append(
 								$('<option ' + selected + ' ></option>').attr(
 										'value', id).text(val));
 					}
 
 				});
-		$('.' + comboName).select2();
+		$('.' + comboName).select2({minimumResultsForSearch: 20});
 	}
 }
 
@@ -1999,9 +2005,9 @@ function addUpdateCheckType(operation) {
 }
 
 function validateCheckFields() {
-	if (checkTypes_obj.length === 0 && checkTypes != null) {
+	if (checkTypesObj.length === 0 && checkTypes != null) {
 		$.each(checkTypes, function(index, item) {
-			checkTypes_obj.push({
+			checkTypesObj.push({
 				'id' : item.id,
 				'text' : item.name,
 				'description' : item.description
@@ -2009,7 +2015,7 @@ function validateCheckFields() {
 		});
 	}
 
-	if (!$("#comboCheckCode").select2("data")) {
+	if (!$('#comboCheckCode').select2('data')) {
 		showCheckTypeErrorMessage(codeRequiredError);
 		return false;
 	} else if ($("#manageCheckValue").val() === "") {
@@ -2025,9 +2031,9 @@ function validateCheckFields() {
 
 function isValueUnique() {
 	var isUnique = true;
-	$.each(checkTypes_obj, function(index, item) {
-		if (item.description == $("#manageCheckValue").val()
-				&& item.id != $("#comboCheckCode").select2("data").id) {
+	$.each(checkTypesObj, function(index, item) {
+		if (item.description == $('#manageCheckValue').val()
+				&& item.id != $('#comboCheckCode').select2("data").id) {
 			isUnique = false;
 			return false;
 		}
@@ -2076,11 +2082,11 @@ function deleteCheckType() {
 function reloadCheckTypeList(data, operation) {
 	var selectedValue = 0;
 
-	checkTypes_obj = [];
+	checkTypesObj = [];
 
 	if (data != null) {
 		$.each($.parseJSON(data), function(index, value) {
-			checkTypes_obj.push({
+			checkTypesObj.push({
 				'id' : value.id,
 				'text' : value.name,
 				'description' : value.description
@@ -2095,13 +2101,13 @@ function reloadCheckTypeList(data, operation) {
 
 	$("#manageCheckValue").val("");
 	initializeCheckTypeSelect2(null, [], false, 0, "comboCheckCode");
-	initializeCheckTypeSelect2(null, checkTypes_obj, false, selectedValue,
+	initializeCheckTypeSelect2(null, checkTypesObj, false, selectedValue,
 			"comboCheckCode");
 }
 
 function getIdOfValue(value) {
 	var id = 0;
-	$.each(checkTypes_obj, function(index, item) {
+	$.each(checkTypesObj, function(index, item) {
 		if (item.description == value) {
 			id = item.id;
 			return false;

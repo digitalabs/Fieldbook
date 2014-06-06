@@ -72,10 +72,8 @@
 <script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-paginator.min.js}"></script>
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
-	var paginationUrl = /*[[@{/NurseryManager/importGermplasmList/page/}]]*/;
-	var checkTypes = /*[[${checkTypes}]]*/ null;
-	var checkTypes_obj = [];
-
+	var paginationUrl = /*[[@{/NurseryManager/importGermplasmList/page/}]]*/ '';
+	
 	var options = {
 		currentPage: /*[[${importGermplasmListForm.currentPage}]]*/,
 		totalPages: /*[[${importGermplasmListForm.totalPages}]]*/,

@@ -33,27 +33,32 @@
 
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
-	var checkTypes = /*[[${checkTypes}]]*/ null;
-	var checkTypes_obj = [];
-	var spinnerCreatedAlready = false;
-	var prevStartIndex = 0;
-	$( document ).ready(function() {
+	/*globals initializeCheckTypeSelect2, reloadCheckTypeDropDown*/
+	/* exported prevStartIndex,checkTypesObj */
+	
+	var checkTypes = /*[[${checkTypes}]]*/ null,
+		checkTypesObj = [],
+		prevStartIndex = 0;
 
-		$('#manageCheckTypesModal').on('hidden.bs.modal', function (e) {
+	function setSpinnerMaxValue(){
+		'use strict';
+		$('#startIndex2').val(1);
+		$('#interval2').val(1);
+	}
+	$( document ).ready(function() {
+		'use strict';
+		$('#manageCheckTypesModal').on('hidden.bs.modal', function () {
 			reloadCheckTypeDropDown(false, 'checklist-select');
 		});
 
-		initializeCheckTypeSelect2(checkTypes, [], false, 0, "comboCheckCode");
-		$("#updateCheckTypes").hide();
-		$("#deleteCheckTypes").hide();
-		$('#mannerOfInsertion').select2();
+		initializeCheckTypeSelect2(checkTypes, [], false, 0, 'comboCheckCode');
+		$('#updateCheckTypes').hide();
+		$('#deleteCheckTypes').hide();
+		$('#mannerOfInsertion2').select2({minimumResultsForSearch: 20});
 
 		setSpinnerMaxValue();
 	});
 
-	function setSpinnerMaxValue(){
-		$('#startIndex2').val(1);
-		$('#interval2').val(1);
-	}
+	
 	//]]>
 </script>

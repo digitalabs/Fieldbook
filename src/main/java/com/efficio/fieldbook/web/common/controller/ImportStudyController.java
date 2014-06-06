@@ -18,6 +18,7 @@ import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
@@ -202,8 +203,11 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	}else{
     		resultsMap.put("isSuccess", 0);
     		String errorCode = result.getFieldError("file").getCode();
-    		resultsMap.put("error", messageSource.getMessage(
-    				errorCode, null, locale));
+    		try{
+    			resultsMap.put("error", messageSource.getMessage(errorCode, null, locale));
+    		}catch(NoSuchMessageException e){    			
+    			resultsMap.put("error",messageSource.getMessage("nursery.import.incorrect.input.file", null, locale));
+    		}
     	}
 	    	
     	//return show(model, isTrial);

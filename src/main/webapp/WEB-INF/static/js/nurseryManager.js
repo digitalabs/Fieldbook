@@ -1702,8 +1702,12 @@ function validateCreateNursery() {
 								}
 								value = $.trim(value);
 								if (!value) {
-									name = $(this).parent().find(
-											'.control-label').html();
+									if($(this).parent().hasClass('variable-tooltip')) {
+										name = $(this).parent().data('original-title');
+									}else {
+										name = $(this).parent().find('.control-label').html();	
+									}
+									
 									hasError = true;
 								}
 							}
@@ -1731,7 +1735,11 @@ function validateCreateNursery() {
 	$.each($('.numeric-input'), function(index, textField) {
 		if (isNaN($(textField).val())) {
 			hasError = true;
-			name = $(this).parent().prev().find('.control-label').html();
+			if($(this).parent().prev().hasClass('variable-tooltip')) {
+				name = $(this).parent().prev().data('original-title');
+			}else {
+				name = $(this).parent().prev().find('.control-label').html();
+			}
 			customMessage = name + " " + valueNotNumeric;
 		}
 	});
@@ -1740,7 +1748,11 @@ function validateCreateNursery() {
 		if (parseFloat($(textField).val()) > $(textField).data('max')
 				|| parseFloat($(textField).val()) < $(textField).data('min')) {
 			hasError = true;
-			name = $(this).parent().prev().find('.control-label').html();
+			if($(this).parent().prev().hasClass('variable-tooltip')) {
+				name = $(this).parent().prev().data('original-title');
+			}else {
+				name = $(this).parent().prev().find('.control-label').html();
+			}
 			customMessage = name + ' ' + valueNotWIMinMax + ' '
 					+ $(textField).data('min') + ' to '
 					+ $(textField).data('max');

@@ -406,8 +406,14 @@ public class SettingsUtil {
 							condition.getScale(), condition.getMethod(), condition.getRole(), condition.getDatatype(), condition.getDataTypeId(),
 							condition.getMinRange(), condition.getMaxRange());
 					variable.setOperation(Operation.UPDATE);
-					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), 
+					Integer stdVar = null;
+					if (condition.getId() != 0) {
+						stdVar = condition.getId();
+					}
+					else {
+						stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), 
 							HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
+					}
 					
                     variable.setCvTermId(stdVar);                                        
                     List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
@@ -475,7 +481,13 @@ public class SettingsUtil {
 					SettingVariable variable = new SettingVariable(variate.getName(), variate.getDescription(), variate.getProperty(),
 							variate.getScale(), variate.getMethod(), variate.getRole(), variate.getDatatype());
 					variable.setOperation(Operation.UPDATE);
-					Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
+					Integer  stdVar = null;
+					if (variate.getId() != 0) {
+						stdVar = variate.getId();
+					}
+					else {
+						stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
+					}
 					variable.setCvTermId(stdVar);
 					StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
 					
@@ -502,9 +514,15 @@ public class SettingsUtil {
                                                     constant.getScale(), constant.getMethod(), constant.getRole(), constant.getDatatype(), constant.getDataTypeId(),
                                                     constant.getMinRange(), constant.getMaxRange());
                                     variable.setOperation(Operation.UPDATE);
-                                    Integer  stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), 
+                                    Integer  stdVar = null;
+                                    if (constant.getId() != 0) {
+                                    	stdVar = constant.getId();
+                                    }
+                                    else {
+                                    	stdVar = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(HtmlUtils.htmlUnescape(variable.getProperty()), 
                                                     HtmlUtils.htmlUnescape(variable.getScale()), HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.VARIATE);
-                                                                        
+                                    }
+                                    
                                     variable.setCvTermId(stdVar);      
                                     
                                     List<ValueReference> possibleValues = getFieldPossibleVales(fieldbookService, stdVar);
@@ -873,7 +891,7 @@ public class SettingsUtil {
 		
 		if (mlist != null && !mlist.isEmpty()) {
 			for (MeasurementVariable mvar : mlist) {
-				conditions.add(new Condition(
+				Condition condition = new Condition(
 						mvar.getName(), 
 						mvar.getDescription(), 
 						mvar.getProperty(), 
@@ -881,7 +899,9 @@ public class SettingsUtil {
 						mvar.getMethod(), 
 						PhenotypicType.getPhenotypicTypeForLabel(mvar.getLabel()).toString(), 
 						mvar.getDataType(), 
-						mvar.getValue(), null, null, null));
+						mvar.getValue(), null, null, null);
+				condition.setId(mvar.getTermId());
+				conditions.add(condition);
 			}
 		}
 		
@@ -894,7 +914,7 @@ public class SettingsUtil {
             if (mlist != null && !mlist.isEmpty()) {
                     
                     for (MeasurementVariable mvar : mlist) {
-                        constants.add(new Constant(
+                        Constant constant = new Constant(
                                             mvar.getName(), 
                                             mvar.getDescription(), 
                                             mvar.getProperty(), 
@@ -902,7 +922,9 @@ public class SettingsUtil {
                                             mvar.getMethod(), 
                                             PhenotypicType.getPhenotypicTypeForLabel(mvar.getLabel()).toString(), 
                                             mvar.getDataType(), 
-                                            mvar.getValue(), null, null, null));
+                                            mvar.getValue(), null, null, null);
+                        constant.setId(mvar.getTermId());
+                        constants.add(constant);
                     }
             }
             
@@ -929,6 +951,7 @@ public class SettingsUtil {
 						PhenotypicType.getPhenotypicTypeForLabel(mvar.getLabel()).toString(), 
 						mvar.getDataType(), mvar.getTermId());
 				factor.setTreatmentLabel(mvar.getTreatmentLabel());
+				factor.setId(mvar.getTermId());
 				factors.add(factor);
 			}
 		}
@@ -978,7 +1001,7 @@ public class SettingsUtil {
 		
 		if (mlist != null && !mlist.isEmpty()) {
 			for (MeasurementVariable mvar : mlist) {
-				variates.add(new Variate(
+				Variate variate = new Variate(
 						mvar.getName(), 
 						mvar.getDescription(), 
 						mvar.getProperty(), 
@@ -989,7 +1012,9 @@ public class SettingsUtil {
 						mvar.getDataTypeId(),
 						mvar.getPossibleValues(),
 						mvar.getMinRange(),
-						mvar.getMaxRange()));
+						mvar.getMaxRange());
+				variate.setId(mvar.getTermId());
+				variates.add(variate);
 			}
 		}
 		

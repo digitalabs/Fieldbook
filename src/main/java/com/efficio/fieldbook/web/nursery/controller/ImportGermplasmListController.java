@@ -176,7 +176,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     @RequestMapping(value="/submitCheckGermplasmList", method = RequestMethod.POST)
     public String submitCheckGermplasmList(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form
             , BindingResult result, Model model) {
-        int previewPageNum = userSelection.getCurrentPageGermplasmList();
+        int previewPageNum = userSelection.getCurrentPageCheckGermplasmList();
         if(form.getPaginatedImportedCheckGermplasm() != null){
 	        for(int i = 0 ; i < form.getPaginatedImportedCheckGermplasm().size() ; i++){
 	            ImportedGermplasm importedGermplasm = form.getPaginatedImportedCheckGermplasm().get(i);

@@ -673,7 +673,7 @@ function submitSelectedVariables(variableType) {
 function replaceNameVariables() {
 	'use strict';
 	$.each($('#newVariablesList tbody tr'), function(index, row) {
-		value = $(
+		var value = $(
 				$(row).children('td:nth-child(1)').children(
 						'#'
 								+ getJquerySafeId('selectedVariables' + index

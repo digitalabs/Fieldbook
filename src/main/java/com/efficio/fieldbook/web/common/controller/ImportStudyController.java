@@ -280,9 +280,9 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 				MeasurementData desigData = row.getMeasurementData(TermId.DESIG.getId());
 				MeasurementData gidData = row.getMeasurementData(TermId.GID.getId());
     			if (responseDetail.getStatus() == 1) { // add germplasm name to gid
-    				int newGid = fieldbookMiddlewareService.addGermplasmName(responseDetail.getNewDesig(), Integer.valueOf(responseDetail.getOriginalGid()), userId);
+    				fieldbookMiddlewareService.addGermplasmName(responseDetail.getNewDesig(), Integer.valueOf(responseDetail.getOriginalGid()), userId);
     				desigData.setValue(responseDetail.getNewDesig());
-    				gidData.setValue(String.valueOf(newGid));
+    				gidData.setValue(responseDetail.getOriginalGid());
     			}
     			else if (responseDetail.getStatus() == 2) { //create new germlasm 
     				int newGid = fieldbookMiddlewareService.addGermplasm(responseDetail.getNewDesig(), userId);

@@ -1327,7 +1327,12 @@ function validatePlantsSelected() {
 	}
 
 	valid = true;
-	if (ids !== '')	{
+	if ($('input[type=checkbox][name=methodChoice]:checked').val() === '1'
+		&& $('#advanceBreedingMethodId').val() === '') {
+		showErrorMessage('page-message', msgMethodError);
+		valid = false;
+	}
+	if (valid && ids !== '')	{
 		Spinner.toggle();
 		$.ajax({
 			url: '/Fieldbook/NurseryManager/advance/nursery/countPlots/' + ids,

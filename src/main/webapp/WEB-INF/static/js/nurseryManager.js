@@ -6,25 +6,25 @@ function checkMethod() {
 		$('#methodIdAll').select2('enable', true);
 		$('#showFavoriteMethod').prop('disabled', false);
 
-		$("#method-variates-section").hide();
-		$(".method-selection-div").find("input,select").prop("disabled", false);
-		$("#methodIdAll").select2("enable", true);
-		$("#methodIdFavorite").select2("enable", true);
+		$('#method-variates-section').hide();
+		$('.method-selection-div').find('input,select').prop('disabled', false);
+		$('#methodIdAll').select2('enable', true);
+		$('#methodIdFavorite').select2("enable", true);
 
 		setCorrectMethodValues(true);
 		changeAdvanceBreedingMethod();
 	} else {
-		$("#method-variates-section").show();
-		$(".method-selection-div").find("input,select").prop("disabled", true);
-		$("#methodIdAll").select2("enable", false);
-		$("#methodIdFavorite").select2("enable", false);
+		$('#method-variates-section').show();
+		$('.method-selection-div').find('input,select').prop('disabled', true);
+		$('#methodIdAll').select2('enable', false);
+		$('#methodIdFavorite').select2('enable', false);
 
 		if ($('#namingConvention').val() != 3) {
 			$('#showFavoriteMethod').prop('disabled', 'disabled');
 			$('#methodIdFavorite').select2('enable', false);
 			$('#methodIdAll').select2('enable', false);
 		}
-		oldMethodSelected = $('#' + getJquerySafeId("advanceBreedingMethodId")).val();
+		oldMethodSelected = $('#' + getJquerySafeId('advanceBreedingMethodId')).val();
 		$('#methodSelected').val($('#defaultMethodId').val());
 		setCorrectMethodValues(false);
 		// we show the bulk and lines section
@@ -56,10 +56,10 @@ function setCorrectMethodValues(isCheckMethod) {
 			}
 		}
 		if (isFound) {
-			$("#methodIdFavorite").select2('data', dataVal).trigger('change');
+			$('#methodIdFavorite').select2('data', dataVal).trigger('change');
 		} else if (methodSuggestionsFav_obj.length > 0) {
 			// we set the first
-			$("#methodIdFavorite").select2('data', methodSuggestionsFav_obj[0])
+			$('#methodIdFavorite').select2('data', methodSuggestionsFav_obj[0])
 					.trigger('change');
 		} else {
 			$('#' + getJquerySafeId("breedingMethodId")).val(0);
@@ -434,23 +434,18 @@ function initializeStandardVariableSearch(variables) {
 }
 
 function getStandardVariableDetailsModal(id) {
-	if (id != '') {
+	'use strict';
+	if (id !== '') {
 		Spinner.toggle();
 		$
 				.ajax({
-					url : "/Fieldbook/NurseryManager/createNursery/showVariableDetails/"
+					url : '/Fieldbook/NurseryManager/createNursery/showVariableDetails/'
 							+ id,
 					type : "GET",
 					cache : false,
 					success : function(data) {
-						$('#var-info').slideDown("slow");
+						$('#var-info').slideDown('slow');
 						populateAttributeFields($.parseJSON(data));
-					},
-					error : function(jqXHR, textStatus, errorThrown) {
-						console.log("The following error occured: "
-								+ textStatus, errorThrown);
-					},
-					complete : function() {
 						Spinner.toggle();
 					}
 				});
@@ -459,19 +454,21 @@ function getStandardVariableDetailsModal(id) {
 }
 
 function populateAttributeFields(data) {
-	$("#selectedTraitClass").html(checkIfEmpty(data.traitClass));
-	$("#selectedProperty").html(checkIfEmpty(data.property));
-	$("#selectedMethod").html(checkIfEmpty(data.method));
-	$("#selectedScale").html(checkIfEmpty(data.scale));
-	$("#selectedDataType").html(checkIfEmpty(data.dataType));
-	$("#selectedRole").html(checkIfEmpty(data.role));
-	$("#selectedCropOntologyId").html(checkIfEmpty(data.cropOntologyId));
-	$("#selectedStdVarId").val(data.cvTermId);
-	$("#selectedName").val(data.name);
+	'use strict';
+	$('#selectedTraitClass').html(checkIfEmpty(data.traitClass));
+	$('#selectedProperty').html(checkIfEmpty(data.property));
+	$('#selectedMethod').html(checkIfEmpty(data.method));
+	$('#selectedScale').html(checkIfEmpty(data.scale));
+	$('#selectedDataType').html(checkIfEmpty(data.dataType));
+	$('#selectedRole').html(checkIfEmpty(data.role));
+	$('#selectedCropOntologyId').html(checkIfEmpty(data.cropOntologyId));
+	$('#selectedStdVarId').val(data.cvTermId);
+	$('#selectedName').val(data.name);
 }
 
 function checkIfEmpty(value) {
-	if (value == "") {
+	'use strict';
+	if (value === '') {
 		return "&nbsp";
 	} else {
 		return value;
@@ -479,15 +476,15 @@ function checkIfEmpty(value) {
 }
 
 function clearAttributeFields() {
-	$("#selectedTraitClass").html("&nbsp;");
-	$("#selectedProperty").html("&nbsp;");
-	$("#selectedMethod").html("&nbsp;");
-	$("#selectedScale").html("&nbsp;");
-	$("#selectedDataType").html("&nbsp;");
-	$("#selectedRole").html("&nbsp;");
-	$("#selectedCropOntologyId").html("&nbsp;");
-	$("#selectedStdVarId").val("");
-	$("#selectedName").val("");
+	$('selectedTraitClass').html('&nbsp;');
+	$('selectedProperty').html('&nbsp;');
+	$('#selectedMethod').html('&nbsp;');
+	$('#selectedScale').html('&nbsp;');
+	$('#selectedDataType').html('&nbsp;');
+	$('#selectedRole').html('&nbsp;');
+	$('#selectedCropOntologyId').html('&nbsp;');
+	$('#selectedStdVarId').val('');
+	$('#selectedName').val('');
 }
 
 function getIdNameCounterpart(selectedVariable, idNameCombinationVariables) {
@@ -602,13 +599,10 @@ function notInList(id) {
 }
 
 function hasNoVariableName() {
+	'use stict';
 	var result = false;
-	$.each($("#newVariablesList tbody tr"), function(index, row) {
-		if ($(
-				$(row).children("td:nth-child(1)").children(
-						"#"
-								+ getJquerySafeId("selectedVariables" + index
-										+ ".name"))).val() == "") {
+	$.each($('#newVariablesList tbody tr'), function(index, row) {
+		if ($($(row).children('td:nth-child(1)').children('#' + getJquerySafeId('selectedVariables' + index + '.name'))).val() === '') {
 			result = true;
 		}
 	});
@@ -616,101 +610,90 @@ function hasNoVariableName() {
 }
 
 function submitSelectedVariables(variableType) {
-	if ($("#newVariablesList tbody tr").length == 0) {
-		$("#page-message-modal").html(
-				"<div class='alert alert-danger'>" + noVariableAddedMessage
-						+ "</div>");
-	} else if ($("#newVariablesList tbody tr").length > 0
+	if ($('#newVariablesList tbody tr').length === 0) {
+		$('#page-message-modal').html(
+				'<div class="alert alert-danger">' + noVariableAddedMessage + '</div>');
+	} else if ($('#newVariablesList tbody tr').length > 0
 			&& hasNoVariableName()) {
-		$("#page-message-modal").html(
-				"<div class='alert alert-danger'>" + noVariableNameError
-						+ "</div>");
-	} else if ($("#newVariablesList tbody tr").length > 0) {
+		$('#page-message-modal').html(
+				'<div class="alert alert-danger">' + noVariableNameError + '</div>');
+	} else if ($('#newVariablesList tbody tr').length > 0) {
 		replaceNameVariables();
-		var serializedData = $("input.addVariables").serialize();
-		$("#page-message-modal").html("");
+		var serializedData = $('input.addVariables').serialize();
+		$('#page-message-modal').html('');
 		Spinner.toggle();
 
 		$.ajax({
-			url : "/Fieldbook/NurseryManager/createNursery/addSettings/"
-					+ variableType,
-			type : "POST",
+			url : '/Fieldbook/NurseryManager/createNursery/addSettings/' + variableType,
+			type : 'POST',
 			data : serializedData,
 			success : function(data) {
 				switch (variableType) {
 				case 1:
 					createDynamicSettingVariables($.parseJSON(data),
-							"studyLevelVariables", "nurseryLevelSettings-dev",
-							"nurseryLevelSettings", variableType, "");
+							'studyLevelVariables', 'nurseryLevelSettings-dev',
+							'nurseryLevelSettings', variableType, '');
 					break;
 				case 2:
 					createTableSettingVariables($.parseJSON(data),
-							"plotLevelVariables", "plotLevelSettings",
-							variableType);
+							'plotLevelVariables', 'plotLevelSettings',variableType);
 					break;
 				case 3:
 					createTableSettingVariables($.parseJSON(data),
-							"baselineTraitVariables", "baselineTraitSettings",
+							'baselineTraitVariables', 'baselineTraitSettings',
 							variableType);
 					break;
 				case 6:
 					createTableSettingVariables($.parseJSON(data),
-							"selectionVariatesVariables",
-							"selectionVariatesSettings", variableType);
+							'selectionVariatesVariables',
+							'selectionVariatesSettings', variableType);
 					break;
 				case 7:
 					createDynamicSettingVariables($.parseJSON(data),
-							"nurseryConditions", "nurseryConditionsSettings",
-							"nurseryConditionsSettings", variableType, "Cons");
+							'nurseryConditions', 'nurseryConditionsSettings',
+							'nurseryConditionsSettings', variableType, 'Cons');
 					break;
 				default:
 					createDynamicSettingVariables($.parseJSON(data),
-							"studyLevelVariables", "nurseryLevelSettings-dev",
-							"nurseryLevelSettings", variableType, "");
+							'studyLevelVariables', 'nurseryLevelSettings-dev',
+							'nurseryLevelSettings', variableType, "");
 				}
-
-			},
-			error : function(jqXHR, textStatus, errorThrown) {
-				console.log("The following error occured: " + textStatus,
-						errorThrown);
-			},
-			complete : function() {
 				Spinner.toggle();
-				$("#addVariablesSettingModal").modal("hide");
+				$('#addVariablesSettingModal').modal('hide');
+
 			}
 		});
 	} else {
-		$("#page-message-modal").html(
-				"<div class='alert alert-danger'>" + varInListMessage
-						+ "</div>");
+		$('#page-message-modal').html(
+				'<div class="alert alert-danger">' + varInListMessage
+						+ '</div>');
 	}
 }
 
 function replaceNameVariables() {
-	$.each($("#newVariablesList tbody tr"), function(index, row) {
+	'use strict';
+	$.each($('#newVariablesList tbody tr'), function(index, row) {
 		value = $(
-				$(row).children("td:nth-child(1)").children(
-						"#"
-								+ getJquerySafeId("selectedVariables" + index
-										+ ".cvTermId"))).val();
+				$(row).children('td:nth-child(1)').children(
+						'#'
+								+ getJquerySafeId('selectedVariables' + index
+										+ '.cvTermId'))).val();
 		// use the id counterpart of the name variable
 		$(
-				$(row).children("td:nth-child(1)").children(
-						"#"
-								+ getJquerySafeId("selectedVariables" + index
-										+ ".cvTermId")))
-				.val(
-						getIdCounterpart(value, $("#idNameVariables").val()
-								.split(",")));
+				$(row).children('td:nth-child(1)').children(
+						'#'
+								+ getJquerySafeId('selectedVariables' + index + '.cvTermId')))
+				.val(getIdCounterpart(value, $('#idNameVariables').val().split(',')));
 	});
 
 }
 
 function getLastRowIndex(name, hasTBody) {
+	'use strict';
 	if (hasTBody) {
-		return $("#" + name + " tbody tr").length - 1;
+		return $('#' + name + ' tbody tr').length - 1;
 	} else {
-		return $("#" + name + " tr").length - 1;
+		return $('#' + name + ' tr').length - 1;
 	}
 }
 
@@ -722,53 +705,53 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 			.each(
 					data,
 					function(index, settingDetail) {
-						var newRow = "<div class='row form-group " + rowClass
-								+ " newVariable'>";
-						var isDelete = "";
+						var newRow = '<div class="row form-group ' + rowClass
+								+ ' newVariable">';
+						var isDelete = '';
 
 						// include delete button if variable is deletable
 						if (settingDetail.deletable) {
-							isDelete = "<span style='cursor: default; font-size: 16px;' class='delete-icon' onclick='deleteVariable("
+							isDelete = '<span style="cursor: default; font-size: 16px;" class="delete-icon" onclick="deleteVariable('
 									+ varType
-									+ ","
+									+ ','
 									+ settingDetail.variable.cvTermId
-									+ ",$(this))'></span>";
+									+ ',$(this))"></span>';
 						}
 
 						// create html elements dynamically
 						newRow = newRow
-								+ "<div class='col-xs-5 col-md-5 1st'>"
+								+ '<div class="col-xs-5 col-md-5 1st">'
 								+ isDelete
-								+ "<input class='cvTermIds nurseryLevelVariableIdClass' type='hidden' id='"
-								+ name + ctr + ".variable.cvTermId' name='"
-								+ name + "[" + ctr
-								+ "].variable.cvTermId' value='"
+								+ '<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" id="'
+								+ name + ctr + '.variable.cvTermId" name="'
+								+ name + '[' + ctr
+								+ '].variable.cvTermId" value="'
 								+ settingDetail.variable.cvTermId
-								+ "' />&nbsp;&nbsp;&nbsp;&nbsp;";
+								+ '" />&nbsp;&nbsp;&nbsp;&nbsp;';
 
 						newRow = newRow
-								+ "<span style='word-wrap: break-word'  class='control-label label-bold study-variable-name'>"
+								+ '<span style="word-wrap: break-word"  class="control-label label-bold study-variable-name">'
 								+ settingDetail.variable.name
-								+ "</span>: &nbsp;<span class='required'>*</span></div>";
+								+ '</span>: &nbsp;<span class="required">*</span></div>';
 
-						if (settingDetail.variable.widgetType == 'DATE') {
+						if (settingDetail.variable.widgetType === 'DATE') {
 							newRow = newRow
-									+ "<div class='col-xs-4 col-md-4 2nd'>";
+									+ '<div class="col-xs-4 col-md-4 2nd">';
 						} else
 							newRow = newRow
-									+ "<div class='col-xs-7 col-md-7 2nd'>";
+									+ '<div class="col-xs-7 col-md-7 2nd">';
 
 						var inputHtml = '';
 
-						if (settingDetail.variable.widgetType == 'DROPDOWN') {
+						if (settingDetail.variable.widgetType === 'DROPDOWN') {
 							inputHtml = createDropdownInput(ctr, name);
-						} else if (settingDetail.variable.widgetType == 'DATE') {
+						} else if (settingDetail.variable.widgetType === 'DATE') {
 							inputHtml = createDateInput(ctr, name);
-						} else if (settingDetail.variable.widgetType == 'CTEXT') {
+						} else if (settingDetail.variable.widgetType === 'CTEXT') {
 							inputHtml = createCharacterTextInput(ctr, name);
-						} else if (settingDetail.variable.widgetType == 'NTEXT') {
+						} else if (settingDetail.variable.widgetType === 'NTEXT') {
 							inputHtml = createNumericalTextInput(ctr, name);
-						} else if (settingDetail.variable.widgetType == 'SLIDER') {
+						} else if (settingDetail.variable.widgetType === 'SLIDER') {
 							inputHtml = createSliderInput(ctr,
 									settingDetail.variable.minRange,
 									settingDetail.variable.maxRange, name);
@@ -778,35 +761,35 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 						if (settingDetail.variable.cvTermId == breedingMethodId) {
 							// show favorite method
 							newRow = newRow
-									+ "<div class='possibleValuesDiv'><input type='checkbox' id='"
+									+ '<div class="possibleValuesDiv"><input type="checkbox" id="'
 									+ name
 									+ ctr
-									+ ".favorite1'"
-									+ " name='"
+									+ '.favorite1"'
+									+ ' name="'
 									+ name
-									+ "["
+									+ '['
 									+ ctr
-									+ "].favorite'"
-									+ " onclick='javascript: toggleMethodDropdown("
+									+ '].favorite"'
+									+ ' onclick="javascript: toggleMethodDropdown('
 									+ ctr
-									+ ");' />"
-									+ "<input type='hidden' name='_"
+									+ ');" />'
+									+ '<input type="hidden" name="_'
 									+ name
-									+ "["
+									+ '['
 									+ ctr
-									+ "].favorite' value='on' /> "
-									+ "<span>&nbsp;&nbsp;"
+									+ '].favorite" value="on" /> '
+									+ '<span>&nbsp;&nbsp;'
 									+ showFavoriteMethodLabel
-									+ "</span></div>"
-									+ "<div id='possibleValuesJson"
+									+ '</span></div>'
+									+ '<div id="possibleValuesJson'
 									+ ctr
-									+ "' class='possibleValuesJson' style='display:none'>"
+									+ '" class="possibleValuesJson" style="display:none">'
 									+ settingDetail.possibleValuesJson
-									+ "</div><div id='possibleValuesFavoriteJson"
+									+ '</div><div id="possibleValuesFavoriteJson'
 									+ ctr
-									+ "' class='possibleValuesFavoriteJson' style='display:none'>"
+									+ '" class="possibleValuesFavoriteJson" style="display:none">'
 									+ settingDetail.possibleValuesFavoriteJson
-									+ "</div>";
+									+ '</div>';
 
 							newRow = newRow
 									+ "<span><a href='javascript: openManageMethods();'>"
@@ -847,33 +830,33 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 									+ "</div>";
 
 							newRow = newRow
-									+ "<span><a href='javascript: openManageLocations();'>"
-									+ manageLocationLabel + "</a></span>";
-							newRow = newRow + "</div>";
+									+ '<span><a href="javascript: openManageLocations();">'
+									+ manageLocationLabel + '</a></span>';
+							newRow = newRow + '</div>';
 
 						} else {
-							newRow = newRow + "<div id='possibleValuesJson"
+							newRow = newRow + '<div id="possibleValuesJson'
 									+ posValSuffix + ctr
-									+ "' class='possibleValuesJson"
-									+ posValSuffix + "' style='display:none'>"
+									+ '" class="possibleValuesJson'
+									+ posValSuffix + '" style="display:none">'
 									+ settingDetail.possibleValuesJson
-									+ "</div></div>";
+									+ '</div></div>';
 						}
 
 						$("#" + tableId).append(newRow);
 
-						if (settingDetail.variable.widgetType == 'DROPDOWN') {
+						if (settingDetail.variable.widgetType === 'DROPDOWN') {
 							// initialize select 2 combo
 							if (settingDetail.variable.cvTermId == locationId) {
 								initializePossibleValuesCombo(
-										settingDetail.possibleValues, "#"
+										settingDetail.possibleValues, '#'
 												+ getJquerySafeId(name + ctr
-														+ ".value"), true, null);
+														+ '.value'), true, null);
 							} else {
 								initializePossibleValuesCombo(
-										settingDetail.possibleValues, "#"
+										settingDetail.possibleValues, '#'
 												+ getJquerySafeId(name + ctr
-														+ ".value"), false,
+														+ '.value'), false,
 										null);
 							}
 						}
@@ -1471,7 +1454,7 @@ function hasEmptyNurseryValue() {
 
 function doSaveSettings() {
 	$('#settingName').val($('#settingName').val().trim());
-	if ($('#settingName').val() == '') {
+	if ($('#settingName').val() === '') {
 		showErrorMessage('page-message', templateSettingNameError);
 		moveToTopScreen();
 		return false;
@@ -1576,7 +1559,7 @@ function initializeDateAndSliderInputs() {
 					});
 				});
 	}
-	truncateStudyVariableNames('.study-variable-name', 19);
+	truncateStudyVariableNames('.study-variable-name', 17);
 }
 
 function checkPlantsSelected() {
@@ -1668,30 +1651,30 @@ function isStudyNameUnique() {
 	return isUnique;
 }
 function validateCreateNursery() {
-	var hasError = false;
-	var name = '';
-	var customMessage = '';
-	var studyBookName;
-	var studyNameId = $("#studyNameTermId").val();
+	var hasError = false
+		,name = ''
+		,customMessage = ''
+		,studyBookName
+		,studyNameId = $('#studyNameTermId').val();
 
 	$('.nurseryLevelVariableIdClass').each(function() {
 		if (studyNameId == $(this).val()) {
-			studyBookName = $(this).parent().find(".form-control").val();
+			studyBookName = $(this).parent().find('.form-control').val();
 		}
 	});
 
-	var startDate = $("#" + getJquerySafeId("basicDetails.value2")).val();
+	var startDate = $('#' + getJquerySafeId('basicDetails.value2')).val();
 
 	if (isStudyNameUnique() === false) {
 		hasError = true;
 		customMessage = "Name should be unique";
-	} else if ($("#folderId").val() === '') {
+	} else if ($('#folderId').val() === '') {
 		hasError = true;
-		name = $("#folderLabel").text();
-	} else if (startDate == '') {
+		name = $('#folderLabel').text();
+	} else if (startDate === '') {
 		// validate creation date
 		hasError = true;
-		name = "Creation Date";
+		name = 'Creation Date';
 	} else if ($('#checkId').val() === '') {
 		hasError = true;
 		customMessage = checkTypeIsRequired;
@@ -1705,23 +1688,22 @@ function validateCreateNursery() {
 							if (!hasError) {
 
 								if ($(this).parent().next().find(
-										".form-control").hasClass("select2")
+										'.form-control').hasClass('select2')
 										&& $(this).parent().next().find(
-												".form-control")
-												.select2("data")) {
+												'.form-control')
+												.select2('data')) {
 									idname = $(this).parent().next().find(
-											".form-control").attr("id");
-									// console.log(idname);
-									value = $("#" + getJquerySafeId(idname))
-											.select2("data").text;
+											'.form-control').attr('id');
+									value = $('#' + getJquerySafeId(idname))
+											.select2('data').text;
 								} else {
 									value = $(this).parent().next().find(
-											".form-control").val();
+											'.form-control').val();
 								}
 								value = $.trim(value);
 								if (!value) {
 									name = $(this).parent().find(
-											".control-label").html();
+											'.control-label').html();
 									hasError = true;
 								}
 							}
@@ -1732,7 +1714,7 @@ function validateCreateNursery() {
 	if (hasError) {
 		var errMsg = '';
 		if (name !== '')
-			errMsg = name.replace('*', '').replace(":", "") + " "
+			errMsg = name.replace('*', '').replace(':', '') + ' '
 					+ nurseryFieldsIsRequired;
 		if (customMessage !== '')
 			errMsg = customMessage;
@@ -1746,33 +1728,33 @@ function validateCreateNursery() {
 		return false;
 	}
 
-	$.each($(".numeric-input"), function(index, textField) {
+	$.each($('.numeric-input'), function(index, textField) {
 		if (isNaN($(textField).val())) {
 			hasError = true;
-			name = $(this).parent().prev().find(".control-label").html();
+			name = $(this).parent().prev().find('.control-label').html();
 			customMessage = name + " " + valueNotNumeric;
 		}
 	});
 
-	$.each($(".numeric-input"), function(index, textField) {
-		if (parseFloat($(textField).val()) > $(textField).data("max")
-				|| parseFloat($(textField).val()) < $(textField).data("min")) {
+	$.each($('.numeric-input'), function(index, textField) {
+		if (parseFloat($(textField).val()) > $(textField).data('max')
+				|| parseFloat($(textField).val()) < $(textField).data('min')) {
 			hasError = true;
-			name = $(this).parent().prev().find(".control-label").html();
-			customMessage = name + " " + valueNotWIMinMax + " "
-					+ $(textField).data("min") + " to "
-					+ $(textField).data("max");
+			name = $(this).parent().prev().find('.control-label').html();
+			customMessage = name + ' ' + valueNotWIMinMax + ' '
+					+ $(textField).data('min') + ' to '
+					+ $(textField).data('max');
 		}
 	});
 
 	if (hasError) {
 		showErrorMessage('page-message', customMessage.replace('*', '')
-				.replace(":", ""));
+				.replace(':', ''));
 		return false;
 	}
 
 	var found = false;
-	$("#selectedNursery option").each(function(i) {
+	$('#selectedNursery option').each(function(i) {
 		if (studyBookName == $(this).text()) {
 			found = true;
 		}
@@ -1791,40 +1773,40 @@ function validateCreateNursery() {
 		// we try to validate if all the check row has check
 		var checkIndex = 0;
 		for (checkIndex = 0; checkIndex < $('.checkRow').length; checkIndex++) {
-			if ($('select.checklist-select:eq(' + checkIndex + ')').val() == '') {
+			if ($('select.checklist-select:eq(' + checkIndex + ')').val() === '') {
 				showErrorMessage('page-message',
-						"Please make sure all selected checks have their check type");
+						'Please make sure all selected checks have their check type');
 				return false;
 			}
 		}
 
-		if (isInt($("#startIndex2").val()) === false) {
+		if (isInt($('#startIndex2').val()) === false) {
 			showErrorMessage('page-message',
-					"Position should be a whole number");
+					'Position should be a whole number');
 			return false;
 		}
-		if (isInt($("#interval2").val()) === false) {
+		if (isInt($('#interval2').val()) === false) {
 			showErrorMessage('page-message',
-					"Interval should be a whole number");
+					'Interval should be a whole number');
 			return false;
 		}
 		var totalGermplasms = $('#totalGermplasms').val();
-		if (parseInt($("#startIndex2").val(), 10) < 0
-				|| parseInt($("#startIndex2").val(), 10) > totalGermplasms) {
-			showErrorMessage('page-message', "Position should be between 1 to "
+		if (parseInt($('#startIndex2').val(), 10) < 0
+				|| parseInt($('#startIndex2').val(), 10) > totalGermplasms) {
+			showErrorMessage('page-message', 'Position should be between 1 to '
 					+ totalGermplasms);
 			return false;
 		}
-		if (parseInt($("#interval2").val(), 10) < 0) {
-			showErrorMessage('page-message', "Interval should be between 1 to "
+		if (parseInt($('#interval2').val(), 10) < 0) {
+			showErrorMessage('page-message', 'Interval should be between 1 to '
 					+ totalGermplasms);
 			return false;
 		}
 		var totalNumberOfChecks = $('#totalNumberOfChecks').val();
-		if (parseInt($("#interval2").val(), 10) <= totalNumberOfChecks) {
+		if (parseInt($('#interval2').val(), 10) <= totalNumberOfChecks) {
 			showErrorMessage('page-message',
-					"Interval should be greater than the number of checks ("
-							+ totalNumberOfChecks + ")");
+					'Interval should be greater than the number of checks ('
+							+ totalNumberOfChecks + ')');
 			return false;
 		}
 	}
@@ -1833,13 +1815,14 @@ function validateCreateNursery() {
 }
 
 function reloadCheckTypeDropDown(addOnChange, select2ClassName) {
+	'use strict';
 	Spinner.toggle();
 	var currentCheckId = $('#checkId').val();
 	$.ajax({
-		url : "/Fieldbook/NurseryManager/importGermplasmList/getAllCheckTypes",
-		type : "GET",
+		url : '/Fieldbook/NurseryManager/importGermplasmList/getAllCheckTypes',
+		type : 'GET',
 		cache : false,
-		data : "",
+		data : '',
 		success : function(data) {
 			initializeCheckTypeSelect2($.parseJSON(data.allCheckTypes), [],
 					addOnChange, currentCheckId, select2ClassName);
@@ -1870,7 +1853,7 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
 
 	if (suggestions != null) {
 		$.each(suggestions, function(index, value) {
-			if (comboName == "comboCheckCode") {
+			if (comboName === 'comboCheckCode') {
 				dataObj = {
 					'id' : value.id,
 					'text' : value.name,
@@ -1894,13 +1877,13 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
 	}
 	// if combo to create is one of the ontology combos, add an onchange event
 	// to populate the description based on the selected value
-	if (comboName == "comboCheckCode") {
+	if (comboName === 'comboCheckCode') {
 		$('#' + comboName)
 				.select2(
 						{
 							query : function(query) {
 								var data = {
-									results : sortByKey(suggestions_obj, "text")
+									results : sortByKey(suggestions_obj, 'text')
 								};
 								// return the array that matches
 								data.results = $.grep(data.results, function(
@@ -1918,19 +1901,19 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
 							}
 						})
 				.on(
-						"change",
+						'change',
 						function() {
-							if ($("#comboCheckCode").select2("data")) {
-								if ($("#comboCheckCode").select2("data").id == $("#comboCheckCode").select2("data").text) {
-									$("#manageCheckValue").val("");
-									$("#updateCheckTypes").hide();
-									$("#deleteCheckTypes").hide();
-									$("#addCheckTypes").show();
+							if ($('#comboCheckCode').select2('data')) {
+								if ($('#comboCheckCode').select2('data').id == $('#comboCheckCode').select2('data').text) {
+									$('#manageCheckValue').val('');
+									$('#updateCheckTypes').hide();
+									$('#deleteCheckTypes').hide();
+									$('#addCheckTypes').show();
 								} else {
-									$("#manageCheckValue").val($("#comboCheckCode").select2("data").description);
-									$("#updateCheckTypes").show();
-									$("#deleteCheckTypes").show();
-									$("#addCheckTypes").hide();
+									$('#manageCheckValue').val($('#comboCheckCode').select2('data').description);
+									$('#updateCheckTypes').show();
+									$('#deleteCheckTypes').show();
+									$('#addCheckTypes').hide();
 								}
 							}
 						});
@@ -1958,7 +1941,7 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
 }
 
 function showManageCheckTypePopup() {
-	$('#page-check-message-modal').html("");
+	$('#page-check-message-modal').html('');
 	resetButtonsAndFields();
 	$('#manageCheckTypesModal').modal({
 		backdrop : 'static',
@@ -1967,11 +1950,12 @@ function showManageCheckTypePopup() {
 }
 
 function resetButtonsAndFields() {
-	$("#manageCheckValue").val("");
-	$("#comboCheckCode").select2("val", "");
-	$("#updateCheckTypes").hide();
-	$("#deleteCheckTypes").hide();
-	$("#addCheckTypes").show();
+	'use strict';
+	$('#manageCheckValue').val('');
+	$('#comboCheckCode').select2('val', '');
+	$('#updateCheckTypes').hide();
+	$('#deleteCheckTypes').hide();
+	$('#addCheckTypes').show();
 }
 
 function addUpdateCheckType(operation) {
@@ -2168,15 +2152,14 @@ function addDetailsTab(studyId, title) {
 
 		Spinner.toggle();
 		$.ajax({
-			url : "/Fieldbook/NurseryManager/reviewNurseryDetails/show/"
-					+ studyId,
-			type : "GET",
+			url : '/Fieldbook/NurseryManager/reviewNurseryDetails/show/' + studyId,
+			type : 'GET',
 			cache : false,
 			success : function(data) {
 				var close = '<i class="glyphicon glyphicon-remove fbk-close-tab" id="'+studyId+'"></i>';
 				$('#study-tab-headers').append(
-						"<li id='study" + studyId + "' class='active'><a>"
-								+ title + close + "</a></li>");
+						"<li id='study" + studyId + "' class='active'><a><span class='review-study-name'>"
+								+ title + "</span>"+ close + "</a></li>");
 				$('#study-tabs').append(
 						'<div class="info" id="study' + studyId + '">' + data
 								+ '</div>');
@@ -2185,6 +2168,7 @@ function addDetailsTab(studyId, title) {
 				$('.info#study' + studyId + ' select').each(function() {
 					$(this).select2();
 				});
+				truncateStudyVariableNames('#study'+studyId+' .review-study-name', 20);
 				Spinner.toggle();
 			}
 		});
@@ -2280,6 +2264,7 @@ function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
 	});
 }
 function showSelectedTab(selectedTabName) {
+	'use strict';
 	$("#create-nursery-tab-headers").show();
 	var tabs = $("#create-nursery-tabs").children();
 	for (var i = 0; i < tabs.length; i++) {
@@ -2294,7 +2279,7 @@ function showSelectedTab(selectedTabName) {
 	
 	if(selectedTabName === 'nursery-measurements') {
 		var dataTable = $('#measurement-table').dataTable();
-		if(dataTable.length != 0)
+		if(dataTable.length !== 0)
 			dataTable.fnAdjustColumnSizing();
 	}
 
@@ -2438,25 +2423,27 @@ function recreateSessionVariables() {
 }
 
 function displayCorrespondingGermplasmSections() {
-	if ($("#measurementDataExisting").val() === "true") {
-		$("#chooseGermplasmAndChecks").hide();
-		$(".overwrite-germplasm-list").hide();
-		$(".observation-exists-notif").show();
+	'use strict';
+	if ($('#measurementDataExisting').val() === 'true') {
+		$('#chooseGermplasmAndChecks').hide();
+		$('.overwrite-germplasm-list').hide();
+		$('.observation-exists-notif').show();
 	} else if (measurementRowCount > 0) {
-		$("#chooseGermplasmAndChecks").hide();
-		$(".observation-exists-notif").hide();
-		$(".overwrite-germplasm-list").show();
+		$('#chooseGermplasmAndChecks').hide();
+		$('.observation-exists-notif').hide();
+		$('.overwrite-germplasm-list').show();
 	} else {
-		$("#chooseGermplasmAndChecks").show();
-		$(".observation-exists-notif").hide();
-		$(".overwrite-germplasm-list").hide();
+		$('#chooseGermplasmAndChecks').show();
+		$('.observation-exists-notif').hide();
+		$('.overwrite-germplasm-list').hide();
 	}
 }
 
 function showGermplasmDetailsSection() {
-	$("#chooseGermplasmAndChecks").show();
-	$(".observation-exists-notif").hide();
-	$(".overwrite-germplasm-list").hide();
+	'use strict';
+	$('#chooseGermplasmAndChecks').show();
+	$('.observation-exists-notif').hide();
+	$('.overwrite-germplasm-list').hide();
 }
 
 //FIXME Should not be using global variables or functions

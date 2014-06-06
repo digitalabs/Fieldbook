@@ -605,7 +605,7 @@
 		function openListTree(type) {
 			'use strict';
 			openTreeType = type;
-			$('#listTreeModal').modal('show');
+			$('#listTreeModal').modal({ backdrop: 'static', keyboard: true });
 			$('#page-import-message-modal').html('');
 			additionalLazyLoadUrl = '/0';
 		}

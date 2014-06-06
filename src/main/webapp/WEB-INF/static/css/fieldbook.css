@@ -1146,3 +1146,6 @@ a.fbk-edit-experiment{
 .fbk-import-upload-file{
 	margin-right: 20px;
 }
+.modal-backdrop {
+	background-color: transparent;
+}

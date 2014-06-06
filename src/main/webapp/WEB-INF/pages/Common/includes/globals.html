@@ -1,6 +1,7 @@
 <div layout:fragment="page-script">
 	<script type="text/javascript" th:inline="javascript">
 		//<![CDATA[
+		/* jshint ignore:start */
 		var variableDetailsHeader = /*[[#{variable.details.heading}]]*/ '',	
 		startDateRequiredError = /*[[#{start.end.date.validation.start.date.required}]]*/ '',
 		startDateRequiredEarlierError = /*[[#{start.end.date.validation.start.date.required.earlier}]]*/ '',
@@ -47,8 +48,13 @@
 		variableDetailHeader = /*[[#{ontology.variable.details}]]*/'';
 		noVariableNameError = /*[[#{manage.settings.no.variable.name.error}]]*/ '',
    		noTreatmentFactorPairError = /*[[#{manage.settings.no.treatment.factor.pair.missing}]]*/ '',
-   		noTreatmentFactorPairNameError = /*[[#{manage.settings.no.treatment.factor.pair.name.missing}]]*/ '';
-
+   		noTreatmentFactorPairNameError = /*[[#{manage.settings.no.treatment.factor.pair.name.missing}]]*/ '',
+		germplasmStartingEntry = /*[[#{import.germplasm.germplasm.specified.starting.entry}]]*/ '',
+		germplasmAddedAsCheck = /*[[#{import.germplasm.germplasm.added.as.check}]]*/ '',
+		startingEntryErr = /*[[#{import.germplasm.starting.entry.in.check.list}]]*/ '',
+		sameListErr = /*[[#{import.germplasm.same.list.primary.check}]]*/ '',
+		startingEntryRequired = /*[[#{import.germplasm.starting.entry.required}]]*/ '';
+		/* jshint ignore:end */
 		//]]>
 	</script>
 </div>

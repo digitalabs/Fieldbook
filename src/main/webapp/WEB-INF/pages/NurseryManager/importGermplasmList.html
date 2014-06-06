@@ -72,6 +72,26 @@
 	</div>
 </div>
 
+<div class="modal fade" id="confirmReplaceListModal" tabindex="-1" role="dialog" aria-labelledby="confirmReplaceListModal" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button id="close" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="heading-modal" th:text="#{common.form.confirmation.text}">
+				</h4>
+			</div>
+			<div class="modal-body">			
+				<div class="col-xs-12 col-lg-12" th:text="#{germplasm.list.confirm.replace.with.check}">
+				</div>
+			</div>
+			<div class="modal-footer">
+				<input type="hidden" id="replaceListId"/>
+				<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.no.text}" >Cancel</button>
+				<button type="button" th:value="#{common.form.ok.text}" data-dismiss="modal" class="btn btn-primary" th:text="#{common.form.yes.text}" onclick="javascript: confirmReplaceList();">Ok</button>
+			</div>
+		</div>
+	</div>
+</div>
 <!-- Modal for removing check if it is set as starting entry -->
 <div class="modal fade" id="removeCheckModal" tabindex="-1" role="dialog" aria-labelledby="removeCheckModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
@@ -163,7 +183,13 @@
 	<![endif]-->
 	<script type="text/javascript" th:inline="javascript">
 		//<![CDATA[
-		/* jshint ignore:start */
+		/*globals Spinner, moveToTopScreen, getDisplayedTreeName, showSpecifyCheckSection, setSpinnerMaxValue*/
+		/*globals prevStartIndex, showErrorMessage,germplasmAddedAsCheck, openTreeType, sameListErr*/
+		/*globals changeBrowseGermplasmButtonBehavior, getJquerySafeId, displayGermplasmListTree, pleaseChooseFolder*/
+		/*globals openGermplasmListDetailsPopop*/
+		/*exported startIndex,germplasmStartingEntry,importLocationUrl,importIframeOpened,overwriteChecksList*/
+		/*exported confirmReplaceList,resetGermplasmList,removeCheckFromList,openListTree,viewGermplasmLitDetails */
+		/*exported additionalLazyLoadUrl, chooseList*/
 		var addedGid = {},
 			listId = 0,
 			makeDraggableBool = true,
@@ -171,13 +197,6 @@
 			startIndex = 0,
 			lastDraggedPrimaryList = 0,
 			lastDraggedChecksList = 0,
-			lastStartingEntry = 0,
-
-			germplasmStartingEntry = /*[[#{import.germplasm.germplasm.specified.starting.entry}]]*/ '',
-			germplasmAddedAsCheck = /*[[#{import.germplasm.germplasm.added.as.check}]]*/ '',
-			startingEntryErr = /*[[#{import.germplasm.starting.entry.in.check.list}]]*/ '',
-			sameListErr = /*[[#{import.germplasm.same.list.primary.check}]]*/ '',
-			startingEntryRequired = /*[[#{import.germplasm.starting.entry.required}]]*/ '',
 
 			itemsToAdd = [],
 			checksFromPrimary = 0,
@@ -185,24 +204,11 @@
 			importLocationUrl = /*[[#{nursery.apps.import.nursery.url}]]*/ '',
 			importIframeOpened = false,
 			itemsIndexAdded = [];
-		/* jshint ignore:end */
+		
 
 		var makeCheckDraggableBool = true,
 			hasPageError = /*[[${importGermplasmListForm.hasError}]]*/ '';
-
-		// FIXME Should be camel case, but it's used in too many files to easily change. Also, what is this
-		// function actually doing?
-		function do_validation() {
-			'use strict';
-			var message = /*[[#{common.error.file.no.file.selected}]]*/ '';
-			return true;
-		}
-
-		// FIXME What is this function doing?
-		function changeCheckLayout() {
-			'use strict';
-			var radioVal = $('input[name=\'specifyCheckType\']:checked').val();
-		}
+		
 
 		// FIXME There is a lot of repeated code in the next two functions
 		function makeCheckDraggable(isDraggable) {
@@ -316,7 +322,7 @@
 			} else {
 				var itemsAddedCounter = 0;
 				for(itemsAddedCounter = 0 ; itemsAddedCounter < itemsIndexAdded.length ; itemsAddedCounter++){
-					if(parseInt(itemsIndexAdded[itemsAddedCounter].index, 10) == index) {
+					if(parseInt(itemsIndexAdded[itemsAddedCounter].index, 10) === index) {
 						showErrorMessage('page-message', germplasmAddedAsCheck);
 						moveToTopScreen();
 						return false;
@@ -332,8 +338,9 @@
 			var selectedCheckVal = '';
 			for (var checkIndex = 0; checkIndex < $('.checkRow').length; checkIndex++) {
 				var checkId = $('select.checklist-select:eq(' + checkIndex + ')').val() ;
-				if(checkId === '')
-					checkId = '0'
+				if(checkId === '') {
+					checkId = '0';
+				}
 				selectedCheckVal += checkId + ':'; 							
 			}
 
@@ -353,21 +360,13 @@
 					setSpinnerMaxValue();
 					itemsIndexAdded.push({'entry':entryNumber, 'gid': gid, 'index': index});
 
-					if (index == $('#startIndex2').val() && $('.check-germplasm-list-items .ui-draggable').length !== 0){
-						index++;
+						if (index == $('#startIndex2').val() && $('.check-germplasm-list-items .ui-draggable').length !== 0){
+							index++;
 							prevStartIndex = $('#startIndex2').val();
 						}
-
-					},
-
-					error: function(jqXHR, textStatus, errorThrown){
-						console.log('The following error occured: ' + textStatus, errorThrown);
-					},
-
-					complete: function() {
-						Spinner.toggle();
-					}
-				});
+					Spinner.toggle();	
+				}
+			});
 			return true;
 		}
 
@@ -408,14 +407,6 @@
 					checksFromPrimary = 0;
 					setSpinnerMaxValue();
 					itemsIndexAdded = [];
-
-				},
-
-				error: function(jqXHR, textStatus, errorThrown){
-					console.log('The following error occured: ' + textStatus, errorThrown);
-				},
-
-				complete: function() {
 					Spinner.toggle();
 				}
 			});
@@ -431,7 +422,7 @@
 				cache: false,
 				async: false,
 
-				success: function(html) {
+				success: function() {
 					$('#check-germplasm-list').html('<h3></h3>');
 					$('#check-germplasm-list').addClass('add-border');
 					addedGid = {};
@@ -440,14 +431,6 @@
 					// Set primary germplasm list rows' opacity to 1
 					$('.germplasm-list-items tbody tr').css('opacity', '1');
 					lastDraggedChecksList = 0;
-					lastStartingEntry = 0;
-				},
-
-				error: function(jqXHR, textStatus, errorThrown){
-					console.log('The following error occured: ' + textStatus, errorThrown);
-				},
-
-				complete: function() {
 					Spinner.toggle();
 				}
 			});
@@ -468,9 +451,7 @@
 					}
 				}
 				$('.germplasm-list-items tr.germplasmSelectedRow').removeClass('germplasmSelectedRow');
-			}
-			// FIXME How do we even know what this is here?
-			$(this).removeClass('add-border');
+			}			
 		}
 
 		function deleteCheckGermplasmList(entryNumber, gid) {
@@ -484,7 +465,7 @@
 				cache: false,
 				async: false,
 
-				success: function(data) {
+				success: function() {
 
 					var indexItems,
 						rowGid;
@@ -508,13 +489,6 @@
 							}
 						}
 					}
-				},
-
-				error: function(jqXHR, textStatus, errorThrown){
-					console.log('The following error occured: ' + textStatus, errorThrown);
-				},
-
-				complete: function() {
 					Spinner.toggle();
 				}
 			});
@@ -525,8 +499,8 @@
 			var getType = {};
 			return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
 		}
-
-		function displayGermplasmDetails(listIdTemp) {
+		
+		function displayListDetails(listIdTemp) {
 			'use strict';
 
 			listId = listIdTemp;
@@ -540,7 +514,6 @@
 
 				success: function(html) {
 					$('#imported-germplasm-list').html(html);
-					changeCheckLayout();
 					makeDraggable(makeDraggableBool);
 					checksFromPrimary = 0;
 					setSpinnerMaxValue();
@@ -555,16 +528,24 @@
 						// We clear the list in the check
 						resetCheckList();
 					}
-				},
-
-				error: function(jqXHR, textStatus, errorThrown){
-					console.log('The following error occured: ' + textStatus, errorThrown);
-				},
-
-				complete: function() {
 					Spinner.toggle();
 				}
 			});
+		}
+		function displayGermplasmDetails(listIdTemp){
+			'use strict';
+			if (lastDraggedChecksList === 0 && $('.check-germplasm-list-items tbody tr').length > 0){
+				$('#confirmReplaceListModal #replaceListId').val(listIdTemp);
+				$('#confirmReplaceListModal').modal({ backdrop: 'static', keyboard: true });	
+			}else {
+				displayListDetails(listIdTemp);
+			}
+			
+		}
+		function confirmReplaceList(){
+			'use strict';
+			
+			displayListDetails($('#confirmReplaceListModal #replaceListId').val());
 		}
 
 		function resetGermplasmList() {
@@ -583,30 +564,10 @@
 				type: 'GET',
 				cache: false,
 				async: false,
-				success: function(html) {
+				success: function() {
 					Spinner.toggle();
 				}
 			});
-		}
-
-		function getGid(index) {
-			'use strict';
-			return $($('.germplasm-list-items tbody tr').get(index-1)).data('gid');
-		}
-
-		function verifyIfCheck(startingIndex) {
-			'use strict';
-
-			if (false && ($('tr.checkRow[data-index="' + $(startingIndex).val() + '"]').length !== 0 ||
-				isGidInCheckList(getGid($(startingIndex).val())) > 0)) {
-
-				if (lastDraggedChecksList == 0 && $('#keyForOverwrite').val() === '') {
-					// Only pop if its a drag item from primary
-					$('#removeCheckModal').modal({ backdrop: 'static', keyboard: true });
-				}
-			} else {
-				lastStartingEntry = $(startingIndex).val();
-			}
 		}
 
 		function isGidInCheckList(gid) {
@@ -634,7 +595,6 @@
 				}
 			});
 
-			lastStartingEntry = $('#startIndex2').val();
 
 			$('.check-germplasm-list-items tr[data-entry=' + entryNo + ']').remove();
 			if ($('.check-germplasm-list-items tbody tr').length === 0) {
@@ -658,7 +618,7 @@
 			if (node.data.isFolder) {
 				showErrorMessage('page-import-message-modal', pleaseChooseFolder);
 			} else {
-				if (openTreeType == 1) {
+				if (openTreeType === 1) {
 					// Load in main list
 					if (lastDraggedChecksList != node.data.key) {
 						// Loads the primary germplasm list
@@ -669,7 +629,7 @@
 						showErrorMessage('page-import-message-modal', sameListErr);
 						return;
 					}
-				} else if(openTreeType == 2) {
+				} else if(openTreeType === 2) {
 					// Load in check list
 					if (lastDraggedPrimaryList != node.data.key) {
 						// Loads the check list
@@ -708,12 +668,12 @@
 			$('.list-droppable').droppable({
 				hoverClass: 'drophover',
 				addClasses: true,
-				over: function(event, ui) {
+				over: function(/*event, ui*/) {
 				},
 
 				drop: function(event, ui) {
 
-					if ($('#listTreeModal').hasClass('in') == true) {
+					if ($('#listTreeModal').hasClass('in') === true) {
 						return false;
 					}
 
@@ -744,7 +704,7 @@
 									$('#keyForOverwrite').val(source.data.key);
 									$('#confirmationModal').modal('show');
 								} else {
-									displayGermplasmCheckDetails(source.data.key)
+									displayGermplasmCheckDetails(source.data.key);
 									$(this).removeClass('add-border');
 								}
 								makeCheckDraggable(false);
@@ -823,10 +783,7 @@
 				$('#myModal').modal('show');
 			}
 
-			// Display tree
-			$('input[name="specifyCheckType"]').on('change', changeCheckLayout);
-
-			changeCheckLayout();
+			// Display tree			
 			showSpecifyCheckSection();
 
 			// FIXME Should not be user agent checking, or changing CSS in JavaScript

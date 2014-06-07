@@ -35,6 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.ChangeType;
 import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.ImportResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
@@ -43,7 +44,6 @@ import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.common.service.DataKaptureImportStudyService;
 import com.efficio.fieldbook.web.common.service.ExcelImportStudyService;
 import com.efficio.fieldbook.web.common.service.FieldroidImportStudyService;
-import com.efficio.fieldbook.web.common.service.ImportStudyService;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -188,13 +188,21 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	    		resultsMap.put("error", importResult.getErrorMessage());
 	    	}else{
 	    		resultsMap.put("isSuccess", 1);
-		    	resultsMap.put("mode", importResult.getMode());
+		    	resultsMap.put("modes", importResult.getModes());
 		    	populateConfirmationMessages(importResult.getChangeDetails());
 		    	resultsMap.put("changeDetails", importResult.getChangeDetails());
 		    	resultsMap.put("errorMessage", importResult.getErrorMessage());
 		    	String reminderConfirmation = "";
-		    	if(importResult.getMode() != ImportStudyService.EDIT_ONLY){
-		    		reminderConfirmation = messageSource.getMessage("confirmation.import." + importResult.getMode(), null, locale);
+		    	if(importResult.getModes() != null && !importResult.getModes().isEmpty()){
+		    		StringBuilder param = new StringBuilder();
+		    		param.append("<ul>");
+		    		for (ChangeType mode : importResult.getModes()) {
+		    			param.append("<li>");
+		    			param.append(messageSource.getMessage(mode.getMessageCode(), null, locale));
+		    			param.append("</li>");
+		    		}
+		    		param.append("</ul>");
+		    		reminderConfirmation = messageSource.getMessage("confirmation.import.text", new String[] {param.toString()}, locale);
 		    	}
 		    	resultsMap.put("message", reminderConfirmation);
 	    	}

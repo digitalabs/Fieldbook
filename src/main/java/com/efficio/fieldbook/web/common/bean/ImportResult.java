@@ -1,15 +1,16 @@
 package com.efficio.fieldbook.web.common.bean;
 
 import java.util.List;
+import java.util.Set;
 
 public class ImportResult {
 
-	private int mode;
+	private Set<ChangeType> modes;
 	private List<GermplasmChangeDetail> changeDetails;
 	private String errorMessage;
 	
-	public ImportResult(int mode, List<GermplasmChangeDetail> changeDetails){
-		this.mode = mode;
+	public ImportResult(Set<ChangeType> modes, List<GermplasmChangeDetail> changeDetails){
+		this.modes = modes;
 		this.changeDetails = changeDetails;
 	}
 	
@@ -18,17 +19,19 @@ public class ImportResult {
 	}
 	
 	/**
-	 * @return the mode
+	 * @return the modes
 	 */
-	public int getMode() {
-		return mode;
+	public Set<ChangeType> getModes() {
+		return modes;
 	}
+
 	/**
-	 * @param mode the mode to set
+	 * @param modes the modes to set
 	 */
-	public void setMode(int mode) {
-		this.mode = mode;
+	public void setModes(Set<ChangeType> modes) {
+		this.modes = modes;
 	}
+
 	/**
 	 * @return the changeDetails
 	 */

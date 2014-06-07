@@ -192,19 +192,16 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		    	populateConfirmationMessages(importResult.getChangeDetails());
 		    	resultsMap.put("changeDetails", importResult.getChangeDetails());
 		    	resultsMap.put("errorMessage", importResult.getErrorMessage());
+		    	List<String> detailErrorMessage = new ArrayList<String>();
 		    	String reminderConfirmation = "";
 		    	if(importResult.getModes() != null && !importResult.getModes().isEmpty()){
-		    		StringBuilder param = new StringBuilder();
-		    		param.append("<ul>");
 		    		for (ChangeType mode : importResult.getModes()) {
-		    			param.append("<li>");
-		    			param.append(messageSource.getMessage(mode.getMessageCode(), null, locale));
-		    			param.append("</li>");
+		    			detailErrorMessage.add(messageSource.getMessage(mode.getMessageCode(), null, locale));
 		    		}
-		    		param.append("</ul>");
-		    		reminderConfirmation = messageSource.getMessage("confirmation.import.text", new String[] {param.toString()}, locale);
+		    		reminderConfirmation = messageSource.getMessage("confirmation.import.text", null, locale);
 		    	}
 		    	resultsMap.put("message", reminderConfirmation);
+		    	resultsMap.put("detailErrorMessage", detailErrorMessage);
 	    	}
 	    	
 	    	

@@ -85,7 +85,7 @@
 				
 				<div class="row form-group">
 					<div class="col-xs-12 col-md-12">
-						<label class="control-label import-confirmation"></label>
+						<label class="control-label import-confirmation label-bold"></label>
 					</div>
 				</div>
 
@@ -161,6 +161,7 @@
 	<script type='text/javascript' th:inline="javascript">
 		//<![CDATA[
 		/*globals importNursery, Spinner, showErrorMessage*/
+		/*exported showImportResponse, importOptions, confirmDesignation, goBackToImport, doImportActionChange*/
 
 		var importStudyHeader = /*[[#{study.import.study.header}]]*/ '',
 			importStudyBookHeader = /*[[#{study.import.study.book.header}]]*/ '',
@@ -199,10 +200,22 @@
 			$('#importStudyModal').modal('hide');
 			$('#importStudyConfirmationModal').modal('hide');
 		}
-		function showImportResponse(responseText, statusText, xhr, $form) {
+		function confirmStudyImport(){
+			'use strict';
+			if(changeConfirmationDetails.length !== 0){
+				showDesigConfirmation();
+			}else{
+				doMeasurementsReload();
+			}
+			
+		}
+		
+		function showImportResponse(responseText) {
 			//reload the screen
 			'use strict';
-			var resp = $.parseJSON(responseText);
+			var resp = $.parseJSON(responseText),
+				importError = '',
+				errorIndex = 0;
 			changeConfirmationDetails = [];
 			currentConfirmationIndex = 0;
 			if(resp.changeDetails != null && resp.changeDetails.length !== 0){
@@ -213,12 +226,20 @@
 			}
 			Spinner.toggle();
 			if(resp.isSuccess === 1){
-				if(resp.mode === 0){
+				if(resp.modes != null && resp.modes.length === 0){
 					confirmStudyImport();
 				}else{
 					$('#importStudyModal').modal('hide');
 					setTimeout(function(){$('#importStudyConfirmationModal').modal({ backdrop: 'static', keyboard: false });}, 300);
-					$('#importStudyConfirmationModal .import-confirmation').html(resp.message);
+					importError = resp.message;
+					if(resp.detailErrorMessage != null && resp.detailErrorMessage.length !== 0) {
+						importError += '<ul>';
+						for(errorIndex = 0 ; errorIndex < resp.detailErrorMessage.length ; errorIndex++) {
+							importError += '<li>'+resp.detailErrorMessage[errorIndex]+'</li>';
+						}
+						importError += '</ul>';
+					}
+					$('#importStudyConfirmationModal .import-confirmation').html(importError);
 				}
 			}else{
 				showErrorMessage('page-import-study-message-modal', resp.error);
@@ -239,10 +260,52 @@
 					Spinner.toggle();
 				}
 			});
+		}		
+
+		function showDesignationConfirmationMessage(){
+			'use strict';
+			$('#import-action-type option:selected').prop('selected', false);
+			$('#import-action-type option[value=0]').prop('selected', true);
+			$('#import-action-type').change();
+			$('#importStudyDesigConfirmationModal .import-desig-confirmation').html(changeConfirmationDetails[currentConfirmationIndex].message);
+			if (changeConfirmationDetails[currentConfirmationIndex].matchingGids && changeConfirmationDetails[currentConfirmationIndex].matchingGids.length > 0) {
+				$('#matching-gid').empty();
+				for (var i = 0; i < changeConfirmationDetails[currentConfirmationIndex].matchingGids.length; i++) {
+					$('#matching-gid').append(
+							new Option(changeConfirmationDetails[currentConfirmationIndex].matchingGids[i],
+									changeConfirmationDetails[currentConfirmationIndex].matchingGids[i]));
+				}
+				$('#matching-gid').change();
+				
+				$('#import-action-type option[value=3]').prop('disabled', false);
+				if ($('#import-action-type').val() === '3') {
+					$('.choose-gids').show();
+					$('.no-choose-gids').hide();
+				} 
+				else {
+					$('.choose-gids').hide();
+					$('.no-choose-gisd').show();
+				}
+			}
+			else {
+				$('#import-action-type option[value=3]').prop('disabled', true);
+				$('.choose-gids').hide();
+				$('.no-choose-gids').show();
+			}
+			
 		}
+
+		function showDesigConfirmation(){
+			'use strict';
+			$('#importStudyModal').modal('hide');
+			$('#importStudyConfirmationModal').modal('hide');
+			setTimeout(function(){$('#importStudyDesigConfirmationModal').modal({ backdrop: 'static', keyboard: false });}, 300);
+			showDesignationConfirmationMessage();
+		}
+
 		function confirmDesignation(){
 			'use strict';
-			var status = $("#import-action-type").val(),
+			var status = $('#import-action-type').val(),
 				applyDetails = false;
 			
 			if($('input[type=checkbox][name=yesToAllDesig]:checked').val() === '1'){
@@ -267,56 +330,7 @@
 			}
 				
 		}
-
-		function showDesigConfirmation(){
-			'use strict';
-			$('#importStudyModal').modal('hide');
-			$('#importStudyConfirmationModal').modal('hide');
-			setTimeout(function(){$('#importStudyDesigConfirmationModal').modal({ backdrop: 'static', keyboard: false });}, 300);
-			showDesignationConfirmationMessage();
-		}
-		function showDesignationConfirmationMessage(){
-			'use strict';
-			$('#import-action-type option:selected').prop('selected', false);
-			$('#import-action-type option[value=0]').prop('selected', true);
-			$('#import-action-type').change();
-			$('#importStudyDesigConfirmationModal .import-desig-confirmation').html(changeConfirmationDetails[currentConfirmationIndex].message);
-			if (changeConfirmationDetails[currentConfirmationIndex].matchingGids && changeConfirmationDetails[currentConfirmationIndex].matchingGids.length > 0) {
-				$('#matching-gid').empty();
-				for (var i = 0; i < changeConfirmationDetails[currentConfirmationIndex].matchingGids.length; i++) {
-					$('#matching-gid').append(
-							new Option(changeConfirmationDetails[currentConfirmationIndex].matchingGids[i],
-									changeConfirmationDetails[currentConfirmationIndex].matchingGids[i]));
-				}
-				$('#matching-gid').change();
-				
-				$('#import-action-type option[value=3]').prop('disabled', false);
-				if ($('#import-action-type').val() == 3) {
-					$('.choose-gids').show();
-					$('.no-choose-gids').hide();
-				} 
-				else {
-					$('.choose-gids').hide();
-					$('.no-choose-gisd').show();
-				}
-			}
-			else {
-				$('#import-action-type option[value=3]').prop('disabled', true);
-				$('.choose-gids').hide();
-				$('.no-choose-gids').show();
-			}
-			
-		}
-		
-		function confirmStudyImport(){
-			'use strict';
-			if(changeConfirmationDetails.length !== 0){
-				showDesigConfirmation();
-			}else{
-				doMeasurementsReload();
-			}
-			
-		}
+						
 		function showImportOptions(){
 			'use strict';
 			$('#importStudyModal').modal({ backdrop: 'static', keyboard: false });
@@ -343,7 +357,7 @@
 		
 		function doImportActionChange() {
 			'use strict';
-			if ($('#import-action-type').val() == 3) {
+			if ($('#import-action-type').val() === '3') {
 				$('.choose-gids').show();
 				$('.no-choose-gids').hide();
 			}

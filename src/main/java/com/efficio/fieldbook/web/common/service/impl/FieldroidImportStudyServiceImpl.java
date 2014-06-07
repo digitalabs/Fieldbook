@@ -13,11 +13,14 @@ package com.efficio.fieldbook.web.common.service.impl;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.springframework.stereotype.Service;
 
+import com.efficio.fieldbook.web.common.bean.ChangeType;
 import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.ImportResult;
 import com.efficio.fieldbook.web.common.service.FieldroidImportStudyService;
@@ -36,7 +39,8 @@ public class FieldroidImportStudyServiceImpl implements
 		validate(csv, file, workbook);
 		
 		csv.readDATAnew(file);
-		return new ImportResult(EDIT_ONLY, new ArrayList<GermplasmChangeDetail>());
+		Set<ChangeType> modes = new HashSet<ChangeType>();
+		return new ImportResult(modes, new ArrayList<GermplasmChangeDetail>());
 	}
 	
 	private void validate(CSVOziel csv, File file, Workbook workbook) throws WorkbookParserException {

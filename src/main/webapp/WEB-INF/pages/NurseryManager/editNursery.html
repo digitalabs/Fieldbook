@@ -310,11 +310,11 @@
 		/*global showErrorMessage,recreateSessionVariables, lastDraggedChecksList, Spinner, validateCreateNursery, validateStartEndDate, moveToTopScreen, programNurseriesText*/
 		var locationSuggestions = /*[[${locationList}]]*/ '',
 			scaleSuggestions = /*[[${scaleList}]]*/  '';
-		
+
 
 		/* jshint ignore:start */
 		var selectedGidsForAdvance = [],
-			measurementRowCount = /*[[${createNurseryForm.measurementRowList.size()}]]*/ 0, 
+			measurementRowCount = /*[[${createNurseryForm.measurementRowList.size()}]]*/ 0,
 			buttonToDelete = null;
 			/* jshint ignore:end */
 
@@ -380,10 +380,10 @@
 					} else if (data.status === '1') {
 						recreateSessionVariables();
 					}
-				} 
+				}
 			});
 		}
-		
+
 		function deleteMeasurementRows() {
 			'use strict';
 
@@ -417,7 +417,7 @@
 				if ($(".germplasm-list-items tbody tr").length > 0 && measurementRowCount > 0) {
 					deleteMeasurementRows();
 				} else {
-					submitWorkbook();	
+					submitWorkbook();
 				}
 			} else {
 				moveToTopScreen();
@@ -440,7 +440,7 @@
 			if ($('#folderId').val() === '1') {
 				$('#folderNameLabel').html(programNurseriesText);
 			}
-			
+
 			if ($("#measurementDataExisting")) {
 				displayCorrespondingGermplasmSections();
 			}
@@ -448,7 +448,7 @@
 				$('.nursery-name').tooltip();
 			}
 		});
-		
+
 	//]]>
 	</script>
 </div>

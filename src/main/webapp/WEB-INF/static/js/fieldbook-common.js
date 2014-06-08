@@ -1184,7 +1184,7 @@ function importNursery(type) {
 }
 
 function submitImportStudy() {
-	
+
 	if ($('#importType').val() === '0') {
 		showErrorMessage('page-import-study-message-modal', 'Please choose import type');
 		return false;
@@ -2081,13 +2081,13 @@ function truncateStudyVariableNames(domSelector, charLimit){
 			if(!$(this).parent().hasClass('variable-tooltip')){
 				$(this).parent().addClass('variable-tooltip');
 				$(this).parent().attr('title',htmlString);
-				
+
 				htmlString = htmlString.substring(0,charLimit) + '...';
-					
+
 			}
 			$(this).html(htmlString);
 		}
-				
+
 	});
 	$('.variable-tooltip').each(function(){
 		$(this).data('toggle', 'tooltip');

@@ -20,10 +20,13 @@ function triggerInventoryTableSelection(tableName, sectionContainerDiv, listIden
 		
 	});
 }
+function getCurrentAdvanceTabTempIdentifier(){
+	var listDivIdentifier  = $('#create-nursery-tab-headers li.active .fbk-close-tab').attr('id');
+	return listDivIdentifier;
+}
 function getCurrentAdvanceTabListIdentifier(){
 	'use strict';
-	var listDivIdentifier  = $('#create-nursery-tab-headers li.active .fbk-close-tab').attr('id'),
-		sectionContainerDiv = 'advance-list'+listDivIdentifier,
+	var sectionContainerDiv = 'advance-list'+getCurrentAdvanceTabTempIdentifier(),
 		listIdentifier = $('#'+getJquerySafeId(sectionContainerDiv) + ' #listId').val();
 	return listIdentifier;
 }
@@ -53,9 +56,7 @@ function addLot(){
 		type: 'GET',
 		cache: false,
 	    success: function(data) {
-	    	$('#addLotsModalDiv').html(data);
-	    	$('#locationId').select2('data', null);
-	    	$('#scaleId').select2('data', null);
+	    	$('#addLotsModalDiv').html(data);	    	
 	    	$('#comments').val('');
 	    	$('#amount').val('');
 	    	$('#page-message-lots').html('');
@@ -68,13 +69,6 @@ function addLot(){
 	    }
 	});
 	
-}
-function sortByKey(array, key) {
-	'use strict';
-    return array.sort(function(a, b) {
-        var x = a[key].toLowerCase(); var y = b[key].toLowerCase();
-        return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-    });
 }
 
 function initializePossibleValuesComboScale(possibleValues, name, isLocation, defaultValue) {
@@ -237,7 +231,7 @@ function displayAdvanceGermplasmDetails(listId) {
 		type: "GET",
 		cache: false,
 		success: function(html) {
-			$('#inventory-germplasm-list').html(html);
+			$('#advance-list' + getCurrentAdvanceTabTempIdentifier()).html(html);
 			Spinner.toggle();
 		}
 	});

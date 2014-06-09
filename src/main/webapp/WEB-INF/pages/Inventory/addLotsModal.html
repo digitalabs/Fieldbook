@@ -3,79 +3,90 @@
 		method="post" th:object="${seedStoreForm}" enctype="multipart/form-data">
 	<!-- Modal -->
    	<div class="modal fade" id="addLotsModal" role="dialog" aria-labelledby="addLotsLabel" aria-hidden="true">
-		<div class="modal-dialog  modal-medium">
+		<div class="modal-dialog  modal-extra-large">
 	    	<div class="modal-content">
 		    	<div class="modal-header">
 		            <button id="closeAddLotsModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		            <h4 class="modal-title">Add Lots</h4>
+		            <h4 class="modal-title" th:text="#{advance.update.inventory}">Update Inventory</h4>
 		        </div>
 	         	<div class="modal-body" id="addLotsBody">
 	         		<div id="page-message-lots">
 	         		</div>
 	         		<div class="row">
-	         			<div class="col-xs-12 col-md-12">
+	         			<div class="col-md-12">
 	         				<input type ="hidden" th:field="*{gidList}" />
 	         			</div>
 	         		</div>
 	         		<div class="row">
-	         			<div class="col-xs-12 col-md-12">
-	         				<div class="col-xs-12 col-md-12">
-	         					<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
-	         				</div>
+	         			<div class="col-md-12">
+         					<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
 	         			</div>
 	         		</div>
 	         		<div class="row form-group">
-	         			<div class="col-xs-12 col-md-12">
-		         			<div class="col-xs-3 col-md-3">
-		         				<label class="control-label label-bold" th:text="#{seed.inventory.location}+':'">Location:</label>&nbsp;<span class="required">*</span>
-		         			</div>
-		         			<div class="col-xs-6 col-md-6">
-		         				<input type="hidden" th:field="*{inventoryLocationId}" class="form-control" />
-		         				<input type="hidden" name="inventoryMethodIdAll" id="inventoryMethodIdAll" class="form-control select2" placeholder=""/>
-								<input type="hidden" name="inventoryMethodIdFavorite" id="inventoryMethodIdFavorite" class="form-control select2" placeholder=""/>
-						
-		         			</div>
-		         			<div class="col-xs-3 col-md-3 add_top_padding"><a class="" href="javascript: openManageLocations()" th:text="#{advancing.nursery.manage.location}">Manage Methods</a></div>
-	         			</div>	         				         			
+						<div class="col-md-12">
+							<label class="h4" th:text="#{seed.inventory.location.header}">LOCATION</label>
+						</div>
+					</div>
+	         		<div class="row form-group">	         			
+	         			<div class="col-md-5">
+	         				<label class="control-label label-bold" th:text="#{seed.inventory.location}+':'">Location:</label>&nbsp;<span class="required">*</span>
+	         			</div>
+	         			<div class="col-md-4">
+	         				<input type="hidden" th:field="*{inventoryLocationId}" class="form-control" />
+	         				<input type="hidden" name="inventoryMethodIdAll" id="inventoryMethodIdAll" class="form-control select2" placeholder=""/>
+							<input type="hidden" name="inventoryMethodIdFavorite" id="inventoryMethodIdFavorite" class="form-control select2" placeholder=""/>
+					
+	         			</div>
+	         			<div class="col-md-3 add_top_padding"><a class="" href="javascript: openManageLocations()" th:text="#{advancing.nursery.manage.location}">Manage Methods</a></div>	         			         				         		
 	         		</div>
 	         		
-	         		<div class="row form-group">
-	         			<div class="col-xs-12 col-md-12">
-		         			<div class="col-xs-3 col-md-3">
+	         		<div class="row form-group">	         			
+		         			<div class="col-md-5">
 		         				&nbsp;
 		         			</div>
-		         			<div class="col-xs-6 col-md-6">
-		         									
-									<label>
-										<input id="showFavoriteLocationInventory" value="1" type="checkbox"/> <span th:text="#{show.favorite.location}">Show Favorite Method</span>
-										&nbsp;&nbsp;
-											
-									</label>								
-		         			</div>
-		         			</div>		         			
+		         			<div class="col-md-4">		         								
+								<label>
+									<input id="showFavoriteLocationInventory" value="1" type="checkbox"/> <span th:text="#{show.favorite.location}">Show Favorite Method</span>
+									&nbsp;&nbsp;											
+								</label>								
+		         			</div>		         				         			
 					</div>
-	         			
 	         		<div class="row form-group">
-	         			<div class="col-xs-12 col-md-12">
-		         			<div class="col-xs-3 col-md-3">
+						<div class="col-md-12">
+							<label class="h4" th:text="#{seed.inventory.scale.and.amount.header}">SCALE AND AMOUNT</label>
+						</div>
+					</div>	
+	         		<div class="row form-group">
+		         			<div class="col-md-5">
 		         				<label class="control-label label-bold" th:text="#{seed.inventory.scale}+':'">Scale:</label>&nbsp;<span class="required">*</span>
 		         			</div>
-		         			<div class="col-xs-6 col-md-6">
+		         			<div class="col-md-4">
 		         				<input type="hidden" th:field="*{inventoryScaleId}" class="form-control select2" />
 		         			</div>
 		         			<div class="col-xs-3 col-md-3">&nbsp;</div>
-	         			</div>
 	         		</div>
 	         		<div class="row form-group">
-	         			<div class="col-xs-12 col-md-12">
-		         			<div class="col-xs-3 col-md-3">
+		         			<div class="col-md-5">
+		         				<label class="control-label label-bold" th:text="#{seed.inventory.amount}+':'">Scale:</label>&nbsp;<span class="required">*</span>
+		         			</div>
+		         			<div class="col-md-2">
+		         				<input type="text" th:field="*{amount}" class="form-control" />
+		         			</div>
+		         			<div class="col-md-3">&nbsp;</div>
+	         		</div>
+	         		<div class="row form-group">
+						<div class="col-md-12">
+							<label class="h4" th:text="#{seed.inventory.comments.header}">COMMENTS</label>
+						</div>
+					</div>	
+	         		<div class="row form-group">
+		         			<div class="col-md-5">
 		         				<label class="control-label label-bold" th:text="#{seed.inventory.comments}+':'">Comments:</label>
 		         			</div>
-		         			<div class="col-xs-8 col-md-8">
+		         			<div class="col-md-4">
 		         				<textarea th:field="*{inventoryComments}" class="form-control" rows="3"></textarea>
 		         			</div>
-		         			<div class="col-xs-1 col-md-1">&nbsp;</div>
-	         			</div>
+		         			<div class="col-md-3">&nbsp;</div>
 	         		</div>
 	         	</div>																							
 	       		<div class="modal-footer">    
@@ -91,14 +102,11 @@
 <div layout:fragment="page-script">		
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[    
-		 var inventoryLocationSuggestions = /*[[${locationList}]]*/ null;
-		 var inventoryFavoriteLocationSuggestions = /*[[${favoriteLocationList}]]*/ null;
-		 var scaleSuggestions = /*[[${scaleList}]]*/ null;
+		 var inventoryLocationSuggestions = /*[[${locationList}]]*/ null,
+		 	inventoryFavoriteLocationSuggestions = /*[[${favoriteLocationList}]]*/ null,
+		 	scaleSuggestions = /*[[${scaleList}]]*/ null;
 		 
 		 $( document ).ready(function() {			  			  
-			  //initializePossibleValuesCombo(inventoryLocationSuggestions, "#inventoryLocationId", true, null);
-			  //initializePossibleValuesCombo(scaleSuggestions, "#inventoryScaleId", false, null);
-			  
 			 $('#showFavoriteLocationInventory').on('change', function(){
 				 showCorrectLocationInventoryCombo();
 			})

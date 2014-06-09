@@ -14,35 +14,36 @@
          <table id="inventory-table" th:if="*{not #lists.isEmpty(paginatedInventoryList)}" class="my-class table table-curved table-condensed germplasm-list-items">
            <thead>
              <tr>
-               <th  style="text-align: left; vertical-align: middle">&nbsp;</th>
-               <th  style="text-align: left; vertical-align: middle">Entry #</th>
-               <th  style="text-align: left; vertical-align: middle">Designation</th>
-               <th  style="text-align: left; vertical-align: middle">Parentage</th>
-               <th  style="text-align: left; vertical-align: middle" th:utext="#{seed.inventory.gid}">.GID</th>
-               <th  style="text-align: left; vertical-align: middle" th:utext="#{seed.inventory.source}">.Source</th>
-               <th  style="text-align: left; vertical-align: middle" th:utext="#{seed.inventory.location}">.Location</th>
-               <th  style="text-align: left; vertical-align: middle" th:utext="#{seed.inventory.amount}">.Amount</th>
-               <th  style="text-align: left; vertical-align: middle" th:utext="#{seed.inventory.scale}">.Scale</th>
-               <th  style="text-align: left; vertical-align: middle">Comment</th>               
+               <th>&nbsp;</th>
+               <th th:utext="#{seed.entry.number}">Entry #</th>
+               <th th:utext="#{seed.entry.designation}">Designation</th>
+               <th th:utext="#{seed.entry.parentage}">Parentage</th>
+               <th th:utext="#{seed.inventory.gid}">.GID</th>
+               <th th:utext="#{seed.inventory.source}">.Source</th>
+               <th th:utext="#{seed.inventory.table.location}">.Location</th>
+               <th th:utext="#{seed.inventory.amount}">.Amount</th>
+               <th th:utext="#{seed.inventory.table.scale}">.Scale</th>
+               <th th:utext="#{seed.inventory.comment}">Comment</th>               
              </tr>
            </thead>
            <tbody>
              <tr class="primaryRow" th:each="gid, row : *{paginatedInventoryList}" th:attr="data-gid=${gid.gid}">
-            	<td style="text-align: center; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'"><input type="checkbox" class="advancingListGid" th:attr="data-gid=${gid.gid}" th:attrappend="data-lotId=${gid.locationId}" name="advancingListGid" id="advancingListGid"/> </td>
-               <td  style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryId}">.1</td> 
-               <td  style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" >
-				<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${gid.germplasmName}" th:attr="data-gid=${gid.gid}" th:attrappend="data-desig=${gid.germplasmName}">.2</a>      
+            	<td th:class="${row.even}? 'even fbk-advance-check-box' : 'odd fbk-advance-check-box'">
+            		<input type="checkbox" class="advancingListGid" th:attr="data-gid=${gid.gid}" th:attrappend="data-lotId=${gid.locationId}" name="advancingListGid" id="advancingListGid"/> 
+           		</td>
+                <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryId}">.1</td> 
+                <td th:class="${row.even}? 'even' : 'odd'" >
+					<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${gid.germplasmName}" th:attr="data-gid=${gid.gid}" th:attrappend="data-desig=${gid.germplasmName}">.2</a>      
 				</td>
-               <td style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.parentage}">.2</td>
-               <td style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" >
-               	<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${gid.gid}" th:attr="data-gid=${gid.gid}" th:attrappend="data-desig=${gid.germplasmName}">.3</a>
-               
+               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.parentage}">.2</td>
+               <td th:class="${row.even}? 'even' : 'odd'" >
+               	<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${gid.gid}" th:attr="data-gid=${gid.gid}" th:attrappend="data-desig=${gid.germplasmName}">.3</a>               
                </td>
-               <td style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.source}">.2</td>
-               <td style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.locationName}">.2</td>
-               <td style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.amount}">.4</td>
-               <td  style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.scaleName}">.6</td>
-               <td  style="text-align: left; vertical-align: middle" align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.comment}">.6</td>
+               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.source}">.2</td>
+               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.locationName}">.2</td>
+               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.amount}">.4</td>
+               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.scaleName}">.6</td>
+               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.comment}">.6</td>
              </tr>             
            </tbody>
          </table> 
@@ -99,7 +100,7 @@
         };
         $( document ).ready(function() {  
           'use strict';
-        	var listDivIdentifier  = $('#create-nursery-tab-headers li.active button').attr('id'),
+        	var listDivIdentifier  = $('#create-nursery-tab-headers li.active .fbk-close-tab').attr('id'),
               sectionContainerDiv = 'advance-list'+listDivIdentifier;
         	
     			if($('#' + sectionContainerDiv + ' #inventory-germplasm-list-pagination') !== null){

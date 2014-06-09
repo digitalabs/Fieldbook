@@ -56,6 +56,8 @@ public class SeedStoreForm {
     /** The total number of germplasms. */
     private int totalNumberOfGermplasms;
     
+    private Double amount;
+    
      
     
     /**
@@ -279,5 +281,13 @@ public class SeedStoreForm {
     public void setGidList(String gidList) {
         this.gidList = gidList;
     }
+
+	public Double getAmount() {
+		return amount;
+	}
+
+	public void setAmount(Double amount) {
+		this.amount = amount;
+	}
 
 }

@@ -316,6 +316,21 @@ function isInt(value) {
 	}
 	return value % 1 === 0;
 }
+function isFloatNumber(val) {
+	if(!val || (typeof val != "string" || val.constructor != String)) {
+		return(false);
+	}
+	var isNumber = !isNaN(new Number(val));
+	if(isNumber) {
+		if(val.indexOf('.') != -1) {
+			return(true);
+		} else {
+			return isInt(val);
+		}
+	} else {
+		return(false);
+	}
+}
 
 function selectTrialInstance(tableName) {
 	if (tableName == 'trial-table') {

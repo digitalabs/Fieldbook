@@ -5,9 +5,7 @@
 /*exported initializePossibleValuesComboInventory, triggerInventoryTableSelection, getCurrentAdvanceTabListIdentifier, addLot, initializePossibleValuesComboScale*/
 function triggerInventoryTableSelection(tableName, sectionContainerDiv, listIdentifier){
 	'use strict';
-	$('#' + sectionContainerDiv + ' #'+tableName+' tr.primaryRow').on('click', function() {	
-		//$('#'+tableName).find("*").removeClass('field-map-highlight');
-		
+	$('#' + sectionContainerDiv + ' #'+tableName+' tr.primaryRow').on('click', function() {			
 			$(this).toggleClass('field-map-highlight');
 			var gid = $(this).data('gid') + '';
 			if(selectedGidsForAdvance[listIdentifier] == null) {
@@ -45,6 +43,7 @@ function addLot(){
 	var gids = getSelectedInventoryGids();
 	if(gids.length === 0){
 		showErrorMessage('page-message', germplasmSelectError);
+		moveToTopScreen();
 		return;		
 	}
 	
@@ -58,6 +57,7 @@ function addLot(){
 	    	$('#locationId').select2('data', null);
 	    	$('#scaleId').select2('data', null);
 	    	$('#comments').val('');
+	    	$('#amount').val('');
 	    	$('#page-message-lots').html('');
 	    	$('#addLotsModal').modal({ backdrop: 'static', keyboard: true });
 	    	initializePossibleValuesComboInventory(inventoryLocationSuggestions, '#inventoryMethodIdAll', true, null);
@@ -83,7 +83,7 @@ function initializePossibleValuesComboScale(possibleValues, name, isLocation, de
 		defaultJsonVal = null;
 	
 	$.each(possibleValues, function(index, value) {
-		var jsonVal;
+		var jsonVal = null;
 		if (value.id !== undefined) {
 			jsonVal = { 'id' : value.id,
 					  'text' : value.name
@@ -104,7 +104,7 @@ function initializePossibleValuesComboScale(possibleValues, name, isLocation, de
 	
 		$(name).select2({
 			query: function (query) {	
-		      var data = {results: possibleValuesObj}, i, j, s;
+		      var data = {results: possibleValuesObj};
 		      // return the array that matches
 		      data.results = $.grep(data.results,function(item,index){
 		        return ($.fn.select2.defaults.matcher(query.term,item.text));
@@ -151,7 +151,7 @@ function initializePossibleValuesComboInventory(possibleValues, name, showAllLoc
 		$(name).select2({
 			minimumInputLength: 2,
 			query: function (query) {	
-		      var data = {results: possibleValuesObj}, i, j, s;
+		      var data = {results: possibleValuesObj};
 		      // return the array that matches
 		      data.results = $.grep(data.results,function(item,index) {
 		        return ($.fn.select2.defaults.matcher(query.term,item.text));
@@ -169,7 +169,7 @@ function initializePossibleValuesComboInventory(possibleValues, name, showAllLoc
 	} else {
 		$(name).select2({
 			query: function (query) {	
-		      var data = {results: possibleValuesObj}, i, j, s;
+		      var data = {results: possibleValuesObj};
 		      // return the array that matches
 		      data.results = $.grep(data.results,function(item,index) {
 		        return ($.fn.select2.defaults.matcher(query.term,item.text));
@@ -197,10 +197,18 @@ function saveLots() {
 	var gids = getSelectedInventoryGids();
 	$('#gidList').val(gids);
 	
-	if (!$('#locationId').select2('data')) {
+	if ($('#inventoryLocationId').val() === '0') {
 		showErrorMessage('page-message-lots', locationRequired);
-	} else if (!$('#scaleId').select2('data')) {
+		moveToTopScreen();
+	} else if (!$('#inventoryScaleId').select2('data')) {
 		showErrorMessage('page-message-lots', scaleRequired);
+		moveToTopScreen();
+	} else if ($('#amount').val() === '') {
+		showErrorMessage('page-message-lots', inventoryAmountRequired);
+		moveToTopScreen();
+	} else if(isFloatNumber($('#amount').val()) === false || parseFloat($('#amount').val()) < 0) {
+		showErrorMessage('page-message-lots', inventoryAmountPositiveRequired);
+		moveToTopScreen();
 	} else {
 		var serializedData = $('#add-plot-form').serialize();
 		
@@ -212,7 +220,7 @@ function saveLots() {
 		    	if (data.success === 1) {
 			    	showSuccessfulMessage('page-message', data.message);
 			    	$('#addLotsModal').modal('hide');
-			    	displayAdvanceGermplasmDetails($('#listIdSelected').val());
+			    	displayAdvanceGermplasmDetails(getCurrentAdvanceTabListIdentifier());
 		    	} else {
 		    		showErrorMessage('page-message-lots', data.message);
 		    	}
@@ -223,14 +231,12 @@ function saveLots() {
 
 function displayAdvanceGermplasmDetails(listId) {
 	'use strict';
-	$('#listIdSelected').val(listId);
 	Spinner.toggle();
 	$.ajax({
-		url: "/Fieldbook/SeedStoreManager/displayGermplasmDetails/" + listId,
+		url: "/Fieldbook/SeedStoreManager/advance/displayGermplasmDetails/" + listId,
 		type: "GET",
 		cache: false,
 		success: function(html) {
-			selectedGids = [];
 			$('#inventory-germplasm-list').html(html);
 			Spinner.toggle();
 		}
@@ -244,7 +250,7 @@ function showCorrectLocationInventoryCombo() {
 	if(isChecked){
 		$('#s2id_inventoryMethodIdFavorite').show();
 		$('#s2id_inventoryMethodIdAll').hide();
-		if($('#'+getJquerySafeId('inventoryMethodIdFavorite')).select2('data"') != null){
+		if($('#'+getJquerySafeId('inventoryMethodIdFavorite')).select2('data') != null){
 			$('#'+getJquerySafeId('inventoryLocationId')).val($('#'+getJquerySafeId('inventoryMethodIdFavorite')).select2('data').id);
 			
 		}else{

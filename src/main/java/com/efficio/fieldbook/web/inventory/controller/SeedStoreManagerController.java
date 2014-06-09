@@ -131,43 +131,14 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
      * @return the string
      */
     @RequestMapping(method = RequestMethod.GET)
-    public String show(@ModelAttribute("seedStoreForm") SeedStoreForm form, Model model, HttpSession session) {
-    	 //session.invalidate();
-    	 /*
-        try {
-           
-        }
-        catch (MiddlewareQueryException e){
-            LOG.error(e.getMessage(), e);
-        }
-        */
+    public String show(@ModelAttribute("seedStoreForm") SeedStoreForm form, Model model, HttpSession session) {   	 
     	return super.show(model);
     }    
     @RequestMapping(value="/ajax", method = RequestMethod.GET)
-    public String showAjax(@ModelAttribute("seedStoreForm") SeedStoreForm form, Model model, HttpSession session) {
-    	
+    public String showAjax(@ModelAttribute("seedStoreForm") SeedStoreForm form, Model model, HttpSession session) {    	
     	return super.showAjaxPage(model, "Inventory/addLotsModal");
     }
-    
-    @RequestMapping(value="/displayGermplasmDetails/{listId}", method = RequestMethod.GET)
-    public String displayGermplasmDetails(@PathVariable Integer listId,  @ModelAttribute("seedStoreForm") SeedStoreForm form,
-            Model model) {
         
-        try {
-                        
-            List<InventoryDetails> inventoryDetailList = inventoryMiddlewareService.getInventoryDetailsByGermplasmList(listId);
-            
-            getSeedSelection().setInventoryList(inventoryDetailList);
-            form.setInventoryList(inventoryDetailList);
-            //form.changePage(1);
-            form.setCurrentPage(1);
-            
-        } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
-        }
-        return super.showAjaxPage(model, PAGINATION_TEMPLATE);
-    }
-    
     @RequestMapping(value="/advance/displayGermplasmDetails/{listId}", method = RequestMethod.GET)
     public String displayAdvanceGermplasmDetails(@PathVariable Integer listId,  @ModelAttribute("seedStoreForm") SeedStoreForm form,
             Model model) {
@@ -180,11 +151,8 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
             getSeedSelection().setInventoryList(inventoryDetailList);
             form.setListId(listId.toString());
             form.setInventoryList(inventoryDetailList);
-            //form.changePage(1);
             form.setCurrentPage(1);
-            form.setGidList(Integer.toString(listId));
-            
-            
+            form.setGidList(Integer.toString(listId));                        
             
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -192,23 +160,6 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
         return super.showAjaxPage(model, "/NurseryManager/savedFinalAdvanceList");
     }
     
-    /**
-     * Get for the pagination of the list
-     *
-     * @param form the form
-     * @param model the model
-     * @return the string
-     */
-    @RequestMapping(value="/page/{pageNum}", method = RequestMethod.GET)
-    public String getPaginatedList(@PathVariable int pageNum
-            , @ModelAttribute("seedStoreForm") SeedStoreForm form, Model model) {
-        List<InventoryDetails> inventoryDetailsList = getSeedSelection().getInventoryList();
-        if(inventoryDetailsList != null){
-            form.setInventoryList(inventoryDetailsList);
-            form.setCurrentPage(pageNum);
-        }
-        return super.showAjaxPage(model, PAGINATION_TEMPLATE);
-    }
     
     @RequestMapping(value="/page/advance/{pageNum}", method = RequestMethod.GET)
     public String getAdvancePaginatedList(@PathVariable int pageNum

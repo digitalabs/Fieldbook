@@ -247,28 +247,7 @@
         	 return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
         	}
 
-        function displayGermplasmDetails(listId) {
-        	//alert(makeDraggableBool);
-        	$("#listIdSelected").val(listId);
-        	Spinner.toggle();
-        	$('#'+'germplasmTree').find("*").removeClass('dynatree-selected');
-        	$.ajax({
-        		url: "/Fieldbook/SeedStoreManager/displayGermplasmDetails/" + listId,
-        		type: "GET",
-        		cache: false,
-        		success: function(html) {
-        			selectedGids = new Array();
-        			$("#inventory-germplasm-list").html(html);
 
-        		},
-        		error: function(jqXHR, textStatus, errorThrown){
-        			console.log("The following error occured: " + textStatus, errorThrown);
-        		},
-        		complete: function() {
-        			Spinner.toggle();
-        		}
-        	});
-        }
 
       //]]>
     </script>

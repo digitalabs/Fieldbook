@@ -2405,7 +2405,7 @@ function plotMethod() {
 			$('input[type=checkbox][name=allPlotsChoice]')
 					.prop('checked', true);
 			$('input[type=checkbox][name=allPlotsChoice]').change();
-			showErrorMessage("page-message", noPlotVariatesError);
+			showErrorMessage("page-advance-modal-message", noPlotVariatesError);
 		}
 	}
 }

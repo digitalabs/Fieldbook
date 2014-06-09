@@ -64,7 +64,7 @@
  
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
-    /*globals getJquerySafeId, showMultiTabPage, selectedGidsForAdvance, getCurrentAdvanceTabListIdentifier*/
+    /*globals getJquerySafeId, showMultiTabPage, getCurrentAdvanceTabListIdentifier*/
     /*exported paginationUrl, options*/
 
         var paginationUrl = /*[[@{/SeedStoreManager/page/advance/}]]*/ '';
@@ -81,21 +81,7 @@
               var listDivIdentifier  = $('#create-nursery-tab-headers li.active button').attr('id'),
                   sectionContainerDiv = 'advance-list'+listDivIdentifier,
                   listIdentifier = $('#'+getJquerySafeId(sectionContainerDiv) + ' #listId').val();
-              showMultiTabPage(paginationUrl, page, 'inventory-germplasm-list', sectionContainerDiv, listIdentifier);
-            	
-            	
-                 	 //we highlight the previously clicked
-                  	
-           		   var selectedGidArray = selectedGidsForAdvance[getCurrentAdvanceTabListIdentifier()];
-           		   for(var index in selectedGidArray) {
-              			//console.log( index + " : " + selectedTableIds[index]);
-              			var idVal = selectedGidArray[index];
-              			if(idVal != null){
-              				//we need to highlight
-              				$('#'+sectionContainerDiv+' tr.primaryRow[data-gid='+idVal+']').addClass('field-map-highlight');
-              			}			
-              		 }
-                
+              showMultiTabPage(paginationUrl, page, 'inventory-germplasm-list', sectionContainerDiv, listIdentifier);            	            	                
             }
         };
         $( document ).ready(function() {  

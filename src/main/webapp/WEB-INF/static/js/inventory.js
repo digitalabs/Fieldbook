@@ -52,7 +52,7 @@ function addLot(){
 	
 	Spinner.toggle();
 	$.ajax({
-		url: '/Fieldbook/SeedStoreManager/ajax',
+		url: '/Fieldbook/SeedStoreManager/ajax/'+getCurrentAdvanceTabListIdentifier(),
 		type: 'GET',
 		cache: false,
 	    success: function(data) {

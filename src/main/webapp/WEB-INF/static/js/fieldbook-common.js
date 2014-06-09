@@ -917,6 +917,8 @@ function initializeHarvestLocationSelect2(locationSuggestions, locationSuggestio
 		$('#' + getJquerySafeId('harvestLocationAbbreviation')).val($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').abbr);
 		if ($('#harvestloc-tooltip')) {
 			$('#harvestloc-tooltip').attr('title', $('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').abbr);
+			$('.help-tooltip-nursery-advance').tooltip('destroy');
+			$('.help-tooltip-nursery-advance').tooltip();
 		}
 	});
 }
@@ -947,6 +949,8 @@ function initializeHarvestLocationFavSelect2(locationSuggestionsFav, locationSug
 		$('#' + getJquerySafeId('harvestLocationAbbreviation')).val($('#' + getJquerySafeId('harvestLocationIdFavorite')).select2('data').abbr);
 		if ($('#harvestloc-tooltip')) {
 			$('#harvestloc-tooltip').attr('title', $('#' + getJquerySafeId('harvestLocationIdFavorite')).select2('data').abbr);
+			$('.help-tooltip-nursery-advance').tooltip('destroy');
+			$('.help-tooltip-nursery-advance').tooltip();
 		}
 	});
 }
@@ -977,6 +981,8 @@ function initializeMethodSelect2(methodSuggestions, methodSuggestionsObj) {
 			$('#' + getJquerySafeId('advanceBreedingMethodId')).val($('#' + getJquerySafeId('methodIdAll')).select2('data').id);
 			if ($('#method-tooltip')) {
 				$('#method-tooltip').attr('title', $('#' + getJquerySafeId('methodIdAll')).select2('data').tooltip);
+				$('.help-tooltip-nursery-advance').tooltip('destroy');
+				$('.help-tooltip-nursery-advance').tooltip();
 			}
 			$('#' + getJquerySafeId('advanceBreedingMethodId')).trigger('change');
 		}
@@ -1008,6 +1014,8 @@ function initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFavOb
 			$('#' + getJquerySafeId('advanceBreedingMethodId')).val($('#' + getJquerySafeId('methodIdFavorite')).select2('data').id);
 			if ($('#method-tooltip')) {
 				$('#method-tooltip').attr('title', $('#' + getJquerySafeId('methodIdFavorite')).select2('data').tooltip);
+				$('.help-tooltip-nursery-advance').tooltip('destroy');
+				$('.help-tooltip-nursery-advance').tooltip();
 			}
 			$('#' + getJquerySafeId('advanceBreedingMethodId')).trigger('change');
 		}

@@ -274,7 +274,6 @@
 			$('#matching-gid').change();
 			$('#importStudyDesigConfirmationModal .import-desig-confirmation').html(changeConfirmationDetails[currentConfirmationIndex].message);
 			if (changeConfirmationDetails[currentConfirmationIndex].matchingGids && changeConfirmationDetails[currentConfirmationIndex].matchingGids.length > 0) {
-//				$('#matching-gid').empty();
 				for (var i = 0; i < changeConfirmationDetails[currentConfirmationIndex].matchingGids.length; i++) {
 					$('#matching-gid').append(
 							new Option(changeConfirmationDetails[currentConfirmationIndex].matchingGids[i],

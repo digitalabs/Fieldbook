@@ -185,15 +185,18 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         }
         String description = saveListForm.getListDescription();
         GermplasmList parent = null; //lhierarchy = 0
-        Integer parentId = Integer.valueOf(saveListForm.getParentId());
+        Integer parentId = null;
         GermplasmList gpList = null;
-		try {
-			gpList = germplasmListManager.getGermplasmListById(parentId);
-		} catch (MiddlewareQueryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+        if (saveListForm.getParentId() != null && !"LOCAL".equals(saveListForm.getParentId())) {
+        	parentId = Integer.valueOf(saveListForm.getParentId());
+			try {
+				gpList = germplasmListManager.getGermplasmListById(parentId);
+			} catch (MiddlewareQueryException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
+        
         if (gpList != null && gpList.isFolder()) {           
 
             parent = gpList;

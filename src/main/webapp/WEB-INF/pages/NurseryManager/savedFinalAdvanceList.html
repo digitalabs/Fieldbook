@@ -8,19 +8,8 @@
 		</div>
 		<div class="col-xs-7 col-md-7">
 			<div style="float:right;  margin-right: 10px;">
-				<div class="btn-group">
-					<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
-						<span th:text="#{advancing.nursery.button.manage.inventory}">Manage Inventory</span>
-					</button>
-					<ul class="dropdown-menu" role="menu">
-						<li>
-							<a href="javascript: addLot();">Add Lot</a>
-						</li>
-						<li>
-							<a href="javascript: void(0)">Deposit</a>
-						</li>
-					</ul>
-				</div>
+				<button type="button" class="btn btn-info" onclick="javascript: addLot();"  th:text="#{advancing.nursery.button.manage.inventory}">						
+				</button>					
 			</div>
 		</div>
 	</div>

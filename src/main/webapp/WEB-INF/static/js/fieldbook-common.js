@@ -1330,7 +1330,7 @@ function validatePlantsSelected() {
 	if ($('input[type=checkbox][name=methodChoice]:checked').val() === '1'
 		&& $('#namingConvention').val() !== '1'
 		&& $('#advanceBreedingMethodId').val() === '') {
-		showErrorMessage('page-message', msgMethodError);
+		showErrorMessage('page-advance-modal-message', msgMethodError);
 		valid = false;
 	}
 	if (valid && ids !== '')	{
@@ -1346,20 +1346,20 @@ function validatePlantsSelected() {
 
 				if (isMixed) {
 					if (data == 0) {
-						showErrorMessage('page-message', msgEmptyListError);
+						showErrorMessage('page-advance-modal-message', msgEmptyListError);
 						valid = false;
 					}
 				} else if (isBulk) {
 					choice = !$('#plot-variates-section').is(':visible');
 					if (choice == false && data == '0') {
-						showErrorMessage('page-message', msgEmptyListError);
+						showErrorMessage('page-advance-modal-message', msgEmptyListError);
 						valid = false;
 					}
 				} else {
 					choice = !$('#line-variates-section').is(':visible');
 					lineSameForAll = $('input[type=checkbox][name=lineChoice]:checked').val() == 1;
 					if (lineSameForAll == false && choice == false && data == '0') {
-						showErrorMessage('page-message', msgEmptyListError);
+						showErrorMessage('page-advance-modal-message', msgEmptyListError);
 						valid = false;
 					}
 				}
@@ -1382,7 +1382,7 @@ function callAdvanceNursery() {
 	var lines = $('#lineSelected').val();
 
 	if (!lines.match(/^\s*(\+|-)?\d+\s*$/)) {
-		showErrorMessage('page-message', linesNotWholeNumberError);
+		showErrorMessage('page-advance-modal-message', linesNotWholeNumberError);
 		return false;
 	} else if (validatePlantsSelected()) {
 		doAdvanceNursery();
@@ -1409,7 +1409,7 @@ function doAdvanceNursery() {
 				aHtml;
 
 			if (listSize === '0') {
-				showErrorMessage('page-message', listShouldNotBeEmptyError);
+				showErrorMessage('page-advance-modal-message', listShouldNotBeEmptyError);
 			} else {
 				$('#advanceNurseryModal').modal('hide');
 				$('#create-nursery-tab-headers li').removeClass('active');
@@ -1477,7 +1477,7 @@ function validateBreedingMethod() {
 			async: false,
 			success: function(data) {
 				if (data == 0) {
-					showErrorMessage('page-message', noMethodValueError);
+					showErrorMessage('page-advance-modal-message', noMethodValueError);
 					valid = false;
 				}
 			},

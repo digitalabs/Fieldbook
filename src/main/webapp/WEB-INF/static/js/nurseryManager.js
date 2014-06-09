@@ -33,7 +33,7 @@ function checkMethod() {
 		if ($("#methodVariateId").has("option").length === 0) {
 			$('input[type=checkbox][name=methodChoice]').prop('checked', true);
 			$('input[type=checkbox][name=methodChoice]').change();
-			showErrorMessage("page-message", noMethodVariatesError);
+			showErrorMessage("page-advance-modal-message", noMethodVariatesError);
 		}
 	}
 }
@@ -95,7 +95,7 @@ function lineMethod() {
 		if ($("#lineVariateId").has("option").length === 0) {
 			$('input[type=checkbox][name=lineChoice]').prop('checked', true);
 			$('input[type=checkbox][name=lineChoice]').change();
-			showErrorMessage("page-message", noLineVariatesError);
+			showErrorMessage("page-advance-modal-message", noLineVariatesError);
 		}
 	}
 }
@@ -104,25 +104,25 @@ function validateAdvanceNursery() {
 	// validate number of sample per plot
 	var numberOfSamplePerPlot = $('#lineSelected').val();
 	if (numberOfSamplePerPlot === '') {
-		showErrorMessage('page-message', msgSamplePlotError);
+		showErrorMessage('page-advance-modal-message', msgSamplePlotError);
 		return false;
 	}
 	if (!isInt(numberOfSamplePerPlot)) {
-		showErrorMessage('page-message', msgSamplePlotError);
+		showErrorMessage('page-advance-modal-message', msgSamplePlotError);
 		return false;
 	}
 	if (Number(numberOfSamplePerPlot) < 1
 			|| Number(numberOfSamplePerPlot) > 1000) {
-		showErrorMessage('page-message', msgSamplePlotError);
+		showErrorMessage('page-advance-modal-message', msgSamplePlotError);
 		return false;
 	}
 	if ($('#harvestDate').val() === '') {
-		showErrorMessage('page-message', msgHarvestDateError);
+		showErrorMessage('page-advance-modal-message', msgHarvestDateError);
 		return false;
 	}
 
 	if ($('#namingConvention').val() === '3' && $('#breedingMethodId').val() === '0') {
-		showErrorMessage('page-message', msgMethodError);
+		showErrorMessage('page-advance-modal-message', msgMethodError);
 		return false;
 	}
 	return true;

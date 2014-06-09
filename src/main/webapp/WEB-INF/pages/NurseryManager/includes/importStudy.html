@@ -269,9 +269,12 @@
 			$('#import-action-type option:selected').prop('selected', false);
 			$('#import-action-type option[value=0]').prop('selected', true);
 			$('#import-action-type').change();
+			$('input[type=checkbox][name=yesToAllDesig]').prop('checked', false);
+			$('#matching-gid').empty();
+			$('#matching-gid').change();
 			$('#importStudyDesigConfirmationModal .import-desig-confirmation').html(changeConfirmationDetails[currentConfirmationIndex].message);
 			if (changeConfirmationDetails[currentConfirmationIndex].matchingGids && changeConfirmationDetails[currentConfirmationIndex].matchingGids.length > 0) {
-				$('#matching-gid').empty();
+//				$('#matching-gid').empty();
 				for (var i = 0; i < changeConfirmationDetails[currentConfirmationIndex].matchingGids.length; i++) {
 					$('#matching-gid').append(
 							new Option(changeConfirmationDetails[currentConfirmationIndex].matchingGids[i],
@@ -362,10 +365,13 @@
 			if ($('#import-action-type').val() === '3') {
 				$('.choose-gids').show();
 				$('.no-choose-gids').hide();
+				$('input[type=checkbox][name=yesToAllDesig]').prop('checked', false);
 			}
 			else {
 				$('.choose-gids').hide();
 				$('.no-choose-gids').show();
+				$('#matching-gid').empty();
+				$('#matching-gid').change();
 			}
 		}
 		//]]>

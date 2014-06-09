@@ -201,6 +201,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		    		reminderConfirmation = messageSource.getMessage("confirmation.import.text", null, locale);
 		    	}
 		    	resultsMap.put("message", reminderConfirmation);
+		    	resultsMap.put("confirmMessage", messageSource.getMessage("confirmation.import.text.to.proceed", null, locale));
 		    	resultsMap.put("detailErrorMessage", detailErrorMessage);
 	    	}
 	    	

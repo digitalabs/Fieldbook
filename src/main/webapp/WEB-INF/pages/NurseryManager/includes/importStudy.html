@@ -73,7 +73,7 @@
 </div>
 
 <div class="modal fade" id="importStudyConfirmationModal" role="dialog" aria-labelledby="importStudyConfirmationModal" aria-hidden="true">
-	<div class="modal-dialog modal-medium">
+	<div class="modal-dialog modal-small">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h4 class="modal-title" id="heading-modal">
@@ -238,6 +238,8 @@
 							importError += '<li>'+resp.detailErrorMessage[errorIndex]+'</li>';
 						}
 						importError += '</ul>';
+						importError += '<br />';
+						importError += resp.confirmMessage;
 					}
 					$('#importStudyConfirmationModal .import-confirmation').html(importError);
 				}

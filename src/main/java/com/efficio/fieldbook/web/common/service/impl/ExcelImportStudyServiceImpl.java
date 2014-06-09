@@ -153,6 +153,11 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 					String originalDesig = wRow.getMeasurementDataValue(TermId.DESIG.getId());
 					String newDesig = xlsRow.getCell(desigColumn).getStringCellValue().trim();
 					String originalGid = wRow.getMeasurementDataValue(TermId.GID.getId());
+					String entryNumber = wRow.getMeasurementDataValue(TermId.ENTRY_NO.getId());
+					String plotNumber = wRow.getMeasurementDataValue(TermId.PLOT_NO.getId());
+					if (plotNumber == null || "".equals(plotNumber)) {
+						plotNumber = wRow.getMeasurementDataValue(TermId.PLOT_NNO.getId());
+					}
 					
 					if (originalDesig != null && !originalDesig.equalsIgnoreCase(newDesig)) {
 						List<Integer> newGids = fieldbookMiddlewareService.getGermplasmIdsByName(newDesig);
@@ -162,7 +167,8 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 						} 
 						else {
 							int index = observations.indexOf(wRow);
-							GermplasmChangeDetail changeDetail = new GermplasmChangeDetail(index, originalDesig, originalGid, newDesig, "");
+							GermplasmChangeDetail changeDetail = new GermplasmChangeDetail(index, originalDesig, originalGid, newDesig, "", 
+									trialInstanceNumber, entryNumber, plotNumber);
 							if (newGids != null && !newGids.isEmpty()) {
 								changeDetail.setMatchingGids(newGids);
 							}

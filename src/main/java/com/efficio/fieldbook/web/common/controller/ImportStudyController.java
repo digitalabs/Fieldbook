@@ -305,12 +305,14 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	
     	return "success";
     }
+    //germplasm trial entry plot - 345
     
     private void populateConfirmationMessages(List<GermplasmChangeDetail> details) {
     	if (details != null && !details.isEmpty()) {
     		for (int index = 0 ; index < details.size() ; index++) {
     			String[] args = new String[] {String.valueOf(index+1), String.valueOf(details.size()), 
-    					details.get(index).getOriginalDesig(), details.get(index).getNewDesig()};
+    					details.get(index).getOriginalDesig(), details.get(index).getTrialInstanceNumber(), 
+    					details.get(index).getEntryNumber(), details.get(index).getPlotNumber()};
     			String message = messageSource.getMessage("import.change.desig.confirmation", args, LocaleContextHolder.getLocale());
     			details.get(index).setMessage(message);
     		}

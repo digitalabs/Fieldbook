@@ -13,18 +13,25 @@ public class GermplasmChangeDetail {
 	private int status;
 	private List<Integer> matchingGids;
 	private Integer selectedGid;
+	private String trialInstanceNumber;
+	private String entryNumber;
+	private String plotNumber;
 	
 	public GermplasmChangeDetail() {
 	}
 	
 	public GermplasmChangeDetail(int index, String originalDesig,
-			String originalGid, String newDesig, String newGid) {
+			String originalGid, String newDesig, String newGid, 
+			String trialInstanceNumber, String entryNumber, String plotNumber) {
 		super();
 		this.index = index;
 		this.originalDesig = originalDesig;
 		this.originalGid = originalGid;
 		this.newDesig = newDesig;
 		this.newGid = newGid;
+		this.trialInstanceNumber = trialInstanceNumber;
+		this.entryNumber = entryNumber;
+		this.plotNumber = plotNumber;
 	}
 
 	/**
@@ -142,6 +149,48 @@ public class GermplasmChangeDetail {
 	 */
 	public void setSelectedGid(Integer selectedGid) {
 		this.selectedGid = selectedGid;
+	}
+
+	/**
+	 * @return the trialInstanceNumber
+	 */
+	public String getTrialInstanceNumber() {
+		return trialInstanceNumber;
+	}
+
+	/**
+	 * @param trialInstanceNumber the trialInstanceNumber to set
+	 */
+	public void setTrialInstanceNumber(String trialInstanceNumber) {
+		this.trialInstanceNumber = trialInstanceNumber;
+	}
+
+	/**
+	 * @return the entryNumber
+	 */
+	public String getEntryNumber() {
+		return entryNumber;
+	}
+
+	/**
+	 * @param entryNumber the entryNumber to set
+	 */
+	public void setEntryNumber(String entryNumber) {
+		this.entryNumber = entryNumber;
+	}
+
+	/**
+	 * @return the plotNumber
+	 */
+	public String getPlotNumber() {
+		return plotNumber;
+	}
+
+	/**
+	 * @param plotNumber the plotNumber to set
+	 */
+	public void setPlotNumber(String plotNumber) {
+		this.plotNumber = plotNumber;
 	}
 
 

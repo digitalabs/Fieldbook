@@ -474,7 +474,7 @@
             };
 
             // re-enable on save
-            $('#successStudyMessageModal button').click(function() {
+            $('document').on('click','#successStudyMessageModal button',function() {
                 var actionBtn = $('.fbk-float-right-with-top-pos .dropdown-toggle');
 
                 actionBtn.attr("data-toggle","dropdown");

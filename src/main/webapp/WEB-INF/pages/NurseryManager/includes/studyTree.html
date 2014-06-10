@@ -45,7 +45,6 @@
 </div>
 
 <div layout:fragment="page-script">
-	<script type="text/javascript" th:src="@{/static/js/fieldbook-tree.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/nurseryManager.js}"></script>
 	<script type="text/javascript" th:inline="javascript">
 		//<![CDATA[
@@ -69,7 +68,7 @@
 		$( document ).ready(function() {
 			displayStudyListTree("studyTree", "N");
 			changeBrowseNurseryButtonBehavior(false);
-			
+
 		});
 
 		function doStudyLazyLoad(node){
@@ -102,7 +101,7 @@
 							else
 								changeBrowseNurseryButtonBehavior(true);
 						}
-						
+
 						if(choosingType == 2){
 							var nodeCentral = $('#studyTree').dynatree("getTree").getNodeByKey('CENTRAL');
 							if(nodeCentral != null)
@@ -133,7 +132,7 @@
 			}
 
 			url = url + additionalUrl;
-			
+
 			$("#" + treeName).dynatree({
 				title: treeName,
 				checkbox: false,
@@ -213,7 +212,7 @@
 					},
 					onDragOver: function(node, sourceNode, hitMode) {
 					},
-					
+
 					onDrop: function(node, sourceNode, hitMode, ui, draggable) {
 						/** This function MUST be defined to enable dropping of items on
 						 * the tree.

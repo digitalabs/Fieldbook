@@ -316,6 +316,21 @@ function isInt(value) {
 	}
 	return value % 1 === 0;
 }
+function isFloatNumber(val) {
+	if(!val || (typeof val != "string" || val.constructor != String)) {
+		return(false);
+	}
+	var isNumber = !isNaN(new Number(val));
+	if(isNumber) {
+		if(val.indexOf('.') != -1) {
+			return(true);
+		} else {
+			return isInt(val);
+		}
+	} else {
+		return(false);
+	}
+}
 
 function selectTrialInstance(tableName) {
 	if (tableName == 'trial-table') {
@@ -917,6 +932,8 @@ function initializeHarvestLocationSelect2(locationSuggestions, locationSuggestio
 		$('#' + getJquerySafeId('harvestLocationAbbreviation')).val($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').abbr);
 		if ($('#harvestloc-tooltip')) {
 			$('#harvestloc-tooltip').attr('title', $('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').abbr);
+			$('.help-tooltip-nursery-advance').tooltip('destroy');
+			$('.help-tooltip-nursery-advance').tooltip();
 		}
 	});
 }
@@ -947,6 +964,8 @@ function initializeHarvestLocationFavSelect2(locationSuggestionsFav, locationSug
 		$('#' + getJquerySafeId('harvestLocationAbbreviation')).val($('#' + getJquerySafeId('harvestLocationIdFavorite')).select2('data').abbr);
 		if ($('#harvestloc-tooltip')) {
 			$('#harvestloc-tooltip').attr('title', $('#' + getJquerySafeId('harvestLocationIdFavorite')).select2('data').abbr);
+			$('.help-tooltip-nursery-advance').tooltip('destroy');
+			$('.help-tooltip-nursery-advance').tooltip();
 		}
 	});
 }
@@ -977,6 +996,8 @@ function initializeMethodSelect2(methodSuggestions, methodSuggestionsObj) {
 			$('#' + getJquerySafeId('advanceBreedingMethodId')).val($('#' + getJquerySafeId('methodIdAll')).select2('data').id);
 			if ($('#method-tooltip')) {
 				$('#method-tooltip').attr('title', $('#' + getJquerySafeId('methodIdAll')).select2('data').tooltip);
+				$('.help-tooltip-nursery-advance').tooltip('destroy');
+				$('.help-tooltip-nursery-advance').tooltip();
 			}
 			$('#' + getJquerySafeId('advanceBreedingMethodId')).trigger('change');
 		}
@@ -1008,6 +1029,8 @@ function initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFavOb
 			$('#' + getJquerySafeId('advanceBreedingMethodId')).val($('#' + getJquerySafeId('methodIdFavorite')).select2('data').id);
 			if ($('#method-tooltip')) {
 				$('#method-tooltip').attr('title', $('#' + getJquerySafeId('methodIdFavorite')).select2('data').tooltip);
+				$('.help-tooltip-nursery-advance').tooltip('destroy');
+				$('.help-tooltip-nursery-advance').tooltip();
 			}
 			$('#' + getJquerySafeId('advanceBreedingMethodId')).trigger('change');
 		}
@@ -1184,7 +1207,7 @@ function importNursery(type) {
 }
 
 function submitImportStudy() {
-	
+
 	if ($('#importType').val() === '0') {
 		showErrorMessage('page-import-study-message-modal', 'Please choose import type');
 		return false;
@@ -1330,7 +1353,7 @@ function validatePlantsSelected() {
 	if ($('input[type=checkbox][name=methodChoice]:checked').val() === '1'
 		&& $('#namingConvention').val() !== '1'
 		&& $('#advanceBreedingMethodId').val() === '') {
-		showErrorMessage('page-message', msgMethodError);
+		showErrorMessage('page-advance-modal-message', msgMethodError);
 		valid = false;
 	}
 	if (valid && ids !== '')	{
@@ -1346,20 +1369,20 @@ function validatePlantsSelected() {
 
 				if (isMixed) {
 					if (data == 0) {
-						showErrorMessage('page-message', msgEmptyListError);
+						showErrorMessage('page-advance-modal-message', msgEmptyListError);
 						valid = false;
 					}
 				} else if (isBulk) {
 					choice = !$('#plot-variates-section').is(':visible');
 					if (choice == false && data == '0') {
-						showErrorMessage('page-message', msgEmptyListError);
+						showErrorMessage('page-advance-modal-message', msgEmptyListError);
 						valid = false;
 					}
 				} else {
 					choice = !$('#line-variates-section').is(':visible');
 					lineSameForAll = $('input[type=checkbox][name=lineChoice]:checked').val() == 1;
 					if (lineSameForAll == false && choice == false && data == '0') {
-						showErrorMessage('page-message', msgEmptyListError);
+						showErrorMessage('page-advance-modal-message', msgEmptyListError);
 						valid = false;
 					}
 				}
@@ -1382,7 +1405,7 @@ function callAdvanceNursery() {
 	var lines = $('#lineSelected').val();
 
 	if (!lines.match(/^\s*(\+|-)?\d+\s*$/)) {
-		showErrorMessage('page-message', linesNotWholeNumberError);
+		showErrorMessage('page-advance-modal-message', linesNotWholeNumberError);
 		return false;
 	} else if (validatePlantsSelected()) {
 		doAdvanceNursery();
@@ -1409,7 +1432,7 @@ function doAdvanceNursery() {
 				aHtml;
 
 			if (listSize === '0') {
-				showErrorMessage('page-message', listShouldNotBeEmptyError);
+				showErrorMessage('page-advance-modal-message', listShouldNotBeEmptyError);
 			} else {
 				$('#advanceNurseryModal').modal('hide');
 				$('#create-nursery-tab-headers li').removeClass('active');
@@ -1477,7 +1500,7 @@ function validateBreedingMethod() {
 			async: false,
 			success: function(data) {
 				if (data == 0) {
-					showErrorMessage('page-message', noMethodValueError);
+					showErrorMessage('page-advance-modal-message', noMethodValueError);
 					valid = false;
 				}
 			},
@@ -2081,13 +2104,13 @@ function truncateStudyVariableNames(domSelector, charLimit){
 			if(!$(this).parent().hasClass('variable-tooltip')){
 				$(this).parent().addClass('variable-tooltip');
 				$(this).parent().attr('title',htmlString);
-				
+
 				htmlString = htmlString.substring(0,charLimit) + '...';
-					
+
 			}
 			$(this).html(htmlString);
 		}
-				
+
 	});
 	$('.variable-tooltip').each(function(){
 		$(this).data('toggle', 'tooltip');

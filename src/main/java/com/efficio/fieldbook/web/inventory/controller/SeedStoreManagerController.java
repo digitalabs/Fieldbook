@@ -16,7 +16,7 @@ import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.Scale;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Location;
-import org.generationcp.middleware.pojos.LotsResult;
+import org.generationcp.middleware.pojos.ims.LotsResult;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.InventoryService;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -131,43 +131,15 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
      * @return the string
      */
     @RequestMapping(method = RequestMethod.GET)
-    public String show(@ModelAttribute("seedStoreForm") SeedStoreForm form, Model model, HttpSession session) {
-    	 //session.invalidate();
-    	 /*
-        try {
-           
-        }
-        catch (MiddlewareQueryException e){
-            LOG.error(e.getMessage(), e);
-        }
-        */
+    public String show(@ModelAttribute("seedStoreForm") SeedStoreForm form, Model model, HttpSession session) {   	 
     	return super.show(model);
     }    
-    @RequestMapping(value="/ajax", method = RequestMethod.GET)
-    public String showAjax(@ModelAttribute("seedStoreForm") SeedStoreForm form, Model model, HttpSession session) {
-    	
+    @RequestMapping(value="/ajax/{listId}", method = RequestMethod.GET)
+    public String showAjax(@ModelAttribute("seedStoreForm") SeedStoreForm form,@PathVariable Integer listId, Model model, HttpSession session) {
+    	form.setListId(listId);
     	return super.showAjaxPage(model, "Inventory/addLotsModal");
     }
-    
-    @RequestMapping(value="/displayGermplasmDetails/{listId}", method = RequestMethod.GET)
-    public String displayGermplasmDetails(@PathVariable Integer listId,  @ModelAttribute("seedStoreForm") SeedStoreForm form,
-            Model model) {
         
-        try {
-                        
-            List<InventoryDetails> inventoryDetailList = inventoryMiddlewareService.getInventoryDetailsByGermplasmList(listId);
-            
-            getSeedSelection().setInventoryList(inventoryDetailList);
-            form.setInventoryList(inventoryDetailList);
-            //form.changePage(1);
-            form.setCurrentPage(1);
-            
-        } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
-        }
-        return super.showAjaxPage(model, PAGINATION_TEMPLATE);
-    }
-    
     @RequestMapping(value="/advance/displayGermplasmDetails/{listId}", method = RequestMethod.GET)
     public String displayAdvanceGermplasmDetails(@PathVariable Integer listId,  @ModelAttribute("seedStoreForm") SeedStoreForm form,
             Model model) {
@@ -178,13 +150,10 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
             this.getPaginationListSelection().addFinalAdvancedList(listId.toString(), inventoryDetailList);
             
             getSeedSelection().setInventoryList(inventoryDetailList);
-            form.setListId(listId.toString());
+            form.setListId(listId);
             form.setInventoryList(inventoryDetailList);
-            //form.changePage(1);
             form.setCurrentPage(1);
-            form.setGidList(Integer.toString(listId));
-            
-            
+            form.setGidList(Integer.toString(listId));                        
             
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -192,23 +161,6 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
         return super.showAjaxPage(model, "/NurseryManager/savedFinalAdvanceList");
     }
     
-    /**
-     * Get for the pagination of the list
-     *
-     * @param form the form
-     * @param model the model
-     * @return the string
-     */
-    @RequestMapping(value="/page/{pageNum}", method = RequestMethod.GET)
-    public String getPaginatedList(@PathVariable int pageNum
-            , @ModelAttribute("seedStoreForm") SeedStoreForm form, Model model) {
-        List<InventoryDetails> inventoryDetailsList = getSeedSelection().getInventoryList();
-        if(inventoryDetailsList != null){
-            form.setInventoryList(inventoryDetailsList);
-            form.setCurrentPage(pageNum);
-        }
-        return super.showAjaxPage(model, PAGINATION_TEMPLATE);
-    }
     
     @RequestMapping(value="/page/advance/{pageNum}", method = RequestMethod.GET)
     public String getAdvancePaginatedList(@PathVariable int pageNum
@@ -220,26 +172,8 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
             form.setInventoryList(inventoryDetailsList);
             form.setCurrentPage(pageNum);
         }
-        form.setListId(listIdentifier);
+        form.setListId(Integer.valueOf(listIdentifier));
         return super.showAjaxPage(model, "/Inventory/seedAdvanceInventoryPagination");
-    }
-
-    private String createUnsavedGidList(List<Integer> gids) {
-        StringBuilder gidList = new StringBuilder();
-        int counter = 0;
-        for (Integer gid: gids) {
-            for (InventoryDetails inventory : seedSelection.getInventoryList()) {
-                if (inventory.getGid().equals(gid)) {
-                    gidList.append(inventory.getGermplasmName());
-                    break;
-                }
-            }
-            if (counter < gids.size()-1) {
-                gidList.append(", ");
-            }
-            counter++;
-        }
-        return gidList.toString();
     }
     
     @ResponseBody
@@ -254,21 +188,16 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
         }
         
         try {
-            LotsResult lotsResult = inventoryMiddlewareService.addLots(gidList, form.getInventoryLocationId(), form.getInventoryScaleId(), form.getInventoryComments(), workbenchService.getCurrentIbdbUserId(this.getCurrentProjectId()));
-            if (gidList.size() == lotsResult.getGidsSkipped().size()) {
-                result.put("message", messageSource
-                        .getMessage("seed.inventory.add.lot.all.combinations.exist", null, local));
-                result.put("success", 0);
-            } else if (lotsResult.getGidsSkipped().size() != 0) {
-                String germplasmNames = createUnsavedGidList(lotsResult.getGidsSkipped());
-                result.put("message", messageSource
-                        .getMessage("seed.inventory.add.lot.save.success.with.warning", new Object[] {germplasmNames}, local));
-                result.put("success", 1);
-            } else {
+        	
+            LotsResult lotsResult = inventoryMiddlewareService.addAdvanceLots(gidList, 
+            		form.getInventoryLocationId(),form.getInventoryScaleId(), 
+            		form.getInventoryComments(), workbenchService.getCurrentIbdbUserId(this.getCurrentProjectId()),
+            		form.getAmount(), form.getListId());
+           
                 result.put("message", messageSource
                         .getMessage("seed.inventory.add.lot.save.success", null, local));
                 result.put("success", 1);
-            }
+
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
             result.put("message", "error: " + e.getMessage());

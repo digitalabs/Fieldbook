@@ -118,8 +118,6 @@
 					return false;
 				}
 				var parentId = chosenNodeFolder.data.key;
-				if(parentId == 'LOCAL')
-					parentId = 1;
 				$('#saveListForm #parentId').val(parentId)
 				var dataForm = $('#saveListForm').serialize()
 				$.ajax(

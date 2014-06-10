@@ -1146,3 +1146,13 @@ a.fbk-edit-experiment{
 .fbk-import-upload-file{
 	margin-right: 20px;
 }
+.modal-backdrop {
+	background-color: transparent;
+}
+.advance-nursery-list-table table th, .advance-nursery-list-table table td{
+	text-align: left; 
+	vertical-align: middle
+}
+.advance-nursery-list-table table td.fbk-advance-check-box{
+	text-align: center;
+}

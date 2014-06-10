@@ -33,7 +33,7 @@ function checkMethod() {
 		if ($("#methodVariateId").has("option").length === 0) {
 			$('input[type=checkbox][name=methodChoice]').prop('checked', true);
 			$('input[type=checkbox][name=methodChoice]').change();
-			showErrorMessage("page-message", noMethodVariatesError);
+			showErrorMessage("page-advance-modal-message", noMethodVariatesError);
 		}
 	}
 }
@@ -95,7 +95,7 @@ function lineMethod() {
 		if ($("#lineVariateId").has("option").length === 0) {
 			$('input[type=checkbox][name=lineChoice]').prop('checked', true);
 			$('input[type=checkbox][name=lineChoice]').change();
-			showErrorMessage("page-message", noLineVariatesError);
+			showErrorMessage("page-advance-modal-message", noLineVariatesError);
 		}
 	}
 }
@@ -104,25 +104,25 @@ function validateAdvanceNursery() {
 	// validate number of sample per plot
 	var numberOfSamplePerPlot = $('#lineSelected').val();
 	if (numberOfSamplePerPlot === '') {
-		showErrorMessage('page-message', msgSamplePlotError);
+		showErrorMessage('page-advance-modal-message', msgSamplePlotError);
 		return false;
 	}
 	if (!isInt(numberOfSamplePerPlot)) {
-		showErrorMessage('page-message', msgSamplePlotError);
+		showErrorMessage('page-advance-modal-message', msgSamplePlotError);
 		return false;
 	}
 	if (Number(numberOfSamplePerPlot) < 1
 			|| Number(numberOfSamplePerPlot) > 1000) {
-		showErrorMessage('page-message', msgSamplePlotError);
+		showErrorMessage('page-advance-modal-message', msgSamplePlotError);
 		return false;
 	}
 	if ($('#harvestDate').val() === '') {
-		showErrorMessage('page-message', msgHarvestDateError);
+		showErrorMessage('page-advance-modal-message', msgHarvestDateError);
 		return false;
 	}
 
 	if ($('#namingConvention').val() === '3' && $('#breedingMethodId').val() === '0') {
-		showErrorMessage('page-message', msgMethodError);
+		showErrorMessage('page-advance-modal-message', msgMethodError);
 		return false;
 	}
 	return true;
@@ -373,7 +373,7 @@ function getStandardVariables(variableType) {
 			displayOntologyTree(treeDivId, treeData, searchTreeData,
 					'srch-term');
 			$('#' + 'srch-term').val('');
-			
+
 			// clear selected variables table and attribute fields
 			$("#newVariablesList > tbody").empty();
 			$("#page-message-modal").html("");
@@ -1707,9 +1707,9 @@ function validateCreateNursery() {
 									if($(this).parent().hasClass('variable-tooltip')) {
 										name = $(this).parent().data('original-title');
 									}else {
-										name = $(this).parent().find('.control-label').html();	
+										name = $(this).parent().find('.control-label').html();
 									}
-									
+
 									hasError = true;
 								}
 							}
@@ -1941,7 +1941,7 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
 					var selected = '';
 					if (currentVal === '')
 						selected = 'selected';
-					
+
 					$(this).append($('<option ' + selected + ' ></option>').attr('value', '').text('Please Choose'));
 					for (i = 0; i < suggestions_obj.length; i++) {
 						var val = suggestions_obj[i].text;
@@ -2210,13 +2210,13 @@ function openStudyTree(type) {
 	if( $('#create-nursery #studyTree').length !== 0){
 		 	$('#create-nursery #studyTree').dynatree("getTree").reloadStudyTree();
 		 	changeBrowseNurseryButtonBehavior(false);
-	}	
-	
+	}
+
 	$('#studyTreeModal').modal({
 		backdrop : 'static',
 		keyboard : true
 	});
-	choosingType = type;	
+	choosingType = type;
 }
 function closeAllStudyTabs() {
 
@@ -2274,7 +2274,7 @@ function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
 			$('#study' + currentStudyId + ' .measurement-section').show();
 			truncateStudyVariableNames('#dataset-li'+datasetId+' .review-dataset-name', 40);
 			Spinner.toggle();
-		}		
+		}
 	});
 }
 function showSelectedTab(selectedTabName) {
@@ -2290,7 +2290,7 @@ function showSelectedTab(selectedTabName) {
 			$("#" + tabs[i].id).hide();
 		}
 	}
-	
+
 	if(selectedTabName === 'nursery-measurements') {
 		var dataTable = $('#measurement-table').dataTable();
 		if(dataTable.length !== 0)
@@ -2339,7 +2339,7 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 		success : function(data) {
 			if (data.success == "1") {
 				if (selectedMethodAll != null) {
-					//recreate the select2 combos to get updated list of methods    			   
+					//recreate the select2 combos to get updated list of methods
 					recreateMethodComboAfterClose("methodIdAll", $
 							.parseJSON(data.allMethods));
 					recreateMethodComboAfterClose("methodIdFavorite", $
@@ -2405,7 +2405,7 @@ function plotMethod() {
 			$('input[type=checkbox][name=allPlotsChoice]')
 					.prop('checked', true);
 			$('input[type=checkbox][name=allPlotsChoice]').change();
-			showErrorMessage("page-message", noPlotVariatesError);
+			showErrorMessage("page-advance-modal-message", noPlotVariatesError);
 		}
 	}
 }
@@ -2432,7 +2432,7 @@ function recreateSessionVariables() {
 		},
 		complete: function () {
 			Spinner.toggle();
-		}	
+		}
 	});
 }
 
@@ -2472,10 +2472,10 @@ function refreshStudyAfterSave(studyId){
 		dataType: 'html',
 		cache: false,
 		async: false,
-		success: function(html) {	
+		success: function(html) {
 			$('.container .row:eq(0)').html(html);
 			$('#successStudyMessageModal').modal({ backdrop: 'static', keyboard: true });
-			Spinner.toggle(); 
-		} 
+			Spinner.toggle();
+		}
 	});
 }

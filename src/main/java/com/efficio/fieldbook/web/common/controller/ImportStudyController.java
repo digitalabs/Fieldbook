@@ -35,6 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.ChangeType;
 import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.ImportResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
@@ -43,7 +44,6 @@ import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.common.service.DataKaptureImportStudyService;
 import com.efficio.fieldbook.web.common.service.ExcelImportStudyService;
 import com.efficio.fieldbook.web.common.service.FieldroidImportStudyService;
-import com.efficio.fieldbook.web.common.service.ImportStudyService;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 import com.efficio.fieldbook.web.util.AppConstants;
@@ -188,15 +188,21 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	    		resultsMap.put("error", importResult.getErrorMessage());
 	    	}else{
 	    		resultsMap.put("isSuccess", 1);
-		    	resultsMap.put("mode", importResult.getMode());
+		    	resultsMap.put("modes", importResult.getModes());
 		    	populateConfirmationMessages(importResult.getChangeDetails());
 		    	resultsMap.put("changeDetails", importResult.getChangeDetails());
 		    	resultsMap.put("errorMessage", importResult.getErrorMessage());
+		    	List<String> detailErrorMessage = new ArrayList<String>();
 		    	String reminderConfirmation = "";
-		    	if(importResult.getMode() != ImportStudyService.EDIT_ONLY){
-		    		reminderConfirmation = messageSource.getMessage("confirmation.import." + importResult.getMode(), null, locale);
+		    	if(importResult.getModes() != null && !importResult.getModes().isEmpty()){
+		    		for (ChangeType mode : importResult.getModes()) {
+		    			detailErrorMessage.add(messageSource.getMessage(mode.getMessageCode(), null, locale));
+		    		}
+		    		reminderConfirmation = messageSource.getMessage("confirmation.import.text", null, locale);
 		    	}
 		    	resultsMap.put("message", reminderConfirmation);
+		    	resultsMap.put("confirmMessage", messageSource.getMessage("confirmation.import.text.to.proceed", null, locale));
+		    	resultsMap.put("detailErrorMessage", detailErrorMessage);
 	    	}
 	    	
 	    	
@@ -280,9 +286,9 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 				MeasurementData desigData = row.getMeasurementData(TermId.DESIG.getId());
 				MeasurementData gidData = row.getMeasurementData(TermId.GID.getId());
     			if (responseDetail.getStatus() == 1) { // add germplasm name to gid
-    				int newGid = fieldbookMiddlewareService.addGermplasmName(responseDetail.getNewDesig(), Integer.valueOf(responseDetail.getOriginalGid()), userId);
+    				fieldbookMiddlewareService.addGermplasmName(responseDetail.getNewDesig(), Integer.valueOf(responseDetail.getOriginalGid()), userId);
     				desigData.setValue(responseDetail.getNewDesig());
-    				gidData.setValue(String.valueOf(newGid));
+    				gidData.setValue(responseDetail.getOriginalGid());
     			}
     			else if (responseDetail.getStatus() == 2) { //create new germlasm 
     				int newGid = fieldbookMiddlewareService.addGermplasm(responseDetail.getNewDesig(), userId);
@@ -299,12 +305,14 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	
     	return "success";
     }
+    //germplasm trial entry plot - 345
     
     private void populateConfirmationMessages(List<GermplasmChangeDetail> details) {
     	if (details != null && !details.isEmpty()) {
     		for (int index = 0 ; index < details.size() ; index++) {
     			String[] args = new String[] {String.valueOf(index+1), String.valueOf(details.size()), 
-    					details.get(index).getOriginalDesig(), details.get(index).getNewDesig()};
+    					details.get(index).getOriginalDesig(), details.get(index).getTrialInstanceNumber(), 
+    					details.get(index).getEntryNumber(), details.get(index).getPlotNumber()};
     			String message = messageSource.getMessage("import.change.desig.confirmation", args, LocaleContextHolder.getLocale());
     			details.get(index).setMessage(message);
     		}

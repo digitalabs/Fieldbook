@@ -6,7 +6,7 @@
 		<div class="col-xs-3 col-md-3" th:object="${seedStoreForm}">
 			<label th:text="#{advancing.nursery.entries.total}">Total Entries:</label>: <label class="control-label control-label-bold" id="numberOfEntries" th:text="*{totalNumberOfGermplasms}"></label>
 		</div>
-		<div class="col-xs-7 col-md-7">
+		<div class="pull-right">
 			<div style="float:right;  margin-right: 10px;">
 				<button type="button" class="btn btn-info" onclick="javascript: addLot();"  th:text="#{advancing.nursery.button.manage.inventory}">						
 				</button>					

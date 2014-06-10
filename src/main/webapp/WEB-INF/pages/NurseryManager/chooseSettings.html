@@ -378,7 +378,6 @@
 
 		$(document).ready(function() {
 			'use strict';
-
 			// FIXME Shouldn't be user agent checking
 			if (getIEVersion() === 8) {
 				$('.table-with-scroll-create').parent().addClass('variable-details');
@@ -448,9 +447,8 @@
             });
 
             // 2. extend the ff functions so we can inject some behavior
-            var _submitSelectedVariables = submitSelectedVariables;
-            submitSelectedVariables = function() {
-                var promise = _submitSelectedVariables.apply(this,arguments);
+            document.submitSelectedVariables = function() {
+                var promise = submitSelectedVariables.apply(this,arguments);
 
                 if (promise !== undefined && promise !== null) {
                     promise.done(function() {
@@ -459,11 +457,15 @@
                 }
             };
 
-            var _deleteVariable = deleteVariable;
-            var deleteVariable = function() {
-                _deleteVariable.apply(this,arguments);
+            document.deleteVariable = function() {
+                deleteVariable.apply(this,arguments);
+
                 window.disableActions();
             };
+
+            // replace the dom function onclicks
+            $.each($('span[onclick]'),function(i,el) {  $(el).attr('onclick',$(el).attr('onclick').replace('deleteVariable','document.deleteVariable'))  });
+            $('#addVariables').attr('onclick',$('#addVariables').attr('onclick').replace('submitSelectedVariables','document.submitSelectedVariables'));
 
             window.disableActions = function() {
                 var actionBtn = $('.fbk-float-right-with-top-pos .dropdown-toggle');

@@ -16,7 +16,7 @@ import org.generationcp.middleware.domain.inventory.InventoryDetails;
 import org.generationcp.middleware.domain.oms.Scale;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.Location;
-import org.generationcp.middleware.pojos.LotsResult;
+import org.generationcp.middleware.pojos.ims.LotsResult;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.generationcp.middleware.service.api.InventoryService;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -134,8 +134,9 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
     public String show(@ModelAttribute("seedStoreForm") SeedStoreForm form, Model model, HttpSession session) {   	 
     	return super.show(model);
     }    
-    @RequestMapping(value="/ajax", method = RequestMethod.GET)
-    public String showAjax(@ModelAttribute("seedStoreForm") SeedStoreForm form, Model model, HttpSession session) {    	
+    @RequestMapping(value="/ajax/{listId}", method = RequestMethod.GET)
+    public String showAjax(@ModelAttribute("seedStoreForm") SeedStoreForm form,@PathVariable Integer listId, Model model, HttpSession session) {
+    	form.setListId(listId);
     	return super.showAjaxPage(model, "Inventory/addLotsModal");
     }
         
@@ -149,7 +150,7 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
             this.getPaginationListSelection().addFinalAdvancedList(listId.toString(), inventoryDetailList);
             
             getSeedSelection().setInventoryList(inventoryDetailList);
-            form.setListId(listId.toString());
+            form.setListId(listId);
             form.setInventoryList(inventoryDetailList);
             form.setCurrentPage(1);
             form.setGidList(Integer.toString(listId));                        
@@ -171,26 +172,8 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
             form.setInventoryList(inventoryDetailsList);
             form.setCurrentPage(pageNum);
         }
-        form.setListId(listIdentifier);
+        form.setListId(Integer.valueOf(listIdentifier));
         return super.showAjaxPage(model, "/Inventory/seedAdvanceInventoryPagination");
-    }
-
-    private String createUnsavedGidList(List<Integer> gids) {
-        StringBuilder gidList = new StringBuilder();
-        int counter = 0;
-        for (Integer gid: gids) {
-            for (InventoryDetails inventory : seedSelection.getInventoryList()) {
-                if (inventory.getGid().equals(gid)) {
-                    gidList.append(inventory.getGermplasmName());
-                    break;
-                }
-            }
-            if (counter < gids.size()-1) {
-                gidList.append(", ");
-            }
-            counter++;
-        }
-        return gidList.toString();
     }
     
     @ResponseBody
@@ -205,21 +188,16 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
         }
         
         try {
-            LotsResult lotsResult = inventoryMiddlewareService.addLots(gidList, form.getInventoryLocationId(), form.getInventoryScaleId(), form.getInventoryComments(), workbenchService.getCurrentIbdbUserId(this.getCurrentProjectId()));
-            if (gidList.size() == lotsResult.getGidsSkipped().size()) {
-                result.put("message", messageSource
-                        .getMessage("seed.inventory.add.lot.all.combinations.exist", null, local));
-                result.put("success", 0);
-            } else if (lotsResult.getGidsSkipped().size() != 0) {
-                String germplasmNames = createUnsavedGidList(lotsResult.getGidsSkipped());
-                result.put("message", messageSource
-                        .getMessage("seed.inventory.add.lot.save.success.with.warning", new Object[] {germplasmNames}, local));
-                result.put("success", 1);
-            } else {
+        	
+            LotsResult lotsResult = inventoryMiddlewareService.addAdvanceLots(gidList, 
+            		form.getInventoryLocationId(),form.getInventoryScaleId(), 
+            		form.getInventoryComments(), workbenchService.getCurrentIbdbUserId(this.getCurrentProjectId()),
+            		form.getAmount(), form.getListId());
+           
                 result.put("message", messageSource
                         .getMessage("seed.inventory.add.lot.save.success", null, local));
                 result.put("success", 1);
-            }
+
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
             result.put("message", "error: " + e.getMessage());

@@ -51,10 +51,13 @@ public class SeedStoreForm {
     private String gidList;
     
     /** The list id. */
-    private String listId;
+    private Integer listId;
     
     /** The total number of germplasms. */
     private int totalNumberOfGermplasms;
+    
+    /** The amount. */
+    private Double amount;
     
      
     
@@ -63,7 +66,7 @@ public class SeedStoreForm {
      *
      * @return the list id
      */
-    public String getListId() {
+    public Integer getListId() {
 		return listId;
 	}
 
@@ -72,7 +75,7 @@ public class SeedStoreForm {
 	 *
 	 * @param listId the new list id
 	 */
-	public void setListId(String listId) {
+	public void setListId(Integer listId) {
 		this.listId = listId;
 	}
 
@@ -279,5 +282,23 @@ public class SeedStoreForm {
     public void setGidList(String gidList) {
         this.gidList = gidList;
     }
+
+	/**
+	 * Gets the amount.
+	 *
+	 * @return the amount
+	 */
+	public Double getAmount() {
+		return amount;
+	}
+
+	/**
+	 * Sets the amount.
+	 *
+	 * @param amount the new amount
+	 */
+	public void setAmount(Double amount) {
+		this.amount = amount;
+	}
 
 }

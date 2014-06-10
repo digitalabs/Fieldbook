@@ -78,16 +78,10 @@
             }
         }
         $( document ).ready(function() {
-			if($('#inventory-germplasm-list-pagination') != null){
-				$('#inventory-germplasm-list-pagination').bootstrapPaginator(options);
+    			if($('#inventory-germplasm-list-pagination') != null){
+		    		$('#inventory-germplasm-list-pagination').bootstrapPaginator(options);
 			}
 
-			if (getIEVersion() == 8) {
-				$(".table-with-scroll-inventory").parent().addClass("inventory-germplasm-list-table");
-				$(".table-with-scroll-inventory").removeClass("table-with-scroll-inventory");
-			}
-
-			triggerInventoryTableSelection('inventory-table');
 
         });
 

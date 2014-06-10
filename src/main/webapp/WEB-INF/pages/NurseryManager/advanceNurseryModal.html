@@ -43,7 +43,7 @@
 								</label>
 							</div>
 							<div class="row form-group col-xs-12 col-md-12">
-								<strong><label class="label-bold" th:text="#{advancing.nursery.naming.convention}+'*:'"></label></strong>
+								<strong><label class="label-bold" th:text="#{advancing.nursery.naming.convention} + ':'"></label><span class="required">*</span></strong>
 								&nbsp;&nbsp;
 								<select th:field="*{namingConvention}">
 									<option value="3" th:text="#{advancing.nursery.naming.convention.other.crops}">OTHER CROPS</option>

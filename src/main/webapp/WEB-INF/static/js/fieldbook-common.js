@@ -901,6 +901,10 @@ function showSuccessfulMessage(messageDivId, message) {
 	$('#' + messageDivId).html('<div class="alert alert-success">' + message + '</div>');
 }
 
+function showAlertMessage(messageDivId, message) {
+    $('#' + messageDivId).html('<div class="alert alert-warning">' + message + '</div>');
+}
+
 function hideErrorMessage() {
 	$('#page-message .alert-danger').fadeOut(1000);
 }

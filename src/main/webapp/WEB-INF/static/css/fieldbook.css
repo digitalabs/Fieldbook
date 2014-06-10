@@ -1156,3 +1156,7 @@ a.fbk-edit-experiment{
 .advance-nursery-list-table table td.fbk-advance-check-box{
 	text-align: center;
 }
+
+.enable-pointer-events {
+    pointer-events: initial !important;
+}

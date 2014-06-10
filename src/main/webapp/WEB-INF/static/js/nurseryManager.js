@@ -623,7 +623,7 @@ function submitSelectedVariables(variableType) {
 		$('#page-message-modal').html('');
 		Spinner.toggle();
 
-		$.ajax({
+		var promise = $.ajax({
 			url : '/Fieldbook/NurseryManager/createNursery/addSettings/' + variableType,
 			type : 'POST',
 			data : serializedData,
@@ -661,8 +661,11 @@ function submitSelectedVariables(variableType) {
 				Spinner.toggle();
 				$('#addVariablesSettingModal').modal('hide');
 
+
 			}
 		});
+
+        return promise;
 	} else {
 		$('#page-message-modal').html(
 				'<div class="alert alert-danger">' + varInListMessage

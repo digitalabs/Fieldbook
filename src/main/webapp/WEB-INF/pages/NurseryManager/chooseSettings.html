@@ -348,7 +348,7 @@
 			nurseryTraitsIsRequired = /*[[#{nursery.create.traits.is.required}]]*/ '',
 			nurseryGermplasmListIsRequired = /*[[#{nursery.create.germplasm.list.is.required}]]*/ '',
 			checkTypeIsRequired = /*[[#{nursery.create.check.type.is.required}]]*/ '',
-
+            disabledActionTooltipMessage = /*[[#{nursery.create.actions.is.disabled}]]*/,
 			// Labels for method and location
 			showFavoriteMethodLabel = /*[[#{show.favorite.method}]]*/ '',
 			showFavoriteLocationLabel = /*[[#{show.favorite.location}]]*/ '',
@@ -412,6 +412,14 @@
 						'#' + getJquerySafeId('studyLevelVariables' + select2Index +
 							'.value'), false, $(divElem).siblings('.div-select-val').html());
 				}
+
+                /* GCP-8880 (tag change event to a var) */
+                $('#' + getJquerySafeId('studyLevelVariables' + select2Index +
+                        '.value')).on('change',function() {
+
+                    window.disableActions();
+                });
+
 			});
 
 			$.each($('.possibleValuesJsonCons'), function (index, divElem){
@@ -425,9 +433,6 @@
 			setTimeout('initializeDateAndSliderInputs()', 500);
 
 			addCreateNurseryRequiredAsterisk();
-			$('select').each(function(){
-				$(this).select2();
-			});
 
 			$('.help-tooltip-nursery').tooltip();
 			$('#srch-term').on('change', function(){
@@ -435,7 +440,51 @@
 				doOntologyTreeHighlight(treeDivId, data.key);
 			});
 			truncateStudyVariableNames('.study-variable-name', 17);
-		});
+
+            /* GCP-8880 (tag change event to a var) */
+            // 1. all form controls except select 2
+            $("form#createNurseryForm .form-control[type=text], form#createNurseryForm input[type=checkbox]").on('change',function() {
+                window.disableActions();
+            });
+
+            // 2. extend the ff functions so we can inject some behavior
+            var _submitSelectedVariables = submitSelectedVariables;
+            submitSelectedVariables = function() {
+                var promise = _submitSelectedVariables.apply(this,arguments);
+
+                if (promise !== undefined && promise !== null) {
+                    promise.done(function() {
+                        window.disableActions();
+                    });
+                }
+            };
+
+            var _deleteVariable = deleteVariable;
+            var deleteVariable = function() {
+                _deleteVariable.apply(this,arguments);
+                window.disableActions();
+            };
+
+            window.disableActions = function() {
+                var actionBtn = $('.fbk-float-right-with-top-pos .dropdown-toggle');
+
+                actionBtn.removeAttr("data-toggle").addClass('disabled enable-pointer-events');
+                actionBtn.tooltip({ container: 'body', title: disabledActionTooltipMessage, placement : 'top' });
+
+            };
+
+            // re-enable on save
+            $('#successStudyMessageModal button').click(function() {
+                var actionBtn = $('.fbk-float-right-with-top-pos .dropdown-toggle');
+
+                actionBtn.attr("data-toggle","dropdown");
+                actionBtn.tooltip('hide');
+                actionBtn.tooltip('destroy');
+                actionBtn.removeClass('disabled');
+
+            });
+
+        });
 	//]]>
 	</script>
 </div>

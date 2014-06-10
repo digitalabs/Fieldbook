@@ -16,6 +16,7 @@ public class GermplasmChangeDetail {
 	private String trialInstanceNumber;
 	private String entryNumber;
 	private String plotNumber;
+	private List<String> addedTraits;
 	
 	public GermplasmChangeDetail() {
 	}

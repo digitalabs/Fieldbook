@@ -88,4 +88,64 @@ public class WorkbookUtil {
 		return observations;
 	}
 
+	public static void addVariateToObservations(MeasurementVariable mvar, List<MeasurementRow> observations) {
+		if (observations != null) {
+			for (MeasurementRow row : observations) {
+				MeasurementData mData = new MeasurementData();
+				mData.setMeasurementVariable(mvar);
+				mData.setLabel(mvar.getName());
+				mData.setDataType(mvar.getDataType());
+				mData.setEditable(true);
+				row.getDataList().add(mData);
+			}
+		}
+	}
+	
+	public static List<String> getAddedTraits(List<MeasurementVariable> variables, List<MeasurementRow> observations) {
+		List<String> newTraits = new ArrayList<String>();
+		if (observations != null && !observations.isEmpty()) {
+			List<MeasurementVariable> workbookVariables = observations.get(0).getMeasurementVariables();
+			if (workbookVariables != null && !workbookVariables.isEmpty()) {
+				for (MeasurementVariable wvar : workbookVariables) {
+					if (!wvar.isFactor()) {
+						boolean found = false;
+						for (MeasurementVariable var : variables) {
+							if (wvar.getTermId() == var.getTermId()) {
+								found = true;
+								break;
+							}
+						}
+						if (!found) {
+							newTraits.add(wvar.getName());
+						}
+					}
+				}
+			}
+		}
+		return newTraits;
+	}
+
+	public static List<MeasurementVariable> getAddedTraitVariables(List<MeasurementVariable> variables, List<MeasurementRow> observations) {
+		List<MeasurementVariable> newTraits = new ArrayList<MeasurementVariable>();
+		if (observations != null && !observations.isEmpty()) {
+			List<MeasurementVariable> workbookVariables = observations.get(0).getMeasurementVariables();
+			if (workbookVariables != null && !workbookVariables.isEmpty()) {
+				for (MeasurementVariable wvar : workbookVariables) {
+					if (!wvar.isFactor()) {
+						boolean found = false;
+						for (MeasurementVariable var : variables) {
+							if (wvar.getTermId() == var.getTermId()) {
+								found = true;
+								break;
+							}
+						}
+						if (!found) {
+							newTraits.add(wvar);
+						}
+					}
+				}
+			}
+		}
+		return newTraits;
+	}
 }

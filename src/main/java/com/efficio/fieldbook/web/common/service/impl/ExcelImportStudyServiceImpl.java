@@ -42,6 +42,8 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.web.common.bean.ChangeType;
@@ -60,6 +62,11 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	private static final String TEMPLATE_SECTION_FACTOR = "FACTOR";
 	private static final String TEMPLATE_SECTION_CONSTANT = "CONSTANT";
 	private static final String TEMPLATE_SECTION_VARIATE = "VARIATE";
+	private static final int COLUMN_NAME = 0;
+	private static final int COLUMN_DESCRIPTION = 1;
+	private static final int COLUMN_PROPERTY = 2;
+	private static final int COLUMN_SCALE = 3;
+	private static final int COLUMN_METHOD = 4;
 	
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
@@ -67,12 +74,20 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	@Resource
 	private ValidationService validationService;
 	
+	@Resource
+	private ResourceBundleMessageSource messageSource;
+	
 	@Override
 	public ImportResult importWorkbook(Workbook workbook, String filename) throws WorkbookParserException {
 		
 		try {
 			org.apache.poi.ss.usermodel.Workbook xlsBook = parseFile(filename);
 			
+			validateNumberOfSheets(xlsBook);
+			Sheet descriptionSheet = xlsBook.getSheetAt(0);
+			validateDescriptionSheetFirstCell(descriptionSheet);
+			validateSections(descriptionSheet);
+
 			String trialInstanceNumber = getTrialInstanceNumber(xlsBook);
 			List<MeasurementRow> observations = filterObservationsByTrialInstance(xlsBook, workbook.getObservations(), trialInstanceNumber);
 			List<MeasurementRow> trialObservations = filterObservationsByTrialInstance(xlsBook, workbook.getTrialObservations(), trialInstanceNumber);
@@ -98,6 +113,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			
 			
 		} catch (WorkbookParserException e) {
+			resetWorkbookObservations(workbook);
 			throw e;
 
 		} catch (Exception e) {
@@ -181,11 +197,12 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 						if (headerCell != null) {
 
 							MeasurementData wData = wRow.getMeasurementData(headerCell.getStringCellValue());
-							if (wData == null) {
+							Integer mvarId = WorkbookUtil.getMeasurementVariableId(variables, headerCell.getStringCellValue());
+							if (mvarId == null) {
 								modes.add(ChangeType.ADDED_TRAITS);
 								addedTraitsCount++;
 							}
-							else if (wData.isEditable()) {
+							if (wData.isEditable()) {
 								Cell cell = xlsRow.getCell(j);
 								String xlsValue = "";
 								if(cell != null){
@@ -254,13 +271,10 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	private void validate(org.apache.poi.ss.usermodel.Workbook xlsBook, Workbook workbook, List<MeasurementRow> observations) 
 			throws WorkbookParserException, MiddlewareQueryException {
 		
-		Sheet descriptionSheet = xlsBook.getSheetAt(0);
 		Sheet observationSheet = xlsBook.getSheetAt(1);
 		
-		validateNumberOfSheets(xlsBook);
-		validateDescriptionSheetFirstCell(descriptionSheet);
-		validateSections(descriptionSheet);
 		validateRequiredObservationColumns(observationSheet, workbook);
+		validateVariates(xlsBook, workbook);
 	}
 	
 	private void validateNumberOfSheets(org.apache.poi.ss.usermodel.Workbook xlsBook) throws WorkbookParserException {
@@ -301,7 +315,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 
     private int findRow(Sheet sheet, String cellValue) {
         int result = 0;
-        for (int i = 0; i < sheet.getLastRowNum(); i++) {
+        for (int i = 0; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
             if (row != null) {
                 Cell cell = row.getCell(0);
@@ -482,4 +496,53 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	    	}
     	}
     }
+    
+    private void validateVariates(org.apache.poi.ss.usermodel.Workbook xlsBook, Workbook workbook) throws WorkbookParserException {
+    	Sheet descriptionSheet = xlsBook.getSheetAt(0);
+		int variateRow = findRow(descriptionSheet, TEMPLATE_SECTION_VARIATE);
+		List<MeasurementVariable> workbookVariates = workbook.getVariates();
+		for (int i = variateRow+1; i <= descriptionSheet.getLastRowNum(); i++) {
+            Row row = descriptionSheet.getRow(i);
+            if (row != null) {
+                Cell cell = row.getCell(0);
+                if (cell != null && cell.getStringCellValue() != null) {
+                	String traitLabel = cell.getStringCellValue();
+                	Integer mvarId = WorkbookUtil.getMeasurementVariableId(workbookVariates, traitLabel);
+                	if (mvarId == null) { //new variates
+                		MeasurementVariable mvar = null;
+                		try {
+                			mvar = getMeasurementVariable(row);
+                		} catch(MiddlewareQueryException e) {
+                			throw new WorkbookParserException(messageSource.getMessage("error.import.variate.duplicate.psmr", 
+                					new String[] {traitLabel}, LocaleContextHolder.getLocale()));
+                		}
+                		if (mvar == null) {
+                			throw new WorkbookParserException(messageSource.getMessage("error.import.variate.does.not.exist", 
+                					new String[] {traitLabel}, LocaleContextHolder.getLocale()));
+                		}
+                		else if (WorkbookUtil.getMeasurementVariable(workbookVariates, mvar.getTermId()) != null) {
+                			throw new WorkbookParserException(messageSource.getMessage("error.import.variate.exists.in.study", 
+                					new String[] {traitLabel}, LocaleContextHolder.getLocale()));
+                		}
+                		else {
+                			//valid
+                			WorkbookUtil.addVariateToObservations(mvar, workbook.getObservations());
+                		}
+                	}
+                	
+                }
+            }
+		}
+    }
+    
+    private MeasurementVariable getMeasurementVariable(Row row) throws MiddlewareQueryException {
+    	String property = row.getCell(COLUMN_PROPERTY).getStringCellValue();
+    	String scale = row.getCell(COLUMN_SCALE).getStringCellValue();
+    	String method = row.getCell(COLUMN_METHOD).getStringCellValue();
+    	MeasurementVariable mvar = fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(property, scale, method, PhenotypicType.VARIATE);
+    	mvar.setName(row.getCell(COLUMN_NAME).getStringCellValue());
+    	mvar.setDescription(row.getCell(COLUMN_DESCRIPTION).getStringCellValue());
+    	return mvar;
+    }
+    
 }

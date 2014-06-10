@@ -199,10 +199,8 @@
 			Spinner.toggle();
 			$.ajax(
 				{ 
-					url: '/Fieldbook/Common/addOrRemoveTraits/data/table',
-					type: 'GET',
-					data: '',
-					cache: false,
+					url: '/Fieldbook/ImportManager/import/save',
+					type: 'POST',
 					success: function(html) {
 						$('#measurementsDiv').html(html);
 						Spinner.toggle();

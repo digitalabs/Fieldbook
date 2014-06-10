@@ -150,14 +150,7 @@ public class ObservationMatrixController extends
     	return isTrial ? this.trialSelection : this.nurserySelection;
     }
     
-    @RequestMapping(value="/data/table", method = RequestMethod.GET)
-    public String reloadPageDataTables(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
-    	
-    	StudySelection userSelection = getUserSelection(false);
-    	form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());    
-    	
-        return super.showAjaxPage(model, "/NurseryManager/addOrRemoveTraits");
-    }
+   
     @RequestMapping(value="/update/experiment/{index}", method = RequestMethod.GET)
     public String editExperimentModal(@PathVariable int index,
             @ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, 

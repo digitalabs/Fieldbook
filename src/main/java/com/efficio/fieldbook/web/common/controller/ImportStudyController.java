@@ -47,6 +47,7 @@ import com.efficio.fieldbook.web.common.service.DataKaptureImportStudyService;
 import com.efficio.fieldbook.web.common.service.ExcelImportStudyService;
 import com.efficio.fieldbook.web.common.service.FieldroidImportStudyService;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
@@ -328,9 +329,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	}
     }
 
-    @ResponseBody
     @RequestMapping(value="/import/save", method=RequestMethod.POST)
-    public String saveImportedFiles(Model model) throws Exception {
+    public String saveImportedFiles(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws Exception {
     	StudySelection userSelection = getUserSelection(false);
     	List<MeasurementVariable> traits = WorkbookUtil.getAddedTraitVariables(
 								    			userSelection.getWorkbook().getVariates(), 
@@ -338,6 +338,9 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	userSelection.getWorkbook().getVariates().addAll(traits);
     	fieldbookMiddlewareService.saveMeasurementRows(userSelection.getWorkbook());
     	userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
-    	return "success";
+    	form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());    
+    	userSelection.getWorkbook().setOriginalObservations(userSelection.getWorkbook().getObservations());
+        return super.showAjaxPage(model, "/NurseryManager/addOrRemoveTraits");
     }
+    
 }

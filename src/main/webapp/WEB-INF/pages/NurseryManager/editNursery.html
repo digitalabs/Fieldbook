@@ -90,7 +90,7 @@
 				<label th:text="#{nursery.create.nursery.nursery.name} + ': '" class="control-label label-bold"></label>&nbsp;<span class="required">*</span>
 			</div>
 			<div class="col-xs-4 col-md-4">
-				<label th:text="*{basicDetails[0].value}" class="control-label fbk-label-overflow"> </label>
+				<label th:text="*{basicDetails[0].value}" class="control-label fbk-variable" data-truncate-limit="45"> </label>
 				<input type="hidden" class="form-control" th:field="*{basicDetails[0].value}" />
 			</div>
 			<div class="col-xs-2 col-md-2">
@@ -446,6 +446,7 @@
 			if ($('.nursery-name').length > 0) {
 				$('.nursery-name').tooltip();
 			}
+			truncateStudyVariableNames('.fbk-variable', 30);
 		});
 
 	//]]>

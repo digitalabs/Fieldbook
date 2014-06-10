@@ -2103,11 +2103,15 @@ function showListTreeToolTip(node, nodeSpan) {
 function truncateStudyVariableNames(domSelector, charLimit){
 	'use strict';
 	$(domSelector).each(function(){
-		var htmlString = $(this).html();
+		var htmlString = $(this).html();		
+		if($(this).data('truncate-limit') !== undefined) {
+			charLimit = parseInt($(this).data('truncate-limit'), 10);
+		}
+		
 		if(htmlString.length > charLimit){
-			if(!$(this).parent().hasClass('variable-tooltip')){
-				$(this).parent().addClass('variable-tooltip');
-				$(this).parent().attr('title',htmlString);
+			if(!$(this).hasClass('variable-tooltip')){
+				$(this).addClass('variable-tooltip');
+				$(this).attr('title',htmlString);
 
 				htmlString = htmlString.substring(0,charLimit) + '...';
 
@@ -2119,6 +2123,7 @@ function truncateStudyVariableNames(domSelector, charLimit){
 	$('.variable-tooltip').each(function(){
 		$(this).data('toggle', 'tooltip');
 		$(this).data('placement', 'right');
+		$(this).data('container', 'body');
 		$(this).tooltip();
 	});
 }

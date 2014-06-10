@@ -39,9 +39,9 @@
 		</div>
 		<div class="sectionContainer collapse in nurseryDetails">
 			<div style="padding-left: 5px" class="form-group" >
-				<div style="padding-bottom: 5px" class="col-xs-4 col-md-4 fbk-span-overflow" th:each="basicDetail, rowStat : *{basicStudyDetails}">
+				<div style="padding-bottom: 5px" class="col-xs-4 col-md-4" th:each="basicDetail, rowStat : *{basicStudyDetails}">
 					&nbsp;&nbsp;&nbsp;<strong><span style="word-wrap: break-word" class="control-label" th:text="${basicDetail.variable.name}"></span>:</strong>
-					&nbsp;<span th:text="${basicDetail.value}" class="div-select-val"></span>
+					&nbsp;<span th:text="${basicDetail.value}" data-truncate-limit="30" class="div-select-val  fbk-variable"></span>
 					<span th:if="${basicDetail.variable.name == 'Field Map Created' and basicDetail.value == 'Yes'}">
 						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
@@ -62,9 +62,9 @@
 		</div>
 		<div class="sectionContainer collapse in managementDetails">
 			<div style="padding-left: 5px" class="form-group" >
-				<div style="padding-bottom: 5px" class="col-xs-4 col-md-4 fbk-span-overflow" th:each="managementDetail, rowStat : *{managementDetails}">
-					&nbsp;&nbsp;&nbsp;<strong><span style="word-wrap: break-word" class="control-label" th:text="${managementDetail.variable.name}"></span>:</strong>
-					&nbsp;<span th:text="${managementDetail.value}" class="div-select-val"></span>
+				<div style="padding-bottom: 5px" class="col-xs-4 col-md-4" th:each="managementDetail, rowStat : *{managementDetails}">
+					&nbsp;&nbsp;&nbsp;<strong><span style="word-wrap: break-word" data-truncate-limit="20" class="control-label fbk-variable" th:text="${managementDetail.variable.name}"></span>:</strong>
+					&nbsp;<span th:text="${managementDetail.value}" data-truncate-limit="15" class="div-select-val fbk-variable"></span>
 				</div>
 			</div>
 		</div>
@@ -81,8 +81,8 @@
 		<div class="sectionContainer collapse nurseryConditions">
 			<div style="padding-left: 5px" class="form-group" >
 				<div style="padding-bottom: 5px" class="col-xs-4 col-md-4" th:each="nurseryConditionDetail, rowStat : *{nurseryConditionDetails}">
-					&nbsp;&nbsp;&nbsp;<strong><span style="word-wrap: break-word" class="control-label" th:text="${nurseryConditionDetail.variable.name}"></span>:</strong>
-					&nbsp;<span th:text="${nurseryConditionDetail.value}" class="div-select-val"></span>
+					&nbsp;&nbsp;&nbsp;<strong><span style="word-wrap: break-word" data-truncate-limit="20" class="control-label fbk-variable" th:text="${nurseryConditionDetail.variable.name}"></span>:</strong>
+					&nbsp;<span th:text="${nurseryConditionDetail.value}" data-truncate-limit="15" class="div-select-val fbk-variable"></span>
 				</div>
 			</div>
 		</div>
@@ -321,7 +321,7 @@
 			if (hasFieldmap) {
 				$("#div-nursery-tab-" + getCurrentStudyIdInTab() + " #fieldmap-url-link").hide();
 			}
-
+			truncateStudyVariableNames('.fbk-variable', 10);
 		});
 		//]]>
 	</script>

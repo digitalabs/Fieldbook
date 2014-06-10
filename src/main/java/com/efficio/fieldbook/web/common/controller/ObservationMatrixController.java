@@ -151,12 +151,12 @@ public class ObservationMatrixController extends
     }
     
     @RequestMapping(value="/data/table", method = RequestMethod.GET)
-    public String demoPageDataTables(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
+    public String reloadPageDataTables(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
     	
     	StudySelection userSelection = getUserSelection(false);
     	form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());    
     	
-        return super.showCustom(model, "/NurseryManager/datatable");
+        return super.showAjaxPage(model, "/NurseryManager/addOrRemoveTraits");
     }
     @RequestMapping(value="/update/experiment/{index}", method = RequestMethod.GET)
     public String editExperimentModal(@PathVariable int index,

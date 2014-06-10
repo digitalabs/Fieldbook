@@ -196,7 +196,19 @@
 		});
 		function doMeasurementsReload(){
 			'use strict';
-			$('#measurement-table').DataTable().ajax.reload();
+			Spinner.toggle();
+			$.ajax(
+				{ 
+					url: '/Fieldbook/Common/addOrRemoveTraits/data/table',
+					type: 'GET',
+					data: '',
+					cache: false,
+					success: function(html) {
+						$('#measurementsDiv').html(html);
+						Spinner.toggle();
+					}
+			});
+			
 			$('#importStudyModal').modal('hide');
 			$('#importStudyConfirmationModal').modal('hide');
 		}

@@ -203,6 +203,9 @@ function saveLots() {
 	} else if(isFloatNumber($('#amount').val()) === false || parseFloat($('#amount').val()) < 0) {
 		showErrorMessage('page-message-lots', inventoryAmountPositiveRequired);
 		moveToTopScreen();
+	}  else if($('#inventoryComments').val().length > 250) {
+		showErrorMessage('page-message-lots', commentLimitError);
+		moveToTopScreen();
 	} else {
 		var serializedData = $('#add-plot-form').serialize();
 		

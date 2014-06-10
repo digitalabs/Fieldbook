@@ -78,7 +78,7 @@
             useBootstrapTooltip:true,
             onPageClicked: function(e,originalEvent,type,page){   
               'use strict';
-              var listDivIdentifier  = $('#create-nursery-tab-headers li.active button').attr('id'),
+              var listDivIdentifier  = $('#create-nursery-tab-headers li.active .fbk-close-tab').attr('id'),
                   sectionContainerDiv = 'advance-list'+listDivIdentifier,
                   listIdentifier = $('#'+getJquerySafeId(sectionContainerDiv) + ' #listId').val();
               showMultiTabPage(paginationUrl, page, 'inventory-germplasm-list', sectionContainerDiv, listIdentifier);            	            	                

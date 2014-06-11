@@ -348,7 +348,7 @@
 			nurseryTraitsIsRequired = /*[[#{nursery.create.traits.is.required}]]*/ '',
 			nurseryGermplasmListIsRequired = /*[[#{nursery.create.germplasm.list.is.required}]]*/ '',
 			checkTypeIsRequired = /*[[#{nursery.create.check.type.is.required}]]*/ '',
-
+            disabledActionTooltipMessage = /*[[#{nursery.create.actions.is.disabled}]]*/,
 			// Labels for method and location
 			showFavoriteMethodLabel = /*[[#{show.favorite.method}]]*/ '',
 			showFavoriteLocationLabel = /*[[#{show.favorite.location}]]*/ '',
@@ -378,7 +378,6 @@
 
 		$(document).ready(function() {
 			'use strict';
-
 			// FIXME Shouldn't be user agent checking
 			if (getIEVersion() === 8) {
 				$('.table-with-scroll-create').parent().addClass('variable-details');
@@ -412,6 +411,14 @@
 						'#' + getJquerySafeId('studyLevelVariables' + select2Index +
 							'.value'), false, $(divElem).siblings('.div-select-val').html());
 				}
+
+                /* GCP-8880 (tag change event to a var) */
+                $('#' + getJquerySafeId('studyLevelVariables' + select2Index +
+                        '.value')).on('change',function() {
+                    if (document.disableActions !== undefined)
+                        document.disableActions();
+                });
+
 			});
 
 			$.each($('.possibleValuesJsonCons'), function (index, divElem){
@@ -425,9 +432,6 @@
 			setTimeout('initializeDateAndSliderInputs()', 500);
 
 			addCreateNurseryRequiredAsterisk();
-			$('select').each(function(){
-				$(this).select2();
-			});
 
 			$('.help-tooltip-nursery').tooltip();
 			$('#srch-term').on('change', function(){
@@ -435,7 +439,56 @@
 				doOntologyTreeHighlight(treeDivId, data.key);
 			});
 			truncateStudyVariableNames('.study-variable-name', 17);
-		});
+
+            /* GCP-8880 (tag change event to a var) */
+            // 1. all form controls except select 2
+            $("form#createNurseryForm .form-control[type=text], form#createNurseryForm input[type=checkbox]").on('change',function() {
+                if (document.disableActions !== undefined)
+                    document.disableActions();
+            });
+
+
+            $.each($('span.delete-icon'),function(){
+                this.onclick = null;
+            });
+
+            // re apply the behaviors using modified functions
+            $('#createNurseryForm').on('click','span.delete-icon',function(){
+
+                if (eval($(this).attr('onclick'))) {
+                    if (document.disableActions !== undefined)
+                        document.disableActions();
+                }
+            });
+
+            $('#variateDeleteConfirmationModal').on('click','#continueDelete',function(){
+                if (document.disableActions !== undefined)
+                    document.disableActions();
+            });
+
+            $('#createNurseryForm').on('click','#addVariables',function(i,el){
+                if (document.disableActions !== undefined)
+                    document.disableActions();
+            });
+
+            document.disableActions = function() {
+                var actionBtn = $('.fbk-float-right-with-top-pos .dropdown-toggle');
+
+                actionBtn.removeAttr("data-toggle").addClass('disabled enable-pointer-events');
+                actionBtn.tooltip({ container: 'body', title: disabledActionTooltipMessage, placement : 'top' });
+
+            };
+
+            document.enableActions = function() {
+                var actionBtn = $('.fbk-float-right-with-top-pos .dropdown-toggle');
+
+                actionBtn.attr("data-toggle","dropdown");
+                actionBtn.tooltip('hide');
+                actionBtn.tooltip('destroy');
+                actionBtn.removeClass('disabled');
+            };
+
+        });
 	//]]>
 	</script>
 </div>

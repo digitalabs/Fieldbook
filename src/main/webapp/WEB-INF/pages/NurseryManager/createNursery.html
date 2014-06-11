@@ -262,7 +262,12 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 					return false;
 				}
 				submitWorkbook();
-			} else {
+
+                if (document.enableActions !== undefined) {
+                    document.enableActions();
+                }
+
+            } else {
 				moveToTopScreen();
 			}
 		}

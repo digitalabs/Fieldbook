@@ -148,7 +148,7 @@
 
 		$(document).ready(function() {
 			'use strict';
-			$('#exportStudyModal select').select2({width: 'copy'});
+			$('#exportStudyModal select').select2({width: 'copy', minimumResultsForSearch: 20});
 			$('#exportType').on('change', function(){
 				if ($(this).val() === '2') {
 					$('.exportRSection').css('display', 'block');

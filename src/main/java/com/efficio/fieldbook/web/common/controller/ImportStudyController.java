@@ -9,12 +9,15 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
+import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,8 +48,11 @@ import com.efficio.fieldbook.web.common.service.DataKaptureImportStudyService;
 import com.efficio.fieldbook.web.common.service.ExcelImportStudyService;
 import com.efficio.fieldbook.web.common.service.FieldroidImportStudyService;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
+import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 @Controller
 @RequestMapping(ImportStudyController.URL)
@@ -82,6 +88,9 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     /** The message source. */
     @Resource
     private ResourceBundleMessageSource messageSource;
+    
+    @Resource
+    private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
     
     @Override
 	public String getContentName() {
@@ -196,7 +205,13 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 		    	String reminderConfirmation = "";
 		    	if(importResult.getModes() != null && !importResult.getModes().isEmpty()){
 		    		for (ChangeType mode : importResult.getModes()) {
-		    			detailErrorMessage.add(messageSource.getMessage(mode.getMessageCode(), null, locale));
+		    			String message = messageSource.getMessage(mode.getMessageCode(), null, locale);
+		    			if (mode == ChangeType.ADDED_TRAITS) {
+		    				message += StringUtils.join(
+		    						WorkbookUtil.getAddedTraits(
+		    								userSelection.getWorkbook().getVariates(), userSelection.getWorkbook().getObservations()), ", ");
+		    			}
+		    			detailErrorMessage.add(message);
 		    		}
 		    		reminderConfirmation = messageSource.getMessage("confirmation.import.text", null, locale);
 		    	}
@@ -212,7 +227,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     		try{
     			resultsMap.put("error", messageSource.getMessage(errorCode, null, locale));
     		}catch(NoSuchMessageException e){    			
-    			resultsMap.put("error",messageSource.getMessage("nursery.import.incorrect.input.file", null, locale));
+    			resultsMap.put("error", errorCode);
     		}
     	}
 	    	
@@ -317,5 +332,46 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     			details.get(index).setMessage(message);
     		}
     	}
+    }
+
+    @RequestMapping(value="/import/save", method=RequestMethod.POST)
+    public String saveImportedFiles(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws Exception {
+    	UserSelection userSelection = (UserSelection) getUserSelection(false);
+    	List<MeasurementVariable> traits = WorkbookUtil.getAddedTraitVariables(
+								    			userSelection.getWorkbook().getVariates(), 
+								    			userSelection.getWorkbook().getObservations());
+    	userSelection.getWorkbook().getVariates().addAll(traits);
+    	fieldbookMiddlewareService.saveMeasurementRows(userSelection.getWorkbook());
+    	userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
+    	form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());    
+    	userSelection.getWorkbook().setOriginalObservations(userSelection.getWorkbook().getObservations());
+    	List<SettingDetail> newTraits = new ArrayList<SettingDetail>();
+    	List<SettingDetail> selectedVariates = new ArrayList<SettingDetail>();
+    	SettingsUtil.convertWorkbookVariatesToSettingDetails(traits, 
+    			fieldbookMiddlewareService, fieldbookService, newTraits, selectedVariates);
+    	userSelection.getSelectionVariates().addAll(selectedVariates);
+    	userSelection.getBaselineTraitsList().addAll(newTraits);
+    	for (SettingDetail detail : newTraits) {
+    		detail.getVariable().setOperation(Operation.UPDATE);
+    	}
+    	for (SettingDetail detail : selectedVariates) {
+    		detail.getVariable().setOperation(Operation.UPDATE);
+    	}
+    	userSelection.setNewTraits(newTraits);
+    	userSelection.setNewSelectionVariates(selectedVariates);
+        return super.showAjaxPage(model, "/NurseryManager/addOrRemoveTraits");
+    }
+    
+    @ResponseBody
+    @RequestMapping(value="/retrieve/new/import/variables", method=RequestMethod.GET)
+    public Map<String, String> getNewlyImportedTraits() throws Exception {
+    	UserSelection userSelection = (UserSelection) getUserSelection(false);
+    	ObjectMapper objectMapper = new ObjectMapper();
+    	Map<String, String> map = new HashMap<String, String>();
+    	List<SettingDetail> newTraits = userSelection.getNewTraits();
+    	List<SettingDetail> selectedVariates = userSelection.getNewSelectionVariates();
+    	map.put("newTraits", objectMapper.writeValueAsString(newTraits));
+    	map.put("newSelectionVariates", objectMapper.writeValueAsString(selectedVariates));
+    	return map;
     }
 }

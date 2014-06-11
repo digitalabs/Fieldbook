@@ -34,6 +34,7 @@
 									<option value="0">Please Choose</option>
 									<option value="1" th:text="#{nursery.import.fieldlog.fieldroid}"></option>
 									<option value="3" th:text="#{nursery.import.excel}"></option>
+									<option value="4" th:text="#{nursery.import.datakapture}"></option>
 								</select>
 							</div>
 						</div>
@@ -156,6 +157,26 @@
 </div>
 </div>
 
+<!-- Modal Dialog for Successful Import -->
+<div class="form-group">
+	<div class="col-md-12">
+		<div class="modal fade" id="successImportSaveModal" role="dialog" aria-labelledby="successImportSaveModal" aria-hidden="true">
+			<div class="modal-dialog" style="width: 600px">
+				<div class="modal-content">
+					<div class="modal-body" id="successImportSaveMessageBody">
+						<div style="text-align: center">
+							<label th:text="#{import.save.confirmation.text}">Import data was saved successfully!</label>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.ok.text}">OK</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div layout:fragment="page-script">
 	<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-fileupload.js}"></script>
 	<script type='text/javascript' th:inline="javascript">
@@ -174,7 +195,7 @@
 
 		$( document ).ready(function() {
 			'use strict';
-			$('#importStudyModal select').select2({width: 'copy'});
+			$('#importStudyModal select').select2({width: 'copy', minimumResultsForSearch: 20});
 			$('#importType').on('change', function(){
 				if($(this).val() !== '0'){
 					importNursery($(this).val());
@@ -194,9 +215,39 @@
 
 			$('#importStudyModal #heading-modal').html(importStudyHeader + ' ' + $('#study-type').val() + ' ' + importStudyBookHeader);
 		});
+		function doRefreshNurserySettings() {
+			'use strict';
+			$.ajax(
+				{ 
+					url: '/Fieldbook/ImportManager/retrieve/new/import/variables',
+					type: 'GET',
+					cache: false,
+					success: function(data) {
+						createTableSettingVariables($.parseJSON(data.newTraits),
+								'baselineTraitVariables', 'baselineTraitSettings',
+								3);
+						createTableSettingVariables($.parseJSON(data.newSelectionVariates),
+								'selectionVariatesVariables',
+								'selectionVariatesSettings', 6);
+						$('#successImportSaveModal').modal('show');	
+					}
+			});
+		}
+		
 		function doMeasurementsReload(){
 			'use strict';
-			$('#measurement-table').DataTable().ajax.reload();
+			Spinner.toggle();
+			$.ajax(
+				{ 
+					url: '/Fieldbook/ImportManager/import/save',
+					type: 'POST',
+					success: function(html) {
+						$('#measurementsDiv').html(html);
+						doRefreshNurserySettings();
+						Spinner.toggle();
+					}
+			});
+			
 			$('#importStudyModal').modal('hide');
 			$('#importStudyConfirmationModal').modal('hide');
 		}

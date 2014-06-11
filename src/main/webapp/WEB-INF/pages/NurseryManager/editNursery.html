@@ -418,6 +418,11 @@
 				} else {
 					submitWorkbook();
 				}
+
+                if (document.enableActions !== undefined) {
+                    document.enableActions();
+                }
+
 			} else {
 				moveToTopScreen();
 			}

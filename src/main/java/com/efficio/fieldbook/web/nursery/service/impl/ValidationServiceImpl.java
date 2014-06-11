@@ -17,6 +17,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -68,9 +69,11 @@ public class ValidationServiceImpl implements ValidationService {
 		Locale locale = LocaleContextHolder.getLocale();
 		if (workbook.getObservations() != null) {
 			for (MeasurementRow row : workbook.getObservations()) {
-				for (MeasurementVariable variate : workbook.getVariates()) {
-					if (!isValidValue(variate, row.getMeasurementDataValue(variate.getName()))) {
+				for (MeasurementData data : row.getDataList()) {
+					MeasurementVariable variate = data.getMeasurementVariable();
+					if (!isValidValue(variate, data.getValue())) {
 						throw new MiddlewareQueryException(messageSource.getMessage("error.workbook.save.invalidCellValue", new Object[] {variate.getName()}, locale));
+						
 					}
 				}
 			}
@@ -80,8 +83,9 @@ public class ValidationServiceImpl implements ValidationService {
 	public void validateObservationValues(Workbook workbook, MeasurementRow row) throws MiddlewareQueryException {
 		Locale locale = LocaleContextHolder.getLocale();
 		if (workbook.getObservations() != null) {			
-				for (MeasurementVariable variate : workbook.getVariates()) {
-					if (!isValidValue(variate, row.getMeasurementDataValue(variate.getName()))) {
+			for (MeasurementData data : row.getDataList()) {
+				MeasurementVariable variate = data.getMeasurementVariable();
+				if (!isValidValue(variate, data.getValue())) {
 						throw new MiddlewareQueryException(messageSource.getMessage("error.workbook.save.invalidCellValue", new Object[] {variate.getName()}, locale));
 					}
 				}			

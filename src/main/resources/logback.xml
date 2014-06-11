@@ -42,8 +42,8 @@
     </root>
 
     <!-- Set the log levels -->
-    <logger name="com.efficio" level="TRACE"/>
-    <logger name="org.generationcp" level="TRACE"/>
+    <logger name="com.efficio" level="DEBUG"/>
+    <logger name="org.generationcp" level="DEBUG"/>
     <logger name="org.hibernate.cfg" level="WARN"/>
     <logger name="org.springframework" level="WARN"/>
 </configuration>

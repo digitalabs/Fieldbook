@@ -202,10 +202,6 @@
 	<div th:include="/NurseryManager/includes/studyTree"></div>
 </div>
 
-<div class="form-group" id="create-nursery">
-	<div th:include="/NurseryManager/includes/saveSuccessModal"></div>
-</div>
-
 <!-- Modal Dialog for Delete Confirmation -->
 <div class="form-group">
 	<div class="col-md-12">
@@ -309,7 +305,8 @@
 		// FIXME Should not be using global variables or functions
 		/*global showErrorMessage,recreateSessionVariables, lastDraggedChecksList, Spinner, validateCreateNursery, validateStartEndDate, moveToTopScreen, programNurseriesText*/
 		var locationSuggestions = /*[[${locationList}]]*/ '',
-			scaleSuggestions = /*[[${scaleList}]]*/  '';
+			scaleSuggestions = /*[[${scaleList}]]*/  '',
+			saveSuccessMessage = /*[[#{common.form.save.successful.text}]]*/ '';
 
 
 		/* jshint ignore:start */
@@ -336,7 +333,7 @@
 				cache: false,
 				success: function() {
 					refreshStudyAfterSave($("#studyId").val());
-					$('#successStudyMessageModal').modal({ backdrop: 'static', keyboard: true });
+					displaySaveNurserySuccessfulMessage();
 				}
 			});
 		}

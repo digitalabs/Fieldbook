@@ -1436,7 +1436,7 @@ public class SettingsUtil {
 		return plotsLevelList;
 	}
 	
-	private static void convertWorkbookVariatesToSettingDetails(List<MeasurementVariable> variates,
+	public static void convertWorkbookVariatesToSettingDetails(List<MeasurementVariable> variates,
 			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
 			FieldbookService fieldbookService, List<SettingDetail> traits, List<SettingDetail> selectedVariates) 
 	throws MiddlewareQueryException {

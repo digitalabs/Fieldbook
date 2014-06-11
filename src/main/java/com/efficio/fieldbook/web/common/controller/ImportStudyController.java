@@ -17,6 +17,7 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
+import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +51,7 @@ import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 @Controller
@@ -86,6 +88,9 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     /** The message source. */
     @Resource
     private ResourceBundleMessageSource messageSource;
+    
+    @Resource
+    private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
     
     @Override
 	public String getContentName() {
@@ -331,7 +336,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
     @RequestMapping(value="/import/save", method=RequestMethod.POST)
     public String saveImportedFiles(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws Exception {
-    	StudySelection userSelection = getUserSelection(false);
+    	UserSelection userSelection = (UserSelection) getUserSelection(false);
     	List<MeasurementVariable> traits = WorkbookUtil.getAddedTraitVariables(
 								    			userSelection.getWorkbook().getVariates(), 
 								    			userSelection.getWorkbook().getObservations());
@@ -340,7 +345,33 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
     	form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());    
     	userSelection.getWorkbook().setOriginalObservations(userSelection.getWorkbook().getObservations());
+    	List<SettingDetail> newTraits = new ArrayList<SettingDetail>();
+    	List<SettingDetail> selectedVariates = new ArrayList<SettingDetail>();
+    	SettingsUtil.convertWorkbookVariatesToSettingDetails(traits, 
+    			fieldbookMiddlewareService, fieldbookService, newTraits, selectedVariates);
+    	userSelection.getSelectionVariates().addAll(selectedVariates);
+    	userSelection.getBaselineTraitsList().addAll(newTraits);
+    	for (SettingDetail detail : newTraits) {
+    		detail.getVariable().setOperation(Operation.UPDATE);
+    	}
+    	for (SettingDetail detail : selectedVariates) {
+    		detail.getVariable().setOperation(Operation.UPDATE);
+    	}
+    	userSelection.setNewTraits(newTraits);
+    	userSelection.setNewSelectionVariates(selectedVariates);
         return super.showAjaxPage(model, "/NurseryManager/addOrRemoveTraits");
     }
     
+    @ResponseBody
+    @RequestMapping(value="/retrieve/new/import/variables", method=RequestMethod.GET)
+    public Map<String, String> getNewlyImportedTraits() throws Exception {
+    	UserSelection userSelection = (UserSelection) getUserSelection(false);
+    	ObjectMapper objectMapper = new ObjectMapper();
+    	Map<String, String> map = new HashMap<String, String>();
+    	List<SettingDetail> newTraits = userSelection.getNewTraits();
+    	List<SettingDetail> selectedVariates = userSelection.getNewSelectionVariates();
+    	map.put("newTraits", objectMapper.writeValueAsString(newTraits));
+    	map.put("newSelectionVariates", objectMapper.writeValueAsString(selectedVariates));
+    	return map;
+    }
 }

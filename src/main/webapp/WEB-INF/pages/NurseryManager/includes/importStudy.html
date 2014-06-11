@@ -194,6 +194,25 @@
 
 			$('#importStudyModal #heading-modal').html(importStudyHeader + ' ' + $('#study-type').val() + ' ' + importStudyBookHeader);
 		});
+		function doRefreshNurserySettings() {
+			'use strict';
+			$.ajax(
+				{ 
+					url: '/Fieldbook/ImportManager/retrieve/new/import/variables',
+					type: 'GET',
+					cache: false,
+					success: function(data) {
+						createTableSettingVariables($.parseJSON(data.newTraits),
+								'baselineTraitVariables', 'baselineTraitSettings',
+								3);
+						createTableSettingVariables($.parseJSON(data.newSelectionVariates),
+								'selectionVariatesVariables',
+								'selectionVariatesSettings', 6);
+						
+					}
+			});
+		}
+		
 		function doMeasurementsReload(){
 			'use strict';
 			Spinner.toggle();
@@ -203,6 +222,7 @@
 					type: 'POST',
 					success: function(html) {
 						$('#measurementsDiv').html(html);
+						doRefreshNurserySettings();
 						Spinner.toggle();
 					}
 			});

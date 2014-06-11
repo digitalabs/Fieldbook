@@ -2454,7 +2454,8 @@ function refreshEditNursery() {
 function displaySaveNurserySuccessfulMessage() {
 	'use strict';
 	showSuccessfulMessage('page-message', saveSuccessMessage);
-	$('#page-message').delay(5000).fadeOut('slow');
+	$('#page-message').show();
+	$('#page-message').fadeOut(5000);
 }
 
 //FIXME Should not be using global variables or functions
@@ -2462,7 +2463,8 @@ function displaySaveNurserySuccessfulMessage() {
 function displaySaveImportNurserySuccessfulMessage() {
 	'use strict';
 	showSuccessfulMessage('page-message', saveImportSuccessMessage);
-	$('#page-message').delay(5000).fadeOut('slow');
+	$('#page-message').show();
+	$('#page-message').fadeOut(5000);
 	
 }
 

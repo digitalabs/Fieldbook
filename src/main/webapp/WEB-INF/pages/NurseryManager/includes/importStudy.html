@@ -174,7 +174,7 @@
 
 		$( document ).ready(function() {
 			'use strict';
-			$('#importStudyModal select').select2({width: 'copy'});
+			$('#importStudyModal select').select2({width: 'copy', minimumResultsForSearch: 20});
 			$('#importType').on('change', function(){
 				if($(this).val() !== '0'){
 					importNursery($(this).val());

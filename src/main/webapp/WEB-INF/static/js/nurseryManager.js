@@ -2264,7 +2264,7 @@ function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
 		return;
 	Spinner.toggle();
 	$.ajax({
-		url : '/Fieldbook/NurseryManager/addOrRemoveTraits/viewNurseryAjax/' + currentStudyId,
+		url : '/Fieldbook/NurseryManager/addOrRemoveTraits/viewNurseryAjax/' + datasetId,
 		type : 'GET',
 		cache : false,
 		success : function(html) {

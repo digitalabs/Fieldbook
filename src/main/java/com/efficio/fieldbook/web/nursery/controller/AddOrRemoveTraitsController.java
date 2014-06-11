@@ -14,8 +14,6 @@ package com.efficio.fieldbook.web.nursery.controller;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
-import org.generationcp.middleware.domain.etl.MeasurementData;
-import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -23,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -133,26 +130,21 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     @RequestMapping(value="/viewNurseryAjax/{datasetId}", method = RequestMethod.GET)
     public String viewNurseryAjax(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, 
             @PathVariable int datasetId) {
-        Workbook workbook = null;
-        
+
+    	Workbook workbook = null;
         try { 
-            workbook = fieldbookMiddlewareService.getNurseryDataSet(datasetId);
+        	workbook = fieldbookMiddlewareService.getCompleteDataset(datasetId, false);
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }
-        
-        if (workbook != null) {
-        	getUserSelection().setMeasurementRowList(workbook.getObservations());
-            form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
-            form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());
-            form.setStudyName(workbook.getStudyDetails().getStudyName());
-            paginationListSelection.addReviewDetailsList(String.valueOf(workbook.getMeasurementDatesetId()), form.getMeasurementRowList());
-            paginationListSelection.addReviewVariableList(String.valueOf(workbook.getMeasurementDatesetId()), form.getMeasurementVariables());
-            form.changePage(1);
-            userSelection.setCurrentPage(form.getCurrentPage());
-            userSelection.setWorkbook(workbook);
-        }
-        
+        getUserSelection().setMeasurementRowList(workbook.getObservations());
+        form.setMeasurementRowList(getUserSelection().getMeasurementRowList());
+      	form.setMeasurementVariables(workbook.getMeasurementDatasetVariables());
+	    paginationListSelection.addReviewDetailsList(String.valueOf(datasetId), form.getMeasurementRowList());
+	    paginationListSelection.addReviewVariableList(String.valueOf(datasetId), form.getMeasurementVariables());
+	    form.changePage(1);
+	    userSelection.setCurrentPage(form.getCurrentPage());
+    	
         return super.showAjaxPage(model, OBSERVATIONS_HTML);
     }
 }

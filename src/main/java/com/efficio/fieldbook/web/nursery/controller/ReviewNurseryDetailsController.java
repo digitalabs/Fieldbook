@@ -17,11 +17,8 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.generationcp.middleware.domain.dms.DatasetReference;
-import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
-import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.manager.Database;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,19 +77,8 @@ public class ReviewNurseryDetailsController extends AbstractBaseFieldbookControl
     @ResponseBody
     @RequestMapping(value="/datasets/{nurseryId}")
     public List<DatasetReference> loadDatasets(@PathVariable int nurseryId) throws MiddlewareQueryException {
-    	List<DatasetReference> datasetList = new ArrayList<DatasetReference>();
-    	Database database = nurseryId > 0 ? Database.CENTRAL : Database.LOCAL;
-    	StudyDetails studyDetails = fieldbookMiddlewareService.getStudyDetails(database, StudyType.N, nurseryId);
-    	int datasetId = fieldbookMiddlewareService.getMeasurementDatasetId(nurseryId, studyDetails.getStudyName()); 
     	List<DatasetReference> datasets = fieldbookMiddlewareService.getDatasetReferences(nurseryId);
-    	if (datasets != null && !datasets.isEmpty()) {
-    		for (DatasetReference dataset : datasets) {
-    			if (dataset.getId() == datasetId) {
-    				datasetList.add(dataset);
-    			}
-    		}
-    	}
-    	return datasetList;
+    	return datasets;
     }
     
     private void rearrangeDetails(NurseryDetails details) {

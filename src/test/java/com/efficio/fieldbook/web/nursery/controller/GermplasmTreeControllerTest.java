@@ -96,7 +96,7 @@ public class GermplasmTreeControllerTest extends AbstractJUnit4SpringContextTest
      */
     @Test
     public void testLoadInitialTree() throws Exception {
-        String jsonResponse = controller.loadInitialGermplasmTree();
+        String jsonResponse = controller.loadInitialGermplasmTree("0");
         
         List<TreeNode> treeNodes = objectMapper.readValue(
                 jsonResponse, new TypeReference<List<TreeNode>>(){});

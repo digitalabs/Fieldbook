@@ -43,7 +43,7 @@
                <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.locationName}">.2</td>
                <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.amount}">.4</td>
                <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.scaleName}">.6</td>
-               <td th:class="${row.even}? 'even' : 'odd'" th:text="${gid.comment}">.6</td>
+               <td data-truncate-limit="30" data-truncate-placement="left" th:class="${row.even}? 'even advance-list-comment' : 'odd advance-list-comment'" th:text="${gid.comment}">.6</td>
              </tr>             
            </tbody>
          </table> 
@@ -81,7 +81,8 @@
               var listDivIdentifier  = $('#create-nursery-tab-headers li.active .fbk-close-tab').attr('id'),
                   sectionContainerDiv = 'advance-list'+listDivIdentifier,
                   listIdentifier = $('#'+getJquerySafeId(sectionContainerDiv) + ' #listId').val();
-              showMultiTabPage(paginationUrl, page, 'inventory-germplasm-list', sectionContainerDiv, listIdentifier);            	            	                
+              showMultiTabPage(paginationUrl, page, 'inventory-germplasm-list', sectionContainerDiv, listIdentifier);
+              truncateStudyVariableNames('#' + sectionContainerDiv + ' .advance-nursery-list-table .advance-list-comment', 30);
             }
         };
         $( document ).ready(function() {  
@@ -101,6 +102,7 @@
     					$(this).prop('checked', isChecked);
     				});
     			});
+			truncateStudyVariableNames('#' + sectionContainerDiv + ' .advance-nursery-list-table .advance-list-comment', 30);
         });
         
         

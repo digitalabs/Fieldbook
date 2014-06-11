@@ -2112,6 +2112,11 @@ function truncateStudyVariableNames(domSelector, charLimit){
 			if(!$(this).hasClass('variable-tooltip')){
 				$(this).addClass('variable-tooltip');
 				$(this).attr('title',htmlString);
+				
+				if($(this).data('truncate-placement') !== undefined) {
+					$(this).data('placement',$(this).data('truncate-placement'));
+				}
+				
 
 				htmlString = htmlString.substring(0,charLimit) + '...';
 
@@ -2122,7 +2127,9 @@ function truncateStudyVariableNames(domSelector, charLimit){
 	});
 	$('.variable-tooltip').each(function(){
 		$(this).data('toggle', 'tooltip');
-		$(this).data('placement', 'right');
+		if($(this).data('placement') === undefined) {
+			$(this).data('placement', 'right');
+		}
 		$(this).data('container', 'body');
 		$(this).tooltip();
 	});

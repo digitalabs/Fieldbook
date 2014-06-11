@@ -16,14 +16,13 @@
 	<div class="row form-group">
 		<div class="col-xs-6 col-md-6">
 			<div class="row">
-				<div class="col-xs-10 col-md-10">
+				<div class="col-md-12">
 					<label class="control-label" data-toggle="collapse" data-target=".nurseryLevelDetails">
 						<strong class="sub-content-heading" th:text="#{nursery.managesettings.management.details}">MANAGEMENT DETAILS</strong>
 					</label>
 					<span class="help-tooltip-nursery" data-placement="right" data-toggle="tooltip" th:title="#{nursery.managesettings.nursery.level.notes}">?</span>
-				</div>
-				<div class="col-xs-2 col-md-2 add-bottom-padding">
-					<a class="btn btn-info" href="javascript: openAddVariablesSetting(1);" th:text="#{nursery.create.nursery.add.settings}">Add</a>
+				
+					<a class="btn btn-info pull-right" href="javascript: openAddVariablesSetting(1);" th:text="#{nursery.create.nursery.add.settings}">Add</a>
 				</div>
 			</div>
 			<div class="sectionContainer" id="nurseryLevelSettings-dev">
@@ -34,7 +33,7 @@
 						th:onclick="'javascript: deleteVariable(1,\'' + ${nurseryLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
 						<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 						&nbsp;&nbsp;&nbsp;
-						<span style="word-wrap: break-word" class="control-label nursery-level-label label-bold study-variable-name" th:text="${nurseryLevelVariable.variable.name}"></span>:
+						<span style="word-wrap: break-word" class="control-label nursery-level-label label-bold study-variable-name var-names" th:text="${nurseryLevelVariable.variable.name}"></span>:
 						&nbsp;<span class="required">*</span>
 					</div>
 					<div class="col-xs-7 col-md-7 2nd">
@@ -109,14 +108,13 @@
 				</div>
 				<div class="col-xs-6 col-md-6">
 					<div class="row">
-						<div class="col-xs-10 col-md-10">
+						<div class="col-md-12">
 							<label class="control-label" data-toggle="collapse" data-target=".nurseryConditionsDetails">
 								<strong class="sub-content-heading" th:text="#{nursery.create.nursery.conditions}">NURSERY CONDITIONS</strong>
 							</label>
 							<span class="help-tooltip-nursery" data-placement="right" data-toggle="tooltip" th:title="#{nursery.create.nursery.conditions.notes}">?</span>
-						</div>
-						<div class="col-xs-2 col-md-2 add-bottom-padding">
-							<a class="btn btn-info" href="javascript: openAddVariablesSetting(7);" th:text="#{nursery.create.nursery.add.settings}">Add</a>
+						
+							<a class="btn btn-info pull-right" href="javascript: openAddVariablesSetting(7);" th:text="#{nursery.create.nursery.add.settings}">Add</a>
 						</div>
 					</div>
 					<div class="sectionContainer collapse in nurseryConditionsDetails" id="nurseryConditionsSettings">
@@ -125,7 +123,7 @@
 								<span style="cursor: default; font-size: 16px;" th:if="${nurseryCondition.deletable}" class="delete-icon"
 								th:onclick="'javascript: deleteVariable(7,\'' + ${nurseryCondition.variable.cvTermId} + '\',$(this))'"></span>
 								<input class="cvTermIds" type="hidden" th:field="*{nurseryConditions[__${rowStat.index}__].variable.cvTermId}" />&nbsp;&nbsp;&nbsp;
-								<span style="word-wrap: break-word" class="control-label nursery-condition-label label-bold study-variable-name" th:text="${nurseryCondition.variable.name}"></span>:
+								<span style="word-wrap: break-word" class="control-label nursery-condition-label label-bold study-variable-name var-names" th:text="${nurseryCondition.variable.name}"></span>:
 								&nbsp;<span class="required">*</span>
 							</div>
 							<div class="col-xs-7 col-md-7 2nd">
@@ -173,32 +171,30 @@
 	<div class="row form-group">
 		<div class="col-xs-6 col-md-6">
 			<div class="row">
-				<div class="col-xs-10 col-md-10">
+				<div class="col-md-12">
 					<img width="23" height="23" th:src="@{/static/img/factors.png}" class="image-padding" /> &nbsp;
 					<label class="control-label" data-toggle="collapse" data-target=".plotLevelDetails">
 						<strong class="sub-content-heading" th:text="#{nursery.managesettings.plot.level.details}">PLOT-LEVEL DETAILS</strong>
 					</label>
 					<span class="help-tooltip-nursery" data-placement="right" data-toggle="tooltip" th:title="#{nursery.managesettings.plot.level.notes}">?</span>
-				</div>
-				<div class="col-xs-2 col-md-2 add-bottom-padding" th:if="${createNurseryForm.measurementRowList.size() == 0}">
-					<a class="btn btn-info" href="javascript: openAddVariablesSetting(2);"
+
+					<a th:if="${createNurseryForm.measurementRowList.size() == 0}" class="btn btn-info pull-right" href="javascript: openAddVariablesSetting(2);"
 					th:text="#{nursery.create.nursery.add.settings}">Add</a>
 				</div>
-				<div class="col-xs-2 col-md-2 add-bottom-padding" th:if="${createNurseryForm.measurementRowList.size() != 0}" style="padding-top: 30px"></div>
 			</div>
 			<div class="row form-group collapse in plotLevelDetails">
 				<div class="col-xs-12 col-md-12">
 					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed" id="plotLevelSettings">
 						<thead>
 							<tr>
-								<th width="5%"></th>
+								<th class="fbk-delete-link"></th>
 								<th width="45%" th:utext="#{nursery.managesettings.plot.name}">.Name</th>
 								<th width="50%" th:utext="#{nursery.managesettings.plot.description}">.Description</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr th:each="plotLevelVariable, rowStat : *{plotLevelVariables}">
-								<td width="5%" style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'">
+								<td style="text-align: center" th:class="${rowStat.even}? 'even fbk-delete-link' : 'odd fbk-delete-link'">
 									<span style="cursor: default; font-size: 16px;" th:if="${plotLevelVariable.deletable}" class="delete-icon"
 									th:onclick="'javascript: deleteVariable(2,\'' + ${plotLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
 
@@ -207,7 +203,7 @@
 								<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
 									<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
 									*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
-									<span th:text="${plotLevelVariable.variable.name}"></span></a>
+									<span class="var-names" th:text="${plotLevelVariable.variable.name}"></span></a>
 								</td>
 								<td width="50%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${plotLevelVariable.variable.description}"></td>
 							</tr>
@@ -219,15 +215,14 @@
 		</div>
 		<div class="col-xs-6 col-md-6">
 			<div class="row">
-				<div class="col-xs-10 col-md-10">
+				<div class="col-md-12">
 					<img width="23" height="23" th:src="@{/static/img/baseline-traits.png}" class="image-padding" /> &nbsp;
 					<label class="control-label" data-toggle="collapse" data-target=".baselineTraitDetails">
 						<strong class="sub-content-heading" th:text="#{nursery.managesettings.baseline.traits}">BASELINE TRAITS</strong>
 					</label>
 					<span class="help-tooltip-nursery" data-placement="right" data-toggle="tooltip" th:title="#{nursery.managesettings.baseline.traits.notes}">?</span>
-				</div>
-				<div class="col-xs-2 col-md-2 add-bottom-padding">
-					<a class="btn btn-info" href="javascript: openAddVariablesSetting(3);" th:text="#{nursery.create.nursery.add.settings}">Add</a>
+				
+					<a class="btn btn-info pull-right" href="javascript: openAddVariablesSetting(3);" th:text="#{nursery.create.nursery.add.settings}">Add</a>
 				</div>
 			</div>
 			<div class="row form-group collapse in baselineTraitDetails">
@@ -235,14 +230,14 @@
 					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed" id="baselineTraitSettings">
 						<thead>
 							<tr>
-								<th width="5%"></th>
+								<th class="fbk-delete-link"></th>
 								<th width="45%" th:utext="#{nursery.managesettings.trait}">.Trait</th>
 								<th width="50%" th:utext="#{nursery.managesettings.trait.description}">.Description</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr class="baseline-traits" th:each="baselineTraitVariable, rowStat : *{baselineTraitVariables}">
-								<td width="5%" style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'" >
+								<td style="text-align: center" th:class="${rowStat.even}? 'even fbk-delete-link' : 'odd fbk-delete-link'" >
 									<span style="cursor: default; font-size: 16px;" th:if="${baselineTraitVariable.deletable}" class="delete-icon"
 									th:onclick="'javascript: deleteVariable(3,\'' + ${baselineTraitVariable.variable.cvTermId} + '\',$(this))'"></span>
 
@@ -251,7 +246,7 @@
 								<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
 									<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
 									*{baselineTraitVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
-									<span th:text="${baselineTraitVariable.variable.name}"></span></a>
+									<span class="var-names" th:text="${baselineTraitVariable.variable.name}"></span></a>
 								</td>
 								<td width="50%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${baselineTraitVariable.variable.description}"></td>
 							</tr>
@@ -265,15 +260,14 @@
 	<div class="row form-group">
 		<div class="col-xs-6 col-md-6">
 			<div class="row">
-				<div class="col-xs-10 col-md-10">
+				<div class="col-md-12">
 					<img width="23" height="23" th:src="@{/static/img/variates.png}" class="image-padding" /> &nbsp;
 					<label class="control-label" data-toggle="collapse" data-target=".selectionVariatesDetails">
 						<strong class="sub-content-heading" th:text="#{nursery.create.nursery.selection.variates}">SELECTION VARIATES</strong>
 					</label>
 					<span class="help-tooltip-nursery" data-placement="right" data-toggle="tooltip" th:title="#{nursery.create.nursery.selection.variates.notes}">?</span>
-				</div>
-				<div class="col-xs-2 col-md-2 add-bottom-padding">
-					<a class="btn btn-info" href="javascript: openAddVariablesSetting(6);" th:text="#{nursery.create.nursery.add.settings}">Add</a>
+				
+					<a class="btn btn-info pull-right" href="javascript: openAddVariablesSetting(6);" th:text="#{nursery.create.nursery.add.settings}">Add</a>
 				</div>
 			</div>
 			<div class="row form-group collapse in selectionVariatesDetails">
@@ -281,14 +275,14 @@
 					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed" id="selectionVariatesSettings">
 						<thead>
 							<tr>
-								<th width="5%"></th>
+								<th class="fbk-delete-link"></th>
 								<th width="45%" th:utext="#{nursery.create.nursery.selection.variate.name}">.Name</th>
 								<th width="50%" th:utext="#{nursery.create.nursery.selection.variate.description}">.Description</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr th:each="selectionVariatesVariable, rowStat : *{selectionVariatesVariables}">
-								<td width="5%" style="text-align: center" th:class="${rowStat.even}? 'even' : 'odd'">
+								<td style="text-align: center" th:class="${rowStat.even}? 'even fbk-delete-link' : 'odd fbk-delete-link'">
 									<span style="cursor: default; font-size: 16px;" th:if="${selectionVariatesVariable.deletable}" class="delete-icon"
 									th:onclick="'javascript: deleteVariable(6,\'' + ${selectionVariatesVariable.variable.cvTermId} + '\',$(this))'"></span>
 
@@ -297,7 +291,7 @@
 								<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
 									<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
 									*{selectionVariatesVariables[__${rowStat.index}__].variable.cvTermId} + '\');'" >
-									<span th:text="${selectionVariatesVariable.variable.name}"></span></a>
+									<span class="var-names" th:text="${selectionVariatesVariable.variable.name}"></span></a>
 								</td>
 								<td width="50%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${selectionVariatesVariable.variable.description}"></td>
 							</tr>

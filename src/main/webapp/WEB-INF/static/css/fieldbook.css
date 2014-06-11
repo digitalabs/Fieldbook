@@ -865,6 +865,7 @@ div.sectionContainer {
 	overflow-y: auto;
 	padding:0;
 	margin: 0;
+	margin-top: 5px;
 }
 .variable-details{
 	max-height: 250px;
@@ -1163,4 +1164,7 @@ a.fbk-edit-experiment{
 }
 .tooltip-arrow {
  display: none;
+}
+.fbk-delete-link{
+	width: 30px;
 }

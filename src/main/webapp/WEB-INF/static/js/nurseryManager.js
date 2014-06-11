@@ -608,7 +608,26 @@ function hasNoVariableName() {
 	});
 	return result;
 }
-
+function validateUniqueVariableName(){
+	'use strict';
+	var existingNameMap = [],
+		isFound = false,
+		existingVarName = '',
+		newName = '';
+	$('.var-names').each(function(){
+		var varName = $.trim($(this).html()).toUpperCase();
+		existingNameMap[varName] = $(this).html();	
+	});
+	$('input[type=text].addVariables').each(function(){		
+			newName = $.trim($(this).val()).toUpperCase();
+			if(isFound === false && existingNameMap[newName] !== undefined) {
+				existingVarName = $.trim($(this).val());
+				isFound = true;
+				return;
+			}			
+	});
+	return existingVarName;
+}
 function submitSelectedVariables(variableType) {
 	if ($('#newVariablesList tbody tr').length === 0) {
 		$('#page-message-modal').html(
@@ -618,6 +637,13 @@ function submitSelectedVariables(variableType) {
 		$('#page-message-modal').html(
 				'<div class="alert alert-danger">' + noVariableNameError + '</div>');
 	} else if ($('#newVariablesList tbody tr').length > 0) {
+		var varName = validateUniqueVariableName();
+		if(varName !== ''){
+				$('#page-message-modal').html(
+					'<div class="alert alert-danger">' + errorTheVariable + ' &quot;'+varName + '&quot; ' + errorTheVariableNurseryUnique + '</div>');
+				return;
+		}
+		
 		replaceNameVariables();
 		var serializedData = $('input.addVariables').serialize();
 		$('#page-message-modal').html('');
@@ -733,7 +759,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 								+ '" />&nbsp;&nbsp;&nbsp;&nbsp;';
 
 						newRow = newRow
-								+ '<span style="word-wrap: break-word"  class="control-label label-bold study-variable-name">'
+								+ '<span style="word-wrap: break-word"  class="var-names control-label label-bold study-variable-name">'
 								+ settingDetail.variable.name
 								+ '</span>: &nbsp;<span class="required">*</span></div>';
 
@@ -1012,7 +1038,7 @@ function createTableSettingVariables(data, name, tableId, varType) {
 									+ ",$(this))'></span>";
 						}
 						newRow = newRow
-								+ "<td width='5%' style='text-align: center' class='"
+								+ "<td style='text-align: center' class='fbk-delete-link "
 								+ className + "'>" + isDelete
 								+ "<input class='cvTermIds' type='hidden' id='"
 								+ name + (length - 1)
@@ -1025,7 +1051,7 @@ function createTableSettingVariables(data, name, tableId, varType) {
 								+ className
 								+ "'><a href='javascript: void(0);' onclick='javascript:showBaselineTraitDetailsModal("
 								+ settingDetail.variable.cvTermId
-								+ ");' ><span>" + settingDetail.variable.name
+								+ ");' ><span class='var-names'>" + settingDetail.variable.name
 								+ "</span></a></td>";
 						newRow = newRow + "<td width='50%' class='" + className
 								+ "'>" + settingDetail.variable.description

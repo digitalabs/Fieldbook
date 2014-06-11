@@ -53,11 +53,13 @@ public class StudyTreeController {
 		boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;
 		try {
 			List<TreeNode> rootNodes = new ArrayList<TreeNode>();
-			rootNodes.add(new TreeNode("LOCAL", AppConstants.PROGRAM_NURSERIES.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG
-					.getString()));
+			TreeNode localTreeNode = new TreeNode("LOCAL", AppConstants.PROGRAM_NURSERIES.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG.getString());			
+			rootNodes.add(localTreeNode);
+			localTreeNode.setChildren(getChildNodes(localTreeNode.getKey(), isFolderOnlyBool));
 			if(isFolderOnlyBool == false){
-				rootNodes.add(new TreeNode("CENTRAL", AppConstants.PUBLIC_NURSERIES.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG
-					.getString()));
+				TreeNode centralTreeNode = new TreeNode("CENTRAL", AppConstants.PUBLIC_NURSERIES.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG.getString());
+				rootNodes.add(centralTreeNode);
+				centralTreeNode.setChildren(getChildNodes(centralTreeNode.getKey(), isFolderOnlyBool));
 			}
 			return TreeViewUtil.convertTreeViewToJson(rootNodes);
 
@@ -67,41 +69,57 @@ public class StudyTreeController {
 		return "[]";
 	}
 
+	private List<TreeNode> getChildNodes(String parentKey, boolean isFolderOnly){
+		List<TreeNode> childNodes = new ArrayList<TreeNode>();
+		if(parentKey != null && !parentKey.equalsIgnoreCase("")){
+			
+			try {
+				if (Database.LOCAL.toString().equals(parentKey) || Database.CENTRAL.toString().equals(parentKey)) {
+					
+						Database instance = Database.LOCAL;
+						if (Database.CENTRAL.toString().equals(parentKey)) {
+							instance = Database.CENTRAL;
+						}
+
+						List<FolderReference> rootFolders = fieldbookMiddlewareService.getRootFolders(instance);
+						childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(rootFolders, true, true, false,
+								fieldbookMiddlewareService, isFolderOnly);
+					
+				} else if (NumberUtils.isNumber(parentKey)) {
+
+					int parentId = Integer.valueOf(parentKey);
+					List<Reference> folders = fieldbookMiddlewareService.getChildrenOfFolder(parentId);
+					// convert reference to folder refence
+					List<FolderReference> folRefs = TreeViewUtil.convertReferenceToFolderReference(folders);
+					childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(folRefs, true, true, false, fieldbookMiddlewareService,
+							isFolderOnly);
+
+				} else {
+					LOG.error("parentKey = " + parentKey + " is not a number");
+				}
+			} catch (Exception e) {
+				LOG.error(e.getMessage(), e);
+			}			
+		}
+		for(TreeNode newNode : childNodes){
+			newNode.setChildren(getChildNodes(newNode.getKey(), isFolderOnly));
+		}
+		
+		return childNodes;
+	}
 
 	@ResponseBody
 	@RequestMapping(value = "/expandNurseryTree/{parentKey}/{isFolderOnly}", method = RequestMethod.GET)
 	public String expandNurseryTree(@PathVariable String parentKey, @PathVariable String isFolderOnly) {
 		boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;
+		
+		
+		List<TreeNode> childNodes = getChildNodes(parentKey, isFolderOnlyBool);
 		try {
-			if (Database.LOCAL.toString().equals(parentKey) || Database.CENTRAL.toString().equals(parentKey)) {
-				try {
-					Database instance = Database.LOCAL;
-					if (Database.CENTRAL.toString().equals(parentKey)) {
-						instance = Database.CENTRAL;
-					}
-
-					List<FolderReference> rootFolders = fieldbookMiddlewareService.getRootFolders(instance);
-					String jsonResponse = TreeViewUtil.convertStudyFolderReferencesToJson(rootFolders, true, false, true,
-							fieldbookMiddlewareService, isFolderOnlyBool);
-					return jsonResponse;
-				} catch (Exception e) {
-					LOG.error(e.getMessage());
-				}
-				return "[]";
-			} else if (NumberUtils.isNumber(parentKey)) {
-
-				int parentId = Integer.valueOf(parentKey);
-				List<Reference> folders = fieldbookMiddlewareService.getChildrenOfFolder(parentId);
-				// convert reference to folder refence
-				List<FolderReference> folRefs = TreeViewUtil.convertReferenceToFolderReference(folders);
-				return TreeViewUtil.convertStudyFolderReferencesToJson(folRefs, true, false, true, fieldbookMiddlewareService,
-						isFolderOnlyBool);
-
-			} else {
-				LOG.error("parentKey = " + parentKey + " is not a number");
-			}
+			return TreeViewUtil.convertTreeViewToJson(childNodes);
 		} catch (Exception e) {
-			LOG.error(e.getMessage(), e);
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return "[]";
 	}

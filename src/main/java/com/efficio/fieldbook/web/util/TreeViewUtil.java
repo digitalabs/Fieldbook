@@ -145,7 +145,7 @@ public class TreeViewUtil {
         return treeNodes;
     }
 
-    private static List<TreeNode> convertStudyFolderReferencesToTreeView(List<FolderReference> references, boolean isNursery, boolean isAll, boolean isLazy,FieldbookService fieldbookService, boolean isFolderOnly) {
+    public static List<TreeNode> convertStudyFolderReferencesToTreeView(List<FolderReference> references, boolean isNursery, boolean isAll, boolean isLazy,FieldbookService fieldbookService, boolean isFolderOnly) {
         List<TreeNode> treeNodes = new ArrayList<TreeNode>();
         TreeNode treeNode;
         if (references != null && !references.isEmpty()) {
@@ -184,7 +184,7 @@ public class TreeViewUtil {
      * @param germplasmLists the germplasm lists
      * @return the list
      */
-    private static List<TreeNode> convertGermplasmListToTreeView(List<GermplasmList> germplasmLists, boolean isFolderOnly) {
+    public static List<TreeNode> convertGermplasmListToTreeView(List<GermplasmList> germplasmLists, boolean isFolderOnly) {
         List<TreeNode> treeNodes = new ArrayList<TreeNode>();
         if (germplasmLists != null && !germplasmLists.isEmpty()) {
             for (GermplasmList germplasmList : germplasmLists) {
@@ -248,10 +248,9 @@ public class TreeViewUtil {
 				return null;
 			
 			treeNode.setIcon(AppConstants.STUDY_ICON_PNG.getString());
-			if(!isAll){
 				if(!isNurseryStudy(reference.getId(), isNursery, fieldbookService))
 					return null;
-			}
+			
 			
 		}
 		
@@ -291,7 +290,7 @@ public class TreeViewUtil {
 	    treeNode.setTitle(germplasmList.getName());
 	    treeNode.setIsFolder(germplasmList.getType() != null 
 	            && germplasmList.getType().equals("FOLDER") ? true : false);
-	    treeNode.setIsLazy(true);
+	    treeNode.setIsLazy(false);
 	    if(treeNode.getIsFolder())
 	    	treeNode.setIcon(AppConstants.FOLDER_ICON_PNG.getString());
 	    else

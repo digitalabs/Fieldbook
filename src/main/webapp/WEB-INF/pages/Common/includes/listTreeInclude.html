@@ -105,13 +105,17 @@
 			}
 			
 			/** Germplasm Tree **/
-			function displayGermplasmListTree(treeName, isLocalOnly) {
+			function displayGermplasmListTree(treeName, isLocalOnly, isFolderOnly) {
 				'use strict';
 				var lazyLoadUrlGetChildren = '/Fieldbook/ListTreeManager/expandGermplasmTree/';
 				var initLoadUrl = '/Fieldbook/ListTreeManager/loadInitGermplasmTree';
 
-				if(isLocalOnly === true)
+				if(isLocalOnly === true) {
 					initLoadUrl = '/Fieldbook/ListTreeManager/loadInitGermplasmLocalTree';
+				}
+
+				
+				initLoadUrl += '/' + isFolderOnly;
 
 				$('#' + treeName).dynatree({
 					title: treeName,

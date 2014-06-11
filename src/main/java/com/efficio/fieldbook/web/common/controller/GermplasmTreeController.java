@@ -23,6 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.middleware.domain.dms.FolderReference;
+import org.generationcp.middleware.domain.dms.Reference;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Database;
 import org.generationcp.middleware.manager.GermplasmNameType;
@@ -308,13 +310,17 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
      * @return the string
      */
     @ResponseBody
-    @RequestMapping(value = "/loadInitGermplasmTree", method = RequestMethod.GET)
-    public String loadInitialGermplasmTree() {
-
+    @RequestMapping(value = "/loadInitGermplasmTree/{isFolderOnly}", method = RequestMethod.GET)
+    public String loadInitialGermplasmTree(@PathVariable String isFolderOnly) {
+    	boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;
         try {
             List<TreeNode> rootNodes = new ArrayList<TreeNode>();
-            rootNodes.add(new TreeNode("LOCAL", AppConstants.GERMPLASM_LIST_LOCAL.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG.getString()));
-            rootNodes.add(new TreeNode("CENTRAL", AppConstants.GERMPLASM_LIST_CENTRAL.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG.getString()));
+            TreeNode localNode = new TreeNode("LOCAL", AppConstants.GERMPLASM_LIST_LOCAL.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG.getString());
+            TreeNode centralNode = new TreeNode("CENTRAL", AppConstants.GERMPLASM_LIST_CENTRAL.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG.getString());
+            rootNodes.add(localNode);
+            rootNodes.add(centralNode);
+            localNode.setChildren(getGermplasmChildNodes(localNode.getKey(), isFolderOnlyBool));
+            centralNode.setChildren(getGermplasmChildNodes(centralNode.getKey(), isFolderOnlyBool));
             return TreeViewUtil.convertTreeViewToJson(rootNodes);
             
         } catch(Exception e) {
@@ -324,20 +330,55 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         return "[]";
     }
     
+    private List<TreeNode> getGermplasmChildNodes(String parentKey, boolean isFolderOnly){
+		List<TreeNode> childNodes = new ArrayList<TreeNode>();
+		if(parentKey != null && !parentKey.equalsIgnoreCase("")){
+			
+			try {
+	        	
+	            if (Database.LOCAL.toString().equals(parentKey) 
+	                    || Database.CENTRAL.toString().equals(parentKey)) {
+	                List<GermplasmList> rootLists = germplasmListManager
+	                            .getAllTopLevelListsBatched(BATCH_SIZE, Database.valueOf(parentKey));
+	                childNodes = TreeViewUtil.convertGermplasmListToTreeView(rootLists, isFolderOnly);
+	            } 
+	            else if (NumberUtils.isNumber(parentKey)) {
+	                int parentId = Integer.valueOf(parentKey);
+	                List<GermplasmList> childLists = germplasmListManager
+	                            .getGermplasmListByParentFolderIdBatched(parentId, BATCH_SIZE);
+	                childNodes = TreeViewUtil.convertGermplasmListToTreeView(childLists, isFolderOnly);
+	            }
+	            else {
+	                LOG.error("parentKey = " + parentKey + " is not a number");
+	            }
+	            
+	        } catch(Exception e) {
+	            LOG.error(e.getMessage(), e);
+	        }		
+		}
+		for(TreeNode newNode : childNodes){
+			newNode.setChildren(getGermplasmChildNodes(newNode.getKey(), isFolderOnly));
+		}
+		
+		return childNodes;
+	}
+    
     /**
      * Load initial germplasm tree.
      *
      * @return the string
      */
     @ResponseBody
-    @RequestMapping(value = "/loadInitGermplasmLocalTree", method = RequestMethod.GET)
-    public String loadInitialGermplasmLocalTree() {
-
+    @RequestMapping(value = "/loadInitGermplasmLocalTree/{isFolderOnly}", method = RequestMethod.GET)
+    public String loadInitialGermplasmLocalTree(@PathVariable String isFolderOnly) {
+    	boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;
         try {
             List<TreeNode> rootNodes = new ArrayList<TreeNode>();
-            rootNodes.add(new TreeNode("LOCAL", AppConstants.GERMPLASM_LIST_LOCAL.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG.getString()));
-            return TreeViewUtil.convertTreeViewToJson(rootNodes);
+            TreeNode localNode = new TreeNode("LOCAL", AppConstants.GERMPLASM_LIST_LOCAL.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG.getString());
+            rootNodes.add(localNode);            
+            localNode.setChildren(getGermplasmChildNodes(localNode.getKey(), isFolderOnlyBool));
             
+            return TreeViewUtil.convertTreeViewToJson(rootNodes);
         } catch(Exception e) {
             LOG.error(e.getMessage(), e);
         }
@@ -402,25 +443,10 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
     @ResponseBody
     @RequestMapping(value = "/expandGermplasmTree/{parentKey}/{isFolderOnly}", method = RequestMethod.GET)
     public String expandGermplasmTree(@PathVariable String parentKey, @PathVariable String isFolderOnly) {
-        
-        try {
-        	boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;
-            if (Database.LOCAL.toString().equals(parentKey) 
-                    || Database.CENTRAL.toString().equals(parentKey)) {
-                List<GermplasmList> rootLists = germplasmListManager
-                            .getAllTopLevelListsBatched(BATCH_SIZE, Database.valueOf(parentKey));
-                return TreeViewUtil.convertGermplasmListToJson(rootLists, isFolderOnlyBool);
-            } 
-            else if (NumberUtils.isNumber(parentKey)) {
-                int parentId = Integer.valueOf(parentKey);
-                List<GermplasmList> childLists = germplasmListManager
-                            .getGermplasmListByParentFolderIdBatched(parentId, BATCH_SIZE);
-                return TreeViewUtil.convertGermplasmListToJson(childLists, isFolderOnlyBool);
-            }
-            else {
-                LOG.error("parentKey = " + parentKey + " is not a number");
-            }
-            
+    	boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;
+        List<TreeNode> childNodes = getGermplasmChildNodes(parentKey, isFolderOnlyBool);
+        try {        	
+        	return TreeViewUtil.convertTreeViewToJson(childNodes);            
         } catch(Exception e) {
             LOG.error(e.getMessage(), e);
         }

@@ -1169,6 +1169,8 @@ function deleteVariable(variableType, variableId, deleteButton) {
 		// reinstantiate counters of ids and names
 		sortVariableIdsAndNames(variableType);
 		inputChange = true;
+
+        return true;
 	} else {
 		// show confirmation popup
 		$("#variateDeleteConfirmationModal").modal({
@@ -1178,6 +1180,8 @@ function deleteVariable(variableType, variableId, deleteButton) {
 		$("#varToDelete").val(variableId);
 		$("#variableType").val(variableType);
 		buttonToDelete = deleteButton;
+
+        return false;
 	}
 }
 

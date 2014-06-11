@@ -415,8 +415,8 @@
                 /* GCP-8880 (tag change event to a var) */
                 $('#' + getJquerySafeId('studyLevelVariables' + select2Index +
                         '.value')).on('change',function() {
-
-                    window.disableActions();
+                    if (document.disableActions !== undefined)
+                        document.disableActions();
                 });
 
 			});
@@ -443,31 +443,35 @@
             /* GCP-8880 (tag change event to a var) */
             // 1. all form controls except select 2
             $("form#createNurseryForm .form-control[type=text], form#createNurseryForm input[type=checkbox]").on('change',function() {
-                window.disableActions();
+                if (document.disableActions !== undefined)
+                    document.disableActions();
             });
 
-            // 2. extend the ff functions so we can inject some behavior
-            document.submitSelectedVariables = function() {
-                var promise = submitSelectedVariables.apply(this,arguments);
 
-                if (promise !== undefined && promise !== null) {
-                    promise.done(function() {
-                        window.disableActions();
-                    });
+            $.each($('span.delete-icon'),function(){
+                this.onclick = null;
+            });
+
+            // re apply the behaviors using modified functions
+            $('#createNurseryForm').on('click','span.delete-icon',function(){
+
+                if (eval($(this).attr('onclick'))) {
+                    if (document.disableActions !== undefined)
+                        document.disableActions();
                 }
-            };
+            });
 
-            document.deleteVariable = function() {
-                deleteVariable.apply(this,arguments);
+            $('#variateDeleteConfirmationModal').on('click','#continueDelete',function(){
+                if (document.disableActions !== undefined)
+                    document.disableActions();
+            });
 
-                window.disableActions();
-            };
+            $('#createNurseryForm').on('click','#addVariables',function(i,el){
+                if (document.disableActions !== undefined)
+                    document.disableActions();
+            });
 
-            // replace the dom function onclicks
-            $.each($('span[onclick]'),function(i,el) {  $(el).attr('onclick',$(el).attr('onclick').replace('deleteVariable','document.deleteVariable'))  });
-            $('#addVariables').attr('onclick',$('#addVariables').attr('onclick').replace('submitSelectedVariables','document.submitSelectedVariables'));
-
-            window.disableActions = function() {
+            document.disableActions = function() {
                 var actionBtn = $('.fbk-float-right-with-top-pos .dropdown-toggle');
 
                 actionBtn.removeAttr("data-toggle").addClass('disabled enable-pointer-events');
@@ -475,16 +479,14 @@
 
             };
 
-            // re-enable on save
-            $('document').on('click','#successStudyMessageModal button',function() {
+            document.enableActions = function() {
                 var actionBtn = $('.fbk-float-right-with-top-pos .dropdown-toggle');
 
                 actionBtn.attr("data-toggle","dropdown");
                 actionBtn.tooltip('hide');
                 actionBtn.tooltip('destroy');
                 actionBtn.removeClass('disabled');
-
-            });
+            };
 
         });
 	//]]>

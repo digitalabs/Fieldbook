@@ -1,20 +1,23 @@
-<div class="modal-header">
-	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	<h4 class="modal-title" >
-	<strong th:text="#{ontology.browser.modal.property.header}">Manage Properties</strong></h4>
-</div>
-
 <form id="managePropertyForm" role="form-horizontal" onsubmit="return do_validation()"  class="form-horizontal" action="#" 
 	enctype="multipart/form-data" th:object="${ontologyPropertyForm}">
 
 	<div class="modal-body">
-		<div class="form-group" id="page-message-modal"></div>
+		<div class="row form-group">
+			<div class="col-xs-11 col-md-11">					
+				<label class="modal-title fbk-modal-title" th:text="#{ontology.browser.modal.property.header}"></label>
+			</div>
+			<div class="col-xs-1 col-md-1">
+				<button  type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
+			</div>										
+		</div>
+				
+		<div class="row form-group  col-md-12" id="page-message-modal"></div>
 		<div th:class="${#fields.hasErrors('*')} ? 'form-group has-error' : 'form-group'">
 			<div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div>
 			<div class="row fluid">
 	      		<div class="col-xs-6 col-md-6">
 	      			<div class="form-group">
-	      				<label for="comboManagePropTraitClass" class="col-xs-5 col-md-5 control-label" ><span th:text="#{ontology.browser.modal.trait.class} + ': '"></span><span class="required">*</span></label>
+	      				<label for="comboManagePropTraitClass" class="col-xs-5 col-md-5 control-label label-bold" ><span th:text="#{ontology.browser.modal.trait.class} + ': '"></span><span class="required">*</span></label>
 						<div class="col-xs-7 col-md-7">
 							<input type="hidden" th:field="*{comboManagePropTraitClass}" class="form-control select2" placeholder=""/>
 							<input type="hidden" th:field="*{managePropTraitClassId}" />
@@ -29,7 +32,7 @@
 				</div>
 				<div class="col-xs-6 col-md-6">
 					<div class="form-group">                        
-						<label for="comboManageProperty" class="col-xs-5 col-md-5 control-label" ><span th:text="#{ontology.browser.modal.property} + ': '"></span><span class="required">*</span></label>
+						<label for="comboManageProperty" class="col-xs-5 col-md-5 control-label  label-bold" ><span th:text="#{ontology.browser.modal.property} + ': '"></span><span class="required">*</span></label>
 						<div class="col-xs-7 col-md-7">
 							<input type="hidden" th:field="*{comboManageProperty}" class="form-control select2" placeholder=""/>
 							<input type="hidden" th:field="*{managePropertyId}" />
@@ -37,14 +40,14 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="managePropertyDescription" class="col-xs-5 col-md-5 control-label" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
+						<label for="managePropertyDescription" class="col-xs-5 col-md-5 control-label  label-bold" th:text="#{ontology.browser.modal.description} + ':'">Description:</label>
 						<div class="col-xs-7 col-md-7">
 							<textarea type="text" th:field="*{managePropertyDescription}" class="form-control" size="10"> </textarea>
 						</div>
 					</div>
 					<div class="form-group">
 						<div class="col-xs-5 col-md-5 control-label">
-		          			<label for="cropOntologyId" th:text="#{ontology.browser.modal.crop.ontology.id} + ':'">Crop Ontology ID:</label>
+		          			<label class=" label-bold" for="cropOntologyId" th:text="#{ontology.browser.modal.crop.ontology.id} + ':'">Crop Ontology ID:</label>
 		       			</div>
 		                <div class="col-xs-7 col-md-7">
 		                    <input type="text" th:field="*{cropOntologyId}" class="form-control"/>
@@ -52,7 +55,7 @@
 		            </div>
 					<div class="">
 						<div>
-							<span th:text="#{ontology.browser.modal.variable.list('Property')}">Variables Linked to Property:</span>
+							<span class=" label-bold" th:text="#{ontology.browser.modal.variable.list('Property')}">Variables Linked to Property:</span>
 							<span id="managePropertyNameText"></span>
 						</div>
 						<div class="input-group col-xs-12 col-md-12" id="manageLinkedVariableList">

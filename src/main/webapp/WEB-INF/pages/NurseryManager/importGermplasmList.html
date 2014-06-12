@@ -56,12 +56,19 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-body">
-				<div>
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<br />
+				<div class="row form-group">
+					<div class="col-xs-11 col-md-11">					
+						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{common.form.confirmation.text}"></label>
+					</div>
+					<div class="col-xs-1 col-md-1">
+						<button  id="close" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
+					</div>										
 				</div>
-				<div class="col-xs-12 col-lg-12" th:text="#{import.germplasm.overwrite.current.checks}">
-					Are you sure you want to overwrite existing checks with a new one?
+				
+				<div class="row form-group">
+					<div class="col-xs-12 col-md-12" th:text="#{import.germplasm.overwrite.current.checks}">
+						Are you sure you want to overwrite existing checks with a new one?
+					</div>
 				</div>
 			</div>
 			<div class="modal-footer">
@@ -74,14 +81,20 @@
 
 <div class="modal fade" id="confirmReplaceListModal" tabindex="-1" role="dialog" aria-labelledby="confirmReplaceListModal" aria-hidden="true">
 	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button id="close" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title" id="heading-modal" th:text="#{common.form.confirmation.text}">
-				</h4>
-			</div>
-			<div class="modal-body">			
-				<div class="col-xs-12 col-lg-12" th:text="#{germplasm.list.confirm.replace.with.check}">
+		<div class="modal-content">			
+			<div class="modal-body">		
+			
+				<div class="row form-group">
+					<div class="col-xs-11 col-md-11">					
+						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{common.form.confirmation.text}"></label>
+					</div>
+					<div class="col-xs-1 col-md-1">
+						<button  id="close" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
+					</div>										
+				</div>
+				<div class="row form-group">
+					<div class="col-xs-12 col-lg-12" th:text="#{germplasm.list.confirm.replace.with.check}">
+					</div>
 				</div>
 			</div>
 			<div class="modal-footer">
@@ -97,12 +110,18 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-body">
-				<div>
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<br />
-				</div>
-				<div class="col-xs-12 col-lg-12" th:text="#{import.germplasm.remove.check}">
-					The specified starting entry is already assigned as a check, do you want to continue and remove it from the checks list?
+				<div class="row form-group">
+					<div class="col-xs-11 col-md-11">					
+						<label class="modal-title fbk-modal-title" id="heading-modal"></label>
+					</div>
+					<div class="col-xs-1 col-md-1">
+						<button  type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
+					</div>										
+				</div>				
+				<div class="row form-group">
+					<div class="col-xs-12 col-lg-12" th:text="#{import.germplasm.remove.check}">
+						The specified starting entry is already assigned as a check, do you want to continue and remove it from the checks list?
+					</div>
 				</div>
 			</div>
 			<div class="modal-footer">
@@ -116,34 +135,33 @@
 <div class="modal fade" id="listTreeModal" tabindex="-1" role="dialog" aria-labelledby="listTreeModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-extra-small">
 		<div class="modal-content">
-			<div class="modal-header">
-				<button id="closelistTreeModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title" id="heading-modal" th:text="#{import.browse.for.list}">
-					Browse for List
-				</h4>
-			</div>
-			<div class="modal-body">
+			
+			<div class="modal-body">							
+				
 				<div class="row">
 					<div id="page-import-message-modal" class="col-xs-12 col-md-12">
 					</div>
 				</div>
 
-				<div class="row">
+				<div class="row form-group modal-popover ">
 					<div class="col-xs-6 col-md-6">
 						<img th:src="@{/static/img/build-new-list.png}" style="padding-bottom:3px;" />
-						<label class="control-label"><strong class="sub-content-heading" th:text="#{browse.for.list.all.list}">All List</strong></label>
+						<label class="control-label fbk-modal-title" th:text="#{browse.for.list.all.list}">All List</label>
 					</div>
-					<div class="col-xs-6 col-md-6">
-						<div style="float: right; padding-right: 15px">
+					<div class="col-xs-5 col-md-5">
+						<div class="pull-right">
 							<img onclick="javascript: addGermplasmFolder(this)" th:src="@{/static/img/add 2.png}" class="image-padding browse-germplasm-action" />
 							<img onclick="javascript: renameGermplasmFolder(this)" th:src="@{/static/img/edit.png}" class="image-padding browse-germplasm-action edit-germplasm-folder" />
 							<img onclick="javascript: deleteGermplasmFolder(this)" th:src="@{/static/img/delete.png}" class="image-padding browse-germplasm-action delete-germplasm-folder" />
 						</div>
 					</div>
+					<div class="col-xs-1 col-md-1 ">
+						<button id="closeStudyTreeModal" type="button" class="close pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true" style="padding-top: 5px"></button>
+					</div>
 				</div>
-				<div class="row col-xs-12 col-md-12" >
+				<div class="row form-group" >
 					<!-- Germplasm List Tree View -->
-					<div id="germplasmTree" style="height:350px; overflow:auto;"></div>
+					<div class="col-md-12 col-xs-12" id="germplasmTree" style="height:350px; overflow:auto;"></div>
 				</div>
 				<br />
 				<a class="btn btn-info" href="javascript: openImportGermplasmList()" th:text="#{nursery.import.germplasm.list}">Import File</a>
@@ -614,7 +632,7 @@
 
 			var node = $('#'+getDisplayedTreeName()).dynatree('getTree').getActiveNode();
 
-			if (node.data.isFolder) {
+			if (node === null || node.data.isFolder) {
 				showErrorMessage('page-import-message-modal', pleaseChooseFolder);
 			} else {
 				if (openTreeType === 1) {

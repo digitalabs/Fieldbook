@@ -2,12 +2,17 @@
 	<!-- Modal -->
 	<div class="modal fade" id="exportStudyModal" role="dialog" aria-labelledby="exportStudyModal" aria-hidden="true">
 		<div class="modal-dialog modal-medium">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button id="close" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title" id="heading-modal"></h4>
-				</div>
+			<div class="modal-content">			
 				<div class="modal-body" id="exportStudyModalBody">
+					<div class="row form-group">
+						<div class="col-xs-11 col-md-11">					
+							<label class="modal-title fbk-modal-title" id="heading-modal"></label>
+						</div>
+						<div class="col-xs-1 col-md-1">
+							<button id="close" type="button" class="close pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"></button>
+						</div>										
+					</div>
+				
 					<div class="row form-group">
 						<div id="page-export-message-modal" class="col-xs-12 col-md-12">
 						</div>

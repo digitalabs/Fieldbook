@@ -2,63 +2,68 @@
 	<!-- Modal -->
    	<div class="modal fade" id="openGermplasmListModal"  role="dialog" aria-labelledby="openGermplasmListModal" aria-hidden="true">
 		<div class="modal-dialog modal-small">
-			<div class="modal-content" >
-				<div class="modal-header">
-		            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		            	<h4 class="modal-title">List Header Details</h4>
-		          </div>
-				<div class="modal-body" id="openGermplasmListBody">				
-	         		<div class="row">
+			<div class="modal-content" >				
+				<div class="modal-body" id="openGermplasmListBody">		
+					<div class="row form-group">
+						<div class="col-xs-11 col-md-11">					
+							<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{germplasm.list.header.details}">List Header Details</label>
+						</div>
+						<div class="col-xs-1 col-md-1">
+							<button type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
+						</div>										
+					</div>
+							
+	         		<div class="row form-group">
 	         			<div class="col-xs-4 col-md-4">
-	         				<label class="control-label control-label-bold">List Name:</label>
+	         				<label class="control-label control-label-bold" th:text="#{germplasm.list.name}">List Name:</label>
 	         			</div>
 						<div class="col-xs-8 col-md-8">
 							<label class="germplasm-header-details" id="list-name"></label>
 						</div>	
 					</div>
-					<div class="row">
+					<div class="row form-group">
 						<div class="col-xs-4 col-md-4">
-							<label class="control-label control-label-bold">List Owner:</label>
+							<label class="control-label control-label-bold" th:text="#{germplasm.list.owner}">List Owner:</label>
 						</div>
 						<div class="col-xs-8 col-md-8">
 							<label class="germplasm-header-details" id="list-owner"></label>
 						</div>		
 					</div>
-					<div class="row">
+					<div class="row form-group">
 						<div class="col-xs-4 col-md-4">
-							<label class="control-label control-label-bold">Status:</label>
+							<label class="control-label control-label-bold" th:text="#{germplasm.list.status}">Status:</label>
 						</div>	
 						<div class="col-xs-8 col-md-8">
 							<label class="germplasm-header-details" id="list-status"></label>
 						</div>	
 					</div>
-					<div class="row">
+					<div class="row form-group">
 						<div class="col-xs-4 col-md-4">
-							<label class="control-label control-label-bold">Description:</label>
+							<label class="control-label control-label-bold" th:text="#{germplasm.list.description}">Description:</label>
 						</div>	
 						<div class="col-xs-8 col-md-8">
 							<label class="germplasm-header-details" id="list-description"></label>
 						</div>	
 					</div>
-					<div class="row">
+					<div class="row form-group">
 						<div class="col-xs-4 col-md-4">
-							<label class="control-label control-label-bold">Type:</label>
+							<label class="control-label control-label-bold" th:text="#{germplasm.list.type}">Type:</label>
 						</div>	
 						<div class="col-xs-8 col-md-8">
 							<label class="germplasm-header-details" id="list-type"></label>
 						</div>	
 					</div>
-					<div class="row">
+					<div class="row form-group">
 						<div class="col-xs-4 col-md-4">
-							<label class="control-label control-label-bold">Date:</label>
+							<label class="control-label control-label-bold" th:text="#{germplasm.list.date}">Date:</label>
 						</div>	
 						<div class="col-xs-8 col-md-8">
 							<label class="germplasm-header-details" id="list-date"></label>
 						</div>	
 					</div>
-					<div class="row">
+					<div class="row form-group">
 						<div class="col-xs-4 col-md-4">
-							<label class="control-label control-label-bold">Notes:</label>
+							<label class="control-label control-label-bold" th:text="#{germplasm.list.notes}">Notes:</label>
 						</div>	
 						<div class="col-xs-8 col-md-8">
 							<label class="germplasm-header-details" id="list-notes"></label>

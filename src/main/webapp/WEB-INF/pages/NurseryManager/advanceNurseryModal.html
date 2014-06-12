@@ -13,24 +13,24 @@
 
 		<div class="modal fade" id="advanceNurseryModal" role="dialog" aria-labelledby="advanceNurseryModal" aria-hidden="true">
 			<div class="modal-dialog modal-extra-large">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button id="closeAdvanceNurseryModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-						<h4 class="modal-title" id="heading-modal" th:text="#{nursery.nurserydetails.action.advance}">Advance Nursery</h4>
-					</div>
-
+				<div class="modal-content">					
 					<div class="modal-body">
+						<div class="row form-group">
+							<div class="col-xs-11 col-md-11">					
+								<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{nursery.nurserydetails.action.advance}"></label>
+							</div>
+							<div class="col-xs-1 col-md-1">
+								<button  id="closeAdvanceNurseryModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
+							</div>										
+						</div>
+						
 						<div class="row">
 							<div class="form-group">
 								<div id="page-advance-modal-message"></div>
 							</div>
-						</div>
-						<div class="row">
-							<div id="page-block-message-modal" class="col-xs-12 col-md-12">
-							</div>
-						</div>
+						</div>						
 
-						<div class="row">
+						<div class="row form-group">
 							<div class="col-xs-12 col-md-12" >
 								<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
 							</div>

@@ -250,13 +250,21 @@
 				</div>
 				<div class="modal fade" id="create-label-confirmation">
 					<div class="modal-dialog">
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-								<h4 class="modal-title">Confirmation</h4>
-							</div>
+						<div class="modal-content">							
 							<div class="modal-body">
-								<p th:text="#{fieldmap.create.label.save.fieldmap}">Do you want to save the fieldmap?</p>
+								<div class="row form-group">
+									<div class="col-xs-11 col-md-11">					
+										<label class="modal-title fbk-modal-title" id="modal-title" th:text="#{common.form.confirmation.text}"></label>
+									</div>
+									<div class="col-xs-1 col-md-1">
+										<button type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
+									</div>										
+								</div>
+								<div class="row form-group">
+									<div class="col-xs-12 col-md-12">
+										<label th:text="#{fieldmap.create.label.save.fieldmap}">Do you want to save the fieldmap?</label>
+									</div>
+								</div>
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-default" data-dismiss="modal" onclick="javascript: redirectToCreateLabel();">No</button>

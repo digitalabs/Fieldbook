@@ -367,7 +367,6 @@ table{
 .modal-medium {
     width: 650px;
 }
-
 .modal-small {
     width: 500px;
 }
@@ -745,7 +744,6 @@ div.possibleValuesDiv{
 */
 #addVariablesSettingBody{
 	padding-bottom: 0px;
-	padding-top: 10px;
 }
 .addVariable-footer{
 	margin-top: 0px;
@@ -893,6 +891,9 @@ div.sectionContainer {
 }
 .image-padding{
 	padding-top:0px;
+}
+.browse-nursery-action, .browse-germplasm-action{
+	padding-left: 4px;
 }
 .image-padding-with-text{
 	float: left;
@@ -1054,10 +1055,10 @@ a.fbk-edit-experiment{
 .DTFC_LeftWrapper .table-curved  > *:first-child > *:first-child > *:last-child {
     border-top-right-radius: 0px;
 }
-.dynatree-node .popover{
+.modal-popover .popover{
 	width: 500px;
 }
-.dynatree-node .popover-title{
+.modal-popover .popover-title{
 	height: 30px;
 	background-color: #e9e9e9;
 	font-weight: bold;
@@ -1167,4 +1168,17 @@ a.fbk-edit-experiment{
 }
 .fbk-delete-link{
 	width: 30px;
+}
+.modal-footer{
+	border-top: none;
+}
+.fbk-modal-title{
+	font-weight: 700;
+	font-size: 17px
+}
+.fbk-study-tree-title{
+	padding-top: 7px;
+}
+.modal-body .glyphicon-remove{
+	font-size: 16px;
 }

@@ -1,12 +1,16 @@
 
 <div class="modal fade" id="variableDetailsModal" role="dialog" aria-labelledby="variableDetailsModal" aria-hidden="true">
 	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title"></h4>
-			</div>
+		<div class="modal-content">			
 			<div class="modal-body">
+				<div class="row form-group">
+					<div class="col-xs-11 col-md-11">					
+						<label class="modal-title fbk-modal-title" id="heading-modal"></label>
+					</div>
+					<div class="col-xs-1 col-md-1">
+						<button  id="closeAddVariablesSettingModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
+					</div>										
+				</div>
 				<dl class="dl-horizontal">
 					<dt th:text="#{variable.details.traitClass} + ':'">Trait Class:</dt>
 					<dd id="traitClass">Agronomic</dd>

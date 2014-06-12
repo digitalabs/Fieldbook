@@ -2095,7 +2095,8 @@ function showListTreeToolTip(node, nodeSpan) {
 				title: 'List Details',
 				content: $(listDetails).html(),
 				trigger: 'hover',
-				placement: 'right'
+				placement: 'right',
+				container: '.modal-popover'
 			});
 		}
 	});

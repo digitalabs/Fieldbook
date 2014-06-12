@@ -2,12 +2,18 @@
 	<input type="button" id="showSuccessfulModal" data-toggle="modal" href="#addVariableSuccessfulModal" value="test" style="visibility:hidden" />
 	<!-- Modal -->
    	<div class="modal fade variableModal" id="addVariableSuccessfulModal" role="dialog" aria-labelledby="addVariableSuccessfulLabel" aria-hidden="true">
-		<div class="modal-dialog modal-large">
+		<div class="modal-dialog modal-small">
 	    	<div class="modal-content">
 	         	<div class="modal-body" id="addVariableSuccessfulBody">
-	         		<div>
-	         			<button onclick="javascript: doNotify();" id="closeAddVariableSuccessfulModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	         		</div>
+		         	<div class="row form-group">
+						<div class="col-xs-11 col-md-11">					
+							<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{common.form.notification.tex}"></label>
+						</div>
+						<div class="col-xs-1 col-md-1">
+							<button onclick="javascript: doNotify();" id="closeAddVariableSuccessfulModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
+						</div>										
+					</div>
+	         		
 	         		<br/><br/>
 	         		<div class="alert alert-success" th:if="${ontologyBrowserForm.isDelete} == 0" th:text="#{ontology.browser.header.add.new.variable.successful(${ontologyBrowserForm.variableName})}">Standard Variable successfully created.</div>
 	         		<div class="alert alert-success" th:if="${ontologyBrowserForm.isDelete} == 2" th:text="#{ontology.browser.header.edit.variable.successful(${ontologyBrowserForm.newVariableName})}">Standard Variable successfully updated.</div>
@@ -23,13 +29,18 @@
 	<input type="button" id="showFailedSaveModal" data-toggle="modal" href="#addFailedSaveModal" value="test" style="visibility:hidden" />
 	<!-- Modal -->
    	<div class="modal fade variableModal" id="addFailedSaveModal" role="dialog" aria-labelledby="addVariableFailedLabel" aria-hidden="true">
-		<div class="modal-dialog modal-large">
+		<div class="modal-dialog modal-small">
 	    	<div class="modal-content">
 	         	<div class="modal-body" id="addVariableFailedBody">
-	         		<div>
-	         			<button id="closeAddVariableFailedModal" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	         		</div>
-	         		<br/><br/>
+	         		
+	         		<div class="row form-group">
+						<div class="col-xs-11 col-md-11">					
+							<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{common.form.notification.tex}"></label>
+						</div>						
+						<div class="col-xs-1 col-md-1">
+							<button id="closeAddVariableFailedModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
+						</div>										
+					</div>
 	         		<div class="alert alert-danger" id="add-var-err-msg" th:text="${ontologyBrowserForm.errorMessage}"></div>
 	         	</div>																							
 	       		<div class="modal-footer">    
@@ -69,9 +80,9 @@
 			
 			
 		
-    } else if (addSuccessful == "2") {
+    } else if (addSuccessful == '2') {
     	setTimeout(function (){
-			$("#showFailedSaveModal").trigger("click");
+			$('#showFailedSaveModal').trigger('click');
 		}, 500);
     }    
     });
@@ -89,10 +100,10 @@
 					 status = 'DELETE';
 				 else if(operation == 2)
 					 status = 'UPDATE';
-				 var variableId = '';
-				 var variableDescription = '';
-				 var variableName = '';
-				 var dataTypeId = '';
+				 var variableId = '',
+				 	variableDescription = '',
+				 	variableName = '',
+				 	dataTypeId = '';
 				 if($('#comboVariableName').select2('data') != null){
 					 variableId = $('#comboVariableName').select2('data').id;
 					 variableName = $('#comboVariableName').select2('data').text;
@@ -108,16 +119,16 @@
 				 }
 				 
 				 
-				 var propertyName = '';
-				 var propertyDescription = '';
-				 var scaleName = '';
-				 var scaleDescription = '';
-				 var methodName = '';
-				 var methodDescription = '';
-				 var traiClassName = '';
-				 var propertyId = '';
-				 var scaleId = '';
-				 var methodId = '';
+				 var propertyName = '',
+					propertyDescription = '',
+				 	scaleName = '',
+				 	scaleDescription = '',
+				 	methodName = '',
+				 	methodDescription = '',
+				 	traiClassName = '',
+				 	propertyId = '',
+				 	scaleId = '',
+				 	methodId = '';
 				 if($('#comboProperty').select2('data') != null){
 					 propertyName =  $('#comboProperty').select2('data').text;
 					 propertyDescription =  $('#comboProperty').select2('data').description;
@@ -182,12 +193,9 @@
 				 data['STANDARD_VARIABLE_ID'] = standardVariableObj;
 	
 				 var returnData = $.parseJSON(JSON.stringify(standardVariableObj));
-				 
-			 
-			 
+				 			 
 				// function exists, so we can now call it
 				 window.parent.applyOntologyManageVariableUpdate(returnData,{});
-				//console.log(returnData);
 			  }
 	    }
     //]]>

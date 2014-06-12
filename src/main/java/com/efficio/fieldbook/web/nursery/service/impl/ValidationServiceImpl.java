@@ -54,8 +54,17 @@ public class ValidationServiceImpl implements ValidationService {
 			
 		} else if (var.getPossibleValues() != null && !var.getPossibleValues().isEmpty()) {
 			for (ValueReference ref : var.getPossibleValues()) {
-				if (value != null && !value.equalsIgnoreCase("") && ref.getId().intValue()  == Integer.valueOf(value)) {
-					return true;
+				
+				if (value != null && !value.equalsIgnoreCase("")){
+					int valueToCompare = 0;
+					try{
+						valueToCompare = Integer.valueOf(value);
+					}catch(NumberFormatException e){
+						return false;
+					}
+					if(ref.getId().intValue()  == valueToCompare) {
+						return true;
+					}
 				}
 			}
 		} else {
@@ -72,7 +81,7 @@ public class ValidationServiceImpl implements ValidationService {
 				for (MeasurementData data : row.getDataList()) {
 					MeasurementVariable variate = data.getMeasurementVariable();
 					if (!isValidValue(variate, data.getValue())) {
-						throw new MiddlewareQueryException(messageSource.getMessage("error.workbook.save.invalidCellValue", new Object[] {variate.getName()}, locale));
+						throw new MiddlewareQueryException(messageSource.getMessage("error.workbook.save.invalidCellValue", new Object[] {variate.getName(), data.getValue()}, locale));
 						
 					}
 				}
@@ -86,7 +95,7 @@ public class ValidationServiceImpl implements ValidationService {
 			for (MeasurementData data : row.getDataList()) {
 				MeasurementVariable variate = data.getMeasurementVariable();
 				if (!isValidValue(variate, data.getValue())) {
-						throw new MiddlewareQueryException(messageSource.getMessage("error.workbook.save.invalidCellValue", new Object[] {variate.getName()}, locale));
+						throw new MiddlewareQueryException(messageSource.getMessage("error.workbook.save.invalidCellValue", new Object[] {variate.getName(), data.getValue()}, locale));
 					}
 				}			
 		}

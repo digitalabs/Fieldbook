@@ -2455,7 +2455,10 @@ function displaySaveNurserySuccessfulMessage() {
 	'use strict';
 	showSuccessfulMessage('page-message', saveSuccessMessage);
 	$('#page-message').show();
-	$('#page-message').fadeOut(5000);
+	$('#page-message').slideUp(5000, function(){
+		$('#page-message').html('');
+		$('#page-message').show();
+	});
 }
 
 //FIXME Should not be using global variables or functions
@@ -2464,7 +2467,11 @@ function displaySaveImportNurserySuccessfulMessage() {
 	'use strict';
 	showSuccessfulMessage('page-message', saveImportSuccessMessage);
 	$('#page-message').show();
-	$('#page-message').fadeOut(5000);
+	$('#page-message').slideUp(5000, function(){
+		$('#page-message').html('');
+		$('#page-message').show();
+	});
+	
 	
 }
 

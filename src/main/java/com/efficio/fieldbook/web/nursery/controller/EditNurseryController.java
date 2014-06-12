@@ -386,7 +386,7 @@ public class EditNurseryController extends SettingsController {
                 workbook.setObservations(form.getMeasurementRowList());
                 
                 userSelection.setWorkbook(workbook);
-                validationService.validateObservationValues(workbook);
+                //validationService.validateObservationValues(workbook);
                 fieldbookMiddlewareService.saveMeasurementRows(workbook);
                 workbook.setTrialObservations(
                 		fieldbookMiddlewareService.buildTrialObservations(trialDatasetId, workbook.getTrialConditions(), workbook.getTrialConstants()));

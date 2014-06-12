@@ -2449,30 +2449,15 @@ function refreshEditNursery() {
 	$('#page-message').html('');
 }
 
-//FIXME Should not be using global variables or functions
-/*global saveSuccessMessage*/
-function displaySaveNurserySuccessfulMessage() {
+function displaySaveSuccessMessage(idDomSelector, messageToDisplay){
 	'use strict';
-	showSuccessfulMessage('page-message', saveSuccessMessage);
-	$('#page-message').show();
-	$('#page-message').slideUp(5000, function(){
-		$('#page-message').html('');
-		$('#page-message').show();
+	showSuccessfulMessage(idDomSelector, messageToDisplay);
+	$('#'+idDomSelector).show();
+	$('#'+idDomSelector).delay(3000).slideUp(1000, function(){
+		$('#'+idDomSelector).html('');
+		$('#'+idDomSelector).show();
+		Spinner.stop();
 	});
-}
-
-//FIXME Should not be using global variables or functions
-/*global saveImportSuccessMessage*/
-function displaySaveImportNurserySuccessfulMessage() {
-	'use strict';
-	showSuccessfulMessage('page-message', saveImportSuccessMessage);
-	$('#page-message').show();
-	$('#page-message').slideUp(5000, function(){
-		$('#page-message').html('');
-		$('#page-message').show();
-	});
-	
-	
 }
 
 function recreateSessionVariables() {
@@ -2485,7 +2470,7 @@ function recreateSessionVariables() {
 			if ($("#measurementDataExisting")) {
 				displayCorrespondingGermplasmSections();
 			}
-			displaySaveNurserySuccessfulMessage();
+			displaySaveSuccessMessage('page-message', saveSuccessMessage);
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
 			console.log(errorThrown);
@@ -2534,7 +2519,7 @@ function refreshStudyAfterSave(studyId){
 		async: false,
 		success: function(html) {
 			$('.container .row:eq(0)').html(html);
-			displaySaveNurserySuccessfulMessage();
+			displaySaveSuccessMessage('page-message', saveSuccessMessage);
 			Spinner.toggle();
 		}
 	});

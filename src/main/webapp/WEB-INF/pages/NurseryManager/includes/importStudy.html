@@ -158,8 +158,9 @@
 	<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-fileupload.js}"></script>
 	<script type='text/javascript' th:inline="javascript">
 		//<![CDATA[
-		/*globals importNursery, Spinner, showErrorMessage*/
+		/*globals displaySaveSuccessMessage, createTableSettingVariables, importNursery, Spinner, showErrorMessage*/
 		/*exported showImportResponse, importOptions, confirmDesignation, goBackToImport, doImportActionChange*/
+		/*exported importStudyBookHeader, importStudyHeader*/
 
 		var importStudyHeader = /*[[#{study.import.study.header}]]*/ '',
 			importStudyBookHeader = /*[[#{study.import.study.book.header}]]*/ '',
@@ -206,7 +207,7 @@
 						createTableSettingVariables($.parseJSON(data.newSelectionVariates),
 								'selectionVariatesVariables',
 								'selectionVariatesSettings', 6);
-						displaySaveImportNurserySuccessfulMessage();
+						displaySaveSuccessMessage('page-message', saveImportSuccessMessage);
 					}
 			});
 		}

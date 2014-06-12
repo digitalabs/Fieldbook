@@ -396,6 +396,14 @@ public class CSVOziel {
 	    		if (data.getLabel().equals(label)) {
 	    			if (data.getMeasurementVariable().getPossibleValues() != null && !data.getMeasurementVariable().getPossibleValues().isEmpty()) {
 	    				data.setValue(ExportImportStudyUtil.getCategoricalIdCellValue(value, data.getMeasurementVariable().getPossibleValues()));
+	    				if (data != null && data.getValue() != null && "".equals(data.getValue())) {
+	    					data.setcValueId(null);
+	    					data.setValue(null);
+	    				}
+	    				else if (data.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()) {
+	    					data.setcValueId(data.getValue());
+	    					data.setValue(data.getValue());
+	    				}
 	    			}
 	    			else {
 			    		if (!"N".equalsIgnoreCase(data.getDataType())

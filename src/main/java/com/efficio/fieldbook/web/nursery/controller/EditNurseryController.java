@@ -692,6 +692,21 @@ public class EditNurseryController extends SettingsController {
     		HttpSession session) throws MiddlewareQueryException{
     	Workbook workbook = userSelection.getWorkbook();
     	form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), buildVariates(workbook.getVariates())));
+    	//update variables in measurement rows
+    	if (userSelection.getMeasurementRowList() != null && !userSelection.getMeasurementRowList().isEmpty()) {
+    		MeasurementRow row = userSelection.getMeasurementRowList().get(0);
+    		for (MeasurementVariable mvar : workbook.getMeasurementDatasetVariables()) {
+    			if (mvar.getOperation() == Operation.UPDATE) {
+    				for (MeasurementVariable rvar : row.getMeasurementVariables()) {
+    					if (mvar.getTermId() == rvar.getTermId()) {
+    						rvar.setName(mvar.getName());
+    						break;
+    					}
+    				}
+    			}
+    		}
+    	}
+    	
     	//remove deleted variables in measurement rows & header
     	if (userSelection.getDeletedBaselineTraitsList() != null) {
 	    	for (SettingDetail setting : userSelection.getDeletedBaselineTraitsList()) {

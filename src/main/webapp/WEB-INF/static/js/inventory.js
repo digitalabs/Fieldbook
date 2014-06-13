@@ -61,8 +61,8 @@ function addLot(){
 	    	$('#amount').val('');
 	    	$('#page-message-lots').html('');
 	    	$('#addLotsModal').modal({ backdrop: 'static', keyboard: true });
-	    	initializePossibleValuesComboInventory(inventoryLocationSuggestions, '#inventoryMethodIdAll', true, null);
-	    	initializePossibleValuesComboInventory(inventoryFavoriteLocationSuggestions, '#inventoryMethodIdFavorite', false, null);
+	    	initializePossibleValuesComboInventory(inventoryLocationSuggestions, '#inventoryLocationIdAll', true, null);
+	    	initializePossibleValuesComboInventory(inventoryFavoriteLocationSuggestions, '#inventoryLocationIdFavorite', false, null);
 	  	  	initializePossibleValuesComboScale(scaleSuggestions, '#inventoryScaleId', false, null);
 	  	    showCorrectLocationInventoryCombo();
 	    	Spinner.toggle();
@@ -156,7 +156,7 @@ function initializePossibleValuesComboInventory(possibleValues, name, showAllLoc
 		    }
 	    }).on('change', function (){
 	    	if($('#'+getJquerySafeId('inventoryLocationId')).length !== 0){
-	    		$('#'+getJquerySafeId('inventoryLocationId')).val($('#'+getJquerySafeId('inventoryMethodIdAll')).select2(
+	    		$('#'+getJquerySafeId('inventoryLocationId')).val($('#'+getJquerySafeId('inventoryLocationIdAll')).select2(
 	    			'data').id);
 	    	}
 	    });
@@ -245,19 +245,19 @@ function showCorrectLocationInventoryCombo() {
 	var isChecked = $('#showFavoriteLocationInventory').is(':checked');
 	//if show favorite location is checked, hide all field locations, else, show only favorite locations
 	if(isChecked){
-		$('#s2id_inventoryMethodIdFavorite').show();
-		$('#s2id_inventoryMethodIdAll').hide();
-		if($('#'+getJquerySafeId('inventoryMethodIdFavorite')).select2('data') != null){
-			$('#'+getJquerySafeId('inventoryLocationId')).val($('#'+getJquerySafeId('inventoryMethodIdFavorite')).select2('data').id);
+		$('#s2id_inventoryLocationIdFavorite').show();
+		$('#s2id_inventoryLocationIdAll').hide();
+		if($('#'+getJquerySafeId('inventoryLocationIdFavorite')).select2('data') != null){
+			$('#'+getJquerySafeId('inventoryLocationId')).val($('#'+getJquerySafeId('inventoryLocationIdFavorite')).select2('data').id);
 			
 		}else{
 			$('#'+getJquerySafeId('inventoryLocationId')).val(0);
 		}
 	}else{
-		$('#s2id_inventoryMethodIdFavorite').hide();
-		$('#s2id_inventoryMethodIdAll').show();
-		if($('#'+getJquerySafeId('inventoryMethodIdAll')).select2('data') != null){
-			$('#'+getJquerySafeId('inventoryLocationId')).val($('#'+getJquerySafeId('inventoryMethodIdAll')).select2('data').id);
+		$('#s2id_inventoryLocationIdFavorite').hide();
+		$('#s2id_inventoryLocationIdAll').show();
+		if($('#'+getJquerySafeId('inventoryLocationIdAll')).select2('data') != null){
+			$('#'+getJquerySafeId('inventoryLocationId')).val($('#'+getJquerySafeId('inventoryLocationIdAll')).select2('data').id);
 		
 		}else{
 			$('#'+getJquerySafeId('inventoryLocationId')).val(0);

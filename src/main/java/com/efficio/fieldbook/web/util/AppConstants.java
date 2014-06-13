@@ -226,6 +226,7 @@ public enum AppConstants {
 
     ,START_YEAR
     ,CHAR_LIMIT
+    ,PLEASE_CHOOSE
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

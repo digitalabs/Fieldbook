@@ -1588,9 +1588,6 @@ function recreateMethodCombo() {
 		data: '',
 		async: false,
 		success: function(data) {
-			var selectedVal = null,
-				index;
-
 			if (data.success == '1') {
 				if (selectedMethodAll != null) {
 					//recreate the select2 combos to get updated list of methods
@@ -1603,27 +1600,12 @@ function recreateMethodCombo() {
 					} else {
 						setComboValues(methodSuggestionsObj, selectedMethodAll, 'methodIdAll');
 					}
+
+					if ($("#advanceNurseryModal").length > 0 ) {
+						refreshMethodComboInSettings(data);
+					}
 				} else {
-					//get index of breeding method row
-					index = getBreedingMethodRowIndex();
-
-					if ($('#' + getJquerySafeId('studyLevelVariables' + index + '.value')).select2('data')) {
-						selectedVal = $('#' + getJquerySafeId('studyLevelVariables' + index + '.value')).select2('data').id;
-					}
-					//recreate select2 of breeding method
-					initializePossibleValuesCombo([],
-							'#' + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
-
-					//update values of combo
-					if ($('#' + getJquerySafeId('studyLevelVariables' + index + '.favorite1')).is(':checked')) {
-						initializePossibleValuesCombo($.parseJSON(data.favoriteMethods),
-								'#' + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
-					} else {
-						initializePossibleValuesCombo($.parseJSON(data.allMethods),
-								'#' + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
-					}
-
-					replacePossibleJsonValues(data.favoriteMethods, data.allMethods, index);
+					refreshMethodComboInSettings(data);
 				}
 			} else {
 				showErrorMessage('page-message', data.errorMessage);
@@ -1638,6 +1620,127 @@ function recreateMethodCombo() {
 	});
 }
 
+function recreateLocationCombo() {
+	var selectedLocationAll = $('#harvestLocationIdAll').val();
+	var selectedLocationFavorite = $('#harvestLocationIdFavorite').val();
+	
+	var inventoryPopup = false;
+	var advancePopup = false;
+	var fieldmapScreen = false;
+	if ($('#addLotsModal').length !== 0 && $('#addLotsModal').hasClass('in')){
+		inventoryPopup = true;
+	}
+	else if ($('#advanceNurseryModal').length !== 0 && $('#advanceNurseryModal').hasClass('in')) {
+		advancePopup = true;
+	} else if ($('#enterFieldDetailsForm').length !== 0) {
+		fieldmapScreen = true;
+	}
+
+	Spinner.toggle();
+	$
+			.ajax({
+				url : '/Fieldbook/NurseryManager/advance/nursery/getLocations',
+				type : 'GET',
+				cache : false,
+				data : '',
+				async : false,
+				success : function(data) {
+					if (data.success == '1') {
+						if (inventoryPopup) {
+							recreateLocationComboAfterClose('inventoryLocationIdAll', $.parseJSON(data.allLocations));
+							recreateLocationComboAfterClose('inventoryLocationIdFavorite', $.parseJSON(data.favoriteLocations));
+							showCorrectLocationInventoryCombo();
+							// set previously selected value of location
+							if ($('#showFavoriteLocationInventory').prop('checked')) {
+								setComboValues(locationSuggestionsFav_obj, $('#inventoryLocationIdFavorite').val(),'inventoryLocationIdFavorite');
+							} else {
+								setComboValues(locationSuggestions_obj, $('#inventoryLocationIdAll').val(),'inventoryLocationIdAll');
+							}
+							refreshLocationComboInSettings(data);
+						} else if (advancePopup === true
+								|| selectedLocationAll != null) {
+							// recreate the select2 combos to get updated list
+							// of locations
+							recreateLocationComboAfterClose('harvestLocationIdAll', $.parseJSON(data.allLocations));
+							recreateLocationComboAfterClose('harvestLocationIdFavorite', $.parseJSON(data.favoriteLocations));
+							showCorrectLocationCombo();
+							// set previously selected value of location
+							if ($('#showFavoriteLocation').prop('checked')) {setComboValues(locationSuggestionsFav_obj,selectedLocationFavorite,'harvestLocationIdFavorite');
+							} else {
+								setComboValues(locationSuggestions_obj,selectedLocationAll,'harvestLocationIdAll');
+							}
+							refreshLocationComboInSettings(data);
+						} else if (fieldmapScreen === true) {
+							//recreate the select2 combos to get updated list of locations
+			    		   recreateLocationComboAfterClose('fieldLocationIdAll', $.parseJSON(data.allLocations));
+			    		   recreateLocationComboAfterClose('fieldLocationIdFavorite', $.parseJSON(data.favoriteLocations));
+			    		   showCorrectLocationCombo();
+			    		   //set previously selected value of location
+			    		   if ($('#showFavoriteLocation').prop('checked')) {
+			    			   setComboValues(locationSuggestionsFav_obj, $('#fieldLocationIdFavorite').val(), 'fieldLocationIdFavorite');
+			    		   } else {
+			    			   setComboValues(locationSuggestions_obj, $('#fieldLocationIdAll').val(), 'fieldLocationIdAll');
+			    		   }
+						} else {
+							refreshLocationComboInSettings(data);
+						}
+					} else {
+						showErrorMessage('page-message', data.errorMessage);
+					}
+				},
+				error : function(jqXHR, textStatus, errorThrown) {
+					console.log('The following error occured: ' + textStatus,
+							errorThrown);
+				},
+				complete : function() {
+					Spinner.toggle();
+				}
+			});
+}
+
+
+function refreshMethodComboInSettings(data) {
+	//get index of breeding method row
+	var index = getBreedingMethodRowIndex(), selectedVal = null;
+	
+	if ($('#' + getJquerySafeId('studyLevelVariables' + index + '.value')).select2('data')) {
+		selectedVal = $('#' + getJquerySafeId('studyLevelVariables' + index + '.value')).select2('data').id;
+	}
+	//recreate select2 of breeding method
+	initializePossibleValuesCombo([],
+			'#' + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
+
+	//update values of combo
+	if ($('#' + getJquerySafeId('studyLevelVariables' + index + '.favorite1')).is(':checked')) {
+		initializePossibleValuesCombo($.parseJSON(data.favoriteMethods),
+				'#' + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
+	} else {
+		initializePossibleValuesCombo($.parseJSON(data.allMethods),
+				'#' + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
+	}
+
+	replacePossibleJsonValues(data.favoriteMethods, data.allMethods, index);
+}
+
+function refreshLocationComboInSettings(data) {
+	var selectedVal = null;
+	var index = getLocationRowIndex();
+
+	if ($('#'+ getJquerySafeId('studyLevelVariables'+ index + '.value')).select2('data')) {
+		selectedVal = $('#'+ getJquerySafeId('studyLevelVariables' + index + '.value')).select2('data').id;
+	}
+	initializePossibleValuesCombo([], '#' + getJquerySafeId('studyLevelVariables' + index + '.value'), true, selectedVal);
+
+	// update values in combo
+	if ($("#"+ getJquerySafeId('studyLevelVariables' + index + '.favorite1')).is(':checked')) {
+		initializePossibleValuesCombo($.parseJSON(data.favoriteLocations), "#" + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
+	} else {
+		initializePossibleValuesCombo($.parseJSON(data.allLocations), '#' + getJquerySafeId('studyLevelVariables' + index + '.value'), true, selectedVal);
+	}
+
+	replacePossibleJsonValues(data.favoriteLocations, data.allLocations, index);
+}
+
 function recreateLocationComboAfterClose(comboName, data) {
 	if (comboName == 'harvestLocationIdAll') {
 		//clear all locations dropdown
@@ -1647,11 +1750,11 @@ function recreateLocationComboAfterClose(comboName, data) {
 		//reload the data retrieved
 		locationSuggestions = data;
 		initializeHarvestLocationSelect2(locationSuggestions, locationSuggestionsObj);
-	} else if (comboName == 'inventoryMethodIdAll') {
+	} else if (comboName == 'inventoryLocationIdAll') {
 		//clear all locations dropdown
-		initializePossibleValuesComboInventory(data, '#inventoryMethodIdAll', true, null);
-	} else if (comboName == 'inventoryMethodIdFavorite') {
-		initializePossibleValuesComboInventory(data, '#inventoryMethodIdFavorite', false, null);
+		initializePossibleValuesComboInventory(data, '#inventoryLocationIdAll', true, null);
+	} else if (comboName == 'inventoryLocationIdFavorite') {
+		initializePossibleValuesComboInventory(data, '#inventoryLocationIdFavorite', false, null);
 	} else {
 		//clear the favorite locations dropdown
 		locationSuggestionsFav = [];

@@ -265,7 +265,10 @@ public class FieldbookServiceImpl implements FieldbookService{
         if (possibleValues == null) {
 
             if (TermId.BREEDING_METHOD_ID.getId() == id) {
-                possibleValues = getAllBreedingMethods();
+                List<ValueReference> list = new ArrayList<ValueReference>();
+                list.add(new ValueReference(0, AppConstants.PLEASE_CHOOSE.getString(), AppConstants.PLEASE_CHOOSE.getString()));
+                possibleValues = list;
+                possibleValues.addAll(getAllBreedingMethods());
             } else if (TermId.LOCATION_ID.getId() == id) {
                 possibleValues = convertLocationsToValueReferences(fieldbookMiddlewareService.getAllLocations());
             } else if (TermId.PI_ID.getId() == id || Integer.parseInt(AppConstants.COOPERATOR_ID.getString()) == id) {

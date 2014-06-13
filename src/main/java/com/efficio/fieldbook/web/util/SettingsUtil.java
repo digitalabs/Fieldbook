@@ -139,8 +139,9 @@ public class SettingsUtil {
 				variable.setPSMRFromStandardVariable(standardVariable);
 				//need to get the name from the session
 				variable.setName(userSelection.getStudyLevelConditions().get(index).getVariable().getName());
-				
-			
+				if (variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_ID.getId())) && settingDetail.getValue().equals("0")) {
+				    settingDetail.setValue("");
+				} 			
         			
         			Condition condition = new Condition(variable.getName(), variable.getDescription(), variable.getProperty(),
         					variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
@@ -432,6 +433,10 @@ public class SettingsUtil {
                         if (!inHideVariableFields(stdVar, AppConstants.HIDE_NURSERY_FIELDS.getString())) {
                             if(enumerationByDescription != null) {
                                 settingDetail.setValue(enumerationByDescription.getName());
+                            }
+                            if (variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_ID.getId())) && 
+                                    (condition.getValue() == null || condition.getValue().isEmpty())) {
+                                settingDetail.setValue(AppConstants.PLEASE_CHOOSE.getString());
                             }
                             studyLevelConditions.add(settingDetail);
                         } else {

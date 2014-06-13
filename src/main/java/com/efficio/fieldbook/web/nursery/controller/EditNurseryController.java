@@ -113,9 +113,13 @@ public class EditNurseryController extends SettingsController {
             Dataset dataset = (Dataset)SettingsUtil.convertWorkbookToXmlDataset(workbook);
             
             SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
-            
+
             //nursery-level
-            List<SettingDetail> nurseryLevelConditions = userSelection.getStudyLevelConditions();
+            List<SettingDetail> nurseryLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
+                    buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true), 
+                    buildRequiredVariablesFlag(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
+                    userSelection.getStudyLevelConditions(), true);
+            
             List<SettingDetail> basicDetails = getBasicDetails(nurseryLevelConditions);
             
             removeBasicDetailsVariables(nurseryLevelConditions);

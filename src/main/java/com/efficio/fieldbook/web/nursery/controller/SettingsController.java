@@ -23,6 +23,7 @@ import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.StudyDetails;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
@@ -296,7 +297,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
     private SettingDetail createSettingDetail(int id, String name) throws MiddlewareQueryException {
             String variableName = "";
             StandardVariable stdVar = getStandardVariable(id);
-            if (name != null) {
+            if (name != null && !name.isEmpty()) {
                 variableName = name;
             } else {
                 variableName = stdVar.getName();
@@ -315,6 +316,10 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
                         List<ValueReference> possibleValues = fieldbookService.getAllPossibleValues(id);
                         SettingDetail settingDetail = new SettingDetail(svar, possibleValues, null, false);
+                        
+                        if (id == TermId.BREEDING_METHOD_ID.getId()) {
+                            settingDetail.setValue(AppConstants.PLEASE_CHOOSE.getString());
+                        }
                         settingDetail.setPossibleValuesToJson(possibleValues);
                         List<ValueReference> possibleValuesFavorite = fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProjectId());
                         settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);

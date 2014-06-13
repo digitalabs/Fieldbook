@@ -431,42 +431,6 @@ function openManageLocations() {
 	}
 }
 
-function recreateLocationCombo() {
-	var selectedLocationAll = $("#fieldLocationIdAll").val();
-	var selectedLocationFavorite = $("#fieldLocationIdFavorite").val();
-	
-	Spinner.toggle();
-	$.ajax(
-	{ url: "/Fieldbook/NurseryManager/advance/nursery/getLocations",
-       type: "GET",
-       cache: false,
-       data: "",
-       success: function(data) {
-    	   if (data.success == "1") {
-    		   //recreate the select2 combos to get updated list of locations
-    		   recreateLocationComboAfterClose("fieldLocationIdAll", $.parseJSON(data.allLocations));
-    		   recreateLocationComboAfterClose("fieldLocationIdFavorite", $.parseJSON(data.favoriteLocations));
-    		   showCorrectLocationCombo();
-    		   //set previously selected value of location
-    		   if ($("#showFavoriteLocation").prop("checked")) {
-    			   setComboValues(locationSuggestionsFav_obj, selectedLocationFavorite, "fieldLocationIdFavorite");
-    		   } else {
-    			   setComboValues(locationSuggestions_obj, selectedLocationAll, "fieldLocationIdAll");
-    		   }
-    	   } else {
-    		   showErrorMessage("page-message", data.errorMessage);
-    	   }
-       },
-       error: function(jqXHR, textStatus, errorThrown){
-			console.log("The following error occured: " + textStatus, errorThrown); 
-	   }, 
-	   complete: function(){  
-		   Spinner.toggle();
-	   } 
-     }
- );
-}
-
 function recreatePopupLocationCombo() {
 	
 	Spinner.toggle();

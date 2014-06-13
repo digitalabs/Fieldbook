@@ -1041,7 +1041,7 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 
 	if (isLocation) {
 		$(name).select2(
-				{
+				{ 	minimumResultsForSearch: 20,
 					minimumInputLength : 2,
 					query : function(query) {
 						var data = {
@@ -1060,6 +1060,7 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 	} else if ($(name).parent().next().children(".breeding-method-tooltip").length > 0) {
 		$(name).select2(
 				{
+					minimumResultsForSearch: 20,
 					query : function(query) {
 						var data = {
 							results : possibleValues_obj
@@ -1087,6 +1088,7 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 	} else {
 		$(name).select2(
 				{
+					minimumResultsForSearch: 20,
 					query : function(query) {
 						var data = {
 							results : possibleValues_obj

@@ -1194,3 +1194,6 @@ a.fbk-edit-experiment{
     padding : 0 !important;
     margin: 0 !important;
 }
+textarea {
+   resize: none;
+}

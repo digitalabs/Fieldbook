@@ -289,13 +289,21 @@
 					</table>
 				</div>
 				<div class="col-xs-3 col-md-3"></div>
-			</div>
-			<div class="row form-group collapse in selectionVariatesDetails" th:each="nurseryLevelVariable, rowStat : *{studyLevelVariables}">
-				<div th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}">
-					<div class="col-xs-12 col-md-12 form-group">
+			</div>			
+		</div>
+		<div class="col-xs-6 col-md-6">
+		</div>
+	</div>
+	<div class="row form-group">
+		<div class=" collapse in selectionVariatesDetails" th:each="nurseryLevelVariable, rowStat : *{studyLevelVariables}">
+			<div th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}">
+				<div class="row  form-group  col-xs-12 col-md-12">
+					<div class="col-xs-12 col-md-12">
 						<span th:text="#{nursery.create.nursery.method.note}">If you plan to advance the nursery with a single method, please select it below</span>
 					</div>
-					<div class="col-xs-8 col-md-8 form-group">
+				</div>
+				<div class="row form-group  col-xs-12 col-md-12">
+					<div class="col-xs-5 col-md-5 form-group">
 						<input class="cvTermIds" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 						
 						<input style="width: 70%" th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}"
@@ -328,8 +336,6 @@
 					</div>
 				</div>
 			</div>
-		</div>
-		<div class="col-xs-6 col-md-6">
 		</div>
 	</div>
 

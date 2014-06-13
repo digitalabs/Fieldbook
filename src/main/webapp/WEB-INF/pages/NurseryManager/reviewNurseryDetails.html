@@ -38,17 +38,28 @@
 			</div>
 		</div>
 		<div class="sectionContainer collapse in nurseryDetails">
-			<div style="padding-left: 5px" class="form-group" >
-				<div style="padding-bottom: 5px" class="col-xs-4 col-md-4 fbk-span-overflow" th:each="basicDetail, rowStat : *{basicStudyDetails}">
-					&nbsp;&nbsp;&nbsp;<strong><span style="word-wrap: break-word" class="control-label" th:text="${basicDetail.variable.name}"></span>:</strong>
-					&nbsp;<span th:text="${basicDetail.value}" class="div-select-val"></span>
-					<span th:if="${basicDetail.variable.name == 'Field Map Created' and basicDetail.value == 'Yes'}">
-						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-						<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
-						<a href="javascript: showFieldMap('nursery-table');" id="view-fieldmap-url-link" th:text="#{nursery.nurserydetails.viewFieldMap}">View</a>
-					</span>
-				</div>
-			</div>
+            <div th:each="basicDetail, rowStat : *{basicStudyDetails}" th:remove="tag">
+                <div style="padding-bottom: 5px" th:class="
+                            ${rowStat.last and rowStat.size mod 3 ne 0} ?
+                                'col-sm-12 ' +
+                                'col-md-' + ${4*(4-(rowStat.size % 3))}
+                            : 'col-sm-6 col-md-4'">
+
+                        <div class="col-md-12">
+                            <div>
+                                <strong th:text="${basicDetail.variable.name} + ':'" class="break-word">:</strong>
+                            </div>
+                            <div>
+                                <span th:text="${basicDetail.value}" class="div-select-val break-word"></span>
+                            <span th:if="${basicDetail.variable.name == 'Field Map Created' and basicDetail.value == 'Yes'}">
+                                <a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
+                                <a href="javascript: showFieldMap('nursery-table');" id="view-fieldmap-url-link" th:text="#{nursery.nurserydetails.viewFieldMap}">View</a>
+                            </span>
+                            </div>
+                        </div>
+                </div>
+                <div th:if="${rowStat.odd}" class="clearfix visible-sm"></div>
+            </div>
 		</div>
 		<br/>
 		<div class="col-xs-12 col-md-12">
@@ -61,12 +72,24 @@
 
 		</div>
 		<div class="sectionContainer collapse in managementDetails">
-			<div style="padding-left: 5px" class="form-group" >
-				<div style="padding-bottom: 5px" class="col-xs-4 col-md-4 fbk-span-overflow" th:each="managementDetail, rowStat : *{managementDetails}">
-					&nbsp;&nbsp;&nbsp;<strong><span style="word-wrap: break-word" class="control-label" th:text="${managementDetail.variable.name}"></span>:</strong>
-					&nbsp;<span th:text="${managementDetail.value}" class="div-select-val"></span>
-				</div>
-			</div>
+			<div th:each="managementDetail, rowStat : *{managementDetails}" th:remove="tag">
+                <div style="padding-bottom: 5px" th:class="
+                            ${rowStat.last and rowStat.size mod 3 ne 0} ?
+                                'col-sm-12 ' +
+                                'col-md-' + ${4*(4-(rowStat.size % 3))}
+                            : 'col-sm-6 col-md-4'">
+
+                    <div class="col-md-12">
+                        <div>
+                            <strong th:text="${managementDetail.variable.name} + ':'" class="break-word">:</strong>
+                        </div>
+                        <div>
+                            <span th:text="${managementDetail.value}" class="div-select-val break-word"></span>
+                        </div>
+                    </div>
+                </div>
+                <div th:if="${rowStat.odd}" class="clearfix visible-sm"></div>
+            </div>
 		</div>
 		<br/>
 		<div class="col-xs-12 col-md-12">
@@ -79,12 +102,26 @@
 
 		</div>
 		<div class="sectionContainer collapse nurseryConditions">
-			<div style="padding-left: 5px" class="form-group" >
-				<div style="padding-bottom: 5px" class="col-xs-4 col-md-4" th:each="nurseryConditionDetail, rowStat : *{nurseryConditionDetails}">
-					&nbsp;&nbsp;&nbsp;<strong><span style="word-wrap: break-word" class="control-label" th:text="${nurseryConditionDetail.variable.name}"></span>:</strong>
-					&nbsp;<span th:text="${nurseryConditionDetail.value}" class="div-select-val"></span>
-				</div>
-			</div>
+
+            <div th:each="nurseryConditionDetail, rowStat : *{nurseryConditionDetails}" th:remove="tag">
+                <div style="padding-bottom: 5px" th:class="
+                            ${rowStat.last and rowStat.size mod 3 ne 0} ?
+                                'col-sm-12 ' +
+                                'col-md-' + ${4*(4-(rowStat.size % 3))}
+                            : 'col-sm-6 col-md-4'">
+
+                    <div class="col-md-12">
+                        <div>
+                            <strong th:text="${nurseryConditionDetail.variable.name} + ':'" class="break-word">:</strong>
+                        </div>
+                        <div>
+                            <span th:text="${nurseryConditionDetail.value}" class="div-select-val break-word"></span>
+                        </div>
+                    </div>
+                </div>
+                <div th:if="${rowStat.odd}" class="clearfix visible-sm"></div>
+            </div>
+
 		</div>
 		<br />
 		<div class="form-group col-xs-12 col-md-12">

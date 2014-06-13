@@ -2197,9 +2197,14 @@ function showListTreeToolTip(node, nodeSpan) {
 				html: true,
 				title: 'List Details',
 				content: $(listDetails).html(),
-				trigger: 'hover',
+				trigger: 'manual',
 				placement: 'right',
 				container: '.modal-popover'
+			}).hover(function(){
+				$('.popover').hide();
+				$(this).popover('show');
+			}, function(){
+				$(this).popover('hide');
 			});
 		}
 	});

@@ -48,16 +48,19 @@
 	<script type="text/javascript" th:src="@{/static/js/nurseryManager.js}"></script>
 	<script type="text/javascript" th:inline="javascript">
 		//<![CDATA[
-		var url = "";
-		var lazyReadUrl = "";
-		var lazyReadAllUrl = "/Fieldbook/StudyTreeManager/retrieveChildren/";
+		/*globals Spinner,console,displayStudyListTree, changeBrowseNurseryButtonBehavior, showErrorMessage*/
+		/*globals addDetailsTab, moveStudy*/
+		/*exported displayStudyListTree*/
+		var url = '',
+			lazyReadUrl = '',
+			lazyReadAllUrl = '/Fieldbook/StudyTreeManager/retrieveChildren/',
+			focusNode = null;
 
-		var cannotMove = /*[[#{browse.nursery.move.can.not}]]*/;
-		var hasChildrenString = /*[[#{browse.nursery.move.has.children}]]*/;
-		var isAStudy = /*[[#{browse.nursery.move.is.study}]]*/;
-
-		var chooseProgramListFolderError = /*[[#{browse.nursery.please.choose.program.list.folder}]]*/;
-		var chooseStudyError = /*[[#{browse.nursery.please.choose.program.study}]]*/;
+		var cannotMove = /*[[#{browse.nursery.move.can.not}]]*/ '',
+			hasChildrenString = /*[[#{browse.nursery.move.has.children}]]*/'',
+			isAStudy = /*[[#{browse.nursery.move.is.study}]]*/'',
+			chooseProgramListFolderError = /*[[#{browse.nursery.please.choose.program.list.folder}]]*/'',
+			chooseStudyError = /*[[#{browse.nursery.please.choose.program.study}]]*/'';
 		/*
 		1 - Can choose folder / study
 		2 - Can choose folder only
@@ -66,50 +69,95 @@
 		var choosingType = 1;
 
 		$( document ).ready(function() {
+			'use strict';
 			displayStudyListTree('studyTree', 'N', 1);
 			changeBrowseNurseryButtonBehavior(false);
 
 		});
 
-		function doStudyLazyLoad(node){
-			var additionalUrl = "/0";
-			if(choosingType == 2){
-				additionalUrl = "/1";
+		function chooseStudyNode(node, fromEnterKey){
+			'use strict';
+			if(choosingType === 1 || choosingType === 3){
+				if(node.data.isFolder === false){
+					if(choosingType === 1)
+						addDetailsTab(node.data.key, node.data.title);
+					else{
+						choosePreviousNursery(node.data.key);
+					}
+
+					$('#studyTreeModal').modal('hide');
+				}else{
+					if(fromEnterKey === false) {
+						showErrorMessage('page-study-tree-message-modal', chooseStudyError);	
+					}					
+				}
+			} else if(choosingType === 2){
+				if(node.data.isFolder === true){
+					if(node.data.key > 0 || node.data.key === 'CENTRAL'){
+						showErrorMessage('page-study-tree-message-modal', chooseProgramListFolderError);
+					}else{
+						var folderDataId = node.data.key === 'LOCAL' ? 1 : node.data.key;
+						$('#folderId').val(folderDataId);
+						$('#folderName').val(node.data.title);
+						$('#folderNameLabel').html(node.data.title + ' > ');
+
+						$('#studyTreeModal').modal('hide');
+					}
+				}else{
+					if(fromEnterKey === false) {
+						showErrorMessage('page-study-tree-message-modal', chooseProgramListFolderError);
+					}
+				}
 			}
-			if (node.data.isFolder == true){
+		}
+		function chooseStudy(){
+			'use strict';
+			var node = $('#studyTree').dynatree('getTree').getActiveNode();
+			chooseStudyNode(node, false);
+		}
+
+		function doStudyLazyLoad(node){
+			'use strict';
+			var additionalUrl = '/0';
+			if(choosingType === 2){
+				additionalUrl = '/1';
+			}
+			if (node.data.isFolder === true){
 				node.appendAjax({
 					url: lazyReadUrl + node.data.key +additionalUrl,
-					dataType: "json",
+					dataType: 'json',
 					success: function(node) {
 						//do nothing
-						setTimeout(function(){node.focus(); node.expand()}, 50);
+						setTimeout(function(){node.focus(); node.expand();}, 50);
 						if(node.hasChildren()){
 							$('.delete-folder').addClass('disable-image');
 						}
 
-						if(node.data.isFolder == false){
+						if(node.data.isFolder === false){
 							addDetailsTab(node.data.key, node.data.title);
 							changeBrowseNurseryButtonBehavior(false);
 						}else{
-							if(node.data.key > 1 || node.data.key == 'CENTRAL'){
+							if(node.data.key > 1 || node.data.key === 'CENTRAL'){
 								changeBrowseNurseryButtonBehavior(false);
-							}else if(node.data.key == 'LOCAL'){
+							}else if(node.data.key === 'LOCAL'){
 								changeBrowseNurseryButtonBehavior(true);
 								$('.edit-folder').addClass('disable-image');
 								$('.delete-folder').addClass('disable-image');
 							}
-							else
+							else {
 								changeBrowseNurseryButtonBehavior(true);
+							}
 						}
 
-						if(choosingType == 2){
-							var nodeCentral = $('#studyTree').dynatree("getTree").getNodeByKey('CENTRAL');
-							if(nodeCentral != null)
+						if(choosingType === 2){
+							var nodeCentral = $('#studyTree').dynatree('getTree').getNodeByKey('CENTRAL');
+							if(nodeCentral !== null){
 								nodeCentral.remove();
+							}
 						}
 					},
 					error: function(node, XMLHttpRequest, textStatus, errorThrown) {
-						console.log("The following error occured: " + textStatus, errorThrown);
+						console.log('The following error occured: ' + textStatus, errorThrown);
 					},
 					cache: false
 				});
@@ -118,62 +166,66 @@
 		}
 		/** Germplasm Tree **/
 		function displayStudyListTree(treeName, studyType, choosingTypeParam) {
-			if(studyType == 'N'){
+			'use strict';
+			if(studyType === 'N'){
 				url = '/Fieldbook/StudyTreeManager/loadInitialNurseryTree';
-				lazyReadUrl = "/Fieldbook/StudyTreeManager/expandNurseryTree/";
+				lazyReadUrl = '/Fieldbook/StudyTreeManager/expandNurseryTree/';
 			}
 			else{
 				url = '/Fieldbook/StudyTreeManager/loadInitialTrialTree';
-				lazyReadUrl = "/Fieldbook/StudyTreeManager/expandTrialTree/";
+				lazyReadUrl = '/Fieldbook/StudyTreeManager/expandTrialTree/';
 			}
 			choosingType = choosingTypeParam;
-			var additionalUrl = "/0";
-			if(choosingType == 2){
-				additionalUrl = "/1";
+			var additionalUrl = '/0';
+			if(choosingType === 2){
+				additionalUrl = '/1';
 			}
 
 			url = url + additionalUrl;
 
-			$("#" + treeName).dynatree({
+			$('#' + treeName).dynatree({
 				title: treeName,
 				checkbox: false,
 				noLink: false,
 				autoFocus: false,
-				imagePath: "/Fieldbook/static/img/",
+				imagePath: '/Fieldbook/static/img/',
 				activeVisible: true,
 				initAjax: {url: url,
-					dataType: "json"
+					dataType: 'json'
 				},
 
 				onLazyRead: function(node) {
 					doStudyLazyLoad(node);
 				},
 				classNames: {
-					container: "fbtree-container",
-					expander: "fbtree-expander",
-					nodeIcon: "fbtree-icon",
-					combinedIconPrefix: "fbtree-ico-",
-					focused: "fbtree-focused",
-					active: "fbtree-active"
+					container: 'fbtree-container',
+					expander: 'fbtree-expander',
+					nodeIcon: 'fbtree-icon',
+					combinedIconPrefix: 'fbtree-ico-',
+					focused: 'fbtree-focused',
+					active: 'fbtree-active'
 				},
 
 				onPostInit: function (isReloading, isError) {
-					if(choosingType == 2){
-						var nodeCentral = $('#create-nursery #studyTree').dynatree("getTree").getNodeByKey('CENTRAL');
-						if(nodeCentral != null) {
+					if(choosingType === 2){
+						var nodeCentral = $('#create-nursery #studyTree').dynatree('getTree').getNodeByKey('CENTRAL');
+						if(nodeCentral !== null) {
 							nodeCentral.remove();
 						}
-					}
+					}					
 					Spinner.stop();
 				},
+				onFocus: function(node) {
+			        focusNode = node;
+			    },
 
 				onActivate: function(node) {
-					if(node.data.isFolder == false){
+					if(node.data.isFolder === false){
 						changeBrowseNurseryButtonBehavior(false);
 					}else{
-						if(node.data.key > 1 || node.data.key == 'CENTRAL'){
+						if(node.data.key > 1 || node.data.key === 'CENTRAL'){
 							changeBrowseNurseryButtonBehavior(false);
-						}else if(node.data.key == 'LOCAL'){
+						}else if(node.data.key === 'LOCAL'){
 							changeBrowseNurseryButtonBehavior(true);
 							$('.edit-folder').addClass('disable-image');
 							$('.delete-folder').addClass('disable-image');
@@ -182,6 +234,12 @@
 							changeBrowseNurseryButtonBehavior(true);
 						}
 					}
+					$('#studyTreeModalBody a.dynatree-title').off('keypress');
+					$('#studyTreeModalBody a.dynatree-title').on('keypress', function(e) {						
+					  if (e.keyCode === 13) {
+						  chooseStudyNode(focusNode, true);  						  
+					  }
+					});
 				},
 				onDblClick: function(node, event) {
 					chooseStudy();
@@ -220,21 +278,21 @@
 						 * the tree.
 						 */
 						 if(sourceNode.hasChildren()){
-						 	showErrorMessage('page-study-tree-message-modal', cannotMove + " " + sourceNode.data.title + " " + hasChildrenString);
-						 }else if(node.data.isFolder == false){
-						 	showErrorMessage('page-study-tree-message-modal', cannotMove + " " + node.data.title + " " + isAStudy);
+						 	showErrorMessage('page-study-tree-message-modal', cannotMove + ' ' + sourceNode.data.title + ' ' + hasChildrenString);
+						 }else if(node.data.isFolder === false){
+						 	showErrorMessage('page-study-tree-message-modal', cannotMove + ' ' + node.data.title + ' ' + isAStudy);
 						 }else{
 						 	$.ajax({
 						 		url: lazyReadAllUrl + sourceNode.data.key + additionalUrl,
-						 		type: "GET",
+						 		type: 'GET',
 						 		cache: false,
 						 		aysnc: false,
 						 		success: function(data) {
 						 			var childCount = $.parseJSON(data).length;
-						 			if(childCount == 0){
+						 			if(childCount === 0){
 						 				moveStudy(sourceNode, node);
 						 			}else{
-						 				showErrorMessage('page-study-tree-message-modal', cannotMove + " " + sourceNode.data.title + " " + hasChildrenString)
+						 				showErrorMessage('page-study-tree-message-modal', cannotMove + ' ' + sourceNode.data.title + ' ' + hasChildrenString);
 						 			}
 						 		}
 						 	});
@@ -245,37 +303,7 @@
 			});
 		}
 
-		function chooseStudy(){
-			var node = $('#studyTree').dynatree("getTree").getActiveNode();
-			if(choosingType == 1 || choosingType == 3){
-				if(node.data.isFolder == false){
-					if(choosingType == 1)
-						addDetailsTab(node.data.key, node.data.title);
-					else{
-						choosePreviousNursery(node.data.key);
-					}
-
-					$('#studyTreeModal').modal('hide');
-				}else{
-					showErrorMessage('page-study-tree-message-modal', chooseStudyError);
-				}
-			} else if(choosingType == 2){
-				if(node.data.isFolder == true){
-					if(node.data.key > 0 || node.data.key == 'CENTRAL'){
-						showErrorMessage('page-study-tree-message-modal', chooseProgramListFolderError);
-					}else{
-						var folderDataId = node.data.key == 'LOCAL' ? 1 : node.data.key;
-						$("#folderId").val(folderDataId);
-						$("#folderName").val(node.data.title);
-						$("#folderNameLabel").html(node.data.title + " > ");
-
-						$('#studyTreeModal').modal('hide');
-					}
-				}else{
-					showErrorMessage('page-study-tree-message-modal', chooseProgramListFolderError);
-				}
-			}
-		}
+		
 		//]]>
 	</script>
 </div>

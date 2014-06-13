@@ -172,7 +172,7 @@
 				</div>
 				<div class="row form-group" >
 					<!-- Germplasm List Tree View -->
-					<div class="col-md-12 col-xs-12" id="germplasmTree" style="height:350px; overflow:auto;"></div>
+					<div class="col-md-12 col-xs-12 germplasm-tree-section" id="germplasmTree" style="height:350px; overflow:auto;"></div>
 				</div>
 				<br />
 				<a class="btn btn-info" href="javascript: openImportGermplasmList()" th:text="#{nursery.import.germplasm.list}">Import File</a>
@@ -638,13 +638,19 @@
 			additionalLazyLoadUrl = '/0';
 		}
 
-		function chooseList() {
+		function chooseList(){
 			'use strict';
-
 			var node = $('#'+getDisplayedTreeName()).dynatree('getTree').getActiveNode();
+			chooseListNode(node, false);
+		}
+
+		function chooseListNode(node, fromEnterKey) {
+			'use strict';		
 
 			if (node === null || node.data.isFolder) {
-				showErrorMessage('page-import-message-modal', pleaseChooseFolder);
+				if(fromEnterKey === false){
+					showErrorMessage('page-import-message-modal', pleaseChooseFolder);
+				}
 			} else {
 				if (openTreeType === 1) {
 					// Load in main list
@@ -654,8 +660,11 @@
 						lastDraggedPrimaryList = node.data.key;
 						displayGermplasmDetails(node.data.key);
 					} else {
-						showErrorMessage('page-import-message-modal', sameListErr);
-						return;
+						if(fromEnterKey === false){
+							showErrorMessage('page-import-message-modal', sameListErr);
+							return;	
+						}
+						
 					}
 				} else if(openTreeType === 2) {
 					// Load in check list
@@ -677,8 +686,10 @@
 						}
 						makeCheckDraggable(false);
 					} else {
-						showErrorMessage('page-import-message-modal', sameListErr);
-						return;
+						if(fromEnterKey === false){
+							showErrorMessage('page-import-message-modal', sameListErr);
+							return;
+						}
 					}
 				}
 				$('#listTreeModal').modal('hide');
@@ -807,7 +818,7 @@
 			'use strict';
 
 			// FIXME This is relying on implicit type conversion - also see other uses of == in this file
-			if (hasPageError == 1){
+			if (hasPageError === 1){
 				// Show the modal dialog again
 				$('#myModal').modal('show');
 			}

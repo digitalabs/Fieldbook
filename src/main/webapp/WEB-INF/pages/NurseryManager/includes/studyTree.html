@@ -117,17 +117,19 @@
 		}
 
 		function doStudyLazyLoad(node){
-			'use strict';
+			'use strict';			
 			var additionalUrl = '/0';
 			if(choosingType === 2){
 				additionalUrl = '/1';
 			}
 			if (node.data.isFolder === true){
+				Spinner.play();
 				node.appendAjax({
 					url: lazyReadUrl + node.data.key +additionalUrl,
 					dataType: 'json',
 					success: function(node) {
 						//do nothing
+						Spinner.stop();
 						setTimeout(function(){node.focus(); node.expand();}, 50);
 						if(node.hasChildren()){
 							$('.delete-folder').addClass('disable-image');
@@ -157,6 +159,7 @@
 						}
 					},
 					error: function(node, XMLHttpRequest, textStatus, errorThrown) {
+						Spinner.stop();
 						console.log('The following error occured: ' + textStatus, errorThrown);
 					},
 					cache: false
@@ -203,7 +206,8 @@
 					nodeIcon: 'fbtree-icon',
 					combinedIconPrefix: 'fbtree-ico-',
 					focused: 'fbtree-focused',
-					active: 'fbtree-active'
+					active: 'fbtree-active',
+					nodeLoading: ''
 				},
 
 				onPostInit: function (isReloading, isError) {

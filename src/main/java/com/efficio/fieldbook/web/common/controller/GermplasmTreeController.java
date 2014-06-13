@@ -319,8 +319,8 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
             TreeNode centralNode = new TreeNode("CENTRAL", AppConstants.GERMPLASM_LIST_CENTRAL.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG.getString());
             rootNodes.add(localNode);
             rootNodes.add(centralNode);
-            localNode.setChildren(getGermplasmChildNodes(localNode.getKey(), isFolderOnlyBool));
-            centralNode.setChildren(getGermplasmChildNodes(centralNode.getKey(), isFolderOnlyBool));
+            //localNode.setChildren(getGermplasmChildNodes(localNode.getKey(), isFolderOnlyBool));
+            //centralNode.setChildren(getGermplasmChildNodes(centralNode.getKey(), isFolderOnlyBool));
             return TreeViewUtil.convertTreeViewToJson(rootNodes);
             
         } catch(Exception e) {
@@ -330,7 +330,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         return "[]";
     }
     
-    private List<TreeNode> getGermplasmChildNodes(String parentKey, boolean isFolderOnly){
+    private List<TreeNode> getGermplasmChildNodes(String parentKey, boolean isFolderOnly) throws MiddlewareQueryException{
 		List<TreeNode> childNodes = new ArrayList<TreeNode>();
 		if(parentKey != null && !parentKey.equalsIgnoreCase("")){
 			
@@ -343,10 +343,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
 	                childNodes = TreeViewUtil.convertGermplasmListToTreeView(rootLists, isFolderOnly);
 	            } 
 	            else if (NumberUtils.isNumber(parentKey)) {
-	                int parentId = Integer.valueOf(parentKey);
-	                List<GermplasmList> childLists = germplasmListManager
-	                            .getGermplasmListByParentFolderIdBatched(parentId, BATCH_SIZE);
-	                childNodes = TreeViewUtil.convertGermplasmListToTreeView(childLists, isFolderOnly);
+	                childNodes = getGermplasmChildrenNode(parentKey, isFolderOnly);	                
 	            }
 	            else {
 	                LOG.error("parentKey = " + parentKey + " is not a number");
@@ -356,12 +353,31 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
 	            LOG.error(e.getMessage(), e);
 	        }		
 		}
+		/*
 		for(TreeNode newNode : childNodes){
 			newNode.setChildren(getGermplasmChildNodes(newNode.getKey(), isFolderOnly));
 		}
-		
+		*/
+		for(TreeNode newNode : childNodes){
+			List<TreeNode> childOfChildNode = getGermplasmChildrenNode(newNode.getKey(), isFolderOnly);
+			//newNode.setChildren(childOfChildNode);
+			if(childOfChildNode.size() == 0) {
+				newNode.setIsLazy(false);
+			}else{
+				newNode.setIsLazy(true);
+			}
+		}
 		return childNodes;
 	}
+    
+    private List<TreeNode> getGermplasmChildrenNode(String parentKey, boolean isFolderOnly) throws MiddlewareQueryException{
+    	List<TreeNode> childNodes = new ArrayList<TreeNode>();
+    	int parentId = Integer.valueOf(parentKey);
+    	List<GermplasmList> childLists = germplasmListManager
+                .getGermplasmListByParentFolderIdBatched(parentId, BATCH_SIZE);
+    	childNodes = TreeViewUtil.convertGermplasmListToTreeView(childLists, isFolderOnly);
+    	return childNodes;
+    }
     
     /**
      * Load initial germplasm tree.
@@ -443,9 +459,9 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
     @ResponseBody
     @RequestMapping(value = "/expandGermplasmTree/{parentKey}/{isFolderOnly}", method = RequestMethod.GET)
     public String expandGermplasmTree(@PathVariable String parentKey, @PathVariable String isFolderOnly) {
-    	boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;
-        List<TreeNode> childNodes = getGermplasmChildNodes(parentKey, isFolderOnlyBool);
-        try {        	
+    	boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;        
+        try {
+        	List<TreeNode> childNodes = getGermplasmChildNodes(parentKey, isFolderOnlyBool);
         	return TreeViewUtil.convertTreeViewToJson(childNodes);            
         } catch(Exception e) {
             LOG.error(e.getMessage(), e);

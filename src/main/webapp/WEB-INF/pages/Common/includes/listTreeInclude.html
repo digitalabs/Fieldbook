@@ -93,12 +93,15 @@
 
 			function doGermplasmLazyLoad(node) {
 				'use strict';
+				
 				if (node.data.isFolder === true){
+					Spinner.play();
 					node.appendAjax({
 						url: lazyLoadUrl + node.data.key + additionalLazyLoadUrl,
 						dataType: 'json',
 						success: function(node) {
 							//do nothing
+							Spinner.stop();
 							setTimeout(function(){node.focus();}, 50);
 							if(node.hasChildren()) {
 								$('.delete-germplasm-folder').addClass('disable-image');
@@ -120,6 +123,7 @@
 							}
 						},
 						error: function(node, XMLHttpRequest, textStatus, errorThrown) {
+							Spinner.stop();
 							console.log('The following error occured: ' + textStatus, errorThrown);
 						},
 						cache: false
@@ -166,7 +170,8 @@
 						nodeIcon: 'fbtree-icon',
 						combinedIconPrefix: 'fbtree-ico-',
 						focused: 'fbtree-focused',
-						active: 'fbtree-active'
+						active: 'fbtree-active',
+						nodeLoading: ''
 					},
 					onFocus: function(node) {
 						$('.popover').hide();

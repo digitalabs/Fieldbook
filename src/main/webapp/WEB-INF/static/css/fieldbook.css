@@ -1148,8 +1148,9 @@ a.fbk-edit-experiment{
 .fbk-import-upload-file{
 	margin-right: 20px;
 }
-.modal-backdrop {
-	background-color: transparent;
+
+.modal-backdrop.in {
+    opacity: 0.5;
 }
 .advance-nursery-list-table table th, .advance-nursery-list-table table td{
 	text-align: left; 

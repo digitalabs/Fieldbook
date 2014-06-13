@@ -1164,6 +1164,10 @@ a.fbk-edit-experiment{
 .enable-pointer-events {
     pointer-events: initial !important;
 }
+
+.break-word {
+    word-wrap: break-word;
+}
 .tooltip-arrow {
  display: none;
 }

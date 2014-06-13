@@ -1,27 +1,28 @@
 <div class="modal fade" id="addStudyFolder" role="dialog" aria-labelledby="addStudyFolder" aria-hidden="true" style="overflow: hidden">
 	<div class="modal-dialog modal-extra-small">
 		<div class="modal-content">
-			<div class="modal-header">
-				<button id="closeAddStudyFolder" type="button" class="close" onclick="javascript: closeModal('addStudyFolder')">&times;</button>
-				<h4 class="modal-title" id="heading-modal" th:text="#{browse.nursery.add.folder.name}">
-					Add New Folder
-				</h4>
-			</div>
+			
 			<form onsubmit="return createFolder();">
 			<div class="modal-body" id="manageCheckTypesModalBody">
+				<div class="row form-group">
+					<div class="col-xs-11 col-md-11">					
+						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{browse.nursery.add.folder.name}">Add New Folder</label>
+					</div>
+					<div class="col-xs-1 col-md-1">
+						<button  id="closeAddStudyFolder" type="button" class="close  pull-right glyphicon glyphicon-remove" onclick="javascript: closeModal('addStudyFolder')"/>
+					</div>										
+				</div>
 				<div class="row">
 					<div id="page-add-study-folder-message-modal" class="col-xs-12 col-md-12">
 					</div>
 				</div>
 				<div class="row form-group">
-					<div class="col-xs-12 col-md-12">
 						<div class="col-xs-5 col-md-5 add_top_padding">
-							<label class="control-label" th:text="#{browse.nursery.folder.name}">Folder Name:</label><span class="required">*</span>
+							<label class="control-label  label-bold" th:text="#{browse.nursery.folder.name}">Folder Name:</label><span class="required">*</span>
 						</div>
 						<div class="col-xs-7 col-md-7">
 							<input id="addFolderName" name="addFolderName" type="text" class="form-control select2" placeholder="Folder Name"/>
 						</div>
-					</div>
 				</div>
 
 			</div>
@@ -37,27 +38,28 @@
 <div class="modal fade" id="renameStudyFolder" role="dialog" aria-labelledby="renameStudyFolder" aria-hidden="true" style="overflow: hidden">
 	<div class="modal-dialog modal-extra-small">
 		<div class="modal-content">
-			<div class="modal-header">
-				<button id="closeRenameStudyFolder" type="button" class="close" onclick="javascript: closeModal('renameStudyFolder')">&times;</button>
-				<h4 class="modal-title" id="heading-modal" th:text="#{browse.nursery.rename.folder.name}">
-					Rename Folder
-				</h4>
-			</div>
+			
 
 			<div class="modal-body" id="manageCheckTypesModalBody">
+				<div class="row form-group">
+					<div class="col-xs-11 col-md-11">					
+						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{browse.nursery.rename.folder.name}">Rename Folder</label>
+					</div>
+					<div class="col-xs-1 col-md-1">
+						<button  id="closeRenameStudyFolder" type="button" class="close  pull-right glyphicon glyphicon-remove" onclick="javascript: closeModal('renameStudyFolder')"/>
+					</div>										
+				</div>
 				<div class="row">
 					<div id="page-rename-study-folder-message-modal" class="col-xs-12 col-md-12">
 					</div>
 				</div>
 				<div class="row form-group">
-					<div class="col-xs-12 col-md-12">
 						<div class="col-xs-5 col-md-5 add_top_padding">
-							<label class="control-label" th:text="#{browse.nursery.folder.name}">Folder Name:</label><span class="required">*</span>
+							<label class="control-label  label-bold" th:text="#{browse.nursery.folder.name}">Folder Name:</label><span class="required">*</span>
 						</div>
 						<div class="col-xs-7 col-md-7">
 							<input id="newFolderName" name="newFolderName" type="text" class="form-control select2" placeholder="Folder Name"/>
 						</div>
-					</div>
 				</div>
 
 			</div>
@@ -71,27 +73,24 @@
 
 <div class="modal fade" id="deleteStudyFolder" role="dialog" aria-labelledby="deleteStudyFolder" aria-hidden="true" style="overflow: hidden">
 	<div class="modal-dialog modal-extra-small">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button id="closeDeleteStudyFolder" type="button" class="close" onclick="javascript: closeModal('deleteStudyFolder')">&times;</button>
-				<h4 class="modal-title" id="heading-modal" th:text="#{browse.nursery.delete.folder.name}">
-					Delete Folder
-				</h4>
-			</div>
-
+		<div class="modal-content">			
 			<div class="modal-body" id="manageCheckTypesModalBody">
+				<div class="row form-group">
+					<div class="col-xs-11 col-md-11">					
+						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{browse.nursery.delete.folder.name}">Delete Folder</label>
+					</div>
+					<div class="col-xs-1 col-md-1">
+						<button  id="closeDeleteStudyFolder" type="button" class="close  pull-right glyphicon glyphicon-remove" onclick="javascript: closeModal('deleteStudyFolder')"/>
+					</div>										
+				</div>
 				<div class="row">
 					<div id="page-delete-study-folder-message-modal" class="col-xs-12 col-md-12">
 					</div>
 				</div>
 				<div class="row form-group">
-					<div class="col-xs-12 col-md-12">
-						<div class="col-xs-2col-md-2 add_top_padding">
-						</div>
-						<div class="col-xs-9col-md-9 add_top_padding">
+						<div class="col-xs-12 col-md-12 add_top_padding">
 							<label class="control-label" id="delete-confirmation"></label>
 						</div>
-					</div>
 				</div>
 
 			</div>
@@ -105,15 +104,17 @@
 
 <div class="modal fade" id="moveStudyFolder" role="dialog" aria-labelledby="moveStudyFolder" aria-hidden="true" style="overflow: hidden">
 	<div class="modal-dialog modal-extra-small">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button id="closeMoveStudyFolder" type="button" class="close" onclick="javascript: closeModal('moveStudyFolder')">&times;</button>
-				<h4 class="modal-title" id="heading-modal">
-					Invalid Operation
-				</h4>
-			</div>
-
+		<div class="modal-content">			
 			<div class="modal-body" id="manageCheckTypesModalBody">
+				<div class="row form-group">
+					<div class="col-xs-11 col-md-11">					
+						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{common.form.notification.text}"></label>
+					</div>
+					<div class="col-xs-1 col-md-1">
+						<button  id="closeMoveStudyFolder" type="button" class="close  pull-right glyphicon glyphicon-remove" onclick="javascript: closeModal('moveStudyFolder')"/>
+					</div>										
+				</div>
+				
 				<div class="row">
 					<div id="page-move-study-folder-message-modal" class="col-xs-12 col-md-12">
 					</div>

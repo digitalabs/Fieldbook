@@ -1,5 +1,5 @@
 $(function() {
-
+    'use strict';
 	var newHash = '';
 
 	$(window).bind('hashchange', function() {
@@ -31,7 +31,7 @@ $(function() {
 });
 
 function doAjaxMainSubmit(pageMessageDivId, successMessage, overrideAction) {
-
+    'use strict';
 	Spinner.toggle();
 
 	var form = $('form'),
@@ -136,7 +136,7 @@ function showMultiTabPage(paginationUrl, pageNum, sectionDiv, sectionContainerId
 }
 
 function showPostPage(paginationUrl, previewPageNum, pageNum, sectionDiv, formName) {
-
+    'use strict';
 	var $form,
 		completeSectionDivName,
 		serializedData;

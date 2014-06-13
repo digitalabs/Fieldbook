@@ -291,27 +291,29 @@
 				<div class="col-xs-3 col-md-3"></div>
 			</div>
 			<div class="row form-group collapse in selectionVariatesDetails" th:each="nurseryLevelVariable, rowStat : *{studyLevelVariables}">
-				<div class="col-xs-12 col-md-12" th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}">
-					<br />
-					<span th:text="#{nursery.create.nursery.method.note}">If you plan to advance the nursery with a single method, please select it below</span><br /><br />
-					<input class="cvTermIds" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
-					
-					<input style="width: 70%" th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}"
-					type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="select2" />
-					<span class="help-tooltip-nursery" data-placement="right" data-toggle="tooltip" th:title="${nurseryLevelVariable.variable.description}">?</span>
-
-					<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="selectedValue" type="hidden" th:value="*{studyLevelVariables[__${rowStat.index}__].value}" />
-					<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="selectedValueFave" type="hidden" th:value="*{studyLevelVariables[__${rowStat.index}__].value}" />
-
+				<div th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}">
+					<div class="col-xs-12 col-md-12 form-group">
+						<span th:text="#{nursery.create.nursery.method.note}">If you plan to advance the nursery with a single method, please select it below</span>
+					</div>
+					<div class="col-xs-12 col-md-12 form-group">
+						<input class="cvTermIds" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
+						
+						<input style="width: 70%" th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}"
+						type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="select2" />
+						<span class="help-tooltip-nursery" data-placement="right" data-toggle="tooltip" th:title="${nurseryLevelVariable.variable.description}">?</span>
+	
+						<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="selectedValue" type="hidden" th:value="*{studyLevelVariables[__${rowStat.index}__].value}" />
+						<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="selectedValueFave" type="hidden" th:value="*{studyLevelVariables[__${rowStat.index}__].value}" />
+					</div>
 					<!-- Show Favorite Location/Method -->
-					<div style="width: 100%" th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}" class="possibleValuesDiv">
-
-						<input
-						type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}"
-						th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'" />
-						&nbsp;&nbsp;
-						<span th:text="#{show.favorite.method}">Show Favorite Method</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-						<a th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}" href="javascript: openManageMethods();" th:text="#{nursery.managesettings.manage.method}">Manage Method</a>
+					<div class="col-xs-12 col-md-12 form-group possibleValuesDiv" th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}">
+	
+							<input
+							type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}"
+							th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'" />
+							&nbsp;&nbsp;
+							<span th:text="#{show.favorite.method}">Show Favorite Method</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<a th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}" href="javascript: openManageMethods();" th:text="#{nursery.managesettings.manage.method}">Manage Method</a>
 					</div>
 
 					<!-- store possible values of variable -->

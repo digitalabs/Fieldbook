@@ -197,7 +197,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 						if (headerCell != null) {
 
 							MeasurementData wData = wRow.getMeasurementData(headerCell.getStringCellValue());
-							if (wData.isEditable()) {
+							if (wData != null && wData.isEditable()) {
 								Cell cell = xlsRow.getCell(j);
 								String xlsValue = "";
 								if(cell != null){
@@ -537,8 +537,10 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
     	String scale = row.getCell(COLUMN_SCALE).getStringCellValue();
     	String method = row.getCell(COLUMN_METHOD).getStringCellValue();
     	MeasurementVariable mvar = fieldbookMiddlewareService.getMeasurementVariableByPropertyScaleMethodAndRole(property, scale, method, PhenotypicType.VARIATE);
-    	mvar.setName(row.getCell(COLUMN_NAME).getStringCellValue());
-    	mvar.setDescription(row.getCell(COLUMN_DESCRIPTION).getStringCellValue());
+    	if (mvar != null) {
+	    	mvar.setName(row.getCell(COLUMN_NAME).getStringCellValue());
+	    	mvar.setDescription(row.getCell(COLUMN_DESCRIPTION).getStringCellValue());
+    	}
     	return mvar;
     }
     

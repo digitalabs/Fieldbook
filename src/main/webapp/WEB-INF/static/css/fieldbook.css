@@ -1198,6 +1198,9 @@ a.fbk-edit-experiment{
     padding : 0 !important;
     margin: 0 !important;
 }
-textarea {
+
+.droptarget {
+    background-color: #C8C6C6;
+}textarea {
    resize: none;
 }

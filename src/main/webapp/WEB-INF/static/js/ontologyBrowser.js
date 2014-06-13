@@ -845,7 +845,7 @@ function populateFields(data, variableId) {
 	$("#variableDescription").val(data.description);
 	$('#role').select2('destroy');
 	$("#role").val(data.role).attr("disabled","disabled");
-	$('#role').select2();
+	$('#role').select2({minimumResultsForSearch: 20});
 	$('#role').trigger('change');
 	$("#cropOntologyDisplay").html(data.cropOntologyDisplay);
 	setComboValues(traitClassesSuggestions_obj, data.traitClass, "TraitClass");

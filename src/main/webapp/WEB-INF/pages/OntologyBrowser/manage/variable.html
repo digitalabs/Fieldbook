@@ -581,7 +581,7 @@
 					$('#dataType').append($('<option></option>').attr('value', id).text(val));			
 			}
 		}
-		$('#dataType').select2();
+		$('#dataType').select2({minimumResultsForSearch: 20});
 		$("#dataType").trigger("change");
 	}
 	

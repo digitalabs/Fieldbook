@@ -247,7 +247,7 @@
 							$('#selectedRTrait').append($('<option></option>').attr('value', id).text(val));
 						}
 					}
-					$('#selectedRTrait').select2();
+					$('#selectedRTrait').select2({minimumResultsForSearch: 20});
 					$('#exportStudyModal').modal({ backdrop: 'static', keyboard: false });
 					Spinner.toggle();
 				}

@@ -53,10 +53,11 @@
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
 		 $(document).ready(function() {
-			$('#saveListForm select').select2();
+		 	'use strict';
+			$('#saveListForm select').select2({minimumResultsForSearch: 20});
 			$('#saveListForm #listDate').datepicker({'format': 'yyyymmdd'}).on('changeDate', function(ev) {
 					$(this).datepicker('hide');
-				})
+				});
 
 				if($('#saveListForm .date-input').length > 0){
 					$('#saveListForm .date-input').each(function(){

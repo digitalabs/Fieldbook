@@ -1556,7 +1556,7 @@ function loadNurserySettingsForCreate(templateSettingsId) {
 function openUsePreviousNurseryModal() {
 	$("#selectedNursery").select2("destroy");
 	$("#selectedNursery").val("");
-	$("#selectedNursery").select2();
+	$("#selectedNursery").select2({minimumResultsForSearch: 20});
 	$("#usePreviousNurseryModal").modal("show");
 }
 
@@ -2140,7 +2140,7 @@ function addDetailsTab(studyId, title) {
 				$('.info#study' + studyId).show();
 				initializeStudyTabs();
 				$('.info#study' + studyId + ' select').each(function() {
-					$(this).select2();
+					$(this).select2({minimumResultsForSearch: 20});
 				});
 				truncateStudyVariableNames('#study'+studyId+' .review-study-name', 20);
 				Spinner.toggle();

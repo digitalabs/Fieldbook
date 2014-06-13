@@ -1189,3 +1189,8 @@ a.fbk-edit-experiment{
 .breeding-method-note span{
 	margin-left: 0;
 }
+
+.nopadding {
+    padding : 0 !important;
+    margin: 0 !important;
+}

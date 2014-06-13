@@ -53,6 +53,7 @@ public class CreateNurseryForm {
     
     /** The folder name. */
     private String folderName;
+    private String folderNameLabel;
     
     /** The field layout random. */
     private boolean fieldLayoutRandom = true;
@@ -1077,6 +1078,14 @@ public class CreateNurseryForm {
         public void setCharLimit(int charLimit) {
             this.charLimit = charLimit;
         }
+
+		public String getFolderNameLabel() {
+			return folderNameLabel;
+		}
+
+		public void setFolderNameLabel(String folderNameLabel) {
+			this.folderNameLabel = folderNameLabel;
+		}
 
         
 }

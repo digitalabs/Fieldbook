@@ -1745,38 +1745,36 @@ function validateCreateNursery() {
 		for (checkIndex = 0; checkIndex < $('.checkRow').length; checkIndex++) {
 			if ($('select.checklist-select:eq(' + checkIndex + ')').val() === '') {
 				showErrorMessage('page-message',
-						'Please make sure all selected checks have their check type');
+						selectedCheckError);
 				return false;
 			}
 		}
 
 		if (isInt($('#startIndex2').val()) === false) {
 			showErrorMessage('page-message',
-					'Position should be a whole number');
+					startIndexWholeNumberError);
 			return false;
 		}
 		if (isInt($('#interval2').val()) === false) {
 			showErrorMessage('page-message',
-					'Interval should be a whole number');
+					intervalWholeNumberError);
 			return false;
 		}
 		var totalGermplasms = $('#totalGermplasms').val();
 		if (parseInt($('#startIndex2').val(), 10) < 0
 				|| parseInt($('#startIndex2').val(), 10) > totalGermplasms) {
-			showErrorMessage('page-message', 'Position should be between 1 to '
-					+ totalGermplasms);
+			showErrorMessage('page-message', startIndexLessGermplasmError);
 			return false;
-		}
+		}	
+		
 		if (parseInt($('#interval2').val(), 10) < 0) {
-			showErrorMessage('page-message', 'Interval should be between 1 to '
-					+ totalGermplasms);
+			showErrorMessage('page-message', checkIntervalGreaterThanZeroError);
 			return false;
 		}
 		var totalNumberOfChecks = $('#totalNumberOfChecks').val();
 		if (parseInt($('#interval2').val(), 10) <= totalNumberOfChecks) {
 			showErrorMessage('page-message',
-					'Interval should be greater than the number of checks ('
-							+ totalNumberOfChecks + ')');
+					checkIntervalError);
 			return false;
 		}
 	}

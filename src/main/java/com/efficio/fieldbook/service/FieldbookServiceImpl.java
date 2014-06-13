@@ -324,7 +324,7 @@ public class FieldbookServiceImpl implements FieldbookService{
         if (methods != null && !methods.isEmpty()) {
             for (Method method : methods) {
                 if (method != null) {
-                    list.add(new ValueReference(method.getMid(), method.getMname(), method.getMname()));
+                    list.add(new ValueReference(method.getMid(), method.getMname(), method.getMdesc()));
                 }
             }
         }
@@ -338,7 +338,7 @@ public class FieldbookServiceImpl implements FieldbookService{
         if (methods != null && !methods.isEmpty()) {
             for (Method method : methods) {
                 if (method != null) {
-                    list.add(new ValueReference(method.getMid(), method.getMname(), method.getMname()));
+                    list.add(new ValueReference(method.getMid(), method.getMname(), method.getMdesc()));
                 }
             }
         }

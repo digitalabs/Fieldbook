@@ -1175,11 +1175,17 @@ a.fbk-edit-experiment{
 }
 .fbk-modal-title{
 	font-weight: 700;
-	font-size: 17px
+	font-size: 17px;
 }
 .fbk-study-tree-title{
 	padding-top: 7px;
 }
 .modal-body .glyphicon-remove{
 	font-size: 16px;
+}
+.breeding-method-note{
+	margin-top: 7px;
+}
+.breeding-method-note span{
+	margin-left: 0;
 }

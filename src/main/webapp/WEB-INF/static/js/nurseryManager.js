@@ -2479,6 +2479,7 @@ function refreshStudyAfterSave(studyId){
 }
 
 function initializeReviewDatasetTabs(datasetId) {
+	'use strict';
 	$('#dataset-li' + datasetId).on('click', function() {
 		$('#study' + getCurrentStudyIdInTab() + ' #dataset-selection option:selected').prop('selected', false);
 		$('#study' + getCurrentStudyIdInTab() + ' #dataset-selection option').each(function(index) {

@@ -14,7 +14,7 @@
 		<div id="page-message"></div>
 	</div>
 </div>
-
+<div class="row">
 <form id="createNurseryMainForm" role="form-horizontal" action="#" th:object="${createNurseryForm}" enctype="multipart/form-data">
 	<input type="hidden" th:field="*{studyId}" />
 	<div class="row">
@@ -142,8 +142,8 @@
 		</div>
 	</div>
 </form>
-
-<ul id="create-nursery-tab-headers" class="nav nav-tabs">
+</div>
+<ul id="create-nursery-tab-headers" class="nav nav-tabs row">
 	<li id="nursery-settings-li" class="active">
 		<a href="javascript:showSelectedTab('nursery-settings');" th:text="#{nursery.create.nursery.nursery.settings}">.Nursery Settings</a>
 	</li>
@@ -155,7 +155,7 @@
 	</li>
 </ul>
 
-<div id="create-nursery-tabs" style="padding-top: 15px;">
+<div id="create-nursery-tabs" style="padding-top: 15px;" class="row">
 	<div id="nursery-settings" class="info">
 		<div class="col-xs-12 col-md-12">
 			<div id="chooseSettingsDiv" th:include="/NurseryManager/chooseSettings"></div>

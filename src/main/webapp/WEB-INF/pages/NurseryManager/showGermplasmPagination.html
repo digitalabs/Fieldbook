@@ -57,8 +57,12 @@
 			</table>
 		</div>
 	</div>
+	
 
-	<div>
+	<div class="row col-xs-12 col-md-12">
+		<div id="imported-germplasm-list-reset-button" class="pull-left" style="opacity: 1">
+	         <a style="margin-top: 20px;" href="javascript: resetGermplasmList()" class="btn btn-default">Clear</a>
+	     </div>
 		<div th:if="*{importedGermplasm != null and not #lists.isEmpty(importedGermplasm)}">
 			<div id="germplasm-list-pagination" style="height: 40px">
 

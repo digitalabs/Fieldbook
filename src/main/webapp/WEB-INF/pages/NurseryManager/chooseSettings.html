@@ -285,17 +285,6 @@
 	
 						<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="selectedValue" type="hidden" th:value="*{studyLevelVariables[__${rowStat.index}__].value}" />
 						<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="selectedValueFave" type="hidden" th:value="*{studyLevelVariables[__${rowStat.index}__].value}" />
-					
-						<!-- Show Favorite Location/Method -->
-						<div style="width: 100%" class="possibleValuesDiv" th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}">
-		
-								<input
-								type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}"
-								th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'" />
-								&nbsp;&nbsp;
-								<span th:text="#{show.favorite.method}">Show Favorite Method</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-								<a th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}" href="javascript: openManageMethods();" th:text="#{nursery.managesettings.manage.method}">Manage Method</a>
-						</div>
 						<!-- store possible values of variable -->
 						<div th:text="${nurseryLevelVariable.value}" class="div-select-val" style="display: none"></div>
 						<div th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" th:id="'possibleValuesJson' + ${rowStat.index}"
@@ -307,7 +296,21 @@
 					</div>
 					<div class="col-xs-4 col-md-4 form-group breeding-method-note">
 						<span class="help-tooltip-nursery breeding-method-tooltip" data-placement="right" data-toggle="tooltip">?</span>
+					</div>					
+					
+				</div>
+				<div class="row form-group col-xs-12 col-md-12">
+					<!-- Show Favorite Location/Method -->
+					<div class="possibleValuesDiv col-xs-12 col-md-12" th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}">
+	
+							<input
+							type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}"
+							th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'" />
+							&nbsp;&nbsp;
+							<span th:text="#{show.favorite.method}">Show Favorite Method</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<a th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}" href="javascript: openManageMethods();" th:text="#{nursery.managesettings.manage.method}">Manage Method</a>
 					</div>
+					
 				</div>
 			</div>
 		</div>

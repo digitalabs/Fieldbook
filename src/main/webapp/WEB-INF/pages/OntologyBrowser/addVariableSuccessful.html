@@ -71,19 +71,11 @@
 
     if (addSuccessful == "1") {
     	$('#role').select2('data',{'id': $('#role option:first').val(), 'text': $('#role option:first').text()});
-		$('#dataType').select2('data',{'id': $('#dataType option:first').val(), 'text': $('#dataType option:first').text()});
-		setTimeout(function (){			
-			$('#addVariableSuccessfulModal').modal({ backdrop: 'static', keyboard: true })
-			$("#addVariableSuccessfulModal").modal("show");
-		}, 500);	
-		
-			
-			
-		
-    } else if (addSuccessful == '2') {
-    	setTimeout(function (){
-			$('#showFailedSaveModal').trigger('click');
-		}, 500);
+		$('#dataType').select2('data',{'id': $('#dataType option:first').val(), 'text': $('#dataType option:first').text()});		
+		createSuccessNotification( notificationHeader, $('#addVariableSuccessfulBody .alert').html());
+		doNotify();		
+    } else if (addSuccessful == '2') {    	
+    	createErrorNotification( notificationHeader, $('#showFailedSaveModal .alert').html());
     }    
     });
 		function doNotify(){	

@@ -471,7 +471,7 @@
     			if(varNameChecking[i].name.toLowerCase() == varName.toLowerCase()){
     				message = /*[[#{error.name.exists}]]*/;
     				showMessage(message);
-    				moveToTopScreen()
+    				moveToTopScreen();
     				return false;
     			}
     		}
@@ -492,8 +492,10 @@
 				if(data == 'error'){
 					isValid = false;
 					//psmrError
-					$('#add-var-err-msg').html(psmrError);
-					$('#addFailedSaveModal').modal('show');
+					//$('#add-var-err-msg').html(psmrError);
+					//$('#addFailedSaveModal').modal('show');
+					showErrorMessage('page-message',psmrError );
+					moveToTopScreen();
 				}
 				//console.log(data);
 			}			

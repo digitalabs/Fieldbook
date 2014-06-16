@@ -127,7 +127,6 @@ BMS.NurseryManager.MeasurementsDataTable = (function($) {
 
 			// Get the column API object
 			column = table.column($(this).attr('data-index'));
-			console.log($(this).attr('data-index'));
 			// Toggle the visibility
 			column.visible(!column.visible());
 		});

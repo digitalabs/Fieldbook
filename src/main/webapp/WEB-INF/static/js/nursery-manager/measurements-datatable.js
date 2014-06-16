@@ -92,7 +92,7 @@ BMS.NurseryManager.MeasurementsDataTable = (function($) {
 			language: {
 				search: '<span class="mdt-filtering-label">Search:</span>'
 			},
-			dom: '<<"mdt-header"rli<"mdt-filtering"f>r><t>p>',
+			dom: 'R<<"mdt-header"rli<"mdt-filtering"f>r><t>p>',
 			// For column visibility
 			colVis: {
 				exclude: [0],
@@ -101,7 +101,7 @@ BMS.NurseryManager.MeasurementsDataTable = (function($) {
 			},
 			// Problem with reordering plugin and fixed column for column re-ordering
 			colReorder: {
-				fixedColumns: 3
+				fixedColumns: 1
 			}
 		});
 
@@ -109,7 +109,7 @@ BMS.NurseryManager.MeasurementsDataTable = (function($) {
 			$(tableIdentifier).dataTable().fnAdjustColumnSizing();
 		});
 
-		new $.fn.dataTable.FixedColumns(table, {iLeftColumns: 3});
+		//new $.fn.dataTable.FixedColumns(table, {iLeftColumns: 3});
 
 		$('.mdt-columns').detach().insertBefore('.mdt-filtering');
 		$('.measurement-dropdown-menu a').click(function(e) {

@@ -1221,9 +1221,11 @@ a.fbk-edit-experiment{
     margin: 0 !important;
 }
 
-.droptarget {
+.drop-target {
     background-color: #C8C6C6;
-}textarea {
+}
+
+textarea {
    resize: none;
 }
 input::-ms-clear {

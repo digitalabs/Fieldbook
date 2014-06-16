@@ -75,7 +75,7 @@ function showPage(paginationUrl, pageNum, sectionDiv) {
 				indexItems,
 				rowIndex;
 
-			$('#' + sectionDiv).empty().append(html);
+			$('#' + sectionDiv).html(html);
 
 			if (sectionDiv === 'trial-details-list' || sectionDiv === 'nursery-details-list') {
 				// We highlight the previously clicked

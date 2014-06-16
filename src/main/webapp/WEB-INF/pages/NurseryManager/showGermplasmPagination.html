@@ -60,7 +60,9 @@
 
 	<div>
 		<div th:if="*{importedGermplasm != null and not #lists.isEmpty(importedGermplasm)}">
-			<div id="germplasm-list-pagination"></div>
+			<div id="germplasm-list-pagination" style="height: 40px">
+
+			</div>
 		</div>
 	</div>
 
@@ -81,13 +83,15 @@
 		alignment:'center',
 		useBootstrapTooltip:true,
 		onPageClicked: function(e,originalEvent,type,page){
+            var temp = $('#germplasm-list-pagination').clone();
 			showPage(paginationUrl, page, 'imported-germplasm-list');
+            $('#germplasm-list-pagination').html(temp);
 
 		}
 	}
 	$( document ).ready(function() {
 		if($('#germplasm-list-pagination') != null){
-			$('#germplasm-list-pagination').bootstrapPaginator(options);
+			$('#germplasm-list-pagination').empty().bootstrapPaginator(options);
 		}
 		setSpinnerMaxValue();
 

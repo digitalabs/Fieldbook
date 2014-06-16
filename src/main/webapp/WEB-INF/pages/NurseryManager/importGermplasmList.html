@@ -258,13 +258,17 @@
 
 					start: function (/*event, ui*/) {
 						var selected = $('.check-germplasm-list-items tr.checkGermplasmSelectedRow');
-						$(selected).css('opacity', '.5');
+						/*$(selected).css('opacity', '.5');*/
 					},
 
 					stop: function (/*event, ui*/) {
 						var selected = $('.check-germplasm-list-items tr.checkGermplasmSelectedRow');
 						$(selected).css('opacity', '1');
-					}
+					},
+
+                    zIndex : 9999,
+
+                    appendTo : 'body'
 				});
 
 				$('.check-germplasm-list-items tbody tr').off('click').on('click', function (){
@@ -307,13 +311,17 @@
 
 					start: function (/*event, ui*/) {
 						var selected = $('.germplasm-list-items tr.germplasmSelectedRow');
-						$(selected).css('opacity', '.5');
+						/*$(selected).css('opacity', '.5');*/
 					},
 
 					stop: function (/*event, ui*/) {
 						var selected = $('.germplasm-list-items tr.germplasmSelectedRow');
 						$(selected).css('opacity', '1');
-					}
+					},
+
+                    zIndex : 9999,
+
+                    appendTo : 'body'
 				});
 
 				$('.germplasm-list-items tbody tr').off('click').on('click', function (){
@@ -466,9 +474,9 @@
 			} else {
 				resetCheckList();
 				for (i = 0; i < itemsToAdd.length ; i++) {
-					if (addCheckGermplasmList(itemsToAdd[i].entry, itemsToAdd[i].gid, itemsToAdd[i].index)){
+					/*if (addCheckGermplasmList(itemsToAdd[i].entry, itemsToAdd[i].gid, itemsToAdd[i].index)){
 						$('.primaryRow[data-entry="' + itemsToAdd[i].entry+ '"]').css('opacity', '0.5');
-					}
+					}*/
 				}
 				$('.germplasm-list-items tr.germplasmSelectedRow').removeClass('germplasmSelectedRow');
 			}			

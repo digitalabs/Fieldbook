@@ -457,10 +457,12 @@
             // re apply the behaviors using modified functions
             $('#createNurseryForm').on('click','span.delete-icon',function(){
 
-                if (eval($(this).attr('onclick'))) {
-                    if (document.disableActions !== undefined)
-                        document.disableActions();
-                }
+                if (document.disableActions !== undefined)
+                    document.disableActions();
+
+                if (!eval($(this).attr('onclick')))
+                    document.enableActions();
+
             });
 
             $('#variateDeleteConfirmationModal').on('click','#continueDelete',function(){

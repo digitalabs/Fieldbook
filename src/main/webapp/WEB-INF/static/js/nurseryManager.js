@@ -281,11 +281,12 @@ function openAddVariablesSetting(variableType) {
 }
 
 function getStandardVariables(variableType) {
+	'use strict;'
 	Spinner.toggle();
 	$.ajax({
-		url : "/Fieldbook/NurseryManager/createNursery/displayAddSetting/"
+		url : '/Fieldbook/NurseryManager/createNursery/displayAddSetting/'
 				+ variableType,
-		type : "GET",
+		type : 'GET',
 		cache : false,
 		success : function(data) {
 			if (treeData != null) {
@@ -298,17 +299,19 @@ function getStandardVariables(variableType) {
 			$('#' + 'srch-term').val('');
 
 			// clear selected variables table and attribute fields
-			$("#newVariablesList > tbody").empty();
-			$("#page-message-modal").html("");
+			$('#newVariablesList > tbody').empty();
+			$('#page-message-modal').html('');
 			clearAttributeFields();
-			$("#addVariables").attr(
-					"onclick",
+			$('#addVariables').attr(
+					'onclick',
 					"javascript: submitSelectedVariables(" + variableType
 							+ ");");
-			$("#addVariablesSettingModal").modal({
+			$('#newVariablesList').addClass('fbk-hide');
+			$('#addVariablesSettingModal').modal({
 				backdrop : 'static',
 				keyboard : false
 			});
+			
 			Spinner.toggle();
 		}
 	});
@@ -503,6 +506,7 @@ function addVariableToList() {
 		$("#newVariablesList").append(newRow);
 		$("#page-message-modal").html("");
 
+		$('#newVariablesList').removeClass('fbk-hide');
 	} else {
 
 		$("#page-message-modal").html(
@@ -591,11 +595,13 @@ function submitSelectedVariables(variableType) {
 					createTableSettingVariables($.parseJSON(data),
 							'baselineTraitVariables', 'baselineTraitSettings',
 							variableType);
+					checkTraitsAndSelectionVariateTable('', false);
 					break;
 				case 6:
 					createTableSettingVariables($.parseJSON(data),
 							'selectionVariatesVariables',
 							'selectionVariatesSettings', variableType);
+					checkTraitsAndSelectionVariateTable('', false);
 					break;
 				case 7:
 					createDynamicSettingVariables($.parseJSON(data),
@@ -609,7 +615,7 @@ function submitSelectedVariables(variableType) {
 				}
 				Spinner.toggle();
 				$('#addVariablesSettingModal').modal('hide');
-
+				
 
 			}
 		});
@@ -1306,10 +1312,12 @@ function sortVariableIdsAndNames(variableType) {
 		break;
 	case 3:
 		resetIdsOfTables("baselineTraitVariables", "baselineTraitSettings");
+		checkTraitsAndSelectionVariateTable('', false);
 		break;
 	case 6:
 		resetIdsOfTables("selectionVariatesVariables",
 				"selectionVariatesSettings");
+		checkTraitsAndSelectionVariateTable('', false);
 		break;
 	case 7:
 		recreateDynamicFieldsAfterDelete("nurseryConditions",

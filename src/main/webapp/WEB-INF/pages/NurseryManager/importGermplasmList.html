@@ -200,15 +200,7 @@
 <div layout:fragment="page-script">
 	<script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery-multisortable.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery.tablednd.0.7.min.js}"></script>
-	<script type='text/javascript' th:inline="javascript">
-		var isIE = false;
-	</script>
-	<!--[if IE]>
-	<script type="text/javascript">
-		isIE = true;
-		//any other IE specific stuff here
-	</script>
-	<![endif]-->
+	
 	<script type="text/javascript" th:inline="javascript">
 		//<![CDATA[
 		/*globals Spinner, moveToTopScreen, getDisplayedTreeName, showSpecifyCheckSection, setSpinnerMaxValue*/
@@ -636,6 +628,7 @@
 			$('#listTreeModal').modal({ backdrop: 'static', keyboard: true });
 			$('#page-import-message-modal').html('');
 			additionalLazyLoadUrl = '/0';
+			$('.popover').hide();
 		}
 
 		function chooseList(){
@@ -826,11 +819,7 @@
 			// Display tree			
 			showSpecifyCheckSection();
 
-			// FIXME Should not be user agent checking, or changing CSS in JavaScript
-			if(isIE){
-				$('#primary-section').css('width', '67%');
-				$('#checks-section').css('width', '33%');
-			}
+			
 			$('#entries-details').css('display', 'none');
 
 			displayGermplasmListTree('germplasmTree', false, 0);

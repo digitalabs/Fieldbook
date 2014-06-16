@@ -2190,10 +2190,13 @@ function addDetailsTab(studyId, title) {
 }
 
 function determineIfShowCloseAllStudyTabs() {
+	'use strict';
 	if ($('#study-tab-headers li').length > 0) {
 		$('#closeAllStudytabs').css('display', 'block');
+		$('#study-details').css('display', 'block');
 	} else {
 		$('#closeAllStudytabs').css('display', 'none');
+		$('#study-details').css('display', 'none');
 	}
 }
 

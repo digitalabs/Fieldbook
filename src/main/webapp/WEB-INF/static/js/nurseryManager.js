@@ -551,6 +551,8 @@ function validateUniqueVariableName(){
 				existingVarName = $.trim($(this).val());
 				isFound = true;
 				return;
+			}else{
+				existingNameMap[newName] = newName;
 			}			
 	});
 	return existingVarName;

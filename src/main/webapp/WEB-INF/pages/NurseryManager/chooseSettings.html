@@ -307,7 +307,7 @@
 							type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}"
 							th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'" />
 							&nbsp;&nbsp;
-							<span th:text="#{show.favorite.method}">Show Favorite Method</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<span th:text="#{show.favorite.method}">Show Favorite Method</span>&nbsp;&nbsp;
 							<a th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}" href="javascript: openManageMethods();" th:text="#{nursery.managesettings.manage.method}">Manage Method</a>
 					</div>
 					

@@ -1862,7 +1862,7 @@ function createFolder() {
 		return false;
 	} else if ( ! isValidInput(folderName)) {
         showErrorMessage('page-add-study-folder-message-modal', invalidFolderNameCharacterMessage);
-        		return false;
+        return false;
     }else {
 		parentFolderId = $('#studyTree').dynatree('getTree').getActiveNode().data.key;
 		if (parentFolderId === 'LOCAL') {
@@ -2040,7 +2040,7 @@ function createGermplasmFolder() {
 		return false;
 	} else if (!isValidInput(folderName)) {
         showErrorMessage('page-add-germplasm-folder-message-modal', invalidFolderNameCharacterMessage);
-        		return false;
+        return false;
     }else {
 		parentFolderId = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.key;
 		if (parentFolderId === 'LOCAL') {
@@ -2102,7 +2102,7 @@ function submitRenameGermplasmFolder() {
 		return false;
 	} else if (!isValidInput(folderName)) {
         showErrorMessage('page-rename-germplasm-folder-message-modal', invalidFolderNameCharacterMessage);
-        		return false;
+        return false;
     }else {
 		parentFolderId = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.key;
 		if (parentFolderId === 'LOCAL') {

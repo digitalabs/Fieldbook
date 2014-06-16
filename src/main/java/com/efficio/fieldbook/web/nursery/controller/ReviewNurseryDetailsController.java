@@ -68,7 +68,7 @@ public class ReviewNurseryDetailsController extends AbstractBaseFieldbookControl
             NurseryDetails details = SettingsUtil.convertWorkbookToNurseryDetails(workbook, fieldbookMiddlewareService, fieldbookService, userSelection);
             rearrangeDetails(details);
             this.getPaginationListSelection().addReviewWorkbook(Integer.toString(id), workbook);
-            
+            details.setHasMeasurements(fieldbookMiddlewareService.countObservations(workbook.getMeasurementDatesetId()) > 0);
             model.addAttribute("nurseryDetails", details);
         }    	
     	return showAjaxPage(model, getContentName());

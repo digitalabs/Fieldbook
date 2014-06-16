@@ -709,7 +709,7 @@ public class EditNurseryController extends SettingsController {
     	String contextParams = ContextUtil.getContextParameterString(contextInfo);
 
     	Workbook workbook = userSelection.getWorkbook();
-    	form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), buildVariates(workbook.getVariates())));
+        form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), buildVariates(workbook.getVariates())));
     	//update variables in measurement rows
     	if (userSelection.getMeasurementRowList() != null && !userSelection.getMeasurementRowList().isEmpty()) {
     		MeasurementRow row = userSelection.getMeasurementRowList().get(0);
@@ -717,7 +717,9 @@ public class EditNurseryController extends SettingsController {
     			if (mvar.getOperation() == Operation.UPDATE) {
     				for (MeasurementVariable rvar : row.getMeasurementVariables()) {
     					if (mvar.getTermId() == rvar.getTermId()) {
-    						rvar.setName(mvar.getName());
+    						if (mvar.getName() != null && !"".equals(mvar.getName())) {
+    							rvar.setName(mvar.getName());
+    						}
     						break;
     					}
     				}

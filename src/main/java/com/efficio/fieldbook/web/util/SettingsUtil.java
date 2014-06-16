@@ -1351,7 +1351,10 @@ public class SettingsUtil {
 		int index = fields != null ? fields.size() : 0;
     	MeasurementVariable studyNameVar = WorkbookUtil.getMeasurementVariable(workbook.getConditions(), TermId.STUDY_NAME.getId());
     	String studyName = studyNameVar != null ? studyNameVar.getValue() : "";
-		int datasetId = fieldbookMiddlewareService.getMeasurementDatasetId(workbook.getStudyId(), studyName);
+    	Integer datasetId = workbook.getMeasurementDatesetId();
+    	if (datasetId == null) {
+    		datasetId = fieldbookMiddlewareService.getMeasurementDatasetId(workbook.getStudyId(), studyName);
+    	}
     	for (String strFieldId : fields) {
     		if (strFieldId != null && !"".equals(strFieldId)) {
 	    		boolean found = false;
@@ -1380,7 +1383,7 @@ public class SettingsUtil {
 		    			}
 		    			else { //special field
 		        			SettingVariable variable = new SettingVariable(label, null, null, null, null, null, null, null, null, null);
-		        			String value = getSpecialFieldValue(strFieldId, datasetId, fieldbookMiddlewareService);
+		        			String value = getSpecialFieldValue(strFieldId, datasetId, fieldbookMiddlewareService, workbook);
 		        			SettingDetail settingDetail = new SettingDetail(variable, null, value, false);
 		        			index = addToList(details, settingDetail, index, fields, strFieldId);
 		        			found = true;
@@ -1399,7 +1402,8 @@ public class SettingsUtil {
 	}
 	
 	private static String getSpecialFieldValue(String specialFieldLabel, int datasetId,
-			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService) 
+			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
+			Workbook workbook) 
 	throws MiddlewareQueryException {
 		
 		if (AppConstants.SPFLD_ENTRIES.getString().equals(specialFieldLabel)) {
@@ -1409,9 +1413,15 @@ public class SettingsUtil {
 		else if (AppConstants.SPFLD_HAS_FIELDMAP.getString().equals(specialFieldLabel)) {
 			return fieldbookMiddlewareService.hasFieldMap(datasetId) ? "Yes" : "No"; 
 		}
-		else if (AppConstants.SPFLD_HAS_MEASUREMENTS.getString().equals(specialFieldLabel)) {
-			long count = fieldbookMiddlewareService.countObservations(datasetId);
-			return count > 0 ? "Yes" : "No";
+		else if (AppConstants.SPFLD_COUNT_VARIATES.getString().equals(specialFieldLabel)) {
+			List<Integer> variateIds = new ArrayList<Integer>();
+			if (workbook.getVariates() != null) {
+				for (MeasurementVariable variate : workbook.getVariates()) {
+					variateIds.add(variate.getTermId());
+				}
+			}
+			long count = fieldbookMiddlewareService.countVariatesWithData(datasetId, variateIds);
+			return count + " of " + variateIds.size();
 		}
 		return "";
 	}

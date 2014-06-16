@@ -57,6 +57,8 @@ public class NurseryDetails{
     
     private List<SettingDetail> selectionVariateDetails;
     
+    private boolean hasMeasurements;
+    
 
     /**
      * Instantiates a new nursery details.
@@ -311,6 +313,20 @@ public class NurseryDetails{
 	public void setSelectionVariateDetails(
 			List<SettingDetail> selectionVariateDetails) {
 		this.selectionVariateDetails = selectionVariateDetails;
+	}
+
+	/**
+	 * @return the hasMeasurements
+	 */
+	public boolean isHasMeasurements() {
+		return hasMeasurements;
+	}
+
+	/**
+	 * @param hasMeasurements the hasMeasurements to set
+	 */
+	public void setHasMeasurements(boolean hasMeasurements) {
+		this.hasMeasurements = hasMeasurements;
 	}
 
 }

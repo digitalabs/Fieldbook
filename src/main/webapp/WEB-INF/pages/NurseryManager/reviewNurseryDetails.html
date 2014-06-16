@@ -2,6 +2,7 @@
 	<div class="" th:object="${nurseryDetails}" th:id="'div-nursery-tab-' + *{id}">
 		<input type="hidden" id="studyId" class="field-map-highlight" th:value="*{id}" />
 		<input type="hidden" id="study-type" name="study-type" value="Nursery" />
+		<input type="hidden" id="has-measurements" name="has-measurements" th:value="*{hasMeasurements}" />
 
 		<div class="col-xs-12 col-md-12">
 			<label  class="control-label section-toggle toggle-icon" data-target=".nurseryDetails">
@@ -236,7 +237,7 @@
 
 	<script type='text/javascript' th:inline="javascript">
 		//<![CDATA[
-		var hasMeasurements = false;
+		var hasMeasurements = $('#study' + getCurrentStudyIdInTab() + ' #has-measurements').val() === 'true';
 		var hasFieldmap = false;
 
 		$(document).ready(function() {
@@ -312,18 +313,14 @@
 			});
 
 			$("#div-nursery-tab-" + getCurrentStudyIdInTab() + " .nurseryDetails").find(".control-label").each(function (index) {
-				if ($(this).text() == 'Measurements Recorded') {
-					if ($(this).parent().parent().find(".div-select-val").text() == 'Yes') {
-						hasMeasurements = true;
-					}
-				}
-				else if ($(this).text() == 'Field Map Created') {
+				if ($(this).text() == 'Field Map Created') {
 					if ($(this).parent().parent().find(".div-select-val").text() == 'Yes') {
 						hasFieldmap = true;
 					}
 				}
 			});
 
+			alert(!hasMeasurements);
 			if (!hasMeasurements) {
 				$("#div-nursery-tab-" + getCurrentStudyIdInTab() + " #advance-study-url-link").hide();
 				$("#div-nursery-tab-" + getCurrentStudyIdInTab() + " #fieldmap-url-link").hide();

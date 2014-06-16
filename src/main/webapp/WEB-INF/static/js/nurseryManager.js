@@ -2261,9 +2261,10 @@ function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
 		type : 'GET',
 		cache : false,
 		success : function(html) {
+			var close = '<i class="glyphicon glyphicon-remove fbk-close-dataset-tab" id="'+datasetId+'"></i>';
 			$('#study' + currentStudyId + ' #measurement-tab-headers').append(
 					'<li class="active" id="dataset-li' + datasetId + '"><a><span class="review-dataset-name">'
-							+ datasetName + '</span></a> ' + '</li>');
+							+ datasetName + '</span>'+close+'</a> ' + '</li>');
 			$('#study' + currentStudyId + " #measurement-tabs").append(
 					'<div class="review-info" id="dset-tab-' + datasetId + '">' + html + '</div>');
 			$('#study' + currentStudyId + ' .measurement-section').show();
@@ -2486,6 +2487,21 @@ function initializeReviewDatasetTabs(datasetId) {
 			}
 		});
 		$('#study' + getCurrentStudyIdInTab() + ' #dataset-selection').change();
+	});
+	
+	$('#dataset-li' + datasetId +' .fbk-close-dataset-tab').on('click', function() {
+		var datasetId = $(this).attr('id'),
+			showFirst = false;
+		if ($(this).parent().parent().hasClass('active')) {
+			showFirst = true;
+		}
+		$('li#dataset-li' + datasetId).remove();
+		$('#measurement-tabs #dset-tab-' + datasetId).remove();
+		if (showFirst && $('#measurement-tab-headers li').length > 0) {
+			var datasetIdString = $('#measurement-tab-headers li:eq(0) .fbk-close-dataset-tab').attr('id');
+			$('li#dataset-li' + datasetIdString).addClass('active');
+			$('#measurement-tabs #dset-tab-' + datasetIdString).show();
+		}
 	});
 }
 

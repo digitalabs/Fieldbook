@@ -1860,7 +1860,10 @@ function createFolder() {
 	if (folderName === '') {
 		showErrorMessage('page-add-study-folder-message-modal', folderNameRequiredMessage);
 		return false;
-	} else {
+	} else if ( ! isValidInput(folderName)) {
+        showErrorMessage('page-add-study-folder-message-modal', invalidFolderNameCharacterMessage);
+        		return false;
+    }else {
 		parentFolderId = $('#studyTree').dynatree('getTree').getActiveNode().data.key;
 		if (parentFolderId === 'LOCAL') {
 			parentFolderId = 1;
@@ -1919,7 +1922,10 @@ function submitRenameFolder() {
 	if (folderName === '') {
 		showErrorMessage('page-rename-study-folder-message-modal', folderNameRequiredMessage);
 		return false;
-	} else {
+	} else if (!isValidInput()) {
+        showErrorMessage('page-rename-study-folder-message-modal', invalidFolderNameCharacterMessage);
+        return false;
+    }else {
 		parentFolderId = $('#studyTree').dynatree('getTree').getActiveNode().data.key;
 		if (parentFolderId === 'LOCAL') {
 			parentFolderId = 1;
@@ -2032,7 +2038,10 @@ function createGermplasmFolder() {
 	if (folderName === '') {
 		showErrorMessage('page-add-germplasm-folder-message-modal', folderNameRequiredMessage);
 		return false;
-	} else {
+	} else if (!isValidInput(folderName)) {
+        showErrorMessage('page-add-germplasm-folder-message-modal', invalidFolderNameCharacterMessage);
+        		return false;
+    }else {
 		parentFolderId = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.key;
 		if (parentFolderId === 'LOCAL') {
 			parentFolderId = 1;
@@ -2091,7 +2100,10 @@ function submitRenameGermplasmFolder() {
 	if (folderName === '') {
 		showErrorMessage('page-rename-germplasm-folder-message-modal', folderNameRequiredMessage);
 		return false;
-	} else {
+	} else if (!isValidInput(folderName)) {
+        showErrorMessage('page-rename-germplasm-folder-message-modal', invalidFolderNameCharacterMessage);
+        		return false;
+    }else {
 		parentFolderId = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.key;
 		if (parentFolderId === 'LOCAL') {
 			parentFolderId = 1;
@@ -2314,4 +2326,10 @@ function checkTraitsAndSelectionVariateTable(containerDiv, isLandingPage){
 			$(containerDiv + ' .traits-table').parent().parent().addClass('fbk-hide');
 		}
 	}
+}
+
+function isValidInput(input) {
+    var invalidInput = /[<>&=%;]/.test(input);
+
+    return !invalidInput;
 }

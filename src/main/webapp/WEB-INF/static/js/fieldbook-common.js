@@ -2329,7 +2329,7 @@ function checkTraitsAndSelectionVariateTable(containerDiv, isLandingPage){
 }
 
 function isValidInput(input) {
-    var invalidInput = /[<>&=%;]/.test(input);
+    var invalidInput = /[<>&=%;?]/.test(input);
 
     return !invalidInput;
 }

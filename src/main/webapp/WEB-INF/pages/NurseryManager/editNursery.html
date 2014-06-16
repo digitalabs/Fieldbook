@@ -333,7 +333,7 @@
 				cache: false,
 				success: function() {
 					refreshStudyAfterSave($("#studyId").val());
-					displaySaveSuccessMessage('page-message', saveSuccessMessage);
+					Spinner.stop();
 				}
 			});
 		}

@@ -2412,13 +2412,9 @@ function refreshEditNursery() {
 
 function displaySaveSuccessMessage(idDomSelector, messageToDisplay){
 	'use strict';
-	showSuccessfulMessage(idDomSelector, messageToDisplay);
-	$('#'+idDomSelector).show();
-	$('#'+idDomSelector).delay(3000).slideUp(1000, function(){
-		$('#'+idDomSelector).html('');
-		$('#'+idDomSelector).show();
-		Spinner.stop();
-	});
+	Spinner.stop();
+	createSuccessNotification('Notification', messageToDisplay);
+	
 }
 
 function recreateSessionVariables() {
@@ -2432,12 +2428,7 @@ function recreateSessionVariables() {
 				displayCorrespondingGermplasmSections();
 			}
 			displaySaveSuccessMessage('page-message', saveSuccessMessage);
-		},
-		error: function (jqXHR, textStatus, errorThrown) {
-			console.log(errorThrown);
-		},
-		complete: function () {
-			Spinner.toggle();
+			Spinner.stop();
 		}
 	});
 }
@@ -2481,7 +2472,7 @@ function refreshStudyAfterSave(studyId){
 		success: function(html) {
 			$('.container .row:eq(0)').html(html);
 			displaySaveSuccessMessage('page-message', saveSuccessMessage);
-			Spinner.toggle();
+			Spinner.stop();
 		}
 	});
 }

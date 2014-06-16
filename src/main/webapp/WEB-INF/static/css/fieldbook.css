@@ -987,6 +987,18 @@ div.sectionContainer {
 .btn{
 	font-weight: bold;
 }
+
+.control-label img,
+.control-label .sub-content-heading
+{
+    vertical-align: middle;
+}
+
+.control-label .lbl-img {
+    display: inline-block;
+    margin-right: 3pt;
+}
+
 .control-label-bold{
 	font-weight: bold;
 }

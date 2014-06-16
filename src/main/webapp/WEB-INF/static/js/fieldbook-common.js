@@ -1683,7 +1683,7 @@ function recreateLocationCombo() {
 		}
 	}
 
-	Spinner.toggle();
+	Spinner.play();
 	$
 			.ajax({
 				url : '/Fieldbook/NurseryManager/advance/nursery/getLocations',
@@ -1746,7 +1746,7 @@ function recreateLocationCombo() {
 							errorThrown);
 				},
 				complete : function() {
-					Spinner.toggle();
+					Spinner.stop();
 				}
 			});
 }

@@ -174,6 +174,14 @@ public class CreateNurseryForm {
     
     private int charLimit;
     
+    private int nameType;
+    
+    private String importDate;
+    
+    private int importMethodId;
+    
+    private int importLocationId;
+    
     /**
      * Gets the project id.
      *
@@ -1086,6 +1094,38 @@ public class CreateNurseryForm {
 		public void setFolderNameLabel(String folderNameLabel) {
 			this.folderNameLabel = folderNameLabel;
 		}
+
+        public int getNameType() {
+            return nameType;
+        }
+
+        public void setNameType(int nameType) {
+            this.nameType = nameType;
+        }
+
+        public int getImportMethodId() {
+            return importMethodId;
+        }
+
+        public void setImportMethodId(int importMethodId) {
+            this.importMethodId = importMethodId;
+        }
+
+        public int getImportLocationId() {
+            return importLocationId;
+        }
+
+        public void setImportLocationId(int importLocationId) {
+            this.importLocationId = importLocationId;
+        }
+
+        public String getImportDate() {
+            return importDate;
+        }
+
+        public void setImportDate(String importDate) {
+            this.importDate = importDate;
+        }
 
         
 }

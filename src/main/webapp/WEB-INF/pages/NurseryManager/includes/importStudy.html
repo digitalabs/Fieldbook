@@ -107,7 +107,10 @@
 			</div>
 
 			<div class="modal-body" id="importStudyDesigConfirmationModalBody">
-				
+				<div class="row form-group">
+					<div id="confirmation-page-message">
+					</div>
+				</div>
 				<div class="row form-group">
 					<div class="col-xs-12 col-md-12">
 						<label class="control-label import-desig-confirmation label-bold"></label>
@@ -138,6 +141,74 @@
 					</div>
 				</div>
 				
+				<form id="importStudyConfirmationForm" method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
+					<div class="row form-group create-germplasm">
+						<div class="col-xs-5 col-md-5">
+							<label class="control-label label-bold" th:text="#{nursery.import.excel.breeding.method}+':'">Breeding Method</label>&nbsp;<span class="required">*</span>	
+						</div>
+						<div class="col-xs-7 col-md-7">
+							<input class="selectedValue" type="hidden" />
+							<input class="selectedValueFave" type="hidden" />
+							<input type="hidden" th:field="*{importMethodId}"/>
+							
+							<div style="width: 100%" class="possibleValuesDiv">
+									<input type="checkbox" th:onclick="'javascript: toggleDropdownGen(\'importMethodId\', \'importFavoriteMethod\', \'Method\', false);'" id="importFavoriteMethod" />
+									&nbsp;&nbsp;
+									<span th:text="#{show.favorite.method}">Show Favorite Method</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									<a href="javascript: openManageMethods();" th:text="#{nursery.managesettings.manage.method}">Manage Method</a>
+							</div>
+							<!-- store possible values of variable -->
+							<div id="possibleValuesJsonMethod"
+								class="possibleValuesJsonMethod" style="display:none">
+							</div>
+							<div id="possibleValuesFavoriteJsonMethod"
+								class="possibleValuesFavoriteJsonMethod" style="display:none">
+							</div>
+						</div>
+					</div>
+					<div class="row form-group create-germplasm">
+						<div class="col-xs-5 col-md-5">
+							<label class="control-label label-bold" th:text="#{nursery.import.excel.date}+':'">Date</label>&nbsp;<span class="required">*</span>	
+						</div>
+						<div class="col-xs-7 col-md-7">
+							<input type="text" class="form-control date-input" th:field="*{importDate}" />
+						</div>
+					</div>
+					<div class="row form-group create-germplasm">
+						<div class="col-xs-5 col-md-5">
+							<label class="control-label label-bold" th:text="#{nursery.import.excel.location}+':'">Location</label>&nbsp;<span class="required">*</span>	
+						</div>
+						<div class="col-xs-7 col-md-7">
+							<input class="selectedValue" type="hidden" />
+							<input class="selectedValueFave" type="hidden" />
+							<input type="hidden" th:field="*{importLocationId}"/>
+							
+							<div style="width: 100%" class="possibleValuesDiv">
+									<input type="checkbox" th:onclick="'javascript: toggleDropdownGen(\'importLocationId\', \'importFavoriteLocation\', \'Location\', true);'" id="importFavoriteLocation" />
+									&nbsp;&nbsp;
+									<span th:text="#{show.favorite.location}">Show Favorite Location</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									<a href="javascript: openManageLocation();" th:text="#{nursery.managesettings.manage.location}">Manage Location</a>
+							</div>
+							<!-- store possible values of variable -->
+							<div id="possibleValuesJsonLocation"
+								class="possibleValuesJsonLocation" style="display:none">
+							</div>
+							<div id="possibleValuesFavoriteJsonLocation"
+								class="possibleValuesFavoriteJsonLocation" style="display:none">
+							</div>
+						</div>
+					</div>
+					<div class="row form-group create-germplasm">
+						<div class="col-xs-5 col-md-5">
+							<label class="control-label label-bold" th:text="#{nursery.import.excel.name.type}+':'">Name Type</label>&nbsp;<span class="required">*</span>	
+						</div>
+						<div class="col-xs-7 col-md-7">
+							<select th:field="*{nameType}">
+								<option th:value="${nameType.fldno}" th:text="${nameType.fname}" th:each="nameType : ${nameTypes}"> </option>
+							</select>
+						</div>
+					</div>
+				</form>				
 				<div class="row form-group no-choose-gids">
 					<div class="col-xs-12 col-md-12">
 						<input type="checkbox" id="yesToAllDesig" name="yesToAllDesig" value="1"/>
@@ -191,7 +262,9 @@
 			$('#importStudyDesigConfirmationModal').on('hide.bs.modal', function() {
 				$('input[type=checkbox][name=yesToAllDesig]').prop('checked', false);
 			});
-
+			
+			recreateMethodCombo();
+			recreateLocationCombo();
 		});
 		function doRefreshNurserySettings() {
 			'use strict';
@@ -333,35 +406,51 @@
 			$('#importStudyModal').modal('hide');
 			$('#importStudyConfirmationModal').modal('hide');
 			setTimeout(function(){$('#importStudyDesigConfirmationModal').modal({ backdrop: 'static', keyboard: false });}, 300);
+			resetDesigConfirmationFields();
 			showDesignationConfirmationMessage();
 		}
-
+		
 		function confirmDesignation(){
 			'use strict';
 			var status = $('#import-action-type').val(),
-				applyDetails = false;
+				applyDetails = false,
+				importDate = $('#importDate').val(),
+				nameType = $('#nameType').val(),
+				importLocationId = $('#importLocationId').select2('data') === null ? null : $('#importLocationId').select2('data').id,
+				importMethodId = $('#importMethodId').select2('data') === null ? null : $('#importMethodId').select2('data').id;
 			
-			if($('input[type=checkbox][name=yesToAllDesig]:checked').val() === '1'){
-				for(var index = currentConfirmationIndex ; index < changeConfirmationDetails.length ; index++){
-					changeConfirmationDetails[index].status = status;	
-				}
-				applyDetails = true;
-			}else{
-				changeConfirmationDetails[currentConfirmationIndex].status = status;
-				changeConfirmationDetails[currentConfirmationIndex].selectedGid = $('#matching-gid').val();
-				currentConfirmationIndex++;
-				if(currentConfirmationIndex === changeConfirmationDetails.length){
-					//meaning we've gone through all the confirmation
+			if (validateGermplasmInput(importDate, importLocationId, importMethodId)) {
+				if($('input[type=checkbox][name=yesToAllDesig]:checked').val() === '1'){
+					for(var index = currentConfirmationIndex ; index < changeConfirmationDetails.length ; index++){
+						changeConfirmationDetails[index].status = status;
+						changeConfirmationDetails[index].importDate = importDate;
+						changeConfirmationDetails[index].nameType = nameType;
+						changeConfirmationDetails[index].importLocationId = importLocationId;
+						changeConfirmationDetails[index].importMethodId = importMethodId;
+					}
 					applyDetails = true;
 				}else{
-					showDesignationConfirmationMessage();
+					changeConfirmationDetails[currentConfirmationIndex].status = status;
+					changeConfirmationDetails[currentConfirmationIndex].importDate = importDate;
+					changeConfirmationDetails[currentConfirmationIndex].nameType = nameType;
+					changeConfirmationDetails[currentConfirmationIndex].importLocationId = importLocationId;
+					changeConfirmationDetails[currentConfirmationIndex].importMethodId = importMethodId;
+					changeConfirmationDetails[currentConfirmationIndex].selectedGid = $('#matching-gid').val();
+					currentConfirmationIndex++;
+					if(currentConfirmationIndex === changeConfirmationDetails.length){
+						//meaning we've gone through all the confirmation
+						applyDetails = true;
+					}else{
+						showDesignationConfirmationMessage();
+					}
+					
 				}
-				
+				if(applyDetails){
+					applyChangeDetails();
+				}
+			} else {
+				showErrorMessage('confirmation-page-message', importRequiredFieldsError);
 			}
-			if(applyDetails){
-				applyChangeDetails();
-			}
-				
 		}
 						
 		function showImportOptions(){
@@ -393,10 +482,16 @@
 			if ($('#import-action-type').val() === '3') {
 				$('.choose-gids').show();
 				$('.no-choose-gids').hide();
+				$('.create-germplasm').hide();
 				$('input[type=checkbox][name=yesToAllDesig]').prop('checked', false);
-			}
-			else {
+			} else if ($('#import-action-type').val() === '2') {
+				$('.create-germplasm').show();
+				$('.no-choose-gids').show();
 				$('.choose-gids').hide();
+				$('input[type=checkbox][name=yesToAllDesig]').prop('checked', false);
+			} else {
+				$('.choose-gids').hide();
+				$('.create-germplasm').hide();
 				$('.no-choose-gids').show();
 				$('#matching-gid').empty();
 				$('#matching-gid').change();

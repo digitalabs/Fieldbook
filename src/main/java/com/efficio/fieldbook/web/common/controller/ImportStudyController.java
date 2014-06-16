@@ -18,6 +18,8 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.pojos.Germplasm;
+import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -305,8 +307,11 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     				desigData.setValue(responseDetail.getNewDesig());
     				gidData.setValue(responseDetail.getOriginalGid());
     			}
-    			else if (responseDetail.getStatus() == 2) { //create new germlasm 
-    				int newGid = fieldbookMiddlewareService.addGermplasm(responseDetail.getNewDesig(), userId);
+    			else if (responseDetail.getStatus() == 2) { //create new germlasm
+    			    Name name = new Name(null, null, responseDetail.getNameType(), 1, userId, responseDetail.getNewDesig(), 0, 0, 0);
+    			    Germplasm germplasm = new Germplasm(null, responseDetail.getImportMethodId(), 0, 0, 0, userId, 
+    			            0, responseDetail.getImportLocationId(), responseDetail.getImportDate(), name);
+    				int newGid = fieldbookMiddlewareService.addGermplasm(germplasm, name);
     				desigData.setValue(responseDetail.getNewDesig());
     				gidData.setValue(String.valueOf(newGid));
     			}

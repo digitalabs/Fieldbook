@@ -1579,6 +1579,15 @@ function openManageMethods() {
 function recreateMethodCombo() {
 	var selectedMethodAll = $('#methodIdAll').val(),
 		selectedMethodFavorite = $('#methodIdFavorite').val();
+	var createGermplasm = false;
+	var createGermplasmOpened = false;
+	
+	if ($('#importStudyDesigConfirmationModal').length !== 0){
+		createGermplasm = true;
+		if ($('#importStudyDesigConfirmationModal').hasClass('in')) {
+			createGermplasmOpened = true;
+		}
+	}
 
 	Spinner.toggle();
 	$.ajax({
@@ -1589,7 +1598,10 @@ function recreateMethodCombo() {
 		async: false,
 		success: function(data) {
 			if (data.success == '1') {
-				if (selectedMethodAll != null) {
+				if (createGermplasmOpened) {
+					refreshImportMethodCombo(data);
+					refreshMethodComboInSettings(data);
+				} else if (selectedMethodAll != null) {
 					//recreate the select2 combos to get updated list of methods
 					recreateMethodComboAfterClose('methodIdAll', $.parseJSON(data.allMethods));
 					recreateMethodComboAfterClose('methodIdFavorite', $.parseJSON(data.favoriteMethods));
@@ -1606,6 +1618,9 @@ function recreateMethodCombo() {
 					}
 				} else {
 					refreshMethodComboInSettings(data);
+					if (createGermplasm) {
+						refreshImportMethodCombo(data);
+					}
 				}
 			} else {
 				showErrorMessage('page-message', data.errorMessage);
@@ -1620,6 +1635,28 @@ function recreateMethodCombo() {
 	});
 }
 
+function refreshImportMethodCombo(data) {
+	if ($('#importFavoriteMethod').is(':checked')) {
+		initializePossibleValuesCombo($.parseJSON(data.favoriteMethods),
+				'#importMethodId', false, $('#importMethodId').select2('data').id === undefined ? null : $('#importMethodId').select2('data').id);
+	} else {
+		initializePossibleValuesCombo($.parseJSON(data.allMethods),
+				'#importMethodId', false, $('#importMethodId').select2('data').id === undefined ? null : $('#importMethodId').select2('data').id);
+	}
+	replacePossibleJsonValues(data.favoriteMethods, data.allMethods, 'Method');
+}
+
+function refreshImportLocationCombo(data) {
+	if ($('#importFavoriteLocation').is(':checked')) {
+		initializePossibleValuesCombo($.parseJSON(data.favoriteLocations),
+				'#importLocationId', true, $('#importLocationId').select2('data').id === undefined ? null : $('#importLocationId').select2('data').id);
+	} else {
+		initializePossibleValuesCombo($.parseJSON(data.allLocations),
+				'#importLocationId', true, $('#importLocationId').select2('data').id === undefined ? null : $('#importLocationId').select2('data').id);
+	}
+	replacePossibleJsonValues(data.favoriteLocations, data.allLocations, 'Location');
+}
+
 function recreateLocationCombo() {
 	var selectedLocationAll = $('#harvestLocationIdAll').val();
 	var selectedLocationFavorite = $('#harvestLocationIdFavorite').val();
@@ -1627,6 +1664,9 @@ function recreateLocationCombo() {
 	var inventoryPopup = false;
 	var advancePopup = false;
 	var fieldmapScreen = false;
+	var createGermplasm = false;
+	var createGermplasmOpened = false;
+	
 	if ($('#addLotsModal').length !== 0 && $('#addLotsModal').hasClass('in')){
 		inventoryPopup = true;
 	}
@@ -1634,6 +1674,13 @@ function recreateLocationCombo() {
 		advancePopup = true;
 	} else if ($('#enterFieldDetailsForm').length !== 0) {
 		fieldmapScreen = true;
+	}
+	
+	if ($('#importStudyDesigConfirmationModal').length !== 0){
+		createGermplasm = true;
+		if ($('#importStudyDesigConfirmationModal').hasClass('in')) {
+			createGermplasmOpened = true;
+		}
 	}
 
 	Spinner.toggle();
@@ -1646,7 +1693,10 @@ function recreateLocationCombo() {
 				async : false,
 				success : function(data) {
 					if (data.success == '1') {
-						if (inventoryPopup) {
+						if (createGermplasmOpened) {
+							refreshImportLocationCombo(data);
+							refreshLocationComboInSettings(data);
+						} else if (inventoryPopup) {
 							recreateLocationComboAfterClose('inventoryLocationIdAll', $.parseJSON(data.allLocations));
 							recreateLocationComboAfterClose('inventoryLocationIdFavorite', $.parseJSON(data.favoriteLocations));
 							showCorrectLocationInventoryCombo();
@@ -1683,6 +1733,9 @@ function recreateLocationCombo() {
 			    		   }
 						} else {
 							refreshLocationComboInSettings(data);
+							if (createGermplasm) {
+								refreshImportLocationCombo(data);
+							}
 						}
 					} else {
 						showErrorMessage('page-message', data.errorMessage);

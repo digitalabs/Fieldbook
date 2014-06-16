@@ -38,6 +38,7 @@ import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
@@ -857,5 +858,18 @@ public class EditNurseryController extends SettingsController {
         userSelection.getWorkbook().setOriginalObservations(null);
         userSelection.getWorkbook().setObservations(null);
         return resultMap;
+    }
+    
+    @ModelAttribute("nameTypes")
+    public List<UserDefinedField> getNameTypes(){
+        try {
+            List<UserDefinedField> nameTypes = fieldbookMiddlewareService.getGermplasmNameTypes();
+            
+            return nameTypes;
+        }catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+
+        return null;
     }
 }

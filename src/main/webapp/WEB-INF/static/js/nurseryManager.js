@@ -818,6 +818,36 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 	initializeDateAndSliderInputs();
 }
 
+function toggleDropdownGen(comboId, favoriteCheckId, suffix, isLocation) {
+	var possibleValues;
+	var showFavorite = $('#'+favoriteCheckId).is(':checked');
+	var selectedVal = '';
+	
+	// get previously selected value
+	if ($('#'+comboId).select2('data')) {
+		selectedVal = $('#'+comboId).select2('data').id;
+	}
+
+	// reset select2 combo
+	initializePossibleValuesCombo([], '#' + comboId, isLocation, null);
+
+	// get possible values based on checkbox
+	if (showFavorite) {
+		possibleValues = $('#possibleValuesFavoriteJson' + suffix).text();
+		$($('#' + comboId).parent().find('.selectedValue')).val(selectedVal);
+		selectedVal = $($('#' + comboId).parent().find('.selectedValueFave')).val();
+	} else {
+		possibleValues = $('#possibleValuesJson' + suffix).text();
+		$($('#' + comboId).parent().find('.selectedValueFave')).val(selectedVal);
+		selectedVal = $($('#' + comboId).parent().find('.selectedValue')).val();
+	}
+
+	// recreate select2 combo
+	initializePossibleValuesCombo($.parseJSON(possibleValues), '#' + comboId,
+			showFavorite ? false : isLocation, selectedVal);
+
+}
+
 function toggleMethodDropdown(rowIndex) {
 	var possibleValues;
 	var showFavorite = $(
@@ -2509,3 +2539,19 @@ function initializeReviewDatasetTabs(datasetId) {
 	});
 }
 
+function resetDesigConfirmationFields() {
+	//reset dropdowns and fields
+	$('#importLocationId').select2('data', null);
+	$('#importMethodId').select2('data', null);
+	$('#nameType').val('');
+	$('#importDate').val('');
+	$('#confirmation-page-message').html('');
+}
+
+function validateGermplasmInput(importDate, importLocationId, importMethodId) {
+	if ($('#import-action-type').val() === '2' && 
+			(importDate === '' || importLocationId === null || importMethodId === null)) {
+		return false;
+	}
+	return true;
+}

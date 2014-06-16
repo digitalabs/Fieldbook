@@ -17,6 +17,10 @@ public class GermplasmChangeDetail {
 	private String entryNumber;
 	private String plotNumber;
 	private List<String> addedTraits;
+	private int nameType;
+	private int importLocationId;
+	private int importMethodId;
+	private int importDate;
 	
 	public GermplasmChangeDetail() {
 	}
@@ -193,6 +197,38 @@ public class GermplasmChangeDetail {
 	public void setPlotNumber(String plotNumber) {
 		this.plotNumber = plotNumber;
 	}
+
+    public int getNameType() {
+        return nameType;
+    }
+
+    public void setNameType(int nameType) {
+        this.nameType = nameType;
+    }
+
+    public int getImportLocationId() {
+        return importLocationId;
+    }
+
+    public void setImportLocationId(int importLocationId) {
+        this.importLocationId = importLocationId;
+    }
+
+    public int getImportMethodId() {
+        return importMethodId;
+    }
+
+    public void setImportMethodId(int importMethodId) {
+        this.importMethodId = importMethodId;
+    }
+
+    public int getImportDate() {
+        return importDate;
+    }
+
+    public void setImportDate(int importDate) {
+        this.importDate = importDate;
+    }
 
 
 }

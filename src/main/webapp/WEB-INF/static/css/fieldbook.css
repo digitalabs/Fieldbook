@@ -1064,8 +1064,7 @@ a.fbk-edit-experiment{
 	background-image: url('../img/edit.png');
 	display:block;
     height:20px;
-	margin-left: 15px;
-    text-align: center;
+    text-align: left;
     background-repeat:no-repeat;
     width: 25px;
 }

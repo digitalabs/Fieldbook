@@ -416,14 +416,6 @@
 						'#' + getJquerySafeId('studyLevelVariables' + select2Index +
 							'.value'), false, $(divElem).siblings('.div-select-val').html());
 				}
-
-                /* GCP-8880 (tag change event to a var) */
-                $('#' + getJquerySafeId('studyLevelVariables' + select2Index +
-                        '.value')).on('change',function() {
-                    if (document.disableActions !== undefined)
-                        document.disableActions();
-                });
-
 			});
 
 			$.each($('.possibleValuesJsonCons'), function (index, divElem){
@@ -446,12 +438,6 @@
 			truncateStudyVariableNames('.study-variable-name', 17);
 
             /* GCP-8880 (tag change event to a var) */
-            // 1. all form controls except select 2
-            $("form#createNurseryForm .form-control[type=text], form#createNurseryForm input[type=checkbox]").on('change',function() {
-                if (document.disableActions !== undefined)
-                    document.disableActions();
-            });
-
 
             $.each($('span.delete-icon'),function(){
                 this.onclick = null;

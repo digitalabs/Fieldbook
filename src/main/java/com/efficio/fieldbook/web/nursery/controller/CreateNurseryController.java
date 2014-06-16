@@ -19,9 +19,13 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.generationcp.commons.context.ContextConstants;
+import org.generationcp.commons.context.ContextInfo;
+import org.generationcp.commons.util.ContextUtil;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.StudyDetails;
@@ -43,6 +47,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.util.WebUtils;
 
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
@@ -92,8 +97,12 @@ public class CreateNurseryController extends SettingsController {
      */
     @RequestMapping(value="/nursery/{nurseryId}", method = RequestMethod.GET)
     public String useExistingNursery(@ModelAttribute("createNurseryForm") CreateNurseryForm form, @PathVariable int nurseryId
-            , Model model, HttpSession session) throws MiddlewareQueryException{
-        if(nurseryId != 0){     
+            , Model model, HttpSession session, HttpServletRequest request) throws MiddlewareQueryException{
+    	
+    	ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO); 
+    	String contextParams = ContextUtil.getContextParameterString(contextInfo);
+
+    	if(nurseryId != 0){     
             Workbook workbook = fieldbookMiddlewareService.getStudyVariableSettings(nurseryId, true);
             
             Dataset dataset = (Dataset)SettingsUtil.convertWorkbookToXmlDataset(workbook);
@@ -127,7 +136,7 @@ public class CreateNurseryController extends SettingsController {
             form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
             form.setMeasurementRowList(new ArrayList<MeasurementRow>());
         }
-        setFormStaticData(form);
+        setFormStaticData(form, contextParams);
         model.addAttribute("createNurseryForm", form);
         model.addAttribute("nurseryList", getNurseryList());
         //setupFormData(form);
@@ -164,12 +173,17 @@ public class CreateNurseryController extends SettingsController {
      * @throws MiddlewareQueryException the middleware query exception
      */
     @RequestMapping(method = RequestMethod.GET)
-    public String show(@ModelAttribute("createNurseryForm") CreateNurseryForm form, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2, Model model, HttpSession session) throws MiddlewareQueryException{
+    public String show(@ModelAttribute("createNurseryForm") CreateNurseryForm form, 
+    			@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2, Model model, 
+    			HttpSession session, HttpServletRequest request) throws MiddlewareQueryException{
+    	    	
+    	ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO); 
+    	String contextParams = ContextUtil.getContextParameterString(contextInfo);    	
     	session.invalidate();
     	form.setProjectId(this.getCurrentProjectId());
     	form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + "," + AppConstants.FIXED_NURSERY_VARIABLES.getString());
     	form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
-    	setFormStaticData(form);
+    	setFormStaticData(form, contextParams);
     	assignDefaultValues(form);
     	form.setMeasurementRowList(new ArrayList<MeasurementRow>());
     	//setting the default folder
@@ -306,13 +320,13 @@ public class CreateNurseryController extends SettingsController {
      *
      * @param form the new form static data
      */
-    private void setFormStaticData(CreateNurseryForm form){
+    private void setFormStaticData(CreateNurseryForm form, String contextParams){
         form.setBreedingMethodId(AppConstants.BREEDING_METHOD_ID.getString());
         form.setLocationId(AppConstants.LOCATION_ID.getString());
         form.setBreedingMethodUrl(AppConstants.BREEDING_METHOD_URL.getString());
         form.setLocationUrl(AppConstants.LOCATION_URL.getString());
         form.setProjectId(this.getCurrentProjectId());
-        form.setImportLocationUrl(AppConstants.IMPORT_GERMPLASM_URL.getString());
+        form.setImportLocationUrl(AppConstants.IMPORT_GERMPLASM_URL.getString() + "?" + contextParams);
         form.setStudyNameTermId(AppConstants.STUDY_NAME_ID.getString());
         form.setStartDateId(AppConstants.START_DATE_ID.getString());
     	form.setEndDateId(AppConstants.END_DATE_ID.getString());
@@ -497,12 +511,14 @@ public class CreateNurseryController extends SettingsController {
      */
     @RequestMapping(value = "/clearSettings", method = RequestMethod.GET)
     public String clearSettings(@ModelAttribute("createNurseryForm") CreateNurseryForm form,
-                Model model, HttpSession session) {
+                Model model, HttpSession session, HttpServletRequest request) {
+    	
+    	String contextParams = ContextUtil.getContextParameterString(request);
         try {
             form.setProjectId(this.getCurrentProjectId());
             form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + "," + AppConstants.FIXED_NURSERY_VARIABLES.getString());
             form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
-            setFormStaticData(form);
+            setFormStaticData(form, contextParams);
             assignDefaultValues(form);
             form.setMeasurementRowList(new ArrayList<MeasurementRow>());
         } catch(Exception e) {

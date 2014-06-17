@@ -1336,7 +1336,8 @@ function sortVariableIdsAndNames(variableType) {
 }
 
 function recreateDateInput(index, row, selectedVal, name) {
-	var newCell = "<input type='text' id='" + name + index + ".value' name='"
+	'use strict';
+	var newCell = "<input placeholder='yyyymmdd' type='text' id='" + name + index + ".value' name='"
 			+ name + "[" + index + "].value' " + "value='" + selectedVal
 			+ "' class='form-control date-input' />";
 	newCell += '<label for="'
@@ -1545,7 +1546,7 @@ function createDropdownInput(ctr, name) {
 			+ "<input class='selectedValueFave' type='hidden' />";
 }
 function createDateInput(ctr, name) {
-	return "<input type='text' id='"
+	return "<input placeholder='yyyymmdd' type='text' id='"
 			+ name
 			+ ctr
 			+ ".value' name='"

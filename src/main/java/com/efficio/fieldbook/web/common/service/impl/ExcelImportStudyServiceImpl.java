@@ -160,81 +160,83 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			for (int i = 1; i <= lastXlsRowIndex; i++) {
 				Row xlsRow = observationSheet.getRow(i);
 				String key = getKeyIdentifierFromXlsRow(xlsRow, indexes);
-				MeasurementRow wRow = rowsMap.get(key);
-				if (wRow == null) {
-					modes.add(ChangeType.ADDED_ROWS);
-				} else if (wRow != null) {
-					rowsMap.remove(key);
-					
-					String originalDesig = wRow.getMeasurementDataValue(TermId.DESIG.getId());
-					String newDesig = xlsRow.getCell(desigColumn).getStringCellValue().trim();
-					String originalGid = wRow.getMeasurementDataValue(TermId.GID.getId());
-					String entryNumber = wRow.getMeasurementDataValue(TermId.ENTRY_NO.getId());
-					String plotNumber = wRow.getMeasurementDataValue(TermId.PLOT_NO.getId());
-					if (plotNumber == null || "".equals(plotNumber)) {
-						plotNumber = wRow.getMeasurementDataValue(TermId.PLOT_NNO.getId());
-					}
-					
-					if (originalDesig != null && !originalDesig.equalsIgnoreCase(newDesig)) {
-						List<Integer> newGids = fieldbookMiddlewareService.getGermplasmIdsByName(newDesig);
-						if (originalGid != null && newGids.contains(Integer.valueOf(originalGid))) {
-							MeasurementData wData = wRow.getMeasurementData(TermId.DESIG.getId());
-							wData.setValue(newDesig);
-						} 
-						else {
-							int index = observations.indexOf(wRow);
-							GermplasmChangeDetail changeDetail = new GermplasmChangeDetail(index, originalDesig, originalGid, newDesig, "", 
-									trialInstanceNumber, entryNumber, plotNumber);
-							if (newGids != null && !newGids.isEmpty()) {
-								changeDetail.setMatchingGids(newGids);
-							}
-							changeDetailsList.add(changeDetail);
+				if (key != null) {
+					MeasurementRow wRow = rowsMap.get(key);
+					if (wRow == null) {
+						modes.add(ChangeType.ADDED_ROWS);
+					} else if (wRow != null) {
+						rowsMap.remove(key);
+						
+						String originalDesig = wRow.getMeasurementDataValue(TermId.DESIG.getId());
+						String newDesig = xlsRow.getCell(desigColumn).getStringCellValue().trim();
+						String originalGid = wRow.getMeasurementDataValue(TermId.GID.getId());
+						String entryNumber = wRow.getMeasurementDataValue(TermId.ENTRY_NO.getId());
+						String plotNumber = wRow.getMeasurementDataValue(TermId.PLOT_NO.getId());
+						if (plotNumber == null || "".equals(plotNumber)) {
+							plotNumber = wRow.getMeasurementDataValue(TermId.PLOT_NNO.getId());
 						}
-					}
-					
-					for (int j = 0; j <= lastXlsColIndex; j++) {
-						Cell headerCell = headerRow.getCell(j);
-						if (headerCell != null) {
-
-							MeasurementData wData = wRow.getMeasurementData(headerCell.getStringCellValue());
-							if (wData != null && wData.isEditable()) {
-								Cell cell = xlsRow.getCell(j);
-								String xlsValue = "";
-								if(cell != null){
-									if (wData.getMeasurementVariable() != null && wData.getMeasurementVariable().getPossibleValues() != null
-											&& !wData.getMeasurementVariable().getPossibleValues().isEmpty()) {
-										
-										if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-											xlsValue = ExportImportStudyUtil.getCategoricalIdCellValue(String.valueOf(Double.valueOf(cell.getNumericCellValue()).intValue()), 
-													wData.getMeasurementVariable().getPossibleValues(), true);
+						
+						if (originalDesig != null && !originalDesig.equalsIgnoreCase(newDesig)) {
+							List<Integer> newGids = fieldbookMiddlewareService.getGermplasmIdsByName(newDesig);
+							if (originalGid != null && newGids.contains(Integer.valueOf(originalGid))) {
+								MeasurementData wData = wRow.getMeasurementData(TermId.DESIG.getId());
+								wData.setValue(newDesig);
+							} 
+							else {
+								int index = observations.indexOf(wRow);
+								GermplasmChangeDetail changeDetail = new GermplasmChangeDetail(index, originalDesig, originalGid, newDesig, "", 
+										trialInstanceNumber, entryNumber, plotNumber);
+								if (newGids != null && !newGids.isEmpty()) {
+									changeDetail.setMatchingGids(newGids);
+								}
+								changeDetailsList.add(changeDetail);
+							}
+						}
+						
+						for (int j = 0; j <= lastXlsColIndex; j++) {
+							Cell headerCell = headerRow.getCell(j);
+							if (headerCell != null) {
+	
+								MeasurementData wData = wRow.getMeasurementData(headerCell.getStringCellValue());
+								if (wData != null && wData.isEditable()) {
+									Cell cell = xlsRow.getCell(j);
+									String xlsValue = "";
+									if(cell != null){
+										if (wData.getMeasurementVariable() != null && wData.getMeasurementVariable().getPossibleValues() != null
+												&& !wData.getMeasurementVariable().getPossibleValues().isEmpty()) {
+											
+											if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+												xlsValue = ExportImportStudyUtil.getCategoricalIdCellValue(String.valueOf(Double.valueOf(cell.getNumericCellValue()).intValue()), 
+														wData.getMeasurementVariable().getPossibleValues(), true);
+											}
+											else {
+												xlsValue = ExportImportStudyUtil.getCategoricalIdCellValue(cell.getStringCellValue(), wData.getMeasurementVariable().getPossibleValues(), true);
+											}
+											
+											if (wData.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()) {
+												wData.setcValueId(xlsValue);
+											}
+										} 
+										else if(cell.getCellType() == Cell.CELL_TYPE_NUMERIC){
+											Double doubleVal = Double.valueOf(cell.getNumericCellValue());
+											Integer intVal = Integer.valueOf(doubleVal.intValue());
+											if(Double.parseDouble(intVal.toString()) == doubleVal.doubleValue()){
+												xlsValue = intVal.toString();
+											}else{
+												xlsValue = doubleVal.toString();	
+											}
+											
+											
 										}
 										else {
-											xlsValue = ExportImportStudyUtil.getCategoricalIdCellValue(cell.getStringCellValue(), wData.getMeasurementVariable().getPossibleValues(), true);
+											xlsValue = cell.getStringCellValue();
 										}
-										
-										if (wData.getMeasurementVariable().getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId()) {
-											wData.setcValueId(xlsValue);
-										}
-									} 
-									else if(cell.getCellType() == Cell.CELL_TYPE_NUMERIC){
-										Double doubleVal = Double.valueOf(cell.getNumericCellValue());
-										Integer intVal = Integer.valueOf(doubleVal.intValue());
-										if(Double.parseDouble(intVal.toString()) == doubleVal.doubleValue()){
-											xlsValue = intVal.toString();
-										}else{
-											xlsValue = doubleVal.toString();	
-										}
-										
-										
+										wData.setValue(xlsValue);
 									}
 									else {
-										xlsValue = cell.getStringCellValue();
+										wData.setcValueId(null);
+										wData.setValue(null);
 									}
-									wData.setValue(xlsValue);
-								}
-								else {
-									wData.setcValueId(null);
-									wData.setValue(null);
 								}
 							}
 						}
@@ -447,17 +449,15 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
     }
     
     private String getColumnIndexesFromXlsSheet(Sheet observationSheet, List<MeasurementVariable> variables, String trialInstanceNumber) {
-    	String trialLabel = null, plotLabel = null, entryLabel = null;
+    	String plotLabel = null, entryLabel = null;
     	for (MeasurementVariable variable : variables) {
-    		if (variable.getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
-    			trialLabel = variable.getName();
-    		} else if (variable.getTermId() == TermId.PLOT_NO.getId() || variable.getTermId() == TermId.PLOT_NNO.getId()) {
+    		if (variable.getTermId() == TermId.PLOT_NO.getId() || variable.getTermId() == TermId.PLOT_NNO.getId()) {
     			plotLabel = variable.getName();
     		} else if (variable.getTermId() == TermId.ENTRY_NO.getId()) {
     			entryLabel = variable.getName();
     		}
     	}
-    	if (trialLabel != null && plotLabel != null && entryLabel != null) {
+    	if (plotLabel != null && entryLabel != null) {
     		String indexes = findColumns(observationSheet, trialInstanceNumber, plotLabel, entryLabel);
     		for (String index : indexes.split(",")) {
     			if (!NumberUtils.isNumber(index) || "-1".equals(index)) {
@@ -470,10 +470,13 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
     }
     
     private String getKeyIdentifierFromXlsRow(Row xlsRow, String indexes) {
-    	String[] indexArray = indexes.split(",");
-    	return indexArray[0] 
-    			+ "-" + xlsRow.getCell(Integer.valueOf(indexArray[1]))
-    			+ "-" + xlsRow.getCell(Integer.valueOf(indexArray[2]));
+    	if (indexes != null) {
+	    	String[] indexArray = indexes.split(",");
+	    	return indexArray[0] 
+	    			+ "-" + xlsRow.getCell(Integer.valueOf(indexArray[1]))
+	    			+ "-" + xlsRow.getCell(Integer.valueOf(indexArray[2]));
+    	} 
+    	return null;
     }
     
     private void resetWorkbookObservations(Workbook workbook) {

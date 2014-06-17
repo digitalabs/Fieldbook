@@ -1207,4 +1207,5 @@ input::-ms-clear {
 textarea.form-control {
     font-size: 13px;
     color: #808080;
+    padding: 4px;
 }

@@ -1927,10 +1927,10 @@ function submitRenameFolder() {
 	if (folderName === '') {
 		showErrorMessage('page-rename-study-folder-message-modal', folderNameRequiredMessage);
 		return false;
-	} else if (!isValidInput()) {
+	} else if (!isValidInput(folderName)) {
         showErrorMessage('page-rename-study-folder-message-modal', invalidFolderNameCharacterMessage);
         return false;
-    }else {
+    } else {
 		parentFolderId = $('#studyTree').dynatree('getTree').getActiveNode().data.key;
 		if (parentFolderId === 'LOCAL') {
 			parentFolderId = 1;

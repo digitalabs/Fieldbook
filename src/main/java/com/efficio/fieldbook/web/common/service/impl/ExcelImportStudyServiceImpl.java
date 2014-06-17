@@ -253,12 +253,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			}
 			if(rowsMap.size() != 0){
 				//meaning there are items in the original list, so there are items deleted
-				modes.add(ChangeType.DELETED_ROWS);
-				
-				Set<String> keys = rowsMap.keySet();
-				for (String key : keys) {
-					observations.remove(rowsMap.get(key));
-				}
+				modes.add(ChangeType.DELETED_ROWS);								
 			}
 		}
 	}

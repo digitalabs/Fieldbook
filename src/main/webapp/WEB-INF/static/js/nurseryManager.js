@@ -2372,7 +2372,7 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 	var selectedMethodAll = $("#methodIdAll").val();
 	var selectedMethodFavorite = $("#methodIdFavorite").val();
 
-	Spinner.toggle();
+	Spinner.play();
 	$.ajax({
 		url : "/Fieldbook/NurseryManager/advance/nursery/getBreedingMethods",
 		type : "GET",
@@ -2432,13 +2432,7 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 			} else {
 				showErrorMessage("page-message", data.errorMessage);
 			}
-		},
-		error : function(jqXHR, textStatus, errorThrown) {
-			console.log("The following error occured: " + textStatus,
-					errorThrown);
-		},
-		complete : function() {
-			Spinner.toggle();
+			Spinner.stop();
 		}
 	});
 }
@@ -2463,7 +2457,7 @@ function refreshEditNursery() {
 function displaySaveSuccessMessage(idDomSelector, messageToDisplay){
 	'use strict';
 	Spinner.stop();
-	createSuccessNotification('Notification', messageToDisplay);
+	createSuccessNotification(successMsgHeader, messageToDisplay);
 	
 }
 

@@ -868,7 +868,7 @@ function advanceNursery(tableName) {
 		return;
 	}
 
-	Spinner.toggle();
+	Spinner.play();
 	var advanceStudyHref = $('#advance-study-url').attr('href');
 
 	if (tableName == 'nursery-table') {
@@ -877,17 +877,13 @@ function advanceNursery(tableName) {
 			$.ajax({
 				url: advanceStudyHref + '/' + encodeURIComponent(idVal),
 				type: 'GET',
+				aysnc: false,
 				success: function(html) {
 					$('#advance-nursery-modal-div').html(html);
-					$('#advanceNurseryModal').modal('show');
+					$('#advanceNurseryModal').modal({ backdrop: 'static', keyboard: true });
 					$('#advanceNurseryModal select').select2({minimumResultsForSearch: 20});
-				},
-				error: function(jqXHR, textStatus, errorThrown) {
-					console.log('The following error occured: ' + textStatus, errorThrown);
-				},
-				complete: function() {
-					Spinner.toggle();
-				}
+					Spinner.stop();
+				}				
 			});
 		}
 	}
@@ -1752,14 +1748,8 @@ function recreateLocationCombo() {
 					} else {
 						showErrorMessage('page-message', data.errorMessage);
 					}
-				},
-				error : function(jqXHR, textStatus, errorThrown) {
-					console.log('The following error occured: ' + textStatus,
-							errorThrown);
-				},
-				complete : function() {
 					Spinner.stop();
-				}
+				}				
 			});
 }
 

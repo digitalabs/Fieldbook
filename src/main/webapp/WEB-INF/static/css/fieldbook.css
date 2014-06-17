@@ -1204,3 +1204,7 @@ input::-ms-clear {
 .reduce-padding {
     padding: 0 6px;
 }
+textarea.form-control {
+    font-size: 13px;
+    color: #808080;
+}

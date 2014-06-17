@@ -1616,7 +1616,9 @@ function recreateMethodCombo() {
 						refreshMethodComboInSettings(data);
 					}
 				} else {
-					refreshMethodComboInSettings(data);
+					if ($('.hasCreateGermplasm').length === 0 || ($('.hasCreateGermplasm').length > 0 && $('.hasCreateGermplasm').val() === '0')) {
+						refreshMethodComboInSettings(data);
+					}
 					if (createGermplasm) {
 						refreshImportMethodCombo(data);
 					}
@@ -1740,7 +1742,9 @@ function recreateLocationCombo() {
 			    			   setComboValues(locationSuggestions_obj, $('#fieldLocationIdAll').val(), 'fieldLocationIdAll');
 			    		   }
 						} else {
-							refreshLocationComboInSettings(data);
+							if ($('.hasCreateGermplasm').length === 0 || ($('.hasCreateGermplasm').length > 0 && $('.hasCreateGermplasm').val() === '0')) {
+								refreshLocationComboInSettings(data);
+							}
 							if (createGermplasm) {
 								refreshImportLocationCombo(data);
 							}
@@ -1758,9 +1762,12 @@ function refreshMethodComboInSettings(data) {
 	//get index of breeding method row
 	var index = getBreedingMethodRowIndex(), selectedVal = null;
 	if (index > -1) {
+		data.favoriteMethods = '[{"mid":0,"mname":"Please Choose","mdesc":"Please Choose"},' + data.favoriteMethods.substring(1);
+		data.allMethods = '[{"mid":0,"mname":"Please Choose","mdesc":"Please Choose"},' + data.allMethods.substring(1);
 		if ($('#' + getJquerySafeId('studyLevelVariables' + index + '.value')).select2('data')) {
 			selectedVal = $('#' + getJquerySafeId('studyLevelVariables' + index + '.value')).select2('data').id;
 		}
+		
 		//recreate select2 of breeding method
 		initializePossibleValuesCombo([],
 				'#' + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
@@ -1781,7 +1788,6 @@ function refreshMethodComboInSettings(data) {
 function refreshLocationComboInSettings(data) {
 	var selectedVal = null;
 	var index = getLocationRowIndex();
-
 	if (index > -1) {
 		if ($('#'+ getJquerySafeId('studyLevelVariables'+ index + '.value')).select2('data')) {
 			selectedVal = $('#'+ getJquerySafeId('studyLevelVariables' + index + '.value')).select2('data').id;

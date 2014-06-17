@@ -383,6 +383,8 @@
 
 		$(document).ready(function() {
 			'use strict';
+			
+			Spinner.play();
 			// FIXME Shouldn't be user agent checking
 			if (getIEVersion() === 8) {
 				$('.table-with-scroll-create').parent().addClass('variable-details');
@@ -492,6 +494,7 @@
                 actionBtn.removeClass('disabled');
             };
             checkTraitsAndSelectionVariateTable('', false);
+            Spinner.stop();
         });
 	//]]>
 	</script>

@@ -145,6 +145,7 @@
 				</div>
 				
 				<form id="importStudyConfirmationForm" method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
+					<input type="hidden" class="hasCreateGermplasm" />
 					<div class="row form-group create-germplasm">
 						<div class="col-xs-5 col-md-5">
 							<label class="control-label label-bold" th:text="#{nursery.import.excel.breeding.method}+':'">Breeding Method</label>&nbsp;<span class="required">*</span>	
@@ -266,8 +267,11 @@
 				$('input[type=checkbox][name=yesToAllDesig]').prop('checked', false);
 			});
 			
+			//set to 1 to initialize only the location and method dropdowns in the import modal
+			$('.hasCreateGermplasm').val(1);
 			recreateMethodCombo();
 			recreateLocationCombo();
+			$('.hasCreateGermplasm').val(0);
 		});
 		function doRefreshNurserySettings() {
 			'use strict';

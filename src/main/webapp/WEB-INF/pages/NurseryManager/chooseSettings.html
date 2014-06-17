@@ -446,12 +446,23 @@
             // re apply the behaviors using modified functions
             $('#createNurseryForm').on('click','span.delete-icon',function(){
 
-                if (document.disableActions !== undefined)
+
+                if (document.disableActions !== undefined) {
+                    if (!$('.fbk-float-right-with-top-pos .dropdown-toggle').hasClass("disabled")) {
+                        document.initialEnabledStat = true;
+                    } else
+                        document.initialEnabledStat = false;
+
                     document.disableActions();
+                    eval($(this).attr('onclick'));
 
-                if (!eval($(this).attr('onclick')))
+                }
+            });
+
+            $('#variateDeleteConfirmationModal').on('click','#cancelDelete',function(){
+                if (document.initialEnabledStat && document.enableActions !== undefined) {
                     document.enableActions();
-
+                }
             });
 
             $('#variateDeleteConfirmationModal').on('click','#continueDelete',function(){

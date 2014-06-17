@@ -269,14 +269,14 @@
 		</div>
 	</div>
 	<div class="row form-group">
-		<div class=" collapse in selectionVariatesDetails" th:each="nurseryLevelVariable, rowStat : *{studyLevelVariables}">
-			<div th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}">
+		<div class=" collapse in breedingMethodDetails" th:each="nurseryLevelVariable, rowStat : *{studyLevelVariables}" th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}">
+			<div>
 				<div class="row  form-group  col-xs-12 col-md-12">
 					<div class="col-xs-6 col-md-6">
 						<span th:text="#{nursery.create.nursery.method.note}">If you plan to advance the nursery with a single method, please select it below</span>
 					</div>
 				</div>
-				<div class="row form-group  col-xs-12 col-md-12">
+				<div class="row form-group  col-xs-12 col-md-12 1st">
 					<div class="col-xs-5 col-md-5 form-group">
 						<input class="cvTermIds" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 						

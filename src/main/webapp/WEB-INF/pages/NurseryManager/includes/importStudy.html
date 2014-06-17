@@ -149,7 +149,7 @@
 						<div class="col-xs-7 col-md-7">
 							<input class="selectedValue" type="hidden" />
 							<input class="selectedValueFave" type="hidden" />
-							<input type="hidden" th:field="*{importMethodId}"/>
+							<input type="hidden" th:field="*{importMethodId}" class="form-control select2" />
 							
 							<div style="width: 100%" class="possibleValuesDiv">
 									<input type="checkbox" th:onclick="'javascript: toggleDropdownGen(\'importMethodId\', \'importFavoriteMethod\', \'Method\', false);'" id="importFavoriteMethod" />
@@ -181,7 +181,7 @@
 						<div class="col-xs-7 col-md-7">
 							<input class="selectedValue" type="hidden" />
 							<input class="selectedValueFave" type="hidden" />
-							<input type="hidden" th:field="*{importLocationId}"/>
+							<input type="hidden" th:field="*{importLocationId}" class="form-control select2" />
 							
 							<div style="width: 100%" class="possibleValuesDiv">
 									<input type="checkbox" th:onclick="'javascript: toggleDropdownGen(\'importLocationId\', \'importFavoriteLocation\', \'Location\', true);'" id="importFavoriteLocation" />

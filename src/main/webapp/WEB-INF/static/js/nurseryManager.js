@@ -197,28 +197,35 @@ function showCorrectMethodCombo() {
 }
 
 function getBreedingMethodRowIndex() {
-	var rowIndex = 0;
-	$.each($(".nurseryLevelSettings"), function(index, row) {
-		var cvTermId = $(
-				$(row).find('.1st').find("#"+ getJquerySafeId("studyLevelVariables" + index + ".variable.cvTermId"))).val();
+	var rowIndex = -1;
+	$.each($('.nurseryLevelSettings'), function(index, row) {
+		var cvTermId = $($(row).find('.1st').find('.cvTermIds')).val();
 		if (parseInt(cvTermId, 10) == parseInt(breedingMethodId, 10)) {
-			rowIndex = index;
+			rowIndex = getIndexFromName($($(row).find('.1st').find('.cvTermIds')).attr('name'));
 		}
+	});
+	
+	$.each($('.breedingMethodDetails'), function(index, row) {
+		rowIndex = getIndexFromName($($(row).find('.1st').find(".cvTermIds")).attr('name'));
 	});
 	return rowIndex;
 }
 
 function getLocationRowIndex() {
-	var rowIndex = 0;
+	var rowIndex = -1;
 	$.each($(".nurseryLevelSettings"), function(index, row) {
-		var cvTermId = $($(row).find('.1st').find("#" + getJquerySafeId("studyLevelVariables" + index + ".variable.cvTermId"))).val();
+		var cvTermId = $($(row).find('.1st').find(".cvTermIds")).val();
 		if (parseInt(cvTermId, 10) == parseInt(locationId, 10)) {
-			rowIndex = index;
+			rowIndex = getIndexFromName($($(row).find('.1st').find(".cvTermIds")).attr("name"));
 		}
 	});
+	
 	return rowIndex;
 }
 
+function getIndexFromName(name) {
+	return name.split('[')[1].split(']')[0];
+}
 
 function replacePossibleJsonValues(favoriteJson, allJson, index) {
 	$("#possibleValuesJson" + index).text(allJson);
@@ -661,6 +668,10 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 		posValSuffix) {
 	var ctr = $('.' + rowClass).length; // getLastRowIndex("nurseryLevelSettings",
 										// false) + 1;
+	if (name === 'studyLevelVariables') {
+		ctr++;
+	}
+	
 	$
 			.each(
 					data,
@@ -1034,7 +1045,6 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 	var possibleValues_obj = [];
 	var defaultJsonVal = null;
 	var isBreedingMethodSetting = $(name).parent().next().children(".breeding-method-tooltip").length > 0;
-
 	$.each(
 					possibleValues,
 					function(index, value) {
@@ -1146,7 +1156,6 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 					}
 				});
 	}
-
 	if (defaultJsonVal != null) {
 		$(name).select2('data', defaultJsonVal).trigger('change');
 	}
@@ -1238,10 +1247,14 @@ function proceedWithDelete() {
 function recreateDynamicFieldsAfterDelete(name, tableId, rowClass, posValSuffix) {
 	var reg = new RegExp(name + "[0-9]+", "g");
 	var reg2 = new RegExp(name + "\[[0-9]+\]", "g");
+	var breedingMethodIndex = getBreedingMethodRowIndex();
 	$
 			.each(
 					$("." + rowClass),
 					function(index, row) {
+						if (index >= breedingMethodIndex) {
+							index++;
+						}
 						// get currently selected value of select2 dropdown
 						var selectedVal = null;
 						var oldSelect2 = row.innerHTML.match(reg)[0];
@@ -1260,7 +1273,6 @@ function recreateDynamicFieldsAfterDelete(name, tableId, rowClass, posValSuffix)
 											+ getJquerySafeId(oldSelect2
 													+ ".value")).val();
 						}
-
 						// if dropdown is for location or method, check if show
 						// favorite is checked
 						var isFavoriteChecked = "";
@@ -2399,6 +2411,7 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 					//get index of breeding method row
 					var index = getBreedingMethodRowIndex();
 
+					
 					if ($("#" + getJquerySafeId(comboName)).select2("data")) {
 						selectedVal = $("#" + getJquerySafeId(comboName))
 								.select2("data").id;
@@ -2421,8 +2434,10 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 								selectedVal);
 					}
 
-					replacePossibleJsonValues(data.favoriteMethods,
-							data.allMethods, index);
+					if (index > -1) {
+						replacePossibleJsonValues(data.favoriteMethods,
+								data.allMethods, index);
+					}
 				}
 			} else {
 				showErrorMessage("page-message", data.errorMessage);

@@ -618,6 +618,7 @@ public class CreateNurseryController extends SettingsController {
             addVariableInDeletedList(userSelection.getStudyLevelConditions(), mode, variableId);
             deleteVariableInSession(userSelection.getStudyLevelConditions(), variableId);
         } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
+            addVariableInDeletedList(userSelection.getPlotsLevelList(), mode, variableId);
             deleteVariableInSession(userSelection.getPlotsLevelList(), variableId);
         } else if (mode == AppConstants.SEGMENT_TRAITS.getInt()){
             addVariableInDeletedList(userSelection.getBaselineTraitsList(), mode, variableId);

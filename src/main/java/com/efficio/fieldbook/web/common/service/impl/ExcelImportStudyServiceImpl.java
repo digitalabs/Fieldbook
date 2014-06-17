@@ -89,6 +89,14 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			validateSections(descriptionSheet);
 
 			String trialInstanceNumber = getTrialInstanceNumber(xlsBook);
+			if (trialInstanceNumber == null) {
+				if (!workbook.isNursery()) {
+					throw new WorkbookParserException("error.workbook.import.missing.trial.instance");
+				}
+				else {
+					trialInstanceNumber = "1";
+				}
+			}
 			List<MeasurementRow> observations = filterObservationsByTrialInstance(xlsBook, workbook.getObservations(), trialInstanceNumber);
 			List<MeasurementRow> trialObservations = filterObservationsByTrialInstance(xlsBook, workbook.getTrialObservations(), trialInstanceNumber);
 

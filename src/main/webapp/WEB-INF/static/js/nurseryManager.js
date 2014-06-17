@@ -484,7 +484,7 @@ function addVariableToList() {
 	if (idNameCounterpartSelected($("#selectedStdVarId").val())) {
 		// if selected variable is an id/name counterpart of a variable already
 		// selected/added
-		$("#page-message-modal").html("<div class='alert alert-danger'>" + idNameCounterpartAddedError + "</div>");
+		showErrorMessage('', idNameCounterpartAddedError);
 	} else if (notInList($("#selectedStdVarId").val()) && $("#selectedStdVarId").val() != "") {
 		// if selected variable is not yet in the list and is not blank or new,
 		// add it
@@ -515,10 +515,7 @@ function addVariableToList() {
 
 		$('#newVariablesList').removeClass('fbk-hide');
 	} else {
-
-		$("#page-message-modal").html(
-				"<div class='alert alert-danger'>" + varInListMessage
-						+ "</div>");
+		showErrorMessage('', varInListMessage);
 	}
 }
 
@@ -566,17 +563,14 @@ function validateUniqueVariableName(){
 }
 function submitSelectedVariables(variableType) {
 	if ($('#newVariablesList tbody tr').length === 0) {
-		$('#page-message-modal').html(
-				'<div class="alert alert-danger">' + noVariableAddedMessage + '</div>');
+		showErrorMessage('', noVariableAddedMessage);
 	} else if ($('#newVariablesList tbody tr').length > 0
 			&& hasNoVariableName()) {
-		$('#page-message-modal').html(
-				'<div class="alert alert-danger">' + noVariableNameError + '</div>');
+		showErrorMessage('', noVariableNameError);
 	} else if ($('#newVariablesList tbody tr').length > 0) {
 		var varName = validateUniqueVariableName();
 		if(varName !== ''){
-				$('#page-message-modal').html(
-					'<div class="alert alert-danger">' + errorTheVariable + ' &quot;'+varName + '&quot; ' + errorTheVariableNurseryUnique + '</div>');
+				showErrorMessage('', errorTheVariable + ' &quot;'+varName + '&quot; ' + errorTheVariableNurseryUnique);
 				return;
 		}
 		
@@ -631,9 +625,7 @@ function submitSelectedVariables(variableType) {
 
         return promise;
 	} else {
-		$('#page-message-modal').html(
-				'<div class="alert alert-danger">' + varInListMessage
-						+ '</div>');
+		showErrorMessage('', varInListMessage);
 	}
 }
 
@@ -2087,13 +2079,11 @@ function isValueUnique() {
 }
 
 function showCheckTypeErrorMessage(message) {
-	$('#page-check-message-modal').html(
-			"<div class='alert alert-danger'>" + message + "</div>");
+	showErrorMessage('', message);
 }
 
 function showCheckTypeMessage(message) {
-	$('#page-check-message-modal').html(
-			"<div class='alert alert-success'>" + message + "</div>");
+	showSuccessfulMessage('', message);	
 }
 
 function deleteCheckType() {

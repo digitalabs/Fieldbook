@@ -1,33 +1,22 @@
-/*
-function doSearchTree(){
-	var result = searchOntologyTreeNodeWithName(treeDivId, $('#srch-term').val());
-	$("#page-message").html("");
-	if(result == null){   		    	       	    
-    	$("#page-message").html("<div class='alert alert-danger'>"+ seasrchErrorMessage +"</div>");
-	}else{
-		console.log(result);
-	}
-} 
-*/
-
 function doOntologyTreeHighlight(treeName, nodeKey){
-	
-	$("#"+treeName).dynatree("getTree").activateKey(nodeKey);
-	$('#'+treeName).find("*").removeClass('highlight');
+	'use strict';
+	$('#'+treeName).dynatree('getTree').activateKey(nodeKey);
+	$('#'+treeName).find('*').removeClass('highlight');
 	//then we highlight the nodeKey and its parents
-	var elem = nodeKey.split("_");
+	var elem = nodeKey.split('_');
 	var count = 0;
-	var key = "";
-	var standardVariableKey = "";
+	var key = '';
+	var standardVariableKey = '';
 	for(count = 0 ; count < elem.length ; count++){
-		if(key != '')
-			key = key + "_";
+		if(key != '') {
+			key = key + '_';
+		}			
 		
 		key = key + elem[count];
 		$('.'+key).addClass('highlight');
 	}
 	
-	var node = $("#"+treeName).dynatree("getTree").getNodeByKey(nodeKey);
+	var node = $('#'+treeName).dynatree('getTree').getNodeByKey(nodeKey);
 	
 	if(node != null && node.data.lastChildren == true){
 		//call ajax
@@ -39,13 +28,12 @@ function doOntologyTreeHighlight(treeName, nodeKey){
 }
 
 function searchOntologyTreeNodeWithName(treeName, name) {
+	'use strict';
     if (name == null) {
         return null;
     }
-
     
-    var searchFrom = $('#'+treeName).dynatree("getRoot");
-    
+    var searchFrom = $('#'+treeName).dynatree('getRoot');    
 
     var match = null;
 
@@ -60,20 +48,21 @@ function searchOntologyTreeNodeWithName(treeName, name) {
 	        }
 	    }
     });
-    return match;
-    
-    	
+    return match;        	
 };
 
 function formatResult(myItem) {
+	'use strict';
     return myItem.text;
  }
 
 function format(myItem) {
-	return "<p><strong>"+myItem.text+"</strong> ("+myItem.type+") <br /> "+myItem.parentTitle+"</p>";
+	'use strict';
+	return '<p><strong>'+myItem.text+'</strong> ('+myItem.type+') <br /> '+myItem.parentTitle+'</p>';
 }
 
 function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId){
+	'use strict';
 	//for triggering the start of search type ahead
 	if(treeData == null){
 		return;
@@ -123,16 +112,16 @@ function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId){
 	
 	var json = $.parseJSON(treeData);
 	
-	$("#" + treeName).dynatree({
+	$('#' + treeName).dynatree({
 	      checkbox: false,
 	      // Override class name for checkbox icon:
 	      classNames: {
-				container: "fbtree-container",
-				expander: "fbtree-expander",
-				nodeIcon: "fbtree-icon",
-				combinedIconPrefix: "fbtree-ico-",
-				focused: "fbtree-focused",
-				active: "fbtree-active"
+				container: 'fbtree-container',
+				expander: 'fbtree-expander',
+				nodeIcon: 'fbtree-icon',
+				combinedIconPrefix: 'fbtree-ico-',
+				focused: 'fbtree-focused',
+				active: 'fbtree-active'
 			},
 	      selectMode: 1,
 	      children: json,
@@ -164,29 +153,31 @@ function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId){
 
 //Tab functions
 function processTab(variableName, variableId) {
-	viewTabs(variableName, variableId);
-	
+	'use strict';
+	viewTabs(variableName, variableId);	
 }
 
 function showSelectedTab(selectedTabName) {
-	$("#ontology-tab-headers").show();
-	var tabs = $("#ontology-tabs").children();
+	'use strict';
+	$('#ontology-tab-headers').show();
+	var tabs = $('#ontology-tabs').children();
 	for (var i = 0; i < tabs.length; i++) {
 		if (tabs[i].id == selectedTabName) {
-			$("#" + tabs[i].id + "-li").addClass("active");
-			$("#" + tabs[i].id).show();
+			$('#' + tabs[i].id + '-li').addClass('active');
+			$('#' + tabs[i].id).show();
 		} else {
-			$("#" + tabs[i].id + "-li").removeClass("active");
-			$("#" + tabs[i].id).hide();
+			$('#' + tabs[i].id + '-li').removeClass('active');
+			$('#' + tabs[i].id).hide();
 		}
 	}
 }
 
 function clearAndAppendOntologyDetailsTab(variableName, html){
+	'use strict';
 	if(html != ''){
-		$("#ontology-detail-tabs").empty().append(html);		
-		var varDetails = variableDetailHeader + " " + variableName;
-		$("#variable-details").html(varDetails);
+		$('#ontology-detail-tabs').empty().append(html);		
+		var varDetails = variableDetailHeader + ' ' + variableName;
+		$('#variable-details').html(varDetails);
 	}		
 	else{
 		// we dont clear if there is an information tab
@@ -216,8 +207,8 @@ function viewTabs(variableName, variableId) {
 	isSearchTab = true;
 	Spinner.toggle();
 	$.ajax({
-		url: ontologyUrl + "details/" + variableId,
-		type: "get",
+		url: ontologyUrl + 'details/' + variableId,
+		type: 'GET',
 		async: true,
 		success: function(html) {
 			clearAndAppendOntologyDetailsTab(variableName, html);				
@@ -242,20 +233,20 @@ function viewTabs(variableName, variableId) {
 function doSave(combo) {
 	if (validateCombo(combo)) {
 		//get form data
-		var $form = $("#addVariableForm");
+		var $form = $('#addVariableForm');
 		serializedData = $form.serialize();
 		Spinner.toggle();		
 		$.ajax({
-			url: ontologyUrl + "addVariable/" + combo,
-			type: "post",
-			dataType: "json",
+			url: ontologyUrl + 'addVariable/' + combo,
+			type: 'POST',
+			dataType: 'json',
 			data: serializedData,
 		    success: function(data){
-			    if (data.status == "1") {
+			    if (data.status == '1') {
 			    	//add the newly inserted ontology in its corresponding dropdown
 			    	recreateCombo(combo, data);	
 			    	showSuccessMessage(data.successMessage);
-			    	if(data.addedNewTrait == "1"){
+			    	if(data.addedNewTrait == '1'){
 			    		//we need to recreate the combo for the traitClass			    		
 			    		var newData = {id:data.traitId, name:data.traitName, definition:data.traitDefinition};
 			    		recreateCombo('TraitClass', newData);			    		
@@ -266,20 +257,21 @@ function doSave(combo) {
 			    Spinner.toggle();
 		   } 
 		});		
-		$("#page-message-modal").html("");
+		$('#page-message-modal').html("");
 	}
 }
 
 function setCorrespondingTraitClass(propertyId){
+	'use strict';
 	var dataVal = {id:'',text:'',description:''}; //default value
 	if(isInt(propertyId)){
 		$.ajax({
-			url: ontologyUrl+"retrieve/trait/property/" + propertyId,
-			type: "GET",
-			dataType: "json",
-			data: "",
+			url: ontologyUrl+'retrieve/trait/property/' + propertyId,
+			type: 'GET',
+			dataType: 'json',
+			data: '',
 		    success: function(data){
-			    if (data.status == "1") {
+			    if (data.status == '1') {
 			    	//set trait class and crop ontology id of selected property
 			    	if(data.traitId != ''){
 			    		var count = 0;
@@ -290,8 +282,8 @@ function setCorrespondingTraitClass(propertyId){
 				    		}			    			
 				    	}
 			    	}
-			    	$("#cropOntologyId").val(data.cropOntologyId);
-			    	$("#comboManagePropTraitClass").select2('data', dataVal).trigger('change');
+			    	$('#cropOntologyId').val(data.cropOntologyId);
+			    	$('#comboManagePropTraitClass').select2('data', dataVal).trigger('change');
 		       	}
 		   }		   
 		});
@@ -299,7 +291,8 @@ function setCorrespondingTraitClass(propertyId){
 }
 
 function getOntologySuffix(id){
-	return (id > -1 ? " (Shared)" : ""); 
+	'use strict';
+	return (id > -1 ? ' (Shared)' : ''); 
 }
 
 //function to create the select2 combos
@@ -591,10 +584,8 @@ function itemExists(combo) {
 }
 
 function showSuccessMessage(message) {
-	$("#page-message").html(
-		    "<div class='alert alert-success'>"+ message +"</div>"
-	);
-	setTimeout("hideSuccessMessage()", 3000);
+	'use strict';
+	showSuccessfulMessage('', message);
 }
 
 function hideSuccessMessage(){
@@ -942,13 +933,10 @@ function loadOntologyModal(ontologyName){
 }
 
 function showErrorMessageInModal(messageDivId, message) {
-	$("#" + messageDivId).html("<div class='alert alert-danger'>"+ message +"</div>");
+	showErrorMessage('', message);
 }
-function showSuccessMessageInModal(message) {
-	$("#page-message-modal").html(
-		    "<div class='alert alert-success'>"+ message +"</div>"
-	);
-	setTimeout("hideSuccessMessageInModal()", 3000);
+function showSuccessMessageInModal(message) {	
+	showSuccessfulMessage('', message);
 }
 
 function hideSuccessMessageInModal(){

@@ -124,7 +124,7 @@ function setValuesForCounts() {
 }
 
 function showEnterFieldDetailsMessage(msg){
-		$('#enter-field-details-message').html("<div class='alert alert-danger'>"+ msg +"</div>");
+	createErrorNotification(errorMsgHeader,msg);
 }
 
 function initializeLocationSelect2(locationSuggestions, locationSuggestions_obj) {

@@ -1,7 +1,7 @@
 function validateEnterLabelFieldsPage(type){
 	//we do the validation
 	//we do the selected fields
-	var leftSelectedFields = "";
+	var leftSelectedFields = '';
 	$('#leftSelectedFields li').each(function(){
 		
 		leftSelectedFields += $(this).attr('id');
@@ -23,7 +23,7 @@ function validateEnterLabelFieldsPage(type){
 		rightSelectedFields = rightSelectedFields.substring(0,rightSelectedFields.length-1); 
 	}
 	
-	if(leftSelectedFields == "" && rightSelectedFields == ""){
+	if(leftSelectedFields == '' && rightSelectedFields == ''){
 		showMessage(selectedFieldsError);
 		moveToTopScreen();
 		return false;

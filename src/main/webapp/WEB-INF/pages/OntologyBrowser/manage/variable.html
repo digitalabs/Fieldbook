@@ -12,12 +12,12 @@
 	<div class="" th:if="${isPopup == '1'}" style="padding-top: 23px">
 		
 	</div>
-	<div class="row">
-	<div id="page-message">
-		<form  th:object="${ontologyBrowserForm}" th:remove="tag">	
-	        <div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div> 
-		</form>
-	</div>
+	<div class="row fbk-hide">
+		<div id="page-message">
+			<form  th:object="${ontologyBrowserForm}" th:remove="tag">	
+		        <div class="alert alert-danger" th:if="${#fields.hasErrors('*')} " th:each="err : ${#fields.errors('*')}" th:text="${err}"></div> 
+			</form>
+		</div>
 	</div>			
 	
 	<form id="manageVariable" role="form-horizontal" onsubmit="return doValidation()"  class="form-horizontal" action="#" 
@@ -401,7 +401,7 @@
 	
     function doValidation() {
     	var message = null;
-    	if ($("#isDelete").val() != 1) {
+    	if ($('#isDelete').val() != 1) {
 	    	//check required fields
 		    if (requiredFieldsEmpty()) {	
 		    	message = /*[[#{ontology.browser.modal.error}]]*/;
@@ -421,7 +421,7 @@
 		    var notANumber = /*[[#{ontology.manager.min.max.not.a.number}]]*/;
 		    var invalidValue = /*[[#{ontology.manager.min.max.invalid.value}]]*/;
 		    message = minMaxErrorMessage(bothMinMaxRequired, notANumber, invalidValue); 
-		    if (message != "") { 
+		    if (message != '') { 
 		    	showMessage(message);
 		    	moveToTopScreen()
 		    	return false;
@@ -555,7 +555,9 @@
 				rebuildDataTypeOptions(false);
 			}
 		})
-				
+		if($('#page-message .alert-danger').length !== 0){
+			showErrorMessage('', $('#page-message .alert-danger').html());
+		}	
 	});
 	
 	function hasCategoricalValues(){

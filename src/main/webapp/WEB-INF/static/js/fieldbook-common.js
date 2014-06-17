@@ -233,7 +233,7 @@ function createFieldMap(tableName) {
 		// Show pop up to select instances/dataset for field map creation
 		showFieldMapPopUpCreate(tableName, idList);
 	} else {
-		$('#page-create-field-map-message').html('<div class="alert alert-danger">' + fieldMapStudyRequired + '</div>');
+		showErrorMessage('', fieldMapStudyRequired);
 	}
 }
 
@@ -556,7 +556,7 @@ function clearStudyTree() {
 }
 
 function showMessage(message) {
-	$('#page-message').html('<div class="alert alert-danger">' + message + '</div>');
+	createErrorNotification(errorMsgHeader,message);
 }
 
 function createLabelPrinting(tableName) {
@@ -586,7 +586,7 @@ function createLabelPrinting(tableName) {
 	}
 
 	if (count !== 1) {
-		$('#page-create-field-map-message').html('<div class="alert alert-danger">' + createLabelErrorMsg + '</div>');
+		showMessage(createLabelErrorMsg);
 		return;
 	}
 
@@ -602,7 +602,7 @@ function createLabelPrinting(tableName) {
 		if (tableName === 'nursery-table') {
 			type = 'Nursery';
 		}
-		$('#page-create-field-map-message').html('<div class="alert alert-danger">' + createLabelErrorMsg + '</div>');
+		showMessage(createLabelErrorMsg);
 	}
 }
 
@@ -619,13 +619,13 @@ function showFieldMap(tableName) {
 
 	if (idVal != null) {
 		if (count > 1) {
-			$('#page-create-field-map-message').html('<div class="alert alert-danger">' + fieldMapOneStudyErrorMsg + '</div>');
+			showMessage(fieldMapOneStudyErrorMsg);
 		} else {
 			$('#page-message').html('');
 			showFieldMapPopUp(tableName, idVal);
 		}
 	} else {
-		$('#page-create-field-map-message').html('<div class="alert alert-danger">' + fieldMapStudyRequired + '</div>');
+		showMessage(fieldMapStudyRequired);
 	}
 }
 
@@ -677,7 +677,7 @@ function showFieldMapPopUp(tableName, id) {
 				}
 				selectTrialInstance(tableName);
 			} else if (data.nav == '1') {
-				$('#page-create-field-map-message').html('<div class="alert alert-danger">' + noFieldMapExists + '</div>');
+				showMessage(noFieldMapExists);
 			}
 			Spinner.toggle();
 		}
@@ -820,7 +820,7 @@ function openStudyOldFb() {
 	}
 
 	if (count != 1) {
-		$('#page-create-field-map-message').html('<div class="alert alert-danger">' + openStudyError + '</div>');
+		showMessage(openStudyError);
 		return;
 	}
 
@@ -845,7 +845,7 @@ function openStudy(tableName) {
 	count++;
 
 	if (count !== 1) {
-		$('#page-create-field-map-message').html('<div class="alert alert-danger">' + openStudyError + '</div>');
+		showMessage(openStudyError);
 		return;
 	}
 
@@ -864,7 +864,7 @@ function advanceNursery(tableName) {
 	idVal = $('#createNurseryMainForm #studyId').val();
 	count++;
 	if (count !== 1) {
-		$('#page-create-field-map-message').html('<div class="alert alert-danger">' + advanceStudyError + '</div>');
+		showMessage(advanceStudyError);
 		return;
 	}
 
@@ -894,15 +894,18 @@ function advanceNursery(tableName) {
 }
 
 function showErrorMessage(messageDivId, message) {
-	$('#' + messageDivId).html('<div class="alert alert-danger">' + message + '</div>');
+	'use strict';
+	createErrorNotification(errorMsgHeader,message);
 }
 
 function showSuccessfulMessage(messageDivId, message) {
-	$('#' + messageDivId).html('<div class="alert alert-success">' + message + '</div>');
+	'use strict';
+	createSuccessNotification(successMsgHeader,message);
 }
 
 function showAlertMessage(messageDivId, message) {
-    $('#' + messageDivId).html('<div class="alert alert-warning">' + message + '</div>');
+	'use strict';
+	createWarningNotification(warningMsgHeader,message);
 }
 
 function hideErrorMessage() {
@@ -1084,7 +1087,7 @@ function doExportTrial() {
 function exportNursery() {
 	var type = $('#exportType').val();
 	if (type === '0') {
-		showErrorMessage('page-export-message-modal', 'Please choose export type');
+		showMessage('Please choose export type');
 		return false;
 	}
 
@@ -1230,7 +1233,7 @@ function isFloat(value) {
 }
 
 function moveToTopScreen() {
-	$('html').scrollTop(0);
+	
 }
 
 function openImportGermplasmList() {

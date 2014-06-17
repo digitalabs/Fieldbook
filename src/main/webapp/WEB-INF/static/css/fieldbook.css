@@ -1234,3 +1234,7 @@ input::-ms-clear {
 .fbk-hide{
 	display: none;
 }
+.fbk-icon-header{
+	padding-bottom:5px; 
+	padding-right: 10px;
+}

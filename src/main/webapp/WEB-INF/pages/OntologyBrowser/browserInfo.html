@@ -1,9 +1,9 @@
 <div class="row" xmlns:th="http://www.thymeleaf.org">
 		<div class="col-xs-5 col-md-5">
 	        <div class="form-group" id="page-message"></div>
-	        <h4 th:utext="#{ontology.search.name}">
+	        <span class="h4" th:utext="#{ontology.search.name}">
 	            Enter a property or variable name:*
-	        </h4>
+	        </span>
         </div>
 
 		<div class="col-xs-7 col-md-7">
@@ -11,19 +11,12 @@
 			<h4 id="variable-details">
 	        </h4>
         </div>
-
     </div>
-
 	<div class="row">
 		<div class="col-xs-5 col-md-5">
-
 	        <div style="padding-left: 0px;" class="col-xs-12 col-md-12">
 	        	<input type="hidden" id="srch-term" class="form-control"/>
-	            <!-- <input type="text" id="srch-term" name="srch-term" placeholder="Search" class="form-control"/> -->
-	            <!-- <span class="input-group-addon "><i class="glyphicon glyphicon-search"></i></span> -->
-
 	        </div>
-
         </div>
     </div>
 
@@ -42,15 +35,11 @@
     </div>
 
      <a style="display: none" id="ontologyBaseUrl" href="/OntologyBrowser" th:href="@{/OntologyBrowser/}">test</a>
-
      <div class="col-xs-7 col-md-7 variable-detail-info" style="display:none">
-
-
 	<!-- Tab Navigation section -->
 				<ul class="nav nav-tabs" id="ontology-tab-headers">
 					<li class="active" id="ontology-details-tab-li"><a href="javascript:showSelectedTab('ontology-details-tab');">Details</a></li>
 				</ul>
-
 				<!-- details section -->
 				<div style="padding-top: 15px;" id="ontology-tabs">
 					<div id="ontology-details-tab">
@@ -68,17 +57,11 @@
     var termSuggestionsMap = {};
     var isSearchTab = false;
    	$( document ).ready(function() {
-
-  	//display tree
+		'use strict';
+  		//display tree
     	  displayOntologyTree(treeDivId, treeData, searchTreeData, 'srch-term');
          $.fn.modal.Constructor.prototype.enforceFocus = function () {};
-         $(".tt-hint").css('top','3px');
-  	     $(".tt-hint").css('left','0px');
-  	  //$("#srch-term").css('background-color','#FFFFFF');
       });
-
-
-
 
       //]]>
     </script>

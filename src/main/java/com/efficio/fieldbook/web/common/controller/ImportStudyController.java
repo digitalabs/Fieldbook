@@ -308,7 +308,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     				gidData.setValue(responseDetail.getOriginalGid());
     			}
     			else if (responseDetail.getStatus() == 2) { //create new germlasm
-    			    Name name = new Name(null, null, responseDetail.getNameType(), 1, userId, responseDetail.getNewDesig(), 0, 0, 0);
+
+    			    Name name = new Name(null, null, responseDetail.getNameType(), 1, userId, responseDetail.getNewDesig(), responseDetail.getImportLocationId(), responseDetail.getImportDate(), 0);
     			    Germplasm germplasm = new Germplasm(null, responseDetail.getImportMethodId(), 0, 0, 0, userId, 
     			            0, responseDetail.getImportLocationId(), responseDetail.getImportDate(), name);
     				int newGid = fieldbookMiddlewareService.addGermplasm(germplasm, name);

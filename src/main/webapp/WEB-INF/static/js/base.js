@@ -6,6 +6,9 @@ function createErrorNotification( titleDisplay, textDisplay){
 	createNotification('default-error-notification',titleDisplay,textDisplay, false);
 }
 function createSuccessNotification( titleDisplay, textDisplay){
+	//we remove all error
+	$('.error-notify').remove();
+	$('.warning-notify').remove();
 	createNotification('default-notification',titleDisplay,textDisplay, 3000);
 }
 function createWarningNotification( titleDisplay, textDisplay){

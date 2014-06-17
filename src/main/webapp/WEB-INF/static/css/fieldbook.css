@@ -357,7 +357,6 @@ table{
 div.scrollWrapper{
   height:200px;
   overflow-y:scroll;
-  max-width: 60%;
 }
 
 td.validValueLabel, td.validValueDel {
@@ -1200,4 +1199,8 @@ input::-ms-clear {
 .fbk-icon-header{
 	padding-bottom:5px; 
 	padding-right: 10px;
+}
+
+.reduce-padding {
+    padding: 0 6px;
 }

@@ -41,7 +41,7 @@
 		<div class="col-xs-6 col-md-6">	
 			<div class="form-group">
 					<div class="col-xs-4 col-md-4">
-         			<label class=" label-bold" for="variableName" th:text="#{ontology.browser.modal.variable.name} + ': '">Name:</label><span class="required">*</span>
+         			<label class=" label-bold" for="variableName" th:utext="#{ontology.browser.modal.variable.name}">Name:</label>
          			</div>
                      <div class="col-xs-6 col-md-6">
                      	
@@ -65,7 +65,7 @@
 		<div class="col-xs-6 col-md-6">	
 			<div class="form-group">
 				<div class="col-xs-4 col-md-4">
-				<label for="role" class="col-xs-12 col-md-12 control-label  label-bold" ><span th:text="#{ontology.browser.modal.role} + ': '"></span><span class="required">*</span></label>
+				<label for="role" class="col-xs-12 col-md-12 control-label  label-bold" ><span th:utext="#{ontology.browser.modal.role}"></span></label>
 				</div>
 				<div class="col-xs-6 col-md-6">
 					<select class="form-control" th:field="*{role}">
@@ -76,7 +76,7 @@
 			</div>
 			<div class="form-group">
 				<div class="col-xs-4 col-md-4">
-				<label for="dataType" class="col-xs-12 col-md-12 control-label  label-bold" ><span th:text="#{ontology.browser.modal.data.type} + ': '"></span><span class="required">*</span></label>
+				<label for="dataType" class="col-xs-12 col-md-12 control-label  label-bold" ><span th:utext="#{ontology.browser.modal.data.type}"></span></label>
 				</div>
 				<div class="col-xs-6 col-md-6">
 					<select class="form-control" th:field="*{dataType}" onchange="showValidValues()">
@@ -151,7 +151,7 @@
 		<div class="col-xs-6 col-md-6">	
 			<div class="form-group">
 				<div class="col-xs-4 col-md-4">
-				<label for="traitClass" class=" label-bold">Filter for Trait Class:</label><span class="required">*</span>
+				<label for="traitClass" class=" label-bold">Filter for Trait Class:<span class="required">*</span></label>
 				</div>
 				<div class="col-xs-6 col-md-6">
 					<input id="comboTraitClass" type="hidden" th:field="*{traitClass}"  class="form-control  input-medium  select2" placeholder=""/>                   	
@@ -181,7 +181,7 @@
 		<div class="col-xs-6 col-md-6">	
 			<div class="form-group">
 				<div class="col-xs-4 col-md-4">
-				<label for="traitClass" class="col-xs-12 col-md-12 control-label  label-bold" ><span th:text="#{ontology.browser.modal.property} + ': '"></span><span class="required">*</span></label>
+				<label for="traitClass" class="col-xs-12 col-md-12 control-label  label-bold" ><span th:utext="#{ontology.browser.modal.property}"></span></label>
 				</div>
 				<div class="col-xs-6 col-md-6">
 					<input id="comboProperty" type="hidden" th:field="*{property}" class="form-control select2" placeholder=""/>
@@ -226,7 +226,7 @@
 		<div class="col-xs-6 col-md-6">	
 			<div class="form-group">
 				<div class="col-xs-4 col-md-4">
-				<label class=" label-bold" for="method" th:text="#{ontology.browser.modal.method} + ': '">Method:</label><span class="required">*</span>
+				<label class=" label-bold" for="method" th:utext="#{ontology.browser.modal.method}">Method:</label>
 				</div>
 				<div class="col-xs-6 col-md-6">
 					<input id="comboMethod" type="hidden" th:field="*{method}" class="form-control select2" placeholder=""  />
@@ -248,7 +248,7 @@
 		<div class="col-xs-6 col-md-6">	
 			<div class="form-group">
 				<div class="col-xs-4 col-md-4">
-				<label   for="traitClass" class="col-xs-12 col-md-12 control-label label-bold" ><span th:text="#{ontology.browser.modal.scale} + ': '"></span><span class="required">*</span></label>
+				<label   for="traitClass" class="col-xs-12 col-md-12 control-label label-bold" ><span th:utext="#{ontology.browser.modal.scale}"></span></label>
 				</div>
 				<div class="col-xs-6 col-md-6">					
                    	<input id="comboScale" type="hidden" th:field="*{scale}" class="form-control select2" placeholder=""/>

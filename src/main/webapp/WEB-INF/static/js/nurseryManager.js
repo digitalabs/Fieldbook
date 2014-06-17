@@ -316,7 +316,7 @@ function getStandardVariables(variableType) {
 			$('#newVariablesList').addClass('fbk-hide');
 			$('#addVariablesSettingModal').modal({
 				backdrop : 'static',
-				keyboard : false
+				keyboard : true
 			});
 			
 			Spinner.toggle();

@@ -87,13 +87,13 @@ function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId){
 	//getOntologySuffix(id)
 			$('#'+searchDivId).select2('destroy');
 			$('#'+searchDivId).select2({
-        query: function (query) {	
-          var data = {results: sortByKey(termSuggestions_obj, "text")}, i, j, s;
-          // return the array that matches
-          data.results = $.grep(data.results,function(item,index) {
-            return ($.fn.select2.defaults.matcher(query.term,item.text));
-          
-          });
+				minimumResultsForSearch: 20,
+				query: function (query) {	
+						var data = {results: sortByKey(termSuggestions_obj, "text")}, i, j, s;
+						//return the array that matches
+						data.results = $.grep(data.results,function(item,index) {
+						return ($.fn.select2.defaults.matcher(query.term,item.text));          
+				});
           /*
           if (data.results.length === 0){
         	  data.results.unshift({id:query.term,text:query.term});	        	 
@@ -138,12 +138,8 @@ function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId){
 	        // Display list of selected nodes	    	
 	        doOntologyTreeHighlight(treeName, node.data.key);
 	      },
-	      onDblClick: function(node, event) {
-	        node.toggleSelect();
-	      },
 	      onKeydown: function(node, event) {
 	        if( event.which == 32 ) {
-	          node.toggleSelect();
 	          return false;
 	        }
 	      },

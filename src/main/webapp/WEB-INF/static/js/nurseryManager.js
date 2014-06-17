@@ -1244,7 +1244,7 @@ function recreateDynamicFieldsAfterDelete(name, tableId, rowClass, posValSuffix)
 			.each(
 					$("." + rowClass),
 					function(index, row) {
-						if (index >= breedingMethodIndex) {
+						if (index >= breedingMethodIndex && name === 'studyLevelVariables') {
 							index++;
 						}
 						// get currently selected value of select2 dropdown

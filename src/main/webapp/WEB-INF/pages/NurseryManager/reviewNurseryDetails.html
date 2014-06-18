@@ -113,33 +113,61 @@
 		</div>
 		<div class="col-md-12 sectionContainer collapse additionalDetails col-xs-12 col-md-12" style="padding-top: 10px;">
 			<div class="row">
-				<div class="col-xs-6 col-md-6">
-					<div>
-						<label  class="control-label">
-							<img heigth="16" th:src="@{/static/img/factors.png}" class="lbl-img" />
-							<strong class="sub-content-heading" th:text="#{nursery.nurserydetails.factors}">FACTORS</strong>
-						</label>
-					</div>
-					<div>
-						<table style="table-layout: fixed;" class="my-class table table-curved table-condensed" id="factorDetails">
-							<thead>
-								<tr>
-									<th width="45%" th:utext="#{nursery.nurserydetails.column.name}">.Name</th>
-									<th width="55%" th:utext="#{nursery.nurserydetails.column.description}">.Description</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr th:each="factorDetail, rowStat : *{factorDetails}">
-									<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
-										<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
+				<div class="col-sm-6">
+
+                        <div>
+                            <label  class="control-label">
+                                <img heigth="16" th:src="@{/static/img/factors.png}" class="lbl-img" />
+                                <strong class="sub-content-heading" th:text="#{nursery.nurserydetails.factors}">FACTORS</strong>
+                            </label>
+                        </div>
+                        <div>
+                            <table style="table-layout: fixed;" class="my-class table table-curved table-condensed" id="factorDetails">
+                                <thead>
+                                <tr>
+                                    <th width="45%" th:utext="#{nursery.nurserydetails.column.name}">.Name</th>
+                                    <th width="55%" th:utext="#{nursery.nurserydetails.column.description}">.Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="factorDetail, rowStat : *{factorDetails}">
+                                    <td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
+                                        <a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
 										*{factorDetails[__${rowStat.index}__].variable.cvTermId} + '\');'" th:text="${factorDetail.variable.name}"></a>
-									</td>
-									<td width="55%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${factorDetail.variable.description}"></td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
+                                    </td>
+                                    <td width="55%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${factorDetail.variable.description}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div>
+                            <label  class="control-label">
+                                <img th:src="@{/static/img/variates.png}" class="lbl-img" />
+                                <strong class="sub-content-heading" th:text="#{nursery.nurserydetails.variates}">SELECTION VARIATES</strong>
+                            </label>
+                        </div>
+                        <div>
+                            <table style="table-layout: fixed;" class="my-class table table-curved table-condensed selection-variate-table" id="selectionVariateDetails">
+                                <thead>
+                                <tr>
+                                    <th width="45%" th:utext="#{nursery.nurserydetails.column.name}">.Name</th>
+                                    <th width="55%" th:utext="#{nursery.nurserydetails.column.description}">.Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="selectionVariateDetail, rowStat : *{selectionVariateDetails}">
+                                    <td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
+                                        <a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
+										*{selectionVariateDetails[__${rowStat.index}__].variable.cvTermId} + '\');'" th:text="${selectionVariateDetail.variable.name}"></a>
+                                    </td>
+                                    <td width="55%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${selectionVariateDetail.variable.description}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
 				</div>
+
 				<div class="col-xs-6 col-md-6">
 					<div>
 						<label  class="control-label">
@@ -167,35 +195,7 @@
 						</table>
 					</div>
 				</div>
-			</div>
-			<div class="row">
-				<div class="col-xs-6 col-md-6">
-					<div>
-						<label  class="control-label">
-							<img th:src="@{/static/img/variates.png}" class="lbl-img" />
-							<strong class="sub-content-heading" th:text="#{nursery.nurserydetails.variates}">SELECTION VARIATES</strong>
-						</label>
-					</div>
-					<div>
-						<table style="table-layout: fixed;" class="my-class table table-curved table-condensed selection-variate-table" id="selectionVariateDetails">
-							<thead>
-								<tr>
-									<th width="45%" th:utext="#{nursery.nurserydetails.column.name}">.Name</th>
-									<th width="55%" th:utext="#{nursery.nurserydetails.column.description}">.Description</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr th:each="selectionVariateDetail, rowStat : *{selectionVariateDetails}">
-									<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
-										<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
-										*{selectionVariateDetails[__${rowStat.index}__].variable.cvTermId} + '\');'" th:text="${selectionVariateDetail.variable.name}"></a>
-									</td>
-									<td width="55%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${selectionVariateDetail.variable.description}"></td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
+
 			</div>
 		</div> <!-- section container -->
 

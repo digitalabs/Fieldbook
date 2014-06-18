@@ -521,17 +521,8 @@ padding-left: 20px; margin-top: 7px
     line-height: 18px;
 }
 .help-tooltip-nursery {
-    background-color: #5A5A5A;
-    border-radius: 50%;
-    box-shadow: 0 0 3px #000000;
-    color: #FFFFFF;
-    font-size: 12px;
-    margin-right: 20px;
-    padding: 0 5px;
-    text-decoration: none;
-    margin-left: 15px;
-    margin-top: 13px;
-    line-height: 18px;
+    font-size: 13pt;
+
 }
 .help-tooltip-nursery-advance{
 	margin-left: 0px;
@@ -829,11 +820,8 @@ table.table-with-scroll-inventory thead tr th:nth-child(7) {
 	width: 12%;
 }
 div.sectionContainer {
-	max-height: 500px;
-	overflow-y: auto;
     overflow-x: hidden;
     padding-top: 6pt;
-
 }
 .variable-details{
 	max-height: 250px;
@@ -951,7 +939,9 @@ div.sectionContainer {
 }
 
 .control-label img,
-.control-label .sub-content-heading
+.control-label .sub-content-heading,
+.control-label [class^="bms-"],
+.control-label [class^="bms-"]:before
 {
     vertical-align: middle;
 }

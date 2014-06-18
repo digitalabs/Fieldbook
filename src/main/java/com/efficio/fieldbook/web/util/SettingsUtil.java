@@ -1401,7 +1401,7 @@ public class SettingsUtil {
     	return details;
 	}
 	
-	private static String getSpecialFieldValue(String specialFieldLabel, int datasetId,
+	private static String getSpecialFieldValue(String specialFieldLabel, Integer datasetId,
 			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
 			Workbook workbook) 
 	throws MiddlewareQueryException {
@@ -1420,7 +1420,10 @@ public class SettingsUtil {
 					variateIds.add(variate.getTermId());
 				}
 			}
-			long count = fieldbookMiddlewareService.countVariatesWithData(datasetId, variateIds);
+			long count = 0;
+			if (datasetId != null) {
+				count = fieldbookMiddlewareService.countVariatesWithData(datasetId, variateIds);
+			}
 			return count + " of " + variateIds.size();
 		}
 		return "";

@@ -109,7 +109,7 @@ public class AdvancingSourceListFactory {
 			for (AdvancingSource row : rows) {
 				String gid = row.getGermplasm().getGid();
 				if (gid != null && NumberUtils.isNumber(gid)) {
-					List<Name> names = map.get(gid);
+					List<Name> names = map.get(Integer.valueOf(gid));
 					if (names != null && !names.isEmpty()) {
 						row.setNames(names);
 					}

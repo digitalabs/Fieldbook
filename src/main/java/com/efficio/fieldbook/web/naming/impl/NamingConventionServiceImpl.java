@@ -170,14 +170,12 @@ public class NamingConventionServiceImpl implements NamingConventionService {
         for (AdvancingSource row : rows.getRows()) {
             if (row.getGermplasm() != null && !row.isCheck() && row.getPlantsSelected() != null && row.getBreedingMethod() != null) {
             	Method method = row.getBreedingMethod();
-            	String germplasmName = getGermplasmName(method.getSnametype(), row);
-            	String expression = method.getSeparator() + method.getPrefix() + method.getCount() + method.getSuffix();
+            	String germplasmName = getGermplasmRootName(method.getSnametype(), row);
+            	String expression = germplasmName + method.getSeparator() + method.getPrefix() + method.getCount() + method.getSuffix();
             	row.setRootName(germplasmName);
             	List<String> names = processCodeService.applyToName(expression, row);
-            	System.out.println("NAME IS " + names.size());
             	int index = 1;
             	for (String name : names) {
-            		System.out.println(name);
             		addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, row.getNurseryName());
             	}
             }
@@ -186,7 +184,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
         return list;
     }
     
-    private String getGermplasmName(Integer snametype, AdvancingSource row) {
+    private String getGermplasmRootName(Integer snametype, AdvancingSource row) {
     	List<Name> names = row.getNames();
     	if (names != null && !names.isEmpty()) {
     		if (snametype != null) {
@@ -204,6 +202,6 @@ public class NamingConventionServiceImpl implements NamingConventionService {
     		}
     	}
     	
-    	return null;
+    	return row.getGermplasm().getDesig();
     }
 }

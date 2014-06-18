@@ -1901,7 +1901,8 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
 									});
 								}
 								query.callback(data);
-							}
+                            },
+                            dropdownCssClass : 's2-nosearch-icon'
 						})
 				.on(
 						'change',

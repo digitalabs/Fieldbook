@@ -1201,3 +1201,7 @@ input[type="text"], input[type="password"], .ui-autocomplete-input, textarea, .u
 	font-size: 13px;
 }
 
+.s2-nosearch-icon .select2-input {
+    background: no-repeat 100% -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, #fff), color-stop(0.99, #eee))
+}
+

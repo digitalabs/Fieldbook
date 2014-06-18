@@ -11,29 +11,43 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.bean;
 
+import java.util.List;
+
+import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.pojos.Name;
+
 /**
  * 
- * The POJO containing information for a germplasm list data.
+ * The POJO containing information needed for Advancing.
  *
  */
 public class AdvancingSource {
 
     private ImportedGermplasm germplasm;
+    private List<Name> names;
     private Integer plantsSelected;
-    private Integer breedingMethodId;
+    private Method breedingMethod;
     private boolean isCheck;
-    private String methodType;
     private boolean isBulk;
+    private String nurseryName;
+    private String season;
+    private String locationAbbreviation;
 
-    public AdvancingSource(ImportedGermplasm germplasm, Integer plantsSelected, Integer breedingMethodId, boolean isCheck, Boolean isBulk) {
-        this.germplasm = germplasm;
-        this.plantsSelected = plantsSelected;
-        this.breedingMethodId = breedingMethodId;
-        this.isCheck = isCheck;
-        this.isBulk = isBulk != null && isBulk.booleanValue();
-    }
-    
-    /**
+    public AdvancingSource(ImportedGermplasm germplasm, List<Name> names,
+			Integer plantsSelected, Method breedingMethod, boolean isCheck,
+			String nurseryName, String season, String locationAbbreviation) {
+		super();
+		this.germplasm = germplasm;
+		this.names = names;
+		this.plantsSelected = plantsSelected;
+		this.breedingMethod = breedingMethod;
+		this.isCheck = isCheck;
+		this.nurseryName = nurseryName;
+		this.season = season;
+		this.locationAbbreviation = locationAbbreviation;
+	}
+
+	/**
      * @return the germplasm
      */
     public ImportedGermplasm getGermplasm() {
@@ -62,20 +76,6 @@ public class AdvancingSource {
     }
     
     /**
-     * @return the breedingMethodId
-     */
-    public Integer getBreedingMethodId() {
-        return breedingMethodId;
-    }
-    
-    /**
-     * @param breedingMethodId the breedingMethodId to set
-     */
-    public void setBreedingMethodId(Integer breedingMethodId) {
-        this.breedingMethodId = breedingMethodId;
-    }
-
-    /**
      * @return the isCheck
      */
     public boolean isCheck() {
@@ -87,20 +87,6 @@ public class AdvancingSource {
      */
     public void setCheck(boolean isCheck) {
         this.isCheck = isCheck;
-    }
-
-    /**
-     * @return the methodType
-     */
-    public String getMethodType() {
-        return methodType;
-    }
-    
-    /**
-     * @param methodType the methodType to set
-     */
-    public void setMethodType(String methodType) {
-        this.methodType = methodType;
     }
 
 	/**
@@ -115,6 +101,76 @@ public class AdvancingSource {
 	 */
 	public void setBulk(boolean isBulk) {
 		this.isBulk = isBulk;
+	}
+
+	/**
+	 * @return the names
+	 */
+	public List<Name> getNames() {
+		return names;
+	}
+
+	/**
+	 * @param names the names to set
+	 */
+	public void setNames(List<Name> names) {
+		this.names = names;
+	}
+
+	/**
+	 * @return the breedingMethod
+	 */
+	public Method getBreedingMethod() {
+		return breedingMethod;
+	}
+
+	/**
+	 * @param breedingMethod the breedingMethod to set
+	 */
+	public void setBreedingMethod(Method breedingMethod) {
+		this.breedingMethod = breedingMethod;
+	}
+
+	/**
+	 * @return the nurseryName
+	 */
+	public String getNurseryName() {
+		return nurseryName;
+	}
+
+	/**
+	 * @param nurseryName the nurseryName to set
+	 */
+	public void setNurseryName(String nurseryName) {
+		this.nurseryName = nurseryName;
+	}
+
+	/**
+	 * @return the season
+	 */
+	public String getSeason() {
+		return season;
+	}
+
+	/**
+	 * @param season the season to set
+	 */
+	public void setSeason(String season) {
+		this.season = season;
+	}
+
+	/**
+	 * @return the locationAbbreviation
+	 */
+	public String getLocationAbbreviation() {
+		return locationAbbreviation;
+	}
+
+	/**
+	 * @param locationAbbreviation the locationAbbreviation to set
+	 */
+	public void setLocationAbbreviation(String locationAbbreviation) {
+		this.locationAbbreviation = locationAbbreviation;
 	}
     
     

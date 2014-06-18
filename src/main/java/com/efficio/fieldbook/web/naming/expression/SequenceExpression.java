@@ -18,7 +18,7 @@ public class SequenceExpression extends Expression {
 			int startIndex = value.indexOf(Expression.SEQUENCE);
 			int endIndex = startIndex + Expression.SEQUENCE.length();
 			
-			for (int i = 0; i < getSource().getPlantsSelected(); i++) {
+			for (int i = 1; i <= getSource().getPlantsSelected(); i++) {
 				StringBuilder newName = new StringBuilder(value);
 				newName.replace(startIndex, endIndex, String.valueOf(i));
 				newNames.add(newName);

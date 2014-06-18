@@ -16,8 +16,8 @@ public class BracketsExpression extends Expression {
 			int startIndex = value.indexOf(Expression.BRACKETS);
 			int endIndex = startIndex + Expression.BRACKETS.length();
 			
-			value.insert(0, "(");
 			value.replace(startIndex, endIndex, ")");
+			value.insert(0, "(");
 		}
 	}
 

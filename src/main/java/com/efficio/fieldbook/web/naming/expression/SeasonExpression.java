@@ -1,5 +1,7 @@
 package com.efficio.fieldbook.web.naming.expression;
 
+import java.util.List;
+
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 public class SeasonExpression extends Expression {
@@ -9,12 +11,14 @@ public class SeasonExpression extends Expression {
 	}
 
 	@Override
-	public void apply(StringBuilder value) {
-		int startIndex = value.indexOf(Expression.SEASON);
-		int endIndex = startIndex + Expression.SEASON.length();
-		
-		String newValue = getSource().getSeason();
-		value.replace(startIndex, endIndex, newValue);
+	public void apply(List<StringBuilder> values) {
+		for (StringBuilder value : values) {
+			int startIndex = value.indexOf(Expression.SEASON);
+			int endIndex = startIndex + Expression.SEASON.length();
+			
+			String newValue = getSource().getSeason();
+			value.replace(startIndex, endIndex, newValue != null ? newValue : "");
+		}
 	}
 
 }

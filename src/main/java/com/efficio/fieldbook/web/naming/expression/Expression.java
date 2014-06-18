@@ -1,12 +1,13 @@
 package com.efficio.fieldbook.web.naming.expression;
 
+import java.util.List;
+
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 public abstract class Expression {
 
 	public static final String BRACKETS = "[BRACKETS]";
 	public static final String BULK_COUNT = "[BCOUNT]";
-	public static final String COUNT = "[COUNT]";
 	public static final String LOCATION_ABBREVIATION = "[LABBR]";
 	public static final String NUMBER = "[NUMBER]";
 	public static final String SEASON = "[SEASON]";
@@ -19,7 +20,7 @@ public abstract class Expression {
 		this.source = source;
 	}
 	
-	public abstract void apply(StringBuilder value);
+	public abstract void apply(List<StringBuilder> values);
 
 	/**
 	 * @return the source

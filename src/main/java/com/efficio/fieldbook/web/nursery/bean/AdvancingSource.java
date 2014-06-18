@@ -32,6 +32,8 @@ public class AdvancingSource {
     private String nurseryName;
     private String season;
     private String locationAbbreviation;
+    private String rootName;
+    private Method sourceMethod;
 
     public AdvancingSource(ImportedGermplasm germplasm, List<Name> names,
 			Integer plantsSelected, Method breedingMethod, boolean isCheck,
@@ -171,6 +173,34 @@ public class AdvancingSource {
 	 */
 	public void setLocationAbbreviation(String locationAbbreviation) {
 		this.locationAbbreviation = locationAbbreviation;
+	}
+
+	/**
+	 * @return the rootName
+	 */
+	public String getRootName() {
+		return rootName;
+	}
+
+	/**
+	 * @param rootName the rootName to set
+	 */
+	public void setRootName(String rootName) {
+		this.rootName = rootName;
+	}
+
+	/**
+	 * @return the sourceMethod
+	 */
+	public Method getSourceMethod() {
+		return sourceMethod;
+	}
+
+	/**
+	 * @param sourceMethod the sourceMethod to set
+	 */
+	public void setSourceMethod(Method sourceMethod) {
+		this.sourceMethod = sourceMethod;
 	}
     
     

@@ -1977,9 +1977,9 @@ function deleteFolder(object) {
 
 	if (!$(object).hasClass('disable-image')) {
 		$('#deleteFolderDiv').slideDown('fast');
-		/*currentFolderName = $('#studyTree').dynatree('getTree').getActiveNode().data.title*/
-		/*$('#delete-confirmation').html(deleteConfirmation + ' ' + currentFolderName + '?');*/
-		/*$('#page-delete-study-folder-message-modal').html('');*/
+		currentFolderName = $('#studyTree').dynatree('getTree').getActiveNode().data.title
+		$('#deleteFolderLabelID').html(deleteConfirmation + ' ' + currentFolderName + '?');
+
 	}
 }
 
@@ -1996,7 +1996,7 @@ function submitDeleteFolder() {
 		success: function(data) {
 			var node;
 			if (data.isSuccess === '1') {
-				$('#deleteStudyFolder').modal('hide');
+				$('#deleteFolderDiv').slideUp('fast');
 				node = $('#studyTree').dynatree('getTree').getActiveNode();
 				if (node != null) {
 					node.remove();

@@ -63,16 +63,16 @@
                             </div>
                         </div>
                         <div class="col-xs-12 col-md-12 form-group" id="deleteFolderDiv">
-                            <div class="col-xs-6 col-md-6 nopadding">
-                                <label id="renameFolderLabelID" class="control-label  label-bold" th:text="#{browse.nursery.delete.folder.name.confirmation}">Are you sure you want to delete </label>
+                            <div class="col-xs-8 col-md-8 nopadding">
+                                <label id="deleteFolderLabelID" class="control-label  label-bold" th:text="#{browse.nursery.delete.folder.name.confirmation}">Are you sure you want to delete </label>
                             </div>
-                            <div class="col-xs-6 col-md-6 nopadding">
+                            <div class="col-xs-4 col-md-4 nopadding">
                                 <div class="input-group">
                                     <span class="input-group-btn">
-                                        <button class="btn btn-success">
+                                        <button class="btn btn-success" id="deleteFolderOkButton">
                                             <span class="glyphicon glyphicon-ok"></span>
                                         </button>
-                                        <button class="btn btn-danger">
+                                        <button class="btn btn-danger" id="deleteFolderCancelButton">
                                             <span class="glyphicon glyphicon-remove"></span>
                                         </button>
                                     </span>
@@ -138,6 +138,10 @@ $(document).ready(function () {
     $('#renameFolderCancelButton').on('click', function() {
         $('#renameFolderDiv').slideUp('fast');
     });
+    $('#deleteFolderOkButton').on('click', submitDeleteFolder);
+    $('#deleteFolderCancelButton').on('click', function() {
+        $('#deleteFolderDiv').slideUp('fast');
+    })
 });
 
 function addFolder(object) {

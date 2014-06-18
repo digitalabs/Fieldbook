@@ -1722,38 +1722,6 @@ function validateCreateNursery() {
 	} else if ($('.check-germplasm-list-items tbody tr').length > 0 && $('.germplasm-list-items tbody tr').length === 0){
 		hasError = true;
 		customMessage = nurseryGermplasmListIsRequired;
-	} else {
-		$('.nurseryLevelVariableIdClass')
-				.each(
-						function() {
-							if (!hasError) {
-
-								if ($(this).parent().next().find(
-										'.form-control').hasClass('select2')
-										&& $(this).parent().next().find(
-												'.form-control')
-												.select2('data')) {
-									idname = $(this).parent().next().find(
-											'.form-control').attr('id');
-									value = $('#' + getJquerySafeId(idname))
-											.select2('data').text;
-								} else {
-									value = $(this).parent().next().find(
-											'.form-control').val();
-								}
-								value = $.trim(value);
-								if (!value) {
-									if($(this).parent().hasClass('variable-tooltip')) {
-										name = $(this).parent().data('original-title');
-									}else {
-										name = $(this).parent().find('.control-label').html();
-									}
-
-									hasError = true;
-								}
-							}
-
-						});
 	}
 
 	if (hasError) {

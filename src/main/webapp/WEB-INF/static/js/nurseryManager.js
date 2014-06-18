@@ -1695,7 +1695,6 @@ function validateCreateNursery() {
 	var hasError = false
 		,name = ''
 		,customMessage = ''
-		,studyBookName
 		,studyNameId = $('#studyNameTermId').val();
 
 	$('.nurseryLevelVariableIdClass').each(function() {
@@ -1705,8 +1704,13 @@ function validateCreateNursery() {
 	});
 
 	var startDate = $('#' + getJquerySafeId('basicDetails.value2')).val();
-
-	if (isStudyNameUnique() === false) {
+	if($.trim($('#' + getJquerySafeId('basicDetails0.value')).val()) === ''){
+		hasError = true;
+		name = 'Name';
+	}else if($.trim($('#' + getJquerySafeId('basicDetails1.value')).val()) === ''){
+		hasError = true;
+		name = 'Description';
+	}else if (isStudyNameUnique() === false) {
 		hasError = true;
 		customMessage = "Name should be unique";
 	} else if ($('#folderId').val() === '') {
@@ -1727,10 +1731,11 @@ function validateCreateNursery() {
 	if (hasError) {
 		var errMsg = '';
 		if (name !== '')
-			errMsg = name.replace('*', '').replace(':', '') + ' '
-					+ nurseryFieldsIsRequired;
-		if (customMessage !== '')
+			errMsg = name.replace('*', '').replace(':', '') + ' ' + nurseryFieldsIsRequired;
+		if (customMessage !== '') {
 			errMsg = customMessage;
+		}	
+		
 		showInvalidInputMessage(errMsg);
 		return false;
 	}

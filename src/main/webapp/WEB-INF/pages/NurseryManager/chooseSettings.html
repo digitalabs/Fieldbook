@@ -74,7 +74,10 @@
 								th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control character-input" rows="3" />
 
 								<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DATE'}"
-								type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control date-input" />
+								type="text" placeholder="yyyymmdd" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control date-input" />
+								<label  th:if="${nurseryLevelVariable.variable.widgetType.type == 'DATE'}"  class="btn datepicker">
+									<img th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;" />
+								</label>
 
 								<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'SLIDER'}"
 								type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}"
@@ -133,7 +136,10 @@
 
 						<input th:if="${nurseryCondition.variable.widgetType.type == 'DATE'}"
 						type="text" th:field="*{nurseryConditions[__${rowStat.index}__].value}" class="form-control date-input" />
-
+						<label  th:if="${nurseryCondition.variable.widgetType.type == 'DATE'}"  class="btn datepicker">
+							<img th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;" />
+						</label>
+						
 						<input th:if="${nurseryCondition.variable.widgetType.type == 'SLIDER'}"
 						type="text" th:field="*{nurseryConditions[__${rowStat.index}__].value}"
 						th:attr="data-min=${nurseryCondition.variable.minRange}"

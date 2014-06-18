@@ -49,52 +49,48 @@
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
 	function showAddFieldPopup(){
+		'use strict';
 		$('#page-message-modal').html('');
 		$('#newFieldName').val('');
 		recreatePopupLocationCombo();
-		$('#addFieldsModal').modal({ backdrop: 'static', keyboard: false });
+		$('#addFieldsModal').modal({ backdrop: 'static', keyboard: true });
 	}
 	function validateAddFields(){
-		if($('#parentLocationId').val() == ''){
-			showErrorMessage('page-message-modal', parentLocationRequired);
+		'use strict';
+		if($('#parentLocationId').val() === ''){
+			showInvalidInputMessage(parentLocationRequired);
 			return false;
 		}
 
-		if($('#newFieldName').val() == ''){
-			showErrorMessage('page-message-modal', fieldNameRequired);
+		if($('#newFieldName').val() === ''){
+			showInvalidInputMessage(fieldNameRequired);
 			return false;
 		}
 
-				//add
-				addNewFieldLocation($('#newFieldName').val(), $('#parentLocationId').val());
-			}
+		//add
+		addNewFieldLocation($('#newFieldName').val(), $('#parentLocationId').val());
+	}
 
-			function addNewFieldLocation(fieldName, locationId){
-				Spinner.toggle();
-				var dataForm = $('#add-field-form').serialize()
-				$.ajax(
-					{ url: "/Fieldbook/Fieldmap/enterFieldDetails/addNewField",
-					type: "POST",
-					data: dataForm,
-					success: function(data) {
-						if(data == 'success'){
-							showSuccessfulMessage("page-message-modal", fieldAddedSuccessfully);
-							   //$('#newFieldName').val('');
-							   $('#addFieldsModal').modal('toggle');
-							}else{
-								showErrorMessage("page-message-modal", fieldNameDuplicateError);
-							}
-
-						},
-						error: function(jqXHR, textStatus, errorThrown){
-							console.log("The following error occured: " + textStatus, errorThrown);
-						},
-						complete: function(){
-							Spinner.toggle();
-						}
+	function addNewFieldLocation(fieldName, locationId){
+		Spinner.toggle();
+		var dataForm = $('#add-field-form').serialize()
+		$.ajax(
+			{ url: "/Fieldbook/Fieldmap/enterFieldDetails/addNewField",
+			type: "POST",
+			data: dataForm,
+			success: function(data) {
+				if(data == 'success'){
+					showSuccessfulMessage('page-message-modal', fieldAddedSuccessfully);
+					   //$('#newFieldName').val('');
+					   $('#addFieldsModal').modal('toggle');
+					}else{
+						showInvalidInputMessage(fieldNameDuplicateError);
 					}
-					);
+				Spinner.toggle();
+				}
 			}
+		);
+	}
 	//]]>
 </script>
 </div>

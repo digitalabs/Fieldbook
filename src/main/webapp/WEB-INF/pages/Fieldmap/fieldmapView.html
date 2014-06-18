@@ -93,20 +93,19 @@
 		$('.deleted-p').each(function(){
 			$(this).parent().parent().addClass('deleted')
 		})
-		if ($("#stepValue").val() == '2') {
-			$(".machineDirectionRow").hide();
-			$(".new-plot").hide();
+		if ($('#stepValue').val() == '2') {
+			$('.machineDirectionRow').hide();
+			$('.new-plot').hide();
 			$('.new-plot').each(function(){
 
 				if($(this).parent().parent().hasClass('planted')){
-					console.log('clean');
 					$(this).parent().parent().removeClass('planted');
 				}
 			})
 		}
 		else {
-			$(".machineDirectionRow").show();
-			$(".plotLabel").show();
+			$('.machineDirectionRow').show();
+			$('.plotLabel').show();
 		}
 	});
     //]]>

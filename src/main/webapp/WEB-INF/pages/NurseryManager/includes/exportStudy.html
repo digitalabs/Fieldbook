@@ -191,7 +191,7 @@
 						if (data === "0") {
 							// Disable the export order of serpentine
 							$('#exportStudyModal').modal('hide');
-							$('#exportStudyConfirmationModal').modal({ backdrop: 'static', keyboard: false });
+							$('#exportStudyConfirmationModal').modal({ backdrop: 'static', keyboard: true });
 						} else {
 							exportNursery();
 						}
@@ -203,7 +203,7 @@
 
 		function doConfirmGoBack() {
 			$('#exportStudyConfirmationModal').modal('hide');
-			$('#exportStudyModal').modal({ backdrop: 'static', keyboard: false });
+			$('#exportStudyModal').modal({ backdrop: 'static', keyboard: true });
 		}
 
 		function doConfirmExport() {

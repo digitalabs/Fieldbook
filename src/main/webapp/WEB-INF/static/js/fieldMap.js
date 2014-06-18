@@ -2,42 +2,42 @@ function validateEnterFieldPage(){
 	var totalNoOfPlots;
 	
 	if($('#'+getJquerySafeId('userFieldmap.fieldLocationId')).val() == 0){
-		showEnterFieldDetailsMessage(msgLocation);
+		showInvalidInputMessage(msgLocation);
 		return false;
 	}
 	
 	if($('#'+getJquerySafeId('userFieldmap.fieldId')).val() == ""){
-		showEnterFieldDetailsMessage(msgFieldName);
+		showInvalidInputMessage(msgFieldName);
 		return false;
 	}
 	
 	if($('#'+getJquerySafeId('userFieldmap.blockId')).val() == ""){
-		showEnterFieldDetailsMessage(msgBlockName);
+		showInvalidInputMessage(msgBlockName);
 		return false;
 	}
 	
 	if($('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val() == "" 
 		|| !isInt($('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val())
 		|| parseInt($('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val()) < 1){
-		showEnterFieldDetailsMessage(msgRowsInBlock);
+		showInvalidInputMessage(msgRowsInBlock);
 		return false;
 	}
 	if($('#'+getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val() == "" || 
 	!isInt($('#'+getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val())
 	|| parseInt($('#'+getJquerySafeId('userFieldmap.numberOfRangesInBlock')).val()) < 1){
-		showEnterFieldDetailsMessage(msgRangesInBlock);
+		showInvalidInputMessage(msgRangesInBlock);
 		return false;
 	}
 	if(parseInt($('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val()) % 
 			parseInt($('#'+getJquerySafeId('userFieldmap.numberOfRowsPerPlot')).select2('data').id) != 0){
 		//we need to check 
 		
-		showEnterFieldDetailsMessage(msgColError);
+		showInvalidInputMessage(msgColError);
 		return false;
 	}
 	
 	if (parseInt($('#'+getJquerySafeId('userFieldmap.numberOfRowsInBlock')).val()) > 255) {
-		showEnterFieldDetailsMessage(noOfRowsLimitError);
+		showInvalidInputMessage(noOfRowsLimitError);
 		return false;
 	}
 	
@@ -195,42 +195,42 @@ function validatePlantingDetails() {
 	var plantingOrder = $("input[type='radio']:checked").length;
 				
 	if (startingCol == "") {
-		showMessage(startColError);
+		showInvalidInputMessage(startColError);
 		return false;
 	}
 	
 	if (startingRange == "") {
-		showMessage(startRangeError);
+		showInvalidInputMessage(startRangeError);
 		return false;
 	}
 	
 	if (!isInt(startingCol)) {
-		showMessage(startColNotInt);
+		showInvalidInputMessage(startColNotInt);
 		return false;
 	} 
 	
 	if (!isInt(startingRange)) {
-		showMessage(startRangeNotInt);
+		showInvalidInputMessage(startRangeNotInt);
 		return false;
 	}
 	
 	if (parseInt(startingCol) > parseInt(rowNum)/parseInt(rowsPerPlot) || parseInt(startingCol) <= 0) {
-		showMessage(startColInvalid);
+		showInvalidInputMessage(startColInvalid);
 		return false;
 	}
 	
 	if (parseInt(startingRange) > parseInt(rangeNum) || parseInt(startingRange) <= 0) {
-		showMessage(startRangeInvalid);
+		showInvalidInputMessage(startRangeInvalid);
 		return false;
 	}
 	
 	if (plantingOrder == 0) {
-		showMessage(plantingOrderError);
+		showInvalidInputMessage(plantingOrderError);
 		return false;
 	}
 	
 	if (checkStartingCoordinates()) {
-		showMessage(deletedPlotError);
+		showInvalidInputMessage(deletedPlotError);
 		return false;
 	}
 	
@@ -535,6 +535,7 @@ function recreatePopupFieldCombo() {
     			 //if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
        			$('#'+getJquerySafeId('parentFieldId')).select2({
        				//minimumInputLength: 2,
+       				minimumResultsForSearch: 20,
        		        query: function (query) {
        		          var data = {results: popupFieldlocationSuggestions_obj}, i, j, s;
        		          // return the array that matches
@@ -667,6 +668,7 @@ function initializeFieldSelect2(suggestions, suggestions_obj, addOnChange, curre
 	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
 	$('#'+getJquerySafeId('userFieldmap.fieldId')).select2({
 		//minimumInputLength: 2,
+		minimumResultsForSearch: 20,
         query: function (query) {
           var data = {results: suggestions_obj}, i, j, s;
           // return the array that matches
@@ -715,6 +717,7 @@ function initializeBlockSelect2(suggestions, suggestions_obj, addOnChange, curre
 	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
 	$('#'+getJquerySafeId('userFieldmap.blockId')).select2({
 		//minimumInputLength: 2,
+		minimumResultsForSearch: 20,
         query: function (query) {
           var data = {results: suggestions_obj}, i, j, s;
           // return the array that matches

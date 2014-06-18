@@ -50,55 +50,50 @@
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
 	function showAddBlockPopup(){
+		'use strict';
 		$('#page-block-message-modal').html('');
 		$('#newBlockName').val('');
 		recreatePopupFieldCombo();
-		$('#addBlocksModal').modal({ backdrop: 'static', keyboard: false });
+		$('#addBlocksModal').modal({ backdrop: 'static', keyboard: true });
 	}
 	function validateAddBlocks(){
+		'use strict';
 		if($('#parentFieldId').val() == ''){
-			showErrorMessage('page-block-message-modal', parentFieldRequired);
+			showInvalidInputMessage(parentFieldRequired);
 			return false;
 		}
 
 		if($('#newBlockName').val() == ''){
-			showErrorMessage('page-block-message-modal', blockNameRequired);
+			showInvalidInputMessage(blockNameRequired);
 			return false;
 		}
 
-				//add
-				addNewBlockLocation($('#newBlockName').val(), $('#parentFieldId').val());
-			}
+		//add
+		addNewBlockLocation($('#newBlockName').val(), $('#parentFieldId').val());
+	}
 
-			function addNewBlockLocation(fieldName, locationId){
-				Spinner.toggle();
-				var dataForm = $('#add-block-form').serialize()
-				$.ajax(
-					{ url: "/Fieldbook/Fieldmap/enterFieldDetails/addNewBlock",
-					type: "POST",
-					data: dataForm,
-					success: function(data) {
-
-
-						if(data == 'success'){
-							showSuccessfulMessage("page-block-message-modal", blockAddedSuccessfully);
-								//$('#newBlockName').val('');
-								$('#addBlocksModal').modal('toggle');
-							}else{
-								showErrorMessage("page-block-message-modal", blockNameDuplicateError);
-							}
-
-
-						},
-						error: function(jqXHR, textStatus, errorThrown){
-							console.log("The following error occured: " + textStatus, errorThrown);
-						},
-						complete: function(){
-							Spinner.toggle();
-						}
+	function addNewBlockLocation(fieldName, locationId){
+		'use strict';
+		Spinner.toggle();
+		var dataForm = $('#add-block-form').serialize()
+		$.ajax(
+			{ url: '/Fieldbook/Fieldmap/enterFieldDetails/addNewBlock',
+			type: 'POST',
+			data: dataForm,
+			success: function(data) {
+				if(data == 'success'){
+					showSuccessfulMessage("page-block-message-modal", blockAddedSuccessfully);
+						//$('#newBlockName').val('');
+						$('#addBlocksModal').modal('toggle');
+					}else{
+						showInvalidInputMessage(blockNameDuplicateError);
 					}
-					);
+
+				Spinner.toggle();
+				}
 			}
+		);
+	}
 
 	//]]>
 </script>

@@ -192,19 +192,19 @@ function saveLots() {
 	$('#gidList').val(gids);
 	
 	if ($('#inventoryLocationId').val() === '0') {
-		showErrorMessage('page-message-lots', locationRequired);
+		showInvalidInputMessage(locationRequired);
 		moveToTopScreen();
 	} else if (!$('#inventoryScaleId').select2('data')) {
-		showErrorMessage('page-message-lots', scaleRequired);
+		showInvalidInputMessage(scaleRequired);
 		moveToTopScreen();
 	} else if ($('#amount').val() === '') {
-		showErrorMessage('page-message-lots', inventoryAmountRequired);
+		showInvalidInputMessage(inventoryAmountRequired);
 		moveToTopScreen();
 	} else if(isFloatNumber($('#amount').val()) === false || parseFloat($('#amount').val()) < 0) {
-		showErrorMessage('page-message-lots', inventoryAmountPositiveRequired);
+		showInvalidInputMessage(inventoryAmountPositiveRequired);
 		moveToTopScreen();
 	}  else if($('#inventoryComments').val().length > 250) {
-		showErrorMessage('page-message-lots', commentLimitError);
+		showInvalidInputMessage(commentLimitError);
 		moveToTopScreen();
 	} else {
 		var serializedData = $('#add-plot-form').serialize();

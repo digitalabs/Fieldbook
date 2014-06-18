@@ -16,7 +16,7 @@
 			<div class="row fluid">
 	      		<div class="col-xs-7 col-md-7">
 					<div class="form-group">                        
-						<label for="comboManageScale" class="col-xs-5 col-md-5 control-label  label-bold" ><span th:text="#{ontology.browser.modal.scale} + ': '"></span><span class="required">*</span></label>
+						<label for="comboManageScale" class="col-xs-5 col-md-5 control-label  label-bold" ><span th:utext="#{ontology.browser.modal.scale}"></span></label>
 						<div class="col-xs-7  col-md-7">
 							<input type="hidden" th:field="*{comboManageScale}" class="form-control select2" placeholder=""/>
 							<input type="hidden" th:field="*{manageScaleId}" />
@@ -69,7 +69,7 @@
 	  	function saveScale() {
 	  		if (!validateScale()) {
 	  			message = /*[[#{ontology.browser.modal.error}]]*/;
-	  			showErrorMessageInModal('page-message-modal', message);
+	  			showInvalidInputMessage(message);
 	  			return;
 	  		}
 	  		Spinner.toggle();

@@ -106,19 +106,19 @@
 					return false;
 				}
 				if($('#listName').val() == ''){
-					showErrorMessage(errorMessageDiv, nameRequired);
+					showInvalidInputMessage(nameRequired);
 					return false;
 				}
 				if($('#listDescription').val() == ''){
-					showErrorMessage(errorMessageDiv, descriptionRequired);
+					showInvalidInputMessage(descriptionRequired);
 					return false;
 				}
 				if($('#listType').val() == ''){
-					showErrorMessage(errorMessageDiv, typeRequired);
+					showInvalidInputMessage(typeRequired);
 					return false;
 				}
 				if($('#listDate').val() == ''){
-					showErrorMessage(errorMessageDiv, dateRequired);
+					showInvalidInputMessage(dateRequired);
 					return false;
 				}
 				var parentId = chosenNodeFolder.data.key;

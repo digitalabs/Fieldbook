@@ -314,7 +314,7 @@ function validateCombo(combo) {
         } else {
             message = /*[[#{ontology.browser.modal.combo.no.value(#{ontology.browser.modal.scale})}]]*/;
         }
-        showMessage(message);
+        showInvalidInputMessage(message);
         return false;
     }
     //check if items to be added exists
@@ -328,7 +328,7 @@ function validateCombo(combo) {
         } else {
             message = /*[[#{ontology.browser.modal.item.exists(#{ontology.browser.modal.scale})}]]*/;
         }
-        showMessage(message);
+        showInvalidInputMessage(message);
         return false;
     }
 
@@ -337,7 +337,7 @@ function validateCombo(combo) {
         var dataVal = $("#comboTraitClass").select2("data");
         if(dataVal == null || dataVal.id == ''){
             message = /*[[#{ontology.browser.modal.trait.class.required}]]*/;
-            showMessage(message);
+            showInvalidInputMessage(message);
             return false;
         }
 
@@ -352,14 +352,14 @@ function doValidation() {
         //check required fields
         if (requiredFieldsEmpty()) {
             message = /*[[#{ontology.browser.modal.error}]]*/;
-            showMessage(message);
+            showInvalidInputMessage(message);
             moveToTopScreen()
             return false;
         }
         //check combo values
         if (comboValuesInvalid()) {
             message = /*[[#{ontology.browser.modal.invalid.value}]]*/;
-            showMessage(message);
+            showInvalidInputMessage(message);
             moveToTopScreen()
             return false;
         }
@@ -369,7 +369,7 @@ function doValidation() {
         var invalidValue = /*[[#{ontology.manager.min.max.invalid.value}]]*/;
         message = minMaxErrorMessage(bothMinMaxRequired, notANumber, invalidValue);
         if (message != '') {
-            showMessage(message);
+        	showInvalidInputMessage(message);
             moveToTopScreen()
             return false;
         }
@@ -383,7 +383,7 @@ function doValidation() {
         var varName = $('#comboVariableName').select2('data').text;
         if($("#isDelete").val() == 0 && varName.indexOf('-') != -1){
             message = /*[[#{ontology.browser.modal.name.invalid.value}]]*/;
-            showMessage(message);
+            showInvalidInputMessage(message);
             moveToTopScreen()
             return false;
         }
@@ -395,7 +395,7 @@ function doValidation() {
         if(roleId == roleCategoricalVariate && dataTypeId == dataTypeCategoricalVariable){
             if(!hasCategoricalValues()){
                 message = /*[[#{ontology.browser.categorical.value.required}]]*/;
-                showMessage(message);
+                showInvalidInputMessage(message);
                 moveToTopScreen()
                 return false;
             }
@@ -417,7 +417,7 @@ function doValidation() {
         {
             if(varNameChecking[i].name.toLowerCase() == varName.toLowerCase()){
                 message = /*[[#{error.name.exists}]]*/;
-                showMessage(message);
+                showInvalidInputMessage(message);
                 moveToTopScreen();
                 return false;
             }
@@ -550,7 +550,7 @@ function addCatVar(label, description, id) {
         } else {
             message = /*[[#{ontology.manager.valid.value.required}]]*/;
         }
-        showMessage(message);
+        showInvalidInputMessage(message);
     }
 }
 

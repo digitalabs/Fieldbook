@@ -888,7 +888,10 @@ function advanceNursery(tableName) {
 		}
 	}
 }
-
+function showInvalidInputMessage(message){
+	'use strict';	
+	createErrorNotification(invalidInputMsgHeader,message);
+}
 function showErrorMessage(messageDivId, message) {
 	'use strict';
 	createErrorNotification(errorMsgHeader,message);

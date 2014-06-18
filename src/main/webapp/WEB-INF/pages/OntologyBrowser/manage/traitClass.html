@@ -95,13 +95,13 @@
 	  			message = /*[[#{ontology.browser.modal.error}]]*/;
 	  		}
 	  		if (message) {
-	  			showErrorMessageInModal('page-message-modal', message);
+	  			showInvalidInputMessage(message);
 	  			return;
 	  		}
 	  		if($('#manageTraitClassId').val() == $('#manageParentTraitClassId').val()){
 	  			//console.log('error ito')
 	  			message = /*[[#{ontology.browser.modal.error.parent.trait}]]*/;
-	  			showErrorMessageInModal('page-message-modal', message);
+	  			showInvalidInputMessage('page-message-modal', message);
 	  			return;
 	  		}
 	  		

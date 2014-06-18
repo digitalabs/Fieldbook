@@ -168,9 +168,6 @@ font-size: 10px;
 .pagination > li > a{
 	cursor: pointer; cursor: hand; 
 }
-table{
-	font-size: 11px;
-}
 .dropdown-menu {
     font-size: 12px;
 }
@@ -1196,6 +1193,12 @@ input::-ms-clear {
 }
 textarea.form-control {
     font-size: 13px;
-    color: #808080;
+    color: #333333;
     padding: 4px;
 }
+input[type="text"], input[type="password"], .ui-autocomplete-input, textarea, .uneditable-input,
+.select2-container .select2-choices .select2-search-field input, .select2-container .select2-choice, .select2-container .select2-choices {
+	color: #333333;
+	font-size: 13px;
+}
+

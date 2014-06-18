@@ -104,25 +104,25 @@ function validateAdvanceNursery() {
 	// validate number of sample per plot
 	var numberOfSamplePerPlot = $('#lineSelected').val();
 	if (numberOfSamplePerPlot === '') {
-		showErrorMessage('page-advance-modal-message', msgSamplePlotError);
+		showInvalidInputMessage(msgSamplePlotError);
 		return false;
 	}
 	if (!isInt(numberOfSamplePerPlot)) {
-		showErrorMessage('page-advance-modal-message', msgSamplePlotError);
+		showInvalidInputMessage(msgSamplePlotError);
 		return false;
 	}
 	if (Number(numberOfSamplePerPlot) < 1
 			|| Number(numberOfSamplePerPlot) > 1000) {
-		showErrorMessage('page-advance-modal-message', msgSamplePlotError);
+		showInvalidInputMessage(msgSamplePlotError);
 		return false;
 	}
 	if ($('#harvestDate').val() === '') {
-		showErrorMessage('page-advance-modal-message', msgHarvestDateError);
+		showInvalidInputMessage(msgHarvestDateError);
 		return false;
 	}
 
 	if ($('#namingConvention').val() === '3' && $('#breedingMethodId').val() === '0') {
-		showErrorMessage('page-advance-modal-message', msgMethodError);
+		showInvalidInputMessage(msgMethodError);
 		return false;
 	}
 	return true;
@@ -1486,7 +1486,7 @@ function hasEmptyNurseryValue() {
 		}
 	});
 	if (hasError) {
-		showErrorMessage('page-message', name + " " + nurseryNumericError);
+		showInvalidInputMessage(name + " " + nurseryNumericError);
 	}
 
 	return hasError;
@@ -1605,7 +1605,7 @@ function initializeDateAndSliderInputs() {
 
 function checkPlantsSelected() {
 	if (parseInt($("#plotsWithPlantsSelected").val()) === 0) {
-		showErrorMessage('page-message', msgEmptyListError);
+		showInvalidInputMessage(msgEmptyListError);
 		$("#lineChoice1").prop("checked", true);
 	}
 }
@@ -1731,7 +1731,7 @@ function validateCreateNursery() {
 					+ nurseryFieldsIsRequired;
 		if (customMessage !== '')
 			errMsg = customMessage;
-		showErrorMessage('page-message', errMsg);
+		showInvalidInputMessage(errMsg);
 		return false;
 	}
 
@@ -1769,20 +1769,8 @@ function validateCreateNursery() {
 	});
 
 	if (hasError) {
-		showErrorMessage('page-message', customMessage.replace('*', '')
+		showInvalidInputMessage(customMessage.replace('*', '')
 				.replace(':', ''));
-		return false;
-	}
-
-	var found = false;
-	$('#selectedNursery option').each(function(i) {
-		if (studyBookName == $(this).text()) {
-			found = true;
-		}
-	});
-	if (found) {
-		hasError = true;
-		showErrorMessage('page-message', uniqueBookNameErrorMessage);
 		return false;
 	}
 	/*
@@ -1795,37 +1783,33 @@ function validateCreateNursery() {
 		var checkIndex = 0;
 		for (checkIndex = 0; checkIndex < $('.checkRow').length; checkIndex++) {
 			if ($('select.checklist-select:eq(' + checkIndex + ')').val() === '') {
-				showErrorMessage('page-message',
-						selectedCheckError);
+				showInvalidInputMessage(selectedCheckError);
 				return false;
 			}
 		}
 
 		if (isInt($('#startIndex2').val()) === false) {
-			showErrorMessage('page-message',
-					startIndexWholeNumberError);
+			showInvalidInputMessage(startIndexWholeNumberError);
 			return false;
 		}
 		if (isInt($('#interval2').val()) === false) {
-			showErrorMessage('page-message',
-					intervalWholeNumberError);
+			showInvalidInputMessage(intervalWholeNumberError);
 			return false;
 		}
 		var totalGermplasms = $('#totalGermplasms').val();
 		if (parseInt($('#startIndex2').val(), 10) < 0
 				|| parseInt($('#startIndex2').val(), 10) > totalGermplasms) {
-			showErrorMessage('page-message', startIndexLessGermplasmError);
+			showInvalidInputMessage(startIndexLessGermplasmError);
 			return false;
 		}	
 		
 		if (parseInt($('#interval2').val(), 10) < 0) {
-			showErrorMessage('page-message', checkIntervalGreaterThanZeroError);
+			showInvalidInputMessage(checkIntervalGreaterThanZeroError);
 			return false;
 		}
 		var totalNumberOfChecks = $('#totalNumberOfChecks').val();
 		if (parseInt($('#interval2').val(), 10) <= totalNumberOfChecks) {
-			showErrorMessage('page-message',
-					checkIntervalError);
+			showInvalidInputMessage(checkIntervalError);
 			return false;
 		}
 	}
@@ -1900,7 +1884,6 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
 		$('#' + comboName)
 				.select2(
 						{
-							minimumResultsForSearch: 20,
 							query : function(query) {
 								var data = {
 									results : sortByKey(suggestions_obj, 'text')
@@ -2022,13 +2005,13 @@ function validateCheckFields() {
 	}
 
 	if (!$('#comboCheckCode').select2('data')) {
-		showCheckTypeErrorMessage(codeRequiredError);
+		showInvalidInputMessage(codeRequiredError);
 		return false;
 	} else if ($("#manageCheckValue").val() === "") {
-		showCheckTypeErrorMessage(valueRequiredError);
+		showInvalidInputMessage(valueRequiredError);
 		return false;
 	} else if (!isValueUnique()) {
-		showCheckTypeErrorMessage(valueNotUniqueError);
+		showInvalidInputMessage(valueNotUniqueError);
 		return false;
 	}
 
@@ -2327,10 +2310,10 @@ function validateStartEndDateBasic() {
 	else if (startDate !== '' && endDate === '') {
 		return true;
 	} else if (startDate === '' && endDate !== '') {
-		showErrorMessage("page-message", startDateRequiredError);
+		showInvalidInputMessage(startDateRequiredError);
 		return false;
 	} else if (parseInt(startDate) > parseInt(endDate)) {
-		showErrorMessage("page-message", startDateRequiredEarlierError);
+		showInvalidInputMessage(startDateRequiredEarlierError);
 		return false;
 	}
 	return true;

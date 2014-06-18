@@ -17,7 +17,7 @@
 			<div class="row fluid">
 	      		<div class="col-xs-7 col-md-7">
 					<div class="form-group">                        
-						<label for="comboManageMethod" class="col-xs-5 col-md-5 control-label  label-bold" ><span th:text="#{ontology.browser.modal.method} + ': '"></span><span class="required">*</span></label>
+						<label for="comboManageMethod" class="col-xs-5 col-md-5 control-label  label-bold" ><span th:utext="#{ontology.browser.modal.method}"></span></label>
 						<div class="col-xs-7  col-md-7">
 							<input type="hidden" th:field="*{comboManageMethod}" class="form-control select2" placeholder=""/>
 							<input type="hidden" th:field="*{manageMethodId}" />
@@ -71,7 +71,7 @@
 	  		
 	  		if (!validateMethod()) {
 	  			message = /*[[#{ontology.browser.modal.error}]]*/;
-	  			showErrorMessageInModal('page-message-modal', message);
+	  			showInvalidInputMessage(message);
 	  			return;
 	  		}
 	  		Spinner.toggle();

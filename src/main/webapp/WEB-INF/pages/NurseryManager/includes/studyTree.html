@@ -331,6 +331,11 @@ function displayStudyListTree(treeName, studyType, choosingTypeParam) {
                 }
             });
         },
+        onClick : function(node, event) {
+            $('#newFolderName').val(node.data.title);
+            var currentFolderName = node.data.title;
+            $('#deleteFolderLabelID').html(deleteConfirmation + ' ' + currentFolderName + '?');
+        },
         onDblClick: function (node, event) {
             chooseStudy();
         },

@@ -504,28 +504,18 @@ padding-left: 20px; margin-top: 7px
 }
 */
 .help-tooltip {
-    background-color: #5A5A5A;
-    border-radius: 50%;
-    box-shadow: 0 0 3px #000000;
-    color: #FFFFFF;
-    font-size: 12px;
-    margin-right: 20px;
-    padding: 0 5px;
-    text-decoration: none;
-    float: left;
-    margin-left: 15px;
-    margin-top: 13px;
-    line-height: 18px;
+    vertical-align: middle;
 }
 .help-tooltip-nursery {
+    color: #7D7D7D;
     font-size: 13pt;
-
+    vertical-align: middle;
 }
 .help-tooltip-nursery-advance{
-	margin-left: 0px;
+/*	margin-left: 0px;
 	position: relative;
 	left: -15px;
-	top: 5px;
+	top: 5px; */
 }
 .germplasm-list-table, .germplasm-measurement-list-table, .advance-nursery-list-table, .check-germplasm-list-table,
 .inventory-germplasm-list-table

@@ -26,16 +26,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 			</div>
 		</div>
 	</div>
-	<div class="row">
-		<div class="col-md-12">
-			&nbsp;
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-12">
-			<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
-		</div>
-	</div>
+
 	<div class="row">
 		<div class="col-md-12">
 			<label class="control-label">
@@ -43,6 +34,13 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 			</label>
 		</div>
 	</div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <label class=""><em th:utext="#{nursery.managesettings.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
+        </div>
+    </div>
+
 	<div class="row form-group">
 		<div class="col-xs-2 col-md-2">
 			<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{basicDetails[0].variable.cvTermId}" />

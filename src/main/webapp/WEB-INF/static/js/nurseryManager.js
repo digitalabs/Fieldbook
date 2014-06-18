@@ -1649,7 +1649,7 @@ function choosePreviousNursery(studyId) {
 		url = "/Fieldbook/NurseryManager/createNursery/nursery/";
 	}
 
-	Spinner.toggle();
+	Spinner.play();
 	$.ajax({
 		url : url + studyId,
 		type : "GET",
@@ -1661,7 +1661,7 @@ function choosePreviousNursery(studyId) {
 			} else {
 				$('.container .row').first().html(html);
 			}
-			Spinner.toggle();
+			Spinner.stop();
 		}
 	});
 }

@@ -695,7 +695,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 						newRow = newRow
 								+ '<span style="word-wrap: break-word"  class="var-names control-label label-bold study-variable-name">'
 								+ settingDetail.variable.name
-								+ '</span>: &nbsp;<span class="required">*</span></div>';
+								+ '</span>: &nbsp;</div>';
 
 						if (settingDetail.variable.widgetType === 'DATE') {
 							newRow = newRow

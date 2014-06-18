@@ -12,7 +12,6 @@ import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.GermplasmNameType;
-import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -49,7 +48,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
         }
         AdvancingSourceList list = createAdvancingSourceList(info, workbook, breedingMethodMap);
         updatePlantsSelectedIfNecessary(list, info);
-        List<ImportedGermplasm> importedGermplasmList = generateGermplasmList(list, breedingMethodMap);
+        List<ImportedGermplasm> importedGermplasmList = generateGermplasmList(list);
         return importedGermplasmList;
 	}
 
@@ -63,7 +62,6 @@ public class NamingConventionServiceImpl implements NamingConventionService {
         Study nursery = advanceInfo.getStudy();
         
         AdvancingSourceList list = factory.create(workbook, advanceInfo, nursery, breedingMethodMap);
-        assignGermplasms(list);
         return list;
     }
     
@@ -90,9 +88,9 @@ public class NamingConventionServiceImpl implements NamingConventionService {
     }
     
     private void assignGermplasmAttributes(ImportedGermplasm germplasm, int sourceGid, int sourceGnpgs, 
-            int sourceGpid1, int sourceGpid2, String sourceMethodType, Method breedingMethod) {
+            int sourceGpid1, int sourceGpid2, Method sourceMethod, Method breedingMethod) {
         
-        if (sourceMethodType != null && AppConstants.METHOD_TYPE_GEN.equals(sourceMethodType) 
+        if (sourceMethod.getMtype() != null && AppConstants.METHOD_TYPE_GEN.equals(sourceMethod.getMtype()) 
                 || sourceGnpgs < 0 && sourceGpid1 == 0 && sourceGpid2 == 0) {
             
             germplasm.setGpid1(sourceGid);
@@ -109,17 +107,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
     }
 
     protected void addImportedGermplasmToList(List<ImportedGermplasm> list, AdvancingSource source, 
-            String newGermplasmName, int breedingMethodId, int index, String nurseryName, Map<Integer, Method> breedingMethodMap) 
+            String newGermplasmName, Method breedingMethod, int index, String nurseryName) 
     throws MiddlewareQueryException {
-        
-        Method breedingMethod = null; //fieldbookMiddlewareService.getBreedingMethodById(breedingMethodId);
-        
-        if(breedingMethodMap.get(breedingMethodId) != null){
-        	breedingMethod = breedingMethodMap.get(breedingMethodId);
-        }else{
-        	breedingMethod = fieldbookMiddlewareService.getBreedingMethodById(breedingMethodId);
-        	breedingMethodMap.put(breedingMethodId, breedingMethod);
-        }
 
         ImportedGermplasm germplasm = new ImportedGermplasm(
                 index
@@ -132,10 +121,10 @@ public class NamingConventionServiceImpl implements NamingConventionService {
               , breedingMethod.getMid());
         
          
-//         assignGermplasmAttributes(germplasm, Integer.valueOf(source.getGermplasm().getGid()), 
-//                 source.getGermplasm().getGnpgs(), 
-//                 source.getGermplasm().getGpid1(), source.getGermplasm().getGpid2(), 
-//                 source.getMethodType(), breedingMethod);
+         assignGermplasmAttributes(germplasm, Integer.valueOf(source.getGermplasm().getGid()), 
+                 source.getGermplasm().getGnpgs(), 
+                 source.getGermplasm().getGpid1(), source.getGermplasm().getGpid2(), 
+                 source.getSourceMethod(), breedingMethod);
          
          assignNames(germplasm, source);
          
@@ -146,35 +135,6 @@ public class NamingConventionServiceImpl implements NamingConventionService {
         return AppConstants.ENTRY_CODE_PREFIX.getString() + String.format("%04d", index);
     }
     
-    private void assignGermplasms(AdvancingSourceList list) throws MiddlewareQueryException {
-    	List<Integer> gidList = new ArrayList<Integer>();
-    	
-        if (list != null && list.getRows() != null && !list.getRows().isEmpty()) {
-            for (AdvancingSource source : list.getRows()) {
-                if (source.getGermplasm() != null && source.getGermplasm().getGid() != null 
-                        && NumberUtils.isNumber(source.getGermplasm().getGid())) {
-                	
-                	gidList.add(Integer.valueOf(source.getGermplasm().getGid()));
-                }
-            }
-            List<Germplasm> germplasmList = fieldbookMiddlewareService.getGermplasms(gidList);
-            Map<String, Germplasm> germplasmMap = new HashMap<String, Germplasm>();
-            for(Germplasm germplasm : germplasmList){
-            	germplasmMap.put(germplasm.getGid().toString(), germplasm);
-            }
-            for (AdvancingSource source : list.getRows()) {
-                if (source.getGermplasm() != null && source.getGermplasm().getGid() != null 
-                        && NumberUtils.isNumber(source.getGermplasm().getGid())) {                	
-                    Germplasm germplasm = germplasmMap.get(source.getGermplasm().getGid().toString());
-                    source.getGermplasm().setGpid1(germplasm.getGpid1());
-                    source.getGermplasm().setGpid2(germplasm.getGpid2());
-                    source.getGermplasm().setGnpgs(germplasm.getGnpgs());
-                    source.getGermplasm().setBreedingMethodId(germplasm.getMethodId());
-                }
-            }
-            
-        }
-    }
 
     protected void assignNames(ImportedGermplasm germplasm, AdvancingSource source) {
         List<Name> names = new ArrayList<Name>();
@@ -205,17 +165,45 @@ public class NamingConventionServiceImpl implements NamingConventionService {
         germplasm.setNames(names);
     }
 
-    public List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList rows, Map<Integer, Method> breedingMethodMap) throws MiddlewareQueryException {
+    public List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList rows) throws MiddlewareQueryException {
         List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
-        String newGermplasmName;
-        int index = 1;
         for (AdvancingSource row : rows.getRows()) {
             if (row.getGermplasm() != null && !row.isCheck() && row.getPlantsSelected() != null && row.getBreedingMethod() != null) {
             	Method method = row.getBreedingMethod();
-            	
+            	String germplasmName = getGermplasmName(method.getSnametype(), row);
+            	String expression = method.getSeparator() + method.getPrefix() + method.getCount() + method.getSuffix();
+            	row.setRootName(germplasmName);
+            	List<String> names = processCodeService.applyToName(expression, row);
+            	System.out.println("NAME IS " + names.size());
+            	int index = 1;
+            	for (String name : names) {
+            		System.out.println(name);
+            		addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, row.getNurseryName());
+            	}
             }
         }
             
         return list;
+    }
+    
+    private String getGermplasmName(Integer snametype, AdvancingSource row) {
+    	List<Name> names = row.getNames();
+    	if (names != null && !names.isEmpty()) {
+    		if (snametype != null) {
+	    		for (Name name : names) {
+	    			if (name.getTypeId() != null && name.getTypeId().equals(snametype)) {
+	    				return name.getNval();
+	    			}
+	    		}
+    		}
+    		//if no sname type defined or if no name found that matched the snametype
+    		for (Name name : names) {
+    			if (name.getNstat() != null && name.getNstat().equals(1)) {
+    				return name.getNval();
+    			}
+    		}
+    	}
+    	
+    	return null;
     }
 }

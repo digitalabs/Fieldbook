@@ -1,6 +1,7 @@
 package com.efficio.fieldbook.web.naming.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
@@ -96,6 +98,8 @@ public class AdvancingSourceListFactory {
             }
         }
         setNamesToGermplasm(rows, gids);
+        list.setRows(rows);
+        assignSourceGermplasms(list, breedingMethodMap);
         return list;
 	}
 	
@@ -153,4 +157,38 @@ public class AdvancingSourceListFactory {
         germplasm.setSource(row.getMeasurementDataValue(TermId.SOURCE.getId()));
         return germplasm;
     }
- }
+ 
+    private void assignSourceGermplasms(AdvancingSourceList list, Map<Integer, Method> breedingMethodMap) throws MiddlewareQueryException {
+    	List<Integer> gidList = new ArrayList<Integer>();
+    	
+        if (list != null && list.getRows() != null && !list.getRows().isEmpty()) {
+            for (AdvancingSource source : list.getRows()) {
+                if (source.getGermplasm() != null && source.getGermplasm().getGid() != null 
+                        && NumberUtils.isNumber(source.getGermplasm().getGid())) {
+                	
+                	gidList.add(Integer.valueOf(source.getGermplasm().getGid()));
+                }
+            }
+            List<Germplasm> germplasmList = fieldbookMiddlewareService.getGermplasms(gidList);
+            Map<String, Germplasm> germplasmMap = new HashMap<String, Germplasm>();
+            for(Germplasm germplasm : germplasmList){
+            	germplasmMap.put(germplasm.getGid().toString(), germplasm);
+            }
+            for (AdvancingSource source : list.getRows()) {
+                if (source.getGermplasm() != null && source.getGermplasm().getGid() != null 
+                        && NumberUtils.isNumber(source.getGermplasm().getGid())) {                	
+                    Germplasm germplasm = germplasmMap.get(source.getGermplasm().getGid().toString());
+                    source.getGermplasm().setGpid1(germplasm.getGpid1());
+                    source.getGermplasm().setGpid2(germplasm.getGpid2());
+                    source.getGermplasm().setGnpgs(germplasm.getGnpgs());
+                    Method sourceMethod = breedingMethodMap.get(germplasm.getMethodId());
+                    if (sourceMethod != null) {
+                    	source.setSourceMethod(sourceMethod);
+                    }
+                    source.getGermplasm().setBreedingMethodId(germplasm.getMethodId());
+                }
+            }
+            
+        }
+    }
+}

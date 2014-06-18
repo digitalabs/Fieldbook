@@ -1,5 +1,8 @@
 package com.efficio.fieldbook.web.naming.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
@@ -17,22 +20,26 @@ public class ProcessCodeServiceImpl implements ProcessCodeService {
 	private ProcessCodeFactory factory;
 	
 	@Override
-	public String applyToName(final String name, final AdvancingSource source) {
-		String newName = name;
-		final StringBuilder builder = new StringBuilder(name);
+	public List<String> applyToName(final String expression, final AdvancingSource source) {
+		List<String> newNames = new ArrayList<String>();
+		final List<StringBuilder> builders = new ArrayList<StringBuilder>();
+		builders.add(new StringBuilder(expression));
 		
-		ExpressionHelper.evaluateExpression(name, "\\[([^\\]]*)]", new ExpressionHelperCallback() {
+		ExpressionHelper.evaluateExpression(expression, "\\[([^\\]]*)]", new ExpressionHelperCallback() {
             @Override
             public void evaluateCapturedExpression(String capturedText, String originalInput, int start, int end) {
             	Expression expression = factory.create(capturedText, source);
             	
             	if (expression != null) {
-	            	expression.apply(builder);
+	            	expression.apply(builders);
             	}
             }
         });
-		
-		return newName;
+
+		for (StringBuilder builder : builders) {
+			newNames.add(builder.toString());
+		}
+		return newNames;
 	}
 
 }

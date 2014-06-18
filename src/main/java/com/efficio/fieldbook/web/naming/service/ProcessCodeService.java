@@ -1,8 +1,10 @@
 package com.efficio.fieldbook.web.naming.service;
 
+import java.util.List;
+
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 public interface ProcessCodeService {
 
-	String applyToName(String name, AdvancingSource source);
+	List<String> applyToName(String paddedExpression, AdvancingSource source);
 }

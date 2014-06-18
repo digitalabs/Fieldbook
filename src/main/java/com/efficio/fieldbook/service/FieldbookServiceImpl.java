@@ -68,6 +68,9 @@ public class FieldbookServiceImpl implements FieldbookService{
 	@Resource
 	private PossibleValuesCache possibleValuesCache;
 	
+	@Resource
+	private NamingConventionService namingConventionService;
+	
 
 	/* (non-Javadoc)
 	 * @see com.efficio.fieldbook.service.api.FieldbookService#storeUserWorkbook(java.io.InputStream)
@@ -92,11 +95,7 @@ public class FieldbookServiceImpl implements FieldbookService{
 	public List<ImportedGermplasm> advanceNursery(AdvancingNursery advanceInfo, Workbook workbook)
 	        throws MiddlewareQueryException {
 
-//        NamingConventionService service = namingConventionServiceFactory.getNamingConventionService(advanceInfo);
-//
-//	    return service.advanceNursery(advanceInfo, workbook);
-		
-		return null;
+		return namingConventionService.advanceNursery(advanceInfo, workbook);
 	}
 	
 	@Override

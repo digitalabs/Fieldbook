@@ -290,10 +290,6 @@
     	scope="request">
     	<aop:scoped-proxy/>
     </bean>
-	<bean id="externalToolInfo" class="com.efficio.fieldbook.web.util.ExternalToolInfo">	
-   		<property name="currentProjectId" value="${workbench.currentProjectId}"/>
-   		<property name="oldFieldbookPath" value="${old.fb.tool.path}"/>   			
-	</bean>	
    	
    	<bean id="springAppContextProvider" class="org.generationcp.commons.util.SpringAppContextProvider"></bean>
     

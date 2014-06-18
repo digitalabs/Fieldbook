@@ -1,4 +1,4 @@
-<div class="row form-group collapse in germplasmListDetails">
+<div class="row form-group collapse in germplasmListDetails germplasmAndCheckSection">
 	<!-- Germplasm List Table View -->
 	<div class="col-xs-12 col-md-12">
 
@@ -6,14 +6,14 @@
             <img th:src="@{/static/img/review-list-details.png}" style="padding-bottom:3px;"/>
             <label class="control-label"><strong id="germplasmLabel" class="sub-content-heading">Nursery List</strong></label>
             <br/>
-            <label class="control-label"><a href="javascript: openListTree(1)">Browse</a> for a list to work with.</label>
+            <label class="control-label"><a href="javascript: openListTree(1)">Browse</a> or <a href="javascript: openImportGermplasmList('1')">Import</a> a list to work with.</label>
         </div>
         <div id="checks-section" style="padding-top: 8px" class="col-xs-4 col-md-4 nopadding">
             <div class="col-xs-8 col-md-8 nopadding">
                 <img th:src="@{/static/img/build-new-list.png}" style="padding-bottom:3px;"/>
                 <label class="control-label"><strong class="sub-content-heading">Selected Checks</strong></label>
                 <br/>
-                <label class="control-label"><a href="javascript: openListTree(2)">Browse</a> for a list to work with.</label>
+                <label class="control-label"><a href="javascript: openListTree(2)">Browse</a> or <a href="javascript: openImportGermplasmList('2')">Import</a> a list to work with.</label>
             </div>
             <div class="col-xs-4 col-md-4 nopadding">
                 <div class="pull-right">
@@ -56,7 +56,7 @@
 
 <!-- Modal for overwriting checks list -->
 <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
+	<div class="modal-dialog modal-extra-small">
 		<div class="modal-content">
 			<div class="modal-body">
 				<div class="row form-group">
@@ -83,7 +83,7 @@
 </div>
 
 <div class="modal fade" id="confirmReplaceListModal" tabindex="-1" role="dialog" aria-labelledby="confirmReplaceListModal" aria-hidden="true">
-	<div class="modal-dialog">
+	<div class="modal-dialog modal-extra-small">
 		<div class="modal-content">			
 			<div class="modal-body">		
 			
@@ -110,7 +110,7 @@
 </div>
 <!-- Modal for removing check if it is set as starting entry -->
 <div class="modal fade" id="removeCheckModal" tabindex="-1" role="dialog" aria-labelledby="removeCheckModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
+	<div class="modal-dialog modal-extra-small">
 		<div class="modal-content">
 			<div class="modal-body">
 				<div class="row form-group">
@@ -166,8 +166,6 @@
 					<!-- Germplasm List Tree View -->
 					<div class="col-md-12 col-xs-12 germplasm-tree-section" id="germplasmTree" style="height:350px; overflow:auto;"></div>
 				</div>
-				<br />
-				<a class="btn btn-info" href="javascript: openImportGermplasmList()" th:text="#{nursery.import.germplasm.list}">Import File</a>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>

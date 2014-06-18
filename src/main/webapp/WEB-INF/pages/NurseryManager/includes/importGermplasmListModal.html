@@ -28,35 +28,38 @@
 <div layout:fragment="page-script">
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[     
-	           function cancelImportGermplasm(){
-	        	   
-	        	   $('#importGermplasmModal').modal('hide');
-	        	   setTimeout(function(){$('#listTreeModal').modal('show');}, 300);
-	        	   
+	           function cancelImportGermplasm(){	        	   
+	           		'use strict';
+	        	   $('#importGermplasmModal').modal('hide');	        	   
 	           }
 	           function closeImportFrame(listGermplasmId){
-					//alert('reload tree and preselect list id ' + listId);
-					//console.log('closeImportFrame');
-					$('#importGermplasmModal').modal('hide');
-					
+	           		'use strict';
+					$('#importGermplasmModal').modal('hide');					
 					listId = listGermplasmId;
 					 $("#germplasmTree").dynatree("getTree").reload();
-					 $('#listTreeModal').modal('show');						        	   		           
-	           }
-	           function doInitialLoad(listId) {
-	        	   var node = $("#germplasmTree").dynatree("getTree").getNodeByKey('LOCAL');
-	        	   if(!node.isExpanded())
-	        	   	node.toggleExpand();	        	   
-	        	   
-	        	   displayGermplasmDetails(listId);
-	        	   var identifier = listId + '';
-	        	   //console.log(identifier);
-  					
-  					setTimeout(function(){
-  						$("#germplasmTree").dynatree("getTree").getNodeByKey(identifier).select(true);
-  					}, 500);
-  					
-		   		};
+					var importFromType = $('.germplasmAndCheckSection').data('import-from');
+					if(importFromType === '1'){
+						//from nursery list
+						lastDraggedPrimaryList = listId;
+						displayGermplasmDetails(listId);
+					} else if(importFromType === '2'){						
+							// Loads the check list
+							$('#lastCheckSourcePrimary').val(0);
+							lastDraggedChecksList = listId;
+
+							// Set primary germplasm list rows' opacity to 1
+							$('.germplasm-list-items tbody tr').css('opacity', '1');
+
+							// If there is an existing list already, ask user if data should be overwritten
+							if ($('.check-germplasm-list-items tbody tr').length > 0) {
+								$('#keyForOverwrite').val(listId);
+								$('#confirmationModal').modal('show');
+							} else {
+								displayGermplasmCheckDetails(listId);
+							}
+							makeCheckDraggable(false);
+					}
+	           }	           
     //]]>
     </script>
 </div>

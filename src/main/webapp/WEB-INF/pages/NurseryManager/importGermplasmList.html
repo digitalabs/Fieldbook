@@ -1,28 +1,32 @@
 <div class="row form-group collapse in germplasmListDetails germplasmAndCheckSection">
 	<!-- Germplasm List Table View -->
-	<div class="col-xs-12 col-md-12">
+	<div>
 
         <div id="primary-section" class="col-xs-8 col-md-8">
-            <img th:src="@{/static/img/review-list-details.png}" style="padding-bottom:3px;"/>
-            <label class="control-label"><strong id="germplasmLabel" class="sub-content-heading">Nursery List</strong></label>
-            <br/>
-            <label class="control-label"><a href="javascript: openListTree(1)">Browse</a> or <a href="javascript: openImportGermplasmList('1')">Import</a> a list to work with.</label>
+            <div><img th:src="@{/static/img/review-list-details.png}" />
+                <label class="control-label"><strong id="germplasmLabel" class="sub-content-heading">Nursery List</strong></label>
+            </div>
+            <div>
+                <label class="control-label"><a href="javascript: openListTree(1)">Browse</a> or <a href="javascript: openImportGermplasmList('1')">Import</a> a list to work with.</label>
+            </div>
         </div>
         <div id="checks-section" style="padding-top: 8px" class="col-xs-4 col-md-4 nopadding">
-            <div class="col-xs-8 col-md-8 nopadding">
-                <img th:src="@{/static/img/build-new-list.png}" style="padding-bottom:3px;"/>
-                <label class="control-label"><strong class="sub-content-heading">Selected Checks</strong></label>
-                <br/>
-                <label class="control-label"><a href="javascript: openListTree(2)">Browse</a> or <a href="javascript: openImportGermplasmList('2')">Import</a> a list to work with.</label>
-            </div>
-            <div class="col-xs-4 col-md-4 nopadding">
-                <div class="pull-right">
-                    <a style="margin-top: -5px;padding:6px 8px;" href="javascript: showManageCheckTypePopup()" th:text="#{germplasm.list.manage.check.types}" class="btn btn-info">Manage Checks</a>
+            <div class="col-xs-10 nopadding">
+                <div>
+                    <div style="display:inline-block; width: 30px; padding: 4px 0 5px 0"><img th:src="@{/static/img/build-new-list.png}" /></div>
+                    <label class="control-label"><strong class="sub-content-heading">Selected Checks</strong></label>
                 </div>
+                <div>
+                    <label class="control-label"><a href="javascript: openListTree(2)">Browse</a> or <a href="javascript: openImportGermplasmList('2')">Import</a> a list to work with.</label>
+                </div>
+
+            </div>
+            <div class="col-xs-2 nopadding">
+                <a class="pull-right btn btn-info" href="javascript: showManageCheckTypePopup()" th:text="#{germplasm.list.manage.check.types}" >Manage Checks</a>
             </div>
         </div>
     </div>
-    <div class="col-xs-12 col-md-12" id="entries-details" style="display: none">
+    <div  id="entries-details" style="display: none">
         <div class="col-xs-8 col-md-8">
             Total Entries: <label class="control-label control-label-bold" id="numberOfEntries"></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript: void(0)"
                                                                                                                                                      onclick="javascript: viewGermplasmLitDetails();">View Header</a>
@@ -32,7 +36,7 @@
 </div>
 <div class="row form-group collapse in germplasmListDetails">
     <!-- Germplasm List Table View -->
-    <div class="col-xs-12 col-md-12">
+    <div >
         <div class="col-xs-8 col-md-8">
             <div id="imported-germplasm-list" class="list-droppable primary"></div>
         </div>

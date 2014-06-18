@@ -296,8 +296,8 @@ function getStandardVariables(variableType) {
 		type : 'GET',
 		cache : false,
 		success : function(data) {
-			if (treeData != null) {
-				$("#" + treeDivId).dynatree("destroy");
+			if ($('#'+treeDivId+' .fbtree-container').length > 0) {
+				$('#' + treeDivId).dynatree('destroy');
 			}
 			treeData = data.treeData;
 			searchTreeData = data.searchTreeData;

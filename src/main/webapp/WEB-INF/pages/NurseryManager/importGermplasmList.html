@@ -231,7 +231,7 @@
 			makeCheckDraggableBool = isDraggable;
 
 			if (isDraggable) {
-				$('.check-germplasm-list-items tr').draggable({
+				$('.check-germplasm-list-items tbody tr').draggable({
 
 					helper: function(/*event, ui*/) {
 
@@ -271,7 +271,7 @@
 
 			} else {
 				if ($('.check-germplasm-list-items .ui-draggable').length !== 0) {
-					$('.check-germplasm-list-items tr').draggable( 'destroy' );
+					$('.check-germplasm-list-items tbody  tr').draggable( 'destroy' );
 				}
 				$('.check-germplasm-list-items tbody tr').off('click');
 			}
@@ -284,7 +284,7 @@
 			'use strict';
 
 			if (isDraggable) {
-				$('.germplasm-list-items tr').draggable({
+				$('.germplasm-list-items tbody  tr').draggable({
 
 					helper: function(/*event, ui*/) {
 						var width = $(this)[0].offsetWidth,
@@ -324,7 +324,7 @@
 
 			} else {
 				if ($('.germplasm-list-items .ui-draggable').length !== 0) {
-					$('.germplasm-list-items tr').draggable('destroy');
+					$('.germplasm-list-items tbody  tr').draggable('destroy');
 				}
 				$('.germplasm-list-items tbody tr').off('click');
 			}
@@ -465,9 +465,7 @@
 			} else {
 				resetCheckList();
 				for (i = 0; i < itemsToAdd.length ; i++) {
-					/*if (addCheckGermplasmList(itemsToAdd[i].entry, itemsToAdd[i].gid, itemsToAdd[i].index)){
-						$('.primaryRow[data-entry="' + itemsToAdd[i].entry+ '"]').css('opacity', '0.5');
-					}*/
+					addCheckGermplasmList(itemsToAdd[i].entry, itemsToAdd[i].gid, itemsToAdd[i].index)					
 				}
 				$('.germplasm-list-items tr.germplasmSelectedRow').removeClass('germplasmSelectedRow');
 			}			
@@ -615,7 +613,7 @@
 
 
 			$('.check-germplasm-list-items tr[data-entry=' + entryNo + ']').remove();
-			if ($('.check-germplasm-list-items tbody tr').length === 0) {
+			if ($('.check-germplasm-list-items tbody tr').length === 0) {				
 				resetCheckList();
 			}
 		}
@@ -776,7 +774,6 @@
 						$(ui.helper.find('tr').get(0)).hasClass('checkRow')) {
 
 					// Removes the items from the check list
-					var checkListCount = $('.check-germplasm-list-items tbody tr').length;
 
 						$.each(ui.helper.find('tr'), function (index, row) {
 							var entryNumber = $(row).data('entry'),
@@ -788,11 +785,9 @@
 									$(row).removeAttr('style');
 								}
 							});
-							//subtract original and cloned row
-							checkListCount = checkListCount-2;
 						});
 						$('.check-germplasm-list-items tr.checkGermplasmSelectedRow').remove();
-						if (checkListCount == 0) {
+						if ($('.check-germplasm-list-items tbody tr').length === 0) {		
 							resetCheckList();
 						}
 					}

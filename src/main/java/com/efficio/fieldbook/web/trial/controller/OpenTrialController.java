@@ -102,7 +102,7 @@ public class OpenTrialController extends
             userSelection.setTrialLevelVariableList(trialLevelVariableList);
         }
         form.setLocationId(AppConstants.LOCATION_ID.getString());
-        form.setLocationUrl(AppConstants.LOCATION_URL.getString());
+        form.setLocationUrl(fieldbookProperties.getProgramLocationsUrl());
         
         return super.show(model);
     }

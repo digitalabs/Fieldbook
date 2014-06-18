@@ -162,11 +162,6 @@ public enum AppConstants {
     ,STUDY_NAME_ID
     ,COOPERATOR_ID
     
-    ,LOCATION_URL
-    ,BREEDING_METHOD_URL
-    ,IMPORT_GERMPLASM_URL
-    ,GERMPLASM_DETAILS_URL
-    
     ,LABEL
     
     ,NUMERIC_DATA_TYPE

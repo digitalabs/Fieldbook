@@ -507,14 +507,14 @@ public class EditNurseryController extends SettingsController {
     private void setFormStaticData(CreateNurseryForm form, String contextParams){
         form.setBreedingMethodId(AppConstants.BREEDING_METHOD_ID.getString());
         form.setLocationId(AppConstants.LOCATION_ID.getString());
-        form.setBreedingMethodUrl(AppConstants.BREEDING_METHOD_URL.getString());
-        form.setLocationUrl(AppConstants.LOCATION_URL.getString());
+        form.setBreedingMethodUrl(fieldbookProperties.getProgramBreedintMethodsUrl());
+        form.setLocationUrl(fieldbookProperties.getProgramLocationsUrl());
         form.setProjectId(this.getCurrentProjectId());
-        form.setImportLocationUrl(AppConstants.IMPORT_GERMPLASM_URL.getString() + "?" + contextParams);
+        form.setImportLocationUrl(fieldbookProperties.getGermplasmImportUrl() + "?" + contextParams);
         form.setStudyNameTermId(AppConstants.STUDY_NAME_ID.getString());
         form.setStartDateId(AppConstants.START_DATE_ID.getString());
     	form.setEndDateId(AppConstants.END_DATE_ID.getString());
-    	form.setOpenGermplasmUrl(AppConstants.GERMPLASM_DETAILS_URL.getString());
+    	form.setOpenGermplasmUrl(fieldbookProperties.getGermplasmDetailsUrl());
     	form.setBaselineTraitsSegment(AppConstants.SEGMENT_TRAITS.getString());
     	form.setSelectionVariatesSegment(AppConstants.SEGMENT_SELECTION_VARIATES.getString());
     	form.setCharLimit(Integer.parseInt(AppConstants.CHAR_LIMIT.getString()));

@@ -145,8 +145,8 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     		}
     	}
     	advancingNursery.setStudy(study);
-    	form.setLocationUrl(AppConstants.LOCATION_URL.getString());
-    	form.setBreedingMethodUrl(AppConstants.BREEDING_METHOD_URL.getString());
+    	form.setLocationUrl(fieldbookProperties.getProgramLocationsUrl());
+    	form.setBreedingMethodUrl(fieldbookProperties.getProgramBreedintMethodsUrl());
     	form.setNurseryId(Integer.toString(nurseryId));
     	Project project = workbenchService.getProjectById(Long.valueOf(this.getCurrentProjectId()));
     	if(AppConstants.CROP_MAIZE.getString().equalsIgnoreCase(project.getCropType().getCropName())){

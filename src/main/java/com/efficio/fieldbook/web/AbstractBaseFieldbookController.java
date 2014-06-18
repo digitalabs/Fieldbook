@@ -25,6 +25,7 @@ import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.service.ProjectActivityService;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExternalToolInfo;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 
 /**
  * Base controller encapsulaitng common functionality between all the Fieldbook controllers.
@@ -44,6 +45,9 @@ public abstract class AbstractBaseFieldbookController {
 	
 	@Resource
 	private ProjectActivityService projectActivityService;
+	
+	@Resource
+	protected FieldbookProperties fieldbookProperties;
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractBaseFieldbookController.class);
 

@@ -241,7 +241,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         } catch (NumberFormatException e) {
             LOG.error(e.toString());
         }
-        form.setProgramLocationUrl(AppConstants.LOCATION_URL.getString());      
+        form.setProgramLocationUrl(fieldbookProperties.getProgramLocationsUrl());      
         return super.show(model);
     }
     
@@ -405,7 +405,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         } catch (NumberFormatException e) {
             LOG.error(e.toString());
         }
-        form.setProgramLocationUrl(AppConstants.LOCATION_URL.getString());
+        form.setProgramLocationUrl(fieldbookProperties.getProgramLocationsUrl());
         return super.show(model);
     }
     

@@ -82,6 +82,13 @@
 
 
 	<!-- Application Beans -->
+	
+	<bean id="fieldbookProperties" class="com.efficio.fieldbook.web.util.FieldbookProperties">
+		<property name="programLocationsUrl" value="${url.program.locations}" />
+		<property name="programBreedintMethodsUrl" value="${url.program.breeding.methods}" />
+		<property name="germplasmImportUrl" value="${url.germplasm.import}" />
+		<property name="germplasmDetailsUrl" value="${url.germplasm.details}" />		
+	</bean>
 
 	<bean id="fieldbookService" class="com.efficio.fieldbook.service.FieldbookServiceImpl" />
 

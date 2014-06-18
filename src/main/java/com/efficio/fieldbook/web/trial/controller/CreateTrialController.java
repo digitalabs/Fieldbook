@@ -371,10 +371,10 @@ public class CreateTrialController extends SettingsController {
     private void setFormStaticData(CreateTrialForm form){
         form.setBreedingMethodId(AppConstants.BREEDING_METHOD_ID.getString());
         form.setLocationId(AppConstants.LOCATION_ID.getString());
-        form.setBreedingMethodUrl(AppConstants.BREEDING_METHOD_URL.getString());
-        form.setLocationUrl(AppConstants.LOCATION_URL.getString());
+        form.setBreedingMethodUrl(fieldbookProperties.getProgramBreedintMethodsUrl());
+        form.setLocationUrl(fieldbookProperties.getProgramLocationsUrl());
         form.setProjectId(this.getCurrentProjectId());
-        form.setImportLocationUrl(AppConstants.IMPORT_GERMPLASM_URL.getString());
+        form.setImportLocationUrl(fieldbookProperties.getGermplasmImportUrl());
         form.setStudyNameTermId(AppConstants.STUDY_NAME_ID.getString());
         form.setStartDateId(AppConstants.START_DATE_ID.getString());
     	form.setEndDateId(AppConstants.END_DATE_ID.getString());
@@ -382,7 +382,7 @@ public class CreateTrialController extends SettingsController {
     	form.setReplicates(AppConstants.REPLICATES.getString());
     	form.setBlockSize(AppConstants.BLOCK_SIZE.getString());
     	form.setExperimentalDesign(AppConstants.EXPERIMENTAL_DESIGN.getString());
-    	form.setOpenGermplasmUrl(AppConstants.GERMPLASM_DETAILS_URL.getString());
+    	form.setOpenGermplasmUrl(fieldbookProperties.getGermplasmDetailsUrl());
     }
     
     @ModelAttribute("experimentalDesignValues")

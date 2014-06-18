@@ -2,7 +2,7 @@ $(document).ready(function() {
 	$('.help-tooltip').tooltip();
 	$(".help-tooltip-nursery").tooltip();
 	//this would handle the closing of modal since some modal window wont close on esc
-	$('body').keypress(function(event){
+	$('body').keydown(function(event){
 		if(event.keyCode == 27){
 			var length = $('.modal.in').length - 1;
 			$($('.modal.in')[length]).modal('hide');

@@ -918,9 +918,9 @@ function loadOntologyModal(ontologyName){
 	           data: "",
 	           success: function(html) {
 	        	   
-	             $("#manageOntologyModal"+" .modal-content").empty().append(html);
+	             $('#manageOntologyModal'+' .modal-content').empty().append(html);
 	               
-	             $('#manageOntologyModal').modal('show');
+	             $('#manageOntologyModal').modal({ backdrop: 'static', keyboard: true });
 	             $.fn.modal.Constructor.prototype.enforceFocus = function () {};
 	             Spinner.toggle();
 	           }

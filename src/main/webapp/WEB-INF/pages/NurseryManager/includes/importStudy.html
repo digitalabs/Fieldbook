@@ -353,7 +353,7 @@
 					confirmStudyImport();
 				}else{
 					$('#importStudyModal').modal('hide');
-					setTimeout(function(){$('#importStudyConfirmationModal').modal({ backdrop: 'static', keyboard: false });}, 300);
+					setTimeout(function(){$('#importStudyConfirmationModal').modal({ backdrop: 'static', keyboard: true });}, 300);
 					importError = resp.message;
 					if(resp.detailErrorMessage != null && resp.detailErrorMessage.length !== 0) {
 						importError += '<ul>';
@@ -426,7 +426,7 @@
 			'use strict';
 			$('#importStudyModal').modal('hide');
 			$('#importStudyConfirmationModal').modal('hide');
-			setTimeout(function(){$('#importStudyDesigConfirmationModal').modal({ backdrop: 'static', keyboard: false });}, 300);
+			setTimeout(function(){$('#importStudyDesigConfirmationModal').modal({ backdrop: 'static', keyboard: true });}, 300);
 			resetDesigConfirmationFields();
 			showDesignationConfirmationMessage();
 		}
@@ -476,7 +476,7 @@
 						
 		function showImportOptions(){
 			'use strict';
-			$('#importStudyModal').modal({ backdrop: 'static', keyboard: false });
+			$('#importStudyModal').modal({ backdrop: 'static', keyboard: true });
 		}
 		function goBackToImport(){
 			'use strict';
@@ -491,7 +491,7 @@
 
 					$('#importStudyConfirmationModal').modal('hide');
 					$('#importStudyDesigConfirmationModal').modal('hide');
-					setTimeout(function(){$('#importStudyModal').modal({ backdrop: 'static', keyboard: false });}, 300);
+					setTimeout(function(){$('#importStudyModal').modal({ backdrop: 'static', keyboard: true });}, 300);
 					Spinner.toggle();
 				}
 			});

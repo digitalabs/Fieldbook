@@ -893,11 +893,13 @@ function showInvalidInputMessage(message){
 	createErrorNotification(invalidInputMsgHeader,message);
 }
 function showErrorMessage(messageDivId, message) {
+    // TODO : change showErrorMessage and calling functions to remove unnecessary div parameter
 	'use strict';
 	createErrorNotification(errorMsgHeader,message);
 }
 
 function showSuccessfulMessage(messageDivId, message) {
+    // TODO : change showSuccessfulMessage and calling functions to remove unnecessary div parameter
 	'use strict';
 	createSuccessNotification(successMsgHeader,message);
 }
@@ -1897,7 +1899,7 @@ function createFolder() {
 					doStudyLazyLoad(node);
 					node.focus();
 					node.expand();
-					$('#addStudyFolder').modal('hide');
+					$('#addFolderDiv').slideUp();
 				} else {
 					showErrorMessage('page-add-study-folder-message-modal', data.message);
 				}
@@ -1915,10 +1917,8 @@ function renameFolder(object) {
 
 	if (!$(object).hasClass('disable-image')) {
 
-		$('#page-rename-study-folder-message-modal').html('');
-		$('#renameStudyFolder').modal('show');
-		currentFolderName = $('#studyTree').dynatree('getTree').getActiveNode().data.title
-		$('#renameStudyFolder #heading-modal').html(renameFolderHeader + ' ' + currentFolderName);
+		$('#renameFolderDiv').slideDown('fast');
+		currentFolderName = $('#studyTree').dynatree('getTree').getActiveNode().data.title;
 		$('#newFolderName').val(currentFolderName);
 	}
 }
@@ -1954,7 +1954,7 @@ function submitRenameFolder() {
 			success: function(data) {
 				var node;
 				if (data.isSuccess === '1') {
-					$('#renameStudyFolder').modal('hide');
+					$('#renameFolderDiv').slideUp('fast');
 					node = $('#studyTree').dynatree('getTree').getActiveNode();
 					node.data.title = folderName
 					$(node.span).find('a').html(folderName);
@@ -1976,10 +1976,10 @@ function deleteFolder(object) {
 	var currentFolderName;
 
 	if (!$(object).hasClass('disable-image')) {
-		$('#deleteStudyFolder').modal('show');
-		currentFolderName = $('#studyTree').dynatree('getTree').getActiveNode().data.title
-		$('#delete-confirmation').html(deleteConfirmation + ' ' + currentFolderName + '?');
-		$('#page-delete-study-folder-message-modal').html('');
+		$('#deleteFolderDiv').slideDown('fast');
+		/*currentFolderName = $('#studyTree').dynatree('getTree').getActiveNode().data.title*/
+		/*$('#delete-confirmation').html(deleteConfirmation + ' ' + currentFolderName + '?');*/
+		/*$('#page-delete-study-folder-message-modal').html('');*/
 	}
 }
 

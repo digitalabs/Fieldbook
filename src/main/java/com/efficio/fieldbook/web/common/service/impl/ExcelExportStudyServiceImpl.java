@@ -44,7 +44,7 @@ import org.springframework.stereotype.Service;
 import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
-import com.efficio.fieldbook.web.util.FieldbookProperty;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.efficio.fieldbook.web.util.ZipUtil;
 
 @Service
@@ -56,6 +56,9 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	
 	@Resource
 	private MessageSource messageSource;
+	
+	@Resource
+    private FieldbookProperties fieldbookProperties;
 	
 	private static final List<Integer> STUDY_DETAILS_IDS = Arrays.asList(TermId.STUDY_NAME.getId(), TermId.STUDY_TITLE.getId(), 
 			TermId.PM_KEY.getId(), TermId.STUDY_OBJECTIVE.getId(), TermId.START_DATE.getId(), TermId.END_DATE.getId(), 
@@ -79,7 +82,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 					writeDescriptionSheet(xlsBook, workbook, trialObservation);
 					writeObservationSheet(xlsBook, workbook, observations);
 					
-					String filenamePath = FieldbookProperty.getPathProperty() + File.separator + filename;
+					String filenamePath = fieldbookProperties.getUploadDirectory() + File.separator + filename;
 					if (end - start > 0) {
 						int fileExtensionIndex = filenamePath.lastIndexOf(".");
 						filenamePath = filenamePath.substring(0, fileExtensionIndex) +  "-" + i + filenamePath.substring(fileExtensionIndex);
@@ -103,7 +106,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 			}
 
 			if (end - start > 0) {
-				outputFilename = FieldbookProperty.getPathProperty() 
+				outputFilename = fieldbookProperties.getUploadDirectory() 
 						+ File.separator 
 						+ filename.replaceAll(AppConstants.EXPORT_XLS_SUFFIX.getString(), "") 
 						+ AppConstants.ZIP_FILE_SUFFIX.getString();

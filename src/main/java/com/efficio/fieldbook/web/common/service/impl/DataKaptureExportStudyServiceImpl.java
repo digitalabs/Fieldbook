@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.slf4j.Logger;
@@ -17,7 +19,7 @@ import com.efficio.fieldbook.web.common.service.DataKaptureExportStudyService;
 import com.efficio.fieldbook.web.nursery.bean.CSVOziel;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
-import com.efficio.fieldbook.web.util.FieldbookProperty;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.efficio.fieldbook.web.util.ZipUtil;
 
 @Service
@@ -25,6 +27,9 @@ public class DataKaptureExportStudyServiceImpl implements
 		DataKaptureExportStudyService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataKaptureExportStudyServiceImpl.class);
+    
+	@Resource
+    private FieldbookProperties fieldbookProperties;
 
     @Override
 	public String export(Workbook workbook, String filename, int start, int end) {
@@ -36,7 +41,7 @@ public class DataKaptureExportStudyServiceImpl implements
     	filenameList.add(exportObservations(filename, csv));
     	filenameList.add(exportTraits(filename, csv));
     	
-		String outputFilename = FieldbookProperty.getPathProperty() 
+		String outputFilename = fieldbookProperties.getUploadDirectory()
 				+ File.separator 
 				+ filename.replaceAll(AppConstants.EXPORT_XLS_SUFFIX.getString(), "") 
 				+ AppConstants.ZIP_FILE_SUFFIX.getString();
@@ -46,7 +51,7 @@ public class DataKaptureExportStudyServiceImpl implements
 	}
 	
 	private String exportObservations(String filename, CSVOziel csv) {
-        String outputFile = FieldbookProperty.getPathProperty() + File.separator + filename + AppConstants.EXPORT_CSV_SUFFIX.getString();
+        String outputFile = fieldbookProperties.getUploadDirectory() + File.separator + filename + AppConstants.EXPORT_CSV_SUFFIX.getString();
     	try {
             new File(outputFile).exists();
         	CsvWriter csvOutput = new CsvWriter(new FileWriter(outputFile, false), ',');
@@ -72,7 +77,7 @@ public class DataKaptureExportStudyServiceImpl implements
 	}
 	
 	private String exportTraits(String filename, CSVOziel csv) {
-        String outputFile = FieldbookProperty.getPathProperty() + File.separator 
+        String outputFile = fieldbookProperties.getUploadDirectory() + File.separator 
         		+ filename + AppConstants.DATAKAPTURE_TRAITS_SUFFIX.getString() 
         		+ AppConstants.EXPORT_CSV_SUFFIX.getString();
         try {

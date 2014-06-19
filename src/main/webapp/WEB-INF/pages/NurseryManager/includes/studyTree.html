@@ -25,12 +25,12 @@
                             <button id="closeStudyTreeModal" type="button" class="close pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true" style="padding-top: 7px"></button>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-xs-12 col-md-12" id="addFolderDiv">
-                            <div class="col-xs-4 col-md-4 nopadding">
-                                <label class="control-label label-bold" th:text="#{browse.nursery.add.folder.name}">Folder Name:</label><span class="required">*</span>
+                    <div class="form-horizontal form-group">
+                        <div id="addFolderDiv">
+                            <div class="col-xs-4 nopadding" >
+                                <label class="control-label label-bold" th:utext="#{browse.nursery.add.folder.name}">Folder Name:</label>
                             </div>
-                            <div class="col-xs-8 col-md-8 nopadding">
+                            <div class="col-xs-8">
                                 <div class="input-group">
                                     <input id="addFolderName" name="addFolderName" type="text" class="form-control select2" placeholder="Folder Name"/>
                                         <span class="input-group-btn">
@@ -44,11 +44,11 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-md-12 form-group" id="renameFolderDiv">
-                            <div class="col-xs-4 col-md-4 nopadding">
-                                <label class="control-label  label-bold" th:text="#{browse.nursery.rename.folder.input.label}">Folder Name:</label><span class="required">*</span>
+                        <div id="renameFolderDiv">
+                            <div class="col-xs-4 nopadding">
+                                <label class="control-label  label-bold" th:utext="#{browse.nursery.rename.folder.input.label}">Folder Name:</label>
                             </div>
-                            <div class="col-xs-8 col-md-8 nopadding">
+                            <div class="col-xs-8">
                                 <div class="input-group">
                                     <input id="newFolderName" name="newFolderName" type="text" class="form-control select2" placeholder="Folder Name"/>
                                         <span class="input-group-btn">
@@ -63,7 +63,7 @@
                             </div>
                         </div>
                     </div>
-
+                    <div class="clearfix"></div>
                     <div class="row">
                         <div id="studyTree">
                         </div>

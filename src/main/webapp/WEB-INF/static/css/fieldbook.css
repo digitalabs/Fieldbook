@@ -1168,6 +1168,10 @@ a.fbk-edit-experiment{
     margin: 0 !important;
 }
 
+.no-padding-right {
+    padding-right: 0;
+}
+
 .drop-target {
     background-color: #C8C6C6;
 }
@@ -1203,5 +1207,9 @@ input[type="text"], input[type="password"], .ui-autocomplete-input, textarea, .u
 
 .s2-nosearch-icon .select2-input {
     background: no-repeat 100% -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, #fff), color-stop(0.99, #eee))
+}
+
+.input-group .btn {
+    font-size: 14px;
 }
 

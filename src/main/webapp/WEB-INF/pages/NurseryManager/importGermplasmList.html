@@ -163,10 +163,10 @@
 					</div>
 				</div>
 
-                <div class="row">
-                    <div class="col-xs-12 col-md-12" id="addGermplasmFolderDiv">
+                <div class="form-horizontal form-group">
+                    <div id="addGermplasmFolderDiv">
                         <div class="col-xs-4 col-md-4 nopadding">
-                            <label class="control-label label-bold" th:text="#{browse.nursery.add.folder.name}">Folder Name:</label><span class="required">*</span>
+                            <label class="control-label label-bold" th:utext="#{browse.nursery.add.folder.name}">Folder Name: <span class="required">*</span></label>
                         </div>
                         <div class="col-xs-8 col-md-8 nopadding">
                             <div class="input-group">
@@ -182,9 +182,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-12 col-md-12 form-group" id="renameGermplasmFolderDiv">
+                    <div id="renameGermplasmFolderDiv">
                         <div class="col-xs-4 col-md-4 nopadding">
-                            <label class="control-label  label-bold" th:text="#{browse.nursery.rename.folder.input.label}">Folder Name:</label><span class="required">*</span>
+                            <label class="control-label  label-bold" th:utext="#{browse.nursery.rename.folder.input.label}">Folder Name: <span class="required">*</span></label>
                         </div>
                         <div class="col-xs-8 col-md-8 nopadding">
                             <div class="input-group">
@@ -201,7 +201,7 @@
                         </div>
                     </div>
                 </div>
-
+                <div class="clearfix"></div>
 				<div class="row form-group" >
 					<!-- Germplasm List Tree View -->
 					<div class="col-md-12 col-xs-12 germplasm-tree-section" id="germplasmTree" style="height:350px; overflow:auto;"></div>

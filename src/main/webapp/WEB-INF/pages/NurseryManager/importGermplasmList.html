@@ -60,14 +60,14 @@
 		<div class="modal-content">
 			<div class="modal-body">
 				<div class="row form-group">
-					<div class="col-xs-11 col-md-11">					
+					<div class="col-xs-11 col-md-11">
 						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{common.form.confirmation.text}"></label>
 					</div>
 					<div class="col-xs-1 col-md-1">
 						<button  id="close" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
-					</div>										
+					</div>
 				</div>
-				
+
 				<div class="row form-group">
 					<div class="col-xs-12 col-md-12" th:text="#{import.germplasm.overwrite.current.checks}">
 						Are you sure you want to overwrite existing checks with a new one?
@@ -84,16 +84,16 @@
 
 <div class="modal fade" id="confirmReplaceListModal" tabindex="-1" role="dialog" aria-labelledby="confirmReplaceListModal" aria-hidden="true">
 	<div class="modal-dialog">
-		<div class="modal-content">			
-			<div class="modal-body">		
-			
+		<div class="modal-content">
+			<div class="modal-body">
+
 				<div class="row form-group">
-					<div class="col-xs-11 col-md-11">					
+					<div class="col-xs-11 col-md-11">
 						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{common.form.confirmation.text}"></label>
 					</div>
 					<div class="col-xs-1 col-md-1">
 						<button  id="close" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
-					</div>										
+					</div>
 				</div>
 				<div class="row form-group">
 					<div class="col-xs-12 col-lg-12" th:text="#{germplasm.list.confirm.replace.with.check}">
@@ -114,13 +114,13 @@
 		<div class="modal-content">
 			<div class="modal-body">
 				<div class="row form-group">
-					<div class="col-xs-11 col-md-11">					
+					<div class="col-xs-11 col-md-11">
 						<label class="modal-title fbk-modal-title" id="heading-modal"></label>
 					</div>
 					<div class="col-xs-1 col-md-1">
 						<button  type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
-					</div>										
-				</div>				
+					</div>
+				</div>
 				<div class="row form-group">
 					<div class="col-xs-12 col-lg-12" th:text="#{import.germplasm.remove.check}">
 						The specified starting entry is already assigned as a check, do you want to continue and remove it from the checks list?
@@ -138,9 +138,9 @@
 <div class="modal fade" id="listTreeModal" tabindex="-1" role="dialog" aria-labelledby="listTreeModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-extra-small">
 		<div class="modal-content">
-			
-			<div class="modal-body">							
-				
+
+			<div class="modal-body">
+
 				<div class="row">
 					<div id="page-import-message-modal" class="col-xs-12 col-md-12">
 					</div>
@@ -162,6 +162,46 @@
 						<button id="closeStudyTreeModal" type="button" class="close pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true" style="padding-top: 5px"></button>
 					</div>
 				</div>
+
+                <div class="row">
+                    <div class="col-xs-12 col-md-12" id="addGermplasmFolderDiv">
+                        <div class="col-xs-4 col-md-4 nopadding">
+                            <label class="control-label label-bold" th:text="#{browse.nursery.add.folder.name}">Folder Name:</label><span class="required">*</span>
+                        </div>
+                        <div class="col-xs-8 col-md-8 nopadding">
+                            <div class="input-group">
+                                <input id="addGermplasmFolderName" name="addFolderName" type="text" class="form-control select2" placeholder="Folder Name"/>
+                                                            <span class="input-group-btn">
+                                                                <button class="btn btn-success" id="addGermplasmFolderOkButton">
+                                                                    <span class="glyphicon glyphicon-ok"></span>
+                                                                </button>
+                                                                <button class="btn btn-danger" id="addGermplasmFolderCancelButton">
+                                                                    <span class="glyphicon glyphicon-remove"></span>
+                                                                </button>
+                                                            </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-12 form-group" id="renameGermplasmFolderDiv">
+                        <div class="col-xs-4 col-md-4 nopadding">
+                            <label class="control-label  label-bold" th:text="#{browse.nursery.rename.folder.input.label}">Folder Name:</label><span class="required">*</span>
+                        </div>
+                        <div class="col-xs-8 col-md-8 nopadding">
+                            <div class="input-group">
+                                <input id="newGermplasmFolderName" name="newFolderName" type="text" class="form-control select2" placeholder="Folder Name"/>
+                                                            <span class="input-group-btn">
+                                                                <button class="btn btn-success" id="renameGermplasmFolderOkButton">
+                                                                    <span class="glyphicon glyphicon-ok"></span>
+                                                                </button>
+                                                                <button class="btn btn-danger" id="renameGermplasmFolderCancelButton">
+                                                                    <span class="glyphicon glyphicon-remove"></span>
+                                                                </button>
+                                                            </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
 				<div class="row form-group" >
 					<!-- Germplasm List Tree View -->
 					<div class="col-md-12 col-xs-12 germplasm-tree-section" id="germplasmTree" style="height:350px; overflow:auto;"></div>
@@ -192,7 +232,7 @@
 <div layout:fragment="page-script">
 	<script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery-multisortable.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery.tablednd.0.7.min.js}"></script>
-	
+
 	<script type="text/javascript" th:inline="javascript">
 		//<![CDATA[
 		/*globals Spinner, moveToTopScreen, getDisplayedTreeName, showSpecifyCheckSection, setSpinnerMaxValue*/
@@ -216,11 +256,11 @@
 			importLocationUrl = /*[[#{nursery.apps.import.nursery.url}]]*/ '',
 			importIframeOpened = false,
 			itemsIndexAdded = [];
-		
+
 
 		var makeCheckDraggableBool = true,
 			hasPageError = /*[[${importGermplasmListForm.hasError}]]*/ '';
-		
+
 
 		// FIXME There is a lot of repeated code in the next two functions
 		function makeCheckDraggable(isDraggable) {
@@ -329,7 +369,7 @@
 
 			// Change background of selected rows
 			$('.germplasm-list-items tr.germplasmSelectedRow').removeClass('germplasmSelectedRow');
-		}		
+		}
 
 		function addCheckGermplasmList(entryNumber, gid, index) {
 			'use strict';
@@ -348,8 +388,8 @@
 						return false;
 					}
 				}
-				
-				
+
+
 			}
 
 			Spinner.toggle();
@@ -359,7 +399,7 @@
 				if(checkId === '') {
 					checkId = '0';
 				}
-				selectedCheckVal += checkId + ':'; 							
+				selectedCheckVal += checkId + ':';
 			}
 
 			$.ajax({
@@ -382,7 +422,7 @@
 							index++;
 							prevStartIndex = $('#startIndex2').val();
 						}
-					Spinner.toggle();	
+					Spinner.toggle();
 				}
 			});
 			return true;
@@ -468,7 +508,7 @@
 					}*/
 				}
 				$('.germplasm-list-items tr.germplasmSelectedRow').removeClass('germplasmSelectedRow');
-			}			
+			}
 		}
 
 		function deleteCheckGermplasmList(entryNumber, gid) {
@@ -502,7 +542,7 @@
 									itemsIndexAdded[indexItems] = null;
 									break;
 								}
-	
+
 							}
 						}
 					}
@@ -516,7 +556,7 @@
 			var getType = {};
 			return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
 		}
-		
+
 		function displayListDetails(listIdTemp) {
 			'use strict';
 
@@ -553,15 +593,16 @@
 			'use strict';
 			if (lastDraggedChecksList === 0 && $('.check-germplasm-list-items tbody tr').length > 0){
 				$('#confirmReplaceListModal #replaceListId').val(listIdTemp);
-				$('#confirmReplaceListModal').modal({ backdrop: 'static', keyboard: true });	
+				$('#confirmReplaceListModal').modal({ backdrop: 'static', keyboard: true });
 			}else {
 				displayListDetails(listIdTemp);
 			}
-			
+
 		}
+
 		function confirmReplaceList(){
 			'use strict';
-			
+
 			displayListDetails($('#confirmReplaceListModal #replaceListId').val());
 		}
 
@@ -617,7 +658,7 @@
 				resetCheckList();
 			}
 		}
-	
+
 		function openListTree(type) {
 			'use strict';
 			openTreeType = type;
@@ -634,7 +675,7 @@
 		}
 
 		function chooseListNode(node, fromEnterKey) {
-			'use strict';		
+			'use strict';
 
 			if (node === null || node.data.isFolder) {
 				if(fromEnterKey === false){
@@ -650,9 +691,9 @@
 					} else {
 						if(fromEnterKey === false){
 							showErrorMessage('page-import-message-modal', sameListErr);
-							return;	
+							return;
 						}
-						
+
 					}
 				} else if(openTreeType === 2) {
 					// Load in check list
@@ -691,7 +732,7 @@
 		function activateDroppable() {
 			'use strict';
 
-			$('.list-droppable').droppable({				
+			$('.list-droppable').droppable({
                 tolerance: 'pointer',
 				addClasses: true,
 				over: function(/*event, ui*/) {
@@ -807,13 +848,17 @@
 				$('#myModal').modal('show');
 			}
 
-			// Display tree			
+			// Display tree
 			showSpecifyCheckSection();
 
-			
+
 			$('#entries-details').css('display', 'none');
 
-			displayGermplasmListTree('germplasmTree', false, 0);
+			displayGermplasmListTree('germplasmTree', false, 0, function (node, sourceNode) {
+                var currentFolderName = node.data.title;
+                $('#newGermplasmFolderName').val(currentFolderName);
+            });
+
 			activateDroppable();
 			changeBrowseGermplasmButtonBehavior(false);
 
@@ -821,7 +866,137 @@
 				$('#'+getDisplayedTreeName()).dynatree('getTree').reloadStudyTree();
 				changeBrowseGermplasmButtonBehavior(false);
 			});
+
+            $('#addGermplasmFolderDiv').hide();
+            $('#renameGermplasmFolderDiv').hide();
+            $('#addGermplasmFolderOkButton').on('click', createGermplasmFolder);
+            $('#addGermplasmFolderCancelButton').on('click', hideAddGermplasmFolderDiv);
+            $('#renameGermplasmFolderOkButton').on('click', submitRenameGermplasmFolder);
+            $('#renameGermplasmFolderCancelButton').on('click', hideRenameGermplasmFolderDiv);
+
 		});
+
+        function createGermplasmFolder() {
+        	'use strict';
+
+        	var folderName = $.trim($('#addGermplasmFolderName').val()),
+        		parentFolderId;
+
+        	if (folderName === '') {
+        		showErrorMessage('page-add-germplasm-folder-message-modal', folderNameRequiredMessage);
+        		return false;
+        	} else if (!isValidInput(folderName)) {
+                showErrorMessage('page-add-germplasm-folder-message-modal', invalidFolderNameCharacterMessage);
+                return false;
+            }else {
+        		parentFolderId = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.key;
+        		if (parentFolderId === 'LOCAL') {
+        			parentFolderId = 1;
+        		}
+
+        		Spinner.toggle();
+        		$.ajax({
+        			url: '/Fieldbook/ListTreeManager/addGermplasmFolder',
+        			type: 'POST',
+        			data: 'parentFolderId=' + parentFolderId + '&folderName=' + folderName,
+        			cache: false,
+        			success: function(data) {
+        				if (data.isSuccess === '1') {
+        					// Lazy load the node
+        					var node = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode();
+        					doGermplasmLazyLoad(node);
+        					node.focus();
+        					node.expand();
+        					hideAddGermplasmFolderDiv();
+        				} else {
+        					showErrorMessage('page-add-germplasm-folder-message-modal', data.message);
+        				}
+        				Spinner.toggle();
+        			}
+        		});
+        	}
+        	return false;
+        }
+
+        function hideAddGermplasmFolderDiv() {
+            'use strict';
+            $('#addGermplasmFolderDiv').slideUp('fast');
+        }
+
+        function hideRenameGermplasmFolderDiv() {
+            'use strict';
+            $('#renameGermplasmFolderDiv').slideUp('fast');
+        }
+
+        function addGermplasmFolder(object) {
+            'use strict';
+            if (!$(object).hasClass('disable-image')) {
+                hideRenameGermplasmFolderDiv();
+                $('#addGermplasmFolderName').val('');
+                $('#addGermplasmFolderDiv').slideDown('fast');
+            }
+        }
+
+        function renameGermplasmFolder(object) {
+        	'use strict';
+
+        	var currentFolderName;
+
+        	if (!$(object).hasClass('disable-image')) {
+                hideAddGermplasmFolderDiv();
+
+        		currentFolderName = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.title
+        		$('#newGermplasmFolderName').val(currentFolderName);
+
+                $('#renameGermplasmFolderDiv').slideDown('fast');
+        	}
+        }
+
+        function submitRenameGermplasmFolder() {
+        	'use strict';
+
+        	var folderName = $.trim($('#newGermplasmFolderName').val()),
+        		parentFolderId;
+
+        	if ($.trim(folderName)  === $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.title) {
+        		$('#renameGermplasmFolder').modal('hide');
+        		return false;
+        	}
+
+        	if (folderName === '') {
+        		showErrorMessage('page-rename-germplasm-folder-message-modal', folderNameRequiredMessage);
+        		return false;
+        	} else if (!isValidInput(folderName)) {
+                showErrorMessage('page-rename-germplasm-folder-message-modal', invalidFolderNameCharacterMessage);
+                return false;
+            }else {
+        		parentFolderId = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.key;
+        		if (parentFolderId === 'LOCAL') {
+        			parentFolderId = 1;
+        		}
+
+        		Spinner.toggle();
+        		$.ajax({
+        			url: '/Fieldbook/ListTreeManager/renameGermplasmFolder',
+        			type: 'POST',
+        			data: 'folderId=' + parentFolderId + '&newFolderName=' + folderName,
+        			cache: false,
+        			success: function(data) {
+        				var node;
+        				if (data.isSuccess === '1') {
+        					hideRenameGermplasmFolderDiv();
+        					node = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode();
+        					node.data.title = folderName;
+        					$(node.span).find('a').html(folderName);
+        					node.focus();
+        				} else {
+        					showErrorMessage('page-rename-germplasm-folder-message-modal', data.message);
+        				}
+        				Spinner.toggle();
+        			}
+        		});
+        	}
+        }
 	//]]>
 	</script>
 </div>

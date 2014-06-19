@@ -62,30 +62,16 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-md-12 form-group" id="deleteFolderDiv">
-                            <div class="col-xs-8 col-md-8 nopadding">
-                                <label id="deleteFolderLabelID" class="control-label  label-bold" th:text="#{browse.nursery.delete.folder.name.confirmation}">Are you sure you want to delete </label>
-                            </div>
-                            <div class="col-xs-4 col-md-4 nopadding">
-                                <div class="input-group">
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-success" id="deleteFolderOkButton">
-                                            <span class="glyphicon glyphicon-ok"></span>
-                                        </button>
-                                        <button class="btn btn-danger" id="deleteFolderCancelButton">
-                                            <span class="glyphicon glyphicon-remove"></span>
-                                        </button>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
 
                     <div class="row">
                         <div id="studyTree">
                         </div>
                     </div>
+                    <div class="row">
+                        <div th:include="/NurseryManager/includes/studyTreeManageNurseryOperation"/>
+                    </div>
+
 
 
                 </div>
@@ -129,13 +115,11 @@ $(document).ready(function () {
     changeBrowseNurseryButtonBehavior(false);
     $('#addFolderDiv').hide();
     $('#renameFolderDiv').hide();
-    $('#deleteFolderDiv').hide();
     $('#addFolderOkButton').on('click', createFolder);
     $('#addFolderCancelButton').on('click', hideAddFolderDiv);
     $('#renameFolderOkButton').on('click', submitRenameFolder);
     $('#renameFolderCancelButton').on('click', hideRenameFolderDiv);
-    $('#deleteFolderOkButton').on('click', submitDeleteFolder);
-    $('#deleteFolderCancelButton').on('click', hideDeleteFolderDiv);
+
 });
 
 
@@ -317,7 +301,6 @@ function displayStudyListTree(treeName, studyType, choosingTypeParam) {
         onClick: function (node, event) {
             $('#newFolderName').val(node.data.title);
             var currentFolderName = node.data.title;
-            $('#deleteFolderLabelID').html(deleteConfirmation + ' ' + currentFolderName + '?');
         },
         onDblClick: function (node, event) {
             chooseStudy();

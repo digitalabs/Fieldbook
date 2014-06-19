@@ -1910,9 +1910,45 @@ function createFolder() {
 	return false;
 }
 
+function deleteFolder(object) {
+	'use strict';
 
+	var currentFolderName;
 
+	if (!$(object).hasClass('disable-image')) {
+		$('#deleteStudyFolder').modal('show');
+		currentFolderName = $('#studyTree').dynatree('getTree').getActiveNode().data.title
+		$('#delete-confirmation').html(deleteConfirmation + ' ' + currentFolderName + '?');
+		$('#page-delete-study-folder-message-modal').html('');
+	}
+}
 
+function submitDeleteFolder() {
+	'use strict';
+	var folderId = $('#studyTree').dynatree('getTree').getActiveNode().data.key;
+
+	Spinner.toggle();
+	$.ajax({
+		url: '/Fieldbook/StudyTreeManager/deleteStudyFolder',
+		type: 'POST',
+		data: 'folderId=' + folderId,
+		cache: false,
+		success: function(data) {
+			var node;
+			if (data.isSuccess === '1') {
+				$('#deleteStudyFolder').modal('hide');
+				node = $('#studyTree').dynatree('getTree').getActiveNode();
+				if (node != null) {
+					node.remove();
+				}
+				changeBrowseNurseryButtonBehavior(false);
+			} else {
+				showErrorMessage('page-delete-study-folder-message-modal', data.message);
+			}
+			Spinner.toggle();
+		}
+	});
+}
 
 function moveStudy(sourceNode, targetNode) {
 	'use strict';
@@ -1945,109 +1981,6 @@ function moveStudy(sourceNode, targetNode) {
 			Spinner.toggle();
 		}
 	});
-}
-
-function createGermplasmFolder() {
-	'use strict';
-
-	var folderName = $.trim($('#addGermplasmFolderName').val()),
-		parentFolderId;
-
-	if (folderName === '') {
-		showErrorMessage('page-add-germplasm-folder-message-modal', folderNameRequiredMessage);
-		return false;
-	} else if (!isValidInput(folderName)) {
-        showErrorMessage('page-add-germplasm-folder-message-modal', invalidFolderNameCharacterMessage);
-        return false;
-    }else {
-		parentFolderId = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.key;
-		if (parentFolderId === 'LOCAL') {
-			parentFolderId = 1;
-		}
-
-		Spinner.toggle();
-		$.ajax({
-			url: '/Fieldbook/ListTreeManager/addGermplasmFolder',
-			type: 'POST',
-			data: 'parentFolderId=' + parentFolderId + '&folderName=' + folderName,
-			cache: false,
-			success: function(data) {
-				if (data.isSuccess === '1') {
-					// Lazy load the node
-					var node = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode();
-					doGermplasmLazyLoad(node);
-					node.focus();
-					node.expand();
-					$('#addGermplasmFolder').modal('hide');
-				} else {
-					showErrorMessage('page-add-germplasm-folder-message-modal', data.message);
-				}
-				Spinner.toggle();
-			}
-		});
-	}
-	return false;
-}
-
-function renameGermplasmFolder(object) {
-	'use strict';
-
-	var currentFolderName;
-
-	if (!$(object).hasClass('disable-image')) {
-
-		$('#page-rename-germplasm-folder-message-modal').html('');
-		$('#renameGermplasmFolder').modal('show');
-		currentFolderName = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.title
-		$('#renameGermplasmFolder #heading-modal').html(renameFolderHeader + ' ' + currentFolderName);
-		$('#newGermplasmFolderName').val(currentFolderName);
-	}
-}
-
-function submitRenameGermplasmFolder() {
-	'use strict';
-
-	var folderName = $.trim($('#newGermplasmFolderName').val()),
-		parentFolderId;
-
-	if ($.trim(folderName)  === $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.title) {
-		$('#renameGermplasmFolder').modal('hide');
-		return false;
-	}
-
-	if (folderName === '') {
-		showErrorMessage('page-rename-germplasm-folder-message-modal', folderNameRequiredMessage);
-		return false;
-	} else if (!isValidInput(folderName)) {
-        showErrorMessage('page-rename-germplasm-folder-message-modal', invalidFolderNameCharacterMessage);
-        return false;
-    }else {
-		parentFolderId = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.key;
-		if (parentFolderId === 'LOCAL') {
-			parentFolderId = 1;
-		}
-
-		Spinner.toggle();
-		$.ajax({
-			url: '/Fieldbook/ListTreeManager/renameGermplasmFolder',
-			type: 'POST',
-			data: 'folderId=' + parentFolderId + '&newFolderName=' + folderName,
-			cache: false,
-			success: function(data) {
-				var node;
-				if (data.isSuccess === '1') {
-					$('#renameGermplasmFolder').modal('hide');
-					node = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode();
-					node.data.title = folderName;
-					$(node.span).find('a').html(folderName);
-					node.focus();
-				} else {
-					showErrorMessage('page-rename-germplasm-folder-message-modal', data.message);
-				}
-				Spinner.toggle();
-			}
-		});
-	}
 }
 
 function deleteGermplasmFolder(object) {

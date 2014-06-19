@@ -1460,7 +1460,7 @@ function hideDeleteConfirmation() {
 }
 
 function clearSettings() {
-	Spinner.toggle();
+	Spinner.play();
 	$.ajax({
 		url : "/Fieldbook/NurseryManager/createNursery/clearSettings",
 		type : "GET",
@@ -1468,7 +1468,7 @@ function clearSettings() {
 		success : function(html) {
 			$("#chooseSettingsDiv").html(html);
 			moveToTopScreen();
-			Spinner.toggle();
+			Spinner.stop();
 		}
 	});
 

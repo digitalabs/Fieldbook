@@ -126,9 +126,7 @@ public class FieldbookServiceImpl implements FieldbookService{
                             if (!selectedIds.contains(ref.getId())) {
                                     
                                      if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
-                                             if(ref.getId().intValue() == TermId.STUDY_TYPE.getId()
-                                                             || ref.getId().intValue() == TermId.PM_KEY.getId()
-                                                             || ref.getId().intValue() == TermId.TRIAL_INSTANCE_FACTOR.getId()
+                                             if(inHideVariableFields(ref.getId(), AppConstants.FILTER_NURSERY_FIELDS.getString())
                                                              || ref.getId().intValue() == TermId.DATASET_NAME.getId()
                                                              || ref.getId().intValue() == TermId.DATASET_TITLE.getId()
                                                              || ref.getId().intValue() == TermId.DATASET_TYPE.getId())

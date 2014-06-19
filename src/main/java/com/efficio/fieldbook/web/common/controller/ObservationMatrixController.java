@@ -176,6 +176,8 @@ public class ObservationMatrixController extends
     	}
     	form.setUpdateObservation(copyRow);
     	form.setExperimentIndex(index);
+    	model.addAttribute("categoricalVarId", TermId.CATEGORICAL_VARIABLE.getId());
+    	model.addAttribute("dateVarId", TermId.DATE_VARIABLE.getId());
         return super.showAjaxPage(model, EDIT_EXPERIMENT_TEMPLATE);
     }
     @ResponseBody

@@ -28,23 +28,22 @@
 					</div>
 					<div class="col-xs-8 col-md-8" th:if="${measurementData.editable == true}">
 						
-						<input th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" type="text" th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues) and measurementData.measurementVariable.dataTypeId != 1117}" 
+						<input th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" type="text" th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues) and measurementData.measurementVariable.dataTypeId != dateVarId and measurementData.measurementVariable.dataTypeId != categoricalVarId}" 
 						th:field="*{updateObservation.dataList[__${rowIndex.index}__].value}"/>
 
-						<input th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues) and measurementData.measurementVariable.dataTypeId == 1117}"
+						<input th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues) and measurementData.measurementVariable.dataTypeId == dateVarId}"
 							type="text" placeholder="yyyy-mm-dd" th:field="*{updateObservation.dataList[__${rowIndex.index}__].value}" class="form-control date-input" />
-						<label  th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues) and measurementData.measurementVariable.dataTypeId == 1117}"  class="btn datepicker">
+						<label  th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues) and measurementData.measurementVariable.dataTypeId == dateVarId}"  class="btn datepicker">
 							<img th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;" />
 						</label>
 								
 						<select class="variates-select" th:attr="data-type=${measurementData.dataType}" style="width: 100%;" size="1" 
-						th:if="${not #lists.isEmpty(measurementData.measurementVariable.possibleValues)}" 
+						th:if="${measurementData.measurementVariable.dataTypeId == categoricalVarId or not #lists.isEmpty(measurementData.measurementVariable.possibleValues)}" 
 						th:field="*{updateObservation.dataList[__${rowIndex.index}__].cValueId}">
-							<option value = "" text=""></option>
+							<option value="" th:text="#{categorical.please.choose}">Please Choose</option>
 							<option th:each="refval : ${measurementData.measurementVariable.possibleValues}" 
 							th:value="${refval.key}" th:text="${refval.description}"></option>
 						</select>
-						
 					</div>
 				</div>				
 				
@@ -63,7 +62,10 @@
 		//<![CDATA[
 
 		$( document ).ready(function() {
-					$('.updateExperimentModal select').select2({minimumResultsForSearch: 20});					
+					$('.updateExperimentModal select').each(function(){
+						var minResultsForSearch = $(this).find('option').length == 0 ? -1 : 20;
+						$(this).select2({minimumResultsForSearch: 20});					
+					});
 					truncateStudyVariableNames('.study-experiment-variable-name', 19);
 					if ($('.updateExperimentModal .date-input').length > 0) {
 						$('.updateExperimentModal .date-input').each(function() {

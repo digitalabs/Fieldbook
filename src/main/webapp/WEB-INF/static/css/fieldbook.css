@@ -513,6 +513,10 @@ padding-left: 20px; margin-top: 7px
 .help-tooltip {
     vertical-align: middle;
 }
+
+.help-tooltip-col {
+    margin-top: 7px;
+}
 .help-tooltip-nursery {
     color: #7D7D7D;
     font-size: 13pt;

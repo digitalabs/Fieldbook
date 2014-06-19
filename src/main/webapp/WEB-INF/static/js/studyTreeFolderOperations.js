@@ -1,4 +1,6 @@
 /* global Spinner:false */
+/* global showErrorMessage */
+/* global deleteConfirmation */
 
 function addFolder(object) {
     'use strict';

@@ -35,6 +35,8 @@ import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.trial.bean.TrialSelection;
+import com.efficio.fieldbook.web.util.DateUtil;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 
 @Controller
 @RequestMapping(ObservationMatrixController.URL)
@@ -164,6 +166,14 @@ public class ObservationMatrixController extends
     	MeasurementRow row = tempList.get(index);    
     	MeasurementRow copyRow = row.copy();
     	copyMeasurementValue(copyRow, row);
+    	if(copyRow != null && copyRow.getMeasurementVariables() != null){
+    		for(MeasurementData var : copyRow.getDataList()){
+    			if(var != null && var.getMeasurementVariable() != null && var.getMeasurementVariable().getDataTypeId() != null && var.getMeasurementVariable().getDataTypeId() == TermId.DATE_VARIABLE.getId()){
+    				//we change the date to the UI format
+    				var.setValue(DateUtil.convertToUIDateFormat(var.getMeasurementVariable().getDataTypeId(), var.getValue()));
+    			}
+    		}
+    	}
     	form.setUpdateObservation(copyRow);
     	form.setExperimentIndex(index);
         return super.showAjaxPage(model, EDIT_EXPERIMENT_TEMPLATE);
@@ -208,6 +218,14 @@ public class ObservationMatrixController extends
 			validationService.validateObservationValues(userSelection.getWorkbook(), copyRow);
 			//if there are no error, meaning everything is good, thats the time we copy it to the original
 			copyMeasurementValue(originalRow, row);
+			if(originalRow != null && originalRow.getMeasurementVariables() != null){
+	    		for(MeasurementData var : originalRow.getDataList()){
+	    			if(var != null && var.getMeasurementVariable() != null && var.getMeasurementVariable().getDataTypeId() != null && var.getMeasurementVariable().getDataTypeId() == TermId.DATE_VARIABLE.getId()){
+	    				//we change the date to the UI format
+	    				var.setValue(DateUtil.convertToDBDateFormat(var.getMeasurementVariable().getDataTypeId(), var.getValue()));
+	    			}
+	    		}
+	    	}
 			map.put("success", "1");
 			Map<String, Object> dataMap = generateDatatableDataMap(originalRow, null);
 	    	map.put("data", dataMap);
@@ -233,8 +251,9 @@ public class ObservationMatrixController extends
     				data.setcValueId(valueRowData.getValue());
 	    			data.setValue(valueRowData.getValue());
     			}
-    		}else
+    		}else {
     			data.setValue(valueRowData.getValue());
+    		}
     	}
     }
     

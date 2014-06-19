@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.generationcp.middleware.domain.oms.TermId;
+
 import com.efficio.fieldbook.web.common.bean.ChoiceKeyVal;
 
 // TODO: Auto-generated Javadoc
@@ -27,7 +29,10 @@ import com.efficio.fieldbook.web.common.bean.ChoiceKeyVal;
 public class DateUtil {
     
     /** The Constant DATE_FORMAT. */
-    private static final String DATE_FORMAT = "yyyyMMdd";
+    public static String DB_DATE_FORMAT = "yyyyMMdd";
+	public static String UI_DATE_FORMAT = "yyyy-MM-dd";
+	public static SimpleDateFormat DB_DATE_FORMATTER = new SimpleDateFormat(DB_DATE_FORMAT);
+	public static SimpleDateFormat UI_DATE_FORMATTER = new SimpleDateFormat(UI_DATE_FORMAT);
     
     /**
      * Gets the current date.
@@ -35,7 +40,7 @@ public class DateUtil {
      * @return the current date
      */
     public static String getCurrentDate(){
-        return new SimpleDateFormat(DATE_FORMAT).format(new Date());        
+        return new SimpleDateFormat(DB_DATE_FORMAT).format(new Date());        
     }
     
     /**
@@ -46,7 +51,7 @@ public class DateUtil {
      * @throws ParseException the parse exception
      */
     public static Date parseDate(String date) throws ParseException{
-        return new SimpleDateFormat(DATE_FORMAT).parse(date);
+        return new SimpleDateFormat(DB_DATE_FORMAT).parse(date);
     }
     
     /**
@@ -77,5 +82,82 @@ public class DateUtil {
     	}
     	return monthList;
     }
+    
+    public static String convertToUIDateFormat(Integer dataTypeId, String val){
+		if(dataTypeId != null && dataTypeId == TermId.DATE_VARIABLE.getId() && val != null && !val.equalsIgnoreCase("")) {
+			
+			try {
+				Date dbDate = DB_DATE_FORMATTER.parse(val);
+				return UI_DATE_FORMATTER.format(dbDate);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return val;
+	}
+	public static String convertToDBDateFormat(Integer dataTypeId, String val){
+		if(dataTypeId != null && dataTypeId == TermId.DATE_VARIABLE.getId() && val != null && !val.equalsIgnoreCase("")) {
+			
+			try {
+				Date dbDate = UI_DATE_FORMATTER.parse(val);
+				return DB_DATE_FORMATTER.format(dbDate);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return val;
+	}
+	
+	public static boolean isValidDate(String dateString) {
+	    if (dateString == null || dateString.length() != DateUtil.DB_DATE_FORMAT.length()) {
+	        return false;
+	    }
+
+	    int date;
+	    try {
+	        date = Integer.parseInt(dateString);
+	    } catch (NumberFormatException e) {
+	        return false;
+	    }
+
+	    int year = date / 10000;
+	    int month = (date % 10000) / 100;
+	    int day = date % 100;
+
+	    // leap years calculation not valid before 1581
+	    boolean yearOk = (year >= 1581);
+	    boolean monthOk = (month >= 1) && (month <= 12);
+	    boolean dayOk = (day >= 1) && (day <= daysInMonth(year, month));
+
+	    return (yearOk && monthOk && dayOk);
+	}
+
+	private static int daysInMonth(int year, int month) {
+	    int daysInMonth;
+	    switch (month) {
+	        case 1: // fall through
+	        case 3: // fall through
+	        case 5: // fall through
+	        case 7: // fall through
+	        case 8: // fall through
+	        case 10: // fall through
+	        case 12:
+	            daysInMonth = 31;
+	            break;
+	        case 2:
+	            if (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)) {
+	                daysInMonth = 29;
+	            } else {
+	                daysInMonth = 28;
+	            }
+	            break;
+	        default:
+	            // returns 30 even for nonexistant months 
+	            daysInMonth = 30;
+	    }
+	    return daysInMonth;
+	}
 
 }

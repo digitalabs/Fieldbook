@@ -27,9 +27,16 @@
 						th:field="*{updateObservation.dataList[__${rowIndex.index}__].value}"/>				
 					</div>
 					<div class="col-xs-8 col-md-8" th:if="${measurementData.editable == true}">
-						<input th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" type="text" th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues)}" 
+						
+						<input th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" type="text" th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues) and measurementData.measurementVariable.dataTypeId != 1117}" 
 						th:field="*{updateObservation.dataList[__${rowIndex.index}__].value}"/>
 
+						<input th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues) and measurementData.measurementVariable.dataTypeId == 1117}"
+							type="text" placeholder="yyyy-mm-dd" th:field="*{updateObservation.dataList[__${rowIndex.index}__].value}" class="form-control date-input" />
+						<label  th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues) and measurementData.measurementVariable.dataTypeId == 1117}"  class="btn datepicker">
+							<img th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;" />
+						</label>
+								
 						<select class="variates-select" th:attr="data-type=${measurementData.dataType}" style="width: 100%;" size="1" 
 						th:if="${not #lists.isEmpty(measurementData.measurementVariable.possibleValues)}" 
 						th:field="*{updateObservation.dataList[__${rowIndex.index}__].cValueId}">
@@ -58,6 +65,20 @@
 		$( document ).ready(function() {
 					$('.updateExperimentModal select').select2({minimumResultsForSearch: 20});					
 					truncateStudyVariableNames('.study-experiment-variable-name', 19);
+					if ($('.updateExperimentModal .date-input').length > 0) {
+						$('.updateExperimentModal .date-input').each(function() {
+							$(this).datepicker({
+								'format' : 'yyyy-mm-dd'
+							}).on('changeDate', function(ev) {
+								$(this).datepicker('hide');
+							});
+						});
+					}
+					if ($('.updateExperimentModal .datepicker img').length > 0) {
+						$('.updateExperimentModal  .datepicker img').on('click', function() {
+							$(this).parent().parent().find('.date-input').datepicker('show');
+						});
+					}
 			});
 		function saveExperimentMeasurements(){
 			'use strict'

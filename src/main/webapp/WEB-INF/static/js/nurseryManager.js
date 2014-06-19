@@ -1335,7 +1335,7 @@ function sortVariableIdsAndNames(variableType) {
 
 function recreateDateInput(index, row, selectedVal, name) {
 	'use strict';
-	var newCell = "<input placeholder='yyyymmdd' type='text' id='" + name + index + ".value' name='"
+	var newCell = "<input placeholder='yyyy-mm-dd' type='text' id='" + name + index + ".value' name='"
 			+ name + "[" + index + "].value' " + "value='" + selectedVal
 			+ "' class='form-control date-input' />";
 	newCell += '<label for="'
@@ -1544,7 +1544,7 @@ function createDropdownInput(ctr, name) {
 			+ "<input class='selectedValueFave' type='hidden' />";
 }
 function createDateInput(ctr, name) {
-	return "<input placeholder='yyyymmdd' type='text' id='"
+	return "<input placeholder='yyyy-mm-dd' type='text' id='"
 			+ name
 			+ ctr
 			+ ".value' name='"
@@ -1572,7 +1572,7 @@ function initializeDateAndSliderInputs() {
 	if ($('.date-input').length > 0) {
 		$('.date-input').each(function() {
 			$(this).datepicker({
-				'format' : 'yyyymmdd'
+				'format' : 'yyyy-mm-dd'
 			}).on('changeDate', function(ev) {
 				$(this).datepicker('hide');
 			});

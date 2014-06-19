@@ -30,7 +30,7 @@
 			<label class="control-label label-bold" th:text="#{germplasm.save.list.date.label}">List Date:</label><span class="required">*</span>
 		</div>
 		<div class="col-xs-7 col-md-7" data-date="" data-date-format="yyyymmdd">
-			<input placeholder="yyyymmdd" type="text" class="form-control date-input" th:field="*{listDate}" style="width: 100px"/>
+			<input placeholder="yyyy-mm-dd" type="text" class="form-control date-input" th:field="*{listDate}" style="width: 100px"/>
 			<label for="listDate" class="btn datepicker">
 				<img width="20" height="22" th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;" />
 			</label>
@@ -55,13 +55,13 @@
 		 $(document).ready(function() {
 		 	'use strict';
 			$('#saveListForm select').select2({minimumResultsForSearch: 20});
-			$('#saveListForm #listDate').datepicker({'format': 'yyyymmdd'}).on('changeDate', function(ev) {
+			$('#saveListForm #listDate').datepicker({'format': 'yyyy-mm-dd'}).on('changeDate', function(ev) {
 					$(this).datepicker('hide');
 				});
 
 				if($('#saveListForm .date-input').length > 0){
 					$('#saveListForm .date-input').each(function(){
-						$(this).datepicker({'format': 'yyyymmdd'}).on('changeDate', function(ev) {
+						$(this).datepicker({'format': 'yyyy-mm-dd'}).on('changeDate', function(ev) {
 						$(this).datepicker('hide');
 
 					}).on('show', function(){

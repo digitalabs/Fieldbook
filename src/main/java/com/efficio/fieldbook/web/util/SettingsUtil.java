@@ -11,8 +11,11 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -46,11 +49,13 @@ import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
 import com.efficio.fieldbook.web.nursery.bean.NurseryDetails;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
+import com.efficio.fieldbook.web.nursery.bean.WidgetType;
 
 /**
  * The Class SettingsUtil.
  */
 public class SettingsUtil {
+	
 
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(SettingsUtil.class);
@@ -145,7 +150,7 @@ public class SettingsUtil {
         			
         			Condition condition = new Condition(variable.getName(), variable.getDescription(), variable.getProperty(),
         					variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
-        					HtmlUtils.htmlEscape(settingDetail.getValue()), variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
+        					DateUtil.convertToDBDateFormat(variable.getDataTypeId(), HtmlUtils.htmlEscape(settingDetail.getValue())), variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
         			condition.setOperation(userSelection.getStudyLevelConditions().get(index++).getVariable().getOperation());
         			condition.setStoredIn(standardVariable.getStoredIn().getId());
         			condition.setId(variable.getCvTermId());
@@ -210,7 +215,7 @@ public class SettingsUtil {
                         
                                 Constant constant= new Constant(variable.getName(), variable.getDescription(), variable.getProperty(),
                                                 variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
-                                                HtmlUtils.htmlEscape(settingDetail.getValue()), variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
+                                                DateUtil.convertToDBDateFormat(variable.getDataTypeId(), HtmlUtils.htmlEscape(settingDetail.getValue())), variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
                                 constant.setOperation(userSelection.getNurseryConditions().get(index++).getVariable().getOperation());
                                 constant.setStoredIn(standardVariable.getStoredIn().getId());
                                 constant.setId(variable.getCvTermId());
@@ -446,7 +451,9 @@ public class SettingsUtil {
                             removedConditions.add(settingDetail);
                         }
                     }
-                    
+                    if(settingDetail.getVariable().getDataTypeId() != null && settingDetail.getVariable().getDataTypeId() == TermId.DATE_VARIABLE.getId()){
+                    	settingDetail.setValue(DateUtil.convertToUIDateFormat(variable.getDataTypeId(), HtmlUtils.htmlUnescape(condition.getValue())));
+                    }
 				}
 		    }
 			//plot level
@@ -545,6 +552,9 @@ public class SettingsUtil {
                                             if(enumerationByDescription != null) {
                                             	settingDetail.setValue(enumerationByDescription.getName());
                                             }
+                                    }
+                                    if(settingDetail.getVariable().getDataTypeId() != null && settingDetail.getVariable().getDataTypeId() == TermId.DATE_VARIABLE.getId()){
+                                    	settingDetail.setValue(DateUtil.convertToUIDateFormat(variable.getDataTypeId(), HtmlUtils.htmlUnescape(constant.getValue())));
                                     }
                             }
                         }

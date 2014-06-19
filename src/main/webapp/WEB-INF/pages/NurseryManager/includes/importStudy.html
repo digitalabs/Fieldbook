@@ -175,7 +175,7 @@
 							<label class="control-label label-bold" th:text="#{nursery.import.excel.date}+':'">Date</label>&nbsp;<span class="required">*</span>	
 						</div>
 						<div class="col-xs-7 col-md-7">
-							<input type="text" class="form-control date-input" th:field="*{importDate}" />
+							<input placeholder="yyyy-mm-dd" type="text" class="form-control date-input" th:field="*{importDate}" />
 							<label for="importDate" class="btn datepicker">
 								<img width="20" height="22" th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;" />
 							</label>
@@ -277,7 +277,7 @@
 			$('.hasCreateGermplasm').val(0);
 			
 			$('#importDate').each(function(){
-					$(this).datepicker({'format': 'yyyymmdd'}).on('changeDate', function(ev) {
+					$(this).datepicker({'format': 'yyyy-mm-dd'}).on('changeDate', function(ev) {
 					$(this).datepicker('hide');
 	
 				}).on('show', function(){

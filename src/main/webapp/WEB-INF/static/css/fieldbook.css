@@ -1212,6 +1212,7 @@ input[type="text"], input[type="password"], .ui-autocomplete-input, textarea, .u
 .select2-container .select2-choices .select2-search-field input, .select2-container .select2-choice, .select2-container .select2-choices {
 	color: #333333;
 	font-size: 13px;
+	font-family: 'Open Sans', 'Segoe UI','Helvetica Neue', Arial, sans-serif;
 }
 
 .s2-nosearch-icon .select2-input {

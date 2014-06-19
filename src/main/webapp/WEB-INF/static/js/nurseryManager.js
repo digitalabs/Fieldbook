@@ -1574,7 +1574,15 @@ function initializeDateAndSliderInputs() {
 			$(this).datepicker({
 				'format' : 'yyyy-mm-dd'
 			}).on('changeDate', function(ev) {
-				$(this).datepicker('hide');
+				$(this).datepicker('hide');		
+			}).on("change", function (e) {
+			    var curDate = $(this).val();
+			    try {
+			        var r = $.datepicker.parseDate("yy-mm-dd", curDate);
+			        $(this).datepicker('setDate', r);
+			    } catch(e) {			        
+			        $(this).datepicker('setDate', new Date());
+			    }
 			});
 		});
 	}

@@ -52,23 +52,31 @@
 <div layout:fragment="page-script">
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
+	/*globals treeReloading, initializeDateAndSliderInputs*/
+
 		 $(document).ready(function() {
 		 	'use strict';
 			$('#saveListForm select').select2({minimumResultsForSearch: 20});
-			$('#saveListForm #listDate').datepicker({'format': 'yyyy-mm-dd'}).on('changeDate', function(ev) {
-					$(this).datepicker('hide');
-				});
+			
 
 				if($('#saveListForm .date-input').length > 0){
 					$('#saveListForm .date-input').each(function(){
-						$(this).datepicker({'format': 'yyyy-mm-dd'}).on('changeDate', function(ev) {
+						$(this).datepicker({'format': 'yyyy-mm-dd'}).on('change', function () {
+					    var curDate = $(this).val();
+					    try {
+					        var r = $.datepicker.parseDate('yy-mm-dd', curDate);
+					        $(this).datepicker('setDate', r);
+					    } catch(e) {			        
+					        $(this).datepicker('setDate', new Date());
+					    }
+					}).on('changeDate', function() {
 						$(this).datepicker('hide');
 
 					}).on('show', function(){
 						treeReloading = 1;
 					}).on('hide', function(){
 						setTimeout(function(){treeReloading = 0;}, 1000);
-					})
+					});
 					});
 				}
 				initializeDateAndSliderInputs();

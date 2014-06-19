@@ -8,6 +8,7 @@ public abstract class Expression {
 
 	public static final String BRACKETS = "[BRACKETS]";
 	public static final String BULK_COUNT = "[BCOUNT]";
+	public static final String FIRST = "[FIRST]";
 	public static final String LOCATION_ABBREVIATION = "[LABBR]";
 	public static final String NUMBER = "[NUMBER]";
 	public static final String SEASON = "[SEASON]";

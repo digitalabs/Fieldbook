@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import com.efficio.fieldbook.web.naming.expression.BracketsExpression;
 import com.efficio.fieldbook.web.naming.expression.BulkCountExpression;
 import com.efficio.fieldbook.web.naming.expression.Expression;
+import com.efficio.fieldbook.web.naming.expression.FirstExpression;
 import com.efficio.fieldbook.web.naming.expression.LocationAbbreviationExpression;
 import com.efficio.fieldbook.web.naming.expression.NumberExpression;
 import com.efficio.fieldbook.web.naming.expression.SeasonExpression;
@@ -22,6 +23,9 @@ public class ProcessCodeFactory {
 		}
 		else if (Expression.BULK_COUNT.equalsIgnoreCase(key)) {
 			expression = new BulkCountExpression(source);
+		}
+		else if (Expression.FIRST.equalsIgnoreCase(key)) {
+			expression = new FirstExpression(source);
 		}
 		else if (Expression.LOCATION_ABBREVIATION.equalsIgnoreCase(key)) {
 			expression = new LocationAbbreviationExpression(source);

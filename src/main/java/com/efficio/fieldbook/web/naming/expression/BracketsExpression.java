@@ -15,9 +15,24 @@ public class BracketsExpression extends Expression {
 		for (StringBuilder value : values) {
 			int startIndex = value.indexOf(Expression.BRACKETS);
 			int endIndex = startIndex + Expression.BRACKETS.length();
-			
-			value.replace(startIndex, endIndex, ")");
-			value.insert(0, "(");
+			int rootNameEndIndex = value.indexOf(getSource().getBreedingMethod().getSeparator());
+			if (rootNameEndIndex > -1) {
+				String newRootName = value.substring(0, rootNameEndIndex);
+				
+				//if root name already has parentheses 
+				if (newRootName.charAt(0) != '(' 
+						|| newRootName.charAt(newRootName.length()-1) != ')') {
+					
+					value.replace(startIndex, endIndex, ")");
+					value.insert(0, "(");
+				}
+				else {
+					value.replace(startIndex, endIndex, "");
+				}
+			}
+			else {
+				value.replace(startIndex, endIndex, "");
+			}
 		}
 	}
 

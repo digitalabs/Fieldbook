@@ -1,6 +1,9 @@
 package com.efficio.fieldbook.web.naming.impl;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +12,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.dms.Study;
+import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -60,7 +64,17 @@ public class AdvancingSourceListFactory {
                 	}
                     
                     MeasurementRow trialRow = getTrialObservation(workbook, row.getLocationId());
-                    season = trialRow.getMeasurementDataValue(TermId.SEASON.getId());
+                    season = trialRow.getMeasurementDataValue(TermId.SEASON_VAR_TEXT.getId());
+                    if (season == null || "".equals(season.trim())) {
+                        MeasurementData seasonData = trialRow.getMeasurementData(TermId.SEASON_VAR.getId());
+                        if (seasonData != null) {
+                        	season = seasonData.getDisplayValue();
+                        }
+                    }
+                    if (season == null || "".equals(season.trim())) {
+                    	DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+                    	season = dateFormat.format(new Date());
+                    }
                     
                     String check = row.getMeasurementDataValue(TermId.CHECK.getId());
                     boolean isCheck = check != null && !"".equals(check);
@@ -76,22 +90,20 @@ public class AdvancingSourceListFactory {
                     }
 
                     if (methodId != null) {
+                    	Method breedingMethod = breedingMethodMap.get(methodId);
 		                Integer plantsSelected = null; 
-		                Boolean isMethodBulked = isBulk(methodId, breedingMethodMap);
-		                Boolean isBulk = advanceInfo.isForcedBulk() || isMethodBulked != null && isMethodBulked.booleanValue();
-		                if (isBulk != null) {
-		                	if (isBulk.booleanValue() && (advanceInfo.getAllPlotsChoice() == null || "0".equals(advanceInfo.getAllPlotsChoice()))) {
-		                    	if (plotVariateId != null) {
-			                        plantsSelected = getIntegerValue(row.getMeasurementDataValue(plotVariateId));
-		                    	}
-		                	}
-		                    else {
-		                    	if (lineVariateId != null && (advanceInfo.getLineChoice() == null || "0".equals(advanceInfo.getLineChoice()))) {
-		                    		plantsSelected = getIntegerValue(row.getMeasurementDataValue(lineVariateId));
-		                    	}
-		                    }
-		                }
-		                rows.add(new AdvancingSource(germplasm, names, plantsSelected, breedingMethodMap.get(methodId), 
+		                boolean isBulk = breedingMethod.isBulked();
+	                	if (isBulk && (advanceInfo.getAllPlotsChoice() == null || "0".equals(advanceInfo.getAllPlotsChoice()))) {
+	                    	if (plotVariateId != null) {
+		                        plantsSelected = getIntegerValue(row.getMeasurementDataValue(plotVariateId));
+	                    	}
+	                	}
+	                    else {
+	                    	if (lineVariateId != null && (advanceInfo.getLineChoice() == null || "0".equals(advanceInfo.getLineChoice()))) {
+	                    		plantsSelected = getIntegerValue(row.getMeasurementDataValue(lineVariateId));
+	                    	}
+	                    }
+		                rows.add(new AdvancingSource(germplasm, names, plantsSelected, breedingMethod, 
 		                					isCheck, nurseryName, season, locationAbbreviation));
                     }
                 }

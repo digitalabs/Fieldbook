@@ -6,13 +6,9 @@
 		<input type="hidden" th:field="*{defaultMethodId}"/>
 		<input type="hidden" th:field="*{nurseryId}"/>
 		<input type="hidden" th:field="*{harvestDate}"/>
-		<input type="hidden" th:field="*{maizeSelfMethodId}" />
-		<input type="hidden" th:field="*{maizeBulkMethodId}" />
-		<input type="hidden" th:field="*{maizeSibMethodId}" />
-		<input type="hidden" th:field="*{maizeColchMethodId}" />
 
 		<div class="modal fade" id="advanceNurseryModal" role="dialog" aria-labelledby="advanceNurseryModal" aria-hidden="true">
-			<div class="modal-dialog modal-extra-large">
+			<div class="modal-dialog modal-large">
 				<div class="modal-content">					
 					<div class="modal-body">
 						<div class="row form-group">
@@ -36,23 +32,6 @@
 							</div>
 						</div>
 						<br/>
-						<div class="row form-group col-xs-12 col-md-12">
-							<div class="row form-group col-xs-12 col-md-12">
-								<label class="control-label">
-									<strong class="sub-content-heading" th:text="#{advancing.nursery.convention}"></strong>
-								</label>
-							</div>
-							<div class="row form-group col-xs-12 col-md-12">
-								<strong><label class="label-bold" th:text="#{advancing.nursery.naming.convention} + ':'"></label><span class="required">*</span></strong>
-								&nbsp;&nbsp;
-								<select th:field="*{namingConvention}">
-									<option value="3" th:text="#{advancing.nursery.naming.convention.other.crops}">OTHER CROPS</option>
-									<option th:if="*{cropType == 1}" value="1" th:text="#{advancing.nursery.naming.convention.cimmyt.wheat}">CIMMYT-WHEAT</option>
-									<option th:if="*{cropType == 2}" value="2" th:text="#{advancing.nursery.naming.convention.cimmyt.maize}">CIMMYT-MAIZE</option>
-								</select>
-							</div>
-						</div>
-						<br/>
 						<div class="row form-group col-xs-12 col-md-12" id="methods-section">
 							<div class="row form-group col-xs-12 col-md-12">
 								<label class="control-label">
@@ -71,12 +50,6 @@
 								<div class="row form-group col-xs-11 col-md-11 method-selection-div">
 									<input type="hidden" th:field="*{methodIdAll}" class="form-control select2 non-maize-control" placeholder=""/>
 									<input type="hidden" th:field="*{methodIdFavorite}" class="form-control select2 non-maize-control" placeholder=""/>
-									<select id="maizeBreedingMethod" class="form-control maize-control">
-										<option value="1" th:text="#{advance.nursery.maize.breeding.method.selfed.shelled}">Selfed and ears shelled individually (-)</option>
-										<option value="2" th:text="#{advance.nursery.maize.breeding.method.selfed.bulked}">Selfed and ears bulked (-B)</option>
-										<option value="3" th:text="#{advance.nursery.maize.breeding.method.sib.increased}">Sib-Increased (-#)</option>
-										<option value="4" th:text="#{advance.nursery.maize.breeding.method.colchicinize}">Colchicinize</option>
-									</select>
 									<input type="hidden" th:field="*{advanceBreedingMethodId}"/>
 								</div>
 								<div class="col-xs-1 col-md-1 method-selection-div">
@@ -90,13 +63,6 @@
 									<input id="showFavoriteMethod" value="1" type="checkbox"/> <span th:text="#{show.favorite.method}">Show Favorite Method</span>
 									&nbsp;&nbsp;
 									<a class="form-group" href="javascript: openManageMethods()" th:text="#{advancing.nursery.manage.method}">Manage Methods</a>
-								</label>
-							</div>
-							<div class="row form-group col-xs-6 col-md-6">
-							</div>
-							<div class="row form-group col-xs-6 col-md-6">
-								<label class="maize-control">
-									<input th:field="*{putBrackets}" value="1" type="checkbox"/> <span th:text="#{advance.nursery.maize.breeding.method.put.brackets}">Put brackets around parents</span>
 								</label>
 							</div>
 							<div id="method-variates-section">
@@ -278,52 +244,6 @@
 			listShouldNotBeEmptyError = /*[[#{nursery.save.advance.error.row.list.empty}]]*/ '';
 		/* jshint ignore:end */
 
-		function changeMaizeBreedingMethod() {
-			'use strict';
-
-			var maizeBreedingMethod = $('#maizeBreedingMethod').val(),
-				methodId;
-
-			// TODO Add error checking
-			switch (maizeBreedingMethod) {
-				case '1':
-					methodId = $('#maizeSelfMethodId').val();
-					break;
-				case '2':
-					methodId = $('#maizeBulkMethodId').val();
-					break;
-				case '3':
-					methodId = $('#maizeSibMethodId').val();
-					break;
-				case '4':
-					methodId = $('#maizeColchMethodId').val();
-					break;
-			}
-			$('#' + getJquerySafeId('advanceBreedingMethodId')).val(methodId);
-			$('#advanceBreedingMethodId').change();
-		}
-
-		function adjustMaizeControl(isShow) {
-			'use strict';
-
-			var $maizeControl = $('.maize-control'),
-				$nonMaizeControl = $('.non-maize-control');
-
-			if (isShow){
-				$maizeControl.css('display', 'block');
-				$nonMaizeControl.css('display', 'none');
-				changeMaizeBreedingMethod();
-				$('input[type=checkbox][name=methodChoice]').prop('checked', true);
-				checkMethod();
-				$('input[type=checkbox][name=methodChoice]').prop('disabled', true);
-				changeMaizeBreedingMethod();
-			} else {
-				$maizeControl.css('display', 'none');
-				$nonMaizeControl.css('display', 'block');
-				showCorrectMethodCombo();
-			}
-		}
-
 		function changeSuffix() {
 			'use strict';
 
@@ -331,27 +251,10 @@
 				$methodSelectionInput = $('.method-section input'),
 				$methodIdAll = $('#methodIdAll'),
 				$methodIdFavorite = $('#methodIdFavorite'),
-				$methodsSection = $('#methods-section'),
-				namingConvention = $('#namingConvention').val();
+				$methodsSection = $('#methods-section');
 
 			$input.prop('disabled', false);
 
-			// FIXME This is relying on implicit type conversion - also see other uses of == in this file
-			if (namingConvention === '1') {
-				// If it's wheat, we disable the method section
-				$methodSelectionInput.attr('disabled', true);
-				$methodIdAll.select2('enable', false);
-				$methodIdFavorite.select2('enable', false);
-				$methodsSection.hide();
-				$input.prop('checked', true);
-			} else {
-				$methodSelectionInput.attr('disabled', false);
-				$methodIdAll.select2('enable', true);
-				$methodIdFavorite.select2('enable', true);
-				$methodsSection.show();
-			}
-
-			adjustMaizeControl(namingConvention === '2');
 			checkMethod();
 		}
 
@@ -378,19 +281,12 @@
 				isBulk = false,
 				i;
 
-			if($('#namingConvention').val() === '2'){
-				// Maize has been chosen
-				if(bMethodId === $('#maizeBulkMethodId').val()) { // Selfed and Ears Bulked
-					isBulk = true;
-				}
-			} else {
-				for (i = 0; i < methodSuggestions.length; i++) {
-					if (methodSuggestions[i].mid == bMethodId) {
-						if (methodSuggestions[i].geneq === 1) { // Bulk
-					 		isBulk = true;
-					 	}
-						break;
-					}
+			for (i = 0; i < methodSuggestions.length; i++) {
+				if (methodSuggestions[i].mid == bMethodId) {
+					if (methodSuggestions[i].bulked === true) { // Bulk
+				 		isBulk = true;
+				 	}
+					break;
 				}
 			}
 			showBulkSection(isBulk);
@@ -425,9 +321,6 @@
 			$('.ps-variate-selection').on('change', function() {
 				validatePlantsSelected($(this));
 			});
-
-			$('#namingConvention').on('change', changeSuffix);
-			$('#maizeBreedingMethod').on('change', changeMaizeBreedingMethod);
 
 			oldMethodSelected = $('#defaultMethodId').val();
 			oldLineSelected = $('#lineSelected').val();

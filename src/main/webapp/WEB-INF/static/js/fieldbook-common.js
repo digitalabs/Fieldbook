@@ -1237,9 +1237,8 @@ function moveToTopScreen() {
 	
 }
 
-function openImportGermplasmList() {
-	$('#listTreeModal').modal('hide');
-
+function openImportGermplasmList(type) {
+	$('.germplasmAndCheckSection').data('import-from', type);
 	setTimeout(function() {
 		$('#importFrame').attr('src', importLocationUrl);
 		$('#importGermplasmModal').modal({ backdrop: 'static', keyboard: true });

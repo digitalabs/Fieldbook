@@ -14,35 +14,31 @@
 <div class="row">
 <form id="createNurseryMainForm" role="form-horizontal" action="#"
 th:object="${createNurseryForm}" enctype="multipart/form-data">
-	<div class="">
-		<div class="row">
-			<div class="col-md-6">
-				<img width="30" height="30" th:src="@{/static/img/new-nursery.png}" class="image-padding image-padding-with-text" />
-				<label class="heading" th:text="#{nursery.create.nursery.label}">Create Nursery</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<input type="button" onclick="submitForm();" th:value="#{common.form.save.text}" class="btn btn-info fbk-save-button-left-margin" />
-			</div>
-			<div class="col-md-6 add_top_padding">
-				<a class="fbk-float-right" th:href="@{/NurseryManager/manageNurseries}" th:text="#{return.to.manage.nurseries}">Return to Manage Nurseries</a>
-			</div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-12">
-			&nbsp;
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-12">
-			<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
-		</div>
-	</div>
-	<div class="row">
+    <div class="row add-top-bottom-padding">
+        <div class="col-md-12">
+            <div class="pull-left">
+                <img width="30" height="30" th:src="@{/static/img/new-nursery.png}" class="image-padding image-padding-with-text" />
+                <span class="heading" th:text="#{nursery.create.nursery.label}">Create Nursery</span>
+                <input type="button" onclick="submitForm();" th:value="#{common.form.save.text}" class="btn btn-info fbk-save-button-left-margin" />
+            </div>
+            <a class="pull-right" th:href="@{/NurseryManager/manageNurseries}" th:text="#{return.to.manage.nurseries}">Return to Manage Nurseries</a>
+        </div>
+    </div>
+
+	<div class="row" style="height: 30px">
 		<div class="col-md-12">
 			<label class="control-label">
 				<strong class="sub-content-heading" th:text="#{nursery.create.nursery.basic.details}">BASIC DETAILS</strong>
 			</label>
 		</div>
 	</div>
+
+    <div class="row fbk-mandatory">
+        <div class="col-md-12 ">
+            <label class=""><em th:utext="#{nursery.managesettings.mandatory.fields}">* indicates a mandatory field</em></label>
+        </div>
+    </div>
+
 	<div class="row form-group">
 		<div class="col-xs-2 col-md-2">
 			<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{basicDetails[0].variable.cvTermId}" />

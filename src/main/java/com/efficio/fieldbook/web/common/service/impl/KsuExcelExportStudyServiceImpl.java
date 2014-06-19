@@ -5,6 +5,8 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -16,13 +18,16 @@ import org.springframework.stereotype.Service;
 import com.efficio.fieldbook.web.common.service.KsuExceIExportStudyService;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
-import com.efficio.fieldbook.web.util.FieldbookProperty;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 import com.efficio.fieldbook.web.util.KsuFieldbookUtil;
 import com.efficio.fieldbook.web.util.ZipUtil;
 
 @Service
 public class KsuExcelExportStudyServiceImpl implements
 		KsuExceIExportStudyService {
+
+	@Resource
+    private FieldbookProperties fieldbookProperties;
 
 	@Override
 	public String export(Workbook workbook, String filename, int start, int end) {
@@ -52,7 +57,7 @@ public class KsuExcelExportStudyServiceImpl implements
 				}
 				
 				int fileExtensionIndex = filename.lastIndexOf(".");
-				String filenamePath = FieldbookProperty.getPathProperty() + File.separator 
+				String filenamePath = fieldbookProperties.getUploadDirectory() + File.separator 
 						+ filename.substring(0, fileExtensionIndex)
 						+ "-" + String.valueOf(i) + filename.substring(fileExtensionIndex);
 				fos = new FileOutputStream(new File(filenamePath));
@@ -64,7 +69,7 @@ public class KsuExcelExportStudyServiceImpl implements
         		outputFilename = filenameList.get(0);
         	}
         	else { //multi-trial instances
-				outputFilename = FieldbookProperty.getPathProperty() 
+				outputFilename = fieldbookProperties.getUploadDirectory() 
 						+ File.separator 
 						+ filename.replaceAll(AppConstants.EXPORT_XLS_SUFFIX.getString(), "") 
 						+ AppConstants.ZIP_FILE_SUFFIX.getString();

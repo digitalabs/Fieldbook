@@ -24,7 +24,6 @@ import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.service.ProjectActivityService;
 import com.efficio.fieldbook.web.util.AppConstants;
-import com.efficio.fieldbook.web.util.ExternalToolInfo;
 import com.efficio.fieldbook.web.util.FieldbookProperties;
 
 /**
@@ -35,10 +34,6 @@ public abstract class AbstractBaseFieldbookController {
 	public static final String BASE_TEMPLATE_NAME = "/template/base-template";
 	public static final String ERROR_TEMPLATE_NAME = "/template/error-template";
 	public static final String TEMPLATE_NAME_ATTRIBUTE = "templateName";
-	public static final String EXTERNAL_INFO_ATTRIBUTE = "externalInfo";
-
-	@Resource
-	public ExternalToolInfo externalToolInfo;
 
 	@Resource
 	private WorkbenchService workbenchService;
@@ -63,14 +58,17 @@ public abstract class AbstractBaseFieldbookController {
 	public abstract String getContentName();
 
 	protected void setupModelInfo(Model model) {
-		model.addAttribute(EXTERNAL_INFO_ATTRIBUTE, externalToolInfo);
+		
 	}
 
-	public String getCurrentProjectId() {
-		if (externalToolInfo != null) {
-			return externalToolInfo.getCurrentProjectId();
-		}
-		return "";
+	public String getCurrentProjectId() {		
+		long projectId = 0;
+        try {           
+            projectId = workbenchService.getLastOpenedProject();
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        return String.valueOf(projectId);
 	}
 
 	public String getOldFieldbookPath() {

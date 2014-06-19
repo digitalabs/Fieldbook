@@ -79,8 +79,8 @@
 									</select>
 									<input type="hidden" th:field="*{advanceBreedingMethodId}"/>
 								</div>
-								<div class="col-xs-1 col-md-1 method-selection-div">
-									<span id="method-tooltip" class="help-tooltip-nursery help-tooltip-nursery-advance" data-placement="right" data-toggle="tooltip" style="display:inline;">?</span>
+								<div class="col-xs-1 col-md-1 method-selection-div help-tooltip-col">
+									<span data-container="#advanceNurseryModal .modal-body" id="method-tooltip" class="bms-fa-question-circle help-tooltip-nursery help-tooltip-nursery-advance" data-placement="right" data-toggle="tooltip" style="display:inline;"></span>
 								</div>
 							</div>
 							<div class="row form-group col-xs-6 col-md-6">
@@ -188,8 +188,8 @@
 									<input type="hidden" th:field="*{harvestLocationName}" />
 									<input type="hidden" th:field="*{harvestLocationAbbreviation}" />
 								</div>
-								<div class="col-xs-1 col-md-1">
-									<span id="harvestloc-tooltip" class="help-tooltip-nursery help-tooltip-nursery-advance" data-placement="right" data-toggle="tooltip">?</span>
+								<div class="col-xs-1 col-md-1 help-tooltip-col">
+									<span data-container="#advanceNurseryModal .modal-body" id="harvestloc-tooltip" class="bms-fa-question-circle help-tooltip-nursery help-tooltip-nursery-advance" data-placement="right" data-toggle="tooltip"></span>
 								</div>
 							</div>
 							<div class="row form-group col-xs-6 col-md-6">
@@ -439,7 +439,7 @@
 
 			$('#advanceBreedingMethodId').on('change', changeAdvanceBreedingMethod);
 			changeAdvanceBreedingMethod();
-			$('.help-tooltip-nursery-advance').tooltip();
+
 		});
 	//]]>
 	</script>

@@ -470,7 +470,7 @@
             });
 
             document.disableActions = function() {
-                var actionBtn = $('.fbk-float-right-with-top-pos .dropdown-toggle');
+                var actionBtn = $('.fbk-action-btn');
 
                 actionBtn.removeAttr("data-toggle").addClass('disabled enable-pointer-events');
                 actionBtn.tooltip({ container: 'body', title: disabledActionTooltipMessage, placement : 'top' });
@@ -478,7 +478,7 @@
             };
 
             document.enableActions = function() {
-                var actionBtn = $('.fbk-float-right-with-top-pos .dropdown-toggle');
+                var actionBtn = $('.fbk-action-btn');
 
                 actionBtn.attr("data-toggle","dropdown");
                 actionBtn.tooltip('hide');

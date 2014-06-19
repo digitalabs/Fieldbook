@@ -4,7 +4,7 @@ body {
   font-family: 'Open Sans', 'Segoe UI','Helvetica Neue', Arial, sans-serif;
   font-size: 13px;
 }
-.heading{color:#333;font-family:'Open Sans','Segoe UI','Helvetica Neue',Arial,sans-serif;letter-spacing:normal;font-weight:500;margin-bottom:5px;margin-left:0;margin-right:0;margin-top:10px;box-sizing:border-box;font-size:18px;height:18px;line-height:18px;font-weight:600;}
+.heading{vertical-align: middle; color:#333;font-family:'Open Sans','Segoe UI','Helvetica Neue',Arial,sans-serif;letter-spacing:normal;font-weight:500;margin-bottom:5px;margin-left:0;margin-right:0;margin-top:10px;box-sizing:border-box;font-size:18px;height:18px;line-height:18px;font-weight:600;}
 h1,h2,h3,h4,h5,h6,
 .h1,.h2,.h2_no_transform,.h3,.h3_no_transform,.h4,.h5,.h6{display:block;color:#333;font-family:'Open Sans','Segoe UI','Helvetica Neue',Arial,sans-serif;letter-spacing:normal;font-weight:500;margin-bottom:5px;margin-left:0;margin-right:0;margin-top:10px;box-sizing:border-box}
 h4,h5,h6,
@@ -37,6 +37,13 @@ h6,.h6{font-size:13px;font-weight:500;line-height:13px}
 	font-size:14px;height:14px;line-height:14px;font-weight:500
 	margin-bottom:5px;margin-left:0;margin-right:0;margin-top:10px;box-sizing:border-box;
 }
+
+.select2-dropdown-open.select2-drop-above [class^="select2-choice"] {
+    border-bottom-right-radius: 4px !important;
+    border-bottom-left-radius: 4px !important;
+    background: white;
+}
+
 
 label{
 	font-weight: normal;
@@ -504,28 +511,22 @@ padding-left: 20px; margin-top: 7px
 }
 */
 .help-tooltip {
-    background-color: #5A5A5A;
-    border-radius: 50%;
-    box-shadow: 0 0 3px #000000;
-    color: #FFFFFF;
-    font-size: 12px;
-    margin-right: 20px;
-    padding: 0 5px;
-    text-decoration: none;
-    float: left;
-    margin-left: 15px;
-    margin-top: 13px;
-    line-height: 18px;
+    vertical-align: middle;
+}
+
+.help-tooltip-col {
+    margin-top: 7px;
 }
 .help-tooltip-nursery {
+    color: #7D7D7D;
     font-size: 13pt;
-
+    vertical-align: middle;
 }
 .help-tooltip-nursery-advance{
-	margin-left: 0px;
+/*	margin-left: 0px;
 	position: relative;
 	left: -15px;
-	top: 5px;
+	top: 5px; */
 }
 .germplasm-list-table, .germplasm-measurement-list-table, .advance-nursery-list-table, .check-germplasm-list-table,
 .inventory-germplasm-list-table
@@ -669,6 +670,23 @@ td.user-name {
 .add_top_padding{
 	padding-top: 10px;
 }
+
+.add-top-padding-small {
+    padding-top: 5px;
+}
+
+.add-bottom-padding {
+    padding-bottom: 10px;
+}
+
+.add-top-bottom-padding {
+    padding-top: 10px; padding-bottom: 10px;
+}
+
+.add-border {
+    border: 1px solid #CECECE;
+}
+
 td.nurseryLevelVariableSetting {
 	vertical-align: top;
 	padding-top: 10px;
@@ -728,9 +746,6 @@ div.possibleValuesDiv{
 	overflow-x: auto;
 	padding: 0;
 	margin: 0;
-}
-.add-border{
-	border: 1px solid #CECECE;
 }
 table .even, div.DTFC_LeftHeadWrapper table, div.DTFC_LeftFootWrapper table, div.DTFC_RightHeadWrapper table, div.DTFC_RightFootWrapper table, table.DTFC_Cloned tr.even {
     background-color: #f0eeee;
@@ -951,13 +966,6 @@ div.sectionContainer {
 .control-label-bold{
 	font-weight: bold;
 }
-.add-bottom-padding {
-	padding-bottom: 10px;
-	padding-left: 40px;
-}
-.add_top_padding_small {
-	padding-top: 5px;
-}
 .delete-icon {
     background:url(../img/delete-icon.png) left top;
     width:18px;
@@ -997,13 +1005,18 @@ div.sectionContainer {
 .dl-horizontal dd {
 	padding: 4px;
 }
+
+.fbk-mandatory {
+    padding-bottom: 15px;
+    position: relative;
+    bottom: 5px
+}
+
 .fbk-open-button-left-margin{
 	margin-left: 20px;
 }
 .fbk-save-button-left-margin{
-	margin-left: 20px;
-	position: relative;
-    top: -5px;
+	margin-left: 50px;
 }
 .nav-tabs li a{
 	font-weight: bold;
@@ -1204,4 +1217,3 @@ input[type="text"], input[type="password"], .ui-autocomplete-input, textarea, .u
 .s2-nosearch-icon .select2-input {
     background: no-repeat 100% -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, #fff), color-stop(0.99, #eee))
 }
-

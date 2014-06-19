@@ -1,28 +1,32 @@
-<div class="row form-group collapse in germplasmListDetails">
+<div class="row form-group collapse in germplasmListDetails germplasmAndCheckSection">
 	<!-- Germplasm List Table View -->
-	<div class="col-xs-12 col-md-12">
+	<div>
 
         <div id="primary-section" class="col-xs-8 col-md-8">
-            <img th:src="@{/static/img/review-list-details.png}" style="padding-bottom:3px;"/>
-            <label class="control-label"><strong id="germplasmLabel" class="sub-content-heading">Nursery List</strong></label>
-            <br/>
-            <label class="control-label"><a href="javascript: openListTree(1)">Browse</a> for a list to work with.</label>
+            <div><img th:src="@{/static/img/review-list-details.png}" />
+                <label class="control-label"><strong id="germplasmLabel" class="sub-content-heading">Nursery List</strong></label>
+            </div>
+            <div>
+                <label class="control-label"><a href="javascript: openListTree(1)">Browse</a> or <a href="javascript: openImportGermplasmList('1')">Import</a> a list to work with.</label>
+            </div>
         </div>
         <div id="checks-section" style="padding-top: 8px" class="col-xs-4 col-md-4 nopadding">
-            <div class="col-xs-8 col-md-8 nopadding">
-                <img th:src="@{/static/img/build-new-list.png}" style="padding-bottom:3px;"/>
-                <label class="control-label"><strong class="sub-content-heading">Selected Checks</strong></label>
-                <br/>
-                <label class="control-label"><a href="javascript: openListTree(2)">Browse</a> for a list to work with.</label>
-            </div>
-            <div class="col-xs-4 col-md-4 nopadding">
-                <div class="pull-right">
-                    <a style="margin-top: -5px;padding:6px 8px;" href="javascript: showManageCheckTypePopup()" th:text="#{germplasm.list.manage.check.types}" class="btn btn-info">Manage Checks</a>
+            <div class="col-xs-10 nopadding">
+                <div>
+                    <div style="display:inline-block; width: 30px; padding: 4px 0 5px 0"><img th:src="@{/static/img/build-new-list.png}" /></div>
+                    <label class="control-label"><strong class="sub-content-heading">Selected Checks</strong></label>
                 </div>
+                <div>
+                    <label class="control-label"><a href="javascript: openListTree(2)">Browse</a> or <a href="javascript: openImportGermplasmList('2')">Import</a> a list to work with.</label>
+                </div>
+
+            </div>
+            <div class="col-xs-2 nopadding">
+                <a class="pull-right btn btn-info" href="javascript: showManageCheckTypePopup()" th:text="#{germplasm.list.manage.check.types}" >Manage Checks</a>
             </div>
         </div>
     </div>
-    <div class="col-xs-12 col-md-12" id="entries-details" style="display: none">
+    <div  id="entries-details" style="display: none">
         <div class="col-xs-8 col-md-8">
             Total Entries: <label class="control-label control-label-bold" id="numberOfEntries"></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript: void(0)"
                                                                                                                                                      onclick="javascript: viewGermplasmLitDetails();">View Header</a>
@@ -32,7 +36,7 @@
 </div>
 <div class="row form-group collapse in germplasmListDetails">
     <!-- Germplasm List Table View -->
-    <div class="col-xs-12 col-md-12">
+    <div >
         <div class="col-xs-8 col-md-8">
             <div id="imported-germplasm-list" class="list-droppable primary"></div>
         </div>
@@ -56,7 +60,7 @@
 
 <!-- Modal for overwriting checks list -->
 <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
+	<div class="modal-dialog modal-extra-small">
 		<div class="modal-content">
 			<div class="modal-body">
 				<div class="row form-group">
@@ -83,7 +87,7 @@
 </div>
 
 <div class="modal fade" id="confirmReplaceListModal" tabindex="-1" role="dialog" aria-labelledby="confirmReplaceListModal" aria-hidden="true">
-	<div class="modal-dialog">
+	<div class="modal-dialog modal-extra-small">
 		<div class="modal-content">			
 			<div class="modal-body">		
 			
@@ -110,7 +114,7 @@
 </div>
 <!-- Modal for removing check if it is set as starting entry -->
 <div class="modal fade" id="removeCheckModal" tabindex="-1" role="dialog" aria-labelledby="removeCheckModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
+	<div class="modal-dialog modal-extra-small">
 		<div class="modal-content">
 			<div class="modal-body">
 				<div class="row form-group">
@@ -166,8 +170,6 @@
 					<!-- Germplasm List Tree View -->
 					<div class="col-md-12 col-xs-12 germplasm-tree-section" id="germplasmTree" style="height:350px; overflow:auto;"></div>
 				</div>
-				<br />
-				<a class="btn btn-info" href="javascript: openImportGermplasmList()" th:text="#{nursery.import.germplasm.list}">Import File</a>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
@@ -229,7 +231,7 @@
 			makeCheckDraggableBool = isDraggable;
 
 			if (isDraggable) {
-				$('.check-germplasm-list-items tr').draggable({
+				$('.check-germplasm-list-items tbody tr').draggable({
 
 					helper: function(/*event, ui*/) {
 
@@ -269,7 +271,7 @@
 
 			} else {
 				if ($('.check-germplasm-list-items .ui-draggable').length !== 0) {
-					$('.check-germplasm-list-items tr').draggable( 'destroy' );
+					$('.check-germplasm-list-items tbody  tr').draggable( 'destroy' );
 				}
 				$('.check-germplasm-list-items tbody tr').off('click');
 			}
@@ -282,7 +284,7 @@
 			'use strict';
 
 			if (isDraggable) {
-				$('.germplasm-list-items tr').draggable({
+				$('.germplasm-list-items tbody  tr').draggable({
 
 					helper: function(/*event, ui*/) {
 						var width = $(this)[0].offsetWidth,
@@ -322,7 +324,7 @@
 
 			} else {
 				if ($('.germplasm-list-items .ui-draggable').length !== 0) {
-					$('.germplasm-list-items tr').draggable('destroy');
+					$('.germplasm-list-items tbody  tr').draggable('destroy');
 				}
 				$('.germplasm-list-items tbody tr').off('click');
 			}
@@ -463,9 +465,7 @@
 			} else {
 				resetCheckList();
 				for (i = 0; i < itemsToAdd.length ; i++) {
-					/*if (addCheckGermplasmList(itemsToAdd[i].entry, itemsToAdd[i].gid, itemsToAdd[i].index)){
-						$('.primaryRow[data-entry="' + itemsToAdd[i].entry+ '"]').css('opacity', '0.5');
-					}*/
+					addCheckGermplasmList(itemsToAdd[i].entry, itemsToAdd[i].gid, itemsToAdd[i].index)					
 				}
 				$('.germplasm-list-items tr.germplasmSelectedRow').removeClass('germplasmSelectedRow');
 			}			
@@ -613,7 +613,7 @@
 
 
 			$('.check-germplasm-list-items tr[data-entry=' + entryNo + ']').remove();
-			if ($('.check-germplasm-list-items tbody tr').length === 0) {
+			if ($('.check-germplasm-list-items tbody tr').length === 0) {				
 				resetCheckList();
 			}
 		}
@@ -774,7 +774,6 @@
 						$(ui.helper.find('tr').get(0)).hasClass('checkRow')) {
 
 					// Removes the items from the check list
-					var checkListCount = $('.check-germplasm-list-items tbody tr').length;
 
 						$.each(ui.helper.find('tr'), function (index, row) {
 							var entryNumber = $(row).data('entry'),
@@ -786,11 +785,9 @@
 									$(row).removeAttr('style');
 								}
 							});
-							//subtract original and cloned row
-							checkListCount = checkListCount-2;
 						});
 						$('.check-germplasm-list-items tr.checkGermplasmSelectedRow').remove();
-						if (checkListCount == 0) {
+						if ($('.check-germplasm-list-items tbody tr').length === 0) {		
 							resetCheckList();
 						}
 					}

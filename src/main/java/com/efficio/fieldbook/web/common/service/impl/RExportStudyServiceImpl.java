@@ -16,6 +16,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -25,9 +27,13 @@ import com.csvreader.CsvWriter;
 import com.efficio.fieldbook.web.common.service.RExportStudyService;
 import com.efficio.fieldbook.web.nursery.bean.CSVOziel;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
-import com.efficio.fieldbook.web.util.FieldbookProperty;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
+
 @Service
 public class RExportStudyServiceImpl implements RExportStudyService {
+
+	@Resource
+    private FieldbookProperties fieldbookProperties;
 
 	@Override
 	public String export(Workbook workbook, String outputFile, int start, int end) {
@@ -36,7 +42,7 @@ public class RExportStudyServiceImpl implements RExportStudyService {
 	
 	@Override
 	public String exportToR(Workbook workbook, String outputFile, Integer selectedTrait, int start, int end) {
-		String outFile = FieldbookProperty.getPathProperty() + File.separator + outputFile;
+		String outFile = fieldbookProperties.getUploadDirectory() + File.separator + outputFile;
         boolean alreadyExists = new File(outFile).exists();
         List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), start, end);
         List<MeasurementRow> trialObservations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getTrialObservations(), start, end);

@@ -255,12 +255,6 @@
         <property name="password" value="${workbench.password}"/>
     </bean>
     
-   	<bean id="externalToolInfo" class="com.efficio.fieldbook.web.util.ExternalToolInfo">	
-   		<property name="currentProjectId" value="${workbench.currentProjectId}"/>
-   		<property name="oldFieldbookPath" value="${old.fb.tool.path}"/>   			
-	</bean>	
-    
-    
     <bean id="workbenchDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="${workbench.driver}"/>
         <property name="url" value="${workbench.url}"/>

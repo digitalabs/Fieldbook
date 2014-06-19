@@ -1007,8 +1007,9 @@ div.sectionContainer {
 }
 
 .fbk-mandatory {
-    padding-top: 5px;
     padding-bottom: 15px;
+    position: relative;
+    bottom: 5px
 }
 
 .fbk-open-button-left-margin{

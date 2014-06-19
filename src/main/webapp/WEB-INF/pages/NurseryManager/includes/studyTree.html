@@ -100,6 +100,7 @@
 
 <div layout:fragment="page-script">
 <script type="text/javascript" th:src="@{/static/js/nurseryManager.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/studyTreeFolderOperations.js}"></script>
 <script type="text/javascript" th:inline="javascript">
 //<![CDATA[
 /*globals Spinner,console,displayStudyListTree, changeBrowseNurseryButtonBehavior, showErrorMessage*/
@@ -132,26 +133,10 @@ $(document).ready(function () {
     $('#addFolderOkButton').on('click', createFolder);
     $('#addFolderCancelButton').on('click', hideAddFolderDiv);
     $('#renameFolderOkButton').on('click', submitRenameFolder);
-    $('#renameFolderCancelButton').on('click', function() {
-        $('#renameFolderDiv').slideUp('fast');
-    });
+    $('#renameFolderCancelButton').on('click', hideRenameFolderDiv);
     $('#deleteFolderOkButton').on('click', submitDeleteFolder);
-    $('#deleteFolderCancelButton').on('click', function() {
-        $('#deleteFolderDiv').slideUp('fast');
-    })
+    $('#deleteFolderCancelButton').on('click', hideDeleteFolderDiv);
 });
-
-function addFolder(object) {
-    'use strict';
-    if (!$(object).hasClass('disable-image')) {
-        $('#addFolderName').val('');
-        $('#addFolderDiv').slideDown('fast');
-    }
-}
-
-function hideAddFolderDiv() {
-    $('#addFolderDiv').slideUp('fast');
-}
 
 
 
@@ -190,6 +175,7 @@ function chooseStudyNode(node, fromEnterKey) {
         }
     }
 }
+
 function chooseStudy() {
     'use strict';
     var node = $('#studyTree').dynatree('getTree').getActiveNode();
@@ -328,7 +314,7 @@ function displayStudyListTree(treeName, studyType, choosingTypeParam) {
                 }
             });
         },
-        onClick : function(node, event) {
+        onClick: function (node, event) {
             $('#newFolderName').val(node.data.title);
             var currentFolderName = node.data.title;
             $('#deleteFolderLabelID').html(deleteConfirmation + ' ' + currentFolderName + '?');

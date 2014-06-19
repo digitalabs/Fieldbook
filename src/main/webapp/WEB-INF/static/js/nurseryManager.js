@@ -697,11 +697,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 								+ settingDetail.variable.name
 								+ '</span>: &nbsp;</div>';
 
-						if (settingDetail.variable.widgetType === 'DATE') {
-							newRow = newRow
-									+ '<div class="col-xs-4 col-md-4 2nd">';
-						} else
-							newRow = newRow
+                        newRow = newRow
 									+ '<div class="col-xs-7 col-md-7 2nd">';
 
 						var inputHtml = '';
@@ -1126,9 +1122,11 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 					}
 				});
 	} else {
-		$(name).select2(
+        var minResults = (possibleValues_obj.length > 0) ? 20 : -1;
+
+        $(name).select2(
 				{
-					minimumResultsForSearch: 20,
+					minimumResultsForSearch: minResults,
 					query : function(query) {
 						var data = {
 							results : possibleValues_obj

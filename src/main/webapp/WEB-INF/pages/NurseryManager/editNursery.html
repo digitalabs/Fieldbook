@@ -17,22 +17,20 @@
 <div class="row">
 <form id="createNurseryMainForm" role="form-horizontal" action="#" th:object="${createNurseryForm}" enctype="multipart/form-data">
 	<input type="hidden" th:field="*{studyId}" />
-	<div class="row">
-		<div class="col-md-9">
-			<img width="30" height="30" th:src="@{/static/img/new-nursery.png}" class="image-padding image-padding-with-text" />
-			<label class="heading" th:text="#{nursery.edit.nursery.label}">Edit Nursery</label>
-			<label class="heading" th:text="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() &lt; charLimit or basicDetails[0].value.length() == charLimit}"></label>
-			<label class="heading nursery-name" data-placement="right" data-toggle="tooltip" th:text="*{basicDetails[0].value.substring(0, charLimit)} + '...'" th:title="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() > charLimit}"></label>
-			<input type="button" onclick="submitForm();" th:value="#{common.form.save.text}" class="btn btn-info fbk-save-button-left-margin" />
-		</div>
-		<div class="col-md-3 add_top_padding">
-			<a  class="fbk-float-right"  th:href="@{/NurseryManager/manageNurseries}" th:text="#{return.to.manage.nurseries}">Return to Manage Nurseries</a>
-		</div>
+	<div class="row add-top-bottom-padding">
+		<div class="col-md-12">
+			<div class="pull-left">
+                <img width="30" height="30" th:src="@{/static/img/new-nursery.png}" class="image-padding image-padding-with-text" />
+                <span class="heading" th:text="#{nursery.edit.nursery.label}">Edit Nursery</span>
+                <span class="heading" th:text="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() &lt; charLimit or basicDetails[0].value.length() == charLimit}"></span>
+                <span class="heading nursery-name" data-placement="right" data-toggle="tooltip" th:text="*{basicDetails[0].value.substring(0, charLimit)} + '...'" th:title="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() > charLimit}"></span>
+                <input type="button" onclick="submitForm();" th:value="#{common.form.save.text}" class="btn btn-info fbk-save-button-left-margin" />
+            </div>
+            <a  class="pull-right"  th:href="@{/NurseryManager/manageNurseries}" th:text="#{return.to.manage.nurseries}">Return to Manage Nurseries</a>
+
+        </div>
 	</div>
-	<div class="row">
-		<div class="col-xs-12 col-md-12">&nbsp;</div>
-	</div>
-	<div class="row">
+	<div class="row" style="height: 30px">
 		<div class="col-md-12">
             <label class="control-label section-toggle toggle-icon" id="basicDetails" data-target=".basicDetailsSection">
                 <img style="margin-left: -10px; display: none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
@@ -81,7 +79,7 @@
 		</div>
 	</div>
     <div class="basicDetailsSection" style="display: none">
-        <div class="row">
+        <div class="row fbk-mandatory">
             <div class="col-md-12">
                 <label class=""><em th:utext="#{nursery.managesettings.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
             </div>

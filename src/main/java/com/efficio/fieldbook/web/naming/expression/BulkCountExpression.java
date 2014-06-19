@@ -18,7 +18,7 @@ public class BulkCountExpression extends Expression {
 			int startIndex = value.indexOf(Expression.BULK_COUNT);
 			int endIndex = startIndex + Expression.BULK_COUNT.length();
 	
-			Pattern pattern = Pattern.compile("(.*)-([0-9]*)B$");
+			Pattern pattern = Pattern.compile("(.*)-([0-9]*)B(.*)");
 			Matcher matcher = pattern.matcher(getSource().getRootName());
 			if (matcher.find()) { //original is a bulk
 				int count = 2;

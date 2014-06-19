@@ -185,23 +185,38 @@ public class NamingConventionServiceImpl implements NamingConventionService {
     }
     
     private String getGermplasmRootName(Integer snametype, AdvancingSource row) {
+    	String nameString = null;
     	List<Name> names = row.getNames();
     	if (names != null && !names.isEmpty()) {
     		if (snametype != null) {
 	    		for (Name name : names) {
 	    			if (name.getTypeId() != null && name.getTypeId().equals(snametype)) {
-	    				return name.getNval();
+	    				nameString = name.getNval();
+	    				break;
 	    			}
 	    		}
     		}
-    		//if no sname type defined or if no name found that matched the snametype
-    		for (Name name : names) {
-    			if (name.getNstat() != null && name.getNstat().equals(1)) {
-    				return name.getNval();
-    			}
+    		if (nameString == null) {
+	    		//if no sname type defined or if no name found that matched the snametype
+	    		for (Name name : names) {
+	    			if (name.getNstat() != null && name.getNstat().equals(1)) {
+	    				nameString = name.getNval();
+	    			}
+	    		}
     		}
     	}
     	
-    	return row.getGermplasm().getDesig();
+    	if (nameString == null) {
+    		nameString = row.getGermplasm().getDesig();
+    	}
+    	
+    	//If the root name is a cross string (contains one or more /s not enclosed within the range 
+    	//of a pair of parentheses) then enclose the root name in parentheses.
+    	if (nameString.contains("\\/") && !nameString.matches("[.*][\\(+][.*][\\/+][.*][\\)+][.*]")) {
+    		return "(" + nameString + ")";
+    	}
+    	else {
+    		return nameString;
+    	}
     }
 }

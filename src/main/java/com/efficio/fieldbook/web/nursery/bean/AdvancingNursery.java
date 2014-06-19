@@ -26,12 +26,6 @@ public class AdvancingNursery implements Serializable {
     
     private Study study;
     
-    /** The naming convention. */
-    private String namingConvention;
-    
-    /** The suffix convention. */
-    private String suffixConvention;
-    
     /** The method choice. */
     private String methodChoice;
     
@@ -63,7 +57,6 @@ public class AdvancingNursery implements Serializable {
     
     private Integer plotVariateId;
     
-    private boolean forcedBulk;
     
     public Study getStudy() {
         return study;
@@ -145,42 +138,6 @@ public class AdvancingNursery implements Serializable {
             this.breedingMethodId = breedingMethodId;
     }
 
-    /**
-     * Gets the naming convention.
-     *
-     * @return the naming convention
-     */
-    public String getNamingConvention() {
-            return namingConvention;
-    }
-    
-    /**
-     * Sets the naming convention.
-     *
-     * @param namingConvention the new naming convention
-     */
-    public void setNamingConvention(String namingConvention) {
-            this.namingConvention = namingConvention;
-    }
-    
-    /**
-     * Gets the suffix convention.
-     *
-     * @return the suffix convention
-     */
-    public String getSuffixConvention() {
-            return suffixConvention;
-    }
-    
-    /**
-     * Sets the suffix convention.
-     *
-     * @param suffixConvention the new suffix convention
-     */
-    public void setSuffixConvention(String suffixConvention) {
-            this.suffixConvention = suffixConvention;
-    }
-    
     /**
      * Gets the method choice.
      *
@@ -303,29 +260,11 @@ public class AdvancingNursery implements Serializable {
 		this.plotVariateId = plotVariateId;
 	}
 
-	/**
-	 * @return the forceIsBulked
-	 */
-	public boolean isForcedBulk() {
-		return forcedBulk;
-	}
-
-	/**
-	 * @param forceIsBulked the forceIsBulked to set
-	 */
-	public void setForcedBulk(boolean forceIsBulked) {
-		this.forcedBulk = forceIsBulked;
-	}
-
 	@Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("AdvancingNursery [study=");
         builder.append(study);
-        builder.append(", namingConvention=");
-        builder.append(namingConvention);
-        builder.append(", suffixConvention=");
-        builder.append(suffixConvention);
         builder.append(", methodChoice=");
         builder.append(methodChoice);
         builder.append(", lineChoice=");

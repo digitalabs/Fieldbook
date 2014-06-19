@@ -22,8 +22,15 @@ public class BulkCountExpression extends Expression {
 			Matcher matcher = pattern.matcher(getSource().getRootName());
 			if (matcher.find()) { //original is a bulk
 				int count = 2;
-				String countStr = matcher.group(matcher.groupCount());
-				if (countStr != null && countStr.matches("[0-9]*")) {
+				String countStr = null;
+				for (int i = matcher.groupCount(); i >= 1; i--) {
+					String temp = matcher.group(i);
+					if (getSource().getRootName().contains("-" + temp + "B") && temp.matches("[0-9]*")) {
+						countStr = temp;
+						break;
+					}
+				}
+				if (countStr != null) {
 					count = Integer.valueOf(countStr) + 1;
 				}
 				value.replace(startIndex, endIndex, "-" + count + "B");

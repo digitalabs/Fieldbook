@@ -13,19 +13,23 @@ public class SequenceExpression extends Expression {
 
 	@Override
 	public void apply(List<StringBuilder> values) {
-		List<StringBuilder> newNames = new ArrayList<StringBuilder>();
-		for (StringBuilder value : values) {
-			int startIndex = value.indexOf(Expression.SEQUENCE);
-			int endIndex = startIndex + Expression.SEQUENCE.length();
+		if (getSource().getPlantsSelected() != null && 
+				getSource().getPlantsSelected() > 0) {
 			
-			for (int i = 1; i <= getSource().getPlantsSelected(); i++) {
-				StringBuilder newName = new StringBuilder(value);
-				newName.replace(startIndex, endIndex, String.valueOf(i));
-				newNames.add(newName);
+			List<StringBuilder> newNames = new ArrayList<StringBuilder>();
+			for (StringBuilder value : values) {
+				int startIndex = value.indexOf(Expression.SEQUENCE);
+				int endIndex = startIndex + Expression.SEQUENCE.length();
+				
+				for (int i = 1; i <= getSource().getPlantsSelected(); i++) {
+					StringBuilder newName = new StringBuilder(value);
+					newName.replace(startIndex, endIndex, String.valueOf(i));
+					newNames.add(newName);
+				}
 			}
+			values.clear();
+			values.addAll(newNames);
 		}
-		values.clear();
-		values.addAll(newNames);
 	}
 
 }

@@ -12,12 +12,16 @@ public class NumberExpression extends Expression {
 
 	@Override
 	public void apply(List<StringBuilder> values) {
-		for (StringBuilder value : values) {
-			int startIndex = value.indexOf(Expression.NUMBER);
-			int endIndex = startIndex + Expression.NUMBER.length();
+		if (getSource().getPlantsSelected() != null && 
+				getSource().getPlantsSelected() > 0) {
 			
-			Integer newValue = getSource().getPlantsSelected();
-			value.replace(startIndex, endIndex, newValue != null ? newValue.toString() : "");
+			for (StringBuilder value : values) {
+				int startIndex = value.indexOf(Expression.NUMBER);
+				int endIndex = startIndex + Expression.NUMBER.length();
+				
+				Integer newValue = getSource().getPlantsSelected();
+				value.replace(startIndex, endIndex, newValue != null ? newValue.toString() : "");
+			}
 		}
 	}
 

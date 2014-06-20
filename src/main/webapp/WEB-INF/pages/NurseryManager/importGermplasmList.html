@@ -166,6 +166,47 @@
 						<button id="closeStudyTreeModal" type="button" class="close pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true" style="padding-top: 5px"></button>
 					</div>
 				</div>
+
+                <div class="form-horizontal form-group">
+                    <div id="addGermplasmFolderDiv">
+                        <div class="col-xs-4 col-md-4 nopadding">
+                            <label class="control-label label-bold" th:utext="#{browse.nursery.add.folder.name}">Folder Name: <span class="required">*</span></label>
+                        </div>
+                        <div class="col-xs-8 col-md-8 nopadding">
+                            <div class="input-group">
+                                <input id="addGermplasmFolderName" name="addFolderName" type="text" class="form-control select2" placeholder="Folder Name"/>
+                                                                            <span class="input-group-btn">
+                                                                                <button class="btn btn-success" id="addGermplasmFolderOkButton">
+                                                                                    <span class="glyphicon glyphicon-ok"></span>
+                                                                                </button>
+                                                                                <button class="btn btn-danger" id="addGermplasmFolderCancelButton">
+                                                                                    <span class="glyphicon glyphicon-remove"></span>
+                                                                                </button>
+                                                                            </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="renameGermplasmFolderDiv">
+                        <div class="col-xs-4 col-md-4 nopadding">
+                            <label class="control-label  label-bold" th:utext="#{browse.nursery.rename.folder.input.label}">Folder Name: <span class="required">*</span></label>
+                        </div>
+                        <div class="col-xs-8 col-md-8 nopadding">
+                            <div class="input-group">
+                                <input id="newGermplasmFolderName" name="newFolderName" type="text" class="form-control select2" placeholder="Folder Name"/>
+                                                                            <span class="input-group-btn">
+                                                                                <button class="btn btn-success" id="renameGermplasmFolderOkButton">
+                                                                                    <span class="glyphicon glyphicon-ok"></span>
+                                                                                </button>
+                                                                                <button class="btn btn-danger" id="renameGermplasmFolderCancelButton">
+                                                                                    <span class="glyphicon glyphicon-remove"></span>
+                                                                                </button>
+                                                                            </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+
 				<div class="row form-group" >
 					<!-- Germplasm List Tree View -->
 					<div class="col-md-12 col-xs-12 germplasm-tree-section" id="germplasmTree" style="height:350px; overflow:auto;"></div>
@@ -795,30 +836,159 @@
 			});
 		}
 
-		$(document).ready(function() {
-			'use strict';
+        $(document).ready(function () {
+            'use strict';
 
-			// FIXME This is relying on implicit type conversion - also see other uses of == in this file
-			if (hasPageError === 1){
-				// Show the modal dialog again
-				$('#myModal').modal('show');
-			}
+            // FIXME This is relying on implicit type conversion - also see other uses of == in this file
+            if (hasPageError === 1) {
+                // Show the modal dialog again
+                $('#myModal').modal('show');
+            }
 
-			// Display tree			
-			showSpecifyCheckSection();
+            // Display tree
+            showSpecifyCheckSection();
 
-			
-			$('#entries-details').css('display', 'none');
 
-			displayGermplasmListTree('germplasmTree', false, 0);
-			activateDroppable();
-			changeBrowseGermplasmButtonBehavior(false);
+            $('#entries-details').css('display', 'none');
 
-			$('#listTreeModal').on('hide.bs.modal', function() {
-				$('#'+getDisplayedTreeName()).dynatree('getTree').reloadStudyTree();
-				changeBrowseGermplasmButtonBehavior(false);
-			});
-		});
+            displayGermplasmListTree('germplasmTree', false, 0);
+            activateDroppable();
+            changeBrowseGermplasmButtonBehavior(false);
+
+            $('#listTreeModal').on('hide.bs.modal', function () {
+                $('#' + getDisplayedTreeName()).dynatree('getTree').reloadStudyTree();
+                changeBrowseGermplasmButtonBehavior(false);
+            });
+            $('#addGermplasmFolderDiv').hide();
+            $('#renameGermplasmFolderDiv').hide();
+            $('#addGermplasmFolderOkButton').on('click', createGermplasmFolder);
+            $('#addGermplasmFolderCancelButton').on('click', hideAddGermplasmFolderDiv);
+            $('#renameGermplasmFolderOkButton').on('click', submitRenameGermplasmFolder);
+            $('#renameGermplasmFolderCancelButton').on('click', hideRenameGermplasmFolderDiv);
+
+        });
+
+        function createGermplasmFolder() {
+            'use strict';
+
+            var folderName = $.trim($('#addGermplasmFolderName').val()),
+                    parentFolderId;
+
+            if (folderName === '') {
+                showErrorMessage('page-add-germplasm-folder-message-modal', folderNameRequiredMessage);
+                return false;
+            } else if (!isValidInput(folderName)) {
+                showErrorMessage('page-add-germplasm-folder-message-modal', invalidFolderNameCharacterMessage);
+                return false;
+            } else {
+                parentFolderId = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.key;
+                if (parentFolderId === 'LOCAL') {
+                    parentFolderId = 1;
+                }
+
+                Spinner.toggle();
+                $.ajax({
+                    url: '/Fieldbook/ListTreeManager/addGermplasmFolder',
+                    type: 'POST',
+                    data: 'parentFolderId=' + parentFolderId + '&folderName=' + folderName,
+                    cache: false,
+                    success: function (data) {
+                        if (data.isSuccess === '1') {
+                            // Lazy load the node
+                            var node = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode();
+                            doGermplasmLazyLoad(node);
+                            node.focus();
+                            node.expand();
+                            hideAddGermplasmFolderDiv();
+                        } else {
+                            showErrorMessage('page-add-germplasm-folder-message-modal', data.message);
+                        }
+                        Spinner.toggle();
+                    }
+                });
+            }
+            return false;
+        }
+
+        function hideAddGermplasmFolderDiv() {
+            'use strict';
+            $('#addGermplasmFolderDiv').slideUp('fast');
+        }
+
+        function hideRenameGermplasmFolderDiv() {
+            'use strict';
+            $('#renameGermplasmFolderDiv').slideUp('fast');
+        }
+
+        function addGermplasmFolder(object) {
+            'use strict';
+            if (!$(object).hasClass('disable-image')) {
+                hideRenameGermplasmFolderDiv();
+                $('#addGermplasmFolderName').val('');
+                $('#addGermplasmFolderDiv').slideDown('fast');
+            }
+        }
+
+        function renameGermplasmFolder(object) {
+            'use strict';
+
+            var currentFolderName;
+
+            if (!$(object).hasClass('disable-image')) {
+                hideAddGermplasmFolderDiv();
+
+                currentFolderName = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.title
+                $('#newGermplasmFolderName').val(currentFolderName);
+
+                $('#renameGermplasmFolderDiv').slideDown('fast');
+            }
+        }
+
+        function submitRenameGermplasmFolder() {
+            'use strict';
+
+            var folderName = $.trim($('#newGermplasmFolderName').val()),
+                    parentFolderId;
+
+            if ($.trim(folderName) === $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.title) {
+                $('#renameGermplasmFolder').modal('hide');
+                return false;
+            }
+
+            if (folderName === '') {
+                showErrorMessage('page-rename-germplasm-folder-message-modal', folderNameRequiredMessage);
+                return false;
+            } else if (!isValidInput(folderName)) {
+                showErrorMessage('page-rename-germplasm-folder-message-modal', invalidFolderNameCharacterMessage);
+                return false;
+            } else {
+                parentFolderId = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.key;
+                if (parentFolderId === 'LOCAL') {
+                    parentFolderId = 1;
+                }
+
+                Spinner.toggle();
+                $.ajax({
+                    url: '/Fieldbook/ListTreeManager/renameGermplasmFolder',
+                    type: 'POST',
+                    data: 'folderId=' + parentFolderId + '&newFolderName=' + folderName,
+                    cache: false,
+                    success: function (data) {
+                        var node;
+                        if (data.isSuccess === '1') {
+                            hideRenameGermplasmFolderDiv();
+                            node = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode();
+                            node.data.title = folderName;
+                            $(node.span).find('a').html(folderName);
+                            node.focus();
+                        } else {
+                            showErrorMessage('page-rename-germplasm-folder-message-modal', data.message);
+                        }
+                        Spinner.toggle();
+                    }
+                });
+            }
+        }
 	//]]>
 	</script>
 </div>

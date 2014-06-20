@@ -1922,6 +1922,8 @@ function deleteFolder(object) {
 
 	if (!$(object).hasClass('disable-image')) {
 		$('#deleteStudyFolder').modal('show');
+        hideAddFolderDiv();
+        hideRenameFolderDiv();
 		currentFolderName = $('#studyTree').dynatree('getTree').getActiveNode().data.title
 		$('#delete-confirmation').html(deleteConfirmation + ' ' + currentFolderName + '?');
 		$('#page-delete-study-folder-message-modal').html('');
@@ -1995,6 +1997,8 @@ function deleteGermplasmFolder(object) {
 
 	if (!$(object).hasClass('disable-image')) {
 		$('#deleteGermplasmFolder').modal('show');
+        $('#addGermplasmFolderDiv').slideUp('fast');
+        $('#renameGermplasmFolderDiv').slideUp('fast');
 		currentFolderName = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.title
 		$('#delete-folder-confirmation').html(deleteConfirmation + ' ' + currentFolderName + '?');
 

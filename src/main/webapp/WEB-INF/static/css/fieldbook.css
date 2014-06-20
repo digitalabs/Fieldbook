@@ -527,6 +527,11 @@ padding-left: 20px; margin-top: 7px
 	max-height: 400px;
 	overflow: auto;
 }
+
+.germplasm-tree-section {
+    padding-top: 10px;
+}
+
 .germplasm-measurement-list-table thead th, .germplasm-list-table thead th{
    text-align: left;
 }

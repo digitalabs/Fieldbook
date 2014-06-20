@@ -122,13 +122,13 @@ th:object="${createTrialForm}" enctype="multipart/form-data">
 		    	$("#successMessageModal").modal("show");
 			}, 
 			complete: function() {
-				// Spinner.toggle();
+
 			}
 		});
 	}
 
 	function submitWorkbook(){
-		// Spinner.toggle();
+
 
 		var $form = $("#createTrialForm");
 		
@@ -170,7 +170,7 @@ th:object="${createTrialForm}" enctype="multipart/form-data">
 	});
 
 	function loadFolderAjax() {
-		// Spinner.toggle();
+
 		$.ajax({ 
 			url: "/Fieldbook/Common/selectFolderLocation",
 		    type: "GET",
@@ -179,7 +179,7 @@ th:object="${createTrialForm}" enctype="multipart/form-data">
 				$("#folderBrowserModal"+" .modal-content").empty().append(html);
 				$('#folderBrowserModal').modal('show');
 				$.fn.modal.Constructor.prototype.enforceFocus = function () {};
-				// Spinner.toggle();
+
 			}
 		});
 	}

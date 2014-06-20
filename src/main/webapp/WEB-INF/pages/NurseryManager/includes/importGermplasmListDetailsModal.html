@@ -79,7 +79,6 @@
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[   
 	     function openGermplasmListDetailsPopop(listId) {
-	    	 /*// Spinner.toggle();*/
 	    	 $('.germplasm-header-details').html('');
 	    	 $.ajax({
 	 			url: "/Fieldbook/ListTreeManager/germplasm/list/header/details/"+listId,
@@ -98,7 +97,6 @@
 	 		    	$('#openGermplasmListModal').modal({ backdrop: 'static', keyboard: true });
 	 			}, 
 	 			complete: function() {
-	 				/*// Spinner.toggle();*/
 	 			}
 	 		});				
 		}     

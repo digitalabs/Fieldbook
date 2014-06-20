@@ -181,7 +181,7 @@
 				exportNursery();
 			}else {
 
-				/*// Spinner.toggle();*/
+
 	
 				$.ajax({
 					url: '/Fieldbook/ExportManager/study/hasFieldMap?studyId=' + studyId,
@@ -195,7 +195,7 @@
 						} else {
 							exportNursery();
 						}
-						/*// Spinner.toggle();*/
+
 					}
 				});
 			}
@@ -227,7 +227,7 @@
 			$('#selectedRTrait').empty();
 			$('#selectedRTrait').select2('destroy');
 
-			/*// Spinner.toggle();*/
+
 
 			$.ajax({
 				url: '/Fieldbook/ExportManager/study/traits/?studyId='+studyId,
@@ -249,7 +249,7 @@
 					}
 					$('#selectedRTrait').select2({minimumResultsForSearch: 20});
 					$('#exportStudyModal').modal({ backdrop: 'static', keyboard: true });
-					/*// Spinner.toggle();*/
+
 				}
 			});
 
@@ -262,7 +262,7 @@
 			$('#exportStudyDownloadForm #contentType').val(resp.contentType);
 			$('#exportStudyDownloadForm').submit();
 			$('#exportStudyModal').modal('hide');
-			/*// Spinner.toggle();*/
+
 		}
 	//]]>
 	</script>

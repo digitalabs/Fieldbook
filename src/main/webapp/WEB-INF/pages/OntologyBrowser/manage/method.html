@@ -74,7 +74,6 @@
 	  			showInvalidInputMessage(message);
 	  			return;
 	  		}
-	  		/*// Spinner.toggle();*/
 			serializedData = $("#manageMethodForm").serialize();
 	  		
 	  		$.ajax({
@@ -97,8 +96,7 @@
 			    	} else {
 			    		showErrorMessageInModal('page-message-modal', data.errorMessage);
 			    	}
-					/*// Spinner.toggle();*/
-				} 
+				}
 	  		});
 	  	}
     //]]>

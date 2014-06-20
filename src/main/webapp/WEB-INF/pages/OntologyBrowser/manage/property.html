@@ -99,7 +99,6 @@
 	  			showInvalidInputMessage(message);
 	  			return;
 	  		}
-	  		/*// Spinner.toggle();*/
 			serializedData = $("#managePropertyForm").serialize();
 	  		
 	  		$.ajax({
@@ -130,8 +129,7 @@
 			    	} else {
 			    		showErrorMessageInModal('page-message-modal', data.errorMessage);
 			    	}
-					/*// Spinner.toggle();*/
-				} 
+				}
 	  		});
 	  	}
     //]]>

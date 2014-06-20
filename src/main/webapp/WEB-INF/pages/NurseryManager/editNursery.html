@@ -133,11 +133,11 @@
 				<textarea class="form-control character-input" rows="3" th:field="*{basicDetails[3].value}"></textarea>
 			</div>
 			<div class="col-xs-2 col-md-2">
-				<input placeholder="yyyy-mm-dd" class="cvTermIds" type="hidden" th:field="*{basicDetails[4].variable.cvTermId}" />
+				<input class="cvTermIds" type="hidden" th:field="*{basicDetails[4].variable.cvTermId}" />
 				<label th:text="#{nursery.create.nursery.completion.date} + ': '" class="control-label label-bold"></label>
 			</div>
 			<div class="col-xs-4 col-md-4">
-				<input id="basicDetails.value4" style="width: 100px" type="text" class="form-control date-input" th:field="*{basicDetails[4].value}" />
+				<input placeholder="yyyy-mm-dd" id="basicDetails.value4" style="width: 100px" type="text" class="form-control date-input" th:field="*{basicDetails[4].value}" />
 				<label for="basicDetails.value4" class="btn datepicker"> <img th:src="@{/static/img/calendar.png}" style="padding-bottom: 3px;" /></label>
 			</div>
 		</div>

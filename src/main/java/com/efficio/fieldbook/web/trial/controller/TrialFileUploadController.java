@@ -30,6 +30,7 @@ import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 import com.efficio.fieldbook.web.trial.form.FileUploadForm;
+import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.ToolUtil;
 
 /**
@@ -63,7 +64,7 @@ public class TrialFileUploadController extends AbstractBaseFieldbookController{
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("fileUploadForm") FileUploadForm uploadForm
             , Model model, HttpServletRequest req, HttpSession session) {
-    	super.clearSessionData(session, req);
+    	SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME,SessionUtility.TRIAL_SELECTION_SESSION_NAME,SessionUtility.POSSIBLE_VALUES_SESSION_NAME});
     	
     	try {
     	    ToolUtil toolUtil = new ToolUtil();

@@ -2431,7 +2431,7 @@ function displaySaveSuccessMessage(idDomSelector, messageToDisplay){
 
 function recreateSessionVariables() {
 	'use strict';
-	Spinner.play();
+	/*Spinner.play();*/
 	$.ajax({
 		url: '/Fieldbook/NurseryManager/editNursery/recreate/session/variables',
 		type: 'GET',
@@ -2549,7 +2549,7 @@ function submitGermplasmAndCheck() {
 	
 	var $form = $('#check-germplasm-list-form, #germplasm-list-form'),
 		serializedData = $form.serialize();
-	Spinner.play();
+	/*Spinner.play();*/
 	$.ajax({
 		url: '/Fieldbook/NurseryManager/GermplasmList/submitAll',
 		type: 'POST',
@@ -2557,7 +2557,7 @@ function submitGermplasmAndCheck() {
 		cache: false,
 		success: function(dataResponse) {
 			refreshStudyAfterSave(dataResponse);
-			Spinner.stop();
+			/*Spinner.stop();*/
 		}
 	});
 }

@@ -33,7 +33,7 @@
 						th:onclick="'javascript: deleteVariable(1,\'' + ${nurseryLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
 						<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 						&nbsp;&nbsp;&nbsp;
-						<span style="word-wrap: break-word" class="control-label nursery-level-label label-bold study-variable-name var-names" th:text="${nurseryLevelVariable.variable.name}"></span>:&nbsp;
+						<span style="word-wrap: break-word" class="control-label nursery-level-label label-bold var-names" th:text="${nurseryLevelVariable.variable.name}"></span>:&nbsp;
 					</div>
 					<div class="col-xs-7 2nd">
 						<!-- <div th:text="${nurseryLevelVariable.variable.cvTermId}"></div> -->
@@ -109,7 +109,7 @@
 								<span style="cursor: default; font-size: 16px;" th:if="${nurseryCondition.deletable}" class="delete-icon"
 								th:onclick="'javascript: deleteVariable(7,\'' + ${nurseryCondition.variable.cvTermId} + '\',$(this))'"></span>
 								<input class="cvTermIds" type="hidden" th:field="*{nurseryConditions[__${rowStat.index}__].variable.cvTermId}" />&nbsp;&nbsp;&nbsp;
-								<span style="word-wrap: break-word" class="control-label nursery-condition-label label-bold study-variable-name var-names" th:text="${nurseryCondition.variable.name}"></span>:&nbsp;
+								<span style="word-wrap: break-word" class="control-label nursery-condition-label label-bold var-names" th:text="${nurseryCondition.variable.name}"></span>:&nbsp;
 							</div>
 							<div class="col-xs-7 col-md-7 2nd">
 								<input class="cvTermIds nurseryConditionVariableIdClass" type="hidden" th:field="*{nurseryConditions[__${rowStat.index}__].variable.cvTermId}" />

@@ -23,6 +23,8 @@ import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.StudyDetails;
+import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
@@ -395,5 +397,55 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
     	}
     	
     	return variable;
+    }
+    
+    /**
+     * Creates the study details.
+     *
+     * @param workbook the workbook
+     * @param conditions the conditions
+     * @param folderId the folder id
+     */
+    public void createStudyDetails(Workbook workbook, List<SettingDetail> conditions, Integer folderId, Integer studyId) {
+        if (workbook.getStudyDetails() == null) {
+            workbook.setStudyDetails(new StudyDetails());
+        }
+        StudyDetails studyDetails = workbook.getStudyDetails();
+
+        if (conditions != null && !conditions.isEmpty()) {
+        	if(studyId != null){
+        		studyDetails.setId(studyId);
+        	}
+	        studyDetails.setTitle(getSettingDetailValue(conditions, TermId.STUDY_TITLE.getId()));
+	        studyDetails.setObjective(getSettingDetailValue(conditions, TermId.STUDY_OBJECTIVE.getId()));
+	        studyDetails.setStudyName(getSettingDetailValue(conditions, TermId.STUDY_NAME.getId()));
+	        studyDetails.setStudyType(StudyType.N);
+	        
+	        if (folderId != null) {
+	        	studyDetails.setParentFolderId(folderId);
+	        }
+    	}
+        studyDetails.print(1);
+    }
+    
+
+    /**
+     * Gets the setting detail value.
+     *
+     * @param details the details
+     * @param termId the term id
+     * @return the setting detail value
+     */
+    private String getSettingDetailValue(List<SettingDetail> details, int termId) {
+    	String value = null;
+    	
+    	for (SettingDetail detail : details) {
+    		if (detail.getVariable().getCvTermId().equals(termId)) {
+    			value = detail.getValue();
+    			break;
+    		}
+    	}
+    	
+    	return value;
     }
 }

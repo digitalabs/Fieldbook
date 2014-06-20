@@ -265,56 +265,11 @@ public class CreateNurseryController extends SettingsController {
     	Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);
     	userSelection.setWorkbook(workbook);
 
-    	createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId());
+    	this.createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), null);
  
     	return "success";
     }
-    
-    /**
-     * Creates the study details.
-     *
-     * @param workbook the workbook
-     * @param conditions the conditions
-     * @param folderId the folder id
-     */
-    private void createStudyDetails(Workbook workbook, List<SettingDetail> conditions, Integer folderId) {
-        if (workbook.getStudyDetails() == null) {
-            workbook.setStudyDetails(new StudyDetails());
-        }
-        StudyDetails studyDetails = workbook.getStudyDetails();
-
-        if (conditions != null && !conditions.isEmpty()) {
-	        studyDetails.setTitle(getSettingDetailValue(conditions, TermId.STUDY_TITLE.getId()));
-	        studyDetails.setObjective(getSettingDetailValue(conditions, TermId.STUDY_OBJECTIVE.getId()));
-	        studyDetails.setStudyName(getSettingDetailValue(conditions, TermId.STUDY_NAME.getId()));
-	        studyDetails.setStudyType(StudyType.N);
-	        
-	        if (folderId != null) {
-	        	studyDetails.setParentFolderId(folderId);
-	        }
-    	}
-        studyDetails.print(1);
-    }
-    
-    /**
-     * Gets the setting detail value.
-     *
-     * @param details the details
-     * @param termId the term id
-     * @return the setting detail value
-     */
-    private String getSettingDetailValue(List<SettingDetail> details, int termId) {
-    	String value = null;
-    	
-    	for (SettingDetail detail : details) {
-    		if (detail.getVariable().getCvTermId().equals(termId)) {
-    			value = detail.getValue();
-    			break;
-    		}
-    	}
-    	
-    	return value;
-    }
+            
     
     /**
      * Sets the form static data.

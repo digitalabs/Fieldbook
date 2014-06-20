@@ -390,7 +390,7 @@ public class EditNurseryController extends SettingsController {
     	workbook.setMeasurementDatesetId(measurementDatasetId);
     	workbook.setTrialObservations(userSelection.getWorkbook().getTrialObservations());
     	    	
-    	createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), form.getStudyId());
+    	this.createStudyDetails(workbook, form.getBasicDetails(), form.getFolderId(), form.getStudyId());
     	userSelection.setWorkbook(workbook);
     	        
     	Map<String, String> resultMap = new HashMap<String, String>();
@@ -450,56 +450,7 @@ public class EditNurseryController extends SettingsController {
             }
         }
     }
-    
-    
-    /**
-     * Creates the study details.
-     *
-     * @param workbook the workbook
-     * @param conditions the conditions
-     * @param folderId the folder id
-     * @param studyId the study id
-     */
-    private void createStudyDetails(Workbook workbook, List<SettingDetail> conditions, Integer folderId, Integer studyId) {
-        if (workbook.getStudyDetails() == null) {
-            workbook.setStudyDetails(new StudyDetails());
-        }
-        StudyDetails studyDetails = workbook.getStudyDetails();
-
-        if (conditions != null && !conditions.isEmpty()) {
-                studyDetails.setId(studyId);
-	        studyDetails.setTitle(getSettingDetailValue(conditions, TermId.STUDY_TITLE.getId()));
-	        studyDetails.setObjective(getSettingDetailValue(conditions, TermId.STUDY_OBJECTIVE.getId()));
-	        studyDetails.setStudyName(getSettingDetailValue(conditions, TermId.STUDY_NAME.getId()));
-	        studyDetails.setStudyType(StudyType.N);
-	        
-	        if (folderId != null) {
-	        	studyDetails.setParentFolderId(folderId);
-	        }
-    	}
-        studyDetails.print(1);
-    }
-    
-    /**
-     * Gets the setting detail value.
-     *
-     * @param details the details
-     * @param termId the term id
-     * @return the setting detail value
-     */
-    private String getSettingDetailValue(List<SettingDetail> details, int termId) {
-    	String value = null;
-    	
-    	for (SettingDetail detail : details) {
-    		if (detail.getVariable().getCvTermId().equals(termId)) {
-    			value = detail.getValue();
-    			break;
-    		}
-    	}
-    	
-    	return value;
-    }
-    
+          
     /**
      * Sets the form static data.
      *

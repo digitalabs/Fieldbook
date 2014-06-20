@@ -1,16 +1,15 @@
 /* global Spinner */
-
 window.SpinnerManager = (function() {
     'use strict';
     var activeConnectionsAvailable = false;
     var DELAY = 1000;
-
 
     function startSpinnerIfNecessary() {
         if (activeConnectionsAvailable) {
             Spinner.play();
         }
     }
+
 
     return {
         addActive : function() {

@@ -419,6 +419,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 	        studyDetails.setTitle(getSettingDetailValue(conditions, TermId.STUDY_TITLE.getId()));
 	        studyDetails.setObjective(getSettingDetailValue(conditions, TermId.STUDY_OBJECTIVE.getId()));
 	        studyDetails.setStudyName(getSettingDetailValue(conditions, TermId.STUDY_NAME.getId()));
+	        studyDetails.setStartDate(getSettingDetailValue(conditions, TermId.START_DATE.getId()));
+	        studyDetails.setEndDate(getSettingDetailValue(conditions, TermId.END_DATE.getId()));
 	        studyDetails.setStudyType(StudyType.N);
 	        
 	        if (folderId != null) {

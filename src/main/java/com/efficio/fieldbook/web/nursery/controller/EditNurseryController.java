@@ -109,12 +109,12 @@ public class EditNurseryController extends SettingsController {
     public String useExistingNursery(@ModelAttribute("createNurseryForm") CreateNurseryForm form, 
     		@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2, 
             @PathVariable int nurseryId,@RequestParam(required=false) String isAjax, 
-            Model model, HttpSession session, HttpServletRequest request) throws MiddlewareQueryException{
+            Model model, HttpServletRequest req, HttpSession session, HttpServletRequest request) throws MiddlewareQueryException{
     	
     	ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO); 
     	String contextParams = ContextUtil.getContextParameterString(contextInfo);
     	
-    	session.invalidate();
+    	super.clearSessionData(session, req);
         if(nurseryId != 0){     
             //settings part
             Workbook workbook = fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
@@ -266,11 +266,11 @@ public class EditNurseryController extends SettingsController {
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("createNurseryForm") CreateNurseryForm form,
     				@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2, 
-    				Model model, HttpSession session, HttpServletRequest request) throws MiddlewareQueryException {
+    				Model model, HttpServletRequest req, HttpSession session, HttpServletRequest request) throws MiddlewareQueryException {
     	
     	ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO); 
     	String contextParams = ContextUtil.getContextParameterString(contextInfo);
-    	session.invalidate();
+    	super.clearSessionData(session, req);
     	form.setProjectId(this.getCurrentProjectId());
     	form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + "," + AppConstants.FIXED_NURSERY_VARIABLES.getString());
     	form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -60,8 +61,8 @@ public class OpenTrialController extends
 
     @RequestMapping(value="/viewTrial/{trialId}", method = RequestMethod.GET)
     public String viewNursery(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, Model model, 
-            @PathVariable int trialId, HttpSession session) {
-    	session.invalidate();
+            @PathVariable int trialId, HttpServletRequest req, HttpSession session) {
+    	super.clearSessionData(session, req);
         Workbook workbook = null;
         
         try { 

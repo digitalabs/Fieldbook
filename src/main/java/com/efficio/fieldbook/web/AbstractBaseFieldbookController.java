@@ -11,9 +11,14 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web;
 
+import java.util.Enumeration;
+
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.Tool;
 import org.slf4j.Logger;
@@ -34,6 +39,12 @@ public abstract class AbstractBaseFieldbookController {
 	public static final String BASE_TEMPLATE_NAME = "/template/base-template";
 	public static final String ERROR_TEMPLATE_NAME = "/template/error-template";
 	public static final String TEMPLATE_NAME_ATTRIBUTE = "templateName";
+	
+	private static String[] SESSION_ATTRIBUTE_NAMES = {"scopedTarget.possibleValuesCache", "scopedTarget.advancingNursery",
+													"scopedTarget.nurseryUserSelection","scopedTarget.trialSelection",
+													"scopedTarget.seedSelection","scopedTarget.userFieldmap",
+													"scopedTarget.userLabelPrinting","scopedTarget.paginationListSelection"};	
+
 
 	@Resource
 	private WorkbenchService workbenchService;
@@ -180,6 +191,14 @@ public abstract class AbstractBaseFieldbookController {
 
 	public ProjectActivityService getProjectActivityService() {
 		return projectActivityService;
+	}
+	//this would be use in place for the session.invalidate
+	public void clearSessionData(HttpSession session, HttpServletRequest req){
+		if(session != null){				
+			for(int index = 0 ; index < SESSION_ATTRIBUTE_NAMES.length ; index++){
+				session.removeAttribute(SESSION_ATTRIBUTE_NAMES[index]);
+			}
+		}
 	}
 
 }

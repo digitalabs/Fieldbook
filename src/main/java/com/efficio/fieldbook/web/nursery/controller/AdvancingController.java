@@ -130,7 +130,6 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     @RequestMapping(value="/{nurseryId}", method = RequestMethod.GET)
     public String show(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form
             , Model model, HttpServletRequest req, HttpSession session, @PathVariable int nurseryId) throws MiddlewareQueryException{
-    	super.clearSessionData(session, req);
     	form.setMethodChoice("1");
     	form.setLineChoice("1");
     	form.setLineSelected("1");

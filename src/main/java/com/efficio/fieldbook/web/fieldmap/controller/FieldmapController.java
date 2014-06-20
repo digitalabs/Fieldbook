@@ -46,6 +46,7 @@ import com.efficio.fieldbook.web.fieldmap.bean.SelectedFieldmapList;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.fieldmap.form.FieldmapForm;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SessionUtility;
 
 /**
  * The Class FieldmapController.
@@ -128,7 +129,8 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     @RequestMapping(value="/createFieldmap/{ids}", method = RequestMethod.GET)
     public Map<String, String> determineFieldMapNavigation(@PathVariable String ids, 
             Model model, HttpServletRequest req, HttpSession session) {
-    	super.clearSessionData(session, req);
+
+    	SessionUtility.clearSessionData(session, new String[]{SessionUtility.FIELDMAP_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
         Map<String, String> result = new HashMap<String, String>();
         String nav = "1";
         try {
@@ -346,7 +348,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     @RequestMapping(value="/createNurseryFieldmap/{ids}", method = RequestMethod.GET)
     public Map<String, String> determineNurseryFieldMapNavigation(
             @PathVariable String ids, HttpServletRequest req, HttpSession session) {
-    	super.clearSessionData(session, req);
+    	SessionUtility.clearSessionData(session, new String[]{SessionUtility.FIELDMAP_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
         Map<String, String> result = new HashMap<String, String>();
         
         String nav = "1";

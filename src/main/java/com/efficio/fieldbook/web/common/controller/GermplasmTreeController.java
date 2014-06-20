@@ -23,8 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.math.NumberUtils;
-import org.generationcp.middleware.domain.dms.FolderReference;
-import org.generationcp.middleware.domain.dms.Reference;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Database;
@@ -54,11 +52,9 @@ import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.form.SaveListForm;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
-import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.AdvancingNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
-import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
 import com.efficio.pojos.treeview.TreeNode;
 
@@ -88,10 +84,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
     private String NAME_NOT_UNIQUE = "Name not unique";
     private String HAS_CHILDREN = "Folder has children";
     @Resource
-    private ResourceBundleMessageSource messageSource;
-    
-    @Resource
-    private UserSelection userSelection;
+    private ResourceBundleMessageSource messageSource;    
     
     
     /**

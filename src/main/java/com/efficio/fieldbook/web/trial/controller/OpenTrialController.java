@@ -31,6 +31,7 @@ import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
@@ -62,7 +63,7 @@ public class OpenTrialController extends
     @RequestMapping(value="/viewTrial/{trialId}", method = RequestMethod.GET)
     public String viewNursery(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, Model model, 
             @PathVariable int trialId, HttpServletRequest req, HttpSession session) {
-    	super.clearSessionData(session, req);
+    	SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME,SessionUtility.TRIAL_SELECTION_SESSION_NAME,SessionUtility.POSSIBLE_VALUES_SESSION_NAME});
         Workbook workbook = null;
         
         try { 

@@ -693,7 +693,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 								+ '" />&nbsp;&nbsp;&nbsp;&nbsp;';
 
 						newRow = newRow
-								+ '<span style="word-wrap: break-word"  class="var-names control-label label-bold study-variable-name">'
+								+ '<span style="word-wrap: break-word"  class="var-names control-label label-bold">'
 								+ settingDetail.variable.name
 								+ '</span>: &nbsp;</div>';
 
@@ -1606,7 +1606,6 @@ function initializeDateAndSliderInputs() {
 					});
 				});
 	}
-	truncateStudyVariableNames('.study-variable-name', 17);
 }
 
 function checkPlantsSelected() {
@@ -2318,8 +2317,8 @@ function validateStartEndDateBasic() {
 	var startDate = $("#" + getJquerySafeId("basicDetails.value2")).val();
 	var endDate = $("#" + getJquerySafeId("basicDetails.value4")).val();
 
-	startDate = startDate == null ? '' : startDate;
-	endDate = endDate == null ? '' : endDate;
+	startDate = startDate == null ? '' : startDate.replace(/-/g, "");
+	endDate = endDate == null ? '' : endDate.replace(/-/g, "");
 
 	if (startDate === '' && endDate === '')
 		return true;

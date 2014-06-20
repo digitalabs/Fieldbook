@@ -52,9 +52,9 @@ import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.label.printing.form.LabelPrintingForm;
-import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
+import com.efficio.fieldbook.web.util.SessionUtility;
 
 /**
  * The Class LabelPrintingController.
@@ -94,10 +94,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     @Resource
     private ResourceBundleMessageSource messageSource;
     
-    /** The user selection. */
-    @Resource
-    private UserSelection userSelection;
-    
    
     /**
      * Show trial label details.
@@ -113,7 +109,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     public String showTrialLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, 
             Model model, HttpServletRequest req, HttpSession session, @PathVariable int id , Locale locale) {
     	
-    	super.clearSessionData(session, req);
+    	SessionUtility.clearSessionData(session, new String[]{SessionUtility.LABEL_PRINTING_SESSION_NAME, SessionUtility.FIELDMAP_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
         Study study = null;
         List<FieldMapInfo> fieldMapInfoList = null;
         FieldMapInfo fieldMapInfo = null;
@@ -157,18 +153,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     public String showNurseryLabelDetails(
             @ModelAttribute("labelPrintingForm") LabelPrintingForm form, Model model, 
             HttpServletRequest req, HttpSession session, @PathVariable int id, Locale locale) {
-    	//we get the nursery site name first
-    	/*
-    	String location = "";
-    	for(StudyDetails details : getUserSelection().getStudyDetailsList()){
-    		if(details.getId().intValue() == id){
-    			location = details.getSiteName();
-    			break;
-    		}
-    		
-    	}
-    	*/
-    	super.clearSessionData(session, req);
+    	SessionUtility.clearSessionData(session, new String[]{SessionUtility.LABEL_PRINTING_SESSION_NAME, SessionUtility.FIELDMAP_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
         Study study = null;
         List<FieldMapInfo> fieldMapInfoList = null;
         FieldMapInfo fieldMapInfo = null;
@@ -529,16 +514,6 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
         this.userLabelPrinting = userLabelPrinting;
     }
   
-    /* (non-Javadoc)
-     * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getUserSelection()
-     */
-    /**
-     * Gets the user selection.
-     *
-     * @return the user selection
-     */
-    public UserSelection getUserSelection() {
-        return this.userSelection;
-    }
+  
     
 }

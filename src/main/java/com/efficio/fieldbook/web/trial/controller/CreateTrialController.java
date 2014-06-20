@@ -46,6 +46,7 @@ import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
@@ -160,7 +161,8 @@ public class CreateTrialController extends SettingsController {
      */
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("createTrialForm") CreateTrialForm form, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2, Model model, HttpServletRequest req, HttpSession session) throws MiddlewareQueryException{
-    	super.clearSessionData(session, req);
+    	
+    	SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME,SessionUtility.TRIAL_SELECTION_SESSION_NAME,SessionUtility.POSSIBLE_VALUES_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
     	form.setProjectId(this.getCurrentProjectId());
     	form.setRequiredFields(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
     	setFormStaticData(form);

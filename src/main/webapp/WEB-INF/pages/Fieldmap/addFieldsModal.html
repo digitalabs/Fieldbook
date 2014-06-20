@@ -2,7 +2,7 @@
 	<!-- Modal -->
 	<form id="add-field-form" role="form-horizontal" class="form-horizontal" action="#" th:action="@{/Fieldmap/enterFieldDetails}" method="post" th:object="${fieldmapForm}" enctype="multipart/form-data">
 		<div class="modal fade" id="addFieldsModal" role="dialog" aria-labelledby="addVariablesSettingModal" aria-hidden="true">
-			<div class="modal-dialog modal-large">
+			<div class="modal-dialog modal-medium">
 				<div class="modal-content">					
 					<div class="modal-body" id="addVariablesSettingBody">
 					
@@ -20,7 +20,7 @@
 						</div>
 
 						<div class="row form-group">
-								<div class="col-xs-3  col-md-3 add_top_padding">
+								<div class="col-xs-3  col-md-3 add-top-padding-small">
 									<label class="control-label label-bold" th:text="#{fieldmap.add.fields.parent.location}">Parent Location:</label><span class="required">*</span>
 								</div>
 								<div class="col-xs-6 col-md-6">
@@ -28,7 +28,7 @@
 								</div>
 						</div>
 						<div class="row form-group">
-								<div class="col-xs-3  col-md-3 add_top_padding">
+								<div class="col-xs-3  col-md-3 add-top-padding-small">
 									<label class="control-label label-bold" th:text="#{fieldmap.trial.enter.field.name}">Field Name:</label><span class="required">*</span>
 								</div>
 								<div class="col-xs-6 col-md-6">

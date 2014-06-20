@@ -59,6 +59,7 @@ import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 
 // TODO: Auto-generated Javadoc
@@ -114,7 +115,7 @@ public class EditNurseryController extends SettingsController {
     	ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO); 
     	String contextParams = ContextUtil.getContextParameterString(contextInfo);
     	
-    	super.clearSessionData(session, req);
+    	SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME,SessionUtility.POSSIBLE_VALUES_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
         if(nurseryId != 0){     
             //settings part
             Workbook workbook = fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
@@ -270,7 +271,7 @@ public class EditNurseryController extends SettingsController {
     	
     	ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO); 
     	String contextParams = ContextUtil.getContextParameterString(contextInfo);
-    	super.clearSessionData(session, req);
+    	SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME,SessionUtility.POSSIBLE_VALUES_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
     	form.setProjectId(this.getCurrentProjectId());
     	form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + "," + AppConstants.FIXED_NURSERY_VARIABLES.getString());
     	form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());

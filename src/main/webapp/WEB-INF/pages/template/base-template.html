@@ -50,28 +50,20 @@
 	    <![endif]-->
 	</head>
 	<body>
+		<div id="notification-container" style="display:none">
+			<div id="default-notification">
+				<a class="ui-notify-close" href="#"><span class="glyphicon glyphicon-remove" style="float:right"></span></a>
+				<h1>#{title}</h1>
+				<p>#{text}</p>
+			</div>			
+		</div>
 		<div class="container">
 			<div class="row">
 				<div class="col-md-12" th:substituteby="${templateName}">
 					<!-- Main container of all Fieldbook screen content.
 						Always replaced/filled in by the contents of individual screen templates. -->
 				</div>
-			</div>
-			<div id="notification-container" style="display:none">
-				<div id="default-notification">
-					<h1>#{title}</h1>
-					<p>#{text}</p>
-				</div>
-				<div id="default-warning-notification" class="warning-notify">
-					<h1>#{title}</h1>
-					<p>#{text}</p>
-				</div>
-				<div id="default-error-notification" class="error-notify">
-					<a class="ui-notify-close" href="#"><span class="glyphicon glyphicon-remove" style="float:right"></span></a>
-					<h1>#{title}</h1>
-					<p>#{text}</p>
-				</div>
-			</div>
+			</div>			
 		</div>
 		<div class="global-messages" th:include="/Common/includes/globals"></div>
 	</body>

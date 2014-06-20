@@ -144,6 +144,11 @@
 		<aop:scoped-proxy />
 	</bean>
 	
+	<bean id="possibleValuesCache" class="com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache"
+		scope="session">
+		<aop:scoped-proxy />
+	</bean>
+	
 	<!-- **************************************************************** -->
 	<!-- RESTful Web Service -->
 	<!-- **************************************************************** -->

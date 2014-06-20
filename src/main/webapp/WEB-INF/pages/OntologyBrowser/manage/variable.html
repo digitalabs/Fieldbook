@@ -425,7 +425,7 @@ function doValidation() {
 
     }
 
-    Spinner.toggle()
+    // Spinner.toggle()
     var serializedData = $("#manageVariable").serialize();
     var isValid = true;
     $.ajax({
@@ -435,7 +435,7 @@ function doValidation() {
         cache: false,
         async: false,
         success: function (data) {
-            Spinner.toggle();
+            // Spinner.toggle();
             if(data == 'error'){
                 isValid = false;
                 //psmrError

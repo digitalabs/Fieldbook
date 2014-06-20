@@ -82,7 +82,7 @@ function validateEnterLabelFieldsPage(type){
 	
 	setSelectedTrialInstanceOrder();
 	
-Spinner.toggle();
+// Spinner.toggle();
 var $form = $("#specifyLabelDetailsForm");
 serializedData = $form.serialize();
 		$.ajax({
@@ -93,7 +93,7 @@ serializedData = $form.serialize();
 			    $('#specifyLabelDetailsDownloadForm').submit();
 		   },
 		   complete: function(){ 
-			   Spinner.toggle();
+			   // Spinner.toggle();
 		   } 
 		});
 	

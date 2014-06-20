@@ -95,13 +95,13 @@
 				'use strict';
 				
 				if (node.data.isFolder === true){
-					Spinner.play();
+					/*Spinner.play();*/
 					node.appendAjax({
 						url: lazyLoadUrl + node.data.key + additionalLazyLoadUrl,
 						dataType: 'json',
 						success: function(node) {
 							//do nothing
-							Spinner.stop();
+							/*Spinner.stop();*/
 							setTimeout(function(){node.focus();}, 50);
 							if(node.hasChildren()) {
 								$('.delete-germplasm-folder').addClass('disable-image');
@@ -123,7 +123,7 @@
 							}
 						},
 						error: function(node, XMLHttpRequest, textStatus, errorThrown) {
-							Spinner.stop();
+							/*Spinner.stop();*/
 							console.log('The following error occured: ' + textStatus, errorThrown);
 						},
 						cache: false

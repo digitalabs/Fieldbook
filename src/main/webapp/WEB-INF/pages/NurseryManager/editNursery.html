@@ -335,7 +335,7 @@
 				cache: false,
 				success: function() {
 					refreshStudyAfterSave($("#studyId").val());
-					Spinner.stop();
+					/*Spinner.stop();*/
 				}
 			});
 		}
@@ -359,7 +359,7 @@
 		function submitWorkbook(){
 			'use strict';
 
-			Spinner.toggle();
+			/*// Spinner.toggle();*/
 
 			var $form = $('#createNurseryForm, #createNurseryMainForm'),
 				serializedData = $form.serialize();
@@ -372,7 +372,7 @@
 				success: function(data) {
                     if (data.status === '-1') {
                         showErrorMessage('page-message', data.errorMessage);
-                        Spinner.toggle();
+                        /*// Spinner.toggle();*/
                     } else if ($('.germplasm-list-items tbody tr').length > 0 || measurementRowCount === 0) {
 						submitCheckGermplasmList();
 					} else if (data.status === '1') {
@@ -385,7 +385,7 @@
 		function deleteMeasurementRows() {
 			'use strict';
 
-			Spinner.toggle();
+			/*// Spinner.toggle();*/
 
 			$.ajax({
 				url: '/Fieldbook/NurseryManager/editNursery/deleteMeasurementRows',
@@ -395,9 +395,9 @@
 				success: function(data) {
                     if (data.status == -1) {
                         showErrorMessage('page-message', data.errorMessage);
-                        Spinner.toggle();
+                        /*// Spinner.toggle();*/
                     } else {
-                    	Spinner.toggle();
+                    	/*// Spinner.toggle();*/
                     	submitWorkbook();
 					}
 				}

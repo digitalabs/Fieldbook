@@ -74,7 +74,7 @@
 
 	function addNewBlockLocation(fieldName, locationId){
 		'use strict';
-		Spinner.toggle();
+		// Spinner.toggle();
 		var dataForm = $('#add-block-form').serialize()
 		$.ajax(
 			{ url: '/Fieldbook/Fieldmap/enterFieldDetails/addNewBlock',
@@ -89,7 +89,7 @@
 						showInvalidInputMessage(blockNameDuplicateError);
 					}
 
-				Spinner.toggle();
+				// Spinner.toggle();
 				}
 			}
 		);

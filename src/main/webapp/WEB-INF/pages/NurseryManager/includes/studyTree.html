@@ -202,13 +202,13 @@ function doStudyLazyLoad(node) {
         additionalUrl = '/1';
     }
     if (node.data.isFolder === true) {
-        Spinner.play();
+        /*Spinner.play();*/
         node.appendAjax({
             url: lazyReadUrl + node.data.key + additionalUrl,
             dataType: 'json',
             success: function (node) {
                 //do nothing
-                Spinner.stop();
+                /*Spinner.stop();*/
                 setTimeout(function () {
                     node.focus();
                     node.expand();
@@ -241,7 +241,7 @@ function doStudyLazyLoad(node) {
                 }
             },
             error: function (node, XMLHttpRequest, textStatus, errorThrown) {
-                Spinner.stop();
+                /*Spinner.stop();*/
                 console.log('The following error occured: ' + textStatus, errorThrown);
             },
             cache: false
@@ -299,7 +299,7 @@ function displayStudyListTree(treeName, studyType, choosingTypeParam) {
                     nodeCentral.remove();
                 }
             }
-            Spinner.stop();
+            /*Spinner.stop();*/
         },
         onFocus: function (node) {
             focusNode = node;

@@ -157,7 +157,7 @@ function recreateMethodCombo() {
 var selectedMethodAll = $("#methodIdAll").val();
 var selectedMethodFavorite = $("#methodIdFavorite").val();
 
-Spinner.toggle();
+// Spinner.toggle();
 $.ajax(
      { url: "/Fieldbook/NurseryManager/advance/nursery/getBreedingMethods",
        type: "GET",
@@ -208,7 +208,7 @@ $.ajax(
 			console.log("The following error occured: " + textStatus, errorThrown); 
 	   }, 
 	   complete: function(){
-		   Spinner.toggle();
+		   // Spinner.toggle();
 	   } 
      }
  );
@@ -250,7 +250,7 @@ function recreateLocationCombo() {
 			 return;
 	}
 	
-	Spinner.toggle();
+	// Spinner.toggle();
 	$.ajax(
 	{ url: "/Fieldbook/NurseryManager/advance/nursery/getLocations",
        type: "GET",
@@ -301,7 +301,7 @@ function recreateLocationCombo() {
 			console.log("The following error occured: " + textStatus, errorThrown); 
 	   }, 
 	   complete: function(){  
-		   Spinner.toggle();
+		   // Spinner.toggle();
 	   } 
      }
  );
@@ -436,7 +436,7 @@ function openAddVariablesSetting(variableType) {
 }
 
 function getStandardVariables(variableType) {
-	Spinner.toggle();
+	// Spinner.toggle();
 	$.ajax({
 		url: "/Fieldbook/TrialManager/manageTrialSettings/displayAddSetting/" + variableType,
 		type: "GET",
@@ -486,7 +486,7 @@ function getStandardVariables(variableType) {
 			console.log("The following error occured: " + textStatus, errorThrown); 
 		},
 		complete: function() {
-			Spinner.toggle();
+			// Spinner.toggle();
 		}
 	});
 }
@@ -527,7 +527,7 @@ function initializeStandardVariableSearch(variables) {
 function getStandardVariableDetailsModal(id) {
 	
 	if(id != ''){
-		Spinner.toggle();
+		// Spinner.toggle();
 		$.ajax({
 			url: "/Fieldbook/TrialManager/manageTrialSettings/showVariableDetails/" + id,
 			type: "GET",
@@ -540,7 +540,7 @@ function getStandardVariableDetailsModal(id) {
 				console.log("The following error occured: " + textStatus, errorThrown); 
 			},
 			complete: function() {
-				Spinner.toggle();
+				// Spinner.toggle();
 			}
 		});
 	}
@@ -850,7 +850,7 @@ function submitSelectedVariables(variableType) {
 		replaceNameVariables();
 		var serializedData = $("input.addVariables, select.addVariables").serialize();
 		$("#page-message-modal").html("");
-		Spinner.toggle();
+		// Spinner.toggle();
 		
 		$.ajax({
 			url: "/Fieldbook/TrialManager/manageTrialSettings/addSettings/" + variableType,
@@ -882,7 +882,7 @@ function submitSelectedVariables(variableType) {
 				console.log("The following error occured: " + textStatus, errorThrown); 
 			},
 			complete: function() {
-				Spinner.toggle();
+				// Spinner.toggle();
 				$("#addVariablesSettingModal").modal("hide");
 			}
 		});
@@ -1426,13 +1426,13 @@ function deleteVariable(variableType, variableId, deleteButton) {
 	}
 
 	//remove row from session
-	Spinner.toggle();
+	// Spinner.toggle();
 	$.ajax({
 		url: "/Fieldbook/TrialManager/manageTrialSettings/deleteVariable/" + variableType + "/" + variableId,
 		cache: false,
 		type: "POST",
 		success: function() {
-			Spinner.toggle();
+			// Spinner.toggle();
 		}
 	});
 	
@@ -1609,7 +1609,7 @@ function deleteNurserySettings(){
 		$('#delete-settings-confirmation').modal('hide');
 		//doAjaxMainSubmit('page-message', deleteTemplateSettingSuccess, "/Fieldbook/TrialManager/manageTrialSettings/delete/" + templateSettingsId);
 		
-		Spinner.toggle();
+		// Spinner.toggle();
 		
 		$.ajax({
 			url: "/Fieldbook/TrialManager/manageTrialSettings/delete/" + templateSettingsId,
@@ -1621,7 +1621,7 @@ function deleteNurserySettings(){
 				
 			    showSuccessfulMessage('page-message', deleteTemplateSettingSuccess);	
 			    moveToTopScreen();
-				Spinner.toggle();
+				// Spinner.toggle();
 			}
 		});
 			
@@ -1634,7 +1634,7 @@ function clearSettings(){
 	var templateSettingsId = $('#selectedSettingId').val();
 	//window.location.hash = "/Fieldbook/TrialManager/manageTrialSettings/clearSettings/"+templateSettingsId+"?t=";
 	
-	Spinner.toggle();	
+	// Spinner.toggle();
 		$.ajax({
 			url: "/Fieldbook/TrialManager/manageTrialSettings/clearSettings/"+templateSettingsId,
 			type: "GET", 	
@@ -1643,7 +1643,7 @@ function clearSettings(){
 				//we just paste the whole html
 				$('.container .row').first().html(html);
 				moveToTopScreen();
-				Spinner.toggle();
+				// Spinner.toggle();
 			}
 		});
 		
@@ -1652,7 +1652,7 @@ function loadNurserySettings(templateSettingsId) {
 //var serializedData = $("#saveAdvanceNurseryForm").serialize();
 	//window.location.hash = "/Fieldbook/TrialManager/manageTrialSettings/view/"+templateSettingsId;
 	
-	Spinner.toggle();
+	// Spinner.toggle();
 	$.ajax({
 		url: "/Fieldbook/TrialManager/manageTrialSettings/view/" + templateSettingsId,
 		type: "GET", 	
@@ -1668,14 +1668,14 @@ function loadNurserySettings(templateSettingsId) {
 			console.log("The following error occured: " + textStatus, errorThrown); 
 		},
 		complete: function() {
-			Spinner.toggle();
+			// Spinner.toggle();
 		}
 	});
 }
 function addNewSettings(){
 	//window.location.hash = "/Fieldbook/TrialManager/manageTrialSettings/addNewSettings";
 	
-	Spinner.toggle();
+	// Spinner.toggle();
 	
 	$.ajax({
 		url: "/Fieldbook/TrialManager/manageTrialSettings/addNewSettings",
@@ -1684,14 +1684,14 @@ function addNewSettings(){
 		success: function (html) {
 			//we just paste the whole html
 			$('.container .row').first().html(html);				
-			Spinner.toggle();
+			// Spinner.toggle();
 		}
 	});
 	
 }
 function copySettings() {
 	var templateSettingsId = $('#selectedSettingId').val();
-	Spinner.toggle();
+	// Spinner.toggle();
 	$.ajax({
 		url: "/Fieldbook/TrialManager/manageTrialSettings/copy/" + templateSettingsId,
 		type: "GET", 	
@@ -1700,7 +1700,7 @@ function copySettings() {
 			//we just paste the whole html
 			$('.container .row').first().html(html);			
 			showSuccessfulMessage('page-message', copyTemplateSettingSuccess);	
-			Spinner.toggle();
+			// Spinner.toggle();
 		}
 	});
 }
@@ -1755,7 +1755,7 @@ function doSaveSettings(){
 		doAjaxMainSubmit('page-message', saveTemplateSettingSuccess, null);
 		moveToTopScreen();
 		/*
-	Spinner.toggle();
+	// Spinner.toggle();
 	var $form = $("#saveNurserySettingsForm");
 	serializedData = $form.serialize();
 	
@@ -1768,7 +1768,7 @@ function doSaveSettings(){
 				$('.container .row').first().html(html);
 				
 			    showSuccessfulMessage('page-message', saveTemplateSettingSuccess);				
-				Spinner.toggle();
+				// Spinner.toggle();
 			}
 		}); 
 		*/
@@ -1856,7 +1856,7 @@ function validateReset(){
 }
 
 function loadTrialSettingsForCreate(templateSettingsId) {
- 	Spinner.toggle();
+ 	// Spinner.toggle();
 	var $form = $("#createTrialForm");
 	
 	var serializedData = $form.serialize();
@@ -1886,7 +1886,7 @@ function loadTrialSettingsForCreate(templateSettingsId) {
 			console.log("The following error occured: " + textStatus, errorThrown); 
 		},
 		complete: function() {
-			Spinner.toggle();
+			// Spinner.toggle();
 		}
 	});
 }
@@ -1940,14 +1940,14 @@ function displayGermplasmListTree(treeName) {
 }
 
 function displayGermplasmDetails(listId) {
-	Spinner.toggle();
+	// Spinner.toggle();
 	$.ajax({		
 		url: "/Fieldbook/NurseryManager/importGermplasmList/displayGermplasmDetails/" + listId,
 		type: "GET",
 		cache: false,
 		success: function(html) {
 			$("#imported-germplasm-list").html(html);	
-			Spinner.toggle();
+			// Spinner.toggle();
 		}
 		
 	});
@@ -1969,7 +1969,7 @@ function chooseSelectedTrial() {
 	}
 	
 	$("#usePreviousTrialModal").modal("hide");
-	Spinner.toggle();
+	// Spinner.toggle();
 	$.ajax({
 		url: url + nurseryId,
         type: "GET",
@@ -1993,7 +1993,7 @@ function chooseSelectedTrial() {
 			console.log("The following error occured: " + textStatus, errorThrown); 
 	    }, 
 	    complete: function(){
-		    Spinner.toggle();
+		    // Spinner.toggle();
 	    } 
 	});
 }
@@ -2056,7 +2056,7 @@ function validateCreateTrial() {
 	return true;
 }
 function reloadCheckTypeDropDown(addOnChange, select2ClassName){
-	Spinner.toggle();
+	// Spinner.toggle();
 	var currentCheckId = $('#checkId').val();
 	$.ajax(
     	{ url: "/Fieldbook/NurseryManager/importGermplasmList/getAllCheckTypes",
@@ -2068,7 +2068,7 @@ function reloadCheckTypeDropDown(addOnChange, select2ClassName){
         		   //$('#checkId').select2('destroy');
         		   //$('#checkValue').val("");
         		   initializeCheckTypeSelect2($.parseJSON(data.allCheckTypes), [], addOnChange, currentCheckId, select2ClassName);	   
-        	   	   Spinner.toggle();
+        	   	   // Spinner.toggle();
            }
          }
      );
@@ -2220,7 +2220,7 @@ function addUpdateCheckType(operation) {
 	if (validateCheckFields()) {
 		var $form = $("#manageCheckValue,#comboCheckCode");	
 		var serializedData = $form.serialize();
-		Spinner.toggle();
+		// Spinner.toggle();
 		$.ajax({
 			url: "/Fieldbook/NurseryManager/importGermplasmList/addUpdateCheckType/" + operation,
 			type: "POST",
@@ -2234,7 +2234,7 @@ function addUpdateCheckType(operation) {
       	    } else {
       	    	showCheckTypeErrorMessage(data.error);
       	    }
-         		Spinner.toggle();
+         		// Spinner.toggle();
      	}
 		});
 	}
@@ -2288,7 +2288,7 @@ function deleteCheckType() {
 		
 		var $form = $("#manageCheckValue,#comboCheckCode");	
 		var serializedData = $form.serialize();
-		Spinner.toggle();
+		// Spinner.toggle();
 		$.ajax({
 			url: "/Fieldbook/NurseryManager/importGermplasmList/deleteCheckType",
 			type: "POST",
@@ -2302,7 +2302,7 @@ function deleteCheckType() {
          		} else {
          			showCheckTypeErrorMessage(data.error);
          		}
-         		Spinner.toggle();
+         		// Spinner.toggle();
      	}
 		});
 	} else {

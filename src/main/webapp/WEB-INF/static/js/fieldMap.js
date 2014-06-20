@@ -433,7 +433,7 @@ function openManageLocations() {
 
 function recreatePopupLocationCombo() {
 	
-	Spinner.toggle();
+	// Spinner.toggle();
 	$.ajax(
 	{ url: "/Fieldbook/NurseryManager/advance/nursery/getLocations",
        type: "GET",
@@ -488,7 +488,7 @@ function recreatePopupLocationCombo() {
 			console.log("The following error occured: " + textStatus, errorThrown); 
 	   }, 
 	   complete: function(){  
-		   Spinner.toggle();
+		   // Spinner.toggle();
 	   } 
      }
  );
@@ -505,7 +505,7 @@ function formatField(myItem) {
 
 function recreatePopupFieldCombo() {
 	
-	Spinner.toggle();
+	// Spinner.toggle();
 	$.ajax(
 	{ url: "/Fieldbook/Fieldmap/enterFieldDetails/getFields",
        type: "GET",
@@ -568,7 +568,7 @@ function recreatePopupFieldCombo() {
 			console.log("The following error occured: " + textStatus, errorThrown); 
 	   }, 
 	   complete: function(){  
-		   Spinner.toggle();
+		   // Spinner.toggle();
 	   } 
      }
  );
@@ -749,7 +749,7 @@ function loadFieldsDropdown(locationId, currentFieldId){
 	showBlockDetails(true, null);
     
     
-		Spinner.toggle();
+		// Spinner.toggle();
     	$.ajax(
 	    	{ url: "/Fieldbook/Fieldmap/enterFieldDetails/getFields/"+locationId,
 	           type: "GET",
@@ -763,7 +763,7 @@ function loadFieldsDropdown(locationId, currentFieldId){
 	        		   else
 	        			   initializeFieldSelect2({}, [], false, "");
 	        		   initializeBlockSelect2({}, [], false, "");
-	        	   	   Spinner.toggle();
+	        	   	   // Spinner.toggle();
 	        	   	//console.log('here close 1');
 	        	   	//loadField = false;
 	           }
@@ -777,7 +777,7 @@ function loadBlockDropdown(fieldId, currentBlockId){
 	showBlockDetails(true, null);
 	
 	//loadBlock = true;
-	Spinner.toggle();
+	// Spinner.toggle();
 	$.ajax(
 			{ url: "/Fieldbook/Fieldmap/enterFieldDetails/getBlocks/"+fieldId,
            type: "GET",
@@ -786,7 +786,7 @@ function loadBlockDropdown(fieldId, currentBlockId){
            success: function(data) {	  
         	   $('#'+getJquerySafeId('userFieldmap.blockId')).select2('destroy');
         		   initializeBlockSelect2($.parseJSON(data.allBlocks), [], false, currentBlockId);
-        	   	   Spinner.toggle();
+        	   	   // Spinner.toggle();
         	   	   //console.log('here close 2');
         	   		//loadBlock = false;
            }
@@ -798,7 +798,7 @@ function loadBlockInformation(blockId){
 	//console.log('load block info' + blockId);
 	
 	//loadBlockInfo = true;
-	Spinner.toggle();
+	// Spinner.toggle();
 	$.ajax(
 			{ url: "/Fieldbook/Fieldmap/enterFieldDetails/getBlockInformation/"+blockId,
            type: "GET",
@@ -809,7 +809,7 @@ function loadBlockInformation(blockId){
         		   //alert('show determine if its new or used block');
         		   showBlockDetails(false, blockInfo);
         		   //console.log(blockInfo);
-        		   Spinner.toggle();
+        		   // Spinner.toggle();
         	   	   //loadBlockInfo = false;
            }
          }

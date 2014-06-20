@@ -289,7 +289,7 @@ function openAddVariablesSetting(variableType) {
 
 function getStandardVariables(variableType) {
 	'use strict;'
-	Spinner.toggle();
+	// Spinner.toggle();
 	$.ajax({
 		url : '/Fieldbook/NurseryManager/createNursery/displayAddSetting/'
 				+ variableType,
@@ -319,7 +319,7 @@ function getStandardVariables(variableType) {
 				keyboard : true
 			});
 			
-			Spinner.toggle();
+			// Spinner.toggle();
 		}
 	});
 }
@@ -369,7 +369,7 @@ function initializeStandardVariableSearch(variables) {
 function getStandardVariableDetailsModal(id) {
 	'use strict';
 	if (id !== '') {
-		Spinner.toggle();
+		// Spinner.toggle();
 		$
 				.ajax({
 					url : '/Fieldbook/NurseryManager/createNursery/showVariableDetails/'
@@ -379,7 +379,7 @@ function getStandardVariableDetailsModal(id) {
 					success : function(data) {
 						$('#var-info').slideDown('slow');
 						populateAttributeFields($.parseJSON(data));
-						Spinner.toggle();
+						// Spinner.toggle();
 					}
 				});
 	}
@@ -577,7 +577,7 @@ function submitSelectedVariables(variableType) {
 		replaceNameVariables();
 		var serializedData = $('input.addVariables').serialize();
 		$('#page-message-modal').html('');
-		Spinner.toggle();
+		// Spinner.toggle();
 
 		var promise = $.ajax({
 			url : '/Fieldbook/NurseryManager/createNursery/addSettings/' + variableType,
@@ -616,7 +616,7 @@ function submitSelectedVariables(variableType) {
 							'studyLevelVariables', 'nurseryLevelSettings-dev',
 							'nurseryLevelSettings', variableType, "");
 				}
-				Spinner.toggle();
+				// Spinner.toggle();
 				$('#addVariablesSettingModal').modal('hide');
 				
 
@@ -1179,14 +1179,14 @@ function deleteVariable(variableType, variableId, deleteButton) {
 		deleteButton.parent().parent().remove();
 
 		// remove row from session
-		Spinner.toggle();
+		// Spinner.toggle();
 		$.ajax({
 			url : "/Fieldbook/NurseryManager/createNursery/deleteVariable/"
 					+ variableType + "/" + variableId,
 			cache : false,
 			type : "POST",
 			success : function() {
-				Spinner.toggle();
+				// Spinner.toggle();
 			}
 		});
 
@@ -1218,14 +1218,14 @@ function proceedWithDelete() {
 	deleteButton.parent().parent().remove();
 
 	// remove row from session
-	Spinner.toggle();
+	// Spinner.toggle();
 	$.ajax({
 		url : "/Fieldbook/NurseryManager/createNursery/deleteVariable/"
 				+ variableType + "/" + variableId,
 		cache : false,
 		type : "POST",
 		success : function() {
-			Spinner.toggle();
+			// Spinner.toggle();
 		}
 	});
 
@@ -1458,7 +1458,7 @@ function hideDeleteConfirmation() {
 }
 
 function clearSettings() {
-	Spinner.play();
+	/*Spinner.play();*/
 	$.ajax({
 		url : "/Fieldbook/NurseryManager/createNursery/clearSettings",
 		type : "GET",
@@ -1466,7 +1466,7 @@ function clearSettings() {
 		success : function(html) {
 			$("#chooseSettingsDiv").html(html);
 			moveToTopScreen();
-			Spinner.stop();
+			/*Spinner.stop();*/
 		}
 	});
 
@@ -1617,7 +1617,7 @@ function checkPlantsSelected() {
 }
 
 function loadNurserySettingsForCreate(templateSettingsId) {
-	Spinner.toggle();
+	// Spinner.toggle();
 	var $form = $("#createNurseryForm");
 
 	var serializedData = $form.serialize();
@@ -1637,7 +1637,7 @@ function loadNurserySettingsForCreate(templateSettingsId) {
 					errorThrown);
 		},
 		complete : function() {
-			Spinner.toggle();
+			// Spinner.toggle();
 		}
 	});
 }
@@ -1655,7 +1655,7 @@ function choosePreviousNursery(studyId) {
 		url = "/Fieldbook/NurseryManager/createNursery/nursery/";
 	}
 
-	Spinner.play();
+	/*Spinner.play();*/
 	$.ajax({
 		url : url + studyId,
 		type : "GET",
@@ -1667,7 +1667,7 @@ function choosePreviousNursery(studyId) {
 			} else {
 				$('.container .row').first().html(html);
 			}
-			Spinner.stop();
+			/*Spinner.stop();*/
 		}
 	});
 }
@@ -1830,7 +1830,7 @@ function validateCreateNursery() {
 
 function reloadCheckTypeDropDown(addOnChange, select2ClassName) {
 	'use strict';
-	Spinner.toggle();
+	// Spinner.toggle();
 	var currentCheckId = $('#checkId').val();
 	$.ajax({
 		url : '/Fieldbook/NurseryManager/importGermplasmList/getAllCheckTypes',
@@ -1840,7 +1840,7 @@ function reloadCheckTypeDropDown(addOnChange, select2ClassName) {
 		success : function(data) {
 			initializeCheckTypeSelect2($.parseJSON(data.allCheckTypes), [],
 					addOnChange, currentCheckId, select2ClassName);
-			Spinner.toggle();
+			// Spinner.toggle();
 		}
 	});
 }
@@ -1983,7 +1983,7 @@ function addUpdateCheckType(operation) {
 	if (validateCheckFields()) {
 		var $form = $("#manageCheckValue,#comboCheckCode");
 		var serializedData = $form.serialize();
-		Spinner.toggle();
+		// Spinner.toggle();
 		$
 				.ajax({
 					url : "/Fieldbook/NurseryManager/importGermplasmList/addUpdateCheckType/"
@@ -1999,7 +1999,7 @@ function addUpdateCheckType(operation) {
 						} else {
 							showCheckTypeErrorMessage(data.error);
 						}
-						Spinner.toggle();
+						// Spinner.toggle();
 					}
 				});
 	}
@@ -2055,7 +2055,7 @@ function deleteCheckType() {
 
 		var $form = $("#manageCheckValue,#comboCheckCode");
 		var serializedData = $form.serialize();
-		Spinner.toggle();
+		// Spinner.toggle();
 		$
 				.ajax({
 					url : "/Fieldbook/NurseryManager/importGermplasmList/deleteCheckType",
@@ -2070,7 +2070,7 @@ function deleteCheckType() {
 						} else {
 							showCheckTypeErrorMessage(data.error);
 						}
-						Spinner.toggle();
+						// Spinner.toggle();
 					}
 				});
 	} else {
@@ -2169,7 +2169,7 @@ function addDetailsTab(studyId, title) {
 		$('.info#study' + studyId).show();
 	} else {
 
-		Spinner.toggle();
+		// Spinner.toggle();
 		$.ajax({
 			url : '/Fieldbook/NurseryManager/reviewNurseryDetails/show/' + studyId,
 			type : 'GET',
@@ -2188,7 +2188,7 @@ function addDetailsTab(studyId, title) {
 					$(this).select2({minimumResultsForSearch: 20});
 				});
 				truncateStudyVariableNames('#study'+studyId+' .review-study-name', 20);
-				Spinner.toggle();
+				// Spinner.toggle();
 			}
 		});
 	}
@@ -2210,7 +2210,7 @@ function determineIfShowCloseAllStudyTabs() {
 function openStudyTree(type) {
 	$('#page-study-tree-message-modal').html('');
 	if( $('#create-nursery #studyTree').length !== 0){
-			Spinner.play();
+			/*Spinner.play();*/
 			$('#studyTree').dynatree('destroy');
 		 	displayStudyListTree('studyTree', 'N', type);
 		 	changeBrowseNurseryButtonBehavior(false);
@@ -2232,7 +2232,7 @@ function closeAllStudyTabs() {
 function loadDatasetDropdown(optionTag) {
 	if ($('#study' + getCurrentStudyIdInTab() + " #dataset-selection option").length > 1)
 		return;
-	Spinner.toggle();
+	// Spinner.toggle();
 	$.ajax({
 		url : "/Fieldbook/NurseryManager/reviewNurseryDetails/datasets/"
 				+ getCurrentStudyIdInTab(),
@@ -2250,7 +2250,7 @@ function loadDatasetDropdown(optionTag) {
 					errorThrown);
 		},
 		complete : function() {
-			Spinner.toggle();
+			// Spinner.toggle();
 		}
 	});
 }
@@ -2265,7 +2265,7 @@ function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
 	if (datasetId == 'Please Choose'
 			|| $("#" + getJquerySafeId('dset-tab-') + datasetId).length !== 0)
 		return;
-	Spinner.toggle();
+	// Spinner.toggle();
 	$.ajax({
 		url : '/Fieldbook/NurseryManager/addOrRemoveTraits/viewNurseryAjax/' + datasetId,
 		type : 'GET',
@@ -2280,7 +2280,7 @@ function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
 			$('#study' + currentStudyId + ' .measurement-section').show();
 			truncateStudyVariableNames('#dataset-li'+datasetId+' .review-dataset-name', 40);
 			initializeReviewDatasetTabs(datasetId);
-			Spinner.toggle();
+			// Spinner.toggle();
 		}
 	});
 }
@@ -2336,7 +2336,7 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 	var selectedMethodAll = $("#methodIdAll").val();
 	var selectedMethodFavorite = $("#methodIdFavorite").val();
 
-	Spinner.play();
+	/*Spinner.play();*/
 	$.ajax({
 		url : "/Fieldbook/NurseryManager/advance/nursery/getBreedingMethods",
 		type : "GET",
@@ -2396,7 +2396,7 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 			} else {
 				showErrorMessage("page-message", data.errorMessage);
 			}
-			Spinner.stop();
+			/*Spinner.stop();*/
 		}
 	});
 }
@@ -2420,7 +2420,7 @@ function refreshEditNursery() {
 
 function displaySaveSuccessMessage(idDomSelector, messageToDisplay){
 	'use strict';
-	Spinner.stop();
+	/*Spinner.stop();*/
 	createSuccessNotification(successMsgHeader, messageToDisplay);
 	
 }
@@ -2436,7 +2436,7 @@ function recreateSessionVariables() {
 				displayCorrespondingGermplasmSections();
 			}
 			displaySaveSuccessMessage('page-message', saveSuccessMessage);
-			Spinner.stop();
+			/*Spinner.stop();*/
 		}
 	});
 }
@@ -2480,7 +2480,7 @@ function refreshStudyAfterSave(studyId){
 		success: function(html) {
 			$('.container .row:eq(0)').html(html);
 			displaySaveSuccessMessage('page-message', saveSuccessMessage);
-			Spinner.stop();
+			/*Spinner.stop();*/
 		}
 	});
 }

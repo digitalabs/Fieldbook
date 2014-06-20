@@ -236,7 +236,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 			var $form = $('#createNurseryForm, #createNurseryMainForm'),
 				serializedData = $form.serialize();
 
-			Spinner.toggle();
+			/*// Spinner.toggle();*/
 
 			$.ajax({
 				url: '/Fieldbook/NurseryManager/createNursery',

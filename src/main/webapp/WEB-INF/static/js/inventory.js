@@ -50,7 +50,7 @@ function addLot(){
 		return;		
 	}
 	
-	Spinner.toggle();
+	// Spinner.toggle();
 	$.ajax({
 		url: '/Fieldbook/SeedStoreManager/ajax/'+getCurrentAdvanceTabListIdentifier(),
 		type: 'GET',
@@ -65,7 +65,7 @@ function addLot(){
 	    	initializePossibleValuesComboInventory(inventoryFavoriteLocationSuggestions, '#inventoryLocationIdFavorite', false, null);
 	  	  	initializePossibleValuesComboScale(scaleSuggestions, '#inventoryScaleId', false, null);
 	  	    showCorrectLocationInventoryCombo();
-	    	Spinner.toggle();
+	    	// Spinner.toggle();
 	    }
 	});
 	
@@ -228,14 +228,14 @@ function saveLots() {
 
 function displayAdvanceGermplasmDetails(listId) {
 	'use strict';
-	Spinner.toggle();
+	// Spinner.toggle();
 	$.ajax({
 		url: "/Fieldbook/SeedStoreManager/advance/displayGermplasmDetails/" + listId,
 		type: "GET",
 		cache: false,
 		success: function(html) {
 			$('#advance-list' + getCurrentAdvanceTabTempIdentifier()).html(html);
-			Spinner.toggle();
+			// Spinner.toggle();
 		}
 	});
 }

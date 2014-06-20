@@ -72,7 +72,7 @@
 	}
 
 	function addNewFieldLocation(fieldName, locationId){
-		Spinner.toggle();
+		// Spinner.toggle();
 		var dataForm = $('#add-field-form').serialize()
 		$.ajax(
 			{ url: "/Fieldbook/Fieldmap/enterFieldDetails/addNewField",
@@ -86,7 +86,7 @@
 					}else{
 						showInvalidInputMessage(fieldNameDuplicateError);
 					}
-				Spinner.toggle();
+				// Spinner.toggle();
 				}
 			}
 		);

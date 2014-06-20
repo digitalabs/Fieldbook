@@ -133,7 +133,7 @@
 			}
 			
 			/** Germplasm Tree **/
-			function displayGermplasmListTree(treeName, isLocalOnly, isFolderOnly) {
+			function displayGermplasmListTree(treeName, isLocalOnly, isFolderOnly, clickFunction) {
 				'use strict';
 				var lazyLoadUrlGetChildren = '/Fieldbook/ListTreeManager/expandGermplasmTree/';
 				var initLoadUrl = '/Fieldbook/ListTreeManager/loadInitGermplasmTree';
@@ -145,112 +145,118 @@
 				
 				initLoadUrl += '/' + isFolderOnly;
 
-				$('#' + treeName).dynatree({
-					title: treeName,
-					checkbox: false,
-					noLink: false,
-					autoFocus: false,
-					imagePath: '/Fieldbook/static/img/',
-					activeVisible: true,
-					initAjax: {url: initLoadUrl,
-						dataType: 'json'
-					},
-					onLazyRead: function(node) {
-						doGermplasmLazyLoad(node);
-					},
-					onRender: function(node, nodeSpan){
-						//console.log(node);
-						if(node.data.key !== 'LOCAL' && node.data.key !== 'CENTRAL' && node.data.key !== '_statusNode' && node.data.isFolder === false) {
-								showListTreeToolTip(node, nodeSpan);
-						}
-	                },
-					classNames: {
-						container: 'fbtree-container',
-						expander: 'fbtree-expander',
-						nodeIcon: 'fbtree-icon',
-						combinedIconPrefix: 'fbtree-ico-',
-						focused: 'fbtree-focused',
-						active: 'fbtree-active',
-						nodeLoading: ''
-					},
-					onFocus: function(node) {
-						$('.popover').hide();
-						$(node.span).find('.dynatree-title').popover('show');
-						germplasmFocusNode = node;
-				    },
-					onActivate: function(node) {
+                var dynaTreeOptions = {
+                    title: treeName,
+                    checkbox: false,
+                    noLink: false,
+                    autoFocus: false,
+                    imagePath: '/Fieldbook/static/img/',
+                    activeVisible: true,
+                    initAjax: {url: initLoadUrl,
+                        dataType: 'json'
+                    },
+                    onLazyRead: function (node) {
+                        doGermplasmLazyLoad(node);
+                    },
+                    onRender: function (node, nodeSpan) {
+                        //console.log(node);
+                        if (node.data.key !== 'LOCAL' && node.data.key !== 'CENTRAL' && node.data.key !== '_statusNode' && node.data.isFolder === false) {
+                            showListTreeToolTip(node, nodeSpan);
+                        }
+                    },
+                    classNames: {
+                        container: 'fbtree-container',
+                        expander: 'fbtree-expander',
+                        nodeIcon: 'fbtree-icon',
+                        combinedIconPrefix: 'fbtree-ico-',
+                        focused: 'fbtree-focused',
+                        active: 'fbtree-active',
+                        nodeLoading: ''
+                    },
+                    onFocus: function (node) {
+                        $('.popover').hide();
+                        $(node.span).find('.dynatree-title').popover('show');
+                        germplasmFocusNode = node;
+                    },
+                    onActivate: function (node) {
 
-						if(node.data.isFolder === false){
-							changeBrowseGermplasmButtonBehavior(false);
-						}else{
-							if(node.data.key > 1 || node.data.key === 'CENTRAL'){
-								changeBrowseGermplasmButtonBehavior(false);
-							}else if(node.data.key === 'LOCAL'){
-								changeBrowseGermplasmButtonBehavior(true);
-								$('.edit-germplasm-folder').addClass('disable-image');
-								$('.delete-germplasm-folder').addClass('disable-image');
-							}
-							else {
-								changeBrowseGermplasmButtonBehavior(true);
-							}
-						}
-						$('.germplasm-tree-section a.dynatree-title').off('keyup');
-						$('.germplasm-tree-section a.dynatree-title').on('keyup', function(e) {						
-						  if (e.keyCode === 13) {
-							  chooseListNode(germplasmFocusNode, true);
-						  }
-						});
-					},
-					onDblClick: function(node, event) {
-						chooseList();
-					},
-					dnd: {
-					onDragStart: function(node) {
-						/** This function MUST be defined to enable dragging for the tree.
-						 * Return false to cancel dragging of node.
-						 */
-							 if(node.data.key > 0) {
-							 	return false;
-							 }								
-						return true;
-					},
-					preventVoidMoves: true, // Prevent dropping nodes 'before self', etc.
-					onDragEnter: function(node, sourceNode) {
-						return true;
-					},
-					onDragOver: function(node, sourceNode, hitMode) {
+                        if (node.data.isFolder === false) {
+                            changeBrowseGermplasmButtonBehavior(false);
+                        } else {
+                            if (node.data.key > 1 || node.data.key === 'CENTRAL') {
+                                changeBrowseGermplasmButtonBehavior(false);
+                            } else if (node.data.key === 'LOCAL') {
+                                changeBrowseGermplasmButtonBehavior(true);
+                                $('.edit-germplasm-folder').addClass('disable-image');
+                                $('.delete-germplasm-folder').addClass('disable-image');
+                            }
+                            else {
+                                changeBrowseGermplasmButtonBehavior(true);
+                            }
+                        }
+                        $('.germplasm-tree-section a.dynatree-title').off('keyup');
+                        $('.germplasm-tree-section a.dynatree-title').on('keyup', function (e) {
+                            if (e.keyCode === 13) {
+                                chooseListNode(germplasmFocusNode, true);
+                            }
+                        });
+                    },
+                    onDblClick: function (node, event) {
+                        chooseList();
+                    },
+                    dnd: {
+                        onDragStart: function (node) {
+                            /** This function MUST be defined to enable dragging for the tree.
+                             * Return false to cancel dragging of node.
+                             */
+                            if (node.data.key > 0) {
+                                return false;
+                            }
+                            return true;
+                        },
+                        preventVoidMoves: true, // Prevent dropping nodes 'before self', etc.
+                        onDragEnter: function (node, sourceNode) {
+                            return true;
+                        },
+                        onDragOver: function (node, sourceNode, hitMode) {
 
-					},
-					onDrop: function(node, sourceNode, hitMode, ui, draggable) {
-						/** This function MUST be defined to enable dropping of items on
-						 * the tree.
-						 */
-						 if(sourceNode.hasChildren()){
-							 showErrorMessage(getMessageErrorDiv(), cannotMove + ' ' + sourceNode.data.title + ' ' + hasChildrenString);
-						 }else{
-							 $.ajax({
-								url: lazyLoadUrlGetChildren + sourceNode.data.key,
-									type: 'GET',
-									cache: false,
-									aysnc: false,
-									success: function(data) {
-										var childCount = $.parseJSON(data).length;
-										if(childCount === 0){
-											moveGermplasm(sourceNode, node);
-										}else{
-											showErrorMessage(getMessageErrorDiv(), cannotMove + ' ' + sourceNode.data.title + ' ' + hasChildrenString);
-										}
+                        },
+                        onDrop: function (node, sourceNode, hitMode, ui, draggable) {
+                            /** This function MUST be defined to enable dropping of items on
+                             * the tree.
+                             */
+                            if (sourceNode.hasChildren()) {
+                                showErrorMessage(getMessageErrorDiv(), cannotMove + ' ' + sourceNode.data.title + ' ' + hasChildrenString);
+                            } else {
+                                $.ajax({
+                                    url: lazyLoadUrlGetChildren + sourceNode.data.key,
+                                    type: 'GET',
+                                    cache: false,
+                                    aysnc: false,
+                                    success: function (data) {
+                                        var childCount = $.parseJSON(data).length;
+                                        if (childCount === 0) {
+                                            moveGermplasm(sourceNode, node);
+                                        } else {
+                                            showErrorMessage(getMessageErrorDiv(), cannotMove + ' ' + sourceNode.data.title + ' ' + hasChildrenString);
+                                        }
 
-									}
-								});
-						 }
-					},
-					onDragLeave: function(node, sourceNode) {
-						/** Always called if onDragEnter was called.
-						 */
-					}
-					}
-				});
+                                    }
+                                });
+                            }
+                        },
+                        onDragLeave: function (node, sourceNode) {
+                            /** Always called if onDragEnter was called.
+                             */
+                        }
+                    }
+                };
+
+                if (clickFunction) {
+                    dynaTreeOptions.onClick = clickFunction;
+                }
+
+				$('#' + treeName).dynatree(dynaTreeOptions);
 			}
 			
 			

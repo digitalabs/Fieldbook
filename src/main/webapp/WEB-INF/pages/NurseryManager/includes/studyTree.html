@@ -25,12 +25,12 @@
                             <button id="closeStudyTreeModal" type="button" class="close pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true" style="padding-top: 7px"></button>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-xs-12 col-md-12" id="addFolderDiv">
-                            <div class="col-xs-4 col-md-4 nopadding">
-                                <label class="control-label label-bold" th:text="#{browse.nursery.add.folder.name}">Folder Name:</label><span class="required">*</span>
+                    <div class="form-horizontal form-group">
+                        <div id="addFolderDiv">
+                            <div class="col-xs-4 nopadding" >
+                                <label class="control-label label-bold" th:utext="#{browse.nursery.add.folder.name}">Folder Name:</label>
                             </div>
-                            <div class="col-xs-8 col-md-8 nopadding">
+                            <div class="col-xs-8">
                                 <div class="input-group">
                                     <input id="addFolderName" name="addFolderName" type="text" class="form-control select2" placeholder="Folder Name"/>
                                         <span class="input-group-btn">
@@ -44,11 +44,11 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-md-12 form-group" id="renameFolderDiv">
-                            <div class="col-xs-4 col-md-4 nopadding">
-                                <label class="control-label  label-bold" th:text="#{browse.nursery.rename.folder.input.label}">Folder Name:</label><span class="required">*</span>
+                        <div id="renameFolderDiv">
+                            <div class="col-xs-4 nopadding">
+                                <label class="control-label  label-bold" th:utext="#{browse.nursery.rename.folder.input.label}">Folder Name:</label>
                             </div>
-                            <div class="col-xs-8 col-md-8 nopadding">
+                            <div class="col-xs-8">
                                 <div class="input-group">
                                     <input id="newFolderName" name="newFolderName" type="text" class="form-control select2" placeholder="Folder Name"/>
                                         <span class="input-group-btn">
@@ -62,34 +62,17 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-md-12 form-group" id="deleteFolderDiv">
-                            <div class="col-xs-6 col-md-6 nopadding">
-                                <label id="renameFolderLabelID" class="control-label  label-bold" th:text="#{browse.nursery.delete.folder.name.confirmation}">Are you sure you want to delete </label>
-                            </div>
-                            <div class="col-xs-6 col-md-6 nopadding">
-                                <div class="input-group">
-                                    <span class="input-group-btn">
-                                        <button class="btn btn-success">
-                                            <span class="glyphicon glyphicon-ok"></span>
-                                        </button>
-                                        <button class="btn btn-danger">
-                                            <span class="glyphicon glyphicon-remove"></span>
-                                        </button>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
-
+                    <div class="clearfix"></div>
                     <div class="row">
                         <div id="studyTree">
                         </div>
                     </div>
-
                     <div class="row">
                         <div th:include="/NurseryManager/includes/studyTreeManageNurseryOperation"/>
                     </div>
+
+
 
                 </div>
                 <div class="modal-footer">
@@ -103,6 +86,7 @@
 
 <div layout:fragment="page-script">
 <script type="text/javascript" th:src="@{/static/js/nurseryManager.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/studyTreeFolderOperations.js}"></script>
 <script type="text/javascript" th:inline="javascript">
 //<![CDATA[
 /*globals Spinner,console,displayStudyListTree, changeBrowseNurseryButtonBehavior, showErrorMessage*/
@@ -131,26 +115,12 @@ $(document).ready(function () {
     changeBrowseNurseryButtonBehavior(false);
     $('#addFolderDiv').hide();
     $('#renameFolderDiv').hide();
-    $('#deleteFolderDiv').hide();
     $('#addFolderOkButton').on('click', createFolder);
     $('#addFolderCancelButton').on('click', hideAddFolderDiv);
     $('#renameFolderOkButton').on('click', submitRenameFolder);
-    $('#renameFolderCancelButton').on('click', function() {
-        $('#renameFolderDiv').slideUp('fast');
-    });
+    $('#renameFolderCancelButton').on('click', hideRenameFolderDiv);
+
 });
-
-function addFolder(object) {
-    'use strict';
-    if (!$(object).hasClass('disable-image')) {
-        $('#addFolderName').val('');
-        $('#addFolderDiv').slideDown('fast');
-    }
-}
-
-function hideAddFolderDiv() {
-    $('#addFolderDiv').slideUp('fast');
-}
 
 
 
@@ -189,6 +159,7 @@ function chooseStudyNode(node, fromEnterKey) {
         }
     }
 }
+
 function chooseStudy() {
     'use strict';
     var node = $('#studyTree').dynatree('getTree').getActiveNode();
@@ -326,6 +297,10 @@ function displayStudyListTree(treeName, studyType, choosingTypeParam) {
                     chooseStudyNode(focusNode, true);
                 }
             });
+        },
+        onClick: function (node, event) {
+            $('#newFolderName').val(node.data.title);
+            var currentFolderName = node.data.title;
         },
         onDblClick: function (node, event) {
             chooseStudy();

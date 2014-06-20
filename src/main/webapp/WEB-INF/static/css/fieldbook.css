@@ -527,6 +527,11 @@ padding-left: 20px; margin-top: 7px
 	max-height: 400px;
 	overflow: auto;
 }
+
+.germplasm-tree-section {
+    padding-top: 10px;
+}
+
 .germplasm-measurement-list-table thead th, .germplasm-list-table thead th{
    text-align: left;
 }
@@ -1232,6 +1237,14 @@ input[type="text"], input[type="password"], .ui-autocomplete-input, textarea, .u
     border-bottom-right-radius: 4px !important;
     border-bottom-left-radius: 4px !important;
     background: white;
+}
+
+.s2-nosearch-icon .select2-input {
+    background: no-repeat 100% -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, #fff), color-stop(0.99, #eee))
+}
+
+.input-group .btn {
+    font-size: 14px;
 }
 
 /* move the search icon to the fron and set the starting caret position after the icon */

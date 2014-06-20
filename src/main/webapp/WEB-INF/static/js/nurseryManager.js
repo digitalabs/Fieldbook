@@ -1672,11 +1672,15 @@ function choosePreviousNursery(studyId) {
 	});
 }
 function isStudyNameUnique() {
+	'use strict';
 	var studyId = '0';
-	if ($('#createNurseryMainForm #studyId').length !== 0)
+	if ($('#createNurseryMainForm #studyId').length !== 0){
 		studyId = $('#createNurseryMainForm #studyId').val();
-	var studyName = $.trim($('#' + getJquerySafeId('basicDetails0.value'))
-			.val());
+		//we dont need to call the is name unique again since its not editable anymore in edit
+		return true;		
+	}
+	
+	var studyName = $.trim($('#' + getJquerySafeId('basicDetails0.value')).val());
 
 	$('#' + getJquerySafeId('basicDetails0.value')).val(studyName);
 
@@ -2426,13 +2430,16 @@ function displaySaveSuccessMessage(idDomSelector, messageToDisplay){
 }
 
 function recreateSessionVariables() {
+	'use strict';
+	Spinner.play();
 	$.ajax({
-		url: "/Fieldbook/NurseryManager/editNursery/recreate/session/variables",
-		type: "GET",
-		data: "",
+		url: '/Fieldbook/NurseryManager/editNursery/recreate/session/variables',
+		type: 'GET',
+		data: '',
+		cache: false,
 		success: function (html) {
-			$("#measurementsDiv").html(html);
-			if ($("#measurementDataExisting")) {
+			$('#measurementsDiv').html(html);
+			if ($('#measurementDataExisting').length !== 0) {
 				displayCorrespondingGermplasmSections();
 			}
 			displaySaveSuccessMessage('page-message', saveSuccessMessage);
@@ -2514,6 +2521,7 @@ function initializeReviewDatasetTabs(datasetId) {
 }
 
 function resetDesigConfirmationFields() {
+	'use strict';
 	//reset dropdowns and fields
 	$('#importLocationId').select2('data', null);
 	$('#importMethodId').select2('data', null);
@@ -2523,9 +2531,33 @@ function resetDesigConfirmationFields() {
 }
 
 function validateGermplasmInput(importDate, importLocationId, importMethodId) {
+	'use strict';
 	if ($('#import-action-type').val() === '2' && 
 			(importDate === '' || importLocationId === null || importMethodId === null)) {
 		return false;
 	}
 	return true;
+}
+
+function submitGermplasmAndCheck() {
+	'use strict';
+
+	$('#startIndex').val($('#startIndex2').val());
+	$('#interval').val($('#interval2').val());
+	$('#mannerOfInsertion').val($('#mannerOfInsertion2').val());
+	$('#lastDraggedChecksList').val(lastDraggedChecksList);
+	
+	var $form = $('#check-germplasm-list-form, #germplasm-list-form'),
+		serializedData = $form.serialize();
+	Spinner.play();
+	$.ajax({
+		url: '/Fieldbook/NurseryManager/GermplasmList/submitAll',
+		type: 'POST',
+		data: serializedData,
+		cache: false,
+		success: function(dataResponse) {
+			refreshStudyAfterSave(dataResponse);
+			Spinner.stop();
+		}
+	});
 }

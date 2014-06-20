@@ -19,7 +19,7 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
             <div class="pull-left">
                 <img width="30" height="30" th:src="@{/static/img/new-nursery.png}" class="image-padding image-padding-with-text" />
                 <span class="heading" th:text="#{nursery.create.nursery.label}">Create Nursery</span>
-                <input type="button" onclick="submitForm();" th:value="#{common.form.save.text}" class="btn btn-info fbk-save-button-left-margin" />
+                <input type="button" onclick="submitCreateForm();" th:value="#{common.form.save.text}" class="btn btn-info fbk-save-button-left-margin" />
             </div>
             <a class="pull-right" th:href="@{/NurseryManager/manageNurseries}" th:text="#{return.to.manage.nurseries}">Return to Manage Nurseries</a>
         </div>
@@ -189,54 +189,16 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 <div layout:fragment="page-script">
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
-
-		function submitGermplasmList(){
-			'use strict';
-
-			var $form = $('#germplasm-list-form');
-
-			$('#startIndex').val($('#startIndex2').val());
-			$('#interval').val($('#interval2').val());
-			$('#mannerOfInsertion').val($('#mannerOfInsertion2').val());
-			$('#lastDraggedChecksList').val(lastDraggedChecksList);
-			var serializedData = $form.serialize();
-
-			$.ajax({
-				url: '/Fieldbook/NurseryManager/importGermplasmList/next',
-				type: 'POST',
-				data: serializedData,
-				cache: false,
-				success: function(dataResponse) {
-					refreshStudyAfterSave(dataResponse);
-				}
-			});
-		}
-
-
-		function submitCheckGermplasmList() {
-			'use strict';
-
-			var $form = $('#check-germplasm-list-form'),
-				serializedData = $form.serialize();
-
-			$.ajax({
-				url: '/Fieldbook/NurseryManager/importGermplasmList/submitCheckGermplasmList',
-				type: 'POST',
-				data: serializedData,
-				cache: false,
-				success: function() {
-					submitGermplasmList();
-				}
-			});
-		}
-
-		function submitWorkbook(){
+		/*globals Spinner, submitGermplasmAndCheck, loadNurserySettingsForCreate, validateCreateNursery*/	
+		/*globals validateStartEndDate, changeBuildOption, getJquerySafeId*/
+		/*exported submitCreateWorkbook, submitCreateForm*/
+		function submitCreateWorkbook(){
 			'use strict';
 
 			var $form = $('#createNurseryForm, #createNurseryMainForm'),
 				serializedData = $form.serialize();
 
-			Spinner.toggle();
+			Spinner.play();
 
 			$.ajax({
 				url: '/Fieldbook/NurseryManager/createNursery',
@@ -244,31 +206,26 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 				data: serializedData,
 				cache: false,
 				success: function() {
-					submitCheckGermplasmList();
-				},
-				complete: function() {
+					submitGermplasmAndCheck();					
 				}
 			});
 		}
 
 		// FIXME This should not be global
-		function submitForm() {
+		function submitCreateForm() {
 			'use strict';
 
 			if (validateCreateNursery()) {
 				if (!validateStartEndDate('nurseryLevelSettings')) {
-					moveToTopScreen();
 					return false;
 				}
-				submitWorkbook();
+				submitCreateWorkbook();
 
                 if (document.enableActions !== undefined) {
                     document.enableActions();
                 }
 
-            } else {
-				moveToTopScreen();
-			}
+            }
 		}
 
 

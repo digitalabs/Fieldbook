@@ -1237,7 +1237,10 @@ input[type="text"], input[type="password"], .ui-autocomplete-input, textarea, .u
 
 /* -- */
 
-.section-toggle, label[data-toggle="collapse"], .delete-icon {
+.section-toggle,
+label[data-toggle="collapse"],
+.delete-icon,
+.ui-draggable {
     cursor: pointer;
     -webkit-touch-callout: none;
     -webkit-user-select: none;

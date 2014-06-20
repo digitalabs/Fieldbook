@@ -452,7 +452,18 @@ public class FieldbookServiceImpl implements FieldbookService{
     			if (variable.getPossibleValues() == null || variable.getPossibleValues().isEmpty()) {
 					Property property = ontologyService.getProperty(variable.getProperty());
 					if (property != null && property.getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId()) {
-                        variable.setPossibleValues(fieldbookService.getAllBreedingMethods());
+						List<ValueReference> list = new ArrayList<ValueReference>();
+						List<Method> methodList = fieldbookMiddlewareService.getAllBreedingMethods();
+						//since we only need the name for the display
+						//special handling for breeding methods
+						if (methodList != null && !methodList.isEmpty()) {
+			                for (Method method : methodList) {
+			                    if (method != null) {
+			                        list.add(new ValueReference(method.getMid(), method.getMname(), method.getMname()));
+			                    }
+			                }
+			            }						
+                        variable.setPossibleValues(list);
                     }
     			}
     		}

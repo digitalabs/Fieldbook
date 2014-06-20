@@ -179,7 +179,7 @@ public class CreateNurseryController extends SettingsController {
     	    	
     	ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO); 
     	String contextParams = ContextUtil.getContextParameterString(contextInfo);    	
-    	session.invalidate();
+    	super.clearSessionData(session, request);
     	form.setProjectId(this.getCurrentProjectId());
     	form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + "," + AppConstants.FIXED_NURSERY_VARIABLES.getString());
     	form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());

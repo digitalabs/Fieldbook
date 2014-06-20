@@ -18,3 +18,5 @@
 .ui-notify-cross:hover { color:#ffffab }
 .ui-notify-cross:active { position:relative; top:1px }
 .ui-notify .glyphicon-remove{color: #333333}
+.ui-notify-message .ui-notify-close, .warning-notify .ui-notify-close{display: none;}
+.error-notify .ui-notify-close{display: block;}

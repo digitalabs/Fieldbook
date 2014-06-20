@@ -17,23 +17,20 @@
 							</div>										
 						</div>
 						
-						<div class="row">
+						<div class="form-group">
 							<div id="page-check-message-modal" class="col-xs-12 col-md-12">
 							</div>
 						</div>
-						<div class="row form-group">
-								<div class="col-xs-3 col-md-3 add_top_padding">
-									<label class="control-label" th:text="#{nursery.manager.manage.check.types.code}">Code:</label><span class="required">*</span>
-								</div>
-								<div class="col-xs-6 col-md-6">
+						<div class="form-group">
+							    <label class="control-label col-xs-3"><b><span th:text="#{nursery.manager.manage.check.types.code}"></span> <span class="required">*</span></b></label>
+
+								<div class="col-xs-6">
 									<input id="comboCheckCode" th:field="*{manageCheckCode}" type="hidden" class="form-control select2" placeholder=""/>
 								</div>
 						</div>
-						<div class="row form-group">
-								<div class="col-xs-3 col-md-3 add_top_padding">
-									<label class="control-label" th:text="#{nursery.manager.manage.check.types.value}">Value:</label><span class="required">*</span>
-								</div>
-								<div class="col-xs-6 col-md-6">
+						<div class="form-group">
+                                <label class="control-label col-xs-3"><b><span th:text="#{nursery.manager.manage.check.types.value}"></span> <span class="required">*</span></b></label>
+								<div class="col-xs-6">
 									<input type="text" th:field="*{manageCheckValue}" class="form-control" />
 								</div>
 						</div>

@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.math.NumberUtils;
@@ -128,8 +129,8 @@ public class AdvancingController extends AbstractBaseFieldbookController{
      */
     @RequestMapping(value="/{nurseryId}", method = RequestMethod.GET)
     public String show(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form
-            , Model model, HttpSession session, @PathVariable int nurseryId) throws MiddlewareQueryException{
-    	//session.invalidate();
+            , Model model, HttpServletRequest req, HttpSession session, @PathVariable int nurseryId) throws MiddlewareQueryException{
+    	super.clearSessionData(session, req);
     	form.setMethodChoice("1");
     	form.setLineChoice("1");
     	form.setLineSelected("1");

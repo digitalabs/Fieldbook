@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -110,20 +111,9 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
      */
     @RequestMapping(value="/trial/{id}", method = RequestMethod.GET)
     public String showTrialLabelDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, 
-            Model model, HttpSession session, @PathVariable int id , Locale locale) {
+            Model model, HttpServletRequest req, HttpSession session, @PathVariable int id , Locale locale) {
     	
-    	// we try to get the site name first
-    	/*
-    	String location = "";
-    	for(StudyDetails details : getUserSelection().getStudyDetailsList()){
-    		if(details.getId().intValue() == id){
-    			location = details.getSiteName();
-    			break;
-    		}
-    		
-    	}
-    	*/
-        session.invalidate();
+    	super.clearSessionData(session, req);
         Study study = null;
         List<FieldMapInfo> fieldMapInfoList = null;
         FieldMapInfo fieldMapInfo = null;
@@ -166,7 +156,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     @RequestMapping(value="/nursery/{id}", method = RequestMethod.GET)
     public String showNurseryLabelDetails(
             @ModelAttribute("labelPrintingForm") LabelPrintingForm form, Model model, 
-            HttpSession session, @PathVariable int id, Locale locale) {
+            HttpServletRequest req, HttpSession session, @PathVariable int id, Locale locale) {
     	//we get the nursery site name first
     	/*
     	String location = "";
@@ -178,7 +168,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
     		
     	}
     	*/
-        session.invalidate();
+    	super.clearSessionData(session, req);
         Study study = null;
         List<FieldMapInfo> fieldMapInfoList = null;
         FieldMapInfo fieldMapInfo = null;

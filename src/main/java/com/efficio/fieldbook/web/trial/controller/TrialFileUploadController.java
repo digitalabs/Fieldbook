@@ -15,6 +15,7 @@ package com.efficio.fieldbook.web.trial.controller;
 import java.io.IOException;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -61,8 +62,8 @@ public class TrialFileUploadController extends AbstractBaseFieldbookController{
      */
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("fileUploadForm") FileUploadForm uploadForm
-            , Model model, HttpSession session) {
-    	session.invalidate();
+            , Model model, HttpServletRequest req, HttpSession session) {
+    	super.clearSessionData(session, req);
     	
     	try {
     	    ToolUtil toolUtil = new ToolUtil();

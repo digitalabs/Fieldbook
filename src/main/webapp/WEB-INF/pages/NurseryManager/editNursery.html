@@ -24,7 +24,7 @@
                 <span class="heading" th:text="#{nursery.edit.nursery.label}">Edit Nursery</span>
                 <span class="heading" th:text="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() &lt; charLimit or basicDetails[0].value.length() == charLimit}"></span>
                 <span class="heading nursery-name" data-placement="right" data-toggle="tooltip" th:text="*{basicDetails[0].value.substring(0, charLimit)} + '...'" th:title="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() > charLimit}"></span>
-                <input type="button" onclick="submitForm();" th:value="#{common.form.save.text}" class="btn btn-info fbk-save-button-left-margin" />
+                <input type="button" onclick="submitEditForm();" th:value="#{common.form.save.text}" class="btn btn-info fbk-save-button-left-margin" />
             </div>
             <a  class="pull-right"  th:href="@{/NurseryManager/manageNurseries}" th:text="#{return.to.manage.nurseries}">Return to Manage Nurseries</a>
 
@@ -305,7 +305,11 @@
 		//<![CDATA[
 
 		// FIXME Should not be using global variables or functions
-		/*global showErrorMessage,recreateSessionVariables, lastDraggedChecksList, Spinner, validateCreateNursery, validateStartEndDate, moveToTopScreen, programNurseriesText*/
+		/*global showErrorMessage,recreateSessionVariables, lastDraggedChecksList, Spinner, validateCreateNursery*/
+		/*globals validateStartEndDate, moveToTopScreen, programNurseriesText, measurementRowCount*/
+		/*globals submitGermplasmAndCheck, truncateStudyVariableNames, displayCorrespondingGermplasmSections*/
+		/*exported lastDraggedChecksList, locationSuggestions, scaleSuggestions,saveSuccessMessage, submitEditForm*/
+
 		var locationSuggestions = /*[[${locationList}]]*/ '',
 			scaleSuggestions = /*[[${scaleList}]]*/  '',
 			saveSuccessMessage = /*[[#{common.form.save.successful.text}]]*/ '';
@@ -314,52 +318,12 @@
 		/* jshint ignore:start */
 		var measurementRowCount = /*[[${createNurseryForm.measurementRowList.size()}]]*/ 0,
 			buttonToDelete = null;
-			/* jshint ignore:end */
+			/* jshint ignore:end */				
 
-		function submitGermplasmList() {
+		function submitEditWorkbook(){
 			'use strict';
 
-			var $form = $('#germplasm-list-form');
-
-			$('#startIndex').val($('#startIndex2').val());
-			$('#interval').val($('#interval2').val());
-			$('#mannerOfInsertion').val($('#mannerOfInsertion2').val());
-			var serializedData = $form.serialize();
-
-			$('#lastDraggedChecksList').val(lastDraggedChecksList);
-
-			$.ajax({
-				url: '/Fieldbook/NurseryManager/importGermplasmList/next',
-				type: 'POST',
-				data: serializedData,
-				cache: false,
-				success: function() {
-					refreshStudyAfterSave($("#studyId").val());
-					/*Spinner.stop();*/
-				}
-			});
-		}
-
-		function submitCheckGermplasmList() {
-			'use strict';
-			var $form = $('#check-germplasm-list-form');
-			var serializedData = $form.serialize();
-
-			$.ajax({
-				url: '/Fieldbook/NurseryManager/importGermplasmList/submitCheckGermplasmList',
-				type: 'POST',
-				data: serializedData,
-				cache: false,
-				success: function() {
-					submitGermplasmList();
-				}
-			});
-		}
-
-		function submitWorkbook(){
-			'use strict';
-
-			/*// Spinner.toggle();*/
+			Spinner.play();
 
 			var $form = $('#createNurseryForm, #createNurseryMainForm'),
 				serializedData = $form.serialize();
@@ -371,13 +335,13 @@
 				cache: false,
 				success: function(data) {
                     if (data.status === '-1') {
-                        showErrorMessage('page-message', data.errorMessage);
-                        /*// Spinner.toggle();*/
+                        showErrorMessage('page-message', data.errorMessage);                        
                     } else if ($('.germplasm-list-items tbody tr').length > 0 || measurementRowCount === 0) {
-						submitCheckGermplasmList();
+                    	submitGermplasmAndCheck();
 					} else if (data.status === '1') {
 						recreateSessionVariables();
 					}
+                    Spinner.stop();
 				}
 			});
 		}
@@ -385,7 +349,7 @@
 		function deleteMeasurementRows() {
 			'use strict';
 
-			/*// Spinner.toggle();*/
+			Spinner.toggle();
 
 			$.ajax({
 				url: '/Fieldbook/NurseryManager/editNursery/deleteMeasurementRows',
@@ -393,18 +357,18 @@
 				data: '',
 				cache: false,
 				success: function(data) {
-                    if (data.status == -1) {
+                    if (data.status === '-1') {
                         showErrorMessage('page-message', data.errorMessage);
-                        /*// Spinner.toggle();*/
+                        Spinner.toggle();
                     } else {
-                    	/*// Spinner.toggle();*/
-                    	submitWorkbook();
+                    	Spinner.toggle();
+                    	submitEditWorkbook();
 					}
 				}
 			});
 		}
 
-		function submitForm() {
+		function submitEditForm() {
 			'use strict';
 
 			if (validateCreateNursery()) {
@@ -412,10 +376,10 @@
 					moveToTopScreen();
 					return false;
 				}
-				if ($(".germplasm-list-items tbody tr").length > 0 && measurementRowCount > 0) {
+				if ($('.germplasm-list-items tbody tr').length > 0 && measurementRowCount > 0) {
 					deleteMeasurementRows();
 				} else {
-					submitWorkbook();
+					submitEditWorkbook();
 				}
 
                 if (document.enableActions !== undefined) {
@@ -444,7 +408,7 @@
 				$('#folderNameLabel').html(programNurseriesText);
 			}
 
-			if ($("#measurementDataExisting")) {
+			if ($('#measurementDataExisting')) {
 				displayCorrespondingGermplasmSections();
 			}
 			if ($('.nursery-name').length > 0) {

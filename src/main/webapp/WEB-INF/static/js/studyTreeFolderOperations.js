@@ -41,8 +41,16 @@ function submitRenameFolder() {
     var folderName = $.trim($('#newFolderName').val()),
             parentFolderId;
 
-    if ($.trim(folderName) === $('#studyTree').dynatree('getTree').getActiveNode().data.title) {
-        $('#renameStudyFolder').modal('hide');
+    var activeStudyNode = $('#studyTree').dynatree('getTree').getActiveNode();
+    
+    if(activeStudyNode == null || activeStudyNode.data.isFolder === false ||
+		activeStudyNode.data.key > 1 || activeStudyNode.data.key === 'CENTRAL' || activeStudyNode.data.key === 'LOCAL'){
+		showErrorMessage('', studyProgramFolderRequired);
+		return false;
+	}
+    
+    if ($.trim(folderName) === activeStudyNode.data.title) {
+        $('#renameFolderDiv').slideUp('fast');
         return false;
     }
     if (folderName === '') {
@@ -52,12 +60,12 @@ function submitRenameFolder() {
         showErrorMessage('page-rename-study-folder-message-modal', invalidFolderNameCharacterMessage);
         return false;
     } else {
-        parentFolderId = $('#studyTree').dynatree('getTree').getActiveNode().data.key;
+        parentFolderId = activeStudyNode.data.key;
+        
         if (parentFolderId === 'LOCAL') {
             parentFolderId = 1;
         }
 
-        Spinner.toggle();
         $.ajax({
             url: '/Fieldbook/StudyTreeManager/renameStudyFolder',
             type: 'POST',
@@ -71,12 +79,10 @@ function submitRenameFolder() {
                     node.data.title = folderName
                     $(node.span).find('a').html(folderName);
                     node.focus();
-                    //lazy load the node
-                    //doStudyLazyLoad($('#studyTree').dynatree('getTree').getActiveNode());
+                    showSuccessfulMessage('',renameFolderSuccessful);
                 } else {
                     showErrorMessage('page-rename-study-folder-message-modal', data.message);
                 }
-                Spinner.toggle();
             }
         });
     }

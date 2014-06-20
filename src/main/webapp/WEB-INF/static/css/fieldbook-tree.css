@@ -485,6 +485,8 @@ span.dynatree-drop-target.dynatree-drop-after a
     padding: 0 4pt;
 }
 
+
+.fbtree-active .dynatree-title,
 .fbtree-container li span.highlight .dynatree-title,
 .fbtree-container li span a:hover,
 .fbtree-container li span a:focus,

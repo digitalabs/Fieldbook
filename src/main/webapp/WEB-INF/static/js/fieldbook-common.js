@@ -1842,7 +1842,14 @@ function createFolder() {
         showErrorMessage('page-add-study-folder-message-modal', invalidFolderNameCharacterMessage);
         return false;
     }else {
-		parentFolderId = $('#studyTree').dynatree('getTree').getActiveNode().data.key;
+    	var activeStudyNode = $('#studyTree').dynatree('getTree').getActiveNode();
+    	
+    	if(activeStudyNode == null || activeStudyNode.data.isFolder === false || activeStudyNode.data.key > 1 || activeStudyNode.data.key === 'CENTRAL'){
+    		showErrorMessage('', studyProgramFolderRequired);
+    		return false;
+    	}
+    	
+		parentFolderId = activeStudyNode.data.key;
 		if (parentFolderId === 'LOCAL') {
 			parentFolderId = 1;
 		}
@@ -1861,6 +1868,7 @@ function createFolder() {
 					node.focus();
 					node.expand();
 					$('#addFolderDiv').slideUp();
+					showSuccessfulMessage('',addFolderSuccessful);
 				} else {
 					showErrorMessage('page-add-study-folder-message-modal', data.message);
 				}
@@ -1903,6 +1911,7 @@ function submitDeleteFolder() {
 					node.remove();
 				}
 				changeBrowseNurseryButtonBehavior(false);
+				showSuccessfulMessage('',deleteFolderSuccessful);
 			} else {
 				showErrorMessage('page-delete-study-folder-message-modal', data.message);
 			}

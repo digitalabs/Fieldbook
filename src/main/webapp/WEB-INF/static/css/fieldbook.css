@@ -1234,3 +1234,15 @@ input[type="text"], input[type="password"], .ui-autocomplete-input, textarea, .u
     background: linear-gradient(top, #fff 85%, #eee 99%);
     background-image: none;
 }
+
+/* -- */
+
+.section-toggle, label[data-toggle="collapse"], .delete-icon {
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}

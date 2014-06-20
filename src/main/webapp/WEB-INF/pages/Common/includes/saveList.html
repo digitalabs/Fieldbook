@@ -80,7 +80,6 @@
 			function openSaveListModal(object){
 				var listIdentifier = $(object).attr('id');
 				additionalLazyLoadUrl = "/1";
-				Spinner.toggle();
 				$.ajax(
 					{ url: "/Fieldbook/ListTreeManager/saveList/"+listIdentifier,
 					type: "GET",
@@ -93,7 +92,6 @@
 							keyboard: true,
 							backdrop: 'static'
 						});
-						Spinner.toggle();
 					}
 				}
 				);

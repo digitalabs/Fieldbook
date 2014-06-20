@@ -317,7 +317,6 @@
 		
 		function doMeasurementsReload(){
 			'use strict';
-			Spinner.toggle();
 			$.ajax(
 				{ 
 					url: '/Fieldbook/ImportManager/import/save',
@@ -325,7 +324,6 @@
 					success: function(html) {
 						$('#measurementsDiv').html(html);
 						doRefreshNurserySettings();
-						Spinner.toggle();
 					}
 			});
 			
@@ -356,7 +354,6 @@
 				}
 				
 			}
-			Spinner.toggle();
 			if(resp.isSuccess === 1){
 				if(resp.modes != null && resp.modes.length === 0){
 					confirmStudyImport();
@@ -382,7 +379,6 @@
 		}
 		function applyChangeDetails(){
 			'use strict';
-			Spinner.toggle();
 			var data = JSON.stringify(changeConfirmationDetails);
 			$.ajax(
 				{ url: '/Fieldbook/ImportManager/apply/change/details',
@@ -391,7 +387,6 @@
 				success: function() {
 					$('#importStudyDesigConfirmationModal').modal('hide');
 					doMeasurementsReload();
-					Spinner.toggle();
 				}
 			});
 		}		
@@ -489,7 +484,6 @@
 		}
 		function goBackToImport(){
 			'use strict';
-			Spinner.toggle();
 			var revertUrl = '/Fieldbook/ImportManager/revert/data';
 			$.ajax(
 				{ url: revertUrl,
@@ -501,7 +495,6 @@
 					$('#importStudyConfirmationModal').modal('hide');
 					$('#importStudyDesigConfirmationModal').modal('hide');
 					setTimeout(function(){$('#importStudyModal').modal({ backdrop: 'static', keyboard: true });}, 300);
-					Spinner.toggle();
 				}
 			});
 			

@@ -354,7 +354,6 @@
 				
 			}
 
-			Spinner.toggle();
 			var selectedCheckVal = '';
 			for (var checkIndex = 0; checkIndex < $('.checkRow').length; checkIndex++) {
 				var checkId = $('select.checklist-select:eq(' + checkIndex + ')').val() ;
@@ -384,7 +383,6 @@
 							index++;
 							prevStartIndex = $('#startIndex2').val();
 						}
-					Spinner.toggle();	
 				}
 			});
 			return true;
@@ -413,7 +411,6 @@
 			'use strict';
 
 			hideAddCol(false);
-			Spinner.toggle();
 			$('#'+getDisplayedTreeName()).find('*').removeClass('dynatree-selected');
 
 			$.ajax({
@@ -427,7 +424,6 @@
 					checksFromPrimary = 0;
 					setSpinnerMaxValue();
 					itemsIndexAdded = [];
-					Spinner.toggle();
 				}
 			});
 		}
@@ -435,7 +431,6 @@
 		function resetCheckList() {
 			'use strict';
 			hideAddCol(false);
-			Spinner.toggle();
 			$.ajax({
 				url: '/Fieldbook/NurseryManager/importGermplasmList/resetCheckGermplasmDetails',
 				type: 'GET',
@@ -450,7 +445,6 @@
 					// Set primary germplasm list rows' opacity to 1
 					$('.germplasm-list-items tbody tr').css('opacity', '1');
 					lastDraggedChecksList = 0;
-					Spinner.toggle();
 				}
 			});
 		}
@@ -474,7 +468,6 @@
 		function deleteCheckGermplasmList(entryNumber, gid) {
 			'use strict';
 
-			Spinner.toggle();
 
 			$.ajax({
 				url: '/Fieldbook/NurseryManager/importGermplasmList/deleteCheckGermplasmDetails/' + gid,
@@ -506,7 +499,6 @@
 							}
 						}
 					}
-					Spinner.toggle();
 				}
 			});
 		}
@@ -521,7 +513,6 @@
 			'use strict';
 
 			listId = listIdTemp;
-			Spinner.toggle();
 			$('#'+getDisplayedTreeName()).find('*').removeClass('dynatree-selected');
 
 			$.ajax({
@@ -545,7 +536,6 @@
 						// We clear the list in the check
 						resetCheckList();
 					}
-					Spinner.toggle();
 				}
 			});
 		}
@@ -574,14 +564,12 @@
 			listId = 0;
 			lastDraggedPrimaryList = 0;
 
-			Spinner.toggle();
 			$.ajax({
 				url: '/Fieldbook/NurseryManager/importGermplasmList/resetNurseryGermplasmDetails',
 				type: 'GET',
 				cache: false,
 				async: false,
 				success: function() {
-					Spinner.toggle();
 				}
 			});
 		}

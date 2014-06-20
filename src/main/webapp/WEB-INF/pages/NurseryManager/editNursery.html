@@ -323,7 +323,7 @@
 		function submitEditWorkbook(){
 			'use strict';
 
-			Spinner.play();
+
 
 			var $form = $('#createNurseryForm, #createNurseryMainForm'),
 				serializedData = $form.serialize();
@@ -341,7 +341,7 @@
 					} else if (data.status === '1') {
 						recreateSessionVariables();
 					}
-                    Spinner.stop();
+
 				}
 			});
 		}
@@ -349,7 +349,7 @@
 		function deleteMeasurementRows() {
 			'use strict';
 
-			Spinner.toggle();
+
 
 			$.ajax({
 				url: '/Fieldbook/NurseryManager/editNursery/deleteMeasurementRows',
@@ -359,9 +359,9 @@
 				success: function(data) {
                     if (data.status === '-1') {
                         showErrorMessage('page-message', data.errorMessage);
-                        Spinner.toggle();
+
                     } else {
-                    	Spinner.toggle();
+
                     	submitEditWorkbook();
 					}
 				}

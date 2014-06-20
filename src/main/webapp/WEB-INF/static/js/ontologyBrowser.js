@@ -201,7 +201,6 @@ function viewTabs(variableName, variableId) {
 	if(false && isSearchTab == true)
 		return;
 	isSearchTab = true;
-	Spinner.toggle();
 	$.ajax({
 		url: ontologyUrl + 'details/' + variableId,
 		type: 'GET',
@@ -220,7 +219,6 @@ function viewTabs(variableName, variableId) {
 			console.log("The following error occured: " + textStatus, errorThrown); 
 		},
 		complete: function() {
-			Spinner.toggle();
 		}
 	});
 }
@@ -231,7 +229,6 @@ function doSave(combo) {
 		//get form data
 		var $form = $('#addVariableForm');
 		serializedData = $form.serialize();
-		Spinner.toggle();		
 		$.ajax({
 			url: ontologyUrl + 'addVariable/' + combo,
 			type: 'POST',
@@ -250,8 +247,7 @@ function doSave(combo) {
 		       	} else {
 		       		showMessage(data.errorMessage);
 		       	}
-			    Spinner.toggle();
-		   } 
+		   }
 		});		
 		$('#page-message-modal').html("");
 	}
@@ -458,13 +454,11 @@ function enablePropertyFields() {
 }
 
 function retrieveLinkedVariables(ontologyType, ontologyId){
-	Spinner.toggle();
 	$.ajax({
 		url: ontologyUrl + "retrieve/linked/variable/" + ontologyType + "/"+ontologyId,
 		type: "get",
 		success: function(html) {
 			$("#manageLinkedVariableList").empty().append(html);			
-			Spinner.toggle();
 		}
 	});
 	
@@ -798,7 +792,6 @@ function loadTraitClassTree(treeName, comboName, descriptionName, treeData, drop
 function getStandardVariableDetails(variableId, text) {
 	if(isInt(variableId) && variableId != text){
 		resetCategoricalValues();
-		Spinner.toggle();
 		$.ajax({
 			url: ontologyUrl + "retrieve/variable/" + variableId,
 			type: "GET",
@@ -810,7 +803,6 @@ function getStandardVariableDetails(variableId, text) {
 			    	populateFields(data, variableId);
 		       	}
 			    
-			    Spinner.toggle();
 		   }
 		   
 		});
@@ -911,7 +903,6 @@ function setDeleteOperation(val) {
 }
 
 function loadOntologyModal(ontologyName){
-		Spinner.toggle();
 		$.ajax(
 	         { url: ontologyUrl + ontologyName,
 	           type: "GET",
@@ -922,7 +913,6 @@ function loadOntologyModal(ontologyName){
 	               
 	             $('#manageOntologyModal').modal({ backdrop: 'static', keyboard: true });
 	             $.fn.modal.Constructor.prototype.enforceFocus = function () {};
-	             Spinner.toggle();
 	           }
 	         }
 	       );
@@ -1143,7 +1133,6 @@ function preSelectAfterUpdate(combo, id, name) {
 function deleteOntology(combo) {
 	var formData = {id: $("#" + "combo" + (combo) ).select2('data').id, name: $("#" + lowerCaseFirstLetter(combo) + "Name").val()};
 
-	Spinner.toggle();
 	$.ajax({
 		url: ontologyUrl + "deleteOntology/" + lowerCaseFirstLetter(combo.replace("Manage", "")),
 		type: "post",
@@ -1190,8 +1179,7 @@ function deleteOntology(combo) {
 			console.log("The following error occured: " + textStatus, errorThrown);
 	   }, 
 	   complete: function(){ 
-		   Spinner.toggle();
-	   } 
+	   }
 	});
 }
 
@@ -1315,8 +1303,7 @@ function delCatVar(button) {
 		
 		//daniel
 		var hasError = false;
-		Spinner.toggle();
-    	
+
 		$.ajax({
 			url: '/Fieldbook/OntologyManager/manage/categorical/verify/'+stdVarId+"/"+enumerationId,
 			type: "GET",
@@ -1324,8 +1311,7 @@ function delCatVar(button) {
 			cache: false,
 			async: false,
 			success: function (data) {
-				Spinner.toggle();
-				if(data.status == '0'){					
+				if(data.status == '0'){
 					showErrorMessage('page-message', variateValidValueDeleteError);
 					hasError = true;
 				}

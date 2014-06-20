@@ -194,7 +194,6 @@
       	var $form = $("#addVariableForm, #addVariableForm2");
 		serializedData = $form.serialize();
 		$("btnUpdate").attr("disabled", "disabled");
-		Spinner.toggle();
 
 		$.ajax({
 			url: "/Fieldbook/Common/addOrRemoveTraits/Trial/updateTraits",
@@ -214,7 +213,6 @@
 		   },
 		   complete: function(){
 			   $("btnUpdate").removeAttr("disabled");
-			   Spinner.toggle();
 		   }
 		});
 	}

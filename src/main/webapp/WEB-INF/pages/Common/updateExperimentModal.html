@@ -93,7 +93,6 @@
 			});
 		function saveExperimentMeasurements(){
 			'use strict';
-			Spinner.toggle();
 			var rowIndex = $('.updateExperimentForm #experimentIndex').val();
 			$.ajax({
 				url: '/Fieldbook/Common/addOrRemoveTraits/data/table/ajax/submit/' + rowIndex,
@@ -108,7 +107,6 @@
 					}else{
 						showErrorMessage('page-update-experiment-message-modal', data.errorMessage);
 					}
-					Spinner.toggle();		
 				}
 			});
 		}

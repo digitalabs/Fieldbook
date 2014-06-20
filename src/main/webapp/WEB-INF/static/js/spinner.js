@@ -17,19 +17,20 @@ window.Spinner = (function() {
 
 		play: function() {
 			// If there is already a waiting throbber, don't bother adding another one.
-			if (!timeout) {
+			/*if (!timeout) {
 				timeout = setTimeout(startThrobber, DELAY);
-			}
+			}*/
+            startThrobber();
 		},
 
 		// This method is intended to be called when your asynchronous method has returned (e.g. you have hit the server and come back)
 		stop: function() {
 			// If there is an existing timeout, we want to clear it. This will cancel any waiting timeouts (for example, if you come back
 			// within the delay) - ensuring the throbber does not appear unnecessarily.
-			if (timeout) {
+			/*if (timeout) {
 				clearTimeout(timeout);
 				timeout = null;
-			}
+			}*/
 
 			// Stop the throbber if it has already started playing.
 			$.unblockUI();

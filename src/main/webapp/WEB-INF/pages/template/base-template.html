@@ -43,6 +43,16 @@
 		<script type="text/javascript" th:src="@{/static/js/lib/notify/jquery.notify.min.js}"></script>
 
 		<script type="text/javascript" th:src="@{/static/js/base.js}"></script>
+        <script type="text/javascript" th:src="@{/static/js/SpinnerManager.js}"></script>
+
+        <script type='text/javascript' th:inline="javascript">
+            /* global SpinnerManager */
+            $(document).ajaxStart(function() {
+                SpinnerManager.addActive();
+            }).ajaxStop(function() {
+                SpinnerManager.resolveActive();
+            });
+        </script>
 
 		<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
 		<!--[if lt IE 9]>

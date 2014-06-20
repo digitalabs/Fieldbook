@@ -159,10 +159,16 @@
                         doGermplasmLazyLoad(node);
                     },
                     onRender: function (node, nodeSpan) {
-                        //console.log(node);
-                        if (node.data.key !== 'LOCAL' && node.data.key !== 'CENTRAL' && node.data.key !== '_statusNode' && node.data.isFolder === false) {
-                            showListTreeToolTip(node, nodeSpan);
-                        }
+                    	if(node.data.key !== 'LOCAL' && node.data.key !== 'CENTRAL' && node.data.key !== '_statusNode' && node.data.isFolder === false) {
+								//showListTreeToolTip(node, nodeSpan);
+							$(nodeSpan).find('a.dynatree-title').hover(function(){
+								if($(nodeSpan).find('a.dynatree-title').hasClass('has-popover') === false){
+									$(nodeSpan).find('a.dynatree-title').addClass('has-popover');
+									showListTreeToolTip(node, nodeSpan);	
+								}
+								
+							})
+						}	
                     },
                     classNames: {
                         container: 'fbtree-container',
@@ -174,8 +180,22 @@
                         nodeLoading: ''
                     },
                     onFocus: function (node) {
-                        $('.popover').hide();
-                        $(node.span).find('.dynatree-title').popover('show');
+                    	var nodeSpan = node.span;
+						if(node.data.key !== 'LOCAL' && node.data.key !== 'CENTRAL' && node.data.key !== '_statusNode' && node.data.isFolder === false) {
+							$(nodeSpan).find('a.dynatree-title').hover(function(){
+								if($(nodeSpan).find('a.dynatree-title').hasClass('has-popover') === false){
+									$(nodeSpan).find('a.dynatree-title').addClass('has-popover');
+									showListTreeToolTip(node, nodeSpan);	
+								}								
+							});
+							if($(nodeSpan).find('a.dynatree-title').hasClass('has-popover') === false){
+								$(nodeSpan).find('a.dynatree-title').addClass('has-popover');
+								showListTreeToolTip(node, nodeSpan);	
+							}else{
+								$('.popover').hide();
+								$(nodeSpan).find('a.dynatree-title').popover('show');
+							}
+						}
                         germplasmFocusNode = node;
                     },
                     onActivate: function (node) {

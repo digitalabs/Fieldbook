@@ -2078,6 +2078,8 @@ function showListTreeToolTip(node, nodeSpan) {
 			}, function(){
 				$(this).popover('hide');
 			});
+			$('.popover').hide();
+			$(nodeSpan).find('a.dynatree-title').popover('show');
 		}
 	});
 }

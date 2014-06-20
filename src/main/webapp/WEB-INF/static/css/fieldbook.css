@@ -696,6 +696,14 @@ div.possibleValuesDiv{
 .variable-detail-info{
 	display: none;
 }
+
+.var-names {
+    word-wrap: break-word;
+    word-break: break-all;
+    vertical-align: middle;
+    padding: 0 !important;
+}
+
 #addVariablesSettingBody .select-variable
 {
 	display: block;
@@ -963,8 +971,8 @@ div.sectionContainer {
     background:url(../img/delete-icon.png) left top;
     width:18px;
     height:18px;
-    display: block;
-    float: left;
+    display: inline-block;
+    vertical-align: middle;
 }
 .nav-tabs > li .close {
     margin: -2px 0 0 10px;
@@ -1172,6 +1180,15 @@ a.fbk-edit-experiment{
 .nopadding {
     padding : 0 !important;
     margin: 0 !important;
+}
+
+.nopadding-left {
+    padding-left: 0;
+}
+
+
+.nopadding-right {
+    padding-right: 0;
 }
 
 .drop-target {

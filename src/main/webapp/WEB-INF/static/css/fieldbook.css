@@ -987,8 +987,8 @@ div.sectionContainer {
 .germplasm-measurement-list-table .select2-container .select2-choices .select2-search-field input {
     padding: 2px 12px;
 }
-#check-table span.select2-arrow{
-	top: -3px;
+#check-table span.select2-arrow b{
+    background-position: 0 -1px;
 }
 
 .dl-horizontal dt {

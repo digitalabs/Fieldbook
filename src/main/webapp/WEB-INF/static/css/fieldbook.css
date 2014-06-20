@@ -38,13 +38,6 @@ h6,.h6{font-size:13px;font-weight:500;line-height:13px}
 	margin-bottom:5px;margin-left:0;margin-right:0;margin-top:10px;box-sizing:border-box;
 }
 
-.select2-dropdown-open.select2-drop-above [class^="select2-choice"] {
-    border-bottom-right-radius: 4px !important;
-    border-bottom-left-radius: 4px !important;
-    background: white;
-}
-
-
 label{
 	font-weight: normal;
 }
@@ -1208,6 +1201,9 @@ textarea.form-control {
     color: #333333;
     padding: 4px;
 }
+
+/* SELECT 2 overrides */
+
 input[type="text"], input[type="password"], .ui-autocomplete-input, textarea, .uneditable-input,
 .select2-container .select2-choices .select2-search-field input, .select2-container .select2-choice, .select2-container .select2-choices {
 	color: #333333;
@@ -1215,6 +1211,19 @@ input[type="text"], input[type="password"], .ui-autocomplete-input, textarea, .u
 	font-family: 'Open Sans', 'Segoe UI','Helvetica Neue', Arial, sans-serif;
 }
 
+.select2-dropdown-open.select2-drop-above [class^="select2-choice"] {
+    border-bottom-right-radius: 4px !important;
+    border-bottom-left-radius: 4px !important;
+    background: white;
+}
+
+/* move the search icon to the fron and set the starting caret position after the icon */
+.select2-input {
+    background-position-x: -38px !important;
+    padding-left: 20px !important;
+}
+
 .s2-nosearch-icon .select2-input {
-    background: no-repeat 100% -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, #fff), color-stop(0.99, #eee))
+    padding-left: 4px !important;
+    background: no-repeat 100% -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, #fff), color-stop(0.99, #eee));
 }

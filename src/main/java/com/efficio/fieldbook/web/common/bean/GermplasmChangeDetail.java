@@ -20,7 +20,7 @@ public class GermplasmChangeDetail {
 	private int nameType;
 	private int importLocationId;
 	private int importMethodId;
-	private int importDate;
+	private String importDate;
 	
 	public GermplasmChangeDetail() {
 	}
@@ -222,11 +222,11 @@ public class GermplasmChangeDetail {
         this.importMethodId = importMethodId;
     }
 
-    public int getImportDate() {
+    public String getImportDate() {
         return importDate;
     }
 
-    public void setImportDate(int importDate) {
+    public void setImportDate(String importDate) {
         this.importDate = importDate;
     }
 

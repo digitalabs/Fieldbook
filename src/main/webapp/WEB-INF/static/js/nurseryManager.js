@@ -697,11 +697,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 								+ settingDetail.variable.name
 								+ '</span>: &nbsp;</div>';
 
-						if (settingDetail.variable.widgetType === 'DATE') {
-							newRow = newRow
-									+ '<div class="col-xs-4 col-md-4 2nd">';
-						} else
-							newRow = newRow
+                        newRow = newRow
 									+ '<div class="col-xs-7 col-md-7 2nd">';
 
 						var inputHtml = '';
@@ -1126,9 +1122,11 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 					}
 				});
 	} else {
-		$(name).select2(
+        var minResults = (possibleValues_obj.length > 0) ? 20 : -1;
+
+        $(name).select2(
 				{
-					minimumResultsForSearch: 20,
+					minimumResultsForSearch: minResults,
 					query : function(query) {
 						var data = {
 							results : possibleValues_obj
@@ -1337,7 +1335,7 @@ function sortVariableIdsAndNames(variableType) {
 
 function recreateDateInput(index, row, selectedVal, name) {
 	'use strict';
-	var newCell = "<input placeholder='yyyymmdd' type='text' id='" + name + index + ".value' name='"
+	var newCell = "<input placeholder='yyyy-mm-dd' type='text' id='" + name + index + ".value' name='"
 			+ name + "[" + index + "].value' " + "value='" + selectedVal
 			+ "' class='form-control date-input' />";
 	newCell += '<label for="'
@@ -1546,7 +1544,7 @@ function createDropdownInput(ctr, name) {
 			+ "<input class='selectedValueFave' type='hidden' />";
 }
 function createDateInput(ctr, name) {
-	return "<input placeholder='yyyymmdd' type='text' id='"
+	return "<input placeholder='yyyy-mm-dd' type='text' id='"
 			+ name
 			+ ctr
 			+ ".value' name='"
@@ -1574,9 +1572,17 @@ function initializeDateAndSliderInputs() {
 	if ($('.date-input').length > 0) {
 		$('.date-input').each(function() {
 			$(this).datepicker({
-				'format' : 'yyyymmdd'
+				'format' : 'yyyy-mm-dd'
 			}).on('changeDate', function(ev) {
-				$(this).datepicker('hide');
+				$(this).datepicker('hide');		
+			}).on("change", function (e) {
+			    var curDate = $(this).val();
+			    try {
+			        var r = $.datepicker.parseDate("yy-mm-dd", curDate);
+			        $(this).datepicker('setDate', r);
+			    } catch(e) {			        
+			        $(this).datepicker('setDate', new Date());
+			    }
 			});
 		});
 	}

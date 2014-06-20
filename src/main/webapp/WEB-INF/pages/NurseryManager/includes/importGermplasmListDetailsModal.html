@@ -87,14 +87,14 @@
 	 			cache: false,
 	 			success: function(data) {
 	 				//console.log(data);
-	 				$('#list-name').html(data.name);
-	 				$('#list-description').html(data.description);
-	 				$('#list-status').html(data.status);
-	 				$('#list-date').html(data.date);
-	 				$('#list-owner').html(data.owner);
-	 				$('#list-type').html(data.type);
+	 				$('#openGermplasmListBody #list-name').html(data.name);
+	 				$('#openGermplasmListBody #list-description').html(data.description);
+	 				$('#openGermplasmListBody #list-status').html(data.status);
+	 				$('#openGermplasmListBody #list-date').html(data.date);
+	 				$('#openGermplasmListBody #list-owner').html(data.owner);
+	 				$('#openGermplasmListBody #list-type').html(data.type);
 	 				var notes = data.notes == null ? '-' : data.notes;
-	 				$('#list-notes').html(notes);
+	 				$('#openGermplasmListBody #list-notes').html(notes);
 	 		    	$('#openGermplasmListModal').modal({ backdrop: 'static', keyboard: true });
 	 			}, 
 	 			complete: function() {

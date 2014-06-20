@@ -53,6 +53,7 @@ import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.DateUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
@@ -308,10 +309,11 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     				gidData.setValue(responseDetail.getOriginalGid());
     			}
     			else if (responseDetail.getStatus() == 2) { //create new germlasm
-
-    			    Name name = new Name(null, null, responseDetail.getNameType(), 1, userId, responseDetail.getNewDesig(), responseDetail.getImportLocationId(), responseDetail.getImportDate(), 0);
+					String gDate = DateUtil.convertToDBDateFormat(TermId.DATE_VARIABLE.getId(), responseDetail.getImportDate());
+					Integer dateInteger = Integer.valueOf(gDate); 
+    			    Name name = new Name(null, null, responseDetail.getNameType(), 1, userId, responseDetail.getNewDesig(), responseDetail.getImportLocationId(), dateInteger, 0);
     			    Germplasm germplasm = new Germplasm(null, responseDetail.getImportMethodId(), 0, 0, 0, userId, 
-    			            0, responseDetail.getImportLocationId(), responseDetail.getImportDate(), name);
+    			            0, responseDetail.getImportLocationId(), dateInteger, name);
     				int newGid = fieldbookMiddlewareService.addGermplasm(germplasm, name);
     				desigData.setValue(responseDetail.getNewDesig());
     				gidData.setValue(String.valueOf(newGid));

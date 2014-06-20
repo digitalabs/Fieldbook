@@ -21,12 +21,14 @@ import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
+import com.efficio.fieldbook.web.util.DateUtil;
 
 @Service
 public class ValidationServiceImpl implements ValidationService {
@@ -37,7 +39,7 @@ public class ValidationServiceImpl implements ValidationService {
 	private ResourceBundleMessageSource messageSource;
 	
 	@Override
-	public boolean isValidValue(MeasurementVariable var, String value) {
+	public boolean isValidValue(MeasurementVariable var, String value, boolean validateDateForDB) {
 		if (value == null || "".equals(value.trim())) {
 			return true;
 		}
@@ -49,10 +51,12 @@ public class ValidationServiceImpl implements ValidationService {
 				return numericValue <= var.getMaxRange() && numericValue >= var.getMinRange();
 			}
 			
-		} else if (var.getDataType() != null && value != null && !"".equals(value.trim()) && var.getDataType().equalsIgnoreCase(DATA_TYPE_NUMERIC)) {
+		} else if(validateDateForDB && var != null && var.getDataTypeId() != null && var.getDataTypeId() == TermId.DATE_VARIABLE.getId() && value != null && !"".equals(value.trim())){
+			return DateUtil.isValidDate(value);			
+		}else if (var.getDataType() != null && value != null && !"".equals(value.trim()) && var.getDataType().equalsIgnoreCase(DATA_TYPE_NUMERIC)) {
 			return NumberUtils.isNumber(value.trim());
 			
-		} else if (var.getPossibleValues() != null && !var.getPossibleValues().isEmpty()) {
+		}  else if (var.getPossibleValues() != null && !var.getPossibleValues().isEmpty()) {
 			for (ValueReference ref : var.getPossibleValues()) {
 				
 				if (value != null && !value.equalsIgnoreCase("")){
@@ -80,7 +84,7 @@ public class ValidationServiceImpl implements ValidationService {
 			for (MeasurementRow row : workbook.getObservations()) {
 				for (MeasurementData data : row.getDataList()) {
 					MeasurementVariable variate = data.getMeasurementVariable();
-					if (!isValidValue(variate, data.getValue())) {
+					if (!isValidValue(variate, data.getValue(), true)) {
 						throw new MiddlewareQueryException(messageSource.getMessage("error.workbook.save.invalidCellValue", new Object[] {variate.getName(), data.getValue()}, locale));
 						
 					}
@@ -94,10 +98,11 @@ public class ValidationServiceImpl implements ValidationService {
 		if (workbook.getObservations() != null) {			
 			for (MeasurementData data : row.getDataList()) {
 				MeasurementVariable variate = data.getMeasurementVariable();
-				if (!isValidValue(variate, data.getValue())) {
+				if (!isValidValue(variate, data.getValue(), false)) {
 						throw new MiddlewareQueryException(messageSource.getMessage("error.workbook.save.invalidCellValue", new Object[] {variate.getName(), data.getValue()}, locale));
 					}
 				}			
 		}
 	}
+		
 }

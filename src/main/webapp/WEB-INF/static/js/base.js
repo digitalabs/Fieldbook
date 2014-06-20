@@ -11,20 +11,20 @@ $(document).ready(function() {
 });
 function createErrorNotification( titleDisplay, textDisplay){
 	'use strict';
-	createNotification('default-error-notification',titleDisplay,textDisplay, false);
+	createNotification('default-notification',titleDisplay,textDisplay, false, 'error-notify');
 }
 function createSuccessNotification( titleDisplay, textDisplay){
 	//we remove all error
 	'use strict';
 	$('.error-notify').remove();
 	$('.warning-notify').remove();
-	createNotification('default-notification',titleDisplay,textDisplay, 3000);
+	createNotification('default-notification',titleDisplay,textDisplay, 3000, '');
 }
 function createWarningNotification( titleDisplay, textDisplay){
 	'use strict';
-	createNotification('default-warning-notification',titleDisplay,textDisplay, 3000);
+	createNotification('default-notification',titleDisplay,textDisplay, 3000, 'warning-notify');
 }
-function createNotification( template, titleDisplay, textDisplay, expires){
+function createNotification( template, titleDisplay, textDisplay, expires, className){
 	'use strict';
 	var $container = $('#notification-container').notify();
 	if(textDisplay !== null && textDisplay !== '' && textDisplay.length > 0) {
@@ -32,7 +32,8 @@ function createNotification( template, titleDisplay, textDisplay, expires){
 			textDisplay += '.';
 		}
 	}
-	return $container.notify('create', template, {title: titleDisplay, text: textDisplay}, {expires: expires, click: function(e,instance){
+	var temp = $container.notify('create', template, {title: titleDisplay, text: textDisplay}, {expires: expires, click: function(e,instance){
 		instance.close();
 	}});
+	$(temp.element).addClass(className);
 }

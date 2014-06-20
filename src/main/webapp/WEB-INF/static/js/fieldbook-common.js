@@ -1215,7 +1215,7 @@ function importNursery(type) {
 }
 
 function submitImportStudy() {
-
+	'use strict';
 	if ($('#importType').val() === '0') {
 		showErrorMessage('page-import-study-message-modal', 'Please choose import type');
 		return false;
@@ -1230,6 +1230,7 @@ function submitImportStudy() {
 }
 
 function isFloat(value) {
+	'use strict';
 	return !isNaN(parseInt(value, 10)) && (parseFloat(value, 10) == parseInt(value, 10));
 }
 
@@ -1237,9 +1238,13 @@ function moveToTopScreen() {
 	
 }
 
-function openImportGermplasmList() {
-	$('#listTreeModal').modal('hide');
-
+function openImportGermplasmList(type) {
+	'use strict';
+	$('.germplasmAndCheckSection').data('import-from', type);
+	if($('#importLocationUrl').length != 0){
+		importLocationUrl = $('#importLocationUrl').val();
+	}
+	
 	setTimeout(function() {
 		$('#importFrame').attr('src', importLocationUrl);
 		$('#importGermplasmModal').modal({ backdrop: 'static', keyboard: true });

@@ -16,6 +16,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.slf4j.Logger;
@@ -26,20 +28,23 @@ import com.csvreader.CsvWriter;
 import com.efficio.fieldbook.web.common.service.FieldroidExportStudyService;
 import com.efficio.fieldbook.web.nursery.bean.CSVOziel;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
-import com.efficio.fieldbook.web.util.FieldbookProperty;
+import com.efficio.fieldbook.web.util.FieldbookProperties;
 
 @Service
 public class FieldroidExportStudyServiceImpl implements
 		FieldroidExportStudyService {
 	
     private static final Logger LOG = LoggerFactory.getLogger(FieldroidExportStudyServiceImpl.class);
+    
+	@Resource
+    private FieldbookProperties fieldbookProperties;
 
 	/* (non-Javadoc)
 	 * @see com.efficio.fieldbook.web.nursery.service.ExportStudyService#export(org.generationcp.middleware.domain.etl.Workbook, java.lang.String)
 	 */
 	@Override
 	public String export(Workbook workbook, String filename, int start, int end) {
-        String outputFile = FieldbookProperty.getPathProperty() + File.separator + filename;
+        String outputFile = fieldbookProperties.getUploadDirectory() + File.separator + filename;
         boolean alreadyExists = new File(outputFile).exists();
         CsvWriter csvOutput = null;
         List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), start, end);

@@ -144,6 +144,11 @@
 		<aop:scoped-proxy />
 	</bean>
 	
+	<bean id="possibleValuesCache" class="com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache"
+		scope="session">
+		<aop:scoped-proxy />
+	</bean>
+	
 	<!-- **************************************************************** -->
 	<!-- RESTful Web Service -->
 	<!-- **************************************************************** -->
@@ -254,12 +259,6 @@
         <property name="username" value="${workbench.username}"/>
         <property name="password" value="${workbench.password}"/>
     </bean>
-    
-   	<bean id="externalToolInfo" class="com.efficio.fieldbook.web.util.ExternalToolInfo">	
-   		<property name="currentProjectId" value="${workbench.currentProjectId}"/>
-   		<property name="oldFieldbookPath" value="${old.fb.tool.path}"/>   			
-	</bean>	
-    
     
     <bean id="workbenchDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="${workbench.driver}"/>

@@ -112,7 +112,7 @@ public class CreateNurseryController extends SettingsController {
             List<SettingDetail> nurseryLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
                     buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true), 
                     buildRequiredVariablesFlag(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
-                    userSelection.getStudyLevelConditions(), true);
+                    userSelection.getStudyLevelConditions(), false);
             removeBasicDetailsVariables(nurseryLevelConditions);
             
             //plot-level
@@ -179,7 +179,7 @@ public class CreateNurseryController extends SettingsController {
     	    	
     	ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO); 
     	String contextParams = ContextUtil.getContextParameterString(contextInfo);    	
-    	session.invalidate();
+    	super.clearSessionData(session, request);
     	form.setProjectId(this.getCurrentProjectId());
     	form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + "," + AppConstants.FIXED_NURSERY_VARIABLES.getString());
     	form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());

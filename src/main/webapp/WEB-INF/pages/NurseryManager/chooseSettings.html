@@ -74,7 +74,7 @@
 								th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control character-input" rows="3" />
 
 								<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DATE'}"
-								type="text" placeholder="yyyymmdd" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control date-input" />
+								type="text" placeholder="yyyy-mm-dd" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control date-input" />
 								<label  th:if="${nurseryLevelVariable.variable.widgetType.type == 'DATE'}"  class="btn datepicker">
 									<img th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;" />
 								</label>
@@ -470,7 +470,7 @@
             });
 
             document.disableActions = function() {
-                var actionBtn = $('.fbk-float-right-with-top-pos .dropdown-toggle');
+                var actionBtn = $('.fbk-action-btn');
 
                 actionBtn.removeAttr("data-toggle").addClass('disabled enable-pointer-events');
                 actionBtn.tooltip({ container: 'body', title: disabledActionTooltipMessage, placement : 'top' });
@@ -478,7 +478,7 @@
             };
 
             document.enableActions = function() {
-                var actionBtn = $('.fbk-float-right-with-top-pos .dropdown-toggle');
+                var actionBtn = $('.fbk-action-btn');
 
                 actionBtn.attr("data-toggle","dropdown");
                 actionBtn.tooltip('hide');

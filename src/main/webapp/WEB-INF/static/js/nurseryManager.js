@@ -296,8 +296,8 @@ function getStandardVariables(variableType) {
 		type : 'GET',
 		cache : false,
 		success : function(data) {
-			if (treeData != null) {
-				$("#" + treeDivId).dynatree("destroy");
+			if ($('#'+treeDivId+' .fbtree-container').length > 0) {
+				$('#' + treeDivId).dynatree('destroy');
 			}
 			treeData = data.treeData;
 			searchTreeData = data.searchTreeData;
@@ -697,11 +697,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 								+ settingDetail.variable.name
 								+ '</span>: &nbsp;</div>';
 
-						if (settingDetail.variable.widgetType === 'DATE') {
-							newRow = newRow
-									+ '<div class="col-xs-4 col-md-4 2nd">';
-						} else
-							newRow = newRow
+                        newRow = newRow
 									+ '<div class="col-xs-7 col-md-7 2nd">';
 
 						var inputHtml = '';
@@ -1126,9 +1122,11 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 					}
 				});
 	} else {
-		$(name).select2(
+        var minResults = (possibleValues_obj.length > 0) ? 20 : -1;
+
+        $(name).select2(
 				{
-					minimumResultsForSearch: 20,
+					minimumResultsForSearch: minResults,
 					query : function(query) {
 						var data = {
 							results : possibleValues_obj
@@ -1337,7 +1335,7 @@ function sortVariableIdsAndNames(variableType) {
 
 function recreateDateInput(index, row, selectedVal, name) {
 	'use strict';
-	var newCell = "<input placeholder='yyyymmdd' type='text' id='" + name + index + ".value' name='"
+	var newCell = "<input placeholder='yyyy-mm-dd' type='text' id='" + name + index + ".value' name='"
 			+ name + "[" + index + "].value' " + "value='" + selectedVal
 			+ "' class='form-control date-input' />";
 	newCell += '<label for="'
@@ -1460,7 +1458,7 @@ function hideDeleteConfirmation() {
 }
 
 function clearSettings() {
-	Spinner.toggle();
+	Spinner.play();
 	$.ajax({
 		url : "/Fieldbook/NurseryManager/createNursery/clearSettings",
 		type : "GET",
@@ -1468,7 +1466,7 @@ function clearSettings() {
 		success : function(html) {
 			$("#chooseSettingsDiv").html(html);
 			moveToTopScreen();
-			Spinner.toggle();
+			Spinner.stop();
 		}
 	});
 
@@ -1546,7 +1544,7 @@ function createDropdownInput(ctr, name) {
 			+ "<input class='selectedValueFave' type='hidden' />";
 }
 function createDateInput(ctr, name) {
-	return "<input placeholder='yyyymmdd' type='text' id='"
+	return "<input placeholder='yyyy-mm-dd' type='text' id='"
 			+ name
 			+ ctr
 			+ ".value' name='"
@@ -1574,9 +1572,17 @@ function initializeDateAndSliderInputs() {
 	if ($('.date-input').length > 0) {
 		$('.date-input').each(function() {
 			$(this).datepicker({
-				'format' : 'yyyymmdd'
+				'format' : 'yyyy-mm-dd'
 			}).on('changeDate', function(ev) {
-				$(this).datepicker('hide');
+				$(this).datepicker('hide');		
+			}).on("change", function (e) {
+			    var curDate = $(this).val();
+			    try {
+			        var r = $.datepicker.parseDate("yy-mm-dd", curDate);
+			        $(this).datepicker('setDate', r);
+			    } catch(e) {			        
+			        $(this).datepicker('setDate', new Date());
+			    }
 			});
 		});
 	}
@@ -1666,11 +1672,15 @@ function choosePreviousNursery(studyId) {
 	});
 }
 function isStudyNameUnique() {
+	'use strict';
 	var studyId = '0';
-	if ($('#createNurseryMainForm #studyId').length !== 0)
+	if ($('#createNurseryMainForm #studyId').length !== 0){
 		studyId = $('#createNurseryMainForm #studyId').val();
-	var studyName = $.trim($('#' + getJquerySafeId('basicDetails0.value'))
-			.val());
+		//we dont need to call the is name unique again since its not editable anymore in edit
+		return true;		
+	}
+	
+	var studyName = $.trim($('#' + getJquerySafeId('basicDetails0.value')).val());
 
 	$('#' + getJquerySafeId('basicDetails0.value')).val(studyName);
 
@@ -1695,7 +1705,6 @@ function validateCreateNursery() {
 	var hasError = false
 		,name = ''
 		,customMessage = ''
-		,studyBookName
 		,studyNameId = $('#studyNameTermId').val();
 
 	$('.nurseryLevelVariableIdClass').each(function() {
@@ -1705,8 +1714,13 @@ function validateCreateNursery() {
 	});
 
 	var startDate = $('#' + getJquerySafeId('basicDetails.value2')).val();
-
-	if (isStudyNameUnique() === false) {
+	if($.trim($('#' + getJquerySafeId('basicDetails0.value')).val()) === ''){
+		hasError = true;
+		name = 'Name';
+	}else if($.trim($('#' + getJquerySafeId('basicDetails1.value')).val()) === ''){
+		hasError = true;
+		name = 'Description';
+	}else if (isStudyNameUnique() === false) {
 		hasError = true;
 		customMessage = "Name should be unique";
 	} else if ($('#folderId').val() === '') {
@@ -1727,10 +1741,11 @@ function validateCreateNursery() {
 	if (hasError) {
 		var errMsg = '';
 		if (name !== '')
-			errMsg = name.replace('*', '').replace(':', '') + ' '
-					+ nurseryFieldsIsRequired;
-		if (customMessage !== '')
+			errMsg = name.replace('*', '').replace(':', '') + ' ' + nurseryFieldsIsRequired;
+		if (customMessage !== '') {
 			errMsg = customMessage;
+		}	
+		
 		showInvalidInputMessage(errMsg);
 		return false;
 	}
@@ -2415,13 +2430,16 @@ function displaySaveSuccessMessage(idDomSelector, messageToDisplay){
 }
 
 function recreateSessionVariables() {
+	'use strict';
+	Spinner.play();
 	$.ajax({
-		url: "/Fieldbook/NurseryManager/editNursery/recreate/session/variables",
-		type: "GET",
-		data: "",
+		url: '/Fieldbook/NurseryManager/editNursery/recreate/session/variables',
+		type: 'GET',
+		data: '',
+		cache: false,
 		success: function (html) {
-			$("#measurementsDiv").html(html);
-			if ($("#measurementDataExisting")) {
+			$('#measurementsDiv').html(html);
+			if ($('#measurementDataExisting').length !== 0) {
 				displayCorrespondingGermplasmSections();
 			}
 			displaySaveSuccessMessage('page-message', saveSuccessMessage);
@@ -2503,6 +2521,7 @@ function initializeReviewDatasetTabs(datasetId) {
 }
 
 function resetDesigConfirmationFields() {
+	'use strict';
 	//reset dropdowns and fields
 	$('#importLocationId').select2('data', null);
 	$('#importMethodId').select2('data', null);
@@ -2512,9 +2531,33 @@ function resetDesigConfirmationFields() {
 }
 
 function validateGermplasmInput(importDate, importLocationId, importMethodId) {
+	'use strict';
 	if ($('#import-action-type').val() === '2' && 
 			(importDate === '' || importLocationId === null || importMethodId === null)) {
 		return false;
 	}
 	return true;
+}
+
+function submitGermplasmAndCheck() {
+	'use strict';
+
+	$('#startIndex').val($('#startIndex2').val());
+	$('#interval').val($('#interval2').val());
+	$('#mannerOfInsertion').val($('#mannerOfInsertion2').val());
+	$('#lastDraggedChecksList').val(lastDraggedChecksList);
+	
+	var $form = $('#check-germplasm-list-form, #germplasm-list-form'),
+		serializedData = $form.serialize();
+	Spinner.play();
+	$.ajax({
+		url: '/Fieldbook/NurseryManager/GermplasmList/submitAll',
+		type: 'POST',
+		data: serializedData,
+		cache: false,
+		success: function(dataResponse) {
+			refreshStudyAfterSave(dataResponse);
+			Spinner.stop();
+		}
+	});
 }

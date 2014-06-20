@@ -6,6 +6,8 @@ public class FieldbookProperties {
 	private String programBreedintMethodsUrl;
 	private String germplasmImportUrl;
 	private String germplasmDetailsUrl;
+	
+	private String uploadDirectory;
 
 	public String getProgramLocationsUrl() {
 		return programLocationsUrl;
@@ -37,6 +39,14 @@ public class FieldbookProperties {
 
 	public void setGermplasmDetailsUrl(String germplasmDetailsUrl) {
 		this.germplasmDetailsUrl = germplasmDetailsUrl;
+	}
+
+	public String getUploadDirectory() {
+		return uploadDirectory;
+	}
+
+	public void setUploadDirectory(String uploadDirectory) {
+		this.uploadDirectory = uploadDirectory;
 	}
 
 }

@@ -17,74 +17,75 @@
 <div class="row">
 <form id="createNurseryMainForm" role="form-horizontal" action="#" th:object="${createNurseryForm}" enctype="multipart/form-data">
 	<input type="hidden" th:field="*{studyId}" />
-	<div class="row">
-		<div class="col-md-9">
-			<img width="30" height="30" th:src="@{/static/img/new-nursery.png}" class="image-padding image-padding-with-text" />
-			<label class="heading" th:text="#{nursery.edit.nursery.label}">Edit Nursery</label>
-			<label class="heading" th:text="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() &lt; charLimit or basicDetails[0].value.length() == charLimit}"></label>
-			<label class="heading nursery-name" data-placement="right" data-toggle="tooltip" th:text="*{basicDetails[0].value.substring(0, charLimit)} + '...'" th:title="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() > charLimit}"></label>
-			<input type="button" onclick="submitForm();" th:value="#{common.form.save.text}" class="btn btn-info fbk-save-button-left-margin" />
-		</div>
-		<div class="col-md-3 add_top_padding">
-			<a  class="fbk-float-right"  th:href="@{/NurseryManager/manageNurseries}" th:text="#{return.to.manage.nurseries}">Return to Manage Nurseries</a>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-xs-12 col-md-12">&nbsp;</div>
-	</div>
-	<div class="row">
+	<div class="row add-top-bottom-padding">
 		<div class="col-md-12">
-			<div class="col-md-8">
-			<label class="control-label section-toggle toggle-icon" id="basicDetails" data-target=".basicDetailsSection">
-				<img style="margin-left: -10px; display: none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
-				<img style="margin-left: -7px;" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
-				<strong class="sub-content-heading" th:text="#{nursery.create.nursery.basic.details}">BASIC DETAILS</strong>
-			</label>
-			</div>
-			<div class="col-md-4">
-			<div  class="fbk-float-right-with-top-pos">
-				<div class="btn-group">
-					<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
-						<span th:text="#{nursery.nurserydetails.actions}">Actions</span>
-					</button>
-					<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
-						<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
-							<a href="" style="display: none" id="open-study-url"></a>
-							<a href="javascript: showExportOptions();" id="open-study-url-link"
-								th:text="#{nursery.nurserydetails.action.export.nursery}">Export Nursery Book</a>
-						</li>
-						<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
-							<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
-							<a href="javascript: createFieldMap('nursery-table');" id="fieldmap-url-link"
-								th:text="#{nursery.nurserydetails.action.createFieldmap}">Make Field Map</a>
-						</li>
-						<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
-							<a href="" style="display: none" id="label-printing-url" th:href="@{/LabelPrinting/specifyLabelDetails/nursery}"></a>
-							<a href="javascript: createLabelPrinting('nursery-table');" id="label-printing-url-link"
-								th:text="#{nursery.nurserydetails.action.printLabels}">Print Labels</a>
-						</li>
-						<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
-							<a href="" style="display: none" id="open-study-url"></a>
-							<a href="javascript: showImportOptions();" id="open-study-url-link"
-								th:text="#{nursery.nurserydetails.action.import.nursery}">Import Measurements</a>
-						</li>
-						<li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
-							<a href="" style="display: none" id="advance-study-url" th:href="@{/NurseryManager/advance/nursery}"></a>
-							<a href="javascript: advanceNursery('nursery-table');" id="advance-study-url-link"
-								th:text="#{nursery.nurserydetails.action.advance}">Advance Nursery</a>
-							</li>
-						<li>
-							<a th:href="@{/NurseryManager/manageNurseries}" id="close-nursery-url-link"
-								th:text="#{nursery.nurserydetails.action.close.nursery}">Close Nursery</a>
-						</li>
-					</ul>
-				</div>
-			</div>
-			</div>
+			<div class="pull-left">
+                <img width="30" height="30" th:src="@{/static/img/new-nursery.png}" class="image-padding image-padding-with-text" />
+                <span class="heading" th:text="#{nursery.edit.nursery.label}">Edit Nursery</span>
+                <span class="heading" th:text="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() &lt; charLimit or basicDetails[0].value.length() == charLimit}"></span>
+                <span class="heading nursery-name" data-placement="right" data-toggle="tooltip" th:text="*{basicDetails[0].value.substring(0, charLimit)} + '...'" th:title="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() > charLimit}"></span>
+                <input type="button" onclick="submitEditForm();" th:value="#{common.form.save.text}" class="btn btn-info fbk-save-button-left-margin" />
+            </div>
+            <a  class="pull-right"  th:href="@{/NurseryManager/manageNurseries}" th:text="#{return.to.manage.nurseries}">Return to Manage Nurseries</a>
+
+        </div>
+	</div>
+	<div class="row" style="height: 30px">
+		<div class="col-md-12">
+            <label class="control-label section-toggle toggle-icon" id="basicDetails" data-target=".basicDetailsSection">
+                <img style="margin-left: -10px; display: none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
+                <img style="margin-left: -7px;" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
+                <strong class="sub-content-heading" th:text="#{nursery.create.nursery.basic.details}">BASIC DETAILS</strong>
+            </label>
+
+            <div  class="pull-right">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
+                        <span th:text="#{nursery.nurserydetails.actions}">Actions</span>
+                    </button>
+                    <ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
+                        <li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
+                            <a href="" style="display: none" id="open-study-url"></a>
+                            <a href="javascript: showExportOptions();" id="open-study-url-link"
+                               th:text="#{nursery.nurserydetails.action.export.nursery}">Export Nursery Book</a>
+                        </li>
+                        <li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
+                            <a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
+                            <a href="javascript: createFieldMap('nursery-table');" id="fieldmap-url-link"
+                               th:text="#{nursery.nurserydetails.action.createFieldmap}">Make Field Map</a>
+                        </li>
+                        <li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
+                            <a href="" style="display: none" id="label-printing-url" th:href="@{/LabelPrinting/specifyLabelDetails/nursery}"></a>
+                            <a href="javascript: createLabelPrinting('nursery-table');" id="label-printing-url-link"
+                               th:text="#{nursery.nurserydetails.action.printLabels}">Print Labels</a>
+                        </li>
+                        <li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
+                            <a href="" style="display: none" id="open-study-url"></a>
+                            <a href="javascript: showImportOptions();" id="open-study-url-link"
+                               th:text="#{nursery.nurserydetails.action.import.nursery}">Import Measurements</a>
+                        </li>
+                        <li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
+                            <a href="" style="display: none" id="advance-study-url" th:href="@{/NurseryManager/advance/nursery}"></a>
+                            <a href="javascript: advanceNursery('nursery-table');" id="advance-study-url-link"
+                               th:text="#{nursery.nurserydetails.action.advance}">Advance Nursery</a>
+                        </li>
+                        <li>
+                            <a th:href="@{/NurseryManager/manageNurseries}" id="close-nursery-url-link"
+                               th:text="#{nursery.nurserydetails.action.close.nursery}">Close Nursery</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
 		</div>
 	</div>
-	<div class="basicDetailsSection" style="display: none">
-		<div class="row form-group">
+    <div class="basicDetailsSection" style="display: none">
+        <div class="row fbk-mandatory">
+            <div class="col-md-12">
+                <label class=""><em th:utext="#{nursery.managesettings.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
+            </div>
+        </div>
+
+        <div class="row form-group">
 			<div class="col-xs-2 col-md-2">
 				<input class="cvTermIds" type="hidden" th:field="*{basicDetails[0].variable.cvTermId}" />
 				<label th:text="#{nursery.create.nursery.nursery.name} + ': '" class="control-label label-bold"></label>&nbsp;<span class="required">*</span>
@@ -119,7 +120,7 @@
 				<label th:text="#{nursery.create.nursery.creation.date} + ': '" class="control-label label-bold"></label>&nbsp;<span class="required">*</span>
 			</div>
 			<div class="col-xs-4 col-md-4">
-				<input id="basicDetails.value2" style="width: 100px" type="text" class="form-control date-input" th:field="*{basicDetails[2].value}" />
+				<input placeholder="yyyy-mm-dd" id="basicDetails.value2" style="width: 100px" type="text" class="form-control date-input" th:field="*{basicDetails[2].value}" />
 				<label for="basicDetails.value2" class="btn datepicker"> <img th:src="@{/static/img/calendar.png}" style="padding-bottom: 3px;" /></label>
 			</div>
 		</div>
@@ -132,7 +133,7 @@
 				<textarea class="form-control character-input" rows="3" th:field="*{basicDetails[3].value}"></textarea>
 			</div>
 			<div class="col-xs-2 col-md-2">
-				<input class="cvTermIds" type="hidden" th:field="*{basicDetails[4].variable.cvTermId}" />
+				<input placeholder="yyyy-mm-dd" class="cvTermIds" type="hidden" th:field="*{basicDetails[4].variable.cvTermId}" />
 				<label th:text="#{nursery.create.nursery.completion.date} + ': '" class="control-label label-bold"></label>
 			</div>
 			<div class="col-xs-4 col-md-4">
@@ -304,7 +305,11 @@
 		//<![CDATA[
 
 		// FIXME Should not be using global variables or functions
-		/*global showErrorMessage,recreateSessionVariables, lastDraggedChecksList, Spinner, validateCreateNursery, validateStartEndDate, moveToTopScreen, programNurseriesText*/
+		/*global showErrorMessage,recreateSessionVariables, lastDraggedChecksList, Spinner, validateCreateNursery*/
+		/*globals validateStartEndDate, moveToTopScreen, programNurseriesText, measurementRowCount*/
+		/*globals submitGermplasmAndCheck, truncateStudyVariableNames, displayCorrespondingGermplasmSections*/
+		/*exported lastDraggedChecksList, locationSuggestions, scaleSuggestions,saveSuccessMessage, submitEditForm*/
+
 		var locationSuggestions = /*[[${locationList}]]*/ '',
 			scaleSuggestions = /*[[${scaleList}]]*/  '',
 			saveSuccessMessage = /*[[#{common.form.save.successful.text}]]*/ '';
@@ -313,52 +318,12 @@
 		/* jshint ignore:start */
 		var measurementRowCount = /*[[${createNurseryForm.measurementRowList.size()}]]*/ 0,
 			buttonToDelete = null;
-			/* jshint ignore:end */
+			/* jshint ignore:end */				
 
-		function submitGermplasmList() {
+		function submitEditWorkbook(){
 			'use strict';
 
-			var $form = $('#germplasm-list-form');
-
-			$('#startIndex').val($('#startIndex2').val());
-			$('#interval').val($('#interval2').val());
-			$('#mannerOfInsertion').val($('#mannerOfInsertion2').val());
-			var serializedData = $form.serialize();
-
-			$('#lastDraggedChecksList').val(lastDraggedChecksList);
-
-			$.ajax({
-				url: '/Fieldbook/NurseryManager/importGermplasmList/next',
-				type: 'POST',
-				data: serializedData,
-				cache: false,
-				success: function() {
-					refreshStudyAfterSave($("#studyId").val());
-					Spinner.stop();
-				}
-			});
-		}
-
-		function submitCheckGermplasmList() {
-			'use strict';
-			var $form = $('#check-germplasm-list-form');
-			var serializedData = $form.serialize();
-
-			$.ajax({
-				url: '/Fieldbook/NurseryManager/importGermplasmList/submitCheckGermplasmList',
-				type: 'POST',
-				data: serializedData,
-				cache: false,
-				success: function() {
-					submitGermplasmList();
-				}
-			});
-		}
-
-		function submitWorkbook(){
-			'use strict';
-
-			Spinner.toggle();
+			Spinner.play();
 
 			var $form = $('#createNurseryForm, #createNurseryMainForm'),
 				serializedData = $form.serialize();
@@ -370,13 +335,13 @@
 				cache: false,
 				success: function(data) {
                     if (data.status === '-1') {
-                        showErrorMessage('page-message', data.errorMessage);
-                        Spinner.toggle();
+                        showErrorMessage('page-message', data.errorMessage);                        
                     } else if ($('.germplasm-list-items tbody tr').length > 0 || measurementRowCount === 0) {
-						submitCheckGermplasmList();
+                    	submitGermplasmAndCheck();
 					} else if (data.status === '1') {
 						recreateSessionVariables();
 					}
+                    Spinner.stop();
 				}
 			});
 		}
@@ -392,18 +357,18 @@
 				data: '',
 				cache: false,
 				success: function(data) {
-                    if (data.status == -1) {
+                    if (data.status === '-1') {
                         showErrorMessage('page-message', data.errorMessage);
                         Spinner.toggle();
                     } else {
                     	Spinner.toggle();
-                    	submitWorkbook();
+                    	submitEditWorkbook();
 					}
 				}
 			});
 		}
 
-		function submitForm() {
+		function submitEditForm() {
 			'use strict';
 
 			if (validateCreateNursery()) {
@@ -411,10 +376,10 @@
 					moveToTopScreen();
 					return false;
 				}
-				if ($(".germplasm-list-items tbody tr").length > 0 && measurementRowCount > 0) {
+				if ($('.germplasm-list-items tbody tr').length > 0 && measurementRowCount > 0) {
 					deleteMeasurementRows();
 				} else {
-					submitWorkbook();
+					submitEditWorkbook();
 				}
 
                 if (document.enableActions !== undefined) {
@@ -443,7 +408,7 @@
 				$('#folderNameLabel').html(programNurseriesText);
 			}
 
-			if ($("#measurementDataExisting")) {
+			if ($('#measurementDataExisting')) {
 				displayCorrespondingGermplasmSections();
 			}
 			if ($('.nursery-name').length > 0) {

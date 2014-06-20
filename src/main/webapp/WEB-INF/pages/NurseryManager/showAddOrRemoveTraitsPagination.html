@@ -40,12 +40,14 @@ method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
 
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
-	var headerMsg1 = /*[[#{open.germplasm.header}]]*/;
-	var headerMsg2 = /*[[#{open.germplasm.gid}]]*/;
+	/*globals convertToSelect2*/
+	/*exported headerMsg1, headerMsg2, options*/
+	var headerMsg1 = /*[[#{open.germplasm.header}]]*/'',
+		headerMsg2 = /*[[#{open.germplasm.gid}]]*/'';
 
 	convertToSelect2 = false;
 	var paginationUrl = '/Fieldbook/Common/addOrRemoveTraits/pageView/';
-	paginationUrl = paginationUrl + $("#study-type").val() + "/";
+	paginationUrl = paginationUrl + $('#study-type').val() + '/';
 
 	var options = {
 		currentPage: /*[[${createNurseryForm.currentPage}]]*/,
@@ -54,35 +56,38 @@ method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
 		alignment:'center',
 		useBootstrapTooltip:true,
 		onPageClicked: function(e,originalEvent,type,page){
-			var sectionContainerDiv = "div-nursery-tab-"+getCurrentStudyIdInTab();
-			var listIdentifier = $("#study"+getCurrentStudyIdInTab()+" #dataset-selection").val();
-			showMultiTabPage(paginationUrl, page, 'germplasm-measurement-list-table-div', sectionContainerDiv, listIdentifier);
+			var sectionContainerDiv = 'div-nursery-tab-'+getCurrentStudyIdInTab();
+			var listIdentifier = $('#study'+getCurrentStudyIdInTab()+' #dataset-selection').val();
+			
+			showMultiTabPage(paginationUrl, page, 'dset-tab-'+listIdentifier + ' #germplasm-measurement-list-table-div', sectionContainerDiv, listIdentifier);
 		}
-	}
+	};
 
-	if($("#div-nursery-tab-"+getCurrentStudyIdInTab()+' #measurement-data-list-pagination') != null){
-		$("#div-nursery-tab-"+getCurrentStudyIdInTab()+' #measurement-data-list-pagination').bootstrapPaginator(options);
+	if($('#div-nursery-tab-'+getCurrentStudyIdInTab()+' #dset-tab-'+$('#study'+getCurrentStudyIdInTab()+' #dataset-selection').val()+' #measurement-data-list-pagination') != null){
+		$('#div-nursery-tab-'+getCurrentStudyIdInTab()+' #dset-tab-'+$('#study'+getCurrentStudyIdInTab()+' #dataset-selection').val()+' #measurement-data-list-pagination').bootstrapPaginator(options);
 	}
 	$( document ).ready(function() {
-		$("#btnBack").attr("href", "/Fieldbook/" + $("#study-type").val() + "Manager");
+		'use strict';
+		$('#btnBack').attr('href', '/Fieldbook/' + $('#study-type').val() + 'Manager');
 
-		$("#div-nursery-tab-"+getCurrentStudyIdInTab()+" .desig-link").click(function() {
-			var gidValue = $(this).parent().parent().find(".gid-link").text();
-			$(this).data("gid", gidValue);
-			$(this).data("desig", $(this).text());
+		$('#div-nursery-tab-'+getCurrentStudyIdInTab()+' .desig-link').click(function() {
+			var gidValue = $(this).parent().parent().find('.gid-link').text();
+			$(this).data('gid', gidValue);
+			$(this).data('desig', $(this).text());
 			openGermplasmDetailsPopop($(this));
 		});
 
-		$("#div-nursery-tab-"+getCurrentStudyIdInTab()+" .gid-link").click(function() {
-			var desigValue = $(this).parent().parent().find(".desig-link").text();
-			$(this).data("gid", $(this).text());
-			$(this).data("desig", desigValue);
+		$('#div-nursery-tab-'+getCurrentStudyIdInTab()+' .gid-link').click(function() {
+			var desigValue = $(this).parent().parent().find('.desig-link').text();
+			$(this).data('gid', $(this).text());
+			$(this).data('desig', desigValue);
 			openGermplasmDetailsPopop($(this));
 		});
 	});
 
 	function doReturn() {
-		location.href = "/Fieldbook/" + $("#study-type").val() + "Manager";
+		'use strict';
+		location.href = '/Fieldbook/' + $('#study-type').val() + 'Manager';
 	}
 
 	//]]>

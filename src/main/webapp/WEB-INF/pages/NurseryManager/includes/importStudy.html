@@ -175,7 +175,7 @@
 							<label class="control-label label-bold" th:text="#{nursery.import.excel.date}+':'">Date</label>&nbsp;<span class="required">*</span>	
 						</div>
 						<div class="col-xs-7 col-md-7">
-							<input type="text" class="form-control date-input" th:field="*{importDate}" />
+							<input placeholder="yyyy-mm-dd" type="text" class="form-control date-input" th:field="*{importDate}" />
 							<label for="importDate" class="btn datepicker">
 								<img width="20" height="22" th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;" />
 							</label>
@@ -237,6 +237,7 @@
 	<script type='text/javascript' th:inline="javascript">
 		//<![CDATA[
 		/*globals displaySaveSuccessMessage, createTableSettingVariables, importNursery, Spinner, showErrorMessage*/
+		/*globals recreateMethodCombo,showErrorMessage,showImportResponse,recreateLocationCombo*/
 		/*exported showImportResponse, importOptions, confirmDesignation, goBackToImport, doImportActionChange*/
 		/*exported importStudyBookHeader, importStudyHeader*/
 
@@ -277,7 +278,15 @@
 			$('.hasCreateGermplasm').val(0);
 			
 			$('#importDate').each(function(){
-					$(this).datepicker({'format': 'yyyymmdd'}).on('changeDate', function(ev) {
+					$(this).datepicker({'format': 'yyyy-mm-dd'}).on('change', function (e) {
+			    var curDate = $(this).val();
+			    try {
+			        var r = $.datepicker.parseDate('yy-mm-dd', curDate);
+			        $(this).datepicker('setDate', r);
+			    } catch(e) {			        
+			        $(this).datepicker('setDate', new Date());
+			    }
+			}).on('changeDate', function(ev) {
 					$(this).datepicker('hide');
 	
 				}).on('show', function(){

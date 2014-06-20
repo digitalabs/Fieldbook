@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -126,8 +127,8 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     @ResponseBody
     @RequestMapping(value="/createFieldmap/{ids}", method = RequestMethod.GET)
     public Map<String, String> determineFieldMapNavigation(@PathVariable String ids, 
-            Model model, HttpSession session) {
-    	session.invalidate();
+            Model model, HttpServletRequest req, HttpSession session) {
+    	super.clearSessionData(session, req);
         Map<String, String> result = new HashMap<String, String>();
         String nav = "1";
         try {
@@ -344,8 +345,8 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     @ResponseBody
     @RequestMapping(value="/createNurseryFieldmap/{ids}", method = RequestMethod.GET)
     public Map<String, String> determineNurseryFieldMapNavigation(
-            @PathVariable String ids, HttpSession session) {
-        session.invalidate();
+            @PathVariable String ids, HttpServletRequest req, HttpSession session) {
+    	super.clearSessionData(session, req);
         Map<String, String> result = new HashMap<String, String>();
         
         String nav = "1";

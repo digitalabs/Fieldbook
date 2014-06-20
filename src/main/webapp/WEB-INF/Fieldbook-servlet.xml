@@ -87,7 +87,8 @@
 		<property name="programLocationsUrl" value="${url.program.locations}" />
 		<property name="programBreedintMethodsUrl" value="${url.program.breeding.methods}" />
 		<property name="germplasmImportUrl" value="${url.germplasm.import}" />
-		<property name="germplasmDetailsUrl" value="${url.germplasm.details}" />		
+		<property name="germplasmDetailsUrl" value="${url.germplasm.details}" />	
+		<property name="uploadDirectory" value="${upload.directory}" />	
 	</bean>
 
 	<bean id="fieldbookService" class="com.efficio.fieldbook.service.FieldbookServiceImpl" />
@@ -172,6 +173,11 @@
 
 	
 	<bean id="paginationListSelection" class="com.efficio.fieldbook.web.common.bean.PaginationListSelection"
+		scope="session">
+		<aop:scoped-proxy />
+	</bean>
+	
+	<bean id="possibleValuesCache" class="com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache"
 		scope="session">
 		<aop:scoped-proxy />
 	</bean>
@@ -289,10 +295,6 @@
     	scope="request">
     	<aop:scoped-proxy/>
     </bean>
-	<bean id="externalToolInfo" class="com.efficio.fieldbook.web.util.ExternalToolInfo">	
-   		<property name="currentProjectId" value="${workbench.currentProjectId}"/>
-   		<property name="oldFieldbookPath" value="${old.fb.tool.path}"/>   			
-	</bean>	
    	
    	<bean id="springAppContextProvider" class="org.generationcp.commons.util.SpringAppContextProvider"></bean>
     

@@ -1218,9 +1218,15 @@ input[type="text"], input[type="password"], .ui-autocomplete-input, textarea, .u
 }
 
 /* move the search icon to the fron and set the starting caret position after the icon */
-.select2-input {
-    background-position-x: -38px !important;
-    padding-left: 20px !important;
+.select2-search input {
+    padding-left: 22px !important;
+
+    background: #fff url('lib/select2/img/select2.png') no-repeat -36px -22px;
+    background: url('lib/select2/img/select2.png') no-repeat -36px -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, #fff), color-stop(0.99, #eee));
+    background: url('lib/select2/img/select2.png') no-repeat -36px -22px, -webkit-linear-gradient(center bottom, #fff 85%, #eee 99%);
+    background: url('lib/select2/img/select2.png') no-repeat -36px -22px, -moz-linear-gradient(center bottom, #fff 85%, #eee 99%);
+    background: url('lib/select2/img/select2.png') no-repeat -36px -22px, linear-gradient(top, #fff 85%, #eee 99%);
+
 }
 
 .s2-nosearch-icon .select2-input {

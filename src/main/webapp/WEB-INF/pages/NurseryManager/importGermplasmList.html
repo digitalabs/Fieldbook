@@ -839,13 +839,19 @@
 
             $('#entries-details').css('display', 'none');
 
-            displayGermplasmListTree('germplasmTree', false, 0);
+            displayGermplasmListTree('germplasmTree', false, 0, function (node, event) {
+                var currentFolderName = node.data.title;
+                $('#newGermplasmFolderName').val(currentFolderName);
+            });
+
             activateDroppable();
             changeBrowseGermplasmButtonBehavior(false);
 
             $('#listTreeModal').on('hide.bs.modal', function () {
                 $('#' + getDisplayedTreeName()).dynatree('getTree').reloadStudyTree();
                 changeBrowseGermplasmButtonBehavior(false);
+                $('#addGermplasmFolderDiv').hide();
+                $('#renameGermplasmFolderDiv').hide();
             });
             $('#addGermplasmFolderDiv').hide();
             $('#renameGermplasmFolderDiv').hide();
@@ -858,6 +864,20 @@
 
         function createGermplasmFolder() {
             'use strict';
+
+            var node = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode();
+
+            if (!node) {
+                showErrorMessage('page-rename-germplasm-folder-message-modal', invalidNodeGermplasmTreeMessage);
+                return false;
+            }
+
+            if (!node.data.isFolder || (node.data.key > 1 || node.data.key === 'CENTRAL')) {
+                showErrorMessage('page-rename-germplasm-folder-message-modal', addGermplasmInvalidFolderMessage);
+                return false;
+            }
+
+
 
             var folderName = $.trim($('#addGermplasmFolderName').val()),
                     parentFolderId;
@@ -874,7 +894,6 @@
                     parentFolderId = 1;
                 }
 
-                Spinner.toggle();
                 $.ajax({
                     url: '/Fieldbook/ListTreeManager/addGermplasmFolder',
                     type: 'POST',
@@ -888,10 +907,10 @@
                             node.focus();
                             node.expand();
                             hideAddGermplasmFolderDiv();
+                            showSuccessfulMessage('', addFolderSuccessful);
                         } else {
                             showErrorMessage('page-add-germplasm-folder-message-modal', data.message);
                         }
-                        Spinner.toggle();
                     }
                 });
             }
@@ -938,6 +957,18 @@
             var folderName = $.trim($('#newGermplasmFolderName').val()),
                     parentFolderId;
 
+            var node = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode();
+
+            if (! node) {
+                showErrorMessage('page-rename-germplasm-folder-message-modal',invalidNodeGermplasmTreeMessage);
+                return false;
+            }
+
+            if (!node.data.isFolder || (node.data.key > 1 || node.data.key === 'CENTRAL' || node.data.key === 'LOCAL')) {
+                showErrorMessage('page-rename-germplasm-folder-message-modal', renameGermplasmInvalidFolderMessage);
+                return false;
+            }
+
             if ($.trim(folderName) === $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.title) {
                 $('#renameGermplasmFolder').modal('hide');
                 return false;
@@ -955,7 +986,6 @@
                     parentFolderId = 1;
                 }
 
-                Spinner.toggle();
                 $.ajax({
                     url: '/Fieldbook/ListTreeManager/renameGermplasmFolder',
                     type: 'POST',
@@ -969,10 +999,10 @@
                             node.data.title = folderName;
                             $(node.span).find('a').html(folderName);
                             node.focus();
+                            showSuccessfulMessage('', renameFolderSuccessful);
                         } else {
                             showErrorMessage('page-rename-germplasm-folder-message-modal', data.message);
                         }
-                        Spinner.toggle();
                     }
                 });
             }

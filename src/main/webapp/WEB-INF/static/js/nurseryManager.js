@@ -2193,10 +2193,12 @@ function determineIfShowCloseAllStudyTabs() {
 function openStudyTree(type) {
 	$('#page-study-tree-message-modal').html('');
 	if( $('#create-nursery #studyTree').length !== 0){
-
+        $('#addFolderDiv').hide();
+                    $('#renameFolderDiv').hide();
 			$('#studyTree').dynatree('destroy');
 		 	displayStudyListTree('studyTree', 'N', type);
 		 	changeBrowseNurseryButtonBehavior(false);
+
 	}
 
 	$('#studyTreeModal').modal({

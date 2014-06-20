@@ -1982,6 +1982,7 @@ function submitDeleteGermplasmFolder() {
 				$('#deleteGermplasmFolder').modal('hide');
 				node = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode();
 				node.remove();
+                showSuccessfulMessage('',deleteFolderSuccessful);
 			} else {
 				showErrorMessage('page-delete-germplasm-folder-message-modal', data.message);
 			}

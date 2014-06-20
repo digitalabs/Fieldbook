@@ -26,7 +26,9 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.Property;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -71,6 +73,9 @@ public class FieldbookServiceImpl implements FieldbookService{
 	
 	@Resource
 	private PossibleValuesCache possibleValuesCache;
+	
+	@Resource
+	private FieldbookService fieldbookService;
 	
 
 	/* (non-Javadoc)
@@ -437,5 +442,20 @@ public class FieldbookServiceImpl implements FieldbookService{
     @Override
     public Term getTermById(int termId) throws MiddlewareQueryException {
     	return ontologyService.getTermById(termId);
+    }
+
+    @Override
+    public void setAllPossibleValuesInWorkbook(Workbook workbook) throws MiddlewareQueryException {
+    	List<MeasurementVariable> allVariables = workbook.getAllVariables();
+    	if (allVariables != null) {
+    		for (MeasurementVariable variable : allVariables) {
+    			if (variable.getPossibleValues() == null || variable.getPossibleValues().isEmpty()) {
+					Property property = ontologyService.getProperty(variable.getProperty());
+					if (property != null && property.getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId()) {
+                        variable.setPossibleValues(fieldbookService.getAllBreedingMethods());
+                    }
+    			}
+    		}
+    	}
     }
 }

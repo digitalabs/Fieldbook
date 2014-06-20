@@ -80,4 +80,6 @@ public interface FieldbookService {
     Term getTermById(int termId) throws MiddlewareQueryException;
     
     List<ValueReference> getAllBreedingMethods() throws MiddlewareQueryException;
+
+    void setAllPossibleValuesInWorkbook(Workbook workbook) throws MiddlewareQueryException;
 }

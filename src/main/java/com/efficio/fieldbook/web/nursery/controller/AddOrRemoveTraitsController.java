@@ -61,7 +61,9 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     
     @Resource
     private PaginationListSelection paginationListSelection;
-    
+
+	@Resource
+    private com.efficio.fieldbook.service.api.FieldbookService fieldbookService;
   
 
 	/* (non-Javadoc)
@@ -134,6 +136,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     	Workbook workbook = null;
         try { 
         	workbook = fieldbookMiddlewareService.getCompleteDataset(datasetId, false);
+            fieldbookService.setAllPossibleValuesInWorkbook(workbook);
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }

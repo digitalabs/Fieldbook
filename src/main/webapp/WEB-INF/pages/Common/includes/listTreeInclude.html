@@ -82,6 +82,15 @@
 					return 'germplasmFolderTree';
 				}
 			}
+			function getDisplayedModalSelector(){
+				'use strict';
+				if($('#listTreeModal').hasClass('in') === true){
+					return '#listTreeModal';
+				}
+				else if($('#saveListTreeModal').hasClass('in') === true){
+					return '#saveListTreeModal';
+				}
+			}
 			function getMessageErrorDiv(){
 				'use strict';
 				 var msgDiv = 'page-import-message-modal';

@@ -168,7 +168,7 @@
 				</div>
 
                 <div class="form-horizontal form-group">
-                    <div id="addGermplasmFolderDiv">
+                    <div id="addGermplasmFolderDiv" class="fbk-hide">
                         <div class="col-xs-4 col-md-4 nopadding">
                             <label class="control-label label-bold" th:utext="#{browse.nursery.add.folder.name}">Folder Name: <span class="required">*</span></label>
                         </div>
@@ -176,17 +176,17 @@
                             <div class="input-group">
                                 <input id="addGermplasmFolderName" name="addFolderName" type="text" class="form-control select2" placeholder="Folder Name"/>
                                                                             <span class="input-group-btn">
-                                                                                <button class="btn btn-success" id="addGermplasmFolderOkButton">
+                                                                                <button class="btn btn-success" id="addGermplasmFolderOkButton" onclick="javascript: createGermplasmFolder()">
                                                                                     <span class="glyphicon glyphicon-ok"></span>
                                                                                 </button>
-                                                                                <button class="btn btn-danger" id="addGermplasmFolderCancelButton">
+                                                                                <button class="btn btn-danger" id="addGermplasmFolderCancelButton" onclick="javascript: hideAddGermplasmFolderDiv()">
                                                                                     <span class="glyphicon glyphicon-remove"></span>
                                                                                 </button>
                                                                             </span>
                             </div>
                         </div>
                     </div>
-                    <div id="renameGermplasmFolderDiv">
+                    <div id="renameGermplasmFolderDiv" class="fbk-hide">
                         <div class="col-xs-4 col-md-4 nopadding">
                             <label class="control-label  label-bold" th:utext="#{browse.nursery.rename.folder.input.label}">Folder Name: <span class="required">*</span></label>
                         </div>
@@ -194,10 +194,10 @@
                             <div class="input-group">
                                 <input id="newGermplasmFolderName" name="newFolderName" type="text" class="form-control select2" placeholder="Folder Name"/>
                                                                             <span class="input-group-btn">
-                                                                                <button class="btn btn-success" id="renameGermplasmFolderOkButton">
+                                                                                <button class="btn btn-success" id="renameGermplasmFolderOkButton" onclick="javascript: submitRenameGermplasmFolder()">
                                                                                     <span class="glyphicon glyphicon-ok"></span>
                                                                                 </button>
-                                                                                <button class="btn btn-danger" id="renameGermplasmFolderCancelButton">
+                                                                                <button class="btn btn-danger" id="renameGermplasmFolderCancelButton" onclick="javascript: hideRenameGermplasmFolderDiv()">
                                                                                     <span class="glyphicon glyphicon-remove"></span>
                                                                                 </button>
                                                                             </span>
@@ -850,15 +850,9 @@
             $('#listTreeModal').on('hide.bs.modal', function () {
                 $('#' + getDisplayedTreeName()).dynatree('getTree').reloadStudyTree();
                 changeBrowseGermplasmButtonBehavior(false);
-                $('#addGermplasmFolderDiv').hide();
-                $('#renameGermplasmFolderDiv').hide();
+                $(getDisplayedModalSelector() + ' #addGermplasmFolderDiv').hide();
+                $(getDisplayedModalSelector() + ' #renameGermplasmFolderDiv').hide();
             });
-            $('#addGermplasmFolderDiv').hide();
-            $('#renameGermplasmFolderDiv').hide();
-            $('#addGermplasmFolderOkButton').on('click', createGermplasmFolder);
-            $('#addGermplasmFolderCancelButton').on('click', hideAddGermplasmFolderDiv);
-            $('#renameGermplasmFolderOkButton').on('click', submitRenameGermplasmFolder);
-            $('#renameGermplasmFolderCancelButton').on('click', hideRenameGermplasmFolderDiv);
 
         });
 
@@ -879,7 +873,7 @@
 
 
 
-            var folderName = $.trim($('#addGermplasmFolderName').val()),
+            var folderName = $.trim($(getDisplayedModalSelector() + ' #addGermplasmFolderName').val()),
                     parentFolderId;
 
             if (folderName === '') {
@@ -919,20 +913,20 @@
 
         function hideAddGermplasmFolderDiv() {
             'use strict';
-            $('#addGermplasmFolderDiv').slideUp('fast');
+            $(getDisplayedModalSelector() + ' #addGermplasmFolderDiv').slideUp('fast');
         }
 
         function hideRenameGermplasmFolderDiv() {
             'use strict';
-            $('#renameGermplasmFolderDiv').slideUp('fast');
+            $(getDisplayedModalSelector() + ' #renameGermplasmFolderDiv').slideUp('fast');
         }
 
         function addGermplasmFolder(object) {
             'use strict';
             if (!$(object).hasClass('disable-image')) {
                 hideRenameGermplasmFolderDiv();
-                $('#addGermplasmFolderName').val('');
-                $('#addGermplasmFolderDiv').slideDown('fast');
+                $(getDisplayedModalSelector() + ' #addGermplasmFolderName').val('');
+                $(getDisplayedModalSelector() + ' #addGermplasmFolderDiv').slideDown('fast');
             }
         }
 
@@ -945,16 +939,16 @@
                 hideAddGermplasmFolderDiv();
 
                 currentFolderName = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.title
-                $('#newGermplasmFolderName').val(currentFolderName);
+                $(getDisplayedModalSelector() + ' #newGermplasmFolderName').val(currentFolderName);
 
-                $('#renameGermplasmFolderDiv').slideDown('fast');
+                $(getDisplayedModalSelector() + ' #renameGermplasmFolderDiv').slideDown('fast');
             }
         }
 
         function submitRenameGermplasmFolder() {
             'use strict';
 
-            var folderName = $.trim($('#newGermplasmFolderName').val()),
+            var folderName = $.trim($(getDisplayedModalSelector() + ' #newGermplasmFolderName').val()),
                     parentFolderId;
 
             var node = $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode();
@@ -970,7 +964,7 @@
             }
 
             if ($.trim(folderName) === $('#' + getDisplayedTreeName()).dynatree('getTree').getActiveNode().data.title) {
-                $('#renameGermplasmFolder').modal('hide');
+            	hideRenameGermplasmFolderDiv()
                 return false;
             }
 

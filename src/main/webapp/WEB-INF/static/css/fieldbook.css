@@ -1,8 +1,8 @@
 @import url('/Fieldbook/static/fonts/font.css');
 /*Added to style properly*/
 body {
-  font-family: 'Open Sans', 'Segoe UI','Helvetica Neue', Arial, sans-serif;
-  font-size: 13px;
+    font-family: 'Open Sans', 'Segoe UI','Helvetica Neue', Arial, sans-serif;
+    font-size: 13px;
 }
 .heading{vertical-align: middle; color:#333;font-family:'Open Sans','Segoe UI','Helvetica Neue',Arial,sans-serif;letter-spacing:normal;font-weight:500;margin-bottom:5px;margin-left:0;margin-right:0;margin-top:10px;box-sizing:border-box;font-size:18px;height:18px;line-height:18px;font-weight:600;}
 h1,h2,h3,h4,h5,h6,
@@ -20,74 +20,74 @@ h5,.h5{font-size:15px;font-weight:500;line-height:15px;text-transform:uppercase}
 h6,.h6{font-size:13px;font-weight:500;line-height:13px}
 
 .sub-heading{
-	/*
-	font-size: 24px;
-	font-weight: 300;
-	text-transform:uppercase;
-	*/
-	font-size:16.5px;height:16.5px;line-height:16.5px;font-weight:600;text-transform:uppercase
-	margin-bottom:5px;margin-left:0;margin-right:0;margin-top:10px;box-sizing:border-box;
+    /*
+    font-size: 24px;
+    font-weight: 300;
+    text-transform:uppercase;
+    */
+    font-size:16.5px;height:16.5px;line-height:16.5px;font-weight:600;text-transform:uppercase
+margin-bottom:5px;margin-left:0;margin-right:0;margin-top:10px;box-sizing:border-box;
 }
 .sub-content-heading{
-	/*
-	font-size: 16px;
-	font-weight: bold;
-	text-transform:uppercase;
-	*/
-	font-size:14px;height:14px;line-height:14px;font-weight:500
-	margin-bottom:5px;margin-left:0;margin-right:0;margin-top:10px;box-sizing:border-box;
+    /*
+    font-size: 16px;
+    font-weight: bold;
+    text-transform:uppercase;
+    */
+    font-size:14px;height:14px;line-height:14px;font-weight:500
+margin-bottom:5px;margin-left:0;margin-right:0;margin-top:10px;box-sizing:border-box;
 }
 
 label{
-	font-weight: normal;
+    font-weight: normal;
 }
 .btn-primary {
-  color: #ffffff;
-  background-color: #ff8109;
-  border-color:  #ff8109;
+    color: #ffffff;
+    background-color: #ff8109;
+    border-color:  #ff8109;
 }
 .btn-primary:hover,
 .btn-primary:focus,
 .btn-primary:active,
 .btn-primary.active,
 .open .dropdown-toggle.btn-primary {
-  color: #ffffff;
-  background-color: #ff8109;
-  border-color:  #ff8109;
-  opacity: 0.7
+    color: #ffffff;
+    background-color: #ff8109;
+    border-color:  #ff8109;
+    opacity: 0.7
 }
 
 
 .btn-default {
-  color: #ffffff;
-  background-color: #828282;
-  border-color: #828282;
+    color: #ffffff;
+    background-color: #828282;
+    border-color: #828282;
 }
 .btn-default:hover,
 .btn-default:focus,
 .btn-default:active,
 .btn-default.active,
 .open .dropdown-toggle.btn-default {
-  color: #ffffff;
-  background-color: #828282;
-  border-color: #828282;
-  opacity: 0.7
+    color: #ffffff;
+    background-color: #828282;
+    border-color: #828282;
+    opacity: 0.7
 }
 
 .btn-info {
-  color: #ffffff;
-  background-color: #1b95b2;
-  border-color: #1b95b2;
+    color: #ffffff;
+    background-color: #1b95b2;
+    border-color: #1b95b2;
 }
 .btn-info:hover,
 .btn-info:focus,
 .btn-info:active,
 .btn-info.active,
 .open .dropdown-toggle.btn-info {
-  color: #ffffff;
-  background-color: #1b95b2;
-  border-color: #1b95b2;
-  opacity: 0.7
+    color: #ffffff;
+    background-color: #1b95b2;
+    border-color: #1b95b2;
+    opacity: 0.7
 }
 .btn {
     font-size: 11px;
@@ -100,13 +100,13 @@ table th, table td{
 }
 */
 table > thead > tr > th, table .table-header{
-	background-color: #c8c6c6;
+    background-color: #c8c6c6;
 }
 table .odd{
-	background-color: #e3e3e3;
+    background-color: #e3e3e3;
 }
 table .even{
-	background-color: #f0eeee;
+    background-color: #f0eeee;
 }
 /*
 #studyTree tr:nth-child(even), #selectedTrials tr:nth-child(even), #catVarList tr:nth-child(even) {background-color: #DADADA}
@@ -122,34 +122,34 @@ table .even{
 .table caption + thead tr:first-child td,
 .table colgroup + thead tr:first-child td,
 .table thead:first-child tr:first-child td {
-  border-top: none;
+    border-top: none;
 }
 
 
-  .table-bordered > thead > tr > th:first-child,
-  .table-bordered > tbody > tr > th:first-child,
-  .table-bordered > tfoot > tr > th:first-child,
-  .table-bordered > thead > tr > td:first-child,
-  .table-bordered > tbody > tr > td:first-child,
-  .table-bordered > tfoot > tr > td:first-child {
+.table-bordered > thead > tr > th:first-child,
+.table-bordered > tbody > tr > th:first-child,
+.table-bordered > tfoot > tr > th:first-child,
+.table-bordered > thead > tr > td:first-child,
+.table-bordered > tbody > tr > td:first-child,
+.table-bordered > tfoot > tr > td:first-child {
     border-left: none;
-  }
-  .table-bordered > thead > tr > th:last-child,
-  .table-bordered > tbody > tr > th:last-child,
-  .table-bordered > tfoot > tr > th:last-child,
-  .table-bordered > thead > tr > td:last-child,
-  .table-bordered > tbody > tr > td:last-child,
-  .table-bordered > tfoot > tr > td:last-child {
+}
+.table-bordered > thead > tr > th:last-child,
+.table-bordered > tbody > tr > th:last-child,
+.table-bordered > tfoot > tr > th:last-child,
+.table-bordered > thead > tr > td:last-child,
+.table-bordered > tbody > tr > td:last-child,
+.table-bordered > tfoot > tr > td:last-child {
     border-right: none;
-  }
-  .table-bordered > thead > tr:last-child > th,
-  .table-bordered > tbody > tr:last-child > th,
-  .table-bordered > tfoot > tr:last-child > th,
-  .table-bordered > thead > tr:last-child > td,
-  .table-bordered > tbody > tr:last-child > td,
-  .table-bordered > tfoot > tr:last-child > td {
+}
+.table-bordered > thead > tr:last-child > th,
+.table-bordered > tbody > tr:last-child > th,
+.table-bordered > tfoot > tr:last-child > th,
+.table-bordered > thead > tr:last-child > td,
+.table-bordered > tbody > tr:last-child > td,
+.table-bordered > tfoot > tr:last-child > td {
     border-bottom: none;
-  }
+}
 
 
 
@@ -157,22 +157,22 @@ table .highlight, table .field-map-highlight {
     /* background-color: #BED6B2;*/
 }
 table .highlight td, table .field-map-highlight td{
-     background-color: #BED6B2;
+    background-color: #BED6B2;
 }
 .pagination {
-font-size: 10px;
+    font-size: 10px;
 }
 .pagination > li > a, .pagination > li > span {
     padding: 6px 8px;
 }
 .pagination > li > a{
-	cursor: pointer; cursor: hand; 
+    cursor: pointer; cursor: hand;
 }
 .dropdown-menu {
     font-size: 12px;
 }
 .required{
-	color: #990000;
+    color: #990000;
 }
 
 .nav-tabs > li > a,
@@ -198,17 +198,17 @@ font-size: 10px;
     position: relative;
 }
 #ontology-tabs{
-	background-color: #f6f6f6;
-	border:1px solid #e4e4e4;
-	min-height: 320px;
-	border-top: 0px;
+    background-color: #f6f6f6;
+    border:1px solid #e4e4e4;
+    min-height: 320px;
+    border-top: 0px;
 }
 
 #nursery-tabs{
-	background-color: #f6f6f6;
-	border:1px solid #e4e4e4;
-	min-height: 650px;
-	border-top: 0px;
+    background-color: #f6f6f6;
+    border:1px solid #e4e4e4;
+    min-height: 650px;
+    border-top: 0px;
 }
 
 /* needs !important since data-tables css has overriden table css in important tags also */
@@ -217,44 +217,44 @@ font-size: 10px;
 }
 
 #studyTree{
-	height:350px;
-	overflow:auto;
-	padding-left: 15px;
+    height:350px;
+    overflow:auto;
+    padding-left: 15px;
     padding-right: 10px;
     padding-top: 10px;
 }
 
 
 .table-curved {
-   border-collapse: separate;
-   border: solid #e4e4e4 1px;
-   border-radius: 10px;
-   border-left: 0px;
-   border-top: 0px;
+    border-collapse: separate;
+    border: solid #e4e4e4 1px;
+    border-radius: 10px;
+    border-left: 0px;
+    border-top: 0px;
 }
 .table-curved > thead:first-child > tr:first-child > th {
 
-     border-bottom: none;
+    border-bottom: none;
 }
 .table-curved > tbody > tr > td:first-child,
 .table-curved > thead > tr > th:first-child,
 .table-curved > th:first:child  {
 
-     border-left: none;
+    border-left: none;
 }
 
 .table-curved > thead > tr > th:first-child,
-  .table-curved > tbody > tr > th:first-child,
-  .table-curved > tfoot > tr > th:first-child,
-  .table-curved > thead > tr > td:first-child,
-  .table-curved > tbody > tr > td:first-child,
-  .table-curved > tfoot > tr > td:first-child {
-   /* border-left: none;*/
+.table-curved > tbody > tr > th:first-child,
+.table-curved > tfoot > tr > th:first-child,
+.table-curved > thead > tr > td:first-child,
+.table-curved > tbody > tr > td:first-child,
+.table-curved > tfoot > tr > td:first-child {
+    /* border-left: none;*/
     border-left: 1px solid #c2c3c4;
-  }
+}
 
 .table-curved  > tbody > tr:last-child > td {
-     border-bottom: none;
+    border-bottom: none;
 }
 
 .table-curved td, .table-curved th {
@@ -278,35 +278,35 @@ font-size: 10px;
     margin-bottom: 6px;
 }
 .col-xs-12{
-	padding-left: 13px;
+    padding-left: 13px;
 }
 /*end*/
 .container{
-	/*max-width: none !important;*/
-	/*width: 950px;*/
-	min-width: 100%;
-	padding-left: 35px; margin-top: -20px; margin-left: 0px;
-	float: left;
+    /*max-width: none !important;*/
+    /*width: 950px;*/
+    min-width: 100%;
+    padding-left: 35px; margin-top: -20px; margin-left: 0px;
+    float: left;
 }
 .move-left{
-	margin-left: -25px;
+    margin-left: -25px;
 }
 .panel-body{
-	background-color: #F6F6F6; /*#D4D4D4;*/
-	padding: 0px;
+    background-color: #F6F6F6; /*#D4D4D4;*/
+    padding: 0px;
 }
 .manage-settings-panel-body{
-	padding: 15px;
+    padding: 15px;
 }
 .panel-body-modal{
-	padding: 15px;
-	background-color: #FFFFFF;
+    padding: 15px;
+    background-color: #FFFFFF;
 }
 .tt-hint{
-	width: 100%;
+    width: 100%;
 }
 .tt-query{
-	background-color: none;
+    background-color: none;
 }
 /*For the spinner*/
 #spinner-wrap {
@@ -316,7 +316,7 @@ font-size: 10px;
     height:150px;
     background:#e9e9e9;
     opacity:1;
- filter:alpha(opacity=80); /* For IE8 and earlier */
+    filter:alpha(opacity=80); /* For IE8 and earlier */
     border-radius: 15px;
     top:50%;
     margin-left:-100px;
@@ -324,7 +324,7 @@ font-size: 10px;
     left:50%;
 }
 #spinner-wrap img{
-	padding-top: 45px;
+    padding-top: 45px;
 }
 .modal-extra-large {
     width: 950px;
@@ -339,133 +339,133 @@ font-size: 10px;
     width: 500px;
 }
 .modal-extra-small{
-	width: 400px;
+    width: 400px;
 }
 #studyTreeModal .modal-dialog{
-	width: 400px;
+    width: 400px;
 }
 #addVariableModal .select2-choice{
-	max-width: 200px;
-	min-width: 200px;
+    max-width: 200px;
+    min-width: 200px;
 }
 
 
 
 div.scrollWrapper{
-  height:200px;
-  overflow-y:scroll;
+    height:200px;
+    overflow-y:scroll;
 }
 
 td.validValueLabel, td.validValueDel {
-	width: 20%;
+    width: 20%;
 }
 
 td.validValueDesc {
-	width: 60%;
+    width: 60%;
 }
 
 .fieldmap-header{
-	padding-right: 15px;
-	margin-left:10px;
-	float: left;
+    padding-right: 15px;
+    margin-left:10px;
+    float: left;
 }
 #field-map {
-	table-layout: fixed;
+    table-layout: fixed;
 }
 
 #field-map td{
-	border: 1px solid;
-	text-align: center;
-	padding-top: 5px;
-	padding-bottom: 5px;
+    border: 1px solid;
+    text-align: center;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 #field-map td p{
-	margin-bottom: 0px;
+    margin-bottom: 0px;
 }
 
 #field-map td.plot{
-	text-align:center;
-	vertical-align: middle;
-	word-wrap: break-word;
+    text-align:center;
+    vertical-align: middle;
+    word-wrap: break-word;
 }
 
 #field-map td.plot label {
-	padding: 3px;
-	margin-bottom: 0px;
-	padding-left: 15px;
-	padding-right: 15px;
+    padding: 3px;
+    margin-bottom: 0px;
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
 #field-map td.header-row-main{
-	background-color: #BEBEBA;
-	width: 64px;
+    background-color: #BEBEBA;
+    width: 64px;
 }
 #field-map td.header-row-data{
-	background-color: #BEBEBA;
-	width: 80px;
+    background-color: #BEBEBA;
+    width: 80px;
 }
 #field-map td.sub-header-row{
-	background-color: #EEEEE9;
+    background-color: #EEEEE9;
 }
 
 
 .fieldmap-container {
-	padding:10px;
-	margin:20px;
-	border:1px dashed;
-	overflow:auto;
-	border-bottom:none;
-	/*max-width: 1200px;*/
-	max-width: 100%;
+    padding:10px;
+    margin:20px;
+    border:1px dashed;
+    overflow:auto;
+    border-bottom:none;
+    /*max-width: 1200px;*/
+    max-width: 100%;
 }
 
 
 #availableFields, #leftSelectedFields, #rightSelectedFields
 { list-style-type: none; margin: 0; padding: 0; float: left;
-margin-right: 10px; background: #eee; padding: 5px; width: 100%;
-min-height: 50px;
+    margin-right: 10px; background: #eee; padding: 5px; width: 100%;
+    min-height: 50px;
 }
 #availableFields li, #leftSelectedFields li, #rightSelectedFields li
 { margin: 5px; padding: 5px; font-size: 13px; }
 
 .field-group{
-	margin-bottom: 0px
+    margin-bottom: 0px
 }
 .field-group .list-group-item{
-	padding: 5px 10px;
+    padding: 5px 10px;
 }
 tr.trialInstance {
-	background-color: #dff0d8;
+    background-color: #dff0d8;
 }
 
 .myDragClass {
-	background-color: #dff0d8;
+    background-color: #dff0d8;
 }
 .plot{
-	background-color: #ffffff;
+    background-color: #ffffff;
 }
 
 
 .modal-header{
-	background-color: #e9e9e9;
-	padding: 10px;
+    background-color: #e9e9e9;
+    padding: 10px;
 }
 .modal-footer {
     text-align: center;
     padding: 10px;
 }
 .treegrid-indent{
-	height: 0px;
+    height: 0px;
 }
 .page-header{
-	margin-left: -25px;
-	margin-bottom: 0px;
+    margin-left: -25px;
+    margin-bottom: 0px;
 }
 #nursery-table, #trial-table{
-	table-layout: fixed;
+    table-layout: fixed;
 }
 #ontology-tab-headers{
-	/*border-bottom:none;*/
+    /*border-bottom:none;*/
 }
 #ontology-tab-headers  > li > a,
 #ontology-tab-headers  > li > a:hover,
@@ -483,7 +483,7 @@ tr.trialInstance {
 }
 
 .page-header {
-	border-bottom: 0;
+    border-bottom: 0;
 }
 .tooltip-inner {
     background-color: #5A5A5A;
@@ -516,16 +516,16 @@ padding-left: 20px; margin-top: 7px
     vertical-align: middle;
 }
 .help-tooltip-nursery-advance{
-/*	margin-left: 0px;
-	position: relative;
-	left: -15px;
-	top: 5px; */
+    /*	margin-left: 0px;
+        position: relative;
+        left: -15px;
+        top: 5px; */
 }
 .germplasm-list-table, .germplasm-measurement-list-table, .advance-nursery-list-table, .check-germplasm-list-table,
 .inventory-germplasm-list-table
 {
-	max-height: 400px;
-	overflow: auto;
+    max-height: 400px;
+    overflow: auto;
 }
 
 .germplasm-tree-section {
@@ -533,37 +533,37 @@ padding-left: 20px; margin-top: 7px
 }
 
 .germplasm-measurement-list-table thead th, .germplasm-list-table thead th{
-   text-align: left;
+    text-align: left;
 }
 .germplasm-measurement-list-table td  {
-   vertical-align: middle;
+    vertical-align: middle;
 }
 .germplasm-measurement-list-table td input {
-   font-size: 10px;
+    font-size: 10px;
 }
-.variates{	
+.variates{
 }
 .factors{
-	background-color: #a4a4a4
+    background-color: #a4a4a4
 }
 .lead {
     font-size: 10pt;
 }
 .btn-file, a.fileupload-exists{
-	padding: 8.5px 12px;
+    padding: 8.5px 12px;
 }
 .fileupload-exists{
-	padding: 0px;
+    padding: 0px;
 }
 
 /* For appearance */
 .component {
-	line-height: 1.5em;
-	margin: 0 auto;
-	width: 90%;
-	max-width: 1000px;
-	overflow: hidden;
-	max-height: none;
+    line-height: 1.5em;
+    margin: 0 auto;
+    width: 90%;
+    max-width: 1000px;
+    overflow: hidden;
+    max-height: none;
 }
 table.make-sticky{
     border-collapse: collapse;
@@ -594,10 +594,10 @@ table.make-sticky{
     white-space: nowrap;
 }
 .sticky-wrap tbody th {
-	/*background-color: #2ea879;*/
+    /*background-color: #2ea879;*/
 }
 .sticky-wrap tbody tr:nth-child(2n-1) {
-   /* background-color: #f5f5f5;*/
+    /* background-color: #f5f5f5;*/
     transition: all .125s ease-in-out;
 }
 .sticky-wrap tbody tr:hover {
@@ -606,67 +606,67 @@ table.make-sticky{
 /**/
 /* For appearance */
 .sticky-wrap {
-	overflow-x: auto;
-	overflow-y: hidden;
-	position: relative;
-	margin: 3em 0;
-	width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    position: relative;
+    margin: 3em 0;
+    width: 100%;
 }
 .sticky-wrap .sticky-thead,
 .sticky-wrap .sticky-col,
 .sticky-wrap .sticky-intersect {
-	opacity: 0;
-	position: absolute;
-	top: 0;
-	left: 0;
-	transition: all .125s ease-in-out;
-	z-index: 50;
-	width: auto; /* Prevent table from stretching to full size */
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: all .125s ease-in-out;
+    z-index: 50;
+    width: auto; /* Prevent table from stretching to full size */
 }
 .sticky-col{
-	z-index:9999;
+    z-index:9999;
 }
-	.sticky-wrap .sticky-thead {
-		box-shadow: 0 0.25em 0.1em -0.1em rgba(0,0,0,.125);
-		z-index: 100;
-		width: 100%; /* Force stretch */
-	}
-	.sticky-wrap .sticky-intersect {
-		opacity: 1;
-		z-index: 150;
+.sticky-wrap .sticky-thead {
+    box-shadow: 0 0.25em 0.1em -0.1em rgba(0,0,0,.125);
+    z-index: 100;
+    width: 100%; /* Force stretch */
+}
+.sticky-wrap .sticky-intersect {
+    opacity: 1;
+    z-index: 150;
 
-	}
-		.sticky-wrap .sticky-intersect th {
-			background-color: #666;
-			color: #eee;
-		}
+}
+.sticky-wrap .sticky-intersect th {
+    background-color: #666;
+    color: #eee;
+}
 .sticky-wrap td,
 .sticky-wrap th {
-	box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 .sticky-col th{
-	 background-color: #31bc86;
+    background-color: #31bc86;
 }
 
 .sticky-col tbody th {
-	background-color: #2ea879;
+    background-color: #2ea879;
 }
 
 /* Not needed for sticky header/column functionality */
 td.user-name {
-	text-transform: capitalize;
+    text-transform: capitalize;
 }
 .sticky-wrap.overflow-y {
-	overflow-y: auto;
-	/*max-height: 70vh;*/
-	max-height: 500px;
+    overflow-y: auto;
+    /*max-height: 70vh;*/
+    max-height: 500px;
 }
 .datepicker th{
-	background-color: #FFFFFF;
+    background-color: #FFFFFF;
 }
 .add_top_padding{
-	padding-top: 10px;
+    padding-top: 10px;
 }
 
 .add-top-padding-small {
@@ -686,20 +686,20 @@ td.user-name {
 }
 
 td.nurseryLevelVariableSetting {
-	vertical-align: top;
-	padding-top: 10px;
+    vertical-align: top;
+    padding-top: 10px;
 }
 div.possibleValuesDiv{
-	padding-bottom: 5px;
+    padding-bottom: 5px;
 }
 #addVariablesSettingBody #ontology-values-tab-li, #addVariablesSettingBody #ontology-usage-tab-li{
-	display: none;
+    display: none;
 }
 .select-variable{
-	display: none;
+    display: none;
 }
 .variable-detail-info{
-	display: none;
+    display: none;
 }
 
 .var-names {
@@ -711,10 +711,10 @@ div.possibleValuesDiv{
 
 #addVariablesSettingBody .select-variable
 {
-	display: block;
+    display: block;
 }
 #ontologyBrowserTree{
-	height: 350px;
+    height: 350px;
 }
 /*
 #addVariablesSettingBody #ontologyBrowserTree{
@@ -725,42 +725,42 @@ div.possibleValuesDiv{
 }
 */
 #addVariablesSettingBody{
-	padding-bottom: 0px;
+    padding-bottom: 0px;
 }
 .addVariable-footer{
-	margin-top: 0px;
+    margin-top: 0px;
 }
 .row{
-	margin-right: 0px;
+    margin-right: 0px;
 }
 .select2-container {
-  width: 260px;
+    width: 260px;
 }
 #plotLevelSettings td, #baselineTraitSettings td{
-	word-wrap: break-word;
+    word-wrap: break-word;
 }
 .label-bold{
-	font-weight: 600;
+    font-weight: 600;
 }
 
 .trialEnvironmentDiv{
-	max-height: 500px;
-	min-height: 0px;
-	max-width: 100%;
-	min-width: 100%;
-	overflow: auto;
-	overflow-x: auto;
-	padding: 0;
-	margin: 0;
+    max-height: 500px;
+    min-height: 0px;
+    max-width: 100%;
+    min-width: 100%;
+    overflow: auto;
+    overflow-x: auto;
+    padding: 0;
+    margin: 0;
 }
 table .even, div.DTFC_LeftHeadWrapper table, div.DTFC_LeftFootWrapper table, div.DTFC_RightHeadWrapper table, div.DTFC_RightFootWrapper table, table.DTFC_Cloned tr.even {
     background-color: #f0eeee;
 }
 table tbody tr.germplasmSelectedRow, .germplasmSelectedRow td{
-	background-color: #BED6B2;
+    background-color: #BED6B2;
 }
 table tbody tr.checkGermplasmSelectedRow, .checkGermplasmSelectedRow td{
-	background-color: #BED6B2;
+    background-color: #BED6B2;
 }
 table.table-with-scroll, table.table-with-scroll-create, table.table-with-scroll-treatment, table.table-with-scroll-inventory  {
     display: table;
@@ -790,66 +790,66 @@ table.table-with-scroll-treatment tr, table.table-with-scroll-inventory tr{
     display: table;
 }
 table.table-with-scroll thead tr th:first-child, table.table-with-scroll thead tr th:last-child {
-	width: 5%;
+    width: 5%;
 }
 table.table-with-scroll tbody tr td:first-child, table.table-with-scroll tbody tr td:last-child {
-	width: 5%;
+    width: 5%;
 }
 table.table-with-scroll-create thead tr th:first-child {
-	width: 1%;
+    width: 1%;
 }
 table.table-with-scroll-create tbody tr td:last-child {
-	width: 10%;
+    width: 10%;
 }
 table.table-with-scroll thead tr th:nth-child(2), table.table-with-scroll thead tr th:nth-child(3) {
-	width: 47%;
+    width: 47%;
 }
 table.table-with-scroll tbody tr td:nth-child(2), table.table-with-scroll tbody tr td:nth-child(3) {
-	width: 46%;
+    width: 46%;
 }
 table.table-with-scroll-create thead tr th:nth-child(2){
-	width: 8%;
+    width: 8%;
 }
 table.table-with-scroll-create thead tr th:nth-child(3) {
-	width: 7%;
+    width: 7%;
 }
 table.table-with-scroll-create tbody tr td:nth-child(2), table.table-with-scroll-create tbody tr td:nth-child(3) {
-	width: 37%;
+    width: 37%;
 }
 table.table-with-scroll-inventory thead tr th:nth-child(1) {
-	width: 10%;
+    width: 10%;
 }
 table.table-with-scroll-inventory thead tr th:nth-child(2) {
-	width: 12%;
+    width: 12%;
 }
 table.table-with-scroll-inventory thead tr th:nth-child(3) {
-	width: 18%;
+    width: 18%;
 }
 table.table-with-scroll-inventory thead tr th:nth-child(4) {
-	width: 15%;
+    width: 15%;
 }
 table.table-with-scroll-inventory thead tr th:nth-child(5) {
-	width: 5%;
+    width: 5%;
 }
 table.table-with-scroll-inventory thead tr th:nth-child(6) {
-	width: 16%;
+    width: 16%;
 }
 table.table-with-scroll-inventory thead tr th:nth-child(7) {
-	width: 12%;
+    width: 12%;
 }
 div.sectionContainer {
     overflow-x: hidden;
     padding-top: 6pt;
 }
 .variable-details{
-	max-height: 250px;
-	overflow-y: auto;
+    max-height: 250px;
+    overflow-y: auto;
 }
 #specifyCheckSection .spinedit{
-	top: 5px;
+    top: 5px;
 }
 .date-input{
-	width: 100px;
+    width: 100px;
 }
 
 .dropdown-submenu{position:relative;}
@@ -860,32 +860,32 @@ div.sectionContainer {
 .dropdown-submenu.pull-left{float:none;}.dropdown-submenu.pull-left>.dropdown-menu{left:-100%;margin-left:10px;-webkit-border-radius:6px 0 6px 6px;-moz-border-radius:6px 0 6px 6px;border-radius:6px 0 6px 6px;}
 
 #inventory-germplasm-list {
-      min-height: 500px;
-    }
+    min-height: 500px;
+}
 .table-with-scroll-inventory th, .table-with-scroll-inventory td{
-	text-align: center;
+    text-align: center;
 }
 .image-padding{
-	padding-top:0px;
+    padding-top:0px;
 }
 .browse-nursery-action, .browse-germplasm-action{
-	padding-left: 4px;
+    padding-left: 4px;
 }
 .image-padding-with-text{
-	float: left;
-	padding-right: 5px;
+    float: left;
+    padding-right: 5px;
 }
 .disable-image{
-	opacity: 0.5
+    opacity: 0.5
 }
 #study-details{
-	padding-top: 10px;
+    padding-top: 10px;
 }
 #study-tabs{
-	min-height: 250px;
-	background-color: #f6f6f6;
-	border:1px solid #e4e4e4;
-	border-top: 0px;
+    min-height: 250px;
+    background-color: #f6f6f6;
+    border:1px solid #e4e4e4;
+    border-top: 0px;
 }
 #study-tab-headers  > li > a,
 #study-tab-headers  > li > a:hover,
@@ -903,15 +903,15 @@ div.sectionContainer {
 }
 #study-tab-headers .close
 {
-	padding-left: 10px;
-	margin-top: -2px;
+    padding-left: 10px;
+    margin-top: -2px;
 }
 
 #create-nursery-tabs{
-	min-height: 460px;
-	background-color: #f6f6f6;
-	border:1px solid #e4e4e4;
-	border-top: 0px;
+    min-height: 460px;
+    background-color: #f6f6f6;
+    border:1px solid #e4e4e4;
+    border-top: 0px;
 }
 #create-nursery-tab-headers  > li > a,
 #create-nursery-tab-headers  > li > a:hover,
@@ -929,10 +929,10 @@ div.sectionContainer {
 }
 
 .fb-tabs{
-	/*min-height: 460px;*/
-	background-color: #f6f6f6;
-	border:1px solid #e4e4e4;
-	border-top: 0px;
+    /*min-height: 460px;*/
+    background-color: #f6f6f6;
+    border:1px solid #e4e4e4;
+    border-top: 0px;
 }
 .fb-tabs-headers  > li > a,
 .fb-tabs-headers  > li > a:hover,
@@ -950,10 +950,10 @@ div.sectionContainer {
 }
 
 #check-germplasm-list, #imported-germplasm-list {
-  min-height: 300px;
+    min-height: 300px;
 }
 .btn{
-	font-weight: bold;
+    font-weight: bold;
 }
 
 .control-label img,
@@ -970,7 +970,7 @@ div.sectionContainer {
 }
 
 .control-label-bold{
-	font-weight: bold;
+    font-weight: bold;
 }
 .delete-icon {
     background:url(../img/delete-icon.png) left top;
@@ -990,7 +990,7 @@ div.sectionContainer {
 }
 #check-table  .select2-container.form-control,
 .germplasm-measurement-list-table .select2-container.form-control{
-	 height: 24px;
+    height: 24px;
 }
 #check-table  .select2-chosen,
 #check-table .select2-choice > span:first-child,
@@ -1005,11 +1005,11 @@ div.sectionContainer {
 }
 
 .dl-horizontal dt {
-	padding: 4px;
+    padding: 4px;
 }
 
 .dl-horizontal dd {
-	padding: 4px;
+    padding: 4px;
 }
 
 .fbk-mandatory {
@@ -1019,133 +1019,133 @@ div.sectionContainer {
 }
 
 .fbk-open-button-left-margin{
-	margin-left: 20px;
+    margin-left: 20px;
 }
 .fbk-save-button-left-margin{
-	margin-left: 50px;
+    margin-left: 50px;
 }
 .nav-tabs li a{
-	font-weight: bold;
+    font-weight: bold;
 }
 
 a.fbk-edit-experiment{
-	background-image: url('../img/edit.png');
-	display:block;
+    background-image: url('../img/edit.png');
+    display:block;
     height:20px;
     text-align: left;
     background-repeat:no-repeat;
     width: 25px;
 }
 .DTFC_LeftBodyLiner{
-	overflow-x: hidden;
+    overflow-x: hidden;
 }
 .DTFC_LeftWrapper .table-curved  > *:first-child > *:first-child > *:last-child {
     border-top-right-radius: 0px;
 }
 .modal-popover .popover{
-	width: 500px;
+    width: 500px;
 }
 .modal-popover .popover-title{
-	height: 30px;
-	background-color: #e9e9e9;
-	font-weight: bold;
+    height: 30px;
+    background-color: #e9e9e9;
+    font-weight: bold;
 }
 .list-details{
-	display: none;
+    display: none;
 }
 .list-details-show{
-	display: block;
+    display: block;
 }
 .fbk-dropdown-select-highlight{
-	/*background-color: #428bca;*/
-	color: #000000;
+    /*background-color: #428bca;*/
+    color: #000000;
 }
 .fbk-dropdown-select-fade{
-	opacity: 0.5;
+    opacity: 0.5;
 }
 .fbk-float-right{
-	float: right;
+    float: right;
 }
 .fbk-float-right-with-top-pos{
-	float: right;
-	position:relative;
-	top: -10px;
+    float: right;
+    position:relative;
+    top: -10px;
 }
 .fbk-close-tab, .fbk-close-dataset-tab{
-	padding-left: 10px;
+    padding-left: 10px;
 }
 
 /* Measurements Tab */
 
 .mdt-header {
-	height: 46px;
+    height: 46px;
 }
 
 .mdt-header > div {
-	height: 30px;
+    height: 30px;
 }
 
 .mdt-header .dataTables_length,
 .mdt-header .dataTables_info {
-	float: left;
+    float: left;
 }
 .mdt-header .mdt-filtering,
 .mdt-header .mdt-columns {
-	float: right;
+    float: right;
 }
 
 .mdt-header .dataTables_info {
-	padding: 0;
+    padding: 0;
 }
 
 .mdt-header .mdt-filtering-label,
 .mdt-header .dataTables_info {
-	height: 30px;
-	line-height: 30px;
-	vertical-align: middle;
+    height: 30px;
+    line-height: 30px;
+    vertical-align: middle;
 }
 
 .mdt-header .dataTables_length,
 .mdt-header .mdt-filtering-label {
-	margin-right: 15px;
+    margin-right: 15px;
 }
 
 .mdt-header .dataTables_filter {
-	margin-right: 20px;
+    margin-right: 20px;
 }
 
 .dataTables_wrapper .dataTables_paginate {
-	margin-top: 16px;
-	margin-bottom: 10px;
+    margin-top: 16px;
+    margin-bottom: 10px;
 }
 .fbk-right-button-drop-down{
-	right: 0; 
-	left: auto;
+    right: 0;
+    left: auto;
 }
 .fbk-label-overflow{
-	overflow:hidden;
+    overflow:hidden;
     text-overflow:ellipsis;
     width:100%;
 }
 .fbk-span-overflow{
-	overflow:hidden;
-	white-space:nowrap;
-	text-overflow:ellipsis;
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
 }
 .fbk-import-upload-file{
-	margin-right: 20px;
+    margin-right: 20px;
 }
 
 .modal-backdrop.in {
     opacity: 0.5;
 }
 .advance-nursery-list-table table th, .advance-nursery-list-table table td{
-	text-align: left; 
-	vertical-align: middle
+    text-align: left;
+    vertical-align: middle
 }
-.advance-nursery-list-table table td.fbk-advance-check-box, 
+.advance-nursery-list-table table td.fbk-advance-check-box,
 .advance-nursery-list-table table th.fbk-advance-check-box, .fbk-advance-check-box{
-	text-align: center;
+    text-align: center;
 }
 
 .enable-pointer-events {
@@ -1157,29 +1157,31 @@ a.fbk-edit-experiment{
     padding-left: 3pt; padding-right: 3pt; padding-bottom: 6pt;
 }
 .tooltip-arrow {
- display: none;
+    display: none;
 }
 .fbk-delete-link{
-	width: 30px;
+    width: 30px;
 }
 .modal-footer{
-	border-top: none;
+    border-top: none;
 }
 .fbk-modal-title{
-	font-weight: 700;
-	font-size: 17px;
+    font-weight: 700;
+    font-size: 17px;
 }
 .fbk-study-tree-title{
-	padding-top: 7px;
+    padding-top: 7px;
 }
-.modal-body .glyphicon-remove{
-	font-size: 16px;
+.modal-body .close {
+    font-size: 16px;
+    top: -10px;
+    left: 15px;
 }
 .breeding-method-note{
-	margin-top: 7px;
+    margin-top: 7px;
 }
 .breeding-method-note span{
-	margin-left: 0;
+    margin-left: 0;
 }
 
 .nopadding {
@@ -1201,18 +1203,18 @@ a.fbk-edit-experiment{
 }
 
 textarea {
-   resize: none;
+    resize: none;
 }
 input::-ms-clear {
     width: 0;
     height: 0;
 }
 .fbk-hide{
-	display: none;
+    display: none;
 }
 .fbk-icon-header{
-	padding-bottom:5px; 
-	padding-right: 10px;
+    padding-bottom:5px;
+    padding-right: 10px;
 }
 
 .reduce-padding {
@@ -1228,9 +1230,9 @@ textarea.form-control {
 
 input[type="text"], input[type="password"], .ui-autocomplete-input, textarea, .uneditable-input,
 .select2-container .select2-choices .select2-search-field input, .select2-container .select2-choice, .select2-container .select2-choices {
-	color: #333333;
-	font-size: 13px;
-	font-family: 'Open Sans', 'Segoe UI','Helvetica Neue', Arial, sans-serif;
+    color: #333333;
+    font-size: 13px;
+    font-family: 'Open Sans', 'Segoe UI','Helvetica Neue', Arial, sans-serif;
 }
 
 .select2-dropdown-open.select2-drop-above [class^="select2-choice"] {
@@ -1243,9 +1245,6 @@ input[type="text"], input[type="password"], .ui-autocomplete-input, textarea, .u
     background: no-repeat 100% -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, #fff), color-stop(0.99, #eee))
 }
 
-.input-group .btn {
-    font-size: 14px;
-}
 
 /* move the search icon to the fron and set the starting caret position after the icon */
 .select2-search input {
@@ -1278,4 +1277,29 @@ label[data-toggle="collapse"],
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+.s2-nosearch-icon input {
+    padding-left: 4px;
+    background: linear-gradient(top, #fff 85%, #eee 99%);
+    background-image: none;
+}
+
+/* -- */
+
+.section-toggle,
+label[data-toggle="collapse"],
+.delete-icon,
+.ui-draggable {
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.input-group-btn > .btn {
+    font-size: 14px;
 }

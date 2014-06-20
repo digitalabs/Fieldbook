@@ -2317,8 +2317,8 @@ function validateStartEndDateBasic() {
 	var startDate = $("#" + getJquerySafeId("basicDetails.value2")).val();
 	var endDate = $("#" + getJquerySafeId("basicDetails.value4")).val();
 
-	startDate = startDate == null ? '' : startDate;
-	endDate = endDate == null ? '' : endDate;
+	startDate = startDate == null ? '' : startDate.replace(/-/g, "");
+	endDate = endDate == null ? '' : endDate.replace(/-/g, "");
 
 	if (startDate === '' && endDate === '')
 		return true;

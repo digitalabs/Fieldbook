@@ -16,10 +16,11 @@
 				<table th:if="*{not #lists.isEmpty(importedCheckGermplasm)}" class="table-curved table-condensed check-germplasm-list-items">
 					<thead>
 						<tr>
-							<th style="text-align: left; vertical-align: middle" th:utext="#{nursery.import.header.designation}">.Designation</th>
-							<th style="text-align: left; vertical-align: middle" th:utext="#{nursery.import.header.check}">.Check</th>
+							<th data-col-name="desig" style="text-align: left; vertical-align: middle" th:utext="#{nursery.import.header.designation}">.Designation</th>
+							<th data-col-name="check" style="text-align: left; vertical-align: middle" th:utext="#{nursery.import.header.check}">.Check</th>
 						</tr>
 					</thead>
+					 
 					<tbody th:remove="all-but-first">
 						<tr th:each="gid, row : *{importedCheckGermplasm}" th:attr="data-entry=${gid.entryId}" th:attrappend="data-gid=${gid.gid},data-index=${gid.index}" class="checkRow">
 
@@ -38,6 +39,7 @@
 							<td>.2</td>
 						</tr>
 					</tbody>
+					  
 				</table>
 			</div>
 		</div>
@@ -53,12 +55,20 @@
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
 	/*globals showPostPage*/
-	
+	var dataSelectedCheckGermplasmList = /*[[${checkListDataTable}]]*/ [];
 	$( document ).ready(function() {
-		'use strict';
-		$('.checklist-select').select2({minimumResultsForSearch: 20});
-		selectedCheckListDataTable = new BMS.Fieldbook.SelectedCheckListDataTable('.check-germplasm-list-items', '.check-germplasm-list-data-table');
+		'use strict';		
+        $('.checklist-select').select2({minimumResultsForSearch: 20});
+		selectedCheckListDataTable = new BMS.Fieldbook.SelectedCheckListDataTable('.check-germplasm-list-items', '.check-germplasm-list-data-table', dataSelectedCheckGermplasmList);
 		
 	});
+	/*
+	function showCheckSelect(domElemName){
+		'use strict';
+		$(domElemName).removeClass('fbk-hide');
+		$(domElemName).select2({minimumResultsForSearch: 20});
+		$(domElemName).siblings('a').remove();
+	}
+	*/
 	//]]>
 </script>

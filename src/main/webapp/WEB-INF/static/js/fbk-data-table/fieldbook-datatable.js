@@ -186,7 +186,7 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 		});
 
 		this.germplasmDataTable = $(tableIdentifier).dataTable({
-			"data": dataList,
+			data: dataList,
 			columns: columns,
 			columnDefs: columnsDef,
 			scrollY: '500px',
@@ -212,8 +212,7 @@ BMS.Fieldbook.GermplasmListDataTable = (function($) {
 				if(totalPages === 1){
 					$(parentDiv +' .fbk-page-div').addClass('fbk-hide');
 				}
-				$(parentDiv).removeClass('fbk-hide-opacity');
-				
+				$(parentDiv).removeClass('fbk-hide-opacity');				
 			}
 		});
 		
@@ -240,12 +239,62 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 	 * @param {string} parentDiv parentdiv of that contains the table
 	 * @param {dataList} json representation of the data to be displayed
 	 */
-	var dataTableConstructor = function SelectedCheckListDataTable(tableIdentifier, parentDiv) {
+	var dataTableConstructor = function SelectedCheckListDataTable(tableIdentifier, parentDiv, dataList) {
 		'use strict';
 		
-		var checkDataTable;				
+		var columns = [],
+		columnsDef = [],
+		checkDataTable;		
+		
+		$(tableIdentifier + ' thead tr th').each(function() {
+			columns.push({data: $(this).data('col-name')});
+			if ($(this).data('col-name') == 'desig') {
+				// For designation
+				columnsDef.push({
+					targets: columns.length - 1,
+					data: $(this).html(),
+					render: function(data, type, full, meta) {
+						return '<a class="desig-link" href="javascript: void(0)" ' +
+							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
+							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
+					}
+				});
+			}else if ($(this).data('col-name') == 'check') {
+				// For designation
+				columnsDef.push({
+					targets: columns.length - 1,
+					data: $(this).html(),
+					render: function(data, type, full, meta) {
+						var fieldName = 'importedCheckGermplasm['+(meta.row)+'].check',
+							count = 0,
+							isSelected = '',
+							actualVal = '',
+							domElem = '<select class="fbk-hide" id="selectedCheck'+(meta.row)+'" name="'+fieldName+'">'+
+									'<option value="">Please Choose</option>'; 
+									
+						for(count = 0 ; count < full.checkOptions.length ; count++){
+							isSelected = '';
+							if(full.checkOptions[count].id == full.check){
+								isSelected = 'selected';
+								actualVal = full.checkOptions[count].description;
+							}
+							domElem += '<option '+isSelected+' data-code="'+full.checkOptions[count].name+'" value="'+full.checkOptions[count].id+'">'+full.checkOptions[count].description+'</option>';							
+						}
+						
+						domElem += '</select>';
+								
+						return '<a href="javascript: showCheckSelect(&quot;#selectedCheck'+(meta.row)+'&quot;)">'+actualVal+'</a>' + domElem;
+					}
+				});
+			}
+		});
 
-		this.checkDataTable = $(tableIdentifier).dataTable({			
+
+		this.checkDataTable = $(tableIdentifier).dataTable({	
+			/*data: dataList,
+			columns: columns,
+			columnDefs: columnsDef,
+			*/
 			scrollY: '500px',
 			scrollX: '100%',
 			scrollCollapse: true,
@@ -253,6 +302,9 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 		  iDisplayLength: 100,		  
 		  fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {							
 				//$('td', nRow).attr('nowrap','nowrap');
+			  	//$('.checklist-select').select2({minimumResultsForSearch: 20});
+		        //$(nRow).find('select').select2({minimumResultsForSearch: 20, width: 'copy'});
+			  //$('td', nRow).attr('nowrap','nowrap');
 				return nRow;
 			},
 		  fnInitComplete: function(oSettings, json) {
@@ -261,10 +313,9 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 				if(totalPages === 1){
 					$(parentDiv +' .fbk-page-div').addClass('fbk-hide');
 				}
-								
-			}
+		  	}
 		});
-		
+		//this.checkDataTable.$('select').select2({minimumResultsForSearch: 20});
 		SelectedCheckListDataTable.prototype.getDataTable = function()
 		{
 		    return this.checkDataTable;

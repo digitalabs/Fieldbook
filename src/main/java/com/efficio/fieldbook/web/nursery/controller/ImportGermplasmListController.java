@@ -344,6 +344,17 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             	data.addAll(germplasmListManager.getGermplasmListDataByListId(listId, 0, count));
             List<ImportedGermplasm> list = transformGermplasmListDataToImportedGermplasm(data, checkId);
             
+            List<Map<String, Object>> dataTableDataList = new ArrayList();
+        	for(ImportedGermplasm germplasm : list){
+            	Map<String, Object> dataMap = new HashMap();            	
+				dataMap.put("desig", germplasm.getDesig().toString());
+				dataMap.put("gid", germplasm.getGid().toString());
+				dataMap.put("check", germplasm.getCheck().toString()); 
+				dataMap.put("checkOptions", checksList);
+        		dataTableDataList.add(dataMap);
+            }
+
+        	
             form.setImportedCheckGermplasm(list);
             
             ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
@@ -358,6 +369,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             getUserSelection().setImportValid(true);
             
             model.addAttribute("checkLists", checksList);
+            model.addAttribute("checkListDataTable", dataTableDataList);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
@@ -462,6 +474,16 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             
             form.setImportedCheckGermplasm(list);
             
+            List<Map<String, Object>> dataTableDataList = new ArrayList();
+        	for(ImportedGermplasm germplasm : list){
+            	Map<String, Object> dataMap = new HashMap();            	
+				dataMap.put("desig", germplasm.getDesig().toString());
+				dataMap.put("gid", germplasm.getGid().toString());
+				dataMap.put("check", germplasm.getCheck().toString());
+				dataMap.put("checkOptions", checksList);
+        		dataTableDataList.add(dataMap);
+            }
+            
             ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
             importedGermplasmList.setImportedGermplasms(list);
             mainInfo.setImportedGermplasmList(importedGermplasmList);
@@ -475,6 +497,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             getUserSelection().setImportValid(true);
             
             model.addAttribute("checkLists", checksList);
+            model.addAttribute("checkListDataTable", dataTableDataList);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }

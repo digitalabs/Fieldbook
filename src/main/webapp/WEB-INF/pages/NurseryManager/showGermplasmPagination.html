@@ -77,11 +77,11 @@
 
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
-	var dataList = /*[[${listDataTable}]]*/ [];	
+	var dataGermplasmList = /*[[${listDataTable}]]*/ [];	
 	$( document ).ready(function() {
 		
 		'use strict';
-		germplasmDataTable = new BMS.Fieldbook.GermplasmListDataTable('.germplasm-list-items', '.germplasm-list-data-table', dataList);
+		germplasmDataTable = new BMS.Fieldbook.GermplasmListDataTable('.germplasm-list-items', '.germplasm-list-data-table', dataGermplasmList);
 		//console.log(germplasmDataTable.getDataTable());
 		
 		setSpinnerMaxValue();

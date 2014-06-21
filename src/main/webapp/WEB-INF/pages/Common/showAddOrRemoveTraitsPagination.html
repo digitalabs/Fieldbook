@@ -1,8 +1,7 @@
 <div class="btn-group mdt-columns">
-	<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
-		<span>Show/Hide Columns</span>
-	</button>
-	<ul class="dropdown-menu measurement-dropdown-menu" role="menu"  th:object="${createNurseryForm}">
+	<i class="glyphicon glyphicon-th dropdown-toggle fbk-show-hide-grid-column" data-toggle="dropdown"></i>
+
+	<ul class="dropdown-menu measurement-dropdown-menu fbk-right-button-drop-down" role="menu"  th:object="${createNurseryForm}">
 		<li th:each="measurementVariable, rowIndex : *{arrangeMeasurementVariables}" >
 			<a href="javascript: void(0)"
 			th:text="${measurementVariable.name}"

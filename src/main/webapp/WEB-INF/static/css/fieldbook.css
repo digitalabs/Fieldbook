@@ -1097,7 +1097,9 @@ a.fbk-edit-experiment{
 .mdt-header .mdt-columns {
     float: right;
 }
-
+.mdt-filtering input.form-control{
+	float: right;
+}
 .mdt-header .dataTables_info {
     padding: 0;
 }
@@ -1312,4 +1314,8 @@ label[data-toggle="collapse"],
 	position: relative; 
 	top: -6px;
 	width: 100%;
+}
+.fbk-show-hide-grid-column{
+	margin-top: 8px;
+	margin-right: 10px;
 }

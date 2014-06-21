@@ -120,6 +120,8 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     @Autowired
     public MessageSource messageSource;
     
+    private static String DEFAULT_CHECK_VALUE = "C";
+    
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
      */
@@ -314,14 +316,14 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             
             List<Enumeration> checksList = ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
             String checkId =  "";
-            /*
+            
             for(Enumeration enumVar : checksList){
-            	if(enumVar.getName().equalsIgnoreCase("C")){
+            	if(enumVar.getName().equalsIgnoreCase(DEFAULT_CHECK_VALUE)){
             		checkId = enumVar.getId().toString();
             		break;
             	}
             }
-            */
+            
             List<GermplasmListData> data = new ArrayList<GermplasmListData>();
             //for(int i = 0 ; i < 20 ; i++)
             	data.addAll(germplasmListManager.getGermplasmListDataByListId(listId, 0, count));
@@ -403,7 +405,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             List<Enumeration> checksList = ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
             String checkId =  null;
             for(Enumeration enumVar : checksList){
-            	if(enumVar.getName().equalsIgnoreCase("CHECK")){
+            	if(enumVar.getName().equalsIgnoreCase(DEFAULT_CHECK_VALUE)){
             		checkId = enumVar.getId().toString();
             		break;
             	}

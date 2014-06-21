@@ -6,14 +6,14 @@
 		<input type="hidden" id="totalNumberOfChecks" th:value="*{#lists.size(importedCheckGermplasm)}"/>
 
 		<!-- case 1: no data means no table -->
-		<div th:if="*{paginatedImportedCheckGermplasm == null or #lists.isEmpty(paginatedImportedCheckGermplasm)}">
+		<div th:if="*{importedCheckGermplasm == null or #lists.isEmpty(importedCheckGermplasm)}">
 			<span class="noGermplasmListIndicator" th:text="#{nursery.import.no.germplasm.list}">No Germplasm list</span>
 		</div>
 
 		<!-- case 3: basic view of the importedGermplasm -->
-		<div th:if="*{paginatedImportedCheckGermplasm != null and not #lists.isEmpty(paginatedImportedCheckGermplasm)}">
-			<div class="check-germplasm-list-table">
-				<table th:if="*{not #lists.isEmpty(paginatedImportedCheckGermplasm)}" class="my-class table table-curved table-condensed check-germplasm-list-items">
+		<div th:if="*{importedCheckGermplasm != null and not #lists.isEmpty(importedCheckGermplasm)}">
+			<div class="check-germplasm-list-table-old check-germplasm-list-data-table">
+				<table th:if="*{not #lists.isEmpty(importedCheckGermplasm)}" class="table-curved table-condensed check-germplasm-list-items">
 					<thead>
 						<tr>
 							<th style="text-align: left; vertical-align: middle" th:utext="#{nursery.import.header.designation}">.Designation</th>
@@ -21,15 +21,15 @@
 						</tr>
 					</thead>
 					<tbody th:remove="all-but-first">
-						<tr th:each="gid, row : *{paginatedImportedCheckGermplasm}" th:attr="data-entry=${gid.entryId}" th:attrappend="data-gid=${gid.gid},data-index=${gid.index}" class="checkRow">
+						<tr th:each="gid, row : *{importedCheckGermplasm}" th:attr="data-entry=${gid.entryId}" th:attrappend="data-gid=${gid.gid},data-index=${gid.index}" class="checkRow">
 
-							<td style="text-align: left; vertical-align: middle" th:class="${row.even}? 'even' : 'odd'">
+							<td style="text-align: left; vertical-align: middle" >
 								<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${gid.desig}" th:attr="data-gid=${gid.gid}" th:attrappend="data-desig=${gid.desig}">.2</a>
 							</td>
-							<td align="left" th:class="${row.even}? 'even' : 'odd'">
-								<select th:field="*{paginatedImportedCheckGermplasm[__${row.index}__].check}" class="form-control checklist-select">
+							<td align="left">
+								<select th:field="*{importedCheckGermplasm[__${row.index}__].check}" class="form-control checklist-select">
 									<option value="">Please Choose</option>
-									<option th:each="type: ${checkLists}" th:value="${type.id}" th:text="${type.description}"></option>
+									<option th:each="type: ${checkLists}"  th:attr="data-code=${type.name}"  th:value="${type.id}" th:text="${type.description}"></option>
 								</select>
 							</td>
 						</tr>
@@ -43,11 +43,8 @@
 		</div>
 		<div class="row col-xs-12 col-md-12">
 			<div id="check-germplasm-list-reset-button" class="pull-left">
-	            <a style="margin-top: 20px;" href="javascript: resetCheckList()" class="btn btn-default">Clear</a>
-	        </div>
-			<div th:if="*{importedCheckGermplasm != null and not #lists.isEmpty(importedCheckGermplasm)}">
-				<div id="check-germplasm-list-pagination"></div>
-			</div>
+	            <a style="margin-top: 5px;" href="javascript: resetCheckList()" class="btn btn-default">Clear</a>
+	        </div>			
 		</div>
 	</form>
 </div>
@@ -56,26 +53,12 @@
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
 	/*globals showPostPage*/
-
-	var paginationCheckUrl = /*[[@{/NurseryManager/importGermplasmList/checkPage/}]]*/ '',
-		optionsCheck = {
-			currentPage: /*[[${importGermplasmListForm.currentCheckPage}]]*/ '',
-			totalPages: /*[[${importGermplasmListForm.totalCheckPages}]]*/ '',
-
-			alignment:'center',
-			useBootstrapTooltip:true,
-			onPageClicked: function(e,originalEvent,type,page){
-				'use strict';
-				showPostPage(paginationCheckUrl, optionsCheck.currentPage, page, 'check-germplasm-list', 'check-germplasm-list-form');
-			}
-		};
 	
 	$( document ).ready(function() {
 		'use strict';
-		if($('#check-germplasm-list-pagination') != null){
-			$('#check-germplasm-list-pagination').bootstrapPaginator(optionsCheck);
-		}
 		$('.checklist-select').select2({minimumResultsForSearch: 20});
+		selectedCheckListDataTable = new BMS.Fieldbook.SelectedCheckListDataTable('.check-germplasm-list-items', '.check-germplasm-list-data-table');
+		
 	});
 	//]]>
 </script>

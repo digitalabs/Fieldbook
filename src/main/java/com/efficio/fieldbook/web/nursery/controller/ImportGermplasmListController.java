@@ -181,11 +181,11 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     public String nextScreen(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form
             , BindingResult result, Model model) throws MiddlewareQueryException {
     		//start: section for taking note of the check germplasm
-    	 int previewPageNum = userSelection.getCurrentPageCheckGermplasmList();
-         if(form.getPaginatedImportedCheckGermplasm() != null){
- 	        for(int i = 0 ; i < form.getPaginatedImportedCheckGermplasm().size() ; i++){
- 	            ImportedGermplasm importedGermplasm = form.getPaginatedImportedCheckGermplasm().get(i);
- 	            int realIndex = ((previewPageNum - 1) * form.getResultPerPage()) + i;
+    	 
+         if(form.getImportedCheckGermplasm() != null){
+ 	        for(int i = 0 ; i < form.getImportedCheckGermplasm().size() ; i++){
+ 	            ImportedGermplasm importedGermplasm = form.getImportedCheckGermplasm().get(i);
+ 	            int realIndex = i;
  	            getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheck(importedGermplasm.getCheck());
  	            if (importedGermplasm.getCheck() != null && NumberUtils.isNumber(importedGermplasm.getCheck())) {
  	            	getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckId(Integer.parseInt(importedGermplasm.getCheck()));
@@ -277,7 +277,19 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             List<ImportedGermplasm> list = transformGermplasmListDataToImportedGermplasm(data, null);
             
             form.setImportedGermplasm(list);
-            
+            List<Map<String, String>> dataTableDataList = new ArrayList();
+        	for(ImportedGermplasm germplasm : list){
+            	Map<String, String> dataMap = new HashMap();            	
+				dataMap.put("position", germplasm.getIndex().toString());
+				dataMap.put("entry", germplasm.getEntryId().toString());
+				dataMap.put("desig", germplasm.getDesig().toString());
+				dataMap.put("gid", germplasm.getGid().toString());
+				dataMap.put("cross", germplasm.getCross().toString());
+				dataMap.put("source", germplasm.getSource().toString());
+				dataMap.put("entryCode", germplasm.getEntryCode().toString());    
+        		dataTableDataList.add(dataMap);
+            }
+
             ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
             importedGermplasmList.setImportedGermplasms(list);
             mainInfo.setImportedGermplasmList(importedGermplasmList);
@@ -288,8 +300,11 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
 
             getUserSelection().setImportedGermplasmMainInfo(mainInfo);
             getUserSelection().setImportValid(true);
-            model.addAttribute("checkLists", ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations());
             
+            
+            
+            model.addAttribute("checkLists", ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations());
+            model.addAttribute("listDataTable", dataTableDataList);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }

@@ -1118,7 +1118,7 @@ a.fbk-edit-experiment{
     margin-right: 20px;
 }
 
-.dataTables_wrapper .dataTables_paginate {
+.dataTables_wrapper .dataTables_paginate, .fbk-page-div .dataTables_paginate {
     margin-top: 16px;
     margin-bottom: 10px;
 }
@@ -1214,6 +1214,9 @@ input::-ms-clear {
 .fbk-hide{
     display: none;
 }
+.fbk-hide-opacity{
+    opacity: 0;
+}
 .fbk-icon-header{
     padding-bottom:5px;
     padding-right: 10px;
@@ -1304,4 +1307,9 @@ label[data-toggle="collapse"],
 
 .input-group-btn > .btn {
     font-size: 14px;
+}
+.fake-check-germplasm-list-items{
+	position: relative; 
+	top: -6px;
+	width: 100%;
 }

@@ -15,8 +15,8 @@
 <table th:object="${createNurseryForm}" id="measurement-table" width="100%" class="table-curved table-condensed" >
 	<thead>
 		<tr>
-			<th  data-term-id="Action" class="factors">Action</th>
-			<th th:attr="data-term-id=${measurementVariable.termId}"
+			<th nowrap="nowrap" data-term-id="Action" class="factors">Action</th>
+			<th nowrap="nowrap" th:attr="data-term-id=${measurementVariable.termId}"
 			th:class="${measurementVariable.factor == true} ? 'factors' : 'variates'"
 			th:each="measurementVariable, rowIndex : *{arrangeMeasurementVariables}" th:utext="${measurementVariable.name}">.variable name</th>
 
@@ -27,12 +27,12 @@
 <div class="row edit-experiment-section">
 </div>
 
-<script type="text/javascript" th:src="@{/static/js/nursery-manager/measurements-datatable.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/fbk-data-table/fieldbook-datatable.js}"></script>
 <script type='text/javascript' th:inline="javascript">
 //<![CDATA[
 	jQuery().ready(function() {
 		'use strict';
-		new BMS.NurseryManager.MeasurementsDataTable('#measurement-table', '/Fieldbook/Common/addOrRemoveTraits/data/table/ajax');
+		new  BMS.Fieldbook.MeasurementsDataTable('#measurement-table', '/Fieldbook/Common/addOrRemoveTraits/data/table/ajax');
 	});
 //]]>
 </script>

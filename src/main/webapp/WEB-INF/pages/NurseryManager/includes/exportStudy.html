@@ -19,22 +19,18 @@
 					</div>
 					<div class="row form-group">
 						<div class="col-xs-12 col-md-12">
-							<label class="control-label label-bold" th:text="#{nursery.export.note}"></label>
+							<label class="control-label" th:text="#{nursery.export.note}"></label>
 						</div>
 					</div>
-					<div class="row">
+					<div class="row form-group">
 						<div class="col-xs-12 col-md-12">
 							<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
 						</div>
 					</div>					
+					
 					<div class="row form-group">
 						<div class="col-xs-12 col-md-12">
-							&nbsp;
-						</div>
-					</div>
-					<div class="row form-group">
-						<div class="col-xs-12 col-md-12">
-							<label class="control-label h4" th:text="#{study.export.format.header}"></label>
+							<label class="control-label h4 label-bold" th:text="#{study.export.format.header}"></label>
 						</div>
 
 					</div>
@@ -55,6 +51,7 @@
 							</select>
 						</div>
 					</div>
+					<div class="row  form-group">&nbsp;</div>
 					<div class="row form-group">
 						<div class="col-xs-12 col-md-12">
 							<label class="control-label h4 label-bold" th:text="#{study.export.data.collection.header}"></label>

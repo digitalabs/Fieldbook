@@ -612,7 +612,7 @@ function submitSelectedVariables(variableType) {
 							'nurseryLevelSettings', variableType, "");
 				}
 				$('#addVariablesSettingModal').modal('hide');
-				
+				checkShowSettingsFormReminder();
 
 			}
 		});
@@ -1171,7 +1171,7 @@ function deleteVariable(variableType, variableId, deleteButton) {
 	if (hasMeasurementData == "0") {
 		// remove row from UI
 		deleteButton.parent().parent().remove();
-
+		checkShowSettingsFormReminder();
 		// remove row from session
 		$.ajax({
 			url : "/Fieldbook/NurseryManager/createNursery/deleteVariable/"
@@ -2545,5 +2545,20 @@ function addFakeCheckTable(){
 	}else if($('.germplasm-list-items tbody tr').length === 0 && $('#check-germplasm-list .fake-check-germplasm-list-items tbody tr').length == 1){
 		//we remove if there are no nursery check and the selected check is fake
 		$('#check-germplasm-list .fake-check-germplasm-list-items').remove();
+	}
+}
+function checkShowSettingsFormReminder(){
+	'use strict';
+	//we check management details if there are entries
+	if($('.nurseryLevelSettings .1st').length === 0){
+		$('.management-details-section-reminder').removeClass('fbk-hide');
+	}else{
+		$('.management-details-section-reminder').addClass('fbk-hide');
+	}
+	
+	if($('.nurseryConditionsSettings .1st').length === 0){
+		$('.constants-section-reminder').removeClass('fbk-hide');
+	}else{
+		$('.constants-section-reminder').addClass('fbk-hide');
 	}
 }

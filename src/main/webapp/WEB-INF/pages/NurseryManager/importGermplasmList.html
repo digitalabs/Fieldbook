@@ -42,7 +42,22 @@
         </div>
 
         <div class="col-xs-4 col-md-4 nopadding">
-            <div id="check-germplasm-list" class="list-droppable check"></div>
+            <div id="check-germplasm-list" class="list-droppable check">            	
+			</div>
+			<table width="100%" class="table table-curved table-condensed fake-check-germplasm-list-items fbk-hide">
+				<thead>
+					<tr>
+						<th style="text-align: left; vertical-align: middle" th:utext="#{nursery.import.header.designation}">.Designation</th>
+						<th style="text-align: left; vertical-align: middle" th:utext="#{nursery.import.header.check}">.Check</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="even">&nbsp;</td>
+						<td class="even">&nbsp;</td>
+					</tr>						
+				</tbody>
+			</table>
         </div>
 
     </div>
@@ -241,7 +256,7 @@
 		/*globals Spinner, moveToTopScreen, getDisplayedTreeName, showSpecifyCheckSection, setSpinnerMaxValue*/
 		/*globals prevStartIndex, showErrorMessage,germplasmAddedAsCheck, openTreeType, sameListErr*/
 		/*globals changeBrowseGermplasmButtonBehavior, getJquerySafeId, displayGermplasmListTree, pleaseChooseFolder*/
-		/*globals openGermplasmListDetailsPopop*/
+		/*globals addFakeCheckTable, openGermplasmListDetailsPopop*/
 		/*exported startIndex,germplasmStartingEntry,importLocationUrl,importIframeOpened,overwriteChecksList*/
 		/*exported confirmReplaceList,resetGermplasmList,removeCheckFromList,openListTree,viewGermplasmLitDetails */
 		/*exported additionalLazyLoadUrl, chooseList*/
@@ -472,14 +487,15 @@
 		function resetCheckList() {
 			'use strict';
 			hideAddCol(false);
+            $('#check-germplasm-list').html('');
+
 			$.ajax({
 				url: '/Fieldbook/NurseryManager/importGermplasmList/resetCheckGermplasmDetails',
 				type: 'GET',
 				cache: false,
 				async: false,
 
-				success: function() {
-					$('#check-germplasm-list').html('<h3></h3>');
+				success: function() {					
 					addedGid = {};
 					showSpecifyCheckSection();
 					makeCheckDraggable(true);
@@ -488,6 +504,7 @@
 					lastDraggedChecksList = 0;
 				}
 			});
+			addFakeCheckTable();
 		}
 
 		function overwriteChecksList() {
@@ -577,9 +594,11 @@
 						// We clear the list in the check
 						resetCheckList();
 					}
+					addFakeCheckTable();
 				}
 			});
 		}
+		
 		function displayGermplasmDetails(listIdTemp){
 			'use strict';
 			if (lastDraggedChecksList === 0 && $('.check-germplasm-list-items tbody tr').length > 0){
@@ -613,6 +632,7 @@
 				success: function() {
 				}
 			});
+			addFakeCheckTable();
 		}
 
 		function isGidInCheckList(gid) {

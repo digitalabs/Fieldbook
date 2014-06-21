@@ -2537,3 +2537,13 @@ function submitGermplasmAndCheck() {
 		}
 	});
 }
+function addFakeCheckTable(){
+	'use strict';
+	if($('.germplasm-list-items tbody tr').length > 0 && $('.check-germplasm-list-items tbody tr').length == 0 && $('#check-germplasm-list .fake-check-germplasm-list-items tbody tr').length == 0){
+		//we add the fake table
+		$('.fake-check-germplasm-list-items').clone().removeClass('fbk-hide').appendTo('#check-germplasm-list');
+	}else if($('.germplasm-list-items tbody tr').length === 0 && $('#check-germplasm-list .fake-check-germplasm-list-items tbody tr').length == 1){
+		//we remove if there are no nursery check and the selected check is fake
+		$('#check-germplasm-list .fake-check-germplasm-list-items').remove();
+	}
+}

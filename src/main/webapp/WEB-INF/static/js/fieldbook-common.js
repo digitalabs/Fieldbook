@@ -2072,6 +2072,7 @@ function showListTreeToolTip(node, nodeSpan) {
 			$(listDetails).find('#list-date').html(data.date);
 			$(listDetails).find('#list-owner').html(data.owner);
 			$(listDetails).find('#list-type').html(data.type);
+			$(listDetails).find('#list-total-entries').html(data.totalEntries);
 			notes = data.notes == null ? '-' : data.notes;
 			$(listDetails).find('#list-notes').html(notes);
 

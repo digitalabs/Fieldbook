@@ -1043,8 +1043,12 @@ a.fbk-edit-experiment{
     border-top-right-radius: 0px;
 }
 .modal-popover .popover{
-    width: 500px;
+    min-width: 380px;
 }
+ .modal-popover .popover-label-padding, #openGermplasmListBody .label-padding{
+ 	display: inline-block;
+ 	min-width: 88px;
+ }
 .modal-popover .popover-title{
     height: 30px;
     background-color: #e9e9e9;

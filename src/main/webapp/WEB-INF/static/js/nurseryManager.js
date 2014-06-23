@@ -2193,11 +2193,9 @@ function addDetailsTab(studyId, title) {
 function determineIfShowCloseAllStudyTabs() {
 	'use strict';
 	if ($('#study-tab-headers li').length > 0) {
-		$('#closeAllStudytabs').css('display', 'block');
-		$('#study-details').css('display', 'block');
+		$('.review-nursery-details').removeClass('fbk-hide');
 	} else {
-		$('#closeAllStudytabs').css('display', 'none');
-		$('#study-details').css('display', 'none');
+		$('.review-nursery-details').addClass('fbk-hide');
 	}
 }
 
@@ -2277,6 +2275,11 @@ function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
 }
 function showSelectedTab(selectedTabName) {
 	'use strict';
+	if($('.import-study-data').data('data-import') === '1'){
+		showAlertMessage('', importSaveDataWarningMessage);
+		return;
+	}
+	
 	$("#create-nursery-tab-headers").show();
 	var tabs = $("#create-nursery-tabs").children();
 	for (var i = 0; i < tabs.length; i++) {

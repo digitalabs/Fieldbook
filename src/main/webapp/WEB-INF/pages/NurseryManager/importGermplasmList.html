@@ -472,7 +472,7 @@
 
 			hideAddCol(false);
 			$('#'+getDisplayedTreeName()).find('*').removeClass('dynatree-selected');
-			Spinner.play();
+			
 			$.ajax({
 				url: '/Fieldbook/NurseryManager/importGermplasmList/displayCheckGermplasmDetails/' + listId,
 				type: 'GET',

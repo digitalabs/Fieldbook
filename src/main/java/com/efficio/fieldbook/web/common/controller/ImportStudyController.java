@@ -63,6 +63,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
     private static final Logger LOG = LoggerFactory.getLogger(ImportStudyController.class);
     public static final String URL = "/ImportManager";
+    private String ADD_OR_REMOVE_TRAITS_HTML =  "/NurseryManager/addOrRemoveTraits";
 
     @Resource
     private UserSelection nurserySelection;
@@ -283,7 +284,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	
     	doRevertData(form);
     	
-        return super.showAjaxPage(model, "/NurseryManager/addOrRemoveTraits");
+        return super.showAjaxPage(model, ADD_OR_REMOVE_TRAITS_HTML);
     }
     
     private void doRevertData(CreateNurseryForm form){
@@ -378,7 +379,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	}
     	userSelection.setNewTraits(newTraits);
     	userSelection.setNewSelectionVariates(selectedVariates);
-        return super.showAjaxPage(model, "/NurseryManager/addOrRemoveTraits");
+        return super.showAjaxPage(model,ADD_OR_REMOVE_TRAITS_HTML);
     }
     
     @RequestMapping(value="/import/preview", method=RequestMethod.POST)
@@ -394,7 +395,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	newVariableList.addAll(traits);
     	form.setMeasurementVariables(newVariableList);
     	    	
-        return super.showAjaxPage(model, "/NurseryManager/addOrRemoveTraits");
+        return super.showAjaxPage(model, ADD_OR_REMOVE_TRAITS_HTML);
     }
     
     @ResponseBody

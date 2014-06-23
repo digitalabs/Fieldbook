@@ -1,12 +1,12 @@
 <div class="col-xs-7 col-md-7" xmlns:th="http://www.thymeleaf.org">
 	<!-- Modal -->
-	<div class="modal fade" id="addVariablesSettingModal" role="dialog" aria-labelledby="addVariablesSettingModal" aria-hidden="true">
+	<div class="modal fade nrm-vs-modal" id="addVariablesSettingModal" role="dialog" aria-labelledby="addVariablesSettingModal" aria-hidden="true">
 		<div class="modal-dialog modal-large">
 			<div class="modal-content">
 				<div class="modal-body" id="addVariablesSettingBody">
 					<div class="row form-group">
 						<div class="col-xs-11 col-md-11">
-							<label class="modal-title fbk-modal-title" id="heading-modal"></label>
+							<label class="modal-title fbk-modal-title"></label>
 						</div>
 						<div class="col-xs-1 col-md-1">
 							<button  id="closeAddVariablesSettingModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
@@ -67,7 +67,7 @@
 							<!-- details section -->
 							<div style="padding-top: 15px;" id="ontology-tabs">
 								<div id="ontology-details-tab">
-									<div class="col-xs-12 col-md-12" id="reminder-placeholder" th:text="#{ontology.browser.details.tab.reminder}">
+									<div class="col-xs-12 col-md-12 nrm-vs-hint-placeholder" th:text="#{ontology.browser.details.tab.reminder}">
 										Select a Standard Variable to view
 									</div>
 								</div>

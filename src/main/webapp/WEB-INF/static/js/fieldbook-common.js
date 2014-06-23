@@ -204,7 +204,7 @@ function createFieldMap(tableName) {
 		idList;
 	
 	if($('.import-study-data').data('data-import') === '1'){
-		showAlertMessage('', needSaveImportDataError);
+		showErrorMessage('', needSaveImportDataError);
 		return;
 	}
 
@@ -559,7 +559,7 @@ function createLabelPrinting(tableName) {
 		type;
 	
 	if($('.import-study-data').data('data-import') === '1'){
-		showAlertMessage('', needSaveImportDataError);
+		showErrorMessage('', needSaveImportDataError);
 		return;
 	}
 
@@ -849,7 +849,7 @@ function advanceNursery(tableName) {
 		idVal = $('#createNurseryMainForm #studyId').val();
 	
 	if($('.import-study-data').data('data-import') === '1'){
-		showAlertMessage('', needSaveImportDataError);
+		showErrorMessage('', needSaveImportDataError);
 		return;
 	}
 	

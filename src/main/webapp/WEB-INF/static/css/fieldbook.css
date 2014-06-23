@@ -1353,3 +1353,6 @@ label[data-toggle="collapse"],
 .fbk-discard-imported-data{
 	margin-bottom:10px;
 }
+.add-top-margin {
+	margin-top: 6px;
+}

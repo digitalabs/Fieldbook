@@ -132,7 +132,7 @@ public class EditNurseryController extends SettingsController {
                     buildRequiredVariablesFlag(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
                     userSelection.getStudyLevelConditions(), false);
             
-            List<SettingDetail> basicDetails = getBasicDetails(nurseryLevelConditions);
+            List<SettingDetail> basicDetails = getBasicDetails(nurseryLevelConditions, form);
             
             removeBasicDetailsVariables(nurseryLevelConditions);
             
@@ -208,7 +208,7 @@ public class EditNurseryController extends SettingsController {
      * @param nurseryLevelConditions the nursery level conditions
      * @return the basic details
      */
-    private List<SettingDetail> getBasicDetails(List<SettingDetail> nurseryLevelConditions) {
+    private List<SettingDetail> getBasicDetails(List<SettingDetail> nurseryLevelConditions, CreateNurseryForm form) {
         List<SettingDetail> basicDetails = new ArrayList<SettingDetail>();
         
         StringTokenizer token = new StringTokenizer(AppConstants.FIXED_NURSERY_VARIABLES.getString(), ",");
@@ -216,6 +216,14 @@ public class EditNurseryController extends SettingsController {
             Integer termId = Integer.valueOf(token.nextToken());
             for (SettingDetail setting : nurseryLevelConditions) {
                 if (termId.equals(setting.getVariable().getCvTermId())) {
+                    if (termId.equals(Integer.valueOf(TermId.STUDY_UID.getId()))) {
+                        try {
+                            form.setCreatedBy(fieldbookService.getPersonById(Integer.parseInt(setting.getValue())));
+                        }
+                        catch (MiddlewareQueryException e) {
+                            LOG.error(e.getMessage(), e);
+                        }
+                    }
                     basicDetails.add(setting);
                 }
             }
@@ -470,6 +478,7 @@ public class EditNurseryController extends SettingsController {
     	form.setBaselineTraitsSegment(AppConstants.SEGMENT_TRAITS.getString());
     	form.setSelectionVariatesSegment(AppConstants.SEGMENT_SELECTION_VARIATES.getString());
     	form.setCharLimit(Integer.parseInt(AppConstants.CHAR_LIMIT.getString()));
+    	
     }
     
     /**

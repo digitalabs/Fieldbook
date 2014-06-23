@@ -1356,3 +1356,4 @@ label[data-toggle="collapse"],
 .add-top-margin {
 	margin-top: 6px;
 }
+.dataTables_scrollHeadInner, .dataTables_scrollBody table, .dataTables_scrollHeadInner table { width:100% !important}

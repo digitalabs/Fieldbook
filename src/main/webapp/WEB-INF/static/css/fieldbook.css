@@ -1353,3 +1353,6 @@ label[data-toggle="collapse"],
 .fbk-discard-imported-data{
 	margin-bottom:10px;
 }
+
+
+.dataTables_scrollHeadInner, .dataTables_scrollBody table, .dataTables_scrollHeadInner table { width:100% !important}

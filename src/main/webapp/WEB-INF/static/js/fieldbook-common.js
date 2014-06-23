@@ -833,9 +833,16 @@ function openStudy(tableName) {
 }
 
 function advanceNursery(tableName) {
-	var count = 0;
-
-	idVal = $('#createNurseryMainForm #studyId').val();
+	'use strict';
+	
+	var count = 0, 
+		idVal = $('#createNurseryMainForm #studyId').val();
+	
+	if($('.import-study-data').data('data-import') === '1'){
+		showAlertMessage('', advanceNeedSaveImportDataError);
+		return;
+	}
+	
 	count++;
 	if (count !== 1) {
 		showMessage(advanceStudyError);

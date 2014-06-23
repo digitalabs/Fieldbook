@@ -125,6 +125,8 @@ public class AdvancingNurseryForm {
     
     private Integer plotVariateId;
     
+    private String errorInAdvance;
+    
 	/**
 	 * Gets the method id all.
 	 *
@@ -791,6 +793,20 @@ public class AdvancingNurseryForm {
 	 */
 	public void setPlotVariateId(Integer plotVariateId) {
 		this.plotVariateId = plotVariateId;
+	}
+
+		/**
+	 * @return the errorInAdvance
+	 */
+	public String getErrorInAdvance() {
+		return errorInAdvance;
+	}
+
+	/**
+	 * @param errorInAdvance the errorInAdvance to set
+	 */
+	public void setErrorInAdvance(String errorInAdvance) {
+		this.errorInAdvance = errorInAdvance;
 	}
 
 		/* (non-Javadoc)

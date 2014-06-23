@@ -1437,12 +1437,16 @@ function doAdvanceNursery() {
 		data: serializedData,
 		cache: false,
 		success: function(html) {
-			var listSize = $(html).find('.advance-list-size').text(),
+			var errorMessage = $(html).find('#errorInAdvance').val(),
+			    listSize = $(html).find('.advance-list-size').text(),
 				uniqueId,
 				close,
 				aHtml;
 
-			if (listSize === '0') {
+			if (errorMessage) {
+				showErrorMessage('page-advance-modal-message', errorMessage);
+			}
+			else if (listSize === '0') {
 				showErrorMessage('page-advance-modal-message', listShouldNotBeEmptyError);
 			} else {
 				$('#advanceNurseryModal').modal('hide');
@@ -1456,7 +1460,6 @@ function doAdvanceNursery() {
 				$('#create-nursery-tabs').append('<div class="info" id="advance-list' + uniqueId + '">' + html + '</div>');
 				showSelectedTab('advance-list' + uniqueId);
 			}
-
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			console.log('The following error occured: ' + textStatus, errorThrown);

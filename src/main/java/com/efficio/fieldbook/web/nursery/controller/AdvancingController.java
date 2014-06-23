@@ -289,14 +289,20 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         advancingNursery.setPlotVariateId(form.getPlotVariateId());
         advancingNursery.setMethodVariateId(form.getMethodVariateId());
         
-        importedGermplasmList = fieldbookService.advanceNursery(advancingNursery, userSelection.getWorkbook());
-        userSelection.setImportedAdvancedGermplasmList(importedGermplasmList);
-        form.setGermplasmList(importedGermplasmList);
-        form.setEntries(importedGermplasmList.size());
-        form.changePage(1);
-        long id = (new Date()).getTime();
-        getPaginationListSelection().addAdvanceDetails(Long.toString(id), form);
-        form.setUniqueId(id);
+        try {
+        	importedGermplasmList = fieldbookService.advanceNursery(advancingNursery, userSelection.getWorkbook());
+            userSelection.setImportedAdvancedGermplasmList(importedGermplasmList);
+            form.setGermplasmList(importedGermplasmList);
+            form.setEntries(importedGermplasmList.size());
+            form.changePage(1);
+            long id = (new Date()).getTime();
+            getPaginationListSelection().addAdvanceDetails(Long.toString(id), form);
+            form.setUniqueId(id);
+        } catch (MiddlewareQueryException e) {
+        	form.setErrorInAdvance(e.getMessage());
+        	form.setGermplasmList(new ArrayList<ImportedGermplasm>());
+        	form.setEntries(0);
+        }
     	return super.showAjaxPage(model, SAVE_ADVANCE_NURSERY_PAGE_TEMPLATE);
     }
     

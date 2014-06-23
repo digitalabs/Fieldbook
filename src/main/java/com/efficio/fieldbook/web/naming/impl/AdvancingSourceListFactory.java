@@ -103,10 +103,8 @@ public class AdvancingSourceListFactory {
 	                    		plantsSelected = getIntegerValue(row.getMeasurementDataValue(lineVariateId));
 	                    	}
 	                    }
-	                	if (plantsSelected != null && plantsSelected > 0) {
-			                rows.add(new AdvancingSource(germplasm, names, plantsSelected, breedingMethod, 
-			                					isCheck, nurseryName, season, locationAbbreviation));
-	                	}
+		                rows.add(new AdvancingSource(germplasm, names, plantsSelected, breedingMethod, 
+		                					isCheck, nurseryName, season, locationAbbreviation));
                     }
                 }
             }

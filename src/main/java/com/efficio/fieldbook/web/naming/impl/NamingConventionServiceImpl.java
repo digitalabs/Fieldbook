@@ -168,7 +168,9 @@ public class NamingConventionServiceImpl implements NamingConventionService {
     public List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList rows) throws MiddlewareQueryException {
         List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
         for (AdvancingSource row : rows.getRows()) {
-            if (row.getGermplasm() != null && !row.isCheck() && row.getPlantsSelected() != null && row.getBreedingMethod() != null) {
+            if (row.getGermplasm() != null && !row.isCheck() && row.getPlantsSelected() != null && row.getBreedingMethod() != null
+            		&& row.getPlantsSelected() > 0) {
+            	
             	Method method = row.getBreedingMethod();
             	String germplasmName = getGermplasmRootName(method.getSnametype(), row);
             	String expression = germplasmName + method.getSeparator() + method.getPrefix() + method.getCount() + method.getSuffix();

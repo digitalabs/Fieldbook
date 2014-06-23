@@ -153,6 +153,11 @@
                 </tr>
                 </thead>
                 <tbody>
+                <tr th:if="*{selectionVariatesVariables == null}" class="dummy-row">
+                	<td class="even">&nbsp;</td>
+                	<td class="even">&nbsp;</td>
+                	<td class="even">&nbsp;</td>
+                </tr>
                 <tr th:each="selectionVariatesVariable, rowStat : *{selectionVariatesVariables}">
                     <td style="text-align: center" th:class="${rowStat.even}? 'even fbk-delete-link' : 'odd fbk-delete-link'">
 									<span style="font-size: 16px;" th:if="${selectionVariatesVariable.deletable}" class="delete-icon"
@@ -288,6 +293,11 @@
                 </tr>
                 </thead>
                 <tbody>
+                <tr th:if="*{baselineTraitVariables == null}" class="dummy-row">
+                	<td class="even">&nbsp;</td>
+                	<td class="even">&nbsp;</td>
+                	<td class="even">&nbsp;</td>
+                </tr>
                 <tr class="baseline-traits" th:each="baselineTraitVariable, rowStat : *{baselineTraitVariables}">
                     <td style="text-align: center" th:class="${rowStat.even}? 'even fbk-delete-link' : 'odd fbk-delete-link'" >
 									<span style="font-size: 16px;" th:if="${baselineTraitVariable.deletable}" class="delete-icon"
@@ -483,7 +493,7 @@
                 actionBtn.tooltip('destroy');
                 actionBtn.removeClass('disabled');
             };
-            checkTraitsAndSelectionVariateTable('', false);
+
             checkShowSettingsFormReminder();
         });
         //]]>

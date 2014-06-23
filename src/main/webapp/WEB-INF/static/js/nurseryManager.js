@@ -590,12 +590,14 @@ function submitSelectedVariables(variableType) {
 							'plotLevelVariables', 'plotLevelSettings',variableType);
 					break;
 				case 3:
+					removeDummyRow('baselineTraitSettings');
 					createTableSettingVariables($.parseJSON(data),
 							'baselineTraitVariables', 'baselineTraitSettings',
 							variableType);
 					checkTraitsAndSelectionVariateTable('', false);
 					break;
 				case 6:
+					removeDummyRow('selectionVariatesSettings');
 					createTableSettingVariables($.parseJSON(data),
 							'selectionVariatesVariables',
 							'selectionVariatesSettings', variableType);
@@ -621,6 +623,14 @@ function submitSelectedVariables(variableType) {
 	} else {
 		showErrorMessage('', varInListMessage);
 	}
+}
+
+function removeDummyRow(tableId) {
+	$('#'+tableId).find('.dummy-row').hide();
+}
+
+function addDummyRow(tableId) {
+	$('#'+tableId).find('.dummy-row').show();
 }
 
 function replaceNameVariables() {
@@ -1166,7 +1176,7 @@ function deleteVariable(variableType, variableId, deleteButton) {
 			|| variableType == baselineTraitsSegment) {
 		hasMeasurementData = checkMeasurementData(variableType, variableId);
 	}
-
+	
 	// if no data for measurement rows is saved yet, proceed with delete
 	if (hasMeasurementData == "0") {
 		// remove row from UI
@@ -1181,6 +1191,13 @@ function deleteVariable(variableType, variableId, deleteButton) {
 			success : function() {
 			}
 		});
+		
+		//add dummy row to selection variates/traits if no record is left
+		if (variableType === 3 && $('#baselineTraitSettings tbody tr').length === 1) {
+			addDummyRow('baselineTraitSettings');
+		} else if (variableType === 6 && $('#selectionVariatesSettings tbody tr').length === 1) {
+			addDummyRow('selectionVariatesSettings');
+		}
 
 		// reinstantiate counters of ids and names
 		sortVariableIdsAndNames(variableType);
@@ -1218,6 +1235,13 @@ function proceedWithDelete() {
 		success : function() {
 		}
 	});
+	
+	//add dummy row to selection variates/traits if no record is left
+	if (variableType === 3 && $('#baselineTraitSettings tbody tr').length === 1) {
+		addDummyRow('baselineTraitSettings');
+	} else if (variableType === 6 && $('#selectionVariatesSettings tbody tr').length === 1) {
+		addDummyRow('selectionVariatesSettings');
+	}
 
 	// reinstantiate counters of ids and names
 	sortVariableIdsAndNames(variableType);

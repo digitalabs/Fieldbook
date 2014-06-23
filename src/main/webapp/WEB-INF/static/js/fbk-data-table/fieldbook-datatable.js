@@ -264,6 +264,7 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 				columnsDef.push({
 					targets: columns.length - 1,
 					data: $(this).html(),
+					width: '100px',
 					render: function(data, type, full, meta) {
 						var fieldName = 'importedCheckGermplasm['+(meta.row)+'].check',
 							count = 0,

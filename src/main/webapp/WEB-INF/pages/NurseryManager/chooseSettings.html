@@ -327,48 +327,43 @@
 
 		// FIXME Should not be using global variables or functions
 		/*global getIEVersion, getJquerySafeId, initializePossibleValuesCombo, setTimeout*/
-		/*global addCreateNurseryRequiredAsterisk, doOntologyTreeHighlight, treeDivId*/
-
-		// FIXME These variables should not be global. Dangerous to fix right now,
-		// because they are used in so many other files. Don't use ignore! This should be fixed!
+		/*global addCreateNurseryRequiredAsterisk, doOntologyTreeHighlight, treeDivId */
+		/*global checkTraitsAndSelectionVariateTable*/
 
 		/* jshint ignore:start */
-		var requiredErrorMessage = /*[[#{ontology.browser.modal.error}]]*/ '',
-				requiredSettingErrorMessage = /*[[#{nursery.create.nursery.required.setting}]]*/ '',
-				uniqueBookNameErrorMessage = /*[[#{nursery.create.already.exists}]]*/ '',
-				nurseryFieldsIsRequired = /*[[#{nursery.create.is.required}]]*/ '',
-				nurseryTraitsIsRequired = /*[[#{nursery.create.traits.is.required}]]*/ '',
-				nurseryGermplasmListIsRequired = /*[[#{nursery.create.germplasm.list.is.required}]]*/ '',
-				checkTypeIsRequired = /*[[#{nursery.create.check.type.is.required}]]*/ '',
-				disabledActionTooltipMessage = /*[[#{nursery.create.actions.is.disabled}]]*/,
-		// Labels for method and location
-				showFavoriteMethodLabel = /*[[#{show.favorite.method}]]*/ '',
-				showFavoriteLocationLabel = /*[[#{show.favorite.location}]]*/ '',
-				manageMethodLabel = /*[[#{nursery.managesettings.manage.method}]]*/ '',
-				manageLocationLabel = /*[[#{nursery.managesettings.manage.location}]]*/ '',
+		var nurseryFieldsIsRequired = /*[[#{nursery.create.is.required}]]*/ '',
+			nurseryGermplasmListIsRequired = /*[[#{nursery.create.germplasm.list.is.required}]]*/ '',
+			checkTypeIsRequired = /*[[#{nursery.create.check.type.is.required}]]*/ '',
 
-				varInListMessage = /*[[#{nursery.managesettings.variable.in.selected.list}]]*/ '',
-				idNameCounterpartAddedError = /*[[#{manage.settings.id.name.counterpart.added.error}]]*/ '',
-				valueNotNumeric = /*[[#{nursery.create.nursery.value.not.numeric}]]*/ '',
-				valueNotWIMinMax = /*[[#{nursery.create.nursery.value.not.within.min.max}]]*/ '',
+			// Labels for method and location
+			showFavoriteMethodLabel = /*[[#{show.favorite.method}]]*/ '',
+			showFavoriteLocationLabel = /*[[#{show.favorite.location}]]*/ '',
+			manageMethodLabel = /*[[#{nursery.managesettings.manage.method}]]*/ '',
+			manageLocationLabel = /*[[#{nursery.managesettings.manage.location}]]*/ '',
 
-				locationIframeOpened = false,
-				methodIframeOpened = false,
+			varInListMessage = /*[[#{nursery.managesettings.variable.in.selected.list}]]*/ '',
+			idNameCounterpartAddedError = /*[[#{manage.settings.id.name.counterpart.added.error}]]*/ '',
+			valueNotNumeric = /*[[#{nursery.create.nursery.value.not.numeric}]]*/ '',
+			valueNotWIMinMax = /*[[#{nursery.create.nursery.value.not.within.min.max}]]*/ '',
 
-				selectionVariatesSegment = 6,
-				baselineTraitsSegment = 3;
+			locationIframeOpened = false,
+			methodIframeOpened = false,
+
+			selectionVariatesSegment = 6,
+			baselineTraitsSegment = 3;
 		/* jshint ignore:end */
 
 		var locationId = '',
-				programLocationUrl = '',
-				programMethodUrl = '',
-				breedingMethodId = '',
-				importLocationUrl = '',
-				requiredFields = [],
-				startDateId = '',
-				endDateId = '',
+			programLocationUrl = '',
+			programMethodUrl = '',
+			breedingMethodId = '',
+			importLocationUrl = '',
+			requiredFields = [],
+			startDateId = '',
+			endDateId = '',
 
 			// Translations
+			disabledActionTooltipMessage = /*[[#{nursery.create.actions.is.disabled}]]*/ '',
 			mdLabel = /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
 			mdPlaceholder = /*[[#{nursery.reminder.add.nursery.settings}]]*/ '',
 			fdLabel = /*[[#{nursery.managesettings.add.plot.level.settings}]]*/ '',
@@ -403,7 +398,7 @@
 				$('.table-with-scroll-create').parent().addClass('variable-details');
 				$('.table-with-scroll-create').removeClass('table-with-scroll-create');
 			}
-			if ($('#requiredFields').val() !== ''){
+			if ($('#requiredFields').val() !== '') {
 				requiredFields = $('#requiredFields').val().split(',');
 			}
 
@@ -432,7 +427,7 @@
 
 			$('#folderNameSpan').html($('#folderName').val());
 
-			$.each($('.possibleValuesJson'), function (index, divElem){
+			$.each($('.possibleValuesJson'), function(index, divElem) {
 				var select2Index = $(divElem).attr('id').split('possibleValuesJson')[1];
 
 				if (parseInt($('#' + getJquerySafeId('studyLevelVariables' + select2Index +
@@ -448,7 +443,7 @@
 				}
 			});
 
-			$.each($('.possibleValuesJsonCons'), function (index, divElem){
+			$.each($('.possibleValuesJsonCons'), function(index, divElem) {
 				var select2Index = $(divElem).attr('id').split('possibleValuesJsonCons')[1];
 				initializePossibleValuesCombo($.parseJSON(divElem.innerHTML),
 								'#' + getJquerySafeId('nurseryConditions' + select2Index +
@@ -461,26 +456,26 @@
 			addCreateNurseryRequiredAsterisk();
 
 			//$('.help-tooltip-nursery').tooltip();
-			$('#srch-term').on('change', function(){
+			$('#srch-term').on('change', function() {
 				var data = $('#srch-term').select2('data');
 				doOntologyTreeHighlight(treeDivId, data.key);
 			});
 
 			/* GCP-8880 (tag change event to a var) */
 
-			$.each($('span.delete-icon'),function(){
+			$.each($('span.delete-icon'), function() {
 				this.onclick = null;
 			});
 
 			// re apply the behaviors using modified functions
-			$('#createNurseryForm').on('click','span.delete-icon',function(){
-
+			$('#createNurseryForm').on('click', 'span.delete-icon', function() {
 
 				if (document.disableActions !== undefined) {
-					if (!$('.fbk-float-right-with-top-pos .dropdown-toggle').hasClass("disabled")) {
+					if (!$('.fbk-float-right-with-top-pos .dropdown-toggle').hasClass('disabled')) {
 						document.initialEnabledStat = true;
-					} else
+					} else {
 						document.initialEnabledStat = false;
+					}
 
 					document.disableActions();
 					eval($(this).attr('onclick'));
@@ -488,34 +483,36 @@
 				}
 			});
 
-			$('#variateDeleteConfirmationModal').on('click','#cancelDelete',function(){
+			$('#variateDeleteConfirmationModal').on('click', '#cancelDelete', function() {
 				if (document.initialEnabledStat && document.enableActions !== undefined) {
 					document.enableActions();
 				}
 			});
 
-			$('#variateDeleteConfirmationModal').on('click','#continueDelete',function(){
-				if (document.disableActions !== undefined)
+			$('#variateDeleteConfirmationModal').on('click', '#continueDelete', function() {
+				if (document.disableActions !== undefined) {
 					document.disableActions();
+				}
 			});
 
-			$('#createNurseryForm').on('click','#addVariables',function(i,el){
-				if (document.disableActions !== undefined)
+			$('#createNurseryForm').on('click', '#addVariables', function() {
+				if (document.disableActions !== undefined) {
 					document.disableActions();
+				}
 			});
 
 			document.disableActions = function() {
 				var actionBtn = $('.fbk-action-btn');
 
-				actionBtn.removeAttr("data-toggle").addClass('disabled enable-pointer-events');
-				actionBtn.tooltip({ container: 'body', title: disabledActionTooltipMessage, placement : 'top' });
+				actionBtn.removeAttr('data-toggle').addClass('disabled enable-pointer-events');
+				actionBtn.tooltip({container: 'body', title: disabledActionTooltipMessage, placement: 'top'});
 
 			};
 
 			document.enableActions = function() {
 				var actionBtn = $('.fbk-action-btn');
 
-				actionBtn.attr("data-toggle","dropdown");
+				actionBtn.attr('data-toggle', 'dropdown');
 				actionBtn.tooltip('hide');
 				actionBtn.tooltip('destroy');
 				actionBtn.removeClass('disabled');

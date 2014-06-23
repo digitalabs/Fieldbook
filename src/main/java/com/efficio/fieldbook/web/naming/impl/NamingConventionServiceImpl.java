@@ -15,6 +15,8 @@ import org.generationcp.middleware.manager.GermplasmNameType;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
@@ -37,6 +39,9 @@ public class NamingConventionServiceImpl implements NamingConventionService {
     @Resource
     private ProcessCodeService processCodeService;
 
+	@Resource
+	private ResourceBundleMessageSource messageSource;
+	
     @Override
 	public List<ImportedGermplasm> advanceNursery(AdvancingNursery info,
 			Workbook workbook) throws MiddlewareQueryException {
@@ -186,7 +191,9 @@ public class NamingConventionServiceImpl implements NamingConventionService {
         return list;
     }
     
-    private String getGermplasmRootName(Integer snametype, AdvancingSource row) {
+    private String getGermplasmRootName(Integer snametype, AdvancingSource row)
+    throws MiddlewareQueryException {
+    	
     	String nameString = null;
     	List<Name> names = row.getNames();
     	if (names != null && !names.isEmpty()) {
@@ -209,7 +216,8 @@ public class NamingConventionServiceImpl implements NamingConventionService {
     	}
     	
     	if (nameString == null) {
-    		nameString = row.getGermplasm().getDesig();
+    		throw new MiddlewareQueryException(messageSource.getMessage("error.advancing.nursery.no.root.name.found", 
+    				new Object[] {row.getGermplasm().getDesig()}, LocaleContextHolder.getLocale())); 
     	}
     	
     	//If the root name is a cross string (contains one or more /s not enclosed within the range 

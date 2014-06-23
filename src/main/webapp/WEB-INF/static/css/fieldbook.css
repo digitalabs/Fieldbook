@@ -224,7 +224,6 @@ table .highlight td, table .field-map-highlight td{
     padding-top: 10px;
 }
 
-
 .table-curved {
     border-collapse: separate;
     border: solid #e4e4e4 1px;
@@ -274,6 +273,29 @@ table .highlight td, table .field-map-highlight td{
 .table-curved > :last-child > :last-child > :last-child {
     border-bottom-right-radius: 0px;
 }
+
+
+.dataTables_wrapper > div {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.dataTables_scrollHead {
+    background: #C8C6C6;
+}
+
+div.dataTables_scrollHead table.table-curved,
+div.dataTables_scrollBody table.table-curved {
+    border-radius: 0;
+    border: none;
+}
+
+#measurement-table_wrapper > div > div:nth-child(2) {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+
 .form-group {
     margin-bottom: 6px;
 }

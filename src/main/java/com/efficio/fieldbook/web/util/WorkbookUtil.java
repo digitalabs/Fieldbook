@@ -152,11 +152,6 @@ public class WorkbookUtil {
 		return newTraits;
 	}
 	
-	public static void removeNewlyAddedTraits(List<MeasurementVariable> variables, List<MeasurementRow> observations) {
-		List<MeasurementVariable> newTraits = getAddedTraitVariables(variables, observations);
-		
-	}
-	
 	public static void clearNewlyAddedImportTraits(List<MeasurementVariable> variables, List<MeasurementRow> observations) {
 		List<MeasurementVariable> newTraits = getAddedTraitVariables(variables, observations);
 		List<Integer> indexForRemoval = new ArrayList<Integer>();

@@ -296,7 +296,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
      * @return the setting detail
      * @throws MiddlewareQueryException the middleware query exception
      */
-    private SettingDetail createSettingDetail(int id, String name) throws MiddlewareQueryException {
+    protected SettingDetail createSettingDetail(int id, String name) throws MiddlewareQueryException {
             String variableName = "";
             StandardVariable stdVar = getStandardVariable(id);
             if (name != null && !name.isEmpty()) {

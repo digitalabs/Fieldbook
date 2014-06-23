@@ -212,11 +212,13 @@ public class EditNurseryController extends SettingsController {
         List<SettingDetail> basicDetails = new ArrayList<SettingDetail>();
         
         StringTokenizer token = new StringTokenizer(AppConstants.FIXED_NURSERY_VARIABLES.getString(), ",");
+        boolean isStudyUIDFound = false;
         while(token.hasMoreTokens()){
             Integer termId = Integer.valueOf(token.nextToken());
             for (SettingDetail setting : nurseryLevelConditions) {
                 if (termId.equals(setting.getVariable().getCvTermId())) {
                     if (termId.equals(Integer.valueOf(TermId.STUDY_UID.getId()))) {
+                    	isStudyUIDFound = true;
                         try {
                             form.setCreatedBy(fieldbookService.getPersonById(Integer.parseInt(setting.getValue())));
                         }
@@ -226,8 +228,15 @@ public class EditNurseryController extends SettingsController {
                     }
                     basicDetails.add(setting);
                 }
-            }
-            
+            }            
+        }
+        if(!isStudyUIDFound){
+        	try {
+				basicDetails.add(createSettingDetail(TermId.STUDY_UID.getId(), null));
+			} catch (MiddlewareQueryException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }
         return basicDetails;
     }

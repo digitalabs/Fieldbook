@@ -10,17 +10,17 @@ function doOntologyTreeHighlight(treeName, nodeKey){
 	for(count = 0 ; count < elem.length ; count++){
 		if(key != '') {
 			key = key + '_';
-		}			
-		
+		}
+
 		key = key + elem[count];
 		$('.'+key).addClass('highlight');
 	}
-	
+
 	var node = $('#'+treeName).dynatree('getTree').getNodeByKey(nodeKey);
-	
+
 	if(node != null && node.data.lastChildren == true){
 		//call ajax
-		standardVariableKey = elem[elem.length-1];		
+		standardVariableKey = elem[elem.length-1];
 		processTab(node.data.title, standardVariableKey);
 	}else{
 		clearAndAppendOntologyDetailsTab('', '');
@@ -32,8 +32,8 @@ function searchOntologyTreeNodeWithName(treeName, name) {
     if (name == null) {
         return null;
     }
-    
-    var searchFrom = $('#'+treeName).dynatree('getRoot');    
+
+    var searchFrom = $('#'+treeName).dynatree('getRoot');
 
     var match = null;
 
@@ -48,7 +48,7 @@ function searchOntologyTreeNodeWithName(treeName, name) {
 	        }
 	    }
     });
-    return match;        	
+    return match;
 };
 
 function formatResult(myItem) {
@@ -67,36 +67,36 @@ function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId){
 	if(treeData == null){
 		return;
 	}
-	termSuggestions = $.parseJSON(searchTreeData);	
+	termSuggestions = $.parseJSON(searchTreeData);
 	termSuggestions_obj = [];
 	termSuggestionsMap = {};
 		//initialize the arrays that would contain json data for the combos
 			$.each(termSuggestions, function( index, value ) {
-				var obj = { 		
-						
-						  'text' : value.value,	
+				var obj = {
+
+						  'text' : value.value,
 						  'parentTitle' : value.parentTitle,
 						  'type' : value.type,
 						  'key': value.key,
 						  'id': value.key
 					};
-				termSuggestions_obj.push(obj);  
+				termSuggestions_obj.push(obj);
 				termSuggestionsMap[obj.key] = obj;
 			});
-	
+
 	//getOntologySuffix(id)
 			$('#'+searchDivId).select2('destroy');
 			$('#'+searchDivId).select2({
 				minimumResultsForSearch: 20,
-				query: function (query) {	
+				query: function (query) {
 						var data = {results: sortByKey(termSuggestions_obj, "text")}, i, j, s;
 						//return the array that matches
 						data.results = $.grep(data.results,function(item,index) {
-						return ($.fn.select2.defaults.matcher(query.term,item.text));          
+						return ($.fn.select2.defaults.matcher(query.term,item.text));
 				});
           /*
           if (data.results.length === 0){
-        	  data.results.unshift({id:query.term,text:query.term});	        	 
+        	  data.results.unshift({id:query.term,text:query.term});
           }
           */
             query.callback(data);
@@ -109,9 +109,9 @@ function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId){
          formatSelection: formatResult
 
     });
-	
+
 	var json = $.parseJSON(treeData);
-	
+
 	$('#' + treeName).dynatree({
 	      checkbox: false,
 	      // Override class name for checkbox icon:
@@ -135,7 +135,7 @@ function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId){
 	        doOntologyTreeHighlight(treeName, node.data.key);
 	      },
 	      onSelect: function(select, node) {
-	        // Display list of selected nodes	    	
+	        // Display list of selected nodes
 	        doOntologyTreeHighlight(treeName, node.data.key);
 	      },
 	      onKeydown: function(node, event) {
@@ -150,7 +150,7 @@ function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId){
 //Tab functions
 function processTab(variableName, variableId) {
 	'use strict';
-	viewTabs(variableName, variableId);	
+	viewTabs(variableName, variableId);
 }
 
 function showSelectedTab(selectedTabName) {
@@ -171,15 +171,15 @@ function showSelectedTab(selectedTabName) {
 function clearAndAppendOntologyDetailsTab(variableName, html){
 	'use strict';
 	if(html != ''){
-		$('#ontology-detail-tabs').empty().append(html);		
+		$('#ontology-detail-tabs').empty().append(html);
 		var varDetails = variableDetailHeader + ' ' + variableName;
 		$('#variable-details').html(varDetails);
-	}		
+	}
 	else{
 		// we dont clear if there is an information tab
 		if($('#addVariablesSettingBody').length == 0){
 			$("#ontology-detail-tabs").empty();
-			$("#variable-details").html('');	
+			$("#variable-details").html('');
 			$('#ontology-detail-tabs').empty().append($('.variable-detail-info').html());
 		}else{
 			//we set the reminder
@@ -192,9 +192,9 @@ function clearAndAppendOntologyDetailsTab(variableName, html){
 			else if($("#heading-modal").text() == addBaselineTraits)
 					$('#reminder-placeholder').html(reminderTraits);
 			else if ($("#heading-modal").text() == addTreatmentFactors)
-					$("#reminder-placeholder").html(reminderTreatmentFactors);			
-		}		
-	}		
+					$("#reminder-placeholder").html(reminderTreatmentFactors);
+		}
+	}
 }
 
 function viewTabs(variableName, variableId) {
@@ -206,17 +206,17 @@ function viewTabs(variableName, variableId) {
 		type: 'GET',
 		async: true,
 		success: function(html) {
-			clearAndAppendOntologyDetailsTab(variableName, html);				
+			clearAndAppendOntologyDetailsTab(variableName, html);
 			if($('#selectedStdVarId').length != 0){
-				$('#selectedStdVarId').val(variableId);				
+				$('#selectedStdVarId').val(variableId);
 			}
 			if($('#selectedName').length != 0){
-				$('#selectedName').val(variableName);				
+				$('#selectedName').val(variableName);
 			}
 			isSearchTab = false;
 		},
-		error: function(jqXHR, textStatus, errorThrown){ 
-			console.log("The following error occured: " + textStatus, errorThrown); 
+		error: function(jqXHR, textStatus, errorThrown){
+			console.log("The following error occured: " + textStatus, errorThrown);
 		},
 		complete: function() {
 		}
@@ -237,18 +237,18 @@ function doSave(combo) {
 		    success: function(data){
 			    if (data.status == '1') {
 			    	//add the newly inserted ontology in its corresponding dropdown
-			    	recreateCombo(combo, data);	
+			    	recreateCombo(combo, data);
 			    	showSuccessMessage(data.successMessage);
 			    	if(data.addedNewTrait == '1'){
-			    		//we need to recreate the combo for the traitClass			    		
+			    		//we need to recreate the combo for the traitClass
 			    		var newData = {id:data.traitId, name:data.traitName, definition:data.traitDefinition};
-			    		recreateCombo('TraitClass', newData);			    		
+			    		recreateCombo('TraitClass', newData);
 			    	}
 		       	} else {
 		       		showMessage(data.errorMessage);
 		       	}
 		   }
-		});		
+		});
 		$('#page-message-modal').html("");
 	}
 }
@@ -269,27 +269,27 @@ function setCorrespondingTraitClass(propertyId){
 			    		var count = 0;
 				    	for(count = 0 ; count < traitClassesSuggestions_obj.length ; count++){
 				    		if(traitClassesSuggestions_obj[count].id == data.traitId){
-				    			dataVal = traitClassesSuggestions_obj[count];			    			
+				    			dataVal = traitClassesSuggestions_obj[count];
 				    			break;
-				    		}			    			
+				    		}
 				    	}
 			    	}
 			    	$('#cropOntologyId').val(data.cropOntologyId);
 			    	$('#comboManagePropTraitClass').select2('data', dataVal).trigger('change');
 		       	}
-		   }		   
+		   }
 		});
 	}
 }
 
 function getOntologySuffix(id){
 	'use strict';
-	return (id > -1 ? ' (Shared)' : ''); 
+	return (id > -1 ? ' (Shared)' : '');
 }
 
 //function to create the select2 combos
 function initializeVariable(variableSuggestions, variableSuggestions_obj, description, name, allowTypedValues) {
-	
+
 	if (name.indexOf('TraitClass') > -1 && variableSuggestions_obj.length == 1 || variableSuggestions_obj.length == 0) {
 		//initialize the arrays that would contain json data for the combos
 		if (description == "description") {
@@ -297,26 +297,26 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 				variableSuggestions_obj.push({ 'id' : value.id,
 					  'text' : value.name + getOntologySuffix(value.id),
 					  'description' : value.description
-				});  
-		  		
+				});
+
 			});
-		} else if (name == "Property"){		
+		} else if (name == "Property"){
 			$.each(variableSuggestions, function( index, value ) {
 				variableSuggestions_obj.push({ 'id' : value.id,
 					  'text' : value.name + getOntologySuffix(value.id),
 					  'description' : value.definition,
 					  'traitId' : value.isAId,
 					  'cropOntologyId' : value.cropOntologyId
-				});  
-		  		
+				});
+
 			});
 		} else {
 			$.each(variableSuggestions, function( index, value ) {
 				variableSuggestions_obj.push({ 'id' : value.id,
 					  'text' : value.name + getOntologySuffix(value.id),
 					  'description' : value.definition
-				});  
-		  		
+				});
+
 			});
 		}
 	}
@@ -324,20 +324,20 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	//if combo to create is the variable name, add an onchange event to fill up all the fields of the selected variable
 	if (name == "VariableName") {
 		$("#combo" + name).select2({
-	        query: function (query) {	
+	        query: function (query) {
 	          var data = {results: sortByKey(variableSuggestions_obj, "text")}, i, j, s;
 	          // return the array that matches
 	          data.results = $.grep(data.results,function(item,index) {
 	            return ($.fn.select2.defaults.matcher($.trim(query.term),$.trim(item.text)));
-	          
+
 	          });
 	          if (data.results.length === 0){
-	        	  data.results.unshift({id:query.term,text:query.term});	        	 
+	        	  data.results.unshift({id:query.term,text:query.term});
 	          }
-	          
+
 	            query.callback(data);
 	        }
-	
+
 	    }).on("change", function(){
 	    	getStandardVariableDetails($("#combo" + name).select2("data").id, $("#combo" + name).select2("data").text);
 	    	var tempId = $("#combo" + name).select2("data").id
@@ -345,7 +345,7 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	    		enableFieldsForUpdate();
 	    		$("#traitClassBrowserTree").dynatree("enable");
 	    	}
-	    	
+
 	    });
 	} else {
 		//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
@@ -355,15 +355,15 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	          // return the array that matches
 	          data.results = $.grep(data.results,function(item,index) {
 	            return ($.fn.select2.defaults.matcher($.trim(query.term),$.trim(item.text)));
-	          
+
 	          });
 	          if(allowTypedValues == true){
-	        	  if (data.results.length === 0) 
-	        		  data.results.unshift({id:query.term,text:query.term});  
+	        	  if (data.results.length === 0)
+	        		  data.results.unshift({id:query.term,text:query.term});
 	          }
-	            query.callback(data);	            
+	            query.callback(data);
 	        }
-	
+
 	    }).on("change", function(){
 	    	$("#" + lowerCaseFirstLetter(name) + "Description").val($("#combo"+name).select2("data").description);
 	    	if(name == 'TraitClass'){
@@ -374,7 +374,7 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 	    	}
 	    	if (name.match("^Manage")) {
 	    		$("#" + "page-message-" + lowerCaseFirstLetter(name) + "-modal").html("");
-	    		if ($("#combo"+name).select2("data").description) { 
+	    		if ($("#combo"+name).select2("data").description) {
 	    			//edit mode
 			    	$("#" + lowerCaseFirstLetter(name) + "Id").val($("#combo"+name).select2("data").id);
 			    	$("#" + lowerCaseFirstLetter(name) + "Name").val($("#combo"+name).select2("data").text.replace(" (Shared)", ""));
@@ -382,39 +382,39 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 		    		$("#btnUpdate" + name).show();
 		    		$("#btnDelete" + name).show();
 		    		$("#" + lowerCaseFirstLetter(name) + "NameText").html($("#combo"+name).select2("data").text.replace(" (Shared)", ""));
-		    		
+
 		    		//add the loading of the linked variables here
 		    		if (allowTypedValues) {
 		    			retrieveLinkedVariables(name, $("#combo"+name).select2("data").id);
 		    		}
-		    		
+
 		    		if(name == 'ManageTraitClass'){
 		    			//setCorrespondingTraitClass($("#combo"+name).select2("data").id);
 		    			var count = 0;
 		    			var traitId = $("#combo"+name).select2("data").id;
 		    			if(traitId != null && traitId != ''){
 		    				var nodeKeyFull = getNodeKeyFromTraitClass(traitId,'manageParentTraitClassBrowserTree')
-		    				
+
 		    				var elem = nodeKeyFull.split("_");
 		    				var count = 0;
 		    				var prevTraitId;
-		    				for(count = 0 ; count < elem.length ; count++){		    					
-		    					
+		    				for(count = 0 ; count < elem.length ; count++){
+
 		    					if(traitId == elem[count])
 		    						break;
 		    					else
 		    						prevTraitId = elem[count];
 		    				}
-		    				
+
 		    				for(count = 0 ; count < traitClassesSuggestions_obj.length ; count++){
 					    		if(traitClassesSuggestions_obj[count].id == prevTraitId){
-					    			dataVal = traitClassesSuggestions_obj[count];			    			
+					    			dataVal = traitClassesSuggestions_obj[count];
 					    			break;
-					    		}			    			
-					    	}					    	
+					    		}
+					    	}
 					    	$("#comboManageParentTraitClass").select2('data', dataVal).trigger('change');
-		    			}		    							    	
-		    		}		    				    		
+		    			}
+		    		}
 		    		if(name == 'ManageProperty'){
 		    			setCorrespondingTraitClass($("#combo"+name).select2("data").id);
 		    			if (parseInt($("#combo"+name).select2("data").id) > 0) {
@@ -423,7 +423,7 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 		    				enablePropertyFields();
 		    			}
 		    		}
-		    		
+
 	    		} else { //add mode
 	    			if(name != 'ManageProperty'){
 	    				clearForm(lowerCaseFirstLetter(name) + "Form");
@@ -434,9 +434,9 @@ function initializeVariable(variableSuggestions, variableSuggestions_obj, descri
 		    		$("#btnUpdate" + name).hide();
 		    		$("#btnDelete" + name).hide();
 		    		$("#" + lowerCaseFirstLetter(name) + "NameText").html($("#combo"+name).select2("data").id);
-		    		$("#manageLinkedVariableList").html("");		    		
+		    		$("#manageLinkedVariableList").html("");
 	    		}
-	    	}	    	
+	    	}
 	    });
 	}
 }
@@ -458,10 +458,10 @@ function retrieveLinkedVariables(ontologyType, ontologyId){
 		url: ontologyUrl + "retrieve/linked/variable/" + ontologyType + "/"+ontologyId,
 		type: "get",
 		success: function(html) {
-			$("#manageLinkedVariableList").empty().append(html);			
+			$("#manageLinkedVariableList").empty().append(html);
 		}
 	});
-	
+
 }
 
 function lowerCaseFirstLetter(string){
@@ -473,34 +473,34 @@ function loadOntologyCombos(){
 	if($('#preselectVariableId').val() == 0 && $('#fromPopup').val() == 1){
 		varNameChecking = variableNameSuggestions;
 		variableNameSuggestions = {};
-		variableNameSuggestions_obj = [];		
+		variableNameSuggestions_obj = [];
 	}
 	initializeVariable(variableNameSuggestions, variableNameSuggestions_obj, "description", "VariableName", true);
-	
+
 	traitClassesSuggestions_obj.push({ 'id' : 0,
 		  'text' : "-- All --",
 		  'description' : "All",
-	});  
-	
+	});
+
 	initializeVariable(traitClassesSuggestions, traitClassesSuggestions_obj, "description", "TraitClass", false);
 	initializeVariable(propertySuggestions, propertySuggestions_obj, "definition", "Property", false);
 	initializeVariable(methodSuggestions, methodSuggestions_obj, "definition", "Method", false);
 	initializeVariable(scaleSuggestions, scaleSuggestions_obj, "definition", "Scale", false);
-}		
+}
 
 function loadTraitOntologyCombos(){
-	//re create combos	
+	//re create combos
 	traitClassesSuggestions_obj.push({ 'id' : 0,
 		  'text' : "-- All --",
 		  'description' : "All",
-	});  
+	});
 	//initialize main tree
 	initializeVariable(traitClassesSuggestions, traitClassesSuggestions_obj, "description", "TraitClass", false);
 	//initialize main tree
 	loadTraitClassTree("traitClassBrowserTree", "comboTraitClass", "traitClassDescription", treeClassData, 'comboTraitClass');
-		
+
 	$("#traitClassBrowserTree").dynatree("getTree").reload();
-	
+
 }
 
 function clearFields() {
@@ -512,7 +512,7 @@ function clearFields() {
 function recreateCombo(combo, data) {
 	var suggestions_obj = [];
 	var description = null;
-	
+
 	//add the new data in the collection
 	if (combo == "TraitClass") {
 		traitClassesSuggestions_obj.push({ 'id' : data.id,
@@ -539,11 +539,11 @@ function recreateCombo(combo, data) {
 		});
 		suggestions_obj = sortByKey(scaleSuggestions_obj, "text");
 	}
-	
+
 	//set description field to empty
-	description = $("#"+lowerCaseFirstLetter(combo)+"Description"); 
+	description = $("#"+lowerCaseFirstLetter(combo)+"Description");
 	description.val("");
-	
+
 	//recreate the dropdown
 	$("#combo" + combo).select2({
 			query: function (query) {
@@ -551,14 +551,14 @@ function recreateCombo(combo, data) {
 	              // return the array that matches
 	              data.results = $.grep(data.results,function(item,index) {
 	                return ($.fn.select2.defaults.matcher(query.term,item.text));
-	              
+
 	              });
-	              
+
 	              if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
-	              
+
 	                query.callback(data);
-	                
-	            }		
+
+	            }
 	});
 	var newData = { 'id' : data.id,
 			  'text' : data.name + getOntologySuffix(data.id),
@@ -568,7 +568,7 @@ function recreateCombo(combo, data) {
 	$("#combo"+combo).select2('data', newData);//no need to trigger change.trigger('change');
 }
 
-//check if the selected item is an existing record 
+//check if the selected item is an existing record
 function itemExists(combo) {
 	return $("#combo"+combo).select2("data").id != $("#combo"+combo).select2("data").text && $("#combo"+combo).select2("data").description != undefined;
 }
@@ -584,20 +584,20 @@ function hideSuccessMessage(){
 
 //check if any of the required fields is empty
 function requiredFieldsEmpty() {
-	return $("#comboVariableName").select2("data") == null || $("#dataType").val() == "" || $("#role").val() == "" || 
-	$("#comboTraitClass").select2("data") == null || $("#comboProperty").select2("data") == null || 
+	return $("#comboVariableName").select2("data") == null || $("#dataType").val() == "" || $("#role").val() == "" ||
+	$("#comboTraitClass").select2("data") == null || $("#comboProperty").select2("data") == null ||
 	$("#comboMethod").select2("data") == null || $("#comboScale").select2("data") == null;
 }
 
 //check if the values selected in the combo is a new entry
-function comboValuesInvalid() {	
-	return ($("#comboTraitClass").select2("data").id == $("#comboTraitClass").select2("data").text && 
-    		$("#comboTraitClass").select2("data").description == undefined) || 
-    	   ($("#comboProperty").select2("data").id == $("#comboProperty").select2("data").text && 
-			$("#comboProperty").select2("data").description == undefined) || 
-		   ($("#comboMethod").select2("data").id == $("#comboMethod").select2("data").text && 
-			$("#comboMethod").select2("data").description == undefined) || 
-		   ($("#comboScale").select2("data").id == $("#comboScale").select2("data").text && 
+function comboValuesInvalid() {
+	return ($("#comboTraitClass").select2("data").id == $("#comboTraitClass").select2("data").text &&
+    		$("#comboTraitClass").select2("data").description == undefined) ||
+    	   ($("#comboProperty").select2("data").id == $("#comboProperty").select2("data").text &&
+			$("#comboProperty").select2("data").description == undefined) ||
+		   ($("#comboMethod").select2("data").id == $("#comboMethod").select2("data").text &&
+			$("#comboMethod").select2("data").description == undefined) ||
+		   ($("#comboScale").select2("data").id == $("#comboScale").select2("data").text &&
 			$("#comboScale").select2("data").description == undefined);
 }
 
@@ -619,17 +619,17 @@ function doTraitClassTreeHighlight(treeName, comboName, descriptionName, nodeKey
 	for(count = 0 ; count < elem.length ; count++){
 		if(key != '')
 			key = key + "_";
-		
+
 		key = key + elem[count];
 		$('.'+key).addClass('highlight');
 	}
-	
+
 	var node = $("#"+treeName).dynatree("getTree").getNodeByKey(nodeKey);
-	
+
 	traitClassId = elem[elem.length-1];
-	
+
 	filterPropertyCombo(treeName, comboName, descriptionName, traitClassId, false);
-	
+
 	if(treeName == 'managePropTraitClassBrowserTree'){
     	$('#managePropTraitClassId').val($('#comboManagePropTraitClass').select2('data').id);
     	$('#managePropTraitClassName').val($('#comboManagePropTraitClass').select2('data').text);
@@ -639,7 +639,7 @@ function doTraitClassTreeHighlight(treeName, comboName, descriptionName, nodeKey
 function getNodeKeyFromTraitClass(traitClassId, treeName){
 
 	var rootNode = $("#"+treeName).dynatree("getRoot");
-	
+
 	var children=rootNode.getChildren() ;
 	var i = 0;
 	var nodeKey = '';
@@ -656,7 +656,7 @@ function getTreeChildren(child, traitClassId){
 	if( child.data.key.indexOf(traitClassId) != -1){
 		return child.data.key;
 	}
-	
+
 	var children=child.getChildren();
 	if(children != null){
 		var i = 0;
@@ -666,7 +666,7 @@ function getTreeChildren(child, traitClassId){
 			}
 			if(children[i].getChildren() != null)
 				nodeKey = getTreeChildren(children[i], traitClassId);
-			
+
 			if(nodeKey != ""){
 				break;
 			}
@@ -679,9 +679,9 @@ function filterPropertyCombo(treeName, comboName, descriptionName, traitClassId,
 	if(isFromDropDown){
 		$('#'+treeName).find("*").removeClass('highlight');
 			var nodeKey = getNodeKeyFromTraitClass(traitClassId, treeName);
-			
+
 			$("#"+treeName).dynatree("getTree").activateKey(nodeKey);
-			//then we highlight the nodeKey and its parents		
+			//then we highlight the nodeKey and its parents
 			if(nodeKey != ''){
 				var elem = nodeKey.split("_");
 				var count = 0;
@@ -689,12 +689,12 @@ function filterPropertyCombo(treeName, comboName, descriptionName, traitClassId,
 				for(count = 0 ; count < elem.length ; count++){
 					if(key != '')
 						key = key + "_";
-					
+
 					key = key + elem[count];
 					$('.'+key).addClass('highlight');
 				}
 			}
-		
+
 	}else {
 		var counter = 0;
 		for(counter = 0 ; counter < traitClassesSuggestions_obj.length ; counter++){
@@ -704,14 +704,14 @@ function filterPropertyCombo(treeName, comboName, descriptionName, traitClassId,
 				$("#" + descriptionName).val(dataVal.description);
 				break;
 			}
-		}	
+		}
 	}
 	if(treeName != 'managePropTraitClassBrowserTree'){
 		//we filter the property combo
 		var suggestions_obj = [];
 		if(traitClassId == 0){
 			suggestions_obj = sortByKey(propertySuggestions_obj, "text");
-		}		
+		}
 		else{
 			//we filter by specific
 			var count = 0;
@@ -721,27 +721,27 @@ function filterPropertyCombo(treeName, comboName, descriptionName, traitClassId,
 				}
 			}
 		}
-		
+
 		$("#comboProperty").select2({
 			query: function (query) {
 	              var data = {results: suggestions_obj}, i, j, s;
 	              // return the array that matches
 	              data.results = $.grep(data.results,function(item,index) {
 	                return ($.fn.select2.defaults.matcher(query.term,item.text));
-	              
+
 	              });
-	              	query.callback(data);	                
-	            }		
+	              	query.callback(data);
+	            }
 		});
 		$("#propertyDescription").val("");
 		$("#cropOntologyDisplay").html("");
 	}
-	
+
 }
 function loadTraitClassTree(treeName, comboName, descriptionName, treeData, dropDownId){
-	//for triggering the start of search type ahead			
+	//for triggering the start of search type ahead
 	var json = $.parseJSON(treeData);
-	
+
 	$("#" + treeName).dynatree({
 	      checkbox: false,
 	      // Override class name for checkbox icon:
@@ -763,12 +763,12 @@ function loadTraitClassTree(treeName, comboName, descriptionName, treeData, drop
 		  	        var selKeys = $.map(selNodes, function(node){
 		  	             return "[" + node.data.key + "]: '" + node.data.title + "'";
 		  	        });
-		  	       
+
 		  	        doTraitClassTreeHighlight(treeName, comboName, descriptionName, node.data.key);
-	    	  }	        
+	    	  }
 	      },
 	      onSelect: function(select, node) {
-	        // Display list of selected nodes		
+	        // Display list of selected nodes
 	    	  if(!$(this).hasClass('ui-dynatree-disabled')){
 	    		  doTraitClassTreeHighlight(treeName, comboName, descriptionName, node.data.key);
 	    	  }
@@ -802,9 +802,9 @@ function getStandardVariableDetails(variableId, text) {
 			    if (data.status == "1") {
 			    	populateFields(data, variableId);
 		       	}
-			    
+
 		   }
-		   
+
 		});
 	} else {
 		//save the variable name in a hidden field for saving new standard variables
@@ -844,10 +844,10 @@ function populateFields(data, variableId) {
 		$("#maxValue").val(data.maxValue);
 	}
 	populateCategoricalValues(data.validValues);
-	
+
 	setVisibleButtons(false, true, true);
 	setDeleteOperation(2);
-	
+
 	//disable other fields except valid values if selected variable is from central db
 	if (parseInt(variableId) > 0) {
 		disableFieldsForCentralUpdate();
@@ -856,7 +856,7 @@ function populateFields(data, variableId) {
 		enableFieldsForUpdate();
 		$("#traitClassBrowserTree").dynatree("enable");
 	}
-	
+
 }
 
 function populateCategoricalValues(data) {
@@ -865,7 +865,7 @@ function populateCategoricalValues(data) {
 		for (var i = 0; i < validValues.length; i++) {
 			addCatVar(validValues[i].name, validValues[i].description, validValues[i].id);
 		}
-	} 
+	}
 }
 
 function setComboValues(suggestions_obj, id, name) {
@@ -875,9 +875,9 @@ function setComboValues(suggestions_obj, id, name) {
 		//find the matching ontology value in the array given
     	for(count = 0 ; count < suggestions_obj.length ; count++){
     		if(suggestions_obj[count].id == id){
-    			dataVal = suggestions_obj[count];			    			
+    			dataVal = suggestions_obj[count];
     			break;
-    		}			    			
+    		}
     	}
 	}
 	//set the selected value of the ontology combo
@@ -908,9 +908,9 @@ function loadOntologyModal(ontologyName){
 	           type: "GET",
 	           data: "",
 	           success: function(html) {
-	        	   
+
 	             $('#manageOntologyModal'+' .modal-content').empty().append(html);
-	               
+
 	             $('#manageOntologyModal').modal({ backdrop: 'static', keyboard: true });
 	             $.fn.modal.Constructor.prototype.enforceFocus = function () {};
 	           }
@@ -921,7 +921,7 @@ function loadOntologyModal(ontologyName){
 function showErrorMessageInModal(messageDivId, message) {
 	showErrorMessage('', message);
 }
-function showSuccessMessageInModal(message) {	
+function showSuccessMessageInModal(message) {
 	showSuccessfulMessage('', message);
 }
 
@@ -961,12 +961,12 @@ function recreate(combo, suggestions_obj) {
               // return the array that matches
               data.results = $.grep(data.results,function(item,index) {
                 return ($.fn.select2.defaults.matcher(query.term,item.text));
-              
+
               });
               if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
-              
+
                 query.callback(data);
-            }		
+            }
 	});
 }
 
@@ -979,7 +979,7 @@ function recreateComboAfterDelete(combo, data) {
 		index = findIndexOfDeletedVariable(variableNameSuggestions_obj, data);
 		variableNameSuggestions_obj.splice(index, 1);
 		recreate(combo, variableNameSuggestions_obj);
-	} else if (combo == "ManageTraitClass") {		
+	} else if (combo == "ManageTraitClass") {
 		index = findIndexOfOntology(traitClassesSuggestions_obj, data);
 		traitClassesSuggestions_obj.splice(index, 1);
 		recreate(combo, traitClassesSuggestions_obj);
@@ -996,10 +996,10 @@ function recreateComboAfterDelete(combo, data) {
 		scaleSuggestions_obj.splice(index, 1);
 		recreate(combo, scaleSuggestions_obj);
 	}
-	
+
 	//set description field to empty
 	if (description == null) {
-		description = $("#"+lowerCaseFirstLetter(combo)+"Description"); 
+		description = $("#"+lowerCaseFirstLetter(combo)+"Description");
 	}
 	description.val("");
 }
@@ -1007,7 +1007,7 @@ function recreateComboAfterDelete(combo, data) {
 function recreateComboAfterUpdate(combo, data) {
 	var suggestions_obj = [];
 	var description = null;
-	
+
 	if (combo.indexOf("TraitClass") > -1) {
 		suggestions_obj = traitClassesSuggestions_obj;
 	}
@@ -1020,14 +1020,14 @@ function recreateComboAfterUpdate(combo, data) {
 	else {
 		suggestions_obj = scaleSuggestions_obj;
 	}
-	
+
 	var index = findIndexOfOntology(suggestions_obj, data);
 	if (index > -1) { //update
 		suggestions_obj[index].description = data.definition;
 		if (combo.indexOf("Property") > -1) {
 			suggestions_obj[index].traitId = data.isAId;
 		}
-		
+
 	}
 	else { //add
 		if (combo.indexOf("Property") > -1) {
@@ -1040,16 +1040,16 @@ function recreateComboAfterUpdate(combo, data) {
 			suggestions_obj.push({ 'id' : data.id,
 				  'text' : data.name + getOntologySuffix(data.id),
 				  'description' : data.definition
-			});	
+			});
 		}
-		
+
 		suggestions_obj = sortByKey(suggestions_obj, "text");
 	}
-	
+
 	//set description field to empty
-	description = $("#"+lowerCaseFirstLetter(combo)+"Description"); 
+	description = $("#"+lowerCaseFirstLetter(combo)+"Description");
 	description.val("");
-	
+
 	//recreate the dropdown
 	$("#combo" + combo).select2({
 			query: function (query) {
@@ -1057,14 +1057,14 @@ function recreateComboAfterUpdate(combo, data) {
 	              // return the array that matches
 	              data.results = $.grep(data.results,function(item,index) {
 	                return ($.fn.select2.defaults.matcher(query.term,item.text));
-	              
+
 	              });
-	              
+
 	              if (data.results.length === 0) data.results.unshift({id:query.term,text:query.term});
-	              
+
 	                query.callback(data);
-	                
-	            }		
+
+	            }
 	});
 	var newData = { 'id' : data.id,
 			  'text' : data.name + getOntologySuffix(data.id),
@@ -1084,14 +1084,14 @@ function findIndexOfDeletedVariable(suggestions_obj, id) {
 
 function recreateVariableNameCombo(combo, id, name) {
 	var suggestions_obj = [];
-	
+
 	//add the new data in the collection
 	variableNameSuggestions_obj.push({ 'id' : id,
 		  'text' : name + getOntologySuffix(id),
 		  'description' : name
 	});
 	suggestions_obj = sortByKey(variableNameSuggestions_obj, "text");
-	
+
 	//recreate the dropdown
 	$("#combo" + combo).select2({
 			query: function (query) {
@@ -1099,21 +1099,21 @@ function recreateVariableNameCombo(combo, id, name) {
 	              // return the array that matches
 	              data.results = $.grep(data.results,function(item,index) {
 	                return ($.fn.select2.defaults.matcher(query.term,item.text));
-	              
+
 	              });
-	              
+
 	              if (data.results.length === 0)
 	            	  {
 	            	  	//console.log('new');
 	            	  	data.results.unshift({id:query.term,text:query.term});
-	            	  
+
 	            	  }
-	              
+
 	                query.callback(data);
-	                
-	            }		
+
+	            }
 	});
-	
+
 	var newData = { 'id' : id,
 			  'text' : name + getOntologySuffix(id),
 			  'description' : name
@@ -1126,7 +1126,7 @@ function preSelectAfterUpdate(combo, id, name) {
 			  'text' : name,
 			  'description' : name
 		};
-	$("#combo" + combo).select2('data', newData).trigger('change');	
+	$("#combo" + combo).select2('data', newData).trigger('change');
 }
 
 //function for deleting ontology
@@ -1145,9 +1145,9 @@ function deleteOntology(combo) {
 		    		traitClassesSuggestions = data.traitClassesSuggestionList;
 					traitClassesSuggestions_obj = [];
 					treeClassData = data.traitClassTreeData;
-					
+
 					loadTraitOntologyCombos();
-						
+
 					//if there is a selected trait class in the Manage Variable screen
 					if (chosendRecord != null) {
 						if($("#" + "combo" + (combo) ).select2('data').id == chosendRecord.id){
@@ -1160,9 +1160,9 @@ function deleteOntology(combo) {
 					}
 					recreateComboAfterDelete(combo, formData);
 		    	}else{
-		    		recreateComboAfterDelete(combo, formData);	
-		    	}	    	
-	    		
+		    		recreateComboAfterDelete(combo, formData);
+		    	}
+
 	    		showSuccessMessageInModal(data.successMessage);
 	    		//remove the list, other values and reset buttons
 	    		$("#" + lowerCaseFirstLetter(combo) + "NameText").html("");
@@ -1174,23 +1174,23 @@ function deleteOntology(combo) {
 	    	} else {
 	    		showErrorMessageInModal('page-message-modal', data.errorMessage);
 	       	}
-	   }, 
+	   },
 	   error: function(jqXHR, textStatus, errorThrown){
 			console.log("The following error occured: " + textStatus, errorThrown);
-	   }, 
-	   complete: function(){ 
+	   },
+	   complete: function(){
 	   }
 	});
 }
 
 function clearForm(formName) {
 	//$("#" + formName).reset();
-	
+
 	$("#" + formName).find("input").each(function() {
-		
+
 		this.value = "";
 	});
-	
+
 }
 
 function showValidValues() {
@@ -1222,44 +1222,44 @@ function hideValidValues(validValues) {
 function addCategoricalValidValue(id, label, description) {
 	var deleteButton = "";
 	var operation = "0";
-	
+
 	//add mode
 	if (id == null) {
 		operation = "1";
 	}
-	
+
 	//if new valid value, add a delete button
 	if (id < 0 || id == null) {
-		deleteButton= "<button class='btn btn-info' type='button' onClick='delCatVar($(this))'>" + 
+		deleteButton= "<button class='btn btn-info' type='button' onClick='delCatVar($(this))'>" +
 		"<span class='glyphicon glyphicon-remove'></span>" +
-	    "</button>";	
+	    "</button>";
 		enumerations.push({ 'id' : id,
-			  'name' : label, 
+			  'name' : label,
 			  'description' : description,
 			  'operation' : operation
 		});
 	} else {
-		deleteButton= "<button style='display: none' class='btn btn-info delete-valid-val-btn' type='button' onClick='delCatVar($(this))'>" + 
+		deleteButton= "<button style='display: none' class='btn btn-info delete-valid-val-btn' type='button' onClick='delCatVar($(this))'>" +
 		"<span class='glyphicon glyphicon-remove'></span>" +
 	    "</button>";
 		//read-only
 		enumerations_central.push({ 'id' : id,
-			  'name' : label, 
+			  'name' : label,
 			  'description' : description,
 			  'operation' : operation
 		});
 	}
-	
-	var newValidValue = "<tr><td class='validValueLabel'>" + label +  
-						"</td><td class='validValueDesc'>" + description + 
+
+	var newValidValue = "<tr><td class='validValueLabel'>" + label +
+						"</td><td class='validValueDesc'>" + description +
 						"</td><td class='validValueDel'>" + deleteButton + "</td></tr>";
 	$("#catVarList").append(newValidValue);
-	
+
 	//clear fields
 	$("#newValidValueLabel").val("");
 	$("#newValidValueDesc").val("");
-	
-	//add scrollbar 
+
+	//add scrollbar
 	if ($("#catVarList").height() > 200 && !$("#catVarList").parent().hasClass("scrollWrapper")) {
 		$("#catVarList").parent().toggleClass("scrollWrapper");
 	}
@@ -1269,10 +1269,10 @@ function addCategoricalValidValue(id, label, description) {
 function validateNewValidValue(label, description, id) {
 	if (id == null) {
 		//validate if new valid value entered is unique and has a value
-		if (findIndexOfEnumeration(enumerations, label, "name") > -1 || 
+		if (findIndexOfEnumeration(enumerations, label, "name") > -1 ||
 				findIndexOfEnumeration(enumerations_central, label, "name") > -1) {
 			return "name";
-		} else if (findIndexOfEnumeration(enumerations, description, "description") > -1 || 
+		} else if (findIndexOfEnumeration(enumerations, description, "description") > -1 ||
 				findIndexOfEnumeration(enumerations_central, description, "description") > -1) {
 			return "description";
 		} else if (label == "" || description == ""){
@@ -1289,18 +1289,18 @@ function validateNewValidValue(label, description, id) {
 function delCatVar(button) {
 	//get the label of the valid value to be deleted
 	var name = button.closest("td").prev().prev().text();
-	
+
 	//get the index of the deleted label and remove it from the enumerations object
 	var index = findIndexOfEnumeration(enumerations, name, "name");
 	if (enumerations[index].id == null || enumerations[index].id == "") {
 		enumerations.splice(index, 1);
 	} else {
-		
+
 		//we add the checking here if its being use before deleting
 		var stdVarId = $('#comboVariableName').select2('data').id;
 		var enumerationId = enumerations[index].id;
 		//console.log(stdVarId + " " + enumerationId );
-		
+
 		//daniel
 		var hasError = false;
 
@@ -1319,12 +1319,12 @@ function delCatVar(button) {
 					enumerations.splice(index, 1);
 				}*/
 				//console.log(data);
-			}			
+			}
 		});
 		if (hasError) {
 			return;
 		}
-		
+
 		enumerations[index].operation = "-1";
 	}
 	//console.log('here');
@@ -1355,7 +1355,7 @@ function findIndexOfEnumeration(enumerations_obj, name, col) {
 function minMaxErrorMessage(bothMinMaxRequired, notANumber, invalidValue) {
 	var minValue = $("#minValue").val();
 	var maxValue = $("#maxValue").val();
-	
+
 	if (minValue != "" || maxValue != "") {
 		if (minValue == "" || maxValue == "") {
 			return bothMinMaxRequired;
@@ -1403,39 +1403,39 @@ function enableFieldsForUpdate() {
 	$("#comboScale").select2('enable',true);
 	$("#dataType").removeAttr("disabled");
 	if($("#variableId").val() == ''){
-	
+
 		var enumerationsTemp = [];
 	  	if(enumerations_central.length != 0){
 	  		for(var index = 0 ; index < enumerations_central.length ; index++){
 	  			//console.log(enumerations_central[index].operation)
-	  			if(enumerations_central[index].operation != '-1'){  				  			
+	  			if(enumerations_central[index].operation != '-1'){
 	  				enumerationsTemp.push({ 'id' : null,
-	                			  'name' : enumerations_central[index].name, 
+	                			  'name' : enumerations_central[index].name,
 	                			  'description' : enumerations_central[index].description,
 	                			  'operation' : 1
 	                		});
 	  			}
 	  		}
-	  			
+
 	  	}
-	  	
+
 	  	if(enumerations.length != 0){
 	  		for(var index = 0 ; index < enumerations.length ; index++){
 	  			//console.log(enumerations_central[index].operation)
-	  			if(enumerations[index].operation != '-1'){  				  			
+	  			if(enumerations[index].operation != '-1'){
 	  				enumerationsTemp.push({ 'id' : null,
-	                			  'name' : enumerations[index].name, 
+	                			  'name' : enumerations[index].name,
 	                			  'description' : enumerations[index].description,
 	                			  'operation' : 1
 	                		});
 	  			}
 	  		}
-	  			
+
 	  	}
 	  	//console.log('here');
 	  	enumerations = enumerationsTemp;
 	  	enumerations_central = [];
-	  	
+
 	  	$('.'+getJquerySafeId('delete-valid-val-btn')).css('display', 'block');
 	}
 }

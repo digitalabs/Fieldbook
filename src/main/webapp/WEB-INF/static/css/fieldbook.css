@@ -1310,6 +1310,9 @@ label[data-toggle="collapse"],
 .input-group-btn > .btn {
     font-size: 14px;
 }
+.fbk-import-upload-file .input-group-btn > .btn {
+	font-size: 12px;
+}
 .fake-check-germplasm-list-items{
 	position: relative; 
 	top: -6px;
@@ -1318,4 +1321,7 @@ label[data-toggle="collapse"],
 .fbk-show-hide-grid-column{
 	margin-top: 8px;
 	margin-right: 10px;
+}
+.fbk-discard-imported-data{
+	margin-bottom:10px;
 }

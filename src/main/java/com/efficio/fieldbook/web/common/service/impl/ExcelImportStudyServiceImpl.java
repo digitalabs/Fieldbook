@@ -100,9 +100,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			List<MeasurementRow> observations = filterObservationsByTrialInstance(xlsBook, workbook.getObservations(), trialInstanceNumber);
 			List<MeasurementRow> trialObservations = filterObservationsByTrialInstance(xlsBook, workbook.getTrialObservations(), trialInstanceNumber);
 
-			validate(xlsBook, workbook, observations);
-			
-			resetWorkbookObservations(workbook);
+			validate(xlsBook, workbook, observations);			
 			
 			List<GermplasmChangeDetail> changeDetailsList = new ArrayList<GermplasmChangeDetail>();
 			
@@ -114,7 +112,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			try {
 				validationService.validateObservationValues(workbook);
 			} catch (MiddlewareQueryException e) {
-				resetWorkbookObservations(workbook);
+				WorkbookUtil.resetWorkbookObservations(workbook);
 				return new ImportResult(e.getMessage());
 			}
 			
@@ -123,7 +121,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			
 			
 		} catch (WorkbookParserException e) {
-			resetWorkbookObservations(workbook);
+			WorkbookUtil.resetWorkbookObservations(workbook);
 			throw e;
 
 		} catch (Exception e) {
@@ -482,24 +480,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
     	return null;
     }
     
-    private void resetWorkbookObservations(Workbook workbook) {
-    	if (workbook.getObservations() != null && !workbook.getObservations().isEmpty()) {
-	    	if (workbook.getOriginalObservations() == null || workbook.getOriginalObservations().isEmpty()) {
-	    		List<MeasurementRow> origObservations = new ArrayList<MeasurementRow>();
-	    		for (MeasurementRow row : workbook.getObservations()) {
-	    			origObservations.add(row.copy());
-	    		}
-	    		workbook.setOriginalObservations(origObservations);
-	    	} else {
-	    		List<MeasurementRow> observations = new ArrayList<MeasurementRow>();
-	    		for (MeasurementRow row : workbook.getOriginalObservations()) {
-	    			observations.add(row.copy());
-	    		}
-	    		workbook.setObservations(observations);
-	    	}
-    	}
-    }
-    
+   
     private void validateVariates(org.apache.poi.ss.usermodel.Workbook xlsBook, Workbook workbook) throws WorkbookParserException {
     	Sheet descriptionSheet = xlsBook.getSheetAt(0);
 		int variateRow = findRow(descriptionSheet, TEMPLATE_SECTION_VARIATE);

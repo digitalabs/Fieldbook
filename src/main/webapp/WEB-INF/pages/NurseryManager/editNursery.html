@@ -341,7 +341,8 @@
 					} else if (data.status === '1') {
 						recreateSessionVariables();
 					}
-
+					$('.import-study-data').data('data-import', '0');
+					$('.fbk-discard-imported-data').addClass('fbk-hide');
 				}
 			});
 		}
@@ -379,7 +380,13 @@
 				if ($('.germplasm-list-items tbody tr').length > 0 && measurementRowCount > 0) {
 					deleteMeasurementRows();
 				} else {
-					submitEditWorkbook();
+					if($('.import-study-data').data('data-import') === '1'){
+						doSaveImportedData();
+					}
+					else{
+						submitEditWorkbook();	
+					}
+					
 				}
 
                 if (document.enableActions !== undefined) {

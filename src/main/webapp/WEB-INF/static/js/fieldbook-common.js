@@ -1198,7 +1198,36 @@ function submitImportStudy() {
 		showErrorMessage('page-import-study-message-modal', 'Please choose a file to import');
 		return false;
 	}
+	
+	if($('.import-study-data').data('data-import') === '1'){
+		setTimeout(function(){$('#importOverwriteConfirmation').modal({ backdrop: 'static', keyboard: true });}, 300);
+	}else{
+		continueStudyImport(false);
+	}
+}
+function continueStudyImport(doDataRevert){
+	'use strict';
+	if(doDataRevert){
+		revertData(false);
+		$('#importOverwriteConfirmation').modal('hide');
+	}
+	
 	$('#importStudyUploadForm').ajaxForm(importOptions).submit();
+}
+
+function showImportOptions(){
+	'use strict';
+	$('#fileupload').val('');
+	$('#importStudyModal').modal({ backdrop: 'static', keyboard: true });
+}
+function goBackToImport(){
+	'use strict';
+	//revertData(false);
+	$('#importStudyConfirmationModal').modal('hide');
+	$('#importStudyDesigConfirmationModal').modal('hide');
+	$('#importOverwriteConfirmation').modal('hide');
+	setTimeout(function(){$('#importStudyModal').modal({ backdrop: 'static', keyboard: true });}, 300);
+	
 }
 
 function isFloat(value) {

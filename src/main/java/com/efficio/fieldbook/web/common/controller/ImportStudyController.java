@@ -108,6 +108,12 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	boolean isTrial = studyType.equalsIgnoreCase("TRIAL");
     	ImportResult importResult = null;
     	StudySelection userSelection = getUserSelection(isTrial);
+    	/**
+    	 * Should always revert the data first to the original data here
+    	 * we should move here that part the copies it to the original observation
+    	 */
+    	
+		WorkbookUtil.resetWorkbookObservations(userSelection.getWorkbook());
     	if(AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == importType){
     		MultipartFile file = form.getFile();
             if (file == null) {
@@ -131,10 +137,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 				}
             }
     	}else if(AppConstants.EXPORT_NURSERY_EXCEL.getInt() == importType){
-    		
-    		
-        	
-        	 MultipartFile file = form.getFile();
+    		 MultipartFile file = form.getFile();
              if (file == null) {
             	 result.rejectValue("file", AppConstants.FILE_NOT_FOUND_ERROR.getString());
              } else {
@@ -275,19 +278,27 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	return isTrial ? "TrialManager/openTrial" : "NurseryManager/addOrRemoveTraits";
     }
     
-    @ResponseBody
     @RequestMapping(value="/revert/data", method=RequestMethod.GET)
-    public String revertData(Model model) {
-    	UserSelection userSelection = (UserSelection) getUserSelection(false);
+    public String revertData(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
     	
+    	doRevertData(form);
+    	
+        return super.showAjaxPage(model, "/NurseryManager/addOrRemoveTraits");
+    }
+    
+    private void doRevertData(CreateNurseryForm form){
+    	UserSelection userSelection = (UserSelection) getUserSelection(false);
+    	//we should remove here the newly added traits
+    	List<MeasurementVariable> newVariableList = new ArrayList<MeasurementVariable>();
+    	newVariableList.addAll(userSelection.getWorkbook().getMeasurementDatasetVariables());
+    	form.setMeasurementVariables(newVariableList);
     	List<MeasurementRow> list = new ArrayList<MeasurementRow>();
     	for (MeasurementRow row : userSelection.getWorkbook().getOriginalObservations()) {
     		list.add(row.copy());
     	}
     	userSelection.getWorkbook().setObservations(list);
     	userSelection.setMeasurementRowList(list);
-    	
-    	return "success";
+
     }
     
     @ResponseBody
@@ -367,6 +378,22 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	}
     	userSelection.setNewTraits(newTraits);
     	userSelection.setNewSelectionVariates(selectedVariates);
+        return super.showAjaxPage(model, "/NurseryManager/addOrRemoveTraits");
+    }
+    
+    @RequestMapping(value="/import/preview", method=RequestMethod.POST)
+    public String previewImportedFiles(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws Exception {
+    	UserSelection userSelection = (UserSelection) getUserSelection(false);
+    	List<MeasurementVariable> traits = WorkbookUtil.getAddedTraitVariables(
+								    			userSelection.getWorkbook().getVariates(), 
+								    			userSelection.getWorkbook().getObservations());
+    	
+    	userSelection.setMeasurementRowList(userSelection.getWorkbook().getObservations());
+    	List<MeasurementVariable> newVariableList = new ArrayList<MeasurementVariable>();
+    	newVariableList.addAll(userSelection.getWorkbook().getMeasurementDatasetVariables());
+    	newVariableList.addAll(traits);
+    	form.setMeasurementVariables(newVariableList);
+    	    	
         return super.showAjaxPage(model, "/NurseryManager/addOrRemoveTraits");
     }
     

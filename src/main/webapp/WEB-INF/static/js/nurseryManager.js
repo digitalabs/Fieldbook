@@ -2583,3 +2583,9 @@ function checkShowSettingsFormReminder(){
 		$('.constants-section-reminder').addClass('fbk-hide');
 	}
 }
+function discardImportedData(){
+	$('#discardImportDataConfirmation').modal({
+		backdrop : 'static',
+		keyboard : true
+	});
+}

@@ -590,14 +590,14 @@ function submitSelectedVariables(variableType) {
 							'plotLevelVariables', 'plotLevelSettings',variableType);
 					break;
 				case 3:
-					removeDummyRow('baselineTraitSettings');
+					hideDummyRow('baselineTraitSettings');
 					createTableSettingVariables($.parseJSON(data),
 							'baselineTraitVariables', 'baselineTraitSettings',
 							variableType);
 					checkTraitsAndSelectionVariateTable('', false);
 					break;
 				case 6:
-					removeDummyRow('selectionVariatesSettings');
+					hideDummyRow('selectionVariatesSettings');
 					createTableSettingVariables($.parseJSON(data),
 							'selectionVariatesVariables',
 							'selectionVariatesSettings', variableType);
@@ -625,11 +625,11 @@ function submitSelectedVariables(variableType) {
 	}
 }
 
-function removeDummyRow(tableId) {
+function hideDummyRow(tableId) {
 	$('#'+tableId).find('.dummy-row').hide();
 }
 
-function addDummyRow(tableId) {
+function showDummyRow(tableId) {
 	$('#'+tableId).find('.dummy-row').show();
 }
 
@@ -1194,9 +1194,9 @@ function deleteVariable(variableType, variableId, deleteButton) {
 		
 		//add dummy row to selection variates/traits if no record is left
 		if (variableType === 3 && $('#baselineTraitSettings tbody tr').length === 1) {
-			addDummyRow('baselineTraitSettings');
+			showDummyRow('baselineTraitSettings');
 		} else if (variableType === 6 && $('#selectionVariatesSettings tbody tr').length === 1) {
-			addDummyRow('selectionVariatesSettings');
+			showDummyRow('selectionVariatesSettings');
 		}
 
 		// reinstantiate counters of ids and names
@@ -1238,9 +1238,9 @@ function proceedWithDelete() {
 	
 	//add dummy row to selection variates/traits if no record is left
 	if (variableType === 3 && $('#baselineTraitSettings tbody tr').length === 1) {
-		addDummyRow('baselineTraitSettings');
+		showDummyRow('baselineTraitSettings');
 	} else if (variableType === 6 && $('#selectionVariatesSettings tbody tr').length === 1) {
-		addDummyRow('selectionVariatesSettings');
+		showDummyRow('selectionVariatesSettings');
 	}
 
 	// reinstantiate counters of ids and names

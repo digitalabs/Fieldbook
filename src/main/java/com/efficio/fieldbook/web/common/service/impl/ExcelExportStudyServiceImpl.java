@@ -313,7 +313,7 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 
 		cell = row.createCell(6, HSSFCell.CELL_TYPE_STRING);
 		cleanupValue(variable);
-		if(variable.getDataTypeId().equals(TermId.NUMERIC_VARIABLE.getId())){
+		if(variable.getDataTypeId() != null && variable.getDataTypeId().equals(TermId.NUMERIC_VARIABLE.getId())){
 			if(variable.getValue() != null && !"".equalsIgnoreCase(variable.getValue())){
 				cell.setCellType(Cell.CELL_TYPE_BLANK);
 				cell.setCellType(Cell.CELL_TYPE_NUMERIC);		

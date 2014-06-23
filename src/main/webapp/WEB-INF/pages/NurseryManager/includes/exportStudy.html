@@ -166,7 +166,7 @@
 		});
 
 		function checkBeforeExport() {
-
+			'use strict';
 			var studyId = '0';
 
 			if ($('#browser-nurseries').length !== 0) {
@@ -199,19 +199,27 @@
 		}
 
 		function doConfirmGoBack() {
+			'use strict';
 			$('#exportStudyConfirmationModal').modal('hide');
 			$('#exportStudyModal').modal({ backdrop: 'static', keyboard: true });
 		}
 
 		function doConfirmExport() {
+			'use strict';
 			exportNursery();
 			$('#exportStudyConfirmationModal').modal('hide');
 		}
 
 		function showExportOptions() {
+			'use strict';
 			var studyType = '',
 				studyId = '0';
 
+			if($('.import-study-data').data('data-import') === '1'){
+				showAlertMessage('', needSaveImportDataError);
+				return;
+			}
+			
 			if ($('#browser-nurseries').length !== 0) {
 				// We are on the landing page
 				studyType = $("#study"+getCurrentStudyIdInTab()+" #study-type").val();
@@ -252,6 +260,7 @@
 
 		}
 		function showExportResponse(responseText, statusText, xhr, $form) {
+			'use strict';
 			var resp = $.parseJSON(responseText);
 
 			$('#exportStudyDownloadForm #outputFilename').val(resp.outputFilename);

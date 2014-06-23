@@ -202,6 +202,11 @@ function createFieldMap(tableName) {
 		index,
 		idVal,
 		idList;
+	
+	if($('.import-study-data').data('data-import') === '1'){
+		showAlertMessage('', needSaveImportDataError);
+		return;
+	}
 
 	if ($('#' + tableName + ' .field-map-highlight').attr('id') != null || tableName == 'nursery-table') {
 		// Get selected studies
@@ -552,6 +557,11 @@ function createLabelPrinting(tableName) {
 		labelPrintingHref,
 		id,
 		type;
+	
+	if($('.import-study-data').data('data-import') === '1'){
+		showAlertMessage('', needSaveImportDataError);
+		return;
+	}
 
 	if ($('#createNurseryMainForm #studyId').length === 1) {
 		idVal = ($('#createNurseryMainForm #studyId').val());
@@ -839,7 +849,7 @@ function advanceNursery(tableName) {
 		idVal = $('#createNurseryMainForm #studyId').val();
 	
 	if($('.import-study-data').data('data-import') === '1'){
-		showAlertMessage('', advanceNeedSaveImportDataError);
+		showAlertMessage('', needSaveImportDataError);
 		return;
 	}
 	

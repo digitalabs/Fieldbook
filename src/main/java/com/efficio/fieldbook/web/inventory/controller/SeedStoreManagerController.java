@@ -114,7 +114,7 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
     @ModelAttribute("scaleList")
     public List<Scale> getScaleList() {
         try {
-            return ontologyService.getAllScales();
+            return ontologyService.getAllInventoryScales();
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }

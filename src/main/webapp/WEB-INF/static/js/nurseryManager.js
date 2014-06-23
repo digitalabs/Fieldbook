@@ -204,7 +204,7 @@ function getBreedingMethodRowIndex() {
 			rowIndex = getIndexFromName($($(row).find('.1st').find('.cvTermIds')).attr('name'));
 		}
 	});
-	
+
 	$.each($('.breedingMethodDetails'), function(index, row) {
 		rowIndex = getIndexFromName($($(row).find('.1st').find(".cvTermIds")).attr('name'));
 	});
@@ -219,7 +219,7 @@ function getLocationRowIndex() {
 			rowIndex = getIndexFromName($($(row).find('.1st').find(".cvTermIds")).attr("name"));
 		}
 	});
-	
+
 	return rowIndex;
 }
 
@@ -317,7 +317,7 @@ function getStandardVariables(variableType) {
 				backdrop : 'static',
 				keyboard : true
 			});
-			
+
 		}
 	});
 }
@@ -543,9 +543,9 @@ function validateUniqueVariableName(){
 		newName = '';
 	$('.var-names').each(function(){
 		var varName = $.trim($(this).html()).toUpperCase();
-		existingNameMap[varName] = $(this).html();	
+		existingNameMap[varName] = $(this).html();
 	});
-	$('input[type=text].addVariables').each(function(){		
+	$('input[type=text].addVariables').each(function(){
 			newName = $.trim($(this).val()).toUpperCase();
 			if(isFound === false && existingNameMap[newName] !== undefined) {
 				existingVarName = $.trim($(this).val());
@@ -553,7 +553,7 @@ function validateUniqueVariableName(){
 				return;
 			}else{
 				existingNameMap[newName] = newName;
-			}			
+			}
 	});
 	return existingVarName;
 }
@@ -569,7 +569,7 @@ function submitSelectedVariables(variableType) {
 				showErrorMessage('', errorTheVariable + ' &quot;'+varName + '&quot; ' + errorTheVariableNurseryUnique);
 				return;
 		}
-		
+
 		replaceNameVariables();
 		var serializedData = $('input.addVariables').serialize();
 		$('#page-message-modal').html('');
@@ -612,12 +612,12 @@ function submitSelectedVariables(variableType) {
 							'nurseryLevelSettings', variableType, "");
 				}
 				$('#addVariablesSettingModal').modal('hide');
-				
+
 
 			}
 		});
 
-        return promise;
+		return promise;
 	} else {
 		showErrorMessage('', varInListMessage);
 	}
@@ -657,7 +657,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 	if (name === 'studyLevelVariables') {
 		ctr++;
 	}
-	
+
 	$
 			.each(
 					data,
@@ -691,7 +691,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 								+ settingDetail.variable.name
 								+ '</span>: &nbsp;</div>';
 
-                        newRow = newRow
+						newRow = newRow
 									+ '<div class="col-xs-7 col-md-7 2nd">';
 
 						var inputHtml = '';
@@ -823,7 +823,7 @@ function toggleDropdownGen(comboId, favoriteCheckId, suffix, isLocation) {
 	var possibleValues;
 	var showFavorite = $('#'+favoriteCheckId).is(':checked');
 	var selectedVal = '';
-	
+
 	// get previously selected value
 	if ($('#'+comboId).select2('data')) {
 		selectedVal = $('#'+comboId).select2('data').id;
@@ -1116,9 +1116,9 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 					}
 				});
 	} else {
-        var minResults = (possibleValues_obj.length > 0) ? 20 : -1;
+		var minResults = (possibleValues_obj.length > 0) ? 20 : -1;
 
-        $(name).select2(
+		$(name).select2(
 				{
 					minimumResultsForSearch: minResults,
 					query : function(query) {
@@ -1186,7 +1186,7 @@ function deleteVariable(variableType, variableId, deleteButton) {
 		sortVariableIdsAndNames(variableType);
 		inputChange = true;
 
-        return true;
+		return true;
 	} else {
 		// show confirmation popup
 		$("#variateDeleteConfirmationModal").modal({
@@ -1197,7 +1197,7 @@ function deleteVariable(variableType, variableId, deleteButton) {
 		$("#variableType").val(variableType);
 		buttonToDelete = deleteButton;
 
-        return false;
+		return false;
 	}
 }
 
@@ -1564,15 +1564,15 @@ function initializeDateAndSliderInputs() {
 			$(this).datepicker({
 				'format' : 'yyyy-mm-dd'
 			}).on('changeDate', function(ev) {
-				$(this).datepicker('hide');		
+				$(this).datepicker('hide');
 			}).on("change", function (e) {
-			    var curDate = $(this).val();
-			    try {
-			        var r = $.datepicker.parseDate("yy-mm-dd", curDate);
-			        $(this).datepicker('setDate', r);
-			    } catch(e) {			        
-			        $(this).datepicker('setDate', new Date());
-			    }
+				var curDate = $(this).val();
+				try {
+					var r = $.datepicker.parseDate("yy-mm-dd", curDate);
+					$(this).datepicker('setDate', r);
+				} catch(e) {
+					$(this).datepicker('setDate', new Date());
+				}
 			});
 		});
 	}
@@ -1664,9 +1664,9 @@ function isStudyNameUnique() {
 	if ($('#createNurseryMainForm #studyId').length !== 0){
 		studyId = $('#createNurseryMainForm #studyId').val();
 		//we dont need to call the is name unique again since its not editable anymore in edit
-		return true;		
+		return true;
 	}
-	
+
 	var studyName = $.trim($('#' + getJquerySafeId('basicDetails0.value')).val());
 
 	$('#' + getJquerySafeId('basicDetails0.value')).val(studyName);
@@ -1731,8 +1731,8 @@ function validateCreateNursery() {
 			errMsg = name.replace('*', '').replace(':', '') + ' ' + nurseryFieldsIsRequired;
 		if (customMessage !== '') {
 			errMsg = customMessage;
-		}	
-		
+		}
+
 		showInvalidInputMessage(errMsg);
 		return false;
 	}
@@ -1803,8 +1803,8 @@ function validateCreateNursery() {
 				|| parseInt($('#startIndex2').val(), 10) > totalGermplasms) {
 			showInvalidInputMessage(startIndexLessGermplasmError);
 			return false;
-		}	
-		
+		}
+
 		if (parseInt($('#interval2').val(), 10) < 0) {
 			showInvalidInputMessage(checkIntervalGreaterThanZeroError);
 			return false;
@@ -1901,8 +1901,8 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
 									});
 								}
 								query.callback(data);
-                            },
-                            dropdownCssClass : 's2-nosearch-icon'
+							},
+							dropdownCssClass : 's2-nosearch-icon'
 						})
 				.on(
 						'change',
@@ -2034,7 +2034,7 @@ function showCheckTypeErrorMessage(message) {
 }
 
 function showCheckTypeMessage(message) {
-	showSuccessfulMessage('', message);	
+	showSuccessfulMessage('', message);
 }
 
 function deleteCheckType() {
@@ -2193,11 +2193,11 @@ function determineIfShowCloseAllStudyTabs() {
 function openStudyTree(type) {
 	$('#page-study-tree-message-modal').html('');
 	  $('#addFolderDiv').hide();
-      $('#renameFolderDiv').hide();
-	if( $('#create-nursery #studyTree').length !== 0){      
+	  $('#renameFolderDiv').hide();
+	if( $('#create-nursery #studyTree').length !== 0){
 			$('#studyTree').dynatree('destroy');
-		 	displayStudyListTree('studyTree', 'N', type);
-		 	changeBrowseNurseryButtonBehavior(false);
+			displayStudyListTree('studyTree', 'N', type);
+			changeBrowseNurseryButtonBehavior(false);
 	}
 
 	$('#studyTreeModal').modal({
@@ -2345,7 +2345,7 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 					//get index of breeding method row
 					var index = getBreedingMethodRowIndex();
 
-					
+
 					if ($("#" + getJquerySafeId(comboName)).select2("data")) {
 						selectedVal = $("#" + getJquerySafeId(comboName))
 								.select2("data").id;
@@ -2402,7 +2402,7 @@ function displaySaveSuccessMessage(idDomSelector, messageToDisplay){
 	'use strict';
 
 	createSuccessNotification(successMsgHeader, messageToDisplay);
-	
+
 }
 
 function recreateSessionVariables() {
@@ -2479,7 +2479,7 @@ function initializeReviewDatasetTabs(datasetId) {
 		});
 		$('#study' + getCurrentStudyIdInTab() + ' #dataset-selection').change();
 	});
-	
+
 	$('#dataset-li' + datasetId +' .fbk-close-dataset-tab').on('click', function() {
 		var datasetId = $(this).attr('id'),
 			showFirst = false;
@@ -2508,7 +2508,7 @@ function resetDesigConfirmationFields() {
 
 function validateGermplasmInput(importDate, importLocationId, importMethodId) {
 	'use strict';
-	if ($('#import-action-type').val() === '2' && 
+	if ($('#import-action-type').val() === '2' &&
 			(importDate === '' || importLocationId === null || importMethodId === null)) {
 		return false;
 	}
@@ -2522,7 +2522,7 @@ function submitGermplasmAndCheck() {
 	$('#interval').val($('#interval2').val());
 	$('#mannerOfInsertion').val($('#mannerOfInsertion2').val());
 	$('#lastDraggedChecksList').val(lastDraggedChecksList);
-	
+
 	var $form = $('#check-germplasm-list-form, #germplasm-list-form'),
 		serializedData = $form.serialize();
 

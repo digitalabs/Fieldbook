@@ -224,15 +224,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 											}
 										} 
 										else if(cell.getCellType() == Cell.CELL_TYPE_NUMERIC){
-											Double doubleVal = Double.valueOf(cell.getNumericCellValue());
-											Integer intVal = Integer.valueOf(doubleVal.intValue());
-											if(Double.parseDouble(intVal.toString()) == doubleVal.doubleValue()){
-												xlsValue = intVal.toString();
-											}else{
-												xlsValue = doubleVal.toString();	
-											}
-											
-											
+											xlsValue = getRealNumericValue(cell);																						
 										}
 										else {
 											xlsValue = cell.getStringCellValue();
@@ -254,6 +246,22 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 				modes.add(ChangeType.DELETED_ROWS);								
 			}
 		}
+	}
+	
+	private String getRealNumericValue(Cell cell){
+		String realValue = "";
+		if(cell.getCellType() == Cell.CELL_TYPE_NUMERIC){
+			Double doubleVal = Double.valueOf(cell.getNumericCellValue());
+			Integer intVal = Integer.valueOf(doubleVal.intValue());
+			if(Double.parseDouble(intVal.toString()) == doubleVal.doubleValue()){
+				realValue = intVal.toString();
+			}else{
+				realValue = doubleVal.toString();	
+			}
+		}else{
+			realValue = cell.getStringCellValue();
+		}
+		return realValue;
 	}
 
 	private void importTrialToWorkbook(org.apache.poi.ss.usermodel.Workbook xlsBook, List<MeasurementRow> observations) {
@@ -473,9 +481,10 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
     private String getKeyIdentifierFromXlsRow(Row xlsRow, String indexes) {
     	if (indexes != null) {
 	    	String[] indexArray = indexes.split(",");
+	    	
 	    	return indexArray[0] 
-	    			+ "-" + xlsRow.getCell(Integer.valueOf(indexArray[1]))
-	    			+ "-" + xlsRow.getCell(Integer.valueOf(indexArray[2]));
+	    			+ "-" + getRealNumericValue(xlsRow.getCell(Integer.valueOf(indexArray[1])))
+	    			+ "-" +getRealNumericValue(xlsRow.getCell(Integer.valueOf(indexArray[2])));
     	} 
     	return null;
     }

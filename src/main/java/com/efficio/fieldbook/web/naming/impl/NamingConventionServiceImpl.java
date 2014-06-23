@@ -174,7 +174,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
         List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
         for (AdvancingSource row : rows.getRows()) {
             if (row.getGermplasm() != null && !row.isCheck() && row.getPlantsSelected() != null && row.getBreedingMethod() != null
-            		&& row.getPlantsSelected() > 0) {
+            		&& row.getPlantsSelected() > 0 && (row.getBreedingMethod().isBulked() || row.getBreedingMethod().isNonBulked())) {
             	
             	Method method = row.getBreedingMethod();
             	String germplasmName = getGermplasmRootName(method.getSnametype(), row);

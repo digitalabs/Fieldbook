@@ -2164,7 +2164,7 @@ function checkTraitsAndSelectionVariateTable(containerDiv, isLandingPage){
 	} else {
 		$(containerDiv + ' .selection-variate-table').addClass('fbk-hide');
 		if(isLandingPage) {
-			$(containerDiv + ' .selection-variate-table').parent().parent().addClass('fbk-hide');
+			$(containerDiv + ' .selection-variate-table').parent().prev().addClass('fbk-hide');
 		}
 	}
 	if($(containerDiv + ' .traits-table tbody tr').length > 0){
@@ -2172,7 +2172,7 @@ function checkTraitsAndSelectionVariateTable(containerDiv, isLandingPage){
 	} else {
 		$(containerDiv + ' .traits-table ').addClass('fbk-hide');
 		if(isLandingPage) {
-			$(containerDiv + ' .traits-table').parent().parent().addClass('fbk-hide');
+			$(containerDiv + ' .traits-table').parent().prev().addClass('fbk-hide');
 		}
 	}
 }

@@ -23,7 +23,7 @@
 
 			</label>
 
-			<a class="btn btn-info pull-right" href="javascript: openAddVariablesSetting(1);" th:text="#{nursery.create.nursery.add.settings}">Add</a>
+			<a href="#" class="btn btn-info pull-right nrm-md-variable-select" th:text="#{nursery.create.nursery.add.settings}">Add</a>
 
 		</div>
 		<div class="form-horizontal sectionContainer" id="nurseryLevelSettings-dev">
@@ -101,8 +101,7 @@
 				<span class="bms-fa-question-circle help-tooltip-nursery" data-placement="right" data-toggle="tooltip" data-container="body" th:title="#{nursery.managesettings.plot.level.notes}"></span>
 			</label>
 
-			<a th:if="${createNurseryForm.measurementRowList.size() == 0}" class="btn btn-info pull-right" href="javascript: openAddVariablesSetting(2);"
-			   th:text="#{nursery.create.nursery.add.settings}">Add</a>
+			<a href="#" th:if="${createNurseryForm.measurementRowList.size() == 0}" class="btn btn-info pull-right nrm-fct-variable-select" th:text="#{nursery.create.nursery.add.settings}">Add</a>
 		</div>
 		<div class="form-group collapse in plotLevelDetails">
 			<table style="table-layout: fixed;" class="my-class table table-curved table-condensed" id="plotLevelSettings">
@@ -140,7 +139,7 @@
 				<span class="bms-fa-question-circle help-tooltip-nursery" data-placement="right" data-toggle="tooltip" data-container="body" th:title="#{nursery.create.nursery.selection.variates.notes}"></span>
 			</label>
 
-			<a class="btn btn-info pull-right" href="javascript: openAddVariablesSetting(6);" th:text="#{nursery.create.nursery.add.settings}">Add</a>
+			<a class="btn btn-info pull-right nrm-sv-variable-select" href="#" th:text="#{nursery.create.nursery.add.settings}">Add</a>
 		</div>
 		<div class="form-group collapse in selectionVariatesDetails">
 			<table style="table-layout: fixed;" class="my-class table table-curved table-condensed selection-variate-table" id="selectionVariatesSettings">
@@ -216,7 +215,7 @@
 				<span class="bms-fa-question-circle help-tooltip-nursery" data-placement="right" data-toggle="tooltip" data-container="body" th:title="#{nursery.create.nursery.conditions.notes}"></span>
 			</label>
 
-			<a class="btn btn-info pull-right" href="javascript: openAddVariablesSetting(7);" th:text="#{nursery.create.nursery.add.settings}">Add</a>
+			<a class="btn btn-info pull-right nrm-nc-variable-select" href="#" th:text="#{nursery.create.nursery.add.settings}">Add</a>
 		</div>
 		<div class="form-horizontal sectionContainer collapse in nurseryConditionsDetails" id="nurseryConditionsSettings">
 			<div class="form-group nurseryConditionsSettings" th:each="nurseryCondition, rowStat : *{nurseryConditions}">
@@ -272,7 +271,7 @@
 				<span class="bms-fa-question-circle help-tooltip-nursery" data-placement="right" data-toggle="tooltip" data-container="body" th:title="#{nursery.managesettings.baseline.traits.notes}"></span>
 			</label>
 
-			<a class="btn btn-info pull-right" href="javascript: openAddVariablesSetting(3);" th:text="#{nursery.create.nursery.add.settings}">Add</a>
+			<a class="btn btn-info pull-right nrm-trait-variable-select" href="#" th:text="#{nursery.create.nursery.add.settings}">Add</a>
 		</div>
 		<div class="form-group collapse in baselineTraitDetails">
 			<table style="table-layout: fixed;" class="my-class table table-curved table-condensed traits-table" id="baselineTraitSettings">
@@ -367,7 +366,34 @@
 				importLocationUrl = '',
 				requiredFields = [],
 				startDateId = '',
-				endDateId = '';
+				endDateId = '',
+
+			// Translations
+			mdLabel = /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
+			mdPlaceholder = /*[[#{nursery.reminder.add.nursery.settings}]]*/ '',
+			fdLabel = /*[[#{nursery.managesettings.add.plot.level.settings}]]*/ '',
+			fdPlaceholder = /*[[#{nursery.reminder.add.plot.settings}]]*/ '',
+			svLabel = /*[[#{nursery.managesettings.add.selection.variates}]]*/ '',
+			svPlaceholder = /*[[#{nursery.reminder.add.selection.variates}]]*/ '',
+			tdLabel = /*[[#{nursery.managesettings.add.baseline.traits}]]*/ '',
+			tdPlaceholder = /*[[#{nursery.reminder.add.trait.settings}]]*/ '',
+			ncLabel = /*[[#{nursery.managesettings.add.nursery.conditions}]]*/ '',
+			ncPlaceholder = /*[[#{nursery.reminder.add.nursery.conditions}]]*/ '';
+
+		function openVariableSelectionDialog(e) {
+			'use strict';
+
+			e.preventDefault();
+
+			$('.nrm-vs-modal .fbk-modal-title').text(e.data.label);
+			$('.nrm-vs-modal .nrm-vs-hint-placeholder').html(e.data.placeholderLabel);
+
+			$('#ontology-detail-tabs').empty().html($('.variable-detail-info').html());
+			$('#variable-details').html('');
+
+			// FIXME
+			getStandardVariables(e.data.group);
+		}
 
 		$(document).ready(function() {
 			'use strict';
@@ -380,6 +406,21 @@
 			if ($('#requiredFields').val() !== ''){
 				requiredFields = $('#requiredFields').val().split(',');
 			}
+
+			// Initialising on click handlers for variable selection buttons
+			$('.nrm-md-variable-select').click({label: mdLabel, placeholder: mdPlaceholder, group: 1}, openVariableSelectionDialog);
+
+			$('.nrm-fct-variable-select').click({label: fdLabel, placeholder: fdPlaceholder, group: 2},
+				openVariableSelectionDialog);
+
+			$('.nrm-sv-variable-select').click({label: svLabel, placeholder: svPlaceholder, group: 6},
+				openVariableSelectionDialog);
+
+			$('.nrm-trait-variable-select').click({label: tdLabel, placeholder: tdPlaceholder, group: 3},
+				openVariableSelectionDialog);
+
+			$('.nrm-nc-variable-select').click({label: ncLabel, placeholder: ncPlaceholder, group: 7},
+				openVariableSelectionDialog);
 
 			startDateId = $('#startDateId').val();
 			endDateId = $('#endDateId').val();

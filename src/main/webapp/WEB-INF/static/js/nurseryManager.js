@@ -252,41 +252,6 @@ function setComboValues(suggestions_obj, id, name) {
 	$("#" + name).select2('data', dataVal);
 }
 
-function openAddVariablesSetting(variableType) {
-	// change heading of popup based on clicked link
-	$('#ontology-detail-tabs').empty().html($('.variable-detail-info').html());
-	// this would reset the tree view
-
-	$("#variable-details").html('');
-	switch (parseInt(variableType)) {
-	case 1:
-		$("#heading-modal").text(addNurseryLevelSettings);
-		$('#reminder-placeholder').html(reminderNursery);
-		break;
-	case 2:
-		$("#heading-modal").text(addPlotLevelSettings);
-		$('#reminder-placeholder').html(reminderPlot);
-		break;
-	case 3:
-		$("#heading-modal").text(addBaselineTraits);
-		$('#reminder-placeholder').html(reminderTraits);
-		break;
-	case 6:
-		$("#heading-modal").text(addSelectionVariates);
-		$('#reminder-placeholder').html(reminderSelectionVariates);
-		break;
-	case 7:
-		$("#heading-modal").text(addNurseryConditions);
-		$('#reminder-placeholder').html(reminderNurseryCondtions);
-		break;
-	default:
-		$("#heading-modal").text(addNurseryLevelSettings);
-		$('#reminder-placeholder').html(reminderNursery);
-	}
-	getStandardVariables(variableType);
-
-}
-
 function getStandardVariables(variableType) {
 	'use strict;'
 	$.ajax({

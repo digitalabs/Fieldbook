@@ -11,15 +11,14 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web;
 
-import java.util.Enumeration;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.generationcp.commons.context.ContextConstants;
+import org.generationcp.commons.util.ContextUtil;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.api.WorkbenchDataManager;
+import org.generationcp.middleware.pojos.workbench.Project;
 import org.generationcp.middleware.pojos.workbench.Tool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +43,9 @@ public abstract class AbstractBaseFieldbookController {
 	private WorkbenchService workbenchService;
 	
 	@Resource
+    private WorkbenchDataManager workbenchDataManager;
+	
+	@Resource
 	private ProjectActivityService projectActivityService;
 	
 	@Resource
@@ -55,6 +57,9 @@ public abstract class AbstractBaseFieldbookController {
 
 	@Resource
 	private PaginationListSelection paginationListSelection;
+	
+	@Resource
+	private HttpServletRequest httpRequest;
 
 	/**
 	 * Implemented by the sub controllers to specify the html view that they render into the base template.
@@ -66,16 +71,19 @@ public abstract class AbstractBaseFieldbookController {
 		
 	}
 
-	public String getCurrentProjectId() {		
-		long projectId = 0;
-        try {           
-            projectId = workbenchService.getLastOpenedProject();
-        } catch (MiddlewareQueryException e) {
-            LOG.error(e.getMessage(), e);
-        }
-        return String.valueOf(projectId);
+	public String getCurrentProjectId() {
+		try {
+			Project projectInContext = ContextUtil.getProjectInContext(this.workbenchDataManager, this.httpRequest);
+			if(projectInContext != null) {
+				return projectInContext.getProjectId().toString();
+			}
+		} catch (MiddlewareQueryException e) {
+			LOG.error(e.getMessage(), e);	
+		}       
+		//TODO Keeping this default return value of 0 from old logic. Needs review/cleanup.
+		return "0";
 	}
-
+	
 	public String getOldFieldbookPath() {
 
 		if (oldFbTool == null) {

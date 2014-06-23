@@ -67,8 +67,9 @@ function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId){
 	if(treeData == null){
 		return;
 	}
-	termSuggestions = $.parseJSON(searchTreeData);
-	termSuggestions_obj = [];
+
+	var termSuggestions = $.parseJSON(searchTreeData),
+	termSuggestions_obj = [],
 	termSuggestionsMap = {};
 		//initialize the arrays that would contain json data for the combos
 			$.each(termSuggestions, function( index, value ) {

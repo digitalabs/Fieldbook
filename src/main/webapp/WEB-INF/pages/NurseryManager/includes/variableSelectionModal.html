@@ -116,25 +116,11 @@
 	<script type="text/javascript" th:src="@{/static/js/ontologyBrowser.js}"></script>
 	<script type='text/javascript' th:inline="javascript">
 		//<![CDATA[
-		var treeData = /*[[${createNurseryForm.treeData}]]*/;
-		var searchTreeData = /*[[${createNurseryForm.searchTreeData}]]*/;
-		var treeDivId = 'ontologyBrowserTree';
-		var seasrchErrorMessage = /*[[#{ontology.search.error.no.result}]]*/;
-		var variableDetailHeader = /*[[#{ontology.variable.details}]]*/;
-		var noVariableAddedMessage = /*[[#{nursery.managesettings.select.variable}]]*/;
 
-		var ontologyUrl = $('#ontologyBaseUrl').attr('href');
-		var termSuggestions_obj = [];
-	    var termSuggestions;
-	    var termSuggestionsMap = {};
-	    var isSearchTab = false;
-
-		$( document ).ready(function() {
-
-				//display tree
-				displayOntologyTree(treeDivId, treeData, searchTreeData, 'srch-term');
-				$.fn.modal.Constructor.prototype.enforceFocus = function () {};
-			});
+		var variableDetailHeader = /*[[#{ontology.variable.details}]]*/ '',
+			noVariableAddedMessage = /*[[#{nursery.managesettings.select.variable}]]*/ '',
+			ontologyUrl = $('#ontologyBaseUrl').attr('href'),
+	    	isSearchTab = false;
 
 		//]]>
 	</script>

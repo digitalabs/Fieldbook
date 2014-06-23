@@ -1265,6 +1265,12 @@ input[type="text"], input[type="password"], .ui-autocomplete-input, textarea, .u
 
 }
 
+@media only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (min-resolution: 2dppx)  {
+   .select2-search input {
+       background-position: -36px -21px !important;
+   }
+}
+
 .s2-nosearch-icon input {
     padding-left: 4px;
     background: linear-gradient(top, #fff 85%, #eee 99%);

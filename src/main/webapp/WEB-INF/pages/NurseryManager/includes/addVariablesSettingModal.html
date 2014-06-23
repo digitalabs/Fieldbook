@@ -4,19 +4,76 @@
 		<div class="modal-dialog modal-large">
 			<div class="modal-content">
 				<div class="modal-body" id="addVariablesSettingBody">
-						<div class="row form-group">
-							<div class="col-xs-11 col-md-11">
-								<label class="modal-title fbk-modal-title" id="heading-modal"></label>
-							</div>
-							<div class="col-xs-1 col-md-1">
-								<button  id="closeAddVariablesSettingModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
-							</div>
+					<div class="row form-group">
+						<div class="col-xs-11 col-md-11">
+							<label class="modal-title fbk-modal-title" id="heading-modal"></label>
 						</div>
+						<div class="col-xs-1 col-md-1">
+							<button  id="closeAddVariablesSettingModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
+						</div>
+					</div>
 
 					<div class="row">
 						<div id="page-message-modal" class="col-xs-12 col-md-12"></div>
 					</div>
-					<div th:include="/OntologyBrowser/browserInfo"></div>
+					<div>
+						<div class="row" xmlns:th="http://www.thymeleaf.org">
+							<div class="col-xs-5 col-md-5">
+								<div class="form-group" id="page-message"></div>
+								<span class="h4" th:utext="#{ontology.search.name}">
+									Enter a property or variable name:*
+								</span>
+							</div>
+
+							<div class="col-xs-7 col-md-7">
+								<div class="form-group"></div>
+								<h4 id="variable-details">
+								</h4>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xs-5 col-md-5">
+								<div style="padding-left: 0px;" class="col-xs-12 col-md-12">
+									<input type="hidden" id="srch-term" class="form-control"/>
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							&nbsp;
+						</div>
+
+						<div class="row">
+							<div class="col-xs-5 col-md-5">
+								<div id="ontology-browser-tree">
+									<div class="col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org">
+										<div class="row">
+											<div id="ontologyBrowserTree" style="overflow:auto;"></div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xs-7 col-md-7" id="ontology-detail-tabs">
+
+							</div>
+						</div>
+
+						<a style="display: none" id="ontologyBaseUrl" href="/OntologyBrowser" th:href="@{/OntologyBrowser/}">test</a>
+						<div class="col-xs-7 col-md-7 variable-detail-info" style="display:none">
+							<!-- Tab Navigation section -->
+							<ul class="nav nav-tabs" id="ontology-tab-headers">
+								<li class="active" id="ontology-details-tab-li"><a href="javascript:showSelectedTab('ontology-details-tab');">Details</a></li>
+							</ul>
+							<!-- details section -->
+							<div style="padding-top: 15px;" id="ontology-tabs">
+								<div id="ontology-details-tab">
+									<div class="col-xs-12 col-md-12" id="reminder-placeholder" th:text="#{ontology.browser.details.tab.reminder}">
+										Select a Standard Variable to view
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 					<br/>
 					<div class="row">
 						<div class="col-xs-12 col-md-12">
@@ -67,6 +124,10 @@
 		var noVariableAddedMessage = /*[[#{nursery.managesettings.select.variable}]]*/;
 
 		var ontologyUrl = $('#ontologyBaseUrl').attr('href');
+		var termSuggestions_obj = [];
+	    var termSuggestions;
+	    var termSuggestionsMap = {};
+	    var isSearchTab = false;
 
 		$( document ).ready(function() {
 

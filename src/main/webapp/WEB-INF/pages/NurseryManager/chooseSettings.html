@@ -317,6 +317,7 @@
 </div>
 <div layout:fragment="page-script">
 	<script type="text/javascript" th:src="@{/static/js/nurseryManager.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/choose-settings.js}"></script>
 	<link th:href="@{/static/css/lib/bootstrap/bootstrap-datepicker.css}" rel="stylesheet"/>
 	<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-datepicker.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-spinedit.js}"></script>
@@ -327,7 +328,7 @@
 
 		// FIXME Should not be using global variables or functions
 		/*global getIEVersion, getJquerySafeId, initializePossibleValuesCombo, setTimeout*/
-		/*global addCreateNurseryRequiredAsterisk, doOntologyTreeHighlight, treeDivId */
+		/*global addCreateNurseryRequiredAsterisk, doOntologyTreeHighlight */
 		/*global checkTraitsAndSelectionVariateTable*/
 
 		/* jshint ignore:start */
@@ -373,7 +374,11 @@
 			tdLabel = /*[[#{nursery.managesettings.add.baseline.traits}]]*/ '',
 			tdPlaceholder = /*[[#{nursery.reminder.add.trait.settings}]]*/ '',
 			ncLabel = /*[[#{nursery.managesettings.add.nursery.conditions}]]*/ '',
-			ncPlaceholder = /*[[#{nursery.reminder.add.nursery.conditions}]]*/ '';
+			ncPlaceholder = /*[[#{nursery.reminder.add.nursery.conditions}]]*/ '',
+
+			treeDivId = 'ontologyBrowserTree',
+
+			ChooseSettings = window.ChooseSettings;
 
 		function openVariableSelectionDialog(e) {
 			'use strict';
@@ -387,7 +392,7 @@
 			$('#variable-details').html('');
 
 			// FIXME
-			getStandardVariables(e.data.group);
+			ChooseSettings.getStandardVariables(e.data.group, treeDivId);
 		}
 
 		$(document).ready(function() {

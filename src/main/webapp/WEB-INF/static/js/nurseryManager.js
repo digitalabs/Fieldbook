@@ -252,41 +252,6 @@ function setComboValues(suggestions_obj, id, name) {
 	$("#" + name).select2('data', dataVal);
 }
 
-function getStandardVariables(variableType) {
-	'use strict;'
-	$.ajax({
-		url : '/Fieldbook/NurseryManager/createNursery/displayAddSetting/'
-				+ variableType,
-		type : 'GET',
-		cache : false,
-		success : function(data) {
-			if ($('#'+treeDivId+' .fbtree-container').length > 0) {
-				$('#' + treeDivId).dynatree('destroy');
-			}
-			treeData = data.treeData;
-			searchTreeData = data.searchTreeData;
-			displayOntologyTree(treeDivId, treeData, searchTreeData,
-					'srch-term');
-			$('#' + 'srch-term').val('');
-
-			// clear selected variables table and attribute fields
-			$('#newVariablesList > tbody').empty();
-			$('#page-message-modal').html('');
-			clearAttributeFields();
-			$('#addVariables').attr(
-					'onclick',
-					"javascript: submitSelectedVariables(" + variableType
-							+ ");");
-			$('#newVariablesList').addClass('fbk-hide');
-			$('#addVariablesSettingModal').modal({
-				backdrop : 'static',
-				keyboard : true
-			});
-
-		}
-	});
-}
-
 function initializeStandardVariableSearch(variables) {
 	// set values
 	var stdVariableSuggestions_obj = [];
@@ -367,18 +332,6 @@ function checkIfEmpty(value) {
 	} else {
 		return value;
 	}
-}
-
-function clearAttributeFields() {
-	$('selectedTraitClass').html('&nbsp;');
-	$('selectedProperty').html('&nbsp;');
-	$('#selectedMethod').html('&nbsp;');
-	$('#selectedScale').html('&nbsp;');
-	$('#selectedDataType').html('&nbsp;');
-	$('#selectedRole').html('&nbsp;');
-	$('#selectedCropOntologyId').html('&nbsp;');
-	$('#selectedStdVarId').val('');
-	$('#selectedName').val('');
 }
 
 function getIdNameCounterpart(selectedVariable, idNameCombinationVariables) {

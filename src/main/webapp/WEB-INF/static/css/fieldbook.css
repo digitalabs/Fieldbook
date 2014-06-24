@@ -289,10 +289,6 @@ table .highlight td, table .field-map-highlight td{
     overflow: hidden;
 }
 
-.dataTables_scrollHead {
-    background: #C8C6C6;
-}
-
 div.dataTables_scrollHead table.table-curved,
 div.dataTables_scrollBody table.table-curved {
     border-radius: 0;
@@ -1363,7 +1359,6 @@ label[data-toggle="collapse"],
 .add-top-margin {
 	margin-top: 6px;
 }
-.dataTables_scrollHeadInner, .dataTables_scrollBody table { width:100% !important}
 .fbk-import-close-button{
 	float: right; 
 	z-index:99999; 

@@ -1037,7 +1037,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
 
             }
             else if (form instanceof OntologyPropertyForm) {
-                ontologyName = messageSource.getMessage("ontology.browser.modal.property", null, locale);
+                ontologyName = messageSource.getMessage("ontology.browser.modal.property.name", null, locale);
                 String desc = ((OntologyPropertyForm) form).getManagePropertyDescription();
                 if(desc != null && desc.equalsIgnoreCase("")){
                     desc = ((OntologyPropertyForm) form).getManagePropertyName().trim();
@@ -1049,7 +1049,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                         ((OntologyPropertyForm)form).getCropOntologyId()));
             }
             else if (form instanceof OntologyScaleForm) {
-                ontologyName = messageSource.getMessage("ontology.browser.modal.scale", null, locale);
+                ontologyName = messageSource.getMessage("ontology.browser.modal.scale.name", null, locale);
                 String desc = ((OntologyScaleForm) form).getManageScaleDescription();
                 if(desc != null && desc.equalsIgnoreCase("")){
                     desc = ((OntologyScaleForm) form).getManageScaleName().trim();
@@ -1059,7 +1059,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                         desc));
             }
             else if (form instanceof OntologyMethodForm) {
-                ontologyName = messageSource.getMessage("ontology.browser.modal.method", null, locale);
+                ontologyName = messageSource.getMessage("ontology.browser.modal.method.name", null, locale);
                 String desc = ((OntologyMethodForm) form).getManageMethodDescription();
                 if(desc != null && desc.equalsIgnoreCase("")){
                     desc = ((OntologyMethodForm) form).getManageMethodName().trim();
@@ -1114,7 +1114,7 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
         Locale locale = LocaleContextHolder.getLocale();
         
         String ontologyTypeName = 
-                messageSource.getMessage("ontology.browser.modal." + ontology, null, locale);
+                messageSource.getMessage("ontology.browser.modal." + ontology+".name", null, locale);
         
         try {
             ontologyService.deleteTraitClass(id);

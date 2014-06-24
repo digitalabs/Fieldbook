@@ -182,6 +182,8 @@ public class CreateNurseryForm {
     
     private int importLocationId;
     
+    private String createdBy;
+    
     /**
      * Gets the project id.
      *
@@ -1125,6 +1127,14 @@ public class CreateNurseryForm {
 
         public void setImportDate(String importDate) {
             this.importDate = importDate;
+        }
+
+        public String getCreatedBy() {
+            return createdBy;
+        }
+
+        public void setCreatedBy(String createdBy) {
+            this.createdBy = createdBy;
         }
 
         

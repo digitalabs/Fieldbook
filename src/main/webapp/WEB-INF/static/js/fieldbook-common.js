@@ -202,6 +202,11 @@ function createFieldMap(tableName) {
 		index,
 		idVal,
 		idList;
+	
+	if($('.import-study-data').data('data-import') === '1'){
+		showErrorMessage('', needSaveImportDataError);
+		return;
+	}
 
 	if ($('#' + tableName + ' .field-map-highlight').attr('id') != null || tableName == 'nursery-table') {
 		// Get selected studies
@@ -552,6 +557,11 @@ function createLabelPrinting(tableName) {
 		labelPrintingHref,
 		id,
 		type;
+	
+	if($('.import-study-data').data('data-import') === '1'){
+		showErrorMessage('', needSaveImportDataError);
+		return;
+	}
 
 	if ($('#createNurseryMainForm #studyId').length === 1) {
 		idVal = ($('#createNurseryMainForm #studyId').val());
@@ -833,9 +843,16 @@ function openStudy(tableName) {
 }
 
 function advanceNursery(tableName) {
-	var count = 0;
-
-	idVal = $('#createNurseryMainForm #studyId').val();
+	'use strict';
+	
+	var count = 0, 
+		idVal = $('#createNurseryMainForm #studyId').val();
+	
+	if($('.import-study-data').data('data-import') === '1'){
+		showErrorMessage('', needSaveImportDataError);
+		return;
+	}
+	
 	count++;
 	if (count !== 1) {
 		showMessage(advanceStudyError);
@@ -1198,7 +1215,36 @@ function submitImportStudy() {
 		showErrorMessage('page-import-study-message-modal', 'Please choose a file to import');
 		return false;
 	}
+	
+	if($('.import-study-data').data('data-import') === '1'){
+		setTimeout(function(){$('#importOverwriteConfirmation').modal({ backdrop: 'static', keyboard: true });}, 300);
+	}else{
+		continueStudyImport(false);
+	}
+}
+function continueStudyImport(doDataRevert){
+	'use strict';
+	if(doDataRevert){
+		revertData(false);
+		$('#importOverwriteConfirmation').modal('hide');
+	}
+	
 	$('#importStudyUploadForm').ajaxForm(importOptions).submit();
+}
+
+function showImportOptions(){
+	'use strict';
+	$('#fileupload').val('');
+	$('#importStudyModal').modal({ backdrop: 'static', keyboard: true });
+}
+function goBackToImport(){
+	'use strict';
+	//revertData(false);
+	$('#importStudyConfirmationModal').modal('hide');
+	$('#importStudyDesigConfirmationModal').modal('hide');
+	$('#importOverwriteConfirmation').modal('hide');
+	setTimeout(function(){$('#importStudyModal').modal({ backdrop: 'static', keyboard: true });}, 300);
+	
 }
 
 function isFloat(value) {
@@ -2072,6 +2118,7 @@ function showListTreeToolTip(node, nodeSpan) {
 			$(listDetails).find('#list-date').html(data.date);
 			$(listDetails).find('#list-owner').html(data.owner);
 			$(listDetails).find('#list-type').html(data.type);
+			$(listDetails).find('#list-total-entries').html(data.totalEntries);
 			notes = data.notes == null ? '-' : data.notes;
 			$(listDetails).find('#list-notes').html(notes);
 
@@ -2134,7 +2181,7 @@ function checkTraitsAndSelectionVariateTable(containerDiv, isLandingPage){
 	} else {
 		$(containerDiv + ' .selection-variate-table').addClass('fbk-hide');
 		if(isLandingPage) {
-			$(containerDiv + ' .selection-variate-table').parent().parent().addClass('fbk-hide');
+			$(containerDiv + ' .selection-variate-table').parent().prev().addClass('fbk-hide');
 		}
 	}
 	if($(containerDiv + ' .traits-table tbody tr').length > 0){
@@ -2142,7 +2189,7 @@ function checkTraitsAndSelectionVariateTable(containerDiv, isLandingPage){
 	} else {
 		$(containerDiv + ' .traits-table ').addClass('fbk-hide');
 		if(isLandingPage) {
-			$(containerDiv + ' .traits-table').parent().parent().addClass('fbk-hide');
+			$(containerDiv + ' .traits-table').parent().prev().addClass('fbk-hide');
 		}
 	}
 }

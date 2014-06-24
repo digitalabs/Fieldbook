@@ -42,7 +42,22 @@
         </div>
 
         <div class="col-xs-4 col-md-4 nopadding">
-            <div id="check-germplasm-list" class="list-droppable check"></div>
+            <div id="check-germplasm-list" class="list-droppable check">            	
+			</div>
+			<table class="table table-curved table-condensed fake-check-germplasm-list-items fbk-hide">
+				<thead>
+					<tr>
+						<th style="text-align: left; vertical-align: middle" th:utext="#{nursery.import.header.designation}">.Designation</th>
+						<th style="text-align: left; vertical-align: middle" th:utext="#{nursery.import.header.check}">.Check</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="even">&nbsp;</td>
+						<td class="even">&nbsp;</td>
+					</tr>						
+				</tbody>
+			</table>
         </div>
 
     </div>
@@ -233,6 +248,7 @@
 
 <!-- Scripts location, note that the div tag will be remove after merging to decorator -->
 <div layout:fragment="page-script">
+	<script type="text/javascript" th:src="@{/static/js/fbk-data-table/fieldbook-datatable.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery-multisortable.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery.tablednd.0.7.min.js}"></script>
 	
@@ -241,7 +257,7 @@
 		/*globals Spinner, moveToTopScreen, getDisplayedTreeName, showSpecifyCheckSection, setSpinnerMaxValue*/
 		/*globals prevStartIndex, showErrorMessage,germplasmAddedAsCheck, openTreeType, sameListErr*/
 		/*globals changeBrowseGermplasmButtonBehavior, getJquerySafeId, displayGermplasmListTree, pleaseChooseFolder*/
-		/*globals openGermplasmListDetailsPopop*/
+		/*globals addFakeCheckTable, openGermplasmListDetailsPopop*/
 		/*exported startIndex,germplasmStartingEntry,importLocationUrl,importIframeOpened,overwriteChecksList*/
 		/*exported confirmReplaceList,resetGermplasmList,removeCheckFromList,openListTree,viewGermplasmLitDetails */
 		/*exported additionalLazyLoadUrl, chooseList*/
@@ -263,6 +279,10 @@
 
 		var makeCheckDraggableBool = true,
 			hasPageError = /*[[${importGermplasmListForm.hasError}]]*/ '';
+		
+		//to be use as reference to the data table object
+		var germplasmDataTable= null,
+		selectedCheckListDataTable = null;
 		
 
 		// FIXME There is a lot of repeated code in the next two functions
@@ -376,7 +396,6 @@
 
 		function addCheckGermplasmList(entryNumber, gid, index) {
 			'use strict';
-
 			// FIXME Not sure if the following condition is relying on implicit type conversion. See other instances of this in this file
 
 			// If the germplasm record has been specified as starting index
@@ -453,7 +472,7 @@
 
 			hideAddCol(false);
 			$('#'+getDisplayedTreeName()).find('*').removeClass('dynatree-selected');
-
+			
 			$.ajax({
 				url: '/Fieldbook/NurseryManager/importGermplasmList/displayCheckGermplasmDetails/' + listId,
 				type: 'GET',
@@ -472,14 +491,15 @@
 		function resetCheckList() {
 			'use strict';
 			hideAddCol(false);
+            $('#check-germplasm-list').html('');
+
 			$.ajax({
 				url: '/Fieldbook/NurseryManager/importGermplasmList/resetCheckGermplasmDetails',
 				type: 'GET',
 				cache: false,
 				async: false,
 
-				success: function() {
-					$('#check-germplasm-list').html('<h3></h3>');
+				success: function() {					
 					addedGid = {};
 					showSpecifyCheckSection();
 					makeCheckDraggable(true);
@@ -488,6 +508,7 @@
 					lastDraggedChecksList = 0;
 				}
 			});
+			addFakeCheckTable();
 		}
 
 		function overwriteChecksList() {
@@ -564,6 +585,24 @@
 				success: function(html) {
 					$('#imported-germplasm-list').html(html);
 					makeDraggable(makeDraggableBool);
+					/*
+					$('.germplasm-list-items').dataTable({						
+						scrollY: '500px',
+						scrollX: '100%',
+						scrollCollapse: true,
+					  dom: 'R<t><"fbk-page-div"p>',
+					  iDisplayLength: 100,		
+					  bAutoWidth: true,
+					  fnInitComplete: function(oSettings, json) {
+							
+							var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil( oSettings.fnRecordsDisplay() / oSettings._iDisplayLength );
+							if(totalPages === 1){
+								$('#imported-germplasm-list .fbk-page-div').addClass('fbk-hide');
+							}
+							
+						}
+					});
+					*/
 					checksFromPrimary = 0;
 					setSpinnerMaxValue();
 
@@ -577,9 +616,11 @@
 						// We clear the list in the check
 						resetCheckList();
 					}
+					addFakeCheckTable();
 				}
 			});
 		}
+		
 		function displayGermplasmDetails(listIdTemp){
 			'use strict';
 			if (lastDraggedChecksList === 0 && $('.check-germplasm-list-items tbody tr').length > 0){
@@ -613,6 +654,7 @@
 				success: function() {
 				}
 			});
+			addFakeCheckTable();
 		}
 
 		function isGidInCheckList(gid) {
@@ -776,23 +818,36 @@
 							if (lastDraggedChecksList != 0) {
 								itemsToAdd = [];
 								$('#keyForOverwrite').val('');
-								$.each(ui.helper.find('tr'), function (index, row) {
-									var entryNumber = $(row).data('entry');
-									var gid = ''+$(row).data('gid');
-									var index = $(row).data('index');
+								//$.each(ui.helper.find('tr'), function (index, row) {
+								$('.primaryRow.germplasmSelectedRow').each(function(){	
+									var entryNumber = $(this).data('entry');
+									var gid = ''+$(this).data('gid');
+									var index = $(this).data('index');
 									itemsToAdd.push({'entry':entryNumber, 'gid': gid, 'index': index});
 								});
 
 								$('#confirmationModal').modal('show');
 							} else {
+								/*
 								$.each(ui.helper.find('tr'), function (index, row) {
+									
 									var entryNumber = $(row).data('entry'),
 										gid = '' + $(row).data('gid'),
 										idx = '' + $(row).data('index');
 									if(addCheckGermplasmList(entryNumber, gid, idx)){
 										$('.germplasm-list-items tr.germplasmSelectedRow').removeClass('germplasmSelectedRow');
 									}
-								});
+								});*/
+								$('.primaryRow.germplasmSelectedRow').each(function(){
+									
+									var entryNumber = $(this).data('entry'),
+									gid = '' + $(this).data('gid'),
+									idx = '' + $(this).data('index');
+									if(addCheckGermplasmList(entryNumber, gid, idx)){
+										$('.germplasm-list-items tr.germplasmSelectedRow').removeClass('germplasmSelectedRow');
+									}
+								}
+								);
 							}
 							$('#lastCheckSourcePrimary').val(1);
 						} else {

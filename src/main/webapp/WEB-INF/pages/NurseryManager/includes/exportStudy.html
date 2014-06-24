@@ -19,22 +19,18 @@
 					</div>
 					<div class="row form-group">
 						<div class="col-xs-12 col-md-12">
-							<label class="control-label label-bold" th:text="#{nursery.export.note}"></label>
+							<label class="control-label" th:text="#{nursery.export.note}"></label>
 						</div>
 					</div>
-					<div class="row">
+					<div class="row form-group">
 						<div class="col-xs-12 col-md-12">
 							<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
 						</div>
 					</div>					
+					
 					<div class="row form-group">
 						<div class="col-xs-12 col-md-12">
-							&nbsp;
-						</div>
-					</div>
-					<div class="row form-group">
-						<div class="col-xs-12 col-md-12">
-							<label class="control-label h4" th:text="#{study.export.format.header}"></label>
+							<label class="control-label h4 label-bold" th:text="#{study.export.format.header}"></label>
 						</div>
 
 					</div>
@@ -55,6 +51,7 @@
 							</select>
 						</div>
 					</div>
+					<div class="row  form-group">&nbsp;</div>
 					<div class="row form-group">
 						<div class="col-xs-12 col-md-12">
 							<label class="control-label h4 label-bold" th:text="#{study.export.data.collection.header}"></label>
@@ -169,7 +166,7 @@
 		});
 
 		function checkBeforeExport() {
-
+			'use strict';
 			var studyId = '0';
 
 			if ($('#browser-nurseries').length !== 0) {
@@ -202,19 +199,27 @@
 		}
 
 		function doConfirmGoBack() {
+			'use strict';
 			$('#exportStudyConfirmationModal').modal('hide');
 			$('#exportStudyModal').modal({ backdrop: 'static', keyboard: true });
 		}
 
 		function doConfirmExport() {
+			'use strict';
 			exportNursery();
 			$('#exportStudyConfirmationModal').modal('hide');
 		}
 
 		function showExportOptions() {
+			'use strict';
 			var studyType = '',
 				studyId = '0';
 
+			if($('.import-study-data').data('data-import') === '1'){
+				showErrorMessage('', needSaveImportDataError);
+				return;
+			}
+			
 			if ($('#browser-nurseries').length !== 0) {
 				// We are on the landing page
 				studyType = $("#study"+getCurrentStudyIdInTab()+" #study-type").val();
@@ -255,6 +260,7 @@
 
 		}
 		function showExportResponse(responseText, statusText, xhr, $form) {
+			'use strict';
 			var resp = $.parseJSON(responseText);
 
 			$('#exportStudyDownloadForm #outputFilename').val(resp.outputFilename);

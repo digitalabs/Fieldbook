@@ -9,39 +9,42 @@
 	<input type="hidden" th:field="*{lastDraggedChecksList}"/>
 
 	<!-- case 1: no data means no table -->
-	<div th:if="*{paginatedImportedGermplasm == null or #lists.isEmpty(paginatedImportedGermplasm)}">
+	<div th:if="*{importedGermplasm == null or #lists.isEmpty(importedGermplasm)}">
 		<span class="noGermplasmListIndicator" th:text="#{nursery.import.no.germplasm.list}">No Germplasm list</span>
 	</div>
 
 	<!-- case 2: advanced view of the importedGermplasm -->
-	<div th:if="*{paginatedImportedGermplasm != null and not #lists.isEmpty(paginatedImportedGermplasm)}">
-		<div class="germplasm-list-table" th:if="*{importedGermplasmMainInfo.isAdvanceImportType()}">
-			<table th:if="*{not #lists.isEmpty(paginatedImportedGermplasm)}" class="my-class table table-curved table-condensed germplasm-list-items">
+	<div th:if="*{importedGermplasm != null and not #lists.isEmpty(importedGermplasm)}">
+		<div class="germplasm-list-table-old fbk-hide-opacity germplasm-list-data-table" th:if="*{importedGermplasmMainInfo.isAdvanceImportType()}">
+			<table th:if="*{not #lists.isEmpty(importedGermplasm)}" 
+			class="table-curved table-condensed germplasm-list-items">
+			
 				<thead>
 					<tr>
 						<!-- <th class="check-col" th:utext="#{nursery.import.header.check}">.Check</th> -->
-						<th th:text="#{nursery.import.header.position}">Position</th>
-						<th style="text-align:center" th:utext="#{nursery.import.header.entry}">.Entry</th>
-						<th th:utext="#{nursery.import.header.designation}">.Designation</th>
-						<th th:utext="#{nursery.import.header.gid}">.GID</th>
-						<th th:utext="#{nursery.import.header.cross}">.Cross</th>
-						<th th:utext="#{nursery.import.header.source}">.Source</th>
-						<th th:utext="#{nursery.import.header.entrycode}">.Entry Code</th>
+						<th nowrap="nowrap" data-col-name="position" th:text="#{nursery.import.header.position}">Position</th>
+						<th nowrap="nowrap" data-col-name="entry" th:utext="#{nursery.import.header.entry}">.Entry</th>
+						<th nowrap="nowrap" data-col-name="desig" th:utext="#{nursery.import.header.designation}">.Designation</th>
+						<th nowrap="nowrap" data-col-name="gid" th:utext="#{nursery.import.header.gid}">.GID</th>
+						<th nowrap="nowrap" data-col-name="cross" th:utext="#{nursery.import.header.cross}">.Cross</th>
+						<th nowrap="nowrap" data-col-name="source" th:utext="#{nursery.import.header.source}">.Source</th>
+						<th nowrap="nowrap" data-col-name="entryCode" th:utext="#{nursery.import.header.entrycode}">.Entry Code</th>
 					</tr>
 				</thead>
+				 <!-- 
 				<tbody th:remove="all-but-first">
-					<tr class="draggable primaryRow" th:each="gid, row : *{paginatedImportedGermplasm}" th:attr="data-entry=${gid.entryId}" th:attrappend="data-gid=${gid.gid},data-index=${gid.index}">
-						<td align="left" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.index}">.1</td>
-						<td align="center" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryId}">.1</td>
-						<td align="left" th:class="${row.even}? 'even' : 'odd'" >
+					<tr class="draggable primaryRow" th:each="gid, row : *{importedGermplasm}" th:attr="data-entry=${gid.entryId}" th:attrappend="data-gid=${gid.gid},data-index=${gid.index}">
+						<td align="left" th:class="${row.even}? 'even1' : 'odd1'" th:text="${gid.index}">.1</td>
+						<td align="left" th:class="${row.even}? 'even1' : 'odd1'" th:text="${gid.entryId}">.1</td>
+						<td align="left" th:class="${row.even}? 'even1' : 'odd1'" >
 							<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${gid.desig}" th:attr="data-gid=${gid.gid}" th:attrappend="data-desig=${gid.desig}">.2</a>
 						</td>
-						<td align="left" th:class="${row.even}? 'even' : 'odd'">
+						<td align="left" th:class="${row.even}? 'even1' : 'odd1'">
 							<a href="javascript: void(0)" onclick="javascript: openGermplasmDetailsPopop(this)" th:text="${gid.gid}" th:attr="data-gid=${gid.gid}" th:attrappend="data-desig=${gid.desig}">.3</a>
 						</td>
-						<td align="left" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.cross}">.4</td>
-						<td align="left" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.source}">.5</td>
-						<td align="left" th:class="${row.even}? 'even' : 'odd'" th:text="${gid.entryCode}">.6</td>
+						<td align="left" th:class="${row.even}? 'even1' : 'odd1'" th:text="${gid.cross}">.4</td>
+						<td align="left" th:class="${row.even}? 'even1' : 'odd1'" th:text="${gid.source}">.5</td>
+						<td align="left" th:class="${row.even}? 'even1' : 'odd1'" th:text="${gid.entryCode}">.6</td>
 					</tr>
 					<tr>
 						<td>.1.1</td>
@@ -54,6 +57,7 @@
 						<td>.6</td>
 					</tr>
 				</tbody>
+				  -->
 			</table>
 		</div>
 	</div>
@@ -61,13 +65,8 @@
 
 	<div class="row col-xs-12 col-md-12">
 		<div id="imported-germplasm-list-reset-button" class="pull-left" style="opacity: 1">
-	         <a style="margin-top: 20px;" href="javascript: resetGermplasmList()" class="btn btn-default">Clear</a>
-	     </div>
-		<div th:if="*{importedGermplasm != null and not #lists.isEmpty(importedGermplasm)}">
-			<div id="germplasm-list-pagination" style="height: 40px">
-
-			</div>
-		</div>
+	         <a style="margin-top: 5px;" href="javascript: resetGermplasmList()" class="btn btn-default">Clear</a>
+	     </div>		
 	</div>
 
 	<br/>
@@ -75,26 +74,16 @@
 </form>
 
 </div>
-<script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-paginator.min.js}"></script>
+
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
-	var paginationUrl = /*[[@{/NurseryManager/importGermplasmList/page/}]]*/ '';
-	
-	var options = {
-		currentPage: /*[[${importGermplasmListForm.currentPage}]]*/,
-		totalPages: /*[[${importGermplasmListForm.totalPages}]]*/,
-
-		alignment:'center',
-		useBootstrapTooltip:true,
-		onPageClicked: function(e,originalEvent,type,page){
-			showPage(paginationUrl, page, 'imported-germplasm-list');
-
-		}
-	}
+	var dataGermplasmList = /*[[${listDataTable}]]*/ [];	
 	$( document ).ready(function() {
-		if($('#germplasm-list-pagination') != null){
-			$('#germplasm-list-pagination').empty().bootstrapPaginator(options);
-		}
+		
+		'use strict';
+		germplasmDataTable = new BMS.Fieldbook.GermplasmListDataTable('.germplasm-list-items', '.germplasm-list-data-table', dataGermplasmList);
+		//console.log(germplasmDataTable.getDataTable());
+		
 		setSpinnerMaxValue();
 
 	});

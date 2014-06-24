@@ -132,7 +132,7 @@ public class EditNurseryController extends SettingsController {
                     buildRequiredVariablesFlag(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
                     userSelection.getStudyLevelConditions(), false);
             
-            List<SettingDetail> basicDetails = getBasicDetails(nurseryLevelConditions);
+            List<SettingDetail> basicDetails = getBasicDetails(nurseryLevelConditions, form);
             
             removeBasicDetailsVariables(nurseryLevelConditions);
             
@@ -208,19 +208,45 @@ public class EditNurseryController extends SettingsController {
      * @param nurseryLevelConditions the nursery level conditions
      * @return the basic details
      */
-    private List<SettingDetail> getBasicDetails(List<SettingDetail> nurseryLevelConditions) {
+    private List<SettingDetail> getBasicDetails(List<SettingDetail> nurseryLevelConditions, CreateNurseryForm form) {
         List<SettingDetail> basicDetails = new ArrayList<SettingDetail>();
         
         StringTokenizer token = new StringTokenizer(AppConstants.FIXED_NURSERY_VARIABLES.getString(), ",");
         while(token.hasMoreTokens()){
             Integer termId = Integer.valueOf(token.nextToken());
+            boolean isFound = false;
             for (SettingDetail setting : nurseryLevelConditions) {
                 if (termId.equals(setting.getVariable().getCvTermId())) {
+                    isFound = true;
+                    if (termId.equals(Integer.valueOf(TermId.STUDY_UID.getId()))) {
+                        try {
+                            form.setCreatedBy(fieldbookService.getPersonById(Integer.parseInt(setting.getValue())));
+                        }
+                        catch (MiddlewareQueryException e) {
+                            LOG.error(e.getMessage(), e);
+                        }
+                    }
                     basicDetails.add(setting);
                 }
+            }  
+            if(!isFound){
+                try {
+                    basicDetails.add(createSettingDetail(termId, null));
+                    if (termId.equals(Integer.valueOf(TermId.STUDY_UID.getId()))) {
+                        try {
+                            form.setCreatedBy(fieldbookService.getPersonById(workbenchService.getCurrentIbdbUserId(this.getCurrentProjectId())));
+                        }
+                        catch (MiddlewareQueryException e) {
+                            LOG.error(e.getMessage(), e);
+                        }
+                    }
+                } catch (MiddlewareQueryException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
-            
         }
+        
         return basicDetails;
     }
     
@@ -470,6 +496,7 @@ public class EditNurseryController extends SettingsController {
     	form.setBaselineTraitsSegment(AppConstants.SEGMENT_TRAITS.getString());
     	form.setSelectionVariatesSegment(AppConstants.SEGMENT_SELECTION_VARIATES.getString());
     	form.setCharLimit(Integer.parseInt(AppConstants.CHAR_LIMIT.getString()));
+    	
     }
     
     /**

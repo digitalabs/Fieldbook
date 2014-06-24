@@ -25,6 +25,7 @@
                 <span class="heading" th:text="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() &lt; charLimit or basicDetails[0].value.length() == charLimit}"></span>
                 <span class="heading nursery-name" data-placement="right" data-toggle="tooltip" th:text="*{basicDetails[0].value.substring(0, charLimit)} + '...'" th:title="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() > charLimit}"></span>
                 <input type="button" onclick="submitEditForm();" th:value="#{common.form.save.text}" class="btn btn-info fbk-save-button-left-margin" />
+                <input type="button" value="Save" class="btn btn-info fbk-discard-imported-data fbk-hide" onclick="discardImportedData();" th:value="#{import.discard.data}"/>				
             </div>
             <a  class="pull-right"  th:href="@{/NurseryManager/manageNurseries}" th:text="#{return.to.manage.nurseries}">Return to Manage Nurseries</a>
 
@@ -33,8 +34,8 @@
 	<div class="row" style="height: 30px">
 		<div class="col-md-12">
             <label class="control-label section-toggle toggle-icon" id="basicDetails" data-target=".basicDetailsSection">
-                <img style="margin-left: -10px; display: none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
-                <img style="margin-left: -7px;" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
+                <img style="margin-left: -5px; display: none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
+                <img style="margin-left: -2px;" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
                 <strong class="sub-content-heading" th:text="#{nursery.create.nursery.basic.details}">BASIC DETAILS</strong>
             </label>
 
@@ -116,12 +117,12 @@
 				<input type="text" class="form-control character-input" th:field="*{basicDetails[1].value}" />
 			</div>
 			<div class="col-xs-2 col-md-2">
-				<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{basicDetails[2].variable.cvTermId}" />
-				<label th:text="#{nursery.create.nursery.creation.date} + ': '" class="control-label label-bold"></label>&nbsp;<span class="required">*</span>
+				<input  class="cvTermIds" type="hidden" th:field="*{basicDetails[5].variable.cvTermId}" />
+				<label th:text="#{nursery.create.nursery.created.by} + ': '" class="control-label label-bold"></label>&nbsp;<span class="required">*</span>
 			</div>
 			<div class="col-xs-4 col-md-4">
-				<input placeholder="yyyy-mm-dd" id="basicDetails.value2" style="width: 100px" type="text" class="form-control date-input" th:field="*{basicDetails[2].value}" />
-				<label for="basicDetails.value2" class="btn datepicker"> <img th:src="@{/static/img/calendar.png}" style="padding-bottom: 3px;" /></label>
+				<input type="hidden" th:field="*{basicDetails[5].value}" />
+			<label th:text="*{createdBy}"></label>
 			</div>
 		</div>
 		<div class="row form-group">
@@ -133,10 +134,18 @@
 				<textarea class="form-control character-input" rows="3" th:field="*{basicDetails[3].value}"></textarea>
 			</div>
 			<div class="col-xs-2 col-md-2">
+				<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{basicDetails[2].variable.cvTermId}" />
+				<label th:text="#{nursery.create.nursery.creation.date} + ': '" class="control-label label-bold"></label>&nbsp;<span class="required">*</span>
+			</div>
+			<div class="col-xs-4 col-md-4">
+				<input placeholder="yyyy-mm-dd" id="basicDetails.value2" style="width: 100px" type="text" class="form-control date-input" th:field="*{basicDetails[2].value}" />
+				<label for="basicDetails.value2" class="btn datepicker"> <img th:src="@{/static/img/calendar.png}" style="padding-bottom: 3px;" /></label>
+			</div>
+			<div class="col-xs-2 col-md-2 add-top-margin">
 				<input class="cvTermIds" type="hidden" th:field="*{basicDetails[4].variable.cvTermId}" />
 				<label th:text="#{nursery.create.nursery.completion.date} + ': '" class="control-label label-bold"></label>
 			</div>
-			<div class="col-xs-4 col-md-4">
+			<div class="col-xs-4 col-md-4 add-top-margin">
 				<input placeholder="yyyy-mm-dd" id="basicDetails.value4" style="width: 100px" type="text" class="form-control date-input" th:field="*{basicDetails[4].value}" />
 				<label for="basicDetails.value4" class="btn datepicker"> <img th:src="@{/static/img/calendar.png}" style="padding-bottom: 3px;" /></label>
 			</div>
@@ -341,7 +350,8 @@
 					} else if (data.status === '1') {
 						recreateSessionVariables();
 					}
-
+					$('.import-study-data').data('data-import', '0');
+					$('.fbk-discard-imported-data').addClass('fbk-hide');
 				}
 			});
 		}
@@ -379,7 +389,13 @@
 				if ($('.germplasm-list-items tbody tr').length > 0 && measurementRowCount > 0) {
 					deleteMeasurementRows();
 				} else {
-					submitEditWorkbook();
+					if($('.import-study-data').data('data-import') === '1'){
+						doSaveImportedData();
+					}
+					else{
+						submitEditWorkbook();	
+					}
+					
 				}
 
                 if (document.enableActions !== undefined) {

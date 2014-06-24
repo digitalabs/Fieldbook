@@ -3,7 +3,7 @@
 	<form id="importStudyUploadForm"
 	method="post" th:object="${createNurseryForm}"
 	enctype="multipart/form-data">
-		<div class="modal fade" id="importStudyModal" role="dialog" aria-labelledby="importStudyModal" aria-hidden="true">
+		<div class="modal fade import-study-data" id="importStudyModal" role="dialog" aria-labelledby="importStudyModal" aria-hidden="true">
 			<div class="modal-dialog modal-medium">
 				<div class="modal-content">
 					
@@ -21,6 +21,12 @@
 							<div id="page-import-study-message-modal" class="col-xs-12 col-md-12">
 							</div>
 						</div>
+						
+						<div class="row form-group">
+							<div class="col-xs-12 col-md-12">
+								<label class=""><em th:utext="#{fieldmap.mandatory.fields}"> Mandatory fields are noted with a *</em></label>
+							</div>
+						</div>	
 
 						<div class="row form-group">
 							<div class="col-xs-7 col-md-7">
@@ -36,7 +42,7 @@
 							</div>
 						</div>
 
-						<div class='row form-group'>
+						<div class='row form-group add_top_padding'>
 
 							<div class="col-md-12">
 								<span class="pull-left fbk-import-upload-file">
@@ -89,13 +95,13 @@
 				</div>
 
 
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default"  onclick="javascript:goBackToImport();" th:text="#{nursery.go.back}">Cancel</button>
-				<button type="button" class="btn btn-primary"  onclick="javascript:confirmStudyImport();" th:text="#{nursery.proceed}">Import</button>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default"  onclick="javascript:goBackToImport();" th:text="#{nursery.go.back}">Cancel</button>
+					<button type="button" class="btn btn-primary"  onclick="javascript:confirmStudyImport();" th:text="#{nursery.proceed}">Import</button>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
 </div>
 
 <div class="modal fade" id="importStudyDesigConfirmationModal" role="dialog" aria-labelledby="importStudyDesigConfirmationModal" aria-hidden="true">
@@ -223,13 +229,68 @@
 					</div>
 				</div>
 
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default"  onclick="javascript:goBackToImport();" th:text="#{common.form.cancel.text}" >Cancel</button>
-				<button type="button" class="btn btn-primary"  onclick="javascript:confirmDesignation();" th:text="#{common.form.yes.text}">Yes</button>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default"  onclick="javascript:goBackToImport();" th:text="#{common.form.cancel.text}" >Cancel</button>
+					<button type="button" class="btn btn-primary"  onclick="javascript:confirmDesignation();" th:text="#{common.form.yes.text}">Yes</button>
+				</div>
 			</div>
 		</div>
 	</div>
 </div>
+
+<div class="modal fade" id="discardImportDataConfirmation" role="dialog" aria-labelledby="discardImportDataConfirmation" aria-hidden="true">
+	<div class="modal-dialog modal-small">
+		<div class="modal-content">			
+			<div class="modal-body" id="discardImportDataConfirmationBody">
+				<div class="row form-group">
+					<div class="col-xs-11 col-md-11">					
+						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{common.form.confirmation.text}"></label>
+					</div>
+					<div class="col-xs-1 col-md-1">
+						<button id="close" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
+					</div>										
+				</div>
+				<div class="row form-group">
+					<div class="col-xs-12 col-md-12">
+						<label class="control-label label-bold" th:text="#{import.data.discard.confirmation}">Do you really want to discard your imported data?</label>
+					</div>
+				</div>
+
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal"  th:text="#{common.form.no.text}">Cancel</button>
+					<button type="button" class="btn btn-primary"  onclick="javascript:revertData(true);" th:text="#{common.form.yes.text}">Import</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="importOverwriteConfirmation" role="dialog" aria-labelledby="importOverwriteConfirmation" aria-hidden="true">
+	<div class="modal-dialog modal-small">
+		<div class="modal-content">			
+			<div class="modal-body" id="importOverwriteConfirmationBody">
+				<div class="row form-group">
+					<div class="col-xs-11 col-md-11">					
+						<label class="modal-title fbk-modal-title" id="heading-modal" th:text="#{common.form.confirmation.text}"></label>
+					</div>
+					<div class="col-xs-1 col-md-1">
+						<button id="close" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" aria-hidden="true"/>
+					</div>										
+				</div>
+				<div class="row form-group">
+					<div class="col-xs-12 col-md-12">
+						<label class="control-label label-bold" th:text="#{import.data.overwrite.confirmation}">Current import file will overwrite existing data, do you want to continue?</label>
+					</div>
+				</div>
+
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default"  data-dismiss="modal"   th:text="#{common.form.no.text}">No</button>
+					<button type="button" class="btn btn-primary"  onclick="continueStudyImport(true);" th:text="#{common.form.yes.text}">Yes</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <div layout:fragment="page-script">
@@ -261,8 +322,6 @@
 			});
 
 			$('#importStudyModal').on('hide.bs.modal', function() {
-				$('#page-import-study-message-modal').html('');
-				$('#fileupload').val('');
 				$('div.fileupload').parent().parent().removeClass('has-error');
 				$('#importStudyModal .fileupload-exists').click();
 			});
@@ -314,21 +373,39 @@
 					}
 			});
 		}
-		
+		function doSaveImportedData(){
+			$.ajax(
+					{ 
+						url: '/Fieldbook/ImportManager/import/save',
+						type: 'POST',
+						success: function(html) {
+							$('#measurementsDiv').html(html);
+							doRefreshNurserySettings();
+							$('.import-study-data').data('data-import', '0');
+							$('.fbk-discard-imported-data').addClass('fbk-hide');
+						}
+				});
+		}
 		function doMeasurementsReload(){
 			'use strict';
+			showSelectedTab('nursery-measurements');
+			$('.import-study-data').data('data-import', '1');			
 			$.ajax(
 				{ 
-					url: '/Fieldbook/ImportManager/import/save',
+					url: '/Fieldbook/ImportManager/import/preview',
 					type: 'POST',
 					success: function(html) {
 						$('#measurementsDiv').html(html);
-						doRefreshNurserySettings();
+						$('.fbk-discard-imported-data').removeClass('fbk-hide');
+						
+						showSuccessfulMessage('', importSuccessReminderToSaveMessage);
 					}
 			});
 			
 			$('#importStudyModal').modal('hide');
 			$('#importStudyConfirmationModal').modal('hide');
+			$('#importOverwriteConfirmation').modal('hide');
+			return false;
 		}
 		function confirmStudyImport(){
 			'use strict';
@@ -336,8 +413,7 @@
 				showDesigConfirmation();
 			}else{
 				doMeasurementsReload();
-			}
-			
+			}			
 		}
 		
 		function showImportResponse(responseText) {
@@ -430,6 +506,7 @@
 			'use strict';
 			$('#importStudyModal').modal('hide');
 			$('#importStudyConfirmationModal').modal('hide');
+			$('#importOverwriteConfirmation').modal('hide');
 			setTimeout(function(){$('#importStudyDesigConfirmationModal').modal({ backdrop: 'static', keyboard: true });}, 300);
 			resetDesigConfirmationFields();
 			showDesignationConfirmationMessage();
@@ -478,11 +555,8 @@
 			}
 		}
 						
-		function showImportOptions(){
-			'use strict';
-			$('#importStudyModal').modal({ backdrop: 'static', keyboard: true });
-		}
-		function goBackToImport(){
+		
+		function revertData(showMessage){
 			'use strict';
 			var revertUrl = '/Fieldbook/ImportManager/revert/data';
 			$.ajax(
@@ -490,14 +564,17 @@
 				type: 'GET',
 				data: '',
 				cache: false,
-				success: function() {
-
-					$('#importStudyConfirmationModal').modal('hide');
-					$('#importStudyDesigConfirmationModal').modal('hide');
-					setTimeout(function(){$('#importStudyModal').modal({ backdrop: 'static', keyboard: true });}, 300);
+				async: false,
+				success: function(html) {
+					$('#measurementsDiv').html(html);
+					if(showMessage === true){
+						showSuccessfulMessage('', 'Discarded imported data successfully');	
+					}
+					$('.fbk-discard-imported-data').addClass('fbk-hide');
+					$('#discardImportDataConfirmation').modal('hide');
+					$('.import-study-data').data('data-import', '0');
 				}
 			});
-			
 		}
 		
 		function doImportActionChange() {

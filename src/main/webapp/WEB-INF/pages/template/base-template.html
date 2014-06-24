@@ -51,6 +51,9 @@
                 SpinnerManager.addActive();
             }).ajaxStop(function() {
                 SpinnerManager.resolveActive();
+            }).ajaxError(function(){
+            	showErrorMessage('', ajaxGenericErrorMsg);
+            	SpinnerManager.resolveActive();
             });
         </script>
 

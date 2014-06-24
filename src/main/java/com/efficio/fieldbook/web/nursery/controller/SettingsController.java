@@ -296,7 +296,7 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
      * @return the setting detail
      * @throws MiddlewareQueryException the middleware query exception
      */
-    private SettingDetail createSettingDetail(int id, String name) throws MiddlewareQueryException {
+    protected SettingDetail createSettingDetail(int id, String name) throws MiddlewareQueryException {
             String variableName = "";
             StandardVariable stdVar = getStandardVariable(id);
             if (name != null && !name.isEmpty()) {
@@ -321,6 +321,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
                         
                         if (id == TermId.BREEDING_METHOD_ID.getId()) {
                             settingDetail.setValue(AppConstants.PLEASE_CHOOSE.getString());
+                        } else if (id == TermId.STUDY_UID.getId()) {
+                            settingDetail.setValue(workbenchService.getCurrentIbdbUserId(this.getCurrentProjectId()).toString());
                         }
                         settingDetail.setPossibleValuesToJson(possibleValues);
                         List<ValueReference> possibleValuesFavorite = fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProjectId());

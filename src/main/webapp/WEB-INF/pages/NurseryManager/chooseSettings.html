@@ -25,23 +25,24 @@
 
 			<a href="#" class="btn btn-info pull-right nrm-md-variable-select" th:text="#{nursery.create.nursery.add.settings}">Add</a>
 
-		</div>
-		<div class="form-horizontal sectionContainer" id="nurseryLevelSettings-dev">
+        </div>
+        <div class="form-group management-details-section-reminder fbk-hide">
+        	<label class="control-label label-bold" th:text="#{section.reminder.to.add.records}"></label>
+        </div>
+        <div class="form-horizontal sectionContainer" id="nurseryLevelSettings-dev">
 
 			<div class="form-group nurseryLevelSettings" th:each="nurseryLevelVariable, rowStat : *{studyLevelVariables}" th:if="${nurseryLevelVariable.variable.cvTermId}!=*{breedingMethodId}">
 				<div class="col-xs-5 1st">
 						<span style="font-size: 16px;" th:if="${nurseryLevelVariable.deletable}" class="delete-icon"
-							  th:onclick="'javascript: deleteVariable(1,\'' + ${nurseryLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
-					<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
-					&nbsp;&nbsp;&nbsp;
-					<span style="word-wrap: break-word" class="control-label nursery-level-label label-bold var-names" th:text="${nurseryLevelVariable.variable.name}"></span>:&nbsp;
-				</div>
-				<div class="col-xs-7 2nd">
-					<!-- <div th:text="${nurseryLevelVariable.variable.cvTermId}"></div> -->
-					<!-- <input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
-				-->
-					<input style="width: 30%" th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}"
-						   type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control select2" />
+                              th:onclick="'javascript: deleteVariable(1,\'' + ${nurseryLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
+                    <input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
+                    &nbsp;&nbsp;&nbsp;
+                    <span style="word-wrap: break-word" class="control-label nursery-level-label label-bold var-names" th:text="${nurseryLevelVariable.variable.name}"></span>:&nbsp;
+                </div>
+                <div class="col-xs-7 2nd">
+                    
+                    <input style="width: 30%" th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}"
+                           type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control select2" />
 
 					<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="selectedValue" type="hidden" th:value="*{studyLevelVariables[__${rowStat.index}__].value}" />
 					<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}" class="selectedValueFave" type="hidden" th:value="*{studyLevelVariables[__${rowStat.index}__].value}" />
@@ -151,6 +152,11 @@
 				</tr>
 				</thead>
 				<tbody>
+                <tr class="dummy-row">
+                	<td class="even">&nbsp;</td>
+                	<td class="even">&nbsp;</td>
+                	<td class="even">&nbsp;</td>
+                </tr>
 				<tr th:each="selectionVariatesVariable, rowStat : *{selectionVariatesVariables}">
 					<td style="text-align: center" th:class="${rowStat.even}? 'even fbk-delete-link' : 'odd fbk-delete-link'">
 									<span style="font-size: 16px;" th:if="${selectionVariatesVariable.deletable}" class="delete-icon"
@@ -216,6 +222,9 @@
 			</label>
 
 			<a class="btn btn-info pull-right nrm-nc-variable-select" href="#" th:text="#{nursery.create.nursery.add.settings}">Add</a>
+        </div>
+         <div class="form-group constants-section-reminder fbk-hide">
+        	<label class="control-label label-bold" th:text="#{section.reminder.to.add.records}"></label>
 		</div>
 		<div class="form-horizontal sectionContainer collapse in nurseryConditionsDetails" id="nurseryConditionsSettings">
 			<div class="form-group nurseryConditionsSettings" th:each="nurseryCondition, rowStat : *{nurseryConditions}">
@@ -283,6 +292,11 @@
 				</tr>
 				</thead>
 				<tbody>
+                <tr class="dummy-row">
+                	<td class="even">&nbsp;</td>
+                	<td class="even">&nbsp;</td>
+                	<td class="even">&nbsp;</td>
+                </tr>
 				<tr class="baseline-traits" th:each="baselineTraitVariable, rowStat : *{baselineTraitVariables}">
 					<td style="text-align: center" th:class="${rowStat.even}? 'even fbk-delete-link' : 'odd fbk-delete-link'" >
 									<span style="font-size: 16px;" th:if="${baselineTraitVariable.deletable}" class="delete-icon"
@@ -522,7 +536,14 @@ $(document).ready(function() {
 		actionBtn.tooltip('destroy');
 		actionBtn.removeClass('disabled');
 	};
-	checkTraitsAndSelectionVariateTable('', false);
+            if ($('#baselineTraitSettings tbody tr').length > 1) {
+    			hideDummyRow('baselineTraitSettings');
+    		} 
+            
+            if ($('#selectionVariatesSettings tbody tr').length > 1) {
+    			hideDummyRow('selectionVariatesSettings');
+    		}
+            checkShowSettingsFormReminder();
 });
 //]]>
 </script>

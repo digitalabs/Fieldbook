@@ -508,12 +508,14 @@ function submitSelectedVariables(variableType) {
 							'plotLevelVariables', 'plotLevelSettings',variableType);
 					break;
 				case 3:
+					hideDummyRow('baselineTraitSettings');
 					createTableSettingVariables($.parseJSON(data),
 							'baselineTraitVariables', 'baselineTraitSettings',
 							variableType);
 					checkTraitsAndSelectionVariateTable('', false);
 					break;
 				case 6:
+					hideDummyRow('selectionVariatesSettings');
 					createTableSettingVariables($.parseJSON(data),
 							'selectionVariatesVariables',
 							'selectionVariatesSettings', variableType);
@@ -531,6 +533,7 @@ function submitSelectedVariables(variableType) {
 				}
 				$('#addVariablesSettingModal').modal('hide');
 
+				checkShowSettingsFormReminder();
 
 			}
 		});
@@ -539,6 +542,14 @@ function submitSelectedVariables(variableType) {
 	} else {
 		showErrorMessage('', varInListMessage);
 	}
+}
+
+function hideDummyRow(tableId) {
+	$('#'+tableId).find('.dummy-row').hide();
+}
+
+function showDummyRow(tableId) {
+	$('#'+tableId).find('.dummy-row').show();
 }
 
 function replaceNameVariables() {
@@ -1084,12 +1095,12 @@ function deleteVariable(variableType, variableId, deleteButton) {
 			|| variableType == baselineTraitsSegment) {
 		hasMeasurementData = checkMeasurementData(variableType, variableId);
 	}
-
+	
 	// if no data for measurement rows is saved yet, proceed with delete
 	if (hasMeasurementData == "0") {
 		// remove row from UI
 		deleteButton.parent().parent().remove();
-
+		checkShowSettingsFormReminder();
 		// remove row from session
 		$.ajax({
 			url : "/Fieldbook/NurseryManager/createNursery/deleteVariable/"
@@ -1099,6 +1110,13 @@ function deleteVariable(variableType, variableId, deleteButton) {
 			success : function() {
 			}
 		});
+		
+		//add dummy row to selection variates/traits if no record is left
+		if (variableType === 3 && $('#baselineTraitSettings tbody tr').length === 1) {
+			showDummyRow('baselineTraitSettings');
+		} else if (variableType === 6 && $('#selectionVariatesSettings tbody tr').length === 1) {
+			showDummyRow('selectionVariatesSettings');
+		}
 
 		// reinstantiate counters of ids and names
 		sortVariableIdsAndNames(variableType);
@@ -1136,6 +1154,13 @@ function proceedWithDelete() {
 		success : function() {
 		}
 	});
+	
+	//add dummy row to selection variates/traits if no record is left
+	if (variableType === 3 && $('#baselineTraitSettings tbody tr').length === 1) {
+		showDummyRow('baselineTraitSettings');
+	} else if (variableType === 6 && $('#selectionVariatesSettings tbody tr').length === 1) {
+		showDummyRow('selectionVariatesSettings');
+	}
 
 	// reinstantiate counters of ids and names
 	sortVariableIdsAndNames(variableType);
@@ -1697,40 +1722,47 @@ function validateCreateNursery() {
 	 * Validate Position is less than the total germplasm Validate the Interval
 	 * should be less than the total germplasm
 	 */
-	if ($('.checkRow').length > 0) {
-		// we validate only if there is a check
-		// we try to validate if all the check row has check
-		var checkIndex = 0;
-		for (checkIndex = 0; checkIndex < $('.checkRow').length; checkIndex++) {
-			if ($('select.checklist-select:eq(' + checkIndex + ')').val() === '') {
+	if($('.check-germplasm-list-items tbody tr').length != 0 && selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null){
+		selectedCheckListDataTable.getDataTable().$('select').serialize(); 	
+	
+		if (selectedCheckListDataTable.getDataTable().$('select').length > 0) {
+			// we validate only if there is a check
+			// we try to validate if all the check row has check
+			var hasCheckError = false;
+			selectedCheckListDataTable.getDataTable().$('select').each(function(){
+				  if($(this).val() === ''){
+					  hasCheckError = true;			
+				  }
+			});
+	
+			if(hasCheckError == true){
 				showInvalidInputMessage(selectedCheckError);
 				return false;
 			}
-		}
-
-		if (isInt($('#startIndex2').val()) === false) {
-			showInvalidInputMessage(startIndexWholeNumberError);
-			return false;
-		}
-		if (isInt($('#interval2').val()) === false) {
-			showInvalidInputMessage(intervalWholeNumberError);
-			return false;
-		}
-		var totalGermplasms = $('#totalGermplasms').val();
-		if (parseInt($('#startIndex2').val(), 10) < 0
-				|| parseInt($('#startIndex2').val(), 10) > totalGermplasms) {
-			showInvalidInputMessage(startIndexLessGermplasmError);
-			return false;
-		}
-
-		if (parseInt($('#interval2').val(), 10) < 0) {
-			showInvalidInputMessage(checkIntervalGreaterThanZeroError);
-			return false;
-		}
-		var totalNumberOfChecks = $('#totalNumberOfChecks').val();
-		if (parseInt($('#interval2').val(), 10) <= totalNumberOfChecks) {
-			showInvalidInputMessage(checkIntervalError);
-			return false;
+			if (isInt($('#startIndex2').val()) === false) {
+				showInvalidInputMessage(startIndexWholeNumberError);
+				return false;
+			}
+			if (isInt($('#interval2').val()) === false) {
+				showInvalidInputMessage(intervalWholeNumberError);
+				return false;
+			}
+			var totalGermplasms = $('#totalGermplasms').val();
+			if (parseInt($('#startIndex2').val(), 10) < 0
+					|| parseInt($('#startIndex2').val(), 10) > totalGermplasms) {
+				showInvalidInputMessage(startIndexLessGermplasmError);
+				return false;
+			}	
+			
+			if (parseInt($('#interval2').val(), 10) < 0) {
+				showInvalidInputMessage(checkIntervalGreaterThanZeroError);
+				return false;
+			}
+			var totalNumberOfChecks = $('#totalNumberOfChecks').val();
+			if (parseInt($('#interval2').val(), 10) <= totalNumberOfChecks) {
+				showInvalidInputMessage(checkIntervalError);
+				return false;
+			}
 		}
 	}
 
@@ -1778,13 +1810,15 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
 				dataObj = {
 					'id' : value.id,
 					'text' : value.name,
-					'description' : value.description
+					'description' : value.description,
+					'originalText' : value.name
 				};
 			} else {
 				dataObj = {
 					'id' : value.id,
 					'text' : value.description,
-					'description' : value.description
+					'description' : value.description,
+					'originalText' : value.name
 				};
 			}
 			suggestions_obj.push(dataObj);
@@ -1842,9 +1876,11 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
 	} else {
 		$('.' + comboName).each(
 				function() {
-					var currentVal = $(this).val();
-					$(this).empty();
+					var currentVal = $(this).select2('data').id;
 					$(this).select2('destroy');
+					var currentCode = $(this).find('option:selected').data('code');
+					$(this).empty();
+					
 					var i = 0;
 					var selected = '';
 					if (currentVal === '')
@@ -1855,11 +1891,11 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
 						var val = suggestions_obj[i].text;
 						var id = suggestions_obj[i].id;
 						selected = '';
-						if (currentVal == id)
+						if (currentCode == suggestions_obj[i].originalText)
 							selected = 'selected';
 
 						$(this).append(
-								$('<option ' + selected + ' ></option>').attr(
+								$('<option data-code="'+ suggestions_obj[i].originalText +'"' + selected + ' ></option>').attr(
 										'value', id).text(val));
 					}
 
@@ -2100,11 +2136,9 @@ function addDetailsTab(studyId, title) {
 function determineIfShowCloseAllStudyTabs() {
 	'use strict';
 	if ($('#study-tab-headers li').length > 0) {
-		$('#closeAllStudytabs').css('display', 'block');
-		$('#study-details').css('display', 'block');
+		$('.review-nursery-details').removeClass('fbk-hide');
 	} else {
-		$('#closeAllStudytabs').css('display', 'none');
-		$('#study-details').css('display', 'none');
+		$('.review-nursery-details').addClass('fbk-hide');
 	}
 }
 
@@ -2184,6 +2218,11 @@ function loadDatasetMeasurementRowsViewOnly(datasetId, datasetName) {
 }
 function showSelectedTab(selectedTabName) {
 	'use strict';
+	if($('.import-study-data').data('data-import') === '1'){
+		showAlertMessage('', importSaveDataWarningMessage);
+		return;
+	}
+	
 	$("#create-nursery-tab-headers").show();
 	var tabs = $("#create-nursery-tabs").children();
 	for (var i = 0; i < tabs.length; i++) {
@@ -2441,8 +2480,12 @@ function submitGermplasmAndCheck() {
 	$('#mannerOfInsertion').val($('#mannerOfInsertion2').val());
 	$('#lastDraggedChecksList').val(lastDraggedChecksList);
 
-	var $form = $('#check-germplasm-list-form, #germplasm-list-form'),
+	var $form = $('#germplasm-list-form'),
 		serializedData = $form.serialize();
+	if($('.check-germplasm-list-items tbody tr').length != 0 && selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null){
+		selectedCheckListDataTable.getDataTable().$('select').serialize();
+		serializedData += "&" + selectedCheckListDataTable.getDataTable().$('select').serialize(); 
+	}
 
 	$.ajax({
 		url: '/Fieldbook/NurseryManager/GermplasmList/submitAll',
@@ -2453,5 +2496,36 @@ function submitGermplasmAndCheck() {
 			refreshStudyAfterSave(dataResponse);
 
 		}
+	});
+}
+function addFakeCheckTable(){
+	'use strict';
+	if($('.germplasm-list-items tbody tr').length > 0 && $('.check-germplasm-list-items tbody tr').length == 0 && $('#check-germplasm-list .fake-check-germplasm-list-items tbody tr').length == 0){
+		//we add the fake table
+		$('.fake-check-germplasm-list-items').clone().removeClass('fbk-hide').appendTo('#check-germplasm-list');
+	}else if($('.germplasm-list-items tbody tr').length === 0 && $('#check-germplasm-list .fake-check-germplasm-list-items tbody tr').length == 1){
+		//we remove if there are no nursery check and the selected check is fake
+		$('#check-germplasm-list .fake-check-germplasm-list-items').remove();
+	}
+}
+function checkShowSettingsFormReminder(){
+	'use strict';
+	//we check management details if there are entries
+	if($('.nurseryLevelSettings .1st').length === 0){
+		$('.management-details-section-reminder').removeClass('fbk-hide');
+	}else{
+		$('.management-details-section-reminder').addClass('fbk-hide');
+	}
+	
+	if($('.nurseryConditionsSettings .1st').length === 0){
+		$('.constants-section-reminder').removeClass('fbk-hide');
+	}else{
+		$('.constants-section-reminder').addClass('fbk-hide');
+	}
+}
+function discardImportedData(){
+	$('#discardImportDataConfirmation').modal({
+		backdrop : 'static',
+		keyboard : true
 	});
 }

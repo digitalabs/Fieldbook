@@ -28,6 +28,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -312,7 +313,18 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 
 		cell = row.createCell(6, HSSFCell.CELL_TYPE_STRING);
 		cleanupValue(variable);
-		cell.setCellValue(variable.getValue());
+		if(variable.getDataTypeId() != null && variable.getDataTypeId().equals(TermId.NUMERIC_VARIABLE.getId())){
+			if(variable.getValue() != null && !"".equalsIgnoreCase(variable.getValue())){
+				cell.setCellType(Cell.CELL_TYPE_BLANK);
+				cell.setCellType(Cell.CELL_TYPE_NUMERIC);		
+				cell.setCellValue(Double.valueOf(variable.getValue()));				
+			}else{
+				cell.setCellValue(variable.getValue());	
+			}		
+		}
+		else{
+			cell.setCellValue(variable.getValue());
+		}
 
 		cell = row.createCell(7, HSSFCell.CELL_TYPE_STRING);
 		cell.setCellValue(variable.getLabel());
@@ -343,22 +355,30 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		DataFormat format = xlsBook.createDataFormat();
 		style.setDataFormat(format.getFormat("0.#"));
 		for (MeasurementData dataCell : dataRow.getDataList()) {
-			/*
-			if(AppConstants.NUMERIC_DATA_TYPE.getString().equalsIgnoreCase(dataCell.getDataType())){
-				cell.setCellType(Cell.CELL_TYPE_BLANK);
-				cell.setCellType(Cell.CELL_TYPE_NUMERIC);				
-			}*/
+			
+			
 			if (dataCell.getMeasurementVariable() != null && dataCell.getMeasurementVariable().getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
 				continue;
 			}
 			HSSFCell cell = row.createCell(currentColNum++);
+									
 			if (dataCell.getMeasurementVariable() != null && dataCell.getMeasurementVariable().getPossibleValues() != null
 					&& !dataCell.getMeasurementVariable().getPossibleValues().isEmpty()) {
 
 				cell.setCellValue(ExportImportStudyUtil.getCategoricalCellValue(dataCell.getValue(), dataCell.getMeasurementVariable().getPossibleValues()));
 			}
 			else {
-				cell.setCellValue(dataCell.getValue());
+				
+				if(AppConstants.NUMERIC_DATA_TYPE.getString().equalsIgnoreCase(dataCell.getDataType())){					
+					if(dataCell.getValue() != null && !"".equalsIgnoreCase(dataCell.getValue())){
+						cell.setCellType(Cell.CELL_TYPE_BLANK);
+						cell.setCellType(Cell.CELL_TYPE_NUMERIC);		
+						cell.setCellValue(Double.valueOf(dataCell.getValue()));
+						
+					}
+				}else{
+					cell.setCellValue(dataCell.getValue());	
+				}
 			}
 			
 		}

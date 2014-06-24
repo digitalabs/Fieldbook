@@ -402,7 +402,7 @@ public class FieldbookServiceImpl implements FieldbookService{
         	return getBreedingMethodById(valueId.intValue());
         } else if (TermId.LOCATION_ID.getId() == id) {
             return getLocationById(valueId.intValue());
-        } else if (TermId.PI_ID.getId() == id || Integer.parseInt(AppConstants.COOPERATOR_ID.getString()) == id) {
+        } else if (TermId.PI_ID.getId() == id || Integer.parseInt(AppConstants.COOPERATOR_ID.getString()) == id || TermId.STUDY_UID.getId() == id) {
             return getPersonById(valueId.intValue());
         } else if (isCategorical) {
         	Term term = ontologyService.getTermById(valueId.intValue());
@@ -431,7 +431,8 @@ public class FieldbookServiceImpl implements FieldbookService{
     	return null;
     }
     
-    private String getPersonById(int id) throws MiddlewareQueryException {
+    @Override
+    public String getPersonById(int id) throws MiddlewareQueryException {
     	Person person = fieldbookMiddlewareService.getPersonById(id);
     	if (person != null) {
     		return person.getDisplayName();

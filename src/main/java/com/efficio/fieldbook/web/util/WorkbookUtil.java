@@ -7,6 +7,7 @@ import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.manager.Operation;
 
@@ -150,4 +151,47 @@ public class WorkbookUtil {
 		}
 		return newTraits;
 	}
+	
+	public static void clearNewlyAddedImportTraits(List<MeasurementVariable> variables, List<MeasurementRow> observations) {
+		List<MeasurementVariable> newTraits = getAddedTraitVariables(variables, observations);
+		List<Integer> indexForRemoval = new ArrayList<Integer>();
+		if (observations != null && !observations.isEmpty()) {
+			List<MeasurementData> initialDataList = observations.get(0).getDataList();
+			for(MeasurementData initialData : initialDataList){
+				for(int index = 0 ; index < newTraits.size() ; index++){
+					if(initialData.getMeasurementVariable().getTermId() ==  newTraits.get(index).getTermId()){
+						//means this is a newly added trait, we should remove it
+						indexForRemoval.add(Integer.valueOf(index));
+					}
+				}
+			}
+			if(indexForRemoval != null && !indexForRemoval.isEmpty()){
+				for(MeasurementRow dataRow : observations){
+					for(Integer removedMeasurementDataIndex : indexForRemoval){
+						dataRow.getDataList().remove(removedMeasurementDataIndex);						
+					}
+				}
+			}
+			
+		}
+	}
+	
+	 public static void resetWorkbookObservations(Workbook workbook) {
+    	if (workbook.getObservations() != null && !workbook.getObservations().isEmpty()) {
+	    	if (workbook.getOriginalObservations() == null || workbook.getOriginalObservations().isEmpty()) {
+	    		List<MeasurementRow> origObservations = new ArrayList<MeasurementRow>();
+	    		for (MeasurementRow row : workbook.getObservations()) {
+	    			origObservations.add(row.copy());
+	    		}
+	    		workbook.setOriginalObservations(origObservations);
+	    	} else {
+	    		List<MeasurementRow> observations = new ArrayList<MeasurementRow>();
+	    		for (MeasurementRow row : workbook.getOriginalObservations()) {
+	    			observations.add(row.copy());
+	    		}
+	    		workbook.setObservations(observations);
+	    	}
+    	}
+    }
+    
 }

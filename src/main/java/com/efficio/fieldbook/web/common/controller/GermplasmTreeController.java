@@ -422,6 +422,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         	dataResults.put("date", germplasmList.getDate());
         	dataResults.put("owner", fieldbookMiddlewareService.getOwnerListName(germplasmList.getUserId()));
         	dataResults.put("notes", germplasmList.getNotes());
+        	dataResults.put("totalEntries", fieldbookMiddlewareService.countGermplasmListDataByListId(listId));
             
         } catch(Exception e) {
             LOG.error(e.getMessage(), e);

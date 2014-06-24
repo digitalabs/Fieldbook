@@ -316,7 +316,10 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 				MeasurementData desigData = row.getMeasurementData(TermId.DESIG.getId());
 				MeasurementData gidData = row.getMeasurementData(TermId.GID.getId());
     			if (responseDetail.getStatus() == 1) { // add germplasm name to gid
-    				fieldbookMiddlewareService.addGermplasmName(responseDetail.getNewDesig(), Integer.valueOf(responseDetail.getOriginalGid()), userId);
+    				String gDate = DateUtil.convertToDBDateFormat(TermId.DATE_VARIABLE.getId(), responseDetail.getImportDate());
+					Integer dateInteger = Integer.valueOf(gDate); 
+    				fieldbookMiddlewareService.addGermplasmName(responseDetail.getNewDesig(), 
+    						Integer.valueOf(responseDetail.getOriginalGid()), userId, responseDetail.getNameType(), responseDetail.getImportLocationId(), dateInteger);
     				desigData.setValue(responseDetail.getNewDesig());
     				gidData.setValue(responseDetail.getOriginalGid());
     			}

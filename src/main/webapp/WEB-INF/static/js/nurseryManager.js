@@ -2458,17 +2458,25 @@ function resetDesigConfirmationFields() {
 	//reset dropdowns and fields
 	$('#importLocationId').select2('data', null);
 	$('#importMethodId').select2('data', null);
-	$('#nameType').val('');
+	$('#nameType').select2('data', {'id': $("#nameType option:first").val(), 'text':$("#nameType option:first").html()})
 	$('#importDate').val('');
 	$('#confirmation-page-message').html('');
 }
 
 function validateGermplasmInput(importDate, importLocationId, importMethodId) {
 	'use strict';
-	if ($('#import-action-type').val() === '2' &&
-			(importDate === '' || importLocationId === null || importMethodId === null)) {
-		return false;
-	}
+	if ($('#import-action-type').val() === '2' || $('#import-action-type').val() === '1'){
+		if(importDate === ''){
+			showInvalidInputMessage(importDateRequired);
+			return false;
+		}else if(importLocationId === '' || importLocationId === null){
+			showInvalidInputMessage(importLocationRequired);
+			return false;
+		}else if((importMethodId === '' || importMethodId === null) && $('#import-action-type').val() === '2'){
+			showInvalidInputMessage(importMethodRequired);
+			return false;
+		}		
+	}	
 	return true;
 }
 

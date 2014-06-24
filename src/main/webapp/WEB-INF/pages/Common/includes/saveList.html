@@ -46,15 +46,15 @@
                         </div>
                         <div class="col-xs-8 col-md-8 nopadding">
                             <div class="input-group">
-                                <input id="addGermplasmFolderName" name="addFolderName" type="text" class="form-control select2" placeholder="Folder Name"/>
-                                                                            <span class="input-group-btn">
-                                                                                <button class="btn btn-success" id="addGermplasmFolderOkButton" onclick="javascript: createGermplasmFolder()">
-                                                                                    <span class="glyphicon glyphicon-ok"></span>
-                                                                                </button>
-                                                                                <button class="btn btn-danger" id="addGermplasmFolderCancelButton" onclick="javascript: hideAddGermplasmFolderDiv()">
-                                                                                    <span class="glyphicon glyphicon-remove"></span>
-                                                                                </button>
-                                                                            </span>
+                                <input id="addGermplasmFolderName" name="addFolderName" type="text" class="form-control select2" placeholder="Folder Name" onkeypress="folderChangeKeypress(event, '1');"/>
+                                 <span class="input-group-btn">
+                                     <button class="btn btn-success" id="addGermplasmFolderOkButton" onclick="javascript: createGermplasmFolder()">
+                                         <span class="glyphicon glyphicon-ok"></span>
+                                     </button>
+                                     <button class="btn btn-danger" id="addGermplasmFolderCancelButton" onclick="javascript: hideAddGermplasmFolderDiv()">
+                                         <span class="glyphicon glyphicon-remove"></span>
+                                     </button>
+                                 </span>
                             </div>
                         </div>
                       	<div class="clearfix"></div>
@@ -65,15 +65,15 @@
                         </div>
                         <div class="col-xs-8 col-md-8 nopadding">
                             <div class="input-group">
-                                <input id="newGermplasmFolderName" name="newFolderName" type="text" class="form-control select2" placeholder="Folder Name"/>
-                                                                            <span class="input-group-btn">
-                                                                                <button class="btn btn-success" id="renameGermplasmFolderOkButton" onclick="javascript: submitRenameGermplasmFolder()">
-                                                                                    <span class="glyphicon glyphicon-ok"></span>
-                                                                                </button>
-                                                                                <button class="btn btn-danger" id="renameGermplasmFolderCancelButton" onclick="javascript: hideRenameGermplasmFolderDiv()">
-                                                                                    <span class="glyphicon glyphicon-remove"></span>
-                                                                                </button>
-                                                                            </span>
+                                <input id="newGermplasmFolderName" name="newFolderName" type="text" class="form-control select2" placeholder="Folder Name" onkeypress="folderChangeKeypress(event, '2');"/>
+                                  <span class="input-group-btn">
+                                      <button class="btn btn-success" id="renameGermplasmFolderOkButton" onclick="javascript: submitRenameGermplasmFolder()">
+                                          <span class="glyphicon glyphicon-ok"></span>
+                                      </button>
+                                      <button class="btn btn-danger" id="renameGermplasmFolderCancelButton" onclick="javascript: hideRenameGermplasmFolderDiv()">
+                                          <span class="glyphicon glyphicon-remove"></span>
+                                      </button>
+                                  </span>
                             </div>
                         </div>
                         <div class="clearfix"></div>

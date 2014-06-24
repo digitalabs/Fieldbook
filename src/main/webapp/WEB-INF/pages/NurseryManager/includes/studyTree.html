@@ -31,17 +31,17 @@
                                 <label class="control-label label-bold" th:utext="#{browse.nursery.add.folder.name}">Folder Name:</label>
                             </div>
                             <div class="col-xs-8">
-                                <div class="input-group">
-                                    <input id="addFolderName" name="addFolderName" type="text" class="form-control select2" placeholder="Folder Name"/>
-                                        <span class="input-group-btn">
-                                            <button class="btn btn-success" id="addFolderOkButton">
-                                                <span class="glyphicon glyphicon-ok"></span>
-                                            </button>
-                                            <button class="btn btn-danger" id="addFolderCancelButton">
-                                                <span class="glyphicon glyphicon-remove"></span>
-                                            </button>
-                                        </span>
-                                </div>
+	                                <div class="input-group">
+	                                    	<input id="addFolderName" name="addFolderName" type="text" class="form-control" placeholder="Folder Name"/>
+	                                        <span class="input-group-btn">
+	                                            <button class="btn btn-success" id="addFolderOkButton">
+	                                                <span class="glyphicon glyphicon-ok"></span>
+	                                            </button>
+	                                            <button class="btn btn-danger" id="addFolderCancelButton">
+	                                                <span class="glyphicon glyphicon-remove"></span>
+	                                            </button>
+	                                        </span>
+	                                </div>
                             </div>
                         </div>
                         <div id="renameFolderDiv">
@@ -49,8 +49,8 @@
                                 <label class="control-label  label-bold" th:utext="#{browse.nursery.rename.folder.input.label}">Folder Name:</label>
                             </div>
                             <div class="col-xs-8">
-                                <div class="input-group">
-                                    <input id="newFolderName" name="newFolderName" type="text" class="form-control select2" placeholder="Folder Name"/>
+                                	<div class="input-group">                                	
+                                    	<input id="newFolderName" name="newFolderName" type="text" class="form-control select2" placeholder="Folder Name"/>
                                         <span class="input-group-btn">
                                             <button class="btn btn-success" id="renameFolderOkButton">
                                                 <span class="glyphicon glyphicon-ok"></span>
@@ -58,8 +58,8 @@
                                             <button class="btn btn-danger" id="renameFolderCancelButton">
                                                 <span class="glyphicon glyphicon-remove"></span>
                                             </button>
-                                        </span>
-                                </div>
+                                        </span>                                   
+                                	</div>
                             </div>
                         </div>
                     </div>
@@ -119,7 +119,16 @@ $(document).ready(function () {
     $('#addFolderCancelButton').on('click', hideAddFolderDiv);
     $('#renameFolderOkButton').on('click', submitRenameFolder);
     $('#renameFolderCancelButton').on('click', hideRenameFolderDiv);
-
+	$('#addFolderDiv #addFolderName').on('keypress', function(event){
+		if(event.keyCode == 13){
+			createFolder();
+		}
+	});
+	$('#renameFolderDiv #newFolderName').on('keypress', function(event){
+		if(event.keyCode == 13){
+			submitRenameFolder();
+		}
+	});
 });
 
 

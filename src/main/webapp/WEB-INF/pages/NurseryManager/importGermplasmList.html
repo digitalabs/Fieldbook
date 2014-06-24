@@ -189,15 +189,15 @@
                         </div>
                         <div class="col-xs-8 col-md-8 nopadding">
                             <div class="input-group">
-                                <input id="addGermplasmFolderName" name="addFolderName" type="text" class="form-control select2" placeholder="Folder Name"/>
-                                                                            <span class="input-group-btn">
-                                                                                <button class="btn btn-success" id="addGermplasmFolderOkButton" onclick="javascript: createGermplasmFolder()">
-                                                                                    <span class="glyphicon glyphicon-ok"></span>
-                                                                                </button>
-                                                                                <button class="btn btn-danger" id="addGermplasmFolderCancelButton" onclick="javascript: hideAddGermplasmFolderDiv()">
-                                                                                    <span class="glyphicon glyphicon-remove"></span>
-                                                                                </button>
-                                                                            </span>
+                                <input id="addGermplasmFolderName" name="addFolderName" type="text" class="form-control select2" placeholder="Folder Name" onkeypress="folderChangeKeypress(event, '1');"/>
+                                <span class="input-group-btn">
+                                    <button class="btn btn-success" id="addGermplasmFolderOkButton" onclick="javascript: createGermplasmFolder()">
+                                        <span class="glyphicon glyphicon-ok"></span>
+                                    </button>
+                                    <button class="btn btn-danger" id="addGermplasmFolderCancelButton" onclick="javascript: hideAddGermplasmFolderDiv()">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                    </button>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -207,15 +207,15 @@
                         </div>
                         <div class="col-xs-8 col-md-8 nopadding">
                             <div class="input-group">
-                                <input id="newGermplasmFolderName" name="newFolderName" type="text" class="form-control select2" placeholder="Folder Name"/>
-                                                                            <span class="input-group-btn">
-                                                                                <button class="btn btn-success" id="renameGermplasmFolderOkButton" onclick="javascript: submitRenameGermplasmFolder()">
-                                                                                    <span class="glyphicon glyphicon-ok"></span>
-                                                                                </button>
-                                                                                <button class="btn btn-danger" id="renameGermplasmFolderCancelButton" onclick="javascript: hideRenameGermplasmFolderDiv()">
-                                                                                    <span class="glyphicon glyphicon-remove"></span>
-                                                                                </button>
-                                                                            </span>
+                                <input id="newGermplasmFolderName" name="newFolderName" type="text" class="form-control select2" placeholder="Folder Name" onkeypress="folderChangeKeypress(event, '2');"/>
+                                 <span class="input-group-btn">
+                                     <button class="btn btn-success" id="renameGermplasmFolderOkButton" onclick="javascript: submitRenameGermplasmFolder()">
+                                         <span class="glyphicon glyphicon-ok"></span>
+                                     </button>
+                                     <button class="btn btn-danger" id="renameGermplasmFolderCancelButton" onclick="javascript: hideRenameGermplasmFolderDiv()">
+                                         <span class="glyphicon glyphicon-remove"></span>
+                                     </button>
+                                 </span>
                             </div>
                         </div>
                     </div>
@@ -584,25 +584,7 @@
 
 				success: function(html) {
 					$('#imported-germplasm-list').html(html);
-					makeDraggable(makeDraggableBool);
-					/*
-					$('.germplasm-list-items').dataTable({						
-						scrollY: '500px',
-						scrollX: '100%',
-						scrollCollapse: true,
-					  dom: 'R<t><"fbk-page-div"p>',
-					  iDisplayLength: 100,		
-					  bAutoWidth: true,
-					  fnInitComplete: function(oSettings, json) {
-							
-							var totalPages = oSettings._iDisplayLength === -1 ? 0 : Math.ceil( oSettings.fnRecordsDisplay() / oSettings._iDisplayLength );
-							if(totalPages === 1){
-								$('#imported-germplasm-list .fbk-page-div').addClass('fbk-hide');
-							}
-							
-						}
-					});
-					*/
+					makeDraggable(makeDraggableBool);					
 					checksFromPrimary = 0;
 					setSpinnerMaxValue();
 
@@ -697,7 +679,16 @@
 			additionalLazyLoadUrl = '/0';
 			$('.popover').hide();
 		}
-
+		function folderChangeKeypress(event, type){
+			'use strict';
+			if(event.keyCode === 13){
+				if(type === '1'){
+					createGermplasmFolder();
+				}else if(type === '2'){
+					submitRenameGermplasmFolder();
+				}
+			}
+		}
 		function chooseList(){
 			'use strict';
 			var node = $('#'+getDisplayedTreeName()).dynatree('getTree').getActiveNode();
@@ -896,7 +887,7 @@
 
             displayGermplasmListTree('germplasmTree', false, 0, function (node, event) {
                 var currentFolderName = node.data.title;
-                $('#newGermplasmFolderName').val(currentFolderName);
+                $(getDisplayedModalSelector() + ' #newGermplasmFolderName').val(currentFolderName);
             });
 
             activateDroppable();

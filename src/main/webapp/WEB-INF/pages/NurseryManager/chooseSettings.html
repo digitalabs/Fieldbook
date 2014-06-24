@@ -42,7 +42,7 @@
                     <span style="word-wrap: break-word" class="control-label nursery-level-label label-bold var-names" th:text="${nurseryLevelVariable.variable.name}"></span>:&nbsp;
                 </div>
                 <div class="col-xs-7 2nd">
-                    
+
                     <input style="width: 30%" th:if="${nurseryLevelVariable.variable.widgetType.type == 'DROPDOWN'}"
                            type="hidden" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control select2" />
 
@@ -332,7 +332,8 @@
 </div>
 <div layout:fragment="page-script">
 <script type="text/javascript" th:src="@{/static/js/nurseryManager.js}"></script>
-<script type="text/javascript" th:src="@{/static/js/choose-settings.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/nursery-manager/choose-settings.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/nursery-manager/variable-selection.js}"></script>
 <link th:href="@{/static/css/lib/bootstrap/bootstrap-datepicker.css}" rel="stylesheet"/>
 <script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-datepicker.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-spinedit.js}"></script>
@@ -378,38 +379,31 @@ var locationId = '',
 	startDateId = '',
 	endDateId = '',
 
-	// Translations
 	disabledActionTooltipMessage = /*[[#{nursery.create.actions.is.disabled}]]*/ '',
-	mdLabel = /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
-	mdPlaceholder = /*[[#{nursery.reminder.add.nursery.settings}]]*/ '',
-	fdLabel = /*[[#{nursery.managesettings.add.plot.level.settings}]]*/ '',
-	fdPlaceholder = /*[[#{nursery.reminder.add.plot.settings}]]*/ '',
-	svLabel = /*[[#{nursery.managesettings.add.selection.variates}]]*/ '',
-	svPlaceholder = /*[[#{nursery.reminder.add.selection.variates}]]*/ '',
-	tdLabel = /*[[#{nursery.managesettings.add.baseline.traits}]]*/ '',
-	tdPlaceholder = /*[[#{nursery.reminder.add.trait.settings}]]*/ '',
-	ncLabel = /*[[#{nursery.managesettings.add.nursery.conditions}]]*/ '',
-	ncPlaceholder = /*[[#{nursery.reminder.add.nursery.conditions}]]*/ '',
 
 	treeDivId = 'ontologyBrowserTree',
 
-	ChooseSettings = window.ChooseSettings;
+	ChooseSettings = window.ChooseSettings,
 
-function openVariableSelectionDialog(e) {
-	'use strict';
-
-	e.preventDefault();
-
-    var labels = {};
-    labels.label = e.data.label;
-    labels.placeholderLabel = e.data.placeholderLabel;
-
-	// FIXME
-	ChooseSettings.getStandardVariables(labels, e.data.group, treeDivId, processSelectVariablesSubmission);
-}
+	chooseSettings;
 
 $(document).ready(function() {
 	'use strict';
+
+	chooseSettings = new ChooseSettings({
+		mdLabel: /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
+		mdPlaceholder: /*[[#{nursery.reminder.add.nursery.settings}]]*/ '',
+		fdLabel: /*[[#{nursery.managesettings.add.plot.level.settings}]]*/ '',
+		fdPlaceholder: /*[[#{nursery.reminder.add.plot.settings}]]*/ '',
+		svLabel: /*[[#{nursery.managesettings.add.selection.variates}]]*/ '',
+		svPlaceholder: /*[[#{nursery.reminder.add.selection.variates}]]*/ '',
+		tdLabel: /*[[#{nursery.managesettings.add.baseline.traits}]]*/ '',
+		tdPlaceholder: /*[[#{nursery.reminder.add.trait.settings}]]*/ '',
+		ncLabel: /*[[#{nursery.managesettings.add.nursery.conditions}]]*/ '',
+		ncPlaceholder: /*[[#{nursery.reminder.add.nursery.conditions}]]*/ ''
+	});
+
+	chooseSettings.initialiseVariableSelection();
 
 	// FIXME Shouldn't be user agent checking
 	if (getIEVersion() === 8) {
@@ -419,21 +413,6 @@ $(document).ready(function() {
 	if ($('#requiredFields').val() !== '') {
 		requiredFields = $('#requiredFields').val().split(',');
 	}
-
-	// Initialising on click handlers for variable selection buttons
-	$('.nrm-md-variable-select').click({label: mdLabel, placeholder: mdPlaceholder, group: 1}, openVariableSelectionDialog);
-
-	$('.nrm-fct-variable-select').click({label: fdLabel, placeholder: fdPlaceholder, group: 2},
-		openVariableSelectionDialog);
-
-	$('.nrm-sv-variable-select').click({label: svLabel, placeholder: svPlaceholder, group: 6},
-		openVariableSelectionDialog);
-
-	$('.nrm-trait-variable-select').click({label: tdLabel, placeholder: tdPlaceholder, group: 3},
-		openVariableSelectionDialog);
-
-	$('.nrm-nc-variable-select').click({label: ncLabel, placeholder: ncPlaceholder, group: 7},
-		openVariableSelectionDialog);
 
 	startDateId = $('#startDateId').val();
 	endDateId = $('#endDateId').val();
@@ -537,8 +516,8 @@ $(document).ready(function() {
 	};
             if ($('#baselineTraitSettings tbody tr').length > 1) {
     			hideDummyRow('baselineTraitSettings');
-    		} 
-            
+    		}
+
             if ($('#selectionVariatesSettings tbody tr').length > 1) {
     			hideDummyRow('selectionVariatesSettings');
     		}

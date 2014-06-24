@@ -103,7 +103,7 @@
 				</div>
 				<div class="modal-footer addVariable-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" th:text="#{common.form.cancel.text}">Cancel</button>
-					<button type="button" id="addVariables" class="btn btn-primary" aria-hidden="true" onclick="javascript: submitSelectedVariables();">Add Variables</button>
+					<button type="button" id="addVariables" class="btn btn-primary" aria-hidden="true">Add Variables</button>
 				</div>
 			</div>
 		</div>
@@ -113,15 +113,16 @@
 <a style="display: none" id="ontologyBaseUrl" href="/OntologyBrowser" th:href="@{/OntologyBrowser/}">test</a>
 
 <div layout:fragment="page-script">
-	<script type="text/javascript" th:src="@{/static/js/ontologyBrowser.js}"></script>
-	<script type='text/javascript' th:inline="javascript">
-		//<![CDATA[
+<script type="text/javascript" th:src="@{/static/js/ontologyBrowser.js}"></script>
+<script type='text/javascript' th:inline="javascript">
+//<![CDATA[
 
-		var variableDetailHeader = /*[[#{ontology.variable.details}]]*/ '',
-			noVariableAddedMessage = /*[[#{nursery.managesettings.select.variable}]]*/ '',
-			ontologyUrl = $('#ontologyBaseUrl').attr('href'),
-	    	isSearchTab = false;
+/*exported variableDetailHeader, noVariableAddedMessage, ontologyUrl, isSearchTab */
 
-		//]]>
-	</script>
+var variableDetailHeader = /*[[#{ontology.variable.details}]]*/ '',
+	noVariableAddedMessage = /*[[#{nursery.managesettings.select.variable}]]*/ '',
+	ontologyUrl = $('#ontologyBaseUrl').attr('href'),
+	isSearchTab = false;
+//]]>
+</script>
 </div>

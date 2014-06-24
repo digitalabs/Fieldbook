@@ -43,7 +43,7 @@ function setCorrectMethodValues(isCheckMethod) {
 		dataVal = null,
 		findId = $('#defaultMethodId').val(),
 		objKey = null;
-	
+
 	if ($('#showFavoriteMethod').is(':checked')) {
 		// we check if the default is in the favorite method list or not
 		if (isCheckMethod) {
@@ -336,52 +336,13 @@ function checkIfEmpty(value) {
 	}
 }
 
-function processSelectVariablesSubmission(data, variableType) {
-    switch (variableType) {
-        case 1:
-            createDynamicSettingVariables(data,
-                'studyLevelVariables', 'nurseryLevelSettings-dev',
-                'nurseryLevelSettings', variableType, '');
-            break;
-        case 2:
-            createTableSettingVariables(data,
-                'plotLevelVariables', 'plotLevelSettings', variableType);
-            break;
-        case 3:
-            hideDummyRow('baselineTraitSettings');
-            createTableSettingVariables(data,
-                'baselineTraitVariables', 'baselineTraitSettings',
-                variableType);
-            checkTraitsAndSelectionVariateTable('', false);
-            break;
-        case 6:
-            hideDummyRow('selectionVariatesSettings');
-            createTableSettingVariables(data,
-                'selectionVariatesVariables',
-                'selectionVariatesSettings', variableType);
-            checkTraitsAndSelectionVariateTable('', false);
-            break;
-        case 7:
-            createDynamicSettingVariables(data,
-                'nurseryConditions', 'nurseryConditionsSettings',
-                'nurseryConditionsSettings', variableType, 'Cons');
-            break;
-        default:
-            createDynamicSettingVariables(data,
-                'studyLevelVariables', 'nurseryLevelSettings-dev',
-                'nurseryLevelSettings', variableType, "");
-    }
-
-    checkShowSettingsFormReminder();
-}
-
 function hideDummyRow(tableId) {
 	$('#'+tableId).find('.dummy-row').remove();
 }
 
 function showDummyRow(tableId) {
 	var dummyRow = '<tr class=\'dummy-row\'> ' +
-                	'<td class=\'even\'>&nbsp;</td> ' +  
+                	'<td class=\'even\'>&nbsp;</td> ' +
                 	'<td class=\'even\'>&nbsp;</td> ' +
                 	'<td class=\'even\'>&nbsp;</td> </tr>';
 	$('#'+tableId+' tbody').append(dummyRow);
@@ -457,7 +418,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 						}
 						newRow = newRow + inputHtml;
 
-						if (parseInt(settingDetail.variable.cvTermId, 10) == parseInt(breedingMethodId, 10) || 
+						if (parseInt(settingDetail.variable.cvTermId, 10) == parseInt(breedingMethodId, 10) ||
 								parseInt(settingDetail.variable.cvTermId, 10) === parseInt($('#breedingMethodCode').val(), 10)) {
 							// show favorite method
 							newRow = newRow
@@ -776,7 +737,7 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 		newPossibleValues = [];
 	var defaultJsonVal = null;
 	var isBreedingMethodSetting = $(name).parent().next().children(".breeding-method-tooltip").length > 0;
-	
+
 	$.each(
 					possibleValues,
 					function(index, value) {
@@ -915,7 +876,7 @@ function deleteVariable(variableType, variableId, deleteButton) {
 			|| variableType == baselineTraitsSegment) {
 		hasMeasurementData = checkMeasurementData(variableType, variableId);
 	}
-	
+
 	// if no data for measurement rows is saved yet, proceed with delete
 	if (hasMeasurementData == "0") {
 		// remove row from UI
@@ -930,7 +891,7 @@ function deleteVariable(variableType, variableId, deleteButton) {
 			success : function() {
 			}
 		});
-		
+
 		// add dummy row to selection variates/traits if no record is left
 		if (variableType === 3 && $('#baselineTraitSettings tbody tr').length === 0) {
 			showDummyRow('baselineTraitSettings');
@@ -974,7 +935,6 @@ function proceedWithDelete() {
 		success : function() {
 		}
 	});
-	
 	// add dummy row to selection variates/traits if no record is left
 	if (variableType === 3 && $('#baselineTraitSettings tbody tr').length === 0) {
 		showDummyRow('baselineTraitSettings');
@@ -1534,18 +1494,20 @@ function validateCreateNursery() {
 	 * should be less than the total germplasm
 	 */
 	if($('.check-germplasm-list-items tbody tr').length != 0 && selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null){
-		selectedCheckListDataTable.getDataTable().$('.check-hidden').serialize(); 	
-	
+
+		selectedCheckListDataTable.getDataTable().$('.check-hidden').serialize();
+
 		if (selectedCheckListDataTable.getDataTable().$('.check-hidden').length > 0) {
+
 			// we validate only if there is a check
 			// we try to validate if all the check row has check
 			var hasCheckError = false;
 			selectedCheckListDataTable.getDataTable().$('.check-hidden').each(function(){
 				  if($(this).val() === ''){
-					  hasCheckError = true;			
+					  hasCheckError = true;
 				  }
 			});
-	
+
 			if(hasCheckError == true){
 				showInvalidInputMessage(selectedCheckError);
 				return false;
@@ -1563,8 +1525,8 @@ function validateCreateNursery() {
 					|| parseInt($('#startIndex2').val(), 10) > totalGermplasms) {
 				showInvalidInputMessage(startIndexLessGermplasmError);
 				return false;
-			}	
-			
+			}
+
 			if (parseInt($('#interval2').val(), 10) < 0) {
 				showInvalidInputMessage(checkIntervalGreaterThanZeroError);
 				return false;
@@ -1690,28 +1652,28 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
 		 * $(this).select2('data').id; $(this).select2('destroy'); var
 		 * currentCode = $(this).find('option:selected').data('code');
 		 * $(this).empty();
-		 * 
+		 *
 		 * var i = 0; var selected = ''; if (currentVal === '') selected =
 		 * 'selected';
-		 * 
+		 *
 		 * $(this).append($('<option ' + selected + ' ></option>').attr('value',
 		 * '').text('Please Choose')); for (i = 0; i < suggestions_obj.length;
 		 * i++) { var val = suggestions_obj[i].text; var id =
 		 * suggestions_obj[i].id; selected = ''; if (currentCode ==
 		 * suggestions_obj[i].originalText) selected = 'selected';
-		 * 
+		 *
 		 * $(this).append( $('<option data-code="'+
 		 * suggestions_obj[i].originalText +'"' + selected + ' ></option>').attr(
 		 * 'value', id).text(val)); }
-		 * 
+		 *
 		 * }); $('.' + comboName).select2({minimumResultsForSearch: 20});
 		 */
 		if($('.check-germplasm-list-items tbody tr').length != 0 && selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null){
 			selectedCheckListDataTable.getDataTable().$('.check-hidden').each(function(){
-				
-			
+
+
 				var currentCode = $(this).data('code');
-				
+
 				for (i = 0; i < suggestions_obj.length; i++) {
 					var val = suggestions_obj[i].text;
 					var id = suggestions_obj[i].id;
@@ -1726,7 +1688,7 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
 						break;
 					}
 				}
-				
+
 			});
 		}
 	}
@@ -1832,13 +1794,13 @@ function deleteCheckType() {
 					isFound = true;
 				}
 			});
-		} 
+		}
         if(isFound){
         	showCheckTypeErrorMessage(checkTypeCurrentlyUseError);
         	return false;
         }
 
-		
+
 		var $form = $("#manageCheckValue,#comboCheckCode");
 		var serializedData = $form.serialize();
 		$
@@ -2067,7 +2029,7 @@ function showSelectedTab(selectedTabName) {
 		showAlertMessage('', importSaveDataWarningMessage);
 		return;
 	}
-	
+
 	$("#create-nursery-tab-headers").show();
 	var tabs = $("#create-nursery-tabs").children();
 	for (var i = 0; i < tabs.length; i++) {
@@ -2324,8 +2286,8 @@ function validateGermplasmInput(importDate, importLocationId, importMethodId) {
 		}else if((importMethodId === '' || importMethodId === null) && $('#import-action-type').val() === '2'){
 			showInvalidInputMessage(importMethodRequired);
 			return false;
-		}		
-	}	
+		}
+	}
 	return true;
 }
 
@@ -2340,7 +2302,7 @@ function submitGermplasmAndCheck() {
 	var $form = $('#germplasm-list-form'),
 		serializedData = $form.serialize();
 	if($('.check-germplasm-list-items tbody tr').length != 0 && selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null){
-		serializedData += "&" + selectedCheckListDataTable.getDataTable().$('.check-hidden').serialize(); 
+		serializedData += "&" + selectedCheckListDataTable.getDataTable().$('.check-hidden').serialize();
 	}
 
 	$.ajax({
@@ -2373,7 +2335,7 @@ function checkShowSettingsFormReminder(){
 	}else{
 		$('.management-details-section-reminder').addClass('fbk-hide');
 	}
-	
+
 	if($('.nurseryConditionsSettings .1st').length === 0){
 		$('.constants-section-reminder').removeClass('fbk-hide');
 	}else{

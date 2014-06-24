@@ -1364,3 +1364,12 @@ label[data-toggle="collapse"],
 	margin-top: 6px;
 }
 .dataTables_scrollHeadInner, .dataTables_scrollBody table { width:100% !important}
+.fbk-import-close-button{
+	float: right; 
+	z-index:99999; 
+	position: relative; 
+	right: 20px;
+}
+.fbk-import-body{
+	height: 500px;
+}

@@ -47,7 +47,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 			Workbook workbook) throws MiddlewareQueryException {
 		
         Map<Integer, Method> breedingMethodMap = new HashMap<Integer, Method>();
-        List<Method> methodList = fieldbookMiddlewareService.getAllBreedingMethods();
+        List<Method> methodList = fieldbookMiddlewareService.getAllMethods();
         for(Method method: methodList){
         	breedingMethodMap.put(method.getMid(), method);
         }
@@ -95,7 +95,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
     private void assignGermplasmAttributes(ImportedGermplasm germplasm, int sourceGid, int sourceGnpgs, 
             int sourceGpid1, int sourceGpid2, Method sourceMethod, Method breedingMethod) {
         
-        if (sourceMethod.getMtype() != null && AppConstants.METHOD_TYPE_GEN.equals(sourceMethod.getMtype()) 
+        if (sourceMethod != null && sourceMethod.getMtype() != null && AppConstants.METHOD_TYPE_GEN.equals(sourceMethod.getMtype()) 
                 || sourceGnpgs < 0 && sourceGpid1 == 0 && sourceGpid2 == 0) {
             
             germplasm.setGpid1(sourceGid);
@@ -174,11 +174,15 @@ public class NamingConventionServiceImpl implements NamingConventionService {
         List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
         for (AdvancingSource row : rows.getRows()) {
             if (row.getGermplasm() != null && !row.isCheck() && row.getPlantsSelected() != null && row.getBreedingMethod() != null
-            		&& row.getPlantsSelected() > 0 && (row.getBreedingMethod().isBulked() || row.getBreedingMethod().isNonBulked())) {
+            		&& row.getPlantsSelected() > 0 && row.getBreedingMethod().isBulkingMethod() != null) {
             	
             	Method method = row.getBreedingMethod();
             	String germplasmName = getGermplasmRootName(method.getSnametype(), row);
-            	String expression = germplasmName + method.getSeparator() + method.getPrefix() + method.getCount() + method.getSuffix();
+            	String expression = germplasmName 
+            						+ getNonNullValue(method.getSeparator()) 
+            						+ getNonNullValue(method.getPrefix()) 
+            						+ getNonNullValue(method.getCount()) 
+            						+ getNonNullValue(method.getSuffix());
             	row.setRootName(germplasmName);
             	List<String> names = processCodeService.applyToName(expression, row);
             	int index = 1;
@@ -189,6 +193,10 @@ public class NamingConventionServiceImpl implements NamingConventionService {
         }
             
         return list;
+    }
+    
+    private String getNonNullValue(String value) {
+    	return value != null ? value : "";
     }
     
     private String getGermplasmRootName(Integer snametype, AdvancingSource row)

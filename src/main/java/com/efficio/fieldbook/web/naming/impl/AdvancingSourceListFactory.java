@@ -92,8 +92,8 @@ public class AdvancingSourceListFactory {
                     if (methodId != null) {
                     	Method breedingMethod = breedingMethodMap.get(methodId);
 		                Integer plantsSelected = null; 
-		                boolean isBulk = breedingMethod.isBulked();
-	                	if (isBulk && (advanceInfo.getAllPlotsChoice() == null || "0".equals(advanceInfo.getAllPlotsChoice()))) {
+		                Boolean isBulk = breedingMethod.isBulkingMethod();
+	                	if (isBulk != null && isBulk && (advanceInfo.getAllPlotsChoice() == null || "0".equals(advanceInfo.getAllPlotsChoice()))) {
 	                    	if (plotVariateId != null) {
 		                        plantsSelected = getIntegerValue(row.getMeasurementDataValue(plotVariateId));
 	                    	}

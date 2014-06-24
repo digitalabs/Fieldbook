@@ -43,6 +43,7 @@ function setCorrectMethodValues(isCheckMethod) {
 		dataVal = null,
 		findId = $('#defaultMethodId').val(),
 		objKey = null;
+	
 	if ($('#showFavoriteMethod').is(':checked')) {
 		// we check if the default is in the favorite method list or not
 		if (isCheckMethod) {
@@ -62,7 +63,7 @@ function setCorrectMethodValues(isCheckMethod) {
 			$('#methodIdFavorite').select2('data', methodSuggestionsFav_obj[0])
 					.trigger('change');
 		} else {
-			$('#' + getJquerySafeId("breedingMethodId")).val(0);
+			$('#' + getJquerySafeId("advanceBreedingMethodId")).val(0);
 		}
 	} else {
 		if (isCheckMethod) {

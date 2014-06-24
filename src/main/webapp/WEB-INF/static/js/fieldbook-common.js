@@ -1,24 +1,5 @@
 $(function() {
     'use strict';
-	var newHash = '';
-
-	$(window).bind('hashchange', function() {
-
-		newHash = window.location.hash.substring(1);
-
-		if (newHash) {
-			$.ajax({
-				url: newHash,
-				type: 'GET',
-				success: function(html) {
-					// We just paste the whole html
-					$('.container .row').first().html(html);
-				}
-			});
-		}
-	});
-
-	$(window).trigger('hashchange');
 
 	if (typeof convertToSelect2 === 'undefined' || convertToSelect2) {
 		// Variable is undefined
@@ -26,6 +7,32 @@ $(function() {
 			$(this).select2({minimumResultsForSearch: 20});
 		});
 	}
+
+    function measureScrollBar() {
+        // david walsh
+        var scrollDiv = document.createElement('div');
+        scrollDiv.className = 'scrollbar-measure';
+        document.body.appendChild(scrollDiv);
+        var scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth;
+        document.body.removeChild(scrollDiv);
+        return scrollbarWidth;
+    }
+
+    $(document.body)
+        .on('show.bs.modal', function () {
+            if (this.clientHeight < window.innerHeight) {return;}
+
+            var scrollbarWidth = measureScrollBar();
+            if (scrollbarWidth) {
+                $(document.body).css('padding-right', scrollbarWidth);
+            }
+        })
+        .on('hidden.bs.modal', function () {
+            $(document.body).css('padding-right', 0);
+        });
+
+
+
 });
 
 function doAjaxMainSubmit(pageMessageDivId, successMessage, overrideAction) {

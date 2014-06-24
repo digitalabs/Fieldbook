@@ -3,6 +3,7 @@
 body {
     font-family: 'Open Sans', 'Segoe UI','Helvetica Neue', Arial, sans-serif;
     font-size: 13px;
+    margin: 0 !important;
 }
 .heading{vertical-align: middle; color:#333;font-family:'Open Sans','Segoe UI','Helvetica Neue',Arial,sans-serif;letter-spacing:normal;font-weight:500;margin-bottom:5px;margin-left:0;margin-right:0;margin-top:10px;box-sizing:border-box;font-size:18px;height:18px;line-height:18px;font-weight:600;}
 h1,h2,h3,h4,h5,h6,
@@ -18,6 +19,14 @@ h3,.h3{font-size:16px;line-height:16px;font-weight:600;text-transform:uppercase}
 h4,.h4{font-size:15.5px;line-height:15px;font-weight:500}
 h5,.h5{font-size:15px;font-weight:500;line-height:15px;text-transform:uppercase}
 h6,.h6{font-size:13px;font-weight:500;line-height:13px}
+
+.scrollbar-measure {
+    width: 1px;
+    height: 1px;
+    overflow: scroll;
+    position: absolute;
+    top: -9999px;
+}
 
 .sub-heading{
     /*
@@ -308,7 +317,6 @@ div.dataTables_scrollBody table.table-curved {
     /*width: 950px;*/
     min-width: 100%;
     padding-left: 35px; margin-top: -20px; margin-left: 0px;
-    float: left;
 }
 .move-left{
     margin-left: -25px;

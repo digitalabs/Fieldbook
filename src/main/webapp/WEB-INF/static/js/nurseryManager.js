@@ -545,11 +545,15 @@ function submitSelectedVariables(variableType) {
 }
 
 function hideDummyRow(tableId) {
-	$('#'+tableId).find('.dummy-row').hide();
+	$('#'+tableId).find('.dummy-row').remove();
 }
 
 function showDummyRow(tableId) {
-	$('#'+tableId).find('.dummy-row').show();
+	var dummyRow = '<tr class=\'dummy-row\'> ' +
+                	'<td class=\'even\'>&nbsp;</td> ' +  
+                	'<td class=\'even\'>&nbsp;</td> ' +
+                	'<td class=\'even\'>&nbsp;</td> </tr>';
+	$('#'+tableId+' tbody').append(dummyRow);
 }
 
 function replaceNameVariables() {
@@ -903,7 +907,7 @@ function createTableSettingVariables(data, name, tableId, varType) {
 			.each(
 					data,
 					function(index, settingDetail) {
-						var length = $("#" + tableId + " tbody tr").length + 1;
+						var length = $("#" + tableId + " tbody tr").length+1;
 						var className = length % 2 == 1 ? 'even' : 'odd';
 						var rowClass = "";
 						if (varType == 3) {
@@ -1112,9 +1116,9 @@ function deleteVariable(variableType, variableId, deleteButton) {
 		});
 		
 		//add dummy row to selection variates/traits if no record is left
-		if (variableType === 3 && $('#baselineTraitSettings tbody tr').length === 1) {
+		if (variableType === 3 && $('#baselineTraitSettings tbody tr').length === 0) {
 			showDummyRow('baselineTraitSettings');
-		} else if (variableType === 6 && $('#selectionVariatesSettings tbody tr').length === 1) {
+		} else if (variableType === 6 && $('#selectionVariatesSettings tbody tr').length === 0) {
 			showDummyRow('selectionVariatesSettings');
 		}
 
@@ -1156,9 +1160,9 @@ function proceedWithDelete() {
 	});
 	
 	//add dummy row to selection variates/traits if no record is left
-	if (variableType === 3 && $('#baselineTraitSettings tbody tr').length === 1) {
+	if (variableType === 3 && $('#baselineTraitSettings tbody tr').length === 0) {
 		showDummyRow('baselineTraitSettings');
-	} else if (variableType === 6 && $('#selectionVariatesSettings tbody tr').length === 1) {
+	} else if (variableType === 6 && $('#selectionVariatesSettings tbody tr').length === 0) {
 		showDummyRow('selectionVariatesSettings');
 	}
 

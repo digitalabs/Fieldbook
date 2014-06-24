@@ -97,8 +97,14 @@ public class ReviewNurseryDetailsController extends AbstractBaseFieldbookControl
     	
     	if (list != null && !list.isEmpty()) {
     		int rows = Double.valueOf(Math.ceil(list.size()/(double)COLS)).intValue();
+    		int extra = list.size() % COLS;
     		for (int i = 0; i < list.size(); i++) {
-    			int computedIndex = (i % COLS) * rows + i / COLS;
+    			int delta = 0;
+    			int currentColumn = i % COLS;
+    			if (currentColumn > extra && extra > 0) {
+    				delta = currentColumn - extra;
+    			}
+    			int computedIndex = currentColumn * rows + i / COLS - delta;
     			if (computedIndex < list.size()) {
     				newList.add(list.get(computedIndex));
     			}

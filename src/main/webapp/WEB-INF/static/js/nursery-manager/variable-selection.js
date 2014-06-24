@@ -3,10 +3,6 @@
 // TODO HH Move these to be passed in
 /* global noVariableAddedMessage, errorTheVariable, errorTheVariableNurseryUnique, varInListMessage*/
 
-// These should move to choose-settings
-/* global createDynamicSettingVariables, createTableSettingVariables, checkTraitsAndSelectionVariateTable, hideDummyRow */
-/* global checkShowSettingsFormReminder */
-
 /**
  * @module measurements-datatable
  */
@@ -89,6 +85,51 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		return existingVarName;
 	}
 
+	function submitSelectedVariables(group, successFn) {
+
+		var $newVariablesList = $('#newVariablesList tbody tr'),
+
+			numberOfVariablesToAdd = $newVariablesList.length;
+
+		if (numberOfVariablesToAdd === 0) {
+			showErrorMessage('', noVariableAddedMessage);
+
+		} else if (numberOfVariablesToAdd > 0 && hasNoVariableName($newVariablesList)) {
+			showErrorMessage('', noVariableNameError);
+
+		} else if (numberOfVariablesToAdd > 0) {
+
+			// TODO - Prevent already added variables from being added again instead of letting them select them
+			// and then erroring
+			var varName = validateUniqueVariableName();
+
+			if (varName !== '') {
+				showErrorMessage('', errorTheVariable + ' &quot;' + varName + '&quot; ' + errorTheVariableNurseryUnique);
+				return;
+			}
+
+			replaceNameVariables($newVariablesList);
+
+			var serializedData = $('input.addVariables').serialize();
+
+			$.ajax({
+				url: '/Fieldbook/NurseryManager/createNursery/addSettings/' + group,
+				type: 'POST',
+				data: serializedData,
+				success: function(data) {
+					$.event.trigger({
+						type: 'variable-select',
+						group: group,
+						responseData: data
+					});
+					successFn();
+				}
+			});
+		} else {
+			showErrorMessage('', varInListMessage);
+		}
+	}
+
 	VariableSelection = function(group, data, translations) {
 		this._data = data;
 		this._group = group;
@@ -107,7 +148,6 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 		// clear selected variables table and attribute fields
 		$('#newVariablesList > tbody').empty();
-		$('#page-message-modal').html('');
 
 		clearAttributeFields();
 
@@ -119,7 +159,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 		$('#addVariables').on('click', null, {group: this._group}, $.proxy(function(e) {
 			e.preventDefault();
-			this.submitSelectedVariables(e.data.group);
+			submitSelectedVariables(e.data.group, $.proxy(this.hide, this));
 		}, this));
 
 		$('#newVariablesList').addClass('fbk-hide');
@@ -134,76 +174,6 @@ BMS.NurseryManager.VariableSelection = (function($) {
 	VariableSelection.prototype.hide = function() {
 		this._modal.modal('hide');
 		$('#addVariables').off('click');
-	};
-
-	VariableSelection.prototype.submitSelectedVariables = function(variableType) {
-
-		var that = this,
-			$newVariablesList = $('#newVariablesList tbody tr'),
-
-			numberOfVariablesToAdd = $newVariablesList.length;
-
-		if (numberOfVariablesToAdd === 0) {
-			showErrorMessage('', noVariableAddedMessage);
-
-		} else if (numberOfVariablesToAdd > 0 && hasNoVariableName($newVariablesList)) {
-			showErrorMessage('', noVariableNameError);
-
-		} else if (numberOfVariablesToAdd > 0) {
-			var varName = validateUniqueVariableName();
-
-			if (varName !== '') {
-				showErrorMessage('', errorTheVariable + ' &quot;' + varName + '&quot; ' + errorTheVariableNurseryUnique);
-				return;
-			}
-
-			replaceNameVariables($newVariablesList);
-			var serializedData = $('input.addVariables').serialize();
-			$('#page-message-modal').html('');
-
-			var promise = $.ajax({
-				url: '/Fieldbook/NurseryManager/createNursery/addSettings/' + variableType,
-				type: 'POST',
-				data: serializedData,
-				success: function(data) {
-					switch (variableType) {
-						case 1:
-							createDynamicSettingVariables($.parseJSON(data),
-									'studyLevelVariables', 'nurseryLevelSettings-dev', 'nurseryLevelSettings', variableType, '');
-							break;
-						case 2:
-							createTableSettingVariables($.parseJSON(data), 'plotLevelVariables', 'plotLevelSettings', variableType);
-							break;
-						case 3:
-							hideDummyRow('baselineTraitSettings');
-							createTableSettingVariables($.parseJSON(data), 'baselineTraitVariables', 'baselineTraitSettings', variableType);
-							checkTraitsAndSelectionVariateTable('', false);
-							break;
-						case 6:
-							hideDummyRow('selectionVariatesSettings');
-							createTableSettingVariables($.parseJSON(data),
-									'selectionVariatesVariables',
-									'selectionVariatesSettings', variableType);
-							checkTraitsAndSelectionVariateTable('', false);
-							break;
-						case 7:
-							createDynamicSettingVariables($.parseJSON(data),
-									'nurseryConditions', 'nurseryConditionsSettings',
-									'nurseryConditionsSettings', variableType, 'Cons');
-							break;
-						default:
-							createDynamicSettingVariables($.parseJSON(data), 'studyLevelVariables', 'nurseryLevelSettings-dev',
-							'nurseryLevelSettings', variableType, '');
-					}
-					that.hide();
-					checkShowSettingsFormReminder();
-				}
-			});
-
-			return promise;
-		} else {
-			showErrorMessage('', varInListMessage);
-		}
 	};
 
 	return VariableSelection;

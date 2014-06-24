@@ -73,9 +73,11 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
 		<div class="col-xs-2 col-md-2">
 			<input  class="cvTermIds" type="hidden" th:field="*{basicDetails[5].variable.cvTermId}" />
 			<label th:text="#{nursery.create.nursery.created.by} + ': '" class="control-label label-bold"></label>&nbsp;<span class="required">*</span>
+			<input  class="cvTermIds" type="hidden" th:field="*{basicDetails[6].variable.cvTermId}" />
 		</div>
 		<div class="col-xs-4 col-md-4">
 			<input type="hidden" th:field="*{basicDetails[5].value}" />
+			<input type="hidden" th:field="*{basicDetails[6].value}" />
 			<label th:text="*{createdBy}"></label>
 		</div>
 	</div>

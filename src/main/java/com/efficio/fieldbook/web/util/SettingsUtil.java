@@ -11,11 +11,8 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.util;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -49,7 +46,6 @@ import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
 import com.efficio.fieldbook.web.nursery.bean.NurseryDetails;
 import com.efficio.fieldbook.web.nursery.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.bean.WidgetType;
 
 /**
  * The Class SettingsUtil.
@@ -141,20 +137,26 @@ public class SettingsUtil {
 			if(userSelection != null){
 				StandardVariable standardVariable = getStandardVariable(variable.getCvTermId(), userSelection, fieldbookMiddlewareService);
 				
-				variable.setPSMRFromStandardVariable(standardVariable);
-				//need to get the name from the session
-				variable.setName(userSelection.getStudyLevelConditions().get(index).getVariable().getName());
-				if (variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_ID.getId())) && settingDetail.getValue().equals("0")) {
-				    settingDetail.setValue("");
-				} 			
-        			
-        			Condition condition = new Condition(variable.getName(), variable.getDescription(), variable.getProperty(),
-        					variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
-        					DateUtil.convertToDBDateFormat(variable.getDataTypeId(), HtmlUtils.htmlEscape(settingDetail.getValue())), variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
-        			condition.setOperation(userSelection.getStudyLevelConditions().get(index++).getVariable().getOperation());
-        			condition.setStoredIn(standardVariable.getStoredIn().getId());
-        			condition.setId(variable.getCvTermId());
-        			conditions.add(condition);
+				//if the standard variable exists in the database 
+				if (standardVariable.getName() != null) {
+    				variable.setPSMRFromStandardVariable(standardVariable);
+    				//need to get the name from the session
+    				variable.setName(userSelection.getStudyLevelConditions().get(index).getVariable().getName());
+    				if (variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_ID.getId())) && settingDetail.getValue().equals("0")) {
+    				    settingDetail.setValue("");
+    				} 			
+            			
+            			Condition condition = new Condition(variable.getName(), variable.getDescription(), variable.getProperty(),
+            					variable.getScale(), variable.getMethod(), variable.getRole(), variable.getDataType(),
+            					DateUtil.convertToDBDateFormat(variable.getDataTypeId(), HtmlUtils.htmlEscape(settingDetail.getValue())), variable.getDataTypeId(), variable.getMinRange(), variable.getMaxRange());
+            			condition.setOperation(userSelection.getStudyLevelConditions().get(index++).getVariable().getOperation());
+            			condition.setStoredIn(standardVariable.getStoredIn().getId());
+            			condition.setId(variable.getCvTermId());
+            			conditions.add(condition);
+				} else {
+				    //do not include it in saving if variable does not exist in the database
+				    index++;
+				}
 			}
 		}
 		//iterate for the plot level

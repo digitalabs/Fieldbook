@@ -11,9 +11,12 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -43,6 +46,7 @@ import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.DateUtil;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -304,7 +308,8 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
             } else {
                 variableName = stdVar.getName();
             }
-            if (stdVar != null) {
+            
+            if (stdVar != null && stdVar.getName() != null) {
             SettingVariable svar = new SettingVariable(
                     variableName, stdVar.getDescription(), stdVar.getProperty().getName(),
                                         stdVar.getScale().getName(), stdVar.getMethod().getName(), stdVar.getStoredIn().getName(), 
@@ -318,19 +323,27 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
 
                         List<ValueReference> possibleValues = fieldbookService.getAllPossibleValues(id);
                         SettingDetail settingDetail = new SettingDetail(svar, possibleValues, null, false);
-                        
                         if (id == TermId.BREEDING_METHOD_ID.getId()) {
                             settingDetail.setValue(AppConstants.PLEASE_CHOOSE.getString());
                         } else if (id == TermId.STUDY_UID.getId()) {
                             settingDetail.setValue(workbenchService.getCurrentIbdbUserId(this.getCurrentProjectId()).toString());
+                        } else if (id == TermId.STUDY_UPDATE.getId()) {
+                            
+                            DateFormat dateFormat = new SimpleDateFormat(DateUtil.DB_DATE_FORMAT);
+                            Date date = new Date();
+                            settingDetail.setValue(dateFormat.format(date));
                         }
                         settingDetail.setPossibleValuesToJson(possibleValues);
                         List<ValueReference> possibleValuesFavorite = fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProjectId());
                         settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);
                         settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
                         return settingDetail;
-                }
-                return new SettingDetail();
+            } else {
+                SettingVariable svar = new SettingVariable();
+                svar.setCvTermId(stdVar.getId());
+                SettingDetail settingDetail = new SettingDetail(svar, null, null, false);
+                return settingDetail;
+            }
     }
     
     /**

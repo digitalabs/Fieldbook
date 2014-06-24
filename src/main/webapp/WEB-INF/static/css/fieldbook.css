@@ -1348,6 +1348,8 @@ label[data-toggle="collapse"],
 }
 .fbk-import-upload-file .input-group-btn > .btn {
 	font-size: 12px;
+    padding-top: 8px;
+    padding-bottom: 7px
 }
 .fake-check-germplasm-list-items{
 	position: relative; 
@@ -1361,4 +1363,4 @@ label[data-toggle="collapse"],
 .add-top-margin {
 	margin-top: 6px;
 }
-.dataTables_scrollHeadInner, .dataTables_scrollBody table, .dataTables_scrollHeadInner table { width:100% !important}
+.dataTables_scrollHeadInner, .dataTables_scrollBody table { width:100% !important}

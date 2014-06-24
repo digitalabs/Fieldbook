@@ -131,7 +131,7 @@
 						<label class="control-label label-bold" th:text="#{import.change.action} + ':'">Action:</label>
 					</div>
 					<div class="col-xs-7 col-md-7">
-						<select style="width: 205px" id="import-action-type" onchange="doImportActionChange();">
+						<select id="import-action-type" onchange="doImportActionChange();">
 							<option value="0" th:text="#{import.change.option.skip}">Skip</option>
 							<option value="1" th:text="#{import.change.option.add.desig.to.gid}">Add the New Designation to the Germplasm</option>
 							<option value="2" th:text="#{import.change.option.create.new.desig}">Create a New Germplasm</option>
@@ -152,7 +152,7 @@
 				
 				<form id="importStudyConfirmationForm" method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
 					<input type="hidden" class="hasCreateGermplasm" />
-					<div class="row form-group create-germplasm">
+					<div class="row form-group create-germplasm add-desig-to-gid">
 						<div class="col-xs-4 col-md-4">
 							<label class="control-label label-bold" th:text="#{nursery.import.excel.breeding.method}+':'">Breeding Method</label>&nbsp;<span class="required">*</span>	
 						</div>
@@ -374,6 +374,7 @@
 			});
 		}
 		function doSaveImportedData(){
+			'use strict';
 			$.ajax(
 					{ 
 						url: '/Fieldbook/ImportManager/import/save',
@@ -499,7 +500,8 @@
 				$('.choose-gids').hide();
 				$('.no-choose-gids').show();
 			}
-			
+			//we do the reset here
+			resetDesigConfirmationFields();
 		}
 
 		function showDesigConfirmation(){
@@ -550,8 +552,6 @@
 				if(applyDetails){
 					applyChangeDetails();
 				}
-			} else {
-				showInvalidInputMessage(importRequiredFieldsError);
 			}
 		}
 						
@@ -588,6 +588,11 @@
 				$('.create-germplasm').show();
 				$('.no-choose-gids').show();
 				$('.choose-gids').hide();				
+			} else if ($('#import-action-type').val() === '1') {
+				$('.create-germplasm').show();
+				$('.add-desig-to-gid').hide();
+				$('.no-choose-gids').show();
+				$('.choose-gids').hide();	
 			} else {
 				$('.choose-gids').hide();
 				$('.create-germplasm').hide();

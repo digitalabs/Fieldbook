@@ -554,9 +554,9 @@ public class EditNurseryController extends SettingsController {
 	    	Iterator<SettingDetail> iter = settingList.iterator();
 	        while (iter.hasNext()) {
 	        	SettingDetail setting = iter.next();
-	        	if (setting.getVariable().getOperation().equals(Operation.DELETE)) {
+	        	if (setting.getVariable().getOperation() != null && setting.getVariable().getOperation().equals(Operation.DELETE)) {
 	        		iter.remove();
-	        	} else if (setting.getVariable().getOperation().equals(Operation.ADD)) {
+	        	} else if (setting.getVariable().getOperation() != null && setting.getVariable().getOperation().equals(Operation.ADD)) {
 	        		setting.getVariable().setOperation(Operation.UPDATE);
 	        	} 
 	        }
@@ -567,9 +567,9 @@ public class EditNurseryController extends SettingsController {
 	        Iterator<MeasurementVariable> iter2 = variableList.iterator();
 	        while (iter2.hasNext()) {
 	        	MeasurementVariable var = iter2.next();
-	        	if (var.getOperation().equals(Operation.DELETE)) {
+	        	if (var.getOperation() != null && var.getOperation().equals(Operation.DELETE)) {
 	        		iter2.remove();
-	        	} else if (var.getOperation().equals(Operation.ADD)) {
+	        	} else if (var.getOperation() != null && var.getOperation().equals(Operation.ADD)) {
 	        		var.setOperation(Operation.UPDATE);
 	        	}
 	        }

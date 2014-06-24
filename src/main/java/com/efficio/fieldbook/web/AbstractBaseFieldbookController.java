@@ -84,6 +84,11 @@ public abstract class AbstractBaseFieldbookController {
 		return "0";
 	}
 	
+	public Integer getCurrentIbdbUserId() throws MiddlewareQueryException {
+		Integer ibdbUserId = workbenchService.getCurrentIbdbUserId(this.getCurrentProjectId());
+		return ibdbUserId;
+	}
+	
 	public String getOldFieldbookPath() {
 
 		if (oldFbTool == null) {

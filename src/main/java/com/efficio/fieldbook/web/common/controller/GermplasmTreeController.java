@@ -172,7 +172,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         String listType = AppConstants.GERMPLASM_LIST_TYPE_HARVEST.getString();
         Integer userId = 0;
         try {
-            userId = workbenchService.getCurrentIbdbUserId(getCurrentProjectId());
+            userId = this.getCurrentIbdbUserId();
             if (userId == null){
                 userId = 0;
             }
@@ -502,7 +502,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         try {
         	
         	checkIfUnique(folderName);
-        	Integer userId =workbenchService.getCurrentIbdbUserId(this.getCurrentProjectId());
+        	Integer userId = this.getCurrentIbdbUserId();
 
             if (id == null) {
                 newList = new GermplasmList(null,folderName,Long.valueOf((new SimpleDateFormat("yyyyMMdd")).format(Calendar.getInstance().getTime())),"FOLDER",userId,folderName,null,0);

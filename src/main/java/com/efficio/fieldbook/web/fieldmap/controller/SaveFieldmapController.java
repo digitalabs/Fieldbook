@@ -85,7 +85,7 @@ public class SaveFieldmapController extends AbstractBaseFieldbookController{
             	
 //                String fieldmapUUID = UUID.randomUUID().toString();
                 updateSelectedFieldMapInfo();
-                int userId = workbenchService.getCurrentIbdbUserId(getCurrentProjectId());
+                int userId = this.getCurrentIbdbUserId();
                 fieldbookMiddlewareService.saveOrUpdateFieldmapProperties(
                         this.userFieldmap.getSelectedFieldMaps(), userId, userFieldmap.isNew());
             }

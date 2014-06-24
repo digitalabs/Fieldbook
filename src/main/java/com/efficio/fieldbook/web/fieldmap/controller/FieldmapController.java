@@ -594,7 +594,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         Integer locationId = form.getParentLocationId();
         String msg = "success";
         try {
-        	Integer currentUserId = workbenchService.getCurrentIbdbUserId(getCurrentProjectId());
+        	Integer currentUserId = this.getCurrentIbdbUserId();
         	if(isFieldNameUnique(fieldName, locationId))
         		fieldbookMiddlewareService.addFieldLocation(fieldName, locationId, currentUserId);
         	else 
@@ -655,7 +655,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
         Integer parentFieldId = form.getParentFieldId();
         String msg = "success";
         try {
-        	Integer currentUserId = workbenchService.getCurrentIbdbUserId(getCurrentProjectId());
+        	Integer currentUserId = this.getCurrentIbdbUserId();
         	if(isBlockNameUnique(blockName, parentFieldId))
         		fieldbookMiddlewareService.addBlockLocation(blockName, parentFieldId, currentUserId);
         	else

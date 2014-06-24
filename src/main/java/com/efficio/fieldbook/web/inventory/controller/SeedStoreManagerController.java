@@ -191,7 +191,7 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
         	
             LotsResult lotsResult = inventoryMiddlewareService.addAdvanceLots(gidList, 
             		form.getInventoryLocationId(),form.getInventoryScaleId(), 
-            		form.getInventoryComments(), workbenchService.getCurrentIbdbUserId(this.getCurrentProjectId()),
+            		form.getInventoryComments(), this.getCurrentIbdbUserId(),
             		form.getAmount(), form.getListId());
            
                 result.put("message", messageSource

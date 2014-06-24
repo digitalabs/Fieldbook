@@ -300,7 +300,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	for (GermplasmChangeDetail responseDetail : responseDetails) {
     		if (responseDetail.getIndex() < observations.size()) {
     			MeasurementRow row = observations.get(responseDetail.getIndex());
-				int userId = workbenchService.getCurrentIbdbUserId(getCurrentProjectId());
+				int userId = this.getCurrentIbdbUserId();
 				MeasurementData desigData = row.getMeasurementData(TermId.DESIG.getId());
 				MeasurementData gidData = row.getMeasurementData(TermId.GID.getId());
     			if (responseDetail.getStatus() == 1) { // add germplasm name to gid

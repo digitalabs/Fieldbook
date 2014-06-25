@@ -108,6 +108,8 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     /** The imported germplasm list. */
     private List<ImportedGermplasm> importedGermplasmList;
     
+    private static String GENERATIVE_TYPE = "GEN";
+    
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
      */
@@ -182,16 +184,33 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         Map<String, String> result = new HashMap<String, String>();
         
         try {
-            List<Method> breedingMethods = fieldbookMiddlewareService.getAllBreedingMethods();
-            Project project = new Project();
-            project.setProjectId(Long.valueOf(this.getCurrentProjectId()));
+			List<Method> breedingMethods = fieldbookMiddlewareService.getAllBreedingMethods(false);
+			Project project = new Project();
+			project.setProjectId(Long.valueOf(this.getCurrentProjectId()));
+			
+			List<Integer> methodIds = workbenchService
+			              .getFavoriteProjectMethods(getCurrentProjectId());
+			List<Method> favoriteMethods = fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIds, false);
+			
+			
+			List<Method> allNonGenerativeMethods = new ArrayList<Method>();
+			List<Method> favoriteNonGenerativeMethods = new ArrayList<Method>();
+            for(Method method: breedingMethods){
+            	if(method != null && (method.getMtype() == null || !method.getMtype().equals(GENERATIVE_TYPE))) {
+            		allNonGenerativeMethods.add(method);            		
+            	}
+            }
+            for(Method method: favoriteMethods){
+            	if(method != null && (method.getMtype() == null || !method.getMtype().equals(GENERATIVE_TYPE))) {
+            		favoriteNonGenerativeMethods.add(method);            		
+            	}
+            }
             
-              List<Integer> methodIds = workbenchService
-                          .getFavoriteProjectMethods(getCurrentProjectId());
-              List<Method> favoriteMethods = fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIds);
             result.put("success", "1");
             result.put("allMethods", convertMethodsToJson(breedingMethods));
-            result.put("favoriteMethods", convertMethodsToJson(favoriteMethods));
+            result.put("favoriteMethods", convertMethodsToJson(favoriteMethods));            
+            result.put("allNonGenerativeMethods", convertMethodsToJson(allNonGenerativeMethods));
+            result.put("favoriteNonGenerativeMethods", convertMethodsToJson(favoriteNonGenerativeMethods));
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
             result.put("success", "-1");
@@ -200,6 +219,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         
         return result;
     }
+      
     
     /**
      * Gets the locations.

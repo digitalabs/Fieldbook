@@ -896,8 +896,11 @@ function advanceNursery(tableName) {
 				success: function(html) {
 					$('#advance-nursery-modal-div').html(html);
 					$('#advanceNurseryModal').modal({ backdrop: 'static', keyboard: true });
-					$('#advanceNurseryModal select').select2({minimumResultsForSearch: 20});
-
+					
+					$('#advanceNurseryModal select').each(function(){
+						$(this).select2({minimumResultsForSearch: $(this).find('option').length == 0 ? -1 : 20});
+					});
+					
 				}				
 			});
 		}
@@ -1005,6 +1008,7 @@ function initializeMethodSelect2(methodSuggestions, methodSuggestionsObj) {
 
 	// If combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
 	$('#' + getJquerySafeId('methodIdAll')).select2({
+		minimumResultsForSearch: $('#' + getJquerySafeId('methodIdAll')).find('option').length == 0 ? -1 : 20,
 		query: function(query) {
 			var data = {results: methodSuggestionsObj}, i, j, s;
 			// Return the array that matches
@@ -1039,6 +1043,7 @@ function initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFavOb
 
 	// If combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
 	$('#' + getJquerySafeId('methodIdFavorite')).select2({
+		minimumResultsForSearch: $('#' + getJquerySafeId('methodIdFavorite')).find('option').length == 0 ? -1 : 20,
 		query: function(query) {
 			var data = {results: methodSuggestionsFavObj}, i, j, s;
 			// Return the array that matches
@@ -1635,14 +1640,16 @@ function recreateMethodCombo() {
 		data: '',
 		async: false,
 		success: function(data) {
+			//allNonGenerativeMethods
+			//favoriteNonGenerativeMethods
 			if (data.success == '1') {
 				if (createGermplasmOpened) {
 					refreshImportMethodCombo(data);
 					refreshMethodComboInSettings(data);
 				} else if (selectedMethodAll != null) {
 					//recreate the select2 combos to get updated list of methods
-					recreateMethodComboAfterClose('methodIdAll', $.parseJSON(data.allMethods));
-					recreateMethodComboAfterClose('methodIdFavorite', $.parseJSON(data.favoriteMethods));
+					recreateMethodComboAfterClose('methodIdAll', $.parseJSON(data.allNonGenerativeMethods));
+					recreateMethodComboAfterClose('methodIdFavorite', $.parseJSON(data.favoriteNonGenerativeMethods));
 					showCorrectMethodCombo();
 					//set previously selected value of method
 					if ($('#showFavoriteMethod').prop('checked')) {
@@ -1737,7 +1744,6 @@ function recreateLocationCombo() {
 				type : 'GET',
 				cache : false,
 				data : '',
-				async : false,
 				success : function(data) {
 					if (data.success == '1') {
 						if (createGermplasmOpened) {
@@ -1799,8 +1805,8 @@ function refreshMethodComboInSettings(data) {
 	//get index of breeding method row
 	var index = getBreedingMethodRowIndex(), selectedVal = null;
 	if (index > -1) {
-		data.favoriteMethods = '[{"mid":0,"mname":"Please Choose","mdesc":"Please Choose"},' + data.favoriteMethods.substring(1);
-		data.allMethods = '[{"mid":0,"mname":"Please Choose","mdesc":"Please Choose"},' + data.allMethods.substring(1);
+		data.favoriteNonGenerativeMethods = '[{"mid":0,"mname":"Please Choose","mdesc":"Please Choose"},' + data.favoriteNonGenerativeMethods.substring(1);
+		data.allNonGenerativeMethods = '[{"mid":0,"mname":"Please Choose","mdesc":"Please Choose"},' + data.allNonGenerativeMethods.substring(1);
 		if ($('#' + getJquerySafeId('studyLevelVariables' + index + '.value')).select2('data')) {
 			selectedVal = $('#' + getJquerySafeId('studyLevelVariables' + index + '.value')).select2('data').id;
 		}
@@ -1808,17 +1814,17 @@ function refreshMethodComboInSettings(data) {
 		//recreate select2 of breeding method
 		initializePossibleValuesCombo([],
 				'#' + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
-	
+		
 		//update values of combo
 		if ($('#' + getJquerySafeId('studyLevelVariables' + index + '.favorite1')).is(':checked')) {
-			initializePossibleValuesCombo($.parseJSON(data.favoriteMethods),
+			initializePossibleValuesCombo($.parseJSON(data.favoriteNonGenerativeMethods),
 					'#' + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
 		} else {
-			initializePossibleValuesCombo($.parseJSON(data.allMethods),
+			initializePossibleValuesCombo($.parseJSON(data.allNonGenerativeMethods),
 					'#' + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
 		}
 	
-		replacePossibleJsonValues(data.favoriteMethods, data.allMethods, index);
+		replacePossibleJsonValues(data.favoriteNonGenerativeMethods, data.allNonGenerativeMethods, index);
 	}
 }
 

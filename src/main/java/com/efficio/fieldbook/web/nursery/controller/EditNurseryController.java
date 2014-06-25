@@ -670,7 +670,7 @@ public class EditNurseryController extends SettingsController {
                 }
                 
                 if (ontologyService.getProperty(variable.getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId()) {
-                    variable.setPossibleValues(fieldbookService.getAllBreedingMethods());
+                    variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true));
                 } else {
                     variable.setPossibleValues(transformPossibleValues(stdVariable.getEnumerations()));
                 }

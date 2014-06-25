@@ -52,7 +52,7 @@ implements NamingConventionService {
     @Override
     public List<ImportedGermplasm> advanceNursery(AdvancingNursery info, Workbook workbook) throws MiddlewareQueryException {
         Map<Integer, Method> breedingMethodMap = new HashMap<Integer, Method>();
-        List<Method> methodList = fieldbookMiddlewareService.getAllBreedingMethods();
+        List<Method> methodList = fieldbookMiddlewareService.getAllBreedingMethods(false);
         for(Method method: methodList){
         	breedingMethodMap.put(method.getMid(), method);
         }

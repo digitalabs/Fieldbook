@@ -957,9 +957,12 @@ function sortByKey(array, key) {
 
 function initializePossibleValuesCombo(possibleValues, name, isLocation,
 		defaultValue) {
-	var possibleValues_obj = [];
+	var possibleValues_obj = [],
+		counter = 0,
+		newPossibleValues = [];
 	var defaultJsonVal = null;
 	var isBreedingMethodSetting = $(name).parent().next().children(".breeding-method-tooltip").length > 0;
+	
 	$.each(
 					possibleValues,
 					function(index, value) {
@@ -2289,9 +2292,9 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 				if (selectedMethodAll != null) {
 					//recreate the select2 combos to get updated list of methods
 					recreateMethodComboAfterClose("methodIdAll", $
-							.parseJSON(data.allMethods));
+							.parseJSON(data.allNonGenerativeMethods));
 					recreateMethodComboAfterClose("methodIdFavorite", $
-							.parseJSON(data.favoriteMethods));
+							.parseJSON(data.favoriteNonGenerativeMethods));
 					showCorrectMethodCombo();
 					//set previously selected value of method
 					if ($("#showFavoriteMethod").prop("checked")) {
@@ -2319,19 +2322,19 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 					if ($("#" + getJquerySafeId(comboFaveCBoxName)).is(
 							":checked")) {
 						initializePossibleValuesCombo($
-								.parseJSON(data.favoriteMethods), "#"
+								.parseJSON(data.favoriteNonGenerativeMethods), "#"
 								+ getJquerySafeId(comboName), false,
 								selectedVal);
 					} else {
 						initializePossibleValuesCombo($
-								.parseJSON(data.allMethods), "#"
+								.parseJSON(data.allNonGenerativeMethods), "#"
 								+ getJquerySafeId(comboName), false,
 								selectedVal);
 					}
 
 					if (index > -1) {
-						replacePossibleJsonValues(data.favoriteMethods,
-								data.allMethods, index);
+						replacePossibleJsonValues(data.favoriteNonGenerativeMethods,
+								data.allNonGenerativeMethods, index);
 					}
 				}
 			} else {

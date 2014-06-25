@@ -139,7 +139,7 @@ public interface FieldbookService {
      * @return the all breeding methods
      * @throws MiddlewareQueryException the middleware query exception
      */
-    List<ValueReference> getAllBreedingMethods() throws MiddlewareQueryException;
+    List<ValueReference> getAllBreedingMethods(boolean isFilterOutGenerative) throws MiddlewareQueryException;
 
     /**
      * Sets the all possible values in workbook.

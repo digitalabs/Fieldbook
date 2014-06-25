@@ -271,7 +271,7 @@ public class FieldbookServiceImpl implements FieldbookService{
                 List<ValueReference> list = new ArrayList<ValueReference>();
                 list.add(new ValueReference(0, AppConstants.PLEASE_CHOOSE.getString(), AppConstants.PLEASE_CHOOSE.getString()));
                 possibleValues = list;
-                possibleValues.addAll(getAllBreedingMethods());
+                possibleValues.addAll(getAllBreedingMethods(true));
             } else if (TermId.LOCATION_ID.getId() == id) {
                 possibleValues = convertLocationsToValueReferences(fieldbookMiddlewareService.getAllLocations());
             } else if (TermId.PI_ID.getId() == id || Integer.parseInt(AppConstants.COOPERATOR_ID.getString()) == id) {
@@ -310,7 +310,7 @@ public class FieldbookServiceImpl implements FieldbookService{
         if (possibleValuesFavorite == null) {
             if (TermId.BREEDING_METHOD_ID.getId() == id) {
                 List<Integer> methodIds = workbenchService.getFavoriteProjectMethods(projectId);
-                possibleValuesFavorite = getFavoriteBreedingMethods(methodIds);
+                possibleValuesFavorite = getFavoriteBreedingMethods(methodIds, true);
             } else if (TermId.LOCATION_ID.getId() == id) {
                 List<Long> locationIds = workbenchService.getFavoriteProjectLocationIds(projectId);
                 possibleValuesFavorite = convertLocationsToValueReferences(fieldbookMiddlewareService
@@ -320,10 +320,10 @@ public class FieldbookServiceImpl implements FieldbookService{
         return possibleValuesFavorite;
     }
 	
-    private List<ValueReference> getFavoriteBreedingMethods(List<Integer> projectIdList)
+    private List<ValueReference> getFavoriteBreedingMethods(List<Integer> projectIdList, boolean isFilterOutGenerative)
             throws MiddlewareQueryException {
         List<ValueReference> list = new ArrayList<ValueReference>();
-        List<Method> methods = fieldbookMiddlewareService.getFavoriteBreedingMethods(projectIdList);
+        List<Method> methods = fieldbookMiddlewareService.getFavoriteBreedingMethods(projectIdList, isFilterOutGenerative);
         if (methods != null && !methods.isEmpty()) {
             for (Method method : methods) {
                 if (method != null) {
@@ -335,9 +335,9 @@ public class FieldbookServiceImpl implements FieldbookService{
     }
 	
     @Override
-    public List<ValueReference> getAllBreedingMethods() throws MiddlewareQueryException {
+    public List<ValueReference> getAllBreedingMethods(boolean isFilterOutGenerative) throws MiddlewareQueryException {
         List<ValueReference> list = new ArrayList<ValueReference>();
-        List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods();
+        List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods(isFilterOutGenerative);
         if (methods != null && !methods.isEmpty()) {
             for (Method method : methods) {
                 if (method != null) {
@@ -454,7 +454,7 @@ public class FieldbookServiceImpl implements FieldbookService{
 					Property property = ontologyService.getProperty(variable.getProperty());
 					if (property != null && property.getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId()) {
 						List<ValueReference> list = new ArrayList<ValueReference>();
-						List<Method> methodList = fieldbookMiddlewareService.getAllBreedingMethods();
+						List<Method> methodList = fieldbookMiddlewareService.getAllBreedingMethods(true);
 						//since we only need the name for the display
 						//special handling for breeding methods
 						if (methodList != null && !methodList.isEmpty()) {

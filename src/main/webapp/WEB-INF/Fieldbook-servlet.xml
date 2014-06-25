@@ -293,7 +293,7 @@
    	
    	<bean id="springAppContextProvider" class="org.generationcp.commons.util.SpringAppContextProvider"></bean>
 
-    <bean id="processCodeFactory" class="com.efficio.fieldbook.web.naming.impl.ProcessCodeFactory">
+    <bean id="processCodeFactory" class="com.efficio.fieldbook.web.naming.impl.ProcessCodeFactory" init-method="init">
         <!--TODO : possibly find a way to make list based on component scan of a certain package-->
         <property name="registeredExpressions">
             <list>

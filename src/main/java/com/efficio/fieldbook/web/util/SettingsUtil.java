@@ -175,6 +175,10 @@ public class SettingsUtil {
         				factor.setOperation(userSelection.getPlotsLevelList().get(index++).getVariable().getOperation());
         				factor.setStoredIn(standardVariable.getStoredIn().getId());
         				factor.setId(standardVariable.getId());
+        				factor.setDataTypeId(variable.getDataTypeId());
+        				factor.setPossibleValues(settingDetail.getPossibleValues());
+        				factor.setMinRange(variable.getMinRange());
+        				factor.setMaxRange(variable.getMaxRange());
         				factors.add(factor);
 				}
 			}
@@ -1139,6 +1143,10 @@ public class SettingsUtil {
 		mvar.setStoredIn(factor.getStoredIn());
 		mvar.setTermId(factor.getId());
 		mvar.setTreatmentLabel(factor.getTreatmentLabel());
+        mvar.setDataTypeId(factor.getDataTypeId());
+        mvar.setPossibleValues(factor.getPossibleValues());
+        mvar.setMinRange(factor.getMinRange());
+        mvar.setMaxRange(factor.getMaxRange());
 		return mvar;
 	}
 

@@ -101,8 +101,7 @@
 				<strong class="sub-content-heading" th:text="#{nursery.managesettings.plot.level.details}">PLOT-LEVEL DETAILS</strong>
 				<span class="bms-fa-question-circle help-tooltip-nursery" data-placement="right" data-toggle="tooltip" data-container="body" th:title="#{nursery.managesettings.plot.level.notes}"></span>
 			</label>
-
-			<a href="#" th:if="${createNurseryForm.measurementRowList.size() == 0}" class="btn btn-info pull-right nrm-fct-variable-select" th:text="#{nursery.create.nursery.add.settings}">Add</a>
+			<a href="#" th:if="${createNurseryForm.measurementDataExisting == false}" class="btn btn-info pull-right nrm-fct-variable-select" th:text="#{nursery.create.nursery.add.settings}">Add</a>
 		</div>
 		<div class="form-group collapse in plotLevelDetails">
 			<table style="table-layout: fixed;" class="my-class table table-curved table-condensed" id="plotLevelSettings">
@@ -116,8 +115,8 @@
 				<tbody>
 				<tr th:each="plotLevelVariable, rowStat : *{plotLevelVariables}">
 					<td style="text-align: center" th:class="${rowStat.even}? 'even fbk-delete-link' : 'odd fbk-delete-link'">
-									<span style="font-size: 16px;" th:if="${plotLevelVariable.deletable}" class="delete-icon"
-										  th:onclick="'javascript: deleteVariable(2,\'' + ${plotLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
+						<span style="font-size: 16px;" th:if="${plotLevelVariable.deletable}" class="delete-icon"
+							  th:onclick="'javascript: deleteVariable(2,\'' + ${plotLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
 
 						<input class="cvTermIds" type="hidden" th:field="*{plotLevelVariables[__${rowStat.index}__].variable.cvTermId}" />
 					</td>

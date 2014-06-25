@@ -171,7 +171,7 @@ public class EditNurseryController extends SettingsController {
             }
             
             //make factors uneditable if experiments exist already
-            if (userSelection.getMeasurementRowList() != null && userSelection.getMeasurementRowList().size() > 0) {
+            if (form.isMeasurementDataExisting()) {
                 for (SettingDetail setting : userSelection.getPlotsLevelList()) {
                     setting.setDeletable(false);
                 }
@@ -429,8 +429,8 @@ public class EditNurseryController extends SettingsController {
     	//saving of measurement rows
     	if (userSelection.getMeasurementRowList() != null && userSelection.getMeasurementRowList().size() > 0) {
             try {
-                //int previewPageNum = userSelection.getCurrentPage();
-                addMeasurementDataToRows(workbook);
+                addMeasurementDataToRows(workbook.getFactors(), false);
+                addMeasurementDataToRows(workbook.getVariates(), true);
                 
                 workbook.setMeasurementDatasetVariables(null);
                 form.setMeasurementRowList(userSelection.getMeasurementRowList());
@@ -445,6 +445,7 @@ public class EditNurseryController extends SettingsController {
                 workbook.setOriginalObservations(workbook.getObservations());
                 
                 resultMap.put("status", "1");
+                resultMap.put("hasMeasurementData", String.valueOf(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), buildVariates(workbook.getVariates()))));
             } catch (MiddlewareQueryException e) {
                 LOG.error(e.getMessage());
                 resultMap.put("status", "-1");
@@ -654,10 +655,10 @@ public class EditNurseryController extends SettingsController {
         }
     }
     
-    private void addMeasurementDataToRows(Workbook workbook) throws MiddlewareQueryException{
-      //add new variables in measurement rows
-        for (MeasurementVariable variable : workbook.getVariates()) {
-            if (variable.getOperation().equals(Operation.ADD)) {                
+    private void addMeasurementDataToRows(List<MeasurementVariable> variableList, boolean isVariate) throws MiddlewareQueryException{
+        //add new variables in measurement rows
+        for (MeasurementVariable variable : variableList) {
+            if (variable.getOperation().equals(Operation.ADD)) {
                 StandardVariable stdVariable = ontologyService.getStandardVariable(variable.getTermId());
                 for (MeasurementRow row : userSelection.getMeasurementRowList()) {
                     MeasurementData measurementData = new MeasurementData(variable.getName(), 
@@ -666,13 +667,58 @@ public class EditNurseryController extends SettingsController {
                             variable);
                     
                     measurementData.setPhenotypeId(null);
-                    row.getDataList().add(measurementData);
+                    int insertIndex = getInsertIndex(row.getDataList(), isVariate);
+                    row.getDataList().add(insertIndex, measurementData);
                 }
                 
-                if (ontologyService.getProperty(variable.getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId()) {
+                if (ontologyService.getProperty(variable.getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId() && isVariate) {
                     variable.setPossibleValues(fieldbookService.getAllBreedingMethods(true));
                 } else {
                     variable.setPossibleValues(transformPossibleValues(stdVariable.getEnumerations()));
+                }
+            }
+        }
+    }
+    
+    private int getInsertIndex(List<MeasurementData> dataList, boolean isVariate) {
+        int index = -1;
+        if (dataList != null) {
+            for (MeasurementData data : dataList) {
+                if ((!data.getMeasurementVariable().isFactor() && !isVariate)) {
+                    return index;
+                }
+                index++;
+            }
+        }
+        return index;
+    }
+    
+    private void removeDeletedVariablesInMeasurements(List<SettingDetail> deletedList, Workbook workbook) {
+        if (deletedList != null) {
+            for (SettingDetail setting : deletedList) {
+                //remove from measurement rows
+                int index = 0;
+                int varIndex = 0;
+                for (MeasurementRow row : userSelection.getMeasurementRowList()) {
+                    if (index == 0) {
+                        for (MeasurementData var : row.getDataList()) {
+                            if (var.getMeasurementVariable().getTermId() == setting.getVariable().getCvTermId()) {
+                                break;
+                            }
+                            varIndex++;
+                        }
+                    }
+                    row.getDataList().remove(varIndex);
+                    index++;
+                }
+                //remove from header
+                if (workbook.getMeasurementDatasetVariables() != null) {
+                    Iterator<MeasurementVariable> iter = workbook.getMeasurementDatasetVariables().iterator();
+                    while(iter.hasNext()) {
+                        if (iter.next().getTermId() == setting.getVariable().getCvTermId()) {
+                            iter.remove();
+                        }
+                    }
                 }
             }
         }
@@ -713,39 +759,14 @@ public class EditNurseryController extends SettingsController {
     		}
     	}
     	
-    	//remove deleted variables in measurement rows & header
-    	if (userSelection.getDeletedBaselineTraitsList() != null) {
-	    	for (SettingDetail setting : userSelection.getDeletedBaselineTraitsList()) {
-	    		//remove from measurement rows
-	    		int index = 0;
-	    		int varIndex = 0;
-	    		for (MeasurementRow row : userSelection.getMeasurementRowList()) {
-	    			if (index == 0) {
-	    				for (MeasurementData var : row.getDataList()) {
-	    					if (var.getMeasurementVariable().getTermId() == setting.getVariable().getCvTermId()) {
-	    						break;
-	    					}
-	    					varIndex++;
-	    				}
-	    			}
-	    			row.getDataList().remove(varIndex);
-	    			index++;
-	        	}
-	    		//remove from header
-	    		if (workbook.getMeasurementDatasetVariables() != null) {
-	    			Iterator<MeasurementVariable> iter = workbook.getMeasurementDatasetVariables().iterator();
-	    			while(iter.hasNext()) {
-	    				if (iter.next().getTermId() == setting.getVariable().getCvTermId()) {
-	    					iter.remove();
-	    				}
-	    			}
-	        	}
-	    	}
-    	}
+    	//remove deleted variables in measurement rows & header for variates
+    	removeDeletedVariablesInMeasurements(userSelection.getDeletedPlotLevelList(), workbook);
+    	removeDeletedVariablesInMeasurements(userSelection.getDeletedBaselineTraitsList(), workbook);
     	
     	//remove deleted variables in the original lists
     	//and change add operation to update
     	removeDeletedSetUpdate(userSelection.getStudyLevelConditions(), workbook.getConditions());
+    	removeDeletedSetUpdate(userSelection.getPlotsLevelList(), workbook.getFactors());
     	removeDeletedSetUpdate(userSelection.getBaselineTraitsList(), workbook.getVariates());
     	removeDeletedSetUpdate(userSelection.getNurseryConditions(), workbook.getConstants());
     	removeDeletedSetUpdate(userSelection.getSelectionVariates(), null);
@@ -763,7 +784,6 @@ public class EditNurseryController extends SettingsController {
     							newVariatesList.add(varToArrange);
     						}
     			    	}
-    					
     				}
     			}
     			index++;

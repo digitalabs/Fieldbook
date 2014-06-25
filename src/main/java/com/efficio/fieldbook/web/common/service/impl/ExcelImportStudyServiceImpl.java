@@ -125,8 +125,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			throw e;
 
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new WorkbookParserException(e.getMessage());
+			throw new WorkbookParserException(e.getMessage(), e);
 		}
 	}
 	
@@ -154,7 +153,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	
 	private void importDataToWorkbook(Set<ChangeType> modes, org.apache.poi.ss.usermodel.Workbook xlsBook, Map<String, MeasurementRow> rowsMap, 
 			List<MeasurementVariable> variables, String trialInstanceNumber, List<MeasurementRow> observations, List<GermplasmChangeDetail> changeDetailsList)
-	throws MiddlewareQueryException {
+	throws MiddlewareQueryException, WorkbookParserException {
 		
 		if (rowsMap != null && !rowsMap.isEmpty()) {
 			Sheet observationSheet = xlsBook.getSheetAt(1);
@@ -338,14 +337,16 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
         return result;
     }
 
-    private int findColumn(Sheet sheet, String cellValue) {
+    private int findColumn(Sheet sheet, String cellValue) throws WorkbookParserException{
         int result = -1;
         if (cellValue != null) {
 	        Row row = sheet.getRow(0); //Encabezados
 	        int cells = row.getLastCellNum();
 	        for (int i = 0; i < cells; i++) {
 	            Cell cell = row.getCell(i);
-	            if (cell.getStringCellValue().equals(cellValue)) {
+	            if (cell == null){
+                   throw new WorkbookParserException("error.workbook.import.missing.columns.import.file");
+	            } else if (cell.getStringCellValue().equals(cellValue)) {
 	                return i;
 	            }
 	        }

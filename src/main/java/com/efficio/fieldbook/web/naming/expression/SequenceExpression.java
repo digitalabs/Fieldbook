@@ -14,13 +14,13 @@ public class SequenceExpression implements Expression {
 
 	@Override
 	public void apply(List<StringBuilder> values, AdvancingSource source) {
-		if (source.getPlantsSelected() != null &&
-                source.getPlantsSelected() > 0) {
+		List<StringBuilder> newNames = new ArrayList<StringBuilder>();
+		for (StringBuilder value : values) {
+			int startIndex = value.indexOf(KEY);
+			int endIndex = startIndex + KEY.length();
 			
-			List<StringBuilder> newNames = new ArrayList<StringBuilder>();
-			for (StringBuilder value : values) {
-				int startIndex = value.indexOf(KEY);
-				int endIndex = startIndex + KEY.length();
+			if (source.getPlantsSelected() != null &&
+	                source.getPlantsSelected() > 0) {
 				
 				for (int i = 1; i <= source.getPlantsSelected(); i++) {
 					StringBuilder newName = new StringBuilder(value);
@@ -28,10 +28,13 @@ public class SequenceExpression implements Expression {
 					newNames.add(newName);
 				}
 			}
-
-			values.clear();
-			values.addAll(newNames);
+			else {
+				newNames.add(value.replace(startIndex, endIndex, ""));
+			}
 		}
+
+		values.clear();
+		values.addAll(newNames);
 	}
 
     @Override

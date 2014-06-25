@@ -2,6 +2,8 @@ package com.efficio.fieldbook.web.naming.expression;
 
 import java.util.List;
 
+import org.generationcp.middleware.pojos.Method;
+
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 public class BracketsExpression implements Expression {
@@ -16,7 +18,11 @@ public class BracketsExpression implements Expression {
 		for (StringBuilder value : values) {
 			int startIndex = value.indexOf(KEY);
 			int endIndex = startIndex + KEY.length();
-			int rootNameEndIndex = value.indexOf(source.getBreedingMethod().getSeparator());
+			String nextExpression = getExpressionAfterRootName(source.getBreedingMethod());
+			int rootNameEndIndex = value.length();
+			if (nextExpression != null) {
+				rootNameEndIndex = value.indexOf(nextExpression);
+			}
 			if (rootNameEndIndex > -1) {
 				String newRootName = value.substring(0, rootNameEndIndex);
 				
@@ -40,5 +46,21 @@ public class BracketsExpression implements Expression {
     @Override
     public String getExpressionKey() {
         return KEY;
+    }
+    
+    private String getExpressionAfterRootName(Method method) {
+    	if (method.getSeparator() != null) {
+    		return method.getSeparator();
+    	}
+    	else if (method.getPrefix() != null) {
+    		return method.getPrefix();
+    	}
+    	else if (method.getCount() != null) {
+    		return method.getCount();
+    	}
+    	else if (method.getSuffix() != null) {
+    		return method.getSuffix();
+    	}
+    	return null;
     }
 }

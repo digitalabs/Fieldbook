@@ -1,13 +1,20 @@
 package com.efficio.fieldbook.web.util;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.TermId;
+
+import com.csvreader.CsvWriter;
 
 public class KsuFieldbookUtil {
 
@@ -33,6 +40,13 @@ public class KsuFieldbookUtil {
 //	private static final List<Integer> RECOGNIZED_FACTOR_IDS = Arrays.asList(TERM_PLOT_ID, TERM_RANGE, TERM_PLOT1, TERM_PLOT2/*, TERM_TRAY_ROW, 
 //			TERM_TRAY_ID, TERM_SEED_ID, TERM_SEED_NAME, TERM_PEDIGREE*/);
 	
+	private static final List<String> TRAIT_FILE_HEADERS = Arrays.asList("trait", "format", "defaultValue", 
+			"minimum", "maximum", "details", "categories", "isVisible", "realPosition");
+	
+	private static final String NUMERIC_FORMAT = "numeric";
+	private static final String TEXT_FORMAT = "text";
+	
+	
 	private static final Map<Integer, String> idNameMap;
 	
 	static {
@@ -55,7 +69,7 @@ public class KsuFieldbookUtil {
 			List<Integer> factorHeaders = getFactorHeaders(variables);
 			
 			//write header row
-			table.add(getHeaderNames(factorHeaders, variables));
+			table.add(getHeaderNames(variables));
 			
 			List<MeasurementVariable> labels = getMeasurementLabels(factorHeaders, variables);
 			
@@ -94,12 +108,18 @@ public class KsuFieldbookUtil {
 		return factorHeaders;
 	}
 	
-	private static List<String> getHeaderNames(List<Integer> factorIds, List<MeasurementVariable> headers) {
+	private static List<String> getHeaderNames(List<MeasurementVariable> headers) {
+		return getHeaderNames(headers, null);
+	}
+	
+	private static List<String> getHeaderNames(List<MeasurementVariable> headers, Boolean isFactor) {
 		List<String> names = new ArrayList<String>();
 		
 		if (headers != null && !headers.isEmpty()) {
 			for (MeasurementVariable header : headers) {
-				if (header.isFactor()) {
+				if (isFactor == null 
+						|| (isFactor != null && (isFactor && header.isFactor() || !isFactor && !header.isFactor()))) {
+					
 					if (idNameMap.get(header.getTermId()) != null) {
 						names.add(idNameMap.get(header.getTermId()));
 					}
@@ -109,24 +129,10 @@ public class KsuFieldbookUtil {
 				}
 			}
 		}
-		
-//		List<String> names = new ArrayList<String>();
-//		
-//		for (Integer factorId : factorIds) {
-//			if (idNameMap.get(factorId) != null) {
-//				names.add(idNameMap.get(factorId));
-//			}
-//		}
-		
-//		for (MeasurementVariable variate : variates) {
-//			if (!variate.isFactor()) {
-//				names.add(variate.getName());
-//			}
-//		}
-		
+
 		return names;
 	}
-	
+
 	private static List<MeasurementVariable> getMeasurementLabels(List<Integer> factorIds, List<MeasurementVariable> variables) {
 		List<MeasurementVariable> labels = new ArrayList<MeasurementVariable>();
 		
@@ -139,12 +145,74 @@ public class KsuFieldbookUtil {
 			}
 		}
 		
-//		for (MeasurementVariable variate : variables) {
-//			if (!variate.isFactor()) {
-//				labels.add(variate);
-//			}
-//		}
+		for (MeasurementVariable variate : variables) {
+			if (!variate.isFactor()) {
+				labels.add(variate);
+			}
+		}
 		
 		return labels;
+	}
+	
+	public static void writeTraits(List<MeasurementVariable> traits, String filenamePath)
+	throws IOException {
+		
+        new File(filenamePath).exists();
+        CsvWriter csvWriter = null;
+        try {
+        	List<List<String>> dataTable = convertTraitsData(traits);
+        	
+            csvWriter = new CsvWriter(new FileWriter(filenamePath, false), ',');
+            for (List<String> row : dataTable) {
+            	for (String cell : row) {
+            		csvWriter.write(cell);
+            	}
+            	csvWriter.endRecord();
+            }
+
+        } finally {
+        	if (csvWriter != null) {
+        		csvWriter.close();
+        	}
+        }		
+	}
+	
+	private static List<List<String>> convertTraitsData(List<MeasurementVariable> traits) {
+		List<List<String>> data = new ArrayList<List<String>>();
+		
+		data.add(TRAIT_FILE_HEADERS);
+		
+		int index = 1;
+		for (MeasurementVariable trait : traits) {
+			List<String> traitData = new ArrayList<String>();
+			traitData.add(trait.getName());
+			if (trait.getDataTypeDisplay().equals("C")) {
+				traitData.add(TEXT_FORMAT);
+			}
+			else {
+				traitData.add(NUMERIC_FORMAT);
+			}
+			traitData.add(""); //default value
+			if (trait.getMinRange() != null) {
+				traitData.add(trait.getMinRange().toString());
+			}
+			if (trait.getMaxRange() != null) {
+				traitData.add(trait.getMaxRange().toString());
+			}
+			traitData.add(""); //details
+			if (trait.getPossibleValues() != null && !trait.getPossibleValues().isEmpty()) {
+				traitData.add(StringUtils.join(trait.getPossibleValues(), "/"));
+			}
+			else {
+				traitData.add(""); //categories
+			}
+			traitData.add("true");
+			traitData.add(String.valueOf(index));
+			index++;
+			data.add(traitData);
+		}
+		
+		
+		return data;
 	}
 }

@@ -34,14 +34,17 @@ public class KsuCsvExportStudyServiceImpl implements KsuCsvExportStudyService {
 	public String export(Workbook workbook, String filename, int start, int end) {
 		
 		List<String> filenameList = new ArrayList<String>();
-		for (int i = start; i <= end; i++) {
-			int fileExtensionIndex = filename.lastIndexOf(".");
-			String filenamePath = fieldbookProperties.getUploadDirectory() + File.separator 
-					+ filename.substring(0, fileExtensionIndex)
-					+ "-" + String.valueOf(i) + filename.substring(fileExtensionIndex);
-	        boolean alreadyExists = new File(filenamePath).exists();
-	        CsvWriter csvWriter = null;
-	        try {
+
+		int fileExtensionIndex = filename.lastIndexOf(".");
+		String studyName = filename.substring(0, fileExtensionIndex);
+
+        CsvWriter csvWriter = null;
+        try {
+			for (int i = start; i <= end; i++) {
+				String filenamePath = fieldbookProperties.getUploadDirectory() + File.separator 
+						+ studyName 
+						+ "-" + String.valueOf(i) + filename.substring(fileExtensionIndex);
+		        boolean alreadyExists = new File(filenamePath).exists();
 	            List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), i, i);
 	            List<List<String>> dataTable = KsuFieldbookUtil.convertWorkbookData(observations, workbook.getMeasurementDatasetVariables());
 	
@@ -53,28 +56,28 @@ public class KsuCsvExportStudyServiceImpl implements KsuCsvExportStudyService {
 	            	csvWriter.endRecord();
 	            }
 	            filenameList.add(filenamePath);
-	            
-	        } catch (IOException e) {
-	            LOG.error("ERROR in KSU CSV Export Study", e);
-	            
-	        } finally {
-	        	if (csvWriter != null) {
-	        		csvWriter.close();
-	        	}
-	        }
-		}
+			}
+
+			String traitFilenamePath = fieldbookProperties.getUploadDirectory() + File.separator 
+					+ studyName + "-Traits"
+					+ AppConstants.EXPORT_KSU_TRAITS_SUFFIX.getString();
+			KsuFieldbookUtil.writeTraits(workbook.getVariates(), traitFilenamePath);
+			filenameList.add(traitFilenamePath);
+
+        } catch (IOException e) {
+            LOG.error("ERROR in KSU CSV Export Study", e);
+            
+        } finally {
+        	if (csvWriter != null) {
+        		csvWriter.close();
+        	}
+        }
 		
-		String outputFilename;
-    	if (filenameList.size() == 1) {
-    		outputFilename = filenameList.get(0);
-    	}
-    	else { //multi-trial instances
-			outputFilename = fieldbookProperties.getUploadDirectory() 
-					+ File.separator 
-					+ filename.replaceAll(AppConstants.EXPORT_CSV_SUFFIX.getString(), "") 
-					+ AppConstants.ZIP_FILE_SUFFIX.getString();
-			ZipUtil.zipIt(outputFilename, filenameList);
-    	}
+		String outputFilename = fieldbookProperties.getUploadDirectory() 
+				+ File.separator 
+				+ filename.replaceAll(AppConstants.EXPORT_CSV_SUFFIX.getString(), "") 
+				+ AppConstants.ZIP_FILE_SUFFIX.getString();
+		ZipUtil.zipIt(outputFilename, filenameList);
 
 		return outputFilename;
 	}

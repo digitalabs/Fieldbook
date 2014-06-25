@@ -322,25 +322,15 @@ HttpServletRequest req, HttpServletResponse response) {
     	}else if (AppConstants.EXPORT_KSU_EXCEL.getInt() == exportType) {
     		filename = filename + AppConstants.EXPORT_XLS_SUFFIX.getString();
     		outputFilename = ksuExcelExportStudyService.export(userSelection.getWorkbook(), filename, start, end);
-    		if (end - start > 0) {
-        		int extensionIndex = filename.lastIndexOf(".");
-        		filename = filename.substring(0, extensionIndex) + AppConstants.ZIP_FILE_SUFFIX.getString();
-        		response.setContentType("application/zip");
-    		}
-    		else {
-        		response.setContentType("application/vnd.ms-excel");
-    		}
+    		int extensionIndex = filename.lastIndexOf(".");
+    		filename = filename.substring(0, extensionIndex) + AppConstants.ZIP_FILE_SUFFIX.getString();
+    		response.setContentType("application/zip");
     	}else if (AppConstants.EXPORT_KSU_CSV.getInt() == exportType) {
     		filename = filename + AppConstants.EXPORT_CSV_SUFFIX.getString();
     		outputFilename = ksuCsvExportStudyService.export(userSelection.getWorkbook(), filename, start, end);
-    		if (end - start > 0) {
-        		int extensionIndex = filename.lastIndexOf(".");
-        		filename = filename.substring(0, extensionIndex) + AppConstants.ZIP_FILE_SUFFIX.getString();
-        		response.setContentType("application/zip");
-    		}
-    		else {
-    			response.setContentType("text/csv");
-    		}
+    		int extensionIndex = filename.lastIndexOf(".");
+    		filename = filename.substring(0, extensionIndex) + AppConstants.ZIP_FILE_SUFFIX.getString();
+    		response.setContentType("application/zip");
     	}
     	Map<String, Object> results = new HashMap<String, Object>();
     	results.put("outputFilename", outputFilename);

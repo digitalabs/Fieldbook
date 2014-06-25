@@ -35,6 +35,9 @@ public class KsuExcelExportStudyServiceImpl implements
 		String outputFilename = null;
 		FileOutputStream fos = null;
 
+		int fileExtensionIndex = filename.lastIndexOf(".");
+		String studyName = filename.substring(0, fileExtensionIndex);
+		
         try {
         	List<String> filenameList = new ArrayList<String>();
         	for (int i = start; i <= end; i++) {
@@ -56,25 +59,26 @@ public class KsuExcelExportStudyServiceImpl implements
 					}
 				}
 				
-				int fileExtensionIndex = filename.lastIndexOf(".");
 				String filenamePath = fieldbookProperties.getUploadDirectory() + File.separator 
-						+ filename.substring(0, fileExtensionIndex)
+						+ studyName 
 						+ "-" + String.valueOf(i) + filename.substring(fileExtensionIndex);
 				fos = new FileOutputStream(new File(filenamePath));
 				xlsBook.write(fos);
 				filenameList.add(filenamePath);
+				
         	}
         	
-        	if (filenameList.size() == 1) {
-        		outputFilename = filenameList.get(0);
-        	}
-        	else { //multi-trial instances
-				outputFilename = fieldbookProperties.getUploadDirectory() 
-						+ File.separator 
-						+ filename.replaceAll(AppConstants.EXPORT_XLS_SUFFIX.getString(), "") 
-						+ AppConstants.ZIP_FILE_SUFFIX.getString();
-				ZipUtil.zipIt(outputFilename, filenameList);
-        	}
+			String traitFilenamePath = fieldbookProperties.getUploadDirectory() + File.separator 
+					+ studyName + "-Traits"
+					+ AppConstants.EXPORT_KSU_TRAITS_SUFFIX.getString();
+			KsuFieldbookUtil.writeTraits(workbook.getVariates(), traitFilenamePath);
+			filenameList.add(traitFilenamePath);
+
+			outputFilename = fieldbookProperties.getUploadDirectory() 
+					+ File.separator 
+					+ filename.replaceAll(AppConstants.EXPORT_XLS_SUFFIX.getString(), "") 
+					+ AppConstants.ZIP_FILE_SUFFIX.getString();
+			ZipUtil.zipIt(outputFilename, filenameList);
         	
 		} catch (Exception e) {
 			e.printStackTrace();

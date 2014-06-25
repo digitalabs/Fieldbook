@@ -5,31 +5,37 @@ import java.util.List;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
-public class SequenceExpression extends Expression {
+public class SequenceExpression implements Expression {
 
-	public SequenceExpression(AdvancingSource source) {
-		super(source);
+    public static final String KEY = "[SEQUENCE]";
+
+	public SequenceExpression() {
 	}
 
 	@Override
-	public void apply(List<StringBuilder> values) {
-		if (getSource().getPlantsSelected() != null && 
-				getSource().getPlantsSelected() > 0) {
+	public void apply(List<StringBuilder> values, AdvancingSource source) {
+		if (source.getPlantsSelected() != null &&
+                source.getPlantsSelected() > 0) {
 			
 			List<StringBuilder> newNames = new ArrayList<StringBuilder>();
 			for (StringBuilder value : values) {
-				int startIndex = value.indexOf(Expression.SEQUENCE);
-				int endIndex = startIndex + Expression.SEQUENCE.length();
+				int startIndex = value.indexOf(KEY);
+				int endIndex = startIndex + KEY.length();
 				
-				for (int i = 1; i <= getSource().getPlantsSelected(); i++) {
+				for (int i = 1; i <= source.getPlantsSelected(); i++) {
 					StringBuilder newName = new StringBuilder(value);
 					newName.replace(startIndex, endIndex, String.valueOf(i));
 					newNames.add(newName);
 				}
 			}
+
 			values.clear();
 			values.addAll(newNames);
 		}
 	}
 
+    @Override
+    public String getExpressionKey() {
+        return KEY;
+    }
 }

@@ -4,18 +4,19 @@ import java.util.List;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
-public class BracketsExpression extends Expression {
+public class BracketsExpression implements Expression {
 
-	public BracketsExpression(AdvancingSource source) {
-		super(source);
+    public static final String KEY = "[BRACKETS]";
+
+	public BracketsExpression() {
 	}
 
 	@Override
-	public void apply(List<StringBuilder> values) {
+	public void apply(List<StringBuilder> values, AdvancingSource source) {
 		for (StringBuilder value : values) {
-			int startIndex = value.indexOf(Expression.BRACKETS);
-			int endIndex = startIndex + Expression.BRACKETS.length();
-			int rootNameEndIndex = value.indexOf(getSource().getBreedingMethod().getSeparator());
+			int startIndex = value.indexOf(KEY);
+			int endIndex = startIndex + KEY.length();
+			int rootNameEndIndex = value.indexOf(source.getBreedingMethod().getSeparator());
 			if (rootNameEndIndex > -1) {
 				String newRootName = value.substring(0, rootNameEndIndex);
 				
@@ -36,4 +37,8 @@ public class BracketsExpression extends Expression {
 		}
 	}
 
+    @Override
+    public String getExpressionKey() {
+        return KEY;
+    }
 }

@@ -6,31 +6,32 @@ import java.util.regex.Pattern;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
-public class BulkCountExpression extends Expression {
+public class BulkCountExpression implements Expression {
 
-	public BulkCountExpression(AdvancingSource source) {
-		super(source);
+    public static final String KEY = "[BCOUNT]";
+
+	public BulkCountExpression() {
 	}
 
 	@Override
-	public void apply(List<StringBuilder> values) {
+	public void apply(List<StringBuilder> values, AdvancingSource source) {
 		for (StringBuilder value : values) {
-			int startIndex = value.indexOf(Expression.BULK_COUNT);
-			int endIndex = startIndex + Expression.BULK_COUNT.length();
+			int startIndex = value.indexOf(KEY);
+			int endIndex = startIndex + KEY.length();
 			String count = "";
 		
-			if (getSource().getRootName() != null) {
+			if (source.getRootName() != null) {
 				String countStr = null;
-				if (getSource().getRootName().contains("-B")) { //original is a bulk
+				if (source.getRootName().contains("-B")) { //original is a bulk
 					countStr = "1";
 				}
 				else {
 					Pattern pattern = Pattern.compile("(.*)-([0-9]*)B(.*)");
-					Matcher matcher = pattern.matcher(getSource().getRootName());
+					Matcher matcher = pattern.matcher(source.getRootName());
 					if (matcher.find()) { //original is a bulk with number
 						for (int i = matcher.groupCount(); i >= 1; i--) {
 							String temp = matcher.group(i);
-							if (getSource().getRootName().contains("-" + temp + "B") && temp.matches("[0-9]*")) {
+							if (source.getRootName().contains("-" + temp + "B") && temp.matches("[0-9]*")) {
 								countStr = temp;
 								break;
 							}
@@ -47,4 +48,9 @@ public class BulkCountExpression extends Expression {
 			value.replace(startIndex, endIndex, "-" + count + "B");
 		}
 	}
+
+    @Override
+    public String getExpressionKey() {
+        return KEY;
+    }
 }

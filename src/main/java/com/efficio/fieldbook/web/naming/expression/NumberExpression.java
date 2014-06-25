@@ -4,25 +4,31 @@ import java.util.List;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
-public class NumberExpression extends Expression {
+public class NumberExpression implements Expression {
 
-	public NumberExpression(AdvancingSource source) {
-		super(source);
-	}
+    public static final String KEY = "[NUMBER]";
 
-	@Override
-	public void apply(List<StringBuilder> values) {
-		if (getSource().getPlantsSelected() != null && 
-				getSource().getPlantsSelected() > 0) {
-			
-			for (StringBuilder value : values) {
-				int startIndex = value.indexOf(Expression.NUMBER);
-				int endIndex = startIndex + Expression.NUMBER.length();
-				
-				Integer newValue = getSource().getPlantsSelected();
-				value.replace(startIndex, endIndex, newValue != null ? newValue.toString() : "");
-			}
-		}
-	}
+    public NumberExpression() {
 
+    }
+
+    @Override
+    public void apply(List<StringBuilder> values, AdvancingSource source) {
+        if (source.getPlantsSelected() != null &&
+                source.getPlantsSelected() > 0) {
+
+            for (StringBuilder value : values) {
+                int startIndex = value.indexOf(KEY);
+                int endIndex = startIndex + KEY.length();
+
+                Integer newValue = source.getPlantsSelected();
+                value.replace(startIndex, endIndex, newValue != null ? newValue.toString() : "");
+            }
+        }
+    }
+
+    @Override
+    public String getExpressionKey() {
+        return KEY;
+    }
 }

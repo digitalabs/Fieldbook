@@ -13,35 +13,33 @@ import com.efficio.fieldbook.web.naming.expression.SequenceExpression;
 import com.efficio.fieldbook.web.naming.expression.TopLocationAbbreviation;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
-@Service
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class ProcessCodeFactory {
 
-	public Expression create(String key, AdvancingSource source) {
-		Expression expression = null;
-		if (Expression.BRACKETS.equalsIgnoreCase(key)) {
-			expression = new BracketsExpression(source);
-		}
-		else if (Expression.BULK_COUNT.equalsIgnoreCase(key)) {
-			expression = new BulkCountExpression(source);
-		}
-		else if (Expression.FIRST.equalsIgnoreCase(key)) {
-			expression = new FirstExpression(source);
-		}
-		else if (Expression.LOCATION_ABBREVIATION.equalsIgnoreCase(key)) {
-			expression = new LocationAbbreviationExpression(source);
-		}
-		else if (Expression.NUMBER.equalsIgnoreCase(key)) {
-			expression = new NumberExpression(source);
-		}
-		else if (Expression.SEASON.equalsIgnoreCase(key)) {
-			expression = new SeasonExpression(source);
-		}
-		else if (Expression.SEQUENCE.equalsIgnoreCase(key)) {
-			expression = new SequenceExpression(source);
-		}
-		else if (Expression.TOP_LOCATION_ABBREVIATION.equalsIgnoreCase(key)) {
-			expression = new TopLocationAbbreviation(source);
-		}
+    public List<Expression> registeredExpressions;
+
+    public Map<String, Expression> expressionMap;
+
+    public void init() {
+        assert(registeredExpressions != null);
+
+        expressionMap = new HashMap<String, Expression>();
+        for (Expression registeredExpression : registeredExpressions) {
+            expressionMap.put(registeredExpression.getExpressionKey(), registeredExpression);
+        }
+    }
+
+
+	public Expression create(String key) {
+		Expression expression = expressionMap.get(key);
 		return expression;
 	}
+
+    public void setRegisteredExpressions(List<Expression> registeredExpressions) {
+        this.registeredExpressions = registeredExpressions;
+    }
 }

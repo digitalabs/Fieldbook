@@ -28,10 +28,10 @@ public class ProcessCodeServiceImpl implements ProcessCodeService {
 		ExpressionHelper.evaluateExpression(expression, "\\[([^\\]]*)]", new ExpressionHelperCallback() {
             @Override
             public void evaluateCapturedExpression(String capturedText, String originalInput, int start, int end) {
-            	Expression expression = factory.create(capturedText, source);
+            	Expression expression = factory.create(capturedText);
             	
             	if (expression != null) {
-	            	expression.apply(builders);
+	            	expression.apply(builders, source);
             	}
             }
         });

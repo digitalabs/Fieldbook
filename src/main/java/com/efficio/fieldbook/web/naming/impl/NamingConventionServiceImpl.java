@@ -48,9 +48,11 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 		
         Map<Integer, Method> breedingMethodMap = new HashMap<Integer, Method>();
         List<Method> methodList = fieldbookMiddlewareService.getAllMethods();
+
         for(Method method: methodList){
         	breedingMethodMap.put(method.getMid(), method);
         }
+
         AdvancingSourceList list = createAdvancingSourceList(info, workbook, breedingMethodMap);
         updatePlantsSelectedIfNecessary(list, info);
         List<ImportedGermplasm> importedGermplasmList = generateGermplasmList(list);
@@ -230,7 +232,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
     	
     	//If the root name is a cross string (contains one or more /s not enclosed within the range 
     	//of a pair of parentheses) then enclose the root name in parentheses.
-    	if (nameString.contains("\\/") && !nameString.matches("[.*][\\(+][.*][\\/+][.*][\\)+][.*]")) {
+    	if (nameString.contains("\\/") && !nameString.matches("[.*][(+][.*][\\/+][.*][\\)+][.*]")) {
     		return "(" + nameString + ")";
     	}
     	else {

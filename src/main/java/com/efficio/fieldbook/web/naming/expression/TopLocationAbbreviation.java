@@ -4,20 +4,21 @@ import java.util.List;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
-public class TopLocationAbbreviation extends Expression {
+public class TopLocationAbbreviation implements Expression {
 
-	public TopLocationAbbreviation(AdvancingSource source) {
-		super(source);
+    public static final String KEY = "[TLABBR]";
+
+	public TopLocationAbbreviation() {
 	}
 
 	@Override
-	public void apply(List<StringBuilder> values) {
+	public void apply(List<StringBuilder> values, AdvancingSource source) {
 		for (StringBuilder value : values) {
-			int startIndex = value.indexOf(Expression.TOP_LOCATION_ABBREVIATION);
-			int endIndex = startIndex + Expression.TOP_LOCATION_ABBREVIATION.length();
+			int startIndex = value.indexOf(KEY);
+			int endIndex = startIndex + KEY.length();
 
-			String rootName = getSource().getRootName();
-			String labbr = getSource().getLocationAbbreviation() != null ? getSource().getLocationAbbreviation() : "";
+			String rootName = source.getRootName();
+			String labbr = source.getLocationAbbreviation() != null ? source.getLocationAbbreviation() : "";
 			if (rootName != null && rootName.toString().endsWith("T")) {
 				value.replace(startIndex, endIndex, "TOP" + labbr);
 			}
@@ -27,4 +28,8 @@ public class TopLocationAbbreviation extends Expression {
 		}
 	}
 
+    @Override
+    public String getExpressionKey() {
+        return KEY;
+    }
 }

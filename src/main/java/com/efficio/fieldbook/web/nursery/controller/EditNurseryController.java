@@ -240,7 +240,7 @@ public class EditNurseryController extends SettingsController {
                     basicDetails.add(createSettingDetail(termId, null));
                     if (termId.equals(Integer.valueOf(TermId.STUDY_UID.getId()))) {
                         try {
-                            form.setCreatedBy(fieldbookService.getPersonById(workbenchService.getCurrentIbdbUserId(this.getCurrentProjectId())));
+                            form.setCreatedBy(fieldbookService.getPersonById(this.getCurrentIbdbUserId()));
                         }
                         catch (MiddlewareQueryException e) {
                             LOG.error(e.getMessage(), e);

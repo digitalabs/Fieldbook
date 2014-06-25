@@ -86,23 +86,17 @@ public interface WorkbenchService {
      * @throws MiddlewareQueryException the middleware query exception
      */
     void deleteTemplateSetting(Integer templateSettingId) throws MiddlewareQueryException;
-    
-    /**
-     * Gets the current workbench user id.
-     *
-     * @return the current workbench user id
-     * @throws MiddlewareQueryException the middleware query exception
-     */
-    Integer getCurrentWorkbenchUserId() throws MiddlewareQueryException;
-    
+       
     /**
      * Gets the current ibdb user id.
      *
      * @param projectId the project id
+     * @param workbenchUserId the current workbench user id
+     * 
      * @return the current ibdb user id
      * @throws MiddlewareQueryException the middleware query exception
      */
-    Integer getCurrentIbdbUserId(String projectId) throws MiddlewareQueryException;
+    Integer getCurrentIbdbUserId(Long projectId, Integer workbenchUserId) throws MiddlewareQueryException;
     
     /**
      * Gets the project by id.

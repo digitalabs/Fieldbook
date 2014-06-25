@@ -289,7 +289,7 @@ public class CreateNurseryController extends SettingsController {
         form.setSelectionVariatesSegment(AppConstants.SEGMENT_SELECTION_VARIATES.getString());
         
         try {
-            form.setCreatedBy(fieldbookService.getPersonById(workbenchService.getCurrentIbdbUserId(this.getCurrentProjectId())));
+            form.setCreatedBy(fieldbookService.getPersonById(this.getCurrentIbdbUserId()));
         }
         catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);

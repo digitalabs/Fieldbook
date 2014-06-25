@@ -71,6 +71,7 @@ public abstract class AbstractBaseFieldbookController {
 		
 	}
 
+	//TODO change the return type to Long.
 	public String getCurrentProjectId() {
 		try {
 			Project projectInContext = ContextUtil.getProjectInContext(this.workbenchDataManager, this.httpRequest);
@@ -84,9 +85,9 @@ public abstract class AbstractBaseFieldbookController {
 		return "0";
 	}
 	
-	public Integer getCurrentIbdbUserId() throws MiddlewareQueryException {
-		Integer ibdbUserId = workbenchService.getCurrentIbdbUserId(this.getCurrentProjectId());
-		return ibdbUserId;
+	public Integer getCurrentIbdbUserId() throws MiddlewareQueryException {	
+		return workbenchService.getCurrentIbdbUserId(Long.valueOf(this.getCurrentProjectId()), 
+					ContextUtil.getCurrentWorkbenchUserId(this.workbenchDataManager, this.httpRequest));
 	}
 	
 	public String getOldFieldbookPath() {

@@ -391,9 +391,7 @@ td.validValueDesc {
 }
 
 .fieldmap-header{
-    padding-right: 15px;
-    margin-left:10px;
-    float: left;
+    height: auto;
 }
 #field-map {
     table-layout: fixed;

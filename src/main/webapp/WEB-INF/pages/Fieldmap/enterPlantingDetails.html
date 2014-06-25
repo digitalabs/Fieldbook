@@ -18,22 +18,20 @@
 	<div class="panel panel-default">
 		<div class="panel-body">
 
-			<div class="row">
-				<form class="form-inline" role="form">
-					<div  class="form-group fieldmap-header" style="padding-left: 15px">
-						<h2 th:text="#{fieldmap.header.make.a.field.plan}">Make a Field Plan</h2>
-					</div>
-					<div   class="form-group fieldmap-header">
-						<h2 class="light" th:text="#{fieldmap.header.enter.details}">1. ENTER FIELD DETAILS</h2>
-					</div>
-					<div   class="form-group fieldmap-header">
-						<h2 th:text="#{fieldmap.header.enter.planting.details}">2. ENTER PLANTING DETAILS</h2>
-					</div>
-					<div   class="form-group fieldmap-header">
-						<h2 class="light" th:text="#{fieldmap.header.generate.field.map}">3. GENERATE FIELD MAP</h2>
-					</div>
-				</form>
-			</div>
+            <div class="row col-xs-12" style="padding-bottom: 30px">
+                <div class="col-xs-3">
+                    <h2 class="fieldmap-header" th:text="#{fieldmap.header.make.a.field.plan}">Make a Field Plan</h2>
+                </div>
+                <div class="col-xs-3">
+                    <h2 class="fieldmap-header light" th:text="#{fieldmap.header.enter.details}">1. ENTER FIELD DETAILS</h2>
+                </div>
+                <div class="col-xs-3">
+                    <h2 class="fieldmap-header" th:text="#{fieldmap.header.enter.planting.details}">2. ENTER PLANTING DETAILS</h2>
+                </div>
+                <div class="col-xs-3">
+                    <h2 class="fieldmap-header light" th:text="#{fieldmap.header.generate.field.map}">3. GENERATE FIELD MAP</h2>
+                </div>
+            </div>
 
 			<form id="fieldmapForm" name="fieldmapForm" role="form-horizontal" action="#" onsubmit="return setAllDeletedBox();" th:action="@{/Fieldmap/generateFieldmapView}" method="post" th:object="${fieldmapForm}" enctype="multipart/form-data">
 
@@ -41,16 +39,11 @@
 			<input type="hidden" id="stepValue" name="stepValue" value="2" />
 
 			<div>
-				<div class="row">&nbsp;</div>
 
 				<div class="row">
 					<div class="col-xs-12 col-md-12" >
-						<div class="">
-							<div class="col-xs-12 col-md-12">
-								<label ><strong class="sub-content-heading" th:text="#{fieldmap.header.planting.details}">PLANTING DETAILS</strong></label>
-							</div>
-						</div>
-					</div>
+                            <label class="col-xs-12 col-md-12" ><strong class="sub-content-heading" th:text="#{fieldmap.header.planting.details}">PLANTING DETAILS</strong></label>
+                    </div>
 				</div>
 				<div class="row " >
 					<div class="col-xs-12 col-md-12">

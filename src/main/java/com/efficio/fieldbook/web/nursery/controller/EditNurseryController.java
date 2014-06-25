@@ -683,11 +683,15 @@ public class EditNurseryController extends SettingsController {
     private int getInsertIndex(List<MeasurementData> dataList, boolean isVariate) {
         int index = -1;
         if (dataList != null) {
-            for (MeasurementData data : dataList) {
-                if ((!data.getMeasurementVariable().isFactor() && !isVariate)) {
-                    return index;
+            if (!isVariate) {
+                for (MeasurementData data : dataList) {
+                    if ((!data.getMeasurementVariable().isFactor())) {
+                        return index;
+                    }
+                    index++;
                 }
-                index++;
+            } else {
+                return dataList.size();
             }
         }
         return index;

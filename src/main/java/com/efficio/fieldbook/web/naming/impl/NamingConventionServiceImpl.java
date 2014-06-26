@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
@@ -232,7 +234,9 @@ public class NamingConventionServiceImpl implements NamingConventionService {
     	
     	//If the root name is a cross string (contains one or more /s not enclosed within the range 
     	//of a pair of parentheses) then enclose the root name in parentheses.
-    	if (nameString.contains("\\/") && !nameString.matches("[.*][(+][.*][\\/+][.*][\\)+][.*]")) {
+    	Pattern pattern = Pattern.compile("[(]+[^)]*[/]+[^(]*[)]+");
+    	Matcher matcher = pattern.matcher(nameString);
+    	if (nameString.contains("/") && !matcher.find()) {
     		return "(" + nameString + ")";
     	}
     	else {

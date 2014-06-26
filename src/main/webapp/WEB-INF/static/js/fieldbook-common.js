@@ -1650,6 +1650,7 @@ function recreateMethodCombo() {
 					refreshImportMethodCombo(data);
 					refreshMethodComboInSettings(data);
 				} else if (selectedMethodAll != null) {
+					
 					//recreate the select2 combos to get updated list of methods
 					recreateMethodComboAfterClose('methodIdAll', $.parseJSON(data.allNonGenerativeMethods));
 					recreateMethodComboAfterClose('methodIdFavorite', $.parseJSON(data.favoriteNonGenerativeMethods));
@@ -1808,8 +1809,20 @@ function refreshMethodComboInSettings(data) {
 	//get index of breeding method row
 	var index = getBreedingMethodRowIndex(), selectedVal = null;
 	if (index > -1) {
-		data.favoriteNonGenerativeMethods = '[{"mid":0,"mname":"Please Choose","mdesc":"Please Choose"},' + data.favoriteNonGenerativeMethods.substring(1);
-		data.allNonGenerativeMethods = '[{"mid":0,"mname":"Please Choose","mdesc":"Please Choose"},' + data.allNonGenerativeMethods.substring(1);
+		var pleaseChoose = '{"mid":0,"mname":"Please Choose","mdesc":"Please Choose"}';
+		if($.parseJSON( data.favoriteNonGenerativeMethods).length == 0){
+			data.favoriteNonGenerativeMethods = '['+pleaseChoose+']';
+		}else{
+			data.favoriteNonGenerativeMethods = '['+pleaseChoose+',' + data.favoriteNonGenerativeMethods.substring(1);
+		}
+		
+		if($.parseJSON( data.allNonGenerativeMethods).length == 0){
+			data.allNonGenerativeMethods = '['+pleaseChoose+']';
+		}else{
+			data.allNonGenerativeMethods = '['+pleaseChoose+', ' + data.allNonGenerativeMethods.substring(1);
+		}
+		
+		
 		if ($('#' + getJquerySafeId('studyLevelVariables' + index + '.value')).select2('data')) {
 			selectedVal = $('#' + getJquerySafeId('studyLevelVariables' + index + '.value')).select2('data').id;
 		}

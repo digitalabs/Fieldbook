@@ -190,22 +190,10 @@ public class AdvancingController extends AbstractBaseFieldbookController{
 			
 			List<Integer> methodIds = workbenchService
 			              .getFavoriteProjectMethods(getCurrentProjectId());
-			List<Method> favoriteMethods = fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIds, false);
-			
-			
-			List<Method> allNonGenerativeMethods = new ArrayList<Method>();
-			List<Method> favoriteNonGenerativeMethods = new ArrayList<Method>();
-            for(Method method: breedingMethods){
-            	if(method != null && (method.getMtype() == null || !method.getMtype().equals(GENERATIVE_TYPE))) {
-            		allNonGenerativeMethods.add(method);            		
-            	}
-            }
-            for(Method method: favoriteMethods){
-            	if(method != null && (method.getMtype() == null || !method.getMtype().equals(GENERATIVE_TYPE))) {
-            		favoriteNonGenerativeMethods.add(method);            		
-            	}
-            }
-            
+			List<Method> favoriteMethods = fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIds, false);						
+			List<Method> allNonGenerativeMethods = fieldbookMiddlewareService.getAllBreedingMethods(true);
+			List<Method> favoriteNonGenerativeMethods = fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIds, true);
+                                   
             result.put("success", "1");
             result.put("allMethods", convertMethodsToJson(breedingMethods));
             result.put("favoriteMethods", convertMethodsToJson(favoriteMethods));            

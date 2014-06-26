@@ -10,7 +10,7 @@ import com.efficio.fieldbook.web.naming.expression.LocationAbbreviationExpressio
 import com.efficio.fieldbook.web.naming.expression.NumberExpression;
 import com.efficio.fieldbook.web.naming.expression.SeasonExpression;
 import com.efficio.fieldbook.web.naming.expression.SequenceExpression;
-import com.efficio.fieldbook.web.naming.expression.TopLocationAbbreviation;
+import com.efficio.fieldbook.web.naming.expression.TopLocationAbbreviationExpression;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
 import javax.annotation.Resource;

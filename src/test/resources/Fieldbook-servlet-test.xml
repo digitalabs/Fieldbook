@@ -274,5 +274,28 @@
         <constructor-arg ref="workbenchHibernateSessionProvider" />
     </bean>
 	
+	<bean id="fieldbookProperties" class="com.efficio.fieldbook.web.util.FieldbookProperties">
+		<property name="programLocationsUrl" value="${url.program.locations}" />
+		<property name="programBreedintMethodsUrl" value="${url.program.breeding.methods}" />
+		<property name="germplasmImportUrl" value="${url.germplasm.import}" />
+		<property name="germplasmDetailsUrl" value="${url.germplasm.details}" />	
+		<property name="uploadDirectory" value="${upload.directory}" />	
+	</bean>
 
+    <bean id="processCodeFactory" class="com.efficio.fieldbook.web.naming.impl.ProcessCodeFactory" init-method="init">
+        <!--TODO : possibly find a way to make list based on component scan of a certain package-->
+        <property name="registeredExpressions">
+            <list>
+                <bean class="com.efficio.fieldbook.web.naming.expression.BracketsExpression"/>
+                <bean class="com.efficio.fieldbook.web.naming.expression.BulkCountExpression"/>
+                <bean class="com.efficio.fieldbook.web.naming.expression.FirstExpression"/>
+                <bean class="com.efficio.fieldbook.web.naming.expression.LocationAbbreviationExpression"/>
+                <bean class="com.efficio.fieldbook.web.naming.expression.NumberExpression"/>
+                <bean class="com.efficio.fieldbook.web.naming.expression.SeasonExpression"/>
+                <bean class="com.efficio.fieldbook.web.naming.expression.SequenceExpression"/>
+                <bean class="com.efficio.fieldbook.web.naming.expression.TopLocationAbbreviationExpression"/>
+            </list>
+        </property>
+    </bean>
+    
 </beans>

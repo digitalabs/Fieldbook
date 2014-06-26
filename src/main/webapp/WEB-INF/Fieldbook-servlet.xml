@@ -304,7 +304,7 @@
                 <bean class="com.efficio.fieldbook.web.naming.expression.NumberExpression"/>
                 <bean class="com.efficio.fieldbook.web.naming.expression.SeasonExpression"/>
                 <bean class="com.efficio.fieldbook.web.naming.expression.SequenceExpression"/>
-                <bean class="com.efficio.fieldbook.web.naming.expression.TopLocationAbbreviation"/>
+                <bean class="com.efficio.fieldbook.web.naming.expression.TopLocationAbbreviationExpression"/>
             </list>
         </property>
     </bean>

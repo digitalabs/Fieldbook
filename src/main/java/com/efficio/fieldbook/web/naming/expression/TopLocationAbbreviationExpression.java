@@ -4,11 +4,11 @@ import java.util.List;
 
 import com.efficio.fieldbook.web.nursery.bean.AdvancingSource;
 
-public class TopLocationAbbreviation implements Expression {
+public class TopLocationAbbreviationExpression implements Expression {
 
     public static final String KEY = "[TLABBR]";
 
-	public TopLocationAbbreviation() {
+	public TopLocationAbbreviationExpression() {
 	}
 
 	@Override

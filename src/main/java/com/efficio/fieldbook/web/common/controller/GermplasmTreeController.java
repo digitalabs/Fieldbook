@@ -98,6 +98,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
     		Model model, HttpSession session) {
 
         try {
+        	form.setListDate(DateUtil.getCurrentDateInUIFormat());
         	form.setListIdentifier(listIdentifier);
         	List<UserDefinedField> germplasmListTypes = germplasmListManager.getGermplasmListTypes();
         	

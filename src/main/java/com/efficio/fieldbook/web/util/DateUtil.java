@@ -43,6 +43,10 @@ public class DateUtil {
         return new SimpleDateFormat(DB_DATE_FORMAT).format(new Date());        
     }
     
+    public static String getCurrentDateInUIFormat(){
+        return new SimpleDateFormat(UI_DATE_FORMAT).format(new Date());        
+    }
+    
     /**
      * Parses the date.
      *

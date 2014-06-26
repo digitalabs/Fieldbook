@@ -79,7 +79,7 @@ public class SeedStoreManagerController extends AbstractBaseFieldbookController{
     @ModelAttribute("locationList")
     public List<Location> getLocationList() {
         try {
-            List<Location> dataTypesOrig = fieldbookMiddlewareService.getAllLocations();
+            List<Location> dataTypesOrig = fieldbookMiddlewareService.getAllSeedLocations();
             List<Location> dataTypes = dataTypesOrig;
             
             return dataTypes;

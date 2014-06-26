@@ -943,7 +943,6 @@ function initializeHarvestLocationSelect2(locationSuggestions, locationSuggestio
 
 	// If combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
 	$('#' + getJquerySafeId('harvestLocationIdAll')).select2({
-		minimumInputLength: 2,
 		query: function(query) {
 			var data = {results: locationSuggestionsObj}, i, j, s;
 			// Return the array that matches
@@ -976,6 +975,7 @@ function initializeHarvestLocationFavSelect2(locationSuggestionsFav, locationSug
 
 	// If combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
 	$('#' + getJquerySafeId('harvestLocationIdFavorite')).select2({
+		minimumResultsForSearch: locationSuggestionsFavObj.length == 0 ? -1 : 20,
 		query: function(query) {
 			var data = {results: locationSuggestionsFavObj}, i, j, s;
 			// Return the array that matches
@@ -1709,10 +1709,10 @@ function refreshImportLocationCombo(data) {
 		initializePossibleValuesCombo($.parseJSON(data.favoriteLocations),
 				'#importLocationId', true, selectedValue);
 	} else {
-		initializePossibleValuesCombo($.parseJSON(data.allLocations),
+		initializePossibleValuesCombo($.parseJSON(data.allBreedingLocations),
 				'#importLocationId', true, selectedValue);
 	}
-	replacePossibleJsonValues(data.favoriteLocations, data.allLocations, 'Location');
+	replacePossibleJsonValues(data.favoriteLocations, data.allBreedingLocations, 'Location');
 }
 
 function recreateLocationCombo() {
@@ -1753,7 +1753,7 @@ function recreateLocationCombo() {
 							refreshImportLocationCombo(data);
 							refreshLocationComboInSettings(data);
 						} else if (inventoryPopup) {
-							recreateLocationComboAfterClose('inventoryLocationIdAll', $.parseJSON(data.allLocations));
+							recreateLocationComboAfterClose('inventoryLocationIdAll', $.parseJSON(data.allSeedStorageLocations));
 							recreateLocationComboAfterClose('inventoryLocationIdFavorite', $.parseJSON(data.favoriteLocations));
 							showCorrectLocationInventoryCombo();
 							// set previously selected value of location
@@ -1767,7 +1767,7 @@ function recreateLocationCombo() {
 								|| selectedLocationAll != null) {
 							// recreate the select2 combos to get updated list
 							// of locations
-							recreateLocationComboAfterClose('harvestLocationIdAll', $.parseJSON(data.allLocations));
+							recreateLocationComboAfterClose('harvestLocationIdAll', $.parseJSON(data.allBreedingLocations));
 							recreateLocationComboAfterClose('harvestLocationIdFavorite', $.parseJSON(data.favoriteLocations));
 							showCorrectLocationCombo();
 							// set previously selected value of location
@@ -1778,7 +1778,7 @@ function recreateLocationCombo() {
 							refreshLocationComboInSettings(data);
 						} else if (fieldmapScreen === true) {
 							//recreate the select2 combos to get updated list of locations
-			    		   recreateLocationComboAfterClose('fieldLocationIdAll', $.parseJSON(data.allLocations));
+			    		   recreateLocationComboAfterClose('fieldLocationIdAll', $.parseJSON(data.allBreedingLocations));
 			    		   recreateLocationComboAfterClose('fieldLocationIdFavorite', $.parseJSON(data.favoriteLocations));
 			    		   showCorrectLocationCombo();
 			    		   //set previously selected value of location
@@ -1844,10 +1844,10 @@ function refreshLocationComboInSettings(data) {
 		if ($("#"+ getJquerySafeId('studyLevelVariables' + index + '.favorite1')).is(':checked')) {
 			initializePossibleValuesCombo($.parseJSON(data.favoriteLocations), "#" + getJquerySafeId('studyLevelVariables' + index + '.value'), false, selectedVal);
 		} else {
-			initializePossibleValuesCombo($.parseJSON(data.allLocations), '#' + getJquerySafeId('studyLevelVariables' + index + '.value'), true, selectedVal);
+			initializePossibleValuesCombo($.parseJSON(data.allBreedingLocations), '#' + getJquerySafeId('studyLevelVariables' + index + '.value'), true, selectedVal);
 		}
 	
-		replacePossibleJsonValues(data.favoriteLocations, data.allLocations, index);
+		replacePossibleJsonValues(data.favoriteLocations, data.allBreedingLocations, index);
 	}
 }
 

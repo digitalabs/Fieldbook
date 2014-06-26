@@ -141,7 +141,7 @@ function initializePossibleValuesComboInventory(possibleValues, name, showAllLoc
 
 	if (showAllLocation) {
 		$(name).select2({
-			minimumInputLength: 2,
+			minimumResultsForSearch: possibleValuesObj.length == 0 ? -1 : 20,
 			query: function (query) {	
 		      var data = {results: possibleValuesObj};
 		      // return the array that matches
@@ -160,7 +160,8 @@ function initializePossibleValuesComboInventory(possibleValues, name, showAllLoc
 	    });
 	} else {
 		$(name).select2({
-			query: function (query) {	
+			minimumResultsForSearch: possibleValuesObj.length == 0 ? -1 : 20,
+			query: function (query) {					
 		      var data = {results: possibleValuesObj};
 		      // return the array that matches
 		      data.results = $.grep(data.results,function(item,index) {

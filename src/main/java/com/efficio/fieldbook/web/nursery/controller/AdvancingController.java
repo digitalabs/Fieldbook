@@ -236,10 +236,12 @@ public class AdvancingController extends AbstractBaseFieldbookController{
                                 .getFavoriteProjectLocationIds(getCurrentProjectId());
             List<Location> faveLocations = fieldbookMiddlewareService
                                 .getFavoriteLocationByProjectId(locationsIds);
-            List<Location> allLocations = fieldbookMiddlewareService.getAllLocations();
+            List<Location> allBreedingLocations = fieldbookMiddlewareService.getAllBreedingLocations();
+            List<Location> allSeedStorageLocations = fieldbookMiddlewareService.getAllSeedLocations();
             result.put("success", "1");
             result.put("favoriteLocations", convertFaveLocationToJson(faveLocations));
-            result.put("allLocations", convertFaveLocationToJson(allLocations));
+            result.put("allBreedingLocations", convertFaveLocationToJson(allBreedingLocations));
+            result.put("allSeedStorageLocations", convertFaveLocationToJson(allSeedStorageLocations));
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
             result.put("success", "-1");

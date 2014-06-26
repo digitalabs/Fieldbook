@@ -84,7 +84,7 @@ public class FieldmapController extends AbstractBaseFieldbookController{
     @ModelAttribute("locationList")
     public List<Location> getLocationList() {
         try {
-            List<Location> dataTypesOrig = fieldbookMiddlewareService.getAllLocations();
+            List<Location> dataTypesOrig = fieldbookMiddlewareService.getAllBreedingLocations();
             List<Location> dataTypes = dataTypesOrig;
             
             return dataTypes;

@@ -271,7 +271,7 @@ public class FieldbookServiceImpl implements FieldbookService{
                 possibleValues = list;
                 possibleValues.addAll(getAllBreedingMethods(true));
             } else if (TermId.LOCATION_ID.getId() == id) {
-                possibleValues = convertLocationsToValueReferences(fieldbookMiddlewareService.getAllLocations());
+                possibleValues = convertLocationsToValueReferences(fieldbookMiddlewareService.getAllBreedingLocations());
             } else if (TermId.PI_ID.getId() == id || Integer.parseInt(AppConstants.COOPERATOR_ID.getString()) == id) {
                 possibleValues = convertPersonsToValueReferences(fieldbookMiddlewareService.getAllPersonsOrderedByLocalCentral());
             } else if (TermId.NURSERY_TYPE.getId() == id) {

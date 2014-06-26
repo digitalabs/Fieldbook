@@ -138,7 +138,7 @@ function initializeLocationSelect2(locationSuggestions, locationSuggestions_obj)
 	
 	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
 	$('#'+getJquerySafeId('fieldLocationIdAll')).select2({
-		minimumInputLength: 2,
+		minimumResultsForSearch: locationSuggestions_obj.length == 0 ? -1 : 20,
         query: function (query) {
           var data = {results: locationSuggestions_obj}, i, j, s;
           // return the array that matches
@@ -170,6 +170,7 @@ function initializeLocationFavSelect2(locationSuggestionsFav, locationSuggestion
 
 //if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
 $('#'+getJquerySafeId('fieldLocationIdFavorite')).select2({
+	minimumResultsForSearch: locationSuggestionsFav_obj.length == 0 ? -1 : 20,
     query: function (query) {
       var data = {results: locationSuggestionsFav_obj}, i, j, s;
       // return the array that matches
@@ -278,12 +279,12 @@ function checkStartingCoordinatesPlanted() {
 //total no. of plots given the deleted plots and starting coordinates
 //using horizontal layout
 function checkRemainingPlotsHorizontal() {
-	var startingCol = $('#'+getJquerySafeId("userFieldmap.startingColumn")).val();
-	var startingRange = $('#'+getJquerySafeId("userFieldmap.startingRange")).val();
+	var startingCol = $('#'+getJquerySafeId('userFieldmap.startingColumn')).val();
+	var startingRange = $('#'+getJquerySafeId('userFieldmap.startingRange')).val();
 	var plantingOrder = $("input[type='radio']:checked").val();
 	var remainingPlots = 0;
 
-	if (plantingOrder == "1") {
+	if (plantingOrder == '1') {
 		//row/column
 		remainingPlots = (((parseInt(rowNum)/parseInt(rowsPerPlot))*rangeNum)-deletedPlots-plantedPlots) - (((startingRange-1)*(rowNum/rowsPerPlot))+(startingCol-1));
 	} else {
@@ -302,12 +303,12 @@ function checkRemainingPlotsHorizontal() {
 //total no. of plots given the deleted plots and starting coordinates
 //using vertical layout
 function checkRemainingPlotsVertical() {
-	var startingCol = $('#'+getJquerySafeId("userFieldmap.startingColumn")).val();
-	var startingRange = $('#'+getJquerySafeId("userFieldmap.startingRange")).val();
+	var startingCol = $('#'+getJquerySafeId('userFieldmap.startingColumn')).val();
+	var startingRange = $('#'+getJquerySafeId('userFieldmap.startingRange')).val();
 	var plantingOrder = $("input[type='radio']:checked").val();
 	var remainingPlots = 0;
 
-	if (plantingOrder == "1") {
+	if (plantingOrder == '1') {
 		//row/column
 		remainingPlots = (((parseInt(rowNum)/parseInt(rowsPerPlot))*rangeNum)-deletedPlots-plantedPlots) - (((startingCol-1)*rangeNum)+(startingRange-1));
 	} else {
@@ -346,14 +347,14 @@ function getUnavailablePlotsVertical(startingCol, startingRange) {
 
 //count the no. of plots marked as deleted, starting coordinates are considered
 function checkDeletedPlotsHorizontal(id, isDelete) {
-	var startingCol = $('#'+getJquerySafeId("userFieldmap.startingColumn")).val();
-	var startingRange = $('#'+getJquerySafeId("userFieldmap.startingRange")).val();
+	var startingCol = $('#'+getJquerySafeId('userFieldmap.startingColumn')).val();
+	var startingRange = $('#'+getJquerySafeId('userFieldmap.startingRange')).val();
 	var plantingOrder = $("input[type='radio']:checked").val();
 	
-	var col = parseInt(id.split("_")[0]) + 1;
-	var range = parseInt(id.split("_")[1]) + 1;
+	var col = parseInt(id.split('_')[0]) + 1;
+	var range = parseInt(id.split('_')[1]) + 1;
 	
-	if (plantingOrder == "1") {
+	if (plantingOrder == '1') {
 		//row/column
 		if (range > startingRange || (range == startingRange && col >= startingCol)) {
 			if (isDelete) {
@@ -379,14 +380,14 @@ function checkDeletedPlotsHorizontal(id, isDelete) {
 
 //count the no. of plots marked as deleted, starting coordinates are considered
 function checkDeletedPlotsVertical(id, isDelete) {
-	var startingCol = $('#'+getJquerySafeId("userFieldmap.startingColumn")).val();
-	var startingRange = $('#'+getJquerySafeId("userFieldmap.startingRange")).val();
+	var startingCol = $('#'+getJquerySafeId('userFieldmap.startingColumn')).val();
+	var startingRange = $('#'+getJquerySafeId('userFieldmap.startingRange')).val();
 	var plantingOrder = $("input[type='radio']:checked").val();
 	
 	var col = parseInt(id.split("_")[0]) + 1;
 	var range = parseInt(id.split("_")[1]) + 1;
 	
-	if (plantingOrder == "1") {
+	if (plantingOrder == '1') {
 		//row/column
 		if (col > startingCol || (col >= startingCol && range >= startingRange)) {
 			if (isDelete) {
@@ -411,10 +412,10 @@ function checkDeletedPlotsVertical(id, isDelete) {
 }
 
 function isDeletedPlotAtStartCoord(id) {
-	var startingCol = $('#'+getJquerySafeId("userFieldmap.startingColumn")).val();
-	var startingRange = $('#'+getJquerySafeId("userFieldmap.startingRange")).val();
-	var col = parseInt(id.split("_")[0]) + 1;
-	var range = parseInt(id.split("_")[1]) + 1;
+	var startingCol = $('#'+getJquerySafeId('userFieldmap.startingColumn')).val();
+	var startingRange = $('#'+getJquerySafeId('userFieldmap.startingRange')).val();
+	var col = parseInt(id.split('_')[0]) + 1;
+	var range = parseInt(id.split('_')[1]) + 1;
 	//check if starting coordinates is marked as deleted
 	if (col == startingCol && range == startingRange) {
 		return true;
@@ -434,18 +435,18 @@ function openManageLocations() {
 function recreatePopupLocationCombo() {
 	
 	$.ajax(
-	{ url: "/Fieldbook/NurseryManager/advance/nursery/getLocations",
-       type: "GET",
+	{ url: '/Fieldbook/NurseryManager/advance/nursery/getLocations',
+       type: 'GET',
        cache: false,
-       data: "",
+       data: '',
        success: function(data) {
-    	   if (data.success == "1") {
+    	   if (data.success == '1') {
     		   //recreate the select2 combos to get updated list of locations
     		  
-    		   var popuplocationSuggestions =  $.parseJSON(data.allLocations);
+    		   var popuplocationSuggestions =  $.parseJSON(data.allBreedingLocations);
     		   var popuplocationSuggestions_obj = [];
     		   var defaultData = null;
-    		   var currentLocId = $("#"+getJquerySafeId("userFieldmap.fieldLocationId")).val();
+    		   var currentLocId = $("#"+getJquerySafeId('userFieldmap.fieldLocationId')).val();
     		   $.each(popuplocationSuggestions, function( index, value ) {
     			   var tempData = { 'id' : value.locid,
      					  'text' : value.lname
@@ -464,7 +465,7 @@ function recreatePopupLocationCombo() {
     		   
     			//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
     			$('#'+getJquerySafeId('parentLocationId')).select2({
-    				minimumInputLength: 2,
+    				minimumResultsForSearch: popuplocationSuggestions_obj.length == 0 ? -1 : 20,
     		        query: function (query) {
     		          var data = {results: popuplocationSuggestions_obj}, i, j, s;
     		          // return the array that matches
@@ -480,11 +481,11 @@ function recreatePopupLocationCombo() {
     				$('#'+getJquerySafeId('parentLocationId')).select2('data', defaultData);
     			
     	   } else {
-    		   showErrorMessage("page-message", data.errorMessage);
+    		   showErrorMessage('page-message', data.errorMessage);
     	   }
        },
        error: function(jqXHR, textStatus, errorThrown){
-			console.log("The following error occured: " + textStatus, errorThrown); 
+			console.log('The following error occured: ' + textStatus, errorThrown); 
 	   }, 
 	   complete: function(){  
 	   }
@@ -497,17 +498,17 @@ function formatFieldResult(myItem) {
  }
 
 function formatField(myItem) {
-	return "<p><strong>"+myItem.text+"</strong> <br /> Location: "+myItem.location+"</p>";
+	return '<p><strong>'+myItem.text+'</strong> <br /> Location: '+myItem.location+'</p>';
 	//return "<p><strong>"+ myItem.location +"</strong> &gt; <strong><i>"+myItem.text+"</i></strong> </p>";
 }
 
 function recreatePopupFieldCombo() {
 	
 	$.ajax(
-	{ url: "/Fieldbook/Fieldmap/enterFieldDetails/getFields",
-       type: "GET",
+	{ url: '/Fieldbook/Fieldmap/enterFieldDetails/getFields',
+       type: 'GET',
        cache: false,
-       data: "",
+       data: '',
        success: function(data) {
     	   if (data.success == "1") {
     		   //recreate the select2 combos to get updated list of locations
@@ -531,8 +532,7 @@ function recreatePopupFieldCombo() {
     			   
     			 //if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
        			$('#'+getJquerySafeId('parentFieldId')).select2({
-       				//minimumInputLength: 2,
-       				minimumResultsForSearch: 20,
+       				minimumResultsForSearch: popupFieldlocationSuggestions_obj.length == 0 ? -1 : 20,
        		        query: function (query) {
        		          var data = {results: popupFieldlocationSuggestions_obj}, i, j, s;
        		          // return the array that matches
@@ -558,7 +558,7 @@ function recreatePopupFieldCombo() {
     			
     			
     	   } else {
-    		   showErrorMessage("page-message", data.errorMessage);
+    		   showErrorMessage('page-message', data.errorMessage);
     	   }
        },
        error: function(jqXHR, textStatus, errorThrown){
@@ -620,7 +620,7 @@ function setComboValues(suggestions_obj, id, name) {
 }
 
 function recreateLocationComboAfterClose(comboName, data) {	
-	if (comboName == "fieldLocationIdAll") {
+	if (comboName == 'fieldLocationIdAll') {
 		//clear all locations dropdown
 		locationSuggestions = [];
 		locationSuggestions_obj = [];
@@ -663,8 +663,7 @@ function initializeFieldSelect2(suggestions, suggestions_obj, addOnChange, curre
 	$('#'+getJquerySafeId('userFieldmap.fieldId')).val('');
 	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
 	$('#'+getJquerySafeId('userFieldmap.fieldId')).select2({
-		//minimumInputLength: 2,
-		minimumResultsForSearch: 20,
+		minimumResultsForSearch: suggestions_obj.length == 0 ? -1 : 20,
         query: function (query) {
           var data = {results: suggestions_obj}, i, j, s;
           // return the array that matches
@@ -679,9 +678,9 @@ function initializeFieldSelect2(suggestions, suggestions_obj, addOnChange, curre
     });
 	
 	if(addOnChange){
-		$('#'+getJquerySafeId('userFieldmap.fieldId')).on("change", function (){
+		$('#'+getJquerySafeId('userFieldmap.fieldId')).on('change', function (){
 	    	
-	    	loadBlockDropdown($('#'+getJquerySafeId("userFieldmap.fieldId")).val(), $('#'+getJquerySafeId("userFieldmap.blockId")).val());
+	    	loadBlockDropdown($('#'+getJquerySafeId('userFieldmap.fieldId')).val(), $('#'+getJquerySafeId("userFieldmap.blockId")).val());
 	    	
 	    })
 	}
@@ -691,6 +690,7 @@ function initializeFieldSelect2(suggestions, suggestions_obj, addOnChange, curre
 	
 }
 function initializeBlockSelect2(suggestions, suggestions_obj, addOnChange, currentBlockId) {
+	'use strict';
 	var defaultData = null;
 	var newlyAddedBlock = $('#newBlockName').val();
 	$.each(suggestions, function( index, value ) {
@@ -712,8 +712,7 @@ function initializeBlockSelect2(suggestions, suggestions_obj, addOnChange, curre
 	$('#'+getJquerySafeId('userFieldmap.blockId')).val('');
 	//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
 	$('#'+getJquerySafeId('userFieldmap.blockId')).select2({
-		//minimumInputLength: 2,
-		minimumResultsForSearch: 20,
+		minimumResultsForSearch: suggestions_obj.length == 0 ? -1 : 20,
         query: function (query) {
           var data = {results: suggestions_obj}, i, j, s;
           // return the array that matches
@@ -738,28 +737,24 @@ function initializeBlockSelect2(suggestions, suggestions_obj, addOnChange, curre
 		$('#'+getJquerySafeId('userFieldmap.blockId')).select2('data', defaultData).trigger('change');
 }
 function loadFieldsDropdown(locationId, currentFieldId){
-	//console.log('reload fields ' + locationId);
-	
-	
-	//loadField = true;
+	'use strict';
 	showBlockDetails(true, null);
     
     
     	$.ajax(
-	    	{ url: "/Fieldbook/Fieldmap/enterFieldDetails/getFields/"+locationId,
-	           type: "GET",
+	    	{ url: '/Fieldbook/Fieldmap/enterFieldDetails/getFields/'+locationId,
+	           type: 'GET',
 	           cache: false,
-	           data: "",
+	           data: '',
 	           success: function(data) {	        	   
 	        		   //recreate the select2 combos to get updated list of locations
 	        		   $('#'+getJquerySafeId('userFieldmap.fieldId')).select2('destroy');
 	        		   if(locationId != '')
 	        			   initializeFieldSelect2($.parseJSON(data.allFields), [], false, currentFieldId);
 	        		   else
-	        			   initializeFieldSelect2({}, [], false, "");
-	        		   initializeBlockSelect2({}, [], false, "");
-	        	   	//console.log('here close 1');
-	        	   	//loadField = false;
+	        			   initializeFieldSelect2({}, [], false, '');
+	        		   initializeBlockSelect2({}, [], false, '');
+
 	           }
 	         }
 	     );
@@ -770,49 +765,43 @@ function loadBlockDropdown(fieldId, currentBlockId){
 	//console.log('reload block ' + fieldId);
 	showBlockDetails(true, null);
 	
-	//loadBlock = true;
 	$.ajax(
-			{ url: "/Fieldbook/Fieldmap/enterFieldDetails/getBlocks/"+fieldId,
-           type: "GET",
+			{ url: '/Fieldbook/Fieldmap/enterFieldDetails/getBlocks/'+fieldId,
+           type: 'GET',
            cache: false,
-           data: "",
+           data: '',
            success: function(data) {	  
         	   $('#'+getJquerySafeId('userFieldmap.blockId')).select2('destroy');
         		   initializeBlockSelect2($.parseJSON(data.allBlocks), [], false, currentBlockId);
-        	   	   //console.log('here close 2');
-        	   		//loadBlock = false;
+
            }
          }
      );
 }
 
 function loadBlockInformation(blockId){
-	//console.log('load block info' + blockId);
-	
-	//loadBlockInfo = true;
+	'use strict';
 	$.ajax(
-			{ url: "/Fieldbook/Fieldmap/enterFieldDetails/getBlockInformation/"+blockId,
-           type: "GET",
+			{ url: '/Fieldbook/Fieldmap/enterFieldDetails/getBlockInformation/'+blockId,
+           type: 'GET',
            cache: false,
-           data: "",
+           data: '',
            success: function(data) {	        	   
         		   var blockInfo = $.parseJSON(data.blockInfo);
-        		   //alert('show determine if its new or used block');
         		   showBlockDetails(false, blockInfo);
-        		   //console.log(blockInfo);
-        	   	   //loadBlockInfo = false;
            }
          }
      );
 }
 function showBlockDetails(isHide, blockInfo){
+	'use strict';
 	if(isHide){
-		$('.block-details').slideUp( "slow", function() {
+		$('.block-details').slideUp( 'slow', function() {
 			// Animation complete.
 			  
 		   });
 	}else{
-		$('.block-details').slideDown( "slow", function() {
+		$('.block-details').slideDown( 'slow', function() {
 			// Animation complete.
 			/*
 			sample data: 	

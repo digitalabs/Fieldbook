@@ -39,87 +39,99 @@ th:object="${createNurseryForm}" enctype="multipart/form-data">
         </div>
     </div>
 
-	<div class="row form-group">
-		<div class="col-xs-2 col-md-2">
-			<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{basicDetails[0].variable.cvTermId}" />
-			<label th:text="#{nursery.create.nursery.nursery.name} + ': '" class="control-label label-bold"></label>&nbsp;<span class="required">*</span>
-		</div>
-		<div class="col-xs-4 col-md-4">
-			<input type="text" class="form-control character-input" th:field="*{basicDetails[0].value}" />
-		</div>
-		<div class="col-xs-2 col-md-2">
-			<label class="label-bold" id="folderLabel" th:text="#{nursery.savenursery.savein} + ': '"></label>&nbsp;<span class="required">*</span>
-		</div>
-		<div class="col-xs-4 col-md-4">
-			<input type="hidden" th:field="*{folderId}" />
-			<input type="hidden" th:field="*{folderName}" />
+    <!-- basic details -->
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="row form-group">
+                <input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{basicDetails[0].variable.cvTermId}" />
+                <label class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.nursery.name}"></b>: <span class="required">*</span></label>
 
-            <div class="pull-left">
-                <label class="control-label" id="folderNameLabel" th:text="*{folderNameLabel}"></label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control character-input" th:field="*{basicDetails[0].value}" />
+                </div>
             </div>
 
-            <a href="javascript: void(0)" class="pull-right" id="chooseLocation" onclick="openStudyTree(2);" th:text="#{nursery.create.nursery.choose.location}"></a>
+            <div class="row form-group">
+                <input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{basicDetails[1].variable.cvTermId}" />
+                <label class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.description}" ></b>: <span class="required">*</span></label>
+
+                <div class="col-sm-8">
+                    <input type="text" class="form-control character-input" th:field="*{basicDetails[1].value}" />
+                </div>
+            </div>
+
+            <div class="row form-group">
+                <input class="cvTermIds" type="hidden" th:field="*{basicDetails[3].variable.cvTermId}" />
+                <label class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.objective}"></b>:</label>
+
+                <div class="col-sm-8">
+                    <textarea class="form-control character-input" rows="3" th:field="*{basicDetails[3].value}"></textarea>
+                </div>
+            </div>
 
         </div>
-	</div>
-	<div class="row form-group">
-		<div class="col-xs-2 col-md-2">
-			<input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" th:field="*{basicDetails[1].variable.cvTermId}" />
-			<label th:text="#{nursery.create.nursery.description} + ': '" class="control-label label-bold"></label>&nbsp;<span class="required">*</span>
-		</div>
-		<div class="col-xs-4 col-md-4">
-			<input type="text" class="form-control character-input" th:field="*{basicDetails[1].value}" />
-		</div>
-		<div class="col-xs-2 col-md-2">
-			<input  class="cvTermIds" type="hidden" th:field="*{basicDetails[5].variable.cvTermId}" />
-			<label th:text="#{nursery.create.nursery.created.by} + ': '" class="control-label label-bold"></label>&nbsp;<span class="required">*</span>
-			<input  class="cvTermIds" type="hidden" th:field="*{basicDetails[6].variable.cvTermId}" />
-		</div>
-		<div class="col-xs-4 col-md-4">
-			<input type="hidden" th:field="*{basicDetails[5].value}" />
-			<input type="hidden" th:field="*{basicDetails[6].value}" />
-			<label th:text="*{createdBy}"></label>
-		</div>
-	</div>
-	<div class="row form-group">
-		<div class="col-xs-2 col-md-2">
-			<input class="cvTermIds" type="hidden" th:field="*{basicDetails[3].variable.cvTermId}" />
-			<label th:text="#{nursery.create.nursery.objective} + ': '" class="control-label label-bold"></label>
-		</div>
-		<div class="col-xs-4 col-md-4">
-			<textarea class="form-control character-input" rows="3" th:field="*{basicDetails[3].value}"></textarea>
-		</div>
-		<div class="col-xs-2 col-md-2">
-			<input  class="cvTermIds" type="hidden" th:field="*{basicDetails[2].variable.cvTermId}" />
-			<label th:text="#{nursery.create.nursery.creation.date} + ': '" class="control-label label-bold"></label>&nbsp;<span class="required">*</span>
-		</div>
-		<div class="col-xs-4 col-md-4">
-			<input placeholder="yyyy-mm-dd" id="basicDetails.value2" style="width: 100px" type="text" class="form-control date-input" th:field="*{basicDetails[2].value}" />
-			<label for="basicDetails.value2" class="btn datepicker">
-				<img th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;" />
-			</label>
-		</div>
-		<div class="col-xs-2 col-md-2 add-top-margin">
-			<input class="cvTermIds" type="hidden" th:field="*{basicDetails[4].variable.cvTermId}" />
-			<label th:text="#{nursery.create.nursery.completion.date} + ': '" class="control-label label-bold"></label>
-		</div>
-		<div class="col-xs-4 col-md-4 add-top-margin">
-			<input placeholder="yyyy-mm-dd" id="basicDetails.value4" style="width: 100px" type="text" class="form-control date-input" th:field="*{basicDetails[4].value}" />
-			<label for="basicDetails.value4" class="btn datepicker">
-				<img th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;" />
-			</label>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-xs-12 col-md-12">
-			&nbsp;
-		</div>
-	</div>
-	<div class="row form-group">
+
+        <!-- second col -->
+        <div class="col-xs-6">
+            <div class="row form-group">
+                <label class="control-label col-sm-4" id="folderLabel"><b th:text="#{nursery.savenursery.savein}"></b>: <span class="required">*</span></label>
+
+                <div class="col-sm-8">
+                    <input type="hidden" th:field="*{folderId}" />
+                    <input type="hidden" th:field="*{folderName}" />
+
+                    <div class="pull-left">
+                        <label class="control-label" id="folderNameLabel" th:text="*{folderNameLabel}"></label>
+                    </div>
+
+                    <a href="javascript: void(0)" class="pull-right" id="chooseLocation" onclick="openStudyTree(2);" th:text="#{nursery.create.nursery.choose.location}"></a>
+                </div>
+            </div>
+
+            <div class="row form-group">
+                <input  class="cvTermIds" type="hidden" th:field="*{basicDetails[5].variable.cvTermId}" />
+                <label  class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.created.by}"></b>: <span class="required">*</span></label>
+                <input  class="cvTermIds" type="hidden" th:field="*{basicDetails[6].variable.cvTermId}" />
+
+                <div class="col-sm-8">
+                    <input type="hidden" th:field="*{basicDetails[5].value}" />
+                    <input type="hidden" th:field="*{basicDetails[6].value}" />
+                    <label th:text="*{createdBy}"></label>
+                </div>
+
+            </div>
+
+            <div class="row form-group">
+                <input  class="cvTermIds" type="hidden" th:field="*{basicDetails[2].variable.cvTermId}" />
+                <label class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.creation.date}" ></b>: <span class="required">*</span></label>
+                <div class="col-sm-8">
+                    <input placeholder="yyyy-mm-dd" id="basicDetails.value2" style="width: 100px" type="text" class="form-control date-input" th:field="*{basicDetails[2].value}" />
+                    <label for="basicDetails.value2" class="btn datepicker">
+                        <img th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;" />
+                    </label>
+                </div>
+            </div>
+
+            <div class="row form-group">
+                <input class="cvTermIds" type="hidden" th:field="*{basicDetails[4].variable.cvTermId}" />
+                <label class="control-label col-sm-4"><b th:text="#{nursery.create.nursery.completion.date}" ></b>:</label>
+
+                <div class="col-sm-8">
+                    <input placeholder="yyyy-mm-dd" id="basicDetails.value4" style="width: 100px" type="text" class="form-control date-input" th:field="*{basicDetails[4].value}" />
+                    <label for="basicDetails.value4" class="btn datepicker">
+                        <img th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;" />
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+	<div class="row form-group add_top_padding">
 		<div class="col-xs-12 col-md-12">
 			<label class="label-bold" th:text="#{nursery.create.nursery.build.nursery} + '? '">How would you like to build your nursery?</label>
 		</div>
 	</div>
+
 	<div class="row form-group">
 		<div class="col-xs-8 col-md-8">
 			<select id="studyBuildOption">

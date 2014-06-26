@@ -1,12 +1,8 @@
 package com.efficio.fieldbook.web.naming.expression;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.math.NumberUtils;
-
-import ognl.enhance.ExpressionCompiler;
 
 import com.efficio.fieldbook.util.ExpressionHelper;
 import com.efficio.fieldbook.util.ExpressionHelperCallback;
@@ -22,7 +18,7 @@ public class BulkCountExpression implements Expression {
 	@Override
 	public void apply(List<StringBuilder> values, AdvancingSource source) {
 		for (StringBuilder value : values) {
-			int startIndex = value.indexOf(KEY);
+			int startIndex = value.toString().toUpperCase().indexOf(KEY);
 			int endIndex = startIndex + KEY.length();
 		
 			if (source.getRootName() != null) {

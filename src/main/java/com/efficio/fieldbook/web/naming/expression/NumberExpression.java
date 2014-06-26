@@ -15,7 +15,7 @@ public class NumberExpression implements Expression {
     @Override
     public void apply(List<StringBuilder> values, AdvancingSource source) {
         for (StringBuilder value : values) {
-            int startIndex = value.indexOf(KEY);
+            int startIndex = value.toString().toUpperCase().indexOf(KEY);
             int endIndex = startIndex + KEY.length();
 
             if (source.getPlantsSelected() != null &&

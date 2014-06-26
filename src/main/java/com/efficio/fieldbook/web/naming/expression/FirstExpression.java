@@ -21,8 +21,8 @@ public class FirstExpression implements Expression {
 		String separatorExpression = source.getBreedingMethod().getSeparator();
 
 		for (StringBuilder value : values) {
-			if (separatorExpression != null && separatorExpression.contains(KEY)) {
-				int start = separatorExpression.indexOf(KEY) + KEY.length();
+			if (separatorExpression != null && separatorExpression.toString().toUpperCase().contains(KEY)) {
+				int start = separatorExpression.toString().toUpperCase().indexOf(KEY) + KEY.length();
 				int end = separatorExpression.indexOf("[", start);
 				if (end == -1) {
 					end = separatorExpression.length();
@@ -38,7 +38,7 @@ public class FirstExpression implements Expression {
 				}
 			}
 
-			int startIndex = value.indexOf(KEY);
+			int startIndex = value.toString().toUpperCase().indexOf(KEY);
 			int endIndex = startIndex + KEY.length();
 
 			value.replace(startIndex, endIndex, "");

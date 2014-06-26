@@ -16,7 +16,7 @@ public class SequenceExpression implements Expression {
 	public void apply(List<StringBuilder> values, AdvancingSource source) {
 		List<StringBuilder> newNames = new ArrayList<StringBuilder>();
 		for (StringBuilder value : values) {
-			int startIndex = value.indexOf(KEY);
+			int startIndex = value.toString().toUpperCase().indexOf(KEY);
 			int endIndex = startIndex + KEY.length();
 			
 			if (source.getPlantsSelected() != null &&

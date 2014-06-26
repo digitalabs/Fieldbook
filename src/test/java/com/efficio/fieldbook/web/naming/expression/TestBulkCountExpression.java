@@ -61,7 +61,7 @@ public class TestBulkCountExpression extends TestExpression {
 	public void testBulkSourceAtMultipleAdvanced() throws Exception {
 		BulkCountExpression expression = new BulkCountExpression();
 		AdvancingSource source = createAdvancingSourceTestData(
-				"GERMPLASM_TEST-B-2B-3B", 
+				"GERMPLASM_TEST-B-4B-3B", 
 				"[BCOUNT]", null, null, null, true);
 		List<StringBuilder> values = createInitialValues(source);
 		expression.apply(values, source);

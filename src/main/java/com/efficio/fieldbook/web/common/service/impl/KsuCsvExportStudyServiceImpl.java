@@ -40,10 +40,11 @@ public class KsuCsvExportStudyServiceImpl implements KsuCsvExportStudyService {
 
         CsvWriter csvWriter = null;
         try {
+        	int fileCount = end - start + 1;
 			for (int i = start; i <= end; i++) {
 				String filenamePath = fieldbookProperties.getUploadDirectory() + File.separator 
 						+ studyName 
-						+ "-" + String.valueOf(i) + filename.substring(fileExtensionIndex);
+						+ (fileCount > 1 ? "-" + String.valueOf(i) : "") + filename.substring(fileExtensionIndex);
 		        boolean alreadyExists = new File(filenamePath).exists();
 	            List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), i, i);
 	            List<List<String>> dataTable = KsuFieldbookUtil.convertWorkbookData(observations, workbook.getMeasurementDatasetVariables());

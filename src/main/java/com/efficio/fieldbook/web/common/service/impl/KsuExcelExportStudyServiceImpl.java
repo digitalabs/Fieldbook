@@ -40,6 +40,7 @@ public class KsuExcelExportStudyServiceImpl implements
 		
         try {
         	List<String> filenameList = new ArrayList<String>();
+        	int fileCount = end - start + 1;
         	for (int i = start; i <= end; i++) {
         		
 	            List<MeasurementRow> observations = ExportImportStudyUtil.getApplicableObservations(workbook, workbook.getExportArrangedObservations(), i, i);
@@ -61,7 +62,7 @@ public class KsuExcelExportStudyServiceImpl implements
 				
 				String filenamePath = fieldbookProperties.getUploadDirectory() + File.separator 
 						+ studyName 
-						+ "-" + String.valueOf(i) + filename.substring(fileExtensionIndex);
+						+ (fileCount > 1 ? "-" + String.valueOf(i) : "") + filename.substring(fileExtensionIndex);
 				fos = new FileOutputStream(new File(filenamePath));
 				xlsBook.write(fos);
 				filenameList.add(filenamePath);

@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
+import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -196,17 +196,30 @@ public class KsuFieldbookUtil {
 			if (trait.getMinRange() != null) {
 				traitData.add(trait.getMinRange().toString());
 			}
+			else {
+				traitData.add("");
+			}
 			if (trait.getMaxRange() != null) {
 				traitData.add(trait.getMaxRange().toString());
 			}
+			else {
+				traitData.add("");
+			}
 			traitData.add(""); //details
 			if (trait.getPossibleValues() != null && !trait.getPossibleValues().isEmpty()) {
-				traitData.add(StringUtils.join(trait.getPossibleValues(), "/"));
+				StringBuilder possibleValuesString = new StringBuilder();
+				for (ValueReference value : trait.getPossibleValues()) {
+					if (possibleValuesString.length() > 0) {
+						possibleValuesString.append("/");
+					}
+					possibleValuesString.append(value.getName());
+				}
+				traitData.add(possibleValuesString.toString());
 			}
 			else {
 				traitData.add(""); //categories
 			}
-			traitData.add("true");
+			traitData.add("TRUE");
 			traitData.add(String.valueOf(index));
 			index++;
 			data.add(traitData);

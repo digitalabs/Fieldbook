@@ -16,18 +16,11 @@ import java.util.List;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
-import com.efficio.fieldbook.web.util.AppConstants;
 
 /**
  * The Class AdvancingNurseryForm.
  */
 public class AdvancingNurseryForm {
-	
-    /** The naming convention. */
-    private String namingConvention;
-	
-    /** The suffix convention. */
-    private String suffixConvention;
 	
     /** The method choice. */
     private String methodChoice;
@@ -112,8 +105,6 @@ public class AdvancingNurseryForm {
     
     private int cropType;
     
-    private String putBrackets;
-    
     private Integer methodVariateId;
     
     private Integer lineVariateId;
@@ -134,11 +125,8 @@ public class AdvancingNurseryForm {
     
     private Integer plotVariateId;
     
-    public static final int maizeSelfMethodId = AppConstants.SINGLE_PLANT_SELECTION_SF.getInt();
-    public static final int maizeBulkMethodId = AppConstants.SELECTED_BULK_SF.getInt();
-    public static final int maizeSibMethodId = AppConstants.HALF_MASS_SELECTION.getInt();
-    public static final int maizeColchMethodId = AppConstants.DOUBLE_HAPLOID_LINE.getInt();
-
+    private String errorInAdvance;
+    
 	/**
 	 * Gets the method id all.
 	 *
@@ -338,42 +326,6 @@ public class AdvancingNurseryForm {
 		this.advanceBreedingMethodId = breedingMethodId;
 	}
 
-	/**
-	 * Gets the naming convention.
-	 *
-	 * @return the naming convention
-	 */
-	public String getNamingConvention() {
-		return namingConvention;
-	}
-	
-	/**
-	 * Sets the naming convention.
-	 *
-	 * @param namingConvention the new naming convention
-	 */
-	public void setNamingConvention(String namingConvention) {
-		this.namingConvention = namingConvention;
-	}
-	
-	/**
-	 * Gets the suffix convention.
-	 *
-	 * @return the suffix convention
-	 */
-	public String getSuffixConvention() {
-		return suffixConvention;
-	}
-	
-	/**
-	 * Sets the suffix convention.
-	 *
-	 * @param suffixConvention the new suffix convention
-	 */
-	public void setSuffixConvention(String suffixConvention) {
-		this.suffixConvention = suffixConvention;
-	}
-	
 	/**
 	 * Gets the method choice.
 	 *
@@ -703,15 +655,7 @@ public class AdvancingNurseryForm {
 		this.nurseryId = nurseryId;
 	}
 	
-	public String getPutBrackets() {
-		return putBrackets;
-	}
-
-	public void setPutBrackets(String putBrackets) {
-		this.putBrackets = putBrackets;
-	}
-
-		/**
+	/**
 	 * @return the methodVariateId
 	 */
 	public Integer getMethodVariateId() {
@@ -852,55 +796,17 @@ public class AdvancingNurseryForm {
 	}
 
 		/**
-	 * @return the maizeSelfMethodId
+	 * @return the errorInAdvance
 	 */
-	public int getMaizeSelfMethodId() {
-		return maizeSelfMethodId;
+	public String getErrorInAdvance() {
+		return errorInAdvance;
 	}
 
 	/**
-	 * @param maizeSelfMethodId the maizeSelfMethodId to set
+	 * @param errorInAdvance the errorInAdvance to set
 	 */
-	public void setMaizeSelfMethodId(int maizeSelfMethodId) {
-	}
-
-	/**
-	 * @return the maizeBulkMethodId
-	 */
-	public int getMaizeBulkMethodId() {
-		return maizeBulkMethodId;
-	}
-
-	/**
-	 * @param maizeBulkMethodId the maizeBulkMethodId to set
-	 */
-	public void setMaizeBulkMethodId(int maizeBulkMethodId) {
-	}
-
-	/**
-	 * @return the maizeSibMethodId
-	 */
-	public int getMaizeSibMethodId() {
-		return maizeSibMethodId;
-	}
-
-	/**
-	 * @param maizeSibMethodId the maizeSibMethodId to set
-	 */
-	public void setMaizeSibMethodId(int maizeSibMethodId) {
-	}
-
-	/**
-	 * @return the maizeColchMethodId
-	 */
-	public int getMaizeColchMethodId() {
-		return maizeColchMethodId;
-	}
-
-	/**
-	 * @param maizeColchMethodId the maizeColchMethodId to set
-	 */
-	public void setMaizeColchMethodId(int maizeColchMethodId) {
+	public void setErrorInAdvance(String errorInAdvance) {
+		this.errorInAdvance = errorInAdvance;
 	}
 
 		/* (non-Javadoc)
@@ -909,11 +815,7 @@ public class AdvancingNurseryForm {
 		@Override
         public String toString() {
             StringBuilder builder = new StringBuilder();
-            builder.append("AdvancingNurseryForm [namingConvention=");
-            builder.append(namingConvention);
-            builder.append(", suffixConvention=");
-            builder.append(suffixConvention);
-            builder.append(", methodChoice=");
+            builder.append("AdvancingNurseryForm [methodChoice=");
             builder.append(methodChoice);
             builder.append(", lineChoice=");
             builder.append(lineChoice);

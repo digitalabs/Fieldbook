@@ -47,11 +47,10 @@ import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
-import com.efficio.fieldbook.web.nursery.service.NamingConventionService;
-import com.efficio.fieldbook.web.nursery.service.impl.NamingConventionServiceFactory;
 import com.efficio.fieldbook.web.util.AppConstants;
 
 /**
@@ -62,9 +61,6 @@ public class FieldbookServiceImpl implements FieldbookService{
 	/** The file service. */
 	@Resource
     private FileService fileService;
-	
-	@Autowired
-	private NamingConventionServiceFactory namingConventionServiceFactory;
 	
     @Autowired
     private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
@@ -79,7 +75,7 @@ public class FieldbookServiceImpl implements FieldbookService{
 	private PossibleValuesCache possibleValuesCache;
 	
 	@Resource
-	private FieldbookService fieldbookService;
+	private NamingConventionService namingConventionService;
 	
 
 	/* (non-Javadoc)
@@ -105,9 +101,7 @@ public class FieldbookServiceImpl implements FieldbookService{
 	public List<ImportedGermplasm> advanceNursery(AdvancingNursery advanceInfo, Workbook workbook)
 	        throws MiddlewareQueryException {
 
-        NamingConventionService service = namingConventionServiceFactory.getNamingConventionService(advanceInfo);
-
-	    return service.advanceNursery(advanceInfo, workbook);
+		return namingConventionService.advanceNursery(advanceInfo, workbook);
 	}
 	
 	@Override

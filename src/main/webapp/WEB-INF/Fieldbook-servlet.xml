@@ -235,7 +235,7 @@
     	<property name="centralUsername" value="${workbench.username}"/>
         <property name="centralPassword" value="${workbench.password}"/>
     </bean>
-    
+
     <bean id="managerFactory" name="managerFactory"
     	factory-bean="managerFactoryProvider"
     	factory-method="createInstance"
@@ -297,6 +297,21 @@
     </bean>
    	
    	<bean id="springAppContextProvider" class="org.generationcp.commons.util.SpringAppContextProvider"></bean>
-    
+
+    <bean id="processCodeFactory" class="com.efficio.fieldbook.web.naming.impl.ProcessCodeFactory" init-method="init">
+        <!--TODO : possibly find a way to make list based on component scan of a certain package-->
+        <property name="registeredExpressions">
+            <list>
+                <bean class="com.efficio.fieldbook.web.naming.expression.BracketsExpression"/>
+                <bean class="com.efficio.fieldbook.web.naming.expression.BulkCountExpression"/>
+                <bean class="com.efficio.fieldbook.web.naming.expression.FirstExpression"/>
+                <bean class="com.efficio.fieldbook.web.naming.expression.LocationAbbreviationExpression"/>
+                <bean class="com.efficio.fieldbook.web.naming.expression.NumberExpression"/>
+                <bean class="com.efficio.fieldbook.web.naming.expression.SeasonExpression"/>
+                <bean class="com.efficio.fieldbook.web.naming.expression.SequenceExpression"/>
+                <bean class="com.efficio.fieldbook.web.naming.expression.TopLocationAbbreviationExpression"/>
+            </list>
+        </property>
+    </bean>
     
 </beans>

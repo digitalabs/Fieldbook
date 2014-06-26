@@ -66,9 +66,6 @@ public class ImportedGermplasm implements Serializable {
     
     private Integer index;
     
-    
-
-    
     public Integer getIndex() {
 		return index;
 	}

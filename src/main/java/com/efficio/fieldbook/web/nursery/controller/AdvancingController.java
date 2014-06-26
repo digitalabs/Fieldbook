@@ -297,8 +297,6 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     public String postAdvanceNursery(@ModelAttribute("advancingNurseryform") AdvancingNurseryForm form
             , BindingResult result, Model model) throws MiddlewareQueryException{
         
-        advancingNursery.setNamingConvention(form.getNamingConvention());
-        advancingNursery.setSuffixConvention(form.getSuffixConvention() != null ? form.getSuffixConvention() : "");
         advancingNursery.setMethodChoice(form.getMethodChoice());
         advancingNursery.setBreedingMethodId(form.getAdvanceBreedingMethodId());
         advancingNursery.setLineChoice(form.getLineChoice());
@@ -306,22 +304,25 @@ public class AdvancingController extends AbstractBaseFieldbookController{
         advancingNursery.setHarvestDate(form.getHarvestDate());
         advancingNursery.setHarvestLocationId(form.getHarvestLocationId());
         advancingNursery.setHarvestLocationAbbreviation(form.getHarvestLocationAbbreviation() != null ? form.getHarvestLocationAbbreviation() : "");
-        advancingNursery.setPutBrackets(form.getPutBrackets());
         advancingNursery.setAllPlotsChoice(form.getAllPlotsChoice());
         advancingNursery.setLineVariateId(form.getLineVariateId());
         advancingNursery.setPlotVariateId(form.getPlotVariateId());
         advancingNursery.setMethodVariateId(form.getMethodVariateId());
-        advancingNursery.setForcedBulk(form.getNamingConvention().equals(AppConstants.NAMING_CONVENTION_CIMMYT_MAIZE.getString())
-        		&& AppConstants.SELECTED_BULK_SF.getString().equals(form.getAdvanceBreedingMethodId()));
         
-        importedGermplasmList = fieldbookService.advanceNursery(advancingNursery, userSelection.getWorkbook());
-        userSelection.setImportedAdvancedGermplasmList(importedGermplasmList);
-        form.setGermplasmList(importedGermplasmList);
-        form.setEntries(importedGermplasmList.size());
-        form.changePage(1);
-        long id = (new Date()).getTime();
-        getPaginationListSelection().addAdvanceDetails(Long.toString(id), form);
-        form.setUniqueId(id);
+        try {
+        	importedGermplasmList = fieldbookService.advanceNursery(advancingNursery, userSelection.getWorkbook());
+            userSelection.setImportedAdvancedGermplasmList(importedGermplasmList);
+            form.setGermplasmList(importedGermplasmList);
+            form.setEntries(importedGermplasmList.size());
+            form.changePage(1);
+            long id = (new Date()).getTime();
+            getPaginationListSelection().addAdvanceDetails(Long.toString(id), form);
+            form.setUniqueId(id);
+        } catch (MiddlewareQueryException e) {
+        	form.setErrorInAdvance(e.getMessage());
+        	form.setGermplasmList(new ArrayList<ImportedGermplasm>());
+        	form.setEntries(0);
+        }
     	return super.showAjaxPage(model, SAVE_ADVANCE_NURSERY_PAGE_TEMPLATE);
     }
     

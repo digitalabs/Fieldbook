@@ -103,7 +103,7 @@ public class CreateNurseryController extends SettingsController {
 
     	if(nurseryId != 0){     
             Workbook workbook = fieldbookMiddlewareService.getStudyVariableSettings(nurseryId, true);
-            
+            fieldbookService.createIdNameVariablePairs(workbook, AppConstants.ID_NAME_COMBINATION_FOR_RETRIEVE_AND_SAVE.getString(), false);
             Dataset dataset = (Dataset)SettingsUtil.convertWorkbookToXmlDataset(workbook);
             SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
             
@@ -574,10 +574,16 @@ public class CreateNurseryController extends SettingsController {
     @RequestMapping(value = "/deleteVariable/{mode}/{variableId}", method = RequestMethod.POST)
     public String deleteVariable(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, 
             @PathVariable int mode, @PathVariable int variableId) {
+    	Map<String, String> idNameRetrieveSaveMap = fieldbookService.getIdNamePairForRetrieveAndSave();
         if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
             //form.getNurseryLevelVariables()
             addVariableInDeletedList(userSelection.getStudyLevelConditions(), mode, variableId);
             deleteVariableInSession(userSelection.getStudyLevelConditions(), variableId);
+            if(idNameRetrieveSaveMap.get(variableId) != null){
+            	//special case so we must delete it as well
+            	addVariableInDeletedList(userSelection.getStudyLevelConditions(), mode, Integer.parseInt(idNameRetrieveSaveMap.get(variableId)));
+                deleteVariableInSession(userSelection.getStudyLevelConditions(), Integer.parseInt(idNameRetrieveSaveMap.get(variableId)));
+            }
         } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
             addVariableInDeletedList(userSelection.getPlotsLevelList(), mode, variableId);
             deleteVariableInSession(userSelection.getPlotsLevelList(), variableId);

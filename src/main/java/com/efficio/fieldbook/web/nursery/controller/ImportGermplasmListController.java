@@ -56,6 +56,7 @@ import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
+import com.efficio.fieldbook.web.util.AppConstants;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -107,6 +108,8 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
 	/** The fieldbook middleware service. */
 	@Resource
     private FieldbookService fieldbookMiddlewareService;
+	@Resource
+    private com.efficio.fieldbook.service.api.FieldbookService fieldbooService;
     
     /** The ontology service. */
     @Resource
@@ -229,12 +232,13 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             userSelection.setMeasurementRowList(measurementsGeneratorService.generateRealMeasurementRows(userSelection));
             userSelection.getWorkbook().setObservations(userSelection.getMeasurementRowList());
         }
-
+        
+        fieldbooService.createIdNameVariablePairs(userSelection.getWorkbook(), AppConstants.ID_NAME_COMBINATION_FOR_RETRIEVE_AND_SAVE.getString(), true);
         int studyId = dataImportService.saveDataset(userSelection.getWorkbook(), true);
 		
         return Integer.toString(studyId);
     }
-
+    
     private List<ImportedGermplasm> cleanGermplasmList(List<ImportedGermplasm> primaryList, 
 			List<ImportedGermplasm> checkList){
     	

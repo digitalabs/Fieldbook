@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -148,4 +149,7 @@ public interface FieldbookService {
      * @throws MiddlewareQueryException the middleware query exception
      */
     void setAllPossibleValuesInWorkbook(Workbook workbook) throws MiddlewareQueryException;
+    
+    void createIdNameVariablePairs(Workbook workbook, String idNamePairs, boolean deleteIdWhenNameExists) throws MiddlewareQueryException;
+    Map<String,String> getIdNamePairForRetrieveAndSave();
 }

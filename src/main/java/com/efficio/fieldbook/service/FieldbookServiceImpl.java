@@ -16,8 +16,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -25,6 +27,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
+import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -33,6 +36,7 @@ import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.Location;
 import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.Person;
@@ -470,4 +474,157 @@ public class FieldbookServiceImpl implements FieldbookService{
     		}
     	}
     }
+    
+    @Override
+    public Map<String,String> getIdNamePairForRetrieveAndSave(){
+   	 String idNamePairs = AppConstants.ID_NAME_COMBINATION_FOR_RETRIEVE_AND_SAVE.getString();
+   	 StringTokenizer tokenizer = new StringTokenizer(idNamePairs, ",");
+   	 Map<String,String> idNameMap = new HashMap<String, String>();
+			if(tokenizer.hasMoreTokens()){
+				//we iterate it
+				while(tokenizer.hasMoreTokens()){
+					String pair = tokenizer.nextToken();
+					StringTokenizer tokenizerPair = new StringTokenizer(pair, "|");
+					String idTermId = tokenizerPair.nextToken();
+ 					String nameTermId = tokenizerPair.nextToken();
+ 					idNameMap.put(idTermId, nameTermId);
+				}
+			}
+		return idNameMap;
+   }
+    
+    @Override
+  	public void createIdNameVariablePairs(Workbook workbook, String idNamePairs, boolean deleteNameWhenIdNotExist) throws MiddlewareQueryException{
+  		
+  		Map<String, MeasurementVariable> studyConditionMap = new HashMap();
+  		Map<String, List<MeasurementVariable>> studyConditionMapList = new HashMap();
+  		if(workbook != null && idNamePairs != null && !idNamePairs.equalsIgnoreCase("")){
+  			//we get a map so we can check easily instead of traversing it again
+  			for(MeasurementVariable var : workbook.getConditions()){
+  				if(var != null){
+  					studyConditionMap.put(Integer.toString(var.getTermId()), var);
+  					List<MeasurementVariable> varList = new ArrayList();
+  					if(studyConditionMapList.get(Integer.toString(var.getTermId())) != null){
+  						varList = studyConditionMapList.get(Integer.toString(var.getTermId()));
+  					}
+  					varList.add(var);
+  					studyConditionMapList.put(Integer.toString(var.getTermId()), varList);
+  				}
+  			}
+  		
+  		
+  		
+  			StringTokenizer tokenizer = new StringTokenizer(idNamePairs, ",");
+  			if(tokenizer.hasMoreTokens()){
+  				//we iterate it
+  				while(tokenizer.hasMoreTokens()){
+  					String pair = tokenizer.nextToken();
+  					StringTokenizer tokenizerPair = new StringTokenizer(pair, "|");
+  					String idTermId = tokenizerPair.nextToken();
+  					String nameTermId = tokenizerPair.nextToken();
+  					if(studyConditionMap.get(idTermId) != null && studyConditionMap.get(nameTermId) != null){
+  						/*means both are existing
+  						 * we need to get the value from the id and save it in the name
+  						 */
+  						MeasurementVariable tempVarId = studyConditionMap.get(idTermId);
+  						MeasurementVariable tempVarName = studyConditionMap.get(nameTermId);
+  						String actualNameVal = "";
+  						if(tempVarId.getValue() != null && !tempVarId.getValue().equalsIgnoreCase("")){
+  							List<ValueReference> possibleValues = this.getAllPossibleValues(tempVarId.getTermId());
+  							
+  							for(ValueReference ref : possibleValues){
+  								if(ref.getId() != null && ref.getId().toString().equalsIgnoreCase(tempVarId.getValue())){
+  									actualNameVal = ref.getName();
+  									break;
+  								}
+  							}
+  						}
+  						tempVarName.setValue(actualNameVal);	
+//  						if(tempVarId.getOperation() == Operation.ADD && tempVarName.getOperation() != Op)
+  						tempVarName.setOperation(tempVarId.getOperation());
+  						if(tempVarId.getOperation() != null && Operation.DELETE == tempVarId.getOperation()){
+  							if(studyConditionMapList.get(tempVarName.getTermId()) != null){
+  								List<MeasurementVariable> varList  = studyConditionMapList.get(tempVarName.getTermId());
+  								for(MeasurementVariable var : varList){
+  									var.setOperation(Operation.DELETE);
+  								}
+  							}
+  						}
+  					}else if(studyConditionMap.get(idTermId) != null && studyConditionMap.get(nameTermId) == null){
+  						/*means only id is existing
+  						 * we need to create another variable of the name
+  						 */
+  						MeasurementVariable tempVarId = studyConditionMap.get(idTermId);
+  						String actualNameVal = "";
+  						if(tempVarId.getValue() != null && !tempVarId.getValue().equalsIgnoreCase("")){
+  							List<ValueReference> possibleValues = this.getAllPossibleValues(tempVarId.getTermId());
+  							
+  							for(ValueReference ref : possibleValues){
+  								if(ref.getId() != null && ref.getId().toString().equalsIgnoreCase(tempVarId.getValue())){
+  									actualNameVal = ref.getName();
+  									break;
+  								}
+  							}
+  						}
+  						
+  						StandardVariable stdvar = fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(nameTermId));
+  						MeasurementVariable tempVarName = new MeasurementVariable(
+  								Integer.valueOf(nameTermId), stdvar.getName() + "_DBCV", stdvar.getDescription(), stdvar.getScale().getName(), stdvar.getMethod().getName(),
+  								stdvar.getProperty().getName(), stdvar.getDataType().getName(), actualNameVal, stdvar.getPhenotypicType().getLabelList().get(0));
+  						tempVarName.setStoredIn(stdvar.getStoredIn().getId());
+  						tempVarName.setDataTypeId(stdvar.getDataType().getId());
+  						tempVarName.setFactor(false);
+  						if(tempVarId.getOperation() != Operation.DELETE){
+	  						tempVarName.setOperation(tempVarId.getOperation());
+	  						workbook.getConditions().add(tempVarName);
+  						}
+  						//get value only gets the id, we need to get the value here
+  						
+  					}else if(studyConditionMap.get(idTermId) == null && studyConditionMap.get(nameTermId) != null){
+  						/*means only name is existing
+  						 * we need to create the variable of the id 
+  						 */
+  						MeasurementVariable tempVarName = studyConditionMap.get(nameTermId);
+  						String actualIdVal = "";
+  						if(tempVarName.getValue() != null && !tempVarName.getValue().equalsIgnoreCase("")){
+  							List<ValueReference> possibleValues = this.getAllPossibleValues(Integer.valueOf(idTermId));
+  							
+  							for(ValueReference ref : possibleValues){
+  								
+  								if(ref.getId() != null && ref.getName().equalsIgnoreCase(tempVarName.getValue())){
+  									actualIdVal = ref.getId().toString();
+  									break;
+  								}
+  							}
+  						}
+  						
+  						
+  						
+  						if(deleteNameWhenIdNotExist){
+							//we need to delete the name
+  							tempVarName.setOperation(Operation.DELETE);
+  							//to be sure, we check all record and mark it as delete
+  							if(studyConditionMapList.get(tempVarName.getTermId()) != null){
+  								List<MeasurementVariable> varList  = studyConditionMapList.get(tempVarName.getTermId());
+  								for(MeasurementVariable var : varList){
+  									var.setOperation(Operation.DELETE);
+  								}
+  							}
+  						}else{
+  							StandardVariable stdvar = fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(idTermId));
+  	  						MeasurementVariable tempVarId = new MeasurementVariable(
+  	  								Integer.valueOf(idTermId), stdvar.getName() + "_DBID", stdvar.getDescription(), stdvar.getScale().getName(), stdvar.getMethod().getName(),
+  	  								stdvar.getProperty().getName(), stdvar.getDataType().getName(), actualIdVal, stdvar.getPhenotypicType().getLabelList().get(0));
+  	  						tempVarId.setStoredIn(stdvar.getStoredIn().getId());
+  	  						tempVarId.setDataTypeId(stdvar.getDataType().getId());
+  	  						tempVarId.setFactor(false);
+  	  						tempVarId.setOperation(Operation.ADD);
+  							workbook.getConditions().add(tempVarId);	
+  						}
+  					}
+  					
+  				}
+  			}
+  		}
+  	}
 }

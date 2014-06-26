@@ -103,8 +103,6 @@ public class DateUtil {
 				Date dbDate = UI_DATE_FORMATTER.parse(val);
 				return DB_DATE_FORMATTER.format(dbDate);
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 		}
 		return val;

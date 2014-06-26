@@ -56,31 +56,31 @@ window.ChooseSettings = (function() {
 
 		switch (group) {
 			case 1:
-				createDynamicSettingVariables($.parseJSON(data),
+				createDynamicSettingVariables(data,
 						'studyLevelVariables', 'nurseryLevelSettings-dev', 'nurseryLevelSettings', group, '');
 				break;
 			case 2:
-				createTableSettingVariables($.parseJSON(data), 'plotLevelVariables', 'plotLevelSettings', group);
+				createTableSettingVariables(data, 'plotLevelVariables', 'plotLevelSettings', group);
 				break;
 			case 3:
 				hideDummyRow('baselineTraitSettings');
-				createTableSettingVariables($.parseJSON(data), 'baselineTraitVariables', 'baselineTraitSettings', group);
+				createTableSettingVariables(data, 'baselineTraitVariables', 'baselineTraitSettings', group);
 				checkTraitsAndSelectionVariateTable('', false);
 				break;
 			case 6:
 				hideDummyRow('selectionVariatesSettings');
-				createTableSettingVariables($.parseJSON(data),
+				createTableSettingVariables(data,
 						'selectionVariatesVariables',
 						'selectionVariatesSettings', group);
 				checkTraitsAndSelectionVariateTable('', false);
 				break;
 			case 7:
-				createDynamicSettingVariables($.parseJSON(data),
+				createDynamicSettingVariables(data,
 						'nurseryConditions', 'nurseryConditionsSettings',
 						'nurseryConditionsSettings', group, 'Cons');
 				break;
 			default:
-				createDynamicSettingVariables($.parseJSON(data), 'studyLevelVariables', 'nurseryLevelSettings-dev',
+				createDynamicSettingVariables(data, 'studyLevelVariables', 'nurseryLevelSettings-dev',
 				'nurseryLevelSettings', group, '');
 		}
 		checkShowSettingsFormReminder();
@@ -121,6 +121,7 @@ window.ChooseSettings = (function() {
 			}
 		};
 
+		// TODO HH Scope this a little better
 		$(document).on('variable-select', addSelectedVariables);
 	};
 

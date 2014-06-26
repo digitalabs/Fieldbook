@@ -87,47 +87,64 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 	function submitSelectedVariables(group, successFn) {
 
-		var $newVariablesList = $('#newVariablesList tbody tr'),
+		// TODO Prevent already added variables from being able to be selected
+		// TODO Can we get by without variable renaming?
 
-			numberOfVariablesToAdd = $newVariablesList.length;
+		// Test data
+		var testVariable;
 
-		if (numberOfVariablesToAdd === 0) {
-			showErrorMessage('', noVariableAddedMessage);
+		switch (group) {
+			case 1:
+				testVariable = {
+					cvTermId: 8008,
+					name: 'STUDY_DATE'
+				};
+				break;
+			case 7:
+				testVariable = {
+					cvTermId: 22531,
+					name: 'SOILPH'
+				};
+				break;
+			case 2:
+				testVariable = {
+					cvTermId: 8255,
+					name: 'ENTRY_TYPE'
+				};
+				break;
 
-		} else if (numberOfVariablesToAdd > 0 && hasNoVariableName($newVariablesList)) {
-			showErrorMessage('', noVariableNameError);
-
-		} else if (numberOfVariablesToAdd > 0) {
-
-			// TODO - Prevent already added variables from being added again instead of letting them select them
-			// and then erroring
-			var varName = validateUniqueVariableName();
-
-			if (varName !== '') {
-				showErrorMessage('', errorTheVariable + ' &quot;' + varName + '&quot; ' + errorTheVariableNurseryUnique);
-				return;
-			}
-
-			replaceNameVariables($newVariablesList);
-
-			var serializedData = $('input.addVariables').serialize();
-
-			$.ajax({
-				url: '/Fieldbook/NurseryManager/createNursery/addSettings/' + group,
-				type: 'POST',
-				data: serializedData,
-				success: function(data) {
-					$.event.trigger({
-						type: 'variable-select',
-						group: group,
-						responseData: data
-					});
-					successFn();
-				}
-			});
-		} else {
-			showErrorMessage('', varInListMessage);
+			case 3:
+				testVariable = {
+					cvTermId: 22564,
+					name: 'HT'
+				};
+				break;
+			case 6:
+				testVariable = {
+					cvTermId: 8263,
+					name: 'NPSEL'
+				};
+				break;
 		}
+
+		$.ajax({
+			url: '/Fieldbook/NurseryManager/createNursery/addSettings/' + group,
+			type: 'POST',
+			data: JSON.stringify({selectedVariables: [testVariable]}),
+			dataType: 'json',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			},
+			success: function(data) {
+				$.event.trigger({
+					type: 'variable-select',
+					group: group,
+					responseData: data
+				});
+				successFn();
+			}
+		});
 	}
 
 	VariableSelection = function(group, data, translations) {
@@ -135,6 +152,10 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		this._group = group;
 		this._translations = translations;
 		this._modal = $('#addVariablesSettingModal');
+
+		this._modal.on('hide.bs.modal', function() {
+			$('#addVariables').off('click');
+		});
 	};
 
 	VariableSelection.prototype.show = function() {
@@ -173,7 +194,6 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 	VariableSelection.prototype.hide = function() {
 		this._modal.modal('hide');
-		$('#addVariables').off('click');
 	};
 
 	return VariableSelection;

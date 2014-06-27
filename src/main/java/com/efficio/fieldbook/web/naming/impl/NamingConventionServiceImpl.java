@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
@@ -21,6 +19,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 
+import com.efficio.fieldbook.web.naming.expression.RootNameExpression;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.naming.service.ProcessCodeService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
@@ -206,41 +205,15 @@ public class NamingConventionServiceImpl implements NamingConventionService {
     private String getGermplasmRootName(Integer snametype, AdvancingSource row)
     throws MiddlewareQueryException {
     	
-    	String nameString = null;
-    	List<Name> names = row.getNames();
-    	if (names != null && !names.isEmpty()) {
-    		if (snametype != null) {
-	    		for (Name name : names) {
-	    			if (name.getTypeId() != null && name.getTypeId().equals(snametype)) {
-	    				nameString = name.getNval();
-	    				break;
-	    			}
-	    		}
-    		}
-    		if (nameString == null) {
-	    		//if no sname type defined or if no name found that matched the snametype
-	    		for (Name name : names) {
-	    			if (name.getNstat() != null && name.getNstat().equals(1)) {
-	    				nameString = name.getNval();
-	    			}
-	    		}
-    		}
-    	}
-    	
-    	if (nameString == null) {
+    	RootNameExpression expression = new RootNameExpression();
+    	List<StringBuilder> builders = new ArrayList<StringBuilder>();
+    	builders.add(new StringBuilder());
+    	expression.apply(builders, row);
+    	String name = builders.get(0).toString();
+    	if (name.length() == 0) {
     		throw new MiddlewareQueryException(messageSource.getMessage("error.advancing.nursery.no.root.name.found", 
     				new Object[] {row.getGermplasm().getDesig()}, LocaleContextHolder.getLocale())); 
     	}
-    	
-    	//If the root name is a cross string (contains one or more /s not enclosed within the range 
-    	//of a pair of parentheses) then enclose the root name in parentheses.
-    	Pattern pattern = Pattern.compile("[(]+[^)]*[/]+[^(]*[)]+");
-    	Matcher matcher = pattern.matcher(nameString);
-    	if (nameString.contains("/") && !matcher.find()) {
-    		return "(" + nameString + ")";
-    	}
-    	else {
-    		return nameString;
-    	}
+    	return name;
     }
 }

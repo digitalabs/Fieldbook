@@ -26,12 +26,14 @@
             </div>
         </div>
     </div>
-    <div  id="entries-details" style="display: none">
-        <div class="col-xs-8 col-md-8">
+    <div  >
+        <div class="col-xs-8 col-md-8" id="entries-details" style="display: none">
             Total Entries: <label class="control-label control-label-bold" id="numberOfEntries"></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript: void(0)"
                                                                                                                                                      onclick="javascript: viewGermplasmLitDetails();">View Header</a>
         </div>
-        <div class="col-xs-4 col-md-4"></div>
+        <div th:text="#{germplasm.list.check.edit.reminder}" id="check-details" class="fbk-hide">
+        	
+        </div>
     </div>
 </div>
 <div class="row form-group collapse in germplasmListDetails">
@@ -433,7 +435,7 @@
 				success: function(html) {
 
 					$('#check-germplasm-list').html(html);
-					makeCheckDraggable(true);
+					//makeCheckDraggable(true);
 					showSpecifyCheckSection();
 					checksFromPrimary++;
 					setSpinnerMaxValue();
@@ -443,6 +445,7 @@
 							index++;
 							prevStartIndex = $('#startIndex2').val();
 						}
+					$('#check-details').removeClass('fbk-hide');
 				}
 			});
 			return true;
@@ -484,6 +487,7 @@
 					checksFromPrimary = 0;
 					setSpinnerMaxValue();
 					itemsIndexAdded = [];
+					$('#check-details').removeClass('fbk-hide');
 				}
 			});
 		}
@@ -506,6 +510,7 @@
 					// Set primary germplasm list rows' opacity to 1
 					$('.germplasm-list-items tbody tr').css('opacity', '1');
 					lastDraggedChecksList = 0;
+					$('#check-details').addClass('fbk-hide');
 				}
 			});
 			addFakeCheckTable();
@@ -529,8 +534,6 @@
 
 		function deleteCheckGermplasmList(entryNumber, gid) {
 			'use strict';
-
-
 			$.ajax({
 				url: '/Fieldbook/NurseryManager/importGermplasmList/deleteCheckGermplasmDetails/' + gid,
 				type: 'GET',
@@ -766,7 +769,7 @@
 					}
 
 					var source = ui.helper.data('dtSourceNode') || ui.draggable;
-
+						
 					if (!isFunction(source.data)) {
 						if ($(this).hasClass('primary')) {
 							if (lastDraggedChecksList != source.data.key) {
@@ -849,11 +852,11 @@
 						$(ui.helper.find('tr').get(0)).hasClass('checkRow')) {
 
 					// Removes the items from the check list
-
+						/*
 						$.each(ui.helper.find('tr'), function (index, row) {
 							var entryNumber = $(row).data('entry'),
 								gid = '' + $(row).data('gid');
-
+							
 							deleteCheckGermplasmList(entryNumber, gid);
 							$.each($('.germplasm-list-items tbody tr'), function (index, row) {
 								if ($(row).data('entry') == entryNumber && $(row).data('gid') == gid) {
@@ -861,6 +864,19 @@
 								}
 							});
 						});
+						*/
+						$('.checkRow.checkGermplasmSelectedRow').each(function(){
+							
+							var entryNumber = $(this).data('entry'),
+							gid = '' + $(this).data('gid');
+							deleteCheckGermplasmList(entryNumber, gid);
+							$.each($('.germplasm-list-items tbody tr'), function (index, row) {
+								if ($(row).data('entry') == entryNumber && $(row).data('gid') == gid) {
+									$(row).removeAttr('style');
+								}
+							});
+						}
+						);
 						$('.check-germplasm-list-items tr.checkGermplasmSelectedRow').remove();
 						if ($('.check-germplasm-list-items tbody tr').length === 0) {		
 							resetCheckList();

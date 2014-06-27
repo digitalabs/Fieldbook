@@ -47,6 +47,7 @@ import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.service.api.FileService;
 import com.efficio.fieldbook.service.api.WorkbenchService;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.naming.service.NamingConventionService;
 import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
@@ -488,7 +489,7 @@ public class FieldbookServiceImpl implements FieldbookService{
    }
     
     @Override
-  	public void createIdNameVariablePairs(Workbook workbook, String idNamePairs, boolean deleteNameWhenIdNotExist) throws MiddlewareQueryException{
+  	public void createIdNameVariablePairs(Workbook workbook, List<SettingDetail> settingDetails, String idNamePairs, boolean deleteNameWhenIdNotExist) throws MiddlewareQueryException{
   		
   		Map<String, MeasurementVariable> studyConditionMap = new HashMap();
   		Map<String, List<MeasurementVariable>> studyConditionMapList = new HashMap();
@@ -569,9 +570,22 @@ public class FieldbookServiceImpl implements FieldbookService{
   						tempVarName.setDataTypeId(stdvar.getDataType().getId());
   						tempVarName.setFactor(false);
   						if(tempVarId.getOperation() != Operation.DELETE){
-	  						tempVarName.setOperation(tempVarId.getOperation());
+	  						tempVarName.setOperation(Operation.ADD);
 	  						workbook.getConditions().add(tempVarName);
+	  						 SettingVariable svar = new SettingVariable(
+	  								tempVarName.getName(), stdvar.getDescription(), stdvar.getProperty().getName(),
+	  								stdvar.getScale().getName(), stdvar.getMethod().getName(), stdvar.getStoredIn().getName(), 
+	  								stdvar.getDataType().getName(), stdvar.getDataType().getId(), 
+	  								stdvar.getConstraints() != null && stdvar.getConstraints().getMinValue() != null ? stdvar.getConstraints().getMinValue() : null,
+	  			            		stdvar.getConstraints() != null && stdvar.getConstraints().getMaxValue() != null ? stdvar.getConstraints().getMaxValue() : null);
+	                        svar.setCvTermId(stdvar.getId());
+	                        svar.setCropOntologyId(stdvar.getCropOntologyId() != null ? stdvar.getCropOntologyId() : "");
+	                        svar.setTraitClass(stdvar.getIsA() != null ? stdvar.getIsA().getName() : "");
+	                        svar.setOperation(Operation.UPDATE);
+	  						SettingDetail settingDetail = new SettingDetail(svar, null, actualNameVal, true);
+	  						settingDetails.add(settingDetail);
   						}
+  						
   						//get value only gets the id, we need to get the value here
   						
   					}else if(studyConditionMap.get(idTermId) == null && studyConditionMap.get(nameTermId) != null){

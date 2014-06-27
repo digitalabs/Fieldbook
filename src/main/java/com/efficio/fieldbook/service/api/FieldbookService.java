@@ -150,6 +150,6 @@ public interface FieldbookService {
      */
     void setAllPossibleValuesInWorkbook(Workbook workbook) throws MiddlewareQueryException;
     
-    void createIdNameVariablePairs(Workbook workbook, String idNamePairs, boolean deleteIdWhenNameExists) throws MiddlewareQueryException;
+    void createIdNameVariablePairs(Workbook workbook, List<SettingDetail> settingDetails, String idNamePairs, boolean deleteIdWhenNameExists) throws MiddlewareQueryException;
     Map<String,String> getIdNamePairForRetrieveAndSave();
 }

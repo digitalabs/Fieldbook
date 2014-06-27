@@ -443,7 +443,7 @@ public class EditNurseryController extends SettingsController {
                 userSelection.setWorkbook(workbook);
                 //validationService.validateObservationValues(workbook);
                 
-                fieldbookService.createIdNameVariablePairs(userSelection.getWorkbook(), AppConstants.ID_NAME_COMBINATION_FOR_RETRIEVE_AND_SAVE.getString(), true);
+                fieldbookService.createIdNameVariablePairs(userSelection.getWorkbook(), userSelection.getRemovedConditions(), AppConstants.ID_NAME_COMBINATION_FOR_RETRIEVE_AND_SAVE.getString(), true);
                 fieldbookMiddlewareService.saveMeasurementRows(workbook);
                 workbook.setTrialObservations(
                 		fieldbookMiddlewareService.buildTrialObservations(trialDatasetId, workbook.getTrialConditions(), workbook.getTrialConstants()));

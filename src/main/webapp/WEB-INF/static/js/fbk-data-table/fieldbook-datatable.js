@@ -264,27 +264,27 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 				columnsDef.push({
 					targets: columns.length - 1,
 					data: $(this).html(),
-					width: '100px',
+					//width: '100px',
 					render: function(data, type, full, meta) {
 						var fieldName = 'importedCheckGermplasm['+(meta.row)+'].check',
 							count = 0,
 							isSelected = '',
 							actualVal = '',
-							domElem = '<select class="fbk-hide" id="selectedCheck'+(meta.row)+'" name="'+fieldName+'">'+
-									'<option value="">Please Choose</option>'; 
-									
+							actualCode = '',
+							domElem = '';
+							
+						
 						for(count = 0 ; count < full.checkOptions.length ; count++){
 							isSelected = '';
 							if(full.checkOptions[count].id == full.check){
-								isSelected = 'selected';
 								actualVal = full.checkOptions[count].description;
-							}
-							domElem += '<option '+isSelected+' data-code="'+full.checkOptions[count].name+'" value="'+full.checkOptions[count].id+'">'+full.checkOptions[count].description+'</option>';							
+								actualCode = full.checkOptions[count].name;
+								domElem = '<input class="check-hidden" type="hidden"  data-code="'+actualCode+'" value="'+full.check+'" id="selectedCheck'+(meta.row)+'" name="'+fieldName+'">';
+								break;
+							}							
 						}
 						
-						domElem += '</select>';
-								
-						return '<a href="javascript: showCheckSelect(&quot;#selectedCheck'+(meta.row)+'&quot;)">'+actualVal+'</a>' + domElem;
+						return '<a class="check-href edit-check'+meta.row+'" data-code="'+actualCode+'" href="javascript: showPopoverCheck(&quot;'+(meta.row)+'&quot;)">'+actualVal+'</a>' + domElem;
 					}
 				});
 			}
@@ -292,20 +292,25 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 
 
 		this.checkDataTable = $(tableIdentifier).dataTable({	
-			/*data: dataList,
+			data: dataList,
 			columns: columns,
-			columnDefs: columnsDef,
-			*/
+			columnDefs: columnsDef,			
 			scrollY: '500px',
 			scrollX: '100%',
+			bSort: false,
 			scrollCollapse: true,
 		  dom: 'R<t><"fbk-page-div"p>',
 		  iDisplayLength: 100,		  
-		  fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {							
-				//$('td', nRow).attr('nowrap','nowrap');
-			  	//$('.checklist-select').select2({minimumResultsForSearch: 20});
-		        //$(nRow).find('select').select2({minimumResultsForSearch: 20, width: 'copy'});
-			  //$('td', nRow).attr('nowrap','nowrap');
+		  fnRowCallback: function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {		
+		  		$(nRow).addClass('checkRow');
+		  		$(nRow).data('entry', aData.entry);
+				$(nRow).data('gid', aData.gid);
+				$(nRow).data('index', aData.index);
+
+				
+			  	$('td', nRow).attr('nowrap','nowrap');			  	
+			  		
+			  	setTimeout(function(){makeCheckDraggable(makeCheckDraggableBool);}, 300);
 				return nRow;
 			},
 		  fnInitComplete: function(oSettings, json) {
@@ -316,6 +321,11 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 				}
 		  	}
 		});
+		$(parentDiv + ' div.dataTables_scrollBody').scroll( 
+				function(){
+						$(parentDiv + ' .popover').remove();
+					} 
+				);
 		//this.checkDataTable.$('select').select2({minimumResultsForSearch: 20});
 		SelectedCheckListDataTable.prototype.getDataTable = function()
 		{

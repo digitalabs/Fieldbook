@@ -58,17 +58,32 @@
 	var dataSelectedCheckGermplasmList = /*[[${checkListDataTable}]]*/ [];
 	$( document ).ready(function() {
 		'use strict';		
-        $('.checklist-select').select2({minimumResultsForSearch: 20});
+        //$('.checklist-select').select2({minimumResultsForSearch: 20});
 		selectedCheckListDataTable = new BMS.Fieldbook.SelectedCheckListDataTable('.check-germplasm-list-items', '.check-germplasm-list-data-table', dataSelectedCheckGermplasmList);
 		
 	});
-	/*
-	function showCheckSelect(domElemName){
+	function showPopoverCheck(index){
 		'use strict';
-		$(domElemName).removeClass('fbk-hide');
-		$(domElemName).select2({minimumResultsForSearch: 20});
-		$(domElemName).siblings('a').remove();
+		var currentCheckVal = $('.check-germplasm-list-items #selectedCheck'+index).val();
+		$.ajax({
+			url: '/Fieldbook/NurseryManager/GermplasmList/edit/check/' + index,
+			type: 'GET',
+			data: 'currentVal='+currentCheckVal,
+			cache: false,
+			success: function(data) {		
+				
+				$('.check-germplasm-list-items .popover').remove();
+				$('.check-germplasm-list-items .edit-check'+index).popover('destroy');
+				$('.check-germplasm-list-items .edit-check'+index).popover({
+					html: true,
+					title: 'Edit Check',
+					content: data,
+					trigger: 'manual',
+					placement: 'left'
+				});
+				$('.check-germplasm-list-items .edit-check'+index).popover('show');
+			}
+		});
 	}
-	*/
 	//]]>
 </script>

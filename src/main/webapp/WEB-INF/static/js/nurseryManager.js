@@ -229,8 +229,9 @@ function getIndexFromName(name) {
 }
 
 function replacePossibleJsonValues(favoriteJson, allJson, index) {
-	$("#possibleValuesJson" + index).text(allJson);
-	$("#possibleValuesFavoriteJson" + index).text(favoriteJson);
+	'use strict';
+	$('#possibleValuesJson' + index).text(allJson);
+	$('#possibleValuesFavoriteJson' + index).text(favoriteJson);
 }
 
 function setComboValues(suggestions_obj, id, name) {
@@ -808,6 +809,7 @@ function toggleMethodDropdown(rowIndex) {
 	// get possible values based on checkbox
 	if (showFavorite) {
 		possibleValues = $("#possibleValuesFavoriteJson" + rowIndex).text();
+
 		$(
 				$(
 						"#"
@@ -835,7 +837,6 @@ function toggleMethodDropdown(rowIndex) {
 										+ rowIndex + ".value")).parent().find(
 						".selectedValue")).val();
 	}
-
 	// recreate select2 combo
 	initializePossibleValuesCombo($.parseJSON(possibleValues), "#"
 			+ getJquerySafeId("studyLevelVariables" + rowIndex + ".value"),
@@ -1004,7 +1005,7 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 
 					});
 
-	//possibleValues_obj = sortByKey(possibleValues_obj, "text");
+	// possibleValues_obj = sortByKey(possibleValues_obj, "text");
 
 	if (isLocation) {
 		$(name).select2(
@@ -1118,7 +1119,7 @@ function deleteVariable(variableType, variableId, deleteButton) {
 			}
 		});
 		
-		//add dummy row to selection variates/traits if no record is left
+		// add dummy row to selection variates/traits if no record is left
 		if (variableType === 3 && $('#baselineTraitSettings tbody tr').length === 0) {
 			showDummyRow('baselineTraitSettings');
 		} else if (variableType === 6 && $('#selectionVariatesSettings tbody tr').length === 0) {
@@ -1162,7 +1163,7 @@ function proceedWithDelete() {
 		}
 	});
 	
-	//add dummy row to selection variates/traits if no record is left
+	// add dummy row to selection variates/traits if no record is left
 	if (variableType === 3 && $('#baselineTraitSettings tbody tr').length === 0) {
 		showDummyRow('baselineTraitSettings');
 	} else if (variableType === 6 && $('#selectionVariatesSettings tbody tr').length === 0) {
@@ -1613,7 +1614,8 @@ function isStudyNameUnique() {
 	var studyId = '0';
 	if ($('#createNurseryMainForm #studyId').length !== 0){
 		studyId = $('#createNurseryMainForm #studyId').val();
-		//we dont need to call the is name unique again since its not editable anymore in edit
+		// we dont need to call the is name unique again since its not editable
+		// anymore in edit
 		return true;
 	}
 
@@ -1730,13 +1732,13 @@ function validateCreateNursery() {
 	 * should be less than the total germplasm
 	 */
 	if($('.check-germplasm-list-items tbody tr').length != 0 && selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null){
-		selectedCheckListDataTable.getDataTable().$('select').serialize(); 	
+		selectedCheckListDataTable.getDataTable().$('.check-hidden').serialize(); 	
 	
-		if (selectedCheckListDataTable.getDataTable().$('select').length > 0) {
+		if (selectedCheckListDataTable.getDataTable().$('.check-hidden').length > 0) {
 			// we validate only if there is a check
 			// we try to validate if all the check row has check
 			var hasCheckError = false;
-			selectedCheckListDataTable.getDataTable().$('select').each(function(){
+			selectedCheckListDataTable.getDataTable().$('.check-hidden').each(function(){
 				  if($(this).val() === ''){
 					  hasCheckError = true;			
 				  }
@@ -1881,38 +1883,56 @@ function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
 							}
 						});
 	} else {
-		$('.' + comboName).each(
-				function() {
-					var currentVal = $(this).select2('data').id;
-					$(this).select2('destroy');
-					var currentCode = $(this).find('option:selected').data('code');
-					$(this).empty();
-					
-					var i = 0;
-					var selected = '';
-					if (currentVal === '')
+		/*
+		 * $('.' + comboName).each( function() { var currentVal =
+		 * $(this).select2('data').id; $(this).select2('destroy'); var
+		 * currentCode = $(this).find('option:selected').data('code');
+		 * $(this).empty();
+		 * 
+		 * var i = 0; var selected = ''; if (currentVal === '') selected =
+		 * 'selected';
+		 * 
+		 * $(this).append($('<option ' + selected + ' ></option>').attr('value',
+		 * '').text('Please Choose')); for (i = 0; i < suggestions_obj.length;
+		 * i++) { var val = suggestions_obj[i].text; var id =
+		 * suggestions_obj[i].id; selected = ''; if (currentCode ==
+		 * suggestions_obj[i].originalText) selected = 'selected';
+		 * 
+		 * $(this).append( $('<option data-code="'+
+		 * suggestions_obj[i].originalText +'"' + selected + ' ></option>').attr(
+		 * 'value', id).text(val)); }
+		 * 
+		 * }); $('.' + comboName).select2({minimumResultsForSearch: 20});
+		 */
+		if($('.check-germplasm-list-items tbody tr').length != 0 && selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null){
+			selectedCheckListDataTable.getDataTable().$('.check-hidden').each(function(){
+				
+			
+				var currentCode = $(this).data('code');
+				
+				for (i = 0; i < suggestions_obj.length; i++) {
+					var val = suggestions_obj[i].text;
+					var id = suggestions_obj[i].id;
+					selected = '';
+					if (currentCode == suggestions_obj[i].originalText){
 						selected = 'selected';
-
-					$(this).append($('<option ' + selected + ' ></option>').attr('value', '').text('Please Choose'));
-					for (i = 0; i < suggestions_obj.length; i++) {
-						var val = suggestions_obj[i].text;
-						var id = suggestions_obj[i].id;
-						selected = '';
-						if (currentCode == suggestions_obj[i].originalText)
-							selected = 'selected';
-
-						$(this).append(
-								$('<option data-code="'+ suggestions_obj[i].originalText +'"' + selected + ' ></option>').attr(
-										'value', id).text(val));
+						var $href = $(this).siblings().parent().find('.check-href');
+						$href.html(val);
+						$href.data('code', suggestions_obj[i].originalText);
+						$(this).data('code', suggestions_obj[i].originalText);
+						$(this).val(id);
+						break;
 					}
-
-				});
-		$('.' + comboName).select2({minimumResultsForSearch: 20});
+				}
+				
+			});
+		}
 	}
 }
 
 function showManageCheckTypePopup() {
 	$('#page-check-message-modal').html('');
+	$('.check-germplasm-list-items .popover').remove();
 	resetButtonsAndFields();
 	$('#manageCheckTypesModal').modal({
 		backdrop : 'static',
@@ -1999,8 +2019,24 @@ function showCheckTypeMessage(message) {
 }
 
 function deleteCheckType() {
-	if ($("manageCheckCode").select2("data")) {
+	'use strict';
+	var isFound = false;
+	if ($('manageCheckCode').select2('data')) {
+		// we need to check here if it neing used in current
+		if($('.check-germplasm-list-items tbody tr').length != 0 && selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null){
+			var currentId = $('#comboCheckCode').select2('data').id;
+			selectedCheckListDataTable.getDataTable().$('.check-hidden').each(function(){
+				if($(this).val() == currentId){
+					isFound = true;
+				}
+			});
+		} 
+        if(isFound){
+        	showCheckTypeErrorMessage(checkTypeCurrentlyUseError);
+        	return false;
+        }
 
+		
 		var $form = $("#manageCheckValue,#comboCheckCode");
 		var serializedData = $form.serialize();
 		$
@@ -2290,13 +2326,14 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 		success : function(data) {
 			if (data.success == "1") {
 				if (selectedMethodAll != null) {
-					//recreate the select2 combos to get updated list of methods
+					// recreate the select2 combos to get updated list of
+					// methods
 					recreateMethodComboAfterClose("methodIdAll", $
 							.parseJSON(data.allNonGenerativeMethods));
 					recreateMethodComboAfterClose("methodIdFavorite", $
 							.parseJSON(data.favoriteNonGenerativeMethods));
 					showCorrectMethodCombo();
-					//set previously selected value of method
+					// set previously selected value of method
 					if ($("#showFavoriteMethod").prop("checked")) {
 						setComboValues(methodSuggestionsFav_obj,
 								selectedMethodFavorite, "methodIdFavorite");
@@ -2306,7 +2343,7 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 					}
 				} else {
 					var selectedVal = null;
-					//get index of breeding method row
+					// get index of breeding method row
 					var index = getBreedingMethodRowIndex();
 
 
@@ -2314,11 +2351,11 @@ function recreateModalMethodCombo(comboName, comboFaveCBoxName) {
 						selectedVal = $("#" + getJquerySafeId(comboName))
 								.select2("data").id;
 					}
-					//recreate select2 of breeding method
+					// recreate select2 of breeding method
 					initializePossibleValuesCombo([], "#"
 							+ getJquerySafeId(comboName), false, selectedVal);
 
-					//update values of combo
+					// update values of combo
 					if ($("#" + getJquerySafeId(comboFaveCBoxName)).is(
 							":checked")) {
 						initializePossibleValuesCombo($
@@ -2412,9 +2449,12 @@ function showGermplasmDetailsSection() {
 	$('.overwrite-germplasm-list').hide();
 }
 
-//FIXME Should not be using global variables or functions
-/*global lastDraggedChecksList, Spinner, validateCreateNursery, validateStartEndDate, moveToTopScreen*/
-/*global loadNurserySettingsForCreate, getJquerySafeId, changeBuildOption*/
+// FIXME Should not be using global variables or functions
+/*
+ * global lastDraggedChecksList, Spinner, validateCreateNursery,
+ * validateStartEndDate, moveToTopScreen
+ */
+/* global loadNurserySettingsForCreate, getJquerySafeId, changeBuildOption */
 function refreshStudyAfterSave(studyId){
 	'use strict';
 	$.ajax({
@@ -2462,7 +2502,7 @@ function initializeReviewDatasetTabs(datasetId) {
 
 function resetDesigConfirmationFields() {
 	'use strict';
-	//reset dropdowns and fields
+	// reset dropdowns and fields
 	$('#importLocationId').select2('data', null);
 	$('#importMethodId').select2('data', null);
 	$('#nameType').select2('data', {'id': $("#nameType option:first").val(), 'text':$("#nameType option:first").html()})
@@ -2498,8 +2538,7 @@ function submitGermplasmAndCheck() {
 	var $form = $('#germplasm-list-form'),
 		serializedData = $form.serialize();
 	if($('.check-germplasm-list-items tbody tr').length != 0 && selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null){
-		selectedCheckListDataTable.getDataTable().$('select').serialize();
-		serializedData += "&" + selectedCheckListDataTable.getDataTable().$('select').serialize(); 
+		serializedData += "&" + selectedCheckListDataTable.getDataTable().$('.check-hidden').serialize(); 
 	}
 
 	$.ajax({
@@ -2516,16 +2555,17 @@ function submitGermplasmAndCheck() {
 function addFakeCheckTable(){
 	'use strict';
 	if($('.germplasm-list-items tbody tr').length > 0 && $('.check-germplasm-list-items tbody tr').length == 0 && $('#check-germplasm-list .fake-check-germplasm-list-items tbody tr').length == 0){
-		//we add the fake table
+		// we add the fake table
 		$('.fake-check-germplasm-list-items').clone().removeClass('fbk-hide').appendTo('#check-germplasm-list');
 	}else if($('.germplasm-list-items tbody tr').length === 0 && $('#check-germplasm-list .fake-check-germplasm-list-items tbody tr').length == 1){
-		//we remove if there are no nursery check and the selected check is fake
+		// we remove if there are no nursery check and the selected check is
+		// fake
 		$('#check-germplasm-list .fake-check-germplasm-list-items').remove();
 	}
 }
 function checkShowSettingsFormReminder(){
 	'use strict';
-	//we check management details if there are entries
+	// we check management details if there are entries
 	if($('.nurseryLevelSettings .1st').length === 0){
 		$('.management-details-section-reminder').removeClass('fbk-hide');
 	}else{

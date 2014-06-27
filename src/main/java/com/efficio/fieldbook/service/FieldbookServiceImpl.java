@@ -309,7 +309,7 @@ public class FieldbookServiceImpl implements FieldbookService{
         if (possibleValuesFavorite == null) {
             if (TermId.BREEDING_METHOD_ID.getId() == id) {
                 List<Integer> methodIds = workbenchService.getFavoriteProjectMethods(projectId);
-                possibleValuesFavorite = getFavoriteBreedingMethods(methodIds, true);
+                possibleValuesFavorite = getFavoriteBreedingMethods(methodIds, false);
             } else if (TermId.LOCATION_ID.getId() == id) {
                 List<Long> locationIds = workbenchService.getFavoriteProjectLocationIds(projectId);
                 possibleValuesFavorite = convertLocationsToValueReferences(fieldbookMiddlewareService

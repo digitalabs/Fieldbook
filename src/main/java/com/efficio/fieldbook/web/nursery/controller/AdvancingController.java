@@ -192,13 +192,13 @@ public class AdvancingController extends AbstractBaseFieldbookController{
 			              .getFavoriteProjectMethods(getCurrentProjectId());
 			List<Method> favoriteMethods = fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIds, false);						
 			List<Method> allNonGenerativeMethods = fieldbookMiddlewareService.getAllBreedingMethods(true);
-			List<Method> favoriteNonGenerativeMethods = fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIds, true);
+			//List<Method> favoriteNonGenerativeMethods = fieldbookMiddlewareService.getFavoriteBreedingMethods(methodIds, true);
                                    
             result.put("success", "1");
             result.put("allMethods", convertMethodsToJson(breedingMethods));
             result.put("favoriteMethods", convertMethodsToJson(favoriteMethods));            
             result.put("allNonGenerativeMethods", convertMethodsToJson(allNonGenerativeMethods));
-            result.put("favoriteNonGenerativeMethods", convertMethodsToJson(favoriteNonGenerativeMethods));
+            result.put("favoriteNonGenerativeMethods", convertMethodsToJson(favoriteMethods));
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
             result.put("success", "-1");

@@ -1008,7 +1008,7 @@ function initializeMethodSelect2(methodSuggestions, methodSuggestionsObj) {
 
 	// If combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
 	$('#' + getJquerySafeId('methodIdAll')).select2({
-		minimumResultsForSearch: $('#' + getJquerySafeId('methodIdAll')).find('option').length == 0 ? -1 : 20,
+		minimumResultsForSearch: methodSuggestionsObj.length == 0 ? -1 : 20,
 		query: function(query) {
 			var data = {results: methodSuggestionsObj}, i, j, s;
 			// Return the array that matches
@@ -1043,7 +1043,7 @@ function initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFavOb
 
 	// If combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
 	$('#' + getJquerySafeId('methodIdFavorite')).select2({
-		minimumResultsForSearch: $('#' + getJquerySafeId('methodIdFavorite')).find('option').length == 0 ? -1 : 20,
+		minimumResultsForSearch: methodSuggestionsFavObj.length == 0 ? -1 : 20,
 		query: function(query) {
 			var data = {results: methodSuggestionsFavObj}, i, j, s;
 			// Return the array that matches

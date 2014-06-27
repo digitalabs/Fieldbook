@@ -88,7 +88,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			validateDescriptionSheetFirstCell(descriptionSheet);
 			validateSections(descriptionSheet);
 
-			String trialInstanceNumber = getTrialInstanceNumber(xlsBook);
+			String trialInstanceNumber = (workbook != null && workbook.isNursery()) ? "1" : getTrialInstanceNumber(xlsBook);
 			if (trialInstanceNumber == null || "".equals(trialInstanceNumber)) {
 				if (!workbook.isNursery()) {
 					throw new WorkbookParserException("error.workbook.import.missing.trial.instance");
@@ -437,9 +437,6 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			else if(cell.getCellType() == Cell.CELL_TYPE_STRING){
 				trialInstance = cell.getStringCellValue();
 			}
-		}else{
-			//we always default it to 1
-			trialInstance = "1";
 		}
 		return trialInstance;
     }

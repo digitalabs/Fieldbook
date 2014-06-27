@@ -132,8 +132,14 @@ public class CSVOziel {
     		
             for (MeasurementRow row : this.observations) {
                 csvOutput.write(getDisplayValue(map.get(row.getLocationId())));
-                csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.REP_NO.getId(), row));
-                csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.BLOCK_NO.getId(), row));
+                if (workbook.isNursery()) {
+	                csvOutput.write("1");
+	                csvOutput.write("1");
+                }
+                else {
+	                csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.REP_NO.getId(), row));
+	                csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.BLOCK_NO.getId(), row));
+                }
                 
                 String plot = WorkbookUtil.getValueByIdInRow(this.headers, TermId.PLOT_NO.getId(), row);
                 if (plot == null || "".equals(plot.trim())) {
@@ -185,8 +191,14 @@ public class CSVOziel {
     		
             for (MeasurementRow mRow : this.observations) {
                 csvOutput.write(getDisplayValue(map.get(mRow.getLocationId())));
-                csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.REP_NO.getId(), mRow));
-                csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.BLOCK_NO.getId(), mRow));
+                if (workbook.isNursery()) {
+                    csvOutput.write("1");
+                    csvOutput.write("1");
+                }
+                else {
+                    csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.REP_NO.getId(), mRow));
+                    csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.BLOCK_NO.getId(), mRow));
+                }
 
                 csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.ENTRY_NO.getId(), mRow));
                 try {
@@ -537,8 +549,12 @@ public class CSVOziel {
                  */
                 //Actualmente se guarda la ocurrencia, pero no necesariamente debe ser asi.
                 //se acordo con Celso dejar ahi la occurencia.
-                String rep = WorkbookUtil.getValueByIdInRow(this.headers, TermId.REP_NO.getId(), row);
-                csvOutput.write(rep);
+                if (workbook.isNursery()) {
+	                csvOutput.write("1");
+                } else {
+	                String rep = WorkbookUtil.getValueByIdInRow(this.headers, TermId.REP_NO.getId(), row);
+	                csvOutput.write(rep);
+                }
 
                 for (int z = 0; z < this.variateHeaders.size(); z++) {
                     csvOutput.write("");

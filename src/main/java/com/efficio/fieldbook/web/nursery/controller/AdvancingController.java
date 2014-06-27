@@ -360,7 +360,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     			boolean isBulk = false;
     			boolean isLine = false;
     			for (Method method : methods) {
-    				if (method.getGeneq() != null && method.getGeneq().equals("1")) {
+    				if (method.isBulkingMethod() != null && method.isBulkingMethod()) {
     					isBulk = true;
     				} else {
     					isLine = true;

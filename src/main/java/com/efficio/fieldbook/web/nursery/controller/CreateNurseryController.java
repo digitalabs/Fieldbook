@@ -103,7 +103,7 @@ public class CreateNurseryController extends SettingsController {
 
     	if(nurseryId != 0){     
             Workbook workbook = fieldbookMiddlewareService.getStudyVariableSettings(nurseryId, true);
-            fieldbookService.createIdNameVariablePairs(workbook, AppConstants.ID_NAME_COMBINATION_FOR_RETRIEVE_AND_SAVE.getString(), false);
+            fieldbookService.createIdNameVariablePairs(workbook, new ArrayList(),AppConstants.ID_NAME_COMBINATION_FOR_RETRIEVE_AND_SAVE.getString(), false);
             Dataset dataset = (Dataset)SettingsUtil.convertWorkbookToXmlDataset(workbook);
             SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
             

@@ -1,7 +1,4 @@
-/* global displayOntologyTree, getJquerySafeId, getIdCounterpart, showErrorMessage, noVariableNameError */
-
-// TODO HH Move these to be passed in
-/* global noVariableAddedMessage, errorTheVariable, errorTheVariableNurseryUnique, varInListMessage*/
+/* global displayOntologyTree */
 
 /**
  * @module measurements-datatable
@@ -33,56 +30,6 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		$('#selectedCropOntologyId').html('&nbsp;');
 		$('#selectedStdVarId').val('');
 		$('#selectedName').val('');
-	}
-
-	function replaceNameVariables($variablesList) {
-
-		$.each($variablesList, function(index, row) {
-			var value = $(
-					$(row).children('td:nth-child(1)').children('#' + getJquerySafeId('selectedVariables' + index + '.cvTermId'))).val();
-
-			// use the id counterpart of the name variable
-			$($(row).children('td:nth-child(1)').children('#' +
-				getJquerySafeId('selectedVariables' + index + '.cvTermId'))).val(getIdCounterpart(value,
-				$('#idNameVariables').val().split(',')));
-		});
-
-	}
-
-	function hasNoVariableName($variablesList) {
-
-		var result = false;
-
-		$.each($variablesList, function(index, row) {
-			if ($($(row).children('td:nth-child(1)').children('#' + getJquerySafeId('selectedVariables' + index + '.name'))).val() === '') {
-				result = true;
-			}
-		});
-		return result;
-	}
-
-	function validateUniqueVariableName() {
-		var existingNameMap = [],
-			isFound = false,
-			existingVarName = '',
-			newName = '';
-
-		$('.var-names').each(function() {
-			var varName = $.trim($(this).html()).toUpperCase();
-			existingNameMap[varName] = $(this).html();
-		});
-
-		$('input[type=text].addVariables').each(function() {
-			newName = $.trim($(this).val()).toUpperCase();
-			if (isFound === false && existingNameMap[newName] !== undefined) {
-				existingVarName = $.trim($(this).val());
-				isFound = true;
-				return;
-			} else {
-				existingNameMap[newName] = newName;
-			}
-		});
-		return existingVarName;
 	}
 
 	function submitSelectedVariables(group, successFn) {

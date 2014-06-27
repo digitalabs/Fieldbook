@@ -358,7 +358,6 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
     @RequestMapping(value="variable/verify", method = RequestMethod.POST)
     public String saveVerifyNewVariable(@ModelAttribute("ontologyBrowserForm") OntologyBrowserForm form
             , BindingResult result, Model model) {
-        OntologyBrowserValidator validator = new OntologyBrowserValidator();
         boolean error = false;
             try {
                
@@ -367,16 +366,12 @@ public class OntologyManagerController extends AbstractBaseFieldbookController{
                     StandardVariable standardVariable = new StandardVariable();
                     //if variable is from local, add/update the variable
                     //if it's from central, get the standard variable object only for update of valid value
-                    if (form.getVariableId() == null || form.getVariableId() < 0) {
-                        standardVariable = createStandardVariableObject(form, operation);
-                
-                    }
+                    
                     Integer standardVariableId = null;
                     if (form.getVariableId() == null || form.getVariableId() < 0) {
-                        standardVariable = createStandardVariableObject(form, operation);           
-                    }
-                    
-                    standardVariableId = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(standardVariable.getProperty().getName(), standardVariable.getScale().getName(), standardVariable.getMethod().getName(),standardVariable.getPhenotypicType());
+                        standardVariable = createStandardVariableObject(form, operation);
+                        standardVariableId = fieldbookMiddlewareService.getStandardVariableIdByPropertyScaleMethodRole(standardVariable.getProperty().getName(), standardVariable.getScale().getName(), standardVariable.getMethod().getName(),standardVariable.getPhenotypicType());
+                    }                                      
                     
                     if(form.getVariableId() == null && standardVariableId != null){
                     	error = true;

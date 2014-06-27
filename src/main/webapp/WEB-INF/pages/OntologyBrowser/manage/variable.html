@@ -427,6 +427,7 @@ function doValidation() {
 
     var serializedData = $("#manageVariable").serialize();
     var isValid = true;
+
     $.ajax({
         url: $('#manageVariable').attr('action') + "/verify",
         type: "POST",
@@ -436,13 +437,9 @@ function doValidation() {
         success: function (data) {
             if(data == 'error'){
                 isValid = false;
-                //psmrError
-                //$('#add-var-err-msg').html(psmrError);
-                //$('#addFailedSaveModal').modal('show');
                 showErrorMessage('page-message',psmrError );
                 moveToTopScreen();
             }
-            //console.log(data);
         }
     });
 

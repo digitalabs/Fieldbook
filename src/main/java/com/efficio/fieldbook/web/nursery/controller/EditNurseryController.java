@@ -25,6 +25,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.commons.context.ContextConstants;
 import org.generationcp.commons.context.ContextInfo;
@@ -222,7 +223,9 @@ public class EditNurseryController extends SettingsController {
                     isFound = true;
                     if (termId.equals(Integer.valueOf(TermId.STUDY_UID.getId()))) {
                         try {
-                            form.setCreatedBy(fieldbookService.getPersonById(Integer.parseInt(setting.getValue())));
+                        	if (setting.getValue() != null && NumberUtils.isNumber(setting.getValue())) {
+                        		form.setCreatedBy(fieldbookService.getPersonById(Integer.parseInt(setting.getValue())));
+                        	}
                         }
                         catch (MiddlewareQueryException e) {
                             LOG.error(e.getMessage(), e);

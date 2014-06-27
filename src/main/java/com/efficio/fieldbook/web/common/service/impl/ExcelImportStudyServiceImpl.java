@@ -437,6 +437,9 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			else if(cell.getCellType() == Cell.CELL_TYPE_STRING){
 				trialInstance = cell.getStringCellValue();
 			}
+		}else{
+			//we always default it to 1
+			trialInstance = "1";
 		}
 		return trialInstance;
     }

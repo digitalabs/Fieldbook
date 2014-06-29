@@ -217,11 +217,14 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         	    	        form.getImportedCheckGermplasm());
         			form.setImportedGermplasm(newNurseryGermplasm);
         		}
-        		
+        		int interval = 0;
+        		if(form.getInterval() != null && !form.getInterval().equalsIgnoreCase("")){
+        			interval = Integer.parseInt(form.getInterval());
+        		}
         		List<ImportedGermplasm> newImportedGermplasm = mergeCheckService.mergeGermplasmList(form.getImportedGermplasm(), 
     	    	        form.getImportedCheckGermplasm(), 
     	    	        Integer.parseInt(form.getStartIndex()), 
-    	    	        Integer.parseInt(form.getInterval()), 
+    	    	        interval, 
     	    	        Integer.parseInt(form.getMannerOfInsertion()));
         		
     	    	getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().setImportedGermplasms(newImportedGermplasm);

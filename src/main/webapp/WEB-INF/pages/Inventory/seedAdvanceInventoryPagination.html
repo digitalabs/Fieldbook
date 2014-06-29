@@ -98,10 +98,78 @@
 			$('#'+getJquerySafeId(sectionContainerDiv) + ' .selectAllAdvance').on('change', function(){
 				//select all the checkbox in the section container div
     				var isChecked = $(this).prop('checked');
-    				$('#'+getJquerySafeId(sectionContainerDiv) + ' .advancingListGid').each(function(){
-    					$(this).prop('checked', isChecked);
-    				});
+    				$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table #inventory-table tr').removeClass('selected');
+    				$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table #inventory-table tr').removeClass('manual-selected');
+    				$('#'+getJquerySafeId(sectionContainerDiv) + ' input.advancingListGid').prop('checked', isChecked);
+    				if(isChecked){
+    					$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table #inventory-table tr').addClass('selected');
+        				$('#'+getJquerySafeId(sectionContainerDiv) + ' .advance-nursery-list-table #inventory-table tr').addClass('manual-selected');
+    				}
     			});
+			
+			$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table').tableSelect({
+				onClick: function(row) {
+					//we clear all check
+					if($('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table').data('check-click') === '1'){
+						$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table').data('check-click', '0');
+						$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected').addClass('selected');
+						$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr:not(.manual-selected) input.advancingListGid:checked').parent().parent().addClass('selected');
+						$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.selected input.advancingListGid:not(:checked)').parent().parent().removeClass('selected');
+					}else{
+						$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table input.advancingListGid').prop('checked', false);
+						$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected').removeClass('manual-selected');
+						if($(row).hasClass('selected')){
+							$(row).find('input.advancingListGid').prop('checked', true);
+						}else{
+							$(row).find('input.advancingListGid').prop('checked', false);
+						}
+					}
+					
+				},
+				onCtrl: function(row){
+					console.log('on ctrl');
+					/*
+					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected input.advancingListGid').prop('checked', true);
+					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected input.advancingListGid').addClass('selected');
+					*/
+					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.selected input.advancingListGid').prop('checked', true);
+					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr:not(.selected) input.advancingListGid').prop('checked', false);
+					if($(row).hasClass('manual-selected') || $(row).hasClass('selected')){
+						$(row).find('input.advancingListGid').prop('checked', true);
+						$(row).addClass('selected');
+					}else{
+						$(row).find('input.advancingListGid').prop('checked', false);
+						$(row).removeClass('selected');
+					}
+					if($('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table').data('check-click') === '1'){
+						$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table').data('check-click', '0');
+						if($(row).hasClass('selected') && $(row).hasClass('manual-selected') === false){
+							$(row).find('input.advancingListGid').prop('checked', false);
+							$(row).removeClass('selected');	
+						}
+					}
+				},
+				onShift: function(){
+					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected-dummy').addClass('selected');					
+					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.selected input.advancingListGid').prop('checked', true);
+					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr:not(.selected) input.advancingListGid').prop('checked', false);
+				}
+			
+			});
+			$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table input.advancingListGid').on('click', function(){
+				$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table').data('check-click', '1');
+				if($(this).is(':checked')){
+					//we highlight
+					$(this).parent().parent().addClass('selected');
+					$(this).parent().parent().addClass('manual-selected');
+				}else{
+					$(this).parent().parent().removeClass('selected');
+					$(this).parent().parent().removeClass('manual-selected');
+				}
+				$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected input.advancingListGid').prop('checked', true);
+				$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected').addClass('selected');
+				$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr:not(.manual-selected)').remove('selected');								
+			});
 			truncateStudyVariableNames('#' + sectionContainerDiv + ' .advance-nursery-list-table .advance-list-comment', 30);
         });
         

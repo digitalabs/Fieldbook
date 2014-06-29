@@ -1363,3 +1363,15 @@ label[data-toggle="collapse"],
 .editCheck .input-group-btn{
 	padding-left: 10px;
 }
+.fbk-advance-label-pos .sub-content-heading{
+	position: relative; 
+	top: 2px;
+}
+.fbk-advance-label-pos .control-label{
+	position: relative; 
+	top: 6px;
+}
+.fbk-advance-label-pos .advanced-list-label{
+	position: relative; 
+	top: 10px;
+}

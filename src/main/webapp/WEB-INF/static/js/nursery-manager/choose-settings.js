@@ -5,7 +5,8 @@
 window.ChooseSettings = (function() {
 	'use strict';
 
-	var variableSelectionGroups,
+	var modalSelector = '.nrm-vs-modal',
+		variableSelectionGroups,
 		ChooseSettings;
 
 	function getStandardVariables(variableType, successFn) {
@@ -16,37 +17,6 @@ window.ChooseSettings = (function() {
 			success: successFn
 			// TODO Error handling
 		});
-	}
-
-	function openVariableSelectionDialog(e) {
-		e.preventDefault();
-
-		var group = e.data.group,
-			groupData = variableSelectionGroups[group],
-			VariableSelection = window.BMS.NurseryManager.VariableSelection,
-			properties;
-
-		if (!groupData.modal) {
-			// Get properties for this group
-			properties = getStandardVariables(group, function(data) {
-
-				// Initialise a new Variable Selection instance, passing through the properties, group type and translations
-				variableSelectionGroups[group].modal = new VariableSelection(group, {
-					treeData: data.treeData,
-					searchTreeData: data.searchTreeData
-				}, {
-					label: groupData.label,
-					placeholderLabel: groupData.placeholder
-				});
-
-				// Call Variable Selection.show
-				variableSelectionGroups[group].modal.show();
-			});
-
-		} else {
-			// We've opened this dialog before, so just call Variable Selection.show
-			groupData.modal.show();
-		}
 	}
 
 	function addSelectedVariables(e) {
@@ -92,37 +62,64 @@ window.ChooseSettings = (function() {
 			1: {
 				selector: '.nrm-md-variable-select',
 				label: translations.mdLabel,
-				placeholder: translations.mdPlaceholder,
-				modal: null
+				placeholder: translations.mdPlaceholder
 			},
 			2: {
 				selector: '.nrm-fct-variable-select',
 				label: translations.fdLabel,
-				placeholder: translations.fdPlaceholder,
-				modal: null
+				placeholder: translations.fdPlaceholder
 			},
 			6: {
 				selector: '.nrm-sv-variable-select',
 				label: translations.svLabel,
-				placeholder: translations.svPlaceholder,
-				modal: null
+				placeholder: translations.svPlaceholder
 			},
 			3: {
 				selector: '.nrm-trait-variable-select',
 				label: translations.tdLabel,
-				placeholder: translations.tdPlaceholder,
-				modal: null
+				placeholder: translations.tdPlaceholder
 			},
 			7: {
 				selector: '.nrm-nc-variable-select',
 				label: translations.ncLabel,
-				placeholder: translations.ncPlaceholder,
-				modal: null
+				placeholder: translations.ncPlaceholder
 			}
 		};
 
 		// TODO HH Scope this a little better
 		$(document).on('variable-select', addSelectedVariables);
+	};
+
+	ChooseSettings.prototype._openVariableSelectionDialog = function(e) {
+		e.preventDefault();
+
+		var groupId = e.data.group,
+			group = variableSelectionGroups[groupId],
+			groupTranslations = {
+				label: group.label,
+				placeholderLabel: group.placeholder
+			},
+			properties;
+
+		if (!this._variableSelection) {
+			this._variableSelection = new window.BMS.NurseryManager.VariableSelection($(modalSelector));
+		}
+
+		if (!group.data) {
+			// Get properties for this group
+			properties = getStandardVariables(groupId, $.proxy(function(data) {
+				// Initialise a new Variable Selection instance, passing through the properties, group type and groupTranslations
+				variableSelectionGroups[groupId].data = {
+					treeData: data.treeData,
+					searchTreeData: data.searchTreeData
+				};
+
+				this._variableSelection.show(groupId, variableSelectionGroups[groupId].data, groupTranslations);
+			}, this));
+		} else {
+			// We've shown this before, and have the data. Just show the dialog.
+			this._variableSelection.show(groupId, group.data, groupTranslations);
+		}
 	};
 
 	ChooseSettings.prototype.initialiseVariableSelection = function() {
@@ -135,7 +132,7 @@ window.ChooseSettings = (function() {
 			if (variableSelectionGroups.hasOwnProperty(key)) {
 				group = variableSelectionGroups[key];
 
-				$(group.selector).click({group: parseInt(key, 10)}, openVariableSelectionDialog);
+				$(group.selector).click({group: parseInt(key, 10)}, this._openVariableSelectionDialog);
 			}
 		}
 	};

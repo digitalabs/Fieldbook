@@ -94,24 +94,21 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		});
 	}
 
-	VariableSelection = function(group, data, translations) {
-		this._data = data;
-		this._group = group;
-		this._translations = translations;
-		this._modal = $('#addVariablesSettingModal');
+	VariableSelection = function(modal) {
+		this._modal = modal;
 
 		this._modal.on('hide.bs.modal', function() {
 			$('#addVariables').off('click');
 		});
 	};
 
-	VariableSelection.prototype.show = function() {
+	VariableSelection.prototype.show = function(group, data, translations) {
 
 		if ($('#' + treeDivId + ' .fbtree-container').length > 0) {
 			$('#' + treeDivId).dynatree('destroy');
 		}
 
-		displayOntologyTree(treeDivId, this._data.treeData, this._data.searchTreeData, 'srch-term');
+		displayOntologyTree(treeDivId, data.treeData, data.searchTreeData, 'srch-term');
 		$('#' + 'srch-term').val('');
 
 		// clear selected variables table and attribute fields
@@ -119,13 +116,13 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 		clearAttributeFields();
 
-		$('.nrm-vs-modal .fbk-modal-title').text(this._translations.label);
-		$('.nrm-vs-modal .nrm-vs-hint-placeholder').html(this._translations.placeholderLabel);
+		$('.nrm-vs-modal .fbk-modal-title').text(translations.label);
+		$('.nrm-vs-modal .nrm-vs-hint-placeholder').html(translations.placeholderLabel);
 
 		$('#ontology-detail-tabs').empty().html($('.variable-detail-info').html());
 		$('#variable-details').html('');
 
-		$('#addVariables').on('click', null, {group: this._group}, $.proxy(function(e) {
+		$('#addVariables').on('click', null, {group: group}, $.proxy(function(e) {
 			e.preventDefault();
 			submitSelectedVariables(e.data.group, $.proxy(this.hide, this));
 		}, this));

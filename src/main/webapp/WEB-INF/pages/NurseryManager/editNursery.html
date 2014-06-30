@@ -198,10 +198,7 @@
 			<div id="chooseGermplasmAndChecks" th:include="/NurseryManager/importGermplasmList"></div>
 			<div class="row form-group overwrite-germplasm-list">
 				<div class="col-xs-12 col-md-12">
-					<label class="control-label">
-						<strong class="sub-content-heading" th:text="#{nursery.edit.nursery.overwrite.germplasm.list.message}">
-							This Nursery has a saved germplasm list, do you want to overwrite it?
-						</strong>
+					<label class="control-label" th:text="#{nursery.edit.nursery.overwrite.germplasm.list.message}">						
 					</label>
 					&nbsp;&nbsp;&nbsp;
 					<button class="btn btn-primary" onclick="showGermplasmDetailsSection();" th:text="#{germplasm.replace}">Overwrite</button>

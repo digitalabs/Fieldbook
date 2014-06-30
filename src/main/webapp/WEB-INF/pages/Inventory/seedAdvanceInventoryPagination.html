@@ -64,7 +64,7 @@
  
 <script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
-    /*globals getJquerySafeId, showMultiTabPage, getCurrentAdvanceTabListIdentifier*/
+    /*globals getJquerySafeId, showMultiTabPage, truncateStudyVariableNames*/
     /*exported paginationUrl, options*/
 
         var paginationUrl = /*[[@{/SeedStoreManager/page/advance/}]]*/ '';
@@ -127,11 +127,7 @@
 					
 				},
 				onCtrl: function(row){
-					console.log('on ctrl');
-					/*
-					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected input.advancingListGid').prop('checked', true);
-					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.manual-selected input.advancingListGid').addClass('selected');
-					*/
+					
 					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr.selected input.advancingListGid').prop('checked', true);
 					$('#' + sectionContainerDiv + ' .advance-nursery-list-table #inventory-table tr:not(.selected) input.advancingListGid').prop('checked', false);
 					if($(row).hasClass('manual-selected') || $(row).hasClass('selected')){

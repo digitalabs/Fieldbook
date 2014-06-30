@@ -187,7 +187,7 @@ public class AdvancingSourceListFactory {
     }
     
     private String getSeason(MeasurementRow trialRow) {
-        String season = trialRow.getMeasurementDataValue(TermId.SEASON_MONTH.getId());
+        String season = trialRow.getMeasurementDataValue(TermId.SEASON.getId());
         if (season == null || "".equals(season.trim())) {
 	        season = trialRow.getMeasurementDataValue(TermId.SEASON_VAR_TEXT.getId());
 	        if (season == null || "".equals(season.trim())) {

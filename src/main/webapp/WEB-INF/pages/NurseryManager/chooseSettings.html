@@ -18,14 +18,14 @@
 <div class="row">
 	<div class="col-xs-6">
 
-		<div class="form-group">
+		<div class="form-group nrm-management-details">
 			<label class="control-label" data-toggle="collapse" data-target=".nurseryLevelDetails">
 				<strong class="sub-content-heading" th:text="#{nursery.managesettings.management.details}">MANAGEMENT DETAILS</strong>
 				<span class="bms-fa-question-circle help-tooltip-nursery" data-placement="right" data-toggle="tooltip" data-container="body" th:title="#{nursery.managesettings.nursery.level.notes}"></span>
 
 			</label>
 
-			<a href="#" class="btn btn-info pull-right nrm-md-variable-select" th:text="#{nursery.create.nursery.add.settings}">Add</a>
+			<a href="#" class="btn btn-info pull-right nrm-var-select-open" th:text="#{nursery.create.nursery.add.settings}">Add</a>
 
         </div>
         <div class="form-group management-details-section-reminder fbk-hide">
@@ -97,13 +97,13 @@
 			</div>
 		</div>
 
-		<div class="form-group">
+		<div class="form-group nrm-factors">
 			<img width="23" height="23" th:src="@{/static/img/factors.png}" class="image-padding" /> &nbsp;
 			<label class="control-label" data-toggle="collapse" data-target=".plotLevelDetails">
 				<strong class="sub-content-heading" th:text="#{nursery.managesettings.plot.level.details}">PLOT-LEVEL DETAILS</strong>
 				<span class="bms-fa-question-circle help-tooltip-nursery" data-placement="right" data-toggle="tooltip" data-container="body" th:title="#{nursery.managesettings.plot.level.notes}"></span>
 			</label>
-			<a href="#" th:if="${createNurseryForm.measurementDataExisting == false}" class="btn btn-info pull-right nrm-fct-variable-select" th:text="#{nursery.create.nursery.add.settings}">Add</a>
+			<a href="#" th:if="${createNurseryForm.measurementDataExisting == false}" class="btn btn-info pull-right nrm-var-select-open" th:text="#{nursery.create.nursery.add.settings}">Add</a>
 		</div>
 		<div class="form-group collapse in plotLevelDetails">
 			<table style="table-layout: fixed;" class="my-class table table-curved table-condensed" id="plotLevelSettings">
@@ -134,14 +134,14 @@
 		</div>
 
 		<!-- selection variates -->
-		<div class="form-group">
+		<div class="form-group nrm-selection-variates">
 			<img width="23" height="23" th:src="@{/static/img/variates.png}" class="image-padding" /> &nbsp;
 			<label class="control-label" data-toggle="collapse" data-target=".selectionVariatesDetails">
 				<strong class="sub-content-heading" th:text="#{nursery.create.nursery.selection.variates}">SELECTION VARIATES</strong>
 				<span class="bms-fa-question-circle help-tooltip-nursery" data-placement="right" data-toggle="tooltip" data-container="body" th:title="#{nursery.create.nursery.selection.variates.notes}"></span>
 			</label>
 
-			<a class="btn btn-info pull-right nrm-sv-variable-select" href="#" th:text="#{nursery.create.nursery.add.settings}">Add</a>
+			<a class="btn btn-info pull-right nrm-var-select-open" href="#" th:text="#{nursery.create.nursery.add.settings}">Add</a>
 		</div>
 		<div class="form-group collapse in selectionVariatesDetails">
 			<table style="table-layout: fixed;" class="my-class table table-curved table-condensed selection-variate-table" id="selectionVariatesSettings">
@@ -216,13 +216,13 @@
 	</div>
 	<div class="col-xs-6">
 
-		<div class="form-group">
+		<div class="form-group nrm-nursery-conditions">
 			<label class="control-label" data-toggle="collapse" data-target=".nurseryConditionsDetails">
 				<strong class="sub-content-heading" th:text="#{nursery.create.nursery.conditions}">NURSERY CONDITIONS</strong>
 				<span class="bms-fa-question-circle help-tooltip-nursery" data-placement="right" data-toggle="tooltip" data-container="body" th:title="#{nursery.create.nursery.conditions.notes}"></span>
 			</label>
 
-			<a class="btn btn-info pull-right nrm-nc-variable-select" href="#" th:text="#{nursery.create.nursery.add.settings}">Add</a>
+			<a class="btn btn-info pull-right nrm-var-select-open" href="#" th:text="#{nursery.create.nursery.add.settings}">Add</a>
         </div>
          <div class="form-group constants-section-reminder fbk-hide">
         	<label class="control-label" th:text="#{section.reminder.to.add.records}"></label>
@@ -274,14 +274,14 @@
 			</div>
 		</div>
 
-		<div class="form-group">
+		<div class="form-group nrm-traits">
 			<img width="23" height="23" th:src="@{/static/img/baseline-traits.png}" class="image-padding" /> &nbsp;
 			<label class="control-label" data-toggle="collapse" data-target=".baselineTraitDetails">
 				<strong class="sub-content-heading" th:text="#{nursery.managesettings.baseline.traits}">BASELINE TRAITS</strong>
 				<span class="bms-fa-question-circle help-tooltip-nursery" data-placement="right" data-toggle="tooltip" data-container="body" th:title="#{nursery.managesettings.baseline.traits.notes}"></span>
 			</label>
 
-			<a class="btn btn-info pull-right nrm-trait-variable-select" href="#" th:text="#{nursery.create.nursery.add.settings}">Add</a>
+			<a class="btn btn-info pull-right nrm-var-select-open" href="#" th:text="#{nursery.create.nursery.add.settings}">Add</a>
 		</div>
 		<div class="form-group collapse in baselineTraitDetails">
 			<table style="table-layout: fixed;" class="my-class table table-curved table-condensed traits-table" id="baselineTraitSettings">
@@ -318,11 +318,7 @@
 	</div>
 </div>
 
-<div class="row">
-	<div class="col-xs-12 col-md-12">
-		<div th:include="/NurseryManager/includes/variableSelectionModal"></div>
-	</div>
-</div>
+<div th:include="/NurseryManager/includes/variableSelectionModal"></div>
 
 </form>
 <div class="row">

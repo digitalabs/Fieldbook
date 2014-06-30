@@ -1,5 +1,3 @@
-/* global displayOntologyTree */
-
 /**
  * @module measurements-datatable
  */
@@ -16,26 +14,12 @@ if (typeof (BMS.NurseryManager) === 'undefined') {
 BMS.NurseryManager.VariableSelection = (function($) {
 	'use strict';
 
-	var treeDivId = 'ontologyBrowserTree',
+	var VariableSelection;
 
-		VariableSelection;
-
-	function clearAttributeFields() {
-		$('selectedTraitClass').html('&nbsp;');
-		$('selectedProperty').html('&nbsp;');
-		$('#selectedMethod').html('&nbsp;');
-		$('#selectedScale').html('&nbsp;');
-		$('#selectedDataType').html('&nbsp;');
-		$('#selectedRole').html('&nbsp;');
-		$('#selectedCropOntologyId').html('&nbsp;');
-		$('#selectedStdVarId').val('');
-		$('#selectedName').val('');
-	}
-
-	function submitSelectedVariables(group, successFn) {
+	function selectVariable(group) {
 
 		// TODO Prevent already added variables from being able to be selected
-		// TODO Can we get by without variable renaming?
+		// TODO HH Need the ability to rename variables
 
 		// Test data
 		var testVariable;
@@ -85,49 +69,42 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			},
 			success: function(data) {
 				$.event.trigger({
-					type: 'variable-select',
+					type: 'nrm-variable-select',
 					group: group,
 					responseData: data
 				});
-				successFn();
 			}
+			// TODO HH Error handling
 		});
 	}
 
-	VariableSelection = function(modal) {
-		this._modal = modal;
+	VariableSelection = function(selector) {
+		this._modalSelector = selector;
+		this._modal = $(selector);
 
 		this._modal.on('hide.bs.modal', function() {
-			$('#addVariables').off('click');
+			$('.nrm-var-select-add').off('click');
 		});
 	};
 
 	VariableSelection.prototype.show = function(group, data, translations) {
 
-		if ($('#' + treeDivId + ' .fbtree-container').length > 0) {
-			$('#' + treeDivId).dynatree('destroy');
-		}
+		var modalHeader = $(this._modalSelector + ' ' + '.modal-header'),
+			title;
 
-		displayOntologyTree(treeDivId, data.treeData, data.searchTreeData, 'srch-term');
-		$('#' + 'srch-term').val('');
+		// Clear title
+		modalHeader.empty();
 
-		// clear selected variables table and attribute fields
-		$('#newVariablesList > tbody').empty();
+		// Append new title
+		title = $('<h4 class="modal-title" id="nrm-var-selection-modal-title">' + translations.label + '</h4>');
+		modalHeader.append(title);
 
-		clearAttributeFields();
+		//displayOntologyTree(treeDivId, data.treeData, data.searchTreeData, 'srch-term');
 
-		$('.nrm-vs-modal .fbk-modal-title').text(translations.label);
-		$('.nrm-vs-modal .nrm-vs-hint-placeholder').html(translations.placeholderLabel);
-
-		$('#ontology-detail-tabs').empty().html($('.variable-detail-info').html());
-		$('#variable-details').html('');
-
-		$('#addVariables').on('click', null, {group: group}, $.proxy(function(e) {
+		$('.nrm-var-select-add').on('click', null, {group: group}, $.proxy(function(e) {
 			e.preventDefault();
-			submitSelectedVariables(e.data.group, $.proxy(this.hide, this));
+			selectVariable(e.data.group);
 		}, this));
-
-		$('#newVariablesList').addClass('fbk-hide');
 
 		// Show the modal
 		this._modal.modal({

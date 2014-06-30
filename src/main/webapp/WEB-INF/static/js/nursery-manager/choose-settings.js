@@ -5,7 +5,8 @@
 window.ChooseSettings = (function() {
 	'use strict';
 
-	var modalSelector = '.nrm-vs-modal',
+	var modalSelector = '.nrm-var-selection-modal',
+		dialogOpenSelector = '.nrm-var-select-open',
 		variableSelectionGroups,
 		ChooseSettings;
 
@@ -60,34 +61,33 @@ window.ChooseSettings = (function() {
 
 		variableSelectionGroups = {
 			1: {
-				selector: '.nrm-md-variable-select',
+				selector: '.nrm-management-details',
 				label: translations.mdLabel,
 				placeholder: translations.mdPlaceholder
 			},
 			2: {
-				selector: '.nrm-fct-variable-select',
+				selector: '.nrm-factors',
 				label: translations.fdLabel,
 				placeholder: translations.fdPlaceholder
 			},
 			6: {
-				selector: '.nrm-sv-variable-select',
+				selector: '.nrm-selection-variates',
 				label: translations.svLabel,
 				placeholder: translations.svPlaceholder
 			},
 			3: {
-				selector: '.nrm-trait-variable-select',
+				selector: '.nrm-traits',
 				label: translations.tdLabel,
 				placeholder: translations.tdPlaceholder
 			},
 			7: {
-				selector: '.nrm-nc-variable-select',
+				selector: '.nrm-nursery-conditions',
 				label: translations.ncLabel,
 				placeholder: translations.ncPlaceholder
 			}
 		};
 
-		// TODO HH Scope this a little better
-		$(document).on('variable-select', addSelectedVariables);
+		$(document).on('nrm-variable-select', addSelectedVariables);
 	};
 
 	ChooseSettings.prototype._openVariableSelectionDialog = function(e) {
@@ -102,7 +102,7 @@ window.ChooseSettings = (function() {
 			properties;
 
 		if (!this._variableSelection) {
-			this._variableSelection = new window.BMS.NurseryManager.VariableSelection($(modalSelector));
+			this._variableSelection = new window.BMS.NurseryManager.VariableSelection(modalSelector);
 		}
 
 		if (!group.data) {
@@ -132,7 +132,7 @@ window.ChooseSettings = (function() {
 			if (variableSelectionGroups.hasOwnProperty(key)) {
 				group = variableSelectionGroups[key];
 
-				$(group.selector).click({group: parseInt(key, 10)}, this._openVariableSelectionDialog);
+				$(group.selector  + ' ' + dialogOpenSelector).click({group: parseInt(key, 10)}, this._openVariableSelectionDialog);
 			}
 		}
 	};

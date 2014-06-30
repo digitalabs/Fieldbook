@@ -64,17 +64,7 @@ public class AdvancingSourceListFactory {
                 	}
                     
                     MeasurementRow trialRow = getTrialObservation(workbook, row.getLocationId());
-                    season = trialRow.getMeasurementDataValue(TermId.SEASON_VAR_TEXT.getId());
-                    if (season == null || "".equals(season.trim())) {
-                        MeasurementData seasonData = trialRow.getMeasurementData(TermId.SEASON_VAR.getId());
-                        if (seasonData != null) {
-                        	season = seasonData.getDisplayValue();
-                        }
-                    }
-                    if (season == null || "".equals(season.trim())) {
-                    	DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-                    	season = dateFormat.format(new Date());
-                    }
+                    season = getSeason(trialRow);
                     
                     String check = row.getMeasurementDataValue(TermId.CHECK.getId());
                     boolean isCheck = check != null && !"".equals(check);
@@ -141,14 +131,6 @@ public class AdvancingSourceListFactory {
     	return null;
     }
     
-    private Boolean isBulk(Integer methodId, Map<Integer, Method> methodMap) throws MiddlewareQueryException {
-    	if (methodId != null) {
-    		Method method = methodMap.get(methodId);
-    		return method != null && method.getGeneq() != null && method.getGeneq().equals(1);
-    	}
-    	return null;
-    }
-    
     private Integer getIntegerValue(String value) {
         Integer integerValue = null;
         
@@ -202,5 +184,23 @@ public class AdvancingSourceListFactory {
             }
             
         }
+    }
+    
+    private String getSeason(MeasurementRow trialRow) {
+        String season = trialRow.getMeasurementDataValue(TermId.SEASON_MONTH.getId());
+        if (season == null || "".equals(season.trim())) {
+	        season = trialRow.getMeasurementDataValue(TermId.SEASON_VAR_TEXT.getId());
+	        if (season == null || "".equals(season.trim())) {
+	            MeasurementData seasonData = trialRow.getMeasurementData(TermId.SEASON_VAR.getId());
+	            if (seasonData != null) {
+	            	season = seasonData.getDisplayValue();
+	            }
+	        }
+        }
+        if (season == null || "".equals(season.trim())) {
+        	DateFormat dateFormat = new SimpleDateFormat("yyyyMM");
+        	season = dateFormat.format(new Date());
+        }
+        return season;
     }
 }

@@ -1554,7 +1554,8 @@ function validateBreedingMethod() {
 			async: false,
 			success: function(data) {
 				if (data == 0) {
-					showErrorMessage('page-advance-modal-message', noMethodValueError);
+					var newMessage = noMethodValueError.replace(new RegExp(/\{0\}/g), $('#methodVariateId').text());
+					showErrorMessage('page-advance-modal-message', newMessage);
 					valid = false;
 				}
 			},

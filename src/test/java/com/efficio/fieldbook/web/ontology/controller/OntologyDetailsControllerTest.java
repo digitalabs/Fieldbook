@@ -37,6 +37,7 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.web.common.bean.PropertyTree;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.ontology.form.OntologyDetailsForm;
 
@@ -100,7 +101,7 @@ public class OntologyDetailsControllerTest  extends AbstractJUnit4SpringContextT
 			log.error(e);
 		}
     	
-    	String result = controller.getPropertiesBySettingsGroup(1, 101);
+    	List<PropertyTree> result = controller.getPropertiesBySettingsGroup(1, 101);
     	
     }
     

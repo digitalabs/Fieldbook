@@ -129,7 +129,7 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
      */
     @ResponseBody
     @RequestMapping(value = "/OntologyBrowser/settings/properties", method = RequestMethod.GET)
-    public String getPropertiesBySettingsGroup(@RequestParam(required=true) Integer groupId, @RequestParam(required=false) Integer classId) {
+    public List<PropertyTree> getPropertiesBySettingsGroup(@RequestParam(required=true) Integer groupId, @RequestParam(required=false) Integer classId) {
     	try {
     		
     		if(classId == null) {
@@ -186,18 +186,11 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
     				}
 				}
 			}
-	    	ObjectMapper om = new ObjectMapper();
-			return om.writeValueAsString(propertyTrees);
-		} catch (JsonGenerationException e) {
-			LOG.error("Error generating JSON for property trees " + e.getMessage());
-		} catch (JsonMappingException e) {
-			LOG.error("Error mapping JSON for property trees " + e.getMessage());
-		} catch (IOException e) {
-			LOG.error("Error writing JSON for property trees " + e.getMessage());
+			return propertyTrees;
 		} catch (MiddlewareQueryException e) {
 			LOG.error("Error querying Ontology Manager for full Ontology Tree " + e.getMessage());
 		}
-    	return "[]";
+    	return new ArrayList<PropertyTree>();
     } 
     
     /**

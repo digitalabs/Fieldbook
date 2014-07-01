@@ -27,7 +27,7 @@ public class TestMergeCheckServiceImpl {
 		int startIndex = 1;
 		int interval = 2;
 		int manner = 1;
-		List<ImportedGermplasm> newList = mergeCheckService.mergeGermplasmList(primaryList, checkList, startIndex, interval, manner);
+		List<ImportedGermplasm> newList = mergeCheckService.mergeGermplasmList(primaryList, checkList, startIndex, interval, manner, "");
 		
 		for (ImportedGermplasm newGerm : newList) {
 			System.out.println(newGerm.getEntryId() + " " + newGerm.getDesig());
@@ -42,7 +42,7 @@ public class TestMergeCheckServiceImpl {
 		int startIndex = 1;
 		int interval = 2;
 		int manner = 2;
-		List<ImportedGermplasm> newList = mergeCheckService.mergeGermplasmList(primaryList, checkList, startIndex, interval, manner);
+		List<ImportedGermplasm> newList = mergeCheckService.mergeGermplasmList(primaryList, checkList, startIndex, interval, manner, "");
 		
 		for (ImportedGermplasm newGerm : newList) {
 			System.out.println(newGerm.getEntryId() + " " + newGerm.getDesig());

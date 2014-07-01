@@ -48,6 +48,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.PropertyTree;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.ontology.bean.OntologyUsage;
 import com.efficio.fieldbook.web.ontology.form.OntologyDetailsForm;
 
 /**
@@ -257,10 +258,14 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
      * @throws JsonMappingException 
      * @throws JsonGenerationException 
      */
-    @ResponseBody
-    @RequestMapping(value = "/OntologyBrowser/variables/usage/{mode}", method = RequestMethod.GET)
-    public String getUsageBySettingsMode(@PathVariable int mode) {
+    @SuppressWarnings("unchecked")
+	@ResponseBody
+    @RequestMapping(value = "/OntologyBrowser/variables/usage", method = RequestMethod.GET)
+    public String getUsageBySettingsMode(@RequestParam(required=true) Integer mode, @RequestParam(required=false) Boolean flat) {
     	try {
+    		
+    		if(flat == null) flat = true;
+    		
     		// Fetch the list of filtered Standard Variable References and extract ids (this would be better if 
     		// filtered SVs were full objects)
     		List<StandardVariableReference> stdVars = fieldbookService.filterStandardVariablesForSetting(mode, new ArrayList<SettingDetail>());
@@ -281,18 +286,15 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
     		
     		// Collecting stats in a TreeMap to sort on experimental usage
     		Map<Long, List<String>> usageMap = new TreeMap<Long, List<String>>(Collections.reverseOrder());
+    		List<OntologyUsage> usageList = new ArrayList<OntologyUsage>();
     		
-    		int count = 0;
-    		int foundCount = 0;
     		List<TraitClassReference> tree = ontologyService.getAllTraitGroupsHierarchy(true);
     		for (TraitClassReference root : tree) {
     			for (TraitClassReference traitClassReference : root.getTraitClassChildren()) {
 					for (PropertyReference property : traitClassReference.getProperties()) {
 						if(!property.getStandardVariables().isEmpty()) {
 							for (StandardVariableReference svRef : property.getStandardVariables()) {
-								count ++;
 								if(stdVars.contains(svRef)) {
-									foundCount++;
 									StandardVariable sv = svMap.get(svRef.getId());
 									long projectCount = ontologyService.countProjectsByVariable(svRef.getId());
 									long experimentCount = ontologyService.countExperimentsByVariable(sv.getId(), sv.getStoredIn().getId());
@@ -306,10 +308,15 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
 									resultBuilder.append(projectCount);
 									resultBuilder.append(":");
 									resultBuilder.append(experimentCount);
+									OntologyUsage ou = new OntologyUsage();
+									ou.setStandardVariable(sv);
+									ou.setProjectCount(Long.valueOf(projectCount));
+									ou.setExperimentCount(Long.valueOf(experimentCount));
 									if(usageMap.get(Long.valueOf(experimentCount)) == null) {
 										usageMap.put(Long.valueOf(experimentCount), new ArrayList<String>());
 									}
 									usageMap.get(Long.valueOf(experimentCount)).add(resultBuilder.toString());
+									usageList.add(ou);
 								}
 								else LOG.info("Missed : " + svRef.getId() + ":" + svRef.getName() + ":" + svRef.getDescription());
 							}
@@ -318,11 +325,15 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
 				}
 			}
     		
-    		LOG.info("Variables navigated : " + count);
-    		LOG.info("Variables found : " + foundCount);
-    		
 	    	ObjectMapper om = new ObjectMapper();
-			return om.writeValueAsString(usageMap.values());
+	    	if(flat) {
+	    		return om.writeValueAsString(usageMap.values());
+	    	}
+	    	else {
+	    		// FIXME : aim to avoid warning suppression
+	    		Collections.sort(usageList);
+	    		return om.writeValueAsString(usageList);
+	    	}
 			
 		} catch (JsonGenerationException e) {
 			LOG.error("Error generating JSON for property trees " + e.getMessage());

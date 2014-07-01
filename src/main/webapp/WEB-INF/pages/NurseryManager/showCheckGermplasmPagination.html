@@ -16,6 +16,7 @@
 				<table th:if="*{not #lists.isEmpty(importedCheckGermplasm)}" class="table-curved table-condensed check-germplasm-list-items">
 					<thead>
 						<tr>
+							<th data-col-name="action"></th>
 							<th data-col-name="desig" style="text-align: left; vertical-align: middle" th:utext="#{nursery.import.header.designation}">.Designation</th>
 							<th data-col-name="check" style="width: 110px; text-align: left; vertical-align: middle" th:utext="#{nursery.import.header.check}">.Check</th>
 						</tr>
@@ -59,14 +60,25 @@
 	$( document ).ready(function() {
 		'use strict';		
         //$('.checklist-select').select2({minimumResultsForSearch: 20});
-		selectedCheckListDataTable = new BMS.Fieldbook.SelectedCheckListDataTable('.check-germplasm-list-items', '.check-germplasm-list-data-table', dataSelectedCheckGermplasmList);
-		
+		selectedCheckListDataTable = new BMS.Fieldbook.SelectedCheckListDataTable('.check-germplasm-list-items', '.check-germplasm-list-data-table', dataSelectedCheckGermplasmList);				
 	});
 	function showPopoverCheck(index){
 		'use strict';
-		var currentCheckVal = $('.check-germplasm-list-items #selectedCheck'+index).val();
+		var currentCheckVal = $('.check-germplasm-list-items #selectedCheck'+index).val(),
+			realIndex = index;
+		//we need to get the real index of the check
+		
+		
+		if(selectedCheckListDataTable != null){
+			selectedCheckListDataTable.getDataTable().$('.check-hidden').each(function(indexCount){
+				if($(this).attr('id') === 'selectedCheck'+index){
+					realIndex = indexCount;
+					return;
+				}
+			})
+		}
 		$.ajax({
-			url: '/Fieldbook/NurseryManager/GermplasmList/edit/check/' + index,
+			url: '/Fieldbook/NurseryManager/GermplasmList/edit/check/' + index + '/' + realIndex,
 			type: 'GET',
 			data: 'currentVal='+currentCheckVal,
 			cache: false,

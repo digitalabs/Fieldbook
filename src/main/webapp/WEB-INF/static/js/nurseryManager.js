@@ -1759,7 +1759,7 @@ function validateCreateNursery() {
 				showInvalidInputMessage(checkIntervalGreaterThanZeroError);
 				return false;
 			}
-			var totalNumberOfChecks = $('#totalNumberOfChecks').val();
+			var totalNumberOfChecks = selectedCheckListDataTable.getDataTable().$('.check-hidden').length;
 			if (parseInt($('#interval2').val(), 10) <= totalNumberOfChecks) {
 				showInvalidInputMessage(checkIntervalError);
 				return false;

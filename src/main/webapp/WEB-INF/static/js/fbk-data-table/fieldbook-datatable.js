@@ -266,7 +266,7 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 					data: $(this).html(),
 					//width: '100px',
 					render: function(data, type, full, meta) {
-						var fieldName = 'importedCheckGermplasm['+(meta.row)+'].check',
+						var fieldName = 'selectedCheck',
 							count = 0,
 							isSelected = '',
 							actualVal = '',
@@ -285,6 +285,16 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 						}
 						
 						return '<a class="check-href edit-check'+meta.row+'" data-code="'+actualCode+'" href="javascript: showPopoverCheck(&quot;'+(meta.row)+'&quot;)">'+actualVal+'</a>' + domElem;
+					}
+				});
+			} else if ($(this).data('col-name') == 'action') {
+				// For delete
+				columnsDef.push({
+					targets: columns.length - 1,
+					width: '15px',
+					data: $(this).html(),
+					render: function(data, type, full, meta) {
+						return '<span class="delete-icon delete-check" data-index="'+meta.row+'"></span>';
 					}
 				});
 			}
@@ -309,7 +319,7 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 
 				
 			  	$('td', nRow).attr('nowrap','nowrap');			  	
-			  		
+			  	
 			  	setTimeout(function(){makeCheckDraggable(makeCheckDraggableBool);}, 300);
 				return nRow;
 			},
@@ -326,7 +336,13 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 						$(parentDiv + ' .popover').remove();
 					} 
 				);
-		//this.checkDataTable.$('select').select2({minimumResultsForSearch: 20});
+		this.checkDataTable.$('.delete-check').on('click', function(){
+			
+			var entryNumber = $(this).parent().parent().data('entry'),
+			gid = '' + $(this).parent().parent().data('gid');
+			deleteCheckGermplasmList(entryNumber, gid, $(this).parent().parent());	
+			
+	  	});	
 		SelectedCheckListDataTable.prototype.getDataTable = function()
 		{
 		    return this.checkDataTable;

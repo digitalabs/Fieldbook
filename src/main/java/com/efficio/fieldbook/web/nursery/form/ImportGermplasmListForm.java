@@ -72,10 +72,17 @@ public class ImportGermplasmListForm {
     private String startIndex;
     private int totalGermplasms;
     private String lastDraggedChecksList = "0";
-    
-    
-	
-    public String getLastDraggedChecksList() {
+    private String[] selectedCheck;
+        	
+    public String[] getSelectedCheck() {
+		return selectedCheck;
+	}
+
+	public void setSelectedCheck(String[] selectedCheck) {
+		this.selectedCheck = selectedCheck;
+	}
+
+	public String getLastDraggedChecksList() {
 		return lastDraggedChecksList;
 	}
 

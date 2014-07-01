@@ -17,9 +17,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.generationcp.middleware.domain.dms.Enumeration;
@@ -184,18 +184,18 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     @ResponseBody
     @RequestMapping(value={"/next", "/submitAll"}, method = RequestMethod.POST)
     public String nextScreen(@ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form
-            , BindingResult result, Model model) throws MiddlewareQueryException {
+            , BindingResult result, Model model, HttpServletRequest req) throws MiddlewareQueryException {
     		//start: section for taking note of the check germplasm
-    	 
-         if(form.getImportedCheckGermplasm() != null){
- 	        for(int i = 0 ; i < form.getImportedCheckGermplasm().size() ; i++){
- 	            ImportedGermplasm importedGermplasm = form.getImportedCheckGermplasm().get(i);
+		 String selectedCheck[] = form.getSelectedCheck();
+         if(selectedCheck != null && selectedCheck.length != 0){
+ 	        for(int i = 0 ; i < selectedCheck.length ; i++){
+ 	            //ImportedGermplasm importedGermplasm = form.getImportedCheckGermplasm().get(i);
  	            int realIndex = i;
- 	            getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheck(importedGermplasm.getCheck());
- 	            if (importedGermplasm.getCheck() != null && NumberUtils.isNumber(importedGermplasm.getCheck())) {
- 	            	getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckId(Integer.parseInt(importedGermplasm.getCheck()));
+ 	            getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheck(selectedCheck[i]);
+ 	            if (NumberUtils.isNumber(selectedCheck[i])) {
+ 	            	getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckId(Integer.parseInt(selectedCheck[i]));
  	            }
- 	            getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckName(importedGermplasm.getCheckName());
+ 	            //getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckName(importedGermplasm.getCheckName());
  	        }
          }
          //end: section for taking note of the check germplasm
@@ -286,9 +286,9 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             List<ImportedGermplasm> list = transformGermplasmListDataToImportedGermplasm(data, null);
             
             form.setImportedGermplasm(list);
-            List<Map<String, String>> dataTableDataList = new ArrayList();
+            List<Map<String, String>> dataTableDataList = new ArrayList<Map<String, String>>();
         	for(ImportedGermplasm germplasm : list){
-            	Map<String, String> dataMap = new HashMap();            	
+            	Map<String, String> dataMap = new HashMap<String, String>();            	
 				dataMap.put("position", germplasm.getIndex().toString());
 				dataMap.put("entry", germplasm.getEntryId().toString());
 				dataMap.put("desig", germplasm.getDesig().toString());
@@ -409,6 +409,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             while (iter.hasNext()) {
                 if (iter.next().getGid().equalsIgnoreCase(gid.toString())) {
                     iter.remove();
+                    break;
                 }
             }
             
@@ -469,19 +470,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             		userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms() != null){
             	//we set it here
             	list = userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
-            	/*
-            	StringTokenizer checkTokenizer = new StringTokenizer(selectedCheckVal, ":");
-            	int checkIndex = 0 ;
-            	while(checkTokenizer.hasMoreElements()){
-            		String selectedCheck = checkTokenizer.nextToken();
-            		if(selectedCheck != null){
-            			if(list != null && checkIndex < list.size()){
-            				list.get(checkIndex).setCheck(selectedCheck);
-            			}
-            		}
-            		checkIndex++;
-            	}
-            	*/
+            	
             }
             list.add(importedGermplasm);
             
@@ -503,9 +492,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
             importedGermplasmList.setImportedGermplasms(list);
             mainInfo.setImportedGermplasmList(importedGermplasmList);
-            
-            
-            //form.changePage(1);
+
             form.changeCheckPage(1);
             userSelection.setCurrentPageCheckGermplasmList(form.getCurrentCheckPage());
 
@@ -534,18 +521,13 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         try {
             ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
             mainInfo.setAdvanceImportType(true);
-            //form.setImportedCheckGermplasmMainInfo(mainInfo);
             
             List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
-            
-            //form.setImportedCheckGermplasm(list);
-            
+                        
             ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
             importedGermplasmList.setImportedGermplasms(list);
             mainInfo.setImportedGermplasmList(importedGermplasmList);
             
-            //form.changePage(1);
-            //form.changeCheckPage(1);
             userSelection.setCurrentPageCheckGermplasmList(1);
 
             getUserSelection().setImportedCheckGermplasmMainInfo(mainInfo);
@@ -557,19 +539,20 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         return "success";
     }
     
-    @RequestMapping(value="/edit/check/{index}", method = RequestMethod.GET)
+    @RequestMapping(value="/edit/check/{index}/{dataTableIndex}", method = RequestMethod.GET)
     public String editCheck( @ModelAttribute("updatedGermplasmCheckForm") UpdateGermplasmCheckForm form, 
-    		Model model, @PathVariable int index, @RequestParam(value="currentVal") String currentVal) {
+    		Model model, @PathVariable int index, @PathVariable int dataTableIndex, @RequestParam(value="currentVal") String currentVal) {
         
     	
         try {
-        	ImportedGermplasm importedCheckGermplasm = getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(index);
+        	ImportedGermplasm importedCheckGermplasm = getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(dataTableIndex);
         	importedCheckGermplasm.setCheck(currentVal);
         	List<Enumeration> allEnumerations = ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
 
         	model.addAttribute("allCheckTypes", allEnumerations);
         	form.setCheckVal(currentVal);
         	form.setIndex(index);
+        	form.setDataTableIndex(dataTableIndex);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }

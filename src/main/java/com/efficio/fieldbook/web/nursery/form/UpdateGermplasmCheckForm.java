@@ -2,6 +2,7 @@ package com.efficio.fieldbook.web.nursery.form;
 
 public class UpdateGermplasmCheckForm {
 	private int index;
+	private int dataTableIndex;
 	private String checkVal;
 	
 	public int getIndex() {
@@ -15,6 +16,12 @@ public class UpdateGermplasmCheckForm {
 	}
 	public void setCheckVal(String checkVal) {
 		this.checkVal = checkVal;
+	}
+	public int getDataTableIndex() {
+		return dataTableIndex;
+	}
+	public void setDataTableIndex(int dataTableIndex) {
+		this.dataTableIndex = dataTableIndex;
 	}
 	
 	

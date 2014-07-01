@@ -1,6 +1,16 @@
 $(function() {
     'use strict';
 
+    // attach spinner operations to ajax events
+    $(document).ajaxStart(function() {
+        SpinnerManager.addActive();
+    }).ajaxStop(function() {
+        SpinnerManager.resolveActive();
+    }).ajaxError(function(){
+        showErrorMessage('', ajaxGenericErrorMsg);
+        SpinnerManager.resolveActive();
+    });
+
 	if (typeof convertToSelect2 === 'undefined' || convertToSelect2) {
 		// Variable is undefined
 		$('select').each(function() {

@@ -61,7 +61,7 @@
 		class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
 		<property name="prefix" value="/WEB-INF/pages/" />
 		<property name="suffix" value=".html" />
-		<property name="templateMode" value="HTML5" />
+		<property name="templateMode" value="LEGACYHTML5" />
 		<!-- Template cache is true by default. Set to false if you want -->
 		<!-- templates to be automatically updated when modified. -->
 		<property name="cacheable" value="false" />
@@ -73,7 +73,7 @@
         <set>
             <bean class="com.github.mxab.thymeleaf.extras.dataattribute.dialect.DataAttributeDialect"/>
         </set>
-    </property>
+        </property>
 	</bean>
 
 	<bean class="org.thymeleaf.spring3.view.ThymeleafViewResolver">

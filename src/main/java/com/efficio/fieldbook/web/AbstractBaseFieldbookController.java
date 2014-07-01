@@ -36,6 +36,7 @@ import com.efficio.fieldbook.web.util.FieldbookProperties;
 public abstract class AbstractBaseFieldbookController {
 
 	public static final String BASE_TEMPLATE_NAME = "/template/base-template";
+    public static final String ANGULAR_BASE_TEMPLATE_NAME = "/template/ng-base-template";
 	public static final String ERROR_TEMPLATE_NAME = "/template/error-template";
 	public static final String TEMPLATE_NAME_ATTRIBUTE = "templateName";
 		
@@ -143,6 +144,12 @@ public abstract class AbstractBaseFieldbookController {
 		model.addAttribute(TEMPLATE_NAME_ATTRIBUTE, contentName);
 		return BASE_TEMPLATE_NAME;
 	}
+
+    public String showAngularPage(Model model) {
+        setupModelInfo(model);
+        model.addAttribute(TEMPLATE_NAME_ATTRIBUTE, getContentName());
+        return ANGULAR_BASE_TEMPLATE_NAME;
+    }
 
 	/**
 	 * Base functionality for displaying the error page.

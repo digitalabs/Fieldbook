@@ -1,0 +1,92 @@
+<div class="container-fluid" ng-app="treatmentApp">
+    <div ng-controller="TreatmentCtrl">
+        <div id='addtl-treatment-factors'>
+            <!-- title -->
+            <h4>Define Additional Treatment Factors</h4>
+
+            <div class="row">
+                <div class="col-md-12">
+          <span>
+            <b>TREATMENT FACTORS</b>
+            <span class="glyphicon glyphicon-question-sign help-info"></span>
+          </span>
+
+                    <span ng-click="addTreatmentFactor()" class="btn btn-info pull-right" >Add</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <form role='form' id='addtl-treatment-factors-form' novalidate>
+                        <table class='factor-opts-tbl table'>
+                            <tr>
+                                <th>&nbsp;</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Levels</th>
+
+                            </tr>
+                            <tr ng-repeat="treatmentFactor in treatmentFactors track by $index">
+                                <td><span class='glyphicon glyphicon-minus-sign delete-factor' ng-click="removeTreatmentFactorByIndex($index)"></span>
+                                </td>
+                                <td><a ng-href='#variable-details-{{treatmentFactor.variableName}}' >{{treatmentFactor.variableName}}</a>
+                                </td>
+                                <td>{{treatmentFactor.variableDescription}}</td>
+                                <td>
+                                    <input valid-number maxlength="2" type='text' class='form-control' ng-model='treatmentFactor.variableLevelCount' ng-change='onLevelChange(treatmentFactor.variableName,treatmentFactor.variableLevelCount)' />
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- end addtl-treatment-factors -->
+
+        <div id='treatment-levels'>
+            <!-- title -->
+            <h4>Specify Treatment Levels</h4>
+
+            <form role='form' id='treatment-level-form'>
+
+                <div class='treatment-level-item' ng-repeat="treatmentFactor in treatmentFactors">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <b>{{treatmentFactor.variableName}}</b>: <b>{{treatmentFactor.variableDescription}}</b>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <b>Define the labels for this factor</b>:
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class='factor-level-tbl table'>
+                                <tr>
+                                    <th>Level</th>
+                                    <th>Scale</th>
+                                    <th>Label</th>
+                                </tr>
+                                <tr ng-repeat="n in treatmentFactor.variableLabelsForEachCount track by $index">
+                                    <td>
+                                        <a>{{treatmentFactor.variableName}} {{$index + 1}}</a>
+                                    </td>
+                                    <td>{{treatmentFactor.variableScale}}</td>
+                                    <td>
+                                        <input type='text' class='form-control' ng-model="treatmentFactor.variableLabelsForEachCount[$index]" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+        <!-- end treatment-levels -->
+    </div>
+</div>
+
+<script type="text/javascript" th:src="@{/static/js/trialmanager/treatment.js}"></script>

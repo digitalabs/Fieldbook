@@ -1607,6 +1607,14 @@ function populateVariableDetails(standardVariable) {
 	}
 }
 
+function checkIfNull(object) {
+	if (object != null) {
+		return object;
+	} else {
+		return "";
+	}
+}
+
 function openManageLocations() {
 	$('#manageLocationModal').modal({ backdrop: 'static', keyboard: true });
 	if (locationIframeOpened == false) {

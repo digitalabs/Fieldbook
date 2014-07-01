@@ -310,34 +310,34 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
             }
             
             if (stdVar != null && stdVar.getName() != null) {
-            SettingVariable svar = new SettingVariable(
-                    variableName, stdVar.getDescription(), stdVar.getProperty().getName(),
-                                        stdVar.getScale().getName(), stdVar.getMethod().getName(), stdVar.getStoredIn().getName(), 
-                                        stdVar.getDataType().getName(), stdVar.getDataType().getId(), 
-                                        stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null ? stdVar.getConstraints().getMinValue() : null,
-                                        stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ? stdVar.getConstraints().getMaxValue() : null);
-                        svar.setCvTermId(stdVar.getId());
-                        svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
-                        svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
-                        svar.setOperation(Operation.ADD);
+                SettingVariable svar = new SettingVariable(
+                        variableName, stdVar.getDescription(), stdVar.getProperty().getName(),
+                        stdVar.getScale().getName(), stdVar.getMethod().getName(), stdVar.getStoredIn().getName(),
+                        stdVar.getDataType().getName(), stdVar.getDataType().getId(),
+                        stdVar.getConstraints() != null && stdVar.getConstraints().getMinValue() != null ? stdVar.getConstraints().getMinValue() : null,
+                        stdVar.getConstraints() != null && stdVar.getConstraints().getMaxValue() != null ? stdVar.getConstraints().getMaxValue() : null);
+                svar.setCvTermId(stdVar.getId());
+                svar.setCropOntologyId(stdVar.getCropOntologyId() != null ? stdVar.getCropOntologyId() : "");
+                svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
+                svar.setOperation(Operation.ADD);
 
-                        List<ValueReference> possibleValues = fieldbookService.getAllPossibleValues(id);
-                        SettingDetail settingDetail = new SettingDetail(svar, possibleValues, null, false);
-                        if (id == TermId.BREEDING_METHOD_ID.getId()) {
-                            settingDetail.setValue(AppConstants.PLEASE_CHOOSE.getString());
-                        } else if (id == TermId.STUDY_UID.getId()) {
-                            settingDetail.setValue(this.getCurrentIbdbUserId().toString());
-                        } else if (id == TermId.STUDY_UPDATE.getId()) {
-                            
-                            DateFormat dateFormat = new SimpleDateFormat(DateUtil.DB_DATE_FORMAT);
-                            Date date = new Date();
-                            settingDetail.setValue(dateFormat.format(date));
-                        }
-                        settingDetail.setPossibleValuesToJson(possibleValues);
-                        List<ValueReference> possibleValuesFavorite = fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProjectId());
-                        settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);
-                        settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
-                        return settingDetail;
+                List<ValueReference> possibleValues = fieldbookService.getAllPossibleValues(id);
+                SettingDetail settingDetail = new SettingDetail(svar, possibleValues, null, false);
+                if (id == TermId.BREEDING_METHOD_ID.getId()) {
+                    settingDetail.setValue(AppConstants.PLEASE_CHOOSE.getString());
+                } else if (id == TermId.STUDY_UID.getId()) {
+                    settingDetail.setValue(this.getCurrentIbdbUserId().toString());
+                } else if (id == TermId.STUDY_UPDATE.getId()) {
+
+                    DateFormat dateFormat = new SimpleDateFormat(DateUtil.DB_DATE_FORMAT);
+                    Date date = new Date();
+                    settingDetail.setValue(dateFormat.format(date));
+                }
+                settingDetail.setPossibleValuesToJson(possibleValues);
+                List<ValueReference> possibleValuesFavorite = fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProjectId());
+                settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);
+                settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
+                return settingDetail;
             } else {
                 SettingVariable svar = new SettingVariable();
                 svar.setCvTermId(stdVar.getId());

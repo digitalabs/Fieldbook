@@ -1,0 +1,130 @@
+<div class="col-xs-12 col-md-12" ng-app="fb-environments">
+    <div ng-controller="EnvironmentController">
+        <div class="row">
+            <div class="form-group">
+                <label class="control-label">
+                    <strong class="sub-content-heading">Define Environments</strong>
+                </label>
+            </div>
+            <div class="form-group">
+                <div class="col-md-6 col-xs-6">
+                    <label class="control-label">Specify the number of environments for this trial:</label>
+                    <div class="pull-right">
+                        <input type="number" ng-model="temp.noOfEnvironments"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6 col-md-6">
+                <div class="form-group">
+                    <label class="control-label">
+                        <strong class="sub-content-heading">MANAGEMENT DETAILS</strong>
+                    </label>
+
+                    <a href="#" class="btn btn-info pull-right" select-standard-variable="true"
+                        variable-type="1" labels="labels.addManagementDetails">Add</a>
+                </div>
+                <div class="form-horizontal sectionContainer">
+                    <display-settings settings="data.managementDetails"></display-settings>
+                </div>
+            </div>
+            <div class="col-xs-6 col-md-6">
+                <div class="form-group">
+                    <label class="control-label">
+                        <strong class="sub-content-heading">TRIAL CONDITION DETAILS</strong>
+                    </label>
+
+                    <a href="#" class="btn btn-info pull-right" select-standard-variable="true"
+                       variable-type="7" labels="labels.trialConditionDetails">Add</a>
+                </div>
+                <div class="form-horizontal sectionContainer">
+                    <display-settings settings="data.trialConditionDetails"></display-settings>
+                </div>
+            </div>
+        </div>
+        <div class="row" ng-repeat="environment in data.environments">
+            <div class="col-xs-6 col-md-6">
+                <div class="form-group">
+                    <label class="control-label">Data here</label>
+                </div>
+            </div>
+            <div class="col-xs-6 col-md-6">
+                <div class="form-group">
+                    <label class="control-label">More data here</label>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12 col-md-12">
+                <div id="showBaselineTraitDetails" th:include="/NurseryManager/includes/baselineTraitDetails"></div>
+            </div>
+        </div>
+
+        <div class="row">
+        	<div class="col-xs-12 col-md-12">
+        		<div th:include="/NurseryManager/includes/variableSelectionModal"></div>
+        	</div>
+        </div>
+    </div>
+</div>
+
+<div layout:fragment="page-script">
+    <script type="text/javascript" th:src="@{/static/js/lib/angular/angular1.2.18.js}"></script>
+    <script type="text/javascript" th:src="@{/static/js/lib/angular/ui-bootstrap-tpls-0.11.0.js}"></script>
+    <script type="text/javascript" th:src="@{/static/js/lib/angular/angular-select2.js}"></script>
+    <script type="text/javascript" th:src="@{/static/js/choose-settings.js}"></script>
+    <script type="text/javascript" th:src="@{/static/js/angular/fieldbook-settings.js}"></script>
+    <script type="text/javascript" th:inline="javascript">
+        //<![CDATA[
+        angular.module('fb-environments', ['ui.bootstrap', 'fieldbook-settings'])
+                .controller('EnvironmentController', ['$scope', function ($scope) {
+                    $scope.data = {};
+
+                    // storage of number of environments uses a temp variable to account for user temporarily deleting contents of field to enter new value
+                    $scope.temp = {
+                        noOfEnvironments : 0
+                    };
+
+                    $scope.data.noOfEnvironments = 0;
+                    $scope.data.environments = [];
+                    $scope.data.managementDetails = {};
+                    $scope.data.trialConditionDetails = {};
+
+                    $scope.labels = {};
+                    $scope.labels.managementDetails = {
+
+                    };
+
+                    $scope.$watch('temp.noOfEnvironments', function(newVal, oldVal) {
+                        if (newVal) {
+                            $scope.data.noOfEnvironments = newVal;
+                        }
+                    });
+
+                    $scope.$watch('data.noOfEnvironments', function(newVal, oldVal) {
+
+                        if (newVal < oldVal) {
+                            // if new environment count is less than previous value, splice array
+                            while ($scope.data.environments.length > newVal) {
+                                $scope.data.environments.pop();
+                            }
+                        } else if (oldVal < newVal) {
+                            // if new environment count is greater than old value, add new element to environments array
+                            while ($scope.data.environments.length < newVal) {
+                                $scope.data.environments.push({
+                                    managementDetailValues: {},
+                                    trialDetailValues: {}
+                                })
+                            }
+                        } else {
+                            // do nothing if equal
+                        }
+
+                    });
+                }]);
+        //]]>
+    </script>
+</div>

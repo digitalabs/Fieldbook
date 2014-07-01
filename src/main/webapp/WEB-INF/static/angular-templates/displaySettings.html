@@ -1,0 +1,22 @@
+<table style="table-layout: fixed;" class="my-class table table-curved table-condensed">
+    <thead>
+    <tr>
+        <th class="fbk-delete-link"></th>
+        <th width="45%" th:utext="#{nursery.managesettings.plot.name}">Name</th>
+        <th width="50%" th:utext="#{nursery.managesettings.plot.description}">Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="(key, setting) in settings">
+        <td>
+            <span class="delete-icon" ng-click="removeSetting(setting)" ng-show="setting.isDeletable"></span>
+        </td>
+        <td width="45%">
+            <a href="javascript: void(0);" ng-click="showDetailsModal(setting)">
+                <span class="var-names">{{setting.name}}</span>
+            </a>
+        </td>
+        <td width="50%">{{setting.description}}</td>
+    </tr>
+    </tbody>
+</table>

@@ -1455,14 +1455,6 @@ function doSaveSettings() {
 	}
 }
 
-function checkIfNull(object) {
-	if (object != null) {
-		return object;
-	} else {
-		return "";
-	}
-}
-
 
 function createSliderInput(ctr, minVal, maxVal, name) {
 	return "<input data-slider-orientation='horizontal' data-slider-selection='after' type='text' data-min='"

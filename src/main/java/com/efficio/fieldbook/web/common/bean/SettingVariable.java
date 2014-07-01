@@ -218,45 +218,42 @@ public class SettingVariable implements Serializable{
 	public void setWidgetType() {		
 		
 	}
-	
+
+
+    // TODO : shift computation of widget type elsewhere, to avoid having it continuously recomputed
 	public WidgetType getWidgetType() {
-		
-		if (dataTypeId != null) {
-			if (dataTypeId.equals(TermId.DATE_VARIABLE.getId())) {
-				this.widgetType = WidgetType.DATE;
-			}
-			else if (dataTypeId.equals(TermId.CATEGORICAL_VARIABLE.getId())) {
-				this.widgetType = WidgetType.DROPDOWN;
-			}
-			else if (minRange != null && maxRange != null) {
-				this.widgetType = WidgetType.SLIDER;
-			}
-			else if (dataTypeId.equals(TermId.NUMERIC_VARIABLE.getId()) 
-					|| dataTypeId.equals(TermId.NUMERIC_DBID_VARIABLE.getId())) {
-				this.widgetType = WidgetType.NTEXT;
-			}
-			else {
-				this.widgetType = WidgetType.CTEXT;
-				if(cvTermId.toString().equalsIgnoreCase(AppConstants.OBJECTIVE_ID.getString()))
-					this.widgetType = WidgetType.TEXTAREA;
-			}					
-		}
-		else {
-			this.widgetType = WidgetType.CTEXT;
-			if(cvTermId.toString().equalsIgnoreCase(AppConstants.OBJECTIVE_ID.getString()))
-				this.widgetType = WidgetType.TEXTAREA;
-		}
-		
-		if (cvTermId != null) {
-			if (cvTermId.equals(TermId.LOCATION_ID.getId()) || cvTermId.equals(TermId.PI_ID.getId()) 
-					|| cvTermId.equals(TermId.BREEDING_METHOD_ID.getId()) || 
-					cvTermId.equals(TermId.NURSERY_TYPE.getId())
-					|| cvTermId.toString().equalsIgnoreCase(AppConstants.COOPERATOR_ID.getString())) {
-				this.widgetType = WidgetType.DROPDOWN;
-			}
-		}
-		return this.widgetType;
-	}
+
+        if (dataTypeId != null) {
+            if (dataTypeId.equals(TermId.DATE_VARIABLE.getId())) {
+                this.widgetType = WidgetType.DATE;
+            } else if (dataTypeId.equals(TermId.CATEGORICAL_VARIABLE.getId())) {
+                this.widgetType = WidgetType.DROPDOWN;
+            } else if (minRange != null && maxRange != null) {
+                this.widgetType = WidgetType.SLIDER;
+            } else if (dataTypeId.equals(TermId.NUMERIC_VARIABLE.getId())
+                    || dataTypeId.equals(TermId.NUMERIC_DBID_VARIABLE.getId())) {
+                this.widgetType = WidgetType.NTEXT;
+            } else {
+                this.widgetType = WidgetType.CTEXT;
+                if (cvTermId.toString().equalsIgnoreCase(AppConstants.OBJECTIVE_ID.getString()))
+                    this.widgetType = WidgetType.TEXTAREA;
+            }
+        } else {
+            this.widgetType = WidgetType.CTEXT;
+            if (cvTermId.toString().equalsIgnoreCase(AppConstants.OBJECTIVE_ID.getString()))
+                this.widgetType = WidgetType.TEXTAREA;
+        }
+
+        if (cvTermId != null) {
+            if (cvTermId.equals(TermId.LOCATION_ID.getId()) || cvTermId.equals(TermId.PI_ID.getId())
+                    || cvTermId.equals(TermId.BREEDING_METHOD_ID.getId()) ||
+                    cvTermId.equals(TermId.NURSERY_TYPE.getId())
+                    || cvTermId.toString().equalsIgnoreCase(AppConstants.COOPERATOR_ID.getString())) {
+                this.widgetType = WidgetType.DROPDOWN;
+            }
+        }
+        return this.widgetType;
+    }
 
 
 

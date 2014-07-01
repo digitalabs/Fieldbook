@@ -216,6 +216,19 @@
 			<version>1.9.13</version>
 		</dependency>
 
+        <!-- For support of LEGACYHTML5 templating mode ( AngularJS and Thymeleaf integration -->
+        <dependency>
+            <groupId>net.sourceforge.nekohtml</groupId>
+            <artifactId>nekohtml</artifactId>
+            <version>1.9.18</version>
+        </dependency>
+
+        <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+            <version>1.4.01</version>
+        </dependency>
+
 		<!-- AOP dependency -->
 		<dependency>
 			<groupId>cglib</groupId>

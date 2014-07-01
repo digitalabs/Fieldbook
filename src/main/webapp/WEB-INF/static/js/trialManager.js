@@ -1752,14 +1752,6 @@ function doSaveSettings(){
 				
 }
 
-function checkIfNull(object) {
-	if (object != null) {
-		return object;
-	} else {
-		return "";
-	}
-}
-
 function createSliderInput(ctr, minVal, maxVal){
 	
 	return "<input data-slider-orientation='horizontal' data-slider-selection='after' type='text' data-step='0.0001' data-min='"+minVal+"' data-max='"+maxVal+"' id='studyLevelVariables" + ctr + 

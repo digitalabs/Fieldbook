@@ -16,12 +16,12 @@ window.ChooseSettings = (function() {
 	}
 
 	return {
-		getStandardVariables: function(variableType, treeDivId) {
+		getStandardVariables: function(variableType, treeDivId, evalFunction) {
 			var treeData,
 				searchTreeData;
 
 			$.ajax({
-				url: '/Fieldbook/NurseryManager/createNursery/displayAddSetting/' + variableType,
+				url: '/Fieldbook/manageSettings/displayAddSetting/' + variableType,
 				type: 'GET',
 				cache: false,
 				success: function(data) {
@@ -39,7 +39,13 @@ window.ChooseSettings = (function() {
 
 					clearAttributeFields();
 
-					$('#addVariables').attr('onclick', 'javascript: submitSelectedVariables(' + variableType + ');');
+                    if (!evalFunction) {
+                        $('#addVariables').attr('onclick', 'javascript: submitSelectedVariables(' + variableType + ');');
+                    } else {
+                        $('#addVariables').removeAttribute('onclick');
+                        $('#addVariables').on('click', evalFunction);
+                    }
+
 					$('#newVariablesList').addClass('fbk-hide');
 					$('#addVariablesSettingModal').modal({
 						backdrop: 'static',

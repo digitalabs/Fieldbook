@@ -324,7 +324,9 @@ public class CreateNurseryController extends SettingsController {
         }
         return null;
     }
-    
+
+
+    // TODO : refactor out of this class and into the more general ManageSettingsController
     /**
      * Displays the Add Setting popup.
      *
@@ -337,33 +339,35 @@ public class CreateNurseryController extends SettingsController {
                 Map<String, Object> result = new HashMap<String, Object>();
         try {
 
-                List<StandardVariableReference> standardVariableList = 
-                                fieldbookService.filterStandardVariablesForSetting(mode, getSettingDetailList(mode));
-                
-                try{
-                        if(userSelection.getTraitRefList() == null){
-                                List<TraitClassReference> traitRefList = (List<TraitClassReference>) 
-                                ontologyService.getAllTraitGroupsHierarchy(true);
-                                userSelection.setTraitRefList(traitRefList);
-                        }
-                                List<TraitClassReference> traitRefList = userSelection.getTraitRefList();
-                                //we convert it to map so that it would be easier to chekc if there is a record or not
-                                HashMap<String, StandardVariableReference> mapVariableRef = new HashMap<String, StandardVariableReference>();
-                                if(standardVariableList != null && !standardVariableList.isEmpty()){
-                                        for(StandardVariableReference varRef: standardVariableList){
-                                                mapVariableRef.put(varRef.getId().toString(), varRef);
-                                        }
-                                }
-                                
-                                String treeData = TreeViewUtil.convertOntologyTraitsToJson(traitRefList, mapVariableRef);
-                        String searchTreeData = TreeViewUtil.convertOntologyTraitsToSearchSingleLevelJson(traitRefList, mapVariableRef);
-                        result.put("treeData", treeData);
-                        result.put("searchTreeData", searchTreeData);                
-                }catch(Exception e){
-                        LOG.error(e.getMessage());
+            List<StandardVariableReference> standardVariableList =
+                    fieldbookService.filterStandardVariablesForSetting(mode, getSettingDetailList(mode));
+
+            try {
+                if (userSelection.getTraitRefList() == null) {
+                    List<TraitClassReference> traitRefList = (List<TraitClassReference>)
+                            ontologyService.getAllTraitGroupsHierarchy(true);
+                    userSelection.setTraitRefList(traitRefList);
                 }
-        } catch(Exception e) {
-                LOG.error(e.getMessage(), e);
+
+                List<TraitClassReference> traitRefList = userSelection.getTraitRefList();
+
+                //we convert it to map so that it would be easier to chekc if there is a record or not
+                HashMap<String, StandardVariableReference> mapVariableRef = new HashMap<String, StandardVariableReference>();
+                if (standardVariableList != null && !standardVariableList.isEmpty()) {
+                    for (StandardVariableReference varRef : standardVariableList) {
+                        mapVariableRef.put(varRef.getId().toString(), varRef);
+                    }
+                }
+
+                String treeData = TreeViewUtil.convertOntologyTraitsToJson(traitRefList, mapVariableRef);
+                String searchTreeData = TreeViewUtil.convertOntologyTraitsToSearchSingleLevelJson(traitRefList, mapVariableRef);
+                result.put("treeData", treeData);
+                result.put("searchTreeData", searchTreeData);
+            } catch (Exception e) {
+                LOG.error(e.getMessage());
+            }
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
         }
         
         //return "[]";
@@ -403,36 +407,36 @@ public class CreateNurseryController extends SettingsController {
      */
     @ResponseBody
     @RequestMapping(value = "/addSettings/{mode}", method = RequestMethod.POST)
-    public String addSettings(@ModelAttribute("createNurseryForm") CreateNurseryForm form, 
-            Model model, @PathVariable int mode) {
+    public String addSettings(@ModelAttribute("createNurseryForm") CreateNurseryForm form,
+                              Model model, @PathVariable int mode) {
         List<SettingDetail> newSettings = new ArrayList<SettingDetail>();
         try {
-                List<SettingVariable> selectedVariables = form.getSelectedVariables();
-                if (selectedVariables != null && !selectedVariables.isEmpty()) {
-                        for (SettingVariable var : selectedVariables) {
-                                Operation operation = removeVarFromDeletedList(var, mode);
-                                
-                                var.setOperation(operation);
-                                populateSettingVariable(var);
-                                        List<ValueReference> possibleValues = 
-                                                fieldbookService.getAllPossibleValues(var.getCvTermId());
-                                        SettingDetail newSetting = new SettingDetail(var, possibleValues, null, true);
-                                        List<ValueReference> possibleValuesFavorite = fieldbookService.getAllPossibleValuesFavorite(var.getCvTermId(), this.getCurrentProjectId());
-                                        newSetting.setPossibleValuesFavorite(possibleValuesFavorite);
-                                        newSetting.setPossibleValuesToJson(possibleValues);
-                                        newSetting.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
-                                        newSettings.add(newSetting);
-                        }
+            List<SettingVariable> selectedVariables = form.getSelectedVariables();
+            if (selectedVariables != null && !selectedVariables.isEmpty()) {
+                for (SettingVariable var : selectedVariables) {
+                    Operation operation = removeVarFromDeletedList(var, mode);
+
+                    var.setOperation(operation);
+                    populateSettingVariable(var);
+                    List<ValueReference> possibleValues =
+                            fieldbookService.getAllPossibleValues(var.getCvTermId());
+                    SettingDetail newSetting = new SettingDetail(var, possibleValues, null, true);
+                    List<ValueReference> possibleValuesFavorite = fieldbookService.getAllPossibleValuesFavorite(var.getCvTermId(), this.getCurrentProjectId());
+                    newSetting.setPossibleValuesFavorite(possibleValuesFavorite);
+                    newSetting.setPossibleValuesToJson(possibleValues);
+                    newSetting.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
+                    newSettings.add(newSetting);
                 }
-                
-                if (newSettings != null && !newSettings.isEmpty()) {
-                        return addNewSettingDetails(form, mode, newSettings);
-                }
-                
-        } catch(Exception e) {
-                LOG.error(e.getMessage(), e);
+            }
+
+            if (newSettings != null && !newSettings.isEmpty()) {
+                return addNewSettingDetails(form, mode, newSettings);
+            }
+
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
         }
-        
+
         return "[]";
     }
     

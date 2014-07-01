@@ -11,12 +11,12 @@ import com.efficio.fieldbook.web.util.AppConstants;
 
 @Service
 public class MergeCheckServiceImpl implements MergeCheckService {
-
+	
 	@Override
 	public List<ImportedGermplasm> mergeGermplasmList(
 			List<ImportedGermplasm> primaryList,
 			List<ImportedGermplasm> checkList, int startEntry, int interval,
-			int manner) {
+			int manner, String defaultTestCheckId) {
 		
 		if (checkList == null || checkList.isEmpty() || startEntry < 1 || startEntry > primaryList.size() 
 				|| primaryList == null || primaryList.isEmpty() || interval < 1) {
@@ -48,13 +48,16 @@ public class MergeCheckServiceImpl implements MergeCheckService {
 				List<ImportedGermplasm> checks = generateChecksToInsert(checkList, checkIndex, manner, newEntry);
 				checkIndex++;
 				newEntry += checks.size();
-				//fix
-					intervalEntry += checks.size();
+				intervalEntry += checks.size();
 					
 				newList.addAll(checks);
 			}
-			
-			newList.add(assignNewGermplasm(primaryGermplasm, newEntry));
+			ImportedGermplasm primaryNewGermplasm = assignNewGermplasm(primaryGermplasm, newEntry);
+			if(defaultTestCheckId != null && !defaultTestCheckId.equalsIgnoreCase("")){
+				primaryNewGermplasm.setCheck(defaultTestCheckId);
+				primaryNewGermplasm.setCheckId(Integer.valueOf(defaultTestCheckId));
+			}
+			newList.add(primaryNewGermplasm);
 			newEntry++;
 			
 			

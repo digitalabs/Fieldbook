@@ -126,6 +126,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     public MessageSource messageSource;
     
     private static String DEFAULT_CHECK_VALUE = "C";
+    private static String DEFAULT_TEST_VALUE = "T";
     
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
@@ -219,11 +220,13 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         		if(form.getInterval() != null && !form.getInterval().equalsIgnoreCase("")){
         			interval = Integer.parseInt(form.getInterval());
         		}
+        		String defaultTestCheckId = getCheckId(DEFAULT_TEST_VALUE, fieldbooService.getCheckList());
+        		
         		List<ImportedGermplasm> newImportedGermplasm = mergeCheckService.mergeGermplasmList(form.getImportedGermplasm(), 
     	    	        form.getImportedCheckGermplasm(), 
     	    	        Integer.parseInt(form.getStartIndex()), 
     	    	        interval, 
-    	    	        Integer.parseInt(form.getMannerOfInsertion()));
+    	    	        Integer.parseInt(form.getMannerOfInsertion()), defaultTestCheckId);
         		
     	    	getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().setImportedGermplasms(newImportedGermplasm);
     	    	form.setImportedGermplasm(getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms());
@@ -307,7 +310,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             getUserSelection().setImportedGermplasmMainInfo(mainInfo);
             getUserSelection().setImportValid(true);
             
-            model.addAttribute("checkLists", ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations());
+            model.addAttribute("checkLists", fieldbooService.getCheckList());
             model.addAttribute("listDataTable", dataTableDataList);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -315,6 +318,17 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         return super.showAjaxPage(model, PAGINATION_TEMPLATE);
     }
     
+    private String getCheckId(String checkCode,  List<Enumeration> checksList) throws MiddlewareQueryException{
+         String checkId =  "";
+         
+         for(Enumeration enumVar : checksList){
+         	if(enumVar.getName().equalsIgnoreCase(checkCode)){
+         		checkId = enumVar.getId().toString();
+         		break;
+         	}
+         }
+         return checkId;
+    }
     /**
      * Display check germplasm details.
      *
@@ -333,15 +347,8 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             form.setImportedCheckGermplasmMainInfo(mainInfo);
             int count = (int) germplasmListManager.countGermplasmListDataByListId(listId);
             
-            List<Enumeration> checksList = ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
-            String checkId =  "";
-            
-            for(Enumeration enumVar : checksList){
-            	if(enumVar.getName().equalsIgnoreCase(DEFAULT_CHECK_VALUE)){
-            		checkId = enumVar.getId().toString();
-            		break;
-            	}
-            }
+            List<Enumeration> checkList = fieldbooService.getCheckList();
+            String checkId =  getCheckId(DEFAULT_CHECK_VALUE, checkList);
             
             List<GermplasmListData> data = new ArrayList<GermplasmListData>();
             data.addAll(germplasmListManager.getGermplasmListDataByListId(listId, 0, count));
@@ -355,7 +362,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
 				dataMap.put("check", germplasm.getCheck().toString());				
 				dataMap.put("entry", germplasm.getEntryId());
 				dataMap.put("check", germplasm.getCheck().toString()); 
-				dataMap.put("checkOptions", checksList);
+                dataMap.put("checkOptions", checkList);
         		dataTableDataList.add(dataMap);
             }
 
@@ -372,7 +379,6 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             getUserSelection().setImportedCheckGermplasmMainInfo(mainInfo);
             getUserSelection().setImportValid(true);
             
-            model.addAttribute("checkLists", checksList);
             model.addAttribute("checkListDataTable", dataTableDataList);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -434,21 +440,14 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             mainInfo.setAdvanceImportType(true);
             form.setImportedCheckGermplasmMainInfo(mainInfo);
             
-            List<Enumeration> checksList = ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
-            String checkId =  null;
-            for(Enumeration enumVar : checksList){
-            	if(enumVar.getName().equalsIgnoreCase(DEFAULT_CHECK_VALUE)){
-            		checkId = enumVar.getId().toString();
-            		break;
-            	}
-            }           
-                        
+            List<Enumeration> checksList = fieldbooService.getCheckList();
+            String checkId = getCheckId(DEFAULT_CHECK_VALUE, checksList);               
+                     
             List<ImportedGermplasm> primaryList = userSelection.getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms();
             ImportedGermplasm importedGermplasm = null;//primaryList.get(entryId-1);
             for(ImportedGermplasm impGerm : primaryList){
             	if(impGerm.getEntryId().intValue() == entryId.intValue()){
             		importedGermplasm = impGerm.copy();
-            		
             		break;
             	}
             		
@@ -456,7 +455,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             
             importedGermplasm.setCheck(checkId);
             
-            List<ImportedGermplasm> list = new ArrayList();
+            List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
             if(userSelection.getImportedCheckGermplasmMainInfo() != null && 
             		userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList() != null && 
             		userSelection.getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms() != null){
@@ -468,9 +467,9 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             
             form.setImportedCheckGermplasm(list);
             
-            List<Map<String, Object>> dataTableDataList = new ArrayList();
+            List<Map<String, Object>> dataTableDataList = new ArrayList<Map<String, Object>>();
         	for(ImportedGermplasm germplasm : list){
-            	Map<String, Object> dataMap = new HashMap();            	
+            	Map<String, Object> dataMap = new HashMap<String, Object>();            	
 				dataMap.put("desig", germplasm.getDesig().toString());
 				dataMap.put("gid", germplasm.getGid().toString());
 				dataMap.put("check", germplasm.getCheck().toString());				
@@ -539,7 +538,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         try {
         	ImportedGermplasm importedCheckGermplasm = getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(dataTableIndex);
         	importedCheckGermplasm.setCheck(currentVal);
-        	List<Enumeration> allEnumerations = ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
+        	List<Enumeration> allEnumerations = fieldbooService.getCheckList();
 
         	model.addAttribute("allCheckTypes", allEnumerations);
         	form.setCheckVal(currentVal);
@@ -612,7 +611,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         form.changePage(pageNum);
         userSelection.setCurrentPageGermplasmList(form.getCurrentPage());
         try {
-			model.addAttribute("checkLists", ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations());
+			model.addAttribute("checkLists", fieldbooService.getCheckList());
 		} catch (MiddlewareQueryException e) {
 			e.printStackTrace();
 		}
@@ -645,7 +644,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         form.changeCheckPage(pageNum);
         userSelection.setCurrentPageCheckGermplasmList(form.getCurrentCheckPage());
         try {
-			model.addAttribute("checkLists", ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations());
+			model.addAttribute("checkLists", fieldbooService.getCheckList());
 		} catch (MiddlewareQueryException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -694,7 +693,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         Map<String, String> result = new HashMap<String, String>();
         
         try {            
-            List<Enumeration> allEnumerations = ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
+            List<Enumeration> allEnumerations = fieldbooService.getCheckList();
             result.put("success", "1");
             result.put("allCheckTypes", convertObjectToJson(allEnumerations));
             
@@ -808,7 +807,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     @ModelAttribute("checkTypes")
     public List<Enumeration> getCheckTypes() {
         try {
-            return ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
+            return fieldbooService.getCheckList();
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }

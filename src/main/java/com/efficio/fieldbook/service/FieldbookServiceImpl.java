@@ -26,6 +26,7 @@ import java.util.StringTokenizer;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
@@ -468,6 +469,12 @@ public class FieldbookServiceImpl implements FieldbookService{
     			}
     		}
     	}
+    }
+    
+    @Override
+    public List<Enumeration> getCheckList() throws MiddlewareQueryException{
+    	List<Enumeration> allEnumerations = ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations();
+    	return allEnumerations;
     }
     
     @Override

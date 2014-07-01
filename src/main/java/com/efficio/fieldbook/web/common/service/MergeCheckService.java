@@ -8,5 +8,5 @@ public interface MergeCheckService {
 
 	List<ImportedGermplasm> mergeGermplasmList(List<ImportedGermplasm> primaryList, 
 			List<ImportedGermplasm> checkList, int startIndex, int interval, 
-			int manner);
+			int manner, String defaultTestCheckId);
 }

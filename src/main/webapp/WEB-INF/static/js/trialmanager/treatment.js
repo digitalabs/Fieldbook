@@ -7,7 +7,7 @@
 (function(){
     'use strict';
 
-    var treatmentApp = angular.module('treatmentApp', []);
+    var treatmentApp = angular.module('treatmentApp', ['fieldbook-settings']);
 
     treatmentApp.controller('TreatmentCtrl',['$scope','TreatmentFactorsService',function($scope,TreatmentFactorsService) {
         $scope.treatmentFactors = TreatmentFactorsService.treatmentFactors;
@@ -38,11 +38,10 @@
                     break;
                 }
             }
+        }; // end $scope.onLevelChange
 
-            $scope.addTreatmentFactor = function() {
-                TreatmentFactorsService.addDummyTreatmentFactor();
-            };
-
+        $scope.addTreatmentFactor = function() {
+            TreatmentFactorsService.addDummyTreatmentFactor();
         };
 
         $scope.removeTreatmentFactorByIndex = TreatmentFactorsService.removeTreatmentFactorByIndex;

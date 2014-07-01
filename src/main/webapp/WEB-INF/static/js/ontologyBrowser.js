@@ -28,28 +28,28 @@ function doOntologyTreeHighlight(treeName, nodeKey){
 }
 
 function searchOntologyTreeNodeWithName(treeName, name) {
-	'use strict';
+    'use strict';
     if (name == null) {
         return null;
     }
 
-    var searchFrom = $('#'+treeName).dynatree('getRoot');
+    var searchFrom = $('#' + treeName).dynatree('getRoot');
 
     var match = null;
 
     searchFrom.visit(function (node) {
-    	if(node.data.includeInSearch == true){
-	        if (node.data.title.toUpperCase().indexOf(name.toUpperCase()) != -1) {
-	        	if(match == null){
-	        		match = new Array();
-	        	}
-	            match[match.length] = node;
-	            //return false; // Break if found
-	        }
-	    }
+        if (node.data.includeInSearch === true) {
+            if (node.data.title.toUpperCase().indexOf(name.toUpperCase()) !== -1) {
+                if (match == null) {
+                    match = [];
+                }
+                match[match.length] = node;
+                //return false; // Break if found
+            }
+        }
     });
     return match;
-};
+}
 
 function formatResult(myItem) {
 	'use strict';
@@ -61,90 +61,90 @@ function format(myItem) {
 	return '<p><strong>'+myItem.text+'</strong> ('+myItem.type+') <br /> '+myItem.parentTitle+'</p>';
 }
 
-function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId){
-	'use strict';
-	//for triggering the start of search type ahead
-	if(treeData == null){
-		return;
-	}
+function displayOntologyTree(treeName, treeData, searchTreeData, searchDivId) {
+    'use strict';
+    //for triggering the start of search type ahead
+    if (treeData == null) {
+        return;
+    }
 
-	var termSuggestions = $.parseJSON(searchTreeData),
-	termSuggestions_obj = [],
-	termSuggestionsMap = {};
-		//initialize the arrays that would contain json data for the combos
-			$.each(termSuggestions, function( index, value ) {
-				var obj = {
+    var termSuggestions = $.parseJSON(searchTreeData),
+        termSuggestionsObj = [],
+        termSuggestionsMap = {};
+    //initialize the arrays that would contain json data for the combos
+    $.each(termSuggestions, function (index, value) {
+        var obj = {
 
-						  'text' : value.value,
-						  'parentTitle' : value.parentTitle,
-						  'type' : value.type,
-						  'key': value.key,
-						  'id': value.key
-					};
-				termSuggestions_obj.push(obj);
-				termSuggestionsMap[obj.key] = obj;
-			});
+            'text': value.value,
+            'parentTitle': value.parentTitle,
+            'type': value.type,
+            'key': value.key,
+            'id': value.key
+        };
+        termSuggestionsObj.push(obj);
+        termSuggestionsMap[obj.key] = obj;
+    });
 
-	//getOntologySuffix(id)
-			$('#'+searchDivId).select2('destroy');
-			$('#'+searchDivId).select2({
-				minimumResultsForSearch: 20,
-				query: function (query) {
-						var data = {results: sortByKey(termSuggestions_obj, "text")}, i, j, s;
-						//return the array that matches
-						data.results = $.grep(data.results,function(item,index) {
-						return ($.fn.select2.defaults.matcher(query.term,item.text));
-				});
-          /*
-          if (data.results.length === 0){
-        	  data.results.unshift({id:query.term,text:query.term});
-          }
-          */
+    //getOntologySuffix(id)
+    $('#' + searchDivId).select2('destroy');
+    $('#' + searchDivId).select2({
+        minimumResultsForSearch: 20,
+        query: function (query) {
+            var data = {results: sortByKey(termSuggestionsObj, 'text')}, i, j, s;
+            //return the array that matches
+            data.results = $.grep(data.results, function (item, index) {
+                return ($.fn.select2.defaults.matcher(query.term, item.text));
+            });
+            /*
+             if (data.results.length === 0){
+             data.results.unshift({id:query.term,text:query.term});
+             }
+             */
             query.callback(data);
         },
-        escapeMarkup: function(m) {
+        escapeMarkup: function (m) {
             // Do not escape HTML in the select options text
             return m;
-         },
-         formatResult: format,
-         formatSelection: formatResult
+        },
+        formatResult: format,
+        formatSelection: formatResult
 
     });
 
-	var json = $.parseJSON(treeData);
+    var json = $.parseJSON(treeData);
 
-	$('#' + treeName).dynatree({
-	      checkbox: false,
-	      // Override class name for checkbox icon:
-	      classNames: {
-				container: 'fbtree-container',
-				expander: 'fbtree-expander',
-				nodeIcon: 'fbtree-icon',
-				combinedIconPrefix: 'fbtree-ico-',
-				focused: 'fbtree-focused',
-				active: 'fbtree-active'
-			},
-	      selectMode: 1,
-	      children: json,
-	      onActivate: function(node) {
-	     // Display list of selected nodes
-	        var selNodes = node.tree.getSelectedNodes();
-	        // convert to title/key array
-	        var selKeys = $.map(selNodes, function(node){
-	             return "[" + node.data.key + "]: '" + node.data.title + "'";
-	        });
-	        doOntologyTreeHighlight(treeName, node.data.key);
-	      },
-	      onSelect: function(select, node) {
-	        // Display list of selected nodes
-	        doOntologyTreeHighlight(treeName, node.data.key);
-	      },
-	      onKeydown: function(node, event) {
-	        if( event.which == 32 ) {
-	          return false;
-	        }
-	      },
-	    });
+    $('#' + treeName).dynatree({
+        checkbox: false,
+        // Override class name for checkbox icon:
+        classNames: {
+            container: 'fbtree-container',
+            expander: 'fbtree-expander',
+            nodeIcon: 'fbtree-icon',
+            combinedIconPrefix: 'fbtree-ico-',
+            focused: 'fbtree-focused',
+            active: 'fbtree-active'
+        },
+        selectMode: 1,
+        children: json,
+        onActivate: function (node) {
+            // Display list of selected nodes
+            var selNodes = node.tree.getSelectedNodes();
+            // convert to title/key array
+            var selKeys = $.map(selNodes, function (node) {
+                return "[" + node.data.key + "]: '" + node.data.title + "'";
+            });
+            doOntologyTreeHighlight(treeName, node.data.key);
+        },
+        onSelect: function (select, node) {
+            // Display list of selected nodes
+            doOntologyTreeHighlight(treeName, node.data.key);
+        },
+        onKeydown: function (node, event) {
+            if (event.which === 32) {
+                return false;
+            }
+        }
+    });
 
 }
 
@@ -159,7 +159,7 @@ function showSelectedTab(selectedTabName) {
 	$('#ontology-tab-headers').show();
 	var tabs = $('#ontology-tabs').children();
 	for (var i = 0; i < tabs.length; i++) {
-		if (tabs[i].id == selectedTabName) {
+		if (tabs[i].id === selectedTabName) {
 			$('#' + tabs[i].id + '-li').addClass('active');
 			$('#' + tabs[i].id).show();
 		} else {
@@ -171,14 +171,14 @@ function showSelectedTab(selectedTabName) {
 
 function clearAndAppendOntologyDetailsTab(variableName, html){
 	'use strict';
-	if(html != ''){
+	if(html !== ''){
 		$('#ontology-detail-tabs').empty().append(html);
 		var varDetails = variableDetailHeader + ' ' + variableName;
 		$('#variable-details').html(varDetails);
 	}
 	else{
 		// we dont clear if there is an information tab
-		if($('#addVariablesSettingBody').length == 0){
+		if($('#addVariablesSettingBody').length === 0){
 			$("#ontology-detail-tabs").empty();
 			$("#variable-details").html('');
 			$('#ontology-detail-tabs').empty().append($('.variable-detail-info').html());
@@ -226,61 +226,61 @@ function viewTabs(variableName, variableId) {
 
 //save function for adding ontology
 function doSave(combo) {
-	if (validateCombo(combo)) {
-		//get form data
-		var $form = $('#addVariableForm');
-		serializedData = $form.serialize();
-		$.ajax({
-			url: ontologyUrl + 'addVariable/' + combo,
-			type: 'POST',
-			dataType: 'json',
-			data: serializedData,
-		    success: function(data){
-			    if (data.status == '1') {
-			    	//add the newly inserted ontology in its corresponding dropdown
-			    	recreateCombo(combo, data);
-			    	showSuccessMessage(data.successMessage);
-			    	if(data.addedNewTrait == '1'){
-			    		//we need to recreate the combo for the traitClass
-			    		var newData = {id:data.traitId, name:data.traitName, definition:data.traitDefinition};
-			    		recreateCombo('TraitClass', newData);
-			    	}
-		       	} else {
-		       		showMessage(data.errorMessage);
-		       	}
-		   }
-		});
-		$('#page-message-modal').html("");
-	}
+    if (validateCombo(combo)) {
+        //get form data
+        var $form = $('#addVariableForm');
+        serializedData = $form.serialize();
+        $.ajax({
+            url: ontologyUrl + 'addVariable/' + combo,
+            type: 'POST',
+            dataType: 'json',
+            data: serializedData,
+            success: function (data) {
+                if (data.status === '1') {
+                    //add the newly inserted ontology in its corresponding dropdown
+                    recreateCombo(combo, data);
+                    showSuccessMessage(data.successMessage);
+                    if (data.addedNewTrait === '1') {
+                        //we need to recreate the combo for the traitClass
+                        var newData = {id: data.traitId, name: data.traitName, definition: data.traitDefinition};
+                        recreateCombo('TraitClass', newData);
+                    }
+                } else {
+                    showMessage(data.errorMessage);
+                }
+            }
+        });
+        $('#page-message-modal').html("");
+    }
 }
 
-function setCorrespondingTraitClass(propertyId){
-	'use strict';
-	var dataVal = {id:'',text:'',description:''}; //default value
-	if(isInt(propertyId)){
-		$.ajax({
-			url: ontologyUrl+'retrieve/trait/property/' + propertyId,
-			type: 'GET',
-			dataType: 'json',
-			data: '',
-		    success: function(data){
-			    if (data.status == '1') {
-			    	//set trait class and crop ontology id of selected property
-			    	if(data.traitId != ''){
-			    		var count = 0;
-				    	for(count = 0 ; count < traitClassesSuggestions_obj.length ; count++){
-				    		if(traitClassesSuggestions_obj[count].id == data.traitId){
-				    			dataVal = traitClassesSuggestions_obj[count];
-				    			break;
-				    		}
-				    	}
-			    	}
-			    	$('#cropOntologyId').val(data.cropOntologyId);
-			    	$('#comboManagePropTraitClass').select2('data', dataVal).trigger('change');
-		       	}
-		   }
-		});
-	}
+function setCorrespondingTraitClass(propertyId) {
+    'use strict';
+    var dataVal = {id: '', text: '', description: ''}; //default value
+    if (isInt(propertyId)) {
+        $.ajax({
+            url: ontologyUrl + 'retrieve/trait/property/' + propertyId,
+            type: 'GET',
+            dataType: 'json',
+            data: '',
+            success: function (data) {
+                if (data.status === '1') {
+                    //set trait class and crop ontology id of selected property
+                    if (data.traitId !== '') {
+                        var count = 0;
+                        for (count = 0; count < traitClassesSuggestions_obj.length; count++) {
+                            if (traitClassesSuggestions_obj[count].id == data.traitId) {
+                                dataVal = traitClassesSuggestions_obj[count];
+                                break;
+                            }
+                        }
+                    }
+                    $('#cropOntologyId').val(data.cropOntologyId);
+                    $('#comboManagePropTraitClass').select2('data', dataVal).trigger('change');
+                }
+            }
+        });
+    }
 }
 
 function getOntologySuffix(id){
@@ -291,155 +291,155 @@ function getOntologySuffix(id){
 //function to create the select2 combos
 function initializeVariable(variableSuggestions, variableSuggestions_obj, description, name, allowTypedValues) {
 
-	if (name.indexOf('TraitClass') > -1 && variableSuggestions_obj.length == 1 || variableSuggestions_obj.length == 0) {
-		//initialize the arrays that would contain json data for the combos
-		if (description == "description") {
-			$.each(variableSuggestions, function( index, value ) {
-				variableSuggestions_obj.push({ 'id' : value.id,
-					  'text' : value.name + getOntologySuffix(value.id),
-					  'description' : value.description
-				});
+    if (name.indexOf('TraitClass') > -1 && variableSuggestions_obj.length == 1 || variableSuggestions_obj.length == 0) {
+        //initialize the arrays that would contain json data for the combos
+        if (description == "description") {
+            $.each(variableSuggestions, function (index, value) {
+                variableSuggestions_obj.push({ 'id': value.id,
+                    'text': value.name + getOntologySuffix(value.id),
+                    'description': value.description
+                });
 
-			});
-		} else if (name == "Property"){
-			$.each(variableSuggestions, function( index, value ) {
-				variableSuggestions_obj.push({ 'id' : value.id,
-					  'text' : value.name + getOntologySuffix(value.id),
-					  'description' : value.definition,
-					  'traitId' : value.isAId,
-					  'cropOntologyId' : value.cropOntologyId
-				});
+            });
+        } else if (name == "Property") {
+            $.each(variableSuggestions, function (index, value) {
+                variableSuggestions_obj.push({ 'id': value.id,
+                    'text': value.name + getOntologySuffix(value.id),
+                    'description': value.definition,
+                    'traitId': value.isAId,
+                    'cropOntologyId': value.cropOntologyId
+                });
 
-			});
-		} else {
-			$.each(variableSuggestions, function( index, value ) {
-				variableSuggestions_obj.push({ 'id' : value.id,
-					  'text' : value.name + getOntologySuffix(value.id),
-					  'description' : value.definition
-				});
+            });
+        } else {
+            $.each(variableSuggestions, function (index, value) {
+                variableSuggestions_obj.push({ 'id': value.id,
+                    'text': value.name + getOntologySuffix(value.id),
+                    'description': value.definition
+                });
 
-			});
-		}
-	}
-	//create the select2 combo
-	//if combo to create is the variable name, add an onchange event to fill up all the fields of the selected variable
-	if (name == "VariableName") {
-		$("#combo" + name).select2({
-	        query: function (query) {
-	          var data = {results: sortByKey(variableSuggestions_obj, "text")}, i, j, s;
-	          // return the array that matches
-	          data.results = $.grep(data.results,function(item,index) {
-	            return ($.fn.select2.defaults.matcher($.trim(query.term),$.trim(item.text)));
+            });
+        }
+    }
+    //create the select2 combo
+    //if combo to create is the variable name, add an onchange event to fill up all the fields of the selected variable
+    if (name == "VariableName") {
+        $("#combo" + name).select2({
+            query: function (query) {
+                var data = {results: sortByKey(variableSuggestions_obj, "text")}, i, j, s;
+                // return the array that matches
+                data.results = $.grep(data.results, function (item, index) {
+                    return ($.fn.select2.defaults.matcher($.trim(query.term), $.trim(item.text)));
 
-	          });
-	          if (data.results.length === 0){
-	        	  data.results.unshift({id:query.term,text:query.term});
-	          }
+                });
+                if (data.results.length === 0) {
+                    data.results.unshift({id: query.term, text: query.term});
+                }
 
-	            query.callback(data);
-	        }
+                query.callback(data);
+            }
 
-	    }).on("change", function(){
-	    	getStandardVariableDetails($("#combo" + name).select2("data").id, $("#combo" + name).select2("data").text);
-	    	var tempId = $("#combo" + name).select2("data").id
-	    	if(tempId == $("#combo" + name).select2("data").text){
-	    		enableFieldsForUpdate();
-	    		$("#traitClassBrowserTree").dynatree("enable");
-	    	}
+        }).on("change", function () {
+            getStandardVariableDetails($("#combo" + name).select2("data").id, $("#combo" + name).select2("data").text);
+            var tempId = $("#combo" + name).select2("data").id
+            if (tempId == $("#combo" + name).select2("data").text) {
+                enableFieldsForUpdate();
+                $("#traitClassBrowserTree").dynatree("enable");
+            }
 
-	    });
-	} else {
-		//if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
-		$("#combo" + name).select2({
-	        query: function (query) {
-	          var data = {results: sortByKey(variableSuggestions_obj, "text")}, i, j, s;
-	          // return the array that matches
-	          data.results = $.grep(data.results,function(item,index) {
-	            return ($.fn.select2.defaults.matcher($.trim(query.term),$.trim(item.text)));
+        });
+    } else {
+        //if combo to create is one of the ontology combos, add an onchange event to populate the description based on the selected value
+        $("#combo" + name).select2({
+            query: function (query) {
+                var data = {results: sortByKey(variableSuggestions_obj, "text")}, i, j, s;
+                // return the array that matches
+                data.results = $.grep(data.results, function (item, index) {
+                    return ($.fn.select2.defaults.matcher($.trim(query.term), $.trim(item.text)));
 
-	          });
-	          if(allowTypedValues == true){
-	        	  if (data.results.length === 0)
-	        		  data.results.unshift({id:query.term,text:query.term});
-	          }
-	            query.callback(data);
-	        }
+                });
+                if (allowTypedValues == true) {
+                    if (data.results.length === 0)
+                        data.results.unshift({id: query.term, text: query.term});
+                }
+                query.callback(data);
+            }
 
-	    }).on("change", function(){
-	    	$("#" + lowerCaseFirstLetter(name) + "Description").val($("#combo"+name).select2("data").description);
-	    	if(name == 'TraitClass'){
-	    		filterPropertyCombo(treeDivId, "comboTraitClass", "traitClassDescription", $("#comboTraitClass").select2("data").id, true);
-	    	}
-	    	else if (name == 'Property') {
-	    		$("#cropOntologyDisplay").html($("#combo"+name).select2("data").cropOntologyId);
-	    	}
-	    	if (name.match("^Manage")) {
-	    		$("#" + "page-message-" + lowerCaseFirstLetter(name) + "-modal").html("");
-	    		if ($("#combo"+name).select2("data").description) {
-	    			//edit mode
-			    	$("#" + lowerCaseFirstLetter(name) + "Id").val($("#combo"+name).select2("data").id);
-			    	$("#" + lowerCaseFirstLetter(name) + "Name").val($("#combo"+name).select2("data").text.replace(" (Shared)", ""));
-		    		$("#btnAdd" + name).hide();
-		    		$("#btnUpdate" + name).show();
-		    		$("#btnDelete" + name).show();
-		    		$("#" + lowerCaseFirstLetter(name) + "NameText").html($("#combo"+name).select2("data").text.replace(" (Shared)", ""));
+        }).on("change", function () {
+            $("#" + lowerCaseFirstLetter(name) + "Description").val($("#combo" + name).select2("data").description);
+            if (name == 'TraitClass') {
+                filterPropertyCombo(treeDivId, "comboTraitClass", "traitClassDescription", $("#comboTraitClass").select2("data").id, true);
+            }
+            else if (name == 'Property') {
+                $("#cropOntologyDisplay").html($("#combo" + name).select2("data").cropOntologyId);
+            }
+            if (name.match("^Manage")) {
+                $("#" + "page-message-" + lowerCaseFirstLetter(name) + "-modal").html("");
+                if ($("#combo" + name).select2("data").description) {
+                    //edit mode
+                    $("#" + lowerCaseFirstLetter(name) + "Id").val($("#combo" + name).select2("data").id);
+                    $("#" + lowerCaseFirstLetter(name) + "Name").val($("#combo" + name).select2("data").text.replace(" (Shared)", ""));
+                    $("#btnAdd" + name).hide();
+                    $("#btnUpdate" + name).show();
+                    $("#btnDelete" + name).show();
+                    $("#" + lowerCaseFirstLetter(name) + "NameText").html($("#combo" + name).select2("data").text.replace(" (Shared)", ""));
 
-		    		//add the loading of the linked variables here
-		    		if (allowTypedValues) {
-		    			retrieveLinkedVariables(name, $("#combo"+name).select2("data").id);
-		    		}
+                    //add the loading of the linked variables here
+                    if (allowTypedValues) {
+                        retrieveLinkedVariables(name, $("#combo" + name).select2("data").id);
+                    }
 
-		    		if(name == 'ManageTraitClass'){
-		    			//setCorrespondingTraitClass($("#combo"+name).select2("data").id);
-		    			var count = 0;
-		    			var traitId = $("#combo"+name).select2("data").id;
-		    			if(traitId != null && traitId != ''){
-		    				var nodeKeyFull = getNodeKeyFromTraitClass(traitId,'manageParentTraitClassBrowserTree')
+                    if (name == 'ManageTraitClass') {
+                        //setCorrespondingTraitClass($("#combo"+name).select2("data").id);
+                        var count = 0;
+                        var traitId = $("#combo" + name).select2("data").id;
+                        if (traitId != null && traitId != '') {
+                            var nodeKeyFull = getNodeKeyFromTraitClass(traitId, 'manageParentTraitClassBrowserTree')
 
-		    				var elem = nodeKeyFull.split("_");
-		    				var count = 0;
-		    				var prevTraitId;
-		    				for(count = 0 ; count < elem.length ; count++){
+                            var elem = nodeKeyFull.split("_");
+                            var count = 0;
+                            var prevTraitId;
+                            for (count = 0; count < elem.length; count++) {
 
-		    					if(traitId == elem[count])
-		    						break;
-		    					else
-		    						prevTraitId = elem[count];
-		    				}
+                                if (traitId == elem[count])
+                                    break;
+                                else
+                                    prevTraitId = elem[count];
+                            }
 
-		    				for(count = 0 ; count < traitClassesSuggestions_obj.length ; count++){
-					    		if(traitClassesSuggestions_obj[count].id == prevTraitId){
-					    			dataVal = traitClassesSuggestions_obj[count];
-					    			break;
-					    		}
-					    	}
-					    	$("#comboManageParentTraitClass").select2('data', dataVal).trigger('change');
-		    			}
-		    		}
-		    		if(name == 'ManageProperty'){
-		    			setCorrespondingTraitClass($("#combo"+name).select2("data").id);
-		    			if (parseInt($("#combo"+name).select2("data").id) > 0) {
-		    				disablePropertyFields();
-		    			} else {
-		    				enablePropertyFields();
-		    			}
-		    		}
+                            for (count = 0; count < traitClassesSuggestions_obj.length; count++) {
+                                if (traitClassesSuggestions_obj[count].id == prevTraitId) {
+                                    dataVal = traitClassesSuggestions_obj[count];
+                                    break;
+                                }
+                            }
+                            $("#comboManageParentTraitClass").select2('data', dataVal).trigger('change');
+                        }
+                    }
+                    if (name == 'ManageProperty') {
+                        setCorrespondingTraitClass($("#combo" + name).select2("data").id);
+                        if (parseInt($("#combo" + name).select2("data").id) > 0) {
+                            disablePropertyFields();
+                        } else {
+                            enablePropertyFields();
+                        }
+                    }
 
-	    		} else { //add mode
-	    			if(name != 'ManageProperty'){
-	    				clearForm(lowerCaseFirstLetter(name) + "Form");
-	    			}
-			    	$("#" + lowerCaseFirstLetter(name) + "Id").val('');
-			    	$("#" + lowerCaseFirstLetter(name) + "Name").val($("#combo"+name).select2("data").id);
-		    		$("#btnAdd" + name).show();
-		    		$("#btnUpdate" + name).hide();
-		    		$("#btnDelete" + name).hide();
-		    		$("#" + lowerCaseFirstLetter(name) + "NameText").html($("#combo"+name).select2("data").id);
-		    		$("#manageLinkedVariableList").html("");
-	    		}
-	    	}
-	    });
-	}
+                } else { //add mode
+                    if (name != 'ManageProperty') {
+                        clearForm(lowerCaseFirstLetter(name) + "Form");
+                    }
+                    $("#" + lowerCaseFirstLetter(name) + "Id").val('');
+                    $("#" + lowerCaseFirstLetter(name) + "Name").val($("#combo" + name).select2("data").id);
+                    $("#btnAdd" + name).show();
+                    $("#btnUpdate" + name).hide();
+                    $("#btnDelete" + name).hide();
+                    $("#" + lowerCaseFirstLetter(name) + "NameText").html($("#combo" + name).select2("data").id);
+                    $("#manageLinkedVariableList").html("");
+                }
+            }
+        });
+    }
 }
 
 function disablePropertyFields() {
@@ -480,7 +480,7 @@ function loadOntologyCombos(){
 
 	traitClassesSuggestions_obj.push({ 'id' : 0,
 		  'text' : "-- All --",
-		  'description' : "All",
+		  'description' : "All"
 	});
 
 	initializeVariable(traitClassesSuggestions, traitClassesSuggestions_obj, "description", "TraitClass", false);
@@ -493,7 +493,7 @@ function loadTraitOntologyCombos(){
 	//re create combos
 	traitClassesSuggestions_obj.push({ 'id' : 0,
 		  'text' : "-- All --",
-		  'description' : "All",
+		  'description' : "All"
 	});
 	//initialize main tree
 	initializeVariable(traitClassesSuggestions, traitClassesSuggestions_obj, "description", "TraitClass", false);
@@ -786,7 +786,7 @@ function loadTraitClassTree(treeName, comboName, descriptionName, treeData, drop
 	        	}
 	          return false;
 	        }
-	      },
+	      }
 	    });
 }
 //function to retrieve the standard variable details of the selected variable

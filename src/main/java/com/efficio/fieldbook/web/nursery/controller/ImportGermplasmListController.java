@@ -189,13 +189,11 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
 		 String selectedCheck[] = form.getSelectedCheck();
          if(selectedCheck != null && selectedCheck.length != 0){
  	        for(int i = 0 ; i < selectedCheck.length ; i++){
- 	            //ImportedGermplasm importedGermplasm = form.getImportedCheckGermplasm().get(i);
  	            int realIndex = i;
  	            getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheck(selectedCheck[i]);
  	            if (NumberUtils.isNumber(selectedCheck[i])) {
  	            	getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckId(Integer.parseInt(selectedCheck[i]));
  	            }
- 	            //getUserSelection().getImportedCheckGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms().get(realIndex).setCheckName(importedGermplasm.getCheckName());
  	        }
          }
          //end: section for taking note of the check germplasm
@@ -303,14 +301,11 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             importedGermplasmList.setImportedGermplasms(list);
             mainInfo.setImportedGermplasmList(importedGermplasmList);
             
-            //form.changePage(1);
             form.changePage(1);
             userSelection.setCurrentPageGermplasmList(form.getCurrentPage());
 
             getUserSelection().setImportedGermplasmMainInfo(mainInfo);
             getUserSelection().setImportValid(true);
-            
-            
             
             model.addAttribute("checkLists", ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations());
             model.addAttribute("listDataTable", dataTableDataList);
@@ -349,8 +344,7 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             }
             
             List<GermplasmListData> data = new ArrayList<GermplasmListData>();
-            //for(int i = 0 ; i < 20 ; i++)
-            	data.addAll(germplasmListManager.getGermplasmListDataByListId(listId, 0, count));
+            data.addAll(germplasmListManager.getGermplasmListDataByListId(listId, 0, count));
             List<ImportedGermplasm> list = transformGermplasmListDataToImportedGermplasm(data, checkId);
             
             List<Map<String, Object>> dataTableDataList = new ArrayList();
@@ -372,7 +366,6 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             importedGermplasmList.setImportedGermplasms(list);
             mainInfo.setImportedGermplasmList(importedGermplasmList);
             
-            //form.changePage(1);
             form.changeCheckPage(1);
             userSelection.setCurrentPageCheckGermplasmList(form.getCurrentCheckPage());
 
@@ -460,7 +453,6 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
             	}
             		
             }
-            //ImportedGermplasm importedGermplasm = primaryList.get(entryId-1);
             
             importedGermplasm.setCheck(checkId);
             
@@ -585,13 +577,9 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         
         try {
             ImportedGermplasmMainInfo mainInfo = new ImportedGermplasmMainInfo();
-            mainInfo.setAdvanceImportType(true);
-            //form.setImportedCheckGermplasmMainInfo(mainInfo);
-            
+            mainInfo.setAdvanceImportType(true);            
             List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
-            
-            //form.setImportedCheckGermplasm(list);
-            
+                        
             ImportedGermplasmList importedGermplasmList = new ImportedGermplasmList();
             importedGermplasmList.setImportedGermplasms(list);
             mainInfo.setImportedGermplasmList(importedGermplasmList);
@@ -626,7 +614,6 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         try {
 			model.addAttribute("checkLists", ontologyService.getStandardVariable(TermId.CHECK.getId()).getEnumerations());
 		} catch (MiddlewareQueryException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         return super.showAjaxPage(model, PAGINATION_TEMPLATE);
@@ -645,7 +632,6 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
     public String getCheckPaginatedList(@PathVariable int pageNum, @PathVariable int previewPageNum
             , @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form, Model model) {
         //this set the necessary info from the session variable
-    	
     	//we need to set the data in the measurementList
     	for(int i = 0 ; i < form.getPaginatedImportedCheckGermplasm().size() ; i++){
     		ImportedGermplasm importedGermplasm = form.getPaginatedImportedCheckGermplasm().get(i);

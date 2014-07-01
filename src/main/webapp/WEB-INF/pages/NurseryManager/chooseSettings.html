@@ -398,14 +398,12 @@ function openVariableSelectionDialog(e) {
 
 	e.preventDefault();
 
-	$('.nrm-vs-modal .fbk-modal-title').text(e.data.label);
-	$('.nrm-vs-modal .nrm-vs-hint-placeholder').html(e.data.placeholderLabel);
-
-	$('#ontology-detail-tabs').empty().html($('.variable-detail-info').html());
-	$('#variable-details').html('');
+    var labels = {};
+    labels.label = e.data.label;
+    labels.placeholderLabel = e.data.placeholderLabel;
 
 	// FIXME
-	ChooseSettings.getStandardVariables(e.data.group, treeDivId);
+	ChooseSettings.getStandardVariables(labels, e.data.group, treeDivId, processSelectVariablesSubmission);
 }
 
 $(document).ready(function() {

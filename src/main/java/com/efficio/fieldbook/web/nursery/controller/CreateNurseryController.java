@@ -373,7 +373,7 @@ public class CreateNurseryController extends SettingsController {
         //return "[]";
         return result;
     }
-    
+
     /**
      * Show variable details.
      *
@@ -381,18 +381,18 @@ public class CreateNurseryController extends SettingsController {
      * @return the string
      */
     @ResponseBody
-    @RequestMapping(value="showVariableDetails/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "showVariableDetails/{id}", method = RequestMethod.GET)
     public String showVariableDetails(@PathVariable int id) {
         try {
 
-                SettingVariable svar = getSettingVariable(id);
-                if (svar != null) {
-                        ObjectMapper om = new ObjectMapper();
-                        return om.writeValueAsString(svar);
-                }
-                
-        } catch(Exception e) {
-                LOG.error(e.getMessage(), e);
+            SettingVariable svar = getSettingVariable(id);
+            if (svar != null) {
+                ObjectMapper om = new ObjectMapper();
+                return om.writeValueAsString(svar);
+            }
+
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
         }
         return "[]";
     }

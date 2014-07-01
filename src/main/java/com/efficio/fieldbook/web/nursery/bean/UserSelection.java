@@ -73,7 +73,7 @@ public class UserSelection extends StudySelection implements Serializable {
     
     /** The trial level variable list. */
     private List<SettingDetail> trialLevelVariableList;
-    
+
     /** The trial environment values. */
     private List<List<ValueReference>> trialEnvironmentValues;
     

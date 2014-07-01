@@ -9,14 +9,14 @@
     <tbody>
     <tr ng-repeat="(key, setting) in settings">
         <td>
-            <span class="delete-icon" ng-click="removeSetting(setting)" ng-show="setting.isDeletable"></span>
+            <span class="delete-icon" ng-click="removeSetting(setting)" ng-show="setting.deletable"></span>
         </td>
         <td width="45%">
             <a href="javascript: void(0);" ng-click="showDetailsModal(setting)">
-                <span class="var-names">{{setting.name}}</span>
+                <span class="var-names">{{setting.variable.name}}</span>
             </a>
         </td>
-        <td width="50%">{{setting.description}}</td>
+        <td width="50%">{{setting.variable.description}}</td>
     </tr>
     </tbody>
 </table>

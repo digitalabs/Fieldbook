@@ -130,7 +130,8 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
      */
     @ResponseBody
     @RequestMapping(value = "/OntologyBrowser/settings/properties", method = RequestMethod.GET)
-    public List<PropertyTree> getPropertiesBySettingsGroup(@RequestParam(required=true) Integer groupId, @RequestParam(required=false) Integer classId) {
+    public List<PropertyTree> getPropertiesBySettingsGroup(@RequestParam(required=true) Integer groupId, 
+    		@RequestParam(required=false) Integer classId) {
     	try {
     		
     		if(classId == null) {
@@ -261,7 +262,8 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
     @SuppressWarnings("unchecked")
 	@ResponseBody
     @RequestMapping(value = "/OntologyBrowser/variables/usage", method = RequestMethod.GET)
-    public String getUsageBySettingsMode(@RequestParam(required=true) Integer mode, @RequestParam(required=false) Boolean flat) {
+    public String getUsageBySettingsMode(@RequestParam(required=true) Integer mode, @RequestParam(required=false) Boolean flat,
+    		@RequestParam(required=false) Integer maxResults) {
     	try {
     		
     		if(flat == null) flat = true;
@@ -269,6 +271,7 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
     		// Fetch the list of filtered Standard Variable References and extract ids (this would be better if 
     		// filtered SVs were full objects)
     		List<StandardVariableReference> stdVars = fieldbookService.filterStandardVariablesForSetting(mode, new ArrayList<SettingDetail>());
+    		if(maxResults == null) maxResults = stdVars.size();
     		LOG.info("Filtering for " + mode + " : results : " + stdVars.size());
     		
     		List<Integer> ids = new ArrayList<Integer>();
@@ -332,6 +335,9 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
 	    	else {
 	    		// FIXME : aim to avoid warning suppression
 	    		Collections.sort(usageList);
+	    		if(maxResults < usageList.size()) {
+	    			return om.writeValueAsString(usageList.subList(0, maxResults));
+	    		}
 	    		return om.writeValueAsString(usageList);
 	    	}
 			

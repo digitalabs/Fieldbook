@@ -693,8 +693,8 @@ public class FieldbookServiceImpl implements FieldbookService{
   								}
   							}
   						}
+  						tempVarId.setName(tempVarName.getName() + "_ID");
   						tempVarName.setValue(actualNameVal);	
-//  						if(tempVarId.getOperation() == Operation.ADD && tempVarName.getOperation() != Op)
   						tempVarName.setOperation(tempVarId.getOperation());
   						if(tempVarId.getOperation() != null && Operation.DELETE == tempVarId.getOperation()){
   							if(studyConditionMapList.get(tempVarName.getTermId()) != null){
@@ -723,11 +723,12 @@ public class FieldbookServiceImpl implements FieldbookService{
   						
   						StandardVariable stdvar = fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(nameTermId));
   						MeasurementVariable tempVarName = new MeasurementVariable(
-  								Integer.valueOf(nameTermId), stdvar.getName() + "_DBCV", stdvar.getDescription(), stdvar.getScale().getName(), stdvar.getMethod().getName(),
+  								Integer.valueOf(nameTermId), tempVarId.getName(), stdvar.getDescription(), stdvar.getScale().getName(), stdvar.getMethod().getName(),
   								stdvar.getProperty().getName(), stdvar.getDataType().getName(), actualNameVal, stdvar.getPhenotypicType().getLabelList().get(0));
   						tempVarName.setStoredIn(stdvar.getStoredIn().getId());
   						tempVarName.setDataTypeId(stdvar.getDataType().getId());
   						tempVarName.setFactor(false);
+  						tempVarId.setName(tempVarId.getName() + "_ID");
   						if(tempVarId.getOperation() != Operation.DELETE){
 	  						tempVarName.setOperation(Operation.ADD);
 	  						workbook.getConditions().add(tempVarName);
@@ -765,8 +766,6 @@ public class FieldbookServiceImpl implements FieldbookService{
   							}
   						}
   						
-  						
-  						
   						if(deleteNameWhenIdNotExist){
 							//we need to delete the name
   							tempVarName.setOperation(Operation.DELETE);
@@ -780,7 +779,7 @@ public class FieldbookServiceImpl implements FieldbookService{
   						}else{
   							StandardVariable stdvar = fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(idTermId));
   	  						MeasurementVariable tempVarId = new MeasurementVariable(
-  	  								Integer.valueOf(idTermId), stdvar.getName() + "_DBID", stdvar.getDescription(), stdvar.getScale().getName(), stdvar.getMethod().getName(),
+  	  								Integer.valueOf(idTermId), tempVarName.getName() + "_ID", stdvar.getDescription(), stdvar.getScale().getName(), stdvar.getMethod().getName(),
   	  								stdvar.getProperty().getName(), stdvar.getDataType().getName(), actualIdVal, stdvar.getPhenotypicType().getLabelList().get(0));
   	  						tempVarId.setStoredIn(stdvar.getStoredIn().getId());
   	  						tempVarId.setDataTypeId(stdvar.getDataType().getId());

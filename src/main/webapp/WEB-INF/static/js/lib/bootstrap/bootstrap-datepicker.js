@@ -469,7 +469,7 @@ endYear = this.endDate !== Infinity ? this.endDate.getUTCFullYear() : Infinity,
 endMonth = this.endDate !== Infinity ? this.endDate.getUTCMonth() : Infinity,
 currentDate = this.date && this.date.valueOf();
 this.picker.find('.datepicker-days thead th.datepicker-switch')
-.text(dates[this.language].months[month]+' '+year);
+.text(dates[this.language].monthsShort[month]+' '+year);
 this.picker.find('tfoot th.today')
 .text(dates[this.language].today)
 .toggle(this.todayBtn !== false);
@@ -590,7 +590,7 @@ switch(target[0].nodeName.toLowerCase()) {
 case 'th':
 switch(target[0].className) {
 case 'datepicker-switch':
-this.showMode(1);
+//this.showMode(1);
 break;
 case 'prev':
 case 'next':
@@ -604,6 +604,14 @@ case 2:
 this.viewDate = this.moveYear(this.viewDate, dir);
 break;
 }
+this.fill();
+break;
+case 'prev-year':
+case 'next-year':
+var dir = DPGlobal.modes[this.viewMode].navStep * (target[0].className == 'prev-year' ? -1 : 1);
+case 1:
+case 2:
+this.viewDate = this.moveYear(this.viewDate, dir);
 this.fill();
 break;
 case 'today':
@@ -1095,9 +1103,11 @@ return date.join('');
 },
 headTemplate: '<thead>'+
 '<tr>'+
+'<th class="prev-year"><i class="glyphicon glyphicon-backward"/></th>'+
 '<th class="prev"><i class="glyphicon glyphicon-arrow-left"/></th>'+
-'<th colspan="5" class="datepicker-switch"></th>'+
+'<th colspan="3" class="datepicker-switch"></th>'+
 '<th class="next"><i class="glyphicon glyphicon-arrow-right"/></th>'+
+'<th class="next-year"><i class="glyphicon glyphicon-forward"/></th>'+
 '</tr>'+
 '</thead>',
 contTemplate: '<tbody><tr><td colspan="7"></td></tr></tbody>',

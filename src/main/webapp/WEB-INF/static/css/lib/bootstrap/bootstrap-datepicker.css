@@ -526,7 +526,7 @@ fieldset[disabled] .datepicker table tr td span.active.disabled:hover.active {
   color: #999999;
 }
 .datepicker th.datepicker-switch {
-  width: 145px;
+  width: 0px;
 }
 .datepicker thead tr:first-child th,
 .datepicker tfoot tr:first-child th {

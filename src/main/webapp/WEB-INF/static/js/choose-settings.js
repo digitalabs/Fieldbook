@@ -54,7 +54,7 @@ window.ChooseSettings = (function() {
             $(
                 $(row).children('td:nth-child(1)').children(
                         '#' + getJquerySafeId('selectedVariables' + index + '.cvTermId')))
-                        .val(getIdOrCodeCounterpart(value, $('#idNameVariables').val().split(','), $('#idCodeNameCombination').val().split(',')));
+                        .val(getIdOrCodeCounterpart(value, idNameVariables.split(','), idCodeNameCombination.split(',')));
         });
 
     }
@@ -226,8 +226,7 @@ function addVariableToList() {
 function idNameCounterpartSelected(selectedVariable) {
     'use strict';
     var itemToCompare = getIdNameCounterpart(selectedVariable, idNameVariables.split(","));
-	var idCodeNameToCompare = getIdCodeNameCounterpart(selectedVariable, $(
-			'#idCodeNameCombination').val().split(','));
+	var idCodeNameToCompare = getIdCodeNameCounterpart(selectedVariable, idCodeNameCombination.split(','));
 	
 	if (itemToCompare != -1) {
 		// if it is selected/added already

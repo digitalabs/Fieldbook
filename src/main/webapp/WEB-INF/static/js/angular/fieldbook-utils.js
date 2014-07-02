@@ -1,7 +1,7 @@
 /*global angular*/
 /*global showBaselineTraitDetailsModal */
 
-angular.module('fieldbook-settings', ['ui.select2'])
+angular.module('fieldbook-utils', ['ui.select2'])
     .constant('ONTOLOGY_TREE_ID', 'ontologyBrowserTree')
     .directive('displaySettings', function() {
         'use strict';

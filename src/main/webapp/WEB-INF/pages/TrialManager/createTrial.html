@@ -162,10 +162,79 @@
         </div>
     </div>
 
+    <!-- included modals -->
+    <div id="showBaselineTraitDetails" th:include="/NurseryManager/includes/baselineTraitDetails"></div>
+    <div th:include="/NurseryManager/includes/variableSelectionModal"></div>
+
+
+
     <!-- MAIN jS -->
     <script type="text/javascript" th:src="@{/static/js/trialmanager/manageTrial.js}"></script>
 
     <!-- constants here -->
+    <script type="text/javascript" th:inline="javascript">
+        //<![CDATA[
+        // TODO: move the ff later as constant in the angular app module
+        var varInListMessage = /*[[#{nursery.managesettings.variable.in.selected.list}]]*/ '';
+        var addNurseryLevelSettings = /*[[#{trial.managesettings.add.trial.level.settings}]]*/ '';
+        var addPlotLevelSettings = /*[[#{nursery.managesettings.add.plot.level.settings}]]*/ '';
+        var addBaselineTraits = /*[[#{nursery.managesettings.add.baseline.traits}]]*/ '';
+        var addTrialEnvironmentTraits = /*[[#{nursery.managesettings.add.trial.environment.variable}]]*/ '';
+        var addTreatmentFactors = /*[[#{trial.managesettings.treatment.factors.add}]]*/ '';
+        var deleteTemplateSettingError = /*[[#{manage.settings.delete.error}]]*/ '';
+        var deleteTemplateSettingSuccess = /*[[#{manage.settings.delete.success}]]*/ '';
+        var saveTemplateSettingSuccess = /*[[#{manage.settings.save.setting.success}]]*/ '';
+        var templateSettingNameError = /*[[#{manage.settings.setting.name.error}]]*/ '';
+        var templateSettingNameErrorUnique = /*[[#{manage.settings.setting.name.unique.error}]]*/ '';
+        var programLocationUrl = '';
+        var programMethodUrl = '';
+        var locationIframeOpened = false;
+        var methodIframeOpened = false;
+        var nurseryLevelValueEmpty= /*[[#{nursery.managesettings.nursery.level.value.empty}]]*/ '';
+        var copyTemplateSettingError = /*[[#{manage.settings.copy.error}]]*/ '';
+        var copyTemplateSettingSuccess = /*[[#{manage.settings.copy.setting.success}]]*/ '';
+        var manageMethodLabel = /*[[#{nursery.managesettings.manage.method}]]*/ '';
+        var manageLocationLabel = /*[[#{nursery.managesettings.manage.location}]]*/ '';
+        var nurseryNumericError = /*[[#{manage.settings.nursery.numeric.error}]]*/ '';
+        var breedingMethodId = '';
+        var locationId = '';
+
+        var showFavoriteMethodLabel = /*[[#{show.favorite.method}]]*/ '';
+        var showFavoriteLocationLabel = /*[[#{show.favorite.location}]]*/ '';
+
+        var idNameCounterpartAddedError = /*[[#{manage.settings.id.name.counterpart.added.error}]]*/ '';
+
+        var inputChange = false;
+        var reminderNursery = /*[[#{trial.reminder.add.trial.settings}]]*/ '';
+        var reminderPlot = /*[[#{nursery.reminder.add.plot.settings}]]*/ '';
+        var reminderTraits = /*[[#{nursery.reminder.add.trait.settings}]]*/ '';
+        var reminderTrialEnvironment = /*[[#{nursery.reminder.add.trial.environment.settings}]]*/ '';
+        var reminderTreatmentFactors = /*[[#{trial.reminder.add.treatment.factors}]]*/ '';
+
+        var noVariableNameError = /*[[#{manage.settings.no.variable.name.error}]]*/ '';
+        var noTreatmentFactorPairError = /*[[#{manage.settings.no.treatment.factor.pair.missing}]]*/ '';
+        var noTreatmentFactorPairNameError = /*[[#{manage.settings.no.treatment.factor.pair.name.missing}]]*/ '';
+
+        var startDateRequiredError = /*[[#{start.end.date.validation.start.date.required}]]*/ '';
+        var startDateRequiredEarlierError = /*[[#{start.end.date.validation.start.date.required.earlier}]]*/ '';
+        var startDateId = '';
+        var endDateId = '';
+
+
+        var mdLabel = /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
+            mdPlaceholder = /*[[#{nursery.reminder.add.nursery.settings}]]*/ '';
+
+        (function(){
+
+            angular.module('manageTrialApp')
+                    .constant('LOCATION_ID', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).LOCATION_ID.getString()}]]*/ ''
+            ).constant('BREEDING_METHOD_CODE', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).BREEDING_METHOD_CODE.getString()}]]*/ ''
+            ).constant('BREEDING_METHOD_ID', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).BREEDING_METHOD_ID.getString()}]]*/ ''
+            );
+
+        })();
+        //]]>
+    </script>
 
     <!-- NG-VIEW controller js files -->
     <script type="text/javascript" th:src="@{/static/js/trialmanager/trialSettings.js}"></script>

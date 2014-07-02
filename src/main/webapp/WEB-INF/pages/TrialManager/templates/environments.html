@@ -1,1 +1,95 @@
-<div>Environments page</div>
+<div class="col-xs-12 col-md-12">
+    <div ng-controller="EnvironmentCtrl">
+        <div class="row">
+            <div class="form-group">
+                <label class="control-label">
+                    <strong class="sub-content-heading">Define Environments</strong>
+                </label>
+            </div>
+            <div class="form-group">
+                <div class="col-md-6 col-xs-6">
+                    <label class="control-label">Specify the number of environments for this trial:</label>
+                    <div class="pull-right">
+                        <input type="number" ng-model="temp.noOfEnvironments"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6 col-md-6">
+                <div class="form-group">
+                    <label class="control-label">
+                        <strong class="sub-content-heading">MANAGEMENT DETAILS</strong>
+                    </label>
+
+                    <a select-standard-variable href="#" class="btn btn-info pull-right"
+                       variable-type="1" labels="labels.managementDetails" modeldata="data.managementDetails">Add</a>
+                </div>
+                <div class="form-horizontal sectionContainer">
+                    <display-settings settings="data.managementDetails"></display-settings>
+                </div>
+            </div>
+            <div class="col-xs-6 col-md-6">
+                <div class="form-group">
+                    <label class="control-label">
+                        <strong class="sub-content-heading">TRIAL CONDITION DETAILS</strong>
+                    </label>
+
+                    <a select-standard-variable href="#" class="btn btn-info pull-right"
+                       variable-type="1" labels="labels.trialConditionDetails" modeldata="data.trialConditionDetails">Add</a>
+                </div>
+                <div class="form-horizontal sectionContainer">
+                    <display-settings settings="data.trialConditionDetails"></display-settings>
+                </div>
+            </div>
+        </div>
+        <div class="row" ng-repeat="environment in data.environments">
+            <div class="row">
+                <div class="form-group">
+                    <label class="control-label">
+                        <strong class="sub-content-heading">Environment {{$index + 1}}</strong>
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 col-md-6">
+                    <div class="form-group" ng-repeat="(key, value) in environment.managementDetailValues">
+                        <div class="col-xs-5 1st">
+                        <span style="word-wrap: break-word" class="control-label nursery-level-label
+                            label-bold var-names">{{data.managementDetails[key].variable.name}}</span>
+                        </div>
+                        <div class="col-xs-7 2nd">
+                            <show-setting-form-element settings="data.managementDetails" targetkey="{{key}}"
+                                                       valuecontainer="environment.managementDetailValues"></show-setting-form-element>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6 col-md-6">
+                    <div class="form-group" ng-repeat="(key, value) in environment.trialDetailValues">
+                        <div class="col-xs-5 1st">
+                        <span style="word-wrap: break-word" class="control-label nursery-level-label
+                            label-bold var-names">{{data.trialConditionDetails[key].variable.name}}</span>
+                        </div>
+                        <div class="col-xs-7 2nd">
+                            <show-setting-form-element settings="data.trialConditionDetails" targetkey="{{key}}"
+                                                       valuecontainer="environment.trialDetailValues"></show-setting-form-element>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12 col-md-12">
+                <div id="showBaselineTraitDetails" th:include="/NurseryManager/includes/baselineTraitDetails"></div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12 col-md-12">
+                <div th:include="/NurseryManager/includes/variableSelectionModal"></div>
+            </div>
+        </div>
+    </div>
+</div>

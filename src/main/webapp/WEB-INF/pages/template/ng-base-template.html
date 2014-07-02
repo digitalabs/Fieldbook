@@ -48,6 +48,7 @@
     <script type="text/javascript" th:src="@{/static/js/lib/bootstrap/bootstrap-paginator.min.js}"></script>
     <script type="text/javascript" th:src="@{/static/js/lib/notify/jquery.notify.min.js}"></script>
     <script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery.tableSelect.js}"></script>
+    <script type="text/javascript" th:src="@{/static/js/spinner.js}"></script>
     <script type="text/javascript" th:src="@{/static/js/spinner-manager.js}"></script>
     <script type="text/javascript" th:src="@{/static/js/base.js}"></script>
 
@@ -57,8 +58,12 @@
     <script type="text/javascript" th:src="@{/static/js/lib/angular/ui-bootstrap-tpls-0.11.0.js}"></script>
     <script type="text/javascript" th:src="@{/static/js/lib/angular/angular-select2.js}"></script>
 
+    <!-- FIXME: for the meantime, the legacy chooseSettings.js is needed by fieldbook-utils.js for the old ontology popup  -->
+    <script type="text/javascript" th:src="@{/static/js/choose-settings.js}"></script>
+
     <!-- angular common modules -->
-    <script type="text/javascript" th:src="@{/static/js/angular/fieldbook-settings.js}"></script>
+    <script type="text/javascript" th:src="@{/static/js/angular/fieldbook-utils.js}"></script>
+    <script type="text/javascript" th:src="@{/static/js/angular/angular-utilities.js}"></script>
 
 </head>
 <body>

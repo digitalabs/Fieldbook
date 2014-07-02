@@ -7,7 +7,7 @@
 (function(){
     'use strict';
 
-    var manageTrialApp = angular.module('manageTrialApp', ['fieldbook-settings','ngRoute']);
+    var manageTrialApp = angular.module('manageTrialApp', ['fieldbook-utils','ngRoute']);
 
     // routing configuration
     manageTrialApp.config(['$routeProvider',
@@ -19,7 +19,8 @@
                 }).
 
                 when('/environment', {
-                    templateUrl: '/Fieldbook/TrialManager/createTrial/environment'
+                    templateUrl: '/Fieldbook/TrialManager/createTrial/environment',
+                    controller: 'EnvironmentCtrl'
                 }).
                 when('/germplasm', {
                     templateUrl: '/Fieldbook/TrialManager/createTrial/germplasm'
@@ -32,7 +33,7 @@
                     templateUrl: '/Fieldbook/TrialManager/createTrial/experimentalDesign'
                 }).
                 when('/measurements', {
-                    templateUrl: '/Fieldbook/TrialManager/createTrial/measurements',
+                    templateUrl: '/Fieldbook/TrialManager/createTrial/measurements'
                 }).
                 otherwise({
                     redirectTo: '/Fieldbook/TrialManager/createTrial/trialSettings'

@@ -99,13 +99,13 @@
     <script type="text/javascript" th:src="@{/static/js/lib/angular/ui-bootstrap-tpls-0.11.0.js}"></script>
     <script type="text/javascript" th:src="@{/static/js/lib/angular/angular-select2.js}"></script>
     <script type="text/javascript" th:src="@{/static/js/choose-settings.js}"></script>
-    <script type="text/javascript" th:src="@{/static/js/angular/fieldbook-settings.js}"></script>
+    <script type="text/javascript" th:src="@{/static/js/angular/fieldbook-utils.js}"></script>
     <script type="text/javascript" th:src="@{/static/js/angular/angular-utilities.js}"></script>
     <script type="text/javascript" th:inline="javascript">
         //<![CDATA[
         var mdLabel = /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
         	mdPlaceholder = /*[[#{nursery.reminder.add.nursery.settings}]]*/ '';
-        angular.module('fb-environments', ['ui.bootstrap', 'fieldbook-settings', 'leafnode-utils'])
+        angular.module('fb-environments', ['ui.bootstrap', 'fieldbook-utils', 'leafnode-utils'])
                 .constant('LOCATION_ID', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).LOCATION_ID.getString()}]]*/ ''
                 ).constant('BREEDING_METHOD_CODE', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).BREEDING_METHOD_CODE.getString()}]]*/ ''
                 ).constant('BREEDING_METHOD_ID', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).BREEDING_METHOD_ID.getString()}]]*/ ''

@@ -18,11 +18,11 @@ public class AngularTreatmentController extends SettingsController {
 
     @Override
     public String getContentName() {
-        return "TrialManager/angular/treatment";
+        return "TrialManager/templates/treatment";
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public String show(Model model) {
-        return super.showAngularPage(model);
+        return getContentName();
     }
 }

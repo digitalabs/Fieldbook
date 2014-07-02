@@ -166,7 +166,7 @@ public class CreateTrialController extends SettingsController {
     	form.setProjectId(this.getCurrentProjectId());
     	form.setRequiredFields(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
     	setFormStaticData(form);
-    	return super.show(model);
+    	return showAngularPage(model);
     }    
     
     private List<TreatmentFactorDetail> convertSettingDetailToTreatment(List<SettingDetail> treatmentFactors) {
@@ -392,4 +392,6 @@ public class CreateTrialController extends SettingsController {
     public List<ValueReference> getExperimentalDesignValues() throws MiddlewareQueryException {
         return fieldbookService.getAllPossibleValues(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
     }
+
+
 }

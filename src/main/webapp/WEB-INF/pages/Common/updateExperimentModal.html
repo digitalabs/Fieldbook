@@ -28,7 +28,7 @@
 					</div>
 					<div class="col-xs-8 col-md-8" th:if="${measurementData.editable == true}">
 						
-						<input th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" type="text" th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues) and measurementData.measurementVariable.dataTypeId != dateVarId and measurementData.measurementVariable.dataTypeId != categoricalVarId}" 
+						<input  maxlength="250"  th:attr="data-type=${measurementData.dataType}" style="width: 100%" size="1" type="text" th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues) and measurementData.measurementVariable.dataTypeId != dateVarId and measurementData.measurementVariable.dataTypeId != categoricalVarId}" 
 						th:field="*{updateObservation.dataList[__${rowIndex.index}__].value}"/>
 
 						<input th:if="${#lists.isEmpty(measurementData.measurementVariable.possibleValues) and measurementData.measurementVariable.dataTypeId == dateVarId}"

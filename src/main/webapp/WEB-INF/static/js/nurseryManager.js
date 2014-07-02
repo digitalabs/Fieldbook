@@ -1103,7 +1103,7 @@ function recreateDateInput(index, row, selectedVal, name) {
 }
 
 function recreateSpinnerInput(index, row, selectedVal, name) {
-	var newCell = "<input type='text' id='"
+	var newCell = "<input  maxlength='250'  type='text' id='"
 			+ name
 			+ index
 			+ ".value' name='"
@@ -1307,11 +1307,11 @@ function createDateInput(ctr, name) {
 
 }
 function createNumericalTextInput(ctr, name) {
-	return "<input type='text' id='" + name + ctr + ".value' name='" + name
+	return "<input  maxlength='250' type='text' id='" + name + ctr + ".value' name='" + name
 			+ "[" + ctr + "].value' class='form-control numeric-input' />";
 }
 function createCharacterTextInput(ctr, name) {
-	return "<input type='text' id='" + name + ctr + ".value' name='" + name
+	return "<input  maxlength='250' type='text' id='" + name + ctr + ".value' name='" + name
 			+ "[" + ctr + "].value' class='form-control character-input' />";
 
 }

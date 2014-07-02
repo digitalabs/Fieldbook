@@ -66,13 +66,13 @@
 						 class="possibleValuesFavoriteJson" style="display:none" th:text="${nurseryLevelVariable.possibleValuesFavoriteJson}">
 					</div>
 
-					<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'NTEXT'}"
+					<input  maxlength="250"  th:if="${nurseryLevelVariable.variable.widgetType.type == 'NTEXT'}"
 						   type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control numeric-input" />
 
-					<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'CTEXT'}"
+					<input  maxlength="250"  th:if="${nurseryLevelVariable.variable.widgetType.type == 'CTEXT'}"
 						   type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control character-input" />
 
-					<textarea th:if="${nurseryLevelVariable.variable.widgetType.type == 'TEXTAREA'}"
+					<textarea  maxlength="250"  th:if="${nurseryLevelVariable.variable.widgetType.type == 'TEXTAREA'}"
 							  th:field="*{studyLevelVariables[__${rowStat.index}__].value}" class="form-control character-input" rows="3" />
 
 					<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'DATE'}"
@@ -81,7 +81,7 @@
 						<img th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;" />
 					</label>
 
-					<input th:if="${nurseryLevelVariable.variable.widgetType.type == 'SLIDER'}"
+					<input  maxlength="250"  th:if="${nurseryLevelVariable.variable.widgetType.type == 'SLIDER'}"
 						   type="text" th:field="*{studyLevelVariables[__${rowStat.index}__].value}"
 						   th:attr="data-min=${nurseryLevelVariable.variable.minRange}"
 						   th:attrappend="data-max=${nurseryLevelVariable.variable.maxRange}"
@@ -247,13 +247,13 @@
 						 class="possibleValuesFavoriteJsonCons" style="display:none" th:text="${nurseryCondition.possibleValuesFavoriteJson}">
 					</div>
 
-					<input th:if="${nurseryCondition.variable.widgetType.type == 'NTEXT'}"
+					<input  maxlength="250" th:if="${nurseryCondition.variable.widgetType.type == 'NTEXT'}"
 						   type="text" th:field="*{nurseryConditions[__${rowStat.index}__].value}" class="form-control numeric-input" />
 
-					<input th:if="${nurseryCondition.variable.widgetType.type == 'CTEXT'}"
+					<input  maxlength="250" th:if="${nurseryCondition.variable.widgetType.type == 'CTEXT'}"
 						   type="text" th:field="*{nurseryConditions[__${rowStat.index}__].value}" class="form-control character-input" />
 
-					<textarea th:if="${nurseryCondition.variable.widgetType.type == 'TEXTAREA'}"
+					<textarea  maxlength="250" th:if="${nurseryCondition.variable.widgetType.type == 'TEXTAREA'}"
 							  th:field="*{nurseryConditions[__${rowStat.index}__].value}" class="form-control character-input" rows="3" />
 
 					<input th:if="${nurseryCondition.variable.widgetType.type == 'DATE'}"
@@ -262,7 +262,7 @@
 						<img th:src="@{/static/img/calendar.png}" style="padding-bottom:3px;" />
 					</label>
 
-					<input th:if="${nurseryCondition.variable.widgetType.type == 'SLIDER'}"
+					<input  maxlength="250" th:if="${nurseryCondition.variable.widgetType.type == 'SLIDER'}"
 						   type="text" th:field="*{nurseryConditions[__${rowStat.index}__].value}"
 						   th:attr="data-min=${nurseryCondition.variable.minRange}"
 						   th:attrappend="data-max=${nurseryCondition.variable.maxRange}"

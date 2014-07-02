@@ -108,8 +108,6 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     /** The imported germplasm list. */
     private List<ImportedGermplasm> importedGermplasmList;
     
-    private static String GENERATIVE_TYPE = "GEN";
-    
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
      */
@@ -140,11 +138,9 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	Study study = fieldbookMiddlewareService.getStudy(nurseryId);
     	List<Variable> varList = study.getConditions().getVariables();
     	form.setDefaultMethodId(Integer.toString(AppConstants.SINGLE_PLANT_SELECTION_SF.getInt()));
-    	for(Variable var : varList){
-    		if(var.getVariableType().getStandardVariable().getId() == TermId.BREEDING_METHOD_ID.getId() 
-    				&& var.getValue() != null && !var.getValue().equalsIgnoreCase("") && !var.getValue().equalsIgnoreCase("0")){    			
-    			form.setDefaultMethodId(var.getValue());
-    		}
+    	String defaultId = getBreedingMethodIdFromStudy(varList);
+    	if (defaultId != null) {
+    		form.setDefaultMethodId(defaultId);
     	}
     	advancingNursery.setStudy(study);
     	form.setLocationUrl(fieldbookProperties.getProgramLocationsUrl());
@@ -380,4 +376,33 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	return messageSource.getMessage("nursery.advance.nursery.empty.method.error", null, locale);
     }
     
+    private String getBreedingMethodIdFromStudy(List<Variable> varList) throws MiddlewareQueryException {
+    	String code = null;
+    	String name = null;
+    	for(Variable var : varList){
+    		if (var.getValue() != null && !var.getValue().equalsIgnoreCase("") && !var.getValue().equalsIgnoreCase("0")) {
+	    		if (var.getVariableType().getStandardVariable().getId() == TermId.BREEDING_METHOD_ID.getId()){    			
+	    			return var.getValue();
+	    		}
+	    		else if (var.getVariableType().getStandardVariable().getId() == TermId.BREEDING_METHOD_CODE.getId()) {
+	    			code = var.getValue();
+	    		}
+	    		else if (var.getVariableType().getStandardVariable().getId() == TermId.BREEDING_METHOD.getId()) {
+	    			name = var.getValue();
+	    		}
+    		}
+    	}
+    	Method method = null;
+    	if (code != null) {
+    		method = fieldbookMiddlewareService.getMethodByCode(code);
+    	}
+    	if (method == null) {
+    		method = fieldbookMiddlewareService.getMethodByName(name);
+    	}
+    	
+    	if (method != null) {
+    		return String.valueOf(method.getMid());
+    	}
+    	return null;
+    }
 }

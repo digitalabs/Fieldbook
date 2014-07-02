@@ -5,7 +5,12 @@
 				<!-- Title will get inserted here -->
 			</div>
 			<div class="modal-body">
-				<button type="button" class="btn btn-primary nrm-var-select-add">Select</button>
+				<div class="nrm-var-select-dropdown-container"></div>
+
+				<!-- TODO Awaiting Rebecca's JSONified variable usage service
+				<ul class="nrm-var-select-popular-vars"></ul> -->
+
+				<ul class="nrm-var-select-vars"></ul>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal" th:utext="#{common.form.done.text}">Done</button>
@@ -13,3 +18,16 @@
 		</div>
 	</div>
 </div>
+
+<script id="variable-template" type="text/x-handlebars-template">
+  {{#each variables}}
+  <ul class="nrm-var-select-var">
+  	<span><strong><span class="nrm-var-name">{{name}}</span></strong> - {{description}}</span>
+  	<button type="button" class="btn btn-primary nrm-var-select-add">Select</button>
+  </ul>
+  {{/each}}
+</script>
+
+<script id="nrm-var-select-dropdown-template" type="text/x-handlebars-template">
+  <input class="nrm-var-select-dropdown" type="hidden"></input>
+</script>

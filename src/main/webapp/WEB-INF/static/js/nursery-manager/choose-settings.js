@@ -10,16 +10,6 @@ window.ChooseSettings = (function() {
 		variableSelectionGroups,
 		ChooseSettings;
 
-	function getStandardVariables(variableType, successFn) {
-		$.ajax({
-			url: '/Fieldbook/NurseryManager/createNursery/displayAddSetting/' + variableType,
-			type: 'GET',
-			cache: false,
-			success: successFn
-			// TODO Error handling
-		});
-	}
-
 	function addSelectedVariables(e) {
 
 		var group = e.group,
@@ -98,27 +88,43 @@ window.ChooseSettings = (function() {
 			groupTranslations = {
 				label: group.label,
 				placeholderLabel: group.placeholder
-			},
-			properties;
+			};
 
+		// Initialise a variable selection modal if we haven't done so before
 		if (!this._variableSelection) {
 			this._variableSelection = new window.BMS.NurseryManager.VariableSelection(modalSelector);
 		}
 
-		if (!group.data) {
-			// Get properties for this group
-			properties = getStandardVariables(groupId, $.proxy(function(data) {
-				// Initialise a new Variable Selection instance, passing through the properties, group type and groupTranslations
-				variableSelectionGroups[groupId].data = {
-					treeData: data.treeData,
-					searchTreeData: data.searchTreeData
-				};
+		// If we haven't loaded data for this group before, then load it
+		if (!group.data || !group.usageData) {
 
-				this._variableSelection.show(groupId, variableSelectionGroups[groupId].data, groupTranslations);
+			// TODO Do we need to pass in the base URL here?
+			$.when($.ajax({
+				url: '/Fieldbook/OntologyBrowser/settings/properties?groupId=' + groupId,
+				type: 'GET',
+				cache: true
+			}), $.ajax({
+				url: '/Fieldbook/OntologyBrowser/variables/usage/' + groupId,
+				type: 'GET',
+				cache: true
+			})).done($.proxy(function(propertyResponse, variableResponse) {
+
+				// TODO HH Error handling
+
+				// propertyResponse = [ data, statusText, jqXHR ]
+				var properties = JSON.parse(propertyResponse[0]),
+					variables = JSON.parse(variableResponse[0]);
+
+				variableSelectionGroups[groupId].data = properties;
+				variableSelectionGroups[groupId].usageData = variables;
+
+				// Initialise a new Variable Selection instance, passing through the properties, group type and groupTranslations
+				this._variableSelection.show(groupId, properties, variables, groupTranslations);
 			}, this));
+
 		} else {
 			// We've shown this before, and have the data. Just show the dialog.
-			this._variableSelection.show(groupId, group.data, groupTranslations);
+			this._variableSelection.show(groupId, group.data, group.usageData, groupTranslations);
 		}
 	};
 

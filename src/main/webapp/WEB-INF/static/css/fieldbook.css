@@ -1386,3 +1386,17 @@ label[data-toggle="collapse"],
 	position: relative; 
 	top: 10px;
 }
+
+/* Variable Selection Dialog CSS */
+
+.nrm-var-selection-modal ul {
+	padding: 0;
+}
+
+.nrm-var-selection-modal .nrm-var-select-dropdown-container {
+	padding-bottom: 10px;
+}
+
+.nrm-var-selection-modal .nrm-var-select-var {
+	padding-bottom: 5px;
+}

@@ -99,77 +99,89 @@
 <div layout:fragment="page-script">
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
-	var folderRequired = /*[[#{germplasm.save.list.folder.error}]]*/;
-	var nameRequired = /*[[#{germplasm.save.list.name.error}]]*/;
-	var descriptionRequired = /*[[#{germplasm.save.list.description.error}]]*/;
-	var dateRequired = /*[[#{germplasm.save.list.date.error}]]*/;
-	var typeRequired = /*[[#{germplasm.save.list.type.error}]]*/;
-	var nameDuplicateError = /*[[#{germplasm.save.list.name.unique.error}]]*/;
+	/*globals displayGermplasmListTree, changeBrowseGermplasmButtonBehavior, additionalLazyLoadUrl, displayAdvanceList*/
+	/*globals showErrorMessage, showInvalidInputMessage, getDisplayedTreeName*/
+	/*exported nameDuplicateError, saveGermplasmList, openSaveListModal*/
+
+	var folderRequired = /*[[#{germplasm.save.list.folder.error}]]*/ '',
+		nameRequired = /*[[#{germplasm.save.list.name.error}]]*/ '',
+		descriptionRequired = /*[[#{germplasm.save.list.description.error}]]*/ '',
+		dateRequired = /*[[#{germplasm.save.list.date.error}]]*/ '',
+		typeRequired = /*[[#{germplasm.save.list.type.error}]]*/ '',
+		nameDuplicateError = /*[[#{germplasm.save.list.name.unique.error}]]*/ '';
 			var treeReloading = 1; // this will prevent reloading
 
 			$( document ).ready(function() {
-
-				displayGermplasmListTree("germplasmFolderTree", true, 1);
+				'use strict';
+				displayGermplasmListTree('germplasmFolderTree', true, 1);
 				changeBrowseGermplasmButtonBehavior(false);
 				$('#saveListTreeModal').on('hidden.bs.modal', function() {
 					treeReloading = 0;
-					$('#germplasmFolderTree').dynatree("getTree").reload();
+					$('#germplasmFolderTree').dynatree('getTree').reload();
 					changeBrowseGermplasmButtonBehavior(false);
-				})
+				});
 
 			});
 			function openSaveListModal(object){
-				var listIdentifier = $(object).attr('id');
-				additionalLazyLoadUrl = "/1";
+				'use strict';
+				var listIdentifier = $(object).attr('id'),
+				germplasmTreeNode = $('#germplasmFolderTree').dynatree('getTree');
+				additionalLazyLoadUrl = '/1';
 				$.ajax(
-					{ url: "/Fieldbook/ListTreeManager/saveList/"+listIdentifier,
-					type: "GET",
-					cache: false,
-					success: function(html) {
-						$('#page-save-list-message-modal').html('');
-						$('#saveGermplasmRightSection').html(html)
-						$('#saveListTreeModal').modal({
-							show: true,
-							keyboard: true,
-							backdrop: 'static'
-						});
+					{ 
+						url: '/Fieldbook/ListTreeManager/saveList/'+listIdentifier,
+						type: 'GET',
+						cache: false,
+						success: function(html) {
+							$('#saveGermplasmRightSection').html(html);
+							$('#saveListTreeModal').modal({
+								show: true,
+								keyboard: true,
+								backdrop: 'static'
+							});
+							//we preselect the program lists
+							if(germplasmTreeNode !== null && germplasmTreeNode.getNodeByKey('LOCAL') !== null){
+								germplasmTreeNode.getNodeByKey('LOCAL').activate();
+								germplasmTreeNode.getNodeByKey('LOCAL').expand()
+							}
+						}
 					}
-				}
 				);
 			}
 			function saveGermplasmList(){
-				var chosenNodeFolder = $('#'+getDisplayedTreeName()).dynatree("getTree").getActiveNode();
+				'use strict';
+				var chosenNodeFolder = $('#'+getDisplayedTreeName()).dynatree('getTree').getActiveNode();
 				var errorMessageDiv = 'page-save-list-message-modal';
 				if(chosenNodeFolder == null){
 					showErrorMessage(errorMessageDiv, folderRequired);
 					return false;
 				}
-				if($('#listName').val() == ''){
+				if($('#listName').val() === ''){
 					showInvalidInputMessage(nameRequired);
 					return false;
 				}
-				if($('#listDescription').val() == ''){
+				if($('#listDescription').val() === ''){
 					showInvalidInputMessage(descriptionRequired);
 					return false;
 				}
-				if($('#listType').val() == ''){
+				if($('#listType').val() === ''){
 					showInvalidInputMessage(typeRequired);
 					return false;
 				}
-				if($('#listDate').val() == ''){
+				if($('#listDate').val() === ''){
 					showInvalidInputMessage(dateRequired);
 					return false;
 				}
 				var parentId = chosenNodeFolder.data.key;
-				$('#saveListForm #parentId').val(parentId)
-				var dataForm = $('#saveListForm').serialize()
+				$('#saveListForm #parentId').val(parentId);
+				var dataForm = $('#saveListForm').serialize();
 				$.ajax(
-					{ url: "/Fieldbook/ListTreeManager/saveList/",
-					type: "POST",
+					{ url: '/Fieldbook/ListTreeManager/saveList/',
+					type: 'POST',
 					data: dataForm,
 					cache: false,
 					success: function(data) {
-						if(data.isSuccess == 1){
+						if(data.isSuccess === 1){
 							$('#saveListTreeModal').modal('hide');
 							displayAdvanceList(data.uniqueId, data.germplasmListId, data.listName);
 						}else{

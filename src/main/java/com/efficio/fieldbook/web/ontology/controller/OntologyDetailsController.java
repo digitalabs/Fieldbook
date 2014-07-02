@@ -120,9 +120,10 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
      * Gets Properties, Trait Class and Standard Variables, based on a numeric filter that corresponds to the following
      * 
      * -- 1 : Management Details
+     * -- 2:  Factors
      * -- 3 : Traits
+     * -- 6 : Selection Variates
      * -- 7 : Nursery Conditions
-     * -- 9 : Selection Variates
      * 
      * @param mode : integer corresponding to the filter described above
      * @return String Representation of a PropertyTree Object : properties with nested Trait Class and Standard Variables
@@ -135,7 +136,7 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
     	try {
     		
     		if(classId == null) {
-    			// zero value will allow all classes
+    			// zero value will allow all classes to be fetched
     			classId = new Integer(0);
     		}
     		
@@ -169,22 +170,10 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
     			for (TraitClassReference traitClassReference : root.getTraitClassChildren()) {
     				// filter on the optional classId provided, or allow if zero=ALL
     				if(classId.equals(new Integer(0)) || classId.equals(traitClassReference.getId())) {
-						for (PropertyReference property : traitClassReference.getProperties()) {
-							if(!property.getStandardVariables().isEmpty()) {
-								PropertyTree propertyTree = new PropertyTree(property);
-								propertyTree.setTraitClass(traitClassReference);
-								for (StandardVariableReference svRef : property.getStandardVariables()) {
-									if(stdVars.contains(svRef)) {
-										// if std variable is in the limited set, then add to the result
-										propertyTree.getStandardVariables().add(svMap.get(svRef.getId()));
-									}									
-								}
-								// only add to the result if we have Std Variables to return
-								if(!propertyTree.getStandardVariables().isEmpty()) {
-									propertyTrees.add(propertyTree);
-								}
-							}
+    					for (TraitClassReference subTraitClass : traitClassReference.getTraitClassChildren()) {
+    						propertyTrees = processTreeProperties(svMap, stdVars, propertyTrees, subTraitClass);						
 						}
+						propertyTrees = processTreeProperties(svMap, stdVars, propertyTrees, traitClassReference);
     				}
 				}
 			}
@@ -193,7 +182,8 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
 			LOG.error("Error querying Ontology Manager for full Ontology Tree " + e.getMessage());
 		}
     	return new ArrayList<PropertyTree>();
-    } 
+    }
+
     
     /**
      * Fetches Property and associated Standard Variables by PropertyId
@@ -360,5 +350,36 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
     public String getContentName() {
         return null;
     }
+
+    /**
+     * A method that takes a trait class node from the Trait Tree and extracts the Standard Variables
+     * 
+     * @param svMap
+     * @param stdVars
+     * @param propertyTrees
+     * @param traitClassReference
+     * @return the Property Trees list that collects the new items
+     * 
+     */
+    private List<PropertyTree> processTreeProperties(Map<Integer, StandardVariable> svMap, List<StandardVariableReference> stdVars,
+    		List<PropertyTree> propertyTrees, TraitClassReference traitClassReference) {
+    	for (PropertyReference property : traitClassReference.getProperties()) {
+    		if(!property.getStandardVariables().isEmpty()) {
+    			PropertyTree propertyTree = new PropertyTree(property);
+    			propertyTree.setTraitClass(traitClassReference);
+    			for (StandardVariableReference svRef : property.getStandardVariables()) {
+    				if(stdVars.contains(svRef)) {
+    					// if std variable is in the limited set, then add to the result
+    					propertyTree.getStandardVariables().add(svMap.get(svRef.getId()));
+    				}									
+    			}
+    			// only add to the result if we have Std Variables to return
+    			if(!propertyTree.getStandardVariables().isEmpty()) {
+    				propertyTrees.add(propertyTree);
+    			}
+    		}
+    	}
+    	return propertyTrees;
+    } 
     
 }

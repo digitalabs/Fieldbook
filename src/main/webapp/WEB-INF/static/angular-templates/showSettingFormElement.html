@@ -1,0 +1,23 @@
+<div ng-switch="variableDefinition.variable.widgetType">
+    <div ng-switch-when="DROPDOWN">
+        <span>Dropdown here</span>
+    </div>
+    <div ng-switch-when="NTEXT">
+        <input type="text" class="form-control numeric-input" ng-model="valuecontainer[targetkey]"/>
+    </div>
+    <div ng-switch-when="CTEXT">
+        <input type="text" class="form-control character-input" ng-model="valuecontainer[targetkey]"/>
+    </div>
+    <div ng-switch-when="TEXTAREA">
+        <textarea class="form-control character-input" rows="3" ng-model="valuecontainer[targetkey]"/>
+    </div>
+    <div ng-switch-when="DATE">
+        <input type="text" placeholder="yyyy-mm-dd" class="form-control date-input" ng-model="valuecontainer[targetkey]" jq-datepicker/>
+    </div>
+    <div ng-switch-when="SLIDER">
+        <span>Slider here</span>
+    </div>
+    <div ng-switch-default="">
+        <span>{{variableDefinition.variable.widgetType}}</span>
+    </div>
+</div>

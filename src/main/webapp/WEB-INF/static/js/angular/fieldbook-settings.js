@@ -34,12 +34,10 @@ angular.module('fieldbook-settings', [])
             restrict : 'A',
             scope : {
                 modeldata : '=',
-                labels : '@labels'
+                labels : '='
             },
 
             controller : function($scope, $element, $attrs,ONTOLOGY_TREE_ID) {
-                $scope.promise = null;
-
                 $scope.processModalData = function (data) {
                     if (data) {
                         // if retrieved data is an array of values
@@ -66,6 +64,51 @@ angular.module('fieldbook-settings', [])
                         ONTOLOGY_TREE_ID, $scope.processModalData);
 
                 });
+            }
+        };
+    })
+    .directive('showSettingFormElement', function() {
+        'use strict';
+
+        return {
+            restrict : 'E',
+            scope : {
+                settings : '=',
+                targetkey : '@targetkey',
+                valuecontainer : '='
+            },
+
+            templateUrl:  '/Fieldbook/static/angular-templates/showSettingFormElement.html',
+            controller : function($scope) {
+                $scope.variableDefinition = $scope.settings[$scope.targetkey];
+                $scope.hasDropdownOptions = $scope.variableDefinition.possibleValues && $scope.variableDefinition.possibleValues.length > 0;
+
+                if ($scope.hasDropdownOptions) {
+                    $scope.dropdownOptions = {
+                        data: function () {
+                            return {results: $scope.variableDefinition.possibleValues};
+                        },
+                        formatResult: function (value) {
+                            if (value.id !== undefined) {
+                                return value.description;
+                            } else if (value.locid !== undefined) {
+                                return value.lname;
+                            } else {
+                                return value.mname;
+                            }
+                        },
+                        formatSelection: function (value) {
+                            if (value.id !== undefined) {
+                                return value.description;
+                            } else if (value.locid !== undefined) {
+                                return value.lname;
+                            } else {
+                                return value.mname;
+                            }
+                        }
+
+                    };
+                }
             }
         };
     });

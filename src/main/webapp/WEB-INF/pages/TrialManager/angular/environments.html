@@ -22,8 +22,8 @@
                         <strong class="sub-content-heading">MANAGEMENT DETAILS</strong>
                     </label>
 
-                    <a href="#" class="btn btn-info pull-right" select-standard-variable="true"
-                        variable-type="1" labels="labels.addManagementDetails" modeldata="data.managementDetails">Add</a>
+                    <a select-standard-variable href="#" class="btn btn-info pull-right"
+                        variable-type="1" labels="labels.managementDetails" modeldata="data.managementDetails">Add</a>
                 </div>
                 <div class="form-horizontal sectionContainer">
                     <display-settings settings="data.managementDetails"></display-settings>
@@ -35,7 +35,7 @@
                         <strong class="sub-content-heading">TRIAL CONDITION DETAILS</strong>
                     </label>
 
-                    <a href="#" class="btn btn-info pull-right" select-standard-variable="true"
+                    <a select-standard-variable href="#" class="btn btn-info pull-right"
                        variable-type="1" labels="labels.trialConditionDetails" modeldata="data.trialConditionDetails">Add</a>
                 </div>
                 <div class="form-horizontal sectionContainer">
@@ -44,14 +44,37 @@
             </div>
         </div>
         <div class="row" ng-repeat="environment in data.environments">
-            <div class="col-xs-6 col-md-6">
+            <div class="row">
                 <div class="form-group">
-                    <label class="control-label">Data here</label>
+                    <label class="control-label">
+                        <strong class="sub-content-heading">Environment {{$index + 1}}</strong>
+                    </label>
                 </div>
             </div>
-            <div class="col-xs-6 col-md-6">
-                <div class="form-group">
-                    <label class="control-label">More data here</label>
+            <div class="row">
+                <div class="col-xs-6 col-md-6">
+                    <div class="form-group" ng-repeat="(key, value) in environment.managementDetailValues">
+                        <div class="col-xs-5 1st">
+                        <span style="word-wrap: break-word" class="control-label nursery-level-label
+                            label-bold var-names">{{data.managementDetails[key].variable.name}}</span>
+                        </div>
+                        <div class="col-xs-7 2nd">
+                            <show-setting-form-element settings="data.managementDetails" targetkey="{{key}}"
+                                                       valuecontainer="environment.managementDetailValues"></show-setting-form-element>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6 col-md-6">
+                    <div class="form-group" ng-repeat="(key, value) in environment.trialDetailValues">
+                        <div class="col-xs-5 1st">
+                        <span style="word-wrap: break-word" class="control-label nursery-level-label
+                            label-bold var-names">{{data.trialConditionDetails[key].variable.name}}</span>
+                        </div>
+                        <div class="col-xs-7 2nd">
+                            <show-setting-form-element settings="data.trialConditionDetails" targetkey="{{key}}"
+                                                       valuecontainer="environment.trialDetailValues"></show-setting-form-element>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -77,9 +100,12 @@
     <script type="text/javascript" th:src="@{/static/js/lib/angular/angular-select2.js}"></script>
     <script type="text/javascript" th:src="@{/static/js/choose-settings.js}"></script>
     <script type="text/javascript" th:src="@{/static/js/angular/fieldbook-settings.js}"></script>
+    <script type="text/javascript" th:src="@{/static/js/angular/angular-utilities.js}"></script>
     <script type="text/javascript" th:inline="javascript">
         //<![CDATA[
-        angular.module('fb-environments', ['ui.bootstrap', 'fieldbook-settings'])
+        var mdLabel = /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
+        	mdPlaceholder = /*[[#{nursery.reminder.add.nursery.settings}]]*/ '';
+        angular.module('fb-environments', ['ui.bootstrap', 'fieldbook-settings', 'leafnode-utils'])
                 .controller('EnvironmentController', ['$scope', function ($scope) {
                     $scope.data = {};
 
@@ -94,8 +120,15 @@
                     $scope.data.trialConditionDetails = {};
 
                     $scope.labels = {};
-                    $scope.labels.managementDetails = {
 
+                    $scope.labels.managementDetails = {
+                        label : mdLabel,
+                        placeholderLabel : mdPlaceholder
+                    };
+
+                    $scope.labels.trialConditionDetails = {
+                        label: mdLabel,
+                        placeholderLabel: mdPlaceholder
                     };
 
                     $scope.$watch('temp.noOfEnvironments', function(newVal, oldVal) {
@@ -115,8 +148,8 @@
                             // if new environment count is greater than old value, add new element to environments array
                             while ($scope.data.environments.length < newVal) {
                                 $scope.data.environments.push({
-                                    managementDetailValues: {},
-                                    trialDetailValues: {}
+                                    managementDetailValues: $scope.constructDataStructureFromDetails($scope.data.managementDetails),
+                                    trialDetailValues: $scope.constructDataStructureFromDetails($scope.data.trialConditionDetails)
                                 })
                             }
                         } else {
@@ -124,6 +157,55 @@
                         }
 
                     });
+
+                    $scope.$watch('data.managementDetails', function(newVal, oldVal) {
+                        $scope.updateEnvironmentVariables('managementDetails', Object.keys(newVal).length > Object.keys(oldVal).length);
+                    }, true);
+
+                    $scope.$watch('data.trialConditionDetails', function (newVal, oldVal) {
+                        $scope.updateEnvironmentVariables('trialConditionDetails', Object.keys(newVal).length > Object.keys(oldVal).length);
+                    }, true);
+
+                    $scope.updateEnvironmentVariables = function(type, entriesIncreased) {
+
+                        var settingDetailSource = null;
+                        var targetKey = null;
+
+                        if (type === 'managementDetails') {
+                            settingDetailSource = $scope.data.managementDetails;
+                            targetKey = 'managementDetailValues';
+                        } else if (type === 'trialConditionDetails'){
+                            settingDetailSource = $scope.data.trialConditionDetails;
+                            targetKey = 'trialDetailValues';
+                        }
+
+                        $.each($scope.data.environments, function(key, value) {
+                            var subList = value[targetKey];
+
+                            if (entriesIncreased) {
+                                $.each(settingDetailSource, function (key, value) {
+                                    if (subList[key] === undefined) {
+                                        subList[key] = null;
+                                    }
+                                });
+                            } else {
+                                $.each(subList, function (key, value) {
+                                    if (settingDetailSource[key] === undefined) {
+                                        delete subList[key];
+                                    }
+                                });
+                            }
+                        });
+                    };
+
+                    $scope.constructDataStructureFromDetails = function(details) {
+                        var returnVal = {};
+                        $.each(details, function(key, value) {
+                            returnVal[key] = null;
+                        });
+
+                        return returnVal;
+                    }
                 }]);
         //]]>
     </script>

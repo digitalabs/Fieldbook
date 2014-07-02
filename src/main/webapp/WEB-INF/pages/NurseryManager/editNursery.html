@@ -66,9 +66,12 @@
                                th:text="#{nursery.nurserydetails.action.import.nursery}">Import Measurements</a>
                         </li>
                         <li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
-                            <a href="" style="display: none" id="advance-study-url" th:href="@{/NurseryManager/advance/nursery}"></a>
                             <a href="javascript: advanceNursery('nursery-table');" id="advance-study-url-link"
                                th:text="#{nursery.nurserydetails.action.advance}">Advance Nursery</a>
+                        </li>
+                        <li th:if="${createNurseryForm.measurementRowList.size() != 0}">
+                            <a href="javascript: submitEditForm();" id="save-study-url-link"
+                               th:text="#{nursery.option.save}">Save Nursery</a>
                         </li>
                         <li>
                             <a th:href="@{/NurseryManager/manageNurseries}" id="close-nursery-url-link"

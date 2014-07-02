@@ -54,7 +54,7 @@ window.ChooseSettings = (function() {
             $(
                 $(row).children('td:nth-child(1)').children(
                         '#' + getJquerySafeId('selectedVariables' + index + '.cvTermId')))
-                .val(getIdCounterpart(value, idNameVariables.split(',')));
+                        .val(getIdOrCodeCounterpart(value, $('#idNameVariables').val().split(','), $('#idCodeNameCombination').val().split(',')));
         });
 
     }
@@ -226,14 +226,61 @@ function addVariableToList() {
 function idNameCounterpartSelected(selectedVariable) {
     'use strict';
     var itemToCompare = getIdNameCounterpart(selectedVariable, idNameVariables.split(","));
+	var idCodeNameToCompare = getIdCodeNameCounterpart(selectedVariable, $(
+			'#idCodeNameCombination').val().split(','));
+	
+	if (itemToCompare != -1) {
+		// if it is selected/added already
+		if (!notInList(itemToCompare)) {
+			return true;
+		}
+	}
+	
+	//for breeding method in study level and selection variates
+	if (idCodeNameToCompare.length != 0) {
+		if (!notInListIdCodeName(idCodeNameToCompare)) {
+			return true;
+		}
+	}
+	return false;
+}
 
-    if (itemToCompare != -1) {
-        // if it is selected/added already
-        if (!notInList(itemToCompare)) {
-            return true;
-        }
-    }
-    return false;
+function getIdCodeNameCounterpart(selectVariable, idCodeNameCombinationVariables) {
+	var inList = [];
+	 
+	if (idCodeNameCombinationVariables) {
+		$.each(idCodeNameCombinationVariables, function(index, item) {
+			var arrCombo = item.split('|');
+			$.each(arrCombo, function (index, id) {
+				if (parseInt(id) === parseInt(selectVariable)) {
+					inList.push(parseInt(arrCombo[(index+1)%3]));
+					inList.push(parseInt(arrCombo[(index+2)%3]));
+					return false;
+				}
+			});
+		});
+	}
+	return inList;
+}
+
+function getIdOrCodeCounterpart(selectedVariable, idNameCombinationVariables, idCodeNameCombinationVariables) {
+	var inList = selectedVariable;
+	// return the id counterpart of the variable selected if it is in the list
+	$.each(idNameCombinationVariables, function(index, item) {
+		if (parseInt(item.split("|")[1], 10) === parseInt(selectedVariable, 10)) {
+			inList = parseInt(item.split("|")[0], 10);
+			return false;
+		}
+	});
+	
+	//return the code counterpart of the variable if it is in the list
+	$.each(idCodeNameCombinationVariables, function(index, item) {
+		if (parseInt(item.split("|")[2], 10) === parseInt(selectedVariable, 10)) {
+			inList = parseInt(item.split("|")[1], 10);
+			return false;
+		}
+	});
+	return inList;
 }
 
 function getIdNameCounterpart(selectedVariable, idNameCombinationVariables) {
@@ -263,4 +310,17 @@ function notInList(id) {
         }
     });
     return isNotInList;
+}
+
+function notInListIdCodeName(ids) {
+	var isNotInList = true;
+	
+	$.each(ids, function (index, id) {
+		$.each($('.cvTermIds'), function() {
+			if (parseInt($(this).val()) === parseInt(id)) {
+				isNotInList = false;
+			}
+		});
+	});
+	return isNotInList;
 }

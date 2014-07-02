@@ -152,7 +152,9 @@ public enum AppConstants {
     ,HIDE_PLOT_FIELDS
     ,FILTER_NURSERY_FIELDS
     ,ID_NAME_COMBINATION
-    ,ID_NAME_COMBINATION_FOR_RETRIEVE_AND_SAVE
+    ,ID_CODE_NAME_COMBINATION_STUDY
+    ,ID_CODE_NAME_COMBINATION_VARIATE
+    ,HIDE_ID_VARIABLES
     ,CREATE_TRIAL_REQUIRED_FIELDS
     ,CREATE_TRIAL_ENVIRONMENT_REQUIRED_FIELDS
     ,CREATE_TRIAL_PLOT_REQUIRED_FIELDS
@@ -160,6 +162,7 @@ public enum AppConstants {
     
     ,LOCATION_ID
     ,BREEDING_METHOD_ID
+    ,BREEDING_METHOD_CODE
     ,START_DATE_ID
     ,END_DATE_ID
     ,STUDY_NAME_ID
@@ -225,6 +228,10 @@ public enum AppConstants {
     ,START_YEAR
     ,CHAR_LIMIT
     ,PLEASE_CHOOSE
+    
+    ,BM_CODE
+    ,DBID
+    ,DBCV
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

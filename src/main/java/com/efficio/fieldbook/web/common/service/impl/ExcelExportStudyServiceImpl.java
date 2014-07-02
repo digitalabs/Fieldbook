@@ -363,7 +363,9 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 			HSSFCell cell = row.createCell(currentColNum++);
 									
 			if (dataCell.getMeasurementVariable() != null && dataCell.getMeasurementVariable().getPossibleValues() != null
-					&& !dataCell.getMeasurementVariable().getPossibleValues().isEmpty()) {
+					&& !dataCell.getMeasurementVariable().getPossibleValues().isEmpty() 
+					&& dataCell.getMeasurementVariable().getTermId() != TermId.BREEDING_METHOD_VARIATE.getId()
+					&& dataCell.getMeasurementVariable().getTermId() != TermId.BREEDING_METHOD_VARIATE_CODE.getId()) {
 
 				cell.setCellValue(ExportImportStudyUtil.getCategoricalCellValue(dataCell.getValue(), dataCell.getMeasurementVariable().getPossibleValues()));
 			}

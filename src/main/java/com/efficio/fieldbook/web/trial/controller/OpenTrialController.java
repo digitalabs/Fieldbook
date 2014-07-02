@@ -84,7 +84,7 @@ public class OpenTrialController extends
             
             TrialDataset dataset = (TrialDataset)SettingsUtil.convertWorkbookToXmlDataset(workbook, false);
             try {
-				SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
+				SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId(), false);
 			} catch (MiddlewareQueryException e) {
 				LOG.debug(e.getMessage(), e);
 			}

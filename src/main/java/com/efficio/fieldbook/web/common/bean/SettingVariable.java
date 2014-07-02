@@ -222,7 +222,6 @@ public class SettingVariable implements Serializable{
 
     // TODO : shift computation of widget type elsewhere, to avoid having it continuously recomputed
 	public WidgetType getWidgetType() {
-
         if (dataTypeId != null) {
             if (dataTypeId.equals(TermId.DATE_VARIABLE.getId())) {
                 this.widgetType = WidgetType.DATE;
@@ -246,15 +245,15 @@ public class SettingVariable implements Serializable{
 
         if (cvTermId != null) {
             if (cvTermId.equals(TermId.LOCATION_ID.getId()) || cvTermId.equals(TermId.PI_ID.getId())
-                    || cvTermId.equals(TermId.BREEDING_METHOD_ID.getId()) ||
-                    cvTermId.equals(TermId.NURSERY_TYPE.getId())
+                    || cvTermId.equals(TermId.BREEDING_METHOD_ID.getId())
+                    || cvTermId.equals(TermId.BREEDING_METHOD_CODE.getId())
+                    || cvTermId.equals(TermId.NURSERY_TYPE.getId())
                     || cvTermId.toString().equalsIgnoreCase(AppConstants.COOPERATOR_ID.getString())) {
                 this.widgetType = WidgetType.DROPDOWN;
             }
         }
         return this.widgetType;
     }
-
 
 
     /**

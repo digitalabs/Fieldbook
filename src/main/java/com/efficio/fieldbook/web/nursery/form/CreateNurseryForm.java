@@ -53,6 +53,8 @@ public class CreateNurseryForm {
     
     /** The folder name. */
     private String folderName;
+    
+    /** The folder name label. */
     private String folderNameLabel;
     
     /** The field layout random. */
@@ -170,19 +172,32 @@ public class CreateNurseryForm {
     /** The baseline traits segment. */
     private String baselineTraitsSegment;
     
+    /** The is measurement data existing. */
     private boolean isMeasurementDataExisting;
     
+    /** The char limit. */
     private int charLimit;
     
+    /** The name type. */
     private int nameType;
     
+    /** The import date. */
     private String importDate;
     
+    /** The import method id. */
     private int importMethodId;
     
+    /** The import location id. */
     private int importLocationId;
     
+    /** The created by. */
     private String createdBy;
+    
+    /** The id code name combination. */
+    private String idCodeNameCombination;
+    
+    /** The breeding method code. */
+    private String breedingMethodCode;
     
     /**
      * Gets the project id.
@@ -1043,6 +1058,11 @@ public class CreateNurseryForm {
             this.selectionVariatesSegment = selectionVariatesSegment;
         }
 
+		/**
+		 * Gets the arrange measurement variables.
+		 *
+		 * @return the arrange measurement variables
+		 */
 		public List<MeasurementVariable> getArrangeMeasurementVariables(){
 			List<MeasurementVariable> measureList = new ArrayList<MeasurementVariable>();
 			List<MeasurementVariable> newMeasureList = new ArrayList<MeasurementVariable>();
@@ -1073,68 +1093,184 @@ public class CreateNurseryForm {
 			return newMeasureList;
 		}
 		
+        /**
+         * Checks if is measurement data existing.
+         *
+         * @return true, if is measurement data existing
+         */
         public boolean isMeasurementDataExisting() {
             return isMeasurementDataExisting;
         }
 
+        /**
+         * Sets the measurement data existing.
+         *
+         * @param isMeasurementDataExisting the new measurement data existing
+         */
         public void setMeasurementDataExisting(boolean isMeasurementDataExisting) {
             this.isMeasurementDataExisting = isMeasurementDataExisting;
         }
 
+        /**
+         * Gets the char limit.
+         *
+         * @return the char limit
+         */
         public int getCharLimit() {
             return charLimit;
         }
 
+        /**
+         * Sets the char limit.
+         *
+         * @param charLimit the new char limit
+         */
         public void setCharLimit(int charLimit) {
             this.charLimit = charLimit;
         }
 
+		/**
+		 * Gets the folder name label.
+		 *
+		 * @return the folder name label
+		 */
 		public String getFolderNameLabel() {
 			return folderNameLabel;
 		}
 
+		/**
+		 * Sets the folder name label.
+		 *
+		 * @param folderNameLabel the new folder name label
+		 */
 		public void setFolderNameLabel(String folderNameLabel) {
 			this.folderNameLabel = folderNameLabel;
 		}
 
+        /**
+         * Gets the name type.
+         *
+         * @return the name type
+         */
         public int getNameType() {
             return nameType;
         }
 
+        /**
+         * Sets the name type.
+         *
+         * @param nameType the new name type
+         */
         public void setNameType(int nameType) {
             this.nameType = nameType;
         }
 
+        /**
+         * Gets the import method id.
+         *
+         * @return the import method id
+         */
         public int getImportMethodId() {
             return importMethodId;
         }
 
+        /**
+         * Sets the import method id.
+         *
+         * @param importMethodId the new import method id
+         */
         public void setImportMethodId(int importMethodId) {
             this.importMethodId = importMethodId;
         }
 
+        /**
+         * Gets the import location id.
+         *
+         * @return the import location id
+         */
         public int getImportLocationId() {
             return importLocationId;
         }
 
+        /**
+         * Sets the import location id.
+         *
+         * @param importLocationId the new import location id
+         */
         public void setImportLocationId(int importLocationId) {
             this.importLocationId = importLocationId;
         }
 
+        /**
+         * Gets the import date.
+         *
+         * @return the import date
+         */
         public String getImportDate() {
             return importDate;
         }
 
+        /**
+         * Sets the import date.
+         *
+         * @param importDate the new import date
+         */
         public void setImportDate(String importDate) {
             this.importDate = importDate;
         }
 
+        /**
+         * Gets the created by.
+         *
+         * @return the created by
+         */
         public String getCreatedBy() {
             return createdBy;
         }
 
+        /**
+         * Sets the created by.
+         *
+         * @param createdBy the new created by
+         */
         public void setCreatedBy(String createdBy) {
             this.createdBy = createdBy;
+        }
+
+        /**
+         * Gets the id code name combination.
+         *
+         * @return the id code name combination
+         */
+        public String getIdCodeNameCombination() {
+            return idCodeNameCombination;
+        }
+
+        /**
+         * Sets the id code name combination.
+         *
+         * @param idCodeNameCombination the new id code name combination
+         */
+        public void setIdCodeNameCombination(String idCodeNameCombination) {
+            this.idCodeNameCombination = idCodeNameCombination;
+        }
+
+        /**
+         * Gets the breeding method code.
+         *
+         * @return the breeding method code
+         */
+        public String getBreedingMethodCode() {
+            return breedingMethodCode;
+        }
+
+        /**
+         * Sets the breeding method code.
+         *
+         * @param breedingMethodCode the new breeding method code
+         */
+        public void setBreedingMethodCode(String breedingMethodCode) {
+            this.breedingMethodCode = breedingMethodCode;
         }
 
         

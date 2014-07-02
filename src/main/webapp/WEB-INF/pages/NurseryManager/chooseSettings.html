@@ -12,6 +12,8 @@
 <input type="hidden" th:field="*{endDateId}"/>
 <input type="hidden" th:field="*{openGermplasmUrl}"/>
 <input type="hidden" th:field="*{idNameVariables}"/>
+<input type="hidden" th:field="*{idCodeNameCombination}"/>
+<input type="hidden" th:field="*{breedingMethodCode}"/>
 
 <div class="row">
 	<div class="col-xs-6">
@@ -31,7 +33,7 @@
         </div>
         <div class="form-horizontal sectionContainer" id="nurseryLevelSettings-dev">
 
-			<div class="form-group nurseryLevelSettings" th:each="nurseryLevelVariable, rowStat : *{studyLevelVariables}" th:if="${nurseryLevelVariable.variable.cvTermId}!=*{breedingMethodId}">
+			<div class="form-group nurseryLevelSettings" th:each="nurseryLevelVariable, rowStat : *{studyLevelVariables}" th:if="${nurseryLevelVariable.variable.cvTermId}!=*{breedingMethodId} and ${nurseryLevelVariable.variable.cvTermId}!=*{breedingMethodCode}">
 				<div class="col-xs-5 1st">
 						<span style="font-size: 16px;" th:if="${nurseryLevelVariable.deletable}" class="delete-icon"
                               th:onclick="'javascript: deleteVariable(1,\'' + ${nurseryLevelVariable.variable.cvTermId} + '\',$(this))'"></span>
@@ -174,7 +176,7 @@
 			</table>
 		</div>
 
-		<div class=" row collapse in" th:each="nurseryLevelVariable, rowStat : *{studyLevelVariables}" th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}" th:remove="tag">
+		<div class=" row collapse in" th:each="nurseryLevelVariable, rowStat : *{studyLevelVariables}" th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId} or ${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodCode}" th:remove="tag">
 			<div class="form-group">
 				<span th:text="#{nursery.create.nursery.method.note}">If you plan to advance the nursery with a single method, please select it below</span>
 			</div>
@@ -202,7 +204,7 @@
 				</div>
 			</div>
 
-			<div class="form-group possibleValuesDiv " th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}">
+			<div class="form-group possibleValuesDiv " th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId} or ${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodCode}">
 				<input
 						type="checkbox" th:field="*{studyLevelVariables[__${rowStat.index}__].favorite}"
 						th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'" />

@@ -52,6 +52,7 @@ import com.efficio.fieldbook.web.common.bean.ImportResult;
 import com.efficio.fieldbook.web.common.service.ExcelImportStudyService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.ExportImportStudyUtil;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 
 @Service
@@ -107,7 +108,9 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			Set<ChangeType> modes = new HashSet<ChangeType>();
 			checkForAddedAndDeletedTraits(modes, xlsBook, workbook);
 			Map<String, MeasurementRow> rowsMap = createMeasurementRowsMap(workbook.getObservations());
+			
 			importDataToWorkbook(modes, xlsBook, rowsMap, workbook.getFactors(), trialInstanceNumber, workbook.getObservations(), changeDetailsList);
+			SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations());
 
 			try {
 				validationService.validateObservationValues(workbook);

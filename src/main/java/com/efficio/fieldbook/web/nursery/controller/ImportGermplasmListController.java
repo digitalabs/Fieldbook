@@ -234,12 +234,12 @@ public class ImportGermplasmListController extends AbstractBaseFieldbookControll
         	
         	//this would validate and add CHECK factor if necessary
             importGermplasmFileService.validataAndAddCheckFactor(form.getImportedGermplasm(), getUserSelection().getImportedGermplasmMainInfo().getImportedGermplasmList().getImportedGermplasms(), userSelection);
-            
             userSelection.setMeasurementRowList(measurementsGeneratorService.generateRealMeasurementRows(userSelection));
             userSelection.getWorkbook().setObservations(userSelection.getMeasurementRowList());
         }
         
-        fieldbooService.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList(), AppConstants.ID_NAME_COMBINATION_FOR_RETRIEVE_AND_SAVE.getString(), true);
+        fieldbooService.createIdCodeNameVariablePairs(userSelection.getWorkbook(), AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
+        fieldbooService.createIdNameVariablePairs(userSelection.getWorkbook(), new ArrayList(), AppConstants.ID_NAME_COMBINATION.getString(), true);
         int studyId = dataImportService.saveDataset(userSelection.getWorkbook(), true);
 		
         return Integer.toString(studyId);

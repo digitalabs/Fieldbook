@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -31,6 +32,7 @@ import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
 import org.generationcp.middleware.service.api.DataImportService;
 import org.slf4j.Logger;
@@ -216,6 +218,16 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
         return requiredVariablesFlag;
     } 
     
+    private String getCodeCounterpart(String idCodeNameCombination) {
+        StringTokenizer tokenizer = new StringTokenizer(idCodeNameCombination, "|");
+        if(tokenizer.hasMoreTokens()){
+            tokenizer.nextToken();
+            return tokenizer.nextToken();
+        } else {
+            return "0";
+        }
+    }
+    
     /**
      * Update required fields.
      *
@@ -228,7 +240,29 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
      * @throws MiddlewareQueryException the middleware query exception
      */
     protected List<SettingDetail> updateRequiredFields(List<Integer> requiredVariables, List<String> requiredVariablesLabel, 
-            boolean[] requiredVariablesFlag, List<SettingDetail> variables, boolean hasLabels) throws MiddlewareQueryException{
+            boolean[] requiredVariablesFlag, List<SettingDetail> variables, boolean hasLabels, String idCodeNameCombination) throws MiddlewareQueryException{
+        
+        //create a map of id and its id-code-name combination
+        HashMap<String, String> idCodeNameMap = new HashMap<String, String>();
+        if (idCodeNameCombination != null & !idCodeNameCombination.isEmpty()) {
+            StringTokenizer tokenizer = new StringTokenizer(idCodeNameCombination, ",");
+            if(tokenizer.hasMoreTokens()){
+                while(tokenizer.hasMoreTokens()){
+                    String pair = tokenizer.nextToken();
+                    StringTokenizer tokenizerPair = new StringTokenizer(pair, "|");
+                    idCodeNameMap.put(tokenizerPair.nextToken(), pair);
+                }
+            }
+        }
+        
+        //save hidden conditions in a map
+        HashMap<String, SettingDetail> variablesMap = new HashMap<String, SettingDetail>();
+        if (variables != null) {
+            for (SettingDetail variable : userSelection.getRemovedConditions()) {
+                variablesMap.put(variable.getVariable().getCvTermId().toString(), variable);
+            }
+        }
+        
         for (SettingDetail variable : variables) {
             Integer  stdVar = null;
             if (variable.getVariable().getCvTermId() != null) {
@@ -239,10 +273,16 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
                     PhenotypicType.valueOf(variable.getVariable().getRole()));
             }
             
-            //mark required factors that are already in the list
+            //mark required variables that are already in the list
             int ctr = 0;
             for (Integer requiredFactor: requiredVariables) {
-                if (requiredFactor.equals(stdVar)) {
+                String code = "0";
+                //if the variable is in the id-code-name combination list, get code counterpart of id
+                if (idCodeNameMap.get(String.valueOf(stdVar)) != null) {
+                    code = getCodeCounterpart(idCodeNameMap.get(String.valueOf(stdVar)));
+                }
+                //if the id already exists do not add the code counterpart as a required field
+                if (requiredFactor.equals(stdVar) || requiredFactor.equals(Integer.parseInt(code))) {
                     requiredVariablesFlag[ctr] = true;
                     variable.setOrder((requiredVariables.size()-ctr)*-1);
                     if (hasLabels) {
@@ -253,11 +293,19 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
             }
         }
         
-        //add required factors that are not in existing nursery
+        //add required variables that are not in existing nursery
         for (int i = 0; i < requiredVariablesFlag.length; i++) {
             if (!requiredVariablesFlag[i]) {
                 SettingDetail newSettingDetail = createSettingDetail(requiredVariables.get(i), requiredVariablesLabel.get(i));
                 newSettingDetail.setOrder((requiredVariables.size()-i)*-1);
+                //set value of breeding method code if name is provided but id is not 
+                if (TermId.BREEDING_METHOD_CODE.getId() == requiredVariables.get(i) 
+                        && variablesMap.get(String.valueOf(TermId.BREEDING_METHOD.getId())) != null
+                        && variablesMap.get(String.valueOf(TermId.BREEDING_METHOD_ID.getId())) == null) {
+                    Method method = fieldbookMiddlewareService.getMethodByName(variablesMap.get(String.valueOf(TermId.BREEDING_METHOD.getId())).getValue());
+                    newSettingDetail.setValue(method.getMid() == null ? "" : method.getMid().toString());
+                }
+                
                 variables.add(newSettingDetail);
             }
         }
@@ -321,23 +369,22 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
                 svar.setTraitClass(stdVar.getIsA() != null ? stdVar.getIsA().getName() : "");
                 svar.setOperation(Operation.ADD);
 
-                List<ValueReference> possibleValues = fieldbookService.getAllPossibleValues(id);
-                SettingDetail settingDetail = new SettingDetail(svar, possibleValues, null, false);
-                if (id == TermId.BREEDING_METHOD_ID.getId()) {
-                    settingDetail.setValue(AppConstants.PLEASE_CHOOSE.getString());
-                } else if (id == TermId.STUDY_UID.getId()) {
-                    settingDetail.setValue(this.getCurrentIbdbUserId().toString());
-                } else if (id == TermId.STUDY_UPDATE.getId()) {
-
-                    DateFormat dateFormat = new SimpleDateFormat(DateUtil.DB_DATE_FORMAT);
-                    Date date = new Date();
-                    settingDetail.setValue(dateFormat.format(date));
-                }
-                settingDetail.setPossibleValuesToJson(possibleValues);
-                List<ValueReference> possibleValuesFavorite = fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProjectId());
-                settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);
-                settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
-                return settingDetail;
+                    List<ValueReference> possibleValues = fieldbookService.getAllPossibleValues(id);
+                    SettingDetail settingDetail = new SettingDetail(svar, possibleValues, null, false);
+                    if (id == TermId.BREEDING_METHOD_ID.getId() || id == TermId.BREEDING_METHOD_CODE.getId()) {
+                        settingDetail.setValue(AppConstants.PLEASE_CHOOSE.getString());
+                    } else if (id == TermId.STUDY_UID.getId()) {
+                        settingDetail.setValue(this.getCurrentIbdbUserId().toString());
+                    } else if (id == TermId.STUDY_UPDATE.getId()) {
+                        DateFormat dateFormat = new SimpleDateFormat(DateUtil.DB_DATE_FORMAT);
+                        Date date = new Date();
+                        settingDetail.setValue(dateFormat.format(date));
+                    }
+                    settingDetail.setPossibleValuesToJson(possibleValues);
+                    List<ValueReference> possibleValuesFavorite = fieldbookService.getAllPossibleValuesFavorite(id, this.getCurrentProjectId());
+                    settingDetail.setPossibleValuesFavorite(possibleValuesFavorite);
+                    settingDetail.setPossibleValuesFavoriteToJson(possibleValuesFavorite);
+                    return settingDetail;
             } else {
                 SettingVariable svar = new SettingVariable();
                 svar.setCvTermId(stdVar.getId());

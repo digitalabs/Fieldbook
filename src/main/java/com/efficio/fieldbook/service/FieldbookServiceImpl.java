@@ -54,6 +54,7 @@ import com.efficio.fieldbook.web.nursery.bean.AdvancingNursery;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.bean.PossibleValuesCache;
 import com.efficio.fieldbook.web.util.AppConstants;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 
 /**
  * The Class FieldbookServiceImpl.
@@ -134,11 +135,16 @@ public class FieldbookServiceImpl implements FieldbookService{
                                              if(inHideVariableFields(ref.getId(), AppConstants.FILTER_NURSERY_FIELDS.getString())
                                                              || ref.getId().intValue() == TermId.DATASET_NAME.getId()
                                                              || ref.getId().intValue() == TermId.DATASET_TITLE.getId()
-                                                             || ref.getId().intValue() == TermId.DATASET_TYPE.getId())
+                                                             || ref.getId().intValue() == TermId.DATASET_TYPE.getId()
+                                                             || inHideVariableFields(ref.getId(), AppConstants.HIDE_ID_VARIABLES.getString()))
                                                      continue;
                                              
                                      } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
                                              if (inHideVariableFields(ref.getId(), AppConstants.HIDE_PLOT_FIELDS.getString())) {
+                                                 continue;
+                                             }
+                                     } else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
+                                             if (inHideVariableFields(ref.getId(), AppConstants.HIDE_ID_VARIABLES.getString())) {
                                                  continue;
                                              }
                                      }
@@ -267,7 +273,7 @@ public class FieldbookServiceImpl implements FieldbookService{
         List<ValueReference> possibleValues = possibleValuesCache.getPossibleValues(id);
         if (possibleValues == null) {
 
-            if (TermId.BREEDING_METHOD_ID.getId() == id) {
+            if (TermId.BREEDING_METHOD_ID.getId() == id || TermId.BREEDING_METHOD_CODE.getId() == id) {
                 List<ValueReference> list = new ArrayList<ValueReference>();
                 list.add(new ValueReference(0, AppConstants.PLEASE_CHOOSE.getString(), AppConstants.PLEASE_CHOOSE.getString()));
                 possibleValues = list;
@@ -308,9 +314,13 @@ public class FieldbookServiceImpl implements FieldbookService{
     public List<ValueReference> getAllPossibleValuesFavorite(int id, String projectId) throws MiddlewareQueryException {
         List<ValueReference> possibleValuesFavorite = null;
         if (possibleValuesFavorite == null) {
-            if (TermId.BREEDING_METHOD_ID.getId() == id) {
+            if (TermId.BREEDING_METHOD_ID.getId() == id || TermId.BREEDING_METHOD_CODE.getId() == id) {
                 List<Integer> methodIds = workbenchService.getFavoriteProjectMethods(projectId);
-                possibleValuesFavorite = getFavoriteBreedingMethods(methodIds, false);
+                List<ValueReference> list = new ArrayList<ValueReference>();
+                list.add(new ValueReference(0, AppConstants.PLEASE_CHOOSE.getString(), AppConstants.PLEASE_CHOOSE.getString()));
+                possibleValuesFavorite = list;
+                possibleValuesFavorite.addAll(getFavoriteBreedingMethods(methodIds, false));
+                
             } else if (TermId.LOCATION_ID.getId() == id) {
                 List<Long> locationIds = workbenchService.getFavoriteProjectLocationIds(projectId);
                 possibleValuesFavorite = convertLocationsToValueReferences(fieldbookMiddlewareService
@@ -327,7 +337,7 @@ public class FieldbookServiceImpl implements FieldbookService{
         if (methods != null && !methods.isEmpty()) {
             for (Method method : methods) {
                 if (method != null) {
-                    list.add(new ValueReference(method.getMid(), method.getMname(), method.getMdesc()));
+                    list.add(new ValueReference(method.getMid(), method.getMname() + " - " + method.getMcode(), method.getMdesc()));
                 }
             }
         }
@@ -341,7 +351,7 @@ public class FieldbookServiceImpl implements FieldbookService{
         if (methods != null && !methods.isEmpty()) {
             for (Method method : methods) {
                 if (method != null) {
-                    list.add(new ValueReference(method.getMid(), method.getMname(), method.getMdesc()));
+                    list.add(new ValueReference(method.getMid(), method.getMname() + " - " + method.getMcode(), method.getMdesc()));
                 }
             }
         }
@@ -386,7 +396,7 @@ public class FieldbookServiceImpl implements FieldbookService{
     @Override
     public String getValue(int id, String valueOrId, boolean isCategorical) throws MiddlewareQueryException {
         List<ValueReference> possibleValues = possibleValuesCache.getPossibleValues(id);
-        if (!NumberUtils.isNumber(valueOrId)) {
+        if (!NumberUtils.isNumber(valueOrId) && TermId.BREEDING_METHOD_CODE.getId() != id && TermId.BREEDING_METHOD.getId() != id) {
         	return valueOrId;
         }
         if (possibleValues != null && !possibleValues.isEmpty()) {
@@ -397,9 +407,16 @@ public class FieldbookServiceImpl implements FieldbookService{
         	}
         }
 
-        Double valueId = Double.valueOf(valueOrId);
+        Double valueId = null;
+        if (NumberUtils.isNumber(valueOrId)) {
+            valueId = Double.valueOf(valueOrId);
+        }
         if (TermId.BREEDING_METHOD_ID.getId() == id) {
         	return getBreedingMethodById(valueId.intValue());
+        } else if (TermId.BREEDING_METHOD_CODE.getId() == id) {
+            return getBreedingMethodByCode(valueOrId);
+        } else if (TermId.BREEDING_METHOD.getId() == id) {
+            return getBreedingMethodByName(valueOrId);
         } else if (TermId.LOCATION_ID.getId() == id) {
             return getLocationById(valueId.intValue());
         } else if (TermId.PI_ID.getId() == id || Integer.parseInt(AppConstants.COOPERATOR_ID.getString()) == id || TermId.STUDY_UID.getId() == id) {
@@ -418,9 +435,25 @@ public class FieldbookServiceImpl implements FieldbookService{
     private String getBreedingMethodById(int id) throws MiddlewareQueryException {
         Method method = fieldbookMiddlewareService.getBreedingMethodById(id);
         if (method != null) {
-        	return method.getMname();
+        	return method.getMname() + " - " + method.getMcode();
         }
         return null;
+    }
+    
+    private String getBreedingMethodByCode(String code) throws MiddlewareQueryException {
+        Method method = fieldbookMiddlewareService.getMethodByCode(code);
+        if (method != null) {
+            return method.getMname() + " - " + method.getMcode();
+        }
+        return "";
+    }
+    
+    private String getBreedingMethodByName(String name) throws MiddlewareQueryException {
+        Method method = fieldbookMiddlewareService.getMethodByName(name);
+        if (method != null) {
+            return method.getMname() + " - " + method.getMcode();
+        }
+        return "";
     }
     
     private String getLocationById(int id) throws MiddlewareQueryException {
@@ -460,7 +493,7 @@ public class FieldbookServiceImpl implements FieldbookService{
 						if (methodList != null && !methodList.isEmpty()) {
 			                for (Method method : methodList) {
 			                    if (method != null) {
-			                        list.add(new ValueReference(method.getMid(), method.getMname(), method.getMname()));
+			                        list.add(new ValueReference(method.getMid(), method.getMname() + " - " + method.getMcode(), method.getMname() + " - " + method.getMcode()));
 			                    }
 			                }
 			            }						
@@ -479,7 +512,7 @@ public class FieldbookServiceImpl implements FieldbookService{
     
     @Override
     public Map<String,String> getIdNamePairForRetrieveAndSave(){
-   	 String idNamePairs = AppConstants.ID_NAME_COMBINATION_FOR_RETRIEVE_AND_SAVE.getString();
+   	 String idNamePairs = AppConstants.ID_NAME_COMBINATION.getString();
    	 StringTokenizer tokenizer = new StringTokenizer(idNamePairs, ",");
    	 Map<String,String> idNameMap = new HashMap<String, String>();
 			if(tokenizer.hasMoreTokens()){
@@ -495,17 +528,136 @@ public class FieldbookServiceImpl implements FieldbookService{
 		return idNameMap;
    }
     
+    private MeasurementVariable createMeasurementVariable(String idToCreate, String value, Operation operation, String suffix) throws MiddlewareQueryException {
+        StandardVariable stdvar = fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(idToCreate));
+        MeasurementVariable var = new MeasurementVariable(
+                Integer.valueOf(idToCreate), appendNameSuffix(stdvar.getName(), suffix), stdvar.getDescription(), stdvar.getScale().getName(), stdvar.getMethod().getName(),
+                stdvar.getProperty().getName(), stdvar.getDataType().getName(), value, stdvar.getPhenotypicType().getLabelList().get(0));
+        var.setStoredIn(stdvar.getStoredIn().getId());
+        var.setDataTypeId(stdvar.getDataType().getId());
+        var.setFactor(false);
+        var.setOperation(operation);
+        return var;
+        
+    }
+    
+    private String appendNameSuffix(String name, String suffix) {
+        if (name.contains(suffix)) {
+            return name;
+        } else {
+            return name + "_"+ suffix;
+        }
+    }
+    
+    @Override
+    public void createIdCodeNameVariablePairs(Workbook workbook, String idCodeNamePairs) throws MiddlewareQueryException{
+        Map<String, MeasurementVariable> studyConditionMap = new HashMap<String, MeasurementVariable>();
+        if (workbook != null && idCodeNamePairs != null && !idCodeNamePairs.equalsIgnoreCase("")) {
+            //we get a map so we can check easily instead of traversing it again
+            for(MeasurementVariable var : workbook.getConditions()){
+                if(var != null){
+                    studyConditionMap.put(Integer.toString(var.getTermId()), var);
+                }
+            }
+            
+            StringTokenizer tokenizer = new StringTokenizer(idCodeNamePairs, ",");
+            if(tokenizer.hasMoreTokens()){
+                //we iterate it
+                while(tokenizer.hasMoreTokens()){
+                    String pair = tokenizer.nextToken();
+                    StringTokenizer tokenizerPair = new StringTokenizer(pair, "|");
+                    String idTermId = tokenizerPair.nextToken();
+                    String codeTermId = tokenizerPair.nextToken();
+                    String nameTermId = tokenizerPair.nextToken();
+                    
+                    if (studyConditionMap.get(codeTermId) == null) {
+                        //case when nursery comes from old fieldbook and has id variable saved
+                        if (studyConditionMap.get(idTermId) != null) {
+                            Method method = studyConditionMap.get(idTermId).getValue().isEmpty() ? null : fieldbookMiddlewareService.getMethodById(Integer.parseInt(studyConditionMap.get(idTermId).getValue()));
+                            
+                            //add code if it is not yet in the list
+                            workbook.getConditions().add(
+                                    createMeasurementVariable(codeTermId, 
+                                            method == null ? "" : method.getMcode(), 
+                                            Operation.ADD, AppConstants.BM_CODE.getString()));
+                            
+                            //add name if it is not yet in the list
+                            if (studyConditionMap.get(nameTermId) == null) {
+                                workbook.getConditions().add(
+                                        createMeasurementVariable(nameTermId, 
+                                                method == null ? "" : method.getMname(),
+                                                Operation.ADD, AppConstants.DBCV.getString()));
+                            }
+                            
+                            //set the correct value of the name and id for update operation
+                            for (MeasurementVariable var : workbook.getConditions()) {
+                                if (var.getTermId() == Integer.parseInt(nameTermId)) {
+                                    var.setValue(method == null ? "" : method.getMname());
+                                    var.setName(appendNameSuffix(var.getName(), AppConstants.DBCV.getString()));
+                                } else if (var.getTermId() == Integer.parseInt(idTermId)) {
+                                    var.setName(appendNameSuffix(var.getName(), AppConstants.DBID.getString()));
+                                }
+                            }
+                        }
+                    } else {
+                        Method method = null;
+                        if (studyConditionMap.get(idTermId) != null) {
+                            method = studyConditionMap.get(idTermId).getValue().isEmpty() ? null : fieldbookMiddlewareService.getMethodById(Integer.parseInt(studyConditionMap.get(idTermId).getValue()));
+                        } else {
+                            method = studyConditionMap.get(codeTermId).getValue().isEmpty() ? null : fieldbookMiddlewareService.getMethodById(Integer.parseInt(studyConditionMap.get(codeTermId).getValue()));
+                        }
+                        
+                        //add name variable if it is not yet in the list
+                        if (studyConditionMap.get(nameTermId) == null && studyConditionMap.get(codeTermId).getOperation().equals(Operation.ADD)) {
+                            workbook.getConditions().add(
+                                    createMeasurementVariable(nameTermId, 
+                                            method == null ? "" : method.getMname(), 
+                                            Operation.ADD, AppConstants.DBCV.getString()));
+                        } 
+                        
+                        //set correct values of id, code and name before saving
+                        if (studyConditionMap.get(nameTermId) != null || studyConditionMap.get(codeTermId) != null || studyConditionMap.get(idTermId) != null){
+                            if (workbook.getConditions() != null) {                                
+                                for (MeasurementVariable var : workbook.getConditions()) {
+                                    if (var.getTermId() == Integer.parseInt(nameTermId)) {
+                                        var.setValue(method == null ? "" : method.getMname());
+                                    } else if (var.getTermId() == Integer.parseInt(codeTermId)) {
+                                        var.setValue(method == null ? "" : method.getMcode());
+                                        var.setName(appendNameSuffix(var.getName(), AppConstants.BM_CODE.getString()));
+                                    } else if (var.getTermId() == Integer.parseInt(idTermId)) {
+                                        var.setName(appendNameSuffix(var.getName(), AppConstants.DBID.getString()));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            if (workbook.getVariates() != null) {
+                for (MeasurementVariable var : workbook.getVariates()) {
+                    if (var.getTermId() == TermId.BREEDING_METHOD_VARIATE_CODE.getId()) {
+                        var.setName(appendNameSuffix(var.getName(), AppConstants.BM_CODE.getString()));
+                    } else if (var.getTermId() == TermId.BREEDING_METHOD_VARIATE.getId()) {
+                        var.setName(appendNameSuffix(var.getName(), AppConstants.DBID.getString()));
+                    }
+                }
+            }
+            SettingsUtil.resetBreedingMethodValueToCode(fieldbookMiddlewareService, workbook.getObservations());
+        }
+    }
+    
     @Override
   	public void createIdNameVariablePairs(Workbook workbook, List<SettingDetail> settingDetails, String idNamePairs, boolean deleteNameWhenIdNotExist) throws MiddlewareQueryException{
   		
-  		Map<String, MeasurementVariable> studyConditionMap = new HashMap();
-  		Map<String, List<MeasurementVariable>> studyConditionMapList = new HashMap();
+  		Map<String, MeasurementVariable> studyConditionMap = new HashMap<String, MeasurementVariable>();
+  		Map<String, List<MeasurementVariable>> studyConditionMapList = new HashMap<String, List<MeasurementVariable>>();
   		if(workbook != null && idNamePairs != null && !idNamePairs.equalsIgnoreCase("")){
   			//we get a map so we can check easily instead of traversing it again
   			for(MeasurementVariable var : workbook.getConditions()){
   				if(var != null){
   					studyConditionMap.put(Integer.toString(var.getTermId()), var);
-  					List<MeasurementVariable> varList = new ArrayList();
+  					List<MeasurementVariable> varList = new ArrayList<MeasurementVariable>();
   					if(studyConditionMapList.get(Integer.toString(var.getTermId())) != null){
   						varList = studyConditionMapList.get(Integer.toString(var.getTermId()));
   					}

@@ -138,6 +138,7 @@ public interface FieldbookService {
     /**
      * Gets the all breeding methods.
      *
+     * @param isFilterOutGenerative the is filter out generative
      * @return the all breeding methods
      * @throws MiddlewareQueryException the middleware query exception
      */
@@ -150,8 +151,40 @@ public interface FieldbookService {
      * @throws MiddlewareQueryException the middleware query exception
      */
     void setAllPossibleValuesInWorkbook(Workbook workbook) throws MiddlewareQueryException;
+
+    /**
+     * Gets the check list.
+     *
+     * @return the check list
+     * @throws MiddlewareQueryException the middleware query exception
+     */
     List<Enumeration> getCheckList() throws MiddlewareQueryException;
+
+    /**
+     * Creates the id name variable pairs.
+     *
+     * @param workbook the workbook
+     * @param settingDetails the setting details
+     * @param idNamePairs the id name pairs
+     * @param deleteIdWhenNameExists the delete id when name exists
+     * @throws MiddlewareQueryException the middleware query exception
+     */
     void createIdNameVariablePairs(Workbook workbook, List<SettingDetail> settingDetails, String idNamePairs, boolean deleteIdWhenNameExists) throws MiddlewareQueryException;
+ 
+   /**
+     * Creates the id code name variable pairs.
+     *
+     * @param workbook the workbook
+     * @param idCodeNamePairs the id code name pairs
+     * @throws MiddlewareQueryException the middleware query exception
+     */
+    void createIdCodeNameVariablePairs(Workbook workbook, String idCodeNamePairs) throws MiddlewareQueryException;
+    
+    /**
+     * Gets the id name pair for retrieve and save.
+     *
+     * @return the id name pair for retrieve and save
+     */
     Map<String,String> getIdNamePairForRetrieveAndSave();
     
 }

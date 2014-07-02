@@ -201,7 +201,7 @@ function getBreedingMethodRowIndex() {
 	var rowIndex = -1;
 	$.each($('.nurseryLevelSettings'), function(index, row) {
 		var cvTermId = $($(row).find('.1st').find('.cvTermIds')).val();
-		if (parseInt(cvTermId, 10) == parseInt(breedingMethodId, 10)) {
+		if (parseInt(cvTermId, 10) == parseInt(breedingMethodId, 10) || parseInt(cvTermId, 10) == parseInt($('#breedingMethodCode').val(), 10)) {
 			rowIndex = getIndexFromName($($(row).find('.1st').find('.cvTermIds')).attr('name'));
 		}
 	});
@@ -373,10 +373,7 @@ function processSelectVariablesSubmission(data, variableType) {
     }
 
     checkShowSettingsFormReminder();
-
 }
-
-
 
 function hideDummyRow(tableId) {
 	$('#'+tableId).find('.dummy-row').remove();
@@ -389,7 +386,6 @@ function showDummyRow(tableId) {
                 	'<td class=\'even\'>&nbsp;</td> </tr>';
 	$('#'+tableId+' tbody').append(dummyRow);
 }
-
 
 function getLastRowIndex(name, hasTBody) {
 	'use strict';
@@ -461,7 +457,8 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 						}
 						newRow = newRow + inputHtml;
 
-						if (settingDetail.variable.cvTermId == breedingMethodId) {
+						if (parseInt(settingDetail.variable.cvTermId, 10) == parseInt(breedingMethodId, 10) || 
+								parseInt(settingDetail.variable.cvTermId, 10) === parseInt($('#breedingMethodCode').val(), 10)) {
 							// show favorite method
 							newRow = newRow
 									+ '<div class="possibleValuesDiv"><input type="checkbox" id="'
@@ -1179,6 +1176,7 @@ function recreateSelect2Combo(index, row, selectedVal, isFavoriteChecked, name,
 
 	// add checkbox and manage location/method links
 	if (parseInt(cvTermId, 10) === parseInt(breedingMethodId, 10)
+			|| parseInt(cvTermId, 10) === parseInt($('#breedingMethodCode').val(), 10)
 			|| parseInt(cvTermId, 10) === parseInt(locationId, 10)) {
 		newCell = newCell
 				+ "<div class='possibleValuesDiv'><input type='checkbox' id='"
@@ -1200,9 +1198,6 @@ function recreateSelect2Combo(index, row, selectedVal, isFavoriteChecked, name,
 		initializePossibleValuesCombo($.parseJSON(possibleValuesJson), "#"
 				+ getJquerySafeId(name + index + ".value"), showAll,
 				selectedVal);
-	} else if (parseInt(cvTermId, 10) === parseInt(breedingMethodId, 10)) {
-		initializePossibleValuesCombo($.parseJSON(possibleValuesJson), "#"
-				+ getJquerySafeId(name + index + ".value"), false, selectedVal);
 	} else {
 		initializePossibleValuesCombo($.parseJSON(possibleValuesJson), "#"
 				+ getJquerySafeId(name + index + ".value"), false, selectedVal);

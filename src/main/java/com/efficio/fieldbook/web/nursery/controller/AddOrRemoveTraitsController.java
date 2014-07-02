@@ -32,6 +32,7 @@ import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 
 /**
  * The Class AddOrRemoveTraitsController.
@@ -137,6 +138,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
         try { 
         	workbook = fieldbookMiddlewareService.getCompleteDataset(datasetId, false);
             fieldbookService.setAllPossibleValuesInWorkbook(workbook);
+            SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations());
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }

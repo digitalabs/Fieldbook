@@ -13,6 +13,7 @@ package com.efficio.fieldbook.web.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -21,6 +22,8 @@ import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.MeasurementData;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.TreatmentVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
@@ -28,6 +31,7 @@ import org.generationcp.middleware.domain.oms.Term;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.workbench.settings.Condition;
 import org.generationcp.middleware.pojos.workbench.settings.Constant;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
@@ -142,7 +146,7 @@ public class SettingsUtil {
     				variable.setPSMRFromStandardVariable(standardVariable);
     				//need to get the name from the session
     				variable.setName(userSelection.getStudyLevelConditions().get(index).getVariable().getName());
-    				if (variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_ID.getId())) && settingDetail.getValue().equals("0")) {
+    				if ((variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_ID.getId())) || variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_CODE.getId()))) && settingDetail.getValue().equals("0")) {
     				    settingDetail.setValue("");
     				} 			
             			
@@ -384,11 +388,26 @@ public class SettingsUtil {
 	 * @param projectId the project id
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	public static void convertXmlDatasetToPojo(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, com.efficio.fieldbook.service.api.FieldbookService fieldbookService, ParentDataset dataset, UserSelection userSelection, String projectId) throws MiddlewareQueryException{
+	public static void convertXmlDatasetToPojo(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, com.efficio.fieldbook.service.api.FieldbookService fieldbookService, ParentDataset dataset, UserSelection userSelection, String projectId, boolean isUsePrevious) throws MiddlewareQueryException{
 		if(dataset instanceof Dataset)
-			 convertXmlNurseryDatasetToPojo( fieldbookMiddlewareService, fieldbookService, (Dataset) dataset,  userSelection, projectId);
+			 convertXmlNurseryDatasetToPojo( fieldbookMiddlewareService, fieldbookService, (Dataset) dataset,  userSelection, projectId, isUsePrevious);
 		else if(dataset instanceof TrialDataset)
 			convertXmlTrialDatasetToPojo( fieldbookMiddlewareService, fieldbookService, (TrialDataset) dataset,  userSelection, projectId);
+	}
+	
+	private static boolean idCounterPartInList(Integer stdVar, HashMap<String, String> idCodeNameMap, List<Condition> conditions) {
+	    boolean inList = false;
+	    
+	    if (idCodeNameMap.get(String.valueOf(stdVar)) != null) {
+            StringTokenizer tokenizerPair = new StringTokenizer(idCodeNameMap.get(String.valueOf(stdVar)), "|");
+            String idTermId = tokenizerPair.nextToken();
+	        for (Condition condition : conditions) {
+	            if (Integer.parseInt(idTermId) == condition.getId()) {
+	                inList = true;
+	            }
+	        }
+	    }
+	    return inList;
 	}
 	
 	/**
@@ -401,7 +420,10 @@ public class SettingsUtil {
 	 * @param projectId the project id
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	private static void convertXmlNurseryDatasetToPojo(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, com.efficio.fieldbook.service.api.FieldbookService fieldbookService, Dataset dataset, UserSelection userSelection, String projectId) throws MiddlewareQueryException{
+	private static void convertXmlNurseryDatasetToPojo(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, 
+	        com.efficio.fieldbook.service.api.FieldbookService fieldbookService, Dataset dataset, UserSelection userSelection, 
+	        String projectId, boolean isUsePrevious) throws MiddlewareQueryException{
+	    Operation operation = isUsePrevious ? Operation.ADD : Operation.UPDATE;
 		if(dataset != null && userSelection != null){
 			//we copy it to User session object
 			//nursery level
@@ -412,12 +434,27 @@ public class SettingsUtil {
 		    List<SettingDetail> selectionVariates = new ArrayList<SettingDetail>();
 		    List<SettingDetail> removedFactors = new ArrayList<SettingDetail>();
 		    List<SettingDetail> removedConditions = new ArrayList<SettingDetail>();
-		    if(dataset.getConditions() != null){
+		    if(dataset.getConditions() != null){	        
+		        //create a map of code and its id-code-name combination
+	            HashMap<String, String> idCodeNameMap = new HashMap<String, String>();
+	            String idCodeNameCombination = AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString();
+	            if (idCodeNameCombination!= null & !idCodeNameCombination.isEmpty()) {
+	                StringTokenizer tokenizer = new StringTokenizer(idCodeNameCombination, ",");
+	                if(tokenizer.hasMoreTokens()){
+	                    while(tokenizer.hasMoreTokens()){
+	                        String pair = tokenizer.nextToken();
+	                        StringTokenizer tokenizerPair = new StringTokenizer(pair, "|");
+	                        tokenizerPair.nextToken();
+	                        idCodeNameMap.put(tokenizerPair.nextToken(), pair);
+	                    }
+	                }
+	            }
+	            
 				for(Condition condition : dataset.getConditions()){					
 					SettingVariable variable = new SettingVariable(condition.getName(), condition.getDescription(), condition.getProperty(),
 							condition.getScale(), condition.getMethod(), condition.getRole(), condition.getDatatype(), condition.getDataTypeId(),
 							condition.getMinRange(), condition.getMaxRange());
-					variable.setOperation(Operation.UPDATE);
+					variable.setOperation(operation);
 					Integer stdVar = null;
 					if (condition.getId() != 0) {
 						stdVar = condition.getId();
@@ -441,13 +478,19 @@ public class SettingsUtil {
                         variable.setPSMRFromStandardVariable(standardVariable);                        
                         Enumeration enumerationByDescription = standardVariable.getEnumerationByDescription(condition.getValue());
                         
-                        if (!inHideVariableFields(stdVar, AppConstants.HIDE_NURSERY_FIELDS.getString())) {
+                        if (!inHideVariableFields(stdVar, AppConstants.HIDE_NURSERY_FIELDS.getString()) && !idCounterPartInList(stdVar, idCodeNameMap, dataset.getConditions())) {
                             if(enumerationByDescription != null) {
                                 settingDetail.setValue(enumerationByDescription.getName());
                             }
-                            if (variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_ID.getId())) && 
+                            if ((variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_ID.getId())) 
+                                    || variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_CODE.getId()))) && 
                                     (condition.getValue() == null || condition.getValue().isEmpty())) {
+                                //if method has no value, auto select the Please Choose option
                                 settingDetail.setValue(AppConstants.PLEASE_CHOOSE.getString());
+                            } else if (variable.getCvTermId().equals(Integer.valueOf(TermId.BREEDING_METHOD_CODE.getId())) 
+                                    && condition.getValue() != null && !condition.getValue().isEmpty()) {
+                                //set the value of code to ID for it to be selected in the popup
+                                settingDetail.setValue(String.valueOf(fieldbookMiddlewareService.getMethodByCode(condition.getValue()).getMid()));
                             }
                             studyLevelConditions.add(settingDetail);
                         } else {
@@ -468,7 +511,7 @@ public class SettingsUtil {
 				for(Factor factor : dataset.getFactors()){
 					SettingVariable variable = new SettingVariable(factor.getName(), factor.getDescription(), factor.getProperty(),
 							factor.getScale(), factor.getMethod(), factor.getRole(), factor.getDatatype());
-					variable.setOperation(Operation.UPDATE);
+					variable.setOperation(operation);
 					Integer stdVar = null;
 					if (factor.getTermId() != null) {
 						stdVar = factor.getTermId();
@@ -498,7 +541,7 @@ public class SettingsUtil {
 					
 					SettingVariable variable = new SettingVariable(variate.getName(), variate.getDescription(), variate.getProperty(),
 							variate.getScale(), variate.getMethod(), variate.getRole(), variate.getDatatype());
-					variable.setOperation(Operation.UPDATE);
+					variable.setOperation(operation);
 					Integer  stdVar = null;
 					if (variate.getId() != 0) {
 						stdVar = variate.getId();
@@ -531,7 +574,7 @@ public class SettingsUtil {
                                     SettingVariable variable = new SettingVariable(constant.getName(), constant.getDescription(), constant.getProperty(),
                                                     constant.getScale(), constant.getMethod(), constant.getRole(), constant.getDatatype(), constant.getDataTypeId(),
                                                     constant.getMinRange(), constant.getMaxRange());
-                                    variable.setOperation(Operation.UPDATE);
+                                    variable.setOperation(operation);
                                     Integer  stdVar = null;
                                     if (constant.getId() != 0) {
                                     	stdVar = constant.getId();
@@ -1343,11 +1386,20 @@ public class SettingsUtil {
 		List<String> basicFields = Arrays.asList(AppConstants.NURSERY_BASIC_REQUIRED_FIELDS.getString().split(","));
 		List<String> hiddenFields = Arrays.asList(AppConstants.HIDDEN_FIELDS.getString().split(","));
 		
+		HashMap<String, MeasurementVariable> variableMap = new HashMap<String, MeasurementVariable>();
+		
+		for (MeasurementVariable condition : conditions) {
+		    variableMap.put(String.valueOf(condition.getTermId()), condition);
+		}
+		
 		if (conditions != null) {
 			for (MeasurementVariable condition : conditions) {
 				String id = String.valueOf(condition.getTermId());
 				String role = (isVariate) ? PhenotypicType.VARIATE.toString() : PhenotypicType.getPhenotypicTypeForLabel(condition.getLabel()).toString();
-				if (!basicFields.contains(id) && !hiddenFields.contains(id)) {
+				if (!basicFields.contains(id) && !hiddenFields.contains(id) 
+				        && !(condition.getTermId() == TermId.BREEDING_METHOD_ID.getId() && variableMap.get(String.valueOf(TermId.BREEDING_METHOD_CODE.getId())) != null) //do not show breeding method id if code exists
+				        && !(condition.getTermId() == TermId.BREEDING_METHOD.getId() && (variableMap.get(String.valueOf(TermId.BREEDING_METHOD_CODE.getId())) != null || 
+				        variableMap.get(String.valueOf(TermId.BREEDING_METHOD_ID.getId())) != null))) { //do not name if code or id exists 
 					SettingVariable variable = getSettingVariable(condition.getName(), condition.getDescription(), condition.getProperty(),
 							condition.getScale(), condition.getMethod(), role, 
 							condition.getDataType(), condition.getDataTypeId(), condition.getMinRange(), condition.getMaxRange(), userSelection, fieldbookMiddlewareService);
@@ -1545,4 +1597,69 @@ public class SettingsUtil {
 		
 		return index;
 	}
+	
+	public static void resetBreedingMethodValueToId(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, List<MeasurementRow> observations) throws MiddlewareQueryException{
+        if (observations != null && observations.size() > 0) {
+            int index = -1;
+            for (int i = 0; i < 1; i++) {
+                MeasurementRow row = observations.get(0);
+                for (MeasurementData data : row.getDataList()) {
+                    if (data.getMeasurementVariable().getTermId() == TermId.BREEDING_METHOD_VARIATE_CODE.getId()) {
+                        index++;
+                        break;
+                    }
+                    index++;
+                }
+            }
+            if (index > -1) {
+                List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
+                HashMap<String, Method> methodMap = new HashMap<String, Method>();
+                //create a map to get method id based on given code
+                if (methods != null) {
+                    for (Method method : methods) {
+                        methodMap.put(method.getMcode(), method);
+                    }
+                }
+                //set value back to id
+                for (MeasurementRow row : observations) {
+                    Method method = methodMap.get(row.getDataList().get(index).getValue());
+                    row.getDataList().get(index).setValue(method == null ? "" : String.valueOf(method.getMid()));
+                }   
+            }
+        }
+    }
+	
+	public static void resetBreedingMethodValueToCode(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, List<MeasurementRow> observations) throws MiddlewareQueryException{
+	  //set value of breeding method code in selection variates to code instead of id
+        if (observations != null && observations.size() > 0) {
+            int index = -1;
+            for (int i = 0; i < 1; i++) {
+                MeasurementRow row = observations.get(0);
+                for (MeasurementData data : row.getDataList()) {
+                    if (data.getMeasurementVariable().getTermId() == TermId.BREEDING_METHOD_VARIATE_CODE.getId()) {
+                        index++;
+                        break;
+                    }
+                    index++;
+                }
+            }
+            if (index > -1) {
+                List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
+                HashMap<Integer, Method> methodMap = new HashMap<Integer, Method>();
+                
+                if (methods != null) {
+                    for (Method method : methods) {
+                        methodMap.put(method.getMid(), method);
+                    }
+                }
+                for (MeasurementRow row : observations) {
+                    Integer value = row.getDataList().get(index).getValue() == null 
+                            || row.getDataList().get(index).getValue().isEmpty() ? 
+                                    null : Integer.parseInt(row.getDataList().get(index).getValue());
+                    Method method = methodMap.get(value);
+                    row.getDataList().get(index).setValue(method == null ? "" : method.getMcode());
+                }   
+            }
+        }
+    }
 }

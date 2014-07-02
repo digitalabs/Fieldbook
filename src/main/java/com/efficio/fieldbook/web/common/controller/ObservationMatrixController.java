@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementData;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
@@ -36,7 +35,6 @@ import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 import com.efficio.fieldbook.web.util.DateUtil;
-import com.efficio.fieldbook.web.util.SettingsUtil;
 
 @Controller
 @RequestMapping(ObservationMatrixController.URL)
@@ -156,7 +154,7 @@ public class ObservationMatrixController extends
     @RequestMapping(value="/update/experiment/{index}", method = RequestMethod.GET)
     public String editExperimentModal(@PathVariable int index,
             @ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, 
-            Model model) {
+            Model model) throws MiddlewareQueryException {
 
     	
     	StudySelection userSelection = getUserSelection(false);

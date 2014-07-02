@@ -132,7 +132,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     public String exportRFileForNursery(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form,  
 @PathVariable int exportType, @PathVariable int selectedTraitTermId,
 @PathVariable int exportWayType,
-HttpServletRequest req, HttpServletResponse response) {
+HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryException {
     	boolean isTrial = false;
     	return doExport(exportType, selectedTraitTermId, response, isTrial,0,0,exportWayType,req);
     	
@@ -143,7 +143,7 @@ HttpServletRequest req, HttpServletResponse response) {
     public String exportFile(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, 
     		@PathVariable int exportType, 
     		@PathVariable int exportWayType,
-    		HttpServletRequest req, HttpServletResponse response) {
+    		HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryException {
     	boolean isTrial = false;
         return doExport(exportType, 0, response, isTrial,0,0, exportWayType,req);
     	
@@ -155,7 +155,7 @@ HttpServletRequest req, HttpServletResponse response) {
     		@PathVariable int selectedTraitTermId, @PathVariable int instanceNumberStart, 
     		@PathVariable int instanceNumberEnd, 
     		@PathVariable int exportWayType,
-    		HttpServletRequest req, HttpServletResponse response) {
+    		HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryException {
     	boolean isTrial = true;
     	
     	return doExport(exportType, selectedTraitTermId, response, isTrial, instanceNumberStart, instanceNumberEnd, exportWayType, req);
@@ -168,7 +168,7 @@ HttpServletRequest req, HttpServletResponse response) {
     		@PathVariable int exportType,  @PathVariable int instanceNumberStart,
     		@PathVariable int instanceNumberEnd,
     		@PathVariable int exportWayType, 
-    		HttpServletRequest req, HttpServletResponse response) {
+    		HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryException {
     	boolean isTrial = true;
         return doExport(exportType, 0, response, isTrial, instanceNumberStart, instanceNumberEnd, exportWayType, req);
     	
@@ -247,7 +247,8 @@ HttpServletRequest req, HttpServletResponse response) {
      * @return the string
      */
     private String doExport(int exportType, int selectedTraitTermId, 
-    		HttpServletResponse response, boolean isTrial, int start, int end, int exportWayType, HttpServletRequest req){
+    		HttpServletResponse response, boolean isTrial, int start, int end, int exportWayType, HttpServletRequest req) 
+    		        throws MiddlewareQueryException {
     	
     	/*
     	 * exportWayType
@@ -256,8 +257,6 @@ HttpServletRequest req, HttpServletResponse response) {
     	 * 3 - serpentine (col)
     	 */
     	ExportDataCollectionOrderService exportDataCollectionService = getExportOrderService(exportWayType);
-    	
-    	
     	
     	StudySelection userSelection = getUserSelection(isTrial);
     	try {
@@ -292,6 +291,7 @@ HttpServletRequest req, HttpServletResponse response) {
     	}
     	Workbook workbook = userSelection.getWorkbook();
     	
+    	SettingsUtil.resetBreedingMethodValueToCode(fieldbookMiddlewareService, workbook.getObservations());
     	
     	exportDataCollectionService.reorderWorkbook(workbook);
     	

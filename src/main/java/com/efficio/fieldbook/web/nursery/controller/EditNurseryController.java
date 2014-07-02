@@ -40,6 +40,7 @@ import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.manager.Operation;
+import org.generationcp.middleware.pojos.Method;
 import org.generationcp.middleware.pojos.UserDefinedField;
 import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.service.api.OntologyService;
@@ -127,13 +128,13 @@ public class EditNurseryController extends SettingsController {
             
             Dataset dataset = (Dataset)SettingsUtil.convertWorkbookToXmlDataset(workbook);
             
-            SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
-
+            SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId(), false);
+            
             //nursery-level
             List<SettingDetail> nurseryLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
                     buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true), 
                     buildRequiredVariablesFlag(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
-                    userSelection.getStudyLevelConditions(), false);
+                    userSelection.getStudyLevelConditions(), false, AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
             
             List<SettingDetail> basicDetails = getBasicDetails(nurseryLevelConditions, form);
             
@@ -149,9 +150,6 @@ public class EditNurseryController extends SettingsController {
             form.setNurseryConditions(userSelection.getNurseryConditions());
             //form.setSelectedSettingId(1);
             form.setLoadSettings("1");
-            form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + "," + AppConstants.FIXED_NURSERY_VARIABLES.getString());
-            form.setProjectId(this.getCurrentProjectId());
-            form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
             form.setFolderId(Integer.valueOf((int)workbook.getStudyDetails().getParentFolderId()));
             if (form.getFolderId() == 1) {
             	if (nurseryId > 0) {
@@ -168,6 +166,7 @@ public class EditNurseryController extends SettingsController {
             
             //measurements part
             if (workbook != null) {
+                SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations());
             	setMeasurementsData(form, workbook);
             }
             
@@ -223,7 +222,7 @@ public class EditNurseryController extends SettingsController {
                     isFound = true;
                     if (termId.equals(Integer.valueOf(TermId.STUDY_UID.getId()))) {
                         try {
-                        	if (setting.getValue() != null && NumberUtils.isNumber(setting.getValue())) {
+                        	if (setting.getValue() != null && !setting.getValue().isEmpty() && NumberUtils.isNumber(setting.getValue())) {
                         		form.setCreatedBy(fieldbookService.getPersonById(Integer.parseInt(setting.getValue())));
                         	}
                         }
@@ -307,9 +306,6 @@ public class EditNurseryController extends SettingsController {
     	ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO); 
     	String contextParams = ContextUtil.getContextParameterString(contextInfo);
     	SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME,SessionUtility.POSSIBLE_VALUES_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
-    	form.setProjectId(this.getCurrentProjectId());
-    	form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + "," + AppConstants.FIXED_NURSERY_VARIABLES.getString());
-    	form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
     	setFormStaticData(form, contextParams);
     	assignDefaultValues(form);
     	return super.show(model);
@@ -443,7 +439,8 @@ public class EditNurseryController extends SettingsController {
                 userSelection.setWorkbook(workbook);
                 //validationService.validateObservationValues(workbook);
                 
-                fieldbookService.createIdNameVariablePairs(userSelection.getWorkbook(), userSelection.getRemovedConditions(), AppConstants.ID_NAME_COMBINATION_FOR_RETRIEVE_AND_SAVE.getString(), true);
+                fieldbookService.createIdCodeNameVariablePairs(userSelection.getWorkbook(), AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
+                fieldbookService.createIdNameVariablePairs(userSelection.getWorkbook(), userSelection.getRemovedConditions(), AppConstants.ID_NAME_COMBINATION.getString(), true);
                 fieldbookMiddlewareService.saveMeasurementRows(workbook);
                 workbook.setTrialObservations(
                 		fieldbookMiddlewareService.buildTrialObservations(trialDatasetId, workbook.getTrialConditions(), workbook.getTrialConstants()));
@@ -508,7 +505,11 @@ public class EditNurseryController extends SettingsController {
     	form.setBaselineTraitsSegment(AppConstants.SEGMENT_TRAITS.getString());
     	form.setSelectionVariatesSegment(AppConstants.SEGMENT_SELECTION_VARIATES.getString());
     	form.setCharLimit(Integer.parseInt(AppConstants.CHAR_LIMIT.getString()));
-    	
+    	form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + "," + AppConstants.FIXED_NURSERY_VARIABLES.getString());
+        form.setProjectId(this.getCurrentProjectId());
+        form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
+        form.setIdCodeNameCombination(AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString() + "," + AppConstants.ID_CODE_NAME_COMBINATION_VARIATE.getString());
+        form.setBreedingMethodCode(AppConstants.BREEDING_METHOD_CODE.getString());
     }
     
     /**
@@ -651,6 +652,7 @@ public class EditNurseryController extends SettingsController {
      */
     private void removeHiddenVariables(List<SettingDetail> settingList, String hiddenVarList) {
         if (settingList != null) {
+            
             Iterator<SettingDetail> iter = settingList.iterator();
             while (iter.hasNext()) {
                 if (SettingsUtil.inHideVariableFields(iter.next().getVariable().getCvTermId(), hiddenVarList)) {
@@ -733,6 +735,103 @@ public class EditNurseryController extends SettingsController {
         }
     }
     
+    private void addSettingDetail(List<SettingDetail> removedConditions, Map<String, SettingDetail> removedConditionsMap, 
+            Map<String, MeasurementVariable> studyConditionMap, String id, String value) throws MiddlewareQueryException {
+        if (removedConditionsMap.get(id) == null) {
+            removedConditions.add(createSettingDetail(Integer.parseInt(id), studyConditionMap.get(id).getName()));
+        }
+        if (removedConditions != null) {
+            for (SettingDetail setting : removedConditions) {
+                if (setting.getVariable().getCvTermId() == Integer.parseInt(id)) {
+                    setting.setValue(value);
+                    setting.getVariable().setOperation(Operation.UPDATE);
+                }
+            }
+        }
+    }
+    
+    private void removeCodeVariablesIfNeeded(List<SettingDetail> variableList, String idCodeNamePairs) {
+        Map<String, SettingDetail> variableListMap = new HashMap<String, SettingDetail>();
+        if (variableList != null) {
+            for(SettingDetail setting : variableList){
+                if(setting != null){
+                    variableListMap.put(Integer.toString(setting.getVariable().getCvTermId()), setting);
+                }
+            }
+        }
+        
+        StringTokenizer tokenizer = new StringTokenizer(idCodeNamePairs, ",");
+        if(tokenizer.hasMoreTokens()){
+          //we iterate it
+            while(tokenizer.hasMoreTokens()){
+                String pair = tokenizer.nextToken();
+                StringTokenizer tokenizerPair = new StringTokenizer(pair, "|");
+                String idTermId = tokenizerPair.nextToken();
+                String codeTermId = tokenizerPair.nextToken();
+                
+                Iterator<SettingDetail> iter = variableList.iterator();
+                while (iter.hasNext()) {
+                    Integer cvTermId = iter.next().getVariable().getCvTermId();
+                    if (cvTermId.equals(Integer.parseInt(codeTermId)) && variableListMap.get(idTermId) != null) {
+                        iter.remove();
+                    }
+                }
+            }
+        }
+    }
+    
+    private void addNameVariables(List<SettingDetail> removedConditions, Workbook workbook, String idCodeNamePairs) throws MiddlewareQueryException {
+        Map<String, MeasurementVariable> studyConditionMap = new HashMap<String, MeasurementVariable>();
+        Map<String, SettingDetail> removedConditionsMap = new HashMap<String, SettingDetail>();
+        if (workbook != null && idCodeNamePairs != null && !idCodeNamePairs.equalsIgnoreCase("")) {
+            //we get a map so we can check easily instead of traversing it again
+            for(MeasurementVariable var : workbook.getConditions()){
+                if(var != null){
+                    studyConditionMap.put(Integer.toString(var.getTermId()), var);
+                }
+            }
+            
+            if (removedConditions != null) {
+                for(SettingDetail setting : removedConditions){
+                    if(setting != null){
+                        removedConditionsMap.put(Integer.toString(setting.getVariable().getCvTermId()), setting);
+                    }
+                }
+            }
+            
+            StringTokenizer tokenizer = new StringTokenizer(idCodeNamePairs, ",");
+            if(tokenizer.hasMoreTokens()){
+              //we iterate it
+                while(tokenizer.hasMoreTokens()){
+                    String pair = tokenizer.nextToken();
+                    StringTokenizer tokenizerPair = new StringTokenizer(pair, "|");
+                    String idTermId = tokenizerPair.nextToken();
+                    String codeTermId = tokenizerPair.nextToken();
+                    String nameTermId = tokenizerPair.nextToken();
+                    
+                    Method method = null;
+                    if (studyConditionMap.get(idTermId) != null) {
+                        method = studyConditionMap.get(idTermId).getValue().isEmpty() ? null : fieldbookMiddlewareService.getMethodById(Integer.parseInt(studyConditionMap.get(idTermId).getValue()));
+                    } else if (studyConditionMap.get(codeTermId) != null) {
+                        method = studyConditionMap.get(codeTermId).getValue().isEmpty() ? null : fieldbookMiddlewareService.getMethodByCode(studyConditionMap.get(codeTermId).getValue());
+                    }
+                    
+                    //add code to the removed conditions if code is not yet in the list
+                    if (studyConditionMap.get(idTermId) != null && studyConditionMap.get(codeTermId) != null && removedConditionsMap.get(codeTermId) == null) {
+                        addSettingDetail(removedConditions, removedConditionsMap, studyConditionMap, codeTermId, 
+                                method == null ? "" : method.getMcode());
+                    }
+                    
+                    //add name to the removed conditions if name is not yet in the list
+                    if (studyConditionMap.get(nameTermId) != null && removedConditionsMap.get(nameTermId) == null) {
+                        addSettingDetail(removedConditions, removedConditionsMap, studyConditionMap, nameTermId, 
+                                method == null ? "" : method.getMname());
+                    }
+                }
+            }
+        }        
+    }
+    
     /**
      * Reset session variables after save.
      *
@@ -804,10 +903,22 @@ public class EditNurseryController extends SettingsController {
     	//remove deleted variables in the deleted lists
     	resetDeletedLists();
     	
+    	//add name variables
+    	
+    	if (userSelection.getRemovedConditions() == null) {
+    	    userSelection.setRemovedConditions(new ArrayList<SettingDetail>());
+    	}
+    	addNameVariables(userSelection.getRemovedConditions(), workbook, AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
+    	
+    	
     	//remove basic details & hidden variables from study level variables
     	removeBasicDetailsVariables(userSelection.getStudyLevelConditions());
     	removeHiddenVariables(userSelection.getStudyLevelConditions(), AppConstants.HIDE_NURSERY_FIELDS.getString());
+    	removeCodeVariablesIfNeeded(userSelection.getStudyLevelConditions(), AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
     	removeHiddenVariables(userSelection.getPlotsLevelList(), AppConstants.HIDE_PLOT_FIELDS.getString());
+    	
+    	//set value of breeding method code back to code after saving
+    	SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations());
     	
     	//set measurement session variables to form
     	setMeasurementsData(form, workbook);

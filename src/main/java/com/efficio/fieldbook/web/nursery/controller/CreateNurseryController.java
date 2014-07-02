@@ -103,22 +103,23 @@ public class CreateNurseryController extends SettingsController {
 
     	if(nurseryId != 0){     
             Workbook workbook = fieldbookMiddlewareService.getStudyVariableSettings(nurseryId, true);
-            fieldbookService.createIdNameVariablePairs(workbook, new ArrayList(),AppConstants.ID_NAME_COMBINATION_FOR_RETRIEVE_AND_SAVE.getString(), false);
+            fieldbookService.createIdNameVariablePairs(workbook, new ArrayList(),AppConstants.ID_NAME_COMBINATION.getString(), false);
+
             Dataset dataset = (Dataset)SettingsUtil.convertWorkbookToXmlDataset(workbook);
-            SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId());
+            SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId(), true);
             
             //nursery-level
             List<SettingDetail> nurseryLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
                     buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true), 
                     buildRequiredVariablesFlag(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
-                    userSelection.getStudyLevelConditions(), false);
+                    userSelection.getStudyLevelConditions(), false, AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString());
             removeBasicDetailsVariables(nurseryLevelConditions);
             
             //plot-level
             List<SettingDetail> plotLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()), 
                     buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false), 
                     buildRequiredVariablesFlag(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()), 
-                    userSelection.getPlotsLevelList(), false);
+                    userSelection.getPlotsLevelList(), false, "");
             
             userSelection.setStudyLevelConditions(nurseryLevelConditions);
             userSelection.setPlotsLevelList(plotLevelConditions);
@@ -129,10 +130,9 @@ public class CreateNurseryController extends SettingsController {
             form.setPlotLevelVariables(userSelection.getPlotsLevelList());
             form.setNurseryConditions(userSelection.getNurseryConditions());
             //form.setSelectedSettingId(1);
-            form.setLoadSettings("1");
-            form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + "," + AppConstants.FIXED_NURSERY_VARIABLES.getString());
+            form.setLoadSettings("1");            
             form.setProjectId(this.getCurrentProjectId());
-            form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
+            
             form.setMeasurementRowList(new ArrayList<MeasurementRow>());
         }
         setFormStaticData(form, contextParams);
@@ -180,8 +180,6 @@ public class CreateNurseryController extends SettingsController {
     	String contextParams = ContextUtil.getContextParameterString(contextInfo);    	
     	SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME,SessionUtility.POSSIBLE_VALUES_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
     	form.setProjectId(this.getCurrentProjectId());
-    	form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + "," + AppConstants.FIXED_NURSERY_VARIABLES.getString());
-    	form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
     	setFormStaticData(form, contextParams);
     	assignDefaultValues(form);
     	form.setMeasurementRowList(new ArrayList<MeasurementRow>());
@@ -287,7 +285,10 @@ public class CreateNurseryController extends SettingsController {
     	form.setOpenGermplasmUrl(fieldbookProperties.getGermplasmDetailsUrl());
     	form.setBaselineTraitsSegment(AppConstants.SEGMENT_TRAITS.getString());
         form.setSelectionVariatesSegment(AppConstants.SEGMENT_SELECTION_VARIATES.getString());
-        
+        form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
+        form.setIdCodeNameCombination(AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString() + "," + AppConstants.ID_CODE_NAME_COMBINATION_VARIATE.getString());
+        form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + "," + AppConstants.FIXED_NURSERY_VARIABLES.getString());
+        form.setBreedingMethodCode(AppConstants.BREEDING_METHOD_CODE.getString());
         try {
             form.setCreatedBy(fieldbookService.getPersonById(this.getCurrentIbdbUserId()));
         }
@@ -481,8 +482,6 @@ public class CreateNurseryController extends SettingsController {
     	String contextParams = ContextUtil.getContextParameterString(request);
         try {
             form.setProjectId(this.getCurrentProjectId());
-            form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + "," + AppConstants.FIXED_NURSERY_VARIABLES.getString());
-            form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
             setFormStaticData(form, contextParams);
             assignDefaultValues(form);
             form.setMeasurementRowList(new ArrayList<MeasurementRow>());

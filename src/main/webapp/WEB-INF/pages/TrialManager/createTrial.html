@@ -1,4 +1,4 @@
-<div ng-app="manageTrialApp">
+<div ng-app="manageTrialApp" ng-controller="manageTrialCtrl">
     <!-- header -->
     <div class="row col-xs-12">
         <h1 class="page-header col-xs-12">
@@ -150,17 +150,17 @@
 
     <!-- TABS -->
 
-    <ul class="nav nav-tabs row" id="create-trial-tab-headers">
-        <li class="active"><a href="#/">Trial Settings</a></li>
-        <li><a href="#/environment">Environments</a></li>
-        <li><a href="#/germplasm">Germplasm</a></li>
-        <li><a href="#/treatment">Treatment Factors</a></li>
-        <li><a href="#/experimentalDesign">Experimental Design</a></li>
-        <li><a href="#/measurements">Measurements</a></li>
+    <ul class="nav nav-tabs row fb-tabs-headers" id="manage-trial-tab-headers">
+        <li ng-repeat="tab in trialTabs" ng-class="tab.active"><a ng-href="#/{{tab.link}}">{{tab.name}}</a></li>
+
     </ul>
 
     <!-- CURRENT TAB CONTENT -->
-    <div class="row" id="manage-trial-tabs" ng-view></div>
+    <div class="row fb-tabs" id="manage-trial-tabs">
+        <div class="info">
+            <div class="col-xs-12" ng-view></div>
+        </div>
+    </div>
 
     <!-- MAIN jS -->
     <script type="text/javascript" th:src="@{/static/js/trialmanager/manageTrial.js}"></script>

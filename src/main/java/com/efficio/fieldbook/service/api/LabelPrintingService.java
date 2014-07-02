@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
+import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 
@@ -35,7 +36,7 @@ public interface LabelPrintingService {
      */
     String generatePDFLabels(List<StudyTrialInstanceInfo> trialInstances, 
             UserLabelPrinting userLabelPrinting, ByteArrayOutputStream baos) 
-                    throws MiddlewareQueryException;
+                    throws MiddlewareQueryException, LabelPrintingException;
     
     /**
      * Generate xl s labels.

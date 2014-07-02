@@ -46,6 +46,7 @@ import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.service.api.LabelPrintingService;
 import com.efficio.fieldbook.util.LabelPaperFactory;
+import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
 import com.efficio.fieldbook.web.label.printing.bean.UserLabelPrinting;
 import com.efficio.fieldbook.web.label.printing.template.LabelPaper;
@@ -124,7 +125,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
     @Override
     public String generatePDFLabels(List<StudyTrialInstanceInfo> trialInstances
             , UserLabelPrinting userLabelPrinting,
-            ByteArrayOutputStream baos) throws MiddlewareQueryException {
+            ByteArrayOutputStream baos) throws MiddlewareQueryException, LabelPrintingException {
 
         // setUserLabelPrinting(form.getUserLabelPrinting());
         int pageSizeId = Integer.parseInt(userLabelPrinting.getSizeOfLabelSheet());
@@ -228,14 +229,20 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                     for (FieldMapLabel fieldMapLabel : fieldMapTrialInstanceInfo.getFieldMapLabels()) {
 
                         i++;
+                        String barcodeLabelForCode = generateBarcodeField(
+                                moreFieldInfo, fieldMapLabel, firstBarcodeField,
+                                secondBarcodeField, thirdBarcodeField, barcodeNeeded, false);
                         String barcodeLabel = generateBarcodeField(
                                 moreFieldInfo, fieldMapLabel, firstBarcodeField,
-                                secondBarcodeField, thirdBarcodeField, barcodeNeeded);
+                                secondBarcodeField, thirdBarcodeField, barcodeNeeded, true);
                         if ("0".equalsIgnoreCase(barcodeNeeded)) {
                             barcodeLabel = " ";
+                            barcodeLabelForCode = " ";
                         }
-
-                        BitMatrix bitMatrix = new Code128Writer().encode(barcodeLabel, 
+                    	if(barcodeLabelForCode != null && barcodeLabelForCode.length() > 80){
+                    		throw new LabelPrintingException("label.printing.label.too.long", barcodeLabelForCode, "label.printing.label.too.long");
+                    	}
+                        BitMatrix bitMatrix = new Code128Writer().encode(barcodeLabelForCode, 
                                 BarcodeFormat.CODE_128, width, height, null);
                         String imageLocation = System.getProperty("user.home") 
                                 + "/" + Math.random() + ".png";
@@ -412,11 +419,14 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
                 LOG.error(e.getMessage(), e);
             } catch (IOException e) {
                 LOG.error(e.getMessage(), e);
-            }
+            } 
 
         } catch (WriterException e) {
             LOG.error(e.getMessage(), e);
-        } catch (Exception e) {
+        } catch(LabelPrintingException e){
+        	throw e;
+        }
+        catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
         return fileName;
@@ -435,7 +445,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
      */
     private String generateBarcodeField(Map<String,String> moreFieldInfo
             , FieldMapLabel fieldMapLabel, String firstField, String secondField
-            , String thirdField, String barcodeNeeded){
+            , String thirdField, String barcodeNeeded, boolean includeLabel){
         StringBuffer buffer = new StringBuffer();
         List<String> fieldList = new ArrayList<String>();
         fieldList.add(firstField);
@@ -449,7 +459,7 @@ public class LabelPrintingServiceImpl implements LabelPrintingService{
             if(!buffer.toString().equalsIgnoreCase("")){
                 buffer.append(delimiter);
             }
-            buffer.append(getSpecificInfo(moreFieldInfo, fieldMapLabel, barcodeLabel, true));
+            buffer.append(getSpecificInfo(moreFieldInfo, fieldMapLabel, barcodeLabel, includeLabel));
         }
         return buffer.toString();
     }

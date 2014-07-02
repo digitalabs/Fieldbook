@@ -1,6 +1,7 @@
 function validateEnterLabelFieldsPage(type){
 	//we do the validation
 	//we do the selected fields
+	'use strict';
 	var leftSelectedFields = '';
 	$('#leftSelectedFields li').each(function(){
 		
@@ -68,7 +69,6 @@ function validateEnterLabelFieldsPage(type){
 		
 	}
 	var data = $("#"+getJquerySafeId('userLabelPrinting.filename')).val();
-    //data = data.replace(/^\s|\s$/g, ""); //trims string
      var isValid = /^[ A-Za-z0-9_@.\.&''@{}$!\-#()%.+~_=^\s]*$/i.test(data);
 	    
 	
@@ -82,16 +82,19 @@ function validateEnterLabelFieldsPage(type){
 	
 	setSelectedTrialInstanceOrder();
 	
-var $form = $("#specifyLabelDetailsForm");
-serializedData = $form.serialize();
+	var $form = $('#specifyLabelDetailsForm'),
+	serializedData = $form.serialize();
 		$.ajax({
 			url: $('#specifyLabelDetailsForm').attr('action'),
-			type: "post",
+			type: 'POST',
 			data: serializedData,
 		    success: function(data){
-			    $('#specifyLabelDetailsDownloadForm').submit();
-		   },
-		   complete: function(){ 
+		    	if(data.isSuccess === 1){
+		    		$('#specifyLabelDetailsDownloadForm').submit();
+		    	}else{		    		
+		    		showErrorMessage('', data.message);
+		    	}
+			    
 		   }
 		});
 	

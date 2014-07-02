@@ -20,8 +20,10 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +37,7 @@ import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -47,6 +50,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.service.api.LabelPrintingService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.exception.LabelPrintingException;
 import com.efficio.fieldbook.web.fieldmap.bean.UserFieldmap;
 import com.efficio.fieldbook.web.label.printing.bean.LabelFields;
 import com.efficio.fieldbook.web.label.printing.bean.StudyTrialInstanceInfo;
@@ -367,7 +371,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
      */
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
-    public String submitDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, 
+    public Map<String,Object> submitDetails(@ModelAttribute("labelPrintingForm") LabelPrintingForm form, 
             BindingResult result, Model model, HttpServletResponse response) {
         
         getUserLabelPrinting().setBarcodeNeeded(form.getUserLabelPrinting().getBarcodeNeeded());
@@ -393,7 +397,7 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
                 fieldMapTrialInstanceInfo.setLocationName(fieldMapTrialInstanceInfo.getSiteName());
             }
         }
-        
+        Map<String,Object> results = new HashMap<String, Object>();
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             String fileName  = "";
@@ -415,13 +419,23 @@ public class LabelPrintingController extends AbstractBaseFieldbookController{
                                 getUserLabelPrinting(), baos);
                 //response.setHeader("Content-disposition","attachment; filename=" + fileName);
             }
-            
-            return fileName;
+            results.put("isSuccess", 1);
+            results.put("fileName", fileName);
+            //return fileName;
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
+            results.put("isSuccess", 0);
+            results.put("message", e.getMessage());
+        } catch (LabelPrintingException e) {
+            LOG.error(e.getMessage(), e);
+            results.put("isSuccess", 0);
+            Locale locale = LocaleContextHolder.getLocale();
+            results.put("message", messageSource.getMessage(
+                    e.getErrorCode(), new String[]{e.getLabelError()}, locale));
         }
+        return results;
          
-        return "redirect:" + GenerateLabelController.URL;
+        //return "redirect:" + GenerateLabelController.URL;
     } 
     
     /**

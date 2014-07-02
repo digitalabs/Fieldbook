@@ -396,7 +396,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	if (code != null) {
     		method = fieldbookMiddlewareService.getMethodByCode(code);
     	}
-    	if (method == null) {
+    	if (method == null && name != null) {
     		method = fieldbookMiddlewareService.getMethodByName(name);
     	}
     	

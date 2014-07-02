@@ -104,7 +104,7 @@ window.ChooseSettings = (function() {
 				type: 'GET',
 				cache: true
 			}), $.ajax({
-				url: '/Fieldbook/OntologyBrowser/variables/usage/' + groupId,
+				url: '/Fieldbook/OntologyBrowser/variables/usage?maxResults=20&mode=' + groupId,
 				type: 'GET',
 				cache: true
 			})).done($.proxy(function(propertyResponse, variableResponse) {
@@ -112,7 +112,7 @@ window.ChooseSettings = (function() {
 				// TODO HH Error handling
 
 				// propertyResponse = [ data, statusText, jqXHR ]
-				var properties = JSON.parse(propertyResponse[0]),
+				var properties = propertyResponse[0],
 					variables = JSON.parse(variableResponse[0]);
 
 				variableSelectionGroups[groupId].data = properties;

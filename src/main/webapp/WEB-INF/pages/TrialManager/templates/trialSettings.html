@@ -1,1 +1,50 @@
-<div>Choose settings page</div>
+<div class="row">
+    <div class="col-sm-6">
+
+        <!-- management details title -->
+        <div class="form-group">
+            <label class="control-label" data-toggle="collapse" data-target=".nurseryLevelDetails">
+                <strong class="sub-content-heading">MANAGEMENT DETAILS</strong>
+                <span class="bms-fa-question-circle help-tooltip-nursery" data-placement="right" data-toggle="tooltip" data-container="body" title="trial management details tooltip"></span>
+
+            </label>
+
+            <a href="#" class="btn btn-info pull-right nrm-md-variable-select" th:text="#{nursery.create.nursery.add.settings}">Add</a>
+
+        </div>
+
+        <!-- management details description -->
+        <div class="form-group management-details-section-reminder">
+            <label class="control-label">Click Add to begin selecting items to record in this section.</label>
+        </div>
+
+        <!-- management details variables container -->
+        <div class="form-horizontal sectionContainer" id="nurseryLevelSettings-dev">
+
+            <!-- TODO: please make this a directive -->
+            <div class="form-group nurseryLevelSettings">
+                <div class="col-xs-5 1st">
+                    <span class="delete-icon" style="font-size: 16px;" onclick="javascript: deleteVariable(1,'8110',$(this))"></span>
+                    <input class="cvTermIds nurseryLevelVariableIdClass" type="hidden" id="studyLevelVariables1.variable.cvTermId" name="studyLevelVariables[1].variable.cvTermId" value="8110">
+                    &nbsp;&nbsp;&nbsp;
+                    <span class="control-label nursery-level-label label-bold var-names" style="word-wrap: break-word">PI_ID</span>:&nbsp;
+                </div>
+                <div class="col-xs-7 2nd">
+
+                    <div class="select2-container form-control select2" id="s2id_studyLevelVariables1.value" style="width: 30%;"><a href="javascript:void(0)" class="select2-choice" tabindex="-1">   <span class="select2-chosen" id="select2-chosen-9">&nbsp;</span><abbr class="select2-search-choice-close"></abbr>   <span class="select2-arrow" role="presentation"><b role="presentation"></b></span></a><label for="s2id_autogen9" class="select2-offscreen"></label><input class="select2-focusser select2-offscreen" type="text" aria-haspopup="true" role="button" aria-labelledby="select2-chosen-9" id="s2id_autogen9"><div class="select2-drop select2-display-none select2-with-searchbox">   <div class="select2-search">       <label for="s2id_autogen9_search" class="select2-offscreen"></label>       <input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="select2-input" role="combobox" aria-expanded="true" aria-autocomplete="list" aria-owns="select2-results-9" id="s2id_autogen9_search" placeholder="">   </div>   <ul class="select2-results" role="listbox" id="select2-results-9">   </ul></div></div><input class="form-control select2 select2-offscreen" style="width: 30%" type="hidden" id="studyLevelVariables1.value" name="studyLevelVariables[1].value" value="-2" tabindex="-1" title="">
+
+                    <input class="selectedValue" type="hidden" value="-2">
+                    <input class="selectedValueFave" type="hidden" value="-2">
+
+                    <div class="div-select-val" style="display: none">-2</div>
+                    <div class="possibleValuesJson" style="display:none" id="possibleValuesJson1">[{"id":-1,"name":"Rintarou Okabe","description":"Rintarou Okabe","key":"-1"},{"id":5,"name":"Brian Love","description":"Brian Love","key":"5"},{"id":4,"name":"David Bergvinson","description":"David Bergvinson","key":"4"},{"id":1,"name":"Gary Atlin","description":"Gary Atlin","key":"1"},{"id":3,"name":"McLaren Graham","description":"McLaren Graham","key":"3"},{"id":2,"name":"Sanchez Hector","description":"Sanchez Hector","key":"2"}]</div>
+                    <div class="possibleValuesFavoriteJson" style="display:none" id="possibleValuesFavoriteJson1">null</div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</div>

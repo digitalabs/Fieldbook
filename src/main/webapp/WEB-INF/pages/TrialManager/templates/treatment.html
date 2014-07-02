@@ -1,18 +1,17 @@
-<div ng-controller="TreatmentCtrl">
+<div class="row col-sm-6" ng-controller="TreatmentCtrl">
     <div id='addtl-treatment-factors'>
         <!-- title -->
         <h4>Define Additional Treatment Factors</h4>
 
-        <div class="row">
-            <div class="col-md-12">
-      <span>
-        <b>TREATMENT FACTORS</b>
-        <span class="glyphicon glyphicon-question-sign help-info"></span>
-      </span>
+        <div class="form-group">
+            <span>
+                <b class="sub-content-heading">TREATMENT FACTORS</b>
+                <span class="bms-fa-question-circle help-tooltip-nursery" data-placement="right" data-toggle="tooltip" data-container="body" title="trial management details tooltip"></span>
+            </span>
 
-                <span ng-click="addTreatmentFactor()" class="btn btn-info pull-right" >Add</span>
-            </div>
+            <span ng-click="addTreatmentFactor()" class="btn btn-info pull-right nrm-md-variable-select" >Add</span>
         </div>
+
 
         <div class="row">
             <div class="col-md-12">
@@ -39,8 +38,7 @@
                 </form>
             </div>
         </div>
-    </div>
-    <!-- end addtl-treatment-factors -->
+    </div><!-- end addtl-treatment-factors -->
 
     <div id='treatment-levels'>
         <!-- title -->
@@ -82,6 +80,6 @@
                 </div>
             </div>
         </form>
-    </div>
-    <!-- end treatment-levels -->
+    </div><!-- end treatment-levels -->
+
 </div>

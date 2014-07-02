@@ -1,7 +1,7 @@
 /*global angular*/
 /*global showBaselineTraitDetailsModal */
 
-angular.module('fieldbook-settings', [])
+angular.module('fieldbook-settings', ['ui.select2'])
     .constant('ONTOLOGY_TREE_ID', 'ontologyBrowserTree')
     .directive('displaySettings', function() {
         'use strict';
@@ -71,6 +71,7 @@ angular.module('fieldbook-settings', [])
         'use strict';
 
         return {
+            require: '?uiSelect2',
             restrict : 'E',
             scope : {
                 settings : '=',
@@ -79,32 +80,65 @@ angular.module('fieldbook-settings', [])
             },
 
             templateUrl:  '/Fieldbook/static/angular-templates/showSettingFormElement.html',
-            controller : function($scope) {
+            compile : function(tElement, tAttrs, transclude, uiSelect2) {
+                if (uiSelect2) {
+                    uiSelect2.compile(tElement, tAttrs);
+                }
+            },
+            controller : function($scope, LOCATION_ID, BREEDING_METHOD_ID, BREEDING_METHOD_CODE) {
                 $scope.variableDefinition = $scope.settings[$scope.targetkey];
-                $scope.hasDropdownOptions = $scope.variableDefinition.possibleValues && $scope.variableDefinition.possibleValues.length > 0;
+                $scope.hasDropdownOptions = $scope.variableDefinition.variable.widgetType === 'DROPDOWN';
+
+                $scope.isLocation = $scope.variableDefinition.variable.cvTermId == LOCATION_ID;
+
+                $scope.isBreedingMethod = ($scope.variableDefinition.variable.cvTermId == BREEDING_METHOD_ID ||
+                    $scope.variableDefinition.variable.cvTermId == BREEDING_METHOD_CODE);
+
+                $scope.localData = {};
+                $scope.localData.useFavorites = false;
+
+                $scope.updateDropdownValues = function() {
+                    if ($scope.localData.useFavorites) {
+                        $scope.dropdownValues = $scope.variableDefinition.possibleValuesFavorite;
+                    } else {
+                        $scope.dropdownValues = $scope.variableDefinition.possibleValues;
+                    }
+                };
 
                 if ($scope.hasDropdownOptions) {
+                    $scope.dropdownValues = $scope.variableDefinition.possibleValues;
+
+                    $scope.computeMinimumSearchResults = function() {
+                        return ($scope.dropdownValues.length > 0) ? 20 : -1;
+                    };
+
                     $scope.dropdownOptions = {
                         data: function () {
-                            return {results: $scope.variableDefinition.possibleValues};
+                            return {results: $scope.dropdownValues};
                         },
                         formatResult: function (value) {
-                            if (value.id !== undefined) {
-                                return value.description;
-                            } else if (value.locid !== undefined) {
-                                return value.lname;
-                            } else {
-                                return value.mname;
-                            }
+                            return value.name;
                         },
                         formatSelection: function (value) {
-                            if (value.id !== undefined) {
-                                return value.description;
-                            } else if (value.locid !== undefined) {
-                                return value.lname;
-                            } else {
-                                return value.mname;
-                            }
+                            return value.name;
+                        },
+                        minimumResultsForSearch : $scope.computeMinimumSearchResults(),
+                        query : function (query) {
+                            var data = {
+                                results: $scope.dropdownValues
+                            };
+
+                            // return the array that matches
+                            data.results = $.grep(data.results, function (item, index) {
+                                return ($.fn.select2.defaults.matcher(query.term,
+                                    item.name));
+
+                            });
+                            /*
+                             * if (data.results.length === 0){
+                             * data.results.unshift({id:query.term,text:query.term}); }
+                             */
+                            query.callback(data);
                         }
 
                     };

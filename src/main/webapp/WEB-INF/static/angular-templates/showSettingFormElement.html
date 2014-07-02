@@ -1,6 +1,18 @@
 <div ng-switch="variableDefinition.variable.widgetType">
     <div ng-switch-when="DROPDOWN">
-        <span>Dropdown here</span>
+        <input type="hidden" ui-select2="dropdownOptions" class="form-control select2" ng-model="valuecontainer[targetkey]"/>
+        <div ng-if="isLocation">
+            <div class="possibleValuesDiv">
+                <input type="checkbox" ng-model="localData.useFavorites" ng-change="updateDropdownValues()"> &nbsp; &nbsp;
+                <span th:text="#{show.favorite.location}">Show Favorite Location</span>
+            </div>
+            <span>
+                <a href="javascript: openManageLocations();" th:text="#{nursery.managesettings.manage.location}">Manage Location</a>
+            </span>
+        </div>
+        <div ng-if="isBreedingMethod" class="possibleValuesDiv">
+            <!--TODO : handle rendering of breeding method dropdowns for completeness-->
+        </div>
     </div>
     <div ng-switch-when="NTEXT">
         <input type="text" class="form-control numeric-input" ng-model="valuecontainer[targetkey]"/>
@@ -13,11 +25,5 @@
     </div>
     <div ng-switch-when="DATE">
         <input type="text" placeholder="yyyy-mm-dd" class="form-control date-input" ng-model="valuecontainer[targetkey]" jq-datepicker/>
-    </div>
-    <div ng-switch-when="SLIDER">
-        <span>Slider here</span>
-    </div>
-    <div ng-switch-default="">
-        <span>{{variableDefinition.variable.widgetType}}</span>
     </div>
 </div>

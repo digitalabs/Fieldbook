@@ -32,6 +32,7 @@ import org.generationcp.middleware.pojos.workbench.TemplateSetting;
 import org.generationcp.middleware.pojos.workbench.settings.TrialDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -64,8 +65,13 @@ public class CreateTrialController extends SettingsController {
     public static final String URL = "/TrialManager/createTrial";
     
     /** The Constant URL_SETTINGS. */
-    public static final String URL_SETTINGS = "/TrialManager/chooseSettings";
-    
+    public static final String URL_SETTINGS = "TrialManager/templates/trialSettings";
+    public static final String URL_GERMPLASM = "TrialManager/templates/germplasmDetails";
+    public static final String URL_ENVIRONMENTS = "TrialManager/templates/environments";
+    public static final String URL_TREATMENT = "TrialManager/templates/treatment";
+    public static final String URL_EXPERIMENTAL_DESIGN = "TrialManager/templates/experimentalDesign";
+    public static final String URL_MEASUREMENT = "TrialManager/templates/measurements";
+
     @Resource
     private TrialSelection trialSelection;
 	
@@ -78,6 +84,39 @@ public class CreateTrialController extends SettingsController {
 		return "TrialManager/createTrial";
 	}
 
+   @RequestMapping(value="/trialSettings",method = RequestMethod.GET)
+   public String showCreateTrial(Model model, HttpSession session, HttpServletRequest req) {
+       return showAjaxPage(model,URL_SETTINGS);
+   }
+
+
+    @RequestMapping(value="/environment",method = RequestMethod.GET)
+    public String showEnvironments(Model model, HttpSession session, HttpServletRequest req) {
+        return showAjaxPage(model,URL_ENVIRONMENTS);
+    }
+
+
+    @RequestMapping(value="/germplasm",method = RequestMethod.GET)
+    public String showGermplasm(Model model, HttpSession session, HttpServletRequest req) {
+        return showAjaxPage(model,URL_GERMPLASM);
+    }
+
+
+    @RequestMapping(value="/treatment",method = RequestMethod.GET)
+    public String showTreatmentFactors(Model model, HttpSession session, HttpServletRequest req) {
+        return showAjaxPage(model,URL_TREATMENT);
+    }
+
+
+    @RequestMapping(value="/experimentalDesign",method = RequestMethod.GET)
+    public String showExperimentalDesign(Model model, HttpSession session, HttpServletRequest req) {
+        return showAjaxPage(model,URL_EXPERIMENTAL_DESIGN);
+    }
+
+    @RequestMapping(value="/measurements",method = RequestMethod.GET)
+    public String showMeasurements(Model model, HttpSession session, HttpServletRequest req) {
+        return showAjaxPage(model,URL_MEASUREMENT);
+    }
     
 
     /**

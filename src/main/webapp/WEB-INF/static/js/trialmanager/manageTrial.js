@@ -13,20 +13,29 @@
     manageTrialApp.config(['$routeProvider',
         function($routeProvider) {
             $routeProvider.
-                when('/chooseSettings', {
-                    templateUrl: '/Fieldbook/TrialManager/chooseSettings'
+                when('/', {
+                    templateUrl: '/Fieldbook/TrialManager/createTrial/trialSettings'
+                }).
 
+                when('/environment', {
+                    templateUrl: '/Fieldbook/TrialManager/createTrial/environment'
+                }).
+                when('/germplasm', {
+                    templateUrl: '/Fieldbook/TrialManager/createTrial/germplasm'
                 }).
                 when('/treatment', {
-                    templateUrl: '/Fieldbook/TrialManager/treatment',
+                    templateUrl: '/Fieldbook/TrialManager/createTrial/treatment',
                     controller: 'TreatmentCtrl'
                 }).
-                when('/measurement', {
-                    templateUrl: '/Fieldbook/TrialManager/measurement',
+                when('/experimentalDesign', {
+                    templateUrl: '/Fieldbook/TrialManager/createTrial/experimentalDesign'
+                }).
+                when('/measurements', {
+                    templateUrl: '/Fieldbook/TrialManager/createTrial/measurements',
                     controller: 'MeasurementCtrl'
                 }).
                 otherwise({
-                    redirectTo: '/'
+                    redirectTo: '/Fieldbook/TrialManager/createTrial/trialSettings'
                 });
         }]);
 

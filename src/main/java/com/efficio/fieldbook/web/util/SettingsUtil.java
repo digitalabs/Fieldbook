@@ -1609,17 +1609,17 @@ public class SettingsUtil {
 	public static void resetBreedingMethodValueToId(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, List<MeasurementRow> observations) throws MiddlewareQueryException{
         if (observations != null && observations.size() > 0) {
             int index = -1;
-            for (int i = 0; i < 1; i++) {
-                MeasurementRow row = observations.get(0);
-                for (MeasurementData data : row.getDataList()) {
-                    if (data.getMeasurementVariable().getTermId() == TermId.BREEDING_METHOD_VARIATE_CODE.getId()) {
-                        index++;
-                        break;
-                    }
+            boolean hasBMethod = false;
+            MeasurementRow mrow = observations.get(0);
+            for (MeasurementData data : mrow.getDataList()) {
+                if (data.getMeasurementVariable().getTermId() == TermId.BREEDING_METHOD_VARIATE_CODE.getId()) {
                     index++;
+                    hasBMethod = true;
+                    break;
                 }
+                index++;
             }
-            if (index > -1) {
+            if (index > -1 && hasBMethod) {
                 List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
                 HashMap<String, Method> methodMap = new HashMap<String, Method>();
                 //create a map to get method id based on given code
@@ -1641,17 +1641,19 @@ public class SettingsUtil {
 	  //set value of breeding method code in selection variates to code instead of id
         if (observations != null && observations.size() > 0) {
             int index = -1;
-            for (int i = 0; i < 1; i++) {
-                MeasurementRow row = observations.get(0);
-                for (MeasurementData data : row.getDataList()) {
+            boolean hasBMethod = false;
+            MeasurementRow mrow = observations.get(0);
+            if (mrow.getDataList() != null) {
+                for (MeasurementData data : mrow.getDataList()) {
                     if (data.getMeasurementVariable().getTermId() == TermId.BREEDING_METHOD_VARIATE_CODE.getId()) {
                         index++;
+                        hasBMethod = true;
                         break;
                     }
                     index++;
                 }
             }
-            if (index > -1) {
+            if (index > -1 && hasBMethod) {
                 List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
                 HashMap<Integer, Method> methodMap = new HashMap<Integer, Method>();
                 

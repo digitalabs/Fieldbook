@@ -232,6 +232,7 @@ public enum AppConstants {
     ,BM_CODE
     ,DBID
     ,DBCV
+    ,ID_SUFFIX
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

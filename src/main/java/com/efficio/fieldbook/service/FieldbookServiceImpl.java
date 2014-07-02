@@ -665,9 +665,7 @@ public class FieldbookServiceImpl implements FieldbookService{
   					studyConditionMapList.put(Integer.toString(var.getTermId()), varList);
   				}
   			}
-  		
-  		
-  		
+  		  		
   			StringTokenizer tokenizer = new StringTokenizer(idNamePairs, ",");
   			if(tokenizer.hasMoreTokens()){
   				//we iterate it
@@ -693,7 +691,7 @@ public class FieldbookServiceImpl implements FieldbookService{
   								}
   							}
   						}
-  						tempVarId.setName(tempVarName.getName() + "_ID");
+  						tempVarId.setName(tempVarName.getName() + AppConstants.ID_SUFFIX.getString());
   						tempVarName.setValue(actualNameVal);	
   						tempVarName.setOperation(tempVarId.getOperation());
   						if(tempVarId.getOperation() != null && Operation.DELETE == tempVarId.getOperation()){
@@ -728,7 +726,7 @@ public class FieldbookServiceImpl implements FieldbookService{
   						tempVarName.setStoredIn(stdvar.getStoredIn().getId());
   						tempVarName.setDataTypeId(stdvar.getDataType().getId());
   						tempVarName.setFactor(false);
-  						tempVarId.setName(tempVarId.getName() + "_ID");
+  						tempVarId.setName(tempVarId.getName() + AppConstants.ID_SUFFIX.getString());
   						if(tempVarId.getOperation() != Operation.DELETE){
 	  						tempVarName.setOperation(Operation.ADD);
 	  						workbook.getConditions().add(tempVarName);
@@ -779,7 +777,7 @@ public class FieldbookServiceImpl implements FieldbookService{
   						}else{
   							StandardVariable stdvar = fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(idTermId));
   	  						MeasurementVariable tempVarId = new MeasurementVariable(
-  	  								Integer.valueOf(idTermId), tempVarName.getName() + "_ID", stdvar.getDescription(), stdvar.getScale().getName(), stdvar.getMethod().getName(),
+  	  								Integer.valueOf(idTermId), tempVarName.getName() + AppConstants.ID_SUFFIX.getString(), stdvar.getDescription(), stdvar.getScale().getName(), stdvar.getMethod().getName(),
   	  								stdvar.getProperty().getName(), stdvar.getDataType().getName(), actualIdVal, stdvar.getPhenotypicType().getLabelList().get(0));
   	  						tempVarId.setStoredIn(stdvar.getStoredIn().getId());
   	  						tempVarId.setDataTypeId(stdvar.getDataType().getId());

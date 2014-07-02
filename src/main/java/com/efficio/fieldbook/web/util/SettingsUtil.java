@@ -1400,7 +1400,7 @@ public class SettingsUtil {
 				        && !(condition.getTermId() == TermId.BREEDING_METHOD_ID.getId() && variableMap.get(String.valueOf(TermId.BREEDING_METHOD_CODE.getId())) != null) //do not show breeding method id if code exists
 				        && !(condition.getTermId() == TermId.BREEDING_METHOD.getId() && (variableMap.get(String.valueOf(TermId.BREEDING_METHOD_CODE.getId())) != null || 
 				        variableMap.get(String.valueOf(TermId.BREEDING_METHOD_ID.getId())) != null))) { //do not name if code or id exists 
-					SettingVariable variable = getSettingVariable(condition.getName(), condition.getDescription(), condition.getProperty(),
+					SettingVariable variable = getSettingVariable(getDisplayName(condition.getTermId(), condition.getName()), condition.getDescription(), condition.getProperty(),
 							condition.getScale(), condition.getMethod(), role, 
 							condition.getDataType(), condition.getDataTypeId(), condition.getMinRange(), condition.getMaxRange(), userSelection, fieldbookMiddlewareService);
 					variable.setCvTermId(condition.getTermId());
@@ -1412,6 +1412,14 @@ public class SettingsUtil {
 			}
 		}
 		return details;
+	}
+	
+	private static String getDisplayName(int termId, String name) {
+	    if (AppConstants.getString(String.valueOf(termId) + AppConstants.LABEL.getString()) != null) {
+	        return AppConstants.getString(String.valueOf(termId) + AppConstants.LABEL.getString());
+	    } else {
+	        return name;
+	    }
 	}
 	
 	private static List<SettingDetail> convertWorkbookToSettingDetails(List<String> fields, List<MeasurementVariable> conditions,

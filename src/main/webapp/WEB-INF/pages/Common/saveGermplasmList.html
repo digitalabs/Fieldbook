@@ -27,6 +27,16 @@
 	</div>
 	<div class="row form-group">
 		<div class="col-xs-5 col-md-5">
+			<label class="control-label label-bold" th:text="#{germplasm.save.list.type.label}">List Type:</label><span class="required">*</span>
+		</div>
+		<div class="col-xs-7 col-md-7">
+			<select class="form-input"  th:field="*{listType}">
+				<option th:each="listType : ${germplasmListTypes}" th:value="${listType.fcode}" th:text="${listType.fname}"></option>
+			</select>
+		</div>
+	</div>
+	<div class="row form-group">
+		<div class="col-xs-5 col-md-5">
 			<label class="control-label label-bold" th:text="#{germplasm.save.list.date.label}">List Date:</label><span class="required">*</span>
 		</div>
 		<div class="col-xs-7 col-md-7" data-date="" data-date-format="yyyymmdd">

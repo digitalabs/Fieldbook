@@ -101,7 +101,7 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         	form.setListDate(DateUtil.getCurrentDateInUIFormat());
         	form.setListIdentifier(listIdentifier);
         	List<UserDefinedField> germplasmListTypes = germplasmListManager.getGermplasmListTypes();
-        	
+        	form.setListType(AppConstants.GERMPLASM_LIST_TYPE_HARVEST.getString());
         	model.addAttribute("germplasmListTypes", germplasmListTypes);
             
         } catch(Exception e) {
@@ -170,7 +170,8 @@ public class GermplasmTreeController  extends AbstractBaseFieldbookController{
         // Create germplasm list
         String listName =  saveListForm.getListName();
         String harvestDate = form.getHarvestYear() + form.getHarvestMonth() + "00";//form.getHarvestDate(); 
-        String listType = AppConstants.GERMPLASM_LIST_TYPE_HARVEST.getString();
+        String listType = saveListForm.getListType(); 
+        
         Integer userId = 0;
         try {
             userId = this.getCurrentIbdbUserId();

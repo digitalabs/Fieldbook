@@ -15,7 +15,7 @@
 
         <div class="row">
             <div class="col-md-12">
-                <form role='form' id='addtl-treatment-factors-form' novalidate>
+                <form role='form' id='addtl-treatment-factors-form' novalidate="">
                     <table class='factor-opts-tbl table'>
                         <tr>
                             <th>&nbsp;</th>
@@ -31,7 +31,7 @@
                             </td>
                             <td>{{treatmentFactor.variableDescription}}</td>
                             <td>
-                                <input valid-number maxlength="2" type='text' class='form-control' ng-model='treatmentFactor.variableLevelCount' ng-change='onLevelChange(treatmentFactor.variableName,treatmentFactor.variableLevelCount)' />
+                                <input valid-number="" maxlength="2" type='text' class='form-control' ng-model='treatmentFactor.variableLevelCount' ng-change='onLevelChange(treatmentFactor.variableName,treatmentFactor.variableLevelCount)' />
                             </td>
                         </tr>
                     </table>

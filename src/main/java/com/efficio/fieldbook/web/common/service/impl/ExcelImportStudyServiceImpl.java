@@ -357,7 +357,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
         return result;
     }
 
-    private String findColumns(Sheet sheet, String... cellValue) {
+    private String findColumns(Sheet sheet, String... cellValue) throws WorkbookParserException{
     	List<String> cellValueList = Arrays.asList(cellValue);
     	String result = StringUtils.join(cellValue, ",");
     	
@@ -366,7 +366,10 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	        int cells = row.getLastCellNum();
 	        for (int i = 0; i < cells; i++) {
 	            Cell cell = row.getCell(i);
-	            if (cell != null && cellValueList.contains(cell.getStringCellValue())) {
+	            if (cell == null){
+	                   throw new WorkbookParserException("error.workbook.import.missing.columns.import.file");
+	            }
+	            else if (cellValueList.contains(cell.getStringCellValue())) {
 	            	result = result.replace(cell.getStringCellValue(), String.valueOf(i));
 	            }
 	        }
@@ -461,7 +464,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
     	return map;
     }
     
-    private String getColumnIndexesFromXlsSheet(Sheet observationSheet, List<MeasurementVariable> variables, String trialInstanceNumber) {
+    private String getColumnIndexesFromXlsSheet(Sheet observationSheet, List<MeasurementVariable> variables, String trialInstanceNumber) throws WorkbookParserException{
     	String plotLabel = null, entryLabel = null;
     	for (MeasurementVariable variable : variables) {
     		if (variable.getTermId() == TermId.PLOT_NO.getId() || variable.getTermId() == TermId.PLOT_NNO.getId()) {

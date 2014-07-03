@@ -366,7 +366,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	        int cells = row.getLastCellNum();
 	        for (int i = 0; i < cells; i++) {
 	            Cell cell = row.getCell(i);
-	            if (cellValueList.contains(cell.getStringCellValue())) {
+	            if (cell != null && cellValueList.contains(cell.getStringCellValue())) {
 	            	result = result.replace(cell.getStringCellValue(), String.valueOf(i));
 	            }
 	        }

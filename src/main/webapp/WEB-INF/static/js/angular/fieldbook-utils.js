@@ -67,6 +67,51 @@ angular.module('fieldbook-utils', ['ui.select2'])
             }
         };
     })
+    .directive('openOntologyBrowserPopup', function() {
+        'use strict';
+
+        return {
+            restrict : 'A',
+            scope : {
+                onSelectVariables : '&'
+            },
+
+            controller : function($scope, $element, $attrs,ONTOLOGY_TREE_ID) {
+                $scope.processModalData = function (data) {
+                    var resultData = {};
+                    if (data) {
+                        // if retrieved data is an array of values
+                        if (data.length && data.length > 0) {
+                            $.each(data, function (key, value) {
+                                resultData[value.variable.cvTermId] = value;
+                            });
+                        } else {
+                            // if retrieved data is a single object
+                            resultData[data.variable.cvTermId] = data;
+                        }
+
+                        // perform the passed function
+                        $scope.onSelectVariables({ result : resultData });
+
+                        if (!$scope.$$phase) {
+                            $scope.$apply();
+                        }
+
+                    }
+                };
+
+                $element.on('click',  function() {
+                    var labels = { 'label' : $attrs.label, 'placeholderLabel' : $attrs.placeholder };
+
+                    // TODO change modal such that it no longer requires id / class-based DOM manipulation
+                    // FIXME
+                    window.ChooseSettings.getStandardVariables(labels, $attrs.variableType,
+                        ONTOLOGY_TREE_ID, $scope.processModalData);
+
+                });
+            }
+        };
+    })
     .directive('showSettingFormElement', function() {
         'use strict';
 

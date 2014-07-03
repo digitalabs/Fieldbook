@@ -9,9 +9,8 @@
                 <span class="bms-fa-question-circle help-tooltip-nursery" data-placement="right" data-toggle="tooltip" data-container="body" title="trial management details tooltip"></span>
             </span>
 
-            <span ng-click="addTreatmentFactor()" class="btn btn-info pull-right nrm-md-variable-select" >Add</span>
+            <span open-ontology-browser-popup="" on-select-variables="addManagementVariables(result)" th:attr="label=#{nursery.managesettings.add.nursery.level.settings},placeholder=#{nursery.reminder.add.nursery.settings}" variable-type="1" class="btn btn-info pull-right nrm-md-variable-select" >Add</span>
         </div>
-
 
         <div class="row">
             <div class="col-md-12">
@@ -24,14 +23,14 @@
                             <th>Levels</th>
 
                         </tr>
-                        <tr ng-repeat="treatmentFactor in treatmentFactors track by $index">
-                            <td><span class='glyphicon glyphicon-minus-sign delete-factor' ng-click="removeTreatmentFactorByIndex($index)"></span>
+                        <tr ng-repeat="(key,item) in data.managementDetails track by key">
+                            <td><span class='glyphicon glyphicon-minus-sign delete-factor' ng-click="removeTreatmentFactorByIndex(key)"></span>
                             </td>
-                            <td><a ng-href='#variable-details-{{treatmentFactor.variableName}}' >{{treatmentFactor.variableName}}</a>
+                            <td><a ng-click='showDetailsModal(key)' >{{item.variable.name}}</a>
                             </td>
-                            <td>{{treatmentFactor.variableDescription}}</td>
+                            <td>{{item.variable.description}}</td>
                             <td>
-                                <input valid-number="" maxlength="2" type='text' class='form-control' ng-model='treatmentFactor.variableLevelCount' ng-change='onLevelChange(treatmentFactor.variableName,treatmentFactor.variableLevelCount)' />
+                                <input valid-number="" maxlength="2" type='text' class='form-control' ng-model='item.variableLabelCount' ng-change='onLevelChange(item.variable.name,item.variableLabelCount)' />
                             </td>
                         </tr>
                     </table>
@@ -46,10 +45,10 @@
 
         <form role='form' id='treatment-level-form'>
 
-            <div class='treatment-level-item' ng-repeat="treatmentFactor in treatmentFactors">
+            <div class='treatment-level-item' ng-repeat="(key,item) in data.managementDetails track by key">
                 <div class="row">
                     <div class="col-md-12">
-                        <b>{{treatmentFactor.variableName}}</b>: <b>{{treatmentFactor.variableDescription}}</b>
+                        <b>{{item.variable.name}}</b>: <b>{{item.variable.description}}</b>
                     </div>
                 </div>
 
@@ -66,13 +65,13 @@
                                 <th>Scale</th>
                                 <th>Label</th>
                             </tr>
-                            <tr ng-repeat="n in treatmentFactor.variableLabelsForEachCount track by $index">
+                            <tr ng-repeat="n in item.variableLabels track by $index">
                                 <td>
-                                    <a>{{treatmentFactor.variableName}} {{$index + 1}}</a>
+                                    <a>{{item.variable.name}} {{$index + 1}}</a>
                                 </td>
-                                <td>{{treatmentFactor.variableScale}}</td>
+                                <td>{{item.variable.scale}}</td>
                                 <td>
-                                    <input type='text' class='form-control' ng-model="treatmentFactor.variableLabelsForEachCount[$index]" />
+                                    <input type='text' class='form-control' ng-model="item.variableLabels[$index]" />
                                 </td>
                             </tr>
                         </table>

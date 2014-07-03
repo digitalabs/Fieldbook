@@ -88,43 +88,30 @@ window.ChooseSettings = (function() {
 			groupTranslations = {
 				label: group.label,
 				placeholderLabel: group.placeholder
-			};
+			},
+			modal = this._variableSelection;
 
 		// Initialise a variable selection modal if we haven't done so before
-		if (!this._variableSelection) {
-			this._variableSelection = new window.BMS.NurseryManager.VariableSelection(modalSelector);
+		if (!modal) {
+			modal = this._variableSelection = new window.BMS.NurseryManager.VariableSelection(modalSelector);
 		}
 
 		// If we haven't loaded data for this group before, then load it
 		if (!group.data || !group.usageData) {
 
-			// TODO Do we need to pass in the base URL here?
-			$.when($.ajax({
-				url: '/Fieldbook/OntologyBrowser/settings/properties?groupId=' + groupId,
-				type: 'GET',
-				cache: true
-			}), $.ajax({
-				url: '/Fieldbook/OntologyBrowser/variables/usage?maxResults=20&mode=' + groupId,
-				type: 'GET',
-				cache: true
-			})).done($.proxy(function(propertyResponse, variableResponse) {
-
-				// TODO HH Error handling
-
-				// propertyResponse = [ data, statusText, jqXHR ]
-				var properties = propertyResponse[0],
-					variables = JSON.parse(variableResponse[0]);
-
-				variableSelectionGroups[groupId].data = properties;
-				variableSelectionGroups[groupId].usageData = variables;
+			$.getJSON('/Fieldbook/OntologyBrowser/settings/properties?groupId=' + groupId, function(data) {
+				variableSelectionGroups[groupId].data = data;
 
 				// Initialise a new Variable Selection instance, passing through the properties, group type and groupTranslations
-				this._variableSelection.show(groupId, properties, variables, groupTranslations);
-			}, this));
+				// TODO get variable usage
+				modal.show(groupId, data, [], groupTranslations);
+			});
+
+			// TODO Error handling
 
 		} else {
 			// We've shown this before, and have the data. Just show the dialog.
-			this._variableSelection.show(groupId, group.data, group.usageData, groupTranslations);
+			modal.show(groupId, group.data, group.usageData, groupTranslations);
 		}
 	};
 

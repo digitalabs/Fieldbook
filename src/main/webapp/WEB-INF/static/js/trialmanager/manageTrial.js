@@ -10,6 +10,7 @@
     var manageTrialApp = angular.module('manageTrialApp', ['fieldbook-utils','ngRoute']);
 
     // routing configuration
+    // TODO: if possible, retrieve the template urls from the list of constants
     manageTrialApp.config(['$routeProvider',
         function($routeProvider) {
             $routeProvider.
@@ -40,34 +41,6 @@
                 });
         }]);
 
-
-    // common directives, might be better to add this section of code to a common module
-    manageTrialApp.directive('validNumber', function() {
-        return {
-            require: '?ngModel',
-            link: function(scope, element, attrs, ngModelCtrl) {
-                if(!ngModelCtrl) {
-                    return;
-                }
-
-                ngModelCtrl.$parsers.push(function(val) {
-                    var clean = val.replace( /[^0-9]+/g, '');
-                    if (val !== clean) {
-                        ngModelCtrl.$setViewValue(clean);
-                        ngModelCtrl.$render();
-                    }
-                    return clean;
-                });
-
-                element.bind('keypress', function(event) {
-                    if(event.keyCode === 32) {
-                        event.preventDefault();
-                    }
-                });
-            }
-        };
-    });
-
     // common filters
     manageTrialApp.filter('range', function() {
         return function(input, total) {
@@ -77,7 +50,6 @@
             return input;
         };
     });
-
 
     // THE parent controller for the manageTrial (create/edit) page
     manageTrialApp.controller('manageTrialCtrl',['$scope',function($scope){

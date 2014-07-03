@@ -11,6 +11,7 @@
 
     manageTrialApp.controller('TreatmentCtrl',['$scope','TreatmentFactorsService',function($scope,TreatmentFactorsService) {
         $scope.data = TreatmentFactorsService.data;
+
         $scope.addManagementVariables = function(result) {
             $.each(result, function (key, val) {
                 TreatmentFactorsService.addManagementDetailVar(key,val);
@@ -95,8 +96,8 @@
             },
 
             removeManagementDetailVarByIndex : function(index) {
-                if ( index !== null) {
-                    this.data.managementDetails.delete(index);
+                if (index !== undefined && index !== null) {
+                    delete this.data.managementDetails[index];
                 }
             },
 

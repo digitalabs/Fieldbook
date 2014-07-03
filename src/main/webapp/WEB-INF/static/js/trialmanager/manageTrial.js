@@ -24,7 +24,8 @@
                     controller: 'EnvironmentCtrl'
                 }).
                 when('/germplasm', {
-                    templateUrl: '/Fieldbook/TrialManager/createTrial/germplasm'
+                    templateUrl: '/Fieldbook/TrialManager/createTrial/germplasm',
+                    controller: 'GermplasmCtrl'
                 }).
                 when('/treatment', {
                     templateUrl: '/Fieldbook/TrialManager/createTrial/treatment',

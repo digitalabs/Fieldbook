@@ -9,7 +9,7 @@
 (function(){
     'use strict';
 
-    angular.module("manageTrialApp").controller('EnvironmentCtrl', ['$scope', function ($scope) {
+    angular.module('manageTrialApp').controller('EnvironmentCtrl', ['$scope', function ($scope) {
         $scope.data = {};
 
         // storage of number of environments uses a temp variable to account for user temporarily deleting contents of field to enter new value

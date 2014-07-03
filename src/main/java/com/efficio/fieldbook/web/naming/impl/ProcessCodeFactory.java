@@ -35,7 +35,7 @@ public class ProcessCodeFactory {
 
 
 	public Expression create(String key) {
-		Expression expression = expressionMap.get(key);
+		Expression expression = expressionMap.get(key.toUpperCase());
 		return expression;
 	}
 

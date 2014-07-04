@@ -95,9 +95,6 @@
                         }
                     };
 
-                    $(VARIABLE_SELECTION_MODAL_SELECTOR).off(VARIABLE_SELECTED_EVENT_TYPE);
-                    $(VARIABLE_SELECTION_MODAL_SELECTOR).on(VARIABLE_SELECTED_EVENT_TYPE, $scope.processModalData);
-
                     $element.on('click',  function() {
 
                         var eventProxy = {
@@ -107,6 +104,9 @@
                                 group : $attrs.variableType
                             }
                         };
+
+                        $(VARIABLE_SELECTION_MODAL_SELECTOR).off(VARIABLE_SELECTED_EVENT_TYPE);
+                        $(VARIABLE_SELECTION_MODAL_SELECTOR).on(VARIABLE_SELECTED_EVENT_TYPE, $scope.processModalData);
 
                         var chooseSettings = new ChooseSettings(VARIABLE_SELECTION_MODAL_SELECTOR, {});
                         chooseSettings._openVariableSelectionDialog(eventProxy);
@@ -151,9 +151,6 @@
                         }
                     };
 
-                    $(VARIABLE_SELECTION_MODAL_SELECTOR).off(VARIABLE_SELECTED_EVENT_TYPE);
-                    $(VARIABLE_SELECTION_MODAL_SELECTOR).on(VARIABLE_SELECTED_EVENT_TYPE, $scope.processModalData);
-
                     $element.on('click',  function() {
                         var eventProxy = {
                             preventDefault: function () {
@@ -162,6 +159,9 @@
                                 group: $attrs.variableType
                             }
                         };
+
+                        $(VARIABLE_SELECTION_MODAL_SELECTOR).off(VARIABLE_SELECTED_EVENT_TYPE);
+                        $(VARIABLE_SELECTION_MODAL_SELECTOR).on(VARIABLE_SELECTED_EVENT_TYPE, $scope.processModalData);
 
                         var chooseSettings = new ChooseSettings(VARIABLE_SELECTION_MODAL_SELECTOR, {});
                         chooseSettings._openVariableSelectionDialog(eventProxy);

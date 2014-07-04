@@ -134,7 +134,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	form.setLineChoice("1");
     	form.setLineSelected("1");
     	form.setAllPlotsChoice("1");
-    	form.setProjectId(this.getCurrentProjectId());
+    	/*form.setProjectId(this.getCurrentProjectId());*/
     	Study study = fieldbookMiddlewareService.getStudy(nurseryId);
     	List<Variable> varList = study.getConditions().getVariables();
     	form.setDefaultMethodId(Integer.toString(AppConstants.SINGLE_PLANT_SELECTION_SF.getInt()));
@@ -143,7 +143,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     		form.setDefaultMethodId(defaultId);
     	}
     	advancingNursery.setStudy(study);
-    	form.setLocationUrl(fieldbookProperties.getProgramLocationsUrl());
+    	/*form.setLocationUrl(fieldbookProperties.getProgramLocationsUrl());*/
     	form.setBreedingMethodUrl(fieldbookProperties.getProgramBreedintMethodsUrl());
     	form.setNurseryId(Integer.toString(nurseryId));
     	Project project = workbenchService.getProjectById(Long.valueOf(this.getCurrentProjectId()));
@@ -167,6 +167,16 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     	model.addAttribute("monthChoices", DateUtil.generateMonthChoices());
     	
     	return super.showAjaxPage(model, MODAL_URL);
+    }
+
+    @ModelAttribute("programLocationURL")
+    public String getProgramLocation() {
+        return fieldbookProperties.getProgramLocationsUrl();
+    }
+
+    @ModelAttribute("projectID")
+    public String getProgramID() {
+        return getCurrentProjectId();
     }
     
     /**

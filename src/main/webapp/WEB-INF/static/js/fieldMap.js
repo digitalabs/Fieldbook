@@ -423,15 +423,6 @@ function isDeletedPlotAtStartCoord(id) {
 	return false;
 }
 
-function openManageLocations() {
-	$('#manageLocationModal').modal({ backdrop: 'static', keyboard: true });
-	$("#manageLocationModal").modal("show");
-	if(locationIframeOpened == false){
-		locationIframeOpened = true;
-		$('#locationFrame').attr('src', programLocationUrl + $('#projectId').val());
-	}
-}
-
 function recreatePopupLocationCombo() {
 	'use strict';
 	$.ajax(

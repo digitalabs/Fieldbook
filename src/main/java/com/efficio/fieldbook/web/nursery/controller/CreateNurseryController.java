@@ -277,11 +277,12 @@ public class CreateNurseryController extends SettingsController {
      * @param form the new form static data
      */
     private void setFormStaticData(CreateNurseryForm form, String contextParams){
+
+        // TODO move the translation of static data from form field into either the use of page model, or via Thymeleaf static evaluation
+
         form.setBreedingMethodId(AppConstants.BREEDING_METHOD_ID.getString());
         form.setLocationId(AppConstants.LOCATION_ID.getString());
         form.setBreedingMethodUrl(fieldbookProperties.getProgramBreedintMethodsUrl());
-        form.setLocationUrl(fieldbookProperties.getProgramLocationsUrl());
-        form.setProjectId(this.getCurrentProjectId());
         form.setImportLocationUrl(fieldbookProperties.getGermplasmImportUrl() + "?" + contextParams);
         form.setStudyNameTermId(AppConstants.STUDY_NAME_ID.getString());
         form.setStartDateId(AppConstants.START_DATE_ID.getString());
@@ -648,5 +649,15 @@ public class CreateNurseryController extends SettingsController {
                 iter.remove();
             }
         }
+    }
+
+    @ModelAttribute("programLocationURL")
+    public String getProgramLocation() {
+        return fieldbookProperties.getProgramLocationsUrl();
+    }
+
+    @ModelAttribute("projectID")
+    public String getProgramID() {
+        return getCurrentProjectId();
     }
 }

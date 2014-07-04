@@ -8,10 +8,10 @@
 (function(){
     'use strict';
 
-    angular.module('manageTrialApp').controller('GermplasmCtrl', ['$scope', function($scope) {
+    angular.module('manageTrialApp').controller('GermplasmCtrl',
+        ['$scope', 'TrialManagerDataService', function($scope, TrialManagerDataService) {
 
-        $scope.data = {};
-        $scope.data.settings = {};
+        $scope.data = TrialManagerDataService.currentData.germplasm;
 
         $scope.labels = {};
         $scope.labels.germplasmFactors = {

@@ -11,11 +11,7 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.trial.controller;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -57,6 +53,7 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 @Controller
 @RequestMapping(CreateTrialController.URL)
 public class CreateTrialController extends SettingsController {
+    // TODO : rename and repurpose class to handle not just initial creation, but also editing
 
     /**
      * The Constant LOG.
@@ -451,5 +448,55 @@ public class CreateTrialController extends SettingsController {
         return fieldbookService.getAllPossibleValues(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
     }
 
+    @ModelAttribute("trialSettingsData")
+    public Map<String, Object> getTrialSettingsInitialData() {
+        return new HashMap<String, Object>();
+    }
 
+    @ModelAttribute("environmentData")
+    public Map<String, Object> getEnvironmentInitialData() {
+        return new HashMap<String, Object>();
+    }
+
+    @ModelAttribute("germplasmData")
+    public Map<String, Object> getGermplasmInitialData() {
+        Map<String, Object> initialData = new HashMap<String, Object>();
+        Map<Integer, SettingDetail> initialDetails = new HashMap<Integer, SettingDetail>();
+        List<SettingDetail> initialDetailList = new ArrayList<SettingDetail>();
+        String[] initialSettingIDs = AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString().split(",");
+
+        for (String initialSettingID : initialSettingIDs) {
+            try {
+                SettingDetail detail = createSettingDetail(Integer.valueOf(initialSettingID), null);
+                initialDetails.put(detail.getVariable().getCvTermId(), detail);
+                initialDetailList.add(detail);
+            } catch (MiddlewareQueryException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        initialData.put("settings", initialDetails);
+
+        if (userSelection.getPlotsLevelList() == null) {
+            userSelection.setPlotsLevelList(initialDetailList);
+        }
+
+        return initialData;
+    }
+
+    @ModelAttribute("treatmentFactorsData")
+    public Map<String, Object> getTreatmentFactorsInitialData() {
+        return new HashMap<String, Object>();
+    }
+
+    @ModelAttribute("experimentalDesignData")
+    public Map<String, Object> getExperimentalDesignInitialData() {
+        return new HashMap<String, Object>();
+    }
+
+    @ModelAttribute("measurementData")
+    public Map<String, Object> getMeasurementInitialData() {
+        return new HashMap<String, Object>();
+    }
 }

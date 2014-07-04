@@ -230,14 +230,21 @@
         var mdLabel = /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
             mdPlaceholder = /*[[#{nursery.reminder.add.nursery.settings}]]*/ '';
 
+
+
         (function(){
 
             angular.module('manageTrialApp')
-                    .constant('LOCATION_ID', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).LOCATION_ID.getString()}]]*/ ''
+            .constant('LOCATION_ID', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).LOCATION_ID.getString()}]]*/ ''
             ).constant('BREEDING_METHOD_CODE', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).BREEDING_METHOD_CODE.getString()}]]*/ ''
             ).constant('BREEDING_METHOD_ID', /*[[${T(com.efficio.fieldbook.web.util.AppConstants).BREEDING_METHOD_ID.getString()}]]*/ ''
+            ).constant('TRIAL_SETTINGS_INITIAL_DATA', /*[[${trialSettingsData}]]*/ ''
+            ).constant('ENVIRONMENTS_INITIAL_DATA', /*[[${environmentData}]]*/ ''
+            ).constant('GERMPLASM_INITIAL_DATA', /*[[${germplasmData}]]*/ ''
+            ).constant('TREATMENT_FACTORS_INITIAL_DATA', /*[[${treatmentFactorsData}]]*/ ''
+            ).constant('EXPERIMENTAL_DESIGN_INITIAL_DATA', /*[[${experimentalDesignData}]]*/ ''
+            ).constant('MEASUREMENTS_INITIAL_DATA', /*[[${measurementsData}]]*/ ''
             );
-
         })();
         
         $(document).ready(function() {

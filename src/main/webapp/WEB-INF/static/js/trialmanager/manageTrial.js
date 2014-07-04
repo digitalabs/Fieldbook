@@ -100,5 +100,22 @@
 
     }]);
 
+    manageTrialApp.service('TrialManagerDataService', ['TRIAL_SETTINGS_INITIAL_DATA', 'ENVIRONMENTS_INITIAL_DATA',
+        'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
+        function (TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA,GERMPLASM_INITIAL_DATA,EXPERIMENTAL_DESIGN_INITIAL_DATA,
+                  MEASUREMENTS_INITIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA) {
+        var service = {
+            currentData: {
+                trialSettings: TRIAL_SETTINGS_INITIAL_DATA,
+                environments: ENVIRONMENTS_INITIAL_DATA,
+                germplasm: GERMPLASM_INITIAL_DATA,
+                treatmentFactors: TREATMENT_FACTORS_INITIAL_DATA,
+                experimentalDesign: ENVIRONMENTS_INITIAL_DATA,
+                measurements: MEASUREMENTS_INITIAL_DATA
+            }
+        };
+
+        return service;
+    }]);
 })();
 

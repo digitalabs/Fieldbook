@@ -7,7 +7,7 @@
 (function(){
     'use strict';
 
-    var manageTrialApp = angular.module('manageTrialApp', ['fieldbook-utils','ngRoute']);
+    var manageTrialApp = angular.module('manageTrialApp', ['leafnode-utils','fieldbook-utils','ngRoute','ui.bootstrap']);
 
     // routing configuration
     // TODO: if possible, retrieve the template urls from the list of constants

@@ -24,6 +24,14 @@
             showBaselineTraitDetailsModal(cvTermId);
         };
 
+        $scope.managementDetailsSize = function() {
+            var size = 0, key;
+            for (key in $scope.data.managementDetails) {
+                if ($scope.data.managementDetails.hasOwnProperty(key)) { size++; }
+            }
+            return size;
+        };
+
         $scope.onLevelChange = function(variableName,levelCount) {
             levelCount = parseInt(levelCount);
             // search the treatment factors then update it

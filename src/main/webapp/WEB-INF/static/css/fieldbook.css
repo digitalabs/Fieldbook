@@ -288,7 +288,7 @@ table .highlight td, table .field-map-highlight td, .tableSelect tr.selected td{
     border-bottom-left-radius: 10px;
 }
 .table-curved > :last-child > :last-child > :last-child {
-    border-bottom-right-radius: 0px;
+    border-bottom-right-radius: 10px;
 }
 
 
@@ -542,7 +542,7 @@ padding-left: 20px; margin-top: 7px
 .help-tooltip-col {
     margin-top: 7px;
 }
-.help-tooltip-nursery {
+.help-tooltip, .help-tooltip-nursery {
     color: #7D7D7D;
     font-size: 13pt;
     vertical-align: middle;
@@ -1387,6 +1387,18 @@ label[data-toggle="collapse"],
 	top: 10px;
 }
 
+.treatment-level-item {
+    border-bottom: 1px solid gainsboro;
+    margin-top: 10pt;
+    margin-bottom: 10pt;
+    padding-bottom: 10pt;
+}
+
+.treatment-level-item:last-child {
+    border-bottom: none;
+    margin-bottom: 10pt;
+    padding-bottom: 0;
+}
 /* Variable Selection Dialog CSS */
 
 .nrm-var-selection-modal ul {

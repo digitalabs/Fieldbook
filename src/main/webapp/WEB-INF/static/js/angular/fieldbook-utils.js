@@ -25,6 +25,14 @@
                         // TODO : move away from global function definitions
                         showBaselineTraitDetailsModal(setting.variable.cvTermId);
                     };
+
+                    $scope.size = function() {
+                        var size = 0, key;
+                        for (key in $scope.settings) {
+                            if ($scope.settings.hasOwnProperty(key)) { size++; }
+                        }
+                        return size;
+                    };
                 }
             };
         })

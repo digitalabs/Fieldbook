@@ -10,7 +10,6 @@
     var manageTrialApp = angular.module('manageTrialApp');
 
     manageTrialApp.controller('TrialSettingsCtrl',['$scope','TrialSettingsService',function($scope,TrialSettingsService) {
-        TrialSettingsService.addDummyData();
         $scope.data = TrialSettingsService.data;
 
 
@@ -25,13 +24,26 @@
             TrialSettingsService.removeManagementDetailVarByIndex(cvTermId);
         };
 
+        $scope.managementDetailsSize = function() {
+            var size = 0, key;
+            for (key in $scope.data.managementDetails) {
+                if ($scope.data.managementDetails.hasOwnProperty(key)) { size++; }
+            }
+            return size;
+        };
+
+
+
+
     }]);
 
     // factory and services
     manageTrialApp.factory('TrialSettingsService',function() {
         return {
             data : {
-                managementDetails : {},
+                managementDetails : {
+
+                },
                 userInput : {}
             },
 

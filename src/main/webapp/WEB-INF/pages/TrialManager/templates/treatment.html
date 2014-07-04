@@ -1,12 +1,19 @@
-<div class="row col-sm-6" ng-controller="TreatmentCtrl">
-    <div id='addtl-treatment-factors'>
-        <!-- title -->
-        <h4>Define Additional Treatment Factors</h4>
+<div class="row col-lg-6 col-md-8 col-sm-10 col-xs-12" ng-controller="TreatmentCtrl">
+    <!-- title -->
+    <div>
+        <label class="control-label section-toggle toggle-icon" slide-toggle="" section=".treatmentFactors">
+            <img style="margin-left: -10px" class="icn section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
+            <img style="display:none; margin-left: -7px" class="icn section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
+            <strong class="sub-content-heading" th:text="#{trial.managesettings.treatment.factors.title}">Define Additional Treatment Factors</strong>
+        </label>
+    </div>
+
+    <div id='addtl-treatment-factors' class="sectionContainer collapse in treatmentFactors">
 
         <div class="form-group">
             <span>
-                <b class="sub-content-heading">TREATMENT FACTORS</b>
-                <span class="bms-fa-question-circle help-tooltip-nursery" data-placement="right" data-toggle="tooltip" data-container="body" title="trial management details tooltip"></span>
+                <b class="sub-content-heading" th:text="#{trial.managesettings.treatment.factors}">TREATMENT FACTORS</b>
+                <span class="bms-fa-question-circle help-tooltip-nursery" tooltip-placement="right" tooltip-container="body" th:attr="tooltip=#{trial.managesettings.treatment.factors.notes}"></span>
             </span>
 
             <span open-ontology-browser-popup="" on-select-variables="addManagementVariables(result)" th:attr="label=#{nursery.managesettings.add.nursery.level.settings},placeholder=#{nursery.reminder.add.nursery.settings}" variable-type="1" class="btn btn-info pull-right nrm-md-variable-select" >Add</span>
@@ -15,70 +22,89 @@
         <div class="row">
             <div class="col-md-12">
                 <form role='form' id='addtl-treatment-factors-form' novalidate="">
-                    <table class='factor-opts-tbl table'>
-                        <tr>
-                            <th>&nbsp;</th>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Levels</th>
+                    <table class='factor-opts-tbl table table-curved table-condensed'>
+                        <thead>
+                            <tr>
+                                <th>&nbsp;</th>
+                                <th th:text="#{trial.managesettings.treatment.factors.name}">Name</th>
+                                <th th:text="#{trial.managesettings.treatment.factors.description}">Description</th>
+                                <th th:text="#{trial.managesettings.treatment.factors.level}">Levels</th>
 
-                        </tr>
-                        <tr ng-repeat="(key,item) in data.managementDetails track by key">
-                            <td><span class='glyphicon glyphicon-minus-sign delete-factor' ng-click="removeTreatmentFactorByIndex(key)"></span>
-                            </td>
-                            <td><a ng-click='showDetailsModal(key)' >{{item.variable.name}}</a>
-                            </td>
-                            <td>{{item.variable.description}}</td>
-                            <td>
-                                <input valid-number="" maxlength="2" type='text' class='form-control' ng-model='item.variableLabelCount' ng-change='onLevelChange(item.variable.name,item.variableLabelCount)' />
-                            </td>
-                        </tr>
+                            </tr>
+                        </thead>
+
+
+                        <tbody >
+                            <tr ng-repeat="(key,item) in data.managementDetails track by key">
+                                <td ng-class-odd="'odd'" ng-class-even="'even'"><span class='glyphicon glyphicon-minus-sign delete-factor' ng-click="removeTreatmentFactorByIndex(key)"></span>
+                                </td>
+                                <td ng-class-odd="'odd'" ng-class-even="'even'"><a ng-click='showDetailsModal(key)' >{{item.variable.name}}</a>
+                                </td>
+                                <td ng-class-odd="'odd'" ng-class-even="'even'">{{item.variable.description}}</td>
+                                <td ng-class-odd="'odd'" ng-class-even="'even'">
+                                    <input valid-number="" maxlength="2" type='text' class='form-control' ng-model='item.variableLabelCount' ng-change='onLevelChange(item.variable.name,item.variableLabelCount)' />
+                                </td>
+                            </tr>
+
+                            <tr ng-hide="managementDetailsSize() &gt; 0">
+                                <td class="odd">&nbsp;</td><td class="odd">&nbsp;</td><td class="odd">&nbsp;</td><td class="odd">&nbsp;</td>
+                            </tr>
+
+                        </tbody>
                     </table>
                 </form>
             </div>
         </div>
     </div><!-- end addtl-treatment-factors -->
 
-    <div id='treatment-levels'>
+    <div id='treatment-levels' ng-hide="managementDetailsSize() &lt;= 0" class="add_top_padding">
         <!-- title -->
-        <h4>Specify Treatment Levels</h4>
-
-        <form role='form' id='treatment-level-form'>
+        <div><strong class="sub-content-heading" th:text="#{trial.managesettings.treatment.factors.specify.level}">Specify Treatment Levels</strong></div>
 
             <div class='treatment-level-item' ng-repeat="(key,item) in data.managementDetails track by key">
                 <div class="row">
                     <div class="col-md-12">
-                        <b>{{item.variable.name}}</b>: <b>{{item.variable.description}}</b>
+                        <span class="sub-content-heading" style="text-transform: uppercase"><b>{{item.variable.name}}</b>: <b>{{item.variable.description}}</b></span>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-12">
-                        <b>Define the labels for this factor</b>:
+                        <b th:text="#{trial.managesettings.treatment.factors.define.label}">Define the labels for this factor</b>:
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <table class='factor-level-tbl table'>
-                            <tr>
-                                <th>Level</th>
-                                <th>Scale</th>
-                                <th>Label</th>
-                            </tr>
-                            <tr ng-repeat="n in item.variableLabels track by $index">
-                                <td>
-                                    <a>{{item.variable.name}} {{$index + 1}}</a>
-                                </td>
-                                <td>{{item.variable.scale}}</td>
-                                <td>
-                                    <input type='text' class='form-control' ng-model="item.variableLabels[$index]" />
-                                </td>
-                            </tr>
+                        <table class='factor-level-tbl table table-curved table-condensed'>
+                            <thead>
+                                <tr>
+                                    <th th:text="#{trial.managesettings.treatment.factors.level}">Level</th>
+                                    <th th:text="#{variable.details.scale}">Scale</th>
+                                    <th th:text="#{trial.managesettings.treatment.factors.label}">Label</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="n in item.variableLabels track by $index">
+                                    <td ng-class-odd="'odd'" ng-class-even="'even'">
+                                        <a ng-click='showDetailsModal(item.variable.cvTermId)'>{{item.variable.name}} {{$index + 1}}</a>
+                                    </td>
+                                    <td ng-class-odd="'odd'" ng-class-even="'even'">{{item.variable.scale}}</td>
+                                    <td ng-class-odd="'odd'" ng-class-even="'even'">
+                                        <input type='text' class='form-control' ng-model="item.variableLabels[$index]" />
+                                    </td>
+                                </tr>
+
+                                <tr ng-hide="item.variableLabelCount &gt; 0">
+                                    <td class="odd">&nbsp;</td>
+                                    <td class="odd">&nbsp;</td>
+                                    <td class="odd">&nbsp;</td>
+                                </tr>
+
+                            </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-        </form>
     </div><!-- end treatment-levels -->
 
 </div>

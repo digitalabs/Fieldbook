@@ -7,7 +7,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="(key, setting) in settings">
+    <tr ng-repeat="(key, setting) in settings track by key">
         <td ng-class="{even : $even, odd : $odd}" class="fbk-delete-link">
             <span class="delete-icon" ng-click="removeSetting(setting)" ng-show="setting.deletable"></span>
         </td>
@@ -17,6 +17,11 @@
             </a>
         </td>
         <td width="50%" ng-class="{even : $even, odd : $odd}">{{setting.variable.description}}</td>
+    </tr>
+    <tr ng-hide="size() &gt; 0">
+       <td class="odd">&nbsp;</td>
+       <td class="odd">&nbsp;</td>
+        <td class="odd">&nbsp;</td>
     </tr>
     </tbody>
 </table>

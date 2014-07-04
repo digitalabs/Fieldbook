@@ -4,9 +4,8 @@
         <!-- management details title -->
         <div class="form-group">
             <label class="control-label" data-toggle="collapse" data-target=".nurseryLevelDetails">
-                <strong class="sub-content-heading">MANAGEMENT DETAILS</strong>
-                <span class="bms-fa-question-circle help-tooltip-nursery" data-placement="right" data-toggle="tooltip" data-container="body" title="trial management details tooltip"></span>
-
+                <strong class="sub-content-heading" th:text="#{fb.study.managementdetails}">MANAGEMENT DETAILS</strong>
+                <span class="bms-fa-question-circle help-tooltip" th:attr="tooltip=#{fb.study.managementdetails.tooltip}" tooltip-placement="right"></span>
             </label>
 
             <span open-ontology-browser-popup="" on-select-variables="addManagementVariables(result)" th:attr="label=#{nursery.managesettings.add.nursery.level.settings},placeholder=#{nursery.reminder.add.nursery.settings}" variable-type="1" class="btn btn-info pull-right nrm-md-variable-select" >Add</span>
@@ -15,7 +14,7 @@
 
         <!-- management details description -->
         <div class="form-group management-details-section-reminder">
-            <label class="control-label">Click Add to begin selecting items to record in this section.</label>
+            <label class="control-label" ng-show='managementDetailsSize() &lt;= 0' th:text="#{section.reminder.to.add.records}">Click Add to begin selecting items to record in this section.</label>
         </div>
 
         <!-- management details variables container -->

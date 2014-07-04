@@ -1,7 +1,8 @@
 /* global angular */
-angular.module('leafnode-utils', [])
+(function(){
+    'use strict';
+    angular.module('leafnode-utils', [])
         .directive('jqDatepicker', function () {
-        'use strict';
             return {
                 require: '?ngModel',
                 link: function (scope, el, attr, ngModel) {
@@ -9,7 +10,6 @@ angular.module('leafnode-utils', [])
                         $(el).datepicker();
                         return;
                     }
-
 
                     $(el).datepicker().on('changeDate', function () {
                         scope.$apply(function () {
@@ -23,4 +23,17 @@ angular.module('leafnode-utils', [])
 
                 }
             };
+        })
+        .directive('slideToggle',function() {
+            return {
+                link: function(scope,el,attr) {
+                    $(el).click(function() {
+                        $(el).find('.icn.section-expanded').toggle();
+                        $(el).find('.icn.section-collapsed').toggle();
+
+                        $(attr.section).slideToggle();
+                    });
+                }
+            };
         });
+})();

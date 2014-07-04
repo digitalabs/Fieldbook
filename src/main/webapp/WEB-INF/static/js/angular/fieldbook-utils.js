@@ -99,10 +99,7 @@
                     $(VARIABLE_SELECTION_MODAL_SELECTOR).on(VARIABLE_SELECTED_EVENT_TYPE, $scope.processModalData);
 
                     $element.on('click',  function() {
-                        /*// TODO change modal such that it no longer requires id / class-based DOM manipulation
-                        // FIXME
-                        window.ChooseSettings.getStandardVariables($scope.labels, $attrs.variableType,
-                            ONTOLOGY_TREE_ID, $scope.processModalData);*/
+
                         var eventProxy = {
                             preventDefault : function() {
                             },
@@ -127,7 +124,7 @@
                     onSelectVariables : '&'
                 },
 
-                controller : function($scope, $element, $attrs,ONTOLOGY_TREE_ID) {
+                controller : function($scope, $element, $attrs,VARIABLE_SELECTION_MODAL_SELECTOR, VARIABLE_SELECTED_EVENT_TYPE) {
                     $scope.processModalData = function (data) {
                         if (data.responseData) {
                             data = data.responseData;
@@ -154,13 +151,20 @@
                         }
                     };
 
-                    $element.on('click',  function() {
-                        var labels = { 'label' : $attrs.label, 'placeholderLabel' : $attrs.placeholder };
+                    $(VARIABLE_SELECTION_MODAL_SELECTOR).off(VARIABLE_SELECTED_EVENT_TYPE);
+                    $(VARIABLE_SELECTION_MODAL_SELECTOR).on(VARIABLE_SELECTED_EVENT_TYPE, $scope.processModalData);
 
-                        // TODO change modal such that it no longer requires id / class-based DOM manipulation
-                        // FIXME
-                        window.ChooseSettings.getStandardVariables(labels, $attrs.variableType,
-                            ONTOLOGY_TREE_ID, $scope.processModalData);
+                    $element.on('click',  function() {
+                        var eventProxy = {
+                            preventDefault: function () {
+                            },
+                            data: {
+                                group: $attrs.variableType
+                            }
+                        };
+
+                        var chooseSettings = new ChooseSettings(VARIABLE_SELECTION_MODAL_SELECTOR, {});
+                        chooseSettings._openVariableSelectionDialog(eventProxy);
 
                     });
                 }

@@ -368,7 +368,7 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     			for (Method method : methods) {
     				if (method.isBulkingMethod() != null && method.isBulkingMethod()) {
     					isBulk = true;
-    				} else {
+    				} else if (method.isBulkingMethod() != null && !method.isBulkingMethod()) {
     					isLine = true;
     				}
     				if (isBulk && isLine) {

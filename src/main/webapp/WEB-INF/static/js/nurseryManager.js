@@ -28,15 +28,46 @@ function checkMethod() {
 		$('#methodSelected').val($('#defaultMethodId').val());
 		setCorrectMethodValues(false);
 		// we show the bulk and lines section
-		$('.bulk-section').css('display', 'block');
-		$('.lines-section').css('display', 'block');
+		$('.bulk-section').css('display', 'none');
+		$('.lines-section').css('display', 'none');
 		if ($("#methodVariateId").has("option").length === 0) {
 			$('input[type=checkbox][name=methodChoice]').prop('checked', true);
 			$('input[type=checkbox][name=methodChoice]').change();
 			showErrorMessage("page-advance-modal-message", noMethodVariatesError);
 		}
+		else {
+			displaySectionsPerMethodVariateValues();
+		}
 	}
 }
+
+function displaySectionsPerMethodVariateValues() {
+	'use strict';
+	var id = $("#methodVariateId").val();
+	if (id !== '') {
+		$.ajax({
+			url : '/Fieldbook/NurseryManager/advance/nursery/checkMethodTypeMode/' + id,
+			type : "GET",
+			cache : false,
+			success : function(data) {
+				if (data === 'LINE') {
+					$('.lines-section').css('display', 'block');
+				}
+				else if (data === 'BULK') {
+					$('.bulk-section').css('display', 'block');
+				}
+				else if (data === 'MIXED') {
+					$('.lines-section').css('display', 'block');
+					$('.bulk-section').css('display', 'block');
+				}
+				else {
+					showErrorMessage("page-advance-modal-message", data);
+				}
+			}
+		});
+	}
+}
+
 function setCorrectMethodValues(isCheckMethod) {
 	'use strict';
 	var isFound = false,

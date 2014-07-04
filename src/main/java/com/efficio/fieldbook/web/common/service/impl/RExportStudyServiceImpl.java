@@ -21,6 +21,7 @@ import javax.annotation.Resource;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.springframework.stereotype.Service;
 
 import com.csvreader.CsvWriter;
@@ -34,6 +35,9 @@ public class RExportStudyServiceImpl implements RExportStudyService {
 
 	@Resource
     private FieldbookProperties fieldbookProperties;
+	
+	@Resource
+	private OntologyService ontologyService;
 
 	@Override
 	public String export(Workbook workbook, String outputFile, int start, int end) {
@@ -59,7 +63,7 @@ public class RExportStudyServiceImpl implements RExportStudyService {
             csv.setSelectedTrait(getMeasurementVariable(workbook.getVariates(), csv.getStringTraitToEvaluate()));
             csv.writeTraitsR(csvOutput);
             csvOutput.endRecord();
-            csv.writeDATAR(csvOutput);
+            csv.writeDATAR(csvOutput, ontologyService);
             
         } catch (IOException e) {
         	e.printStackTrace();

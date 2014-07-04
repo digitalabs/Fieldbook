@@ -20,6 +20,7 @@ import javax.annotation.Resource;
 
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,9 @@ public class FieldroidExportStudyServiceImpl implements
     
 	@Resource
     private FieldbookProperties fieldbookProperties;
+	
+	@Resource
+	private OntologyService ontologyService;
 
 	/* (non-Javadoc)
 	 * @see com.efficio.fieldbook.web.nursery.service.ExportStudyService#export(org.generationcp.middleware.domain.etl.Workbook, java.lang.String)
@@ -68,7 +72,7 @@ public class FieldroidExportStudyServiceImpl implements
             csv.writeTraitsFromObservations(csvOutput);
             csvOutput.endRecord();
             csv.writeRows(csvOutput, 23);
-            csv.writeDATA(csvOutput);
+            csv.writeDATA(csvOutput, ontologyService);
             
         } catch (IOException e) {
             LOG.error("ERROR AL CREAR CVS fieldlog", e);

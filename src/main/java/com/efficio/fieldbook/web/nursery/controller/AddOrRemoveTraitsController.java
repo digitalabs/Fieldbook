@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSession;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -54,6 +55,10 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
     private UserSelection userSelection;
     @Resource
     private FieldbookService fieldbookMiddlewareService;
+    
+    @Resource
+    private OntologyService ontologyService;
+    
     @Resource
     private MeasurementsGeneratorService measurementsGeneratorService;
 
@@ -138,7 +143,7 @@ public class AddOrRemoveTraitsController extends AbstractBaseFieldbookController
         try { 
         	workbook = fieldbookMiddlewareService.getCompleteDataset(datasetId, false);
             fieldbookService.setAllPossibleValuesInWorkbook(workbook);
-            SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations());
+            SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), false, ontologyService);
         } catch (MiddlewareQueryException e) {
             LOG.error(e.getMessage(), e);
         }

@@ -38,6 +38,8 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.StudyDetails;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
@@ -60,6 +62,9 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 	
 	@Resource
     private FieldbookProperties fieldbookProperties;
+	
+	@Resource
+	private OntologyService ontologyService;
 	
 	private static final List<Integer> STUDY_DETAILS_IDS = Arrays.asList(TermId.STUDY_NAME.getId(), TermId.STUDY_TITLE.getId(), 
 			TermId.PM_KEY.getId(), TermId.STUDY_OBJECTIVE.getId(), TermId.START_DATE.getId(), TermId.END_DATE.getId(), 
@@ -152,8 +157,16 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		int currentRowNum = 0;
 		
 		writeObservationHeader(currentRowNum++, xlsBook, xlsSheet, workbook.getMeasurementDatasetVariables());
+		
+		String propertyName = "";
+		try {
+		    propertyName = ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getTerm().getName();
+		} catch (MiddlewareQueryException e) {
+		    e.printStackTrace();
+		}
+		
 		for (MeasurementRow dataRow : observations) {
-			writeObservationRow(currentRowNum++, xlsSheet, dataRow, xlsBook);
+			writeObservationRow(currentRowNum++, xlsSheet, dataRow, xlsBook, propertyName);
 		}
 	}
 	
@@ -348,15 +361,14 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 		}
 	}
 	
-	private void writeObservationRow(int currentRowNum, HSSFSheet xlsSheet, MeasurementRow dataRow, HSSFWorkbook xlsBook) {
+	private void writeObservationRow(int currentRowNum, HSSFSheet xlsSheet, MeasurementRow dataRow, HSSFWorkbook xlsBook, String propertyName) {
 		HSSFRow row = xlsSheet.createRow(currentRowNum);
 		int currentColNum = 0;
 		CellStyle style =  xlsBook.createCellStyle();
 		DataFormat format = xlsBook.createDataFormat();
 		style.setDataFormat(format.getFormat("0.#"));
-		for (MeasurementData dataCell : dataRow.getDataList()) {
-			
-			
+		
+		for (MeasurementData dataCell : dataRow.getDataList()) {		    
 			if (dataCell.getMeasurementVariable() != null && dataCell.getMeasurementVariable().getTermId() == TermId.TRIAL_INSTANCE_FACTOR.getId()) {
 				continue;
 			}
@@ -365,7 +377,8 @@ public class ExcelExportStudyServiceImpl implements ExcelExportStudyService {
 			if (dataCell.getMeasurementVariable() != null && dataCell.getMeasurementVariable().getPossibleValues() != null
 					&& !dataCell.getMeasurementVariable().getPossibleValues().isEmpty() 
 					&& dataCell.getMeasurementVariable().getTermId() != TermId.BREEDING_METHOD_VARIATE.getId()
-					&& dataCell.getMeasurementVariable().getTermId() != TermId.BREEDING_METHOD_VARIATE_CODE.getId()) {
+					&& dataCell.getMeasurementVariable().getTermId() != TermId.BREEDING_METHOD_VARIATE_CODE.getId()
+					&& !dataCell.getMeasurementVariable().getProperty().equals(propertyName)) {
 
 				cell.setCellValue(ExportImportStudyUtil.getCategoricalCellValue(dataCell.getValue(), dataCell.getMeasurementVariable().getPossibleValues()));
 			}

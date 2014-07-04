@@ -166,7 +166,7 @@ public class EditNurseryController extends SettingsController {
             
             //measurements part
             if (workbook != null) {
-                SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations());
+                SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), false, ontologyService);
             	setMeasurementsData(form, workbook);
             }
             
@@ -508,7 +508,6 @@ public class EditNurseryController extends SettingsController {
     	form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + "," + AppConstants.FIXED_NURSERY_VARIABLES.getString());
         form.setProjectId(this.getCurrentProjectId());
         form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
-        form.setIdCodeNameCombination(AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString() + "," + AppConstants.ID_CODE_NAME_COMBINATION_VARIATE.getString());
         form.setBreedingMethodCode(AppConstants.BREEDING_METHOD_CODE.getString());
     }
     
@@ -918,7 +917,7 @@ public class EditNurseryController extends SettingsController {
     	removeHiddenVariables(userSelection.getPlotsLevelList(), AppConstants.HIDE_PLOT_FIELDS.getString());
     	
     	//set value of breeding method code back to code after saving
-    	SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations());
+    	SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), false, ontologyService);
     	
     	//set measurement session variables to form
     	setMeasurementsData(form, workbook);

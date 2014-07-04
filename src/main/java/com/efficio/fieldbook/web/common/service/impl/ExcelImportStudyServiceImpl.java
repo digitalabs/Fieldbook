@@ -42,6 +42,7 @@ import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
@@ -72,6 +73,9 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
 	
+	@Resource 
+	private OntologyService ontologyService;
+	
 	@Resource
 	private ValidationService validationService;
 	
@@ -79,7 +83,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 	private ResourceBundleMessageSource messageSource;
 	
 	@Override
-	public ImportResult importWorkbook(Workbook workbook, String filename) throws WorkbookParserException {
+	public ImportResult importWorkbook(Workbook workbook, String filename, OntologyService ontologyService, FieldbookService fieldbookMiddlewareService) throws WorkbookParserException {
 		
 		try {
 			org.apache.poi.ss.usermodel.Workbook xlsBook = parseFile(filename);
@@ -110,7 +114,7 @@ public class ExcelImportStudyServiceImpl implements ExcelImportStudyService {
 			Map<String, MeasurementRow> rowsMap = createMeasurementRowsMap(workbook.getObservations());
 			
 			importDataToWorkbook(modes, xlsBook, rowsMap, workbook.getFactors(), trialInstanceNumber, workbook.getObservations(), changeDetailsList);
-			SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations());
+			SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), true, ontologyService);
 
 			try {
 				validationService.validateObservationValues(workbook);

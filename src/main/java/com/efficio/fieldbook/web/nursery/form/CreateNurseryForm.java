@@ -192,10 +192,7 @@ public class CreateNurseryForm {
     
     /** The created by. */
     private String createdBy;
-    
-    /** The id code name combination. */
-    private String idCodeNameCombination;
-    
+        
     /** The breeding method code. */
     private String breedingMethodCode;
     
@@ -1235,24 +1232,6 @@ public class CreateNurseryForm {
          */
         public void setCreatedBy(String createdBy) {
             this.createdBy = createdBy;
-        }
-
-        /**
-         * Gets the id code name combination.
-         *
-         * @return the id code name combination
-         */
-        public String getIdCodeNameCombination() {
-            return idCodeNameCombination;
-        }
-
-        /**
-         * Sets the id code name combination.
-         *
-         * @param idCodeNameCombination the new id code name combination
-         */
-        public void setIdCodeNameCombination(String idCodeNameCombination) {
-            this.idCodeNameCombination = idCodeNameCombination;
         }
 
         /**

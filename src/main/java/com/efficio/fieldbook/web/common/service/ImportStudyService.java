@@ -13,10 +13,12 @@ package com.efficio.fieldbook.web.common.service;
 
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
+import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.OntologyService;
 
 import com.efficio.fieldbook.web.common.bean.ImportResult;
 
 public interface ImportStudyService {
 
-	ImportResult importWorkbook(Workbook workbook, String filename) throws WorkbookParserException;
+	ImportResult importWorkbook(Workbook workbook, String filename, OntologyService ontologyService, FieldbookService fieldbookMiddlewareService) throws WorkbookParserException;
 }

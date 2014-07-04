@@ -18,6 +18,7 @@ import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -78,6 +79,9 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     private KsuCsvExportStudyService ksuCsvExportStudyService;
     @Resource
     private FieldbookService fieldbookMiddlewareService;
+    
+    @Resource
+    private OntologyService ontologyService;
     
     @Resource
     private ExportOrderingRowColImpl exportOrderingRowColService;
@@ -291,7 +295,7 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
     	}
     	Workbook workbook = userSelection.getWorkbook();
     	
-    	SettingsUtil.resetBreedingMethodValueToCode(fieldbookMiddlewareService, workbook.getObservations());
+    	SettingsUtil.resetBreedingMethodValueToCode(fieldbookMiddlewareService, workbook.getObservations(), true, ontologyService);
     	
     	exportDataCollectionService.reorderWorkbook(workbook);
     	
@@ -336,6 +340,8 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
     	results.put("outputFilename", outputFilename);
     	results.put("filename", SettingsUtil.cleanSheetAndFileName(filename));
     	results.put("contentType", response.getContentType());
+    	
+    	SettingsUtil.resetBreedingMethodValueToId(fieldbookMiddlewareService, workbook.getObservations(), true, ontologyService);
     	
     	return super.convertObjectToJson(results);
     }

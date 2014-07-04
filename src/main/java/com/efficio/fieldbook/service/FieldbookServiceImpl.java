@@ -528,10 +528,10 @@ public class FieldbookServiceImpl implements FieldbookService{
 		return idNameMap;
    }
     
-    private MeasurementVariable createMeasurementVariable(String idToCreate, String value, Operation operation, String suffix) throws MiddlewareQueryException {
+    private MeasurementVariable createMeasurementVariable(String idToCreate, String value, Operation operation) throws MiddlewareQueryException {
         StandardVariable stdvar = fieldbookMiddlewareService.getStandardVariable(Integer.valueOf(idToCreate));
         MeasurementVariable var = new MeasurementVariable(
-                Integer.valueOf(idToCreate), appendNameSuffix(stdvar.getName(), suffix), stdvar.getDescription(), stdvar.getScale().getName(), stdvar.getMethod().getName(),
+                Integer.valueOf(idToCreate), stdvar.getName(), stdvar.getDescription(), stdvar.getScale().getName(), stdvar.getMethod().getName(),
                 stdvar.getProperty().getName(), stdvar.getDataType().getName(), value, stdvar.getPhenotypicType().getLabelList().get(0));
         var.setStoredIn(stdvar.getStoredIn().getId());
         var.setDataTypeId(stdvar.getDataType().getId());
@@ -539,14 +539,6 @@ public class FieldbookServiceImpl implements FieldbookService{
         var.setOperation(operation);
         return var;
         
-    }
-    
-    private String appendNameSuffix(String name, String suffix) {
-        if (name.contains(suffix)) {
-            return name;
-        } else {
-            return name + "_"+ suffix;
-        }
     }
     
     @Override
@@ -579,23 +571,20 @@ public class FieldbookServiceImpl implements FieldbookService{
                             workbook.getConditions().add(
                                     createMeasurementVariable(codeTermId, 
                                             method == null ? "" : method.getMcode(), 
-                                            Operation.ADD, AppConstants.BM_CODE.getString()));
+                                            Operation.ADD));
                             
                             //add name if it is not yet in the list
                             if (studyConditionMap.get(nameTermId) == null) {
                                 workbook.getConditions().add(
                                         createMeasurementVariable(nameTermId, 
                                                 method == null ? "" : method.getMname(),
-                                                Operation.ADD, AppConstants.DBCV.getString()));
+                                                Operation.ADD));
                             }
                             
                             //set the correct value of the name and id for update operation
                             for (MeasurementVariable var : workbook.getConditions()) {
                                 if (var.getTermId() == Integer.parseInt(nameTermId)) {
                                     var.setValue(method == null ? "" : method.getMname());
-                                    var.setName(appendNameSuffix(var.getName(), AppConstants.DBCV.getString()));
-                                } else if (var.getTermId() == Integer.parseInt(idTermId)) {
-                                    var.setName(appendNameSuffix(var.getName(), AppConstants.DBID.getString()));
                                 }
                             }
                         }
@@ -612,7 +601,7 @@ public class FieldbookServiceImpl implements FieldbookService{
                             workbook.getConditions().add(
                                     createMeasurementVariable(nameTermId, 
                                             method == null ? "" : method.getMname(), 
-                                            Operation.ADD, AppConstants.DBCV.getString()));
+                                            Operation.ADD));
                         } 
                         
                         //set correct values of id, code and name before saving
@@ -623,9 +612,6 @@ public class FieldbookServiceImpl implements FieldbookService{
                                         var.setValue(method == null ? "" : method.getMname());
                                     } else if (var.getTermId() == Integer.parseInt(codeTermId)) {
                                         var.setValue(method == null ? "" : method.getMcode());
-                                        var.setName(appendNameSuffix(var.getName(), AppConstants.BM_CODE.getString()));
-                                    } else if (var.getTermId() == Integer.parseInt(idTermId)) {
-                                        var.setName(appendNameSuffix(var.getName(), AppConstants.DBID.getString()));
                                     }
                                 }
                             }
@@ -634,16 +620,7 @@ public class FieldbookServiceImpl implements FieldbookService{
                 }
             }
             
-            if (workbook.getVariates() != null) {
-                for (MeasurementVariable var : workbook.getVariates()) {
-                    if (var.getTermId() == TermId.BREEDING_METHOD_VARIATE_CODE.getId()) {
-                        var.setName(appendNameSuffix(var.getName(), AppConstants.BM_CODE.getString()));
-                    } else if (var.getTermId() == TermId.BREEDING_METHOD_VARIATE.getId()) {
-                        var.setName(appendNameSuffix(var.getName(), AppConstants.DBID.getString()));
-                    }
-                }
-            }
-            SettingsUtil.resetBreedingMethodValueToCode(fieldbookMiddlewareService, workbook.getObservations());
+            SettingsUtil.resetBreedingMethodValueToCode(fieldbookMiddlewareService, workbook.getObservations(), false, ontologyService);
         }
     }
     

@@ -21,6 +21,7 @@ import org.generationcp.middleware.manager.Operation;
 import org.generationcp.middleware.pojos.Germplasm;
 import org.generationcp.middleware.pojos.Name;
 import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.NoSuchMessageException;
@@ -89,6 +90,9 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     @Resource
     private WorkbenchService workbenchService;
     
+    @Resource
+    private OntologyService ontologyService;
+    
     /** The message source. */
     @Resource
     private ResourceBundleMessageSource messageSource;
@@ -114,7 +118,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	 * we should move here that part the copies it to the original observation
     	 */
     	
-		WorkbookUtil.resetWorkbookObservations(userSelection.getWorkbook());
+        WorkbookUtil.resetWorkbookObservations(userSelection.getWorkbook());
     	if(AppConstants.EXPORT_NURSERY_FIELDLOG_FIELDROID.getInt() == importType){
     		MultipartFile file = form.getFile();
             if (file == null) {
@@ -129,7 +133,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	    		try {
 	    			String filename = fileService.saveTemporaryFile(file.getInputStream());
 	    			
-	    			importResult = fieldroidImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename));
+	    			importResult = fieldroidImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename), ontologyService, fieldbookMiddlewareService);
 				} catch (WorkbookParserException e) {
 					LOG.error(e.getMessage(), e);
 					result.rejectValue("file", e.getMessage());
@@ -151,7 +155,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
              if(!result.hasErrors()){
 	    		try {
 	    			String filename = fileService.saveTemporaryFile(file.getInputStream());
-	    			importResult = excelImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename));
+	    			importResult = excelImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename), ontologyService, fieldbookMiddlewareService);
 				} catch (WorkbookParserException e) {
 					LOG.error(e.getMessage(), e);
 					result.rejectValue("file", e.getMessage());
@@ -175,7 +179,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	    		try {
 	    			String filename = fileService.saveTemporaryFile(file.getInputStream());
 	    			
-	    			importResult = dataKaptureImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename));
+	    			importResult = dataKaptureImportStudyService.importWorkbook(userSelection.getWorkbook(), fileService.getFilePath(filename), ontologyService, fieldbookMiddlewareService);
 					
 				} catch (WorkbookParserException e) {
 					LOG.error(e.getMessage(), e);
@@ -294,8 +298,10 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	newVariableList.addAll(userSelection.getWorkbook().getMeasurementDatasetVariables());
     	form.setMeasurementVariables(newVariableList);
     	List<MeasurementRow> list = new ArrayList<MeasurementRow>();
-    	for (MeasurementRow row : userSelection.getWorkbook().getOriginalObservations()) {
-    		list.add(row.copy());
+    	if (userSelection.getWorkbook().getOriginalObservations() != null) {
+        	for (MeasurementRow row : userSelection.getWorkbook().getOriginalObservations()) {
+        		list.add(row.copy());
+        	}
     	}
     	userSelection.getWorkbook().setObservations(list);
     	userSelection.setMeasurementRowList(list);

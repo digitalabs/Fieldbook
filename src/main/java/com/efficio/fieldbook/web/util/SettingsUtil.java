@@ -40,6 +40,7 @@ import org.generationcp.middleware.pojos.workbench.settings.ParentDataset;
 import org.generationcp.middleware.pojos.workbench.settings.TreatmentFactor;
 import org.generationcp.middleware.pojos.workbench.settings.TrialDataset;
 import org.generationcp.middleware.pojos.workbench.settings.Variate;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.HtmlUtils;
@@ -410,6 +411,26 @@ public class SettingsUtil {
 	    return inList;
 	}
 	
+	private static HashMap<String, Condition> buildConditionsMap (List<Condition> conditions) {
+	    HashMap<String, Condition> conditionsMap = new HashMap<String, Condition>();
+	    for (Condition condition : conditions) {
+	        conditionsMap.put(String.valueOf(condition.getId()), condition);
+	    }
+	    return conditionsMap;
+	}
+	
+	private static String getNameCounterpart(Integer idTermId, String idNameCombination) {
+	    StringTokenizer tokenizer = new StringTokenizer(idNameCombination, ",");
+	    while (tokenizer.hasMoreTokens()) {
+            String pair = tokenizer.nextToken();
+            StringTokenizer tokenizerPair = new StringTokenizer(pair, "|");
+            if (tokenizerPair.nextToken().equals(String.valueOf(idTermId))) {
+                return tokenizerPair.nextToken();
+            }    
+	    }
+	    return "";
+	}
+	
 	/**
 	 * Convert xml nursery dataset to pojo.
 	 *
@@ -449,6 +470,8 @@ public class SettingsUtil {
 	                    }
 	                }
 	            }
+	            
+	            HashMap<String, Condition> conditionsMap = buildConditionsMap(dataset.getConditions());
 	            
 				for(Condition condition : dataset.getConditions()){					
 					SettingVariable variable = new SettingVariable(condition.getName(), condition.getDescription(), condition.getProperty(),
@@ -492,6 +515,13 @@ public class SettingsUtil {
                                 //set the value of code to ID for it to be selected in the popup
                                 settingDetail.setValue(String.valueOf(fieldbookMiddlewareService.getMethodByCode(condition.getValue()).getMid()));
                             }
+                            
+                            //set local name of id variable to local name of name variable
+                            String nameTermId = getNameCounterpart(variable.getCvTermId(), AppConstants.ID_NAME_COMBINATION.getString());
+                            if (conditionsMap.get(nameTermId) != null) {
+                                settingDetail.getVariable().setName(conditionsMap.get(nameTermId).getName());
+                            }
+                            
                             studyLevelConditions.add(settingDetail);
                         } else {
                             if(enumerationByDescription != null) {
@@ -1606,20 +1636,26 @@ public class SettingsUtil {
 		return index;
 	}
 	
-	public static void resetBreedingMethodValueToId(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, List<MeasurementRow> observations) throws MiddlewareQueryException{
-        if (observations != null && observations.size() > 0) {
-            int index = -1;
-            boolean hasBMethod = false;
-            MeasurementRow mrow = observations.get(0);
-            for (MeasurementData data : mrow.getDataList()) {
-                if (data.getMeasurementVariable().getTermId() == TermId.BREEDING_METHOD_VARIATE_CODE.getId()) {
-                    index++;
-                    hasBMethod = true;
-                    break;
-                }
-                index++;
+	private static List<Integer> getBreedingMethodIndeces(List<MeasurementRow> observations, OntologyService ontologyService, boolean isResetAll) throws MiddlewareQueryException{
+	    List<Integer> indeces = new ArrayList<Integer>();
+        MeasurementRow mrow = observations.get(0);
+        int index = 0;
+        for (MeasurementData data : mrow.getDataList()) {
+            if ((data.getMeasurementVariable().getTermId() != TermId.BREEDING_METHOD_VARIATE.getId() 
+                    && ontologyService.getProperty(data.getMeasurementVariable().getProperty()).getTerm().getId() == TermId.BREEDING_METHOD_PROP.getId() && isResetAll)
+                    || (!isResetAll && data.getMeasurementVariable().getTermId() == TermId.BREEDING_METHOD_VARIATE_CODE.getId())) {
+                indeces.add(index);
             }
-            if (index > -1 && hasBMethod) {
+            index++;
+        }
+        return indeces;
+	}
+	
+	public static void resetBreedingMethodValueToId(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, 
+	        List<MeasurementRow> observations, boolean isResetAll, OntologyService ontologyService) throws MiddlewareQueryException{
+        if (observations != null && observations.size() > 0) {
+            List<Integer> indeces = getBreedingMethodIndeces(observations, ontologyService, isResetAll);
+            if (indeces.size() > 0) {
                 List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
                 HashMap<String, Method> methodMap = new HashMap<String, Method>();
                 //create a map to get method id based on given code
@@ -1628,32 +1664,24 @@ public class SettingsUtil {
                         methodMap.put(method.getMcode(), method);
                     }
                 }
+                
                 //set value back to id
                 for (MeasurementRow row : observations) {
-                    Method method = methodMap.get(row.getDataList().get(index).getValue());
-                    row.getDataList().get(index).setValue(method == null ? "" : String.valueOf(method.getMid()));
+                    for (Integer i : indeces) {
+                        Method method = methodMap.get(row.getDataList().get(i).getValue());
+                        row.getDataList().get(i).setValue(method == null ? "" : String.valueOf(method.getMid()));
+                    }
                 }   
             }
         }
     }
 	
-	public static void resetBreedingMethodValueToCode(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, List<MeasurementRow> observations) throws MiddlewareQueryException{
+	public static void resetBreedingMethodValueToCode(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, 
+	        List<MeasurementRow> observations, boolean isResetAll, OntologyService ontologyService) throws MiddlewareQueryException{
 	  //set value of breeding method code in selection variates to code instead of id
         if (observations != null && observations.size() > 0) {
-            int index = -1;
-            boolean hasBMethod = false;
-            MeasurementRow mrow = observations.get(0);
-            if (mrow.getDataList() != null) {
-                for (MeasurementData data : mrow.getDataList()) {
-                    if (data.getMeasurementVariable().getTermId() == TermId.BREEDING_METHOD_VARIATE_CODE.getId()) {
-                        index++;
-                        hasBMethod = true;
-                        break;
-                    }
-                    index++;
-                }
-            }
-            if (index > -1 && hasBMethod) {
+            List<Integer> indeces = getBreedingMethodIndeces(observations, ontologyService, isResetAll);
+            if (indeces.size() > 0) {
                 List<Method> methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
                 HashMap<Integer, Method> methodMap = new HashMap<Integer, Method>();
                 
@@ -1663,11 +1691,13 @@ public class SettingsUtil {
                     }
                 }
                 for (MeasurementRow row : observations) {
-                    Integer value = row.getDataList().get(index).getValue() == null 
-                            || row.getDataList().get(index).getValue().isEmpty() ? 
-                                    null : Integer.parseInt(row.getDataList().get(index).getValue());
-                    Method method = methodMap.get(value);
-                    row.getDataList().get(index).setValue(method == null ? "" : method.getMcode());
+                    for (Integer i : indeces) {
+                        Integer value = row.getDataList().get(i).getValue() == null 
+                                || row.getDataList().get(i).getValue().isEmpty() ? 
+                                        null : Integer.parseInt(row.getDataList().get(i).getValue());
+                        Method method = methodMap.get(value);
+                        row.getDataList().get(i).setValue(method == null ? "" : method.getMcode());
+                    }
                 }   
             }
         }

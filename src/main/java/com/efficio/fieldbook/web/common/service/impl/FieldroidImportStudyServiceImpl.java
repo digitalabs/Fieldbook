@@ -18,6 +18,8 @@ import java.util.Set;
 
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.WorkbookParserException;
+import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.springframework.stereotype.Service;
 
 import com.efficio.fieldbook.web.common.bean.ChangeType;
@@ -30,7 +32,7 @@ public class FieldroidImportStudyServiceImpl implements
 		FieldroidImportStudyService {
 
 	@Override
-	public ImportResult importWorkbook(Workbook workbook, String filename)
+	public ImportResult importWorkbook(Workbook workbook, String filename, OntologyService ontologyService, FieldbookService fieldbookMiddlewareService)
 			throws WorkbookParserException {
 	
 		File file = new File(filename);
@@ -38,7 +40,7 @@ public class FieldroidImportStudyServiceImpl implements
 		
 		validate(csv, file, workbook);
 		
-		csv.readDATAnew(file);
+		csv.readDATAnew(file, ontologyService, fieldbookMiddlewareService);
 		Set<ChangeType> modes = new HashSet<ChangeType>();
 		return new ImportResult(modes, new ArrayList<GermplasmChangeDetail>());
 	}

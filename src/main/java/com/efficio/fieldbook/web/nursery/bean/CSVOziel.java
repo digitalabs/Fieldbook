@@ -25,6 +25,10 @@ import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TermId;
+import org.generationcp.middleware.exceptions.MiddlewareQueryException;
+import org.generationcp.middleware.pojos.Method;
+import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,7 +124,7 @@ public class CSVOziel {
     }
    
 
-    public void writeDATA(CsvWriter csvOutput) {
+    public void writeDATA(CsvWriter csvOutput, OntologyService ontologyService) {
     	int tot = this.variateHeaders.size();
 
     	try {
@@ -153,12 +157,21 @@ public class CSVOziel {
                 csvOutput.write(WorkbookUtil.getValueByIdInRow(this.headers, TermId.GID.getId(), row));
                 writeColums(csvOutput, 2);
 
+                String propertyName = "";
+                try {
+                    propertyName = ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getName();
+                } catch (MiddlewareQueryException e) {
+                    e.printStackTrace();
+                }
 
                 for (MeasurementVariable variate : this.variateHeaders) {
                    String valor = variate.getName();
                    if (!valor.equals(stringTraitToEvaluate)) {
                         try {
-                        	if (variate.getPossibleValues() != null && !variate.getPossibleValues().isEmpty()) {
+                        	if (variate.getPossibleValues() != null && !variate.getPossibleValues().isEmpty() 
+                        	        && variate.getTermId() != TermId.BREEDING_METHOD_VARIATE.getId()
+                                    && variate.getTermId() != TermId.BREEDING_METHOD_VARIATE_CODE.getId()
+                                    && !variate.getProperty().equals(propertyName)) {
                         		csvOutput.write(ExportImportStudyUtil.getCategoricalCellValue(row.getMeasurementDataValue(valor), variate.getPossibleValues()));
                         	}
                         	else {
@@ -181,7 +194,7 @@ public class CSVOziel {
         }
 
     }
-    public void writeDATAR(CsvWriter csvOutput) {
+    public void writeDATAR(CsvWriter csvOutput, OntologyService ontologyService) {
         try {
 
     		Map<Long, String> map = new HashMap<Long, String>();
@@ -217,13 +230,22 @@ public class CSVOziel {
                     csvOutput.write(cad);
                 }
 
+                String propertyName = "";
+                try {
+                    propertyName = ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getName();
+                } catch (MiddlewareQueryException e) {
+                    e.printStackTrace();
+                }
 
                 for (MeasurementVariable variate : this.variateHeaders) {
                     String valor = variate.getName();
 
                      if (!valor.equals(stringTraitToEvaluate)) {
                         try {
-                        	if (variate.getPossibleValues() != null && !variate.getPossibleValues().isEmpty()) {
+                        	if (variate.getPossibleValues() != null && !variate.getPossibleValues().isEmpty()
+                        	        && variate.getTermId() != TermId.BREEDING_METHOD_VARIATE.getId()
+                                    && variate.getTermId() != TermId.BREEDING_METHOD_VARIATE_CODE.getId()
+                                    && !variate.getProperty().equals(propertyName)) {
                         		csvOutput.write(ExportImportStudyUtil.getCategoricalCellValue(mRow.getMeasurementDataValue(variate.getName()), variate.getPossibleValues()));
                         	}
                         	else {
@@ -244,7 +266,7 @@ public class CSVOziel {
 
     }
 
-    public void readDATAnew(File file) {
+    public void readDATAnew(File file, OntologyService ontologyService, FieldbookService fieldbookMiddlewareService) {
 
         List<String> titulos = new ArrayList<String>();
         int add = 0;
@@ -302,18 +324,36 @@ public class CSVOziel {
                 } catch (NumberFormatException ex) {
                     return;
                 }
-
+                
+                //get name of breeding method property and get all methods 
+                String propertyName = "";
+                List<Method> methods = new ArrayList<Method>();
+                try {
+                    methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
+                    propertyName = ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getName();
+                } catch(MiddlewareQueryException e) {
+                    e.printStackTrace();
+                }
+                
+                //create a map for methods
+                HashMap<String, Method> methodMap = new HashMap<String, Method>(); 
+                if (methods != null) {
+                    for (Method method : methods) {
+                        methodMap.put(method.getMcode(), method);
+                    }
+                }
+                
                 for (int i = 0; i < titulos.size(); i++) {
                     String head = titulos.get(i).toString();
                     int col = buscaCol(head);
                     if (col >= 0) {
                         String data = csvReader.get(head);
-                        setObservationData(head, myrow + add, data);
+                        setObservationData(head, myrow + add, data, propertyName, methodMap);
                         dataOfTraits = dataOfTraits + " " + data;
                     } else {
                         col = buscaCol(head);
                         String data = csvReader.get(head);
-                        setObservationData(head, myrow + add, data);
+                        setObservationData(head, myrow + add, data, propertyName, methodMap);
                         dataOfTraits = dataOfTraits + " " + data;
                     }
                 }
@@ -401,13 +441,31 @@ public class CSVOziel {
         this.stringTraitToEvaluate = stringTraitToEval;
     }
 
-    private void setObservationData(String label, int rowIndex, String value) {
+    private void setObservationData(String label, int rowIndex, String value, String propertyName, HashMap<String, Method> methodMap) {
     	if (rowIndex < this.observations.size()) {
 	    	MeasurementRow row = this.observations.get(rowIndex);
 	    	for (MeasurementData data : row.getDataList()) {
 	    		if (data.getLabel().equals(label)) {
 	    			if (data.getMeasurementVariable().getPossibleValues() != null && !data.getMeasurementVariable().getPossibleValues().isEmpty()) {
-	    				data.setValue(ExportImportStudyUtil.getCategoricalIdCellValue(value, data.getMeasurementVariable().getPossibleValues()));
+	    			    
+	    			    //if breeding method id, use value as it is already in id format, if bm_code or any variable with breeding method property, get id using code 
+	    			    if (data.getMeasurementVariable().getTermId() == TermId.BREEDING_METHOD_VARIATE.getId()) {
+    			            data.setValue(value);
+	    			    } else if (data.getMeasurementVariable().getTermId() == TermId.BREEDING_METHOD_VARIATE_CODE.getId() ||
+                                data.getMeasurementVariable().getProperty().equals(propertyName)) {
+	    			        String newValue = methodMap.get(value) == null ? "" : String.valueOf(methodMap.get(value).getMid());
+	    			        data.setValue(newValue);
+	    			    } else {
+	    			        data.setValue(ExportImportStudyUtil.getCategoricalIdCellValue(value, data.getMeasurementVariable().getPossibleValues()));
+	    			    }
+	    			    
+	    			    if ((data.getMeasurementVariable().getTermId() == TermId.BREEDING_METHOD_VARIATE.getId() ||
+	    			            data.getMeasurementVariable().getTermId() == TermId.BREEDING_METHOD_VARIATE_CODE.getId() ||
+                                data.getMeasurementVariable().getProperty().equals(propertyName)) && 
+                                !data.getValue().isEmpty() && !NumberUtils.isNumber(data.getValue())) {
+	    			        data.setValue("");
+	    			    }
+	    				
 	    				if (data != null && data.getValue() != null && "".equals(data.getValue())) {
 	    					data.setcValueId(null);
 	    					data.setValue(null);
@@ -626,7 +684,7 @@ public class CSVOziel {
         }
     }
 
-    public void readDATACapture(File file) {
+    public void readDATACapture(File file, OntologyService ontologyService, FieldbookService fieldbookMiddlewareService) {
 
         int variateCol = 0;
         HashMap<String, Integer> traitsMap = new HashMap<String, Integer>();
@@ -644,6 +702,24 @@ public class CSVOziel {
 //            int myrow = 0;
             while (csvReader.readRecord()) {
 
+                //get name of breeding method property and get all methods 
+                String propertyName = "";
+                List<Method> methods = new ArrayList<Method>();
+                try {
+                    methods = fieldbookMiddlewareService.getAllBreedingMethods(false);
+                    propertyName = ontologyService.getProperty(TermId.BREEDING_METHOD_PROP.getId()).getName();
+                } catch(MiddlewareQueryException e) {
+                    e.printStackTrace();
+                }
+                
+                //create a map for methods
+                HashMap<String, Method> methodMap = new HashMap<String, Method>(); 
+                if (methods != null) {
+                    for (Method method : methods) {
+                        methodMap.put(method.getMcode(), method);
+                    }
+                }
+                
             	for (MeasurementVariable variate : this.variateHeaders) {
             		String csvTrial = csvReader.get("TrialNumber");
             		String csvPlot = csvReader.get("PlotBarCode");
@@ -658,7 +734,7 @@ public class CSVOziel {
             		int rowNum = findRow(trial, plot);
             		if (rowNum > -1) {
 	            		String value = csvReader.get(variate.getName());
-	            		setObservationData(variate.getName(), rowNum, value);
+	            		setObservationData(variate.getName(), rowNum, value, propertyName, methodMap);
             		}
             	}
             	

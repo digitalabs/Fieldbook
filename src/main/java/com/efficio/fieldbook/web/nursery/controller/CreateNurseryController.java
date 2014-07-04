@@ -208,7 +208,7 @@ public class CreateNurseryController extends SettingsController {
         form.setBasicDetails(basicDetails);
         form.setStudyLevelVariables(nurseryDefaults);
         form.setPlotLevelVariables(plotDefaults);
-        nurseryDefaults = buildDefaultVariables(nurseryDefaults, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), true));
+        nurseryDefaults = buildDefaultVariables(nurseryDefaults, AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), buildRequiredVariablesLabel(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString(), false));
         plotDefaults = buildDefaultVariables(plotDefaults, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), buildRequiredVariablesLabel(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString(), false));
         
         this.userSelection.setBasicDetails(basicDetails);
@@ -287,7 +287,6 @@ public class CreateNurseryController extends SettingsController {
     	form.setBaselineTraitsSegment(AppConstants.SEGMENT_TRAITS.getString());
         form.setSelectionVariatesSegment(AppConstants.SEGMENT_SELECTION_VARIATES.getString());
         form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
-        form.setIdCodeNameCombination(AppConstants.ID_CODE_NAME_COMBINATION_STUDY.getString() + "," + AppConstants.ID_CODE_NAME_COMBINATION_VARIATE.getString());
         form.setRequiredFields(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString() + "," + AppConstants.FIXED_NURSERY_VARIABLES.getString());
         form.setBreedingMethodCode(AppConstants.BREEDING_METHOD_CODE.getString());
         try {

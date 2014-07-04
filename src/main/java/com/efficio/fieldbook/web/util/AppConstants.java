@@ -236,6 +236,8 @@ public enum AppConstants {
     ,DBID
     ,DBCV
     ,ID_SUFFIX
+    
+    ,TABLE_HEADER_KEY_SUFFIX
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

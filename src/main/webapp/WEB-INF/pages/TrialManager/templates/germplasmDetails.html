@@ -24,8 +24,22 @@
         <div id="primary-section" class="col-xs-12 col-md-12">
             <div>
             	<img th:src="@{/static/img/review-list-details.png}" />
-                <label class="control-label"><strong id="germplasmLabel" class="sub-content-heading">Nursery List</strong></label>                
-	            <a class="pull-right btn btn-info" href="javascript: showManageCheckTypePopup()" th:text="#{germplasm.list.manage.check.types}" >Manage Checks</a>	            
+                <label class="control-label"><strong id="germplasmLabel" class="sub-content-heading">Trial List</strong></label>                
+	            
+	            
+	            <div  class="pull-right">
+	                <div class="btn-group">
+	                    <button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
+	                        <span th:text="#{nursery.nurserydetails.actions}">Actions</span>
+	                    </button>
+	                    <ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
+	                        <li>	                        
+	                           <a href="javascript: showManageCheckTypePopup()" th:text="#{germplasm.list.manage.check.types}" >Manage Checks</a>
+	                        </li>	                    
+                        </ul>
+	                </div>
+	            </div>
+	            	            
             </div>
             <div>
                 <label class="control-label"><a href="javascript: openListTree(1)">Browse</a> or <a href="javascript: openImportGermplasmList('1')">Import</a> a list to work with.</label>

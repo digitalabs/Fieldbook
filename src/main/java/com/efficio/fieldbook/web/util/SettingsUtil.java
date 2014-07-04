@@ -1669,7 +1669,7 @@ public class SettingsUtil {
                 for (MeasurementRow row : observations) {
                     for (Integer i : indeces) {
                         Method method = methodMap.get(row.getDataList().get(i).getValue());
-                        row.getDataList().get(i).setValue(method == null ? "" : String.valueOf(method.getMid()));
+                        row.getDataList().get(i).setValue(method == null ? row.getDataList().get(i).getValue() : String.valueOf(method.getMid()));
                     }
                 }   
             }
@@ -1696,7 +1696,7 @@ public class SettingsUtil {
                                 || row.getDataList().get(i).getValue().isEmpty() ? 
                                         null : Integer.parseInt(row.getDataList().get(i).getValue());
                         Method method = methodMap.get(value);
-                        row.getDataList().get(i).setValue(method == null ? "" : method.getMcode());
+                        row.getDataList().get(i).setValue(method == null ? row.getDataList().get(i).getValue() : method.getMcode());
                     }
                 }   
             }

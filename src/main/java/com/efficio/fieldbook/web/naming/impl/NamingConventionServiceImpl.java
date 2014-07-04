@@ -48,19 +48,22 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 			Workbook workbook) throws MiddlewareQueryException {
 		
         Map<Integer, Method> breedingMethodMap = new HashMap<Integer, Method>();
+        Map<String, Method> breedingMethodCodeMap = new HashMap<String, Method>();
         List<Method> methodList = fieldbookMiddlewareService.getAllBreedingMethods(false);
 
         for(Method method: methodList){
         	breedingMethodMap.put(method.getMid(), method);
+        	breedingMethodCodeMap.put(method.getMcode(), method);
         }
 
-        AdvancingSourceList list = createAdvancingSourceList(info, workbook, breedingMethodMap);
+        AdvancingSourceList list = createAdvancingSourceList(info, workbook, breedingMethodMap, breedingMethodCodeMap);
         updatePlantsSelectedIfNecessary(list, info);
         List<ImportedGermplasm> importedGermplasmList = generateGermplasmList(list);
         return importedGermplasmList;
 	}
 
-    private AdvancingSourceList createAdvancingSourceList(AdvancingNursery advanceInfo, Workbook workbook, Map<Integer, Method> breedingMethodMap) 
+    private AdvancingSourceList createAdvancingSourceList(AdvancingNursery advanceInfo, Workbook workbook, 
+    		Map<Integer, Method> breedingMethodMap, Map<String, Method> breedingMethodCodeMap) 
     throws MiddlewareQueryException {
     	
         int nurseryId = advanceInfo.getStudy().getId();
@@ -69,7 +72,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
         }
         Study nursery = advanceInfo.getStudy();
         
-        AdvancingSourceList list = factory.create(workbook, advanceInfo, nursery, breedingMethodMap);
+        AdvancingSourceList list = factory.create(workbook, advanceInfo, nursery, breedingMethodMap, breedingMethodCodeMap);
         return list;
     }
     
@@ -175,6 +178,7 @@ public class NamingConventionServiceImpl implements NamingConventionService {
 
     public List<ImportedGermplasm> generateGermplasmList(AdvancingSourceList rows) throws MiddlewareQueryException {
         List<ImportedGermplasm> list = new ArrayList<ImportedGermplasm>();
+        int index = 1;
         for (AdvancingSource row : rows.getRows()) {
             if (row.getGermplasm() != null && !row.isCheck() && row.getPlantsSelected() != null && row.getBreedingMethod() != null
             		&& row.getPlantsSelected() > 0 && row.getBreedingMethod().isBulkingMethod() != null) {
@@ -188,7 +192,6 @@ public class NamingConventionServiceImpl implements NamingConventionService {
             						+ getNonNullValue(method.getSuffix());
             	row.setRootName(germplasmName);
             	List<String> names = processCodeService.applyToName(expression, row);
-            	int index = 1;
             	for (String name : names) {
             		addImportedGermplasmToList(list, row, name, row.getBreedingMethod(), index++, row.getNurseryName());
             	}

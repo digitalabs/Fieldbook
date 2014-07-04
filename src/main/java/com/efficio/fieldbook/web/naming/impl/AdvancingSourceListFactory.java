@@ -5,8 +5,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -34,7 +36,8 @@ public class AdvancingSourceListFactory {
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
 
-	public AdvancingSourceList create(Workbook workbook, AdvancingNursery advanceInfo, Study nursery, Map<Integer, Method> breedingMethodMap)
+	public AdvancingSourceList create(Workbook workbook, AdvancingNursery advanceInfo, Study nursery, 
+			Map<Integer, Method> breedingMethodMap, Map<String, Method> breedingMethodCodeMap)
 	throws MiddlewareQueryException {
 		
 		AdvancingSourceList list = new AdvancingSourceList();
@@ -72,7 +75,7 @@ public class AdvancingSourceListFactory {
                     Integer methodId = null;
                     if (advanceInfo.getMethodChoice() == null || "0".equals(advanceInfo.getMethodChoice())) {
                         if (methodVariateId != null) {
-                        	methodId = getIntegerValue(row.getMeasurementDataValue(methodVariateId));
+                        	methodId = getBreedingMethodId(methodVariateId, row, breedingMethodCodeMap);
                         } 
                     }
                     else {
@@ -202,5 +205,35 @@ public class AdvancingSourceListFactory {
         	season = dateFormat.format(new Date());
         }
         return season;
+    }
+    
+    private Integer getBreedingMethodId(Integer methodVariateId, MeasurementRow row, Map<String, Method> breedingMethodCodeMap) {
+    	Integer methodId = null;
+    	if (methodVariateId.equals(TermId.BREEDING_METHOD_VARIATE.getId())) {
+    		methodId = getIntegerValue(row.getMeasurementDataValue(methodVariateId));
+    	}
+    	else if (methodVariateId.equals(TermId.BREEDING_METHOD_VARIATE_TEXT.getId())) {
+    		String methodName = row.getMeasurementDataValue(methodVariateId);
+    		if (NumberUtils.isNumber(methodName)) {
+        		methodId = Double.valueOf(methodName).intValue();
+    		}
+    		else { //coming from old fb or other sources
+	    		Set<String> keys = breedingMethodCodeMap.keySet();
+	    		Iterator<String> iterator = keys.iterator();
+	    		while (iterator.hasNext()) {
+	    			String code = iterator.next();
+	    			Method method = breedingMethodCodeMap.get(code);
+	    			if (methodName != null && methodName.equalsIgnoreCase(method.getMname())) {
+	    				methodId = method.getMid();
+	    				break;
+	    			}
+	    		}
+    		}
+    	}
+    	else {
+    		//on load of study, this has been converted to id and not the code.
+    		methodId = getIntegerValue(row.getMeasurementDataValue(methodVariateId));
+    	}
+    	return methodId;
     }
 }

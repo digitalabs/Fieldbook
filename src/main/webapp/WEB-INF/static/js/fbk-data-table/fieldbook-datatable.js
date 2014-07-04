@@ -412,7 +412,7 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 				// For designation
 				columnsDef.push({
 					targets: columns.length - 1,
-					data: $(this).html(),
+					data: $(this).html(),					
 					render: function(data, type, full, meta) {
 						return '<a class="desig-link" href="javascript: void(0)" ' +
 							'onclick="javascript: openGermplasmDetailsPopopWithGidAndDesig(&quot;' +
@@ -423,8 +423,7 @@ BMS.Fieldbook.SelectedCheckListDataTable = (function($) {
 				// For designation
 				columnsDef.push({
 					targets: columns.length - 1,
-					data: $(this).html(),
-					//width: '100px',
+					data: $(this).html(),					
 					render: function(data, type, full, meta) {
 						var fieldName = 'selectedCheck',
 							count = 0,

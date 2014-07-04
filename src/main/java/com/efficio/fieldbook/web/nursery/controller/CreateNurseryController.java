@@ -122,6 +122,9 @@ public class CreateNurseryController extends SettingsController {
                     buildRequiredVariablesFlag(AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()), 
                     userSelection.getPlotsLevelList(), false, "");
             
+            //remove variables not needed
+            removeVariablesFromExistingNursery(plotLevelConditions, AppConstants.REMOVE_FACTORS_IN_USE_PREVIOUS_STUDY.getString());
+            
             userSelection.setStudyLevelConditions(nurseryLevelConditions);
             userSelection.setPlotsLevelList(plotLevelConditions);
             

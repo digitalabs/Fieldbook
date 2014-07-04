@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -49,6 +50,7 @@ import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
+import com.efficio.fieldbook.web.util.SettingsUtil;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -511,5 +513,14 @@ public abstract class SettingsController extends AbstractBaseFieldbookController
     	}
     	
     	return value;
+    }
+    
+    protected void removeVariablesFromExistingNursery(List<SettingDetail> settingList, String variables) {
+        Iterator<SettingDetail> variableList = settingList.iterator();
+        while (variableList.hasNext()) {
+            if (SettingsUtil.inHideVariableFields(variableList.next().getVariable().getCvTermId(), variables)) {
+                variableList.remove();
+            }
+        }
     }
 }

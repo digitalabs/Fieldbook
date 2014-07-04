@@ -876,6 +876,65 @@ function openStudy(tableName) {
 	}
 }
 
+function openDeleteConfirmation() {
+	'use strict';
+	
+	$('#deleteStudyModal').modal({ backdrop: 'static', keyboard: true });
+	var idVal = getCurrentStudyIdInTab();
+	if (!idVal) {
+		idVal = $('#studyId').val();
+	}
+	var name = $('#study' + idVal + ' .review-study-name').text();
+	if (!name) {
+		name = $('.nursery-name-display').text();
+	}
+	$('#delete-study-confirmation').html(deleteNurseryConfirmation + ' ' + name + '?');
+}
+
+function deleteNursery() {
+	'use strict';
+	
+	if ($('.review-nursery-page-identifier').length) {
+		deleteNurseryInReview();
+	}
+	else if ($('.edit-nursery-page-identifier').length) {
+		deleteNurseryInEdit();
+	}
+}
+
+function deleteNurseryInReview() {
+	'use strict';
+
+	var idVal = getCurrentStudyIdInTab();
+	doDeleteNursery(idVal, function(data) {
+		$('#deleteStudyModal').modal('hide');
+		
+		setTimeout(function() {
+			//simulate close tab
+			$('#' + idVal).trigger('click');
+			//remove it from the tree
+			if ($('#studyTree').dynatree('getTree').getNodeByKey(idVal)) {
+				$('#studyTree').dynatree('getTree').getNodeByKey(idVal).remove();
+			}
+			showSuccessfulMessage('',deleteNurserySuccessful);
+		}, 500);
+	});
+}
+
+function deleteNurseryInEdit() {
+	'use strict';
+	
+	var idVal = $('#studyId').val();
+	doDeleteNursery(idVal, function(data) {
+		$('#deleteStudyModal').modal('hide');
+		showSuccessfulMessage('',deleteNurserySuccessful);
+		setTimeout(function() {
+			//go back to review nursery page
+			location.href = $('#delete-success-return-url').attr('href');
+		}, 500);
+	});
+}
+
 function advanceNursery(tableName) {
 	'use strict';
 	
@@ -966,7 +1025,7 @@ function initializeHarvestLocationSelect2(locationSuggestions, locationSuggestio
 		$('#' + getJquerySafeId('harvestLocationName')).val($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').text);
 		$('#' + getJquerySafeId('harvestLocationAbbreviation')).val($('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').abbr);
 		if ($('#harvestloc-tooltip')) {
-			$('#harvestloc-tooltip').attr('title', $('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').abbr);
+			$('#harvestloc-tooltip').attr('title', locationTooltipMessage + $('#' + getJquerySafeId('harvestLocationIdAll')).select2('data').abbr);
 			$('.help-tooltip-nursery-advance').tooltip('destroy');
 			$('.help-tooltip-nursery-advance').tooltip();
 		}
@@ -999,7 +1058,7 @@ function initializeHarvestLocationFavSelect2(locationSuggestionsFav, locationSug
 		$('#' + getJquerySafeId('harvestLocationName')).val($('#' + getJquerySafeId('harvestLocationIdFavorite')).select2('data').text);
 		$('#' + getJquerySafeId('harvestLocationAbbreviation')).val($('#' + getJquerySafeId('harvestLocationIdFavorite')).select2('data').abbr);
 		if ($('#harvestloc-tooltip')) {
-			$('#harvestloc-tooltip').attr('title', $('#' + getJquerySafeId('harvestLocationIdFavorite')).select2('data').abbr);
+			$('#harvestloc-tooltip').attr('title', locationTooltipMessage + $('#' + getJquerySafeId('harvestLocationIdFavorite')).select2('data').abbr);
 			$('.help-tooltip-nursery-advance').tooltip('destroy');
 			$('.help-tooltip-nursery-advance').tooltip();
 		}
@@ -1011,7 +1070,7 @@ function initializeMethodSelect2(methodSuggestions, methodSuggestionsObj) {
 	$.each(methodSuggestions, function(index, value) {
 		methodSuggestionsObj.push({
 			id: value.mid,
-			text: value.mname,
+			text: value.mname + ' - ' + value.mcode,
 			tooltip: value.mdesc
 		});
 	});
@@ -1046,7 +1105,7 @@ function initializeMethodFavSelect2(methodSuggestionsFav, methodSuggestionsFavOb
 	$.each(methodSuggestionsFav, function(index, value) {
 		methodSuggestionsFavObj.push({
 			id: value.mid,
-			text: value.mname,
+			text: value.mname + ' - ' + value.mcode,
 			tooltip: value.mdesc
 		});
 	});
@@ -1992,28 +2051,58 @@ function createFolder() {
 function deleteFolder(object) {
 	'use strict';
 
-	var currentFolderName;
+	var currentFolderName,
+		isFolder = $('#studyTree').dynatree('getTree').getActiveNode().data.isFolder,
+		deleteConfirmationText;
 
 	if (!$(object).hasClass('disable-image')) {
+		if (isFolder) {
+			$('#delete-heading-modal').text(deleteFolderTitle);
+			deleteConfirmationText = deleteConfirmation;
+		}
+		else {
+			$('#delete-heading-modal').text(deleteNurseryTitle);
+			deleteConfirmationText = deleteNurseryConfirmation;
+		}
 		$('#deleteStudyFolder').modal('show');
         hideAddFolderDiv();
         hideRenameFolderDiv();
-		currentFolderName = $('#studyTree').dynatree('getTree').getActiveNode().data.title
-		$('#delete-confirmation').html(deleteConfirmation + ' ' + currentFolderName + '?');
+		currentFolderName = $('#studyTree').dynatree('getTree').getActiveNode().data.title;
+		$('#delete-confirmation').html(deleteConfirmationText + ' ' + currentFolderName + '?');
 		$('#page-delete-study-folder-message-modal').html('');
 	}
 }
 
 function submitDeleteFolder() {
 	'use strict';
+	
 	var folderId = $('#studyTree').dynatree('getTree').getActiveNode().data.key;
-
-	$.ajax({
-		url: '/Fieldbook/StudyTreeManager/deleteStudyFolder',
-		type: 'POST',
-		data: 'folderId=' + folderId,
-		cache: false,
-		success: function(data) {
+	var isFolder = $('#studyTree').dynatree('getTree').getActiveNode().data.isFolder;
+	
+	if (isFolder) {
+		$.ajax({
+			url: '/Fieldbook/StudyTreeManager/deleteStudyFolder',
+			type: 'POST',
+			data: 'folderId=' + folderId,
+			cache: false,
+			success: function(data) {
+				var node;
+				if (data.isSuccess === '1') {
+					$('#deleteStudyFolder').modal('hide');
+					node = $('#studyTree').dynatree('getTree').getActiveNode();
+					if (node != null) {
+						node.remove();
+					}
+					changeBrowseNurseryButtonBehavior(false);
+					showSuccessfulMessage('',deleteFolderSuccessful);
+				} else {
+					showErrorMessage('page-delete-study-folder-message-modal', data.message);
+				}
+			}
+		});
+	}
+	else {
+		doDeleteNursery(folderId, function(data) {
 			var node;
 			if (data.isSuccess === '1') {
 				$('#deleteStudyFolder').modal('hide');
@@ -2022,12 +2111,10 @@ function submitDeleteFolder() {
 					node.remove();
 				}
 				changeBrowseNurseryButtonBehavior(false);
-				showSuccessfulMessage('',deleteFolderSuccessful);
-			} else {
-				showErrorMessage('page-delete-study-folder-message-modal', data.message);
+				showSuccessfulMessage('',deleteNurserySuccessful);
 			}
-		}
-	});
+		});
+	}
 }
 
 function moveStudy(sourceNode, targetNode) {
@@ -2263,4 +2350,15 @@ function isValidInput(input) {
     var invalidInput = /[<>&=%;?]/.test(input);
 
     return !invalidInput;
+}
+
+function doDeleteNursery(id, callback) {
+	$.ajax({
+		url: '/Fieldbook/NurseryManager/deleteNursery/' + id,
+		type: 'POST',
+		cache: false,
+		success: function(data) {
+			callback(data);
+		}
+	});
 }

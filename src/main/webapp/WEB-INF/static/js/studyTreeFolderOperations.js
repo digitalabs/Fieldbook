@@ -1,6 +1,9 @@
 /* global Spinner:false */
 /* global showErrorMessage */
 /* global deleteConfirmation */
+/* global deleteNurseryConfirmation */
+/* global deleteFolderTitle */
+/* global deleteNurseryTitle */
 
 function addFolder(object) {
     'use strict';

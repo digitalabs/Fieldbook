@@ -4,7 +4,7 @@
 </div>
 
 <div class="col-xs-12 col-md-12" xmlns:th="http://www.thymeleaf.org">
-	<div class="page-header">
+	<div class="page-header edit-nursery-page-identifier">
 		<h1>MANAGE NURSERIES</h1>
 	</div>
 </div>
@@ -22,7 +22,7 @@
 			<div class="pull-left">
                 <img width="30" height="30" th:src="@{/static/img/new-nursery.png}" class="image-padding image-padding-with-text" />
                 <span class="heading" th:text="#{nursery.edit.nursery.label}">Edit Nursery</span>
-                <span class="heading" th:text="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() &lt; charLimit or basicDetails[0].value.length() == charLimit}"></span>
+                <span class="heading nursery-name-display" th:text="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() &lt; charLimit or basicDetails[0].value.length() == charLimit}"></span>
                 <span class="heading nursery-name" data-placement="right" data-toggle="tooltip" th:text="*{basicDetails[0].value.substring(0, charLimit)} + '...'" th:title="*{basicDetails[0].value}" th:if="*{basicDetails[0].value.length() > charLimit}"></span>
                 <input type="button" onclick="submitEditForm();" th:value="#{common.form.save.text}" class="btn btn-info fbk-save-button-left-margin" />
                 <input type="button" value="Save" class="btn btn-info fbk-discard-imported-data fbk-hide" onclick="discardImportedData();" th:value="#{import.discard.data}"/>				
@@ -66,7 +66,7 @@
                                th:text="#{nursery.nurserydetails.action.import.nursery}">Import Measurements</a>
                         </li>
                         <li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
-                            <a href="" style="display: none" id="advance-study-url" th:href="@{/NurseryManager/advance/nursery}"></a>
+                           <a href="" style="display: none" id="advance-study-url" th:href="@{/NurseryManager/advance/nursery}"></a>
                             <a href="javascript: advanceNursery('nursery-table');" id="advance-study-url-link"
                                th:text="#{nursery.nurserydetails.action.advance}">Advance Nursery</a>
                         </li>
@@ -74,6 +74,10 @@
                             <a href="javascript: submitEditForm();" id="save-study-url-link"
                                th:text="#{nursery.option.save}">Save Nursery</a>
                         </li>
+						<li>
+							<a style="display:none;" th:href="@{/NurseryManager}"></a>
+							<a href="javascript: openDeleteConfirmation();" th:text="#{browse.nursery.delete.nursery.name}">Delete Nursery</a>
+						</li>
                         <li>
                             <a th:href="@{/NurseryManager/manageNurseries}" id="close-nursery-url-link"
                                th:text="#{nursery.nurserydetails.action.close.nursery}">Close Nursery</a>
@@ -295,6 +299,10 @@
 
 <div class="row">
 	<div id="ontology-add-variable" th:include="/Fieldmap/includes/selectTrialInstanceModal"></div>
+</div>
+
+<div class="row">
+	<div th:include="/NurseryManager/includes/deleteStudyConfirmation"></div>
 </div>
 
 <div class="modal fade" id="manageTrialConfirmation" tabindex="-1" role="dialog" aria-labelledby="manageTrialConfirmationLabel" aria-hidden="true">

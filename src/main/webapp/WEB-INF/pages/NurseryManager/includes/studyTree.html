@@ -288,6 +288,7 @@ function displayStudyListTree(treeName, studyType, choosingTypeParam) {
         onActivate: function (node) {
             if (node.data.isFolder === false) {
                 changeBrowseNurseryButtonBehavior(false);
+                $('.delete-folder').removeClass('disable-image');
             } else {
                 if (node.data.key > 1 || node.data.key === 'CENTRAL') {
                     changeBrowseNurseryButtonBehavior(false);

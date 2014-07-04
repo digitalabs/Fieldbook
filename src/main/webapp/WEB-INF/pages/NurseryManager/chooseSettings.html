@@ -318,7 +318,7 @@
 	</div>
 </div>
 
-<div th:include="/NurseryManager/includes/variableSelectionModal"></div>
+<div class="nrm-var-selection-modal-container" th:include="/NurseryManager/includes/variableSelectionModal"></div>
 
 </form>
 <div class="row">
@@ -387,7 +387,7 @@ var locationId = '',
 $(document).ready(function() {
 	'use strict';
 
-	chooseSettings = new ChooseSettings({
+	chooseSettings = new ChooseSettings('.nrm-var-selection-modal-container', {
 		mdLabel: /*[[#{nursery.managesettings.add.nursery.level.settings}]]*/ '',
 		mdPlaceholder: /*[[#{nursery.reminder.add.nursery.settings}]]*/ '',
 		fdLabel: /*[[#{nursery.managesettings.add.plot.level.settings}]]*/ '',

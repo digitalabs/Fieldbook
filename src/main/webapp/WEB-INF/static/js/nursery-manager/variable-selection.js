@@ -131,7 +131,8 @@ BMS.NurseryManager.VariableSelection = (function($) {
 				'Content-Type': 'application/json'
 			},
 			success: function(data) {
-				$.event.trigger({
+				// FIXME Should pass this selector through
+				$('.nrm-var-selection-modal-container').trigger({
 					type: VARIABLE_SELECT_EVENT,
 					group: group,
 					responseData: data

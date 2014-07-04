@@ -47,7 +47,7 @@ window.ChooseSettings = (function() {
 		checkShowSettingsFormReminder();
 	}
 
-	ChooseSettings = function(translations) {
+	ChooseSettings = function(modalContainerSelector, translations) {
 
 		variableSelectionGroups = {
 			1: {
@@ -77,7 +77,7 @@ window.ChooseSettings = (function() {
 			}
 		};
 
-		$(document).on('nrm-variable-select', addSelectedVariables);
+		$(modalContainerSelector).on('nrm-variable-select', addSelectedVariables);
 	};
 
 	ChooseSettings.prototype._openVariableSelectionDialog = function(e) {
@@ -125,7 +125,8 @@ window.ChooseSettings = (function() {
 			if (variableSelectionGroups.hasOwnProperty(key)) {
 				group = variableSelectionGroups[key];
 
-				$(group.selector  + ' ' + dialogOpenSelector).click({group: parseInt(key, 10)}, this._openVariableSelectionDialog);
+				$(group.selector  + ' ' + dialogOpenSelector).click({group: parseInt(key, 10)},
+					$.proxy(this._openVariableSelectionDialog, this));
 			}
 		}
 	};

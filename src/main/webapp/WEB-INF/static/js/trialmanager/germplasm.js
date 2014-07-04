@@ -36,10 +36,10 @@
                 data: JSON.stringify(forSubmit),
                 contentType: 'application/json',
                 success: function (html) {
-                	$('#imported-germplasm-list').html(html);
-					$('#entries-details').css('display', 'block');
-					$('#numberOfEntries').html($('#totalGermplasms').val());
-					$('#imported-germplasm-list-reset-button').css('opacity', '1');
+                    $('#imported-germplasm-list').html(html);
+                    $('#entries-details').css('display', 'block');
+                    $('#numberOfEntries').html($('#totalGermplasms').val());
+                    $('#imported-germplasm-list-reset-button').css('opacity', '1');
                 }
 
             });

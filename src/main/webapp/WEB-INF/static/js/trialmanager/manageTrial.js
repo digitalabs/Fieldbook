@@ -83,7 +83,7 @@
             $scope.activeTabIndex = index;
         };
 
-        $scope.$on("$locationChangeStart", function(event, next, current) {
+        $scope.$on('$locationChangeStart', function(event, next, current) {
             var nextPage = next.split('#/')[1];
 
             if (nextPage !== undefined) {

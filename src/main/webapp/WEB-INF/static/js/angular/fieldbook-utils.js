@@ -1,6 +1,6 @@
 /*global angular*/
 /*global showBaselineTraitDetailsModal */
-/* global openManageLocations, ChooseSettings, alert */
+/* global openManageLocations, ChooseSettings*/
 (function() {
     'use strict';
 
@@ -14,10 +14,20 @@
                     settings : '='
                 },
                 templateUrl : '/Fieldbook/static/angular-templates/displaySettings.html',
-                controller : function($scope) {
+                controller : function($scope, $element, $attrs) {
                     $scope.removeSetting = function(setting) {
                         if ($scope.settings[setting.variable.cvTermId]) {
                             delete $scope.settings[setting.variable.cvTermId];
+
+                            $.ajax({
+                                url: '/Fieldbook/manageSettings/deleteVariable/' + $attrs.variableType + '/' + setting.variable.cvTermId,
+                                type: 'POST',
+                                cache: false,
+                                data: '',
+                                contentType: 'application/json',
+                                success: function () {
+                                }
+                            });
                         }
                     };
 

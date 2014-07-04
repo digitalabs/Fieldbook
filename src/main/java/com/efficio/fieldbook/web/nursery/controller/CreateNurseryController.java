@@ -582,7 +582,7 @@ public class CreateNurseryController extends SettingsController {
             @PathVariable int mode, @PathVariable int variableId) {
     	Map<String, String> idNameRetrieveSaveMap = fieldbookService.getIdNamePairForRetrieveAndSave();
         if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
-            //form.getNurseryLevelVariables()
+
             addVariableInDeletedList(userSelection.getStudyLevelConditions(), mode, variableId);
             deleteVariableInSession(userSelection.getStudyLevelConditions(), variableId);
             if(idNameRetrieveSaveMap.get(variableId) != null){

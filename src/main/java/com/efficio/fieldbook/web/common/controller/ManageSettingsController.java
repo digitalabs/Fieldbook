@@ -245,6 +245,80 @@ public class ManageSettingsController extends SettingsController{
         return null;
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/deleteVariable/{mode}/{variableId}", method = RequestMethod.POST)
+    public String deleteVariable(@PathVariable int mode, @PathVariable int variableId) {
+        Map<String, String> idNameRetrieveSaveMap = fieldbookService.getIdNamePairForRetrieveAndSave();
+        if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
+
+            addVariableInDeletedList(userSelection.getStudyLevelConditions(), mode, variableId);
+            deleteVariableInSession(userSelection.getStudyLevelConditions(), variableId);
+            if (idNameRetrieveSaveMap.get(variableId) != null) {
+                //special case so we must delete it as well
+                addVariableInDeletedList(userSelection.getStudyLevelConditions(), mode, Integer.parseInt(idNameRetrieveSaveMap.get(variableId)));
+                deleteVariableInSession(userSelection.getStudyLevelConditions(), Integer.parseInt(idNameRetrieveSaveMap.get(variableId)));
+            }
+        } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
+            addVariableInDeletedList(userSelection.getPlotsLevelList(), mode, variableId);
+            deleteVariableInSession(userSelection.getPlotsLevelList(), variableId);
+        } else if (mode == AppConstants.SEGMENT_TRAITS.getInt()) {
+            addVariableInDeletedList(userSelection.getBaselineTraitsList(), mode, variableId);
+            deleteVariableInSession(userSelection.getBaselineTraitsList(), variableId);
+        } else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
+            addVariableInDeletedList(userSelection.getSelectionVariates(), mode, variableId);
+            deleteVariableInSession(userSelection.getSelectionVariates(), variableId);
+        } else {
+            addVariableInDeletedList(userSelection.getNurseryConditions(), mode, variableId);
+            deleteVariableInSession(userSelection.getNurseryConditions(), variableId);
+        }
+        return "";
+    }
+
+    private void addVariableInDeletedList(List<SettingDetail> currentList, int mode, int variableId) {
+        SettingDetail newSetting = null;
+        for (SettingDetail setting : currentList) {
+            if (setting.getVariable().getCvTermId().equals(Integer.valueOf(variableId))) {
+                newSetting = setting;
+            }
+        }
+
+        if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
+            if (userSelection.getDeletedStudyLevelConditions() == null) {
+                userSelection.setDeletedStudyLevelConditions(new ArrayList<SettingDetail>());
+            }
+            userSelection.getDeletedStudyLevelConditions().add(newSetting);
+        } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
+            if (userSelection.getDeletedPlotLevelList() == null) {
+                userSelection.setDeletedPlotLevelList(new ArrayList<SettingDetail>());
+            }
+            userSelection.getDeletedPlotLevelList().add(newSetting);
+        } else if (mode == AppConstants.SEGMENT_TRAITS.getInt()) {
+            if (userSelection.getDeletedBaselineTraitsList() == null) {
+                userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
+            }
+            userSelection.getDeletedBaselineTraitsList().add(newSetting);
+        } else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
+            if (userSelection.getDeletedBaselineTraitsList() == null) {
+                userSelection.setDeletedBaselineTraitsList(new ArrayList<SettingDetail>());
+            }
+            userSelection.getDeletedBaselineTraitsList().add(newSetting);
+        } else if (mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt()) {
+            if (userSelection.getDeletedNurseryConditions() == null) {
+                userSelection.setDeletedNurseryConditions(new ArrayList<SettingDetail>());
+            }
+            userSelection.getDeletedNurseryConditions().add(newSetting);
+        }
+    }
+
+    private void deleteVariableInSession(List<SettingDetail> variableList, int variableId) {
+        Iterator<SettingDetail> iter = variableList.iterator();
+        while (iter.hasNext()) {
+            if (iter.next().getVariable().getCvTermId().equals(Integer.valueOf(variableId))) {
+                iter.remove();
+            }
+        }
+    }
+
     @Override
     public String getContentName() {
         return null;

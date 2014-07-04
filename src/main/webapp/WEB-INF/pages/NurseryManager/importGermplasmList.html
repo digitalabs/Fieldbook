@@ -184,28 +184,7 @@
 		/*exported startIndex,germplasmStartingEntry,importLocationUrl,importIframeOpened,overwriteChecksList*/
 		/*exported confirmReplaceList,resetGermplasmList,removeCheckFromList,openListTree,viewGermplasmLitDetails */
 		/*exported additionalLazyLoadUrl, chooseList*/
-		var addedGid = {},
-			listId = 0,
-			makeDraggableBool = true,
-
-			startIndex = 0,
-			lastDraggedPrimaryList = 0,
-			lastDraggedChecksList = 0,
-
-			itemsToAdd = [],
-			checksFromPrimary = 0,
-
-			importLocationUrl = /*[[#{nursery.apps.import.nursery.url}]]*/ '',
-			importIframeOpened = false,
-			itemsIndexAdded = [];
 		
-
-		var makeCheckDraggableBool = true,
-			hasPageError = /*[[${importGermplasmListForm.hasError}]]*/ '';
-		
-		//to be use as reference to the data table object
-		var germplasmDataTable= null,
-		selectedCheckListDataTable = null;
 		
 
 		// FIXME There is a lot of repeated code in the next two functions
@@ -511,27 +490,7 @@
 			'use strict';
 			
 			displayListDetails($('#confirmReplaceListModal #replaceListId').val());
-		}
-
-		function resetGermplasmList() {
-			'use strict';
-
-			$('#imported-germplasm-list').html('<h3></h3>');
-			$('#imported-germplasm-list-reset-button').css('opacity', '0');
-			$('#entries-details').css('display', 'none');
-			listId = 0;
-			lastDraggedPrimaryList = 0;
-
-			$.ajax({
-				url: '/Fieldbook/NurseryManager/importGermplasmList/resetNurseryGermplasmDetails',
-				type: 'GET',
-				cache: false,
-				async: false,
-				success: function() {
-				}
-			});
-			addFakeCheckTable();
-		}
+		}		
 
 		function isGidInCheckList(gid) {
 			'use strict';
@@ -678,13 +637,7 @@
         $(document).ready(function () {
             'use strict';
 
-            // FIXME This is relying on implicit type conversion - also see other uses of == in this file
-            if (hasPageError === 1) {
-                // Show the modal dialog again
-                $('#myModal').modal('show');
-            }
-
-            // Display tree
+			// Display tree
             showSpecifyCheckSection();
 
 

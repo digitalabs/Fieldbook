@@ -1,104 +1,131 @@
-<div class="col-xs-12 col-md-12">
-    <div>Germplasm Details page</div>
-    <div class="row form-group" ng-controller="GermplasmCtrl">
-        <div class="col-xs-12 col-md-12">
-            <div class="col-xs-6 col-md-6">
-                <div class="form-group">
-                    <label class="control-label">
-                        <strong class="sub-content-heading">GERMPLASM FACTORS</strong>
-                    </label>
-                    <div class="form-group pull-right">
-                <span select-standard-variable="" class="btn btn-info"
-                      variable-type="1" labels="labels.germplasmFactors" modeldata="data.settings">Add</span>
-                </div> &nbsp;
-                <a href="javascript: void(0);" ng-click="updateDataTable()" class="btn btn-info pull-right">Refresh</a>
-                </div>
-                <div class="form-horizontal sectionContainer">
-                    <display-settings settings="data.settings"></display-settings>
-                </div>
+<div class="row form-group" ng-controller="GermplasmCtrl">
+   <div class="col-xs-12 col-md-12">
+       <div class="col-xs-6 col-md-6">
+           <div class="form-group">
+               <label class="control-label">
+                   <strong class="sub-content-heading">GERMPLASM FACTORS</strong>
+               </label>
+               <div class="form-group pull-right">
+           <span select-standard-variable="" class="btn btn-info"
+                 variable-type="2" labels="labels.germplasmFactors" modeldata="data.settings">Add</span>
+           </div> &nbsp;
+           <a href="javascript: void(0);" ng-click="updateDataTable()" class="btn btn-info pull-right">Refresh</a>
+           </div>
+           <div class="form-horizontal sectionContainer">
+               <display-settings settings="data.settings"></display-settings>
+           </div>
+       </div>
+   </div>
+</div>
+<div class="row form-group collapse in germplasmListDetails germplasmAndCheckSection">
+	<!-- Germplasm List Table View -->
+	<div>
+
+        <div id="primary-section" class="col-xs-12 col-md-12">
+            <div>
+            	<img th:src="@{/static/img/review-list-details.png}" />
+                <label class="control-label"><strong id="germplasmLabel" class="sub-content-heading">Nursery List</strong></label>                
+	            <a class="pull-right btn btn-info" href="javascript: showManageCheckTypePopup()" th:text="#{germplasm.list.manage.check.types}" >Manage Checks</a>	            
+            </div>
+            <div>
+                <label class="control-label"><a href="javascript: openListTree(1)">Browse</a> or <a href="javascript: openImportGermplasmList('1')">Import</a> a list to work with.</label>
             </div>
         </div>
+       
     </div>
-    <!--<div class="row form-group collapse in germplasmListDetails germplasmAndCheckSection">
-        &lt;!&ndash; Germplasm List Table View &ndash;&gt;
-        <div>
-
-            <div id="primary-section" class="col-xs-12 col-md-12">
-                <div><img th:src="@{/static/img/review-list-details.png}"/>
-                    <label class="control-label"><strong id="germplasmLabel" class="sub-content-heading">Nursery List</strong></label>
-                </div>
-                <div>
-                    <label class="control-label"><a href="javascript: openListTree(1)">Browse</a> or <a href="javascript: openImportGermplasmList('1')">Import</a> a list to work with.</label>
-                </div>
-            </div>
-
-        </div>
-        <div>
-            <div class="col-xs-12 col-md-12" id="entries-details" style="display: none">
-                Total Entries: <label class="control-label control-label-bold" id="numberOfEntries"></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript: void(0)"
-                                                                                                                                                         onclick="javascript: viewGermplasmLitDetails();">View Header</a>
-            </div>
+    <div>
+        <div class="col-xs-12 col-md-12" id="entries-details" style="display: none">
+            Total Entries: <label class="control-label control-label-bold" id="numberOfEntries"></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="javascript: void(0)" onclick="javascript: viewGermplasmLitDetails();">View Header</a>
+            <div class="col-show-hide pull-right">
+            </div>            
         </div>
     </div>
+</div>
 
+<div class="row form-group collapse in germplasmListDetails">
+    <!-- Germplasm List Table View -->
+    <div class="col-xs-12 col-md-12">
+        <div id="imported-germplasm-list" class="primary"></div>
+    </div>      
+</div>
 
-    <input type="hidden" id="keyForOverwrite" value=""/>
-    <input type="hidden" id="lastCheckSourcePrimary" value=""/>
+<input type="hidden" id="keyForOverwrite" value=""/>
+<input type="hidden" id="lastCheckSourcePrimary" value=""/>
 
-    <div th:include="/Common/browseGermplasmList"></div>
+<div th:include="/Common/browseGermplasmList"></div>
 
-    <div class="row">
-        <div id="manage-location" th:include="/NurseryManager/includes/importGermplasmListModal"></div>
-    </div>
-    &lt;!&ndash;
-    <div class="row">
-        <div id="manage-location" th:include="/NurseryManager/includes/importGermplasmListManageCheckType"></div>
-    </div>
-     &ndash;&gt;
-    <div class="row">
-        <div id="open-germplasm" th:include="/NurseryManager/includes/importGermplasmListDetailsModal"></div>
-    </div>
+<div class="row">
+	<div id="manage-location" th:include="/NurseryManager/includes/importGermplasmListModal"></div>
+</div>
+ 
+<div class="row">
+	<div id="manage-location" th:include="/NurseryManager/includes/importGermplasmListManageCheckType"></div>
+</div>
 
-    &lt;!&ndash; Scripts location, note that the div tag will be remove after merging to decorator &ndash;&gt;
-    <div layout:fragment="page-script">
-        <script type="text/javascript" th:src="@{/static/js/fbk-data-table/fieldbook-datatable.js}"></script>
-        <script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery-multisortable.js}"></script>
-        <script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery.tablednd.0.7.min.js}"></script>
+<div class="row">
+	<div id="open-germplasm" th:include="/NurseryManager/includes/importGermplasmListDetailsModal"></div>
+</div>
+<div class="row">
+	<div id="open-germplasm" th:include="/Common/includes/openGermplasmDetailsModal"></div>
+</div>
 
-        <script type="text/javascript" th:inline="javascript">
-            //<![CDATA[
-
-            /*var listId = 0,
-                    importLocationUrl = *//*[[#{nursery.apps.import.nursery.url}]]*//* '',
-                    importIframeOpened = false,
-                    itemsIndexAdded = [];
-
-
-            *//*var hasPageError = *//**//*[[${importGermplasmListForm.hasError}]]*//**//* '';*//*
-
-            //to be use as reference to the data table object
-            var germplasmDataTable = null;
-
-            $(document).ready(function () {
-                'use strict';
-                *//*
-                 displayGermplasmListTree('germplasmTree', false, 0, function (node, event) {
-                 var currentFolderName = node.data.title;
-                 $(getDisplayedModalSelector() + ' #newGermplasmFolderName').val(currentFolderName);
-                 });
-
-                 changeBrowseGermplasmButtonBehavior(false);
-
-                 $('#listTreeModal').on('hide.bs.modal', function () {
-                 $('#' + getDisplayedTreeName()).dynatree('getTree').reloadStudyTree();
-                 changeBrowseGermplasmButtonBehavior(false);
-                 $(getDisplayedModalSelector() + ' #addGermplasmFolderDiv').hide();
-                 $(getDisplayedModalSelector() + ' #renameGermplasmFolderDiv').hide();
-                 });
-                 *//*
+<!-- Scripts location, note that the div tag will be remove after merging to decorator -->
+<div layout:fragment="page-script">
+	<script type="text/javascript" th:src="@{/static/js/fbk-data-table/fieldbook-datatable.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery-multisortable.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery.tablednd.0.7.min.js}"></script>
+	
+	<script type="text/javascript" th:inline="javascript">
+		//<![CDATA[		
+		/*globals initializeCheckTypeSelect2, reloadCheckTypeDropDown*/
+    	/* exported prevStartIndex,checkTypesObj */
+    	var checkTypes = /*[[${checkTypes}]]*/ null,
+    		checkTypesObj = [];
+		
+        $(document).ready(function () {
+            'use strict';
+			
+            displayGermplasmListTree('germplasmTree', false, 0, function (node, event) {
+                var currentFolderName = node.data.title;
+                $(getDisplayedModalSelector() + ' #newGermplasmFolderName').val(currentFolderName);
             });
+			
+            changeBrowseGermplasmButtonBehavior(false);
 
-            //]]>*/
-        </script>
-    </div>-->
+            $('#listTreeModal').on('hide.bs.modal', function () {
+                $('#' + getDisplayedTreeName()).dynatree('getTree').reloadStudyTree();
+                changeBrowseGermplasmButtonBehavior(false);
+                $(getDisplayedModalSelector() + ' #addGermplasmFolderDiv').hide();
+                $(getDisplayedModalSelector() + ' #renameGermplasmFolderDiv').hide();
+            });
+           	
+        });
+             
+    	$( document ).ready(function() {
+    		'use strict';
+    		$('#manageCheckTypesModal').on('hidden.bs.modal', function () {
+    			reloadCheckTypeDropDown(false, 'checklist-select');
+    		});
+
+    		initializeCheckTypeSelect2(checkTypes, [], false, 0, 'comboCheckCode');
+    		$('#updateCheckTypes').hide();
+    		$('#deleteCheckTypes').hide();
+    	});
+
+    	function hideGermplasmColumn(colName){    		
+    		'use strict';
+    		var column = null;
+    		// Get the column API object
+    		if(germplasmDataTable != null){
+				column = germplasmDataTable.getDataTableColumn(colName);
+				// Toggle the visibility
+				if(column !== null){
+					germplasmDataTable.getDataTable().fnSetColumnVis( column.idx, !column.bVisible );
+				}
+    		}
+    	}
+    
+	//]]>
+	</script>
 </div>

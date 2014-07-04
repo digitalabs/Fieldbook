@@ -2347,12 +2347,14 @@ function checkTraitsAndSelectionVariateTable(containerDiv, isLandingPage){
 }
 
 function isValidInput(input) {
+	'use strict';
     var invalidInput = /[<>&=%;?]/.test(input);
-
     return !invalidInput;
 }
 
+
 function doDeleteNursery(id, callback) {
+	'use strict';
 	$.ajax({
 		url: '/Fieldbook/NurseryManager/deleteNursery/' + id,
 		type: 'POST',
@@ -2362,3 +2364,365 @@ function doDeleteNursery(id, callback) {
 		}
 	});
 }
+function changeBrowseNurseryButtonBehavior(isEnable) {
+	'use strict';
+	if (isEnable){
+		$('.browse-nursery-action').removeClass('disable-image');
+	}
+	else{
+		$('.browse-nursery-action').addClass('disable-image');
+	}
+}
+function changeBrowseGermplasmButtonBehavior(isEnable) {
+	'use strict';
+	if (isEnable){
+		$('.browse-germplasm-action').removeClass('disable-image');
+	}
+	else{
+		$('.browse-germplasm-action').addClass('disable-image');
+	}
+}
+function showManageCheckTypePopup() {
+	'use strict';
+	$('#page-check-message-modal').html('');
+	$('.check-germplasm-list-items .popover').remove();
+	resetButtonsAndFields();
+	$('#manageCheckTypesModal').modal({
+		backdrop : 'static',
+		keyboard : false
+	});
+}
+function addUpdateCheckType(operation) {
+	'use strict';
+	if (validateCheckFields()) {
+		var $form = $("#manageCheckValue,#comboCheckCode");
+		var serializedData = $form.serialize();
+		$
+				.ajax({
+					url : "/Fieldbook/NurseryManager/importGermplasmList/addUpdateCheckType/"
+							+ operation,
+					type : "POST",
+					data : serializedData,
+					cache : false,
+					success : function(data) {
+						if (data.success == "1") {
+							// reload dropdown
+							reloadCheckTypeList(data.checkTypes, operation);
+							showCheckTypeMessage(data.successMessage);
+						} else {
+							showCheckTypeErrorMessage(data.error);
+						}
+					}
+				});
+	}
+}
+
+function validateCheckFields() {
+	'use strict';
+	if (checkTypesObj.length === 0 && checkTypes != null) {
+		$.each(checkTypes, function(index, item) {
+			checkTypesObj.push({
+				'id' : item.id,
+				'text' : item.name,
+				'description' : item.description
+			});
+		});
+	}
+
+	if (!$('#comboCheckCode').select2('data')) {
+		showInvalidInputMessage(codeRequiredError);
+		return false;
+	} else if ($("#manageCheckValue").val() === "") {
+		showInvalidInputMessage(valueRequiredError);
+		return false;
+	} else if (!isValueUnique()) {
+		showInvalidInputMessage(valueNotUniqueError);
+		return false;
+	}
+
+	return true;
+}
+
+function isValueUnique() {
+	'use strict';
+	var isUnique = true;
+	$.each(checkTypesObj, function(index, item) {
+		if (item.description == $('#manageCheckValue').val()
+				&& item.id != $('#comboCheckCode').select2("data").id) {
+			isUnique = false;
+			return false;
+		}
+	});
+	return isUnique;
+}
+function resetButtonsAndFields() {
+	'use strict';
+	$('#manageCheckValue').val('');
+	$('#comboCheckCode').select2('val', '');
+	$('#updateCheckTypes').hide();
+	$('#deleteCheckTypes').hide();
+	$('#addCheckTypes').show();
+}
+
+
+function showCheckTypeErrorMessage(message) {
+	'use strict';
+	showErrorMessage('', message);
+}
+
+function showCheckTypeMessage(message) {
+	'use strict';
+	showSuccessfulMessage('', message);
+}
+
+function deleteCheckType() {
+	'use strict';
+	var isFound = false;
+	if ($('manageCheckCode').select2('data')) {
+		// we need to check here if it neing used in current
+		if($('.check-germplasm-list-items tbody tr').length != 0 && selectedCheckListDataTable !== null && selectedCheckListDataTable.getDataTable() !== null){
+			var currentId = $('#comboCheckCode').select2('data').id;
+			selectedCheckListDataTable.getDataTable().$('.check-hidden').each(function(){
+				if($(this).val() == currentId){
+					isFound = true;
+				}
+			});
+		} 
+        if(isFound){
+        	showCheckTypeErrorMessage(checkTypeCurrentlyUseError);
+        	return false;
+        }
+
+		
+		var $form = $("#manageCheckValue,#comboCheckCode");
+		var serializedData = $form.serialize();
+		$
+				.ajax({
+					url : "/Fieldbook/NurseryManager/importGermplasmList/deleteCheckType",
+					type : "POST",
+					data : serializedData,
+					cache : false,
+					success : function(data) {
+						if (data.success == "1") {
+							reloadCheckTypeList(data.checkTypes, 3);
+							showCheckTypeMessage(data.successMessage);
+							resetButtonsAndFields();
+						} else {
+							showCheckTypeErrorMessage(data.error);
+						}
+					}
+				});
+	} else {
+		showCheckTypeErrorMessage(noCheckSelected);
+	}
+}
+
+function reloadCheckTypeList(data, operation) {
+	'use strict';
+	var selectedValue = 0;
+
+	checkTypesObj = [];
+
+	if (data != null) {
+		$.each($.parseJSON(data), function(index, value) {
+			checkTypesObj.push({
+				'id' : value.id,
+				'text' : value.name,
+				'description' : value.description
+			});
+		});
+	}
+
+	if (operation == 2) {
+		// update
+		selectedValue = getIdOfValue($("#manageCheckValue").val());
+	}
+
+	$("#manageCheckValue").val("");
+	initializeCheckTypeSelect2(null, [], false, 0, "comboCheckCode");
+	initializeCheckTypeSelect2(null, checkTypesObj, false, selectedValue,
+			"comboCheckCode");
+}
+
+function getIdOfValue(value) {
+	'use strict';
+	var id = 0;
+	$.each(checkTypesObj, function(index, item) {
+		if (item.description == value) {
+			id = item.id;
+			return false;
+		}
+	});
+	return id;
+}
+
+function reloadCheckTypeDropDown(addOnChange, select2ClassName) {
+	'use strict';
+	var currentCheckId = $('#checkId').val();
+	$.ajax({
+		url : '/Fieldbook/NurseryManager/importGermplasmList/getAllCheckTypes',
+		type : 'GET',
+		cache : false,
+		data : '',
+		success : function(data) {
+			initializeCheckTypeSelect2($.parseJSON(data.allCheckTypes), [],
+					addOnChange, currentCheckId, select2ClassName);
+		}
+	});
+}
+
+function initializeCheckTypeSelect2(suggestions, suggestions_obj, addOnChange,
+		currentFieldId, comboName) {
+	var defaultData = null;
+
+	if (suggestions_obj.length === 0) {
+		$
+				.ajax({
+					url : "/Fieldbook/NurseryManager/importGermplasmList/getAllCheckTypes",
+					type : "GET",
+					cache : false,
+					data : "",
+					async : false,
+					success : function(data) {
+						checkTypes = $.parseJSON(data.allCheckTypes);
+						suggestions = checkTypes;
+						// alert('here');
+					}
+				});
+	}
+
+	if (suggestions != null) {
+		$.each(suggestions, function(index, value) {
+			if (comboName === 'comboCheckCode') {
+				dataObj = {
+					'id' : value.id,
+					'text' : value.name,
+					'description' : value.description,
+					'originalText' : value.name
+				};
+			} else {
+				dataObj = {
+					'id' : value.id,
+					'text' : value.description,
+					'description' : value.description,
+					'originalText' : value.name
+				};
+			}
+			suggestions_obj.push(dataObj);
+		});
+	} else {
+		$.each(suggestions_obj, function(index, value) {
+			if (currentFieldId != '' && currentFieldId == value.id) {
+				defaultData = value;
+			}
+		});
+	}
+	// if combo to create is one of the ontology combos, add an onchange event
+	// to populate the description based on the selected value
+	if (comboName === 'comboCheckCode') {
+		$('#' + comboName)
+				.select2(
+						{
+							query : function(query) {
+								var data = {
+									results : sortByKey(suggestions_obj, 'text')
+								};
+								// return the array that matches
+								data.results = $.grep(data.results, function(
+										item, index) {
+									return ($.fn.select2.defaults.matcher(
+											query.term, item.text));
+								});
+								if (data.results.length === 0) {
+									data.results.unshift({
+										id : query.term,
+										text : query.term
+									});
+								}
+								query.callback(data);
+							},
+							dropdownCssClass : 's2-nosearch-icon'
+						})
+				.on(
+						'change',
+						function() {
+							if ($('#comboCheckCode').select2('data')) {
+								if ($('#comboCheckCode').select2('data').id == $('#comboCheckCode').select2('data').text) {
+									$('#manageCheckValue').val('');
+									$('#updateCheckTypes').hide();
+									$('#deleteCheckTypes').hide();
+									$('#addCheckTypes').show();
+								} else {
+									$('#manageCheckValue').val($('#comboCheckCode').select2('data').description);
+									$('#updateCheckTypes').show();
+									$('#deleteCheckTypes').show();
+									$('#addCheckTypes').hide();
+								}
+							}
+						});
+	} else {
+		
+		if($('.check-table-popover tbody tr').length != 0){
+				var checkDataTable = isNursery() ? selectedCheckListDataTable.getDataTable() : germplasmDataTable.getDataTable();
+				
+				checkDataTable.$('.check-hidden').each(function(){
+				
+			
+				var currentCode = $(this).data('code');
+				
+				for (i = 0; i < suggestions_obj.length; i++) {
+					var val = suggestions_obj[i].text;
+					var id = suggestions_obj[i].id;
+					selected = '';
+					if (currentCode == suggestions_obj[i].originalText){
+						selected = 'selected';
+						var $href = $(this).siblings().parent().find('.check-href');
+						$href.html(val);
+						$href.data('code', suggestions_obj[i].originalText);
+						$(this).data('code', suggestions_obj[i].originalText);
+						$(this).val(id);
+						break;
+					}
+				}
+			});						    	
+			//we need to get the real index of the check						
+		}
+	}
+}
+
+function openStudyTree(type) {
+	'use strict';
+	$('#page-study-tree-message-modal').html('');
+	  $('#addFolderDiv').hide();
+	  $('#renameFolderDiv').hide();
+	if( $('#create-nursery #studyTree').length !== 0){
+			$('#studyTree').dynatree('destroy');
+			displayStudyListTree('studyTree', 'N', type);
+			changeBrowseNurseryButtonBehavior(false);
+	}else if( $('#create-trial #studyTree').length !== 0){
+		$('#studyTree').dynatree('destroy');
+		displayStudyListTree('studyTree', 'T', type);
+		changeBrowseNurseryButtonBehavior(false);
+	}
+
+	$('#studyTreeModal').modal({
+		backdrop : 'static',
+		keyboard : true
+	});
+	choosingType = type;
+	if(isNursery()){
+		$('.fbk-study-tree-title.nursery').removeClass('fbk-hide');
+	}else{
+		$('.fbk-study-tree-title.trial').removeClass('fbk-hide');
+	}
+}
+
+function isNursery(){
+	'use strict';
+	if($('#check-germplasm-list').length != 0 || $('.nursery-header').length != 0){
+		return true;
+	}else{
+		return false;
+	}		
+}
+

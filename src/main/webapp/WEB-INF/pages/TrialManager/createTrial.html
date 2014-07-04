@@ -8,7 +8,7 @@
 
     <!-- BASIC DETAILS FORM -->
     <div class="row">
-        <form action="#" enctype="multipart/form-data" id="createTrialMainForm" role="form-horizontal">
+        <form action="#" th:object="${createTrialForm}" enctype="multipart/form-data" id="createTrialMainForm" role="form-horizontal">
             <div class="row add-top-bottom-padding">
                 <div class="col-md-12">
                     <div class="pull-left">
@@ -71,13 +71,13 @@
                     <div class="row form-group">
                         <label class="control-label col-sm-4" id="folderLabel"><b>Save In</b>: <span class="required">*</span></label>
 
-                        <div class="col-sm-8">
-                            <input type="hidden" id="folderId" name="folderId" value="1"/>
-                            <input type="hidden" id="folderName" name="folderName" value="Program Nurseries"/>
-
-                            <div class="pull-left">
-                                <label class="control-label" id="folderNameLabel">Program Nurseries</label>
-                            </div>
+                        <div class="col-sm-8">              
+                            <input type="hidden" th:field="*{folderId}" />
+		                    <input type="hidden" th:field="*{folderName}" />
+		
+		                    <div class="pull-left">
+		                        <label class="control-label" id="folderNameLabel" th:text="*{folderNameLabel}"></label>
+		                    </div>
 
                             <a class="pull-right" href="javascript: void(0)" id="chooseLocation" onclick="openStudyTree(2);">Change Folder</a>
                         </div>
@@ -128,13 +128,13 @@
             </div>
 
             <div class="row form-group">
-                <div class="col-xs-8 col-md-8">
-                    <select>
-                        <option value="1">Start with Blank Trial</option>
-                        <option value="2">Use Previous Trial</option>
-                    </select>
+                <div class="col-xs-8 col-md-8 fb-build-options">                  
+                    <select id="studyBuildOption">
+						<option value="1">Start with Blank Trial</option>
+						<option value="2" th:text="#{trial.managesettings.use.previous.trial}">Use Previous Trial</option>
+					</select>
                     &nbsp;&nbsp;
-                    <input class="btn btn-info" id="choosePreviousStudy" onclick="" type="button" value="Choose" style="display: none;"/>
+                    <input class="btn btn-info" id="choosePreviousStudy" onclick="javascript: openStudyTree(3);" type="button" value="Choose" style="display: none;"/>
                 </div>
                 <div class="col-xs-4 col-md-4">
                     &nbsp;
@@ -147,6 +147,9 @@
             </div>
         </form>
     </div>
+    <div class="form-group" id="create-trial">
+		<div th:include="/Common/includes/studyTree"></div>
+	</div>
 
     <!-- TABS -->
 
@@ -233,6 +236,18 @@
             );
 
         })();
+        
+        $(document).ready(function() {
+			'use strict';
+
+
+			$('#studyBuildOption').on('change', changeBuildOption);
+			$('#choosePreviousStudy').hide();
+
+			setTimeout(function() {
+				$('#' + getJquerySafeId('basicDetails.value2')).datepicker('setDate', new Date());
+			}, 600);
+		});
         //]]>
     </script>
 

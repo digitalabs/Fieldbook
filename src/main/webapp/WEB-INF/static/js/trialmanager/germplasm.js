@@ -30,13 +30,16 @@
             });
 
             $.ajax({
-                url: '/Fieldbook/manageSettings/refreshTrial',
+                url: '/Fieldbook/TrialManager/GermplasmList/refreshListDetails',
                 type: 'POST',
                 cache: false,
                 data: JSON.stringify(forSubmit),
                 contentType: 'application/json',
-                success: function (data) {
-                    // evaluate data table
+                success: function (html) {
+                	$('#imported-germplasm-list').html(html);
+					$('#entries-details').css('display', 'block');
+					$('#numberOfEntries').html($('#totalGermplasms').val());
+					$('#imported-germplasm-list-reset-button').css('opacity', '1');
                 }
 
             });

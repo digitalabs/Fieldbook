@@ -82,3 +82,114 @@
 	<div id="open-germplasm-list" th:include="/Common/includes/manageGermplasmListOperation"></div>
 </div>
 <div id="list-tree-include" th:include="/Common/includes/listTreeInclude"></div>
+
+<div layout:fragment="page-script">
+	
+	<script type="text/javascript" th:inline="javascript">
+		//<![CDATA[
+		/*exported startIndex,germplasmStartingEntry,importLocationUrl,importIframeOpened,overwriteChecksList*/
+		/*exported confirmReplaceList,resetGermplasmList,removeCheckFromList,openListTree,viewGermplasmLitDetails */
+		/*exported additionalLazyLoadUrl, chooseList*/
+		
+		var addedGid = {},
+			listId = 0,
+			makeDraggableBool = true,
+
+			startIndex = 0,
+			lastDraggedPrimaryList = 0,
+			lastDraggedChecksList = 0,
+
+			itemsToAdd = [],
+			checksFromPrimary = 0,
+
+			importLocationUrl = /*[[#{nursery.apps.import.nursery.url}]]*/ '',
+			importIframeOpened = false,
+			itemsIndexAdded = [];
+		
+
+		var makeCheckDraggableBool = true;
+		
+		//to be use as reference to the data table object
+		var germplasmDataTable= null,
+		selectedCheckListDataTable = null;
+		
+		function resetGermplasmList() {
+			'use strict';
+
+			$('#imported-germplasm-list').html('<h3></h3>');
+			$('#imported-germplasm-list-reset-button').css('opacity', '0');
+			$('#entries-details').css('display', 'none');
+			listId = 0;
+			lastDraggedPrimaryList = 0;
+
+			$.ajax({
+				url: '/Fieldbook/NurseryManager/importGermplasmList/resetNurseryGermplasmDetails',
+				type: 'GET',
+				cache: false,
+				async: false,
+				success: function() {
+				}
+			});
+			if(isNursery()){
+				addFakeCheckTable();
+			}
+		}
+		
+		function showPopoverCheck(index, sectionContainer, bodyContainer){
+			'use strict';
+			var currentCheckVal = $(sectionContainer + ' #selectedCheck'+index).val(),
+				realIndex = index,
+				suffix = '/N',
+				popoverOptions = {},
+				listDataTable = selectedCheckListDataTable;
+	    		if(!isNursery()){
+	    			suffix = '/T'; 
+	    			listDataTable = germplasmDataTable;
+	    		}
+	    	
+			//we need to get the real index of the check
+			
+			if(listDataTable != null){
+				listDataTable.getDataTable().$('.check-hidden').each(function(indexCount){
+					if($(this).attr('id') === 'selectedCheck'+index){
+						realIndex = indexCount;
+						return;
+					}
+				})
+			}
+			$.ajax({
+				url: '/Fieldbook/NurseryManager/GermplasmList/edit/check/' + index + '/' + realIndex + suffix,
+				type: 'GET',
+				data: 'currentVal='+currentCheckVal,
+				cache: false,
+				success: function(data) {		
+					
+		    		if(!isNursery()){
+		    			popoverOptions = {
+		    					html: true,
+		    					title: 'Edit Check',
+		    					content: data,
+		    					trigger: 'manual',
+		    					placement: 'right',
+		    					container:  bodyContainer
+		    				};
+		    		}else{
+		    			popoverOptions = {
+								html: true,
+								title: 'Edit Check',
+								content: data,
+								trigger: 'manual',
+								placement: 'left',
+						};
+		    		}
+					$(sectionContainer +' .popover').remove();
+					$(sectionContainer +' .edit-check'+index).popover('destroy');				
+					$(sectionContainer +' .edit-check'+index).popover(popoverOptions);
+					$(sectionContainer +' .edit-check'+index).popover('show');
+				}
+			});
+		}
+
+	//]]>
+	</script>
+</div>

@@ -13,12 +13,12 @@
 		<!-- case 3: basic view of the importedGermplasm -->
 		<div th:if="*{importedCheckGermplasm != null and not #lists.isEmpty(importedCheckGermplasm)}">
 			<div class="check-germplasm-list-table-old check-germplasm-list-data-table">
-				<table th:if="*{not #lists.isEmpty(importedCheckGermplasm)}" class="table-curved table-condensed check-germplasm-list-items">
+				<table th:if="*{not #lists.isEmpty(importedCheckGermplasm)}" class="table-curved table-condensed check-germplasm-list-items check-table-popover">
 					<thead>
 						<tr>
-							<th data-col-name="action"></th>
-							<th data-col-name="desig" style="text-align: left; vertical-align: middle" th:utext="#{nursery.import.header.designation}">.Designation</th>
-							<th data-col-name="check" style="width: 110px; text-align: left; vertical-align: middle" th:utext="#{nursery.import.header.check}">.Check</th>
+							<th nowrap="nowrap" data-col-name="action"></th>
+							<th nowrap="nowrap" data-col-name="desig" style="text-align: left; vertical-align: middle" th:utext="#{nursery.import.header.designation}">.Designation</th>
+							<th nowrap="nowrap"  data-col-name="check" style="width: 110px; text-align: left; vertical-align: middle" th:utext="#{nursery.import.header.check}">.Check</th>
 						</tr>
 					</thead>
 					 
@@ -46,7 +46,7 @@
 		</div>
 		<div class="row col-xs-12 col-md-12">
 			<div id="check-germplasm-list-reset-button" class="pull-left">
-	            <a style="margin-top: 5px;" href="javascript: resetCheckList()" class="btn btn-default">Clear</a>
+	            <a style="margin-top: 5px;" href="javascript: resetCheckList()" class="btn btn-default">Clear Checks</a>
 	        </div>			
 		</div>
 	</form>
@@ -59,43 +59,8 @@
 	var dataSelectedCheckGermplasmList = /*[[${checkListDataTable}]]*/ [];
 	$( document ).ready(function() {
 		'use strict';		
-        //$('.checklist-select').select2({minimumResultsForSearch: 20});
 		selectedCheckListDataTable = new BMS.Fieldbook.SelectedCheckListDataTable('.check-germplasm-list-items', '.check-germplasm-list-data-table', dataSelectedCheckGermplasmList);				
-	});
-	function showPopoverCheck(index){
-		'use strict';
-		var currentCheckVal = $('.check-germplasm-list-items #selectedCheck'+index).val(),
-			realIndex = index;
-		//we need to get the real index of the check
-		
-		
-		if(selectedCheckListDataTable != null){
-			selectedCheckListDataTable.getDataTable().$('.check-hidden').each(function(indexCount){
-				if($(this).attr('id') === 'selectedCheck'+index){
-					realIndex = indexCount;
-					return;
-				}
-			})
-		}
-		$.ajax({
-			url: '/Fieldbook/NurseryManager/GermplasmList/edit/check/' + index + '/' + realIndex,
-			type: 'GET',
-			data: 'currentVal='+currentCheckVal,
-			cache: false,
-			success: function(data) {		
-				
-				$('.check-germplasm-list-items .popover').remove();
-				$('.check-germplasm-list-items .edit-check'+index).popover('destroy');
-				$('.check-germplasm-list-items .edit-check'+index).popover({
-					html: true,
-					title: 'Edit Check',
-					content: data,
-					trigger: 'manual',
-					placement: 'left'
-				});
-				$('.check-germplasm-list-items .edit-check'+index).popover('show');
-			}
-		});
-	}
+	});	
+	
 	//]]>
 </script>

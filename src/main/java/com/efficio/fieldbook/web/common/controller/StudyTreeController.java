@@ -48,18 +48,19 @@ public class StudyTreeController {
     public MessageSource messageSource;
 
 	@ResponseBody
-	@RequestMapping(value = "/loadInitialNurseryTree/{isFolderOnly}", method = RequestMethod.GET)
-	public String loadInitialNurseryTree(@PathVariable String isFolderOnly) {
+	@RequestMapping(value = "/loadInitialTree/{isFolderOnly}/{type}", method = RequestMethod.GET)
+	public String loadInitialTree(@PathVariable String isFolderOnly, @PathVariable String type) {
 		boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;
+		boolean isNursery = (type != null && type.equalsIgnoreCase("N")) ? true : false;
 		try {
 			List<TreeNode> rootNodes = new ArrayList<TreeNode>();
-			TreeNode localTreeNode = new TreeNode("LOCAL", AppConstants.PROGRAM_NURSERIES.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG.getString());			
+			String localName = isNursery ? AppConstants.PROGRAM_NURSERIES.getString() : AppConstants.PROGRAM_TRIALS.getString();
+			String centralName = isNursery ? AppConstants.PUBLIC_NURSERIES.getString() : AppConstants.PUBLIC_TRIALS.getString();
+			TreeNode localTreeNode = new TreeNode("LOCAL", localName, true, "lead", AppConstants.FOLDER_ICON_PNG.getString());			
 			rootNodes.add(localTreeNode);
-			//localTreeNode.setChildren(getChildNodes(localTreeNode.getKey(), isFolderOnlyBool));
 			if(isFolderOnlyBool == false){
-				TreeNode centralTreeNode = new TreeNode("CENTRAL", AppConstants.PUBLIC_NURSERIES.getString(), true, "lead", AppConstants.FOLDER_ICON_PNG.getString());
+				TreeNode centralTreeNode = new TreeNode("CENTRAL", centralName, true, "lead", AppConstants.FOLDER_ICON_PNG.getString());
 				rootNodes.add(centralTreeNode);
-				//centralTreeNode.setChildren(getChildNodes(centralTreeNode.getKey(), isFolderOnlyBool));
 			}
 			return TreeViewUtil.convertTreeViewToJson(rootNodes);
 
@@ -82,7 +83,7 @@ public class StudyTreeController {
 						}
 
 						List<FolderReference> rootFolders = fieldbookMiddlewareService.getRootFolders(instance);
-						childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(rootFolders, true, false, true,
+						childNodes = TreeViewUtil.convertStudyFolderReferencesToTreeView(rootFolders, isNursery, false, true,
 								fieldbookMiddlewareService, isFolderOnly);
 					
 				} else if (NumberUtils.isNumber(parentKey)) {
@@ -121,11 +122,12 @@ public class StudyTreeController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/expandNurseryTree/{parentKey}/{isFolderOnly}", method = RequestMethod.GET)
-	public String expandNurseryTree(@PathVariable String parentKey, @PathVariable String isFolderOnly) {
-		boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;		
+	@RequestMapping(value = "/expandTree/{type}/{parentKey}/{isFolderOnly}", method = RequestMethod.GET)
+	public String expandNurseryTree(@PathVariable String parentKey, @PathVariable String isFolderOnly, @PathVariable String type) {
+		boolean isFolderOnlyBool = "1".equalsIgnoreCase(isFolderOnly) ? true : false;
+		boolean isNursery = (type != null && type.equalsIgnoreCase("N")) ? true : false;
 		try {
-			List<TreeNode> childNodes = getChildNodes(parentKey, true, isFolderOnlyBool);
+			List<TreeNode> childNodes = getChildNodes(parentKey, isNursery, isFolderOnlyBool);
 			return TreeViewUtil.convertTreeViewToJson(childNodes);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

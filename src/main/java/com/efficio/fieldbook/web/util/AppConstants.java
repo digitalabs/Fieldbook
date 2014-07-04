@@ -205,7 +205,9 @@ public enum AppConstants {
     ,OCC
     
     ,PROGRAM_NURSERIES
+    ,PROGRAM_TRIALS
     ,PUBLIC_NURSERIES
+    ,PUBLIC_TRIALS
     
     ,FOLDER_ICON_PNG
     ,STUDY_ICON_PNG

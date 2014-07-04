@@ -51,6 +51,9 @@ public class CreateTrialForm {
         /** The folder name. */
         private String folderName;
         
+        /** The folder name label. */
+        private String folderNameLabel;
+        
         /** The field layout random. */
         private boolean fieldLayoutRandom = true;
     
@@ -642,6 +645,14 @@ public class CreateTrialForm {
 
 		public void setOpenGermplasmUrl(String openGermplasmUrl) {
 			this.openGermplasmUrl = openGermplasmUrl;
+		}
+
+		public String getFolderNameLabel() {
+			return folderNameLabel;
+		}
+
+		public void setFolderNameLabel(String folderNameLabel) {
+			this.folderNameLabel = folderNameLabel;
 		}
         
 }

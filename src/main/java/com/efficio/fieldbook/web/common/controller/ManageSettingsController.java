@@ -89,26 +89,6 @@ public class ManageSettingsController extends SettingsController{
         return result;
     }
 
-    @ResponseBody
-    @RequestMapping(value = "/refreshTrial", method = RequestMethod.POST)
-    public Map<String, String> refreshTableTrial(@RequestBody List values) {
-        Map<String, String> returnVal = new HashMap<String, String>();
-        /*for (Map<String, String> value : values) {
-            for (Map.Entry<String, String> entry : value.entrySet()) {
-                System.out.println(entry.getKey());
-                System.out.println(entry.getValue());
-            }
-
-
-        }*/
-
-        System.out.println(values.size());
-        returnVal.put("success", "1");
-
-        return returnVal;
-
-    }
-
     /**
      * Adds the settings.
      *

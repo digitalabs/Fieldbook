@@ -97,7 +97,7 @@ public class CreateTrialController extends SettingsController {
 
 
     @RequestMapping(value="/germplasm",method = RequestMethod.GET)
-    public String showGermplasm(Model model, HttpSession session, HttpServletRequest req) {
+    public String showGermplasm(Model model, HttpSession session, HttpServletRequest req, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form) {
         return showAjaxPage(model,URL_GERMPLASM);
     }
 
@@ -204,6 +204,10 @@ public class CreateTrialController extends SettingsController {
     	SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME,SessionUtility.TRIAL_SELECTION_SESSION_NAME,SessionUtility.POSSIBLE_VALUES_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
     	form.setProjectId(this.getCurrentProjectId());
     	form.setRequiredFields(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
+    	form.setFolderId(1);
+    	form.setFolderName(AppConstants.PROGRAM_TRIALS.getString());
+    	form.setFolderNameLabel(AppConstants.PROGRAM_TRIALS.getString());
+    	
     	setFormStaticData(form);
     	return showAngularPage(model);
     }    

@@ -131,38 +131,42 @@
 <div layout:fragment="page-script">
 	<script type="text/javascript" th:inline="javascript">
 		//<![CDATA[
+		
 		function viewGermplasmLitDetails() {
 			'use strict';
 			openGermplasmListDetailsPopop(listId);
 		}
 		function displayListDetails(listIdTemp) {
 			'use strict';
-
+			var suffix = '/N';
+			if(!isNursery()){
+				suffix = '/T';
+			}
 			listId = listIdTemp;
 			$('#'+getDisplayedTreeName()).find('*').removeClass('dynatree-selected');
-
+			
 			$.ajax({
-				url: '/Fieldbook/NurseryManager/importGermplasmList/displayGermplasmDetails/' + listId,
+				url: '/Fieldbook/NurseryManager/importGermplasmList/displayGermplasmDetails/' + listId + suffix,
 				type: 'GET',
 				cache: false,
-
 				success: function(html) {
 					$('#imported-germplasm-list').html(html);
-					makeDraggable(makeDraggableBool);					
-					checksFromPrimary = 0;
-					setSpinnerMaxValue();
-
 					$('#entries-details').css('display', 'block');
-
 					$('#numberOfEntries').html($('#totalGermplasms').val());
 					$('#imported-germplasm-list-reset-button').css('opacity', '1');
-					itemsIndexAdded = [];
-
-					if (lastDraggedChecksList == 0) {
-						// We clear the list in the check
-						resetCheckList();
+					if(isNursery()){
+						makeDraggable(makeDraggableBool);					
+						checksFromPrimary = 0;
+						setSpinnerMaxValue();
+	
+						itemsIndexAdded = [];
+	
+						if (lastDraggedChecksList == 0) {
+							// We clear the list in the check
+							resetCheckList();
+						}
+						addFakeCheckTable();
 					}
-					addFakeCheckTable();
 				}
 			});
 		}

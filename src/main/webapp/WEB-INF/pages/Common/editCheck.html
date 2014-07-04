@@ -9,10 +9,10 @@
         <select style="width: 150px" th:field="*{checkVal}">	
 			<option th:each="checkType : ${allCheckTypes}"  th:attr="data-code=${checkType.name}" th:value="${checkType.id}" th:text="${checkType.description}"></option>
 		</select>
-        <span class="input-group-btn">
-            <button class="btn btn-success submit-edit-check">
+        <span class="input-group-btn">        
+            <a href="javascript: void(0)" class="btn btn-success submit-edit-check">
                 <span class="glyphicon glyphicon-ok"></span>
-            </button>
+            </a>
             <button class="btn btn-danger cancel-edit-check">
                 <span class="glyphicon glyphicon-remove"></span>
             </button>
@@ -26,34 +26,61 @@
 <div layout:fragment="page-script">
 	<script type='text/javascript' th:inline="javascript">
 		//<![CDATA[
-		function updateCheck(){
+		function updateCheck(event){
+			
+			'use strict';
+			var suffix = '/N',
+			sectionContainer = '.check-germplasm-list-items';
+    		if(!isNursery()){
+    			suffix = '/T';
+    			sectionContainer = '.germplasm-list-items';
+    		}
+    		event.stopPropagation();
+    		
 			$.ajax({
-				url: '/Fieldbook/NurseryManager/GermplasmList/update/check',
+				url: '/Fieldbook/NurseryManager/GermplasmList/update/check'+suffix,
 				type: 'POST',
 				data: $('.editCheck').serialize(),
 				success: function(data) {
 					//update the hidden and the a href
-					$('#selectedCheck'+$('.editCheck #index').val()).val($('.editCheck #checkVal').select2('data').id);
-					
-					$('.edit-check'+$('.editCheck #index').val()).html($('.editCheck #checkVal').select2('data').text);
-					$('.editCheck #checkVal').select2('destroy');
-					$('.check-germplasm-list-items #selectedCheck'+$('.editCheck #index').val()).data('code',  $('.editCheck #checkVal option:selected').data('code'));
+				
+					$('#selectedCheck'+$('.editCheck #index').val()).val($('.editCheck #checkVal').select2('data').id);					
+					$('.check-table-popover #selectedCheck'+$('.editCheck #index').val()).data('code',  $('.editCheck #checkVal option:selected').data('code'));
 					$('.edit-check'+$('.editCheck #index').val()).data('code',  $('.editCheck #checkVal option:selected').data('code'));
-					$('.check-germplasm-list-items .popover').remove();
+					$('.editCheck #checkVal').select2('destroy');															
+					
+					
+					var listDataTable = selectedCheckListDataTable;
+		    		if(!isNursery()){
+		    			listDataTable = germplasmDataTable;
+		    		}			    	
+					//we need to get the real index of the check
+					
+					if(listDataTable != null){
+						listDataTable.getDataTable().fnUpdate($('#selectedCheck'+$('.editCheck #index').val()).val(), $('.editCheck #dataTableIndex').val(),listDataTable.getDataTableColumnIndex('check')); // Single cell												
+					}
+					$('.edit-check'+$('.editCheck #index').val()).html($('.editCheck #checkVal option:selected').html());
+					$('.check-table-popover .popover').remove();
 				}
 			});
+    		
 			return false;
 		}	
 		
 		$( document ).ready(function() {
-			$('.cancel-edit-check').on('click', function(){$('.check-germplasm-list-items .popover').remove();});
-			$('.submit-edit-check').on('click', updateCheck);
 			'use strict';
-					$('.editCheck select').each(function(){
-						$(this).select2({width: 'copy', minimumResultsForSearch: $(this).find('option').length == 0 ? -1 : 20});					
-					});
-					
+			$('.cancel-edit-check').on('click', function(event){	
+					$('.check-table-popover .popover').remove();
+					event.stopPropagation();
+				}
+			);
+			$('.submit-edit-check').on('click', updateCheck);
+			
+			$('.editCheck select').each(function(){
+				$(this).select2({width: 'copy', minimumResultsForSearch: $(this).find('option').length == 0 ? -1 : 20});					
 			});
+					
+		});
 		//]]>
 	</script>
 </div>

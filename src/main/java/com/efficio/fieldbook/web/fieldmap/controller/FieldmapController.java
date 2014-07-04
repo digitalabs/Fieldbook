@@ -736,4 +736,14 @@ public class FieldmapController extends AbstractBaseFieldbookController{
             this.userFieldmap.setFieldmap(null);
         }
     }
+
+    @ModelAttribute("programLocationURL")
+        public String getProgramLocation() {
+            return fieldbookProperties.getProgramLocationsUrl();
+        }
+
+        @ModelAttribute("projectID")
+        public String getProgramID() {
+            return getCurrentProjectId();
+        }
 }

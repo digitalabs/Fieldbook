@@ -1,7 +1,6 @@
 <div class="col-xs-10 col-md-10" xmlns:th="http://www.thymeleaf.org">
 	<form onsubmit="javascript: return validateAdvanceNursery();" id="advanceNurseryModalForm" role="form-horizontal" action="#" th:action="@{/NurseryManager/advance/nursery}" method="post" th:object="${advancingNurseryform}" enctype="multipart/form-data">
 
-		<input type="hidden" th:field="*{locationUrl}"/>
 		<input type="hidden" th:field="*{breedingMethodUrl}"/>
 		<input type="hidden" th:field="*{defaultMethodId}"/>
 		<input type="hidden" th:field="*{nurseryId}"/>
@@ -339,6 +338,10 @@
 
 			$('#advanceBreedingMethodId').on('change', changeAdvanceBreedingMethod);
 			changeAdvanceBreedingMethod();
+
+            // remove any other listeners for the location update
+            $(document).off('location-update');
+            $(document).on('location-update', recreateLocationCombo);
 
 		});
 	//]]>

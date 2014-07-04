@@ -3,10 +3,8 @@
 <input type="hidden" th:field="*{loadSettings}"/>
 <input type="hidden" th:field="*{locationId}"/>
 <input type="hidden" th:field="*{breedingMethodId}"/>
-<input type="hidden" th:field="*{locationUrl}"/>
 <input type="hidden" th:field="*{breedingMethodUrl}"/>
 <input type="hidden" th:field="*{importLocationUrl}"/>
-<input type="hidden" th:field="*{projectId}"/>
 <input type="hidden" th:field="*{studyNameTermId}"/>
 <input type="hidden" th:field="*{startDateId}"/>
 <input type="hidden" th:field="*{endDateId}"/>
@@ -475,6 +473,9 @@ $(document).ready(function() {
 
 		}
 	});
+    // remove any other listeners for the location update
+    $(document).off('location-update');
+    $(document).on('location-update', recreateLocationCombo);
 
 	$('#variateDeleteConfirmationModal').on('click', '#cancelDelete', function() {
 		if (document.initialEnabledStat && document.enableActions !== undefined) {

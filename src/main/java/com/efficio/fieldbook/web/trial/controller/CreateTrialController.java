@@ -57,14 +57,20 @@ import com.efficio.fieldbook.web.util.WorkbookUtil;
 @Controller
 @RequestMapping(CreateTrialController.URL)
 public class CreateTrialController extends SettingsController {
-	
-    /** The Constant LOG. */
+
+    /**
+     * The Constant LOG.
+     */
     private static final Logger LOG = LoggerFactory.getLogger(CreateTrialController.class);
 
-    /** The Constant URL. */
+    /**
+     * The Constant URL.
+     */
     public static final String URL = "/TrialManager/createTrial";
-    
-    /** The Constant URL_SETTINGS. */
+
+    /**
+     * The Constant URL_SETTINGS.
+     */
     public static final String URL_SETTINGS = "TrialManager/templates/trialSettings";
     public static final String URL_GERMPLASM = "TrialManager/templates/germplasmDetails";
     public static final String URL_ENVIRONMENTS = "TrialManager/templates/environments";
@@ -74,50 +80,60 @@ public class CreateTrialController extends SettingsController {
 
     @Resource
     private TrialSelection trialSelection;
-	
-   
-	/* (non-Javadoc)
-	 * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
-	 */
-	@Override
-	public String getContentName() {
-		return "TrialManager/createTrial";
-	}
-
-   @RequestMapping(value="/trialSettings",method = RequestMethod.GET)
-   public String showCreateTrial(Model model, HttpSession session, HttpServletRequest req) {
-       return showAjaxPage(model,URL_SETTINGS);
-   }
 
 
-    @RequestMapping(value="/environment",method = RequestMethod.GET)
+    /* (non-Javadoc)
+     * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
+     */
+    @Override
+    public String getContentName() {
+        return "TrialManager/createTrial";
+    }
+
+    @RequestMapping(value = "/trialSettings", method = RequestMethod.GET)
+    public String showCreateTrial(Model model, HttpSession session, HttpServletRequest req) {
+        return showAjaxPage(model, URL_SETTINGS);
+    }
+
+    @ModelAttribute("programLocationURL")
+    public String getProgramLocation() {
+        return fieldbookProperties.getProgramLocationsUrl();
+    }
+
+    @ModelAttribute("projectID")
+    public String getProgramID() {
+        return getCurrentProjectId();
+    }
+
+
+    @RequestMapping(value = "/environment", method = RequestMethod.GET)
     public String showEnvironments(Model model, HttpSession session, HttpServletRequest req) {
-        return showAjaxPage(model,URL_ENVIRONMENTS);
+        return showAjaxPage(model, URL_ENVIRONMENTS);
     }
 
 
-    @RequestMapping(value="/germplasm",method = RequestMethod.GET)
+    @RequestMapping(value = "/germplasm", method = RequestMethod.GET)
     public String showGermplasm(Model model, HttpSession session, HttpServletRequest req, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form) {
-        return showAjaxPage(model,URL_GERMPLASM);
+        return showAjaxPage(model, URL_GERMPLASM);
     }
 
 
-    @RequestMapping(value="/treatment",method = RequestMethod.GET)
+    @RequestMapping(value = "/treatment", method = RequestMethod.GET)
     public String showTreatmentFactors(Model model, HttpSession session, HttpServletRequest req) {
-        return showAjaxPage(model,URL_TREATMENT);
+        return showAjaxPage(model, URL_TREATMENT);
     }
 
 
-    @RequestMapping(value="/experimentalDesign",method = RequestMethod.GET)
+    @RequestMapping(value = "/experimentalDesign", method = RequestMethod.GET)
     public String showExperimentalDesign(Model model, HttpSession session, HttpServletRequest req) {
-        return showAjaxPage(model,URL_EXPERIMENTAL_DESIGN);
+        return showAjaxPage(model, URL_EXPERIMENTAL_DESIGN);
     }
 
-    @RequestMapping(value="/measurements",method = RequestMethod.GET)
+    @RequestMapping(value = "/measurements", method = RequestMethod.GET)
     public String showMeasurements(Model model, HttpSession session, HttpServletRequest req) {
-        return showAjaxPage(model,URL_MEASUREMENT);
+        return showAjaxPage(model, URL_MEASUREMENT);
     }
-    
+
 
     /**
      * Use existing Trial.
@@ -207,7 +223,7 @@ public class CreateTrialController extends SettingsController {
     	form.setFolderId(1);
     	form.setFolderName(AppConstants.PROGRAM_TRIALS.getString());
     	form.setFolderNameLabel(AppConstants.PROGRAM_TRIALS.getString());
-    	
+
     	setFormStaticData(form);
     	return showAngularPage(model);
     }    
@@ -363,6 +379,7 @@ public class CreateTrialController extends SettingsController {
     	return "success";
     }
     */
+
     /**
      * Creates the study details.
      *
@@ -418,8 +435,6 @@ public class CreateTrialController extends SettingsController {
         form.setBreedingMethodId(AppConstants.BREEDING_METHOD_ID.getString());
         form.setLocationId(AppConstants.LOCATION_ID.getString());
         form.setBreedingMethodUrl(fieldbookProperties.getProgramBreedintMethodsUrl());
-        form.setLocationUrl(fieldbookProperties.getProgramLocationsUrl());
-        form.setProjectId(this.getCurrentProjectId());
         form.setImportLocationUrl(fieldbookProperties.getGermplasmImportUrl());
         form.setStudyNameTermId(AppConstants.STUDY_NAME_ID.getString());
         form.setStartDateId(AppConstants.START_DATE_ID.getString());

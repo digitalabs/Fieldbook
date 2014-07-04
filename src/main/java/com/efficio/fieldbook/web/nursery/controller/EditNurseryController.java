@@ -996,4 +996,14 @@ public class EditNurseryController extends SettingsController {
 
         return null;
     }
+
+    @ModelAttribute("programLocationURL")
+    public String getProgramLocation() {
+        return fieldbookProperties.getProgramLocationsUrl();
+    }
+
+    @ModelAttribute("projectID")
+    public String getProgramID() {
+        return getCurrentProjectId();
+    }
 }

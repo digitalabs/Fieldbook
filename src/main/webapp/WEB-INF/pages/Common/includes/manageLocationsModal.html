@@ -8,7 +8,7 @@
 							&nbsp;
 						</div>
 						<div class="col-xs-1 col-md-1">
-							<button  id="closeManageLocationModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" onClick="recreateLocationCombo();" aria-hidden="true"/>
+							<button id="closeManageLocationModal" type="button" class="close  pull-right glyphicon glyphicon-remove" data-dismiss="modal" onClick="propagateLocationUpdateEvent();" aria-hidden="true"/>
 						</div>										
 					</div>					
 					<div>
@@ -24,11 +24,29 @@
 <div layout:fragment="page-script">
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
-	function closeLocationFrame(){
-		recreateLocationCombo();
-		$('#manageLocationModal').modal('hide');
+    (function() {
+        document.programLocationUrl = /*[[${programLocationURL}]]*/ '';
+        document.projectID = /*[[${projectID}]]*/ '';
+    })();
 
+	function closeLocationFrame(){
+		propagateLocationUpdateEvent();
+		$('#manageLocationModal').modal('hide');
 	}
+
+    function propagateLocationUpdateEvent() {
+        $.event.trigger({
+            type : 'location-update'
+        });
+    }
+
+    function openManageLocations() {
+    	$('#manageLocationModal').modal({ backdrop: 'static', keyboard: true });
+    	if (locationIframeOpened == false) {
+    		locationIframeOpened = true;
+    		$('#locationFrame').attr('src', document.programLocationUrl + document.projectID);
+    	}
+    }
 	//]]>
 </script>
 </div>

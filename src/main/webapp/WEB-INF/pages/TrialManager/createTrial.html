@@ -167,12 +167,16 @@
 
     <!-- included modals -->
     <div id="showBaselineTraitDetails" th:include="/NurseryManager/includes/baselineTraitDetails"></div>
-    <div th:include="/NurseryManager/includes/variableSelectionModal"></div>
+    <div class="nrm-var-selection-modal-container" th:include="/NurseryManager/includes/variableSelectionModal"></div>
+    <div th:include="/Common/includes/manageLocationsModal"></div>
 
 
 
     <!-- MAIN jS -->
     <script type="text/javascript" th:src="@{/static/js/trialmanager/manageTrial.js}"></script>
+    <script type="text/javascript" th:src="@{/static/js/lib/handlebars.js}"></script>
+        <script type="text/javascript" th:src="@{/static/js/nursery-manager/choose-settings.js}"></script>
+        <script type="text/javascript" th:src="@{/static/js/nursery-manager/variable-selection.js}"></script>
 
     <!-- constants here -->
     <script type="text/javascript" th:inline="javascript">
@@ -189,7 +193,6 @@
         var saveTemplateSettingSuccess = /*[[#{manage.settings.save.setting.success}]]*/ '';
         var templateSettingNameError = /*[[#{manage.settings.setting.name.error}]]*/ '';
         var templateSettingNameErrorUnique = /*[[#{manage.settings.setting.name.unique.error}]]*/ '';
-        var programLocationUrl = '';
         var programMethodUrl = '';
         var locationIframeOpened = false;
         var methodIframeOpened = false;

@@ -113,6 +113,10 @@
 			 $('#showFavoriteLocationInventory').on('change', function(){
 				 showCorrectLocationInventoryCombo();
 			})
+
+             // remove any other listeners for the location update
+             $(document).off('location-update');
+             $(document).on('location-update', recreateLocationCombo);
 		  });
 		  
     //]]>

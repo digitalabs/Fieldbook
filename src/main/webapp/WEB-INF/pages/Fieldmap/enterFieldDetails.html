@@ -309,6 +309,10 @@
 
 		showBlockDetails(true, null);
 
+        // remove any other listeners for the location update
+        $(document).off('location-update');
+        $(document).on('location-update', recreateLocationCombo);
+
 		$('#s2id_fieldLocationIdFavorite').hide();
 		$('#s2id_fieldLocationIdAll').show();
 		$('#showFavoriteLocation').removeAttr("checked");

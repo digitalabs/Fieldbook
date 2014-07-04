@@ -6,7 +6,6 @@ import com.efficio.fieldbook.web.nursery.controller.SettingsController;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.TreeViewUtil;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TraitClassReference;

@@ -1,11 +1,12 @@
 /*global angular*/
 /*global showBaselineTraitDetailsModal */
-
+/* global openManageLocations, ChooseSettings, alert */
 (function() {
     'use strict';
 
     angular.module('fieldbook-utils', ['ui.select2'])
-        .constant('ONTOLOGY_TREE_ID', 'ontologyBrowserTree')
+        .constant('VARIABLE_SELECTION_MODAL_SELECTOR', '.nrm-var-selection-modal-container')
+        .constant('VARIABLE_SELECTED_EVENT_TYPE', 'nrm-variable-select')
         .directive('displaySettings', function() {
             return {
                 restrict : 'E',
@@ -71,8 +72,11 @@
                     labels : '='
                 },
 
-                controller : function($scope, $element, $attrs,ONTOLOGY_TREE_ID) {
+                controller : function($scope, $element, $attrs, VARIABLE_SELECTION_MODAL_SELECTOR, VARIABLE_SELECTED_EVENT_TYPE) {
                     $scope.processModalData = function (data) {
+                        if (data.responseData) {
+                            data = data.responseData;
+                        }
                         if (data) {
                             // if retrieved data is an array of values
                             if (data.length && data.length > 0) {
@@ -91,18 +95,31 @@
                         }
                     };
 
+                    $(VARIABLE_SELECTION_MODAL_SELECTOR).off(VARIABLE_SELECTED_EVENT_TYPE);
+                    $(VARIABLE_SELECTION_MODAL_SELECTOR).on(VARIABLE_SELECTED_EVENT_TYPE, $scope.processModalData);
+
                     $element.on('click',  function() {
-                        // TODO change modal such that it no longer requires id / class-based DOM manipulation
+                        /*// TODO change modal such that it no longer requires id / class-based DOM manipulation
                         // FIXME
                         window.ChooseSettings.getStandardVariables($scope.labels, $attrs.variableType,
-                            ONTOLOGY_TREE_ID, $scope.processModalData);
+                            ONTOLOGY_TREE_ID, $scope.processModalData);*/
+                        var eventProxy = {
+                            preventDefault : function() {
+                            },
+                            data : {
+                                group : $attrs.variableType
+                            }
+                        };
 
+                        var chooseSettings = new ChooseSettings(VARIABLE_SELECTION_MODAL_SELECTOR, {});
+                        chooseSettings._openVariableSelectionDialog(eventProxy);
                     });
                 }
             };
         })
         .directive('openOntologyBrowserPopup', function() {
-            // FIXME : Note this also retrives the possible_values of the selected variables, modify this as not all screens need this particular variable.
+            // FIXME : Note this also retrives the possible_values of
+            // the selected variables, modify this as not all screens need this particular variable
 
             return {
                 restrict : 'A',
@@ -112,6 +129,10 @@
 
                 controller : function($scope, $element, $attrs,ONTOLOGY_TREE_ID) {
                     $scope.processModalData = function (data) {
+                        if (data.responseData) {
+                            data = data.responseData;
+                        }
+
                         var resultData = {};
                         if (data) {
                             // if retrieved data is an array of values
@@ -130,7 +151,6 @@
                             if (!$scope.$$phase) {
                                 $scope.$apply();
                             }
-
                         }
                     };
 
@@ -206,7 +226,7 @@
                                 };
 
                                 // return the array that matches
-                                data.results = $.grep(data.results, function (item, index) {
+                                data.results = $.grep(data.results, function (item) {
                                     return ($.fn.select2.defaults.matcher(query.term,
                                         item.name));
 
@@ -219,6 +239,55 @@
                             }
 
                         };
+                    }
+
+                    if ($scope.isLocation) {
+                        $scope.updateLocationValues = function () {
+                            if (!$scope.variableDefinition.locationUpdated) {
+                                $.ajax({
+                                    url: '/Fieldbook/NurseryManager/advance/nursery/getLocations',
+                                    type: 'GET',
+                                    cache: false,
+                                    data: '',
+                                    success: function (data) {
+                                        if (data.success === '1') {
+                                            $scope.variableDefinition.locationUpdated = true;
+                                            $scope.variableDefinition.possibleValues = $scope.convertLocationsToPossibleValues(
+                                                $.parseJSON(data.allBreedingLocations));
+                                            $scope.variableDefinition.possibleValuesFavorite = $scope.convertLocationsToPossibleValues(
+                                                $.parseJSON(data.favoriteLocations));
+
+                                            if (!$scope.$$phase) {
+                                                $scope.$apply();
+                                            }
+                                        }
+                                    }
+
+                                });
+                            }
+                        };
+
+                        $scope.convertLocationsToPossibleValues = function (locations) {
+                            var possibleValues = [];
+
+                            $.each(locations, function (key, value) {
+                                possibleValues.push({
+                                    id: value.locid,
+                                    name: value.lname,
+                                    description: value.lname
+                                });
+                            });
+
+                            return possibleValues;
+                        };
+
+                        $scope.initiateManageLocationModal = function () {
+                            $scope.variableDefinition.locationUpdated = false;
+                            openManageLocations();
+                        };
+
+                        $(document).off('location-update');
+                        $(document).on('location-update', $scope.updateLocationValues);
                     }
                 }
             };

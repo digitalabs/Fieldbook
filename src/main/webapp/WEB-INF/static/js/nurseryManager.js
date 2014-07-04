@@ -445,11 +445,11 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 									+ '<div id="possibleValuesJson'
 									+ ctr
 									+ '" class="possibleValuesJson" style="display:none">'
-									+ settingDetail.possibleValuesJson
+									+ JSON.stringify(settingDetail.possibleValues)
 									+ '</div><div id="possibleValuesFavoriteJson'
 									+ ctr
 									+ '" class="possibleValuesFavoriteJson" style="display:none">'
-									+ settingDetail.possibleValuesFavoriteJson
+									+ JSON.stringify(settingDetail.possibleValuesFavorite)
 									+ '</div>';
 
 							newRow = newRow
@@ -483,11 +483,11 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 									+ "<div id='possibleValuesJson"
 									+ ctr
 									+ "' class='possibleValuesJson' style='display:none'>"
-									+ settingDetail.possibleValuesJson
+									+ JSON.stringify(settingDetail.possibleValues)
 									+ "</div><div id='possibleValuesFavoriteJson"
 									+ ctr
 									+ "' class='possibleValuesFavoriteJson' style='display:none'>"
-									+ settingDetail.possibleValuesFavoriteJson
+									+ JSON.stringify(settingDetail.possibleValuesFavorite)
 									+ "</div>";
 
 							newRow = newRow
@@ -500,7 +500,7 @@ function createDynamicSettingVariables(data, name, tableId, rowClass, varType,
 									+ posValSuffix + ctr
 									+ '" class="possibleValuesJson'
 									+ posValSuffix + '" style="display:none">'
-									+ settingDetail.possibleValuesJson
+									+ JSON.stringify(settingDetail.possibleValues)
 									+ '</div></div>';
 						}
 
@@ -618,9 +618,7 @@ function toggleMethodDropdown(rowIndex) {
 
 function toggleLocationDropdown(rowIndex) {
 	var possibleValues;
-	var showFavorite = $(
-			"#"
-					+ getJquerySafeId("studyLevelVariables" + rowIndex
+	var showFavorite = $("#" + getJquerySafeId("studyLevelVariables" + rowIndex
 							+ ".favorite1")).is(":checked");
 	var selectedVal = "";
 	var showAll = true;
@@ -640,41 +638,41 @@ function toggleLocationDropdown(rowIndex) {
 			false, null);
 
 	// get possible values based on checkbox
-	if (showFavorite) {
-		possibleValues = $("#possibleValuesFavoriteJson" + rowIndex).text();
-		showAll = false;
-		$(
-				$(
-						"#"
-								+ getJquerySafeId("studyLevelVariables"
-										+ rowIndex + ".value")).parent().find(
-						".selectedValue")).val(selectedVal);
-		selectedVal = $(
-				$(
-						"#"
-								+ getJquerySafeId("studyLevelVariables"
-										+ rowIndex + ".value")).parent().find(
-						".selectedValueFave")).val();
-	} else {
-		possibleValues = $("#possibleValuesJson" + rowIndex).text();
-		$(
-				$(
-						"#"
-								+ getJquerySafeId("studyLevelVariables"
-										+ rowIndex + ".value")).parent().find(
-						".selectedValueFave")).val(selectedVal);
-		selectedVal = $(
-				$(
-						"#"
-								+ getJquerySafeId("studyLevelVariables"
-										+ rowIndex + ".value")).parent().find(
-						".selectedValue")).val();
-	}
+    if (showFavorite) {
+        possibleValues = $("#possibleValuesFavoriteJson" + rowIndex).text();
+        showAll = false;
+        $(
+            $(
+                    "#"
+                    + getJquerySafeId("studyLevelVariables"
+                    + rowIndex + ".value")).parent().find(
+                ".selectedValue")).val(selectedVal);
+        selectedVal = $(
+            $(
+                    "#"
+                    + getJquerySafeId("studyLevelVariables"
+                    + rowIndex + ".value")).parent().find(
+                ".selectedValueFave")).val();
+    } else {
+        possibleValues = $("#possibleValuesJson" + rowIndex).text();
+        $(
+            $(
+                    "#"
+                    + getJquerySafeId("studyLevelVariables"
+                    + rowIndex + ".value")).parent().find(
+                ".selectedValueFave")).val(selectedVal);
+        selectedVal = $(
+            $(
+                    "#"
+                    + getJquerySafeId("studyLevelVariables"
+                    + rowIndex + ".value")).parent().find(
+                ".selectedValue")).val();
+    }
 
-	// recreate select2 combo
-	initializePossibleValuesCombo($.parseJSON(possibleValues), "#"
-			+ getJquerySafeId("studyLevelVariables" + rowIndex + ".value"),
-			showAll, selectedVal);
+    // recreate select2 combo
+    initializePossibleValuesCombo($.parseJSON(possibleValues), "#"
+            + getJquerySafeId("studyLevelVariables" + rowIndex + ".value"),
+        showAll, selectedVal);
 }
 
 function createTableSettingVariables(data, name, tableId, varType) {

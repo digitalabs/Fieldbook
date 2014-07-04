@@ -95,7 +95,7 @@ public class AdvancingSource {
 	 * @return the isBulk
 	 */
 	public boolean isBulk() {
-		return isBulk;
+		return getBreedingMethod() != null ? getBreedingMethod().isBulkingMethod() : false;
 	}
 
 	/**

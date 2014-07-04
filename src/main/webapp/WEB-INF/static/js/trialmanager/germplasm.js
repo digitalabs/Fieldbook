@@ -19,27 +19,32 @@
             placeholderLabel: 'Temp placeholder here'
         };
 
+        $scope.updateOccurred = false;
+
+        $scope.$on('deleteOccurred', function() {
+            $scope.updateOccurred = true;
+        });
+
+        $scope.$on('variableAdded', function() {
+            $scope.updateOccurred = true;
+        });
+
         $scope.updateDataTable = function() {
-            var forSubmit = [];
-
-            $.each($scope.data.settings, function(key, value) {
-                forSubmit.push({
-                    termId : value.variable.cvTermId + '',
-                    termName : value.variable.name
-                });
-            });
-
             $.ajax({
                 url: '/Fieldbook/TrialManager/GermplasmList/refreshListDetails',
                 type: 'POST',
                 cache: false,
-                data: JSON.stringify(forSubmit),
-                contentType: 'application/json',
+                data: '',
                 success: function (html) {
                     $('#imported-germplasm-list').html(html);
                     $('#entries-details').css('display', 'block');
                     $('#numberOfEntries').html($('#totalGermplasms').val());
                     $('#imported-germplasm-list-reset-button').css('opacity', '1');
+                    $scope.updateOccurred = false;
+
+                    if (!$scope.$$phase) {
+                        $scope.$apply();
+                    }
                 }
 
             });

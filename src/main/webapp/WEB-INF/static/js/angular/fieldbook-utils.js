@@ -28,6 +28,8 @@
                                 success: function () {
                                 }
                             });
+
+                            $scope.$emit('deleteOccurred');
                         }
                     };
 
@@ -102,6 +104,7 @@
                                 $scope.$apply();
                             }
 
+                            $scope.$emit('variableAdded');
                         }
                     };
 

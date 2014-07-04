@@ -9,7 +9,7 @@
            <span select-standard-variable="" class="btn btn-info"
                  variable-type="2" labels="labels.germplasmFactors" modeldata="data.settings">Add</span>
            </div> &nbsp;
-           <a href="javascript: void(0);" ng-click="updateDataTable()" class="btn btn-info pull-right">Refresh</a>
+           <a href="javascript: void(0);" ng-show="updateOccurred" ng-click="updateDataTable()" class="btn btn-info pull-right">Refresh</a>
            </div>
            <div class="form-horizontal sectionContainer">
                <display-settings settings="data.settings" variable-type="2"></display-settings>

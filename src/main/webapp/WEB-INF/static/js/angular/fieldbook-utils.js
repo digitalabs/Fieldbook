@@ -310,6 +310,45 @@
             };
         })
 
+        .directive("sectionContainer",function(){
+            return {
+                restrict: 'E',
+                scope : {
+                    heading : '@',
+                    reminder : '@',
+                    helpTooltip : '@'
+                },
+                transclude : true,
+                templateUrl: '/Fieldbook/static/angular-templates/sectionContainer.html',
+                link : function (scope,elem,attrs) {
+                    scope.collapsible = scope.$eval(attrs.collapsible);
+
+                    attrs.$observe('reminder',function(value){
+                        if (value) {
+                            scope.showReminder = true;
+                        }
+                    });
+
+                    attrs.$observe('helpTooltip',function(value){
+                        if (value) {
+                            scope.hasHelpTooltip = true;
+                        }
+                    });
+
+
+                },
+                controller : ['$scope','$attrs',function($scope,$attrs) {
+                    $scope.toggleCollapse = false;
+                    $scope.doCollapse = function() {
+                        if ($scope.collapsible) {
+                            $scope.toggleSection = !$scope.toggleSection;
+                        }
+                    };
+                }]
+
+            };
+        })
+
         // filters
 
         .filter('range', function() {

@@ -1,16 +1,7 @@
-<div class="row col-lg-6 col-md-8 col-sm-10 col-xs-12" ng-controller="TreatmentCtrl">
+<div class="col-lg-6 col-md-8 col-sm-10 col-xs-12" ng-controller="TreatmentCtrl">
     <!-- title -->
-    <div>
-        <label class="control-label section-toggle toggle-icon" slide-toggle="" section=".treatmentFactors">
-            <img style="margin-left: -10px" class="icn section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
-            <img style="display:none; margin-left: -7px" class="icn section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
-            <strong class="sub-content-heading" th:text="#{trial.managesettings.treatment.factors.title}">Define Additional Treatment Factors</strong>
-        </label>
-    </div>
-
-    <div id='addtl-treatment-factors' class="sectionContainer collapse in treatmentFactors">
-
-        <div class="form-group">
+    <section-container collapsible="true" th:attr="heading=#{trial.managesettings.treatment.factors.title}">
+        <div>
             <span>
                 <b class="sub-content-heading" th:text="#{trial.managesettings.treatment.factors}">TREATMENT FACTORS</b>
                 <span class="bms-fa-question-circle help-tooltip-nursery" tooltip-placement="right" tooltip-container="body" th:attr="tooltip=#{trial.managesettings.treatment.factors.notes}"></span>
@@ -19,43 +10,37 @@
             <span open-ontology-browser-popup="" on-select-variables="addManagementVariables(result)" th:attr="label=#{nursery.managesettings.add.nursery.level.settings},placeholder=#{nursery.reminder.add.nursery.settings}" variable-type="1" class="btn btn-info pull-right nrm-md-variable-select" >Add</span>
         </div>
 
-        <div class="row">
-            <div class="col-md-12">
-                <form role='form' id='addtl-treatment-factors-form' novalidate="">
-                    <table class='factor-opts-tbl table table-curved table-condensed'>
-                        <thead>
-                            <tr>
-                                <th>&nbsp;</th>
-                                <th th:text="#{trial.managesettings.treatment.factors.name}">Name</th>
-                                <th th:text="#{trial.managesettings.treatment.factors.description}">Description</th>
-                                <th th:text="#{trial.managesettings.treatment.factors.level}">Levels</th>
+        <div class="add_top_padding">
+            <table class='factor-opts-tbl table table-curved table-condensed'>
+                <thead>
+                    <tr>
+                        <th>&nbsp;</th>
+                        <th th:text="#{trial.managesettings.treatment.factors.name}">Name</th>
+                        <th th:text="#{trial.managesettings.treatment.factors.description}">Description</th>
+                        <th th:text="#{trial.managesettings.treatment.factors.level}">Levels</th>
+                    </tr>
+                </thead>
 
-                            </tr>
-                        </thead>
+                <tbody >
+                <tr ng-repeat="(key,item) in data.managementDetails track by key">
+                    <td ng-class-odd="'odd'" ng-class-even="'even'"><span class='glyphicon glyphicon-minus-sign delete-factor' ng-click="removeTreatmentFactorByIndex(key)"></span>
+                    </td>
+                    <td ng-class-odd="'odd'" ng-class-even="'even'"><a ng-click='showDetailsModal(key)' >{{item.variable.name}}</a>
+                    </td>
+                    <td ng-class-odd="'odd'" ng-class-even="'even'">{{item.variable.description}}</td>
+                    <td ng-class-odd="'odd'" ng-class-even="'even'">
+                        <input valid-number="" maxlength="2" type='text' class='form-control' ng-model='item.variableLabelCount' ng-change='onLevelChange(item.variable.name,item.variableLabelCount)' />
+                    </td>
+                </tr>
 
+                <tr ng-hide="managementDetailsSize() &gt; 0">
+                    <td class="odd">&nbsp;</td><td class="odd">&nbsp;</td><td class="odd">&nbsp;</td><td class="odd">&nbsp;</td>
+                </tr>
 
-                        <tbody >
-                            <tr ng-repeat="(key,item) in data.managementDetails track by key">
-                                <td ng-class-odd="'odd'" ng-class-even="'even'"><span class='glyphicon glyphicon-minus-sign delete-factor' ng-click="removeTreatmentFactorByIndex(key)"></span>
-                                </td>
-                                <td ng-class-odd="'odd'" ng-class-even="'even'"><a ng-click='showDetailsModal(key)' >{{item.variable.name}}</a>
-                                </td>
-                                <td ng-class-odd="'odd'" ng-class-even="'even'">{{item.variable.description}}</td>
-                                <td ng-class-odd="'odd'" ng-class-even="'even'">
-                                    <input valid-number="" maxlength="2" type='text' class='form-control' ng-model='item.variableLabelCount' ng-change='onLevelChange(item.variable.name,item.variableLabelCount)' />
-                                </td>
-                            </tr>
-
-                            <tr ng-hide="managementDetailsSize() &gt; 0">
-                                <td class="odd">&nbsp;</td><td class="odd">&nbsp;</td><td class="odd">&nbsp;</td><td class="odd">&nbsp;</td>
-                            </tr>
-
-                        </tbody>
-                    </table>
-                </form>
-            </div>
+                </tbody>
+            </table>
         </div>
-    </div><!-- end addtl-treatment-factors -->
+    </section-container>
 
     <div id='treatment-levels' ng-hide="managementDetailsSize() &lt;= 0" class="add_top_padding">
         <!-- title -->

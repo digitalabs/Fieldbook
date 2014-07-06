@@ -84,62 +84,20 @@
 	<div id="open-germplasm" th:include="/Common/includes/openGermplasmDetailsModal"></div>
 </div>
 
-<!-- Scripts location, note that the div tag will be remove after merging to decorator -->
-<div layout:fragment="page-script">
-	<script type="text/javascript" th:src="@{/static/js/fbk-data-table/fieldbook-datatable.js}"></script>
-	<script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery-multisortable.js}"></script>
-	<script type="text/javascript" th:src="@{/static/js/lib/jquery/jquery.tablednd.0.7.min.js}"></script>
-	
-	<script type="text/javascript" th:inline="javascript">
-		//<![CDATA[		
-		/*globals initializeCheckTypeSelect2, reloadCheckTypeDropDown*/
-    	/* exported prevStartIndex,checkTypesObj */
-    	var checkTypes = /*[[${checkTypes}]]*/ null,
-    		checkTypesObj = [];
-		
+<!-- Cyrus: moved the script to germplasm.js for organization. Only globals initialized from thymeleaf:spring should go here -->
+<script type="text/javascript" th:inline="javascript">
+    //<![CDATA[
+
+        /*globals initializeCheckTypeSelect2, reloadCheckTypeDropDown*/
+        /* exported prevStartIndex,checkTypesObj */
+        var checkTypes = /*[[${checkTypes}]]*/ null,
+            checkTypesObj = [];
+
         $(document).ready(function () {
             'use strict';
-			
-            displayGermplasmListTree('germplasmTree', false, 0, function (node, event) {
-                var currentFolderName = node.data.title;
-                $(getDisplayedModalSelector() + ' #newGermplasmFolderName').val(currentFolderName);
-            });
-			
-            changeBrowseGermplasmButtonBehavior(false);
-
-            $('#listTreeModal').on('hide.bs.modal', function () {
-                $('#' + getDisplayedTreeName()).dynatree('getTree').reloadStudyTree();
-                changeBrowseGermplasmButtonBehavior(false);
-                $(getDisplayedModalSelector() + ' #addGermplasmFolderDiv').hide();
-                $(getDisplayedModalSelector() + ' #renameGermplasmFolderDiv').hide();
-            });
-           	
+            document.onLoadGermplasmDetails();
         });
-             
-    	$( document ).ready(function() {
-    		'use strict';
-    		$('#manageCheckTypesModal').on('hidden.bs.modal', function () {
-    			reloadCheckTypeDropDown(false, 'checklist-select');
-    		});
 
-    		initializeCheckTypeSelect2(checkTypes, [], false, 0, 'comboCheckCode');
-    		$('#updateCheckTypes').hide();
-    		$('#deleteCheckTypes').hide();
-    	});
 
-    	function hideGermplasmColumn(colName){    		
-    		'use strict';
-    		var column = null;
-    		// Get the column API object
-    		if(germplasmDataTable != null){
-				column = germplasmDataTable.getDataTableColumn(colName);
-				// Toggle the visibility
-				if(column !== null){
-					germplasmDataTable.getDataTable().fnSetColumnVis( column.idx, !column.bVisible );
-				}
-    		}
-    	}
-    
-	//]]>
-	</script>
-</div>
+    //]]>
+</script>

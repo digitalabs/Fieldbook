@@ -377,8 +377,21 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 				$(this).parent().addClass('fbk-dropdown-select-fade');
 				$(this).parent().removeClass('fbk-dropdown-select-highlight');
 			}
-			hideGermplasmColumn($(this).attr('data-column-name'));			
-		});
+
+			// hide germplasm column
+            (function(colName){
+                var column = null;
+                // Get the column API object
+                if(germplasmDataTable != null){
+                    column = germplasmDataTable.getDataTableColumn(colName);
+                    // Toggle the visibility
+                    if(column !== null){
+                        germplasmDataTable.getDataTable().fnSetColumnVis( column.idx, !column.bVisible );
+                    }
+                }
+            })($(this).attr('data-column-name'));
+
+        });
 	};
 
 	return dataTableConstructor;

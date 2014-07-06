@@ -22,8 +22,12 @@
 <script id="variable-template" type="text/x-handlebars-template">
   {{#each variables}}
   <ul class="nrm-var-select-var">
-  	<span><strong><span class="nrm-var-name">{{name}}</span></strong> - {{description}}</span>
-  	<button type="button" class="btn btn-primary nrm-var-select-add">Select</button>
+	<span><strong><span class="nrm-var-name">{{name}}</span></strong> - {{description}}</span>
+	{{#ifSelectedVariable id}}
+		<button type="button" class="btn btn-primary nrm-var-select-add" disabled="disabled">Select</button>
+	{{else}}
+		<button type="button" class="btn btn-primary nrm-var-select-add">Select</button>
+	{{/ifSelectedVariable}}
   </ul>
   {{/each}}
 </script>

@@ -31,10 +31,18 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		generateVariable = Handlebars.compile($('#variable-template').html()),
 		generateDropdownMarkup = Handlebars.compile($('#nrm-var-select-dropdown-template').html()),
 
-		// TODO Reconsider this - maybe scope to the class. Keep track of the selected property
 		selectedProperty,
+		selectedVariables,
 
 		VariableSelection;
+
+	Handlebars.registerHelper('ifSelectedVariable', function(variableId, options) {
+		if (selectedVariables.indexOf(variableId) !== -1)  {
+			return options.fn(this);
+		} else {
+			return options.inverse(this);
+		}
+	});
 
 	function formatResult(item) {
 		var formattedItem,
@@ -53,7 +61,6 @@ BMS.NurseryManager.VariableSelection = (function($) {
 			}
 			formattedItem += variables[i].name;
 		}
-
 		return formattedItem + '</p>';
 	}
 
@@ -65,7 +72,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 		$(propertyDropdownContainerSelector).append(generateDropdownMarkup());
 
-		$(propertyDropdownSelector).select2({
+		return $(propertyDropdownSelector).select2({
 			placeholder: placeholder,
 			minimumResultsForSearch: 20,
 			data: {
@@ -79,16 +86,6 @@ BMS.NurseryManager.VariableSelection = (function($) {
 					id: item.propertyId
 				};
 			}
-		}).on('select2-selecting', function(e) {
-
-			var variableList = $(variableListSelector);
-
-			// Hold on this for later use
-			selectedProperty = e.choice;
-
-			// Clear currently selected property and select the new one
-			variableList.empty();
-			variableList.append(generateVariable({variables: selectedProperty.standardVariables}));
 		});
 	}
 
@@ -101,7 +98,8 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		e.preventDefault();
 
 		// TODO Error handling for not finding element
-		var selectedVariableElement = $(e.target).parent('.nrm-var-select-var'),
+		var selectButton = $(e.target),
+			selectedVariableElement = selectButton.parent('.nrm-var-select-var'),
 			variableName = $(selectedVariableElement.find('.nrm-var-name')[0]).text(),
 			variables = selectedProperty.standardVariables,
 			varLength = variables.length,
@@ -118,6 +116,8 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 		// TODO Error handling if selected var is undefined
 
+		selectButton.attr('disabled', 'disabled');
+
 		$.ajax({
 			url: '/Fieldbook/NurseryManager/createNursery/addSettings/' + group,
 			type: 'POST',
@@ -131,14 +131,21 @@ BMS.NurseryManager.VariableSelection = (function($) {
 				'Content-Type': 'application/json'
 			},
 			success: function(data) {
+
+				// Prevent this variable from being selected again
+				selectedVariables.push(selectedVariable.id);
+
 				// FIXME Should pass this selector through
 				$('.nrm-var-selection-modal-container').trigger({
 					type: VARIABLE_SELECT_EVENT,
 					group: group,
 					responseData: data
 				});
+			},
+			failure: function() {
+				// TODO HH Error handling
+				selectButton.removeAttr('disabled');
 			}
-			// TODO HH Error handling
 		});
 	}
 
@@ -173,23 +180,39 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		destroyPropertyDropdown();
 	};
 
-	VariableSelection.prototype.show = function(group, properties, variables, translations) {
+	VariableSelection.prototype.show = function(group, translations, groupData) {
 
-		var modalHeader = $(this._modalSelector + ' ' + modalHeaderSelector),
-			title;
+		var properties = groupData.propertyData,
+			modalHeader = $(this._modalSelector + ' ' + modalHeaderSelector),
+			title,
+			propertyDropdown;
+
+		selectedVariables = groupData.selectedVariables;
 
 		// Append title
 		title = $('<h4 class="modal-title" id="nrm-var-selection-modal-title">' + translations.label + '</h4>');
 		modalHeader.append(title);
 
 		// Instantiate select2 widget for property dropdown
-		initialisePropertyDropdown(translations.placeholderLabel, properties);
+		propertyDropdown = initialisePropertyDropdown(translations.placeholderLabel, properties);
+
+		propertyDropdown.on('select2-selecting', function(e) {
+
+			var variableList = $(variableListSelector);
+
+			// Hold on this for later use
+			selectedProperty = e.choice;
+
+			// Clear currently selected property and select the new one
+			variableList.empty();
+			variableList.append(generateVariable({variables: selectedProperty.standardVariables}));
+		});
 
 		// TODO Awaiting Rebecca's JSONified variable usage service
-		// $('.nrm-var-select-popular-vars').append(generateVariable({variables: variables}));
+		// $('.nrm-var-select-popular-vars').append(generateVariable({variables: groupData.variables}));
 
 		// Listen for variable selection
-		$(variableListSelector).on('click', addVariableButtonSelector, {group: group}, selectVariableButton);
+		$(variableListSelector).on('click', addVariableButtonSelector, {group: group}, $.proxy(selectVariableButton, this));
 
 		// Show the modal
 		this._$modal.modal({

@@ -5,10 +5,40 @@
 window.ChooseSettings = (function() {
 	'use strict';
 
-	var modalSelector = '.nrm-var-selection-modal',
+	var MODES = {
+			MANAGEMENT_DETAILS: 1,
+			FACTORS: 2,
+			TRAITS: 3,
+			SELECTION_VARIATES: 6,
+			NURSERY_CONDITIONS: 7
+		},
+
+		modalSelector = '.nrm-var-selection-modal',
 		dialogOpenSelector = '.nrm-var-select-open',
-		variableSelectionGroups,
+		variableSelectionGroups = {},
 		ChooseSettings;
+
+	function findVariables(startingSelector) {
+
+		var allMatches = $('[id^=' + startingSelector + ']'),
+			variables = [],
+			findElement,
+			variableElement;
+
+		findElement = function() {
+			return $(this).attr('id') === startingSelector + i + '.variable.cvTermId';
+		};
+
+		for (var i = allMatches.length - 1; i >= 0; i--) {
+			variableElement = allMatches.filter(findElement);
+
+			if (variableElement.length > 0) {
+				variables.push(parseInt($(variableElement[0]).attr('value')));
+			}
+			// TODO Error handling
+		}
+		return variables;
+	}
 
 	function addSelectedVariables(e) {
 
@@ -16,26 +46,26 @@ window.ChooseSettings = (function() {
 			data = e.responseData;
 
 		switch (group) {
-			case 1:
+			case MODES.MANAGEMENT_DETAILS:
 				createDynamicSettingVariables(data,
 						'studyLevelVariables', 'nurseryLevelSettings-dev', 'nurseryLevelSettings', group, '');
 				break;
-			case 2:
+			case MODES.FACTORS:
 				createTableSettingVariables(data, 'plotLevelVariables', 'plotLevelSettings', group);
 				break;
-			case 3:
+			case MODES.TRAITS:
 				hideDummyRow('baselineTraitSettings');
 				createTableSettingVariables(data, 'baselineTraitVariables', 'baselineTraitSettings', group);
 				checkTraitsAndSelectionVariateTable('', false);
 				break;
-			case 6:
+			case MODES.SELECTION_VARIATES:
 				hideDummyRow('selectionVariatesSettings');
 				createTableSettingVariables(data,
 						'selectionVariatesVariables',
 						'selectionVariatesSettings', group);
 				checkTraitsAndSelectionVariateTable('', false);
 				break;
-			case 7:
+			case MODES.NURSERY_CONDITIONS:
 				createDynamicSettingVariables(data,
 						'nurseryConditions', 'nurseryConditionsSettings',
 						'nurseryConditionsSettings', group, 'Cons');
@@ -49,32 +79,41 @@ window.ChooseSettings = (function() {
 
 	ChooseSettings = function(modalContainerSelector, translations) {
 
-		variableSelectionGroups = {
-			1: {
-				selector: '.nrm-management-details',
-				label: translations.mdLabel,
-				placeholder: translations.mdPlaceholder
-			},
-			2: {
-				selector: '.nrm-factors',
-				label: translations.fdLabel,
-				placeholder: translations.fdPlaceholder
-			},
-			6: {
-				selector: '.nrm-selection-variates',
-				label: translations.svLabel,
-				placeholder: translations.svPlaceholder
-			},
-			3: {
-				selector: '.nrm-traits',
-				label: translations.tdLabel,
-				placeholder: translations.tdPlaceholder
-			},
-			7: {
-				selector: '.nrm-nursery-conditions',
-				label: translations.ncLabel,
-				placeholder: translations.ncPlaceholder
-			}
+		// Look for any existing variables and instaniate our list of them
+
+		variableSelectionGroups[MODES.MANAGEMENT_DETAILS] = {
+			selector: '.nrm-management-details',
+			label: translations.mdLabel,
+			placeholder: translations.mdPlaceholder,
+			variableMarkupSelector: 'studyLevelVariables'
+		};
+
+		variableSelectionGroups[MODES.FACTORS] = {
+			selector: '.nrm-factors',
+			label: translations.fdLabel,
+			placeholder: translations.fdPlaceholder,
+			variableMarkupSelector: 'plotLevelVariables'
+		};
+
+		variableSelectionGroups[MODES.TRAITS] = {
+			selector: '.nrm-traits',
+			label: translations.tdLabel,
+			placeholder: translations.tdPlaceholder,
+			variableMarkupSelector: 'baselineTraitVariables'
+		};
+
+		variableSelectionGroups[MODES.SELECTION_VARIATES] = {
+			selector: '.nrm-selection-variates',
+			label: translations.svLabel,
+			placeholder: translations.svPlaceholder,
+			variableMarkupSelector: 'selectionVariatesVariables'
+		};
+
+		variableSelectionGroups[MODES.NURSERY_CONDITIONS] = {
+			selector: '.nrm-nursery-conditions',
+			label: translations.ncLabel,
+			placeholder: translations.ncPlaceholder,
+			variableMarkupSelector: 'nurseryConditions'
 		};
 
 		$(modalContainerSelector).on('nrm-variable-select', addSelectedVariables);
@@ -104,14 +143,22 @@ window.ChooseSettings = (function() {
 
 				// Initialise a new Variable Selection instance, passing through the properties, group type and groupTranslations
 				// TODO get variable usage
-				modal.show(groupId, data, [], groupTranslations);
+				modal.show(groupId, groupTranslations, {
+					propertyData: data,
+					variableUsageData: [],
+					selectedVariables: findVariables(group.variableMarkupSelector)
+				});
 			});
 
 			// TODO Error handling
 
 		} else {
 			// We've shown this before, and have the data. Just show the dialog.
-			modal.show(groupId, group.data, group.usageData, groupTranslations);
+			modal.show(groupId, groupTranslations, {
+				propertyData: group.data,
+				variableUsageData: group.usageData,
+				selectedVariables: findVariables(group.variableMarkupSelector)
+			});
 		}
 	};
 

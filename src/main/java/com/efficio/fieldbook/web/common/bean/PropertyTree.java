@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
-import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.StandardVariableSummary;
 import org.generationcp.middleware.domain.oms.PropertyReference;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 
@@ -16,7 +16,7 @@ public class PropertyTree {
 	
 	private PropertyReference propertyReference;
 	
-	private List<StandardVariable> standardVariables = new ArrayList<StandardVariable>();
+	private List<StandardVariableSummary> standardVariables = new ArrayList<StandardVariableSummary>();
 	
 	public PropertyTree(PropertyReference propertyReference) {
 		this.propertyReference = propertyReference;
@@ -44,12 +44,12 @@ public class PropertyTree {
 		traitClass.setTraitClassName(traitClassReference.getName());
 	}
 	
-	public List<StandardVariable> getStandardVariables() {
+	public List<StandardVariableSummary> getStandardVariables() {
 		return standardVariables;
 	}
 
 	
-	public void setStandardVariables(List<StandardVariable> standardVariables) {
+	public void setStandardVariables(List<StandardVariableSummary> standardVariables) {
 		this.standardVariables = standardVariables;
 	}
 	

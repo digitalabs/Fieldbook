@@ -1,21 +1,21 @@
 package com.efficio.fieldbook.web.ontology.bean;
 
-import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.StandardVariableSummary;
 
 
 public class OntologyUsage implements Comparable {
 	
-	private StandardVariable standardVariable;
+	private StandardVariableSummary standardVariable;
 	
 	private Long projectCount;
 	
 	private Long experimentCount;
 	
-	public StandardVariable getStandardVariable() {
+	public StandardVariableSummary getStandardVariable() {
 		return standardVariable;
 	}
 	
-	public void setStandardVariable(StandardVariable standardVariable) {
+	public void setStandardVariable(StandardVariableSummary standardVariable) {
 		this.standardVariable = standardVariable;
 	}
 

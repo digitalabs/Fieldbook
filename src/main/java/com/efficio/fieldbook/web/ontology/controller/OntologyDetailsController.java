@@ -27,6 +27,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
+import org.generationcp.middleware.domain.dms.StandardVariableSummary;
 import org.generationcp.middleware.domain.oms.PropertyReference;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
@@ -141,7 +142,7 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
     		}
     		
     		// create a Map - - we will select from this list to return, as the include method and scale information
-    		Map<Integer, StandardVariable> svMap = new HashMap<Integer, StandardVariable>();
+    		Map<Integer, StandardVariableSummary> svMap = new HashMap<Integer, StandardVariableSummary>();
 
     		// Fetch the list of filtered Standard Variable References and extract ids (this would be better if 
     		// filtered SVs were full objects)
@@ -158,11 +159,10 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
 			}
     		
     		// Fetch filtered Standard Variables using the list of ids just created
-    		// FIXME : this is doing an individual fetch for each sv under the hood
-    		List<StandardVariable> standardVariables = ontologyService.getStandardVariables(ids);
+    		List<StandardVariableSummary> standardVariables = ontologyService.getStandardVariableSummaries(ids);
     		
     		// fill the StabdardVariableMap - keyed by svId
-    		for (StandardVariable standardVariable : standardVariables) {
+    		for (StandardVariableSummary standardVariable : standardVariables) {
 				svMap.put(Integer.valueOf(standardVariable.getId()), standardVariable);
 			}
     		
@@ -258,7 +258,7 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
     @SuppressWarnings("unchecked")
 	@ResponseBody
     @RequestMapping(value = "/OntologyBrowser/variables/usage", method = RequestMethod.GET)
-    public String getUsageBySettingsMode(@RequestParam(required=true) Integer mode, @RequestParam(required=false) Boolean flat,
+    public String getUsageBySettingsMode(@RequestParam(required=true) Integer groupId, @RequestParam(required=false) Boolean flat,
     		@RequestParam(required=false) Integer maxResults) {
     	try {
     		
@@ -266,20 +266,19 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
     		
     		// Fetch the list of filtered Standard Variable References and extract ids (this would be better if 
     		// filtered SVs were full objects)
-    		List<StandardVariableReference> stdVars = fieldbookService.filterStandardVariablesForSetting(mode, new ArrayList<SettingDetail>());
+    		List<StandardVariableReference> stdVars = fieldbookService.filterStandardVariablesForSetting(groupId, new ArrayList<SettingDetail>());
     		if(maxResults == null) maxResults = stdVars.size();
-    		LOG.info("Filtering for " + mode + " : results : " + stdVars.size());
+    		LOG.info("Filtering for " + groupId + " : results : " + stdVars.size());
     		
     		List<Integer> ids = new ArrayList<Integer>();
     		for (StandardVariableReference standardVariableReference : stdVars) {
 				ids.add(standardVariableReference.getId());
 			}
     		// create a Map - - we will select from this list to return, as the include method and scale information
-    		Map<Integer, StandardVariable> svMap = new HashMap<Integer, StandardVariable>();
-    		// FIXME : this is doing an individual fetch for each sv under the hood
+    		Map<Integer, StandardVariableSummary> svMap = new HashMap<Integer, StandardVariableSummary>();
     		// fetch filtered Standard Variables 
-    		List<StandardVariable> standardVariables = ontologyService.getStandardVariables(ids);
-    		for (StandardVariable standardVariable : standardVariables) {
+    		List<StandardVariableSummary> standardVariables = ontologyService.getStandardVariableSummaries(ids);
+    		for (StandardVariableSummary standardVariable : standardVariables) {
 				svMap.put(Integer.valueOf(standardVariable.getId()), standardVariable);
 			}
     		
@@ -294,7 +293,7 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
 						if(!property.getStandardVariables().isEmpty()) {
 							for (StandardVariableReference svRef : property.getStandardVariables()) {
 								if(stdVars.contains(svRef)) {
-									StandardVariable sv = svMap.get(svRef.getId());
+									StandardVariableSummary sv = svMap.get(svRef.getId());
 									long projectCount = ontologyService.countProjectsByVariable(svRef.getId());
 									long experimentCount = ontologyService.countExperimentsByVariable(sv.getId(), sv.getStoredIn().getId());
 									// if std variable is in the limited set, then add to the result
@@ -367,7 +366,7 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
      * @return the Property Trees list that collects the new items
      * 
      */
-    private List<PropertyTree> processTreeProperties(Map<Integer, StandardVariable> svMap, List<StandardVariableReference> stdVars,
+    private List<PropertyTree> processTreeProperties(Map<Integer, StandardVariableSummary> svMap, List<StandardVariableReference> stdVars,
     		List<PropertyTree> propertyTrees, TraitClassReference traitClassReference) {
     	for (PropertyReference property : traitClassReference.getProperties()) {
     		if(!property.getStandardVariables().isEmpty()) {

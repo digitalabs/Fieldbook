@@ -41,6 +41,7 @@ public class SettingVariable implements Serializable{
 	private Double maxRange;
 	private WidgetType widgetType;
 	private Operation operation;
+	private Integer storedInId;
 	
 	public SettingVariable(){
 		super();
@@ -271,5 +272,23 @@ public class SettingVariable implements Serializable{
     public void setOperation(Operation operation) {
         this.operation = operation;
     }
+
+
+
+	/**
+	 * @return the storedInId
+	 */
+	public Integer getStoredInId() {
+		return storedInId;
+	}
+
+
+
+	/**
+	 * @param storedInId the storedInId to set
+	 */
+	public void setStoredInId(Integer storedInId) {
+		this.storedInId = storedInId;
+	}
 	
 }

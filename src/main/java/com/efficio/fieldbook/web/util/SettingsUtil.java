@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
 import org.generationcp.middleware.domain.dms.StandardVariable;
@@ -45,11 +46,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.util.HtmlUtils;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
+import com.efficio.fieldbook.web.common.bean.PairedVariable;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.bean.NurseryDetails;
+import com.efficio.fieldbook.web.nursery.bean.StudyDetails;
 
 /**
  * The Class SettingsUtil.
@@ -1350,29 +1352,39 @@ public class SettingsUtil {
 		return null;
 	}
 	
-	public static NurseryDetails convertWorkbookToNurseryDetails(Workbook workbook, org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
+	public static StudyDetails convertWorkbookToStudyDetails(Workbook workbook, org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
 			FieldbookService fieldbookService, UserSelection userSelection) 
 	throws MiddlewareQueryException {
 		
-		NurseryDetails nurseryDetails = convertWorkbookStudyLevelVariablesToNurserDetails(workbook, 
+		StudyDetails studyDetails = convertWorkbookStudyLevelVariablesToStudyDetails(workbook, 
 				fieldbookMiddlewareService, fieldbookService, userSelection, workbook.getStudyId().toString());
 		
-		nurseryDetails.setFactorDetails(convertWorkbookFactorsToSettingDetails(workbook.getNonTrialFactors(), fieldbookMiddlewareService));
+		studyDetails.setNumberOfEnvironments(workbook.getTotalNumberOfInstances());
+		
+		List<SettingDetail> factors = convertWorkbookFactorsToSettingDetails(workbook.getNonTrialFactors(), fieldbookMiddlewareService);
+		if (!workbook.isNursery()) {
+			List<SettingDetail> germplasmDescriptors = new ArrayList<SettingDetail>();
+			rearrangeSettings(factors, germplasmDescriptors, PhenotypicType.GERMPLASM);
+			studyDetails.setGermplasmDescriptors(germplasmDescriptors);
+			List<TreatmentFactorDetail> treatmentFactorDetails = convertWorkbookFactorsToTreatmentDetailFactors(workbook.getTreatmentFactors());
+			studyDetails.setTreatmentFactorDetails(treatmentFactorDetails);
+		}
+		studyDetails.setFactorDetails(factors);
 		List<SettingDetail> traits = new ArrayList<SettingDetail>();
 		List<SettingDetail> selectionVariateDetails = new ArrayList<SettingDetail>();
 		convertWorkbookVariatesToSettingDetails(workbook.getVariates(), fieldbookMiddlewareService, fieldbookService, traits, selectionVariateDetails);
-		nurseryDetails.setVariateDetails(traits);
-		nurseryDetails.setSelectionVariateDetails(selectionVariateDetails);
+		studyDetails.setVariateDetails(traits);
+		studyDetails.setSelectionVariateDetails(selectionVariateDetails);
 		
-		return nurseryDetails;
+		return studyDetails;
 	}
 	
-	private static NurseryDetails convertWorkbookStudyLevelVariablesToNurserDetails(Workbook workbook, 
+	private static StudyDetails convertWorkbookStudyLevelVariablesToStudyDetails(Workbook workbook, 
 			org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService,
 			FieldbookService fieldbookService, UserSelection userSelection, String projectId) 
 	throws MiddlewareQueryException {
 		
-		NurseryDetails details = new NurseryDetails();
+		StudyDetails details = new StudyDetails();
 		details.setId(workbook.getStudyId());
 		List<MeasurementVariable> conditions = workbook.getConditions();
 		List<MeasurementVariable> constants = workbook.getConstants();
@@ -1381,7 +1393,13 @@ public class SettingsUtil {
 		List<SettingDetail> managementDetails = new ArrayList<SettingDetail>();
 		List<SettingDetail> nurseryConditionDetails = new ArrayList<SettingDetail>();
 		
-		List<String> basicFields = Arrays.asList(AppConstants.NURSERY_BASIC_REQUIRED_FIELDS.getString().split(","));
+		List<String> basicFields;
+		if (workbook.isNursery()) {
+			basicFields = Arrays.asList(AppConstants.NURSERY_BASIC_REQUIRED_FIELDS.getString().split(","));
+		}
+		else {
+			basicFields = Arrays.asList(AppConstants.TRIAL_BASIC_REQUIRED_FIELDS.getString().split(","));
+		}
 		
 	    if(conditions != null){
 	    	MeasurementVariable studyName = WorkbookUtil.getMeasurementVariable(conditions, TermId.STUDY_NAME.getId());
@@ -1393,6 +1411,11 @@ public class SettingsUtil {
 	    	nurseryConditionDetails = convertWorkbookOtherStudyVariablesToSettingDetails(constants, 1, userSelection, fieldbookMiddlewareService, fieldbookService, true);
 	    }
 		
+	    if (!workbook.isNursery()) {
+	    	List<SettingDetail> environmentManagementDetails = new ArrayList<SettingDetail>();
+	    	rearrangeSettings(managementDetails, environmentManagementDetails, PhenotypicType.TRIAL_ENVIRONMENT);
+	    	details.setEnvironmentManagementDetails(environmentManagementDetails);
+	    }
 		details.setBasicStudyDetails(basicDetails);
 		details.setManagementDetails(managementDetails);
 		details.setNurseryConditionDetails(nurseryConditionDetails);
@@ -1412,7 +1435,13 @@ public class SettingsUtil {
 	throws MiddlewareQueryException {
 		
 		List<SettingDetail> details = new ArrayList<SettingDetail>();
-		List<String> basicFields = Arrays.asList(AppConstants.NURSERY_BASIC_REQUIRED_FIELDS.getString().split(","));
+		List<String> basicFields;
+		if (userSelection.isTrial()) {
+			basicFields = Arrays.asList(AppConstants.TRIAL_BASIC_REQUIRED_FIELDS.getString().split(","));
+		}
+		else {
+			basicFields = Arrays.asList(AppConstants.NURSERY_BASIC_REQUIRED_FIELDS.getString().split(","));
+		}
 		List<String> hiddenFields = Arrays.asList(AppConstants.HIDDEN_FIELDS.getString().split(","));
 		
 		HashMap<String, MeasurementVariable> variableMap = new HashMap<String, MeasurementVariable>();
@@ -1433,6 +1462,7 @@ public class SettingsUtil {
 							condition.getScale(), condition.getMethod(), role, 
 							condition.getDataType(), condition.getDataTypeId(), condition.getMinRange(), condition.getMaxRange(), userSelection, fieldbookMiddlewareService);
 					variable.setCvTermId(condition.getTermId());
+					variable.setStoredInId(condition.getStoredIn());
 					String value = fieldbookService.getValue(variable.getCvTermId(), HtmlUtils.htmlUnescape(condition.getValue()), 
 							condition.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId());
 					SettingDetail settingDetail = new SettingDetail(variable, null,	HtmlUtils.htmlUnescape(value), false);
@@ -1475,17 +1505,15 @@ public class SettingsUtil {
 								if (label == null || "".equals(label.trim())) {
 									label = condition.getName();
 								}
-								if (NumberUtils.isNumber(strFieldId) ) {
-									SettingVariable variable = getSettingVariable(label, condition.getDescription(), condition.getProperty(),
-											condition.getScale(), condition.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(condition.getLabel()).toString(), 
-											condition.getDataType(), condition.getDataTypeId(), condition.getMinRange(), condition.getMaxRange(), userSelection, fieldbookMiddlewareService);
-									variable.setCvTermId(Integer.valueOf(strFieldId));						
-									String value = fieldbookService.getValue(variable.getCvTermId(), HtmlUtils.htmlUnescape(condition.getValue()), 
-											condition.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId());
-									SettingDetail settingDetail = new SettingDetail(variable, null,
-											HtmlUtils.htmlUnescape(value), false);
-				    				index = addToList(details, settingDetail, index, fields, strFieldId);
-				    			}
+								SettingVariable variable = getSettingVariable(label, condition.getDescription(), condition.getProperty(),
+										condition.getScale(), condition.getMethod(), PhenotypicType.getPhenotypicTypeForLabel(condition.getLabel()).toString(), 
+										condition.getDataType(), condition.getDataTypeId(), condition.getMinRange(), condition.getMaxRange(), userSelection, fieldbookMiddlewareService);
+								variable.setCvTermId(Integer.valueOf(strFieldId));						
+								String value = fieldbookService.getValue(variable.getCvTermId(), HtmlUtils.htmlUnescape(condition.getValue()), 
+										condition.getDataTypeId() == TermId.CATEGORICAL_VARIABLE.getId());
+								SettingDetail settingDetail = new SettingDetail(variable, null,
+										HtmlUtils.htmlUnescape(value), false);
+			    				index = addToList(details, settingDetail, index, fields, strFieldId);
 								found = true;
 								break;
 			    			}
@@ -1494,6 +1522,11 @@ public class SettingsUtil {
 		        			SettingVariable variable = new SettingVariable(label, null, null, null, null, null, null, null, null, null);
 		        			String value = getSpecialFieldValue(strFieldId, datasetId, fieldbookMiddlewareService, workbook);
 		        			SettingDetail settingDetail = new SettingDetail(variable, null, value, false);
+		        			if (strFieldId.equals(AppConstants.SPFLD_ENTRIES.getString())) {
+		        				String plotValue = getSpecialFieldValue(AppConstants.SPFLD_PLOT_COUNT.getString(), datasetId, fieldbookMiddlewareService, workbook);
+		        				PairedVariable pair = new PairedVariable(AppConstants.getString(AppConstants.SPFLD_PLOT_COUNT.getString() + "_LABEL"), plotValue);
+		        				settingDetail.setPairedVariable(pair);
+		        			}
 		        			index = addToList(details, settingDetail, index, fields, strFieldId);
 		        			found = true;
 		        			break;
@@ -1535,6 +1568,9 @@ public class SettingsUtil {
 			}
 			return count + " of " + variateIds.size();
 		}
+		else if (AppConstants.SPFLD_PLOT_COUNT.getString().equals(specialFieldLabel)) {
+			return String.valueOf(fieldbookMiddlewareService.countObservations(datasetId));
+		}
 		return "";
 	}
 	
@@ -1552,8 +1588,11 @@ public class SettingsUtil {
 						HtmlUtils.htmlUnescape(variable.getProperty()), HtmlUtils.htmlUnescape(variable.getScale()), 
 						HtmlUtils.htmlUnescape(variable.getMethod()), PhenotypicType.valueOf(HtmlUtils.htmlUnescape(variable.getRole())));
 				
-				if (!inHideVariableFields(stdVar, AppConstants.HIDE_PLOT_FIELDS.getString())) {
-    					variable.setCvTermId(stdVar);
+				if (!inHideVariableFields(stdVar, AppConstants.HIDE_PLOT_FIELDS.getString()) 
+						&& (factor.getTreatmentLabel() == null || "".equals(factor.getTreatmentLabel()))) {
+
+						variable.setCvTermId(stdVar);
+    					variable.setStoredInId(factor.getStoredIn());
     					SettingDetail settingDetail = new SettingDetail(variable,
     							null, null, isSettingVariableDeletable(stdVar, AppConstants.CREATE_PLOT_REQUIRED_FIELDS.getString()));
     					plotsLevelList.add(settingDetail);
@@ -1701,4 +1740,48 @@ public class SettingsUtil {
             }
         }
     }
+	
+	private static void rearrangeSettings(List<SettingDetail> sourceList, List<SettingDetail> trialList, PhenotypicType type) {
+		if (sourceList != null && !sourceList.isEmpty()) {
+			for (SettingDetail source : sourceList) {
+				if (source.getVariable().getStoredInId() != null 
+						&& type.getTypeStorages().contains(source.getVariable().getStoredInId())) {
+					trialList.add(source);
+				}
+			}
+			sourceList.removeAll(trialList);
+		}
+	}
+	
+	private static List<TreatmentFactorDetail> convertWorkbookFactorsToTreatmentDetailFactors(List<TreatmentVariable> factors)
+	throws MiddlewareQueryException {
+		List<TreatmentFactorDetail> details =  new ArrayList<TreatmentFactorDetail>();
+		if (factors != null && !factors.isEmpty()) {
+			MeasurementVariable levelFactor, amountFactor;
+			ObjectMapper objectMapper = new ObjectMapper();
+			for (TreatmentVariable factor : factors) {
+				try {
+					levelFactor = factor.getLevelVariable();
+					amountFactor = factor.getValueVariable();
+					
+					TreatmentFactorDetail detail = new TreatmentFactorDetail(
+							levelFactor.getTermId(), 
+							amountFactor.getTermId(),
+							levelFactor.getValue(),
+							amountFactor.getValue(),
+							levelFactor.getName(),
+							amountFactor.getName(),
+							amountFactor.getDataTypeId(),
+							objectMapper.writeValueAsString(amountFactor.getPossibleValues()),
+							amountFactor.getMinRange(),
+							amountFactor.getMaxRange());
+					details.add(detail);
+					
+				} catch(Exception e) {
+					throw new MiddlewareQueryException(e.getMessage(), e);
+				}
+			}
+		}
+		return details;
+	}
 }

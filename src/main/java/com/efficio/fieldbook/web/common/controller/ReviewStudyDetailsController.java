@@ -9,7 +9,7 @@
  * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
  * 
  *******************************************************************************/
-package com.efficio.fieldbook.web.nursery.controller;
+package com.efficio.fieldbook.web.common.controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,16 +34,16 @@ import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
-import com.efficio.fieldbook.web.nursery.bean.NurseryDetails;
+import com.efficio.fieldbook.web.nursery.bean.StudyDetails;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 
 @Controller
-@RequestMapping(ReviewNurseryDetailsController.URL)
-public class ReviewNurseryDetailsController extends AbstractBaseFieldbookController {
+@RequestMapping(ReviewStudyDetailsController.URL)
+public class ReviewStudyDetailsController extends AbstractBaseFieldbookController {
 
-    public static final String URL = "/NurseryManager/reviewNurseryDetails";
+    public static final String URL = "/StudyManager/reviewStudyDetails";
     
-    private static final Logger LOG = LoggerFactory.getLogger(ReviewNurseryDetailsController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ReviewStudyDetailsController.class);
 
     @Resource
     private UserSelection userSelection;
@@ -56,27 +56,42 @@ public class ReviewNurseryDetailsController extends AbstractBaseFieldbookControl
     
     @Override
 	public String getContentName() {
-		return "NurseryManager/reviewNurseryDetails";
+    	return getContentName(userSelection.isTrial());
 	}
+    
+    private String getContentName(boolean isTrial) {
+    	if (isTrial) {
+    		return "TrialManager/reviewTrialDetails";
+    	}
+    	else {
+    		return "NurseryManager/reviewNurseryDetails";
+    	}
+    }
 
-    @RequestMapping(value = "/show/{id}", method = RequestMethod.GET)
-    public String show(@PathVariable int id, @ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, Model model) throws MiddlewareQueryException {
+    @RequestMapping(value = "/show/{studyType}/{id}", method = RequestMethod.GET)
+    public String show(@PathVariable String studyType, @PathVariable int id, 
+    		@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, Model model) throws MiddlewareQueryException {
     	
-        if (id != 0) {     
-            Workbook workbook = fieldbookMiddlewareService.getStudyVariableSettings(id, true);
-            workbook.setStudyId(id);
-            NurseryDetails details = SettingsUtil.convertWorkbookToNurseryDetails(workbook, fieldbookMiddlewareService, fieldbookService, userSelection);
-            rearrangeDetails(details);
-            this.getPaginationListSelection().addReviewWorkbook(Integer.toString(id), workbook);
-            if (workbook.getMeasurementDatesetId() != null) {
-            	details.setHasMeasurements(fieldbookMiddlewareService.countObservations(workbook.getMeasurementDatesetId()) > 0);
-            }
-            else {
-            	details.setHasMeasurements(false);
-            }
-            model.addAttribute("nurseryDetails", details);
-        }    	
-    	return showAjaxPage(model, getContentName());
+    	boolean isNursery = "Nursery".equalsIgnoreCase(studyType);
+        Workbook workbook = fieldbookMiddlewareService.getStudyVariableSettings(id, isNursery);
+        workbook.setStudyId(id);
+        userSelection.setWorkbook(workbook);
+        StudyDetails details = SettingsUtil.convertWorkbookToStudyDetails(workbook, fieldbookMiddlewareService, fieldbookService, userSelection);
+        rearrangeDetails(details);
+        this.getPaginationListSelection().addReviewWorkbook(Integer.toString(id), workbook);
+        if (workbook.getMeasurementDatesetId() != null) {
+        	details.setHasMeasurements(fieldbookMiddlewareService.countObservations(workbook.getMeasurementDatesetId()) > 0);
+        }
+        else {
+        	details.setHasMeasurements(false);
+        }
+        if (workbook.isNursery()) {
+        	model.addAttribute("nurseryDetails", details);
+        } 
+        else {
+        	model.addAttribute("trialDetails", details);
+        }
+    	return showAjaxPage(model, getContentName(!workbook.isNursery()));
     }
     
     @ResponseBody
@@ -86,7 +101,7 @@ public class ReviewNurseryDetailsController extends AbstractBaseFieldbookControl
     	return datasets;
     }
     
-    private void rearrangeDetails(NurseryDetails details) {
+    private void rearrangeDetails(StudyDetails details) {
     	details.setBasicStudyDetails(rearrangeSettingDetails(details.getBasicStudyDetails()));
     	details.setManagementDetails(rearrangeSettingDetails(details.getManagementDetails()));
     }

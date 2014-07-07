@@ -2766,7 +2766,7 @@ function addDetailsTab(studyId, title) {
 	} else {
 
 		$.ajax({
-			url : '/Fieldbook/NurseryManager/reviewNurseryDetails/show/' + studyId,
+			url : '/Fieldbook/StudyManager/reviewStudyDetails/show/' + $('#study-type').val() + '/' + studyId,
 			type : 'GET',
 			cache : false,
 			success : function(data) {
@@ -2811,7 +2811,7 @@ function loadDatasetDropdown(optionTag) {
 	if ($('#study' + getCurrentStudyIdInTab() + ' #dataset-selection option').length > 1)
 		return;
 	$.ajax({
-		url : "/Fieldbook/NurseryManager/reviewNurseryDetails/datasets/"
+		url : "/Fieldbook/StudyManager/reviewStudyDetails/datasets/"
 				+ getCurrentStudyIdInTab(),
 		type : "GET",
 		cache : false,

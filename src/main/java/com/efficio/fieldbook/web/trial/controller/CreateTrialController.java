@@ -184,15 +184,13 @@ public class CreateTrialController extends SettingsController {
             List<List<ValueReference>> trialEnvList = createTrialEnvValueList(userSelection.getTrialLevelVariableList(), 1, true);
             form.setTrialEnvironmentValues(trialEnvList);
             form.setTrialInstances(1);
-            form.setLoadSettings("1");
             form.setRequiredFields(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
         }
-        setFormStaticData(form);
+
         model.addAttribute("createTrialForm", form);
         model.addAttribute("settingsTrialList", getTrialSettingsList());
         model.addAttribute("trialList", getTrialList());
         model.addAttribute("experimentalDesignValues", getExperimentalDesignValues());
-        form.setDesignLayout(AppConstants.DESIGN_LAYOUT_INDIVIDUAL.getString());
         return super.showAjaxPage(model, URL_SETTINGS);
     }
     
@@ -209,14 +207,12 @@ public class CreateTrialController extends SettingsController {
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("createTrialForm") CreateTrialForm form, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2, Model model, HttpServletRequest req, HttpSession session) throws MiddlewareQueryException{
     	
-    	SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME,SessionUtility.POSSIBLE_VALUES_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
-    	form.setProjectId(this.getCurrentProjectId());
+        SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME,SessionUtility.POSSIBLE_VALUES_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
     	form.setRequiredFields(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
     	form.setFolderId(1);
     	form.setFolderName(AppConstants.PROGRAM_TRIALS.getString());
     	form.setFolderNameLabel(AppConstants.PROGRAM_TRIALS.getString());
 
-    	setFormStaticData(form);
     	return showAngularPage(model);
     }    
     
@@ -416,26 +412,6 @@ public class CreateTrialController extends SettingsController {
     	}
     	
     	return value;
-    }
-    
-    /**
-     * Sets the form static data.
-     *
-     * @param form the new form static data
-     */
-    private void setFormStaticData(CreateTrialForm form){
-        form.setBreedingMethodId(AppConstants.BREEDING_METHOD_ID.getString());
-        form.setLocationId(AppConstants.LOCATION_ID.getString());
-        form.setBreedingMethodUrl(fieldbookProperties.getProgramBreedintMethodsUrl());
-        form.setImportLocationUrl(fieldbookProperties.getGermplasmImportUrl());
-        form.setStudyNameTermId(AppConstants.STUDY_NAME_ID.getString());
-        form.setStartDateId(AppConstants.START_DATE_ID.getString());
-    	form.setEndDateId(AppConstants.END_DATE_ID.getString());
-    	form.setTrialInstanceFactor(AppConstants.TRIAL_INSTANCE_FACTOR.getString());
-    	form.setReplicates(AppConstants.REPLICATES.getString());
-    	form.setBlockSize(AppConstants.BLOCK_SIZE.getString());
-    	form.setExperimentalDesign(AppConstants.EXPERIMENTAL_DESIGN.getString());
-    	form.setOpenGermplasmUrl(fieldbookProperties.getGermplasmDetailsUrl());
     }
     
     @ModelAttribute("experimentalDesignValues")

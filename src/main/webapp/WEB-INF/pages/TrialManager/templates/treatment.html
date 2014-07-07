@@ -47,48 +47,45 @@
         <div><strong class="sub-content-heading" th:text="#{trial.managesettings.treatment.factors.specify.level}">Specify Treatment Levels</strong></div>
 
             <div class='treatment-level-item' ng-repeat="(key,item) in data.managementDetails track by key">
-                <div class="row">
-                    <div class="col-md-12">
-                        <span class="sub-content-heading" style="text-transform: uppercase"><b>{{item.variable.name}}</b>: <b>{{item.variable.description}}</b></span>
-                    </div>
+                <div>
+                    <span class="sub-content-heading" style="text-transform: uppercase"><b>{{item.variable.name}}</b>: <b>{{item.variable.description}}</b></span>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-12">
-                        <b th:text="#{trial.managesettings.treatment.factors.define.label}">Define the labels for this factor</b>:
-                    </div>
+                <div>
+                    <b th:text="#{trial.managesettings.treatment.factors.define.label}">Define the labels for this factor</b>:
                 </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <table class='factor-level-tbl table table-curved table-condensed'>
-                            <thead>
-                                <tr>
-                                    <th th:text="#{trial.managesettings.treatment.factors.level}">Level</th>
-                                    <th th:text="#{variable.details.scale}">Scale</th>
-                                    <th th:text="#{trial.managesettings.treatment.factors.label}">Label</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-repeat="n in item.variableLabels track by $index">
-                                    <td ng-class-odd="'odd'" ng-class-even="'even'">
-                                        <a ng-click='showDetailsModal(item.variable.cvTermId)'>{{item.variable.name}} {{$index + 1}}</a>
-                                    </td>
-                                    <td ng-class-odd="'odd'" ng-class-even="'even'">{{item.variable.scale}}</td>
-                                    <td ng-class-odd="'odd'" ng-class-even="'even'">
-                                        <input type='text' class='form-control' ng-model="item.variableLabels[$index]" />
-                                    </td>
-                                </tr>
 
-                                <tr ng-hide="item.variableLabelCount &gt; 0">
-                                    <td class="odd">&nbsp;</td>
-                                    <td class="odd">&nbsp;</td>
-                                    <td class="odd">&nbsp;</td>
-                                </tr>
+                <div>
+                    <table class='factor-level-tbl table table-curved table-condensed'>
+                        <thead>
+                        <tr>
+                            <th th:text="#{trial.managesettings.treatment.factors.level}">Level</th>
+                            <th th:text="#{variable.details.scale}">Scale</th>
+                            <th th:text="#{trial.managesettings.treatment.factors.label}">Label</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="n in item.variableLabels track by $index">
+                            <td ng-class-odd="'odd'" ng-class-even="'even'">
+                                <a ng-click='showDetailsModal(item.variable.cvTermId)'>{{item.variable.name}} {{$index + 1}}</a>
+                            </td>
+                            <td ng-class-odd="'odd'" ng-class-even="'even'">{{item.variable.scale}}</td>
+                            <td ng-class-odd="'odd'" ng-class-even="'even'">
+                                <input type='text' class='form-control' ng-model="item.variableLabels[$index]" />
+                            </td>
+                        </tr>
 
-                            </tbody>
-                        </table>
-                    </div>
+                        <tr ng-hide="item.variableLabelCount &gt; 0">
+                            <td class="odd">&nbsp;</td>
+                            <td class="odd">&nbsp;</td>
+                            <td class="odd">&nbsp;</td>
+                        </tr>
+
+                        </tbody>
+                    </table>
                 </div>
+
+
             </div>
     </div><!-- end treatment-levels -->
 

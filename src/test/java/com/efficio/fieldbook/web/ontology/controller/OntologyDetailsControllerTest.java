@@ -101,7 +101,7 @@ public class OntologyDetailsControllerTest  extends AbstractJUnit4SpringContextT
 			log.error(e);
 		}
     	
-    	List<PropertyTree> result = controller.getPropertiesBySettingsGroup(1, 101);
+    	List<PropertyTree> result = controller.getPropertiesBySettingsGroup(1, 101, false);
     	
     }
     

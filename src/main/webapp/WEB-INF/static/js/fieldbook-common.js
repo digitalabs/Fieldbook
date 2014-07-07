@@ -403,16 +403,18 @@ function selectTrialInstanceCreate(tableName) {
 }
 
 function createStudyTree(fieldMapInfoList, hasFieldMap, tableName) {
+	var hasOneInstance = false;
 	createHeader(hasFieldMap);
 	$.each(fieldMapInfoList, function(index, fieldMapInfo) {
-		createRow(getPrefixName('study', fieldMapInfo.fieldbookId), '', fieldMapInfo.fieldbookName, fieldMapInfo.fieldbookId, hasFieldMap);
+		createRow(getPrefixName('study', fieldMapInfo.fieldbookId), '', fieldMapInfo.fieldbookName, fieldMapInfo.fieldbookId, hasFieldMap, hasOneInstance);
 		$.each(fieldMapInfo.datasets, function(index, value) {
+			hasOneInstance = fieldMapInfoList.length === 1 && fieldMapInfoList[0].datasets.length === 1 && fieldMapInfoList[0].datasets[0].trialInstances.length === 1; 
 			if (tableName == 'trial-table') {
 				// Create trial study tree up to instance level
-				createRow(getPrefixName('dataset', value.datasetId), getPrefixName('study', fieldMapInfo.fieldbookId), value.datasetName, value.datasetId, hasFieldMap);
+				createRow(getPrefixName('dataset', value.datasetId), getPrefixName('study', fieldMapInfo.fieldbookId), value.datasetName, value.datasetId, hasFieldMap, hasOneInstance);
 				$.each(value.trialInstances, function(index, childValue) {
 					if ((hasFieldMap && childValue.hasFieldMap) || !hasFieldMap) {
-						createRow(getPrefixName('trialInstance', childValue.geolocationId), getPrefixName('dataset', value.datasetId), childValue, childValue.geolocationId, hasFieldMap);
+						createRow(getPrefixName('trialInstance', childValue.geolocationId), getPrefixName('dataset', value.datasetId), childValue, childValue.geolocationId, hasFieldMap, hasOneInstance);
 					}
 				});
 			} else {
@@ -421,7 +423,7 @@ function createStudyTree(fieldMapInfoList, hasFieldMap, tableName) {
 					$.each(value.trialInstances, function(index, childValue) {
 						createRowForNursery(getPrefixName('trialInstance', childValue.geolocationId),
 								getPrefixName('study', fieldMapInfo.fieldbookId), childValue, childValue.geolocationId,
-								hasFieldMap, value.datasetName, value.datasetId);
+								hasFieldMap, value.datasetName, value.datasetId, hasOneInstance);
 					});
 				}
 			}
@@ -492,7 +494,7 @@ function createHeader(hasFieldMap) {
 	$('#studyFieldMapTree').append(newRow + '<tbody></tbody>');
 }
 
-function createRowForNursery(id, parentClass, value, realId, withFieldMap, datasetName, datasetId) {
+function createRowForNursery(id, parentClass, value, realId, withFieldMap, datasetName, datasetId, hasOneInstance) {
 	var genClassName = 'treegrid-',
 		genParentClassName = '',
 		newRow = '',
@@ -508,9 +510,10 @@ function createRowForNursery(id, parentClass, value, realId, withFieldMap, datas
 	// For create new fieldmap
 	hasFieldMap = value.hasFieldMap ? 'Yes' : 'No';
 	disabledString = value.hasFieldMap ? 'disabled' : '';
+	var checked = hasOneInstance ? 'checked' : '';
 
 	newRow = '<tr class="data-row trialInstance ' + genClassName + id + ' ' + genParentClassName + '">';
-	checkBox = '<input ' + disabledString + ' class="checkInstance" type="checkbox" id="' + datasetId + '|' + realId + '" /> &nbsp;&nbsp;';
+	checkBox = '<input ' + disabledString + ' class="checkInstance" type="checkbox" id="' + datasetId + '|' + realId + '" ' + checked + ' /> &nbsp;&nbsp;';
 	newCell = '<td>' + checkBox + '&nbsp;' + datasetName + '</td><td>' + value.entryCount + '</td>';
 	newCell = newCell + '<td class="hasFieldMap">' + hasFieldMap + '</td>';
 	$('#studyFieldMapTree').append(newRow + newCell + '</tr>');
@@ -554,9 +557,10 @@ function createRow(id, parentClass, value, realId, withFieldMap) {
 			// For create new fieldmap
 			hasFieldMap = value.hasFieldMap ? 'Yes' : 'No';
 			disabledString = value.hasFieldMap ? 'disabled' : '';
+			var checked = hasOneInstance ? 'checked' : '';
 
 			newRow = '<tr class="data-row trialInstance ' + genClassName + id + ' ' + genParentClassName + '">';
-			checkBox = '<input ' + disabledString + ' class="checkInstance" type="checkbox" id="' + realId + '" /> &nbsp;&nbsp;';
+			checkBox = '<input ' + disabledString + ' class="checkInstance" type="checkbox" id="' + realId + '" ' + checked + ' /> &nbsp;&nbsp;';
 			newCell = '<td>' + checkBox + '&nbsp;' + value.trialInstanceNo + '</td><td>' + value.entryCount + '</td>';
 			if (trial) {
 				newCell = newCell + '<td>' + value.repCount + '</td><td>' + value.plotCount + '</td>';
@@ -620,11 +624,19 @@ function createLabelPrinting(tableName) {
 function showFieldMap(tableName) {
 	var count = 0;
 	var idVal = null;
-	for (var index in selectedTableIds) {
-		var tempVal = selectedTableIds[index];
-		if (tempVal != null) {
-			idVal = tempVal;
-			count++;
+	if (selectedTableIds.length > 0) {
+		for (var index in selectedTableIds) {
+			var tempVal = selectedTableIds[index];
+			
+			if (tempVal != null) {
+				idVal = tempVal;
+				count++;
+			}
+		}
+	} else {
+		//edit nursery
+		if ($('#studyId')) {
+			idVal = $('#studyId').val();
 		}
 	}
 

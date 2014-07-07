@@ -17,7 +17,7 @@ import java.io.IOException;
 import javax.annotation.Resource;
 
 import com.efficio.fieldbook.service.api.FileService;
-import com.efficio.fieldbook.web.nursery.bean.UserSelection;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.service.ImportWorkbookFileService;
 
 /**

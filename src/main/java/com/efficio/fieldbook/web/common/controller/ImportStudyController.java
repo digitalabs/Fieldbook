@@ -45,14 +45,12 @@ import com.efficio.fieldbook.web.common.bean.ChangeType;
 import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.ImportResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.StudySelection;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.common.service.DataKaptureImportStudyService;
 import com.efficio.fieldbook.web.common.service.ExcelImportStudyService;
 import com.efficio.fieldbook.web.common.service.FieldroidImportStudyService;
-import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
-import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.DateUtil;
 import com.efficio.fieldbook.web.util.SettingsUtil;
@@ -67,10 +65,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     private String ADD_OR_REMOVE_TRAITS_HTML =  "/NurseryManager/addOrRemoveTraits";
 
     @Resource
-    private UserSelection nurserySelection;
-    
-    @Resource
-    private TrialSelection trialSelection;
+    private UserSelection studySelection;
     
     @Resource
     private FileService fileService;
@@ -112,7 +107,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
     	boolean isTrial = studyType.equalsIgnoreCase("TRIAL");
     	ImportResult importResult = null;
-    	StudySelection userSelection = getUserSelection(isTrial);
+    	UserSelection userSelection = getUserSelection(isTrial);
     	/**
     	 * Should always revert the data first to the original data here
     	 * we should move here that part the copies it to the original observation
@@ -200,8 +195,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	    	userSelection.setCurrentPage(form.getCurrentPage());
 	    	form.setImportVal(1);
 	    	form.setNumberOfInstances(userSelection.getWorkbook().getTotalNumberOfInstances());
-	    	form.setTrialEnvironmentValues(transformTrialObservations(userSelection.getWorkbook().getTrialObservations(), nurserySelection.getTrialLevelVariableList()));
-	    	form.setTrialLevelVariables(nurserySelection.getTrialLevelVariableList());
+	    	form.setTrialEnvironmentValues(transformTrialObservations(userSelection.getWorkbook().getTrialObservations(), userSelection.getTrialLevelVariableList()));
+	    	form.setTrialLevelVariables(userSelection.getTrialLevelVariableList());
 	    	
 	    	if(importResult.getErrorMessage() != null && !importResult.getErrorMessage().equalsIgnoreCase("")){
 	    		resultsMap.put("isSuccess", 0);	    		
@@ -269,8 +264,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	return list;
     }
     
-    private StudySelection getUserSelection(boolean isTrial) {
-    	return isTrial ? this.trialSelection : this.nurserySelection;
+    private UserSelection getUserSelection(boolean isTrial) {
+    	return this.studySelection;
     }
     
     public String show(Model model, boolean isTrial) {

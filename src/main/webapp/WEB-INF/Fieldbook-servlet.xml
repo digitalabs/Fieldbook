@@ -146,12 +146,7 @@
 		<aop:scoped-proxy />
 	</bean>
 	
-	<bean id="nurseryUserSelection" class="com.efficio.fieldbook.web.nursery.bean.UserSelection"
-		scope="session">
-		<aop:scoped-proxy />
-	</bean>
-	
-	<bean id="trialSelection" class="com.efficio.fieldbook.web.trial.bean.TrialSelection"
+	<bean id="userSelection" class="com.efficio.fieldbook.web.common.bean.UserSelection"
 		scope="session">
 		<aop:scoped-proxy />
 	</bean>

@@ -38,7 +38,6 @@ import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.generationcp.middleware.pojos.workbench.settings.Factor;
 import org.generationcp.middleware.pojos.workbench.settings.ParentDataset;
 import org.generationcp.middleware.pojos.workbench.settings.TreatmentFactor;
-import org.generationcp.middleware.pojos.workbench.settings.TrialDataset;
 import org.generationcp.middleware.pojos.workbench.settings.Variate;
 import org.generationcp.middleware.service.api.OntologyService;
 import org.slf4j.Logger;
@@ -49,8 +48,8 @@ import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.bean.NurseryDetails;
-import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 
 /**
  * The Class SettingsUtil.
@@ -296,7 +295,7 @@ public class SettingsUtil {
 			
 			
 			//this is a trial dataset
-			TrialDataset dataset = new TrialDataset(trialLevelVariables);
+			Dataset dataset = new Dataset(trialLevelVariables);
 			dataset.setConditions(conditions);
 			dataset.setFactors(factors);
 			dataset.setVariates(variates);
@@ -389,11 +388,11 @@ public class SettingsUtil {
 	 * @param projectId the project id
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	public static void convertXmlDatasetToPojo(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, com.efficio.fieldbook.service.api.FieldbookService fieldbookService, ParentDataset dataset, UserSelection userSelection, String projectId, boolean isUsePrevious) throws MiddlewareQueryException{
-		if(dataset instanceof Dataset)
+	public static void convertXmlDatasetToPojo(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, com.efficio.fieldbook.service.api.FieldbookService fieldbookService, ParentDataset dataset, UserSelection userSelection, String projectId, boolean isUsePrevious, boolean isTrial) throws MiddlewareQueryException{
+		if(!isTrial)
 			 convertXmlNurseryDatasetToPojo( fieldbookMiddlewareService, fieldbookService, (Dataset) dataset,  userSelection, projectId, isUsePrevious);
-		else if(dataset instanceof TrialDataset)
-			convertXmlTrialDatasetToPojo( fieldbookMiddlewareService, fieldbookService, (TrialDataset) dataset,  userSelection, projectId);
+		else
+			convertXmlTrialDatasetToPojo( fieldbookMiddlewareService, fieldbookService, (Dataset) dataset,  userSelection, projectId);
 	}
 	
 	private static boolean idCounterPartInList(Integer stdVar, HashMap<String, String> idCodeNameMap, List<Condition> conditions) {
@@ -670,7 +669,7 @@ public class SettingsUtil {
 	 * @param projectId the project id
 	 * @throws MiddlewareQueryException the middleware query exception
 	 */
-	private static void convertXmlTrialDatasetToPojo(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, com.efficio.fieldbook.service.api.FieldbookService fieldbookService, TrialDataset dataset, UserSelection userSelection, String projectId) throws MiddlewareQueryException{
+	private static void convertXmlTrialDatasetToPojo(org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService, com.efficio.fieldbook.service.api.FieldbookService fieldbookService, Dataset dataset, UserSelection userSelection, String projectId) throws MiddlewareQueryException{
 		if(dataset != null && userSelection != null){
 			//we copy it to User session object
 			//nursery level
@@ -917,7 +916,7 @@ public class SettingsUtil {
 			workbook.setConstants(convertConstantsToMeasurementVariables(nurseryDataset.getConstants()));
 		}
 		else {
-			TrialDataset trialDataset = (TrialDataset) dataset;
+			Dataset trialDataset = (Dataset) dataset;
 			workbook.setConditions(convertConditionsToMeasurementVariables(trialDataset.getConditions()));
 			workbook.setFactors(convertFactorsToMeasurementVariables(trialDataset.getFactors()));
 			workbook.setVariates(convertVariatesToMeasurementVariables(trialDataset.getVariates()));
@@ -956,7 +955,7 @@ public class SettingsUtil {
 			nurseryDataset.setConstants(constants);
 			dataset = nurseryDataset;
 		}else{
-			TrialDataset trialDataset = new TrialDataset();
+			Dataset trialDataset = new Dataset();
 			
 			List<Condition> conditions = convertMeasurementVariablesToConditions(workbook.getStudyConditions());
 			List<Factor> factors = convertMeasurementVariablesToFactors(workbook.getFactors());

@@ -7,40 +7,46 @@
 (function(){
     'use strict';
 
-    var manageTrialApp = angular.module('manageTrialApp', ['leafnode-utils','fieldbook-utils','ngRoute','ui.bootstrap']);
+    var manageTrialApp = angular.module('manageTrialApp', ['leafnode-utils','fieldbook-utils','ui.router','ui.bootstrap']);
 
     // routing configuration
     // TODO: if possible, retrieve the template urls from the list of constants
-    manageTrialApp.config(['$routeProvider',
-        function($routeProvider) {
-            $routeProvider.
-                when('/', {
-                    templateUrl: '/Fieldbook/TrialManager/createTrial/trialSettings',
-                    controller: 'TrialSettingsCtrl'
-                }).
-
-                when('/environment', {
-                    templateUrl: '/Fieldbook/TrialManager/createTrial/environment',
-                    controller: 'EnvironmentCtrl'
-                }).
-                when('/germplasm', {
-                    templateUrl: '/Fieldbook/TrialManager/createTrial/germplasm',
-                    controller: 'GermplasmCtrl'
-                }).
-                when('/treatment', {
-                    templateUrl: '/Fieldbook/TrialManager/createTrial/treatment',
-                    controller: 'TreatmentCtrl'
-                }).
-                when('/experimentalDesign', {
-                    templateUrl: '/Fieldbook/TrialManager/createTrial/experimentalDesign'
-                }).
-                when('/measurements', {
-                    templateUrl: '/Fieldbook/TrialManager/createTrial/measurements'
-                }).
-                otherwise({
-                    redirectTo: '/Fieldbook/TrialManager/createTrial/trialSettings'
-                });
-        }]);
+    manageTrialApp.config(function($stateProvider, $urlRouterProvider) {
+        //
+        // For any unmatched url, redirect to /state1
+        $urlRouterProvider.otherwise("/");
+        //
+        // Now set up the states
+        $stateProvider
+            .state('trialSettings', {
+                url: "/",
+                templateUrl: "/Fieldbook/TrialManager/createTrial/trialSettings",
+                controller: 'TrialSettingsCtrl'
+            })
+            .state('environment', {
+                url: "/environment",
+                templateUrl: '/Fieldbook/TrialManager/createTrial/environment',
+                controller: 'EnvironmentCtrl'
+            })
+            .state('germplasm', {
+                url: "/germplasm",
+                templateUrl: '/Fieldbook/TrialManager/createTrial/germplasm',
+                controller: 'GermplasmCtrl'
+            })
+            .state('treatment', {
+                url: "/treatment",
+                templateUrl: '/Fieldbook/TrialManager/createTrial/treatment',
+                controller: 'TreatmentCtrl'
+            })
+            .state('experimentalDesign', {
+                url: "/experimentalDesign",
+                templateUrl: '/Fieldbook/TrialManager/createTrial/experimentalDesign'
+            })
+            .state('measurements', {
+                url: "/measurements",
+                templateUrl: '/Fieldbook/TrialManager/createTrial/measurements'
+            });
+    });
 
     // common filters
     manageTrialApp.filter('range', function() {
@@ -52,51 +58,43 @@
         };
     });
 
+    manageTrialApp.run(
+        [          '$rootScope', '$state', '$stateParams',
+            function ($rootScope,   $state,   $stateParams) {
+
+                // It's very handy to add references to $state and $stateParams to the $rootScope
+                // so that you can access them from any scope within your applications.For example,
+                // <li ui-sref-active="active }"> will set the <li> // to active whenever
+                // 'contacts.list' or one of its decendents is active.
+                $rootScope.$state = $state;
+                $rootScope.$stateParams = $stateParams;
+            }
+        ]
+    );
+
+
     // THE parent controller for the manageTrial (create/edit) page
-    manageTrialApp.controller('manageTrialCtrl',['$scope',function($scope){
+    manageTrialApp.controller('manageTrialCtrl',['$scope','$rootScope',function($scope,$rootScope){
         $scope.trialTabs = [
             {   'name' : 'Trial Settings',
-                'link' : '',
-                'active' : 'active' },
+                'state' : 'trialSettings'
+            },
             {   'name' : 'Environments',
-                'link' : 'environment',
-                'active' : '' },
+                'state' : 'environment'
+            },
             {   'name' : 'Germplasm',
-                'link' : 'germplasm',
-                'active' : '' },
+                'state' : 'germplasm'
+            },
             {   'name' : 'Treatment Factors',
-                'link' : 'treatment',
-                'active' : '' },
+                'state' : 'treatment'
+            },
             {   'name' : 'Experimental Design',
-                'link' : 'experimentalDesign',
-                'active' : '' },
+                'state' : 'experimentalDesign'
+            },
             {   'name' : 'Measurements',
-                'link' : 'measurements',
-                'active' : '' }
-        ];
-
-        $scope.activeTabIndex = 0;
-
-        $scope.switchTab = function(index) {
-            $scope.trialTabs[$scope.activeTabIndex].active = '';
-            $scope.trialTabs[index].active = 'active';
-            $scope.activeTabIndex = index;
-        };
-
-        $scope.$on('$locationChangeStart', function(event, next, current) {
-            var nextPage = next.split('#/')[1];
-
-            if (nextPage !== undefined) {
-                for (var i = 0; i < $scope.trialTabs.length; i++) {
-                    if ($scope.trialTabs[i].link === nextPage) {
-
-                        $scope.switchTab(i);
-
-                        break;
-                    }
-                }
+                'state' : 'measurements'
             }
-        });
+        ];
 
     }]);
 

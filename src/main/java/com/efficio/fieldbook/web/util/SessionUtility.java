@@ -11,7 +11,6 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.util;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -31,11 +30,7 @@ public class SessionUtility {
 	/*
 	 * This is the session object being use for create/editing a nursery
 	 */
-	public static String USER_SELECTION_SESSION_NAME = "scopedTarget.nurseryUserSelection";
-	/*
-	 * This is the session object being use for create/editing a trial
-	 */
-	public static String TRIAL_SELECTION_SESSION_NAME = "scopedTarget.trialSelection";
+	public static String USER_SELECTION_SESSION_NAME = "scopedTarget.userSelection";
 	/*
 	 * This is the session object being use for seed inventory
 	 */

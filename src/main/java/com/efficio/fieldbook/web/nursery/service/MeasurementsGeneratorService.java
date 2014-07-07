@@ -16,7 +16,7 @@ import java.util.List;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 
-import com.efficio.fieldbook.web.nursery.bean.UserSelection;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 
 /**
  * The Interface MeasurementsGeneratorService.

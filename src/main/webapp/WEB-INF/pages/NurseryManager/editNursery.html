@@ -55,6 +55,10 @@
                             <a href="javascript: createFieldMap('nursery-table');" id="fieldmap-url-link"
                                th:text="#{nursery.nurserydetails.action.createFieldmap}">Make Field Map</a>
                         </li>
+                        <li th:if="${createNurseryForm.measurementRowList.size() != 0} and ${createNurseryForm.hasFieldmap}" class="withMeasurementsOnly">
+                        	<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
+                        	<a href="javascript: showFieldMap('nursery-table');" id="view-fieldmap-url-link" th:text="#{nursery.edit.nursery.view.field.map}">View Field Map</a>
+                        </li>
                         <li th:if="${createNurseryForm.measurementRowList.size() != 0}" class="withMeasurementsOnly">
                             <a href="" style="display: none" id="label-printing-url" th:href="@{/LabelPrinting/specifyLabelDetails/nursery}"></a>
                             <a href="javascript: createLabelPrinting('nursery-table');" id="label-printing-url-link"
@@ -352,7 +356,9 @@
 		/* jshint ignore:start */
 		var measurementRowCount = /*[[${createNurseryForm.measurementRowList.size()}]]*/ 0,
 			buttonToDelete = null;
-			/* jshint ignore:end */				
+			/* jshint ignore:end */		
+			
+		var selectedTableIds = new Array();
 
 		function submitEditWorkbook(){
 			'use strict';

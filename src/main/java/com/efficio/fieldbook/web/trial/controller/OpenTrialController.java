@@ -14,7 +14,7 @@ import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.pojos.workbench.settings.TrialDataset;
+import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -27,9 +27,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
-import com.efficio.fieldbook.web.nursery.bean.UserSelection;
-import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.SettingsUtil;
@@ -43,9 +42,6 @@ public class OpenTrialController extends
     private static final Logger LOG = LoggerFactory.getLogger(OpenTrialController.class);
     public static final String URL = "/TrialManager/addOrRemoveTraits";
 
-    @Resource
-	private TrialSelection trialSelection;
-	
 	@Resource
 	private org.generationcp.middleware.service.api.FieldbookService fieldbookMiddlewareService;
 	@Resource
@@ -63,7 +59,7 @@ public class OpenTrialController extends
     @RequestMapping(value="/viewTrial/{trialId}", method = RequestMethod.GET)
     public String viewNursery(@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, Model model, 
             @PathVariable int trialId, HttpServletRequest req, HttpSession session) {
-    	SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME,SessionUtility.TRIAL_SELECTION_SESSION_NAME,SessionUtility.POSSIBLE_VALUES_SESSION_NAME});
+    	SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME,SessionUtility.POSSIBLE_VALUES_SESSION_NAME});
         Workbook workbook = null;
         
         try { 
@@ -73,18 +69,18 @@ public class OpenTrialController extends
         }
         
         if (workbook != null) {
-        	trialSelection.setMeasurementRowList(workbook.getObservations());
-            form.setMeasurementRowList(trialSelection.getMeasurementRowList());
+        	userSelection.setMeasurementRowList(workbook.getObservations());
+            form.setMeasurementRowList(userSelection.getMeasurementRowList());
             form.setMeasurementVariables(workbook.getMeasurementDatasetVariablesView());
             form.setStudyName(workbook.getStudyDetails().getStudyName());
             form.changePage(1);
             form.setNumberOfInstances(workbook.getTotalNumberOfInstances());
-            trialSelection.setCurrentPage(form.getCurrentPage());
-            trialSelection.setWorkbook(workbook);
+            userSelection.setCurrentPage(form.getCurrentPage());
+            userSelection.setWorkbook(workbook);
             
-            TrialDataset dataset = (TrialDataset)SettingsUtil.convertWorkbookToXmlDataset(workbook, false);
+            Dataset dataset = (Dataset)SettingsUtil.convertWorkbookToXmlDataset(workbook, false);
             try {
-				SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId(), false);
+				SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId(), false, true);
 			} catch (MiddlewareQueryException e) {
 				LOG.debug(e.getMessage(), e);
 			}
@@ -164,11 +160,11 @@ public class OpenTrialController extends
     }
     private List<List<ValueReference>> createTrialEnvValueList(List<SettingDetail> trialLevelVariableList, int trialInstances, boolean addDefault) {
         List<List<ValueReference>> trialEnvValueList = new ArrayList<List<ValueReference>>();
-        List<MeasurementRow> trialObservations = trialSelection.getWorkbook().getTrialObservations();
+        List<MeasurementRow> trialObservations = userSelection.getWorkbook().getTrialObservations();
     	for (MeasurementRow trialObservation : trialObservations) {
     		List<ValueReference> trialInstanceVariables = new ArrayList<ValueReference>();
             for (SettingDetail detail : trialLevelVariableList) {
-        		String headerName = WorkbookUtil.getMeasurementVariableName(trialSelection.getWorkbook().getTrialVariables(), detail.getVariable().getCvTermId());
+        		String headerName = WorkbookUtil.getMeasurementVariableName(userSelection.getWorkbook().getTrialVariables(), detail.getVariable().getCvTermId());
         		String value = trialObservation.getMeasurementDataValue(headerName);
         		trialInstanceVariables.add(new ValueReference(detail.getVariable().getCvTermId(), value));
             }

@@ -29,8 +29,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.ManageNurseriesForm;
-import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 import com.efficio.fieldbook.web.trial.form.ManageTrialForm;
 
 /**
@@ -42,10 +42,9 @@ public class ManageTrialController extends AbstractBaseFieldbookController{
 
     
     private static final Logger LOG = LoggerFactory.getLogger(ManageTrialController.class);
-    
     /** The Constant URL. */
     public static final String URL = "/TrialManager/manageTrial";
-
+  
     /**
      * Shows the manage nurseries screen
      *
@@ -56,16 +55,17 @@ public class ManageTrialController extends AbstractBaseFieldbookController{
      */
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("manageTrialForm") ManageTrialForm form, Model model) {
-        
     	return super.show(model);
     }
-       
+    
+   
+    
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
      */
     @Override
     public String getContentName() {
         return "TrialManager/manageTrial";
-    }       
-    
+    }
+   
 }

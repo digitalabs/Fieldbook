@@ -14,7 +14,7 @@ package com.efficio.fieldbook.web.nursery.service;
 import java.io.File;
 import java.io.IOException;
 
-import com.efficio.fieldbook.web.nursery.bean.UserSelection;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 
 /**
  * File service for the dataset workbook import needs.

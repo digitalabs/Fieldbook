@@ -25,7 +25,7 @@ import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.pojos.workbench.TemplateSetting;
-import org.generationcp.middleware.pojos.workbench.settings.TrialDataset;
+import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpRequest;
@@ -40,7 +40,6 @@ import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
 import com.efficio.fieldbook.web.nursery.controller.SettingsController;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
-import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 import com.efficio.fieldbook.web.trial.form.CreateTrialForm;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SessionUtility;
@@ -74,10 +73,6 @@ public class CreateTrialController extends SettingsController {
     public static final String URL_TREATMENT = "TrialManager/templates/treatment";
     public static final String URL_EXPERIMENTAL_DESIGN = "TrialManager/templates/experimentalDesign";
     public static final String URL_MEASUREMENT = "TrialManager/templates/measurements";
-
-    @Resource
-    private TrialSelection trialSelection;
-
 
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
@@ -154,9 +149,9 @@ public class CreateTrialController extends SettingsController {
                 LOG.error(e.getMessage(), e);
             }
             
-            trialSelection.setWorkbook(workbook);
-            TrialDataset dataset = (TrialDataset)SettingsUtil.convertWorkbookToXmlDataset(workbook, false);
-            SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId(), true);
+            userSelection.setWorkbook(workbook);
+            Dataset dataset = (Dataset)SettingsUtil.convertWorkbookToXmlDataset(workbook, false);
+            SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId(), true, true);
             
             //study-level
             List<SettingDetail> trialLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString()), 
@@ -214,7 +209,7 @@ public class CreateTrialController extends SettingsController {
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("createTrialForm") CreateTrialForm form, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2, Model model, HttpServletRequest req, HttpSession session) throws MiddlewareQueryException{
     	
-    	SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME,SessionUtility.TRIAL_SELECTION_SESSION_NAME,SessionUtility.POSSIBLE_VALUES_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
+    	SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME,SessionUtility.POSSIBLE_VALUES_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
     	form.setProjectId(this.getCurrentProjectId());
     	form.setRequiredFields(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
     	form.setFolderId(1);
@@ -272,12 +267,12 @@ public class CreateTrialController extends SettingsController {
     
     private List<List<ValueReference>> createTrialEnvValueList(List<SettingDetail> trialLevelVariableList) {
         List<List<ValueReference>> trialEnvValueList = new ArrayList<List<ValueReference>>();
-        List<MeasurementRow> trialObservations = trialSelection.getWorkbook().getTrialObservations();        
+        List<MeasurementRow> trialObservations = userSelection.getWorkbook().getTrialObservations();        
         
         for (MeasurementRow trialObservation : trialObservations) {
             List<ValueReference> trialInstanceVariables = new ArrayList<ValueReference>();
             for (SettingDetail detail : trialLevelVariableList) {
-                String headerName = WorkbookUtil.getMeasurementVariableName(trialSelection.getWorkbook().getTrialVariables(), detail.getVariable().getCvTermId());
+                String headerName = WorkbookUtil.getMeasurementVariableName(userSelection.getWorkbook().getTrialVariables(), detail.getVariable().getCvTermId());
                 String value = trialObservation.getMeasurementDataValue(headerName);
                 trialInstanceVariables.add(new ValueReference(detail.getVariable().getCvTermId(), value));
             }

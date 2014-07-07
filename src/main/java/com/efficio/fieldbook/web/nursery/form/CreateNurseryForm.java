@@ -196,6 +196,8 @@ public class CreateNurseryForm {
     /** The breeding method code. */
     private String breedingMethodCode;
     
+    private boolean hasFieldmap;
+    
     /**
      * Gets the project id.
      *
@@ -1250,6 +1252,14 @@ public class CreateNurseryForm {
          */
         public void setBreedingMethodCode(String breedingMethodCode) {
             this.breedingMethodCode = breedingMethodCode;
+        }
+
+        public boolean isHasFieldmap() {
+            return hasFieldmap;
+        }
+
+        public void setHasFieldmap(boolean hasFieldmap) {
+            this.hasFieldmap = hasFieldmap;
         }
 
         

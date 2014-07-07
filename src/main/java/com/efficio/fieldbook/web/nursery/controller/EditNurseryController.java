@@ -120,15 +120,17 @@ public class EditNurseryController extends SettingsController {
     	String contextParams = ContextUtil.getContextParameterString(contextInfo);
     	
     	SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME,SessionUtility.POSSIBLE_VALUES_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
+    	
+    	Workbook workbook = null;
         if(nurseryId != 0){     
             //settings part
-            Workbook workbook = fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
+            workbook = fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
 
             form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), buildVariates(workbook.getVariates())));
             
             Dataset dataset = (Dataset)SettingsUtil.convertWorkbookToXmlDataset(workbook);
             
-            SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId(), false);
+            SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId(), false, false);
             
             //nursery-level
             List<SettingDetail> nurseryLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 
@@ -179,7 +181,7 @@ public class EditNurseryController extends SettingsController {
             
             form.setPlotLevelVariables(userSelection.getPlotsLevelList());
         }
-        setFormStaticData(form, contextParams);
+        setFormStaticData(form, contextParams, workbook);
         model.addAttribute("createNurseryForm", form);
         if(isAjax != null && isAjax.equalsIgnoreCase("1")) {
         	return super.showAjaxPage(model, getContentName());
@@ -306,7 +308,7 @@ public class EditNurseryController extends SettingsController {
     	ContextInfo contextInfo = (ContextInfo) WebUtils.getSessionAttribute(request, ContextConstants.SESSION_ATTR_CONTEXT_INFO); 
     	String contextParams = ContextUtil.getContextParameterString(contextInfo);
     	SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME,SessionUtility.POSSIBLE_VALUES_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
-    	setFormStaticData(form, contextParams);
+    	setFormStaticData(form, contextParams, new Workbook());
     	assignDefaultValues(form);
     	return super.show(model);
     }
@@ -491,7 +493,7 @@ public class EditNurseryController extends SettingsController {
      *
      * @param form the new form static data
      */
-    private void setFormStaticData(CreateNurseryForm form, String contextParams){
+    private void setFormStaticData(CreateNurseryForm form, String contextParams, Workbook workbook){
         form.setBreedingMethodId(AppConstants.BREEDING_METHOD_ID.getString());
         form.setLocationId(AppConstants.LOCATION_ID.getString());
         form.setBreedingMethodUrl(fieldbookProperties.getProgramBreedintMethodsUrl());
@@ -509,6 +511,15 @@ public class EditNurseryController extends SettingsController {
         form.setProjectId(this.getCurrentProjectId());
         form.setIdNameVariables(AppConstants.ID_NAME_COMBINATION.getString());
         form.setBreedingMethodCode(AppConstants.BREEDING_METHOD_CODE.getString());
+        Integer datasetId = workbook.getMeasurementDatesetId();
+        try {
+            if (datasetId == null) {
+                datasetId = fieldbookMiddlewareService.getMeasurementDatasetId(workbook.getStudyId(), workbook.getStudyName());
+            }
+            form.setHasFieldmap(fieldbookMiddlewareService.hasFieldMap(datasetId));
+        } catch (MiddlewareQueryException e) {
+            LOG.error(e.getMessage(), e);
+        }
     }
     
     /**
@@ -925,7 +936,7 @@ public class EditNurseryController extends SettingsController {
         //remove selection variates from traits list
         removeSelectionVariatesFromTraits(userSelection.getBaselineTraitsList());
         
-    	setFormStaticData(form, contextParams);
+    	setFormStaticData(form, contextParams, workbook);
         model.addAttribute("createNurseryForm", form);
     	
         return super.showAjaxPage(model, URL_SETTINGS);

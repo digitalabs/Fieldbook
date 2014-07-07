@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.StudySelection;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.common.service.DataKaptureExportStudyService;
@@ -178,7 +177,7 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
     @RequestMapping(value="/study/hasFieldMap", method = RequestMethod.GET)
     public String hasFieldMap(HttpServletRequest req, HttpServletResponse response) {
     	String studyId = req.getParameter("studyId");
-    	StudySelection userSelection = getUserSelection(false);    	
+    	UserSelection userSelection = getUserSelection(false);    	
     	boolean hasFieldMap = false;
 		try {
 			Workbook workbook = null;
@@ -200,7 +199,7 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
     @ResponseBody
     @RequestMapping(value="/studyTrial/hasFieldMap", method = RequestMethod.GET)
     public String hasTrialFieldMap(HttpServletRequest req, HttpServletResponse response) {
-    	StudySelection userSelection = getUserSelection(false);    	
+    	UserSelection userSelection = getUserSelection(false);    	
     	userSelection.getWorkbook().getTotalNumberOfInstances();     	    	
     	Integer datasetId = userSelection.getWorkbook().getMeasurementDatesetId();
     	return datasetId.toString();
@@ -211,7 +210,7 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
     public String getStudyTraits(HttpServletRequest req, HttpServletResponse response) {
     	String studyId = req.getParameter("studyId");
     	
-    	StudySelection userSelection = getUserSelection(false);    	
+    	UserSelection userSelection = getUserSelection(false);    	
     	List<MeasurementVariable> variates = new ArrayList<MeasurementVariable>();
 		try {
 			List<MeasurementVariable> tempVariates = new ArrayList<MeasurementVariable>();
@@ -258,7 +257,7 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
     	 */
     	ExportDataCollectionOrderService exportDataCollectionService = getExportOrderService(exportWayType);
     	
-    	StudySelection userSelection = getUserSelection(isTrial);
+    	UserSelection userSelection = getUserSelection(isTrial);
     	try {
 	    	String studyId = req.getParameter("studyExportId");
 	    	if(!"0".equalsIgnoreCase(studyId)){
@@ -342,7 +341,7 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
     	return super.convertObjectToJson(results);
     }
     
-    private StudySelection getUserSelection(boolean isTrial) {
+    private UserSelection getUserSelection(boolean isTrial) {
     	return this.studySelection;
     }
     

@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
-import com.efficio.fieldbook.web.common.bean.StudySelection;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
@@ -76,7 +75,7 @@ public class ObservationMatrixController extends
             , @ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
 
     	boolean isTrial = studyType.equalsIgnoreCase("TRIAL");
-    	StudySelection userSelection = getUserSelection(isTrial);    	
+    	UserSelection userSelection = getUserSelection(isTrial);    	
     	
     	form.setMeasurementRowList(userSelection.getWorkbook().getObservations());
     	form.setMeasurementVariables(userSelection.getWorkbook().getMeasurementDatasetVariables());
@@ -92,7 +91,7 @@ public class ObservationMatrixController extends
             @ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model, @RequestParam("listIdentifier") String datasetId) {
 
     	boolean isTrial = studyType.equalsIgnoreCase("TRIAL");
-    	StudySelection userSelection = getUserSelection(isTrial);
+    	UserSelection userSelection = getUserSelection(isTrial);
     	
     	List<MeasurementRow> rows = paginationListSelection.getReviewDetailsList(datasetId);
     	if (rows != null) {
@@ -114,7 +113,7 @@ public class ObservationMatrixController extends
             @PathVariable String studyType, BindingResult result, Model model){
 
     	boolean isTrial = studyType.equalsIgnoreCase("TRIAL");
-    	StudySelection userSelection = getUserSelection(isTrial);
+    	UserSelection userSelection = getUserSelection(isTrial);
     	
     	Map<String, String> resultMap = new HashMap<String, String>();
         
@@ -142,7 +141,7 @@ public class ObservationMatrixController extends
         return resultMap;
     }
 
-    private StudySelection getUserSelection(boolean isTrial) {
+    private UserSelection getUserSelection(boolean isTrial) {
     	return this.studySelection;
     }
     
@@ -153,7 +152,7 @@ public class ObservationMatrixController extends
             Model model) throws MiddlewareQueryException {
 
     	
-    	StudySelection userSelection = getUserSelection(false);
+    	UserSelection userSelection = getUserSelection(false);
     	List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
     	tempList.addAll(userSelection.getMeasurementRowList());
 
@@ -178,7 +177,7 @@ public class ObservationMatrixController extends
     @RequestMapping(value="/data/table/ajax", method = RequestMethod.GET)
     public Map<String, Object> demoPageDataTablesAjax(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) {
     	
-    	StudySelection userSelection = getUserSelection(false);
+    	UserSelection userSelection = getUserSelection(false);
     	List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
     	//for(int i = 0 ; i < 20; i++)
     		tempList.addAll(userSelection.getMeasurementRowList());
@@ -201,7 +200,7 @@ public class ObservationMatrixController extends
     @RequestMapping(value="/data/table/ajax/submit/{index}", method = RequestMethod.POST)
     public Map<String, Object> dataTablesAjaxSubmit(@PathVariable int index, @ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form) {
     	HashMap<String, Object> map = new HashMap<String, Object>();
-    	StudySelection userSelection = getUserSelection(false);
+    	UserSelection userSelection = getUserSelection(false);
     	List<MeasurementRow> tempList = new ArrayList<MeasurementRow>();
     	tempList.addAll(userSelection.getMeasurementRowList());
 

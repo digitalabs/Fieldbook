@@ -18,7 +18,9 @@ import java.util.Map;
 
 import org.generationcp.middleware.domain.dms.StandardVariable;
 import org.generationcp.middleware.domain.dms.ValueReference;
+import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.StudyDetails;
+import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.domain.oms.TraitClassReference;
 
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
@@ -29,7 +31,7 @@ import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
  * This bean models the various input that the user builds up over time
  * to perform the actual loading operation.
  */
-public class UserSelection extends StudySelection implements Serializable {
+public class UserSelection implements Serializable {
     
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -75,10 +77,7 @@ public class UserSelection extends StudySelection implements Serializable {
 
     /** The trial environment values. */
     private List<List<ValueReference>> trialEnvironmentValues;
-    
-    /** The all standard variables. */
-    //private Set<StandardVariable> allStandardVariables;
-    
+        
     /** The imported advanced germplasm list. */
     private List<ImportedGermplasm> importedAdvancedGermplasmList;
     
@@ -121,9 +120,20 @@ public class UserSelection extends StudySelection implements Serializable {
     /** The removed conditions. */
     private List<SettingDetail> removedConditions;
     
+    /** The new traits. */
     private List<SettingDetail> newTraits;
     
+    /** The new selection variates. */
     private List<SettingDetail> newSelectionVariates;
+    
+    /** The workbook. */
+    private Workbook workbook;
+    
+    /** The current page. */
+    private int currentPage;
+    
+    /** The measurement row list. */
+    private List<MeasurementRow> measurementRowList;
     
 	
 	/**
@@ -242,18 +252,18 @@ public class UserSelection extends StudySelection implements Serializable {
      *
      * @return the workbook
      */
-//    public Workbook getWorkbook() {
-//        return workbook;
-//    }
+    public Workbook getWorkbook() {
+        return workbook;
+    }
 
     /**
      * Sets the workbook.
      *
      * @param workbook the new workbook
      */
-//    public void setWorkbook(Workbook workbook) {
-//        this.workbook = workbook;
-//    }
+    public void setWorkbook(Workbook workbook) {
+        this.workbook = workbook;
+    }
 
     /**
      * Gets the field layout random.
@@ -366,32 +376,6 @@ public class UserSelection extends StudySelection implements Serializable {
 	}
 
 	/**
-	 * Gets the all standard variables.
-	 *
-	 * @param id the id
-	 * @return the allStandardVariables
-	 */
-//	public Set<StandardVariable> getAllStandardVariables() {
-//		return allStandardVariables;
-//	}
-
-	/**
-	 * Sets the all standard variables.
-	 *
-	 * @param allStandardVariables the allStandardVariables to set
-	 */
-//	public void setAllStandardVariables(Set<StandardVariable> allStandardVariables) {
-//		this.allStandardVariables = allStandardVariables;
-//		
-//		standardVariableMap = new HashMap<String, StandardVariable>();
-//		if(allStandardVariables != null){
-//			for(StandardVariable var : allStandardVariables){
-//				standardVariableMap.put(Integer.toString(var.getId()), var);
-//			}
-//		}
-//	}
-
-	/**
 	 * Gets the cache standard variable.
 	 *
 	 * @param id the id
@@ -469,10 +453,11 @@ public class UserSelection extends StudySelection implements Serializable {
 		this.trialLevelVariableList = trialLevelVariableList;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.efficio.fieldbook.web.common.bean.StudySelection#isTrial()
+	/**
+	 * Checks if is trial.
+	 *
+	 * @return true, if is trial
 	 */
-	@Override
 	public boolean isTrial() {
 		if (this.workbook != null) {
 			return !this.workbook.isNursery();
@@ -719,6 +704,8 @@ public class UserSelection extends StudySelection implements Serializable {
         }
 
 		/**
+		 * Gets the new traits.
+		 *
 		 * @return the newTraits
 		 */
 		public List<SettingDetail> getNewTraits() {
@@ -726,6 +713,8 @@ public class UserSelection extends StudySelection implements Serializable {
 		}
 
 		/**
+		 * Sets the new traits.
+		 *
 		 * @param newTraits the newTraits to set
 		 */
 		public void setNewTraits(List<SettingDetail> newTraits) {
@@ -733,6 +722,8 @@ public class UserSelection extends StudySelection implements Serializable {
 		}
 
 		/**
+		 * Gets the new selection variates.
+		 *
 		 * @return the newSelectionVariates
 		 */
 		public List<SettingDetail> getNewSelectionVariates() {
@@ -740,10 +731,47 @@ public class UserSelection extends StudySelection implements Serializable {
 		}
 
 		/**
+		 * Sets the new selection variates.
+		 *
 		 * @param newSelectionVariates the newSelectionVariates to set
 		 */
 		public void setNewSelectionVariates(List<SettingDetail> newSelectionVariates) {
 			this.newSelectionVariates = newSelectionVariates;
 		}
+		
+		/**
+		 * Gets the current page.
+		 *
+		 * @return the currentPage
+		 */
+	    public int getCurrentPage() {
+	        return currentPage;
+	    }
 
+	    /**
+    	 * Sets the current page.
+    	 *
+    	 * @param currentPage the currentPage to set
+    	 */
+	    public void setCurrentPage(int currentPage) {
+	        this.currentPage = currentPage;
+	    }
+
+	    /**
+    	 * Gets the measurement row list.
+    	 *
+    	 * @return the measurementRowList
+    	 */
+	    public List<MeasurementRow> getMeasurementRowList() {
+	        return measurementRowList;
+	    }
+
+	    /**
+    	 * Sets the measurement row list.
+    	 *
+    	 * @param measurementRowList the measurementRowList to set
+    	 */
+	    public void setMeasurementRowList(List<MeasurementRow> measurementRowList) {
+	        this.measurementRowList = measurementRowList;
+	    }
  }

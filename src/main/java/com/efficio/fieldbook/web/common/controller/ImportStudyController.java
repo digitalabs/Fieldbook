@@ -45,7 +45,6 @@ import com.efficio.fieldbook.web.common.bean.ChangeType;
 import com.efficio.fieldbook.web.common.bean.GermplasmChangeDetail;
 import com.efficio.fieldbook.web.common.bean.ImportResult;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.StudySelection;
 import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.common.service.DataKaptureImportStudyService;
@@ -108,7 +107,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 
     	boolean isTrial = studyType.equalsIgnoreCase("TRIAL");
     	ImportResult importResult = null;
-    	StudySelection userSelection = getUserSelection(isTrial);
+    	UserSelection userSelection = getUserSelection(isTrial);
     	/**
     	 * Should always revert the data first to the original data here
     	 * we should move here that part the copies it to the original observation
@@ -196,8 +195,8 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
 	    	userSelection.setCurrentPage(form.getCurrentPage());
 	    	form.setImportVal(1);
 	    	form.setNumberOfInstances(userSelection.getWorkbook().getTotalNumberOfInstances());
-	    	form.setTrialEnvironmentValues(transformTrialObservations(userSelection.getWorkbook().getTrialObservations(), studySelection.getTrialLevelVariableList()));
-	    	form.setTrialLevelVariables(studySelection.getTrialLevelVariableList());
+	    	form.setTrialEnvironmentValues(transformTrialObservations(userSelection.getWorkbook().getTrialObservations(), userSelection.getTrialLevelVariableList()));
+	    	form.setTrialLevelVariables(userSelection.getTrialLevelVariableList());
 	    	
 	    	if(importResult.getErrorMessage() != null && !importResult.getErrorMessage().equalsIgnoreCase("")){
 	    		resultsMap.put("isSuccess", 0);	    		
@@ -265,7 +264,7 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	return list;
     }
     
-    private StudySelection getUserSelection(boolean isTrial) {
+    private UserSelection getUserSelection(boolean isTrial) {
     	return this.studySelection;
     }
     

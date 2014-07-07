@@ -203,7 +203,7 @@
 				<tr th:each="nurseryConditionDetail, rowStat : *{nurseryConditionDetails}">
 					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
 						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
-						*{nurseryConditionDetails[__${rowStat.index}__].variable.termId} + '\');'" th:text="${nurseryConditionDetail.variable.name}"></a>
+						*{nurseryConditionDetails[__${rowStat.index}__].variable.cvTermId} + '\');'" th:text="${nurseryConditionDetail.variable.name}"></a>
 					</td>
 					<td width="55%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${nurseryConditionDetail.variable.description}"></td>
 				</tr>

@@ -49,8 +49,8 @@ import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.common.bean.SettingDetail;
 import com.efficio.fieldbook.web.common.bean.SettingVariable;
 import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.bean.NurseryDetails;
-import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 
 /**
  * The Class SettingsUtil.

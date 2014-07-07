@@ -35,8 +35,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
-import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.util.WorkbookUtil;
 

@@ -18,9 +18,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasm;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
-import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 
 /**
  * The Interface ImportGermplasmFileService.

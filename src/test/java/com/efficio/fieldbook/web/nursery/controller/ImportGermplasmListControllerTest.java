@@ -33,8 +33,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.bean.ImportedGermplasmMainInfo;
-import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.ImportGermplasmListForm;
 import com.efficio.fieldbook.web.nursery.service.ImportGermplasmFileService;
 

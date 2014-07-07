@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.nursery.bean.UserSelection;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.NurseryDetailsForm;
 
 /**

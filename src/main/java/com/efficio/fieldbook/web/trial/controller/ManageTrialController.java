@@ -29,8 +29,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.ManageNurseriesForm;
-import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 import com.efficio.fieldbook.web.trial.form.ManageTrialForm;
 
 /**
@@ -49,9 +49,10 @@ public class ManageTrialController extends AbstractBaseFieldbookController{
 
     @Resource
     private FieldbookService fieldbookMiddlewareService;
-  
+    
     @Resource
-    private TrialSelection trialSelection;
+    private UserSelection userSelection;
+  
     /**
      * Shows the manage nurseries screen
      *
@@ -65,8 +66,8 @@ public class ManageTrialController extends AbstractBaseFieldbookController{
         try {
             List<StudyDetails> nurseryDetailsList = 
                     fieldbookMiddlewareService.getAllLocalTrialStudyDetails();
-            getTrialSelection().setStudyDetailsList(nurseryDetailsList);
-            form.setTrialDetailsList(getTrialSelection().getStudyDetailsList());
+            getUserSelection().setStudyDetailsList(nurseryDetailsList);
+            form.setTrialDetailsList(getUserSelection().getStudyDetailsList());
             form.setCurrentPage(1);
         }
         catch (MiddlewareQueryException e){
@@ -85,7 +86,7 @@ public class ManageTrialController extends AbstractBaseFieldbookController{
     @RequestMapping(value="/page/{pageNum}", method = RequestMethod.GET)
     public String getPaginatedList(@PathVariable int pageNum
             , @ModelAttribute("manageTrialForm") ManageTrialForm form, Model model) {
-        List<StudyDetails> nurseryDetailsList = getTrialSelection().getStudyDetailsList();
+        List<StudyDetails> nurseryDetailsList = getUserSelection().getStudyDetailsList();
         if(nurseryDetailsList != null){
             form.setTrialDetailsList(nurseryDetailsList);
             form.setCurrentPage(pageNum);
@@ -129,8 +130,8 @@ public class ManageTrialController extends AbstractBaseFieldbookController{
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getUserSelection()
      */    
-    public TrialSelection getTrialSelection() {
-        return this.trialSelection;
+    public UserSelection getUserSelection() {
+        return this.userSelection;
     }
     
 }

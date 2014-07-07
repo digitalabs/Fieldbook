@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.StudySelection;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
 import com.efficio.fieldbook.web.common.service.DataKaptureExportStudyService;
 import com.efficio.fieldbook.web.common.service.ExcelExportStudyService;
@@ -41,8 +42,6 @@ import com.efficio.fieldbook.web.common.service.RExportStudyService;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingRowColImpl;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverColImpl;
 import com.efficio.fieldbook.web.common.service.impl.ExportOrderingSerpentineOverRangeImpl;
-import com.efficio.fieldbook.web.nursery.bean.UserSelection;
-import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 import com.efficio.fieldbook.web.util.AppConstants;
 import com.efficio.fieldbook.web.util.SettingsUtil;
 
@@ -55,10 +54,7 @@ public class ExportStudyController extends AbstractBaseFieldbookController {
     private static final int BUFFER_SIZE = 4096 * 4;
 
     @Resource
-    private UserSelection nurserySelection;
-    
-    @Resource
-    private TrialSelection trialSelection;
+    private UserSelection studySelection;
     
     @Resource
     private FieldroidExportStudyService fielddroidExportStudyService;
@@ -347,7 +343,7 @@ HttpServletRequest req, HttpServletResponse response) throws MiddlewareQueryExce
     }
     
     private StudySelection getUserSelection(boolean isTrial) {
-    	return isTrial ? this.trialSelection : this.nurserySelection;
+    	return this.studySelection;
     }
     
     private ExportDataCollectionOrderService getExportOrderService(int exportWayType){

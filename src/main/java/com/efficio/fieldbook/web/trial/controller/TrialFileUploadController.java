@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.efficio.fieldbook.service.api.FieldbookService;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.trial.bean.TrialSelection;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.trial.form.FileUploadForm;
 import com.efficio.fieldbook.web.util.SessionUtility;
 import com.efficio.fieldbook.web.util.ToolUtil;
@@ -48,11 +48,10 @@ public class TrialFileUploadController extends AbstractBaseFieldbookController{
     /** The fieldbook service. */
     @Resource
     private FieldbookService fieldbookService;
-	
-    /** The user selection. */
+    
     @Resource
-    private TrialSelection trialSelection;	
-	
+    private UserSelection userSelection;
+		
     /**
      * Shows the file upload screen
      *
@@ -64,7 +63,7 @@ public class TrialFileUploadController extends AbstractBaseFieldbookController{
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("fileUploadForm") FileUploadForm uploadForm
             , Model model, HttpServletRequest req, HttpSession session) {
-    	SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME,SessionUtility.TRIAL_SELECTION_SESSION_NAME,SessionUtility.POSSIBLE_VALUES_SESSION_NAME});
+    	SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME,SessionUtility.POSSIBLE_VALUES_SESSION_NAME});
     	
     	try {
     	    ToolUtil toolUtil = new ToolUtil();
@@ -119,12 +118,12 @@ public class TrialFileUploadController extends AbstractBaseFieldbookController{
         this.fieldbookService = fieldbookService;
     }
     
-    public TrialSelection getTrialSelection() {
-        return trialSelection;
+    public UserSelection getUserSelection() {
+        return userSelection;
     }
     
-    public void setTrialSelection(TrialSelection trialSelection) {
-        this.trialSelection = trialSelection;
+    public void setTrialSelection(UserSelection userSelection) {
+        this.userSelection = userSelection;
     }
 
 }

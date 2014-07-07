@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
-import com.efficio.fieldbook.web.nursery.bean.UserSelection;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.MeasurementsGeneratorService;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;

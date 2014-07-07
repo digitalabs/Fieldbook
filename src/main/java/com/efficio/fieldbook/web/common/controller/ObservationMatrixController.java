@@ -29,11 +29,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
 import com.efficio.fieldbook.web.common.bean.PaginationListSelection;
 import com.efficio.fieldbook.web.common.bean.StudySelection;
+import com.efficio.fieldbook.web.common.bean.UserSelection;
 import com.efficio.fieldbook.web.common.form.AddOrRemoveTraitsForm;
-import com.efficio.fieldbook.web.nursery.bean.UserSelection;
 import com.efficio.fieldbook.web.nursery.form.CreateNurseryForm;
 import com.efficio.fieldbook.web.nursery.service.ValidationService;
-import com.efficio.fieldbook.web.trial.bean.TrialSelection;
 import com.efficio.fieldbook.web.util.DateUtil;
 
 @Controller
@@ -48,10 +47,7 @@ public class ObservationMatrixController extends
     public static final String EDIT_EXPERIMENT_TEMPLATE = "/Common/updateExperimentModal";
     
 	@Resource
-	private UserSelection nurserySelection;
-	
-	@Resource
-	private TrialSelection trialSelection;
+	private UserSelection studySelection;
 	
 	@Resource
 	private ValidationService validationService;
@@ -147,7 +143,7 @@ public class ObservationMatrixController extends
     }
 
     private StudySelection getUserSelection(boolean isTrial) {
-    	return isTrial ? this.trialSelection : this.nurserySelection;
+    	return this.studySelection;
     }
     
    

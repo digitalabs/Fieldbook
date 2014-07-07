@@ -62,14 +62,13 @@
            </div>
 		</div>
 		<br/>
+
 		<div class="col-xs-12 col-md-12">
 			<label  class="control-label section-toggle toggle-icon" data-target=".managementDetails">
-				<img th:src="@{/static/img/basic-details.png}" />
 				<img style="margin-left: -10px" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
 				<img style="margin-left: -7px; display:none;" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
 				<strong class="sub-content-heading" th:text="#{fb.study.trialmanagementdetails}">TRIAL MANAGEMENT DETAILS</strong>
 			</label>
-
 		</div>
 		<div class="col-md-12 sectionContainer collapse in managementDetails">
 			<div th:each="managementDetail, rowStat : *{managementDetails}" th:remove="tag">
@@ -81,11 +80,11 @@
 
                         <strong th:text="${managementDetail.variable.name} + ':'" class="">:</strong>
                         <span th:text="${managementDetail.value}" class="div-select-val "></span>
-
                 </div>
             </div>
 		</div>
 		<br/>
+
 		<div class="col-xs-12 col-md-12">
 			<label  class="control-label section-toggle toggle-icon" data-target=".germplasmDescriptors">
 				<img heigth="16" th:src="@{/static/img/factors.png}" class="lbl-img" />
@@ -93,7 +92,6 @@
 				<img style="margin-left: -7px" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
 				<strong class="sub-content-heading" th:text="#{trial.trialdetails.germplasm.descriptors}">GERMPLASM DESCRIPTORS</strong>
 			</label>
-
 		</div>
 		<div class="col-md-12 sectionContainer collapse germplasmDescriptors">
 			<div class="col-md-6">
@@ -158,7 +156,7 @@
 		<div class="col-md-12 sectionContainer collapse trialEnvironments">
 			<div class="col-md-12">
 				<strong class="" th:text="#{trial.trialdetails.environment.count}">Number of environments for this trial:</strong>
-				<span th:text="${numberOfEnvironments}" ></span>
+				<span th:text="*{numberOfEnvironments}" ></span>
 			</div>
 			
 			<div class="col-md-6">

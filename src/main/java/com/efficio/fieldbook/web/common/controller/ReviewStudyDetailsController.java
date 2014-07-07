@@ -76,7 +76,6 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
     	boolean isNursery = (studyType != null && StudyType.N.getName().equalsIgnoreCase(studyType)) ? true : false;
         Workbook workbook = fieldbookMiddlewareService.getStudyVariableSettings(id, isNursery);
         workbook.setStudyId(id);
-        userSelection.setWorkbook(workbook);
         StudyDetails details = SettingsUtil.convertWorkbookToStudyDetails(workbook, fieldbookMiddlewareService, fieldbookService, userSelection);
         rearrangeDetails(details);
         this.getPaginationListSelection().addReviewWorkbook(Integer.toString(id), workbook);

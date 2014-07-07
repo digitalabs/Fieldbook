@@ -1359,7 +1359,7 @@ public class SettingsUtil {
 		StudyDetails studyDetails = convertWorkbookStudyLevelVariablesToStudyDetails(workbook, 
 				fieldbookMiddlewareService, fieldbookService, userSelection, workbook.getStudyId().toString());
 		
-		studyDetails.setNumberOfEnvironments(workbook.getTotalNumberOfInstances());
+		studyDetails.setNumberOfEnvironments(Long.valueOf(fieldbookMiddlewareService.countObservations(workbook.getTrialDatasetId())).intValue());
 		
 		List<SettingDetail> factors = convertWorkbookFactorsToSettingDetails(workbook.getNonTrialFactors(), fieldbookMiddlewareService);
 		if (!workbook.isNursery()) {

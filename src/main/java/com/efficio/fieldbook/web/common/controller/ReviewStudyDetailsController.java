@@ -18,6 +18,7 @@ import javax.annotation.Resource;
 
 import org.generationcp.middleware.domain.dms.DatasetReference;
 import org.generationcp.middleware.domain.etl.Workbook;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
 import org.generationcp.middleware.service.api.FieldbookService;
 import org.slf4j.Logger;
@@ -72,7 +73,7 @@ public class ReviewStudyDetailsController extends AbstractBaseFieldbookControlle
     public String show(@PathVariable String studyType, @PathVariable int id, 
     		@ModelAttribute("addOrRemoveTraitsForm") AddOrRemoveTraitsForm form, Model model) throws MiddlewareQueryException {
     	
-    	boolean isNursery = "Nursery".equalsIgnoreCase(studyType);
+    	boolean isNursery = (studyType != null && StudyType.N.getName().equalsIgnoreCase(studyType)) ? true : false;
         Workbook workbook = fieldbookMiddlewareService.getStudyVariableSettings(id, isNursery);
         workbook.setStudyId(id);
         userSelection.setWorkbook(workbook);

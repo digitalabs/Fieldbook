@@ -2758,15 +2758,16 @@ function initializeStudyTabs() {
 }
 function addDetailsTab(studyId, title) {
 	// if the study is already existing, we show that tab
+	'use strict';
 	$('#study-tab-headers li').removeClass('active');
 	$('#study-tabs .info').hide();
 	if ($('li#study' + studyId).length !== 0) {
 		$('li#study' + studyId).addClass('active');
 		$('.info#study' + studyId).show();
 	} else {
-
+		var studyType = isNursery() ? 'N' : 'T';
 		$.ajax({
-			url : '/Fieldbook/StudyManager/reviewStudyDetails/show/' + $('#study-type').val() + '/' + studyId,
+			url : '/Fieldbook/StudyManager/reviewStudyDetails/show/' + studyType + '/' + studyId,
 			type : 'GET',
 			cache : false,
 			success : function(data) {

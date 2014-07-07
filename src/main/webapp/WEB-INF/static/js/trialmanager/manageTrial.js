@@ -13,94 +13,49 @@
     // TODO: if possible, retrieve the template urls from the list of constants
     manageTrialApp.config(function($stateProvider, $urlRouterProvider,$stickyStateProvider) {
 
-        //ENABLE ONLY ON DEBUG $stickyStateProvider.enableDebug(true);
+        $stickyStateProvider.enableDebug(true);
 
-        $urlRouterProvider.otherwise("trialSettings");
+        $urlRouterProvider.otherwise("/trialSettings");
         $stateProvider
-            .state('root', {
-                url: "/",
-                views: {
-                    "@" : {
-                        templateUrl: "/Fieldbook/static/angular-templates/tab.html"
-                    }
-                }
-            })
 
-            .state('root.environment', {
-                url: "environment",
-                templateUrl: '/Fieldbook/TrialManager/createTrial/environment',
-                controller: 'EnvironmentCtrl'
-            })
-
-            .state('root.trialSettings', {
-                url: "trialSettings",
+            .state('trialSettings', {
+                url: "/trialSettings",
                 templateUrl: '/Fieldbook/TrialManager/createTrial/trialSettings',
                 controller: 'TrialSettingsCtrl'
             })
 
-            .state('root.treatment', {
-                url: "treatment",
+            .state('treatment', {
+                url: "/treatment",
                 templateUrl: '/Fieldbook/TrialManager/createTrial/treatment',
                 controller: 'TreatmentCtrl'
             })
-            .state('root.experimentalDesign', {
-                url: "experimentalDesign",
+
+            .state('environment', {
+                url: "/environment",
+                templateUrl: '/Fieldbook/TrialManager/createTrial/environment',
+                controller: 'EnvironmentCtrl'
+            })
+
+            .state('experimentalDesign', {
+                url: "/experimentalDesign",
                 templateUrl: '/Fieldbook/TrialManager/createTrial/experimentalDesign'
             })
 
-            .state('root.measurements', {
-                url: "measurements",
+            .state('measurements', {
+                url: "/measurements",
                 templateUrl: '/Fieldbook/TrialManager/createTrial/measurements'
             })
 
-            .state('root.germplasm', {
-                url: "germplasm",
+            .state('germplasm', {
+                url: "/germplasm",
                 views: {
-                    "germplasm@root" : {
+                    "germplasm" : {
                         controller: 'GermplasmCtrl',
                         templateUrl: "/Fieldbook/TrialManager/createTrial/germplasm"
                     }
                 },
                 deepStateRedirect: true, sticky: true
             });
-
-        /*
-        * .state('environment', {
-         url: "/environment",
-         templateUrl: '/Fieldbook/TrialManager/createTrial/environment',
-         controller: 'EnvironmentCtrl'
-         })
-         .state('germplasm', {
-         url: "/germplasm",
-         controller: 'GermplasmCtrl',
-         template: "<div class='col-xs-12' ui-view='germplasm' ng-show=\"$state.includes('germplasm.sticky')\"></div>"
-         })
-         .state('germplasm.sticky', {
-         url: "/germplasm",
-         view : {
-         "germplasm@" : {
-         templateUrl: '/Fieldbook/TrialManager/createTrial/germplasm',
-         controller: 'GermplasmCtrl'
-         }
-         },
-         sticky: true,
-         deepStateRedirect: true
-         })
-         .state('treatment', {
-         url: "/treatment",
-         templateUrl: '/Fieldbook/TrialManager/createTrial/treatment',
-         controller: 'TreatmentCtrl'
-         })
-         .state('experimentalDesign', {
-         url: "/experimentalDesign",
-         templateUrl: '/Fieldbook/TrialManager/createTrial/experimentalDesign'
-         })
-         .state('measurements', {
-         url: "/measurements",
-         templateUrl: '/Fieldbook/TrialManager/createTrial/measurements'
-         });
-        * */
-
     });
 
     // common filters

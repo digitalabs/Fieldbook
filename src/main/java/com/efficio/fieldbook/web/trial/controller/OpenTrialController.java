@@ -14,7 +14,7 @@ import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.Workbook;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.pojos.workbench.settings.TrialDataset;
+import org.generationcp.middleware.pojos.workbench.settings.Dataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -78,9 +78,9 @@ public class OpenTrialController extends
             userSelection.setCurrentPage(form.getCurrentPage());
             userSelection.setWorkbook(workbook);
             
-            TrialDataset dataset = (TrialDataset)SettingsUtil.convertWorkbookToXmlDataset(workbook, false);
+            Dataset dataset = (Dataset)SettingsUtil.convertWorkbookToXmlDataset(workbook, false);
             try {
-				SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId(), false);
+				SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId(), false, true);
 			} catch (MiddlewareQueryException e) {
 				LOG.debug(e.getMessage(), e);
 			}

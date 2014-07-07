@@ -107,7 +107,7 @@ public class CreateNurseryController extends SettingsController {
             fieldbookService.createIdNameVariablePairs(workbook, new ArrayList(),AppConstants.ID_NAME_COMBINATION.getString(), false);
 
             Dataset dataset = (Dataset)SettingsUtil.convertWorkbookToXmlDataset(workbook);
-            SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId(), true);
+            SettingsUtil.convertXmlDatasetToPojo(fieldbookMiddlewareService, fieldbookService, dataset, userSelection, this.getCurrentProjectId(), true, false);
             
             //nursery-level
             List<SettingDetail> nurseryLevelConditions = updateRequiredFields(buildRequiredVariables(AppConstants.CREATE_NURSERY_REQUIRED_FIELDS.getString()), 

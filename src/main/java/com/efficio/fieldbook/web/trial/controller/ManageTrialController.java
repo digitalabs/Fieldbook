@@ -45,13 +45,7 @@ public class ManageTrialController extends AbstractBaseFieldbookController{
     
     /** The Constant URL. */
     public static final String URL = "/TrialManager/manageTrial";
-    public static final String PAGINATION_TEMPLATE = "/TrialManager/showTrialPagination";
 
-    @Resource
-    private FieldbookService fieldbookMiddlewareService;
-  
-    @Resource
-    private TrialSelection trialSelection;
     /**
      * Shows the manage nurseries screen
      *
@@ -62,75 +56,16 @@ public class ManageTrialController extends AbstractBaseFieldbookController{
      */
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("manageTrialForm") ManageTrialForm form, Model model) {
-        try {
-            List<StudyDetails> nurseryDetailsList = 
-                    fieldbookMiddlewareService.getAllLocalTrialStudyDetails();
-            getTrialSelection().setStudyDetailsList(nurseryDetailsList);
-            form.setTrialDetailsList(getTrialSelection().getStudyDetailsList());
-            form.setCurrentPage(1);
-        }
-        catch (MiddlewareQueryException e){
-            LOG.error(e.getMessage(), e);
-        }
+        
     	return super.show(model);
     }
-    
-    /**
-     * Get for the pagination of the list
-     *
-     * @param form the form
-     * @param model the model
-     * @return the string
-     */
-    @RequestMapping(value="/page/{pageNum}", method = RequestMethod.GET)
-    public String getPaginatedList(@PathVariable int pageNum
-            , @ModelAttribute("manageTrialForm") ManageTrialForm form, Model model) {
-        List<StudyDetails> nurseryDetailsList = getTrialSelection().getStudyDetailsList();
-        if(nurseryDetailsList != null){
-            form.setTrialDetailsList(nurseryDetailsList);
-            form.setCurrentPage(pageNum);
-        }
-        return super.showAjaxPage(model, PAGINATION_TEMPLATE);
-    }
-    
-    /**
-     * Submits the details.
-     *
-     * @param form the form
-     * @param result the result
-     * @param model the model
-     * @return the string
-     */
-    @RequestMapping(method = RequestMethod.POST)
-    public String submitDetails(@ModelAttribute("manageTrialForm") ManageTrialForm form
-            , BindingResult result, Model model) {
-        //return "redirect:" + FileUploadController.URL;
-        return super.show(model);
-    }
-    
+       
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
      */
     @Override
     public String getContentName() {
         return "TrialManager/manageTrial";
-    }
-    
-    /**
-     * Gets the form.
-     *
-     * @return the form
-     */
-    @ModelAttribute("form")
-    public ManageNurseriesForm getForm() {
-        return new ManageNurseriesForm();
-    }
-    
-    /* (non-Javadoc)
-     * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getUserSelection()
-     */    
-    public TrialSelection getTrialSelection() {
-        return this.trialSelection;
-    }
+    }       
     
 }

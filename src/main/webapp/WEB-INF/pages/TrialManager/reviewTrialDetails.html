@@ -1,7 +1,7 @@
-<div class="review-nursery-page-identifier" style="padding-top: 10px;">
+<div class="review-trial-page-identifier" style="padding-top: 10px;">
 	<div class="" th:object="${nurseryDetails}" th:id="'div-study-tab-' + *{id}">
 		<input type="hidden" id="studyId" class="field-map-highlight" th:value="*{id}" />
-		<input type="hidden" id="study-type" name="study-type" value="Nursery" />
+		<input type="hidden" id="study-type" name="study-type" value="Trial" />
 		<input type="hidden" id="has-measurements" name="has-measurements" th:value="*{hasMeasurements}" />
 
 		<div class="col-xs-12 col-md-12">
@@ -19,14 +19,14 @@
                 	</button>
 					<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
 						<li>
-							<a href="" style="display: none" id="open-study-url" th:href="@{/NurseryManager/editNursery}"></a>
-							<a href="javascript: openStudy('nursery-table');" id="open-study-url-link" th:text="#{nursery.nurserydetails.action.edit}">Edit Nursery</a>
+							<a href="" style="display: none" id="open-study-url" th:href="@{/TrialManager/editTrial}"></a>
+							<a href="javascript: openStudy('trial-table');" id="open-study-url-link" th:text="#{trial.trialdetails.action.edit}">Edit Trial</a>
 						</li>
 						<li>
-							<a href="javascript: openDeleteConfirmation();" th:text="#{browse.nursery.delete.nursery.name}">Delete Nursery</a>
+							<a href="javascript: openDeleteConfirmation();" th:text="#{browse.trial.delete.trial.name}">Delete Trial</a>
 						</li>
 						<li>
-							<a href="javascript: showExportOptions();" id="export-study-link" th:text="#{nursery.nurserydetails.action.export.nursery}">Export Nursery Book</a>
+							<a href="javascript: showExportOptions();" id="export-study-link" th:text="#{trial.trialdetails.action.export.trial}">Export Trial Book</a>
 						</li>
 						<li>
 							<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>

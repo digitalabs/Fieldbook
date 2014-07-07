@@ -112,7 +112,7 @@ var choosingType = 1;
 
 $(document).ready(function () {
     'use strict';
-    displayStudyListTree('studyTree', 'N', 1);
+    displayStudyListTree('studyTree', isNursery() ? 'N' : 'T', 1);
     changeBrowseNurseryButtonBehavior(false);
     $('#addFolderDiv').hide();
     $('#renameFolderDiv').hide();

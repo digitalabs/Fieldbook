@@ -1378,3 +1378,15 @@ label[data-toggle="collapse"],
 .nrm-var-selection-modal .nrm-var-select-var {
 	padding-bottom: 5px;
 }
+
+.var-select-results .var-select-result-prop {
+	font-weight: bold;
+}
+
+.var-select-results .var-select-result-class {
+	font-style: italic;
+}
+
+.var-select-results .var-select-result-vars {
+	font-size: 0.8em;
+}

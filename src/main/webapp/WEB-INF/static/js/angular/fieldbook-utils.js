@@ -170,19 +170,24 @@
                     };
 
                     $element.on('click',  function() {
-                        var eventProxy = {
-                            preventDefault: function () {
-                            },
-                            data: {
-                                group: $attrs.variableType
+                        var params = {
+                            variableType: $attrs.variableType,
+                            retrieveSelectedVariableFunction: function () {
+                                var currentIds = [];
+                                $.each($scope.modeldata, function (key) {
+                                    currentIds.push(key);
+                                });
+
+                                return currentIds;
                             }
                         };
 
                         $(VARIABLE_SELECTION_MODAL_SELECTOR).off(VARIABLE_SELECTED_EVENT_TYPE);
                         $(VARIABLE_SELECTION_MODAL_SELECTOR).on(VARIABLE_SELECTED_EVENT_TYPE, $scope.processModalData);
 
-                        var chooseSettings = new ChooseSettings(VARIABLE_SELECTION_MODAL_SELECTOR, {});
-                        chooseSettings._openVariableSelectionDialog(eventProxy);
+                        var TrialSettingsManager = window.TrialSettingsManager;
+                        var settingsManager = new TrialSettingsManager({});
+                        settingsManager._openVariableSelectionDialog(params);
 
                     });
                 }

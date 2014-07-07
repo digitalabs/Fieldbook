@@ -13,7 +13,7 @@
     // TODO: if possible, retrieve the template urls from the list of constants
     manageTrialApp.config(function($stateProvider, $urlRouterProvider,$stickyStateProvider) {
 
-        $stickyStateProvider.enableDebug(true);
+        $stickyStateProvider.enableDebug(false);
 
         $urlRouterProvider.otherwise("/trialSettings");
         $stateProvider

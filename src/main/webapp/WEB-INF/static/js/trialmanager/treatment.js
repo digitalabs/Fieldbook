@@ -11,11 +11,6 @@
 
     manageTrialApp.controller('TreatmentCtrl',['$scope','TreatmentFactorsService',function($scope,TreatmentFactorsService) {
         $scope.data = TreatmentFactorsService.data;
-        $scope.addManagementVariables = function(result) {
-            $.each(result, function (key, val) {
-                TreatmentFactorsService.addManagementDetailVar(key,val);
-            });
-        };
 
         $scope.showDetailsModal = function(cvTermId) {
             // this function is currently defined in the fieldbook-common.js, loaded globally for the page

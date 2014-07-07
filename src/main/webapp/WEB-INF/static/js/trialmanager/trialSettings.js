@@ -12,13 +12,6 @@
     manageTrialApp.controller('TrialSettingsCtrl',['$scope','TrialSettingsService',function($scope,TrialSettingsService) {
         $scope.data = TrialSettingsService.data;
 
-
-        $scope.addManagementVariables = function(result) {
-            $.each(result,function(key,val){
-                TrialSettingsService.addManagementDetailVar(key,val);
-            });
-        };
-
         $scope.removeVariable = function(cvTermId) {
             //TrialSettingsService.removeUserInputByIndex(cvTermId);
             TrialSettingsService.removeManagementDetailVarByIndex(cvTermId);
@@ -31,9 +24,6 @@
             }
             return size;
         };
-
-
-
 
     }]);
 

@@ -80,8 +80,7 @@
             return {
                 restrict : 'A',
                 scope : {
-                    modeldata : '=',
-                    labels : '='
+                    modeldata : '='
                 },
 
                 controller : function($scope, $element, $attrs, VARIABLE_SELECTION_MODAL_SELECTOR, VARIABLE_SELECTED_EVENT_TYPE) {
@@ -128,67 +127,6 @@
                         var TrialSettingsManager = window.TrialSettingsManager;
                         var settingsManager = new TrialSettingsManager({});
                         settingsManager._openVariableSelectionDialog(params);
-                    });
-                }
-            };
-        })
-        .directive('openOntologyBrowserPopup', function() {
-            // FIXME : Note this also retrives the possible_values of
-            // the selected variables, modify this as not all screens need this particular variable
-
-            return {
-                restrict : 'A',
-                scope : {
-                    onSelectVariables : '&'
-                },
-
-                controller : function($scope, $element, $attrs,VARIABLE_SELECTION_MODAL_SELECTOR, VARIABLE_SELECTED_EVENT_TYPE) {
-                    $scope.processModalData = function (data) {
-                        if (data.responseData) {
-                            data = data.responseData;
-                        }
-
-                        var resultData = {};
-                        if (data) {
-                            // if retrieved data is an array of values
-                            if (data.length && data.length > 0) {
-                                $.each(data, function (key, value) {
-                                    resultData[value.variable.cvTermId] = value;
-                                });
-                            } else {
-                                // if retrieved data is a single object
-                                resultData[data.variable.cvTermId] = data;
-                            }
-
-                            // perform the passed function
-                            $scope.onSelectVariables({ result : resultData });
-
-                            if (!$scope.$$phase) {
-                                $scope.$apply();
-                            }
-                        }
-                    };
-
-                    $element.on('click',  function() {
-                        var params = {
-                            variableType: $attrs.variableType,
-                            retrieveSelectedVariableFunction: function () {
-                                var currentIds = [];
-                                $.each($scope.modeldata, function (key) {
-                                    currentIds.push(key);
-                                });
-
-                                return currentIds;
-                            }
-                        };
-
-                        $(VARIABLE_SELECTION_MODAL_SELECTOR).off(VARIABLE_SELECTED_EVENT_TYPE);
-                        $(VARIABLE_SELECTION_MODAL_SELECTOR).on(VARIABLE_SELECTED_EVENT_TYPE, $scope.processModalData);
-
-                        var TrialSettingsManager = window.TrialSettingsManager;
-                        var settingsManager = new TrialSettingsManager({});
-                        settingsManager._openVariableSelectionDialog(params);
-
                     });
                 }
             };
@@ -358,9 +296,7 @@
 
             };
         })
-
         // filters
-
         .filter('range', function() {
             return function(input, total) {
                 total = parseInt(total);

@@ -122,44 +122,44 @@ public class FieldbookServiceImpl implements FieldbookService{
 
 		List<Integer> storedInIds = getStoredInIdsByMode(mode, true);
 		List<Integer> propertyIds = getPropertyIdsByMode(mode);
-		
-		List<StandardVariableReference> dbList = fieldbookMiddlewareService.filterStandardVariablesByMode(storedInIds, propertyIds, 
-		                mode == AppConstants.SEGMENT_TRAITS.getInt() || mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt() ? true : false);
-		
-		if (dbList != null && !dbList.isEmpty()) {
-                    
-                    for (StandardVariableReference ref : dbList) {
-                            if (!selectedIds.contains(ref.getId())) {
-                                    
-                                     if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
-                                             if(inHideVariableFields(ref.getId(), AppConstants.FILTER_NURSERY_FIELDS.getString())
-                                                             || ref.getId().intValue() == TermId.DATASET_NAME.getId()
-                                                             || ref.getId().intValue() == TermId.DATASET_TITLE.getId()
-                                                             || ref.getId().intValue() == TermId.DATASET_TYPE.getId()
-                                                             || inHideVariableFields(ref.getId(), AppConstants.HIDE_ID_VARIABLES.getString()))
-                                                     continue;
-                                             
-                                     } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
-                                             if (inHideVariableFields(ref.getId(), AppConstants.HIDE_PLOT_FIELDS.getString())) {
-                                                 continue;
-                                             }
-                                     } else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
-                                             if (inHideVariableFields(ref.getId(), AppConstants.HIDE_ID_VARIABLES.getString())) {
-                                                 continue;
-                                             }
-                                     }
-                                    
-                                            result.add(ref);
-                            }
-                    }
-                }
-		
-		Collections.sort(result);
 
-		return result;
-	}
-	
-	@Override
+        List<StandardVariableReference> dbList = fieldbookMiddlewareService.filterStandardVariablesByMode(storedInIds, propertyIds,
+                mode == AppConstants.SEGMENT_TRAITS.getInt() || mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt() ? true : false);
+
+        if (dbList != null && !dbList.isEmpty()) {
+
+            for (StandardVariableReference ref : dbList) {
+                if (!selectedIds.contains(ref.getId())) {
+
+                    if (mode == AppConstants.SEGMENT_STUDY.getInt()) {
+                        if (inHideVariableFields(ref.getId(), AppConstants.FILTER_NURSERY_FIELDS.getString())
+                                || ref.getId().intValue() == TermId.DATASET_NAME.getId()
+                                || ref.getId().intValue() == TermId.DATASET_TITLE.getId()
+                                || ref.getId().intValue() == TermId.DATASET_TYPE.getId()
+                                || inHideVariableFields(ref.getId(), AppConstants.HIDE_ID_VARIABLES.getString()))
+                            continue;
+
+                    } else if (mode == AppConstants.SEGMENT_PLOT.getInt()) {
+                        if (inHideVariableFields(ref.getId(), AppConstants.HIDE_PLOT_FIELDS.getString())) {
+                            continue;
+                        }
+                    } else if (mode == AppConstants.SEGMENT_SELECTION_VARIATES.getInt()) {
+                        if (inHideVariableFields(ref.getId(), AppConstants.HIDE_ID_VARIABLES.getString())) {
+                            continue;
+                        }
+                    }
+
+                    result.add(ref);
+                }
+            }
+        }
+
+        Collections.sort(result);
+
+        return result;
+    }
+
+    @Override
 	public List<StandardVariableReference> filterStandardVariablesForTrialSetting(int mode, Collection<SettingDetail> selectedList)
 	throws MiddlewareQueryException {
 		
@@ -178,7 +178,8 @@ public class FieldbookServiceImpl implements FieldbookService{
 		}
 		else {
 			List<Integer> storedInIds = getStoredInIdsByMode(mode, false);
-			dbList = fieldbookMiddlewareService.filterStandardVariablesByMode(storedInIds, new ArrayList<Integer>(), false);
+			dbList = fieldbookMiddlewareService.filterStandardVariablesByMode(storedInIds, new ArrayList<Integer>(),
+                    mode == AppConstants.SEGMENT_NURSERY_CONDITIONS.getInt());
 		}
 		
 		if (dbList != null && !dbList.isEmpty()) {

@@ -98,8 +98,8 @@ public class ManageSettingsController extends SettingsController{
      */
     @ResponseBody
     @RequestMapping(value = "/addSettings/{mode}", method = RequestMethod.POST)
-    public List<SettingDetail> addSettings(@ModelAttribute("createNurseryForm") CreateNurseryForm form,
-                              Model model, @PathVariable int mode) {
+    public List<SettingDetail> addSettings(@RequestBody CreateNurseryForm form,
+                              @PathVariable int mode) {
         List<SettingDetail> newSettings = new ArrayList<SettingDetail>();
         try {
             List<SettingVariable> selectedVariables = form.getSelectedVariables();

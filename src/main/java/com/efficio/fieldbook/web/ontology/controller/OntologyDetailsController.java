@@ -132,7 +132,7 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
     @ResponseBody
     @RequestMapping(value = "/OntologyBrowser/settings/properties", method = RequestMethod.GET)
     public List<PropertyTree> getPropertiesBySettingsGroup(@RequestParam(required=true) Integer groupId, 
-    		@RequestParam(required=false) Integer classId) {
+    		@RequestParam(required=false) Integer classId, @RequestParam(required = false) boolean useTrialFiltering) {
     	try {
     		
     		if(classId == null) {
@@ -145,7 +145,13 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
 
     		// Fetch the list of filtered Standard Variable References and extract ids (this would be better if 
     		// filtered SVs were full objects)
-    		List<StandardVariableReference> stdVars = fieldbookService.filterStandardVariablesForSetting(groupId, new ArrayList<SettingDetail>());
+            List<StandardVariableReference> stdVars;
+            if (useTrialFiltering) {
+                stdVars = fieldbookService.filterStandardVariablesForTrialSetting(groupId, new ArrayList<SettingDetail>());
+            } else {
+                stdVars = fieldbookService.filterStandardVariablesForSetting(groupId, new ArrayList<SettingDetail>());
+            }
+
     		List<Integer> ids = new ArrayList<Integer>();
     		for (StandardVariableReference standardVariableReference : stdVars) {
 				ids.add(standardVariableReference.getId());

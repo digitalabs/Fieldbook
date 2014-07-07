@@ -165,7 +165,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		selectButton.attr('disabled', 'disabled');
 
 		$.ajax({
-			url: '/Fieldbook/NurseryManager/createNursery/addSettings/' + group,
+			url: '/Fieldbook/manageSettings/addSettings/' + group,
 			type: 'POST',
 			data: JSON.stringify({selectedVariables: [{
 				cvTermId: selectedVariable.id,

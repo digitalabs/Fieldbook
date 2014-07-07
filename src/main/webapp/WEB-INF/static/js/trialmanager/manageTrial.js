@@ -7,45 +7,100 @@
 (function(){
     'use strict';
 
-    var manageTrialApp = angular.module('manageTrialApp', ['leafnode-utils','fieldbook-utils','ui.router','ui.bootstrap']);
+    var manageTrialApp = angular.module('manageTrialApp', ['leafnode-utils','fieldbook-utils','ct.ui.router.extras','ui.bootstrap']);
 
     // routing configuration
     // TODO: if possible, retrieve the template urls from the list of constants
-    manageTrialApp.config(function($stateProvider, $urlRouterProvider) {
-        //
-        // For any unmatched url, redirect to /state1
-        $urlRouterProvider.otherwise("/");
-        //
-        // Now set up the states
+    manageTrialApp.config(function($stateProvider, $urlRouterProvider,$stickyStateProvider) {
+
+        //ENABLE ONLY ON DEBUG $stickyStateProvider.enableDebug(true);
+
+        $urlRouterProvider.otherwise("trialSettings");
         $stateProvider
-            .state('trialSettings', {
+            .state('root', {
                 url: "/",
-                templateUrl: "/Fieldbook/TrialManager/createTrial/trialSettings",
-                controller: 'TrialSettingsCtrl'
+                views: {
+                    "@" : {
+                        templateUrl: "/Fieldbook/static/angular-templates/tab.html"
+                    }
+                }
             })
-            .state('environment', {
-                url: "/environment",
+
+            .state('root.environment', {
+                url: "environment",
                 templateUrl: '/Fieldbook/TrialManager/createTrial/environment',
                 controller: 'EnvironmentCtrl'
             })
-            .state('germplasm', {
-                url: "/germplasm",
-                templateUrl: '/Fieldbook/TrialManager/createTrial/germplasm',
-                controller: 'GermplasmCtrl'
+
+            .state('root.trialSettings', {
+                url: "trialSettings",
+                templateUrl: '/Fieldbook/TrialManager/createTrial/trialSettings',
+                controller: 'TrialSettingsCtrl'
             })
-            .state('treatment', {
-                url: "/treatment",
+
+            .state('root.treatment', {
+                url: "treatment",
                 templateUrl: '/Fieldbook/TrialManager/createTrial/treatment',
                 controller: 'TreatmentCtrl'
             })
-            .state('experimentalDesign', {
-                url: "/experimentalDesign",
+            .state('root.experimentalDesign', {
+                url: "experimentalDesign",
                 templateUrl: '/Fieldbook/TrialManager/createTrial/experimentalDesign'
             })
-            .state('measurements', {
-                url: "/measurements",
+
+            .state('root.measurements', {
+                url: "measurements",
                 templateUrl: '/Fieldbook/TrialManager/createTrial/measurements'
+            })
+
+            .state('root.germplasm', {
+                url: "germplasm",
+                views: {
+                    "germplasm@root" : {
+                        controller: 'GermplasmCtrl',
+                        templateUrl: "/Fieldbook/TrialManager/createTrial/germplasm"
+                    }
+                },
+                deepStateRedirect: true, sticky: true
             });
+
+        /*
+        * .state('environment', {
+         url: "/environment",
+         templateUrl: '/Fieldbook/TrialManager/createTrial/environment',
+         controller: 'EnvironmentCtrl'
+         })
+         .state('germplasm', {
+         url: "/germplasm",
+         controller: 'GermplasmCtrl',
+         template: "<div class='col-xs-12' ui-view='germplasm' ng-show=\"$state.includes('germplasm.sticky')\"></div>"
+         })
+         .state('germplasm.sticky', {
+         url: "/germplasm",
+         view : {
+         "germplasm@" : {
+         templateUrl: '/Fieldbook/TrialManager/createTrial/germplasm',
+         controller: 'GermplasmCtrl'
+         }
+         },
+         sticky: true,
+         deepStateRedirect: true
+         })
+         .state('treatment', {
+         url: "/treatment",
+         templateUrl: '/Fieldbook/TrialManager/createTrial/treatment',
+         controller: 'TreatmentCtrl'
+         })
+         .state('experimentalDesign', {
+         url: "/experimentalDesign",
+         templateUrl: '/Fieldbook/TrialManager/createTrial/experimentalDesign'
+         })
+         .state('measurements', {
+         url: "/measurements",
+         templateUrl: '/Fieldbook/TrialManager/createTrial/measurements'
+         });
+        * */
+
     });
 
     // common filters

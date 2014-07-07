@@ -242,17 +242,10 @@ function createFieldMap(tableName) {
 		return;
 	}
 
-	if ($('#' + tableName + ' .field-map-highlight').attr('id') != null || tableName == 'nursery-table') {
+	if ($('#' + tableName + ' .field-map-highlight').attr('id') != null || tableName == 'nursery-table' || tableName == 'trial-table') {
 		// Get selected studies
 		if ($('#createNurseryMainForm #studyId').length  === 1) {
 			ids.push($('#createNurseryMainForm #studyId').val());
-		} else if ($('#trial-table').length === 1) {
-			for (index in selectedTableIds) {
-				idVal = selectedTableIds[index];
-				if (idVal != null) {
-					ids.push(idVal);
-				}
-			}
 		} else {
 			ids.push(getCurrentStudyIdInTab());
 		}
@@ -600,14 +593,6 @@ function createLabelPrinting(tableName) {
 	if ($('#createNurseryMainForm #studyId').length === 1) {
 		idVal = ($('#createNurseryMainForm #studyId').val());
 		count++;
-	} else if ($('#trial-table').length === 1) {
-		for (index in selectedTableIds) {
-			tempVal = selectedTableIds[index];
-			if (tempVal != null) {
-				idVal = tempVal;
-				count++;
-			}
-		}
 	} else {
 		idVal = getCurrentStudyIdInTab();
 		count++;

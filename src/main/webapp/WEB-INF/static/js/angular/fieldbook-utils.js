@@ -258,18 +258,23 @@
             };
         })
 
-        .directive("sectionContainer",function(){
+        .directive("sectionContainer",["$parse",function($parse){
             return {
                 restrict: 'E',
                 scope : {
                     heading : '@',
                     reminder : '@',
-                    helpTooltip : '@'
+                    helpTooltip : '@',
+                    icon: '@',
+                    iconImg: '@',
+                    modelData: '=',
+                    variableType: '@'
                 },
                 transclude : true,
                 templateUrl: '/Fieldbook/static/angular-templates/sectionContainer.html',
                 link : function (scope,elem,attrs) {
-                    scope.collapsible = scope.$eval(attrs.collapsible);
+                    scope.collapsible = $parse(attrs.collapsible)();
+                    scope.addVariable =  $parse(attrs.addVariable)();
 
                     attrs.$observe('reminder',function(value){
                         if (value) {
@@ -295,7 +300,7 @@
                 }]
 
             };
-        })
+        }])
         // filters
         .filter('range', function() {
             return function(input, total) {

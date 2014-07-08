@@ -1,16 +1,15 @@
 <div class="row" ng-controller="GermplasmCtrl">
    <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
-       <section-container th:attr="heading=#{trial.managesettings.germplasm.factors.label}" collapsible="true">
+       <section-container icon="bms-factors" th:attr="heading=#{trial.managesettings.germplasm.factors.label}"
+                          collapsible="true" add-variable="true" model-data="data.settings" variable-type="2">
 
            <div>
                <label class="control-label" data-toggle="collapse" data-target=".nurseryLevelDetails">
-                   <strong class="sub-content-heading">GERMPLASM FACTORS</strong>
+                   <strong class="sub-content-heading" th:text="#{trial.managesettings.germplasm.factors.label}">GERMPLASM FACTORS</strong>
                    <span class="bms-fa-question-circle help-tooltip" th:attr="tooltip=#{trial.reminder.add.germplasm.factors}" tooltip-placement="right"></span>
                </label>
 
            <span class="pull-right">
-               <span select-standard-variable="" class="btn btn-info nrm-md-variable-select"
-                     variable-type="2" modeldata="data.settings">Add</span>
                 <span ng-show="updateOccurred" ng-click="updateDataTable()" class="btn btn-info pull-right">Refresh</span>
            </span>
 

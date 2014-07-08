@@ -1,9 +1,17 @@
-<label class="control-label section-toggle toggle-icon" ng-click="doCollapse()" >
-    <img style="margin-left: -14px" class="icn section-expanded" ng-show="!toggleSection && collapsible" src="/Fieldbook/static/img/expanded-arrow.png" />
-    <img style="margin-left: -7px" class="icn section-collapsed" ng-show="toggleSection && collapsible" src="/Fieldbook/static/img/collapsed-arrow.png" />
-    <strong class="sub-content-heading">{{heading}}</strong>
-    <span class="bms-fa-question-circle help-tooltip-nursery" tooltip-placement="right" tooltip-container="body" tooltip="{{helpTooltip}}" ng-show="hasHelpTooltip"></span>
-</label>
+<div>
+    <label class="control-label section-toggle toggle-icon" ng-click="doCollapse()" >
+        <span ng-show="icon" class="{{icon}}" style="font-size: 20px; color: #C4A01B;"></span>
+        <img ng-src="{{iconImg}}" ng-show="iconImg" />
+        <img class="icn section-expanded" ng-show="!toggleSection && collapsible" src="/Fieldbook/static/img/expanded-arrow.png" />
+        <img style="margin-left: 7px" class="icn section-collapsed" ng-show="toggleSection && collapsible" src="/Fieldbook/static/img/collapsed-arrow.png" />
+        <strong class="sub-content-heading">{{heading}}</strong>
+        <span class="bms-fa-question-circle help-tooltip-nursery" tooltip-placement="right" tooltip-container="body" tooltip="{{helpTooltip}}" ng-show="hasHelpTooltip"></span>
+
+
+    </label>
+
+    <span ng-show="addVariable" select-standard-variable="" modeldata="modelData" variable-type="{{variableType}}" class="btn btn-info pull-right nrm-md-variable-select" >Add</span>
+</div>
 
 <!-- section content -->
 <div collapse="toggleSection">
@@ -15,5 +23,3 @@
     </div>
 
 </div>
-
-

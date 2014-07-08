@@ -127,7 +127,7 @@
         return service;
     }]);
 
-    // old school shit here:
+    // README IMPORTANT: Code unmanaged by angular should go here
     document.onInitManageTrial = function() {
         $('#studyBuildOption').on('change', changeBuildOption);
         $('#choosePreviousStudy').hide();

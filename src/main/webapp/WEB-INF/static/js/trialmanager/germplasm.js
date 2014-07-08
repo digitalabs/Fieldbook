@@ -52,11 +52,9 @@
     }]);
 })();
 
-/* PUT OLD SCHOOL SHIT HERE */
+// README IMPORTANT: Code unmanaged by angular should go here
 
-/*
-    This will be called when germplasm details page is loaded
- */
+/* This will be called when germplasm details page is loaded */
 (function(){
     'use strict';
 

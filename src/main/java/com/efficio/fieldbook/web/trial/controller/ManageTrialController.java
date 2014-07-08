@@ -11,26 +11,16 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.trial.controller;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.ManageNurseriesForm;
 import com.efficio.fieldbook.web.trial.form.ManageTrialForm;
 
 /**
@@ -55,6 +45,7 @@ public class ManageTrialController extends AbstractBaseFieldbookController{
      */
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("manageTrialForm") ManageTrialForm form, Model model) {
+    	model.addAttribute("type", StudyType.T.getName());
     	return super.show(model);
     }
     
@@ -65,7 +56,7 @@ public class ManageTrialController extends AbstractBaseFieldbookController{
      */
     @Override
     public String getContentName() {
-        return "TrialManager/manageTrial";
+        return "Common/manageStudy";
     }
    
 }

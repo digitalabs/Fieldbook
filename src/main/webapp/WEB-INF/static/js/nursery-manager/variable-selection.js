@@ -1,8 +1,7 @@
-// FIXME Currently this module depends on globally available select2 code. Should try and fix this.
 /* global Handlebars */
 
 /**
- * @module measurements-datatable
+ * @module variable-selection
  */
  var BMS = window.BMS;
 
@@ -14,33 +13,28 @@ if (typeof (BMS.NurseryManager) === 'undefined') {
 	BMS.NurseryManager = {};
 }
 
-// TODO Prevent already added variables from being able to be selected
-// TODO Need the ability to rename variables
-
 BMS.NurseryManager.VariableSelection = (function($) {
 	'use strict';
 
 	var VARIABLE_SELECT_EVENT = 'nrm-variable-select',
 
 		modalHeaderSelector = '.modal-header',
-		propertyDropdownSelector = '.nrm-var-select-dropdown',
-		propertyDropdownContainerSelector = '.nrm-var-select-dropdown-container',
 		addVariableButtonSelector = '.nrm-var-select-add',
 		relatedPropertyLinkSelector = '.nrm-var-property-name',
 		variableListSelector = '.nrm-var-select-vars',
 		relatedPropertyListSelector = '.nrm-var-select-related-props',
+		propertySelectSelector = '.nrm-var-select-dropdown-container',
 
+		// Only compile our templates once, rather than every time we need them
 		generateVariable = Handlebars.compile($('#variable-template').html()),
-		generateDropdownMarkup = Handlebars.compile($('#nrm-var-select-dropdown-template').html()),
 		generateRelatedProperty = Handlebars.compile($('#related-prop-template').html()),
-
-		relatedProperties = [],
-		selectedProperty,
-		selectedVariables,
 
 		VariableSelection;
 
-	Handlebars.registerHelper('ifSelectedVariable', function(variableId, options) {
+	/* Provides a conditional check as to whether a provided variable is one of a list of already selected variables. Used to ensure already
+	 * selected variables cannot be selected again.
+	 */
+	Handlebars.registerHelper('ifSelectedVariable', function(variableId, selectedVariables, options) {
 		if (selectedVariables.indexOf(variableId) !== -1)  {
 			return options.fn(this);
 		} else {
@@ -48,155 +42,35 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		}
 	});
 
-	function formatResult(item, container, query) {
-		var searchTerm = query.term,
-			regex,
-			propertyName,
-			className,
-			formattedItem,
-			variables,
-			i;
+	/* Attaches the specified list of related properties to the provided container, after ensuring the currently selected property is
+	 * removed from the list.
+	 *
+	 * @param {JQuery} container the container to which the properties should be appended
+	 * @param {object} selectedProperty the currently selected property, which should be removed from the list of related properties
+	 * @param {object[]} the list of properties related to the selected property
+	 */
+	function _renderRelatedProperties(container, selectedProperty, properties) {
 
-		regex = new RegExp(searchTerm, 'gi');
-
-		propertyName = item.name.replace(regex, '<strong>$&</strong>');
-		className = item.traitClass.traitClassName.replace(regex, '<strong>$&</strong>');
-
-		formattedItem  = '<p><span class="var-select-result-prop">' + propertyName + '</span> (<span class="var-select-result-class">' +
-			className + '</span>)<br/>';
-
-		variables = item.standardVariables.sort(function(a, b) {
-			return a.name.localeCompare(b.name);
+		// Filter out the currently selected property
+		var filteredProperties = $.grep(properties, function(element) {
+			return element.propertyId !== selectedProperty.propertyId;
 		});
 
-		formattedItem += '<span class="var-select-result-vars">';
-
-		for (i = 0; i < variables.length; i++) {
-			if (i !== 0) {
-				formattedItem += ', ';
-			}
-
-			formattedItem += variables[i].name.replace(regex, '<strong>$&</strong>');
-		}
-		return formattedItem + '</span></p>';
+		container.append(generateRelatedProperty({properties: filteredProperties}));
 	}
 
-	function formatSelection(item) {
-		return '<p><strong>' + item.name + '</strong> (' + item.traitClass.traitClassName + ')</p>';
-	}
+	/* Constructs a new property dropdown.
+	 *
+	 * @param {string} placeholder the placeholder to use in the select
+	 * @param {object[]} the list of properties to render in the dropdown
+	 * @param {function} onSelectingFn a function to perform when the user selects a new property
+	 */
+	function _instantiatePropertyDropdown(placeholder, properties, onSelectingFn) {
 
-	function initialisePropertyDropdown(placeholder, properties) {
+		var propertyDropdown = new window.BMS.NurseryManager.PropertySelect(propertySelectSelector,
+			placeholder, properties, onSelectingFn);
 
-		$(propertyDropdownContainerSelector).append(generateDropdownMarkup());
-
-		return $(propertyDropdownSelector).select2({
-			placeholder: placeholder,
-			minimumResultsForSearch: 20,
-			data: {
-				results: properties,
-				text: 'name'
-			},
-			formatSelection: formatSelection,
-			formatResult: formatResult,
-			id: function(item) {
-				return {
-					id: item.propertyId
-				};
-			},
-			query: function(options) {
-
-				var searchTerm = options.term.toLocaleLowerCase(),
-					result = {};
-
-				result.results = $.grep(properties, function(prop) {
-
-					var propContainsTerm,
-						varNameContainsTerm;
-
-					// Include the object in the results if either the property name or class name contains the search term
-					propContainsTerm = prop.name.toLocaleLowerCase().indexOf(searchTerm) > -1 ||
-						prop.traitClass.traitClassName.toLocaleLowerCase().indexOf(searchTerm) > -1;
-
-					if (propContainsTerm) {
-						return true;
-					}
-
-					// Also include the object if any of the property's variables have the search term in their name
-					$.each(prop.standardVariables, function(index, variable) {
-						varNameContainsTerm = variable.name.toLocaleLowerCase().indexOf(searchTerm) > -1;
-
-						// Returning false will stop the loop - we want to stop when we've found the first variable
-						// in this property that contains the search term
-						return !varNameContainsTerm;
-					});
-
-					return varNameContainsTerm;
-				});
-
-				options.callback(result);
-			},
-			dropdownCssClass: 'var-select-results'
-		});
-	}
-
-	function destroyPropertyDropdown() {
-		$(propertyDropdownSelector).select2('destroy');
-		$(propertyDropdownContainerSelector).empty();
-	}
-
-	function selectVariableButton(e) {
-		e.preventDefault();
-
-		// TODO Error handling for not finding element
-		var selectButton = $(e.target),
-			selectedVariableElement = selectButton.parent('.nrm-var-select-var'),
-			variableName = $(selectedVariableElement.find('.nrm-var-name')[0]).text(),
-			variables = selectedProperty.standardVariables,
-			varLength = variables.length,
-			group = e.data.group,
-			i,
-			selectedVariable;
-
-		// Find the variable from the name
-		for (i = 0; i < varLength; i++) {
-			if (variables[i].name === variableName) {
-				selectedVariable = variables[i];
-			}
-		}
-
-		// TODO Error handling if selected var is undefined
-
-		selectButton.attr('disabled', 'disabled');
-
-		$.ajax({
-			url: '/Fieldbook/manageSettings/addSettings/' + group,
-			type: 'POST',
-			data: JSON.stringify({selectedVariables: [{
-				cvTermId: selectedVariable.id,
-				name: selectedVariable.name
-			}]}),
-			dataType: 'json',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json'
-			},
-			success: function(data) {
-
-				// Prevent this variable from being selected again
-				selectedVariables.push(selectedVariable.id);
-
-				// FIXME Should pass this selector through
-				$('.nrm-var-selection-modal-container').trigger({
-					type: VARIABLE_SELECT_EVENT,
-					group: group,
-					responseData: data
-				});
-			},
-			failure: function() {
-				// TODO HH Error handling
-				selectButton.removeAttr('disabled');
-			}
-		});
+		return propertyDropdown;
 	}
 
 	/**
@@ -209,58 +83,190 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		this._modalSelector = selector;
 		this._$modal = $(selector);
 
-		this._$modal.on('hide.bs.modal', $.proxy(this._destroy, this));
+		this._relatedProperties = [];
+
+		this._$modal.on('hide.bs.modal', $.proxy(this._clear, this));
 	};
 
-	VariableSelection.prototype._loadPropertyDetails = function(property, group) {
+	/**
+	 * Display the variable selection dialog for the specified group.
+	 *
+	 * @param {number} group properties and variables will be filtered to be specific to the group represented by this number
+	 * @param {object} translations internationalised labels to be used in the dialog
+	 * @param {string} translations.label the title of the dialog
+	 * @param {string} translations.placeholderLabel the placeholder in the property dropdown
+	 * @param {object} groupData data about the group, including selected variables and properties
+	 */
+	VariableSelection.prototype.show = function(group, translations, groupData) {
 
-		var variableList = $(variableListSelector),
+		var properties = groupData.propertyData,
+			modalHeader = $(this._modalSelector + ' ' + modalHeaderSelector),
+			title;
+
+		// Store these properties for later use
+		this._currentlySelectedVariables = groupData.selectedVariables;
+		this._group = group;
+		this._properties = properties;
+
+		// Append title
+		title = $('<h4 class="modal-title" id="nrm-var-selection-modal-title">' + translations.label + '</h4>');
+		modalHeader.append(title);
+
+		// Instantiate property dropdown, passing in a function that will record the new property and load it's details on select
+		this._propertyDropdown = _instantiatePropertyDropdown(translations.placeholderLabel, properties, $.proxy(function(e) {
+			this._selectedProperty = e.choice;
+			this._loadVariablesAndRelatedProperties();
+		}, this));
+
+		// TODO Awaiting Rebecca's JSONified variable usage service
+		// $('.nrm-var-select-popular-vars').append(generateVariable({variables: groupData.variables}));
+
+		// Listen for variable selection
+		$(variableListSelector).on('click', addVariableButtonSelector, {}, $.proxy(this._selectVariableButton, this));
+
+		// Listen for the user clicking on a related property
+		$(relatedPropertyListSelector).on('click', relatedPropertyLinkSelector, {}, $.proxy(this._loadRelatedProperty, this));
+
+		// Show the modal
+		this._$modal.modal({
+			backdrop: 'static',
+			keyboard: true
+		});
+	};
+
+	/**
+	 * Hide the dialog. This programmatic method is available for use, but because we are using a bootstrap modal, pressing the escape key
+	 * will also hide the modal.
+	 */
+	VariableSelection.prototype.hide = function() {
+		this._$modal.modal('hide');
+	};
+
+	/*
+	 * Loads variables and related properties for the currently selected property.
+	 */
+	VariableSelection.prototype._loadVariablesAndRelatedProperties = function() {
+
+		var selectedProperty = this._selectedProperty,
+			variableList = $(variableListSelector),
 			relatedPropertyList = $(relatedPropertyListSelector),
-			classId = property.traitClass.traitClassId,
-			relatedPropertiesKey = group + ':' + classId,
+			classId = selectedProperty.traitClass.traitClassId,
 
-			filterOutCurrentProperty = function(element) {
-				return element.propertyId !== property.propertyId;
-			};
+			relatedPropertiesKey;
 
-		// Clear currently selected property and select the new one
+		// Clear out any existing variables and append the variables of the selectedProperty
 		variableList.empty();
+		variableList.append(generateVariable({
+			variables: selectedProperty.standardVariables,
+			selectedVariables: this._currentlySelectedVariables
+		}));
+
+		// Clear out any existing related properties, and update the related property class name
 		relatedPropertyList.empty();
+		$('.nrm-var-select-related-prop-class').text(selectedProperty.traitClass.traitClassName);
 
-		$('.nrm-var-select-related-prop-class').text(property.traitClass.traitClassName);
+		// Key identifies whether we have retrieved the related properties for this group / class before (so we don't retrieve them again)
+		relatedPropertiesKey = this._group + ':' + classId;
 
-		variableList.append(generateVariable({variables: property.standardVariables}));
+		if (!this._relatedProperties[relatedPropertiesKey]) {
 
-		// Check to see if we have loaded this set before
-		if (!relatedProperties[relatedPropertiesKey]) {
+			var url = '/Fieldbook/OntologyBrowser/settings/properties?groupId=' + this._group + '&classId=' + classId;
 
 			// TODO Deal with the situation where they have moved on before it returns
-			$.getJSON('/Fieldbook/OntologyBrowser/settings/properties?groupId=' + group + '&classId=' + classId, function(data) {
-
-				var filteredProperties;
+			$.getJSON(url, $.proxy(function(data) {
 
 				// Store for later to prevent multiple calls to the same service with the same data
-				relatedProperties[relatedPropertiesKey] = data;
-
-				// Filter out the currently selected property
-				filteredProperties = $.grep(data, filterOutCurrentProperty);
-
-				relatedPropertyList.append(generateRelatedProperty({properties: filteredProperties}));
-			});
+				this._relatedProperties[relatedPropertiesKey] = data;
+				_renderRelatedProperties(relatedPropertyList, selectedProperty, data);
+			}, this));
 		} else {
-			relatedPropertyList.append(generateRelatedProperty({
-				properties: $.grep(relatedProperties[relatedPropertiesKey], filterOutCurrentProperty)
-			}));
+			_renderRelatedProperties(relatedPropertyList, selectedProperty, this._relatedProperties[relatedPropertiesKey]);
 		}
 	};
 
-	VariableSelection.prototype._loadProperty = function(property, group) {
+	/*
+	 * Handles a variable select event. Selects the clicked variable.
+	 *
+	 * @param {object} event the JQuery click event
+	 */
+	VariableSelection.prototype._selectVariableButton = function(e) {
+		e.preventDefault();
 
-		this._propertyDropdown.select2('data', property);
-		this._loadPropertyDetails(property, group);
+		var selectButton = $(e.target),
+			variableName = $(selectButton.parent('.nrm-var-select-var').find('.nrm-var-name')[0]).text(),
+			selectedVariable;
+
+		// Find the variable from the name of the variable that was clicked on
+		$.each(this._selectedProperty.standardVariables, function(index, variableObj) {
+
+			if (variableObj.name === variableName) {
+				selectedVariable = variableObj;
+			}
+			return !selectedVariable;
+		});
+
+		// Disable the select button to prevent clicking twice
+		selectButton.attr('disabled', 'disabled');
+
+		$.ajax({
+			url: '/Fieldbook/manageSettings/addSettings/' + this._group,
+			type: 'POST',
+			data: JSON.stringify({selectedVariables: [{cvTermId: selectedVariable.id, name: selectedVariable.name}]}),
+			dataType: 'json',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			},
+			success: $.proxy(function(data) {
+				// Prevent this variable from being selected again
+				this._currentlySelectedVariables.push(selectedVariable.id);
+
+				// Throw a variable select event, so interested parties can do something with the user's intention to add this variable.
+				// FIXME Should pass this selector through
+				$('.nrm-var-selection-modal-container').trigger({
+					type: VARIABLE_SELECT_EVENT,
+					group: this._group,
+					responseData: data
+				});
+			}, this),
+			failure: function() {
+				selectButton.removeAttr('disabled');
+			}
+		});
 	};
 
-	VariableSelection.prototype._destroy = function() {
+	/*
+	 * Handles a click on a related property. Loads the selected property.
+	 *
+	 * @param {object} event the JQuery click event
+	 */
+	VariableSelection.prototype._loadRelatedProperty = function(e) {
+		e.preventDefault();
+
+		// The id of the property that the user clicked on
+		var propertyId = $(e.target).data('id'),
+			property;
+
+		// Find the property that was selected from our list of properties
+		$.each(this._properties, function(index, propertyObj) {
+
+			if (propertyObj.propertyId === propertyId) {
+				property = propertyObj;
+			}
+
+			return !property;
+		});
+
+		// Set the selected property in the dropdown, store for later use and load the variables and related properties for that property
+		this._propertyDropdown.setValue(property);
+		this._selectedProperty = property;
+		this._loadVariablesAndRelatedProperties();
+	};
+
+	/*
+	 * Clears out data from the dialog.
+	 */
+	VariableSelection.prototype._clear = function() {
 
 		var modalHeader = $(this._modalSelector + ' ' + modalHeaderSelector),
 			variableList = $(variableListSelector),
@@ -278,68 +284,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		relatedPropertyList.empty();
 
 		// Destroy the select dropdown
-		destroyPropertyDropdown();
-	};
-
-	VariableSelection.prototype.show = function(group, translations, groupData) {
-
-		var properties = groupData.propertyData,
-			modalHeader = $(this._modalSelector + ' ' + modalHeaderSelector),
-			title;
-
-		selectedVariables = groupData.selectedVariables;
-
-		// Append title
-		title = $('<h4 class="modal-title" id="nrm-var-selection-modal-title">' + translations.label + '</h4>');
-		modalHeader.append(title);
-
-		// Instantiate select2 widget for property dropdown
-		this._propertyDropdown = initialisePropertyDropdown(translations.placeholderLabel, properties);
-
-		// When the user selects a new property, load the property
-		this._propertyDropdown.on('select2-selecting', $.proxy(function(e) {
-			// Hold on this for later use
-			selectedProperty = e.choice;
-
-			this._loadPropertyDetails(selectedProperty, group);
-		}, this));
-
-		// When the user selects a related property, load the property
-		$(relatedPropertyListSelector).on('click', relatedPropertyLinkSelector, {}, $.proxy(function(e) {
-			e.preventDefault();
-
-			var propertyId = $(e.target).data('id'),
-				property;
-
-			$.each(properties, function(index, propertyObj) {
-
-				if (propertyObj.propertyId === propertyId) {
-					property = propertyObj;
-				}
-
-				return !property;
-			});
-
-			selectedProperty = property;
-
-			this._loadProperty(property, group);
-		}, this));
-
-		// TODO Awaiting Rebecca's JSONified variable usage service
-		// $('.nrm-var-select-popular-vars').append(generateVariable({variables: groupData.variables}));
-
-		// Listen for variable selection
-		$(variableListSelector).on('click', addVariableButtonSelector, {group: group}, $.proxy(selectVariableButton, this));
-
-		// Show the modal
-		this._$modal.modal({
-			backdrop: 'static',
-			keyboard: true
-		});
-	};
-
-	VariableSelection.prototype.hide = function() {
-		this._$modal.modal('hide');
+		this._propertyDropdown.destroy();
 	};
 
 	return VariableSelection;

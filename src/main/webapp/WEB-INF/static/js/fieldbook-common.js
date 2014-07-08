@@ -408,7 +408,7 @@ function createStudyTree(fieldMapInfoList, hasFieldMap, tableName) {
 	$.each(fieldMapInfoList, function(index, fieldMapInfo) {
 		createRow(getPrefixName('study', fieldMapInfo.fieldbookId), '', fieldMapInfo.fieldbookName, fieldMapInfo.fieldbookId, hasFieldMap, hasOneInstance);
 		$.each(fieldMapInfo.datasets, function(index, value) {
-			hasOneInstance = fieldMapInfoList.length === 1 && fieldMapInfoList[0].datasets.length === 1 && fieldMapInfoList[0].datasets[0].trialInstances.length === 1; 
+			hasOneInstance = fieldMapInfoList.length === 1 && fieldMapInfoList[0].datasets.length === 1 && fieldMapInfoList[0].datasets[0].trialInstances.length === 1;
 			if (tableName == 'trial-table') {
 				// Create trial study tree up to instance level
 				createRow(getPrefixName('dataset', value.datasetId), getPrefixName('study', fieldMapInfo.fieldbookId), value.datasetName, value.datasetId, hasFieldMap, hasOneInstance);
@@ -519,7 +519,7 @@ function createRowForNursery(id, parentClass, value, realId, withFieldMap, datas
 	$('#studyFieldMapTree').append(newRow + newCell + '</tr>');
 }
 
-function createRow(id, parentClass, value, realId, withFieldMap) {
+function createRow(id, parentClass, value, realId, withFieldMap, hasOneInstance) {
 	var genClassName = 'treegrid-',
 		genParentClassName = '',
 		newRow = '',

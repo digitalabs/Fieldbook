@@ -434,11 +434,11 @@ public class CreateTrialController extends SettingsController {
         Map<String, Object> initialData = new HashMap<String, Object>();
         Map<Integer, SettingDetail> initialDetails = new HashMap<Integer, SettingDetail>();
         List<SettingDetail> initialDetailList = new ArrayList<SettingDetail>();
-        String[] initialSettingIDs = AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString().split(",");
+        List<Integer> initialSettingIDs = buildRequiredVariables(AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString());
 
-        for (String initialSettingID : initialSettingIDs) {
+        for (Integer initialSettingID : initialSettingIDs) {
             try {
-                SettingDetail detail = createSettingDetail(Integer.valueOf(initialSettingID), null);
+                SettingDetail detail = createSettingDetail(initialSettingID, null);
                 initialDetails.put(detail.getVariable().getCvTermId(), detail);
                 initialDetailList.add(detail);
             } catch (MiddlewareQueryException e) {

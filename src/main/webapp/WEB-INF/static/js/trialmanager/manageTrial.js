@@ -84,7 +84,7 @@
 
 
     // THE parent controller for the manageTrial (create/edit) page
-    manageTrialApp.controller('manageTrialCtrl',['$scope','$rootScope',function($scope,$rootScope){
+    manageTrialApp.controller('manageTrialCtrl',['$scope','$rootScope','TrialManagerDataService', function($scope,$rootScope, TrialManagerDataService){
         $scope.trialTabs = [
             {   'name' : 'Trial Settings',
                 'state' : 'trialSettings'
@@ -106,6 +106,8 @@
             }
         ];
 
+        $scope.data = TrialManagerDataService.currentData.basicDetails;
+
     }]);
 
     manageTrialApp.service('TrialManagerDataService', ['TRIAL_SETTINGS_INITIAL_DATA', 'ENVIRONMENTS_INITIAL_DATA',
@@ -119,7 +121,8 @@
                 germplasm: GERMPLASM_INITIAL_DATA,
                 treatmentFactors: TREATMENT_FACTORS_INITIAL_DATA,
                 experimentalDesign: ENVIRONMENTS_INITIAL_DATA,
-                measurements: MEASUREMENTS_INITIAL_DATA
+                measurements: MEASUREMENTS_INITIAL_DATA,
+                basicDetails : {}
             }
         };
 

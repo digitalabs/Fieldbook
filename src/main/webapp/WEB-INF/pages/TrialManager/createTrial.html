@@ -38,29 +38,26 @@
             <div class="row">
                 <div class="col-xs-6">
                     <div class="row form-group">
-                        <input class="cvTermIds trialLevelVariableIdClass" type="hidden" id="basicDetails0.variable.cvTermId" name="basicDetails[0].variable.cvTermId" value="8005"/>
                         <label class="control-label col-sm-4"><b>Trial Name</b>: <span class="required">*</span></label>
 
                         <div class="col-sm-8">
-                            <input class="form-control character-input" type="text" id="basicDetails0.value" name="basicDetails[0].value" value=""/>
+                            <input class="form-control character-input" type="text" ng-model="data.basicDetails[8005]"/>
                         </div>
                     </div>
 
                     <div class="row form-group">
-                        <input class="cvTermIds trialLevelVariableIdClass" type="hidden" id="basicDetails1.variable.cvTermId" name="basicDetails[1].variable.cvTermId" value="8007"/>
                         <label class="control-label col-sm-4"><b>Description</b>: <span class="required">*</span></label>
 
                         <div class="col-sm-8">
-                            <input class="form-control character-input" type="text" id="basicDetails1.value" name="basicDetails[1].value" value=""/>
+                            <input class="form-control character-input" type="text" ng-model="data.basicDetails[8007]"/>
                         </div>
                     </div>
 
                     <div class="row form-group">
-                        <input class="cvTermIds" type="hidden" id="basicDetails3.variable.cvTermId" name="basicDetails[3].variable.cvTermId" value="8030"/>
                         <label class="control-label col-sm-4"><b>Objective</b>:</label>
 
                         <div class="col-sm-8">
-                            <textarea class="form-control character-input" rows="3" id="basicDetails3.value" name="basicDetails[3].value"></textarea>
+                            <textarea class="form-control character-input" rows="3" ng-model="data.basicDetails[8030]"></textarea>
                         </div>
                     </div>
 
@@ -72,11 +69,11 @@
                         <label class="control-label col-sm-4" id="folderLabel"><b>Save In</b>: <span class="required">*</span></label>
 
                         <div class="col-sm-8">              
-                            <input type="hidden" th:field="*{folderId}" />
-		                    <input type="hidden" th:field="*{folderName}" />
-		
+                            <input type="hidden" id="folderId" ng-model="data.folderId"/>
+		                    <input type="hidden" id="folderName" ng-model="data.folderName"/>
+
 		                    <div class="pull-left">
-		                        <label class="control-label" id="folderNameLabel" th:text="*{folderNameLabel}"></label>
+		                        <label class="control-label" id="folderNameLabel" ng-text="data.folderNameLabel"></label>
 		                    </div>
 
                             <a class="pull-right" href="javascript: void(0)" id="chooseLocation" onclick="openStudyTree(2);">Change Folder</a>
@@ -84,36 +81,31 @@
                     </div>
 
                     <div class="row form-group">
-                        <input class="cvTermIds" type="hidden" id="basicDetails5.variable.cvTermId" name="basicDetails[5].variable.cvTermId" value="8020"/>
                         <label class="control-label col-sm-4"><b>Created by</b>: <span class="required">*</span></label>
-                        <input class="cvTermIds" type="hidden" id="basicDetails6.variable.cvTermId" name="basicDetails[6].variable.cvTermId" value="8009"/>
 
                         <div class="col-sm-8">
-                            <input type="hidden" id="basicDetails5.value" name="basicDetails[5].value" value="-1"/>
-                            <input type="hidden" id="basicDetails6.value" name="basicDetails[6].value" value="20140701"/>
-                            <label>Rintarou Okabe</label>
+
+                            <label ng-text="data.userName"></label>
                         </div>
 
                     </div>
 
                     <div class="row form-group">
-                        <input class="cvTermIds" type="hidden" id="basicDetails2.variable.cvTermId" name="basicDetails[2].variable.cvTermId" value="8050"/>
                         <label class="control-label col-sm-4"><b>Creation Date</b>: <span class="required">*</span></label>
                         <div class="col-sm-8">
-                            <input class="form-control date-input" id="basicDetails.value2" placeholder="yyyy-mm-dd" style="width: 100px" type="text" name="basicDetails[2].value" value=""/>
-                            <label class="btn datepicker" for="basicDetails.value2">
+                            <input class="form-control date-input" placeholder="yyyy-mm-dd" style="width: 100px" type="text" ng-model="data.basicDetails[8050]" jq-datepicker=""/>
+                            <label class="btn">
                                 <img style="padding-bottom:3px;" src="/Fieldbook/static/img/calendar.png"/>
                             </label>
                         </div>
                     </div>
 
                     <div class="row form-group">
-                        <input class="cvTermIds" type="hidden" id="basicDetails4.variable.cvTermId" name="basicDetails[4].variable.cvTermId" value="8060"/>
                         <label class="control-label col-sm-4"><b>Completion Date</b>:</label>
 
                         <div class="col-sm-8">
-                            <input class="form-control date-input" id="basicDetails.value4" placeholder="yyyy-mm-dd" style="width: 100px" type="text" name="basicDetails[4].value" value=""/>
-                            <label class="btn datepicker" for="basicDetails.value4">
+                            <input class="form-control date-input" placeholder="yyyy-mm-dd" style="width: 100px" type="text" ng-model="data.basicDetails[8060]" jq-datepicker=""/>
+                            <label class="btn">
                                 <img style="padding-bottom:3px;" src="/Fieldbook/static/img/calendar.png"/>
                             </label>
                         </div>
@@ -150,6 +142,18 @@
     <div class="form-group" id="create-trial">
 		<div th:include="/Common/includes/studyTree"></div>
 	</div>
+    <div class="row">
+        <div class="col-xs-12 col-md-12">
+            <div id="showBaselineTraitDetails" th:include="/NurseryManager/includes/baselineTraitDetails"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 col-md-12">
+            <div class="nrm-var-selection-modal-container" th:include="/NurseryManager/includes/variableSelectionModal"></div>
+        </div>
+    </div>
+
 
     <!-- tab + content -->
     <ul class="nav nav-tabs row fb-tabs-headers" id="manage-trial-tab-headers">
@@ -172,7 +176,9 @@
     <script type="text/javascript" th:src="@{/static/js/lib/handlebars.js}"></script>
     <script type="text/javascript" th:src="@{/static/js/nursery-manager/choose-settings.js}"></script>
     <script type="text/javascript" th:src="@{/static/js/trial-settings-manager.js}"></script>
+    <script type="text/javascript" th:src="@{/static/js/nursery-manager/property-select.js}"></script>
     <script type="text/javascript" th:src="@{/static/js/nursery-manager/variable-selection.js}"></script>
+
 
     <!-- constants here -->
     <script type="text/javascript" th:inline="javascript">
@@ -240,6 +246,7 @@
             ).constant('TREATMENT_FACTORS_INITIAL_DATA', /*[[${treatmentFactorsData}]]*/ ''
             ).constant('EXPERIMENTAL_DESIGN_INITIAL_DATA', /*[[${experimentalDesignData}]]*/ ''
             ).constant('MEASUREMENTS_INITIAL_DATA', /*[[${measurementsData}]]*/ ''
+            ).constant('BASIC_DETAILS_DATA', /*[[${basicDetailsData}]]*/ ''
             );
         })();
         

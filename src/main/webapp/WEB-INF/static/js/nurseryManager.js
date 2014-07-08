@@ -774,8 +774,8 @@ function initializePossibleValuesCombo(possibleValues, name, isLocation,
 						if (isBreedingMethodSetting && value.id !== undefined) {
 							jsonVal = {
 									'id' : value.key,
-									'text' : value.name,
-									'description' : value.description
+									'text' : value.description,
+									'description' : value.name
 								};
 						}
 						else if (value.id !== undefined) {

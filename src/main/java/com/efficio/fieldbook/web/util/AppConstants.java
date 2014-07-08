@@ -222,6 +222,7 @@ public enum AppConstants {
     ,SPFLD_ENTRIES
     ,SPFLD_COUNT_VARIATES
     ,SPFLD_HAS_FIELDMAP
+    ,SPFLD_PLOT_COUNT
     ,SELECTION_VARIATES_PROPERTIES
     ,FIXED_NURSERY_VARIABLES
     
@@ -238,6 +239,8 @@ public enum AppConstants {
     ,ID_SUFFIX
     
     ,TABLE_HEADER_KEY_SUFFIX
+    
+    ,TRIAL_BASIC_REQUIRED_FIELDS
     ;
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConstants.class);

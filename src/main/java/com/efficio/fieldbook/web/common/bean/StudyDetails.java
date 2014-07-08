@@ -9,18 +9,16 @@
  * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
  * 
  *******************************************************************************/
-package com.efficio.fieldbook.web.nursery.bean;
+package com.efficio.fieldbook.web.common.bean;
 
 import java.util.List;
 
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-
 /**
- * The Class NurseryDetails.
+ * The Class StudyDetails.
  *
  * @author Chezka Camille Arevalo
  */
-public class NurseryDetails{
+public class StudyDetails{
     
 	private Integer id;
 	
@@ -57,18 +55,26 @@ public class NurseryDetails{
     
     private List<SettingDetail> selectionVariateDetails;
     
+    private List<SettingDetail> environmentManagementDetails;
+    
+    private List<SettingDetail> germplasmDescriptors;
+    
+    private List<TreatmentFactorDetail> treatmentFactorDetails;
+    
     private boolean hasMeasurements;
+    
+    private int numberOfEnvironments;
     
 
     /**
-     * Instantiates a new nursery details.
+     * Instantiates a new study details.
      */
-    public NurseryDetails(){
+    public StudyDetails(){
         
     }
     
     /**
-     * Instantiates a new nursery details.
+     * Instantiates a new study details.
      *
      * @param name the name
      * @param title the title
@@ -78,7 +84,7 @@ public class NurseryDetails{
      * @param principalInvestigator the principal investigator
      * @param siteName the site name
      */
-    public NurseryDetails(String name, String title, String objective, 
+    public StudyDetails(String name, String title, String objective, 
             String startDate, String endDate, String principalInvestigator, String siteName){
         this.name = name;
         this.title = title;
@@ -327,6 +333,64 @@ public class NurseryDetails{
 	 */
 	public void setHasMeasurements(boolean hasMeasurements) {
 		this.hasMeasurements = hasMeasurements;
+	}
+
+	/**
+	 * @return the environmentManagementDetails
+	 */
+	public List<SettingDetail> getEnvironmentManagementDetails() {
+		return environmentManagementDetails;
+	}
+
+	/**
+	 * @param environmentManagementDetails the environmentManagementDetails to set
+	 */
+	public void setEnvironmentManagementDetails(
+			List<SettingDetail> environmentManagementDetails) {
+		this.environmentManagementDetails = environmentManagementDetails;
+	}
+
+	/**
+	 * @return the germplasmDescriptors
+	 */
+	public List<SettingDetail> getGermplasmDescriptors() {
+		return germplasmDescriptors;
+	}
+
+	/**
+	 * @param germplasmDescriptors the germplasmDescriptors to set
+	 */
+	public void setGermplasmDescriptors(List<SettingDetail> germplasmDescriptors) {
+		this.germplasmDescriptors = germplasmDescriptors;
+	}
+
+	/**
+	 * @return the treatmentFactorDetails
+	 */
+	public List<TreatmentFactorDetail> getTreatmentFactorDetails() {
+		return treatmentFactorDetails;
+	}
+
+	/**
+	 * @param treatmentFactorDetails the treatmentFactorDetails to set
+	 */
+	public void setTreatmentFactorDetails(
+			List<TreatmentFactorDetail> treatmentFactorDetails) {
+		this.treatmentFactorDetails = treatmentFactorDetails;
+	}
+
+	/**
+	 * @return the numberOfEnvironments
+	 */
+	public int getNumberOfEnvironments() {
+		return numberOfEnvironments;
+	}
+
+	/**
+	 * @param numberOfEnvironments the numberOfEnvironments to set
+	 */
+	public void setNumberOfEnvironments(int numberOfEnvironments) {
+		this.numberOfEnvironments = numberOfEnvironments;
 	}
 
 }

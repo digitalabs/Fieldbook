@@ -1,0 +1,290 @@
+<div class="review-trial-page-identifier" style="padding-top: 10px;">
+	<div class="" th:object="${trialDetails}" th:id="'div-study-tab-' + *{id}">
+		<input type="hidden" id="studyId" class="field-map-highlight" th:value="*{id}" />
+		<input type="hidden" id="study-type" name="study-type" value="Trial" />
+		<input type="hidden" id="has-measurements" name="has-measurements" th:value="*{hasMeasurements}" />
+
+		<div class="col-xs-12 col-md-12">
+			<label  class="control-label section-toggle toggle-icon" data-target=".trialDetails">
+				<img th:src="@{/static/img/basic-details.png}" />
+				<img style="margin-left: -10px" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
+				<img style="display:none; margin-left: -7px" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
+				<strong class="sub-content-heading" th:text="#{trial.trialdetails.header}">BASIC DETAILS</strong>				
+			</label>
+			<a class="btn btn-info fbk-open-button-left-margin" th:if="*{id lt 0}" href="javascript: openStudy('trial-table');" th:text="#{common.form.open}">Open</a>
+			<div style="float:right;" th:if="*{id lt 0}" >
+				<div class="btn-group">
+					<button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+						<span class="glyphicon glyphicon-cog"></span>&nbsp;&nbsp;<span th:text="#{nursery.nurserydetails.actions}">Actions</span>
+                	</button>
+					<ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
+						<li th:if="${false}">
+							<a href="" style="display: none" id="open-study-url" th:href="@{/TrialManager/editTrial}"></a>
+							<a href="javascript: openStudy('trial-table');" id="open-study-url-link" th:text="#{trial.trialdetails.action.edit}">Edit Trial</a>
+						</li>
+						<!-- next to be worked on -->
+						<li th:if="${false}">
+							<a href="javascript: openDeleteConfirmation();" th:text="#{browse.trial.delete.trial.name}">Delete Trial</a>
+						</li>
+						<li th:if="${false}">
+							<a href="javascript: showExportOptions();" id="export-study-link" th:text="#{trial.trialdetails.action.export.trial}">Export Trial Book</a>
+						</li>
+						<li>
+							<a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
+							<a href="javascript: createFieldMap('trial-table');" id="fieldmap-url-link" th:text="#{nursery.nurserydetails.action.createFieldmap}">Make Field Map</a>
+						</li>
+						<li>
+							<a href="" style="display: none" id="label-printing-url" th:href="@{/LabelPrinting/specifyLabelDetails/nursery}"></a>
+							<a href="javascript: createLabelPrinting('trial-table');" id="label-printing-url-link" th:text="#{nursery.nurserydetails.action.printLabels}">Print Labels</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-12 sectionContainer collapse in trialDetails">
+            <div th:each="basicDetail, rowStat : *{basicStudyDetails}" th:remove="tag">
+                <div  th:class="
+                            (${rowStat.last and rowStat.size mod 3 ne 0} ?
+                                'col-sm-6 ' +
+                                'col-md-' + ${4*(4-(rowStat.size % 3))}
+                            : 'col-sm-6 col-md-4') + ' nursery-details-variable'">
+                    <strong th:text="${basicDetail.variable.name} + ':'" class="">:</strong>
+                    <span th:text="${basicDetail.value}" class="div-select-val "></span>
+                    <span th:if="${basicDetail.variable.name == 'Field Map Created' and basicDetail.value == 'Yes'}">
+                        <a href="" style="display: none" id="fieldmap-url" th:href="@{/Fieldmap/enterFieldDetails/nursery}"></a>
+                        <a href="javascript: showFieldMap('trial-table');" id="view-fieldmap-url-link" th:text="#{nursery.nurserydetails.viewFieldMap}">View</a>
+                    </span>
+                    <span th:if="${basicDetail.pairedVariable}">
+                    	&nbsp;&nbsp;&nbsp;
+                    	<strong th:text="${basicDetail.pairedVariable.label} + ':'"></strong>
+                    	<span th:text="${basicDetail.pairedVariable.value}"></span>
+                    </span>
+                </div>
+           </div>
+		</div>
+		<br/>
+
+		<div class="col-xs-12 col-md-12">
+			<label  class="control-label section-toggle toggle-icon" data-target=".managementDetails">
+				<img style="margin-left: -10px" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
+				<img style="margin-left: -7px; display:none;" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
+				<strong class="sub-content-heading" th:text="#{fb.study.trialmanagementdetails}">TRIAL MANAGEMENT DETAILS</strong>
+			</label>
+		</div>
+		<div class="col-md-12 sectionContainer collapse in managementDetails">
+			<div th:each="managementDetail, rowStat : *{managementDetails}" th:remove="tag">
+                <div  th:class="
+                        (${rowStat.last and rowStat.size mod 3 ne 0} ?
+                                'col-sm-6 ' +
+                                'col-md-' + ${4*(4-(rowStat.size % 3))}
+                            : 'col-sm-6 col-md-4') + ' nursery-details-variable'">
+
+                        <strong th:text="${managementDetail.variable.name} + ':'" class="">:</strong>
+                        <span th:text="${managementDetail.value}" class="div-select-val "></span>
+                </div>
+            </div>
+		</div>
+		<br/>
+
+		<div class="col-xs-12 col-md-12">
+			<label  class="control-label section-toggle toggle-icon" data-target=".germplasmDescriptors">
+				<img heigth="16" th:src="@{/static/img/factors.png}" class="lbl-img" />
+				<img style="margin-left: -10px; display:none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
+				<img style="margin-left: -7px" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
+				<strong class="sub-content-heading" th:text="#{trial.trialdetails.germplasm.descriptors}">GERMPLASM DESCRIPTORS</strong>
+			</label>
+		</div>
+		<div class="col-md-12 sectionContainer collapse germplasmDescriptors">
+			<div class="col-md-6">
+				<table style="table-layout: fixed;" class="my-class table table-curved table-condensed traits-table" id="germplasmDescriptors">
+				<thead>
+					<tr>
+						<th width="45%" th:utext="#{nursery.nurserydetails.column.name}">.Name</th>
+						<th width="55%" th:utext="#{nursery.nurserydetails.column.description}">.Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="germplasmDescriptor, rowStat : *{germplasmDescriptors}">
+						<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
+							<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
+							*{germplasmDescriptors[__${rowStat.index}__].variable.cvTermId} + '\');'" th:text="${germplasmDescriptor.variable.name}"></a>
+						</td>
+						<td width="55%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${germplasmDescriptor.variable.description}"></td>
+					</tr>
+				</tbody>
+				</table>
+			</div>
+			<div class="col-md-6"></div>
+		</div>
+		<br/>
+		<div class="col-xs-12 col-md-12">
+			<label  class="control-label section-toggle toggle-icon" data-target=".treatmentFactors">
+				<img style="margin-left: -10px; display:none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
+				<img style="margin-left: -7px" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
+				<strong class="sub-content-heading" th:text="#{trial.trialdetails.treatment.factors}">TREATMENT FACTORS</strong>
+			</label>
+		</div>
+		<div class="col-md-12 sectionContainer collapse treatmentFactors">
+			<div class="col-md-6">
+				<table style="table-layout: fixed;" class="my-class table table-curved table-condensed traits-table" id="treatmentFactors">
+				<thead>
+					<tr>
+						<th width="45%" th:utext="#{nursery.nurserydetails.column.name}">.Name</th>
+						<th width="55%" th:utext="#{nursery.nurserydetails.column.description}">.Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="treatmentFactor, rowStat : *{treatmentFactorDetails}">
+						<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
+							<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
+							*{treatmentFactorDetails[__${rowStat.index}__].levelId} + '\');'" th:text="${treatmentFactor.levelName}"></a>
+						</td>
+						<td width="55%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${treatmentFactor.amountName}"></td>
+					</tr>
+				</tbody>
+				</table>
+			</div>
+			<div class="col-md-6"></div>
+		</div>
+		<br/>
+		<div class="col-xs-12 col-md-12">
+			<label  class="control-label section-toggle toggle-icon" data-target=".trialEnvironments">
+				<img style="margin-left: -10px; display:none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
+				<img style="margin-left: -7px" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
+				<strong class="sub-content-heading" th:text="#{trial.trialdetails.environments}">ENVIRONMENTS</strong>
+			</label>
+		</div>
+		<div class="col-md-12 sectionContainer collapse trialEnvironments">
+			<div class="col-md-12">
+				<strong class="" th:text="#{trial.trialdetails.environment.count}">Number of environments for this trial:</strong>
+				<span th:text="*{numberOfEnvironments}" ></span>
+			</div>
+			
+			<div class="col-md-6">
+	            <div>
+	                <label  class="control-label">
+	                    <strong class="sub-content-heading" th:text="#{trial.trialdetails.environment.management.details}">ENVIRONMENT MANAGEMENT DETAILS</strong>
+	                </label>
+	            </div>
+	            <div>
+					<table style="table-layout: fixed;" class="my-class table table-curved table-condensed traits-table" id="environmentManagementDetails">
+					<thead>
+						<tr>
+							<th width="45%" th:utext="#{nursery.nurserydetails.column.name}">.Name</th>
+							<th width="55%" th:utext="#{nursery.nurserydetails.column.description}">.Description</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="environmentManagementDetail, rowStat : *{environmentManagementDetails}">
+							<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
+								<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
+								*{environmentManagementDetails[__${rowStat.index}__].variable.cvTermId} + '\');'" th:text="${environmentManagementDetail.variable.name}"></a>
+							</td>
+							<td width="55%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${environmentManagementDetail.variable.description}"></td>
+						</tr>
+					</tbody>
+					</table>
+				</div>
+			</div>
+
+			<div class="col-md-6">
+            <div>
+                <label  class="control-label">
+                    <strong class="sub-content-heading" th:text="#{trial.trialdetails.trial.conditions}">TRIAL CONDITIONS</strong>
+                </label>
+            </div>
+			<table style="table-layout: fixed;" class="my-class table table-curved table-condensed traits-table" id="nurseryConditionDetails">
+			<thead>
+				<tr>
+					<th width="45%" th:utext="#{nursery.nurserydetails.column.name}">.Name</th>
+					<th width="55%" th:utext="#{nursery.nurserydetails.column.description}">.Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="nurseryConditionDetail, rowStat : *{nurseryConditionDetails}">
+					<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
+						<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
+						*{nurseryConditionDetails[__${rowStat.index}__].variable.cvTermId} + '\');'" th:text="${nurseryConditionDetail.variable.name}"></a>
+					</td>
+					<td width="55%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${nurseryConditionDetail.variable.description}"></td>
+				</tr>
+			</tbody>
+			</table>
+			</div>
+			
+		</div>
+		<br />
+		<div class="form-group col-xs-12 col-md-12">
+			<label  class="control-label section-toggle toggle-icon" data-target=".traitDetails">
+				<img height="25" th:src="@{/static/img/baseline-traits.png}" class="lbl-img" />
+				<img style="margin-left: -10px; display:none;" class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" />
+				<img style="margin-left: -7px" class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" />
+				<strong class="sub-content-heading" th:text="#{trial.trialdetails.traits}">TRAITS</strong>
+			</label>
+
+		</div>
+		<div class="col-md-12 sectionContainer collapse traitDetails col-xs-12 col-md-12" style="padding-top: 10px;">
+			<div class="row">
+				<div class="col-sm-6">
+					<div>
+						<table style="table-layout: fixed;" class="my-class table table-curved table-condensed traits-table" id="variateDetails">
+							<thead>
+								<tr>
+									<th width="45%" th:utext="#{nursery.nurserydetails.column.name}">.Name</th>
+									<th width="55%" th:utext="#{nursery.nurserydetails.column.description}">.Description</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="variateDetail, rowStat : *{variateDetails}">
+									<td width="45%" th:class="${rowStat.even}? 'even' : 'odd'">
+										<a href="javascript: void(0);" th:onclick="'javascript:showBaselineTraitDetailsModal(\'' +
+										*{variateDetails[__${rowStat.index}__].variable.cvTermId} + '\');'" th:text="${variateDetail.variable.name}"></a>
+									</td>
+									<td width="55%" th:class="${rowStat.even}? 'even' : 'odd'" th:text="${variateDetail.variable.description}"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+			</div>
+		</div> <!-- section container -->
+
+        <div class="col-xs-12 col-md-12">
+			<label  class="control-label section-toggle toggle-icon dataset-toggle" data-target=".datasetDetails">
+				<img th:src="@{/static/img/matching-nurseries.png}" />
+				<img class="section-expanded" th:src="@{/static/img/expanded-arrow.png}" style="display:none; margin-left: -10px" />
+				<img class="section-collapsed" th:src="@{/static/img/collapsed-arrow.png}" style=" margin-left: -7px"/>
+				<strong class="sub-content-heading" th:text="#{nursery.nurserydetails.datasets}">DATASETS</strong>
+			</label>
+			<div class="collapse datasetDetails">
+				<div class="col-xs-12 col-md-12">
+					<label class="control-label">
+						<strong><span th:text="#{nursery.nurserydetails.datasets.choose}"></span></strong>&nbsp;&nbsp;
+					</label>
+					<select style="width: 350px" id="dataset-selection">
+					</select>
+				</div>
+
+				<div class="col-xs-12 col-md-12">
+					&nbsp;
+				</div>
+				<div class="measurement-section" style="display:none;">
+					<div id="measurement-details" class="col-xs-12 col-md-12">
+						<ul id="measurement-tab-headers" class="nav nav-tabs fb-tabs-headers">
+						</ul>
+						<div id="measurement-tabs" class="fb-tabs">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div id="advance-nursery-modal-div"></div>
+</div>
+<div class="row">
+	<div th:include="/NurseryManager/includes/deleteStudyConfirmation"></div>
+</div>
+<script type="text/javascript" th:src="@{/static/js/reviewLanding.js}"></script>

@@ -11,26 +11,16 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.trial.controller;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.generationcp.middleware.domain.etl.StudyDetails;
-import org.generationcp.middleware.exceptions.MiddlewareQueryException;
-import org.generationcp.middleware.service.api.FieldbookService;
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.efficio.fieldbook.web.AbstractBaseFieldbookController;
-import com.efficio.fieldbook.web.common.bean.UserSelection;
-import com.efficio.fieldbook.web.nursery.form.ManageNurseriesForm;
 import com.efficio.fieldbook.web.trial.form.ManageTrialForm;
 
 /**
@@ -42,16 +32,8 @@ public class ManageTrialController extends AbstractBaseFieldbookController{
 
     
     private static final Logger LOG = LoggerFactory.getLogger(ManageTrialController.class);
-    
     /** The Constant URL. */
     public static final String URL = "/TrialManager/manageTrial";
-    public static final String PAGINATION_TEMPLATE = "/TrialManager/showTrialPagination";
-
-    @Resource
-    private FieldbookService fieldbookMiddlewareService;
-    
-    @Resource
-    private UserSelection userSelection;
   
     /**
      * Shows the manage nurseries screen
@@ -63,75 +45,18 @@ public class ManageTrialController extends AbstractBaseFieldbookController{
      */
     @RequestMapping(method = RequestMethod.GET)
     public String show(@ModelAttribute("manageTrialForm") ManageTrialForm form, Model model) {
-        try {
-            List<StudyDetails> nurseryDetailsList = 
-                    fieldbookMiddlewareService.getAllLocalTrialStudyDetails();
-            getUserSelection().setStudyDetailsList(nurseryDetailsList);
-            form.setTrialDetailsList(getUserSelection().getStudyDetailsList());
-            form.setCurrentPage(1);
-        }
-        catch (MiddlewareQueryException e){
-            LOG.error(e.getMessage(), e);
-        }
+    	model.addAttribute("type", StudyType.T.getName());
     	return super.show(model);
     }
     
-    /**
-     * Get for the pagination of the list
-     *
-     * @param form the form
-     * @param model the model
-     * @return the string
-     */
-    @RequestMapping(value="/page/{pageNum}", method = RequestMethod.GET)
-    public String getPaginatedList(@PathVariable int pageNum
-            , @ModelAttribute("manageTrialForm") ManageTrialForm form, Model model) {
-        List<StudyDetails> nurseryDetailsList = getUserSelection().getStudyDetailsList();
-        if(nurseryDetailsList != null){
-            form.setTrialDetailsList(nurseryDetailsList);
-            form.setCurrentPage(pageNum);
-        }
-        return super.showAjaxPage(model, PAGINATION_TEMPLATE);
-    }
-    
-    /**
-     * Submits the details.
-     *
-     * @param form the form
-     * @param result the result
-     * @param model the model
-     * @return the string
-     */
-    @RequestMapping(method = RequestMethod.POST)
-    public String submitDetails(@ModelAttribute("manageTrialForm") ManageTrialForm form
-            , BindingResult result, Model model) {
-        //return "redirect:" + FileUploadController.URL;
-        return super.show(model);
-    }
+   
     
     /* (non-Javadoc)
      * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getContentName()
      */
     @Override
     public String getContentName() {
-        return "TrialManager/manageTrial";
+        return "Common/manageStudy";
     }
-    
-    /**
-     * Gets the form.
-     *
-     * @return the form
-     */
-    @ModelAttribute("form")
-    public ManageNurseriesForm getForm() {
-        return new ManageNurseriesForm();
-    }
-    
-    /* (non-Javadoc)
-     * @see com.efficio.fieldbook.web.AbstractBaseFieldbookController#getUserSelection()
-     */    
-    public UserSelection getUserSelection() {
-        return this.userSelection;
-    }
-    
+   
 }

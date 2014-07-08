@@ -31,6 +31,7 @@ public class SettingDetail implements Serializable {
 	private boolean isFavorite;
 	private int order;
 	private Integer group;
+	private PairedVariable pairedVariable;
 
 	public SettingDetail(){
 		super();
@@ -126,5 +127,19 @@ public class SettingDetail implements Serializable {
 
 	public void setGroup(Integer group) {
 		this.group = group;
+	}
+
+	/**
+	 * @return the pairedVariable
+	 */
+	public PairedVariable getPairedVariable() {
+		return pairedVariable;
+	}
+
+	/**
+	 * @param pairedVariable the pairedVariable to set
+	 */
+	public void setPairedVariable(PairedVariable pairedVariable) {
+		this.pairedVariable = pairedVariable;
 	}
 }

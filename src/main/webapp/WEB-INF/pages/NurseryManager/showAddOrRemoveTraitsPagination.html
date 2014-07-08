@@ -54,28 +54,28 @@ method="post" th:object="${createNurseryForm}" enctype="multipart/form-data">
 		alignment:'center',
 		useBootstrapTooltip:true,
 		onPageClicked: function(e,originalEvent,type,page){
-			var sectionContainerDiv = 'div-nursery-tab-'+getCurrentStudyIdInTab();
+			var sectionContainerDiv = 'div-study-tab-'+getCurrentStudyIdInTab();
 			var listIdentifier = $('#study'+getCurrentStudyIdInTab()+' #dataset-selection').val();
 			
 			showMultiTabPage(paginationUrl, page, 'dset-tab-'+listIdentifier + ' #germplasm-measurement-list-table-div', sectionContainerDiv, listIdentifier);
 		}
 	};
 
-	if($('#div-nursery-tab-'+getCurrentStudyIdInTab()+' #dset-tab-'+$('#study'+getCurrentStudyIdInTab()+' #dataset-selection').val()+' #measurement-data-list-pagination') != null){
-		$('#div-nursery-tab-'+getCurrentStudyIdInTab()+' #dset-tab-'+$('#study'+getCurrentStudyIdInTab()+' #dataset-selection').val()+' #measurement-data-list-pagination').bootstrapPaginator(options);
+	if($('#div-study-tab-'+getCurrentStudyIdInTab()+' #dset-tab-'+$('#study'+getCurrentStudyIdInTab()+' #dataset-selection').val()+' #measurement-data-list-pagination') != null){
+		$('#div-study-tab-'+getCurrentStudyIdInTab()+' #dset-tab-'+$('#study'+getCurrentStudyIdInTab()+' #dataset-selection').val()+' #measurement-data-list-pagination').bootstrapPaginator(options);
 	}
 	$( document ).ready(function() {
 		'use strict';
 		$('#btnBack').attr('href', '/Fieldbook/' + $('#study-type').val() + 'Manager');
 
-		$('#div-nursery-tab-'+getCurrentStudyIdInTab()+' .desig-link').click(function() {
+		$('#div-study-tab-'+getCurrentStudyIdInTab()+' .desig-link').click(function() {
 			var gidValue = $(this).parent().parent().find('.gid-link').text();
 			$(this).data('gid', gidValue);
 			$(this).data('desig', $(this).text());
 			openGermplasmDetailsPopop($(this));
 		});
 
-		$('#div-nursery-tab-'+getCurrentStudyIdInTab()+' .gid-link').click(function() {
+		$('#div-study-tab-'+getCurrentStudyIdInTab()+' .gid-link').click(function() {
 			var desigValue = $(this).parent().parent().find('.desig-link').text();
 			$(this).data('gid', $(this).text());
 			$(this).data('desig', desigValue);

@@ -11,6 +11,7 @@
  *******************************************************************************/
 package com.efficio.fieldbook.web.nursery.controller;
 
+import org.generationcp.middleware.domain.oms.StudyType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,11 +27,12 @@ public class ManageNurseriesController extends AbstractBaseFieldbookController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String show(Model model) {
+		model.addAttribute("type", StudyType.N.getName());
 		return super.show(model);
 	}
 
 	@Override
 	public String getContentName() {
-		return "NurseryManager/manageNurseries";
+		return "Common/manageStudy";
 	}
 }

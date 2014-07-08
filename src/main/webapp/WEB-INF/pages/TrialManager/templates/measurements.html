@@ -1,1 +1,13 @@
-<div>Measurements Page</div>
+<div class="row" ng-controller="MeasurementsCtrl">
+    <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
+        <section-container th:attr="heading=#{trial.managesettings.measurement.title}"
+                           collapsible="true" add-variable="true" model-data="data.measurements" variable-type="3">
+
+            <section-container th:attr="heading=#{trial.managesettings.measurement.title},help-tooltip=#{trial.managesettings.trait.notes}">
+                <display-settings settings="data.measurements" variable-type="2"></display-settings>
+            </section-container>
+
+        </section-container>
+
+    </div>
+</div>

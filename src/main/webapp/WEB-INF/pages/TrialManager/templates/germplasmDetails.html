@@ -3,19 +3,9 @@
        <section-container icon="bms-factors" th:attr="heading=#{trial.managesettings.germplasm.factors.label}"
                           collapsible="true" add-variable="true" model-data="data.settings" variable-type="2">
 
-           <div>
-               <label class="control-label" data-toggle="collapse" data-target=".nurseryLevelDetails">
-                   <strong class="sub-content-heading" th:text="#{trial.managesettings.germplasm.factors.label}">GERMPLASM FACTORS</strong>
-                   <span class="bms-fa-question-circle help-tooltip" th:attr="tooltip=#{trial.reminder.add.germplasm.factors}" tooltip-placement="right"></span>
-               </label>
-
-           <span class="pull-right">
-                <span ng-show="updateOccurred" ng-click="updateDataTable()" class="btn btn-info pull-right">Refresh</span>
-           </span>
-
-           </div>
-
-           <display-settings settings="data.settings" variable-type="2"></display-settings>
+           <section-container th:attr="heading=#{trial.managesettings.germplasm.factors.label},help-tooltip=#{trial.reminder.add.germplasm.factors}">
+               <display-settings settings="data.settings" variable-type="2"></display-settings>
+           </section-container>
 
        </section-container>
 

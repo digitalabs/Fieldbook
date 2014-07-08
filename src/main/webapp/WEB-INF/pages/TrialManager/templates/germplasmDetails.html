@@ -1,64 +1,57 @@
 <div class="row" ng-controller="GermplasmCtrl">
-   <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
-       <section-container icon="bms-factors" th:attr="heading=#{trial.managesettings.germplasm.factors.label}"
-                          collapsible="true" add-variable="true" model-data="data.settings" variable-type="2">
+    <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
 
-           <section-container th:attr="heading=#{trial.managesettings.germplasm.factors.label},help-tooltip=#{trial.reminder.add.germplasm.factors}">
-               <display-settings settings="data.settings" variable-type="2"></display-settings>
-           </section-container>
+        <section-container icon="bms-factors" th:attr="heading=#{trial.managesettings.germplasm.factors.label}"
+                           collapsible="true" add-variable="true" model-data="data.settings" variable-type="2">
 
-       </section-container>
+            <section-container th:attr="heading=#{trial.managesettings.germplasm.factors.label},help-tooltip=#{trial.reminder.add.germplasm.factors}">
+                <display-settings settings="data.settings" variable-type="2"></display-settings>
+            </section-container>
 
-   </div>
+        </section-container>
+    </div>
+
 </div>
 
-
-
-<div class="row form-group collapse in germplasmListDetails germplasmAndCheckSection">
+<div class="collapse in germplasmListDetails germplasmAndCheckSection">
 	<!-- Germplasm List Table View -->
-	<div>
+    <div id="primary-section">
+        <div>
+            <img th:src="@{/static/img/review-list-details.png}" />
+            <label class="control-label"><strong id="germplasmLabel" class="sub-content-heading">Trial List</strong></label>
 
-        <div id="primary-section" class="col-xs-12 col-md-12">
-            <div>
-            	<img th:src="@{/static/img/review-list-details.png}" />
-                <label class="control-label"><strong id="germplasmLabel" class="sub-content-heading">Trial List</strong></label>                
-	            
-	            
-	            <div  class="pull-right">
-	                <div class="btn-group">
-	                    <button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
-	                        <span th:text="#{nursery.nurserydetails.actions}">Actions</span>
-	                    </button>
-	                    <ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
-	                        <li>	                        
-	                           <a href="javascript: showManageCheckTypePopup()" th:text="#{germplasm.list.manage.check.types}" >Manage Checks</a>
-	                        </li>	                    
-                        </ul>
-	                </div>
-	            </div>
-	            	            
+
+            <div  class="pull-right">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
+                        <span th:text="#{nursery.nurserydetails.actions}">Actions</span>
+                    </button>
+                    <ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
+                        <li>
+                            <a href="javascript: showManageCheckTypePopup()" th:text="#{germplasm.list.manage.check.types}" >Manage Checks</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <div>
-                <label class="control-label"><a href="javascript: openListTree(1)">Browse</a> or <a href="javascript: openImportGermplasmList('1')">Import</a> a list to work with.</label>
-            </div>
+
         </div>
-       
-    </div>
-    <div>
-        <div class="col-xs-12 col-md-12" id="entries-details" style="display: none">
-            Total Entries: <label class="control-label control-label-bold" id="numberOfEntries"></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <a href="javascript: void(0)" onclick="javascript: viewGermplasmLitDetails();">View Header</a>
-            <div class="col-show-hide pull-right">
-            </div>            
+        <div>
+            <label class="control-label"><a href="javascript: openListTree(1)">Browse</a> or <a href="javascript: openImportGermplasmList('1')">Import</a> a list to work with.</label>
         </div>
     </div>
+
+    <div id="entries-details" style="display: none">
+        Total Entries: <label class="control-label control-label-bold" id="numberOfEntries"></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <a href="javascript: void(0)" onclick="javascript: viewGermplasmLitDetails();">View Header</a>
+        <div class="col-show-hide pull-right">
+        </div>
+    </div>
+
 </div>
 
-<div class="row form-group collapse in germplasmListDetails">
+<div class="collapse in germplasmListDetails">
     <!-- Germplasm List Table View -->
-    <div class="col-xs-12 col-md-12">
-        <div id="imported-germplasm-list" class="primary"></div>
-    </div>      
+    <div id="imported-germplasm-list" class="primary"></div>
 </div>
 
 <input type="hidden" id="keyForOverwrite" value=""/>

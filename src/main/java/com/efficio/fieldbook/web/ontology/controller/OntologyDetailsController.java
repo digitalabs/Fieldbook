@@ -161,7 +161,7 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
     		// Fetch filtered Standard Variables using the list of ids just created
     		List<StandardVariableSummary> standardVariables = ontologyService.getStandardVariableSummaries(ids);
     		
-    		// fill the StabdardVariableMap - keyed by svId
+    		// fill the StandardVariableMap - keyed by svId
     		for (StandardVariableSummary standardVariable : standardVariables) {
 				svMap.put(Integer.valueOf(standardVariable.getId()), standardVariable);
 			}
@@ -174,13 +174,7 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
     		List<TraitClassReference> tree = ontologyService.getAllTraitGroupsHierarchy(true);
     		for (TraitClassReference root : tree) {
     			for (TraitClassReference traitClassReference : root.getTraitClassChildren()) {
-    				// filter on the optional classId provided, or allow if zero=ALL
-    				if(classId.equals(new Integer(0)) || classId.equals(traitClassReference.getId())) {
-    					for (TraitClassReference subTraitClass : traitClassReference.getTraitClassChildren()) {
-    						propertyTrees = processTreeProperties(svMap, stdVars, propertyTrees, subTraitClass);						
-						}
-						propertyTrees = processTreeProperties(svMap, stdVars, propertyTrees, traitClassReference);
-    				}
+    				propertyTrees = processTreeTraitClasses(classId, svMap, stdVars, propertyTrees, traitClassReference);
 				}
 			}
 			return propertyTrees;
@@ -190,8 +184,8 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
     	return new ArrayList<PropertyTree>();
     }
 
-    
-    /**
+
+	/**
      * Fetches Property and associated Standard Variables by PropertyId
      * 
      * @param propertyId
@@ -357,7 +351,35 @@ public class OntologyDetailsController extends AbstractBaseFieldbookController {
     }
 
     /**
-     * A method that takes a trait class node from the Trait Tree and extracts the Standard Variables
+     * Recursive kick-off spot for Ontological tree processing. Recursive node is the TraitClassNode. If Trait Classes and 
+     * Properties for a TraitClass node are exhausted, then the algorithm will return with collected Properties.
+     * @param classId 
+     * 
+     * @param svMap : standard variable map. Only return standard variables from this map
+     * @param stdVars : standard variables to process
+     * @param propertyTrees : collection units for results
+     * @param traitClassReference : the class node that contains either further subClasses, and/or Properties
+     * @return
+     */
+    private List<PropertyTree> processTreeTraitClasses(Integer classId, Map<Integer, StandardVariableSummary> svMap, List<StandardVariableReference> stdVars, List<PropertyTree> propertyTrees, TraitClassReference traitClassReference) {
+    	
+    	// We might encounter a trait class node - if so, process sub trait class nodes
+    	if(!traitClassReference.getTraitClassChildren().isEmpty() ) {
+    		for (TraitClassReference subTraitClass : traitClassReference.getTraitClassChildren()) {
+    			propertyTrees = processTreeTraitClasses(classId, svMap, stdVars, propertyTrees, subTraitClass);					
+    		}  
+    	}
+    	// and process properties of that trait class (if the class is selected, or we are defaulting to all classes
+    	if(!traitClassReference.getProperties().isEmpty() && (classId == 0 || classId.equals(traitClassReference.getId()))) {
+    		propertyTrees = processTreeProperties(svMap, stdVars, propertyTrees, traitClassReference);
+    	}
+		return propertyTrees;
+			
+	}
+    
+    /**
+     * A method that takes a Trait Class parent in the tree, and processes the list of property nodes from the Trait Class 
+     * parent in the tree and extracts the Standard Variables
      * 
      * @param svMap
      * @param stdVars

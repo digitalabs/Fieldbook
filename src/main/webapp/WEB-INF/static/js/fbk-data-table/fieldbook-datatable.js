@@ -259,7 +259,7 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 							full.gid + '&quot;,&quot;' + full.desig + '&quot;)">' + data + '</a>';
 					}
 				});
-			}else if ($(this).data('col-name') == 'check') {
+			}else if ($(this).data('col-name') == '8255-key') {
 				// For check
 				columnsDef.push({
 					targets: columns.length - 1,
@@ -272,15 +272,15 @@ BMS.Fieldbook.TrialGermplasmListDataTable = (function($) {
 							domElem = '';
 													
 						for(count = 0 ; count < full.checkOptions.length ; count++){							
-							if(full.checkOptions[count].id == full.check){
+							if(full.checkOptions[count].id == full['8255-key']){
 								actualVal = full.checkOptions[count].description;
 								actualCode = full.checkOptions[count].name;
-								domElem = '<input class="check-hidden" type="hidden"  data-code="'+actualCode+'" value="'+full.check+'" id="selectedCheck'+(meta.row)+'" name="'+fieldName+'">';
+								domElem = '<input class="check-hidden" type="hidden"  data-code="'+actualCode+'" value="'+full['8255-key']+'" id="selectedCheck'+(meta.row)+'" name="'+fieldName+'">';
 								break;
 							}							
 						}
 						if(domElem === ''){
-							domElem = '<input data-index="'+meta.row+'" class="check-hidden" type="hidden"  data-code="'+actualCode+'" value="'+full.check+'" id="selectedCheck'+(meta.row)+'" name="'+fieldName+'">';
+							domElem = '<input data-index="'+meta.row+'" class="check-hidden" type="hidden"  data-code="'+actualCode+'" value="'+full['8255-key']+'" id="selectedCheck'+(meta.row)+'" name="'+fieldName+'">';
 						}
 						
 						return '<span data-index="'+meta.row+'" class="check-href edit-check'+meta.row+'" data-code="'+actualCode+'">'+actualVal+'</span>' + domElem;

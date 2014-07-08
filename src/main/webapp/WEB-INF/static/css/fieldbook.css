@@ -1371,6 +1371,10 @@ label[data-toggle="collapse"],
 	padding: 0;
 }
 
+.nrm-var-selection-modal li {
+	list-style-type: none;
+}
+
 .nrm-var-selection-modal .nrm-var-select-dropdown-container {
 	padding-bottom: 10px;
 }
@@ -1383,7 +1387,7 @@ label[data-toggle="collapse"],
 	font-weight: bold;
 }
 
-.var-select-results .var-select-result-class {
+.var-select-result-class {
 	font-style: italic;
 }
 

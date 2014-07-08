@@ -10,7 +10,11 @@
 				<!-- TODO Awaiting Rebecca's JSONified variable usage service
 				<ul class="nrm-var-select-popular-vars"></ul> -->
 
+				<h3>Variables</h3>
 				<ul class="nrm-var-select-vars"></ul>
+
+				<h3>Related Properties in the <span class="nrm-var-select-related-prop-class"></span> Class</h3>
+				<ul class="nrm-var-select-related-props"></ul>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal" th:utext="#{common.form.done.text}">Done</button>
@@ -21,14 +25,22 @@
 
 <script id="variable-template" type="text/x-handlebars-template">
   {{#each variables}}
-  <ul class="nrm-var-select-var">
+  <li class="nrm-var-select-var">
 	<span><strong><span class="nrm-var-name">{{name}}</span></strong> - {{description}}</span>
 	{{#ifSelectedVariable id}}
 		<button type="button" class="btn btn-primary nrm-var-select-add" disabled="disabled">Select</button>
 	{{else}}
 		<button type="button" class="btn btn-primary nrm-var-select-add">Select</button>
 	{{/ifSelectedVariable}}
-  </ul>
+  </li>
+  {{/each}}
+</script>
+
+<script id="related-prop-template" type="text/x-handlebars-template">
+  {{#each properties}}
+  <li>
+	  <a href="#" class="nrm-var-property-name" data-id="{{propertyId}}">{{name}}</a>
+  </li>
   {{/each}}
 </script>
 

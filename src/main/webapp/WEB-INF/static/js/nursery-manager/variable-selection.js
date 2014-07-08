@@ -26,11 +26,15 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		propertyDropdownSelector = '.nrm-var-select-dropdown',
 		propertyDropdownContainerSelector = '.nrm-var-select-dropdown-container',
 		addVariableButtonSelector = '.nrm-var-select-add',
+		relatedPropertyLinkSelector = '.nrm-var-property-name',
 		variableListSelector = '.nrm-var-select-vars',
+		relatedPropertyListSelector = '.nrm-var-select-related-props',
 
 		generateVariable = Handlebars.compile($('#variable-template').html()),
 		generateDropdownMarkup = Handlebars.compile($('#nrm-var-select-dropdown-template').html()),
+		generateRelatedProperty = Handlebars.compile($('#related-prop-template').html()),
 
+		relatedProperties = [],
 		selectedProperty,
 		selectedVariables,
 
@@ -208,19 +212,70 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		this._$modal.on('hide.bs.modal', $.proxy(this._destroy, this));
 	};
 
+	VariableSelection.prototype._loadPropertyDetails = function(property, group) {
+
+		var variableList = $(variableListSelector),
+			relatedPropertyList = $(relatedPropertyListSelector),
+			classId = property.traitClass.traitClassId,
+			relatedPropertiesKey = group + ':' + classId,
+
+			filterOutCurrentProperty = function(element) {
+				return element.propertyId !== property.propertyId;
+			};
+
+		// Clear currently selected property and select the new one
+		variableList.empty();
+		relatedPropertyList.empty();
+
+		$('.nrm-var-select-related-prop-class').text(property.traitClass.traitClassName);
+
+		variableList.append(generateVariable({variables: property.standardVariables}));
+
+		// Check to see if we have loaded this set before
+		if (!relatedProperties[relatedPropertiesKey]) {
+
+			// TODO Deal with the situation where they have moved on before it returns
+			$.getJSON('/Fieldbook/OntologyBrowser/settings/properties?groupId=' + group + '&classId=' + classId, function(data) {
+
+				var filteredProperties;
+
+				// Store for later to prevent multiple calls to the same service with the same data
+				relatedProperties[relatedPropertiesKey] = data;
+
+				// Filter out the currently selected property
+				filteredProperties = $.grep(data, filterOutCurrentProperty);
+
+				relatedPropertyList.append(generateRelatedProperty({properties: filteredProperties}));
+			});
+		} else {
+			relatedPropertyList.append(generateRelatedProperty({
+				properties: $.grep(relatedProperties[relatedPropertiesKey], filterOutCurrentProperty)
+			}));
+		}
+	};
+
+	VariableSelection.prototype._loadProperty = function(property, group) {
+
+		this._propertyDropdown.select2('data', property);
+		this._loadPropertyDetails(property, group);
+	};
+
 	VariableSelection.prototype._destroy = function() {
 
 		var modalHeader = $(this._modalSelector + ' ' + modalHeaderSelector),
-			variableList = $(variableListSelector);
+			variableList = $(variableListSelector),
+			relatedPropertyList = $(relatedPropertyListSelector);
 
 		// Clear title
 		modalHeader.empty();
 
-		// Clear variable selection events
+		// Clear variable and related property selection events
 		variableList.off('click');
+		relatedPropertyList.off('click');
 
-		// Clear variables
+		// Clear variables and related properties
 		variableList.empty();
+		relatedPropertyList.empty();
 
 		// Destroy the select dropdown
 		destroyPropertyDropdown();
@@ -230,8 +285,7 @@ BMS.NurseryManager.VariableSelection = (function($) {
 
 		var properties = groupData.propertyData,
 			modalHeader = $(this._modalSelector + ' ' + modalHeaderSelector),
-			title,
-			propertyDropdown;
+			title;
 
 		selectedVariables = groupData.selectedVariables;
 
@@ -240,19 +294,36 @@ BMS.NurseryManager.VariableSelection = (function($) {
 		modalHeader.append(title);
 
 		// Instantiate select2 widget for property dropdown
-		propertyDropdown = initialisePropertyDropdown(translations.placeholderLabel, properties);
+		this._propertyDropdown = initialisePropertyDropdown(translations.placeholderLabel, properties);
 
-		propertyDropdown.on('select2-selecting', function(e) {
-
-			var variableList = $(variableListSelector);
-
+		// When the user selects a new property, load the property
+		this._propertyDropdown.on('select2-selecting', $.proxy(function(e) {
 			// Hold on this for later use
 			selectedProperty = e.choice;
 
-			// Clear currently selected property and select the new one
-			variableList.empty();
-			variableList.append(generateVariable({variables: selectedProperty.standardVariables}));
-		});
+			this._loadPropertyDetails(selectedProperty, group);
+		}, this));
+
+		// When the user selects a related property, load the property
+		$(relatedPropertyListSelector).on('click', relatedPropertyLinkSelector, {}, $.proxy(function(e) {
+			e.preventDefault();
+
+			var propertyId = $(e.target).data('id'),
+				property;
+
+			$.each(properties, function(index, propertyObj) {
+
+				if (propertyObj.propertyId === propertyId) {
+					property = propertyObj;
+				}
+
+				return !property;
+			});
+
+			selectedProperty = property;
+
+			this._loadProperty(property, group);
+		}, this));
 
 		// TODO Awaiting Rebecca's JSONified variable usage service
 		// $('.nrm-var-select-popular-vars').append(generateVariable({variables: groupData.variables}));

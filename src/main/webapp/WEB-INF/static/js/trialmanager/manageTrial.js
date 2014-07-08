@@ -2,9 +2,9 @@
  * Created by cyrus on 7/1/14.
  */
 
-/*global angular*/
+/*global angular, changeBuildOption, getJquerySafeId*/
 
-(function(){
+(function() {
     'use strict';
 
     var manageTrialApp = angular.module('manageTrialApp', ['leafnode-utils','fieldbook-utils','ct.ui.router.extras','ui.bootstrap']);
@@ -98,9 +98,7 @@
             {   'name' : 'Treatment Factors',
                 'state' : 'treatment'
             },
-            {   'name' : 'Experimental Design',
-                'state' : 'experimentalDesign'
-            },
+
             {   'name' : 'Measurements',
                 'state' : 'measurements'
             }
@@ -128,5 +126,16 @@
 
         return service;
     }]);
+
+    // old school shit here:
+    document.onInitManageTrial = function() {
+        $('#studyBuildOption').on('change', changeBuildOption);
+        $('#choosePreviousStudy').hide();
+
+        setTimeout(function() {
+            $('#' + getJquerySafeId('basicDetails.value2')).datepicker('setDate', new Date());
+        }, 600);
+    };
+
 })();
 

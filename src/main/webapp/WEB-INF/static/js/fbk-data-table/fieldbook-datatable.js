@@ -59,6 +59,7 @@ BMS.Fieldbook.MeasurementsDataTable = (function($) {
 				columnsDef.push({
 					targets: columns.length - 1,
 					data: $(this).html(),
+					width: '50px',
 					render: function(data, type, full, meta) {
 						return '<a href="javascript: editExperiment(&quot;' + tableIdentifier + '&quot;,' +
 							data + ',' + meta.row + ')" class="fbk-edit-experiment"></a>';

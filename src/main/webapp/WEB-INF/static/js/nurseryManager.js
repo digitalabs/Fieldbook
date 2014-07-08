@@ -1860,13 +1860,30 @@ function recreateSessionVariables() {
 		cache: false,
 		success: function (html) {
 			$('#measurementsDiv').html(html);
-			if ($('#measurementDataExisting').length !== 0) {
-				displayCorrespondingGermplasmSections();
-			}
+			displayEditFactorsAndGermplasmSection();			
 			displaySaveSuccessMessage('page-message', saveSuccessMessage);
 
 		}
 	});
+}
+
+function displayEditFactorsAndGermplasmSection() {
+	if ($('#measurementDataExisting').length !== 0) {
+		displayCorrespondingGermplasmSections();
+		
+		//enable/disable adding of factors if nursery has measurement data
+		if ($('#measurementDataExisting').val() === 'true') {
+			$('.nrm-var-select-open').hide();
+			$.each($('#plotLevelSettings tbody tr'), function (index, row) {
+				$(row).find('.delete-icon').hide();
+			});
+		} else {
+			$('.nrm-var-select-open').show();
+			$.each($('#plotLevelSettings tbody tr'), function (index, row) {
+				$(row).find('.delete-icon').show();
+			});
+		}
+	}
 }
 
 function displayCorrespondingGermplasmSections() {

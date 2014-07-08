@@ -1696,14 +1696,6 @@ function checkIfNull(object) {
 	}
 }
 
-function openManageMethods() {
-	$('#manageMethodModal').modal({ backdrop: 'static', keyboard: true });
-	if (methodIframeOpened == false) {
-		methodIframeOpened = true;
-		$('#methodFrame').attr('src', programMethodUrl + $('#projectId').val());
-	}
-}
-
 function recreateMethodCombo() {
 	var selectedMethodAll = $('#methodIdAll').val(),
 		selectedMethodFavorite = $('#methodIdFavorite').val();

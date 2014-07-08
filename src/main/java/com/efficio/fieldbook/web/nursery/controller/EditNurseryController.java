@@ -126,7 +126,7 @@ public class EditNurseryController extends SettingsController {
             //settings part
             workbook = fieldbookMiddlewareService.getNurseryDataSet(nurseryId);
 
-            form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), buildVariates(workbook.getVariates())));
+            form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));
             
             Dataset dataset = (Dataset)SettingsUtil.convertWorkbookToXmlDataset(workbook);
             
@@ -449,7 +449,7 @@ public class EditNurseryController extends SettingsController {
                 workbook.setOriginalObservations(workbook.getObservations());
                 
                 resultMap.put("status", "1");
-                resultMap.put("hasMeasurementData", String.valueOf(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), buildVariates(workbook.getVariates()))));
+                resultMap.put("hasMeasurementData", String.valueOf(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates()))));
             } catch (MiddlewareQueryException e) {
                 LOG.error(e.getMessage());
                 resultMap.put("status", "-1");
@@ -859,7 +859,7 @@ public class EditNurseryController extends SettingsController {
     	String contextParams = ContextUtil.getContextParameterString(contextInfo);
 
     	Workbook workbook = userSelection.getWorkbook();
-        form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), buildVariates(workbook.getVariates())));
+        form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(workbook.getMeasurementDatesetId(), SettingsUtil.buildVariates(workbook.getVariates())));
     	//update variables in measurement rows
     	if (userSelection.getMeasurementRowList() != null && !userSelection.getMeasurementRowList().isEmpty()) {
     		MeasurementRow row = userSelection.getMeasurementRowList().get(0);
@@ -964,17 +964,7 @@ public class EditNurseryController extends SettingsController {
     	}
     	return "[]";
     }
-    
-    private List<Integer> buildVariates(List<MeasurementVariable> variates) {
-        List<Integer> variateList = new ArrayList<Integer>();
-        if (variates != null) {
-            for (MeasurementVariable var : variates) {
-                variateList.add(new Integer(var.getTermId()));
-            }
-        }
-        return variateList;
-    }
-    
+        
     @ResponseBody
     @RequestMapping(value="/deleteMeasurementRows", method = RequestMethod.POST)
     public Map<String, String> deleteMeasurementRows() {
@@ -1011,6 +1001,11 @@ public class EditNurseryController extends SettingsController {
     @ModelAttribute("programLocationURL")
     public String getProgramLocation() {
         return fieldbookProperties.getProgramLocationsUrl();
+    }
+    
+    @ModelAttribute("programMethodURL")
+    public String getProgramMethod() {
+        return fieldbookProperties.getProgramBreedintMethodsUrl();
     }
 
     @ModelAttribute("projectID")

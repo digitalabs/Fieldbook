@@ -100,7 +100,7 @@
 				<strong class="sub-content-heading" th:text="#{nursery.managesettings.plot.level.details}">PLOT-LEVEL DETAILS</strong>
 				<span class="bms-fa-question-circle help-tooltip-nursery" data-placement="right" data-toggle="tooltip" data-container="body" th:title="#{nursery.managesettings.plot.level.notes}"></span>
 			</label>
-			<a href="#" th:if="${createNurseryForm.measurementDataExisting == false}" class="btn btn-info pull-right nrm-var-select-open" th:text="#{nursery.create.nursery.add.settings}">Add</a>
+			<a href="#" class="btn btn-info pull-right nrm-var-select-open" th:text="#{nursery.create.nursery.add.settings}">Add</a>
 		</div>
 		<div class="form-group collapse in plotLevelDetails">
 			<table style="table-layout: fixed;" class="my-class table table-curved table-condensed" id="plotLevelSettings">
@@ -207,7 +207,7 @@
 						th:onclick="'javascript: toggleMethodDropdown(\'' + ${rowStat.index} + '\');'" />
 				&nbsp;&nbsp;
 				<span th:text="#{show.favorite.method}">Show Favorite Method</span>&nbsp;&nbsp;
-				<a th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId}" href="javascript: openManageMethods();" th:text="#{nursery.managesettings.manage.method}">Manage Method</a>
+				<a th:if="${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodId} or ${nurseryLevelVariable.variable.cvTermId}==*{breedingMethodCode}" href="javascript: openManageMethods();" th:text="#{nursery.managesettings.manage.method}">Manage Method</a>
 			</div>
 		</div>
 	</div>
@@ -365,8 +365,6 @@ var nurseryFieldsIsRequired = /*[[#{nursery.create.is.required}]]*/ '',
 /* jshint ignore:end */
 
 var locationId = '',
-	programLocationUrl = '',
-	programMethodUrl = '',
 	breedingMethodId = '',
 	importLocationUrl = '',
 	requiredFields = [],
@@ -412,8 +410,6 @@ $(document).ready(function() {
 	endDateId = $('#endDateId').val();
 	locationId = $('#locationId').val();
 	breedingMethodId = $('#breedingMethodId').val();
-	programMethodUrl = $('#breedingMethodUrl').val();
-	programLocationUrl = $('#locationUrl').val();
 	importLocationUrl = $('#importLocationUrl').val();
 
 	$('#folderNameSpan').html($('#folderName').val());

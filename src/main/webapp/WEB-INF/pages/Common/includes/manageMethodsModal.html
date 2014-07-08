@@ -26,9 +26,20 @@
 <div layout:fragment="page-script">
 	<script type='text/javascript' th:inline="javascript">
 	//<![CDATA[
+	(function() {
+        document.programMethodUrl = /*[[${programMethodURL}]]*/ '';
+        document.projectID = /*[[${projectID}]]*/ '';
+    })();
 	function closeMethodFrame(){
 		recreateMethodCombo();
 		$('#manageMethodModal').modal('hide');
+	}
+	function openManageMethods() {
+		$('#manageMethodModal').modal({ backdrop: 'static', keyboard: true });
+		if (methodIframeOpened == false) {
+			methodIframeOpened = true;
+			$('#methodFrame').attr('src', document.programMethodUrl + document.projectID);
+		}
 	}
 	//]]>
 </script>

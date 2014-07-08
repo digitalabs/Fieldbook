@@ -1701,4 +1701,14 @@ public class SettingsUtil {
             }
         }
     }
+	
+	public static List<Integer> buildVariates(List<MeasurementVariable> variates) {
+        List<Integer> variateList = new ArrayList<Integer>();
+        if (variates != null) {
+            for (MeasurementVariable var : variates) {
+                variateList.add(new Integer(var.getTermId()));
+            }
+        }
+        return variateList;
+    }
 }

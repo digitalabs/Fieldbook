@@ -655,6 +655,11 @@ public class CreateNurseryController extends SettingsController {
     public String getProgramLocation() {
         return fieldbookProperties.getProgramLocationsUrl();
     }
+    
+    @ModelAttribute("programMethodURL")
+    public String getProgramMethod() {
+        return fieldbookProperties.getProgramBreedintMethodsUrl();
+    }
 
     @ModelAttribute("projectID")
     public String getProgramID() {

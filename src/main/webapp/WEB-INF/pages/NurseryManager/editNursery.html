@@ -379,13 +379,6 @@
                     } else if ($('.germplasm-list-items tbody tr').length > 0 || measurementRowCount === 0) {
                     	submitGermplasmAndCheck();
 					} else if (data.status === '1') {
-						//disable adding of factors if nursery has measurement data
-						if (data.hasMeasurementData === 'true') {
-							$('.nrm-fct-variable-select').hide();
-							$.each($('#plotLevelSettings tbody tr'), function (index, row) {
-								$(row).find('.delete-icon').hide();
-							});
-						}
 						recreateSessionVariables();
 					}
 					$('.import-study-data').data('data-import', '0');
@@ -462,9 +455,8 @@
 				$('#folderNameLabel').html(programNurseriesText);
 			}
 
-			if ($('#measurementDataExisting')) {
-				displayCorrespondingGermplasmSections();
-			}
+			displayEditFactorsAndGermplasmSection();
+			
 			if ($('.nursery-name').length > 0) {
 				$('.nursery-name').tooltip();
 			}

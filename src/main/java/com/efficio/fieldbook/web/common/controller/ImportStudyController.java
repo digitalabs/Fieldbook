@@ -383,8 +383,11 @@ public class ImportStudyController extends AbstractBaseFieldbookController {
     	}
     	userSelection.setNewTraits(newTraits);
     	userSelection.setNewSelectionVariates(selectedVariates);
+    	form.setMeasurementDataExisting(fieldbookMiddlewareService.checkIfStudyHasMeasurementData(userSelection.getWorkbook().getMeasurementDatesetId(), SettingsUtil.buildVariates(userSelection.getWorkbook().getVariates())));
         return super.showAjaxPage(model,ADD_OR_REMOVE_TRAITS_HTML);
     }
+    
+    
     
     @RequestMapping(value="/import/preview", method=RequestMethod.POST)
     public String previewImportedFiles(@ModelAttribute("createNurseryForm") CreateNurseryForm form, Model model) throws Exception {

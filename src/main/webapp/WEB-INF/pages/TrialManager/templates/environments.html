@@ -32,16 +32,14 @@
     </section-container>
 
     <div ng-repeat="environment in data.environments">
-        <div class="col-xs-12">
-            <div class="form-group">
-                <label class="control-label" style="text-transform: uppercase">
-                    <strong class="sub-content-heading">Environment {{$index + 1}}</strong>
-                </label>
-            </div>
+        <div class="row col-xs-12">
+            <label class="control-label" style="text-transform: uppercase">
+                <strong class="sub-content-heading">Environment {{$index + 1}}</strong>
+            </label>
         </div>
-        <div>
+        <div class="row">
             <div class="col-xs-6 col-md-6">
-                <div class="form-group" ng-repeat="(key, value) in environment.managementDetailValues">
+                <div class="row form-group" ng-repeat="(key, value) in environment.managementDetailValues">
                     <div class="col-xs-5 1st">
                     <span style="word-wrap: break-word" class="control-label nursery-level-label
                         label-bold var-names">{{data.managementDetails[key].variable.name}}</span>
@@ -53,7 +51,7 @@
                 </div>
             </div>
             <div class="col-xs-6 col-md-6">
-                <div class="form-group" ng-repeat="(key, value) in environment.trialDetailValues">
+                <div class="row form-group" ng-repeat="(key, value) in environment.trialDetailValues">
                     <div class="col-xs-5 1st">
                     <span style="word-wrap: break-word" class="control-label nursery-level-label
                         label-bold var-names">{{data.trialConditionDetails[key].variable.name}}</span>

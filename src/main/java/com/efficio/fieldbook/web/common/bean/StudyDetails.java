@@ -9,12 +9,9 @@
  * Challenge Programme Amended Consortium Agreement (http://bit.ly/KQX1nL)
  * 
  *******************************************************************************/
-package com.efficio.fieldbook.web.nursery.bean;
+package com.efficio.fieldbook.web.common.bean;
 
 import java.util.List;
-
-import com.efficio.fieldbook.web.common.bean.SettingDetail;
-import com.efficio.fieldbook.web.common.bean.TreatmentFactorDetail;
 
 /**
  * The Class StudyDetails.

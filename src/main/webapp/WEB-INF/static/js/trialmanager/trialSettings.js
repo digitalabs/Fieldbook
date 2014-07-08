@@ -10,6 +10,8 @@
     var manageTrialApp = angular.module('manageTrialApp');
 
     manageTrialApp.controller('TrialSettingsCtrl',['$scope','TrialSettingsService',function($scope,TrialSettingsService) {
+        TrialSettingsService.addDummyData();
+
         $scope.data = TrialSettingsService.data;
 
         $scope.removeVariable = function(cvTermId) {

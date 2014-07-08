@@ -1,24 +1,17 @@
 <div class="row col-lg-6 col-md-8 col-sm-10 col-xs-12" ng-controller="TreatmentCtrl">
     <!-- title -->
     <section-container collapsible="true" th:attr="heading=#{trial.managesettings.treatment.factors.title}">
-        <div>
-            <span>
-                <b class="sub-content-heading" th:text="#{trial.managesettings.treatment.factors}">TREATMENT FACTORS</b>
-                <span class="bms-fa-question-circle help-tooltip-nursery" tooltip-placement="right" tooltip-container="body" th:attr="tooltip=#{trial.managesettings.treatment.factors.notes}"></span>
-            </span>
 
-            <span select-standard-variable="" modeldata="data.managementDetails" variable-type="1" class="btn btn-info pull-right nrm-md-variable-select" >Add</span>
-        </div>
+        <section-container th:attr="heading=#{trial.managesettings.treatment.factors},help-tooltip=#{trial.managesettings.treatment.factors.notes}" add-variable="true" model-data="data.managementDetails" variable-type="1">
 
-        <div class="add_top_padding">
             <table class='factor-opts-tbl table table-curved table-condensed'>
                 <thead>
-                    <tr>
-                        <th>&nbsp;</th>
-                        <th th:text="#{trial.managesettings.treatment.factors.name}">Name</th>
-                        <th th:text="#{trial.managesettings.treatment.factors.description}">Description</th>
-                        <th th:text="#{trial.managesettings.treatment.factors.level}">Levels</th>
-                    </tr>
+                <tr>
+                    <th>&nbsp;</th>
+                    <th th:text="#{trial.managesettings.treatment.factors.name}">Name</th>
+                    <th th:text="#{trial.managesettings.treatment.factors.description}">Description</th>
+                    <th th:text="#{trial.managesettings.treatment.factors.level}">Levels</th>
+                </tr>
                 </thead>
 
                 <tbody >
@@ -39,7 +32,10 @@
 
                 </tbody>
             </table>
-        </div>
+
+        </section-container>
+
+
     </section-container>
 
     <div id='treatment-levels' ng-hide="managementDetailsSize() &lt;= 0" class="add_top_padding">

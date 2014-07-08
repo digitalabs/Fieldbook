@@ -1,39 +1,24 @@
 <div class="row" ng-controller="TrialSettingsCtrl">
     <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
         <!-- management details title -->
-        <div >
-            <label class="control-label" data-toggle="collapse" data-target=".nurseryLevelDetails">
-                <strong class="sub-content-heading" th:text="#{fb.study.managementdetails}">MANAGEMENT DETAILS</strong>
-                <span class="bms-fa-question-circle help-tooltip" th:attr="tooltip=#{fb.study.managementdetails.tooltip}" tooltip-placement="right"></span>
-            </label>
 
-            <span select-standard-variable="" modeldata="data.managementDetails" variable-type="1" class="btn btn-info pull-right nrm-md-variable-select" >Add</span>
+        <section-container th:attr="heading=#{fb.study.managementdetails},reminder=#{section.reminder.to.add.records}" show-reminder="managementDetailsSize() &lt;= 0" add-variable="true" model-data="data.managementDetails" variable-type="1">
 
-        </div>
-
-        <!-- management details description -->
-        <div class="form-group management-details-section-reminder">
-            <label class="control-label" ng-show='managementDetailsSize() &lt;= 0' th:text="#{section.reminder.to.add.records}">Click Add to begin selecting items to record in this section.</label>
-        </div>
-
-        <!-- management details variables container -->
-        <div class="form-horizontal sectionContainer" id="nurseryLevelSettings-dev">
-
-            <div class="form-group nurseryLevelSettings" ng-repeat="(key, value) in data.managementDetails">
+            <div class="row form-group nurseryLevelSettings" ng-repeat="(key, value) in data.managementDetails">
                 <div class="col-xs-5 1st">
                     <span class="delete-icon" style="font-size: 16px;" ng-click="removeVariable(key)"></span>
                     &nbsp;&nbsp;&nbsp;
                     <span style="word-wrap: break-word" class="control-label nursery-level-label
                             label-bold var-names">{{data.managementDetails[key].variable.name}}</span>:
                 </div>
-                <div class="col-xs-7 2nd">
+                <div class="col-xs-7 2nd" style="padding-right: 0">
                     <show-setting-form-element settings="data.managementDetails" targetkey="{{key}}"
                                                valuecontainer="data.userInput"></show-setting-form-element>
                 </div>
 
-
             </div>
-        </div>
+
+        </section-container>
 
     </div>
 </div>

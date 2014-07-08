@@ -268,7 +268,9 @@
                     icon: '@',
                     iconImg: '@',
                     modelData: '=',
-                    variableType: '@'
+                    variableType: '@',
+                    showReminder: '='
+
                 },
                 transclude : true,
                 templateUrl: '/Fieldbook/static/angular-templates/sectionContainer.html',
@@ -276,11 +278,6 @@
                     scope.collapsible = $parse(attrs.collapsible)();
                     scope.addVariable =  $parse(attrs.addVariable)();
 
-                    attrs.$observe('reminder',function(value){
-                        if (value) {
-                            scope.showReminder = true;
-                        }
-                    });
 
                     attrs.$observe('helpTooltip',function(value){
                         if (value) {

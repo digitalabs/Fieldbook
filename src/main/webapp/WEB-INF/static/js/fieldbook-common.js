@@ -918,7 +918,7 @@ function deleteNurseryInReview() {
 			if ($('#studyTree').dynatree('getTree').getNodeByKey(idVal)) {
 				$('#studyTree').dynatree('getTree').getNodeByKey(idVal).remove();
 			}
-			showSuccessfulMessage('',deleteNurserySuccessful);
+			showSuccessfulMessage('',isNursery() ? deleteNurserySuccessful : deleteTrialSuccessful);
 		}, 500);
 	});
 }
@@ -929,7 +929,7 @@ function deleteNurseryInEdit() {
 	var idVal = $('#studyId').val();
 	doDeleteNursery(idVal, function(data) {
 		$('#deleteStudyModal').modal('hide');
-		showSuccessfulMessage('',deleteNurserySuccessful);
+		showSuccessfulMessage('',isNursery() ? deleteNurserySuccessful : deleteTrialSuccessful);
 		setTimeout(function() {
 			//go back to review nursery page
 			location.href = $('#delete-success-return-url').attr('href');
@@ -2103,7 +2103,7 @@ function submitDeleteFolder() {
 					node.remove();
 				}
 				changeBrowseNurseryButtonBehavior(false);
-				showSuccessfulMessage('',deleteNurserySuccessful);
+				showSuccessfulMessage('',isNursery() ? deleteNurserySuccessful : deleteTrialSuccessful);
 			}
 		});
 	}

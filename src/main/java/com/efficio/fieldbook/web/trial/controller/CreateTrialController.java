@@ -340,7 +340,7 @@ public class CreateTrialController extends SettingsController {
     	}
     	
     	form.setTrialLevelVariables(userSelection.getTrialLevelVariableList());
-    	TrialDataset dataset = (TrialDataset) SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, form.getStudyLevelVariables(), 
+    	Dataset dataset = (Dataset) SettingsUtil.convertPojoToXmlDataset(fieldbookMiddlewareService, name, form.getStudyLevelVariables(),
     			form.getPlotLevelVariables(), form.getBaselineTraitVariables(), userSelection, form.getTrialLevelVariables(), null, form.getTreatmentFactors());
     	Workbook workbook = SettingsUtil.convertXmlDatasetToWorkbook(dataset);
     	userSelection.setWorkbook(workbook);
@@ -447,6 +447,12 @@ public class CreateTrialController extends SettingsController {
     protected TabInfo prepareEnvironmentsTabInfo() {
         TabInfo info = new TabInfo();
         info.setData(new EnvironmentData());
+
+        Map<String, List<SettingDetail>> settingMap = new HashMap<String, List<SettingDetail>>();
+        settingMap.put("managementDetails", new ArrayList<SettingDetail>());
+        settingMap.put("trialConditionDetails", new ArrayList<SettingDetail>());
+
+        info.setSettingMap(settingMap);
         return info;
     }
 

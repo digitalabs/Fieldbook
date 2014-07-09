@@ -11,9 +11,11 @@
         }
 
         OrderedHash.prototype.addList = function (list, keyExtract) {
-            for (var i = 0; i < list.length; i++) {
-                this.m_keys.push(keyExtract(list[i]));
-                this.m_vals[keyExtract(list[i])] = list[i];
+            if (list) {
+                for (var i = 0; i < list.length; i++) {
+                    this.m_keys.push(keyExtract(list[i]));
+                    this.m_vals[keyExtract(list[i])] = list[i];
+                }
             }
         }
 
@@ -86,7 +88,7 @@
                     };
 
                     $scope.size = function() {
-                        return $scope.settings.keys().length;
+                        return Object.keys($scope.settings).length;
                     };
                 }
             };

@@ -36,6 +36,8 @@ public class AdvancingSourceListFactory {
 	
 	@Resource
 	private FieldbookService fieldbookMiddlewareService;
+	
+	private static final String DEFAULT_TEST_VALUE = "T";
 
 	public AdvancingSourceList create(Workbook workbook, AdvancingNursery advanceInfo, Study nursery, 
 			Map<Integer, Method> breedingMethodMap, Map<String, Method> breedingMethodCodeMap)
@@ -85,7 +87,7 @@ public class AdvancingSourceListFactory {
                     		}
                     	}
                     }
-                    boolean isCheck = check != null && !"T".equalsIgnoreCase(check);
+                    boolean isCheck = check != null && !DEFAULT_TEST_VALUE.equalsIgnoreCase(check);
 
                     Integer methodId = null;
                     if (advanceInfo.getMethodChoice() == null || "0".equals(advanceInfo.getMethodChoice())) {

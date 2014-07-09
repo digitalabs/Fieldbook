@@ -14,7 +14,6 @@ package com.efficio.fieldbook.web.ontology.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.easymock.EasyMock;
 import org.generationcp.middleware.domain.dms.Enumeration;
 import org.generationcp.middleware.domain.dms.PhenotypicType;
@@ -28,6 +27,8 @@ import org.generationcp.middleware.service.api.OntologyService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
@@ -48,7 +49,7 @@ import com.efficio.fieldbook.web.ontology.form.OntologyDetailsForm;
 @ContextConfiguration(locations = {"file:src/test/resources/Fieldbook-servlet-test.xml"})
 public class OntologyDetailsControllerTest  extends AbstractJUnit4SpringContextTests {
 	
-	public static final Logger log = Logger.getLogger(OntologyDetailsControllerTest.class);
+	public static final Logger log = LoggerFactory.getLogger(OntologyDetailsControllerTest.class);
 
     /** The controller. */
     @Autowired
@@ -98,7 +99,7 @@ public class OntologyDetailsControllerTest  extends AbstractJUnit4SpringContextT
 			EasyMock.expect(ontologyService.getStandardVariable(2)).andReturn(sv2);
 			EasyMock.expect(ontologyService.getStandardVariable(3)).andReturn(sv3);
 		} catch (MiddlewareQueryException e) {
-			log.error(e);
+			log.error(e.getMessage());
 		}
     	
     	List<PropertyTree> result = controller.getPropertiesBySettingsGroup(1, 101, false);

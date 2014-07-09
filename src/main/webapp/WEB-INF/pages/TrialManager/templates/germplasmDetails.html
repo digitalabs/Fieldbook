@@ -1,4 +1,5 @@
-<div class="row" ng-controller="GermplasmCtrl">
+<div ng-controller="GermplasmCtrl">
+<div class="row" >
     <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
 
         <section-container icon="bms-factors" th:attr="heading=#{trial.managesettings.germplasm.factors.label}"
@@ -22,16 +23,19 @@
 
 
             <div  class="pull-right">
-                <div class="btn-group">
-                    <button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
-                        <span th:text="#{nursery.nurserydetails.actions}">Actions</span>
-                    </button>
-                    <ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
-                        <li>
-                            <a href="javascript: showManageCheckTypePopup()" th:text="#{germplasm.list.manage.check.types}" >Manage Checks</a>
-                        </li>
-                    </ul>
-                </div>
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" ng-click="updateDataTable" ng-class="{disabled: !updateOccurred}">
+                    <span class="glyphicon glyphicon-refresh"></span>
+                    <span>Refresh</span>
+                </button>
+
+                <button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
+                    <span th:text="#{nursery.nurserydetails.actions}">Actions</span>
+                </button>
+                <ul class="dropdown-menu fbk-right-button-drop-down" role="menu">
+                    <li>
+                        <a href="javascript: showManageCheckTypePopup()" th:text="#{germplasm.list.manage.check.types}" >Manage Checks</a>
+                    </li>
+                </ul>
             </div>
 
         </div>
@@ -48,6 +52,8 @@
     </div>
 
 </div>
+
+
 
 <div class="collapse in germplasmListDetails">
     <!-- Germplasm List Table View -->
@@ -73,6 +79,9 @@
 <div class="row">
 	<div id="open-germplasm" th:include="/Common/includes/openGermplasmDetailsModal"></div>
 </div>
+
+</div>
+
 
 <!-- Cyrus: moved the script to germplasm.js for organization. Only globals initialized from thymeleaf:spring should go here -->
 <script type="text/javascript" th:inline="javascript">

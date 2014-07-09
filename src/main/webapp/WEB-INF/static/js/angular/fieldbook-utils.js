@@ -83,7 +83,11 @@
                     };
 
                     $scope.size = function() {
-                        return $scope.settings.length;
+                        if ($scope.settings instanceof Array) {
+                            return $scope.settings.length;
+                        } else if ($scope.settings instanceof Object) {
+                            return Object.keys($scope.settings).length;
+                        }
                     };
                 }
             };

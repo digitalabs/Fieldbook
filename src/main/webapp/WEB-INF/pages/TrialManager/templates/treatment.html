@@ -1,44 +1,45 @@
-<div class="row col-lg-6 col-md-8 col-sm-10 col-xs-12" ng-controller="TreatmentCtrl">
-    <!-- title -->
-    <section-container collapsible="true" th:attr="heading=#{trial.managesettings.treatment.factors.title}">
-
-        <section-container th:attr="heading=#{trial.managesettings.treatment.factors},help-tooltip=#{trial.managesettings.treatment.factors.notes}" add-variable="true" model-data="data.managementDetails" variable-type="1">
-
-            <table class='factor-opts-tbl table table-curved table-condensed'>
-                <thead>
-                <tr>
-                    <th>&nbsp;</th>
-                    <th th:text="#{trial.managesettings.treatment.factors.name}">Name</th>
-                    <th th:text="#{trial.managesettings.treatment.factors.description}">Description</th>
-                    <th th:text="#{trial.managesettings.treatment.factors.level}">Levels</th>
-                </tr>
-                </thead>
-
-                <tbody >
-                <tr ng-repeat="(key,item) in data.managementDetails track by key">
-                    <td ng-class-odd="'odd'" ng-class-even="'even'"><span class='glyphicon glyphicon-minus-sign delete-factor' ng-click="removeTreatmentFactorByIndex(key)"></span>
-                    </td>
-                    <td ng-class-odd="'odd'" ng-class-even="'even'"><a ng-click='showDetailsModal(key)' >{{item.variable.name}}</a>
-                    </td>
-                    <td ng-class-odd="'odd'" ng-class-even="'even'">{{item.variable.description}}</td>
-                    <td ng-class-odd="'odd'" ng-class-even="'even'">
-                        <input valid-number="" maxlength="2" type='text' class='form-control' ng-model='item.variableLabelCount' ng-change='onLevelChange(item.variable.name,item.variableLabelCount)' />
-                    </td>
-                </tr>
-
-                <tr ng-hide="managementDetailsSize() &gt; 0">
-                    <td class="odd">&nbsp;</td><td class="odd">&nbsp;</td><td class="odd">&nbsp;</td><td class="odd">&nbsp;</td>
-                </tr>
-
-                </tbody>
-            </table>
-
-        </section-container>
-    </section-container>
-
-    <div id='treatment-levels' ng-hide="managementDetailsSize() &lt;= 0" class="add_top_padding">
+<div class="row" ng-controller="TreatmentCtrl">
+    <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
         <!-- title -->
-        <div><strong class="sub-content-heading" th:text="#{trial.managesettings.treatment.factors.specify.level}">Specify Treatment Levels</strong></div>
+        <section-container collapsible="true" th:attr="heading=#{trial.managesettings.treatment.factors.title}">
+
+            <section-container th:attr="heading=#{trial.managesettings.treatment.factors},help-tooltip=#{trial.managesettings.treatment.factors.notes}" add-variable="true" model-data="data.managementDetails" variable-type="1">
+
+                <table class='factor-opts-tbl table table-curved table-condensed'>
+                    <thead>
+                    <tr>
+                        <th>&nbsp;</th>
+                        <th th:text="#{trial.managesettings.treatment.factors.name}">Name</th>
+                        <th th:text="#{trial.managesettings.treatment.factors.description}">Description</th>
+                        <th th:text="#{trial.managesettings.treatment.factors.level}">Levels</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr ng-repeat="(key,item) in data.managementDetails track by key">
+                        <td ng-class="{even : $even, odd : $odd}"><span class='glyphicon glyphicon-minus-sign delete-factor' ng-click="removeTreatmentFactorByIndex(key)"></span>
+                        </td>
+                        <td ng-class="{even : $even, odd : $odd}"><a ng-click='showDetailsModal(key)' >{{item.variable.name}}</a>
+                        </td>
+                        <td ng-class="{even : $even, odd : $odd}">{{item.variable.description}}</td>
+                        <td ng-class="{even : $even, odd : $odd}">
+                            <input valid-number="" maxlength="2" type='text' class='form-control' ng-model='item.variableLabelCount' ng-change='onLevelChange(item.variable.name,item.variableLabelCount)' />
+                        </td>
+                    </tr>
+
+                    <tr ng-hide="managementDetailsSize() &gt; 0">
+                        <td class="odd">&nbsp;</td><td class="odd">&nbsp;</td><td class="odd">&nbsp;</td><td class="odd">&nbsp;</td>
+                    </tr>
+
+                    </tbody>
+                </table>
+
+            </section-container>
+        </section-container>
+
+        <div id='treatment-levels' ng-hide="managementDetailsSize() &lt;= 0" class="add_top_padding">
+            <!-- title -->
+            <div><strong class="sub-content-heading" th:text="#{trial.managesettings.treatment.factors.specify.level}">Specify Treatment Levels</strong></div>
 
             <div class='treatment-level-item' ng-repeat="(key,item) in data.managementDetails track by key">
                 <div>
@@ -78,9 +79,9 @@
                         </tbody>
                     </table>
                 </div>
-
-
             </div>
-    </div><!-- end treatment-levels -->
+        </div><!-- end treatment-levels -->
 
+
+    </div>
 </div>

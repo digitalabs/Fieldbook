@@ -15,14 +15,14 @@
             <div class="row">
                 <div class="col-xs-6 col-md-6">
 
-                    <section-container heading="MANAGEMENT DETAILS" add-variable="true" model-data="data.managementDetails" variable-type="4">
-                        <display-settings settings="data.managementDetails" variable-type="4"></display-settings>
+                    <section-container heading="MANAGEMENT DETAILS" add-variable="true" model-data="settings.managementDetails" variable-type="4">
+                        <display-settings settings="settings.managementDetails" variable-type="4"></display-settings>
                     </section-container>
 
                 </div>
                 <div class="col-xs-6 col-md-6">
-                    <section-container heading="TRIAL CONDITION DETAILS" add-variable="true" model-data="data.managementDetails" variable-type="7">
-                        <display-settings settings="data.trialConditionDetails" variable-type="7"></display-settings>
+                    <section-container heading="TRIAL CONDITION DETAILS" add-variable="true" model-data="settings.trialConditionDetails" variable-type="7">
+                        <display-settings settings="settings.trialConditionDetails" variable-type="7"></display-settings>
                     </section-container>
                 </div>
             </div>
@@ -42,10 +42,10 @@
                 <div class="row form-group" ng-repeat="(key, value) in environment.managementDetailValues">
                     <div class="col-xs-5 1st">
                     <span style="word-wrap: break-word" class="control-label nursery-level-label
-                        label-bold var-names">{{data.managementDetails[key].variable.name}}</span>
+                        label-bold var-names">{{settings.managementDetails[key].variable.name}}</span>
                     </div>
                     <div class="col-xs-7 2nd">
-                        <show-setting-form-element settings="data.managementDetails" targetkey="{{key}}"
+                        <show-setting-form-element settings="settings.managementDetails" targetkey="{{key}}"
                                                    valuecontainer="environment.managementDetailValues"></show-setting-form-element>
                     </div>
                 </div>
@@ -54,10 +54,10 @@
                 <div class="row form-group" ng-repeat="(key, value) in environment.trialDetailValues">
                     <div class="col-xs-5 1st">
                     <span style="word-wrap: break-word" class="control-label nursery-level-label
-                        label-bold var-names">{{data.trialConditionDetails[key].variable.name}}</span>
+                        label-bold var-names">{{settings.trialConditionDetails[key].variable.name}}</span>
                     </div>
                     <div class="col-xs-7 2nd">
-                        <show-setting-form-element settings="data.trialConditionDetails" targetkey="{{key}}"
+                        <show-setting-form-element settings="settings.trialConditionDetails" targetkey="{{key}}"
                                                    valuecontainer="environment.trialDetailValues"></show-setting-form-element>
                     </div>
                 </div>

@@ -106,26 +106,59 @@
 
         $scope.data = TrialManagerDataService.currentData.basicDetails;
 
+        $scope.saveCurrentTrialData = TrialManagerDataService.saveCurrentData;
     }]);
 
     manageTrialApp.service('TrialManagerDataService', ['TRIAL_SETTINGS_INITIAL_DATA', 'ENVIRONMENTS_INITIAL_DATA',
         'GERMPLASM_INITIAL_DATA', 'EXPERIMENTAL_DESIGN_INITIAL_DATA', 'MEASUREMENTS_INITIAL_DATA', 'TREATMENT_FACTORS_INITIAL_DATA',
-        function (TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA,GERMPLASM_INITIAL_DATA,EXPERIMENTAL_DESIGN_INITIAL_DATA,
-                  MEASUREMENTS_INITIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA) {
-        var service = {
-            currentData: {
-                trialSettings: TRIAL_SETTINGS_INITIAL_DATA,
-                environments: ENVIRONMENTS_INITIAL_DATA,
-                germplasm: GERMPLASM_INITIAL_DATA,
-                treatmentFactors: TREATMENT_FACTORS_INITIAL_DATA,
-                experimentalDesign: ENVIRONMENTS_INITIAL_DATA,
-                measurements: MEASUREMENTS_INITIAL_DATA,
-                basicDetails : {}
-            }
-        };
+        'BASIC_DETAILS_DATA', '$http',
+        function (TRIAL_SETTINGS_INITIAL_DATA, ENVIRONMENTS_INITIAL_DATA, GERMPLASM_INITIAL_DATA, EXPERIMENTAL_DESIGN_INITIAL_DATA,
+                  MEASUREMENTS_INITIAL_DATA, TREATMENT_FACTORS_INITIAL_DATA, BASIC_DETAILS_DATA, $http) {
 
-        return service;
-    }]);
+            var extractData = function (initialData) {
+                if (!initialData) {
+                    return null;
+                } else {
+                    return initialData.data;
+                }
+            };
+
+            var extractSettings = function (initialData) {
+                if (!initialData) {
+                    return null;
+                } else {
+                    return initialData.settings.length > 0 ? initialData.settings : initialData.settingMap;
+                }
+            };
+
+            var service = {
+                currentData: {
+                    trialSettings: extractData(TRIAL_SETTINGS_INITIAL_DATA),
+                    environments: extractData(ENVIRONMENTS_INITIAL_DATA),
+                    germplasm: extractData(GERMPLASM_INITIAL_DATA),
+                    treatmentFactors: extractData(TREATMENT_FACTORS_INITIAL_DATA),
+                    experimentalDesign: extractData(ENVIRONMENTS_INITIAL_DATA),
+                    measurements: extractData(MEASUREMENTS_INITIAL_DATA),
+                    basicDetails: extractData(BASIC_DETAILS_DATA)
+                },
+
+                settings: {
+                    trialSettings: extractSettings(TRIAL_SETTINGS_INITIAL_DATA),
+                    environments: extractSettings(ENVIRONMENTS_INITIAL_DATA),
+                    germplasm: extractSettings(GERMPLASM_INITIAL_DATA),
+                    treatmentFactors: extractSettings(TREATMENT_FACTORS_INITIAL_DATA),
+                    experimentalDesign: extractSettings(ENVIRONMENTS_INITIAL_DATA),
+                    measurements: extractSettings(MEASUREMENTS_INITIAL_DATA),
+                    basicDetails: extractSettings(BASIC_DETAILS_DATA)
+                },
+
+                saveCurrentData: function () {
+                    $http.post('/Fieldbook/TrialManager/createTrial', service.currentData);
+                }
+            };
+
+            return service;
+        }]);
 
     // README IMPORTANT: Code unmanaged by angular should go here
     document.onInitManageTrial = function() {

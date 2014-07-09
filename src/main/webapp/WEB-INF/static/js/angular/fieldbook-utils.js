@@ -1,8 +1,50 @@
 /*global angular*/
 /*global showBaselineTraitDetailsModal */
-/* global openManageLocations, ChooseSettings*/
+/* global openManageLocations*/
 (function() {
     'use strict';
+
+    angular.OrderedHash = (function () {
+        function OrderedHash() {
+            this.m_keys = [];
+            this.m_vals = {};
+        }
+
+        OrderedHash.prototype.addList = function (list, keyExtract) {
+            for (var i = 0; i < list.length; i++) {
+                OrderedHash.this.m_keys.push(keyExtract(list[i]));
+                OrderedHash.this.m_vals[keyExtract(list[i])] = list[i];
+            }
+        }
+
+
+        OrderedHash.prototype.push = function (k, v) {
+            if (!this.m_vals[k]) {
+                this.m_keys.push(k);
+            }
+            this.m_vals[k] = v;
+            return v;
+        };
+
+        OrderedHash.prototype.length = function () {
+            return this.m_keys.length;
+        };
+
+        OrderedHash.prototype.keys = function () {
+            return this.m_keys;
+        };
+
+        OrderedHash.prototype.val = function (k) {
+            return this.m_vals[k];
+        };
+
+        OrderedHash.prototype.vals = function () {
+            return this.m_vals;
+        };
+
+        return OrderedHash;
+
+    })();
 
     angular.module('fieldbook-utils', ['ui.select2'])
         .constant('VARIABLE_SELECTION_MODAL_SELECTOR', '.nrm-var-selection-modal-container')
@@ -16,8 +58,9 @@
                 templateUrl : '/Fieldbook/static/angular-templates/displaySettings.html',
                 controller : function($scope, $element, $attrs) {
                     $scope.removeSetting = function(setting) {
-                        if ($scope.settings[setting.variable.cvTermId]) {
-                            delete $scope.settings[setting.variable.cvTermId];
+                        var index = $scope.settings.indexOf(setting);
+                        if (index !== -1){
+                            $scope.settings.splice(index, 1);
 
                             $.ajax({
                                 url: '/Fieldbook/manageSettings/deleteVariable/' + $attrs.variableType + '/' + setting.variable.cvTermId,
@@ -40,11 +83,7 @@
                     };
 
                     $scope.size = function() {
-                        var size = 0, key;
-                        for (key in $scope.settings) {
-                            if ($scope.settings.hasOwnProperty(key)) { size++; }
-                        }
-                        return size;
+                        return $scope.settings.length;
                     };
                 }
             };
@@ -92,11 +131,11 @@
                             // if retrieved data is an array of values
                             if (data.length && data.length > 0) {
                                 $.each(data, function (key, value) {
-                                    $scope.modeldata[value.variable.cvTermId] = value;
+                                    $scope.modeldata.push(value);
                                 });
                             } else {
                                 // if retrieved data is a single object
-                                $scope.modeldata[data.variable.cvTermId] = data;
+                                $scope.modeldata.push(data);
                             }
 
                             if (!$scope.$$phase) {
@@ -112,12 +151,13 @@
                         var params = {
                             variableType : $attrs.variableType,
                             retrieveSelectedVariableFunction: function () {
-                                var currentIds = [];
-                                $.each($scope.modeldata, function(key) {
-                                    currentIds.push(key);
+                                var selected = [];
+
+                                $.each($scope.modeldata, function(key, value) {
+                                    selected.push(value.variable.cvTermId);
                                 });
 
-                                return currentIds;
+                                return selected;
                             }
                         };
 
@@ -148,7 +188,19 @@
                     }
                 },
                 controller : function($scope, LOCATION_ID, BREEDING_METHOD_ID, BREEDING_METHOD_CODE) {
-                    $scope.variableDefinition = $scope.settings[$scope.targetkey];
+                    $scope.findSetting = function(targetKey) {
+                        var foundSetting = null;
+                        $.each($scope.settings, function(key, value) {
+                            if (value.variable.cvTermId == targetKey) {
+                                foundSetting = value;
+                                return false;
+                            }
+                        });
+
+                        return foundSetting;
+                    };
+
+                    $scope.variableDefinition = $scope.findSetting($scope.targetkey);
                     $scope.hasDropdownOptions = $scope.variableDefinition.variable.widgetType === 'DROPDOWN';
 
                     $scope.isLocation = $scope.variableDefinition.variable.cvTermId == LOCATION_ID;
@@ -258,7 +310,7 @@
             };
         })
 
-        .directive("sectionContainer",["$parse",function($parse){
+        .directive('sectionContainer',['$parse',function($parse){
             return {
                 restrict: 'E',
                 scope : {

@@ -17,6 +17,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.efficio.fieldbook.web.trial.bean.BasicDetails;
+import com.efficio.fieldbook.web.trial.bean.EnvironmentData;
+import com.efficio.fieldbook.web.trial.bean.TabInfo;
 import org.generationcp.middleware.domain.dms.ValueReference;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
 import org.generationcp.middleware.domain.etl.StudyDetails;
@@ -82,9 +85,26 @@ public class CreateTrialController extends SettingsController {
         return "TrialManager/createTrial";
     }
 
-    @RequestMapping(value = "/trialSettings", method = RequestMethod.GET)
-    public String showCreateTrial(Model model, HttpSession session, HttpServletRequest req) {
-        return showAjaxPage(model, URL_SETTINGS);
+    /**
+     * Show.
+     *
+     * @param model   the model
+     * @param session the session
+     * @return the string
+     * @throws MiddlewareQueryException the middleware query exception
+     */
+    @RequestMapping(method = RequestMethod.GET)
+    public String show(Model model, HttpSession session) throws MiddlewareQueryException {
+
+
+        SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME, SessionUtility.POSSIBLE_VALUES_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
+
+        model.addAttribute("basicDetailsData", prepareBasicDetailsTabInfo());
+        model.addAttribute("germplasmData", prepareGermplasmTabInfo());
+        model.addAttribute("environmentData", prepareEnvironmentsTabInfo());
+        model.addAttribute("trialSettingsData", prepareTrialSettingsTabInfo());
+
+        return showAngularPage(model);
     }
 
     @ModelAttribute("programLocationURL")
@@ -97,18 +117,21 @@ public class CreateTrialController extends SettingsController {
         return getCurrentProjectId();
     }
 
+    @RequestMapping(value = "/trialSettings", method = RequestMethod.GET)
+    public String showCreateTrial(Model model) {
+        return showAjaxPage(model, URL_SETTINGS);
+    }
 
     @RequestMapping(value = "/environment", method = RequestMethod.GET)
-    public String showEnvironments(Model model, HttpSession session, HttpServletRequest req) {
+    public String showEnvironments(Model model) {
         return showAjaxPage(model, URL_ENVIRONMENTS);
     }
 
 
     @RequestMapping(value = "/germplasm", method = RequestMethod.GET)
-    public String showGermplasm(Model model, HttpSession session, HttpServletRequest req, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form) {
+    public String showGermplasm(Model model, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form) {
         return showAjaxPage(model, URL_GERMPLASM);
     }
-
 
     @RequestMapping(value = "/treatment", method = RequestMethod.GET)
     public String showTreatmentFactors(Model model, HttpSession session, HttpServletRequest req) {
@@ -193,28 +216,6 @@ public class CreateTrialController extends SettingsController {
         model.addAttribute("experimentalDesignValues", getExperimentalDesignValues());
         return super.showAjaxPage(model, URL_SETTINGS);
     }
-    
-    /**
-     * Show.
-     *
-     * @param form the form
-     * @param form2 the form2
-     * @param model the model
-     * @param session the session
-     * @return the string
-     * @throws MiddlewareQueryException the middleware query exception
-     */
-    @RequestMapping(method = RequestMethod.GET)
-    public String show(@ModelAttribute("createTrialForm") CreateTrialForm form, @ModelAttribute("importGermplasmListForm") ImportGermplasmListForm form2, Model model, HttpServletRequest req, HttpSession session) throws MiddlewareQueryException{
-    	
-        SessionUtility.clearSessionData(session, new String[]{SessionUtility.USER_SELECTION_SESSION_NAME,SessionUtility.POSSIBLE_VALUES_SESSION_NAME, SessionUtility.PAGINATION_LIST_SELECTION_SESSION_NAME});
-    	form.setRequiredFields(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
-    	form.setFolderId(1);
-    	form.setFolderName(AppConstants.PROGRAM_TRIALS.getString());
-    	form.setFolderNameLabel(AppConstants.PROGRAM_TRIALS.getString());
-
-    	return showAngularPage(model);
-    }    
     
     private List<TreatmentFactorDetail> convertSettingDetailToTreatment(List<SettingDetail> treatmentFactors) {
         List<TreatmentFactorDetail> newTreatmentFactors = new ArrayList<TreatmentFactorDetail>();
@@ -414,32 +415,18 @@ public class CreateTrialController extends SettingsController {
     	return value;
     }
     
-    @ModelAttribute("experimentalDesignValues")
+    /*@ModelAttribute("experimentalDesignValues")*/
     public List<ValueReference> getExperimentalDesignValues() throws MiddlewareQueryException {
         return fieldbookService.getAllPossibleValues(TermId.EXPERIMENT_DESIGN_FACTOR.getId());
     }
 
-    @ModelAttribute("trialSettingsData")
-    public Map<String, Object> getTrialSettingsInitialData() {
-        return new HashMap<String, Object>();
-    }
-
-    @ModelAttribute("environmentData")
-    public Map<String, Object> getEnvironmentInitialData() {
-        return new HashMap<String, Object>();
-    }
-
-    @ModelAttribute("germplasmData")
-    public Map<String, Object> getGermplasmInitialData() {
-        Map<String, Object> initialData = new HashMap<String, Object>();
-        Map<Integer, SettingDetail> initialDetails = new HashMap<Integer, SettingDetail>();
+    protected TabInfo prepareGermplasmTabInfo() {
         List<SettingDetail> initialDetailList = new ArrayList<SettingDetail>();
         List<Integer> initialSettingIDs = buildRequiredVariables(AppConstants.CREATE_TRIAL_PLOT_REQUIRED_FIELDS.getString());
 
         for (Integer initialSettingID : initialSettingIDs) {
             try {
                 SettingDetail detail = createSettingDetail(initialSettingID, null);
-                initialDetails.put(detail.getVariable().getCvTermId(), detail);
                 initialDetailList.add(detail);
             } catch (MiddlewareQueryException e) {
                 e.printStackTrace();
@@ -447,27 +434,51 @@ public class CreateTrialController extends SettingsController {
 
         }
 
-        initialData.put("settings", initialDetails);
+        TabInfo info = new TabInfo();
+        info.setSettings(initialDetailList);
 
         if (userSelection.getPlotsLevelList() == null) {
             userSelection.setPlotsLevelList(initialDetailList);
         }
 
-        return initialData;
+        return info;
     }
 
-    @ModelAttribute("treatmentFactorsData")
-    public Map<String, Object> getTreatmentFactorsInitialData() {
-        return new HashMap<String, Object>();
+    protected TabInfo prepareEnvironmentsTabInfo() {
+        TabInfo info = new TabInfo();
+        info.setData(new EnvironmentData());
+        return info;
     }
 
-    @ModelAttribute("experimentalDesignData")
-    public Map<String, Object> getExperimentalDesignInitialData() {
-        return new HashMap<String, Object>();
+    protected TabInfo prepareBasicDetailsTabInfo() {
+        Map<Integer, String> basicDetails = new HashMap<Integer, String>();
+        List<SettingDetail> initialDetailList = new ArrayList<SettingDetail>();
+        List<Integer> initialSettingIDs = buildRequiredVariables(AppConstants.CREATE_TRIAL_REQUIRED_FIELDS.getString());
+
+        for (Integer initialSettingID : initialSettingIDs) {
+            try {
+                basicDetails.put(initialSettingID, "");
+                SettingDetail detail = createSettingDetail(initialSettingID, null);
+                initialDetailList.add(detail);
+            } catch (MiddlewareQueryException e) {
+                e.printStackTrace();
+            }
+
+        }
+        BasicDetails basic = new BasicDetails();
+        basic.setBasicDetails(basicDetails);
+
+        basic.setFolderId(1);
+        basic.setFolderName(AppConstants.PROGRAM_TRIALS.getString());
+        basic.setFolderNameLabel(AppConstants.PROGRAM_TRIALS.getString());
+
+        TabInfo tab = new TabInfo();
+        tab.setData(basic);
+
+        return tab;
     }
 
-    @ModelAttribute("measurementData")
-    public Map<String, Object> getMeasurementInitialData() {
-        return new HashMap<String, Object>();
+    protected TabInfo prepareTrialSettingsTabInfo() {
+        return new TabInfo();
     }
 }

@@ -135,11 +135,11 @@
                             // if retrieved data is an array of values
                             if (data.length && data.length > 0) {
                                 $.each(data, function (key, value) {
-                                    $scope.modeldata.push(value);
+                                    $scope.modeldata.push(value.variable.cvTermId,value);
                                 });
                             } else {
                                 // if retrieved data is a single object
-                                $scope.modeldata.push(data);
+                                $scope.modeldata.push(data.variable.cvTermId,data);
                             }
 
                             if (!$scope.$$phase) {

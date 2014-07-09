@@ -30,6 +30,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.generationcp.middleware.domain.dms.Study;
 import org.generationcp.middleware.domain.dms.Variable;
 import org.generationcp.middleware.domain.etl.MeasurementRow;
+import org.generationcp.middleware.domain.etl.MeasurementVariable;
 import org.generationcp.middleware.domain.oms.StandardVariableReference;
 import org.generationcp.middleware.domain.oms.TermId;
 import org.generationcp.middleware.exceptions.MiddlewareQueryException;
@@ -383,7 +384,14 @@ public class AdvancingController extends AbstractBaseFieldbookController{
     		}
     	}
     	Locale locale = LocaleContextHolder.getLocale();
-    	return messageSource.getMessage("nursery.advance.nursery.empty.method.error", null, locale);
+    	String name = "";
+    	for (MeasurementVariable variable : userSelection.getWorkbook().getAllVariables()) {
+    		if (variable.getTermId() == methodVariateId) {
+    			name = variable.getName();
+    			break;
+    		}
+    	}
+    	return messageSource.getMessage("nursery.advance.nursery.empty.method.error", new String[] {name}, locale);
     }
     
     private String getBreedingMethodIdFromStudy(List<Variable> varList) throws MiddlewareQueryException {

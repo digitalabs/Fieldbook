@@ -1,29 +1,30 @@
-<div>
-    <label class="control-label section-toggle toggle-icon" ng-click="doCollapse()" >
-        <span ng-show="icon" class="{{icon}}" style="font-size: 20px; color: #C4A01B;"></span>
-        <img ng-src="{{iconImg}}" ng-show="iconImg" />
-        <img class="icn section-expanded" ng-show="!toggleSection && collapsible" src="/Fieldbook/static/img/expanded-arrow.png" />
-        <img style="margin-left: 7px" class="icn section-collapsed" ng-show="toggleSection && collapsible" src="/Fieldbook/static/img/collapsed-arrow.png" />
-        <strong class="sub-content-heading">{{heading}}</strong>
-        <span class="bms-fa-question-circle help-tooltip-nursery" tooltip-placement="right" tooltip-container="body" tooltip="{{helpTooltip}}" ng-show="hasHelpTooltip"></span>
+<div ng-multi-transclude-controller>
+    <div>
+        <label class="control-label section-toggle toggle-icon" ng-click="doCollapse()" >
+            <span ng-show="icon" class="{{icon}}" style="font-size: 20px; color: #C4A01B;"></span>
+            <img ng-src="{{iconImg}}" ng-show="iconImg" />
+            <img class="icn section-expanded" ng-show="!toggleSection && collapsible" src="/Fieldbook/static/img/expanded-arrow.png" />
+            <img style="margin-left: 7px" class="icn section-collapsed" ng-show="toggleSection && collapsible" src="/Fieldbook/static/img/collapsed-arrow.png" />
+            <strong class="sub-content-heading">{{heading}}</strong>
+            <span class="bms-fa-question-circle help-tooltip-nursery" tooltip-placement="right" tooltip-container="body" tooltip="{{helpTooltip}}" ng-show="hasHelpTooltip"></span>
 
 
-    </label>
+        </label>
 
-    <span class="pull-right">
-            <span class="btn btn-primary" ng-show="enableUpdate" ng-click="doClick()">
-                <span class="glyphicon glyphicon-refresh"></span>&nbsp;Update</span>
-            <span ng-show="addVariable" select-standard-variable="" modeldata="modelData" variable-type="{{variableType}}" class="btn btn-info nrm-md-variable-select" >Add</span>
-    </span>
-</div>
+    <span ng-hide="addVariable" class="pull-right" ng-multi-transclude="action-buttons"></span>
+    <span ng-show="addVariable" select-standard-variable="" modeldata="modelData" variable-type="{{variableType}}" class="btn btn-info nrm-md-variable-select pull-right" >Add</span>
 
-<!-- section content -->
-<div collapse="toggleSection">
-    <div ng-show="showReminder" class="form-group management-details-section-reminder" >
-        <label class="control-label">{{reminder}}</label>
     </div>
 
-    <div ng-transclude class="add_top_padding">
+    <!-- section content -->
+    <div collapse="toggleSection">
+        <div ng-show="showReminder" class="form-group management-details-section-reminder" >
+            <label class="control-label">{{reminder}}</label>
+        </div>
+
+        <div ng-multi-transclude="content" class="add_top_padding">
+        </div>
+
     </div>
 
 </div>

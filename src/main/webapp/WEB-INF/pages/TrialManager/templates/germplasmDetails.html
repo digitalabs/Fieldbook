@@ -3,10 +3,17 @@
     <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
 
         <section-container icon="bms-factors" th:attr="heading=#{trial.managesettings.germplasm.factors.label}"
-                           collapsible="true" add-variable="true" model-data="settings" variable-type="2" enable-update="updateOccurred" on-update="updateDataTable()" >
+                           collapsible="true">
 
-            <section-container th:attr="heading=#{trial.managesettings.germplasm.factors.label},help-tooltip=#{trial.reminder.add.germplasm.factors}">
-                <display-settings settings="settings" variable-type="2"></display-settings>
+            <span name="action-buttons">
+                    <span class="btn btn-primary" ng-show="updateOccurred" ng-click="updateDataTable()">
+                        <span class="glyphicon glyphicon-refresh"></span> Update
+                    </span>
+                    <span select-standard-variable="" modeldata="settings" variable-type="2" class="btn btn-info nrm-md-variable-select" >Add</span>
+            </span>
+
+            <section-container name="content" th:attr="heading=#{trial.managesettings.germplasm.factors.label},help-tooltip=#{trial.reminder.add.germplasm.factors}">
+                <display-settings settings="settings" variable-type="2" name="content"></display-settings>
             </section-container>
 
         </section-container>

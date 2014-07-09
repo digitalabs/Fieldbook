@@ -35,20 +35,21 @@
                 url: '/Fieldbook/TrialManager/GermplasmList/refreshListDetails',
                 type: 'POST',
                 cache: false,
-                data: '',
-                success: function (html) {
-                    $('#imported-germplasm-list').html(html);
-                    $('#entries-details').css('display', 'block');
-                    $('#numberOfEntries').html($('#totalGermplasms').val());
-                    $('#imported-germplasm-list-reset-button').css('opacity', '1');
-                    $scope.updateOccurred = false;
+                data: ''
+            }).success(function (html) {
+                $('#imported-germplasm-list').html(html);
+                $('#entries-details').css('display', 'block');
+                $('#numberOfEntries').html($('#totalGermplasms').val());
+                $('#imported-germplasm-list-reset-button').css('opacity', '1');
+                $scope.updateOccurred = false;
 
-                    if (!$scope.$$phase) {
-                        $scope.$apply();
-                    }
+                if (!$scope.$$phase) {
+                    $scope.$apply();
                 }
 
             });
+
+
         };
     }]);
 })();

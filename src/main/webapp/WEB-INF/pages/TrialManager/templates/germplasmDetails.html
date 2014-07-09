@@ -3,7 +3,7 @@
     <div class="col-lg-6 col-md-8 col-sm-10 col-xs-12">
 
         <section-container icon="bms-factors" th:attr="heading=#{trial.managesettings.germplasm.factors.label}"
-                           collapsible="true" add-variable="true" model-data="settings" variable-type="2">
+                           collapsible="true" add-variable="true" model-data="settings" variable-type="2" enable-update="updateOccurred" on-update="updateDataTable()" >
 
             <section-container th:attr="heading=#{trial.managesettings.germplasm.factors.label},help-tooltip=#{trial.reminder.add.germplasm.factors}">
                 <display-settings settings="settings" variable-type="2"></display-settings>
@@ -23,11 +23,6 @@
 
 
             <div  class="pull-right">
-                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" ng-click="updateDataTable" ng-class="{disabled: !updateOccurred}">
-                    <span class="glyphicon glyphicon-refresh"></span>
-                    <span>Refresh</span>
-                </button>
-
                 <button type="button" class="btn btn-info dropdown-toggle fbk-action-btn" data-toggle="dropdown">
                     <span th:text="#{nursery.nurserydetails.actions}">Actions</span>
                 </button>

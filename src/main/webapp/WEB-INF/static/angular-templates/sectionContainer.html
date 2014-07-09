@@ -10,7 +10,11 @@
 
     </label>
 
-    <span ng-show="addVariable" select-standard-variable="" modeldata="modelData" variable-type="{{variableType}}" class="btn btn-info pull-right nrm-md-variable-select" >Add</span>
+    <span class="pull-right">
+            <span class="btn btn-primary" ng-show="enableUpdate" ng-click="doClick()">
+                <span class="glyphicon glyphicon-refresh"></span>&nbsp;Update</span>
+            <span ng-show="addVariable" select-standard-variable="" modeldata="modelData" variable-type="{{variableType}}" class="btn btn-info nrm-md-variable-select" >Add</span>
+    </span>
 </div>
 
 <!-- section content -->

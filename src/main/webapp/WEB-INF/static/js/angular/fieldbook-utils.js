@@ -326,7 +326,9 @@
                     iconImg: '@',
                     modelData: '=',
                     variableType: '@',
-                    showReminder: '='
+                    showReminder: '=',
+                    enableUpdate: '=',
+                    onUpdate: '&'
 
                 },
                 transclude : true,
@@ -350,6 +352,11 @@
                         if ($scope.collapsible) {
                             $scope.toggleSection = !$scope.toggleSection;
                         }
+                    };
+
+                    $scope.doClick = function() {
+                        console.log('clicked');
+                        $scope.onUpdate({});
                     };
                 }]
 
